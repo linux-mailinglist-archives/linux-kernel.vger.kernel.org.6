@@ -1,103 +1,170 @@
-Return-Path: <linux-kernel+bounces-425402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7392D9DC196
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:40:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13269DC197
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:42:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF63281AA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:40:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662092824EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68FA17A90F;
-	Fri, 29 Nov 2024 09:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998CF17ADFA;
+	Fri, 29 Nov 2024 09:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vauBDyc/"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0c52VNuO"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7EC160799
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D21165EED
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732873200; cv=none; b=XIfRmbfyuYg4MByW38+zeYdH0I/G64sSa7LNKW5o+btp8oz9x4mfr5Pj4/pSTOnZ3Dxk7uoXEuDI03AW4GRFACwuLWvRNavE2iCCO9+X/xvwQxImTL6ZVyJm/8Q5W/tto6y3jUVy1g1tkCqB6eTmFIVOI1O5zHrzvr8rwEdvdvA=
+	t=1732873329; cv=none; b=FdI+QoCxfhz9HfLhbvCqugSWeGmGHg79ZhuJvzzilHYM46dfLKvI066HxUtL3Kozw2mOZJeknJUR9oVy99LOEGeVkOXij50IPPC17BFJ6x+UNBpMNQ0CB9t3BHcRjeprC20REwnwPE7+R5uI4YJtRTVVuCTslWrVf08ucdhofsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732873200; c=relaxed/simple;
-	bh=IzCqwsyp/ckKsqEM+TTTsqQsbXr6WOSqpOQRN4y+3Nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FO8MgJWylia/9yHl1ZxLfp3V82NxShY6D2gBnEwmXTW4mJptx9WlD31zch2+P985oiDUSvEUIMAk+5YLKyWC3r812AEwV2G8Z48wsvqveH438hCr3KN3udEnVsK9/LhK4eW/UaHVWOJmvYWM6p7gPa7EzS/wpBQM0teq2LRNjWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vauBDyc/; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2124a86f4cbso12434035ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 01:39:58 -0800 (PST)
+	s=arc-20240116; t=1732873329; c=relaxed/simple;
+	bh=xC3TBC3hXDQtRMMLwHaC2Yx9WYQVsimtRWH+4eR5vK0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O6ihj3hB1SKKNhHVeg+euH5LNOx/MIcT2+4rIXrXwAFtWsRLXbD3Zu02dvu7YLKeIkA7k++155R80wwRv9eqqmcFBQkD1qDaeKxRl9ZJ8bxKmZOR39gfERyXHZEMpmSmHhC4SKQ1acfNJcyQX3Oyw9+R4pphWnZsUqoPBIALAQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0c52VNuO; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a2033562so15152665e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 01:42:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732873198; x=1733477998; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MOusRXoS6yLwNo2tY8vJRcYfq8J1TfQ3gXvaPL+GXYc=;
-        b=vauBDyc/EOQex6S7oKFD/jyoI98xCukECmJhm5YnjBC2Fgh2/z5lCezYTAC751oCzr
-         dEW6UrTmeCOFX8fguqMiv67/nlwcn5/gPIj67APQofF4WS7em1oC1o3S+FDIT7iqq3cO
-         V2TVyfpvAJbmsfBctcv1gQPP9vRNh+pKA+JfeDhj/zFQ0B8nnTUWgnh2euW7//DP4QxL
-         va4L24y36COKtMlR4yABIZsm1foWTjVJP/V70UOAbwQJ7iUX4yKth3yYNFqRbuzuQDEC
-         ymM4gVNmAY69PJHWAnUMOrIGohgDORxN1pI2UwI+u/0apPIu/E8LOanO2XjQ/0dr+EkM
-         CNLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732873198; x=1733477998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1732873325; x=1733478125; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MOusRXoS6yLwNo2tY8vJRcYfq8J1TfQ3gXvaPL+GXYc=;
-        b=ShSiUdNp1lHZbCW+BgcEPzXrznX6jyAlPgCY3n1XmhBkCL5oDqyfpurAIWORY0BUpN
-         ynh06aI026ZS/JV2kJisAv8/LwSjPqWrny5qXw28jKqmQhs0yklVBINffeVOmZgrrBPK
-         hSgMv+hWPbVsLAZvZ3Df0NJqXpKLc9Wbbm+bWoDg0yr4odd8plZ/mkTga2nqLbRnbFPa
-         tghCd9+NMOIjw1Oj/CLtLQAVutbZZoWPoTKG8k+0X3MZiaTMaoOxow6IZZhOX4R6QWTO
-         QBWjXR+8RpcfKegxBXMZMila8aBB9jYS2r6Gx70GgE7nX9rOGyG1BQRWyL7oD9vtFued
-         lVWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJbWLTg8NoaqtI6ru2SOenevf5e2d1RSYeOdrQzRTEHnT6+p09PELt7vtpv14F2nph3TTPI0ggwod9m50=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2uhvlhvRfN58ONCNOVud4qWNDt3w3YPGii1cwyDZtrXIksxw7
-	rgfFwpZeNhy9zztArETkVToJP9LfPB+jLpYXASViZiItURiaAkux9bCKTWXzmLs=
-X-Gm-Gg: ASbGnctvYUWWT1jNxxAwDeq67No9mMhbjVQvUSu47/861ljv13rq0+ZL+L+ehQsucFs
-	RVwqzwnbU/xuKrJBW6pcc+sZlfEkD8+ZPnx4HcMASgZpXYESmD07MqsXf4TDi9QjL1116UKjZ20
-	9NIRFgDAfYeIwA+KuT6luksYQkonJuuq125+5+aQ0UgEi32XxZljn8cAQddvKunVt/774nIeiJj
-	Hi9xbP1KBs9aP/Oa+I9f9J+QW7eIr3jJTVrCUiFrrBUq5XGFrK/
-X-Google-Smtp-Source: AGHT+IHWodno/X6VRTJzhKdXVQ/gso6/rtS4xy33n61Y9sx/WwKW3iY78OTpvtXf0n7sw/wkaVMi3Q==
-X-Received: by 2002:a17:902:ebce:b0:212:13e5:3ba4 with SMTP id d9443c01a7336-2150109b05amr120185115ad.21.1732873198197;
-        Fri, 29 Nov 2024 01:39:58 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2152196845dsm26185725ad.121.2024.11.29.01.39.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 01:39:57 -0800 (PST)
-Date: Fri, 29 Nov 2024 15:09:55 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] OPP: fix dev_pm_opp_find_bw_*() when bandwidth table
- not initialized
-Message-ID: <20241129093955.c7wm3oabtiyjuaze@vireshk-i7>
-References: <20241128-topic-opp-fix-assert-index-check-v1-0-cb8bd4c0370e@linaro.org>
- <20241128-topic-opp-fix-assert-index-check-v1-2-cb8bd4c0370e@linaro.org>
- <20241129084111.ifwak4y4irxjnpru@vireshk-i7>
- <46cb2f2a-908a-4600-8716-db7f937ec13c@linaro.org>
+        bh=aCya0V2ouJjFIBaqKyJ8rlrVuDCrvVqJzJ78/+Hkl4w=;
+        b=0c52VNuOrPSgIl5S8eXmO+8Vm8/sxzRh1nNOY1qhSK1AiYRTtgIWWQPN9QqQJA8H++
+         FTgT44PTX+BLBxbGQsfKGDduMmarc4kmTmX6Qns5FiaFzK6oiLeqPBrBAf5Wu2a/gM3I
+         839R90fQFGIFkhPZrHlrQpTpZD8H/KDKTaRtmDob1UYYjSCxnGx/ERmDKptQxqAogxlv
+         xFS6lgQNV2l5koAAVwQu3dYTT61hwxbKe3canDAYvoLKkpzU8M/YgV8qnx8q2fC7jNkw
+         VL8YwzE8Ky4JxH6c1amzu4RQ2OaibvNemMwxJjJKv2GhIX3F6xAdccv2Au6ml5HL6cnY
+         gGrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732873325; x=1733478125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aCya0V2ouJjFIBaqKyJ8rlrVuDCrvVqJzJ78/+Hkl4w=;
+        b=ugwrDp6XCuRH1Egfmb5SX4rpLheWnJkJahfr2GftCss94ntKessCzC18KywdEEqE0I
+         BoVVunA7ioOpHnT/W2FVa3GpeN9miC52X1EaAnYVQSSEYeA3S7nXZ2zVlPHUoWD8/I+r
+         XFXlG9dpJ8CNzYfch6pIo2qSfJli21ZwG4nVfTo4+H1dR0x0uavvCoXJqYmXTW0IdD0U
+         KVp7JiHKQSD/FhVRJpJN77Cyxnpl+1WvS37A+5cgB36rjX+R2zNHkCrw2prLwJ+SFW/w
+         yqG6yXX3YGBF7ss7mpVWqw7T2JcWqcDkeT87viBJQEcnh/Zm+I6NpUFjZKVTJXt9reaQ
+         N0AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgDmIW/fcGUOVNR52J4hcW66IzfcGucKsDKdTKhRjL1FnmRN33ArCSNARHxDVLa6onUFkAxLzgfDWdpHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmMa6izUDveGY0poZxaXWOsfLHi4SLGyWmhyqzIHmuOOD9KHBJ
+	omxiZtotivDAu2Qp8iYmMzHqGL1CGCRV/MnW6snsny/jpGaaCw3RhBhmBm9b9IXisPjCrjgtGEV
+	2ig4YYM6b/qa+FICR09xkXdjMrItfa5UQs3NQ
+X-Gm-Gg: ASbGncu/RE+XiGMrdirHmOxMYALMntHrqsmnZS/Wagn5XxZGBBes8ckobiN+IIsJPwR
+	/CYqjaPz1C8yWcJ32JlthAlxE3ihYIxmhUsrH8uPFyy9gLYy/0krEhVhvz6xEYA==
+X-Google-Smtp-Source: AGHT+IE9/TgAZVKCU5TDmSXossBwgPrlUoxMO11jrwBXUmpCqnfqprE/r7XZr8dFH04PAocSUQRrR43EoUB/tAuRFhE=
+X-Received: by 2002:a05:600c:5101:b0:434:9dfe:20e6 with SMTP id
+ 5b1f17b1804b1-434a9df71c6mr87366995e9.23.1732873325500; Fri, 29 Nov 2024
+ 01:42:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46cb2f2a-908a-4600-8716-db7f937ec13c@linaro.org>
+References: <20241128141323.481033-1-pbonzini@redhat.com> <20241128141323.481033-3-pbonzini@redhat.com>
+In-Reply-To: <20241128141323.481033-3-pbonzini@redhat.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 29 Nov 2024 10:41:53 +0100
+Message-ID: <CAH5fLgi9+d6PwZdU23xcF0p+m6mja3Dx8BufiiM-ZgLtDSqQDw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: block/mq: replace mem::zeroed() with Zeroable trait
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	boqun.feng@gmail.com, ojeda@kernel.org, benno.lossin@proton.me, 
+	axboe@kernel.dk, tmgross@umich.edu, bjorn3_gh@protonmail.com, 
+	gary@garyguo.net, alex.gaynor@gmail.com, a.hindborg@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29-11-24, 10:34, Neil Armstrong wrote:
-> Wait, this needs the first patch to work, otherwise index is not passed to assert
+On Thu, Nov 28, 2024 at 3:13=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com>=
+ wrote:
+>
+> Isolate the unsafety in the declaration of the Zeroable trait, instead of=
+ having
+> to use "unsafe" just to declare a struct.  This is more similar to how yo=
+u would
+> use "..Default::default()" (which is also a possibility here, but arguabl=
+y
+> less efficient).
+>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>  rust/kernel/block/mq/gen_disk.rs |  8 +++++---
+>  rust/kernel/block/mq/tag_set.rs  | 10 ++++++----
+>  2 files changed, 11 insertions(+), 7 deletions(-)
+>
+> diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/gen_=
+disk.rs
+> index 708125dce96a..65342d065296 100644
+> --- a/rust/kernel/block/mq/gen_disk.rs
+> +++ b/rust/kernel/block/mq/gen_disk.rs
+> @@ -6,7 +6,7 @@
+>  //! C header: [`include/linux/blk_mq.h`](srctree/include/linux/blk_mq.h)
+>
+>  use crate::block::mq::{raw_writer::RawWriter, Operations, TagSet};
+> -use crate::{bindings, error::from_err_ptr, error::Result, sync::Arc};
+> +use crate::{bindings, error::from_err_ptr, error::Result, init::Zeroable=
+, sync::Arc};
+>  use crate::{error, static_lock_class};
+>  use core::fmt::{self, Write};
+>
+> @@ -31,6 +31,9 @@ fn default() -> Self {
+>      }
+>  }
+>
+> +// SAFETY: `bindings::queue_limits` contains only fields that are valid =
+when zeroed.
+> +unsafe impl Zeroable for bindings::queue_limits {}
+> +
+>  impl GenDiskBuilder {
+>      /// Create a new instance.
+>      pub fn new() -> Self {
+> @@ -93,8 +96,7 @@ pub fn build<T: Operations>(
+>          name: fmt::Arguments<'_>,
+>          tagset: Arc<TagSet<T>>,
+>      ) -> Result<GenDisk<T>> {
+> -        // SAFETY: `bindings::queue_limits` contain only fields that are=
+ valid when zeroed.
+> -        let mut lim: bindings::queue_limits =3D unsafe { core::mem::zero=
+ed() };
+> +        let mut lim: bindings::queue_limits =3D Zeroable::ZERO;
+>
+>          lim.logical_block_size =3D self.logical_block_size;
+>          lim.physical_block_size =3D self.physical_block_size;
+> diff --git a/rust/kernel/block/mq/tag_set.rs b/rust/kernel/block/mq/tag_s=
+et.rs
+> index f9a1ca655a35..1ff7366ca549 100644
+> --- a/rust/kernel/block/mq/tag_set.rs
+> +++ b/rust/kernel/block/mq/tag_set.rs
+> @@ -10,6 +10,7 @@
+>      bindings,
+>      block::mq::{operations::OperationsVTable, request::RequestDataWrappe=
+r, Operations},
+>      error,
+> +    init::Zeroable,
+>      prelude::PinInit,
+>      try_pin_init,
+>      types::Opaque,
+> @@ -32,6 +33,10 @@ pub struct TagSet<T: Operations> {
+>      _p: PhantomData<T>,
+>  }
+>
+> +// SAFETY: `blk_mq_tag_set` only contains integers and pointers, which
+> +// all are allowed to be 0.
+> +unsafe impl Zeroable for bindings::blk_mq_tag_set {}
 
-Oops. My bad.
+This will have to be reverted if we want to split up the kernel crate
+due to the orphan rule.
 
--- 
-viresh
+Alice
 
