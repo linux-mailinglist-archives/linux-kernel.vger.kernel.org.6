@@ -1,98 +1,137 @@
-Return-Path: <linux-kernel+bounces-425725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8912B9DE9C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:38:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D9B9DE9C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15D28B21C84
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:38:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D59BB24895
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B092815CD46;
-	Fri, 29 Nov 2024 15:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9074014A60F;
+	Fri, 29 Nov 2024 15:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcKx9onu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5DSdd69"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16730145A17;
-	Fri, 29 Nov 2024 15:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A1C145A17;
+	Fri, 29 Nov 2024 15:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732894629; cv=none; b=XSOkd75uJ3t/fkvyxYckZqq0hVrbskZvhuLEVjPukhNLOFx5soQKgWdyDR/GrNNCZnAQ5MqS18qkmsg20josqacDsi83DOJqrvKNwDXpp0u5kk0y+OJk5rwPELo7UUqPxe6vJd73JpVR8hIIHUD1kd0J+javD1XTklEwA+Cd44Y=
+	t=1732894664; cv=none; b=O//bb0Huf9uesWZezlTvsO3fAYOwNCJKCpJzTtX1gvqPhMHST1qvrxCgphNALffRkMKcttWcnJNiYf3xCVsH5DYb3GvLya4mYHGZDI2SnHGViLu9xteFbhFrbtURaPRxUZ+XH/ODTdZxfiGqEKLyDMvJKqMCmPwhmmeRY6jOdR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732894629; c=relaxed/simple;
-	bh=iZjwFTEk+pFpApbK1/Pl81mH5NE6tyJhyWcbEVWo/Wc=;
+	s=arc-20240116; t=1732894664; c=relaxed/simple;
+	bh=B8ZduSCXx+T9t862mFfTVamD3ZvIyVqH4xZpWXNHI8s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JlY7R5rBH+lDr0dvi3pEr0eIvYMktYWZ/RuUJnrpucOeqe7oxfBY0/sEoitTxRE/1RBt5LmgKgxlj8t3+hgZszH7m/0VlfEoulksOYyVjncD8t5YxSbEj5lOF3A7aeUWKJQeH+mfLcCaJKIAwYMS5Jt18Fu413PIUwpv6NqVuY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcKx9onu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E0D8C4CECF;
-	Fri, 29 Nov 2024 15:37:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PNIPIbQVCw4IL8AQ+Xw9jX+qi2taTR5mWuh2daZZzjTvkUY4AOhymQ/XMWblimCXhDIQCaSZ1OcVLvdhCyggtZ1Sze8iYsCHlPBH7e6WNrQGeXD8Y19YKhasSkKmsepFrlHWbbIVqLaZITOvaHxWIk5EI69+KbSciFIuneW4/T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5DSdd69; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D866C4CECF;
+	Fri, 29 Nov 2024 15:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732894628;
-	bh=iZjwFTEk+pFpApbK1/Pl81mH5NE6tyJhyWcbEVWo/Wc=;
+	s=k20201202; t=1732894663;
+	bh=B8ZduSCXx+T9t862mFfTVamD3ZvIyVqH4xZpWXNHI8s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZcKx9onu0sISrxdGUJgJJkCsKD4imjP8AOqm0N1Vx/06QYFctaccO63OIHKWhiNLU
-	 qttpgUTypnFuq+/SKo7BotduYh4taxcav7DZybFBSbiBUzXyovwrKx6tnhIhf18myr
-	 kn6IUS5rF9qvw0aGzBPGKQyY54r7zVcLtVcSpXyqI+eG1uzfsabsLvn44UqmQGTu/O
-	 SltkGg/Smj24X29lgWGFgjUIh6O7pra6X+w/tfY8WVJ8v1kYH7KCZ5XfDzIE8TbKa0
-	 mMUi7Z2jPOrkLxOMDGAJVthQxr/TKBs9FTmEGRhIefedEcRoP0L/fS6LPbP27NJka4
-	 r++JE6xYj60Dg==
-Date: Fri, 29 Nov 2024 10:37:06 -0500
-From: Sasha Levin <sashal@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Erwan Velu <erwanaliasr1@gmail.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, puwen@hygon.cn,
-	seanjc@google.com, kim.phillips@amd.com, jmattson@google.com,
-	babu.moger@amd.com, peterz@infradead.org,
-	rick.p.edgecombe@intel.com, brgerst@gmail.com, ashok.raj@intel.com,
-	mjguzik@gmail.com, jpoimboe@kernel.org, nik.borisov@suse.com,
-	aik@amd.com, vegard.nossum@oracle.com,
-	daniel.sneddon@linux.intel.com, acdunlap@google.com, pavel@denx.de
-Subject: Re: [PATCH AUTOSEL 5.15 11/12] x86/barrier: Do not serialize MSR
- accesses on AMD
-Message-ID: <Z0nfomc6TKd-17S9@sashalap>
-References: <20240115232718.209642-1-sashal@kernel.org>
- <20240115232718.209642-11-sashal@kernel.org>
- <20241128115924.GAZ0hbHKsbtCixVqAe@fat_crate.local>
- <Z0iRzPpGvpeYzA4H@sashalap>
- <20241128164310.GCZ0idnhjpAV6wFWm6@fat_crate.local>
- <Z0kJHvesUl6xJkS7@sashalap>
- <CAL2Jzuxygf+kp0b9y5c+SY7xQEp7j24zNuKqaTAOUGHZrmWROw@mail.gmail.com>
- <20241129133310.GDZ0nClg7mDbFaqxft@fat_crate.local>
+	b=Q5DSdd69wrziYSI7Y481XqxoGe44LO/arqKa2tz4/uZFMGslQMfwZC1ZLUPGewepR
+	 emsKb9hU+gqOKFa7psWcnFDLQVKphFIyFeKdAY1ybWodFsP4U0GB7i2v7r4H7Sm/hn
+	 hxv1gNulM2xM523moMfb5WFLHD5NppVHUiSjGUdwPPgI9+6xcRhr/vleHLxOhGXbF6
+	 P35JKxGiDY0elKcnuplnPDyikTsOgnAtNls3+myOBdRYrcFXC8/A/g5NSO21gHJDBL
+	 gFXSGPOwQ80eRItrGdyeE++p/V1Y1cJ6j8kRzFzxgqK/teDjw4rXLM3J4E2hi7abtR
+	 /fbSizfWvVL5Q==
+Date: Fri, 29 Nov 2024 16:37:41 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Paul Kocialkowski <contact@paulk.fr>
+Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
+Message-ID: <20241129-amazing-whale-of-proficiency-ee6fd2@houat>
+References: <20241119140805.3345412-1-paulk@sys-base.io>
+ <20241119-prudent-jasmine-lizard-195cef@houat>
+ <ZzyoIABRArkGoZBn@collins>
+ <20241119-vivacious-optimistic-squirrel-a2f3c5@houat>
+ <ZzzdT0wr0u1ApVgV@collins>
+ <20241120-wild-stimulating-prawn-ffefb7@houat>
+ <Zz20dquzl5_2_3TQ@collins>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="4fudffiqskytk6s2"
 Content-Disposition: inline
-In-Reply-To: <20241129133310.GDZ0nClg7mDbFaqxft@fat_crate.local>
+In-Reply-To: <Zz20dquzl5_2_3TQ@collins>
 
-On Fri, Nov 29, 2024 at 02:33:10PM +0100, Borislav Petkov wrote:
->On Fri, Nov 29, 2024 at 10:30:11AM +0100, Erwan Velu wrote:
->> We all know how difficult it is to maintain kernels and support the hard
->> work you do on this.  It's also up to us, the users & industry, to give
->> feedback and testing around this type of story.  It could probably be
->> interesting to have a presentation around this at KernelRecipes ;)
 
-Or LPC? I don't usually end up attending KR but Greg is always there :)
+--4fudffiqskytk6s2
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
+MIME-Version: 1.0
 
->Yes, absolutely.
->
->And you should reserve a whole slot of 1h after it for discussion. Because all
->the folks using stable kernels or doing backports will definitely have
->experience and thoughts to share... who knows, might improve the proces in the
->end.
+On Wed, Nov 20, 2024 at 11:05:42AM +0100, Paul Kocialkowski wrote:
+> Le Wed 20 Nov 24, 09:01, Maxime Ripard a =E9crit :
+> > > > If anything, the status quo doesn't impose anything, it just rolls =
+with
+> > > > the hardware default. Yours would impose one though.
+> > >=20
+> > > The result is that it puts a strong limitation and breaks many use ca=
+ses by
+> > > default. I don't think we have to accept whatever register default wa=
+s chosen
+> > > by hardware engineers as the most sensible default choice and pretend=
+ that this
+> > > is not a policy decision.
+> >=20
+> > You're making it much worse than it is. It doesn't "break many use
+> > cases" it broke one, by default, with a supported way to unbreak it, in
+> > 12 years.
+>=20
+> I think this is exaggerated. Like I mentioned previously there are *many*
+> situations that are not covered by the default.
 
-If there are enough folks who are interested in a BoF session I'm happy
-to help set it up for LPC.
+Note that this statement would be true for any default. The current, the
+one you suggest, or any other really. The fact that we have a way to
+override it is an acknowledgement that it's not a one size fits all
+situation.
 
--- 
-Thanks,
-Sasha
+> The fact that I'm the first person to bring it up in 12 years doesn't
+> change that.
+
+Sure. It does however hint that it seems like it's a sane enough
+default.
+
+> Sofar the downside you brought up boils down to: badly-designed
+> hardware may have relied on this mechanism to avoid interrupt storms
+> that could prevent the system from booting.
+
+It's not about good or bad design. Buttons bounce, HPD signals bounce,
+it's just the world we live in.
+
+But let me rephrase if my main objection wasn't clear enough: you want
+to introduce an ABI breaking change. With the possibility of breaking
+devices that have worked fine so far. That's not ok.
+
+Maxime
+
+--4fudffiqskytk6s2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0nfxAAKCRAnX84Zoj2+
+dk7LAYDGqN4+FFKYNkVeh8uBncZUXNq1+3hQGCVKth0yfd3qHhn9VImj9CLuhxpe
+0uuZEIkBf18IaV+JYJMvpW2AWpLOCDfVa5A+SLz6MGRXBt8mhAfrxGWV/K10P8XN
+7auTbJcbqA==
+=P+2t
+-----END PGP SIGNATURE-----
+
+--4fudffiqskytk6s2--
 
