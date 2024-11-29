@@ -1,225 +1,202 @@
-Return-Path: <linux-kernel+bounces-425592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F899DE726
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:20:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11A29DE729
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:22:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8887B205CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:20:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06807B2225B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7EF19E7ED;
-	Fri, 29 Nov 2024 13:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="fej70535";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ctI3S9Eo"
-Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC51219D8A2;
+	Fri, 29 Nov 2024 13:22:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2B11991AA;
-	Fri, 29 Nov 2024 13:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111FF1991AA;
+	Fri, 29 Nov 2024 13:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732886430; cv=none; b=bcSYRoRu6uevk6tP8kbUZHtu60GPigT1WyQmUr0gpGDxCigGOg61w86YkvrOcsmv91wYtbt2NHr7dGGew7PvOiQfr50R6qNruXyZ2XHuo/rbH6PxsSD1oqAUIXViXhQWTpu+VZuyJEfgVjY2jzHcroLN2J2dREJOVoXLc7oXI7s=
+	t=1732886568; cv=none; b=sVhXq4MIfzufRdJZBW3zIadfpsLKNOSJ6JgI7fvY4J1TMdW77lPlNsT4q3WSVEDzLhZ0RUWpmSmSghabPKqwBcWgqqmiEdie0CZsEmr4rrz+mji8ZnSKBnZcUT/SusOaCIvVJnOVhuMx0c0BBHZmyBaCyJVHFkU2sN2MVaPi72Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732886430; c=relaxed/simple;
-	bh=iTbx20FnA7mezjqwLAY+/IuoW3ith2+9M0JvvXtPX0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VtDOhdmV1IA/M9NGScNHH/U37HUeTYJA9rcRzzoscbj4YD+AqO85HMfynKxg86zCOzO7nshKC8tVyz83XVO+GkJN+dsJJD9M8pbRajgJlS1XpC8JH5el9lgdqxA3e7gEaP8zbIgR2CcYqMolauMiTE+87DgKU+Q3oqRlUcCl1vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=fej70535; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ctI3S9Eo; arc=none smtp.client-ip=202.12.124.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailflow.stl.internal (Postfix) with ESMTP id 7329F1D40683;
-	Fri, 29 Nov 2024 08:20:24 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Fri, 29 Nov 2024 08:20:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1732886424; x=1732890024; bh=EPOGgKgGObNAQHsXiiSQb3xlJnijbFXb
-	QhOX2B+lx+o=; b=fej70535UCBmHVKcXNhfAhlR/jhGtidVpo5pJLtCAeKk4Ajg
-	YSZ7/lJ6dq8iH8Z5TaizYpMLp8+FXg3R12gu2riF+hEIJcYqW0/qYwUDkel1W343
-	AUQEAgISgADcpT9Y4aAHJ1Hc9YS5ad52QaURVDkMt++gVPdZIZSWB4i6DAVRfcMy
-	9P//AMmZbgfnhymgQU1lSAICeuTt/mvhLvKB0oow8Yr6bcjvLeUTY6foeO9HvtLY
-	AnNnpXTyTglYBpVctpzbI58ri/y4CehM/c5ap4I5o7CeCrRyDw6ITXWdpTO/JfpN
-	Ata/Ac5X0zzhMRmEN9IgO4+QT0kQHPT2iMzR7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732886424; x=
-	1732890024; bh=EPOGgKgGObNAQHsXiiSQb3xlJnijbFXbQhOX2B+lx+o=; b=c
-	tI3S9EoPo5o6+rdHq3rlUq5B+Q9EdRJakWYdd7Xvgn4XAN3+yuTBpARoQgqoG1TC
-	I2Bp7NM28MRrI7/smYkv3c+5FvcSY5tRoxk5O4IJBcQWh1JSeA6Eses1WVHRVZze
-	5cAgZNSfaYoIpS5oqAlMr0/u2egGZf3z091/c0OoD7JO+gn6TLTBCF8oTGUtG4Kk
-	vdM/xeymOBZoxE3Ihsx3pTUkZSU0OH12SAZ1Lbi15+X3Lht5fnAUSynoSAOS/Wi1
-	/puTtTqNpJTP6nJN5SaWD6xOyGOWgj16ygoEKTu0lwAvvX7mgaKQFjHD7w5uccKu
-	L3Xrtn2a9auBDT2ien31g==
-X-ME-Sender: <xms:l79JZ3bjareX1OoILt0RdP2mC7HxbqBSkD64le-FJi_TPEkx18lPXw>
-    <xme:l79JZ2b5nG08rsza_SKqyUXClt7O7KXaxi3Y5o7tnRrnjEQ2iUWg4CfhTXX0u0MbT
-    qO2vG5JOB4gdjQHSyo>
-X-ME-Received: <xmr:l79JZ58sUAn_4Nb5tvvakj0FcfkMK2nw9EvUXYLEO0otawtgEXr7ELpn2kNc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgdehtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
-    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
-    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepgfdvgeeitefffedvgfdutdelgeeihfeg
-    ueehteevveegveejudelfeffieehledvnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggp
-    rhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnthhonh
-    hiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehrhigriigrnhhovhdrshdrrges
-    ghhmrghilhdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtoh
-    hmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggs
-    vghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnthgvrh
-    esghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgt
-    phhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:l79JZ9pFsUgccpZ76qwWHD8PMyfPmurXvaGJBnGVQuTsKjYplic9ZA>
-    <xmx:l79JZypeeOU6SnqpYwAuLEmeUhAf9qAyKu7iMltcqN3UETcHD-tZQQ>
-    <xmx:l79JZzRweJSzXH-AekE8R-D2QOevQfEneS-aIHZ_FGSzPZagLJjUJw>
-    <xmx:l79JZ6oPpGYxnV1ZyaIrER1XaUhMrsdmofa8rCDFfg8Gm6u4UnLWHA>
-    <xmx:l79JZ-d6bw3TTaAxKu9jFa9BgSuSuxp3uIRgxLTqFt7VjByWLt7LnJ9J>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 29 Nov 2024 08:20:23 -0500 (EST)
-Date: Fri, 29 Nov 2024 14:20:20 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH net-next v11 09/23] ovpn: implement basic RX path (UDP)
-Message-ID: <Z0m_lNTOAV7yL9wo@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-9-de4698c73a25@openvpn.net>
- <eabe28f9-d6a4-4bdc-a988-418e5137f3cb@gmail.com>
- <288f68cd-533a-4253-85c4-951cc4a9c862@openvpn.net>
- <aac209cc-589c-4b8a-9123-e44df9e794e4@gmail.com>
- <4c24d8ba-35d0-4aff-b207-9eca6eeda1fc@openvpn.net>
- <a4a537df-900b-43e6-bcc2-5049036b1ca2@openvpn.net>
+	s=arc-20240116; t=1732886568; c=relaxed/simple;
+	bh=sYfc59DNgMeuMRFfCk7PwPvb08s/LqzJFxW8ncctZyY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=I1jmEUTVUvwpjv1fR92Z7q93Qpv6sgRJI7TFcmFYza2cs1aGFTgDnfGGl/+LMIzSnR791P83fYS+ye1JunvOlSU9moG0Ozm01ohe/CGVq6NjcMfmUT8PMdQ24DGRlbN4688ZL1uqLND827yrQyDl228IIcVG0GD66tQBaaswpJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y0DJq1cskz688BZ;
+	Fri, 29 Nov 2024 21:18:35 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
+	by mail.maildlp.com (Postfix) with ESMTPS id D4EDB140680;
+	Fri, 29 Nov 2024 21:22:34 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 29 Nov 2024 14:22:34 +0100
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Fri, 29 Nov 2024 14:22:34 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Shiju Jose <shiju.jose@huawei.com>, Steven Rostedt <rostedt@goodmis.org>
+CC: "dave.jiang@intel.com" <dave.jiang@intel.com>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"dave@stgolabs.net" <dave@stgolabs.net>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
+Subject: RE: [PATCH v4 3/6] cxl/events: Update General Media Event Record to
+ CXL spec rev 3.1
+Thread-Topic: [PATCH v4 3/6] cxl/events: Update General Media Event Record to
+ CXL spec rev 3.1
+Thread-Index: AQHbOy/jEKs9N8Ou/EWSGme10Yml3rLJc4IQgABPV4CAAS95QIAATDQAgAA1zlD///prgIABEYyggAHA21A=
+Date: Fri, 29 Nov 2024 13:22:34 +0000
+Message-ID: <3c9808a694d242cab35bab67602edebf@huawei.com>
+References: <20241120093745.1847-1-shiju.jose@huawei.com>
+	<20241120093745.1847-4-shiju.jose@huawei.com>
+	<180fcfd623c64cdb86cdc9059f749af0@huawei.com>
+	<20241126120237.1598854d@gandalf.local.home>
+	<a24524dccbf442d5a3c910d7f46c7b6c@huawei.com>
+	<20241127104132.6c1729e1@gandalf.local.home>
+	<53a299d3cca6417d90d553e8399f834b@huawei.com>
+ <20241127133407.7bc1376a@gandalf.local.home>
+ <dc8fa73e871949eeaf4117c622d66ac5@huawei.com>
+In-Reply-To: <dc8fa73e871949eeaf4117c622d66ac5@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a4a537df-900b-43e6-bcc2-5049036b1ca2@openvpn.net>
 
-2024-11-27, 02:40:02 +0100, Antonio Quartulli wrote:
-> On 26/11/2024 09:49, Antonio Quartulli wrote:
-> [...]
-> > > 
-> > > The potential issue is tricky since we create it patch-by-patch.
-> > > 
-> > > Up to this patch the socket releasing procedure looks solid and
-> > > reliable. E.g. the P2P netdev destroying:
-> > > 
-> > >    ovpn_netdev_notifier_call(NETDEV_UNREGISTER)
-> > >      ovpn_peer_release_p2p
-> > >        ovpn_peer_del_p2p
-> > >          ovpn_peer_put
-> > >            ovpn_peer_release_kref
-> > >              ovpn_peer_release
-> > >                ovpn_socket_put
-> > >                  ovpn_socket_release_kref
-> > >                    ovpn_socket_detach
-> > >                      ovpn_udp_socket_detach
-> > >                        setup_udp_tunnel_sock
-> > >    netdev_run_todo
-> > >      rcu_barrier  <- no running ovpn_udp_encap_recv after this point
-> > >      free_netdev
-> > > 
-> > > After the setup_udp_tunnel_sock() call no new ovpn_udp_encap_recv()
-> > > will be spawned. And after the rcu_barrier() all running
-> > > ovpn_udp_encap_recv() will be done. All good.
-> > > 
-> > 
-> > ok
-> > 
-> > > Then, the following patch 'ovpn: implement TCP transport' disjoin
-> > > ovpn_socket_release_kref() and ovpn_socket_detach() by scheduling
-> > > the socket detach function call:
-> > > 
-> > >    ovpn_socket_release_kref
-> > >      ovpn_socket_schedule_release
-> > >        schedule_work(&sock->work)
-> > > 
-> > > And long time after the socket will be actually detached:
-> > > 
-> > >    ovpn_socket_release_work
-> > >      ovpn_socket_detach
-> > >        ovpn_udp_socket_detach
-> > >          setup_udp_tunnel_sock
-> > > 
-> > > And until this detaching will take a place, UDP handler can call
-> > > ovpn_udp_encap_recv() whatever number of times.
-> > > 
-> > > So, we can end up with this scenario:
-> > > 
-> > >    ovpn_netdev_notifier_call(NETDEV_UNREGISTER)
-> > >      ovpn_peer_release_p2p
-> > >        ovpn_peer_del_p2p
-> > >          ovpn_peer_put
-> > >            ovpn_peer_release_kref
-> > >              ovpn_peer_release
-> > >                ovpn_socket_put
-> > >                  ovpn_socket_release_kref
-> > >                    ovpn_socket_schedule_release
-> > >                      schedule_work(&sock->work)
-> > >    netdev_run_todo
-> > >      rcu_barrier
-> > >      free_netdev
-> > > 
-> > >    ovpn_udp_encap_recv  <- called for an incoming UDP packet
-> > >      ovpn_from_udp_sock <- returns pointer to freed memory
-> > >      // Any access to ovpn pointer is the use-after-free
-> > > 
-> > >    ovpn_socket_release_work  <- kernel finally ivoke the work
-> > >      ovpn_socket_detach
-> > >        ovpn_udp_socket_detach
-> > >          setup_udp_tunnel_sock
-> > > 
-> > > To address the issue, I see two possible solutions:
-> > > 1. flush the workqueue somewhere before the netdev release
-> > 
-> > yes! This is what I was missing. This will also solve the "how can the
-> > module wait for all workers to be done before unloading?"
-> > 
-> 
-> Actually there might be even a simpler solution: each ovpn_socket will hold
-> a reference to an ovpn_peer (TCP) or to an ovpn_priv (UDP).
-> I can simply increase the refcounter those objects while they are referenced
-> by the socket and decrease it when the socket is fully released (in the
-> detach() function called by the worker).
-> 
-> This way the netdev cannot be released until all socket (and all peers) are
-> gone.
-> 
-> This approach doesn't require any local workqueue or any other special
-> coordination as we'll just force the whole cleanup to happen in a specific
-> order.
-> 
-> Does it make sense?
+>-----Original Message-----
+>From: Shiju Jose <shiju.jose@huawei.com>
+>Sent: 28 November 2024 10:02
+>To: Steven Rostedt <rostedt@goodmis.org>
+>Cc: dave.jiang@intel.com; dan.j.williams@intel.com; Jonathan Cameron
+><jonathan.cameron@huawei.com>; alison.schofield@intel.com;
+>nifan.cxl@gmail.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
+>dave@stgolabs.net; linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org=
+;
+>Linuxarm <linuxarm@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>;
+>Zengtao (B) <prime.zeng@hisilicon.com>
+>Subject: RE: [PATCH v4 3/6] cxl/events: Update General Media Event Record =
+to
+>CXL spec rev 3.1
+>
+>>-----Original Message-----
+>>From: Steven Rostedt <rostedt@goodmis.org>
+>>Sent: 27 November 2024 18:34
+>>To: Shiju Jose <shiju.jose@huawei.com>
+>>Cc: dave.jiang@intel.com; dan.j.williams@intel.com; Jonathan Cameron
+>><jonathan.cameron@huawei.com>; alison.schofield@intel.com;
+>>nifan.cxl@gmail.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
+>>dave@stgolabs.net; linux-cxl@vger.kernel.org;
+>>linux-kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>;
+>>tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
+>><prime.zeng@hisilicon.com>
+>>Subject: Re: [PATCH v4 3/6] cxl/events: Update General Media Event
+>>Record to CXL spec rev 3.1
+>>
+>>On Wed, 27 Nov 2024 18:20:26 +0000
+>>Shiju Jose <shiju.jose@huawei.com> wrote:
+>>
+>>> I tested removing hdr_uuid and region_uuid from the rasdaemon test
+>>> setup as you suggested. As a result, libtraceevent parses correctly,
+>>> as you
+>>mentioned.
+>>>
+>>> However, I encounter  similar parsing error ("FAILED TO PARSE") when
+>>> I add two additional decoded strings (%s) to the TP_printk, replacing
+>>> (%u). Please see the attached format file,
+>>"format_cxl_general_media_v3.1_basic", for your reference.
+>>
+>>Are you sure. I don't see anything wrong with that one. Which version
+>>of libtraceevent do you have?
+>
+>libtraceevent source code version 1.8.4,  build for arm64.
 
-This dependency between refcounts worries me. I'm already having a
-hard time remembering how all objects interact together.
+Hi Steve,
 
-And since ovpn_peer_release already calls ovpn_socket_put, you'd get a
-refcount loop if ovpn_socket now also has a ref on the peer, no?
+I debug this case and please find the info,
+1. rasdaemon :  read() from format file return around 1/3rd of the=20
+    actual data in the file only when the total size of the format's file
+    is above 4K bytes (page size), For example, in this case, the total siz=
+e was 4512 bytes,
+    but read only 1674 bytes.
+    This partial data resulted  tep_parse_event() in libtraceevent failed i=
+nternally in the parse_format()    =20
+    and  since __parse_event() does not return error when parse_format() fa=
+il,
+    thus initialization of the event does not fail.
+    =20
+   The following  solution in rasdaemon solved the issue,=20
+   (provided if no other fix for the above issue with read()),=20
+    1. read() and accumulate content of format file until EOF reached.
+    2. Increased the buffer size from 4K bytes to  8K bytes.
+    3. May be __parse_event()  in libtraceevent  and thus tep_parse_event()=
+  return error
+        when parse_format() fail so that the initialization would fail if t=
+he input data is
+        corrupted or partial?  =20
+>
+>>
+>>>
+>>> I've also attached another format file,
+>>> "format_cxl_general_media_v3.1_full",
+>>> which contains the complete TP_printk() intended.
+>>
+>>This one has some complex arguments and also uses the '&' address of an
+>>argument.
+>Thanks.
+>I will debug this when basic one is working.
 
--- 
-Sabrina
+This case too worked  with above workaround after removing '&' address
+from the TP_printk().
+>>
+>>>
+>>> Can you please help or else can you share how to debug these errors
+>>> in the libtraceevent setup?
+>>
+>>Basically, I use the attached program (that just links to libtraceevent).
+>>
+>>Note, I need to delete the first line of your files, which has the "cat"
+>>command. But you can run this on the file itself:
+>>
+>>  ./tep_load_event
+>> /sys/kernel/tracing/events/cxl/cxl_general_media/format
+>>
+>>But you may need to be root to do that. If root just copies that file,
+>>you can then run it as non-root.
+>>
+>> # cp /sys/kernel/tracing/events/cxl/cxl_general_media/format /tmp  $
+>>./tep_load_event /tmp/format
+>>
+>>I run it under gdb and see where it fails. But it should let you know
+>>if it will pass or not. I put a breakpoint on tep_warning and when it
+>>gets hit, I examine what it did up to that point.
+>
+>Thanks Steve for the instructions. I will try this.
+
+I built tep_load_event.c for arm64 and it worked after copy
+format file to the /tmp/ folder as you said.
+>>
+>>-- Steve
+>
+
+Thanks,
+Shiju
 
