@@ -1,156 +1,119 @@
-Return-Path: <linux-kernel+bounces-425542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18F49DE65B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:27:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A299DE689
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:35:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53BB164E62
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:26:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E33163B41
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0199819D07B;
-	Fri, 29 Nov 2024 12:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H9mLtwEo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+kegZlHi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E19B19C56A;
+	Fri, 29 Nov 2024 12:35:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7C919A298;
-	Fri, 29 Nov 2024 12:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5634155352
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732883214; cv=none; b=nNSuWCTEh5PpLnHFsqutYbBQ8AauCt50nMOw3odswRGO8V8RlQ8EFhyj6Q0GB9/QL6BM0XMDWORc+sHbn3gU8Olz6biobdcyWLOE/wtKTtyCRZCsDF0M0vKBo3PcMLhp6dlu97u/8yEacvpPltaQDj2qLed7lbGAVCIexQEjg+E=
+	t=1732883730; cv=none; b=mzoAUQwadpbVgDqxOLZM6Aszwie4L4TIkvqpx55c4EoHYlRrbPtf+fja+7wsHUAxCxQMwNNG1NtcL8h7LQF4DviCpAW05NyaGgdW6pa0LFnzGcdlJynfCTblnFsct+jIsCqnIvYX7kMilrL0/pJs61aaUodvlf0bLN612TTW+P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732883214; c=relaxed/simple;
-	bh=FHiC2Wea6t2YR3kDPzsqL1s5fgWUsTDDIXkAK5wspI0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Ui02Z50hnvz2uZWp+VttDtNsd/c1K5PX/vu3DVp8kNjMl2hQ0dYOWD/9gNTsgas1XLFF47mosnlFX7OVs4MbZl3ert8A0UwkHGozmuDPukJ2lNsqYM+eRRmHOFazA28hu48uGTLxfDI6yuU+5noOxc3e2iET3XKTFEXdF55rj24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H9mLtwEo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+kegZlHi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 29 Nov 2024 12:26:50 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732883211;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IJVSSdJOdSZGebsbDcIYlSf24/N5rpFGvgPRw9vnbI0=;
-	b=H9mLtwEoDSF2z6E9X8+VII5TvJdOodoCwDjxr9fy4D0deEa5LwhZPpvm97baANCYThoHKf
-	PaNeLefSvg7LjmIldGcAaEDaBsTELerI/ecnjiHWMBPZLWRitu9/qgJL1b1Qq0VecbN5tk
-	aNf1UXjKXJshRCLwDLjvFlBmps1OyVFrEl1sA4jo80ZQ4vzxTlNQ7l61PmA6q2iWO6ptg4
-	gSU7G/2/4JlNk4+jcBkIxgQOHkiitfkl3mL7aJJ3AE3p2LJZFqbAyMABQa+5+RZteTH+Ie
-	1DEH0/1dXH61wbzYn1oVGvwaW1JTrGI3Y02n/0iq5lUNZu3deuhOkoE00oWQbg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732883211;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IJVSSdJOdSZGebsbDcIYlSf24/N5rpFGvgPRw9vnbI0=;
-	b=+kegZlHi5G2dAnZ+f3NYBk+B4bu+sdMfrMGyhPRvdmNDKhaTpdGsvA08AQqckmOXAuZcwH
-	/+7Qkw2blfyLh/AQ==
-From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/urgent] posix-timers: Target group sigqueue to current
- task only if not exiting
-Cc: Anthony Mallet <anthony.mallet@laas.fr>, Oleg Nesterov <oleg@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241122234811.60455-1-frederic@kernel.org>
-References: <20241122234811.60455-1-frederic@kernel.org>
+	s=arc-20240116; t=1732883730; c=relaxed/simple;
+	bh=w67/ixr1H7XO0VSjOnNUeruUwtoAOjN1j4exDmNfTbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZiabYJSHLoEV0LMzTknZmi9sUigXf2zelRgGemFm20URAlr+oC+mb7mMCRZCNcsxH/IzdOLEQoEJkudj+TiezfU7h3kl+vAGmBubHCQbVK5M2wWC5MKsoj6MhYj5ltOB+pwLzRq7ba0W+ZQn+UCB8E/4HmBwZRyERHpplcImwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tH0DK-0002FF-FK; Fri, 29 Nov 2024 13:35:14 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tH0DJ-000n13-0k;
+	Fri, 29 Nov 2024 13:35:14 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id A638A38120F;
+	Fri, 29 Nov 2024 12:35:13 +0000 (UTC)
+Date: Fri, 29 Nov 2024 13:35:13 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH can-next v3] dt-bindings: can: convert tcan4x5x.txt to DT
+ schema
+Message-ID: <20241129-godlike-monumental-piculet-1dbd6d-mkl@pengutronix.de>
+References: <20241128-convert-tcan-v3-1-bf2d8005bab5@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173288321021.412.11000070169478198327.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6hascvzpjolqdpwc"
+Content-Disposition: inline
+In-Reply-To: <20241128-convert-tcan-v3-1-bf2d8005bab5@geanix.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/urgent branch of tip:
 
-Commit-ID:     63dffecfba3eddcf67a8f76d80e0c141f93d44a5
-Gitweb:        https://git.kernel.org/tip/63dffecfba3eddcf67a8f76d80e0c141f93d44a5
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Sat, 23 Nov 2024 00:48:11 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 29 Nov 2024 13:19:09 +01:00
+--6hascvzpjolqdpwc
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH can-next v3] dt-bindings: can: convert tcan4x5x.txt to DT
+ schema
+MIME-Version: 1.0
 
-posix-timers: Target group sigqueue to current task only if not exiting
+On 28.11.2024 09:29:21, Sean Nyekjaer wrote:
+> Convert binding doc tcan4x5x.txt to yaml.
+>=20
+> Added during conversion, required clock-names cclk.
+>=20
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
 
-A sigqueue belonging to a posix timer, which target is not a specific
-thread but a whole thread group, is preferrably targeted to the current
-task if it is part of that thread group.
+I've replaced the v2 in can-next/testing.
 
-However nothing prevents a posix timer event from queueing such a
-sigqueue from a reaped yet running task. The interruptible code space
-between exit_notify() and the final call to schedule() is enough for
-posix_timer_fn() hrtimer to fire.
+regards,
+Marc
 
-If that happens while the current task is part of the thread group
-target, it is proposed to handle it but since its sighand pointer may
-have been cleared already, the sigqueue is dropped even if there are
-other tasks running within the group that could handle it.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-As a result posix timers with thread group wide target may miss signals
-when some of their threads are exiting.
+--6hascvzpjolqdpwc
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Fix this with verifying that the current task hasn't been through
-exit_notify() before proposing it as a preferred target so as to ensure
-that its sighand is still here and stable.
+-----BEGIN PGP SIGNATURE-----
 
-complete_signal() might still reconsider the choice and find a better
-target within the group if current has passed retarget_shared_pending()
-already.
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdJtPwACgkQKDiiPnot
+vG82swf+KHFhEx4+B2xMRR1cWQQzel6mE6zkRaoYVFISkUBAUNJzYAGmOi/n9zSB
+qCCD1I05Ezfhz1w0inZF438LI/zXoZv/QMtPvAQaRwUwmuvYeetCqLQAzaqR+/MU
+3uikMf6I7g+Fq87iu1FR7A6LHud80fM5HavJF4jywMUt3HfC/ZjLH79mtqDF4J+y
+SVRbbiX/3n1m/zPap8HYS++6t+dmjxf4MQIEtDhsuxPRwldUYowX9uFm9Io5nFwg
+k+OvflbSsNu8asBN+oN03ENiQUoHjL6oM7JzDjMmByl/Cb2ljcSoQWZuosIgOeFd
+jauPYNBoUS7zB3kYXbccL1l7AtVgdQ==
+=kSfY
+-----END PGP SIGNATURE-----
 
-Fixes: bcb7ee79029d ("posix-timers: Prefer delivery of signals to the current thread")
-Reported-by: Anthony Mallet <anthony.mallet@laas.fr>
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/20241122234811.60455-1-frederic@kernel.org
-Closes: https://lore.kernel.org/all/26411.57288.238690.681680@gargle.gargle.HOWL
----
- kernel/signal.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 98b65cb..989b1cc 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1959,14 +1959,15 @@ static void posixtimer_queue_sigqueue(struct sigqueue *q, struct task_struct *t,
-  *
-  * Where type is not PIDTYPE_PID, signals must be delivered to the
-  * process. In this case, prefer to deliver to current if it is in
-- * the same thread group as the target process, which avoids
-- * unnecessarily waking up a potentially idle task.
-+ * the same thread group as the target process and its sighand is
-+ * stable, which avoids unnecessarily waking up a potentially idle task.
-  */
- static inline struct task_struct *posixtimer_get_target(struct k_itimer *tmr)
- {
- 	struct task_struct *t = pid_task(tmr->it_pid, tmr->it_pid_type);
- 
--	if (t && tmr->it_pid_type != PIDTYPE_PID && same_thread_group(t, current))
-+	if (t && tmr->it_pid_type != PIDTYPE_PID &&
-+	    same_thread_group(t, current) && !current->exit_state)
- 		t = current;
- 	return t;
- }
+--6hascvzpjolqdpwc--
 
