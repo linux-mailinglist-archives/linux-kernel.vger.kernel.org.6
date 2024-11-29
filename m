@@ -1,126 +1,114 @@
-Return-Path: <linux-kernel+bounces-425608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6179DE79F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:32:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEE19DE7A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:33:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 819CD161DEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:33:50 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E8519E83E;
+	Fri, 29 Nov 2024 13:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="REapzx3k"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90D1C2817C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:32:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5559019F424;
-	Fri, 29 Nov 2024 13:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kB0Uur8M"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A2B19CCEC
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED3D19CC27;
+	Fri, 29 Nov 2024 13:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732887169; cv=none; b=rk/FiFMnqI0bWg/cNaMeFzbK+zqvWovzrtaty5bjp2rrBE3183+KuYbfq0Gz6F8ZD7pzsO1bZvLtzy0mcVBWCOMaikVWwy09yB9+QYDXq57Sx3cRdOnravvIo5sH3U1kF/s2D1MZVE0g0amtuHE4xGS+UwwZcxor8+BJ0aEL2ec=
+	t=1732887227; cv=none; b=JgXdG5nDeL1TTQHqLuD3pN3CQRPwZXclG5DtKTmDssLEQh2rwNDGe3342q9mmuOuMg4Ps6EP8H1+B9N8hEnqoKo3/MbeaEhusnbSnJq6bNv0iOduL3sfw5GjU8Ux9Zlp4dzFhTUUzedCn+cJoqWRm3K1OFZvwbYGPF62ALWLP30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732887169; c=relaxed/simple;
-	bh=ZKWLxg/koyEuJu/rxUtcz+091wbreZD9MH/W6cC6ZRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EzrxjVBqauNmXOiu+B0HuUtvd42VrCG8Aso/xSslftjBqTRYF5d8tNJDCOkyj+7fOBUprOEyR6d+0DDlsaMd2kAB7WJUtigxXXuL0se8ObRnxatjlNqL1Frt6zx17t1NEvVGRndYpOmD/VYaQQdjwCAiz/UoI63Tbo7JcwmTmPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kB0Uur8M; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e3978c00a5aso1423866276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:32:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732887167; x=1733491967; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rk8EqcQBJedHgZVFcqE3LAsuROmL1X9WJEUhmB7OiE=;
-        b=kB0Uur8Mevt3DUvNM1B9gBTjrMGPY/wTU+eu1+1dhytYuYWQ6njAIlpDqbtsnjzT2r
-         +kw6DJ+x2pgQ5Zqi/nzGX/jL9Z8FxTE6qgqbhJxF4uZ5SuWUFUw/ZxI1fjkfy5ZF+rCt
-         7CzCgGbpqBwC2YhmbVjHsO2OnHI0lZIXrTorqM1a8/h9zgKc2wL6sUdjnKOAe7vOf1cC
-         XFDYMu7lV40gJvdzJ8yhFkb6NyyRl08Ag0OhnyCtUnIwTTL/BFH+qhMknxUHn0KamEmO
-         3KU9UGJQGXD53t4vYPqIkgK5bchzXvJS4UZcfEESdInKRAc3IAApYw0mcKsbej9FxZec
-         bAcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732887167; x=1733491967;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4rk8EqcQBJedHgZVFcqE3LAsuROmL1X9WJEUhmB7OiE=;
-        b=BOOHDZvrcloGWoHNEQXQA9pmKP5i6eFwJxVKES9JtKKDk0Wl8a+u8c/fqFt9usIU4u
-         i/kYLz+vCo6yVUTyL8FyMQdXE2XRO0We10uTuabhOJsfCou0sZ0PHHKaiXcXUk9w0C7k
-         NQHDPn3aQfgJJr/HJHGuLk3Q9KLcdTQWhqfNcUgIgEr8ruKlk/aSDfg1fl0Ku+VBSb8P
-         axKeDB5fAdYsElED58a3cFMMRSXnw7PeR57n+QkKx9c46ac1gYUdz0sLP2Y7EijtSfy8
-         FSJk8bUhf3v69zjxm8n71LPPzdmd2+OmwU9b42VQiYZ+2jG1FGchrvl0snHLpmvFlJxA
-         8vww==
-X-Forwarded-Encrypted: i=1; AJvYcCXZDsUg0/RB/zxeu8xL3jk9NZ0qf/JYiNN8g+GbvQKnBaH3WTdJ433R30XJWIsrBpZ3lIWIcZob5ytbd3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMzqOB5NyrV6Y1XiOMqrb7+J+62XnJOiwU9uAgMb9vtU9Gnkl7
-	kLM2UYVnTeDy4kxM4qlXjt085CIFEyekksFofpJ+IZ07YvRB/GT7p3+p6nORLwHLf4uM4wucHdF
-	8vwc1ANoQxpQSPz+IgefS55OWmFjBAhuwr6IpoQ==
-X-Gm-Gg: ASbGnctuPsUUfJ4xS0FMBVuOODC2viwE53TMb1g7oQ6thmJoUnTR4vVVas9c8ugEKx8
-	QMz92ADPABt4NaJZZNLn/mAD3p5jh+QY=
-X-Google-Smtp-Source: AGHT+IHfjxXnTdn0iSp1AqYYDcm5/K9nEAphNu1TQKr2ozphQmTsKuv3nB1lPh4zZEbpx4kmGb4PSCSBKcPFfDN6tJ4=
-X-Received: by 2002:a05:6902:1504:b0:e28:e407:610 with SMTP id
- 3f1490d57ef6-e395b957479mr11164613276.47.1732887166767; Fri, 29 Nov 2024
- 05:32:46 -0800 (PST)
+	s=arc-20240116; t=1732887227; c=relaxed/simple;
+	bh=BmJTPdvEhlmfXBpMW2CMFUKl1EkoNSvSSbAlpkOXlgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUAYAUS6wdLXsu+PVre0VuF/DpCWpKwfVXv1CNpssKKhwyWeA/8HfCLI+tb/Fe2+CAajnxi9ZYORtwAydbyxeuI27DVMeAFolj8brZvjDVUaI8P9/zFYcykaUDiELHcPSdUB0Ld+Yd+ANna/Ry5gavXM5LiV+KHffS6+ZH3F8hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=REapzx3k; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3B8CE40E0200;
+	Fri, 29 Nov 2024 13:33:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ibWBUJTRIbXr; Fri, 29 Nov 2024 13:33:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732887218; bh=3xsdZxP4aUmPelDn7N/O2boX4B91vWO7usueAP7op5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=REapzx3k0ScaDOYCa9l++RtyDtMdsn4lhRS33Bt9Gymw4Z3MrjxCdE9/QPdN4/7zr
+	 jAc3DcPTq8rvs2fDeUD+upB1OPj/KeAd6AjK32FHPBZKZb9b9A9J/Xo1pGvr9+DoX/
+	 DjOfLIz2fyvfY28+Xg3z546gg2gW1cv/HuptpIXxwqwK7cG5yk8v4bJ65JOdd1tXWj
+	 MHzS27NaVO3jMhGhU8uMZVdCPUuouvqvg3+gVixVkNVx919Cu8V6BVOmKt0SOqMTpa
+	 M3I2a7si2BbJZsno2PM5VrMzWFbUMCDorbyS7KLhCree7nkSFenJp86iaTxSPKlttK
+	 CVjzZUC5L4c+y1whhfEvfPlGGXFxrf8jtOTFm6Iz5QE9sPm2LTCWeio9nke8h8SaHn
+	 mTJHU3COUAJn1aMdT17zuYGzVYCb05rYbJGQHlV6vWjqXvZNvxwu2UXLvkNQNEbBFm
+	 Kg7DI+uvBdOpcUkqf/oUcUf6N46Z50XeJCeB0fK4xiTYfYr6jC+zMP7GEBu5Gmo59u
+	 xYfkbxbs490cZ/TwZXI0pQeSB0JcrCR1TGnht1NkIqL0bnD5pXqoUMLPowCHltw8ts
+	 E7zFmnMdVqe1JGxgOM2W9teX/uSKaFnnOZRK6PaH9Wp73/zD4hD0GL2zjJTd9zyYc7
+	 vyPw1LNB8WJER5fIk0es3POk=
+Received: from zn.tnic (p200300ea9736a103329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a103:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 32C8140E0269;
+	Fri, 29 Nov 2024 13:33:13 +0000 (UTC)
+Date: Fri, 29 Nov 2024 14:33:10 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Erwan Velu <erwanaliasr1@gmail.com>
+Cc: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, puwen@hygon.cn,
+	seanjc@google.com, kim.phillips@amd.com, jmattson@google.com,
+	babu.moger@amd.com, peterz@infradead.org,
+	rick.p.edgecombe@intel.com, brgerst@gmail.com, ashok.raj@intel.com,
+	mjguzik@gmail.com, jpoimboe@kernel.org, nik.borisov@suse.com,
+	aik@amd.com, vegard.nossum@oracle.com,
+	daniel.sneddon@linux.intel.com, acdunlap@google.com, pavel@denx.de
+Subject: Re: [PATCH AUTOSEL 5.15 11/12] x86/barrier: Do not serialize MSR
+ accesses on AMD
+Message-ID: <20241129133310.GDZ0nClg7mDbFaqxft@fat_crate.local>
+References: <20240115232718.209642-1-sashal@kernel.org>
+ <20240115232718.209642-11-sashal@kernel.org>
+ <20241128115924.GAZ0hbHKsbtCixVqAe@fat_crate.local>
+ <Z0iRzPpGvpeYzA4H@sashalap>
+ <20241128164310.GCZ0idnhjpAV6wFWm6@fat_crate.local>
+ <Z0kJHvesUl6xJkS7@sashalap>
+ <CAL2Jzuxygf+kp0b9y5c+SY7xQEp7j24zNuKqaTAOUGHZrmWROw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
- <20241127-mdss_qcs8300-v1-4-29b2c3ee95b8@quicinc.com> <f5kqdxkhniwwxu6wm2q323vvlsfn3yyig7mfg3h5ctqo7jjxc7@7g32tirseuqs>
- <9821c4d5-8d1d-4bed-b3e0-879d0aeba017@quicinc.com>
-In-Reply-To: <9821c4d5-8d1d-4bed-b3e0-879d0aeba017@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 29 Nov 2024 15:32:41 +0200
-Message-ID: <CAA8EJppDomrYvtJ46pi1_hDsf3zFeeTfrkQfVwE8UTN01KfKpw@mail.gmail.com>
-Subject: Re: [PATCH 4/5] drm/msm/dpu: Add QCS8300 support
-To: Yongxing Mou <quic_yongmou@quicinc.com>
-Cc: Ritesh Kumar <quic_riteshk@quicinc.com>, Rob Clark <robdclark@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAL2Jzuxygf+kp0b9y5c+SY7xQEp7j24zNuKqaTAOUGHZrmWROw@mail.gmail.com>
 
-On Fri, 29 Nov 2024 at 12:01, Yongxing Mou <quic_yongmou@quicinc.com> wrote:
->
->
->
-> On 2024/11/27 21:49, Dmitry Baryshkov wrote:
-> > On Wed, Nov 27, 2024 at 03:05:04PM +0800, Yongxing Mou wrote:
-> >> Add definitions for the display hardware used on the
-> >> Qualcomm QCS8300 platform.
-> >>
-> >> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> >> ---
-> >>   .../drm/msm/disp/dpu1/catalog/dpu_8_4_qcs8300.h    | 485 +++++++++++++++++++++
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
-> >>   4 files changed, 488 insertions(+)
-> >>
-> >>
-> >
-> > NAK, there is no need for this.
-> Got it,thanks. will modify it in next patchset.Compared to sa8775p, they
-> use same dpu but qcs8300 has one less intf and two fewer dp intfs. Other
-> configurations are the same.can we reuse it or a new catalog file to
-> show it.
+On Fri, Nov 29, 2024 at 10:30:11AM +0100, Erwan Velu wrote:
+> We all know how difficult it is to maintain kernels and support the hard
+> work you do on this.  It's also up to us, the users & industry, to give
+> feedback and testing around this type of story.  It could probably be
+> interesting to have a presentation around this at KernelRecipes ;)
 
-Is it actually not populated in the silicon? What happens if one
-access those INTF_n registers?
+Yes, absolutely.
+
+And you should reserve a whole slot of 1h after it for discussion. Because all
+the folks using stable kernels or doing backports will definitely have
+experience and thoughts to share... who knows, might improve the proces in the
+end.
+
+Thx.
 
 -- 
-With best wishes
-Dmitry
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
