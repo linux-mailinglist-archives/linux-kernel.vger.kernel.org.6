@@ -1,47 +1,78 @@
-Return-Path: <linux-kernel+bounces-425564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA94F9DE6C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:58:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBC69DE6D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34377B222E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:58:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53152820D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0629C19DF5F;
-	Fri, 29 Nov 2024 12:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A00719F105;
+	Fri, 29 Nov 2024 12:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7kF5xOB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vIe3Ng8Z"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DF719D8A4;
-	Fri, 29 Nov 2024 12:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D6319E833
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732885104; cv=none; b=W5W5r2Mh99uCmCOYNb3LWfWvwXbhPyr/9d+pcy5cauwbNqt6z7G+RwihwqdoJDQdd4w6Cw0rXiIM4FLkl4cwayPiCeoUQ13m5KSGRjZ3rFyuZY/Q5sglY0mkL8LODuXF8WWFZEtCjwbXqh+Qe6m4nVrVdfq6XeRPiJg4/nVUD5s=
+	t=1732885119; cv=none; b=ozsUa2XLSBXqi3CYhH3r5CIdpmE1UC+Qp1+UdKCaHpSiuBCpl/VHhLfjnvnnYd4+tWaZ44RIb11IwyeAWGaI9u4ELsYPEWmVf5bRU07mqTF4UWldtpsOCxX0Q8uSL/46zm2q4vos4jLBUIigT1YgVa5irCWA5vUNlbtvRfm+Z4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732885104; c=relaxed/simple;
-	bh=sq/YLAb/fB+2vkIJfrLd/Ha67t4otVRZ7+d52cxNFXI=;
+	s=arc-20240116; t=1732885119; c=relaxed/simple;
+	bh=wj06W1b4xxDx0jKVLXr6WdYHgEJjM3/1JW0EOYtxvrQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HyyUf5ODjesyvRVRa3SOGKlaVNInI/c9gPc3XMXXqOi6tY6CAnnTUbYKHFMs++EVUg62ScuXmaW++WK4ZpsSBoa8k1CO//XC+F+NEuDbjTzb3gKc+vV4wZ6pzJq3meaRCdgCk1ZzGeynFhHXQQybYPc4zGEKdUslTySjcooiwNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q7kF5xOB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F656C4CECF;
-	Fri, 29 Nov 2024 12:58:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732885103;
-	bh=sq/YLAb/fB+2vkIJfrLd/Ha67t4otVRZ7+d52cxNFXI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q7kF5xOB27aQnYfMlebD1tv+LucTFpSonUqh4/C42D2KymsHuuuYHJfajqQ2GiK1n
-	 HYKcPvcK5X+a/go5MSnR17aKSyiocpm7v74tmP/1DAyX7V5UTiqFxOrXtaoMrHb6Nd
-	 epuar4o9D8HJHP8E8N73bMSwpBUwAoljsbuva5MUKbsuHJ8Bsahl5atHbawjX4PbvC
-	 kHoMKvDUAb/e/1JvtDMdC3o5e/QJ73hIRYwpxTtoteEowCZZFOq1CT8gCqWfl4BM4E
-	 AUdY/pOBO0IX6XJc7oqsuaOm2rrTBMBdPzLDaBjPVGJnWuvnA0GqozwSDmK0ZIHjcJ
-	 tq7y5/qjbHmJA==
-Message-ID: <5b6cf8f9-fdaf-4719-b1b2-f4745c671263@kernel.org>
-Date: Fri, 29 Nov 2024 14:58:17 +0200
+	 In-Reply-To:Content-Type; b=NxPGLSQQEMDmhy5gzmi5TQKMCnaIxvShRrIwAEqfsbL69Lg+4vlY/AzgyuRw8ztlw0ZkE2NuMVAD2nav9pBZQZG0wpz7UDYVQ08/GCGPbvxH9W3SrKmHTjEnEO4qqNx9G8yrFe93EIDNk81/upRiX0YMOKcghpIqvUo2NorHACA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vIe3Ng8Z; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa51b8c5f4dso243502866b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:58:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732885116; x=1733489916; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7gTU5eaxq+t1bh+hhq2w9VM3ZRpCzbMVz7+CTMi+lv8=;
+        b=vIe3Ng8Zt/C4pDEJ+5xwboD5yi6UBVNHRmkbIMZmzOhRhn4zF8feGe7NrP1Toua0yI
+         N8shr0RZbRQrFTdFXwfLfJRbnlrAsuWr/9lRA2r/uLTSQwDENJzHnyzzQMmGOrIibK8y
+         Wm3IZxsIf0ncW4UDfihuk0AHdEdMWosXdeBde+geKM3SzTMufqEk/Yh190hDAexwHXHd
+         pq391M3v8vpKs+RH4DV1rRqYMqzfqNcunsYy0SdVuyeCpS4bgqUBbvlAj2WoDSGKCbju
+         EaRuDjtSDieTcOxphSPmBpzDivbvccbHsXkT/LWJRQZ8fS9N6empZsPRKuKDgI7LvA3p
+         iMUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732885116; x=1733489916;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7gTU5eaxq+t1bh+hhq2w9VM3ZRpCzbMVz7+CTMi+lv8=;
+        b=eWl0pRGsb6gZf/Wlh5JoSvPk9EiBlad54P1pHkbKT2sCT2IlRt6PxaVc4jCig7uaPV
+         oBP0L3oX8byB4TIaB5u0oEhjV8jXNbX3Ezjyfjz1c5eZBgG8OHeMe2X0bU4n+RElOn/Z
+         AjOmBMK2mrVeTdi9ekp5EMvVLWC5r1Z/uqFIRnWuRs7uc2I5CD4R0kYAGiSlmkYSrL0m
+         fteI6Tdcw3WVAtJ7zIBvvGZF+vH/Xt3602E0y0EfxHP88r6017wbukMnwl6gwW5FeONo
+         99fUzOHSVZwIfbFX5GGZzcGCYhvs8dbKXmBR1vJDR1frIUGM5JKRhpY//uPZPwiV+Pbn
+         9gBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWS5p0hmOm4DyuV6efWM/2x4g+ivPJi+o3mifb2o/R4XlUskN/vg9dKQClW/8pp+8KVJnxu2Zf4fGBI1W4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK7pzEiAlQuSzCpStKFMgqS1zk2MPoit3b68+ZzE592PozcQs3
+	/wUKVM27t3KuOs1CiZ7Cb78x7WlfneHcX5H9dttsdqpEycsuq12luW5Ihh8pNuo=
+X-Gm-Gg: ASbGncvV3OU4asoFLqgjJD849LWD6Vvmvj1lUBKDmM50hp6FL5drRl0CDW7WPXEO1QZ
+	kdIGIoQgPJQ1OZucWjwBqFt76OkEKl8u64Yhm3i3/DsJKE3Sk36drJZVfgYgj7rMhIApoGf1+P2
+	eNS1zaJzLBPMWO2JlZE5+I///+ZjHBWHUhffCbUZLCYPwcmUDWdSjJAiOUR1NzyhTxoa5EqsZ7A
+	6benT8EQwvNRIiqnmTSfZTDXsdwnqw/3TN9ceFfbQG14c/X1FwWJbd9sbkE0V3iXi6LuXiQPDgQ
+	aGxvT1o8uwdk7CdYyuzT3pDe4dRo8Q==
+X-Google-Smtp-Source: AGHT+IEj3xJBPhhONybzeuI+/sUVESff66GZgw3Cn0h8ebB5GrfzILpsAe23SpSHPYRXA1/mDRffwA==
+X-Received: by 2002:a17:906:318d:b0:aa4:9ab1:1982 with SMTP id a640c23a62f3a-aa580ecfcf0mr901827566b.4.1732885116433;
+        Fri, 29 Nov 2024 04:58:36 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:3cb:7bb0:94bb:9634:af59:23cd? ([2a01:e0a:3cb:7bb0:94bb:9634:af59:23cd])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d5651sm172920766b.60.2024.11.29.04.58.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 04:58:36 -0800 (PST)
+Message-ID: <41999ad0-30a3-4663-936d-9ce0a00992b8@linaro.org>
+Date: Fri, 29 Nov 2024 13:58:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,42 +80,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 2/2] net: ti: icssg-prueth: Fix clearing of
- IEP_CMP_CFG registers during iep_init
-To: Meghana Malladi <m-malladi@ti.com>, lokeshvutla@ti.com, vigneshr@ti.com,
- javier.carrasco.cruz@gmail.com, diogo.ivo@siemens.com,
- jacob.e.keller@intel.com, horms@kernel.org, pabeni@redhat.com,
- kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
- andrew+netdev@lunn.ch
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com, danishanwar@ti.com
-References: <20241128122931.2494446-1-m-malladi@ti.com>
- <20241128122931.2494446-3-m-malladi@ti.com>
+Subject: Re: [PATCH] optee: fix format string for printing optee build_id
+To: Sahil Malhotra <sahil.malhotra@nxp.com>,
+ Jens Wiklander <jens.wiklander@linaro.org>,
+ op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
+Cc: Varun Sethi <V.Sethi@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+ Aisheng Dong <aisheng.dong@nxp.com>
+References: <20241129114648.3048941-1-sahil.malhotra@nxp.com>
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241128122931.2494446-3-m-malladi@ti.com>
+From: Jerome Forissier <jerome.forissier@linaro.org>
+In-Reply-To: <20241129114648.3048941-1-sahil.malhotra@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 28/11/2024 14:29, Meghana Malladi wrote:
-> When ICSSG interfaces are brought down and brought up again, the
-> pru cores are shut down and booted again, flushing out all the memories
-> and start again in a clean state. Hence it is expected that the
-> IEP_CMP_CFG register needs to be flushed during iep_init() to ensure
-> that the existing residual configuration doesn't cause any unusual
-> behavior. If the register is not cleared, existing IEP_CMP_CFG set for
-> CMP1 will result in SYNC0_OUT signal based on the SYNC_OUT register values.
+On 11/29/24 12:46, Sahil Malhotra wrote:
+> There has been a recent change in OP-TEE to print 8 and 16 character
+> commit id for 32bit and 64bit architecture respectively.
+> In case if commit id is starting with 0 like 04d1c612ec7beaede073b8c
+> it is printing revision as below removing leading 0
+> "optee: revision 4.4 (4d1c612ec7beaed)"
 > 
-> After bringing the interface up, calling PPS enable doesn't work as
-> the driver believes PPS is already enabled, (iep->pps_enabled is not
-> cleared during interface bring down) and driver will just return true
-> even though there is no signal. Fix this by disabling pps and perout.
+> Signed-off-by: Sahil Malhotra <sahil.malhotra@nxp.com>
+> ---
+>  drivers/tee/optee/smc_abi.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
-> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+> diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
+> index e9456e3e74cc..eb51dc18f32d 100644
+> --- a/drivers/tee/optee/smc_abi.c
+> +++ b/drivers/tee/optee/smc_abi.c
+> @@ -1272,8 +1272,9 @@ static void optee_msg_get_os_revision(optee_invoke_fn *invoke_fn)
+>  		  &res.smccc);
+>  
+>  	if (res.result.build_id)
+> -		pr_info("revision %lu.%lu (%08lx)", res.result.major,
+> -			res.result.minor, res.result.build_id);
+> +		pr_info("revision %lu.%lu (%0*lx)", res.result.major,
+> +			res.result.minor, (int)sizeof(res.result.build_id) * 2,
+> +			res.result.build_id);
+>  	else
+>  		pr_info("revision %lu.%lu", res.result.major, res.result.minor);
+>  }
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+Reviewed-by: Jerome Forissier <jerome.forissier@linaro.org>
 
+Thanks,
+-- 
+Jerome
 
