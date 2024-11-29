@@ -1,275 +1,134 @@
-Return-Path: <linux-kernel+bounces-425296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B9E9DC027
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:01:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F40309DBFFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D8A281591
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:01:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FCBFB21A43
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF2F15957D;
-	Fri, 29 Nov 2024 07:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cV8Fl2j8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB16158862;
+	Fri, 29 Nov 2024 07:58:47 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B7F159209;
-	Fri, 29 Nov 2024 07:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAD11386DA;
+	Fri, 29 Nov 2024 07:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732867193; cv=none; b=s2s8fHFhDpyEXZiz1HLytiM1AmhIqIEwvyNmupkKx4OvzrXNvQVHGcsRAHAcE6XxEtz4+JanpXkXpj+7PbxnqW/tdG39p5upBhLPx93mgSW9dk3FSvNU5eTGtZWSCKEsofcVkhdu6e4xRQYX/V6+OsNfeI7211t+vvAkswqWpQY=
+	t=1732867127; cv=none; b=khYRyOF7TordxEB1DgPPa5tHkuyjI5B0S9SuBJbpWkrJRYwA4RCxk9IbIZlKvke5DYfiCkLm6WpjIG3XRXrLW2ohhCC5oidtMIdIybIeh50wZU1HUMiN+4jDqmQt6fvp5HqzEy9ul+0/Bt0cqaznzE4xSg35xuuT8THqfteY9kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732867193; c=relaxed/simple;
-	bh=TNj5EiTOMzDJ0PKM4MIWEv3ufyXXV6h9punYRpWZDKc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Bf7MscjK+t+oQ1zvrqDNGoCuFjaJLbyXp4vnW83HEneEQ7Cg98+MVYin56XS7/pIT+bLrIfsWrCRydchcVjUAHWYqmdZfo/A6IOpsTsE7cfQBVAjAP3iJY0DC4Lnso1oaDztH4Kuzmjq5uBIAbWGDhcZi6dPfckF19rXRrcZE14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cV8Fl2j8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASLZ99Q011311;
-	Fri, 29 Nov 2024 07:59:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	c2W5Jc9ESQZPhwrskfSZmD27wZzekj5ji0rlq1whTWk=; b=cV8Fl2j8DMOopiNE
-	UW7BXAQ25HNQqcOyuJMxhWbsueCOQA1DSwYJxTls/gTjEDQ5X1K+GmFfCiQEB0FB
-	rsVlcVwMgwGLTd+YJRrRIs40USOUcXr9BmUJCj8/5xtGTkyqPjnVYzYy170fVrrw
-	HZPvb/XwDKYOQPkLEIugkdpE6rVQLi4FOsnP9xWdizWRIlErL2SBEVdgyRJ18Onk
-	Hz0NxpEGj06e3/ID7U+dhkGQnxmfrGTyInI+U6SJMPMHYACe/+TcBv1GIQJgvANh
-	0PafrbG8+UOao9rniOPnm3irQqSmZIipKlYfKfTAYBOJAL7Pahz4ZwBGgwKqjU8s
-	X5PNyA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xw4vny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 07:59:39 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AT7xc4q002890
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 07:59:38 GMT
-Received: from szioemm-lnxbld002.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 28 Nov 2024 23:59:31 -0800
-From: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-Date: Fri, 29 Nov 2024 15:57:48 +0800
-Subject: [PATCH 8/8] drm/msm/dp: Support external GPIO HPD with 3rd pinctrl
- chip
+	s=arc-20240116; t=1732867127; c=relaxed/simple;
+	bh=DGGweeKTa+RH+0DnaUtBC1/0fD3GQ1ZhcpPHK7Zfy7w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qsbBAFF6eRlArrWDsU1RYxGJrnw5pEqNUcvd9kHU+owdTX9OzjC+7cQMdesjKQmWki409kqLA2L4X7Xfj/8H8MhjZH5tFlYjIG+TGawNQ8p+BkyZy9A3aRgmRAvluhHFD8uGxKpPGZYqyKcJ6b2NSQMORKeXlhanJxg9cUMF90A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-51514257e57so426557e0c.2;
+        Thu, 28 Nov 2024 23:58:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732867120; x=1733471920;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s+Gp1qiNTq0xAIAUyk8qXxpMaz1cYGia2c+m2zi+2Rk=;
+        b=LHSuhS4quPTe+DvNOFd3dsYaCfIpL5VkmbwNAMBePQkiPuzkXVec2xToRFOxxWdgJC
+         xDcQeOdii9z3jYiturOtDKpre9EAgEGXjVa0FX8gQDfPmO9dOQVQ9e5jpYVGlzn/P2Eq
+         kVhfrTLZpQT/qC+FPVJLQcx5jTfxjCfm6wwkxTdVeAh4dXjPCMPlL60u99KGhxe3y8qU
+         CW0gTN0o3jfa+GuZ0GMt1NXPl0h/l1Mxz2Zv/JcTPvmGNiSfQ7QQVCGSuktzjOHK9akJ
+         BVvX59zCSVUpgV8pHwxdRqlLJgYIusDI2MVQ2qJHgTQfljuN+W3IC+YSH506u4QMZ7UY
+         0kdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVb9u4EnBXyr65+ZwsOJzVZEoYSy1A433bkkGRINykfMNbT8BVqe2FgK/LdFjVcLwUGYdCjNYQBHNyJV1xE@vger.kernel.org, AJvYcCVtPKlLOIuKfR4vnYXa/Ova3Nh7SZM5Urw/K0dEdfsKQDadidj+7Ubo9JsC65ZG0CCQ/5eV68kWzgu4a8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/qcwxpmCkDHYNIBXKTcxHkXiB0ozgdKJqGIT4l17kHujDZfBO
+	qSMThZcGiK8g18dIghMkmzwKohqolM2/oCrFHNjbMJafh/y6xMILHClWVpuDj4o=
+X-Gm-Gg: ASbGncuHIc78RbGP4b6ytzOE8GwEMWMurOG+5i6YFaMir2ne/Z0j2QzIw93oBxgw46J
+	aRTkYf+qpqkbfkCBIKtYXnnSWe1xZ+fYVArliFxI6oPadFWWpZjkioEDLn61S+KSe0lBylm/DS/
+	gawkucD5df8h8RUBNXwG2iVxsY8iXgYKKMF7vdFYONk3X5UWRHWkOGV2gLlqU5wcPk52JyBmCtv
+	XdMg0dqtTOrQoPHWHoyYwzTrKul91uMw5hJ7gYpWHLTVrZRHfdY7xxm/fO0lPmqjvzjAE09x3ox
+	d9NWoab3Q3Kp
+X-Google-Smtp-Source: AGHT+IEN5Mru+x7LyJ/6RxmLLiTi46Tt0KvF/yIkcVNiTr7ssz6fmSSCpHJghLNUiHV6uk6/4g5DZQ==
+X-Received: by 2002:a05:6122:458b:b0:515:4fab:b1a3 with SMTP id 71dfb90a1353d-51556762babmr12082065e0c.0.1732867120569;
+        Thu, 28 Nov 2024 23:58:40 -0800 (PST)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5156d0f8bf7sm434714e0c.52.2024.11.28.23.58.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 23:58:40 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4aefcb3242aso525754137.1;
+        Thu, 28 Nov 2024 23:58:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUCYixANJr7ZlfC4lK3splcdBRCSSXaiBRDQle7uJgTvZW+2pHU/BuVqGofvoaA8TZ23lnfllWNHSNMm3A=@vger.kernel.org, AJvYcCV8kXv00xSPhLtcWBbGJLOm4M5nwejAGpE6eRG1BABtXhn6TDmGMRTS+l2P4A3czL+FlLjmJqhWttqSxdHj@vger.kernel.org
+X-Received: by 2002:a05:6102:cd0:b0:4af:4983:d8c8 with SMTP id
+ ada2fe7eead31-4af4983d95cmr10883213137.10.1732867119928; Thu, 28 Nov 2024
+ 23:58:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241129-add-displayport-support-for-qcs615-platform-v1-8-09a4338d93ef@quicinc.com>
-References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
-In-Reply-To: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul
-	<vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, <quic_lliu6@quicinc.com>,
-        <quic_fangez@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, Xiangxu Yin <quic_xiangxuy@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732867105; l=4469;
- i=quic_xiangxuy@quicinc.com; s=20241125; h=from:subject:message-id;
- bh=TNj5EiTOMzDJ0PKM4MIWEv3ufyXXV6h9punYRpWZDKc=;
- b=GyogZ628z9aZFe6b5wiADpPghpaIkxyLi/0Kuotl2chQMlWFKmVE/aM4lLc3LE7wf4wgiLMzs
- rqlHSHvRfzSDJpXyO6xaLLA2qfSCX6d7te4ywU7ad1sP8ogKOFVa8sD
-X-Developer-Key: i=quic_xiangxuy@quicinc.com; a=ed25519;
- pk=F1TwipJzpywfbt3n/RPi4l/A4AVF+QC89XzCHgZYaOc=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: O8LqOFgAl-AgO4VTrSQFKu8WR8dshWwy
-X-Proofpoint-ORIG-GUID: O8LqOFgAl-AgO4VTrSQFKu8WR8dshWwy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- bulkscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0
- spamscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411290064
+References: <Z0lCihhE75lE9Zjd@kroah.com>
+In-Reply-To: <Z0lCihhE75lE9Zjd@kroah.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 29 Nov 2024 08:58:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXwdyb6RA5jksNfw-M9h_nERvm8M4b7XU1_1N-C+bf94A@mail.gmail.com>
+Message-ID: <CAMuHMdXwdyb6RA5jksNfw-M9h_nERvm8M4b7XU1_1N-C+bf94A@mail.gmail.com>
+Subject: Re: [GIT PULL] TTY / Serial driver changes for 6.13-rc1
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Slaby <jslaby@suse.cz>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for handling HPD (Hot Plug Detect) signals via external
-GPIOs connected through pinctrl chips (e.g., Semtech SX1509Q). This
-involves reinitializing the relevant GPIO and binding an interrupt
-handler to process hot plug events. Since external GPIOs only support
-edge interrupts (rising or falling) rather than state interrupts, the
-GPIO state must be read during the first DP bridge HPD enablement. This
-ensures the current connection state is determined and a hot plug event
-is reported accordingly.
+Hi Greg,
 
-Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
----
- drivers/gpu/drm/msm/dp/dp_display.c | 83 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+On Fri, Nov 29, 2024 at 5:26=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+> The following changes since commit 42f7652d3eb527d03665b09edac47f85fb6009=
+24:
+>
+>   Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6=
+.13-rc1
+>
+> for you to fetch changes up to b5a23a60e8ab5711f4952912424347bf3864ce8d:
+>
+>   serial: amba-pl011: fix build regression (2024-11-16 09:52:55 +0100)
+>
+> ----------------------------------------------------------------
+> TTY / Serial driver updates for 6.13-rc1
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index eb6fb76c68e505fafbec563440e9784f51e1894b..22c288ca61b9b444a7b8d4a574c614bfef9d88be 100644
---- a/drivers/gpu/drm/msm/dp/dp_display.c
-+++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -13,6 +13,8 @@
- #include <linux/delay.h>
- #include <drm/display/drm_dp_aux_bus.h>
- #include <drm/drm_edid.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/of_gpio.h>
- 
- #include "msm_drv.h"
- #include "msm_kms.h"
-@@ -78,6 +80,10 @@ struct msm_dp_display_private {
- 
- 	unsigned int id;
- 
-+	bool ext_gpio;
-+	int gpio_num;
-+	struct work_struct  gpio_work;
-+
- 	/* state variables */
- 	bool core_initialized;
- 	bool phy_initialized;
-@@ -1182,6 +1188,42 @@ static irqreturn_t msm_dp_display_irq_handler(int irq, void *dev_id)
- 	return ret;
- }
- 
-+
-+static void msm_dp_gpio_work_handler(struct work_struct *work)
-+{
-+	struct msm_dp_display_private *dp = container_of(work,
-+			struct msm_dp_display_private, gpio_work);
-+	struct gpio_desc *desc;
-+	bool hpd;
-+
-+	if (dp->ext_gpio) {
-+		desc = gpio_to_desc(dp->gpio_num);
-+		if (!desc) {
-+			pr_err("Failed to get gpio_desc for GPIO %d\n", dp->gpio_num);
-+			return;
-+		}
-+
-+		hpd = gpiod_get_value_cansleep(desc);
-+		if (hpd)
-+			msm_dp_add_event(dp, EV_HPD_PLUG_INT, 0, 0);
-+		else
-+			msm_dp_add_event(dp, EV_HPD_UNPLUG_INT, 0, 0);
-+	}
-+}
-+
-+static irqreturn_t msm_dp_gpio_isr(int unused, void *data)
-+{
-+	struct msm_dp_display_private *dp = data;
-+
-+	if (!dp) {
-+		DRM_ERROR("NULL data\n");
-+		return IRQ_NONE;
-+	}
-+
-+	schedule_work(&dp->gpio_work);
-+	return IRQ_HANDLED;
-+}
-+
- static int msm_dp_display_request_irq(struct msm_dp_display_private *dp)
- {
- 	int rc = 0;
-@@ -1193,6 +1235,21 @@ static int msm_dp_display_request_irq(struct msm_dp_display_private *dp)
- 		return dp->irq;
- 	}
- 
-+	if (dp->ext_gpio) {
-+		int edge, gpio_irq;
-+
-+		gpio_irq = gpio_to_irq(dp->gpio_num);
-+		edge = IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING;
-+
-+		rc = devm_request_threaded_irq(&pdev->dev, gpio_irq, NULL,
-+		msm_dp_gpio_isr, edge, "dp_gpio_isr", dp);
-+		if (rc < 0) {
-+			DRM_ERROR("failed to request ext-gpio IRQ%u: %d\n",
-+					gpio_irq, rc);
-+			return rc;
-+		}
-+	}
-+
- 	rc = devm_request_irq(&pdev->dev, dp->irq, msm_dp_display_irq_handler,
- 			      IRQF_TRIGGER_HIGH|IRQF_NO_AUTOEN,
- 			      "dp_display_isr", dp);
-@@ -1308,10 +1365,32 @@ static int msm_dp_display_probe(struct platform_device *pdev)
- 		return -EPROBE_DEFER;
- 	}
- 
-+	if (of_find_property(pdev->dev.of_node, "dp-hpd-gpio", NULL)) {
-+		dp->ext_gpio = true;
-+		dp->gpio_num = of_get_named_gpio(pdev->dev.of_node, "dp-hpd-gpio", 0);
-+		if (dp->gpio_num < 0) {
-+			dev_err(&pdev->dev, "Failed to get gpio:%d\n", dp->gpio_num);
-+			return dp->gpio_num;
-+		}
-+
-+		if (!gpio_is_valid(dp->gpio_num)) {
-+			DRM_ERROR("gpio(%d) invalid\n", dp->gpio_num);
-+			return -EINVAL;
-+		}
-+
-+		rc = gpio_request(dp->gpio_num, "dp-hpd-gpio");
-+		if (rc) {
-+			dev_err(&pdev->dev, "Failed to request gpio:%d\n", dp->gpio_num);
-+			return rc;
-+		}
-+		gpio_direction_input(dp->gpio_num);
-+	}
-+
- 	/* setup event q */
- 	mutex_init(&dp->event_mutex);
- 	init_waitqueue_head(&dp->event_q);
- 	spin_lock_init(&dp->event_lock);
-+	INIT_WORK(&dp->gpio_work, msm_dp_gpio_work_handler);
- 
- 	/* Store DP audio handle inside DP display */
- 	dp->msm_dp_display.msm_dp_audio = dp->audio;
-@@ -1678,6 +1757,10 @@ void msm_dp_bridge_hpd_enable(struct drm_bridge *bridge)
- 	msm_dp_catalog_hpd_config_intr(dp->catalog, DP_DP_HPD_INT_MASK, true);
- 
- 	msm_dp_display->internal_hpd = true;
-+
-+	if (dp->ext_gpio)
-+		schedule_work(&dp->gpio_work);
-+
- 	mutex_unlock(&dp->event_mutex);
- }
- 
+[...]
 
--- 
-2.25.1
+> All of these have been in linux-next for a while with no reported
+> issues.
 
+Oh, how do I love this boilerplate...
+
+> Claudiu Beznea (1):
+>       serial: sh-sci: Clean sci_ports[0] after at earlycon exit
+
+"BUG: spinlock bad magic"
+https://lore.kernel.org/all/CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dW=
+ZWYA@mail.gmail.com/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
