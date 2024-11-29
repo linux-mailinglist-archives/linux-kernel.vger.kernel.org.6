@@ -1,171 +1,237 @@
-Return-Path: <linux-kernel+bounces-425672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B1E9DE8DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:45:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88DB9DE8E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:48:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D03F9282D4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:45:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83A99163FF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BD41448E0;
-	Fri, 29 Nov 2024 14:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DE013AD03;
+	Fri, 29 Nov 2024 14:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I5hWYv1m"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G1x3QrdZ"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EB284D3E
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 14:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0552C1F94A
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 14:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732891505; cv=none; b=HMZex1XE5pqXb7+dI0qXB/CMgnCp4eN77JwHehA+i/gFMKzuID0eSIQ5e6F5kFSfRNu/vx05Qbxjd27rG5oRYwIjTDit0Q9eR3dPr/h6DfUTX7Jx52CglbbJ3+ehNKynobwfTCjDZwWpaaCfbCGyQDomM8GhIy8FqVG9OXtpHyw=
+	t=1732891720; cv=none; b=UIefiRhWrnnnNxecYg/IBlR5fbVyPpYkEN38C3WJ9+/UcVFcoPYQ5KZj/pTcHyh6xgPq4MF1JzMOH4TYhvcpfGpC+ZdsjJuwEMe/qPnRRgXdnHMICWOBFdAnWl6zIUrOrD9ihDNuyYFWQ4T888SzH8gB2BdyxIsOYGyRvkjBnjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732891505; c=relaxed/simple;
-	bh=L7gwidp26nVgyFhrYv06puEPI8/tExyUP1V8hCEscnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tr3euQUMZhcfvwCT1gyXkxPz1OhEtlTWzwX1cwvwNTTesxh7xcUp1KrkjqZDdzQ1iJjkQoUoTPmaEhL/pCifhNfA5uYTETflk8hrOQB44/lB5nlUDmjMsuW7XTS3T4o9tHpGqRRb6iwqMtNAJ27Wmp/hX+hA1wftNca3f00CoZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I5hWYv1m; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1732891720; c=relaxed/simple;
+	bh=EgDVrHEPSKvYoPz3Ab1UXXESviQrnxrpBaaJBsesJVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e/Z2JgeybhdStVU0ifn4NAvCoyg1MuOwtlFEi6OoahJo79kZl2fApGMHuo+gn9cMNgrgyrizQHKgQCmBgEdq/ku4ffW1HqRw2RWHTe3CHSfSrNNsUY9YVPZFr2iS2+Qx39DGkJwSkJbq+UyeRfiEYeIoYNapnluAO7BB7m8qpW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G1x3QrdZ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732891502;
+	s=mimecast20190719; t=1732891717;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sjg4MUuhzdXRT3Uv4ig93e6KSuECA/RIgomlgIgm41E=;
-	b=I5hWYv1m2aeZ8s7kIbymIDBfy8yUHH04sn21rHFDM++IbeV7DH43M6JLiPBNcXQU+ioWfJ
-	DykLMDkJwimOBRi7POd3KefUDoKXwsjqKRwbT8/eC257pY4fa54AuH3a4hScZirQFVzzZp
-	hq+otT0EMxApS564oxRobzQHkvI5Ijo=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3TvSFUCpPDPD2n7HyfIOdg4+sstUSObKdBGjGfqxcFU=;
+	b=G1x3QrdZMbi4ciFWUN6LzBk9p1inROgedRmLLdUpviqSpMj+uHXXwC+5bEgaOQJxxrARWk
+	MkB3M7KojZvAavQRITXJYCNhMxrRzNQvJOd7vWBnSjvIB4PmL3BRtCWTUbXLBiU4DHdAIu
+	Y9a3FdhBb5JvjGugwAqEzcK5mQRnrO0=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-85-ho-VXegJNAi8CbwHCWCRSQ-1; Fri, 29 Nov 2024 09:45:01 -0500
-X-MC-Unique: ho-VXegJNAi8CbwHCWCRSQ-1
-X-Mimecast-MFC-AGG-ID: ho-VXegJNAi8CbwHCWCRSQ
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d3a07b63e6so26963836d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 06:45:01 -0800 (PST)
+ us-mta-543-JjTeIX20NbysYGEaggRf2Q-1; Fri, 29 Nov 2024 09:48:36 -0500
+X-MC-Unique: JjTeIX20NbysYGEaggRf2Q-1
+X-Mimecast-MFC-AGG-ID: JjTeIX20NbysYGEaggRf2Q
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38240d9ed31so1317273f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 06:48:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732891500; x=1733496300;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sjg4MUuhzdXRT3Uv4ig93e6KSuECA/RIgomlgIgm41E=;
-        b=jLQfuHNcJVmTco3VJ/GgzFP6x5A914ZFVCsANvdy6DIz5Sxr3I23WmiCOO5LNAGVdn
-         UBgSwVxeEebfZl++K55hayVIzA1ffNUFMnoR7LaHIJ1yO/rkkR0y8iHjStlhr4YEtNov
-         EFqvYj7aFORxYDmEpbZezpBJ6N4CstEqxcdrr3tfT7hQft/BrgOruPODaUslBwsLxI5Z
-         9HmtlIUUCiJniJWdRXZ3vIt8CON2bNq9h/bbYr5r4OvdhQYcQ4JbS77WWwZEsT77E2GB
-         fa18f2Ymx5c6RQugWB3kIdmfHZrVi8rLymJQekw0FsXyJM1wSCYRCNW7xb1FWe3dBV2y
-         2wtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFJ0zzQogbGwk8H1U5V0ppii/8AWo/Tz8z5kv8KnLnq9kAdmAXbjOrcXuw8Ye+82VCeoaQOTQe7X6aIyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnm8/61EM7CSRsNqrvq8kswhxj2uxkWpj8Y3UoJrx+1aKutL+D
-	F607iClph9aRwjMHRy1GMg0M6KsCesxM1uuzwk6fkWVA5GpiuaNJ10wNcn1wz5ureJLGq66Pn+4
-	N0JToV9KUG6Dvvz3q9YjqEyisaTvt4e5gSnqp1O+rT3kihBjvwamJ1DP7h/P/jkpwmgj2GQ==
-X-Gm-Gg: ASbGnctKCvhUi3I6zPzSRdDB9OKdSf7Hy44jOoJudBrYRzvKf5tH1OaSP5zj53Yj5lQ
-	dhSV7roOI7DTRHL7w0BS7T031Dwzi/6cGQKNlgjqe2OO3dfEWFH94ncN3kn4r9ly/H756xuByjs
-	2OCaOm0lZydvKulokuMNxfNOijSpS2nGEke35AZqpwTXMMiRFl93u0ndClPY1I8BLTtHQeKTrn9
-	u3FGfBWGLPPZ7+bEc9ezV80RSmDckqWNAetGNVxBS2IqnBvdtijNFJOqFAwQDa9Q510HnZknRE/
-	HoA=
-X-Received: by 2002:a05:6214:2489:b0:6d4:1e43:f3a3 with SMTP id 6a1803df08f44-6d864d2094emr158930766d6.13.1732891499990;
-        Fri, 29 Nov 2024 06:44:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH1aWHyuoj7GndsmzSMvg/xzPIFTOsQpK+Hj97TLrzyhWc/YBW0neOGRM6ymhgqq1PQGCRxQw==
-X-Received: by 2002:a05:6214:2489:b0:6d4:1e43:f3a3 with SMTP id 6a1803df08f44-6d864d2094emr158930366d6.13.1732891499659;
-        Fri, 29 Nov 2024 06:44:59 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.75.19])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d887b7a98csm5155396d6.36.2024.11.29.06.44.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 06:44:58 -0800 (PST)
-Date: Fri, 29 Nov 2024 15:44:53 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Vineeth Pillai <vineeth@bitbyteword.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Phil Auld <pauld@redhat.com>,
-	Suleiman Souhlal <suleiman@google.com>
-Subject: Re: [PATCH V7 9/9] sched/rt: Remove default bandwidth control
-Message-ID: <Z0nTZXHDggHD8raj@jlelli-thinkpadt14gen4.remote.csb>
-References: <cover.1716811043.git.bristot@kernel.org>
- <14d562db55df5c3c780d91940743acb166895ef7.1716811044.git.bristot@kernel.org>
- <d3bllrfwji74t3ix3jcdlvdt6jdorw75wjol6kmadpeuuqal2t@io7ghgf7zkbs>
- <Z0c8S8i3qt7SEU14@jlelli-thinkpadt14gen4.remote.csb>
- <tjsas6vkv3xegcgmranxmnkrt46xuitp553caz6vvtgpfrbwl3@252nbydvxaqt>
+        d=1e100.net; s=20230601; t=1732891715; x=1733496515;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3TvSFUCpPDPD2n7HyfIOdg4+sstUSObKdBGjGfqxcFU=;
+        b=EPfNWVCtxXe3ZMGsdzzqJ7Y803/qNV0BpRz+xoIAMcdbgCKT1EWsrVL6oTwrogKmI2
+         PxUa00f9Y8qDjQo5UgtCJzdzGJgh/REpxec/Dqq+kEuHnGYxLt6f3kC6Pe3xuyxjyHgQ
+         RsczbDlf5r81zeq6HfwUdehxobVqDUEHzUsq7YApUSHnIq6n7WbbExVJN9QMVhcwv2Et
+         IC8j61Jqz99O2hH9am7QQLPwa/jN21Yc16kdzy5smmFniBH6iXDn2L36sLS3hSBu3Cm/
+         vwe9TS8tgqzCMATpKboZIGXxGmGwX7+yjbNuiSkUAcl01dcCfzyaFVOqKXy14hUcZv2O
+         6nCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXE0JCaH8h1KAs+CBzUCESS2AIs3fc43Ln/IdMufSPfhtk0NZUg/YL5dbIGXpvTf0FuCHjbc3UNfWc2YMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybflwInQItyzxi9GhlMj7oJ33oBACrL6gkxmvfxxgFhW0BJoHO
+	WcwE3R5R43SkHRANjl6MLPZszBlYCUuAou4xl4YqaHDHuxCoJNvSgYCf3X7xn1HjEAVJMDQwXyP
+	xzWgWVhXxhlxMiJovzSCR4UdhkgB03UNgNJxhWjxG4+ZAsUTKLMXoenJk2NXyLA==
+X-Gm-Gg: ASbGncveDJ8mumaXs7q5InOWt44stnbu/CNcjbcv4XOMeBZ0OwSapV1RBRqIUJPM9bI
+	rYQb6GHggyHZDGXZOivuXqn2bGFgHyFt7PmI9tfM8Bml0xO5vUvtKSAUE6krsBhDL06Cxrs54zB
+	f5Zf43gH0zUcyMKcbTzfFPjlh/Mjpo/ACACDqDgYrUvIV/eEDQTTadRYs2hAaU6xGUbPCTQUJ0e
+	AVQ+1g8b6D5T7ByIS4Or96ef2muoFlu5bZ1T7Luw5cnvpjjlx8ImtRvXdyUmHqTcJWFJS3LMZbk
+	olqfTYihqEEjBvI277etTEBO2pXm0gsPOHvzaTVEYs2XziWAXz4BiBXTeSdjvgrW+L6F2cdXxuW
+	aUQ==
+X-Received: by 2002:a05:6000:178a:b0:37d:4647:154e with SMTP id ffacd0b85a97d-385c6eb4accmr10632005f8f.9.1732891715439;
+        Fri, 29 Nov 2024 06:48:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFcbDqLb3JhI7c5XLyTnT3Uu+6hKcZ8X6uq7BkxnOYm+G5JeKcSB7UxV7nolFXZ2cuLzYFBtA==
+X-Received: by 2002:a05:6000:178a:b0:37d:4647:154e with SMTP id ffacd0b85a97d-385c6eb4accmr10631976f8f.9.1732891715063;
+        Fri, 29 Nov 2024 06:48:35 -0800 (PST)
+Received: from ?IPV6:2003:cb:c71c:a700:bba7:849a:ecf1:5404? (p200300cbc71ca700bba7849aecf15404.dip0.t-ipconnect.de. [2003:cb:c71c:a700:bba7:849a:ecf1:5404])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385df74157asm1559438f8f.0.2024.11.29.06.48.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 06:48:34 -0800 (PST)
+Message-ID: <fda2336c-7d00-4a5d-8a81-4cb1e58bb8ce@redhat.com>
+Date: Fri, 29 Nov 2024 15:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <tjsas6vkv3xegcgmranxmnkrt46xuitp553caz6vvtgpfrbwl3@252nbydvxaqt>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf: map pages in advance
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Matthew Wilcox <willy@infradead.org>
+References: <e97dba32-b5a8-43b1-9bea-e42daf6078c1@lucifer.local>
+ <9d6be5bd-ffb9-4a27-b56d-521cf6b7486e@redhat.com>
+ <6cab3e8a-dff7-41d1-af22-f18b8f2820dc@lucifer.local>
+ <c8ecd378-c197-4e06-94ef-e03b5ee28616@redhat.com>
+ <94dabe57-232b-4a21-b2cf-bcfbda75c881@lucifer.local>
+ <6795cc9a-6230-431f-b089-7909f7bc4f30@redhat.com>
+ <60191c97-dce2-4a92-8b47-c402478ba336@lucifer.local>
+ <9d4ef1a2-11fb-455f-8b37-954215bf25d2@redhat.com>
+ <14895682-a013-419f-bee8-1476540ddedd@lucifer.local>
+ <f637de06-41de-44be-8e1f-6a5d429e0ec9@redhat.com>
+ <be33a685-f6e0-41b0-ba3b-d1d7c2d743b8@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <be33a685-f6e0-41b0-ba3b-d1d7c2d743b8@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 29/11/24 11:02, Michal Koutný wrote:
-> On Wed, Nov 27, 2024 at 04:35:39PM GMT, Juri Lelli <juri.lelli@redhat.com> wrote:
-> > > The default DL bandwidth is thus is 95%. The fair server is given 5%.
-> > > Is that 5% of those 95%?
-> > 
-> > Yes, it is indeed.
+On 29.11.24 15:35, Lorenzo Stoakes wrote:
+> On Fri, Nov 29, 2024 at 03:09:49PM +0100, David Hildenbrand wrote:
+>>>>> I just tested it and write() works fine, it uses uaccess afaict as part of the
+>>>>> lib/iov_iter.c code:
+>>>>>
+>>>>> generic_perform_write()
+>>>>> -> copy_folio_from_iter_atomic()
+>>>>> -> copy_page_from_iter_atomic()
+>>>>> -> __copy_from_iter()
+>>>>> -> copy_from_user_iter()
+>>>>> -> raw_copy_from_user()
+>>>>> -> copy_user_generic()
+>>>>> -> [uaccess asm]
+>>>>>
+>>>>
+>>>> Ah yes. O_DIRECT is the problematic bit I suspect, which will use GUP.
+>>>>
+>>>> Ptrace access and friends should also no longer work on these pages, likely
+>>>> that's tolerable.
+>>>
+>>> Yeah Peter can interject if not, but I'd be _very_ surprised if anybody expects
+>>> to be able to ptrace perf counter mappings in another process (it'd be kind of
+>>> totally insane to do that anyway since it's a ring buffer that needs special
+>>> handing anyway).
+>>
+>> I think so as well. Disallowing GUP has some side effects, like not getting
+>> these pages included in a coredump etc ... at least I hope nobody uses
+>> O_DIRECT on them.
 > 
-> Thanks for navigating me. I have followup questions about
-> /proc/sys/kernel/sched_rt_runtime_us / /proc/sys/kernel/sched_rt_period_us
-> (a ratio, without CONGIG_RT_GROUP_SCHED)
+> We set VM_DONTDUMP anyway (set by remap_pfn_range() also) so this part won't be
+> a problem, and I can't see anybody using O_DIRECT on them, sensibly.
+
+Ah, even better.
+
+>>
+>> Actually, the whole thing is on my todo list, because messing with the RMAP
+>> with vm_insert_pages() doesn't make any sense (whereby the refcount might!).
+>> See the TODO I added in __folio_rmap_sanity_checks().
 > 
-> - 0
->   - disables DL, (not RT, so they can monopolize a CPU)
-> - 1
->   - DL tasks can monopolize CPU, SCHED_NORMAL have 5% thanks to
->     fair_server
-> - 1-Δ
->   - SCHED_NORMAL tasks have
->     - (1-Δ)*5% on behalf of DL (above RT)
->     - Δ regularly (below RT)
+> How long is your TODO list I wonder? :)) I imagine it requires a huge page to
+> map at this point..
+
+:D
+
+Too long, but as some of these TODOs stand in the memdesc way, 
+fortunately other people might be able to give a helping hand at some 
+point ;)
+
+I'll play with using a page type for some of these "simple" cases and 
+see how hard it will get.
+
 > 
-> Is this breakdown correct?
+>>
+>> --
+>> Cheers,
+>>
+>> David / dhildenb
+>>
+> 
+> Cool will respin and send out shortly with an appropriately 'forgive us father
+> for we have sinned' comment.
+> 
+> Thanks for taking the time to discuss this! Much appreciated.
 
-So, sched_rt_runtime_us/sched_rt_period_us only applies to admission
-control (for DEADLINE tasks, including dl_servers). The actual
-parameters controlling the dl_server for SCHED_NORMAL are under sched/
-debug as per-cpu values, e.g.:
+Thanks for bearing with me. Whenever PFNMAP/MIXEDMAP is involved it gets 
+tricky, and as soon as PFNMAP/MIXEDMAP is inevitable, things get ugly. :)
 
-# grep . /sys/kernel/debug/sched/fair_server/cpu*/*
-/sys/kernel/debug/sched/fair_server/cpu0/period:1000000000
-/sys/kernel/debug/sched/fair_server/cpu0/runtime:50000000
-/sys/kernel/debug/sched/fair_server/cpu1/period:1000000000
-/sys/kernel/debug/sched/fair_server/cpu1/runtime:50000000
-/sys/kernel/debug/sched/fair_server/cpu2/period:1000000000
-/sys/kernel/debug/sched/fair_server/cpu2/runtime:50000000
-/sys/kernel/debug/sched/fair_server/cpu3/period:1000000000
-/sys/kernel/debug/sched/fair_server/cpu3/runtime:50000000
-/sys/kernel/debug/sched/fair_server/cpu4/period:1000000000
-/sys/kernel/debug/sched/fair_server/cpu4/runtime:50000000
-/sys/kernel/debug/sched/fair_server/cpu5/period:1000000000
-/sys/kernel/debug/sched/fair_server/cpu5/runtime:50000000
-/sys/kernel/debug/sched/fair_server/cpu6/period:1000000000
-/sys/kernel/debug/sched/fair_server/cpu6/runtime:50000000
-/sys/kernel/debug/sched/fair_server/cpu7/period:1000000000
-/sys/kernel/debug/sched/fair_server/cpu7/runtime:50000000
+-- 
+Cheers,
 
-You can disable admission control by echoing -1 in sched_rt_runtime_us,
-but still have the dl_server working for SCHED_NORMAL tasks. By
-disabling admission control SCHED_DEADLINE can indeed monopolize CPU
-(over subscription).
-
-Best,
-Juri
+David / dhildenb
 
 
