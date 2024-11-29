@@ -1,150 +1,92 @@
-Return-Path: <linux-kernel+bounces-425262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9AF9DBF95
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:57:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C122B9DBF98
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18598B21317
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 06:57:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6177EB21241
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A21158527;
-	Fri, 29 Nov 2024 06:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcAd+aps"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C581515853B;
+	Fri, 29 Nov 2024 07:00:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9E9184F;
-	Fri, 29 Nov 2024 06:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD36155A59
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732863425; cv=none; b=FbXPy+Tn01IyrqjwOYtzErPs7VDhk59e4+PmEY8ICmiylBhuBop4e2Y6pFAwz21B/S/+V2+PoY08cauKObFlXXign7/Ceo+BFcdAe+9zL9TbwsxKrGnn8KIgAOBFSYmkNYuQGX67Vphw1c/aTe0lV+o6zUO1tnzvcXrCcnj0F1Y=
+	t=1732863605; cv=none; b=jKUQ9sicJuZMlrj+42P267Gqw3He8J3jxBbotvl/l39Z3roDgF/2dyqsWGf1NiKua3ESafMjym7xN1GSj3lR7+ToiTA9I7EbLMttAZPMt3fR+7bmubp/tRsLHwpUWAvC3txbhphXcHPZisDQZ3T1lCLMummqnOP26deHvNp9Auk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732863425; c=relaxed/simple;
-	bh=6rPNYjhfP4z/7KICHAqwiixJj5mvMXg74/wVAQhyYQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MvghVEelztPkWi+v2mjRF+0Ig0Rp8WhHYQkTQoe11ssV/jMva+RkT25yUDvSAWqmRMBsNc0JYSy/kUJkgET0Hrq7U5xDSkf1BKjw7HfDgXv7HbSzioWZcLQYVQPaRkXrAEzxgfFlWr9LMoEencgEBUAsmwCuf9o1wr2mYBehmxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcAd+aps; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF5AC4CECF;
-	Fri, 29 Nov 2024 06:57:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732863424;
-	bh=6rPNYjhfP4z/7KICHAqwiixJj5mvMXg74/wVAQhyYQo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XcAd+apsUdAsjI60PZM4CrLR2Z3RdZz8dve+NFqEpwmhmCtuP87yWpzfIJ2oFsLfn
-	 Pht63r6sEsRcOFaJXOny/9Xq4CJqJslSt8Y1MvPCQvDe6ILCgeDHCTqfU1ikCZsk2p
-	 mEiUzVxWHD5e1TZDjcYv1o5O7ZT2Rs7n/gbbOOs6dGP36vUF6AS4Wc+1nUNJnBJdCN
-	 P1H87uYf6vV7eeRw7qi0OiNCJizlDbJdM8gDnAP2P0PzoLmhTCpUpcsj6rqZ/0pmfs
-	 qLt3uJL314qG/wv+6bA17WxpLfgTEi7kiB7M5Bads8Y33EzBR/GNewiegIdsPi8Rw5
-	 kV1r7lYrA9EYQ==
-Message-ID: <24ff0d8c-461e-470c-a9c7-5c0d5e5e7548@kernel.org>
-Date: Fri, 29 Nov 2024 07:56:57 +0100
+	s=arc-20240116; t=1732863605; c=relaxed/simple;
+	bh=OTnsXcTFOSk4pX6ATOXr/FBbB1ZGPiO0Bg7kRdMMFOk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SajYO9hBLWRrpTN/pHDXtqEDk/AVreJLBM9pRFxtYZ1EMWUdaq0zu5AqWQmce7BzS4o8tjTkFBztDKvWrGmhccEQpKK4Vi4XCa/nqJfx8/L3fiyC8Gwt8s161wWsezb1xc34+3bxH7/mgNiICUqJzEZplLxFgWOci830HSGuoEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a787d32003so14926285ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 23:00:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732863603; x=1733468403;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/uFra0YN+yna+dFAYGRTHBlUgOuZ/rd2jDdrEmkswmo=;
+        b=k7/Z1ePHdrxuojUAEcTqLqD6OWDZo3xPvPoqNCUSISV5XI2XbJ1MTcr965OdJSQxit
+         oM3oy491h0nHE4GwTuQTTNb/tEn34QWFU4IQ34P+5SZpFKf3pGrEqePZLyH8HvLh2fv0
+         s8Lqej0ZtaikOqP6RJss3LAAFafKLQOs6Fm2JW4OYuzCqWbdQBCB0DzWNLOHyL3Ny/w+
+         tNzkakNirX4vEHTF8WLhkCXFm+DWI87+6u2D2YTTEHdMOWpNF54Eldanvo9lekBFKUmT
+         l0iDiMgCsX3KT9/ShhAbp0rBVSIvm3YCThgejhkDWjHzQGnAUe9E6Y0y8I1IF4ydRrP7
+         a/eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+M3YzaOvbt2WgbOwYVIMYALXTnTya1xI4phhkaVWVDDJTSt/R0jmK3MU2CAAIBW0VlKyBiC3DC2mMD80=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy76p8WIpnsdc63BPrl3DD4pUW1DHxYVKsRhkX4uv7nIl1+Hlt5
+	UsDkyzM9IRQ/Z4FiFCmM27+UaqQbvYnyExLEZpq+8gUmUq7KWC2sIWEvCR5MIG4bTVQbosV7Ebv
+	ATlEEm8nAThXeucdRuldFoTUGuD0urwmXKIIM0Ku/g1PZ+7NPkM/+Bp0=
+X-Google-Smtp-Source: AGHT+IFdiUwM6usNyDCkLi/if2XisD6w3B0PUJMgYfQwjzXBmtMFTye+l/jlLwYTFAMwLA9+B7LxNQeBaYvKgU653zSV2doKUl21
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] dt-bindings: net: Add QCA6698 Bluetooth
-To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
- Rocky Liao <quic_rjliao@quicinc.com>
-Cc: linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241128120922.3518582-1-quic_chejiang@quicinc.com>
- <20241128120922.3518582-3-quic_chejiang@quicinc.com>
- <bd4cb046-f0c1-4044-897c-00f30c6e84d2@kernel.org>
- <ca1dbeee-c61f-4309-ae4e-a599b4c245d5@kernel.org>
- <1117756e-a548-4e9d-9e91-116bec43fd2e@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1117756e-a548-4e9d-9e91-116bec43fd2e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1b05:b0:3a7:8270:4050 with SMTP id
+ e9e14a558f8ab-3a7c55d49dcmr113095305ab.18.1732863603171; Thu, 28 Nov 2024
+ 23:00:03 -0800 (PST)
+Date: Thu, 28 Nov 2024 23:00:03 -0800
+In-Reply-To: <67475f25.050a0220.253251.005b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67496673.050a0220.253251.00a4.GAE@google.com>
+Subject: Re: [syzbot] [fuse?] KASAN: null-ptr-deref Read in fuse_copy_do
+From: syzbot <syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com>
+To: joannelkoong@gmail.com, josef@toxicpanda.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, mszeredi@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 29/11/2024 03:13, Cheng Jiang (IOE) wrote:
-> Hi Krzysztof,
-> 
-> On 11/28/2024 10:41 PM, Krzysztof Kozlowski wrote:
->> On 28/11/2024 15:41, Krzysztof Kozlowski wrote:
->>> On 28/11/2024 13:09, Cheng Jiang wrote:
->>>> Add the compatible for the Bluetooth part of the Qualcomm QCA6698 chipset.
->>>
->>> <form letter>
->>> This is a friendly reminder during the review process.
->>>
->>> It seems my or other reviewer's previous comments were not fully
->>> addressed. Maybe the feedback got lost between the quotes, maybe you
->>> just forgot to apply it. Please go back to the previous discussion and
->>> either implement all requested changes or keep discussing them.
->>>
->>> Thank you.
->>> </form letter>
->>>
->>> Respond to the comment and then implement it.
->>>
->>> Also, version your patches correct and provide changelog. This is v2,
->>> not v1.
->>
->> Wait, no, it's even v3 or v4. You just ask us to the same work twice,
->> don't you?
-> Sorry for this. So the version number should be increased even 
-> solution/implementation is changed? Will follow the rule.  
+syzbot has bisected this issue to:
 
-Yes, because you don't want to send the same for review over and over again.
+commit 3b97c3652d9128ab7f8c9b8adec6108611fdb153
+Author: Joanne Koong <joannelkoong@gmail.com>
+Date:   Thu Oct 24 17:18:08 2024 +0000
 
-Best regards,
-Krzysztof
+    fuse: convert direct io to use folios
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1648df5f980000
+start commit:   445d9f05fa14 Merge tag 'nfsd-6.13' of git://git.kernel.org..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1548df5f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1148df5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c44a32edb32752c
+dashboard link: https://syzkaller.appspot.com/bug?extid=87b8e6ed25dbc41759f7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fd43c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cf2f5f980000
+
+Reported-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
+Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
