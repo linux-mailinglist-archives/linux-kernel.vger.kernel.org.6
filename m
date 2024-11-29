@@ -1,290 +1,209 @@
-Return-Path: <linux-kernel+bounces-425352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB479DC0E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:54:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3759DC0E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:55:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86A37B21F3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF90428263E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5221416F8E5;
-	Fri, 29 Nov 2024 08:54:32 +0000 (UTC)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2D6170A15;
+	Fri, 29 Nov 2024 08:55:31 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11216AD27;
-	Fri, 29 Nov 2024 08:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FC315C13F
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732870471; cv=none; b=YojcuwLb0bfeAJVATEgLu19Df3WdoA621GxSU7sybNlopARpR9wvQxuu6w14aHNDlwqnqFVpufkuT/yyyXquuCRUH9dERe6j+988MVgTO0PMEYVothIdxSAkP0itTd/hr6kTVxVtTGKYX+VWVW/RrsFUuTNGT1+waNQjVCx9E+I=
+	t=1732870530; cv=none; b=G3M6QJt1FTtrowfgu4fEWuopJhA+/mwPmrHbCLTr8Wo/VxIYODUwO6a8sZ3vqWs2lo73amATPVYvLxXoTrdX7JgemlS/NhlHdJjj+iCwc0UJp+kHH1cAWoQa4BXUBEFS+CqRFRmg4djF6RK4pmktbftJFemuaBJbErKx1qGCzNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732870471; c=relaxed/simple;
-	bh=1jW2sJC2gA+iZNbMYV3OC/SGiypWcHHfISK0qT339h4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WkZgq4SvTd0wfAAWMsZEfrUrmvtDN//yCb+6Ipu+Nabn/mnplH2aoW0k0HFpcsv6RqZysqO8jVG3eD/9vAm79a1iuq70j5jgd6vQCwXM8CqDngnzYm2Wz/srJ/8dsMv8W5NsNzobMThNGf5kFEVZEdBbHHD0JmPj0nU9MvYU6pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-85b9c456f46so123908241.3;
-        Fri, 29 Nov 2024 00:54:29 -0800 (PST)
+	s=arc-20240116; t=1732870530; c=relaxed/simple;
+	bh=qM20KHn5jAFgUZLCV2Slj4cu5IQfmkKXuvbqSICjsN0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=j3vUp8BUcGDysvEj+bYo3vN9qvyElNzspCH5b7bT4544hmVCTnanQF9GxHB5EEYNnDmF5Lnp47w/ngudUiu2oWuf7/HLTl5CcYNcDUxFRl4CXPq4/Ze7YRPDiJ1J1VGEU2yRF+gszS4NHjM7tTW3chFS8SWCcAiHNlnai+mnZ3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a78e952858so14900115ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:55:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732870468; x=1733475268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Euk3VJ7BmU7RfhdWEIOUgVSr2IUFcOE2zUwRiXafaDc=;
-        b=c6xFA8lvBKBaUN1gfyRED6Xg6+Q156QKz+SPCI0hPJtQ2ssdP2/FiISXn6FYf4Ihu0
-         D3U0p+53nR5hex1zi3SxjIsXw1+ZIDO0oykJbOWj1Z4L8nByoI/YRf4FN8/Iq0ubfY2c
-         KlK5t43+vXc5rnOKEM+2UT65iuW0oXwyILTE0zmhuihdDjHziNz0kVjXuMPwBNhRTdcs
-         Zw03n6XaULMyUwVAuuXWNq66e7WghNDsmAKUfdgy/FrUzHJqHhymhYvuKP+upy7TUKvc
-         dGe3HMMCTySyZmKegfCXtCOLkpGqp68nFZKrj90ez26E9IQ39Ig74OxM6rTfuLl0ltH/
-         S/CA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3oCqF1YafP7NgnOuuVDbd950YqjoDHUR+hSmDVblS2xiDf61o+TN1spU6xeL3/48emWGNew8RKCEy8FG0A46FlJc=@vger.kernel.org, AJvYcCWTuee2TG71sdnhBExLIN7ZYG6RJYjtLXpMkNnC78onCESZD2Y+bfKtr44n4kAYLy+hyVzzZ8LXCelV@vger.kernel.org, AJvYcCWgibzlj7mLhwHsMR9GIy1cdp7UxTBVbXfIsCv1EaLAg0rgaSM4BHl1gG7BwIV3n6k77jhc01fgFKuf@vger.kernel.org, AJvYcCXe6TNVr4uebcWT0NOwyHDVQGN1CKE/Zwk5sA8ewE3Y+VpULvVn8giv9UjztorDi0jEPYoH+NGp6xcjBUsp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0lu5UYwCotA8jDqoVtNTHxCO1uyyXzWAQOVrA5R4NmVg7csVr
-	rZE3ThYGB9IzcnG9R5B6yVuDe5Gvev3MQvhJg/aqSGcb2OvQsPxH0V3pes2Uce8=
-X-Gm-Gg: ASbGncuW5egdtExfKF5zYMdgJ8LnSthoKQPKCEGF/nIbBFHm5TFa9W9FhizXSfNWxoU
-	cxudHlpxx9C3FIPUXFhok4QBVqdh8i9ZStQu+OHvrwoAGuu7fPWTBIuZixVBYwD0N1BwW6Suuv+
-	Z0j3w5sKCq7ymaDXjNqNWYTg3EqqcPPEqi/hlc8WPllIJ0ySDLLfi6zMPiCLE41Dw0A8j3Ytl/c
-	7ShEGYt15WKAP4Oc5h7pAyYhUQiM9GWmAFahH35x3fQfGOcnBL850YUByY2v7XmHyJjd217df5q
-	Rdu5aX6P5O5O
-X-Google-Smtp-Source: AGHT+IH3t5pNJc5GG6TQrCXVETTdhlzO3niUq+pU984b171bieTs1ybTz9aZWhlKHo/kFEz99CWt8Q==
-X-Received: by 2002:a05:6102:e07:b0:4af:5682:bc30 with SMTP id ada2fe7eead31-4af5682bf83mr7538296137.12.1732870467897;
-        Fri, 29 Nov 2024 00:54:27 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af59213219sm694565137.20.2024.11.29.00.54.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 00:54:26 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4addd900de1so472185137.3;
-        Fri, 29 Nov 2024 00:54:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUClNxUAnlay+Rc7ouiFWIL1KRuEydr2RKBRta5U9bklIFHpUbbVXYuOWY0jcmgOh2o0BfHDes3A52TMH/u@vger.kernel.org, AJvYcCUR3wwGKqyu9+rRaZBqhUyaSygIx0HTvDM2mTTp6276i3yrjz5njGPbKkTC+3qHn9+gRUXrlfUug1FJ@vger.kernel.org, AJvYcCVlHyMIpuf8M1DbUoGIrDYSc2MSDqAwmKoBHsmjrmJdL1kdmwIduzpphOvO+UYHxa8xULyeIlPKuzI3tpKAWNMQo4s=@vger.kernel.org, AJvYcCXHZHXhjDoqnZzGrWs8fpBkmOA5NNaXozbIXReZzPzxA44FMkHOxP8+K9iOxf8H817+5lkLGD3hTrDf@vger.kernel.org
-X-Received: by 2002:a05:6102:4421:b0:4af:4a89:7a1f with SMTP id
- ada2fe7eead31-4af4a8981d0mr10889457137.19.1732870466034; Fri, 29 Nov 2024
- 00:54:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732870528; x=1733475328;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lR+p6NE3/ylb/sNtXOnSWDpXj/jDLqlspCqpCJsrYUs=;
+        b=MTde/jFO/UbBFOmY8TDILS4tq632KzEx/yZLaGaeOE2qNzwGyxPT5/P6kUsIh8Sgeg
+         j0hONkV0eyEVMew1XzkZ5oB0BKgcPXx+RAw/zp85kTZfSsBcHTok+mRABRpWLwFF6wZv
+         JUmE3a9hqcklB/RQb/XNi981m+u4z9qpA1nP/ZvBJDuXGFTyN3Bq6zksopf6HLNeuP1B
+         rvMD/k614xIJ5rL/nXeZHXrZhSXUsV8dSj+la+WGaCwlWPQEW8Aq/uvwTjrP69Ey7GBx
+         0fwonnMiqhzAaxddPWAhn86GJgF4GPAO+EKt+KGDn6df/KmQuXDH3urIL8d/qS9EaSOy
+         c7NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdds5bZsAYvu5TXamqWkINjDFftsDDr7HPcLSdBTK1dlqwXQBkGm1jNUP0WjnLC2fV2KhWisPSL+MrqTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoRjs9cAp/TK9I2ZtbOdHrKHP5CzplsnJrd1Qds+a0knFP+dnH
+	qIgJxCaBmPf1B8WYqZaYmISbD95+kbYjskXKobuH6uzgHJLYXRS9kNfnftY9GqaBiyzUbxMxxzk
+	GSbwD+Yg92pl5fr9KHyBkMtpj+eL+eoSdCvqI3kKgnPm7b7qzDLFPmQE=
+X-Google-Smtp-Source: AGHT+IHPLcB/b9JLed7OoEV9zLx/4zMeKD0hmJ9n6HKfcyCZnnQp2qTsoSXlfpciYJsd/Oys+DOBVQfxG3BTz4+2ITnH/IXZBwZH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
- <20241126092050.1825607-3-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUvmTQeQXxhsXtj23-OS=aL3UgsyOtnawdmnusrEJ2JQw@mail.gmail.com> <32fa7eb8-2139-454c-8866-cb264d060616@tuxon.dev>
-In-Reply-To: <32fa7eb8-2139-454c-8866-cb264d060616@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 29 Nov 2024 09:54:14 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXPQnCPjKRxoSceYabWPHF9Z_A7qVN85yaUZjPG7-o7tg@mail.gmail.com>
-Message-ID: <CAMuHMdXPQnCPjKRxoSceYabWPHF9Z_A7qVN85yaUZjPG7-o7tg@mail.gmail.com>
-Subject: Re: [PATCH v2 02/15] soc: renesas: Add SYSC driver for Renesas RZ family
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
-	gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com, 
-	christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+X-Received: by 2002:a05:6e02:1a02:b0:3a7:9347:5465 with SMTP id
+ e9e14a558f8ab-3a7c5523826mr116629975ab.3.1732870528021; Fri, 29 Nov 2024
+ 00:55:28 -0800 (PST)
+Date: Fri, 29 Nov 2024 00:55:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6749817f.050a0220.253251.00a8.GAE@google.com>
+Subject: [syzbot] [net?] BUG: soft lockup in sctp_generate_t1_init_event
+From: syzbot <syzbot+64802c9d544a016044ac@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
+Hello,
 
-On Fri, Nov 29, 2024 at 9:48=E2=80=AFAM Claudiu Beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
-> On 28.11.2024 17:24, Geert Uytterhoeven wrote:
-> > On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.=
-dev> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> The RZ/G3S system controller (SYSC) has various registers that control
-> >> signals specific to individual IPs. IP drivers must control these sign=
-als
-> >> at different configuration phases.
-> >>
-> >> Add SYSC driver that allows individual SYSC consumers to control these
-> >> signals. The SYSC driver exports a syscon regmap enabling IP drivers t=
-o
-> >> use a specific SYSC offset and mask from the device tree, which can th=
-en be
-> >> accessed through regmap_update_bits().
-> >>
-> >> Currently, the SYSC driver provides control to the USB PWRRDY signal, =
-which
-> >> is routed to the USB PHY. This signal needs to be managed before or af=
-ter
-> >> powering the USB PHY off or on.
-> >>
-> >> Other SYSC signals candidates (as exposed in the the hardware manual o=
-f the
-> >>
-> >> * PCIe:
-> >> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
-> >> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
-> >>   register
-> >> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
-> >>
-> >> * SPI:
-> >> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
-> >>   register
-> >>
-> >> * I2C/I3C:
-> >> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
-> >>   (x=3D0..3)
-> >> - af_bypass I3C signal controlled through SYS_I3C_CFG register
-> >>
-> >> * Ethernet:
-> >> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
-> >>   registers (x=3D0..1)
-> >>
-> >> As different Renesas RZ SoC shares most of the SYSC functionalities
-> >> available on the RZ/G3S SoC, the driver if formed of a SYSC core
-> >> part and a SoC specific part allowing individual SYSC SoC to provide
-> >> functionalities to the SYSC core.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> >> --- /dev/null
-> >> +++ b/drivers/soc/renesas/r9a08g045-sysc.c
-> >> @@ -0,0 +1,31 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * RZ/G3S System controller driver
-> >> + *
-> >> + * Copyright (C) 2024 Renesas Electronics Corp.
-> >> + */
-> >> +
-> >> +#include <linux/array_size.h>
-> >> +#include <linux/bits.h>
-> >> +#include <linux/init.h>
-> >> +
-> >> +#include "rz-sysc.h"
-> >> +
-> >> +#define SYS_USB_PWRRDY         0xd70
-> >> +#define SYS_USB_PWRRDY_PWRRDY_N        BIT(0)
-> >> +#define SYS_MAX_REG            0xe20
-> >> +
-> >> +static const struct rz_sysc_signal_init_data rzg3s_sysc_signals_init_=
-data[] __initconst =3D {
-> >
-> > This is marked __initconst...
-> >
-> >> +       {
-> >> +               .name =3D "usb-pwrrdy",
-> >> +               .offset =3D SYS_USB_PWRRDY,
-> >> +               .mask =3D SYS_USB_PWRRDY_PWRRDY_N,
-> >> +               .refcnt_incr_val =3D 0
-> >> +       }
-> >> +};
-> >> +
-> >> +const struct rz_sysc_init_data rzg3s_sysc_init_data =3D {
-> >
-> > ... but this is not __init, causing a section mismatch.
->
-> Do you know if there is a way to detect this?
+syzbot found the following issue on:
 
-The kernel should tell you during the build...
+HEAD commit:    28eb75e178d3 Merge tag 'drm-next-2024-11-21' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1576a530580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ba7dd83119eb53b6
+dashboard link: https://syzkaller.appspot.com/bug?extid=64802c9d544a016044ac
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm
 
->
-> >
-> >> +       .signals_init_data =3D rzg3s_sysc_signals_init_data,
-> >> +       .num_signals =3D ARRAY_SIZE(rzg3s_sysc_signals_init_data),
-> >> +       .max_register_offset =3D SYS_MAX_REG,
-> >> +};
-> >
-> >> --- /dev/null
-> >> +++ b/drivers/soc/renesas/rz-sysc.c
-> >
-> >> +/**
-> >> + * struct rz_sysc - RZ SYSC private data structure
-> >> + * @base: SYSC base address
-> >> + * @dev: SYSC device pointer
-> >> + * @signals: SYSC signals
-> >> + * @num_signals: number of SYSC signals
-> >> + */
-> >> +struct rz_sysc {
-> >> +       void __iomem *base;
-> >> +       struct device *dev;
-> >> +       struct rz_sysc_signal *signals;
-> >> +       u8 num_signals;
-> >
-> > You could change signals to a flexible array at the end, tag it with
-> > __counted_by(num_signals), and allocate space for both struct rz_sysc
-> > and the signals array using struct_size(), reducing the number of
-> > allocations.
->
-> I'll look into this.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> >> --- /dev/null
-> >> +++ b/drivers/soc/renesas/rz-sysc.h
-> >> @@ -0,0 +1,52 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0 */
-> >> +/*
-> >> + * Renesas RZ System Controller
-> >> + *
-> >> + * Copyright (C) 2024 Renesas Electronics Corp.
-> >> + */
-> >> +
-> >> +#ifndef __SOC_RENESAS_RZ_SYSC_H__
-> >> +#define __SOC_RENESAS_RZ_SYSC_H__
-> >> +
-> >> +#include <linux/refcount.h>
-> >> +#include <linux/types.h>
-> >> +
-> >> +/**
-> >> + * struct rz_sysc_signal_init_data - RZ SYSC signals init data
-> >> + * @name: signal name
-> >> + * @offset: register offset controling this signal
-> >> + * @mask: bitmask in register specific to this signal
-> >> + * @refcnt_incr_val: increment refcnt when setting this value
-> >> + */
-> >> +struct rz_sysc_signal_init_data {
-> >> +       const char *name;
-> >> +       u32 offset;
-> >> +       u32 mask;
-> >> +       u32 refcnt_incr_val;
-> >> +};
-> >> +
-> >> +/**
-> >> + * struct rz_sysc_signal - RZ SYSC signals
-> >> + * @init_data: signals initialization data
-> >> + * @refcnt: reference counter
-> >> + */
-> >> +struct rz_sysc_signal {
-> >> +       const struct rz_sysc_signal_init_data *init_data;
-> >
-> > Can't you just embed struct rz_sysc_signal_init_data?
->
-> Meaning to have directly the members of struct rz_sysc_signal_init_data
-> here or to drop the const qualifier along with __initconst on
-> rzg3s_sysc_signals_init_data[]  and re-use the platfom data w/o allocate
-> new memory?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-28eb75e1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4600137dc19a/vmlinux-28eb75e1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/307506ce5736/zImage-28eb75e1.xz
 
-I mean
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+64802c9d544a016044ac@syzkaller.appspotmail.com
 
-    struct rz_sysc_signal {
-          struct rz_sysc_signal_init_data init_data;
-          ...
-    };
+watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [kworker/u8:6:779]
+Modules linked in:
+irq event stamp: 875487
+hardirqs last  enabled at (875486): [<ffff80008525de50>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:85 [inline]
+hardirqs last  enabled at (875486): [<ffff80008525de50>] exit_to_kernel_mode+0x38/0x118 arch/arm64/kernel/entry-common.c:95
+hardirqs last disabled at (875487): [<ffff80008525fff8>] __el1_irq arch/arm64/kernel/entry-common.c:557 [inline]
+hardirqs last disabled at (875487): [<ffff80008525fff8>] el1_interrupt+0x24/0x54 arch/arm64/kernel/entry-common.c:575
+softirqs last  enabled at (836530): [<ffff800082d402d8>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
+softirqs last  enabled at (836530): [<ffff800082d402d8>] nsim_dev_trap_report drivers/net/netdevsim/dev.c:820 [inline]
+softirqs last  enabled at (836530): [<ffff800082d402d8>] nsim_dev_trap_report_work+0x6c4/0xa9c drivers/net/netdevsim/dev.c:851
+softirqs last disabled at (836531): [<ffff800080010758>] __do_softirq+0x14/0x20 kernel/softirq.c:588
+CPU: 0 UID: 0 PID: 779 Comm: kworker/u8:6 Not tainted 6.12.0-syzkaller-07749-g28eb75e178d3 #0
+Hardware name: linux,dummy-virt (DT)
+Workqueue: events_unbound nsim_dev_trap_report_work
+pstate: 10000005 (nzcV daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __percpu_read_32+0x0/0x58 arch/arm64/include/asm/percpu.h:125
+lr : lockdep_enabled kernel/locking/lockdep.c:119 [inline]
+lr : lock_is_held_type+0x68/0x1b4 kernel/locking/lockdep.c:5914
+sp : ffff800080006a60
+x29: ffff800080006a60 x28: ffff00001ac99050 x27: 0000000000000003
+x26: 00000000ffffffff x25: 1ffff00010000d79 x24: ffff800086c84448
+x23: 0000000000000000 x22: ffff800080006bc0 x21: ffff800086ed8960
+x20: dfff800000000000 x19: ffff000011d8bf00 x18: 0000000032b43c88
+x17: 00000000000080fe x16: 0000000000000000 x15: 1fffe0000273a514
+x14: 1ffff000110ce4fc x13: ffff0000139d28c0 x12: ffff700010000d7e
+x11: 1ffff00010000d7d x10: ffff700010000d7d x9 : dfff800000000000
+x8 : ffff800080006bf0 x7 : 0000000000000000 x6 : ffff700010000d78
+x5 : ffff800080006bc4 x4 : ffff800080007488 x3 : 1fffe0000273a3c9
+x2 : 0000000000000000 x1 : ffff800086c84448 x0 : ffff000069f74448
+Call trace:
+ __percpu_read_32+0x0/0x58 arch/arm64/include/asm/percpu.h:47 (P)
+ lockdep_enabled kernel/locking/lockdep.c:119 [inline] (L)
+ lock_is_held_type+0x68/0x1b4 kernel/locking/lockdep.c:5914 (L)
+ lock_is_held include/linux/lockdep.h:249 [inline]
+ rcu_read_lock_held kernel/rcu/update.c:351 [inline]
+ rcu_read_lock_held+0x54/0x70 kernel/rcu/update.c:345
+ fib6_node_lookup_1+0x284/0x6c4 net/ipv6/ip6_fib.c:1620
+ fib6_node_lookup+0xc0/0x14c net/ipv6/ip6_fib.c:1649
+ fib6_table_lookup+0xbc/0x70c net/ipv6/route.c:2191
+ ip6_pol_route+0x164/0xbcc net/ipv6/route.c:2231
+ ip6_pol_route_output+0x50/0x7c net/ipv6/route.c:2606
+ pol_lookup_func include/net/ip6_fib.h:616 [inline]
+ fib6_rule_lookup+0xf8/0x560 net/ipv6/fib6_rules.c:117
+ ip6_route_output_flags_noref net/ipv6/route.c:2639 [inline]
+ ip6_route_output_flags+0x158/0x4b0 net/ipv6/route.c:2651
+ ip6_dst_lookup_tail.constprop.0+0xcc8/0x1b68 net/ipv6/ip6_output.c:1156
+ ip6_dst_lookup_flow+0x90/0x16c net/ipv6/ip6_output.c:1259
+ sctp_v6_get_dst+0x854/0x144c net/sctp/ipv6.c:384
+ sctp_transport_route+0xf8/0x2b8 net/sctp/transport.c:455
+ sctp_packet_config+0x7b8/0xa88 net/sctp/output.c:103
+ sctp_outq_select_transport+0x16c/0x59c net/sctp/outqueue.c:869
+ sctp_outq_flush_ctrl net/sctp/outqueue.c:903 [inline]
+ sctp_outq_flush+0x234/0x2540 net/sctp/outqueue.c:1212
+ sctp_outq_uncork+0x54/0x74 net/sctp/outqueue.c:764
+ sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1818 [inline]
+ sctp_side_effects net/sctp/sm_sideeffect.c:1198 [inline]
+ sctp_do_sm+0x1604/0x4b70 net/sctp/sm_sideeffect.c:1169
+ sctp_generate_timeout_event+0x154/0x2c8 net/sctp/sm_sideeffect.c:295
+ sctp_generate_t1_init_event+0x18/0x24 net/sctp/sm_sideeffect.c:321
+ call_timer_fn+0x1b0/0x7b4 kernel/time/timer.c:1793
+ expire_timers kernel/time/timer.c:1844 [inline]
+ __run_timers+0x50c/0x71c kernel/time/timer.c:2418
+ __run_timer_base kernel/time/timer.c:2430 [inline]
+ __run_timer_base kernel/time/timer.c:2422 [inline]
+ run_timer_base+0x110/0x180 kernel/time/timer.c:2439
+ run_timer_softirq+0x1c/0x44 kernel/time/timer.c:2449
+ handle_softirqs+0x2e8/0xd44 kernel/softirq.c:554
+ __do_softirq+0x14/0x20 kernel/softirq.c:588
+ ____do_softirq+0x10/0x1c arch/arm64/kernel/irq.c:81
+ call_on_irq_stack+0x24/0x4c arch/arm64/kernel/entry.S:891
+ do_softirq_own_stack+0x1c/0x2c arch/arm64/kernel/irq.c:86
+ do_softirq kernel/softirq.c:455 [inline]
+ do_softirq+0x12c/0x150 kernel/softirq.c:442
+ __local_bh_enable_ip+0x414/0x4a4 kernel/softirq.c:382
+ __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:167 [inline]
+ _raw_spin_unlock_bh+0x44/0x54 kernel/locking/spinlock.c:210
+ spin_unlock_bh include/linux/spinlock.h:396 [inline]
+ nsim_dev_trap_report drivers/net/netdevsim/dev.c:820 [inline]
+ nsim_dev_trap_report_work+0x6c4/0xa9c drivers/net/netdevsim/dev.c:851
+ process_one_work+0x7b8/0x189c kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x730/0xb74 kernel/workqueue.c:3391
+ kthread+0x27c/0x300 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 5489 Comm: syz.2.701 Not tainted 6.12.0-syzkaller-07749-g28eb75e178d3 #0
+Hardware name: linux,dummy-virt (DT)
+pstate: 20000010 (nzCv q A32 LE aif -DIT -SSBS)
+pc : 0000000000018b8c
+lr : 0000000000018b8c
+sp : 0000000020000370
+x12: 0000000020000370
+x11: 00000000f76b10bc x10: 00000000003d0f00 x9 : 0000000000006364
+x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 00000000000001e4 x1 : 0000000000000004 x0 : 00000000ffffffff
 
-Currently you allocate rz_sysc_signal_init_data separately.
-When embedded, it will be part of rz_sysc, cfr. above.
 
-> > That way you could allocate the rz_sysc_signal and
-> > rz_sysc_signal_init_data structures in a single allocation.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Gr{oetje,eeting}s,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-                        Geert
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
