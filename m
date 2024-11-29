@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-425992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858E19DED77
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:08:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A61E9DED82
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:13:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 504A5163CAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:08:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA00B2152D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA1919067A;
-	Fri, 29 Nov 2024 23:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5FC198E6D;
+	Fri, 29 Nov 2024 23:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XgNcYBrS"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D7CCYIUX"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730CC15667B
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBC113BAEE
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732921719; cv=none; b=psIktrDXj7TOabRjfVkpsFDSlofVW3xI2I6PsK4KWo/jawMBsv2gBs2Mi6DKI+6fbCrtK/EqfztdfE2NscouHn1JkMd9wh+sZCw/cbQ3JcNhzQ5N/plfZwI6+AhKdT+I8miXKVAEz9Qkocqf5RSbtEUQXg3G9hRqbLhi/dvcR/E=
+	t=1732921997; cv=none; b=P9f71+kUR8VDJqr05lwEivrp1qm1xBh5lhoqiDSx9iO+BvdgoEZcrO7KxdyPtSbW7Ze/2cBe/1ikiGN0i/2ziqhdj6GNd3cxIN0HA+eqJe7uNp6rK7weelXakEkOYFu+dwpvPvMW2INb57gWTUqWnykYNIFhEV4P2tmycCFOh2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732921719; c=relaxed/simple;
-	bh=hBcS/rWxL8Z16VubTFxz2tOkzDDUlWwC/vRzmnyPkLY=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=L99yfOMChWH6g0zAaxuUlyF3gHZqsr4Iz9dXBwxSRy7B820dlFHULgVSUmOKvJ16BQahvq0AIFmvib2O72OtxppZLOsEZFClyeLJONoYBdU7ZGgc4YJsHQIIM/C3swuBvOTP2ALqly8KkyMJRl2pgE1YQnitLbFa8cIvbPYr4BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XgNcYBrS; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b6600c9338so162342985a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:08:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1732921716; x=1733526516; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HN5bGNA7/bg9Ufs2Fd2xQf/aHKLWC0v8KWxMtmpgDIA=;
-        b=XgNcYBrSO6FET0P1jtaHxpjRM3fqXdrdCQG+XY0UAJuk0aEOUcwpskn+lv6TRAraTq
-         +wTSQi1LIw1l11T/24aeW/wp75vUlt8pO0+/BCbkFITK2GQB9lKawErWiijgELTb9B4r
-         eHdZdF0BH81z18KuHPPHMtypa5QpzYKsG20cSqtDVaMHUVdWEnY8qiVGvrSoQuCXqGxM
-         Jg36Zbz7JI0ytN54lBMcssG0qn7/bm8kH64vNHsfxIA3ESDyXV73Jp97BNSLOdSHjX09
-         Y6KL9R839Iujq3LmTeVWyLYmlrhnqAJyL++BlC1pP0hnkyTxiMn9K0oZSNAdm10IVfMX
-         YReA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732921716; x=1733526516;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HN5bGNA7/bg9Ufs2Fd2xQf/aHKLWC0v8KWxMtmpgDIA=;
-        b=fS6+NqFLCspO+bDAJTTpEW25vt9OFSaRTffpRff03mGL4h9G1qjxcPeafLaiF6qgDh
-         f7UMmRkv7yGOJYTM3/YtIfGz8YyqSStdGVrXFltRMtVRwj2sB1CLZotWueDllRAHhI79
-         6SBg2Xf/39B9TwQ/XH3Wf15vOsw4llv9E4UT1VgmNoJzsWvhVLMGSlWWbMlhvfla+nsh
-         XujFBxiEBwF6vsnCk8Kdxup+zO3WXoZCXBfAmAhmzB1IysMdovUQV+F3CL0eijyRthG9
-         yEkouYLbX8YsW5S59f5kkRxwIR85ayQ0tNVzxG5LziQtFZp1Vf5sOY9VSKai/DceYZR4
-         Ns7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU1qwPxOkGi3xTZhtgODmRuEMfE2gJzVSkX4SYiakNjCojgM/V2l5V27NtiMjbkDY43dHBMN8JBJGrBWFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT2+LKXDbZLU/CIVA+/N0gRjzgN9Jdz3cIaCH5czngxtq8Ka6x
-	OaZ4RTL+QOFow/Rhe37hYYn7ohMz5BeiOAeZaZ7eHkk9Xc8Q8Z7C+LEFotNmJQ==
-X-Gm-Gg: ASbGncuxb5VEzevKXBxP5F4oiARjmSuKTb/IxK7gZklhDNhozEm/UGriqlEMr3Zb3f9
-	jHqI7u23w+gMRPyII+Lzh3ZdJ4IpJwYBzhxei10h5ZmTI3l2ZVc411yCt9pY6BSroRbh/9WcM5Q
-	bqC5MPrWBWnQ6vUnuor24y8FEMDF/4uqMHfr/wpQmUf2JzdfFGUFTAUY4FS5Z7XbGyxWjCpquIC
-	K+evg12M+cWEdJql742knnMo0pI9woOcdhv8zsAumGeGLb0SB7G
-X-Google-Smtp-Source: AGHT+IExMxKJhFilcnoFuMS0wRFtUpZtDBMoV3qzKN2iJbHR+5C+uZxGBBCeLuK2DKd2L4g4oNydPQ==
-X-Received: by 2002:a05:620a:1a9e:b0:7b6:753b:9b78 with SMTP id af79cd13be357-7b67c2c1736mr1644925785a.29.1732921716368;
-        Fri, 29 Nov 2024 15:08:36 -0800 (PST)
-Received: from [10.167.35.107] ([166.199.165.81])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849210a6sm181893885a.22.2024.11.29.15.08.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 15:08:35 -0800 (PST)
-From: Paul Moore <paul@paul-moore.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: Yafang Shao <laoar.shao@gmail.com>, Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>, <rust-for-linux@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Justin Stitt <justinstitt@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 29 Nov 2024 18:08:33 -0500
-Message-ID: <1937a2ee168.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <20241129082646.1341af16@rorschach.local.home>
-References: <20241127131941.3444fbd9@gandalf.local.home>
- <CAHk-=wgwQ5gDdHgN54n8hsm566x5bauNPsdZPXm6uOCFvPA1+Q@mail.gmail.com>
- <20241128155120.6e6cd300@rorschach.local.home>
- <20241128182435.57a1ea6f@gandalf.local.home>
- <CALOAHbBB-__eyERw82QnS3Wmgi7_BpPaacY2urVmpWX3ZkVtvQ@mail.gmail.com>
- <193780f6880.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <20241129082646.1341af16@rorschach.local.home>
-User-Agent: AquaMail/1.53.0 (build: 105300523)
-Subject: Re: [GIT PULL] tracing: More updates for 6.13
+	s=arc-20240116; t=1732921997; c=relaxed/simple;
+	bh=DVVuUQbmAm99ECO7j4qZY/M+0QSt0nokxG+RYufcIic=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bPCEG+4NFFspQEStDwJrcp/YO6SyGofEbUaTs1vbNYdSSnj7NcPm/q+xYH69oTgkstKSco0mWa3ECWoygu+StNw7khs4LIP5XZaR4JC6EjiDqyFeDDejlECyixV2ufZyl5I17JxoV27iCTT5L2kzyy7CgubHfX6tJiZ0qUxW/lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D7CCYIUX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732921993;
+	bh=DVVuUQbmAm99ECO7j4qZY/M+0QSt0nokxG+RYufcIic=;
+	h=From:Date:Subject:To:Cc:From;
+	b=D7CCYIUXRWqiFElqOu4Us5iv4bvjfbDD4wbkRVSbgm9iiTnu3lqVnBNahOyXN959F
+	 OcZ6p5FF876Sfb+gWEUuCsNy8xelLDnTAblZ2ZEQemM/cFZJPicgdSYA927Hj1FRLg
+	 /Q98KWf+YdRqFtEfHBYdW9djy9ungsvtmcir9cg0oksaSN8WFDzZUTN5qwg6d4lB41
+	 9lEAlSl7ngKB125zq3sh1RNnsrtr4rW1F2fXsti15aoHwdupaXEQo3I8ekzWjG2rY/
+	 PVXp7vF7hwsNRM15gGimrNclXL0OpD25JtaZ9eh6qotGimsk2oEpOPDM16MOCIoZKa
+	 NHAA2SHf6QISQ==
+Received: from localhost (unknown [86.120.21.57])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8664D17E0290;
+	Sat, 30 Nov 2024 00:13:13 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Sat, 30 Nov 2024 01:13:01 +0200
+Subject: [PATCH] drm/bridge-connector: Prioritize supported_formats over
+ ycbcr_420_allowed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241130-bridge-conn-fmt-prio-v1-1-146b663f17f3@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAHxKSmcC/x2MQQqAMAzAviI9W1jVIfgV8aBbpz24SSciiH93e
+ EwgeSCzCmcYqgeUL8mSYgGqK3DbHFdG8YWhMU1H1BpcVHyxLsWIYT/xUEnoLPWOOtOzt1DSQzn
+ I/W/H6X0/4ipcB2YAAAA=
+X-Change-ID: 20241130-bridge-conn-fmt-prio-c517c1407ed5
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On November 29, 2024 8:26:51 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Fri, 29 Nov 2024 08:14:56 -0500
-> Paul Moore <paul@paul-moore.com> wrote:
->
->>> The issue appears to be a known GCC bug, though the root cause remains
->>> unclear at this time.
->>>
->>> A potential workaround has been proposed, which you can find here:
->>> https://lore.kernel.org/linux-hardening/202410171059.C2C395030@keescook/
->>>
->>> However, it seems that the patch has not yet been accepted into the mainline.
->>
->> I didn't pull that into the audit tree because it isn't a real patch.
->> Looking at it again on my phone before today's holiday stuff kicks off, I
->> don't have a problem with the workaround, but i do need to see it as a
->> proper patch with a commit description, sign off, etc. before I can merge it.
->
-> Yeah, from the comment I was expecting to see a proper patch.
+Bridges having the DRM_BRIDGE_OP_HDMI flag set in drm_bridge->ops are
+supposed to rely on drm_bridge->supported_formats bitmask to advertise
+the supported colorspaces, including HDMI_COLORSPACE_YUV420.  Therefore,
+the newly introduced drm_bridge->ycbcr_420_allowed flag becomes
+redundant in this particular context.
 
-So was I :). To be perfectly honest I was really expecting this to get 
-sorted with some compiler flag, workaround, etc. If we have to fix it by 
-hacking around it in the audit code that's okay (the hack looks pretty 
-minor) but it's not still a kludge.
+Moreover, when drm_bridge_connector gets initialised, only
+drm_bridge->ycbcr_420_allowed is considered in the process of adjusting
+the equivalent property of the base drm_connector, which effectively
+discards the formats advertised by the HDMI bridge.
 
->
->> For anyone who is going to put together a patch, please make it clear that
->> it is a compiler bug and provide the associated bug report links.
->
-> If it matters, with that patch applied, all my tests were able to
-> complete with success.
->
-> Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Handle the inconsistency by ignoring ycbcr_420_allowed for HDMI bridges
+and, instead, make use of the supported_formats bitmask when setting up
+the bridge connector.
 
-Thanks.
+Fixes: 3ced1c687512 ("drm/display: bridge_connector: handle ycbcr_420_allowed")
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+ drivers/gpu/drm/display/drm_bridge_connector.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---
-paul-moore.com
+diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
+index 320c297008aaa8b6ef5b1f4c71928849b202e8ac..b1bb937da85dbe1dcb1f5e5f621fb02647bcc793 100644
+--- a/drivers/gpu/drm/display/drm_bridge_connector.c
++++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+@@ -414,7 +414,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 	drm_for_each_bridge_in_chain(encoder, bridge) {
+ 		if (!bridge->interlace_allowed)
+ 			connector->interlace_allowed = false;
+-		if (!bridge->ycbcr_420_allowed)
++		if (!bridge->ycbcr_420_allowed && !(bridge->ops & DRM_BRIDGE_OP_HDMI))
+ 			connector->ycbcr_420_allowed = false;
+ 
+ 		if (bridge->ops & DRM_BRIDGE_OP_EDID)
+@@ -436,6 +436,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 
+ 			if (bridge->supported_formats)
+ 				supported_formats = bridge->supported_formats;
++
++			if (!(bridge->supported_formats & HDMI_COLORSPACE_YUV420))
++				connector->ycbcr_420_allowed = false;
++
+ 			if (bridge->max_bpc)
+ 				max_bpc = bridge->max_bpc;
+ 		}
 
-
+---
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+change-id: 20241130-bridge-conn-fmt-prio-c517c1407ed5
 
 
