@@ -1,117 +1,136 @@
-Return-Path: <linux-kernel+bounces-425433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39DF9DC1FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:12:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FCA09DC201
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:16:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77554163FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:12:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BE14B20E50
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22378189BBF;
-	Fri, 29 Nov 2024 10:12:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03E914C5B0;
-	Fri, 29 Nov 2024 10:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B49416A95B;
+	Fri, 29 Nov 2024 10:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g54yiayq"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6FA143C40
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732875150; cv=none; b=ZpFOMpixHlPGkXRzqu1XWotaaq6ALnUMci5GxfrY2hv3qJuWufZdQpmbGWRYVWUJ4d527blwhSDhvL9rYUzESU9Itq89gQH7gtlHwZ64ZHk9794s87Nm+/Sp10V7t5uBPOAtM+coyDD6dGLQ3m5A1vogvOvEd1CQ1WmvjgxK7VU=
+	t=1732875355; cv=none; b=hfRLVFIpbjQwImMhPiPD2eyxZbvo6mJQIMOUX1mnZ4oLYPosKXGcYzL/XsM1NKUqRvRJRtFaiw23xyM6GmwRKW+PnDKoZcbFVzbipWd7SG6bvDDZJ7kwyno+A3uf7cvE2WEOSb74XIKPKPRYLFhwSLosCTnxiZKz42VCqeD9cNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732875150; c=relaxed/simple;
-	bh=BbfwKC/iNlnC1+UA4VuHhTiKxEtxCvZTmSnAv525mqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CXJvQ/S/Nmw4owrVwMyH8RahOu+X/jOtOTt76rziQa4fwe+xELRaJZ9YECSg/g4AbAt0tJ6rX9s3t3Sy1dH1Y5Kz+84TrT+HIqYXdt/Vc0z/Y+hjZxYqSORmdTyWZOSHwhAh4S7iJWqBKm1g6XCuS0Otp01492nyx+PSgmWjatU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6EE1A12FC;
-	Fri, 29 Nov 2024 02:12:56 -0800 (PST)
-Received: from [192.168.2.88] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 674683F5A1;
-	Fri, 29 Nov 2024 02:12:24 -0800 (PST)
-Message-ID: <f7046fcc-91e3-434e-930c-10259b36a90b@arm.com>
-Date: Fri, 29 Nov 2024 11:12:15 +0100
+	s=arc-20240116; t=1732875355; c=relaxed/simple;
+	bh=LvRZHtwr7NQGBpmS83O3y5MSQ3yHx/Md4Sz0v6BSaNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eeuod6/OvMXmEpUUcLKFJDGdk6T5nRf24juZTMD0wo5tq2YjkHjrobKazgeq8hMzG/Qd/PjRavxckJ4vBkwrwLMN8X1iJtKenTJ1CiseWwSnLWXABFNuTPeVwvRrG0uvdg2C5JpFTfEiTg1PAspTjOEUeNXuaCPOWIVJMQ9zHdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=g54yiayq; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FT9P5mB6wZ+ilUmkcp5LzqjA3Y4z/iGrJD4SK4+4b7Q=; b=g54yiayqC/Fu+BEJl3RZ5QEmgf
+	ngJ85Lx3XqwI4/+qP0NncfRjdHAIYmYfxcKFNP87Rmuc2InU7+L5e/DFoDJ8ert/OLW6UejHfrhPu
+	CfAFiC0/SEw/nJ+gaYCe5c7pGmEub4snGCrR0x78UIAquMdToOa5qhhefF6AgsVYHWgnw5FiUBsGi
+	6sqlcnxkXGndvJDI3cXOYXs4bq7k5wFhIlKJ3LiN8OHEsLWwayHTsxikHfBLF8Q51iOXDfu56zVfO
+	1B01NoEtRU2lbl+1lOclUNSoLg16iRRX+w8tZy1Q0EQNky2vNc39mNL3iPkz4KXnt9FIZo1Slxc6i
+	hpqb4PPA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGy2G-00000003six-3vXF;
+	Fri, 29 Nov 2024 10:15:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BF4C630026A; Fri, 29 Nov 2024 11:15:41 +0100 (CET)
+Date: Fri, 29 Nov 2024 11:15:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Adam Li <adamli@os.amperecomputing.com>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	patches@amperecomputing.com, cl@linux.com, christian.loehle@arm.com,
+	vineethr@linux.ibm.com
+Subject: [PATCH] sched/fair: Untangle NEXT_BUDDY and pick_next_task()
+Message-ID: <20241129101541.GA33464@noisy.programming.kicks-ass.net>
+References: <20241127055610.7076-1-adamli@os.amperecomputing.com>
+ <20241127055610.7076-2-adamli@os.amperecomputing.com>
+ <670a0d54-e398-4b1f-8a6e-90784e2fdf89@amd.com>
+ <20241129095500.GD15382@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
- RUN_TO_PARITY and move them to sysctl
-To: Cristian Prundeanu <cpru@amazon.com>
-Cc: abuehaze@amazon.com, alisaidi@amazon.com, benh@kernel.crashing.org,
- blakgeof@amazon.com, csabac@amazon.com, doebel@amazon.com,
- gautham.shenoy@amd.com, joseph.salisbury@oracle.com, kprateek.nayak@amd.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-tip-commits@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
- x86@kernel.org
-References: <20241125113535.88583-1-cpru@amazon.com>
- <20241128103236.22777-1-cpru@amazon.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20241128103236.22777-1-cpru@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129095500.GD15382@noisy.programming.kicks-ass.net>
 
-On 28/11/2024 11:32, Cristian Prundeanu wrote:
+On Fri, Nov 29, 2024 at 10:55:00AM +0100, Peter Zijlstra wrote:
 
-[...]
+> Anyway..  I'm sure I started a patch series cleaning up the whole next
+> buddy thing months ago (there's more problems here), but I can't seem to
+> find it in a hurry :/
 
-> On 2024-11-26, Dietmar Eggemann wrote:
+There was this..
+
+---
+Subject: sched/fair: Untangle NEXT_BUDDY and pick_next_task()
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Fri Nov 29 10:36:59 CET 2024
+
+There are 3 sites using set_next_buddy() and only one is conditional
+on NEXT_BUDDY, the other two sites are unconditional; to note:
+
+  - yield_to_task()
+  - cgroup dequeue / pick optimization
+
+However, having NEXT_BUDDY control both the wakeup-preemption and the
+picking side of things means its near useless.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ kernel/sched/fair.c     |    4 ++--
+ kernel/sched/features.h |    9 +++++++++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5613,9 +5613,9 @@ static struct sched_entity *
+ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+ {
+ 	/*
+-	 * Enabling NEXT_BUDDY will affect latency but not fairness.
++	 * Picking the ->next buddy will affect latency but not fairness.
+ 	 */
+-	if (sched_feat(NEXT_BUDDY) &&
++	if (sched_feat(PICK_BUDDY) &&
+ 	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next)) {
+ 		/* ->next will never be delayed */
+ 		SCHED_WARN_ON(cfs_rq->next->sched_delayed);
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -32,6 +32,15 @@ SCHED_FEAT(PREEMPT_SHORT, true)
+ SCHED_FEAT(NEXT_BUDDY, false)
+ 
+ /*
++ * Allow completely ignoring cfs_rq->next; which can be set from various
++ * places:
++ *   - NEXT_BUDDY (wakeup preemption)
++ *   - yield_to_task()
++ *   - cgroup dequeue / pick
++ */
++SCHED_FEAT(PICK_BUDDY, true)
++
++/*
+  * Consider buddies to be cache hot, decreases the likeliness of a
+  * cache buddy being migrated away, increases cache locality.
+  */
 > 
->> SUT kernel arm64 (mysql-8.4.0)
->> (2) 6.12.0-rc4                -12.9%
->> (3) 6.12.0-rc4 NO_PLACE_LAG   +6.4%		
->> (4) v6.12-rc4  SCHED_BATCH    +10.8%
 > 
-> This is very interesting; our setups are close, yet I have not seen any 
-> feature or policy combination that performs above the 6.5 CFS baseline.
-> I look forward to seeing your results with the repro when it's ready.
-> 
-> Did you only use NO_PLACE_LAG or was it together with NO_RUN_TO_PARITY?
-
-Only NO_PLACE_LAG.
-
-> Was SCHED_BATCH used with the default feature set (all enabled)?
-
-Yes.
-
-> Which distro/version did you use for the SUT?
-
-The default, Ubuntu 24.04 Arm64 server.
-
->> Maybe a difference in our test setup can explain the different test results:
->>
->> I use:
->>
->> HammerDB Load Generator <-> MySQL SUT
->> 192 VCPUs               <-> 16 VCPUs
->>
->> Virtual users: 256
->> Warehouse count: 64
->> 3 min rampup
->> 10 min test run time
->> performance data: NOPM (New Operations Per Minute)
->>
->> So I have 256 'connection' tasks running on the 16 SUT VCPUS.
-> 
-> My setup:
-> 
-> SUT     - 16 vCPUs, 32 GB RAM
-> Loadgen - 64 vCPU, 128 GB RAM (anything large enough to not be a 
->  bottleneck should work)
-> 
-> Virtual users:  4 x vCPUs = 64
-> Warehouses:     24
-> Rampup:         5 min
-> Test runtime:   20 min x 10 times, each on 4 different SUT/Loadgen pairs
-> Value recorded: geometric_mean(NOPM)
-
-Looks like you have 4 times less 'connection' tasks on your 16 VCPUs. So
-much less concurrency/preemption ...
 
