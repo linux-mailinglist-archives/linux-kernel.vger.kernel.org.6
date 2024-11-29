@@ -1,92 +1,96 @@
-Return-Path: <linux-kernel+bounces-425705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4753A9DE95F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:29:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F869DE963
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:29:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB5A7B20FBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:29:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6875B2177E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA3A14601C;
-	Fri, 29 Nov 2024 15:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1032114658F;
+	Fri, 29 Nov 2024 15:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BrGnU19w"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ii6Z6PWp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7C8208CA;
-	Fri, 29 Nov 2024 15:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FD11448E0;
+	Fri, 29 Nov 2024 15:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732894151; cv=none; b=eJleWiXb4FLSgh41Ba+4XoRSVzlCMIjyktmHoHl4YzrwsLqZ6ieyxDb7JN4pfwIHwLjthWOYY8uwnirjp8BUD4eUYvwWYVxXlqXvhQr3RSKz97PB02yuYHdO0VZJdHd7HUmnMFLjUBhOvbS3jBUXRGpbroq72DrwMDqNuZGPy48=
+	t=1732894167; cv=none; b=cF1Wt2YlHuOuaER0lTGtRemiGTaWmuzXDaBqQH3cA8JtopcJr1sp8iB5ABmZ48ilBUPx9wo8ihCFTFR/kyWkQtX7VUoPliEDATKrdvoiJ9G6M+eqpAFyqcpUK5MLljS9u1KB05/U3DomU5vOVgsTsR8H8BMmu7Iivt2pHDDmCyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732894151; c=relaxed/simple;
-	bh=lfmDZAdOZcwsj0j9s3hNP6RbUmz5QvoDJrRmMvPJITI=;
+	s=arc-20240116; t=1732894167; c=relaxed/simple;
+	bh=gemHqc6nEYZsaj76pOy9Uu8PHBgdPrXwJF9PuGadYLI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7jj2eQHpTTuf3IsdU7f4MzFOq8Ukwi5r839vMfDorvtuEzhwFdY7k6Qd8/lLU34Vml+XOKsbcui1HjBSqE4NBqii77uELz/vBrzJjyT9zFQAg5bVLIfGbe/AzD5ZjzJR6bGFllqlmmjVcROX5ZtM6sQbA6cuT/xk8ufJKf+dEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BrGnU19w; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=MKLFyWXQI6exBSS0mW7Tm+wDxmLwRTvmq+HQx8mM2v4=; b=BrGnU19wKVt8sK1IDm0aNQuqcQ
-	ND3qjMakLiuVMAZUMNZl3bxzIbpQ+Jjx7F7EiIox+jWQ+V+M50ddJa9etJZM6ZxdY4DIoRwm1vuWj
-	hH8TS3C7yAm7/HWkFj/Af2bvDXO+QpiUwN057gzjqpFc5PQETwGPINpI9UMSdDO7quK0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tH2vX-00EmO0-Fm; Fri, 29 Nov 2024 16:29:03 +0100
-Date: Fri, 29 Nov 2024 16:29:03 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yijie Yang <quic_yijiyang@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWcQhgt7oLlsfnKiYiVASjnurq4zt9Q3LS6l4FE82lawCvZwOPXQ2ykVtOehCGLEx07aT0G1k9ZfS0qfQwatW+zTwLWmv2V1i37t35rR6K5zYodeLQ0a0mTTIpneBynqQSQtRkTIogVxn8qCeFxLdV5vnp31rM9bsDQo0/bdeY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ii6Z6PWp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E92EC4CECF;
+	Fri, 29 Nov 2024 15:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732894165;
+	bh=gemHqc6nEYZsaj76pOy9Uu8PHBgdPrXwJF9PuGadYLI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ii6Z6PWpgFnotEpHtJDL+pwmTDbL8kG6Vyjs8ff1Io8gJUYr11m50GX14dafdhVBk
+	 vSVjruUg1qpkHrXp0zkn82lGWi21eVQvOtCkYQakPQs8f1QrlPdj7JStfIf6FZnd5T
+	 BTPRsKHYARF0GK2pP4c6z/gc3QGrLtPBQ6vV5/r4MzDUZRP5lUV/9JN6ZER1XB2GDw
+	 q+6FbT/ylU1XuDFVtTk/WuFSBh+dHtKW4mT9wqDWxmW449Pkq4zON1flhTKWxkNxoi
+	 UHXM9IEfBppoi0KtevLTGmtwBTx2t2138lEM5rJRfRgUj5mZ7aVOBFw3u80nK3iQMJ
+	 jjpeq6+SowPgw==
+Date: Fri, 29 Nov 2024 15:29:21 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615-ride: Enable ethernet
- node
-Message-ID: <4a6a6697-a476-40f4-b700-09ef18e4ba22@lunn.ch>
-References: <20241118-dts_qcs615-v2-0-e62b924a3cbd@quicinc.com>
- <20241118-dts_qcs615-v2-2-e62b924a3cbd@quicinc.com>
- <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
- <89a4f120-6cfd-416d-ab55-f0bdf069d9ce@quicinc.com>
- <c2800557-225d-4fbd-83ee-d4b72eb587ce@oss.qualcomm.com>
- <3c69423e-ba80-487f-b585-1e4ffb4137b6@lunn.ch>
- <2556b02c-f884-40c2-a0d4-0c87da6e5332@quicinc.com>
- <75fb42cc-1cc5-4dd3-924c-e6fda4061f03@quicinc.com>
+	Denis Ciocca <denis.ciocca@st.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: iio: st-sensors: Re-add IIS2MDC magnetometer
+Message-ID: <20241129-dictation-outplayed-0a6a0844158f@spud>
+References: <20241129-stmagdt-v1-1-963f0347fb0a@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="8x+8u9VoME862kbh"
+Content-Disposition: inline
+In-Reply-To: <20241129-stmagdt-v1-1-963f0347fb0a@geanix.com>
+
+
+--8x+8u9VoME862kbh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <75fb42cc-1cc5-4dd3-924c-e6fda4061f03@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
 
-> I was mistaken earlier; it is actually the EMAC that will introduce a time
-> skew by shifting the phase of the clock in 'rgmii' mode.
+On Fri, Nov 29, 2024 at 03:54:42PM +0100, Sean Nyekjaer wrote:
+> "iio: st-sensors: Update ST Sensor bindings" accidentially dropped
+> the compatible for the IIS2MDC magnetometer.
+>=20
+> Fixes: 0cd71145803d ("iio: st-sensors: Update ST Sensor bindings")
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
 
-This is fine, but not the normal way we do this. The Linux preference
-is that the PHY adds the delays. There are a few exceptions, boards
-which have PHYs which cannot add delays. In that case the MAC adds the
-delays. But this is pretty unusual.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-If you decided you want to be unusual and have the MAC add the delays,
-it should not be hard coded. You need to look at phy-mode. Only add
-delays for rgmii-id. And you then need to mask the value passed to the
-PHY, pass PHY_INTERFACE_MODE_RGMII, not PHY_INTERFACE_MODE_RGMII_ID,
-so the PHY does not add delays as well.
+--8x+8u9VoME862kbh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	Andrew
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0nd0QAKCRB4tDGHoIJi
+0hSoAP99z6GkLqzidtt9MsGPQTs9Zyme4cGF5rWnbcoZ/87wYwD/Y/suo5mGJVhY
+3us36uOcTA98y73GMUKuAQ1DahbWbQM=
+=hAhQ
+-----END PGP SIGNATURE-----
+
+--8x+8u9VoME862kbh--
 
