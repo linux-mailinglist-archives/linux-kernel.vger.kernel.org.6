@@ -1,253 +1,167 @@
-Return-Path: <linux-kernel+bounces-425610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259A69DE7BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:37:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5AD9DE7BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:38:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75B92B20AE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:37:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8CFDB21449
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF20719E98A;
-	Fri, 29 Nov 2024 13:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72321A00ED;
+	Fri, 29 Nov 2024 13:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mQqpZley"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tDTm5dn4"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876461990C1
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FE41A00EE
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732887458; cv=none; b=Kzgw6IK3v3uhopEepsHiivmFCFWvJCVXNIyz6KGw/HLP73U2BuvushWWNuGL5tzr1Y/GPmvLnELI6pwWm9/IP6vHEacYFntPEUH4tIA4MW7i2LEwtGY5ZKQVmhHRMEg6Btpj7Yygu6S3VYLY4jvVeqKZRCttmlSax2oW6o5hR1U=
+	t=1732887464; cv=none; b=cUz7kWTP4ze3B9OONqN6mfDX7FbXKtR5myrIMeZ2ECCR9IsKLwZe46eUk4VvbSj+Pb4mM8GzfOe8jb04C3x8LaaBl0TO5AgS5OTnyb5f48QdmdIV9Da5dtVcmaV9w07XSW5uVwsLn6p/AvUdRtRT8M51wDO3BFQQe2oSbD2lb3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732887458; c=relaxed/simple;
-	bh=R2rjNShv5veEDBGPHePYhobrJs9IB4FV7Vw1BACRxt0=;
+	s=arc-20240116; t=1732887464; c=relaxed/simple;
+	bh=Q/b5bZKOnrnbzj1Sa34OqZxqSlQtXvdEoPTXurkSd+I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y4jx1k3Bb43ciVOBOJEKxiZwePhEa+b6NUk4tcgO6plpn3IIW4JeZSzLlW/+Wc7HN0snN4S0iOorbrNyfX1N5OUxC5D4ASt7ls4mTecsrL0y2+kCJydhGlNoEtWjQOJdFy2pPybIktaM0gOtMviy1/HIpCg4I3pUzmPm0vsEKr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mQqpZley; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-724d23df764so1686115b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:37:36 -0800 (PST)
+	 To:Cc:Content-Type; b=OhjgvLOIaSFuN3gQX5/MBGj5rOIkeomGnIRUXD3FiiQYHyZ1umpgvAiZE9Ubcg7r/CfA7sjKb0utVKTo4k3NEf6Dmped7BDUJAfT8mskoZ7H7hC2NY52s7PBHY0Qkq3SA5w29eVwWuiWPbjptni3dULzYWdNUf/RHKQX1BE8ZEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tDTm5dn4; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e3983426f80so958450276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:37:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732887456; x=1733492256; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732887461; x=1733492261; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tzqnSLR2tYzoidyvIFlVXcbBt6VVSOo2C3FzIud4FBg=;
-        b=mQqpZleyqbbTWiCvAexM+zW7acv3WXLZ/mLkuLPWmvP8qAb13AWSjynQF1gxoBDPmo
-         NUW+Ol3K6ehA/990zIdjpoS28nmRgby4R//d6bEkDAaxry9uDOsIrcAB+DlFvYJf107l
-         qBSLuJfQDOOIev04/muVZnI0urOKIw9vGpn7A=
+        bh=58OMzBUym1v3QZatsP+eIIFv2sSi0+p3zj755X8dJ8Q=;
+        b=tDTm5dn4d+cmD8wUHJCieqPT6mR37pEHyw7ungwsJEfHDx/Ma3wY4e6wDeY6It9Jc9
+         JNJLvZhECYIzmHMGzdSHsP2l2jLE0+f7ox9cw9RFr7UQYCwRMfl+9nhbpGKkcLqZ91ow
+         YX9T//dmkhU7ypWh328Wi6G1Eo+d0DEmyqgAS1jMRSFNPAuv3B4Y3+qClpQY3R/fgku6
+         M8boZJZQAVFc8BChTV3tJy9TVXEEjSuDYFJaWzdBkMJtktv89O1rvXF9TRRhIrFWBMVH
+         H0HUprj2Rfwn05LCoFYFrM+Ng8e4d3zmi9oTOUHFw3yzIo0GXy1mZPScBw7syzEHmWii
+         ag+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732887456; x=1733492256;
+        d=1e100.net; s=20230601; t=1732887461; x=1733492261;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tzqnSLR2tYzoidyvIFlVXcbBt6VVSOo2C3FzIud4FBg=;
-        b=Wbc1Pq8EKUpyuN8RUCtCCXd/TuQZy/ytmkWRvlgttdzbld/mQN7UAd/lfLWDhjyMHy
-         zbZQL9HjzVyKBvS6sXcZ+9GXLjePdw5GnyEFyX96jVZvchFY9hukfQWLXLp0Tm2RVlK/
-         2YNU2QjDde5gRkCCo1Peh7TZamxDz9rnj5Gc6N0kztB1L7qqZxGu4yn1kNO77gZfZps4
-         85J8RCIizzUfpMihLMfMzsl0UYGU1QtLZz9J302Tn3PdXfe5+MZmshXnEsWpWyKmbV7Q
-         hNnC0ZmeEJOWa+2MUJaGHvXOhqYrT8fHaN6J0txnBM7KERd+KMo2C2EPTTHKDH5YdB58
-         dXMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAm0A/+mFly94czVPaFwtFA+6N+qr8zbmlHVcTyhu0bIsJ8n69pKczFSbpbDPIRI11RmlVv0VRUycZzkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYa/WFWrbiuP4ua1YvKr4wmraRFGDOkwt58tcx5VYmoVSrLehS
-	aE8q8HCqBctIlciMqMsYsKYLDBrOVZ1+oq0JAq536Qg/GUm2gVwG7tMBVLRsptlXW+c1SsXZ8Kk
-	=
-X-Gm-Gg: ASbGncuxrpvfQZx1pWUBR2EkdIwuG/IccpsDWNm2LnDWf/bF0dyByrYevfwAiwESofu
-	ynBQ8vxrm90WXaARcfXT9PNJQGqQu+rekeexLfE9IEcAtc+YObkW2q67GzSjQl0Q64v0PPrexqV
-	M1N5WscgRxLPeEC4mErVILYQ0ZZHQ1tu/cVmsfx0xMxwvpMYSN9LDwEVyl7W71sEUm50ga1AJYk
-	90FZwu2lcVH2KRa7Kgkb4BHVVDMCKVsUxkIReFgGBtfy3xhVQ0TPyFuQEDPSupjSCjVB4LTah+6
-	BmI0cTygthWp
-X-Google-Smtp-Source: AGHT+IGiquGv055E9kLu6r5ndLlfc4XVFaG2DSKCsv4MWszx18j1Q7eBM0P8KyUdUXLL9wj//xtgAw==
-X-Received: by 2002:a05:6a00:1396:b0:724:62b3:58da with SMTP id d2e1a72fcca58-72530043fe3mr16098931b3a.6.1732887455424;
-        Fri, 29 Nov 2024 05:37:35 -0800 (PST)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com. [209.85.216.41])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254176150dsm3544825b3a.23.2024.11.29.05.37.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 05:37:34 -0800 (PST)
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ea8b039ddcso1342521a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:37:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUlwTXnL4GvVaBaul04/CKqb5hihDLyW0IkxuK4FDinbrObcj99Sp5S8NbOFkLrfgwPtWY6togyH4Xfvdg=@vger.kernel.org
-X-Received: by 2002:a17:90b:1d81:b0:2ea:4e9e:df87 with SMTP id
- 98e67ed59e1d1-2ee08eb62b0mr14233938a91.19.1732887453826; Fri, 29 Nov 2024
- 05:37:33 -0800 (PST)
+        bh=58OMzBUym1v3QZatsP+eIIFv2sSi0+p3zj755X8dJ8Q=;
+        b=f90qL85DSr5j/vX+2CQLy/WpYGX3IAEWfKwsFp+Z0FQUPd83fAAMh3V5BX/xdYYIC9
+         1GUAtCAxBRmr5lDOPjstx4eewUjS6BVI6Puaxgo0AkGc7nBBC78zB5THnB9646ReDZ/U
+         nCmg+AkDcByYRMeD2rpS8spVioE4zeo5SXkZf2WJ0Ph9sXsIrHpcpXAaQBbF/YIqoWrl
+         PTfDhB95GDU7lfrX0lS2KqCjfcNaV6yvfoTr1umQhKm4LgrEUuF4sAkqNCweKh1rbu6l
+         dc+XMQDfmIyxWRk3zqwEJMtLgbsTmebrIZ2a8Im7WMKg4ydyipYj3GgjbIOsZbEgjwCR
+         oCoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiSSkm4Byf9riWVOC4EcdvYGGnOQXW/qSf7L6fDr1C2vERDhEVk3e8dv9HU6rV285qlg6zRfOpq4Kd2rw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCmSlZiOmPTMcK/OC7izlRiKZQcHMhxg2FfM+9PfUpK15N5qpY
+	Af4JnE9w8XVv5eGPqmeKomAvxurgkdGE2fKKl6hXoiTnDsjsuoOidxGbN4qn5E1jQVwPWOVNRMS
+	VnY7RPqRaB7WyqQCISaTRzY4kHKK3FsqBB0Aefg==
+X-Gm-Gg: ASbGncuPMWpXE2G/uKe9TVBW3tglZj0AmOguRIjz/CJOsdTDvLgpFgrdyI9ADCAPIpX
+	+tmq7aUsRLt00b83C1GOXyNgayE0uqeo=
+X-Google-Smtp-Source: AGHT+IFrkQj4k5kVrrQDIL9m2/Jvz3+WCa9PDtXeRIXqBRMzU6Wvt9L6VaM1TYObS+1ILE0ANh43T1BRSKVu2mYCPeA=
+X-Received: by 2002:a05:6902:f84:b0:e38:b6be:1d58 with SMTP id
+ 3f1490d57ef6-e395b893aaemr14088801276.21.1732887461424; Fri, 29 Nov 2024
+ 05:37:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
- <20241127-uvc-fix-async-v2-2-510aab9570dd@chromium.org> <20241128222232.GF25731@pendragon.ideasonboard.com>
- <CANiDSCvyMbAffdyi7_TrA0tpjbHe3V_D_VkTKiW-fNDnwQfpGA@mail.gmail.com>
- <20241128223343.GH25731@pendragon.ideasonboard.com> <7eeab6bd-ce02-41a6-bcc1-7c2750ce0359@xs4all.nl>
- <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
- <20241129110640.GB4108@pendragon.ideasonboard.com> <e6eeb2fc-7951-4ef2-afc5-5147d78ec2e8@xs4all.nl>
-In-Reply-To: <e6eeb2fc-7951-4ef2-afc5-5147d78ec2e8@xs4all.nl>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 29 Nov 2024 14:37:21 +0100
-X-Gmail-Original-Message-ID: <CANiDSCsVdv2dE4jtkVD0Xk2ji=tGPH6zNAHWCwxUHKv6i==RTg@mail.gmail.com>
-Message-ID: <CANiDSCsVdv2dE4jtkVD0Xk2ji=tGPH6zNAHWCwxUHKv6i==RTg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
- by other fh
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, 
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
+ <20241127-mdss_qcs8300-v1-3-29b2c3ee95b8@quicinc.com> <nllulh3vskl3hm3hvjux4khxtanqj7cpoytodwkzphwn4ajmo7@g46rgnhp637b>
+ <4b4a7609-0d9e-4b52-9193-a79583419902@quicinc.com>
+In-Reply-To: <4b4a7609-0d9e-4b52-9193-a79583419902@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 29 Nov 2024 15:37:35 +0200
+Message-ID: <CAA8EJprGLfa2H1VMAG7uYJOEUyf9aMbC9-V6Q_J-pDz4pGV1yQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] drm/msm: mdss: Add QCS8300 support
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Ritesh Kumar <quic_riteshk@quicinc.com>, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 29 Nov 2024 at 14:10, Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+On Fri, 29 Nov 2024 at 11:56, Yongxing Mou <quic_yongmou@quicinc.com> wrote:
 >
-> On 29/11/2024 12:06, Laurent Pinchart wrote:
-> > On Fri, Nov 29, 2024 at 11:59:27AM +0100, Ricardo Ribalda wrote:
-> >> On Fri, 29 Nov 2024 at 11:36, Hans Verkuil wrote:
-> >>> On 28/11/2024 23:33, Laurent Pinchart wrote:
-> >>>> On Thu, Nov 28, 2024 at 11:28:29PM +0100, Ricardo Ribalda wrote:
-> >>>>> On Thu, 28 Nov 2024 at 23:22, Laurent Pinchart wrote:
-> >>>>>>
-> >>>>>> Hi Ricardo,
-> >>>>>>
-> >>>>>> (CC'ing Hans Verkuil)
-> >>>>>>
-> >>>>>> Thank you for the patch.
-> >>>>>>
-> >>>>>> On Wed, Nov 27, 2024 at 12:14:50PM +0000, Ricardo Ribalda wrote:
-> >>>>>>> If a file handle is waiting for a response from an async control, avoid
-> >>>>>>> that other file handle operate with it.
-> >>>>>>>
-> >>>>>>> Without this patch, the first file handle will never get the event
-> >>>>>>> associated with that operation, which can lead to endless loops in
-> >>>>>>> applications. Eg:
-> >>>>>>> If an application A wants to change the zoom and to know when the
-> >>>>>>> operation has completed:
-> >>>>>>> it will open the video node, subscribe to the zoom event, change the
-> >>>>>>> control and wait for zoom to finish.
-> >>>>>>> If before the zoom operation finishes, another application B changes
-> >>>>>>> the zoom, the first app A will loop forever.
-> >>>>>>
-> >>>>>> Hans, the V4L2 specification isn't very clear on this. I see pros and
-> >>>>>> cons for both behaviours, with a preference for the current behaviour,
-> >>>>>> as with this patch the control will remain busy until the file handle is
-> >>>>>> closed if the device doesn't send the control event for any reason. What
-> >>>>>> do you think ?
-> >>>>>
-> >>>>> Just one small clarification. The same file handler can change the
-> >>>>> value of the async control as many times as it wants, even if the
-> >>>>> operation has not finished.
-> >>>>>
-> >>>>> It will be other file handles that will get -EBUSY if they try to use
-> >>>>> an async control with an unfinished operation started by another fh.
-> >>>>
-> >>>> Yes, I should have been more precised. If the device doesn't send the
-> >>>> control event, then all other file handles will be prevented from
-> >>>> setting the control until the file handle that set it first gets closed.
-> >>>
-> >>> I think I need a bit more background here:
-> >>>
-> >>> First of all, what is an asynchronous control in UVC? I think that means
-> >>> you can set it, but it takes time for that operation to finish, so you
-> >>> get an event later when the operation is done. So zoom and similar operations
-> >>> are examples of that.
-> >>>
-> >>> And only when the operation finishes will the control event be sent, correct?
-> >>
-> >> You are correct.  This diagrams from the spec is more or less clear:
-> >> https://ibb.co/MDGn7F3
-> >>
-> >>> While the operation is ongoing, if you query the control value, is that reporting
-> >>> the current position or the final position?
-> >>
-> >> I'd expect hardware will return either the current position, the start
-> >> position or the final position. I could not find anything in the spec
-> >> that points in one direction or the others.
+>
+>
+> On 2024/11/27 21:46, Dmitry Baryshkov wrote:
+> > On Wed, Nov 27, 2024 at 03:05:03PM +0800, Yongxing Mou wrote:
+> >> Add Mobile Display Subsystem (MDSS) support for the QCS8300 platform.
 > >
-> > Figure 2-21 in UVC 1.5 indicates that the device should STALL the
-> > GET_CUR and SET_CUR requests if a state change is in progress.
+> > Please mention, why do you need it at all. I see that the UBWC swizzle
+> > and HBB settings are different. Is this really the case? Is it because
+> > of the different memory being used on those platforms?
 > >
-> >> And in the driver I believe that we might have a bug handling this
-> >> case (will send a patch if I can confirm it)
-> >> the zoom is at 0 and you set it 10
-> >> if you read the value 2 times before the camera reaches value 10:
-> >> - First value will come from the hardware and the response will be cached
-> >
-> > Only if the control doesn't have the auto-update flag set, so it will be
-> > device-dependent. As GET_CUR should stall that's not really relevant,
-> > except for the fact that devices may not stall the request.
->
-> OK, that helps a lot.
->
-> If an operation is in progress, then setting a new control value should
-> result in -EBUSY. Based on the description above, I gather that even the
-> same fh that made the request cannot update it while the operation is
-> ongoing?
+> Thanks, will modify the comment to add more information .QCS8300 UBWC
+> setting is quite different with SA8775P,it use different memory,so their
+> recommended configurations are not quite the same.this is really setting.
 
-That is correct according to the spec. But both Laurent (correct me if
-I am wrong) and me suspect that there are devices that do not
-implement this properly.
+We had several cases where the platform should be using different HBB
+if it uses different memory type. Is that the case here? If so, rather
+than adding another compat entry please extend the msm_mdss to read
+memory type and select HBB based on that. This will also fix several
+TODO items in the driver.
 
+As a side note, I see that your config has different ubwc_swizzle. If
+that's actually different, then maybe you are right and there should
+be a separate entry.
 
->
-> Getting the control should just return the value that was set. I assume
-> that is cached in uvc?
-
-If I get the code right... we only return the cached value when the
-field "loaded" is true. That happens when we read the device. So if
-the driver is just loaded
-
-write(full controlA)
-read(full controlA)
-read(full controlA)
-
-The first read will get the value from the hardware, the second will be cached.
-
-
->
-> Regards,
->
->         Hans
->
-> >
-> >> - Second value will be the cached one
 > >>
-> >> now the camera  is at zoom 10
-> >> If you read the value, you will read the cached value
+> >> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> >> ---
+> >>   drivers/gpu/drm/msm/msm_mdss.c | 11 +++++++++++
+> >>   1 file changed, 11 insertions(+)
 > >>
-> >>> E.g.: the zoom control is at value 0 and I set it to 10, then I poll the zoom control
-> >>> value: will that report the intermediate values until it reaches 10? And when it is
-> >>> at 10, the control event is sent?
-> >>>
-> >>>>>>> Cc: stable@vger.kernel.org
-> >>>>>>> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
-> >>>>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> >>>>>>> ---
-> >>>>>>>  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++++
-> >>>>>>>  1 file changed, 4 insertions(+)
-> >>>>>>>
-> >>>>>>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> >>>>>>> index b6af4ff92cbd..3f8ae35cb3bc 100644
-> >>>>>>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> >>>>>>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> >>>>>>> @@ -1955,6 +1955,10 @@ int uvc_ctrl_set(struct uvc_fh *handle,
-> >>>>>>>       if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
-> >>>>>>>               return -EACCES;
-> >>>>>>>
-> >>>>>>> +     /* Other file handle is waiting a response from this async control. */
-> >>>>>>> +     if (ctrl->handle && ctrl->handle != handle)
-> >>>>>>> +             return -EBUSY;
-> >>>>>>> +
-> >>>>>>>       /* Clamp out of range values. */
-> >>>>>>>       switch (mapping->v4l2_type) {
-> >>>>>>>       case V4L2_CTRL_TYPE_INTEGER:
+> >> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
+> >> index b7bd899ead44bf86998e7295bccb31a334fa6811..90d8fe469d3134ec73f386153509ac257d75930a 100644
+> >> --- a/drivers/gpu/drm/msm/msm_mdss.c
+> >> +++ b/drivers/gpu/drm/msm/msm_mdss.c
+> >> @@ -568,6 +568,16 @@ static const struct msm_mdss_data qcm2290_data = {
+> >>      .reg_bus_bw = 76800,
+> >>   };
+> >>
+> >> +static const struct msm_mdss_data qcs8300_data = {
+> >> +    .ubwc_enc_version = UBWC_4_0,
+> >> +    .ubwc_dec_version = UBWC_4_0,
+> >> +    .ubwc_swizzle = 6,
+> >> +    .ubwc_static = 1,
+> >> +    .highest_bank_bit = 3,
+> >> +    .macrotile_mode = 1,
+> >> +    .reg_bus_bw = 74000,
+> >> +};
+> >> +
+> >>   static const struct msm_mdss_data sa8775p_data = {
+> >>      .ubwc_enc_version = UBWC_4_0,
+> >>      .ubwc_dec_version = UBWC_4_0,
+> >> @@ -715,6 +725,7 @@ static const struct of_device_id mdss_dt_match[] = {
+> >>      { .compatible = "qcom,mdss" },
+> >>      { .compatible = "qcom,msm8998-mdss", .data = &msm8998_data },
+> >>      { .compatible = "qcom,qcm2290-mdss", .data = &qcm2290_data },
+> >> +    { .compatible = "qcom,qcs8300-mdss", .data = &qcs8300_data },
+> >>      { .compatible = "qcom,sa8775p-mdss", .data = &sa8775p_data },
+> >>      { .compatible = "qcom,sdm670-mdss", .data = &sdm670_data },
+> >>      { .compatible = "qcom,sdm845-mdss", .data = &sdm845_data },
+> >>
+> >> --
+> >> 2.34.1
+> >>
 > >
 >
 
 
---
-Ricardo Ribalda
+-- 
+With best wishes
+Dmitry
 
