@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-425655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D449DE887
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:30:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1289DE889
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E003328278F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:30:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B6E28143F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A510B137776;
-	Fri, 29 Nov 2024 14:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5A2136E3F;
+	Fri, 29 Nov 2024 14:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TiaZ+6LR"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A415C22F11;
-	Fri, 29 Nov 2024 14:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CKwAPGzY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5085522F11;
+	Fri, 29 Nov 2024 14:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732890629; cv=none; b=jdm3l4sb0KJsykZlju/0jFpRpFM5HWk6ghsLcrto55wsZ6+ExFqlkZTjPHTSsPmIMfAtTLXcpK15C/GG7pL8F9mon12sblFqZV4FnxzPTroEVXCsyaJG46w0ysxt2vHfD+EeoV6RzCRxdFbp73CQ771rpSukkjWk6rwCPm2RG4I=
+	t=1732890786; cv=none; b=Hp6i3R2pxF/JD3zieJLdJSRi4UHv6hbEP5P+qcbLoMzT/Vb6JaVaH1BX/16nA+ebo+HI57uksgg8nyGg5RNib6YzV29dPUowPYZOuE3AkRn7OyEW5y2nvgIcpMnvw/5vAmE7zS3xTv2AsWoYz2wIkuXokkzyqNtTfq6FGSD/tH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732890629; c=relaxed/simple;
-	bh=mI5lNGIrvnI0wLhpmyliPfoiK6Sq0DOPlU9HeeBbUv8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GQdKgGh6nF0eJcObTfrkhjTr+rD8cBq4TpLVKs5ZoQKTzhOhyTs4qx8feWHHhMk+5KX5rB+hnHCKNKWjxBfVgdQNo8mbpGCJvtg1oaX+xudNQyvyxxnyUDylJ84Q+bps1rcarr6VhuTPLHqNS7nUUYUKNU7SCvJ4Ev7jenejwgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TiaZ+6LR; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 21D7F2053077;
-	Fri, 29 Nov 2024 06:30:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 21D7F2053077
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1732890626;
-	bh=H1vVof/2pGhOEr3SPl2kANibaYCZWE2/N5q2dIXVdV8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TiaZ+6LRwZ7YFh9p7IDMuGe+3Z6kp0kXBnNaVP6yxnu2W0mQq1KAspKAfOYqNSKf+
-	 ufcEerFLuFrsI2IJP8L//soQPP9mK8vEswV/X0oyphYW5iIMK4WEusuu1u5XGrBAM1
-	 HOiQfbKoWIudkE9IMaooc4A/prj5NYE31ai0v650=
-From: Saurabh Sengar <ssengar@linux.microsoft.com>
-To: bhelgaas@google.com,
-	kwilczynski@kernel.org,
-	bartosz.golaszewski@linaro.org,
-	manivannan.sadhasivam@linaro.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ssengar@microsoft.com
-Subject: [PATCH] PCI/pwrctrl: Check the device node exist before device removal
-Date: Fri, 29 Nov 2024 06:30:21 -0800
-Message-Id: <1732890621-19656-1-git-send-email-ssengar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1732890786; c=relaxed/simple;
+	bh=aGePj3CE+a0I6TCzKfUqgDFGuS1dTrq84ngngdtKKng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8npmOpU0ocjbVIzgwj9XJXKo9z981evGIhty4A/UvtR5uBodHvkM4HSk+acs1hLil7UIWGlM+Q0YoI2mo5gjjN8YCzs02DknEuYmK0YeX6Oey9jGep4lYnK+F1VCA6qqpCXYKyb7TLrSpB/w/dUJO+HVC6s4rzahBxiaBc+Jgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CKwAPGzY; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732890785; x=1764426785;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aGePj3CE+a0I6TCzKfUqgDFGuS1dTrq84ngngdtKKng=;
+  b=CKwAPGzYQ9urewlwn3yvDBYEHPMaPvPdOhh3z22bn9dQv7TTJ0nzl/i6
+   bmns5m4L/uXewnaB47XHWpn2DXTpgDkqKAIdirnc8m3IJULL+VaYtLr76
+   7GUAcMjFDlAg49WXWZyvpsVZbtkTqrBN+xIDMZIe6oQGtoCGgimPnmNbA
+   /3GwZoVgWzZhJ+V9NS7LCUhT/GzablBEHRXs8hneczOUxZDzNUIox5WzT
+   Yq17f7hpIXxXL3p3N9z00Z516YsKVs12O0P92g7vHig6Vs8VZa8jrWh4O
+   UYg7h0IVI/qJhXaK5iWvjPCBXvTaSHcGWILyLcLatPikgVdroRlkxBoYB
+   A==;
+X-CSE-ConnectionGUID: /OzmUocqTUiOeehIVSrnzw==
+X-CSE-MsgGUID: 4Tsj6pTNS3+IFGg/4XKoIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="58534629"
+X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
+   d="scan'208";a="58534629"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 06:33:04 -0800
+X-CSE-ConnectionGUID: lz8MS0gdRke11032lSCs0w==
+X-CSE-MsgGUID: nciqehnjSKmlPK93kyF/pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
+   d="scan'208";a="97606207"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 06:33:02 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tH23H-00000002GLO-45X0;
+	Fri, 29 Nov 2024 16:32:59 +0200
+Date: Fri, 29 Nov 2024 16:32:59 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] iio: chemical: bme680: add power management
+Message-ID: <Z0nQm_HX326_xcSu@smile.fi.intel.com>
+References: <20241128193246.24572-1-vassilisamir@gmail.com>
+ <20241128193246.24572-4-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128193246.24572-4-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-There can be scenarios where device node is NULL, in such cases
-of_node_clear_flag accessing the _flags object will cause a NULL
-pointer dereference.
+On Thu, Nov 28, 2024 at 08:32:46PM +0100, Vasileios Amoiridis wrote:
+> Add runtime power management to the device.
 
-Add a check for NULL device node to fix this.
+...
 
-[  226.227601] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000c0
-[  226.330031] pc : pci_stop_bus_device+0xe4/0x178
-[  226.333117] lr : pci_stop_bus_device+0xd4/0x178
-[  226.389703] Call trace:
-[  226.391463]  pci_stop_bus_device+0xe4/0x178 (P)
-[  226.394579]  pci_stop_bus_device+0xd4/0x178 (L)
-[  226.397691]  pci_stop_and_remove_bus_device_locked+0x2c/0x58
-[  226.401717]  remove_store+0xac/0xc8
-[  226.404359]  dev_attr_store+0x24/0x48
-[  226.406929]  sysfs_kf_write+0x50/0x70
-[  226.409553]  kernfs_fop_write_iter+0x144/0x1e0
-[  226.412682]  vfs_write+0x250/0x3c0
-[  226.415003]  ksys_write+0x7c/0x120
-[  226.417827]  __arm64_sys_write+0x28/0x40
-[  226.420828]  invoke_syscall+0x74/0x108
-[  226.423681]  el0_svc_common.constprop.0+0x4c/0x100
-[  226.427205]  do_el0_svc+0x28/0x40
-[  226.429748]  el0_svc+0x40/0x148
-[  226.432295]  el0t_64_sync_handler+0x114/0x140
-[  226.435528]  el0t_64_sync+0x1b8/0x1c0
+> +	struct bme680_data *data = iio_priv(indio_dev);
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	int ret;
+> +
+> +	pm_runtime_get_sync(dev);
+> +	ret = __bme680_read_raw(indio_dev, chan, val, val2, mask);
 
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Krzysztof Wilczyński <kwilczynski@kernel.org>
-Fixes: 681725afb6b9 ("PCI/pwrctl: Remove pwrctl device without iterating over all children of pwrctl parent")
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
----
- drivers/pci/remove.c | 3 +++
- 1 file changed, 3 insertions(+)
+Does it make sense to read something if previous call failed?
+Most likely you wanted to use
 
-diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-index 963b8d2855c1..474ec2453e4b 100644
---- a/drivers/pci/remove.c
-+++ b/drivers/pci/remove.c
-@@ -21,6 +21,9 @@ static void pci_pwrctrl_unregister(struct device *dev)
- {
- 	struct platform_device *pdev;
- 
-+	if (!dev_of_node(dev))
-+		return;
-+
- 	pdev = of_find_device_by_node(dev_of_node(dev));
- 	if (!pdev)
- 		return;
+
+	ret = pm_runtime_resume_and_get(dev)
+	if (ret)
+		return ret;
+
+	ret = __bme680_read_raw(indio_dev, chan, val, val2, mask);
+
+> +	pm_runtime_mark_last_busy(dev);
+> +	pm_runtime_put_autosuspend(dev);
+> +
+> +	return ret;
+
+...
+
+> +static int bme680_write_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int val, int val2, long mask)
+
+Ditto.
+
+...
+
+> +{
+> +	struct bme680_data *data = iio_priv(indio_dev);
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +
+> +	pm_runtime_get_sync(dev);
+
+No error check?
+
+> +	return 0;
+> +}
+
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
