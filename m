@@ -1,317 +1,240 @@
-Return-Path: <linux-kernel+bounces-425699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E51B9DE93F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:21:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9BE9DE944
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:21:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F4E32825BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3D6E1610E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062381448E0;
-	Fri, 29 Nov 2024 15:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF65E5A4D5;
+	Fri, 29 Nov 2024 15:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="O+NpLIVd"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2050.outbound.protection.outlook.com [40.107.21.50])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mHTC/nPp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA5B5A4D5;
-	Fri, 29 Nov 2024 15:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732893661; cv=fail; b=fvfnUIyhn/7e2LqQHJ8dhS262ikOPWZ4BsdeCbEhqUq2k5UQQ26bFXLFgZmI1NiNxU6zzmdjZwL1GVvUmYrxukbs6WP0eotRUjl5/2QFONR20g8YzhBuJqBEN8BjqEtyUpzp14df0vilerKZlJMeqYmhQotv3+X5VIAsNCOkjLQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732893661; c=relaxed/simple;
-	bh=GbBRxm4KnDEG4JE+0uhyzXaq0o4NcIhyj94nDnfoqCg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=M/GMDPrrWjZMIhJ1BKN1pCMA3WBCzGhz4TQNxClZfdc0niP1hpoBVQaYCiMtSkqxR0592q6Ni/fsf31b8J0X6JF+DkqLtJfO3Ik77U63VcGCj2UwCbpdwQCzMc6Jm3B1lLW03ZISvUg5jTnvFpP7ImWxGJ6ysZ3PaAgxyvTEqoE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=O+NpLIVd; arc=fail smtp.client-ip=40.107.21.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZFedZU1BhzvL2Cv7xk5LsqdT9tCv6eFdo0Y5VjJEznCoYhiwlT2uXwUycF/dXKVbPbXgLQMCCTTW70rlSVs1vVMkisrxJyle2hSSftukHH7b4l4s0J4g+mVKIAOT53W7aVYQPF87xtI8dIzrDbwJOurpi17JrIlwqEuuGGhViUYm5aRhhNtIMQ8CKdS0Lt9bgacuRlXca5YCmMEKBWCBH6tN5CLJWlhFwFdDa+FFgMnu2XqYYf7BJyRH2BfL1CZodRv9ySeJqpcgh/Qve4lMq7ghA+uE2oBtdCqYRpeyEItrAOM7tQV1AkURl3ZDxwjUDPhgxVMj1GWsWIutOKYyNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=piGrOQlo2LHk2kF3Tl0WRYmo5DpLtV5NLqCoeLqiQrg=;
- b=P2zOuRmOaR+hWDqt61wXQ5CNlyj+pGTUScC7mbQX14RJ6Wtw+n89D+jTHPdiBlzJA36ATyLWljZ7rw6OOEL/oXvjv+7ySqG7LzoLe+ghtNgZVadWGDQ4ZE1LdCaQlLx3p0u96enHDmTdaNSlleQi3jLl7OOeCxSChwyl63c+aALxpS2vuC3iIsywcnYgU2gJm/RfGHE9rXGk6ADkpFiilqRqJoYn4z4d2ctteNTL4oVB/k1v1eyPrQJahdtnrsZ8iGkj13B7W54dimyHveEihrJJ7p6rI6icUac9MkbnlFdDfE4l+C41PY1BgK4tCJBjQ3UG1KvO51FDri0ckbtscA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=piGrOQlo2LHk2kF3Tl0WRYmo5DpLtV5NLqCoeLqiQrg=;
- b=O+NpLIVdRNYgd711BHQfhp3hCI+VnogDBQ1ut/UBIIhdXmVk8zxhsvQ6DNBDaowHiEIXYeq4zuKlCrSoS92HSbHjhRkg/gHEKgT8aYGN5NpOwpLTUQYwevlx9l0ENIYMgn/wR2ulbQ0DZV7k1MaCO58Cf/heeIS46dVbJAz8E2fnkw6QNsrJpokIHiKeevOJoHzIWPB/nJfCUhmKnWPO5pCllMk7qcv/Gq7nTXFpxHDm2OUV4ulguPwIMFXVRt/rgmb5Iw4q+HZhJrTww4oEyNbXfrWVh0EcnUPMhHNMximj4f7Ws7DbJjYA0pBrFeq0NDs0I7UQt3cIVj6eDkge0A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
- by AS8PR04MB9175.eurprd04.prod.outlook.com (2603:10a6:20b:44a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.14; Fri, 29 Nov
- 2024 15:20:54 +0000
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd%6]) with mapi id 15.20.8207.010; Fri, 29 Nov 2024
- 15:20:54 +0000
-Message-ID: <72258a57-6c65-4885-af00-0f18f27239e8@oss.nxp.com>
-Date: Fri, 29 Nov 2024 17:20:31 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3 SoC
- support
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- NXP S32 Linux <s32@nxp.com>, imx@lists.linux.dev,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>
-References: <20241129142535.1171249-1-ciprianmarian.costea@oss.nxp.com>
- <20241129142535.1171249-2-ciprianmarian.costea@oss.nxp.com>
- <20241129-ancient-sloth-of-bloom-077ab2-mkl@pengutronix.de>
-Content-Language: en-US
-From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-In-Reply-To: <20241129-ancient-sloth-of-bloom-077ab2-mkl@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM8P190CA0027.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:219::32) To DU0PR04MB9251.eurprd04.prod.outlook.com
- (2603:10a6:10:352::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A1F208D7
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732893709; cv=none; b=emPeGNT678PrbtCY0UQcit35+tCg9S2FoWGCYS0FAHBXIM/fF/ddhdCTAztR+3fmEA/VK5unc0iLX4Lp1K+CpUPkhijCFEJYjoXeZYJIxSpbV7KfEPDmhc778pRonoyjp6RdYinexO/WBRU8O98aoN+7hG8TdIncgNus5MLgT5s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732893709; c=relaxed/simple;
+	bh=iMdEUPork4q238ileCpoenp6O4BbjBJRGZm+6y+TZVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n1jFHFRE6iMSMs8M+MIJXBA1PML6eStA8wlKnCKx1CsNbEm42yf/y/hqsZEY8Q7sBF3YzhivJup6VlZ9FJUYt3+fK7ZfamtjQVcIj5GhO8FZvEz1SAd+C2QgFHGb9Mh6vlhfn+XAOvxfgiF5/bkh0Gw5RCACZjsShj+oJkgYSF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mHTC/nPp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ATCcORH026100
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:21:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IJ5mIRsH3o55KXnabuNYt4mdIaB82lRdAStGmMYH8Ps=; b=mHTC/nPpbmztynUd
+	6C3NhK5OlOdVnYswxs2VRl+6zV6i5RC9FMf78gOBnBVPnJQX8Jm2wDMzdSKp6t5b
+	Ddt7aRW3cBQJanMh2ss+Y/P155/CEtobtYKNNO18uXSvMFoJuRhj26fDgNCrUqih
+	D0MwQUlDU2db3EzGj56Aozvw35MYWG0pbQDfjXHOsHs1NZeFzK9+eQn+VO6+O3Ly
+	Nnj20iGK4I3oy5lHh10wvFt0DpnARFf3n3WFvDGGH8E8yk+6R8FpF0QkKsmaTZJh
+	OcTZ7cyL+4ggGu/RM8UcYT1F9excORDRVYc6Q2LiiVqdo+8WucmevfRHnq7ufuQh
+	I4Gd0g==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437dsqgcdw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:21:46 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4667cab5e1bso2997731cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:21:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732893705; x=1733498505;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IJ5mIRsH3o55KXnabuNYt4mdIaB82lRdAStGmMYH8Ps=;
+        b=Wlxv9rfO1dVKrFcLLV7hSC2t6xeX+B3shqPiApwoENhwaQYlaxZ4miMcFWWfnEGA2d
+         HzUHYJo+DQ35156gHfMVF1MfqMUKEWdDOwZvj+p8e7/u7I+t00KJ0U7Mxv6VG/rwAg0c
+         38XlcpxBQBLtHjTBc3ZyHLbqD6pfmj6d8jtIuQD+I9ixtsZizbVitqLdDUq3wWmpQkeD
+         TR6Nfd9YigKwAEqVWZL9ae8ho+v0shrqneFmDcEdPLnumEcbBUSdeOX3zjm28m4ZlbJk
+         S8AUZvpaRlgHAS51/dRS0dXeSIdX6+ULwWZJspaU0bW+OGD9f1s2HR68CMgnUY17E6xn
+         6SVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWtqj1ynrPPR5f4Fh2Y0KBMQcvKX+kytrfrJ+u3tVxs9XxnIVhGGhEqmtXrv2x+3wXeGrmVNH9vOwuXek=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxinYGY09+WB1LFyU/pyiC0FD/BQuDcdFReqZseebrv8PHHX12t
+	8s5u137HZBzhyMJbiB5wNNEk9H/GmOuKWl2fYRPBI9z9UM+32w2wbIDVrr4ROeBq5P1rIkPKZWM
+	DCXhmhkjN2zQ/gprnY4U0F6b+Pw0hrmLoDgRzUTNweYbLysu+6uZ1c7oyda/EX44=
+X-Gm-Gg: ASbGncsCSC4YU/mPYdcQTBsADI11IAHooxFirKKU5Ps5SNDIket3R3uavBZ5PiMR+mv
+	PjlmeSFjugrYDQI2xhCdv0rIG2TCfM6EVNRln5Ji/ABYhOkyovl8wyjzRjYa8/tTPb7S7uSeP9R
+	I8fYIqk2of+Q/OMqyY+pvMylpkfiHAJ81aZAkQt8/LCBwPrcmB+Ts7wj26Mc1KuZtAC3bfB8ctL
+	cGwc8iO3NXuqaGe0PoG+kgMOvmvtKupCJd2qfq8ZzdpFNUIGuAnfSewDqaVguizL9lwaBqXFhvA
+	OWKs3LaGWiDfHA8zWNiCh4G/kF6cXVs=
+X-Received: by 2002:a05:622a:19a2:b0:460:9acd:68be with SMTP id d75a77b69052e-466b34ed7b1mr72740111cf.5.1732893705119;
+        Fri, 29 Nov 2024 07:21:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFqnFCjvQhGdMrBi/YsC5bYvvrCBQFiBOX8WXQuxWzWQXGXy14AWNHZB3lTPTK/1au+rgfZ1g==
+X-Received: by 2002:a05:622a:19a2:b0:460:9acd:68be with SMTP id d75a77b69052e-466b34ed7b1mr72739851cf.5.1732893704650;
+        Fri, 29 Nov 2024 07:21:44 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097d9f6c1sm1913718a12.11.2024.11.29.07.21.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 07:21:43 -0800 (PST)
+Message-ID: <0dabac7a-bc7e-4075-86ed-3d4c25908ffb@oss.qualcomm.com>
+Date: Fri, 29 Nov 2024 16:21:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|AS8PR04MB9175:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32a2b8f5-b26b-4583-d983-08dd10896a6f
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cW53RXVKVFpwUzJLSnl1OVo5QVBtQUYvNjJJb0VWeEFWQS8wSUFOczc3UVVW?=
- =?utf-8?B?bGFKMmw1TytnQmljZmg3TnhKQ3JzQ2RkbmRMemJzcEkxWXpPRGVpUEdyTzhh?=
- =?utf-8?B?cDhNNlpPYjJuZWEwQksvZUJTNmVhUFhMdU01aHVHeDVaWVpUMnFpbCtMN3R4?=
- =?utf-8?B?c1I4RkgwbWJlVnFoSzZlTEw4SjI1TmphbFZOWGtWaVlZckFOd3JsVVhjSTBm?=
- =?utf-8?B?OE0zcHlwMDRpSEJtaGh2NVRvSmJLbkQrRTBKRzFGazlkY1MrV01ZNHBtU2Jy?=
- =?utf-8?B?bCtEa0lmWU5qWi84dFJ0NDRFa2pFTm9kWTJLSFg2Vit0MjhNTzZCSGppZ0NF?=
- =?utf-8?B?T0RmNDZsYVZaQ29iQ0o1TGp3bmFoN3I1aWM5cm5iN2Uxa3N3WHhmYnFrVk5v?=
- =?utf-8?B?MlF1MXdmUEVXaFZFZkVQWlo5ZGpuT3lyZHNZSTdRZENaYXNOd1Iza1VyNFp4?=
- =?utf-8?B?czl6V3AzNUduSDd3Ulo3S24zenBWQnJKbUk1ME9jTFU2Ym9VS1RaZnlSejdo?=
- =?utf-8?B?emt3d1YydkFVa0JpUXFKeEJ6aUFTN3I0bFBpODJXamhmb05IVnI1MDhiTVp3?=
- =?utf-8?B?K2V3c0NzOW9GeDdhVmhJa3RqdzNjd1U5Z2hXUTZSU2hGRW1UeDFVbWhXUnVW?=
- =?utf-8?B?czMrZTBnaHdyNWFEWjE3SlZrTTlxNjExZDM1U25aOXc2SGgzYytUQWREYktV?=
- =?utf-8?B?alltRHQwVlA4M2dQQSswMmV5Uk1hbnBEMDl2QXd4S2dQTkluL2ZNK3hMODR1?=
- =?utf-8?B?T0pHTUI0NGJwaHltazc3ZnA4YmtlLzdlQlIrN2VVM3NRcXkweGF1MVVoYUhr?=
- =?utf-8?B?UE5QTlJjZHJpQkhONCtKWThnQmpUOUpTR0ZEdUdPcTFNV0pvektQSGc4MW9R?=
- =?utf-8?B?WFFNZ0p5OFJrVFNUU0dKbW5LMmNreklyakxUdjl1QStKeCt2VHVZaEE3cjBt?=
- =?utf-8?B?ejZtSHBGdVB0WGs3WVZjZVhrQklZYmRIY0kzSkRWVmFYUUFyM0VpUWJDYjF1?=
- =?utf-8?B?WEJnT2J2TEZ3SzREd2d6VFFHbnBWZU4xR0Z1bXRGczNRS004K0VvTXlmVWZx?=
- =?utf-8?B?K1lobktsREMwRnJkamRlaUp4cVZnRXNrMkkxcGU2QnV3WGxqZ3JsWEE2Q1FW?=
- =?utf-8?B?OWVjNFNicFA1YVMwOXlHWHlITkR1eXltd0I2ZERocHlZU1JXblg3Vlc3TG05?=
- =?utf-8?B?anZqK21saXJWY0xTQ1U5QjdNU3NnTFJZSTJqUTFsdG9rUXV2cWZQeE5FT05U?=
- =?utf-8?B?cDk0bCsycDQwVmN4eVUydTdDZFJkSlZGSWthbkp3YXludzJoNUsxMUI4cUli?=
- =?utf-8?B?T0kxaDhTc0ZPSyttcjNVQXFWZnFmZVlqTVpCRS9uVlpFMlhtSkhJM2NnTkhM?=
- =?utf-8?B?Ty9OMlZiSUZnaGY4RVhDbjFDUTI1TFhlQ1p1N29SY0hZdFBrUXJ4amsyaHI4?=
- =?utf-8?B?THpyMnlFcktkV2hOdlB2RjlKSExDcVNYNXBUSHZaV1lQZ2RISEcrQXU1eTFy?=
- =?utf-8?B?Ymhhb2s2ZkFWNkl6RU8wdnllaW5rTkVGd3NiNDUxanZTTUpMTFdJTFVUcXlE?=
- =?utf-8?B?QkFtNGozSkw5WGdRVmZnVXlZRC91cnBVRm1lbytWQVpDbSsyR3BvNktXNG5U?=
- =?utf-8?B?Z2pDOGFkQmVSOWhMcytmYW1iVGRvR2hlUUpvWlc2c0lOR2E1TE1oa3UrYktX?=
- =?utf-8?B?TUVRaVRQUVNoYzVsdjI2ZTh3Z3c5bmZYaFRqNjBwazNkNnZDam80aDBNZjFG?=
- =?utf-8?B?S0pjOU1DclZwRzN3MXJTampsOU5Ic1Nndi91TWdUQVZFdUpTS1NBM1VyNVQx?=
- =?utf-8?B?U2tQVlkxZE1iaktxbkZKUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZWV2MkU4ek9FUStnTnNXa2VnVzF3bTVTSytFMFgvelYrWEZ0SnJta282UlJN?=
- =?utf-8?B?WXZEQ01mRWRhQy9HL3Y3VTFIUEhCa083ZFZjSlpsWWQ1dHgrSUovdDFFUUw1?=
- =?utf-8?B?Tml5VXdXM01CckdiZDJUZ0dlV2VEUGJFWWh3YzNSUTdvMWhpQ3ZUT3ptT3VI?=
- =?utf-8?B?bXN1N1NYNTd4OG5kZTJMbjJvUE8rdnlHc3pHWjZjOFAzK3ZXdGsvTVloOUJN?=
- =?utf-8?B?MytxMXhWME1iRWNxb29tTnZPR0pSM1phZFNUeHVGTkNnY3RiVDdwbHRBRWxQ?=
- =?utf-8?B?S05kM0U1QnVuUHNSSG1wUUwzVzIyNjZpaEpNbTRkbXdyQjJobjJhWkJkTG5H?=
- =?utf-8?B?NDhVeklUMldkbkEyd3BZeWNqTWNwdmFHWldkcFEyK2xEbzhOdzVadmJKV0lH?=
- =?utf-8?B?MjdjV0ZncE93alNvejg2WW4vay9jdFlUMFRQcGhUM0pVWDhMQi9FSXRWN0xQ?=
- =?utf-8?B?Wkxja25PUGRGT25QbnJPRGdmVC84WjQ4cGZPSEg4WG5IanNJRVlic09GUGsx?=
- =?utf-8?B?VjdyM3BKMXFCL2tKSmsrd1hCY0xYRmt2TTZjS0d3dmZqZDZ4THdQaDMyeVlJ?=
- =?utf-8?B?dVNDU0w4RXY0M1JxemJ0V2JIRkI3djUyQWxoaVpUekU4NU5XWXhZWnhiSlJn?=
- =?utf-8?B?K1lCbHpqR203azlUMWJPUjBCMnBFWkxrWWNUZy9IUEl6bHlZOVU1cDFMOVN4?=
- =?utf-8?B?ZG5wT2pUb3B4NkRUNG1UOXB6eGRBaEVFYzhoeFEwRnJESnFxNVZ5cXh4TnZZ?=
- =?utf-8?B?S0twQmg3T3lpKzVuejJWRVNzd1ZSU1JvSTJYcURjVHN4YzdPUHVnMFd1WDdV?=
- =?utf-8?B?T0RUdlR3MmkyUkJwaUgwN3B5ZEg1bnp5YVM5ZWlsV2s4ZldJaENselRaMGY5?=
- =?utf-8?B?dzd0MUJqTlhrUXZoSzZCMVZ0MFJkUlZDaHZhekdnRTRGbDFEOGNmbVQrVVlp?=
- =?utf-8?B?cnErV05CRnpET28welJqQ1VnQkw2eTlJeFlWeGdDSGw3SFcrUElqOUFZY1lk?=
- =?utf-8?B?aUFaaUF2TG1kcmhHVzdZV1EvM1FhWkVicmFYNmZza01OVHYweWxLY3NTK1hT?=
- =?utf-8?B?YWJnVVd4Q3RnQy9kWnlhRklTOWlHWjJoRnVzaWpkT0ZGM051VUpWcDZLdkE1?=
- =?utf-8?B?NjNZS0puZ05iZzFsYytGcE4rY2VXUnFaME1DQUNLS2w4cEZJdDFIbE1WMFUw?=
- =?utf-8?B?K3hLM3lRaUUxbDhnMEV6amNVOEtOVm9hbkh5ZkY1em1nWWt6SmhVenI1cjZ2?=
- =?utf-8?B?TEVXakRFekVyS3NMeDdoaVhPM1VidGdQaUtPTEhkNzRLTUNobmVLRzh6Wno3?=
- =?utf-8?B?cGZQRjlxUWFVVU9kaDZZb3h3cXd1d1QvZXBNNkZxZ044MmEyUUhTTm55Ykxi?=
- =?utf-8?B?YTIwSk9Sb2V3YkpQVEZvQ2Y4bjRQWitSR2NmMytQM1pISndxNnI4VjVVZGJH?=
- =?utf-8?B?ZXprREVaOThvTkpSVXhjNVQzMmxGM0UyS0FWUlI1Q1p4V2gwditKRnpRZ0Vq?=
- =?utf-8?B?dWN3L3diaElCWVowVGhuRDlXeWMzYU44OWdvNUhleFZOUmxjTnNuNEdNR2pT?=
- =?utf-8?B?VVFpMmtnM2IrT09xYjByc2IrTWZPRUdxVWJkbVVlQVI4dGc3OFMzMk4vblhC?=
- =?utf-8?B?MXF6ZDdNc0VCMktXTnFFT1BQWlJlMjRpSlQ2Z3RPV1R2UmJidTN4cGhBc0to?=
- =?utf-8?B?NzV6SHNkQ2dmeHp1am9UVFFySG1ud3NmTnJVdDRMV2lKWG5jM3kvM0Y0a25n?=
- =?utf-8?B?N2VITU9Jd2h2b1owamgrZ3BWNEhtcy9tTThnaWpTYkpqV2lSTjZiNllJZGxa?=
- =?utf-8?B?MzR6ZVI4ZDRLako4L1J4eU9ROGZPQU1ZcEZyR1psdEVpRUVrcTNrcWtydDEx?=
- =?utf-8?B?YWFEbmZORjJieVhLQ25PQjl1OWxqZ2NNNHZkT2F4ZDFEWDFqY2ZZSWZDWHU2?=
- =?utf-8?B?UjdHanoxY0F5aXNFYzltbHNkaXlURWg4TThWbFZ6WjZiLzQwcWVmQ0RldHlo?=
- =?utf-8?B?V1FlS0Y1VVZpRFN3V2hvdEJpdGlsRnNOVElhRWQ0UzR0cjNuVER5T3ZUcXg3?=
- =?utf-8?B?bFNhSGlSUDJjTlAyMnlRcUhieWFTNC9xUWZDbUVva2FxT1E3bnNnVUxFMVZn?=
- =?utf-8?B?L3lkTVV4eCtpT0xLTDFOdGZNallnS0h1OUZSMjdFMXNYRFpwV3ZjaFdEbzhl?=
- =?utf-8?Q?07KjSIyMK9jw9jw9ZRlTWKc=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32a2b8f5-b26b-4583-d983-08dd10896a6f
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2024 15:20:54.2304
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MwfMvxANAu33yz0DPtijKyKJXJeYuAg8WDikLSVi7/UEu7kINgP9Y2L+AU+q3HTiy+a2Hzm0OQUXHUELrgsln8yMsRTz1CJAIxuJK2fD618=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9175
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] drm/msm: adreno: add plumbing to generate
+ bandwidth vote table for GMU
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20241128-topic-sm8x50-gpu-bw-vote-v3-0-81d60c10fb73@linaro.org>
+ <20241128-topic-sm8x50-gpu-bw-vote-v3-2-81d60c10fb73@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241128-topic-sm8x50-gpu-bw-vote-v3-2-81d60c10fb73@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: N5Wk8igagt_lpOvSenyCUrlyTJ5wUavo
+X-Proofpoint-GUID: N5Wk8igagt_lpOvSenyCUrlyTJ5wUavo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ spamscore=0 mlxscore=0 suspectscore=0 adultscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411290125
 
-On 11/29/2024 4:37 PM, Marc Kleine-Budde wrote:
-> On 29.11.2024 16:25:33, Ciprian Costea wrote:
->> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->>
->> Add S32G2/S32G3 SoCs compatible strings.
->>
->> A particularity for these SoCs is the presence of separate interrupts for
->> state change, bus errors, MBs 0-7 and MBs 8-127 respectively.
->>
->> Increase maxItems of 'interrupts' to 4 for S32G based SoCs and keep the
->> same restriction for other SoCs.
->>
->> Also, as part of this commit, move the 'allOf' after the required
->> properties to make the documentation easier to read.
->>
->> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->> ---
->>   .../bindings/net/can/fsl,flexcan.yaml         | 46 +++++++++++++++++--
->>   1 file changed, 42 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
->> index 97dd1a7c5ed2..10b658e85ef2 100644
->> --- a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
->> +++ b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
->> @@ -10,9 +10,6 @@ title:
->>   maintainers:
->>     - Marc Kleine-Budde <mkl@pengutronix.de>
->>   
->> -allOf:
->> -  - $ref: can-controller.yaml#
->> -
->>   properties:
->>     compatible:
->>       oneOf:
->> @@ -28,6 +25,7 @@ properties:
->>             - fsl,vf610-flexcan
->>             - fsl,ls1021ar2-flexcan
->>             - fsl,lx2160ar1-flexcan
->> +          - nxp,s32g2-flexcan
->>         - items:
->>             - enum:
->>                 - fsl,imx53-flexcan
->> @@ -43,12 +41,21 @@ properties:
->>             - enum:
->>                 - fsl,ls1028ar1-flexcan
->>             - const: fsl,lx2160ar1-flexcan
->> +      - items:
->> +          - enum:
->> +              - nxp,s32g3-flexcan
->> +          - const: nxp,s32g2-flexcan
->>   
->>     reg:
->>       maxItems: 1
->>   
->>     interrupts:
->> -    maxItems: 1
->> +    minItems: 1
->> +    maxItems: 4
->> +
->> +  interrupt-names:
->> +    minItems: 1
->> +    maxItems: 4
->>   
->>     clocks:
->>       maxItems: 2
->> @@ -136,6 +143,37 @@ required:
->>     - reg
->>     - interrupts
->>   
->> +allOf:
->> +  - $ref: can-controller.yaml#
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: nxp,s32g2-flexcan
->> +    then:
->> +      properties:
->> +        interrupts:
->> +          items:
->> +            - description: Message Buffer interrupt for mailboxes 0-7 and Enhanced RX FIFO
->> +            - description: Device state change
->> +            - description: Error detection
->> +            - description: Message Buffer interrupt for mailboxes 8-127
->> +        interrupt-names:
->> +          items:
->> +            - const: mb-0
->> +            - const: state
->> +            - const: berr
+On 28.11.2024 11:25 AM, Neil Armstrong wrote:
+> The Adreno GPU Management Unit (GMU) can also scale DDR Bandwidth along
+> the Frequency and Power Domain level, but by default we leave the
+> OPP core scale the interconnect ddr path.
 > 
-> Nitpick:
+> While scaling via the interconnect path was sufficient, newer GPUs
+> like the A750 requires specific vote paremeters and bandwidth to
+> achieve full functionality.
 > 
-> - description: Error detection
-> and
-> - const: err
+> In order to calculate vote values used by the GPU Management
+> Unit (GMU), we need to parse all the possible OPP Bandwidths and
+> create a vote value to be sent to the appropriate Bus Control
+> Modules (BCMs) declared in the GPU info struct.
 > 
-> or
+> This vote value is called IB, while on the othe side the GMU also
+> takes another vote called AB which is a 16bit quantized value
+> of the bandwidth against the maximum supported bandwidth.
 > 
-> - description: Bus Error detection
-> and
-> - const: berr
+> The vote array will then be used to dynamically generate the GMU
+> bw_table sent during the GMU power-up.
 > 
-> regards,
-> Marc
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 174 ++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  14 +++
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h |   1 +
+>  drivers/gpu/drm/msm/adreno/a6xx_hfi.h |   5 +
+>  4 files changed, 194 insertions(+)
 > 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> index 14db7376c712d19446b38152e480bd5a1e0a5198..ee2010a01186721dd377f1655fcf05ddaff77131 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/pm_domain.h>
+>  #include <linux/pm_opp.h>
+>  #include <soc/qcom/cmd-db.h>
+> +#include <soc/qcom/tcs.h>
+>  #include <drm/drm_gem.h>
+>  
+>  #include "a6xx_gpu.h"
+> @@ -1287,6 +1288,131 @@ static int a6xx_gmu_memory_probe(struct a6xx_gmu *gmu)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager (BCM)
+> + * @unit: divisor used to convert bytes/sec bw value to an RPMh msg
+> + * @width: multiplier used to convert bytes/sec bw value to an RPMh msg
+> + * @vcd: virtual clock domain that this bcm belongs to
+> + * @reserved: reserved field
+> + */
+> +struct bcm_db {
+> +	__le32 unit;
+> +	__le16 width;
+> +	u8 vcd;
+> +	u8 reserved;
+> +};
+> +
+> +static u64 bcm_div(u64 num, u32 base)
+> +{
+> +	/* Ensure that small votes aren't lost. */
+> +	if (num && num < base)
+> +		return 1;
+> +
+> +	do_div(num, base);
+> +
+> +	return num;
+> +}
 
-Hello Marc,
+This should live in include/soc/qcom/bcm.h, similarly to tcs.h in
+that directory
 
-Good point. I will change irq description to 'Bus Error detection' in V4.
+> +static int a6xx_gmu_rpmh_bw_votes_init(const struct a6xx_info *info,
+> +				       struct a6xx_gmu *gmu)
+> +{
+> +	const struct bcm_db *bcm_data[GMU_MAX_BCMS] = { 0 };
+> +	unsigned int bcm_index, bw_index, bcm_count = 0;
+> +
+> +	if (!info->bcms)
+> +		return 0;
+> +
+> +	/* Retrieve BCM data from cmd-db */
+> +	for (bcm_index = 0; bcm_index < GMU_MAX_BCMS; bcm_index++) {
+> +		size_t count;
+> +
+> +		/* Stop at first unconfigured bcm */
+> +		if (!info->bcms[bcm_index].name)
+> +			break;
+> +
+> +		bcm_data[bcm_index] = cmd_db_read_aux_data(
+> +						info->bcms[bcm_index].name,
+> +						&count);
+> +		if (IS_ERR(bcm_data[bcm_index]))
+> +			return PTR_ERR(bcm_data[bcm_index]);
+> +
+> +		if (!count)
+> +			return -EINVAL;
+> +
+> +		++bcm_count;
+> +	}
+> +
+> +	/* Generate BCM votes values for each bandwidth & BCM */
+> +	for (bw_index = 0; bw_index < gmu->nr_gpu_bws; bw_index++) {
+> +		u32 *data = gmu->gpu_ib_votes[bw_index];
+> +		u32 bw = gmu->gpu_bw_table[bw_index];
+> +
+> +		/* Calculations loosely copied from bcm_aggregate() & tcs_cmd_gen() */
 
+Ditto, perhaps this should be exported from icc
 
-Best Regards,
-Ciprian
+[...]
 
->> +            - const: mb-1
->> +      required:
->> +        - compatible
->> +        - reg
->> +        - interrupts
->> +        - interrupt-names
->> +    else:
->> +      properties:
->> +        interrupts:
->> +          maxItems: 1
->> +
->>   additionalProperties: false
->>   
->>   examples:
->> -- 
->> 2.45.2
->>
->>
-> 
-
+Konrad
 
