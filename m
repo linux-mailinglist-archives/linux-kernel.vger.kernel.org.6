@@ -1,240 +1,398 @@
-Return-Path: <linux-kernel+bounces-425445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F94D9DC22C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:32:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C889DC231
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:34:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76C87B2282E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:32:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD1BBB215CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8503B18D656;
-	Fri, 29 Nov 2024 10:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bDRl3Aiq"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2060.outbound.protection.outlook.com [40.107.220.60])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62632189BB0;
+	Fri, 29 Nov 2024 10:34:04 +0000 (UTC)
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A55155345;
-	Fri, 29 Nov 2024 10:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732876357; cv=fail; b=R5OQy2KFv5AwlBr18ftCWQVk+OcnfoBXHsr5QcCW3xJT74seVSOIR7kliLzEZHRe4Y3j9aZV8o/aOJuAy/+OGbs6vLuBaxkiLxgGD1giPwZMF8gEHp0Pci/svs5FLaoVj6TgMFAxeV782ww24Auan5oT7Hg3obWR4W+grwR2i3A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732876357; c=relaxed/simple;
-	bh=P/3Fqls7qSNdAipjAe1165k94dL513yrHn8Ae1l/Gb4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GgaaA7o7ejIVVVbDeVQDE8bYJP0f6YSxxkpL+lHkwuQsPgH2zas553OvBWo57+EN+8Is/7HcoW0wfQrDTyf0Jq/S5D9hwLp6OeoxDEdRgwlQAy9X1czXTRtTFIguAcC2hiaM0qvbNujS2+FDhOkrJpp8T98uxgigDbPJrC+JGpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bDRl3Aiq; arc=fail smtp.client-ip=40.107.220.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YxSost2kDcba4qx7au6eM/NTtTqkRebgZcxRl4KcENiN/CuLEgmmxCqIDjXX6RMYIAXve0/nDRP5GTjWZrAQAlUu1WFfbPVi7h4I/ynnzwv1Okb9IqbGC6/+rbXCd1jOwcq7XSDAfJ4LhqHLrCSBT+uuD/JjWIL9lFawVhc62qGGtfmOeSRNGVkLAWsO7jP8NYyOsQz1/V8r9xmNRaNsYHYqKjK37ku28Eae7GJwK8fdvDSW9hGJy/WoAw6dULGLcHU6a2fiEScQGusZcTzXdSDWW34G1KkcbLYctdlq/5fo1NaJW5JJjEqkf9hgmTOLw3X19ovmJsQ6n1EZCOwTeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4XumvygVx3tIDEr4J5he6cycO30ca3UbTxPVRDyY99c=;
- b=MnvQDOlrt0uAGHMreljT/2knrrXstYOyb4raP2guE7CQnf3VoyNTMK4DsqlUPLMpmrr+Cov2Kl0WJKyhTLbAlqXDL9gFoHGAL/UgTmI2pSk0+7DojoS97TZZE34Qi6xJTs5M/KfkOCezdsO6dyw0Pb3NrcomSIkO26zu9Eo8sHtAbyNGVSOZ8ouec8epMAv/hJOXZT/qhJcJAsqqktZNBrt8G5vP+OylqFQEUFSXqvlko8SJ8oYDONbWNck8exQuh+K56d9AroZWud0zAs4aKOXS0WGIEiIOtYKCHec4MbzbY3RUT6gqymKSEkXWEa2MeFnIIbQeT71NMV1gYrN7aQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4XumvygVx3tIDEr4J5he6cycO30ca3UbTxPVRDyY99c=;
- b=bDRl3AiqLNiVcX/HlvmvRirgKlam8iVTE/FXmI4LmX0zvKSEEfAU0Hb9/EdFrQJMPTC7yDwuEkI9ITC0JSaa9eJepjKCiI9qvKSzXe57KYNoymhL4gJxbpk2te6/kv443BkKelhKCK9hUHBLkHp3OUdO6VYVH1opBdNOPRt/ch0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com (2603:10b6:208:3ae::10)
- by MN0PR12MB6056.namprd12.prod.outlook.com (2603:10b6:208:3cc::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.14; Fri, 29 Nov
- 2024 10:32:29 +0000
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134]) by IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134%4]) with mapi id 15.20.8207.010; Fri, 29 Nov 2024
- 10:32:29 +0000
-Message-ID: <f6878438-8fcf-4f78-88f5-e7f275b157eb@amd.com>
-Date: Fri, 29 Nov 2024 16:02:19 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, nikunj@amd.com, vbabka@suse.cz, david@redhat.com,
- akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- joshdon@google.com, clm@meta.com
-References: <20241127054737.33351-1-bharata@amd.com>
- <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
- <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com>
- <3947869f-90d4-4912-a42f-197147fe64f0@amd.com>
- <CAGudoHEN-tOhBbdr5hymbLw3YK6OdaCSfsbOL6LjcQkNhR6_6A@mail.gmail.com>
- <5a517b3a-51b2-45d6-bea3-4a64b75dfd30@amd.com>
- <Z0fwCFCKD6lZVGg7@casper.infradead.org>
- <e59466b1-c3b7-495f-b10d-77438c2f07d8@amd.com>
- <fb026d85-7f2e-4ab5-a7e1-48bf071260cf@amd.com>
- <CAGudoHGnNDOQtmNXTG4dphNnQW1MD7idAa0fmvk8fBPF34sUCw@mail.gmail.com>
-Content-Language: en-US
-From: Bharata B Rao <bharata@amd.com>
-In-Reply-To: <CAGudoHGnNDOQtmNXTG4dphNnQW1MD7idAa0fmvk8fBPF34sUCw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN1PEPF000067ED.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c04::29) To IA1PR12MB6434.namprd12.prod.outlook.com
- (2603:10b6:208:3ae::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607A174EDB
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732876443; cv=none; b=eHlCm0K61XWSdh5IJ5hZYHxtKTbYYcBkkXnBpI/0v0AMiaogjRzgxLB6DIKkdFoiaQ9Sj0MS+rY9AiJP6RHoMJ2hAPn+0XI204RZQ1ADaxrncCkXKwRwLSA89I2sDxqiVeY+FNCGT5UN5ER4NzLImN6fwN3SVK1Gxq5aARqqDeA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732876443; c=relaxed/simple;
+	bh=DRgzltW7T+XkbS5BfkXL0p80vinNmcN1yfWoAUg/3YE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g+uGTYn4qDpoLKkOfgqR8TVo+krCGGb9eCSYkX6f0S0W/r9NwIaV/TBL4gSRlxHY6Wv1HC9WvaM8gSXq//kG5a0HvNcTWfzTMPkhEzS2a562PUTlvEeaPh9L8LiZfXUlBphfC4v2eLL6QjyH5Q3o+czzMyJ+kXJEHATygT0lh4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <110c944c-7380-4fe4-b10f-49dde79fa553@linux.dev>
+Date: Fri, 29 Nov 2024 18:33:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6434:EE_|MN0PR12MB6056:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c11168c-020e-441f-b36d-08dd10611fc4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q0JOTDdTdjBocGJ0M1pzaXo4aVdQb3h3UjF4Zmd5aWlTeEtQV242R0ZuN1pC?=
- =?utf-8?B?YVE2aFFZcm1lbFdQak9hVWlZL1g2Z1p6L2ljUW52M2ZldzFQOEFmZmNRUlVI?=
- =?utf-8?B?NEZCNWIrVWREbFQvcW9CaGU1S3gwaXBnSWpmL2NlNkRoS2d1aE5oVkFNV2NG?=
- =?utf-8?B?MTVJVGFYdUZvbmRvbUNKNmEyalRmK1Zldi9hTlQ2UGZVNjl1VzhpK3Z1TGZ0?=
- =?utf-8?B?RW9CM3dYMEJMcmd3VVZOZkJlcTVYTUhhcjI0U3lPdC9kZzdNcU50Mmg5Zmsw?=
- =?utf-8?B?R3NzQURHZEVIbXBVZkNxM1hLa0Z2R3Q2c0VTdmJpQVBORlV1eTdwckQvY1RM?=
- =?utf-8?B?OUNGb3lwOExYVmI2SXpTR1RESmRheHN5dXVKa3lJbk1mMFFiay9FL29VWHRa?=
- =?utf-8?B?RzdLdG51Q0lhRXZNQ1kwaXdEVWhIbzJsN09Ea2Z4SDc4VUNzdU12Vnp5a0dI?=
- =?utf-8?B?OGxzTk5XSExiNjdPVTZSL0swb29QSVZUZkVtcDhCS1hyaEd0MVpLMkJKQTZz?=
- =?utf-8?B?UXB5THlEY3ZtR2NNU24vRDd3dCt5TVJpbGNQOVA3bFI4ejJmK1FUb0ZMMlY1?=
- =?utf-8?B?UkVkeG9saTFPbmJMUDMwTkFHVTltM1MwYWlpWDRsYUpkN21wYWpLTzdUVk9o?=
- =?utf-8?B?OGZrNDUyQkRLQU9CN0hxYVRNZFhmVDRJT1J6Qy9XSUpaZTA4QlFPOXYrOTFa?=
- =?utf-8?B?bW42dDNacEVxeCt0WGJyMXJVYUlEUnhnazdNd3puYnVxYTBSQmV0cEtvMW9k?=
- =?utf-8?B?REJ1dFRNaWZwTXhKZGJUZm5EWnRxc1pQTDdBQms5T3Q0RmpEbFB3OENlMVpw?=
- =?utf-8?B?OTZMdHRuNXdsTXZJcmlqZXVSOG9jVDhndThpK2dmZDhGbHVPYm9rNzNCRFRw?=
- =?utf-8?B?OHV5L2JYVE5nZEhpR0xkaE5Jb3F6dGNlVnBRdzdYdE5hS3o0bmw1aGdEUzl6?=
- =?utf-8?B?SzkxaitZT3k1SzNieU80WFJoKzF2VUhTNm5rWnZCdWRwL1JxL3hWNEsxam5Z?=
- =?utf-8?B?NU94TENmbnFZQXhCTjBwVVJRQjlWMmZSVXFpNWczampHZk1tRE9yVWNEcEFs?=
- =?utf-8?B?QkV1RzNmVUdTcGd5VCtWSUtWdDVSODYzZDBTRCtreEJGbnhDOU9PQWRZdkdM?=
- =?utf-8?B?SGlaUXV2U2xCTm9sODZVVjlCOHVyaGo3VG5FVFkwbGhnSTkzeVczamM0a09I?=
- =?utf-8?B?Sk4zRFNQMlVkUyt4U3pXeWJLenNLNlV0c1FuSGRLTHBaalNEN3hLNkxSdzNX?=
- =?utf-8?B?YXg2bWl2ZDZ3bU5leGxZNjMrSlhHQUcwb2lkRHJBK3hoN21JcTloYmJ5bDJa?=
- =?utf-8?B?ZTJqb2FtZzNjc241UHpzUVpBNzZ5T2ZLS2RkNFMreXNWbHNFN3JHdlh0eHAx?=
- =?utf-8?B?ZHJ2VWZkTEhWZzY5OTFIZ3Q4WWRialk0MjByczZCMmt4eDNGUFdydWxRQ1Vt?=
- =?utf-8?B?RlA1REhObEtwNW1KYS8rMVVNTXFxY3NjVnRKL2wycWJ3MG5nNUhMRTFldUZl?=
- =?utf-8?B?dVg2Tk9mZEdXYjNKd1g5dUhFV2lIZUdZZmxMamRnSXZXMTZia3p1MzZ1Ym1x?=
- =?utf-8?B?N2ZRUDdCb0VNN2Z4Unl6bk15NjFMOUtnMkI3U0kySjVQR3I4WE9XRXpZNnpQ?=
- =?utf-8?B?cUJIaUxtbFozTmtkUnZGamJvSkR6WWtOUE9vM1ZZRVdHOE1pRGUwUUhtblBv?=
- =?utf-8?B?V2VoN3JPeHVkdzk2bEdSWkVyazltdXcxdEpLUTJyS253TFNvSCt2R0NTRk03?=
- =?utf-8?B?ZFpkQTMrcXNNdEx3ZFJUcG9QQzUvRlc4ZnMvRXVMUGNyY2VqOGFUclNsa0tJ?=
- =?utf-8?B?RGEyN2kyWitZUWJSNXNIQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6434.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S0xYTk1JUkVDL2MvZ2VEcG5EaEEzR1FiWEJjblN2SzhLTXpkMHFmMlQ2RVRG?=
- =?utf-8?B?YkZuaWltdFF6TWt1OHdndVBHVGlSTVNJb0VYdGJJTWZOQTVPR09HRitzSUI3?=
- =?utf-8?B?OUdEdFBoQzYyTGw4bnFhZVo2RGt4ZWxjeEN3bUhkbnBSU0hsQ0pBYldKUVJU?=
- =?utf-8?B?NUlDcTNzaXJOdkZVaG9ESFJjMDczb1o4M3FTUFQzRnNFWE5FbUZyNzY1cUhz?=
- =?utf-8?B?Q2hqMTRPTGhYcGZLM0J5T3lUeVY3QWYzUjVreGU5ZmJRRk81SU5WNDNmV3Zk?=
- =?utf-8?B?L3FwazJzbSs4VkRiQVg4WEhyWjJUVkk1QXo4cG1jL0luYnMvUEExZzZVMVVE?=
- =?utf-8?B?eG9XeElQQ21KZWtydExteHlhcWpVU0JQalJiU0gwN25GQmtKcGx4OTFVbk9Q?=
- =?utf-8?B?M052YzJZSDFLSmxSVHpDSGQ1UE11bjNuTnVjSVpNOTJGL0JjZElnN0oxNHFn?=
- =?utf-8?B?aDRJRGtsTTNYdmFBNk1lUk01bk1aODJaMkhSUUJwZnV6OHlva2cvbW4vNkVu?=
- =?utf-8?B?QTVHY0dhblVxbGlVTlNkY2NJSkNlRFBKdVFnT3RZL3ZVai9HMkNxMkVGaEh0?=
- =?utf-8?B?aC9rWlRsRy9EcXZIbFlVVnlodUlKcmc5eEVvZkxiVUdTdjJiaCt4RjNvbkE3?=
- =?utf-8?B?dldNTGFJYVUyUGU4bFdRKzgxYzFMY1k4akxMb2JzdDNxbFNPOUludmFvRDVW?=
- =?utf-8?B?RWZ0ZUxBWXZwOUVlV3VHNElqQXNGZk9nRitDY1JSakNFUFRxbmF1M2IzaUdr?=
- =?utf-8?B?TnhXeUUwWDJuUkxFTWJ2aFVQSzgwTUZ4UW5IdmtnbnhOYTZ5TWMvZU5Wbzhv?=
- =?utf-8?B?RVQ3ZEtuaUJFL2NVNmJKWVZaVVFsZmE4dmRUSURhTVl0elh3c3lQOUxGQ3FN?=
- =?utf-8?B?YmJHZFRZa2phN0s4c0xVclo0WWMxV3dwdDVLY3BXQ3NRZSttMmw5ck5tbHdK?=
- =?utf-8?B?QzhZRXJYbWs5Q0NtRjZiOWtNL0NsUmJzcUxnZWlQWm5QV0JBcXJvbGkrVWlh?=
- =?utf-8?B?MnMvWHA0TlJHbzVqSEprR1pLcWorM3kwbVkxUXZDbnM1SG1TWmV1Y0ZUbUpU?=
- =?utf-8?B?OUo5VHNJSmdBL2s2NDJXZ2NqRDlLZEIzYzk5TmlCMm1jcDV5cUF2SS9DbzZQ?=
- =?utf-8?B?QnplY1NreDJ3eGpIYnFWYlBVcFgxbWRDL2l6T1VMclhsNkFXdVlGSno3Z1FT?=
- =?utf-8?B?TEpySmJHV1BpMmlEcnJLT2N2anBTak1aTk54dDJXQmtuTkRPbDlXaE02WUNX?=
- =?utf-8?B?ZjlxczRoc1BqN3hZNElNNGhQamxFS2FNWWRvRldITmZvM3NkTHE1aTFoMXRB?=
- =?utf-8?B?anFzQ2t1M0VubUdxVER5NGI2ZU9QSG1qQXJkdW5Za0FiWjQxbmpqMVNQZ09E?=
- =?utf-8?B?d0dHOWRRQm5tZTdYSlQ2UkRGYk80VXMxR3lXU2pZdGwzR0RpSERUSUZzYWNz?=
- =?utf-8?B?aEI3VktWZjJsSmlHdThRMXNRUDJQTUV0Slg5WGx6b0RidVNKZk4vS2puYlY1?=
- =?utf-8?B?MkJIL2Zvb2VjYnVidENVM1FFcGtXYURjNkVPREpwYzdpVmRIOG8venRhZFk4?=
- =?utf-8?B?MkQrMmxYYjdwUFlUVFlLbEtOTVlNYlFaM3FkemhhNUJ4NHp3VDR1SjFkVWpG?=
- =?utf-8?B?bWlybnZFWk50SDBXdlJhNE9lTGxnREJoc2ZHVlhCWWU0ZmxDbFVTZTBZWkxl?=
- =?utf-8?B?cGFURTR4STRwOGZJTTBRS2dnVFNxVFRsbzdmOTNrWWtTd1NiUlJIWEdvb2xM?=
- =?utf-8?B?cFNCT1I4SDB4SlFNTXhlUlBYVGZNMU1kNGVNVEprNXZnYTFRUEdqUjJiMHNU?=
- =?utf-8?B?c3VXVi9oY1JmZjVEdW9FWi8xSVJweTJYZnQxZWVYQnAyWVBzdGRQZUphWHpI?=
- =?utf-8?B?QnJwWkE4Nk94aXA4UzVOaWhiQUFVNVcxSzB0ZGtZTjBmSFBiMmlzc3NKRUQ0?=
- =?utf-8?B?eis2OGw2NHNrN1NtTkhKbzNMSWpTcTNtVFAzTXVoYzA3K3N4MjlGMzlEYjBi?=
- =?utf-8?B?aTBqWnJKU3Y2TmhOL1FPMXJNNEZJTjk1VlR4RGt1SmV3TWhMbXZHY3BVc2RN?=
- =?utf-8?B?bWdYL29IOW9OSXVwVERMVGdCVE9WbmhEeklkMmtPWXkvbnVGWm9XMjdXRHhs?=
- =?utf-8?Q?JZkkDVETs5JGnJzTwZ4/u8sb9?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c11168c-020e-441f-b36d-08dd10611fc4
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6434.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2024 10:32:29.0450
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TRR6tlg3ANKy5Kafz69re0SDNTgzyi3q38nGA7TRFz1NvY/64t0lvKtn7hb+SsdYNEiJPxVvgVn0aM5X51h80A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6056
+Subject: Re: [RFC PATCH] drm/bridge: panel: Use devm_drm_bridge_add()
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Maxime Ripard <mripard@kernel.org>, Fei Shao <fshao@chromium.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ David Airlie <airlied@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241009052402.411978-1-fshao@chromium.org>
+ <20241024-stalwart-bandicoot-of-music-bc6b29@houat>
+ <CAC=S1niZuiJkWBvci+bmrU-BvahhXyWWAYAMOB200a3Ppu=rTg@mail.gmail.com>
+ <20241114-gray-corgi-of-youth-f992ec@houat>
+ <CAGXv+5EmVj6S2iioYgMKvY8NM3_jzCDS9-GC-GOMU44j0ikmKA@mail.gmail.com>
+ <58ee3fdd-ae38-4e6d-9280-cc419d0f28da@linux.dev>
+ <CAGXv+5HD6y0hcEeUzJd5vh1mapftY5E436ojgzTF46uYQuTrig@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <CAGXv+5HD6y0hcEeUzJd5vh1mapftY5E436ojgzTF46uYQuTrig@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 29-Nov-24 5:01 AM, Mateusz Guzik wrote:
-> On Thu, Nov 28, 2024 at 12:24 PM Bharata B Rao <bharata@amd.com> wrote:
+Hi,
+
+On 2024/11/29 12:52, Chen-Yu Tsai wrote:
+> On Thu, Nov 28, 2024 at 2:46 AM Sui Jingfeng <sui.jingfeng@linux.dev> wrote:
+>> Hi,
 >>
->> On 28-Nov-24 10:07 AM, Bharata B Rao wrote:
->>> On 28-Nov-24 9:52 AM, Matthew Wilcox wrote:
->>>> On Thu, Nov 28, 2024 at 09:31:50AM +0530, Bharata B Rao wrote:
->>>>> However a point of concern is that FIO bandwidth comes down drastically
->>>>> after the change.
+>> On 2024/11/27 17:58, Chen-Yu Tsai wrote:
+>>> Revisiting this thread since I just stepped on the same problem on a
+>>> different device.
+>>>
+>>> On Thu, Nov 14, 2024 at 9:12 PM Maxime Ripard <mripard@kernel.org> wrote:
+>>>> On Tue, Oct 29, 2024 at 10:53:49PM +0800, Fei Shao wrote:
+>>>>> On Thu, Oct 24, 2024 at 8:36 PM Maxime Ripard <mripard@kernel.org> wrote:
+>>>>>> On Wed, Oct 09, 2024 at 01:23:31PM +0800, Fei Shao wrote:
+>>>>>>> In the mtk_dsi driver, its DSI host attach callback calls
+>>>>>>> devm_drm_of_get_bridge() to get the next bridge. If that next bridge is
+>>>>>>> a panel bridge, a panel_bridge object is allocated and managed by the
+>>>>>>> panel device.
+>>>>>>>
+>>>>>>> Later, if the attach callback fails with -EPROBE_DEFER from subsequent
+>>>>>>> component_add(), the panel device invoking the callback at probe time
+>>>>>>> also fails, and all device-managed resources are freed accordingly.
+>>>>>>>
+>>>>>>> This exposes a drm_bridge bridge_list corruption due to the unbalanced
+>>>>>>> lifecycle between the DSI host and the panel devices: the panel_bridge
+>>>>>>> object managed by panel device is freed, while drm_bridge_remove() is
+>>>>>>> bound to DSI host device and never gets called.
+>>>>>>> The next drm_bridge_add() will trigger UAF against the freed bridge list
+>>>>>>> object and result in kernel panic.
+>>>>>>>
+>>>>>>> This bug is observed on a MediaTek MT8188-based Chromebook with MIPI DSI
+>>>>>>> outputting to a DSI panel (DT is WIP for upstream).
+>>>>>>>
+>>>>>>> As a fix, using devm_drm_bridge_add() with the panel device in the panel
+>>>>>>> path seems reasonable. This also implies a chain of potential cleanup
+>>>>>>> actions:
+>>>>>>>
+>>>>>>> 1. Removing drm_bridge_remove() means devm_drm_panel_bridge_release()
+>>>>>>>      becomes hollow and can be removed.
+>>>>>>>
+>>>>>>> 2. devm_drm_panel_bridge_add_typed() is almost emptied except for the
+>>>>>>>      `bridge->pre_enable_prev_first` line. Itself can be also removed if
+>>>>>>>      we move the line into drm_panel_bridge_add_typed(). (maybe?)
+>>>>>>>
+>>>>>>> 3. drm_panel_bridge_add_typed() now calls all the needed devm_* calls,
+>>>>>>>      so it's essentially the new devm_drm_panel_bridge_add_typed().
+>>>>>>>
+>>>>>>> 4. drmm_panel_bridge_add() needs to be updated accordingly since it
+>>>>>>>      calls drm_panel_bridge_add_typed(). But now there's only one bridge
+>>>>>>>      object to be freed, and it's already being managed by panel device.
+>>>>>>>      I wonder if we still need both drmm_ and devm_ version in this case.
+>>>>>>>      (maybe yes from DRM PoV, I don't know much about the context)
+>>>>>>>
+>>>>>>> This is a RFC patch since I'm not sure if my understanding is correct
+>>>>>>> (for both the fix and the cleanup). It fixes the issue I encountered,
+>>>>>>> but I don't expect it to be picked up directly due to the redundant
+>>>>>>> commit message and the dangling devm_drm_panel_bridge_release().
+>>>>>>> I plan to resend the official patch(es) once I know what I supposed to
+>>>>>>> do next.
+>>>>>>>
+>>>>>>> For reference, here's the KASAN report from the device:
+>>>>>>> ==================================================================
+>>>>>>>    BUG: KASAN: slab-use-after-free in drm_bridge_add+0x98/0x230
+>>>>>>>    Read of size 8 at addr ffffff80c4e9e100 by task kworker/u32:1/69
+>>>>>>>
+>>>>>>>    CPU: 1 UID: 0 PID: 69 Comm: kworker/u32:1 Not tainted 6.12.0-rc1-next-20241004-kasan-00030-g062135fa4046 #1
+>>>>>>>    Hardware name: Google Ciri sku0/unprovisioned board (DT)
+>>>>>>>    Workqueue: events_unbound deferred_probe_work_func
+>>>>>>>    Call trace:
+>>>>>>>     dump_backtrace+0xfc/0x140
+>>>>>>>     show_stack+0x24/0x38
+>>>>>>>     dump_stack_lvl+0x40/0xc8
+>>>>>>>     print_report+0x140/0x700
+>>>>>>>     kasan_report+0xcc/0x130
+>>>>>>>     __asan_report_load8_noabort+0x20/0x30
+>>>>>>>     drm_bridge_add+0x98/0x230
+>>>>>>>     devm_drm_panel_bridge_add_typed+0x174/0x298
+>>>>>>>     devm_drm_of_get_bridge+0xe8/0x190
+>>>>>>>     mtk_dsi_host_attach+0x130/0x2b0
+>>>>>>>     mipi_dsi_attach+0x8c/0xe8
+>>>>>>>     hx83102_probe+0x1a8/0x368
+>>>>>>>     mipi_dsi_drv_probe+0x6c/0x88
+>>>>>>>     really_probe+0x1c4/0x698
+>>>>>>>     __driver_probe_device+0x160/0x298
+>>>>>>>     driver_probe_device+0x7c/0x2a8
+>>>>>>>     __device_attach_driver+0x2a0/0x398
+>>>>>>>     bus_for_each_drv+0x198/0x200
+>>>>>>>     __device_attach+0x1c0/0x308
+>>>>>>>     device_initial_probe+0x20/0x38
+>>>>>>>     bus_probe_device+0x11c/0x1f8
+>>>>>>>     deferred_probe_work_func+0x80/0x250
+>>>>>>>     worker_thread+0x9b4/0x2780
+>>>>>>>     kthread+0x274/0x350
+>>>>>>>     ret_from_fork+0x10/0x20
+>>>>>>>
+>>>>>>>    Allocated by task 69:
+>>>>>>>     kasan_save_track+0x40/0x78
+>>>>>>>     kasan_save_alloc_info+0x44/0x58
+>>>>>>>     __kasan_kmalloc+0x84/0xa0
+>>>>>>>     __kmalloc_node_track_caller_noprof+0x228/0x450
+>>>>>>>     devm_kmalloc+0x6c/0x288
+>>>>>>>     devm_drm_panel_bridge_add_typed+0xa0/0x298
+>>>>>>>     devm_drm_of_get_bridge+0xe8/0x190
+>>>>>>>     mtk_dsi_host_attach+0x130/0x2b0
+>>>>>>>     mipi_dsi_attach+0x8c/0xe8
+>>>>>>>     hx83102_probe+0x1a8/0x368
+>>>>>>>     mipi_dsi_drv_probe+0x6c/0x88
+>>>>>>>     really_probe+0x1c4/0x698
+>>>>>>>     __driver_probe_device+0x160/0x298
+>>>>>>>     driver_probe_device+0x7c/0x2a8
+>>>>>>>     __device_attach_driver+0x2a0/0x398
+>>>>>>>     bus_for_each_drv+0x198/0x200
+>>>>>>>     __device_attach+0x1c0/0x308
+>>>>>>>     device_initial_probe+0x20/0x38
+>>>>>>>     bus_probe_device+0x11c/0x1f8
+>>>>>>>     deferred_probe_work_func+0x80/0x250
+>>>>>>>     worker_thread+0x9b4/0x2780
+>>>>>>>     kthread+0x274/0x350
+>>>>>>>     ret_from_fork+0x10/0x20
+>>>>>>>
+>>>>>>>    Freed by task 69:
+>>>>>>>     kasan_save_track+0x40/0x78
+>>>>>>>     kasan_save_free_info+0x58/0x78
+>>>>>>>     __kasan_slab_free+0x48/0x68
+>>>>>>>     kfree+0xd4/0x750
+>>>>>>>     devres_release_all+0x144/0x1e8
+>>>>>>>     really_probe+0x48c/0x698
+>>>>>>>     __driver_probe_device+0x160/0x298
+>>>>>>>     driver_probe_device+0x7c/0x2a8
+>>>>>>>     __device_attach_driver+0x2a0/0x398
+>>>>>>>     bus_for_each_drv+0x198/0x200
+>>>>>>>     __device_attach+0x1c0/0x308
+>>>>>>>     device_initial_probe+0x20/0x38
+>>>>>>>     bus_probe_device+0x11c/0x1f8
+>>>>>>>     deferred_probe_work_func+0x80/0x250
+>>>>>>>     worker_thread+0x9b4/0x2780
+>>>>>>>     kthread+0x274/0x350
+>>>>>>>     ret_from_fork+0x10/0x20
+>>>>>>>
+>>>>>>>    The buggy address belongs to the object at ffffff80c4e9e000
+>>>>>>>     which belongs to the cache kmalloc-4k of size 4096
+>>>>>>>    The buggy address is located 256 bytes inside of
+>>>>>>>     freed 4096-byte region [ffffff80c4e9e000, ffffff80c4e9f000)
+>>>>>>>
+>>>>>>>    The buggy address belongs to the physical page:
+>>>>>>>    head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+>>>>>>>    flags: 0x8000000000000040(head|zone=2)
+>>>>>>>    page_type: f5(slab)
+>>>>>>>    page: refcount:1 mapcount:0 mapping:0000000000000000
+>>>>>>>    index:0x0 pfn:0x104e98
+>>>>>>>    raw: 8000000000000040 ffffff80c0003040 dead000000000122 0000000000000000
+>>>>>>>    raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+>>>>>>>    head: 8000000000000040 ffffff80c0003040 dead000000000122 0000000000000000
+>>>>>>>    head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+>>>>>>>    head: 8000000000000003 fffffffec313a601 ffffffffffffffff 0000000000000000
+>>>>>>>    head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+>>>>>>>    page dumped because: kasan: bad access detected
+>>>>>>>
+>>>>>>>    Memory state around the buggy address:
+>>>>>>>     ffffff80c4e9e000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>>     ffffff80c4e9e080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>>    >ffffff80c4e9e100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>>                       ^
+>>>>>>>     ffffff80c4e9e180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>>     ffffff80c4e9e200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>> ===================================================================
+>>>>>>>
+>>>>>>> Signed-off-by: Fei Shao <fshao@chromium.org>
+>>>>>> I was looking at the driver to try to follow your (awesome btw, thanks)
+>>>>>> commit log, and it does have a quite different structure compared to
+>>>>>> what we recommend.
+>>>>>>
+>>>>>> Would following
+>>>>>> https://docs.kernel.org/gpu/drm-kms-helpers.html#special-care-with-mipi-dsi-bridges
+>>>>>> help?
+>>>>> Hi Maxime,
 >>>>>
->>>>>          default                inode_lock-fix
->>>>> rw=30%
->>>>> Instance 1    r=55.7GiB/s,w=23.9GiB/s        r=9616MiB/s,w=4121MiB/s
->>>>> Instance 2    r=38.5GiB/s,w=16.5GiB/s        r=8482MiB/s,w=3635MiB/s
->>>>> Instance 3    r=37.5GiB/s,w=16.1GiB/s        r=8609MiB/s,w=3690MiB/s
->>>>> Instance 4    r=37.4GiB/s,w=16.0GiB/s        r=8486MiB/s,w=3637MiB/s
+>>>>> Thank you for the pointer.
+>>>>> I read the suggested pattern in the doc and compared it with the
+>>>>> drivers. If I understand correctly, both the MIPI-DSI host and panel
+>>>>> drivers follow the instructions:
+>>>>>
+>>>>> 1. The MIPI-DSI host driver must run mipi_dsi_host_register() in its probe hook.
+>>>>>      >> drm/mediatek/mtk_dsi.c runs mipi_dsi_host_register() in the probe hook.
+>>>>> 2. In its probe hook, the bridge driver must try to find its MIPI-DSI
+>>>>> host, register as a MIPI-DSI device and attach the MIPI-DSI device to
+>>>>> its host.
+>>>>>      >> drm/panel/panel-himax-hx83102.c follows and runs
+>>>>> mipi_dsi_attach() at the end of probe hook.
+>>>>> 3. In its struct mipi_dsi_host_ops.attach hook, the MIPI-DSI host can
+>>>>> now add its component.
+>>>>>      >> drm/mediatek/mtk_dsi.c calls component_add() in the attach callback.
+>>>>>
+>>>>> Could you elaborate on the "different structures" you mentioned?
+>>>> Yeah, you're right, sorry.
 >>>>
->>>> Something this dramatic usually only happens when you enable a debugging
->>>> option.  Can you recheck that you're running both A and B with the same
->>>> debugging options both compiled in, and enabled?
+>>>>> To clarify my point: the issue is that component_add() may return
+>>>>> -EPROBE_DEFER if the component (e.g. DSI encoder) is not ready,
+>>>>> causing the panel bridge to be removed. However, drm_bridge_remove()
+>>>>> is bound to MIPI-DSI host instead of panel bridge, which owns the
+>>>>> actual list_head object.
+>>>>>
+>>>>> This might be reproducible with other MIPI-DSI host + panel
+>>>>> combinations by forcibly returning -EPROBE_DEFER in the host attach
+>>>>> hook (verification with another device is needed), so the fix may be
+>>>>> required in drm/bridge/panel.c.
+>>>> Yeah, I think you're just hitting another bridge lifetime issue, and
+>>>> it's not the only one unfortunately. Tying the bridge structure lifetime
+>>>> itself to the device is wrong, it should be tied to the DRM device
+>>>> lifetime instead.
+>>> I think the more immediate issue is that the bridge object's lifetime
+>>> and drm_bridge_add/remove are inconsistent when devm_drm_of_get_bridge()
+>>> or drmm_of_get_bridge() are used.
+>> Well, I think this is more of probe issue of multiple kernel modules.
+>>
+>> The root issue is that the global bridge list still stores the
+>> pointer to *old* the bridge instance which has been freed after
+>> the first '-EPROBE_DEFER' happened. The next time the
+>> 'drm_bridge_add(&panel_bridge->bridge);' is called, we will deference
+>> the *old* NULL pointer. Because it will touch the 'struct drm_bridge::list'
+>> field, which's backing memory has been freed.
+> Yes. That is what is causing the crash.
+>
+>>> These helpers tie the bridge add/removal to the device or drm_device
+>>> passed in, but internally they call down to drm_panel_bridge_add_typed()
+>>> which allocates the bridge object tied to the panel device.
+>> When the devm_drm_panel_bridge_add_typed() is passed a pointer of
+>> DSI host device, we essentially tie the lifetime of the freshly
+>> created drm bridge instance to the DSI host device. But, the
+>> 'struct panel_bridge' clearly hint that the bridge instance has
+>> the same lifetime with the backing panel, after all, it's the
+>> underlying panel baking the bridge.
+> Exactly.
+>
+>>>> But then, the discussion becomes that bridges typically probe outside of
+>>>> the "main" DRM device probe path, so you don't have access to the DRM
+>>>> device structure until attach at best.
+>>>>
+>>>> That's why I'm a bit skeptical about your patch. It might workaround
+>>>> your issue, but it doesn't actually solve the problem. I guess the best
+>>>> way about it would be to convert bridges to reference counting, with the
+>>>> device taking a reference at probe time when it allocates the structure
+>>>> (and giving it back at remove time), and the DRM device taking one when
+>>>> it's attached and one when it's detached.
+>>> Without going as far, it's probably better to align the lifecycle of
+>>> the two parts. Most other bridge drivers in the kernel have |drm_bridge|
+>>> lifecycle tied to their underlying |device|, either with explicit
+>>> drm_bridge_{add,remove}() calls in their probe/bind and remove/unbind
+>>> callbacks respectively, or with devm_drm_bridge_add in the probe/bind
+>>> path. The only ones with a narrower lifecycle are the DSI hosts, which
+>>> add the bridge in during host attach and remove it during host detach.
 >>>
->>> It is the same kernel tree with and w/o Mateusz's inode_lock changes to
->>> block/fops.c. I see the config remains same for both the builds.
+>>> I'm thinking about fixing the panel_bridge lifecycle such that it is
+>>> tied to the panel itself. Maybe that would involve making
+>>> devm_drm_of_get_bridge() correctly return bridges even if a panel was
+>>> found, and then making the panels create and add panel bridges directly,
+>>> possibly within drm_panel_add(). Would that make sense?
+>> I think, align the lifetime of the bridge with 'panel->dev' probably helps.
+>> Modifying the devm_drm_of_get_bridge() function like the following pattern:
+>>
+>>
+>> ```
+>>
+>> struct drm_bridge *devm_drm_of_get_bridge(struct device_node *np, u32
+>> port, u32 endpoint)
+>> {
+>>       struct drm_bridge *bridge;
+>>       struct drm_panel *panel;
+>>       int ret;
+>>
+>>       ret = drm_of_find_panel_or_bridge(np, port, endpoint, &panel, &bridge);
+>>       if (ret)
+>>           return ERR_PTR(ret);
+>>
+>>       if (panel)
+>>           bridge = devm_drm_panel_bridge_add(panel->dev, panel);
+>>
+>>       return bridge;
+>> }
+> That's one possible solution I thought of, but then the devm_ prefix
+> no longer makes sense.
+
+It still is dev managed...
+
+Despite of_get_something() typically increase the reference count of
+something. of_find_something() will return a pointer to the underlyinginstance, but will not touch the reference counter.
+
+> Also the panel_bridge is still implicitly created,
+
+Yeah.
+
+And it will always create a new bridge instance when you call the function.
+(if the backing panel is already populated).Similar with Dmitry's AUX/HPD bridge.
+
+> and we might as well move that to the panel side.
+
+Your idea is possible and may bring back better lifetime control,
+I don't know which method is the best, gonna to run away.
+
+
+>> ```
+>>
+>>
+>> Or alternatively, inline this to drm/mediatek,
+>> rename it as mtk_drm_of_get_bridge().
+> I would prefer to not do that, since that only fixes the issue for
+> MediaTek, while we have some 30 odd users of devm_drm_of_get_bridge().
+>
+>> Or alternatively, manage the bridge's lifetime manually.
+>> Remove it from the global bridge list if errors happen.
+> That's also one way; it's just messy.
+
+Right.
+
+>
+> Thanks
+> ChenYu
+>
+>>> Thanks
+>>> ChenYu
 >>>
->>> Let me get a run for both base and patched case w/o running perf lock
->>> contention to check if that makes a difference.
+>>>> It's much more involved than just another helper though :/
+>>>>
+>>>> Maxime
+>> --
+>> Best regards,
+>> Sui
 >>
->> Without perf lock contention
->>
->>                   default                         inode_lock-fix
->> rw=30%
->> Instance 1      r=54.6GiB/s,w=23.4GiB/s         r=11.4GiB/s,w=4992MiB/s
->> Instance 2      r=52.7GiB/s,w=22.6GiB/s         r=11.4GiB/s,w=4981MiB/s
->> Instance 3      r=53.3GiB/s,w=22.8GiB/s         r=12.7GiB/s,w=5575MiB/s
->> Instance 4      r=37.7GiB/s,w=16.2GiB/s         r=10.4GiB/s,w=4581MiB/s
->>
-> 
-> per my other e-mail can you follow willy's suggestion and increase the hash?
+-- 
+Best regards,
+Sui
 
-With Mateusz's inode_lock fix and PAGE_WAIT_TABLE_BITS value of 10, 14, 
-16 and 20.
-(Two values given with each instance below are FIO READ bw and WRITE bw)
-
-                 10              14              16              20
-rw=30%
-Instance 1      11.3GiB/s       14.2GiB/s       14.8GiB/s       14.9GiB/s
-                 4965MiB/s       6225MiB/s       6487MiB/s       6552MiB/s
-Instance 2      12.3GiB/s       10.4GiB/s       10.9GiB/s       11.0GiB/s
-                 5389MiB/s       4548MiB/s       4770MiB/s       4815MiB/s
-Instance 3      11.1GiB/s       12.3GiB/s       11.2GiB/s       13.5GiB/s
-                 4864MiB/s       5410MiB/s       4923MiB/s       5927MiB/s
-Instance 4      12.3GiB/s       13.7GiB/s       13.0GiB/s       11.4GiB/s
-                 5404MiB/s       6004MiB/s       5689MiB/s       5007MiB/s
-
-Number of hash buckets don't seem to matter all that much in this case.
-
-Regards,
-Bharata.
 
