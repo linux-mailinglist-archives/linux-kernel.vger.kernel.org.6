@@ -1,122 +1,90 @@
-Return-Path: <linux-kernel+bounces-425995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB16E9DED87
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:20:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195E29DED99
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88CAA2816D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:20:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C659B21A2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A602419924D;
-	Fri, 29 Nov 2024 23:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SR4i4O0s"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14861A3BD8;
+	Fri, 29 Nov 2024 23:23:59 +0000 (UTC)
+Received: from smtp134-33.sina.com.cn (smtp134-33.sina.com.cn [180.149.134.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B38A38FAD;
-	Fri, 29 Nov 2024 23:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3791A38FAD
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732922444; cv=none; b=eV4dSv1ZU6gb83mZSwmdAntbsWjT4ohy+oROVHd7xVpVJv+6Wy/l/YgiGX6Bar3zM5LgsuJ5ZCL8OC719hhIZcgieGPYGoWLl03qi7+F+y6iFduKSZiM2ULDEl7Gag3PVmIn2mul08tEKmMAYbcuj0i1oTXWbIc1IEJhcraiZjI=
+	t=1732922639; cv=none; b=a/t+p7oegSN1sBxGjFAIFRaLHVlKHIhmmUJ3mTP3zusOUMYVAx2qk8cJFurwhjlvMtPig+S8P8vrKuCJ+EXR3jVe5t6rp1hJQrfx/w1iBOah/2CsTrsdinGkc2iHPgA/j2uM6c5A4RaH2XZsRq1VuvQxBh+is+gBXUlzi3xyDTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732922444; c=relaxed/simple;
-	bh=tVQpUbUALSzFeHsjelEz0sCEXGf2z8kbyz1EmkfnlJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6+ObXbo/ASrzb81smfL+hKPxJFiwqXbPMtoEYbR6pykmUEuVx0kEDtOeHPq1xBauhDLE93SzFFLPyGvV/m/6X8Ok6OkkwdEqfhohRUPzipYo01hbwU28PJ6WMFWYBA7viOeViSlPF1OecbyvIDc9NTfUrkQifRhSpWr3YRZBpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SR4i4O0s; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9D8FC40003;
-	Fri, 29 Nov 2024 23:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732922439;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q0vCYdInPo1Dg1M0c/jQNcugfGfoOVsoCMaIFPdkpec=;
-	b=SR4i4O0srbQJl4PoKMmJD/iwW7lfpgRzk6l4s2poRkmT5d+8yCi78fkmiAwSW28ENQgTA/
-	C6vc+TNkpACFFM9dQ8P6oQiLx5I7q5UU7v7ZTt3xSEYzEgbQBXG9jMF2930qn5sp3EahMl
-	NG/RbBVvA5JpQl8jBevb4kg9I0trJ8C8nqcJepENycFCXRlr5/6tzDcWglf3nBAD6IGdfF
-	hAG0IhskQf+wVjjnd6HxEV0u+qUtEI+8iuH/T0p3gb49RyjYMYRmpDPd8iWrbdgKYZijmD
-	Dt6Na5K5w4q6R3f85Jnr89x8B8VRgeqHsHJJSSdnOPIeuerAsJbCdXlmIWFWPg==
-Date: Sat, 30 Nov 2024 00:20:38 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: =?utf-8?B?6auY5rC46Imv?= <leonylgao@gmail.com>
-Cc: john.stultz@linaro.org, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Yongliang Gao <leonylgao@tencent.com>,
-	Jingqun Li <jingqunli@tencent.com>
-Subject: Re: [PATCH] rtc: check if __rtc_read_time was successful in
- rtc_timer_do_work()
-Message-ID: <20241129232038ad3be3ae@mail.local>
-References: <20241011043153.3788112-1-leonylgao@gmail.com>
- <173136306889.3322178.5149197946199507685.b4-ty@bootlin.com>
- <CAJxhyqC9hYo3E=J--EYN9uYQc6_q67X4F5DSgpMFzsWrFcbw4Q@mail.gmail.com>
+	s=arc-20240116; t=1732922639; c=relaxed/simple;
+	bh=A4tIgoaMPG32VB8dlIc9Mb12Q5WZCs890AqVHcwM1jI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Wgym1jKeZVLvvDfR2b+Bly1/QqBayDHsANYfuWVDn/leGBicVwn0MSyqE9M937dHZ1uIix1sY/XqN5zBvYqr/tW1nxomHrP6fd3e0NHMw1X3E2BaaPrFqFJuhFwyzuz5w1OHxnftv6cmrlas7vebY5w9t/S45+yFn9u9kLNpdfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.64.216])
+	by sina.com (10.185.250.21) with ESMTP
+	id 674A4CF500002396; Fri, 30 Nov 2024 07:23:38 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8175273408272
+X-SMAIL-UIID: 417AC9DC2453461C8C857EAAC26143CC-20241130-072338-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+fe139f9822abd9855970@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] WARNING in netfs_retry_reads
+Date: Sat, 30 Nov 2024 07:23:25 +0800
+Message-Id: <20241129232325.2100-1-hdanton@sina.com>
+In-Reply-To: <67496cdc.050a0220.253251.00a5.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJxhyqC9hYo3E=J--EYN9uYQc6_q67X4F5DSgpMFzsWrFcbw4Q@mail.gmail.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 20/11/2024 22:17:34+0800, 高永良 wrote:
-> Hi Alexandre Belloni,
+On Thu, Nov 28, 2024 at 11:27:24PM -0800, syzbot wrote:
+> syzbot found the following issue on:
 > 
-> I've noticed that the post-failure process for __rtc_read_time requires
-> careful handling.
-> 1. Need to call pm_relax.
+> HEAD commit:    85a2dd7d7c81 Add linux-next specific files for 20241125
+> git tree:       linux-next
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e3a5c0580000
 
-I had a look when taking your patch and I'm not convinced calling
-pm_relax is necessary.
+#syz test
 
-> 2. Potentially need to set the alarm to ensure subsequent interrupts can
-> process the
->     expired timer? Could you give me some advice?
-
-Same thing, if you are not able to read the current time, setting the
-next alarm is going to fail anyway.
-
-> Should I continue to submit a fix patch or create a v2 version of the patch?
-> 
-> Best Regards,
-> Yongliang Gao
-> 
-> Alexandre Belloni <alexandre.belloni@bootlin.com> 于2024年11月12日周二 06:11写道：
-> 
-> > On Fri, 11 Oct 2024 12:31:53 +0800, Yongliang Gao wrote:
-> > > If the __rtc_read_time call fails,, the struct rtc_time tm; may contain
-> > > uninitialized data, or an illegal date/time read from the RTC hardware.
-> > >
-> > > When calling rtc_tm_to_ktime later, the result may be a very large value
-> > > (possibly KTIME_MAX). If there are periodic timers in rtc->timerqueue,
-> > > they will continually expire, may causing kernel softlockup.
-> > >
-> > > [...]
-> >
-> > Applied, thanks!
-> >
-> > [1/1] rtc: check if __rtc_read_time was successful in rtc_timer_do_work()
-> >       https://git.kernel.org/abelloni/c/e8ba8a2bc4f6
-> >
-> > Best regards,
-> >
-> > --
-> > Alexandre Belloni, co-owner and COO, Bootlin
-> > Embedded Linux and Kernel engineering
-> > https://bootlin.com
-> >
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--- x/fs/netfs/read_collect.c
++++ y/fs/netfs/read_collect.c
+@@ -619,8 +619,7 @@ ssize_t netfs_wait_for_read(struct netfs
+ 
+ 	for (;;) {
+ 		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
+-		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
+-
++		smp_mb();
+ 		subreq = list_first_entry_or_null(&stream->subrequests,
+ 						  struct netfs_io_subrequest, rreq_link);
+ 		if (subreq &&
+@@ -628,6 +627,7 @@ ssize_t netfs_wait_for_read(struct netfs
+ 		     test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags)))
+ 			netfs_read_collection(rreq);
+ 
++		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
+ 		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags))
+ 			break;
+ 
+--
 
