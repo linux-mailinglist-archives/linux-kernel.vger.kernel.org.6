@@ -1,281 +1,133 @@
-Return-Path: <linux-kernel+bounces-425532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A3A9DC353
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:15:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B4D9DC354
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:16:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B522827E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18F21614F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BA919C56D;
-	Fri, 29 Nov 2024 12:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D3419C56D;
+	Fri, 29 Nov 2024 12:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="lrkt3IfV"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a4y5LG4y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PT1lxdp8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D19157484
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FFB170A1A
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732882553; cv=none; b=cmMIICjSw4kz/YPO4Ry63nlwUYQxEFaeZzXx0xChP/78CHawL+hAMI7bZ5xOAr2SqDpviPgYQFnzOBpXUt5XrToA1yhigs6YjcBVdj8+tM9vmLdqMlWIFJxkQ9z+QQT66HTG6GMJP4pQ8TyG385MQOo0lfDK/m6sCFU+bgfPGKU=
+	t=1732882573; cv=none; b=UXc8rrMr3429M2hY6bXxL5erKSi7yb+5VuDfyeeJET8PQbscL1i/bMeg1qSF/5/VZrEEqokW3tpN7ysq7B4pQOQBGueSHKapKgZ+XWtkY+TMzsuPyi/MFmmc5LOd+aFNm4OWDM1lNEcfawnke7TNFS/oPCmJ06J737QLvZtqj0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732882553; c=relaxed/simple;
-	bh=Ec5Ylbw+5EsfXxfjsO5YMqVrCLxU4XrwLj6ZYaSKphA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AKU/eIYnhzmcd5Ey884Swt+sjTFqEWG7LtJ6A4nCaKIBgveq1OQJEiY8cVgoPxVaaZ8J0ml/QHgJvxMYKpBoAVpl6p7y9Ja7TwM3sVF4TZiyPSd54jjFTWccNHIq7LYl2oBgMvMT6xN7htMPjf1MJMNfkqTtCV07/XL+vnFeuwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=lrkt3IfV; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
-	Resent-Message-ID:In-Reply-To:References;
-	bh=BfCTylWU9ZNPvECdPAqaK056rc2dMnZuQjjgKC06NTc=; t=1732882551; x=1734092151; 
-	b=lrkt3IfVFV2gkTIchR07KY2AL0liPBQW4m0yMiZpJQi1V26Jwh9Pg/PpCXKqXuNI7v48AGHXDTB
-	S413mQKFd2f27Eu/MgBJXG5wr1uGy8LOyCecrfMPdW1Yh3iU1Q1nH53ylnpxxWK+LN+yCNv2XFWtm
-	XfPBYZVc3GVF6Z3p+j34yYMg7A8IcrjPITjQFyxBRkx6EMVPPhkEQbDnCvzz4h/eBp0Oqk8aafOg/
-	S6/UIDB4hA6d0HmMayOAeM9zFl9reYklnfKUEQJ3ENVAfGwEsBUDD8DM5gllybCVaTvI4WxQPdEUK
-	qI6/GgR70PqulDcUq1f/svI833KoADk/Eiwg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tGzuQ-00000001Mux-3zFM;
-	Fri, 29 Nov 2024 13:15:43 +0100
-From: Johannes Berg <johannes@sipsolutions.net>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] fs: debugfs: differentiate short fops with proxy ops
-Date: Fri, 29 Nov 2024 13:15:37 +0100
-Message-ID: <20241129121536.30989-2-johannes@sipsolutions.net>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732882573; c=relaxed/simple;
+	bh=O3tqu7rPiQfKWhJaRD6waOGq54rlRMkdSc6yYt30dmY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NPTIjq5Uk9/A2Bj0vUX09lKnhhdD/1/YoOsJvUJlFs4q+NKjl+/5mxsrLhp0pNfnIeae6KJO0omtOfKVOP//1DaMqDyjmbVa3C3+FCn4zVJGBRlFoxCSQTc6cEZz7WQWERvVEasPpTLFlBxzhtRSEkiR/3n+D/edelxw2cGgm8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a4y5LG4y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PT1lxdp8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732882568;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1keM/yjfeej7eAiI5QOW6J4N1QYsbkxaSQ6fo3TBGrk=;
+	b=a4y5LG4yuZSIUVjXdiO4ePi7hEoxO7R9beEhWvuogesBlYLxeI1KbRTHfhv7L+S2UjkbnZ
+	WTSKnemTQNKzBpCcZ5CWVZFKVr0OkcCbOfodG+aT+v6BMquo/i7ulF5fckVGCm8t/2KI5X
+	zjRpcM6xWhZlul/GVOkvBl1c09mGWK/woL12OFyFIygtRmXigYJGkLhvfOPaRZtIbqqvpk
+	g/nTKUNUAohU8QOupiO5CeBySh3kHSZWHycwgTe59Ggbz4yIFxKHuFgCKbaJxmTVcU1dak
+	sfzioCT9dw+ZZbEMXFjqeuEFtXqiI9pWnNdH19FyjfP47ZOBpCBgDR6LnichvQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732882568;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1keM/yjfeej7eAiI5QOW6J4N1QYsbkxaSQ6fo3TBGrk=;
+	b=PT1lxdp8ziGgDjdwHu0ZcQlJJNtKQ+wvxmmBYE++69YqTSu7ACDfY0w9v8jwCxgILSFL4J
+	DcU4JdSMtIdkz4CA==
+To: Guenter Roeck <linux@roeck-us.net>, John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [patch 2/2] timekeeping: Always check for negative motion
+In-Reply-To: <2cb25f89-50b9-4e72-9b18-bee78e09c57c@roeck-us.net>
+References: <20241031115448.978498636@linutronix.de>
+ <20241031120328.599430157@linutronix.de>
+ <387b120b-d68a-45e8-b6ab-768cd95d11c2@roeck-us.net>
+ <CANDhNCo1RtcfqUJsuAQ+HdS7E29+gByfek5-4KYiAk3Njk4M3Q@mail.gmail.com>
+ <65b412ef-fc57-4988-bf92-3c924a1c74a5@roeck-us.net> <87cyifxvgj.ffs@tglx>
+ <2cb25f89-50b9-4e72-9b18-bee78e09c57c@roeck-us.net>
+Date: Fri, 29 Nov 2024 13:16:08 +0100
+Message-ID: <874j3qxmk7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Thu, Nov 28 2024 at 07:30, Guenter Roeck wrote:
+> On 11/28/24 06:51, Thomas Gleixner wrote:
+> [   19.090000] ###### now: b5ac62 last: d447e38 mask: ffffff return: 712e2a
+> [   19.110000] ###### now: b9ebc3 last: db506d0 mask: ffffff return: 4e4f3
+> [   19.120000] ###### now: bb842f last: db8d760 mask: ffffff return: 2accf
+> [   19.160000] ###### now: c43f2e last: dbabfa8 mask: ffffff return: 97f86
+>
+> 'last' advances beyond 'mask', and after that the result is always bad. The call to
+> clocksource_delta() is from timekeeping_advance().
 
-Geert reported that my previous short fops debugfs changes
-broke m68k, because it only has mandatory alignement of two,
-so we can't stash the "is it short" information into the
-pointer (as we already did with the "is it real" bit.)
+This does not make any sense. The bits above the mask in cycle_last are
+irrelevant:
 
-Instead, exploit the fact that debugfs_file_get() called on
-an already open file will already find that the fsdata is
-no longer the real fops but rather the allocated data that
-already distinguishes full/short ops, so only open() needs
-to be able to distinguish. We can achieve that by using two
-different open functions.
+        delta = (now - last) & mask;
 
-Unfortunately this requires another set of full file ops,
-increasing the size by 536 bytes (x86-64), but that's still
-a reasonable trade-off given that only converting some of
-the wireless stack gained over 28k. This brings the total
-cost of this to around 1k, for wins of 28k (all x86-64).
+> [    3.350000] ###### now:  6c4f last:  fe6a84 mask: ffffff return: 201cb    <---
+> [    3.360000] ###### now: 40427 last: 10052cc mask: ffffff return: 3b15b    <---
 
-Reported-and-tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Link: https://lore.kernel.org/CAMuHMdWu_9-L2Te101w8hU7H_2yobJFPXSwwUmGHSJfaPWDKiQ@mail.gmail.com
-Fixes: 8dc6d81c6b2a ("debugfs: add small file operations for most files")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
- fs/debugfs/file.c     | 72 ++++++++++++++++++++++++++++++-------------
- fs/debugfs/inode.c    | 11 +++----
- fs/debugfs/internal.h |  6 +---
- 3 files changed, 55 insertions(+), 34 deletions(-)
+       0x40427 - 0x10052cc = 0xffffffffff03b15b
+       0xffffffffff03b15b & 0xffffff = 0x3b15b
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 47dc96dfe386..bdb4f2ca0506 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -64,22 +64,13 @@ const struct file_operations *debugfs_real_fops(const struct file *filp)
- }
- EXPORT_SYMBOL_GPL(debugfs_real_fops);
- 
--/**
-- * debugfs_file_get - mark the beginning of file data access
-- * @dentry: the dentry object whose data is being accessed.
-- *
-- * Up to a matching call to debugfs_file_put(), any successive call
-- * into the file removing functions debugfs_remove() and
-- * debugfs_remove_recursive() will block. Since associated private
-- * file data may only get freed after a successful return of any of
-- * the removal functions, you may safely access it after a successful
-- * call to debugfs_file_get() without worrying about lifetime issues.
-- *
-- * If -%EIO is returned, the file has already been removed and thus,
-- * it is not safe to access any of its data. If, on the other hand,
-- * it is allowed to access the file data, zero is returned.
-- */
--int debugfs_file_get(struct dentry *dentry)
-+enum dbgfs_get_mode {
-+	DBGFS_GET_ALREADY,
-+	DBGFS_GET_REGULAR,
-+	DBGFS_GET_SHORT,
-+};
-+
-+static int __debugfs_file_get(struct dentry *dentry, enum dbgfs_get_mode mode)
- {
- 	struct debugfs_fsdata *fsd;
- 	void *d_fsd;
-@@ -96,15 +87,17 @@ int debugfs_file_get(struct dentry *dentry)
- 	if (!((unsigned long)d_fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)) {
- 		fsd = d_fsd;
- 	} else {
-+		if (WARN_ON(mode == DBGFS_GET_ALREADY))
-+			return -EINVAL;
-+
- 		fsd = kmalloc(sizeof(*fsd), GFP_KERNEL);
- 		if (!fsd)
- 			return -ENOMEM;
- 
--		if ((unsigned long)d_fsd & DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT) {
-+		if (mode == DBGFS_GET_SHORT) {
- 			fsd->real_fops = NULL;
- 			fsd->short_fops = (void *)((unsigned long)d_fsd &
--						~(DEBUGFS_FSDATA_IS_REAL_FOPS_BIT |
--						  DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT));
-+						~DEBUGFS_FSDATA_IS_REAL_FOPS_BIT);
- 		} else {
- 			fsd->real_fops = (void *)((unsigned long)d_fsd &
- 						~DEBUGFS_FSDATA_IS_REAL_FOPS_BIT);
-@@ -138,6 +131,26 @@ int debugfs_file_get(struct dentry *dentry)
- 
- 	return 0;
- }
-+
-+/**
-+ * debugfs_file_get - mark the beginning of file data access
-+ * @dentry: the dentry object whose data is being accessed.
-+ *
-+ * Up to a matching call to debugfs_file_put(), any successive call
-+ * into the file removing functions debugfs_remove() and
-+ * debugfs_remove_recursive() will block. Since associated private
-+ * file data may only get freed after a successful return of any of
-+ * the removal functions, you may safely access it after a successful
-+ * call to debugfs_file_get() without worrying about lifetime issues.
-+ *
-+ * If -%EIO is returned, the file has already been removed and thus,
-+ * it is not safe to access any of its data. If, on the other hand,
-+ * it is allowed to access the file data, zero is returned.
-+ */
-+int debugfs_file_get(struct dentry *dentry)
-+{
-+	return __debugfs_file_get(dentry, DBGFS_GET_ALREADY);
-+}
- EXPORT_SYMBOL_GPL(debugfs_file_get);
- 
- /**
-@@ -424,7 +437,8 @@ static void __full_proxy_fops_init(struct file_operations *proxy_fops,
- 		proxy_fops->unlocked_ioctl = full_proxy_unlocked_ioctl;
- }
- 
--static int full_proxy_open(struct inode *inode, struct file *filp)
-+static int full_proxy_open(struct inode *inode, struct file *filp,
-+			   enum dbgfs_get_mode mode)
- {
- 	struct dentry *dentry = F_DENTRY(filp);
- 	const struct file_operations *real_fops;
-@@ -432,7 +446,7 @@ static int full_proxy_open(struct inode *inode, struct file *filp)
- 	struct debugfs_fsdata *fsd;
- 	int r;
- 
--	r = debugfs_file_get(dentry);
-+	r = __debugfs_file_get(dentry, mode);
- 	if (r)
- 		return r == -EIO ? -ENOENT : r;
- 
-@@ -491,8 +505,22 @@ static int full_proxy_open(struct inode *inode, struct file *filp)
- 	return r;
- }
- 
-+static int full_proxy_open_regular(struct inode *inode, struct file *filp)
-+{
-+	return full_proxy_open(inode, filp, DBGFS_GET_REGULAR);
-+}
-+
- const struct file_operations debugfs_full_proxy_file_operations = {
--	.open = full_proxy_open,
-+	.open = full_proxy_open_regular,
-+};
-+
-+static int full_proxy_open_short(struct inode *inode, struct file *filp)
-+{
-+	return full_proxy_open(inode, filp, DBGFS_GET_SHORT);
-+}
-+
-+const struct file_operations debugfs_full_short_proxy_file_operations = {
-+	.open = full_proxy_open_short,
- };
- 
- ssize_t debugfs_attr_read(struct file *file, char __user *buf,
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index 38a9c7eb97e6..65e46c7b6bf1 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -455,8 +455,7 @@ struct dentry *debugfs_create_file_full(const char *name, umode_t mode,
- 					const struct file_operations *fops)
- {
- 	if (WARN_ON((unsigned long)fops &
--		    (DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT |
--		     DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)))
-+		    DEBUGFS_FSDATA_IS_REAL_FOPS_BIT))
- 		return ERR_PTR(-EINVAL);
- 
- 	return __debugfs_create_file(name, mode, parent, data,
-@@ -471,15 +470,13 @@ struct dentry *debugfs_create_file_short(const char *name, umode_t mode,
- 					 const struct debugfs_short_fops *fops)
- {
- 	if (WARN_ON((unsigned long)fops &
--		    (DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT |
--		     DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)))
-+		    DEBUGFS_FSDATA_IS_REAL_FOPS_BIT))
- 		return ERR_PTR(-EINVAL);
- 
- 	return __debugfs_create_file(name, mode, parent, data,
--				fops ? &debugfs_full_proxy_file_operations :
-+				fops ? &debugfs_full_short_proxy_file_operations :
- 					&debugfs_noop_file_operations,
--				(const void *)((unsigned long)fops |
--					       DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT));
-+				fops);
- }
- EXPORT_SYMBOL_GPL(debugfs_create_file_short);
- 
-diff --git a/fs/debugfs/internal.h b/fs/debugfs/internal.h
-index a3edfa4f0d8e..bbae4a228ef4 100644
---- a/fs/debugfs/internal.h
-+++ b/fs/debugfs/internal.h
-@@ -15,6 +15,7 @@ struct file_operations;
- extern const struct file_operations debugfs_noop_file_operations;
- extern const struct file_operations debugfs_open_proxy_file_operations;
- extern const struct file_operations debugfs_full_proxy_file_operations;
-+extern const struct file_operations debugfs_full_short_proxy_file_operations;
- 
- struct debugfs_fsdata {
- 	const struct file_operations *real_fops;
-@@ -40,11 +41,6 @@ struct debugfs_fsdata {
-  * pointer gets its lowest bit set.
-  */
- #define DEBUGFS_FSDATA_IS_REAL_FOPS_BIT BIT(0)
--/*
-- * A dentry's ->d_fsdata, when pointing to real fops, is with
-- * short fops instead of full fops.
-- */
--#define DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT BIT(1)
- 
- /* Access BITS */
- #define DEBUGFS_ALLOW_API	BIT(0)
--- 
-2.47.0
+That's not any different than before. The only difference is that the
+return value is checked:
 
+       return delta & ~(mask >> 1) ? 0 : delta;
+
+But clearly none of the resulting deltas (after masking) has bit 23
+set. So the function can't return 0, right?
+
+Coming back to my earlier assumption vs. the max idle time. Here is a
+long idle sleep:
+
+> [   18.500000] ###### now: 45b0a2 last: d1c7050 mask: ffffff return: 294052
+> [   19.090000] ###### now: b5ac62 last: d447e38 mask: ffffff return: 712e2a
+
+The cycle interval is 125000 clock cycles per tick. That's a HZ=100
+kernel, so the nominal clock frequency is 12.5 MHz.
+
+  0x712e2a/12.5e6 = 0.593391s
+
+which is close to the 597268854ns max_idle_ns value.
+
+That's about 0.0776978s away from the point where the delta becomes >
+mask/2. So there is a valid concern vs. these long idle sleeps on
+machines with a small counter width.
+
+But none of this explains the problems you are observing.
+
+Can you instrument clocksource_delta() to print the values only when the
+negative motion detection triggers?
+
+         if (delta & ~(mask >> 1))
+         	pr_info(....);
+
+Thanks,
+
+        tglx
 
