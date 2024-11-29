@@ -1,78 +1,86 @@
-Return-Path: <linux-kernel+bounces-425495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05ADC9DC2DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:31:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF84D9DC2DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:31:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 697C6B20B9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:31:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F7EE281B91
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175D017ADF7;
-	Fri, 29 Nov 2024 11:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF0A19B5A5;
+	Fri, 29 Nov 2024 11:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gpl45+3f"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MasX5LPy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A8014F135
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196A5199EB0
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732879860; cv=none; b=jxmzqXucr/lqPXrcdhOK0H5PVF8NCa/XSZNGcnxlxa5uvN8YXXYa+Ryj7Oj7kTGRn53x3TYdBGn3mQTd6i6wQPAZFnrI8S4sGkOGLB5QNKVm/BmpfuuNIKCmmd+kws/fembGyyEFk8vGsi7mRc6eLoIbTWU6sTxkpnkF5FsU/O0=
+	t=1732879864; cv=none; b=i0CcmjASYjYw2Wkfq9dlp8IEMOpptGjSRbHUtg9lKT+t4QuYmIOGOY3ofhETtRoDUKDImjTl/gKlACeaiWAMCV+Lf7o2Fjz7FSg6Cl2DWISagWrHteBwc6GTlIYlIxTsZNZ9BCkzzemdlTJyKe9muozmNuWpQqF+uAPvDP9rH00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732879860; c=relaxed/simple;
-	bh=KvkDUcbjxSgA55eI4i8ys84ybkmkjThM4KqxgS2qbFg=;
+	s=arc-20240116; t=1732879864; c=relaxed/simple;
+	bh=E/nct3Z0AyiW7so5qEv2TjxTURueIYFuWIEzfrDHS+c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m/kI6xifE+dI4JAfRaYsxj6IEW3nmbXEe+VquOXbE4q0MfnbWU4jX7WKLi6Y4lvP4X9w6xXV8DjuiPTB9Qzhs0Ob/KBR80x99CmUY6AUW0RbHgmdnhP/c6d/NngFah/UDVsrv92tW8rEmmF1X17Ls7le1R188cO9qEMifu+fAD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gpl45+3f; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53ddb4c05d1so277217e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 03:30:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732879857; x=1733484657; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dru7XehxiadKT/ViJQ84q3HT+JPTxb4ywcU3T49Qslc=;
-        b=gpl45+3f10IWM8JA4HpDSHThFolrojAmixn1ppzOhCdegQHlM7BxNIsqh+9DPfT276
-         9/RuxJlcs12d3sCdvv+VqdnaNWiJnrlsPPOCSL+oG3ol6CpsVaF7+B4X/mnOYoO3aljM
-         vuoAgIq3i4gnuxGcBlR7jCiJmJObijgzKHQBZVZKEsq9MibS6QkGhMWeIl0ZwjX8Qizd
-         esE3kC1f38I2e0NHCPEYjekmrjQVBosz7RMrCEt88hfITapRdEPQn77t2aHgPxLlrjam
-         tENlWIFJ1CKR+CnJh5s1BUxSZ6tcd0CWNKJW2hxka/O3lCBzVo/ivmAH0yb0hYlTh7Xv
-         39hg==
+	 In-Reply-To:Content-Type; b=YwlrkLckhIgezkctsrwiitm2jGF9I2eHImGiTI/OTmbPvNQF9i4BGwKHIqI3p2yXzmJG6lQbdLSK7Gil5EJPXFcfQ86whKQLT/dqoBbvyPkcETP/rojP0IAt5R9OBrpqFGKu9AwpGY0eXyJ8G5SbRms6W9mQZo2YEF/fzi2HEU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MasX5LPy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASNS0UJ008537
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:31:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2J73uNjPZGAVHNhLAoMksXEtawK/JNV411b/AtLbyMI=; b=MasX5LPyTHJqo+X7
+	zqhVTnDR/lxymLKcgXXcX9K/fv4eIYvlKv7EsL1/a05k/xVQaTnhZH6Z0Pn4MH5q
+	8uoBw0+cxow7q9reaYMsuKGWqMeB3Gt4ZljLGJloXmyxh4/NsznqbDixKqK52FwI
+	YeABf0Ou7vavA8lNfpnouQjAmHd5Va9y2mIbK+i/Z3gVjjoCtv8m37iwyACGvQ6F
+	p8FhDyY+MJ2p9UfIQC1VUZj2x6I5n5yiX9XM72nhhJyKyEAANSF9fqjz4PYppfc7
+	YOVciVcwr/26mNC1/HMZMj/tr0I3sKYF9CwCygYtUbNzegGVDCgwnonSFmJIrc05
+	APoRtg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xw5dcs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:31:01 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6d3b1d1d8c1so4005196d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 03:31:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732879857; x=1733484657;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1732879860; x=1733484660;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dru7XehxiadKT/ViJQ84q3HT+JPTxb4ywcU3T49Qslc=;
-        b=NS+z1mHQeuVe/mTxwQETGKShW2s6CVj80WJwTzxFL4U46XXk8ymZRQasZVUEfqWGGj
-         drfsHX0NS9sVZpbiFJK/wRW7MCBvZoumc8+sKR9QWGfjTtel4ce+cgBd1Ik2cbRaOoeG
-         iBEwl+J+eXrXW5mUc33kE7kxlrDA9ONeqeX1tQ9ICuIC/Tt7qk/WupNM1OWraYSySO6k
-         wbl/cOS1PQZbPgAKTxzWIVeZSw4z9vD6QBFKzAsZippWETzOz/fRDoldyaIT3IlgX43g
-         BapI1sdjgsvmxHuYqFxEf65GnKRND/8gQWDA0ZXza2VrQD29NrCGu2ICVTYWXpaXb0Xn
-         2dew==
-X-Forwarded-Encrypted: i=1; AJvYcCXj9DgZNHKkLSMNvKzkNi1/hex9rGTqNJu5hrwGSxI6Lr0h3HoDUvy7UYBey4EzuCPMH7+lZfxw95U/2FU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzotUMiPSR84HhJDKNzQmMRpWDgYr3pJnEOz/iZxcaL2r5eheXz
-	ulz6t1zURF9bCd7f2hKe0fGP53nosTZXpZyi9527w1YqlqHCYr+VPnpHXkd/udk=
-X-Gm-Gg: ASbGncvWNuJ+svI7KuJcrg50Qg1P6Fd/G2vSnjWfJ8v7hO+xbSy1yZOpFTqJmu2tTJw
-	kWPh4E5b8kLPwGdYnujl2yyJ6xybWaeVJB7fHp6JKjRqzvmoMpOyPW5E/0WPqrspHlxVhYDTdYU
-	N0aQv3TIbnBmeRADB1/AW93xaP+QQyeV1UawlvDNOYn9waqFIgAAq5zV5MsWUDqnEm/nwVV+r5r
-	Cyu964/cBNDSH4dpSespxTMr0s1cQVXeUx03NuNvLVCpd83/T8UAu4zCgfirF15tttKokwfKSJ3
-	WyBy52Axh/4BJ410e7ENBM2JIBIL
-X-Google-Smtp-Source: AGHT+IGn69c9WrUJa5Fx5fZQEEMOvwP4jv1LmT5p/N4LSQWowO2axrDMJ+H0kV5B7ia/qeP27am3cw==
-X-Received: by 2002:a05:6512:2316:b0:53d:a9ab:2ec6 with SMTP id 2adb3069b0e04-53df0108fd0mr1406559e87.10.1732879856709;
-        Fri, 29 Nov 2024 03:30:56 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6430e69sm465538e87.44.2024.11.29.03.30.53
+        bh=2J73uNjPZGAVHNhLAoMksXEtawK/JNV411b/AtLbyMI=;
+        b=M/tGUrae9fAAduo37qKgFRh9XLGtwi/l0qIkeT/OG02ySAj0KE54UsEWpUHBxJIa9P
+         dgxNOB8xYqiiyg2iQMBxhcorvwOhcQzTbUkPf5/4RLMEsSRmeidEHM9Tkq5gsyAIps2N
+         N6QgotBWybe3+3sZOAwDAfJUw62MsLBP8cBZbetzoBBuCDBtb825RywmG/vpeILQd+fW
+         ncq2zcrYhZFCh41CPk5qNVKK7N0eWd+K/UVe3fNsgNn1OxFUWvcI4rRRnq7ZiFO5R8eL
+         VqKVdvUKNIzKoSVqycdtngxtCnvL3LJOMOPscrStr0tWVHP5eGqYs4SvkGFF60Un9tEa
+         Ii4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVE//3I8n79Caz30hDMmYX1JRugpRkyAi9XV/WEYW35yMiJRh0iZa2b2vIFObQn7q7w5LQfeYHC+B5wXGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJfEvHPFewNIr9AwJw9Bk2jQ2AxW5O3n+n+HMITTZ/IprYPVX8
+	boTUwryM7LMpbLUjbO/KtCDLkt7UT1gD3xGI2XPE22w4JYHdIT125r0uBEjm3hJYWnTw2fo4CQP
+	C6xKrdXsvx/f8/lWJ+FC01EeuGx7KaRL/kxyHA/VOP3tZWWyA5sl4wc461dszw1Y=
+X-Gm-Gg: ASbGncsNYMJihsfLSuPCAzQFb6swj/OBOTcqYUB04c5ipqMa2EtWBxiVkkdiUq9sgEn
+	hwU+1vq4tF7eWsd+EigNQ0bhGVdggxw+pkUJ4XjhW8cyQ3QonjlC6xWaHBiFCZWAIWD35OS2cSN
+	GaiCFDX2p9FosQCIlfOhJ0wfv/DCI8VIMfkScaZgmfkrOoN9NZINPs781LtyTUYHaU6AWby1kOD
+	dzC71VXc9efOJSK2DnwjYsu/Qy0felENjxQWLZ793xdo4bZl7Z49Nqj8PcvkraASDGVrRVD+G7o
+	b8kP8ltNl0K81e9Qbu1R3cibeYd1Slo=
+X-Received: by 2002:a05:620a:468f:b0:7af:cac7:5017 with SMTP id af79cd13be357-7b67c294e6amr664115185a.4.1732879859921;
+        Fri, 29 Nov 2024 03:30:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH+ZvQGdRMQzPEEaLaG2syP1M2cbvOxApntRS5gUHerceJ8hR18oZcXNURE5/8QI1Nm+rL0BQ==
+X-Received: by 2002:a05:620a:468f:b0:7af:cac7:5017 with SMTP id af79cd13be357-7b67c294e6amr664113385a.4.1732879859513;
+        Fri, 29 Nov 2024 03:30:59 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d40f4sm167622766b.65.2024.11.29.03.30.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 03:30:55 -0800 (PST)
-Message-ID: <9b9bf718-b5a5-4fef-810a-1206743495f6@linaro.org>
-Date: Fri, 29 Nov 2024 13:30:53 +0200
+        Fri, 29 Nov 2024 03:30:59 -0800 (PST)
+Message-ID: <4f3921b1-412e-4982-b360-d0e6cec69673@oss.qualcomm.com>
+Date: Fri, 29 Nov 2024 12:30:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,82 +88,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] clk: qcom: common: Add support for power-domain
- attachment
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: qcs8300-ride: Enable PMIC
+ peripherals
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Tingguo Cheng <quic_tingguoc@quicinc.com>, quic_fenglinw@quicinc.com,
+        quic_tingweiz@quicinc.com, kernel@quicinc.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241126-adds-spmi-pmic-peripherals-for-qcs8300-v1-0-28af84cb86f8@quicinc.com>
+ <20241126-adds-spmi-pmic-peripherals-for-qcs8300-v1-2-28af84cb86f8@quicinc.com>
+ <5ae55ca2-d9ef-49c0-8868-2c5bb665ddb1@oss.qualcomm.com>
 Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-0-ca2826c46814@linaro.org>
- <20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-2-ca2826c46814@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-2-ca2826c46814@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <5ae55ca2-d9ef-49c0-8868-2c5bb665ddb1@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: kCf3UzFNGKqhmstN6coYR9qqsXzMTk27
+X-Proofpoint-ORIG-GUID: kCf3UzFNGKqhmstN6coYR9qqsXzMTk27
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ clxscore=1015 mlxlogscore=999 phishscore=0 adultscore=0 spamscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411290094
 
-Hi Bryan,
-
-On 11/28/24 18:38, Bryan O'Donoghue wrote:
-> Right now we support one power-domain per clock controller.
-> These single power-domains are switched on by the driver platform logic.
+On 29.11.2024 12:14 PM, Konrad Dybcio wrote:
+> On 26.11.2024 10:35 AM, Tingguo Cheng wrote:
+>> Enable PMIC and PMIC peripherals for qcs8300-ride board. The qcs8
+>> 300-ride uses 2 pmics(pmm8620au:0,pmm8650au:1) on the board, which
+>> are variants of pmm8654au used on sa8775p/qcs9100 -ride(4x pmics).
+>>
+>> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
+>>  1 file changed, 23 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>> index 7eed19a694c39dbe791afb6a991db65acb37e597..9447efb9cd01654b74ec4c18dec58b1956ffe710 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>> @@ -9,6 +9,7 @@
+>>  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>>  
+>>  #include "qcs8300.dtsi"
+>> +#include "sa8775p-pmics.dtsi"
+>>  / {
+>>  	model = "Qualcomm Technologies, Inc. QCS8300 Ride";
+>>  	compatible = "qcom,qcs8300-ride", "qcom,qcs8300";
+>> @@ -223,6 +224,28 @@ &gcc {
+>>  		 <0>;
+>>  };
+>>  
+>> +&pmm8654au_0_pon_resin{
+>> +	linux,code = <KEY_VOLUMEDOWN>;
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pmm8654au_2{
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&pmm8654au_2_thermal{
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&pmm8654au_3{
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&pmm8654au_3_thermal{
+>> +	status = "disabled";
+>> +};
 > 
-> However when we have multiple power-domains attached to a clock-controller
-> that list of power-domains must be handled outside of driver platform
-> logic.
-> 
-> Use devm_pm_domain_attach_list() to automatically hook the list of given
-> power-domains in the dtsi for the clock-controller driver.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   drivers/clk/qcom/common.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index 33cc1f73c69d1f875a193aea0552902268dc8716..e6a024e95ab5f4b0776ffc6c7b3bebfbebb007fd 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -22,6 +22,7 @@ struct qcom_cc {
->   	struct qcom_reset_controller reset;
->   	struct clk_regmap **rclks;
->   	size_t num_rclks;
-> +	struct dev_pm_domain_list *pd_list;
->   };
->   
->   const
-> @@ -294,11 +295,19 @@ int qcom_cc_really_probe(struct device *dev,
->   	struct clk_regmap **rclks = desc->clks;
->   	size_t num_clk_hws = desc->num_clk_hws;
->   	struct clk_hw **clk_hws = desc->clk_hws;
-> +	struct dev_pm_domain_attach_data pd_data = {
-> +		.pd_names = 0,
-> +		.num_pd_names = 0,
-> +	};
->   
->   	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
->   	if (!cc)
->   		return -ENOMEM;
->   
-> +	ret = devm_pm_domain_attach_list(dev, &pd_data, &cc->pd_list);
+> Are all these PMICs absent?
 
-Please make a call to the function like this:
+OK I re-read the commit message..
 
-	ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+Disabling a lot of things usually points to a backwards approach,
+are there any other PMICs on board?
 
-Here pd_data is unused.
-
-> +	if (ret < 0 && ret != -EEXIST)
-> +		return ret;
-> +
->   	reset = &cc->reset;
->   	reset->rcdev.of_node = dev->of_node;
->   	reset->rcdev.ops = &qcom_reset_ops;
-> 
-
---
-Best wishes,
-Vladimir
+Konrad
 
