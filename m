@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-425765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C229DEACA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 067739DEACC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD87282198
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC22282679
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049411A2C06;
-	Fri, 29 Nov 2024 16:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0A81A256A;
+	Fri, 29 Nov 2024 16:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lWypiMfQ"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vDBZcSBh"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A921A0B13
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811D11A257C
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732897096; cv=none; b=SmmfDu0sTV/2RlrzVnbdp/fYfjtMo+zPHxvjMBBjh89fKiuMZOGuVNJCs6Q8ioYHWsN6XH06jkfttzs2UsLOFeNS9n3hwa+0AfB5xBjlN6XL9qychnU0XS8BncpjPxhM2I3ifa18fLX4mxDfYpgMpsY/FWNt6o6T/Yf97IJ0T6w=
+	t=1732897098; cv=none; b=kDax8yEZcdkSUvtl3+Ffdr+MvIabq3gf7AWevFECDg/cFXeatZzstvQaeiCZ6G2NwX4KhacxZh7ELUlXSKaA1fk+aDu2C1evfgfHrlwWIRx8gsY4D97jsikoIDjvB5AIFQX6E7Owyyzkst3TXaUUuoA/9iskQGVCQ7/4lm5P6Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732897096; c=relaxed/simple;
-	bh=2L3jtpLBWH0l2P8fF1Ud91ho1zHZU8g440Ir3CBglIA=;
+	s=arc-20240116; t=1732897098; c=relaxed/simple;
+	bh=YlkIcmm94An7lV0pkjTIvCSU74kX7a9jFjvLJ9SPrIk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d+4hNEHknKy9IJU5YNLjIVrPKtzvujrwOwy+ifRQncR4kP+UX2Stm761OSQO90v8t/ZrpRo92BXkWeyQJctU638O4/JqLmIJO7/jQ67ZR4K7Bq2ZcaXIIPpWsUo2TovtJ3ylth19+EfaCBCAOQhE97WQNk8XKS7taAbA4XMsPoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lWypiMfQ; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=BWVeWhB+TvWfmcQT65T+o1AWu0xvLNCAGTURU3tuFbM7X7I9slmXbRAZh+xlwrXVISYZdxKlIq49REBlfIMv0hy9kKH1cmj67kulVD17wuNUNp7hy8OMakEWHmJ3rUDUNnnV6o2Z4BKxD3AhxTwsT8xfoSxXPu/+4XDjG9xRwvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vDBZcSBh; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a8b94fb5so12802865e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:18:14 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43494a20379so18662765e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:18:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732897093; x=1733501893; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732897095; x=1733501895; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bt0xGTxs8yGFD5cf7awbpbZkl9MBcuva2OpmOmzmwhc=;
-        b=lWypiMfQKzFo9GuP11PoWs+idFuP7uPw8gievlY2TWFWOZTC6NkEisl0JqWa7NCbjV
-         Imwq8rBtxDclwwAEdaAb8ZedSP5HhQHAxf5ONyGLHjJ9IES0RpC+XNxMmhr7KLroGo84
-         J9O1gcSO/gABohE0OYSQqtzHvA/xeI9as+JxsPmvpl5Lx+OPsOsZ+u475Tu1VBMTV7+l
-         saIQZY2v4OZEtbdrUVjUIioB/BuU5WjYc1RNKEAdZxrRWIdkiB3N4zNUSmAFcbw6Zalh
-         mpu3ruMjiTj8Ht+WaLq+U+wMvhIsxGyfmji/acL0ev7LPeeYI9jjypn1n6zVvGjku3UG
-         /aIQ==
+        bh=aVXqZCMu8xwpkslZ2hg8FShI0ONQIAKRUsutZKpKVHA=;
+        b=vDBZcSBhzL5P1T9IqPlk2nskgN2YARoH+HO6DIL9mM2WDbIzythqUkOAINsTkJic29
+         SjyaP4kwYA9kh0TZLhPdZPE6Xx+fenjBXKzXR6EoLCKlcGLPiW406a4hIuTnuRhI5Bt0
+         Hi+hdf/yiEgLScJxfzjzyXW8+YrKyLo1FbyMkA6FxVN9jK5adN/is4RJnHFRvHQuGnu/
+         o23U9+JBXUWsXpPm0fYPB5yiGLMr1ptk2SQDGT2gWKbgXTLIwCBQysBZYFcUV+GyLuHV
+         acS0MwJNC1E8aO2MhleSnZY0Yl2rPDCUomQVqu6uPm6nVYRo282571m/TkugxqRiv1hr
+         5roA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732897093; x=1733501893;
+        d=1e100.net; s=20230601; t=1732897095; x=1733501895;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bt0xGTxs8yGFD5cf7awbpbZkl9MBcuva2OpmOmzmwhc=;
-        b=Hi0ZxISAba8/0gS3AFF//AfZKqQyEHFD4NCtvDX0MjHjLfgbKGyn+HYHj4ZojOeGYQ
-         3fPA29HDJbW5lzOlEt8BNDwepfyQFr+ItDcCLOAGblcbx5tiAcK5Yv407tekYGfWIS9b
-         PBDPoDE7M3yX7PSP3JNqG0nC0zTQYwRJGuLgi5r6ecU7GSw/xDBV88DVTxAUBv1DREfU
-         2UMj6ejX2POUDrYl/k2kxuVV1UwcQmxBTbirAMcenIG1ahWGv+o5d2/SnyuhCSKBVsH2
-         2I/9qZZ+wGHPIoRUiNy7dJ89bpybiKVuRTW1f4wxe6yW22n6jPXC91dDgZm/EbmCeTgC
-         VTjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEPx8P2q/it68q9HrlchiYI1f29TK6SowOfFA1n8YKZ9RjAazBkpmZ1peH0MtfdLw2lrlUfZqSmoEXUKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn8/Kbn+SCH2l6OSsSyno10hHzLIvYH3VhXwj4MCu+AMwxWe0A
-	xz/WmVpBVDlV8+z6sV3hUbj0WQvU7dAK5+tQMac0PIRhOHUyx+E1g9ohLp2QMTc=
-X-Gm-Gg: ASbGnctGomqBimenwxudsM1mKDydShLbxO+Rn9t52bLVY5N9DcWr7+oadDaRdt+B6LL
-	fXudP/TfckpZzANYfi48oexQnCZAP20DymL6lp90ugNIuTzeU+5r4/r9GwCa4NXAHSkbE3Ds4Xt
-	2K6dYUsaiWmDLmfHZnTDz3FBja3G2GsiY5beTontSy4jsSt/McC8jQGX+3dJLYWnh2/9ySaSUMA
-	uvk+u8Ot5l1R5XZg+CmNHEOI/DgubDJruuqD8FfZSb7GbgDjHMR/1J7N20=
-X-Google-Smtp-Source: AGHT+IFkZM0c9SimgPiTFNwzQREG6A3LmuZxD0DaX6XGbSX1og3VFsEOdO90EWGOxbv70Cs6YJUgmg==
-X-Received: by 2002:a05:600c:34ca:b0:431:9340:77e0 with SMTP id 5b1f17b1804b1-434afbb0f4dmr71514855e9.9.1732897092945;
-        Fri, 29 Nov 2024 08:18:12 -0800 (PST)
+        bh=aVXqZCMu8xwpkslZ2hg8FShI0ONQIAKRUsutZKpKVHA=;
+        b=EC4HzXcSR2f46XXLXZSLnyUEE3jU5O8ixsVmCUuZNvXJQj60fTL6bCTlmlxoHBnPnP
+         UAPwHeDDcfcTYOnNHtXDu1w2x4u5Qm8929NyQ5Eo77GNed6WZO/dJ7v2jPmSvgAwcLyY
+         et77DKGtHz0Vp0Q4KrVfIlUqnO3WuxvmUAaBKT/LUAaxaamLfPto162D+D2NspPnNEgu
+         5srCfR++CoSOiZDE8egp702b5fAVKN+gtEv5M1mcZU/VTLJId+pHtCABg3x6AyiiNdZL
+         bSVbE1CyUXnD7ECMkFiSOE+cFblahQuKWcnV+1NsxWQmU3/lYpK4dIm7ziE6u+xvTBW2
+         W/hw==
+X-Forwarded-Encrypted: i=1; AJvYcCUi2MZl6ej6Ff1LDv671srsd+Kj+FsSEnw+z60o6y3rieZAzMY2xhhxyn/zV5dgxtCUqH+JLEkKhPZACRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgMRvjbTKK3PETZ4khuMo2xnyf1DpWAjCinq9KmIM8Ig64xrgo
+	wlEz6i5cJrgD58suuwy47RidK6eu7zkbFuoDkymgRYUqVxaPRlRpVRoxf/0A104=
+X-Gm-Gg: ASbGnct4axzVFVPGl/LnCdIoFHOY5DUMbfbMq8AugaImc5YagIqfKvDLtYQ57wUtL31
+	rQtnXJ9zbYPvnKjP/Xf//FlN4+wAcda0bJ6Z9kvr7v9Idmv1hBzd/aGmJYhMh+Ntse+md+8xenf
+	TBzwuxRfMSnKEDcMm1NvFRZ+AxqkvOwPD8LiBue9ZMMY0V/zBjuUT6cXAibfUMAXDoiX8PGz+Z1
+	54F7+8RmkMJzXrLroIbTBsOdat4z/wU6PdAAcOHKV1lNOwmYj5tBbfdUDA=
+X-Google-Smtp-Source: AGHT+IEA4WsTI+4NtsvW+R6TBXAs/4KeBqQkZDtbHYGltNPgZ4YcEuM2oS7x8HvfZlJiaa2HisRkGw==
+X-Received: by 2002:a05:600c:154d:b0:434:a555:d0d with SMTP id 5b1f17b1804b1-434a9e0e21dmr108116145e9.29.1732897094371;
+        Fri, 29 Nov 2024 08:18:14 -0800 (PST)
 Received: from vingu-cube.. ([2a01:e0a:f:6020:c54b:5636:4db3:1028])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dbf95fsm56771665e9.15.2024.11.29.08.18.11
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dbf95fsm56771665e9.15.2024.11.29.08.18.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 08:18:12 -0800 (PST)
+        Fri, 29 Nov 2024 08:18:13 -0800 (PST)
 From: Vincent Guittot <vincent.guittot@linaro.org>
 To: mingo@redhat.com,
 	peterz@infradead.org,
@@ -85,9 +85,9 @@ Cc: kprateek.nayak@amd.com,
 	efault@gmx.de,
 	luis.machado@arm.com,
 	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 09/10 v2] sched/fair: Fix sched_can_stop_tick() for fair tasks
-Date: Fri, 29 Nov 2024 17:17:55 +0100
-Message-ID: <20241129161756.3081386-10-vincent.guittot@linaro.org>
+Subject: [PATCH 10/10 v2] sched/fair: Fix variable declaration position
+Date: Fri, 29 Nov 2024 17:17:56 +0100
+Message-ID: <20241129161756.3081386-11-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241129161756.3081386-1-vincent.guittot@linaro.org>
 References: <20241129161756.3081386-1-vincent.guittot@linaro.org>
@@ -99,31 +99,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We can't stop the tick of a rq if there are at least 2 tasks enqueued in
-the whole hierarchy and not only at the root cfs rq.
-
-rq->cfs.nr_queued tracks the number of sched_entity at one level
-whereas rq->cfs.h_nr_enqueued tracks all enqueued tasks in the
-hierarchy.
+Move variable declaration at the beginning of the function
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 3571f91d4b0d..866a1605656c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1341,7 +1341,7 @@ bool sched_can_stop_tick(struct rq *rq)
- 	if (scx_enabled() && !scx_can_stop_tick(rq))
- 		return false;
- 
--	if (rq->cfs.nr_queued > 1)
-+	if (rq->cfs.h_nr_queued > 1)
- 		return false;
- 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index c34874203da2..87552870958c 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5632,6 +5632,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags);
+ static struct sched_entity *
+ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+ {
++	struct sched_entity *se;
  	/*
+ 	 * Enabling NEXT_BUDDY will affect latency but not fairness.
+ 	 */
+@@ -5642,7 +5643,7 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+ 		return cfs_rq->next;
+ 	}
+ 
+-	struct sched_entity *se = pick_eevdf(cfs_rq);
++	se = pick_eevdf(cfs_rq);
+ 	if (se->sched_delayed) {
+ 		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+ 		SCHED_WARN_ON(se->sched_delayed);
 -- 
 2.43.0
 
