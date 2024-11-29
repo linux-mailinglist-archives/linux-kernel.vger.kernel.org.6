@@ -1,175 +1,144 @@
-Return-Path: <linux-kernel+bounces-425465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C03B9DC277
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:02:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811D6164C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:02:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169971990C5;
-	Fri, 29 Nov 2024 11:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fBKXnEy2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15EA9DC27B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:04:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BF5155726;
-	Fri, 29 Nov 2024 11:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A5A2B21780
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:04:16 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B04198E74;
+	Fri, 29 Nov 2024 11:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzYLNZph"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28739155726;
+	Fri, 29 Nov 2024 11:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732878123; cv=none; b=LWge2jiIZQkoffosYR9MQaw3oywiE3IpicwEUdu3xj+aSEizCpv+LT1Zjv2Mkb+Fpr1R1iEUecFEzPpScTNYmZuS7hTCTHrdPTTsP7SeMWW9CMQfT/F686RDBtRNB8qYkHt415fjudtMFLh7cSS7k46SUafmVeNe741q4IkvlaM=
+	t=1732878250; cv=none; b=Y/hbXprD8VXk+SFMXHmSDKzsGe29BQzmsWXE1s1p/ksH/Zp/TCt3uMEL9IldHOFB98+jYIr0xYmbZzdqb+/xltH2vaFJcRZ8hka+5j0e7N3BWQ6y1X7RDGoLFE6Pnx4VVJ824Pgjo6n6X1Sr35lWNQRF2dOPt78izQ4bgthUOEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732878123; c=relaxed/simple;
-	bh=ixtB4ZmYvDoC7rWdLTO0CEmP6GC62rmPzNDUAyMrjuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KtMVou+ioDsXRwFAg2CSu/uEnsA0juv2kyQ5L++0OhG8Zdb7Yf2k5Q6X0ZBabmcubLrLHHnPsePi+tcf2kZJOul9Tr0Xy1x0PS5/2Bq9td5o88PakRtskFVAaQmwMzPQwqGfPBYQ9DtXmFcmB+jxfj18JzMPAefH/4jSA/5JwzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fBKXnEy2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 531A5A8F;
-	Fri, 29 Nov 2024 12:01:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732878094;
-	bh=ixtB4ZmYvDoC7rWdLTO0CEmP6GC62rmPzNDUAyMrjuk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fBKXnEy2dd3D1WLRPIT3l34keV7TMLp9RK9EmHtobEC8BJzHiacruxoepLVFrrYDE
-	 r88nQ1meSr6vO+9KpkqJIx8uyD4KeEHGXWnxybfi25lRsygEN0aD1xszoxoP2Q756C
-	 ILZKXCCSJg/P/91qPJRuAcZo4QFQnIU3tTER3UeM=
-Date: Fri, 29 Nov 2024 13:01:48 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control
- owned by other fh
-Message-ID: <20241129110148.GA4108@pendragon.ideasonboard.com>
-References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
- <20241127-uvc-fix-async-v2-2-510aab9570dd@chromium.org>
- <20241128222232.GF25731@pendragon.ideasonboard.com>
- <CANiDSCvyMbAffdyi7_TrA0tpjbHe3V_D_VkTKiW-fNDnwQfpGA@mail.gmail.com>
- <20241128223343.GH25731@pendragon.ideasonboard.com>
- <7eeab6bd-ce02-41a6-bcc1-7c2750ce0359@xs4all.nl>
+	s=arc-20240116; t=1732878250; c=relaxed/simple;
+	bh=pCaLsj2oXo5FvjR958xZgaPENr25Q1/sqdTinPPJPR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hitLzgxLb7WiZYmioxc8RwWTgS28/Jn2JcnwWg1AULPiS1XntDEqjedexoHJzm1BdWNkLBytb+SR32J3aiEBFwKJK3suADjzypWsOlONVBd2oW5fUHQIBsf3RXfd/R752O5LRPHsy9HKTEcDRPAhpagtKU2WtPDnNmwASHa3NjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzYLNZph; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50FB8C4CECF;
+	Fri, 29 Nov 2024 11:04:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732878249;
+	bh=pCaLsj2oXo5FvjR958xZgaPENr25Q1/sqdTinPPJPR4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qzYLNZph8Cco4/sUR1hiSoG2GPSQLly8iQQ293idj3vMj8JPRIrbwYd2FQV4DQM5o
+	 opBXRzGgn/VDiQaw1SA6q5h6kGL+jsfqo3rWkRcZO0l+zfWloBhmzkuLF/tvoc8TMU
+	 L7uycVhAB592m/UwqPmJ1Ww4B8oSwYOYAiQRKxLAYorLb+E2jKxV1mS3JORtgCKsia
+	 rjqdwCBbDres2Gw61My+NhzLmr64SJ0FXyf8ReT3Cl7FcO4zulJxD2AuvEEzLag5og
+	 3tcCP8xA4YCkY2yMT2SYIKdDeEjT13raW6gX0SpChsVu7Jd7h4rr9cVco+LxCFh3U1
+	 UAcbE2yTj+4jA==
+Message-ID: <c0992fb1-20cd-4aab-847a-66542e9af7d2@kernel.org>
+Date: Fri, 29 Nov 2024 12:04:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7eeab6bd-ce02-41a6-bcc1-7c2750ce0359@xs4all.nl>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] w1: ds2482: switch to devm_kzalloc() from
+ kzalloc()
+To: cleverline1mc@gmail.com, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Stefan Wahren <stefan.wahren@chargebyte.com>,
+ Stefan Wahren <wahrenst@gmx.net>
+Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241129-ds2482-add-reg-v5-0-af8e83d41344@gmail.com>
+ <20241129-ds2482-add-reg-v5-2-af8e83d41344@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241129-ds2482-add-reg-v5-2-af8e83d41344@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 29, 2024 at 11:36:36AM +0100, Hans Verkuil wrote:
-> Hi Laurent, Ricardo,
-> 
-> On 28/11/2024 23:33, Laurent Pinchart wrote:
-> > On Thu, Nov 28, 2024 at 11:28:29PM +0100, Ricardo Ribalda wrote:
-> >> On Thu, 28 Nov 2024 at 23:22, Laurent Pinchart wrote:
-> >>>
-> >>> Hi Ricardo,
-> >>>
-> >>> (CC'ing Hans Verkuil)
-> >>>
-> >>> Thank you for the patch.
-> >>>
-> >>> On Wed, Nov 27, 2024 at 12:14:50PM +0000, Ricardo Ribalda wrote:
-> >>>> If a file handle is waiting for a response from an async control, avoid
-> >>>> that other file handle operate with it.
-> >>>>
-> >>>> Without this patch, the first file handle will never get the event
-> >>>> associated with that operation, which can lead to endless loops in
-> >>>> applications. Eg:
-> >>>> If an application A wants to change the zoom and to know when the
-> >>>> operation has completed:
-> >>>> it will open the video node, subscribe to the zoom event, change the
-> >>>> control and wait for zoom to finish.
-> >>>> If before the zoom operation finishes, another application B changes
-> >>>> the zoom, the first app A will loop forever.
-> >>>
-> >>> Hans, the V4L2 specification isn't very clear on this. I see pros and
-> >>> cons for both behaviours, with a preference for the current behaviour,
-> >>> as with this patch the control will remain busy until the file handle is
-> >>> closed if the device doesn't send the control event for any reason. What
-> >>> do you think ?
-> >>
-> >> Just one small clarification. The same file handler can change the
-> >> value of the async control as many times as it wants, even if the
-> >> operation has not finished.
-> >>
-> >> It will be other file handles that will get -EBUSY if they try to use
-> >> an async control with an unfinished operation started by another fh.
-> > 
-> > Yes, I should have been more precised. If the device doesn't send the
-> > control event, then all other file handles will be prevented from
-> > setting the control until the file handle that set it first gets closed.
-> 
-> I think I need a bit more background here:
-> 
-> First of all, what is an asynchronous control in UVC? I think that means
-> you can set it, but it takes time for that operation to finish, so you
-> get an event later when the operation is done. So zoom and similar operations
-> are examples of that.
+On 29/11/2024 10:53, Kryštof Černý via B4 Relay wrote:
+>  	/* Detect the 8-port version */
+> @@ -505,21 +503,15 @@ static int ds2482_probe(struct i2c_client *client)
+>  		err = w1_add_master_device(&data->w1_ch[idx].w1_bm);
+>  		if (err) {
+>  			data->w1_ch[idx].pdev = NULL;
+> -			goto exit_w1_remove;
+> +			for (idx = 0; idx < data->w1_count; idx++) {
+> +				if (data->w1_ch[idx].pdev != NULL)
+> +					w1_remove_master_device(&data->w1_ch[idx].w1_bm);
+> +			}
+> +			return err;
+>  		}
+>  	}
+>  
+>  	return 0;
+> -
+> -exit_w1_remove:
+> -	for (idx = 0; idx < data->w1_count; idx++) {
+> -		if (data->w1_ch[idx].pdev != NULL)
+> -			w1_remove_master_device(&data->w1_ch[idx].w1_bm);
 
-Correct. Physical PTZ (pan/tilt/zoom) is the prime use case. The UVC
-specification states that any control that requires more than 10ms to
-respond to a SET_CUR request must be reported by the device as an
-asynchronous control, but does not tell which control must or must not
-be asynchronous.
+This exit path should stay.
 
-> And only when the operation finishes will the control event be sent, correct?
-
-Correct.
-
-> While the operation is ongoing, if you query the control value, is that reporting
-> the current position or the final position?
-
-The UVC specification indicates that a GET_CUR or SET_CUR request on an
-asynchronous control will stall until the control value has been
-applied. This means you won't be able to poll the control value.
-
-In practice, devices often take liberties with the implementation of the
-specification, so some may let you get or set the value of an
-asynchronous control while a SET_CUR request is in progress.
-
-> E.g.: the zoom control is at value 0 and I set it to 10, then I poll the zoom control
-> value: will that report the intermediate values until it reaches 10? And when it is
-> at 10, the control event is sent?
->
-> >>>> Cc: stable@vger.kernel.org
-> >>>> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
-> >>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> >>>> ---
-> >>>>  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++++
-> >>>>  1 file changed, 4 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> >>>> index b6af4ff92cbd..3f8ae35cb3bc 100644
-> >>>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> >>>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> >>>> @@ -1955,6 +1955,10 @@ int uvc_ctrl_set(struct uvc_fh *handle,
-> >>>>       if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
-> >>>>               return -EACCES;
-> >>>>
-> >>>> +     /* Other file handle is waiting a response from this async control. */
-> >>>> +     if (ctrl->handle && ctrl->handle != handle)
-> >>>> +             return -EBUSY;
-> >>>> +
-> >>>>       /* Clamp out of range values. */
-> >>>>       switch (mapping->v4l2_type) {
-> >>>>       case V4L2_CTRL_TYPE_INTEGER:
-
--- 
-Regards,
-
-Laurent Pinchart
+> -	}
+> -exit_free:
+> -	kfree(data);
+> -exit:
+> -	return err;
+>  }
+>  
+Best regards,
+Krzysztof
 
