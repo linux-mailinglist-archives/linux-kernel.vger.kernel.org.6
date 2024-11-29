@@ -1,47 +1,77 @@
-Return-Path: <linux-kernel+bounces-425466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15EA9DC27B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:04:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 510F69DC27E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A5A2B21780
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:04:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C57E9B216C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B04198E74;
-	Fri, 29 Nov 2024 11:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158AE155726;
+	Fri, 29 Nov 2024 11:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzYLNZph"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xJMUOLM9"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28739155726;
-	Fri, 29 Nov 2024 11:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE7C1714B5
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732878250; cv=none; b=Y/hbXprD8VXk+SFMXHmSDKzsGe29BQzmsWXE1s1p/ksH/Zp/TCt3uMEL9IldHOFB98+jYIr0xYmbZzdqb+/xltH2vaFJcRZ8hka+5j0e7N3BWQ6y1X7RDGoLFE6Pnx4VVJ824Pgjo6n6X1Sr35lWNQRF2dOPt78izQ4bgthUOEU=
+	t=1732878365; cv=none; b=W1y6J9Dsv7wJTuE5zztYU9ATb77lzbQ/5EzobJlacJ9d9OEtIMGffS73ljfvGcwPdUIkKKtmrZ+N8zcF/IFi89tt/trYwRk6O/BT89QOjMkLv08fb8HN+ekfiT7+wAOBfB5U5UveQhXRfJv3P/tbDK45rIQEtWR2oQ5NhmegXmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732878250; c=relaxed/simple;
-	bh=pCaLsj2oXo5FvjR958xZgaPENr25Q1/sqdTinPPJPR4=;
+	s=arc-20240116; t=1732878365; c=relaxed/simple;
+	bh=glSMSM2xYee+n9jszNd5bA6nKVpvDqA90VqpPm4oGGk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hitLzgxLb7WiZYmioxc8RwWTgS28/Jn2JcnwWg1AULPiS1XntDEqjedexoHJzm1BdWNkLBytb+SR32J3aiEBFwKJK3suADjzypWsOlONVBd2oW5fUHQIBsf3RXfd/R752O5LRPHsy9HKTEcDRPAhpagtKU2WtPDnNmwASHa3NjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzYLNZph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50FB8C4CECF;
-	Fri, 29 Nov 2024 11:04:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732878249;
-	bh=pCaLsj2oXo5FvjR958xZgaPENr25Q1/sqdTinPPJPR4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qzYLNZph8Cco4/sUR1hiSoG2GPSQLly8iQQ293idj3vMj8JPRIrbwYd2FQV4DQM5o
-	 opBXRzGgn/VDiQaw1SA6q5h6kGL+jsfqo3rWkRcZO0l+zfWloBhmzkuLF/tvoc8TMU
-	 L7uycVhAB592m/UwqPmJ1Ww4B8oSwYOYAiQRKxLAYorLb+E2jKxV1mS3JORtgCKsia
-	 rjqdwCBbDres2Gw61My+NhzLmr64SJ0FXyf8ReT3Cl7FcO4zulJxD2AuvEEzLag5og
-	 3tcCP8xA4YCkY2yMT2SYIKdDeEjT13raW6gX0SpChsVu7Jd7h4rr9cVco+LxCFh3U1
-	 UAcbE2yTj+4jA==
-Message-ID: <c0992fb1-20cd-4aab-847a-66542e9af7d2@kernel.org>
-Date: Fri, 29 Nov 2024 12:04:04 +0100
+	 In-Reply-To:Content-Type; b=Pfn66gny0RuD20Xzi2GPStoUr64fRPT0CbS0dSbjrQa6u4VFNu1ISidYC3SI8Zu2GN03ndZFzUqgXEeW2SYRozzAEG6Y3c6vE0RZu3iEhpO0jQ76O8txcnk842dfCNZ7nuF76VTXyzLmjPLRRMHe57AhkAQByOKhegY1UEWiPn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xJMUOLM9; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a742481aso15724055e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 03:06:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732878362; x=1733483162; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0PXwgZUh/eJ1uLgDi0tZo2YOu7czg38JF36KJWk2ihI=;
+        b=xJMUOLM96edtd5IOFDlaqZalf7TnCm1LqSx/i2mmOwty0VC1dloGbdEp7gU5R/zwqD
+         0cH+BCu6FoBuS26bVl0WxrqT/RsawIGs61hWkSFWEo8DvcgXzSNrj4JKgS4nt1E70FNA
+         xTtWYpPF7iD9elNnsfZu+tz7P0k7fmF8mqWQd6qDxBktZijA+4CeW3H0c9pxTkIjVzCP
+         Dhh8gm3a/ONKGQ+Q4BGDurZB/d5mBUWW+0C0WdjevZH6QP3TcNOyVyT8m4cZddK+JqYs
+         hC+pAPNRPNKWH2T6DS/P/V59gf0JTw6uMjUw9q4PaP5c1v2kXSluMQ4/2atea7iQ70YR
+         S+fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732878362; x=1733483162;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0PXwgZUh/eJ1uLgDi0tZo2YOu7czg38JF36KJWk2ihI=;
+        b=aPWhzUTdBE8M2BhOerGADfC2eUUfg068fxwZGY07OpbXbkFPmKNl1Vmsso/yoTkqn4
+         xwcwVGXMw7xyZi33/7g+UIA3oL0RIGOIGu4ziY/jUIuj6gZ+KChQgp3vS6240DXo23Ig
+         WvtCnoypAh236tjU3dwlrW1HM+UKTvNogQyPe6mAUY0KvTvXZZUKTb6pZoQb1vwivBQW
+         8sSNoALh4znsoVMgcHtU8znhjoHFYC+sP5hU9A5/b1zkrOgHVCWlrBbPJ/OEl1VAZaWC
+         +aG4fNfpb2ZLqugvmGt5pxtJRTJq/z6kguGI1bPgY8VyUIo4zxY3QUpH/o1udXWD57WX
+         G7Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCU7Kcnx9IOldDft9D86kWr38VOfb9VGaf+/RDv6hIki9mwO1CvWBl3KDi4DIsUr+855HEvUZMwDsCUoLsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWfsxCadjC0Zl/SLZIsI6bRV0wQIfkHfbHzaRJlQiWK86cHI2G
+	sOStvI2hyNUl+ZXjO1pfHb+eS5LgD//sad1DQcvfHguflkInHIr3kk536wDcSWg=
+X-Gm-Gg: ASbGncv6V1NTnrShXU4zEBQJlNZa4UOnBQLmcctHGxywC4W5NB+f4Gzn4dq40Y0CPXq
+	2GwNl7uRP48Ou0uvtJmjt49UEXynKJNkSpzmAQYv6reCOch5r5V7Ly+RVCbXPlaOwrSeh7mMuYV
+	p9bCjQ4yqOWGBE3eRYt4V/9wSu3/uag6EVu4H0Qc8RCV+BRwETQ1EbKCwVtzyEhVYGPeTcrmz8O
+	yVu5pEkmIba9nt6/60GHhX78DVnHk6RPrEa1L6sp3acylliEVPiJBHLXOz6wPA=
+X-Google-Smtp-Source: AGHT+IH2rM8XDzBu9P2eB2Nv+FOlZ4MP17Y6QoZHdCbihA580XT4gslkuMijgMdy3lOM6ASqNrMP/w==
+X-Received: by 2002:a05:600c:458b:b0:434:a924:44e9 with SMTP id 5b1f17b1804b1-434a9dcfedfmr108489465e9.15.1732878362085;
+        Fri, 29 Nov 2024 03:06:02 -0800 (PST)
+Received: from [192.168.0.31] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dc63f7sm49163485e9.23.2024.11.29.03.06.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 03:06:01 -0800 (PST)
+Message-ID: <5cccec71-0cc7-492a-9fb9-903970da05c5@linaro.org>
+Date: Fri, 29 Nov 2024 11:06:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,96 +79,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] w1: ds2482: switch to devm_kzalloc() from
- kzalloc()
-To: cleverline1mc@gmail.com, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Stefan Wahren <stefan.wahren@chargebyte.com>,
- Stefan Wahren <wahrenst@gmx.net>
-Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20241129-ds2482-add-reg-v5-0-af8e83d41344@gmail.com>
- <20241129-ds2482-add-reg-v5-2-af8e83d41344@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] media: qcom: camss: fix VFE pm domain off
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yassine Oudjana <y.oudjana@protonmail.com>
+References: <20241128-vfe_pm_domain_off-v2-1-0bcbbe7daaaf@mainlining.org>
+ <3a5fd596-b442-4d3f-aae2-f454d0cd8e5c@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241129-ds2482-add-reg-v5-2-af8e83d41344@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <3a5fd596-b442-4d3f-aae2-f454d0cd8e5c@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 29/11/2024 10:53, Kryštof Černý via B4 Relay wrote:
->  	/* Detect the 8-port version */
-> @@ -505,21 +503,15 @@ static int ds2482_probe(struct i2c_client *client)
->  		err = w1_add_master_device(&data->w1_ch[idx].w1_bm);
->  		if (err) {
->  			data->w1_ch[idx].pdev = NULL;
-> -			goto exit_w1_remove;
-> +			for (idx = 0; idx < data->w1_count; idx++) {
-> +				if (data->w1_ch[idx].pdev != NULL)
-> +					w1_remove_master_device(&data->w1_ch[idx].w1_bm);
-> +			}
-> +			return err;
->  		}
->  	}
->  
->  	return 0;
-> -
-> -exit_w1_remove:
-> -	for (idx = 0; idx < data->w1_count; idx++) {
-> -		if (data->w1_ch[idx].pdev != NULL)
-> -			w1_remove_master_device(&data->w1_ch[idx].w1_bm);
+On 29/11/2024 08:48, Vladimir Zapolskiy wrote:
+> On 11/28/24 21:39, Barnabás Czémán wrote:
+>> Fix NULL pointer check before device_link_del
+>> is called.
+>>
+>> Unable to handle kernel NULL pointer dereference at virtual address 
+>> 000000000000032c
+>> Call trace:
+>>   device_link_put_kref+0xc/0xb8
+>>   device_link_del+0x30/0x48
+>>   vfe_pm_domain_off+0x24/0x38 [qcom_camss]
+>>   vfe_put+0x9c/0xd0 [qcom_camss]
+>>   vfe_set_power+0x48/0x58 [qcom_camss]
+>>   pipeline_pm_power_one+0x154/0x158 [videodev]
+>>   pipeline_pm_power+0x74/0xfc [videodev]
+>>   v4l2_pipeline_pm_use+0x54/0x90 [videodev]
+>>   v4l2_pipeline_pm_put+0x14/0x34 [videodev]
+>>   video_release+0x2c/0x44 [qcom_camss]
+>>   v4l2_release+0xe4/0xec [videodev]
+>>
+>> Fixes: eb73facec2c2 ("media: qcom: camss: Use common VFE pm_domain_on/ 
+>> pm_domain_off where applicable")
+>> Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+>> Changes in v2:
+>> - Add backtrace to the commit message.
+>> - Link to v1: https://lore.kernel.org/r/20241122-vfe_pm_domain_off- 
+>> v1-1-81d18f56563d@mainlining.org
+>> ---
+>>   drivers/media/platform/qcom/camss/camss-vfe.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/ 
+>> media/platform/qcom/camss/camss-vfe.c
+>> index 
+>> 80a62ba11295042802cbaec617fb87c492ea6a55..1bf1473331f63b9ab106d21ea263c84d851c8a31 100644
+>> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+>> @@ -595,7 +595,7 @@ void vfe_isr_reset_ack(struct vfe_device *vfe)
+>>    */
+>>   void vfe_pm_domain_off(struct vfe_device *vfe)
+>>   {
+>> -    if (!vfe->genpd)
+>> +    if (!vfe->genpd_link)
+>>           return;
+>>       device_link_del(vfe->genpd_link);
+>>
+> 
+> I object to this change, there might be a problem in the code, however it
+> is not yet identified.
+> 
+> vfe->genpd is not NULL, if vfe_pm_domain_on()/vfe_pm_domain_off() are
+> called appropriately, the "fix" does not fix the real problem, it veils it.
+> 
+> -- 
+> Best wishes,
+> Vladimir
+> 
+> 
 
-This exit path should stay.
+Let's walk through the logic.
 
-> -	}
-> -exit_free:
-> -	kfree(data);
-> -exit:
-> -	return err;
->  }
->  
-Best regards,
-Krzysztof
+vfe->genpd =
+
+Can happen in vfe_subdev_init();
+
+vfe_pm_domain_on() can fail @ vfe->genpd_link =
+
+If it fails then I _suppose_ we are still calling vfe_pm_domain_off() at 
+least that's the only logically way I see this error can manifest.
+
+@Barnabás can you confirm that this is the case ?
+
+If not, can you please provide more detail ?
+
+---
+bod
 
