@@ -1,91 +1,134 @@
-Return-Path: <linux-kernel+bounces-425459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF64D9DC25F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:47:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 685EC164848
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:47:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDC0198E6F;
-	Fri, 29 Nov 2024 10:47:18 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F979DC261
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:48:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6AD9463;
-	Fri, 29 Nov 2024 10:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6C1B2827A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:48:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D67197A67;
+	Fri, 29 Nov 2024 10:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vMGLzqBN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/a5s3z9g"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A702C9463;
+	Fri, 29 Nov 2024 10:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732877238; cv=none; b=W3JU+Xp16nR8hgMD70Y9us9K8xPU/HAP05CH/ZJ4/HGnTkIURRht9kMxiQDjXm70Cm/RLSOBzv6Vve3xAmHac5FCzkcLFLP506jH4ZJwmL/QA3JcrAyq/STj8g/iRmg7IQ7xIU55zlfknzKQZ7P0Jp71U71Q7c4JxJAx7/LtUFs=
+	t=1732877307; cv=none; b=bbbaIWWL4B7qyTmCySZ5Qth7Wc/Nw4YlkpGWtpY+emgUds6bDKPxvs+8J4Ez1zfLh5AKs1rgvHSyLJO9QmTt3LEy6YFwFShR0h1czf1C+yrQr1egFRSCTXy+AKoTpC/2G2qYEN/3n9i/de6TLykwacJ3/bxRyi+n6XXx6SPE16g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732877238; c=relaxed/simple;
-	bh=4WMeVmyZh/xaTk4c9lk/9N3vb2+jYhNFxwugKhmez4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=up80KH4jmYclHuS9xor5KV7SbOWl3eT/+TeOxRsFovNFJ/Df4+hueNsYHkQGBoRLaKRyGdjsZ6NvyhXfjgHy8M5+0so40cW4UCE6zbZOaeDf7ZkFXF6pJJjA3Eb5cvg07sC16E26S4YLPF4gVmjIvnOh4aJrnsriyV4pp8MdzaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1tGyWl-0008M7-Q5; Fri, 29 Nov 2024 11:47:11 +0100
-Date: Fri, 29 Nov 2024 11:47:11 +0100
-From: Florian Westphal <fw@strlen.de>
-To: syzbot <syzbot+b26935466701e56cfdc2@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com,
-	tglx@linutronix.de
-Subject: Re: [syzbot] [kernel?] BUG: sleeping function called from invalid
- context in static_key_slow_dec
-Message-ID: <20241129104711.GA32039@breakpoint.cc>
-References: <67478d92.050a0220.253251.0062.GAE@google.com>
+	s=arc-20240116; t=1732877307; c=relaxed/simple;
+	bh=cMa1ktPMFbcpbBLWZPa3kNgET8tp5x46wkDZzO/Y0JQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=OLtKsQiSGZxUPYnIe0NSy2s8xlmlmFxrvKoDP6DyNlqfBApKRQ1uhwmjREmk+KyEXE8TDrHoYLN0BPJWGhEht0mMDj9+k35gxZdjY1sSESN5LKdggdLHDd1vfyLB5USyz8ltQXNoV1I9i8z2RtcAy5OKXml/8SkoFUzK5w2Vsyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vMGLzqBN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/a5s3z9g; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 29 Nov 2024 10:48:22 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732877303;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jZFTFhtm2UUBOxmPi2MDH/89rY4j+aU7c3Yb1Ug7+d4=;
+	b=vMGLzqBNWSJSy7DsWLHk13PDlhbvQTDWY4EUmE5tqRSPimEFiPLO3JeHra1/L01U8y0Q6D
+	ncYRTkdZ7HQAFOhyWN/pdS9Xaa4TWFxylczmeGt+RdwlEUae/9XyKP8siNskOYpg7hXvIP
+	RIz4hqoxfEDrPYyws2qfWMt0O4gzlacWmjDLG9Qdfw4Wix2jr8meqqFyh7xVE29O66/MMN
+	Cn9+uFAcnnhAcgnkSIBOnrmk+fOIe2GQ5NDhhYGcBCz+tnCIhdjgPbaXlq2Q16gOmDTAgt
+	hoFh8CiLDocdn++Jtgb7MSHyNhpoNszJGbyF11ATI0j4M2M8wAyeN4dwXBxFPQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732877303;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jZFTFhtm2UUBOxmPi2MDH/89rY4j+aU7c3Yb1Ug7+d4=;
+	b=/a5s3z9gFwTgWXS0bWAQp/baN1RoZG8annajkAC9YGeTOgFHDMfQVZZEx60MYBtwaLJlyy
+	vEMdxdkjyqmRt/Ag==
+From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: timers/urgent] delay: Fix ndelay() spuriously treated as udelay()
+Cc: "Chen-Yu Tsai" <wenst@chromium.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241121152931.51884-1-frederic@kernel.org>
+References: <20241121152931.51884-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67478d92.050a0220.253251.0062.GAE@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <173287730233.412.16769417461165655460.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-syzbot <syzbot+b26935466701e56cfdc2@syzkaller.appspotmail.com> wrote:
-> BUG: sleeping function called from invalid context at include/linux/percpu-rwsem.h:49
-> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 16, name: ksoftirqd/0
-> preempt_count: 100, expected: 0
-> RCU nest depth: 0, expected: 0
-> 1 lock held by ksoftirqd/0/16:
->  #0: ffffffff8e937e60 (rcu_callback){....}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
->  #0: ffffffff8e937e60 (rcu_callback){....}-{0:0}, at: rcu_do_batch kernel/rcu/tree.c:2561 [inline]
->  #0: ffffffff8e937e60 (rcu_callback){....}-{0:0}, at: rcu_core+0xa37/0x17a0 kernel/rcu/tree.c:2823
-> Preemption disabled at:
-> [<ffffffff81578192>] softirq_handle_begin kernel/softirq.c:395 [inline]
-> [<ffffffff81578192>] handle_softirqs+0x122/0x980 kernel/softirq.c:530
-> CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-rc6-syzkaller-00203-g5b366eae7193 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  __might_resched+0x5d4/0x780 kernel/sched/core.c:8653
->  percpu_down_read include/linux/percpu-rwsem.h:49 [inline]
->  cpus_read_lock+0x1b/0x150 kernel/cpu.c:490
->  __static_key_slow_dec kernel/jump_label.c:320 [inline]
->  static_key_slow_dec+0x49/0xa0 kernel/jump_label.c:336
->  nf_tables_chain_destroy+0x3c4/0x4f0 net/netfilter/nf_tables_api.c:2160
->  __nft_release_basechain_now net/netfilter/nf_tables_api.c:11442 [inline]
->  nft_release_basechain_rcu+0x3fc/0x550 net/netfilter/nf_tables_api.c:11454
+The following commit has been merged into the timers/urgent branch of tip:
 
-nf_tables_chain_destroy can sleep via the static key.
+Commit-ID:     4d17c25eaf5d8b95d70726e6946e8eb94619e139
+Gitweb:        https://git.kernel.org/tip/4d17c25eaf5d8b95d70726e6946e8eb94619e139
+Author:        Frederic Weisbecker <frederic@kernel.org>
+AuthorDate:    Thu, 21 Nov 2024 16:29:31 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 29 Nov 2024 11:40:22 +01:00
 
-I suggest to remove the basechain stats, this was a mistake all along.
+delay: Fix ndelay() spuriously treated as udelay()
 
-Alternative is to defer to work queue or see if replacing the static key
-with a deferred static key, that should place the problematic jump
-patching to work queue too.
+A recent rework on delay functions wrongly ended up calling __udelay()
+instead of __ndelay() for nanosecond delays, increasing those by 1000.
 
-But I'd rather axe all of the basechain stat stuff.
+As a result hangs have been observed on boot
+
+Restore the right function calls.
+
+Fixes: 19e2d91d8cb1 ("delay: Rework udelay and ndelay")
+Reported-by: Chen-Yu Tsai <wenst@chromium.org>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Link: https://lore.kernel.org/all/20241121152931.51884-1-frederic@kernel.org
+
+---
+ include/asm-generic/delay.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
+index 76cf237..03b0ec7 100644
+--- a/include/asm-generic/delay.h
++++ b/include/asm-generic/delay.h
+@@ -75,11 +75,11 @@ static __always_inline void ndelay(unsigned long nsec)
+ {
+ 	if (__builtin_constant_p(nsec)) {
+ 		if (nsec >= DELAY_CONST_MAX)
+-			__bad_udelay();
++			__bad_ndelay();
+ 		else
+ 			__const_udelay(nsec * NDELAY_CONST_MULT);
+ 	} else {
+-		__udelay(nsec);
++		__ndelay(nsec);
+ 	}
+ }
+ #define ndelay(x) ndelay(x)
 
