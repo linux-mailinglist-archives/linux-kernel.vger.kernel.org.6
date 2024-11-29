@@ -1,253 +1,227 @@
-Return-Path: <linux-kernel+bounces-425223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946E89DBF0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:31:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832DF9DBF12
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:36:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D9E7281A50
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:31:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156D7164ADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6126C155300;
-	Fri, 29 Nov 2024 04:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E17155CBD;
+	Fri, 29 Nov 2024 04:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HInVN0nJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="y7+AZP0p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF58B28371
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69613155757
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732854678; cv=none; b=fkB2Q2ZnvPUyOf65liNH5ufj5M4mO+e0UM+pSKEQqMh4KJ7EsD0onPmsruRKiEsnTILjnxEh08JB5rwQfP3qDSK7YFdVE7b8lvVCvsTthSwCh6UwCFol6C+TwBmjCpxE7Np2hm7sidw0q7AAObBQ0oQ8Q8G1kMcxneC9fewghbg=
+	t=1732854981; cv=none; b=fn2yzq758itohyY+crHk/z9+j/AW6Szz+fR/nNCAE+lIrDNqHoVehQVFVY/ngZSQlH5X0EyrQVJKpC/la5nWBdsd9jv+B4/3fWc+VsaPVPqN0xbFjWFa8LWR/v8TQjiV0yfjKL9WI5abuMRCyu4wm9rA0JfPtVPeQxz4NVFJfP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732854678; c=relaxed/simple;
-	bh=nhVJ2KsFTU6vdZyrFjJy+CpqJVuOIfZcG0UnLygKl20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBUwhC4oIl15HwFKpZn1tG8Q0Aq71vt9foNWbIUTghCNtdUcGVajpz0ssDi+WLIvTRN08r9ylIqNNpU41dOJvFqLJJRD0OacXW135ArT/wsqoN4RDWd8zMZXn86eQrY7LNnpsnPCK7GWoYPToQYTUmfymv45Bsf1SArnlYzf/5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HInVN0nJ; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732854676; x=1764390676;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nhVJ2KsFTU6vdZyrFjJy+CpqJVuOIfZcG0UnLygKl20=;
-  b=HInVN0nJcctwMCpHPVTasn1t86YuYZBiFSGlU9vF5n8JQDscpZ0mjVvy
-   ePyIEbdY8BVPvIXEszrFoWPQPFV0LmjHy+mXIq+bL5qlQ7gewln/PFv8s
-   iYpeX/pNIGeEhVPubiJWuptxZiQFT7QlNAYH3kg1DY7Qu23OkjRj7NnX9
-   0Xk1I5LMMwPXR2hyJHtCeYQHpVZ122sef0I0H0s19JpxVcqurnyEuMXmJ
-   QKLuP3yunPCgHcENXkOcBhUrNXnDVniWw4RjM7DiS4Cjpw8RM4jNNU3OR
-   pzLku6Ypcv79t3eJeURbpH9DxphMrpKRjRFXHZgqHBONwPweT4BFUPwQZ
-   g==;
-X-CSE-ConnectionGUID: j6eZN2/cTrOmXOAMiyKpyQ==
-X-CSE-MsgGUID: sk7ZKq1/T/GAIyCrj+4Zag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="58495748"
-X-IronPort-AV: E=Sophos;i="6.12,194,1728975600"; 
-   d="scan'208";a="58495748"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 20:31:15 -0800
-X-CSE-ConnectionGUID: 7+ctehuyTaqXPs1MF1yt2g==
-X-CSE-MsgGUID: 8udd5Dm+TGClDUig78Zgfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,194,1728975600"; 
-   d="scan'208";a="92193838"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 28 Nov 2024 20:31:09 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGsep-000AL9-0P;
-	Fri, 29 Nov 2024 04:31:07 +0000
-Date: Fri, 29 Nov 2024 12:30:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Eliav Farber <farbere@amazon.com>, linux@armlinux.org.uk,
-	catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
-	maddy@linux.ibm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, tglx@linutronix.de, ebiederm@xmission.com,
-	akpm@linux-foundation.org, bhe@redhat.com, hbathini@linux.ibm.com,
-	sourabhjain@linux.ibm.com, adityag@linux.ibm.com,
-	songshuaishuai@tinylab.org, takakura@valinux.co.jp,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	kexec@lists.infradead.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jonnyc@amazon.com
-Subject: Re: [PATCH v3 1/2] kexec: Consolidate
- machine_kexec_mask_interrupts() implementation
-Message-ID: <202411291225.18ZMjZcQ-lkp@intel.com>
-References: <20241128201027.10396-2-farbere@amazon.com>
+	s=arc-20240116; t=1732854981; c=relaxed/simple;
+	bh=ftvjNW/qqlsXSWpCGDd6GK1tITHG7aa6palFLNYveak=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=risi+G9yeXde/pcUsjcZYy0j1mDIZW0R3KNMWEc5yevQXwzjYISFSXOQyeIXPeX6d9/DZbTwPtEZnsi181pZjQP4Qq7/C+UW27GfB6nIwUfP64d9G1K4sdkrWs1mfLRAoQx26AIzIu/5di986Z8zUkNgAAKZ/tFYgKMoIbPmPyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=y7+AZP0p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B7EBC4CECF;
+	Fri, 29 Nov 2024 04:36:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732854980;
+	bh=ftvjNW/qqlsXSWpCGDd6GK1tITHG7aa6palFLNYveak=;
+	h=Date:From:To:Cc:Subject:From;
+	b=y7+AZP0p/OWgQBFY7kx25jkFtbsRRKSvcV63hK7E6+ak/rvmUjh7q2t+8o7jfCWVk
+	 b4JUss7KQbco0Q+nSxx8SZKVg+UPmIR4wGSwnAiwW7YWwGnzsZRkuTaLphQsgPaSju
+	 uH0PSK5rjdMjcfxFH432o72mm9lc+8MLXmmMNT0w=
+Date: Fri, 29 Nov 2024 05:36:17 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Saravana Kannan <saravanak@google.com>
+Subject: [GIT PULL] Driver core changes for 6.13-rc1
+Message-ID: <Z0lEwR55Gv4K0GpR@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241128201027.10396-2-farbere@amazon.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Eliav,
+The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
 
-kernel test robot noticed the following build errors:
+  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
 
-[auto build test ERROR on powerpc/next]
-[also build test ERROR on powerpc/fixes tip/irq/core arm64/for-next/core linus/master v6.12 next-20241128]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+are available in the Git repository at:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Eliav-Farber/kexec-Consolidate-machine_kexec_mask_interrupts-implementation/20241129-041259
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-patch link:    https://lore.kernel.org/r/20241128201027.10396-2-farbere%40amazon.com
-patch subject: [PATCH v3 1/2] kexec: Consolidate machine_kexec_mask_interrupts() implementation
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20241129/202411291225.18ZMjZcQ-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241129/202411291225.18ZMjZcQ-lkp@intel.com/reproduce)
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-6.13-rc1
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411291225.18ZMjZcQ-lkp@intel.com/
+for you to fetch changes up to acfeb6defcb9310b1ff44db1e633798ba766337d:
 
-All errors (new ones prefixed by >>):
+  Fix a potential abuse of seq_printf() format string in drivers (2024-11-22 15:31:35 +0100)
 
-   In file included from kernel/kexec_core.c:9:
-   In file included from include/linux/btf.h:8:
-   In file included from include/linux/bpfptr.h:6:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> kernel/kexec_core.c:1085:10: error: call to undeclared function 'irq_desc_get_chip'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1085 |                 chip = irq_desc_get_chip(desc);
-         |                        ^
->> kernel/kexec_core.c:1085:8: error: incompatible integer to pointer conversion assigning to 'struct irq_chip *' from 'int' [-Wint-conversion]
-    1085 |                 chip = irq_desc_get_chip(desc);
-         |                      ^ ~~~~~~~~~~~~~~~~~~~~~~~
->> kernel/kexec_core.c:1097:24: error: incomplete definition of type 'struct irq_chip'
-    1097 |                 if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
-         |                                  ~~~~^
-   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
-    1082 |                 struct irq_chip *chip;
-         |                        ^
->> kernel/kexec_core.c:1097:37: error: call to undeclared function 'irqd_irq_inprogress'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1097 |                 if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
-         |                                                   ^
->> kernel/kexec_core.c:1097:62: error: incomplete definition of type 'struct irq_desc'
-    1097 |                 if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
-         |                                                                        ~~~~^
-   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
-      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
-         |               ^
-   kernel/kexec_core.c:1098:8: error: incomplete definition of type 'struct irq_chip'
-    1098 |                         chip->irq_eoi(&desc->irq_data);
-         |                         ~~~~^
-   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
-    1082 |                 struct irq_chip *chip;
-         |                        ^
-   kernel/kexec_core.c:1098:23: error: incomplete definition of type 'struct irq_desc'
-    1098 |                         chip->irq_eoi(&desc->irq_data);
-         |                                        ~~~~^
-   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
-      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
-         |               ^
-   kernel/kexec_core.c:1100:11: error: incomplete definition of type 'struct irq_chip'
-    1100 |                 if (chip->irq_mask)
-         |                     ~~~~^
-   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
-    1082 |                 struct irq_chip *chip;
-         |                        ^
-   kernel/kexec_core.c:1101:8: error: incomplete definition of type 'struct irq_chip'
-    1101 |                         chip->irq_mask(&desc->irq_data);
-         |                         ~~~~^
-   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
-    1082 |                 struct irq_chip *chip;
-         |                        ^
-   kernel/kexec_core.c:1101:24: error: incomplete definition of type 'struct irq_desc'
-    1101 |                         chip->irq_mask(&desc->irq_data);
-         |                                         ~~~~^
-   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
-      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
-         |               ^
-   kernel/kexec_core.c:1103:11: error: incomplete definition of type 'struct irq_chip'
-    1103 |                 if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
-         |                     ~~~~^
-   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
-    1082 |                 struct irq_chip *chip;
-         |                        ^
-   kernel/kexec_core.c:1103:29: error: call to undeclared function 'irqd_irq_disabled'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1103 |                 if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
-         |                                           ^
-   kernel/kexec_core.c:1103:29: note: did you mean 'arch_irqs_disabled'?
-   arch/x86/include/asm/irqflags.h:145:28: note: 'arch_irqs_disabled' declared here
-     145 | static __always_inline int arch_irqs_disabled(void)
-         |                            ^
-   kernel/kexec_core.c:1103:52: error: incomplete definition of type 'struct irq_desc'
-    1103 |                 if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
-         |                                                              ~~~~^
-   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
-      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
-         |               ^
-   kernel/kexec_core.c:1104:8: error: incomplete definition of type 'struct irq_chip'
-    1104 |                         chip->irq_disable(&desc->irq_data);
-         |                         ~~~~^
-   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
-    1082 |                 struct irq_chip *chip;
-         |                        ^
-   kernel/kexec_core.c:1104:27: error: incomplete definition of type 'struct irq_desc'
-    1104 |                         chip->irq_disable(&desc->irq_data);
-         |                                            ~~~~^
-   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
-      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
-         |               ^
-   4 warnings and 15 errors generated.
+----------------------------------------------------------------
+Driver core changes for 6.13-rc1
 
+Here is a small set of driver core changes for 6.13-rc1.
 
-vim +/irq_desc_get_chip +1085 kernel/kexec_core.c
+Nothing major for this merge cycle, except for the 2 simple merge
+conflicts are here just to make life interesting.
 
-  1075	
-  1076	void machine_kexec_mask_interrupts(void)
-  1077	{
-  1078		unsigned int i;
-  1079		struct irq_desc *desc;
-  1080	
-  1081		for_each_irq_desc(i, desc) {
-  1082			struct irq_chip *chip;
-  1083			int check_eoi = 1;
-  1084	
-> 1085			chip = irq_desc_get_chip(desc);
-  1086			if (!chip)
-  1087				continue;
-  1088	
-  1089			if (IS_ENABLED(CONFIG_ARM64)) {
-  1090				/*
-  1091				 * First try to remove the active state. If this fails, try to EOI the
-  1092				 * interrupt.
-  1093				 */
-  1094				check_eoi = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE, false);
-  1095			}
-  1096	
-> 1097			if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
+Included in here are:
+  - sysfs core changes and preparations for more sysfs api cleanups that
+    can come through all driver trees after -rc1 is out
+  - fw_devlink fixes based on many reports and debugging sessions
+  - list_for_each_reverse() removal, no one was using it!
+  - last-minute seq_printf() format string bug found and fixed in many
+    drivers all at once.
+  - minor bugfixes and changes full details in the shortlog
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+As mentioned above, there is 2 merge conflicts with your tree, one is
+where the file is removed (easy enough to resolve), the second is a
+build time error, that has been found in linux-next and the fix can be
+seen here:
+	https://lore.kernel.org/r/20241107212645.41252436@canb.auug.org.au
+
+Other than that, the changes here have been in linux-next with no other
+reported issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Amit Vadhavana (1):
+      drivers: core: fw_devlink: Fix excess parameter description in docstring
+
+Bartosz Golaszewski (1):
+      driver core: constify devlink class
+
+David Wang (1):
+      Fix a potential abuse of seq_printf() format string in drivers
+
+Dr. David Alan Gilbert (1):
+      drivers/base: Remove unused auxiliary_find_device
+
+Gaosheng Cui (1):
+      firmware_loader: Fix possible resource leak in fw_log_firmware_info()
+
+Geert Uytterhoeven (1):
+      driver core: auxiliary bus: Spelling s/pecific/specific/
+
+Greg Kroah-Hartman (1):
+      Merge 6.12-rc6 into driver-core-next
+
+Julia Lawall (1):
+      firmware_loader: Reorganize kerneldoc parameter names
+
+Keita Morisaki (1):
+      devres: Fix page faults when tracing devres from unloaded modules
+
+Nathan Chancellor (1):
+      cdx: Fix cdx_mmap_resource() after constifying attr in ->mmap()
+
+Nikolay Borisov (1):
+      cacheinfo: Don't opencode per_cpu_cacheinfo()
+
+Rob Herring (Arm) (1):
+      cacheinfo: Use of_property_present() for non-boolean properties
+
+Saravana Kannan (4):
+      driver core: fw_devlink: Stop trying to optimize cycle detection logic
+      drm: display: Set fwnode for aux bus devices
+      phy: tegra: xusb: Set fwnode for xusb port devices
+      drivers: core: fw_devlink: Make the error message a bit more useful
+
+Thomas Weiﬂschuh (15):
+      sysfs: explicitly pass size to sysfs_add_bin_file_mode_ns()
+      sysfs: introduce callback attribute_group::bin_size
+      PCI/sysfs: Calculate bin_attribute size through bin_size()
+      nvmem: core: calculate bin_attribute size through bin_size()
+      sysfs: treewide: constify attribute callback of bin_is_visible()
+      sysfs: treewide: constify attribute callback of bin_attribute::mmap()
+      sysfs: treewide: constify attribute callback of bin_attribute::llseek()
+      sysfs: implement all BIN_ATTR_* macros in terms of __BIN_ATTR()
+      sysfs: bin_attribute: add const read/write callback variants
+      driver core: Constify attribute arguments of binary attributes
+      sysfs: attribute_group: allow registration of const bin_attribute
+      driver core: Constify bin_attribute definitions
+      perf: arm-ni: Remove spurious NULL in attribute_group definition
+      s390/con3215: Remove spurious NULL in attribute_group definition
+      cpu: Remove spurious NULL in attribute_group definition
+
+Zijun Hu (5):
+      list: Remove duplicated and unused macro list_for_each_reverse
+      lib: devres: Simplify API devm_iounmap() implementation
+      lib: devres: Simplify API devm_ioport_unmap() implementation
+      driver core: Put device attribute @wakeup_last_time_ms and its show() together
+      driver core: class: Correct WARN() message in APIs class_(for_each|find)_device()
+
+ Documentation/driver-api/auxiliary_bus.rst  |  1 -
+ arch/alpha/kernel/pci-sysfs.c               |  6 +-
+ drivers/base/auxiliary.c                    | 31 +--------
+ drivers/base/cacheinfo.c                    | 15 ++---
+ drivers/base/class.c                        |  4 +-
+ drivers/base/core.c                         | 63 ++++++++----------
+ drivers/base/firmware_loader/main.c         |  7 +-
+ drivers/base/node.c                         | 12 ++--
+ drivers/base/power/sysfs.c                  | 17 ++---
+ drivers/base/topology.c                     | 40 ++++++------
+ drivers/base/trace.h                        |  6 +-
+ drivers/cdx/cdx.c                           |  2 +-
+ drivers/cxl/port.c                          |  2 +-
+ drivers/gpio/gpio-aspeed-sgpio.c            |  2 +-
+ drivers/gpio/gpio-aspeed.c                  |  2 +-
+ drivers/gpio/gpio-ep93xx.c                  |  2 +-
+ drivers/gpio/gpio-hlwd.c                    |  2 +-
+ drivers/gpio/gpio-mlxbf2.c                  |  2 +-
+ drivers/gpio/gpio-omap.c                    |  2 +-
+ drivers/gpio/gpio-pca953x.c                 |  2 +-
+ drivers/gpio/gpio-pl061.c                   |  2 +-
+ drivers/gpio/gpio-tegra.c                   |  2 +-
+ drivers/gpio/gpio-tegra186.c                |  2 +-
+ drivers/gpio/gpio-tqmx86.c                  |  2 +-
+ drivers/gpio/gpio-visconti.c                |  2 +-
+ drivers/gpio/gpio-xgs-iproc.c               |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c     |  2 +-
+ drivers/gpu/drm/display/drm_dp_aux_bus.c    |  2 +-
+ drivers/infiniband/hw/qib/qib_sysfs.c       |  2 +-
+ drivers/irqchip/irq-gic.c                   |  2 +-
+ drivers/irqchip/irq-mvebu-pic.c             |  2 +-
+ drivers/irqchip/irq-versatile-fpga.c        |  2 +-
+ drivers/misc/ocxl/sysfs.c                   |  2 +-
+ drivers/mtd/spi-nor/sysfs.c                 |  2 +-
+ drivers/nvmem/core.c                        | 16 ++++-
+ drivers/pci/p2pdma.c                        |  2 +-
+ drivers/pci/pci-sysfs.c                     | 42 ++++++------
+ drivers/pci/vpd.c                           |  2 +-
+ drivers/perf/arm-ni.c                       |  1 -
+ drivers/phy/tegra/xusb.c                    |  2 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |  2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |  2 +-
+ drivers/pinctrl/pinctrl-mcp23s08.c          |  2 +-
+ drivers/pinctrl/pinctrl-stmfx.c             |  2 +-
+ drivers/pinctrl/pinctrl-sx150x.c            |  2 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c     |  2 +-
+ drivers/platform/x86/amd/hsmp.c             |  2 +-
+ drivers/platform/x86/intel/pmt/class.c      |  2 +-
+ drivers/platform/x86/intel/sdsi.c           |  2 +-
+ drivers/s390/char/con3215.c                 |  1 -
+ drivers/scsi/scsi_sysfs.c                   |  2 +-
+ drivers/uio/uio_hv_generic.c                |  2 +-
+ drivers/usb/core/sysfs.c                    |  2 +-
+ fs/sysfs/file.c                             | 30 ++++++---
+ fs/sysfs/group.c                            |  5 +-
+ fs/sysfs/sysfs.h                            |  2 +-
+ include/linux/auxiliary_bus.h               |  4 --
+ include/linux/list.h                        |  8 ---
+ include/linux/sysfs.h                       | 99 +++++++++++++++++------------
+ kernel/cpu.c                                |  3 -
+ lib/devres.c                                |  6 +-
+ 61 files changed, 242 insertions(+), 253 deletions(-)
 
