@@ -1,138 +1,103 @@
-Return-Path: <linux-kernel+bounces-425401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA749DC194
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:39:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7392D9DC196
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC0B281F10
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:39:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF63281AA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEAB17836B;
-	Fri, 29 Nov 2024 09:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68FA17A90F;
+	Fri, 29 Nov 2024 09:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FSA6j/IE"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vauBDyc/"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDF014F135
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7EC160799
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732873189; cv=none; b=MxGLT69ELNlCz3muZlTW9jQDc/YjQIOY5iRdbGZ2OGt48sEvPEyUyZ90bfU9lc+dJMqRtfWZYrci+T+74oCdx83Z9P1DYJy591SpXiLrXpnB8EEr3NQSJ7/4tZFcMgJduUSJ9COFMIXdRMUjN5gCew6IsboRJZA1tEL8IUDVYtI=
+	t=1732873200; cv=none; b=XIfRmbfyuYg4MByW38+zeYdH0I/G64sSa7LNKW5o+btp8oz9x4mfr5Pj4/pSTOnZ3Dxk7uoXEuDI03AW4GRFACwuLWvRNavE2iCCO9+X/xvwQxImTL6ZVyJm/8Q5W/tto6y3jUVy1g1tkCqB6eTmFIVOI1O5zHrzvr8rwEdvdvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732873189; c=relaxed/simple;
-	bh=L3osPo90oS2YjcMtWFuj0/oOrtLAaDGO//RQeyLR3Lk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jEIJRGVZ+An7SzrlG9bwGXNeS7q6xoToK+qFg4id1q38itPPs8NGMhzVWRUhZs6wwkHZpDEiafNGdRYJ+b0v30O7LVcsVcWowVbnU2wZfJNwqpMkbY8MVJzFGMOwqLUh0aGL6Qo3ill/SRmFrYsp7mUJgBQwXVOrvcmrlq8VWr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FSA6j/IE; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385dbf79881so384108f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 01:39:46 -0800 (PST)
+	s=arc-20240116; t=1732873200; c=relaxed/simple;
+	bh=IzCqwsyp/ckKsqEM+TTTsqQsbXr6WOSqpOQRN4y+3Nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FO8MgJWylia/9yHl1ZxLfp3V82NxShY6D2gBnEwmXTW4mJptx9WlD31zch2+P985oiDUSvEUIMAk+5YLKyWC3r812AEwV2G8Z48wsvqveH438hCr3KN3udEnVsK9/LhK4eW/UaHVWOJmvYWM6p7gPa7EzS/wpBQM0teq2LRNjWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vauBDyc/; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2124a86f4cbso12434035ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 01:39:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732873185; x=1733477985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GT81x1pPOl28Snzb/99o88eoaL2m9foxASU5Of2oJ18=;
-        b=FSA6j/IEvwxRMhTj0gF0JqdsHenqP87bWORKyTMdCtX97/JI2TboHrYORoa/3+v4ca
-         lYrx7WJqJoIkJyl7ylpethKcdCCHaSJMTivNzqP4QhHIP+whYMDDxDKkjtF4wNDCUACC
-         J5N8mH6yB3f8rS2ajAV1NSkHFCJ/y53o0977JH8O1eRJWsKiKmseTfh987HoILXXFvGJ
-         q4WjQ8fnZv4OznDq4/yTUaNI9dd2YRXw4NwjrpSCL97idM7rpnr4oPmp5rs51RjZ9QSp
-         GAfSDY+dswjpaUAXV09YDVSAIP0A2sIuGvJYdrrd7xla2SG94q3gwkjAz/iZrZMUe1Me
-         As0w==
+        d=linaro.org; s=google; t=1732873198; x=1733477998; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MOusRXoS6yLwNo2tY8vJRcYfq8J1TfQ3gXvaPL+GXYc=;
+        b=vauBDyc/EOQex6S7oKFD/jyoI98xCukECmJhm5YnjBC2Fgh2/z5lCezYTAC751oCzr
+         dEW6UrTmeCOFX8fguqMiv67/nlwcn5/gPIj67APQofF4WS7em1oC1o3S+FDIT7iqq3cO
+         V2TVyfpvAJbmsfBctcv1gQPP9vRNh+pKA+JfeDhj/zFQ0B8nnTUWgnh2euW7//DP4QxL
+         va4L24y36COKtMlR4yABIZsm1foWTjVJP/V70UOAbwQJ7iUX4yKth3yYNFqRbuzuQDEC
+         ymM4gVNmAY69PJHWAnUMOrIGohgDORxN1pI2UwI+u/0apPIu/E8LOanO2XjQ/0dr+EkM
+         CNLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732873185; x=1733477985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GT81x1pPOl28Snzb/99o88eoaL2m9foxASU5Of2oJ18=;
-        b=j/n73F7y/5FHb+hzlYGbzzjG5RIt2+HNZswhp46Ii5DzzZ57wRS1ru7VZu37bH5rjx
-         b1kW6mz9bbDU5zo92/UPjjCRoS4v2k+sBD+I4bAl7SlQ0oqWQTRI/IQsOS7oSG01jdw9
-         H4NVFQ02kU2wM6EdOBRUrFQlfmR5kL4iBm/8uvurN77LJOx8Fe7M5JDfNgk4IvGqR34T
-         0qHIUMciquTfC7u3Se3LLX5sYhn+4wYm0WuU5KOaUl67bGpxL35qHj7I9Zk+q+bGC8dp
-         tNxPnY2k4hImQ54nXZuWX2PA0pmh/K1vBGivQmu58opcWa29SUJrmVTxg8XXJidOSAvS
-         Moew==
-X-Forwarded-Encrypted: i=1; AJvYcCWxOU/92Tqu53hgnuU4TcJY7tGknZ7LNXEDZ9Y+2JpjnSruSo5QsSXG60OyAO39b1eRr14WbSAFdVkI70U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxABRJUbEybAehuTklBx46YAT3CIzhFWjFfCIZZG8JQMJ2ifwTZ
-	grdS1GMq6B1vwRlWS0zb8MjXUrAf8H8KsJF7tlJLgDgce051jzDEF5cO/v9Qxvvw1hZjA92bICk
-	E6+WKZNioi2yyaaYwwCQFbX1+ViW0rrXls2qV
-X-Gm-Gg: ASbGncuOY591xa+Fd8xzHlq4cXGKEOzc7Fzivpo49zh8PK6fxyUF4cqWrCJl6v8ixvX
-	cYranF4U++IIU8p4b3dEbvjrP7FdhTxH47YnvsXi+fJVhX9kbRMqzfAmEzsW53w==
-X-Google-Smtp-Source: AGHT+IHY54qZUYFh/rP95d81UhUWr1C9OkxG5bJJIM/6YiD8OXmaBDPNhQwhsb79jT1ZPBps/8tz9O4ifcPbEOACApI=
-X-Received: by 2002:a05:6000:1787:b0:382:2386:ceaf with SMTP id
- ffacd0b85a97d-385cbd89c39mr5852413f8f.27.1732873185258; Fri, 29 Nov 2024
- 01:39:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732873198; x=1733477998;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MOusRXoS6yLwNo2tY8vJRcYfq8J1TfQ3gXvaPL+GXYc=;
+        b=ShSiUdNp1lHZbCW+BgcEPzXrznX6jyAlPgCY3n1XmhBkCL5oDqyfpurAIWORY0BUpN
+         ynh06aI026ZS/JV2kJisAv8/LwSjPqWrny5qXw28jKqmQhs0yklVBINffeVOmZgrrBPK
+         hSgMv+hWPbVsLAZvZ3Df0NJqXpKLc9Wbbm+bWoDg0yr4odd8plZ/mkTga2nqLbRnbFPa
+         tghCd9+NMOIjw1Oj/CLtLQAVutbZZoWPoTKG8k+0X3MZiaTMaoOxow6IZZhOX4R6QWTO
+         QBWjXR+8RpcfKegxBXMZMila8aBB9jYS2r6Gx70GgE7nX9rOGyG1BQRWyL7oD9vtFued
+         lVWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJbWLTg8NoaqtI6ru2SOenevf5e2d1RSYeOdrQzRTEHnT6+p09PELt7vtpv14F2nph3TTPI0ggwod9m50=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2uhvlhvRfN58ONCNOVud4qWNDt3w3YPGii1cwyDZtrXIksxw7
+	rgfFwpZeNhy9zztArETkVToJP9LfPB+jLpYXASViZiItURiaAkux9bCKTWXzmLs=
+X-Gm-Gg: ASbGnctvYUWWT1jNxxAwDeq67No9mMhbjVQvUSu47/861ljv13rq0+ZL+L+ehQsucFs
+	RVwqzwnbU/xuKrJBW6pcc+sZlfEkD8+ZPnx4HcMASgZpXYESmD07MqsXf4TDi9QjL1116UKjZ20
+	9NIRFgDAfYeIwA+KuT6luksYQkonJuuq125+5+aQ0UgEi32XxZljn8cAQddvKunVt/774nIeiJj
+	Hi9xbP1KBs9aP/Oa+I9f9J+QW7eIr3jJTVrCUiFrrBUq5XGFrK/
+X-Google-Smtp-Source: AGHT+IHWodno/X6VRTJzhKdXVQ/gso6/rtS4xy33n61Y9sx/WwKW3iY78OTpvtXf0n7sw/wkaVMi3Q==
+X-Received: by 2002:a17:902:ebce:b0:212:13e5:3ba4 with SMTP id d9443c01a7336-2150109b05amr120185115ad.21.1732873198197;
+        Fri, 29 Nov 2024 01:39:58 -0800 (PST)
+Received: from localhost ([122.172.86.146])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2152196845dsm26185725ad.121.2024.11.29.01.39.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 01:39:57 -0800 (PST)
+Date: Fri, 29 Nov 2024 15:09:55 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] OPP: fix dev_pm_opp_find_bw_*() when bandwidth table
+ not initialized
+Message-ID: <20241129093955.c7wm3oabtiyjuaze@vireshk-i7>
+References: <20241128-topic-opp-fix-assert-index-check-v1-0-cb8bd4c0370e@linaro.org>
+ <20241128-topic-opp-fix-assert-index-check-v1-2-cb8bd4c0370e@linaro.org>
+ <20241129084111.ifwak4y4irxjnpru@vireshk-i7>
+ <46cb2f2a-908a-4600-8716-db7f937ec13c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241128141323.481033-1-pbonzini@redhat.com> <20241128141323.481033-2-pbonzini@redhat.com>
- <CAH5fLgjJbzAbf5CO3xjHxcThpqju3j0tNdo+QiGupARVmoThYw@mail.gmail.com> <d7f045c1-79df-4592-a116-01874f402de4@redhat.com>
-In-Reply-To: <d7f045c1-79df-4592-a116-01874f402de4@redhat.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 29 Nov 2024 10:39:33 +0100
-Message-ID: <CAH5fLggHKuYT+s=tejnF-N63QOwcsAAeWb+LDLe0uO1sT3bdsg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] rust: Zeroable: allow struct update syntax outside
- init macros
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	boqun.feng@gmail.com, ojeda@kernel.org, benno.lossin@proton.me, 
-	axboe@kernel.dk, tmgross@umich.edu, bjorn3_gh@protonmail.com, 
-	gary@garyguo.net, alex.gaynor@gmail.com, a.hindborg@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46cb2f2a-908a-4600-8716-db7f937ec13c@linaro.org>
 
-On Thu, Nov 28, 2024 at 5:43=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com>=
- wrote:
->
-> On 11/28/24 15:40, Alice Ryhl wrote:
-> >> The definition of the ZERO constant requires adding a Sized boundary, =
-but
-> >> this is not a problem either because neither slices nor trait objects
-> >> are zeroable.
-> >>
-> >> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> >
-> > Slices are zeroable. I know they don't implement the trait,
->
-> Right, I should have used the uppercase "Zeroable" for clarity.
->
-> > but they could implement it, and this could be used to implement e.g.:
-> >
-> > pub fn write_zero<T: Zeroed + ?Sized>(value: &mut T) {
-> >      memset(0, ...);
-> > }
->
-> Yeah, that would be I think
->
->      pub fn write_zero<T: Zeroable + ?Sized>(value: &mut T) {
->          unsafe {
->             ptr::write_bytes((value as *mut T).cast::<u8>(), 0,
->                              std::mem::size_of_val(value))
->          }
->      }
->
-> ?  And it works for both sized values and slices.  If Zeroable is
-> limited to sized types, I guess you could still do:
->
->      pub fn write_zero_slice<T: Zeroable>(value: &mut [T]) {
->          ptr::write_bytes(value.as_mut_ptr(), 0, value.len())
->      }
->
-> So the question is whether the ZERO constant is worthwhile enough, to
-> justify the limitation of the Sized bound (e.g. having separate
-> write_zero and write_zero_slice in the future).
+On 29-11-24, 10:34, Neil Armstrong wrote:
+> Wait, this needs the first patch to work, otherwise index is not passed to assert
 
-Why not both?
+Oops. My bad.
 
-If you change the constant to a const fn, then you don't have to rule
-out either use-case.
-
-Alice
+-- 
+viresh
 
