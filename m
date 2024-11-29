@@ -1,202 +1,232 @@
-Return-Path: <linux-kernel+bounces-425281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C009DBFD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:43:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BFCB1643A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:43:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C746615853A;
-	Fri, 29 Nov 2024 07:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TCbAFh52"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544F79DBFE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:48:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F72184F;
-	Fri, 29 Nov 2024 07:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 697FFB21A67
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:48:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADDC158853;
+	Fri, 29 Nov 2024 07:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XzVwNK/7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584FE1386DA;
+	Fri, 29 Nov 2024 07:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732866232; cv=none; b=Lq2mxPxUuclaAJtIt2/u6C0dvcFHCsLrAXyCY+KSL/RvskfHBB5rOerx0wfkfCd3A9NvDoa7GhVUVzlHYyXaw/BZ+YQNOgsDmQDfFRcHhgd/JhOKn5THo6mK7KdazJ9GCOhkPvp1u9rrg+hs6AhG87mOTgBI7BK/yTDWrG5tdpI=
+	t=1732866478; cv=none; b=pgcDcxVRzTFonZ+bcRFH8AGxHCssTTGlIxawhynswf2h6135x90vlAeuYpfxTlg1kiOAPzgs2xPcAZCUFLN2x1uyAAFcjLWZP7CfX5BVjdgHWJQRrWwCvEmbHsLsb8Ut4uncUmFkawZl1YJVHAZT441Q3hVzk3qlbtimNEmlQSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732866232; c=relaxed/simple;
-	bh=nWl+SBjBL88FkNXWPG3di7uq91tabKWoZ5Xj+VHBPJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O0Y4n3X0qe7rxmToc8fW+fZkLC1GCX8GtoFDWD1pzwBeuFl0t+eWM6yCp1T7ezL/p0Jphh7ieqEyEwU9L1XNdrFKJIub7AXa9XY/3QiEWv2Tn8sAzOXqB01S0su9O227gVQUlsBMJD5AZ7zZml8VKZZmwhKYTRY0RRyD1Tlhw6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TCbAFh52; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AT7hgCU1176583
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 29 Nov 2024 01:43:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732866222;
-	bh=i+VOgi3ShpiE5xL6iV8G4IpokAHnM4RxqSBIORD7UlE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=TCbAFh52ZPDdKt0DRL0h/9PORAW74zfPh/rT3k9kdcZoEU2mirDUbn+LSaWwcmNoD
-	 wrVWx6A9gjAcyanFN9JofzNCmQM/j8DMc9h//gvtRPOMoUxasB7NLZXNxD7y0P91wh
-	 SBN1JJmcvEK7xfQPB8euAZY9NnVUt8/wYZk3zr4E=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AT7hg0l041410;
-	Fri, 29 Nov 2024 01:43:42 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 29
- Nov 2024 01:43:41 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 29 Nov 2024 01:43:41 -0600
-Received: from [10.24.69.37] (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [10.24.69.37])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AT7hcmc098842;
-	Fri, 29 Nov 2024 01:43:39 -0600
-Message-ID: <837d329b-bcdd-4c3b-b508-e916b110ce25@ti.com>
-Date: Fri, 29 Nov 2024 13:13:37 +0530
+	s=arc-20240116; t=1732866478; c=relaxed/simple;
+	bh=kwuMROrURsHseoiSdB0iqwJm9reXjPuCRbvQJB4guio=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CKUgckgok5bV2FD88GMLOsLokU+Q1jSaYvJz5hVqMRC9dpCIx+Z2eRrpFxHWnlo7aB3Rjs88vIBGH2A7ymlLyroK48grkupPG3l/8cx1acWzvaGpHrBf1XKXrKmGOaFvfnqJMCE3ahJOVhRskAphpOh2rNoJeZbvGbRpkDlWpWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XzVwNK/7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASLafqV019798;
+	Fri, 29 Nov 2024 07:47:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=K3hNAk7Wtna1DBG67fmm8hJ0HmP9zar30SA
+	zfWmV4qA=; b=XzVwNK/7gOSLoLkizfgYWxJ6dfwbjZVhlRo83nJ7jrio8Hi7eOa
+	NxmJKAUfofez7SI65+vePjN1ipNt+K3vm35dtLkcw13EMH3wPNkc1UbgVXCwmGtn
+	F8NZtpUeUTQxhmYvjpzU5JhNJCvSJDQBpqJtyL3gsyKOuPY+Yz9G6V+5j8TQ+DEd
+	xkyzxheitq2WVQlnCZ9KIhO0G43EKm5Yz4YuUZHLgFTvnl2GOlgkH463IFYw8j78
+	3B6wJXdmSSnZLXUwDsAlDFt11xaCDLWdR+eWagcl6DK7C+UQ4ExXDkD67djQB6+G
+	8aweqyNSpBYSbvMlh8iZPEEiDZ5n+1tsHIA==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366y04py5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 07:47:50 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT7llWt013065;
+	Fri, 29 Nov 2024 07:47:47 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 43384n0fsb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 07:47:47 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AT7lldt013057;
+	Fri, 29 Nov 2024 07:47:47 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-msavaliy-hyd.qualcomm.com [10.213.110.207])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4AT7lllR013054
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 07:47:47 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 429934)
+	id 63BD6240BE; Fri, 29 Nov 2024 13:17:46 +0530 (+0530)
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+To: andi.shyti@kernel.org, quic_bjorande@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, --cc=konrad.dybcio@linaro.org,
+        quic_vdadhani@quicinc.com, vkoul@kernel.org
+Cc: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Subject: [PATCH v4] i2c: i2c-qcom-geni: Serve transfer during early resume stage
+Date: Fri, 29 Nov 2024 13:17:42 +0530
+Message-Id: <20241129074742.1844031-1-quic_msavaliy@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: misc: bist: Add BIST dt-binding for TI
- K3 devices
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-References: <20241128140825.263216-1-n-francis@ti.com>
- <20241128140825.263216-2-n-francis@ti.com>
- <ho7ktcnbtl7mvamfthqho23co2fc4z7bgjha7pu4wivxm6ndhu@tfbpveonhckz>
-Content-Language: en-US
-From: Neha Malcom Francis <n-francis@ti.com>
-In-Reply-To: <ho7ktcnbtl7mvamfthqho23co2fc4z7bgjha7pu4wivxm6ndhu@tfbpveonhckz>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: sgFfcwCk6fSYCXsUa73aSfX2ZM0naH0p
+X-Proofpoint-GUID: sgFfcwCk6fSYCXsUa73aSfX2ZM0naH0p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411290062
 
-Hi Krzysztof,
+pm_runtime_get_sync() function fails during PM early resume and returns
+-EACCES because runtime PM for the device is disabled at the early stage
+causing i2c transfer to fail. Make changes to serve transfer with forced
+resume.
 
-On 29/11/24 12:50, Krzysztof Kozlowski wrote:
-> On Thu, Nov 28, 2024 at 07:38:24PM +0530, Neha Malcom Francis wrote:
->> Document the binding for TI K3 BIST (Built-In Self Test) block.
->>
-> 
-> A nit, subject: drop second/last, redundant "dt-binding". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-> 
->> Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
->> ---
->>   .../bindings/misc/ti,j784s4-bist.yaml         | 66 +++++++++++++++++++
->>   1 file changed, 66 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/misc/ti,j784s4-bist.yaml
-> 
-> soc directory, not misc.
-> 
->>
->> diff --git a/Documentation/devicetree/bindings/misc/ti,j784s4-bist.yaml b/Documentation/devicetree/bindings/misc/ti,j784s4-bist.yaml
->> new file mode 100644
->> index 000000000000..bd1b42734b3d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/misc/ti,j784s4-bist.yaml
->> @@ -0,0 +1,66 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +# Copyright (C) 2024 Texas Instruments Incorporated
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/misc/ti,j784s4-bist.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Texas Instruments K3 BIST
->> +
->> +maintainers:
->> +  - Neha Malcom Francis <n-francis@ti.com>
->> +
->> +description:
->> +  The BIST (Built-In Self Test) module is an IP block present in K3 devices
->> +  that support triggering of BIST tests, both PBIST (Memory BIST) and LBIST
->> +  (Logic BIST) on a core. Both tests are destructive in nature. At boot, BIST
->> +  is executed by hardware for the MCU domain automatically as part of HW POST.
->> +
->> +properties:
->> +  compatible:
->> +    const: ti,j784s4-bist
->> +
->> +  reg:
->> +    minItems: 2
-> 
-> Drop minItems
-> 
->> +    maxItems: 2
->> +
->> +  reg-names:
->> +    items:
->> +      - const: cfg
->> +      - const: ctrl_mmr
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  ti,bist-instance:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description:
->> +      the BIST instance in the SoC represented as an integer
-> 
-> No instance indices are allowed. Drop.
-> 
+Few i2c clients like PCI OR touch may request i2c transfers during early
+resume stage. Any i2c client can keep transfer request very early resume
+stage like noirq phase of PM. To serve the transfer, register an interrupt
+with IRQF_EARLY_RESUME and IRQF_NO_SUSPEND flags to avoid timeout of
+transfer when IRQ is not enabled during early stage.
 
-Question on this, this is not a property that is driven by software but rather 
-indicates which register sequences have to be picked up for triggering this test 
-from this instance. So I don't see how I can workaround this without getting 
-this number. Or maybe call it ID rather than instance?
+The actual usecase over i2c is(Not in upstream yet), PCIe client ->
+PCIe Driver -> I2C driver.
+PCIe client needs certain configurations over i2c after powering on the
+PCIe switch. As part of suspend it uses suspend_noirq() to turn off the
+switch, because some PCIe clients do some transfers till suspend_noirq()
+phase. And as part of resume_noirq(), it enables the power to the switch
+and configures the switch again through i2c.
 
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reg-names
->> +  - ti,bist-instance
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
->> +    bus {
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +        bist@33c0000 {
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> Come with something, don't just use device name.
-> 
->> +            compatible = "ti,j784s4-bist";
->> +            reg = <0x00 0x033c0000 0x00 0x400>,
->> +            <0x00 0x0010c1a0 0x00 0x01c>;
-> 
-> Misaligned code.
-> 
-> Best regards,
-> Krzysztof
-> 
+If pm_runtime_get_sync() is failing when runtime PM is not enabled, then
+use pm_runtime_force_resume().
 
-For the rest of the comments, got it! thanks for the review!
+Co-developed-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+---
+Link to V3: https://lore.kernel.org/all/20241119143031.3331753-1-quic_msavaliy@quicinc.com/T/
 
+v3->v4 :
+ - Enhanced commit log by explaining client usecase scenario during early resume.
+ - Covered 'usage_count' of 'struct dev_pm_info' under CONFIG_PM to compile non PM CONFIG.
+
+---
+Link to V2: https://lore.kernel.org/lkml/202410132233.P25W2vKq-lkp@intel.com/T/
+
+ v2 -> v3:
+ - Updated exact usecase and scenario in the commit log description.
+ - Removed bulleted points from technical description, added details in free flow.
+ - Used pm_runtime_force_resume/suspend() instead customized local implementation.
+ - Added debug log after pm_runtime_force_suspend().
+
+---
+
+ v1 -> v2:
+ - Changed gi2c->se.dev to dev during dev_dbg() calls.
+ - Addressed review comments from Andi and Bjorn.
+ - Returned 0 instead garbage inside geni_i2c_force_resume().
+ - Added comments explaining forced resume transfer when runtime PM
+   remains disabled.
+---
+
+    V1 link: https://patches.linaro.org/project/linux-i2c/patch/20240328123743.1713696-1-quic_msavaliy@quicinc.com/
+---
+---
+ drivers/i2c/busses/i2c-qcom-geni.c | 47 ++++++++++++++++++++++--------
+ 1 file changed, 35 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+index 7a22e1f46e60..94f875aca9aa 100644
+--- a/drivers/i2c/busses/i2c-qcom-geni.c
++++ b/drivers/i2c/busses/i2c-qcom-geni.c
+@@ -695,17 +695,29 @@ static int geni_i2c_xfer(struct i2c_adapter *adap,
+ 			 int num)
+ {
+ 	struct geni_i2c_dev *gi2c = i2c_get_adapdata(adap);
++	struct device *dev = gi2c->se.dev;
+ 	int ret;
+ 
+ 	gi2c->err = 0;
+ 	reinit_completion(&gi2c->done);
+-	ret = pm_runtime_get_sync(gi2c->se.dev);
+-	if (ret < 0) {
+-		dev_err(gi2c->se.dev, "error turning SE resources:%d\n", ret);
+-		pm_runtime_put_noidle(gi2c->se.dev);
+-		/* Set device in suspended since resume failed */
+-		pm_runtime_set_suspended(gi2c->se.dev);
+-		return ret;
++	/* Serve I2C transfer by forced resume if Runtime PM is enbled or not */
++	if (!pm_runtime_enabled(dev) && gi2c->suspended) {
++		#if (IS_ENABLED(CONFIG_PM))
++		dev_dbg(dev, "Runtime PM is disabled hence force resume, pm_usage_count: %d\n",
++			atomic_read(&dev->power.usage_count));
++		#endif
++		ret = pm_runtime_force_resume(dev);
++		if (ret)
++			return ret;
++	} else {
++		ret = pm_runtime_get_sync(gi2c->se.dev);
++		if (ret < 0) {
++			dev_err(gi2c->se.dev, "error turning SE resources:%d\n", ret);
++			pm_runtime_put_noidle(gi2c->se.dev);
++			/* Set device in suspended since resume failed */
++			pm_runtime_set_suspended(gi2c->se.dev);
++			return ret;
++		}
+ 	}
+ 
+ 	qcom_geni_i2c_conf(gi2c);
+@@ -715,8 +727,20 @@ static int geni_i2c_xfer(struct i2c_adapter *adap,
+ 	else
+ 		ret = geni_i2c_fifo_xfer(gi2c, msgs, num);
+ 
+-	pm_runtime_mark_last_busy(gi2c->se.dev);
+-	pm_runtime_put_autosuspend(gi2c->se.dev);
++	/* if Runtime PM is disabled, do force_suspend() else autosuspend the driver */
++	if (!pm_runtime_enabled(dev) && !gi2c->suspended) {
++		ret = pm_runtime_force_suspend(dev);
++		#if (IS_ENABLED(CONFIG_PM))
++		dev_dbg(dev, "Runtime PM is disabled hence force suspend, pm_usage_count: %d\n",
++			atomic_read(&dev->power.usage_count));
++		#endif
++		if (ret)
++			return ret;
++	} else {
++		pm_runtime_mark_last_busy(gi2c->se.dev);
++		pm_runtime_put_autosuspend(gi2c->se.dev);
++	}
++
+ 	gi2c->cur = NULL;
+ 	gi2c->err = 0;
+ 	return ret;
+@@ -833,9 +857,8 @@ static int geni_i2c_probe(struct platform_device *pdev)
+ 	init_completion(&gi2c->done);
+ 	spin_lock_init(&gi2c->lock);
+ 	platform_set_drvdata(pdev, gi2c);
+-
+-	/* Keep interrupts disabled initially to allow for low-power modes */
+-	ret = devm_request_irq(dev, gi2c->irq, geni_i2c_irq, IRQF_NO_AUTOEN,
++	ret = devm_request_irq(dev, gi2c->irq, geni_i2c_irq,
++			       IRQF_NO_AUTOEN | IRQF_EARLY_RESUME | IRQF_NO_SUSPEND,
+ 			       dev_name(dev), gi2c);
+ 	if (ret) {
+ 		dev_err(dev, "Request_irq failed:%d: err:%d\n",
 -- 
-Thanking You
-Neha Malcom Francis
+2.25.1
+
 
