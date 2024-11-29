@@ -1,115 +1,89 @@
-Return-Path: <linux-kernel+bounces-426006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3259DEDB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:54:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFA49DEDB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 01:00:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BEE41638F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:54:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF162B21459
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DCB1A0AE1;
-	Fri, 29 Nov 2024 23:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE09155742;
+	Sat, 30 Nov 2024 00:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmR/Gve0"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="epTdT6qU"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84015530F;
-	Fri, 29 Nov 2024 23:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28ECDBA45
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732924491; cv=none; b=Ig1PJEGCnKdEOXF3FC1kNVqBF/zH3t0lpiccqz/q3tj59CbgTxEDUnJYsAbpwamIAKFfH3IxEuMQrbE3T88YEO/d2tX10/5kUWBFQvQPWy+merE6SWkFj7F7BCFWji+x3HgCeeb3ISH7vcu3CvMvYyYbYEv5pIW4MveWz2H7Els=
+	t=1732924834; cv=none; b=IjNuwSJBFV9iNVUfWR9GBdmTTrziIM6qkpY5j1+ufGzrSXf4ykv49/p3AWDKTrWr+6CvhuiKAV4ETKT6ae4Ji7SMBgvAA8ctouMW0ZghYC+WU1cvAH20sCb3MAD7gnnxYi4eAFhjCSmfNgBSKbFx9YLCXxHY4FcShJKth0daius=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732924491; c=relaxed/simple;
-	bh=RXmFWIqBdeITpAI29tkUBBKRJ+AI8lY+rUqfD3si3xw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZiHySReTLA427e1rgbxiMIWGAHVP5TDLWRW4KVEI7nDsk5A41RO0PivWrnJpn8u5rf6QjzmcoDoQSziBZMIOsBhdenWbFor/jIWRNAsSEr3GHnE7dLTqKG/lyvbghO9auiBBJcAHIVC46E5Zop3BxquV69YnWGOwY5ii4wifia4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AmR/Gve0; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385d7f19f20so872479f8f.1;
-        Fri, 29 Nov 2024 15:54:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732924488; x=1733529288; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EEPesXU+h9oIb2rQWQl22qE/+ZEA6qAcZJWXR1NmMyo=;
-        b=AmR/Gve0BiQryAy9PWJQ9NE6l2PAA0fM479sEmV0sJIvgIjidlZNTLauCipAs8SsyO
-         4s4Y2ov9JSCXVjq72VEDvvjuoVgZAEbH9uh1cR+/RUVo/CToJvRF/NCyxUskfWdzpTR5
-         Midg2SQjHdUahcFdnrjS+5Azv9+ATMASlUW3B+3l+lpME6YY0f7KoMiBhxS8FXYM0RQV
-         83Lwr28rUd0s9e8DmtPig83GgF6dWBHP/GMA35/4n0ldep0o6NOSRRFGx5QqGg7l2I6o
-         gyYHkdKEPI5gDk0qzwRTma8zVbzMTeuv+NRBR9Yzhtlp09yBoPsvFPQCS8zYvl3QZyan
-         0u3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732924488; x=1733529288;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EEPesXU+h9oIb2rQWQl22qE/+ZEA6qAcZJWXR1NmMyo=;
-        b=CM6EqVf2OkZEUzkHrbKOmz9CqYxXl5KP3X/J6RSrwMuVEL3TBzLpuu5skVRFA+k0O2
-         2BA4nLlHLy8Tg2azgLffr5LLlBrYlU+rxHt7DKJo3ETrurGGnS8TEeV8mGjungZbd8IR
-         A1Oa2IlUC6BnwpipeDeMXaFMgZvm9e47+lCfVBSCrV2lzkfHMjA35vfd1uAdKi4M+De5
-         H4xSXlIYZ/T49/bcnt2On7i7MTqAfwsA74e7Zwt798DenPokD8PEoqbrJRM7Xh+pfLoI
-         tyM6/IOAemFNyK6T6XidL6mvd6aRr7ah2Rd3gF91YOlQg4vyStvL7L+/qIFbl3e4EWCH
-         O9Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVpyRmY+2qDncWtd7s6s/kDejHTtlhA8o3aY2qUTFdswIN/rqgANlUmWm8zNgrtilH21kiVG8KRCS0w@vger.kernel.org, AJvYcCWhCmI7XEpGLwO/IfaiQw4vwVYKiBk02l0BniKbgxCdCo6mqI5mR16DtN1fr5S1n1NHYaSEAJyMrBvjeNCQ@vger.kernel.org, AJvYcCX0YLTwhlF/APJod+QbrEHM+tYbMFK+0pG3rCYZnoQIjYy5vChQLQE99Cn/A3okBeEwXpy021Gmx3/X@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsm3Be1KJ4FEEYn22C6jZI8Sj/xixYmrQ0/w+Fxf5Qfpjr5fiG
-	T1ugMKyoE3w9aQQA+KypSmGKUjGdoM0LC7DZgtXPcHat7mVNNxPJ
-X-Gm-Gg: ASbGncvemqHPTFMbnneHnOJbclPqsbzEYX3ERKqE6H66+/uei7Nr1uwnJ71fYhojAnH
-	5oiN2PIMSenLAJ929guam5wylJpX2bbEL0x6QD8M8uR3nvDSDnfeEXOCVTSgBhtgmIHKbMZuOmt
-	DwVoJiiBvlmxZnA3NRIyWOVVyR2kSLuhGeV8XlyQ4hzOvKzBUvfN3L4OnrtfOq1BGIlMq1TM69H
-	5cHVDzuxKKgArCz0HqsixkD+D8SqyI03BRDtB1Mk6i0tBRQRvG44nJ3KE4=
-X-Google-Smtp-Source: AGHT+IHBMBxAfyqoTtOJA9LCRV8ah0cIhYx7tY0Qbu/qA0nUl6gfNdVPHblCaTGYtwp/2XGRgKx5Xg==
-X-Received: by 2002:a05:6000:1849:b0:385:e013:39ec with SMTP id ffacd0b85a97d-385e0133a41mr3770848f8f.8.1732924488446;
-        Fri, 29 Nov 2024 15:54:48 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:2250:4c83:a8d5:547])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd2e940sm5610573f8f.15.2024.11.29.15.54.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 15:54:47 -0800 (PST)
-Date: Sat, 30 Nov 2024 00:54:44 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ajarizzo@gmail.com, ak@it-klinger.de,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] iio: pressure: bmp280: Make time vars intuitive
- and move to fsleep
-Message-ID: <Z0pURIPAG4MHRYH3@vamoirid-laptop>
-References: <20241128232450.313862-1-vassilisamir@gmail.com>
- <20241128232450.313862-4-vassilisamir@gmail.com>
- <Z0nXNW4751P6hDtC@smile.fi.intel.com>
+	s=arc-20240116; t=1732924834; c=relaxed/simple;
+	bh=EKQm2CeHWzWU4OiN1m7A1Caw19UNYuKsVB7OYItlHL4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B+tV43QIw2hf49kjhW2KW3qbafQQvFRUezig0IoiSvbSp4eO5tHdFe6Qx4U/pjzrVJXK7TbDGD5eqvM1jiFICnDzarT1UP5lIkeM5BnmQiyaxOlmH3cybIE/TJ1mWjK/X25FsiID/+NRSmKfid0yCAg4Qtnv3EcJb9A465fZ46w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=epTdT6qU; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732924829;
+	bh=EKQm2CeHWzWU4OiN1m7A1Caw19UNYuKsVB7OYItlHL4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=epTdT6qU6V8pgXZ7h5HnlIGD2va5HyK355aReGOlH7WvV6sqVZYl/9txAntyyKShx
+	 xEPqTNC4Y8qdNjijL1HZQq4GA4cFHQQPJmKfM6PnOsZDgRZKWrIR6TxJ49I1O6SKq+
+	 1ccpYGWXYIh53POhrIpOcGoJCIZdTcxXffHd1LI4eU8E7QenGryztAODSiPUa6lLzY
+	 mU4RPlmBpL1V/BVcFHR2zD2lBbLSapg1vYn5AhZEVRD1mqrCrLqb3cPhYSX4U7spXA
+	 PRsYM9MPifoJ6pw/+PbvZrw2wTnbtI4UL+TPz6bLJDEongUk/G6r9VXxn5d7ytsh3C
+	 4m99h69epeeKQ==
+Received: from localhost (unknown [86.120.21.57])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B9D5C17E0E37;
+	Sat, 30 Nov 2024 01:00:29 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH 0/3] drm/connector: hdmi: Allow using the YUV420 output
+ format
+Date: Sat, 30 Nov 2024 01:56:31 +0200
+Message-Id: <20241130-hdmi-conn-yuv-v1-0-254279a08671@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0nXNW4751P6hDtC@smile.fi.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK9USmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ2MD3YyU3Ezd5Py8PN3K0jLdVMO0RFNLs5Q0czMLJaCegqLUtMwKsHn
+ RsbW1AAAnREZfAAAA
+X-Change-ID: 20241130-hdmi-conn-yuv-e1fa596df768
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Fri, Nov 29, 2024 at 05:01:09PM +0200, Andy Shevchenko wrote:
-> On Fri, Nov 29, 2024 at 12:24:50AM +0100, Vasileios Amoiridis wrote:
-> > Add time unit abbreviation in the end of the variables to make the names
-> > more intuitive. While at it, move to new fsleep().
-> 
-> Seems to me the commit message's primary and secondary purposes should be
-> swapped, i.e. you do --> fsleep() conversions and while at it, rename variable.
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
->
+Provide the basic support to enable using YUV420 as an RGB fallback when
+computing the best output format and color depth.
 
-Hi Andy,
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Cristian Ciocaltea (3):
+      drm/connector: hdmi: Evaluate limited range after computing format
+      drm/connector: hdmi: Add support for YUV420 format verification
+      drm/connector: hdmi: Use YUV420 output format as an RGB fallback
 
-Thank you very much for the review! I can change that in next version.
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c | 55 ++++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 10 deletions(-)
+---
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+change-id: 20241130-hdmi-conn-yuv-e1fa596df768
 
-Cheers,
-Vasilis
 
