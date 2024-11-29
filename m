@@ -1,191 +1,91 @@
-Return-Path: <linux-kernel+bounces-425265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514739DBF9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:08:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F11C9DBFA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:08:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8B90B214C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:08:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B93AB219D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9A8155A30;
-	Fri, 29 Nov 2024 07:08:02 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF465158520;
+	Fri, 29 Nov 2024 07:08:19 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442E933C5
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674AB1386DA;
+	Fri, 29 Nov 2024 07:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732864081; cv=none; b=KKrmLPETAB8lsp4KTCy3q/VVFiOyvPkcs5q6R/J9eLyleyCbTUiZ9B5AqDG5z5Ud4X9v5Ft6zip8b+LY1vk8Hj++3C6xLNcWEwfmHYJRX7GmyNpE8jy2mNpHx1UshqWZPXD5ByN7A7gRZZKjoxqb8f7HXZ2sAPwrQZNy7B4452s=
+	t=1732864099; cv=none; b=KCPGJBdvBWRYdqW0DoO67+vdbeZTQC0qb7XNB0qsUIQT91+nUCSq93KYBOzzWG3vGRpwo6aBvpA9UmlNKiC3qoM5AAlxirmaPrhF/zvwx2jAtazbzi6zPIDBUPiGsJwnXnqlZzzqR/vSNZrEA0N91dlMmSI0/RUcLjzTb4DY2Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732864081; c=relaxed/simple;
-	bh=YCgrmJngw14xnxWN1Qj40HNEsiFyLZvpGairCnYaJSo=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WwhuLqIz2uN5pVw+cM7gx+Mtj0WjRIS1xhdvE4WlB5s9wZo2GGHXtBeSOmthoWtxJcTLtMRsrvVZbUZtzj2IirCwUx8fo8Da63hjpvxozoVMzw6hYRrd9VTF557ztmSh/qj52UbQS375a88acPEJQ9/rzJroe6YKXJzdOqo9gw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Y041v6mmrzPpZW;
-	Fri, 29 Nov 2024 15:05:07 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6A520180104;
-	Fri, 29 Nov 2024 15:07:55 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 29 Nov 2024 15:07:54 +0800
-Subject: Re: [RFC PATCH] mm: memory-failure: add soft-offline stat in mf_stats
-To: "Tomohiro Misono (Fujitsu)" <misono.tomohiro@fujitsu.com>, 'Jiaqi Yan'
-	<jiaqiyan@google.com>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>
-References: <20241121045504.2233544-1-misono.tomohiro@fujitsu.com>
- <c25e8ca8-5858-987e-6b1e-2e139d901dc5@huawei.com>
- <TYCPR01MB961779970E6BFA06BD4BF46EE5282@TYCPR01MB9617.jpnprd01.prod.outlook.com>
- <CACw3F51TiRZJMkze-u3a3E_3w65=PMhEUBaBQLUgNwRNuY6+3w@mail.gmail.com>
- <TYCPR01MB961770DF6F58C0D8A16185F7E5292@TYCPR01MB9617.jpnprd01.prod.outlook.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <098640ac-f1c1-95b6-e367-a2673c3ceaae@huawei.com>
-Date: Fri, 29 Nov 2024 15:07:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1732864099; c=relaxed/simple;
+	bh=0W4gdl3LHtpXQqUcw6Hs+0eg26faz4Iu1fqKfJtsO1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHOO5e8KljSU9prUZ8DYm3rHAAMVuYeJLGzwx2bT7DtPFlX39BGex6CbmH+7HL/hyT3OS8gL9oDLhegEAeE7/mUM7Y0h/l2jfoWS5AAe8XN/zQdiLeJM9gwJWJmFtKvhv2Oxu7cQjA9vAAANknVX4unsffomgquHGmzwREKCwgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1tGv6j-0006q3-6S; Fri, 29 Nov 2024 08:08:05 +0100
+Date: Fri, 29 Nov 2024 08:08:05 +0100
+From: Florian Westphal <fw@strlen.de>
+To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Florian Westphal <fw@strlen.de>, kadlec@netfilter.org,
+	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] netfilter: uapi: Fix file names for case-insensitive
+ filesystem.
+Message-ID: <20241129070805.GA26153@breakpoint.cc>
+References: <20241111163634.1022-1-egyszeregy@freemail.hu>
+ <20241111165606.GA21253@breakpoint.cc>
+ <ZzJORY4eWl4xEiMG@calendula>
+ <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <TYCPR01MB961770DF6F58C0D8A16185F7E5292@TYCPR01MB9617.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On 2024/11/28 13:46, Tomohiro Misono (Fujitsu) wrote:
->>>> On 2024/11/21 12:55, Tomohiro Misono wrote:
->>>>> commit 44b8f8bf2438 ("mm: memory-failure: add memory failure stats
->>>>
->>>> Sorry for late, I've been swamped recently.
->>>
->>> Hi,
->>> Thanks for your comments.
->>>
->>>>
->>>>> to sysfs") introduces per NUMA memory error stats which show
->>>>> breakdown of HardwareCorrupted of /proc/meminfo in
->>>>> /sys/devices/system/node/nodeX/memory_failure.
->>>>
->>>> Thanks for your patch.
->>>>
->>>>>
->>>>> However, HardwareCorrupted also counts soft-offline pages. So, add
->>>>> soft-offline stats in mf_stats too to represent more accurate status.
->>>>
->>>> Adding soft-offline stats makes sense to me.
->>>
->>> Thanks for confirming.
->>
->> Agreed with Miaohe.
->>
->>>
->>>>
->>>>>
->>>>> This updates total count as:
->>>>>   total = recovered + ignored + failed + delayed + soft_offline>
->>>>> Test example:
->>>>> 1) # grep HardwareCorrupted /proc/meminfo
->>>>>      HardwareCorrupted:     0 kB
->>>>> 2) soft-offline 1 page by madvise(MADV_SOFT_OFFLINE)
->>>>> 3) # grep HardwareCorrupted /proc/meminfo
->>>>>      HardwareCorrupted:     4 kB
->>>>>    # grep -r "" /sys/devices/system/node/node0/memory_failure
->>>>>    /sys/devices/system/node/node0/memory_failure/total:1
->>>>>    /sys/devices/system/node/node0/memory_failure/soft_offline:1
->>>>>    /sys/devices/system/node/node0/memory_failure/recovered:0
->>>>>    /sys/devices/system/node/node0/memory_failure/ignored:0
->>>>>    /sys/devices/system/node/node0/memory_failure/failed:0
->>>>>    /sys/devices/system/node/node0/memory_failure/delayed:0
->>>>>
->>>>> Signed-off-by: Tomohiro Misono <misono.tomohiro@fujitsu.com>
->>>>> ---
->>>>> Hello
->>>>>
->>>>> This is RFC because I'm not sure adding SOFT_OFFLINE in enum
->>>>> mf_result is a right approach. Also, maybe is it better to move
->>>>> update_per_node_mf_stats() into num_poisoned_pages_inc()?
->>>>>
->>>>> I omitted some cleanups and sysfs doc update in this version to
->>>>> highlight changes. I'd appreciate any suggestions.
->>>>>
->>>>> Regards,
->>>>> Tomohiro Misono
->>>>>
->>>>>  include/linux/mm.h     | 2 ++
->>>>>  include/linux/mmzone.h | 4 +++-
->>>>>  mm/memory-failure.c    | 9 +++++++++
->>>>>  3 files changed, 14 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>>>> index 5d6cd523c7c0..7f93f6883760 100644
->>>>> --- a/include/linux/mm.h
->>>>> +++ b/include/linux/mm.h
->>>>> @@ -3991,6 +3991,8 @@ enum mf_result {
->>>>>     MF_FAILED,      /* Error: handling failed */
->>>>>     MF_DELAYED,     /* Will be handled later */
->>>>>     MF_RECOVERED,   /* Successfully recovered */
->>>>> +
->>>>> +   MF_RES_SOFT_OFFLINE, /* Soft-offline */
->>>>
->>>> It might not be a good idea to add MF_RES_SOFT_OFFLINE here. 'mf_result' is used to record
->>>> the result of memory failure handler. So it might be inappropriate to add MF_RES_SOFT_OFFLINE here.
->>>
->>> Understood. As I don't see other suitable place to put ENUM value, how about changing like below?
->>> Or, do you prefer adding another ENUM type instead of this?
->>
->> I think SOFT_OFFLINE-ed is one of the results of successfully
->> recovered, and the other one is HARD_OFFLINE-ed. So how about make a
->> separate sub-ENUM for MF_RECOVERED? Something like:
-> 
-> Thanks for the suggestion.
-> 
->>
->> enum mf_recovered_result {
->>   MF_RECOVERED_SOFT_OFFLINE,
->>   MF_RECOVERED_HARD_OFFLINE,
->> };
-> 
-> Ok.
-> 
->>
->> And
->> 1. total = recovered + ignored + failed + delayed
->> 2. recovered = soft_offline + hard_offline
-> 
-> Do you mean mf_stats now have 7 entries in sysfs?
-> (total, ignored, failed, delayed, recovered, hard_offline, soft_offline, then recovered = hard_offline + soft_offline)
-> Or 6 entries ? (in that case, hard_offline = recovered - soft_offline)
-> It might be simpler to understand for user if total is just the sum of other entries like this RFC,
-> but I'd like to know other opinions.
+Szőke Benjamin <egyszeregy@freemail.hu> wrote:
+> and lower case *.h files can be merged to a common header files like
+> "xt_dscp_common.h" but what about the *.c sources? For example if xt_DSCP.c
+> removed and its content merged to xt_dscp.c before, what is the plan with
+> kernel config options of CONFIG_NETFILTER_XT_TARGET_DSCP which was made for
+> only xt_DSCP.c source to use in Makefile? Can we remove all of
+> CONFIG_NETFILTER_XT_TARGET* config in the future which will lost their *.c
+> source files?
 
-Will it be better to have below items?
-"
-total
-ignored
-failed
-dalayed
-hard_offline
-soft_offline
-"
+Sure.
 
-though this will break the previous interface.
-Any thoughts?
+> obj-$(CONFIG_NETFILTER_XT_TARGET_DSCP) += xt_DSCP.o
+> ...
 
-Thanks.
-.
+This line goes away.
+
+> obj-$(CONFIG_NETFILTER_XT_MATCH_DSCP) += xt_dscp.o
+
+This line is changed to
+
+obj-$(CONFIG_NETFILTER_XT_DSCP) += xt_dscp.o
+
+Kconfig file NETFILTER_XT_TARGET/MATCH_DSCP are changed to
+select new NETFILTER_XT_MATCH_DSCP.
+
+This has been done before, see e.g.
+28b949885f80 ("netfilter: xtables: merge xt_MARK into xt_mark")
+
+you can follow this almost 1:1.
 
