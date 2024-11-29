@@ -1,273 +1,134 @@
-Return-Path: <linux-kernel+bounces-425883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5395D9DEC2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:44:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AAF79DEC2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:47:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C112B22FA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B78C163AF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533D41A08C5;
-	Fri, 29 Nov 2024 18:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B9A1A0AE1;
+	Fri, 29 Nov 2024 18:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F4tQWCg4"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X+o/JSJL"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983D614D430
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 18:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF5B1E489
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 18:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732905884; cv=none; b=C2Y+vNAJXxN1v7kRrPtBPPn8iM+je1Jl6DqQ/IU/kQ84V08BgIaV/mIUBdgVeo7fXU6fITjWiiBMptejSl8hwDtMSpOwDCqWP+EC0F4E2gzVelVzncrS9jxhBywhqqJB+p8+8asHBJAyUAd64AS2u2TqimF0Rq/vBwsd6PM8nFk=
+	t=1732906067; cv=none; b=TJA2g7Q1EyhkoET5XEVaO57aMCsmSp2DOAIVzBf+FYThNrEuZkqtUlKm2/4SY6qtZ7mwWmuFFQC7HFIVAo32ECOml7qSowN7TDaWZPQNU2TBWeS9NlVtnCtqv278onY1tTOd6APRHNBKwld2OtXIatoi/BOjf7KFEPUg/2YOfbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732905884; c=relaxed/simple;
-	bh=hQcFmzIN5wiJjr7Uxk8hCjS0qmPcjwZE/5VgFTHdzxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtUpgZfAAYanBVhlEq9zLVUVPI3fdhmAVz6wQUKIN+EI1ZkaVCvjoHiI7ZN13o6RVIYGBpqLLX+hhOQT5wrddJQ/09tpoI8ucK3oO66zcMXCjfhd6k0AKiLK0sLjN2joOnCIEKyYBB5SK2RVlXolxrkr+iTkmeWBdLLkj8L7OB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F4tQWCg4; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53df63230d0so2677756e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:44:42 -0800 (PST)
+	s=arc-20240116; t=1732906067; c=relaxed/simple;
+	bh=yzFFrdXn8dr9euF4LM4kEvUL45wKK7RQ8v2pkms5H6A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=azY6m9dhyMctCBSoOtWC1mxeyUo8L4NZeUAaXPPEteZc1Ncj6XeZ8d5B3eneP329jq7ZfAZTv7+B3Gmxz27ewKpvD6oXtCl2tlystxBuGPgAWLfoHmOKIlUTP5mrYBD+itUpryDjzSvokeNtux5qSvttYAHPIS6cyECAfZQK6a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=X+o/JSJL; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21263dbbbc4so21002065ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:47:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732905881; x=1733510681; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FOiKspxipILPKcvO1wYQ1RT/mi2iBB8R5lFWNQVT9HM=;
-        b=F4tQWCg4i1fiZXctSRhDvfpfkTzIWDHaO8p+BAqiSxK+8W1HJFVKC8SrMwcNSnzHhl
-         uh2jBR+h+W90dfvigUOa5MO+ty+ynAkUtvuTKepqHnOgkZulHqO9rM9/CQc79h/BtFnZ
-         c/wE7nENYOUmXbbbSqN8epcFft0hXS+ZBnQIBipH1Rk8KZqshhvHjDjbXrQM98zcEC1Z
-         pRNvFteTlwIIEtTZ9VS2euzbxgSESqXQ6oXQUcBoDEFnheELpnKucKWny3ch5Ow+VXD5
-         xru4Pro/nlgzZcdSj+5EsR4eVUNczhrY0u3IV4vAbSwiL8OWlB/pc6yRfKf5+JlmGRK+
-         QbYQ==
+        d=chromium.org; s=google; t=1732906065; x=1733510865; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KcVxSp/SGlyLOWsY0V+J8c8oFuDtTzhTcOpyJE61Nhg=;
+        b=X+o/JSJL91yGE/aUPby9QmPrTl2N8pDZMd+1CfYncPd/vT939BvlDoGRu5LM3l4mOL
+         u/KKZYS58j78Ewz+CqVq5sEP3RVMFZTTdsJ1IW45AAttWW87mlhgw3SiImEbpRYsyQnR
+         qwGDkPORTOfkBl1kiigPjFo8EXumHix3HvN/k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732905881; x=1733510681;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FOiKspxipILPKcvO1wYQ1RT/mi2iBB8R5lFWNQVT9HM=;
-        b=a5D3U4JGt1LUf81F79wFGkepK3fvgNPxoZqV7e5+pXGfBLwiE6eegq1KL7aAQA1hC3
-         35iIGSBrm9Atn3tQP05qnYFsObktBu2FiGizi0NXrqi7i49F4G5Qs3Tbr+h9mVTT+7K6
-         ZBWY8ZXOxKylKo7X+Bu1ZJbWehqmlg6CvILbKCVxa6ueCEiPScfDzNc9SUahNh2lzOjt
-         ITruVRB7v5nQuiPaE0XcYYo6//SkzRWeyHxmG60hJmNa40nwadg+X1PYO+zLmzAZOxcY
-         1tfrS8a16R08qyGJO7NhEXowXm2GND4zAmQJaKAQaRvYr4GlDUhjj72h0lemk7GhLNk2
-         U2dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMoEx6Z6bi3Vy+m0N7dK+ws9r4JfZ7BwERUWt+1Rt1+DwiXjdWqRnOWKRX5ZiltrQRdLUgdpC0iy//EcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaUjLm4JqxEyhWmdCeRjr7Kimlfy9ILc62/KzOGmmos2ZxIJUB
-	FHjuHQ9d6ZwqcZqUcmUi9TgdPRk1cc8+lTnIBNk/0unRF0HKLbPYnpVyrdd/g44=
-X-Gm-Gg: ASbGncvNPHKEUA2fTNac/gC8VeoSuBxS4FVbGZ6syRSQz8rp4BECyYqAuBDGMusIKng
-	vj0455YKPPvPcroIwQ90iXRN3Qj0ukUX+y5e68NvKW8Ds3WE/SNPVft9LRU45XSfnCA9n9r8hlk
-	VKP0B2k0CdWmBNFkflvX5FFDp28Ug8MeoL8RoQ6a+oSl0MEdmy8j2/Qm7JkIi/ulkFAsBgHv82A
-	/1HT5C8wtuzzCGMYOJ6pZYHQ9gz60XgU3Re8acU6p+fuM+aNee/BQJxeVT7MH6IwxByvly7nSuY
-	pGlIUAkxRWy/7KQiG8BbJtjEAA+PSw==
-X-Google-Smtp-Source: AGHT+IGU+Gk14+Fy7vKtqK+f88i86zD4DWOjZyAi4B5JlY1q48Z1pc3ZNJuAseKpBn27HIL/89ZZ7w==
-X-Received: by 2002:a05:6512:3c89:b0:53d:a2cb:349e with SMTP id 2adb3069b0e04-53df00c5ebamr8555719e87.4.1732905880726;
-        Fri, 29 Nov 2024 10:44:40 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df643110asm553346e87.32.2024.11.29.10.44.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 10:44:39 -0800 (PST)
-Date: Fri, 29 Nov 2024 20:44:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_tingweiz@quicinc.com, quic_zhgao@quicinc.com
-Subject: Re: [PATCH v2] mmc: sdhci-msm: Correctly set the load for the
- regulator
-Message-ID: <cj7nsn2xphd4ftnhtp6ztor4cqyjsdwkubjgancfd3xojddj4s@m3pb4qc645sn>
-References: <20241127095029.3918290-1-quic_yuanjiey@quicinc.com>
+        d=1e100.net; s=20230601; t=1732906065; x=1733510865;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KcVxSp/SGlyLOWsY0V+J8c8oFuDtTzhTcOpyJE61Nhg=;
+        b=PO/JSbkkQAtYCFsM6p6SkitN7uP3WCfBOfqQmtHrFN4mVTuHOgcnbZbnGdMa/eR6L3
+         Q4m2U4sw/8+umS6D+NLpeNieky7aT3Pbr4rBJwOCZWt8of0vfgK3Pk9NM+pJKtr77GBt
+         vnQt5zkFTqUVbQc6OZXaqyiEATm+Q7lZTETrEIQCnF2PISF5N/lOGjDBzmyH9/ltwo5c
+         iVhXWh3Y8ndRW9S2PSw5JhNN258isU+E3tg2ei95vrNE+2nsirZ8EKPdWWOpuG2FfzWM
+         Z926b4BCM8EV/8TmL4//s/W4gKAJUB/dxlhw/2ep7DsCN5i+R+IjZAqULRhpbkAVc01O
+         3AGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXf7Uqz2xzLRXP+OGmP/PLoNefLXBj3fXXc5upJbwstDv0ZcUmUKx1xLRAVsLvF06ALZ7BqQUtgOC1sWw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa1bQoA9gaLRzzlHtg2mnEJM9k6xZonZZRucNomsHh0jGSzAaR
+	cp8ipl2WcPAgHQ84F9bj7hiwsV/KRiMHSJ7Szu4W8M6T/orSuYirfVO/Owc/FBNJi9hhDspoJrA
+	=
+X-Gm-Gg: ASbGncv5rBfSUEfrzP/bjmv+2fdXFALw6hBpkysym3Co2wu27tE/YuWA2EavtIQ1Gr1
+	VDr60IwSA5YhX133sZ4p8XA3z/bAIhrYia0q07yNXkZOCWKYMtLw5RO7ezm65+5UVCI/2ichHku
+	XY9a6lwWwtLgrSAS2kkRo9x3eG0Qb6+ZkulUPvCqkN/LQV0ekGkfqxwAcJXPxIXYHVYp1Pg5SCS
+	00hlKCh4gAUs1hNd05QigXelKO0JRIiEw+zkehCn68Pouku+/jdujUN+NyIZFv0p/zhISBGtHFG
+	SAPhFWKARxSL
+X-Google-Smtp-Source: AGHT+IG39EnN9N6auHElaEaVmTRjxn5sOgUmbzMRrthoI1B4spJZ8LuDbM5iO249KwJojLhM34lOeQ==
+X-Received: by 2002:a17:902:ea08:b0:212:63db:bb15 with SMTP id d9443c01a7336-21501b593b5mr193389855ad.38.1732906065329;
+        Fri, 29 Nov 2024 10:47:45 -0800 (PST)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com. [209.85.216.42])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215219acc0esm33736105ad.234.2024.11.29.10.47.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 10:47:44 -0800 (PST)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ee67e9287fso570366a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:47:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUXNTL5fk+Dd+P2p3ZyoBL27y2Ns8fPnqlmefoLrCIJqiR2Engek2tn5YRO4WuI3qTapbUliDyMHHbSJ+o=@vger.kernel.org
+X-Received: by 2002:a17:90b:1fd0:b0:2ee:53b3:3f1c with SMTP id
+ 98e67ed59e1d1-2ee53b3416emr5720571a91.5.1732906063311; Fri, 29 Nov 2024
+ 10:47:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127095029.3918290-1-quic_yuanjiey@quicinc.com>
+References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
+ <20241127-uvc-fix-async-v2-2-510aab9570dd@chromium.org> <20241128222232.GF25731@pendragon.ideasonboard.com>
+ <CANiDSCvyMbAffdyi7_TrA0tpjbHe3V_D_VkTKiW-fNDnwQfpGA@mail.gmail.com>
+ <20241128223343.GH25731@pendragon.ideasonboard.com> <7eeab6bd-ce02-41a6-bcc1-7c2750ce0359@xs4all.nl>
+ <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
+ <20241129110640.GB4108@pendragon.ideasonboard.com> <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
+ <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl> <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
+In-Reply-To: <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 29 Nov 2024 19:47:31 +0100
+X-Gmail-Original-Message-ID: <CANiDSCvwzY3DJ+U3EyzA7TCQu2qMUL6L1eTmZYbM+_Tk6DsPaA@mail.gmail.com>
+Message-ID: <CANiDSCvwzY3DJ+U3EyzA7TCQu2qMUL6L1eTmZYbM+_Tk6DsPaA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
+ by other fh
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, 
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 27, 2024 at 05:50:29PM +0800, Yuanjie Yang wrote:
-> Qualcomm regulator supports two power supply modes: HPM and LPM.
-> Currently, the sdhci-msm.c driver does not set the load to adjust
-> the current for eMMC and SD. Therefore, if the regulator set load
-> in LPM state, it will lead to the inability to properly initialize
-> eMMC and SD.
-> 
-> Set the correct regulator current for eMMC and SD to ensure that the
-> device can work normally even when the regulator is in LPM.
-> 
-> Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-> ---
-> Changes in v2:
-> - Add enum msm_reg_type to optimize the code
-> - Delete redundant emmc type judgment
-> - Link to v1: https://lore.kernel.org/linux-arm-msm/20241122075048.2006894-1-quic_yuanjiey@quicinc.com/
-> 
-> ---
->  drivers/mmc/host/sdhci-msm.c | 92 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 90 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index e00208535bd1..fc13ef60ab61 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -134,9 +134,22 @@
->  /* Timeout value to avoid infinite waiting for pwr_irq */
->  #define MSM_PWR_IRQ_TIMEOUT_MS 5000
->  
-> +/* Max load for eMMC Vdd supply */
-> +#define MMC_VMMC_MAX_LOAD_UA	570000
-> +
->  /* Max load for eMMC Vdd-io supply */
->  #define MMC_VQMMC_MAX_LOAD_UA	325000
->  
-> +/* Max load for SD Vdd supply */
-> +#define SD_VMMC_MAX_LOAD_UA	800000
-> +
-> +/* Max load for SD Vdd-io supply */
-> +#define SD_VQMMC_MAX_LOAD_UA	22000
-> +
-> +#define MAX_MMC_SD_VMMC_LOAD_UA  max(MMC_VMMC_MAX_LOAD_UA, SD_VMMC_MAX_LOAD_UA)
-> +
-> +#define MAX_MMC_SD_VQMMC_LOAD_UA max(MMC_VQMMC_MAX_LOAD_UA, SD_VQMMC_MAX_LOAD_UA)
-> +
->  #define msm_host_readl(msm_host, host, offset) \
->  	msm_host->var_ops->msm_readl_relaxed(host, offset)
->  
-> @@ -147,6 +160,11 @@
->  #define CQHCI_VENDOR_CFG1	0xA00
->  #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
->  
-> +enum msm_reg_type {
-> +	VMMC_REGULATOR,
-> +	VQMMC_REGULATOR,
+Before we all go on a well deserved weekend, let me recap what we
+know. If I did not get something correctly, let me know.
 
-Please drop enum completely, then...
+1) Well behaved devices do not allow to set or get an incomplete async
+control. They will stall instead (ref: Figure 2-21 in UVC 1.5 )
+2) Both Laurent and Ricardo consider that there is a big chance that
+some camera modules do not implement this properly. (ref: years of
+crying over broken module firmware :) )
+3) ctrl->handle is designed to point to the fh that originated the
+control. So the logic can decide if the originator needs to be
+notified or not. (ref: uvc_ctrl_send_event() )
+4) Right now we replace the originator in ctrl->handle for unfinished
+async controls.  (ref:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_ctrl.c#n2050)
 
-> +};
-> +
->  struct sdhci_msm_offset {
->  	u32 core_hc_mode;
->  	u32 core_mci_data_cnt;
-> @@ -1403,11 +1421,71 @@ static int sdhci_msm_set_pincfg(struct sdhci_msm_host *msm_host, bool level)
->  	return ret;
->  }
->  
-> -static int sdhci_msm_set_vmmc(struct mmc_host *mmc)
-> +static int sdhci_msm_get_regulator_load(struct mmc_host *mmc, int max_current,
-> +					enum msm_reg_type type)
-> +{
-> +	int load = 0;
-> +
-> +	/*
-> +	 * When eMMC and SD are powered on for the first time, select a higher
-> +	 * current value from the corresponding current for eMMC and SD to
-> +	 * ensure that the eMMC and SD cards start up properly and complete
-> +	 * initialization. After the initialization process is finished, use
-> +	 * the corresponding current to set the eMMC and SD to ensure the
-> +	 * normal work of the device.
-> +	 */
-> +
-> +	if (!mmc->card)
-> +		return max_current;
-> +
-> +	if (mmc_card_mmc(mmc->card))
-> +		load = (type == VMMC_REGULATOR) ? MMC_VMMC_MAX_LOAD_UA : MMC_VQMMC_MAX_LOAD_UA;
-> +	else if (mmc_card_sd(mmc->card))
-> +		load = (type == VMMC_REGULATOR) ? SD_VMMC_MAX_LOAD_UA : SD_VQMMC_MAX_LOAD_UA;
+My interpretation is that:
+A) We need to change 4). We shall not change the originator of
+unfinished ctrl->handle.
+B) Well behaved cameras do not need the patch "Do not set an async
+control owned by another fh"
+C) For badly behaved cameras, it is fine if we slightly break the
+v4l2-compliance in corner cases, if we do not break any internal data
+structure.
 
-... split this into two functions, one for vmmc and another one for
-vqmmc...
 
-> +
-> +	return load;
-> +}
-> +
-> +static int msm_config_regulator_load(struct sdhci_msm_host *msm_host, struct mmc_host *mmc,
-> +				     bool hpm, int max_current, enum msm_reg_type type)
+I will send a new version with my interpretation.
 
-Then this becomes two functions too, each of those can be inlined in the
-proper place.
-
-> +{
-> +	int ret;
-> +	int load = 0;
-> +
-> +	/*
-> +	 * After the initialization process is finished, Once the type of card
-> +	 * is determined, only set the corresponding current for SD and eMMC.
-> +	 */
-> +
-> +	if (mmc->card && !(mmc_card_mmc(mmc->card) || mmc_card_sd(mmc->card)))
-> +		return 0;
-
-This goes into sdhci_msm_get_regulator_load().
-
-> +
-> +	if (hpm)
-> +		load = sdhci_msm_get_regulator_load(mmc, max_current, type);
-> +
-> +	if (type == VMMC_REGULATOR)
-> +		ret = regulator_set_load(mmc->supply.vmmc, load);
-> +	else
-> +		ret = regulator_set_load(mmc->supply.vqmmc, load);
-> +	if (ret)
-> +		dev_err(mmc_dev(mmc), "%s: set load failed: %d\n",
-> +			mmc_hostname(mmc), ret);
-> +	return ret;
-> +}
-> +
-> +static int sdhci_msm_set_vmmc(struct sdhci_msm_host *msm_host,
-> +			      struct mmc_host *mmc, bool hpm)
->  {
-> +	int ret;
-> +
->  	if (IS_ERR(mmc->supply.vmmc))
->  		return 0;
->  
-> +	ret = msm_config_regulator_load(msm_host, mmc, hpm,
-> +					MAX_MMC_SD_VMMC_LOAD_UA, VMMC_REGULATOR);
-> +	if (ret)
-> +		return ret;
-> +
->  	return mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, mmc->ios.vdd);
->  }
->  
-> @@ -1435,6 +1513,15 @@ static int msm_toggle_vqmmc(struct sdhci_msm_host *msm_host,
->  				goto out;
->  			}
->  		}
-> +
-> +		ret = msm_config_regulator_load(msm_host, mmc, level,
-> +						MAX_MMC_SD_VQMMC_LOAD_UA, VQMMC_REGULATOR);
-> +		if (ret < 0) {
-> +			dev_err(mmc_dev(mmc), "%s: vqmmc set regulator load failed: %d\n",
-> +				mmc_hostname(mmc), ret);
-> +			goto out;
-> +		}
-> +
->  		ret = regulator_enable(mmc->supply.vqmmc);
->  	} else {
->  		ret = regulator_disable(mmc->supply.vqmmc);
-> @@ -1642,7 +1729,8 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->  	}
->  
->  	if (pwr_state) {
-> -		ret = sdhci_msm_set_vmmc(mmc);
-> +		ret = sdhci_msm_set_vmmc(msm_host, mmc,
-> +					 pwr_state & REQ_BUS_ON);
->  		if (!ret)
->  			ret = sdhci_msm_set_vqmmc(msm_host, mmc,
->  					pwr_state & REQ_BUS_ON);
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+Thanks for a great discussion
 
