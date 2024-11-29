@@ -1,104 +1,97 @@
-Return-Path: <linux-kernel+bounces-425285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062EF9DBFF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:54:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B019DBFF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:54:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8760C164763
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:54:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76A59B21BE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD639158862;
-	Fri, 29 Nov 2024 07:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jsJDp3M6"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608A2158853;
+	Fri, 29 Nov 2024 07:54:41 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBDE1386DA;
-	Fri, 29 Nov 2024 07:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EAA158208;
+	Fri, 29 Nov 2024 07:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732866852; cv=none; b=eRGJl4Xsuy3YlpcmBAeyFNfhArWpjvoWyNKdcRGL78+RyCM0xvdJa4iYqcLfdsWUtEZGQtE8gqicN+dBy65JeWsXVjkZQXaJeiwhgC8qHgWQZ2S3h9DP5NHTi/f07FX5+CGPAYMzxkxP6gMA6EcufkgBcqfG4bDTgvycdJnRtyk=
+	t=1732866881; cv=none; b=lOyWYjgoCCCONy6DJp11gIo39XgDOzDY8lh5OrCqhx+eC896Ifzbl/q2op4x+GH1gtGbkoI72u0ArVOrXClAdAw3W6toJGLRhWYiRa/6DRWeSVj/CRE2XsY31+p83UsdGJSJfPHwY9npQ0NeEV6f7Z34ylwmP8vycmylmMMT/iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732866852; c=relaxed/simple;
-	bh=9spqvrZ+LoHD+ZOLFz4+YFT0uhD8v0cffSFDzPA0+pY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M9QZ336zC40s6tY8QLllvqNVesKtVeN4qXt4NTlKtnaXY5LYYb2dias6dP477mdBNUklNES/BQyExUSfQcUSYOskZVJuWraZumU5Jth3rigQFfgN/2RP6NadJkPiUYi4xkpVDP9uOyyrmyF5vMj4buCCJIhyZ/7gFaAZe3xQ6IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jsJDp3M6; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e387fdd1ec4so1118601276.0;
-        Thu, 28 Nov 2024 23:54:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732866849; x=1733471649; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MILLxUu9rzLsxKaeqYpm+2Gulr4Avp7+0QuruaQfahA=;
-        b=jsJDp3M6dLGjYCVeitpJgX7n8tl72++IaJoiBcRrKrBTPpBJkCYwaujHr9LuPghi3d
-         iR2kwjI7NSRz6gP3E0N/D8n9k9NpqFE6YCyFSe7GouulWo0SfTYrfTAY5YoP1S9Add0P
-         vT9M/Y97/uNmIRkoZsXl0W7q0wXq7jnhivkeR5kPa2PjXaQvEImDSpN/Tre2NPMhAKNL
-         7yKWjN9HWO77G3mPIGSKD11l/LvVRW59JiBlTWTBVxTMOy/z0m6NNByuh/9sW2d5e/CN
-         xd5J3sXyAYdQ3OL5WP/02MCZBYcimUS3iy+yVizvpD4dWfQmkjtumHW+am+6a6suYG7W
-         CRZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732866849; x=1733471649;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MILLxUu9rzLsxKaeqYpm+2Gulr4Avp7+0QuruaQfahA=;
-        b=HojVlLTsmxhs16AlzQPvBBTe7fK9g8DG8V1XOpYwDDKaWegiTUjbyJ+5EqRDYh9SHz
-         3nvgbz/6nGcpRpu0jk1lPnvt5j6kWw/f8Gq73agiynoUl2yM7f2Xg83dhmUPW6Rr9gpj
-         whb0yQO42lFTK9ky5XzssiI25TtsI7XBU6OtsNkIANqx5XnRAIPD86RYzTIRvH+832wA
-         rQ/oPrvNOLGcmPHJFpM1tSTckswiB40W07BmyH58qvIwAI5GvIcCH8+0IXLrAuC5R3L4
-         RTdeHOCtZtRyuRITk1sfGfEpVTExVRvvXNRz1qMMcBSat8CxG/RrSlWngO1STt8Jb0y+
-         +h5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU6ZjEBGQe9yIfC7H9ThRifjZiKLUeG1YhQc8dvzRV6jbP2Hg6wDJKbMrk1U5n1Z6FLG0pDdJHF8Zq42gQ=@vger.kernel.org, AJvYcCUf6G5xvJsNkBz20WfgcTk1JZBwsXGF9g8quFUztbFdIme6YlxIC0OJz4kjKax1CkBr+DxvdyrR0bO71FXo@vger.kernel.org, AJvYcCXPUCaFoMylgtacSPB54zRfJLNDDfdnvSoV+MZWnlhDS5I5LdCMuf16KRc/g78+HFWQSPYKMNdkaeh2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH+IIQ+rVx3qIOuxUTTS9lPqg+9LWLp4GPwwOaOEiOjGkU2Jdg
-	XL0Eh8vdjJRs1L03b5Z8wRCXH3IAx4e1WP89RrZjxiOyCfnuMLcLAfz5Eu1XMkQXXGCQRtv6d9Y
-	jg6YjfHsJevXSphb9FY78oaHF+BE=
-X-Gm-Gg: ASbGnctRLwqto/9oSpSphTefVtjFN6RfejCRIPiTuyrYgzvfREtS1MbkvI8Y1XjF/di
-	zgqPifsCmIcj5BYcnuPXJ8cw9wxZeytGt
-X-Google-Smtp-Source: AGHT+IF8HFusBVWylrBABsLEcXExgX39TFtK9CKcRntzgb2j/Eixg3DOFVeP3pBNmvcd13VUQ6ALY6h5mUnCdbvtq3I=
-X-Received: by 2002:a05:6902:114c:b0:e39:772b:4bc0 with SMTP id
- 3f1490d57ef6-e39772b4fc5mr5024271276.42.1732866849543; Thu, 28 Nov 2024
- 23:54:09 -0800 (PST)
+	s=arc-20240116; t=1732866881; c=relaxed/simple;
+	bh=JaJRL2qlucYu7qlJeg/jT+yPWuSXG8UIn6zT19ZHliU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUIN0LNdshJ3+1SWQkkI0BsCj4gpP+h3jnRtJm66tyn2YF8MP0tE1j22QJ5eNRd7sVAg98mkLNKvsYoIWctLaQ0WXbuL6Ud4x3NYq4mfJYpZQKz3EqG7kJrx3Xq495KrHZ5gcaHGVPczkm87YP+uwzkPsmttAO4nDtdqBpSx7d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id C383E30002AC2;
+	Fri, 29 Nov 2024 08:54:35 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id A00D0331C41; Fri, 29 Nov 2024 08:54:35 +0100 (CET)
+Date: Fri, 29 Nov 2024 08:54:35 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Zorro Lang <zlang@redhat.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Bug report] kernel BUG at include/linux/scatterlist.h
+Message-ID: <Z0lzOw7mQGuPrXlD@wunner.de>
+References: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <CAMj1kXGAuJSdDWvu7D5-PT6mSbNG9FeLObnYmpHeT08eNxaJWQ@mail.gmail.com>
+ <Z0A2W1FTTPt9PeI5@gondor.apana.org.au>
+ <Z0BCtZi2YJywGJAk@gondor.apana.org.au>
+ <Z0NTLDYJQC242GMB@wunner.de>
+ <Z0OzDle-VrrXf8rW@gondor.apana.org.au>
+ <Z0RRiq-BJp8CYdNk@wunner.de>
+ <Z0RTgsb5Va9psaIs@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241128-z2-v2-0-76cc59bbf117@gmail.com> <20241128-z2-v2-1-76cc59bbf117@gmail.com>
- <abmpkfnfrbcarqhp7pspxmy4veuiavpy2p5zqe5ljkstveuuzz@ur7grz3zd7xx>
-In-Reply-To: <abmpkfnfrbcarqhp7pspxmy4veuiavpy2p5zqe5ljkstveuuzz@ur7grz3zd7xx>
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Date: Fri, 29 Nov 2024 08:53:58 +0100
-Message-ID: <CAMT+MTTRT+z2i6qrqVo-KVNuPF2o2OV5HpfhbXiAaWU0TBr-WA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: input: touchscreen: Add Z2 controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0RTgsb5Va9psaIs@gondor.apana.org.au>
 
-On Fri, 29 Nov 2024 at 08:16, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > +    description:
-> > +      Calibration blob supplied by the bootloader
->
-> What is the expected size? Fixed size or maximum?
+On Mon, Nov 25, 2024 at 06:37:54PM +0800, Herbert Xu wrote:
+> On Mon, Nov 25, 2024 at 11:29:30AM +0100, Lukas Wunner wrote:
+> > I deliberately avoided the crypto_akcipher_sync_encrypt() API
+> > in rsassa-pkcs1.c because the extra buffer allocation plus copying
+> > data around impacts performance for no benefit.
+> 
+> This is temporary.  The idea is to convert the akcipher software
+> implementations over to use virtual addresses directly so that no
+> unnecessary copy occurs.  Have a look at what I did with ahash:
+> 
+> https://lore.kernel.org/linux-crypto/bffef4bab1bf250bd64a3d02de53eb1fd047a96e.1730021644.git.herbert@gondor.apana.org.au/
+> 
+> This is what I'd like to do with akcipher as well.
+> 
+> Longer term there is potentially another unnecessary copy if you
+> go from a kmalloced virtual address to an akcipher hardware driver,
+> but we could eliminate that by adding a flag to indicate that the
+> virtual address is safe for use within an SG list.
 
-Unspecified, 1688 bytes on my machine, but the firmware
-has a size field. Most likely less than 4k.
+I'm proposing an optimized approach which auto-detects whether
+duplicating into the linear map is actually necessary:
 
-> Add it to the example.
+https://lore.kernel.org/r/3de5d373c86dcaa5abc36f501c1398c4fbf05f2f.1732865109.git.lukas@wunner.de/
 
-That seems counterproductive - it is a ~1.5kb blob,
-and it is supposed to be set by the bootloader, not
-by person writing the dts.
+I reckon that aside of selftests, duplicating is almost never needed.
+
+Let me know if you have any objections.  My apologies for being
+stubborn and rebellious and not always following what I'm told.
+
+Thanks,
+
+Lukas
 
