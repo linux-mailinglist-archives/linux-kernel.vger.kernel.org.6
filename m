@@ -1,123 +1,246 @@
-Return-Path: <linux-kernel+bounces-426003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3143B9DEDAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:52:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B57B9DEDAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7A0CB2171C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:52:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015C0281BAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D501A01BD;
-	Fri, 29 Nov 2024 23:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91A71A0B04;
+	Fri, 29 Nov 2024 23:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0MHP20w"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="LICjCR73"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731B21993B7;
-	Fri, 29 Nov 2024 23:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCAF176FB4;
+	Fri, 29 Nov 2024 23:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732924314; cv=none; b=J74YqcNLOPG5VbgQqDAT+KMqgFWMjhFePbpARooPlOQLfH6KYvxUur7pJxJtM+9jGh7Ql5Q5/VhAeE3BHdEsWGDj4xNNb4/yQWpbKC5ibEMaOJxEvkd1oWw6Opxh9pQGZJoUbcnVQuYRk+ogQTOqEE2QBpNes0Ufddt3Cl2uKDA=
+	t=1732924343; cv=none; b=GsjuMDHTZJspZ14rze1XHZZftWJnF4fsIO1jJq+TVO/omGzS90ByzvuSRaWrItibtqRrg7wW6DIKkFpN1iPvucdfAhcZkiPleW9+mA25gE2PTJy13WbdXwV0xg//TdedxT2iuAXk55Am13uRASaD8Dj0z2LfICbvO+Ro7VNMnSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732924314; c=relaxed/simple;
-	bh=QAf6JaXTPzREM25KolzVPpSflRa5+iceDUL0A/Ut00E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuA0Hp6aQ5hHzCXBCiVDndLsTUKapxQ2NR1TNO1wQts1oRjN1rHk298A1p2V2aunW22VRVi1k2leQF9DuYxk9DAl9Wo1CvadEgZZ1M6XCoikLu1G1+47nij5uVDhST3WL3v38UmByQNLRdBHgZ5GkeadE+H8tcUXEelXVJlo7TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0MHP20w; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-382610c7116so1739064f8f.0;
-        Fri, 29 Nov 2024 15:51:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732924311; x=1733529111; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R+oPJsLd4XUGTELFgJANK7OVs252hGEPEG/oKMLtm2s=;
-        b=g0MHP20w0puhIa16JS9csOsNzr8tBbeaAhSOelgbfYmEL9/jFt2HU3lOxRAVWrj6GK
-         r0oHJQOT174v0xfGNAwGJhKQ+QTEbkkX6RhjhTuABYcC6Dmc4gHwIGLWFCC8SZGov+sG
-         vbO6iM34YghGl1ct5rwCwsyu8fUpLdn4hoe8N+68JG1mnGewe0FSz9Td9Pa0LMTOnW++
-         qX3TD9jHvzq75w6gJES24nA1FoURCITnSqnOnpdJexXW344qXJZLDiAKpFUHLY+kTPC9
-         HhrgKIXUm2fVdlVTkfUn4bRGHp94bGPZjWpB1BgoJujbX3QIUMCUmv9k0BhNaGPo79Ol
-         tkPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732924311; x=1733529111;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R+oPJsLd4XUGTELFgJANK7OVs252hGEPEG/oKMLtm2s=;
-        b=Ym3Rc+amM6Xw7SedBqhXsY7j7sbD9eIQwigc4Uyt0gsxCH81PbF0hwXAaGBhIrO7nD
-         9Q7I+6G23XvL5GUUS3uXx5ZkqeDMmKBacv+T2b5f+RFkzRndBXfTSJ4f/dIHoBbvTLhV
-         y9tiNsAA/WXeF2Y7LwY8Cwf9uEaQL9tOZGuee5z/NuxaYgkSAFn8LXw3AYqhRbI4Gzof
-         3PmCPdGCib62dmqBiQ2s/5WSzYupzKoK1mkhKvNVLJfVZoSh9fYU9Nxd6ScBdz8dkeHq
-         oRmrGcP5UdaWCvbMlOD8R+iyf4ruhjtiOEZOoLHMQ6et0LyEPYyCeO+j1R8ciutVw5js
-         joAg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3zBMaLnQmtc0R6ZCULqgFtoGFA5nNvKwcVHQwkADHnjylA31YmxKVXAqh5TMI9PgL1pXC4KAE8q5V@vger.kernel.org, AJvYcCWCdEH53qkMUE14RsYInx3XifQgd+UD0YHctEWx1EuVKtqAjkcKAyBGQpIheqGa5cy/HeyOS5nqyYig@vger.kernel.org, AJvYcCXP7kRgCtJOu0b0RoK4ICSkIXEMU/Gx+QJyUKt7EFNkliaDP3COYJitmATs7cPJ8tCha2tf0nL/XynsBY+M@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlNsN6a30EQuIlAnlhkSNLDQX4C64qTeakax8/zMmgENpyqLH/
-	xBigmnymsVVjsVcI8vvYpXkTjesa8vW6hrREAdIPYU2pWpL8I/Gw
-X-Gm-Gg: ASbGncung1Npbjv6zbZu08ct+v+RPapq/rAUkNQrWx4xrC2jOzdOxiMeQoxkSkGmDSV
-	yIUO1v+Bn9DEIhkziRxf/kzPuv/5Y1IzbtzMaJAsJe9i6J0FRHe4WAm/pSBHNymXP6kC0ecdlH2
-	XebFJC31tMPkc9jnhb+yVSwFSJzqsCWxX0faL9zL42NdQF5BrHIzMBZ/boOHYnT2pOgxr/nh0TN
-	6y8YOKm7ntIA62ztp1moUxGdPnp8U5OrEKF1lJpvWFELq46gMNHRX2zA8I=
-X-Google-Smtp-Source: AGHT+IHnB3w+MAZr/zxyA33A3MR+qQnbNJS/dW57uXXoS86XixRDJ9d1eVtcH4/Wxe5TWbCcrgANZg==
-X-Received: by 2002:a5d:6d05:0:b0:382:4b80:abdd with SMTP id ffacd0b85a97d-385c6eb6ce2mr11854967f8f.21.1732924310584;
-        Fri, 29 Nov 2024 15:51:50 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:2250:4c83:a8d5:547])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e32ee381sm506710f8f.76.2024.11.29.15.51.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 15:51:49 -0800 (PST)
-Date: Sat, 30 Nov 2024 00:51:46 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
-	ajarizzo@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] dt-bindings: iio: pressure: bmp085: Add SPI
- interface
-Message-ID: <Z0pTkhFJKPf2rBk0@vamoirid-laptop>
-References: <20241128232450.313862-1-vassilisamir@gmail.com>
- <20241128232450.313862-2-vassilisamir@gmail.com>
- <tqemkmoa5cewpfxkaltkxj4upgsonjm2br5pwmv7rdmz4gq4vc@2r522tx33gzh>
+	s=arc-20240116; t=1732924343; c=relaxed/simple;
+	bh=oSfmQXGCDTZ0/nRPFijCQ2yxYx4THq27wmZCjGeCgMQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=WwCCmefhvmzbvgaXFzknNMYjy3zDJxbpeTX7Cb6POfavVA5yWKiZv4NnmNRqVzX49GSBa0aswKgvi7TNi8aWoC8rBsWIjkIj7tGE4xU32IAtKbQA88a4YqLZMB22F3xWJLjRH5Cir4eZo9qTF8EJekxkDGxIt217g4PTI+Xfr44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=LICjCR73; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 312A5E4804;
+	Fri, 29 Nov 2024 23:52:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1732924338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xg2lwF+3JBp/+AqQy4lofy085EgqGXOyCoznyoiH4L0=;
+	b=LICjCR73D1YpRvPKE4e9QovwNMMKaogI2K/0h58IyiXUOdfaGpVFTFA2awhXMc7MejUi+r
+	ol9DbGhNPq+VuLeJwPpiyKpwUHBHKe+0mgwCgOxAid/mKPUMG9AfvrKoKLj8Fa0z5nn9TV
+	nTK4bOCg8SoA8DeBDdp4il0bKgE1DVqVqpY7D4AFRdxxvLJJ1J0Sf4VDLfk8z7gfLgAZBh
+	3zo1D/L/2aYpgBkrGZ+eAjQON1oubmgiOhgfE7cOSCBamGyTDno6kGfxWd1xyB6bsaCseV
+	X+pmU5aEg6/cPRtboKmgl2ZP9hgCpvO/h+jeO11Pj1Tv8EcTXt+4iWo1U4244A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tqemkmoa5cewpfxkaltkxj4upgsonjm2br5pwmv7rdmz4gq4vc@2r522tx33gzh>
+Date: Sat, 30 Nov 2024 00:52:18 +0100
+From: barnabas.czeman@mainlining.org
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Yassine Oudjana
+ <y.oudjana@protonmail.com>
+Subject: Re: [PATCH v2] media: qcom: camss: fix VFE pm domain off
+In-Reply-To: <93028653-9919-460e-83d3-84bf5ade56d4@linaro.org>
+References: <20241128-vfe_pm_domain_off-v2-1-0bcbbe7daaaf@mainlining.org>
+ <3a5fd596-b442-4d3f-aae2-f454d0cd8e5c@linaro.org>
+ <5cccec71-0cc7-492a-9fb9-903970da05c5@linaro.org>
+ <d3a8d38c-9129-4fbd-8bd6-c91131d950ad@linaro.org>
+ <a08e95fc03fce6cb0809a06900982c6c@mainlining.org>
+ <8dfd2ee1-9baf-441f-8eb9-fa11e830334a@linaro.org>
+ <ac765a062e94d549f4c34cf4c8b2c199@mainlining.org>
+ <f4e47953-5a68-4ec5-860b-820b8eff2a2a@linaro.org>
+ <05e91ae70902f0cd9c47bb4197d8fef1@mainlining.org>
+ <93028653-9919-460e-83d3-84bf5ade56d4@linaro.org>
+Message-ID: <c7a9a43eea8bd1e6302ae4fa2d79dd80@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 29, 2024 at 08:22:00AM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Nov 29, 2024 at 12:24:48AM +0100, Vasileios Amoiridis wrote:
-> > @@ -73,6 +77,19 @@ allOf:
-> >      then:
-> >        properties:
-> >          interrupts: false
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          not:
-> > +            contains:
-> > +              enum:
+On 2024-11-30 00:07, Bryan O'Donoghue wrote:
+> On 29/11/2024 22:45, barnabas.czeman@mainlining.org wrote:
+>> On 2024-11-29 23:08, Bryan O'Donoghue wrote:
+>>> On 29/11/2024 13:46, barnabas.czeman@mainlining.org wrote:
+>>>> On 2024-11-29 13:25, Bryan O'Donoghue wrote:
+>>>>> On 29/11/2024 11:44, barnabas.czeman@mainlining.org wrote:
+>>>>>>> The change does not describe how to reproduce the problem, which 
+>>>>>>> commit
+>>>>>>> base is tested, which platform is testes, there is no enough 
+>>>>>>> information,
+>>>>>>> unfortunately.
+>>>>>> I can reproduce the problem with megapixels-sensorprofile on 
+>>>>>> msm8953 and
+>>>>>> it can be reproduced with megapixels on msm8996.
+>>>>>> The base is the last commit on next.
+>>>>> 
+>>>>> Can you verify if vfe_domain_on has run and if so whether or not 
+>>>>> genpd_link is NULL when that function exists.
+>>>>> 
+>>>> I have added some debug logs it seems pm_domain_on and pm_domain_off 
+>>>> is called twice on the same object.
+>>>> [   63.473360] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 link 
+>>>> 42973800
+>>>> [   63.481524] qcom-camss 1b00020.camss: pm_domain_on 19840080 link 
+>>>> 4e413800
+>>>> [   63.481555] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 link 
+>>>> 42973800
+>>>> [   63.481632] qcom-camss 1b00020.camss: pm_domain_off 19840080 link 
+>>>> 4e413800
+>>>> [   63.481641] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 link 
+>>>> 42973800
+>>>> [   63.654004] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 link 
+>>>> 0
+>>>>> That's the question.
+>>>>> 
+>>>>> ---
+>>>>> bod
+>>> 
+>>> Could you provide this output ?
+>>> 
+>>> index 80a62ba112950..b25b8f6b00be1 100644
+>>> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+>>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+>>> @@ -595,6 +595,9 @@ void vfe_isr_reset_ack(struct vfe_device *vfe)
+>>>   */
+>>>  void vfe_pm_domain_off(struct vfe_device *vfe)
+>>>  {
+>>> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
+>>> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
+>>> +
+>>>         if (!vfe->genpd)
+>>>                 return;
+>>> 
+>>> @@ -609,7 +612,8 @@ void vfe_pm_domain_off(struct vfe_device *vfe)
+>>>  int vfe_pm_domain_on(struct vfe_device *vfe)
+>>>  {
+>>>         struct camss *camss = vfe->camss;
+>>> -
+>>> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
+>>> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
+>>>         if (!vfe->genpd)
+>>>                 return 0;
+>>> 
+>>> ---
+>>> bod
+>> I think logging in pm_domain_on should be placed after device_link_add 
+>> because only NULL
+>> will be visible.
+>> [   83.040694] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+>> 000000009bd8355f genpd_link 0000000000000000
+>> [   83.049293] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
+>> 00000000bfb65e7c genpd_link 0000000000000000
+>> [   83.049353] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+>> 000000009bd8355f genpd_link 00000000ccb0acd9
+>> [   83.049641] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 genpd 
+>> 00000000bfb65e7c genpd_link 00000000348ac3c1
+>> [   83.049654] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+>> 000000009bd8355f genpd_link 00000000ccb0acd9
+>> [   83.241498] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+>> 000000009bd8355f genpd_link 0000000000000000
 > 
-> You have just two variants in this "not-containts", so invert your
-> clause. Easier code.
+> Could you add
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -786,7 +786,7 @@ int vfe_get(struct vfe_device *vfe)
+>         int ret;
 > 
-> Best regards,
-> Krzysztof
->
-
-Hi Krzysztof,
-
-Thank you very much for the review! I will fix it in the next version.
-
-Cheers,
-Vasilis
+>         mutex_lock(&vfe->power_lock);
+> -
+> +dev_info(vfe->camss->dev, "%s vfe %d power_count %d\n", __func__, 
+> vfe->id, vfe->power_count);
+>         if (vfe->power_count == 0) {
+>                 ret = vfe->res->hw_ops->pm_domain_on(vfe);
+>                 if (ret < 0)
+> @@ -823,6 +823,7 @@ int vfe_get(struct vfe_device *vfe)
+> 
+>         mutex_unlock(&vfe->power_lock);
+> 
+> +dev_info(camss->vfe->dev, "%s vfe %d err=%d\n", __func__, 
+> camss->vfe->id, 0);
+>         return 0;
+> 
+>  error_reset:
+> @@ -835,7 +836,7 @@ int vfe_get(struct vfe_device *vfe)
+> 
+>  error_pm_domain:
+>         mutex_unlock(&vfe->power_lock);
+> -
+> +dev_info(camss->vfe->dev, "%s vfe %d err=%d\n", __func__, 
+> camss->vfe->id, ret);
+>         return ret;
+>  }
+> 
+> ?
+> 
+> ---
+> bod
+I have added little more from the logs because it is only failing in 
+edge cases megapixels-sensorprofile failing by
+different reason quickly and trying to release the device.
+[   54.719030] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+[   54.750124] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 1
+[   54.750236] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+[   54.751270] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
+00000000beaef03c genpd_link 00000000251644d9
+[   54.751433] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+000000007ce2da53 genpd_link 0000000000000000
+[   54.755463] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 genpd 
+00000000beaef03c genpd_link 00000000251644d9
+[   54.755531] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+000000007ce2da53 genpd_link 0000000058dcd4d6
+[   55.861084] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 1
+[   55.861177] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+[   55.861778] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
+00000000beaef03c genpd_link 0000000000000000
+[   55.861860] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+000000007ce2da53 genpd_link 0000000000000000
+[   55.862242] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 genpd 
+00000000beaef03c genpd_link 00000000251644d9
+[   55.862258] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+000000007ce2da53 genpd_link 00000000e41c1881
+[  143.911690] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 2
+[  143.911762] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+[  143.911800] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 3
+[  143.911821] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+[  143.911858] qcom-camss 1b00020.camss: vfe_get vfe 1 power_count 0
+[  143.911871] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+000000007ce2da53 genpd_link 0000000000000000
+[  143.912393] qcom-camss 1b00020.camss: vfe_get vfe 1 err=0
+[  143.912489] qcom-camss 1b00020.camss: vfe_get vfe 1 power_count 1
+[  143.912513] qcom-camss 1b00020.camss: vfe_get vfe 1 err=0
+[  143.912553] qcom-camss 1b00020.camss: vfe_get vfe 1 power_count 2
+[  143.912572] qcom-camss 1b00020.camss: vfe_get vfe 1 err=0
+[  143.921750] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 3
+[  143.921802] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
+[  143.922670] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
+00000000beaef03c genpd_link 0000000000000000
+[  143.922725] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+000000007ce2da53 genpd_link 00000000d1fcd54b
+[  143.922853] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 genpd 
+00000000beaef03c genpd_link 00000000251644d9
+[  143.922868] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+000000007ce2da53 genpd_link 00000000d1fcd54b
+[  144.126535] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+000000007ce2da53 genpd_link 0000000000000000
 
