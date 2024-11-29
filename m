@@ -1,146 +1,315 @@
-Return-Path: <linux-kernel+bounces-425211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66CE9DBEEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:39:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB02C9DBEED
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 410D9164B97
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:39:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 564A1164A31
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D631547E9;
-	Fri, 29 Nov 2024 03:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1963715252D;
+	Fri, 29 Nov 2024 03:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CbK7j11C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aaykm36p"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8139433C5;
-	Fri, 29 Nov 2024 03:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4FD33C5;
+	Fri, 29 Nov 2024 03:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732851548; cv=none; b=m5CPQcmZA6z3P27O9vUOqvzHgBGAhDtWsA+pzn6klU0qMidwG0/8JWw7eVplRaxfR/PumMPQvmPyglozFd7Bj0xPMyRDowQSOxBc/QphY5zQCxVh4orgaMkSj9CIrmHThC6O234d9jQ5UPxj2S/Velaspt8Uo8uQWSB0v4L/2vs=
+	t=1732851879; cv=none; b=LaS7Ux+4FiMxWjOTWS165lGYMON1EyyDLoVYxchX6CjjoF8BNGzB80Fa5A3AbuYrc1Nno0sEvA71Zu+P51LIJaPkaqgru2+S9YE6DU5sMk2CbTz01Q58CIueghb65IuXJnWcnm7K6DUkCD4Cii/uDhC1Q8Tkj08wC7fC1vI98eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732851548; c=relaxed/simple;
-	bh=uXQy13BZgOa5L19ahrawleWv0o9BI/o1SY3gQQKTr0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=myZrimbZCG5Cj89Fia++VN1OXj+T/lCzOWzjXssep+ybpXFJxidBKDSuX+dWf0MW3diuLaBFeTgiOmVool+JrPBC2b9KGDzpMsUqbxE90qgEgSSsNEB+478kS0iJotZVegyn9clpzHmUazDIGgCMkwzD3vPErFfUIdHXvnQS4+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CbK7j11C; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732851547; x=1764387547;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uXQy13BZgOa5L19ahrawleWv0o9BI/o1SY3gQQKTr0A=;
-  b=CbK7j11C0n4ixiTyNVJ02criemgexAA/Or5JwFXZMbvskWlcLxUIVbXo
-   z7bYzeXvJtAKNzizywlDXlJI64DqRZoJX7jykBzLAqALFFvyYxv/JDkNh
-   gSKUbiF9x2CwJQTpjBV9cgQ/YUBz6d8LTKFa+zJPHEmnqIwUZ1rzHNOrd
-   8A/gEPzvDZ5prv5ecKSFK4PtTXWTmEPVY6QL78LlR9Vcp6InipEQOpFm1
-   heUomddjQhtQsb+XhlwUxy1gyEp7ads6t0OzXzT2pE12uqIcp9ateYP2f
-   4sh1GZ6Qev9EQuRlXjn3MP3Pk5MrLZFQEtt3YAlPZk1kvWPiUGgenvCiA
-   w==;
-X-CSE-ConnectionGUID: B8Nr6rZvRmC0Gj01Ov6+qQ==
-X-CSE-MsgGUID: PzC1kgwqR7qB75RFgr7Kkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="33225635"
-X-IronPort-AV: E=Sophos;i="6.12,194,1728975600"; 
-   d="scan'208";a="33225635"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 19:39:06 -0800
-X-CSE-ConnectionGUID: koENwoPwTf6PKAUaeJdnGQ==
-X-CSE-MsgGUID: CS5bmjCdQDyH3VAHk9nYzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,194,1728975600"; 
-   d="scan'208";a="97478220"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 28 Nov 2024 19:39:02 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGrqO-000AIZ-0x;
-	Fri, 29 Nov 2024 03:39:00 +0000
-Date: Fri, 29 Nov 2024 11:38:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cheng Jiang <quic_chejiang@quicinc.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
-	Rocky Liao <quic_rjliao@quicinc.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	quic_bt@quicinc.com
-Subject: Re: [PATCH v1 3/3] Bluetooth: btqca: Add QCA6698 support
-Message-ID: <202411291150.ngHlIQve-lkp@intel.com>
-References: <20241128120922.3518582-4-quic_chejiang@quicinc.com>
+	s=arc-20240116; t=1732851879; c=relaxed/simple;
+	bh=p/BtqpG+IVaKvX4ukjImzgdAynVxORij5dB89nsDRos=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TH2iQiX2GcSCc58VbZL/EQDLgX+PyR5zANMiQTeo1hM5PNw+4l37WlJqH+YCKklDHk17xsr6rWYrxCWgC+2g40n46KzSogd3zF8C8m3sJQ7v3AuqBXHPnQbTneDYqHQJXsQ0vruIbELnrbIy3Lh0D/N4/7Xmka0gb1q15ghvfKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aaykm36p; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-720cb6ac25aso1141883b3a.3;
+        Thu, 28 Nov 2024 19:44:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732851877; x=1733456677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qw5HuiFeElq/E/1SFYYivWjOveoig4PxqHy3M5+9mTg=;
+        b=aaykm36p/+dGzg/p7k4VwxzoWLJWvYYWVFG4LDVgNjWsb7COef60dMLzm8LuqA09OY
+         B/fPlqG3JNSjHEG1wppzdmfbOyaPAFXfrXCuyxEdmgDHCwHssiZ/PnqHP2JLD768ICkm
+         H5J0Z3p91R7CyQDCS5VWVMVmYmds1GA9yG8iFovbG+p5gxPhmCL7+L2eBufZX3PV6aQa
+         SxXrmHCj+hTlmFuT+t1bod62Zt6JDyTfDQ5SuwIATZtq7lVRfkg3gMEWCn/i4AHPt44t
+         xZrevPEuiz6pC/HOicaceS1ADRInp7BAmzaF3Gl9XkfLUWcm9xr19ErOgEC91/xO6AEo
+         AFmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732851877; x=1733456677;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qw5HuiFeElq/E/1SFYYivWjOveoig4PxqHy3M5+9mTg=;
+        b=W9kptFjiA9ts6ROvpqg1em/3uccpk6FyeL6NYcyW+5OB27UlgvzlJgs/dYs3E5wtnG
+         Nwn6kbMlZ9pM7WwIOuUml57kQGDH71N5ET8GN5N6dXSw4Oc0UW5PgR73Bq2fSVzp9Iyz
+         icois2UipZrHVaRGRH6t7a7xmszgrp5LZTpAFeqyyJ6lyM5Go/bLgzEeMrj6w+qudZwS
+         oQTffuEya32ZuM+EqPmKX/AEX7//emRwinnS6sGSXkARuOOjwoFFWyBal8hf5npluelR
+         Ygq8sVQ2bj5wEXcvrdvOQWwh5mlC231sRc/YqefHm0+yIXJlYvP8hh8k0n4Yvh/Za+MH
+         wU/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUl93OkX6UO3cWJOdo8fEi7KX4D45GSi1H5nTyV2Tnwtwb63ag8MiY+jwX5dIL7r6G2jezm5TvZ8sU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9FfeZ/9PS4B70BaSSzHsuG47D6RFiN/KPBYPtbe1c8qYrHga5
+	ZxJf3l0H635BGH14Y3B2x64U/usqEV27HdcSdmy4sZeRIOYVgFse4fLl8HW+
+X-Gm-Gg: ASbGncu8MK+khO7oI5saXfuIwyvmn3kc/HKM26tp+DdHX49rNDP+I21P4io8CvuJFvX
+	uiAKmJD3bhEXdhghOVTDtAmLeo30ifTEu+7absQsnwKlnlfmbsPC2RmJ8+BtdlfXHO5/KB2g+rA
+	1oQDW8PX0e7MtbXarut/Dm4IUUHhRux99rlybPLjTc5JbnkCtgrO0WaQ0isZiUGNJO1WXcH8a47
+	pUzR5xxVxyi24QMs7c1Rz2FOkw7ZcYGGoB4KcJcfiXtiJes/8ke5Tve/7rl/emeKctV2/o=
+X-Google-Smtp-Source: AGHT+IGnEF07GDYyxw1iLOHTvzjFzaEmKJ3HpP28dlaG6gu7KLJJWTPS0pjZgVX4+JqsJjvhNDnWjA==
+X-Received: by 2002:a17:903:189:b0:212:618a:4637 with SMTP id d9443c01a7336-215010903cdmr118763515ad.14.1732851876773;
+        Thu, 28 Nov 2024 19:44:36 -0800 (PST)
+Received: from localhost.localdomain ([177.10.10.137])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521966d45sm20719555ad.125.2024.11.28.19.44.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 19:44:36 -0800 (PST)
+From: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
+To: ukleinek@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	rafael.v.volkmer@gmail.com
+Subject: [PATCH] pwm: tiehrpwm: ensures that state.enabled is synchronized during .probe()
+Date: Fri, 29 Nov 2024 00:43:34 -0300
+Message-Id: <20241129034334.27203-1-rafael.v.volkmer@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <eobcrbxmtyxv4x5dkgxf2sssgjefqbhit3tsnzizdel2aqzynq@opsqlav5zh32>
+References: <eobcrbxmtyxv4x5dkgxf2sssgjefqbhit3tsnzizdel2aqzynq@opsqlav5zh32>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128120922.3518582-4-quic_chejiang@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Cheng,
+Fixes potential desynchronization of state.enabled in the .probe() method by
+suggesting proper handling of hardware state initialization. Adds
+considerations for implementing .get_hw_state() to check the current state
+of the module by checking physical registers.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
+---
 
-[auto build test WARNING on f486c8aa16b8172f63bddc70116a0c897a7f3f02]
+Hi, Uwe!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cheng-Jiang/arm64-dts-qcom-sa8775p-ride-Change-the-BT-node/20241128-201156
-base:   f486c8aa16b8172f63bddc70116a0c897a7f3f02
-patch link:    https://lore.kernel.org/r/20241128120922.3518582-4-quic_chejiang%40quicinc.com
-patch subject: [PATCH v1 3/3] Bluetooth: btqca: Add QCA6698 support
-config: arm-randconfig-001-20241129 (https://download.01.org/0day-ci/archive/20241129/202411291150.ngHlIQve-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241129/202411291150.ngHlIQve-lkp@intel.com/reproduce)
+Thanks again for the feedback!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411291150.ngHlIQve-lkp@intel.com/
+I have taken your findings into consideration again and am working on 
+getting my application up and running. Regarding the points you mentioned 
+earlier about the driver, I made this small patch, using some hardware 
+validation functions I had in my possession, to check for occasionality.
 
-All warnings (new ones prefixed by >>):
+Best regards,
+Rafael V. Volkmer
 
->> drivers/bluetooth/btqca.c:703:5: warning: no previous prototype for function 'qca_check_firmware_exists' [-Wmissing-prototypes]
-   int qca_check_firmware_exists(const char *name, struct hci_dev *hdev)
-       ^
-   drivers/bluetooth/btqca.c:703:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   int qca_check_firmware_exists(const char *name, struct hci_dev *hdev)
-   ^
-   static 
-   1 warning generated.
+ drivers/pwm/pwm-tiehrpwm.c | 162 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 161 insertions(+), 1 deletion(-)
 
-
-vim +/qca_check_firmware_exists +703 drivers/bluetooth/btqca.c
-
-   702	
- > 703	int qca_check_firmware_exists(const char *name, struct hci_dev *hdev)
-   704	{
-   705		const struct firmware *fw;
-   706		int ret;
-   707	
-   708		ret = firmware_request_nowarn(&fw, name, &hdev->dev);
-   709		if (ret) {
-   710			bt_dev_warn(hdev, "Firmware %s does not exist. Use default", name);
-   711			return 0;
-   712		}
-   713	
-   714		release_firmware(fw);
-   715		return 1;
-   716	}
-   717	
-
+diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+index 0125e73b98df..693704406f25 100644
+--- a/drivers/pwm/pwm-tiehrpwm.c
++++ b/drivers/pwm/pwm-tiehrpwm.c
+@@ -91,6 +91,15 @@
+ #define AQCSFRC_CSFA_FRCHIGH	BIT(1)
+ #define AQCSFRC_CSFA_DISSWFRC	(BIT(1) | BIT(0))
+ 
++#define AQCTLA_CAU_MASK   (BIT(5) | BIT(4)) 
++#define AQCTLA_CAU_SHIFT  4U
++
++#define AQCTLA_CAD_MASK   (BIT(7) | BIT(6)) 
++#define AQCTLA_CAD_SHIFT  6U
++
++#define AQ_SET    0x1
++#define AQ_CLEAR  0x2
++
+ #define NUM_PWM_CHANNEL		2	/* EHRPWM channels */
+ 
+ struct ehrpwm_context {
+@@ -400,6 +409,134 @@ static void ehrpwm_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	pc->period_cycles[pwm->hwpwm] = 0;
+ }
+ 
++static bool ehrpwm_is_enabled(struct pwm_chip *chip)
++{
++	struct ehrpwm_pwm_chip *pc = to_ehrpwm_pwm_chip(chip);
++
++	bool ret;
++
++	u16 aqcsfrc_reg;
++	u8 csfa_bits;
++
++	u16 aqctla_reg;
++
++	if(chip == NULL) {
++		return -EINVAL;
++	}
++
++	aqcsfrc_reg = readw(pc->mmio_base + AQCSFRC);
++	csfa_bits = (u8)(aqcsfrc_reg & AQCSFRC_CSFA_MASK);
++	
++	aqctla_reg = readw(pc->mmio_base + AQCTLA);
++
++	ret = (csfa_bits != 0u)	 ? false :
++		  (aqctla_reg == 0u) ? false : true;
++
++	return ret;
++}
++
++static u64 ehrpwm_read_period(struct pwm_chip *chip)
++{
++	struct ehrpwm_pwm_chip *pc = to_ehrpwm_pwm_chip(chip);
++
++	u64 ret;
++
++	unsigned long tbclk_rate;
++	
++	u16 tbprd_reg;
++	u64 period_cycles;
++	u64 period_ns;
++
++	if(chip == NULL) {
++		return -EINVAL;
++	}
++
++	tbprd_reg = readw(pc->mmio_base + TBPRD);
++	tbclk_rate = clk_get_rate(pc->tbclk);
++
++	period_cycles = tbprd_reg + 1u;
++	
++	/* period_ns = (period_cycles * 1e9) / tblck_rate */
++	period_ns = DIV_ROUND_UP_ULL(period_cycles * NSEC_PER_SEC, tbclk_rate);
++	
++	ret = period_ns;
++
++	return ret;
++}
++
++static u64 ehrpwm_read_duty_cycle(struct pwm_chip *chip)
++{
++	struct ehrpwm_pwm_chip *pc = to_ehrpwm_pwm_chip(chip);
++
++	u64 ret;
++	
++	u16 cmpa_reg;
++	u64 duty_cycles;
++	u64 duty_ns;
++
++	unsigned long tbclk_rate;
++
++	if(chip == NULL) {
++		return -EINVAL;
++	}
++
++	cmpa_reg = readw(pc->mmio_base + CMPA);
++
++	tbclk_rate = clk_get_rate(pc->tbclk);
++
++	duty_cycles = cmpa_reg;
++
++	/* duty_ns = (duty_cycles * 1e9) / tblck_rate */
++	duty_ns = DIV_ROUND_UP_ULL(duty_cycles * NSEC_PER_SEC, tbclk_rate);
++
++	ret = duty_ns;
++
++	return ret;
++}
++
++static enum pwm_polarity ehrpwm_read_polarity(struct pwm_chip *chip)
++{
++	struct ehrpwm_pwm_chip *pc = to_ehrpwm_pwm_chip(chip);
++
++	enum pwm_polarity ret;
++
++	u16 aqctla_reg;
++	u8 cau_action;
++	u8 cad_action;
++
++	if(chip == NULL) {
++		return -EINVAL;
++	}
++
++	aqctla_reg	= readw(pc->mmio_base + AQCTLA);
++
++	cau_action = (aqctla_reg & AQCTLA_CAU_MASK) >> AQCTLA_CAU_SHIFT;
++	cad_action = (aqctla_reg & AQCTLA_CAD_MASK) >> AQCTLA_CAD_SHIFT;
++
++	ret = (cau_action == AQ_SET && cad_action == AQ_CLEAR) ? PWM_POLARITY_NORMAL :
++		  (cau_action == AQ_CLEAR && cad_action == AQ_SET) ? PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
++
++	return ret;
++}
++
++static int ehrpwm_get_hw_state(struct pwm_chip *chip, struct pwm_device *pwm, 
++								struct pwm_state *state)
++{
++	int ret;
++
++	if(chip == NULL || pwm == NULL || state == NULL){
++		return -EINVAL;
++	}
++
++	state->enabled = ehrpwm_is_enabled(chip);
++
++	state->period = ehrpwm_read_period(chip);
++    state->duty_cycle = ehrpwm_read_duty_cycle(chip);
++    state->polarity = ehrpwm_read_polarity(chip);
++
++	return ret;
++}
++
+ static int ehrpwm_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			    const struct pwm_state *state)
+ {
+@@ -450,6 +587,7 @@ static int ehrpwm_pwm_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct ehrpwm_pwm_chip *pc;
+ 	struct pwm_chip *chip;
++	bool tbclk_enabled;
+ 	struct clk *clk;
+ 	int ret;
+ 
+@@ -501,10 +639,32 @@ static int ehrpwm_pwm_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, chip);
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	ehrpwm_get_hw_state(&pc->chip, &pc->chip.pwms[0], &state);
++
++	if(state.enabled == true) {
++		ret = clk_prepare_enable(pc->tbclk);
++		if (ret) {	
++			dev_err(&pdev->dev, "clk_prepare_enable() failed: %d\n", ret);
++			goto err_pwmchip_remove;
++		}
++		
++		tbclk_enabled = true;
++
++		ret = pm_runtime_get_sync(&pdev->dev);
++		if(ret < 0) {
++			dev_err(&pdev->dev, "pm_runtime_get_sync() failed: %d\n", ret);
++			clk_disable_unprepare(pc->tbclk);
++			goto err_pwmchip_remove;
++		}
++	}
++
+ 	return 0;
+ 
++err_pwmchip_remove:
++	pwmchip_remove(&pc->chip);
+ err_clk_unprepare:
+-	clk_unprepare(pc->tbclk);
++	if(tbclk_enabled)
++		clk_unprepare(pc->tbclk);
+ 
+ 	return ret;
+ }
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
