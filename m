@@ -1,207 +1,297 @@
-Return-Path: <linux-kernel+bounces-425374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E58229DC136
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:12:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 843FB9DC13A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:13:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4913AB23A78
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:12:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6DE41651C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B38175D35;
-	Fri, 29 Nov 2024 09:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAC217625C;
+	Fri, 29 Nov 2024 09:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nh5hDs9j"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fFkN5daD"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79020143C40;
-	Fri, 29 Nov 2024 09:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C690E170A0A
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732871569; cv=none; b=IN+Z3ychhzf8YQoh7dZkLnrAxCtCewdZRJBG2pMAMS2GBNL/IVNk1MkbsFwx7Wf6cOg1D7xsXdB4kvPi6WSEqJv50wtwPGwB9uhLVXjwrxuQCuX5SquF+9jDdMt5sqdvQRb9hD1CujoNqjNkqMqEyjQaB8cFROh298Wz7yxf0Yc=
+	t=1732871574; cv=none; b=X90newEDks7OAUcFiQ7m7G5tvkp3txXrvQm7Ze58YO11xPiFtXDCePwJiGdFZN8GLILU625zWZeFbenx7PnA1D5VmJeEJnI56BB8/ZeIBSOtQQ7f7gIhaojJrrVEvUtpmCgo6A0v57v4RQ10OBw7vRXz2fHQug697/V9NrKLeho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732871569; c=relaxed/simple;
-	bh=dJ6IY9QS2O7JmjJbpKwvcmlKLPRPwSASvHz6cnbvrLs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U6+QnQQEiNh2Ri5xb8aoY+L/YC+OzUIPl1xiXIvGky8X52oybBWAy53tCBnwVJrW1cPtM4x+sxbFvNkg+FUbjWd/G7owFqt3hqJdsFRRWdC9Co+oquIPb0TcxCY9J23w5vJ2CM/2DWGdbzTvWHp+sf2D2PCAH1uHJXlEl62n9W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nh5hDs9j; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43494a20379so15018755e9.0;
-        Fri, 29 Nov 2024 01:12:47 -0800 (PST)
+	s=arc-20240116; t=1732871574; c=relaxed/simple;
+	bh=1bnVnZ6g/RMKpFN6pROmGByLVFcvNA8/ZgUKEpHMa2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=faZl/ZJ1oxHaD0306aU0GtHedgs6GM3BepPmvH0jId3cdbp400L6A138UDyTO6VRktPiz3SdIYP+xzglAHBVIkWb7GJ6mtCxMVi4No3w+5/9MWZnAbxrQzMHIWNtzHRS4n5adGBvqhyh3MjCDOIl1iGyjqEm8jWSpkOSu/Zd2Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fFkN5daD; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a10588f3so10001095e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 01:12:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732871566; x=1733476366; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dJ6IY9QS2O7JmjJbpKwvcmlKLPRPwSASvHz6cnbvrLs=;
-        b=Nh5hDs9jvWHa7g6XKUzzk6RbohMA4yWRH/0FyVqTamfleTR2jDmhtBV6vVtsF0Yp3q
-         hYvDSa/U1xh1Vq7nfQIUII8WtLUocOUv8N4kYFlm4ly8wmrTJLhU9/+adaPap6FSj2Wx
-         SunBZzurAuCbg8Ijot8JKmnV6tdRfIg9KkhkKQqVcmwqMur0w9N7hfIwToxCD/EHCQGW
-         0PxFNNCkiLRXO6axwy49zT1OTNdyqKF4vr6Crp2Pf1Ld++WceeI9q23PlthTzOiTZOgw
-         UrI6qwuUELItoJ0uDuKqWHcMguFqp0RVucjgOnZ98LrLSjaHevp691w/cUe4zHr5xG5A
-         se2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732871566; x=1733476366;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=tuxon.dev; s=google; t=1732871571; x=1733476371; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dJ6IY9QS2O7JmjJbpKwvcmlKLPRPwSASvHz6cnbvrLs=;
-        b=ramd/flqrfUgYbvUePutpmzEwbbJpu/hwToSsboVrquCYPXTpZgRGYw4Yu7p/R3CjP
-         UeObpS0tFrWqiNK2PfhJSOG69W0QpfMemM4q1t3t0ZVFUhLkiMsh1LNXJ0bIrnc71HAN
-         NUv/eCp1jqNc5SulWjeAhdMlCED0abrNTEDO97q6pn3xOGAbvfPmli+F3ztqx1MSZDZC
-         3d0ZXeDmZk2w0UIuzIVtO4FNcRnyvOuNMnXWz1VlSs5+tCWSbhmjEziaL7SVANvF30zw
-         ZwnmElTWTYhcQQiHQLjZ2rTj4syhEeu4XwraQ7jinpamnqhjf0j3o32RpqAOJPyd9wdO
-         tLCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUorMr5T8BhlRLTWs9G7wArGnJ2Dqch5fFivwy/N13NzAnB0YiV0snTpSux39g//jmykWbdOmywhNE=@vger.kernel.org, AJvYcCV/XDpPPxCzmxNchsMYnuO6n4MnQpQYlJMS2udTjRr1tUqYY5yw1GJRiu1sXz5XYn/D87wsRXZVprXl@vger.kernel.org, AJvYcCWfY7VinHM6slJVnLqBMDpNFsfd1DTgeWGqXj5TzJ+dkaZidf53EyVoPNKcl9GQC6cMOGwDWdW75kbmRteA@vger.kernel.org, AJvYcCXCCjz3R5dICvkgMGVYZSfmLNxR8gSboDFSrKwcW6DY4WcMVa+j4Cz6LeOe0cm7i/DwEltw2saga9U8OE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGzXBWzp5xqMm3EeLJH070GBH8VxXgtcZMT2n/ZGmMam1ICPPt
-	H3oGfov6wtb5rms0l0p1SGlH6jzgrPJrnpxRZ4ZtUg+mIBaJzzU0
-X-Gm-Gg: ASbGncuEsvqY6TIi8MP4HKsLPRphrBD0pzkfWqgGvVgIXZpZyQ0eh+YdG+Jb5Z1tIkw
-	YcD0dwec2RvgN1gvG5tJ3hME71lMPeGhxO+mrMHGXsNbMRI8b+FwtVustezx2/hpRgOh0T/bD9V
-	Ym4W6bkSvxfXUoprK8f1ZOE+Q+to8x7u7iajkGY417bfMrSkV63iHX3pCkOZ9HVeTjjxu492Snw
-	jXn5E23oZN/cWcILg8v43qRzNMzyoNIg3IeFJpJoUw4fR4HZNq0FLJEUNJNpXFNE3sm5b7K6Gpk
-	hFyVZ8DvqlxMHNcbqNQu5BI=
-X-Google-Smtp-Source: AGHT+IGF5USQPPQnUyvNi/ekI6n1SlDmZye8w3YoCpMzfV67iTqVMeWXyPxA03INAS0aAlQ6wy7ufA==
-X-Received: by 2002:a05:600c:4e8a:b0:431:5ab3:d28d with SMTP id 5b1f17b1804b1-434a9dc3cc3mr100465735e9.9.1732871565606;
-        Fri, 29 Nov 2024 01:12:45 -0800 (PST)
-Received: from ?IPv6:2a01:599:923:c59f:ea19:16d1:ab07:4803? ([2a01:599:923:c59f:ea19:16d1:ab07:4803])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd36855sm3905633f8f.36.2024.11.29.01.12.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 01:12:45 -0800 (PST)
-Message-ID: <f0cbbbe4b20f828fbd48b504a58437c06ef90908.camel@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: (pmbus/adp1050): Add bindings
- for adp1051, adp1055 and ltp8800
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: "Encarnacion, Cedric justine" <Cedricjustine.Encarnacion@analog.com>, 
- Krzysztof Kozlowski
-	 <krzk@kernel.org>, Guenter Roeck <linux@roeck-us.net>, Conor Dooley
-	 <conor@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>, Jean Delvare
- <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, Delphine CC Chiu
- <Delphine_CC_Chiu@wiwynn.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Sabau,
- Radu bogdan" <Radu.Sabau@analog.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
- <u.kleine-koenig@pengutronix.de>, "Torreno, Alexis Czezar"
- <AlexisCzezar.Torreno@analog.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Date: Fri, 29 Nov 2024 10:12:45 +0100
-In-Reply-To: <PH0PR03MB6938F9DE7173FE958D645CFE8E2E2@PH0PR03MB6938.namprd03.prod.outlook.com>
-References: <20241120035826.3920-1-cedricjustine.encarnacion@analog.com>
-	 <20241120035826.3920-2-cedricjustine.encarnacion@analog.com>
-	 <20241120-process-hulk-ecedcbf088f7@spud>
-	 <dfe8e47e-6c31-4b11-b733-38e5bd0e49d3@kernel.org>
-	 <7e55a403-eb1c-4369-8180-1639b50cc9b1@roeck-us.net>
-	 <4d907ddf-16ca-4136-b912-f571a691dc90@kernel.org>
-	 <PH0PR03MB6938F9DE7173FE958D645CFE8E2E2@PH0PR03MB6938.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        bh=sb8gO4uA+vo8kcJyPPhqX5i7haSv+q2JYHt3gAOv4Y0=;
+        b=fFkN5daDx5C4IP+M2K9BheZExYOitRDImSD4IClty7KWVw6kGsNlBLBHmbFgRxZiuq
+         lweIquyLSvl5YEt0Yn6J3MzsPMlYzothNseGTvwsxjS047fQ509z2gjZt71+/KA+c0hq
+         UWkI5C98RxUSzkZTTEkLft223TIdESlYec/5KumR+fEKSo5zSnMsdpCvHihgmzLh+Eds
+         em1M+nHzBCS1fWst4ueC7R4gX/BdxlWRHANeGgBKUj3HAxc6XdhiFi2BqxtRcOTbrQXv
+         MgSjx3zFg1W5Hpby6+XL0KpqtZt7LMG+9djo6OukFi3NqaXL5hgcgD9ktYQQSQDKhVaD
+         b0ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732871571; x=1733476371;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sb8gO4uA+vo8kcJyPPhqX5i7haSv+q2JYHt3gAOv4Y0=;
+        b=Y7eDvbAklczgvZSpv+WC1YksIl0G2cVJcBKHySAjvYCM0+bNSRHo2Zxp2ECWWCyS01
+         7sC3FqAWpgUUIZElgheMtBrj9oCtbVxJfllpm12KChYhoW5cJov5XNHvo0Lb/UlKX75T
+         NqWMFPIrTH1jv/RsmmW8p+XNRX2DJq4RpvY2SASZUVpKJ60Y2I1uLjG9Qmh4n8C1hc11
+         qQl6W7XiEi12dY6foI72SUGUIeBYVBg8VS/1eLwU7VBqW/kS6pNSVU3TgbtJ8Zdu/uxF
+         Eoj1ztDYyoPSi3QPCB5EsKhAPrY2EZPrHXm5t9SbHcxrhPRGj5hGYR1qlehukZCl9+Sq
+         S7gA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7IbykvNnIuNqvUI+1H6J4pI71vXvwXbxFlIqHPl4PXxnX7Ig8B+qCPwERwWdd1l6+vDgntiEQAWgLLBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwPx5dsDQQVkUbXqS9BiCfVD4VE3KictpMtXecS/vxkFCyh67c
+	PHQzPGtAAhljpiP2cYPd8/Dx4//5oY2MV5ZC7YCJE/DOWINNbCYF+t3NDStTxuA=
+X-Gm-Gg: ASbGncvQrMiaTAoCdtATeqHcnBWOAIy1LmrI9+oWIUjO7hfGSrwqPjZNv0l/kl8qSIg
+	AkvIp66fPcYFLWrOgX+Y+9iXZSXTeIu61Ijc7a2F2FxMMXHIvLJHKHLlDYIqHkkB91SpZOMNrcr
+	VRTOz5OUsN7zKfq7Z8hzptemLyr2zh++m+JcbmK5BT6LfxA1bEkG7MKUOYoXAmlKqPk2h6vlCNN
+	V8ARRy30DWaB5N7u75kK5g2j5EabHnzKBQWg4BBpKNo2v0en8rvfRiK1Q==
+X-Google-Smtp-Source: AGHT+IHmwDZAWFKDepsiDLw8yd17aIS/lp5WnEmXUs3bmN9CBmiHsuGbPOMSIZoIaRXxGX02f7LuEg==
+X-Received: by 2002:a05:600c:3b1a:b0:434:a968:89b5 with SMTP id 5b1f17b1804b1-434a9dc35f7mr102361905e9.9.1732871571093;
+        Fri, 29 Nov 2024 01:12:51 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd36a02sm3890362f8f.37.2024.11.29.01.12.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 01:12:50 -0800 (PST)
+Message-ID: <4d2a4d8b-9951-4454-b662-0a14d73e61a0@tuxon.dev>
+Date: Fri, 29 Nov 2024 11:12:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/15] soc: renesas: Add SYSC driver for Renesas RZ
+ family
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
+ gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com,
+ christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-3-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUvmTQeQXxhsXtj23-OS=aL3UgsyOtnawdmnusrEJ2JQw@mail.gmail.com>
+ <32fa7eb8-2139-454c-8866-cb264d060616@tuxon.dev>
+ <CAMuHMdXPQnCPjKRxoSceYabWPHF9Z_A7qVN85yaUZjPG7-o7tg@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdXPQnCPjKRxoSceYabWPHF9Z_A7qVN85yaUZjPG7-o7tg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-11-25 at 02:44 +0000, Encarnacion, Cedric justine wrote:
-> > -----Original Message-----
-> > From: Krzysztof Kozlowski <krzk@kernel.org>
-> > Sent: Thursday, November 21, 2024 2:39 AM
-> > To: Guenter Roeck <linux@roeck-us.net>; Conor Dooley <conor@kernel.org>=
-;
-> > Encarnacion, Cedric justine <Cedricjustine.Encarnacion@analog.com>
-> > Cc: devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> > i2c@vger.kernel.org; linux-doc@vger.kernel.org; linux-hwmon@vger.kernel=
-.org;
-> > Jean Delvare <jdelvare@suse.com>; Jonathan Corbet <corbet@lwn.net>;
-> > Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>; Rob Herring
-> > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dool=
-ey
-> > <conor+dt@kernel.org>; Sabau, Radu bogdan <Radu.Sabau@analog.com>; Uwe
-> > Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>; Torreno, Alexis Cze=
-zar
-> > <AlexisCzezar.Torreno@analog.com>; Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com>
-> > Subject: Re: [PATCH 1/2] dt-bindings: hwmon: (pmbus/adp1050): Add bindi=
-ngs
-> > for adp1051, adp1055 and ltp8800
-> >=20
-> > [External]
-> >=20
-> > On 20/11/2024 19:07, Guenter Roeck wrote:
-> > > On 11/20/24 09:35, Krzysztof Kozlowski wrote:
-> > > > On 20/11/2024 18:11, Conor Dooley wrote:
-> > > > > On Wed, Nov 20, 2024 at 11:58:25AM +0800, Cedric Encarnacion wrot=
-e:
-> > > > > > add dt-bindings for adp1051, adp1055, and ltp8800 pmbus.
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 ADP1051: 6 PWM for I/O Voltage, I/O Cu=
-rrent, Temperature
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 ADP1055: 6 PWM for I/O Voltage, I/O Cu=
-rrent, Power, Temperature
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 LTP8800-1A/-2/-4A: 150A/135A/200A DC/D=
-C =C2=B5Module Regulator
-> > > > > >=20
-> > > > > > Co-developed-by: Alexis Czezar Torreno
-> > <alexisczezar.torreno@analog.com>
-> > > > > > Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@anal=
-og.com>
-> > > > > > Signed-off-by: Cedric Encarnacion
-> > <cedricjustine.encarnacion@analog.com>
-> > > > >=20
-> > > > > Why did you drop my ack?
-> > > > > https://urldefense.com/v3/__https://lore.kernel.org/all/20241106-
-> > linoleum-kebab-
-> > decf14f54f76@spud/__;!!A3Ni8CS0y2Y!7Q2KluGdg8cJW_wYUd-
-> > vh5mP66Ns62VZOkPG4Jf7NY9ULtTfjiwYqrUHbik_tI9X4izI6fAQS_7eVscdEFK_X
-> > OEm$
-> > > > So that's a v2? Or v3? Then should be marked correctly. Please star=
-t
-> > > > using b4. I already asked analog.com for this in few cases. Feel fr=
-ee
-> > > > not to use b4 if you send correct patches, but this is not the case=
- here.
-> > > >=20
->=20
-> Okay, I will start exploring b4 for future patches.
->=20
 
-Next time, reach out to me. I have been pointing everbody to b4 (if asked n=
-aturally).
 
-> > >=20
-> > > In general I agree, but this is a combination of two patch series, as=
- mentioned
-> > > in the summary. I am not sure how to use versioning in such situation=
-s. Is it
-> > > v2 of one series or v3 of the other ?
-> > I would say the highest and keep the b4 changeset. This allows to use b=
-4
-> > diff easily. Choice done here - v1, no usage of b4=C2=A0 - breaks every=
-thing,
-> > look:
-> >=20
-> > b4 diff '<20241120035826.3920-1-cedricjustine.encarnacion@analog.com>'
-> > Grabbing thread from
-> > lore.kernel.org/all/20241120035826.3920-1-
-> > cedricjustine.encarnacion@analog.com/t.mbox.gz
-> > ---
-> > Analyzing 13 messages in the thread
-> > Could not find lower series to compare against.
->=20
-> This is v2 of one and v3 of another. For the upcoming versions, should I
-> proceed to v4 which succeeds the highest or continue to v2 based on this
-> series?
->=20
+On 29.11.2024 10:54, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Fri, Nov 29, 2024 at 9:48 AM Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+>> On 28.11.2024 17:24, Geert Uytterhoeven wrote:
+>>> On Tue, Nov 26, 2024 at 10:21 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> The RZ/G3S system controller (SYSC) has various registers that control
+>>>> signals specific to individual IPs. IP drivers must control these signals
+>>>> at different configuration phases.
+>>>>
+>>>> Add SYSC driver that allows individual SYSC consumers to control these
+>>>> signals. The SYSC driver exports a syscon regmap enabling IP drivers to
+>>>> use a specific SYSC offset and mask from the device tree, which can then be
+>>>> accessed through regmap_update_bits().
+>>>>
+>>>> Currently, the SYSC driver provides control to the USB PWRRDY signal, which
+>>>> is routed to the USB PHY. This signal needs to be managed before or after
+>>>> powering the USB PHY off or on.
+>>>>
+>>>> Other SYSC signals candidates (as exposed in the the hardware manual of the
+>>>>
+>>>> * PCIe:
+>>>> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+>>>> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+>>>>   register
+>>>> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+>>>>
+>>>> * SPI:
+>>>> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+>>>>   register
+>>>>
+>>>> * I2C/I3C:
+>>>> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+>>>>   (x=0..3)
+>>>> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+>>>>
+>>>> * Ethernet:
+>>>> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+>>>>   registers (x=0..1)
+>>>>
+>>>> As different Renesas RZ SoC shares most of the SYSC functionalities
+>>>> available on the RZ/G3S SoC, the driver if formed of a SYSC core
+>>>> part and a SoC specific part allowing individual SYSC SoC to provide
+>>>> functionalities to the SYSC core.
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>>> --- /dev/null
+>>>> +++ b/drivers/soc/renesas/r9a08g045-sysc.c
+>>>> @@ -0,0 +1,31 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * RZ/G3S System controller driver
+>>>> + *
+>>>> + * Copyright (C) 2024 Renesas Electronics Corp.
+>>>> + */
+>>>> +
+>>>> +#include <linux/array_size.h>
+>>>> +#include <linux/bits.h>
+>>>> +#include <linux/init.h>
+>>>> +
+>>>> +#include "rz-sysc.h"
+>>>> +
+>>>> +#define SYS_USB_PWRRDY         0xd70
+>>>> +#define SYS_USB_PWRRDY_PWRRDY_N        BIT(0)
+>>>> +#define SYS_MAX_REG            0xe20
+>>>> +
+>>>> +static const struct rz_sysc_signal_init_data rzg3s_sysc_signals_init_data[] __initconst = {
+>>>
+>>> This is marked __initconst...
+>>>
+>>>> +       {
+>>>> +               .name = "usb-pwrrdy",
+>>>> +               .offset = SYS_USB_PWRRDY,
+>>>> +               .mask = SYS_USB_PWRRDY_PWRRDY_N,
+>>>> +               .refcnt_incr_val = 0
+>>>> +       }
+>>>> +};
+>>>> +
+>>>> +const struct rz_sysc_init_data rzg3s_sysc_init_data = {
+>>>
+>>> ... but this is not __init, causing a section mismatch.
+>>
+>> Do you know if there is a way to detect this?
+> 
+> The kernel should tell you during the build...
 
-It seems to me the highest is the preferred...
+I'll look carefully, I haven't noticed it. Thank you!
 
-- Nuno S=C3=A1
+> 
+>>
+>>>
+>>>> +       .signals_init_data = rzg3s_sysc_signals_init_data,
+>>>> +       .num_signals = ARRAY_SIZE(rzg3s_sysc_signals_init_data),
+>>>> +       .max_register_offset = SYS_MAX_REG,
+>>>> +};
+>>>
+>>>> --- /dev/null
+>>>> +++ b/drivers/soc/renesas/rz-sysc.c
+>>>
+>>>> +/**
+>>>> + * struct rz_sysc - RZ SYSC private data structure
+>>>> + * @base: SYSC base address
+>>>> + * @dev: SYSC device pointer
+>>>> + * @signals: SYSC signals
+>>>> + * @num_signals: number of SYSC signals
+>>>> + */
+>>>> +struct rz_sysc {
+>>>> +       void __iomem *base;
+>>>> +       struct device *dev;
+>>>> +       struct rz_sysc_signal *signals;
+>>>> +       u8 num_signals;
+>>>
+>>> You could change signals to a flexible array at the end, tag it with
+>>> __counted_by(num_signals), and allocate space for both struct rz_sysc
+>>> and the signals array using struct_size(), reducing the number of
+>>> allocations.
+>>
+>> I'll look into this.
+> 
+>>>> --- /dev/null
+>>>> +++ b/drivers/soc/renesas/rz-sysc.h
+>>>> @@ -0,0 +1,52 @@
+>>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>>> +/*
+>>>> + * Renesas RZ System Controller
+>>>> + *
+>>>> + * Copyright (C) 2024 Renesas Electronics Corp.
+>>>> + */
+>>>> +
+>>>> +#ifndef __SOC_RENESAS_RZ_SYSC_H__
+>>>> +#define __SOC_RENESAS_RZ_SYSC_H__
+>>>> +
+>>>> +#include <linux/refcount.h>
+>>>> +#include <linux/types.h>
+>>>> +
+>>>> +/**
+>>>> + * struct rz_sysc_signal_init_data - RZ SYSC signals init data
+>>>> + * @name: signal name
+>>>> + * @offset: register offset controling this signal
+>>>> + * @mask: bitmask in register specific to this signal
+>>>> + * @refcnt_incr_val: increment refcnt when setting this value
+>>>> + */
+>>>> +struct rz_sysc_signal_init_data {
+>>>> +       const char *name;
+>>>> +       u32 offset;
+>>>> +       u32 mask;
+>>>> +       u32 refcnt_incr_val;
+>>>> +};
+>>>> +
+>>>> +/**
+>>>> + * struct rz_sysc_signal - RZ SYSC signals
+>>>> + * @init_data: signals initialization data
+>>>> + * @refcnt: reference counter
+>>>> + */
+>>>> +struct rz_sysc_signal {
+>>>> +       const struct rz_sysc_signal_init_data *init_data;
+>>>
+>>> Can't you just embed struct rz_sysc_signal_init_data?
+>>
+>> Meaning to have directly the members of struct rz_sysc_signal_init_data
+>> here or to drop the const qualifier along with __initconst on
+>> rzg3s_sysc_signals_init_data[]  and re-use the platfom data w/o allocate
+>> new memory?
+> 
+> I mean
+> 
+>     struct rz_sysc_signal {
+>           struct rz_sysc_signal_init_data init_data;
+>           ...
+>     };
+> 
+> Currently you allocate rz_sysc_signal_init_data separately.
+> When embedded, it will be part of rz_sysc, cfr. above.
 
+Ah, your right. I initially had this as a pointer and re-used the init data
+(rzg3s_sysc_signals_init_data[], w/o having __initconst qualifier for it).
+I dropped that approach but missed to drop the pointer here.
+
+Thank you,
+Claudiu
+
+> 
+>>> That way you could allocate the rz_sysc_signal and
+>>> rz_sysc_signal_init_data structures in a single allocation.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
