@@ -1,363 +1,240 @@
-Return-Path: <linux-kernel+bounces-425444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D6A9DC229
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:32:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F94D9DC22C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59EDAB21A9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:32:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76C87B2282E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0F718D63E;
-	Fri, 29 Nov 2024 10:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8503B18D656;
+	Fri, 29 Nov 2024 10:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="SOjfjNsD"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bDRl3Aiq"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2060.outbound.protection.outlook.com [40.107.220.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E6418871F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732876321; cv=none; b=CUBbc2MAu3pqiRFjnSl51R1zDI4pqlktjthxGJfatso3C5MsoinxMBpYBfrP3Au1YKlAa5wOJiSotn9N67KwDZrS9m/CGpoCHo5wrggj1XHwito9GC3JWmrAh4tC8Ntt5dXkjaYCyMiBcsxnUUvTPk5n3d5z+TtrUuLnZtJ7HJ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732876321; c=relaxed/simple;
-	bh=Yvsxf/JwNE/7ROkTVSxYM/zC/C9ZFeW5Woc/yxQA0m4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NfaKVAerdsUjO3CXUm5lzRt+UH+tEslFkWRv/wkTNqqJAulcPniNLn73moTf2cFJ6ZhfNmT4SZP3eztXQoU2WWPNlT2qC1pRfuhAwUUhrQ7ZdYQdCuoSvWIKuSJ4/+nNSwTbky85G8ilRvG4sKXyE+wi5wrsBAFjOk5eSkWvzDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=SOjfjNsD; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cf6f804233so1901920a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 02:31:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1732876316; x=1733481116; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wJapKPP894yH/ZYBVUl+FkcsTZ4tZiRFFF/+acV2Pko=;
-        b=SOjfjNsDnFpQfZ0dLqAHji0oUYFTPq5i45eGwUB6XC0QvVeFtt/vvqYGLDsB6cnx5J
-         ukRk879dgOlwLZ0GZ1UKGXvVbfGj7S0tBUj2D/bsV9HMFFUaMv+OHe9uQDB9UFVDV1aB
-         ywgvNZodL93eqEUWzswyHbBTGlpt8+mw3njTRFxcmU8cadIk4o3FygLf5AD/IyZy2grN
-         SMdLimUx/2SAsguga0rvD7KJVEx87c6xZQzTlm9zX6c4MgDcrJkyuQFfBxui8QVLbluW
-         IpG8wzkxEv4/DxomJVOFXDVbtUJblF8WCngaVq66fh29XttgrMfuROpUoVNaMby5APn7
-         VR8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732876316; x=1733481116;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wJapKPP894yH/ZYBVUl+FkcsTZ4tZiRFFF/+acV2Pko=;
-        b=HtEgRAJWZK4pk5FA1UlagP+HWfHa+eXWDvzXpK5GwSuJLPfCqgPBBfUHZZSZ/YQaHu
-         HwRfA9DaKWgmfQL3yPR1neBRoSVDwH0dA/RZQJn+TPNOxKVFmUNCcPhZ+gFQRB5q5HDH
-         c8uvAnQdouT6JropCGuve2x8bIoG4rvYQbZfSD1jWDEC1lhqgJd6dI7sKUBpzicW4u13
-         57xz8vvlEUlMoiyyPgwzTBLbLLoFMOY9Fr1YpLHw4ZglLbpJPEJQe8aczGFLC1vxeqEF
-         WlaNTR3BIKT434uyjf3WAvNZgfHUljSi993+jNijiwAudYSrDIffoOc5Jv0Bkva0we/V
-         4SOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFxKJHusMk2IFN5NVQfaEIJyMAf/hGgxyVEha3ypy5Pr5+fMjPaealM2OIRwTM+QizMGRQAuXbvMSG6Ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/IhMzpd9acVvSebGo9g4M8d8rX3Ud5U9liYhW6oQIB5u4wtbQ
-	zs5XWI14b5+gPnF2fSs7JlDc2A3WL6BmMxY5ZpENE79yH5UzSoXZmx1b+LIfShFu15fkfP1c/Rx
-	XF5BMjcxUEgpW2HrkWjq/NjKSY+R8T9SRWuQ9cQ==
-X-Gm-Gg: ASbGncsj7G/1lpqkchmPIadk+cOMC3qzLRr2HY8C53OGcXE532rfbn2m5mf6UB6DXyS
-	PUSDEEfDqLQPXsC0HPS+PF1m20w==
-X-Google-Smtp-Source: AGHT+IHi+z1i7gxHLtV5K787lEVSyWT53ZHIreny4YdaTCIQyu4GO2Y17S2VoBXHlUE5lOPSmaMIq50TrRbGFPwS8YQ=
-X-Received: by 2002:a05:6402:270a:b0:5d0:b60a:2ff6 with SMTP id
- 4fb4d7f45d1cf-5d0b60a3599mr2015227a12.22.1732876316309; Fri, 29 Nov 2024
- 02:31:56 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A55155345;
+	Fri, 29 Nov 2024 10:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732876357; cv=fail; b=R5OQy2KFv5AwlBr18ftCWQVk+OcnfoBXHsr5QcCW3xJT74seVSOIR7kliLzEZHRe4Y3j9aZV8o/aOJuAy/+OGbs6vLuBaxkiLxgGD1giPwZMF8gEHp0Pci/svs5FLaoVj6TgMFAxeV782ww24Auan5oT7Hg3obWR4W+grwR2i3A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732876357; c=relaxed/simple;
+	bh=P/3Fqls7qSNdAipjAe1165k94dL513yrHn8Ae1l/Gb4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GgaaA7o7ejIVVVbDeVQDE8bYJP0f6YSxxkpL+lHkwuQsPgH2zas553OvBWo57+EN+8Is/7HcoW0wfQrDTyf0Jq/S5D9hwLp6OeoxDEdRgwlQAy9X1czXTRtTFIguAcC2hiaM0qvbNujS2+FDhOkrJpp8T98uxgigDbPJrC+JGpg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bDRl3Aiq; arc=fail smtp.client-ip=40.107.220.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YxSost2kDcba4qx7au6eM/NTtTqkRebgZcxRl4KcENiN/CuLEgmmxCqIDjXX6RMYIAXve0/nDRP5GTjWZrAQAlUu1WFfbPVi7h4I/ynnzwv1Okb9IqbGC6/+rbXCd1jOwcq7XSDAfJ4LhqHLrCSBT+uuD/JjWIL9lFawVhc62qGGtfmOeSRNGVkLAWsO7jP8NYyOsQz1/V8r9xmNRaNsYHYqKjK37ku28Eae7GJwK8fdvDSW9hGJy/WoAw6dULGLcHU6a2fiEScQGusZcTzXdSDWW34G1KkcbLYctdlq/5fo1NaJW5JJjEqkf9hgmTOLw3X19ovmJsQ6n1EZCOwTeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4XumvygVx3tIDEr4J5he6cycO30ca3UbTxPVRDyY99c=;
+ b=MnvQDOlrt0uAGHMreljT/2knrrXstYOyb4raP2guE7CQnf3VoyNTMK4DsqlUPLMpmrr+Cov2Kl0WJKyhTLbAlqXDL9gFoHGAL/UgTmI2pSk0+7DojoS97TZZE34Qi6xJTs5M/KfkOCezdsO6dyw0Pb3NrcomSIkO26zu9Eo8sHtAbyNGVSOZ8ouec8epMAv/hJOXZT/qhJcJAsqqktZNBrt8G5vP+OylqFQEUFSXqvlko8SJ8oYDONbWNck8exQuh+K56d9AroZWud0zAs4aKOXS0WGIEiIOtYKCHec4MbzbY3RUT6gqymKSEkXWEa2MeFnIIbQeT71NMV1gYrN7aQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4XumvygVx3tIDEr4J5he6cycO30ca3UbTxPVRDyY99c=;
+ b=bDRl3AiqLNiVcX/HlvmvRirgKlam8iVTE/FXmI4LmX0zvKSEEfAU0Hb9/EdFrQJMPTC7yDwuEkI9ITC0JSaa9eJepjKCiI9qvKSzXe57KYNoymhL4gJxbpk2te6/kv443BkKelhKCK9hUHBLkHp3OUdO6VYVH1opBdNOPRt/ch0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB6434.namprd12.prod.outlook.com (2603:10b6:208:3ae::10)
+ by MN0PR12MB6056.namprd12.prod.outlook.com (2603:10b6:208:3cc::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.14; Fri, 29 Nov
+ 2024 10:32:29 +0000
+Received: from IA1PR12MB6434.namprd12.prod.outlook.com
+ ([fe80::dbf7:e40c:4ae9:8134]) by IA1PR12MB6434.namprd12.prod.outlook.com
+ ([fe80::dbf7:e40c:4ae9:8134%4]) with mapi id 15.20.8207.010; Fri, 29 Nov 2024
+ 10:32:29 +0000
+Message-ID: <f6878438-8fcf-4f78-88f5-e7f275b157eb@amd.com>
+Date: Fri, 29 Nov 2024 16:02:19 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, nikunj@amd.com, vbabka@suse.cz, david@redhat.com,
+ akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ joshdon@google.com, clm@meta.com
+References: <20241127054737.33351-1-bharata@amd.com>
+ <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
+ <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com>
+ <3947869f-90d4-4912-a42f-197147fe64f0@amd.com>
+ <CAGudoHEN-tOhBbdr5hymbLw3YK6OdaCSfsbOL6LjcQkNhR6_6A@mail.gmail.com>
+ <5a517b3a-51b2-45d6-bea3-4a64b75dfd30@amd.com>
+ <Z0fwCFCKD6lZVGg7@casper.infradead.org>
+ <e59466b1-c3b7-495f-b10d-77438c2f07d8@amd.com>
+ <fb026d85-7f2e-4ab5-a7e1-48bf071260cf@amd.com>
+ <CAGudoHGnNDOQtmNXTG4dphNnQW1MD7idAa0fmvk8fBPF34sUCw@mail.gmail.com>
+Content-Language: en-US
+From: Bharata B Rao <bharata@amd.com>
+In-Reply-To: <CAGudoHGnNDOQtmNXTG4dphNnQW1MD7idAa0fmvk8fBPF34sUCw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN1PEPF000067ED.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c04::29) To IA1PR12MB6434.namprd12.prod.outlook.com
+ (2603:10b6:208:3ae::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241103145153.105097-1-alexghiti@rivosinc.com>
- <20241103145153.105097-14-alexghiti@rivosinc.com> <20241128-whoever-wildfire-2a3110c5fd46@wendy>
- <20241128134135.GA3460@willie-the-truck> <20241128-uncivil-removed-4e105d1397c9@wendy>
- <90533aa9-186a-4f75-b3c5-d93d6682056b@ghiti.fr> <20241128-goggles-laundry-d94c23ab39a4@spud>
- <CAJF2gTST0kduYpuqd4mX0byetWMRJT-AAyH0GGiaysZG64Byhw@mail.gmail.com>
- <CAJF2gTRQg=w3sGN0Sdzf+_adRo44z4H6Zd6=C6qXq+ARR5BjSg@mail.gmail.com> <CAJF2gTSX82rGp-9xZHvg1Y3SpO516YCcqSBLKFgWEQ5G-iWR4A@mail.gmail.com>
-In-Reply-To: <CAJF2gTSX82rGp-9xZHvg1Y3SpO516YCcqSBLKFgWEQ5G-iWR4A@mail.gmail.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Fri, 29 Nov 2024 11:31:44 +0100
-Message-ID: <CAHVXubgXiD5Bi6ytyDHXXOONovWHZTSvr4+oADCvuic5ObGXpQ@mail.gmail.com>
-Subject: Re: [PATCH v6 13/13] riscv: Add qspinlock support
-To: Guo Ren <guoren@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Conor Dooley <conor.dooley@microchip.com>, Will Deacon <will@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Andrea Parri <parri.andrea@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Leonardo Bras <leobras@redhat.com>, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6434:EE_|MN0PR12MB6056:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c11168c-020e-441f-b36d-08dd10611fc4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q0JOTDdTdjBocGJ0M1pzaXo4aVdQb3h3UjF4Zmd5aWlTeEtQV242R0ZuN1pC?=
+ =?utf-8?B?YVE2aFFZcm1lbFdQak9hVWlZL1g2Z1p6L2ljUW52M2ZldzFQOEFmZmNRUlVI?=
+ =?utf-8?B?NEZCNWIrVWREbFQvcW9CaGU1S3gwaXBnSWpmL2NlNkRoS2d1aE5oVkFNV2NG?=
+ =?utf-8?B?MTVJVGFYdUZvbmRvbUNKNmEyalRmK1Zldi9hTlQ2UGZVNjl1VzhpK3Z1TGZ0?=
+ =?utf-8?B?RW9CM3dYMEJMcmd3VVZOZkJlcTVYTUhhcjI0U3lPdC9kZzdNcU50Mmg5Zmsw?=
+ =?utf-8?B?R3NzQURHZEVIbXBVZkNxM1hLa0Z2R3Q2c0VTdmJpQVBORlV1eTdwckQvY1RM?=
+ =?utf-8?B?OUNGb3lwOExYVmI2SXpTR1RESmRheHN5dXVKa3lJbk1mMFFiay9FL29VWHRa?=
+ =?utf-8?B?RzdLdG51Q0lhRXZNQ1kwaXdEVWhIbzJsN09Ea2Z4SDc4VUNzdU12Vnp5a0dI?=
+ =?utf-8?B?OGxzTk5XSExiNjdPVTZSL0swb29QSVZUZkVtcDhCS1hyaEd0MVpLMkJKQTZz?=
+ =?utf-8?B?UXB5THlEY3ZtR2NNU24vRDd3dCt5TVJpbGNQOVA3bFI4ejJmK1FUb0ZMMlY1?=
+ =?utf-8?B?UkVkeG9saTFPbmJMUDMwTkFHVTltM1MwYWlpWDRsYUpkN21wYWpLTzdUVk9o?=
+ =?utf-8?B?OGZrNDUyQkRLQU9CN0hxYVRNZFhmVDRJT1J6Qy9XSUpaZTA4QlFPOXYrOTFa?=
+ =?utf-8?B?bW42dDNacEVxeCt0WGJyMXJVYUlEUnhnazdNd3puYnVxYTBSQmV0cEtvMW9k?=
+ =?utf-8?B?REJ1dFRNaWZwTXhKZGJUZm5EWnRxc1pQTDdBQms5T3Q0RmpEbFB3OENlMVpw?=
+ =?utf-8?B?OTZMdHRuNXdsTXZJcmlqZXVSOG9jVDhndThpK2dmZDhGbHVPYm9rNzNCRFRw?=
+ =?utf-8?B?OHV5L2JYVE5nZEhpR0xkaE5Jb3F6dGNlVnBRdzdYdE5hS3o0bmw1aGdEUzl6?=
+ =?utf-8?B?SzkxaitZT3k1SzNieU80WFJoKzF2VUhTNm5rWnZCdWRwL1JxL3hWNEsxam5Z?=
+ =?utf-8?B?NU94TENmbnFZQXhCTjBwVVJRQjlWMmZSVXFpNWczampHZk1tRE9yVWNEcEFs?=
+ =?utf-8?B?QkV1RzNmVUdTcGd5VCtWSUtWdDVSODYzZDBTRCtreEJGbnhDOU9PQWRZdkdM?=
+ =?utf-8?B?SGlaUXV2U2xCTm9sODZVVjlCOHVyaGo3VG5FVFkwbGhnSTkzeVczamM0a09I?=
+ =?utf-8?B?Sk4zRFNQMlVkUyt4U3pXeWJLenNLNlV0c1FuSGRLTHBaalNEN3hLNkxSdzNX?=
+ =?utf-8?B?YXg2bWl2ZDZ3bU5leGxZNjMrSlhHQUcwb2lkRHJBK3hoN21JcTloYmJ5bDJa?=
+ =?utf-8?B?ZTJqb2FtZzNjc241UHpzUVpBNzZ5T2ZLS2RkNFMreXNWbHNFN3JHdlh0eHAx?=
+ =?utf-8?B?ZHJ2VWZkTEhWZzY5OTFIZ3Q4WWRialk0MjByczZCMmt4eDNGUFdydWxRQ1Vt?=
+ =?utf-8?B?RlA1REhObEtwNW1KYS8rMVVNTXFxY3NjVnRKL2wycWJ3MG5nNUhMRTFldUZl?=
+ =?utf-8?B?dVg2Tk9mZEdXYjNKd1g5dUhFV2lIZUdZZmxMamRnSXZXMTZia3p1MzZ1Ym1x?=
+ =?utf-8?B?N2ZRUDdCb0VNN2Z4Unl6bk15NjFMOUtnMkI3U0kySjVQR3I4WE9XRXpZNnpQ?=
+ =?utf-8?B?cUJIaUxtbFozTmtkUnZGamJvSkR6WWtOUE9vM1ZZRVdHOE1pRGUwUUhtblBv?=
+ =?utf-8?B?V2VoN3JPeHVkdzk2bEdSWkVyazltdXcxdEpLUTJyS253TFNvSCt2R0NTRk03?=
+ =?utf-8?B?ZFpkQTMrcXNNdEx3ZFJUcG9QQzUvRlc4ZnMvRXVMUGNyY2VqOGFUclNsa0tJ?=
+ =?utf-8?B?RGEyN2kyWitZUWJSNXNIQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6434.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S0xYTk1JUkVDL2MvZ2VEcG5EaEEzR1FiWEJjblN2SzhLTXpkMHFmMlQ2RVRG?=
+ =?utf-8?B?YkZuaWltdFF6TWt1OHdndVBHVGlSTVNJb0VYdGJJTWZOQTVPR09HRitzSUI3?=
+ =?utf-8?B?OUdEdFBoQzYyTGw4bnFhZVo2RGt4ZWxjeEN3bUhkbnBSU0hsQ0pBYldKUVJU?=
+ =?utf-8?B?NUlDcTNzaXJOdkZVaG9ESFJjMDczb1o4M3FTUFQzRnNFWE5FbUZyNzY1cUhz?=
+ =?utf-8?B?Q2hqMTRPTGhYcGZLM0J5T3lUeVY3QWYzUjVreGU5ZmJRRk81SU5WNDNmV3Zk?=
+ =?utf-8?B?L3FwazJzbSs4VkRiQVg4WEhyWjJUVkk1QXo4cG1jL0luYnMvUEExZzZVMVVE?=
+ =?utf-8?B?eG9XeElQQ21KZWtydExteHlhcWpVU0JQalJiU0gwN25GQmtKcGx4OTFVbk9Q?=
+ =?utf-8?B?M052YzJZSDFLSmxSVHpDSGQ1UE11bjNuTnVjSVpNOTJGL0JjZElnN0oxNHFn?=
+ =?utf-8?B?aDRJRGtsTTNYdmFBNk1lUk01bk1aODJaMkhSUUJwZnV6OHlva2cvbW4vNkVu?=
+ =?utf-8?B?QTVHY0dhblVxbGlVTlNkY2NJSkNlRFBKdVFnT3RZL3ZVai9HMkNxMkVGaEh0?=
+ =?utf-8?B?aC9rWlRsRy9EcXZIbFlVVnlodUlKcmc5eEVvZkxiVUdTdjJiaCt4RjNvbkE3?=
+ =?utf-8?B?dldNTGFJYVUyUGU4bFdRKzgxYzFMY1k4akxMb2JzdDNxbFNPOUludmFvRDVW?=
+ =?utf-8?B?RWZ0ZUxBWXZwOUVlV3VHNElqQXNGZk9nRitDY1JSakNFUFRxbmF1M2IzaUdr?=
+ =?utf-8?B?TnhXeUUwWDJuUkxFTWJ2aFVQSzgwTUZ4UW5IdmtnbnhOYTZ5TWMvZU5Wbzhv?=
+ =?utf-8?B?RVQ3ZEtuaUJFL2NVNmJKWVZaVVFsZmE4dmRUSURhTVl0elh3c3lQOUxGQ3FN?=
+ =?utf-8?B?YmJHZFRZa2phN0s4c0xVclo0WWMxV3dwdDVLY3BXQ3NRZSttMmw5ck5tbHdK?=
+ =?utf-8?B?QzhZRXJYbWs5Q0NtRjZiOWtNL0NsUmJzcUxnZWlQWm5QV0JBcXJvbGkrVWlh?=
+ =?utf-8?B?MnMvWHA0TlJHbzVqSEprR1pLcWorM3kwbVkxUXZDbnM1SG1TWmV1Y0ZUbUpU?=
+ =?utf-8?B?OUo5VHNJSmdBL2s2NDJXZ2NqRDlLZEIzYzk5TmlCMm1jcDV5cUF2SS9DbzZQ?=
+ =?utf-8?B?QnplY1NreDJ3eGpIYnFWYlBVcFgxbWRDL2l6T1VMclhsNkFXdVlGSno3Z1FT?=
+ =?utf-8?B?TEpySmJHV1BpMmlEcnJLT2N2anBTak1aTk54dDJXQmtuTkRPbDlXaE02WUNX?=
+ =?utf-8?B?ZjlxczRoc1BqN3hZNElNNGhQamxFS2FNWWRvRldITmZvM3NkTHE1aTFoMXRB?=
+ =?utf-8?B?anFzQ2t1M0VubUdxVER5NGI2ZU9QSG1qQXJkdW5Za0FiWjQxbmpqMVNQZ09E?=
+ =?utf-8?B?d0dHOWRRQm5tZTdYSlQ2UkRGYk80VXMxR3lXU2pZdGwzR0RpSERUSUZzYWNz?=
+ =?utf-8?B?aEI3VktWZjJsSmlHdThRMXNRUDJQTUV0Slg5WGx6b0RidVNKZk4vS2puYlY1?=
+ =?utf-8?B?MkJIL2Zvb2VjYnVidENVM1FFcGtXYURjNkVPREpwYzdpVmRIOG8venRhZFk4?=
+ =?utf-8?B?MkQrMmxYYjdwUFlUVFlLbEtOTVlNYlFaM3FkemhhNUJ4NHp3VDR1SjFkVWpG?=
+ =?utf-8?B?bWlybnZFWk50SDBXdlJhNE9lTGxnREJoc2ZHVlhCWWU0ZmxDbFVTZTBZWkxl?=
+ =?utf-8?B?cGFURTR4STRwOGZJTTBRS2dnVFNxVFRsbzdmOTNrWWtTd1NiUlJIWEdvb2xM?=
+ =?utf-8?B?cFNCT1I4SDB4SlFNTXhlUlBYVGZNMU1kNGVNVEprNXZnYTFRUEdqUjJiMHNU?=
+ =?utf-8?B?c3VXVi9oY1JmZjVEdW9FWi8xSVJweTJYZnQxZWVYQnAyWVBzdGRQZUphWHpI?=
+ =?utf-8?B?QnJwWkE4Nk94aXA4UzVOaWhiQUFVNVcxSzB0ZGtZTjBmSFBiMmlzc3NKRUQ0?=
+ =?utf-8?B?eis2OGw2NHNrN1NtTkhKbzNMSWpTcTNtVFAzTXVoYzA3K3N4MjlGMzlEYjBi?=
+ =?utf-8?B?aTBqWnJKU3Y2TmhOL1FPMXJNNEZJTjk1VlR4RGt1SmV3TWhMbXZHY3BVc2RN?=
+ =?utf-8?B?bWdYL29IOW9OSXVwVERMVGdCVE9WbmhEeklkMmtPWXkvbnVGWm9XMjdXRHhs?=
+ =?utf-8?Q?JZkkDVETs5JGnJzTwZ4/u8sb9?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c11168c-020e-441f-b36d-08dd10611fc4
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6434.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2024 10:32:29.0450
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TRR6tlg3ANKy5Kafz69re0SDNTgzyi3q38nGA7TRFz1NvY/64t0lvKtn7hb+SsdYNEiJPxVvgVn0aM5X51h80A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6056
 
-Hi everyone,
+On 29-Nov-24 5:01 AM, Mateusz Guzik wrote:
+> On Thu, Nov 28, 2024 at 12:24 PM Bharata B Rao <bharata@amd.com> wrote:
+>>
+>> On 28-Nov-24 10:07 AM, Bharata B Rao wrote:
+>>> On 28-Nov-24 9:52 AM, Matthew Wilcox wrote:
+>>>> On Thu, Nov 28, 2024 at 09:31:50AM +0530, Bharata B Rao wrote:
+>>>>> However a point of concern is that FIO bandwidth comes down drastically
+>>>>> after the change.
+>>>>>
+>>>>>          default                inode_lock-fix
+>>>>> rw=30%
+>>>>> Instance 1    r=55.7GiB/s,w=23.9GiB/s        r=9616MiB/s,w=4121MiB/s
+>>>>> Instance 2    r=38.5GiB/s,w=16.5GiB/s        r=8482MiB/s,w=3635MiB/s
+>>>>> Instance 3    r=37.5GiB/s,w=16.1GiB/s        r=8609MiB/s,w=3690MiB/s
+>>>>> Instance 4    r=37.4GiB/s,w=16.0GiB/s        r=8486MiB/s,w=3637MiB/s
+>>>>
+>>>> Something this dramatic usually only happens when you enable a debugging
+>>>> option.  Can you recheck that you're running both A and B with the same
+>>>> debugging options both compiled in, and enabled?
+>>>
+>>> It is the same kernel tree with and w/o Mateusz's inode_lock changes to
+>>> block/fops.c. I see the config remains same for both the builds.
+>>>
+>>> Let me get a run for both base and patched case w/o running perf lock
+>>> contention to check if that makes a difference.
+>>
+>> Without perf lock contention
+>>
+>>                   default                         inode_lock-fix
+>> rw=30%
+>> Instance 1      r=54.6GiB/s,w=23.4GiB/s         r=11.4GiB/s,w=4992MiB/s
+>> Instance 2      r=52.7GiB/s,w=22.6GiB/s         r=11.4GiB/s,w=4981MiB/s
+>> Instance 3      r=53.3GiB/s,w=22.8GiB/s         r=12.7GiB/s,w=5575MiB/s
+>> Instance 4      r=37.7GiB/s,w=16.2GiB/s         r=10.4GiB/s,w=4581MiB/s
+>>
+> 
+> per my other e-mail can you follow willy's suggestion and increase the hash?
 
-On Fri, Nov 29, 2024 at 7:28=E2=80=AFAM Guo Ren <guoren@kernel.org> wrote:
->
-> Hi Conor & Alexandre,
->
-> On Fri, Nov 29, 2024 at 10:58=E2=80=AFAM Guo Ren <guoren@kernel.org> wrot=
-e:
-> >
-> > On Fri, Nov 29, 2024 at 8:55=E2=80=AFAM Guo Ren <guoren@kernel.org> wro=
-te:
-> > >
-> > > On Fri, Nov 29, 2024 at 12:19=E2=80=AFAM Conor Dooley <conor@kernel.o=
-rg> wrote:
-> > > >
-> > > > On Thu, Nov 28, 2024 at 03:50:09PM +0100, Alexandre Ghiti wrote:
-> > > > > On 28/11/2024 15:14, Conor Dooley wrote:
-> > > > > > On Thu, Nov 28, 2024 at 01:41:36PM +0000, Will Deacon wrote:
-> > > > > > > On Thu, Nov 28, 2024 at 12:56:55PM +0000, Conor Dooley wrote:
-> > > > > > > > On Sun, Nov 03, 2024 at 03:51:53PM +0100, Alexandre Ghiti w=
-rote:
-> > > > > > > > > In order to produce a generic kernel, a user can select
-> > > > > > > > > CONFIG_COMBO_SPINLOCKS which will fallback at runtime to =
-the ticket
-> > > > > > > > > spinlock implementation if Zabha or Ziccrse are not prese=
-nt.
-> > > > > > > > >
-> > > > > > > > > Note that we can't use alternatives here because the disc=
-overy of
-> > > > > > > > > extensions is done too late and we need to start with the=
- qspinlock
-> > > > > > > > > implementation because the ticket spinlock implementation=
- would pollute
-> > > > > > > > > the spinlock value, so let's use static keys.
-> > > > > > > > >
-> > > > > > > > > This is largely based on Guo's work and Leonardo reviews =
-at [1].
-> > > > > > > > >
-> > > > > > > > > Link: https://lore.kernel.org/linux-riscv/20231225125847.=
-2778638-1-guoren@kernel.org/ [1]
-> > > > > > > > > Signed-off-by: Guo Ren <guoren@kernel.org>
-> > > > > > > > > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > > > > > > > This patch (now commit ab83647fadae2 ("riscv: Add qspinlock=
- support"))
-> > > > > > > > breaks boot on polarfire soc. It dies before outputting any=
-thing to the
-> > > > > > > > console. My .config has:
-> > > > > > > >
-> > > > > > > > # CONFIG_RISCV_TICKET_SPINLOCKS is not set
-> > > > > > > > # CONFIG_RISCV_QUEUED_SPINLOCKS is not set
-> > > > > > > > CONFIG_RISCV_COMBO_SPINLOCKS=3Dy
-> > > > > > > I pointed out some of the fragility during review:
-> > > > > > >
-> > > > > > > https://lore.kernel.org/all/20241111164259.GA20042@willie-the=
--truck/
-> > > > > > >
-> > > > > > > so I'm kinda surprised it got merged tbh :/
-> > > > > > Maybe it could be reverted rather than having a broken boot wit=
-h the
-> > > > > > default settings in -rc1.
-> > > > >
-> > > > >
-> > > > > No need to rush before we know what's happening,I guess you bisec=
-ted to this
-> > > > > commit right?
-> > > >
-> > > > The symptom is a failure to boot, without any console output, of co=
-urse
-> > > > I bisected it before blaming something specific. But I don't think =
-it is
-> > > > "rushing" as having -rc1 broken with an option's default is a massi=
-ve pain
-> > > > in the arse when it comes to testing.
-> > > >
-> > > > > I don't have this soc, so can you provide $stval/$sepc/$scause, a=
- config, a
-> > > > > kernel, anything?
-> > > >
-> > > > I don't have the former cos it died immediately on boot. config is
-> > > > attached. It reproduces in QEMU so you don't need any hardware.
-> > > If QEMU could reproduce, could you provide a dmesg by the below metho=
-d?
-> > >
-> > > Qemu cmd append: -s -S
-> > > ref: https://qemu-project.gitlab.io/qemu/system/gdb.html
-> > >
-> > > Connect gdb and in console:
-> > > 1. file vmlinux
-> > > 2. source ./Documentation/admin-guide/kdump/gdbmacros.txt
-> > > 3. dmesg
-> > >
-> > > Then, we could get the kernel's early boot logs from memory.
-> > I've reproduced it on qemu, thx for the config.
-> >
-> > Reading symbols from ../build-rv64lp64/vmlinux...
-> > (gdb) tar rem:1234
-> > Remote debugging using :1234
-> > ticket_spin_lock (lock=3D0xffffffff81b9a5b8 <text_mutex>) at
-> > /home/guoren/source/kernel/linux/include/asm-generic/ticket_spinlock.h:=
-49
-> > 49              atomic_cond_read_acquire(&lock->val, ticket =3D=3D (u16=
-)VAL);
-> > (gdb) bt
-> > #0  ticket_spin_lock (lock=3D0xffffffff81b9a5b8 <text_mutex>) at
-> > /home/guoren/source/kernel/linux/include/asm-generic/ticket_spinlock.h:=
-49
-> > #1  arch_spin_lock (lock=3D0xffffffff81b9a5b8 <text_mutex>) at
-> > /home/guoren/source/kernel/linux/arch/riscv/include/asm/spinlock.h:28
-> > #2  do_raw_spin_lock (lock=3Dlock@entry=3D0xffffffff81b9a5b8 <text_mute=
-x>)
-> > at /home/guoren/source/kernel/linux/kernel/locking/spinlock_debug.c:116
-> > #3  0xffffffff80b2ea0e in __raw_spin_lock_irqsave
-> > (lock=3D0xffffffff81b9a5b8 <text_mutex>) at
-> > /home/guoren/source/kernel/linux/include/linux/spinlock_api_smp.h:111
-> > #4  _raw_spin_lock_irqsave (lock=3Dlock@entry=3D0xffffffff81b9a5b8
-> > <text_mutex>) at
-> > /home/guoren/source/kernel/linux/kernel/locking/spinlock.c:162
-> > #5  0xffffffff80b27c54 in rt_mutex_slowtrylock
-> > (lock=3D0xffffffff81b9a5b8 <text_mutex>) at
-> > /home/guoren/source/kernel/linux/kernel/locking/rtmutex.c:1393
-> > #6  0xffffffff80b295ea in rt_mutex_try_acquire
-> > (lock=3D0xffffffff81b9a5b8 <text_mutex>) at
-> > /home/guoren/source/kernel/linux/kernel/locking/rtmutex.c:319
-> > #7  __rt_mutex_lock (state=3D2, lock=3D0xffffffff81b9a5b8 <text_mutex>)=
- at
-> > /home/guoren/source/kernel/linux/kernel/locking/rtmutex.c:1805
-> > #8  __mutex_lock_common (ip=3D18446744071562135170, nest_lock=3D0x0,
-> > subclass=3D0, state=3D2, lock=3D0xffffffff81b9a5b8 <text_mutex>) at
-> > /home/guoren/source/kernel/linux/kernel/locking/rtmutex_api.c:518
-> > #9  mutex_lock_nested (lock=3D0xffffffff81b9a5b8 <text_mutex>,
-> > subclass=3Dsubclass@entry=3D0) at
-> > /home/guoren/source/kernel/linux/kernel/locking/rtmutex_api.c:529
-> > #10 0xffffffff80010682 in arch_jump_label_transform_queue
-> > (entry=3Dentry@entry=3D0xffffffff8158da28, type=3D<optimized out>) at
-> > /home/guoren/source/kernel/linux/arch/riscv/kernel/jump_label.c:39
-> > #11 0xffffffff801d86b2 in __jump_label_update
-> > (key=3Dkey@entry=3D0xffffffff81a1abb0 <qspinlock_key>,
-> > entry=3D0xffffffff8158da28, stop=3Dstop@entry=3D0xffffffff815a5e68
-> > <__tracepoint_ptr_initcall_finish>, init=3Dinit@entry=3Dtrue)
-> >     at /home/guoren/source/kernel/linux/kernel/jump_label.c:513
-> > #12 0xffffffff801d890c in jump_label_update
-> > (key=3Dkey@entry=3D0xffffffff81a1abb0 <qspinlock_key>) at
-> > /home/guoren/source/kernel/linux/kernel/jump_label.c:920
-> > #13 0xffffffff801d8be8 in static_key_disable_cpuslocked
-> > (key=3Dkey@entry=3D0xffffffff81a1abb0 <qspinlock_key>) at
-> > /home/guoren/source/kernel/linux/kernel/jump_label.c:240
-> > #14 0xffffffff801d8c04 in static_key_disable
-> > (key=3Dkey@entry=3D0xffffffff81a1abb0 <qspinlock_key>) at
-> > /home/guoren/source/kernel/linux/kernel/jump_label.c:248
-> > #15 0xffffffff80c04a1a in riscv_spinlock_init () at
-> > /home/guoren/source/kernel/linux/arch/riscv/kernel/setup.c:271
-> > #16 setup_arch (cmdline_p=3Dcmdline_p@entry=3D0xffffffff81a03e88) at
-> > /home/guoren/source/kernel/linux/arch/riscv/kernel/setup.c:336
-> > #17 0xffffffff80c007a2 in start_kernel () at
-> > /home/guoren/source/kernel/linux/init/main.c:922
-> > #18 0xffffffff80001164 in _start_kernel ()
-> > Backtrace stopped: frame did not save the PC
-> > (gdb) p /x lock
-> > $1 =3D 0xffffffff81b9a5b8
-> > (gdb) p /x *lock
-> > $2 =3D {{val =3D {counter =3D 0x20000}, {locked =3D 0x0, pending =3D 0x=
-0},
-> > {locked_pending =3D 0x0, tail =3D 0x2}}}
->
-> I have for you here a fast fixup for reference. (PS: I'm digging into
-> the root cause mentioned by Will Deacon.)
->
-> diff --git a/arch/riscv/include/asm/text-patching.h
-> b/arch/riscv/include/asm/text-patching.h
-> index 7228e266b9a1..0439609f1cff 100644
-> --- a/arch/riscv/include/asm/text-patching.h
-> +++ b/arch/riscv/include/asm/text-patching.h
-> @@ -12,5 +12,6 @@ int patch_text_set_nosync(void *addr, u8 c, size_t len)=
-;
->  int patch_text(void *addr, u32 *insns, size_t len);
->
->  extern int riscv_patch_in_stop_machine;
-> +extern int riscv_patch_in_spinlock_init;
->
->  #endif /* _ASM_RISCV_PATCH_H */
-> diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_labe=
-l.c
-> index 6eee6f736f68..d9a5a5c1933d 100644
-> --- a/arch/riscv/kernel/jump_label.c
-> +++ b/arch/riscv/kernel/jump_label.c
-> @@ -36,9 +36,11 @@ bool arch_jump_label_transform_queue(struct
-> jump_entry *entry,
->                 insn =3D RISCV_INSN_NOP;
->         }
->
-> -       mutex_lock(&text_mutex);
-> +       if (!riscv_patch_in_spinlock_init)
-> +               mutex_lock(&text_mutex);
->         patch_insn_write(addr, &insn, sizeof(insn));
-> -       mutex_unlock(&text_mutex);
-> +       if (!riscv_patch_in_spinlock_init)
-> +               mutex_unlock(&text_mutex);
->
->         return true;
->  }
-> diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
-> index db13c9ddf9e3..ab009cf855c2 100644
-> --- a/arch/riscv/kernel/patch.c
-> +++ b/arch/riscv/kernel/patch.c
-> @@ -24,6 +24,7 @@ struct patch_insn {
->  };
->
->  int riscv_patch_in_stop_machine =3D false;
-> +int riscv_patch_in_spinlock_init =3D false;
->
->  #ifdef CONFIG_MMU
->
-> @@ -131,7 +132,7 @@ static int __patch_insn_write(void *addr, const
-> void *insn, size_t len)
->          * safe but triggers a lockdep failure, so just elide it for that
->          * specific case.
->          */
-> -       if (!riscv_patch_in_stop_machine)
-> +       if (!riscv_patch_in_stop_machine && !riscv_patch_in_spinlock_init=
-)
->                 lockdep_assert_held(&text_mutex);
->
->         preempt_disable();
-> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-> index 016b48fcd6f2..87ddf1702be4 100644
-> --- a/arch/riscv/kernel/setup.c
-> +++ b/arch/riscv/kernel/setup.c
-> @@ -268,7 +268,9 @@ static void __init riscv_spinlock_init(void)
->         }
->  #if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
->         else {
-> +               riscv_patch_in_spinlock_init =3D 1;
->                 static_branch_disable(&qspinlock_key);
-> +               riscv_patch_in_spinlock_init =3D 0;
->                 pr_info("Ticket spinlock: enabled\n");
->                 return;
->         }
->
->
->
-> --
-> Best Regards
->  Guo Ren
+With Mateusz's inode_lock fix and PAGE_WAIT_TABLE_BITS value of 10, 14, 
+16 and 20.
+(Two values given with each instance below are FIO READ bw and WRITE bw)
 
-Thanks Guo for looking into this.
+                 10              14              16              20
+rw=30%
+Instance 1      11.3GiB/s       14.2GiB/s       14.8GiB/s       14.9GiB/s
+                 4965MiB/s       6225MiB/s       6487MiB/s       6552MiB/s
+Instance 2      12.3GiB/s       10.4GiB/s       10.9GiB/s       11.0GiB/s
+                 5389MiB/s       4548MiB/s       4770MiB/s       4815MiB/s
+Instance 3      11.1GiB/s       12.3GiB/s       11.2GiB/s       13.5GiB/s
+                 4864MiB/s       5410MiB/s       4923MiB/s       5927MiB/s
+Instance 4      12.3GiB/s       13.7GiB/s       13.0GiB/s       11.4GiB/s
+                 5404MiB/s       6004MiB/s       5689MiB/s       5007MiB/s
 
-Your solution is not very pretty but I don't have anything better :/
-Unless introducing a static_branch_XXX_nolock() API? I gave it a try
-and it fixes the issue, but not sure this will be accepted.
+Number of hash buckets don't seem to matter all that much in this case.
 
-The thing is the usage of static branches is temporary, we'll use
-alternatives when I finish working on getting the extensions very
-early from the ACPI tables (I have a poc that works, just needs some
-cleaning).
-
-So let's say that I make this early extension parsing my priority for
-6.14, can we live with Guo's hack in this release? Or should we revert
-this commit?
-
-Thanks,
-
-Alex
+Regards,
+Bharata.
 
