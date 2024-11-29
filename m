@@ -1,191 +1,132 @@
-Return-Path: <linux-kernel+bounces-426027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F7F9DEDED
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 02:00:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805579DEE87
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 02:55:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBB8161B7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 01:55:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2811D80027;
+	Sat, 30 Nov 2024 01:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="mIw2mvKN"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F8CFB218EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 01:00:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B5D3B796;
-	Sat, 30 Nov 2024 01:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxQ7CUWK"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53774AD31;
-	Sat, 30 Nov 2024 01:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00BD481AF
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 01:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732928432; cv=none; b=gfH029S0FkV8lBX8p0Xowchwq1JaaxClR7e96gAQxluUvZO5teMsBwmdBJXNgyyjEoMzYNMpTjN8VlsFWg6lVGC6u5nyW456jbVJn6lhRMYMwm94Yp8uO/K4QMmex37DNErPBBrjA9dCsFMR3EF3AktkCNWnpjIsYiILJIPyWi8=
+	t=1732931727; cv=none; b=QMyvYLpbC0iabdNwxd65/G5NqcwGw19Fr79am5KzkunDwUlIC26xfD5ziKfgk4WlrAqsHWX/03Y0EAjtrjAxUsTL/LAEbyq5Z/A+m5QC24hH9zAmSaOHBzXCl4okNUDlBTyeCbTJQNjwE1J5ND2BgNgsgHmBUFDTXj6lLCeRVYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732928432; c=relaxed/simple;
-	bh=iOyjvGf8m8flOUNAy5HM1kQ3giqsOb1zJ7gIH0HmkKI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=gV99uxDF3Z+QsBS5yJI3MrUj//G/uT+ipiI8hasVTHC92KcIxNSGfZwN1x75hxHWkdsFOZCypEKU1Snv9JVRPrBQDuCbxYXDQlSkW/21XhLiWGT9sxP0abyqVhwm4U/mbUXMgmfsRCT6fG7jBZJJZBq6h70O7Dozi7Zej3Gb4JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxQ7CUWK; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53de84e4005so2849610e87.0;
-        Fri, 29 Nov 2024 17:00:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732928428; x=1733533228; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+QKOOvFip81yuHEWpbhpqOV8si2+J1JX1PN+ftGxVC8=;
-        b=YxQ7CUWK/W3i9M/skWLT69Rcv/d2LhFdOCuRBjQvutE+a5x1jTmX5Sh3aG/GAdCFxo
-         cRz3UdB3mCyU6u2lyjsYnSlgrzb9cAWzYGWpqt+lK8nXDoGuKj/EL+NCJIPtq41Ybvy8
-         BrFuICTwn/DPgMoM+PrqsdtMwuS+epaRpSMhyjzTn1EH55Z7G8aas720KJfDDLNRrIKq
-         JTaS8TamadExYZCQs6cc4RtsKA3mo6ktbnHabjxyEadMuH9iyMT132Xl9OPUWqYHmb5p
-         Iuc15ZzQ2KpmjzTuXX41oPQMwn0DGR2YG0jR33WHGUv6BkhRSyc7eBAEgPmNqEae8WUk
-         DNKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732928428; x=1733533228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+QKOOvFip81yuHEWpbhpqOV8si2+J1JX1PN+ftGxVC8=;
-        b=aLQEgW9ETs/+R+j0LPY7eovWc7kVBw3m1bgNcuUGpAtHiUvaQ286r6JevPRVn5u9Nb
-         7IPSS8QcHqACgt9ANq2yP2Lp10GfcseOsZT0Fko9PisKafW603MLIYIAcsEtX2GX+28+
-         7LmbyGU7i5TI/piPnPCiAMssCZnzuwsIHxBmruXthv7WB9kGIe+GmVP9IFFWzPB6O/Hk
-         0IJ37LAGXONMJYEpAARN4WDVpmPw7i6hjGPpkPRmoC9kZqAcA5v+gj4dRMpbb1821g5v
-         7ABL9DqcpmhJT9vQ1vl64Z9fP9vbU+oGimdntHodnqqYmirwzt/tLxdrkYWgU62qK3WK
-         8NQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMlocUO4m2TkblAwg82KnLzy54bzXm9ULkIV9jk1r/HXTovO1mfdipBKQw5BiziQk/nop1u/eJ0HFPtAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTcgi/9eZfC4heKT0/d+hXRzzGbYAfuys9O6SnCaWAsbI08Q2x
-	jIAQ3imQFU+ZAFooxnt92xyL6HE/P1k5Fx/qXMFfZc/H2CtTquFLiu9sbRw5VEgMN99vZE7WnwP
-	ZW7NjREGKfphm9BfhPfXW1IU0Pg/dlGyS
-X-Gm-Gg: ASbGncuW2G1HqCgxbnhM1wrjk8jGH1EGH06nNj/tv9QRTS9eCZA3rtFbbmoIOwBc+Uf
-	pxsGbWCsILJmpHtjqNyJDsOMpjnVDuR2U/wlg3GVHFSG5mYv43U16WFWoyP+xXSFzRw==
-X-Google-Smtp-Source: AGHT+IEVI/jvUAxOq53CzXENx16Akn805JEEU+wsVpyI0V41/F6QYh36kEb0cfFynZuIXPsN6jFiQw7s+nP0IqEgPcw=
-X-Received: by 2002:a05:6512:2210:b0:53d:ed6c:26ea with SMTP id
- 2adb3069b0e04-53df00c79a2mr8022446e87.8.1732928428220; Fri, 29 Nov 2024
- 17:00:28 -0800 (PST)
+	s=arc-20240116; t=1732931727; c=relaxed/simple;
+	bh=GrvzTqeYQLPNK+Z2wv5/MBmBV0QrYdTY7w/CKHyoEag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=snGUzTBdg18f/uyjSK92+hCZNXiwu+xSXkmmenHHUhMxFPDbAsF//qD23hGlihuVSIqfdrRVXY9/h9UuxtC1YNgHHe8DQ//7rfAPFDueoZZzvUgLiKXL3zZVGjgfr0r2E2XzEPrRcrFrA1Geo1OogezoZxIrqjW7kGTkC+n79Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=mIw2mvKN; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (host250.triadfluidpower.com [63.82.152.250] (may be forged))
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4AU1tCK8016417
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 20:55:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1732931717; bh=bXFZIDG+GlnNgCxWwEIR9/ro6motJnoWrG5gpvavL6g=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=mIw2mvKNtzlD62IO4qKkzfgUrtkpRVqImDDMNgto6xi/pNEOT0GcZmFOHG0rpFIlg
+	 j4UogQYtMv8ssOUSHL/uPuIWvGKjMRloROMg06ZS/upPqsy7vb8BYMIJHivwJCZB1L
+	 09efyWcYz5KA1naEOe7Lr862my7oQpu6taM7vIFgK75NgkiMbuezdewItCQ0lF3ftb
+	 fQYKk4OrTRsA+wAkC2+9aDr1HmsGSQaBBProo/1mv+2Cvc61o8clZv7Bvo/7gTr/3S
+	 FKvcOfkVPngjeW501udJmh3IsP9PVSMGQKp6n0oJBw4dQHbhcHjY5yG1nQdMxIFg55
+	 U0KykFGKIoOdw==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 780AC3417DE; Fri, 29 Nov 2024 08:12:44 -1000 (HST)
+Date: Fri, 29 Nov 2024 08:12:44 -1000
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Niklas =?iso-8859-1?Q?Hamb=FCchen?= <mail@nh2.me>
+Cc: Rui Ueyama <rui314@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
+        Florian Weimer <fw@deneb.enyo.de>
+Subject: Re: Wislist for Linux from the mold linker's POV
+Message-ID: <20241129181244.GA11702@mit.edu>
+References: <CACKH++baPUaoQQhL0+qcc_DzX7kGcmAOizgfaCQ8gG=oBKDDYw@mail.gmail.com>
+ <87ttbrs1c5.fsf@mid.deneb.enyo.de>
+ <CACKH++br0qCHhxsy1kuyK29OB_bgME3FUXA_XepRL=7FYXOvQA@mail.gmail.com>
+ <2c33be3f-8c41-48f1-a6ad-b4ea00ec515f@nh2.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 29 Nov 2024 19:00:17 -0600
-Message-ID: <CAH2r5mtEPAZ4XVpvWszL3=Vah7hxTJYoZbGNzh-fLT_-ayquxg@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2c33be3f-8c41-48f1-a6ad-b4ea00ec515f@nh2.me>
 
-Please pull the following changes since commit
-228a1157fb9fec47eb135b51c0202b574e079ebf:
+On Fri, Nov 29, 2024 at 06:38:47AM +0100, Niklas Hambüchen wrote:
+> Turns out, `ext4` has built in a feature to work around bad applications forgetting `fsync()`:
+> 
+> `close()`ing new files is fast.
+> But if you `close()` existing files after writing them from scratch, or atomic-rename something replacing them, ext4 will insert an `fsync()`!
 
-  Merge tag '6.13-rc-part1-SMB3-client-fixes' of
-git://git.samba.org/sfrench/cifs-2.6 (2024-11-22 21:54:14 -0800)
+It's not actually an fsync() in the close case).  We initiate
+writeback, but we don't actually wait for the writes to complete on
+the close().  In the case of rename(), we do wait for the writes to
+complete before the file system transaction which commits the
+rename(2) is allowed to complete.  But in the case where the
+application programmer is too lazy to call fsync(2), the delayed
+completion of the transaction complete is the implicit commit, and
+nothing is bloced behind it.  (See below for more details.)
 
-are available in the Git repository at:
+But yes, the reason behind this is applications such as tuxracer
+writing the top-ten score file, and then shutting down OpenGL, and the
+out-of-tree nvidia driver would sometimes^H^H^H^H^H^H^H^H^H always
+crash leave a corrupted or missing top-ten score file, and this
+resulted in a bunch of users whinging.
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.13-rc-part2-smb3-client-f=
-ixes
+Also at one poiont, both the KDE and Gnome text editors also did the
+open with O_TRUNC and rewrite, because it was the simplest way to
+avoid losing the extended attrbutes (otherwise the application
+programmers would have to actually copy the extended attriburtes, and
+That Was Too Hard).  I don't know why programmers would edit precious
+source files using something *other* than emacs, or vi, but....
 
-for you to fetch changes up to 8d7690b3c146f8ae3089918226697bf4e3943032:
+In essence, file system developers are massively outnumbered by
+application programs, and for some reason as a class application
+programmers don't seem to be very careful about data corruption
+compared to file system developers --- and users *always* blame the
+file system developers.
 
-  cifs: update internal version number (2024-11-28 09:51:14 -0600)
+As Niklas points out in his reference, this can be disabled by a mount
+option, noauto_da_alloc:
 
-----------------------------------------------------------------
-22 SMB3 client fixes
-- Five directory lease fixes
-- Three password rotation fixes
-- Reconnect Fix
-- Two minor cleanups
-- Fix for SMB3.02 mounts
-- Three DFS (global namespace) fixes
-- Six fixes for special file handling (most relating to better
-handling various types of symlinks)
+   auto_da_alloc(*), noauto_da_alloc
 
-There is an important additional directory lease fix (unmount cache
-race) being investigated,
-and some additional special file handling changesets that need to be
-rebased that are not included
-in this P/R but will try to send next week.
-----------------------------------------------------------------
-Dan Carpenter (1):
-      cifs: unlock on error in smb3_reconfigure()
+       Many broken applications don’t use fsync() when replacing
+       existing files via patterns such as fd =
+       open(“foo.new”)/write(fd,..)/close(fd)/ rename(“foo.new”,
+       “foo”), or worse yet, fd = open(“foo”,
+       O_TRUNC)/write(fd,..)/close(fd). If auto_da_alloc is enabled,
+       ext4 will detect the replace-via-rename and
+       replace-via-truncate patterns and force that any delayed
+       allocation blocks are allocated such that at the next journal
+       commit, in the default data=ordered mode, the data blocks of
+       the new file are forced to disk before the rename() operation
+       is committed. This provides roughly the same level of
+       guarantees as ext3, and avoids the “zero-length” problem that
+       can happen when a system crashes before the delayed allocation
+       blocks are forced to disk.
 
-Henrique Carvalho (3):
-      smb: client: remove unnecessary checks in open_cached_dir()
-      smb: client: disable directory caching when dir_cache_timeout is zero
-      smb: client: change return value in open_cached_dir_by_dentry() if !c=
-fids
+So if you care about performance above all else, and you trust all of
+the application programmers responsible for programs on your system
+being sufficiently careful, feel free to use the noauto_da_alloc
+option.  :-)
 
-Marco Crivellari (1):
-      Update misleading comment in cifs_chan_update_iface
-
-Meetakshi Setiya (1):
-      cifs: support mounting with alternate password to allow password rota=
-tion
-
-Pali Roh=C3=A1r (6):
-      cifs: Fix parsing native symlinks relative to the export
-      cifs: Validate content of native symlink
-      cifs: Add support for parsing WSL-style symlinks
-      cifs: Improve guard for excluding $LXDEV xattr
-      cifs: Validate content of WSL reparse point buffers
-      cifs: Fix parsing reparse point with native symlink in SMB1
-non-UNICODE session
-
-Paul Aurich (2):
-      smb: During unmount, ensure all cached dir instances drop their dentr=
-y
-      smb: Initialize cfid->tcon before performing network ops
-
-Paulo Alcantara (6):
-      smb: client: fix NULL ptr deref in crypto_aead_setkey()
-      smb: client: allow more DFS referrals to be cached
-      smb: client: get rid of @nlsc param in cifs_tree_connect()
-      smb: client: allow reconnect when sending ioctl
-      smb: client: don't try following DFS links in cifs_tree_connect()
-      smb: client: fix noisy message when mounting shares
-
-Shyam Prasad N (1):
-      cifs: during remount, make sure passwords are in sync
-
-Steve French (1):
-      cifs: update internal version number
-
- fs/smb/client/cached_dir.c | 170 +++++++++++++++++++++++++++++++++++------=
-----
- fs/smb/client/cached_dir.h |   6 +-
- fs/smb/client/cifsfs.c     |  12 +++-
- fs/smb/client/cifsfs.h     |   4 +-
- fs/smb/client/cifsglob.h   |   4 +-
- fs/smb/client/cifsproto.h  |   4 +-
- fs/smb/client/cifssmb.c    |  15 ++--
- fs/smb/client/connect.c    |  66 +++++++++++++++---
- fs/smb/client/dfs.c        | 193
-++++++---------------------------------------------
- fs/smb/client/dfs_cache.c  |   4 +-
- fs/smb/client/fs_context.c |  85 ++++++++++++++++++++---
- fs/smb/client/fs_context.h |   1 +
- fs/smb/client/inode.c      |   4 +-
- fs/smb/client/reparse.c    | 157 ++++++++++++++++++++++++++++++++++++++---
- fs/smb/client/reparse.h    |   4 +-
- fs/smb/client/sess.c       |   5 +-
- fs/smb/client/smb1ops.c    |   4 +-
- fs/smb/client/smb2file.c   |  21 +++---
- fs/smb/client/smb2inode.c  |   6 +-
- fs/smb/client/smb2ops.c    |  14 ++--
- fs/smb/client/smb2pdu.c    |  20 +++---
- fs/smb/client/smb2proto.h  |   9 ++-
- fs/smb/client/trace.h      |   3 +
- fs/smb/common/smb2pdu.h    |   9 +++
- 24 files changed, 523 insertions(+), 297 deletions(-)
-
-
---=20
-Thanks,
-
-Steve
+					- Ted
 
