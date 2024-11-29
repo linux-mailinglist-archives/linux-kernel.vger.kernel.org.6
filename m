@@ -1,206 +1,286 @@
-Return-Path: <linux-kernel+bounces-425332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100DA9DC0A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:43:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 821D79DC0A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C51F4281DB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B0EB282205
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC747166F16;
-	Fri, 29 Nov 2024 08:43:33 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B898161321;
+	Fri, 29 Nov 2024 08:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KEn3Vp5V"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC80D165F1F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86B81662EF
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732869813; cv=none; b=nfPGUjHP14trUfYmwv6Ppa7zJGuV0r+h8V0WNi0+O4Z0KHTQ24FrFKsMdF0z1zJCtzyOmk6yI82RuCL/teDqT1r+A2tNAjMJu0fUECqIi2kAA6CAhBvRDSL3Zky0X6MBr9skyTFMPY+NX1zikzrCfG3dJdCrNU0qM3VYpHuzNEM=
+	t=1732869856; cv=none; b=ZN/peVB4n29P1qL4QZQxX/zRtaVtlbB2GCQHfMD+IpdvMGmcW+wy1VcX8Z3KAx9+QmWCl072Q4Hlh4Z0nvxBfMs89xEDuGjxI+FZf7t2I0AIEvmIALHTFoSBewCf4e6cGjEwmmoEzR+2tN8RFL+Lx/mbqEq5GwsxSGCeKl1wzoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732869813; c=relaxed/simple;
-	bh=X5cZmF3sKdKZ/11P4Xrg2m+J/4nRwWRdWayTHAeD+v8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dS5HvYp+B2ov7l4ew089vSjW+BcJMmSdpMVZuzNCY5rCYPrr6DNHMsC+jecDSM2x7bXe5BtZzRLHPVMu8PHYaKne0BgAZTrUwr6PZPeGgguKGOyBaAUjvVzjVc5FeoDIk0RSQmgE+IbKlGAqvYpFqIm4iUXifhIJL6k1I69BVOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83e5dc9f6a4so204723139f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:43:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732869811; x=1733474611;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1732869856; c=relaxed/simple;
+	bh=TT5+RIHx1xuXgfqy9hE/Avt96/GK+N20arFL11M50sU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EYBCgaWGzqy2QcfTo43bVMItmTL08yiZvmztEur4eEFRFIoUBUssLMHQOPWpNIsjNCpT+iYMVIamJOODt+cw7lKCfSYib+MRGLwzYAEBTedO9QdemBkaZ1Q1yQ/jlJ3PNCj7U/Qx4PT19f9NtwsmdNmh6r9o+ahgdsTQBjRxGWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KEn3Vp5V; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53de3ba3d39so267410e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:44:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732869853; x=1733474653; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZNmF7hiqjY9cFJP1jfzFT+we4wM1EDwCOPvDeiSUlVE=;
-        b=m0lmfdHvhCvfGVMIKofZ2DsLh3tS4ciBgiXEm83HSwckWvvrr8CPATacoWPWpFxo/Z
-         rmlGKNqq/+4bDcF7PIXssYnsYZ5nDT8AFjSq8tq5BEieGEQ4vZFNVa8iHG/thSmo4c/V
-         p38eywwY7oda3WdyiUHglhzNbPDof2TeMc5Kf/J8mmfdlaRFxuHhWaoMeIIEyzn0raB8
-         PEgZElUkl/TUfVIODelnUV19ZsBXApQl0HoY6RD/bjM75H9UWabFi0Kt/xmp0au+I7TY
-         mTJpvyh5Vs2BQBjcJU53wmm8yp1gYGTxbTlEyU9ordDXJF+CduzsQ2mxdctx3/mMMt7y
-         beaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVc/ImUHHOUVNcgCninQ2JgN04MM11QtZWLxEftWDHHrY68c+4L7QfLyGCTTq6BoSQ2I9YgPt2wEgMNXv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZEFJ19SuKT+Mo56Q0/oWxycC0R+2hes0Npw5cZDyy1DcJrVVU
-	tceoKDKAU5dQFqKgvwAWZPK+LMCG52YhVp+GE8k2qRZtYYLgAHK0VdCEj8l9H34XyIotLqB+8Qp
-	MlqtYNIaQmdrg3BaoouUUgtFuZ9+iDfFvh6d9ePldKYBxdUSGqfwUbng=
-X-Google-Smtp-Source: AGHT+IGbgTdQFYYRpu2yXJoYLMiKtiKG3dyKHSjHfG51Yx1rwC4z6FLH55U5nJoonwfX0VbsZ55a67m0zf66hKP/Gr2ntOl7GmP0
+        bh=Bt9DDOfs9JYKOtE18laVJNPP8yvKV7fk7BdMO0QU3tw=;
+        b=KEn3Vp5VT1dUvDxBakJ8e02Em50Os/NcX5/SeLS+laQtbJFf29Ir47vLm0JkyBAVGj
+         83CE2Ey7do6p2Jnxn7uxc9HKz6wgIwlnL+9hw9XRu5YPxs43AtV5jXcyIWiDFNTaD9Bd
+         OBNCNVcKSLst5m3awF9YKHT5X45ljq3zLutfrkHUE25Bi0TaGPWV2vfi/y10c4k/TlZQ
+         nmxOd/kTMtDiJvhx+dJDsb9PS9IxYaFZ2V+So33jz7Fm05h+/7I8nzUHuSMHTSC066G+
+         +Kf/TYWGbqz6V5oZAP1rjeWLmCPJtge+w/vGomKbxmZCgMeG2CZFYDV3Ooo45ZK0aFjK
+         vLOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732869853; x=1733474653;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bt9DDOfs9JYKOtE18laVJNPP8yvKV7fk7BdMO0QU3tw=;
+        b=imZf+dXjOJLDNMA+5kavS5nORkeyiWTUY/5M2Zb5dFfFpV8UESNLA3CIDA7egmBeu8
+         QjffyJmSl5VbJ0EMMufORPXxumYOUYeKUPPlv5w+vTsvw3taAO8SDNlRXU0WGqYG9wxq
+         UV2MHqrkKtoyz8K2sea58y0XFGuRJMSQFz3Flhye3lb+VGByv/yQszRbIG3jiB0urgQc
+         nIeAc8zMm/r1M9uNdGoTAOfrtMUYQSV0NUuHEkOk1CdKprliIxxd1OPH+SgfOXNpLfqY
+         qPW1vwE95QwXuQOAbmYFz+OlD5afLf91ficpG3bZvHgbnr0qR8pXQQr8CrrcWn/IqiGD
+         E+pw==
+X-Forwarded-Encrypted: i=1; AJvYcCVS1lq6FAGj/uqe6G576w1fENUVia8fv6Rcn08/Sfw9h63MPnF9bdnyo6dGn2Gopp3lUyh7bub4pHz+DmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfY9RmXacvH8tbB38XznxCvxNmdE1WmsVgtPlnrU6aVZuTgunG
+	AxFlx5Qmmt8iWs/VxVeUtpWaNXSR4GyuPbAOe//+ALK3Pg4Vw6DAE+2BrPo1KIA=
+X-Gm-Gg: ASbGncsPIGf9v6nXsThEmjLchr21qON2lbBzePLOfPBY0agxbgTsSUMB4kHxedj9qpY
+	f1HEeFGBZfltczzRUzQoTnhaJzbxNYYPC7zFApojUInJXs+ud7fC1htNn7NdDuA5Mh6kO4eE8H0
+	IHcQlFn9cqPUndeICLO8k47Eb0E/BTL8r57GjsX6crKMYO7tRF0hUAwNVkX+T07wiifeWN+AXBQ
+	F9+JfGrBIrcHpppN4iOS+8wqsiwBD5gHEhHTchaavpw+BRdhLxY6Wb7jPLbok1kB3YRZM2Gvt3s
+	1ld0VO5H5ojh0ZMAgzgnuc2/84r3
+X-Google-Smtp-Source: AGHT+IHcURwgNyGfLPh20iVLAIgq5+kcYBHSmn/BfhMfCEJIr6Aoikjy3UF0JK6k0Gg+R+w7Fkq4zw==
+X-Received: by 2002:a05:6512:e90:b0:53d:da85:9df0 with SMTP id 2adb3069b0e04-53df00c74bbmr1249914e87.2.1732869852814;
+        Fri, 29 Nov 2024 00:44:12 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6431007sm425297e87.54.2024.11.29.00.44.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 00:44:11 -0800 (PST)
+Message-ID: <f8b51be2-9121-4313-a575-d7aea330b687@linaro.org>
+Date: Fri, 29 Nov 2024 10:44:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a7:b0:3a7:cfee:2112 with SMTP id
- e9e14a558f8ab-3a7cfee216fmr34120655ab.1.1732869810957; Fri, 29 Nov 2024
- 00:43:30 -0800 (PST)
-Date: Fri, 29 Nov 2024 00:43:30 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67497eb2.050a0220.253251.00a7.GAE@google.com>
-Subject: [syzbot] [bcachefs?] general protection fault in bch2_prt_vprintf
-From: syzbot <syzbot+03b7bb8ca037d17926dc@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: fix VFE pm domain off
+Content-Language: en-US
+To: barnabas.czeman@mainlining.org
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <a0a41b77-ee63-4d55-8c91-baf667c25cba@protonmail.com>
+ <acb6366a-aa6b-4c84-a3b2-cad03ae02ee7@linaro.org>
+ <43be9872149cc60d2c5c21294cd69f07@mainlining.org>
+ <38003f90-4b0b-4a7a-86f5-ec75e227777a@linaro.org>
+ <9a2b01c9e00fee0b3f359e7289effa29@mainlining.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <9a2b01c9e00fee0b3f359e7289effa29@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 11/28/24 16:24, barnabas.czeman@mainlining.org wrote:
+> On 2024-11-28 14:22, Vladimir Zapolskiy wrote:
+>> On 11/28/24 12:27, barnabas.czeman@mainlining.org wrote:
+>>> On 2024-11-28 10:10, Vladimir Zapolskiy wrote:
+>>>> On 11/27/24 12:01, Yassine Oudjana wrote:
+>>>>> On 22/11/2024 5:06 am, Barnabás Czémán wrote:
+>>>>>> Fix NULL pointer check before device_link_del
+>>>>>> is called.
+>>>>
+>>>> The intention is clear, but the context of the change is completely
+>>>> lost.
+>>>>
+>>>>>> Fixes: eb73facec2c2 ("media: qcom: camss: Use common VFE
+>>>>>> pm_domain_on/pm_domain_off where applicable")
+>>>>
+>>>> It's invalid, the change is not a fix.
+>>> I don't agree this patch is fixing NULL pointer dereference.
+>>>
+>>> [   92.989120] Unable to handle kernel NULL pointer dereference at
+>>> virtual address 000000000000032c
+>>> [   92.989170] Mem abort info:
+>>> [   92.989186]   ESR = 0x0000000096000004
+>>> [   92.989203]   EC = 0x25: DABT (current EL), IL = 32 bits
+>>> [   92.989221]   SET = 0, FnV = 0
+>>> [   92.989237]   EA = 0, S1PTW = 0
+>>> [   92.989253]   FSC = 0x04: level 0 translation fault
+>>> [   92.989270] Data abort info:
+>>> [   92.989284]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>>> [   92.989300]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>>> [   92.989317]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>>> [   92.989335] user pgtable: 4k pages, 48-bit VAs,
+>>> pgdp=00000001218a8000
+>>> [   92.989354] [000000000000032c] pgd=0000000000000000,
+>>> p4d=0000000000000000
+>>> [   92.989389] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+>>> [   92.989408] Modules linked in: q6afe_dai q6asm_dai q6routing q6adm
+>>> q6asm q6afe snd_q6dsp_common panel_lgphilips_sw43101 q6core venus_enc
+>>> venus_dec videobuf2_dma_contig imx318 ak7375 snd_soc_wcd9335
+>>> regmap_slimbus snd_soc_wcd_classh apr snd_soc_apq8096
+>>> snd_soc_qcom_common snd_soc_core qcom_camss msm v4l2_fwnode
+>>> snd_compress
+>>> ath10k_pci v4l2_async ath10k_core snd_pcm nxp_nci_i2c drm_exec nxp_nci
+>>> venus_core videobuf2_dma_sg snd_timer ath v4l2_mem2mem
+>>> videobuf2_memops
+>>> mac80211 drm_dp_aux_bus snd gpu_sched nci videobuf2_v4l2 libarc4
+>>> soundcore videodev nfc slim_qcom_ngd_ctrl drm_display_helper hci_uart
+>>> pdr_interface videobuf2_common btqca drm_kms_helper slimbus
+>>> i2c_qcom_cci
+>>> bluetooth mc qcom_q6v5_pas qcom_q6v5_mss qcom_pil_info qcom_q6v5
+>>> qcom_sysmon qcom_common qmi_helpers mdt_loader socinfo rmtfs_mem
+>>> pwm_ir_tx cfg80211 rfkill zram zsmalloc atmel_mxt_ts drm
+>>> drm_panel_orientation_quirks dm_mod ip_tables
+>>> [   92.989981] CPU: 2 PID: 1365 Comm: pool-megapixels Not tainted
+>>> 6.9.0-rc3+ #10
+>>> [   92.990003] Hardware name: Xiaomi Mi Note 2 (DT)
+>>> [   92.990020] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS
+>>> BTYPE=--)
+>>> [   92.990042] pc : device_link_put_kref+0xc/0xb8
+>>> [   92.990071] lr : device_link_del+0x30/0x48
+>>> [   92.990089] sp : ffff80008a5db9d0
+>>> [   92.990105] x29: ffff80008a5db9d0 x28: 0000000000000001 x27:
+>>> 0000000000000000
+>>> [   92.990143] x26: 0000000000000000 x25: ffff0000e79d9100 x24:
+>>> ffff0000e79d9500
+>>> [   92.990180] x23: ffff0000943f8568 x22: 00000000ffffffff x21:
+>>> 0000000000000000
+>>> [   92.990217] x20: 0000000000000000 x19: ffff800081352498 x18:
+>>> 0000000000000000
+>>> [   92.990253] x17: 0000000000000000 x16: 0000000000000000 x15:
+>>> 0000000000000168
+>>> [   92.990288] x14: 0000000000000000 x13: 0000000000000191 x12:
+>>> ffff800081259d58
+>>> [   92.990324] x11: 0000000000000001 x10: 0000000000000a60 x9 :
+>>> ffff80008a5db7e0
+>>> [   92.990359] x8 : ffff0000e79d9bc0 x7 : 0000000000000004 x6 :
+>>> 0000000000000190
+>>> [   92.990396] x5 : 0000000000000057 x4 : 0000000000000000 x3 :
+>>> 0000000000000000
+>>> [   92.990430] x2 : ffff0000e79d9100 x1 : 0000000000000000 x0 :
+>>> 0000000000000000
+>>> [   92.990466] Call trace:
+>>> [   92.990482]  device_link_put_kref+0xc/0xb8
+>>> [   92.990503]  device_link_del+0x30/0x48
+>>> [   92.990522]  vfe_pm_domain_off+0x24/0x38 [qcom_camss]
+>>
+>> vfe_pm_domain_off() shall not be called before vfe_pm_domain_on() call.
+>>
+>> If vfe_pm_domain_on() is called and returns failure, then a media
+>> pipeline
+>> shall not be started, and vfe_pm_domain_off() shall not be called.
+>>
+>> If vfe_pm_domain_on() is called and returns success, then
+>> vfe->genpd_link
+>> is not NULL.
+> It can be null if the pm_domain_off is called twice somehow or it is
+> called
+> before pm_domain_on.
 
-syzbot found the following issue on:
+Then this is the problem and this not yet identified problem shall be fixed.
 
-HEAD commit:    65ae975e97d5 Merge tag 'net-6.13-rc1' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1478df5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3891b550f14aea0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=03b7bb8ca037d17926dc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140d100f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=123b4d30580000
+The currently proposed change does not fix it, but hides more efficiently.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-65ae975e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/53fd215a7a86/vmlinux-65ae975e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/589c729ff0b2/bzImage-65ae975e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/3e4078bce33b/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+03b7bb8ca037d17926dc@syzkaller.appspotmail.com
-
-  bi_fields_set=0
-  bi_dir=4096
-  bi_dir_offset=2695648408715017799
-  bi_subvol=0
-  bi_parent_subvol=0
-  bi_nocow=0, fixing
-Oops: general protection fault, probably for non-canonical address 0xec6408ae4eae6c2e: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: maybe wild-memory-access in range [0x6320657275736170-0x6320657275736177]
-CPU: 0 UID: 0 PID: 5321 Comm: syz-executor191 Not tainted 6.12.0-syzkaller-10681-g65ae975e97d5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:string_nocheck lib/vsprintf.c:646 [inline]
-RIP: 0010:string+0x1a5/0x2b0 lib/vsprintf.c:728
-Code: 85 c0 0f 84 db 00 00 00 4c 89 7c 24 08 49 89 c7 49 ff cf 31 db 49 8d 3c 1c 48 89 f8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 75 5d 4c 8d 6c 1d 00 41 0f b6 2c 1c 31 ff 89 ee
-RSP: 0018:ffffc9000d116570 EFLAGS: 00010206
-RAX: 0c640cae4eae6c2e RBX: 0000000000000000 RCX: dffffc0000000000
-RDX: ffff88801f26a440 RSI: ffffffffffffffff RDI: 6320657275736172
-RBP: 0000000000000020 R08: ffffffff8bcc7827 R09: ffffffff8bcc3ec4
-R10: 0000000000000012 R11: ffff88801f26a440 R12: 6320657275736172
-R13: 0000000000000000 R14: 0000000000000020 R15: fffffffffffffffe
-FS:  000055555da89380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055c1e8516098 CR3: 000000003c578000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- vsnprintf+0x1101/0x1da0 lib/vsprintf.c:2848
- bch2_prt_vprintf+0x1a2/0x700 fs/bcachefs/printbuf.c:166
- __bch2_fsck_err+0x2c2/0x1570 fs/bcachefs/error.c:266
- check_dirent_inode_dirent+0xf3b/0x1a30 fs/bcachefs/fsck.c:2214
- check_dirent_target+0x117/0xf70 fs/bcachefs/fsck.c:2244
- check_dirent fs/bcachefs/fsck.c:2518 [inline]
- bch2_check_dirents+0x12e9/0x2570 fs/bcachefs/fsck.c:2552
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:191
- bch2_run_recovery_passes+0x3a7/0x880 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x25cc/0x39d0 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8e3858cdea
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe695cd7a8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffe695cd7c0 RCX: 00007f8e3858cdea
-RDX: 00000000200058c0 RSI: 0000000020000000 RDI: 00007ffe695cd7c0
-RBP: 0000000000000004 R08: 00007ffe695cd800 R09: 00000000000059aa
-R10: 0000000000010040 R11: 0000000000000282 R12: 0000000000010040
-R13: 00007ffe695cd800 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:string_nocheck lib/vsprintf.c:646 [inline]
-RIP: 0010:string+0x1a5/0x2b0 lib/vsprintf.c:728
-Code: 85 c0 0f 84 db 00 00 00 4c 89 7c 24 08 49 89 c7 49 ff cf 31 db 49 8d 3c 1c 48 89 f8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <0f> b6 04 08 84 c0 75 5d 4c 8d 6c 1d 00 41 0f b6 2c 1c 31 ff 89 ee
-RSP: 0018:ffffc9000d116570 EFLAGS: 00010206
-RAX: 0c640cae4eae6c2e RBX: 0000000000000000 RCX: dffffc0000000000
-RDX: ffff88801f26a440 RSI: ffffffffffffffff RDI: 6320657275736172
-RBP: 0000000000000020 R08: ffffffff8bcc7827 R09: ffffffff8bcc3ec4
-R10: 0000000000000012 R11: ffff88801f26a440 R12: 6320657275736172
-R13: 0000000000000000 R14: 0000000000000020 R15: fffffffffffffffe
-FS:  000055555da89380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055c1e8516098 CR3: 000000003c578000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	85 c0                	test   %eax,%eax
-   2:	0f 84 db 00 00 00    	je     0xe3
-   8:	4c 89 7c 24 08       	mov    %r15,0x8(%rsp)
-   d:	49 89 c7             	mov    %rax,%r15
-  10:	49 ff cf             	dec    %r15
-  13:	31 db                	xor    %ebx,%ebx
-  15:	49 8d 3c 1c          	lea    (%r12,%rbx,1),%rdi
-  19:	48 89 f8             	mov    %rdi,%rax
-  1c:	48 c1 e8 03          	shr    $0x3,%rax
-  20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  27:	fc ff df
-* 2a:	0f b6 04 08          	movzbl (%rax,%rcx,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	75 5d                	jne    0x8f
-  32:	4c 8d 6c 1d 00       	lea    0x0(%rbp,%rbx,1),%r13
-  37:	41 0f b6 2c 1c       	movzbl (%r12,%rbx,1),%ebp
-  3c:	31 ff                	xor    %edi,%edi
-  3e:	89 ee                	mov    %ebp,%esi
+> This is the original function, it sets genpd_link to NULL:
+> 
+> void vfe_pm_domain_off(struct vfe_device *vfe)
+> {
+>           if (!vfe->genpd)
+>                   return;
+> 
+>           device_link_del(vfe->genpd_link);
+>           vfe->genpd_link = NULL;
+> }
+> Other possible case:
+> genpd_link can be NULL when pm_domain_on is failing or
+> when genpd is NULL
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> By the way pm_domain_on checks if genpd_link is NULL:
+>           vfe->genpd_link = device_link_add(camss->dev, vfe->genpd,
+>                                             DL_FLAG_STATELESS |
+>                                             DL_FLAG_PM_RUNTIME |
+>                                             DL_FLAG_RPM_ACTIVE);
+>           if (!vfe->genpd_link)
+>                   return -EINVAL;
+> It is not calling pm_domain_off on fail:
+> 
+> ret = vfe->res->hw_ops->pm_domain_on(vfe);
+>                   if (ret < 0)
+>                           goto error_pm_domain;
+> 
+> [...]
+> 
+> error_domain_off:
+>           vfe->res->hw_ops->pm_domain_off(vfe);
+> 
+> error_pm_domain:
+>           mutex_unlock(&vfe->power_lock);
+> 
+> 
+> camss_pm_domain_off also calls vfe_pm_domain_off what is used in
+> camss-ispif
+> void camss_pm_domain_off(struct camss *camss, int id)
+> {
+>           if (id < camss->res->vfe_num) {
+>                   struct vfe_device *vfe = &camss->vfe[id];
+> 
+>                   vfe->res->hw_ops->pm_domain_off(vfe);
+>           }
+> }
+>>
+>> Are there any perceptable flaws within the given above reasoning?
+> The camss will be broken and system also can recover correctly (only
+> force reboot works.).
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Well, my question was about the reasoning, why there is another
+problem.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+I'm worried that the real bug will not be fixed by this change, and
+I believe additional analysis is needed here.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>>
+>> Since you've encountered a bug and taking the reasoning from above as
+>> correct, I believe the bug is present somewhere else, and if so, it
+>> will
+>> remain unfixed by this change.
+>>
+>>> [   92.990566]  vfe_put+0x9c/0xd0 [qcom_camss]
+>>> [   92.990601]  vfe_set_power+0x48/0x58 [qcom_camss]
+>>> [   92.990636]  pipeline_pm_power_one+0x154/0x158 [videodev]
+>>> [   92.990683]  pipeline_pm_power+0x74/0xfc [videodev]
+>>> [   92.990720]  v4l2_pipeline_pm_use+0x54/0x90 [videodev]
+>>> [   92.990757]  v4l2_pipeline_pm_put+0x14/0x34 [videodev]
+>>> [   92.990793]  video_release+0x2c/0x44 [qcom_camss]
+>>> [   92.990828]  v4l2_release+0xe4/0xec [videodev]
+>>
+>> Please include the backtrace up to this point into the commit message.
+>>
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+--
+Best wishes,
+Vladimir
 
-If you want to undo deduplication, reply with:
-#syz undup
 
