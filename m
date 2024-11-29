@@ -1,115 +1,212 @@
-Return-Path: <linux-kernel+bounces-425274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CC69DBFBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:25:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20279DBFBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:27:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79767B21B5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:25:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DDCC164090
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741AD157A5A;
-	Fri, 29 Nov 2024 07:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LLcqb/4J"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC14715855C;
+	Fri, 29 Nov 2024 07:27:26 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70261156F20
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA66345C14
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732865123; cv=none; b=XrRFW3INDnFu3Xy8KgqJBPAKdTAbO3YTmq7dGnwx0i7iOwjhzVdNgOFW4KSVzCFwqpWofioriBeStSH/rhTHxdHOktR8XZy4QIeLwjqMGMye/KKO//59rzxxH+Sda2K+WcDI7VTA5R8gcCBMNwd6fBik4VBxUBapwu7wKRd53Ow=
+	t=1732865246; cv=none; b=TqvbPoOG2tCqVp3bKpug5H0UxVmISrn6XXcepkMYHOVLtEWyYCdp2WeQAizhsyFrq3bpPLVYcrvK+V9YU3GIS4SrR0zsMq4YXk1VwNvQom02/j58JMKqo4PYXBFO4zHzhtwBYziBfetZ19xxiNsuedV1VDTalPBfI4HFXk5vxsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732865123; c=relaxed/simple;
-	bh=DMKRKhr6+Yn0lq+Lqu+jB8XUqvQdWtjLtv3wMe9m3+4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AGq9JqOiN/DBk4Q3QKiZdP/kiuRR2cNUzPXvqOhN7N6smfgbPUq/KAd1qlgKdSiT4g4FtI9bIdukZ4RtxL9GGUShcYStdKADqxhPn8WcwIkSbElCZGCrEj4lk7/ZIegKkBibU9d3hgXekmBzM3CmdnQTbxV5a588GDuSud6/RNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LLcqb/4J; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-843e3b49501so46269739f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 23:25:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732865121; x=1733469921; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DMKRKhr6+Yn0lq+Lqu+jB8XUqvQdWtjLtv3wMe9m3+4=;
-        b=LLcqb/4JMjI+ZVG+tgLpDw211p5+/3gGMsdCpa0XOvtOwUNHEF1WCuzHJf+aZqv7Uf
-         SuVFenPjt9JWJXzXtX2kf532NKVq0GYisKwB304F1rHxbhW5jdTC0cK1lx3u9aTiy8i0
-         +8RdFRbscwWlZ7ty12oFw791+1QKed+BjUh+u50hRexaVjSeJgRPHo23YUnTW9g5UmgZ
-         +OEhXtuSMtlsXBptgQUCDDQImAF32AKksKtNJkJctA4rrn0vkkU5Gr14G6dkS7fjuGtM
-         Wno0Pidd+ziI9JbL/9gCQiPAEktpZdPRweHSAOmidJLDf5KNaAcafzM9hbiO5gAI/puX
-         jnsA==
+	s=arc-20240116; t=1732865246; c=relaxed/simple;
+	bh=qZ/uICPY2dq7EMrhEvmi9Lt3yrzqEBcFQ4vMTDWEJgc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SfudyYqfVGxmjXtyvgUJ2Qfw4ZkSnJu2vPxiRFSP/umqJQkNR+HRdokCQSheASaQq5yU+l7XKD+wx8lQHnsF7ttrdloKscleoO61rdG4A6fXk/dvwWzjjiMrVcKnMUF9mr+w3JJSwP3H6MALmZfcJzolRPXFM+VjYurMNIMRr4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7634d8538so12674595ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 23:27:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732865121; x=1733469921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DMKRKhr6+Yn0lq+Lqu+jB8XUqvQdWtjLtv3wMe9m3+4=;
-        b=TJYqqhFhG87czVz0yb+frW9sg73LGZFfsorZ8WPuTrieaSLz4A3QGqMeH0CdDw32pk
-         BeSrl5jluK6KQcAgeEHyah48tuP1jmlkINMhXTHsYUIe6H4HzdSw8Pjsk3WvvHJrH46H
-         OPBHyNP01djrVIk5606ox27iKsQI4Uz21oprIMVEL9rWSseA+9FlVBQ2a/FqdA8y4OGf
-         t5gqjZk4gP9hgtXmTwJSkdMtZWUCLmnMg75BhEKZTBQ4/f+fncZtcrH83ADTzdiX0L1l
-         vzqvzuv7AyjXpuE5j8TsjZAMMXQU4qQ/DEJb3+mpjV3wWM8xzkVq5gK8wlJD9iQZzc7I
-         6o6w==
-X-Gm-Message-State: AOJu0YzpEewX/IUmaeSoWlrguaEBOA3MALFRQr/+kOyX/8m59o/TuWLH
-	/pfQZQvuBL6iH+QvcboLZhW5EICtNlZZwVlUwIb1vhq4yjRg9tmB0RpDbpbrukKtPWSgVhXI+4g
-	pkeBqemd3Ze3ojz532l5BNzwOXABfHN1lXGs=
-X-Gm-Gg: ASbGnct/UFnYans4hSUDVJUX6qn/Ye4w5YQzGKsAvpezz+PwTc30W+jSNU1PE923hEv
-	p6U2c3pCycUmLHCiKw9/KBdUJ7pOxkV8woaMTt6zuDiKF0BHkJtOpA1THENo46+XiOA==
-X-Google-Smtp-Source: AGHT+IHB4Ao+9tjqZHc13AUmssP8UuJH9YDbuuzpD9KXoT7DqZ0wNMzbNFX6WElZFMnFrIDhandZgl4JM8OEJhv5tqA=
-X-Received: by 2002:a05:6602:27c4:b0:841:a73b:a978 with SMTP id
- ca18e2360f4ac-843ed034293mr1228105739f.7.1732865121461; Thu, 28 Nov 2024
- 23:25:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732865244; x=1733470044;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7t+yCvLqPaPl8VBtNzjGkNzg501tc5nDnJ48ZnMcu+s=;
+        b=bhCp9voWBHre6LATSo8zOR9xnlkenbngu6/MeZOp3ODJyORqr+vKKrXwgPi28xBNYW
+         iB0Mo1C5Q238Xy+aLPp/qzVdvK7D2EOzisJKDPiFBwAsTv/NN4xQ+WkEYTv5ALq2fer5
+         ZPHl4xIRQTz8S0sbQQhsBywICnDHfg4aUB5I3a7SObIcUuAkXwsE+hk0THf2SW/ct8p8
+         v4cqN92KG0+GbJwSYT8BZ0F4KdM6+SyPZw1Th8MQfmyRSQuwKs+aPw9EkpwOQDJ4nlZF
+         CUO8i/4ygVTTdQNajo20yffpqkw2xckTYwpsfqk80FcRBa2SSiE6wPA2uAKJ0GjL8EWG
+         2D7w==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Ryx9+Qe+yHV4m0cfrodYYMrrZKS4OTSJLAgTfEiWsRVPEcbDKOe6Lpe79s+AO7+8sN147SWd/LmhqzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBUl+/8y4QhbRu53ZgBk0ifYtw/lkU/EQFsuvijUTms88biOzY
+	aJKf3IizTT9ViP/w5GCHUO3NCGMWpTzOYDmMm422GR74E94myyQ2SAbAoakpxcQkgLJ12bF/+ik
+	G4RdBD3/YDhpD2OEDsQDNqtccKJF8Xey57R5Vewe8vximE3zdf9zgMqs=
+X-Google-Smtp-Source: AGHT+IFMswTPiNG+WhDA9tzI3s8K/Gi1GhVWJcOG4BsIvm7hfEp0yz22wXkyOmcc/AdmZfd7HSwGlTBJlEKMuAmndiI/ZtqzNe20
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACKH++baPUaoQQhL0+qcc_DzX7kGcmAOizgfaCQ8gG=oBKDDYw@mail.gmail.com>
- <enqsr7otef2osf5kmxwlf56y2jegiggiusbzklqxmkd4puk3rq@tarta.nabijaczleweli.xyz>
-In-Reply-To: <enqsr7otef2osf5kmxwlf56y2jegiggiusbzklqxmkd4puk3rq@tarta.nabijaczleweli.xyz>
-From: Rui Ueyama <rui314@gmail.com>
-Date: Fri, 29 Nov 2024 16:25:09 +0900
-Message-ID: <CACKH++aCPZEwMwreYS7492qabmcj14NWbv9QE6Tp=WN09kE=1w@mail.gmail.com>
-Subject: Re: Wislist for Linux from the mold linker's POV
-To: =?UTF-8?B?0L3QsNCx?= <nabijaczleweli@nabijaczleweli.xyz>
-Cc: LKML <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:b2d:b0:3a7:87f2:b013 with SMTP id
+ e9e14a558f8ab-3a7c5525326mr119878605ab.4.1732865244039; Thu, 28 Nov 2024
+ 23:27:24 -0800 (PST)
+Date: Thu, 28 Nov 2024 23:27:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67496cdc.050a0220.253251.00a5.GAE@google.com>
+Subject: [syzbot] [netfs?] WARNING in netfs_retry_reads
+From: syzbot <syzbot+fe139f9822abd9855970@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, bhelgaas@google.com, dhowells@redhat.com, 
+	ericvh@kernel.org, ilpo.jarvinen@linux.intel.com, jlayton@kernel.org, 
+	jonathan.cameron@huawei.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
+	lukas@wunner.de, netfs@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 29, 2024 at 4:17=E2=80=AFPM =D0=BD=D0=B0=D0=B1 <nabijaczleweli@=
-nabijaczleweli.xyz> wrote:
->
-> Hi! one quick q to clarify, if you don't mind.
->
-> On Thu, Nov 28, 2024 at 11:52:35AM +0900, Rui Ueyama wrote:
-> > - exit(2) takes a few hundred milliseconds for a large process
-> >
-> > I believe this is because mold mmaps all input files and an output
-> > file, and clearing/flushing memory-mapped data is fairly expensive.
-> >
-> > To avoid this overhead, mold currently forks a child process, lets the
-> > child handle the actual linking task, and then, as soon as the child
-> > closes the output file, the parent exits (which takes no time since
-> > the parent is lightweight). Since the child is not an interactive
-> > process, it can afford to take its time for exit. While this works, I
-> > would prefer to avoid it if possible, as it is somewhat a hacky
-> > workaround.
-> Sooo am I reading it right that the output file is not valid when mold ex=
-its,
-> since you seem to be exiting /during/ exit->munmap->msync,
-> while the contents of the file are undefined,
-> so mold -o whatever && ./whatever is not valid
-> (while mold -o whatever then ./whatever later is)?
+Hello,
 
-No worries. The child mold process unmaps and closes an output file
-before notifying the parent mold process of completion. Therefore, the
-output file is guaranteed to be complete and valid when the parent
-exits.
+syzbot found the following issue on:
+
+HEAD commit:    85a2dd7d7c81 Add linux-next specific files for 20241125
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D10e3a5c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D45719eec4c74e6b=
+a
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dfe139f9822abd9855=
+970
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1334dee858000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D14e3a5c0580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5422dd6ada68/disk-=
+85a2dd7d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3a382ed71d3a/vmlinux-=
+85a2dd7d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9b4d03eb0da3/bzI=
+mage-85a2dd7d.xz
+
+The issue was bisected to:
+
+commit fad610b987132868e3410c530871086552ce6155
+Author: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+Date:   Fri Oct 18 14:47:47 2024 +0000
+
+    Documentation PCI: Reformat RMW ops documentation
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D16de15305800=
+00
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D15de15305800=
+00
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D11de1530580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+fe139f9822abd9855970@syzkaller.appspotmail.com
+Fixes: fad610b98713 ("Documentation PCI: Reformat RMW ops documentation")
+
+------------[ cut here ]------------
+do not call blocking ops when !TASK_RUNNING; state=3D2 set at [<ffffffff817=
+7bd66>] prepare_to_wait+0x186/0x210 kernel/sched/wait.c:237
+WARNING: CPU: 0 PID: 5848 at kernel/sched/core.c:8685 __might_sleep+0xb9/0x=
+e0 kernel/sched/core.c:8681
+Modules linked in:
+CPU: 0 UID: 0 PID: 5848 Comm: syz-executor189 Not tainted 6.12.0-next-20241=
+125-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 09/13/2024
+RIP: 0010:__might_sleep+0xb9/0xe0 kernel/sched/core.c:8681
+Code: 93 0e 01 90 42 80 3c 23 00 74 08 48 89 ef e8 fe 38 9b 00 48 8b 4d 00 =
+48 c7 c7 80 2d 0a 8c 44 89 ee 48 89 ca e8 b8 e6 f0 ff 90 <0f> 0b 90 90 eb b=
+5 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 70 ff ff ff
+RSP: 0018:ffffc90003e465a8 EFLAGS: 00010246
+RAX: ff5208356e89db00 RBX: 1ffff1100fff22ed RCX: ffff88807ff90000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff88807ff91768 R08: ffffffff81601b32 R09: fffffbfff1cfa218
+R10: dffffc0000000000 R11: fffffbfff1cfa218 R12: dffffc0000000000
+R13: 0000000000000002 R14: 000000000000004a R15: ffffffff8c1ca120
+FS:  0000555573787380(0000) GS:ffff8880b8600000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff2460a1104 CR3: 00000000745c2000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ wait_on_bit include/linux/wait_bit.h:74 [inline]
+ netfs_retry_reads+0xde/0x1e00 fs/netfs/read_retry.c:263
+ netfs_collect_read_results fs/netfs/read_collect.c:333 [inline]
+ netfs_read_collection+0x33a0/0x4070 fs/netfs/read_collect.c:414
+ netfs_wait_for_read+0x2ba/0x4e0 fs/netfs/read_collect.c:629
+ netfs_unbuffered_read fs/netfs/direct_read.c:156 [inline]
+ netfs_unbuffered_read_iter_locked+0x120e/0x1560 fs/netfs/direct_read.c:231
+ netfs_unbuffered_read_iter+0xbf/0xe0 fs/netfs/direct_read.c:266
+ __kernel_read+0x513/0x9d0 fs/read_write.c:523
+ integrity_kernel_read+0xb0/0x100 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0xae6/0x1b30 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x520/0xb10 security/integrity/ima/ima_api.c:293
+ process_measurement+0x1351/0x1fb0 security/integrity/ima/ima_main.c:372
+ ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0xb9/0x280 security/security.c:3121
+ do_open fs/namei.c:3830 [inline]
+ path_openat+0x2ccd/0x3590 fs/namei.c:3987
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_open fs/open.c:1425 [inline]
+ __se_sys_open fs/open.c:1421 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1421
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff24603d929
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 1a 00 00 90 48 89 f8 48 89 f7 =
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff f=
+f 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe9079c548 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007ff24603d929
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000340
+RBP: 00007ff24608a257 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000023fb0
+R13: 00007ff2460bab40 R14: 00007ff2460bcd00 R15: 00007ffe9079c570
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
+n
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
