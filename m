@@ -1,169 +1,269 @@
-Return-Path: <linux-kernel+bounces-425227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8F79DBF14
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:39:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FFF9DBF16
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:41:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53CEE281A88
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:39:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4106C164578
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A66155753;
-	Fri, 29 Nov 2024 04:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hZk5qmH2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0945155741;
+	Fri, 29 Nov 2024 04:41:27 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05301552E4
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7674E14D428
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732855189; cv=none; b=ZmXvuulSRXU+PYMl1HEoSupK8/lXtf11+lwMfgI/IczRmxg+nOlifWc3+WAThPgoCCXCuBB9rENVl7kYfPaf6bifw0MLHtwnz0Czt6zKrrxfY5g62l2wlzyvPj1fuwmoPq5LYPnNvg+reAL/0Mx8Z0yXgvshChi1ucDke1lGfaU=
+	t=1732855287; cv=none; b=EqW/D4N1i4rtx89ZKRyx0jD6y8ubThT3raezIqfJ9CVZvz1EX8w5VaNTISCUSOF+nj4mAslsujaaFpcEEiCFpDHirny7CCwFHpd83/e/QjHJwF6P70vrFy60TgX6mQk/7QzjK2yEHj7Mexmm151r9t3/0gK+eMhzcgHJpbBxtGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732855189; c=relaxed/simple;
-	bh=tNVaavRCEpRbTS3oB3arsLU1HVqHx9Hwzc2EcWVF+oY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ekm5vGrRzw8Mg7lzjfoWFh3b39AICU+5JuBeVJHgpsu1vKJ5YUGHO70OdqYVUFADOBLI+q2hB7Ru6j2ioaxl6sS4kw564wFHdgfuDbWPndhKmGYxMSjl6gYZtwHKcdwOaXr/N3ynp/aSzQNWuzxv2desa9UKuDy9R0pi9Sy5pH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hZk5qmH2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732855186;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RzFXXHDdcs/VvVbBdMyuNhGF0MKwUMd0fbOPDUe9+/o=;
-	b=hZk5qmH2Uhhyv3JIydQshAYBHDQkaphXU44+dCnBn2afOjghri7xuhs6Ujj4HwJ3jPDMfQ
-	v/Bfz7RWy9/r00c4ctZfcyFP3lkV+7Lea/ZbZxZVGCD6xIEXKUisFMJxBaYxAXxnggZ181
-	0deeIHTXMHDGxkw3+dDz/RCC46ThjNg=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-260-RMzaHnOYNgulRJu-4OcHCg-1; Thu,
- 28 Nov 2024 23:39:42 -0500
-X-MC-Unique: RMzaHnOYNgulRJu-4OcHCg-1
-X-Mimecast-MFC-AGG-ID: RMzaHnOYNgulRJu-4OcHCg
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 574CC19560B5;
-	Fri, 29 Nov 2024 04:39:41 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.64.33])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E81A6195605A;
-	Fri, 29 Nov 2024 04:39:38 +0000 (UTC)
-From: Seiji Nishikawa <snishika@redhat.com>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	mgorman@techsingularity.net,
-	snishika@redhat.com
-Subject: Re: [PATCH] mm: vmscan: ensure kswapd is woken up if the wait queue is active
-Date: Fri, 29 Nov 2024 13:39:35 +0900
-Message-ID: <20241129043936.316481-1-snishika@redhat.com>
-In-Reply-To: <20241127164948.74659f9400fd076760c2a670@linux-foundation.org>
-References: <20241127164948.74659f9400fd076760c2a670@linux-foundation.org>
+	s=arc-20240116; t=1732855287; c=relaxed/simple;
+	bh=qj2KFFuGq7lQSVXkTR4kdy8s82aWgbgFRnXf+Gb62eY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mVOeCT5NeUNLcX+QwpGk5AchnhpF0YF4/FDSV2XCiU15Bu0hEyZpMk39NP/1ccMvKrKazbJQru0HObMlfR1gqHFQAqaPox8d/1FdNL7Zhjbzci1XA23uQM3UXD7NvZfVDENRFyvTtOW1C8AABqvdrLFpqFR9MDO4bqc8AfHzkOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a79088e7abso12883595ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:41:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732855284; x=1733460084;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bm6mg1C4Ifq86FYdHetan/X5KCf84NQHUUVteA+UGlk=;
+        b=A/AjFDijLhul45DcoqjVfYGP5nYbLTvGEoamDMWjM2YbwyHtGnM2SNNJSHS7c5BY5D
+         mZKbq+oSgcmaZMlFdneQyyhAZKUzjcoXnCSphTFzIk/K9dYxkqnZxxdS/G4UTtmr1BDd
+         BQ8mKLTZIKfX1EHvTei97LSAOSoulKnaau4kUNsNJ81catcdpvP0UYniLU0rfZhhIqM1
+         jJg0vxB6eLdmhuDVHLDhlMo1MbsukddpD1xXQx4ZaBCZOD0sz7ed9QP+wU9W6QhmbN0T
+         Ty6wLrQrOy0eIymjsmIKkGiQ5shqQ8cm3+/uLkWAs3zS7kOlYa8bEfJg1ZvCiN9EuzKR
+         g3gg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6l1uR3l+sPMfYfaV521r+wDjf/VO0PeQ58iMIj5VVfZMVGDm9kBMOWIAJojqbC2lxQjQ0CikL2Y/FQ3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymKgW583h2syVyJpzBRvGYZsFDv/29oQdDN4a+ushzPQBrgwaD
+	XIVuRNUI6i/aCbTmObfrlg+nS/J1J3rB0t868cVAp5w0ZLZHwaCUK1nnUyxZm4VMohD0aGMsagb
+	svoWGumbz0WFDtxGvawG+9jU3t8l5oe9LKB/2v7/w3BxsHKHwzzGmOnw=
+X-Google-Smtp-Source: AGHT+IEwAJaQdNQNnz5ms2cYidZb4LDrpozRBfQ56yNpGbTtYABgXz3xw5s6f3VtXckYi8a6uRUVdx7UdXdl+lbDDjh4sAMdwKSg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Received: by 2002:a05:6e02:1ca8:b0:3a6:ac4e:264a with SMTP id
+ e9e14a558f8ab-3a7c555f0ccmr88080475ab.10.1732855284676; Thu, 28 Nov 2024
+ 20:41:24 -0800 (PST)
+Date: Thu, 28 Nov 2024 20:41:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674945f4.050a0220.253251.00a1.GAE@google.com>
+Subject: [syzbot] [xfs?] possible deadlock in xfs_qm_dqrele
+From: syzbot <syzbot+da63448ae44acf902d11@syzkaller.appspotmail.com>
+To: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 28, 2024 at 9:49 AM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Wed, 27 Nov 2024 00:06:12 +0900 Seiji Nishikawa <snishika@redhat.com> wrote:
->
-> > Even after commit 501b26510ae3 ("vmstat: allow_direct_reclaim should use
-> > zone_page_state_snapshot"), a task may remain indefinitely stuck in
-> > throttle_direct_reclaim() while holding mm->rwsem.
-> >
-> > __alloc_pages_nodemask
-> >  try_to_free_pages
-> >   throttle_direct_reclaim
-> >
-> > This can cause numerous other tasks to wait on the same rwsem, leading
-> > to severe system hangups:
-> >
-> > [1088963.358712] INFO: task python3:1670971 blocked for more than 120 seconds.
-> > [1088963.365653]       Tainted: G           OE     -------- -  - 4.18.0-553.el8_10.aarch64 #1
-> > [1088963.373887] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > [1088963.381862] task:python3         state:D stack:0     pid:1670971 ppid:1667117 flags:0x00800080
-> > [1088963.381869] Call trace:
-> > [1088963.381872]  __switch_to+0xd0/0x120
-> > [1088963.381877]  __schedule+0x340/0xac8
-> > [1088963.381881]  schedule+0x68/0x118
-> > [1088963.381886]  rwsem_down_read_slowpath+0x2d4/0x4b8
-> >
-> > The issue arises when allow_direct_reclaim(pgdat) returns false,
-> > preventing progress even when the pgdat->pfmemalloc_wait wait queue is
-> > empty. Despite the wait queue being empty, the condition,
-> > allow_direct_reclaim(pgdat), may still be returning false, causing it to
-> > continue looping.
-> >
-> > In some cases, reclaimable pages exist (zone_reclaimable_pages() returns
-> >  > 0), but calculations of pfmemalloc_reserve and free_pages result in
-> > wmark_ok being false.
-> >
-> > And then, despite the pgdat->kswapd_wait queue being non-empty, kswapd
-> > is not woken up, further exacerbating the problem:
-> >
-> > crash> px ((struct pglist_data *) 0xffff00817fffe540)->kswapd_highest_zoneidx
-> > $775 = __MAX_NR_ZONES
-> >
-> > This patch modifies allow_direct_reclaim() to wake kswapd if the
-> > pgdat->kswapd_wait queue is active, regardless of whether wmark_ok is
-> > true or false. This change ensures kswapd does not miss wake-ups under
-> > high memory pressure, reducing the risk of task stalls in the throttled
-> > reclaim path.
->
-> The code which is being altered is over 10 years old.
->
-> Is this misbehavior more recent?  If so, are we able to identify which
-> commit caused this?
+Hello,
 
-The issue is not new but may have become more noticeable after commit 
-501b26510ae3, which improved precision in allow_direct_reclaim(). This 
-change exposed edge cases where wmark_ok is false despite reclaimable 
-pages being available.
+syzbot found the following issue on:
 
-> Otherwise, can you suggest why it took so long for this to be
-> discovered?  Your test case must be doing something unusual?
+HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=157723c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0b9d4913852126
+dashboard link: https://syzkaller.appspot.com/bug?extid=da63448ae44acf902d11
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-The issue likely occurs under specific conditions: high memory pressure 
-with frequent direct reclaim, contention on mmap_sem from concurrent 
-memory allocations, reclaimable pages exist, but zone states cause 
-wmark_ok to return false.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Modern workloads (e.g., Python multiprocessing) and changes in kernel 
-reclaim logic may have surfaced such edge cases more prominently than 
-before.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b86545e0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/00ec87aaa7ee/vmlinux-b86545e0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fcc70e20d51b/bzImage-b86545e0.xz
 
-The workload involves concurrent Python processes under high memory 
-pressure, leading to contention on mmap_sem. While not unusual, this 
-workload may trigger a rare combination of conditions that expose the 
-issue.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+da63448ae44acf902d11@syzkaller.appspotmail.com
 
->
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -6389,8 +6389,8 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
-> >
-> >       wmark_ok = free_pages > pfmemalloc_reserve / 2;
-> >
-> > -     /* kswapd must be awake if processes are being throttled */
-> > -     if (!wmark_ok && waitqueue_active(&pgdat->kswapd_wait)) {
-> > +     /* Always wake up kswapd if the wait queue is not empty */
-> > +     if (waitqueue_active(&pgdat->kswapd_wait)) {
-> >               if (READ_ONCE(pgdat->kswapd_highest_zoneidx) > ZONE_NORMAL)
-> >                       WRITE_ONCE(pgdat->kswapd_highest_zoneidx, ZONE_NORMAL);
-> >
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-syzkaller-10553-gb86545e02e8c #0 Not tainted
+------------------------------------------------------
+kswapd1/80 is trying to acquire lock:
+ffff8880548028e0 (&dqp->q_qlock){+.+.}-{4:4}, at: xfs_dqlock fs/xfs/xfs_dquot.h:131 [inline]
+ffff8880548028e0 (&dqp->q_qlock){+.+.}-{4:4}, at: xfs_qm_dqrele+0xce/0x240 fs/xfs/xfs_dquot.c:1124
 
+but task is already holding lock:
+ffffffff8ea3f620 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6864 [inline]
+ffffffff8ea3f620 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7246
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __fs_reclaim_acquire mm/page_alloc.c:3851 [inline]
+       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3865
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4055 [inline]
+       slab_alloc_node mm/slub.c:4133 [inline]
+       __kmalloc_cache_noprof+0x41/0x390 mm/slub.c:4309
+       kmalloc_noprof include/linux/slab.h:901 [inline]
+       kzalloc_noprof include/linux/slab.h:1037 [inline]
+       kobject_uevent_env+0x28b/0x8e0 lib/kobject_uevent.c:540
+       set_capacity_and_notify+0x206/0x240 block/genhd.c:95
+       loop_set_size drivers/block/loop.c:232 [inline]
+       loop_set_status+0x584/0x8f0 drivers/block/loop.c:1285
+       lo_ioctl+0xcbc/0x1f50
+       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&q->q_usage_counter(io)#17){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       bio_queue_enter block/blk.h:75 [inline]
+       blk_mq_submit_bio+0x1536/0x23a0 block/blk-mq.c:3092
+       __submit_bio+0x2c6/0x560 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+       xlog_state_release_iclog+0x41d/0x7b0 fs/xfs/xfs_log.c:567
+       xlog_force_iclog fs/xfs/xfs_log.c:802 [inline]
+       xlog_force_and_check_iclog fs/xfs/xfs_log.c:2866 [inline]
+       xfs_log_force+0x616/0x960 fs/xfs/xfs_log.c:2943
+       xfs_qm_dqflush+0xd5e/0x15e0 fs/xfs/xfs_dquot.c:1333
+       xfs_qm_flush_one+0x129/0x430 fs/xfs/xfs_qm.c:1489
+       xfs_qm_dquot_walk+0x232/0x4a0 fs/xfs/xfs_qm.c:90
+       xfs_qm_quotacheck+0x357/0x6f0 fs/xfs/xfs_qm.c:1569
+       xfs_qm_mount_quotas+0x38f/0x680 fs/xfs/xfs_qm.c:1693
+       xfs_mountfs+0x1e60/0x2410 fs/xfs/xfs_mount.c:1030
+       xfs_fs_fill_super+0x12db/0x1590 fs/xfs/xfs_super.c:1791
+       get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&dqp->q_qlock){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       xfs_dqlock fs/xfs/xfs_dquot.h:131 [inline]
+       xfs_qm_dqrele+0xce/0x240 fs/xfs/xfs_dquot.c:1124
+       xfs_qm_dqdetach+0x157/0x380 fs/xfs/xfs_qm.c:422
+       xfs_inode_mark_reclaimable+0x276/0xf60 fs/xfs/xfs_icache.c:2253
+       destroy_inode fs/inode.c:386 [inline]
+       evict+0x7af/0x9a0 fs/inode.c:827
+       dispose_list fs/inode.c:845 [inline]
+       prune_icache_sb+0x239/0x2f0 fs/inode.c:1033
+       super_cache_scan+0x38c/0x4b0 fs/super.c:223
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:437
+       shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
+       shrink_one+0x43b/0x850 mm/vmscan.c:4836
+       shrink_many mm/vmscan.c:4897 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+       shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+       kswapd_shrink_node mm/vmscan.c:6785 [inline]
+       balance_pgdat mm/vmscan.c:6977 [inline]
+       kswapd+0x1ca9/0x3700 mm/vmscan.c:7246
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  &dqp->q_qlock --> &q->q_usage_counter(io)#17 --> fs_reclaim
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&q->q_usage_counter(io)#17);
+                               lock(fs_reclaim);
+  lock(&dqp->q_qlock);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd1/80:
+ #0: ffffffff8ea3f620 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6864 [inline]
+ #0: ffffffff8ea3f620 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7246
+ #1: ffff88801fbb20e0 (&type->s_umount_key#45){++++}-{4:4}, at: super_trylock_shared fs/super.c:562 [inline]
+ #1: ffff88801fbb20e0 (&type->s_umount_key#45){++++}-{4:4}, at: super_cache_scan+0x94/0x4b0 fs/super.c:196
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 80 Comm: kswapd1 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+ xfs_dqlock fs/xfs/xfs_dquot.h:131 [inline]
+ xfs_qm_dqrele+0xce/0x240 fs/xfs/xfs_dquot.c:1124
+ xfs_qm_dqdetach+0x157/0x380 fs/xfs/xfs_qm.c:422
+ xfs_inode_mark_reclaimable+0x276/0xf60 fs/xfs/xfs_icache.c:2253
+ destroy_inode fs/inode.c:386 [inline]
+ evict+0x7af/0x9a0 fs/inode.c:827
+ dispose_list fs/inode.c:845 [inline]
+ prune_icache_sb+0x239/0x2f0 fs/inode.c:1033
+ super_cache_scan+0x38c/0x4b0 fs/super.c:223
+ do_shrink_slab+0x701/0x1160 mm/shrinker.c:437
+ shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
+ shrink_one+0x43b/0x850 mm/vmscan.c:4836
+ shrink_many mm/vmscan.c:4897 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+ shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+ kswapd_shrink_node mm/vmscan.c:6785 [inline]
+ balance_pgdat mm/vmscan.c:6977 [inline]
+ kswapd+0x1ca9/0x3700 mm/vmscan.c:7246
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
