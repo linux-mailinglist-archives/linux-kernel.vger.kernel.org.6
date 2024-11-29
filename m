@@ -1,134 +1,142 @@
-Return-Path: <linux-kernel+bounces-425987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BF49DED6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:04:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1E69DED71
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:05:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AC78163C55
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0E32820CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39B2189B8F;
-	Fri, 29 Nov 2024 23:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A81189B8F;
+	Fri, 29 Nov 2024 23:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BwJ5CPcg"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="W1gxdIm0"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A155C155345
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE33C155345
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732921461; cv=none; b=O93bFgHzry+HcoE/73pSbMp7ScHJfIiDMByR4i+UiHnY2ygfnIMN8fXVyErdYl+aIStJ2XC0S3KHtxk6vtK/RO0FOGrCwflmmW61fdf3055UxQYFy1S7GuKayfg7QI0FEq/lz+v2MJ5F08PPfKfjnzby6LnUc4dT+Dt5ksUo83U=
+	t=1732921519; cv=none; b=j4US7MXJEUB4Uj50M1AhNsYEMvND2f3v3vBK9oT/xsWDIPMtoYo1QZcEAnFxph9k7+8wnblka92Ocz9jd7lRWzGAHLED6dsP2kMup9gjTlqIYr2pBst8QLa2Kqy8Kl46DLAFY4U7w9bwaoozKL6sWlSPE3Z5qOECpv4sqk6yKdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732921461; c=relaxed/simple;
-	bh=seB6UW9IycuF54ukhdc4REUjoQdDXvWiy3Xguh/XgQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HDriTLYeHoyMNncjR5+71Uk5Ehgl3rAeNiQdFWsmM6BxO0hrb+DviJAZB3+Mvo2NZfRnEwfmJwcdG6NfsMpFlV4Q1icPFdDbkq1vtdL+nJ0/47nvjZC5/wWzC1/pBPt0MMZWDgQURtCV2I88015duTaN11m1h+TTQBPpzBjjUhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BwJ5CPcg; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4668194603cso514151cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:04:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732921458; x=1733526258; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eKtB0RpLth2bOD0fClxdqB5Wa0QPOvEvW/KXc9ZWwkg=;
-        b=BwJ5CPcgHbuP8ITpQT3AyhkOEbDGgHiOvs+mXASbQ+oYTYemdAXx9YmSM54qei9736
-         /miAUdbSYoN8o4oHkXjcrwfXyTr312ENk6xbcrOuhsXUi4eLgCRjXwAiKEtz9z4iBMd7
-         +QV5A4mVShcL/jlZLOi54TzoHZHqNXfgohK6HDUp94ETMR3R5GjxD2c89d/bHsOpezS0
-         raWaIFQZbc/ulIxc77sVAzv0ILwOQlRZEx9GOJs0QcXTbmbDiT4SKmtY4Opx2UOf8Rnz
-         JZcXF9MbF97g1bhjUjVK3PIt7ar5i+rsya2QCW8yHJeJgyAWU1yaAkYz1Hs94qJHNZmg
-         DV+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732921458; x=1733526258;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eKtB0RpLth2bOD0fClxdqB5Wa0QPOvEvW/KXc9ZWwkg=;
-        b=XuSnf97migdXEVFTZlCocR92EbUAM/vsYgBQi3AxZs7aD5hEAbo+vSVFxwXnMle/Um
-         aS94OvMGkvA0zkjkZKp+Htw5CmO1uQmK0HOjCRLrHfHd8yOixmePGyUb8o2zTlgDbvSh
-         UOhqW2mgg8B3++1m4IkRqPfmeXFshg6rtzvrnhI6yOi4cyZKdk1D8mvKCxJ0MGp+d1M8
-         WzSkkJgMMPnnT7LoZ+q1znLRtP6Ubi1Jz27WfHoWIfjmG7WKIdi/uPa0PNVzh/WNhhk4
-         oQZpUvWoMV1jRv10/U3KLj3EgZr7zyZPpDJK2xSpbua9BBp1AmwAJcfPgZCb00k9pMxX
-         TQfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU48VxH1kTayC2m8BrZ3aDaNeVB0DMM0oweMlDgyLPP1EuOo5S4JqPRLXXbnisCF4GNiy5r+JilFkLPFQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyheJIh/5WNW23m8Yn7f4GTfO7+8F1sEmvAH9wRfVN6MA7RINS6
-	gIJ5WL1youH5zjHCtxzPvupzdWk9ib2hwrTJ5XkfyI/fZU2uUE7bxZw/tjnhyi9ujaKpxLw1hFn
-	iFZ0130uGKU6Jn5NHvAmAqXuSf0jKYpMrz3ho
-X-Gm-Gg: ASbGncvg48//DoTUtv+8h1NPKXIcK8YBfjyvNypkODY3r3bNmdHV4cEXqJQg1lr3i/m
-	cQFVpv74238cuzv2N/NKN5NhylVDYWqA=
-X-Google-Smtp-Source: AGHT+IEYEA5Txnmt4qq8tmfYoV9AK7E2YOZYxkyrJMUQAr8mmBjceGkjSLy1+eAs7JBTAewoQrq0zMk5zP2FfpYoxcU=
-X-Received: by 2002:a05:622a:5290:b0:466:7a06:2d03 with SMTP id
- d75a77b69052e-466c3ead1d1mr5403211cf.1.1732921458382; Fri, 29 Nov 2024
- 15:04:18 -0800 (PST)
+	s=arc-20240116; t=1732921519; c=relaxed/simple;
+	bh=/XjiQkz89NjPFaLmlTWkQFETq4k8QO+tV1ULpeWlfr4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VkEkYK9fTdlOcpEwv8aZVC98FFZiBAneGPUJDBoyFqatvkkLmjZPOngSJfm5VrKEUiBJJ+eHRGq6IKJ2xupcPKJPSBnGC6LvgVWGJiMhx/BQJwdftb46bD7x/oiePcMOeyGHMtlMRFRzXKus+tJB5k3lpcgsfyglwDCiA3Q4OWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=W1gxdIm0; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732921510;
+	bh=/XjiQkz89NjPFaLmlTWkQFETq4k8QO+tV1ULpeWlfr4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=W1gxdIm00MBYscJ39wRgOoITf53apLxQw1+GKwvkDoVLjAPPz6hPEmIPl/z6IfrRF
+	 WBh9o2iXMMsvHZXj2NF1AlfEZr3SAmTXkWrUylpsCeHwKM4vbeAfF1/5hCQdDeiRyD
+	 3WnAHzSvxKTh+n9469BVoTPfduwjZYZy3aEyiS86cqyKNAoiv9FRtU2EevuECPmNXU
+	 MdmmRgyFIvh16vyDMsxUrCMPR7Pal5Rhe+ege5h7z22HfS5XuLvr/cKg09s2KvHcHr
+	 1btQIKurTxLSXiXIC3OrDSyCNdPqqu9lA5gyA4DwpXieNKSB0GALqNwOdKjBZhBd6l
+	 a+n0SoflJYdHw==
+Received: from localhost (unknown [86.120.21.57])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0AD6917E09F7;
+	Sat, 30 Nov 2024 00:05:10 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Sat, 30 Nov 2024 01:04:53 +0200
+Subject: [PATCH] drm/bridge: dw-hdmi: Sync comments with actual bus formats
+ order
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006082926.20647-1-quic_pintu@quicinc.com>
- <CAJuCfpE+LSd7hogwGnLMT5y831unLjCpS3DpOASgphDFxDjGJw@mail.gmail.com>
- <CAOuPNLjm2_Hg69pVY7fb9wqc-6mpys3P67wUF4Vz3+H77x3t_g@mail.gmail.com> <CAOuPNLjzx2u420D0fSosy=omR8c8cQmcYHWYe=EEmLn_D4sj-Q@mail.gmail.com>
-In-Reply-To: <CAOuPNLjzx2u420D0fSosy=omR8c8cQmcYHWYe=EEmLn_D4sj-Q@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 29 Nov 2024 15:04:07 -0800
-Message-ID: <CAJuCfpEso835Lqqz5ZpZJz5-iptcP3WMtY6g2moT2bOA1+bZ8Q@mail.gmail.com>
-Subject: Re: [PATCH v5] sched/psi: fix memory barrier without comment warnings
-To: peterz@infradead.org, Pintu Agarwal <pintu.ping@gmail.com>
-Cc: Pintu Kumar <quic_pintu@quicinc.com>, hannes@cmpxchg.org, mingo@redhat.com, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	christophe.jaillet@wanadoo.fr, linux-kernel@vger.kernel.org, joe@perches.com, 
-	skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241130-dw-hdmi-bus-fmt-order-v1-1-510b5fb6b990@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAJRISmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ2MD3ZRy3YyU3EzdpNJi3bTcEt38opTUIl3zNLOUJNOUJKM0g0QloN6
+ CotS0zAqwudGxtbUAI+F0n2cAAAA=
+X-Change-ID: 20241130-dw-hdmi-bus-fmt-order-7f6db5db2f0a
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Wed, Nov 27, 2024 at 5:25=E2=80=AFPM Pintu Agarwal <pintu.ping@gmail.com=
-> wrote:
->
-> Hi,
->
-> On Wed, 23 Oct 2024 at 19:57, Pintu Agarwal <pintu.ping@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > On Tue, 15 Oct 2024 at 02:36, Suren Baghdasaryan <surenb@google.com> wr=
-ote:
-> > >
-> > > On Sun, Oct 6, 2024 at 1:29=E2=80=AFAM Pintu Kumar <quic_pintu@quicin=
-c.com> wrote:
-> > > >
-> > > > These warnings were reported by checkpatch.
-> > > > Fix them with minor changes.
-> > > > No functional changes.
-> > > >
-> > > > WARNING: memory barrier without comment
-> > > > +       t =3D smp_load_acquire(trigger_ptr);
-> > > >
-> > > > WARNING: memory barrier without comment
-> > > > +       smp_store_release(&seq->private, new);
-> > > >
-> > > > Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
-> > >
-> > > Acked-by: Suren Baghdasaryan <surenb@google.com>
-> > >
-> >
-> > Any further comment on this ?
->
-> Just a follow up. Are we picking this or I need to push again ?
+Commit d3d6b1bf85ae ("drm: bridge: dw_hdmi: fix preference of RGB modes
+over YUV420") changed the order of the output bus formats, but missed to
+update accordingly the affected comment blocks related to
+dw_hdmi_bridge_atomic_get_output_bus_fmts().
 
-I'm guessing it just fell through the cracks. Peter, could you please
-pick it into your tree?
-Thanks,
-Suren.
+Fix the misleading comments and a context related typo.
 
->
-> Thanks,
-> Pintu
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 996733ed2c004c83a989cb8da54d8b630d9f2c02..d76aede757175d7ad5873c5d7623abf2d12da73c 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -2621,6 +2621,7 @@ static int dw_hdmi_connector_create(struct dw_hdmi *hdmi)
+  * - MEDIA_BUS_FMT_UYYVYY12_0_5X36,
+  * - MEDIA_BUS_FMT_UYYVYY10_0_5X30,
+  * - MEDIA_BUS_FMT_UYYVYY8_0_5X24,
++ * - MEDIA_BUS_FMT_RGB888_1X24,
+  * - MEDIA_BUS_FMT_YUV16_1X48,
+  * - MEDIA_BUS_FMT_RGB161616_1X48,
+  * - MEDIA_BUS_FMT_UYVY12_1X24,
+@@ -2631,7 +2632,6 @@ static int dw_hdmi_connector_create(struct dw_hdmi *hdmi)
+  * - MEDIA_BUS_FMT_RGB101010_1X30,
+  * - MEDIA_BUS_FMT_UYVY8_1X16,
+  * - MEDIA_BUS_FMT_YUV8_1X24,
+- * - MEDIA_BUS_FMT_RGB888_1X24,
+  */
+ 
+ /* Can return a maximum of 11 possible output formats for a mode/connector */
+@@ -2669,7 +2669,7 @@ static u32 *dw_hdmi_bridge_atomic_get_output_bus_fmts(struct drm_bridge *bridge,
+ 	}
+ 
+ 	/*
+-	 * If the current mode enforces 4:2:0, force the output but format
++	 * If the current mode enforces 4:2:0, force the output bus format
+ 	 * to 4:2:0 and do not add the YUV422/444/RGB formats
+ 	 */
+ 	if (conn->ycbcr_420_allowed &&
+@@ -2698,14 +2698,14 @@ static u32 *dw_hdmi_bridge_atomic_get_output_bus_fmts(struct drm_bridge *bridge,
+ 		}
+ 	}
+ 
++	/* Default 8bit RGB fallback */
++	output_fmts[i++] = MEDIA_BUS_FMT_RGB888_1X24;
++
+ 	/*
+ 	 * Order bus formats from 16bit to 8bit and from YUV422 to RGB
+-	 * if supported. In any case the default RGB888 format is added
++	 * if supported.
+ 	 */
+ 
+-	/* Default 8bit RGB fallback */
+-	output_fmts[i++] = MEDIA_BUS_FMT_RGB888_1X24;
+-
+ 	if (max_bpc >= 16 && info->bpc == 16) {
+ 		if (info->color_formats & DRM_COLOR_FORMAT_YCBCR444)
+ 			output_fmts[i++] = MEDIA_BUS_FMT_YUV16_1X48;
+
+---
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+change-id: 20241130-dw-hdmi-bus-fmt-order-7f6db5db2f0a
+
 
