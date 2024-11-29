@@ -1,244 +1,185 @@
-Return-Path: <linux-kernel+bounces-425530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B7D9DC346
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:13:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9554516441F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:13:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FD119CD16;
-	Fri, 29 Nov 2024 12:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hWTm9Ypb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9AA9DC340
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:12:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19783198E74;
-	Fri, 29 Nov 2024 12:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A1A4B22592
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:12:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F6E19CC1C;
+	Fri, 29 Nov 2024 12:12:35 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22676155A59
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732882385; cv=none; b=jnOOvpWzAotrsxlE3hMA0aPh4aI8ZBUM28N+WC9zmgCqGsZBEUulNq351xxTi7XEbTUg6qhqhNGW39upkX2M16taXAC+Bo0wA3QQLxJ1niEIYcq9tcyJ2ONkbsbZFtLeCxU/JjL6ERtQ2GqwUqjTk3gpMQ/nmZ5/KyMTyR+Wqxw=
+	t=1732882354; cv=none; b=T48Rg/vPStnwvdX5zVo4UpdwL18bPb2iM0uEsoXpYsLTjVcU98rsKPMx5tJD+wrfbXCTY74AxdOf4s1707AtAMgC8BH44nrwF/lf/LIRCcyq3coKND6bMpIZEffddOXoAVnUQrwHN7URtBBwSurs6/mv39c+WuacVC9xduEXgN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732882385; c=relaxed/simple;
-	bh=ocQppVVNFhRwq7ha/VHFUhe3KayUiaBEiHqz3BhEtu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2kkFmJYnMhYcIFjcP6aw6O8+VAUk+k7ZfwAuwtWQ8DqaV76FLyPjDapYfs7iKClHy6WuHo8dXGqJaTfG2/QqoPtvP1RfOvbYMteTSI5Qu7nIdHRkeCo+V68rt9gXvKENCwYu3VNJFBqTsbwqVhOeujCMx191YBhq4FOOWDQGDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hWTm9Ypb; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732882383; x=1764418383;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ocQppVVNFhRwq7ha/VHFUhe3KayUiaBEiHqz3BhEtu0=;
-  b=hWTm9YpbmQi5kKIo8gy2zY9bu1xG6cNPx6GhWtrRQULxUYNunqCyXRfd
-   QbH2te0szxSyNujOXL0pZwk4LDEI/kkyRFKk7LwhMlSTX6p9B3T4njjxz
-   ryNJKM4QOOBfsG3ahUnUBy+wFuVtLrcWASaZKIyRfkkJPl+SUSnFoW71V
-   m51n0YgRGPwrWxGQ4LUT9hqveexjRUHXGbSmORdHAqpHFNsnpfhA3BJjs
-   Y78x/4kTedmbZbDmKIFenWf1lvPAM974p3LnlGkyzYZZOenNSZIs4bREF
-   hTjRImva/2sMQuqDdnq1nyFbPdlMFGRJAplA0FJTPL4zA+pZUBijxsPIJ
-   w==;
-X-CSE-ConnectionGUID: tye51lqiQeScLs1QbeYkhA==
-X-CSE-MsgGUID: UHbIpkGdSW62hL5wJ2TrKA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="32486084"
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="32486084"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 04:13:02 -0800
-X-CSE-ConnectionGUID: vwrFvSoWRaiFVOXbhsOqwg==
-X-CSE-MsgGUID: fJbP48qZT6m6AmlfXsrmzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="97577588"
-Received: from lkp-server01.sh.intel.com (HELO 5e2646291792) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 29 Nov 2024 04:12:56 -0800
-Received: from kbuild by 5e2646291792 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGzrh-0000It-18;
-	Fri, 29 Nov 2024 12:12:53 +0000
-Date: Fri, 29 Nov 2024 20:12:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xiangxu Yin <quic_xiangxuy@quicinc.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kuogee Hsieh <quic_khsieh@quicinc.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, quic_lliu6@quicinc.com,
-	quic_fangez@quicinc.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-gpio@vger.kernel.org, Xiangxu Yin <quic_xiangxuy@quicinc.com>
-Subject: Re: [PATCH 3/8] phy: qcom: qmp-usbc: Add DP phy mode support on
- QCS615
-Message-ID: <202411292042.NDeS4BGv-lkp@intel.com>
-References: <20241129-add-displayport-support-for-qcs615-platform-v1-3-09a4338d93ef@quicinc.com>
+	s=arc-20240116; t=1732882354; c=relaxed/simple;
+	bh=vhSELNGRU9ia8cJZ8yaFgbszUbmVsqqiL+P8mHh6C80=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GqLCL0B8QoqS6merOA58j548V4NKpaaLBxPBkvtNnKAgJ5opJLI9Sxh3tXThv2aCxxdfBwYH4BmKdXuuGURQr8yKdiKfnjDhJZfy0MEzYjd+4AhOLajRpZf0+UyNsk4iidqJ1IErbl6N6n3X6z/oNgz0GMB3PJBAxOI4h73m870=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841a6e28b52so165247639f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:12:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732882352; x=1733487152;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pGi6Sc9OlCd1Ksj/0M3YBMNOfSQNw9vcgM6HwKYNkWw=;
+        b=X0Y1M/1P8gg6HcPPcu9f3XQafVfOkJqZArE76DRPkINTlGngBwzD1BFZgAx5OByD33
+         id8BoEs3VGR483dnswiXUveweoiraNZlf0+kADx0RbkACXeNmgOnMCIzEQa9vfojxhL/
+         0UGlj8+H57H6SWJhWtHabj+cuQLD2/kmvm2kJ+pv/Qg83NpOR0ioNZKdBhCFrIB+Mf3O
+         9LNLJABLtGix2UYHHkkATcGeGkGAMBukwSgNiGP+49zNujN3CCvTToo3stgulNdGbYfs
+         wUxG+IanNGan8rWu+yWRQtwTxzqlQNplb3mEByU1mHoXm/qygMMnAacfAcUbp0O+pZim
+         OGHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUMTqVbNFvSIzGUxR5203IAIa5nTNEaf+/H6Lr5R/ss1pm+F7+SfhjPNQgsX8iCXUfihe297VBL6KWJx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5bukHUCd4v7YZrzrZDaH3RfJ7kuZ3vJoRtclR/htRHc44miC6
+	sC+eM41P25/bLXZ7rqVfvd5skK5+OJ6Bn5arqHBL8nyoda7jMk/LifzCciA2Z6oYw8H3Tvo8lhl
+	XQnf7OUy5glo2u0Z1CaQuA62/GbdaVQqpSpEGRDnriDY0GXqopvh3mZs=
+X-Google-Smtp-Source: AGHT+IF5nTY4XothRKp/qaKlLcmow73kJjPm6ScMewoifHqB1/GZgbF1HBv3uD/zGcDFmAsBHMUlSNw0aECEAvEeQuwLQcun5kaO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241129-add-displayport-support-for-qcs615-platform-v1-3-09a4338d93ef@quicinc.com>
+X-Received: by 2002:a05:6e02:156f:b0:3a6:ad61:7ff8 with SMTP id
+ e9e14a558f8ab-3a7c556a18fmr109546125ab.12.1732882352198; Fri, 29 Nov 2024
+ 04:12:32 -0800 (PST)
+Date: Fri, 29 Nov 2024 04:12:32 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6749afb0.050a0220.253251.00b2.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_btree_path_peek_slot
+From: syzbot <syzbot+3ebaf90b49bd97e920ee@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Xiangxu,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on f486c8aa16b8172f63bddc70116a0c897a7f3f02]
+HEAD commit:    65ae975e97d5 Merge tag 'net-6.13-rc1' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14794d30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3891b550f14aea0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ebaf90b49bd97e920ee
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiangxu-Yin/dt-bindings-display-msm-Document-DP-on-QCS615/20241129-160612
-base:   f486c8aa16b8172f63bddc70116a0c897a7f3f02
-patch link:    https://lore.kernel.org/r/20241129-add-displayport-support-for-qcs615-platform-v1-3-09a4338d93ef%40quicinc.com
-patch subject: [PATCH 3/8] phy: qcom: qmp-usbc: Add DP phy mode support on QCS615
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20241129/202411292042.NDeS4BGv-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241129/202411292042.NDeS4BGv-lkp@intel.com/reproduce)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411292042.NDeS4BGv-lkp@intel.com/
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-65ae975e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/53fd215a7a86/vmlinux-65ae975e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/589c729ff0b2/bzImage-65ae975e.xz
 
-All warnings (new ones prefixed by >>):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3ebaf90b49bd97e920ee@syzkaller.appspotmail.com
 
-   In file included from drivers/phy/qualcomm/phy-qcom-qmp-usbc.c:17:
-   In file included from include/linux/phy/phy.h:17:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/phy/qualcomm/phy-qcom-qmp-usbc.c:721:24: warning: variable 'pre_emphasis_cfg' is uninitialized when used here [-Wuninitialized]
-     721 |         if ((v_level > 4) || (pre_emphasis_cfg > 4)) {
-         |                               ^~~~~~~~~~~~~~~~
-   drivers/phy/qualcomm/phy-qcom-qmp-usbc.c:708:40: note: initialize the variable 'pre_emphasis_cfg' to silence this warning
-     708 |         u8 voltage_swing_cfg, pre_emphasis_cfg;
-         |                                               ^
-         |                                                = '\0'
->> drivers/phy/qualcomm/phy-qcom-qmp-usbc.c:1801:47: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
-    1801 |                 dev_err(dev, "get resource fail, ret:%d\n", ret);
-         |                                                             ^~~
-   include/linux/dev_printk.h:154:65: note: expanded from macro 'dev_err'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                                        ^~~~~~~~~~~
-   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                                     ^~~~~~~~~~~
-   drivers/phy/qualcomm/phy-qcom-qmp-usbc.c:1797:9: note: initialize the variable 'ret' to silence this warning
-    1797 |         int ret;
-         |                ^
-         |                 = 0
->> drivers/phy/qualcomm/phy-qcom-qmp-usbc.c:2082:13: warning: variable 'np' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    2082 |         } else if (qmp->type == QMP_PHY_USBC_DP) {
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/phy/qualcomm/phy-qcom-qmp-usbc.c:2150:14: note: uninitialized use occurs here
-    2150 |         of_node_put(np);
-         |                     ^~
-   drivers/phy/qualcomm/phy-qcom-qmp-usbc.c:2082:9: note: remove the 'if' if its condition is always true
-    2082 |         } else if (qmp->type == QMP_PHY_USBC_DP) {
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/phy/qualcomm/phy-qcom-qmp-usbc.c:2027:24: note: initialize the variable 'np' to silence this warning
-    2027 |         struct device_node *np;
-         |                               ^
-         |                                = NULL
-   7 warnings generated.
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/btree_iter.c:1816!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 4683 Comm: kworker/u5:1 Not tainted 6.12.0-syzkaller-10681-g65ae975e97d5 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: bcachefs bch2_write_point_do_index_updates
+RIP: 0010:bch2_btree_path_peek_slot+0xf50/0xf90 fs/bcachefs/btree_iter.c:1816
+Code: f7 ff ff 48 89 34 24 be 08 00 00 00 44 89 44 24 08 e8 c4 fa e3 fd 48 8b 34 24 44 8b 44 24 08 e9 50 f7 ff ff e8 51 12 79 fd 90 <0f> 0b e8 49 12 79 fd 90 0f 0b e8 21 4a b6 07 e8 3c 12 79 fd 90 0f
+RSP: 0018:ffffc9000de4c0a0 EFLAGS: 00010293
+RAX: ffffffff841cd22f RBX: 0000000000002164 RCX: ffff88801f290000
+RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
+RBP: ffffc9000de4c1b0 R08: ffffffff841cc410 R09: 0000000000000000
+R10: ffffc9000de4c300 R11: fffff52001bc9862 R12: dffffc0000000000
+R13: 1ffff1100adc228d R14: ffff888056e11448 R15: 1ffff1100adc228c
+FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffe0e030d38 CR3: 000000004f5d2000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_btree_iter_peek_slot+0xa2f/0x2550 fs/bcachefs/btree_iter.c:2658
+ __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:575 [inline]
+ bch2_bkey_get_iter fs/bcachefs/btree_iter.h:589 [inline]
+ try_alloc_bucket fs/bcachefs/alloc_foreground.c:305 [inline]
+ bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:525 [inline]
+ bch2_bucket_alloc_trans+0x1997/0x3a50 fs/bcachefs/alloc_foreground.c:648
+ bch2_bucket_alloc_set_trans+0x517/0xd30 fs/bcachefs/alloc_foreground.c:808
+ __open_bucket_add_buckets+0x13d0/0x1ec0 fs/bcachefs/alloc_foreground.c:1057
+ open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1101
+ bch2_alloc_sectors_start_trans+0xce9/0x2030
+ __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:339 [inline]
+ bch2_btree_reserve_get+0x612/0x1890 fs/bcachefs/btree_update_interior.c:549
+ bch2_btree_update_start+0xe56/0x14e0 fs/bcachefs/btree_update_interior.c:1247
+ bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1856
+ bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:942
+ __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ btree_key_cache_flush_pos fs/bcachefs/btree_key_cache.c:432 [inline]
+ bch2_btree_key_cache_journal_flush+0x97d/0xe70 fs/bcachefs/btree_key_cache.c:512
+ journal_flush_pins+0x5f7/0xb20 fs/bcachefs/journal_reclaim.c:565
+ __bch2_journal_reclaim+0x789/0xdc0 fs/bcachefs/journal_reclaim.c:698
+ __journal_res_get+0x1de3/0x2670 fs/bcachefs/journal.c:581
+ bch2_journal_res_get_slowpath+0xe6/0x710 fs/bcachefs/journal.c:606
+ bch2_journal_res_get fs/bcachefs/journal.h:382 [inline]
+ bch2_trans_journal_res_get fs/bcachefs/btree_trans_commit.c:350 [inline]
+ bch2_trans_commit_error+0xd91/0x1390 fs/bcachefs/btree_trans_commit.c:962
+ __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ __bch2_data_update_index_update+0x56bb/0x77f0 fs/bcachefs/data_update.c:368
+ bch2_data_update_index_update+0x63/0x90 fs/bcachefs/data_update.c:414
+ __bch2_write_index+0x16d1/0x2140 fs/bcachefs/io_write.c:527
+ bch2_write_point_do_index_updates+0x32e/0x690 fs/bcachefs/io_write.c:635
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_btree_path_peek_slot+0xf50/0xf90 fs/bcachefs/btree_iter.c:1816
+Code: f7 ff ff 48 89 34 24 be 08 00 00 00 44 89 44 24 08 e8 c4 fa e3 fd 48 8b 34 24 44 8b 44 24 08 e9 50 f7 ff ff e8 51 12 79 fd 90 <0f> 0b e8 49 12 79 fd 90 0f 0b e8 21 4a b6 07 e8 3c 12 79 fd 90 0f
+RSP: 0018:ffffc9000de4c0a0 EFLAGS: 00010293
+RAX: ffffffff841cd22f RBX: 0000000000002164 RCX: ffff88801f290000
+RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
+RBP: ffffc9000de4c1b0 R08: ffffffff841cc410 R09: 0000000000000000
+R10: ffffc9000de4c300 R11: fffff52001bc9862 R12: dffffc0000000000
+R13: 1ffff1100adc228d R14: ffff888056e11448 R15: 1ffff1100adc228c
+FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffe0e030d38 CR3: 000000004f5d2000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-vim +/pre_emphasis_cfg +721 drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-   699	
-   700	static int qcs615_qmp_configure_dp_voltages(struct qmp_usbc *qmp)
-   701	{
-   702		struct qmp_phy_dp_layout *layout = to_dp_layout(qmp);
-   703		struct qmp_phy_dp_cfg *cfg = to_dp_cfg(qmp);
-   704		const struct phy_configure_opts_dp *dp_opts = &layout->dp_opts;
-   705		void __iomem *tx = layout->dp_tx;
-   706		void __iomem *tx2 = layout->dp_tx2;
-   707		unsigned int v_level = 0, p_level = 0;
-   708		u8 voltage_swing_cfg, pre_emphasis_cfg;
-   709		int i;
-   710	
-   711		if (dp_opts->lanes > 4) {
-   712			dev_err(qmp->dev, "Invalid lane_num(%d)\n", dp_opts->lanes);
-   713			return -EINVAL;
-   714		}
-   715	
-   716		for (i = 0; i < dp_opts->lanes; i++) {
-   717			v_level = max(v_level, dp_opts->voltage[i]);
-   718			p_level = max(p_level, dp_opts->pre[i]);
-   719		}
-   720	
- > 721		if ((v_level > 4) || (pre_emphasis_cfg > 4)) {
-   722			dev_err(qmp->dev, "Invalid v(%d) | p(%d) level)\n",
-   723				v_level, pre_emphasis_cfg);
-   724			return -EINVAL;
-   725		}
-   726	
-   727		voltage_swing_cfg = (*cfg->swing_tbl)[v_level][p_level];
-   728		pre_emphasis_cfg = (*cfg->pre_emphasis_tbl)[v_level][p_level];
-   729	
-   730		/* Enable MUX to use Cursor values from these registers */
-   731		voltage_swing_cfg |= DP_PHY_TXn_TX_DRV_LVL_MUX_EN;
-   732		pre_emphasis_cfg |= DP_PHY_TXn_TX_EMP_POST1_LVL_MUX_EN;
-   733	
-   734		if (voltage_swing_cfg == 0xFF && pre_emphasis_cfg == 0xFF)
-   735			return -EINVAL;
-   736	
-   737		/* program default setting first */
-   738		writel(0x2A, tx + QSERDES_V3_TX_TX_DRV_LVL);
-   739		writel(0x20, tx + QSERDES_V3_TX_TX_EMP_POST1_LVL);
-   740		writel(0x2A, tx2 + QSERDES_V3_TX_TX_DRV_LVL);
-   741		writel(0x20, tx2 + QSERDES_V3_TX_TX_EMP_POST1_LVL);
-   742	
-   743		writel(voltage_swing_cfg, tx + QSERDES_V3_TX_TX_DRV_LVL);
-   744		writel(pre_emphasis_cfg, tx + QSERDES_V3_TX_TX_EMP_POST1_LVL);
-   745		writel(voltage_swing_cfg, tx2 + QSERDES_V3_TX_TX_DRV_LVL);
-   746		writel(pre_emphasis_cfg, tx2 + QSERDES_V3_TX_TX_EMP_POST1_LVL);
-   747	
-   748		return 0;
-   749	}
-   750	
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
