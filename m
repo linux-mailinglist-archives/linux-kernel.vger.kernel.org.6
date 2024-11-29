@@ -1,126 +1,170 @@
-Return-Path: <linux-kernel+bounces-425418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C049DC1D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:56:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8749DC1BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:53:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E60D5B20DEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11905163273
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C56F197A8B;
-	Fri, 29 Nov 2024 09:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0601865E5;
+	Fri, 29 Nov 2024 09:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgfptolI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="CcXX6HmQ"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E651018A93E;
-	Fri, 29 Nov 2024 09:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A57160799;
+	Fri, 29 Nov 2024 09:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732874182; cv=none; b=IVeUmDKizboncH9GM1YeGrFpibfcNil+mKGA+ZkekbK67AyHCXGMRI+1/hpbqlv5i+hRWKropTbnXIfTxc5Nb1Cjn+NH9KDRuiMN7nzrs1hwO3kLMD+05deP2rgT4RR6YJxKI8yX7mVZjvhciUSSlGiB2OTb5yWj6Oe2Uk+5+UE=
+	t=1732874005; cv=none; b=NtuwgJQzvWhJZ3N1W9D0WS5EImZ/VFkRm29TskWXdCZCNmZ8x93DoxcjqDGkacgx2op7DtHTOqsdEhIfGVSMFyCUUhuE/8S0XyYVsApVg5NqKnP362gPDUAnD4wpgyi4chK+0qRglN4EDBtj90KF2hXRy9wAU5gxQyzq1VXAYGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732874182; c=relaxed/simple;
-	bh=8CnoVT8fTCQCswWGRbR8RsjjauHvsbJEF0XuFWSNCDA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BfIIq0zptRirI7vpN9chttxAL4PkVg416u57dTSMtzW7hpIe3kmfrGx+YNiAxPjSM+CUTT2n6rtVuHxR5L/r7/J+5FL3+gbLnFKb/X9TX7O5zCVKWdbdMwUd9A9keCAB6sDf3u8Zh7YTbAHZQKlEhLgxMzt1g7s5ClLb7ie6/AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgfptolI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 66078C4CED2;
-	Fri, 29 Nov 2024 09:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732874181;
-	bh=8CnoVT8fTCQCswWGRbR8RsjjauHvsbJEF0XuFWSNCDA=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=sgfptolIQbw9FGml+e+zgvdYQv3Rku1NsVt9PfvY+r8FWjzwXZJBq7lEVGXfF3Rjl
-	 OfXbPX4FKWrhHTGdjM+z/cMcmYvowuGJ9FLlxp8RbP2pWsX2PDRwH2/xsH4P+7/3FJ
-	 8gCADJcFEMHQhFbTinSIUDH0IHXZ7Xk9cUW94QrEK/eexBowztnPyuIDshq7F0oY4Q
-	 K6+R49e2+mXisSMFBukdbQIt0RD6q2//Sf9+rWYUqtJJIHrS7k3JSwyQjVXpXLXWOX
-	 vWRoxNXa+GC6TA7tr7up/C+SbSf0CAWubrQCZnvINa5u6nY/sxtmQ6CBa0VXmrycy9
-	 /F3bFDvsJUarg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F0DD6EBF5;
-	Fri, 29 Nov 2024 09:56:21 +0000 (UTC)
-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD_via_B4_Relay?= <devnull+cleverline1mc.gmail.com@kernel.org>
-Subject: [PATCH v5 0/4] Add support for attaching a regulator to w1: ds2482
-Date: Fri, 29 Nov 2024 10:53:15 +0100
-Message-Id: <20241129-ds2482-add-reg-v5-0-af8e83d41344@gmail.com>
+	s=arc-20240116; t=1732874005; c=relaxed/simple;
+	bh=hx3C9drbPwcI7X8FuWDpi2I33d1NaJctELt9voru1fI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bM7av9AGBK7vV+2A231Ip0ywKllHRdpQ5GYwk5p6EQYVxq8Xku5+fgR1zrhHgF0q6h5/yj2w5WQhs9GgQKwv8hmI44yEyGiHjo+RvC8zFjgq9WHt2yO3yIUo0TtlSIJDeMx+oM945MLJPWbr6tW7McjTXDK1baNsFlWOOX72RFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=CcXX6HmQ; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Yl0j5uIS4r/S01x6tXWiLlOS813jd6l7rs7DmO+WbWI=; b=CcXX6HmQ7izN0f06eKh6B6PvY5
+	vwjaizE1uwJGGLrvtBhaKXdr815xV/SLM/vAjHNHCj48VMw1QSPsZzxaZEBOtzadymv3Dly7nX8QF
+	TKTaWPm7n6seDaDI/DmDMqV4ffI2rDnz3Ey8S3mxDVdDMku40Xs3yfTvxmUHGBnYt/eJRJoDvc6+9
+	+PBfE/6VRWYJHOsuMY7V+dL+PK+/BDEEVspnWY4oJmhNhzzInKVkGCCbKZfpYMsGaGzVHlCmEnx7I
+	3IkH2uh73gDAfu6VQcK1Wm0xq5nllLsu3gzC2ztfK6MfHpIugVGux6joOBR1ABBTu1R1AbK7w+mDU
+	0LnxyG6Q==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tGxgb-002MkO-01;
+	Fri, 29 Nov 2024 17:53:18 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 29 Nov 2024 17:53:16 +0800
+Date: Fri, 29 Nov 2024 17:53:16 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Zorro Lang <zlang@redhat.com>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lukas Wunner <lukas@wunner.de>, Ard Biesheuvel <ardb@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] crypto: rsassa-pkcs1 - Copy source data for SG list
+Message-ID: <Z0mPDA31r_LEYzNq@gondor.apana.org.au>
+References: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAuPSWcC/2XOQWrDMBCF4asErasgjUaW3VXuEbqYaMaOoImLF
- ExK8N2rBAqOrd0TfD/zUEVykqI+dw+VZUoljdc6/MdOxTNdB9GJ61ZgAG19mgtgC5qYdZZB92I
- dGEMcuFEV/WTp0/0VPH7VfU7lNubfV3+yz9//lF+nJquNjrHFU0cnstAchgul730cL+qZmmDBA
- TYcKidPxokEZApr7pYcN9xV3pqGe9fFDj2uOS759nisHIOnQKblvns7fp7nP3Hv/dBpAQAA
-X-Change-ID: 20241111-ds2482-add-reg-fe13200ad7d6
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Stefan Wahren <stefan.wahren@chargebyte.com>, 
- Stefan Wahren <wahrenst@gmx.net>
-Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732874180; l=1532;
- i=cleverline1mc@gmail.com; s=20241112; h=from:subject:message-id;
- bh=8CnoVT8fTCQCswWGRbR8RsjjauHvsbJEF0XuFWSNCDA=;
- b=WS1GFauJAHSTrmcFVgV3jccjWxo2Fekg6h+F/E00ZdcM7C8D8v9Z2zOPXYx5ntTh8fU2fVFFE
- GyKxWzz13P2BEg3UjQUXeEyyBm9yiw3DDIXoPo5oyUeEWHUKge3xYr+
-X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
- pk=EJoEbw03UiRORQuCiEyNA8gH1Q6fIpEWnn/MyaWOWX0=
-X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
- auth_id=275
-X-Original-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
-Reply-To: cleverline1mc@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 
-This version fixes the introduced memory leak by changing
-the memory allocation function.
+As virtual addresses in general may not be suitable for DMA, always
+perform a copy before using them in an SG list.
 
-Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
----
-Changes in v5:
-- Refactored the driver to use devm_kzalloc() instead of kzalloc()
-- Link to v4: https://lore.kernel.org/r/20241125-ds2482-add-reg-v4-0-475a7a08df96@gmail.com
+Fixes: 1e562deacecc ("crypto: rsassa-pkcs1 - Migrate to sig_alg backend")
+Reported-by: Zorro Lang <zlang@redhat.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Changes in v4:
-- Using dev_err_probe() instead of dev_err() for the regulator error.
-- Corrected patch order.
-- Link to v3: https://lore.kernel.org/r/20241124-ds2482-add-reg-v3-0-806df39c9454@gmail.com
-
-Changes in v3:
-- Switched from regulator_enable() to devm_regulator_get_enable()
-- Removed obvious comments.
-- Link to v2: https://lore.kernel.org/r/20241122-ds2482-add-reg-v2-0-a5a03ee74da7@gmail.com
-
-Changes in v2:
-- Removed property description
-- Changed commit message of binding commit
-- Link to v1: https://lore.kernel.org/r/20241115-ds2482-add-reg-v1-0-cc84b9aba126@gmail.com
-
----
-Kryštof Černý (4):
-      dt-bindings: w1: ds2482: Add vcc-supply property
-      w1: ds2482: switch to devm_kzalloc() from kzalloc()
-      w1: ds2482: Add regulator support
-      w1: ds2482: Fix datasheet URL
-
- .../devicetree/bindings/w1/maxim,ds2482.yaml       |  2 ++
- drivers/w1/masters/ds2482.c                        | 39 ++++++++++------------
- 2 files changed, 19 insertions(+), 22 deletions(-)
----
-base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
-change-id: 20241111-ds2482-add-reg-fe13200ad7d6
-
-Best regards,
+diff --git a/crypto/rsassa-pkcs1.c b/crypto/rsassa-pkcs1.c
+index 4d077fc96076..f68ffd338f48 100644
+--- a/crypto/rsassa-pkcs1.c
++++ b/crypto/rsassa-pkcs1.c
+@@ -163,10 +163,6 @@ static int rsassa_pkcs1_sign(struct crypto_sig *tfm,
+ 	struct rsassa_pkcs1_inst_ctx *ictx = sig_instance_ctx(inst);
+ 	const struct hash_prefix *hash_prefix = ictx->hash_prefix;
+ 	struct rsassa_pkcs1_ctx *ctx = crypto_sig_ctx(tfm);
+-	unsigned int child_reqsize = crypto_akcipher_reqsize(ctx->child);
+-	struct akcipher_request *child_req __free(kfree_sensitive) = NULL;
+-	struct scatterlist in_sg[3], out_sg;
+-	struct crypto_wait cwait;
+ 	unsigned int pad_len;
+ 	unsigned int ps_end;
+ 	unsigned int len;
+@@ -187,37 +183,25 @@ static int rsassa_pkcs1_sign(struct crypto_sig *tfm,
+ 
+ 	pad_len = ctx->key_size - slen - hash_prefix->size - 1;
+ 
+-	child_req = kmalloc(sizeof(*child_req) + child_reqsize + pad_len,
+-			    GFP_KERNEL);
+-	if (!child_req)
+-		return -ENOMEM;
+-
+ 	/* RFC 8017 sec 8.2.1 step 1 - EMSA-PKCS1-v1_5 encoding generation */
+-	in_buf = (u8 *)(child_req + 1) + child_reqsize;
++	in_buf = dst;
++	memmove(in_buf + pad_len + hash_prefix->size, src, slen);
++	memcpy(in_buf + pad_len, hash_prefix->data, hash_prefix->size);
++
+ 	ps_end = pad_len - 1;
+ 	in_buf[0] = 0x01;
+ 	memset(in_buf + 1, 0xff, ps_end - 1);
+ 	in_buf[ps_end] = 0x00;
+ 
+-	/* RFC 8017 sec 8.2.1 step 2 - RSA signature */
+-	crypto_init_wait(&cwait);
+-	sg_init_table(in_sg, 3);
+-	sg_set_buf(&in_sg[0], in_buf, pad_len);
+-	sg_set_buf(&in_sg[1], hash_prefix->data, hash_prefix->size);
+-	sg_set_buf(&in_sg[2], src, slen);
+-	sg_init_one(&out_sg, dst, dlen);
+-	akcipher_request_set_tfm(child_req, ctx->child);
+-	akcipher_request_set_crypt(child_req, in_sg, &out_sg,
+-				   ctx->key_size - 1, dlen);
+-	akcipher_request_set_callback(child_req, CRYPTO_TFM_REQ_MAY_SLEEP,
+-				      crypto_req_done, &cwait);
+ 
+-	err = crypto_akcipher_decrypt(child_req);
+-	err = crypto_wait_req(err, &cwait);
+-	if (err)
++	/* RFC 8017 sec 8.2.1 step 2 - RSA signature */
++	err = crypto_akcipher_sync_decrypt(ctx->child, in_buf,
++					   ctx->key_size - 1, in_buf,
++					   ctx->key_size);
++	if (err < 0)
+ 		return err;
+ 
+-	len = child_req->dst_len;
++	len = err;
+ 	pad_len = ctx->key_size - len;
+ 
+ 	/* Four billion to one */
+@@ -239,8 +223,8 @@ static int rsassa_pkcs1_verify(struct crypto_sig *tfm,
+ 	struct rsassa_pkcs1_ctx *ctx = crypto_sig_ctx(tfm);
+ 	unsigned int child_reqsize = crypto_akcipher_reqsize(ctx->child);
+ 	struct akcipher_request *child_req __free(kfree_sensitive) = NULL;
+-	struct scatterlist in_sg, out_sg;
+ 	struct crypto_wait cwait;
++	struct scatterlist sg;
+ 	unsigned int dst_len;
+ 	unsigned int pos;
+ 	u8 *out_buf;
+@@ -259,13 +243,12 @@ static int rsassa_pkcs1_verify(struct crypto_sig *tfm,
+ 		return -ENOMEM;
+ 
+ 	out_buf = (u8 *)(child_req + 1) + child_reqsize;
++	memcpy(out_buf, src, slen);
+ 
+ 	crypto_init_wait(&cwait);
+-	sg_init_one(&in_sg, src, slen);
+-	sg_init_one(&out_sg, out_buf, ctx->key_size);
++	sg_init_one(&sg, out_buf, slen);
+ 	akcipher_request_set_tfm(child_req, ctx->child);
+-	akcipher_request_set_crypt(child_req, &in_sg, &out_sg,
+-				   slen, ctx->key_size);
++	akcipher_request_set_crypt(child_req, &sg, &sg, slen, slen);
+ 	akcipher_request_set_callback(child_req, CRYPTO_TFM_REQ_MAY_SLEEP,
+ 				      crypto_req_done, &cwait);
+ 
 -- 
-Kryštof Černý <cleverline1mc@gmail.com>
-
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
