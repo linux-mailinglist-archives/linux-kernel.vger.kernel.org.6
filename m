@@ -1,96 +1,110 @@
-Return-Path: <linux-kernel+bounces-425891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EBE09DEC49
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:09:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE30216358C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:09:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DF01A0BF8;
-	Fri, 29 Nov 2024 19:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAKh8Ysw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29209DEC4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:19:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA8B3224;
-	Fri, 29 Nov 2024 19:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2235DB22448
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:19:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345A91A0BCA;
+	Fri, 29 Nov 2024 19:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ITEaKYW+"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2049146A7A
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732907337; cv=none; b=bvSjqUNTITgRwZO1kgkXVw+DwBx4skehELCgZ6xxEj9Ju88uqLp7a8ojbnu8qoCs4wtANOy8AI6JsFvGOR0Yest4jaZ/IIC9HOXfbtd5hknPZRXZULrw27RrHGlljPnefsfhE5gU0Lama8U7dqmNBSZKZHUMjRGXLgAq20s07o4=
+	t=1732907947; cv=none; b=pVum3bHOEocvIMSJIUYInp8YaP1moJq7mbxHFn3NOUbAyJpMNqZyM16k5ixOyy0jEoiZWV2FZYdXwiY2W6rv/H4UsFjRi8dij+BV6BbOor01RtUQ7BqjMPvH755kpxNF9+Cn4v6vmAyHOUHjJ3j1qIvym4Va74P3qllKrPLgiV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732907337; c=relaxed/simple;
-	bh=W7Vm0c37DPHmUeeFB1k3BNHaU33p3uZ42pyukGFCFXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ED8s2xRZz//pw4gcZsW63uVIZu4XnD7Wl873H9RE4sbTdfmhUh7VC8JH3PUYkuSGkKb6WzYm61lQAnpMVs0TfLgUr09TYfDc4yQ5JisedZbL0bvq1rFuGS/6kdkqcwDGt794m6ZR8H5vV+fDGoYEA/dxgmz5oyKta4EVYJBDb+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAKh8Ysw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B19EDC4CECF;
-	Fri, 29 Nov 2024 19:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732907336;
-	bh=W7Vm0c37DPHmUeeFB1k3BNHaU33p3uZ42pyukGFCFXg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=rAKh8YswPbE2+n1dh1WvdhRxb1FNWEpo1HfViFmvqPNcwxyIUGLG18AJEL1WaNkxh
-	 b4B1ACVZPMY8Zn9BIrw1NfHK2tzbG7Xf5FKc39/9GAz9DdEZZ6tsuG4OH7YZsThAwe
-	 3r+rIsGleh6dWlWL+1sB5gcfRcSktRcNNEBgvg/oWpZtg2squMHReRMERSa+5AuXRw
-	 WI3LTldvfQ/aqotz/54vcPmLicGf8CFz+k2eGEzG8FtEiV5jqqwHf/LEZB3l4qLuXz
-	 dzQ+tsDmV0jVPFI/dRGy1b8Rnvx8gzxcX7wCVGo4Fo5G43YumJ8XzQIaL+KmA9UD8a
-	 jw71Yaf5sQuIA==
-Date: Fri, 29 Nov 2024 13:08:54 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
-	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com,
-	lpieralisi@kernel.org, quic_qianyu@quicinc.com, conor+dt@kernel.org,
-	neil.armstrong@linaro.org, andersson@kernel.org,
-	konradybcio@kernel.org, quic_tsoni@quicinc.com,
-	quic_shashim@quicinc.com, quic_kaushalk@quicinc.com,
-	quic_tdas@quicinc.com, quic_tingweiz@quicinc.com,
-	quic_aiquny@quicinc.com, kernel@quicinc.com,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 4/8] PCI: qcom: Add QCS8300 PCIe support
-Message-ID: <20241129190854.GA2768465@bhelgaas>
+	s=arc-20240116; t=1732907947; c=relaxed/simple;
+	bh=mNS9FaMKCLppUduw748DyIhFvH81tqU2jublvdUmfik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xzo/AvBZq92yZPZGw00OKtgnd8INIM0RrTaK7i8WAHhNwWdha5VdjABpYSEYSfLSZb2a/7penOuusQSEqHPmqipyo8je5FPx1uQYFtNT1ZkeoaA7QPQWgbs9lkCFUwOISjczmREnrIWV6fDOX8asCWc5ZByOi3YHKSOpgCR8pV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ITEaKYW+; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffc3f2b3a9so33024431fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:19:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732907944; x=1733512744; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XI/yTJn2K7uR/0ULxeWbYdLFp4HJLuDCg3+eK/ajORI=;
+        b=ITEaKYW+GEPGv9r3A6HvifL5xoU0jur2vTVEX3BwV05Y+PxvmlnbckUnvOTaXTdsmU
+         dLT+aeSLjkWt3G0pWMqGOXb3wbTQDil/xYOWSi9GivTN4DkbPwu+PyTx0lKcnVpVApgH
+         sGJgb7zi9n6vGrlnRQ5b6tSF+X1HZbqBq4UrQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732907944; x=1733512744;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XI/yTJn2K7uR/0ULxeWbYdLFp4HJLuDCg3+eK/ajORI=;
+        b=vofl2O56hllSbyq39f+XZiFNCY51cWHxcfFtcueDY0lOhr/glrlQcPjNYSn9abxMJm
+         dx59B/F9d6g4obcMkvJm5ivcCoj/klIqHCSE1a7CETID/uI/z2NvZyO5YLtJt2Q8bnn5
+         Q3p3rR0tDc54+qQxIreRrOoXBsNEKxXRa6Slu4mJm6WZbCrDNUjd4Gdp9kbGoyySEWo1
+         t9YMRBq36nB+kVEuU4sKzKmb945TiB0MsAvQgoNxkQVzgf+0D300+9Gj8wKPh9coLLRP
+         nfsrILf+GKPumOz5E4KR1FMzcDhaNEunAg01ekiaCaXHwbeuJvbZLiggkiFYozuSiFET
+         LF1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVM9idWcL75KIARytzS43sAbLnCLXPUJO25LVGSGT9OYG01MMaO7Lr1l/KGy7mTX2zyk1eRz7RY0xmI6YU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD5SNO8FEONtunbVasXkyQyQ+afprcg6Jj2RT+4+XfxIH3q2Uu
+	mqHkCFG41U03/gcPV3IM98I/JMsKSWUO7+QQCvqETbhL+fzETxC2/w6xn6co+QsFYDIlXhllpAS
+	kyK8mow==
+X-Gm-Gg: ASbGnctHXKXdZEgLTBAqdsmzJe8EYCkAVWov7zMS45LTChM6mVB31kCEMq9VHXzu3Z5
+	rjYFKYG9QLjsO/yTjDi/TuYs+lokMbQldr9ilZWegayR2JSSq9bnaSwpkCvpXuhWFOyo3e0WRGr
+	zAEKj6geajdDL5/BBE2L1u3R+Pp6LeSFxFJnNpImUI2jCI4gDkY0dQoU9EuIKGjRKSX8cYOh4Vt
+	AZXWc4Rg25zKJx0oKwAG5L7Mq35MR3xkZs9o6M9mQhrSNvgjNF++tURZhbx5vydpJq8ENYRgxGp
+	Duta6D+50wiN6ddp8N6PDcSr
+X-Google-Smtp-Source: AGHT+IH14d3e6xJbcfVGpsMF8uBeOmw6UpZuZ7axMHRS8PFOeSmOQzWs0MIX/vOSSI12ZWiJr08FqQ==
+X-Received: by 2002:a05:651c:220e:b0:2ff:78be:e030 with SMTP id 38308e7fff4ca-2ffd5fcc145mr122224911fa.3.1732907943580;
+        Fri, 29 Nov 2024 11:19:03 -0800 (PST)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbef7a3sm5052611fa.45.2024.11.29.11.18.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 11:19:00 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53de579f775so3355749e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:18:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXvVAdXuT07pJ01wzHrgZn3X7H8aP65a1rw1chX98TDRKGmYrjPH9HYrz3IHkIYNa0rcSpGLfVfxLhm5BQ=@vger.kernel.org
+X-Received: by 2002:a05:6512:3e23:b0:53d:e5fd:a453 with SMTP id
+ 2adb3069b0e04-53df010b140mr12908711e87.39.1732907939280; Fri, 29 Nov 2024
+ 11:18:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128081056.1361739-5-quic_ziyuzhan@quicinc.com>
+References: <Z0jEBLLRoUKoBVPk@bombadil.infradead.org>
+In-Reply-To: <Z0jEBLLRoUKoBVPk@bombadil.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 29 Nov 2024 11:18:43 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh6SLoXB4zAY51yScDMwyauo0a8FJ05TO_bb6UVNXcCNQ@mail.gmail.com>
+Message-ID: <CAHk-=wh6SLoXB4zAY51yScDMwyauo0a8FJ05TO_bb6UVNXcCNQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Modules fixes for v6.13-rc1
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com, 
+	linux-modules@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, geert@linux-m68k.org, masahiroy@kernel.org, 
+	mmaurer@google.com, arnd@arndb.de, deller@gmx.de, song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-[+cc linux-pci]
+On Thu, 28 Nov 2024 at 11:27, Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> This consists of 3 fixes, the main one build that we build the kallsyms
+> test modules all over again if we just run make twice.
 
-On Thu, Nov 28, 2024 at 04:10:52PM +0800, Ziyue Zhang wrote:
-> Add support for QCS8300 SoC that uses controller version 5.90
-> reusing the 1.9.0 config.
-> 
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index ef44a82be058..5932b228aa17 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1830,6 +1830,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->  	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
->  	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
->  	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
-> +	{ .compatible = "qcom,pcie-qcs8300", .data = &cfg_1_9_0 },
->  	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
->  	{ .compatible = "qcom,pcie-sa8775p", .data = &cfg_1_34_0},
->  	{ .compatible = "qcom,pcie-sc7280", .data = &cfg_1_9_0 },
-> -- 
-> 2.34.1
-> 
-> 
+Thanks, my empty builds went from 43s back to 23s where they belong.
+
+(Obviously when some core header file changes and forces everything to
+be re-built, that's all in the noise, but the small random pulls are
+now much faster)
+
+             Linus
 
