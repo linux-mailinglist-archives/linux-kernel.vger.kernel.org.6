@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-425393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F609DC183
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:28:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0DA9DC184
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:28:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 037D6161975
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:28:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B14FAB24299
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EB7176FB6;
-	Fri, 29 Nov 2024 09:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C73185E50;
+	Fri, 29 Nov 2024 09:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2g3PDC3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjVQ4pLY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F61814F135
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEFF17DFFA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732872509; cv=none; b=o01n/hkvajewT+zeSyEywzwszO7rf1TtsXhuiN6Z7pCtt2e5PP5FWg1zZWheleK9NPKTeFr7gnH7OcBOaO7LlD/bJ5FRrTLX3fk0Q4ffGIYO/n5juZTRsGAmtlVTHNdn8Jm+pptkXwRiLU56UFJ0UUS733QqUu+yNmFWoiEcvhA=
+	t=1732872511; cv=none; b=XQfqvbECceG7BJoexORVO+aHtbRyXO5eKg9hP4rcK8n3VMJlmtxSnocs7ycEsKQnS07i3QkcrsUCwOckgR+I8DWHTcsUZUF/3bMTJnZbT4mv3E4O4Xzb0vzSOokLhwaElq4xSxOEQKqMIvZnv2XGYNNJZjAZ1fBFlVHEaAUHHBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732872509; c=relaxed/simple;
-	bh=v3qXPXvUm4LeQfu0uk/hjbFzCdAxPDZNggDNSWyJChw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uQAi1l32e9VQ62QE7dE1NNwid1z/b+IM7psjA/eoLC1KEno0oIayPMLgCC1G4NLqtCv6ocQJzbTeFlE1Q3eoN6pz/oos2xaD7s4jyLdDvY9ur3xLAJfI+61xpnEXv0/eLWYnQb6YWkQn21S7sXMqxfNvroQWn0k1YtkKFyUKAqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2g3PDC3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF19C4CECF;
-	Fri, 29 Nov 2024 09:28:28 +0000 (UTC)
+	s=arc-20240116; t=1732872511; c=relaxed/simple;
+	bh=tbD5dcEI7VBjbUSCchkwqpnKynf6J6/WxQxL5qjAEfE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=rPzdFhj6m2/x/qmlYh+7cOhJ7jp50eSNQOA5XlDnvCvuft4LA7GeWDoz5XeoJEjTvpnHJJUo3s2lU/V2oKLfGuECtWt8nmQMdGItmVR9JqVzWgaXG0zuwCcHV4BrOE4+B4+bfJjhiMesjhV0ruaU2wGTE5AsUIP+cfjY2CSOUrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjVQ4pLY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E2E9C4CED7;
+	Fri, 29 Nov 2024 09:28:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732872508;
-	bh=v3qXPXvUm4LeQfu0uk/hjbFzCdAxPDZNggDNSWyJChw=;
-	h=From:Subject:Date:To:Cc:From;
-	b=I2g3PDC305GsSRmhpnTZo6vv48DvZk7qOnlvBNbmmJv396pHJKo3/Vo3SI5RA2XQo
-	 xNZoNneMO5TuZLP8vYTi5wVzg41t5xrZugwE9CJihQV383hcSKDfCuJASbdy6DTLUN
-	 9A1LdYz1XHCdPIP2scuGSvR2kbVHZ3oah1yk5DazN9tvH7r0Y+x8gGCFoMa3VZzVrM
-	 jjeIhvs5b/kcMnlmWUYOhsL6OGS+vFBdzcthjLiOhfhK9CyOWsdhghCPs3KgkSAlJL
-	 tekny0gpgE9rVR+5j+a84hhx4bg8ixUn3fmsC1kmxvW80kF/wGj7VCRfnQ6ZmucD8t
-	 /jIlc4cDZrVkg==
+	s=k20201202; t=1732872511;
+	bh=tbD5dcEI7VBjbUSCchkwqpnKynf6J6/WxQxL5qjAEfE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=YjVQ4pLY298afkz41+jXgDBpuwB+S7Kkkdlhj+nslRycC0WBuiSHHzr9hxYW/Djts
+	 OnTUlC14M7hSolyGk595IKGskjdtnL8Dy2QFhGJr+WjLpPU7JAa/6D0oOAfZAlRJdr
+	 5HJnrVvVTgZOzVGVYm69PhJBdpj97sL8d/payYO1PHrc3LxJB+7sVI508FdjTzqiD0
+	 0QQlwx/uaCxvDvOHj/be/HWo2AbRmK7ge2Y86bkx/CMNV9blSpvMVAZAa0XfkJ0YJL
+	 3D/tp+68hVriPMHC4FVO6DzaywCdhvvyxNlP3gd5ArBhF3Dyg1S/TgJcBaz/hVJCNk
+	 kRsscMJLKl0/A==
 From: Daniel Wagner <wagi@kernel.org>
-Subject: [PATCH v3 0/3] nvme-fc: fix race with connectivity loss and
- nvme_fc_create_association
-Date: Fri, 29 Nov 2024 10:28:22 +0100
-Message-Id: <20241129-nvme-fc-handle-com-lost-v3-0-d8967b3cae54@kernel.org>
+Date: Fri, 29 Nov 2024 10:28:23 +0100
+Subject: [PATCH v3 1/3] nvme-fc: go straight to connecting state when
+ initializing
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,11 +52,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADaJSWcC/4WOwQ6CMBBEf4X07JJtUbSe+A/DodAFGqE1W0SN4
- d+tHLx6fJmZl3mLSOwoinP2FkyLiy74BMUuE+1gfE/gbGKhUO0lKg1+mQi6FlJoR4I2TDCGOIN
- uUkEX5Qm1EWl9Y+rcczNf6sQdp+Y8MJmfD0sppcZyf8ylPB1KkGAfpvfEVbxHyi19RYOLc+DX9
- nBRX93/M4sChEODVhZHUgZNdSX2NOaBe1Gv6/oB5BfWC/gAAAA=
-X-Change-ID: 20241029-nvme-fc-handle-com-lost-9b241936809a
+Message-Id: <20241129-nvme-fc-handle-com-lost-v3-1-d8967b3cae54@kernel.org>
+References: <20241129-nvme-fc-handle-com-lost-v3-0-d8967b3cae54@kernel.org>
+In-Reply-To: <20241129-nvme-fc-handle-com-lost-v3-0-d8967b3cae54@kernel.org>
 To: James Smart <james.smart@broadcom.com>, Keith Busch <kbusch@kernel.org>, 
  Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
  Hannes Reinecke <hare@suse.de>, Paul Ely <paul.ely@broadcom.com>
@@ -64,55 +62,37 @@ Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
  Daniel Wagner <wagi@kernel.org>
 X-Mailer: b4 0.14.2
 
-After a long hard stare at the keep alive machinery I am convienced we
-need to trigger a reset when nvme_keep_alive_end_io is called with status
-!= 0. There is a lengthy explanation in patch #3.
+The initial controller initialization mimiks the reconnect loop
+behavior by switching from NEW to RESETTING and then to CONNECTING.
 
-I've also tested this version with blktests and some manual tests. Though
-it's not that easy to get into exact sequence reported by Paul.
+The transition from NEW to CONNECTING is a valid transition, so there is
+no point entering the RESETTING state. TCP and RDMA also transition
+directly to CONNECTING state.
 
-Daniel
-
-previous cover letter:
-
-We got a bug report that a controller was stuck in the connected state
-after an association dropped.
-
-It turns out that nvme_fc_create_association can succeed even though some
-operation do fail. This is on purpose to handle the degraded controller
-case, where the admin queue is up and running but not the io queues. In
-this case the controller will still reach the LIVE state.
-
-Unfortunatly, this will also ignore full connectivity loss for fabric
-controllers. Let's address this by not filtering out all errors in
-nvme_set_queue_count.
-
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
 ---
-Changes in v3:
-- collected reviewed tags
-- added nvme_ctrl_reset to keep alive end io handler
-- Link to v2: https://lore.kernel.org/r/20241029-nvme-fc-handle-com-lost-v2-0-5b0d137e2a0a@kernel.org
+ drivers/nvme/host/fc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Changes in v2:
-- handle connection lost in nvme_set_queue_count directly
-- collected reviewed tags
-- Link to v1: https://lore.kernel.org/r/20240611190647.11856-1-dwagner@suse.de
+diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+index b81af7919e94c421387033bf8361a9cf8a867486..d45ab530ff9b7bd03bc311474278fc840f8786d5 100644
+--- a/drivers/nvme/host/fc.c
++++ b/drivers/nvme/host/fc.c
+@@ -3579,8 +3579,7 @@ nvme_fc_init_ctrl(struct device *dev, struct nvmf_ctrl_options *opts,
+ 	list_add_tail(&ctrl->ctrl_list, &rport->ctrl_list);
+ 	spin_unlock_irqrestore(&rport->lock, flags);
+ 
+-	if (!nvme_change_ctrl_state(&ctrl->ctrl, NVME_CTRL_RESETTING) ||
+-	    !nvme_change_ctrl_state(&ctrl->ctrl, NVME_CTRL_CONNECTING)) {
++	if (!nvme_change_ctrl_state(&ctrl->ctrl, NVME_CTRL_CONNECTING)) {
+ 		dev_err(ctrl->ctrl.device,
+ 			"NVME-FC{%d}: failed to init ctrl state\n", ctrl->cnum);
+ 		goto fail_ctrl;
 
----
-Daniel Wagner (3):
-      nvme-fc: go straight to connecting state when initializing
-      nvme: trigger reset when keep alive fails
-      nvme: handle connectivity loss in nvme_set_queue_count
-
- drivers/nvme/host/core.c | 13 ++++++++++++-
- drivers/nvme/host/fc.c   |  3 +--
- 2 files changed, 13 insertions(+), 3 deletions(-)
----
-base-commit: 029cc98dec2eadb5d0978b5fea9ae6c427f2a020
-change-id: 20241029-nvme-fc-handle-com-lost-9b241936809a
-
-Best regards,
 -- 
-Daniel Wagner <wagi@kernel.org>
+2.47.0
 
 
