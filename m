@@ -1,206 +1,117 @@
-Return-Path: <linux-kernel+bounces-425782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6112D9DEAFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2850F9DEAC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3B21B22378
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:28:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1491B21EF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC60F1A00FA;
-	Fri, 29 Nov 2024 16:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1FE14AD3D;
+	Fri, 29 Nov 2024 16:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="iyxU5GY/"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpnIhCuj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E489D14C5B3;
-	Fri, 29 Nov 2024 16:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DA01B95B;
+	Fri, 29 Nov 2024 16:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732897711; cv=none; b=McruElrG1nyD4qqTqXNeN7xj2el/kFSgNJ4RLHfJlL3lXqzj768Ko7tfnLwkf2gHd3EL1RIIshM1YbxgVJwgKugziHkx/1SfRXJsCrPtV8YnuprAGifiuvD+1wlGkU4wx5duXDhzTHVSbgh/Ygxfr/QXixXxJFNpHeC/v7XmQq4=
+	t=1732897017; cv=none; b=k/0plpfs4Lk4XfNSukRMkqOrl5sL/vkOQq7rsk7mdLxscP25wRk8EelGvfXpFRbSSuP+T+yWAhSr1H8LEBy+jEDwoDKuQNaCdV60p1+1wnpCVU5hDxFjmn2Y8zamHYioYXkXdx/otcqPe0E+eP+2OaScn7CRUyeIwKqEQOJmujM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732897711; c=relaxed/simple;
-	bh=OYoXq9Htw15pDNwhKe3wmKi9nfDTgqvonQ9dTbuSg84=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YOhYPIr40MFmlcX9VcHMXfFdn50SbYfebkApmPCiUYROzGiXkO5RvRruSZ8pzto4ptSIBI6Udd7FS87OnD3ZWXfNJ6Cz6TdGeEt0r6NsCH2M/uKHA8h345mzyohcAvxJjNTeMnxUbs/8dbpqDQTrKwN481Lt7oCy6XdVOZPndjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=iyxU5GY/; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id 5f518de4bde3e1e6; Fri, 29 Nov 2024 17:28:21 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id D5E56A47B8B;
-	Fri, 29 Nov 2024 17:28:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1732897701;
-	bh=OYoXq9Htw15pDNwhKe3wmKi9nfDTgqvonQ9dTbuSg84=;
-	h=From:Subject:Date;
-	b=iyxU5GY/ArKuU8HnZM+epBBnOro2bqsKPxWgzpzvZ8DNMNQFXXjnKY7X9OfmRwZrD
-	 2bOAQpi+XKBLJqrdArSchnvurDoSO19PUpBuNjoi822povcdACcdRuddwJIphl7PDj
-	 I1inSGuwhLDpRZngzTRwi05TL6nEVzTq1IxE+3jag6g4UrrW7uanGig/2S88LlP1jZ
-	 2a2Tdteh51I4/uVWWBtKF9KQgZY1RrCXI83NJ59CZZ87Vkpc3cewxr9Q6d6G8+/iDc
-	 +ESxhmkK76AxPu1PX+jHGVyFUOeENO8jvDPYv2OZw8q7gsLQQpMaJBLySnVVNl+nfw
-	 S4y/vzxX4XGeQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>
-Subject:
- [RFC][PATCH v021 7/9] PM: EM: Register perf domains with ho :active_power()
- callbacks
-Date: Fri, 29 Nov 2024 17:15:45 +0100
-Message-ID: <3278518.5fSG56mABF@rjwysocki.net>
-In-Reply-To: <5861970.DvuYhMxLoT@rjwysocki.net>
-References: <5861970.DvuYhMxLoT@rjwysocki.net>
+	s=arc-20240116; t=1732897017; c=relaxed/simple;
+	bh=YDnw7vhkaJAuUXfPbYeU6lVbCicKP6s6NAPiGggiTN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SNBBt6hKpQ6q3fz0YFfdTpU3oU/DJMOEnTAjbiRhCixNiVGYVwNXH0Gt1TQVKOF/5UTcehnIstP8+28a6eShKe8DgAM+uDyljYXH2q8lJqFr4uzuTLQmxaJezN517tyu7bNEVS2OMnJB1dBzn/eKZy1k1mnQmSzQKu49L68Pc5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpnIhCuj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1603BC4CECF;
+	Fri, 29 Nov 2024 16:16:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732897016;
+	bh=YDnw7vhkaJAuUXfPbYeU6lVbCicKP6s6NAPiGggiTN0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EpnIhCujLTETC/sjIDlyXc2ImoUzbqLJnhGewOt8JJZCWT7l2uXBUXhxb+quO08FW
+	 uN+9llytzHm3TA/GZ5dkYjxKPesLirqPExRlbsyiQ5NCnG+op+ahMU0lC9DXiWOhS1
+	 qumSEl923QAwicK00scDv3kNvEQ7Ai6Ly+sv2W/EOQIx6nj2zeHNz8XJDX4niHJyRG
+	 wV//L/8sRDZpiWLE/8Ne0Wv27cTKH+sFcgYUCWhNqkj5RpVaGopLCuQsFf8Bu/4cuW
+	 oNRwuSMQABTpzzYq2OZJcd4WTNYbdOv2nQgQA36+zZZcJmZTxDyJJzYnHja9+5WFh/
+	 ljX7io+RZ5SvA==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53de5ec22adso2603584e87.3;
+        Fri, 29 Nov 2024 08:16:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXKwPCjiNbioOJTUIwZBqOFfHEVGTqeT7MrLhOKO5DDp5+b0oxe+lZXwDJA185VsdwtY7BGpeZaZI4NsEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQWWirEN+5FE+SGe/Q1539DNVJG/yBvjgSdQ8e8F2n27HMIeVH
+	G7iOqNe0vhL9PCUU0p+xY2xcWRKTlchnMYYTQ1a4OtxpPq70L966H/2lNurW5dQ/B9tdnPyKx51
+	MmKIGko63DFmo6sBBid/t3d5QB88=
+X-Google-Smtp-Source: AGHT+IGErHUY7cr9BfVuAMx9rKVS+ddSGGA3Z630K06yUd7VA5OKmJogaNZfNPqMKSaMYyDVMEOTxBPHY3komw7MEE4=
+X-Received: by 2002:a19:2d0a:0:b0:53d:f4af:6fea with SMTP id
+ 2adb3069b0e04-53df4af70dcmr4799168e87.4.1732897014342; Fri, 29 Nov 2024
+ 08:16:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20241125041129.192999-1-ebiggers@kernel.org>
+In-Reply-To: <20241125041129.192999-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 29 Nov 2024 17:16:42 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHPXS3r244jABjOKTEWaqWX2TYf-KA9i+J2-C3B4XxmUQ@mail.gmail.com>
+Message-ID: <CAMj1kXHPXS3r244jABjOKTEWaqWX2TYf-KA9i+J2-C3B4XxmUQ@mail.gmail.com>
+Subject: Re: [PATCH 0/6] x86: new optimized CRC functions, with VPCLMULQDQ support
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgdekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthg
-X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, 25 Nov 2024 at 05:12, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> This patchset is also available in git via:
+>
+>     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git crc-x86-v1
+>
+> This patchset applies on top of my other recent CRC patchsets
+> https://lore.kernel.org/r/20241103223154.136127-1-ebiggers@kernel.org/ and
+> https://lore.kernel.org/r/20241117002244.105200-1-ebiggers@kernel.org/ .
+> Consider it a preview for what may be coming next, as my priority is
+> getting those two other patchsets merged first.
+>
+> This patchset adds a new assembly macro that expands into the body of a
+> CRC function for x86 for the specified number of bits, bit order, vector
+> length, and AVX level.  There's also a new script that generates the
+> constants needed by this function, given a CRC generator polynomial.
+>
+> This approach allows easily wiring up an x86-optimized implementation of
+> any variant of CRC-8, CRC-16, CRC-32, or CRC-64, including full support
+> for VPCLMULQDQ.  On long messages the resulting functions are up to 4x
+> faster than the existing PCLMULQDQ optimized functions when they exist,
+> or up to 29x faster than the existing table-based functions.
+>
+> This patchset starts by wiring up the new macro for crc32_le,
+> crc_t10dif, and crc32_be.  Later I'd also like to wire up crc64_be and
+> crc64_rocksoft, once the design of the library functions for those has
+> been fixed to be like what I'm doing for crc32* and crc_t10dif.
+>
+> A similar approach of sharing code between CRC variants, and vector
+> lengths when applicable, should work for other architectures.  The CRC
+> constant generation script should be mostly reusable.
+>
+> Eric Biggers (6):
+>   x86: move zmm exclusion list into CPU feature flag
+>   scripts/crc: add gen-crc-consts.py
+>   x86/crc: add "template" for [V]PCLMULQDQ based CRC functions
+>   x86/crc32: implement crc32_le using new template
+>   x86/crc-t10dif: implement crc_t10dif using new template
+>   x86/crc32: implement crc32_be using new template
+>
 
-Allow em_dev_register_perf_domain() to register a cost-only perf domain
-with a one-element states table if the :active_power() callback is not
-provided.
+Good stuff!
 
-Subsequently, this will be used by the intel_pstate driver to register
-such perf domains for CPUs on hybrid systems.
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v0.1 -> v0.2:
-     * Do not add one more local variable to em_dev_register_perf_domain()
-       and make it skip the capacity check if the :active_power() callback
-       is NULL.  Add a comment explaining why it is correct to do so.
-
-For the time being, intel_pstate will only need to be able to say
-something like "this group of CPUs is preferred to that other group
-of CPUs for energy-efficiency reasons regardless of the required
-performance level" (and there may be multiple groups).
-
-For this purpose, it only needs a one-element states table in a perf
-domain for each of the groups and it only needs to set the cost value
-for each of them to reflect the preference.
-
-However, it may need to put CPUs of different capacity into the same
-group because of favored cores and this doesn't mean that one
-group will contain CPUs of different mincro-architectures.  Favored
-cores essentially follow the same power-performance curve as the
-other CPUs of the same type up to a certain point, but they can get
-beyond that point on the curve which the other CPUs of the same type
-cannot do.  Thus it would make sense to use the same states table
-for favored cores and the other CPUs of the same type even if there
-were multiple states in it, and em_pd_get_efficient_state() could
-easily take that into account by only using the states where
-"performance" is at most equal to the current CPU capacity.
-
-Unfortunately, this doesn't match the em_create_perf_table() code
-design and in particular em_init_performance() which scales the
-"performance" values the the current capacity of the "domain leader"
-CPU represented by "dev".
-
-IMV, it should instead scale them to the maximum possible capacity
-of the highest-capacity CPU in the domain (without requiring equal
-capacity at all).
-
-That would also help to handle the cases when CPU capacity changes,
-at least on Intel platforms, if it's necessary to worry about this some
-day.  Namely, when CPU capacity is reduced, say by the platform firmware
-(for thermal or power distribution reasons, for example), this effectively
-means chopping off the top-most section of the power-performance curve,
-but the rest of it remains intact, so the same states table as before
-can be used, only the current CPU capacity needs to be changed to
-prevent the top-most performance states from being taken into
-consideration (and analogously when CPU capacity increases).
-
-Turbo works pretty much in the same way: When it's enabled, the
-power-performance curve is effectively extended by adding some states to
-it and when turbo is disabled, the top-most part of the power-performance
-curve effectively gets chopped off.
-
-This observation may help to avoid having to update the energy model for
-a chip.
-
----
- kernel/power/energy_model.c |   23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
-
-Index: linux-pm/kernel/power/energy_model.c
-===================================================================
---- linux-pm.orig/kernel/power/energy_model.c
-+++ linux-pm/kernel/power/energy_model.c
-@@ -426,9 +426,11 @@ static int em_create_pd(struct device *d
- 	if (!em_table)
- 		goto free_pd;
- 
--	ret = em_create_perf_table(dev, pd, em_table->state, cb, flags);
--	if (ret)
--		goto free_pd_table;
-+	if (cb->active_power) {
-+		ret = em_create_perf_table(dev, pd, em_table->state, cb, flags);
-+		if (ret)
-+			goto free_pd_table;
-+	}
- 
- 	ret = em_compute_costs(dev, em_table->state, cb, nr_states, flags);
- 	if (ret)
-@@ -566,6 +568,9 @@ int em_dev_register_perf_domain(struct d
- 	if (!dev || !nr_states || !cb)
- 		return -EINVAL;
- 
-+	if (!cb->active_power && (!cb->get_cost || nr_states > 1 || microwatts))
-+		return -EINVAL;
-+
- 	/*
- 	 * Use a mutex to serialize the registration of performance domains and
- 	 * let the driver-defined callback functions sleep.
-@@ -594,7 +599,19 @@ int em_dev_register_perf_domain(struct d
- 			 * All CPUs of a domain must have the same
- 			 * micro-architecture since they all share the same
- 			 * table.
-+			 *
-+			 * If the :active_power() callback is present, the
-+			 * performance values for different states in the table
-+			 * computed by em_create_perf_table() depend on the CPU
-+			 * capacity which therefore must be the same for all
-+			 * CPUs in the domain.  However, if the :active_power()
-+			 * callback is not NULL, em_create_perf_table() doesn't
-+			 * run and there is no requirement regarding CPU
-+			 * capacity any more.
- 			 */
-+			if (!cb->active_power)
-+				continue;
-+
- 			cap = arch_scale_cpu_capacity(cpu);
- 			if (prev_cap && prev_cap != cap) {
- 				dev_err(dev, "EM: CPUs of %*pbl must have the same capacity\n",
-
-
-
+Would indeed be nice to get CRC-64 implemented this way as well, so we
+can use it on both x86 and arm64.
 
