@@ -1,165 +1,160 @@
-Return-Path: <linux-kernel+bounces-425187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B54D9DBEAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:21:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5154C9DBEAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89D93B21552
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 02:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1864028258B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 02:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CCE14E2E6;
-	Fri, 29 Nov 2024 02:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4EF14F12D;
+	Fri, 29 Nov 2024 02:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mqIa3Sni"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gk7Rj3AO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7059F42AA5;
-	Fri, 29 Nov 2024 02:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA5642AA5;
+	Fri, 29 Nov 2024 02:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732846855; cv=none; b=gnZJiU2+DMu+ipJPgm3TsNq5WUuZSUwiB028a9xUtDCs2V+ZJRH76kLhefoZtG/9WP82hXxUzvhdOEdbrkJShOFj++FErHUty2YpG22e+jqwVzYLTOk3/6QX9rsSvyrgD4VC5Wv1H5FUjyqKROjLdJXxh8H0z/OvzjBpy3JzPiE=
+	t=1732846916; cv=none; b=b2coK/YGIArXjgEfkLa9x/91wwwUc5pEtJEC306MM8olzuDYSdNKPvD1emr48qrLNr3O5djvBKLDVQBPrZpi1KAuZKc6T2orm+mDjL9p7pk7R7oWiJIiF9xeIk1REqLgdbHPjRqFGTevVYgrRtTTpCpGjJhSUwQ2zQ45qcEquug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732846855; c=relaxed/simple;
-	bh=ydNZlkl3eUzpv7FePh+VVcbb1ePhZfcmPxayqxuOQPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=egV5kw7MY493QTyeNztsFxxEm5vtBoFIdO09nk2kb2O+3/Kq0QH8dDiW5iQbglT3OhY2QzLx7L17AeAvHBOx5NY3flrtKHWUnLsGy9fvdGa5Rz3AhYQFyCdp6x4YW+2j6AdYd6viBe1VOdHbHf/fYqLmcSbyXR1PL/i5iAU9oiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mqIa3Sni; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASMMssO028200;
-	Fri, 29 Nov 2024 02:20:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OrXm2D95YzK2XfL6//NbpfmH0gV9TCCoCZ6jVK/zfkA=; b=mqIa3SnimrG/wYhp
-	TJt5FfXvkAbnc91gImT4m316X12LoL08h4q08seRT5WDTJf83+SbOJTnrrPcYnfi
-	EiTQQ12UDy118XHRA8BH9MaglGmzLc3gmwEE6T95u2BYmLc4nnXxsavjZsPO3Rcm
-	NjGZ1MsUHF0UBQ+uCadVFG3f0s+PCYo+d+tsbbo0uy4jL1tJqsZ3qWTcJ/4Uxo31
-	mHGVMgLeu7rQMWuhyZ+dXNFCJlfeZvIRulG5UCGQMQ+eYJPm09ndFIHgT37O7Zji
-	Gcnyvl7j5pNYKyBI3rDD1SRDr+k18i2ckggtmZ2pOr7xBlRAppauWLfPJcJgmooR
-	yTjCdA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43673jc48w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 02:20:46 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AT2KkFp032347
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 02:20:46 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 28 Nov
- 2024 18:20:42 -0800
-Message-ID: <7083653c-15c6-4971-b9ca-cd7fa02a9a75@quicinc.com>
-Date: Fri, 29 Nov 2024 10:20:40 +0800
+	s=arc-20240116; t=1732846916; c=relaxed/simple;
+	bh=D2eNR7QoPIRfVwbCKv0vY6hJVxA4cBJQNFHhr6OqimA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sw7l7F2CxlpSsNXsa3xnnTIFB/oV6h1GV+ggJSarfMmpiUY2KAZUXd+gN7IjtKMtrKL9TuZNGXzRjTd56yx0mvU1etoSvVAcyTQcWSMTtQKaBgMVgvXq/jtTGJGMXsACv3OVr5JEiI1tcJxn2JZkTcU5pJEXq/6ZH1/8VGNH3+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gk7Rj3AO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E45C4CECE;
+	Fri, 29 Nov 2024 02:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732846915;
+	bh=D2eNR7QoPIRfVwbCKv0vY6hJVxA4cBJQNFHhr6OqimA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gk7Rj3AO0gPgtfeJWQnKvkIpcF+YaumdwyUH73X+JSf1vNvtIU4l0Ito6n68BhX+r
+	 U8KGEJmCzp6f9t7okZyqgEhgYL9UqJMNCHkQKPQl1sm6XiecniQrCxVU248SD+fRjR
+	 2dskdMCKA81ndm7SwcWodtSbGJreUV/t83TnC5SYLV9ETJUxO60ZHW2px26R2OQBrj
+	 b7wN0ngtTaBas6duCzKD2JwkKJaUStR6Mvutqi5pIu9NazkZ7OChjuJtDSpJ4S61nc
+	 He7wir4Yj8Qo4ux5zm3lbs7AYywGCkPma395VFPE7PS/XRYaB94ioGE2Qnwe3pPkXZ
+	 oMOYG7zz1AIeQ==
+Date: Fri, 29 Nov 2024 03:21:50 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Jani Nikula <jani.nikula@intel.com>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, Jonathan
+ Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, workflows@vger.kernel.org, Hans Verkuil
+ <hverkuil@xs4ll.nl>
+Subject: Re: [PATCH] docs: media: document media multi-committers rules and
+ process
+Message-ID: <20241129032150.13f8aa35@foz.lan>
+In-Reply-To: <CAKMK7uEJyTwSULjJ4Qv9vDtm5BkHwiFUSY=iihpHQMvE+a=6og@mail.gmail.com>
+References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
+	<20241126151930.GA5493@pendragon.ideasonboard.com>
+	<20241127103948.501b5a05@foz.lan>
+	<20241127111901.GG31095@pendragon.ideasonboard.com>
+	<CAKMK7uFZsc+-Os+Pb9MHHbdt1K5Pj+D069d-+FvsDeeWgeZASw@mail.gmail.com>
+	<87iks7wqi3.fsf@intel.com>
+	<20241128194758.7d2e7656@foz.lan>
+	<87v7w76od3.fsf@intel.com>
+	<CAKMK7uEJyTwSULjJ4Qv9vDtm5BkHwiFUSY=iihpHQMvE+a=6og@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] arm64: defconfig: enable clock controller,
- interconnect and pinctrl for QCS8300
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <quic_tengfan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-References: <20241128-qcs8300_initial_dtsi-v3-0-26aa8a164914@quicinc.com>
- <20241128-qcs8300_initial_dtsi-v3-2-26aa8a164914@quicinc.com>
- <evzdrhzrr242ynfv6p4qhtjpgd4allzgw3osxalmtyfxzsjj2h@vingsirpf5su>
-Content-Language: en-US
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-In-Reply-To: <evzdrhzrr242ynfv6p4qhtjpgd4allzgw3osxalmtyfxzsjj2h@vingsirpf5su>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7FY4LVx6QF9Uqp1KKhJ7dnSWgNtxdbXv
-X-Proofpoint-ORIG-GUID: 7FY4LVx6QF9Uqp1KKhJ7dnSWgNtxdbXv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- malwarescore=0 adultscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0
- mlxlogscore=828 priorityscore=1501 clxscore=1015 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411290017
 
+Em Thu, 28 Nov 2024 22:52:38 +0100
+Simona Vetter <simona.vetter@ffwll.ch> escreveu:
 
-
-On 11/28/2024 9:12 PM, Dmitry Baryshkov wrote:
-> On Thu, Nov 28, 2024 at 04:44:44PM +0800, Jingyi Wang wrote:
->> Enable clock controller, interconnect and pinctrl for Qualcomm
->> QCS8300 platform to boot to UART console.
+> On Thu, 28 Nov 2024 at 22:27, Jani Nikula <jani.nikula@intel.com> wrote:
+> > On Thu, 28 Nov 2024, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:  
+> > > We used to have a low bar for entry on our past multi-committers
+> > > model (back in 2005-2007). It was a disaster, as one of the
+> > > committer did very evil things. He was blocked, but that didn't
+> > > prevent some of us to be threatened with physical violence - and
+> > > some people even reported death threats.  
+> >
+> > While I understand the hesitation, I don't think it's fair towards
+> > potential future collaborators to distrust them based on a bad actor
+> > from nearly 20 years ago.  
 > 
-> ... which is used on the ABC DEF board. The defconfig is being enabled
-> for everybody, so at least let them know which board increases the size
-> of the default kernel build.
-> 
-will add that
->>
->> The serial engine depends on gcc, interconnect and pinctrl. Since
->> the serial console driver is only available as built-in, so these
->> configs needs be built-in for the UART device to probe and register
->> the console.
->>
->> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->>  arch/arm64/configs/defconfig | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index d13218d0c30f..3d9e48940c96 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -608,6 +608,7 @@ CONFIG_PINCTRL_MSM8996=y
->>  CONFIG_PINCTRL_MSM8998=y
->>  CONFIG_PINCTRL_QCM2290=y
->>  CONFIG_PINCTRL_QCS404=y
->> +CONFIG_PINCTRL_QCS8300=y
->>  CONFIG_PINCTRL_QDF2XXX=y
->>  CONFIG_PINCTRL_QDU1000=y
->>  CONFIG_PINCTRL_SA8775P=y
->> @@ -1327,6 +1328,7 @@ CONFIG_MSM_MMCC_8998=m
->>  CONFIG_QCM_GCC_2290=y
->>  CONFIG_QCM_DISPCC_2290=m
->>  CONFIG_QCS_GCC_404=y
->> +CONFIG_QCS_GCC_8300=y
->>  CONFIG_SC_CAMCC_7280=m
->>  CONFIG_QDU_GCC_1000=y
->>  CONFIG_SC_CAMCC_8280XP=m
->> @@ -1634,6 +1636,7 @@ CONFIG_INTERCONNECT_QCOM_MSM8996=y
->>  CONFIG_INTERCONNECT_QCOM_OSM_L3=m
->>  CONFIG_INTERCONNECT_QCOM_QCM2290=y
->>  CONFIG_INTERCONNECT_QCOM_QCS404=m
->> +CONFIG_INTERCONNECT_QCOM_QCS8300=y
->>  CONFIG_INTERCONNECT_QCOM_QDU1000=y
->>  CONFIG_INTERCONNECT_QCOM_SA8775P=y
->>  CONFIG_INTERCONNECT_QCOM_SC7180=y
->>
->> -- 
->> 2.25.1
->>
-> 
-Thanks,
-Jingyi
+> Yeah this sounds a lot more like a CoC issue (which of course could
+> result in a very swift removal of commit rights and suspend from all
+> access to gitlab and mailing lists). Aside from reference the CoC
+> we've left these things out of scope of the commit rights processes
+> and merge criteria.
+>
+> My key takeaway over the last decade more of maintainering is that
+> assuming that people want to do the right thing and building a process
+> optimized for that works really well. And then handle the toxic people
+> entirely separately through solid conduct enforcement.
+>
 
+Community has evolved and CoC may help, but it is still it is dozen
+times more painful to remove grants than to not add rights for people
+that aren't ready yet to become committers. 
+
+The migration to the new model is already complex enough with experienced
+people having troubles with the new CI engine and new process.
+With just to people testing the new process, basically every time we 
+committed something, we discovered one or more issues with the CI that 
+would end denying merges and cause frustration and more work to
+maintainers.
+
+> > >> I think it's also important to define merge criteria. A set of rules by
+> > >> which a committer can commit. And it's not really about technical
+> > >> checkboxes. For example, in drm it really boils down to two things: at
+> > >> least two people have been involved, and there are no open issues.  
+> > >
+> > > That's the same criteria we're aiming for. We'll start without
+> > > two people reviewing, as there won't be enough committers at the  
+> >
+> > It's not two reviewers for us either; it's typically author+reviewer and
+> > either author or reviewer commits. Two sets of eyeballs in total.
+> >  
+> > > beginning for that, but maintainers may revert/rebase the tree in
+> > > case they don't agree with changes.  
+> >
+> > Not sure if you really mean it, but saying it like that doesn't really
+> > breed trust, IMO. Sure, there have been patches merged to i915 that I
+> > didn't "agree" with. But bad enough to warrant a revert? Very few and
+> > far between, and always for clear and concrete reasons rather than
+> > anything subjective.
+> >
+> > Side note, we don't do rebases in the development branches.  
+> 
+> Yeah, if I don't forget anything I remember a grand total of three
+> rebases by maintainers, and this over 8 years or so of doing this:
+> 
+> - Someone pushed their entire development tree by accident. We
+> obviously had to back that out and improved the tooling to catch these
+> better.
+> - Someone who pushed an entire pile of work (I think 30 patches or so)
+> that missed the merge window into -fixes for a late -rc1.
+> - Someone who lost trust with upstream maintainers because they
+> refused to listen for way too long to engineering direction and
+> consensus. The last big push of development work was backed out again.
+> 
+> There might have been some other things, but I think those were more
+> maintainers screwing things up than committers pushing stuff, and on
+> trees that are handled with the more classic group maintainer model.
+> 
+> It's really an extremely rare event that we rebase out patches.
+
+Rebases should be rare, and we do avoid doing that, but it depends
+on what happens and how the merged tree is tested. We hope that
+the workflow we're implementing with CI testing everything will
+prevent them, but we need to run it for a few kernel cycles to
+be sure that what is there is good enough.
+
+Regards,
+Mauro
 
