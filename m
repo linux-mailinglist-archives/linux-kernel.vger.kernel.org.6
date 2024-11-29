@@ -1,109 +1,145 @@
-Return-Path: <linux-kernel+bounces-425175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E659DBE81
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:01:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF839DBE89
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C2A8B20F4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 02:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041EE281F28
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 02:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD1D14B07A;
-	Fri, 29 Nov 2024 02:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0171814D2B9;
+	Fri, 29 Nov 2024 02:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EeJDpuy5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FYUwkBbt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D83422EE4
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 02:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE45D147C91;
+	Fri, 29 Nov 2024 02:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732845681; cv=none; b=hrRILrsUajlLAPY6QnQp2EHCTC4gIVls48tR+Y1coKn9aFOjZX0lQ7rstyAe5qG1FyPrTn7L4dKwodbQ2X14ohGQjppNrfYZnHno8oHsRPGZ0ajMuqyJ2AeBS9lK+eqFbXqKY+P8UnTmTtfVBIgtlEuN5HEMDlOEeWjG6j8Oxxk=
+	t=1732845991; cv=none; b=kXpcFpcWmomByCFv04XJ0jwFfPIUtfil9snci8HmDR3qUkjs4I/z7X0VoziU48tylg1+yES3m6eUsPMp/6NfyH4It1Nl3Dh4UtAaYNoq879MdFWsjMLcXuDOQXAngYjfkDMlZEnkufW5pk9mpmGjoCot2wd6XvNybTkvACfM2xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732845681; c=relaxed/simple;
-	bh=xXZFwynv6anzz67LCtvbnWIsKlnNImIWMTMGnxNcqk4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fNCTyikEN3jdgzpXl4oGT3f2KSpT8MUnBOh9iLcZjUyyEz++p9kF0MUN5SxO4YNa4LEjnA030yc1AvXvAnfEeCF1AbTM5f9q5mgFvoh1rhgywI3bh0PT7Fmec8Xdlq9UWxvGBG6hsPGC9DBEeZzuGKY/44fbthkiJlAs8gKn0DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EeJDpuy5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2275C4CECE;
-	Fri, 29 Nov 2024 02:01:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732845681;
-	bh=xXZFwynv6anzz67LCtvbnWIsKlnNImIWMTMGnxNcqk4=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=EeJDpuy5lFk7zngbyXmuE0X0gkbRfeoQsPLX9AJk9wdksa9gFhpstCKY3xFC/v3ve
-	 QC7TXK2r54R4TksjNm5HuTQZ2bGW2ZwRiqPB6pM/JxoXVrhSiSPsjzF4bw24XzN+VY
-	 iV17bH0fThNghNU0qT5XmQa+kJc0sJBRWnQPn3uObZUEoPvqHC4DGRVxAXRJvYwLxS
-	 lq8dV+kx9qQTYYAS4OCxfhke/OmNlklznD8GHjhdIFDVduztC4DgRMC4TQgBnou3jN
-	 DDvnfQYOa7IiPbp0rHNntjd1/+eHfwRKzZ5/icJLeXQGISp34mU8THj5pbeUnwQEBS
-	 OWNwQ+frZayPQ==
-Message-ID: <63a65be2-7ad9-4d65-8c3e-d872f83c011d@kernel.org>
-Date: Fri, 29 Nov 2024 10:01:17 +0800
+	s=arc-20240116; t=1732845991; c=relaxed/simple;
+	bh=D8ja1Iw+H3kZwlQOzzmwwQPWABet3e6gMOqHAK+BdDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j4942zmZwNCAn0+geZ4tLrdP94ic/18BUk1gXsPR3fs60BMOsVgFpAC9Rha03rTtzD7IdRD2+Me6QRdMA9UolPA0qtRS7aDubNHm2uonVXKfJwdTryf4LstpMlXKHA+gRLT9VDLeg9lBHYKIn+FE1oOzS949QhN/N8lxiH4mjYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FYUwkBbt; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732845989; x=1764381989;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=D8ja1Iw+H3kZwlQOzzmwwQPWABet3e6gMOqHAK+BdDE=;
+  b=FYUwkBbtpsm886BjaiD3BjeO1SxHTXZIXQYMkHdE0vD/uZwBGop/4PVY
+   osCBgviNhibDi0tUayqQ82w+hhbhxjb/wh8skKz68oX0reTM6VuhB52vz
+   Nu7ZIU5OJlEbKAP5ZD70Rz14p2qLxg1ICZwFYwahBRKsLy41MAp/ivggC
+   96ysa38atOS0tFgft6MHwWGTou7arE/chSNSCBZ+vmCsa4qh5N2yvIW8C
+   rNIVtc8kxnE3tBqGVa7WoiU/QAuhFjZGEQKsLxmIgpEoh8GI3nNok0nJR
+   yZ3hGmjDOJCMrWiOYN597gLDJhTS/62fHJbiLQY8OzOavRU+lv01ttz+M
+   Q==;
+X-CSE-ConnectionGUID: h4DZTRHwSDiu49ziHYA/sg==
+X-CSE-MsgGUID: a8IjqD9PRmmLSQDmqhLSTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="33012092"
+X-IronPort-AV: E=Sophos;i="6.12,194,1728975600"; 
+   d="scan'208";a="33012092"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 18:06:29 -0800
+X-CSE-ConnectionGUID: 737VIFStTkCk91M4TPAOuQ==
+X-CSE-MsgGUID: Oz9gknq7SHeyxoo0FiF+uQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,194,1728975600"; 
+   d="scan'208";a="92746021"
+Received: from allen-sbox.sh.intel.com ([10.239.159.30])
+  by orviesa007.jf.intel.com with ESMTP; 28 Nov 2024 18:06:26 -0800
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Yi Liu <yi.l.liu@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] iommu/vt-d: Remove cache tags before disabling ATS
+Date: Fri, 29 Nov 2024 10:05:06 +0800
+Message-ID: <20241129020506.576413-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: Add check for deleted inode
-To: Leo Stone <leocstone@gmail.com>, jaegeuk@kernel.org
-References: <20241124010459.23283-1-leocstone@gmail.com>
- <1652260c-7657-4f40-ac79-027666f512f0@kernel.org>
- <icjuhtz35zvp5j6zvgbubydbmirbsr4ceasgxr3rk333bj55dp@mp5yf532hd4i>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <icjuhtz35zvp5j6zvgbubydbmirbsr4ceasgxr3rk333bj55dp@mp5yf532hd4i>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/11/26 1:56, Leo Stone wrote:
-> On Mon, Nov 25, 2024 at 07:16:41PM +0800, Chao Yu wrote:
->>
->> I'm fine w/ this change, but I didn't get it, how did above commit introduce
->> this bug?
-> 
-> Hello Chao,
-> 
-> The commit from the bisect didn't exactly introduce this bug, since it
-> would still be possible to make a different image that does the exact
-> same thing in the older code.
-> 
-> This commit was blamed in the bisect because it changes the layout of
-> struct f2fs_inode:
-> 
->> @@ -271,6 +272,10 @@ struct f2fs_inode {
->> 			__le32 i_inode_checksum;/* inode meta checksum */
->> 			__le64 i_crtime;	/* creation time */
->> 			__le32 i_crtime_nsec;	/* creation time in nano scale */
->> +			__le64 i_compr_blocks;	/* # of compressed blocks */
->> +			__u8 i_compress_algorithm;	/* compress algorithm */
->> +			__u8 i_log_cluster_size;	/* log of cluster size */
->> +			__le16 i_padding;		/* padding */
->> 			__le32 i_extra_end[0];	/* for attribute size calculation */
->> 		} __packed;
->> 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
-> 
-> This changes F2FS_TOTAL_EXTRA_ATTR_SIZE, which allows the syzbot
-> reproducer's inode to pass the sanity check for corrupted i_extra_size.
-> Before this change, the inode gets rejected as corrupt:
-> 
->> [   62.794566][ T9662] F2FS-fs (loop0): sanity_check_inode: inode (ino=7) has corrupted i_extra_isize: 36, max: 24
+The current implementation removes cache tags after disabling ATS,
+leading to potential memory leaks and kernel crashes. Specifically,
+CACHE_TAG_DEVTLB type cache tags may still remain in the list even
+after the domain is freed, causing a use-after-free condition.
 
-Leo,
+This issue really shows up when multiple VFs from different PFs
+passed through to a single user-space process via vfio-pci. In such
+cases, the kernel may crash with kernel messages like:
 
-Ah, right, thanks for the explanation, anyway, can you please correct this
-"Fixes line"?
+ BUG: kernel NULL pointer dereference, address: 0000000000000014
+ PGD 19036a067 P4D 1940a3067 PUD 136c9b067 PMD 0
+ Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+ CPU: 74 UID: 0 PID: 3183 Comm: testCli Not tainted 6.11.9 #2
+ RIP: 0010:cache_tag_flush_range+0x9b/0x250
+ Call Trace:
+  <TASK>
+  ? __die+0x1f/0x60
+  ? page_fault_oops+0x163/0x590
+  ? exc_page_fault+0x72/0x190
+  ? asm_exc_page_fault+0x22/0x30
+  ? cache_tag_flush_range+0x9b/0x250
+  ? cache_tag_flush_range+0x5d/0x250
+  intel_iommu_tlb_sync+0x29/0x40
+  intel_iommu_unmap_pages+0xfe/0x160
+  __iommu_unmap+0xd8/0x1a0
+  vfio_unmap_unpin+0x182/0x340 [vfio_iommu_type1]
+  vfio_remove_dma+0x2a/0xb0 [vfio_iommu_type1]
+  vfio_iommu_type1_ioctl+0xafa/0x18e0 [vfio_iommu_type1]
 
-Thanks,
+Move cache_tag_unassign_domain() before iommu_disable_pci_caps() to fix
+it.
 
-> 
-> Thanks,
-> Leo
+Fixes: 3b1d9e2b2d68 ("iommu/vt-d: Add cache tag assignment interface")
+Cc: stable@vger.kernel.org
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/iommu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 7d0acb74d5a5..79e0da9eb626 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -3220,6 +3220,9 @@ void device_block_translation(struct device *dev)
+ 	struct intel_iommu *iommu = info->iommu;
+ 	unsigned long flags;
+ 
++	if (info->domain)
++		cache_tag_unassign_domain(info->domain, dev, IOMMU_NO_PASID);
++
+ 	iommu_disable_pci_caps(info);
+ 	if (!dev_is_real_dma_subdevice(dev)) {
+ 		if (sm_supported(iommu))
+@@ -3236,7 +3239,6 @@ void device_block_translation(struct device *dev)
+ 	list_del(&info->link);
+ 	spin_unlock_irqrestore(&info->domain->lock, flags);
+ 
+-	cache_tag_unassign_domain(info->domain, dev, IOMMU_NO_PASID);
+ 	domain_detach_iommu(info->domain, iommu);
+ 	info->domain = NULL;
+ }
+-- 
+2.43.0
 
 
