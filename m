@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-425603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E8E9DE791
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:30:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41566164406
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:30:47 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0594819D8A9;
-	Fri, 29 Nov 2024 13:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YZd0bUlE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wrWncmeL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79F39DE794
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:31:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3861990C1
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83ACEB21C4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:31:48 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E57E19E806;
+	Fri, 29 Nov 2024 13:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DtPrP9oR"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C302A1990C1;
+	Fri, 29 Nov 2024 13:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732887045; cv=none; b=peLf81A/1IamyJSJfem9qXy3w1lAf5lSPzJM/k+cQLAw7cwFvGb18XFEv0Ul/v+MBJQ3wtMFB/onCh91YcmK8R7gud7vcQmgOGSuvKQ61BNbhBchJIHZsbncxSBal2FxbfiOfHpJK9agzOn1SFBF4XllungUkXbw+PiD0kl543Q=
+	t=1732887101; cv=none; b=gjvFhrxl55cOSK2k26RFS5GdenVGd3IRR+lz9RUqX6Aw4MmJqbIvJb9HAuEWk+ckApP0KIFtCiDpKXhnyqTcmNmhz2Dr10vrzDX79yAcaaEF2a//1W6ITTSd4Jxa5WQ8ThBPwKuf56TlhyX5YvK5BraIwVddMNBuP+BJL0fIUTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732887045; c=relaxed/simple;
-	bh=FHdnGuZBTuKPq9x2/jt1fw8DN1Ik/TsNrC2qXay8KAw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BG/N3rrs3SSksLg0ytDdSSVVTx6o0Bl/76noVN100cZOW6DuIqs2tNFUuClnb9CpcYeQn8ffCZL87yw/1IT1pQRlmUzPrEASjo+41RApHftWnJYORvG7FpHhg/5kNB1Oxmei8smetQ+WgjD6dKVpsixCscwnYpxVEBiwGYgwyzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YZd0bUlE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wrWncmeL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732887041;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=icaSftmPoFs3oPqGohm7R/vQ0cSrUMEsdq65mpHvRVA=;
-	b=YZd0bUlE0xZWKejtIH/8b1Xqio5SfbdWK/5fXWh1rcU+HTZHZqztwv5kJcUBmq52ppdrJy
-	1Ep4+fruQcQWa6mXw/p8/wsLzsNObq5sVcv+kWT0aSkor/PqAIo/AF1SvX8kussOXip9jW
-	H6sdGyfghjxb6Y3ZPxDxq2Zsq4wbPAx6Rg7A9IX3NMquMO61hFmKPU+wHyFSZHsGZB4706
-	parfYH3VpxhtyxyRSUbXKOzFpsOPMQbyXJeDVpuYL/lQkIA/k1Nw2c5rfjJznTWNfjY1ca
-	JSyIKNKyfdTbY8dtmOcn45qcazynk3AfLKl/TLDh1aj50MMzlJU/wBAxGVRaEA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732887041;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=icaSftmPoFs3oPqGohm7R/vQ0cSrUMEsdq65mpHvRVA=;
-	b=wrWncmeLIabkTOlhwz7jViyBBp/tltQNLjqOmhFxdSu/hqrEOzPSlAZ4Wcir7LF0WMDQzx
-	JiqHMj25fRo9EECQ==
-To: Eliav Farber <farbere@amazon.com>, linux@armlinux.org.uk,
- catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
- npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
- maddy@linux.ibm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, ebiederm@xmission.com, akpm@linux-foundation.org,
- bhe@redhat.com, farbere@amazon.com, hbathini@linux.ibm.com,
- sourabhjain@linux.ibm.com, adityag@linux.ibm.com,
- songshuaishuai@tinylab.org, takakura@valinux.co.jp,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- kexec@lists.infradead.org, Marc Zyngier <maz@kernel.org>
-Cc: jonnyc@amazon.com
-Subject: Re: [PATCH v4 1/2] kexec: Consolidate
- machine_kexec_mask_interrupts() implementation
-In-Reply-To: <20241129113119.26669-2-farbere@amazon.com>
-References: <20241129113119.26669-1-farbere@amazon.com>
- <20241129113119.26669-2-farbere@amazon.com>
-Date: Fri, 29 Nov 2024 14:30:41 +0100
-Message-ID: <87zfliw4ji.ffs@tglx>
+	s=arc-20240116; t=1732887101; c=relaxed/simple;
+	bh=TVF56yUixt/gS2om0wEACFTPzCeFFlAZUBAhnjZhioA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KoGnHsq+xLQMo6XU2sCvBBQpJ58QczdaXr+lxQP6cp0gzle2W2Ny3hELQ5JssIRpSq7cltINccm0kwokmPR4xBLwXJelxze3ilq83iEYth3ay+OwbH/4Z8Qk/R6e+vEJ74+3nKfWQIEzBszvdw7RWIsN65HgunInSGrVmqeXnPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DtPrP9oR; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 168C140E0275;
+	Fri, 29 Nov 2024 13:31:30 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id QyzO6poWvbnK; Fri, 29 Nov 2024 13:31:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732887086; bh=1nB+GU9FO2NKW8BvfXaEwoGeBuQi6PQV1hY9JL2NLy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DtPrP9oRtajh/NuNxcL4t/dZCgldlAxiI4ndqEb6gXr9FIoQPC+I5cexnSZGVkDIv
+	 rh1l0cq80SukLFopBCv9n+SDKSpXFmrMcAleLzSum9irRQevK3hRNPJ+yfAeV1q2Kb
+	 7O+Kyy4w9KZ0dbeIR7ZVMBE0/haUpKi0PW79WasuUqIxBQXNkIS4GI18OhqfjdYedQ
+	 pXbCjBLmurjsvtAUYKDh2mAzABsgd1V1GxURQw1+I+aTHOJ/iJ+8tgN9lo6g6CGcfZ
+	 3k/Gk3wAnzJDqWjbp38SsrhvfPnFVgOYeBaWQRd1y3JGopIqeXnTVmtLOgEt+OEfl4
+	 Qm2A00Y4TMhzbs9Txy7eyY1ywQEn14Tydph3XB6tukg27goVk8ldKcPhhHLKAPqXlx
+	 /IaaMXaIj+rqdyPdEtib+4MpXjKkLz1WAd+FV8+Q00jlxXHptysaVfkrFEKIi2/m+3
+	 ADe7Xf/7zzhtl3eewwVIBfLInPeq94ayoxHD4Y8fBKlcgll+V477vL7u3oiL0eb6a7
+	 qDPMlGGNVxel1YZ83kAN12RF0Spv6h7dWj8YQi54FXikKq93T2ZnGpidJozoSSIR7d
+	 1evDTMyKoh1WLGkg6tAVgVpSAxeGnc8H7GG15PiUtzv4ogg8RGYuoXFCQT0+NZCp1O
+	 xLAC9kUtvYH2ALilTkEQJM2Q=
+Received: from zn.tnic (p200300ea9736a103329c23fffEa6A903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a103:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 084ED40E0200;
+	Fri, 29 Nov 2024 13:31:00 +0000 (UTC)
+Date: Fri, 29 Nov 2024 14:30:54 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, puwen@hygon.cn, seanjc@google.com,
+	kim.phillips@amd.com, jmattson@google.com, babu.moger@amd.com,
+	peterz@infradead.org, rick.p.edgecombe@intel.com, brgerst@gmail.com,
+	ashok.raj@intel.com, mjguzik@gmail.com, jpoimboe@kernel.org,
+	nik.borisov@suse.com, aik@amd.com, vegard.nossum@oracle.com,
+	daniel.sneddon@linux.intel.com, acdunlap@google.com,
+	Erwan Velu <erwanaliasr1@gmail.com>, pavel@denx.de
+Subject: Re: [PATCH AUTOSEL 5.15 11/12] x86/barrier: Do not serialize MSR
+ accesses on AMD
+Message-ID: <20241129133054.GCZ0nCDrwBN0wpjP4t@fat_crate.local>
+References: <20240115232718.209642-1-sashal@kernel.org>
+ <20240115232718.209642-11-sashal@kernel.org>
+ <20241128115924.GAZ0hbHKsbtCixVqAe@fat_crate.local>
+ <Z0iRzPpGvpeYzA4H@sashalap>
+ <20241128164310.GCZ0idnhjpAV6wFWm6@fat_crate.local>
+ <Z0kJHvesUl6xJkS7@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z0kJHvesUl6xJkS7@sashalap>
 
-On Fri, Nov 29 2024 at 11:31, Eliav Farber wrote:
-> Move the machine_kexec_mask_interrupts function to a common location in
-> kernel/kexec_core.c, removing duplicate implementations from architecture
-> specific files (arch/arm, arch/arm64, arch/powerpc, and arch/riscv).
+On Thu, Nov 28, 2024 at 07:21:50PM -0500, Sasha Levin wrote:
+> Suggestions welcome... I don't really insist on a massive flood and was
+> mostly following what was the convention when I started doing this work.
+> 
+> I thought about cutting it down to one mail per commit, but OTOH I had
+> folks complain often enough that they missed a mail or that it wasn't
+> obvious enough.
 
-Can you please move this into kernel/irq/kexec.c?
+I don't know. It is a lot of mail and I doubt people look at most of them but
+it's not like cutting down the mails from stable will alleviate the general
+firehose drinking situation so...
 
-It's pure interrupt core internal code and there is no point to make
-core internal functions visible to random other code just because.
+> It might be all those thanksgiving drinks, but I can't find it in
+> 5.15... I see it was part of 6.7.6 and 6.6.18, but nothing older.
 
-> +void machine_kexec_mask_interrupts(void)
-> +{
-> +	unsigned int i;
-> +	struct irq_desc *desc;
+Sorry, I meant 6.6.
 
-	struct irq_desc *desc;
-        unsigned int i;
+> The stable kernel rules allow for "notable" performance fixes, and we
+> already added it to 6.6.
 
-please
+Frankly, I don't have anything smarter than "well, it needs to be decided on
+a case-by-case basis." As Erwan confirms, it really brings perf improvements
+for their use case. So I guess that's a reason good enough to backport it
+everywhere.
 
-> +	for_each_irq_desc(i, desc) {
-> +		struct irq_chip *chip;
-> +		int check_eoi = 1;
-> +
-> +		chip = irq_desc_get_chip(desc);
-> +		if (!chip)
-> +			continue;
-> +
-> +		if (IS_ENABLED(CONFIG_ARM64)) {
+But cutting a general rule about such patches...? Nope, I can't think of any
+good one.
 
-This should not be CONFIG_ARM64. Add something like:
+> No objection to adding it to older kernels...
+> 
+> Happy to do it after the current round of releases goes out.
 
-config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
-	bool
+Thanks.
 
-and select this from ARM64?
+-- 
+Regards/Gruss,
+    Boris.
 
-> +			/*
-> +			 * First try to remove the active state. If this fails, try to EOI the
-> +			 * interrupt.
-
-This comment does not really explain what this is about. I know you
-copied it from the ARM64 implementation, but it should explain what this
-actually means. Something like:
-
-         First try to remove the active state from an interrupt which is
-         forwarded to a VM. If the interrupt is not forwarded, try to
-         EOI the interrupt.
-
-or something like that.
-
-> +			 */
-> +			check_eoi = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE, false);
-
-Looking deeper. This function actually cannot be called from this
-context. It does:
-
-          irq_get_desc_buslock(irq, &flags, 0);
-
-which means for any interrupt which has an actual buslock implementation
-it will end up in a sleepable function and deadlock in the worst case.
-
-Marc?
-
-> +		}
-> +
-> +		if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
-> +			chip->irq_eoi(&desc->irq_data);
-
-Thanks,
-
-        tglx
+https://people.kernel.org/tglx/notes-about-netiquette
 
