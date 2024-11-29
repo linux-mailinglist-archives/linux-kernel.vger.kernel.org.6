@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-425859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650E49DEBF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:12:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D705A9DEBF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2A5AB21B48
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:12:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31E0CB21E44
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0531A0BC5;
-	Fri, 29 Nov 2024 18:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5A71A2543;
+	Fri, 29 Nov 2024 18:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNdvwgpO"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NK4Ql+DB"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A4C1A0B13;
-	Fri, 29 Nov 2024 18:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE2119F423;
+	Fri, 29 Nov 2024 18:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732903957; cv=none; b=jy0g8grycV3l+AwpMgfQsK+1OKrc2BeTtPA+hEBtkWUeL53YZhtKwAsNPyxDwYiS14xwGEzKQaHsbcKGstgJtJFCqQ2uzhpBxEZWcLMeycLuI4wruhuN3evPLJUMDgTyec7KPgBnbqCQxNiZBswNO+3/Revli50o58WXsmPwsNc=
+	t=1732903959; cv=none; b=nCoPIWam6Trbbj/kG5YqkIgPGoCzQI1tvpF3e1eR35544+fd3Nd2c9MzrJivCDIdZfCBeRABFGJ8B7wmfGmtwwIRbaVDTbbz1BwZeyXSoJyx5PY+DCNeimIHHihXCyKhV/cv7Osb4MBHzWVCPACyqNPPtAb4vSXYn0dvdqhV1/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732903957; c=relaxed/simple;
-	bh=hFqaZCuzLCN/kjh0t2Lm5R741ch19PL2+BxpRQEIaLw=;
+	s=arc-20240116; t=1732903959; c=relaxed/simple;
+	bh=65VjcgJ6W/nc4vLNB1ABhHSI9TMVRmLc7Ca4S3eBu00=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DmmCwB62eJ2i5klbt+Q2Xe2f34pqOPNzHwVr8EvyjOssA6wSdrG8TsiEhYC9Y8aAhPV+sOpX+qJwVQWc2o8id3c1sV4Mo0DECTeGhLK8SgrjOSO4gaxQmGZO/7afXIek5UXIeQquD6wO8cvwiWlNTSUk89Run2P14da+rsKjtoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNdvwgpO; arc=none smtp.client-ip=209.85.216.49
+	 MIME-Version; b=F7VvjFe6JoMJH0qIeRw6xvmTd0aNLjYPc8IfCASwW8kjzsZhB5wCZaMhx07epq0artwaYByGF2b4R57Xb1OEyKdR7RuWLi5AX3lHKe+aYfU265SEy7Ikr503IFaum/eoUOXr6T8G/JF2rOKZ4c2jaF4W3R36uj7ZqCsCaBVyj7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NK4Ql+DB; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e9e377aeadso1760553a91.1;
-        Fri, 29 Nov 2024 10:12:34 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21260209c68so21857405ad.0;
+        Fri, 29 Nov 2024 10:12:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732903954; x=1733508754; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732903957; x=1733508757; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a9SB3AMYPBQXj0bhHp6Yep5+PKQx14JSqL2FKuHdcys=;
-        b=kNdvwgpOeozmh7ofVuoM1foWiGdrip8bSqj0Vudyc/26rSP5Ibj75P56gnCWbnBPSs
-         IH5BXu7+yC7kjXUpu647lTSrDQDFDiyxknyOURSgn3B3u4PrZ1AvrXUyBxla/otK17A6
-         PlQa1foKnBq5TJgqkDStnUYnhOlxlTBhaYYYWu/eMmj1E9jYTMamqM8/8ASffFq2PNTL
-         NirvTuXTv41BQHiAaKkWVA7ImcSu34w2uJcplPVPJV2SACErs/nN/cy/Mm32ol/gTfOt
-         LdrdZpSdKtxFMnpiwtJLhqevcsmn6GqbaHQRRPXRoQTZu5PVGBPE3TnjFBHe6eJsw0+8
-         23pQ==
+        bh=j36qtzndjNfXOAp4ucPUgDYXmWkpix8KUSuouNFEhiE=;
+        b=NK4Ql+DBqJmkP7OQhOvIo6yw8Tb3CDaAsEgLbzH6ONdGV1uGpcf6NZZGfZIFqip0vf
+         UA1xMKv8wkS7DGP7GKq7UwaGoYkglDu/TgwqjAWn6qCPZKzWrttGcGUxkSYfVUlDYgd3
+         C+ZubdKQ3LyUKa5GyFRLgpsjEcOtn7lQoft4SrRYKYVGo4N2RqHQ401X0KYr+ZbhWAFu
+         XxN4aXamDyfewXJZv4ekzowj4KGPFqrxFh67lItuCqoiQt+zOTBj0I5dANyzijIKLwKq
+         voWwAvK9mYI1B1nTjSA4mICkLFtBi0/DNt1BwmZ0i/DRueJhWEJ6uI/8wAeLFMBfvdfa
+         F82g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732903954; x=1733508754;
+        d=1e100.net; s=20230601; t=1732903957; x=1733508757;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a9SB3AMYPBQXj0bhHp6Yep5+PKQx14JSqL2FKuHdcys=;
-        b=btj/mxzv0uWIlmra2VMCSY419k2UYqQWPrGfznUDPlG/chAA3dS4Obo4I0OKkpt1d/
-         c1znufiyXD1dL5tSSsp8IMVMUmBW22Rfz7fgT2qjS9dGM/UKsHqkiSy2HiwGO0sTZCC1
-         0sbHI+gMDDHstlUBuF/lpogbxTxiYydmuqv2fDJ7BR7+ec7ywHH2kDD2BrAWBUFXauVk
-         6RDTpgoHqlq96OFZLGn99hpDVG9dw1Cdh3JWoJ79KS7oICYKGvL4T3uySdqazVTik1aN
-         zb+KFfk93rBAllwNFBajfkSugedg2LugfWGqalZV8oPfV8znY+MEzTgRtT5HnpGCiRbD
-         8ibQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUD8gGpM2l4ZbpDLjTctT9j5dlHbIlMEGIjlTbwh3BPft2+yzoZdIeaMZPIV4AvhYpSLIT6pjTE99AxDNh+@vger.kernel.org, AJvYcCVfZk7wGNniu0632V0uJPon1Y3UYfRyIbYwtQD1C0yemlXZ4O8kW35dZY08Apolo7DM0XtI+nAaSDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhmbus3TWicJniPcRK5gSRN+Q6utilK362h4jwlXj9jf+9Hl9s
-	fqYs/YNU7qxAuanuJRmTsE1kNJr3N+IzhUtnomkhUHwKdTd7vSzB
-X-Gm-Gg: ASbGncuK/Z8/FJvUXIGtw1+XULMqgGRltOJ818VMf2S4Pmzzisb3zEJPdrQPB1X5/dS
-	zd/vRN4niGKUZQrYK3iWhdSdJh/9v1gZ8qOj4jRQO2eafeUB64MltQcxleKn6wkUN/hd3hoflgk
-	mkAdVARYzmKEN308Gtmn7pO+KNjP4rl0Prd9GP/yDyNg9tIYCc8wegYmXKjKcWgPXFjBlvL+48T
-	fGOS+qVAFS8yyoMlcYNu65a7fYb3cpAt8R4rZ3F6p9ywakdqvjdzXE+2HqTt1rOMP3JLDD/w76T
-	0mqM
-X-Google-Smtp-Source: AGHT+IF9+ka++uUfxI6HLpg+2EhSqcfv9jDWHZ7yUXX1CkBbTaU+ULP5gNn47y3LwHnLdC75bYUmNg==
-X-Received: by 2002:a17:90b:4c4d:b0:2ea:6d98:b499 with SMTP id 98e67ed59e1d1-2ee097e5252mr13802967a91.36.1732903954196;
-        Fri, 29 Nov 2024 10:12:34 -0800 (PST)
+        bh=j36qtzndjNfXOAp4ucPUgDYXmWkpix8KUSuouNFEhiE=;
+        b=TUDAmchpEBunyBoWw+LByqap3OEuubIkJGITyYJW3m4xzEu73qs4kciohqvjAP/KNo
+         2la1fwqWNTuWrKeRu8Af/PgvWP2vDR9ZrZfr5peDruZbfNWMmJKRnCFBTkW7dV8JBAOl
+         TEBIoDDXdqHB+JFJtLYb8uPY0OAu7kBNvAL+14B6rrWAflLWXPlgs/b7ZAI2I+0d51QL
+         4Tev/kj13i+rRgQsBXYyXKZJ0grzMswCfOleBf51na4Vs9NeCHF2qnkJh5S6GnNl4rG6
+         GqrktIY1MotydhalzzQ0QdvXS0aLYIxbP9nGF3M+SXkglRUzNgowJffmITQp+PYOyuQh
+         m1YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkdxUW/m7Ik8x7/BvzXU2Z9hyShQS/wd9P3kBc1wIbiPWx02Abkw/eL5AltzBIQrl6HmC3n24G+BE=@vger.kernel.org, AJvYcCWuLdzbgz9j0RPuuH+yWhz0d/kooetn4g6PHjAApBGNCtQAAxNiESnxO8H5XezQnYMn5CYMZaUXVXr+oVyn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzGM83kedOB81tfc9Ixq8FyEjtDAh2oRQpvDyD04QRar0OngM1
+	OCoI5bJIN1pFqECiSf5tY5h6Gb1RSSyVMKzrDd1Q3ZfLLuA/VIvx
+X-Gm-Gg: ASbGnctaEz3YlVnlbp2fW+Pe31H7TZj2izbQJxJOmwY3qWiXkijgDj/rI+zum4S/9Mm
+	olvaOhNIlUoERjF+52GW4SIRzhbj0mMBRrHgl5KkdmlsCTOrUMx6KJkQQnj1X2Cl6s44Zqn39wi
+	m+JMFNHbUuNbRF9GK5SN2GMivUDS3d4BuNh16mWbPd/8PHgwN1nutN6sNa9gdJqhxbomDptznyl
+	lXEpGdhMNcw9wmK7nhnrTsmytaYR+k8+wOCMxojHj0b9gvviEE+N3Q5Ptiq/K4QahLazq1FHrOi
+	KM9w
+X-Google-Smtp-Source: AGHT+IGfWF1zsFEaT/OEkL2tM23xJkcNnTjYHquCHSMTXSLbO2BgDhFqVHJxzAIQe2wbP9ZIzC7ZHg==
+X-Received: by 2002:a17:902:dac4:b0:20b:6c1e:1e13 with SMTP id d9443c01a7336-2151d884f23mr105771405ad.23.1732903956938;
+        Fri, 29 Nov 2024 10:12:36 -0800 (PST)
 Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541761474sm3760595b3a.32.2024.11.29.10.12.32
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541761474sm3760595b3a.32.2024.11.29.10.12.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 10:12:33 -0800 (PST)
+        Fri, 29 Nov 2024 10:12:36 -0800 (PST)
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 To: akpm@linux-foundation.org,
 	corbet@lwn.net
@@ -79,9 +79,9 @@ Cc: geert@linux-m68k.org,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH 1/4] lib min_heap: Improve type safety in min_heap macros by using container_of
-Date: Sat, 30 Nov 2024 02:12:19 +0800
-Message-Id: <20241129181222.646855-2-visitorckw@gmail.com>
+Subject: [PATCH 2/4] lib/test_min_heap: Use inline min heap variants to reduce attack vector
+Date: Sat, 30 Nov 2024 02:12:20 +0800
+Message-Id: <20241129181222.646855-3-visitorckw@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241129181222.646855-1-visitorckw@gmail.com>
 References: <20241129181222.646855-1-visitorckw@gmail.com>
@@ -93,173 +93,152 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The current implementation of min_heap macros uses explicit casting to
-min_heap_char *, which prevents the compiler from detecting incorrect
-pointer types. This can lead to errors if non-min_heap pointers are
-passed inadvertently.
+To address concerns about increasing the attack vector, remove the
+select MIN_HEAP dependency from TEST_MIN_HEAP in Kconfig.debug.
 
-To enhance safety, replace all explicit casts to min_heap_char * with
-the use of container_of(&(_heap)->nr, min_heap_char, nr). This approach
-ensures that the _heap parameter is indeed a min_heap_char-compatible
-structure, allowing the compiler to catch improper usages.
+Additionally, all min heap test function calls in lib/test_min_heap.c
+are replaced with their inline variants. By exclusively using inline
+variants, we eliminate the need to enable CONFIG_MIN_HEAP for testing
+purposes.
 
 Link: https://lore.kernel.org/lkml/CAMuHMdVO5DPuD9HYWBFqKDHphx7+0BEhreUxtVC40A=8p6VAhQ@mail.gmail.com
 Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 ---
- include/linux/min_heap.h | 61 +++++++++++++++++++++++-----------------
- 1 file changed, 35 insertions(+), 26 deletions(-)
+ lib/Kconfig.debug   |  1 -
+ lib/test_min_heap.c | 30 +++++++++++++++---------------
+ 2 files changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/min_heap.h b/include/linux/min_heap.h
-index e781727c8916..456cfbc1b8f5 100644
---- a/include/linux/min_heap.h
-+++ b/include/linux/min_heap.h
-@@ -218,7 +218,7 @@ void __min_heap_init_inline(min_heap_char *heap, void *data, int size)
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index f340017585c5..83a25c3220c9 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2269,7 +2269,6 @@ config TEST_LIST_SORT
+ config TEST_MIN_HEAP
+ 	tristate "Min heap test"
+ 	depends on DEBUG_KERNEL || m
+-	select MIN_HEAP
+ 	help
+ 	  Enable this to turn on min heap function tests. This test is
+ 	  executed only once during system boot (so affects only boot time),
+diff --git a/lib/test_min_heap.c b/lib/test_min_heap.c
+index e6fbb798558b..a9c4a74d3898 100644
+--- a/lib/test_min_heap.c
++++ b/lib/test_min_heap.c
+@@ -32,7 +32,7 @@ static __init int pop_verify_heap(bool min_heap,
+ 	int last;
+ 
+ 	last = values[0];
+-	min_heap_pop(heap, funcs, NULL);
++	min_heap_pop_inline(heap, funcs, NULL);
+ 	while (heap->nr > 0) {
+ 		if (min_heap) {
+ 			if (last > values[0]) {
+@@ -48,7 +48,7 @@ static __init int pop_verify_heap(bool min_heap,
+ 			}
+ 		}
+ 		last = values[0];
+-		min_heap_pop(heap, funcs, NULL);
++		min_heap_pop_inline(heap, funcs, NULL);
+ 	}
+ 	return err;
  }
+@@ -69,7 +69,7 @@ static __init int test_heapify_all(bool min_heap)
+ 	int i, err;
  
- #define min_heap_init_inline(_heap, _data, _size)	\
--	__min_heap_init_inline((min_heap_char *)_heap, _data, _size)
-+	__min_heap_init_inline(container_of(&(_heap)->nr, min_heap_char, nr), _data, _size)
+ 	/* Test with known set of values. */
+-	min_heapify_all(&heap, &funcs, NULL);
++	min_heapify_all_inline(&heap, &funcs, NULL);
+ 	err = pop_verify_heap(min_heap, &heap, &funcs);
  
- /* Get the minimum element from the heap. */
- static __always_inline
-@@ -228,7 +228,8 @@ void *__min_heap_peek_inline(struct min_heap_char *heap)
- }
  
- #define min_heap_peek_inline(_heap)	\
--	(__minheap_cast(_heap) __min_heap_peek_inline((min_heap_char *)_heap))
-+	(__minheap_cast(_heap)	\
-+	 __min_heap_peek_inline(container_of(&(_heap)->nr, min_heap_char, nr)))
+@@ -78,7 +78,7 @@ static __init int test_heapify_all(bool min_heap)
+ 	for (i = 0; i < heap.nr; i++)
+ 		values[i] = get_random_u32();
  
- /* Check if the heap is full. */
- static __always_inline
-@@ -238,7 +239,7 @@ bool __min_heap_full_inline(min_heap_char *heap)
- }
+-	min_heapify_all(&heap, &funcs, NULL);
++	min_heapify_all_inline(&heap, &funcs, NULL);
+ 	err += pop_verify_heap(min_heap, &heap, &funcs);
  
- #define min_heap_full_inline(_heap)	\
--	__min_heap_full_inline((min_heap_char *)_heap)
-+	__min_heap_full_inline(container_of(&(_heap)->nr, min_heap_char, nr))
+ 	return err;
+@@ -102,14 +102,14 @@ static __init int test_heap_push(bool min_heap)
  
- /* Sift the element at pos down the heap. */
- static __always_inline
-@@ -277,8 +278,8 @@ void __min_heap_sift_down_inline(min_heap_char *heap, int pos, size_t elem_size,
- }
+ 	/* Test with known set of values copied from data. */
+ 	for (i = 0; i < ARRAY_SIZE(data); i++)
+-		min_heap_push(&heap, &data[i], &funcs, NULL);
++		min_heap_push_inline(&heap, &data[i], &funcs, NULL);
  
- #define min_heap_sift_down_inline(_heap, _pos, _func, _args)	\
--	__min_heap_sift_down_inline((min_heap_char *)_heap, _pos, __minheap_obj_size(_heap),	\
--				    _func, _args)
-+	__min_heap_sift_down_inline(container_of(&(_heap)->nr, min_heap_char, nr), _pos,	\
-+				    __minheap_obj_size(_heap), _func, _args)
+ 	err = pop_verify_heap(min_heap, &heap, &funcs);
  
- /* Sift up ith element from the heap, O(log2(nr)). */
- static __always_inline
-@@ -304,8 +305,8 @@ void __min_heap_sift_up_inline(min_heap_char *heap, size_t elem_size, size_t idx
- }
+ 	/* Test with randomly generated values. */
+ 	while (heap.nr < heap.size) {
+ 		temp = get_random_u32();
+-		min_heap_push(&heap, &temp, &funcs, NULL);
++		min_heap_push_inline(&heap, &temp, &funcs, NULL);
+ 	}
+ 	err += pop_verify_heap(min_heap, &heap, &funcs);
  
- #define min_heap_sift_up_inline(_heap, _idx, _func, _args)	\
--	__min_heap_sift_up_inline((min_heap_char *)_heap, __minheap_obj_size(_heap), _idx,	\
--				  _func, _args)
-+	__min_heap_sift_up_inline(container_of(&(_heap)->nr, min_heap_char, nr),	\
-+				  __minheap_obj_size(_heap), _idx, _func, _args)
+@@ -135,22 +135,22 @@ static __init int test_heap_pop_push(bool min_heap)
+ 	/* Fill values with data to pop and replace. */
+ 	temp = min_heap ? 0x80000000 : 0x7FFFFFFF;
+ 	for (i = 0; i < ARRAY_SIZE(data); i++)
+-		min_heap_push(&heap, &temp, &funcs, NULL);
++		min_heap_push_inline(&heap, &temp, &funcs, NULL);
  
- /* Floyd's approach to heapification that is O(nr). */
- static __always_inline
-@@ -319,7 +320,8 @@ void __min_heapify_all_inline(min_heap_char *heap, size_t elem_size,
- }
+ 	/* Test with known set of values copied from data. */
+ 	for (i = 0; i < ARRAY_SIZE(data); i++)
+-		min_heap_pop_push(&heap, &data[i], &funcs, NULL);
++		min_heap_pop_push_inline(&heap, &data[i], &funcs, NULL);
  
- #define min_heapify_all_inline(_heap, _func, _args)	\
--	__min_heapify_all_inline((min_heap_char *)_heap, __minheap_obj_size(_heap), _func, _args)
-+	__min_heapify_all_inline(container_of(&(_heap)->nr, min_heap_char, nr),	\
-+				 __minheap_obj_size(_heap), _func, _args)
+ 	err = pop_verify_heap(min_heap, &heap, &funcs);
  
- /* Remove minimum element from the heap, O(log2(nr)). */
- static __always_inline
-@@ -340,7 +342,8 @@ bool __min_heap_pop_inline(min_heap_char *heap, size_t elem_size,
- }
+ 	heap.nr = 0;
+ 	for (i = 0; i < ARRAY_SIZE(data); i++)
+-		min_heap_push(&heap, &temp, &funcs, NULL);
++		min_heap_push_inline(&heap, &temp, &funcs, NULL);
  
- #define min_heap_pop_inline(_heap, _func, _args)	\
--	__min_heap_pop_inline((min_heap_char *)_heap, __minheap_obj_size(_heap), _func, _args)
-+	__min_heap_pop_inline(container_of(&(_heap)->nr, min_heap_char, nr),	\
-+			      __minheap_obj_size(_heap), _func, _args)
+ 	/* Test with randomly generated values. */
+ 	for (i = 0; i < ARRAY_SIZE(data); i++) {
+ 		temp = get_random_u32();
+-		min_heap_pop_push(&heap, &temp, &funcs, NULL);
++		min_heap_pop_push_inline(&heap, &temp, &funcs, NULL);
+ 	}
+ 	err += pop_verify_heap(min_heap, &heap, &funcs);
  
- /*
-  * Remove the minimum element and then push the given element. The
-@@ -356,8 +359,8 @@ void __min_heap_pop_push_inline(min_heap_char *heap, const void *element, size_t
- }
+@@ -163,7 +163,7 @@ static __init int test_heap_del(bool min_heap)
+ 			 -3, -1, -2, -4, 0x8000000, 0x7FFFFFF };
+ 	struct min_heap_test heap;
  
- #define min_heap_pop_push_inline(_heap, _element, _func, _args)	\
--	__min_heap_pop_push_inline((min_heap_char *)_heap, _element, __minheap_obj_size(_heap),	\
--				   _func, _args)
-+	__min_heap_pop_push_inline(container_of(&(_heap)->nr, min_heap_char, nr), _element,	\
-+				   __minheap_obj_size(_heap), _func, _args)
+-	min_heap_init(&heap, values, ARRAY_SIZE(values));
++	min_heap_init_inline(&heap, values, ARRAY_SIZE(values));
+ 	heap.nr = ARRAY_SIZE(values);
+ 	struct min_heap_callbacks funcs = {
+ 		.less = min_heap ? less_than : greater_than,
+@@ -172,9 +172,9 @@ static __init int test_heap_del(bool min_heap)
+ 	int i, err;
  
- /* Push an element on to the heap, O(log2(nr)). */
- static __always_inline
-@@ -382,8 +385,8 @@ bool __min_heap_push_inline(min_heap_char *heap, const void *element, size_t ele
- }
+ 	/* Test with known set of values. */
+-	min_heapify_all(&heap, &funcs, NULL);
++	min_heapify_all_inline(&heap, &funcs, NULL);
+ 	for (i = 0; i < ARRAY_SIZE(values) / 2; i++)
+-		min_heap_del(&heap, get_random_u32() % heap.nr, &funcs, NULL);
++		min_heap_del_inline(&heap, get_random_u32() % heap.nr, &funcs, NULL);
+ 	err = pop_verify_heap(min_heap, &heap, &funcs);
  
- #define min_heap_push_inline(_heap, _element, _func, _args)	\
--	__min_heap_push_inline((min_heap_char *)_heap, _element, __minheap_obj_size(_heap),	\
--			       _func, _args)
-+	__min_heap_push_inline(container_of(&(_heap)->nr, min_heap_char, nr), _element,	\
-+					    __minheap_obj_size(_heap), _func, _args)
  
- /* Remove ith element from the heap, O(log2(nr)). */
- static __always_inline
-@@ -411,8 +414,8 @@ bool __min_heap_del_inline(min_heap_char *heap, size_t elem_size, size_t idx,
- }
+@@ -182,10 +182,10 @@ static __init int test_heap_del(bool min_heap)
+ 	heap.nr = ARRAY_SIZE(values);
+ 	for (i = 0; i < heap.nr; i++)
+ 		values[i] = get_random_u32();
+-	min_heapify_all(&heap, &funcs, NULL);
++	min_heapify_all_inline(&heap, &funcs, NULL);
  
- #define min_heap_del_inline(_heap, _idx, _func, _args)	\
--	__min_heap_del_inline((min_heap_char *)_heap, __minheap_obj_size(_heap), _idx,	\
--			      _func, _args)
-+	__min_heap_del_inline(container_of(&(_heap)->nr, min_heap_char, nr),	\
-+			      __minheap_obj_size(_heap), _idx, _func, _args)
+ 	for (i = 0; i < ARRAY_SIZE(values) / 2; i++)
+-		min_heap_del(&heap, get_random_u32() % heap.nr, &funcs, NULL);
++		min_heap_del_inline(&heap, get_random_u32() % heap.nr, &funcs, NULL);
+ 	err += pop_verify_heap(min_heap, &heap, &funcs);
  
- void __min_heap_init(min_heap_char *heap, void *data, int size);
- void *__min_heap_peek(struct min_heap_char *heap);
-@@ -433,25 +436,31 @@ bool __min_heap_del(min_heap_char *heap, size_t elem_size, size_t idx,
- 		    const struct min_heap_callbacks *func, void *args);
- 
- #define min_heap_init(_heap, _data, _size)	\
--	__min_heap_init((min_heap_char *)_heap, _data, _size)
-+	__min_heap_init(container_of(&(_heap)->nr, min_heap_char, nr), _data, _size)
- #define min_heap_peek(_heap)	\
--	(__minheap_cast(_heap) __min_heap_peek((min_heap_char *)_heap))
-+	(__minheap_cast(_heap) __min_heap_peek(container_of(&(_heap)->nr, min_heap_char, nr)))
- #define min_heap_full(_heap)	\
--	__min_heap_full((min_heap_char *)_heap)
-+	__min_heap_full(container_of(&(_heap)->nr, min_heap_char, nr))
- #define min_heap_sift_down(_heap, _pos, _func, _args)	\
--	__min_heap_sift_down((min_heap_char *)_heap, _pos, __minheap_obj_size(_heap), _func, _args)
-+	__min_heap_sift_down(container_of(&(_heap)->nr, min_heap_char, nr), _pos,	\
-+			     __minheap_obj_size(_heap), _func, _args)
- #define min_heap_sift_up(_heap, _idx, _func, _args)	\
--	__min_heap_sift_up((min_heap_char *)_heap, __minheap_obj_size(_heap), _idx, _func, _args)
-+	__min_heap_sift_up(container_of(&(_heap)->nr, min_heap_char, nr),	\
-+			   __minheap_obj_size(_heap), _idx, _func, _args)
- #define min_heapify_all(_heap, _func, _args)	\
--	__min_heapify_all((min_heap_char *)_heap, __minheap_obj_size(_heap), _func, _args)
-+	__min_heapify_all(container_of(&(_heap)->nr, min_heap_char, nr),	\
-+			  __minheap_obj_size(_heap), _func, _args)
- #define min_heap_pop(_heap, _func, _args)	\
--	__min_heap_pop((min_heap_char *)_heap, __minheap_obj_size(_heap), _func, _args)
-+	__min_heap_pop(container_of(&(_heap)->nr, min_heap_char, nr),	\
-+		       __minheap_obj_size(_heap), _func, _args)
- #define min_heap_pop_push(_heap, _element, _func, _args)	\
--	__min_heap_pop_push((min_heap_char *)_heap, _element, __minheap_obj_size(_heap),	\
--			    _func, _args)
-+	__min_heap_pop_push(container_of(&(_heap)->nr, min_heap_char, nr), _element,	\
-+			    __minheap_obj_size(_heap), _func, _args)
- #define min_heap_push(_heap, _element, _func, _args)	\
--	__min_heap_push((min_heap_char *)_heap, _element, __minheap_obj_size(_heap), _func, _args)
-+	__min_heap_push(container_of(&(_heap)->nr, min_heap_char, nr), _element,	\
-+			__minheap_obj_size(_heap), _func, _args)
- #define min_heap_del(_heap, _idx, _func, _args)	\
--	__min_heap_del((min_heap_char *)_heap, __minheap_obj_size(_heap), _idx, _func, _args)
-+	__min_heap_del(container_of(&(_heap)->nr, min_heap_char, nr),	\
-+		       __minheap_obj_size(_heap), _idx, _func, _args)
- 
- #endif /* _LINUX_MIN_HEAP_H */
+ 	return err;
 -- 
 2.34.1
 
