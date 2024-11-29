@@ -1,94 +1,79 @@
-Return-Path: <linux-kernel+bounces-425483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0EA39DC2B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:19:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE579DC2BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:20:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADAAB1635B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF6828132B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA4F1993B4;
-	Fri, 29 Nov 2024 11:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC4719994F;
+	Fri, 29 Nov 2024 11:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zCFNZLZZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="u+rlv321";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zCFNZLZZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="u+rlv321"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kkGOZng4"
+Received: from mail-lj1-f195.google.com (mail-lj1-f195.google.com [209.85.208.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40291586C8
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CAD19922A
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732879188; cv=none; b=UIgxixQMI/jtEmYpTwuxR6uzVNsQtL4zHEmNIIOMm2oSFSM8s9gPHdpL8AwCOWx3LKCAXNVtbCb5f8xhb5joXHnWYVUYxnL+8BmnuTGsMwpGFnbnlbAvRP0l12vLIot5+PCwFiPS0uoJ+UOBJiyhFmab3PlMSj2oHf5Kf3PBV9M=
+	t=1732879240; cv=none; b=KEu/xEDLGXbQ2TZRr1cOL/ii2PBqg6x7D4pte6PWstJhk2NPR9yZhs1yTCuXQYYOf4IovFTWWyB0kkX20qxTXGeNWgWeBGAPgymLNzHmgtE48qaVfngrnQe14mnttwIqLyt7S+QDutElL1zONl7QfmUXGfqFKEsql3xnhVWc7uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732879188; c=relaxed/simple;
-	bh=6AJQyHfuQbPNsE8C0ZMFTxZMTxPqQ5yQNda70pagKYU=;
+	s=arc-20240116; t=1732879240; c=relaxed/simple;
+	bh=QiPALT6HvBmOInux1rl+mRvBSruP2GPb88EaCDzQodg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CadAGSWZ8F2tHSCmzMDkVrap4DhzXoBgsukmhPH4EWxCcYftzJIRfEEQCZ/OTPY0XypZiG1FdYNmPLuY5+LhFvoRzYRNEbrsDEfUZnyWHTQ7HU/DgQO8RpTtIad3TeQ25G7uO7TVNYaFZeW92cTXzRyQxMWL7GE4phuPrvVhl0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zCFNZLZZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=u+rlv321; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zCFNZLZZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=u+rlv321; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0B0841F391;
-	Fri, 29 Nov 2024 11:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732879185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dxewv+ZQ19+cuNwv74XXnOunHnyc/SxCPMWbrvUDyE4=;
-	b=zCFNZLZZxahuzDcEUvtj+1NaXmCAHVTxIAUC5kJWwpN2nkCFvU3zro17qARlMo9bV++K7D
-	ASuAuKqbTyz9W77bCDxIzCSEYEfpm5jrSX2NpfmyvzTTipRb/qorOK70iTKEBhD5zMb7Lq
-	2SbvEYp1wgjbbGH95TqPuOKvA5MMfUU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732879185;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dxewv+ZQ19+cuNwv74XXnOunHnyc/SxCPMWbrvUDyE4=;
-	b=u+rlv321fG4h3Rhl7oFArLCmm5cKd8iZgsWD9jALYSvWdEDlDfsiULc8QfzC/7j/pHW56Y
-	W2CBhNtxzp8FnNBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732879185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dxewv+ZQ19+cuNwv74XXnOunHnyc/SxCPMWbrvUDyE4=;
-	b=zCFNZLZZxahuzDcEUvtj+1NaXmCAHVTxIAUC5kJWwpN2nkCFvU3zro17qARlMo9bV++K7D
-	ASuAuKqbTyz9W77bCDxIzCSEYEfpm5jrSX2NpfmyvzTTipRb/qorOK70iTKEBhD5zMb7Lq
-	2SbvEYp1wgjbbGH95TqPuOKvA5MMfUU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732879185;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dxewv+ZQ19+cuNwv74XXnOunHnyc/SxCPMWbrvUDyE4=;
-	b=u+rlv321fG4h3Rhl7oFArLCmm5cKd8iZgsWD9jALYSvWdEDlDfsiULc8QfzC/7j/pHW56Y
-	W2CBhNtxzp8FnNBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E7EC3139AA;
-	Fri, 29 Nov 2024 11:19:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 60ImOFCjSWcBdQAAD6G6ig
-	(envelope-from <hare@suse.de>); Fri, 29 Nov 2024 11:19:44 +0000
-Message-ID: <c2ae3a29-be3c-40f0-aae2-f36123cd04f6@suse.de>
-Date: Fri, 29 Nov 2024 12:19:44 +0100
+	 In-Reply-To:Content-Type; b=hgeW6UHqRzrcjDqjIlrry3vX9YheASYtwdxEPjBNaATtmVhsMRpvR+g1L+JFUfsog/I5Apjf48yyIhmwD3QdLA4uFq39oB7YbLhUrddSL6aFcguQ3jA8WjXOCT3MTqTy/B6G812r9qXpNZ0c6OY2Ga0QN3UUIzyFLKAAi3o5pN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kkGOZng4; arc=none smtp.client-ip=209.85.208.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f195.google.com with SMTP id 38308e7fff4ca-2ffcd3c2b46so1226911fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 03:20:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732879237; x=1733484037; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aEngJ1u6bI6pjXw8ducjp4PDvEGzLJeEExC6wehZeKI=;
+        b=kkGOZng4crPgn/i4Ir/OJoo6vX4d2o7HDzRSp4haO+DK7PAyZRxC9OHqvky/8CQUOP
+         6p8ZJYoW2EjNQVMydScPU+jY0eom8IYNBz6NpP/R3dKTjqHf44wCQWIk3Yh8K5dYPxEa
+         sh4xMWuGY+mvyRaPGewNIqrTIGwZC/byAWNbYgydK5rFB6lQKOD05mmqNj95F2R5b0XH
+         sgXHKG+ex5E7bi8btbKupd2PuGKX54V/dsX6Nat4gVDZTIiVU0XKiKoDlbLzdZYk6ZUQ
+         O0sFgO0wgp4DYVhgFPPS+PGte0vmZZ8oX5vHnQWkQhZTk8VwZa+nfkVjtqemwnaCOc4T
+         HpgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732879237; x=1733484037;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aEngJ1u6bI6pjXw8ducjp4PDvEGzLJeEExC6wehZeKI=;
+        b=ue+cjMfvS7pvEQWDNeBCq0V2qscizjIhlOuTZ5cAHjWypRJs164OQyoI4eJgprwqYq
+         1azQDN72Cvkg/S1/HHDNMl1w+jBovAuv4FozK5q/ohzB2Tm+7+L3mKknEIkb0Cg6jsHh
+         +tbSU04Yf69bwQjzjzLAkZeh8cqsC0gU1uOSKH73QiqbpT6E1I83IpSemQ5gXGiIrUSX
+         sMSGuR1cOlv54vG5jg//4XNQu1fBu8+tHo0Ldvz/kNSmopDSmvLEJQNIfK8VuwZmT/uh
+         f+HbAdB3Zj0PUUbrHLHzamevnJKdYqqPTWzD7Dru6fQFOd9/FehgaT/g7La1GIQs/OT/
+         cA/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWar5la1bjMz1aU0dBa97JAYSkEopQoChNEhUA1xa0r93TaVGMHfP2+qIyc5D6ZwLDAWWgiL8hadvzEk4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2fP6XxiSTyMx1X76+P40wnd3LFkA6CXfA7c2xuLqGIpEJdOAs
+	cOFT69tzNSLuKJOfOYo9Qx4T2TVj8VroHE2zjfKvZWspID3tcA2/QtPIPr6UU/7ldmTye/tTNFC
+	IvFzADw==
+X-Gm-Gg: ASbGncsaKpXiNj7vDwEBmM+IgRCG5tdsSlRIPfFMyH2CpLT8Wv+nl49CYtiOiY9ETcC
+	kakm4WYG8XteoTf641nRGmCsFYwaf9I2G8m5sEQoe6xB1CJLwLpEA6AbM6SAMVpTu69XCL6FM6U
+	5sbNtd0+4aK/Fsetg+q/EbxHI4luzBA1gaJzoKrhGnJsg8XmGXDslaLn+s/O7w2VIhxh2M3nEtQ
+	aJb6kzgqNQa+H/sO4SnBQGRtGjwzILFMIoVFJ60/RYIWzqcZFcJC8obHeP26eHnjvffqNePGDWc
+	IklamUuOakJE5/pbn1uFuTou66tb
+X-Google-Smtp-Source: AGHT+IGLP9pjTswQ9pA+XlvlVMAV/Cw9gk2FVDbOAgGTKgsbtSCZ4/Q14zA7kCVHOCBJ0aMb3gbP8w==
+X-Received: by 2002:a2e:a98f:0:b0:2ff:9449:fe02 with SMTP id 38308e7fff4ca-2ffd5e9a69cmr13646731fa.0.1732879236728;
+        Fri, 29 Nov 2024 03:20:36 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc7471asm4267261fa.71.2024.11.29.03.20.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 03:20:35 -0800 (PST)
+Message-ID: <d3a8d38c-9129-4fbd-8bd6-c91131d950ad@linaro.org>
+Date: Fri, 29 Nov 2024 13:20:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,64 +81,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] nvme-tcp: simplify nvme_tcp_configure_admin_queue()
-To: "brookxu.cn" <brookxu.cn@gmail.com>, kbusch@kernel.org, axboe@kernel.dk,
- hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1732368538.git.chunguang.xu@shopee.com>
- <c7006c36681afce811e01de7686d6e2df2c4ab0e.1732368538.git.chunguang.xu@shopee.com>
+Subject: Re: [PATCH v2] media: qcom: camss: fix VFE pm domain off
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <c7006c36681afce811e01de7686d6e2df2c4ab0e.1732368538.git.chunguang.xu@shopee.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yassine Oudjana <y.oudjana@protonmail.com>
+References: <20241128-vfe_pm_domain_off-v2-1-0bcbbe7daaaf@mainlining.org>
+ <3a5fd596-b442-4d3f-aae2-f454d0cd8e5c@linaro.org>
+ <5cccec71-0cc7-492a-9fb9-903970da05c5@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <5cccec71-0cc7-492a-9fb9-903970da05c5@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FREEMAIL_TO(0.00)[gmail.com,kernel.org,kernel.dk,lst.de,grimberg.me];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[shopee.com:email,suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo,brookxu.cn:url]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
 
-On 11/23/24 14:37, brookxu.cn wrote:
-> From: "Chunguang.xu" <chunguang.xu@shopee.com>
+On 11/29/24 13:06, Bryan O'Donoghue wrote:
+> On 29/11/2024 08:48, Vladimir Zapolskiy wrote:
+>> On 11/28/24 21:39, Barnabás Czémán wrote:
+>>> Fix NULL pointer check before device_link_del
+>>> is called.
+>>>
+>>> Unable to handle kernel NULL pointer dereference at virtual address
+>>> 000000000000032c
+>>> Call trace:
+>>>    device_link_put_kref+0xc/0xb8
+>>>    device_link_del+0x30/0x48
+>>>    vfe_pm_domain_off+0x24/0x38 [qcom_camss]
+>>>    vfe_put+0x9c/0xd0 [qcom_camss]
+>>>    vfe_set_power+0x48/0x58 [qcom_camss]
+>>>    pipeline_pm_power_one+0x154/0x158 [videodev]
+>>>    pipeline_pm_power+0x74/0xfc [videodev]
+>>>    v4l2_pipeline_pm_use+0x54/0x90 [videodev]
+>>>    v4l2_pipeline_pm_put+0x14/0x34 [videodev]
+>>>    video_release+0x2c/0x44 [qcom_camss]
+>>>    v4l2_release+0xe4/0xec [videodev]
+>>>
+>>> Fixes: eb73facec2c2 ("media: qcom: camss: Use common VFE pm_domain_on/
+>>> pm_domain_off where applicable")
+>>> Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>> ---
+>>> Changes in v2:
+>>> - Add backtrace to the commit message.
+>>> - Link to v1: https://lore.kernel.org/r/20241122-vfe_pm_domain_off-
+>>> v1-1-81d18f56563d@mainlining.org
+>>> ---
+>>>    drivers/media/platform/qcom/camss/camss-vfe.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/
+>>> media/platform/qcom/camss/camss-vfe.c
+>>> index
+>>> 80a62ba11295042802cbaec617fb87c492ea6a55..1bf1473331f63b9ab106d21ea263c84d851c8a31 100644
+>>> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+>>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+>>> @@ -595,7 +595,7 @@ void vfe_isr_reset_ack(struct vfe_device *vfe)
+>>>     */
+>>>    void vfe_pm_domain_off(struct vfe_device *vfe)
+>>>    {
+>>> -    if (!vfe->genpd)
+>>> +    if (!vfe->genpd_link)
+>>>            return;
+>>>        device_link_del(vfe->genpd_link);
+>>>
+>>
+>> I object to this change, there might be a problem in the code, however it
+>> is not yet identified.
+>>
+>> vfe->genpd is not NULL, if vfe_pm_domain_on()/vfe_pm_domain_off() are
+>> called appropriately, the "fix" does not fix the real problem, it veils it.
+>>
+>> -- 
+>> Best wishes,
+>> Vladimir
+>>
+>>
 > 
-> As nvme_tcp_configure_admin_queue() is the only one caller of
-> nvme_tcp_destroy_admin_queue(), so we can merge nvme_tcp_configure_admin_queue()
-> into nvme_tcp_destroy_admin_queue() to simplify the code.
+> Let's walk through the logic.
 > 
-> Signed-off-by: Chunguang.xu <chunguang.xu@shopee.com>
-> ---
->   drivers/nvme/host/tcp.c | 14 ++++----------
->   1 file changed, 4 insertions(+), 10 deletions(-)
+> vfe->genpd =
 > 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Can happen in vfe_subdev_init();
+> 
+> vfe_pm_domain_on() can fail @ vfe->genpd_link =
+> 
+> If it fails then I _suppose_ we are still calling vfe_pm_domain_off() at
+> least that's the only logically way I see this error can manifest.
 
-Cheers,
+There should be no room for suppositions, the source code is open.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+If the described by you case is true, and vfe_pm_domain_on() fails,
+then vfe_pm_domain_off() shall not be called, otherwise that's the
+real problem and it shall be fixed instead of being veiled by the
+proposed change.
+
+> @Barnabás can you confirm that this is the case ?
+> 
+> If not, can you please provide more detail ?
+
+The change does not describe how to reproduce the problem, which commit
+base is tested, which platform is testes, there is no enough information,
+unfortunately.
+
+--
+Best wishes,
+Vladimir
 
