@@ -1,90 +1,117 @@
-Return-Path: <linux-kernel+bounces-425324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0834B9DC090
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:34:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BC29DC092
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:36:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C0F9164B9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:36:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48921166F0C;
+	Fri, 29 Nov 2024 08:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="appCYFW/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA105282495
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:34:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8262158DD8;
-	Fri, 29 Nov 2024 08:34:19 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE5114B088;
-	Fri, 29 Nov 2024 08:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B9014B088;
+	Fri, 29 Nov 2024 08:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732869259; cv=none; b=ln58Xkt/M8lp3H9I3M/4KAqYx4cV790WR/VSQAMUO3AR1ZdAFT3RBYWEAIpoTQvcgIlBotrNS7RQJhRT9Lis0nREgp6ZuxeJ3c77AiC1gguBuW2Cxn0eKHAi5TrxZYbKcTO5Nvrbkj376wPeXm7q1tVwoW0H0QCvNPGh4wu6s74=
+	t=1732869360; cv=none; b=D0obNquZM/Rcs9PP+tTK9JKdoujByXaZtfuTUOgTMjP946n9/jGA9oXEPS2cRa4K8EduhMzIIEiPIvXJNTgEpgZcq+c0Xq1moHuEmoefyBBtUUUuuDpcEMfpL9zPcpczqZc+HIbo2m87AWL0ag3JOTbvh5NH0r60qFaCfkCFlPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732869259; c=relaxed/simple;
-	bh=38dtpdyIihzYzYRxzGxmz1vffoO5wi/Tb2Fz2EpWzY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=li0nHry6le8nCMA61d7QW+/2cfAd+yJsbdNdXD7sbTXgoSPRtIT3CTlvpMkZqr9oELwY+7L/o+sOVc6hrQRv2l5SgvUgjITTtDSMSsMHh8Lub1FhwFFMv7yQvTXAUnXEKoUETeTVdiqyjv2h9AmLFr9hvGjIw9Mb7O3lqR+VkIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tGwRy-0003cP-00; Fri, 29 Nov 2024 09:34:06 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 60DE5C0110; Fri, 29 Nov 2024 09:33:58 +0100 (CET)
-Date: Fri, 29 Nov 2024 09:33:58 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: torvalds@linux-foundation.org
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] MIPS changes pt2 for v6.13
-Message-ID: <Z0l8dqSzSPrsbmFj@alpha.franken.de>
+	s=arc-20240116; t=1732869360; c=relaxed/simple;
+	bh=1AkRArlPvOhjQTdT/PiFCY7HmB/jjJr3KRQ785jqxDY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Vb1ZvJTIRHEKvFNGWZ8b93hthAaYtrurK/go66sy1ZTbboMYbGIAaPphSX/CLOZCE94mc0JNpPpC8/DGVLr+GWBXtGzq7WyiFirUIz6CZsUoObdly8C4RUCeUmbQgrRXyeQnpFYH72J7x7s+w2NchFV0z5ci4ZErJqETHxlKEEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=appCYFW/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56A0EC4CECF;
+	Fri, 29 Nov 2024 08:35:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732869360;
+	bh=1AkRArlPvOhjQTdT/PiFCY7HmB/jjJr3KRQ785jqxDY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=appCYFW/MTYNonIsbMs4g1oEJraLYsnwNPejObwAgyFECUb4kvnYv1ryonkHx6x3v
+	 B/DIA5w5f3AEAY14UgCKShlvfOYn5+jr8BwecuEvOv+G0+Tbd++tedBlrfqTff/PSX
+	 njqegRn5Z36RVrfHWPvNmJ5cLBVq7mSIDboFgmqP09wcSGNCBNvtWj7KzRXfqb3SIx
+	 T6oaIQZhxtyeIzzGvKCgs/a3/MltaXvD7DiJ68fFJc9tBpi27FUO5uAlT56UbAZBq8
+	 qY5auJ/ploEXyLpQgYuMrMVZDV3ewtdQYd52QGkOcPvPuxqC//ZHlZFSzNnJKpHIr2
+	 YwbyzjuW8JW6Q==
+Date: Fri, 29 Nov 2024 17:35:54 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Ruan Bonan <bonan.ruan@u.nus.edu>
+Cc: "peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com"
+ <mingo@redhat.com>, "will@kernel.org" <will@kernel.org>,
+ "longman@redhat.com" <longman@redhat.com>, "boqun.feng@gmail.com"
+ <boqun.feng@gmail.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>, "ast@kernel.org"
+ <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev"
+ <martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>,
+ "song@kernel.org" <song@kernel.org>, "yonghong.song@linux.dev"
+ <yonghong.song@linux.dev>, "john.fastabend@gmail.com"
+ <john.fastabend@gmail.com>, "sdf@fomichev.me" <sdf@fomichev.me>,
+ "haoluo@google.com" <haoluo@google.com>, "jolsa@kernel.org"
+ <jolsa@kernel.org>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+ "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Fu Yeqi
+ <e1374359@u.nus.edu>
+Subject: Re: [BUG] possible deadlock in __schedule (with reproducer
+ available)
+Message-Id: <20241129173554.11e3b2b2f5126c2b72c6a78e@kernel.org>
+In-Reply-To: <24481522-69BF-4CE7-A05D-1E7398400D80@u.nus.edu>
+References: <24481522-69BF-4CE7-A05D-1E7398400D80@u.nus.edu>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 56131e6d1fcce8e7359a2445711cc1a4ddb8325c:
+On Sat, 23 Nov 2024 03:39:45 +0000
+Ruan Bonan <bonan.ruan@u.nus.edu> wrote:
 
-  mips: dts: realtek: Add I2C controllers (2024-11-12 15:51:21 +0100)
+> 
+>        vprintk_emit+0x414/0xb90 kernel/printk/printk.c:2406
+>        _printk+0x7a/0xa0 kernel/printk/printk.c:2432
+>        fail_dump lib/fault-inject.c:46 [inline]
+>        should_fail_ex+0x3be/0x570 lib/fault-inject.c:154
+>        strncpy_from_user+0x36/0x230 lib/strncpy_from_user.c:118
+>        strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+>        bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
+>        ____bpf_probe_read_user_str kernel/trace/bpf_trace.c:224 [inline]
 
-are available in the Git repository at:
+Hmm, this is a combination issue of BPF and fault injection.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.13_1
+static void fail_dump(struct fault_attr *attr)
+{
+        if (attr->verbose > 0 && __ratelimit(&attr->ratelimit_state)) {
+                printk(KERN_NOTICE "FAULT_INJECTION: forcing a failure.\n"
+                       "name %pd, interval %lu, probability %lu, "
+                       "space %d, times %d\n", attr->dname,
+                       attr->interval, attr->probability,
+                       atomic_read(&attr->space),
+                       atomic_read(&attr->times));
 
-for you to fetch changes up to 4fbd66d8254cedfd1218393f39d83b6c07a01917:
+This printk() acquires console lock under rq->lock has been acquired.
 
-  MIPS: Loongson64: DTS: Really fix PCIe port nodes for ls7a (2024-11-23 11:53:21 +0100)
+This can happen if we use fault injection and trace event too because
+the fault injection caused printk warning.
+I think this should be a bug of the fault injection, not tracing/BPF.
+And to solve this issue, we may be able to check the context and if
+it is tracing/NMI etc, fault injection should NOT make it failure.
 
-----------------------------------------------------------------
-- fix for loongson64 device tree
-- add SPI nand to realtek device tree
-- change clock tree for mobileye
-
-----------------------------------------------------------------
-Chris Packham (1):
-      mips: dts: realtek: Add SPI NAND controller
-
-Théo Lebrun (2):
-      MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
-      MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
-
-Xi Ruoyao (1):
-      MIPS: Loongson64: DTS: Really fix PCIe port nodes for ls7a
-
- arch/mips/boot/dts/loongson/ls7a-pch.dtsi          |  73 +++++-
- arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi      | 270 ---------------------
- arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  30 ++-
- .../boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi     |  52 ----
- arch/mips/boot/dts/mobileye/eyeq6h.dtsi            |  73 +++++-
- arch/mips/boot/dts/realtek/rtl930x.dtsi            |  13 +
- 6 files changed, 166 insertions(+), 345 deletions(-)
- delete mode 100644 arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi
- delete mode 100644 arch/mips/boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi
+Thank you,
 
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
