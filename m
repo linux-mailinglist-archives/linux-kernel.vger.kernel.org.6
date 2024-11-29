@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-425269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A9A9DBFAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:12:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5FA9DBFB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06DB5B215C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:12:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0701FB218BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DA0158208;
-	Fri, 29 Nov 2024 07:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08863158524;
+	Fri, 29 Nov 2024 07:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRiaA62H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OM5swOw3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A771386DA;
-	Fri, 29 Nov 2024 07:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556F745C14;
+	Fri, 29 Nov 2024 07:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732864347; cv=none; b=I43po1ebkA02D9dKX0wHLSLQWXZpq+AAJOpfKBEHPbLsWkyqWqVaIVXk2d8WloF5VgLeBydUCIBEtAp57eaNB2DOA9MGclf3zIarEQLZn6EnDSPblPZ5RzynEqfzf0Bg9PKDs8OiGJt7jEfz5PRSLGchPDsi34++XpWyzeWuZyY=
+	t=1732864565; cv=none; b=jL+I/oCrFd/rxfLzSB7a/VeHARshvxCEQLv8Qiw6I73ZymmS2/CYsDd16mIDbTPXXwBzv4TUhfdbQT7J5yyKT1xw/g3DRBFcIu5PrUkYRquWG4d48WD+Ye63JTY3g20ga4vACh3rNM9NMjnHsWS/+bo3hBu/0OB44vNAjvhLMBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732864347; c=relaxed/simple;
-	bh=A/mw54NppyLJYHyhW9435IKQ05C8GNQUuJ18HrH/Gz4=;
+	s=arc-20240116; t=1732864565; c=relaxed/simple;
+	bh=yfUMcS/42xc22dFe7ApSwq6gDTwMxL0f/YsB9GrDmHU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+y+BDZqwnhdyyyD5+GhkjZ+kZvR1JgE2nSF7gVVBshYDhyyryQMNl0VxGUkLsTO8hMLm8ZZH4HJuSJ4/FyfXFuBjiFx/2oFGUoF0Zes6HS2GOI1zlX9492AHbgpxSpWTQUhY++H8PWabqw9ZYERrhIKe8xVTxEzW6xt18n/8is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRiaA62H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A97C4CECF;
-	Fri, 29 Nov 2024 07:12:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRyyBvr4J8m6byTAmt7YZcavBXaUH+PGuQRkfGqbgw69MTeHnYGLGG2yDjA1LcvLUGFMTNZGt3HDXMxot1NDNp0f1xjMc9Cq/l5j9iFdngh9mUrrUsym+AOvs/71UEbHVsEQwSNZvFrHtLKYHdGT+RVIxPVFYKU4SnZwZXGj4v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OM5swOw3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CC3C4CED2;
+	Fri, 29 Nov 2024 07:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732864345;
-	bh=A/mw54NppyLJYHyhW9435IKQ05C8GNQUuJ18HrH/Gz4=;
+	s=k20201202; t=1732864564;
+	bh=yfUMcS/42xc22dFe7ApSwq6gDTwMxL0f/YsB9GrDmHU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oRiaA62Hv37Iy/ji3Fq76kErKJLEBR+W1tR4dodJ+pfcQTwdaxVey2cE6MJTJM76/
-	 0pzvA9z+B5ds7w1jTXuFExi2dTUDJ/8Uc6nxsQhBaGOyNe/1MsyTreVYTgNb9k/3k+
-	 KsGNawVCWCrJ38Okn64f3PpU8zoZ6dGecJHB9d4wBtg/bu6HIyLeSi5EEKhlzL8j+D
-	 2zd4JfUuJ0lb7MfwH88042mbaj2tXwcKaksGAUyCpXtWogVcXk6nzoaStxdwNeLc9s
-	 3qP51ccqFSVJjPIbl4U7rZuqo3W2EDtd7e2GPl+dR3HX2V12Alc0xfj+F6hd2k/SfF
-	 5MXC6vLLAcGCw==
-Date: Fri, 29 Nov 2024 08:12:21 +0100
+	b=OM5swOw3L1BAa8TgjDLNaPD2oVuJGxzlpg9LJlS7Wpnn6Kns4WLL3qhuuxt6Ob14Z
+	 YFfS+qnoJ8NhMOBA88PNiV7nytXrP4iOgLCMKt8EnYHSDft4YzGQhfmNQfa6aQTuYd
+	 wFGDkOrSODM2BfdFJH1sJhCjCM8D6bfB2BjrRHwL2fkDvfanzptMPIhYqoeTDGv3jd
+	 6/1q5/BJpo++JYRg/SQwKpq0xPC2r4ORO3rHjNGkKrS1W3+1ppSpOG6gJgU0vXuflb
+	 qfQ90xSq46FTfejzB+Solr9cMTt7n1kV648yJk0qRq5V4se6GVeYRUvPHf64xpj/XE
+	 VvQUsBjBm2/3A==
+Date: Fri, 29 Nov 2024 08:16:01 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: iio: bosch,bme680: Move from
- trivial-devices and add supplies
-Message-ID: <wdtkd73brhfotps4crpbpgdvtzrc25xr3bq2au2d3uzrl5pwz2@7ssawm3gyyfo>
-References: <20241128193246.24572-1-vassilisamir@gmail.com>
- <20241128193246.24572-2-vassilisamir@gmail.com>
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: input: touchscreen: Add Z2 controller
+Message-ID: <abmpkfnfrbcarqhp7pspxmy4veuiavpy2p5zqe5ljkstveuuzz@ur7grz3zd7xx>
+References: <20241128-z2-v2-0-76cc59bbf117@gmail.com>
+ <20241128-z2-v2-1-76cc59bbf117@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,25 +61,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241128193246.24572-2-vassilisamir@gmail.com>
+In-Reply-To: <20241128-z2-v2-1-76cc59bbf117@gmail.com>
 
-On Thu, Nov 28, 2024 at 08:32:44PM +0100, Vasileios Amoiridis wrote:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
+On Thu, Nov 28, 2024 at 11:29:16PM +0100, Sasha Finkelstein wrote:
+> Add bindings for touchscreen controllers attached using the Z2 protocol.
+> Those are present in most Apple devices.
+> 
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> ---
+>  .../input/touchscreen/apple,z2-multitouch.yaml     | 69 ++++++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/apple,z2-multitouch.yaml b/Documentation/devicetree/bindings/input/touchscreen/apple,z2-multitouch.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c4c0b41178728d5e0a782979d6eecd32e0a83618
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/apple,z2-multitouch.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/touchscreen/apple,z2-multitouch.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +        bme680@77 {
+> +title: Apple touchscreens attached using the Z2 protocol
+> +
+> +maintainers:
+> +  - Sasha Finkelstein <fnkl.kernel@gmail.com>
+> +
+> +description: A series of touschscreen controllers used in Apple products
+> +
+> +allOf:
+> +  - $ref: touchscreen.yaml#
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - apple,j293-touchbar
+> +      - apple,j493-touchbar
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  firmware-name:
+> +    maxItems: 1
+> +
+> +  apple,z2-cal-blob:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description:
+> +      Calibration blob supplied by the bootloader
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+What is the expected size? Fixed size or maximum?
 
-E.g. gas-sensor
-
-Same in other places.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Add it to the example.
 
 Best regards,
 Krzysztof
