@@ -1,85 +1,123 @@
-Return-Path: <linux-kernel+bounces-425252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03479DBF68
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:12:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B902D164648
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 06:12:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B90156C74;
-	Fri, 29 Nov 2024 06:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="K3syNlT7"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891D89DBF6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:18:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C398184F;
-	Fri, 29 Nov 2024 06:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 173EEB21CAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 06:18:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A1E157484;
+	Fri, 29 Nov 2024 06:18:11 +0000 (UTC)
+Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7513C33C5;
+	Fri, 29 Nov 2024 06:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732860723; cv=none; b=q9x1fKsyjUtkR1WsjqX6pmD9qPBBONQslo+Yfy6vOS34cjU0XlxjHcQfVIhLU9rG8EENFMEe8jsl9o4jukF6V/X0tCVEjoWVSoVvo42qF5SOes0M37mF8Wzr2xr4/FV1+J/XhvuYEXOyyAAQF6MKLZfvPaDoMU1rrGe9z4Q8DZI=
+	t=1732861091; cv=none; b=YYrs8WGKRQupXYd6M8q7G7Sctc0wj6qomO5vYFdC0i3OYNJhoOMowf6WtCO9xGojtav9JVENNWcJFh/KXHdBgK20bWxLQ4utdpUWYQjp1frfOHf1ABdlCoNGqFdmIwV2BJAoxC5DcRALfs+5+j1UKBIPmRc6JdcOja8K7GdQ8pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732860723; c=relaxed/simple;
-	bh=K6WlBoWeGPmm2tsSpEPFp7kUB90lkxlWy/QI9C2co/4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G/1sSasnmcbQXAFC8FrjuZDyNC/CwV8DLC61KJCeO07f93/Cghh25qUxk+QM89KFYmcY4Rrsc4+VPvTalcvLSerRKM7VJKAstFBJ3otCn1/fioRUUgDL8irvtf64wRwrnawJlPfBR+FG4HnXnULoGSgXqoZOw9Pu4ZTZUtpJuVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=K3syNlT7; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732860718; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=QBxTC0OTZtLnjf64m0c0V5UiHQaS+QjTyzS/suaFSNk=;
-	b=K3syNlT7ISuDFLc2PgXftoP+HIYH3RUpQk5qyxqyT3Y6Kd0VDlUkWpLSDksQJcPRJEVHqzXnasEfjhbVS/F6IDUwkOicUitUJhx5BgYVSL9Ij9aHh26a4uZypOQEjl1+ReWxE7bJTd5/dRZHnRn/6B2sj6Yu7z76KmfEtC3clpI=
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WKSsNXL_1732860717 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 29 Nov 2024 14:11:57 +0800
-From: Yang Li <yang.lee@linux.alibaba.com>
-To: robh@kernel.org,
-	saravanak@google.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] of: base: Add missing parameter description to of_get_next_child_with_prefix()
-Date: Fri, 29 Nov 2024 14:11:55 +0800
-Message-Id: <20241129061155.52874-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1732861091; c=relaxed/simple;
+	bh=ZdDgU8v0Fg3qEcMdCAaZoTVLCTC1/5gtAQT2ve5pWeY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ut4YouUTfBf1NBjSgGdJl7YgCs6peEfKVU1+ocikeUDoBdeoVEJGN/MN9C//nShSAfTTeG36no1Vdo7dczjeSyplISKwz0++XywY1F5WBaJs5NrUhGDfG3KGEm9o8vfZiP2mqd/BN6EBFy9NwU3zPIzbTcVER/rXghwB+2uyQuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
+Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
+	by ni.piap.pl (Postfix) with ESMTPS id 63D1BC408280;
+	Fri, 29 Nov 2024 07:17:58 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 63D1BC408280
+From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev <netdev@vger.kernel.org>,  Oliver Neukum <oneukum@suse.com>,
+  Andrew Lunn <andrew+netdev@lunn.ch>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,
+  linux-usb@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jose Ignacio
+ Tornos Martinez <jtornosm@redhat.com>,  Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH] PHY: Fix no autoneg corner case
+In-Reply-To: <2428ec56-f2db-4769-aaca-ca09e57b8162@lunn.ch> (Andrew Lunn's
+	message of "Thu, 28 Nov 2024 15:54:52 +0100")
+References: <m3plmhhx6d.fsf@t19.piap.pl>
+	<c57a8f12-744c-4855-bd18-2197a8caf2a2@lunn.ch>
+	<m3wmgnhnsb.fsf@t19.piap.pl>
+	<2428ec56-f2db-4769-aaca-ca09e57b8162@lunn.ch>
+Sender: khalasa@piap.pl
+Date: Fri, 29 Nov 2024 07:17:34 +0100
+Message-ID: <m3serah8ch.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The function of_get_next_child_with_prefix() lacked a description for
-the prefix parameter in its documentation. This patch adds the missing
-description to ensure all parameters are properly documented.
+Andrew,
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=12178
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- drivers/of/base.c | 1 +
- 1 file changed, 1 insertion(+)
+thanks for your response.
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 4cba021c89d3..600236abb5d6 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -648,6 +648,7 @@ EXPORT_SYMBOL(of_get_next_child);
-  * of_get_next_child_with_prefix - Find the next child node with prefix
-  * @node:	parent node
-  * @prev:	previous child of the parent node, or NULL to get first
-+ * @prefix:     prefix string to match in child node names
-  *
-  * This function is like of_get_next_child(), except that it automatically
-  * skips any nodes whose name doesn't have the given prefix.
--- 
-2.32.0.3.g01195cf9f
+Andrew Lunn <andrew@lunn.ch> writes:
 
+>> It seems the phy/phylink code assumes the PHY starts with autoneg
+>> enabled (if supported). This is simply an incorrect assumption.
+>
+> This is sounding like a driver bug. When phy_start() is called it
+> kicks off the PHY state machine. That should result in
+> phy_config_aneg() being called. That function is badly named, since it
+> is used both for autoneg and forced setting. The purpose of that call
+> is to configure the PHY to the configuration stored in
+> phydev->advertise, etc. So if the PHY by hardware defaults has autoneg
+> disabled, but the configuration in phydev says it should be enabled,
+> calling phy_config_aneg() should actually enabled autoneg.
+
+But... how would the driver know if autoneg is to be enabled or not?
+
+In the USB ASIX case, the Ethernet driver could dig this info up from
+the chip EEPROM. Not sure if I like this way, though. Complicated, and
+it's not needed in this case I think.
+
+> I would say there are two different issues here.
+>
+> 1) It seems like we are not configuring the hardware to match phydev.
+> 2) We are overwriting how the bootloader etc configured the hardware.
+>
+> 2) is always hard, because how do we know the PHY is not messed up
+> from a previous boot/crash cycle etc. In general, a driver should try
+> to put the hardware into a well known state. If we have a clear use
+> case for this, we can consider how to implement it.
+
+Well, I think if someone set the PHY previously, and then the machine
+rebooted (without actually changing PHY config), then perhaps the
+settings are better than any defaults anyway. Though I guess it will be
+configured in the init scripts again soon.
+
+It's not something easily messed up by a crash. But yes, there is a risk
+the config was wrong, set by mistake or something.
+
+BTW USB adapters will almost always reconfig PHY on boot, because they
+are powered from USB bus.
+
+In this case, with ASIX USB adapter (internal PHY ax88796b /
+ax88796b_rust), the MAC + PHY will be configured by hardware on USB
+power up. So we _know_ the settings are better than any hardcoded
+defaults.
+
+Maybe the specific ASIX PHY code should handle this.
+
+Nevertheless, the inconsistency between phy/phylink/etc. and the actual
+hardware PHY is there.
+I guess I will have a look at this again shortly.
+--=20
+Krzysztof "Chris" Ha=C5=82asa
+
+Sie=C4=87 Badawcza =C5=81ukasiewicz
+Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+Al. Jerozolimskie 202, 02-486 Warszawa
 
