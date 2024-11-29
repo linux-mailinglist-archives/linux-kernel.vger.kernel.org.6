@@ -1,84 +1,175 @@
-Return-Path: <linux-kernel+bounces-425746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195139DEA19
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:04:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F389DEA1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D61280A6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08E37282588
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DB6149E17;
-	Fri, 29 Nov 2024 16:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C758D14A0A3;
+	Fri, 29 Nov 2024 16:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xozfh4s7"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="kiwMH+vj";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="gMBfpksh"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDC9168DA;
-	Fri, 29 Nov 2024 16:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27847168DA;
+	Fri, 29 Nov 2024 16:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732896238; cv=none; b=gjMxC3PYEcd+RDTuk1CLLygTzTUIS8+WmXBj6ssk0VT1s7i/iKwxKkUhveLxVFT2dvorc3wB/22zzVaxUqmMgqWdp1wLMJUMe4rkVzNagRmC84sMGS8legQUdzt9xHF+4CrOIu2TuPcRQalVdaq0Sp1AS3DNGwPulTUbkX7YtMc=
+	t=1732896245; cv=none; b=YjSf23F0ujHq0wnEOeriNdY6LaDBVTyfRAiaaoZuXZmske2/XPQxZ5Mh3vYkHvzmIsDJbHvXfnVfbZKFv5oBjPwNEBOsHdXqxVRQ8h6TrW3L9ZY62ucqHN9UOu8xZmOHtoacmQcbmoe7rj54bg21nn3WszIRceintywnw4f2mw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732896238; c=relaxed/simple;
-	bh=zr8ZTysZx845AFDYxj/P7skeZoHvpBbRjoNRlu121cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pfj5LxcmETPwTZkaqrEGbX7xwSUZrV2HtknjG1AmuChNcE6Jbv0PLQtjdceMMjaU6qUzZDAwTeKOxfbp/V/YINcAMQAorfV7m/K7xbnDvGaFRL0euOl2nCaIoO2h1cCZFVHSVN8D/XgibrXEtEMT1sr7bhaDrsjtilcVA6IJgnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xozfh4s7; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zr8ZTysZx845AFDYxj/P7skeZoHvpBbRjoNRlu121cg=; b=Xozfh4s7JRsYDDI1apNa56DwhV
-	/8Zx92ys2FeLa1s2CZedoSszasnEouqNyR5ptp8uCiJHNRZDCxHY41Mfo2OnUFbEZnXVEfKetF9SH
-	90tcmeUH+WGf3bbQuSInVicbql0mXf7klOWJ5tpi1nAjVsSUFwRpEbu4Wut9B3B5l9r/THqW5ZkYW
-	x/6W8spUfoV1hmj8kH9NUpbrl4ArEHzmVbbe55C2MwCYTQBiE1HpVnlbBAdTy2Bie34g+65zpE7pN
-	qUOvaNeQiXJxsKtfjlQ4gQxkVTCiiYQLWfmJOcPVS8MGtCE0YwJVJh50l82pNMjUQwzGgmHULy+LM
-	0xw9Q8SA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tH3T7-00000004LuH-0Jgq;
-	Fri, 29 Nov 2024 16:03:45 +0000
-Date: Fri, 29 Nov 2024 16:03:44 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH v2] perf: map pages in advance
-Message-ID: <Z0nl4B_71PP-yf4m@casper.infradead.org>
-References: <20241129153134.82755-1-lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1732896245; c=relaxed/simple;
+	bh=eJcwKX6ItFr4x/AT4MvoWM+YZf2mke1byCryuNUysrE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t8JpmNGF298lD0pGFsgu7EYZL3zT+IAB+I5QV2HzfXKbEGsdFB2MncJEdgNER54Gpm2UZlkD1Zb1li/cKDcSxADY+2q2U56fIOd6tut6jyG4DiW0PjXPKiN46EwRoNUiXgTUghj6EOs8wrraWKXotYslynX7Zt1z2l03QmazOjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=kiwMH+vj; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=gMBfpksh; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1732896242;
+	bh=eJcwKX6ItFr4x/AT4MvoWM+YZf2mke1byCryuNUysrE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=kiwMH+vjBFFwIKiNJlaK8GDSaiK3cokBYEGoKvG5pI++T8kYA7x/tL9zLiFlQIRbj
+	 RN79gILbr7U92IkWn2ceI2XTchgE8hOBP80GMUOxj6kbql4n1ejOIrKIBCe+AAWw8U
+	 N2oVd/e83WOegR8nCeoYlna/ywWMTiE4HOjY/FNs=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1F5A0128791E;
+	Fri, 29 Nov 2024 11:04:02 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id IFaNvKTXbY5o; Fri, 29 Nov 2024 11:04:02 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1732896241;
+	bh=eJcwKX6ItFr4x/AT4MvoWM+YZf2mke1byCryuNUysrE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=gMBfpkshrWCnhoUZZh9yt6spyvumqyJ0TuXa/7L/XiT80LNLIqErC67Vwt0iCv1W8
+	 vU1jr6icVQSlSCHzymRvFAI2HkAPUWa1qnYBF+Ih/o4hQm3SRJxbg4nDf1RQzWb1Vw
+	 PIvw9SIRxv3C5TmHLsDfSzy1ND1JdlV8e5mPZBYs=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2B7D81287960;
+	Fri, 29 Nov 2024 11:04:01 -0500 (EST)
+Message-ID: <02060553aafac7e145e96510a66a6845d389d6ff.camel@HansenPartnership.com>
+Subject: Re: TPM/EFI issue [Was: Linux 6.12]
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jiri Slaby <jirislaby@kernel.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>, Linux Kernel Mailing List
+	 <linux-kernel@vger.kernel.org>
+Cc: Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Jarkko Sakkinen
+	 <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	linux-integrity@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	"linux-efi@vger.kernel.org"
+	 <linux-efi@vger.kernel.org>
+Date: Fri, 29 Nov 2024 11:03:59 -0500
+In-Reply-To: <7773891b-b699-4f1d-b9ba-220c649aee9d@kernel.org>
+References: 
+	<CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com>
+	 <9c893c52-e960-4f30-98ce-ba7d873145bb@kernel.org>
+	 <ca741d8eade72aa68c389a88d2520f4fe541a1e7.camel@HansenPartnership.com>
+	 <2a238b61-fa03-4ae4-9dc4-f73834aa3228@kernel.org>
+	 <70bc83bd7cfb236da030e584e93bfc62c1d9eb6a.camel@HansenPartnership.com>
+	 <7773891b-b699-4f1d-b9ba-220c649aee9d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241129153134.82755-1-lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 29, 2024 at 03:31:34PM +0000, Lorenzo Stoakes wrote:
-> While it is not ideal to use a VM_PFNMAP here, doing anything else will
-> result in the page_mkwrite() hook need to be provided, which requires the
-> same page->mapping hack this patch seeks to undo.
+On Fri, 2024-11-29 at 07:36 +0100, Jiri Slaby wrote:
+> On 28. 11. 24, 17:13, James Bottomley wrote:
+[...]
+> > Yes, it tells me the entries in the log for PCR0-7,14 match the log
+> > entries (for both sha1 and sha256).  However there are entries for
+> > PCR9,12 which don't match.  The log shows shim starting at entry
+> > 32, grub starting at entry 37 and the kernel loading at entry 39 
+> > the kernel command line logged at 40 to PCR 12, which is
+> > mismatching.
+> > 
+> > The next two entries (41,42) are for the mismatching PCR9 and are
+> > of the initrd and the options and come from the libstub code in the
+> > kernel early boot (efi-stub-helper.c).
+> 
+> Note that ovmf logged:
+> Called TcgDxeHashLogExtendEvent 0 58683000 1B1E78C 5FE63C00 5E3492AA
+> Data 28 B5 2F FD ... E1 29 FE 0
+> 
+> But initrd on disk is 1B1E78B long, not 1B1E78C. So the excessive 0
+> at the end above brews the mismatch. See:
+>    https://bugzilla.suse.com/show_bug.cgi?id=1233752#c14
+> "By adding the 0 byte I can replicate the measured digest."
+> 
+> So there is something aligning the initrd. kernel's libstub just uses
+> and passes load_file2's size down to TcgDxeHashLogExtendEvent, AIUI.
+> So it'd be sdb, ovmf or something. BTW how are sizes stored
+> in/fetched from vfat?
 
-Or we could map the first page read-write to begin with ... ?
-Or we could implement a page_mkwrite handler, but do the permissions
-change in the driver and return VM_FAULT_NOPAGE.
+Well, I was going to explain what EFI does, but it doesn't look
+relevant now I've had a crash course reading the systemd-boot code.  It
+looks like run() calls image_start() which loads the initrd itself. 
+Then in initrd.c:initrd_prepare() it actually installs its own load
+file2 protocol which is the protocol the kernel picks up when it loads
+the initrd.  So whatever length the kernel is picking up is, in fact,
+provided by systemd-boot.
 
-I don't think we should do the second option in this driver, but
-mentioning it because we're going to need to have A Talk about fb_defio.
+I'd suspect something in this double indirection of load file protocols
+is causing your length mismatch.
+
+>  But well, fs/fat/ received no significant changes either.
+
+We don't use that at all in the EFI stub (and neither does systemd-
+boot).  We use the protocols EFI provides to read fat volumes, so any
+issue would be in the edk2 (or in your case ovmf) FatPkg.
+
+> > This code was last updated in 6.9, so it seems unlikely to have
+> > suddenly caused a problem.  Event 43,44 are exit boot services
+> > (logged to PCR 5 which matches). line 40 is anomalous: grub is
+> > supposed to measure the options to the string PCR which should be 8
+> > not 12 ... did you patch grub to change this?
+> 
+> All this is with sdb, not grub, actually.
+
+It is?  Grub clearly appears in your log in event 37:
+
+>     SubType 04 File Path
+>       Path Name: \EFI\systemd\grub.efi
+>     Type 7f End of Hardware Device Path
+
+But I figured it out: shim is hard coded to look for grub.efi  In any
+case, the entries match what systemd-boot would write (it seems to
+insist that the string PCR is 12 instead of 8, which explains the log
+entry).
+
+However, this still doesn't explain the mismatch between the log and
+the PCRs (even if you've got the wrong initrd hash, it should be
+correctly recorded), but I suspect something updates them later in the
+boot sequence without adding a log entry.
+
+
+> > The log can't be corrupt because PCR8 is zero, so nothing got
+> > logged to it.
+> > 
+> > And do you have the same thing for a working system?
+> 
+> Let me try.
+
+Thanks, that will at least tell me if something booting via systemd is
+supposed to be able to match log entries on these PCRs (I'm suspecting
+no is the answer).
+
+I'm also trying to set up my own systemd-boot system.
+
+James
 
 
