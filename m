@@ -1,60 +1,40 @@
-Return-Path: <linux-kernel+bounces-425941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E129DECC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:58:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F8F9DECC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 22:05:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2581163EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:58:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF72D281BF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EEF1A0BE0;
-	Fri, 29 Nov 2024 20:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQiVBSEX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF031A070E;
+	Fri, 29 Nov 2024 21:05:32 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A8E157A72;
-	Fri, 29 Nov 2024 20:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6254A39ACC
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 21:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732913905; cv=none; b=eObrHJ4L86JHCYZyyfD8AsQC/7LjwA35el1GQnRzvtP29GK4S2+q9bYVm1ouDGBuElr2JcIPVgrxAvcJbquWLL8p6KNX67wztxrRWrWum/rDTPjZpPYlRflgKcxNDsihopYeyH+aPjgw0QjfUSwtA5SREZLoREHgnYtz9w86iVQ=
+	t=1732914332; cv=none; b=dIk+MC4+UCRRqt4hZtEdPgKxStTtUSsE8jOj1Fp+3HDb3aWCOoWVFoetR5ufiE7NcT4rePXR9mrSa3DO9a/X4G2XOBoJ0wM4uRDYotaxl4cWTQkzk8UP/wskttBom4wSONla2RQ2Nft3sCZxROGXZGGSmabLwFcRbtFAzZg3fwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732913905; c=relaxed/simple;
-	bh=zZKblG1oW6ilUbzaYkY0HepGVylQVjpGP80Xxjdr6Pk=;
+	s=arc-20240116; t=1732914332; c=relaxed/simple;
+	bh=qBsoWDj8IOouyTm1auxIDjcz3US9h5Dfjqew0mdmkps=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Cafm3HZ7tL43rJWN/rIEGYM5efIncBiW9YP/rI2BaUsSRjSZDdIi8ctVuUCYHWIUaNb0oteE0qsgEZOApHce6qOpnXT78bH0rsrXeXB4CJP2K1NUU0PHoeaq4tMCtXEsJxU0suJ1J7PSk40IOwmeMrmOzQcadUPIB1rzd2/YmRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQiVBSEX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B75BDC4CECF;
-	Fri, 29 Nov 2024 20:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732913905;
-	bh=zZKblG1oW6ilUbzaYkY0HepGVylQVjpGP80Xxjdr6Pk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KQiVBSEXjNg3lOwoGvXRCuJjrm7xatbZwYoYfv8aYFd2HC0x5IJwKuqgoADK5cx9K
-	 +KX+jmQbgvhKJQM5fpzL2YlJNdEYoFU52WttObfeKoS51O5ro2RHnsjH0sbHk9v4jY
-	 mZ01idn5tzWZJrtgbtOuJnR9QciqUf3vbKpMkiMsrzTUEVedYbbKlXa+qwBpRIpc7o
-	 j+JCVS5cVlgBCevSGvuoEVGWDx9TIVWsyegp2YjjAfCfT4NCKKbPs/KphT0mSysSZW
-	 8jgaVREpqN7BRnHS8uFMKh7fbOU8g8VMxSepgeHdPF4OoFOGbZAZqPDYvxd+5nR92a
-	 F2eJxFgKs3hvQ==
-Date: Fri, 29 Nov 2024 14:58:22 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
-	cassel@kernel.org, quic_schintav@quicinc.com,
-	fabrice.gasnier@foss.st.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] PCI: stm32: Add PCIe host support for STM32MP25
-Message-ID: <20241129205822.GA2772018@bhelgaas>
+	 Content-Disposition; b=tCkVghMHz6GmnufjmmJQUjST1mhAfv1pgWuhf9/nD22nTrjhzg7iZrTnP0ra0F2C9NcdWyfxc3CkIp1TC2Nz2Ni4hUU3muqQfXVpOZb4O8EDdCoW4xSgcRAibuiLVyC/3cRQaMNjQYfRTuKPjwgs6oj/DJQuSuphMQBWlYL4aGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A28C4CECF;
+	Fri, 29 Nov 2024 21:05:30 +0000 (UTC)
+Date: Fri, 29 Nov 2024 21:05:28 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] arm64 fixes for 6.13-rc1
+Message-ID: <Z0osmEaBnjdHS3Q0@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,71 +43,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241126155119.1574564-3-christian.bruel@foss.st.com>
 
-[+to Rob, DMA mask question]
+Hi Linus,
 
-On Tue, Nov 26, 2024 at 04:51:16PM +0100, Christian Bruel wrote:
-> Add driver for the STM32MP25 SoC PCIe Gen2 controller based on the
-> DesignWare PCIe core.
+Please pull the three fixes below that turned up during the merging
+window. They are on top of the arm64-upstream tag I sent last week.
+There will be at least a couple more next week but I'm waiting for -rc1
+because of some dependencies. Thanks.
 
-Can you include the numeric rate, not just "gen2", so we don't have to
-search for it?
+The following changes since commit 83ef4a378e563d085ddd7214c2a393116b5f3435:
 
-> +static int stm32_pcie_resume_noirq(struct device *dev)
-> +{
-> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
-> +	struct dw_pcie *pci = stm32_pcie->pci;
-> +	struct dw_pcie_rp *pp = &pci->pp;
-> +	int ret;
-> +
-> +	/* init_state must be called first to force clk_req# gpio when no
-> +	 * device is plugged.
-> +	 */
+  Merge branch 'for-next/pkey-signal' into for-next/core (2024-11-14 12:07:30 +0000)
 
-Use drivers/pci/ conventional comment style:
+are available in the Git repository at:
 
-  /*
-   * text ...
-   */
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
 
-> +static bool is_stm32_pcie_driver(struct device *dev)
-> +{
-> +	/* PCI bridge */
-> +	dev = get_device(dev);
-> +
-> +	/* Platform driver */
-> +	dev = get_device(dev->parent);
-> +
-> +	return (dev->driver == &stm32_pcie_driver.driver);
-> +}
-> +
-> +/*
-> + * DMA masters can only access the first 4GB of memory space,
-> + * so we setup the bus DMA limit accordingly.
-> + */
-> +static int stm32_dma_limit(struct pci_dev *pdev, void *data)
-> +{
-> +	dev_dbg(&pdev->dev, "disabling DMA DAC for device");
-> +
-> +	pdev->dev.bus_dma_limit = DMA_BIT_MASK(32);
+for you to fetch changes up to dfdf714fed559c09021df1d2a4bb64c0ad5f53bc:
 
-I don't think this is the right way to do this.  Surely there's a way
-to describe the DMA capability of the bridge once instead of iterating
-over all the downstream devices?  This quirk can't work for hot-added
-devices anyway.
+  perf/arm-cmn: Ensure port and device id bits are set properly (2024-11-25 18:53:05 +0000)
 
-> +	return 0;
-> +}
-> +
-> +static void quirk_stm32_dma_mask(struct pci_dev *pci)
-> +{
-> +	struct pci_dev *root_port;
-> +
-> +	root_port = pcie_find_root_port(pci);
-> +
-> +	if (root_port && is_stm32_pcie_driver(root_port->dev.parent))
-> +		pci_walk_bus(pci->bus, stm32_dma_limit, NULL);
-> +}
-> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_SYNOPSYS, 0x0550, quirk_stm32_dma_mask);
+----------------------------------------------------------------
+arm64 fixes for 6.13-rc1:
+
+- Deselect ARCH_CORRECT_STACKTRACE_ON_KRETPROBE so that tests depending
+  on it don't run (and fail) on arm64
+
+- Fix lockdep assert in the Arm SMMUv3 PMU driver
+
+- Fix the port and device ID bits setting in the Arm CMN perf driver
+
+----------------------------------------------------------------
+Chun-Tse Shao (1):
+      perf/arm-smmuv3: Fix lockdep assert in ->event_init()
+
+Mark Rutland (1):
+      arm64: disable ARCH_CORRECT_STACKTRACE_ON_KRETPROBE tests
+
+Namhyung Kim (1):
+      perf/arm-cmn: Ensure port and device id bits are set properly
+
+ arch/arm64/Kconfig            |  1 -
+ drivers/perf/arm-cmn.c        |  4 ++--
+ drivers/perf/arm_smmuv3_pmu.c | 19 +++++++++++--------
+ 3 files changed, 13 insertions(+), 11 deletions(-)
+
+-- 
+Catalin
 
