@@ -1,320 +1,120 @@
-Return-Path: <linux-kernel+bounces-425625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5DF9DE7ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:45:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065879DE7F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E929728159A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:45:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83CFCB22960
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C75819F487;
-	Fri, 29 Nov 2024 13:45:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19B61EA90;
-	Fri, 29 Nov 2024 13:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C321A0724;
+	Fri, 29 Nov 2024 13:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SlSL/GEB"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E867B19E7F8
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732887936; cv=none; b=J9+CoMRxQxnTgdwk5XL3JJL83VgS/sAIXNWXPLrLFQRH7+pKLQHIRaldZ4TZR7BIbiNlsv1jtqXy+S2FQK5gnHrJLqGhAac/hGTMjkZIiaVMKEclnGz7pSbROfGiqCKV6GkoyU2wpL/Mz5MEtyYBLgzxYjFijl0xm8c8V7+AvMk=
+	t=1732887938; cv=none; b=bUTVFv3tq7HXe2xQGZyrYTxyP1s8FbbsJh46SLQCaUo8AVLpTp4hut+EEyK8U+t4lQ/RvySFAIILGjyFPHPXk4AAUJKeJRfWENyFH4m+BGsohu7JQ13GN3dJzOxoieFTUHQPpIzu750xKVnOSftYmkpKAr3zYal71zwg6zLTq8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732887936; c=relaxed/simple;
-	bh=Y4Zku0SznqOt9Nhq28BYUg+7tD6WWRp4vj8sHJrW0wY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pe5Lcg0+U6uIGf+3z1YC/9xswDyhvBavOG3LRwBH66e06avZPFr7pKW0d5V2CUv868IV8BvtRdj5IAznKbKVsHxHTq0fup4Jd6R3ZqFlirrPQqPpq8nK0YcQB8NYJjNcRqsRyEsWqh7EeL2eo3tdtaql5yGMD6+3dYX0bk+mpjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E5C312FC;
-	Fri, 29 Nov 2024 05:46:02 -0800 (PST)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B33BF3F58B;
-	Fri, 29 Nov 2024 05:45:26 -0800 (PST)
-Message-ID: <791e8c32-83fb-442c-9664-4b5f2f9c09bf@arm.com>
-Date: Fri, 29 Nov 2024 13:45:25 +0000
+	s=arc-20240116; t=1732887938; c=relaxed/simple;
+	bh=WoE2yMfvRouFCW1YYkpvAbtADpCH3VD5R9wGkslpWIw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KVYNPqfK6aGO4qkmWsdHTeQ0737vS/cF6qVtj9JDEZXp9btNmHA/rRD7+F9Wg9cZNYgdTrYkvV7zh8nrdoimIoBJGgcrSrIKMMtF9NUJjYBiBZVx7yHOIGx+F9QDRJ7eGvMocORd8rPh6o6ccPZfsWZ3UQ+S+4f4j2Rkmwh9VSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SlSL/GEB; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e34339d41bso16958907b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:45:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732887935; x=1733492735; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jnuFPvHlqF2+V5h7gDxD9QoNqnoE7Ul8whcq/eg7E7s=;
+        b=SlSL/GEB4MLqk5P9mojbkJI7VRjdhbLLbK41ON1gkOkhA5Iy+rAlWGaoqQC0sJ3Yzw
+         Ize0eBodDL0tgwfYGmn6J/KulNFFalaRKWcLmXSNqqw12BS3HPMp0+LEIi1OFUMDrlcQ
+         Y7d851+/QiQIJD7NdpXfB3pm9fYP3dFbNhtb2lAu+RSm2e8SEGeh+9FMAxezpLSEYLQ/
+         DGA9UDACITPwrbXBK7H/Kdye11og2UqO63fHD54uKx91E0uNqxkM1rQj8A/l8m9nXz1K
+         j8zbwjuMsTc1opZB2KRcC9w8XpDUYosbNyW92KNiISo8LKRnoZDMmj/IBLIoJtISYI09
+         um2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732887935; x=1733492735;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jnuFPvHlqF2+V5h7gDxD9QoNqnoE7Ul8whcq/eg7E7s=;
+        b=sHDUPGMsj2Bggz4b8NvHzD/bUHgEx3X0/GjIjR+MjZsNOQ8UBq6mPQXdQNHSlrNh16
+         mSPLafTzgnEz+hX2i3U782k/1UZUGAdi3/qtx/yTzYUtGYwv9/TzVFjhQl/CqnJl8XxO
+         NHsETkQuThyjk686qIIBGFJEIfpcX1FVNln+Qsp7Wu1YpHEnrMqgwzxd1Bg06wq3R5q2
+         HdeQvVfzOuVmMYxmjFwE8Mcs6Gmz4q7btMvBdcd9NlgLX/8xdm86+ebF3tq6BPtB/n8Z
+         Bas6s6LUUwAfbzxBnPjprl70dEXO3yjRXdUDghNEepU+A0SsdtxKMKJGfXNJkB8pDckU
+         V7Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjeR76SYhF9oqfElj5aKfASjnoE8+xwVbhvZwDg2dk1bSY1CUfrNYHpJp815IIPhBjvFxkb2xi+RYmkYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW+KHI5zonLWZqOJlrGfXrms/m590EjwwTKbfuS4HE4qyTCA3A
+	cinBxTCirXFUZJ8+SJF9V+NyQm1ft54eW8DodX5DmyINFWFnGa5xR1xirVOISgfij/woJzE2Xzh
+	IaIpWZ+f8tia2crOX8VVf0dk09tQB0sVu4o4Tqg==
+X-Gm-Gg: ASbGnctYwBxlJzxoC8UvX9WLqUM4XragTOkDcp4i59XGS8Hp7d6OPL5/0Q7SxEuzNuu
+	J/+O3AO8SijCY1xG9ZjhFPtMSVvDjbQE=
+X-Google-Smtp-Source: AGHT+IFcdw16JjCHhf6pyyNofTqnqJtbeYn35N5Sw7fR5PMwJk8S0Dust9v7sJdcUjiPz0hKcc++q+mU90RLLwYFzZk=
+X-Received: by 2002:a05:690c:9c08:b0:6ef:4ed2:7dfe with SMTP id
+ 00721157ae682-6ef4ed381ecmr63286207b3.31.1732887934964; Fri, 29 Nov 2024
+ 05:45:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 18/43] arm64: RME: Handle realm enter/exit
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-19-steven.price@arm.com>
- <c44aeac6-4fe1-4199-962d-5fbbc5a591de@arm.com>
- <7d1d4893-f798-4e44-aad0-1d0071e30b05@arm.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <7d1d4893-f798-4e44-aad0-1d0071e30b05@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
+ <20241129-add-displayport-support-for-qcs615-platform-v1-8-09a4338d93ef@quicinc.com>
+In-Reply-To: <20241129-add-displayport-support-for-qcs615-platform-v1-8-09a4338d93ef@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 29 Nov 2024 15:45:29 +0200
+Message-ID: <CAA8EJpqMug4u1YPxBGfDUT8Cf8F5XckxnJdau-Gm6swyU5VT=w@mail.gmail.com>
+Subject: Re: [PATCH 8/8] drm/msm/dp: Support external GPIO HPD with 3rd
+ pinctrl chip
+To: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_lliu6@quicinc.com, quic_fangez@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Steven
+On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
+>
+> Add support for handling HPD (Hot Plug Detect) signals via external
+> GPIOs connected through pinctrl chips (e.g., Semtech SX1509Q). This
+> involves reinitializing the relevant GPIO and binding an interrupt
+> handler to process hot plug events. Since external GPIOs only support
+> edge interrupts (rising or falling) rather than state interrupts, the
+> GPIO state must be read during the first DP bridge HPD enablement. This
+> ensures the current connection state is determined and a hot plug event
+> is reported accordingly.
 
-On 29/11/2024 12:18, Steven Price wrote:
-> Hi Suzuki,
-> 
-> Sorry for the very slow response to this. Coming back to this I'm having
-> doubts, see below.
-> 
-> On 17/10/2024 14:00, Suzuki K Poulose wrote:
->> On 04/10/2024 16:27, Steven Price wrote:
->>> Entering a realm is done using a SMC call to the RMM. On exit the
->>> exit-codes need to be handled slightly differently to the normal KVM
->>> path so define our own functions for realm enter/exit and hook them
->>> in if the guest is a realm guest.
->>>
->>> Signed-off-by: Steven Price <steven.price@arm.com>
-> ...
->>> diff --git a/arch/arm64/kvm/rme-exit.c b/arch/arm64/kvm/rme-exit.c
->>> new file mode 100644
->>> index 000000000000..e96ea308212c
->>> --- /dev/null
->>> +++ b/arch/arm64/kvm/rme-exit.c
-> ...
->>> +static int rec_exit_ripas_change(struct kvm_vcpu *vcpu)
->>> +{
->>> +    struct kvm *kvm = vcpu->kvm;
->>> +    struct realm *realm = &kvm->arch.realm;
->>> +    struct realm_rec *rec = &vcpu->arch.rec;
->>> +    unsigned long base = rec->run->exit.ripas_base;
->>> +    unsigned long top = rec->run->exit.ripas_top;
->>> +    unsigned long ripas = rec->run->exit.ripas_value;
->>> +    unsigned long top_ipa;
->>> +    int ret;
->>> +
->>> +    if (!realm_is_addr_protected(realm, base) ||
->>> +        !realm_is_addr_protected(realm, top - 1)) {
->>> +        kvm_err("Invalid RIPAS_CHANGE for %#lx - %#lx, ripas: %#lx\n",
->>> +            base, top, ripas);
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    kvm_mmu_topup_memory_cache(&vcpu->arch.mmu_page_cache,
->>> +                   kvm_mmu_cache_min_pages(vcpu->arch.hw_mmu));
->>
->> I think we also need to filter the request for RIPAS_RAM, by consulting
->> if the "range" is backed by a memslot or not. If they are not, we should
->> reject the request with a response flag set in run.enter.flags.
-> 
-> It's an interesting API question. At the moment there is no requirement
-> to have an active memslot to set the RIPAS - this is true both during
-> the setup by the VMM and at run time.
-> 
-> In theory a VMM can create/destroy memslots while the guest is running.
-> So absense of a memslot doesn't actually imply that the RIPAS change
+NAK, use dp-connector instead.
 
-Agreed. Whether an IPA range may be used as RAM is a decision that the
-VMM must make. So, we could give the VMM a chance to respond to this
-request before we (KVM) make the RTT changes.
-
-> should be rejected. Obviously with realms this is tricky because when
-> destroying a memslot that's in use KVM would rip those pages out from
-> the guest and it would require guest cooperation to restore those pages
-> (transition to RIPAS_EMPTY and back to RIPAS_RAM). But it's not
-> something that has been prohibited so far.
-
-True, and it shouldn't be prohibited. If the Host wants to take away a
-memslot it must be able to do that. But if it wants to do that in
-good faith with the Realm, there must have been some communication
-(e.g., virtio-mem ?) between the Host and the Realm and as long as the
-Realm knows not to trust the contents on that region it could be 
-recovered without a transition to EMPTY.
-
-e.g. From RIPAS_DESTROYED => RIPAS_RAM with RSI_SET_IPA_STATE(... 
-CHANGE_DESTROYED).
+>
+> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/dp/dp_display.c | 83 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 83 insertions(+)
 
 
-> 
-> On the other hand this is a clear way for a (malicious/buggy) guest to
-> use a fair bit of RAM by transitioning to RIPAS_RAM (sparse) pages not
-> in a memslot and forcing KVM to allocate the RTT pages to delegate to
-> the RMM. But we do exit to the VMM, so this is solvable in the VMM (by
-> killing a misbehaving guest). The number of pages this would consume per
-> exit is also fairly small.
-
-Correct. If the VMM has no intention to provide memory at a given IPA
-range, KVM shouldn't report RSI_ACCEPT to the Realm and the Realm later
-gets a stage2 fault that cannot be serviced by KVM.
-
-> 
-> So my instinct is that we shouldn't impose that requirement.
-
-I think we may be able to fix this by letting the VMM ACCEPT or REJECT
-a given RIPAS_RAM transition request. That way, KVM isn't playing by
-the rules set by the VMM and whether the VMM wants to trick the Realm
-or play by the rules is upto it.
-
-
-> 
-> Any thoughts?
-> 
->> As for EMPTY requests, if the guest wants to explicitly mark any range
->> as EMPTY, it doesn't matter, as long as it is within the protected IPA.
->> (even though they may be EMPTY in the first place).
->>
->>> +    write_lock(&kvm->mmu_lock);
->>> +    ret = realm_set_ipa_state(vcpu, base, top, ripas, &top_ipa);
->>> +    write_unlock(&kvm->mmu_lock);
->>> +
->>> +    WARN(ret && ret != -ENOMEM,
->>> +         "Unable to satisfy RIPAS_CHANGE for %#lx - %#lx, ripas:
->>> %#lx\n",
->>> +         base, top, ripas);
->>> +
->>> +    /* Exit to VMM to complete the change */
->>> +    kvm_prepare_memory_fault_exit(vcpu, base, top_ipa - base, false,
->>> false,
->>> +                      ripas == RMI_RAM);
->>
->> Again this may only be need if the range is backed by a memslot ?
->> Otherwise the VMM has nothing to do.
-> 
-> Assuming the above, then the VMM would be the one to kill a misbehaving
-> guest, so would need a notification.
-
-May be we could reverse the order of operations by delaying the 
-realm_set_ipa_state() to occur on VMMs request from the memory_fault_exit.
-
-
-Suzuki
-
-> 
-> Thanks,
-> Steve
-> 
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static void update_arch_timer_irq_lines(struct kvm_vcpu *vcpu)
->>> +{
->>> +    struct realm_rec *rec = &vcpu->arch.rec;
->>> +
->>> +    __vcpu_sys_reg(vcpu, CNTV_CTL_EL0) = rec->run->exit.cntv_ctl;
->>> +    __vcpu_sys_reg(vcpu, CNTV_CVAL_EL0) = rec->run->exit.cntv_cval;
->>> +    __vcpu_sys_reg(vcpu, CNTP_CTL_EL0) = rec->run->exit.cntp_ctl;
->>> +    __vcpu_sys_reg(vcpu, CNTP_CVAL_EL0) = rec->run->exit.cntp_cval;
->>> +
->>> +    kvm_realm_timers_update(vcpu);
->>> +}
->>> +
->>> +/*
->>> + * Return > 0 to return to guest, < 0 on error, 0 (and set
->>> exit_reason) on
->>> + * proper exit to userspace.
->>> + */
->>> +int handle_rec_exit(struct kvm_vcpu *vcpu, int rec_run_ret)
->>> +{
->>> +    struct realm_rec *rec = &vcpu->arch.rec;
->>> +    u8 esr_ec = ESR_ELx_EC(rec->run->exit.esr);
->>> +    unsigned long status, index;
->>> +
->>> +    status = RMI_RETURN_STATUS(rec_run_ret);
->>> +    index = RMI_RETURN_INDEX(rec_run_ret);
->>> +
->>> +    /*
->>> +     * If a PSCI_SYSTEM_OFF request raced with a vcpu executing, we
->>> might
->>> +     * see the following status code and index indicating an attempt
->>> to run
->>> +     * a REC when the RD state is SYSTEM_OFF.  In this case, we just
->>> need to
->>> +     * return to user space which can deal with the system event or
->>> will try
->>> +     * to run the KVM VCPU again, at which point we will no longer
->>> attempt
->>> +     * to enter the Realm because we will have a sleep request
->>> pending on
->>> +     * the VCPU as a result of KVM's PSCI handling.
->>> +     */
->>> +    if (status == RMI_ERROR_REALM && index == 1) {
->>> +        vcpu->run->exit_reason = KVM_EXIT_UNKNOWN;
->>> +        return 0;
->>> +    }
->>> +
->>> +    if (rec_run_ret)
->>> +        return -ENXIO;
->>> +
->>> +    vcpu->arch.fault.esr_el2 = rec->run->exit.esr;
->>> +    vcpu->arch.fault.far_el2 = rec->run->exit.far;
->>> +    vcpu->arch.fault.hpfar_el2 = rec->run->exit.hpfar;
->>> +
->>> +    update_arch_timer_irq_lines(vcpu);
->>> +
->>> +    /* Reset the emulation flags for the next run of the REC */
->>> +    rec->run->enter.flags = 0;
->>> +
->>> +    switch (rec->run->exit.exit_reason) {
->>> +    case RMI_EXIT_SYNC:
->>> +        return rec_exit_handlers[esr_ec](vcpu);
->>> +    case RMI_EXIT_IRQ:
->>> +    case RMI_EXIT_FIQ:
->>> +        return 1;
->>> +    case RMI_EXIT_PSCI:
->>> +        return rec_exit_psci(vcpu);
->>> +    case RMI_EXIT_RIPAS_CHANGE:
->>> +        return rec_exit_ripas_change(vcpu);
->>> +    }
->>> +
->>> +    kvm_pr_unimpl("Unsupported exit reason: %u\n",
->>> +              rec->run->exit.exit_reason);
->>> +    vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
->>> +    return 0;
->>> +}
->>> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
->>> index 1fa9991d708b..4c0751231810 100644
->>> --- a/arch/arm64/kvm/rme.c
->>> +++ b/arch/arm64/kvm/rme.c
->>> @@ -899,6 +899,25 @@ void kvm_destroy_realm(struct kvm *kvm)
->>>        kvm_free_stage2_pgd(&kvm->arch.mmu);
->>>    }
->>>    +int kvm_rec_enter(struct kvm_vcpu *vcpu)
->>> +{
->>> +    struct realm_rec *rec = &vcpu->arch.rec;
->>> +
->>> +    switch (rec->run->exit.exit_reason) {
->>> +    case RMI_EXIT_HOST_CALL:
->>> +    case RMI_EXIT_PSCI:
->>> +        for (int i = 0; i < REC_RUN_GPRS; i++)
->>> +            rec->run->enter.gprs[i] = vcpu_get_reg(vcpu, i);
->>> +        break;
->>> +    }
->>
->> As mentioned in the patch following (MMIO emulation support), we may be
->> able to do this unconditionally for all REC entries, to cover ourselves
->> from missing out other cases. The RMM is in charge of taking the
->> appropriate action anyways to copy the results back.
->>
->> Suzuki
->>
->>> +
->>> +    if (kvm_realm_state(vcpu->kvm) != REALM_STATE_ACTIVE)
->>> +        return -EINVAL;
->>> +
->>> +    return rmi_rec_enter(virt_to_phys(rec->rec_page),
->>> +                 virt_to_phys(rec->run));
->>> +}
->>> +
->>>    static void free_rec_aux(struct page **aux_pages,
->>>                 unsigned int num_aux)
->>>    {
-> 
-
+-- 
+With best wishes
+Dmitry
 
