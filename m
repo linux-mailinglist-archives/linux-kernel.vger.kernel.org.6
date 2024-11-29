@@ -1,151 +1,228 @@
-Return-Path: <linux-kernel+bounces-425818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB71C9DEB53
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:53:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 975B89DEB58
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CC8FB20F67
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:53:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09545B21671
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C85146D76;
-	Fri, 29 Nov 2024 16:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0F519884C;
+	Fri, 29 Nov 2024 16:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QnsRYVM1"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SRjC66XG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED8114B075
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2D914A0A3
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732899185; cv=none; b=U4v+/RZD7QkPwZlcIi8fJGQ3ncoFMK9APO8f3fOPfBBtHBYdZkAMm7CA3xooadqAgrGoNixCVwXzkkQM/G4ToEr39hEfA1EbPWpE63i+XpTvweJgqO21J7f4PI090iGmtjmN5eS9mSuGkoQxxpGLNyAqKhyMR/7ZesTi6wlxAW8=
+	t=1732899387; cv=none; b=NQbQo0pBmpS/OCW8CntUMiii6nCIAr5frVvAMQqiRPI3HOwOpgNPQwzENdEBqeDlY9nHm6/DluDL32ATxPexGCvXWevSkLUX73TR2X1mfKM/1K/8jA9EGzWY20LJ0mC38vv8Rh9lFh3R/N4sDlThQM9orqVBhCuqUsd6PuNh+yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732899185; c=relaxed/simple;
-	bh=sOFiuhO5vsMdTi5SVwyGzfNynTcxWRGvJ2d795d1uF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpX6X35ZAR8TwhPGwD+goCS7gCdxf8dShdQ3X1J8IQdOYKdi1tRPPaIMi5l+uG1lECk2XOSvhGguzShb6kD6L5Gppz0APxF2q+T1K6liBus8OWGQtegeDuXQqb/R+dzhOiGDnpEnrb4QdorLqYFSRQr4YCAXTfo01v1OhFsdwD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QnsRYVM1; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-212348d391cso17022715ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:53:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732899183; x=1733503983; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZFbMuwJoupeTuVIANvu9of3sRyXIlInw9R0HVQxUTXk=;
-        b=QnsRYVM19PCr1yMt2BhY3TrgVFyTOxqez7wGNRZN4OGef9nvY+7pgAFrbOqOix1hPz
-         FfptMpJCGGSRMN41PaCXbUCFbR1SySR/V/SzmB2n9tFx0JodrKKAE/1uW9e3nwjNaGxU
-         BgGIC4hiGDtkgya8PakPdfXLRqdO/YvsSwIy3NQJppkq+BXg/G96hDcN7nRNkUKZ5Fep
-         hk03/GSbtxzXelhdZ/FhAvruOb88s96M9rP6W3SUh2j8gUaEf7Lhvsn8VNy/q17xskf5
-         ujejsWUaXU2e3UyrEKHYVaNz7DXb5izHdNpjaS53N1nhBVrfVM+YAx98jLWJK1ldNo+W
-         EIUg==
+	s=arc-20240116; t=1732899387; c=relaxed/simple;
+	bh=lQwbTwapAcxU9HUYx7ZhzBw2LZBa1rj3PgCAZS97aqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IqcRRtdltqbnW4qlANksRJsLrJz+c1KDK3Dgp182TaQ2BZ4n8uU204oZKvTWLDGY4HF+xp5cgzE563Lwq/Oj/N4Tydr9yr9Y/oMpD6w8/0+AhkWLJf/l7nDTkaScTGcaiabdbtYg7UuXThSAcBU3xaDA5HNBJ204O/knzoPSPko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SRjC66XG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ATDKjra005357
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:56:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9N9+0StuwjFo78qzxGpA7gT4M9KWRW0S+SLyWV8Ydm4=; b=SRjC66XG6ukxUnql
+	QAhvEXXLmYdoqEywLif+5a3pD/fEzyeJuaE0KBFTyGuG1X+ROPeAHW7006tzhx1l
+	f9udFt63+k7gOJuAr+Mc+zVUSZ5f7NBfzvExm443ilGKpTkSSu5TN8LIpnPYZ6O1
+	osmCx1REcNLc9/9SBWPmRVHX6kDBmL/zXwY1HMimUH4Qc7vWmGcsA9cYqrMH7dZa
+	TbYxQN9uEe479CJDCsHoWQtAU4/t2f8V/LOJ70kMhqyjlKHMzIhAolRiTrXwibC2
+	9UKh85kPXc/1SwY7hg49nqJDvgzXwmHTulsifK4301kz1u7eKafttQGiiyPIOk1G
+	H0dyRg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 436h2mmtde-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:56:24 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-466d3ec228bso595941cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:56:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732899183; x=1733503983;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1732899373; x=1733504173;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZFbMuwJoupeTuVIANvu9of3sRyXIlInw9R0HVQxUTXk=;
-        b=d8pQ3aHta4eSL92f2CzgjFrOKx5nP/MKqSPMMGlkoy6rvuycRTgX3GSVOG4HX2/DO8
-         +F+hzjynVCyBxcWYN+3upseSM7nLj6pNI8Nm6dgLWNO3W75ED0x9hSa/k1SJfphiEjdp
-         iLmsxKH6K8ekaWAcWIbfM9c/UiL14GGVYO2VTLJ/aPMcmZPTMRPkXfh7wvlA1iWhkveb
-         yHZVq065nSty899ivjywUrawkAeCzwUBMx/5dLwXXzwU9ISe5xBBeLAbMn01aL0HNWon
-         BVUUWBczFOoqquaz8DXYTzi6B7g3aK+mN6DU7OoAGOm3aNaUq23v8lSxQH/OaKqmojEE
-         r/DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVE6JcYlPMVvqNkMihwLWTUAVa1Jr9qsk0u+8AfcLmKyBSTF0YbhoqIv+haCfdAzgnF7mHV0GJwhVXKHYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8KorduSvbqbEOiwyNnaTwMoqYXdyxldNllvZFi+/Vjp8S3bew
-	Y7iBGaULQsqo1cH2bWJDpxCFSbj5LRi+j+dw75wOkOuf+ACRoUKVHcf917u7Pg==
-X-Gm-Gg: ASbGncsXICSrXw9KxvDhBlwMUTrpHdXBvp1O+lU8Rb8acbJOaCQY0htUCMy6VYNNuFn
-	W4km7N26tBjNmn333nhA5s9AlzK4AJ5ANp+ynLctJVnLkSz9eXysQagh/uxXqUZRJ6loZ+e79U4
-	rYeMAs6+sMUmzJ2GrEJ7ourACIMmcSFrPUX+dg1FFs6gNfY2xwuCsv0xq+upt5uFSvXWXPJZh1S
-	qH09uyCPwIhk2d+2Ot/SZz2sZLnIhLwjGlMp2/4qdRmHAftYbVLyHfEDPbr
-X-Google-Smtp-Source: AGHT+IGgMDneUQoezXtXtm82L/rrJjPpPfA4CVESzXST0WVlaDqWVPOFPzJbew1ac7rLRRJmGXV8Fw==
-X-Received: by 2002:a17:902:fc47:b0:215:5204:3913 with SMTP id d9443c01a7336-21552044c13mr16503025ad.52.1732899182903;
-        Fri, 29 Nov 2024 08:53:02 -0800 (PST)
-Received: from thinkpad ([120.60.57.102])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215219d0aafsm32851455ad.271.2024.11.29.08.52.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 08:53:02 -0800 (PST)
-Date: Fri, 29 Nov 2024 22:22:56 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: kw@linux.com, gregkh@linuxfoundation.org, arnd@arndb.de,
-	lpieralisi@kernel.org, shuah@kernel.org, kishon@kernel.org,
-	aman1.gupta@samsung.com, p.rajanbabu@samsung.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bhelgaas@google.com, linux-arm-msm@vger.kernel.org, robh@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] selftests: pci_endpoint: Migrate to Kselftest
- framework
-Message-ID: <20241129165256.dkzcbfdvmf2n4rxx@thinkpad>
-References: <20241129092415.29437-1-manivannan.sadhasivam@linaro.org>
- <20241129092415.29437-5-manivannan.sadhasivam@linaro.org>
- <Z0nG3oAx66plv4qI@ryzen>
- <20241129163555.apf35xa6x5joscha@thinkpad>
- <Z0nu8n5GEuZ0zaBD@ryzen>
+        bh=9N9+0StuwjFo78qzxGpA7gT4M9KWRW0S+SLyWV8Ydm4=;
+        b=UBPJ9o3HYz8RpYSav5RX+Y6GPue/noZdBa94sR9a9XN5BV94J0a44VmKuNKq2HjJzt
+         pbLZebgoYlaaZb/SLe+hSiCLlpwzgpVml8bRxg4D8aY3TIYD8n9rYL+Ygn3PbpdHKgAM
+         nub2T5QFOh/RotnEfQ/bN26eYrVK2AmGbuJ8/H7pwooYN5L7m10B9omgyunlWjZoIzjt
+         UGsj1wCVDqeonZmqxS8NopnN/kemGN2JUSK7scIEv0Pn70DVsYfbWXfo9HzV4fRLVSA/
+         n9M3EQGYPjteRUvy9NtpUSwkdebB8jtx83SAQO5wNXosOk/QF7qudv8VLgAWrdlMywJ9
+         hmvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOv+qhbgWlP2aL9uAvpFrZBitF5QcEa58T5Lt1jxbmpkh09X4C5lAy9T0OLaVJ/a9PVKIFZHYNVBzmmAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXRk2xNB0NyaOOKGzggmIwIp4QQSFVi7DmugrofI/YCx/THlOm
+	uHdG1ITRycmCNoH0Qy1DlZcOIw7DDTT4gYfoh7RMaAHnu7yXooZa68QOqz8GD1j/wm9um3qaC+b
+	M9ve+/Jl07xYgcf0uW1pmoulAxv3vtQBIR/VgbccCSkhwyc3K2+NNIEjOwG4/gRw=
+X-Gm-Gg: ASbGncvqFu2ATFAXylkboF00d1R7EaruigJLEaubEd0cNx1hT13JaTWj1W7Upcsuhyr
+	Y69u1hErgOJJuMT62j/oFFBbDiO4oulVaPFLk9vYNnyivrAHElZk0ODTQMC4IdOXUJ2EIZMU5ce
+	ys/VM9wZjvsUxKsuPksSzvhbTXVRnTTBMJ06uFvWnDgX4OkBXfYAegb8L8PbyHzBx3CWy8xOqAT
+	PgnRLT3rsaxCnXAlAYNtrlqFwdWv0vCrOshw0cSDwHXzaP3PXSJfSIohUHzME+JP3zb+/6umZxg
+	2c3jstSkRS70gZLhh7zOeLBSnDI7nek=
+X-Received: by 2002:a05:622a:389:b0:462:fb65:cbb5 with SMTP id d75a77b69052e-466b36886b8mr76651481cf.16.1732899372960;
+        Fri, 29 Nov 2024 08:56:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGVQSLO78wLDzRLA3VpDJ6fBlRPS9lgHqu+R15VZlArJvaDZj5w/JO/kqnnSs0mQp12UhVnIQ==
+X-Received: by 2002:a05:622a:389:b0:462:fb65:cbb5 with SMTP id d75a77b69052e-466b36886b8mr76651111cf.16.1732899372416;
+        Fri, 29 Nov 2024 08:56:12 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e64c4sm190708566b.97.2024.11.29.08.56.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 08:56:11 -0800 (PST)
+Message-ID: <00941d91-7366-4836-9d3a-7e505528a4e8@oss.qualcomm.com>
+Date: Fri, 29 Nov 2024 17:56:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z0nu8n5GEuZ0zaBD@ryzen>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/7] drm/msm: adreno: dynamically generate GMU bw table
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20241128-topic-sm8x50-gpu-bw-vote-v3-0-81d60c10fb73@linaro.org>
+ <20241128-topic-sm8x50-gpu-bw-vote-v3-3-81d60c10fb73@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241128-topic-sm8x50-gpu-bw-vote-v3-3-81d60c10fb73@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 7-Iar61IlidALfJDHTF0AXT9HO-nXjPy
+X-Proofpoint-ORIG-GUID: 7-Iar61IlidALfJDHTF0AXT9HO-nXjPy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0 adultscore=0
+ spamscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0 clxscore=1015
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411290137
 
-On Fri, Nov 29, 2024 at 05:42:26PM +0100, Niklas Cassel wrote:
-> On Fri, Nov 29, 2024 at 10:05:55PM +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Nov 29, 2024 at 02:51:26PM +0100, Niklas Cassel wrote:
-> > > Hello Mani,
-> > > 
-> > > On Fri, Nov 29, 2024 at 02:54:15PM +0530, Manivannan Sadhasivam wrote:
-> > > > Migrate the PCI endpoint test to Kselftest framework. All the tests that
-> > > > were part of the previous pcitest.sh file were migrated.
-> > > > 
-> > > > Below is the exclusive list of tests:
-> > > > 
-> > > > 1. BAR Tests (BAR0 to BAR5)
-> > > > 2. Legacy IRQ Tests
-> > > > 3. MSI Interrupt Tests (MSI1 to MSI32)
-> > > > 4. MSI-X Interrupt Tests (MSI-X1 to MSI-X2048)
-> > > > 5. Read Tests - MEMCPY (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > > > 6. Write Tests - MEMCPY (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > > > 7. Copy Tests - MEMCPY (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > > > 8. Read Tests - DMA (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > > > 9. Write Tests - DMA (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > > > 10. Copy Tests - DMA (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > > 
-> > > I'm not sure if it is a great idea to add test case number 10.
-> > > 
-> > > While it will work if you use the "dummy memcpy" DMA channel which uses
-> > > MMIO under the hood, if you actually enable a real DMA controller (which
-> > > often sets the DMA_PRIVATE cap in the DMA controller driver (e.g. if you
-> > > are using a DWC based PCIe EP controller and select CONFIG_DW_EDMA=y)),
-> > > pci_epf_test_copy() will fail with:
-> > > [   93.779444] pci_epf_test pci_epf_test.0: Cannot transfer data using DMA
-> > > 
-> > 
-> > So the idea is to exercise all the options provided by the epf-test driver. In
-> > that sense, we need to have the DMA COPY test. However, I do agree that the
-> > common DMA controllers will fail this case. So how about just simulating the DMA
-> > COPY for controllers implementing DMA_PRIVATE cap? I don't think it hurts to
-> > have this feature in test driver.
+On 28.11.2024 11:25 AM, Neil Armstrong wrote:
+> The Adreno GPU Management Unit (GMU) can also scale the ddr
+> bandwidth along the frequency and power domain level, but for
+> now we statically fill the bw_table with values from the
+> downstream driver.
 > 
-> I guess you could modify pci-epf-test to simply do MMIO in test_copy(),
-> if USE_DMA && DMA_PRIVATE is set, as you suggest.
+> Only the first entry is used, which is a disable vote, so we
+> currently rely on scaling via the linux interconnect paths.
 > 
+> Let's dynamically generate the bw_table with the vote values
+> previously calculated from the OPPs.
+> 
+> Those entried will then be used by the GMU when passing the
 
-No not memcpy, but using the DMA to copy from src to local buf and then local
-buf to dst. This way, we do not need to fallback and at the same time simulate
-DMA COPY.
+entries
 
-- Mani 
+> appropriate bandwidth level while voting for a gpu frequency.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
 
--- 
-மணிவண்ணன் சதாசிவம்
+[...]
+
+>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 39 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 36 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> index cb8844ed46b29c4569d05eb7a24f7b27e173190f..fe1946650425b749bad483dad1e630bc8be83abc 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> @@ -621,6 +621,35 @@ static void a740_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+>  	msg->cnoc_cmds_data[1][0] = 0x60000001;
+>  }
+>  
+> +static void a740_generate_bw_table(const struct a6xx_info *info, struct a6xx_gmu *gmu,
+> +				   struct a6xx_hfi_msg_bw_table *msg)
+
+This should work for all targets
+
+> +{
+> +	unsigned int i, j;
+> +
+> +	msg->ddr_wait_bitmask = 0x7;
+
+GENMASK; also should be generated based on BCM data dynamically, there's
+logic for it in bcm-voter.c : tcs_list_gen()
+
+> +
+> +	for (i = 0; i < GMU_MAX_BCMS; i++) {
+> +		if (!info->bcms[i].name)
+> +			break;
+> +		msg->ddr_cmds_addrs[i] = cmd_db_read_addr(info->bcms[i].name);
+
+A7xx share a common list of BCMs, the buswidth may differ per soc and it's
+something already stored in ICC drivers
+
+> +	}
+> +	msg->ddr_cmds_num = i;
+> +
+> +	for (i = 0; i < gmu->nr_gpu_bws; ++i)
+> +		for (j = 0; j < msg->ddr_cmds_num; j++)
+> +			msg->ddr_cmds_data[i][j] = gmu->gpu_ib_votes[i][j];
+> +	msg->bw_level_num = gmu->nr_gpu_bws;
+> +
+> +	/* TODO also generate CNOC commands */
+
+We only do on/off (0/100 units - kbps?), it seems
+
+> +
+> +	msg->cnoc_cmds_num = 1;
+> +	msg->cnoc_wait_bitmask = 0x1;
+> +
+> +	msg->cnoc_cmds_addrs[0] = cmd_db_read_addr("CN0");
+> +	msg->cnoc_cmds_data[0][0] = 0x40000000;
+> +	msg->cnoc_cmds_data[1][0] = 0x60000001;
+> +}
+> +
+>  static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+>  {
+>  	/* Send a single "off" entry since the 630 GMU doesn't do bus scaling */
+> @@ -664,6 +693,7 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+>  	struct a6xx_hfi_msg_bw_table *msg;
+>  	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>  	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+> +	const struct a6xx_info *info = adreno_gpu->info->a6xx;
+>  
+>  	if (gmu->bw_table)
+>  		goto send;
+> @@ -690,9 +720,12 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+>  		a690_build_bw_table(msg);
+>  	else if (adreno_is_a730(adreno_gpu))
+>  		a730_build_bw_table(msg);
+> -	else if (adreno_is_a740_family(adreno_gpu))
+> -		a740_build_bw_table(msg);
+> -	else
+> +	else if (adreno_is_a740_family(adreno_gpu)) {
+> +		if (info->bcms && gmu->nr_gpu_bws > 1)
+> +			a740_generate_bw_table(info, gmu, msg);
+
+This if should come before the hardcoded if-else chain, as it
+applies to all platforms
+
+Konrad
 
