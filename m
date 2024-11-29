@@ -1,343 +1,223 @@
-Return-Path: <linux-kernel+bounces-425929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD119DECA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:22:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867389DECA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:22:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 452BE281D68
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:22:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467EE2820DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89539E545;
-	Fri, 29 Nov 2024 20:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78D01A38E1;
+	Fri, 29 Nov 2024 20:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWIuXb6O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dF5gR/Nw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9479C14D428;
-	Fri, 29 Nov 2024 20:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EA9E545;
+	Fri, 29 Nov 2024 20:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732911751; cv=none; b=SnabpZEYhrbW7hYR+FWuYg0Ni4VFVm2Jhs2pi47cuc4Ws26aQf8jGyYpM7BkD0tY5Pyv/4JgC13/NUDatkTXjLnwnLAPL+Hldk9mgLKePWIhUef/qVIfbNIQimirmeWCBUL2naLOzftURCHRx+gTy21ZTHAAN4KxPAJfFzP+0sI=
+	t=1732911726; cv=none; b=BttE128UzlBSA32yf6RyPsphavLzVGNu6n03DYKvdBjfOVO5fbIkGsMZGfS9H2giOujc1mG59t+/AzJx2pr2XTSFxdvp3kY+lgRUu/Le+GKzYUjTGeeBF74AlsZgJwZwm3b1YXPdeRhpemWM9/ZwHR+2lz+cIuSAoZrcktMlqfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732911751; c=relaxed/simple;
-	bh=oSAsd4BzKj77bXV2khtHAQT2jN80a9LncyRIC0g5LRQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=bJoOOkzFlRjkhRKMenfrSkilNC06M2PAJsYYf4WaDowRtEzNp46IW7bWae7mrG2RaA7dnZp4H+7R1GXBmFM5UL6NXl6m2bwuWjCVPWZ27zpJJ8Yzs8wwLv1i56fH+1ytwNoVgjvnvTbvYjUowP5E1BcG416KponwYGroxJ/hZX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWIuXb6O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032EFC4CECF;
-	Fri, 29 Nov 2024 20:22:31 +0000 (UTC)
+	s=arc-20240116; t=1732911726; c=relaxed/simple;
+	bh=fy4e/x1/Z0FUaIbDJiNmJ65itWjY8DZ/a4+SMqhGJfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=pgarCHc5XtVvLY7jCkJa7BPW5TO3+dND35gW97r/imJ39KSEAm7dLtfDxcWNeiQsHXENyAqVig6kYBURDR5shepJlStZBp+GHNFeqX+Am+xq8Uz2uc4/wJSN38iOBWFlyZyN0UigUM1vQ0QopmwqyeCTr1hn9NNkvYPadeTRp7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dF5gR/Nw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4671FC4CECF;
+	Fri, 29 Nov 2024 20:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732911751;
-	bh=oSAsd4BzKj77bXV2khtHAQT2jN80a9LncyRIC0g5LRQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=mWIuXb6ONEzdvuAg8FJ2lUtZ4eYNcudKPpgglOf3/rzY88Fvy2lQSMt/5z8UrJApo
-	 n2N6KWPea4oEZK6PlGg5i8GEXN1u6ab7ZCEzjbV79bFykaJP75WzAVBrxqPqsDke0P
-	 6nhgG4zCyFu1sc6J5c2P/2ahdfPuBOQbaffnupcoUNJEj9ptowqDz1BAyQK17njtbS
-	 uDt8NYKIVM7Iy9i1w9C+0vX8/vZ2CKyPrWZCu5BKEzmNnTLzki1SLbQzgPHDs8WfXl
-	 zf59p856EUScZ/mqweafKjtSpupOLWXitVqoxX4INwNAgSaeR85uYJRXjXEPbGI4DU
-	 SCYOKrQFJKD2w==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53de6b7da14so2313773e87.0;
-        Fri, 29 Nov 2024 12:22:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXbh/88J06xgrl2NmeZZLWW45frAJSxEqdqRJY6FlvV2P79dKL14x759W7ou4B5wDrE33QXP1wgKSbH+cw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHnvOzZ1ebpnMnAthWEYccrE+mVp+SByd9wHMcYOXmvktt4LA7
-	cp18mNcoSN04fW5uDYNdgIRBZZeOxiP1J2UJ4hTv7fpgrPH0M8aHeUSKxqfXTJvfSeZ2KzJ/0dc
-	5c9xU0QCr7jTaKtRfdKkuAh+YGW0=
-X-Google-Smtp-Source: AGHT+IGtxTfScttZRGKkughjPqQEUXhvioHYKF4z7QtLt9FXX9v3KrMG6+SmKg6T/jmOmunyVMJ3JBiBOVxSaoNYAtw=
-X-Received: by 2002:a05:6512:224d:b0:53d:d210:4060 with SMTP id
- 2adb3069b0e04-53df01121dbmr4355529e87.53.1732911749620; Fri, 29 Nov 2024
- 12:22:29 -0800 (PST)
+	s=k20201202; t=1732911725;
+	bh=fy4e/x1/Z0FUaIbDJiNmJ65itWjY8DZ/a4+SMqhGJfI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=dF5gR/NwNESWEs8RCeEsxA+oTOQI4tl8Sfx7PNrT8uARwlI8bpuHLjHFSEmgkR5i0
+	 EhdoUDMFyKfM1q0ijxfIAwS/ult2roPBfLrem8CczQl5ACq6ElC1j9XYTdjydfJm1Y
+	 HOnvtLldocaYxILFtO3VK+lT4q0LfrOkayEhE66dRJxaGf92XFKsDvnACbeMWUI+Ud
+	 siz/fIGR+jVXxksRDR+YwAKBfbvqIvrVsn9jFmaU3qD77PnBoXU1PgkcQFaz4xxq9e
+	 MNMfT4bDChJjYZSV1xyaf+X1DSCEX4Qtls9lZJf8MzC2IYKE7BEVw782MvaBhMSD4E
+	 IhuvvuHRyfFew==
+Date: Fri, 29 Nov 2024 14:22:02 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jingoohan1@gmail.com, michal.simek@amd.com,
+	bharat.kumar.gogada@amd.com
+Subject: Re: [PATCH 2/2] PCI: amd-mdb: Add AMD MDB Root Port driver
+Message-ID: <20241129202202.GA2771092@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 30 Nov 2024 05:21:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAShSZrZh_-0wpUA2=FpnomQTBzhxY2bJbGwkYf+kyTzLg@mail.gmail.com>
-Message-ID: <CAK7LNAShSZrZh_-0wpUA2=FpnomQTBzhxY2bJbGwkYf+kyTzLg@mail.gmail.com>
-Subject: [GIT PULL] Kbuild updates for v6.13-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241127115804.2046576-3-thippeswamy.havalige@amd.com>
 
-Hello Linus,
+On Wed, Nov 27, 2024 at 05:28:04PM +0530, Thippeswamy Havalige wrote:
+> Add support for AMD MDB(Multimedia DMA Bridge) IP core as Root Port.
+> 
+> The Versal2 devices include MDB Module. The integrated block for MDB along
+> with the integrated bridge can function as PCIe Root Port controller at
+> Gen5 speed.
 
+What speed is Gen5?  Please include the numeric speed so we don't have
+to Google it.
 
-Please pull Kbuild updates for v6.13-rc1.
+> Bridge error and legacy interrupts in Versal2 MDB are handled using Versal2
+> MDB specific interrupt line.
+> 
+> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+> ---
+>  drivers/pci/controller/dwc/Kconfig        |  10 +
+>  drivers/pci/controller/dwc/Makefile       |   1 +
+>  drivers/pci/controller/dwc/pcie-amd-mdb.c | 455 ++++++++++++++++++++++
+>  3 files changed, 466 insertions(+)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-amd-mdb.c
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index b6d6778b0698..e7ddab8da2c4 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -14,6 +14,16 @@ config PCIE_DW_EP
+>  	bool
+>  	select PCIE_DW
+>  
+> +config PCIE_AMD_MDB
+> +	bool "AMD PCIe controller (host mode)"
+> +	depends on OF || COMPILE_TEST
+> +	depends on PCI && PCI_MSI
+> +	select PCIE_DW_HOST
+> +	help
+> +	  Say Y here to enable PCIe controller support on AMD SoCs. The
+> +	  PCIe controller is based on DesignWare Hardware and uses AMD
+> +	  hardware wrappers.
 
-You will see conflicts in two files.
+Alphabetize by vendor name.  I suppose "Advanced" *would* sort before
+"Amazon", but since "AMD" isn't spelled out, I think we have to sort
+by the initialism and put "Ama" before "AMD".
 
-[1] arch/powerpc/Makefile
+>  config PCIE_AL
+>  	bool "Amazon Annapurna Labs PCIe controller"
+>  	depends on OF && (ARM64 || COMPILE_TEST)
 
-This is caused by:
- 214c0eea43b2 ("kbuild: add $(objtree)/ prefix to some in-kernel build
-artifacts")
+> +static void amd_mdb_mask_leg_irq(struct irq_data *data)
 
-The resolution is provided by:
-https://lore.kernel.org/all/20241113095228.4ac96776@canb.auug.org.au/
+s/_leg_/_intx_/
 
+> +{
+> +	struct dw_pcie_rp *port = irq_data_get_irq_chip_data(data);
+> +	struct amd_mdb_pcie *pcie;
+> +	unsigned long flags;
+> +	u32 mask, val;
+> +
+> +	pcie = get_mdb_pcie(port);
 
-[2] tools/objtool/check.c
+Here and elsewhere, this could be done in the automatic variable list
+above since this is non-interesting setup.
 
-This is caused by:
- 315ad8780a12 ("kbuild: Add AutoFDO support for Clang build")
- d5dc95836147 ("kbuild: Add Propeller configuration for kernel build")
+> +static void amd_mdb_unmask_leg_irq(struct irq_data *data)
 
-The resolution is provided by:
-https://lore.kernel.org/all/20241112130136.52ffc457@canb.auug.org.au/
+Ditto.
 
+> +static struct irq_chip amd_mdb_leg_irq_chip = {
 
+Ditto.
 
-Thank you.
+> +static int amd_mdb_pcie_rp_intx_map(struct irq_domain *domain,
+> +				    unsigned int irq, irq_hw_number_t hwirq)
 
+"_rp_" in name unnecessary.
 
+> +static irqreturn_t amd_mdb_pcie_rp_intr_handler(int irq, void *dev_id)
+> +{
+> +	struct dw_pcie_rp *port = dev_id;
+> +	struct amd_mdb_pcie *pcie;
+> +	struct device *dev;
+> +	struct irq_data *d;
+> +
+> +	pcie = get_mdb_pcie(port);
+> +	dev = pcie->pci.dev;
+> +
+> +	d = irq_domain_get_irq_data(pcie->mdb_domain, irq);
+> +	if (intr_cause[d->hwirq].str)
+> +		dev_warn(dev, "%s\n", intr_cause[d->hwirq].str);
+> +	else
+> +		dev_warn(dev, "Unknown IRQ %ld\n", d->hwirq);
+> +
+> +	return IRQ_HANDLED;
 
-The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230=
-:
+I see that some of these messages are "Correctable/Non-Fatal/Fatal
+error message"; I assume this Root Port doesn't have an AER
+Capability, and this interrupt is the "System Error" controlled by the
+Root Control Error Enable bits in the PCIe Capability?  (See PCIe
+r6.0, sec 6.2.6)
 
-  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
+Is there any way to hook this into the AER handling so we can do
+something about it, since the devices *below* the Root Port may
+support AER and may have useful information logged?
 
-are available in the Git repository at:
+Since this is DWC-based, I suppose these are general questions that
+apply to all the similar drivers.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-v6.13
+> +static int amd_mdb_add_pcie_port(struct amd_mdb_pcie *pcie,
+> +				 struct platform_device *pdev)
+> +{
+> +	struct dw_pcie *pci = &pcie->pci;
+> +	struct dw_pcie_rp *pp = &pci->pp;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	pp->ops = &amd_mdb_pcie_host_ops;
 
-for you to fetch changes up to e6064da6461f989a357f2e280d7f8d4155267c4c:
+This is dw-related initialization; move it down just before the first
+use at dw_pcie_host_init().
 
-  kbuild: rename .tmp_vmlinux.kallsyms0.syms to .tmp_vmlinux0.syms
-(2024-11-28 08:46:03 +0900)
+> +	pcie->mdb_base = devm_platform_ioremap_resource_byname(pdev, "mdb_pcie_slcr");
+> +	if (IS_ERR(pcie->mdb_base))
+> +		return PTR_ERR(pcie->mdb_base);
+> +
+> +	ret = amd_mdb_pcie_rp_init_irq_domain(pcie, pdev);
 
-----------------------------------------------------------------
-Kbuild updates for v6.13
+Other drivers use "*_pcie_init_irq_domain" (without "rp").  It's
+helpful to use similar names so it's easier to compare
+implementations.
 
- - Add generic support for built-in boot DTB files
+Since amd_mdb_pcie_free_irq_domains() cleans this up, I think both
+should end with "domains" (with an "s") so they match.
 
- - Enable TAB cycling for dialog buttons in nconfig
+> +	if (ret)
+> +		return ret;
+> +
+> +	amd_mdb_pcie_rp_init_port(pcie, pdev);
 
- - Fix issues in streamline_config.pl
+Other drivers use "*_pcie_init_port" (without "rp").
 
- - Refactor Kconfig
+> +	ret = amd_mdb_setup_irq(pcie, pdev);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to set up interrupts\n");
+> +		goto out;
+> +	}
+> +
+> +	ret = dw_pcie_host_init(pp);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to initialize host\n");
+> +		goto out;
+> +	}
+> +
+> +	return 0;
+> +
+> +out:
+> +	amd_mdb_pcie_free_irq_domains(pcie);
+> +	return ret;
+> +}
 
- - Add support for Clang's AutoFDO (Automatic Feedback-Directed
-   Optimization)
-
- - Add support for Clang's Propeller, a profile-guided optimization.
-
- - Change the working directory to the external module directory for M=3D
-   builds
-
- - Support building external modules in a separate output directory
-
- - Enable objtool for *.mod.o and additional kernel objects
-
- - Use lz4 instead of deprecated lz4c
-
- - Work around a performance issue with "git describe"
-
- - Refactor modpost
-
-----------------------------------------------------------------
-David Hunter (3):
-      streamline_config.pl: fix missing variable operator in debug print
-      streamline_config.pl: ensure all defaults are tracked
-      streamline_config.pl: remove prompt warnings for configs with default=
-s
-
-Li Zhijian (1):
-      gitignore: Don't ignore 'tags' directory
-
-Masahiro Yamada (62):
-      speakup: use SPKDIR=3D$(src) to specify the source directory
-      kbuild: refactor the check for missing config files
-      kbuild: check the presence of include/generated/rustc_cfg
-      kbuild: add generic support for built-in boot DTBs
-      usb: use "prompt" instead of "bool" for choice prompts
-      kconfig: remove support for "bool" prompt for choice entries
-      kconfig: remove zconfprint()
-      kconfig: qconf: set QSplitter orientation in the constructor
-      kconfig: qconf: reorder code in ConfigMainWindow() constructor
-      kconfig: qconf: set parent in the widget constructor
-      kconfig: qconf: remove mouse{Press,Move}Event() functions
-      kconfig: qconf: remove redundant type check for choice members
-      kconfig: qconf: remove unnecessary setRootIsDecorated() call
-      kconfig: qconf: remove unnecessary lastWindowClosed() signal connecti=
-on
-      kconfig: qconf: convert the last old connection syntax to Qt5 style
-      kconfig: qconf: do not show goParent button in split view
-      kconfig: qconf: remove ConfigItem::visible member
-      kconfig: qconf: avoid unnecessary parentSelected() when ESC is presse=
-d
-      kconfig: qconf: remove redundant check in goBack()
-      kconfig: qconf: remove non-functional href=3D"m..." tag
-      kconfig: add sym_get_prompt_menu() helper function
-      kconfig: qconf: refactor ConfigInfoView::clicked()
-      kconfig: qconf: remove unnecessary mode check in ConfigItem::updateMe=
-nu()
-      kconfig: document the positional argument in the help message
-      kbuild: simplify rustfmt target
-      Rename .data.unlikely to .data..unlikely
-      Rename .data.once to .data..once to fix resetting WARN*_ONCE
-      kbuild: replace two $(abs_objtree) with $(CURDIR) in top Makefile
-      kbuild: add $(objtree)/ prefix to some in-kernel build artifacts
-      kbuild: rename abs_objtree to abs_output
-      kbuild: use 'output' variable to create the output directory
-      kbuild: change working directory to external module directory with M=
-=3D
-      kbuild: remove extmod_prefix, MODORDER, MODULES_NSDEPS variables
-      kbuild: support building external modules in a separate build directo=
-ry
-      kbuild: support -fmacro-prefix-map for external modules
-      kbuild: use absolute path in the generated wrapper Makefile
-      kbuild: make wrapper Makefile more convenient for external modules
-      kbuild: allow to start building external modules in any directory
-      kbuild: do not pass -r to genksyms when *.symref does not exist
-      kbuild: remove support for single %.symtypes build rule
-      kbuild: move cmd_cc_o_c and cmd_as_o_S to scripts/Malefile.lib
-      kbuild: enable objtool for *.mod.o and additional kernel objects
-      kbuild: re-enable KCSAN for autogenerated *.mod.c intermediaries
-      setlocalversion: add -e option
-      modpost: remove incorrect code in do_eisa_entry()
-      modpost: remove unnecessary check in do_acpi_entry()
-      modpost: introduce module_alias_printf() helper
-      modpost: deduplicate MODULE_ALIAS() for all drivers
-      modpost: remove DEF_FIELD_ADDR_VAR() macro
-      modpost: pass (struct module *) to do_*_entry() functions
-      modpost: call module_alias_printf() from all do_*_entry() functions
-      modpost: convert do_pnp_card_entries() to a generic handler
-      modpost: convert do_pnp_device_entry() to a generic handler
-      modpost: convert do_of_table() to a generic handler
-      modpost: convert do_usb_table() to a generic handler
-      modpost: move strstarts() to modpost.h
-      modpost: rename variables in handle_moddevtable()
-      modpost: rename alias symbol for MODULE_DEVICE_TABLE()
-      modpost: improve error messages in device_id_check()
-      genksyms: reduce indentation in export_symbol()
-      kbuild: deb-pkg: add python3:native to build dependency
-      modpost: replace tdb_hash() with hash_str()
-
-Matt Fleming (1):
-      kbuild: deb-pkg: Don't fail if modules.order is missing
-
-Parth Pancholi (1):
-      kbuild: switch from lz4c to lz4 for compression
-
-Rasmus Villemoes (1):
-      setlocalversion: work around "git describe" performance
-
-Rolf Eike Beer (3):
-      kconfig: qconf: use QString to store path to configuration file
-      kconfig: qconf: use default platform shortcuts
-      kconfig: qconf: simplify character replacement
-
-Rong Xu (9):
-      kbuild: Add AutoFDO support for Clang build
-      objtool: Fix unreachable instruction warnings for weak functions
-      MIPS: Place __kernel_entry at the beginning of text section
-      vmlinux.lds.h: Adjust symbol ordering in text output section
-      vmlinux.lds.h: Add markers for text_unlikely and text_hot sections
-      AutoFDO: Enable -ffunction-sections for the AutoFDO build
-      AutoFDO: Enable machine function split optimization for AutoFDO
-      kbuild: Add Propeller configuration for kernel build
-      kbuild: Fix Propeller build option
-
-Sedat Dilek (1):
-      kbuild: rename .tmp_vmlinux.kallsyms0.syms to .tmp_vmlinux0.syms
-
-Thomas Wei=C3=9Fschuh (1):
-      kbuild: add dependency from vmlinux to resolve_btfids
-
-Thorsten Blum (2):
-      kconfig: nconf: Use TAB to cycle thru dialog buttons
-      kconfig: nconf: Fix typo in function comment
-
- .gitignore                                |   1 +
- Documentation/dev-tools/autofdo.rst       | 168 +++++++++
- Documentation/dev-tools/coccinelle.rst    |  20 +-
- Documentation/dev-tools/index.rst         |   2 +
- Documentation/dev-tools/propeller.rst     | 162 +++++++++
- Documentation/kbuild/kbuild.rst           |   8 +-
- Documentation/kbuild/kconfig-language.rst |   4 +-
- Documentation/kbuild/makefiles.rst        |  14 +
- Documentation/kbuild/modules.rst          |  29 +-
- MAINTAINERS                               |  14 +
- Makefile                                  | 221 +++++++-----
- arch/Kconfig                              |  39 ++
- arch/arm/Makefile                         |   4 +-
- arch/arm64/Makefile                       |   2 +-
- arch/mips/kernel/head.S                   |   1 +
- arch/mips/kernel/vmlinux.lds.S            |   1 +
- arch/powerpc/Makefile                     |   4 +-
- arch/riscv/Makefile                       |   2 +-
- arch/sparc/kernel/vmlinux.lds.S           |   5 +
- arch/x86/Kconfig                          |   2 +
- arch/x86/kernel/vmlinux.lds.S             |   4 +
- drivers/accessibility/speakup/Makefile    |   4 +-
- drivers/of/Kconfig                        |   6 +
- drivers/usb/dwc2/Kconfig                  |   2 +-
- drivers/usb/dwc3/Kconfig                  |   2 +-
- drivers/usb/isp1760/Kconfig               |   2 +-
- drivers/usb/mtu3/Kconfig                  |   2 +-
- drivers/usb/musb/Kconfig                  |   2 +-
- include/asm-generic/vmlinux.lds.h         |  53 ++-
- include/linux/mmdebug.h                   |   6 +-
- include/linux/module.h                    |   2 +-
- include/linux/once.h                      |   4 +-
- include/linux/once_lite.h                 |   2 +-
- include/linux/rcupdate.h                  |   2 +-
- include/net/net_debug.h                   |   2 +-
- mm/internal.h                             |   2 +-
- rust/Makefile                             |   4 +-
- scripts/Kbuild.include                    |   2 +-
- scripts/Makefile.autofdo                  |  24 ++
- scripts/Makefile.build                    |  59 +--
- scripts/Makefile.clean                    |   2 +-
- scripts/Makefile.compiler                 |   2 +-
- scripts/Makefile.host                     |   8 +-
- scripts/Makefile.lib                      |  62 +++-
- scripts/Makefile.modfinal                 |  31 +-
- scripts/Makefile.modinst                  |   8 +-
- scripts/Makefile.modpost                  |  24 +-
- scripts/Makefile.propeller                |  39 ++
- scripts/Makefile.vmlinux                  |  51 ++-
- scripts/coccicheck                        |   6 +-
- scripts/depmod.sh                         |   4 +-
- scripts/genksyms/genksyms.c               |  89 ++---
- scripts/head-object-list.txt              |   1 -
- scripts/kconfig/conf.c                    |   5 +-
- scripts/kconfig/lkc_proto.h               |   1 +
- scripts/kconfig/nconf.c                   |   2 +-
- scripts/kconfig/nconf.gui.c               |   9 +
- scripts/kconfig/parser.y                  |  28 +-
- scripts/kconfig/qconf.cc                  | 208 ++++-------
- scripts/kconfig/qconf.h                   |  19 +-
- scripts/kconfig/streamline_config.pl      |  18 +-
- scripts/kconfig/symbol.c                  |  26 +-
- scripts/link-vmlinux.sh                   |  16 +-
- scripts/mod/file2alias.c                  | 779
-++++++++++++++++------------------------
- scripts/mod/modpost.c                     |  31 +-
- scripts/mod/modpost.h                     |  21 +-
- scripts/nsdeps                            |  10 +-
- scripts/package/builddeb                  |  20 +-
- scripts/package/install-extmod-build      |   7 +
- scripts/package/mkdebian                  |   2 +-
- scripts/setlocalversion                   |  58 ++-
- tools/objtool/check.c                     |   2 +
- tools/objtool/elf.c                       |  15 +-
- 73 files changed, 1476 insertions(+), 1017 deletions(-)
- create mode 100644 Documentation/dev-tools/autofdo.rst
- create mode 100644 Documentation/dev-tools/propeller.rst
- create mode 100644 scripts/Makefile.autofdo
- create mode 100644 scripts/Makefile.propeller
-
-
---=20
-Best Regards
-Masahiro Yamada
+Bjorn
 
