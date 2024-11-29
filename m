@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-425743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D6E9DEA11
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:59:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F01C9DEA13
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E726163ACC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66850163B62
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CCC19F487;
-	Fri, 29 Nov 2024 15:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3051A01B3;
+	Fri, 29 Nov 2024 15:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNAKcAA4"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKQ3OUY7"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5241819CC1C;
-	Fri, 29 Nov 2024 15:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8748D19DF47;
+	Fri, 29 Nov 2024 15:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732895945; cv=none; b=T1eMMNjbEhYe27w1c/p/ON8xyTdr59tCy5J78OY2TFu/9U6ssmL3t6etO+pqLZbgQzhV6rzO6aKWV1UE8JR45OgCLWeC2FUGvHR9zXKGgzbp8wVUXIAge6s3D9rhpEK0PYmvYl2RgRm2n7ZUrB5tMNxeta2FORTDo4gQIM9YoUE=
+	t=1732895946; cv=none; b=epoIDS73Gp+M9t+ezskE0xlDcb9Kxo21X2tdn6WtkuZOwI7byUbRf0SpWzrrS37tgcLU3Ra0IplY4KVTZIpfbGqAiR5R6rTeQxxyGsBO9q3hht/kHRAvjMDB7estDeBNFVGM9oKqB87sY0WyGXO+vrrIDywjqBGKhKMpjlYbnh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732895945; c=relaxed/simple;
-	bh=tjg83BcvLm72RhXJ8aW40wzUz9Z+AXKuF8XiSPp7iRo=;
+	s=arc-20240116; t=1732895946; c=relaxed/simple;
+	bh=VDeprDTicXna6kpAAeukLMt08eeVdWnJ9nmGXd+UXqg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NOUdxm4T43M3kw8heJQ1zRIm7lQYuo66YTsQBB83V0f4CHjra3iKBNzgvxbJ1RBZDQ1V9AQdOYp80yvNgt0AE909wnHYw6wpjGrWbzGdKHNKHlKZZmsd84uwF2oqPsH/x+jPRNKZlpzDf1PhJVO1Raf/KqSVt3r5pVaO9u1RtrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNAKcAA4; arc=none smtp.client-ip=209.85.161.41
+	 MIME-Version:Content-Type; b=k57tprksbrc/IgKPdBCagkmNVZv8Kd+Nr1tvItX6E6zrEDiSrJtoq+pn55g720Q8epw8gFc8mQP3amY0vzQtgZv75+JNh56AlIiGpZXBKPPRTjhknHGXMMSPff5ShhTfEo0AGRo5mZ1F3OlUCO8iUy8VF3H+PbwhmmLIpDIZHew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKQ3OUY7; arc=none smtp.client-ip=209.85.210.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5f1d2487b95so711725eaf.0;
-        Fri, 29 Nov 2024 07:59:03 -0800 (PST)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-71d551855c2so810228a34.3;
+        Fri, 29 Nov 2024 07:59:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732895942; x=1733500742; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732895944; x=1733500744; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kxstQK7lyLA1KAwlanh+JmMhzwB3UYAIFtRwg9zsVYQ=;
-        b=LNAKcAA4Q8Vs8GTHJb/i8fkF5jDLyO+odBzMnOSYViRYWM9hX3fAWJ6QEBevturULd
-         gAlou/LpkIp/surOsqcTqYS+pzJtLVU+WbHMKzMz3/0zfFM/iDZo0NiUCl+RWn2cdR+9
-         VDyMTGaf2pC1q4RAwyM1Ofw6+hwWfsXZ4dUz5vkmKEO7+M+dTd8/3rkNiaQ2U6o2L1j8
-         T99vtOTSVQ0CdwgR5kjcSlErebKFUGSwJOvqHwqS5oOdL3gWSGAmVlPlo4kYchw90FDN
-         6XJRlerBflc6VM06EgbYgiacesUDUma3DMQBEiwfXcTB5nnvymeh6rDC5GCeNIjsQhte
-         R7Mg==
+        bh=f6qEX0ra3qWfSu3iSNGny6l2UFPA6gOod5SJz2RGJZg=;
+        b=PKQ3OUY7LX8aJvuW/Vmwl1P0zrLcazwXOxJnpcLVsGhoDbvGlo3jB+XCf+ZMefxTWB
+         NxTxN0NTid2FKUmEJUPawHgB7dh5SjzBDJuxDX7/A96HqERCjqQZ6SPmtPCWjYmLcRIZ
+         Uu6TNwDd1m44cLhJtVQNnvE2JR8utXrkc/3+Z+ptGOy9Pt/hWIPlEIOUdCE+BvtMCPWg
+         6lNus4tnYV8WWwC/UKVDyp3gaGPV7e8534YeJ+D/wVAfgHNby2WHPyDzLsMxWjCX7Dic
+         Maiem1Bo2XUfx88X7UdmPM9RvNJaEtN3u8TP0YcV28H0XODpPnuSXl2N8WMg3y6sgbHs
+         F23Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732895942; x=1733500742;
+        d=1e100.net; s=20230601; t=1732895944; x=1733500744;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kxstQK7lyLA1KAwlanh+JmMhzwB3UYAIFtRwg9zsVYQ=;
-        b=oA4M5k3oQ666Xe5Xyd4p1AoAe7nRpRnPR3MGjxtvHtHOugICKi2iNSGxIpt8x9bfW5
-         ZGFFnO66deRaKFQAe/9OELAPWSM467QmMOxb4uh3qblbfQyhfy1o9ETLpiPqDqyrR9n6
-         doRqNglVldM80Zi6ZhTdvGxsK3mlyOZk/vpnK1vUWy2dhgYscMHbXrK407Uo6ExwLdEj
-         gsv0WOVFWtqN2dj3CxapWNXZq/+dyQR4y63tad0zSgPk97bvoSd661Kks/rjcFENGY4G
-         qXFPc6soxASSeiLRhoig3KKjI/Q/sWKEqXihZKKw7mh2N/I3B6wEPSd8N49sxYvoNyX3
-         ro1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXSfwg4d1+LxdbffD9cmePKn/2IC0hZ058K7sWdPhrYF+bJzm8GigX7UiHiBqsOoN2Vf7awClUWT24xsmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4XCvc05rv95yBCW2vLYblFQYWMHqC4fFpEsIWGm/J2J0GdUPR
-	jwvZFJC5aMBOSJKJvJXVbKhZxg9r35tLU+ihx3X2KeQnjy5gjLEm
-X-Gm-Gg: ASbGncvK/m/dzwc/3yQ3Fz+QNuC+G/Tcjabej9RSNFx1Vw8iw5CWKHk5upa+wXp9Q50
-	BUoDhMeg0ZMCpvLXJCnDY/GsXqWIr3g4GXI3IZNbLywDb5IYbl6yeg9s7NiBkiAe1/F52K3YW0j
-	yX+dMdrudAT5RP3VzWDF6HF1ZGArHnibKKBsLqMGOKZ5K2AZQtv9RXVIYiHNjaMfKE5Mo50KFoD
-	K1edK/rHl+NPgmQTbJwy+XTEo52T9vWiCmbZPc6/bo3AT7sljidKC0gYJfT81qA7U/tCVUvKitd
-X-Google-Smtp-Source: AGHT+IHSP4Koh9Y9mkSlcHToCXZivn+5KiUUo3WQY+jr+CS7AKVG2i+lvkc3J8jHXcv0v0GTO3NldA==
-X-Received: by 2002:a05:6820:823:b0:5e1:ea03:9286 with SMTP id 006d021491bc7-5f20a1e15edmr7969019eaf.6.1732895942287;
-        Fri, 29 Nov 2024 07:59:02 -0800 (PST)
+        bh=f6qEX0ra3qWfSu3iSNGny6l2UFPA6gOod5SJz2RGJZg=;
+        b=Krfm1NKbr9S4y9ubzJ1gsyVxo4wJWiXZidJ9Vk5rkQQ3ibS6JvWj8Q7mHPDyuec5N/
+         7ctjYh0nYbRnj7m7I/SyPIw5SmezrQ2lZ0e0E+5FI5FCTiJQDdL0MhCtReRsAHyoDE/v
+         sx7ibZp5Q2iKYckc7AVdVbp1ohFeAllUm3xpWZ0cvltw80BWmb/bXWh0tiav80ptLmw+
+         +adrJaMtOxlSkiWeUXpLOpV3pJBSH1/HSEJyqAr8qmRE0JWU/C6ttxWdcqzP/t4tS/lD
+         XjaCXruXtG9YtXG00/b7aCC/1TF/i2nJyEWabBEJNf1w4CidKZqr0U5lv5BgR3QDX7ic
+         QlVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtT2fs5eid+sBtH079Ehtz37i6r4z5Ai1xGwp0tfSWyc+f9PBYMkYbXhP9rBiGcdv1yHIZKfqT0hyC+fo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM7SPLoZYjN6iVLEiMmtoiazJkuIuTHVGnO55sZgsp2j9b2+Va
+	Q38KcYiDEXfsEmf4TFbjPv/iWPj6ZDkFJVbZbOVBHzRBGMH8+Ndv
+X-Gm-Gg: ASbGncvOU7JzKHHneEO9mqh0SPrwR2acTbw9BmDSWswwGEdVX1EBwyVPWKu01xI+uj+
+	0W0sKTQ6dHSZFlsz2n2VWuw+/F8Q2gtvTg1JXBPsDySqaOqCvRf3EapHF85qVQHTNpjBAXOzco1
+	Jth/7iy4W4uyDgPcIFxX+MbLFH7nJRvUvlQQx0d1MaXzdDO34V+MUfmyQvS7jVyWA+Cd+ggZraQ
+	9QCJHAAA/wPmkn2S70qPPWE+xtQHhaeWJ2XVcawji+MdsLrG5klXSp8d6CivaWNXWwfTXxIp/lL
+X-Google-Smtp-Source: AGHT+IG6Z6fRSs4Zug2I8mFKNdNbMayY7kfoGAxg65YRVvZTj/fgG/KU+vyaVfTX1+Qb0bhuz4BT9Q==
+X-Received: by 2002:a05:6830:4112:b0:71d:4e0f:bf58 with SMTP id 46e09a7af769-71d65e8c78fmr10113431a34.30.1732895943632;
+        Fri, 29 Nov 2024 07:59:03 -0800 (PST)
 Received: from pipaware.tx.rr.com ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71d725f2251sm794385a34.68.2024.11.29.07.59.01
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71d725f2251sm794385a34.68.2024.11.29.07.59.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 07:59:01 -0800 (PST)
+        Fri, 29 Nov 2024 07:59:03 -0800 (PST)
 From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 To: corbet@lwn.net,
 	avadhut.naik@amd.com,
@@ -77,9 +77,9 @@ To: corbet@lwn.net,
 Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-Subject: [PATCH 5/7] docs/sp_SP: Add translation of process/7.AdvancedTopics.rst
-Date: Fri, 29 Nov 2024 09:58:45 -0600
-Message-ID: <20241129155851.1023884-6-carlos.bilbao.osdev@gmail.com>
+Subject: [PATCH 6/7] docs/sp_SP: Add translation of process/8.Conclusion.rst
+Date: Fri, 29 Nov 2024 09:58:46 -0600
+Message-ID: <20241129155851.1023884-7-carlos.bilbao.osdev@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241129155851.1023884-1-carlos.bilbao.osdev@gmail.com>
 References: <20241129155851.1023884-1-carlos.bilbao.osdev@gmail.com>
@@ -94,247 +94,116 @@ Content-Transfer-Encoding: 8bit
 
 From: Avadhut Naik <avadhut.naik@amd.com>
 
-Translate Documentation/process/7.AdvancedTopics.rst into Spanish.
+Translate Documentation/process/8.Conclusion.rst into Spanish, finishing
+the development-process docs.
 
 Co-developed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
 Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 ---
- .../sp_SP/process/7.AdvancedTopics.rst        | 207 +++++++++++++++++-
- .../sp_SP/process/development-process.rst     |   1 +
- 2 files changed, 206 insertions(+), 2 deletions(-)
+ .../sp_SP/process/8.Conclusion.rst            | 75 ++++++++++++++++++-
+ .../sp_SP/process/development-process.rst     |  1 +
+ 2 files changed, 74 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/translations/sp_SP/process/7.AdvancedTopics.rst b/Documentation/translations/sp_SP/process/7.AdvancedTopics.rst
-index 553759857339..42cb8b866e11 100644
---- a/Documentation/translations/sp_SP/process/7.AdvancedTopics.rst
-+++ b/Documentation/translations/sp_SP/process/7.AdvancedTopics.rst
-@@ -1,11 +1,214 @@
+diff --git a/Documentation/translations/sp_SP/process/8.Conclusion.rst b/Documentation/translations/sp_SP/process/8.Conclusion.rst
+index dd181cb8ec9a..d311a23d53df 100644
+--- a/Documentation/translations/sp_SP/process/8.Conclusion.rst
++++ b/Documentation/translations/sp_SP/process/8.Conclusion.rst
+@@ -1,11 +1,82 @@
  .. include:: ../disclaimer-sp.rst
  
- :Original: Documentation/process/7.AdvancedTopics.rst
+ :Original: Documentation/process/8.Conclusion.rst
 +:Translator: Carlos Bilbao <carlos.bilbao.osdev@gmail.com> and Avadhut Naik <avadhut.naik@amd.com>
  
- .. _sp_development_advancedtopics:
+ .. _sp_development_conclusion:
  
- Temas avanzados
- ===============
+ Para más información
+ ====================
  
 -.. warning::
 -	TODO aún no traducido
-+Llegados a este punto, con suerte, tiene una idea de cómo funciona el
-+proceso de desarrollo. Sin embargo, ¡todavía hay más que aprender! Esta
-+sección cubrirá varios temas que pueden ser útiles para los desarrolladores
-+que desean convertirse en una parte regular del proceso de desarrollo del
-+kernel Linux.
++Hay numerosas fuentes de información sobre el desarrollo del kernel de
++Linux y temas relacionados. La primera de ellas será el directorio de
++Documentación (Documentation) que se encuentra en la distribución del
++código fuente del kernel. Comience con el nivel superior
++:ref:`Documentation/translations/sp_SP/process/howto.rst <sp_process_howto>`;
++también lea
++:ref:`Documentation/translations/sp_SP/process/submitting-patches.rst <sp_submittingpatches>`.
++Muchas API internas del kernel están documentadas utilizando el mecanismo
++de kerneldoc; “make htmldocs” o “make pdfdocs” se pueden usar para
++generar esos documentos en formato HTML o PDF (aunque la versión de TeX
++incluida en algunas distribuciones tiene límites internos y no procesa
++los documentos correctamente).
 +
-+Gestionar parches con git
-+-------------------------
++Varios sitios web discuten el desarrollo del kernel en todos los niveles
++de detalle. A su autor le gustaría sugerir humildemente https://lwn.net/
++como fuente. La información sobre muchos temas específicos del kernel se
++puede encontrar a través del índice del kernel de LWN en:
 +
-+El uso del control de versiones distribuido para el kernel comenzó a
-+principios de 2002 cuando Linus comenzó a jugar con la aplicación
-+propietaria BitKeeper. Aunque BitKeeper fue controvertido, el enfoque de
-+la gestión de versiones de software que incorporó ciertamente no lo fue.
-+El control de versiones distribuido permitió una aceleración inmediata
-+del proyecto de desarrollo del kernel. En los tiempos actuales, existen
-+varias alternativas gratuitas a BitKeeper. Para bien o para mal, el
-+proyecto del kernel ha optado por git como su herramienta preferida.
++	https://lwn.net/Kernel/Index/
 +
-+Administrar parches con git puede hacer la vida mucho más fácil para el
-+desarrollador, especialmente a medida que crece el volumen de esos
-+parches. Git también tiene sus asperezas y representa ciertos peligros;
-+es una herramienta joven y poderosa que aún está siendo civilizada por
-+sus desarrolladores. Este documento no intentará enseñar al lector cómo
-+usar git; eso sería material suficiente para un documento extenso por
-+derecho propio. En su lugar, el enfoque aquí será cómo git encaja en el
-+proceso de desarrollo del kernel en particular. Los desarrolladores que
-+deseen ponerse al día con git encontrarán más información en:
++Más allá de eso, un recurso valioso para los desarrolladores del kernel
++es:
 +
-+	https://git-scm.com/
++	https://kernelnewbies.org/
++
++Y, por supuesto, no se debe olvidar https://kernel.org/, la ubicación
++definitiva para información de lanzamiento del kernel.
++
++Hay varios libros sobre el desarrollo del kernel:
++
++	Linux Device Drivers, 3rd Edition (Jonathan Corbet, Alessandro
++	Rubini, and Greg Kroah-Hartman).  En linea en
++	https://lwn.net/Kernel/LDD3/.
++
++	Linux Kernel Development (Robert Love).
++
++	Understanding the Linux Kernel (Daniel Bovet and Marco Cesati).
++
++Todos estos libros padecen un defecto común: suelen estar algo obsoletos
++cuando llegan a las estanterías, y ya llevan un tiempo en las estanterías.
++Aun así, hay bastante buena información que se puede encontrar allí.
++
++La documentación de git se puede encontrar en:
++
++	https://www.kernel.org/pub/software/scm/git/docs/
 +
 +	https://www.kernel.org/pub/software/scm/git/docs/user-manual.html
 +
-+y en varios tutoriales que se encuentran en la web.
++Conclusión
++==========
 +
-+El primer orden del negocio es leer los sitios mencionados anteriormente
-+y comprender cómo funciona git antes de intentar usarlo para poner
-+parches a disposición de otros. Un desarrollador que usa git debe ser
-+capaz de obtener una copia del repositorio mainline, explorar el historial
-+de revisiones, hacer commits en el árbol, usar ramas, etcétera. También es
-+útil entender las herramientas de git para rescribir la historia (como
-+rebase). Git viene con su propia terminología y conceptos; un nuevo
-+usuario de git debe conocer las referencias, las ramas remotas, el índice,
-+las fusiones fast-forward, los pushes y pulls, las cabezas separadas,
-+etcétera. Todo puede ser un poco intimidante al principio, pero los
-+conceptos no son tan difíciles de entender con un poco de estudio.
++Felicitaciones a todos los que han logrado leer este extenso documento.
++Con suerte, ha proporcionado una comprensión útil de cómo se desarrolla
++el kernel Linux y cómo puede participar en ese proceso.
 +
-+Usar git para generar parches para enviarlos por correo electrónico puede
-+ser un buen ejercicio mientras te pones al día.
++Al final, lo que importa es la participación. Cualquier proyecto de
++software de código abierto no es más que la suma de lo que sus
++colaboradores aportan. El kernel Linux ha progresado tan rápido y tan como
++lo ha hecho porque ha sido ayudado por un grupo impresionantemente grande
++de desarrolladores, todos los cuales están trabajando para mejorarlo. El
++kernel es un excelente ejemplo de lo que se puede lograr cuando miles de
++personas trabajan juntas hacia un objetivo común.
 +
-+Cuando esté listo para comenzar a publicar árboles de git para que otros
-+los vean, necesitará por supuesto, un servidor del que se pueda extraer.
-+Configurar un servidor de este tipo con git-daemon es relativamente
-+sencillo si tiene un sistema accesible a Internet. De lo contrario, los
-+sitios de alojamiento público y gratuitos (GitHub, por ejemplo) están
-+comenzando a aparecer en la red. Los desarrolladores establecidos pueden
-+obtener una cuenta en kernel.org, pero no son fáciles de conseguir; ver
-+https://kernel.org/faq/ para más información.
-+
-+El flujo de trabajo normal de git implica el uso de muchas ramas. Cada
-+línea de desarrollo puede separarse en una “rama temática” separada y
-+mantenerse de forma independiente. Las ramas en git son baratas, no hay
-+razón para no hacer uso gratuito de ellas. Y, en cualquier caso, no debe
-+desarrollarse en ninguna rama de la que tenga la intención de pedir a
-+otros que hagan un pull. Las ramas disponibles públicamente deben crearse
-+con cuidado; fusione los parches de las ramas de desarrollo cuando estén
-+en forma completa y listos para usar – no antes.
-+
-+Git proporciona herramientas poderosas que permiten reescribir su historia
-+de desarrollo. Un parche inconveniente (uno que rompe la bisección, por
-+ejemplo, o que tiene algún otro tipo de error obvio) se puede corregir en
-+su lugar o hacer que desaparezca de la historia por completo. Una serie de
-+parches se puede reescribir como si se hubiera escrito sobre el mainline
-+de hoy, aunque haya estado trabajando en ella durante meses. Los cambios
-+se pueden transferir de manera transparente de una rama a otra. Y así
-+sucesivamente. El uso juicioso de la capacidad de git para revisar el
-+historial puede ayudar en la creación de conjuntos de parches limpios con
-+menos problemas.
-+
-+El uso excesivo de esta capacidad puede llevar a otros problemas más allá
-+de una simple obsesión por crear la historia perfecta del proyecto.
-+Reescribir la historia rescribirá los cambios contenidos en esa historia,
-+convirtiendo un árbol del kernel probado (con suerte) en uno no probado.
-+Pero más allá de eso, los desarrolladores no pueden colaborar fácilmente
-+si no tienen una vista compartida del historial del proyecto; si reescribe
-+la historia que otros desarrolladores han introducido en sus repositorios,
-+les hará la vida mucho más difícil a esos desarrolladores. Por lo tanto,
-+aquí se aplica una regla simple general: la historia que se ha exportado
-+a otros generalmente debe considerarse inmutable a partir de entonces.
-+
-+Por lo tanto, una vez que envié un conjunto de cambios a su servidor
-+disponible públicamente, esos cambios no deben reescribirse. Git
-+intentará hacer cumplir esta regla si intenta enviar cambios que no
-+resulten en un “fast-forward merge” (es decir, cambios que no comparten
-+el mismo historial). Es posible anular esta comprobación, y puede haber
-+ocasiones en las que sea necesario reescribir un árbol exportado. Mover
-+conjuntos de cambios entre árboles para evitar conflictos en linux-next
-+es un ejemplo. Pero tales acciones deberían ser raras. Esta es una de las
-+razones por las que el desarrollo debe hacerse en ramas privadas (que se
-+pueden reescribir si es necesario) y solo trasladarse a ramas públicas
-+cuando esté en un estado razonablemente avanzado.
-+
-+A medida que el mainline (u otro árbol en el que se basa un conjunto de
-+cambios) avanza, es tentador fusionarse con ese árbol para permanecer a
-+la vanguardia. Para una rama privada, la rebase puede ser una manera fácil
-+de mantenerse al día con otro árbol, pero la rebase no es una opción una
-+vez que el árbol se exporta al mundo. Una vez que eso sucede, se debe
-+realizar una fusión completa. Fusionar ocasionalmente tiene sentido, pero
-+las fusiones demasiado frecuentes pueden desordenar el historial
-+innecesariamente. La técnica sugerida en este caso es fusionar con poca
-+frecuencia y, por lo general, solo en puntos de lanzamiento específicos
-+(como una versión -rc del mainline). Si está nervioso por cambios
-+específicos, siempre puede realizar fusiones de prueba en una rama
-+privada. La herramienta git “rerere” puede ser útil en tales situaciones;
-+recuerda cómo se resolvieron los conflictos de fusión para que no tenga
-+que hacer el mismo trabajo dos veces.
-+
-+Una de las mayores quejas recurrentes sobre herramientas como git es la
-+siguiente: el movimiento masivo de parches de un repositorio a otro hace
-+que sea fácil deslizar cambios más aconsejados que pasan al mainline
-+debajo del radar de revisión. Los desarrolladores del kernel tienden a
-+descontentarse cuando ven que suceden ese tipo de cosas; poner un árbol
-+de git con parches no revisados o fuera de tema puede afectar su capacidad
-+para hacer que los árboles sean integrados en el futuro. Citando a Linus:
-+
-+::
-+
-+	Puede enviarme parches, pero para que yo acepte un parche de git de
-+	su parte, necesito saber que usted sabe lo que está haciendo, y
-+	necesito poder confiar en las cosas *sin* tener que revisar
-+	manualmente cada cambio individual.
-+
-+(https://lwn.net/Articles/224135/).
-+
-+Para evitar este tipo de situación, asegúrese de que todos los parches
-+dentro de una rama determinada se adhieran estrictamente al tema asociado;
-+una rama de “correcciones de drivers” no debería hacer cambios en el
-+código central de gestión de memoria. Y, lo más importante, no utilice un
-+árbol git para eludir el proceso de revisión. Publique un resumen
-+ocasional del árbol en la lista relevante y, cuando sea el momento
-+adecuado, solicite que el árbol se incluya en linux-next.
-+
-+Si y cuando otros comiencen a enviar parches para su inclusión en su
-+árbol, no olvide revisarlos. Además, asegúrese de mantener la información
-+de autoría correcta; la herramienta git “am” hace lo mejor que puede es
-+este sentido, pero es posible que tenga que agregar una línea “From:” al
-+parche si ha sido reenviado a través de un tercero.
-+
-+Al solicitar un pull, proporcione toda la información relevante: dónde
-+está su árbol, qué rama se debe pull, y que cambios resultarán del pull.
-+El comando git request-pull puede ser útil en este sentido; formateará la
-+solicitud como otros desarrolladores esperan, y también comprobará para
-+asegurarse de que ha recordado enviar esos cambios al servidor público.
-+
-+Revisión de parches
-+-------------------
-+
-+Algunos lectores seguramente se opondrán a incluir esta sección con
-+“temas avanzados” porque incluso los desarrolladores principiantes del
-+kernel deberían revisar los parches. Es cierto que no hay mejor manera de
-+aprender a programar en el entorno del kernel que mirando el código
-+publicado por otros. Además, los revisores siempre escasean; al revisar
-+código, puede contribuir significativamente al proceso en su conjunto.
-+
-+Revisar el código puede ser una perspectiva intimidante, especialmente
-+para un nuevo desarrollador de kernel que puede sentirse nervioso al
-+cuestionar el código – en público – publicado por aquellos con más
-+experiencia. Sin embargo, incluso el código escrito por los desarrolladores
-+más experimentados se puede mejorar. Quizás el mejor consejo para los
-+revisores (todos los revisores) es este: expresar los comentarios de
-+revisión como preguntas en lugar de críticas. Preguntar “¿cómo se libera
-+el bloqueo en este camino?” siempre funcionará mejor que decir “el
-+bloqueo aquí es incorrecto”.
-+
-+Otra técnica que es útil en caso de desacuerdo es pedir a otros que
-+intervengan. Si una discusión llega a un punto muerto después de algunos
-+intercambios, solicite las opiniones de otros revisores o maintainers. A
-+menudo, aquellos que están de acuerdo con un revisor permanecen en
-+silencio a menos que se les invite a participar. La opinión de varias
-+personas tiene exponencialmente más peso.
-+
-+Diferentes desarrolladores revisarán el código desde diferentes puntos de
-+vista. Algunos se preocupan principalmente por el estilo de codificación
-+y si las líneas de código tienen espacios en blanco al final. Otros se
-+enfocarán principalmente en si el cambio implementado por el parche en su
-+totalidad es beneficioso para el kernel o no. Sin embargo, otros
-+comprobarán si hay bloqueos problemáticos, uso excesivo de la pila,
-+posibles problemas de seguridad, duplicación de código encontrado en
-+otras partes, documentación adecuada, efectos adversos en el rendimiento,
-+cambios en la ABI del espacio de usuario, etcétera. Todos los tipos de
-+revisión, si conducen a un mejor código en el kernel, son bienvenidos y
-+valen la pena.
-+
-+No hay ningún requisito estricto para usar etiquetas específicas como
-+``Reviewed-by``. De hecho, las revisiones en Inglés sencillo son más
-+informativas y alentadas incluso cuando se proporciona una etiqueta, por
-+ejemplo, “Revisé los aspectos A, B y C de esta propuesta y me parece
-+bien”.
-+¡Alguna forma de mensaje de revisión o respuesta es obviamente necesaria,
-+de lo contrario, los maintainers no sabrán que el revisor ha revisado el
-+parche en absoluto!
-+
-+Por último, pero no menos importante, la revisión de parches puede
-+convertirse en un proceso negativo, centrado en señalar problemas. ¡Por
-+favor, dé un cumplido de vez en cuando, especialmente a los principiantes!
++Sin embargo, el kernel siempre puede beneficiarse de una base de
++desarrolladores más grande. Siempre hay más trabajo por hacer. Pero, lo
++que es igual de importante, la mayoría de los demás participantes en el
++ecosistema Linux pueden beneficiarse contribuyendo al kernel. Introducir
++código en el mainline es la clave para una mayor calidad del código,
++menores costes de mantenimiento y distribución, un mayor nivel de
++influencia sobre la dirección del desarrollo del kernel y más. Es una
++situación en la que todos los involucrados ganan. Encienda su editor y
++únase a nosotros; será más que bienvenido.
 diff --git a/Documentation/translations/sp_SP/process/development-process.rst b/Documentation/translations/sp_SP/process/development-process.rst
-index c977d047a792..ecfa04d96b5e 100644
+index ecfa04d96b5e..5430c4cc001b 100644
 --- a/Documentation/translations/sp_SP/process/development-process.rst
 +++ b/Documentation/translations/sp_SP/process/development-process.rst
-@@ -29,3 +29,4 @@ para entenderla.
-    4.Coding
+@@ -30,3 +30,4 @@ para entenderla.
     5.Posting
     6.Followthrough
-+   7.AdvancedTopics
+    7.AdvancedTopics
++   8.Conclusion
 -- 
 2.43.0
 
