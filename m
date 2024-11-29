@@ -1,360 +1,176 @@
-Return-Path: <linux-kernel+bounces-425852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF9B9DEBE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0B99DEBE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB9F3B21C41
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:50:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6CA4B21346
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7960419F131;
-	Fri, 29 Nov 2024 17:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499D019F40B;
+	Fri, 29 Nov 2024 17:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GT7W9T1u"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ov0aUcXS"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2061.outbound.protection.outlook.com [40.107.96.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DDA1A08C2
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 17:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732902631; cv=none; b=M+Y+iANRtYEe2/6wR6bHmC3FyGbkWCDDYHS6r7/k7r05vakAZDS44fsZNYzRvMOphvcsU5xcXSE2uF/+gT+hRgsFo5/NXHiM50eWhRyXITxZnV5w5NUUCiT36HQjF9DzmRl50nDqVQqBPGtmEe5sJLoA+KW6A++5StjhoPzhl04=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732902631; c=relaxed/simple;
-	bh=8ImrQXCJjXUd91H2/9i3Z8wuNRacPGJigWYHLmK2W1I=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvp2BCOxWZp+YQ830xndGMUD9rUuxFsIYi16D3RK8hl77cDY4VQggN5NXixh9sf0BYHRyyzNcM0Fjm7FSscN5dlllucnMYFLDZ8MqOwT/oDjN2shIurZ2/+uR+xaHDxOn4sZ9g8Gym2b7bPJIafNnVTYEHzRPeEB8xzg67chfC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GT7W9T1u; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-aa532dcb470so121684366b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:50:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732902628; x=1733507428; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PqZrAfjye64ZhMw5Co4hhbixNEOQJOzDdw3eUKG3fbQ=;
-        b=GT7W9T1ukkeXC48tyZU/KQTWNbKY9O39uvVW0jyGsneTTdwIWHe2s0CvdUB0yaNIw3
-         Z9X1SYjXH9C8H7RI3dJdkTwYs4xQMQjdkj2LmZz7hYAgS6pH1tawBNpmWlRRw3F09TSL
-         QH+e0alGomOwptCbrYWGTEqqlTgNgCIvF5IX1bwCeBvt7HmNs15UH0dh8ChYyv0hFrup
-         luUmNlS41MKVZRs0H50dbLiA4F57degpX8ujNliwnC73Ip2deV5vxdHr0xNNd5EP459u
-         SJYzjgxHw3OzPH/mYuGtnpH43NZcco9mAR+gD7gttSdmorJ+qx2/dfl/UnORJHRvJUei
-         qMKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732902628; x=1733507428;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PqZrAfjye64ZhMw5Co4hhbixNEOQJOzDdw3eUKG3fbQ=;
-        b=W1X3k4tIss+H6DBf7A4GclCxeuMD+6AVNWHCcnGeI0xwPEVbAq94l7Ihcz0T+WFQ4X
-         e8iAUsWGOmEmaPmGW7CV0MsrxNodgdyHLQCS9Emsvg67GJ/VXS3m97Ujc/wOem+Hq48d
-         EYR2rwgdxLbA2KUC3c8YaQ8eq4QnLNNkL7R0QmU3on96XGWTUhpnt3SK379Af93CQzgR
-         hCjNTE0yoZB63zNg5a5rpj6SZLtnou0le6OV1t3uep7I9nwj17KmTWlllu//oNEp2nxB
-         oceqjcIJ0UFsWESkaWEzGp2BVlxWX0ecxWxx93p8xLsHl5cnDnoPvk7hEOzPlH4/cz/c
-         1zpg==
-X-Forwarded-Encrypted: i=1; AJvYcCV11KKoEyEp1gu6Ffqt3l56nNYU47uenBr5MhUmStpO1E1qaJ3LAVvlF0oYY7kjl+Ha4ccCr7QNR++3hVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTP8CMMBJcU007+2dwStL1Bh1PACwqRVAfIf1GXUtz9NMUoW/E
-	jh3oWKthJCIHRT3vSmaQ8BLYYqgTq6z+Nv1QVHHRKw3l/8O1gfRREqssPPN5r/o=
-X-Gm-Gg: ASbGnct2iqQ0AsuMm4dXI9leeVBcDPFxzp+g1V6kYOYUYeJoHJERRq8z7DLz+Mt/lQn
-	/FGTWyyQ3dbSSSoQG0575L+sjqYbtxAxhodl3PU+BSlzPgG4jkKGNKrgtr0BSVKJpQnoD628ffV
-	qTV3WFgx9XUQ9c7tiCVM4tRDiyqaI7arNjEkd7cRGVvYe2Q2Z4BGk+Bl8TPA1ZrxLymNyCdNyGM
-	pq3iGwvRpCSuIYfE+ZhETk4XPWx3VWRD95I8ufYdL6EloeUg5fb7Xg9X0iEU8YrzxpyCQqdTVpE
-	L912fmHjJhGLgUkPMkta
-X-Google-Smtp-Source: AGHT+IF7i5rs2I/Z8Do8qBVzOITzII4lxVZ5lVsk4D6hBN3DGyS3RbzWkQK53YgfV1EgQ7zK28Pzig==
-X-Received: by 2002:a05:6402:13d3:b0:5d0:224b:d4c1 with SMTP id 4fb4d7f45d1cf-5d080c53c5dmr12990539a12.25.1732902627665;
-        Fri, 29 Nov 2024 09:50:27 -0800 (PST)
-Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0b264f0d2sm996856a12.72.2024.11.29.09.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 09:50:27 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 29 Nov 2024 18:51:00 +0100
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v4 02/10] dt-bindings: pinctrl: Add RaspberryPi RP1
- gpio/pinctrl/pinmux bindings
-Message-ID: <Z0n_BA8ZRU3ghE7Z@apocalypse>
-References: <cover.1732444746.git.andrea.porta@suse.com>
- <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
- <e0595933-d503-492d-ae29-aa3afe90b279@gmx.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268C4199EBB
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 17:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732902806; cv=fail; b=VZ21oMNaULJY+1KkOgCb2TWW/dg396Px3XGTYLZnKRDvGx/VuCypkxAlLBLWYLvYlZBTIokZavsqqovk3f0KXL3m65xzdRvzrPiOFE25qz/rm+mX8WvP/6qXfgs/sevcVGvlKO64Yf2E6wvfywMAo+3XmVGI4jxFJzhZLIPuQpY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732902806; c=relaxed/simple;
+	bh=obBwr0RKES+yiyHB9RPDOp1LFxusFme0uscZ1rPFIaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=JcR/6SL2a3io4NA4BeGYtcp3J9tBrMmrQuz5hyKMXUPBUBUyQeuzRbhkzqkCSm+p57EZ4sB1nfBBUr91gdU6ON9Oh6e1a1S4Xisi8506ijAiScp3Msd+GbrKH8KO32H+DzSHddRgjl9Co27Id0C5U+fXFMPphPq8VyHG5lOcC+I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ov0aUcXS; arc=fail smtp.client-ip=40.107.96.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Yjr2QFrYy+lb/mJErN/oEz57p4a0Nn97HMlnVIHx4XL66SpeVWMPyZUcjFjULJbe7SYJPaeWw4PLGdMLJrVemCE2iJHrdsCwly09j5xDohFO89W9c0GfoswChW+FSIbWs4bfAa14HlGaXpfwmTni/7jgPMm9MmnWokC2LSqyu3zk90xNBxUrAl5z4b6Ys6x6eb71fkexTK6Bm/rKRcD8vjioVIDo08BU5TH/CZPB4Z/bZ7Tc8/sBwiyWeGSUY82LeO7bL/KPmZWyHxwQgOXhm5lboB/yXzQ7xhYDE63crl69C/GgNgdD8oZd33egWdTgVLDn3YC1ovpa3ip0tOBuWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/4MzQTYCcuE33JX//VsycgBaQpJ5xsTfHtF9MizSYcE=;
+ b=CCT/FHlnENnh0iTbCqUiirgzAGYy3XFQ//EThQ8HjvZgXy+98nmX+CcZinhsQ+WXPgTHStQvyxoyI+t+f/zxqfiXN+MPocFQe3Nn/9vyX6dn3E3BUu0RWZB9++n5Z7j+3QI1zp5H5Tm8+R1pAeMMaZmPd1ED3yXf6uyrj+jh0aEs41pdQUnYdEOky9iUFKRvGKh4/Uepu04BPgsIxccvCbld/8oGoU/HmNpgXhMM/vRqRTkTZsCPHE+VBjZz+RTqCShaCc3V/U1jySJq5FPbHitSwnUkmxDU72lfva4vsRX/LibClmgiUR3jhIrOOTFQmgUtp/1my7RcUHfYZOinjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/4MzQTYCcuE33JX//VsycgBaQpJ5xsTfHtF9MizSYcE=;
+ b=Ov0aUcXSJTu+4eg8yrgCZZA9HrlP7ejI98gQt4jdIW/f24pgXO3olGNlYL6GDVmZpQB1fomwuzsGqXkEq9pFBsTP04iiJgKxkrpfZA9/ykw6zVcNUbYiLXDoK8BVB9qbRcNT/eKNQpHlp03P9BwUQL8i2BQaNyOlzZgs400maVE=
+Received: from MN2PR01CA0018.prod.exchangelabs.com (2603:10b6:208:10c::31) by
+ DS0PR12MB8787.namprd12.prod.outlook.com (2603:10b6:8:14e::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8207.14; Fri, 29 Nov 2024 17:53:21 +0000
+Received: from BN1PEPF00004688.namprd05.prod.outlook.com
+ (2603:10b6:208:10c:cafe::5b) by MN2PR01CA0018.outlook.office365.com
+ (2603:10b6:208:10c::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.14 via Frontend Transport; Fri,
+ 29 Nov 2024 17:53:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF00004688.mail.protection.outlook.com (10.167.243.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8207.12 via Frontend Transport; Fri, 29 Nov 2024 17:53:20 +0000
+Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 29 Nov
+ 2024 11:53:14 -0600
+Message-ID: <2ab494a6-e5d7-45a9-800a-d104f905f12f@amd.com>
+Date: Fri, 29 Nov 2024 23:23:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0595933-d503-492d-ae29-aa3afe90b279@gmx.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] sched/fair: Fix warning if NEXT_BUDDY enabled
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: Adam Li <adamli@os.amperecomputing.com>, <mingo@redhat.com>,
+	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
+	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
+	<mgorman@suse.de>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<patches@amperecomputing.com>, <cl@linux.com>, <christian.loehle@arm.com>,
+	<vineethr@linux.ibm.com>
+References: <20241127055610.7076-1-adamli@os.amperecomputing.com>
+ <20241127055610.7076-2-adamli@os.amperecomputing.com>
+ <670a0d54-e398-4b1f-8a6e-90784e2fdf89@amd.com>
+ <20241129095500.GD15382@noisy.programming.kicks-ass.net>
+ <6683a7dc-b83b-489c-bdfc-ad225ab816c6@amd.com>
+Content-Language: en-US
+In-Reply-To: <6683a7dc-b83b-489c-bdfc-ad225ab816c6@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004688:EE_|DS0PR12MB8787:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed82c141-933b-4c29-b747-08dd109eb679
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RVNsOGhNSWZDdStJdVJLcFh6K004b2Jab1R1b1ZtczVzeXdXS3Budk8vVDhk?=
+ =?utf-8?B?R1NXNkFRZk42VzdtdUZkWlYwZnV6WTd5VFNhM2dBTUovY3gzQU02N3NlcEFE?=
+ =?utf-8?B?c01VOFFzKzZ5T2o4aG1xUU5rZHljZnk0enEyTXBCYng3ck5ab0t5S2dGelgv?=
+ =?utf-8?B?OFRyZGgvT3lFWUJyRTlYZ1NCYUxzeXJZQkRNUkdyMDVQb010MUEvalZPeEds?=
+ =?utf-8?B?ZllLdURMd3d2MzZnRG9xM3dzTHRtUlJXN2lPNEtlS3YzbTRseWNnZEVvUlJa?=
+ =?utf-8?B?eHJ1NENZa0xEWGFDZk9LS1pvQitPQ05xUVBmMXFsa0RyN3BmT1FzUUh0RE54?=
+ =?utf-8?B?amNUa2xpMDJlTHhrSlJOSDRNVlExdDF3QU53eE82TmtaQXBOOFMwZ0ZIZmc4?=
+ =?utf-8?B?RFFhVU1tVE9Xanlxd2VVdUJkRS91R3UyeWNGaVNvRCtxRzFvVm9ZMUNjVmEz?=
+ =?utf-8?B?NUl6Um1PSlp4Y2xwR1BuZjNGcEZudWZPVEZjMEc1cGhkK2dhN05taUR0Mk1q?=
+ =?utf-8?B?Tk02bE1JdERXeEo2UnU2MUx3UVBmaldQZWdsTDNNV3J0ZDhXSTl0QjJlUjdp?=
+ =?utf-8?B?clR0cjJaVFcwaGJsMXg5R1dVWWdhRVJqUkZ5aWdyU0tHSFp2a2pEdzJyUGNZ?=
+ =?utf-8?B?ZGRoR3BDLzBmaW8vd2dKQTZpMVZwZm9oS09NL1JaTEFyNlg4MldHa3JHa3oy?=
+ =?utf-8?B?b01Td2V1b2hFeTRFeG0wSUp4NlpxN3ZyaHAza0JCeGpJcHJUMnNnOXNDMHJm?=
+ =?utf-8?B?cS9GZkhMaG11QjJwZnpYaWlOd2lid1BNbHN1WlpMNyt5VzNQa0ZJZkFZeW9Q?=
+ =?utf-8?B?UnBNVDMvMVM4VndTR2dxRnppL0tRUGJtb3ZqUjJBL1p0cndnVURlWXg4ckR1?=
+ =?utf-8?B?SzRDZXM1K1ZUSTl5R0tibGR2ekZDL0E2R0YxWko4WVZsb3oyZzFqYzVpZzNY?=
+ =?utf-8?B?VDM5MmliZDJZbFhjMHMzc3dLZnRoSWhma0VFM2dMTTVsNCt1QTNIcWtKM1dT?=
+ =?utf-8?B?VGhwYkYrWFhla3ZnSTgzWlBlb3FIVldIQ1NlSDlTdTVZM1VHK2Z5c3NGL0dz?=
+ =?utf-8?B?eXk3S0RwNXloQ2xBRFpCWDU4MDlBditBQ1B1NS94RHJMNXNHc0pxeTVZV0N3?=
+ =?utf-8?B?bDlNVUJUOEZQK1Jpc0ZqQUNlQjFTT2h0ODZQbWlORWFiM1Zvbm5LR1ljRkcv?=
+ =?utf-8?B?eGVSMWdXNUpFbnZpWndYV2trMmZ1dVZzbmphWmprMFB0ZW5ZZmVnRlcyeity?=
+ =?utf-8?B?Z3h0cittSDBGakcrYXlXNTdJWHNsczVhV29ZdUt2UlJQUEpqWTNtUEZYaFo0?=
+ =?utf-8?B?SEZhWm1TenBaNHo5K1UxWlZCU3d0dU5UZVNTeUI2SjNIbmN1cEdxUlRlQXlT?=
+ =?utf-8?B?QUh4bG1sbEZ1UW0ySSt5R2d5bjdKeVdlR3U3YlZKNW5FbXVDcWdRMVNKbWhD?=
+ =?utf-8?B?QjcxQzVGVStoTTNmbnhTNDNYbWtWamZUelp5QlF4YXozdS85cHo4dENjVFk3?=
+ =?utf-8?B?TFhIOUR1QllqUEVYd1YzOS9uc3hVSzd2Q3o3MUNJK1JyTU5lcXE1andiSFBO?=
+ =?utf-8?B?a2crZERNemxnMVo1c3dxcmVvdkh3Z1dLcy9BSFNqVFNsZzZFaVN2SUhyY040?=
+ =?utf-8?B?Y2Mxdk1veXM0R0VsRmI2LzNPRXJkUXlVaXVrdWoyb0lwZVY5czNmV2VOWFVl?=
+ =?utf-8?B?NFhqV3BTWUxvRm1wNENvakl4QS9wdG9COUNBSkVJMTcrVm9ERVBjZ2Nyb0ZJ?=
+ =?utf-8?B?NGFGaVJhVml4Y0JsMkx5Wk5GQmk4eWxrcExtU0oxR0pLY25taVVrUnNhVXRC?=
+ =?utf-8?B?YnAvZTVhY2ZGTC9kYmFEOW1JTFlVVGNYOG45c1Y4MUhRMzZtWEdtQys3bzZQ?=
+ =?utf-8?B?REtxcW9keE96Mkw2K0lHMlZ6NW4zZzd1UGZrM3N3VWJ2UXJUNXVlMzFhcnh4?=
+ =?utf-8?Q?HGVCrppH8pN9KV9LAzdA3MRup9rceMNy?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2024 17:53:20.8160
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed82c141-933b-4c29-b747-08dd109eb679
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004688.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8787
 
-Hi Stephan,
+On 11/29/2024 11:16 PM, K Prateek Nayak wrote:
+> [..snip..]
+> newidle balance pulls a delayed entity which goes through the
+> check_preempt_wakeup_fair() path in attach_task() and is set as the next
+> buddy. On a second thought this is perhaps not required since even if
+> this delayed entity is picked, it'll go thorough a full dequeue and the
+> clear_buddies() change above should take care of it.
 
-On 19:12 Mon 25 Nov     , Stefan Wahren wrote:
-> Hi Andrea,
-> 
-> Am 24.11.24 um 11:51 schrieb Andrea della Porta:
-> > Add device tree bindings for the gpio/pin/mux controller that is part of
-> > the RP1 multi function device, and relative entries in MAINTAINERS file.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >   .../pinctrl/raspberrypi,rp1-gpio.yaml         | 193 ++++++++++++++++++
-> >   MAINTAINERS                                   |   2 +
-> >   2 files changed, 195 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> > new file mode 100644
-> > index 000000000000..21923d39c1bc
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> > @@ -0,0 +1,193 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pinctrl/raspberrypi,rp1-gpio.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: RaspberryPi RP1 GPIO/Pinconf/Pinmux Controller submodule
-> > +
-> > +maintainers:
-> > +  - Andrea della Porta <andrea.porta@suse.com>
-> > +
-> > +description:
-> > +  The RP1 chipset is a Multi Function Device containing, among other
-> > +  sub-peripherals, a gpio/pinconf/mux controller whose 54 pins are grouped
-> > +  into 3 banks.
-> > +  It works also as an interrupt controller for those gpios.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: raspberrypi,rp1-gpio
-> > +
-> > +  reg:
-> > +    maxItems: 3
-> > +    description: One reg specifier for each one of the 3 pin banks.
-> > +
-> > +  '#gpio-cells':
-> > +    description: The first cell is the pin number and the second cell is used
-> > +      to specify the flags (see include/dt-bindings/gpio/gpio.h).
-> > +    const: 2
-> > +
-> > +  gpio-controller: true
-> > +
-> > +  gpio-ranges:
-> > +    maxItems: 1
-> > +
-> > +  gpio-line-names:
-> > +    maxItems: 54
-> > +
-> > +  interrupts:
-> > +    maxItems: 3
-> > +    description: One interrupt specifier for each one of the 3 pin banks.
-> > +
-> > +  '#interrupt-cells':
-> > +    description:
-> > +      Specifies the Bank number [0, 1, 2] and Flags as defined in
-> > +      include/dt-bindings/interrupt-controller/irq.h.
-> > +    const: 2
-> > +
-> > +  interrupt-controller: true
-> > +
-> > +patternProperties:
-> > +  "-state$":
-> > +    oneOf:
-> > +      - $ref: "#/$defs/raspberrypi-rp1-state"
-> > +      - patternProperties:
-> > +          "-pins$":
-> > +            $ref: "#/$defs/raspberrypi-rp1-state"
-> > +        additionalProperties: false
-> > +
-> > +$defs:
-> > +  raspberrypi-rp1-state:
-> > +    allOf:
-> > +      - $ref: pincfg-node.yaml#
-> > +      - $ref: pinmux-node.yaml#
-> > +
-> > +    description:
-> > +      Pin controller client devices use pin configuration subnodes (children
-> > +      and grandchildren) for desired pin configuration.
-> > +      Client device subnodes use below standard properties.
-> > +
-> > +    properties:
-> > +      pins:
-> > +        description:
-> > +          List of gpio pins affected by the properties specified in this
-> > +          subnode.
-> > +        items:
-> > +          pattern: "^gpio([0-9]|[1-5][0-9])$"
-> > +
-> > +      function:
-> > +        enum: [ alt0, alt1, alt2, alt3, alt4, gpio, alt6, alt7, alt8, none,
-> > +                aaud, dcd0, dpi, dsi0_te_ext, dsi1_te_ext, dsr0, dtr0, gpclk0,
-> > +                gpclk1, gpclk2, gpclk3, gpclk4, gpclk5, i2c0, i2c1, i2c2, i2c3,
-> > +                i2c4, i2c5, i2c6, i2s0, i2s1, i2s2, ir, mic, pcie_clkreq_n,
-> > +                pio, proc_rio, pwm0, pwm1, ri0, sd0, sd1, spi0, spi1, spi2,
-> > +                spi3, spi4, spi5, spi6, spi7, spi8, uart0, uart1, uart2, uart3,
-> > +                uart4, uart5, vbus0, vbus1, vbus2, vbus3 ]
-> > +
-> > +        description:
-> > +          Specify the alternative function to be configured for the specified
-> > +          pins.
-> > +
-> > +      bias-disable: true
-> > +      bias-pull-down: true
-> > +      bias-pull-up: true
-> > +      slew-rate:
-> > +        description: 0 is slow slew rate, 1 is fast slew rate
-> > +        enum: [ 0, 1 ]
-> > +      drive-strength:
-> > +        enum: [ 2, 4, 8, 12 ]
-> according to the driver in patch 4 the following should also be
-> supported by the hardware:
-> 
-> input-enable, input-schmitt-enable, output-enable, output-low, output-high
+That said, it'll still trigger the following warning in
+pick_next_entity():
 
-You are right, added.
+     /* ->next will never be delayed */
+     SCHED_WARN_ON(cfs_rq->next->sched_delayed);
 
-Many thanks,
-Andrea
+which is also why I added that check in check_preempt_wakeup_fair() :)
 
-> > +
-> > +    additionalProperties: false
-> > +
-> > +allOf:
-> > +  - $ref: pinctrl.yaml#
-> > +
-> > +required:
-> > +  - reg
-> > +  - compatible
-> > +  - '#gpio-cells'
-> > +  - gpio-controller
-> > +  - interrupts
-> > +  - '#interrupt-cells'
-> > +  - interrupt-controller
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +
-> > +    rp1 {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        rp1_gpio: pinctrl@c0400d0000 {
-> > +            reg = <0xc0 0x400d0000  0x0 0xc000>,
-> > +                  <0xc0 0x400e0000  0x0 0xc000>,
-> > +                  <0xc0 0x400f0000  0x0 0xc000>;
-> > +            compatible = "raspberrypi,rp1-gpio";
-> > +            gpio-controller;
-> > +            #gpio-cells = <2>;
-> > +            interrupt-controller;
-> > +            #interrupt-cells = <2>;
-> > +            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>,
-> > +                         <1 IRQ_TYPE_LEVEL_HIGH>,
-> > +                         <2 IRQ_TYPE_LEVEL_HIGH>;
-> > +            gpio-line-names =
-> > +                   "ID_SDA", // GPIO0
-> > +                   "ID_SCL", // GPIO1
-> > +                   "GPIO2", "GPIO3", "GPIO4", "GPIO5", "GPIO6",
-> > +                   "GPIO7", "GPIO8", "GPIO9", "GPIO10", "GPIO11",
-> > +                   "GPIO12", "GPIO13", "GPIO14", "GPIO15", "GPIO16",
-> > +                   "GPIO17", "GPIO18", "GPIO19", "GPIO20", "GPIO21",
-> > +                   "GPIO22", "GPIO23", "GPIO24", "GPIO25", "GPIO26",
-> > +                   "GPIO27",
-> > +                   "PCIE_RP1_WAKE", // GPIO28
-> > +                   "FAN_TACH", // GPIO29
-> > +                   "HOST_SDA", // GPIO30
-> > +                   "HOST_SCL", // GPIO31
-> > +                   "ETH_RST_N", // GPIO32
-> > +                   "", // GPIO33
-> > +                   "CD0_IO0_MICCLK", // GPIO34
-> > +                   "CD0_IO0_MICDAT0", // GPIO35
-> > +                   "RP1_PCIE_CLKREQ_N", // GPIO36
-> > +                   "", // GPIO37
-> > +                   "CD0_SDA", // GPIO38
-> > +                   "CD0_SCL", // GPIO39
-> > +                   "CD1_SDA", // GPIO40
-> > +                   "CD1_SCL", // GPIO41
-> > +                   "USB_VBUS_EN", // GPIO42
-> > +                   "USB_OC_N", // GPIO43
-> > +                   "RP1_STAT_LED", // GPIO44
-> > +                   "FAN_PWM", // GPIO45
-> > +                   "CD1_IO0_MICCLK", // GPIO46
-> > +                   "2712_WAKE", // GPIO47
-> > +                   "CD1_IO1_MICDAT1", // GPIO48
-> > +                   "EN_MAX_USB_CUR", // GPIO49
-> > +                   "", // GPIO50
-> > +                   "", // GPIO51
-> > +                   "", // GPIO52
-> > +                   ""; // GPIO53
-> > +
-> > +            rp1-i2s0-default-state {
-> > +                function = "i2s0";
-> > +                pins = "gpio18", "gpio19", "gpio20", "gpio21";
-> > +                bias-disable;
-> > +            };
-> > +
-> > +            rp1-uart0-default-state {
-> > +                txd-pins {
-> > +                    function = "uart0";
-> > +                    pins = "gpio14";
-> > +                    bias-disable;
-> > +                };
-> > +
-> > +                rxd-pins {
-> > +                    function = "uart0";
-> > +                    pins = "gpio15";
-> > +                    bias-pull-up;
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 75a66e3e34c9..c55d12550246 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19384,7 +19384,9 @@ RASPBERRY PI RP1 PCI DRIVER
-> >   M:	Andrea della Porta <andrea.porta@suse.com>
-> >   S:	Maintained
-> >   F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> > +F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
-> >   F:	include/dt-bindings/clock/rp1.h
-> > +F:	include/dt-bindings/misc/rp1.h
-> > 
-> >   RC-CORE / LIRC FRAMEWORK
-> >   M:	Sean Young <sean@mess.org>
-> 
+-- 
+Thanks and Regards,
+Prateek
+
 
