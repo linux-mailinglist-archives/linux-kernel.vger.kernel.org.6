@@ -1,147 +1,137 @@
-Return-Path: <linux-kernel+bounces-425868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFCC9DEC04
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:17:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209319DEC07
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:19:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BB4AB21B96
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:17:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90B4EB21AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DCE1A01B8;
-	Fri, 29 Nov 2024 18:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411E219F430;
+	Fri, 29 Nov 2024 18:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SnQRzeNL"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iA4qlLUr"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99DA14A60F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 18:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C8273451
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 18:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732904262; cv=none; b=dqr0S0/KDzwffurcnx7+UJXAVg6FTXUhwA2skTwGpcKs+1+oCfTPhaHrB7piswYq/8ySvVFr8ZEbXau6wUcEO6LdtHzcCY2Cr0aAXisxU4SJVQ2Wos9qi3SslOeS8VUGHtMKFcbwckbG7fNyFAMWohQLV2zI/daXmgzQAzDHyF0=
+	t=1732904351; cv=none; b=fPpyCg+SNqZg5abYy1zwMSPwM6o1Wkt3009ST1fNTZpfw1li/TovtZfmE6KZpkZyLbRC5YvEVNWCG28oqa0WHYz0k3t5rcn6VSKnCAMx+lbX0CyQnJm3U7BM4RtnNs9r24DKzIYFkKVQZxPxao+P+LAVHuDB9RgHfUjs5hTXqaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732904262; c=relaxed/simple;
-	bh=fN0bLk90ZCqU7t/VgLksSaWfjvLd7tuev8IlpU2KjsE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RuZTY0z863mUfGb5OefB/pgAPM6BeHw25zG0b7rBMgEdOVfNmCgoUwnbtKOjy/2OAPM3+1RZSfKVN2aReRPQTsL0Hbep94LTTr7XGqQFjkptjuTxDPJktpOX/hy3m73ZBC3Gva36FO73eyMYeTSFBCGsQzM4bkxw6gX+NmjgcRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SnQRzeNL; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9e44654ae3so249584866b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:17:40 -0800 (PST)
+	s=arc-20240116; t=1732904351; c=relaxed/simple;
+	bh=9oNuwtDLWeDAIgUyuRKygrEyiqT9jynskTsaYOCbcNY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=czRFfTfLn0yMatU7mjfCkvJD+TlNsi8IhuRA46e2nSN3MSObYwbN7a78RsrfcM581OZnQeZScHYbebYA6o9+KlbA899RaAVt2HXBg8oEo/BbBT1Uph/XfV+RgX7lHFQ40qccgF2COeo6kyuRGKqQ4+sPkdDhmfLi2PloZ+vhSfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iA4qlLUr; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-720c286bcd6so1862564b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:19:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732904259; x=1733509059; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/K5xGcTYHJ/8xAu9IkRPPHbt4WWLkz+NlJpLlbPrtJ8=;
-        b=SnQRzeNLk5c7PEqfpHhgVBsmwKuQCsuV1f/0oERNlyJqz/K2rylASeCEgXxa60Pgcc
-         ingVz5XZcah5FZXSfGj1/zDe/yy1YB/q+eZStOeMvUeG0eVNyTZVuacz1SbBxShKBhrB
-         6da0qBDYWpnWYwfk6kmc20th2IXKiXfhqDQnunlU2tcq/XxRy7KIPxQ730SudN+mAYJz
-         ioIIzug23+X977rvz2y7R+JMJ96tozihtkpI6BBY2UW7Zq3JiJmcQn8nI+aR+7WYH9Uk
-         nS3FBAogQJm0+f1tLMAyVOPtcImOrptr1UUfa82JCWIN8qoHQvMzbso32yD89Xlj4dta
-         yg+Q==
+        d=chromium.org; s=google; t=1732904349; x=1733509149; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PN3EfWs6vxHfOQvNcqaTj9BKkofXEf67LNsJGDX/OqE=;
+        b=iA4qlLUrtrGn3ncJAq6T1aJe1iG+nuwuGXnqMVIf7c7NxxnE7vJ/soWycz2bdTreOb
+         IppfOZGGf9/ISE70WYx7gNPghHAETfAcyWPqCKKbfP3/d1QAfH/I1yYl/e4SJIy3YLor
+         y84EcujeKdRu5H6oHt2ZEtMAjYR/p78nIByok=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732904259; x=1733509059;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/K5xGcTYHJ/8xAu9IkRPPHbt4WWLkz+NlJpLlbPrtJ8=;
-        b=j8fmf3eCwveqkitUQa3vdNdaUeXahID/7X13huAzdUlqAc+cSWZ/qxtcv6nUGS7EBd
-         QUSptmZQUZR38KPaQT6kOSdwhN/vSjfvERyM6CYnYheFAf9IWt+UNsHs7K6sPQ7Nd7AJ
-         qmYuIpnpGTsZBtY8nhAsgCbMz2Xgt0G5yoj5tADFSRhvIZiV5uG+c8WChosqmflJpBiQ
-         lM0AWQQVpBh+QK8gFj5rHmcSvelaXnFUVcMjXb6Lj/bWukTUWNv9MO4yDB5t5cpZUqQ6
-         6+eTqf/rmbM2nemWsSw1ufS7k6abqdcHZZQzgZgSf4r3K2UtXdJ4KaBhxmdZv2Ill4Ce
-         AW+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWZYqDYWkdvnnBIDu4EytTheauJ7Dvjzqzq36Un6eKM8pUdneadeaWn9wwY10OxDqJ/dSIbKbygJTdS9V0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVe2lu/DVZiW5aNkv+Jf4G66bkDBndH9CZL9m2wLOkmlPZa5+J
-	JfUFjXQsZob5xXRGtZJ+O/6CbWRa+7Y4hib1Gyor8vm8AbIq+L/p9YGmU/qjy/g=
-X-Gm-Gg: ASbGncsKTqOHhF1rd2BZd6qxqAfTha6MGTVOdKhSS6jyAxNvqYLeVAdjacOgj9aawAV
-	7Ct8fSWcgpJLKUfRhS+2QUJeZONBlh2+igktkpAzpJhYAJvmuDGksepkPr2esLf7kY19SU7f8F2
-	1Cs+DhiCUalhfV1zdY6QqA+qWYYawm08IEm6/dZhPPZvwBvqviz9VhlJqhwE3zXk+Xyl6K/n2eI
-	+JCVN2F83VNPyhGhgTNZaDD1btNdWfo5IS6h2u/B8TpU3qrOFnib/mqP/zoQoZC8Uc8mHyH9di6
-	ZtaWCpnTmHTWZ86HLAE2
-X-Google-Smtp-Source: AGHT+IFoJJFPtLBuSMIqJyGFIVwrCuTOeFzAqiPp8piO0gnCMrA5ajUljudZL/pGS/GtLks+6yCgNQ==
-X-Received: by 2002:a17:906:2189:b0:aa5:391e:cadf with SMTP id a640c23a62f3a-aa58103cca7mr869419266b.42.1732904258959;
-        Fri, 29 Nov 2024 10:17:38 -0800 (PST)
-Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e64dcsm197279866b.95.2024.11.29.10.17.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 10:17:38 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 29 Nov 2024 19:18:12 +0100
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v4 08/10] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <Z0oFZGM72FDQX55N@apocalypse>
-References: <cover.1732444746.git.andrea.porta@suse.com>
- <c48e6b9b178cdaa01b92ae82e8fd24c2ba5f170c.1732444746.git.andrea.porta@suse.com>
- <2024112535-viper-uncivil-3054@gregkh>
+        d=1e100.net; s=20230601; t=1732904349; x=1733509149;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PN3EfWs6vxHfOQvNcqaTj9BKkofXEf67LNsJGDX/OqE=;
+        b=eawnxqEwuLUpjVmCIkNDkDgzUbZFdJtqLaJu8XIJv/bZG9pQt3aMeCahzavLUAkzIU
+         ExbBd8h9ZrIgHNAD37ezR6IHIAR9ODaUN/tHAEpDW405OullPLpM845K9HHxPuOKJzQB
+         QjtEWGoEMUb//pM1CbzGOZo1DMEjUnS3CyxMVPd6VusOOVCVQ+pJIAKRM+3EXXdjqpSv
+         A4tz3Ln72mbS+HZr8WM0KR/XVkW75o2dJKrpUXzG87Z3iSMF57e5hfJOdQhxnW0HwwIj
+         Q3aW+2qUDGGZzinqH5ycrgBQ8kt3wboBZdJ8YvAIcPQb9SDSAsyNzt6qoUw6IT98yHHS
+         sNiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIHUGlMqEsT7merrts1m2p6ZGliGqlp5lKCmXwnwsF0bSmBiKPz+HAUnxVpmkrZc98fTB9e/mcUIvOgEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqoaPMx5ulNatFtcXYalWgl92SDMtFuS4g6sJ2iqM0mAYOEwqA
+	6uIsmYvzWqH8VbJfhu7GaIOjH/6D6iD2KpqoNfD+BQstvbFPdzpJkPSr9sBzmB61v8kHg+Wq7NI
+	=
+X-Gm-Gg: ASbGnctR4dMOzShY0eGKhltwS/ZrMdVnAzalFKHyjShoHLjkk/FchUD1cQEEq01ShIn
+	MZrzrs5xMDW7i3WqVb0nLmGoF8QraLy6StAMI795xdaCSdlIEVmX5ofskI+00JHc8vsss0MhSDO
+	6F4SP/bR6TgLTrB6UqtMpV58k+M2/o/Fi48mwdeSOKQqM4NsmOPmJrM9lJYxS0JgfoaTzEGQMSs
+	qxnX98cVFNJEnmxC9nlA2I/dyjG/bOVhd6NQfRElcBAeVptZv81eAo1fm11PibESkZAEqXK/Ipc
+	rYVgUHFVnYvQ
+X-Google-Smtp-Source: AGHT+IFyn+lNcogOT7BmuiIX1wcpXMCdwPFeqWb74/OhjpZDs1ojPae2eUeK4CmBYmHusb5P5qqnqw==
+X-Received: by 2002:a05:6a00:14d5:b0:724:6f2d:eb0c with SMTP id d2e1a72fcca58-72530013a1fmr15992274b3a.7.1732904349052;
+        Fri, 29 Nov 2024 10:19:09 -0800 (PST)
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com. [209.85.216.51])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fb36asm3751738b3a.116.2024.11.29.10.19.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 10:19:08 -0800 (PST)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2eade1cad26so1530722a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:19:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUsJNHdLvy7iR+vg6iYfMLMt/Fl+xBPN9UhVvmA/nQIWyv15VmjfCQbu1TPM4rWIA5PREQTbkNSbsC8mg4=@vger.kernel.org
+X-Received: by 2002:a17:90b:184f:b0:2ea:6d3b:1985 with SMTP id
+ 98e67ed59e1d1-2ee08eb2205mr16640538a91.15.1732904347777; Fri, 29 Nov 2024
+ 10:19:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024112535-viper-uncivil-3054@gregkh>
+References: <20241129151723.48275-1-xndchn@gmail.com>
+In-Reply-To: <20241129151723.48275-1-xndchn@gmail.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 29 Nov 2024 19:18:55 +0100
+X-Gmail-Original-Message-ID: <CANiDSCsFriCyQuF3aQ+mEeHERcaUPt45ZgVX2Wyfo2T6N3vS3g@mail.gmail.com>
+Message-ID: <CANiDSCsFriCyQuF3aQ+mEeHERcaUPt45ZgVX2Wyfo2T6N3vS3g@mail.gmail.com>
+Subject: Re: [PATCH] media: uvcvideo: Use uvc_query_name in uvc_get_video_ctrl
+To: Xiong Nandi <xndchn@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Greg,
+On Fri, 29 Nov 2024 at 16:18, Xiong Nandi <xndchn@gmail.com> wrote:
+>
+> uvc_query_name was introduced to print query name in uvc_query_ctrl.
+> So we can also use it in uvc_get_video_ctrl.
+>
+> Signed-off-by: Xiong Nandi <xndchn@gmail.com>
+> ---
+>  drivers/media/usb/uvc/uvc_video.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index e00f38dd07d9..93cacd2c8721 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -297,8 +297,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+>                 goto out;
+>         } else if (ret != size) {
+>                 dev_err(&stream->intf->dev,
+> -                       "Failed to query (%u) UVC %s control : %d (exp. %u).\n",
+> -                       query, probe ? "probe" : "commit", ret, size);
+> +                       "Failed to query (%s) UVC %s control : %d (exp. %u).\n",
+> +                       uvc_query_name(query), probe ? "probe" : "commit", ret, size);
+nit: This is above 80 characters. Please move size to the next line,
+aligned to uvc_query_name
 
-On 14:46 Mon 25 Nov     , Greg Kroah-Hartman wrote:
-> On Sun, Nov 24, 2024 at 11:51:45AM +0100, Andrea della Porta wrote:
-> > --- a/include/linux/pci_ids.h
-> > +++ b/include/linux/pci_ids.h
-> > @@ -2611,6 +2611,9 @@
-> >  #define PCI_VENDOR_ID_TEKRAM		0x1de1
-> >  #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
-> >  
-> > +#define PCI_VENDOR_ID_RPI		0x1de4
-> > +#define PCI_DEVICE_ID_RPI_RP1_C0	0x0001
-> 
-> As you only use these in one file, please read the top of this file for
-> why this isn't needed here, but rather should be back in that one
-> driver.
+With that change:
 
-The reason I've defined them in pci_ids.h is due to the fact that they are
-indeed used both by the driver (drivers/misc/rp1/rp1_pci.c) and in 
-drivers/pci/quirks.c.
+Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Many thanks,
-Andrea 
+>                 ret = (ret == -EPROTO) ? -EPROTO : -EIO;
+>                 goto out;
+>         }
+> --
+> 2.25.1
+>
+>
 
-> 
-> thanks,
-> 
-> greg k-h
+
+-- 
+Ricardo Ribalda
 
