@@ -1,76 +1,98 @@
-Return-Path: <linux-kernel+bounces-425911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F3C9DEC79
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:34:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7949DEC87
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:38:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE2A16186D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:38:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2901A256F;
+	Fri, 29 Nov 2024 19:38:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C42C2817EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:34:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B601A256B;
-	Fri, 29 Nov 2024 19:34:14 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EEC14D430
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A8B14D430
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732908853; cv=none; b=aslXPUxseU0Mxy+uaUWpN1TEwD65iIkJmZJOoxo2h1LFtNlsUihomL/VirqG9iu5bYlKmKVljeHiFrgIA0/dftH9BsToyjrOb+66Fmm/xPWeF+H8pJptGx+W4IpvXWtU99cf+y+BdKjIvml2XZZtMfs+8OEPPT5CcpTyyE6i168=
+	t=1732909110; cv=none; b=BORZMMRc8oEy9s4Ilgsq2ZpPA6TglV77Nju3HjEqmfNh7aCgiIfr0sfAHzBnyku9VyXL2esD9QlQKVCsLOnlE/nv3xhB8KAEIFIsdawDfy+y41CXGLhpRi8wXvOqNTcqNx0EbOkOq85hFYkCXmF/bgfyKvC52Nie/zrPTIKBaJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732908853; c=relaxed/simple;
-	bh=jOXwzG1YkVgr+24WoIUdr0bg0h/ZSpxXxmdKEZIOh+E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Tzz/owGJHVFm3i6DIeH95bwsryAYC2yrSnYR0NYSwgQsSjzgplq/T0LoHnqtHIOkFBA4qEFhk6ZvoPDH1ovWtKpctSxXPWJ/L1Wj5gLZDaHxKktf/rdWbYpITFKkd9y/1GnTxEQc7rZvT/sfoBiW5zbPJ6sfPkVTaHnw0gWOjd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-841a4a82311so168412739f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:34:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732908851; x=1733513651;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jOXwzG1YkVgr+24WoIUdr0bg0h/ZSpxXxmdKEZIOh+E=;
-        b=YEZJcKjijBM82YSS7CtGc6nN37woJI2Hw7nThJi3x64M/5C6YK2MNB4zWWyB7IpPpM
-         0mHS8hRRB2EOYfIrb4JRRNzAO57J1qIS3FO8XyYNzqtgYW2DZwD1XagJUql34TGspu9Q
-         NeZBIK8pAAMqArJmwFDIYcCI6xQj1pNMaP9C5utIHlZ3Nk+mSi0Sej1A/vO3+KvMBAiR
-         w/8Wr2XwfpMMAsr7pXURf/8KqYHCfJbqog/SOjaD6VxJkKOeh1d45FQa6jHoMZE9upJr
-         3NAVaN4CB0F5w+rU4UOEkE6AnjJMTCeCDkfeicfEqNIIj7SBEblwWuf6QY6CsJnCqUR1
-         lxdQ==
-X-Gm-Message-State: AOJu0YxmU9zRVp42OwnvMjlNyEnW+BV2RjhSU/vtj6Tixi5SXdq4386d
-	7EGhcY4FlgL/aU8j3Tpm6TUeLUCK8OB7DqeZVeTRVP4xMzjgPjc33afd/mkPQ/TJCdcbk0G5S/M
-	iGexKZQjHy+P3D0K34WHst4rfkJvKqjebzrscmswRSadPxndR97+gBJk=
-X-Google-Smtp-Source: AGHT+IHtz1Mj6VQCKrd9lQhz8HH+EmNhnvM/qi/q/4E3NPg5DxQArx8DA1aojaHvQKNwyxekGPeT+0bVDgb7+3wNW5yacpjFrU3/
+	s=arc-20240116; t=1732909110; c=relaxed/simple;
+	bh=BS6jrRu6+sYgE9g4uWRmKXi0Ng/9na/wD645hYlYWmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NR8nulRxHJTxBNOfh3QAOJ4Mm53fjRzoaq98EJX4s6EGDqB0cqmLXGgvc+vudduXuX1ZA0XzC7CSiWrmjQPuJ6KxphYU0MAUGFUwNnAxg2gks2y2UDJchIHXODUTopJsVh26cqQx5qfqf9kHdJboppImVtBZ+dVIv3MOy3RrdGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AE7AC4CECF;
+	Fri, 29 Nov 2024 19:38:27 +0000 (UTC)
+Date: Fri, 29 Nov 2024 19:38:25 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Yang Shi <yang@os.amperecomputing.com>,
+	Baruch Siach <baruch@tkos.co.il>, will@kernel.org,
+	ptesarik@suse.com, hch@lst.de, jiangyutang@os.amperecomputing.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: mm: fix zone_dma_limit calculation
+Message-ID: <Z0oYMXMGYgXoyon7@arm.com>
+References: <20241125171650.77424-1-yang@os.amperecomputing.com>
+ <87ttbu8q7s.fsf@tarshish>
+ <98583682-a95e-440e-bd89-03828998b48e@os.amperecomputing.com>
+ <Z0dbsRCsWT3hiVds@arm.com>
+ <7720d275-bc52-49c3-949a-6a6a32157418@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a6:b0:3a7:783d:93d7 with SMTP id
- e9e14a558f8ab-3a7c552596amr142692835ab.4.1732908851420; Fri, 29 Nov 2024
- 11:34:11 -0800 (PST)
-Date: Fri, 29 Nov 2024 11:34:11 -0800
-In-Reply-To: <67475f25.050a0220.253251.005b.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674a1733.050a0220.253251.00c2.GAE@google.com>
-Subject: Re: [syzbot] KASAN: null-ptr-deref Read in fuse_copy_do
-From: syzbot <syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7720d275-bc52-49c3-949a-6a6a32157418@arm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Fri, Nov 29, 2024 at 06:06:50PM +0000, Robin Murphy wrote:
+> On 2024-11-27 5:49 pm, Catalin Marinas wrote:
+> > If IORT or DT indicate a large mask covering the whole RAM (i.e. no
+> > restrictions), in an ideal world, we should normally extend ZONE_DMA to
+> > the same.
+> 
+> That's not right, ZONE_DMA should still be relatively limited in size
+> (unless we really do only have a tiny amount of RAM) - just because a DT
+> dma-ranges property says the system interconnect can carry >32 address bits
+> in general doesn't mean that individual device DMA masks can't still be
+> 32-bit or smaller. IIRC we're still implicitly assuming that if DT does
+> describe an offset range into "high" RAM, it must represent a suitable
+> lowest common denominator for all relevant devices already, and therefore we
+> can get away with sizing ZONE_DMA off it blindly.
 
-***
+Fine by me to keep ZONE_DMA in the low range always. I was thinking of
+only doing this if ZONE_DMA32 is enabled.
 
-Subject: KASAN: null-ptr-deref Read in fuse_copy_do
-Author: niharchaithanya@gmail.com
+> After staring at it for long enough, I think $SUBJECT patch is actually
+> correct as it is.
 
-#syz test
+Thanks Robin for having a look. Can I add your reviewed-by?
+
+> In fact I'm now wondering why the fix was put inside
+> max_zone_phys() in the first place, since it's clearly pointless to clamp
+> DMA_BIT_MASK(32) to U32_MAX in the dma32_phys_limit case...
+
+I came to the same conclusion. I think it might have been some left-over
+from when we had a ZONE_DMA32 in the above 4GB (AMD Seattle?). Than we
+changed it a few times but only focused on this function for setting the
+limits.
+
+> However the commit message is perhaps not as clear as it could be -
+> technically we are correctly *calculating* the appropriate effective
+> zone_dma_limt value within the scope of zone_sizes_init(), we're just
+> failing to properly update the actual zone_dma_limit variable for the
+> benefit of other users.
+
+I'll have a look next week at rewriting the commit message, unless Yang
+does it first. I'm planning to queue this patch for -rc2.
+
+-- 
+Catalin
 
