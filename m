@@ -1,136 +1,76 @@
-Return-Path: <linux-kernel+bounces-425917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A585F9DEC85
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:35:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F3C9DEC79
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:34:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27578B20F95
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C42C2817EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63111A2C3A;
-	Fri, 29 Nov 2024 19:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="bgBid7pt"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B601A256B;
+	Fri, 29 Nov 2024 19:34:14 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366681AA1E2;
-	Fri, 29 Nov 2024 19:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EEC14D430
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732908865; cv=none; b=swZJ79GvmqythW1WWsY+8I9BYYxTQlxWZTtHHiQeKwAxtHItCNbC1KdSCqNc/t6AkULHRR8Z3zregzCdAq7KYl4Lw1CkWOVMr8WGvV9aQfjwLcZoqovxLJ1qsxr08EOuLPRXCsy7L6+ZNnGojOqjSvJN9SujfJRdDWbB+tX6+eQ=
+	t=1732908853; cv=none; b=aslXPUxseU0Mxy+uaUWpN1TEwD65iIkJmZJOoxo2h1LFtNlsUihomL/VirqG9iu5bYlKmKVljeHiFrgIA0/dftH9BsToyjrOb+66Fmm/xPWeF+H8pJptGx+W4IpvXWtU99cf+y+BdKjIvml2XZZtMfs+8OEPPT5CcpTyyE6i168=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732908865; c=relaxed/simple;
-	bh=05k/9UcKLbPpUNI20HD7zkO4ItYfXtjrurnHnRktDT0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OMFco7jnANTMbGvubcW/xXoA4zvFmdNswItkP1+rMnfHqti8enGx0iyobYqCbSVGPvTQTK8Qkb8JulryhOqURndvgo01wzGrscbWtlWuGJNR/oZjpNIwRaCXhtG4Zyc0LtgAwLG5PLCPcLQqaYKe0Q98XQqCqJwUTq1bDcG7irs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=bgBid7pt; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732908855; x=1733513655; i=w_armin@gmx.de;
-	bh=t6ZQnbK0ISvkSX2rlaJconU2QD2RLMH+szPFATosBag=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=bgBid7ptiT+N4bWNNQuiH3LrXUL6rGxMTNmvfwlOxxJgiW3UCY6+tgDN/6uzlqkP
-	 bTw5veVkw4p0DsWXbzbwT9jHCAHvY9P2Nyo/Na5LDst3ADyFHWWddTGz/NcGK5JV/
-	 XvrM6mszwfazZFVqPKJzIBYbjSrgCvnHi3FngAQFUAFc07kGwy1QQcRQEXBMvxL9k
-	 mHFpucpHhkYIhrV6z2a4+Po722CGSppYTGYo8AArfUNA6zclN+PYCqUU9nWUjdzlQ
-	 HIZP0iyqo7aI23nyWC9H97CgUuk00WJtoqkYuyrvi6Rjcujg/IpOxBDH0qNeN42zI
-	 rm6JiHQK3c+1HWPV4w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-inspiron.fritz.box ([141.30.226.119]) by mail.gmx.net
- (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MIdeR-1tVh460pE5-0020HT; Fri, 29 Nov 2024 20:34:15 +0100
-From: Armin Wolf <W_Armin@gmx.de>
-To: jlee@suse.com,
-	farhan.anwar8@gmail.com,
-	rayanmargham4@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] platform/x86: acer-wmi: Ignore AC events
-Date: Fri, 29 Nov 2024 20:33:59 +0100
-Message-Id: <20241129193359.8392-6-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241129193359.8392-1-W_Armin@gmx.de>
-References: <20241129193359.8392-1-W_Armin@gmx.de>
+	s=arc-20240116; t=1732908853; c=relaxed/simple;
+	bh=jOXwzG1YkVgr+24WoIUdr0bg0h/ZSpxXxmdKEZIOh+E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Tzz/owGJHVFm3i6DIeH95bwsryAYC2yrSnYR0NYSwgQsSjzgplq/T0LoHnqtHIOkFBA4qEFhk6ZvoPDH1ovWtKpctSxXPWJ/L1Wj5gLZDaHxKktf/rdWbYpITFKkd9y/1GnTxEQc7rZvT/sfoBiW5zbPJ6sfPkVTaHnw0gWOjd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-841a4a82311so168412739f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:34:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732908851; x=1733513651;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jOXwzG1YkVgr+24WoIUdr0bg0h/ZSpxXxmdKEZIOh+E=;
+        b=YEZJcKjijBM82YSS7CtGc6nN37woJI2Hw7nThJi3x64M/5C6YK2MNB4zWWyB7IpPpM
+         0mHS8hRRB2EOYfIrb4JRRNzAO57J1qIS3FO8XyYNzqtgYW2DZwD1XagJUql34TGspu9Q
+         NeZBIK8pAAMqArJmwFDIYcCI6xQj1pNMaP9C5utIHlZ3Nk+mSi0Sej1A/vO3+KvMBAiR
+         w/8Wr2XwfpMMAsr7pXURf/8KqYHCfJbqog/SOjaD6VxJkKOeh1d45FQa6jHoMZE9upJr
+         3NAVaN4CB0F5w+rU4UOEkE6AnjJMTCeCDkfeicfEqNIIj7SBEblwWuf6QY6CsJnCqUR1
+         lxdQ==
+X-Gm-Message-State: AOJu0YxmU9zRVp42OwnvMjlNyEnW+BV2RjhSU/vtj6Tixi5SXdq4386d
+	7EGhcY4FlgL/aU8j3Tpm6TUeLUCK8OB7DqeZVeTRVP4xMzjgPjc33afd/mkPQ/TJCdcbk0G5S/M
+	iGexKZQjHy+P3D0K34WHst4rfkJvKqjebzrscmswRSadPxndR97+gBJk=
+X-Google-Smtp-Source: AGHT+IHtz1Mj6VQCKrd9lQhz8HH+EmNhnvM/qi/q/4E3NPg5DxQArx8DA1aojaHvQKNwyxekGPeT+0bVDgb7+3wNW5yacpjFrU3/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9cYNdBGfOHpmRWvfy6JWc9X2lD6GF7p6JT/rfTMaHN30+qnNXPA
- mFzkoarIAX07Lijj60s29W1bReT9rdEzNjLV8FaDAXkCsiJgHCj4c/WtAfW+bMxh/Peayqi
- AmdS8TKvZmAJSJHX9/VHILeq+Pvzp7/LRuDDmA340G6PwygbRfbPz9xcVTv2dnAeEfdYn7T
- l1xOCj/BHgqTwIUk17zRQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ssdQnrYdjhg=;0cVrCF3VkamVbuGtLsEIPvOT+aS
- tGRDcCYMKpjqvKwv0HDBYFJzxPYXf4bQaoZiMePMzSBjaYm6asVPGPxn4wVarO0wr6hxhfr9e
- TP1GJFgDP6IdZkkqaJlamkY+ymhA2BYLeR0cqMdzKItlTix1Wo7ffAoqfaNnMHh1PAw4afyT9
- BMkvSMK3X+xxd+0URrdpsVBITh3bEeNYT1vnzcIgHn0EfkmX71I6lKioVQi395uS/4t0wFqbk
- 3NIrALImcp9JRuwFwr96yOCG5rHYNQ48T0G4odKqKmA8EGj+fDCxFzHV2YV7JK/hI+yNwbbU7
- XfHKR97uZvZ0XfplMa7CfrHovDjIQPzO9TDwRdWH5wKlHfyz/KKycYa9hNb/xabs5tyRXfuZf
- CRkVdYnEXXl6Xw6RphwFmReArZHchLtHX3ctyp38mLAYIK8lb8i+T/WYXVmMwnYI4pNnUrTxc
- 2AYgvkaFsX0vIdKUk4God4pxPIUY+3DPu4KPDAjQDUfNQt4Mul8/vhjvVLGkcPTgPp5+frAD3
- prJBhaaGsGzVYTyv8TfzFcOiFdBAUXPBsVGZNqIZ//WanB3bnKZHn8DYSPhN8lM5gz23MkF3G
- /KNJjK6c+mjYeVxVGvvBbv2LD+MjLSnara/3AvbyK5BnqJ55rBnRyxmLpvn4W0kntX5dmdaj1
- 5nfaP0vdUCCo9/RYQOu0TsspfSwkliF/ez1BFqTu16B4PWcKBp3PWKVv6RRi6+uRysAlHkdSl
- 0r0GAgcW+aRziYZrQGcokjH9HFQQOX2i3FzAd0taO1D4Hxj6LhduGkJDBpJre9hvhf4Qu0VMo
- Kw4nxxCpXu8tFL20xLQ/eHCn5jv979G0becQ9UFGD2BqoiOCKe+8RVDdUq7xyVDHP4LVC5b8p
- ECE4x2t1Lk80PPp+77ZlpgNRVh1qFmcrI2JioypB71x2PRPGz8yY5iPS6GDyMBsLcDG+JAoZH
- oMxYzESlwajJqd/rcZjwYDc7pB/9iztWllkKuCweIH4exH0CAYQGnktTQhst9Oe8OZVW6zqNd
- Uni+LckXvX6BJB+AUduuWrfPpUn15GS5MdWaDAGhWUrjJ8Im2a0/cBonGmkMGiJxqk9eBUXBa
- 5slMJ3+dV5W2MTSZDtebNkBU0GFerI
+X-Received: by 2002:a05:6e02:13a6:b0:3a7:783d:93d7 with SMTP id
+ e9e14a558f8ab-3a7c552596amr142692835ab.4.1732908851420; Fri, 29 Nov 2024
+ 11:34:11 -0800 (PST)
+Date: Fri, 29 Nov 2024 11:34:11 -0800
+In-Reply-To: <67475f25.050a0220.253251.005b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674a1733.050a0220.253251.00c2.GAE@google.com>
+Subject: Re: [syzbot] KASAN: null-ptr-deref Read in fuse_copy_do
+From: syzbot <syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On the Acer Swift SFG14-41, the events 8 - 1 and 8 - 0 are printed on
-AC connect/disconnect. Ignore those events to avoid spamming the
-kernel log with error messages.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Reported-by: Farhan Anwar <farhan.anwar8@gmail.com>
-Closes: https://lore.kernel.org/platform-driver-x86/2ffb529d-e7c8-4026-a3b=
-8-120c8e7afec8@gmail.com
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/acer-wmi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+***
 
-diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-w=
-mi.c
-index 2c1ea6155bd3..18fc706ea752 100644
-=2D-- a/drivers/platform/x86/acer-wmi.c
-+++ b/drivers/platform/x86/acer-wmi.c
-@@ -100,6 +100,7 @@ enum acer_wmi_event_ids {
- 	WMID_HOTKEY_EVENT =3D 0x1,
- 	WMID_ACCEL_OR_KBD_DOCK_EVENT =3D 0x5,
- 	WMID_GAMING_TURBO_KEY_EVENT =3D 0x7,
-+	WMID_AC_EVENT =3D 0x8,
- };
+Subject: KASAN: null-ptr-deref Read in fuse_copy_do
+Author: niharchaithanya@gmail.com
 
- enum acer_wmi_predator_v4_sys_info_command {
-@@ -2305,6 +2306,9 @@ static void acer_wmi_notify(union acpi_object *obj, =
-void *context)
- 		if (return_value.key_num =3D=3D 0x5 && has_cap(ACER_CAP_PLATFORM_PROFIL=
-E))
- 			acer_thermal_profile_change();
- 		break;
-+	case WMID_AC_EVENT:
-+		/* We ignore AC events here */
-+		break;
- 	default:
- 		pr_warn("Unknown function number - %d - %d\n",
- 			return_value.function, return_value.key_num);
-=2D-
-2.39.5
-
+#syz test
 
