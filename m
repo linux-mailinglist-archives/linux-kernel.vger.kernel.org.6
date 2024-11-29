@@ -1,303 +1,313 @@
-Return-Path: <linux-kernel+bounces-425751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6469DEA9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:09:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A199DEAB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EF45163A9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5C77163461
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43704149E17;
-	Fri, 29 Nov 2024 16:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FE814A4DD;
+	Fri, 29 Nov 2024 16:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlEPQxqC"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rY0PH76c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBD5168DA
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B00168DA;
+	Fri, 29 Nov 2024 16:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732896562; cv=none; b=C4loTBUFYuXucjv1mdgzBFO2TencS8gLVismka5wMDD5MGWdV7CLDUTvhk73mleYGuAi9nwSZ1QOwTB6iSZld1vYyhBeYagLCEsXs+3VOJ2vNoMB9tf45AEcAl6/8BFtulUhOHYZwOWMx5jQSOqsHdQmSeX/U3la9yhJvuEuYQM=
+	t=1732896605; cv=none; b=V2lc7XknoLvmxg0G5RqUJt79V7SqWV7ddanNvkxVfOpKYmSnZbhrnpKJy7ukGss4G6miqHtGgKUATtJx/fBXAfe+yDMIFFaTR2i8TbItMGpiKbpBhxTMiMEmPgxPbtYDDha6HoNr5qBVC6gZAvA6WmKpuGoqk4o+K4ptAMbX09s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732896562; c=relaxed/simple;
-	bh=+lz2RLJ7yU2XgbvJvawq8qTOxK3UKhAuVeJ+X3/13dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rJvf7muXoh96HcosJB3/EtE6UVLfVB+vXIOPiLUhTlX/Lp+7D9z8lBl+V3oqxop+k3tnTb2I7yGud6qdgGBYviVg8bicYsdl29NfAEeuBcsIvvcUdHlpLpso5kFw0cnId11VK6s83Ilf7EQ319KlENym7GOlUFmYqkGwf3j/QkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlEPQxqC; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-212348d391cso16597035ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:09:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732896560; x=1733501360; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rn9XUc2kXDHGr6lXt2ctrx4SG9UECOY3Hpaa849mHwM=;
-        b=jlEPQxqC03hKCEk5osXmot2BLZ+Jpp7ARrB8v8cSP4ergDHSULfu5Wd/h5s4t/5yZa
-         Kx8ew+X4w/ke2PlCC+Kd5yAgmjhZIrJr2ftwqCy1GeFRAUIGQk8xkCINkFJWx22t2MbI
-         03vnw/YBoV9TQm4k2aMxosM/eL2U2s25jKLNkHaqEton65TuK2jxyKjJHPyd86MRvgNr
-         E69+lL2ou4Kt5wi7siNLs86NaxKYWkaypYbcO+5dRlh25WHBBjHYYx9YdR/+hj7/kdy/
-         ws7GBST9mGBd7BaV3jHo4wQX/EAzxhrfvZuKOBze6TVcQ4njEQA9YzOmEURa1Q6Nb3WS
-         GvJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732896560; x=1733501360;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rn9XUc2kXDHGr6lXt2ctrx4SG9UECOY3Hpaa849mHwM=;
-        b=oaGW2Rd/VPaK7PnUtLXsaCZOcIjIkuuiWVeOwFGyj4jHWd7MdzKpdqZtBe102Qd3Bq
-         RNxoAWsKznkWBG434qbiJaNcjbEFzk4J/yJBNqRmZyOtj7JvdHyTNvmb+C64a1IP2fsO
-         OlpaFbjM9fRE2w0a7IRPGK+Z0GKlr/cP19FpQLa4VNvOPuOtyZIgobTfbwOTfzATYW0y
-         6cxAI36ZBrc6QS1kglyJz7RRVpZIeMZFlvlbsg8S6ZzfwIjt0nqk0rcrZkMNNJzVHsRY
-         E18cVGYcD9hsqQ++szAWn4DGGn+FwwUqo34HgUlhPFAM4xVhIWJjwZEIinyxh7nTblz7
-         H25w==
-X-Gm-Message-State: AOJu0YzaOa7M/5Jj6siK2WOCUVywn52jpB/Qp6zD/nZAo3BOnrlMDxpD
-	r3x6qi/vO81g7+Oes4GkjtEU2SCmR0yD8lZM6OieN4TEbmop2kyQ
-X-Gm-Gg: ASbGnctIA9QHkhVwH05HVixRStpIxyGMmU1H3A/0Q+cgw6H5zMIv6SV6+wHBItCCzap
-	fmqKjeDr464rf5NB2Oh/Ihw6oUZgldX8LugxJVhMywed8QARo9WoYX6tuRPYBvpZRDrMlM85iVh
-	7ZjdxIbmTl0lXFdxIOhZkTI1I0oJSR+6Sp6gS9nbPCZ+IrCmxc8Rj4GtKOdcx51Mw8M16mQ5FxS
-	/iubvAFNUxP8iohlY3ebku4ug1+xI1a/wklYD07IlmpQ5yGbjnkwokgGta5I1jSC+g6J6nb7pYe
-	seJpDq2YP0GskVCWO5oNEMc=
-X-Google-Smtp-Source: AGHT+IGWM7WHdBC+C/onQT989hm/cREVcG9Jv/66Vp5pzINfer/t08fj11AWjhruzzh1+tHsNb/FeQ==
-X-Received: by 2002:a17:902:cf0c:b0:212:63db:bb14 with SMTP id d9443c01a7336-21501d6451cmr143594545ad.44.1732896559566;
-        Fri, 29 Nov 2024 08:09:19 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215219ac8f3sm32293895ad.240.2024.11.29.08.09.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 08:09:18 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2b732d25-63e7-40f7-8d66-b1e6dc0b701d@roeck-us.net>
-Date: Fri, 29 Nov 2024 08:09:17 -0800
+	s=arc-20240116; t=1732896605; c=relaxed/simple;
+	bh=tLYTMDQXQL2x03mcwzCL/tJ5nbkPDv3owmBLoLTD5ls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ifiljuWMsf7OAQXgrcTyl4e3W3xHALXtIZcQsA46sd1sqjyl71Xx8xiKtYlKtOObbeY5R9X+385TH3xq31Yd2V5wmp67VWyuWQv0YvtGojo05utRFAv/ZjxWiANO6/iGmqnCCJZ50LK9HKa8389vJbnKdUt/pBKNJxhFJG1DLbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rY0PH76c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3660C4CECF;
+	Fri, 29 Nov 2024 16:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732896604;
+	bh=tLYTMDQXQL2x03mcwzCL/tJ5nbkPDv3owmBLoLTD5ls=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rY0PH76c1wgpAeKxhWcaKFkgqDS5Lsrva/gfCJdHnGCEXZzW0jJioosld76FLZ8Cq
+	 SrzV52ih/tHWpOPS80Thr2gvGRL8eklsudGsQGgBLtuB9N52yITHGPrElhXTQ9evVY
+	 RzFfxFN7HJAsLDOzpojqt3rg6hQzxtZsIkTlAfL3OPtbDx+j5YxgI2Hbc5adBOtWYV
+	 nKwFswdviCbhXvODG+tXzPUw+OlOH5gnC0ozri7dfnLasg0GAfO59ymFm3tclmPYP7
+	 m/5SjGWlX9TD++grf7BhzVNHLc9q9ma0dh4sxGNTbGD1K7kPKjL/Uj0mEUfWE5TOvU
+	 pnJ0/5uoStlOQ==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffc86948dcso21854461fa.2;
+        Fri, 29 Nov 2024 08:10:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW3PfElU5l3fh1zniVcY/+EMxlhJs62Bww9BAwv0DjkAN2TOHimDiX/maiRC86U3ppxaKlQKN1whePUjOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHcnZ+vojLeZ93CpbhIPf5RH8CODnPvVIUuFQ2bcUopGlMBFNt
+	RSy+mLXAr9CBqWbbKbxfxdnzPp6gjXO4L/RdjPV8G5GZ54THskuGD63fSgasQdY9HfycybWfNr+
+	iSf6g9d+ek3hjn9oi3VTDQ9jyydc=
+X-Google-Smtp-Source: AGHT+IGo4vefS3BVGJC9QJug0PEfkjnPfa3kCPinOGxYkgjXIUmmaZK82yRudLOCMXnKx/EBKpPPSuYxtPZWeQxLY1Y=
+X-Received: by 2002:a05:6512:3d8b:b0:539:8f4d:a7dc with SMTP id
+ 2adb3069b0e04-53df0111eb8mr7269672e87.48.1732896602997; Fri, 29 Nov 2024
+ 08:10:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 2/2] timekeeping: Always check for negative motion
-To: Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-References: <20241031115448.978498636@linutronix.de>
- <20241031120328.599430157@linutronix.de>
- <387b120b-d68a-45e8-b6ab-768cd95d11c2@roeck-us.net>
- <CANDhNCo1RtcfqUJsuAQ+HdS7E29+gByfek5-4KYiAk3Njk4M3Q@mail.gmail.com>
- <65b412ef-fc57-4988-bf92-3c924a1c74a5@roeck-us.net> <87cyifxvgj.ffs@tglx>
- <2cb25f89-50b9-4e72-9b18-bee78e09c57c@roeck-us.net> <874j3qxmk7.ffs@tglx>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <874j3qxmk7.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241125041129.192999-1-ebiggers@kernel.org> <20241125041129.192999-3-ebiggers@kernel.org>
+In-Reply-To: <20241125041129.192999-3-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 29 Nov 2024 17:09:51 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFGs8Ur0yt9GetVaub8LzbeWJ77jaZ4ZstvECb3JH9Pvg@mail.gmail.com>
+Message-ID: <CAMj1kXFGs8Ur0yt9GetVaub8LzbeWJ77jaZ4ZstvECb3JH9Pvg@mail.gmail.com>
+Subject: Re: [PATCH 2/6] scripts/crc: add gen-crc-consts.py
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/29/24 04:16, Thomas Gleixner wrote:
-> On Thu, Nov 28 2024 at 07:30, Guenter Roeck wrote:
->> On 11/28/24 06:51, Thomas Gleixner wrote:
->> [   19.090000] ###### now: b5ac62 last: d447e38 mask: ffffff return: 712e2a
->> [   19.110000] ###### now: b9ebc3 last: db506d0 mask: ffffff return: 4e4f3
->> [   19.120000] ###### now: bb842f last: db8d760 mask: ffffff return: 2accf
->> [   19.160000] ###### now: c43f2e last: dbabfa8 mask: ffffff return: 97f86
->>
->> 'last' advances beyond 'mask', and after that the result is always bad. The call to
->> clocksource_delta() is from timekeeping_advance().
-> 
-> This does not make any sense. The bits above the mask in cycle_last are
-> irrelevant:
-> 
->          delta = (now - last) & mask;
-> 
->> [    3.350000] ###### now:  6c4f last:  fe6a84 mask: ffffff return: 201cb    <---
->> [    3.360000] ###### now: 40427 last: 10052cc mask: ffffff return: 3b15b    <---
-> 
->         0x40427 - 0x10052cc = 0xffffffffff03b15b
->         0xffffffffff03b15b & 0xffffff = 0x3b15b
-> 
-> That's not any different than before. The only difference is that the
-> return value is checked:
-> 
->         return delta & ~(mask >> 1) ? 0 : delta;
-> 
-> But clearly none of the resulting deltas (after masking) has bit 23
-> set. So the function can't return 0, right?
-> 
-> Coming back to my earlier assumption vs. the max idle time. Here is a
-> long idle sleep:
-> 
->> [   18.500000] ###### now: 45b0a2 last: d1c7050 mask: ffffff return: 294052
->> [   19.090000] ###### now: b5ac62 last: d447e38 mask: ffffff return: 712e2a
-> 
-> The cycle interval is 125000 clock cycles per tick. That's a HZ=100
-> kernel, so the nominal clock frequency is 12.5 MHz.
-> 
->    0x712e2a/12.5e6 = 0.593391s
-> 
-> which is close to the 597268854ns max_idle_ns value.
-> 
-> That's about 0.0776978s away from the point where the delta becomes >
-> mask/2. So there is a valid concern vs. these long idle sleeps on
-> machines with a small counter width.
-> 
-> But none of this explains the problems you are observing.
-> 
-> Can you instrument clocksource_delta() to print the values only when the
-> negative motion detection triggers?
-> 
+On Mon, 25 Nov 2024 at 05:12, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add a Python script that generates constants for computing the given CRC
+> variant(s) using x86's pclmulqdq or vpclmulqdq instructions.
+>
 
-With added WARN_ONCE() after the problem is seen for the first time:
+There is nothing x86 specific about this, right? Except perhaps the
+choice of fold distances?
 
-[   13.860000] ##### now=0xd60127 last=0x85170f4 mask=0xffffff ret=0x849033
-[   13.860000] ------------[ cut here ]------------
-[   13.860000] WARNING: CPU: 0 PID: 0 at kernel/time/timekeeping_internal.h:44 timekeeping_advance+0x844/0x9d0
-[   13.860000] clocksource_delta() time going backward: now=0xd60127 last=0x85170f4 mask=0xffffff ret=0x849033
-[   13.860000] Modules linked in:
-[   13.860000] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.0-10689-g7af08b57bcb9-dirty #1
-[   13.860000] Hardware name: Generic DT based system
-[   13.860000] Call trace:
-[   13.860000]  unwind_backtrace from show_stack+0x10/0x14
-[   13.860000]  show_stack from dump_stack_lvl+0x64/0x88
-[   13.860000]  dump_stack_lvl from __warn+0x7c/0x1ac
-[   13.860000]  __warn from warn_slowpath_fmt+0x130/0x1a4
-[   13.860000]  warn_slowpath_fmt from timekeeping_advance+0x844/0x9d0
-[   13.860000]  timekeeping_advance from update_wall_time+0xc/0x1c
-[   13.860000]  update_wall_time from tick_irq_enter+0x6c/0xb0
-[   13.860000]  tick_irq_enter from generic_handle_arch_irq+0xc/0x44
-[   13.860000]  generic_handle_arch_irq from __irq_svc+0x88/0xb0
-[   13.860000] Exception stack(0xc2201f28 to 0xc2201f70)
-[   13.860000] 1f20:                   00000001 2d639000 c220da80 00000001 c220da80 c2208f14
-[   13.860000] 1f40: c24af000 c2208f54 00000000 00000000 00000097 00000000 c2208f14 c2201f78
-[   13.860000] 1f60: c1568504 c1568488 20000013 ffffffff
-[   13.860000]  __irq_svc from default_idle_call+0x1c/0x1bc
-[   13.860000]  default_idle_call from do_idle+0x200/0x288
-[   13.860000]  do_idle from cpu_startup_entry+0x28/0x2c
-[   13.860000]  cpu_startup_entry from kernel_init+0x0/0x12c
-[   13.860000]  kernel_init from start_kernel+0x6a8/0x6c4
-[   13.860000] ---[ end trace 0000000000000000 ]---
-[   13.870000] ##### now=0xd747fa last=0x85170f4 mask=0xffffff ret=0x85d706
-[   13.880000] ##### now=0xda5bf3 last=0x85170f4 mask=0xffffff ret=0x88eaff
-[   13.890000] ##### now=0xdb1868 last=0x85170f4 mask=0xffffff ret=0x89a774
-[   13.940000] ##### now=0xe541ba last=0x85170f4 mask=0xffffff ret=0x93d0c6
-[   13.950000] ##### now=0xe63e66 last=0x85170f4 mask=0xffffff ret=0x94cd72
-[   13.950000] platform iio-hwmon: deferred probe pending: iio_hwmon: Failed to get channels
-[   13.960000] ##### now=0xe863a8 last=0x85170f4 mask=0xffffff ret=0x96f2b4
-[   13.970000] ##### now=0xeba3a3 last=0x85170f4 mask=0xffffff ret=0x9a32af
-[   13.980000] ##### now=0xec1406 last=0x85170f4 mask=0xffffff ret=0x9aa312
-[   13.990000] ##### now=0xef85a4 last=0x85170f4 mask=0xffffff ret=0x9e14b0
-[   14.000000] ##### now=0xf0f07b last=0x85170f4 mask=0xffffff ret=0x9f7f87
-[   14.010000] ##### now=0xf1bff6 last=0x85170f4 mask=0xffffff ret=0xa04f02
-[   14.150000] ##### now=0xc609c last=0x85170f4 mask=0xffffff ret=0xbaefa8
-[   14.360000] ##### now=0x357f2d last=0x85170f4 mask=0xffffff ret=0xe40e39
-[   14.410000] ##### now=0x3e0a3a last=0x85170f4 mask=0xffffff ret=0xec9946
-[   14.420000] ##### now=0x3fed36 last=0x85170f4 mask=0xffffff ret=0xee7c42
-[   14.430000] ##### now=0x42b58a last=0x85170f4 mask=0xffffff ret=0xf14496
-[   14.440000] ##### now=0x44ba17 last=0x85170f4 mask=0xffffff ret=0xf34923
-[   14.450000] ##### now=0x46635e last=0x85170f4 mask=0xffffff ret=0xf4f26a
-[   14.480000] ##### now=0x4bd58e last=0x85170f4 mask=0xffffff ret=0xfa649a
-[   14.490000] ##### now=0x4d3b0c last=0x85170f4 mask=0xffffff ret=0xfbca18
-[   14.510000] ##### now=0x510ef4 last=0x85170f4 mask=0xffffff ret=0xff9e00
+> It can also generate the traditional byte-at-a-time tables.
+>
+> Only small changes should be needed for this script to also work to
+> generate the constants needed for CRC computation on other architectures
+> with a carryless multiplication instruction, such as arm64.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  scripts/crc/gen-crc-consts.py | 207 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 207 insertions(+)
+>  create mode 100755 scripts/crc/gen-crc-consts.py
+>
+> diff --git a/scripts/crc/gen-crc-consts.py b/scripts/crc/gen-crc-consts.py
+> new file mode 100755
+> index 0000000000000..84f0902e1cd7b
+> --- /dev/null
+> +++ b/scripts/crc/gen-crc-consts.py
+> @@ -0,0 +1,207 @@
+> +#!/usr/bin/env python3
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +#
+> +# Script that generates constants for computing the given CRC variant(s).
+> +#
+> +# Copyright 2024 Google LLC
+> +#
+> +# Author: Eric Biggers <ebiggers@google.com>
+> +
+> +import sys
+> +
+> +# XOR (add) an iterable of polynomials.
+> +def xor(iterable):
+> +    res = 0
+> +    for val in iterable:
+> +        res ^= val
+> +    return res
+> +
+> +# Multiply two polynomials.
+> +def clmul(a, b):
+> +    return xor(a << i for i in range(b.bit_length()) if (b & (1 << i)) != 0)
+> +
+> +# Polynomial division floor(a / b).
+> +def div(a, b):
+> +    q = 0
+> +    while a.bit_length() >= b.bit_length():
+> +        q ^= 1 << (a.bit_length() - b.bit_length())
+> +        a ^= b << (a.bit_length() - b.bit_length())
+> +    return q
+> +
+> +# Reduce the polynomial 'a' modulo the polynomial 'b'.
+> +def reduce(a, b):
+> +    return a ^ clmul(div(a, b), b)
+> +
+> +# Pretty-print a polynomial.
+> +def pprint_poly(prefix, poly):
+> +    terms = ['1' if i == 0 else 'x' if i == 1 else f'x^{i}'
+> +             for i in reversed(range(poly.bit_length()))
+> +             if (poly & (1 << i)) != 0]
+> +    j = 0
+> +    while j < len(terms):
+> +        s = prefix + terms[j] + (' +' if j < len(terms) - 1 else '')
+> +        j += 1
+> +        while j < len(terms) and len(s) < 72:
+> +            s += ' ' + terms[j] + (' +' if j < len(terms) - 1 else '')
+> +            j += 1
+> +        print(s)
+> +        prefix = ' * ' + (' ' * (len(prefix) - 3))
+> +
+> +# Reverse the bits of a polynomial.
+> +def bitreverse(poly, num_bits):
+> +    return xor(1 << (num_bits - 1 - i) for i in range(num_bits)
+> +               if (poly & (1 << i)) != 0)
+> +
+> +# Format a polynomial as hex.  Bit-reflect it if the CRC is LSB-first.
+> +def fmt_poly(variant, poly, num_bits):
+> +    if variant.lsb:
+> +        poly = bitreverse(poly, num_bits)
+> +    return f'0x{poly:0{2*num_bits//8}x}'
+> +
+> +# Print a comment describing constants generated for the given CRC variant.
+> +def print_header(variant, what):
+> +    print('/*')
+> +    s = f'{"least" if variant.lsb else "most"}-significant-bit-first CRC-{variant.bits}'
+> +    print(f' * {what} generated for {s} using')
+> +    pprint_poly(' * G(x) = ', variant.G)
+> +    print(' */')
+> +
+> +# Print a polynomial as hex, but drop a term if needed to keep it in 64 bits.
+> +def print_poly_truncate65thbit(variant, poly, num_bits, desc):
+> +    if num_bits > 64:
+> +        assert num_bits == 65
+> +        if variant.lsb:
+> +            assert (poly & 1) != 0
+> +            poly >>= 1
+> +            desc += ' - 1'
+> +        else:
+> +            poly ^= 1 << 64
+> +            desc += ' - x^64'
+> +        num_bits = 64
+> +    print(f'\t\t{fmt_poly(variant, poly, num_bits)},\t/* {desc} */')
+> +
+> +class CrcVariant:
+> +    def __init__(self, bits, generator_poly, bit_order):
+> +        self.bits = bits
+> +        if bit_order not in ['lsb', 'msb']:
+> +            raise ValueError('Invalid value for bit_order')
+> +        self.lsb = bit_order == 'lsb'
+> +        self.name = f'crc{bits}_{bit_order}_0x{generator_poly:0{(2*bits+7)//8}x}'
+> +        if self.lsb:
+> +            generator_poly = bitreverse(generator_poly, bits)
+> +        self.G = generator_poly ^ (1 << bits)
+> +
+> +# Generate tables for byte-at-a-time CRC computation.
+> +def gen_sliceby1_tables(variants):
+> +    for v in variants:
+> +        print('')
+> +        print_header(v, 'CRC table')
+> +        print(f'static const u{v.bits} __maybe_unused {v.name}_table[256] = {{')
+> +        s = ''
+> +        for i in range(256):
+> +            remainder = (bitreverse(i, 8) if v.lsb else i) << (v.bits - 8)
+> +            for _ in range(8):
+> +                remainder <<= 1
+> +                if (remainder & (1 << v.bits)) != 0:
+> +                    remainder ^= v.G
+> +            next_entry = fmt_poly(v, remainder, v.bits) + ','
+> +            if len(s + next_entry) > 71:
+> +                print(f'\t{s}')
+> +                s = ''
+> +            s += (' ' if s else '') + next_entry
+> +        if s:
+> +            print(f'\t{s}')
+> +        print('};')
+> +
+> +# Generate constants for carryless multiplication based CRC computation.
+> +def gen_x86_pclmul_consts(variants):
+> +    # These are the distances, in bits, to generate folding constants for.
+> +    FOLD_DISTANCES = [2048, 1024, 512, 256, 128]
+> +
+> +    for v in variants:
+> +        print('')
+> +        print_header(v, 'CRC folding constants')
+> +        print('static const struct {')
+> +        if not v.lsb:
+> +            print('\tu8 bswap_mask[16];')
+> +        for i in FOLD_DISTANCES:
+> +            print(f'\tu64 fold_across_{i}_bits_consts[2];')
+> +        print('\tu8 shuf_table[48];')
+> +        print('\tu64 barrett_reduction_consts[2];')
+> +        if v.lsb and v.bits < 64:
+> +            print('\tu64 extract_crc_mask[2];')
+> +        print(f'}} {v.name}_consts __cacheline_aligned __maybe_unused = {{')
+> +
+> +        # Byte-reflection mask, needed for MSB CRCs
+> +        if not v.lsb:
+> +            print('\t.bswap_mask = {' + ', '.join(str(i) for i in reversed(range(16))) + '},')
+> +
+> +        # Fold constants for all distances down to 128 bits
+> +        k = v.bits - 65 if v.lsb else 0
+> +        for i in FOLD_DISTANCES:
+> +            print(f'\t.fold_across_{i}_bits_consts = {{')
+> +            for j in [64, 0] if v.lsb else [0, 64]:
+> +                const = reduce(1<<(i+j+k), v.G)
+> +                pow_desc = f'{i}{"+" if j >= 0 else "-"}{abs(j)}'
+> +                if k != 0:
+> +                    pow_desc += f'{"+" if k >= 0 else "-"}{abs(k)}'
+> +                print(f'\t\t{fmt_poly(v, const, v.bits)},\t/* x^({pow_desc}) mod G(x) */')
+> +            print('\t},')
+> +
+> +        # Shuffle table for handling 1..15 bytes at end
+> +        print('\t.shuf_table = {')
+> +        print('\t\t' + (16*'-1, ').rstrip())
+> +        print('\t\t' + ''.join(f'{i:2}, ' for i in range(16)).rstrip())
+> +        print('\t\t' + (16*'-1, ').rstrip())
+> +        print('\t},')
+> +
+> +        # Barrett reduction constants for reducing 128 bits to the final CRC
+> +        m = 63 if v.lsb else 64
+> +        print('\t.barrett_reduction_consts = {')
+> +        print_poly_truncate65thbit(v, div(1<<(m+v.bits), v.G), m+1,
+> +                                   f'floor(x^{m+v.bits} / G(x))')
+> +        print_poly_truncate65thbit(v, v.G, v.bits+1, 'G(x)')
+> +        print('\t},')
+> +        if v.lsb and v.bits < 64:
+> +            print(f'\t.extract_crc_mask = {{0, 0x{(1<<(v.bits))-1:x}}},')
+> +
+> +        print('};')
+> +
+> +def parse_crc_variants(vars_string):
+> +    variants = []
+> +    for var_string in vars_string.split(','):
+> +        bits, bit_order, generator_poly = var_string.split('_')
+> +        assert bits.startswith('crc')
+> +        bits = int(bits.removeprefix('crc'))
+> +        assert generator_poly.startswith('0x')
+> +        generator_poly = generator_poly.removeprefix('0x')
+> +        assert len(generator_poly) % 2 == 0
+> +        generator_poly = int(generator_poly, 16)
+> +        variants.append(CrcVariant(bits, generator_poly, bit_order))
+> +    return variants
+> +
+> +if len(sys.argv) != 3:
+> +    sys.stderr.write(f'Usage: {sys.argv[0]} CONSTS_TYPE[,CONSTS_TYPE]... CRC_VARIANT[,CRC_VARIANT]...\n')
+> +    sys.stderr.write('  CONSTS_TYPE can be sliceby1 or x86_pclmul\n')
+> +    sys.stderr.write('  CRC_VARIANT is crc${num_bits}_${bit_order}_${generator_poly_as_hex}\n')
+> +    sys.stderr.write('     E.g. crc16_msb_0x8bb7 or crc32_lsb_0xedb88320\n')
+> +    sys.stderr.write('     Polynomial must use the given bit_order and exclude x^{num_bits}\n')
+> +    sys.exit(1)
+> +
+> +print('/* SPDX-License-Identifier: GPL-2.0-or-later */')
 
-With more context (printing for each call to clocksource_delta() as well as the
-actual return value):
+Does it make sense to add a GPL header into a generated file?
 
-[   14.020000] ##### now=0x165aa2 last=0x913b49f mask=0xffffff ret=0x2a603 -> 0x2a603
-[   14.030000] ##### now=0x18aa49 last=0x9159ce7 mask=0xffffff ret=0x30d62 -> 0x30d62
-[   14.040000] ##### now=0x1a2971 last=0x917852f mask=0xffffff ret=0x2a442 -> 0x2a442
-[   14.050000] ##### now=0x1c78d5 last=0x9196d77 mask=0xffffff ret=0x30b5e -> 0x30b5e
-[   14.060000] ##### now=0x1dfe88 last=0x91b55bf mask=0xffffff ret=0x2a8c9 -> 0x2a8c9
-[   14.090000] ##### now=0x236d57 last=0x91d3e07 mask=0xffffff ret=0x62f50 -> 0x62f50
-[   14.180000] ##### now=0x34aaa3 last=0x922f6df mask=0xffffff ret=0x11b3c4 -> 0x11b3c4
-[   14.890000] ##### now=0xbd0aad last=0x9342167 mask=0xffffff ret=0x88e946 -> 0x0
-[   14.890000] ------------[ cut here ]------------
-[   14.890000] WARNING: CPU: 0 PID: 0 at kernel/time/timekeeping_internal.h:44 clocksource_delta+0x108/0x118
-[   14.890000] clocksource_delta() time going backward: now=0xbd0aad last=0x9342167 mask=0xffffff ret=0x88e946
-[   14.890000] Modules linked in:
-[   14.890000] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.0-10689-g7af08b57bcb9-dirty #1
-[   14.890000] Hardware name: Generic DT based system
-[   14.890000] Call trace:
-[   14.890000]  unwind_backtrace from show_stack+0x10/0x14
-[   14.890000]  show_stack from dump_stack_lvl+0x64/0x88
-[   14.890000]  dump_stack_lvl from __warn+0x7c/0x1ac
-[   14.890000]  __warn from warn_slowpath_fmt+0x130/0x1a4
-[   14.890000]  warn_slowpath_fmt from clocksource_delta+0x108/0x118
-[   14.890000]  clocksource_delta from timekeeping_advance+0x6c/0x8e4
-[   14.890000]  timekeeping_advance from update_wall_time+0xc/0x1c
-[   14.890000]  update_wall_time from tick_irq_enter+0x6c/0xb0
-[   14.890000]  tick_irq_enter from generic_handle_arch_irq+0xc/0x44
-[   14.890000]  generic_handle_arch_irq from __irq_svc+0x88/0xb0
-[   14.890000] Exception stack(0xc2201f28 to 0xc2201f70)
-[   14.890000] 1f20:                   00000001 2d639000 c220da80 00000001 c220da80 c2208f14
-[   14.890000] 1f40: c24af000 c2208f54 00000000 00000000 00000091 00000000 c2208f14 c2201f78
-[   14.890000] 1f60: c15684c4 c1568448 20000013 ffffffff
-[   14.890000]  __irq_svc from default_idle_call+0x1c/0x1bc
-[   14.890000]  default_idle_call from do_idle+0x200/0x288
-[   14.890000]  do_idle from cpu_startup_entry+0x28/0x2c
-[   14.890000]  cpu_startup_entry from kernel_init+0x0/0x12c
-[   14.890000]  kernel_init from start_kernel+0x6a8/0x6c4
-[   14.890000] ---[ end trace 0000000000000000 ]---
-[   14.900000] ##### now=0xbdfc5c last=0x9342167 mask=0xffffff ret=0x89daf5 -> 0x0
-[   14.950000] ##### now=0xc8827a last=0x9342167 mask=0xffffff ret=0x946113 -> 0x0
-[   15.060000] ##### now=0xdc3907 last=0x9342167 mask=0xffffff ret=0xa817a0 -> 0x0
-[   15.110000] ##### now=0xe6b484 last=0x9342167 mask=0xffffff ret=0xb2931d -> 0x0
-Sent SIGKILL to all processes
-Requesting system reboot
-[   15.120000] ##### now=0xe7fd9a last=0x9342167 mask=0xffffff ret=0xb3dc33 -> 0x0
-[   15.170000] ##### now=0xf277d5 last=0x9342167 mask=0xffffff ret=0xbe566e -> 0x0
-[   15.260000] ##### now=0x26c10 last=0x9342167 mask=0xffffff ret=0xce4aa9 -> 0x0
-[   15.310000] ##### now=0xce799 last=0x9342167 mask=0xffffff ret=0xd8c632 -> 0x0
 
-So, yes, it looks like the problem is seen after a large delta, and persists from there.
-
-Guenter
-
+> +print('/*')
+> +print(' * CRC constants generated by:')
+> +print(' *')
+> +print(f' *\t{sys.argv[0]} {" ".join(sys.argv[1:])}')
+> +print(' *')
+> +print(' * Do not edit manually.')
+> +print(' */')
+> +consts_types = sys.argv[1].split(',')
+> +variants = parse_crc_variants(sys.argv[2])
+> +for consts_type in consts_types:
+> +    if consts_type == 'sliceby1':
+> +        gen_sliceby1_tables(variants)
+> +    elif consts_type == 'x86_pclmul':
+> +        gen_x86_pclmul_consts(variants)
+> +    else:
+> +        raise ValueError(f'Unknown consts_type: {consts_type}')
+> --
+> 2.47.0
+>
 
