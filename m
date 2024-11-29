@@ -1,56 +1,42 @@
-Return-Path: <linux-kernel+bounces-425928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867389DECA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:22:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352D69DECA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:25:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467EE2820DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC8C716154F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78D01A38E1;
-	Fri, 29 Nov 2024 20:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dF5gR/Nw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631DA156C5E;
+	Fri, 29 Nov 2024 20:25:10 +0000 (UTC)
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EA9E545;
-	Fri, 29 Nov 2024 20:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D571A302E
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 20:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732911726; cv=none; b=BttE128UzlBSA32yf6RyPsphavLzVGNu6n03DYKvdBjfOVO5fbIkGsMZGfS9H2giOujc1mG59t+/AzJx2pr2XTSFxdvp3kY+lgRUu/Le+GKzYUjTGeeBF74AlsZgJwZwm3b1YXPdeRhpemWM9/ZwHR+2lz+cIuSAoZrcktMlqfo=
+	t=1732911909; cv=none; b=cn5jD8rcMfqxmQx5jZuEEk7J9rf20WNLX1z26s+7Pc1K8i6ehRdNSUXsu1QT1syNqmHCsgOJQtXCdu6uREI9VQ9dVertbVksMOq8WpZZZi5/0RaGJ/bi5bNt34r4ge6LszD+DWB0oZr1E2YAya8G999GYd4KSj1xK4FnfKT3W1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732911726; c=relaxed/simple;
-	bh=fy4e/x1/Z0FUaIbDJiNmJ65itWjY8DZ/a4+SMqhGJfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=pgarCHc5XtVvLY7jCkJa7BPW5TO3+dND35gW97r/imJ39KSEAm7dLtfDxcWNeiQsHXENyAqVig6kYBURDR5shepJlStZBp+GHNFeqX+Am+xq8Uz2uc4/wJSN38iOBWFlyZyN0UigUM1vQ0QopmwqyeCTr1hn9NNkvYPadeTRp7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dF5gR/Nw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4671FC4CECF;
-	Fri, 29 Nov 2024 20:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732911725;
-	bh=fy4e/x1/Z0FUaIbDJiNmJ65itWjY8DZ/a4+SMqhGJfI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=dF5gR/NwNESWEs8RCeEsxA+oTOQI4tl8Sfx7PNrT8uARwlI8bpuHLjHFSEmgkR5i0
-	 EhdoUDMFyKfM1q0ijxfIAwS/ult2roPBfLrem8CczQl5ACq6ElC1j9XYTdjydfJm1Y
-	 HOnvtLldocaYxILFtO3VK+lT4q0LfrOkayEhE66dRJxaGf92XFKsDvnACbeMWUI+Ud
-	 siz/fIGR+jVXxksRDR+YwAKBfbvqIvrVsn9jFmaU3qD77PnBoXU1PgkcQFaz4xxq9e
-	 MNMfT4bDChJjYZSV1xyaf+X1DSCEX4Qtls9lZJf8MzC2IYKE7BEVw782MvaBhMSD4E
-	 IhuvvuHRyfFew==
-Date: Fri, 29 Nov 2024 14:22:02 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jingoohan1@gmail.com, michal.simek@amd.com,
-	bharat.kumar.gogada@amd.com
-Subject: Re: [PATCH 2/2] PCI: amd-mdb: Add AMD MDB Root Port driver
-Message-ID: <20241129202202.GA2771092@bhelgaas>
+	s=arc-20240116; t=1732911909; c=relaxed/simple;
+	bh=RJudoZEwGpm8Png5FES9kH3/fPjjml2ou+mMnayj/+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDQdXSXhi2I5uFIQKOG5urGRQFeL15TWPE1c57YRStGGsM0jDjJAT8Gvzds4hjTqnFMK/Fm61UCnw2QS59UFQdf7rhbmUlFQsYz9HLJ4Eay48DoajHehTryHhuWqTFNN2aYMQjasXPTgc9+lPOJG1jSMvC8PmTzqg2a0NRIohhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 29 Nov 2024 15:24:54 -0500
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] possible deadlock in trans_set_locked
+Message-ID: <vkwc4py3f5crc5byn4h24u3bcbsyke2hzeuzd752ncra7iptdz@5hibgcwmd3go>
+References: <6749f54c.050a0220.253251.00bc.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,165 +45,154 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241127115804.2046576-3-thippeswamy.havalige@amd.com>
+In-Reply-To: <6749f54c.050a0220.253251.00bc.GAE@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 27, 2024 at 05:28:04PM +0530, Thippeswamy Havalige wrote:
-> Add support for AMD MDB(Multimedia DMA Bridge) IP core as Root Port.
+On Fri, Nov 29, 2024 at 09:09:32AM -0800, syzbot wrote:
+> Hello,
 > 
-> The Versal2 devices include MDB Module. The integrated block for MDB along
-> with the integrated bridge can function as PCIe Root Port controller at
-> Gen5 speed.
-
-What speed is Gen5?  Please include the numeric speed so we don't have
-to Google it.
-
-> Bridge error and legacy interrupts in Versal2 MDB are handled using Versal2
-> MDB specific interrupt line.
+> syzbot found the following issue on:
 > 
-> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+> HEAD commit:    7b1d1d4cfac0 Merge remote-tracking branch 'iommu/arm/smmu'..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17d6af78580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9bc44a6de1ceb5d6
+> dashboard link: https://syzkaller.appspot.com/bug?extid=78f4eb354f5ca6c1e6eb
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107bdf5f980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ae49e8580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/4d4a0162c7c3/disk-7b1d1d4c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a8c47a4be472/vmlinux-7b1d1d4c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/0e173b91f83e/Image-7b1d1d4c.gz.xz
+> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/5ab7b24d2900/mount_0.gz
+> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/fbfbb60588c1/mount_2.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.12.0-syzkaller-g7b1d1d4cfac0 #0 Not tainted
+> ------------------------------------------------------
+> syz-executor203/6432 is trying to acquire lock:
+> ffff0000da100128 (bcachefs_btree){+.+.}-{0:0}, at: trans_set_locked+0x5c/0x21c fs/bcachefs/btree_locking.h:193
+> 
+> but task is already holding lock:
+> ffff0000dc661548 (&c->fsck_error_msgs_lock){+.+.}-{3:3}, at: __bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #1 (&c->fsck_error_msgs_lock){+.+.}-{3:3}:
+>        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+>        __mutex_lock kernel/locking/mutex.c:752 [inline]
+>        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+>        __bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
+>        bch2_check_alloc_hole_freespace+0x5fc/0xd74 fs/bcachefs/alloc_background.c:1278
+>        bch2_check_alloc_info+0x1174/0x26f8 fs/bcachefs/alloc_background.c:1547
+>        bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:191
+>        bch2_run_online_recovery_passes+0xa4/0x174 fs/bcachefs/recovery_passes.c:212
+>        bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
+>        thread_with_stdio_fn+0x64/0x134 fs/bcachefs/thread_with_file.c:298
+>        kthread+0x288/0x310 kernel/kthread.c:389
+>        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+> 
+> -> #0 (bcachefs_btree){+.+.}-{0:0}:
+>        check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>        validate_chain kernel/locking/lockdep.c:3904 [inline]
+>        __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
+>        lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
+>        trans_set_locked+0x88/0x21c fs/bcachefs/btree_locking.h:194
+>        __bch2_trans_relock+0x2a0/0x394 fs/bcachefs/btree_locking.c:785
+>        bch2_trans_relock+0x24/0x34 fs/bcachefs/btree_locking.c:793
+>        __bch2_fsck_err+0x1664/0x2544 fs/bcachefs/error.c:363
+>        bch2_check_alloc_hole_freespace+0x5fc/0xd74 fs/bcachefs/alloc_background.c:1278
+>        bch2_check_alloc_info+0x1174/0x26f8 fs/bcachefs/alloc_background.c:1547
+>        bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:191
+>        bch2_run_online_recovery_passes+0xa4/0x174 fs/bcachefs/recovery_passes.c:212
+>        bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
+>        thread_with_stdio_fn+0x64/0x134 fs/bcachefs/thread_with_file.c:298
+>        kthread+0x288/0x310 kernel/kthread.c:389
+>        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+> 
+> other info that might help us debug this:
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&c->fsck_error_msgs_lock);
+>                                lock(bcachefs_btree);
+>                                lock(&c->fsck_error_msgs_lock);
+>   lock(bcachefs_btree);
+> 
+>  *** DEADLOCK ***
+> 
+> 3 locks held by syz-executor203/6432:
+>  #0: ffff0000dc600278 (&c->state_lock){++++}-{3:3}, at: bch2_run_online_recovery_passes+0x3c/0x174 fs/bcachefs/recovery_passes.c:204
+>  #1: ffff0000dc604398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire+0x18/0x54 include/linux/srcu.h:150
+>  #2: ffff0000dc661548 (&c->fsck_error_msgs_lock){+.+.}-{3:3}, at: __bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
+> 
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 6432 Comm: syz-executor203 Not tainted 6.12.0-syzkaller-g7b1d1d4cfac0 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call trace:
+>  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:484 (C)
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+>  dump_stack+0x1c/0x28 lib/dump_stack.c:129
+>  print_circular_bug+0x154/0x1c0 kernel/locking/lockdep.c:2074
+>  check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2206
+>  check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>  validate_chain kernel/locking/lockdep.c:3904 [inline]
+>  __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
+>  lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
+>  trans_set_locked+0x88/0x21c fs/bcachefs/btree_locking.h:194
+>  __bch2_trans_relock+0x2a0/0x394 fs/bcachefs/btree_locking.c:785
+>  bch2_trans_relock+0x24/0x34 fs/bcachefs/btree_locking.c:793
+>  __bch2_fsck_err+0x1664/0x2544 fs/bcachefs/error.c:363
+>  bch2_check_alloc_hole_freespace+0x5fc/0xd74 fs/bcachefs/alloc_background.c:1278
+>  bch2_check_alloc_info+0x1174/0x26f8 fs/bcachefs/alloc_background.c:1547
+>  bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:191
+>  bch2_run_online_recovery_passes+0xa4/0x174 fs/bcachefs/recovery_passes.c:212
+>  bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
+>  thread_with_stdio_fn+0x64/0x134 fs/bcachefs/thread_with_file.c:298
+>  kthread+0x288/0x310 kernel/kthread.c:389
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+> 
+> 
 > ---
->  drivers/pci/controller/dwc/Kconfig        |  10 +
->  drivers/pci/controller/dwc/Makefile       |   1 +
->  drivers/pci/controller/dwc/pcie-amd-mdb.c | 455 ++++++++++++++++++++++
->  3 files changed, 466 insertions(+)
->  create mode 100644 drivers/pci/controller/dwc/pcie-amd-mdb.c
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 > 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index b6d6778b0698..e7ddab8da2c4 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -14,6 +14,16 @@ config PCIE_DW_EP
->  	bool
->  	select PCIE_DW
->  
-> +config PCIE_AMD_MDB
-> +	bool "AMD PCIe controller (host mode)"
-> +	depends on OF || COMPILE_TEST
-> +	depends on PCI && PCI_MSI
-> +	select PCIE_DW_HOST
-> +	help
-> +	  Say Y here to enable PCIe controller support on AMD SoCs. The
-> +	  PCIe controller is based on DesignWare Hardware and uses AMD
-> +	  hardware wrappers.
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Alphabetize by vendor name.  I suppose "Advanced" *would* sort before
-"Amazon", but since "AMD" isn't spelled out, I think we have to sort
-by the initialism and put "Ama" before "AMD".
-
->  config PCIE_AL
->  	bool "Amazon Annapurna Labs PCIe controller"
->  	depends on OF && (ARM64 || COMPILE_TEST)
-
-> +static void amd_mdb_mask_leg_irq(struct irq_data *data)
-
-s/_leg_/_intx_/
-
-> +{
-> +	struct dw_pcie_rp *port = irq_data_get_irq_chip_data(data);
-> +	struct amd_mdb_pcie *pcie;
-> +	unsigned long flags;
-> +	u32 mask, val;
-> +
-> +	pcie = get_mdb_pcie(port);
-
-Here and elsewhere, this could be done in the automatic variable list
-above since this is non-interesting setup.
-
-> +static void amd_mdb_unmask_leg_irq(struct irq_data *data)
-
-Ditto.
-
-> +static struct irq_chip amd_mdb_leg_irq_chip = {
-
-Ditto.
-
-> +static int amd_mdb_pcie_rp_intx_map(struct irq_domain *domain,
-> +				    unsigned int irq, irq_hw_number_t hwirq)
-
-"_rp_" in name unnecessary.
-
-> +static irqreturn_t amd_mdb_pcie_rp_intr_handler(int irq, void *dev_id)
-> +{
-> +	struct dw_pcie_rp *port = dev_id;
-> +	struct amd_mdb_pcie *pcie;
-> +	struct device *dev;
-> +	struct irq_data *d;
-> +
-> +	pcie = get_mdb_pcie(port);
-> +	dev = pcie->pci.dev;
-> +
-> +	d = irq_domain_get_irq_data(pcie->mdb_domain, irq);
-> +	if (intr_cause[d->hwirq].str)
-> +		dev_warn(dev, "%s\n", intr_cause[d->hwirq].str);
-> +	else
-> +		dev_warn(dev, "Unknown IRQ %ld\n", d->hwirq);
-> +
-> +	return IRQ_HANDLED;
-
-I see that some of these messages are "Correctable/Non-Fatal/Fatal
-error message"; I assume this Root Port doesn't have an AER
-Capability, and this interrupt is the "System Error" controlled by the
-Root Control Error Enable bits in the PCIe Capability?  (See PCIe
-r6.0, sec 6.2.6)
-
-Is there any way to hook this into the AER handling so we can do
-something about it, since the devices *below* the Root Port may
-support AER and may have useful information logged?
-
-Since this is DWC-based, I suppose these are general questions that
-apply to all the similar drivers.
-
-> +static int amd_mdb_add_pcie_port(struct amd_mdb_pcie *pcie,
-> +				 struct platform_device *pdev)
-> +{
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	struct dw_pcie_rp *pp = &pci->pp;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	pp->ops = &amd_mdb_pcie_host_ops;
-
-This is dw-related initialization; move it down just before the first
-use at dw_pcie_host_init().
-
-> +	pcie->mdb_base = devm_platform_ioremap_resource_byname(pdev, "mdb_pcie_slcr");
-> +	if (IS_ERR(pcie->mdb_base))
-> +		return PTR_ERR(pcie->mdb_base);
-> +
-> +	ret = amd_mdb_pcie_rp_init_irq_domain(pcie, pdev);
-
-Other drivers use "*_pcie_init_irq_domain" (without "rp").  It's
-helpful to use similar names so it's easier to compare
-implementations.
-
-Since amd_mdb_pcie_free_irq_domains() cleans this up, I think both
-should end with "domains" (with an "s") so they match.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	amd_mdb_pcie_rp_init_port(pcie, pdev);
-
-Other drivers use "*_pcie_init_port" (without "rp").
-
-> +	ret = amd_mdb_setup_irq(pcie, pdev);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to set up interrupts\n");
-> +		goto out;
-> +	}
-> +
-> +	ret = dw_pcie_host_init(pp);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to initialize host\n");
-> +		goto out;
-> +	}
-> +
-> +	return 0;
-> +
-> +out:
-> +	amd_mdb_pcie_free_irq_domains(pcie);
-> +	return ret;
-> +}
-
-Bjorn
+syzbot seems to now be re-opening bugs just because the patch hasn't
+been merged into the branch it's testing?
 
