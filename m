@@ -1,245 +1,127 @@
-Return-Path: <linux-kernel+bounces-425453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850319DC245
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:39:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB48D9DC24D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:41:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E24F2B227BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:39:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 800B1164B2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB04194091;
-	Fri, 29 Nov 2024 10:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA8319067A;
+	Fri, 29 Nov 2024 10:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9A8MSK2"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F6msEVFv"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D42155345;
-	Fri, 29 Nov 2024 10:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67822155345
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732876776; cv=none; b=KHlYtBjegfG18wxjv+fcXcDdeY32BisWaMKn9974a/V3KjEBn8g2ELxyoCjrEo8AnI6J4WJzvFsQ0aki15cB5VNVsAqcO5Io4kb/EM2PbL2L+qPmOS7+MqCONLjdiPmCqdMbzrQoYTK0wI3/Xo3Ulz4fN5RccQjZA4XJkRSiDkE=
+	t=1732876884; cv=none; b=QYpu6pdCRMcIgU5wPrF0RJ4ATciZg5MBcdXOKL86x3/7hUBHEMga3qzXiE8abEJEvsvb1Ev97WlmP/bW2c0gDJTYaccRvRP+6oHnow0nWCNbih/L3VtNV079B0NbEOqOjhoAOSLc3M+H0kqKZwUq4oI3vaRiwSIO1GD6T1sZnew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732876776; c=relaxed/simple;
-	bh=bs12UpHie5guRp0pfEJ+k8KVK0dCavtbYJ2mw5smP0c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PiJZ8S1taNeEh6nttn6AnSHU2id3AnHWGsrvng1JmH2iZbVJFVUbI/vtDz3FFrh8mpyagaHyAY9CZ4D7WIAzMX6noqnKDp/CSl0A2f2E/oeCuiDt7EC2sbq+wyYRpu39FgkwwQMF2DVCIvNBrz8gjXM6QhgN7FhOMwZUgtnVrBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9A8MSK2; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434a10588f3so10614545e9.1;
-        Fri, 29 Nov 2024 02:39:34 -0800 (PST)
+	s=arc-20240116; t=1732876884; c=relaxed/simple;
+	bh=mGcE/a4Djr88U2hlV5AL8ojy8KDVt8E/UCu7GG9SY4c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jx9StKq8u16IpPoLeF7gE7a8dK23UURI2AhZJ+7gz+SWuTcEk/MFmsxez4pdl73CrVcR8VNQgSVta5XqVygnBR0kYar3d2lmmN0WTIIb2zGgudQcgfdODMuzUDrLMwfGO68UOHVCdXkd1r1IViyZ0M9s76CYnh8KwuyuNmleny8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F6msEVFv; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6d41176505fso13385676d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 02:41:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732876773; x=1733481573; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w7iwpbK56Zj29FzaEZqSMI5kycSSpeuPNbmTILivgMU=;
-        b=i9A8MSK27okpFBOjHUupmsc7oNW/y2MyEHE3Qa2pWcoqLvUTSpX0Lz7BfHPUbJuBcn
-         2Ops1F74Si0FHwaMZyYqVL+QWMCXYmHYs61wkfzbTD1Niw7fgiaiB/1mnS1R6iNXqaHW
-         DvuNHnATh4og2+l8DoRet9MBFxaom9QQ3UGjd3wwDpIoTgc1byvz52oIj3hHQjXyjGKn
-         mWjRcsQTBzbSKWqcNrHGJfSkaZllo10L3sN2S6BIQvuu0U0gdElc1ei6OOegH3t8Rm8O
-         ilyRSrVTRyX3QrniEX/kUb22cLyrtiVaxnnj9OyGUWO8dBeT6o/u9cWqPc68vt8H1grY
-         m5zQ==
+        d=chromium.org; s=google; t=1732876882; x=1733481682; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L3QJ9o8M7EqzyfllL/EViAFMscBHfEHttay7cu2lgzk=;
+        b=F6msEVFvLYxO2u5kQ7hKkCDPrm0PUkutk+Sbj/6S41Rd48k8+Qdf1D0JGMZedN46W8
+         WEujGoeFckNFIyLC9S3TVjc69CYh6bZIGQjOCIAQdzu6yr9yE4cisZH8Mm03ANYczj3g
+         2thxJduLCTH0YfUk+gDvnB9YW94fEDRp3boLU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732876773; x=1733481573;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w7iwpbK56Zj29FzaEZqSMI5kycSSpeuPNbmTILivgMU=;
-        b=TbJhls6nD2ZlqIBerfFJnZUwDH8GN/Een5yVec6UZhUgyq98In2A1BL1d5dJiW7KH0
-         4QkoaSLh265U/eNURg2NErR2vY2TZyBEg13Zne7/Wd8f1hy7JVYV3pdpaywUqamUav0G
-         ZIukdOqR/KzuxZaToHnAA6Fl3JcLoouwQa4/T5MNl4v/jQlsbrNM6Ex+tRHW11pVDaSX
-         uJy/VmobFdg64DXk/2ERI0KPQ4MePxoOtgzAGDpa7rbts4FauN/LVaTmVn9gO2S4x8wX
-         2vjOWkxGvh9LkCeHjvsus7imBbsDlfdcDRGdKRmG4CokaJAaH/eyzPWlqIiicKndzVzh
-         UdIw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2SYYmU3RrB3z4HGG4a2vPKlXHNYNdg8R1haB0ZSkTPnIq4Aw0aGBp5ERKsxviEd2GSwGaBJT8gABqi9iI@vger.kernel.org, AJvYcCX+uSfyhrJXkxChftwhNWVz/g5wvXbh12ky3IHCcS0mwPJiZb3Vf45eHAYOUVtVzZ3mRil3CSROlS5F@vger.kernel.org, AJvYcCX6lMrLtE/pWC/zXBDOj2V0ZYour9wy3S0Cr1TSgTjmHK5j5sn1Pg8az9MzkwXbySTrPPmxdvQZ+1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy//BV8LMYax67SaFo0qm5IwQUiv54eKcIMztw5I+j0vZiTwfLC
-	vF6fPhwxpRWnCy4vjaz2NTuG9jzGMFjDYbnSlsSvHhHs7bv7Vpk4
-X-Gm-Gg: ASbGnct0u1Lhxb7BlFijOuN9+UMdnNir2G30CtwPDfPkQeSOazPFcqy3rEZ7ixmR/Zl
-	bNFnbyeQyTf95YyFXFST6/9iDQkEeQVl+mi91WzIxOREqcEUKeAYXcwTlbqWI4WV6evWK/oyTRR
-	eUgc06KkO1tuRWGhVzXtNvagCEvxSIHRskvqr+G3hE98G86oPHisIX8qzMNhqV8Q2HnpQAN0L9W
-	rT3l13HmMtokmLhWbZ/7u65IDuh2JiTCAfmcoOvE9E0BajukYAYASoIrq+CsnHvxI5qacqYnfsX
-	ouO4cqzO+B9hNFVnTaVJcc1KF6Cn5ldjDGkx3+AUA5nO7NU=
-X-Google-Smtp-Source: AGHT+IHA+D2Vkn0Qv3fFKnJyMXIfhTHM+HXBEKlk/Simtg+lr4RPXSG0xiy1rifSXm3eCIci8V5vOA==
-X-Received: by 2002:a05:600c:3ba6:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-434a9dbba7dmr98910125e9.7.1732876772960;
-        Fri, 29 Nov 2024 02:39:32 -0800 (PST)
-Received: from stefan.beckhoff.com (dyndsl-089-166-153-066.ewe-ip-backbone.de. [89.166.153.66])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa74f1e6sm81764585e9.9.2024.11.29.02.39.32
+        d=1e100.net; s=20230601; t=1732876882; x=1733481682;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L3QJ9o8M7EqzyfllL/EViAFMscBHfEHttay7cu2lgzk=;
+        b=p0+duLH+v5lrZyPsxKZ9pK7Uby0gJgFQJwhWqsd/QCXp24IQ1FXbndNhSoxdw2th9f
+         4H9M3yyPlzk8qsB/xeZOju6hlJ8AfyFaVI7L6YCm68MOK1zh0BnW/rQ3VWyqiXAnzvCo
+         gL69VV/T3dC9IZH1YspSzaFSUPYgcQ5T1Tn5qZAtfzgfqQ1ZQQCwSNpSF3Guee8FV3po
+         xl8dU+cMNGLRnuWksRkmC6flXbBxDf8bcrICGcpyqbE/B3hbhgFM65C2HFLpv03Fcr0E
+         nfitR8/1pG5YYEUH6LppwjQHczj2OGE4csJmsKNVzzSP8caNpQvFwMdbrmop3yBzTGh9
+         kEmA==
+X-Gm-Message-State: AOJu0YwXg+BudBZWVrEFqPibYtS/qyOofSyyuzq0W2KnBitzaFVp6kOO
+	M7wfzEex1RG5DfCujHAWNwM99swubBlMTPt33bVQcB+8HbHam2N1a2SdoSHI7Q==
+X-Gm-Gg: ASbGnctUl8OwTlmHnl++vTgvtqr3MAK4Pi7hfH/++F/y/he7i3EA8TgNA4KbpwiX9cz
+	ATumYV1+sN8AvbsEM4Pt92SteyZzgOusz67aoHBIDJxCT8QEooDFzJkVWUlMq38OJnothXNZD9J
+	9F6SPYj2M0OF+82/F1teIOPqiK9+EU+X9nM/7nn6diVk0aNae//MxR2A2V1ECRhB0iz44/4rteZ
+	4b1EjC6OvobEuNdu6lyD8hGbPH/uoPyBX6ZjKMVtuWeB0dU15VNWzZxMiIA+Nllt0Wrfd1lY/gA
+	34wcz0ZTXTFcNx6PsKH/cPgW
+X-Google-Smtp-Source: AGHT+IFPJqQq8cqv3iqc88emxGC3oK3p3CTTu8/xVIK2j17o+i02UeE9vByNWT2QWKhklXfWBpziBQ==
+X-Received: by 2002:ad4:5d66:0:b0:6cb:edd7:ac32 with SMTP id 6a1803df08f44-6d864d29ffbmr151115536d6.12.1732876882317;
+        Fri, 29 Nov 2024 02:41:22 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d88b9e6a69sm849916d6.60.2024.11.29.02.41.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 02:39:32 -0800 (PST)
-From: Stefan Raufhake <raufhakestefan@gmail.com>
-To: Sebastian Reichel <sre@kernel.org>,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: s.raufhake@beckhoff.com,
-	s.dirkwinkel@beckhoff.com,
-	Stefan Raufhake <s.raufhake@beckhoff.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: [PATCH 1/1] power: supply: gpio-charger: Support to disable charger
-Date: Fri, 29 Nov 2024 10:38:47 +0000
-Message-Id: <20241129103848.39963-2-raufhakestefan@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241129103848.39963-1-raufhakestefan@gmail.com>
-References: <20241129103848.39963-1-raufhakestefan@gmail.com>
+        Fri, 29 Nov 2024 02:41:21 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 29 Nov 2024 10:41:17 +0000
+Subject: [PATCH] misc: Kconfig: Make MCHP_LAN966X_PCI depend on OF, not
+ select it
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241129-lan966x-depend-v1-1-603fc4996c4f@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAEyaSWcC/x3MTQqAIBBA4avErBNSVLKrRAt/phoIC4UQxLsnL
+ b/FexUyJsIMy1Ah4UuZ7tjBxwH8aeOBjEI3iElIzoVhl41G68ICPhgDm53XxkmjJCro0ZNwp/I
+ P1621D+SgttBgAAAA
+To: Herve Codina <herve.codina@bootlin.com>, 
+ Derek Kiernan <derek.kiernan@amd.com>, 
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-From: Stefan Raufhake <s.raufhake@beckhoff.de>
+Most (maybe all?) the drivers depend on OF instead of selecting it. This
+is more convenient for CI because we can have test scripts that do:
+make allyesconfig
+scripts/config -d OF
+make olddefconfig
 
-We want to disable the built-in UPS in our device
-so that we can switch off the supply power of the
-device with and without the support of the UPS.
-This commit will allow us to disable the ups by
-using the command echo 1 > /sys/class/power_supply/xxx/charge_type
-(1 = POWER_SUPPLY_CHARGE_TYPE_NONE) and enable the
-charger by setting it to 4 (POWER_SUPPLY_CHARGE_TYPE_STANDARD).
+Without this patch, OF cannot be disabled that way.
 
-Signed-off-by: Stefan Raufhake <s.raufhake@beckhoff.de>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- .../bindings/power/supply/gpio-charger.yaml   |  6 +++
- drivers/power/supply/gpio-charger.c           | 43 +++++++++++++++++++
- 2 files changed, 49 insertions(+)
+ drivers/misc/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-index 89f8e2bcb2d7..b2658b0b20e4 100644
---- a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-@@ -44,6 +44,10 @@ properties:
-     maxItems: 32
-     description: GPIOs used for current limiting
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 902c306bc972..2ea5f40ff4e4 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -612,8 +612,7 @@ config MARVELL_CN10K_DPI
  
-+  charge-disable-gpios:
-+    maxItems: 1
-+    description: GPIO to disable the charger
-+
-   charge-current-limit-mapping:
-     description: List of tuples with current in uA and a GPIO bitmap (in
-       this order). The tuples must be provided in descending order of the
-@@ -68,6 +72,8 @@ anyOf:
-       - charge-status-gpios
-   - required:
-       - charge-current-limit-gpios
-+  - required:
-+      - charge-type-gpios
- 
- dependencies:
-   charge-current-limit-gpios: [ charge-current-limit-mapping ]
-diff --git a/drivers/power/supply/gpio-charger.c b/drivers/power/supply/gpio-charger.c
-index 68212b39785b..24cabb2cb111 100644
---- a/drivers/power/supply/gpio-charger.c
-+++ b/drivers/power/supply/gpio-charger.c
-@@ -32,6 +32,7 @@ struct gpio_charger {
- 	struct power_supply_desc charger_desc;
- 	struct gpio_desc *gpiod;
- 	struct gpio_desc *charge_status;
-+	struct gpio_desc *charge_type;
- 
- 	struct gpio_descs *current_limit_gpios;
- 	struct gpio_mapping *current_limit_map;
-@@ -82,6 +83,26 @@ static int set_charge_current_limit(struct gpio_charger *gpio_charger, int val)
- 	return 0;
- }
- 
-+static int gpio_charger_set_charge_type(struct gpio_desc *gpio_charger, int type)
-+{
-+	int chg_config = 0;
-+
-+	switch (type) {
-+	case POWER_SUPPLY_CHARGE_TYPE_STANDARD:
-+		chg_config = 0;
-+		break;
-+	case POWER_SUPPLY_CHARGE_TYPE_NONE:
-+		chg_config = 1;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	gpiod_set_value_cansleep(gpio_charger, chg_config);
-+
-+	return 0;
-+}
-+
- static int gpio_charger_get_property(struct power_supply *psy,
- 		enum power_supply_property psp, union power_supply_propval *val)
- {
-@@ -100,6 +121,13 @@ static int gpio_charger_get_property(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX:
- 		val->intval = gpio_charger->charge_current_limit;
- 		break;
-+	case POWER_SUPPLY_PROP_CHARGE_TYPE:
-+		if (gpiod_get_value_cansleep(gpio_charger->charge_type))
-+			val->intval = POWER_SUPPLY_CHARGE_TYPE_NONE;
-+		else
-+			val->intval = POWER_SUPPLY_CHARGE_TYPE_STANDARD;
-+		break;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -115,6 +143,9 @@ static int gpio_charger_set_property(struct power_supply *psy,
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX:
- 		return set_charge_current_limit(gpio_charger, val->intval);
-+	case POWER_SUPPLY_PROP_CHARGE_TYPE:
-+		return gpio_charger_set_charge_type(gpio_charger->charge_type, val->intval);
-+	break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -126,6 +157,7 @@ static int gpio_charger_property_is_writeable(struct power_supply *psy,
- 					      enum power_supply_property psp)
- {
- 	switch (psp) {
-+	case POWER_SUPPLY_PROP_CHARGE_TYPE:
- 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX:
- 		return 1;
- 	default:
-@@ -246,6 +278,7 @@ static enum power_supply_property gpio_charger_properties[] = {
- 	POWER_SUPPLY_PROP_ONLINE,
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
-+	POWER_SUPPLY_PROP_CHARGE_TYPE,
- };
- 
- static int gpio_charger_probe(struct platform_device *pdev)
-@@ -256,6 +289,7 @@ static int gpio_charger_probe(struct platform_device *pdev)
- 	struct gpio_charger *gpio_charger;
- 	struct power_supply_desc *charger_desc;
- 	struct gpio_desc *charge_status;
-+	struct gpio_desc *charge_type;
- 	int charge_status_irq;
- 	int ret;
- 	int num_props = 0;
-@@ -304,6 +338,15 @@ static int gpio_charger_probe(struct platform_device *pdev)
- 		num_props++;
- 	}
- 
-+	charge_type = devm_gpiod_get_optional(dev, "charge-disable", GPIOD_OUT_LOW);
-+	if (IS_ERR(charge_type))
-+		return PTR_ERR(charge_type);
-+	if (charge_type) {
-+		gpio_charger->charge_type = charge_type;
-+		gpio_charger_properties[num_props] = POWER_SUPPLY_PROP_CHARGE_TYPE;
-+		num_props++;
-+	}
-+
- 	charger_desc = &gpio_charger->charger_desc;
- 	charger_desc->properties = gpio_charger_properties;
- 	charger_desc->num_properties = num_props;
+ config MCHP_LAN966X_PCI
+ 	tristate "Microchip LAN966x PCIe Support"
+-	depends on PCI
+-	select OF
++	depends on PCI && OF
+ 	select OF_OVERLAY
+ 	select IRQ_DOMAIN
+ 	help
+
+---
+base-commit: 7af08b57bcb9ebf78675c50069c54125c0a8b795
+change-id: 20241129-lan966x-depend-8bc69b4954e5
+
+Best regards,
 -- 
-2.25.1
+Ricardo Ribalda <ribalda@chromium.org>
 
 
