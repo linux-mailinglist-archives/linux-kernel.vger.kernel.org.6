@@ -1,314 +1,216 @@
-Return-Path: <linux-kernel+bounces-425623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611CB9DE7E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 528AB9DE7E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:42:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74BA91623DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:42:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1D3E161A36
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB2519F116;
-	Fri, 29 Nov 2024 13:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A143019F424;
+	Fri, 29 Nov 2024 13:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kzUSN6yE"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YcuOhujs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EB619CCEC
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C7219CCEC
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732887729; cv=none; b=Wawtcc5OZLIQsqzJ1p3kKdNlq1YyLwnu2soq9COijiFHq33ptWoRRVz8MkwpkTDoJmx9BTeAKCX57AKJCdHHSflRowqf0YgstepdSm97NvXdLRmX0iyxggUSWLA/t/4E+klyxoKQ/S2iHCUg72lD615xCHc3uhWZnQG4nin03eE=
+	t=1732887758; cv=none; b=rs61p1N3VDce8klrZfS1MMoWDFJIgJecpCJF0dusNcwJzoDnSYj8wISW7fHYF0qWZnwHKsjoN2c3QiE+QFpo1gJ5X6G/ml4BtrngpaXM5JacBLgjn/j0t61q1kaX8Vvbf6JtebZqodikv6Yh/l6nCPg25D/CDbtZb6k9rcbjN4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732887729; c=relaxed/simple;
-	bh=sVgv3ksXvpteRZEYd8JPzQOo44HSIW5lgB3anwK3PPI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MfAkxDB7sgK8uOQ8KQdfHjHEsEpcnOIJb6dnzj91RxuU383zkvweoekgsQxf3Q+WYtw/87ZuPlFtX9hLws5khRwOBXzkVTVqfvC1ELyy8uT4BQ2sT7arWBapidoUzK3Tmp1wmAtAjx3R58ArLkKjgoOn0crPAUFaGHgnYEaS8fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kzUSN6yE; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fc88476a02so1624541a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:42:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732887726; x=1733492526; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kSFitEdT2rCfLfdfH1IWUyxop2r79Nc9DFx17hzOekQ=;
-        b=kzUSN6yEhc6W9jumWzeaFKwEaXt6MOCpTC5pLXz6kellRhiIs5HL5Q4OvTqAbIg6ZP
-         eMfYrlQzw5JPxnQ+LFlt4P0Ae1l8kVMKDb107mb5dhd8vBwUaOCp+cLMh3Iof7NbzR8b
-         fkf1SMbxqPQGbcQOvYWNNg8pjR0lU9S5QuF4g=
+	s=arc-20240116; t=1732887758; c=relaxed/simple;
+	bh=aG2sSjgDu5Iju4YthQgzNWTfdj6zbUCpREK1tLfisfI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D13yALuQUDndqovbuAyMf+z9+5uQUQdDwaPSW7V/TZ13TFryKvFscPA45hCCHh/6rLdfDZ12K6i98k7OdQ/MjYl2Zq7q3xJcNu6r+jJGFZ/k+6w4tdaNcOWVRmGuHCaewck5q/s23GUKIuuzj8gll4yMXVd7b8kB0RnOgspaoWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YcuOhujs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732887755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V4tyi4yr8weO93NKnj4WXd3cQqnP2BTlprWIVXcZzBs=;
+	b=YcuOhujs+5spSgNcKZdRhcidsPr7/AH9WirRd+LHUTJDlzMxQF4PUvgwnymMgPznmmD7LW
+	ufRjwQlpX8Mr4t3bT4Bv1WG9+0GH+O275kcpYf1B4pHXYkUVQB1Tbc3RK3eQx8D484tFya
+	I9fpCmi4D81O6nvucny/jkdJWcZTfG8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-445-u88YRSHVOd2MRSTqWY8FOg-1; Fri, 29 Nov 2024 08:42:34 -0500
+X-MC-Unique: u88YRSHVOd2MRSTqWY8FOg-1
+X-Mimecast-MFC-AGG-ID: u88YRSHVOd2MRSTqWY8FOg
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385e173e8d3so25396f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:42:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732887726; x=1733492526;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732887753; x=1733492553;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kSFitEdT2rCfLfdfH1IWUyxop2r79Nc9DFx17hzOekQ=;
-        b=Wzn4c997+uK4IMTVMl2b43Dc4BphjBYwGUkpGVO5gLRcUATWouL5MBThITo/ajg2jw
-         Q2LcxuqbenY1I49eQMn/pIpj0CDucVmZ/YNJaLmvLBxIgLzuqrAv+vvzQnYKAaiZ3KrJ
-         xvhpbOGSsFWTw3jr94DYbWJGkv10m49wdi87hfc71JRo9iiUJjDrAKUGhrU2OygqJZIN
-         E7Hb4X7f0eHurQBDqfHhkrN8DuR5YvG1JmH5s7BnUIv0qSkaPM2SAxW4HdUvYXRO+ZTQ
-         2HuwgFFPorLpyuh2WlJtQSRkHiHW/jgATIODeKZgaJOYgOs3YZzjCAXVgSPNgueh+rvD
-         uyPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXruxN8YEAmwKD8szbSeewimksKsGaFRw6+rkXGYfqRtbIvI0h0deEFTzjm5lnAHXXZWQ0pSIQbNnGf94Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAMrHjDGOMPXwmEIITw224udJEXlGeGEN4APiRs10+pCfQVSZQ
-	Nk3n9wGseHIRymVKYrcM3SDLX5VyBF1YfqWfohhASGWCweeMGt7yAdAyRbNtd0PVhMrZDRk2txc
-	=
-X-Gm-Gg: ASbGncuTMXUU+J3Vmi4EMB2ecJ9M3MVMWaJEjQJ8puIFe/WaJkSdnmWGa7bgcAAzrJO
-	pTvmJYuU4LdDbmU6OJhOQG86NteAAIjR2xFnH2TTT7rbRI0rC3V0jQWBMZlDwW4kWjvtD85F5uN
-	snndz7qnVT5NxCVYXCOvbOocpkDsr0JFwvs6dM9r8OTYtFKhlGXc7CAOYta2GBX6IIJ4eSgbdxX
-	vvmTqqdbw0Rjr4S0sLusBfyFysvvgr5VxI0dXdcEgXTf+PEO1ZBk9VPJwiw0NL+7MveVGlEHwlz
-	ZTuxuEnHKKRn
-X-Google-Smtp-Source: AGHT+IHRjJD92mrs53TFK6/S5VIAEY7o2gacFg/x5QQjKFal/UjgKZ+ZitgLgYWlDkdgy5rkkjLfyQ==
-X-Received: by 2002:a05:6a20:9144:b0:1e0:c50c:9838 with SMTP id adf61e73a8af0-1e0e0aa73f8mr17278663637.6.1732887726149;
-        Fri, 29 Nov 2024 05:42:06 -0800 (PST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com. [209.85.216.53])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541848d8bsm3543438b3a.184.2024.11.29.05.42.05
-        for <linux-kernel@vger.kernel.org>
+        bh=V4tyi4yr8weO93NKnj4WXd3cQqnP2BTlprWIVXcZzBs=;
+        b=Ej3yn4dhCpr6hSVOTwxiDXbze1XwPxH3H84YSOEHxKoN9gtGthCcaZ4Lox3sxLaY2R
+         Z+iH/2HR3vQ/fXofkPeFGM+5JkLn5Q7WfZ6SWL5gppGQ0ZVchc7crDbTxSx8XVIzxv4O
+         F+FmlGxfaG2hv/1tmDGL7AeXRHE4ZW7buHPgHxIPOCiOkHGu1fylVEJ+pLrsK/8uSnoI
+         FjFQUYIw5xSckfXmhUjiM8VrzVfFgYIvLGRTU7ai+DRyzSf/EUWuDjeKJ9LsWkxvhU4R
+         xvYWNbH0YlGQrqzx57qZt8dRr13iha3UCuaEpN/qWPsyf6//xVqxcFjHpoyQOXy9R54C
+         u2Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCgstZ0OtxwTv+Uyh+/JANk8uT9YUpp+7qa+c7C0CjnW4RHGzkMDFyAEjMHfx94fER+KLWNU2NwOdLVWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW8CAFrCBJqR6LzeXJ32ZlGHIYeDLwo8jxLJPx5VrAdRpr112M
+	FRyXizqr/7RaYddXbh6LIkixCUsdtdpgAg6gtqZ/W2GPYFG4La1EQurCQz3t52oWa1E1l+5RM+5
+	j/OPMV94lCchs73gxbXe8nTMy8ghFIgUnGU43rhbU5/s9z9pnpdT3P7Z0z0+RcQ==
+X-Gm-Gg: ASbGncuHmd8bqGSMRMQnSFD7YfRqbX7FOp5JvGtGSzqqRkcanmwHKE06rl4sgO8vSqD
+	LyR6xKVLryNwxTbqTGMu2psvBznewSifH3BhGsPi2h3s6x8LMLqCUScWeB+PAbpNIUyeCaTih6q
+	9dVsLwauGOz/RtyqMi67Llq8QtmTR2dU053lMEzPJYJxQDf5Nj5WwxQEfo0AFtSy82UIaKTA14r
+	3QmsuUoz+Yu2eIjSWz9inPJKvSZ3gHvRIhgNcqQ9MGzWtYn00uYSHQ=
+X-Received: by 2002:a05:6000:a1c:b0:382:4378:465c with SMTP id ffacd0b85a97d-385c6ef5a20mr11287289f8f.56.1732887753408;
+        Fri, 29 Nov 2024 05:42:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFVWOu8vC4BX+/G+QxaJZ3tXq9R7FuZZ7NKpNyvjSXGdUkyykpQKty0AL3uhh4SFSIZD5cAkw==
+X-Received: by 2002:a05:6000:a1c:b0:382:4378:465c with SMTP id ffacd0b85a97d-385c6ef5a20mr11287261f8f.56.1732887753053;
+        Fri, 29 Nov 2024 05:42:33 -0800 (PST)
+Received: from [192.168.10.27] ([151.49.236.146])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-385dc169d79sm2591698f8f.92.2024.11.29.05.42.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 05:42:05 -0800 (PST)
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ee4f78493aso622344a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:42:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWj1A3wNqjBiwUhRbxgFC7cT13ZjC0j0rJO/qu9lSKnLDnlklUtZaOzgainPxIL/L07n2pjKEEuwjppblE=@vger.kernel.org
-X-Received: by 2002:a17:90b:35cb:b0:2ea:6f19:180b with SMTP id
- 98e67ed59e1d1-2ee097cf0d5mr12912335a91.36.1732887724820; Fri, 29 Nov 2024
- 05:42:04 -0800 (PST)
+        Fri, 29 Nov 2024 05:42:32 -0800 (PST)
+Message-ID: <f824d57c-6578-47de-9c73-c86c9c9e60b6@redhat.com>
+Date: Fri, 29 Nov 2024 14:42:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
- <20241127-uvc-fix-async-v2-2-510aab9570dd@chromium.org> <20241128222232.GF25731@pendragon.ideasonboard.com>
- <CANiDSCvyMbAffdyi7_TrA0tpjbHe3V_D_VkTKiW-fNDnwQfpGA@mail.gmail.com>
- <20241128223343.GH25731@pendragon.ideasonboard.com> <7eeab6bd-ce02-41a6-bcc1-7c2750ce0359@xs4all.nl>
- <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
- <20241129110640.GB4108@pendragon.ideasonboard.com> <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
- <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl>
-In-Reply-To: <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 29 Nov 2024 14:41:52 +0100
-X-Gmail-Original-Message-ID: <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
-Message-ID: <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
- by other fh
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, 
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] rust: block/mq: replace mem::zeroed() with Zeroable
+ trait
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ boqun.feng@gmail.com, ojeda@kernel.org, benno.lossin@proton.me,
+ axboe@kernel.dk, tmgross@umich.edu, bjorn3_gh@protonmail.com,
+ gary@garyguo.net, alex.gaynor@gmail.com, a.hindborg@kernel.org
+References: <20241128141323.481033-1-pbonzini@redhat.com>
+ <20241128141323.481033-3-pbonzini@redhat.com>
+ <CAH5fLgi9+d6PwZdU23xcF0p+m6mja3Dx8BufiiM-ZgLtDSqQDw@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <CAH5fLgi9+d6PwZdU23xcF0p+m6mja3Dx8BufiiM-ZgLtDSqQDw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 29 Nov 2024 at 14:13, Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->
-> On 29/11/2024 12:54, Ricardo Ribalda wrote:
-> > On Fri, 29 Nov 2024 at 12:06, Laurent Pinchart
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> >>
-> >> On Fri, Nov 29, 2024 at 11:59:27AM +0100, Ricardo Ribalda wrote:
-> >>> On Fri, 29 Nov 2024 at 11:36, Hans Verkuil wrote:
-> >>>> On 28/11/2024 23:33, Laurent Pinchart wrote:
-> >>>>> On Thu, Nov 28, 2024 at 11:28:29PM +0100, Ricardo Ribalda wrote:
-> >>>>>> On Thu, 28 Nov 2024 at 23:22, Laurent Pinchart wrote:
-> >>>>>>>
-> >>>>>>> Hi Ricardo,
-> >>>>>>>
-> >>>>>>> (CC'ing Hans Verkuil)
-> >>>>>>>
-> >>>>>>> Thank you for the patch.
-> >>>>>>>
-> >>>>>>> On Wed, Nov 27, 2024 at 12:14:50PM +0000, Ricardo Ribalda wrote:
-> >>>>>>>> If a file handle is waiting for a response from an async control, avoid
-> >>>>>>>> that other file handle operate with it.
-> >>>>>>>>
-> >>>>>>>> Without this patch, the first file handle will never get the event
-> >>>>>>>> associated with that operation, which can lead to endless loops in
-> >>>>>>>> applications. Eg:
-> >>>>>>>> If an application A wants to change the zoom and to know when the
-> >>>>>>>> operation has completed:
-> >>>>>>>> it will open the video node, subscribe to the zoom event, change the
-> >>>>>>>> control and wait for zoom to finish.
-> >>>>>>>> If before the zoom operation finishes, another application B changes
-> >>>>>>>> the zoom, the first app A will loop forever.
-> >>>>>>>
-> >>>>>>> Hans, the V4L2 specification isn't very clear on this. I see pros and
-> >>>>>>> cons for both behaviours, with a preference for the current behaviour,
-> >>>>>>> as with this patch the control will remain busy until the file handle is
-> >>>>>>> closed if the device doesn't send the control event for any reason. What
-> >>>>>>> do you think ?
-> >>>>>>
-> >>>>>> Just one small clarification. The same file handler can change the
-> >>>>>> value of the async control as many times as it wants, even if the
-> >>>>>> operation has not finished.
-> >>>>>>
-> >>>>>> It will be other file handles that will get -EBUSY if they try to use
-> >>>>>> an async control with an unfinished operation started by another fh.
-> >>>>>
-> >>>>> Yes, I should have been more precised. If the device doesn't send the
-> >>>>> control event, then all other file handles will be prevented from
-> >>>>> setting the control until the file handle that set it first gets closed.
-> >>>>
-> >>>> I think I need a bit more background here:
-> >>>>
-> >>>> First of all, what is an asynchronous control in UVC? I think that means
-> >>>> you can set it, but it takes time for that operation to finish, so you
-> >>>> get an event later when the operation is done. So zoom and similar operations
-> >>>> are examples of that.
-> >>>>
-> >>>> And only when the operation finishes will the control event be sent, correct?
-> >>>
-> >>> You are correct.  This diagrams from the spec is more or less clear:
-> >>> https://ibb.co/MDGn7F3
-> >>>
-> >>>> While the operation is ongoing, if you query the control value, is that reporting
-> >>>> the current position or the final position?
-> >>>
-> >>> I'd expect hardware will return either the current position, the start
-> >>> position or the final position. I could not find anything in the spec
-> >>> that points in one direction or the others.
-> >>
-> >> Figure 2-21 in UVC 1.5 indicates that the device should STALL the
-> >> GET_CUR and SET_CUR requests if a state change is in progress.
-> >>
-> >>> And in the driver I believe that we might have a bug handling this
-> >>> case (will send a patch if I can confirm it)
-> >>> the zoom is at 0 and you set it 10
-> >>> if you read the value 2 times before the camera reaches value 10:
-> >>> - First value will come from the hardware and the response will be cached
-> >>
-> >> Only if the control doesn't have the auto-update flag set, so it will be
-> >> device-dependent. As GET_CUR should stall that's not really relevant,
-> >> except for the fact that devices may not stall the request.
-> >
-> > I missed that the device will likely stall during async operations.
-> >
-> > What do you think of something like this? I believe it can work with
-> > compliant and non compliant devices.
-> > Note that the event will be received by the device that originated the
-> > operation, not to the second one that might receive an error during
-> > write/read.
-> >
-> >
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > index 4fe26e82e3d1..9a86c912e7a2 100644
-> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > @@ -1826,14 +1826,15 @@ static int uvc_ctrl_commit_entity(struct
-> > uvc_device *dev,
-> >                         continue;
-> >
-> >                 /*
-> > -                * Reset the loaded flag for auto-update controls that were
-> > +                * Reset the loaded flag for auto-update controls and for
-> > +                * asynchronous controls with pending operations, that were
-> >                  * marked as loaded in uvc_ctrl_get/uvc_ctrl_set to prevent
-> >                  * uvc_ctrl_get from using the cached value, and for write-only
-> >                  * controls to prevent uvc_ctrl_set from setting bits not
-> >                  * explicitly set by the user.
-> >                  */
-> >                 if (ctrl->info.flags & UVC_CTRL_FLAG_AUTO_UPDATE ||
-> > -                   !(ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR))
-> > +                   !(ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR) || ctrl->handle)
-> >                         ctrl->loaded = 0;
-> >
-> >                 if (!ctrl->dirty)
-> > @@ -2046,8 +2047,18 @@ int uvc_ctrl_set(struct uvc_fh *handle,
-> >         mapping->set(mapping, value,
-> >                 uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
-> >
-> > -       if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
-> > -               ctrl->handle = handle;
-> > +       if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS) {
-> > +               /*
-> > +                * Other file handle is waiting for an operation on
-> > +                * this asynchronous control. If the device is compliant
-> > +                * this operation will fail.
-> > +                *
-> > +                * Do not replace the handle pointer, so the original file
-> > +                * descriptor will get the completion event.
-> > +                */
-> > +               if (!ctrl->handle)
-> > +                       ctrl->handle = handle;
->
-> I don't think this is right: you want the completion event for async
-> controls to go to all filehandles that are subscribed to that control.
->
-> Which is what happens if handle == NULL (as I understand the code).
->
-> Regards,
+On 11/29/24 10:41, Alice Ryhl wrote:
+> On Thu, Nov 28, 2024 at 3:13 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>>
+>> Isolate the unsafety in the declaration of the Zeroable trait, instead of having
+>> to use "unsafe" just to declare a struct.  This is more similar to how you would
+>> use "..Default::default()" (which is also a possibility here, but arguably
+>> less efficient).
+>>
+>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+>> ---
+>>   rust/kernel/block/mq/gen_disk.rs |  8 +++++---
+>>   rust/kernel/block/mq/tag_set.rs  | 10 ++++++----
+>>   2 files changed, 11 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/gen_disk.rs
+>> index 708125dce96a..65342d065296 100644
+>> --- a/rust/kernel/block/mq/gen_disk.rs
+>> +++ b/rust/kernel/block/mq/gen_disk.rs
+>> @@ -6,7 +6,7 @@
+>>   //! C header: [`include/linux/blk_mq.h`](srctree/include/linux/blk_mq.h)
+>>
+>>   use crate::block::mq::{raw_writer::RawWriter, Operations, TagSet};
+>> -use crate::{bindings, error::from_err_ptr, error::Result, sync::Arc};
+>> +use crate::{bindings, error::from_err_ptr, error::Result, init::Zeroable, sync::Arc};
+>>   use crate::{error, static_lock_class};
+>>   use core::fmt::{self, Write};
+>>
+>> @@ -31,6 +31,9 @@ fn default() -> Self {
+>>       }
+>>   }
+>>
+>> +// SAFETY: `bindings::queue_limits` contains only fields that are valid when zeroed.
+>> +unsafe impl Zeroable for bindings::queue_limits {}
+>> +
+>>   impl GenDiskBuilder {
+>>       /// Create a new instance.
+>>       pub fn new() -> Self {
+>> @@ -93,8 +96,7 @@ pub fn build<T: Operations>(
+>>           name: fmt::Arguments<'_>,
+>>           tagset: Arc<TagSet<T>>,
+>>       ) -> Result<GenDisk<T>> {
+>> -        // SAFETY: `bindings::queue_limits` contain only fields that are valid when zeroed.
+>> -        let mut lim: bindings::queue_limits = unsafe { core::mem::zeroed() };
+>> +        let mut lim: bindings::queue_limits = Zeroable::ZERO;
+>>
+>>           lim.logical_block_size = self.logical_block_size;
+>>           lim.physical_block_size = self.physical_block_size;
+>> diff --git a/rust/kernel/block/mq/tag_set.rs b/rust/kernel/block/mq/tag_set.rs
+>> index f9a1ca655a35..1ff7366ca549 100644
+>> --- a/rust/kernel/block/mq/tag_set.rs
+>> +++ b/rust/kernel/block/mq/tag_set.rs
+>> @@ -10,6 +10,7 @@
+>>       bindings,
+>>       block::mq::{operations::OperationsVTable, request::RequestDataWrapper, Operations},
+>>       error,
+>> +    init::Zeroable,
+>>       prelude::PinInit,
+>>       try_pin_init,
+>>       types::Opaque,
+>> @@ -32,6 +33,10 @@ pub struct TagSet<T: Operations> {
+>>       _p: PhantomData<T>,
+>>   }
+>>
+>> +// SAFETY: `blk_mq_tag_set` only contains integers and pointers, which
+>> +// all are allowed to be 0.
+>> +unsafe impl Zeroable for bindings::blk_mq_tag_set {}
+> 
+> This will have to be reverted if we want to split up the kernel crate
+> due to the orphan rule.
 
-The code is correct, but the comment is not :). It should say:
- * Do not replace the handle pointer, or the originator of
- * the operation will receive an event.
+Ok, I will look into using the bindgen doc comments then.  It looks like 
+the idea is not dead on arrival at least!  Thanks for the review.
 
-The originar should NOT receive the event.
-From uvc_ctrl_send_event():
-/*
- * Send control change events to all subscribers for the @ctrl control. By
- * default the subscriber that generated the event, as identified by @handle,
- * is not notified unless it has set the V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK flag.
- * @handle can be NULL for asynchronous events related to auto-update controls,
- * in which case all subscribers are notified.
- */
+Paolo
 
-
-
->
->         Hans
->
-> > +       }
-> >
-> >         ctrl->dirty = 1;
-> >         ctrl->modified = 1;
-> >
-> >>
-> >>> - Second value will be the cached one
-> >>>
-> >>> now the camera  is at zoom 10
-> >>> If you read the value, you will read the cached value
-> >>>
-> >>>> E.g.: the zoom control is at value 0 and I set it to 10, then I poll the zoom control
-> >>>> value: will that report the intermediate values until it reaches 10? And when it is
-> >>>> at 10, the control event is sent?
-> >>>>
-> >>>>>>>> Cc: stable@vger.kernel.org
-> >>>>>>>> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
-> >>>>>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> >>>>>>>> ---
-> >>>>>>>>  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++++
-> >>>>>>>>  1 file changed, 4 insertions(+)
-> >>>>>>>>
-> >>>>>>>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> >>>>>>>> index b6af4ff92cbd..3f8ae35cb3bc 100644
-> >>>>>>>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> >>>>>>>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> >>>>>>>> @@ -1955,6 +1955,10 @@ int uvc_ctrl_set(struct uvc_fh *handle,
-> >>>>>>>>       if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
-> >>>>>>>>               return -EACCES;
-> >>>>>>>>
-> >>>>>>>> +     /* Other file handle is waiting a response from this async control. */
-> >>>>>>>> +     if (ctrl->handle && ctrl->handle != handle)
-> >>>>>>>> +             return -EBUSY;
-> >>>>>>>> +
-> >>>>>>>>       /* Clamp out of range values. */
-> >>>>>>>>       switch (mapping->v4l2_type) {
-> >>>>>>>>       case V4L2_CTRL_TYPE_INTEGER:
-> >>
-> >> --
-> >> Regards,
-> >>
-> >> Laurent Pinchart
-> >
-> >
-> >
->
-
-
--- 
-Ricardo Ribalda
 
