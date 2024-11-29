@@ -1,48 +1,47 @@
-Return-Path: <linux-kernel+bounces-425831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FFC9DEB81
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:12:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1951E9DEB92
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:15:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D27E7B222DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46ED1638E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86E019CC02;
-	Fri, 29 Nov 2024 17:12:02 +0000 (UTC)
-Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CF219F105;
+	Fri, 29 Nov 2024 17:15:18 +0000 (UTC)
+Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25A21474A7;
-	Fri, 29 Nov 2024 17:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.165.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A671141987;
+	Fri, 29 Nov 2024 17:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.165.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732900322; cv=none; b=V3/+PulsUiPq23pH2euOxnYVBkV05bdywnjmMUDB4YZYEhZbNOLVCGpjuDh6naUCSW/3IGK3LTwNUN3NG7SopTGwVNnB9mto1ROq0O5DAgcK/AZeapuYvv/foNXthYHY+oFQLJlCloaiDh+NIt3jKB9n+aMitYZi5C74rVn4dVo=
+	t=1732900518; cv=none; b=Noz8N6lkVfkYWMk8af4hdh8bLCWIZ5421yaak02vyEfcmuToZ4xrNOPO1vntOf9HWCLMX3GVOarD/BBt0+q9Mz80fr0N7/r4dRWzoeRcLiEXUfIttqAFqlgbX840sQotSlI+3oQOpR7Sfgm4eawiwRFPyXyLKVKx42JEu/p/raM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732900322; c=relaxed/simple;
-	bh=KGeMQGiTPCgEMm9g59gyJzcFXolJGUf0NVmUDKeuuqY=;
+	s=arc-20240116; t=1732900518; c=relaxed/simple;
+	bh=F9BwqTlUG6TPhLygDqr0oYmLfh4Om/U3ekBCzBPfDHo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FYMJGCmEwTc104pkxPgwGUYhwP4LZSGB2WKqt/ZYL/dkLteeJlg1fcfCQkZcHcEL2abTwfyQwOVNO0ddi6oOyeiaLVZvEAOoHibpqCxpZPCaEHUKnX/CTbXGe9vm3UoseT/04SsvzXYvnkl5BadEkLO4mRfc6REsBPAWnzP+J+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr; spf=pass smtp.mailfrom=skole.hr; arc=none smtp.client-ip=161.53.165.186
+	 MIME-Version:Content-Type; b=IQ1XZMAlrmbO682xJC436cwjcb4L/Rvw5cRQtwwHKQyKS1DZZfV2ZASHAWo6HznS9GCuNpR3/s4luo1QrwZkyMiTUI8d5L1mC7Du3BD4Kwq9j5d0NxwFImimFU86bm9azaIB4rSe4LghDbCHdDwmRBw1Sa1tP0Xj4eCij4BQvDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr; spf=pass smtp.mailfrom=skole.hr; arc=none smtp.client-ip=161.53.165.185
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skole.hr
-Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-	by mx.skole.hr (mx.skole.hr) with ESMTP id 263A88347B;
-	Fri, 29 Nov 2024 18:05:59 +0100 (CET)
+Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+	by mx.skole.hr (mx.skole.hr) with ESMTP id 499FA8216A;
+	Fri, 29 Nov 2024 18:06:34 +0100 (CET)
 From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje.mihanovic@skole.hr>
 To: Dan Carpenter <dan.carpenter@linaro.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject:
- Re: [PATCH next] clk: mmp: pxa1908-mpmu: Fix a NULL vs IS_ERR() check in
- probe()
-Date: Fri, 29 Nov 2024 18:05:01 +0100
-Message-ID: <12564811.O9o76ZdvQC@radijator>
-In-Reply-To: <5b3b963d-ecae-4819-be47-d82e8a58e64b@stanley.mountain>
-References: <5b3b963d-ecae-4819-be47-d82e8a58e64b@stanley.mountain>
+ Re: [PATCH next] clk: mmp: pxa1908-apbcp: Fix a NULL vs IS_ERR() bug in probe
+Date: Fri, 29 Nov 2024 18:05:16 +0100
+Message-ID: <6109326.lOV4Wx5bFT@radijator>
+In-Reply-To: <6155067d-aed5-4799-9e14-6dff7be1cb3a@stanley.mountain>
+References: <6155067d-aed5-4799-9e14-6dff7be1cb3a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,12 +65,12 @@ Autocrypt: addr=duje.mihanovic@skole.hr;
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 
-On Wednesday 20 November 2024 18:18:50 Central European Standard Time Dan=20
+On Wednesday 20 November 2024 18:18:44 Central European Standard Time Dan=20
 Carpenter wrote:
-> The devm_kzalloc() function returns NULL on error, not error pointers.
-> Update the check to match.
+> The devm_kzalloc() function doesn't return error pointers, it returns
+> NULL on error.  Update the check to match.
 >=20
-> Fixes: ebac87cdd230 ("clk: mmp: Add Marvell PXA1908 MPMU driver")
+> Fixes: a89233dbd4df ("clk: mmp: Add Marvell PXA1908 APBCP driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
 
