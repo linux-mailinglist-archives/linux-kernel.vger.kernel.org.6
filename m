@@ -1,129 +1,98 @@
-Return-Path: <linux-kernel+bounces-425697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A8D9DE939
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:20:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64A69DE93B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D775F162842
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:20:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A801628DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99A213D62B;
-	Fri, 29 Nov 2024 15:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5D9145335;
+	Fri, 29 Nov 2024 15:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NtoKqj7q"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CWMWmtWM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9930D5A4D5
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A29013D8B4;
+	Fri, 29 Nov 2024 15:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732893610; cv=none; b=mpA1pwxblCXxtkyOIVO5S/d6u/vdQC45+AddgP5SD+LKDrbVdJKpTREyufzHf2j2mbU7uzBkVfgRpYKPo4qn0+ziMK0nMd6MiU4MQVE3vtdDStlTFA5tTlaMwFJfu5wCIJcO8gIlQ7CkmtsBfsnGnAkZybMwkb6BTRsYDIauE2I=
+	t=1732893630; cv=none; b=IMIiJIQMoge6cvtt4IvQxwGvPuHdHcDQNkuo3zqHpFXIRT0h9IFH8O8wjnHFbVP5asJfFFdPiojjyjESkoukXS5RI4hsIGM7cpdqMY6UzN6vCCeEZPuFJWPuEktQyLFwhRRXgjS++NTmgpVuni4yvKETlYPIYS2pwwUQlbh053M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732893610; c=relaxed/simple;
-	bh=WMiXG5UVLxQ7dqT7HRmR1LceAv7KVX8HDMx2h/1cXvg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sV4xdFhC07xgZVYh3VvyzJvcS9zFW2hcvp0sjSlrpNvhRbjLPGaljMJQ/jR09AvmJRKvjAPLmyF60ZYbW8pvilxK23FMagjipHSZYVhSvGw1tO4d9r2RaP03hw+yksWcKFoDWOg62XoYK9IHV53K1rKQ7HceBCXNRcwG6zhKBAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NtoKqj7q; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a68480164so243106766b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:20:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732893607; x=1733498407; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8GWdrWt2EBhjvzgV2YI8PlXuX9R1pC2cNExx3nRNDE=;
-        b=NtoKqj7qpLjDL4qsX4lVrg3JKnGLjOtZTujq6f9SftdrR8ieJtNr46aE24LwZOf0ij
-         tv8KCX+Uz/Hec9Cl94QCHtE90XCLLvXWzYufiZX/FwD0nFSN72HtXWp0yAGHlBtD9wOe
-         J3Rnf6Jr6tEl0/eWPqV3HSrMcYPzN6gwUjkng5+OiHP87gHcipSbbSK+OYfwz9U/V1z9
-         UeROEQY2jMvpysCkahubbtu60k2ayHvohl3Sm1cezmrVfyFto0/mHPFzVyxsgYowsLUt
-         JU4nMhqkswPeRyCA1DNylnUxOgvK1vkQ0cdWTmqbvzVoYL32hjuzYu1+DRQdnwtMfJIP
-         5Ocg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732893607; x=1733498407;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o8GWdrWt2EBhjvzgV2YI8PlXuX9R1pC2cNExx3nRNDE=;
-        b=WNRyHr/zhsHWRDMG+wByuKiX+P74ArnNPEry/Dqs0BbXDJhGpIQa2L7CsgVK0VNXE8
-         bqCy9kBSnIhWkhkfE2Z0pSne0STbThEBZP84KI5DJGT2sh9pKgb5qWWpF/DQy4R/qmeF
-         +3fC5EnXvCdFgBVmfdr+WuiRukSuW1h+iX5XOxS5HZVl2wpykH1Y2D3cAQXbo0qc7/e/
-         HV6eNF15FG6553tN/bdTu47qmyoUMLiW7GXeDtt7s43grIhbk87vpcg3+OW90pqkrqzw
-         H+v07/kkjgYBO+N/HVSEbP6ccZqYIGaD1Td7AP7VITR3up4yXX7gf90d266BUmZgvHHS
-         tbpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCnHbvs9O4vXaVFKo8PXmlIEvQtURXfQQOs5B4PbjNDsZkcWioxrPjgqpTE6wDrIm2h67zl2TVtspcRJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX7lqNGithklRc+LZx/QIthK+fBRl2bslcVs1d4Kx4CGcW25xc
-	bzfAHp3P39fqNS3RE/sSDi+hpc3llsf04gEXRpj+5odW8HFBmZ6ygno3f4p/O0k=
-X-Gm-Gg: ASbGncvdYEQQFGr7cS4XJDCvuIVqTmih/SqOEi93vjdx+xK03WUE9EenBEGihC8Q8Ay
-	SHIj0QqBi5qyQSKWI2Q9hnj5l9VQXFpCODhsc2vH6S+hHvcVbmPfaFdGbMSUibjq/QaMhzYSxMh
-	+xJDKEUlxVxHbFMJXuvgxHpI1LOUrGxv1ILOjSjMY1aZjvvvuBamkPkwpm+nKN1MAyVPVHh8cFH
-	pnMzKvVfoYhM9VLV5Nx7MJWlyIcTsD5xK3yehnRrj4sE9selA==
-X-Google-Smtp-Source: AGHT+IGbDhuF1WYnayVyw4OBx+CK4b3YOmGGAp/ufEmQBQ6AfLGaToXTkRv1wBm7KZ5DSaVS8tWrSA==
-X-Received: by 2002:a17:906:18b1:b0:aa5:3f53:ad53 with SMTP id a640c23a62f3a-aa580f6aec8mr880140066b.26.1732893606566;
-        Fri, 29 Nov 2024 07:20:06 -0800 (PST)
-Received: from pop-os.. ([145.224.90.200])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d4101sm182260966b.73.2024.11.29.07.20.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 07:20:06 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
+	s=arc-20240116; t=1732893630; c=relaxed/simple;
+	bh=qXahpijGJKBH0HbN3Bqo3N9btobuZwZdWHQjVzlv1Ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QR8qo0cg9ZFi5du5IEIi9lC0AcTPfSZbzCYiRtk1ICarK5x2lYaqYYA4O0/DTvVBCw0vL2MDZtKz6wpOMj18CTmVZqLl0xe26zOuHnY+jsL5+fQYaVeDSueFRwbiC8BE16/K5fxnfYWuHeHfmn8S5AyvrJFoD0HfG7aGQJzTGks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CWMWmtWM; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732893628; x=1764429628;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qXahpijGJKBH0HbN3Bqo3N9btobuZwZdWHQjVzlv1Ic=;
+  b=CWMWmtWMT4U9IKkUO+LnftE52Kb93QwerbOzSc5GS+UygJeyWAO2Y0LD
+   oQH9H84nSc1wnBQ6Kentg9+yrygpWtceiQ1tYrsFxss9uhUOK5ujeF7Dz
+   k8wrt1FprgE7pFk3zzv9N+KP36TMTVVlpWtOQGKOxc/4AtlVLJ4zX5K77
+   rSEaAEnV3eRvjSxF3ALaHdiVEwpPfseozlx4IkjLVLB6ks4HQyl6FuZ4V
+   2er+NK2LOoOGqbWHfm5XbV8NppEaw0xykypL1eF3eOKvdDD50NNKgiqG3
+   g8gCUyzNCM7Yux2/xWimkALAk4S/jiNYHLPiS14c/mzH5fi8HnjTexBSt
+   w==;
+X-CSE-ConnectionGUID: ZptXjBAZQAmpCdcTJdLB6g==
+X-CSE-MsgGUID: Wk+AEuLDT2eAisEjhmqD1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="35994222"
+X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
+   d="scan'208";a="35994222"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 07:20:27 -0800
+X-CSE-ConnectionGUID: CdVdRtR8Stix2buKHgq6Tw==
+X-CSE-MsgGUID: QC37+fmkT4md8164xOhxDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
+   d="scan'208";a="97616809"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 07:20:26 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tH2n8-00000002HDH-1Q4s;
+	Fri, 29 Nov 2024 17:20:22 +0200
+Date: Fri, 29 Nov 2024 17:20:22 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ajarizzo@gmail.com, ak@it-klinger.de,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf test: Don't signal all processes on system when interrupting tests
-Date: Fri, 29 Nov 2024 15:19:48 +0000
-Message-Id: <20241129151948.3199732-1-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH v1 2/3] iio: pressure: bmp280: Use sizeof() for
+ denominator
+Message-ID: <Z0nbtiVeKuTV5Amc@smile.fi.intel.com>
+References: <20241128232450.313862-1-vassilisamir@gmail.com>
+ <20241128232450.313862-3-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128232450.313862-3-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-This signal handler loops over all tests on ctrl-C, but it's active
-while the test list is being constructed. process.pid is 0, then -1,
-then finally set to the child pid on fork. If the Ctrl-C is received
-during this point a kill(-1, SIGINT) can be sent which affects all
-processes.
+On Fri, Nov 29, 2024 at 12:24:49AM +0100, Vasileios Amoiridis wrote:
+> Instead of using magic number 2 as a denominator, make it intuitive by
+> using sizeof().
 
-Make sure the child has forked first before forwarding the signal. This
-can be reproduced with ctrl-C immediately after launching perf test
-which terminates the ssh connection.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Fixes: 553d5efeb341 ("perf test: Add a signal handler to kill forked child processes")
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/tests/builtin-test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index 8dcf74d3c0a3..4751dd3c6f67 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -508,7 +508,7 @@ static int __cmd_test(struct test_suite **suites, int argc, const char *argv[],
- 		for (size_t x = 0; x < num_tests; x++) {
- 			struct child_test *child_test = child_tests[x];
- 
--			if (!child_test)
-+			if (!child_test || child_test->process.pid <= 0)
- 				continue;
- 
- 			pr_debug3("Killing %d pid %d\n",
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
