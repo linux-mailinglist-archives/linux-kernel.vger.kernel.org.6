@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-425939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107E19DECBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:42:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEA75163389
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:42:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C145B1A0BE1;
-	Fri, 29 Nov 2024 20:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t2ZNAuPx"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 649289DECC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:51:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAA044C77;
-	Fri, 29 Nov 2024 20:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29B722816E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:51:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E822A1607AA;
+	Fri, 29 Nov 2024 20:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLzKyGn0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E34415B0EE;
+	Fri, 29 Nov 2024 20:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732912950; cv=none; b=uImfw3rVSeHgXSM1f/eUIatby2ugo4XeFLouf/fFt5qWFnmjx79dF3bJUrYco1JmKxg+A74EQdLm8CpLhsQXrKPx7ZiuyDwQ6r7bcsh+hdia6yvl1KzSDwNEdiKKP3JaPwmZQ7vxk0V6gzrxMC48q4Oyt9dwwjvjNrID2zG/ims=
+	t=1732913460; cv=none; b=lEuHuVuaccExw9A58l9Pa3JAmJbvni7PfX9g3Np2jG2O0N+YWYH5jDtl+twGXxq2A0xRM0gwo55o6SjyyIX0sntMCfeoC08YPzOMqkiKezEoPv2fljL+c8gbmHrJF6b3BxtUnSnn0HAQZv7BrpKLZTbjQYLx4VWCKKRVxRbHrVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732912950; c=relaxed/simple;
-	bh=KQXyE0PHNGnkB7ATfiEdHb7Pa/P9Cbq3A8rIsx+QRnk=;
+	s=arc-20240116; t=1732913460; c=relaxed/simple;
+	bh=LOIG9BSpFHYM/td2BjZkDpvQk8mBag9BFkKQJT+AOOE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oL8+/0N/jOY7PUahIDQBhpIb4eW/s6Uzd9eOmwVHcTDVev5ghnTsNheKiFgqOegA2qS87jrykBUp78zlhgIvBq6eTsJ7d5j5JF56wVyM5MJEFQ3WQ8jVf5VXNLtSOWQgjpniBOB6Vw0lCOIOhGhsXIZYSdhaFQWv8AG0Tql0AQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=t2ZNAuPx; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=X7aBu5N32YIZ611CK1D8iT4+0u7ZGBBz/rE6KJZjVFg=; b=t2ZNAuPxV0pf9kDXS6US/VzS+W
-	cmxDeH26kCkiYsOv0Y1It2zg8JWcsZCLfaePB60voMWvlUo+i6EQZCmz6DRBjqO6dFKnYiFFkgfUA
-	nwYqXQ1286mFqkEoSTxqnhgn35yfCPMIf1JU2L3jQNZ6kT8DXVQQ6KBt2dp2gub6rIRqm0AunFvtC
-	IH7eaAXFoOV4e09lHvgLMj4U2nmvqTHQjkksbQzgixZx+/FVv79/9wYfzoPLVqMvPo03gAvx0103W
-	9mG4vC0aLbVL9Pr38W9FszMAJouZl7jj/rLF5F951GkmQf0/ouwRDYF/3wxR6uHanbpS+Ayk7u1cC
-	YXnjaAiw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tH7ob-00000004cmQ-3Ty6;
-	Fri, 29 Nov 2024 20:42:13 +0000
-Date: Fri, 29 Nov 2024 20:42:13 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] perf: map pages in advance
-Message-ID: <Z0onJRnxQ8ZaWeov@casper.infradead.org>
-References: <6cab3e8a-dff7-41d1-af22-f18b8f2820dc@lucifer.local>
- <c8ecd378-c197-4e06-94ef-e03b5ee28616@redhat.com>
- <94dabe57-232b-4a21-b2cf-bcfbda75c881@lucifer.local>
- <6795cc9a-6230-431f-b089-7909f7bc4f30@redhat.com>
- <60191c97-dce2-4a92-8b47-c402478ba336@lucifer.local>
- <9d4ef1a2-11fb-455f-8b37-954215bf25d2@redhat.com>
- <14895682-a013-419f-bee8-1476540ddedd@lucifer.local>
- <f637de06-41de-44be-8e1f-6a5d429e0ec9@redhat.com>
- <be33a685-f6e0-41b0-ba3b-d1d7c2d743b8@lucifer.local>
- <fda2336c-7d00-4a5d-8a81-4cb1e58bb8ce@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NozuePd+YIRcqVDzgcCAHXop97I5+VKpMKALZIOSZRgFR3zwtogmtWjbLpLasN6g45lLANfutAKd27YNm/FLk3RpIT5Z1olpmzsqfrxtyc26eVJIYnwA8QdRbsvZ4c4olojl0ca7c94Y7BgllqiLVsoNtHlFNdKsL1jxZCNTH5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLzKyGn0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D60C4CECF;
+	Fri, 29 Nov 2024 20:50:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732913459;
+	bh=LOIG9BSpFHYM/td2BjZkDpvQk8mBag9BFkKQJT+AOOE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XLzKyGn0jFczUi2xloW4pdvLTxUdILY1RjHGyKFp5RjbZ6HR5V5MhcqgUSiCXi5RY
+	 pXvu0rD8M3pOmEXlISxYPcq7z/m0PkLGPEEt5wPjVkzl4S3W/djtwhPxlFa7WB9ajS
+	 gWPE3BLUkJZUsNK6GUkIzDf5y0ryaMzhYZ6EikQ1ZV9NPTaYZqigLsBQXsOnlHGHFg
+	 Qiij+wk3pMoOIr5ZPBBj5Afqtn5KNcfh1o9JYnzdc++X0K06V/xYjQwEJkHOIs00Ku
+	 +kO72knUeMIfi4kTVJH3VCUpeax/27sjjI97MM5V64W9vaA3YrJIjR7bCpA6RbVyeK
+	 3mbn2bdHoRa+A==
+Date: Fri, 29 Nov 2024 15:50:58 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Pavel Machek <pavel@denx.de>
+Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, puwen@hygon.cn,
+	seanjc@google.com, kim.phillips@amd.com, jmattson@google.com,
+	babu.moger@amd.com, peterz@infradead.org,
+	rick.p.edgecombe@intel.com, brgerst@gmail.com, ashok.raj@intel.com,
+	mjguzik@gmail.com, jpoimboe@kernel.org, nik.borisov@suse.com,
+	aik@amd.com, vegard.nossum@oracle.com,
+	daniel.sneddon@linux.intel.com, acdunlap@google.com,
+	Erwan Velu <erwanaliasr1@gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.15 11/12] x86/barrier: Do not serialize MSR
+ accesses on AMD
+Message-ID: <Z0opMka39d0mV3DZ@sashalap>
+References: <20240115232718.209642-1-sashal@kernel.org>
+ <20240115232718.209642-11-sashal@kernel.org>
+ <20241128115924.GAZ0hbHKsbtCixVqAe@fat_crate.local>
+ <Z0iRzPpGvpeYzA4H@sashalap>
+ <20241128164310.GCZ0idnhjpAV6wFWm6@fat_crate.local>
+ <Z0mNTEw2vK1nJpOo@duo.ucw.cz>
+ <Z0nD6NZc3wmq8_v9@sashalap>
+ <Z0olbd3OYQnlmW+D@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <fda2336c-7d00-4a5d-8a81-4cb1e58bb8ce@redhat.com>
+In-Reply-To: <Z0olbd3OYQnlmW+D@duo.ucw.cz>
 
-On Fri, Nov 29, 2024 at 03:48:33PM +0100, David Hildenbrand wrote:
-> Too long, but as some of these TODOs stand in the memdesc way, fortunately
-> other people might be able to give a helping hand at some point ;)
+On Fri, Nov 29, 2024 at 09:34:53PM +0100, Pavel Machek wrote:
+>On Fri 2024-11-29 08:38:48, Sasha Levin wrote:
+>> On Fri, Nov 29, 2024 at 10:45:48AM +0100, Pavel Machek wrote:
+>> > Hi!
+>> >
+>> > > > You've missed the 5.10 mail :)
+>> > >
+>> > > You mean in the flood? ;-P
+>> > >
+>> > > > Pavel objected to it so I've dropped it: https://lore.kernel.org/all/Zbli7QIGVFT8EtO4@sashalap/
+>> > >
+>> > > So we're not backporting those anymore? But everything else? :-P
+>> > >
+>> > > And 5.15 has it already...
+>> > >
+>> > > Frankly, with the amount of stuff going into stable, I see no problem with
+>> > > backporting such patches. Especially if the people using stable kernels will
+>> > > end up backporting it themselves and thus multiply work. I.e., Erwan's case.
+>> >
+>> > Well, some people would prefer -stable to only contain fixes for
+>> > critical things, as documented.
+>> >
+>> > stable-kernel-rules.rst:
+>> >
+>> > - It must fix a problem that causes a build error (but not for things
+>> >   marked CONFIG_BROKEN), an oops, a hang, data corruption, a real
+>> >   security issue, or some "oh, that's not good" issue.  In short, something
+>> >   critical.
+>> >
+>> > Now, you are right that reality and documentation are not exactly
+>> > "aligned". I don't care much about which one is fixed, but I'd really
+>> > like them to match (because that's what our users expect).
+>>
+>> You should consider reading past the first bullet in that section :)
+>>
+>>   - Serious issues as reported by a user of a distribution kernel may also
+>>     be considered if they fix a notable performance or interactivity issue.
+>>
+>> It sounds like what's going on here, no?
+>
+>Is it? I'd not expect this to be visible in anything but
+>microbenchmarks. Do you have user reports hitting this?
+>
+>It is not like this makes kernel build 10% slower, is it?
 
-;-)
+On Fri, Nov 29, 2024 at 10:30:11AM +0100, Erwan Velu wrote:
+>This patch greatly impacts servers on production with AMD systems that
+>have lasted since 5.11, having it backported really improves systems
+>performance.
+>Since this patch, I can share that our database team is no longer
+>paged during the night, that's a real noticeable impact.
 
-> I'll play with using a page type for some of these "simple" cases and see
-> how hard it will get.
-
-I've deliberately made pagetype incompatible with setting a mapcount ...
-hugetlb being the exception because we only use entire_mapcount.
-
-Anyway, I agree we need something better than what we have here.
-It needs to be simple for a device driver to allocate memory and
-map it into userspace.  I'm willing to allow perf's ringbuffer to be
-a bit harder than most because it's trying to do the weird thing of
-writable-first-page-rest-read-only.
-
+-- 
+Thanks,
+Sasha
 
