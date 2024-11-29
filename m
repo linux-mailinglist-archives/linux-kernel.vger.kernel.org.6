@@ -1,139 +1,296 @@
-Return-Path: <linux-kernel+bounces-425881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D22F9DEC22
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:36:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16AE9163B91
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:36:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9773B19E7D0;
-	Fri, 29 Nov 2024 18:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="PWxACFuV"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazolkn19010014.outbound.protection.outlook.com [52.103.43.14])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AEE9DEC25
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:40:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CE1208CA
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 18:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732905382; cv=fail; b=cGGKG+gqJNVZthWyA1074RTYCJREzNomdEiYMoq0bBeQNF7i2iDUN11X9Vb5X7xEjvFE+aT3N1UXq+6zCb0XX+e/Pajke1gAbvt3V4RQ2ed0ig62wbLmIBTNJioM8zJOVXnrtnp4WBCwiIAsfHDz/Ps4mp6xctUCOgyGw4UyXPU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732905382; c=relaxed/simple;
-	bh=GjBQqVRE7q9pNsxIubZuq/TeF9e20eYD6Xxj2EaHHwU=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=AY9uira4SBiVw2GjzZeXnimb2IXSGW2obA0ufHB8NRfHfRXttO9lTEQA4U2kjkC5DUPkus7J41Ih+ZIiiHZ3fonLJmKCS/lKbwhmHd29vw92WutcjwPTczMsNFOubBCqcSIUp3LHay5tXZUg0MyF6AzV1omYcUPCldyPTm9cPog=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=PWxACFuV; arc=fail smtp.client-ip=52.103.43.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G7Sa9JAGdqtue3ywq753vntlZGkjZFt5cjanJJQ6LO3q10lXMsaqV8PaEl5Km6L6Ktje4zhhF+DtzAim4VGYHDnwkXPBP3DI4zG//1Lrg37ifHiiqrGCfq5hGOK8mMHCNLUOTGw4blZnw+3G8g2u3eXef5zK6MBtKJdmz48YbPfCd7J03llDVefuFv9UrWx0VB/8K6dzSmfhL8PmbOFjJuMCUzUr4YmIOrp+BXvQz2L0GW0tKp2Fd0xJcsV+hF2fcT+gqSjEMyrYysxWIuRTIwlZ5EfbSlN8flfGMJKGnjCHfPmGV9q4QCY40/ZzSyHgQYfI+jn5lw53Txwh7BReWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GjBQqVRE7q9pNsxIubZuq/TeF9e20eYD6Xxj2EaHHwU=;
- b=kwqKeWE1GH6OC8cySf/acbrTFMxlZRLTu3CQy87ghSCy+E44xHrNZIdTeEtrbPhARpStNN4xA7oMuZcFGThaJIioLyb5UEkyd/BicY5BzblqcgEG/JaWXGjaMG76v94ZYchAp3Wy22n4p6w+KEVfg31n4mlnR6EiypnRaUp450BcCfWVIb83fnqyyRg3awgas9w6t0kBt/xIGNjaZ5/IzJJ7npt5cOfSy7KDqoxhmKin5IiXEu2Ou5u/5ql+ezOywtdv2DhFCdhQ+uEsK52tHXN1A5Neh6YRsX81ajBxn1/IQjbQF0+G5dmH3c9LNybmn3RoLRNX3QTRM3W2L9R+zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GjBQqVRE7q9pNsxIubZuq/TeF9e20eYD6Xxj2EaHHwU=;
- b=PWxACFuV2yHFwKpvaq4wOuSM54gffbdepVqkNJW84Ill12rU5XtDY0T4kVHQYC2mO9ffcXndXYIQl3Cx6VKK85Lb3lWRQbwp1E6mcHb5TBpBvU7uRY9ehrK1TzJODSx+CxvAfDdLKr9qGMwOXEzJWqQUOkKACEb7tQOEmn0YYSf58e18LGLcGAj/vVZBOTZMouuYyBfLMgAPhj+98lrKQE64vox3ewCxuAHQcs/nIyXHSH4nNCHHQjqR3w6oKkZOn/mgCR/O+NWzYDmDVqeL7hVuthJp+5cY26c2Sw0fOaOb8G2vKEpndlAe4sV7aDbjkP2rqCnIRyfNChSb164Euw==
-Received: from TYWPR01MB8838.jpnprd01.prod.outlook.com (2603:1096:400:17c::6)
- by OSZPR01MB6986.jpnprd01.prod.outlook.com (2603:1096:604:13a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.16; Fri, 29 Nov
- 2024 18:36:17 +0000
-Received: from TYWPR01MB8838.jpnprd01.prod.outlook.com
- ([fe80::5a53:4db3:7b07:7cb5]) by TYWPR01MB8838.jpnprd01.prod.outlook.com
- ([fe80::5a53:4db3:7b07:7cb5%6]) with mapi id 15.20.8207.010; Fri, 29 Nov 2024
- 18:36:17 +0000
-From: Yiyang Wu <ToolmanP@outlook.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: unsubscribe linux-kernel
-Thread-Topic: unsubscribe linux-kernel
-Thread-Index: AQHbQo2MwCh71Ahc+k27M/SPxPHujw==
-Date: Fri, 29 Nov 2024 18:36:17 +0000
-Message-ID:
- <TYWPR01MB88389DCA8E8A3AA99920CB44D62A2@TYWPR01MB8838.jpnprd01.prod.outlook.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB8838:EE_|OSZPR01MB6986:EE_
-x-ms-office365-filtering-correlation-id: 075949f8-b93d-4aae-e09f-08dd10a4b62c
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8062599003|461199028|15030799003|8060799006|15080799006|7092599003|19110799003|3412199025|440099028|102099032|56899033|2406899039;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?XPgNi257/QP+7MK7x4z8doazJmFFK+yMQ+EJsWiyTpEgYWd1MuZ5gNZs0x?=
- =?iso-8859-1?Q?CUQbRiOjCBFBNHf24kwwJQ3P0T8BoFXsAIHlm6GAw8PXukIhvKEUmOZK5Z?=
- =?iso-8859-1?Q?mmtfp3xlCOfXwg/c4WqzsBMt9uYe0XJTVWC0KEnOxQyGKBfs7NR5gP5HIb?=
- =?iso-8859-1?Q?G4j5DtQISdp0AOMFw/HWTlLaBEpG8pniscdjYYMuiHJVpi2MBOgmSYTJKY?=
- =?iso-8859-1?Q?kCtCPxFdAXI4ODpUI3SqMbpIt1domcVvLQOiky4YF4/2S+srwKhZbWdTBR?=
- =?iso-8859-1?Q?c0PHOAa6w+MusCwWa26ko+Scw5q5we1hEdlHfkuAclvJA+UoDHRBpdkhmX?=
- =?iso-8859-1?Q?TGXK2q9t1XJjSt/abwSuVXRVP5za597jr9SRjQyac0Dt53wl1InT3km8Q2?=
- =?iso-8859-1?Q?H8qN587wOyT9yHYheOh2O1ut7tJg4CcmbzDe1X4L01j24kLhRIDOQNqzU7?=
- =?iso-8859-1?Q?5Fl+BLJ3odLdeh02fSDa7cCW9GZ+Ew+RBphY6v/Rd787hVsGRBdyccSSgy?=
- =?iso-8859-1?Q?YvyPGAkUZqrDaDaFgCb/PNft2QH8dxfppF50KOLv45vic6L8kc2Sfwj6Gf?=
- =?iso-8859-1?Q?BVBlZwJ4BbZrku3MJ25K/EH576sBwBoWCGc/2HEjfQF4A+jeeFRp03c5i1?=
- =?iso-8859-1?Q?bPi48lMzEkYVsGPACIpkAsm46uldx2K2EhXxg+dzbvzUVJsgusLIxp+L02?=
- =?iso-8859-1?Q?XoblpBGb98MYSyvtFnD3Z2rPebt9SVljMTuIJ1iO4hHh0smE3EiBCfOR3T?=
- =?iso-8859-1?Q?B7eGVRk/+o1k7KzOJOFR218MOhTHinP7Q0fCWkzhvH2tZwS2CFnuHt7wUY?=
- =?iso-8859-1?Q?/socdkVDoZ75xEERXh+0TVJyFb1C4SZShKHWQCi2SWuv9/m4G4yAUMLk2U?=
- =?iso-8859-1?Q?Z34JwauRHEAe64/yWFqoeh/68J2H0qFxsCoihRurpZGb8eWIOhGbc4kO+e?=
- =?iso-8859-1?Q?oZF5OD5U0luG4Qykxoe7Gkf2PxopDJJN2lF9ibMN60nuWN/MoRPE9uxV7I?=
- =?iso-8859-1?Q?JZWEz662p/e6g1K38wKIYqw/fWGGoD8k/i+S7AneChMZLMpOb9EPrsdoqv?=
- =?iso-8859-1?Q?s0VJh4hJbhVaav2mgnRthODeM3MGsQp3GTaqRd8mznJT?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?+HCzjSpUQpZ/lxbFL3GI/BcfQa88FJSz1n36E5TEM9crYJ2/lONFdxSUdM?=
- =?iso-8859-1?Q?mdfOK+S/HyEVZNnZRDc8VFi02QXXqrxKesko8V32oYjImxPqcn530kj070?=
- =?iso-8859-1?Q?PsKxmueI4KBnnop2hndlw+zMQJZyochUWbNkja3hU8a5giQvAEonnVvGcE?=
- =?iso-8859-1?Q?7q44+Noqe5OMW1EXP9RWOOMjgXKcOzf/cipZGDpjwA7pqzr50nUsVQ30V0?=
- =?iso-8859-1?Q?4UXfSfZzMDIcpUYnr1ZbpJ5VHC/fiKnwY3sSgWpqgvLm7vB0dRyPKvZNgk?=
- =?iso-8859-1?Q?qvYT75X56AuOmjXVjVMcQPe2gZkdWquwdDl8jIEx1AbMzQ/mkoamv8X1UT?=
- =?iso-8859-1?Q?O6NiYxaz7noV0sjNwkEZiQ3JvTKQz4/1DHoZF7ynmiNH9uJj4H5PF6MwK9?=
- =?iso-8859-1?Q?h24rIq4sEihmJhnpATrUYdhFHjowXdaQYhm8SyIBuMATeFqjPFJLoSFlNI?=
- =?iso-8859-1?Q?LJ5fPXKnmJh3a6EusBRrbYEjcXuaxK9AB3h5Z/l7HLPIM+Dpjq9WMMdwA5?=
- =?iso-8859-1?Q?hQchENJYDb1nO/xkCmYzQNsWpACtv1jCXFJilWmtdjCKK1ff93G6g0eR6B?=
- =?iso-8859-1?Q?1wVqI4I19adNgzbvFfPb44zOBREl7JculZpvOZPK4nFchUAjuArJj/lDhJ?=
- =?iso-8859-1?Q?cmbclzVoO41WEKRcnaCx1UIRFGnnWO15Wcn3TF/QP771BqvZQKiOzZNPgx?=
- =?iso-8859-1?Q?W9q/DaUR/F1OuxMhVDisqw1dMUgdAYwiTWyrOtO9Rk4e+pIOwHLHWmPtfo?=
- =?iso-8859-1?Q?TWFiSR8I2gqJaIrJNTQn+EoGGrk+f21FU0RkOfsYXBo27ykiuMQv429GLC?=
- =?iso-8859-1?Q?J5HJV+mOFCvVVMmK7K49VXJtAyWBL0xs3hobezUNHc84KEsmv6GwLpbfR0?=
- =?iso-8859-1?Q?+Q3fEDAN/keBDTcp8UA4X8kRN99Lb2HMnf/dku4YEtH0Kb8D8ti5XjlfFq?=
- =?iso-8859-1?Q?Kil/bxzREw6S9VgvwkojMJLzSLF+u4uxbjY42sc3T3kBZE9Cc0PjPSB+5F?=
- =?iso-8859-1?Q?toNYlKwdwtVYjcxSjGBv5sS9sa7WpL+kCX8k8ldFFvZ02CZlF86rbWBRKx?=
- =?iso-8859-1?Q?4h7er8KRrCp3zFznt/pF2nhkRZOOiP+7DENxqsfYw1gejySnGVloZr7qQQ?=
- =?iso-8859-1?Q?b+403uHR8GGbRu4ZSsWFfbtJnDMcgqMddYenFQStatQ2329l9WCnDwRzZS?=
- =?iso-8859-1?Q?0LrrSyx1UCtUslF+cN/8ZLtxQ+7V0rEcZ/0IXEEL50grbUx5eni4IrsuEO?=
- =?iso-8859-1?Q?VqRYSn9izowOjUKU1KfQ=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4907EB22F93
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:40:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4177E1A08AB;
+	Fri, 29 Nov 2024 18:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQ+iM3oU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63951154C04;
+	Fri, 29 Nov 2024 18:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732905644; cv=none; b=aRP1KSEleWlc3HhbUU4g3wEnyhuEeMQF3dNjeUS6Rc6pOdkPwgTesJgupR1WRsgMf2NtMUSsIo5q7BJMEqA55A4huQcWkCPk9ufPwNIQua9wgD7R+MsxFhqlEvLFtyGQxsKEGbQ29UFP44DfsyiZNttzPKRPyT0dCdSHPfY3mu0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732905644; c=relaxed/simple;
+	bh=Qsng7FU1DeYTg+48WQ34KtK/cEVfuDBd81zp+Xy/Ueg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZdodjuGHCUtrf9ihkbQAE3wkf7KQns39a+9/od5XmZldZIeIjFDkRZpvaT1hgAOGuwtoplnX/LCUTBesCYdNLDUqRBZ4KJuUwI9Lukihi4S2+gIX6nOummHgMFrqhLADoIHze8okTr6WbUa77Yc0HnOFJSOeBKfu+ujknSB7V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQ+iM3oU; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732905643; x=1764441643;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Qsng7FU1DeYTg+48WQ34KtK/cEVfuDBd81zp+Xy/Ueg=;
+  b=hQ+iM3oUe/A0bzXIj0J9qAJHewoLkohcbO4sW52yXARGDpQmjYs65NhM
+   d960PwU5VheP15IctWdmIuPwQGuGfD1Df/sZl08siNllzN05JA4XDlYGK
+   4Go8DwpWlka7A+eiHM17R4t4+9v462RFq1Uvwubrnpn8KF8tKAL97HF8+
+   7Onjve9NtdL3A8GVFKtzEzjAEdgIoR52NRHGhmnnagJ4KtAVSq/JkzpQq
+   jWy0uJrv782uDX32IFSeTkueE9uUYlROEeHHr9/0UxqW3Gzl4Ri6iortW
+   bU1gLy1mua2qrCtVseqd8/AtfKmeUc+ae8x4mb25m9clTN5q3zA000N1K
+   w==;
+X-CSE-ConnectionGUID: EH+6R2IpT76ZVunV2/4qbg==
+X-CSE-MsgGUID: FooSXVokQV++89OP5dlb/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="36928712"
+X-IronPort-AV: E=Sophos;i="6.12,196,1728975600"; 
+   d="scan'208";a="36928712"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 10:40:42 -0800
+X-CSE-ConnectionGUID: eLNBb6bSR9KN6PQ0nY+wtA==
+X-CSE-MsgGUID: Sz3wLXyKRxuGfEj0PedYZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="97587111"
+Received: from lkp-server01.sh.intel.com (HELO 5e2646291792) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 29 Nov 2024 10:40:40 -0800
+Received: from kbuild by 5e2646291792 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tH5uw-0000cb-01;
+	Fri, 29 Nov 2024 18:40:38 +0000
+Date: Sat, 30 Nov 2024 02:40:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>, ukleinek@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rafael.v.volkmer@gmail.com
+Subject: Re: [PATCH] pwm: tiehrpwm: ensures that state.enabled is
+ synchronized during .probe()
+Message-ID: <202411300250.wkH4Isc0-lkp@intel.com>
+References: <20241129034334.27203-1-rafael.v.volkmer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB8838.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 075949f8-b93d-4aae-e09f-08dd10a4b62c
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2024 18:36:17.3404
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB6986
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129034334.27203-1-rafael.v.volkmer@gmail.com>
 
-unsubscribe linux-kernel=
+Hi Rafael,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.12 next-20241128]
+[cannot apply to thierry-reding-pwm/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Rafael-V-Volkmer/pwm-tiehrpwm-ensures-that-state-enabled-is-synchronized-during-probe/20241129-114649
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241129034334.27203-1-rafael.v.volkmer%40gmail.com
+patch subject: [PATCH] pwm: tiehrpwm: ensures that state.enabled is synchronized during .probe()
+config: x86_64-buildonly-randconfig-002-20241129 (https://download.01.org/0day-ci/archive/20241130/202411300250.wkH4Isc0-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241130/202411300250.wkH4Isc0-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411300250.wkH4Isc0-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+>> drivers/pwm/pwm-tiehrpwm.c:537:9: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
+     537 |         return ret;
+         |                ^~~
+   drivers/pwm/pwm-tiehrpwm.c:525:9: note: initialize the variable 'ret' to silence this warning
+     525 |         int ret;
+         |                ^
+         |                 = 0
+>> drivers/pwm/pwm-tiehrpwm.c:642:27: error: no member named 'chip' in 'struct ehrpwm_pwm_chip'
+     642 |         ehrpwm_get_hw_state(&pc->chip, &pc->chip.pwms[0], &state);
+         |                              ~~  ^
+   drivers/pwm/pwm-tiehrpwm.c:642:38: error: no member named 'chip' in 'struct ehrpwm_pwm_chip'
+     642 |         ehrpwm_get_hw_state(&pc->chip, &pc->chip.pwms[0], &state);
+         |                                         ~~  ^
+>> drivers/pwm/pwm-tiehrpwm.c:642:53: error: use of undeclared identifier 'state'; did you mean 'stac'?
+     642 |         ehrpwm_get_hw_state(&pc->chip, &pc->chip.pwms[0], &state);
+         |                                                            ^~~~~
+         |                                                            stac
+   arch/x86/include/asm/smap.h:36:29: note: 'stac' declared here
+      36 | static __always_inline void stac(void)
+         |                             ^
+   drivers/pwm/pwm-tiehrpwm.c:644:5: error: use of undeclared identifier 'state'
+     644 |         if(state.enabled == true) {
+         |            ^
+   drivers/pwm/pwm-tiehrpwm.c:664:22: error: no member named 'chip' in 'struct ehrpwm_pwm_chip'
+     664 |         pwmchip_remove(&pc->chip);
+         |                         ~~  ^
+   1 warning and 5 errors generated.
+
+
+vim +642 drivers/pwm/pwm-tiehrpwm.c
+
+   521	
+   522	static int ehrpwm_get_hw_state(struct pwm_chip *chip, struct pwm_device *pwm, 
+   523									struct pwm_state *state)
+   524	{
+   525		int ret;
+   526	
+   527		if(chip == NULL || pwm == NULL || state == NULL){
+   528			return -EINVAL;
+   529		}
+   530	
+   531		state->enabled = ehrpwm_is_enabled(chip);
+   532	
+   533		state->period = ehrpwm_read_period(chip);
+   534	    state->duty_cycle = ehrpwm_read_duty_cycle(chip);
+   535	    state->polarity = ehrpwm_read_polarity(chip);
+   536	
+ > 537		return ret;
+   538	}
+   539	
+   540	static int ehrpwm_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+   541				    const struct pwm_state *state)
+   542	{
+   543		int err;
+   544		bool enabled = pwm->state.enabled;
+   545	
+   546		if (state->polarity != pwm->state.polarity) {
+   547			if (enabled) {
+   548				ehrpwm_pwm_disable(chip, pwm);
+   549				enabled = false;
+   550			}
+   551	
+   552			err = ehrpwm_pwm_set_polarity(chip, pwm, state->polarity);
+   553			if (err)
+   554				return err;
+   555		}
+   556	
+   557		if (!state->enabled) {
+   558			if (enabled)
+   559				ehrpwm_pwm_disable(chip, pwm);
+   560			return 0;
+   561		}
+   562	
+   563		err = ehrpwm_pwm_config(chip, pwm, state->duty_cycle, state->period);
+   564		if (err)
+   565			return err;
+   566	
+   567		if (!enabled)
+   568			err = ehrpwm_pwm_enable(chip, pwm);
+   569	
+   570		return err;
+   571	}
+   572	
+   573	static const struct pwm_ops ehrpwm_pwm_ops = {
+   574		.free = ehrpwm_pwm_free,
+   575		.apply = ehrpwm_pwm_apply,
+   576	};
+   577	
+   578	static const struct of_device_id ehrpwm_of_match[] = {
+   579		{ .compatible = "ti,am3352-ehrpwm" },
+   580		{ .compatible = "ti,am33xx-ehrpwm" },
+   581		{},
+   582	};
+   583	MODULE_DEVICE_TABLE(of, ehrpwm_of_match);
+   584	
+   585	static int ehrpwm_pwm_probe(struct platform_device *pdev)
+   586	{
+   587		struct device_node *np = pdev->dev.of_node;
+   588		struct ehrpwm_pwm_chip *pc;
+   589		struct pwm_chip *chip;
+   590		bool tbclk_enabled;
+   591		struct clk *clk;
+   592		int ret;
+   593	
+   594		chip = devm_pwmchip_alloc(&pdev->dev, NUM_PWM_CHANNEL, sizeof(*pc));
+   595		if (IS_ERR(chip))
+   596			return PTR_ERR(chip);
+   597		pc = to_ehrpwm_pwm_chip(chip);
+   598	
+   599		clk = devm_clk_get(&pdev->dev, "fck");
+   600		if (IS_ERR(clk)) {
+   601			if (of_device_is_compatible(np, "ti,am33xx-ecap")) {
+   602				dev_warn(&pdev->dev, "Binding is obsolete.\n");
+   603				clk = devm_clk_get(pdev->dev.parent, "fck");
+   604			}
+   605		}
+   606	
+   607		if (IS_ERR(clk))
+   608			return dev_err_probe(&pdev->dev, PTR_ERR(clk), "Failed to get fck\n");
+   609	
+   610		pc->clk_rate = clk_get_rate(clk);
+   611		if (!pc->clk_rate) {
+   612			dev_err(&pdev->dev, "failed to get clock rate\n");
+   613			return -EINVAL;
+   614		}
+   615	
+   616		chip->ops = &ehrpwm_pwm_ops;
+   617	
+   618		pc->mmio_base = devm_platform_ioremap_resource(pdev, 0);
+   619		if (IS_ERR(pc->mmio_base))
+   620			return PTR_ERR(pc->mmio_base);
+   621	
+   622		/* Acquire tbclk for Time Base EHRPWM submodule */
+   623		pc->tbclk = devm_clk_get(&pdev->dev, "tbclk");
+   624		if (IS_ERR(pc->tbclk))
+   625			return dev_err_probe(&pdev->dev, PTR_ERR(pc->tbclk), "Failed to get tbclk\n");
+   626	
+   627		ret = clk_prepare(pc->tbclk);
+   628		if (ret < 0) {
+   629			dev_err(&pdev->dev, "clk_prepare() failed: %d\n", ret);
+   630			return ret;
+   631		}
+   632	
+   633		ret = pwmchip_add(chip);
+   634		if (ret < 0) {
+   635			dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
+   636			goto err_clk_unprepare;
+   637		}
+   638	
+   639		platform_set_drvdata(pdev, chip);
+   640		pm_runtime_enable(&pdev->dev);
+   641	
+ > 642		ehrpwm_get_hw_state(&pc->chip, &pc->chip.pwms[0], &state);
+   643	
+   644		if(state.enabled == true) {
+   645			ret = clk_prepare_enable(pc->tbclk);
+   646			if (ret) {	
+   647				dev_err(&pdev->dev, "clk_prepare_enable() failed: %d\n", ret);
+   648				goto err_pwmchip_remove;
+   649			}
+   650			
+   651			tbclk_enabled = true;
+   652	
+   653			ret = pm_runtime_get_sync(&pdev->dev);
+   654			if(ret < 0) {
+   655				dev_err(&pdev->dev, "pm_runtime_get_sync() failed: %d\n", ret);
+   656				clk_disable_unprepare(pc->tbclk);
+   657				goto err_pwmchip_remove;
+   658			}
+   659		}
+   660	
+   661		return 0;
+   662	
+   663	err_pwmchip_remove:
+   664		pwmchip_remove(&pc->chip);
+   665	err_clk_unprepare:
+   666		if(tbclk_enabled)
+   667			clk_unprepare(pc->tbclk);
+   668	
+   669		return ret;
+   670	}
+   671	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
