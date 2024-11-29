@@ -1,225 +1,375 @@
-Return-Path: <linux-kernel+bounces-425358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86B99DC0F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:01:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C14C9DC0FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:01:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CD29B2245C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:01:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE2F1650CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A21170A0A;
-	Fri, 29 Nov 2024 09:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="o4c8nOWq"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2067.outbound.protection.outlook.com [40.107.96.67])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EC9175D35;
+	Fri, 29 Nov 2024 09:01:19 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082CE1547C6;
-	Fri, 29 Nov 2024 09:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732870877; cv=fail; b=o7S+Q/rDoRBddwewFFUgBEZkLFj8d7aprUGQ9zWMUWjREuBvlXE3FGxHqel2ja3JERTjPmM5Pw1ck4WDUm3VtZ71CcMMpjffwpcp4Wy9BICpC2hJRf3n3B9dXD4gBIWUxjC68yHhaVitSa8GdgnJMuAmFxskAxHk2ibx2V6j7i8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732870877; c=relaxed/simple;
-	bh=xTeDxebHv8fWG9YSTpeLIY/0HphDy10PLskq/kbRjbM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=S8m0JY1lfrTmxCOLYBdzeAV6ofSO75AW/HhCiRAtS5qatLUSVDrC/KMqC5ETsyEBz7QAESl2c6sWsXMAVX80B2vC92OyND3gKSyXlx/32JIUXybYr7wPWCpXiuypq88B/jF9ZTzDDohVIvrE1CHwbbsvqHKapvrU3vLaWoVHigg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=o4c8nOWq; arc=fail smtp.client-ip=40.107.96.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F/QBQLTuJ76gS/FON+LXaNS6foHD6Ld5/zfn0u8hIbK6qhus4LFHBZTb+KipIdgjyBFK0G5r9brzr0lFBk5CDADGOmqCA+bxfuhzMcy0ZHIa2xPl4eh9zP8h42JqBYrjt+3KXd7CxxrITRYkgZmxKzU/1EN5zc4XtIMNJJocioF8Hi0N3xPkgJy+CkgpE7o7H2RkjNCmUwj2RKqB3LqHgFSCsLN9+DsBsgPEJWnelmMuCnCtfaiQInZ08O/VxRwAdKgF5xglj69K4V+iqiy9AT/2WiIEvLl7SMXUxwRWA1eoQ173BSdjunD0kjnXL7u0RTKV/O9225lDvBduIIUABQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=loz+qmvkIlfcbvQ6Yr+c21YNpKRJ0+dcQFZcFMbpmZ0=;
- b=pzF0/70RKzgzps0WspukDlcXk/dr89gwl4CYelOJYreSOf3ajQ+krUT0WgpJSupDrociXrr8mi2Y/6A3dtFPGedOD80kwTsvxHHWSP1gQN6y6NN8rXywciPvKMbJU4VKhilic/9ILTR1QfG72Nnayjq84rhCnsNB/t+IHSqcylsr7HLMmww0iHAvwlypquCA9Wt5w8ehA3PzXV5YF0Higs18WqKLtqMrKZYiFbu/xg51Q5jgyjTQ1lX4OhjZG7b1K2yXX9SovvItkxFJkQ1Dz/3OhzAVoCk9QOa1KjAKN+cTx3wQObPri2WlYudNPUEmIl+e1aj9vQgSGk8+T969sQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=loz+qmvkIlfcbvQ6Yr+c21YNpKRJ0+dcQFZcFMbpmZ0=;
- b=o4c8nOWqnVvyk4d382De9AQs4R+sC+XzZHhQIy839PN7cbfIAI9w7H3s01fOET99q7x+5hBAp1dG2O1fVrw901UmHlX3g2DY8pJDIcet02tdI8TIZiYiP/cvJHSWvgH+U+DMXeMFkznH0QQokV2n84lDJKFeLS+Xd6SJ9hqHBrM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
- SN7PR12MB7854.namprd12.prod.outlook.com (2603:10b6:806:32b::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.13; Fri, 29 Nov
- 2024 09:01:13 +0000
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec%4]) with mapi id 15.20.8207.014; Fri, 29 Nov 2024
- 09:01:13 +0000
-Message-ID: <e263259c-065e-43f6-8d5b-626e978cc6ab@amd.com>
-Date: Fri, 29 Nov 2024 14:31:05 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] KVM: x86: Play nice with protected guests in
- complete_hypercall_exit()
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>, Binbin Wu
- <binbin.wu@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>,
- Kai Huang <kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>
-References: <20241128004344.4072099-1-seanjc@google.com>
- <20241128004344.4072099-2-seanjc@google.com>
-Content-Language: en-US
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <20241128004344.4072099-2-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0162.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:c8::6) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650CD16DEDF;
+	Fri, 29 Nov 2024 09:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732870878; cv=none; b=g+v0i4oiEGfKr1Ahu8IrCfEKYQodchK2/mHNB0GHOuMvB63aLr7D0laycpTjUH7VjkP06NyezxwOjL+72ScIxc0VHI4Se1k3bIf+iBfO/kpkhIaZ/Xn8r37KnJLhujRrzOFubBJ8aYwRwcSP/26XlXXoCrwg+mFgta/YKJmYEyY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732870878; c=relaxed/simple;
+	bh=ZmAVSzcdfNqQ2AmOAcMLQqf53TAg05WAO3ERdUd468Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AuswElpj5ZqpoqsMgePhnZUVXMCQs24Lk7Ly6RvbH6U4WE3UtNe4wrgOMWYxXWKpK9Y3c43CAxZbs3BYiMT5G6rsmpFDmnz4KJvp/l+kBUqOLv2Y+r6+s/9lVfrsDW60Tx4S61wl8KEh7ubj6X43cJF2b2hTPzHetQFOOa/UwGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F2EC4CECF;
+	Fri, 29 Nov 2024 09:01:13 +0000 (UTC)
+Message-ID: <92f9c7ba-90a5-4f02-b547-62a00af128e1@xs4all.nl>
+Date: Fri, 29 Nov 2024 10:01:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|SN7PR12MB7854:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30edffe3-c2b6-4ee1-06c1-08dd10545fe8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RXIrTmNsbjNNYU5MUlNPSDZ3ejRhTUhMUWxYQlRZSWJsL1pMSUo0bnNNUFRN?=
- =?utf-8?B?ei9VODlqdGI0eDJySXkzbSt6a3ZkaHNyUkVUbVkwRkRUVFE1ZTUyQzI0Ukh3?=
- =?utf-8?B?UUVwWGcvbGIxQTRqL3JsbDNSQ1JKQUhMWHhtNWhldFVPSEFFOWxFbnFTNE10?=
- =?utf-8?B?YzlZNGRZeHVIUlFkSllYRGpFWnVWZllSQTFpVTNPVE4rOXJiREs5NU1aazZu?=
- =?utf-8?B?Q05VVTZrejkzL0RxWHZyeHB4UmsxV0wwUEN4OUdMczNGRlpFMk5peUJUWklp?=
- =?utf-8?B?ZWw0dGdIZ1c3VG9tNUVkbFJlQ3VaMXhUbEJzU09vZzBTLy9xRFBKUFgxQkFG?=
- =?utf-8?B?bTMvTm5lRjMxUDgxSGFNOU84cTZRbjFDUTUyWVlSWEJwYzBYS0FQcTVaTU9m?=
- =?utf-8?B?QjMxTDg3RmY3eXFwdEY3d3NVSkc4c0VoQWVjSmJtWE1XZ3BaYmQ2ZU83bzEy?=
- =?utf-8?B?MDRtcVBKL2hOSzQ3Unl1a3FjS3A1ZnJQQUREaHRJQ1lKV3NHWThuQ3ZkNUNQ?=
- =?utf-8?B?U2tEelQ5QVRJN09zOTFSZ2I2Q1REdWtZWGd2RnZKdDZBQ1M0bGs3dFVEME9I?=
- =?utf-8?B?Nldzb1dUYUhqYzRRSXMvV2JCM1hyR251UFd2ZnhjaFV6TEVldVZ4QVhvYlkv?=
- =?utf-8?B?d1dGY3lWa1A5TmsxWmloV1FqUGszenZDRE0yWDZwc3VWTlpQeTdYZ3FUcVJ3?=
- =?utf-8?B?Q3FxTXRxZkN4U3h3Vm50OHAyazVpMXBxZnNsdm5Gc25DNFZLUjdiY0JZQytB?=
- =?utf-8?B?bmozT2FtV3psSHlaN3k1ZkhCQVV1MU5rSUFaWkxEV3FUbEZUOHFGblhGY0pp?=
- =?utf-8?B?bU1lTWFuWmZlZHNuU3BLZ2twZ2R2N2VSQ0o0c1lrY1VnOGlISlpuVUVFL3hI?=
- =?utf-8?B?MVhBM3ZodG9XNVVFYVNyaHRpL09GTmw3QUdram9GSDdHZFc3aGJKS3R4MmRx?=
- =?utf-8?B?RXJIMm5JTzVNcDZ3N0h2cTBJS3hzNHZCcS85Z29VMW9XR3FCYk5YYXRTZTZ5?=
- =?utf-8?B?dmVIQTAvZG1iRVFBRm9MUnhPS0F5bXhOc3JNSHNNa1U2NkhxV21wTlpMbVZM?=
- =?utf-8?B?K2t6Sjczdno3RGlwTFdCbkVhNHdWdnAzY3BMdTdGWGR2elNhVGlTVmQyTW50?=
- =?utf-8?B?QlVDdmt5bm9la0dKZERQbUhhZWZ3S2huN3RRS1htaDluU0F3eElXWVgrZEVl?=
- =?utf-8?B?N25FMlIxZkpGVTBJT0FwSzZXc2lNQVJ0Rm13dE5na2ZVcVZwNjA5S09vZGhU?=
- =?utf-8?B?ZU9HZDN3QnVtbmlRcEl0bURGaGNZU1htY1ptUmd3L1ZNL25WRlFSbnh0TFlF?=
- =?utf-8?B?b2duWjdDMEVoYnlvVTJEREhRM0Erc0dOejZnSDZKS1E0SVBqbjJSaDN5RElw?=
- =?utf-8?B?L24yV0JySjMzVjc2U2tZU3dwZGo0RU5NVnV0UXA0MVhMTUxwVlN2Y2hsaUp3?=
- =?utf-8?B?aWdkMWRnYTNzMmxuaEtyeHErQktab0VRQUFDTmhVc2NwdzlwMk5iWDRwamZC?=
- =?utf-8?B?cllDMmtoWEl2MXpnQy90cllyT3EvZ25jc0YwWm9YSXZ1Y0pERGZTVnZ0ZEpj?=
- =?utf-8?B?TUFBeUhrYnJRd045bVlqZUdPM3NWc3B6MkhwRFlJVWFTb1VYbTBRenNmRDVx?=
- =?utf-8?B?SUhuY0RGaUU3cFdabkxON0piYnJqUjVxdU15c1Z6UkJ2L3lHMnVqT1ZiM0Js?=
- =?utf-8?B?OStZclBOSks5ZGg0c3VKWEZVRkpBeUZSWEY2Q3d3eFRnT0hMRzRqRzMzYk0w?=
- =?utf-8?B?MDZEQ2ZOVFZJdkc2dk5ETDNyZCtjSDVjTjFQemx0d0FXd3RwTWVOWXNqTjA5?=
- =?utf-8?B?cS8xaDRvSDNGd0ZqOWVPZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S3hodjlTMTdsUzE3SWNHRUU2SXNrblRwZC9zUVo1UjBtL2RkREdOWVZqRGZx?=
- =?utf-8?B?ckt0QlRxdXpzZWlvclljcmtJMUV0aWRlWTRiMVo4c1hrc1BCMkwyeWd4Qm4r?=
- =?utf-8?B?REVhQm8wek56YlFlZ2t0SitWZjBCWkRNeitMeFVCODhhNmNmc1pLb3F4M3Fh?=
- =?utf-8?B?NGdJb1JRQUFub3JhL2p2N0FXUTNWcFFLU2NYNVhhTnAyVEdsL0I5SHRYYlZB?=
- =?utf-8?B?bElQTFdoVVpmWlB3Uk1Jem5TYmxSTjNkNm5oVUEzVWxzdUJFc3lhUkZaOGhw?=
- =?utf-8?B?dWs3QUhUWFNhRS80T0RENlk3cHpjMFhocmU4OVNpd1JWaitsVDNKYnkxSTA3?=
- =?utf-8?B?R0dKMzhkZlYybFluZzhuRVJOT3hSYVJjSGdmV0k1bHR5cWRmaUVXbnl3blNV?=
- =?utf-8?B?dEFpMEsxejdpN25UdTljdGJtQWJOY0M0b2dKaWcrYlhURkR0NHRYTllwa2Ny?=
- =?utf-8?B?SFhDMUlVL0d1c2hPbWRSV0daWk9tUlZCVzlnTFJLalJwMVBEbTZmV01GbHpm?=
- =?utf-8?B?bnFvMEJ6T2lISjdxdmRpdWFoOHpjRDluTXRyaU83bGFGRGxFTHh1U0lxMDdO?=
- =?utf-8?B?ZVk4aytxRW9HK0lSUjZoRVVuUjErREpHK01RRmkwMVVvL0ppd2JiVkZFeHBK?=
- =?utf-8?B?YnE4Rk9mYnlSOHBPYW5zcVFiUlhXWHlEdndlcWMzVzZMbks0ZXlmci9mQ1dM?=
- =?utf-8?B?Nmd1ejY1ODdCMEpaMnNlV3lmUHJGTXdBbXkrZjlmcDRxaS9TZzE5QTNMRllr?=
- =?utf-8?B?aDFzUFFxY0pzNmE2SC9yRHgxOXBma3dUUFBibGxmS0lxaVB0M20ycG5Ed3BU?=
- =?utf-8?B?N01pUmw0dm5YU0RUbjZvcVBrb200dlgrWnNYblM4dTJhTFhJWTNxZmRKT2dp?=
- =?utf-8?B?cGJySy9kNDFqWVJHS1FVbXdodXM2UndXQkJNaUpBUy9hNWdnajYwakNkaFdH?=
- =?utf-8?B?dVBYS0RSYzVSOE9tQ0EwMWd3a0pNcGl1LzR6QUpHRi85VlVYZ2VYcHE1VVV3?=
- =?utf-8?B?OUtqdmJnSXVmT3dnRmU5Tk4wREd5ZnNLL0NxVVpzcitOWlBQaFM4VDRNU1Jn?=
- =?utf-8?B?Q2daN3ZKQlM4WkR5eEN4WE95aVMrdHpldDNiM2JlTlBlUFNYbW54U2VUMVF6?=
- =?utf-8?B?QnRBTHFUS1NDZHVlVkVQdFF2UW9pQlg5Vi92Rzd2clJUaFJ2YzVTKzdtRGlO?=
- =?utf-8?B?eG9oWUs0b1BOUkNxSW1nOFg2aGhvQmJmSExUU1NkV3NGSk41UVBXOUxReDR0?=
- =?utf-8?B?dXBVN21MVlYrSkJKUG5BcDFwWjFOOU9zSnk1QzdzVktKWTFNYTN5ZFJ5UXN4?=
- =?utf-8?B?QVIyWDNkY09xYVFpN0Z6SzFvRmx0bXU4bGZmM25MR0ttd2R3QjFGKzFGZDVK?=
- =?utf-8?B?Sk1pUEh1cHhvcHU1ZEFXUC9vTERNMUZKOXF5RGJhRDZzRTJGNGRSdUYwUlNV?=
- =?utf-8?B?VHFsQ3d5TG1CeFhEKzBCak1XVzVIQ3k1UkdOcG9OMExzMUk2cXFOd2prdHBF?=
- =?utf-8?B?aUo3TnRpUzJRNFltdW9sTU5jTFE2WHRmamNQZ3ZaQ3ZJUkxMcEs0aHpVMnhw?=
- =?utf-8?B?REdnNytLdUFORit1NGtUSDRKUWZXZHV3ejdJdzBhaUF5SHE1c2FyYkdJMzYr?=
- =?utf-8?B?UUZPbnZ5S0drQi9uUmRYajRENWIzREpSUTFCcnRpVEtOdmtyalU2RmxLWjJ5?=
- =?utf-8?B?NGhtTG15WEtVQzhtc0RSZ0lMa1lvSWJtaXJEZm1QSW9ab2Rwd1hOMk51QjdS?=
- =?utf-8?B?NFBEV1FpalUzZllvMVc1Q2tqaHVYWVhNMloySExnR0hWRGw5ZTBJY21mZFY0?=
- =?utf-8?B?elU1VlV5LzMvMjE4MWVXTzNWcFJrVFJuMDVFZW9kZitoeXBhNjM4cGtkbHNR?=
- =?utf-8?B?SnptMnFhL3Z5WUdtaDJYVzVTdStKL015WXJuSUpzb3BtenV2YWw2ZUNuME5I?=
- =?utf-8?B?NEd0UWRqOWtYUHJXeEpwREVnaW5rMFVYZUFyWGpEbHc5SlZVUWRmWHdjUDFI?=
- =?utf-8?B?UUxHVTBPNlgrS3k5bFhlY1pOa1FYd3VqZDRGNTVlTW9VdXNyWXVDKzZUcWNL?=
- =?utf-8?B?Ylo0SEJoNHE4SEh5blY5dVc5VXJ3Ynl0Ym5Ycmh4U3lJNFJSVTZBWG9DUzZX?=
- =?utf-8?Q?oseUCYDDNHqkAf3VQYdKP+Som?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30edffe3-c2b6-4ee1-06c1-08dd10545fe8
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2024 09:01:13.3199
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dUwUTkTC+flu0FiV5wSam32qIc1zSpnwmh7OzhyZDsaaZguB7yExXG2s4LsmmKyRqAKKf7n76X2Nxloo2Y0h5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7854
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 10/28] media: iris: implement s_fmt, g_fmt and try_fmt
+ ioctls
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20241120-qcom-video-iris-v6-0-a8cf6704e992@quicinc.com>
+ <20241120-qcom-video-iris-v6-10-a8cf6704e992@quicinc.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20241120-qcom-video-iris-v6-10-a8cf6704e992@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/28/2024 6:13 AM, Sean Christopherson wrote:
-> Use is_64_bit_hypercall() instead of is_64_bit_mode() to detect a 64-bit
-> hypercall when completing said hypercall.  For guests with protected state,
-> e.g. SEV-ES and SEV-SNP, KVM must assume the hypercall was made in 64-bit
-> mode as the vCPU state needed to detect 64-bit mode is unavailable.
-> 
-> Hacking the sev_smoke_test selftest to generate a KVM_HC_MAP_GPA_RANGE
-> hypercall via VMGEXIT trips the WARN:
-> 
->   ------------[ cut here ]------------
->   WARNING: CPU: 273 PID: 326626 at arch/x86/kvm/x86.h:180 complete_hypercall_exit+0x44/0xe0 [kvm]
->   Modules linked in: kvm_amd kvm ... [last unloaded: kvm]
->   CPU: 273 UID: 0 PID: 326626 Comm: sev_smoke_test Not tainted 6.12.0-smp--392e932fa0f3-feat #470
->   Hardware name: Google Astoria/astoria, BIOS 0.20240617.0-0 06/17/2024
->   RIP: 0010:complete_hypercall_exit+0x44/0xe0 [kvm]
->   Call Trace:
->    <TASK>
->    kvm_arch_vcpu_ioctl_run+0x2400/0x2720 [kvm]
->    kvm_vcpu_ioctl+0x54f/0x630 [kvm]
->    __se_sys_ioctl+0x6b/0xc0
->    do_syscall_64+0x83/0x160
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->    </TASK>
->   ---[ end trace 0000000000000000 ]---
-> 
-> Fixes: b5aead0064f3 ("KVM: x86: Assume a 64-bit hypercall for guests with protected state")
-> Cc: stable@vger.kernel.org
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Hi Dikshita,
 
-Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
+Some comments below...
 
+On 20/11/2024 15:46, Dikshita Agarwal wrote:
+> From: Vedang Nagar <quic_vnagar@quicinc.com>
+> 
+> Implement s_fmt, g_fmt and try_fmt ioctl ops with necessary hooks.
+> 
+> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 > ---
->  arch/x86/kvm/x86.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/media/platform/qcom/iris/iris_vdec.c | 122 +++++++++++++++++++++++++++
+>  drivers/media/platform/qcom/iris/iris_vdec.h |   2 +
+>  drivers/media/platform/qcom/iris/iris_vidc.c |  48 +++++++++++
+>  3 files changed, 172 insertions(+)
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 2e713480933a..0b2fe4aa04a2 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9976,7 +9976,7 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
->  {
->  	u64 ret = vcpu->run->hypercall.ret;
+> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
+> index 2ed50ad5d58b..11a2507fc35f 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
+> @@ -3,6 +3,8 @@
+>   * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
 >  
-> -	if (!is_64_bit_mode(vcpu))
-> +	if (!is_64_bit_hypercall(vcpu))
->  		ret = (u32)ret;
->  	kvm_rax_write(vcpu, ret);
->  	++vcpu->stat.hypercalls;
+> +#include <media/v4l2-mem2mem.h>
+> +
+>  #include "iris_buffer.h"
+>  #include "iris_instance.h"
+>  #include "iris_vdec.h"
+> @@ -10,6 +12,7 @@
+>  
+>  #define DEFAULT_WIDTH 320
+>  #define DEFAULT_HEIGHT 240
+> +#define DEFAULT_CODEC_ALIGNMENT 16
+>  
+>  void iris_vdec_inst_init(struct iris_inst *inst)
+>  {
+> @@ -54,3 +57,122 @@ void iris_vdec_inst_deinit(struct iris_inst *inst)
+>  	kfree(inst->fmt_dst);
+>  	kfree(inst->fmt_src);
+>  }
+> +
+> +int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f)
+> +{
+> +	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+> +	struct v4l2_m2m_ctx *m2m_ctx = inst->m2m_ctx;
+> +	struct v4l2_format *f_inst;
+> +	struct vb2_queue *src_q;
+> +
+> +	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+> +	switch (f->type) {
+> +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+> +		if (f->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_H264) {
+> +			f_inst = inst->fmt_src;
+> +			f->fmt.pix_mp.width = f_inst->fmt.pix_mp.width;
+> +			f->fmt.pix_mp.height = f_inst->fmt.pix_mp.height;
+> +			f->fmt.pix_mp.pixelformat = f_inst->fmt.pix_mp.pixelformat;
+> +		}
+> +		break;
+> +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+> +		if (f->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV12) {
+> +			f_inst = inst->fmt_dst;
+> +			f->fmt.pix_mp.pixelformat = f_inst->fmt.pix_mp.pixelformat;
+> +			f->fmt.pix_mp.width = f_inst->fmt.pix_mp.width;
+> +			f->fmt.pix_mp.height = f_inst->fmt.pix_mp.height;
+> +		}
+> +
+> +		src_q = v4l2_m2m_get_src_vq(m2m_ctx);
+> +		if (vb2_is_streaming(src_q)) {
+> +			f_inst = inst->fmt_src;
+> +			f->fmt.pix_mp.height = f_inst->fmt.pix_mp.height;
+> +			f->fmt.pix_mp.width = f_inst->fmt.pix_mp.width;
+> +		}
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (pixmp->field == V4L2_FIELD_ANY)
+> +		pixmp->field = V4L2_FIELD_NONE;
+> +
+> +	pixmp->num_planes = 1;
+> +
+> +	return 0;
+> +}
+> +
+> +int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
+> +{
+> +	struct v4l2_format *fmt, *output_fmt;
+> +	struct vb2_queue *q;
+> +	u32 codec_align;
+> +
+> +	iris_vdec_try_fmt(inst, f);
 
+I'm missing a vb2_is_busy() check here (and a return -EBUSY).
+
+Changing the format while busy (i.e. while buffers are allocated)
+is generally a no-go since the format and the buffer sizes are linked.
+
+> +
+> +	switch (f->type) {
+> +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+> +		if (f->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_H264)
+> +			return -EINVAL;
+> +
+> +		fmt = inst->fmt_src;
+> +		fmt->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+> +
+> +		codec_align = DEFAULT_CODEC_ALIGNMENT;
+> +		fmt->fmt.pix_mp.width = ALIGN(f->fmt.pix_mp.width, codec_align);
+> +		fmt->fmt.pix_mp.height = ALIGN(f->fmt.pix_mp.height, codec_align);
+> +		fmt->fmt.pix_mp.num_planes = 1;
+> +		fmt->fmt.pix_mp.plane_fmt[0].bytesperline = 0;
+> +		fmt->fmt.pix_mp.plane_fmt[0].sizeimage = iris_get_buffer_size(inst, BUF_INPUT);
+> +		inst->buffers[BUF_INPUT].min_count = iris_vpu_buf_count(inst, BUF_INPUT);
+> +		inst->buffers[BUF_INPUT].size = fmt->fmt.pix_mp.plane_fmt[0].sizeimage;
+> +
+> +		fmt->fmt.pix_mp.colorspace = f->fmt.pix_mp.colorspace;
+> +		fmt->fmt.pix_mp.xfer_func = f->fmt.pix_mp.xfer_func;
+> +		fmt->fmt.pix_mp.ycbcr_enc = f->fmt.pix_mp.ycbcr_enc;
+> +		fmt->fmt.pix_mp.quantization = f->fmt.pix_mp.quantization;
+> +
+> +		output_fmt = inst->fmt_dst;
+> +		output_fmt->fmt.pix_mp.colorspace = f->fmt.pix_mp.colorspace;
+> +		output_fmt->fmt.pix_mp.xfer_func = f->fmt.pix_mp.xfer_func;
+> +		output_fmt->fmt.pix_mp.ycbcr_enc = f->fmt.pix_mp.ycbcr_enc;
+> +		output_fmt->fmt.pix_mp.quantization = f->fmt.pix_mp.quantization;
+> +
+> +		inst->crop.left = 0;
+> +		inst->crop.top = 0;
+> +		inst->crop.width = f->fmt.pix_mp.width;
+> +		inst->crop.height = f->fmt.pix_mp.height;
+> +		break;
+> +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+> +		fmt = inst->fmt_dst;
+> +		fmt->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+> +		q = v4l2_m2m_get_vq(inst->m2m_ctx, f->type);
+> +		if (q->streaming) {
+> +			f->fmt.pix_mp.height = inst->fmt_src->fmt.pix_mp.height;
+> +			f->fmt.pix_mp.width = inst->fmt_src->fmt.pix_mp.width;
+> +		}
+> +		if (fmt->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV12)
+> +			return -EINVAL;
+> +		fmt->fmt.pix_mp.pixelformat = f->fmt.pix_mp.pixelformat;
+> +		fmt->fmt.pix_mp.width = ALIGN(f->fmt.pix_mp.width, 128);
+> +		fmt->fmt.pix_mp.height = ALIGN(f->fmt.pix_mp.height, 32);
+> +		fmt->fmt.pix_mp.num_planes = 1;
+> +		fmt->fmt.pix_mp.plane_fmt[0].bytesperline = ALIGN(f->fmt.pix_mp.width, 128);
+> +		fmt->fmt.pix_mp.plane_fmt[0].sizeimage = iris_get_buffer_size(inst, BUF_OUTPUT);
+> +		inst->buffers[BUF_OUTPUT].min_count = iris_vpu_buf_count(inst, BUF_OUTPUT);
+> +		inst->buffers[BUF_OUTPUT].size = fmt->fmt.pix_mp.plane_fmt[0].sizeimage;
+> +
+> +		if (!q->streaming) {
+
+Use vb2_is_streaming(), don't refer to q->streaming directly.
+
+Please check if this is done anywhere else as well in the driver and
+use the helper function instead.
+
+> +			inst->crop.top = 0;
+> +			inst->crop.left = 0;
+> +			inst->crop.width = f->fmt.pix_mp.width;
+> +			inst->crop.height = f->fmt.pix_mp.height;
+
+A bigger question is why you do this? See the question about vb2_is_busy above:
+you shouldn't be able to get here at all if you are streaming since the vb2_is_busy
+check will catch that.
+
+> +		}
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +	memcpy(f, fmt, sizeof(*fmt));
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.h b/drivers/media/platform/qcom/iris/iris_vdec.h
+> index 353b73b76230..85e93f33e9e7 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vdec.h
+> +++ b/drivers/media/platform/qcom/iris/iris_vdec.h
+> @@ -10,5 +10,7 @@ struct iris_inst;
+>  
+>  void iris_vdec_inst_init(struct iris_inst *inst);
+>  void iris_vdec_inst_deinit(struct iris_inst *inst);
+> +int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f);
+> +int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>  
+>  #endif
+> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+> index ab3b63171c1d..6707eb9917fe 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+> @@ -217,6 +217,48 @@ int iris_close(struct file *filp)
+>  	return 0;
+>  }
+>  
+> +static int iris_try_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format *f)
+> +{
+> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> +	int ret;
+> +
+> +	mutex_lock(&inst->lock);
+> +	ret = iris_vdec_try_fmt(inst, f);
+> +	mutex_unlock(&inst->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int iris_s_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format *f)
+> +{
+> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> +	int ret;
+> +
+> +	mutex_lock(&inst->lock);
+> +	ret = iris_vdec_s_fmt(inst, f);
+> +	mutex_unlock(&inst->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int iris_g_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format *f)
+> +{
+> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> +	int ret = 0;
+> +
+> +	mutex_lock(&inst->lock);
+> +	if (V4L2_TYPE_IS_OUTPUT(f->type))
+> +		memcpy(f, inst->fmt_src, sizeof(*f));
+
+Use: *f = *inst->fmt_src
+
+> +	else if (V4L2_TYPE_IS_CAPTURE(f->type))
+> +		memcpy(f, inst->fmt_dst, sizeof(*f));
+
+Ditto for fmt_dst
+
+> +	else
+> +		ret = -EINVAL;
+> +
+> +	mutex_unlock(&inst->lock);
+> +
+> +	return ret;
+> +}
+> +
+>  static struct v4l2_file_operations iris_v4l2_file_ops = {
+>  	.owner                          = THIS_MODULE,
+>  	.open                           = iris_open,
+> @@ -231,6 +273,12 @@ static const struct vb2_ops iris_vb2_ops = {
+>  };
+>  
+>  static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
+> +	.vidioc_try_fmt_vid_cap_mplane  = iris_try_fmt_vid_mplane,
+> +	.vidioc_try_fmt_vid_out_mplane  = iris_try_fmt_vid_mplane,
+> +	.vidioc_s_fmt_vid_cap_mplane    = iris_s_fmt_vid_mplane,
+> +	.vidioc_s_fmt_vid_out_mplane    = iris_s_fmt_vid_mplane,
+> +	.vidioc_g_fmt_vid_cap_mplane    = iris_g_fmt_vid_mplane,
+> +	.vidioc_g_fmt_vid_out_mplane    = iris_g_fmt_vid_mplane,
+>  	.vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
+>  };
+>  
+> 
+
+Regards,
+
+	Hans
 
