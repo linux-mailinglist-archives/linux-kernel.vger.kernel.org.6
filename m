@@ -1,184 +1,226 @@
-Return-Path: <linux-kernel+bounces-425469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024AB9DC283
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:07:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8280E9DC288
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72482833EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF412833EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CB21991BB;
-	Fri, 29 Nov 2024 11:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E14F198E74;
+	Fri, 29 Nov 2024 11:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qxxpXQsA"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zklkGarE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vhUDdtkL";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zklkGarE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vhUDdtkL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8C3155726;
-	Fri, 29 Nov 2024 11:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF6A155726
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732878414; cv=none; b=WAqwSevw0g43u+rV4CTgMl4InYf2QN+FBwquRfgQQTFgpPpMxQRNpfu8Sag4v4h6Jxj6Jw00ptc9HHH+OcJh+Iij+P70iYE7+U+GJD3xEIGBCd2Amq61KTQXJiJhsY3/x5UZGelpKeAwns6k5cGMiXqEj5SYQ5o45T6vDfc7e1I=
+	t=1732878580; cv=none; b=U2M0yjjQFAYvjx+tfjCG/FHqznm2L+Vnb+nv+6C8Y2epEVnz0SQDKXnKhRiMdXL1GJGYW1GSBIx6cjZuTO8s8r6FSZj7EKTggSgXd7UzYFJnyrObKrDZS762cGNK8GSE+LBgdQdutJSILWNkSHOeEzdOos1Pcaf1NRa8yH7x5tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732878414; c=relaxed/simple;
-	bh=TwdrBaS4qYS6OdOtx8q9Yeagwt8UgVRcTEqq9YSfMBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1uhqG7BbsI4f9GQcd76mq+yGSSogNALnj5GSoFuJmnXJa0LpD+rYVdgT+/+ZpSihgYueTse9qxMqzPW5XezX+GOQZruxUqTvT2oEJpoMfBwk/jBSEf3xOf5cIPiQUC6Vu1e1nHnBvMiJxuoi2anib/7yscEJNZtRVCsA5SjiEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qxxpXQsA; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 469E7A8F;
-	Fri, 29 Nov 2024 12:06:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732878386;
-	bh=TwdrBaS4qYS6OdOtx8q9Yeagwt8UgVRcTEqq9YSfMBc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qxxpXQsA+neGZrBhgXAjDjR7ecZQv87V4hi+PuFEC0EtZC4tTdf/sEmYL5SKXenKc
-	 dCyPI9qK9WzNVqmhOs/ZtDFWNeTbJhj0u5OIPUlmoI0ATGmHk1gp7l2lcrT06H7Vez
-	 KwcIIDX+QcV3IFgKX2CluVcPheiAQ09ItDPhcvFY=
-Date: Fri, 29 Nov 2024 13:06:40 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control
- owned by other fh
-Message-ID: <20241129110640.GB4108@pendragon.ideasonboard.com>
-References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
- <20241127-uvc-fix-async-v2-2-510aab9570dd@chromium.org>
- <20241128222232.GF25731@pendragon.ideasonboard.com>
- <CANiDSCvyMbAffdyi7_TrA0tpjbHe3V_D_VkTKiW-fNDnwQfpGA@mail.gmail.com>
- <20241128223343.GH25731@pendragon.ideasonboard.com>
- <7eeab6bd-ce02-41a6-bcc1-7c2750ce0359@xs4all.nl>
- <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
+	s=arc-20240116; t=1732878580; c=relaxed/simple;
+	bh=tS7LyrDfKaX9i0WBfzmMwLGD89873r4ITFIVenzTkww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MxVK4E043AVDlw/s11ECGhdrNyPIypaEE8D0bVn5n4cRq6AiTCMbU/KGpa01QGWlUb3z16pnmShsZjoMFGwDsY7HkakxbuekD2nRiGtAl+NI+l4h2bNY8ySlKjAv6Tucf1vhzfm3J3VcgT2YhKhPrKbmE4UFFFjtHXSP8EQBpKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zklkGarE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vhUDdtkL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zklkGarE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vhUDdtkL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5222321194;
+	Fri, 29 Nov 2024 11:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732878577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+R/gj+8Ig3LhHc+2uDX2oht5GogoUnCWhxn331C+erM=;
+	b=zklkGarEHKYjMsu9k8Fjxe7vpdaG38+oB8NbE+hZ/XoCmJbhnR3L5+ifCp5m4nrZtLucp+
+	6A//RpJAaA0/80bp5UEL3gzx6fLU5ihYIg1UdHtySxY7BU8cxQ1exNfG6dt9D9uQaRqQgB
+	cntf6FqgtWrsSqJQpzlTVWEpjEbSLMY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732878577;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+R/gj+8Ig3LhHc+2uDX2oht5GogoUnCWhxn331C+erM=;
+	b=vhUDdtkLVRMmd8DQleXoQCNyBSugt/KxtHjfwDUdOBMxgW1mPyXWnyP5YshojU2eDUkXJ7
+	PK2cQxCgnZ6KjhBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=zklkGarE;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vhUDdtkL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732878577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+R/gj+8Ig3LhHc+2uDX2oht5GogoUnCWhxn331C+erM=;
+	b=zklkGarEHKYjMsu9k8Fjxe7vpdaG38+oB8NbE+hZ/XoCmJbhnR3L5+ifCp5m4nrZtLucp+
+	6A//RpJAaA0/80bp5UEL3gzx6fLU5ihYIg1UdHtySxY7BU8cxQ1exNfG6dt9D9uQaRqQgB
+	cntf6FqgtWrsSqJQpzlTVWEpjEbSLMY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732878577;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+R/gj+8Ig3LhHc+2uDX2oht5GogoUnCWhxn331C+erM=;
+	b=vhUDdtkLVRMmd8DQleXoQCNyBSugt/KxtHjfwDUdOBMxgW1mPyXWnyP5YshojU2eDUkXJ7
+	PK2cQxCgnZ6KjhBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1ABD5139AA;
+	Fri, 29 Nov 2024 11:09:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1ghMBPGgSWe5cQAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 29 Nov 2024 11:09:37 +0000
+Message-ID: <751faf4b-7c43-47a0-95f7-e5d2887600f5@suse.de>
+Date: Fri, 29 Nov 2024 12:09:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] nvme: trigger reset when keep alive fails
+To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Paul Ely <paul.ely@broadcom.com>
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241129-nvme-fc-handle-com-lost-v3-0-d8967b3cae54@kernel.org>
+ <20241129-nvme-fc-handle-com-lost-v3-2-d8967b3cae54@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20241129-nvme-fc-handle-com-lost-v3-2-d8967b3cae54@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 5222321194
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Nov 29, 2024 at 11:59:27AM +0100, Ricardo Ribalda wrote:
-> On Fri, 29 Nov 2024 at 11:36, Hans Verkuil wrote:
-> > On 28/11/2024 23:33, Laurent Pinchart wrote:
-> > > On Thu, Nov 28, 2024 at 11:28:29PM +0100, Ricardo Ribalda wrote:
-> > >> On Thu, 28 Nov 2024 at 23:22, Laurent Pinchart wrote:
-> > >>>
-> > >>> Hi Ricardo,
-> > >>>
-> > >>> (CC'ing Hans Verkuil)
-> > >>>
-> > >>> Thank you for the patch.
-> > >>>
-> > >>> On Wed, Nov 27, 2024 at 12:14:50PM +0000, Ricardo Ribalda wrote:
-> > >>>> If a file handle is waiting for a response from an async control, avoid
-> > >>>> that other file handle operate with it.
-> > >>>>
-> > >>>> Without this patch, the first file handle will never get the event
-> > >>>> associated with that operation, which can lead to endless loops in
-> > >>>> applications. Eg:
-> > >>>> If an application A wants to change the zoom and to know when the
-> > >>>> operation has completed:
-> > >>>> it will open the video node, subscribe to the zoom event, change the
-> > >>>> control and wait for zoom to finish.
-> > >>>> If before the zoom operation finishes, another application B changes
-> > >>>> the zoom, the first app A will loop forever.
-> > >>>
-> > >>> Hans, the V4L2 specification isn't very clear on this. I see pros and
-> > >>> cons for both behaviours, with a preference for the current behaviour,
-> > >>> as with this patch the control will remain busy until the file handle is
-> > >>> closed if the device doesn't send the control event for any reason. What
-> > >>> do you think ?
-> > >>
-> > >> Just one small clarification. The same file handler can change the
-> > >> value of the async control as many times as it wants, even if the
-> > >> operation has not finished.
-> > >>
-> > >> It will be other file handles that will get -EBUSY if they try to use
-> > >> an async control with an unfinished operation started by another fh.
-> > >
-> > > Yes, I should have been more precised. If the device doesn't send the
-> > > control event, then all other file handles will be prevented from
-> > > setting the control until the file handle that set it first gets closed.
-> >
-> > I think I need a bit more background here:
-> >
-> > First of all, what is an asynchronous control in UVC? I think that means
-> > you can set it, but it takes time for that operation to finish, so you
-> > get an event later when the operation is done. So zoom and similar operations
-> > are examples of that.
-> >
-> > And only when the operation finishes will the control event be sent, correct?
+On 11/29/24 10:28, Daniel Wagner wrote:
+> nvme_keep_alive_work setups a keep alive command and uses
+> blk_execute_rq_nowait to send out the command in an asynchronously
+> manner. Eventually, nvme_keep_alive_end_io is called. If the status
+> argument is 0, a new keep alive is send out. When the status argument is
+> not 0, only an error is logged. The keep alive machinery does not
+> trigger the error recovery.
 > 
-> You are correct.  This diagrams from the spec is more or less clear:
-> https://ibb.co/MDGn7F3
+> The FC driver is relying on the keep alive machinery to trigger recovery
+> when an error is detected. Whenever an error happens during the creation
+> of the association the idea is that the operation is aborted and retried
+> later. Though there is a window where an error happens and
+> nvme_fc_create_assocation can't detect the error.
 > 
-> > While the operation is ongoing, if you query the control value, is that reporting
-> > the current position or the final position?
+>           1) nvme nvme10: NVME-FC{10}: create association : ...
+>           2) nvme nvme10: NVME-FC{10}: controller connectivity lost. Awaiting Reconnect
+>              nvme nvme10: queue_size 128 > ctrl maxcmd 32, reducing to maxcmd
+>           3) nvme nvme10: Could not set queue count (880)
+>              nvme nvme10: Failed to configure AEN (cfg 900)
+>           4) nvme nvme10: NVME-FC{10}: controller connect complete
+>           5) nvme nvme10: failed nvme_keep_alive_end_io error=4
 > 
-> I'd expect hardware will return either the current position, the start
-> position or the final position. I could not find anything in the spec
-> that points in one direction or the others.
-
-Figure 2-21 in UVC 1.5 indicates that the device should STALL the
-GET_CUR and SET_CUR requests if a state change is in progress.
-
-> And in the driver I believe that we might have a bug handling this
-> case (will send a patch if I can confirm it)
-> the zoom is at 0 and you set it 10
-> if you read the value 2 times before the camera reaches value 10:
-> - First value will come from the hardware and the response will be cached
-
-Only if the control doesn't have the auto-update flag set, so it will be
-device-dependent. As GET_CUR should stall that's not really relevant,
-except for the fact that devices may not stall the request.
-
-> - Second value will be the cached one
+> A connection attempt starts 1) and the ctrl is in state CONNECTING.
+> Shortly after the LLDD driver detects a connection lost event and calls
+> nvme_fc_ctrl_connectivity_loss 2). Because we are still in CONNECTING
+> state, this event is ignored.
 > 
-> now the camera  is at zoom 10
-> If you read the value, you will read the cached value
->
-> > E.g.: the zoom control is at value 0 and I set it to 10, then I poll the zoom control
-> > value: will that report the intermediate values until it reaches 10? And when it is
-> > at 10, the control event is sent?
-> >
-> > >>>> Cc: stable@vger.kernel.org
-> > >>>> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
-> > >>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > >>>> ---
-> > >>>>  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++++
-> > >>>>  1 file changed, 4 insertions(+)
-> > >>>>
-> > >>>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > >>>> index b6af4ff92cbd..3f8ae35cb3bc 100644
-> > >>>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > >>>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > >>>> @@ -1955,6 +1955,10 @@ int uvc_ctrl_set(struct uvc_fh *handle,
-> > >>>>       if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
-> > >>>>               return -EACCES;
-> > >>>>
-> > >>>> +     /* Other file handle is waiting a response from this async control. */
-> > >>>> +     if (ctrl->handle && ctrl->handle != handle)
-> > >>>> +             return -EBUSY;
-> > >>>> +
-> > >>>>       /* Clamp out of range values. */
-> > >>>>       switch (mapping->v4l2_type) {
-> > >>>>       case V4L2_CTRL_TYPE_INTEGER:
+> nvme_fc_create_association continues to run in parallel and tries to
+> communicate with the controller and those commands fail. Though these
+> errors are filtered out, e.g in 3) setting the I/O queues numbers fails
+> which leads to an early exit in nvme_fc_create_io_queues. Because the
+> number of IO queues is 0 at this point, there is nothing left in
+> nvme_fc_create_association which could detected the connection drop.
+> Thus the ctrl enters LIVE state 4).
+> 
+> The keep alive timer fires and a keep alive command is send off but
+> gets rejected by nvme_fc_queue_rq and the rq status is set to
+> NVME_SC_HOST_PATH_ERROR. The nvme status is then mapped to a block layer
+> status BLK_STS_TRANSPORT/4 in nvme_end_req. Eventually,
+> nvme_keep_alive_end_io sees the status != 0 and just logs an error 5).
+> 
+> We should obviously detect the problem in 3) and abort there (will
+> address this later), but that still leaves a race window open. There is
+> a race window open in nvme_fc_create_association after starting the IO
+> queues and setting the ctrl state to LIVE.
+> 
+> Thus trigger a reset from the keep alive handler when an error is
+> reported.
+> 
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   drivers/nvme/host/core.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index bfd71511c85f8b1a9508c6ea062475ff51bf27fe..2a07c2c540b26c8cbe886711abaf6f0afbe6c4df 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -1320,6 +1320,12 @@ static enum rq_end_io_ret nvme_keep_alive_end_io(struct request *rq,
+>   		dev_err(ctrl->device,
+>   			"failed nvme_keep_alive_end_io error=%d\n",
+>   				status);
+> +		/*
+> +		 * The driver reports that we lost the connection,
+> +		 * trigger a recovery.
+> +		 */
+> +		if (status == BLK_STS_TRANSPORT)
+> +			nvme_reset_ctrl(ctrl);
+>   		return RQ_END_IO_NONE;
+>   	}
+>   
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
+Cheers,
+
+Hannes
 -- 
-Regards,
-
-Laurent Pinchart
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
