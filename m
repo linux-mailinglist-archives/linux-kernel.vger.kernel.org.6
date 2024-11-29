@@ -1,162 +1,231 @@
-Return-Path: <linux-kernel+bounces-425745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287D79DEA14
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:59:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1D19DEAF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:28:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59529163CEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:28:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D0419CD1B;
+	Fri, 29 Nov 2024 16:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="n7H/4bF/"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDFD028160D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:59:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298801A08D7;
-	Fri, 29 Nov 2024 15:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJFi1XSf"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC1519F131;
-	Fri, 29 Nov 2024 15:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B86945BEC;
+	Fri, 29 Nov 2024 16:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732895947; cv=none; b=c8V9GD8F0UBBdipAHzrwPOALuFn4fliMaI4t2lmGDgMQ+WCcEykfWoURkMNEP7JvsYb4Rdl9BlAq9N8iONSFIsel1GWd9m0x41QGdeuHW4g4T3zoM1oUz5mBbRhNVYS6M2LTMsxYACRPfw2B5ifLcVszDr0qj5aZhQr4M24ljU8=
+	t=1732897710; cv=none; b=GzbJOxGbps5bKySt1O2xoGEpsWCZjoUgww8fjEUcqAkJAaMxFGlA/H1XByptJgTMA7dJs7EHsVa5Ec0Vownf1ZIugWaB5thZQylBOmIdpLJ85X+a+FhC0hM3zC89LZ6dMnNetzapCy8iQWI70OaPDIMfjJ93OGFOk0F8gKyEjFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732895947; c=relaxed/simple;
-	bh=rqkHtD6EwjRJGXY2csY/dazWRa4QmRqhNcTNC7LvMmY=;
+	s=arc-20240116; t=1732897710; c=relaxed/simple;
+	bh=70VAqg/TQpJWDE7ktXbJySBPdaEm0FcPRiLHVS6/0Qg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aBnX9exF7KWpsZ277zPEE5/SHQAog1rSJKgYYsRHBPt8pky+tapxdtjBHr1x+GQGQsc1817NiDYTApjzPW4gvdPuZzJaXGbSCUYWnAFURgJYE10tVWqy/HxGbjx5uNT2alluP+Du8UcL+2ga/OTn2pob/HR041vdwKvYhI3+c+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJFi1XSf; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5f1e573e65dso653603eaf.0;
-        Fri, 29 Nov 2024 07:59:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732895945; x=1733500745; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tzoMrkJxZaCg7wBkCMRChgW/WckCWeGemOGQ3ada7SQ=;
-        b=aJFi1XSfRSm5GVUcXDt/ts7X7WXxRA1kZjBfOGZqegl2TYrt7KED/gImmNrN6upQ39
-         gfmcKPo0NDRPenjMJmniCg9cvHNXAERAyAdn1q96YpNCxBmG/wNJIrdXJ1vrOWw6AbjD
-         vzfk2GBvIBM+XNUWMey9U2Qbmc+VlQxGPjokjmklOmFyPX9WZXDcakuJLusSvrGcREM0
-         sd38VAtm+oRniPL31njXMEoGyKEU8vafy/4JHCknGx2mR59fYOYDxd79ogTNGYETk2pV
-         ZsS9uTtKicCfPwMJDcacAVnAxXOKpRUlUnKlk1rdk7G30/ATfp7EdEOklEknINfextlC
-         sWiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732895945; x=1733500745;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tzoMrkJxZaCg7wBkCMRChgW/WckCWeGemOGQ3ada7SQ=;
-        b=us/0RWdSvhcSTHO4FzgOhUfrgBHANb1nukTOKGoWFgOe3i3Q9WBKEyaGbJTZSOAlLw
-         lWqZrDHYg7xBy69xDIoocfX78NRORdfs4SsJbp8xLEodqcdRwyfFFBbYR+djv155k/uN
-         JmW8nwQAiW1HfbKfmdNUkQDI2dZjWJQWtrYsgj6ODnHnkM6nbwP1YxaJeEAFQI7AyjH/
-         230u2qIe+PmtyLFZajX3zu8gTlWcDpXmHm6rN11MsNw/+JeOBVLy+FW/XBulDBaCvSeI
-         MzmrXh5a+BNNA1hHXXAVAVW6in7gkC9X4JokQTrPLpoz/ks8fs3YGAsrQ1h2uEd63Q5B
-         upxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPnf2PY5zJMEA5CtdcHkWcMaSSk8tKigqDwUS8dNVHR/jxYYkYHpWSPfYxH+qQqQqofHGYvkuO/+LsgIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV9qgwlNkrG19EAhZKv8oJFQnZn/HNb2Tt5x7uEb+3lAWZodpF
-	+vUhrBgMkh2bOD5kjZ3HTlS8wK6PAflChE/4QcA+0d3wginFqSIWGYtMEw==
-X-Gm-Gg: ASbGnct0lKTW171ibb0tzSmjZg+//czpdPdFnN193vsD3vVwpoyPSm3KKcOt7hwDKFJ
-	XbFkPJ9YcH/xCcspwJAY16zhVZUMGBHW2GBYxR+v3M8jFMFqD5d6SuTKu/iPCMUFvfz2EscBTWi
-	RGX6UTi1pvIrQFqBLELXontrZw3h/CGx+/rmh2rPRMPJhSRZzOYcLiAvzXo983UDHrVt604LF6i
-	LzdSgtwazgI/iCCSPPp60sZMujboJPOCXDxb0rJ+d+sDjt3ideKTJPc3xY05x2kp2YH5EfEA1N6
-X-Google-Smtp-Source: AGHT+IHElCuQ7DTZuarRABOdNaEJRHlZAVzd59Mo0eflwDJQsa9mJo3giajm3aMDABOGIB6aqwEriA==
-X-Received: by 2002:a05:6830:6d16:b0:71a:21c9:cd62 with SMTP id 46e09a7af769-71d65cabfbcmr12593507a34.17.1732895944806;
-        Fri, 29 Nov 2024 07:59:04 -0800 (PST)
-Received: from pipaware.tx.rr.com ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71d725f2251sm794385a34.68.2024.11.29.07.59.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 07:59:04 -0800 (PST)
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-To: corbet@lwn.net,
-	avadhut.naik@amd.com,
-	bilbao@vt.edu
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-Subject: [PATCH 7/7] docs/sp_SP: Move development-process to top of index
-Date: Fri, 29 Nov 2024 09:58:47 -0600
-Message-ID: <20241129155851.1023884-8-carlos.bilbao.osdev@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241129155851.1023884-1-carlos.bilbao.osdev@gmail.com>
-References: <20241129155851.1023884-1-carlos.bilbao.osdev@gmail.com>
+	 MIME-Version:Content-Type; b=a43uMvjFjt+77QgHcBaOdFQD6g8fbejWV20A8fJD8VFwPHiT8zbu4XqTqoZQx6R1BeHN7826yni2JCQg61jMlbDVPynmodUlg0eBglkPrakb0dSrLyoOFmHdU6WUwQR58YPzvk+eWPZNnlVKZmZWcRAbfTJKNx7o5+WRoi9hHjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=n7H/4bF/; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 7508729bf5dc54a4; Fri, 29 Nov 2024 17:28:25 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id AEE1EA47B8B;
+	Fri, 29 Nov 2024 17:28:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1732897705;
+	bh=70VAqg/TQpJWDE7ktXbJySBPdaEm0FcPRiLHVS6/0Qg=;
+	h=From:Subject:Date;
+	b=n7H/4bF/KpSAS8A7lDXbh/Z9QenT9BYexxAzDsH4X25avSJLAiTJxIt7NCSiIgTgK
+	 gp77dfDRcxrMmve7slXtGSxW/fiJahZyPocChSqhT50bLQTA2070PfQNU/EGwHRDyf
+	 11xJ+jRecbASE6OAaUUF39aUx+w1wLa8ffnHyfvqKQJkiYXEBaKOGblXXUdNDZpyTQ
+	 WFTNNZxIh2l5VOvkW2czfHGiUe7Ez57ymIaanhWjiDZpnESB++XvefftJsfmtFG/ho
+	 yTReavoW7LGrpp2VQ5W7lFD9kijnzw4g4L3mq9/9d7yMrlUju589wGEiZwh6ffqOpb
+	 rqaqZLKj6SDiA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>
+Subject:
+ [RFC][PATCH v021 3/9] PM: EM: Move perf rebuilding function from schedutil to
+ EM
+Date: Fri, 29 Nov 2024 16:59:06 +0100
+Message-ID: <2229205.irdbgypaU6@rjwysocki.net>
+In-Reply-To: <5861970.DvuYhMxLoT@rjwysocki.net>
+References: <5861970.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgdekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
 
-All documents in development-process are now translated. Reorder
-development-process to the top of the index for translated docs,
-matching the layout in the main Documentation index.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Co-developed-by: Avadhut Naik <avadhut.naik@amd.com>
-Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+The sugov_eas_rebuild_sd() function defined in the schedutil cpufreq
+governor implements generic functionality that may be useful in other
+places.  In particular, going forward it will be used in the intel_pstate
+driver.
+
+For this reason, move it from schedutil to the energy model code and
+rename it to em_rebuild_perf_domains().
+
+This also helps to get rid of some #ifdeffery in schedutil which is a
+plus.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- .../sp_SP/process/development-process.rst         | 15 +++++++--------
- .../translations/sp_SP/process/index.rst          |  2 +-
- 2 files changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/translations/sp_SP/process/development-process.rst b/Documentation/translations/sp_SP/process/development-process.rst
-index 5430c4cc001b..261bcdea3ffc 100644
---- a/Documentation/translations/sp_SP/process/development-process.rst
-+++ b/Documentation/translations/sp_SP/process/development-process.rst
-@@ -1,7 +1,7 @@
- .. include:: ../disclaimer-sp.rst
+v0.1 -> v0.2:
+     * Update the comment regarding :register_em() in cpufreq.
+     * Changelog edits.
+
+---
+ drivers/cpufreq/cpufreq.c        |    2 +-
+ include/linux/energy_model.h     |    2 ++
+ kernel/power/energy_model.c      |   17 +++++++++++++++++
+ kernel/sched/cpufreq_schedutil.c |   33 ++++++---------------------------
+ 4 files changed, 26 insertions(+), 28 deletions(-)
+
+Index: linux-pm/kernel/power/energy_model.c
+===================================================================
+--- linux-pm.orig/kernel/power/energy_model.c
++++ linux-pm/kernel/power/energy_model.c
+@@ -908,3 +908,20 @@ int em_update_performance_limits(struct
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(em_update_performance_limits);
++
++static void rebuild_sd_workfn(struct work_struct *work)
++{
++	rebuild_sched_domains_energy();
++}
++
++static DECLARE_WORK(rebuild_sd_work, rebuild_sd_workfn);
++
++void em_rebuild_perf_domains(void)
++{
++	/*
++	 * When called from the cpufreq_register_driver() path, the
++	 * cpu_hotplug_lock is already held, so use a work item to
++	 * avoid nested locking in rebuild_sched_domains().
++	 */
++	schedule_work(&rebuild_sd_work);
++}
+Index: linux-pm/kernel/sched/cpufreq_schedutil.c
+===================================================================
+--- linux-pm.orig/kernel/sched/cpufreq_schedutil.c
++++ linux-pm/kernel/sched/cpufreq_schedutil.c
+@@ -604,31 +604,6 @@ static const struct kobj_type sugov_tuna
  
- :Original: Documentation/process/development-process.rst
--:Translator: Avadhut Naik <avadhut.naik@amd.com>
-+:Translator: Carlos Bilbao <carlos.bilbao.osdev@gmail.com> and Avadhut Naik <avadhut.naik@amd.com>
+ /********************** cpufreq governor interface *********************/
  
- .. _sp_development_process_main:
+-#ifdef CONFIG_ENERGY_MODEL
+-static void rebuild_sd_workfn(struct work_struct *work)
+-{
+-	rebuild_sched_domains_energy();
+-}
+-
+-static DECLARE_WORK(rebuild_sd_work, rebuild_sd_workfn);
+-
+-/*
+- * EAS shouldn't be attempted without sugov, so rebuild the sched_domains
+- * on governor changes to make sure the scheduler knows about it.
+- */
+-static void sugov_eas_rebuild_sd(void)
+-{
+-	/*
+-	 * When called from the cpufreq_register_driver() path, the
+-	 * cpu_hotplug_lock is already held, so use a work item to
+-	 * avoid nested locking in rebuild_sched_domains().
+-	 */
+-	schedule_work(&rebuild_sd_work);
+-}
+-#else
+-static inline void sugov_eas_rebuild_sd(void) { };
+-#endif
+-
+ struct cpufreq_governor schedutil_gov;
  
-@@ -9,14 +9,13 @@ Guía del proceso de desarrollo del kernel
- =========================================
+ static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
+@@ -784,7 +759,11 @@ static int sugov_init(struct cpufreq_pol
+ 		goto fail;
  
- El propósito de este documento es ayudar a los desarrolladores (y sus
--gerentes) a trabajar con la comunidad de desarrollo con un mínimo de
-+jefes) a trabajar con la comunidad de desarrollo con el mínimo de
- frustración. Es un intento de documentar cómo funciona esta comunidad
--de una manera accesible para aquellos que no están familiarizados
--íntimamente con el desarrollo del kernel de Linux (o, de hecho, el
--desarrollo de software libre en general). Si bien hay algo de material
--técnico aquí, este es en gran medida una discusión orientada al proceso
--que no requiere un conocimiento profundo de la programación del kernel
--para entenderla.
-+de una manera accesible, para aquellos que no están familiarizados
-+íntimamente con el desarrollo del kernel Linux (o, de hecho, el desarrollo
-+de software libre en general). Si bien hay algo de material técnico aquí,
-+esto es en gran medida una discusión orientada al proceso que no requiere
-+un conocimiento profundo de la programación del kernel para entenderla.
+ out:
+-	sugov_eas_rebuild_sd();
++	/*
++	 * EAS shouldn't be attempted without sugov, so rebuild the sched_domains
++	 * on governor changes to make sure the scheduler knows about them.
++	 */
++	em_rebuild_perf_domains();
+ 	mutex_unlock(&global_tunables_lock);
+ 	return 0;
  
- .. toctree::
-    :caption: Contenido
-diff --git a/Documentation/translations/sp_SP/process/index.rst b/Documentation/translations/sp_SP/process/index.rst
-index adb2cc845928..cff972fe0084 100644
---- a/Documentation/translations/sp_SP/process/index.rst
-+++ b/Documentation/translations/sp_SP/process/index.rst
-@@ -10,6 +10,7 @@
- .. toctree::
-    :maxdepth: 1
+@@ -826,7 +805,7 @@ static void sugov_exit(struct cpufreq_po
+ 	sugov_policy_free(sg_policy);
+ 	cpufreq_disable_fast_switch(policy);
  
-+   development-process
-    submitting-patches
-    kernel-docs
-    coding-style
-@@ -28,5 +29,4 @@
-    management-style
-    submit-checklist
-    howto
--   development-process
-    maintainer-kvm-x86
--- 
-2.43.0
+-	sugov_eas_rebuild_sd();
++	em_rebuild_perf_domains();
+ }
+ 
+ static int sugov_start(struct cpufreq_policy *policy)
+Index: linux-pm/include/linux/energy_model.h
+===================================================================
+--- linux-pm.orig/include/linux/energy_model.h
++++ linux-pm/include/linux/energy_model.h
+@@ -179,6 +179,7 @@ int em_dev_compute_costs(struct device *
+ int em_dev_update_chip_binning(struct device *dev);
+ int em_update_performance_limits(struct em_perf_domain *pd,
+ 		unsigned long freq_min_khz, unsigned long freq_max_khz);
++void em_rebuild_perf_domains(void);
+ 
+ /**
+  * em_pd_get_efficient_state() - Get an efficient performance state from the EM
+@@ -404,6 +405,7 @@ int em_update_performance_limits(struct
+ {
+ 	return -EINVAL;
+ }
++static inline void em_rebuild_perf_domains(void) {}
+ #endif
+ 
+ #endif
+Index: linux-pm/drivers/cpufreq/cpufreq.c
+===================================================================
+--- linux-pm.orig/drivers/cpufreq/cpufreq.c
++++ linux-pm/drivers/cpufreq/cpufreq.c
+@@ -1538,7 +1538,7 @@ static int cpufreq_online(unsigned int c
+ 
+ 		/*
+ 		 * Register with the energy model before
+-		 * sugov_eas_rebuild_sd() is called, which will result
++		 * em_rebuild_perf_domains() is called, which will result
+ 		 * in rebuilding of the sched domains, which should only be done
+ 		 * once the energy model is properly initialized for the policy
+ 		 * first.
+
+
 
 
