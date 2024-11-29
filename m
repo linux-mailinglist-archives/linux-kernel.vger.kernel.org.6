@@ -1,114 +1,99 @@
-Return-Path: <linux-kernel+bounces-425808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B939DEB41
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:44:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C22E49DEB44
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:47:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14AA3162929
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 812131628E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378BD1547FF;
-	Fri, 29 Nov 2024 16:44:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA121537AA;
-	Fri, 29 Nov 2024 16:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3A9189BAD;
+	Fri, 29 Nov 2024 16:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nM6AOiJs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E25915AF6;
+	Fri, 29 Nov 2024 16:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732898688; cv=none; b=ko4Id7vIl4O//Pk3zmx2/EQY666AkovfypmnpxroIStKASxCMNBsDIPETuOe0AKmiZf43aQQ/XQewKufdD5D4CvZIgKNRSRQB/I5dctBegV+2CSYdBbrV8F1a3VC3KubloGCTMVn0flbuyL0VK0C8ZlfVBSvdXWgRCawUiwdUGM=
+	t=1732898863; cv=none; b=U2a1yiAfHlKvy8PYzy4C5mFclJxdpUrUUlVAhecQH4SGqoO4NGSAw5SR0/sS0JFoENF0OKemxpR7bvSKcFOd5fVxyv8sfUnWTpDLHwJyamOoIVb4M55xp/kyXzkgaVDPOzoBFa0nFFbTvy6abVZADDz0L6XA/JrbSDrWghxp4/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732898688; c=relaxed/simple;
-	bh=LwiGdIJ+UE/ViD9rxTYJPRrt2Uwfhvvj4O0hqbwaEHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SzMFe5JHeNP+Y734+Yhj20Nrq4eTCOfRwLgfdAuBPH5iV16NXaa36+gqDxVYbkdTPzuJWi3XmUyH3A7Vq8avZFH0BBoZgTug+XrtSqq8OESDPPKzrqNCPiWA1F7YlDACSNw2qvtix1NP3VE/sbCRPkjlrkBhqc8fCmpiIsnhuNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3316312FC;
-	Fri, 29 Nov 2024 08:45:15 -0800 (PST)
-Received: from [10.57.90.216] (unknown [10.57.90.216])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E72903F5A1;
-	Fri, 29 Nov 2024 08:44:43 -0800 (PST)
-Message-ID: <4dd1caa7-4b95-4e06-a5ac-e2d33ce88d04@arm.com>
-Date: Fri, 29 Nov 2024 16:44:36 +0000
+	s=arc-20240116; t=1732898863; c=relaxed/simple;
+	bh=1VzCoTLC0Pz31/d/Qw7tNE40swBkiAq4aNmyuonnwVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oAyP1EQDM58K1ZcgNE1OdXqVJ5ncANHakgaSZPeEF9x9b6sYok7wbGOlHXWMj6GJ1YD1SD3PkN0DlqEd+Ch+GdqDSoOHI8kkj/eC7Kfv+joeYC7AYjBmSgbbGrZAjRREhK+1YxDElGox7SvrriHovTlQMPO1vOyGHr7jdMJCMjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nM6AOiJs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53CDDC4CECF;
+	Fri, 29 Nov 2024 16:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732898861;
+	bh=1VzCoTLC0Pz31/d/Qw7tNE40swBkiAq4aNmyuonnwVM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nM6AOiJsayv4Oir4nGjvpAvOuvEM+rwwVtPG+/lxCQHvJBLQpyVOgYKi9aiw895cA
+	 E82jNg6Bl5crwerMUhRLqPS066a5375QuDyBT383L3iYSKAAeOXce4fcZawXhpyH6O
+	 LTh0W5OopTVWblzSzEH7BOlNpBB/Poc/8oYWxF5ImPktYbvs+d2ZD80G6brbEFfKVT
+	 l/rUuxc32pCeNn3zbKbnibLcF1kThgXwe2mh/FCHZ4RpR8HkAq4GFAvNkpVSo76Iz1
+	 mEFeggTT8UAAHGfNdTm1IqTfF++RshMeVI8ZPSp4J+QN9ULw0oRsH/PV8/TK1auwfF
+	 VxKKfNdEaiBFA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] kprobes: tracing/probes: Fix and cleanup to use guard
+Date: Sat, 30 Nov 2024 01:47:36 +0900
+Message-ID: <173289885627.73724.13632317993038475335.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: dma_request_chan_by_mask() defer probing
- unconditionally
-To: Enric Balletbo i Serra <eballetb@redhat.com>,
- Vinod Koul <vkoul@kernel.org>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, u-kumar1@ti.com, vigneshr@ti.com,
- nm@ti.com
-References: <20241127-defer-dma-request-chan-v1-1-203db7baf470@redhat.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241127-defer-dma-request-chan-v1-1-203db7baf470@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2024-11-27 8:23 am, Enric Balletbo i Serra wrote:
-> Having no DMA devices registered is not a guarantee that the device
-> doesn't exist, it could be that is not registered yet, so return
-> EPROBE_DEFER unconditionally so the caller can wait for the required
-> DMA device registered.
-> 
-> Signed-off-by: Enric Balletbo i Serra <eballetb@redhat.com>
-> ---
-> This patch fixes the following error on TI AM69-SK
-> 
-> [    2.854501] cadence-qspi 47040000.spi: error -ENODEV: No Rx DMA available
-> 
-> The DMA device is probed after cadence-qspi driver, so deferring it
-> solves the problem.
+Hi,
 
-Conversely, though, it does carry some risk that if there really is no 
-DMA device/driver, other callers (e.g. spi-ti-qspi) may now get stuck 
-deferring forever where the -ENODEV would have let them proceed with a 
-fallback to non-DMA operation. driver_deferred_probe_check_state() is 
-typically a good tool for these situations, but I guess it's a bit 
-tricky in a context where we don't actually have the dependent device to 
-hand :/
+This is the v2 of the series to fix eprobes and cleanup kprobes and probe
+events in ftrace to use guard() and scoped_guard() instead of pairs of mutex
+locks.
+In this version I fixed mixing of gurad and goto in the same function by
+using scoped_guard.
+
+Some locks are still not using guard(). We need some more work to complete.
 
 Thanks,
-Robin.
 
-> ---
->   drivers/dma/dmaengine.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-> index c1357d7f3dc6ca7899c4d68a039567e73b0f089d..57f07b477a5d9ad8f2656584b8c0d6dffb2ab469 100644
-> --- a/drivers/dma/dmaengine.c
-> +++ b/drivers/dma/dmaengine.c
-> @@ -889,10 +889,10 @@ struct dma_chan *dma_request_chan_by_mask(const dma_cap_mask_t *mask)
->   	chan = __dma_request_channel(mask, NULL, NULL, NULL);
->   	if (!chan) {
->   		mutex_lock(&dma_list_mutex);
-> -		if (list_empty(&dma_device_list))
-> -			chan = ERR_PTR(-EPROBE_DEFER);
-> -		else
-> -			chan = ERR_PTR(-ENODEV);
-> +		/* If the required DMA device is not registered yet,
-> +		 * return EPROBE_DEFER
-> +		 */
-> +		chan = ERR_PTR(-EPROBE_DEFER);
->   		mutex_unlock(&dma_list_mutex);
->   	}
->   
-> 
-> ---
-> base-commit: 43fb83c17ba2d63dfb798f0be7453ed55ca3f9c2
-> change-id: 20241127-defer-dma-request-chan-4f26c62c8691
-> 
-> Best regards,
+---
 
+Masami Hiramatsu (Google) (6):
+      tracing/eprobe: Fix to release eprobe when failed to add dyn_event
+      kprobes: Adopt guard() and scoped_guard()
+      tracing/kprobe: Adopt guard() and scoped_guard()
+      tracing/uprobe: Adopt guard() and scoped_guard()
+      tracing/eprobe: Adopt guard() and scoped_guard()
+      tracing/dynevent: Adopt guard() and scoped_guard()
+
+
+ kernel/kprobes.c              |  205 ++++++++++++++++++-----------------------
+ kernel/trace/trace_dynevent.c |   35 +++----
+ kernel/trace/trace_eprobe.c   |   31 +++---
+ kernel/trace/trace_kprobe.c   |   18 +---
+ kernel/trace/trace_uprobe.c   |   15 +--
+ 5 files changed, 133 insertions(+), 171 deletions(-)
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
