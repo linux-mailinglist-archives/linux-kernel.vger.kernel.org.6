@@ -1,142 +1,297 @@
-Return-Path: <linux-kernel+bounces-425949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F089DECDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 22:19:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83C30163798
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:19:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43A21A070E;
-	Fri, 29 Nov 2024 21:19:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B0D9DECE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 22:22:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA740155300
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 21:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1843BB21074
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:22:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EAA1A0BFA;
+	Fri, 29 Nov 2024 21:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YdnVg9nC"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B102155391
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 21:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732915159; cv=none; b=bAQuajDuwxM8RfpKQxUZgnNmdyhFoLLNIA7gasCUizDg+HTzdLnHJSIglXmKdFg3nmm/al3VePmW7VgZLOuSMcmqyNdqpxz4bY9MkAb/c1DHpotmnMslXyLvk31e27bF9agzonQsI27XX4P2gpDPHiOvSh+dVK7N6lBcA7I8j2c=
+	t=1732915370; cv=none; b=omlDRr9ClArN/DGJwdPVAL/fi0CildDnLz2up+1vxCPULRFvpNqOPZzjQ3D5+pkeOtkTirLytVL1IvkiGbCZfE1vG6guoNb6bfMcoSJyP3FOhFu/nte715ZMYhUEn5wUuc441oklIfKBm523ae4bYgEPWbxCBBX2RihtoX9JpEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732915159; c=relaxed/simple;
-	bh=S9ZDFfMfAmMlUPX4Ibwgq27YQHuxi9tVo+ygMzYiatk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Wclo6SKhncZIgJbWItIRfgIFzyenJc1oFOqOMxhWRNmkiJBQTK7Cu3yhdURKVDhAZdRvVJzO18BBxXHUCMlkZx4d2Dbj1+FwFze2MA7RcfYokQz6i7m185mGvKBAcowx6Zv0F+wCFoZ88P2n0wba5agO65diy0K8LiQgaJcoSe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1tH8Nv-00058G-Qc; Fri, 29 Nov 2024 22:18:43 +0100
-Message-ID: <9ca967aea19d6c28327f3a9bb77e23f6245603e9.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/5] PCI: stm32: Add PCIe host support for STM32MP25
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Bjorn Helgaas <helgaas@kernel.org>, Christian Bruel
-	 <christian.bruel@foss.st.com>, Rob Herring <robh+dt@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
- robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
- conor+dt@kernel.org,  mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,  cassel@kernel.org,
- quic_schintav@quicinc.com, fabrice.gasnier@foss.st.com, 
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Date: Fri, 29 Nov 2024 22:18:40 +0100
-In-Reply-To: <20241129205822.GA2772018@bhelgaas>
-References: <20241129205822.GA2772018@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1732915370; c=relaxed/simple;
+	bh=80ZvND0vrv1LGQrThwq1XamSj43hNvKpegvZ/7CMUZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BOxuJsk5aD9svlz2ZQnitTqMt2cFE6kW+2hlhXSvWjPXY9W3LgMY/BYO26D37w68JuK1A/KUbXUqI6Ui2NyBSJVT+JOr/6+Xq6WMx+Gim1j8DmpQQn/eWX2YWbcROqZyZZQLzCwHOnqWf0teY/Hw1meZIFHRd3dC35get4hKl1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YdnVg9nC; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21285c1b196so22343145ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:22:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732915368; x=1733520168; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=H4e3sx4dJc7nOwA8uivkLR2rCCckmz0cOxuXR8yppGM=;
+        b=YdnVg9nC+vFampjvO9EK3/7uRhYOkSkeZgvMe1VUknOEIzXfIDIhyN7FRIrvOjCoN9
+         Taxe0dvxpG9P9JCb/UnTaiikgzrLv8zNpRtmakVoryvVJ1cA6sTqB1k4AMejLrGoi4RF
+         dYaFuSFRuTpCBLBRmkRzS2Tx/+0dgpIOOqJmw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732915368; x=1733520168;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H4e3sx4dJc7nOwA8uivkLR2rCCckmz0cOxuXR8yppGM=;
+        b=bfVigk4FYke/rDJoxvezmApK2JT5tXTH+9/xiUqD+YWb7laU4zS2T7GgJCD+CZIG3w
+         q62k/BE1YjomHd8mtHyA6ZGb4INeuru/5qfOj8nEW4a8nfUTFZQfVDfOHmsr0isNqHL2
+         T30K3yRAdWcqoKBUvPDq3BpYIKSBmhB/YjnLWUuNkRwH/z7Wrw+J9uyfbOZzAr2PJUwh
+         DsJFA3Q9uWVX0z9kI3FVZgEDGbvSK5BeBM6hOxZUsWMvEgCDqz6jC8izmH5+EuiV16mW
+         oEAypwHEbHiTHPHnZjZySJ5NdZGSiWUIenZF3a75NtAKxon4HNJty9VcClHz4s+BuSK9
+         l5SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDnK+ji8AoFSWEXjcCF6G8Pj0hGdMO/oSB6DL/V9rStRPeClQbh89+TZMZr/od9CvpjKPRdy8+ah2JA3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKtIGFbztKf2vEqajtSoI1xO10twVPJ/XPqpJe4cJS5Bh/RKQ6
+	3ayO2wsbKzl3xMQ026OXArAh8DqauuFOGyTgyg/qDfi+Jcnk9Oki1db5PjLhubnV8xiD89kghv4
+	=
+X-Gm-Gg: ASbGncuA2l9SDYgdUdWqanAJD9KUK4Aj6koLEPPpRa/zjrHN4s3yWsO3h6T7ueXmkSG
+	6ee2L5NRfT+XIIHdM8aVGy9PLxGjWdpicUzwNsF3jv9HId1f4BckJE6kN4KyjMCt2CW7KYMiKHs
+	2yZcc4gWGYb3k8OkvHyC+qMaZOd/4lJ4hA08jx9sYrbvV8tyZl1keN+jX0GwdJS20ZSIVYXBgQK
+	IFE1HLgtwYps7z1gspJeuRHonhBdUiidukWYMV6+tsnFxl3dUMMz9ooa0CynU6FHsVNGm08F5rS
+	jezLTQbiURcR9Lu0
+X-Google-Smtp-Source: AGHT+IHIBQNfXYpytKjuepM4SU4izCdFcLzI84U1JcFifNgcZurYLhIbm+xY/XzCP2wiw5IbdvB8rg==
+X-Received: by 2002:a17:903:230c:b0:215:5234:156f with SMTP id d9443c01a7336-215523417e2mr27649065ad.55.1732915368264;
+        Fri, 29 Nov 2024 13:22:48 -0800 (PST)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com. [209.85.210.181])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215548a813bsm3565745ad.85.2024.11.29.13.22.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 13:22:46 -0800 (PST)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7252fba4de1so2064671b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:22:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUseUqPUuxhTN8+UqcqEM5MbjlLLTGBjntI7cw/gr1ExgyhXDPbs2AN1Vgp7HM4BWxi9NDZmPjK9icUcWA=@vger.kernel.org
+X-Received: by 2002:a17:90b:1d86:b0:2ee:7c02:8f08 with SMTP id
+ 98e67ed59e1d1-2ee7c029c75mr874584a91.37.1732915365753; Fri, 29 Nov 2024
+ 13:22:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
+ <20241127-uvc-fix-async-v2-1-510aab9570dd@chromium.org> <20241128221649.GE25731@pendragon.ideasonboard.com>
+In-Reply-To: <20241128221649.GE25731@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 29 Nov 2024 22:22:33 +0100
+X-Gmail-Original-Message-ID: <CANiDSCv3xtV-AN1P_d+gPog8OJ9gBD9iD_AWi78s8oNJKzRuBg@mail.gmail.com>
+Message-ID: <CANiDSCv3xtV-AN1P_d+gPog8OJ9gBD9iD_AWi78s8oNJKzRuBg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] media: uvcvideo: Remove dangling pointers
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, 
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Am Freitag, dem 29.11.2024 um 14:58 -0600 schrieb Bjorn Helgaas:
-> [+to Rob, DMA mask question]
->=20
-> On Tue, Nov 26, 2024 at 04:51:16PM +0100, Christian Bruel wrote:
-> > Add driver for the STM32MP25 SoC PCIe Gen2 controller based on the
-> > DesignWare PCIe core.
->=20
-> Can you include the numeric rate, not just "gen2", so we don't have to
-> search for it?
->=20
-> > +static int stm32_pcie_resume_noirq(struct device *dev)
+On Thu, 28 Nov 2024 at 23:17, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Ricardo,
+>
+> Thank you for the patch.
+>
+> On Wed, Nov 27, 2024 at 12:14:49PM +0000, Ricardo Ribalda wrote:
+> > When an async control is written, we copy a pointer to the file handle
+> > that started the operation. That pointer will be used when the device is
+> > done. Which could be anytime in the future.
+> >
+> > If the user closes that file descriptor, its structure will be freed,
+> > and there will be one dangling pointer per pending async control, that
+> > the driver will try to use.
+> >
+> > Clean all the dangling pointers during release().
+> >
+> > To avoid adding a performance penalty in the most common case (no async
+> > operation). A counter has been introduced with some logic to make sure
+>
+> s/). A/), a/
+>
+> > that it is properly handled.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/media/usb/uvc/uvc_ctrl.c | 38 ++++++++++++++++++++++++++++++++++++--
+> >  drivers/media/usb/uvc/uvc_v4l2.c |  2 ++
+> >  drivers/media/usb/uvc/uvcvideo.h |  8 +++++++-
+> >  3 files changed, 45 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > index 4fe26e82e3d1..b6af4ff92cbd 100644
+> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > @@ -1589,7 +1589,12 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
+>
+> How about adding
+>
+> static void uvc_ctrl_set_handle(struct uvc_control *ctrl, uvc_fh *handle)
+> {
+>         if (handle) {
+>                 if (!ctrl->handle)
+>                         handle->pending_async_ctrls++;
+>                 ctrl->handle = handle;
+>         } else if (ctrl->handle) {
+>                 ctrl->handle = NULL;
+>                 if (!WARN_ON(!handle->pending_async_ctrls))
+>                         handle->pending_async_ctrls--;
+
+handle is NULL here. Luckily smatch found it :)
+
+I am rewriting it a bit.
+
+
+
+>         }
+> }
+>
+> >       mutex_lock(&chain->ctrl_mutex);
+> >
+> >       handle = ctrl->handle;
+> > -     ctrl->handle = NULL;
+> > +     if (handle) {
+> > +             ctrl->handle = NULL;
+> > +             WARN_ON(!handle->pending_async_ctrls);
+> > +             if (handle->pending_async_ctrls)
+> > +                     handle->pending_async_ctrls--;
+> > +     }
+>
+> This would become
+>
+>         handle = ctrl->handle;
+>         uvc_ctrl_set_handle(ctrl, NULL);
+>
+> >
+> >       list_for_each_entry(mapping, &ctrl->info.mappings, list) {
+> >               s32 value = __uvc_ctrl_get_value(mapping, data);
+> > @@ -2046,8 +2051,11 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+> >       mapping->set(mapping, value,
+> >               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+> >
+> > -     if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+> > +     if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS) {
+> > +             if (!ctrl->handle)
+> > +                     handle->pending_async_ctrls++;
+> >               ctrl->handle = handle;
+> > +     }
+>
+> Here
+>
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+>                 uvc_ctrl_set_handle(ctrl, handle);
+>
+> >
+> >       ctrl->dirty = 1;
+> >       ctrl->modified = 1;
+> > @@ -2770,6 +2778,32 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
+> >       return 0;
+> >  }
+> >
+> > +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
 > > +{
-> > +	struct stm32_pcie *stm32_pcie =3D dev_get_drvdata(dev);
-> > +	struct dw_pcie *pci =3D stm32_pcie->pci;
-> > +	struct dw_pcie_rp *pp =3D &pci->pp;
-> > +	int ret;
+> > +     struct uvc_entity *entity;
 > > +
-> > +	/* init_state must be called first to force clk_req# gpio when no
-> > +	 * device is plugged.
-> > +	 */
->=20
-> Use drivers/pci/ conventional comment style:
->=20
->   /*
->    * text ...
->    */
->=20
-> > +static bool is_stm32_pcie_driver(struct device *dev)
-> > +{
-> > +	/* PCI bridge */
-> > +	dev =3D get_device(dev);
+> > +     guard(mutex)(&handle->chain->ctrl_mutex);
 > > +
-> > +	/* Platform driver */
-> > +	dev =3D get_device(dev->parent);
+> > +     if (!handle->pending_async_ctrls)
+> > +             return;
 > > +
-> > +	return (dev->driver =3D=3D &stm32_pcie_driver.driver);
+> > +     list_for_each_entry(entity, &handle->chain->dev->entities, list) {
+> > +             for (unsigned int i = 0; i < entity->ncontrols; ++i) {
+> > +                     struct uvc_control *ctrl = &entity->controls[i];
+> > +
+> > +                     if (ctrl->handle != handle)
+> > +                             continue;
+> > +
+> > +                     ctrl->handle = NULL;
+> > +                     if (WARN_ON(!handle->pending_async_ctrls))
+> > +                             continue;
+> > +                     handle->pending_async_ctrls--;
+>
+> And here
+>
+>                         uvc_ctrl_set_handle(ctrl, NULL);
+>
+> It seems less error-prone to centralize the logic. I'd add a
+> lockdep_assert() in uvc_ctrl_set_handle(), but there's no easy access to
+> the chain there.
+>
+> > +             }
+> > +     }
+> > +
+> > +     WARN_ON(handle->pending_async_ctrls);
 > > +}
 > > +
-> > +/*
-> > + * DMA masters can only access the first 4GB of memory space,
-> > + * so we setup the bus DMA limit accordingly.
-> > + */
-> > +static int stm32_dma_limit(struct pci_dev *pdev, void *data)
-> > +{
-> > +	dev_dbg(&pdev->dev, "disabling DMA DAC for device");
+> >  /*
+> >   * Cleanup device controls.
+> >   */
+> > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> > index 97c5407f6603..b425306a3b8c 100644
+> > --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> > @@ -652,6 +652,8 @@ static int uvc_v4l2_release(struct file *file)
+> >
+> >       uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
+> >
+> > +     uvc_ctrl_cleanup_fh(handle);
 > > +
-> > +	pdev->dev.bus_dma_limit =3D DMA_BIT_MASK(32);
->=20
-> I don't think this is the right way to do this.  Surely there's a way
-> to describe the DMA capability of the bridge once instead of iterating
-> over all the downstream devices?  This quirk can't work for hot-added
-> devices anyway.
->=20
-This should simply be a dma-ranges property in the PCIe host controller
-DT node, which should describe the DMA address range limits for
-transactions passing through the host.
+> >       /* Only free resources if this is a privileged handle. */
+> >       if (uvc_has_privileges(handle))
+> >               uvc_queue_release(&stream->queue);
+> > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> > index 07f9921d83f2..c68659b70221 100644
+> > --- a/drivers/media/usb/uvc/uvcvideo.h
+> > +++ b/drivers/media/usb/uvc/uvcvideo.h
+> > @@ -337,7 +337,10 @@ struct uvc_video_chain {
+> >       struct uvc_entity *processing;          /* Processing unit */
+> >       struct uvc_entity *selector;            /* Selector unit */
+> >
+> > -     struct mutex ctrl_mutex;                /* Protects ctrl.info */
+> > +     struct mutex ctrl_mutex;                /*
+> > +                                              * Protects ctrl.info and
+> > +                                              * uvc_fh.pending_async_ctrls
+> > +                                              */
+> >
+> >       struct v4l2_prio_state prio;            /* V4L2 priority state */
+> >       u32 caps;                               /* V4L2 chain-wide caps */
+> > @@ -612,6 +615,7 @@ struct uvc_fh {
+> >       struct uvc_video_chain *chain;
+> >       struct uvc_streaming *stream;
+> >       enum uvc_handle_state state;
+> > +     unsigned int pending_async_ctrls;
+> >  };
+> >
+> >  struct uvc_driver {
+> > @@ -797,6 +801,8 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
+> >  int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
+> >                     struct uvc_xu_control_query *xqry);
+> >
+> > +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle);
+> > +
+> >  /* Utility functions */
+> >  struct usb_host_endpoint *uvc_find_endpoint(struct usb_host_interface *alts,
+> >                                           u8 epaddr);
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
-Regards,
-Lucas
 
-> > +	return 0;
-> > +}
-> > +
-> > +static void quirk_stm32_dma_mask(struct pci_dev *pci)
-> > +{
-> > +	struct pci_dev *root_port;
-> > +
-> > +	root_port =3D pcie_find_root_port(pci);
-> > +
-> > +	if (root_port && is_stm32_pcie_driver(root_port->dev.parent))
-> > +		pci_walk_bus(pci->bus, stm32_dma_limit, NULL);
-> > +}
-> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_SYNOPSYS, 0x0550, quirk_stm32_dm=
-a_mask);
->=20
 
+-- 
+Ricardo Ribalda
 
