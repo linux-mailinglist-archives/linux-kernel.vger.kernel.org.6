@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-425739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052399DEA08
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:59:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5839DEA0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:59:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9F4163530
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:59:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEE19B21297
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2D814F9F9;
-	Fri, 29 Nov 2024 15:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A9D19CCF5;
+	Fri, 29 Nov 2024 15:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ml5FmBIS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akHnVTSW"
 Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF87145B1D;
-	Fri, 29 Nov 2024 15:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A4914A4CC;
+	Fri, 29 Nov 2024 15:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732895939; cv=none; b=d8JhyMmwqStxbsXA1gjt4/ig/EkqUCMj5vcpBMfrFvWHvtPK3cD070atm3G7oOpYZICmeq05Y2CY16/Vhby9csgGsuMQaTgyw23SydCrUelIRef6xPGrtcajaAuXUnJ41ZISOOx4Wc8FQXgQyibl9sVuKWiEiTvtTRuldv4Uie8=
+	t=1732895941; cv=none; b=Lg5A/6EuEEtk65bdERJEDbMkiIF5fMYG27E9SzSUubTa5WpqAtzXFOFIAbBpD7P7IEN88RTlHlkUMYiOXejcpp3IKUXR24XBji+qRMu4bUTY0Cp/efHUQBxZHKyupRM4ffblZcYZQNpRg+UzHzuDICyj52E+L8c6rGmmPFHWfmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732895939; c=relaxed/simple;
-	bh=38Iee4iP+AnwM/xmqSDKY0prqlEZMbMh88emZus4XxI=;
+	s=arc-20240116; t=1732895941; c=relaxed/simple;
+	bh=FN/kgNPUhuXmSgJzmYJC6RBkOk0pUs0foA9dAASqRcg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TQsETkiX1mhLXsOLocuBg0cQ6DIolD+U9pxDcXiX+/rLSU3Zt97qDyPTgv1OcM2OVTH+dtJP/LkaxkAj4y86qYgp8ajX5IJTRJQZlg1yxwa28IqARUy24qSsVj+QlBYwqAUMoRSnaCPSDyk31JH8uLCit3wEumHjX04x04tYW0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ml5FmBIS; arc=none smtp.client-ip=209.85.210.49
+	 MIME-Version:Content-Type; b=c3YAd6qvYo6VEmmYXrTmIq4vYX/AT8HEvgJ8uMc1ui3uMPvr9bM8IPnhd86IoWeUXvbgmuwBHnE6UzOVKCT1Cl+ngSUXv8U8Ft4oauHhACWhMv4guoViWis1BWR6bPNzEVvHRxyEUqinruxL9Jx3kbOuqx6Z9rcPTl+rlirxNMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=akHnVTSW; arc=none smtp.client-ip=209.85.210.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71d4c462ab1so771190a34.0;
-        Fri, 29 Nov 2024 07:58:57 -0800 (PST)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71d41932d32so778716a34.0;
+        Fri, 29 Nov 2024 07:58:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732895936; x=1733500736; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732895938; x=1733500738; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z6CigXbvq9WM0qV1TtLzdk3QQaXrv+YjmLAcWjiR0k4=;
-        b=Ml5FmBISwp8xa9NoW2JJuT6CcwhNnIOOCdk7c93E2VWQ8IwMPkfF+nbeswLax1y0LC
-         EqPJWTssCJuQocVXXCBD8MoOqxt6WXESGPJSZpAxvskcJiXhOI541eakH/f4UsdBZ4gp
-         PEsI8e1iYznyeglnUDHsY6IPuzCFTm5dMKls7vLlCi+awjNiYjEJilh5Ki3PIx08HON8
-         xLrszywVbhnIgQgbs9w6nn5Aj8Dwq/DxpFguE4ylgqH1uebPUJt9KSFvNsbl3H8B2qkD
-         CFrY/hfBZetWKG6bl3sE86ZybhBl+/CCPRI0Y4j1Z+czj73kMt9u0BjQhn+kiC6Y8IbV
-         gd4g==
+        bh=5wJIg/sxtDsSUo2Smlt0dgu9NBkc52JfvgQN+3tMwkU=;
+        b=akHnVTSWljKhXZZdq6lri1lti3F0S85yIbKKIjLna99Wjsevy+QZoFgbWWeme//HYw
+         hdsYeDjPTSvHMqNEcGTogNFgO8wNdfgp1r6w8FhDDYfDwCB81udzVUhOAMX2gjPZrOa3
+         guG3vCBoCWBq9zdeqSGzmy+aVePDpGejB31a1/Y/paVC3vvKDgIChDI5LskYa1JVa1AM
+         GOeTTQGjnDkVIbkMEdb45V0TE9dnWkVOiucRbAG5pYWBjQ2j1nG/icqBppe6PICnJfP+
+         hKgI86CebZ5a/hTHfVCWzn0/EpJll8GbSTth3lMWlIffxQ89BldzkbvZ6V5Gf+anWwF+
+         qbrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732895936; x=1733500736;
+        d=1e100.net; s=20230601; t=1732895938; x=1733500738;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Z6CigXbvq9WM0qV1TtLzdk3QQaXrv+YjmLAcWjiR0k4=;
-        b=VEhj/vPJiD6IMNkQVlaAwG4s6Cp9no7WkFyccioIwiPeuRKLk+2qnCY9HeNGliDzgN
-         HLUH646ZniljdpZR+9QY67qr5TalZOO5cRoRvn7oOAUq4BZWEXZa33Ch8xCLQuLqww4m
-         9cmU1oC4kbxAAt4tSsx3zNhEqxzLQYh7kslakPpr6sOZ7mCawfhbEvvwpaSb366RyV98
-         XgS/7gNR9i10LjENdRoGAIf06FyywlSoXCVr0jx/SlHWBoVakaQ2Bak/uAYtn62HbqEH
-         SbOxhMqj53nSmhORfLmz1hLesJ5IJ4+syoDcDvR8FmfFiFpYit3Z4NiNGvhXCjeB4KV3
-         L1Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKYI+uG6D3fC+SR/iwPXKW5vFmfGj3z3dfUNsL/xvOB+yOMFpMkMrbtwDPv9wp7wFpBbbRVnZKZ+VagOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvpKpHS4eAiX8kdXISucdoFgz18ItMhjkB5QekJmlevxsd7ahD
-	mfEmXXsF1Hvm678PwFZ85MsdyHdljzaZrKk9bxniOxUQSdGXmd1DEhL7FA==
-X-Gm-Gg: ASbGncslEaf3pnNaXhvlRmyUiXJIFbKdmZkxtUbptoDalTfnv/OEZQ/6rO1ZedPfF0E
-	gYm0vUHWH4jUFKrHp0RN1gBp+iLD+4pE00tpG71Z18uLAcOri3AQvfV6kGUrEGAJxVfcWKo0KGu
-	g55TtfGSuQZJRNBthTNBDNGrjpEjnH5d0A5CH6PxkRJ4Wgj8SLXVG++rhvpxwzuaRg1xTGXh33A
-	G+IUtjY+C4VL6AtrD5UvECDOszjKJ3A4y3s9S0sTRgGNG8GxKzhW4oxflDbPitSWsBfdo7d5n+v
-X-Google-Smtp-Source: AGHT+IGi+g/J+ETyJb7BSsmDZuPh9QPdLLbvsw4oIZeoRH/MMcp+IAgcppcuYqJYcvAf0sqTlKe7fQ==
-X-Received: by 2002:a05:6830:34a8:b0:71d:4385:6662 with SMTP id 46e09a7af769-71d65d0556emr10507644a34.27.1732895936204;
-        Fri, 29 Nov 2024 07:58:56 -0800 (PST)
+        bh=5wJIg/sxtDsSUo2Smlt0dgu9NBkc52JfvgQN+3tMwkU=;
+        b=nBDy1pWTS5BhboFJf3a4LmzeRuJbkedjc46FAhWNgkcwiQ8mpZxXKtrZ7gzZL0phV/
+         zFMj7rvEfw2/f7HK70I89sU+FMkbiWbIO6GRJ8MkAes/ix9HgVmFKDo0EGxThffjy7Bp
+         XM3o0pMXv9qDIEInHz/7NErT18CUlf8mGG0+t5r871YWcgRLM3MGBsbDkyTlmynfsOuP
+         UrBKqoTzP1p4N9NR6WMWQcOwGumHNgbSOLEinsz7C/oA021N+ouwisG7IU8rTxRfvxZt
+         1t77Ex7OgbXT1XiZHE0VuHik0IyxWpAa1UtNRrhLHhEKIcJ1jbj9jttEiO1DCI4gVMNR
+         ZNpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWhiKwyz3nJGKxbvRI3pFXeVcMeYEw9M/8B2C/pVHyHEXmWCn3bJrCi5tpiYypl7TDv6pQ4yqk/cPhfco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGgdgP3DVPTx+uNBA4zvxbaIBFyRXGmBErkSap4vjFFv2I93d/
+	sp18+4t7hhdDR+Qb1OBCv3oyaNpzcguWuIhgWxhqwPmX1Ot+IPR4
+X-Gm-Gg: ASbGncs4XAvAhvkPOI9sDamonp9MS6SDCNxlOvH3NdxyLa2nVG29fUYjncTam9SDFvi
+	pfU+8Wsxdw3sF3NjASQUgaRdclOljw216pCPwDh5n0JY2fiYoFcAUTIopI0BJfh3kZ/hq+2+6me
+	sJYrYnt1ZEZy1dhea80XS7Qczj9GjfBIUTPickEImVB9zH0icdBgQn21ymqWxTnmhR8xaJSOK2j
+	yIwj3tLhlwIp9bIWxu9s288tNj8yDl6IUC2yKaPaK8DeHWE9KN0D8oXdK7oArU9WdRqQ2xFU5Zh
+X-Google-Smtp-Source: AGHT+IE2VcF/MSwNHS6hN8HzVuhroZFj9OBsXvwDuziygvANH4/lTvjHkaVRJBLDQdldAtq5y9YW8Q==
+X-Received: by 2002:a05:6830:349a:b0:71d:53b7:6433 with SMTP id 46e09a7af769-71d65a93f2fmr11541443a34.0.1732895937878;
+        Fri, 29 Nov 2024 07:58:57 -0800 (PST)
 Received: from pipaware.tx.rr.com ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71d725f2251sm794385a34.68.2024.11.29.07.58.55
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71d725f2251sm794385a34.68.2024.11.29.07.58.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 07:58:55 -0800 (PST)
+        Fri, 29 Nov 2024 07:58:57 -0800 (PST)
 From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 To: corbet@lwn.net,
 	avadhut.naik@amd.com,
@@ -77,9 +77,9 @@ To: corbet@lwn.net,
 Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-Subject: [PATCH 1/7] docs/sp_SP: Add translation of process/3.Early-stage.rst
-Date: Fri, 29 Nov 2024 09:58:41 -0600
-Message-ID: <20241129155851.1023884-2-carlos.bilbao.osdev@gmail.com>
+Subject: [PATCH 2/7] docs/sp_SP: Add translation of process/4.Coding.rst
+Date: Fri, 29 Nov 2024 09:58:42 -0600
+Message-ID: <20241129155851.1023884-3-carlos.bilbao.osdev@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20241129155851.1023884-1-carlos.bilbao.osdev@gmail.com>
 References: <20241129155851.1023884-1-carlos.bilbao.osdev@gmail.com>
@@ -92,273 +92,502 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Translate Documentation/process/3.Early-stage.rst into Spanish.
+Translate Documentation/process/4.Coding.rst into Spanish.
 
 Co-developed-by: Avadhut Naik <avadhut.naik@amd.com>
 Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
 Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 ---
- .../sp_SP/process/3.Early-stage.rst           | 234 +++++++++++++++++-
+ .../translations/sp_SP/process/4.Coding.rst   | 463 +++++++++++++++++-
  .../sp_SP/process/development-process.rst     |   1 +
- 2 files changed, 233 insertions(+), 2 deletions(-)
+ 2 files changed, 462 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/translations/sp_SP/process/3.Early-stage.rst b/Documentation/translations/sp_SP/process/3.Early-stage.rst
-index 71cfb3fb0fda..bb3c630c7fd4 100644
---- a/Documentation/translations/sp_SP/process/3.Early-stage.rst
-+++ b/Documentation/translations/sp_SP/process/3.Early-stage.rst
-@@ -1,11 +1,241 @@
+diff --git a/Documentation/translations/sp_SP/process/4.Coding.rst b/Documentation/translations/sp_SP/process/4.Coding.rst
+index d9436e039b4b..7cc347c34354 100644
+--- a/Documentation/translations/sp_SP/process/4.Coding.rst
++++ b/Documentation/translations/sp_SP/process/4.Coding.rst
+@@ -1,11 +1,470 @@
  .. include:: ../disclaimer-sp.rst
  
- :Original: Documentation/process/3.Early-stage.rst
+ :Original: Documentation/process/4.Coding.rst
 +:Translator: Carlos Bilbao <carlos.bilbao.osdev@gmail.com> and Avadhut Naik <avadhut.naik@amd.com>
  
- .. _sp_development_early_stage:
+ .. _sp_development_coding:
  
- Planificación en etapa inicial
- ==============================
+ Conseguir el código correcto
+ ============================
  
 -.. warning::
 -	TODO aún no traducido
-+Cuando uno se sienta a planear un proyecto de desarrollo del kernel Linux,
-+puede ser tentador lanzarse directamente a escribir código. Sin embargo,
-+como ocurre con cualquier proyecto significativo, gran parte del trabajo
-+que conduce al éxito es mejor realizarlo antes de escribir la primera línea
-+de código. Dedicar tiempo a la planificación y comunicación temprana puede
-+ahorrar mucho más tiempo en adelante.
++Si bien hay mucho que decir a favor de un proceso de diseño sólido y
++orientado a la comunidad, la prueba de cualquier proyecto de desarrollo del
++kernel está en el código resultante. Es el código lo que será examinado por
++otros desarrolladores y lo que será incluido (o no) en el árbol principal.
++Por lo tanto, es la calidad de este código lo que determinará el éxito
++final del proyecto.
 +
-+Especificar el problema
-+-----------------------
++Esta sección examinará el proceso de programación. Comenzaremos observando
++algunas de las maneras en que los desarrolladores del kernel pueden cometer
++errores. Luego, el enfoque se dirigirá hacia hacer las cosas bien y las
++herramientas que pueden ayudar en dicha búsqueda.
 +
-+Como en cualquier proyecto de ingeniería, una mejora exitosa del kernel
-+comienza con una descripción clara del problema a resolver. En algunos
-+casos, este paso es sencillo: cuando se necesita un driver para un hardware
-+específico, por ejemplo. En otros, sin embargo, es tentador confundir el
-+problema real con la solución propuesta, lo que puede generar dificultades.
++Problemas
++---------
 +
-+Consideremos un ejemplo: hace algunos años, los desarrolladores que
-+trabajaban con audio en Linux buscaban una forma de ejecutar aplicaciones
-+sin interrupciones u otros artefactos causados por la latencia excesiva en
-+el sistema. La solución a la que llegaron fue un módulo del kernel
-+destinado a integrarse en el marco del Módulo de Seguridad de Linux (LSM,
-+por sus siglas en inglés); este módulo podía configurarse para dar acceso a
-+aplicaciones específicas al planificador en tiempo real. Este módulo fue
-+implementado y enviado a la lista de correo del kernel de Linux, donde
-+inmediatamente encontró problemas.
++Estilo de programación
++**********************
 +
-+Para los desarrolladores de audio, este módulo de seguridad era suficiente
-+para resolver su problema inmediato. Sin embargo, para la comunidad más
-+amplia del kernel, se veía como un uso indebido del marco LSM (que no está
-+diseñado para otorgar privilegios a procesos que de otro modo no los
-+tendrían) y como un riesgo para la estabilidad del sistema. Sus soluciones
-+preferidas implicaban el acceso a la programación en tiempo real a través
-+del mecanismo de rlimit a corto plazo, y trabajo continuo para reducir la
-+latencia a largo plazo.
++El kernel ha tenido durante mucho tiempo un estilo de programación
++estándar, descrito en la documentación del kernel en
++`Documentation/process/coding-style.rst`. Durante gran parte de ese tiempo,
++las políticas descritas en ese archivo se tomaban como, en el mejor de los
++casos, orientativas. Como resultado, hay una cantidad considerable de
++código en el kernel que no cumple con las pautas de estilo de programación.
++La presencia de ese código lleva a dos peligros independientes para los
++desarrolladores del kernel.
 +
-+La comunidad de audio, sin embargo, no podía ver más allá de la solución
-+particular que habían implementado; no estaban dispuestos a aceptar
-+alternativas. El desacuerdo resultante dejó a esos desarrolladores
-+desilusionados con todo el proceso de desarrollo del kernel; uno de ellos
-+volvió a una lista de audio y publicó esto (traducido):
++El primero de estos es creer que los estándares de programación del kernel
++no importan y no se aplican. La realidad es que agregar nuevo código al
++kernel es muy difícil si ese código no está escrito de acuerdo con el
++estándar; muchos desarrolladores solicitarán que el código sea reformateado
++antes de revisarlo. Una base de código tan grande como el kernel requiere
++cierta uniformidad para que los desarrolladores puedan comprender
++rápidamente cualquier parte de él. Así que ya no hay lugar para el código
++con formato extraño.
 +
-+	"Hay un buen número de desarrolladores muy competentes del kernel de Linux, pero tienden a ser opacados por una multitud de arrogantes necios. Intentar comunicar los requisitos de los usuarios a estas personas es una pérdida de tiempo. Son demasiado 'inteligentes' como para escuchar a simples mortales".
++Ocasionalmente, el estilo de programación del kernel entrará en conflicto
++con el estilo obligatorio de un empleador. En tales casos, el estilo del
++kernel tendrá que prevalecer antes de que el código pueda ser fusionado.
++Incluir código en el kernel significa renunciar a cierto grado de control
++de varias maneras, incluida la forma en que se formatea el código.
 +
-+Siendo el texto original:
++La otra trampa es asumir que el código que ya está en el kernel necesita
++urgentemente correcciones de estilo de programación. Los desarrolladores
++pueden comenzar a generar parches de reformateo como una forma de
++familiarizarse con el proceso o como una forma de incluir su nombre en los
++registros de cambios del kernel, o ambos. Pero las correcciones puramente
++de estilo de programación son vistas como ruido por la comunidad de
++desarrollo; tienden a recibir una recepción adversa. Por lo tanto, este
++tipo de parche es mejor evitarlo. Es natural corregir el estilo de una
++parte del código mientras se trabaja en él por otras razones, pero los
++cambios de estilo de programación no deben hacerse por sí mismos.
 +
-+	There are a number of very good Linux kernel developers, but they
-+	tend to get outshouted by a large crowd of arrogant fools. Trying
-+	to communicate user requirements to these people is a waste of
-+	time. They are much too "intelligent" to listen to lesser mortals.
++El documento de estilo de programación tampoco debe leerse como una ley
++absoluta que nunca puede transgredirse. Si hay una buena razón para ir en
++contra del estilo (una línea que se vuelve mucho menos legible si se divide
++para ajustarse al límite de 80 columnas, por ejemplo), perfecto.
 +
-+(https://lwn.net/Articles/131776/).
++Tenga en cuenta que también puedes usar la herramienta `clang-format` para
++ayudarle con estas reglas, para reformatear rápidamente partes de su código
++automáticamente y para revisar archivos completos a fin de detectar errores
++de estilo de programación, errores tipográficos y posibles mejoras. También
++es útil para ordenar `#includes`, alinear variables/macros, reformatear
++texto y otras tareas similares. Consulte el archivo
++`Documentation/dev-tools/clang-format.rst` para más detalles.
 +
-+La realidad de la situación era diferente; los desarrolladores del kernel
-+estaban mucho más preocupados por la estabilidad del sistema, el
-+mantenimiento a largo plazo y encontrar la solución correcta al problema
-+que por un módulo específico. La moraleja de la historia es centrarse en el
-+problema, no en una solución específica, y discutirlo con la comunidad de
-+desarrollo antes de invertir en la creación de un cuerpo de código.
++Algunas configuraciones básicas del editor, como la indentación y los
++finales de línea, se configurarán automáticamente si utilizas un editor
++compatible con EditorConfig. Consulte el sitio web oficial de EditorConfig
++para obtener más información: https://editorconfig.org/
 +
-+Por lo tanto, al contemplar un proyecto de desarrollo del kernel, se deben
-+obtener respuestas a un conjunto corto de preguntas:
++Capas de abstracción
++********************
 +
-+- ¿Cuál es exactamente el problema que necesita ser resuelto?
++Los profesores de ciencias de la computación enseñan a los estudiantes a
++hacer un uso extensivo de capas de abstracción en nombre de la
++flexibilidad y el ocultamiento de la información. Sin duda, el kernel hace
++un uso extensivo de la abstracción; ningún proyecto que involucre varios
++millones de líneas de código podría sobrevivir de otra manera. Pero la
++experiencia ha demostrado que una abstracción excesiva o prematura puede
++ser tan perjudicial como la optimización prematura. La abstracción debe
++usarse en la medida necesaria y ya.
 +
-+- ¿Quiénes son los usuarios afectados por este problema? ¿Qué casos de uso
-+  debería abordar la solución?
++A un nivel simple, considere una función que tiene un argumento que siempre
++se pasa como cero por todos los que la invocan. Uno podría mantener ese
++argumento por si alguien eventualmente necesita usar la flexibilidad
++adicional que proporciona. Sin embargo, para entonces, es probable que el
++código que implementa este argumento adicional se haya roto de alguna
++manera sutil que nunca se notó, porque nunca se ha utilizado. O, cuando
++surge la necesidad de flexibilidad adicional, no lo hace de una manera que
++coincida con la expectativa temprana del programador. Los desarrolladores
++del kernel rutinariamente enviarán parches para eliminar argumentos no
++utilizados; en general, no deberían añadirse en primer lugar.
 +
-+- ¿En qué aspectos el kernel actual no logra abordar ese problema?
++Las capas de abstracción que ocultan el acceso al hardware, a menudo para
++permitir que la mayor parte de un controlador se utilice con varios
++sistemas operativos, son especialmente mal vistas. Dichas capas oscurecen
++el código y pueden imponer una penalización en el rendimiento; no
++pertenecen al kernel de Linux.
 +
-+Solo entonces tiene sentido comenzar a considerar posibles soluciones.
++Por otro lado, si se encuentra copiando cantidades significativas de código
++de otro subsistema del kernel, es hora de preguntar si, de hecho, tendría
++sentido extraer parte de ese código en una biblioteca separada o
++implementar esa funcionalidad a un nivel superior. No tiene sentido
++replicar el mismo código en todo el kernel.
 +
-+Discusión temprana
-+------------------
++Uso de #ifdef y del preprocesador en general
++********************************************
 +
-+Al planificar un proyecto de desarrollo del kernel, tiene mucho sentido
-+realizar discusiones con la comunidad antes de lanzarse a la
-+implementación. La comunicación temprana puede ahorrar tiempo y problemas
-+de varias maneras:
++El preprocesador de C tiene una tentación poderosa para algunos
++programadores de C, quienes lo ven como una forma de programar
++eficientemente una gran cantidad de flexibilidad en un archivo fuente. Pero
++el preprocesador no es C, y el uso intensivo de él da como resultado un
++código mucho más difícil de leer para otros y más difícil de verificar por
++el compilador para su corrección. El uso intensivo del preprocesador es
++asi siempre un signo de un código que necesita algo de limpieza.
 +
-+- Es posible que el problema ya esté siendo abordado por el kernel de
-+  maneras que no haya comprendido. El kernel de Linux es grande y tiene
-+  una serie de características y capacidades que no son inmediatamente
-+  obvias. No todas las capacidades del kernel están documentadas tan bien
-+  como uno quisiera, y es fácil pasar cosas por alto. El autor de este
-+  texto ha visto la publicación de un driver completo que duplicaba uno
-+  existente del que el nuevo autor no tenía conocimiento. El código que
-+  reinventa ruedas existentes no solo es desperdicio; tampoco será aceptado
-+  en el kernel principal.
++La compilación condicional con `#ifdef` es, de hecho, una característica
++poderosa, y se usa dentro del kernel. Pero hay poco deseo de ver código que
++sté salpicado liberalmente con bloques `#ifdef`. Como regla general, el uso
++de `#ifdef` debe limitarse a los archivos de encabezado siempre que sea
++posible. El código condicionalmente compilado puede confinarse a funciones
++que, si el código no va a estar presente, simplemente se convierten en
++vacías. El compilador luego optimizará silenciosamente la llamada a la
++función vacía. El resultado es un código mucho más limpio y fácil de
++seguir.
 +
-+- Puede haber elementos de la solución propuesta que no serán aceptables
-+  para su inclusión en el kernel principal. Es mejor descubrir problemas
-+  como este antes de escribir el código.
++Las macros del preprocesador de C presentan varios peligros, incluida la
++posible evaluación múltiple de expresiones con efectos secundarios y la
++falta de seguridad de tipos. Si te sientes tentado a definir una macro,
++considera crear una función en línea en su lugar. El código resultante será
++el mismo, pero las funciones en línea son más fáciles de leer, no evalúan
++sus argumentos varias veces y permiten que el compilador realice
++comprobaciones de tipo en los argumentos y el valor de retorno.
 +
-+- Es completamente posible que otros desarrolladores ya hayan pensado en el
-+  problema; pueden tener ideas para una mejor solución y estar dispuestos a
-+  ayudar en la creación de esa solución.
++Funciones en línea
++******************
 +
-+Años de experiencia con la comunidad de desarrollo del kernel han enseñado
-+una lección clara: el código del kernel que se diseña y desarrolla a
-+puertas cerradas invariablemente tiene problemas que solo se revelan cuando
-+el código se libera a la comunidad. A veces, estos problemas son graves,
-+requiriendo meses o años de esfuerzo antes de que el código pueda cumplir
-+con los estándares de la comunidad del kernel. Algunos ejemplos incluyen:
++Las funciones en línea presentan su propio peligro, sin embargo. Los
++programadores pueden enamorarse de la eficiencia percibida al evitar una
++llamada a función y llenar un archivo fuente con funciones en línea. Esas
++funciones, sin embargo, pueden en realidad reducir el rendimiento. Dado que
++su código se replica en cada sitio de llamada, terminan hinchando el tamaño
++del kernel compilado. Eso, a su vez, crea presión en las cachés de memoria
++del procesador, lo que puede ralentizar la ejecución de manera drástica
++Las funciones en línea, como regla, deben ser bastante pequeñas y
++relativamente raras. El costo de una llamada a función, después de todo, no
++es tan alto; la creación de un gran número de funciones en línea es un
++ejemplo clásico de optimización prematura.
 +
-+- La pila de red Devicescape fue diseñada e implementada para sistemas de
-+  un solo procesador. No pudo fusionarse en la rama principal hasta que se
-+  hizo adecuada para sistemas multiprocesador. Adaptar el bloqueo y otros
-+  aspectos en el código es una tarea difícil; como resultado, la fusión de
-+  este código (ahora llamado mac80211) se retrasó más de un año.
++En general, los programadores del kernel ignoran los efectos de caché bajo
++su propio riesgo. El clásico intercambio de tiempo/espacio que se enseña en
++las clases de estructuras de datos iniciales a menudo no se aplica al
++hardware contemporáneo. El espacio *es* tiempo, en el sentido de que un
++programa más grande se ejecutará más lentamente que uno más compacto.
 +
-+- El sistema de archivos Reiser4 incluía una serie de capacidades que, en
-+  opinión de los desarrolladores principales del kernel, deberían haberse
-+  implementado en la capa de sistemas de archivos virtuales. También
-+  incluía funciones que no podían implementarse fácilmente sin exponer el
-+  sistema a bloqueos causados por los usuarios. La revelación tardía de
-+  estos problemas, y la negativa a abordar algunos de ellos, ha mantenido a
-+  Reiser4 fuera del kernel principal.
++Los compiladores más recientes toman un papel cada vez más activo al
++decidir si una función dada debe realmente ser en línea o no. Por lo tanto,
++la colocación liberal de palabras clave "inline" puede no solo ser
++excesiva; también podría ser irrelevante.
 +
-+- El módulo de seguridad AppArmor hacía uso de estructuras de datos
-+  internas del sistema de archivos virtual de maneras que se consideraban
-+  inseguras y poco fiables. Esta preocupación (entre otras) mantuvo a
-+  AppArmor fuera de la rama principal durante años.
++Bloqueo
++*******
 +
-+En cada uno de estos casos, se podría haber evitado mucho dolor y trabajo
-+adicional con algunas discusiones tempranas con los desarrolladores del
-+kernel.
++En mayo de 2006, la pila de red "Devicescape" fue, con gran fanfarria,
++lanzada bajo la licencia GPL y puesta a disposición para su inclusión en el
++kernel principal. Esta donación fue una noticia bienvenida; el soporte para
++redes inalámbricas en Linux se consideraba, en el mejor de los casos,
++deficiente, y la pila de Devicescape ofrecía la promesa de solucionar esa
++situación. Sin embargo, este código no fue incluido en el kernel principal
++hasta junio de 2007 (versión 2.6.22). ¿Qué sucedió?
 +
-+¿Con quién hablar?
-+-------------------
++Este código mostró varios signos de haber sido desarrollado a puertas
++cerradas en una empresa. Pero un problema importante en particular fue que
++no estaba diseñado para funcionar en sistemas multiprocesador. Antes de que
++esta pila de red (ahora llamada mac80211) pudiera fusionarse, se tuvo que
++implementar un esquema de bloqueo en ella.
 +
-+Cuando los desarrolladores deciden hacer públicas sus ideas, la siguiente
-+pregunta será: ¿dónde empezar? La respuesta es encontrar la lista de correo
-+adecuada y el maintainer correcto. Para las listas de correo, la mejor
-+opción es buscar en el archivo MAINTAINERS un lugar relevante para
-+publicar. Si existe una lista de subsistema adecuada, es preferible
-+publicarla allí en lugar de en linux-kernel; es más probable que llegues a
-+desarrolladores con experiencia en el subsistema relevante y el ambiente
-+puede ser más propicio.
++Hubo un tiempo en que se podía desarrollar código para el kernel de Linux
++sin pensar en los problemas de concurrencia que presentan los sistemas
++multiprocesador. Ahora, sin embargo, este documento se está escribiendo en
++una computadora portátil con dos núcleos. Incluso en sistemas de un solo
++procesador, el trabajo que se está realizando para mejorar la capacidad de
++respuesta aumentará el nivel de concurrencia dentro del kernel. Los días en
++que se podía escribir código para el kernel sin pensar en el bloqueo han
++quedado atrás.
 +
-+Encontrar a los maintainers puede ser un poco más difícil. Nuevamente, el
-+archivo MAINTAINERS es el lugar para empezar. Sin embargo, ese archivo
-+tiende a no estar siempre actualizado, y no todos los subsistemas están
-+representados allí. La persona listada en el archivo MAINTAINERS puede, de
-+hecho, no ser la persona que está actuando en ese rol actualmente. Por lo
-+tanto, cuando haya dudas sobre a quién contactar, un truco útil es usar git
-+(y "git log" en particular) para ver quién está activo actualmente en el
-+subsistema de interés. Mira quién está escribiendo parches y quién, si
-+alguien, está adjuntando líneas de Signed-off-by a esos parches. Esas son
-+las personas que estarán mejor posicionadas para ayudar con un nuevo
-+proyecto de desarrollo.
++Cualquier recurso (estructuras de datos, registros de hardware, etc.) que
++pueda ser accedido concurrentemente por más de un hilo debe estar protegido
++por un bloqueo. El nuevo código debe escribirse teniendo en cuenta este
++requisito; implementar el bloqueo después de que el código ya ha sido
++desarrollado es una tarea mucho más difícil. Los desarrolladores del kernel
++deben tomarse el tiempo para comprender bien los primitivos de bloqueo
++disponibles para elegir la herramienta adecuada para el trabajo. El código
++que muestre una falta de atención a la concurrencia tendrá un camino
++difícil para ser incluido en el kernel principal.
 +
-+La tarea de encontrar al maintainer correcto es lo suficientemente
-+desafiante como para que los desarrolladores del kernel hayan añadido un
-+script para facilitar el proceso:
++Regresiones
++***********
++
++Un último peligro que vale la pena mencionar es el siguiente: puede ser
++tentador realizar un cambio (que puede traer grandes mejoras) que cause un
++problema para los usuarios existentes. Este tipo de cambio se llama una
++"regresión", y las regresiones se han vuelto muy mal recibidas en el kernel
++principal. Con pocas excepciones, los cambios que causan regresiones serán
++revertidos si la regresión no se puede solucionar de manera oportuna. Es
++mucho mejor evitar la regresión desde el principio.
++
++A menudo se argumenta que una regresión puede justificarse si hace que las
++cosas funcionen para más personas de las que crea problemas. ¿Por qué no
++hacer un cambio si trae nueva funcionalidad a diez sistemas por cada uno
++que rompe? La mejor respuesta a esta pregunta fue expresada por Linus en
++julio de 2007 (traducido):
 +
 +::
 +
-+	.../scripts/get_maintainer.pl
++    Entonces, no arreglamos errores introduciendo nuevos problemas. Eso
++	lleva a la locura, y nadie sabe si realmente se avanza. ¿Es dos pasos
++	adelante, uno atrás, o un paso adelante y dos atrás?
 +
-+Este script devolverá los maintainers actuales de un archivo o directorio
-+dado cuando se le pase la opción "-f". Si se le pasa un parche en la línea
-+de comandos, listará a los maintainers que probablemente deberían recibir
-+copias del parche. Esta es la manera preferida (a diferencia de la opción
-+"-f") de obtener la lista de personas a las que hay que enviar las copias
-+de sus parches. Hay varias opciones que regulan cuán agresivamente
-+get_maintainer.pl buscará maintainers; por favor, ten cuidado al usar las
-+opciones más agresivas, ya que podrías terminar incluyendo desarrolladores
-+que no tienen ningún interés real en el código que estás modificando.
++(https://lwn.net/Articles/243460/).
 +
-+Si todo lo demás falla, hablar con Andrew Morton puede ser una forma
-+efectiva de encontrar a un maintainer para un código específico.
++Un tipo de regresión especialmente mal recibido es cualquier tipo de cambio
++en la ABI del espacio de usuario. Una vez que se ha exportado una interfaz
++al espacio de usuario, debe ser soportada indefinidamente. Este hecho hace
++que la creación de interfaces para el espacio de usuario sea
++particularmente desafiante: dado que no pueden cambiarse de manera
++incompatible, deben hacerse bien desde el principio. Por esta razón,
++siempre se requiere una gran cantidad de reflexión, documentación clara y
++una amplia revisión para las interfaces del espacio de usuario.
 +
-+¿Cuándo publicar?
-+------------------
++Herramientas de verificación de código
++**************************************
 +
-+Si es posible, publicar sus planes en las primeras etapas solo puede ser
-+útil. Describa el problema que se está resolviendo y cualquier plan que se
-+haya hecho sobre cómo se llevará a cabo la implementación. Cualquier
-+información que puedas proporcionar puede ayudar a la comunidad de
-+desarrollo a ofrecer comentarios útiles sobre el proyecto.
++Por ahora, al menos, escribir código libre de errores sigue siendo un ideal
++que pocos de nosotros podemos alcanzar. Sin embargo, lo que podemos esperar
++hacer es detectar y corregir tantos de esos errores como sea posible antes
++de que nuestro código se integre en el kernel principal. Con ese fin, los
++desarrolladores del kernel han reunido una impresionante variedad de
++herramientas que pueden detectar una amplia variedad de problemas oscuros
++de manera automatizada. Cualquier problema detectado por el ordenador es
++un problema que no afectará a un usuario más adelante, por lo que es lógico
++que las herramientas automatizadas se utilicen siempre que sea posible.
 +
-+Una cosa desalentadora que puede suceder en esta etapa no es una reacción
-+hostil, sino, en cambio, poca o ninguna reacción en absoluto. La triste
-+realidad es que (1) los desarrolladores del kernel tienden a estar
-+ocupados, (2) no hay escasez de personas con grandes planes y poco código
-+(o incluso perspectivas de código) para respaldarlos, y (3) nadie está
-+obligado a revisar o comentar las ideas publicadas por otros. Además, los
-+diseños de alto nivel a menudo esconden problemas que solo se revelan
-+cuando alguien realmente intenta implementar esos diseños; por esa razón,
-+los desarrolladores del kernel prefieren ver el código.
++El primer paso es simplemente prestar atención a las advertencias
++producidas por el compilador. Las versiones contemporáneas de gcc pueden
++detectar (y advertir sobre) una gran cantidad de errores potenciales. Con
++bastante frecuencia, estas advertencias apuntan a problemas reales. El
++código enviado para revisión no debería, por regla general, producir
++ninguna advertencia del compilador. Al silenciar las advertencias, tenga
++cuidado de comprender la causa real e intente evitar "correcciones" que
++hagan desaparecer la advertencia sin abordar su causa.
 +
-+Si una publicación de solicitud de comentarios genera pocos comentarios, no
-+asuma que significa que no hay interés en el proyecto. Desafortunadamente,
-+tampoco puedes asumir que no hay problemas con tu idea. Lo mejor que puede
-+hacer en esta situación es seguir adelante, manteniendo informada a
-+comunidad a medida que avanza.
++Tenga en cuenta que no todas las advertencias del compilador están
++habilitadas de forma predeterminada. Compile el kernel con
++"make KCFLAGS=-W" para obtener el conjunto completo.
 +
-+Obtener respaldo oficial
-+------------------------
++El kernel proporciona varias opciones de configuración que activan
++funciones de depuración; la mayoría de estas se encuentran en el submenú
++"kernel hacking". Varias de estas opciones deben estar activadas para
++cualquier kernel utilizado para desarrollo o pruebas. En particular,
++debería activar:
 +
-+Si su trabajo se está realizando en un entorno corporativo — como ocurre
-+con la mayoría del trabajo en el kernel de Linux — es obvio que debe tener
-+permiso de los jefes debidamente autorizados antes de poder publicar los
-+planes o el código de su empresa en una lista de correo pública. La
-+publicación de código que no ha sido autorizado para su liberación bajo una
-+licencia compatible con la GPL puede ser especialmente problemática; cuanto
-+antes la gerencia y el personal legal de una empresa lleguen a un acuerdo
-+sobre la publicación de un proyecto de desarrollo del kernel, mejor será
-+para todos los involucrados.
++ - FRAME_WARN para obtener advertencias sobre marcos de pila más grandes
++   que una cantidad determinada. La salida generada puede ser extensa, pero
++   no es necesario preocuparse por las advertencias de otras partes del
++   kernel.
 +
-+Algunos lectores pueden estar pensando en este momento que su trabajo en el
-+kernel está destinado a respaldar un producto que aún no ha sido reconocido
-+oficialmente. Revelar los planes de su empleador en una lista de correo
-+pública puede no ser una opción viable. En casos como este, vale la pena
-+considerar si realmente es necesario mantener el secreto; a menudo no hay
-+una necesidad real de mantener los planes de desarrollo en secreto.
++ - DEBUG_OBJECTS agregará código para rastrear la vida útil de varios
++   objetos creados por el kernel y advertir cuando se realicen cosas fuera
++   de orden. Si está agregando un subsistema que crea (y exporta) objetos
++   complejos propios, considere agregar soporte para la infraestructura de
++   depuración de objetos.
 +
-+Dicho esto, también hay casos en los que una empresa legítimamente no puede
-+revelar sus planes al inicio del proceso de desarrollo. Las empresas con
-+desarrolladores experimentados en el kernel pueden optar por proceder de
-+manera abierta, bajo el supuesto de que podrán evitar problemas graves de
-+integración más adelante. Para las empresas sin ese tipo de experiencia
-+interna, la mejor opción suele ser contratar a un desarrollador externo
-+para que revise los planes bajo un acuerdo de confidencialidad (NDA). La
-+Linux Foundation opera un programa de NDA diseñado para ayudar en este tipo
-+de situaciones; se puede encontrar más información en:
++ - DEBUG_SLAB puede encontrar una variedad de errores en la asignación y
++   uso de memoria; debe usarse en la mayoría de los kernels de desarrollo.
 +
-+    https://www.linuxfoundation.org/nda/
++ - DEBUG_SPINLOCK, DEBUG_ATOMIC_SLEEP y DEBUG_MUTEXES encontrarán una serie
++   de errores comunes de bloqueo.
 +
-+Este tipo de revisión suele ser suficiente para evitar problemas graves más
-+adelante sin necesidad de revelar públicamente el proyecto.
++Hay bastantes otras opciones de depuración, algunas de las cuales se
++discutirán más adelante. Algunas de ellas tienen un impacto significativo
++en el rendimiento y no deben usarse todo el tiempo. Pero dedicar tiempo a
++aprender las opciones disponibles probablemente será recompensado muchas
++veces en poco tiempo.
++
++Una de las herramientas de depuración más pesadas es el verificador de
++bloqueos, o "lockdep". Esta herramienta rastreará la adquisición y
++liberación de cada bloqueo (spinlock o mutex) en el sistema, el orden en
++que se adquieren los bloqueos en relación entre sí, el entorno actual de
++interrupción, y más. Luego, puede asegurarse de que los bloqueos siempre se
++adquieran en el mismo orden, que las mismas suposiciones de interrupción se
++apliquen en todas las situaciones, y así sucesivamente. En otras palabras,
++lockdep puede encontrar varios escenarios en los que el sistema podría, en
++raras ocasiones, bloquearse. Este tipo de problema puede ser doloroso
++(tanto para desarrolladores como para usuarios) en un sistema desplegado;
++lockdep permite encontrarlos de manera automatizada con anticipación. El
++código con cualquier tipo de bloqueo no trivial debe ejecutarse con lockdep
++habilitado antes de ser enviado para su inclusión.
++
++Como programador diligente del kernel, sin duda alguna, verificará el
++estado de retorno de cualquier operación (como una asignación de memoria)
++que pueda fallar. Sin embargo, el hecho es que las rutas de recuperación de
++fallos resultantes probablemente no hayan sido probadas en absoluto. El
++código no probado tiende a ser código roto; podría tener mucha más
++confianza en su código si todas esas rutas de manejo de errores se hubieran
++ejercitado algunas veces.
++
++El kernel proporciona un marco de inyección de fallos que puede hacer
++precisamente eso, especialmente donde están involucradas las asignaciones
++de memoria. Con la inyección de fallos habilitada, un porcentaje
++configurable de las asignaciones de memoria fallarán; estas fallas pueden
++restringirse a un rango específico de código. Ejecutar con la inyección de
++fallos habilitada permite al programador ver cómo responde el código cuando
++las cosas van mal. Consulte
++Documentation/fault-injection/fault-injection.rst para obtener más
++información sobre cómo utilizar esta funcionalidad.
++
++Otros tipos de errores se pueden encontrar con la herramienta de análisis
++estático "sparse". Con sparse, el programador puede recibir advertencias
++sobre confusiones entre direcciones del espacio de usuario y del kernel,
++mezcla de cantidades big-endian y little-endian, el paso de valores enteros
++donde se espera un conjunto de banderas de bits, y así sucesivamente.
++Sparse debe instalarse por separado (puede encontrarse en
++https://sparse.wiki.kernel.org/index.php/Main_Page si su distribución no lo
++empaqueta); luego, puede ejecutarse en el código agregando "C=1" a su
++comando make.
++
++La herramienta "Coccinelle" (http://coccinelle.lip6.fr/) puede encontrar
++una amplia variedad de posibles problemas de codificación; también puede
++proponer correcciones para esos problemas. Bastantes "parches semánticos"
++para el kernel se han empaquetado en el directorio scripts/coccinelle;
++ejecutar "make coccicheck" ejecutará esos parches semánticos e informará
++sobre cualquier problema encontrado. Consulte:
++ref:`Documentation/dev-tools/coccinelle.rst <devtools_coccinelle>` para
++obtener más información.
++
++Otros tipos de errores de portabilidad se encuentran mejor compilando su
++código para otras arquitecturas. Si no tiene un sistema S/390 o una placa
++de desarrollo Blackfin a mano, aún puede realizar el paso de compilación.
++Un gran conjunto de compiladores cruzados para sistemas x86 se puede
++encontrar en
++
++	https://www.kernel.org/pub/tools/crosstool/
++
++Muchos sistemas de compilación disponibles comercialmente también se pueden
++utilizar para compilar código de kernel para una amplia gama de
++arquitecturas.
++
++Los desarrolladores del kernel son afortunados: tienen acceso a una
++variedad de herramientas de verificación de código de la que los
++desarrolladores de la mayoría de los otros sistemas pueden estar celosos.
++Pero todas esas herramientas no servirán de nada si no las usa. El
++resultado final de ignorar estas herramientas es simple: alguien más puede
++notificarle de un problema en su código a través de un "oportuno"
++comentario en la lista de correo o, peor aún, el código problemático podría
++ser eliminado. Es mucho más fácil usar estas herramientas en primer lugar.
++
++Documentación
++*************
++
++La documentación a menudo ha sido más la excepción que la regla en el
++desarrollo del kernel. Aun así, una documentación adecuada ayudará a
++facilitar la integración de nuevo código en el kernel, hará la vida más
++fácil a otros desarrolladores, y será útil para sus usuarios. En muchos
++casos, la inclusión de documentación se ha vuelto esencialmente
++obligatoria.
++
++La primera pieza de documentación para cualquier parche es su changelog
++asociado. Las entradas de registro deben describir el problema que se está
++esolviendo, la forma de la solución, las personas que trabajaron en el
++parche, cualquier efecto relevante en el rendimiento, y cualquier otra cosa
++que pueda ser necesaria para entender el parche. Asegúrese de que el
++changelog diga *por qué* el parche vale la pena ser aplicado; un
++sorprendente número de desarrolladores no proporciona esa información.
++
++Cualquier código que agregue una nueva interfaz para el espacio de usuario,
++incluidos los nuevos archivos de sysfs o /proc, debe incluir documentación
++de esa interfaz que permita a los desarrolladores del espacio de usuario
++saber con qué están trabajando. Consulte `Documentation/ABI/README` para
++una descripción de cómo debe formatearse esta documentación y qué
++información debe proporcionarse.
++
++El archivo
++:ref:`Documentation/admin-guide/kernel-parameters.rst <kernelparameters>`
++describe todos los parámetros de arranque del kernel. Cualquier parche que
++agregue nuevos parámetros debe agregar las entradas correspondientes a este
++archivo.
++
++Cualquier nueva opción de configuración debe ir acompañada de un texto de
++ayuda que explique claramente las opciones y cuándo el usuario podría
++querer seleccionarlas.
++
++La información de la API interna para muchos subsistemas está documentada
++mediante comentarios especialmente formateados; estos comentarios pueden
++extraerse y formatearse de diversas maneras mediante el script
++"kernel-doc". Si está trabajando dentro de un subsistema que tiene
++comentarios de kerneldoc, debe mantenerlos y agregarlos según corresponda
++para las funciones disponibles externamente. Incluso en áreas que no han
++sido tan documentadas, no hay ningún inconveniente en agregar comentarios
++de kerneldoc para el futuro; de hecho, esta puede ser una actividad útil
++para desarrolladores de kernel principiantes. El formato de estos
++comentarios, junto con alguna información sobre cómo crear plantillas de
++kerneldoc, se puede encontrar en
++:ref:`Documentation/doc-guide/ <doc_guide>`.
++
++Cualquiera que lea una cantidad significativa de código existente del
++kernel notará que, a menudo, los comentarios son notables por su ausencia.
++Una vez más, las expectativas para el nuevo código son más altas que en el
++pasado; integrar código sin comentarios será más difícil. Dicho esto, hay
++poco deseo de tener código excesivamente comentado. El código en sí debe
++ser legible, con comentarios que expliquen los aspectos más sutiles.
++
++Ciertas cosas siempre deben comentarse. El uso de barreras de memoria debe
++ir acompañado de una línea que explique por qué la barrera es necesaria.
++Las reglas de bloqueo para las estructuras de datos generalmente necesitan
++explicarse en algún lugar. Las estructuras de datos importantes en general
++necesitan documentación completa. Las dependencias no obvias entre
++fragmentos de código separados deben señalarse. Cualquier cosa que pueda
++tentar a un maintainer de código a hacer una "limpieza" incorrecta necesita
++un comentario que explique por qué se hace de esa manera. Y así
++sucesivamente.
++
++Cambios en la API interna
++*************************
++
++La interfaz binaria proporcionada por el kernel al espacio de usuario no se
++puede romper, excepto en las circunstancias más graves. Las interfaces de
++programación internas del kernel, en cambio, son altamente fluidas y pueden
++cambiarse cuando surge la necesidad. Si usted se encuentra teniendo que
++hacer un rodeo alrededor de una API del kernel, o simplemente no utilizando
++una funcionalidad específica porque no cumple con sus necesidades, eso
++puede ser una señal de que la API necesita cambiar. Como desarrollador del
++kernel, usted está autorizado a hacer esos cambios.
++
++Hay, por supuesto, algunas condiciones. Los cambios en la API se pueden
++hacer, pero necesitan estar bien justificados. Entonces, cualquier parche
++que realice un cambio en la API interna debe ir acompañado de una
++descripción de cuál es el cambio y por qué es necesario. Este tipo de
++cambio también debe desglosarse en un parche separado, en lugar de estar
++enterrado dentro de un parche más grande.
++
++La otra condición es que un desarrollador que cambia una API interna
++generalmente está encargado de la tarea de corregir cualquier código dentro
++del árbol del kernel que se vea afectado por el cambio. Para una función
++ampliamente utilizada, este deber puede llevar a literalmente cientos o
++miles de cambios, muchos de los cuales probablemente entren en conflicto
++con el trabajo que otros desarrolladores están realizando. No hace falta
++decir que esto puede ser un trabajo grande, por lo que es mejor asegurarse
++de que la justificación sea sólida. Tenga en cuenta que la herramienta
++Coccinelle puede ayudar con los cambios de API a gran escala.
++
++Cuando se realice un cambio incompatible en la API, siempre que sea
++posible, se debe asegurar que el código que no ha sido actualizado sea
++detectado por el compilador. Esto le ayudará a estar seguro de que ha
++encontrado todos los usos en el árbol de esa interfaz. También alertará a
++los desarrolladores de código fuera del árbol de que hay un cambio al que
++necesitan responder. Apoyar el código fuera del árbol no es algo de lo que
++los desarrolladores del kernel deban preocuparse, pero tampoco tenemos que
++dificultarles la vida más de lo necesario.
 diff --git a/Documentation/translations/sp_SP/process/development-process.rst b/Documentation/translations/sp_SP/process/development-process.rst
-index 40d74086f22e..8a967e569772 100644
+index 8a967e569772..62ee4b2e109e 100644
 --- a/Documentation/translations/sp_SP/process/development-process.rst
 +++ b/Documentation/translations/sp_SP/process/development-process.rst
-@@ -25,3 +25,4 @@ para entenderla.
- 
+@@ -26,3 +26,4 @@ para entenderla.
     1.Intro
     2.Process
-+   3.Early-stage
+    3.Early-stage
++   4.Coding
 -- 
 2.43.0
 
