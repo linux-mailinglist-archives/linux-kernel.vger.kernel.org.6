@@ -1,256 +1,156 @@
-Return-Path: <linux-kernel+bounces-425980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989E99DED43
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CF19DED45
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6DC2821FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 22:40:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3351C28222B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 22:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D005F19F49F;
-	Fri, 29 Nov 2024 22:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94171A704C;
+	Fri, 29 Nov 2024 22:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h59zErUa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="IPYlrhbN"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A0D153801
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 22:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B8639ACC;
+	Fri, 29 Nov 2024 22:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732920008; cv=none; b=ODca7+vgpuXd51VTi38rWwbJWNkCWHqh9cI9CL5f7cKWPth+EXTLNHHBSCIj1FT4d6DcXnU4GjL3565h2wmWGuPtvZpFM+yp7n2pxOpHO7JdYrN4sN2kKto5gF7SW8JL3iPwR6Xl/UnRtyfK8SGbnXjJ6vM8TdCAcixB57mqD/Y=
+	t=1732920357; cv=none; b=n2HMoPSysZSvt5x20Uw3V43WN/8PNcQ2xiIU51yJfXNi4osZZnQyPZ2dvRCJTf0abl/EvALYhiyBqw1a/dC74VLyOW+63RMjic8HBLpRMWIfUFfrWn2DVYoUlwdQ724029OCLaC135hnQgvuKUPOoRmxBJD1JOInTkXtCUuU680=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732920008; c=relaxed/simple;
-	bh=HtN+YA0TD2cbfaaA+uNfnLewQ+MzwI0073k2PLcM55M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sAI0/Nmw8PZlgNnBMb0uIlB2EMBj+rfWToDM+blpR/rNUFHux87CKbY9O8reqRS+ys0lWo0Mp9hC/V8pk00AudCkA/a9d//q/TGpQCqfJw46LLthLtX9QFwzPgQebCmbrfWueIZZBm+EEcj9WhbhmdItPVIniFVdNYes1yKSZJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h59zErUa; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732920005; x=1764456005;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HtN+YA0TD2cbfaaA+uNfnLewQ+MzwI0073k2PLcM55M=;
-  b=h59zErUaK5S+qgR2akEJmCKGrjOv7Fq4KrWLKGQGY+Er9QwFbcRL3OAM
-   +7F/ODafyzQEM/N8+nfbxPYEMf8gUpegHDymVbfHRSXcIjVKJk0PntRSw
-   1uu1miBEU9STH9rSUTCh8TAbOT17Uj3mheXvwu4NYBOuQYHuCVzYgvK1Y
-   MIeoXF9fLbS9xlEibuV+z5bjhVohJlhACxzbCdkMie/YaepOCZtA6RN3P
-   VRp+8mfOma7i1GbUt7PkJre1m0eXl1uqlkz8v2ErO6NYlrRzZmQdEnagh
-   Gk+kVi3ZXdrb4dnp1miyPfCcR07KAG3Cx6YE6va1xHRhwcOmXvd3ov7e5
-   w==;
-X-CSE-ConnectionGUID: i9npe4Y/R/qzb1rhxhUOpQ==
-X-CSE-MsgGUID: XR4EyLQmSgGyxnvCjeHGVg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="37090225"
-X-IronPort-AV: E=Sophos;i="6.12,196,1728975600"; 
-   d="scan'208";a="37090225"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 14:40:04 -0800
-X-CSE-ConnectionGUID: jeHesU7JQt6586XXS+Z0UA==
-X-CSE-MsgGUID: DXrXdI0/TmOcfRHxf/iCzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,196,1728975600"; 
-   d="scan'208";a="92394014"
-Received: from lkp-server01.sh.intel.com (HELO 5e2646291792) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 29 Nov 2024 14:40:01 -0800
-Received: from kbuild by 5e2646291792 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tH9eY-0000jp-2N;
-	Fri, 29 Nov 2024 22:39:58 +0000
-Date: Sat, 30 Nov 2024 06:39:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jocelyn Falempe <jfalempe@redhat.com>
-Subject: Re: [PATCH 1/5] drm/i915/fbdev: Add intel_fbdev_getvaddr()
-Message-ID: <202411300651.eqKjTuw3-lkp@intel.com>
-References: <20241129162232.7594-2-jfalempe@redhat.com>
+	s=arc-20240116; t=1732920357; c=relaxed/simple;
+	bh=UArk5G77pJxYpfp5eCo82B5YjgKMrfIg8H9O2IcLVVs=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=UI32WKEJf/C7SKOJOaEmr7pmVvrGDV3xFPl9Y3WHWB9X9lgYS4cJAscwdk7EwGYHFpsrjUg3ueBc2u9Yi5UbkkF8PrrBzw07p2kuP0296a4bLPAdQ0N5iJEV/uK4KZar6Z2eezWWJMwfCYdHmnxlOMNoALQjKhuGzfsdOzn1pPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=IPYlrhbN; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id E254BE4804;
+	Fri, 29 Nov 2024 22:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1732920352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rjad29xR4+xQq0DYAIrafdlVFdm43MRF9U8uIRYZtks=;
+	b=IPYlrhbNlTbf6Xm+juyoKv5R0RVYJw0UZejoyvpB9v7GH8AAJ+mt6Kec/4o22Bc7h8uacT
+	yaAZBTQaOhXkxXR6TxiVZ9Kplv569rA+ndnqGTPWCPHJ75s9CZGHzZkhPxnrgTma5MXddy
+	O5GcUuvEXNeb++JiWX58Cy4MQmzqoKr3f9ioH5+zfONqGQNb4mqjkyGnMEEY0yAmEAL/nN
+	3kNja00j9zM8XAvdbeaHEZ3QewBlc5rZO5pQOK7nZuGHS80Wq49BE38OfWYKspMOrgLGt0
+	lVhrqaTYu1Obe5BE5Gt7ZPP8NBZ+TeIfjuU/fG41PBjYC/q7faS9eY1CPqu+7Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241129162232.7594-2-jfalempe@redhat.com>
+Date: Fri, 29 Nov 2024 23:45:52 +0100
+From: barnabas.czeman@mainlining.org
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Yassine Oudjana
+ <y.oudjana@protonmail.com>
+Subject: Re: [PATCH v2] media: qcom: camss: fix VFE pm domain off
+In-Reply-To: <f4e47953-5a68-4ec5-860b-820b8eff2a2a@linaro.org>
+References: <20241128-vfe_pm_domain_off-v2-1-0bcbbe7daaaf@mainlining.org>
+ <3a5fd596-b442-4d3f-aae2-f454d0cd8e5c@linaro.org>
+ <5cccec71-0cc7-492a-9fb9-903970da05c5@linaro.org>
+ <d3a8d38c-9129-4fbd-8bd6-c91131d950ad@linaro.org>
+ <a08e95fc03fce6cb0809a06900982c6c@mainlining.org>
+ <8dfd2ee1-9baf-441f-8eb9-fa11e830334a@linaro.org>
+ <ac765a062e94d549f4c34cf4c8b2c199@mainlining.org>
+ <f4e47953-5a68-4ec5-860b-820b8eff2a2a@linaro.org>
+Message-ID: <05e91ae70902f0cd9c47bb4197d8fef1@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Jocelyn,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 44cff6c5b0b17a78bc0b30372bcd816cf6dd282a]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-i915-fbdev-Add-intel_fbdev_getvaddr/20241130-002536
-base:   44cff6c5b0b17a78bc0b30372bcd816cf6dd282a
-patch link:    https://lore.kernel.org/r/20241129162232.7594-2-jfalempe%40redhat.com
-patch subject: [PATCH 1/5] drm/i915/fbdev: Add intel_fbdev_getvaddr()
-config: arm-randconfig-002-20241130 (https://download.01.org/0day-ci/archive/20241130/202411300651.eqKjTuw3-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241130/202411300651.eqKjTuw3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411300651.eqKjTuw3-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from <command-line>:
-   drivers/gpu/drm/i915/display/intel_fbdev.c: In function 'intel_fbdev_getvaddr':
->> drivers/gpu/drm/i915/display/intel_fbdev.c:701:36: error: 'struct i915_vma' has no member named 'iomap'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                                    ^~
-   include/linux/compiler_types.h:497:23: note: in definition of macro '__compiletime_assert'
-     497 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/i915/display/intel_fbdev.c:701:16: note: in expansion of macro 'READ_ONCE'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                ^~~~~~~~~
->> drivers/gpu/drm/i915/display/intel_fbdev.c:701:36: error: 'struct i915_vma' has no member named 'iomap'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                                    ^~
-   include/linux/compiler_types.h:497:23: note: in definition of macro '__compiletime_assert'
-     497 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/i915/display/intel_fbdev.c:701:16: note: in expansion of macro 'READ_ONCE'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                ^~~~~~~~~
->> drivers/gpu/drm/i915/display/intel_fbdev.c:701:36: error: 'struct i915_vma' has no member named 'iomap'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                                    ^~
-   include/linux/compiler_types.h:497:23: note: in definition of macro '__compiletime_assert'
-     497 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/i915/display/intel_fbdev.c:701:16: note: in expansion of macro 'READ_ONCE'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                ^~~~~~~~~
->> drivers/gpu/drm/i915/display/intel_fbdev.c:701:36: error: 'struct i915_vma' has no member named 'iomap'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                                    ^~
-   include/linux/compiler_types.h:497:23: note: in definition of macro '__compiletime_assert'
-     497 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/i915/display/intel_fbdev.c:701:16: note: in expansion of macro 'READ_ONCE'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                ^~~~~~~~~
->> drivers/gpu/drm/i915/display/intel_fbdev.c:701:36: error: 'struct i915_vma' has no member named 'iomap'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                                    ^~
-   include/linux/compiler_types.h:497:23: note: in definition of macro '__compiletime_assert'
-     497 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/i915/display/intel_fbdev.c:701:16: note: in expansion of macro 'READ_ONCE'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                ^~~~~~~~~
->> drivers/gpu/drm/i915/display/intel_fbdev.c:701:36: error: 'struct i915_vma' has no member named 'iomap'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                                    ^~
-   include/linux/compiler_types.h:473:27: note: in definition of macro '__unqual_scalar_typeof'
-     473 |                 _Generic((x),                                           \
-         |                           ^
-   include/asm-generic/rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
-      50 |         __READ_ONCE(x);                                                 \
-         |         ^~~~~~~~~~~
-   drivers/gpu/drm/i915/display/intel_fbdev.c:701:16: note: in expansion of macro 'READ_ONCE'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                ^~~~~~~~~
-   In file included from ./arch/arm/include/generated/asm/rwonce.h:1,
-                    from include/linux/compiler.h:317,
-                    from arch/arm/include/asm/atomic.h:11,
-                    from include/linux/atomic.h:7,
-                    from include/linux/console.h:17,
-                    from drivers/gpu/drm/i915/display/intel_fbdev.c:27:
->> drivers/gpu/drm/i915/display/intel_fbdev.c:701:36: error: 'struct i915_vma' has no member named 'iomap'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                                    ^~
-   include/asm-generic/rwonce.h:44:73: note: in definition of macro '__READ_ONCE'
-      44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x) *)&(x))
-         |                                                                         ^
-   drivers/gpu/drm/i915/display/intel_fbdev.c:701:16: note: in expansion of macro 'READ_ONCE'
-     701 |         return READ_ONCE(fbdev->vma->iomap);
-         |                ^~~~~~~~~
->> drivers/gpu/drm/i915/display/intel_fbdev.c:702:1: warning: control reaches end of non-void function [-Wreturn-type]
-     702 | }
-         | ^
-
-
-vim +701 drivers/gpu/drm/i915/display/intel_fbdev.c
-
-   698	
-   699	void *intel_fbdev_getvaddr(struct intel_fbdev *fbdev)
-   700	{
- > 701		return READ_ONCE(fbdev->vma->iomap);
- > 702	}
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On 2024-11-29 23:08, Bryan O'Donoghue wrote:
+> On 29/11/2024 13:46, barnabas.czeman@mainlining.org wrote:
+>> On 2024-11-29 13:25, Bryan O'Donoghue wrote:
+>>> On 29/11/2024 11:44, barnabas.czeman@mainlining.org wrote:
+>>>>> The change does not describe how to reproduce the problem, which 
+>>>>> commit
+>>>>> base is tested, which platform is testes, there is no enough 
+>>>>> information,
+>>>>> unfortunately.
+>>>> I can reproduce the problem with megapixels-sensorprofile on msm8953 
+>>>> and
+>>>> it can be reproduced with megapixels on msm8996.
+>>>> The base is the last commit on next.
+>>> 
+>>> Can you verify if vfe_domain_on has run and if so whether or not 
+>>> genpd_link is NULL when that function exists.
+>>> 
+>> I have added some debug logs it seems pm_domain_on and pm_domain_off 
+>> is called twice on the same object.
+>> [   63.473360] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 link 
+>> 42973800
+>> [   63.481524] qcom-camss 1b00020.camss: pm_domain_on 19840080 link 
+>> 4e413800
+>> [   63.481555] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 link 
+>> 42973800
+>> [   63.481632] qcom-camss 1b00020.camss: pm_domain_off 19840080 link 
+>> 4e413800
+>> [   63.481641] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 link 
+>> 42973800
+>> [   63.654004] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 link 0
+>>> That's the question.
+>>> 
+>>> ---
+>>> bod
+> 
+> Could you provide this output ?
+> 
+> index 80a62ba112950..b25b8f6b00be1 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -595,6 +595,9 @@ void vfe_isr_reset_ack(struct vfe_device *vfe)
+>   */
+>  void vfe_pm_domain_off(struct vfe_device *vfe)
+>  {
+> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
+> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
+> +
+>         if (!vfe->genpd)
+>                 return;
+> 
+> @@ -609,7 +612,8 @@ void vfe_pm_domain_off(struct vfe_device *vfe)
+>  int vfe_pm_domain_on(struct vfe_device *vfe)
+>  {
+>         struct camss *camss = vfe->camss;
+> -
+> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
+> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
+>         if (!vfe->genpd)
+>                 return 0;
+> 
+> ---
+> bod
+I think logging in pm_domain_on should be placed after device_link_add 
+because only NULL
+will be visible.
+[   83.040694] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+000000009bd8355f genpd_link 0000000000000000
+[   83.049293] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
+00000000bfb65e7c genpd_link 0000000000000000
+[   83.049353] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
+000000009bd8355f genpd_link 00000000ccb0acd9
+[   83.049641] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 genpd 
+00000000bfb65e7c genpd_link 00000000348ac3c1
+[   83.049654] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+000000009bd8355f genpd_link 00000000ccb0acd9
+[   83.241498] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
+000000009bd8355f genpd_link 0000000000000000
 
