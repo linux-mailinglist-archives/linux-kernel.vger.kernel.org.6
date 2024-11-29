@@ -1,164 +1,533 @@
-Return-Path: <linux-kernel+bounces-425703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D155C9DE950
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:25:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5059A9DE95B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91BF92822EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:25:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123DD2824A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74393145A17;
-	Fri, 29 Nov 2024 15:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DADF145FE0;
+	Fri, 29 Nov 2024 15:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iEYPCr1f"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfOBrD0i"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA7140E50
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E07B208CA;
+	Fri, 29 Nov 2024 15:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732893933; cv=none; b=F23r6tZNN28Y6dtlomUBoo41VkT9Jg+wqj9UBbbhzkaZVOOXxY7RtduBcb0ZrArLFa4ZeRF1tzle4xNAkneII+RbaFRPSnzFOQaHgW66XpON0jbTzOD3QTqc9SFOS5YD+EwrZHmSVkPicDv+99rFKJj6yCtzsAmC4DJVHSz3CEk=
+	t=1732894094; cv=none; b=csBW49m9+Ybb1rDBMGJ8fyAHEutezbAAf2gmVI847IXHunFMWDMUvX0YlR/fbOpQC4fMVGgQcqb79wM1dom/zpHqavilKP5HQYQJJg4qP4EUpSbm2wjlR34VJad58XQxiV94odAJ0jem31rlO9v5oHIFtPZdv6DAtfU2rmW1+J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732893933; c=relaxed/simple;
-	bh=2TzIZe67IZbgwGZuUBmATd+QeVnYA4iz2/SVCNS8Yn4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iJlskja0fZAPHEE4XpiHsAjeI0oaw3K3JaeLZM3OkVXBS+9HeXhzLoK3yNgZZAJ5w6KRwOaFTs6LR3ukik2qGz72NhCQ7gqw4XM+1/Lzg+i58ew+MoAPnis1fuHBkXUnERHN8ic2JL7EIPeEXh8FKqLaiwyOX3FInRTGE6agZ3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iEYPCr1f; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ATCC8tW023467
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:25:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	haQsGWihOdgHm4cv5yvNRsaav8iMlhpfGgWfIpKo4Wc=; b=iEYPCr1fqoQ3Wi5Y
-	CXrAggcLVT2euy7mczczoIT0BzQsxw8rkN1cmFsurS0uEC+yOeko5kQKUpyvcrEF
-	7k6Ld8NUJmtWq7K0fmxIw3h+rPodR8+ftfSfkCxEHB1KEC829xS7N2rAtMEfvutY
-	xiRGE1rxNiWyIEwJ/7nZRxd+Q+B4A9/AZGqOWsMb6NxJXKIKgSZYk7hpyQXikWVF
-	ao4yZzZmJCY9Ay+CBUwnccKicPMxIBY7qiHconnbZySQMXs4O7ws3PbhLVRXlUoF
-	HMFjDhqmCQHsfCwpdo1ccxoK9Kwue2LhOoyPsPkD+wUH+491eSKWoF7QosQwK6K1
-	wK9bVQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 436h2mmm7j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:25:30 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d887d2f283so1409696d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:25:30 -0800 (PST)
+	s=arc-20240116; t=1732894094; c=relaxed/simple;
+	bh=3Z0MgbxOps/HSEcj/KP3Q1vYDOggl5wKI4yy5F1WnWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DSgZx8nfmti8WjFHIJAydwqDr8tIXFBQwcG+Jy9v4tzXGDKsUpOO+ug7goVGSY1wrvGSNlppYKNlFuwvZWFCi2u4ndqCgOEHrzwMA/20TY9HGXqjOGaM+aybF8LGXDVcps7jwvwZiCUA5TdlGEZuMWIA1yLVfKW3+xwuPmAJAYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfOBrD0i; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6eeba477fcaso19224277b3.0;
+        Fri, 29 Nov 2024 07:28:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732894091; x=1733498891; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PQNxyIkKlJtJa+P3W8kUijsnUrm7Aa/IVAxDQd+A7yE=;
+        b=SfOBrD0inSK/XrV5kiwcsOrYneqkGWF54oJBXguLz7ecSV/Z2bg7T0gioqzcqfLza1
+         Cd6iHuRi/KuOuynv6yP0VWESur8ZV3dvwllE6z2zhIYt/aSeCtMJuPN164XLRDI8b6BM
+         d5SQ/+2+BoTLeuGzzVQHp/bAXjFZew17nwl2HKvmj+qAP4JYIJMCTRsbPfvfAsDdb7TR
+         27ZFBTAPYEidLYla17g+5BZhqwkK/S3vvD6xLcK27hT8aZTfCt5XQR0nv9w+XkI9pSKG
+         Y5i1BrpYM6n32CH/u+1aGDVCKK8JrA9de3fuvX6WJqxiNw5PmiA4+5hNBqwnhxoFpFJL
+         Hv6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732893930; x=1733498730;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=haQsGWihOdgHm4cv5yvNRsaav8iMlhpfGgWfIpKo4Wc=;
-        b=TCFw5lTZdlUthdx3ZyXcPIU+9DpQf+xuLz/BjiMRwApdyNnYt8IH9VggLIjKKLKwIR
-         IZcp4iIZw6lZ6IjMPaG3oFDmWHGbZLxGPx8Duzgz7Szkd7wUfM2gFxRmRCPIElA4aO0q
-         aSoUSaR9RjPRJDh0QQ8Clpz9D4Kqg4wtWCoFZut5PU/27qw+EyKHqzOa77aQ4Mhr1x9p
-         3V36p8RYHGX3IzOBam+o9mFEscGYGJ/crwkQThfjSLB5jOlGXKcg/iBZKeWowiaGbmq4
-         zcpcKbCkP4rvreQY369/+f5fpC8/qyxvsKNaBfY+5pPF0xNsSZF/OIXJyb+/yA+tbvSn
-         OnFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBncS8bb+PyRZWBRbJMt5V6/pnNMJod8byM+bqfGG4+CrmhmGcS+h9IkjDpjfgvYJKxEUKBcyayxRISW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8M4f2fgC6d48Oj3o6BLwig2fU2A9i8lyBdKbL6DoGxkakf3fJ
-	QYfA0xbnCIsK5KG/QrcSesNQvCR6oL6zrCzvIrRSSqp6LsMIm8uvrByz8K6piAGXpmaZUtES+Xi
-	lXhBTHvpBVGUAJ+eVNIqknzuBkb5/3PTyxorNqDc2GfGJvSnUdI7Yg0cApKRs4pI=
-X-Gm-Gg: ASbGncup9o92sN8nQUx689HTtXME3SJoCMEMXTGC/twg2vkgAiVKKnX3Klg4JHqMtCF
-	+PwE7yzKpa5qFtxw+qCoqi2FFPfFkNqrxbJVetDkLsJDwuUlkC9/xT5urnHkStUCgj5PgPYXuxZ
-	6pChx15pSXpfSPHv3GMR3lnmKi1pazlOeMQ/mfg2m2MVIl5czn/Ti2AyR3hi7OFHKFTRGuqavEm
-	3PdALXG/QgO/5dokYW4ju2bhgwTl/MF+6flNn6RDilg8gBJXb5bt6csS7X69uZswQqoibKFzOXS
-	k/8T0692sY07hZ0KTnPASBrdN7cit6A=
-X-Received: by 2002:a05:620a:3712:b0:7a9:c0f2:75fc with SMTP id af79cd13be357-7b67c44101dmr572685585a.12.1732893929885;
-        Fri, 29 Nov 2024 07:25:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFABGScqGObURNhImJC7fBXLYcd5e8zHADeSrSRhflVdSkOsywE+7CtqbmRoBAFkettLxWeug==
-X-Received: by 2002:a05:620a:3712:b0:7a9:c0f2:75fc with SMTP id af79cd13be357-7b67c44101dmr572682585a.12.1732893929440;
-        Fri, 29 Nov 2024 07:25:29 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997ff0d5sm181758366b.85.2024.11.29.07.25.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 07:25:29 -0800 (PST)
-Message-ID: <5fc71011-7a67-47b9-b372-b5e52ffea757@oss.qualcomm.com>
-Date: Fri, 29 Nov 2024 16:25:26 +0100
+        d=1e100.net; s=20230601; t=1732894091; x=1733498891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PQNxyIkKlJtJa+P3W8kUijsnUrm7Aa/IVAxDQd+A7yE=;
+        b=RLkIOyBY0cmcddTicCLSPoz1yExvULi3U8gAca7lk/Rj+HsHBEbNbHgfqlhF+qzgKM
+         DPZALdNZmhA+vabaxzhfnx7/k4hqz0tC60TXrZ2tZZ2nW0T/I8d2ukvlEeQ/CK+tFWZm
+         M/UwK5KZoGJy83zZmckiTxm3yBBPoHuGveJ5M2xZpokPkkfvomKzoGU2sppiQHh8K8oe
+         IrbdmMxKxQcYLofUsox7xtvBvcB56ayPFh+zBoWxuwR2n+NtE0XgVJM/nXJpvay0dvOb
+         tWttCX7h0HzoQeNCUu34+hGlrBaRawB5GyPm6Zaln0AJcmyjsflBawCTnjR2B8vCBM4C
+         LNXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEVVKFHOlZauQNkV1rO4IrTe7MilMCd96j3/eFV1IPqQ+onjvEE1VXbJF/9cJwtFpz1ciJE9S55bUi2yAT@vger.kernel.org, AJvYcCVSoy00snkFQeZdB+WH7fSwJvFCilT/wmJ2vOzRsitgvZHyLM5L0nqKWS+f8VzpxX7f59ApjnE/KyUC7K0=@vger.kernel.org, AJvYcCW0z/lhmu+/f61b6gUZbHz53mOdbMy3Yn9kc81iNq9HR4q7j0BwUtb3SAU70MOrv6SLu9JQDfiNxTk=@vger.kernel.org, AJvYcCWeLna2Fj84NF5u91H3A5fnqa0tm+2d7L2dcKnaL9f/JRoFMTIkwMXb3fnQL9UisiJDfOSux30bzPOq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy10cDxrnc2AB/WUn8Vo21MGZdG2hTAwhFEu/oR26ltitzKXOMT
+	FeV1WbrUnEn2stJfrS/phqiBNHmBOMyL/zXbuHOIDbx/JDVxpGYQgcqEEZwYx2etm6zgjGXA3/c
+	zcrl7024osSpVAClQyCUePcg3WsM=
+X-Gm-Gg: ASbGncs7BXbP8SXKmJgrOBHUwc70nymUYD7W1hDuQm6o/wvcHrWe1CP4eEC0DbjUzlT
+	O+wHSBG2Qip0a3AKB3sV0KyEjRIF0H6suMqa1eA7ARRXFQ/Q28s19LdyedfYz
+X-Google-Smtp-Source: AGHT+IH2YBfNL80tohIKR+JITY+GZX8TzZyIk331Llwt2bi5LALYNnFxr2vnE6mr77nn9/6l8l+raePY9EBwzqdK1FA=
+X-Received: by 2002:a05:690c:6105:b0:6e5:b6a7:1640 with SMTP id
+ 00721157ae682-6ef3728caacmr115383477b3.42.1732894090991; Fri, 29 Nov 2024
+ 07:28:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/7] drm/msm: adreno: enable GMU bandwidth for A740 and
- A750
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20241128-topic-sm8x50-gpu-bw-vote-v3-0-81d60c10fb73@linaro.org>
- <20241128-topic-sm8x50-gpu-bw-vote-v3-5-81d60c10fb73@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241128-topic-sm8x50-gpu-bw-vote-v3-5-81d60c10fb73@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 3w0lICjuyoarsXeRloxZ5Z2JgtEgcrCx
-X-Proofpoint-ORIG-GUID: 3w0lICjuyoarsXeRloxZ5Z2JgtEgcrCx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0 adultscore=0
- spamscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411290125
+References: <cover.1732872169.git.mchehab+huawei@kernel.org> <f3c81e0e9d27b3876331e02ac35dd0e359657028.1732872169.git.mchehab+huawei@kernel.org>
+In-Reply-To: <f3c81e0e9d27b3876331e02ac35dd0e359657028.1732872169.git.mchehab+huawei@kernel.org>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date: Fri, 29 Nov 2024 16:27:54 +0100
+Message-ID: <CAPybu_1nGwH_ywf-UbN7wVAwqEnuJhRn-vZ+1ebXrdTk9RU80g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] docs: media: document media multi-committers rules
+ and process
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, workflows@vger.kernel.org, 
+	Hans Verkuil <hverkuil@xs4ll.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28.11.2024 11:25 AM, Neil Armstrong wrote:
-> Now all the DDR bandwidth voting via the GPU Management Unit (GMU)
-> is in place, declare the Bus Control Modules (BCMs) and the
-> corresponding parameters in the GPU info struct and add the
-> GMU_BW_VOTE feature bit to enable it.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Minor nits here and there
+
+On Fri, Nov 29, 2024 at 12:15=E2=80=AFPM Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+>
+> As the media subsystem will experiment with a multi-committers model,
+> update the Maintainer's entry profile to the new rules, and add a file
+> documenting the process to become a committer and to maintain such
+> rights.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Signed-off-by: Hans Verkuil <hverkuil@xs4ll.nl>
+Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
 > ---
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> index 0c560e84ad5a53bb4e8a49ba4e153ce9cf33f7ae..edffb7737a97b268bb2986d557969e651988a344 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> @@ -1388,6 +1388,17 @@ static const struct adreno_info a7xx_gpus[] = {
->  			.pwrup_reglist = &a7xx_pwrup_reglist,
->  			.gmu_chipid = 0x7020100,
->  			.gmu_cgc_mode = 0x00020202,
-> +			.bcms = (const struct a6xx_bcm[]) {
-> +				{ .name = "SH0", .buswidth = 16 },
-> +				{ .name = "MC0", .buswidth = 4 },
-> +				{
-> +					.name = "ACV",
-> +					.fixed = true,
-> +					.perfmode = BIT(3),
-> +					.perfmode_bw = 16500000,
-> +				},
-> +				{ /* sentinel */ },
-> +			},
+>  Documentation/driver-api/media/index.rst      |   1 +
+>  .../media/maintainer-entry-profile.rst        |   8 +
+>  .../driver-api/media/media-committer.rst      | 278 ++++++++++++++++++
+>  .../process/maintainer-pgp-guide.rst          |   2 +
+>  4 files changed, 289 insertions(+)
+>  create mode 100644 Documentation/driver-api/media/media-committer.rst
+>
+> diff --git a/Documentation/driver-api/media/index.rst b/Documentation/dri=
+ver-api/media/index.rst
+> index d5593182a3f9..d0c725fcbc67 100644
+> --- a/Documentation/driver-api/media/index.rst
+> +++ b/Documentation/driver-api/media/index.rst
+> @@ -26,6 +26,7 @@ Documentation/userspace-api/media/index.rst
+>      :numbered:
+>
+>      maintainer-entry-profile
+> +    media-committer
+>
+>      v4l2-core
+>      dtv-core
+> diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst =
+b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> index 47f15fad7f9f..650803c30c41 100644
+> --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
+> +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> @@ -62,6 +62,9 @@ as described at Documentation/process/index.rst and to =
+the Kernel
+>  development rules inside the Kernel documentation, including its code of
+>  conduct.
+>
+> +More details about media commiters' roles and responsibilities can be
+> +found here: Documentation/driver-api/media/media-committer.rst.
+> +
+>  Media development tree
+>  ----------------------
+>
+> @@ -195,6 +198,11 @@ shall be validated by using PGP sign, via the
+>
+>  With the pull request workflow, pull requests shall use a GPG-signed tag=
+.
+>
+> +With the committers' workflow, this is ensured at the time merge request
+> +rights will be granted to the gitlab instance used by media-committers.g=
+it
+> +tree, after receiving the e-mail documented at
+> +:ref:`media-committer-agreement`.
+I am not sure I understand this sentence correctly. I guess you mean:
 
-This is not going to fly the second there's two SoCs implementing the
-same GPU with a difference in bus topology. I think we could add
-something like drvdata to ICC nodes and use it for BCMs on icc-rpmh.
-Then, we could retrieve it from the interconnect path we get from the
-dt node. It would also reduce duplication.
+With the committers workflow, this is ensured during merge request via
+gitlab credentials.
+Committers will be granted access to the gitlab instance used by
+media-committers.git
+tree, after receiving the e-mail documented at :ref:`media-committer-agreem=
+ent`.
 
-Konrad
+
+> +
+>  For more details about PGP sign, please read
+>  Documentation/process/maintainer-pgp-guide.rst.
+>
+> diff --git a/Documentation/driver-api/media/media-committer.rst b/Documen=
+tation/driver-api/media/media-committer.rst
+> new file mode 100644
+> index 000000000000..1756a7af6353
+> --- /dev/null
+> +++ b/Documentation/driver-api/media/media-committer.rst
+> @@ -0,0 +1,278 @@
+> +Media committers
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +What is a media committer?
+> +--------------------------
+> +
+> +A media committer is a developer who can push patches from other develop=
+ers
+> +and their own patches to the
+> +`media-committers <https://gitlab.freedesktop.org/linux-media/media-comm=
+itters>`_
+> +tree.
+> +
+> +It is a media committer's duty to ensure that their entries in the MAINT=
+AINERS
+> +file are kept up-to-date, and that submitted patches for files for which
+> +they are listed as maintainers are timely reviewed on the mailing list,
+> +ideally not waiting in patchwork as ``New`` for more than one Kernel mer=
+ge
+> +cycle, and, if accepted, applying them at the media committer's tree.
+> +
+> +These commit rights are granted with some expectation of responsibility:
+> +committers are people who care about the Linux Kernel as a whole and
+> +about the Linux media subsystem and want to help its development. It
+> +is also based on a trust relationship between the rest of the committers=
+,
+> +maintainers and the Linux Media community.
+> +
+> +The Linux Media community, also called LinuxTV community, has its primar=
+y
+> +site at https://linuxtv.org.
+> +
+> +As such, a media committer is not just someone who is capable of creatin=
+g
+> +code, but someone who has demonstrated their ability to collaborate
+> +with the team, get the most knowledgeable people to review code,
+> +contribute high-quality code, and follow through to fix issues (in code
+> +or tests).
+> +
+> +.. Note::
+> +
+> +   1. If a patch introduces a regression, then it is the media committer=
+'s
+> +      responsibility to correct that as soon as possible. Typically the
+> +      patch is either reverted, or an additional patch is committed that
+> +      fixes the regression;
+> +   2. if patches are fixing bugs against already released Kernels, inclu=
+ding
+> +      the reverts above mentioned, the media committer shall add the nee=
+ded
+> +      tags. Please see :ref:`Media development workflow` for more detail=
+s.
+> +
+> +Becoming a media committer
+> +--------------------------
+> +
+> +The most important aspect of volunteering to be a committer is that you =
+have
+> +demonstrated the ability to give good code reviews. So we are looking fo=
+r
+> +whether or not we think you will be good at doing that.
+> +
+> +As such, potential committers must earn enough credibility and trust fro=
+m the
+> +LinuxTV community. To do that, developers shall be familiar with the ope=
+n
+> +source model and have been active in the Linux Kernel community for some=
+ time,
+> +and, in particular, in the media subsystem.
+> +
+> +So, in addition to actually making the code changes, you are basically
+> +demonstrating your:
+> +
+> +- commitment to the project;
+> +- ability to collaborate with the team and communicate well;
+> +- understand of how upstream and the LinuxTV community work
+> +  (policies, processes for testing, code review, ...)
+> +- reasonable knowledge about:
+> +
+> +  - the Kernel development process:
+> +    Documentation/process/index.rst
+> +
+> +  - the Media development profile:
+> +    Documentation/driver-api/media/maintainer-entry-profile.rst
+> +
+> +- understanding of the projects' code base and coding style;
+> +- ability to provide feedback to the patch authors;
+> +- ability to judge when a patch might be ready for review and to submit;
+> +- ability to write good code (last but certainly not least).
+> +
+> +Developers that intend to become committers are encouraged to participat=
+e
+> +at the yearly Linux Media Summit, typically co-located with another Linu=
+x
+> +conference.
+> +
+> +If you are doing such tasks and have become a valued developer, an
+> +existing committer can nominate you to the media subsystem maintainers.
+> +
+> +The ultimate responsibility for accepting a nominated committer is up to
+> +the subsystem's maintainers. The committers must earn a trust relationsh=
+ip
+> +with all subsystem maintainers, as, by granting you commit rights, they =
+will
+> +be delegating part of their maintenance tasks.
+> +
+> +Due to that, to become a committer or a core committer, a consensus betw=
+een
+> +all subsystem maintainers is required, as they all need to trust a devel=
+oper
+> +well enough to be delegated the responsibility to maintain part of the c=
+ode
+> +and to properly review patches from third parties, in a timely manner an=
+d
+> +keeping the status of the reviewed code at https://patchwork.linuxtv.org
+> +updated.
+> +
+> +.. Note::
+> +
+> +   In order to preserve/protect the developers that could have their com=
+mit
+> +   rights granted, denied or removed as well as the subsystem maintainer=
+s who
+> +   have the task to accept or deny commit rights, all communication rela=
+ted to
+> +   nominating a committer, preserving commit rights or leaving such func=
+tion
+> +   should happen in private as much as possible.
+> +
+> +.. _media-committer-agreement:
+> +
+> +Media committer's agreement
+> +---------------------------
+> +
+> +Once a nominated committer is accepted by all subsystem maintainers,
+> +they will ask if the developer is interested in the nomination and discu=
+ss
+> +what area(s) of the media subsystem the committer will be responsible fo=
+r.
+> +
+> +Once the developer accepts being a committer, the new committer shall
+> +explicitly accept the Kernel development policies described under its
+> +Documentation/, and, in particular to the rules on this document, by wri=
+ting
+> +an e-mail to media-committers@linuxtv.org, with a declaration of intent
+> +following the model below::
+> +
+> +   I, John Doe, would like to change my status to: Committer
+> +
+> +   I intend to actively develop the XYZ driver, send fixes to drivers
+> +   that I can test, optionally reviewing patches and merging trivial
+> +   fixes in other areas of the subsystem, ...
+> +
+> +   For the purpose of committing patches to the media-committer's tree,
+> +   I'll be using my user https://gitlab.freedesktop.org/users/<username>=
+.
+> +
+> +Followed by a formal declaration of agreement with the Kernel developmen=
+t
+> +rules::
+> +
+> +   I hereby declare that I agree with the Kernel development rules descr=
+ibed at:
+> +
+> +   https://www.kernel.org/doc/html/latest/driver-api/media/media-committ=
+er.rst
+> +
+> +   and to the Linux Kernel development process rules.
+> +
+> +   I agree to the Code of Conduct as documented in:
+> +   https://www.kernel.org/doc/html/latest/process/code-of-conduct.rst
+> +
+> +   I am aware that I can, at any point of time, retire. In that case, I =
+will
+> +   send an e-mail to notify the subsystem maintainers for them to revoke=
+ my
+> +   commit rights.
+> +
+> +   I am aware that the Kernel development rules change over time.
+> +   By doing a new push to media-commiter tree, I understand that I agree
+> +   with the rules in effect at the time of the commit.
+> +
+> +Such e-mail shall be signed with a PGP key cross signed by other Kernel =
+and
+> +media developers. As described at :ref:`media-developers-gpg`_, the PGP
+> +signature, together with the gitlab user security are fundamental compon=
+ents
+security,
+> +that ensure the authentity of the merge requests that will happen at the
+authenticity
+> +media-committer.git tree.
+> +
+> +In case the kernel development process changes, by merging new commits
+> +in the
+> +`media-committer tree <https://gitlab.freedesktop.org/linux-media/media-=
+committers>`_,
+> +the media committer implicitly declares their agreement with the latest
+> +version of the documented process including the contents of this file.
+> +
+> +.. note::
+> +
+> +   1. Changes to the kernel media development process should be announce=
+d in
+> +      the media-committers mailinglist with a reasonable review period. =
+All
+> +      committers are automatically subscribed to that mailinglist;
+> +   2. Due to the distributed nature of the Kernel development, it is
+> +      possible that kernel development process changes may end being
+> +      reviewed/merged at the linux-docs mailing list, specially for the
+> +      contents under Documentation/process and for trivial typo fixes.
+> +
+> +Core committers
+> +---------------
+> +
+> +As described in Documentation/driver-api/media/maintainer-entry-profile.=
+rst
+> +a committer may be granted with additional rights to also be able to
+> +change a core file and/or media subsystem's Kernel API. The extent of
+> +the core committer's grants will be detailed by the subsystem maintainer=
+s
+> +when they nominate a core committer.
+> +
+> +Existing committers may become core committers and vice versa. Such
+> +decisions will be taken in consensus between the subsystem maintainers.
+> +
+> +Media committers rules
+> +----------------------
+> +
+> +Media committers shall do their best efforts to avoid merged patches tha=
+t
+> +would break any existing drivers. If it breaks, fixup or revert patches
+> +shall be merged as soon as possible, aiming to be merged at the same Ker=
+nel
+> +cycle the bug is reported.
+> +
+> +Media committers shall behave accordingly to the rights granted by
+> +the subsystem maintainers, specially with regards of the scope of change=
+s
+> +they may apply directly at the media-committers tree. Such scope can
+> +change over time on a mutual agreement between media committers and
+> +maintainers.
+> +
+> +As described at :ref:`Media development workflow`, there are workflows.
+> +For the committers' workflow, the following rules apply:
+> +
+> +- Each merged patch shall pass CI tests;
+> +
+> +- Media committers shall request reviews from other committers and
+> +  developers where applicable, i.e. because those developers have more
+> +  knowledge about some areas that are changed by a patch;
+> +
+> +- There shall be no open issues or unresolved or conflicting feedback
+> +  from anyone. Clear them up first. Defer to subsystem maintainers as ne=
+eded.
+> +
+> +Patches that do not fall under the committer's workflow criteria will fo=
+llow
+> +the pull request workflow as described at :ref:`Media development workfl=
+ow`.
+> +
+> +Only a subsystem maintainer can override such rules.
+> +
+> +All media committers shall ensure that patchwork will reflect the curren=
+t
+> +status, e.g. patches shall be delegated to the media committer who is
+> +handling them and the patch status shall be updated according to these r=
+ules:
+> +
+> +- ``Under review``: Used if the patch requires a second opinion
+> +  or when it is part of a pull request;
+> +- ``Accepted``: Once a patch is merged in the multi-committer tree.
+> +- ``Superseded``: There is a newer version of the patch posted to the
+> +  mailing list.
+> +- ``Duplicated``: There was another patch doing the same thing from some=
+one
+> +  else that was accepted.
+> +- ``Not Applicable``: Use for patch series that are not merged at media.=
+git
+> +  tree (e.g. drm, dmabuf, upstream merge, etc.) but were cross-posted to=
+ the
+> +  linux-media mailing list.
+> +
+> +If the committer decides not to merge it, then reply by email to patch
+> +authors, explaining why it is not merged, and patchwork shall be updated
+> +accordingly with either:
+> +
+> +- ``Changes Requested``: if a new revision was requested;
+> +- ``Rejected``: if the proposed change won't be merged upstream.
+> +
+> +If a media committer decides to retire, it is the committer's duty to
+> +notify the subsystem maintainers about that decision.
+> +
+> +.. Note::
+> +
+> +   Patchwork supports a couple of clients to help semi-automating
+> +   status updates via its REST interface:
+> +
+> +   https://patchwork.readthedocs.io/en/latest/usage/clients/
+> +
+> +Maintaining media committer status
+> +----------------------------------
+> +
+> +A community of committers working together to move the Linux Kernel
+> +forward is essential to creating successful projects that are rewarding
+> +to work on. If there are problems or disagreements within the community,
+> +they can usually be solved through healthy discussion and debate.
+> +
+> +In the unhappy event that a media committer continues to disregard good
+> +citizenship (or actively disrupts the project), we may need to revoke
+> +that person's status. In such cases, if someone suggests the revocation
+> +with a good reason, then after discussing this among the media committer=
+s,
+> +the final decision is taken by the subsystem maintainers. As the decisio=
+n
+> +to become a media committer comes from a consensus between subsystem
+> +maintainers, a single subsystem maintainer not trusting the media commit=
+ter
+> +anymore is enough to revoke committer's grants.
+> +
+> +If a committer is inactive for more than a couple of Kernel cycles,
+> +maintainers will try to reach you via e-mail. If not possible, they may
+> +revoke your committer grants and update MAINTAINERS file entries
+> +accordingly. If you wish to resume contributing later on, then contact
+> +the subsystem maintainers to ask if your rights can be restored.
+> +
+> +A previous committer that had their commit rights revoked can keep
+> +contributing to the subsystem via the pull request workflow as documente=
+d
+> +at the :ref:`Media development workflow`.
+> +
+> +References
+> +----------
+> +
+> +Much of this was inspired by/copied from the committer policies of:
+> +
+> +- `Chromium <https://chromium.googlesource.com/chromium/src/+/main/docs/=
+contributing.md>`_;
+> +- `WebKit <https://webkit.org/commit-and-review-policy/>`_;
+> +- `Mozilla <https://www.mozilla.org/hacking/committer/>`_.
+> +
+> diff --git a/Documentation/process/maintainer-pgp-guide.rst b/Documentati=
+on/process/maintainer-pgp-guide.rst
+> index f5277993b195..795ef8d89271 100644
+> --- a/Documentation/process/maintainer-pgp-guide.rst
+> +++ b/Documentation/process/maintainer-pgp-guide.rst
+> @@ -903,6 +903,8 @@ the new default in GnuPG v2). To set it, add (or modi=
+fy) the
+>
+>      trust-model tofu+pgp
+>
+> +.. _kernel_org_trust_repository:
+> +
+>  Using the kernel.org web of trust repository
+>  --------------------------------------------
+>
+> --
+> 2.47.0
+>
+>
+
+
+--=20
+Ricardo Ribalda
 
