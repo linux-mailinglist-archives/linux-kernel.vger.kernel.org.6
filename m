@@ -1,115 +1,127 @@
-Return-Path: <linux-kernel+bounces-425522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ADA9DC326
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:55:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E724D163CD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:55:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD1A19ABC3;
-	Fri, 29 Nov 2024 11:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IenEB1RU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF1F9DC32A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:56:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C59133C5;
-	Fri, 29 Nov 2024 11:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335AA2810FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:56:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B6E33C5;
+	Fri, 29 Nov 2024 11:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HzmXzuTb"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1794F194AFB
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732881331; cv=none; b=an+FO2b6on0aex2/tEHdCmCpc2NZeiL9kvDYZNS4mjTF1y0TXb1UVYKZwoFRpNnOmBCiT4t9WS5kUptul2SJxCyFpNVkvn5KgeXiY9QkLTAvTtivPzd0588yyPXjnkqqxIC2iPHgIpWUz0aTIlxQyHm1pZgGWYJg1bLhnXwvUVw=
+	t=1732881383; cv=none; b=DPCHuLxRURmbNc6mrwvXDX2YZIpY0vFCS+NqZSeWBlJDZ8rPBfrLICj8MlT+GHXmlJ4STdT58MZPDN2vqTJZEecf7cHdzhQxK/YbjTbcHy0C84cS0wDvowsykGDZQ852XAzKkA4A2kGq7pqisbSg2S9WkBLYmiX7cEb08Zs+8Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732881331; c=relaxed/simple;
-	bh=PCwTZksW8jw/sIiLZC5grod741cJ0Qggc5kuzZnMjc4=;
+	s=arc-20240116; t=1732881383; c=relaxed/simple;
+	bh=BRdQq1d646B38q0Lh5kk9wKgLFcCeeNgaOzA4wBFSYs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=im4j78O5lV2krjb9S7YhWt01mw46sFKa6DwhTf1OCwsX9r8wRfiwjV/hrK3vNjX/VQHiVg0/3fbuC8t94oPMO7UAye7sdmQKmxbxLwLjFPkDiDelQOdv8S+LwLrG9C7YVGN2AaOL/XBLIsgnqLmr698ykA1Gw1cTsBiPY1K0rfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IenEB1RU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3271BC4CECF;
-	Fri, 29 Nov 2024 11:55:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732881331;
-	bh=PCwTZksW8jw/sIiLZC5grod741cJ0Qggc5kuzZnMjc4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IenEB1RUjTD2vJ2SdbTKEJqOBiPEdSJOudSSe17Uuf887IXYRMO3EYFhPG9pf2wmA
-	 xjPPTBEzYLBJvZ9vx7XesuEoyDj9Z0uroTq3sAGGIxa5j38JUy5yrf98bTvklzvGI3
-	 I7XH8S0gcprBYOl8xdwWkqDT3TIlN2IFWPzAmlrD1DmS1duYfpuryieGcKf2Bl8JPQ
-	 BMkVbXNuT4qdiurJdAnb7ohcDXf9x8WII8Ww4N5z1Eyaw7JadxvrikcXT7k7Qt3kbx
-	 leByzmM5MtgFlHrVFv5yJvx7+Ab6oownwSp1z+WF+gnHndKOtXioZWVy7YwOgOpdeN
-	 2HZMXs9vgM9Sg==
-Date: Fri, 29 Nov 2024 11:55:24 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Guo Ren <guoren@kernel.org>, Alexandre Ghiti <alex@ghiti.fr>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Leonardo Bras <leobras@redhat.com>, linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v6 13/13] riscv: Add qspinlock support
-Message-ID: <20241129-proxy-mantra-f58352723906@spud>
-References: <20241128134135.GA3460@willie-the-truck>
- <20241128-uncivil-removed-4e105d1397c9@wendy>
- <90533aa9-186a-4f75-b3c5-d93d6682056b@ghiti.fr>
- <20241128-goggles-laundry-d94c23ab39a4@spud>
- <CAJF2gTST0kduYpuqd4mX0byetWMRJT-AAyH0GGiaysZG64Byhw@mail.gmail.com>
- <CAJF2gTRQg=w3sGN0Sdzf+_adRo44z4H6Zd6=C6qXq+ARR5BjSg@mail.gmail.com>
- <CAJF2gTSX82rGp-9xZHvg1Y3SpO516YCcqSBLKFgWEQ5G-iWR4A@mail.gmail.com>
- <CAHVXubgXiD5Bi6ytyDHXXOONovWHZTSvr4+oADCvuic5ObGXpQ@mail.gmail.com>
- <20241129-encrust-thumping-b6c6a3399b98@spud>
- <20241129-clay-trimester-91a0f281a95d@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eu9JU1zXdFyF+EeJDIsOIzT9+DMWcIX4J1BIE00Jjg9403dQZZSJURzPQQhGmg4mlnAdJM2vgeG0RUfXHcSsAfPiyStbDM4Yw7C7VA0lvO+cRfzDTe4PINI9kQV+YldY6EogePm2BQohwFqy2eb35S2lYYDeOwqFgqQEyEZMCYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HzmXzuTb; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=BRdQ
+	q1d646B38q0Lh5kk9wKgLFcCeeNgaOzA4wBFSYs=; b=HzmXzuTbPF/4uDarEdbY
+	oMBibca0fqng0poVkkQP+vUFIM1sfz/nke4hLYjX6vS+OWNDBRQKXaeLpodoVbZc
+	Y2rMkOzItkbUXzju+UuDzC+WEQkM439gX1vnalf+T0RPeb5MRTxtmzgPuw8cBW9J
+	zbMb7qKyjgXYpVUqdg2Q8UYS3IiMAqL7lBoEi+CS2+Oo9lP/xdvpIKoyQRY/85mX
+	nssR/XQOdckKeluQCYNbpy3Wg/R2/qr5ie7hLQ0LjPSa8hWudo+QXNDENAYb6Wdc
+	vExRZAE/KKZBsrhNG3jTD4sVQseG70jbe9CLd+W29Do3kEiFloV1tG2ge/0qYOp2
+	yA==
+Received: (qmail 1390799 invoked from network); 29 Nov 2024 12:56:15 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Nov 2024 12:56:15 +0100
+X-UD-Smtp-Session: l3s3148p1@0VPL4gsodtMgAQnoAEnuAE61Ad4iLfCs
+Date: Fri, 29 Nov 2024 12:56:14 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: fix typo in I2C OF COMPONENT PROBER
+Message-ID: <Z0mr3uIatn1A0iSE@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Lukas Bulwahn <lbulwahn@redhat.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20241129095238.51748-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="B3rY1u54z6BEJe5L"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yBRPQr3UFnGOqWre"
 Content-Disposition: inline
-In-Reply-To: <20241129-clay-trimester-91a0f281a95d@spud>
+In-Reply-To: <20241129095238.51748-1-lukas.bulwahn@redhat.com>
 
 
---B3rY1u54z6BEJe5L
+--yBRPQr3UFnGOqWre
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 29, 2024 at 11:43:44AM +0000, Conor Dooley wrote:
-> On Fri, Nov 29, 2024 at 11:18:24AM +0000, Conor Dooley wrote:
-> >=20
-> > I tried this diff, and it doesn't actually fix the problem - either in
-> > QEMU or in hardware. I'll do some more poking.
+On Fri, Nov 29, 2024 at 10:52:38AM +0100, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 >=20
-> Looks like it might have been my fault, typo while hand-applying the
-> diff pasted above cos it was corrupted :/ Rebuilding..
+> Commit 157ce8f381ef ("i2c: Introduce OF component probe function") adds t=
+he
+> header file include/linux/i2c-of-prober.h and a corresponding file entry =
+in
+> the newly added MAINTAINERS section I2C OF COMPONENT PROBER. This file
+> entry unfortunately has a typo.
+> Fortunately, ./scripts/get_maintainer.pl --self-test=3Dpatterns detects t=
+his
+> broken reference.
+>=20
+> Fix the typo in this file entry in the I2C OF COMPONENT PROBER section.
+>=20
+> Fixes: 157ce8f381ef ("i2c: Introduce OF component probe function")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+
+Applied to for-mergewindow, thanks!
 
 
-sans-typo, the diff does make it boot, my bad.
-
-
---B3rY1u54z6BEJe5L
+--yBRPQr3UFnGOqWre
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0mrrAAKCRB4tDGHoIJi
-0o2cAP9wDMq1AIQu+yNhsWztBDTj6piw+4PfqFq1bQAAh9U/EwEAkLXlNZGUGStI
-QBEc03DcU7n3hnf7FTsBRSBls8a6WQE=
-=dKan
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdJq9oACgkQFA3kzBSg
+KbZSDA//WVfUWr7RZtRfQdM3rxGc3tg3gOh/v43xBLYMzMw+YRr5ntV59jLBixkc
+i5Dljx+8yOOqw3oNJwTe6uVoHfwP8kc/n0BbdunKUoO9LyoI2Jv1cpsANdleKJi0
+9QXahMyl/w0Jmoruv9SaMxg1GYg1wNx5mtCqIo3kZEnopxkzuOXpE6u1gelQ69f3
+u69Opunm4olZ4+SwShk/y0M2t2om8sUoSeNuTT2L9wSJbuEk/uTnKhe/ft3NP/H8
+d/D4VMBOAQLDP4TlC5hJZD/Jxi8KKbEoJN0KbZMysACtcWiPdlu/RWIUg64OzfQ9
+y4gyiCtlDBGufCJicdhctxFD6PCK6ay7ZY6BwfUW1xKRV1f4sdSpOBtOZDqdMMi6
+s55/MnKtu9RvCXqVgPPNfd1VYLK3DKQe5/WDBYRm9r2esbXvKwS4kD5M/U3MxMJ/
+XVxbCzTQWhqc5RDnvOJW+O53FVj4vRFqavCd4D4DVRFqBdL/bXTdvvR0gH0gUvJV
+sYSB5wiKzW9iKgLeKYqyaS6Y2t/87rqjfxyRPrybX4CdEGijcbBjIA5Y+56XtMTp
+OQn7TVoANIHZFEb3E/PpbFY70GINlzfp2QHwt8olCGP3lI5w0ugg7H0ZHP6ozzyu
+XZ7/rXO6FQRX+6cpYCsWxc1co+LCPcEqgw+wOZQedvFdNqBhlPU=
+=hFPO
 -----END PGP SIGNATURE-----
 
---B3rY1u54z6BEJe5L--
+--yBRPQr3UFnGOqWre--
 
