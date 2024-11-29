@@ -1,95 +1,125 @@
-Return-Path: <linux-kernel+bounces-425302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68439DC03B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:06:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56FA39DC03F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:10:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B245162C22
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:06:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BCDD160E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2D5158858;
-	Fri, 29 Nov 2024 08:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3241B158D92;
+	Fri, 29 Nov 2024 08:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="DgZSLo6f"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vl3fTfXg"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D10145C14
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7340745C14;
+	Fri, 29 Nov 2024 08:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732867581; cv=none; b=i4eyeIgGjWMQRHHSk3OWLtBx7SPS58IJ6axai6qg7UOTdxi/eDgAbo6TSl3kT6pFJ0Mtw7v3UJl/OyGsf6bXo7NDkKjeVmWuSYY9QYnbvuC457bAsuzy0sCjHcZZs/uegnRKIg1ZuJF7QHDSQQ9P36RKvkMsCyoHkAULbB1/AT4=
+	t=1732867832; cv=none; b=DdV+TGXNFL9tcBEC+kxMSyGqOhZ/GmeZkY9h6fIhpxJLBdv3gXb345qaRG8HI9wDhhq/qrxCQbclzq3UDoWlO9nBX90ldotcIE/TRSJIeAF7kecQeZabPLgzeTR3jzcAc+wUjsmVn1De35CzlIk3YN8a3k/iiw0JWRMjqEVvHuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732867581; c=relaxed/simple;
-	bh=xdCc7So5WJlPDQV9tqtG5m+9pg/vhfSFOA4sIRrWx7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eeg1WeIhi1qRiPeFcYwIJNeJkwe2wgT0lXAdhKJ4nkU/SRM17X7D8FwHiCw1N4bYZ+SRutAa6oUBK5e0H4/klbW9R/MNaoA3JBGVMh0ZGU/vpNIyOlB9PduxR44nOBWc8tPKHztFEDv3adDvIlLc1fYVpsgrtPheazPmoimbGdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=DgZSLo6f; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa545dc7105so211088366b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:06:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1732867578; x=1733472378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xdCc7So5WJlPDQV9tqtG5m+9pg/vhfSFOA4sIRrWx7g=;
-        b=DgZSLo6finV0NMFXlYdFweErnW8qpOLo5kRxIkGgnIIZ8gcVF5bBoFT/efZRT8lUu7
-         xL3d0kAWfjHsGfwba50cG6Tyh2h19ovvJuX6NCVsO8oTKmQ95lW4Ry4U60VG8kVeeLlP
-         mo6aOBsr/rFDXZj2AxDc2kPGteNnXB2LshgLA4my56t88qqxKKnHvY0PgMCs62OxCf9e
-         M7PvOsWEkpklDYlNba+zJiQ6824wPpQnTrg14OpBH3CqNff9sMT85OXvEM7S6C0txj4G
-         2WjEMvHeIDsomS76u7ONQXlY7JQQf7MlzHCEwL53foo2gRJN9ncmehTQJDy0CaQKnUOw
-         njJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732867578; x=1733472378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xdCc7So5WJlPDQV9tqtG5m+9pg/vhfSFOA4sIRrWx7g=;
-        b=rTNbWFVfLQYAb0/0hVWBKHV/2dME/omICkYXLYsBf3V2ADPgyvk4EMYV+l5Bq9TgIV
-         XH48neKiQcP02Mwn1pfwasqvNe5YCigpqFHHM4V/CVekKQI+k0+gpAObU+leDqee+P6o
-         Ngk9K7taDKNqPVH8FEc5YKYeNk9H9vKIYANDXCAa+QrPtyeh53qfIbyEqgUU/31HnLSH
-         cTTW3QTscna9OquyQsuFUfRwXVUFlbIz5aJbHDeVwFwttaEZ7aYB/dl5xLar3apeu+rt
-         /5SFSKkJAEGaQGuojDlvyU19Ae2jQ3IoJdftXkgu3kegZrSOWpguh0oI238oLZyBDFr5
-         CXow==
-X-Forwarded-Encrypted: i=1; AJvYcCVi3hap26aefo24tzePayII8/qGAr2zvYgjOwYUKNyLCXl9mcNbxj9cCKQz7ylxZdEiS/WsMowDpLY+eRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YystnDWzdgZUMYHAm8TBLBOdkt+Gone2NeMDbFLlZpltCjm141M
-	G2zi2XhfK7aazFIKTFlWijPO0Dl1pdqUDIYBJp6aM4Hq3oqU6Y/5BWICge9WlcORqTS0BOQgQ+p
-	05ko7LDSdpc4vU5g8Ci05tpYHXU9YjmXDDzz/s48d/XPGfkTFUds=
-X-Gm-Gg: ASbGncsUwjMhkvRurVXyrfxIwrX3RcstOibgIL/Sppijlnlkw+lSgIFC8DnFtMebugx
-	rWSn3lXEOGxuODjSJsSbsZQfCoE1FwKegNBOKXgHFE7DbKl4XeAIqWgU+64RH
-X-Google-Smtp-Source: AGHT+IHvfYEqHD35f8UnLDugHPxFfBJiHJYV9810UXcLgYjqc2ISSIJrK1EXM5GwIAW4E5UPnf+3ZjJlrOLaI3o+G14=
-X-Received: by 2002:a17:906:1baa:b0:aa5:cac:9571 with SMTP id
- a640c23a62f3a-aa580f4c51amr744110066b.28.1732867577853; Fri, 29 Nov 2024
- 00:06:17 -0800 (PST)
+	s=arc-20240116; t=1732867832; c=relaxed/simple;
+	bh=AYPeFCSY+ZM8FxtiRhfjwjKx4LWm2P0yK9KPPipft6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EExgx+2P45AF1NzBsVzCtrHdIpOtYJjXdXbeS4I5Mqq1xfmVucnBGa2UbhbIbYxDe4o4IqzedSZ95YTpDqRnSU41rX4Th/L55rkiqIKOZ765N7YIaci+dHUIaNU/O6NUCRQig9JzWBAgSzoOWdZWdIu9FZY1lAXCPNzkVRTv8u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vl3fTfXg; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ADF4240003;
+	Fri, 29 Nov 2024 08:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732867819;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xI6ZyEQYlO67EDyhVXwWpx45NB2tNXa1Y4U0cY6j/nk=;
+	b=Vl3fTfXgOUqb4XayzRUopNxuNO2a0PA88El3Vu57k1X2uvPqC3YDMFL4SXXvcnqdEv2qcC
+	p7VAOtljAwIHPBmNSp/2/uIvdwozWyEuG9XBsypuWuD9uKEPEgHC0fLTumczbcD3dofyC9
+	qwO/5TjFzq8qFITgBpYSGKkjQ8BvHIjfMvKXBRMcXgC/2yjhWejvojKqQRsryivCiD1JCy
+	dx5myJsMw0QS86yN7CcSdrwNtG5t2wrN0bmKXVAjU9S2vPTG9ALfB6xSEIHzaGIeJBjGxS
+	iM8o8ZeVZ4ex/HxBnuVh1FCfjxnQ9p06O9oGcM/2Z2YNI4a1b9mEiZwCTOlX7A==
+Date: Fri, 29 Nov 2024 09:10:13 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Michal Kubecek <mkubecek@suse.cz>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko
+ <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, Lee Jones
+ <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan
+ <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, Lars Povlsen
+ <lars.povlsen@microchip.com>, Steen Hegelund
+ <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v9 1/6] misc: Add support for LAN966x PCI device
+Message-ID: <20241129091013.029fced3@bootlin.com>
+In-Reply-To: <dywwnh7ns47ffndsttstpcsw44avxjvzcddmceha7xavqjdi77@cqdgmpdtywol>
+References: <20241010063611.788527-1-herve.codina@bootlin.com>
+	<20241010063611.788527-2-herve.codina@bootlin.com>
+	<dywwnh7ns47ffndsttstpcsw44avxjvzcddmceha7xavqjdi77@cqdgmpdtywol>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127212027.2704515-1-max.kellermann@ionos.com> <CAO8a2SiS16QFJ0mDtAW0ieuy9Nh6RjnP7-39q0oZKsVwNL=kRQ@mail.gmail.com>
-In-Reply-To: <CAO8a2SiS16QFJ0mDtAW0ieuy9Nh6RjnP7-39q0oZKsVwNL=kRQ@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Fri, 29 Nov 2024 09:06:07 +0100
-Message-ID: <CAKPOu+8qjHsPFFkVGu+V-ew7jQFNVz8G83Vj-11iB_Q9Z+YB5Q@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Thu, Nov 28, 2024 at 1:18=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
-wrote:
-> Pages are freed in `ceph_osdc_put_request`, trying to release them
-> this way will end badly.
+Hi Michal,
 
-Is there anybody else who can explain this to me?
-I believe Alex is wrong and my patch is correct, but maybe I'm missing
-something.
+On Thu, 28 Nov 2024 20:42:53 +0100
+Michal Kubecek <mkubecek@suse.cz> wrote:
+
+...
+> > --- a/drivers/misc/Kconfig
+> > +++ b/drivers/misc/Kconfig
+> > @@ -610,6 +610,30 @@ config MARVELL_CN10K_DPI
+> >  	  To compile this driver as a module, choose M here: the module
+> >  	  will be called mrvl_cn10k_dpi.
+> >  
+> > +config MCHP_LAN966X_PCI
+> > +	tristate "Microchip LAN966x PCIe Support"
+> > +	depends on PCI
+> > +	select OF
+> > +	select OF_OVERLAY  
+> 
+> Are these "select" statements what we want? When configuring current
+> mainline snapshot, I accidentally enabled this driver and ended up
+> flooded with an enormous amount of new config options, most of which
+> didn't make much sense on x86_64. It took quite long to investigate why.
+> 
+> Couldn't we rather use
+> 
+> 	depends on PCI && OF && OF_OVERLAY
+> 
+> like other drivers?
+> 
+
+I don't have a strong opinion on this 'select' vs 'depends on' for those
+symbols.
+
+I used select because the dependency is not obvious for a user that just
+want the driver for the LAN966x PCI device.
+
+Best regards,
+Hervé
 
