@@ -1,113 +1,63 @@
-Return-Path: <linux-kernel+bounces-425830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE2FF9DEB7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:11:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B4B9DEB87
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D051B21C08
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDC628251A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6463E155CA5;
-	Fri, 29 Nov 2024 17:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732C019DF47;
+	Fri, 29 Nov 2024 17:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bDOwkwrp"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUhopQuQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C486B155391
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 17:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67151474A7;
+	Fri, 29 Nov 2024 17:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732900285; cv=none; b=RYq9HTwNuYrIqRvjDiYE/druOvMAKqpvwc+mN2aIWXcbGqvoJTf/gyxrvKO1S4cF3aOpvI82Xa6ZGCqxvG7vOmHbMS5bWHkjvvpBn6g+K0JlB13fnULt3h0HZWkaTD7fkPQ8te9tdNepYHHZjlwoHutHHVqE4BTm6Fvd/dESV/w=
+	t=1732900397; cv=none; b=WOjiOiGu4mWyBkRQHpfiXsPXoZVcsX1/Lb5+p18quHI/XirAcMy6UmWPPJn2aprfV99og0F/YgKTioxDzyaQ6WoJB1tSjynlzNNEI7SCPBf4wqifSDBzWyqwUH+EfvdtxdnF5kFdn1hqK+yfn7PHcRp3dZOQ/30XkAtLD9ngvcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732900285; c=relaxed/simple;
-	bh=u4VeqDNvTWRAhnRMPvx5ZxHgDaIe1hpfxIJoqfWrVgE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cnQGshmNccKuX8V3SoQXakPV3+tJZN2yzuHEtdS7qjqyoHYcPXf3ggz0iP8THDsxTJwNACG28HMY5nRry+IFW7aGDOlRuWBbrYFAOGK4Maw652TumXvWLrIfsQDoRGlX8MyR6IxGCaDm2cIzJE8k6S3WBwel6NLyZ90Zn8PEVkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bDOwkwrp; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53df80eeeedso2134694e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:11:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732900281; x=1733505081; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wKStJ4JMYm6/f7jAdkMonmjOHy/XStYH3AHNh9QPw+k=;
-        b=bDOwkwrp57+hdJuQM2yuTXFuR2uJQz4KquU51t8PIHqO8eQiDyD9aQNlzcorNorPaT
-         xp7YOLadRHiHqNeLg9IJY6J/ulFR/j/syM1NdPODXmEbzVOl5mUR/WOlAKf2q/W7pRWF
-         OVISodhH2VoKdzyWp6LX1fXe+h47Uvf/jzI/K4qJMK0C/xvuS5ytvS7xf5oYa3VTLyd7
-         VWtiSLzoTH2KjPpjC534rVGaPgyoky1fRIlQrXwp05orw95J08DpqUP7G6xtWuVpeMBw
-         wDC8XOyxR1Qfs1jSuK0KTWCb5rsWjIdgrxuwVXnYBHN2hXoRrC0USPiYqn3iDJLpFYf4
-         VHpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732900281; x=1733505081;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wKStJ4JMYm6/f7jAdkMonmjOHy/XStYH3AHNh9QPw+k=;
-        b=CUzPTUb0Bba8dCClJFadIHEPCb5e3UzSdlrxmTZjtD0+2hEEpvUygyZSFjSdE1wuGQ
-         JGg1v0cIPv6SepWW8CJ6aj3Myz6yHsrQxmyatxH3KubTtm/aJya5x6RS9ZZTpNnWfztV
-         To65szmDpKDRY5w2p0xBZyCDeacFjOyAlDeg5sBbrD1uHalAO17BbtPjYWDqV9X+wirl
-         HBgyg8PlifmUneiNEs2p5O7aFS2pCFJXcNnEqtczi7Ck8PGjKWKkOoJKkHn0Xp0jc28b
-         mPcYuPt97f93ux8YeYa5zUkyvRHHFyG4pHHSAu3KphdHIvcJUWgx18ZMcMSjV/8RYuSW
-         8iqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGIhibmpmRXZnZLIPeXlV3UR0Hl4vkLkTnqkHn9SiFvbqPW9SQYx/r92NvZZejcZ6S0kczko/wcJ+THHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpSEU1hE1klkSwDqr7vrE9xriAX1muCt7r+3Kui9DS0xynJmjX
-	ReGwAIzT5ZBn8IhzSEZZa9L5itWyY/CmATJtzfjieZIIxLFoMRkOoSJf9PoES/k=
-X-Gm-Gg: ASbGncvH5DUdPyTfTU5mwdnEbOkNHSIMHFgpRQJpFfjS2DX3LLUvtB+FFKkdXmBZZao
-	dPDCOqI/ARI7l6CT4ePzikCZZl32SskcuvZbs5qiuV5jZprVUgRraLd/K/WxOXbAYMz96y2l1rP
-	Qurthl0TRhoIiczfrlYS5xfoqzjZzhUHRfbjI5+c191aUSSNkgExDEqxVXpBIK7ivgvg1di1LgQ
-	9GOrp26ufiV22b8QjXDIfu+g94n3dlz2c0pJtIPTbDqp8ybpqykSlel7ICF6hLnhRj0fZGh7kj+
-	XsAcQ1O7rVLnI+8xGtBD
-X-Google-Smtp-Source: AGHT+IHZ3oTCh7gVSsmHhrZ3fiOp7cXkhyrNMHuydkCIk2tz2qxDfVIno+QP7oK2bTxacMEqt16MJg==
-X-Received: by 2002:a05:6512:39d2:b0:53d:ec9a:138f with SMTP id 2adb3069b0e04-53df0112687mr8431697e87.57.1732900280754;
-        Fri, 29 Nov 2024 09:11:20 -0800 (PST)
-Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e63a2sm192130166b.113.2024.11.29.09.11.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 09:11:20 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 29 Nov 2024 18:11:53 +0100
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v4 02/10] dt-bindings: pinctrl: Add RaspberryPi RP1
- gpio/pinctrl/pinmux bindings
-Message-ID: <Z0n12a6irbXQomdD@apocalypse>
-References: <cover.1732444746.git.andrea.porta@suse.com>
- <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
- <4ufubysv62v7aq53qfzxmup5agmqypdvemd24vm6eentph46qq@3kveluud3zd3>
+	s=arc-20240116; t=1732900397; c=relaxed/simple;
+	bh=Vgr7lOkaswmLedMDgRZDhamnfpJagMy+vOT3spBC1xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IzQje+jwdgCJm1vAdrLjxFt3WfDa0L1SKoVUtjemO15Lw9a8JTJ+rqcei43e8RLgLQgsSdGPGPDw0bQ0Qzy7mdlI0tN4G6RhCMLncvcBtPXOSGVtKTUutTInxztkfi202TsbDll8Wy93A/59DcndHwW7Cc2tu9mm6Bjdu4ivtQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUhopQuQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50ACAC4CECF;
+	Fri, 29 Nov 2024 17:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732900397;
+	bh=Vgr7lOkaswmLedMDgRZDhamnfpJagMy+vOT3spBC1xU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XUhopQuQX4r5wW8RtCykDvvqZL1u0CpBqAGvX+8rQVXCVKSDUwq/PMWMYUsPa4L5P
+	 CQOQ93eeWX5IuW388PcEXe32TFNH1irNetfE0tuW8wWpsi5zIizaer7HtXd4YWYGYF
+	 7xhwukANOF3JnaR+/wNvBluih1btCztOg/gT2mMiUmPgm4/LKh6hOBYUaU9u3XVtvj
+	 EO1B0jkRGoEleVKAaGScc0fMLyr7fn/3inrD2HBDaXf+fdM5s0AnXFIAbsjVz8g7TO
+	 u/nSi+GEECgbFUE5nE8JZDOLnonDtQqUR3K2MsnrCIUeM+/W+dYPg9J5RKvkngTX3P
+	 GwKLADB5UvOBQ==
+Date: Fri, 29 Nov 2024 18:13:12 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: kw@linux.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+	lpieralisi@kernel.org, shuah@kernel.org, kishon@kernel.org,
+	aman1.gupta@samsung.com, p.rajanbabu@samsung.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org, robh@kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] selftests: pci_endpoint: Migrate to Kselftest
+ framework
+Message-ID: <Z0n2KIUVk2XqrH1p@ryzen>
+References: <20241129092415.29437-1-manivannan.sadhasivam@linaro.org>
+ <20241129092415.29437-5-manivannan.sadhasivam@linaro.org>
+ <Z0nG3oAx66plv4qI@ryzen>
+ <20241129163555.apf35xa6x5joscha@thinkpad>
+ <Z0nu8n5GEuZ0zaBD@ryzen>
+ <20241129165256.dkzcbfdvmf2n4rxx@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -116,65 +66,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4ufubysv62v7aq53qfzxmup5agmqypdvemd24vm6eentph46qq@3kveluud3zd3>
+In-Reply-To: <20241129165256.dkzcbfdvmf2n4rxx@thinkpad>
 
-Hi Krzysztof,
-
-On 08:55 Wed 27 Nov     , Krzysztof Kozlowski wrote:
-> On Sun, Nov 24, 2024 at 11:51:39AM +0100, Andrea della Porta wrote:
-> > +  '#interrupt-cells':
-> > +    description:
-> > +      Specifies the Bank number [0, 1, 2] and Flags as defined in
-> > +      include/dt-bindings/interrupt-controller/irq.h.
-> > +    const: 2
-> > +
-> > +  interrupt-controller: true
-> > +
-> > +patternProperties:
-> > +  "-state$":
-> > +    oneOf:
-> > +      - $ref: "#/$defs/raspberrypi-rp1-state"
-> > +      - patternProperties:
-> > +          "-pins$":
-> > +            $ref: "#/$defs/raspberrypi-rp1-state"
-> > +        additionalProperties: false
-> > +
-> > +$defs:
-> > +  raspberrypi-rp1-state:
-> > +    allOf:
-> > +      - $ref: pincfg-node.yaml#
-> > +      - $ref: pinmux-node.yaml#
-> > +
-> > +    description:
-> > +      Pin controller client devices use pin configuration subnodes (children
-> > +      and grandchildren) for desired pin configuration.
-> > +      Client device subnodes use below standard properties.
-> > +
-> > +    properties:
-> > +      pins:
-> > +        description:
-> > +          List of gpio pins affected by the properties specified in this
-> > +          subnode.
-> > +        items:
-> > +          pattern: "^gpio([0-9]|[1-5][0-9])$"
+On Fri, Nov 29, 2024 at 10:22:56PM +0530, Manivannan Sadhasivam wrote:
+> On Fri, Nov 29, 2024 at 05:42:26PM +0100, Niklas Cassel wrote:
+> > On Fri, Nov 29, 2024 at 10:05:55PM +0530, Manivannan Sadhasivam wrote:
+> > > On Fri, Nov 29, 2024 at 02:51:26PM +0100, Niklas Cassel wrote:
+> > > > Hello Mani,
+> > > > 
+> > > > On Fri, Nov 29, 2024 at 02:54:15PM +0530, Manivannan Sadhasivam wrote:
+> > > > > Migrate the PCI endpoint test to Kselftest framework. All the tests that
+> > > > > were part of the previous pcitest.sh file were migrated.
+> > > > > 
+> > > > > Below is the exclusive list of tests:
+> > > > > 
+> > > > > 1. BAR Tests (BAR0 to BAR5)
+> > > > > 2. Legacy IRQ Tests
+> > > > > 3. MSI Interrupt Tests (MSI1 to MSI32)
+> > > > > 4. MSI-X Interrupt Tests (MSI-X1 to MSI-X2048)
+> > > > > 5. Read Tests - MEMCPY (For 1, 1024, 1025, 1024000, 1024001 Bytes)
+> > > > > 6. Write Tests - MEMCPY (For 1, 1024, 1025, 1024000, 1024001 Bytes)
+> > > > > 7. Copy Tests - MEMCPY (For 1, 1024, 1025, 1024000, 1024001 Bytes)
+> > > > > 8. Read Tests - DMA (For 1, 1024, 1025, 1024000, 1024001 Bytes)
+> > > > > 9. Write Tests - DMA (For 1, 1024, 1025, 1024000, 1024001 Bytes)
+> > > > > 10. Copy Tests - DMA (For 1, 1024, 1025, 1024000, 1024001 Bytes)
+> > > > 
+> > > > I'm not sure if it is a great idea to add test case number 10.
+> > > > 
+> > > > While it will work if you use the "dummy memcpy" DMA channel which uses
+> > > > MMIO under the hood, if you actually enable a real DMA controller (which
+> > > > often sets the DMA_PRIVATE cap in the DMA controller driver (e.g. if you
+> > > > are using a DWC based PCIe EP controller and select CONFIG_DW_EDMA=y)),
+> > > > pci_epf_test_copy() will fail with:
+> > > > [   93.779444] pci_epf_test pci_epf_test.0: Cannot transfer data using DMA
+> > > > 
+> > > 
+> > > So the idea is to exercise all the options provided by the epf-test driver. In
+> > > that sense, we need to have the DMA COPY test. However, I do agree that the
+> > > common DMA controllers will fail this case. So how about just simulating the DMA
+> > > COPY for controllers implementing DMA_PRIVATE cap? I don't think it hurts to
+> > > have this feature in test driver.
+> > 
+> > I guess you could modify pci-epf-test to simply do MMIO in test_copy(),
+> > if USE_DMA && DMA_PRIVATE is set, as you suggest.
+> > 
 > 
-> You have 54 GPIOs, so up to 53.
+> No not memcpy, but using the DMA to copy from src to local buf and then local
+> buf to dst. This way, we do not need to fallback and at the same time simulate
+> DMA COPY.
 
-Ack.
+Sounds very slow :)
 
-> 
-> Use also consistent quotes, either ' or ".
+What would be the value to add such code to pci-epf-test?
 
-Ack.
+Sounds like we would just add a lot of extra code in pci-epf-test.c that
+would not test anything new. (It would basically just be the DMA read test
+followed by the DMA write test. If those tests pass, this new simulated
+test should be guaranteed to pass.)
 
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Wouldn't it make more sense to simply do something like:
 
-Many thanks,
-Andrea
+if (use_dma && dma_prive) {
+	dev_warn(dev, "DEV_TO_DEV not supported with USE_DMA, falling back to MMIO\n");
+	use_dma = 0;
+}
 
-> 
-> Best regards,
-> Krzysztof
-> 
+
+Kind regards,
+Niklas
 
