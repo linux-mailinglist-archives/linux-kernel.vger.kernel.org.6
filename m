@@ -1,107 +1,89 @@
-Return-Path: <linux-kernel+bounces-425600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4790D9DE78A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB9B29DE77F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AAD4281365
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56CC6281713
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503ED1A00F2;
-	Fri, 29 Nov 2024 13:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8vyQpNL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AD919F128;
+	Fri, 29 Nov 2024 13:26:51 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98E419F104;
-	Fri, 29 Nov 2024 13:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9C319884C;
+	Fri, 29 Nov 2024 13:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732886923; cv=none; b=otQC+HOrq00pczw0e38NpnTfOAibAsBwl2pWNm8ZJXfnEp5afbaRXytzk4zlNjmQQK9AbErNTxJHDL/dCMUCOFuxWcK41XpmXkEMbvbdfd50V+qIzCLGc/KOOJGZjqrRwlpVPkt38DQpySHGU3ezDN+iqDPnKw+lAs4l0Q7ir0I=
+	t=1732886811; cv=none; b=rwWwQfTfUQ6LAhfj14x/ie3GU83M0Vl3VcF0bruSJha8XXDJpH7dWp+LpK49advP5a+0q/XdnEIaU0QEsIGkziaRpgo592OO3DXMBk+2nMuIXoB0ltajR3l7RT+2C9bYfJbKQVSuTpaBu6WpHN6RJsgeSbt5IfXOWUqDq59x+WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732886923; c=relaxed/simple;
-	bh=0GT0S6B59Sh7YHKRKqs1R3em47LYzIxB5c5OcdUOSBs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J74lTn1aTBTR3RMTjou6wl9H0z4UpVz3CXFGtaUvkycbz3uXcSvRYq+HprpcYdZxE16Ho53/kW/uNsrRaiSEl4hMNkIjz5xse/saRPfcLlyhFVdAkVZ6FAkxjQpJFPO7/hWhpKQInhAfnInFByea8OyE4et+AbP/OgjoLD/VmiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8vyQpNL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 346A7C4CEDD;
-	Fri, 29 Nov 2024 13:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732886923;
-	bh=0GT0S6B59Sh7YHKRKqs1R3em47LYzIxB5c5OcdUOSBs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=r8vyQpNLf3UbhLCNc5OwSjUhm12oUs4ByFMJtKzYUpfzHgme3JMmS8nT6m/M/befM
-	 UtQ4KOETEyQh9RaUPNFu89NjXzv1hYtb6EcRtBZQL6lbScsBXRCaKjGlch3PrhRqgG
-	 zQ75mBxufmh4cNp7uiHYywNFsKNXVTVYUFGozK3CSCvNPB/QRPr2tNFapEUWIqmsoB
-	 lbOlopA5OxmoMdmqZBb31Qcr5uAwr7Pfi6n4Uw18dc69DmwcMp6oGv8XAymaWs3gQ8
-	 I4RFMmav2Hc53nyXgBY0W5W7krIlaSh6Jm1IYItGfLTmGBDqZhcTS1djBJzjhEtjtk
-	 4k5Ydttts8lRQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B14D6EC0E;
-	Fri, 29 Nov 2024 13:28:43 +0000 (UTC)
-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD_via_B4_Relay?= <devnull+cleverline1mc.gmail.com@kernel.org>
-Date: Fri, 29 Nov 2024 14:25:56 +0100
-Subject: [PATCH v6 4/4] w1: ds2482: Fix datasheet URL
+	s=arc-20240116; t=1732886811; c=relaxed/simple;
+	bh=OegK0/G3eIRaNtgrqBcY9CrE2TZCsJiPnlMplzLsJrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lcBdK6smEblnF2qwSAWndbdjMgTEongOClh+AYopkLBZ5tzgeWJC1UjLQX2/kchxrTsQq59fZrniEzWIEqQlJhGvad6Cjl9NBEPcsf0R3bBJznIQ1kaicTEBubbun3pLrdT78KQSWbf2LfybXVYWzckpjH36BpikiJl+RDnpSOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC6B2C4CECF;
+	Fri, 29 Nov 2024 13:26:47 +0000 (UTC)
+Date: Fri, 29 Nov 2024 08:26:46 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Yafang Shao <laoar.shao@gmail.com>, Kees Cook <keescook@chromium.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, <rust-for-linux@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, Justin Stitt <justinstitt@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] tracing: More updates for 6.13
+Message-ID: <20241129082646.1341af16@rorschach.local.home>
+In-Reply-To: <193780f6880.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+References: <20241127131941.3444fbd9@gandalf.local.home>
+	<CAHk-=wgwQ5gDdHgN54n8hsm566x5bauNPsdZPXm6uOCFvPA1+Q@mail.gmail.com>
+	<20241128155120.6e6cd300@rorschach.local.home>
+	<20241128182435.57a1ea6f@gandalf.local.home>
+	<CALOAHbBB-__eyERw82QnS3Wmgi7_BpPaacY2urVmpWX3ZkVtvQ@mail.gmail.com>
+	<193780f6880.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241129-ds2482-add-reg-v6-4-bd95ad171e19@gmail.com>
-References: <20241129-ds2482-add-reg-v6-0-bd95ad171e19@gmail.com>
-In-Reply-To: <20241129-ds2482-add-reg-v6-0-bd95ad171e19@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Stefan Wahren <stefan.wahren@chargebyte.com>, 
- Stefan Wahren <wahrenst@gmx.net>
-Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732886921; l=803;
- i=cleverline1mc@gmail.com; s=20241112; h=from:subject:message-id;
- bh=EVaEWv3bg2CKdeK1wOkMyq+7EzE+bpOJT7BBQM8wUdo=;
- b=eZ/N+WH/9ZigC7/s5Y4inebd6DqLKx8Fe7UGOTMXLfMjXvejiYi2/LSpdNdCXIVGBeck8jetz
- w3j9fKxILxsAyqfuLVdtTWgw3pUGogy+/BB8g/c5w3RLcp2I/Mts8RJ
-X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
- pk=EJoEbw03UiRORQuCiEyNA8gH1Q6fIpEWnn/MyaWOWX0=
-X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
- auth_id=275
-X-Original-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
-Reply-To: cleverline1mc@gmail.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Kryštof Černý <cleverline1mc@gmail.com>
+On Fri, 29 Nov 2024 08:14:56 -0500
+Paul Moore <paul@paul-moore.com> wrote:
 
-Current link does redirect to wrong place.
+> > The issue appears to be a known GCC bug, though the root cause remains
+> > unclear at this time.
+> >
+> > A potential workaround has been proposed, which you can find here:
+> > https://lore.kernel.org/linux-hardening/202410171059.C2C395030@keescook/
+> >
+> > However, it seems that the patch has not yet been accepted into the mainline.  
+> 
+> I didn't pull that into the audit tree because it isn't a real patch. 
+> Looking at it again on my phone before today's holiday stuff kicks off, I 
+> don't have a problem with the workaround, but i do need to see it as a 
+> proper patch with a commit description, sign off, etc. before I can merge it.
 
-Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
----
- drivers/w1/masters/ds2482.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah, from the comment I was expecting to see a proper patch.
 
-diff --git a/drivers/w1/masters/ds2482.c b/drivers/w1/masters/ds2482.c
-index f8095264d82f0e0135492ed65e71df74c71bcd65..e2a568c9a43aac548056c490ce72c464adca7cb3 100644
---- a/drivers/w1/masters/ds2482.c
-+++ b/drivers/w1/masters/ds2482.c
-@@ -7,7 +7,7 @@
-  * It is a I2C to 1-wire bridge.
-  * There are two variations: -100 and -800, which have 1 or 8 1-wire ports.
-  * The complete datasheet can be obtained from MAXIM's website at:
-- *   http://www.maxim-ic.com/quick_view2.cfm/qv_pk/4382
-+ *   https://www.analog.com/en/products/ds2482-100.html
-  */
- 
- #include <linux/module.h>
+> 
+> For anyone who is going to put together a patch, please make it clear that 
+> it is a compiler bug and provide the associated bug report links.
 
--- 
-2.39.5
+If it matters, with that patch applied, all my tests were able to
+complete with success.
 
+Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
+-- Steve
 
