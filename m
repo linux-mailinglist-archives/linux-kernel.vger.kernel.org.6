@@ -1,71 +1,57 @@
-Return-Path: <linux-kernel+bounces-425485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7039DC2BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:21:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500359DC2A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:17:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D75281DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:21:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5506B2184E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64F4199938;
-	Fri, 29 Nov 2024 11:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="WhJrOrU+"
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B88199253;
+	Fri, 29 Nov 2024 11:16:54 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D423919922A;
-	Fri, 29 Nov 2024 11:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8421586C8
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732879254; cv=none; b=GMC1t9fxq3duCO/CJbyl87m0qa8874w0OpROhQq2g9x7mmwEkJn4j+6DTQottaMiA9vjuKUyf+/HrOzK6Ai9WrRX7DmD1I5FvwTyjti+KQUWw2niQE719UsaIyVEFYpNSiYgkc2qRKwkqQzRHci3Xmwj36wQA/6z1yl6ETKM33M=
+	t=1732879014; cv=none; b=WKNRy/irhTFYEkXx6LnNvVoO06li37CiZIrwx85a7QxQhOP/qpzHCBfndkE8nyMktxIGMuc4hAMxRcIMYdGHsemF9Ropuog0v1BsWaGFJWphoHXuNx7QqS7qbjoa+AcoVAmVuDt+/TPPlATN0SF2DQnBQbRGjhtr9NQAOIQSgiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732879254; c=relaxed/simple;
-	bh=phrCSsYyEwaTDwkDLtTUl/Zv10XMDCCPskQcML1QjHM=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=AGVT0oCyj101HAj2N+w8RuBE4uyy66WsT7q2fBU/cQEhusjyC4g1760Af1PuCTXDPvcrUpBi428iIvgTce2UWbDQv075p0r4kCdaO2LwpeW69CNsxU84FBZh/yUhlAa2TtpOBbvh25jyQBt5KQ1JKT4x8zDRQe6Mp6n/iL3UewQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=WhJrOrU+; arc=none smtp.client-ip=203.205.221.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1732878940;
-	bh=jm5vfF8YJIf0gTL8TMZpGccCAM0Ro5FFz6ZWU/e2oHw=;
-	h=From:To:Cc:Subject:Date;
-	b=WhJrOrU+Ty8fxB0SRr8oY90QQ5/NQM9wv1+R4mHoO0eYM2piW2JCprEfLekXydHmz
-	 M0W9y/3HlKiW6en4IxmeLD53jVnw7EaUe4wmHpbN9iG8BF+yBn4IxlBAd3GBt3afRe
-	 k09Yc0mD+p0+13l7/UkKJBPLQ8qIhWa9gYucXoJ4=
-Received: from localhost.localdomain ([222.125.197.123])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id 3B70842A; Fri, 29 Nov 2024 19:14:55 +0800
-X-QQ-mid: xmsmtpt1732878895tro52lmyz
-Message-ID: <tencent_8557150557A6D039F5A0565D4E8E8AAC9F09@qq.com>
-X-QQ-XMAILINFO: MIAHdi1iQo+zKpnStv6bJnVwxl9sL5aFqmToFOR7+JOsIbQ7yuKdqMIyqG7et0
-	 2YatRSyQFL24+diPvXnJEnjnd/G3KOzUKPsSUJANWKxkuIrFjTZ86e+057zkokZshhVdRM/KfrcC
-	 mSCJmyv65qSHHScw3rc5JuFsDaf4Q1nXevV0AVGTioEi7SCryfesSmuK1b7XqXl4drPTgCgAgqNG
-	 4V0frHmPi5giPUo3yTS2VvMlFFzf/mmgh5BxBjdRqAlU0kobit8bcWmQq/pAP+9GsDkqckT5XZLe
-	 AV2Mg28LgFDdS9zs6gQPXj4jc6OwuZpmBO0urdaitXWRNMjqg+PBlRRMPgsVVEXZRJQtgSjx3ESh
-	 ez5IMiryyj9SgF3zjGaCsiDE3a3YYRDVwxIXKPMN373s36d9HS+6JluQFKK+W6aqveJLX2uv9iLg
-	 +1+7wRpT1NKvim1u54ngqVenkZMgy1gMe4eaep/4LvYE8GSjD2MLoQEU7aEZRdKpDkF0tcq0hdxt
-	 rM4KwgAgPHahyYQkDe6XFtybJL8IMdWkjfSQonX7mRRJGw/asKRjwVh7QRlZ9kvcPeScECoOBZ5V
-	 blvkGnPiqC82LUmrMmwjWwoXB6KbVr0UDI3MxZqiLT4V2KsoJNrMx1reAf2AfWC21r7XGPpXKe6y
-	 vLOqsWeh75knUmIEKDuyQeZ/SCxntbHJ3glhihknLVr5YbeGLGVBPXAwtA50UjZ2KsLnIZoYoSCV
-	 u0eo7CvSe0TT3ahEK3kqPz2O9xdg00O4cSR6cQhHwLezQ2ZVijFzH6+PMsyooPMtYEgMTlSEexpr
-	 umo4QkwvuBhBodSa7w/eprHIzNLa6+ykFe5/QGtGaW6VeESAFuUKdFkzGLyqPLE0EOPSvq7F1WjB
-	 n9CytJo6guv6ltUCyp9msEZxqvQhepw/67QRIrDyTcljH+Z+IAFMpiZkqCo68rqLnZueIQZdLYHu
-	 tajTFv4iEL/eeysN2db7bDU+WdPBmVPuu4fH3Gkl13kBlmp3wyzQ==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Lin Lin <linlin152@foxmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lin Lin <linlin152@foxmail.com>
-Subject: [PATCH] ext4: optimize two log messages in super.c
-Date: Fri, 29 Nov 2024 19:14:16 +0800
-X-OQ-MSGID: <20241129111416.702608-1-linlin152@foxmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1732879014; c=relaxed/simple;
+	bh=1N2P6P9/3ihhJcs223VrfvQtz5QrqXyablfImObPOPQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b9f44DQukvaw1zmrqnK3dGy+yX8fDtZDWXdENAwkRsIDeTT3O/0ByZeX86wOu6Ef+iAM3u6b9eeKi7nj+jKFr4TPWWDKK0YhOOsTTxwmHRKgq9aQKp84TBtZ5kfAc+520bqxzWxwVTiv8YfObcqGg1HWmLTpS7J0Q/NUZxlUV0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT64xrE029754;
+	Fri, 29 Nov 2024 11:16:33 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43671at1sg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 29 Nov 2024 11:16:32 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Fri, 29 Nov 2024 03:16:31 -0800
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Fri, 29 Nov 2024 03:16:30 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+99491d74a9931659cf48@syzkaller.appspotmail.com>
+CC: <jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <shaggy@kernel.org>, <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] jfs: fix a oob in dtSplitRoot
+Date: Fri, 29 Nov 2024 19:16:29 +0800
+Message-ID: <20241129111629.91992-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <6748fb32.050a0220.253251.0098.GAE@google.com>
+References: <6748fb32.050a0220.253251.0098.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,44 +59,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: X_Is-F3dEeyAYzk0nFqROqXNvzz0EUOc
+X-Authority-Analysis: v=2.4 cv=TIS/S0la c=1 sm=1 tr=0 ts=6749a290 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=VlfZXiiP6vEA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=EcIOMTnjEzzh_necsvcA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: X_Is-F3dEeyAYzk0nFqROqXNvzz0EUOc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-11-29_10,2024-11-28_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=477 adultscore=0 clxscore=1011
+ priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2411120000 definitions=main-2411290092
 
-Updates the first one to "run e2fsck". The second "Run e2fsck" has
-double leading spaces, fixed it.
+syzbot report a array-index-out-of-bounds in dtSplitRoot. [1]
 
-kvm-xfstests smoke passed in arm64.
+The second index value of the parent inode of the symbolic link is 4294967168.
+When it is assigned to the stbl of type s8, an overflow value of -128 occurs,
+which triggers oob.
 
-Signed-off-by: Lin Lin <linlin152@foxmail.com>
+To avoid this issue, add a check for the index of the slot before using it.
+
+[1]
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:1997:37
+index -128 is out of range for type 'struct dtslot[128]'
+CPU: 1 UID: 0 PID: 5842 Comm: syz-executor268 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ dtSplitRoot+0xc9c/0x1930 fs/jfs/jfs_dtree.c:1997
+ dtSplitUp fs/jfs/jfs_dtree.c:992 [inline]
+ dtInsert+0x12cd/0x6c10 fs/jfs/jfs_dtree.c:870
+ jfs_symlink+0x827/0x10f0 fs/jfs/namei.c:1020
+ vfs_symlink+0x137/0x2e0 fs/namei.c:4669
+ do_symlinkat+0x222/0x3a0 fs/namei.c:4695
+ __do_sys_symlink fs/namei.c:4716 [inline]
+ __se_sys_symlink fs/namei.c:4714 [inline]
+ __x64_sys_symlink+0x7a/0x90 fs/namei.c:4714
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Reported-and-tested-by: syzbot+99491d74a9931659cf48@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=99491d74a9931659cf48
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 ---
- fs/ext4/super.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/jfs/jfs_dtree.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 785809f33..001b1cf2e 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4622,8 +4622,8 @@ static int ext4_init_metadata_csum(struct super_block *sb, struct ext4_super_blo
- 	/* Warn if metadata_csum and gdt_csum are both set. */
- 	if (ext4_has_feature_metadata_csum(sb) &&
- 	    ext4_has_feature_gdt_csum(sb))
--		ext4_warning(sb, "metadata_csum and uninit_bg are "
--			     "redundant flags; please run fsck.");
-+		ext4_warning(sb,
-+			"metadata_csum and uninit_bg are redundant flags; please run e2fsck.");
+diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
+index 8f85177f284b..71463ad751c2 100644
+--- a/fs/jfs/jfs_dtree.c
++++ b/fs/jfs/jfs_dtree.c
+@@ -1994,6 +1994,9 @@ static int dtSplitRoot(tid_t tid,
  
- 	/* Check for a known checksum algorithm */
- 	if (!ext4_verify_csum_type(sb, es)) {
-@@ -4645,8 +4645,8 @@ static int ext4_init_metadata_csum(struct super_block *sb, struct ext4_super_blo
- 
- 	/* Check superblock checksum */
- 	if (!ext4_superblock_csum_verify(sb, es)) {
--		ext4_msg(sb, KERN_ERR, "VFS: Found ext4 filesystem with "
--			 "invalid superblock checksum.  Run e2fsck?");
-+		ext4_msg(sb, KERN_ERR,
-+			"VFS: Found ext4 filesystem with invalid superblock checksum. Run e2fsck?");
- 		return -EFSBADCRC;
- 	}
- 
+ 		stbl = DT_GETSTBL(rp);
+ 		for (n = 0; n < rp->header.nextindex; n++) {
++			if (stbl[n] >= ARRAY_SIZE(rp->slot))
++				continue;
++
+ 			ldtentry = (struct ldtentry *) & rp->slot[stbl[n]];
+ 			modify_index(tid, ip, le32_to_cpu(ldtentry->index),
+ 				     rbn, n, &mp, &lblock);
 -- 
-2.25.1
+2.43.0
 
 
