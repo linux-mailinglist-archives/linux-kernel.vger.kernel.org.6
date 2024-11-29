@@ -1,143 +1,153 @@
-Return-Path: <linux-kernel+bounces-425602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDAA9DE790
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:30:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E8E9DE791
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:30:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F369116572C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41566164406
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7A91A00EE;
-	Fri, 29 Nov 2024 13:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0594819D8A9;
+	Fri, 29 Nov 2024 13:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="liXOh80t"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YZd0bUlE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wrWncmeL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D4A19F424;
-	Fri, 29 Nov 2024 13:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3861990C1
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732886958; cv=none; b=Ve3WFjeNbrOHk4lPnFX3SBH3kyOo4+yeeJDhk6YSyML8QjoUZU/oUKl+WZr2UTU2gjt3svOzvA1tqrnPJ3Va4JCJbyp97LF4Ob0qcdSilgSQSZ73ri7sw5IvmcwVniS6o+HdWDnaPV5SNm5xPgyckO+4hlDofXjj+6/8wEJGnZA=
+	t=1732887045; cv=none; b=peLf81A/1IamyJSJfem9qXy3w1lAf5lSPzJM/k+cQLAw7cwFvGb18XFEv0Ul/v+MBJQ3wtMFB/onCh91YcmK8R7gud7vcQmgOGSuvKQ61BNbhBchJIHZsbncxSBal2FxbfiOfHpJK9agzOn1SFBF4XllungUkXbw+PiD0kl543Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732886958; c=relaxed/simple;
-	bh=hHSy2jje0m2fGnDElMDfUwXzsVlVbqnNaNhRx2jTiwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YBEJZf8i3u+e0mKrGmAAnPmkb1lUquyrFyKiFt588jWu5byeB80IHR1wbYaYhEA8bZca/UfV6kdpLuf3bkhJS480SGG55QkMkZ5qFKvRtATysykJr9U7noqgdWq7Nl0OXNvip8HiBSNgP2gT8XelhuCL0feqtWi/AivSoL3pGuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=liXOh80t; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT5paRY030786;
-	Fri, 29 Nov 2024 13:29:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=P4TsIX
-	xU1c6A7+T5dOldsD3Fa1gS0AfXfSrycHUdFlA=; b=liXOh80tIYXnJcvtnXwEGw
-	VImgB3vdbUhGdqdkJIVI16WNA5CyhpiIrAZbcdwiwUbBdtUOwUG1Au6J4CcJsq3h
-	6j+agmJZTG8c5sEkYwMWGp0JVPWspQzEo8g6cIeyHjkSAS/752S0wxdyVuFMQ1mq
-	IcfVG3G3LuiT8BDD86dUijvP3yjV1JtTgG37eAN0uohCj2rEt3PiGYJSMmmJNxnY
-	79KKnCj47JG25bE/7xgHsUYqC05RU6VZj/vdW/jTAnQChM74qze9aQLwRjN/fNIR
-	Sw9afX3LgWh6GCbykiqr6b/i+km617+1mQgW39bMbmsoPwuhRZjcSg5SS59i7D3A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 436upa4p6t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 13:29:11 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ATDQJBk029268;
-	Fri, 29 Nov 2024 13:29:10 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 436upa4p42-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 13:29:10 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT9rKVs020371;
-	Fri, 29 Nov 2024 13:28:43 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43672gbw34-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 13:28:43 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ATDSd0P47120764
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Nov 2024 13:28:39 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BDFB12004B;
-	Fri, 29 Nov 2024 13:28:39 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0FB7720043;
-	Fri, 29 Nov 2024 13:28:39 +0000 (GMT)
-Received: from [9.171.68.139] (unknown [9.171.68.139])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 29 Nov 2024 13:28:38 +0000 (GMT)
-Message-ID: <227ce73e-a4f9-4b97-a137-f3a6472bf07f@linux.ibm.com>
-Date: Fri, 29 Nov 2024 14:28:37 +0100
+	s=arc-20240116; t=1732887045; c=relaxed/simple;
+	bh=FHdnGuZBTuKPq9x2/jt1fw8DN1Ik/TsNrC2qXay8KAw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BG/N3rrs3SSksLg0ytDdSSVVTx6o0Bl/76noVN100cZOW6DuIqs2tNFUuClnb9CpcYeQn8ffCZL87yw/1IT1pQRlmUzPrEASjo+41RApHftWnJYORvG7FpHhg/5kNB1Oxmei8smetQ+WgjD6dKVpsixCscwnYpxVEBiwGYgwyzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YZd0bUlE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wrWncmeL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732887041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=icaSftmPoFs3oPqGohm7R/vQ0cSrUMEsdq65mpHvRVA=;
+	b=YZd0bUlE0xZWKejtIH/8b1Xqio5SfbdWK/5fXWh1rcU+HTZHZqztwv5kJcUBmq52ppdrJy
+	1Ep4+fruQcQWa6mXw/p8/wsLzsNObq5sVcv+kWT0aSkor/PqAIo/AF1SvX8kussOXip9jW
+	H6sdGyfghjxb6Y3ZPxDxq2Zsq4wbPAx6Rg7A9IX3NMquMO61hFmKPU+wHyFSZHsGZB4706
+	parfYH3VpxhtyxyRSUbXKOzFpsOPMQbyXJeDVpuYL/lQkIA/k1Nw2c5rfjJznTWNfjY1ca
+	JSyIKNKyfdTbY8dtmOcn45qcazynk3AfLKl/TLDh1aj50MMzlJU/wBAxGVRaEA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732887041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=icaSftmPoFs3oPqGohm7R/vQ0cSrUMEsdq65mpHvRVA=;
+	b=wrWncmeLIabkTOlhwz7jViyBBp/tltQNLjqOmhFxdSu/hqrEOzPSlAZ4Wcir7LF0WMDQzx
+	JiqHMj25fRo9EECQ==
+To: Eliav Farber <farbere@amazon.com>, linux@armlinux.org.uk,
+ catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+ npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+ maddy@linux.ibm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, ebiederm@xmission.com, akpm@linux-foundation.org,
+ bhe@redhat.com, farbere@amazon.com, hbathini@linux.ibm.com,
+ sourabhjain@linux.ibm.com, adityag@linux.ibm.com,
+ songshuaishuai@tinylab.org, takakura@valinux.co.jp,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ kexec@lists.infradead.org, Marc Zyngier <maz@kernel.org>
+Cc: jonnyc@amazon.com
+Subject: Re: [PATCH v4 1/2] kexec: Consolidate
+ machine_kexec_mask_interrupts() implementation
+In-Reply-To: <20241129113119.26669-2-farbere@amazon.com>
+References: <20241129113119.26669-1-farbere@amazon.com>
+ <20241129113119.26669-2-farbere@amazon.com>
+Date: Fri, 29 Nov 2024 14:30:41 +0100
+Message-ID: <87zfliw4ji.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 2/2] net/smc: fix LGR and link use-after-free issue
-To: Wen Gu <guwen@linux.alibaba.com>, wenjia@linux.ibm.com, jaka@linux.ibm.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com, horms@kernel.org,
-        kgraul@linux.ibm.com, hwippel@linux.ibm.com,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241127133014.100509-1-guwen@linux.alibaba.com>
- <20241127133014.100509-3-guwen@linux.alibaba.com>
-Content-Language: en-US
-From: Alexandra Winter <wintera@linux.ibm.com>
-In-Reply-To: <20241127133014.100509-3-guwen@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: M2cTUaHw4ohcglK7s_ECQuD1U814d6VV
-X-Proofpoint-GUID: -352ikGp2Goil5r1crjjY8nSacc7TBNG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 mlxscore=0
- adultscore=0 mlxlogscore=802 phishscore=0 bulkscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411290110
+Content-Type: text/plain
 
+On Fri, Nov 29 2024 at 11:31, Eliav Farber wrote:
+> Move the machine_kexec_mask_interrupts function to a common location in
+> kernel/kexec_core.c, removing duplicate implementations from architecture
+> specific files (arch/arm, arch/arm64, arch/powerpc, and arch/riscv).
 
+Can you please move this into kernel/irq/kexec.c?
 
-On 27.11.24 14:30, Wen Gu wrote:
->  net/smc/af_smc.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> index ed6d4d520bc7..9e6c69d18581 100644
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -1900,6 +1900,7 @@ static void smc_listen_out(struct smc_sock *new_smc)
->  	if (tcp_sk(new_smc->clcsock->sk)->syn_smc)
->  		atomic_dec(&lsmc->queued_smc_hs);
->  
-> +	release_sock(newsmcsk); /* lock in smc_listen_work() */
->  	if (lsmc->sk.sk_state == SMC_LISTEN) {
->  		lock_sock_nested(&lsmc->sk, SINGLE_DEPTH_NESTING);
->  		smc_accept_enqueue(&lsmc->sk, newsmcsk);
-> @@ -2421,6 +2422,7 @@ static void smc_listen_work(struct work_struct *work)
->  	u8 accept_version;
->  	int rc = 0;
->  
-> +	lock_sock(&new_smc->sk); /* release in smc_listen_out() */
->  	if (new_smc->listen_smc->sk.sk_state != SMC_LISTEN)
->  		return smc_listen_out_err(new_smc);
->  
+It's pure interrupt core internal code and there is no point to make
+core internal functions visible to random other code just because.
 
-As far as I can tell, this looks good to me.
-Unfortunately I don't understand the dependencies between the different SMC sockets and TCP sockets
-well enough to give an R-b.
+> +void machine_kexec_mask_interrupts(void)
+> +{
+> +	unsigned int i;
+> +	struct irq_desc *desc;
+
+	struct irq_desc *desc;
+        unsigned int i;
+
+please
+
+> +	for_each_irq_desc(i, desc) {
+> +		struct irq_chip *chip;
+> +		int check_eoi = 1;
+> +
+> +		chip = irq_desc_get_chip(desc);
+> +		if (!chip)
+> +			continue;
+> +
+> +		if (IS_ENABLED(CONFIG_ARM64)) {
+
+This should not be CONFIG_ARM64. Add something like:
+
+config GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD
+	bool
+
+and select this from ARM64?
+
+> +			/*
+> +			 * First try to remove the active state. If this fails, try to EOI the
+> +			 * interrupt.
+
+This comment does not really explain what this is about. I know you
+copied it from the ARM64 implementation, but it should explain what this
+actually means. Something like:
+
+         First try to remove the active state from an interrupt which is
+         forwarded to a VM. If the interrupt is not forwarded, try to
+         EOI the interrupt.
+
+or something like that.
+
+> +			 */
+> +			check_eoi = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE, false);
+
+Looking deeper. This function actually cannot be called from this
+context. It does:
+
+          irq_get_desc_buslock(irq, &flags, 0);
+
+which means for any interrupt which has an actual buslock implementation
+it will end up in a sleepable function and deadlock in the worst case.
+
+Marc?
+
+> +		}
+> +
+> +		if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
+> +			chip->irq_eoi(&desc->irq_data);
+
+Thanks,
+
+        tglx
 
