@@ -1,162 +1,168 @@
-Return-Path: <linux-kernel+bounces-425646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCB49DE85A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:22:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7219DE85F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:25:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23292B213FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:22:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ADA0163586
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB74208CA;
-	Fri, 29 Nov 2024 14:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FAB208CA;
+	Fri, 29 Nov 2024 14:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTIjrVgX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dda0CXCj"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEEE4C9D
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 14:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21447208D7
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 14:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732890136; cv=none; b=q13uqIq3CRXq6bxMSTjvVCSOTdy3uNMRXuZ27gECEXqkF8/DN57EYtQL0p3TZWsUmS+L/GOeq1T3sG9lmktxIYtiScXzzGL/uEvl2HhAKNpsGDyw+igVhlxcD1AAoHosBTVkIS9hy10m7t/DJieweBF+MmyN1ml5tdVsBzeNHFA=
+	t=1732890298; cv=none; b=GE9v50IQzLsNIyPCSgzV9sJEUeOEEzKZt0yEjh8xCBinVc0JdEJuIV+jBfCigo/I004roHx3TRfEBJe+UNqBsjT66YlrGReqsX0W/RZh9oSWfWoezDezcwgM5lXTDsp/EMTrzqFu9RiSQGXePQLLj8F5XP61m95P8Es6Tnwh47M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732890136; c=relaxed/simple;
-	bh=L+79NtBaXOkU3W8AJSCPup/ZJ4h5o0GoneQ42SV9ZnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cWR1dQ6Y5cH1RC7K5IWsW+P/REc1copMqpzIoeyw7wB9qlZomDxKk1/QLShHQomIW27rFBYaDEbszbHn960e9hQRoUYb4MA4zsvnH9+gsSl+kbqSM1ZoLUAAIPtrM3I0SJH07zh8QVEx89WJqVxSUZZi7/mJtLf1+Wvzrn1x8Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTIjrVgX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6871FC4CECF;
-	Fri, 29 Nov 2024 14:22:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732890135;
-	bh=L+79NtBaXOkU3W8AJSCPup/ZJ4h5o0GoneQ42SV9ZnI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VTIjrVgXPH+ioB3hV89R2WiJSRueJBerz9ov+AJbCx4sQ1umWPpptsWHrz37u4bld
-	 eLxMlWwIw5cmetKqXSt5MI687SmZVsfxMSdr4aKtFqZvL1lUNvZn9yknrNMUbGynXb
-	 rKF016P2FJG0zZZgHKGAOnzk5X51KhDPspo/iYQc/oZJyiHgoZ1TpY0PdLQjoyY6X4
-	 HC1Egd5Ckq1N060Y0GcviWfx3Q5uKxbwkRoCfi6dJ8cNhJgWu5BH+9U5ZHxmMlHOPX
-	 621koB91P8EL1yBpodLU9T/5kuvopOe6aYtvZM40VfbPeaapgNs5mTpVfY1aGKUTIm
-	 OTsu+MUzpDTTw==
-Date: Fri, 29 Nov 2024 15:22:12 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	Daniel Bristot de Oliveira <bristot@kernel.org>
-Subject: Re: [PATCH v2 5/6] osnoise: handle quiescent states for
- PREEMPT_RCU=n, PREEMPTION=y
-Message-ID: <Z0nOFDt_Y370pyew@localhost.localdomain>
-References: <20241106201758.428310-1-ankur.a.arora@oracle.com>
- <20241106201758.428310-6-ankur.a.arora@oracle.com>
- <Z0h_KMzCCx2umo6h@localhost.localdomain>
- <87seraeimb.fsf@oracle.com>
+	s=arc-20240116; t=1732890298; c=relaxed/simple;
+	bh=bSfl7Dve9i5C1znJ/YQ1xVmQ29PlBYONWFiyrKw6DiQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gHdobZizEY4H8khYt1jsUBPpHX02gQRsNsLae7nHy0OU+b64tgl075EfBG1IBnUD0nU3Ws4poma9JE2kGoRvfYzR4Jrb+W8y78MgRRpntOZn57XS4CrtELy2iB0C2QOMFpFlTc8eSu6qGHft+wAG8MOrCmRg1HZgb8xBJIMeNdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dda0CXCj; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53dd8b7796dso2055607e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 06:24:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732890294; x=1733495094; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rCZSOSvoZDja8J6h/7BpGF/AK434TPL5kxxQSlBImvw=;
+        b=dda0CXCjdVZzoPXPK2yfi8OtWeFj4XS+Az7Xq3dhJwk398+UOFT3mDQTXg3wJfTS+J
+         TiE+CcFgF6eLhJpeSlvPCR5NfZ5hnbtYn56AFGxzSR6Irf4X1J535AxhUpNKRsVYyEOO
+         XxPsk7CV6qJjx/49eexI9cZDMpHNBBR5ZPMun4IwJcxoGU8hrHTlizRt6PuxGcFGmvaR
+         GtcHjcq/9oQF/SfLtuMCaeZ0oIWNoWMEoNdBLTadF9xy2aWSV7GIDHAPcjh58M+W7x0U
+         UPyvhv9wn72HrnuhaHBq1NlqlXjza/Rn+vDgeCPhTStqVWXZYjhqmAV+dgbta1HuLSfT
+         yakA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732890294; x=1733495094;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rCZSOSvoZDja8J6h/7BpGF/AK434TPL5kxxQSlBImvw=;
+        b=Nbdsqnf3ziF10Z/TJffFYNrf0LUtSsOqFpks7uFkvEBsmFFuQxUJy6oWZQIRkko3oZ
+         D9CFegSQKscc1oLmqSd6ATsFo3W935U5fj38T2BFHtBAGUlQKFdV5w6qoQSNr91/8bWY
+         gq7G0txSgGSKiNpQK3uF12YB/QErNP0DQXQbWB4QPVh0TBYrrjIlRJDnaqtvC9kwE0Gl
+         K347Uo1cEm1QZzHSzlWEkbREzvbtZCl2KakOjXyp45dhIXgMggescJ9uyv20ePUyX0ui
+         Ea71eXokFRzmgKd0/Z7aA5dTXuxlBm8gDrBjj42eKSICWXk/roRM6CpqzbTmKRlczKY/
+         ZDiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrVgBoeOzuAQfU7K0bshLZQjNitBX8MkAUGwRfgeUhEMhD41rE4g2VkoCjUGQr79gFodL94BgqbJD3XFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEBK3TuMSV2Jt1d5EFB7PCrXuQGOJX2jag81l9dR2wHjQ4DXbv
+	qEJZMWVpM5CZOTgwP0naj6zbnJ/5awJy/tyJskeEkrTnXmRWNKt4Jc6IHmWNee0=
+X-Gm-Gg: ASbGncv45arF3Knti6iPIcrife1a035BpscwQE4Oj5u9SuWHUFwTTO2XKNFAxL1M0ei
+	jXeNBaMm3WZ3Yq1MpREufReK1DuY9WU6aXQHNcy7buF33UCtQUeNPtxifs7x3n6phAJY5kVScBk
+	P13w26wYo6JayI8kpBWrAumn61CnAoPbdN/SF2AuBl2YBBVSDk8lF1MwDvGljHmLtaUgOImaWyr
+	eu0GA82BDeoOvA8/Lj9Kzoy/QsDGs0X5VeyFBkeBtS3YVbBAxobGl6rzfw=
+X-Google-Smtp-Source: AGHT+IH/gEyxEGAkwMq76NQgb08E1phOa65IpCDKYvd1xADq8bu4IAVMjy4IbH6o6Y5621O+PeSi0A==
+X-Received: by 2002:a05:6512:3b90:b0:53d:e077:ded9 with SMTP id 2adb3069b0e04-53df010eaabmr6981535e87.48.1732890294314;
+        Fri, 29 Nov 2024 06:24:54 -0800 (PST)
+Received: from eugen-station.. ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd7fb40sm4671540f8f.89.2024.11.29.06.24.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 06:24:53 -0800 (PST)
+From: Eugen Hristev <eugen.hristev@linaro.org>
+To: linux-arm-msm@vger.kernel.org,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	konradybcio@kernel.org,
+	andersson@kernel.org,
+	evgreen@chromium.org,
+	Eugen Hristev <eugen.hristev@linaro.org>
+Subject: [PATCH v4] soc: qcom: Rework BCM_TCS_CMD macro
+Date: Fri, 29 Nov 2024 16:24:46 +0200
+Message-ID: <20241129142446.407443-1-eugen.hristev@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87seraeimb.fsf@oracle.com>
 
-Le Thu, Nov 28, 2024 at 09:03:56PM -0800, Ankur Arora a écrit :
-> 
-> Frederic Weisbecker <frederic@kernel.org> writes:
-> 
-> > Le Wed, Nov 06, 2024 at 12:17:57PM -0800, Ankur Arora a écrit :
-> >> To reduce RCU noise for nohz_full configurations, osnoise depends
-> >> on cond_resched() providing quiescent states for PREEMPT_RCU=n
-> >> configurations. And, for PREEMPT_RCU=y configurations does this
-> >> by directly calling rcu_momentary_eqs().
-> >>
-> >> With PREEMPT_LAZY=y, however, we can have configurations with
-> >> (PREEMPTION=y, PREEMPT_RCU=n), which means neither of the above
-> >> can help.
-> >>
-> >> Handle that by fallback to the explicit quiescent states via
-> >> rcu_momentary_eqs().
-> >>
-> >> Cc: Paul E. McKenney <paulmck@kernel.org>
-> >> Cc: Daniel Bristot de Oliveira <bristot@kernel.org>
-> >> Cc: Steven Rostedt <rostedt@goodmis.org>
-> >> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> >> Acked-by: Daniel Bristot de Oliveira <bristot@kernel.org>
-> >> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> >> ---
-> >>  kernel/trace/trace_osnoise.c | 22 ++++++++++++----------
-> >>  1 file changed, 12 insertions(+), 10 deletions(-)
-> >>
-> >> diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-> >> index a50ed23bee77..15e9600d231d 100644
-> >> --- a/kernel/trace/trace_osnoise.c
-> >> +++ b/kernel/trace/trace_osnoise.c
-> >> @@ -1538,18 +1538,20 @@ static int run_osnoise(void)
-> >>  		/*
-> >>  		 * In some cases, notably when running on a nohz_full CPU with
-> >>  		 * a stopped tick PREEMPT_RCU has no way to account for QSs.
-> >> -		 * This will eventually cause unwarranted noise as PREEMPT_RCU
-> >> -		 * will force preemption as the means of ending the current
-> >> -		 * grace period. We avoid this problem by calling
-> >> -		 * rcu_momentary_eqs(), which performs a zero duration
-> >> -		 * EQS allowing PREEMPT_RCU to end the current grace period.
-> >> -		 * This call shouldn't be wrapped inside an RCU critical
-> >> -		 * section.
-> >> +		 * This will eventually cause unwarranted noise as RCU forces
-> >> +		 * preemption as the means of ending the current grace period.
-> >> +		 * We avoid this by calling rcu_momentary_eqs(), which performs
-> >> +		 * a zero duration EQS allowing RCU to end the current grace
-> >> +		 * period. This call shouldn't be wrapped inside an RCU
-> >> +		 * critical section.
-> >>  		 *
-> >> -		 * Note that in non PREEMPT_RCU kernels QSs are handled through
-> >> -		 * cond_resched()
-> >> +		 * For non-PREEMPT_RCU kernels with cond_resched() (non-
-> >> +		 * PREEMPT_LAZY configurations), QSs are handled through
-> >> +		 * cond_resched(). For PREEMPT_LAZY kernels, we fallback to
-> >> +		 * the zero duration QS via rcu_momentary_eqs().
-> >>  		 */
-> >> -		if (IS_ENABLED(CONFIG_PREEMPT_RCU)) {
-> >> +		if (IS_ENABLED(CONFIG_PREEMPT_RCU) ||
-> >> +		    (!IS_ENABLED(CONFIG_PREEMPT_RCU) && IS_ENABLED(CONFIG_PREEMPTION))) {
-> >>  			if (!disable_irq)
-> >>  				local_irq_disable();
-> >
-> > How about making this unconditional so it works everywhere and doesn't
-> > rely on cond_resched() Kconfig/preempt-dynamic mood?
-> 
-> I think it's a minor matter given that this isn't a hot path, but
-> we don't really need it for the !PREEMPT_RCU configuration.
+Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
 
-Well if you make it unconditional, cond_resched() / rcu_all_qs() won't do its
-own rcu_momentary_qs(), because rcu_data.rcu_urgent_qs should
-be false. So that essentially unify the behaviours for all configurations.
+drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
+drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
 
-Thanks.
+While at it, used u32_encode_bits which made the code easier to
+follow and removed unnecessary shift definitions.
 
-> 
-> Still, given that both of those clauses imply CONFIG_PREEMPTION, we
-> can just simplify this to (with an appropriately adjusted comment):
-> 
-> --- a/kernel/trace/trace_osnoise.c
-> +++ b/kernel/trace/trace_osnoise.c
-> @@ -1543,7 +1543,7 @@ static int run_osnoise(void)
->                  * Note that in non PREEMPT_RCU kernels QSs are handled through
->                  * cond_resched()
->                  */
-> -               if (IS_ENABLED(CONFIG_PREEMPT_RCU)) {
-> +               if (IS_ENABLED(CONFIG_PREEMPTION)) {
->                         if (!disable_irq)
->                                 local_irq_disable();
-> 
-> --
-> ankur
+The use of cpu_to_le32 was wrong and thus removed.
+
+Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+---
+Changes in v4:
+- as per Stephen Boyd, removed cpu_to_le32 being wrong.
+
+Changes in v3:
+- align the macro lines better
+
+Changes in v2:
+- use le32_encode_bits instead of u32_encode_bits with a cpu_to_le32 on
+the fields; this however ment we need to force cast the le32 to the
+u32 container.
+
+ include/soc/qcom/tcs.h | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
+
+diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
+index 3acca067c72b..cff67ce25488 100644
+--- a/include/soc/qcom/tcs.h
++++ b/include/soc/qcom/tcs.h
+@@ -6,6 +6,9 @@
+ #ifndef __SOC_QCOM_TCS_H__
+ #define __SOC_QCOM_TCS_H__
+ 
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++
+ #define MAX_RPMH_PAYLOAD	16
+ 
+ /**
+@@ -60,22 +63,17 @@ struct tcs_request {
+ 	struct tcs_cmd *cmds;
+ };
+ 
+-#define BCM_TCS_CMD_COMMIT_SHFT		30
+-#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
+-#define BCM_TCS_CMD_VALID_SHFT		29
+-#define BCM_TCS_CMD_VALID_MASK		0x20000000
+-#define BCM_TCS_CMD_VOTE_X_SHFT		14
+-#define BCM_TCS_CMD_VOTE_MASK		0x3fff
+-#define BCM_TCS_CMD_VOTE_Y_SHFT		0
+-#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
++#define BCM_TCS_CMD_COMMIT_MASK		BIT(30)
++#define BCM_TCS_CMD_VALID_MASK		BIT(29)
++#define BCM_TCS_CMD_VOTE_MASK		GENMASK(13, 0)
++#define BCM_TCS_CMD_VOTE_Y_MASK		GENMASK(13, 0)
++#define BCM_TCS_CMD_VOTE_X_MASK		GENMASK(27, 14)
+ 
+ /* Construct a Bus Clock Manager (BCM) specific TCS command */
+ #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
+-	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
+-	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
+-	((cpu_to_le32(vote_x) &					\
+-	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
+-	((cpu_to_le32(vote_y) &					\
+-	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
++	(u32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |	\
++	u32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |	\
++	u32_encode_bits(vote_x, BCM_TCS_CMD_VOTE_X_MASK) |	\
++	u32_encode_bits(vote_y, BCM_TCS_CMD_VOTE_Y_MASK))
+ 
+ #endif /* __SOC_QCOM_TCS_H__ */
+-- 
+2.43.0
+
 
