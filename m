@@ -1,188 +1,168 @@
-Return-Path: <linux-kernel+bounces-425580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6A39DE702
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:10:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47049DE703
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:11:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 919EAB20A02
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E967164C19
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899BC19DF4B;
-	Fri, 29 Nov 2024 13:10:45 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8339119E83E;
+	Fri, 29 Nov 2024 13:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cHK7crIE"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18787156991;
-	Fri, 29 Nov 2024 13:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B841156991
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732885845; cv=none; b=T+epqc127suz4z6UB89R0W7roqQ8DSsp0lwmrhUbdPKW1MSts59Js7z0In6xQHwFWl3LPbONys8eAAlJ9BRWJdi9kFHbFNoVf3ImlguFkcBWtoe6jcPTfjSu/u+vVC4GaAbpYI9BRLKo/+eEtTRorCzlKQgi2swzlkbVD07uRTQ=
+	t=1732885850; cv=none; b=RO1QCyU8uGEk8APUmu+wNKBywLR+vthLGZe7leBC2T8JKFWD7oeCxtrseeTozDpoZ/6jF1aj08cWl+QWeVkjiHmC6Gi1eYIS8I+wNXGztFOIPMKOd5sxvUW6WQRIGZ3niqoa6+fnliHr6p1ZB4tJ5LI6G0/wCtKT0mEF3Fw7nI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732885845; c=relaxed/simple;
-	bh=6PKqaLSzy7a+YGasiuHgTCGCEKkl+ttapGfC8mv8FLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Engs6cG2QzpXppeMZgY/Ts1QuccO3vlnmS3CCe5scGp7Fsxo6Go3/nGJvGdh6oJaMdJxtvapmbgdw9aY7R55sD7gYhPT/30TqSbfsVdX+YdrLmk4oF0bUBD9b7S5o5JxS3v0zhdESlFHZzLrAmjpRmRm8VF6LPXx42RoRu+XzZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 358CDC4CECF;
-	Fri, 29 Nov 2024 13:10:43 +0000 (UTC)
-Message-ID: <e6eeb2fc-7951-4ef2-afc5-5147d78ec2e8@xs4all.nl>
-Date: Fri, 29 Nov 2024 14:10:41 +0100
+	s=arc-20240116; t=1732885850; c=relaxed/simple;
+	bh=2tCjuOPED//3wVHlOYnA5EqRmXXYDjuVZ5VnkrbozuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMmvdFS97O6D53teRdNawQCj8R34ifEZ376YzpQRIk4kfrqjrZQiheqC/5oOgf0oeX9VS+5Ph7V6rb9tPdmrvk43pRMGPVekTzPq/yNjIGTARNtQXKAfwyvtT8JhTqIs40BhKkzBM/mm7pf+BrLgPs368X6jYFbgJMW++4gK0HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cHK7crIE; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9e8522445dso234275666b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:10:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732885847; x=1733490647; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hm3r4VcFovoN7vV/Z/7/O6DCsQhUW6XXm/ZhBzyEdx0=;
+        b=cHK7crIElqwZNyMUWB5t5Iw3Fenz+MyYSJVEa5GzpoqqOk1eeoDVqRECoWabD0UcOB
+         gM4DUW3uW9xobEqEO96bUl8RNRwN89Pnq274k36I4uX6nED5fQllY5utRnwSX7nbh7jW
+         Z/I54ugj7JW4h0zovkcHTNtf8+oO+UD/cUTLBgZaFii2Ea3k8X6zbfbc5s/+dp0soW67
+         EwP0z5YRhlj1k7dugFK7wa6PX/W8ECCJjG7aEWlyqGbubxLKqtqddjiRfr0iQvZ6Q0q6
+         Yoq59fHHdUf7VaB2v35xKwkOuEJRaFGjOHgf1kvk+aXolJJG+o7quCM8NDxHOiNQNjiD
+         dR2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732885847; x=1733490647;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hm3r4VcFovoN7vV/Z/7/O6DCsQhUW6XXm/ZhBzyEdx0=;
+        b=Uj2/36sHGzlfelF83Alz3muCuNVK9GGqW2Z5eYuFGDfJoVW6XdprtEFbe8a24tcw68
+         aJXtmWwL5Svh8kXHfm2viL8XBsrix6LwR0xjg0m8dTv3biwJv22nHruee35ca1NpNOQf
+         FAxRlHUnpINodi2EwPvJzdkfptlzSTZswsDYaD22OeNjfWIndhTAYJUdmsGS7xOYx+Cx
+         mIs1TDVw5NmvaKhywECV9YEF6UhygWSLsOLE5a1mF+2/xLh9r+j8oJaEqQlnw346cSeZ
+         dnU1oN82meV6ORuBNUQJkXOlKfAu71/oGFK3j7heuRexP62oV1Zg4GndH7d+hEn6WIc4
+         DvVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWER8IL4hpCqgyYwChSWTeinRH7/oeQkz1jCUVQowefCc+LnfMlvBmUZEf1sps9cOCJjJyk40I6hHenb5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6BkyIGCsLLm9StQritjcqsQ24FzXnXPIwaZthQtgEkZOtUbZ+
+	4zhe71V2JEKXWLBWDtg3sVY8VLlBNiz6KD7rI2NdDQLlsRMqxPC9K1Qxi4RVXg==
+X-Gm-Gg: ASbGncuyNuMIFQbgMBc9KK3Qgiq65O9BjxfQOHUlTTR4wIagKQqyHNZMBVj2Qih9MXp
+	Gk5WCemDUqb2pA5XtjBvxjhuixt6TjCY/UyRLMWDpNptnRRLUTcnOh9b9gKnxeSMaHc0BW/8JIf
+	R1J59kAZbDoH+AF9veZwpc2tezN+S5SxEMW7sR/kfxfczq1P9/spODNkcAvHnTLv9SV0n1sZ0Vd
+	a31WMcbVLY054Hveq2ScnwY49Vosu+MHdjfVK67+JWbGmFx2AOMV2gCO6sP2EWKlAcEFWhWVKDG
+	BY1Grc69
+X-Google-Smtp-Source: AGHT+IEWryAv62jI6ZAYM2AouC0F8zHOcrJl/X+93V7MahOSmgmNr39a624Qy4c77JELRVfcnOj3xA==
+X-Received: by 2002:a17:907:7852:b0:aa5:1d0c:3671 with SMTP id a640c23a62f3a-aa580f2c498mr828473066b.23.1732885845504;
+        Fri, 29 Nov 2024 05:10:45 -0800 (PST)
+Received: from google.com (61.134.90.34.bc.googleusercontent.com. [34.90.134.61])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d55eesm172306766b.80.2024.11.29.05.10.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 05:10:45 -0800 (PST)
+Date: Fri, 29 Nov 2024 13:10:41 +0000
+From: Quentin Perret <qperret@google.com>
+To: Will Deacon <will@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Always check the state from hyp_ack_unshare()
+Message-ID: <Z0m9UXJYcjzf-pgX@google.com>
+References: <20241128154406.602875-1-qperret@google.com>
+ <20241129095812.GA4298@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
- by other fh
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
- <20241127-uvc-fix-async-v2-2-510aab9570dd@chromium.org>
- <20241128222232.GF25731@pendragon.ideasonboard.com>
- <CANiDSCvyMbAffdyi7_TrA0tpjbHe3V_D_VkTKiW-fNDnwQfpGA@mail.gmail.com>
- <20241128223343.GH25731@pendragon.ideasonboard.com>
- <7eeab6bd-ce02-41a6-bcc1-7c2750ce0359@xs4all.nl>
- <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
- <20241129110640.GB4108@pendragon.ideasonboard.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20241129110640.GB4108@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129095812.GA4298@willie-the-truck>
 
-On 29/11/2024 12:06, Laurent Pinchart wrote:
-> On Fri, Nov 29, 2024 at 11:59:27AM +0100, Ricardo Ribalda wrote:
->> On Fri, 29 Nov 2024 at 11:36, Hans Verkuil wrote:
->>> On 28/11/2024 23:33, Laurent Pinchart wrote:
->>>> On Thu, Nov 28, 2024 at 11:28:29PM +0100, Ricardo Ribalda wrote:
->>>>> On Thu, 28 Nov 2024 at 23:22, Laurent Pinchart wrote:
->>>>>>
->>>>>> Hi Ricardo,
->>>>>>
->>>>>> (CC'ing Hans Verkuil)
->>>>>>
->>>>>> Thank you for the patch.
->>>>>>
->>>>>> On Wed, Nov 27, 2024 at 12:14:50PM +0000, Ricardo Ribalda wrote:
->>>>>>> If a file handle is waiting for a response from an async control, avoid
->>>>>>> that other file handle operate with it.
->>>>>>>
->>>>>>> Without this patch, the first file handle will never get the event
->>>>>>> associated with that operation, which can lead to endless loops in
->>>>>>> applications. Eg:
->>>>>>> If an application A wants to change the zoom and to know when the
->>>>>>> operation has completed:
->>>>>>> it will open the video node, subscribe to the zoom event, change the
->>>>>>> control and wait for zoom to finish.
->>>>>>> If before the zoom operation finishes, another application B changes
->>>>>>> the zoom, the first app A will loop forever.
->>>>>>
->>>>>> Hans, the V4L2 specification isn't very clear on this. I see pros and
->>>>>> cons for both behaviours, with a preference for the current behaviour,
->>>>>> as with this patch the control will remain busy until the file handle is
->>>>>> closed if the device doesn't send the control event for any reason. What
->>>>>> do you think ?
->>>>>
->>>>> Just one small clarification. The same file handler can change the
->>>>> value of the async control as many times as it wants, even if the
->>>>> operation has not finished.
->>>>>
->>>>> It will be other file handles that will get -EBUSY if they try to use
->>>>> an async control with an unfinished operation started by another fh.
->>>>
->>>> Yes, I should have been more precised. If the device doesn't send the
->>>> control event, then all other file handles will be prevented from
->>>> setting the control until the file handle that set it first gets closed.
->>>
->>> I think I need a bit more background here:
->>>
->>> First of all, what is an asynchronous control in UVC? I think that means
->>> you can set it, but it takes time for that operation to finish, so you
->>> get an event later when the operation is done. So zoom and similar operations
->>> are examples of that.
->>>
->>> And only when the operation finishes will the control event be sent, correct?
->>
->> You are correct.  This diagrams from the spec is more or less clear:
->> https://ibb.co/MDGn7F3
->>
->>> While the operation is ongoing, if you query the control value, is that reporting
->>> the current position or the final position?
->>
->> I'd expect hardware will return either the current position, the start
->> position or the final position. I could not find anything in the spec
->> that points in one direction or the others.
+On Friday 29 Nov 2024 at 09:58:13 (+0000), Will Deacon wrote:
+> On Thu, Nov 28, 2024 at 03:44:06PM +0000, Quentin Perret wrote:
+> > There are multiple pKVM memory transitions where the state of a page is
+> > not cross-checked from the completer's PoV for performance reasons.
+> > For example, if a page is PKVM_PAGE_OWNED from the initiator's PoV,
+> > we should be guaranteed by construction that it is PKVM_NOPAGE for
+> > everybody else, hence allowing us to save a page-table lookup.
+> > 
+> > When it was introduced, hyp_ack_unshare() followed that logic and bailed
+> > out without checking the PKVM_PAGE_SHARED_BORROWED state in the
+> > hypervisor's stage-1. This was correct as we could safely assume that
+> > all host-initiated shares were directed at the hypervisor at the time.
+> > But with the introduction of other types of shares (e.g. for FF-A or
+> > non-protected guests), it is now very much required to cross check this
+> > state to prevent the host from running __pkvm_host_unshare_hyp() on a
+> > page shared with TZ or a non-protected guest.
+> > 
+> > Thankfully, if an attacker were to try this, the hyp_unmap() call from
+> > hyp_complete_unshare() would fail, hence causing to WARN() from
+> > __do_unshare() with the host lock held, which is fatal. But this is
+> > fragile at best, and can hardly be considered a security measure.
+> > 
+> > Let's just do the right thing and always check the state from
+> > hyp_ack_unshare().
+> > 
+> > Signed-off-by: Quentin Perret <qperret@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/nvhe/mem_protect.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > index caba3e4bd09e..e75374d682f4 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > @@ -783,9 +783,6 @@ static int hyp_ack_unshare(u64 addr, const struct pkvm_mem_transition *tx)
+> >  	if (tx->initiator.id == PKVM_ID_HOST && hyp_page_count((void *)addr))
+> >  		return -EBUSY;
+> >  
+> > -	if (__hyp_ack_skip_pgtable_check(tx))
+> > -		return 0;
+> > -
 > 
-> Figure 2-21 in UVC 1.5 indicates that the device should STALL the
-> GET_CUR and SET_CUR requests if a state change is in progress.
-> 
->> And in the driver I believe that we might have a bug handling this
->> case (will send a patch if I can confirm it)
->> the zoom is at 0 and you set it 10
->> if you read the value 2 times before the camera reaches value 10:
->> - First value will come from the hardware and the response will be cached
-> 
-> Only if the control doesn't have the auto-update flag set, so it will be
-> device-dependent. As GET_CUR should stall that's not really relevant,
-> except for the fact that devices may not stall the request.
+> Acked-by: Will Deacon <will@kernel.org>
 
-OK, that helps a lot.
+Cheers.
 
-If an operation is in progress, then setting a new control value should
-result in -EBUSY. Based on the description above, I gather that even the
-same fh that made the request cannot update it while the operation is
-ongoing?
+> I suppose __hyp_ack_skip_pgtable_check() is now quite poorly named,
+> since we only want to use it in cases where the page is PKVM_PAGE_OWNED
+> by the initiator.
 
-Getting the control should just return the value that was set. I assume
-that is cached in uvc?
+I don't mind the name personally, but happy to respin if someone can
+come up with a better one :-).
 
-Regards,
+> Hopefully nobody smart tries to add it back here!
 
-	Hans
+Right, so here's a patch adding a selftest for this stuff:
 
-> 
->> - Second value will be the cached one
->>
->> now the camera  is at zoom 10
->> If you read the value, you will read the cached value
->>
->>> E.g.: the zoom control is at value 0 and I set it to 10, then I poll the zoom control
->>> value: will that report the intermediate values until it reaches 10? And when it is
->>> at 10, the control event is sent?
->>>
->>>>>>> Cc: stable@vger.kernel.org
->>>>>>> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
->>>>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>>>>>> ---
->>>>>>>  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++++
->>>>>>>  1 file changed, 4 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
->>>>>>> index b6af4ff92cbd..3f8ae35cb3bc 100644
->>>>>>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
->>>>>>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
->>>>>>> @@ -1955,6 +1955,10 @@ int uvc_ctrl_set(struct uvc_fh *handle,
->>>>>>>       if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
->>>>>>>               return -EACCES;
->>>>>>>
->>>>>>> +     /* Other file handle is waiting a response from this async control. */
->>>>>>> +     if (ctrl->handle && ctrl->handle != handle)
->>>>>>> +             return -EBUSY;
->>>>>>> +
->>>>>>>       /* Clamp out of range values. */
->>>>>>>       switch (mapping->v4l2_type) {
->>>>>>>       case V4L2_CTRL_TYPE_INTEGER:
-> 
+  https://lore.kernel.org/kvmarm/20241129125800.992468-1-qperret@google.com/
 
+That should help catch future regressions in that area.
+
+FTR, I've started hating on the skip_pgtable_check() logic altogether as
+enabling CONFIG_EL2_NVHE_DEBUG happens to 'solve' the problem -- it's not
+exactly intuitive that enabling debug options improves security. The
+np-guest series moves the host state to the hyp vmemmap, so we can
+probably nuke __host_ack_skip_pgtable_check() with that as the check
+becomes really cheap. And we could surely do the same thing for the hyp
+state, and just always do the cross-check. I'll give it a spin.
+
+Thanks,
+Quentin
 
