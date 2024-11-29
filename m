@@ -1,49 +1,78 @@
-Return-Path: <linux-kernel+bounces-425770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73E59DEAD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:20:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E86C9DEAEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:23:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24FA6B2362B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:20:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A082817EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BB014E2E6;
-	Fri, 29 Nov 2024 16:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8958199230;
+	Fri, 29 Nov 2024 16:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOUtq4Ho"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A4giokAI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255FD14AD3D;
-	Fri, 29 Nov 2024 16:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC85149E17
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732897217; cv=none; b=nuaoLYoIX+3tVUHGiDD8WTeW+IglESyr69XQ0xsNcgOHWGT+6de/+sM1xnRoJ7g8fEaxtiA77jyx/oP6MOvZYbjFarFrWRw1p+La+dPR1HRgvtCWpnivwia1Th6BMgbb10sKx5yLVmqZuj1nzu0c23RPWH7jxfaRqydVbiNKreQ=
+	t=1732897397; cv=none; b=em1a+o5Iyx5YWuZhRCzX3wA5Ej3RHjSaMSE5TtFRjTnMYHAh2H3XEkvgzAHJWZXP3kkqLzA3E5XASx/npGFEmgd8ONEJd0/2wp2Tfe8GYP23jZNlrzeTuksaEh8sYVvyxbydd0EF/oUJpubf+m6yEi4dCNm23ya+UN9HPRWQtoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732897217; c=relaxed/simple;
-	bh=euN+eAhlu9UIjsZJy6+2NNI8i9i1qM3tGs8d5y8GE9U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tQWO/eZj69pQcZr93kZgY8i2joSloC85BhE1jK+VfytmyUdmCqAd2QDvJlv+tOUZZMYRbae7KJ4b07biAvQD5QizLvMKv12t1/3aznFY0GDZVnya9RCat1iNQE7VNyceJe/D/znJQF8UyasnewgP5UhEzOcRmKr2Esh2vvKE9YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOUtq4Ho; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FEC7C4CECF;
-	Fri, 29 Nov 2024 16:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732897216;
-	bh=euN+eAhlu9UIjsZJy6+2NNI8i9i1qM3tGs8d5y8GE9U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=vOUtq4HoFWjFonhi/D+d+uFXfo5g9tWybrvvz8U5M3uRSm8hKeRshXzM/t+R8sS+b
-	 AAKWamZ4vuPsJUg/LFB7Lu5m02yk1MdsQeD2cArQfng9dptMbfOQGhFn+CTjuu4FjI
-	 ES5k6tsf1XeJnz7K/NbQctCewXqfAVcUsnx5EREY9T6gQyM6dmpWI8yVXzemPMnJ3o
-	 mPPtwGymJzwFNioSfCxnoQBq5u+/JWTJ0vKcg2VKEe1eYVahwtVFt9kO/jBK+2DMlQ
-	 8hg5mjfvXexsYX3XcFuwAHod/ww0j+rPZlplWKVvsoORo4qD4pLRjaTvxmh59jTgGJ
-	 VJwLDGUqLpWaQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E4F380A944;
-	Fri, 29 Nov 2024 16:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1732897397; c=relaxed/simple;
+	bh=3nbdfgDykodulr5SgnRd7VYy2zrtu0I+l6icChGdNK0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ry5UsMHP6xqpwHrTKeU0Yr1R4J8zTBgefIc4xEWbeCOwlH3WPoKg08NOe3hhQGgIiv2lnIevlAItHXK4qu5iz0qKYp/Zg1vUSKmV12GbO/JWcp+P27rvuHDZEFwc+VplJKGrrVsgZnRVSuiBQ4vg9oMj0yFKJG+RlvJfodnTRVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A4giokAI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732897394;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VJlxlZmTa08VOsuEjaOxWp0N1N2M/sWSw22y2ruZ4u0=;
+	b=A4giokAIyMZjoNP0+UCZW+upuA4QfyJZIL3ijyRKi0Ozpba13cS7Ra+ss84faGgk+BNMUb
+	IICTeH3ByNlfkFchgUtfAc21WiVg6UuP1qjxpguZiew/aZ4vxK6TyiCz/R1YNbTXIhHKRX
+	128nxTpsq8X3U3J0VFnMCDPbjIaSB3M=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-262-3T72GyoROBCxh-SBJwwstA-1; Fri,
+ 29 Nov 2024 11:23:11 -0500
+X-MC-Unique: 3T72GyoROBCxh-SBJwwstA-1
+X-Mimecast-MFC-AGG-ID: 3T72GyoROBCxh-SBJwwstA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 48FA21944DDC;
+	Fri, 29 Nov 2024 16:23:09 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.192.13])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5140D1955F41;
+	Fri, 29 Nov 2024 16:23:06 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH 5/5] drm/i915: Add drm_panic support
+Date: Fri, 29 Nov 2024 17:20:30 +0100
+Message-ID: <20241129162232.7594-6-jfalempe@redhat.com>
+In-Reply-To: <20241129162232.7594-1-jfalempe@redhat.com>
+References: <20241129162232.7594-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,49 +80,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf v2] tools: Override makefile ARCH variable if defined,
- but empty
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173289723001.2112878.15562925301764191816.git-patchwork-notify@kernel.org>
-Date: Fri, 29 Nov 2024 16:20:30 +0000
-References: <20241127101748.165693-1-bjorn@kernel.org>
-In-Reply-To: <20241127101748.165693-1-bjorn@kernel.org>
-To: =?utf-8?b?QmrDtnJuIFTDtnBlbCA8Ympvcm5Aa2VybmVsLm9yZz4=?=@codeaurora.org
-Cc: bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
- alexghiti@rivosinc.com, acme@redhat.com, jean-philippe@linaro.org,
- qmo@kernel.org, andrii.nakryiko@gmail.com, bjorn@rivosinc.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- davidlt@rivosinc.com, namhyung@kernel.org
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello:
+This adds drm_panic support for a wide range of Intel GPU. I've
+tested it only on 3 laptops, haswell (with 128MB of eDRAM),
+cometlake and alderlake.
 
-This patch was applied to bpf/bpf.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
+ * DPT: if I disable tiling on a framebuffer using DPT, then it
+   displays some other memory location. As DPT is enabled only for
+   tiled framebuffer, there might be some hardware limitations.
+ * fbdev: On my haswell laptop, the fbdev framebuffer is configured
+   with tiling enabled, but really it's linear, because fbcon don't
+   know about tiling, and the panic screen is perfect when it's drawn
+   as linear.
 
-On Wed, 27 Nov 2024 11:17:46 +0100 you wrote:
-> From: Björn Töpel <bjorn@rivosinc.com>
-> 
-> There are a number of tools (bpftool, selftests), that require a
-> "bootstrap" build. Here, a bootstrap build is a build host variant of
-> a target. E.g., assume that you're performing a bpftool cross-build on
-> x86 to riscv, a bootstrap build would then be an x86 variant of
-> bpftool. The typical way to perform the host build variant, is to pass
-> "ARCH=" in a sub-make. However, if a variable has been set with a
-> command argument, then ordinary assignments in the makefile are
-> ignored.
-> 
-> [...]
+Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+---
+ .../gpu/drm/i915/display/intel_atomic_plane.c | 98 ++++++++++++++++++-
+ 1 file changed, 97 insertions(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [bpf,v2] tools: Override makefile ARCH variable if defined, but empty
-    https://git.kernel.org/bpf/bpf/c/537a2525eaf7
-
-You are awesome, thank you!
+diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+index b7e462075ded3..43dac5538a648 100644
+--- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
++++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
+@@ -33,13 +33,17 @@
+ 
+ #include <linux/dma-fence-chain.h>
+ #include <linux/dma-resv.h>
++#include <linux/iosys-map.h>
+ 
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_blend.h>
++#include <drm/drm_cache.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_gem.h>
+ #include <drm/drm_gem_atomic_helper.h>
++#include <drm/drm_panic.h>
+ 
++#include "gem/i915_gem_object.h"
+ #include "i915_config.h"
+ #include "i9xx_plane_regs.h"
+ #include "intel_atomic_plane.h"
+@@ -50,6 +54,7 @@
+ #include "intel_display_types.h"
+ #include "intel_fb.h"
+ #include "intel_fb_pin.h"
++#include "intel_fbdev.h"
+ #include "skl_scaler.h"
+ #include "skl_watermark.h"
+ 
+@@ -1198,14 +1203,105 @@ intel_cleanup_plane_fb(struct drm_plane *plane,
+ 	intel_plane_unpin_fb(old_plane_state);
+ }
+ 
++/* Only used by drm_panic get_scanout_buffer() and panic_flush(), so it is
++ * protected by the drm panic spinlock
++ */
++static struct iosys_map panic_map;
++
++static void intel_panic_flush(struct drm_plane *plane)
++{
++	struct intel_plane_state *plane_state = to_intel_plane_state(plane->state);
++	struct drm_i915_private *dev_priv = to_i915(plane->dev);
++	struct drm_framebuffer *fb = plane_state->hw.fb;
++	struct intel_plane *iplane = to_intel_plane(plane);
++
++	/* Force a cache flush, otherwise the new pixels won't show up */
++	drm_clflush_virt_range(panic_map.vaddr, fb->height * fb->pitches[0]);
++
++	/* Don't disable tiling if it's the fbdev framebuffer.*/
++	if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev))
++		return;
++
++	if (fb->modifier && iplane->disable_tiling)
++		iplane->disable_tiling(iplane);
++}
++
++static int intel_get_scanout_buffer(struct drm_plane *plane,
++				    struct drm_scanout_buffer *sb)
++{
++	struct intel_plane_state *plane_state;
++	struct drm_gem_object *gem_obj;
++	struct drm_i915_gem_object *obj;
++	struct drm_framebuffer *fb;
++	struct drm_i915_private *dev_priv = to_i915(plane->dev);
++	void *ptr;
++	enum i915_map_type has_type;
++
++	if (!plane->state || !plane->state->fb || !plane->state->visible)
++		return -ENODEV;
++
++	plane_state = to_intel_plane_state(plane->state);
++	fb = plane_state->hw.fb;
++	gem_obj = intel_fb_bo(fb);
++	if (!gem_obj)
++		return -ENODEV;
++
++	obj = to_intel_bo(gem_obj);
++
++	if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev)) {
++		ptr = intel_fbdev_getvaddr(dev_priv->display.fbdev.fbdev);
++		if (!ptr)
++			return -ENOMEM;
++	} else {
++		/* can't disable tiling if DPT is in use */
++		if (fb->modifier && HAS_DPT(dev_priv))
++			return -EOPNOTSUPP;
++
++		/* Taken from i915_gem_object_pin_map() */
++		ptr = page_unpack_bits(obj->mm.mapping, &has_type);
++		if (!ptr) {
++			if (i915_gem_object_has_struct_page(obj))
++				ptr = i915_gem_object_map_page(obj, I915_MAP_WB);
++			else
++				ptr = i915_gem_object_map_pfn(obj, I915_MAP_WB);
++			if (IS_ERR(ptr))
++				return -ENOMEM;
++		}
++	}
++
++	if (i915_gem_object_has_iomem(obj))
++		iosys_map_set_vaddr_iomem(&panic_map, ptr);
++	else
++		iosys_map_set_vaddr(&panic_map, ptr);
++
++	sb->map[0] = panic_map;
++	sb->width = fb->width;
++	sb->height = fb->height;
++	sb->format = fb->format;
++	sb->pitch[0] = fb->pitches[0];
++
++	return 0;
++}
++
+ static const struct drm_plane_helper_funcs intel_plane_helper_funcs = {
+ 	.prepare_fb = intel_prepare_plane_fb,
+ 	.cleanup_fb = intel_cleanup_plane_fb,
+ };
+ 
++
++static const struct drm_plane_helper_funcs intel_primary_plane_helper_funcs = {
++	.prepare_fb = intel_prepare_plane_fb,
++	.cleanup_fb = intel_cleanup_plane_fb,
++	.get_scanout_buffer = intel_get_scanout_buffer,
++	.panic_flush = intel_panic_flush,
++};
++
+ void intel_plane_helper_add(struct intel_plane *plane)
+ {
+-	drm_plane_helper_add(&plane->base, &intel_plane_helper_funcs);
++	if (plane->base.type == DRM_PLANE_TYPE_PRIMARY)
++		drm_plane_helper_add(&plane->base, &intel_primary_plane_helper_funcs);
++	else
++		drm_plane_helper_add(&plane->base, &intel_plane_helper_funcs);
+ }
+ 
+ void intel_plane_init_cursor_vblank_work(struct intel_plane_state *old_plane_state,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.47.0
 
 
