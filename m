@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-425993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A61E9DED82
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:13:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4082F9DED84
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:18:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA00B2152D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:13:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFFE9163C8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5FC198E6D;
-	Fri, 29 Nov 2024 23:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C01F19924D;
+	Fri, 29 Nov 2024 23:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D7CCYIUX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g03MGTYy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBC113BAEE
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8373138FAD
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732921997; cv=none; b=P9f71+kUR8VDJqr05lwEivrp1qm1xBh5lhoqiDSx9iO+BvdgoEZcrO7KxdyPtSbW7Ze/2cBe/1ikiGN0i/2ziqhdj6GNd3cxIN0HA+eqJe7uNp6rK7weelXakEkOYFu+dwpvPvMW2INb57gWTUqWnykYNIFhEV4P2tmycCFOh2U=
+	t=1732922333; cv=none; b=a+KHN6xXD9rlkhDxa9KmHoREaqkL5K0jbdD2QhpUYHIQJ02A0E2jTTeAGPfbLoZ325Eew3BMsap618pNd1RJn5RTYtSHtSzSEq+RFVijqaSI20E4U/T3C6KAgzUTR1WmVTeN5bObvhEI/40zB4wiNW0tLWdubpqUt+Swfyp+zm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732921997; c=relaxed/simple;
-	bh=DVVuUQbmAm99ECO7j4qZY/M+0QSt0nokxG+RYufcIic=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bPCEG+4NFFspQEStDwJrcp/YO6SyGofEbUaTs1vbNYdSSnj7NcPm/q+xYH69oTgkstKSco0mWa3ECWoygu+StNw7khs4LIP5XZaR4JC6EjiDqyFeDDejlECyixV2ufZyl5I17JxoV27iCTT5L2kzyy7CgubHfX6tJiZ0qUxW/lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D7CCYIUX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732921993;
-	bh=DVVuUQbmAm99ECO7j4qZY/M+0QSt0nokxG+RYufcIic=;
-	h=From:Date:Subject:To:Cc:From;
-	b=D7CCYIUXRWqiFElqOu4Us5iv4bvjfbDD4wbkRVSbgm9iiTnu3lqVnBNahOyXN959F
-	 OcZ6p5FF876Sfb+gWEUuCsNy8xelLDnTAblZ2ZEQemM/cFZJPicgdSYA927Hj1FRLg
-	 /Q98KWf+YdRqFtEfHBYdW9djy9ungsvtmcir9cg0oksaSN8WFDzZUTN5qwg6d4lB41
-	 9lEAlSl7ngKB125zq3sh1RNnsrtr4rW1F2fXsti15aoHwdupaXEQo3I8ekzWjG2rY/
-	 PVXp7vF7hwsNRM15gGimrNclXL0OpD25JtaZ9eh6qotGimsk2oEpOPDM16MOCIoZKa
-	 NHAA2SHf6QISQ==
-Received: from localhost (unknown [86.120.21.57])
+	s=arc-20240116; t=1732922333; c=relaxed/simple;
+	bh=6goSQOe/s3OVc7KgWqBRRYDI+YPt/IyKKnh3wVVk6a4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TnUXPz6Lv8A1hZf7WUURGyMXhhDIHyJEGc8usvQZ7CgALCSupFUofCLF1npYd/6XFfwq6dae3Ib8fBmNfDsgdDT14Io2t41puJIaf2+m5PMsW5AUs92cqox7xSembRrFz0+K60vfmywdOR33zQjsf37XGO76mTN21myR+gzM30c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g03MGTYy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732922327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CvQZD8BqiH/dggb6iGesxSTTYCQI5/E9WUH3WgYU8lg=;
+	b=g03MGTYyID3wG1VrQ56a2jm720ABNWUTvXrsdzp/q06bThVjNoFnyFxh9Byxsxu7wFZLyE
+	4nEcnu4kkiKYdkW2K6o2fMmSMVI6iBgi4DwvjnGxNfzu2BObqD0VWjFppE38uEF6knvGSa
+	KsA4d4KCkI3thLzdAlMexd2QQvdQadY=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-361-FutI7yt_MEejaLN9aMGbyQ-1; Fri,
+ 29 Nov 2024 18:18:44 -0500
+X-MC-Unique: FutI7yt_MEejaLN9aMGbyQ-1
+X-Mimecast-MFC-AGG-ID: FutI7yt_MEejaLN9aMGbyQ
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8664D17E0290;
-	Sat, 30 Nov 2024 00:13:13 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Sat, 30 Nov 2024 01:13:01 +0200
-Subject: [PATCH] drm/bridge-connector: Prioritize supported_formats over
- ycbcr_420_allowed
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 394F91954193;
+	Fri, 29 Nov 2024 23:18:43 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8FE09300018D;
+	Fri, 29 Nov 2024 23:18:42 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [GIT PULL] Second batch of KVM changes for Linux 6.13
+Date: Fri, 29 Nov 2024 18:18:41 -0500
+Message-ID: <20241129231841.139239-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241130-bridge-conn-fmt-prio-v1-1-146b663f17f3@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAHxKSmcC/x2MQQqAMAzAviI9W1jVIfgV8aBbpz24SSciiH93e
- EwgeSCzCmcYqgeUL8mSYgGqK3DbHFdG8YWhMU1H1BpcVHyxLsWIYT/xUEnoLPWOOtOzt1DSQzn
- I/W/H6X0/4ipcB2YAAAA=
-X-Change-ID: 20241130-bridge-conn-fmt-prio-c517c1407ed5
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Bridges having the DRM_BRIDGE_OP_HDMI flag set in drm_bridge->ops are
-supposed to rely on drm_bridge->supported_formats bitmask to advertise
-the supported colorspaces, including HDMI_COLORSPACE_YUV420.  Therefore,
-the newly introduced drm_bridge->ycbcr_420_allowed flag becomes
-redundant in this particular context.
+Linus,
 
-Moreover, when drm_bridge_connector gets initialised, only
-drm_bridge->ycbcr_420_allowed is considered in the process of adjusting
-the equivalent property of the base drm_connector, which effectively
-discards the formats advertised by the HDMI bridge.
+The following changes since commit 8d4f1e05ff821a5d59116ab8c3a30fcae81d8597:
 
-Handle the inconsistency by ignoring ycbcr_420_allowed for HDMI bridges
-and, instead, make use of the supported_formats bitmask when setting up
-the bridge connector.
+  RISC-V: Remove unnecessary include from compat.h (2024-11-26 11:48:53 -0800)
 
-Fixes: 3ced1c687512 ("drm/display: bridge_connector: handle ycbcr_420_allowed")
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/gpu/drm/display/drm_bridge_connector.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+are available in the Git repository at:
 
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index 320c297008aaa8b6ef5b1f4c71928849b202e8ac..b1bb937da85dbe1dcb1f5e5f621fb02647bcc793 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -414,7 +414,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	drm_for_each_bridge_in_chain(encoder, bridge) {
- 		if (!bridge->interlace_allowed)
- 			connector->interlace_allowed = false;
--		if (!bridge->ycbcr_420_allowed)
-+		if (!bridge->ycbcr_420_allowed && !(bridge->ops & DRM_BRIDGE_OP_HDMI))
- 			connector->ycbcr_420_allowed = false;
- 
- 		if (bridge->ops & DRM_BRIDGE_OP_EDID)
-@@ -436,6 +436,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 
- 			if (bridge->supported_formats)
- 				supported_formats = bridge->supported_formats;
-+
-+			if (!(bridge->supported_formats & HDMI_COLORSPACE_YUV420))
-+				connector->ycbcr_420_allowed = false;
-+
- 			if (bridge->max_bpc)
- 				max_bpc = bridge->max_bpc;
- 		}
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
----
-base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
-change-id: 20241130-bridge-conn-fmt-prio-c517c1407ed5
+for you to fetch changes up to 4d911c7abee56771b0219a9fbf0120d06bdc9c14:
+
+  Merge tag 'kvm-riscv-6.13-2' of https://github.com/kvm-riscv/linux into HEAD (2024-11-27 12:00:28 -0500)
+
+----------------------------------------------------------------
+ARM:
+
+* Fixes.
+
+RISC-V:
+
+* Svade and Svadu (accessed and dirty bit) extension support for host and
+  guest.  This was acked on the mailing list by the RISC-V maintainer, see
+  https://patchew.org/linux/20240726084931.28924-1-yongxuan.wang@sifive.com/.
+
+----------------------------------------------------------------
+Marc Zyngier (5):
+      KVM: arm64: vgic-v3: Sanitise guest writes to GICR_INVLPIR
+      KVM: arm64: vgic: Make vgic_get_irq() more robust
+      KVM: arm64: vgic: Kill VGIC_MAX_PRIVATE definition
+      KVM: arm64: vgic-its: Add stronger type-checking to the ITS entry sizes
+      KVM: arm64: Mark set_sysreg_masks() as inline to avoid build failure
+
+Oliver Upton (1):
+      KVM: arm64: Use MDCR_EL2.HPME to evaluate overflow of hyp counters
+
+Paolo Bonzini (3):
+      Merge tag 'kvmarm-fixes-6.13-1' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
+      Merge tag 'riscv-for-linus-6.13-mw1' of git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux into HEAD
+      Merge tag 'kvm-riscv-6.13-2' of https://github.com/kvm-riscv/linux into HEAD
+
+Raghavendra Rao Ananta (1):
+      KVM: arm64: Ignore PMCNTENSET_EL0 while checking for overflow status
+
+Yong-Xuan Wang (4):
+      RISC-V: Add Svade and Svadu Extensions Support
+      dt-bindings: riscv: Add Svade and Svadu Entries
+      RISC-V: KVM: Add Svade and Svadu Extensions Support for Guest/VM
+      KVM: riscv: selftests: Add Svade and Svadu Extension to get-reg-list test
+
+ .../devicetree/bindings/riscv/extensions.yaml      | 28 ++++++++
+ arch/arm64/kvm/nested.c                            |  2 +-
+ arch/arm64/kvm/pmu-emul.c                          | 62 ++++++++++++-----
+ arch/arm64/kvm/vgic/vgic-debug.c                   |  5 +-
+ arch/arm64/kvm/vgic/vgic-init.c                    |  2 +-
+ arch/arm64/kvm/vgic/vgic-its.c                     | 77 +++++++++++++++-------
+ arch/arm64/kvm/vgic/vgic-mmio-v2.c                 | 12 ++--
+ arch/arm64/kvm/vgic/vgic-mmio-v3.c                 | 13 ++--
+ arch/arm64/kvm/vgic/vgic-mmio.c                    | 38 +++++------
+ arch/arm64/kvm/vgic/vgic-v2.c                      |  2 +-
+ arch/arm64/kvm/vgic/vgic-v3.c                      |  2 +-
+ arch/arm64/kvm/vgic/vgic-v4.c                      |  4 +-
+ arch/arm64/kvm/vgic/vgic.c                         | 43 +++++++-----
+ arch/arm64/kvm/vgic/vgic.h                         | 27 +-------
+ arch/riscv/Kconfig                                 |  1 +
+ arch/riscv/include/asm/csr.h                       |  1 +
+ arch/riscv/include/asm/hwcap.h                     |  2 +
+ arch/riscv/include/asm/pgtable.h                   | 13 +++-
+ arch/riscv/include/uapi/asm/kvm.h                  |  2 +
+ arch/riscv/kernel/cpufeature.c                     | 12 ++++
+ arch/riscv/kvm/vcpu.c                              |  4 ++
+ arch/riscv/kvm/vcpu_onereg.c                       | 15 +++++
+ include/kvm/arm_vgic.h                             |  1 -
+ tools/testing/selftests/kvm/riscv/get-reg-list.c   |  8 +++
+ 24 files changed, 257 insertions(+), 119 deletions(-)
 
 
