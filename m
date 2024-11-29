@@ -1,158 +1,159 @@
-Return-Path: <linux-kernel+bounces-425804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393F19DEB25
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:36:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 578359DEB2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:38:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B6F0164099
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:36:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07F4A160F5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFB319F131;
-	Fri, 29 Nov 2024 16:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295671547FF;
+	Fri, 29 Nov 2024 16:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="STL2h9AV"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xUBzcXIO"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81CF1474A7;
-	Fri, 29 Nov 2024 16:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008BD44C77
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732898169; cv=none; b=tA+wGvzfcyRECtBeAKRthYGF4oViuILSL4njqoGmnie7yK5ZjaamJWTDTxspbpSgL8ZUpvMikLp2Uv32JeeX8GnN6Sb2J3Ts2LbIHngRK5/qYQ/pQ0z99NwiFXGBdEB8ug4TVcBRUlofOvcPoB8TBi5tKAIoQOj83AGwYmdYSHY=
+	t=1732898289; cv=none; b=NZp0Oqc4MBO3DOzrU2ESAlfjZdi+sc+2Fm4sw3IrhOpvqPcyYlkKj/N+r4lSUyTLhcR5VkpCQS55qYJx2Kam7bkc1nmGFRHqvLj2LO3oR5vySEYX+/QUXm5gVgJ/gHjLIaEQA+cqivDEhUG4nIDU96CKb3ix+TqIoEuSpar7XsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732898169; c=relaxed/simple;
-	bh=St5I1KCUJ1mKkVweJS5J5SS0UjlUqUbGxRaIBGK0WEY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eIO+O/eKIIc5TzpuHXyygXqAiRsmWLs9facPGJhuZ1vazZByO5XG3+X2QFRZ2OwCBdy6FI3NZdoyhNjfRsvLAuY02ol7jh3iRaaAIno0B4hh0OXIc++7I8rC3JCGXYhrnYN1kTyaBUn+8Zdg2p3+bctnltUfMTxtyaxWXVIA//Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=STL2h9AV; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=4W8Rqmae+GoUrIIxVWQgBlsh4/eEYJ7BEkZbzOEfoe0=; b=STL2h9AVW5w8fxtXk+D3f8rGqZ
-	IFV2a2gnGl0GCIBGf2F1iXFkfUGhluEr8ORItiHz2IXKqw09wQNhWxP4FItKVKEwZjl5/i+nhuwS3
-	xvyhOdy+CqYFHDc60NxDWxC4+Za5as/g0BlFH6mmQc/7FEkl5l3klufbWvo6IpFOKBGXz033QUYxS
-	j5bzLfu3l/vIkNCjbn+YplekwEeA5xeVSnqGku5PrJgGlTmI6JvpdJvSyaJryscj6IiUk473AzHKV
-	EImvBM3InjByigLfJ4A6C6fGbH6oZCNjCUE5Vwfs5gQbpF+XRr0LbdhEteeLVj54uU2oVoPtBtD6F
-	bUlGfH2A==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1tH3yI-0007RJ-TK; Fri, 29 Nov 2024 17:35:58 +0100
-Received: from [178.197.249.40] (helo=[192.168.1.114])
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1tH3yH-000Jf4-2G;
-	Fri, 29 Nov 2024 17:35:58 +0100
-Message-ID: <89424046-1142-447e-8a63-d8492ccd9abc@iogearbox.net>
-Date: Fri, 29 Nov 2024 17:35:57 +0100
+	s=arc-20240116; t=1732898289; c=relaxed/simple;
+	bh=7WjikKFNZ+HEfrOK2PPdKEBf13sxhyHfG6cbbVBGcx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HV19zX4rsHPvUzX22iYj5QUxbua/EDoxA/fbrG1y+Wl/DpvIDB/90yKt9hdO2R9DjmRt5qcjT30ANFjNqXuvuvEFKKMK5f4cTJ8eSuiDLdrSca7WG0x8nzYQ9HlJY40pEPaLmsQ2qwNP1eHRj3Lv+jwpgQ6vCUdVmXNlDxLEsFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xUBzcXIO; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2129fd7b1a5so18030755ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:38:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732898287; x=1733503087; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yNj/qfb7oRR2PWaMb8I3iLUkmdoRJW2FZIUwVWDq9j8=;
+        b=xUBzcXIOkZyTCSykVrAcEh42lpJYmP+jTYcVwwB2pCEcIoDCWw7BEA3yYDxIrO/K45
+         qGSRIN4zTtsHqt9ApxOlsiDTB61OW6GIGb4nPnB/1EHVD/oqx8ieEhZxGUnzXGQmt8gD
+         yPkyTpOKpFxYWytMVA8KAUHCD5WZEGKy7g03KV9/DyYRN7kZzAJFGLviQvAfXk5sUCgI
+         EoIRQGKKI5hqKk2A3LGW0OOLdetWT8Kv1Vv0UlVvJu9piCH8b58RPSqbDtHX2TeB02ct
+         gjk3DwxCjS5LPKL/2kKJYYw3lS0TSARlAcnMo1zHUexxH7YHatLuWcWun9QKU/ExJiWV
+         WgzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732898287; x=1733503087;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yNj/qfb7oRR2PWaMb8I3iLUkmdoRJW2FZIUwVWDq9j8=;
+        b=uQ7vJxbl+4m73+m5Rumwci7y8xZgY5Utkr7u53pTkPHm6R3q894sHcdHoByjB3EUDN
+         6gGWydFrkWkzy2WAigFByl5NXphsW6RO1OOC5LLbtZrvI+MFr6F1DENEVhBlQFLO5e1i
+         9sDP4rimvVMj4FX08V0BbPkIA5ejSULw86QwL5fh6ppewas9LmkkfGXWTzYYbbheMlqr
+         mGFXff7F87wQ4Zzzn7bCM1neaPvommxe9ECNTCdmctbcwksVCEgwVLKdQxkcnpTNJypk
+         gVJYfs+5CMDZY3E3gAQ2/OoKTpRGHAmPQv1QJEZTO+55S8mHSI2NKYemE5Y7IHyaOJ94
+         yyqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJphnTg17jcwzGYbAaGjN/xNkrYCno+bznYGj3bohjxdMqxzl341PqgQdcDdELWsbXXtJG7098Y0IEsgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCl+/s5oa5NaFO/QsY1HlnBb1x4XlsoIpZlo4+nfpSnPTIi+RZ
+	B8htHDyjfUNb4eoxV9az9bTedz8fJXkkq3U1iDuEYuzXh96Y/RhFgTDJFfWnwA==
+X-Gm-Gg: ASbGncvIX3f6oiDt44B1O8lM71hg7eaShC8zdUhIanqw1M1DA3aJ5VqQf5JcoY0K62y
+	cf5gs1E1wCI53pjNSFH/7GN05BCkhBa9su5hYfJpvSpyDi+a4dioElrxZi2cUhOIQ5UlGnHSQD2
+	6u/gbGqM+vbPbmGMhXqjQ4MAV389hX28PfbIXV+ESi3qcxs9hreZ/lUdx+T2WPWR9wxNfpYkhGt
+	B4WZyRbfqGoapwQcS0LKQdU4r8cEcW5O/5X8znBIUCKEiaWb8lGs/KK8ZeV
+X-Google-Smtp-Source: AGHT+IEgR6eq5WPd71wOgh5UzKE552haFJB18tPtmtwFe0e0t2hbHfrj7ESMfTuQV+Cku7fnAEDKAA==
+X-Received: by 2002:a17:902:e549:b0:215:4dad:727f with SMTP id d9443c01a7336-2154dad73c3mr23798135ad.50.1732898287401;
+        Fri, 29 Nov 2024 08:38:07 -0800 (PST)
+Received: from thinkpad ([120.60.57.102])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2152199d5c0sm32447185ad.218.2024.11.29.08.38.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 08:38:06 -0800 (PST)
+Date: Fri, 29 Nov 2024 22:08:03 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Saurabh Sengar <ssengar@linux.microsoft.com>
+Cc: bhelgaas@google.com, kwilczynski@kernel.org,
+	bartosz.golaszewski@linaro.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ssengar@microsoft.com
+Subject: Re: [PATCH] PCI/pwrctrl: Check the device node exist before device
+ removal
+Message-ID: <20241129163803.osh6yrub42hqb5yf@thinkpad>
+References: <1732890621-19656-1-git-send-email-ssengar@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v4 1/2] bpf: Remove bpf_probe_write_user()
- warning message
-To: Marco Elver <elver@google.com>, Alexei Starovoitov <ast@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Nikola Grcevski <nikola.grcevski@grafana.com>,
- bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241129090040.2690691-1-elver@google.com>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <20241129090040.2690691-1-elver@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27472/Fri Nov 29 10:38:16 2024)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1732890621-19656-1-git-send-email-ssengar@linux.microsoft.com>
 
-On 11/29/24 9:59 AM, Marco Elver wrote:
-> The warning message for bpf_probe_write_user() was introduced in
-> 96ae52279594 ("bpf: Add bpf_probe_write_user BPF helper to be called in
-> tracers"), with the following in the commit message:
+On Fri, Nov 29, 2024 at 06:30:21AM -0800, Saurabh Sengar wrote:
+> There can be scenarios where device node is NULL, in such cases
+> of_node_clear_flag accessing the _flags object will cause a NULL
+> pointer dereference.
 > 
->      Given this feature is meant for experiments, and it has a risk of
->      crashing the system, and running programs, we print a warning on
->      when a proglet that attempts to use this helper is installed,
->      along with the pid and process name.
+> Add a check for NULL device node to fix this.
 > 
-> After 8 years since 96ae52279594, bpf_probe_write_user() has found
-> successful applications beyond experiments [1, 2], with no other good
-> alternatives. Despite its intended purpose for "experiments", that
-> doesn't stop Hyrum's law, and there are likely many more users depending
-> on this helper: "[..] it does not matter what you promise [..] all
-> observable behaviors of your system will be depended on by somebody."
+> [  226.227601] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000c0
+> [  226.330031] pc : pci_stop_bus_device+0xe4/0x178
+> [  226.333117] lr : pci_stop_bus_device+0xd4/0x178
+> [  226.389703] Call trace:
+> [  226.391463]  pci_stop_bus_device+0xe4/0x178 (P)
+> [  226.394579]  pci_stop_bus_device+0xd4/0x178 (L)
+> [  226.397691]  pci_stop_and_remove_bus_device_locked+0x2c/0x58
+> [  226.401717]  remove_store+0xac/0xc8
+> [  226.404359]  dev_attr_store+0x24/0x48
+> [  226.406929]  sysfs_kf_write+0x50/0x70
+> [  226.409553]  kernfs_fop_write_iter+0x144/0x1e0
+> [  226.412682]  vfs_write+0x250/0x3c0
+> [  226.415003]  ksys_write+0x7c/0x120
+> [  226.417827]  __arm64_sys_write+0x28/0x40
+> [  226.420828]  invoke_syscall+0x74/0x108
+> [  226.423681]  el0_svc_common.constprop.0+0x4c/0x100
+> [  226.427205]  do_el0_svc+0x28/0x40
+> [  226.429748]  el0_svc+0x40/0x148
+> [  226.432295]  el0t_64_sync_handler+0x114/0x140
+> [  226.435528]  el0t_64_sync+0x1b8/0x1c0
 > 
-> The ominous "helper that may corrupt user memory!" has offered no real
-> benefit, and has been found to lead to confusion where the system
-> administrator is loading programs with valid use cases.
-> 
-> As such, remove the warning message.
-> 
-> Link: https://lore.kernel.org/lkml/20240404190146.1898103-1-elver@google.com/ [1]
-> Link: https://lore.kernel.org/r/lkml/CAAn3qOUMD81-vxLLfep0H6rRd74ho2VaekdL4HjKq+Y1t9KdXQ@mail.gmail.com/ [2]
-> Link: https://lore.kernel.org/all/CAEf4Bzb4D_=zuJrg3PawMOW3KqF8JvJm9SwF81_XHR2+u5hkUg@mail.gmail.com/
-> Signed-off-by: Marco Elver <elver@google.com>
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Krzysztof Wilczyński <kwilczynski@kernel.org>
+> Fixes: 681725afb6b9 ("PCI/pwrctl: Remove pwrctl device without iterating over all children of pwrctl parent")
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Thanks for the fix! There was already a patch submitted to fix the same issue:
+https://lore.kernel.org/linux-pci/20241126210443.4052876-1-briannorris@chromium.org/
+
+- Mani
+
+> ---
+>  drivers/pci/remove.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
+> index 963b8d2855c1..474ec2453e4b 100644
+> --- a/drivers/pci/remove.c
+> +++ b/drivers/pci/remove.c
+> @@ -21,6 +21,9 @@ static void pci_pwrctrl_unregister(struct device *dev)
+>  {
+>  	struct platform_device *pdev;
+>  
+> +	if (!dev_of_node(dev))
+> +		return;
+> +
+>  	pdev = of_find_device_by_node(dev_of_node(dev));
+>  	if (!pdev)
+>  		return;
+> -- 
+> 2.43.0
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
