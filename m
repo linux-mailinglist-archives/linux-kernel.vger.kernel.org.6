@@ -1,153 +1,163 @@
-Return-Path: <linux-kernel+bounces-425456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D413A9DC254
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:42:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85399DC257
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:43:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47203B22071
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9737D2849C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3111192B83;
-	Fri, 29 Nov 2024 10:42:39 +0000 (UTC)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871E7194A53;
+	Fri, 29 Nov 2024 10:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K51a38qm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B35155345;
-	Fri, 29 Nov 2024 10:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC16155345;
+	Fri, 29 Nov 2024 10:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732876959; cv=none; b=JjLghC0ANBpSivBS6ErJ2SRwlgwAvFOcUehEu8JoZDKy6kAR6PZfx6RQYxu3Naxd2RuZ8TSGQBIBDUbms9IDGJlvQvIQbc2Bm66zOX4lYS6JxctKfkF/F++j+eFPbhIHfsrdFRtCcpvvTLjACvB5pIpPnb6GRidMDQOd29/ZmUw=
+	t=1732877016; cv=none; b=ZDdwLBO4dH5NMJndFpgXwUFaQAOnc27PJsKGx+fCe/bGK15Vs1nZns98wO91FWP/W2qHm4dk7vLvIf4T7yR046PJeVoE8WvJnc8HrZrmLH5rMsF/pkiJmShfdeml3FWtLkIPY4iVfypuvN/vvoh6SbR+BTzrzb2DO3FHHJW7mCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732876959; c=relaxed/simple;
-	bh=7ZpyTF/Rwz9DM3tIvFc5vhQ1fTGkPShbTMlMb0/iVsY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m7xywS5aeWyNxvFZMRu/iNIGP21b1Yv/Xc8BV90Mfsj6RYVxacqu48dKUOzJM7YJNVpWNR76iYJbz3FiV+6I5tO1Ef4T5hBqZAgToCJi7YUocogFL7/mt8ozI0uKxdVQdJ0yF3pNKLA/lx1cynRdZ1Wyx8lhiO8IO2ZUilsmDBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-51532deb867so413461e0c.0;
-        Fri, 29 Nov 2024 02:42:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732876956; x=1733481756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nz4i8+hIryKOg+hkDrUGtXlPZUU0hx+Rc6UUOljWAf0=;
-        b=rDHReeDPqJEhoia98YAtQc8sgaJFvDadJ26ZaUYhMsNYRdGrLBT8n1uQq7XJxTyXJ/
-         5Ro2TwJbqpMDKA5kbdwXyWGDwj55oUSt0Wja4sIv6gAMmeN6cbXxHVOQq+zdbeqIDqyk
-         nrBLnih65+0pFcKuH5hY/tjB61WKdpcjcUHFbzYBo2SCjT6ajxwSilZNX/4nCzszo4bL
-         IDgS5NBihe5wqbCpcHNoc2mn3+DQbTk1SudOCkaSDxs4hOPaRmXjL1iLS+r3PeWzO2DT
-         1gilU0uZpFvIrvQQOhXE80bh87qIl7saIty3GfxYV49fdaPQxZkqlkkUczQLa/bddpoY
-         WPGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5O1OjtS3HuxqUy1KJxqWwBX4jpVxK6jb9GrSRPlL3OB8uvugtmA1uWZ7Ew7jnUTwQjrJPK+IVn4pl/Wk=@vger.kernel.org, AJvYcCWGaB6Oi6S4eZ2pdWaavMSCT0GtQuHKQwhp+SKh8pUJ62Y5/0W6HUDVEJ8VHkcjCFddXEnS86BP2RnhtrFb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5P7ok2j3dZ9aawnvJAcs/hUIeZd7TZOy/dOmDfH5KFFRxG3U9
-	asrAPVXnNSTaTQSXw3Anv1uW6nwWIqekDywDZ3Qu/U0jKHg5wscwTshSdurld5I=
-X-Gm-Gg: ASbGncsn/irHsoUZWKNp3UnojM2QsgljjaRRwcBs07DpL8KAYS7Gw2+y6D1n3GWnq63
-	iGQPn0Lea7d7WZgQSstOYzRBrY7fM0d8q1vZmoaTGfTZ7Jel3zZspeORgJay8zO4ZZClSmykEYP
-	uU85696z3hXgv/KUVlp8Ue3nFeezTcnfSQ+LckJ3t2fgn42tzmjj16gn4V0u/b6WhT6Hw5gat0l
-	wg51sRTTt2v1NRGPXMvX0+Prh98E8Bp2oen3i3cPG4EiQ+z8qnthS94F4y3ku7uJoFjKIjRboU/
-	gjQBib0sIc+7
-X-Google-Smtp-Source: AGHT+IHuTJNm9lMGiUwPp8kaef9NY1g0n5CaDi8UI1YjDEJi8oFJl5FmQsfL4ikvj+p0qzUg8PaDpw==
-X-Received: by 2002:a05:6122:8c13:b0:515:4fab:2f8e with SMTP id 71dfb90a1353d-51556ae31e9mr12625720e0c.10.1732876955898;
-        Fri, 29 Nov 2024 02:42:35 -0800 (PST)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5156cd231d2sm478028e0c.27.2024.11.29.02.42.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 02:42:34 -0800 (PST)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4aed6fdf04fso401525137.1;
-        Fri, 29 Nov 2024 02:42:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUnnmg0esluOvFBgS1XBNLupivJV/91t8+vrz8ULrblkV6OFFZNEKawHHjevXCqgFBHr1rh7Prj6tlt+1f/@vger.kernel.org, AJvYcCWQlqqzyfHo2RqbgfvEMkR3MD5DJz7BPvlXkZxqBsnju4daViQFi0WoqeF8lYsjkT19mzuYHShD69qfaGU=@vger.kernel.org
-X-Received: by 2002:a05:6102:d94:b0:4ad:4ce6:709 with SMTP id
- ada2fe7eead31-4af448f6a3emr13108148137.6.1732876954639; Fri, 29 Nov 2024
- 02:42:34 -0800 (PST)
+	s=arc-20240116; t=1732877016; c=relaxed/simple;
+	bh=HiysAwR1vBFjGdYnJZFzoJcljRzrm2vPT3oVuBxYu9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gmnUb4NN9sCDQhS6T0njXhR8xXumWeXy+OCuHeVc9P5fAxfBxbqFFdohiLBV+o7KUpNTXdq63w9aorUE8ctzy/psjfXW2G0eu3OM67WKjrgwhww9QiezIhy1o11azcjNxqTgteYy6wfa4QuJl1gyUEyFK75rdQEYRWgI1/yiYXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K51a38qm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B50C6C4CECF;
+	Fri, 29 Nov 2024 10:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732877016;
+	bh=HiysAwR1vBFjGdYnJZFzoJcljRzrm2vPT3oVuBxYu9A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K51a38qmYoTLeO4YbOGeKRRFXRFZhiIaZBmRXyqll6DkIBDch0HDjH7J+6DwpQ/OA
+	 kbkpYhMdkAjY7WxM8m3ILXUKdHR1QynbBpCyV00+BtRs8O5DivUFFNDksJtuqFxhhz
+	 Kz+ssnC1CN9fFra3bUxM46+a09qHclb9y5zayuMvFKz4e2jFjPAhjLNHOfkNVJz7ep
+	 M351+IhULxukvWL7Q92MB4jCRh2m1DJ/4h9Lx0B/2yP7udIqsEWGzmZbaCx7I4JHql
+	 q3viCksAFHR0HyD1LTIrui6efA6wADmRGD4ddswTvSIlyyoYYfy1rgCk3ATrRPe1y4
+	 JqX4dBHiPQRYg==
+Message-ID: <3b0c410b-7dab-4864-a9bb-5201108a9d5a@kernel.org>
+Date: Fri, 29 Nov 2024 11:43:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z0lCihhE75lE9Zjd@kroah.com> <CAMuHMdXwdyb6RA5jksNfw-M9h_nERvm8M4b7XU1_1N-C+bf94A@mail.gmail.com>
- <2024112952-headphone-vastness-3814@gregkh>
-In-Reply-To: <2024112952-headphone-vastness-3814@gregkh>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 29 Nov 2024 11:42:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW9j-=hEgvth0L=AS+BgdFwgFfOkt=xbB7RCP=4UAvocw@mail.gmail.com>
-Message-ID: <CAMuHMdW9j-=hEgvth0L=AS+BgdFwgFfOkt=xbB7RCP=4UAvocw@mail.gmail.com>
-Subject: Re: [GIT PULL] TTY / Serial driver changes for 6.13-rc1
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Slaby <jslaby@suse.cz>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] power: supply: gpio-charger: Support to disable
+ charger
+To: Stefan Raufhake <raufhakestefan@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: s.raufhake@beckhoff.com, s.dirkwinkel@beckhoff.com,
+ Stefan Raufhake <s.raufhake@beckhoff.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20241129103848.39963-1-raufhakestefan@gmail.com>
+ <20241129103848.39963-2-raufhakestefan@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241129103848.39963-2-raufhakestefan@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Greg,
+On 29/11/2024 11:38, Stefan Raufhake wrote:
+> From: Stefan Raufhake <s.raufhake@beckhoff.de>
+> 
+> We want to disable the built-in UPS in our device
 
-CC Claudiu
+Thank you for your patch. There is something to discuss/improve.
 
-On Fri, Nov 29, 2024 at 11:31=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
-> On Fri, Nov 29, 2024 at 08:58:28AM +0100, Geert Uytterhoeven wrote:
-> > On Fri, Nov 29, 2024 at 5:26=E2=80=AFAM Greg KH <gregkh@linuxfoundation=
-.org> wrote:
-> > > The following changes since commit 42f7652d3eb527d03665b09edac47f85fb=
-600924:
-> > >
-> > >   Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
-> > >
-> > > are available in the Git repository at:
-> > >
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/t=
-ty-6.13-rc1
-> > >
-> > > for you to fetch changes up to b5a23a60e8ab5711f4952912424347bf3864ce=
-8d:
-> > >
-> > >   serial: amba-pl011: fix build regression (2024-11-16 09:52:55 +0100=
-)
-> > >
-> > > ----------------------------------------------------------------
-> > > TTY / Serial driver updates for 6.13-rc1
-> >
-> > [...]
-> >
-> > > All of these have been in linux-next for a while with no reported
-> > > issues.
-> >
-> > Oh, how do I love this boilerplate...
->
-> I hand-craft that every time :)
->
-> > > Claudiu Beznea (1):
-> > >       serial: sh-sci: Clean sci_ports[0] after at earlycon exit
-> >
-> > "BUG: spinlock bad magic"
-> > https://lore.kernel.org/all/CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrq=
-v5dWZWYA@mail.gmail.com/
->
-> Ah, yes, sorry, missed that.  I assumed that it would be fixed soon, do
-> you want me to revert it instead?
 
-Let's hope it gets fixed soon.
-It's not super-critical, as earlycon is not meant for regular use
-(although lots of unaffected non-Renesas platforms do have "earlycon"
- in their DTS chosen/bootargs, sigh).
+> so that we can switch off the supply power of the
+> device with and without the support of the UPS.
 
-Gr{oetje,eeting}s,
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-                        Geert
+> This commit will allow us to disable the ups by
+> using the command echo 1 > /sys/class/power_supply/xxx/charge_type
+> (1 = POWER_SUPPLY_CHARGE_TYPE_NONE) and enable the
+> charger by setting it to 4 (POWER_SUPPLY_CHARGE_TYPE_STANDARD).
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Please describe the hardware, not OS.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> 
+> Signed-off-by: Stefan Raufhake <s.raufhake@beckhoff.de>
+> ---
+>  .../bindings/power/supply/gpio-charger.yaml   |  6 +++
+>  drivers/power/supply/gpio-charger.c           | 43 +++++++++++++++++++
+
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
+
+>  2 files changed, 49 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
+> index 89f8e2bcb2d7..b2658b0b20e4 100644
+> --- a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
+> +++ b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
+> @@ -44,6 +44,10 @@ properties:
+>      maxItems: 32
+>      description: GPIOs used for current limiting
+>  
+> +  charge-disable-gpios:
+> +    maxItems: 1
+> +    description: GPIO to disable the charger
+
+You just inverted existing "gpios" property, so no.
+
+Best regards,
+Krzysztof
 
