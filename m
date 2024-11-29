@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-425663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E439DE8A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:38:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB019DE8AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:38:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96CFBB22E21
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:38:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FCBAB231D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7314413AA26;
-	Fri, 29 Nov 2024 14:38:30 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E73613D276;
+	Fri, 29 Nov 2024 14:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LeO6VCfw"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D8683CD2
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 14:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB675588F
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 14:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732891110; cv=none; b=fYegUjwIj820qso3D7MV+41h4fKFWuS+JEeNdCVrNOMsWNoZdbT9bE25LwHet0r0Crlr8ttSstc9oy6Ggy/ifBtDEvrx7bGr+SkK6445NqsFlk24nH/5EvUyuKghYz+7Q1Amt+U4r8ykjHs7Dwx4L2glFywYu8/q0Oq+OrT9y9U=
+	t=1732891119; cv=none; b=Prb3P+Kt7XE0mJDuULgdAS2cWbeovric6HAH+T2sCJZYntN/wOCUaMEvdlnqULgVKEO+0Hk4TbBtd2mekWC4CTNpzzNpo2cvDkqRxhbL81womQmsikdpRUNvKJpg2UKbPuB/4GopnJ4e2mnUmqGF5fanY3/m+GaLrJf31jq2edM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732891110; c=relaxed/simple;
-	bh=e5WsLUQCwSDH4xtec1PFjmZz3cCHWEcQCr8SycRCRE8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pF7a801mktjB4xUAWcVNESvcXNe3dPd4TQhciJTgE+o9eS0iz97Ntvmfu+35OH8B+JZJAEmiTsvNI6FR+aoLj5oWpjDNXbw0yWLm/duYpIGdQr8hYBcXrVqDOYsIm+i2t5zMZdj8+ihfTEnNiDdM89eKUaVzD+6qacXw8CyKAx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a78589df29so19503625ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 06:38:27 -0800 (PST)
+	s=arc-20240116; t=1732891119; c=relaxed/simple;
+	bh=ebG+jgbYOVoxIaoEIS35kNojrHWYdKq3ZDu90W3WPIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=acHpIY/mQShZBGLXKaU+ftehibkcaUF0L5CJYsWhriaTRvMNkMwVwXnAebiIe0JBf60HpMFGGa/Fox4X0LCs5hnTyVx9tgV7fZd8I0YaS786+cjhaUjBWqRZqeaZPdeOJbq2D8UCt8ScZFTw4CRhI0XY7WNfX5/4Pvs0xZOMM38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LeO6VCfw; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53dd2fdcebcso2348539e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 06:38:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732891116; x=1733495916; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6ImmgwusNuF0D/bVRnwcDuw484FNRos5Zt6w0fJUjY8=;
+        b=LeO6VCfwJEAe+FlaCuRkS9ZmLtvfDlLcWsXfukU9cwI1m1aV4+YuoC369b78Pq5ORy
+         f4eb7SslJAsQuQJ+wo5KDU7LohSlpTbvicpEGcDaj2GXKbUwoIbFKqaBGphllOfgib/C
+         +HUWyHB/8i28+biiRdPEONF74hqqCNxQq9Ljh7PZ5L7HVInBh6Q1IJEZFGW0GYy+kaNi
+         HzcrGOkHTu/f2srWdJvNDJ1RmZ6ctjGC2SczwOV48eAN3/h5Fy+N8c43zhkTeCiiCG8M
+         WLPH3jUiEmtkpupLLyOOAZTfJ2AAlRcQmqclFZVf9eTtWF/s+CZnGJpA/5oNl6ttiF04
+         kgIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732891106; x=1733495906;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hj1U9eHo0e7boFaocjYSwnKXwMIgB6QaxAEj/QMXq4E=;
-        b=igaZWZodROLfrBzIeEIvKoFI4Dy5/0awqgL50M7XWFaHIXOxWfmUUb2E2sCQwDz5Wv
-         S8FI0LQiqFn7JYze3b+SawECByU7dGKVchgKTR1LOyeOiINSn0sGQm0QdaKy97uXoSmM
-         UorSMK662Vd3ShWWryMMmrQ+fwMZkfABoQdZtmpvYaiE1Tz7T/E1VWxB2J8lY7q+EaoD
-         3ijxs2//zYvjnKkRaMFeZ3JdEOHVzC2ipRnkhRHD1H+ewY+FmCzVsv9N43hH+uxwtwT5
-         lsoe04treewJYwAeqUQ2pvhFL5+GxvjfODzrm+EWOfguUtOI3oF/ctMFu6Uck2cGU2T6
-         4Abw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXsxrquvG1TnXQmKJ1/5uSy7fH9lDlPP0TjnDkypKAXCDvsVH2ppaJ20XMf2EO+XI/lPViHWpwwYa+muo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyonNKhty/7QTfhE3i587hXpIzv3rMBvYeXh9/FD/n7FWKxjgT0
-	RDPDQ9mhuaL5TVneP7N3z1h3lSZ0xEMdpCnYWjSrRd/ynLspydP4RaMDfo2AWjKHhBO6sNmj5yO
-	RSv6BitwnhxjQIXEBaTV4TIFJZlVMjg1Ci0cwKgSydvFmebi3/lWccek=
-X-Google-Smtp-Source: AGHT+IHWo+2QBobSBb2opTRxIDyO/gK9uM+5+itaXZKJjprlXAL5ylCym9Mk9HwBy2d1plZ5mhD16A7O14azdhmyDuJ3cJD/BNHc
+        d=1e100.net; s=20230601; t=1732891116; x=1733495916;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6ImmgwusNuF0D/bVRnwcDuw484FNRos5Zt6w0fJUjY8=;
+        b=mNkUmAtLmfYalDBhX+NfCYdjf1y777w9bY51aEeqxtwlv4o/FhFrbwt3io5m85ZS+H
+         EBz9S7dsfkGJ0FrQgZn0hqewAOIvUuteKXgyx5xCePqlQSX6Q/xwin+TZCF3LmR5wY7i
+         7qblqywAEVl6y4sv3EmJryXKmgnfM4HulCHeQGM2K0dMTYnRR8PblcKXK64uW3L43Uvg
+         73cGlQCzmECNoPoDUSfybL9MxjuRZWHP1IiFWLRS6rizXnOg9bBHD4XTPZVGjJ6d6NP1
+         c1S0UYCv75IGGsVddUbOWyVP/Ps9PwYYpM8dWZScxjmOENb4bDLLA2v2t1Jzxne5Icmm
+         +8lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyHO+KiprrI/RR2eCErR/FqLMMqHrPk/2FcF9YZdDIyUVWoRstg59yh2SxlrayxoRL9o/lacu/xftLBf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxouBE5mnayFrCPJ6pQ0JHfHFtlUZ4JBxM2dbZcvutS6hMPEg/O
+	PP+n9G/WOAupHYPDCGMmvW8/OTHfOrB1p7i564m5Wo8eRCiKkbg6WMb3oqpz/ts=
+X-Gm-Gg: ASbGnculsGJwdQ1s1QyFnOaHrisw92TMeuNNLwVeo2zLRoYOSAu5Y0Ne0rs+QZS4rD2
+	A11KZM6i63VfBiJfD4csENF1W+LYliQc6DKTZoZzxRcR9vL09eR46HPMJ+ayEH9DVk6DJ2kvc1S
+	OJAzlfz9p+bmOYc/sVm3D62/48NYhQLNSvIomhTsMIf48FreIohBLCcpG+7r8EbClJDRy1/h27B
+	dZleIfkAIGycbhIner0dajVBgqFl0p3WXCSkrMbZGQj9cpGAfW40YJdJrEoevZ9y6mfeUUclzDO
+	FssxgoGqknJ1FOZQWyWHhS7QFIZTlg==
+X-Google-Smtp-Source: AGHT+IFqTjbWr8NjF7+pqz/AQpJ3G3c4XTWyU4iDu/CsyQxhZEjPixqkHRfYJEDMmoPVCfkgLhGrWg==
+X-Received: by 2002:a05:6512:2316:b0:53d:e5cc:d06b with SMTP id 2adb3069b0e04-53df00cf669mr7688145e87.20.1732891114511;
+        Fri, 29 Nov 2024 06:38:34 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64a068esm503034e87.273.2024.11.29.06.38.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 06:38:33 -0800 (PST)
+Date: Fri, 29 Nov 2024 16:38:32 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: kw@linux.com, gregkh@linuxfoundation.org, arnd@arndb.de, 
+	lpieralisi@kernel.org, shuah@kernel.org, kishon@kernel.org, aman1.gupta@samsung.com, 
+	p.rajanbabu@samsung.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org, robh@kernel.org, 
+	linux-kselftest@vger.kernel.org, stable+noautosel@kernel.org
+Subject: Re: [PATCH v2 1/4] PCI: qcom-ep: Mark BAR0/BAR2 as 64bit BARs and
+ BAR1/BAR3 as RESERVED
+Message-ID: <372csbbx4fogqubtz2mh6ztqhpriohecszidhr47fx3lnjm6nq@6whpuyd6vypc>
+References: <20241129092415.29437-1-manivannan.sadhasivam@linaro.org>
+ <20241129092415.29437-2-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216a:b0:3a7:78bd:e486 with SMTP id
- e9e14a558f8ab-3a7c552405fmr126764205ab.5.1732891106537; Fri, 29 Nov 2024
- 06:38:26 -0800 (PST)
-Date: Fri, 29 Nov 2024 06:38:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6749d1e2.050a0220.253251.00b7.GAE@google.com>
-Subject: [syzbot] [kernel?] KCSAN: data-race in kick_pool / wq_worker_running
-From: syzbot <syzbot+f8761b2f358f6a1dec5e@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129092415.29437-2-manivannan.sadhasivam@linaro.org>
 
-Hello,
+On Fri, Nov 29, 2024 at 02:54:12PM +0530, Manivannan Sadhasivam wrote:
+> On all Qcom endpoint SoCs, BAR0/BAR2 are 64bit BARs by default and software
+> cannot change the type. So mark the those BARs as 64bit BARs and also mark
+> the successive BAR1/BAR3 as RESERVED BARs so that the EPF drivers cannot
+> use them.
+> 
+> Cc: stable+noautosel@kernel.org # depends on patch introducing only_64bit flag
+> Fixes: f55fee56a631 ("PCI: qcom-ep: Add Qualcomm PCIe Endpoint controller driver")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
 
-syzbot found the following issue on:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-HEAD commit:    7af08b57bcb9 Merge tag 'trace-v6.13-2' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10a39f5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=77174711582263a3
-dashboard link: https://syzkaller.appspot.com/bug?extid=f8761b2f358f6a1dec5e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/13ed5c4111d5/disk-7af08b57.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b14531c093bd/vmlinux-7af08b57.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0ddfac565b6b/bzImage-7af08b57.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f8761b2f358f6a1dec5e@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in kick_pool / wq_worker_running
-
-read-write to 0xffff888237d2e8a4 of 4 bytes by task 3377 on cpu 1:
- wq_worker_running+0x98/0x130 kernel/workqueue.c:1400
- schedule_timeout+0xb8/0x160 kernel/time/sleep_timeout.c:99
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common+0xfb/0x1c0 kernel/sched/completion.c:127
- usb_start_wait_urb+0xdc/0x190 drivers/usb/core/message.c:64
- usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
- usb_control_msg+0x182/0x240 drivers/usb/core/message.c:154
- get_port_status drivers/usb/core/hub.c:604 [inline]
- hub_ext_port_status+0xbf/0x480 drivers/usb/core/hub.c:621
- usb_hub_port_status drivers/usb/core/hub.c:671 [inline]
- port_event drivers/usb/core/hub.c:5714 [inline]
- hub_event+0x538/0x2910 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3310
- worker_thread+0x51d/0x6f0 kernel/workqueue.c:3391
- kthread+0x1d1/0x210 kernel/kthread.c:389
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-read to 0xffff888237d2e8a4 of 4 bytes by task 3399 on cpu 0:
- need_more_worker kernel/workqueue.c:934 [inline]
- kick_pool+0x4d/0x2c0 kernel/workqueue.c:1240
- __queue_work+0x8bb/0xb40 kernel/workqueue.c:2340
- queue_work_on+0xd3/0x180 kernel/workqueue.c:2390
- wg_queue_enqueue_per_peer_tx+0x124/0x260 drivers/net/wireguard/queueing.h:188
- wg_packet_encrypt_worker+0xa00/0xbb0 drivers/net/wireguard/send.c:305
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3310
- worker_thread+0x51d/0x6f0 kernel/workqueue.c:3391
- kthread+0x1d1/0x210 kernel/kthread.c:389
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-value changed: 0x00000000 -> 0x00000001
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 3399 Comm: kworker/0:4 Not tainted 6.12.0-syzkaller-10689-g7af08b57bcb9 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: wg-crypt-wg1 wg_packet_encrypt_worker
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
