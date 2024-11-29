@@ -1,62 +1,39 @@
-Return-Path: <linux-kernel+bounces-425432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008109DC1FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:09:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39DF9DC1FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:12:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA8C0282847
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:09:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77554163FD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F6918A6A8;
-	Fri, 29 Nov 2024 10:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L+KbsDQO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFF018871F;
-	Fri, 29 Nov 2024 10:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22378189BBF;
+	Fri, 29 Nov 2024 10:12:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03E914C5B0;
+	Fri, 29 Nov 2024 10:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732874964; cv=none; b=f3viOPxtT8tlUPsbogZUWFlFJLpU+yWytAIS6MOg9jV61RLzOZ+lS2Lw43dHcYCVxnTRRXKDpUA3H1IMnBLNaOMNDhpXqmdHscxipEjdtaNMARMLf8ZFY7YpIwU5wHtIRB1G0Zk22rqupwvEDvW+1alYE+m1WqVJnd4OOihsz5k=
+	t=1732875150; cv=none; b=ZpFOMpixHlPGkXRzqu1XWotaaq6ALnUMci5GxfrY2hv3qJuWufZdQpmbGWRYVWUJ4d527blwhSDhvL9rYUzESU9Itq89gQH7gtlHwZ64ZHk9794s87Nm+/Sp10V7t5uBPOAtM+coyDD6dGLQ3m5A1vogvOvEd1CQ1WmvjgxK7VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732874964; c=relaxed/simple;
-	bh=Z8SNdp2ZHeQvOgBJ7HFc+XNtSnBCbLBSA4Q1Fw4NcmU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=d4EfEODpQL84HN1Y66CNbvmK3C4BZrrzabQUjA0vHixlheGL0NIIE/oIYXEgENaL9qwOXRzoKX7SDaaoHsxX0NGNkDZ7i4+wzCJYLqCwPqE/7nFG/+V+ooEDEb6voNxZSPew454/xSR/IpX54PZ8W2HRrVOHoCFZA/g2jwIdFJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L+KbsDQO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASMlgBB000409;
-	Fri, 29 Nov 2024 10:09:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3EG/L0w96RHJGaT0NUhLKqWsFaz54juEmpm/S1SYB/I=; b=L+KbsDQOtbRz8Wc/
-	wDESm58YXfAQ1nz/Ra/UeQBWIbT7AJE+To0y/lWJQC/7GYzoH5d57amiLKCP+tZL
-	KEfVg0IDstg30i4vwZQYQi+PWVPvgNiH33dPNc/fC/B5/OGH6/ml7hXNBSqeTO7a
-	2sA8S/V587/H7902tgh/o642lLK8/4r+xRPtHRS0uHqsQEqMZpj8dKtj4oZBEVqU
-	IG4jIStluedRwIZ1ZFWOOoJCLafgZqQRK8I2oSFp7NDrcyYedmEL4LGVPdAJQwl3
-	wK/UqZZahmz5cnsCHBuMuDpBNddrLiXW1PGSiQpV7RJ2jJi/oqs6OxuwB2h/tpK7
-	p21wTw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xvn5qj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 10:09:08 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ATA979l026533
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 10:09:07 GMT
-Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 29 Nov
- 2024 02:09:00 -0800
-Message-ID: <db3aef25-07d3-495c-9f10-ca08e4e4ed5f@quicinc.com>
-Date: Fri, 29 Nov 2024 18:08:57 +0800
+	s=arc-20240116; t=1732875150; c=relaxed/simple;
+	bh=BbfwKC/iNlnC1+UA4VuHhTiKxEtxCvZTmSnAv525mqU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CXJvQ/S/Nmw4owrVwMyH8RahOu+X/jOtOTt76rziQa4fwe+xELRaJZ9YECSg/g4AbAt0tJ6rX9s3t3Sy1dH1Y5Kz+84TrT+HIqYXdt/Vc0z/Y+hjZxYqSORmdTyWZOSHwhAh4S7iJWqBKm1g6XCuS0Otp01492nyx+PSgmWjatU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6EE1A12FC;
+	Fri, 29 Nov 2024 02:12:56 -0800 (PST)
+Received: from [192.168.2.88] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 674683F5A1;
+	Fri, 29 Nov 2024 02:12:24 -0800 (PST)
+Message-ID: <f7046fcc-91e3-434e-930c-10259b36a90b@arm.com>
+Date: Fri, 29 Nov 2024 11:12:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,69 +41,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: phy: Add eDP PHY compatible for qcs8300
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        "Ritesh
- Kumar" <quic_riteshk@quicinc.com>
-References: <20241127-qcs8300_dp-v1-0-0d30065c8c58@quicinc.com>
- <20241127-qcs8300_dp-v1-1-0d30065c8c58@quicinc.com>
- <3729bdcb-5f3d-4845-8f96-dbb0616b88f4@kernel.org>
+Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
+ RUN_TO_PARITY and move them to sysctl
+To: Cristian Prundeanu <cpru@amazon.com>
+Cc: abuehaze@amazon.com, alisaidi@amazon.com, benh@kernel.crashing.org,
+ blakgeof@amazon.com, csabac@amazon.com, doebel@amazon.com,
+ gautham.shenoy@amd.com, joseph.salisbury@oracle.com, kprateek.nayak@amd.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-tip-commits@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+ x86@kernel.org
+References: <20241125113535.88583-1-cpru@amazon.com>
+ <20241128103236.22777-1-cpru@amazon.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <3729bdcb-5f3d-4845-8f96-dbb0616b88f4@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <20241128103236.22777-1-cpru@amazon.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: L7mUXApJfYPtRlOvYNn8u4IqV_60xJ35
-X-Proofpoint-ORIG-GUID: L7mUXApJfYPtRlOvYNn8u4IqV_60xJ35
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxlogscore=997 clxscore=1015 adultscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 spamscore=0 impostorscore=0
- bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411290083
 
+On 28/11/2024 11:32, Cristian Prundeanu wrote:
 
+[...]
 
-On 2024/11/28 2:28, Krzysztof Kozlowski wrote:
-> On 27/11/2024 09:15, Yongxing Mou wrote:
->> Add compatible string for the supported eDP PHY on qcs8300 platform.
+> On 2024-11-26, Dietmar Eggemann wrote:
 > 
+>> SUT kernel arm64 (mysql-8.4.0)
+>> (2) 6.12.0-rc4                -12.9%
+>> (3) 6.12.0-rc4 NO_PLACE_LAG   +6.4%		
+>> (4) v6.12-rc4  SCHED_BATCH    +10.8%
 > 
-> What is supported eDP PHY? Can it be unsupported? Anyway, this repeats
-> the diff. Say something useful instead, like why this is not compatible
-> with sa8775p.
+> This is very interesting; our setups are close, yet I have not seen any 
+> feature or policy combination that performs above the 6.5 CFS baseline.
+> I look forward to seeing your results with the repro when it's ready.
 > 
-> Best regards,
-> Krzysztof
+> Did you only use NO_PLACE_LAG or was it together with NO_RUN_TO_PARITY?
 
-Actually,for edp phy,it is same with sa8775p, so will reuse it's driver 
-in next patchset.so this patch should drop it..Thansk for reviewing.
+Only NO_PLACE_LAG.
 
+> Was SCHED_BATCH used with the default feature set (all enabled)?
+
+Yes.
+
+> Which distro/version did you use for the SUT?
+
+The default, Ubuntu 24.04 Arm64 server.
+
+>> Maybe a difference in our test setup can explain the different test results:
+>>
+>> I use:
+>>
+>> HammerDB Load Generator <-> MySQL SUT
+>> 192 VCPUs               <-> 16 VCPUs
+>>
+>> Virtual users: 256
+>> Warehouse count: 64
+>> 3 min rampup
+>> 10 min test run time
+>> performance data: NOPM (New Operations Per Minute)
+>>
+>> So I have 256 'connection' tasks running on the 16 SUT VCPUS.
+> 
+> My setup:
+> 
+> SUT     - 16 vCPUs, 32 GB RAM
+> Loadgen - 64 vCPU, 128 GB RAM (anything large enough to not be a 
+>  bottleneck should work)
+> 
+> Virtual users:  4 x vCPUs = 64
+> Warehouses:     24
+> Rampup:         5 min
+> Test runtime:   20 min x 10 times, each on 4 different SUT/Loadgen pairs
+> Value recorded: geometric_mean(NOPM)
+
+Looks like you have 4 times less 'connection' tasks on your 16 VCPUs. So
+much less concurrency/preemption ...
 
