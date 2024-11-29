@@ -1,45 +1,62 @@
-Return-Path: <linux-kernel+bounces-425207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CFBE9DBEDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:13:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7ED9DBEE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A51281AD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641422819D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3481153BF6;
-	Fri, 29 Nov 2024 03:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6B0153BED;
+	Fri, 29 Nov 2024 03:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gFBuH601"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aOIrt+wa"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2EE3C3C;
-	Fri, 29 Nov 2024 03:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D3013C80D;
+	Fri, 29 Nov 2024 03:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732850012; cv=none; b=Rfszx8nOqXj/sW7Xhf1/KrFdNbP1fbHRSQI2QXTTADVUscfyxAQ2gqAKBswP+qOpPhcYJJjmlHHSMJlgBMxfvREyJNk587Jcqo1IIhh3PS4NoEkwUd5lpK3Ht5ZPckRDML+Y9UR6/JjoKQtMjKRSSes+G1GC9VPzRlxHvbLRcgE=
+	t=1732850027; cv=none; b=f1HbzT9lbcRStqNcvQ/kieQEex6dDEaRcV75Xqk6XZ2edMKB5pfWo9pFGd5Rfw8oU4Y6lWVVLTETswm9fmT30zXWF27iMLVhW0ZghXkYXqd/x7R415zWvoJMdk3NfjaiJL094HcnGtau8Tq59hZloVOt1wIVoxIyLBHInvQK5F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732850012; c=relaxed/simple;
-	bh=4+VOq2ixpvyl4tzq3jTq1NH0uR907uyPyKXv6pIDRO0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EXk4EumhWx8c3lhqqS/osdtCOyyKjOLmlqIYKCHoXCLdRyvK/I4+QLf91meeZBmKdt3cr9bTtCuoFfdBwvOcgaewuu63RYDN5d+j7aPfEgy49tlrpfI7GKV8fzHEqzOPjRIMdWa2MXBRw5JJBD7QHroKqW8AsgucXM6OMwmNZRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gFBuH601; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732850000; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ZS2N9Ztg4oqUGmtvXN2lkocM1mP8nrxwbJEZrWU66EI=;
-	b=gFBuH601MmL27n8tRPQLgDTCkpWDbI/qZrLBl4rZx3XZN4FJRg1qAoDvzHRg85Jnow7GDf/GkENrjjFBEjRkGFRBr7zWdUfS++x7ZLOua6Dy+yoPbrzqdcHqG0WTAbcfT2ypRZfFU+jIwyAKvdfuZFz1NvGVhmtHqNEBJtzddA8=
-Received: from 30.221.101.88(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WKSTgss_1732849997 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 29 Nov 2024 11:13:19 +0800
-Message-ID: <a863ffe5-b5b9-4ed4-9c1e-472f49214750@linux.alibaba.com>
-Date: Fri, 29 Nov 2024 11:13:16 +0800
+	s=arc-20240116; t=1732850027; c=relaxed/simple;
+	bh=oCiXwmYSuYTuCgC4gyt9psduj4w5C3C49kxejYtkAUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qiLGVXuc6PRNny+jvdkw0eoF+xcMtcNMw6QH6CrAmtpCz7lvpcxZUCg2cd11Xp8WAwvIGTbtw0UdZbLdHwshUue+02AmB2raR4VAG1uLP2uehkmD33Q8oBoK6O8fUmYeGSWPe6eL4r8ByMD1LTq1O9ikYDjbrQbbgr6RMnx44kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aOIrt+wa; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASLh2kN003301;
+	Fri, 29 Nov 2024 03:13:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8bJ+WEiVEgaL9ON4SZEKQ7F2QFUEWmi4P0r3ZZuKakQ=; b=aOIrt+wamggA7xOT
+	xBfTBIQi2YuQ59+d3P4fzyD5Wo9iJOefEdvfGl3lucOZm7Jg5BcmyQInuXxFrb/T
+	InK6vBGUQ+bF4w3OdmDa175Zr6ebpnXKAx+4H1rFLE21UiZXf4EYrDOAloRaUFku
+	Vi8hyz4Mi84ev11HlvjNO1qmyrfPSCTwc3SZ+kknkMeaDiUgly1/+8zu5YSi1B2I
+	nh39jjJwYZTHPb1h9WEIC0KOCmbQs8j05+VOE77rYDC/0RFv39s0c03v/pR7rk3V
+	fSChM1/sHRFuzbCPhp4nqfMKN1xkg5zNa943H719LKB3rHxtdb5VyW3TiZVVY8AH
+	/RDQ6A==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xvv8yv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 03:13:35 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AT3DZfk032241
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 03:13:35 GMT
+Received: from [10.233.17.145] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 28 Nov
+ 2024 19:13:31 -0800
+Message-ID: <3bdca75a-39aa-4ad8-a3f0-8124a0977c06@quicinc.com>
+Date: Fri, 29 Nov 2024 11:13:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,124 +64,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/2] net/smc: support ipv4 mapped ipv6 addr
- client for smc-r v2
-To: kernel test robot <lkp@intel.com>, wenjia@linux.ibm.com,
- jaka@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dust Li <dust.li@linux.alibaba.com>
-References: <20241127094533.18459-3-guangguan.wang@linux.alibaba.com>
- <202411282154.DjX7ilwF-lkp@intel.com>
-Content-Language: en-US
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-In-Reply-To: <202411282154.DjX7ilwF-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: add base QCS8300 RIDE board
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jingyi Wang
+	<quic_jingyw@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <quic_tengfan@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+References: <20241128-qcs8300_initial_dtsi-v3-0-26aa8a164914@quicinc.com>
+ <20241128-qcs8300_initial_dtsi-v3-4-26aa8a164914@quicinc.com>
+ <hswfcxj6vlutl7covrbqqzueljv6nkm3q4qrgccii3zh72qrig@spfbtrvrar5f>
+From: Tingwei Zhang <quic_tingweiz@quicinc.com>
+In-Reply-To: <hswfcxj6vlutl7covrbqqzueljv6nkm3q4qrgccii3zh72qrig@spfbtrvrar5f>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EeLEciBfORcjoVRiix2OaqBS4TwvytZ5
+X-Proofpoint-ORIG-GUID: EeLEciBfORcjoVRiix2OaqBS4TwvytZ5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
+ phishscore=0 suspectscore=0 clxscore=1011 impostorscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411290024
+
+On 11/28/2024 9:29 PM, Dmitry Baryshkov wrote:
+>> +#include "qcs8300.dtsi"
+>> +/ {
+>> +	model = "Qualcomm Technologies, Inc. QCS8300 Ride";
+>> +	compatible = "qcom,qcs8300-ride", "qcom,qcs8300";
+>> +	chassis-type = "embedded";
+>> +
+>> +	aliases {
+>> +		serial0 = &uart7;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +
+>> +	clocks {
+>> +		xo_board_clk: xo-board-clk {
+>> +			compatible = "fixed-clock";
+>> +			#clock-cells = <0>;
+>> +			clock-frequency = <38400000>;
+>> +		};
+>> +
+>> +		sleep_clk: sleep-clk {
+>> +			compatible = "fixed-clock";
+>> +			#clock-cells = <0>;
+>> +			clock-frequency = <32000>;
+>> +		};
+> Move both clocks to the qcs8300.dtsi. If you wish, you can keep
+> frequencies in the board DT file.
+> 
+Dmirty,
+
+Move xo clock and sleep clock to board DT from SoC DT are due to review 
+comments in [1] and [2].
+
+As you and Krzysztof discussed in [3], there're pros and cons for 
+different solutions. There are three possible ways.
+
+Put these two clocks in board DT is aligned with hardware. These two 
+clocks are provided by PMIC instead of SoC.
+
+Put these two clocks in SoC DT can reduce duplication since they are not 
+supposed to be changed on different board.
+
+Put these two clocks in SoC DT and set frequency in board DT.
+
+We need a unify way to deal with this kind of nodes and keep it 
+consistent across Qualcomm SoC.
+
+Who shall make this decision?
+
+[1]https://lore.kernel.org/all/10914199-1e86-4a2e-aec8-2a48cc49ef14@kernel.org/
+[2]https://lore.kernel.org/all/be8b573c-db4e-4eec-a9a6-3cd83d04156d@kernel.org/
+[3]https://lore.kernel.org/all/4kopdkvbkrpcpzwteezm427ml5putqvzsnfkpmg76spsple7l5@mg7v3ihwxnit/
+
+>> +	};
+>> +};
+>> +
 
 
-Sorry for build error, I will fix it in the next version.
-
-On 2024/11/28 21:52, kernel test robot wrote:
-> Hi Guangguan,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on net-next/main]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Guangguan-Wang/net-smc-support-SMC-R-V2-for-rdma-devices-with-max_recv_sge-equals-to-1/20241128-111259
-> base:   net-next/main
-> patch link:    https://lore.kernel.org/r/20241127094533.18459-3-guangguan.wang%40linux.alibaba.com
-> patch subject: [PATCH net-next 2/2] net/smc: support ipv4 mapped ipv6 addr client for smc-r v2
-> config: arm-randconfig-001-20241128 (https://download.01.org/0day-ci/archive/20241128/202411282154.DjX7ilwF-lkp@intel.com/config)
-> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411282154.DjX7ilwF-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202411282154.DjX7ilwF-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from net/smc/af_smc.c:27:
->    In file included from include/linux/if_vlan.h:10:
->    In file included from include/linux/netdevice.h:38:
->    In file included from include/net/net_namespace.h:43:
->    In file included from include/linux/skbuff.h:17:
->    In file included from include/linux/bvec.h:10:
->    In file included from include/linux/highmem.h:8:
->    In file included from include/linux/cacheflush.h:5:
->    In file included from arch/arm/include/asm/cacheflush.h:10:
->    In file included from include/linux/mm.h:2225:
->    include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
->      518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
->          |                               ~~~~~~~~~~~ ^ ~~~
->>> net/smc/af_smc.c:1120:46: error: no member named 'skc_v6_rcv_saddr' in 'struct sock_common'; did you mean 'skc_rcv_saddr'?
->     1120 |              !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
->          |                                                     ^
->    include/net/sock.h:376:37: note: expanded from macro 'sk_v6_rcv_saddr'
->      376 | #define sk_v6_rcv_saddr __sk_common.skc_v6_rcv_saddr
->          |                                     ^
->    include/net/sock.h:155:11: note: 'skc_rcv_saddr' declared here
->      155 |                         __be32  skc_rcv_saddr;
->          |                                 ^
->    1 warning and 1 error generated.
-> 
-> 
-> vim +1120 net/smc/af_smc.c
-> 
->   1087	
->   1088	static int smc_find_proposal_devices(struct smc_sock *smc,
->   1089					     struct smc_init_info *ini)
->   1090	{
->   1091		int rc = 0;
->   1092	
->   1093		/* check if there is an ism device available */
->   1094		if (!(ini->smcd_version & SMC_V1) ||
->   1095		    smc_find_ism_device(smc, ini) ||
->   1096		    smc_connect_ism_vlan_setup(smc, ini))
->   1097			ini->smcd_version &= ~SMC_V1;
->   1098		/* else ISM V1 is supported for this connection */
->   1099	
->   1100		/* check if there is an rdma device available */
->   1101		if (!(ini->smcr_version & SMC_V1) ||
->   1102		    smc_find_rdma_device(smc, ini))
->   1103			ini->smcr_version &= ~SMC_V1;
->   1104		/* else RDMA is supported for this connection */
->   1105	
->   1106		ini->smc_type_v1 = smc_indicated_type(ini->smcd_version & SMC_V1,
->   1107						      ini->smcr_version & SMC_V1);
->   1108	
->   1109		/* check if there is an ism v2 device available */
->   1110		if (!(ini->smcd_version & SMC_V2) ||
->   1111		    !smc_ism_is_v2_capable() ||
->   1112		    smc_find_ism_v2_device_clnt(smc, ini))
->   1113			ini->smcd_version &= ~SMC_V2;
->   1114	
->   1115		/* check if there is an rdma v2 device available */
->   1116		ini->check_smcrv2 = true;
->   1117		ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
->   1118		if (!(ini->smcr_version & SMC_V2) ||
->   1119		    (smc->clcsock->sk->sk_family != AF_INET &&
->> 1120		     !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
->   1121		    !smc_clc_ueid_count() ||
->   1122		    smc_find_rdma_device(smc, ini))
->   1123			ini->smcr_version &= ~SMC_V2;
->   1124		ini->check_smcrv2 = false;
->   1125	
->   1126		ini->smc_type_v2 = smc_indicated_type(ini->smcd_version & SMC_V2,
->   1127						      ini->smcr_version & SMC_V2);
->   1128	
->   1129		/* if neither ISM nor RDMA are supported, fallback */
->   1130		if (ini->smc_type_v1 == SMC_TYPE_N && ini->smc_type_v2 == SMC_TYPE_N)
->   1131			rc = SMC_CLC_DECL_NOSMCDEV;
->   1132	
->   1133		return rc;
->   1134	}
->   1135	
-> 
+-- 
+Thanks,
+Tingwei
 
