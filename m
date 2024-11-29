@@ -1,148 +1,145 @@
-Return-Path: <linux-kernel+bounces-425330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92D59DC0A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:41:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3A29DC0A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CD1AB22706
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:41:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F74281D18
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0778B166F34;
-	Fri, 29 Nov 2024 08:41:28 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E54166F32;
+	Fri, 29 Nov 2024 08:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLtFe4Ec"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12322165F1F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A132161321;
+	Fri, 29 Nov 2024 08:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732869687; cv=none; b=S9l1V39pniFQQ+8qxsZ1vpybWlSw6mdUWyzGe3oV1S5OimItlk0m/v8lP71JRbQvkYH1D8TVen32Tdnb4pW1gh6eEiCj+ZQU5W75+zqpweJgg0R5/QcdythDekShO9knQI1RxoR7WDjKZUjVC75WcQJ2GFCb4/2l7tyySEKm1pY=
+	t=1732869780; cv=none; b=V46iyoOv8YTlE3eTNOrWIov5iUsPiKTQw1j6Q+lPanKj6cDN1e3PWBbnMs0RUFiTDgdzseadhoatHD90BICfvln3DzdmJRFI/g8W+r//I0g8krl0ttzswzdNUj88NsKL6h2gk2TJM1kM46Itx3QR++Fy35SPDJ96qWQUOLqvio8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732869687; c=relaxed/simple;
-	bh=SNdU0PEn+cuYgXF44Co+Rge1DK841us3OBlD4TvT318=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CEqDTmydyKIinu9IOQmlQ9BxsOoepZxlr70hguGZTppU8e2t/xASuSbV4dAbhFwgZJaW0ASRxZ1J/Ktv6H9JM+erqEFlbBSzNdgE8ATlsD2OdcmxU6WWTDpKWLj9499TSerzWcXWQOWqfyQQiL3Ybza0YPE4Wevas57bv2ktR0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841ac3f9391so139176339f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:41:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732869685; x=1733474485;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x9+YNKS/fHWT9ol9oL2UFpxQXZ6Ne6p8vFn7/Foknxw=;
-        b=LYM2c0/sh726GDCVSZUfL8+n1m15wK+xtw5r+te5fqKuxBv5Nnvj/+QRZiLAsxdLZr
-         xPWzp9r735vKiZCQ0GKfCrRdeEaLZgbn1tbYmxppEJO69ogf1F8OfXMvnDE0udZWrBBC
-         xu4y67Tg3UdgR2cKO7Z+zpqc9OiDXYNtYjamrC8ac1+IR2vaoDy0Wcweey2FmICOsZIn
-         lJTL2fbZ5t0QcYdhDfxjIGW6s5u8xYlqIgrHJHioyLyn7mpNJTHzzDhXgGVejZMkUeQs
-         mAbkEQ4mIZWe5USxaMbNoRcEqwF4uMBHl69SQ11R7Bo6JAfz3hBIkKojIdg0T4xZW8nT
-         zmGQ==
-X-Gm-Message-State: AOJu0Yz1214Zd085kzLqxHZWtsy63SI/jcnLro+jrPg2oZFc+3aWOWwY
-	TizF6O05fdO7indg2uiih3yBcf+CrDnE5Wz6/ZOauYfZlrz/mPGjZZUOe01PwWnVvR8V4h1Bjxr
-	Tnqay8Ii1yjQbOtjbfSnQrHKfoFzbUByfLgAYL+2Am924vp0cqOYY9Hw=
-X-Google-Smtp-Source: AGHT+IFZsw49BIXLKk9Mgiyl3hH6vs28SPLtwIsb3vPZYfofueOXzmZt1JIv4hGPhPGZcELgNEFwM0iKtqrEjw+iUbuSwnBU3W2L
+	s=arc-20240116; t=1732869780; c=relaxed/simple;
+	bh=Ym0SI+xT22Jv1VQDGHdVIS9SkKv1ncTsD1r7VAkDhlg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WgoviD+zJkxWhzr6LUJW7vYMfEzCp+IKnSzPRXwJhAVtKRw662mh8sv8b/UN+TZi2TRiDXDm+F+sptjGUny8q6618sm+ry1v81HZhA5YLw/vCqH2uE/V0uB/+O7YZVdU8/tKu1qoYwPxpVs54Yk9UgGvdLkUVWS4VkquRKygpJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLtFe4Ec; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81501C4CECF;
+	Fri, 29 Nov 2024 08:42:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732869779;
+	bh=Ym0SI+xT22Jv1VQDGHdVIS9SkKv1ncTsD1r7VAkDhlg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VLtFe4EcqNg44BIJ7tT2mz7OirCn7zFZs03fmrbhLJSZ7iv2otSL12SGP4MgbITGw
+	 UhVqAsT3RvlQ6UwUmaqX88OFr2E7rRNCGDOBFOq8IZVSEuSY1M1Jkv8PVW98ayfMyw
+	 mwS2KxrxX0t8xrQ+MMq1KGxKyEd8JhP2BwEjVFtexPrkFk/AnLI5keNSu63cFYAkJs
+	 f0JIbcSXQ3KnRTJiLdtUcdftj1zFKi0bgeu0cSxChU0L1jJhJR7iJVHRN/uBilBbLY
+	 qOH5qtDZUH92n99fPTLj1UwrYCp5L71YHfSde8rs2ts/zaCy4WR4VYhabI1LRZOLLe
+	 7PNIcoCyVsOsA==
+Received: from [37.169.128.218] (helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tGwaW-00GhG0-RA;
+	Fri, 29 Nov 2024 08:42:57 +0000
+Date: Fri, 29 Nov 2024 08:42:55 +0000
+Message-ID: <87v7w6sa5s.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Zi Yan <ziy@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arch_numa: Restore nid checks before registering a memblock with a node
+In-Reply-To: <Z0l6MPWQ66GjAyOC@kernel.org>
+References: <20241127193000.3702637-1-maz@kernel.org>
+	<Z0gVxWstZdKvhY6m@kernel.org>
+	<87y113s3lt.wl-maz@kernel.org>
+	<Z0l6MPWQ66GjAyOC@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13af:b0:3a6:b445:dc92 with SMTP id
- e9e14a558f8ab-3a7c555eca0mr110749945ab.10.1732869685146; Fri, 29 Nov 2024
- 00:41:25 -0800 (PST)
-Date: Fri, 29 Nov 2024 00:41:25 -0800
-In-Reply-To: <674773cd.050a0220.21d33d.0027.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67497e35.050a0220.253251.00a6.GAE@google.com>
-Subject: Re: [syzbot] Re: KMSAN: uninit-value in gfs2_quota_init()
-From: syzbot <syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 37.169.128.218
+X-SA-Exim-Rcpt-To: rppt@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, ziy@nvidia.com, dan.j.williams@intel.com, david@redhat.com, akpm@linux-foundation.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, 29 Nov 2024 08:24:16 +0000,
+Mike Rapoport <rppt@kernel.org> wrote:
+> 
+> On Thu, Nov 28, 2024 at 04:52:14PM +0000, Marc Zyngier wrote:
+> > Hi Mike,
+> > 
+> > On Thu, 28 Nov 2024 07:03:33 +0000,
+> > Mike Rapoport <rppt@kernel.org> wrote:
+> > > 
+> > > Hi Marc,
+> > > 
+> > > > diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
+> > > > index e187016764265..5457248eb0811 100644
+> > > > --- a/drivers/base/arch_numa.c
+> > > > +++ b/drivers/base/arch_numa.c
+> > > > @@ -207,7 +207,21 @@ static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
+> > > >  static int __init numa_register_nodes(void)
+> > > >  {
+> > > >  	int nid;
+> > > > -
+> > > > +	struct memblock_region *mblk;
+> > > > +
+> > > > +	/* Check that valid nid is set to memblks */
+> > > > +	for_each_mem_region(mblk) {
+> > > > +		int mblk_nid = memblock_get_region_node(mblk);
+> > > > +		phys_addr_t start = mblk->base;
+> > > > +		phys_addr_t end = mblk->base + mblk->size - 1;
+> > > > +
+> > > > +		if (mblk_nid == NUMA_NO_NODE || mblk_nid >= MAX_NUMNODES) {
+> > > > +			pr_warn("Warning: invalid memblk node %d [mem %pap-%pap]\n",
+> > > > +				mblk_nid, &start, &end);
+> > > > +			return -EINVAL;
+> > > > +		}
+> > > 
+> > > We have memblock_validate_numa_coverage() that checks that amount of memory
+> > > with unset node id is less than a threshold. The loop here can be replaced
+> > > with something like
+> > > 
+> > > 	if (!memblock_validate_numa_coverage(0))
+> > > 		return -EINVAL;
+> > 
+> > Unfortunately, that doesn't seem to result in something that works
+> > (relevant extract only):
+> > 
+> > [    0.000000] NUMA: no nodes coverage for 9MB of 65516MB RAM
+> > [    0.000000] NUMA: Faking a node at [mem 0x0000000000500000-0x0000000fff0fffff]
+> > [    0.000000] NUMA: no nodes coverage for 0MB of 65516MB RAM
+> > [    0.000000] Unable to handle kernel paging request at virtual address 0000000000001d40
+> > 
+> > Any idea?
+> 
+> With 0 as the threshold the validation fails for the fake node, but it
+> should be fine with memblock_validate_numa_coverage(1)
 
-***
+Huh, subtle. This indeed seems to work. I'll respin the patch next week.
 
-Subject: Re: KMSAN: uninit-value in gfs2_quota_init()
-Author: dmantipov@yandex.ru
+Thanks for your help,
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 7af08b57bcb9ebf78675c50069c54125c0a8b795
+	M.
 
-diff --git a/fs/gfs2/dir.c b/fs/gfs2/dir.c
-index dbf1aede744c..85736135bcf5 100644
---- a/fs/gfs2/dir.c
-+++ b/fs/gfs2/dir.c
-@@ -299,6 +299,10 @@ static int gfs2_dir_read_data(struct gfs2_inode *ip, __be64 *buf,
- 				goto fail;
- 			BUG_ON(extlen < 1);
- 			bh = gfs2_meta_ra(ip->i_gl, dblock, extlen);
-+			if (IS_ERR(bh)) {
-+				error = PTR_ERR(bh);
-+				goto fail;
-+			}
- 		} else {
- 			error = gfs2_meta_read(ip->i_gl, dblock, DIO_WAIT, 0, &bh);
- 			if (error)
-diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
-index fea3efcc2f93..18957afed91a 100644
---- a/fs/gfs2/meta_io.c
-+++ b/fs/gfs2/meta_io.c
-@@ -532,7 +532,7 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
- 	first_bh = gfs2_getbuf(gl, dblock, CREATE);
- 
- 	if (buffer_uptodate(first_bh))
--		goto out;
-+		return first_bh;
- 	bh_read_nowait(first_bh, REQ_META | REQ_PRIO);
- 
- 	dblock++;
-@@ -546,11 +546,10 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
- 		dblock++;
- 		extlen--;
- 		if (!buffer_locked(first_bh) && buffer_uptodate(first_bh))
--			goto out;
-+			return first_bh;
- 	}
- 
- 	wait_on_buffer(first_bh);
--out:
--	return first_bh;
-+	return buffer_uptodate(first_bh) ? first_bh : ERR_PTR(-EIO);
- }
- 
-diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
-index 72b48f6f5561..d919edfb8dda 100644
---- a/fs/gfs2/quota.c
-+++ b/fs/gfs2/quota.c
-@@ -1427,8 +1427,10 @@ int gfs2_quota_init(struct gfs2_sbd *sdp)
- 		}
- 		error = -EIO;
- 		bh = gfs2_meta_ra(ip->i_gl, dblock, extlen);
--		if (!bh)
-+		if (IS_ERR(bh)) {
-+			error = PTR_ERR(bh);
- 			goto fail;
-+		}
- 		if (gfs2_metatype_check(sdp, bh, GFS2_METATYPE_QC))
- 			goto fail_brelse;
- 
-diff --git a/fs/gfs2/recovery.c b/fs/gfs2/recovery.c
-index f4fe7039f725..527353c36aa5 100644
---- a/fs/gfs2/recovery.c
-+++ b/fs/gfs2/recovery.c
-@@ -49,7 +49,7 @@ int gfs2_replay_read_block(struct gfs2_jdesc *jd, unsigned int blk,
- 
- 	*bh = gfs2_meta_ra(gl, dblock, extlen);
- 
--	return error;
-+	return IS_ERR(*bh) ? PTR_ERR(*bh) : 0;
- }
- 
- int gfs2_revoke_add(struct gfs2_jdesc *jd, u64 blkno, unsigned int where)
+-- 
+Without deviation from the norm, progress is not possible.
 
