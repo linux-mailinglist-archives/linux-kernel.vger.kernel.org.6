@@ -1,235 +1,116 @@
-Return-Path: <linux-kernel+bounces-425475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547699DC29B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:14:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 463E81629AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:14:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAD319922F;
-	Fri, 29 Nov 2024 11:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fpuDW79n"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7039DC2BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:21:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C369C1990DC;
-	Fri, 29 Nov 2024 11:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D75281DCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:21:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64F4199938;
+	Fri, 29 Nov 2024 11:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="WhJrOrU+"
+Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D423919922A;
+	Fri, 29 Nov 2024 11:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732878867; cv=none; b=HOiBpM5thSe6SbntaC2diCipMCEA+IeSzgAuU8NS+B/A4rPqN1GcHXe0oWVHyb4aSrkbZrOHachSOeQ5cuaMdFrSS4YhXx/8WDm96oR7ZFOy3tEUtBpufT7e7A7qqDHMW8aiLcDH/fDUUbXecfioFuN+ZPZk0oiFP8krRdLOZn4=
+	t=1732879254; cv=none; b=GMC1t9fxq3duCO/CJbyl87m0qa8874w0OpROhQq2g9x7mmwEkJn4j+6DTQottaMiA9vjuKUyf+/HrOzK6Ai9WrRX7DmD1I5FvwTyjti+KQUWw2niQE719UsaIyVEFYpNSiYgkc2qRKwkqQzRHci3Xmwj36wQA/6z1yl6ETKM33M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732878867; c=relaxed/simple;
-	bh=UAggcOXSPNYjBkZbtIXMmGbzylHgOebjNQAjKZV03AQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FPdLdLC4Gu+Di8+3b1toOI2UkECPjZf51PJVHyjLKV4oT/IRI8UOsZDqITPHTDsgxPLVMUSzvBQV/oa6eW01+rXyJ5F+JsClgea0u9P2CtqGGBDJmpLRbQY6TNSjmp+vcH3RCoMwvNrGbpXm69LcGs51Z6/3bHcwkett96oTzV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fpuDW79n; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT7kmG1021947;
-	Fri, 29 Nov 2024 11:14:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	B8kB42OjvsVzHHyeN1+LTWmBTzToIdxnFDbwMTnjmas=; b=fpuDW79ngTRrJo+m
-	W26vkaEH4Po4JRPDiE/ZBQrMwimKpSDQseKRtVOcqm2sAWavQXtuDq3fXlufbT3p
-	LzjAHuKIXkAn8xFwrI+JXuSV2rAkCxCTuN8wnYxxqF4OqTdkzYxZEaIAMvEXc5AL
-	zkOHhP6ozPuvEYzjJdtr05Ng1wIxXQoQOndOqO+yIaQ4bFP5ghyhJqrH21ZflNV7
-	lpX7cHXQDhAz5/OQXH+5CAGHXFAKJrQmiKcnYPvK5CT+KGCoRcjoaNt29L54VTBo
-	MxPzgzE5cR0eNTRHMYy2rUdo0xb1KDGw3bREdRRrANjPI/W2ansq4XOw9XKI/ss9
-	xUc0HQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4379h68hn4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 11:14:22 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ATBEMPQ002468
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 11:14:22 GMT
-Received: from [10.216.24.185] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 29 Nov
- 2024 03:14:19 -0800
-Message-ID: <ad5388d5-b7ff-4059-b974-948cdfa42d12@quicinc.com>
-Date: Fri, 29 Nov 2024 16:44:16 +0530
+	s=arc-20240116; t=1732879254; c=relaxed/simple;
+	bh=phrCSsYyEwaTDwkDLtTUl/Zv10XMDCCPskQcML1QjHM=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=AGVT0oCyj101HAj2N+w8RuBE4uyy66WsT7q2fBU/cQEhusjyC4g1760Af1PuCTXDPvcrUpBi428iIvgTce2UWbDQv075p0r4kCdaO2LwpeW69CNsxU84FBZh/yUhlAa2TtpOBbvh25jyQBt5KQ1JKT4x8zDRQe6Mp6n/iL3UewQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=WhJrOrU+; arc=none smtp.client-ip=203.205.221.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1732878940;
+	bh=jm5vfF8YJIf0gTL8TMZpGccCAM0Ro5FFz6ZWU/e2oHw=;
+	h=From:To:Cc:Subject:Date;
+	b=WhJrOrU+Ty8fxB0SRr8oY90QQ5/NQM9wv1+R4mHoO0eYM2piW2JCprEfLekXydHmz
+	 M0W9y/3HlKiW6en4IxmeLD53jVnw7EaUe4wmHpbN9iG8BF+yBn4IxlBAd3GBt3afRe
+	 k09Yc0mD+p0+13l7/UkKJBPLQ8qIhWa9gYucXoJ4=
+Received: from localhost.localdomain ([222.125.197.123])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id 3B70842A; Fri, 29 Nov 2024 19:14:55 +0800
+X-QQ-mid: xmsmtpt1732878895tro52lmyz
+Message-ID: <tencent_8557150557A6D039F5A0565D4E8E8AAC9F09@qq.com>
+X-QQ-XMAILINFO: MIAHdi1iQo+zKpnStv6bJnVwxl9sL5aFqmToFOR7+JOsIbQ7yuKdqMIyqG7et0
+	 2YatRSyQFL24+diPvXnJEnjnd/G3KOzUKPsSUJANWKxkuIrFjTZ86e+057zkokZshhVdRM/KfrcC
+	 mSCJmyv65qSHHScw3rc5JuFsDaf4Q1nXevV0AVGTioEi7SCryfesSmuK1b7XqXl4drPTgCgAgqNG
+	 4V0frHmPi5giPUo3yTS2VvMlFFzf/mmgh5BxBjdRqAlU0kobit8bcWmQq/pAP+9GsDkqckT5XZLe
+	 AV2Mg28LgFDdS9zs6gQPXj4jc6OwuZpmBO0urdaitXWRNMjqg+PBlRRMPgsVVEXZRJQtgSjx3ESh
+	 ez5IMiryyj9SgF3zjGaCsiDE3a3YYRDVwxIXKPMN373s36d9HS+6JluQFKK+W6aqveJLX2uv9iLg
+	 +1+7wRpT1NKvim1u54ngqVenkZMgy1gMe4eaep/4LvYE8GSjD2MLoQEU7aEZRdKpDkF0tcq0hdxt
+	 rM4KwgAgPHahyYQkDe6XFtybJL8IMdWkjfSQonX7mRRJGw/asKRjwVh7QRlZ9kvcPeScECoOBZ5V
+	 blvkGnPiqC82LUmrMmwjWwoXB6KbVr0UDI3MxZqiLT4V2KsoJNrMx1reAf2AfWC21r7XGPpXKe6y
+	 vLOqsWeh75knUmIEKDuyQeZ/SCxntbHJ3glhihknLVr5YbeGLGVBPXAwtA50UjZ2KsLnIZoYoSCV
+	 u0eo7CvSe0TT3ahEK3kqPz2O9xdg00O4cSR6cQhHwLezQ2ZVijFzH6+PMsyooPMtYEgMTlSEexpr
+	 umo4QkwvuBhBodSa7w/eprHIzNLa6+ykFe5/QGtGaW6VeESAFuUKdFkzGLyqPLE0EOPSvq7F1WjB
+	 n9CytJo6guv6ltUCyp9msEZxqvQhepw/67QRIrDyTcljH+Z+IAFMpiZkqCo68rqLnZueIQZdLYHu
+	 tajTFv4iEL/eeysN2db7bDU+WdPBmVPuu4fH3Gkl13kBlmp3wyzQ==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Lin Lin <linlin152@foxmail.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lin Lin <linlin152@foxmail.com>
+Subject: [PATCH] ext4: optimize two log messages in super.c
+Date: Fri, 29 Nov 2024 19:14:16 +0800
+X-OQ-MSGID: <20241129111416.702608-1-linlin152@foxmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dmaengine: qcom: gpi: Add GPI immediate DMA
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <quic_msavaliy@quicinc.com>, <quic_vtanuku@quicinc.com>
-References: <20241128133351.24593-1-quic_jseerapu@quicinc.com>
- <20241128133351.24593-2-quic_jseerapu@quicinc.com>
- <b2awih7g7wq2o7546qfpnf5ft27n6zzial7w35jvwpcjlrg5qm@tqrbl7wueiks>
-Content-Language: en-US
-From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-In-Reply-To: <b2awih7g7wq2o7546qfpnf5ft27n6zzial7w35jvwpcjlrg5qm@tqrbl7wueiks>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: E6YodBPESOHPO4aDtxV7feczir534rH2
-X-Proofpoint-ORIG-GUID: E6YodBPESOHPO4aDtxV7feczir534rH2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0
- adultscore=0 spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2411290092
+Content-Transfer-Encoding: 8bit
 
+Updates the first one to "run e2fsck". The second "Run e2fsck" has
+double leading spaces, fixed it.
 
+kvm-xfstests smoke passed in arm64.
 
-On 11/28/2024 7:37 PM, Dmitry Baryshkov wrote:
-> On Thu, Nov 28, 2024 at 07:03:50PM +0530, Jyothi Kumar Seerapu wrote:
->> The DMA TRE(Transfer ring element) buffer contains the DMA
->> buffer address. Accessing data from this address can cause
->> significant delays in SPI transfers, which can be mitigated to
->> some extent by utilizing immediate DMA support.
->>
->> QCOM GPI DMA hardware supports an immediate DMA feature for data
->> up to 8 bytes, storing the data directly in the DMA TRE buffer
->> instead of the DMA buffer address. This enhancement enables faster
->> SPI data transfers.
->>
->> This optimization reduces the average transfer time from 25 us to
->> 16 us for a single SPI transfer of 8 bytes length, with a clock
->> frequency of 50 MHz.
->>
->> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
->> ---
->> v1 -> v2:
->>     - Separated the patches to dmaengine and spi subsystems
->>     - Removed the changes which are not required for this feature from
->>       qcom-gpi-dma.h file.
->>     - Removed the type conversions used in gpi_create_spi_tre.
->>
->>   drivers/dma/qcom/gpi.c           | 32 +++++++++++++++++++++++++++-----
->>   include/linux/dma/qcom-gpi-dma.h |  6 ++++++
->>   2 files changed, 33 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
->> index 52a7c8f2498f..4c5df696ddd8 100644
->> --- a/drivers/dma/qcom/gpi.c
->> +++ b/drivers/dma/qcom/gpi.c
->> @@ -27,6 +27,7 @@
->>   #define TRE_FLAGS_IEOT		BIT(9)
->>   #define TRE_FLAGS_BEI		BIT(10)
->>   #define TRE_FLAGS_LINK		BIT(11)
->> +#define TRE_FLAGS_IMMEDIATE_DMA	BIT(16)
->>   #define TRE_FLAGS_TYPE		GENMASK(23, 16)
->>   
->>   /* SPI CONFIG0 WD0 */
->> @@ -64,6 +65,7 @@
->>   
->>   /* DMA TRE */
->>   #define TRE_DMA_LEN		GENMASK(23, 0)
->> +#define TRE_DMA_IMMEDIATE_LEN	GENMASK(3, 0)
->>   
->>   /* Register offsets from gpi-top */
->>   #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
->> @@ -1711,6 +1713,8 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
->>   	dma_addr_t address;
->>   	struct gpi_tre *tre;
->>   	unsigned int i;
->> +	u8 *buf;
->> +	int len = 0;
->>   
->>   	/* first create config tre if applicable */
->>   	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
->> @@ -1763,14 +1767,32 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
->>   	tre_idx++;
->>   
->>   	address = sg_dma_address(sgl);
->> -	tre->dword[0] = lower_32_bits(address);
->> -	tre->dword[1] = upper_32_bits(address);
->> +	len = sg_dma_len(sgl);
->>   
->> -	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
->> +	/* Support Immediate dma for write transfers for data length up to 8 bytes */
->> +	if ((spi->flags & QCOM_GPI_IMMEDIATE_DMA) && direction == DMA_MEM_TO_DEV) {
-> 
-> Please defer applying the patch until the discussion on v1 comes to
-> conclusion.
-Sure.
+Signed-off-by: Lin Lin <linlin152@foxmail.com>
+---
+ fs/ext4/super.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> 
->> +		buf = sg_virt(sgl);
->>   
->> -	tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
->> -	if (direction == DMA_MEM_TO_DEV)
->> +		/* memcpy may not always be length of 8, hence pre-fill both dword's with 0 */
->> +		tre->dword[0] = 0;
->> +		tre->dword[1] = 0;
->> +		memcpy(&tre->dword[0], buf, len);
->> +
->> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
->> +
->> +		tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
->>   		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
->> +		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IMMEDIATE_DMA);
->> +	} else {
->> +		tre->dword[0] = lower_32_bits(address);
->> +		tre->dword[1] = upper_32_bits(address);
->> +
->> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
->> +
->> +		tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
->> +		if (direction == DMA_MEM_TO_DEV)
->> +			tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
->> +	}
->>   
->>   	for (i = 0; i < tre_idx; i++)
->>   		dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
->> diff --git a/include/linux/dma/qcom-gpi-dma.h b/include/linux/dma/qcom-gpi-dma.h
->> index 6680dd1a43c6..84598848d53a 100644
->> --- a/include/linux/dma/qcom-gpi-dma.h
->> +++ b/include/linux/dma/qcom-gpi-dma.h
->> @@ -15,6 +15,10 @@ enum spi_transfer_cmd {
->>   	SPI_DUPLEX,
->>   };
->>   
->> +#define QCOM_GPI_IMMEDIATE_DMA		BIT(1)
->> +
->> +#define QCOM_GPI_IMMEDIATE_DMA_LEN	8
->> +
->>   /**
->>    * struct gpi_spi_config - spi config for peripheral
->>    *
->> @@ -30,6 +34,7 @@ enum spi_transfer_cmd {
->>    * @cs: chip select toggle
->>    * @set_config: set peripheral config
->>    * @rx_len: receive length for buffer
->> + * @flags: true for immediate dma support
->>    */
->>   struct gpi_spi_config {
->>   	u8 set_config;
->> @@ -44,6 +49,7 @@ struct gpi_spi_config {
->>   	u32 clk_src;
->>   	enum spi_transfer_cmd cmd;
->>   	u32 rx_len;
->> +	u8 flags;
->>   };
->>   
->>   enum i2c_op {
->> -- 
->> 2.17.1
->>
-> 
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 785809f33..001b1cf2e 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4622,8 +4622,8 @@ static int ext4_init_metadata_csum(struct super_block *sb, struct ext4_super_blo
+ 	/* Warn if metadata_csum and gdt_csum are both set. */
+ 	if (ext4_has_feature_metadata_csum(sb) &&
+ 	    ext4_has_feature_gdt_csum(sb))
+-		ext4_warning(sb, "metadata_csum and uninit_bg are "
+-			     "redundant flags; please run fsck.");
++		ext4_warning(sb,
++			"metadata_csum and uninit_bg are redundant flags; please run e2fsck.");
+ 
+ 	/* Check for a known checksum algorithm */
+ 	if (!ext4_verify_csum_type(sb, es)) {
+@@ -4645,8 +4645,8 @@ static int ext4_init_metadata_csum(struct super_block *sb, struct ext4_super_blo
+ 
+ 	/* Check superblock checksum */
+ 	if (!ext4_superblock_csum_verify(sb, es)) {
+-		ext4_msg(sb, KERN_ERR, "VFS: Found ext4 filesystem with "
+-			 "invalid superblock checksum.  Run e2fsck?");
++		ext4_msg(sb, KERN_ERR,
++			"VFS: Found ext4 filesystem with invalid superblock checksum. Run e2fsck?");
+ 		return -EFSBADCRC;
+ 	}
+ 
+-- 
+2.25.1
+
 
