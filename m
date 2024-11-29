@@ -1,544 +1,116 @@
-Return-Path: <linux-kernel+bounces-425694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5549DE92E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:17:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1169C9DE934
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:18:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03743B232A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:17:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A594DB21924
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E0213D897;
-	Fri, 29 Nov 2024 15:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CFC1411EB;
+	Fri, 29 Nov 2024 15:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iy3/fuOz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4SoONsD"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A180376410
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822355A4D5;
+	Fri, 29 Nov 2024 15:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732893425; cv=none; b=ghB/p2UsrzFIZ4p7ZG62yeQYHI23HsJ6FjjsPnKaHRpoueFjfOgiyl+X0l6JYPRniQulKYPF8pjakbMG71iRzzHEDvKz7PYAavxfTaIcLb++HScJ7Ki2qUua9zTK6rKGPAOXmycRsIcEgysB4QIDGXYPuDf/XXF/EiGZVlUoe8A=
+	t=1732893487; cv=none; b=TND/X/5k+uatMR6pGNM3olfjsjurahnH5vn3GscvN/mpa1s61rVBz0n/hyyqjynIrghqIBcTFsjXMqm/fSoJ9jXQ0bbPCWx1IB47VJMkqsozV0l7/DHbn0H/jUNlb3lLbz02r7fOhFyODARcQI6krG5fS21JgD99u8QnVZayGdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732893425; c=relaxed/simple;
-	bh=5CpqPHwaeJ00uqUKabvGbOHYENXuZwrgXBAc6fkOC58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ODJEOaJ95XWif2DtFFRVeHlXjK2gnR630NulwQ1GzoEIRGKRta9+GZU98k7eY8pGbMYRF1jsiExBxRSc/wgPb8HIQcGfzhahtUIANCMl4FncBZUGiw1h6Q2yhNT8RchwVNCDZa9LpH4xhvHEl9aPNyjejgNhAWgQ3k5o2X/KdO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iy3/fuOz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6DBC4CEDF
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732893425;
-	bh=5CpqPHwaeJ00uqUKabvGbOHYENXuZwrgXBAc6fkOC58=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=iy3/fuOzObiz0edADixQXcuE8I9MYGcAPAIgFKDXGUf96LQ+v0MJJngUD8NKya1re
-	 bXUqSfNKgC+yiL+OGGFzLIdVe13aku7FrFX/bzBq7t3vipLlXdGtV0lGiKskpUFPw6
-	 HF2O3b8OkNXfGmtosImJBoEf5epzr5HI8UbznLE89gfyTFcPS5g4/D0F18UltdCKw9
-	 Xydty9t3E/b/P4kRxPa69qwlYNpTwIF0cDyBVDk7fzWWB+eGFzpuOxWICy6Hf5DIqm
-	 6ez0+/HqeKbOvMpDSu3APpmmFmfFpFgkh0izJW4MhFoP0S9ycfw5VGV5/vB5NJzFaz
-	 OZ8CxsGPt0VRw==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffa97d99d6so22972271fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:17:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX4FQyROTNsZ/errzH6AOHoKuQDL7b5qdgyP7vpr7otBhWua7MOz3zcr0qRElEgs8+Mo2whTBnokHCNLWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcVMOXznulWbc2KgpCrIxu6w1ZY9JmlTgtdDQ8IQR6JWFDuCHJ
-	SH+ctCrNofrW2qSpBB9IWjDKroF5OT6aUhSN6KliamVQiMJPFWgDaYzNAlNW5kCekl7FKfnLtRj
-	u19g+d2oSJJdKay5KnR8m4FLU84E=
-X-Google-Smtp-Source: AGHT+IGLBcFanA6qm8WwEgxkOQIxshCP0vKEZhbN37diBpc3wm+g7AoRZaU66ZbnphAOa5p2bPIc97c76DUY6COAoOE=
-X-Received: by 2002:a2e:a99b:0:b0:2f6:6074:db71 with SMTP id
- 38308e7fff4ca-2ffd60ac269mr70373641fa.17.1732893423231; Fri, 29 Nov 2024
- 07:17:03 -0800 (PST)
+	s=arc-20240116; t=1732893487; c=relaxed/simple;
+	bh=Yb2gVHenwJRhK5FPsnY7yeRcPl8pDZtVid8vGUUOXG4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HNp9GniazYUFzpelq7GXybNRMu0d4lQQm14Ha/1SWS28JROTppkV4oIV70AYNdB+cnUfuAY9p3SdAYgjF85ux3/FexmIGh4L/zq1vhVXCz7eVQRNlFIPf5hFjeTyTDHXWaBih/oUVAZRNpEInB4K8FOO3JoELB4j4AvnXXs/jUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4SoONsD; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7250c199602so1672277b3a.1;
+        Fri, 29 Nov 2024 07:18:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732893486; x=1733498286; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DuACJOYzI5dREw1NaJp23YGQY6Cu1pZdm/B/azkQK2c=;
+        b=H4SoONsDh+znXpDV2/KXqzVoij1CD9QgD/FZRw0mRDtUe9X3T4WbUKQHkgXLR18N7n
+         HvxLQ5ud9PnB3rO0IcL84n5X0d+p8UGKgsOaF95iEuBaMreKCWGs7P/d2eFdZkDoZcBP
+         tPnS7fVqXZSSOs9jP7v4KIUJIhUagTuK8GRIhCtvYmkSIiLoLsksOfDx0kNW2stxZ51d
+         WoIMqDRlk8+yCU0IAwHLgjWoZqeO7A7L15rQFmgz/SZyGoXa2yNcwMpVRjhQyPjvft59
+         /c9GwcBk96+E+ThyW50CxgiJ1XoSgNw3XN97DutPM2jgycR7vpr1lA0PghpwBxnqv1Qr
+         7Vkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732893486; x=1733498286;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DuACJOYzI5dREw1NaJp23YGQY6Cu1pZdm/B/azkQK2c=;
+        b=uu5KX3+XwkMnuwnyJMCQM7MJQNjTtBtfpqKANnDE9KhLq9vm6g0tvyOdLOM0J6SGt7
+         bca//PVoRIKMmuj3Itg7sUkRuaEpVQEqbN4Eh2969ZQXq1ZgrWZ3LV9AUMiKOEzvYMu8
+         AJyr0E5CDytPZQ0WsP/7NLLT0AJ69ZvlxRBSCVz2HO/2fSHbre4g9/CeiHnMMyQ1A4Um
+         7JiALdOV7zcATBLmLDRtAlZAoHZoeySgVftPVNfI3GuQ2IxIIlIJgtg0NiIFW4PwR5RV
+         qrKJ8yqz/PlfLNfC9vumbmWZDGWmqN6mnsHkv7h5USTfUKaizCFJQ3SGcVA/hyJkZqh2
+         OGSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUicBBswLfGMzzGB1EFekk1YM2KnblqEgIw0YtqqELGDOECTjHtACixYq+NT7Le1HcjICUKDQiMtec7NA=@vger.kernel.org, AJvYcCVm3A9NuzGlI2rF6iv8s6E7cgUGJl0vTm4+1oset0aS8ilYXtPgJQyU71qW46NgS2LHcU+QDrCSXX90j0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGxulc+x1aKraWSnol0jVNQcYiqNV4tuMcRJpfulzSmtz9U5VX
+	EA+W3dShptY9HdDzHueOdUBWuv29ohYdVQQnAg46dooigWbSK0jE
+X-Gm-Gg: ASbGncsPXBsh0IN7LKHNdH+DvqOK8WWq9rS12pCSrtidSe9NiRn7RGySj+x4AArBbKm
+	K5sHeUuyGl4Z7ISvmXFbp4iwO9pszp00W4ZyX9MHv8axrxdfdgreRvSNvl8CzO1y0+HWJUczG3Z
+	Uw8n2xtEQzFLDZtWh8H/DmBiBAP2pizBF+joZouCNXytrdDx7IsGREdBFr85idFNFI3zGys1ITV
+	6Rw/KyscisRr2fv77IAl4mJByVxVEQxerWvDkIkOrAXU3aIbmS+lm/ltg==
+X-Google-Smtp-Source: AGHT+IHPTs+Y8vwUfzcZTL14I0BvZXqIfGBydOMYS+uRq/lsJx5B9J52xSyNb3gVOncqWcH+PtiBvw==
+X-Received: by 2002:a05:6a00:1956:b0:71e:8049:4730 with SMTP id d2e1a72fcca58-7252ffcbcf2mr15709438b3a.3.1732893485631;
+        Fri, 29 Nov 2024 07:18:05 -0800 (PST)
+Received: from localhost.localdomain ([123.114.6.245])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7254176fd7bsm3590612b3a.73.2024.11.29.07.17.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 07:18:05 -0800 (PST)
+From: Xiong Nandi <xndchn@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Xiong Nandi <xndchn@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: uvcvideo: Use uvc_query_name in uvc_get_video_ctrl
+Date: Fri, 29 Nov 2024 23:17:23 +0800
+Message-Id: <20241129151723.48275-1-xndchn@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009052402.411978-1-fshao@chromium.org> <20241024-stalwart-bandicoot-of-music-bc6b29@houat>
- <CAC=S1niZuiJkWBvci+bmrU-BvahhXyWWAYAMOB200a3Ppu=rTg@mail.gmail.com>
- <20241114-gray-corgi-of-youth-f992ec@houat> <CAGXv+5EmVj6S2iioYgMKvY8NM3_jzCDS9-GC-GOMU44j0ikmKA@mail.gmail.com>
- <20241129-meticulous-pumpkin-echidna-dff6df@houat> <d47e57c2-271a-4ed6-8e00-bb1a84b7b3f6@linux.dev>
- <20241129-blazing-granite-beetle-e9fecd@houat>
-In-Reply-To: <20241129-blazing-granite-beetle-e9fecd@houat>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 29 Nov 2024 23:16:50 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65yu4ZSGegxH71eC+=7-pqPwz5F_Ajk_PAwRJH0+JAdYQ@mail.gmail.com>
-Message-ID: <CAGb2v65yu4ZSGegxH71eC+=7-pqPwz5F_Ajk_PAwRJH0+JAdYQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm/bridge: panel: Use devm_drm_bridge_add()
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Sui Jingfeng <sui.jingfeng@linux.dev>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Fei Shao <fshao@chromium.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, David Airlie <airlied@gmail.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Simona Vetter <simona@ffwll.ch>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 29, 2024 at 10:55=E2=80=AFPM Maxime Ripard <mripard@kernel.org>=
- wrote:
->
-> On Fri, Nov 29, 2024 at 10:12:02PM +0800, Sui Jingfeng wrote:
-> > Hi,
-> >
-> > On 2024/11/29 18:51, Maxime Ripard wrote:
-> > > On Wed, Nov 27, 2024 at 05:58:31PM +0800, Chen-Yu Tsai wrote:
-> > > > Revisiting this thread since I just stepped on the same problem on =
-a
-> > > > different device.
-> > > >
-> > > > On Thu, Nov 14, 2024 at 9:12=E2=80=AFPM Maxime Ripard <mripard@kern=
-el.org> wrote:
-> > > > > On Tue, Oct 29, 2024 at 10:53:49PM +0800, Fei Shao wrote:
-> > > > > > On Thu, Oct 24, 2024 at 8:36=E2=80=AFPM Maxime Ripard <mripard@=
-kernel.org> wrote:
-> > > > > > > On Wed, Oct 09, 2024 at 01:23:31PM +0800, Fei Shao wrote:
-> > > > > > > > In the mtk_dsi driver, its DSI host attach callback calls
-> > > > > > > > devm_drm_of_get_bridge() to get the next bridge. If that ne=
-xt bridge is
-> > > > > > > > a panel bridge, a panel_bridge object is allocated and mana=
-ged by the
-> > > > > > > > panel device.
-> > > > > > > >
-> > > > > > > > Later, if the attach callback fails with -EPROBE_DEFER from=
- subsequent
-> > > > > > > > component_add(), the panel device invoking the callback at =
-probe time
-> > > > > > > > also fails, and all device-managed resources are freed acco=
-rdingly.
-> > > > > > > >
-> > > > > > > > This exposes a drm_bridge bridge_list corruption due to the=
- unbalanced
-> > > > > > > > lifecycle between the DSI host and the panel devices: the p=
-anel_bridge
-> > > > > > > > object managed by panel device is freed, while drm_bridge_r=
-emove() is
-> > > > > > > > bound to DSI host device and never gets called.
-> > > > > > > > The next drm_bridge_add() will trigger UAF against the free=
-d bridge list
-> > > > > > > > object and result in kernel panic.
-> > > > > > > >
-> > > > > > > > This bug is observed on a MediaTek MT8188-based Chromebook =
-with MIPI DSI
-> > > > > > > > outputting to a DSI panel (DT is WIP for upstream).
-> > > > > > > >
-> > > > > > > > As a fix, using devm_drm_bridge_add() with the panel device=
- in the panel
-> > > > > > > > path seems reasonable. This also implies a chain of potenti=
-al cleanup
-> > > > > > > > actions:
-> > > > > > > >
-> > > > > > > > 1. Removing drm_bridge_remove() means devm_drm_panel_bridge=
-_release()
-> > > > > > > >     becomes hollow and can be removed.
-> > > > > > > >
-> > > > > > > > 2. devm_drm_panel_bridge_add_typed() is almost emptied exce=
-pt for the
-> > > > > > > >     `bridge->pre_enable_prev_first` line. Itself can be als=
-o removed if
-> > > > > > > >     we move the line into drm_panel_bridge_add_typed(). (ma=
-ybe?)
-> > > > > > > >
-> > > > > > > > 3. drm_panel_bridge_add_typed() now calls all the needed de=
-vm_* calls,
-> > > > > > > >     so it's essentially the new devm_drm_panel_bridge_add_t=
-yped().
-> > > > > > > >
-> > > > > > > > 4. drmm_panel_bridge_add() needs to be updated accordingly =
-since it
-> > > > > > > >     calls drm_panel_bridge_add_typed(). But now there's onl=
-y one bridge
-> > > > > > > >     object to be freed, and it's already being managed by p=
-anel device.
-> > > > > > > >     I wonder if we still need both drmm_ and devm_ version =
-in this case.
-> > > > > > > >     (maybe yes from DRM PoV, I don't know much about the co=
-ntext)
-> > > > > > > >
-> > > > > > > > This is a RFC patch since I'm not sure if my understanding =
-is correct
-> > > > > > > > (for both the fix and the cleanup). It fixes the issue I en=
-countered,
-> > > > > > > > but I don't expect it to be picked up directly due to the r=
-edundant
-> > > > > > > > commit message and the dangling devm_drm_panel_bridge_relea=
-se().
-> > > > > > > > I plan to resend the official patch(es) once I know what I =
-supposed to
-> > > > > > > > do next.
-> > > > > > > >
-> > > > > > > > For reference, here's the KASAN report from the device:
-> > > > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > > > >   BUG: KASAN: slab-use-after-free in drm_bridge_add+0x98/0x=
-230
-> > > > > > > >   Read of size 8 at addr ffffff80c4e9e100 by task kworker/u=
-32:1/69
-> > > > > > > >
-> > > > > > > >   CPU: 1 UID: 0 PID: 69 Comm: kworker/u32:1 Not tainted 6.1=
-2.0-rc1-next-20241004-kasan-00030-g062135fa4046 #1
-> > > > > > > >   Hardware name: Google Ciri sku0/unprovisioned board (DT)
-> > > > > > > >   Workqueue: events_unbound deferred_probe_work_func
-> > > > > > > >   Call trace:
-> > > > > > > >    dump_backtrace+0xfc/0x140
-> > > > > > > >    show_stack+0x24/0x38
-> > > > > > > >    dump_stack_lvl+0x40/0xc8
-> > > > > > > >    print_report+0x140/0x700
-> > > > > > > >    kasan_report+0xcc/0x130
-> > > > > > > >    __asan_report_load8_noabort+0x20/0x30
-> > > > > > > >    drm_bridge_add+0x98/0x230
-> > > > > > > >    devm_drm_panel_bridge_add_typed+0x174/0x298
-> > > > > > > >    devm_drm_of_get_bridge+0xe8/0x190
-> > > > > > > >    mtk_dsi_host_attach+0x130/0x2b0
-> > > > > > > >    mipi_dsi_attach+0x8c/0xe8
-> > > > > > > >    hx83102_probe+0x1a8/0x368
-> > > > > > > >    mipi_dsi_drv_probe+0x6c/0x88
-> > > > > > > >    really_probe+0x1c4/0x698
-> > > > > > > >    __driver_probe_device+0x160/0x298
-> > > > > > > >    driver_probe_device+0x7c/0x2a8
-> > > > > > > >    __device_attach_driver+0x2a0/0x398
-> > > > > > > >    bus_for_each_drv+0x198/0x200
-> > > > > > > >    __device_attach+0x1c0/0x308
-> > > > > > > >    device_initial_probe+0x20/0x38
-> > > > > > > >    bus_probe_device+0x11c/0x1f8
-> > > > > > > >    deferred_probe_work_func+0x80/0x250
-> > > > > > > >    worker_thread+0x9b4/0x2780
-> > > > > > > >    kthread+0x274/0x350
-> > > > > > > >    ret_from_fork+0x10/0x20
-> > > > > > > >
-> > > > > > > >   Allocated by task 69:
-> > > > > > > >    kasan_save_track+0x40/0x78
-> > > > > > > >    kasan_save_alloc_info+0x44/0x58
-> > > > > > > >    __kasan_kmalloc+0x84/0xa0
-> > > > > > > >    __kmalloc_node_track_caller_noprof+0x228/0x450
-> > > > > > > >    devm_kmalloc+0x6c/0x288
-> > > > > > > >    devm_drm_panel_bridge_add_typed+0xa0/0x298
-> > > > > > > >    devm_drm_of_get_bridge+0xe8/0x190
-> > > > > > > >    mtk_dsi_host_attach+0x130/0x2b0
-> > > > > > > >    mipi_dsi_attach+0x8c/0xe8
-> > > > > > > >    hx83102_probe+0x1a8/0x368
-> > > > > > > >    mipi_dsi_drv_probe+0x6c/0x88
-> > > > > > > >    really_probe+0x1c4/0x698
-> > > > > > > >    __driver_probe_device+0x160/0x298
-> > > > > > > >    driver_probe_device+0x7c/0x2a8
-> > > > > > > >    __device_attach_driver+0x2a0/0x398
-> > > > > > > >    bus_for_each_drv+0x198/0x200
-> > > > > > > >    __device_attach+0x1c0/0x308
-> > > > > > > >    device_initial_probe+0x20/0x38
-> > > > > > > >    bus_probe_device+0x11c/0x1f8
-> > > > > > > >    deferred_probe_work_func+0x80/0x250
-> > > > > > > >    worker_thread+0x9b4/0x2780
-> > > > > > > >    kthread+0x274/0x350
-> > > > > > > >    ret_from_fork+0x10/0x20
-> > > > > > > >
-> > > > > > > >   Freed by task 69:
-> > > > > > > >    kasan_save_track+0x40/0x78
-> > > > > > > >    kasan_save_free_info+0x58/0x78
-> > > > > > > >    __kasan_slab_free+0x48/0x68
-> > > > > > > >    kfree+0xd4/0x750
-> > > > > > > >    devres_release_all+0x144/0x1e8
-> > > > > > > >    really_probe+0x48c/0x698
-> > > > > > > >    __driver_probe_device+0x160/0x298
-> > > > > > > >    driver_probe_device+0x7c/0x2a8
-> > > > > > > >    __device_attach_driver+0x2a0/0x398
-> > > > > > > >    bus_for_each_drv+0x198/0x200
-> > > > > > > >    __device_attach+0x1c0/0x308
-> > > > > > > >    device_initial_probe+0x20/0x38
-> > > > > > > >    bus_probe_device+0x11c/0x1f8
-> > > > > > > >    deferred_probe_work_func+0x80/0x250
-> > > > > > > >    worker_thread+0x9b4/0x2780
-> > > > > > > >    kthread+0x274/0x350
-> > > > > > > >    ret_from_fork+0x10/0x20
-> > > > > > > >
-> > > > > > > >   The buggy address belongs to the object at ffffff80c4e9e0=
-00
-> > > > > > > >    which belongs to the cache kmalloc-4k of size 4096
-> > > > > > > >   The buggy address is located 256 bytes inside of
-> > > > > > > >    freed 4096-byte region [ffffff80c4e9e000, ffffff80c4e9f0=
-00)
-> > > > > > > >
-> > > > > > > >   The buggy address belongs to the physical page:
-> > > > > > > >   head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mappe=
-d:0 pincount:0
-> > > > > > > >   flags: 0x8000000000000040(head|zone=3D2)
-> > > > > > > >   page_type: f5(slab)
-> > > > > > > >   page: refcount:1 mapcount:0 mapping:0000000000000000
-> > > > > > > >   index:0x0 pfn:0x104e98
-> > > > > > > >   raw: 8000000000000040 ffffff80c0003040 dead000000000122 0=
-000000000000000
-> > > > > > > >   raw: 0000000000000000 0000000000040004 00000001f5000000 0=
-000000000000000
-> > > > > > > >   head: 8000000000000040 ffffff80c0003040 dead000000000122 =
-0000000000000000
-> > > > > > > >   head: 0000000000000000 0000000000040004 00000001f5000000 =
-0000000000000000
-> > > > > > > >   head: 8000000000000003 fffffffec313a601 ffffffffffffffff =
-0000000000000000
-> > > > > > > >   head: 0000000000000008 0000000000000000 00000000ffffffff =
-0000000000000000
-> > > > > > > >   page dumped because: kasan: bad access detected
-> > > > > > > >
-> > > > > > > >   Memory state around the buggy address:
-> > > > > > > >    ffffff80c4e9e000: fa fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > > > > > >    ffffff80c4e9e080: fb fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > > > > > >   >ffffff80c4e9e100: fb fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > > > > > >                      ^
-> > > > > > > >    ffffff80c4e9e180: fb fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > > > > > >    ffffff80c4e9e200: fb fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb fb
-> > > > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > > > >
-> > > > > > > > Signed-off-by: Fei Shao <fshao@chromium.org>
-> > > > > > > I was looking at the driver to try to follow your (awesome bt=
-w, thanks)
-> > > > > > > commit log, and it does have a quite different structure comp=
-ared to
-> > > > > > > what we recommend.
-> > > > > > >
-> > > > > > > Would following
-> > > > > > > https://docs.kernel.org/gpu/drm-kms-helpers.html#special-care=
--with-mipi-dsi-bridges
-> > > > > > > help?
-> > > > > > Hi Maxime,
-> > > > > >
-> > > > > > Thank you for the pointer.
-> > > > > > I read the suggested pattern in the doc and compared it with th=
-e
-> > > > > > drivers. If I understand correctly, both the MIPI-DSI host and =
-panel
-> > > > > > drivers follow the instructions:
-> > > > > >
-> > > > > > 1. The MIPI-DSI host driver must run mipi_dsi_host_register() i=
-n its probe hook.
-> > > > > >     >> drm/mediatek/mtk_dsi.c runs mipi_dsi_host_register() in =
-the probe hook.
-> > > > > > 2. In its probe hook, the bridge driver must try to find its MI=
-PI-DSI
-> > > > > > host, register as a MIPI-DSI device and attach the MIPI-DSI dev=
-ice to
-> > > > > > its host.
-> > > > > >     >> drm/panel/panel-himax-hx83102.c follows and runs
-> > > > > > mipi_dsi_attach() at the end of probe hook.
-> > > > > > 3. In its struct mipi_dsi_host_ops.attach hook, the MIPI-DSI ho=
-st can
-> > > > > > now add its component.
-> > > > > >     >> drm/mediatek/mtk_dsi.c calls component_add() in the atta=
-ch callback.
-> > > > > >
-> > > > > > Could you elaborate on the "different structures" you mentioned=
-?
-> > > > > Yeah, you're right, sorry.
-> > > > >
-> > > > > > To clarify my point: the issue is that component_add() may retu=
-rn
-> > > > > > -EPROBE_DEFER if the component (e.g. DSI encoder) is not ready,
-> > > > > > causing the panel bridge to be removed. However, drm_bridge_rem=
-ove()
-> > > > > > is bound to MIPI-DSI host instead of panel bridge, which owns t=
-he
-> > > > > > actual list_head object.
-> > > > > >
-> > > > > > This might be reproducible with other MIPI-DSI host + panel
-> > > > > > combinations by forcibly returning -EPROBE_DEFER in the host at=
-tach
-> > > > > > hook (verification with another device is needed), so the fix m=
-ay be
-> > > > > > required in drm/bridge/panel.c.
-> > > > > Yeah, I think you're just hitting another bridge lifetime issue, =
-and
-> > > > > it's not the only one unfortunately. Tying the bridge structure l=
-ifetime
-> > > > > itself to the device is wrong, it should be tied to the DRM devic=
-e
-> > > > > lifetime instead.
-> > > > I think the more immediate issue is that the bridge object's lifeti=
-me
-> > > > and drm_bridge_add/remove are inconsistent when devm_drm_of_get_bri=
-dge()
-> > > > or drmm_of_get_bridge() are used.
-> > > >
-> > > > These helpers tie the bridge add/removal to the device or drm_devic=
-e
-> > > > passed in, but internally they call down to drm_panel_bridge_add_ty=
-ped()
-> > > > which allocates the bridge object tied to the panel device.
-> > > > > But then, the discussion becomes that bridges typically probe out=
-side of
-> > > > > the "main" DRM device probe path, so you don't have access to the=
- DRM
-> > > > > device structure until attach at best.
-> > > > >
-> > > > > That's why I'm a bit skeptical about your patch. It might workaro=
-und
-> > > > > your issue, but it doesn't actually solve the problem. I guess th=
-e best
-> > > > > way about it would be to convert bridges to reference counting, w=
-ith the
-> > > > > device taking a reference at probe time when it allocates the str=
-ucture
-> > > > > (and giving it back at remove time), and the DRM device taking on=
-e when
-> > > > > it's attached and one when it's detached.
-> > > > Without going as far, it's probably better to align the lifecycle o=
-f
-> > > > the two parts. Most other bridge drivers in the kernel have |drm_br=
-idge|
-> > > > lifecycle tied to their underlying |device|, either with explicit
-> > > > drm_bridge_{add,remove}() calls in their probe/bind and remove/unbi=
-nd
-> > > > callbacks respectively, or with devm_drm_bridge_add in the probe/bi=
-nd
-> > > > path. The only ones with a narrower lifecycle are the DSI hosts, wh=
-ich
-> > > > add the bridge in during host attach and remove it during host deta=
-ch.
-> > > >
-> > > > I'm thinking about fixing the panel_bridge lifecycle such that it i=
-s
-> > > > tied to the panel itself. Maybe that would involve making
-> > > > devm_drm_of_get_bridge() correctly return bridges even if a panel w=
-as
-> > > > found, and then making the panels create and add panel bridges dire=
-ctly,
-> > > > possibly within drm_panel_add(). Would that make sense?
-> > > Not really.
-> >
-> >
-> > [...]
-> >
-> >
-> > > Or rather, it doesn't fix the root cause that is that tieing
-> > > the bridge lifetime to the device is wrong.
+uvc_query_name was introduced to print query name in uvc_query_ctrl.
+So we can also use it in uvc_get_video_ctrl.
 
-Well, yeah, but at least it aligns the panel_bridge case with every other
-bridge driver: the bridge object and its duration existing in the list
-of bridges are the same in every other bridge driver. The bridge driver
-allocates the bridge object in its probe function (with devm or not),
-and adds the bridge to the global list as probably the last step of
-the probe function. In the remove function the reverse is done.
+Signed-off-by: Xiong Nandi <xndchn@gmail.com>
+---
+ drivers/media/usb/uvc/uvc_video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Right now for the panel bridge, the bridge object is allocated with its
-lifetime tied to the panel, but the adding and removing of the bridge
-to/from the global list is tied to the caller of the panel_bridge API,
-likely the previous bridge or encoder in the chain.
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index e00f38dd07d9..93cacd2c8721 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -297,8 +297,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+ 		goto out;
+ 	} else if (ret != size) {
+ 		dev_err(&stream->intf->dev,
+-			"Failed to query (%u) UVC %s control : %d (exp. %u).\n",
+-			query, probe ? "probe" : "commit", ret, size);
++			"Failed to query (%s) UVC %s control : %d (exp. %u).\n",
++			uvc_query_name(query), probe ? "probe" : "commit", ret, size);
+ 		ret = (ret == -EPROTO) ? -EPROTO : -EIO;
+ 		goto out;
+ 	}
+-- 
+2.25.1
 
-This is what is blowing up for us, right now, with the Ciri Chromebooks.
-If we fix this bit, then at least it reduces the problem to be only as
-worse as the other bridge drivers.
-
-I think MediaTek is currently the only platform that hits this because
-it probably is the only platform that has dual display pipelines with
-bridges and panel bridges, with one of the pipelines being MIPI DSI.
-That's not to say another platform, such as Rockchip, wouldn't hit it
-if similar devices were produced.
-
-> > This is multiple kernel driver module probe issue, not an issue
-> > about bridge's lifetime.
-> >
-> >
-> > The life time of the bridge of an 'struct panel_bridge' has
-> > been tied to the 'panel->dev' since 2017 [1].
-> >
-> > See commit 13dfc0540a575b47b2d640b093ac16e9e09474f6
-> > ("drm/bridge: Refactor out the panel wrapper from the lvds-encoder brid=
-ge.")
-> >
-> > [1] https://patchwork.freedesktop.org/patch/159673/
->
-> Yeah, and it's been wrong since 2017.
->
-> > >   It needs to be tied to the DRM device somehow.
-> >
-> > Why?
->
-> Because the DRM device is only free'd when the last userspace
-> application has closed it's FD to it, which might much later than the
-> device being removed. So if we tie that to the device lifetime, and the
-> device goes away, we have a dangling pointer and potential
-> use-after-free issue if the application continues to access its fd.
->
-> > It's the underlying hardware device backing the bridge, if the
-> > backing hardware device has been freed, How does the bound drm
-> > bridge driver could continue to work?
->
-> Using drm_dev_enter/drm_dev_exit.
->
-> > How could the dangling pointer stored in the bridge_list still
-> > will make sense?
->
-> It's dangling only if the bridge has been free'd while still having a
-> pointer to it. If you have a reference counted allocation, it's not
-> dangling anymore.
->
-> > The imx-lcdif could instantiate three DRM driver, which one
-> > should be selected as the "main" DRM device to attach?
->
-> The one the bridge attaches to?
->
-> > No, It is messy since day 0. And has been made worse since 2017,
-> > from then, thedevm_drm_panel_bridge_add() [2] was initially introduced.
-> > Which allow us to abuse the lifetime of bridge to a different device or=
- (any
-> > device).
->
-> I agree it's messy. I'm sure you'd agree that we do not want to make the
-> situation any messier.
->
-> > Maxime's patch just follow this way, but if the caller side
-> > wise enough to refuse to use those helper, we should be still
-> > safe. That why I suggest ChenYu to inline and with a little bit
-> > revise.
->
-> Hi! I'm that Maxime. And it was indeed a mistake in hindsight.
->
-> Maxime
->
-> > [2] https://patchwork.freedesktop.org/patch/167666/
-> >
-> > [3]
-> > https://lore.kernel.org/dri-devel/20210910130941.1740182-2-maxime@cerno=
-.tech/
-> >
-> > > Your suggestion might indeed work around your issue,
-> >
-> > To be clear, the mentioned problem in this thread is caused
-> > by deferral probe. We should remove the dangling pointer
-> > stored in the bridge_list, This is just something similar to
-> > the fault cleanup or error handling, Right?
-> >
-> > But the fundamental thing is that the issue is happened in
-> > the deferral probe context.
->
-> The context doesn't matter here.
->
-> > > but it doesn't fix the actual problem.
-> >
-> > If drm bridge still have lifetime related issue, then it is
-> > yet an another problem. Which should be then orthogonal to
-> > this one. Then, it should deserve an another fix.
->
-> No, it's absolutely the same one: bridges should be refcounted, they
-> aren't, it's a mess.
-
-I agree that the bridge lifecycle is a mess (and panels are probably the
-same). What we're trying to fix here is related, but not exactly the same,
-as explained above.
-
-Can we at least fix this bit?
-
-
-ChenYu
 
