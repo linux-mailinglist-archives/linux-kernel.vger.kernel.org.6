@@ -1,185 +1,386 @@
-Return-Path: <linux-kernel+bounces-425529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9AA9DC340
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:12:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EB79DC347
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A1A4B22592
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:12:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AFD4B23345
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F6E19CC1C;
-	Fri, 29 Nov 2024 12:12:35 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335C019CC08;
+	Fri, 29 Nov 2024 12:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HOmtwDMR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22676155A59
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5708719B5A9
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732882354; cv=none; b=T48Rg/vPStnwvdX5zVo4UpdwL18bPb2iM0uEsoXpYsLTjVcU98rsKPMx5tJD+wrfbXCTY74AxdOf4s1707AtAMgC8BH44nrwF/lf/LIRCcyq3coKND6bMpIZEffddOXoAVnUQrwHN7URtBBwSurs6/mv39c+WuacVC9xduEXgN0=
+	t=1732882386; cv=none; b=LpnPvuzndcHCLhKNkXPofOxOtuXDl1GUuD/WgIHjTx4nYyBQyccXZd6nuohssWL1Rn6zDWKlI35GmyEBkpy2km6HglsOKGCQz4pf1UB5t6LS1RbWQw30D+P7+tW9566brGXcIXxXx0ShtuI/3hbvgNiblw0cc/mQlqkvCe+j3d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732882354; c=relaxed/simple;
-	bh=vhSELNGRU9ia8cJZ8yaFgbszUbmVsqqiL+P8mHh6C80=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GqLCL0B8QoqS6merOA58j548V4NKpaaLBxPBkvtNnKAgJ5opJLI9Sxh3tXThv2aCxxdfBwYH4BmKdXuuGURQr8yKdiKfnjDhJZfy0MEzYjd+4AhOLajRpZf0+UyNsk4iidqJ1IErbl6N6n3X6z/oNgz0GMB3PJBAxOI4h73m870=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841a6e28b52so165247639f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:12:32 -0800 (PST)
+	s=arc-20240116; t=1732882386; c=relaxed/simple;
+	bh=gjVPU9MmSkktEpTzOzFCfC2aJAumehiLpU5KC/Lr1sE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ujDgy+RerQ8sv0JONa9eLtPg1r0OwjuoJjxka9nFwbW6IrIxAbSjAPo9n6LJmo5pnQyBEmxlnk8KCXIbu4ZnaYYcKIPj8S8oxzSI1lzte5ggLENLCd9gykQ/7tpLNPRntyiADj3J+y4fNrtOdBa95Hwstkmxa0AJc5INbzhyKnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HOmtwDMR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732882383;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9dCwHB55kEGMY51zkm3mI/OoeuT8MnmZOigkcUSwHn4=;
+	b=HOmtwDMRBudP4vDn8aT6HQ+n7H6EQbC7U3WWIwRilm+CH+HnXzfwsHjF8sGG0z1oppK7oB
+	ZXEQJBFeWRaVHimjuZQKNObQuXXl2SQcZQtlcrVtIA2ZBgoQNaIvrof9rkqg9klXTnhaxI
+	8gxllxLWLPSk97I73pkImFOXYeX4YCs=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-355-A2yilMb1P_K5dqI3kuwmXw-1; Fri, 29 Nov 2024 07:13:02 -0500
+X-MC-Unique: A2yilMb1P_K5dqI3kuwmXw-1
+X-Mimecast-MFC-AGG-ID: A2yilMb1P_K5dqI3kuwmXw
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38243a4ba7cso985645f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:13:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732882352; x=1733487152;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pGi6Sc9OlCd1Ksj/0M3YBMNOfSQNw9vcgM6HwKYNkWw=;
-        b=X0Y1M/1P8gg6HcPPcu9f3XQafVfOkJqZArE76DRPkINTlGngBwzD1BFZgAx5OByD33
-         id8BoEs3VGR483dnswiXUveweoiraNZlf0+kADx0RbkACXeNmgOnMCIzEQa9vfojxhL/
-         0UGlj8+H57H6SWJhWtHabj+cuQLD2/kmvm2kJ+pv/Qg83NpOR0ioNZKdBhCFrIB+Mf3O
-         9LNLJABLtGix2UYHHkkATcGeGkGAMBukwSgNiGP+49zNujN3CCvTToo3stgulNdGbYfs
-         wUxG+IanNGan8rWu+yWRQtwTxzqlQNplb3mEByU1mHoXm/qygMMnAacfAcUbp0O+pZim
-         OGHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUMTqVbNFvSIzGUxR5203IAIa5nTNEaf+/H6Lr5R/ss1pm+F7+SfhjPNQgsX8iCXUfihe297VBL6KWJx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5bukHUCd4v7YZrzrZDaH3RfJ7kuZ3vJoRtclR/htRHc44miC6
-	sC+eM41P25/bLXZ7rqVfvd5skK5+OJ6Bn5arqHBL8nyoda7jMk/LifzCciA2Z6oYw8H3Tvo8lhl
-	XQnf7OUy5glo2u0Z1CaQuA62/GbdaVQqpSpEGRDnriDY0GXqopvh3mZs=
-X-Google-Smtp-Source: AGHT+IF5nTY4XothRKp/qaKlLcmow73kJjPm6ScMewoifHqB1/GZgbF1HBv3uD/zGcDFmAsBHMUlSNw0aECEAvEeQuwLQcun5kaO
+        d=1e100.net; s=20230601; t=1732882381; x=1733487181;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9dCwHB55kEGMY51zkm3mI/OoeuT8MnmZOigkcUSwHn4=;
+        b=eFTC7ZGpjYHjnLKdA+M5qOtjpqc9RmBelCH5HusCO11He0fxJHqs9VnJ+X1xPxcd3U
+         gkXRDcMxaCJAJz8JqrXGIXWj+tN8/VDRsJouXcWsf0u30SSmcVEUKpH9T6DQ1Varcs27
+         MSqzFjLomi8ybX9RtVrs3t31BcVRwvrddFuoYXPh86XDkcbEg2Xj6oEJtyAVocgEgrNB
+         8BGl4a/kDorrSXR+oFQQEA/e9LdB3fUEYtE2p4F8DmZ+tIvkLrU5Shd/JYkIuUJZK+vl
+         rHoU8WqcfGLSGiwinItkjePuAW5L07CEl2H3+XpXetcJWmve5OTyci4D6PYXd31ShYbD
+         UqDA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7sSFE0jCuUrQZUR8NE9alpTUvsnjrwvV1r77Xj+A0Y3AnmeisDIB8DorGFFepj88iTeWYHb2AHgDbxKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKsl6xVE7Abiq5y0MRQDjariTvkNU9QtS9LGQHR4sXxovaR397
+	5CztNqVci4VBaIULQoqOzx8eBfj2rrCo1L5dnnQT+HEbxdu4dd8tO23D2Am9Rj5bkCfGKmC0M0F
+	UNSrg4DBfvP7gI/AWG3jp9R09SVnzI5TcgrQX0nNbng8Z4cT6sYMY8gaSNbRGiw==
+X-Gm-Gg: ASbGncv7gpJoMliQyWwtpwEVvzethX21xTpWUKNYYmoUtYiB1wrHK+MwYFc5z6HvdtY
+	m6CkqZHY7cvutQQ6lvdFK0dS8rYgHrahcKRJ4yBYHMNTxW5oJd/0+NiRrpT+bYGzF4xbEeOJhY2
+	xjpw4Lb5xBDCYHbPwwJyVo9Eg6rZUDKWcHTe6M1mtx8sDJZs6F9eyEzldkPIsAf1/ahaVIHrYFa
+	/5GeKhdPZ5iP/IDX/IyXgBwwTB7SEp42iQvdsNjgt4xrsIalSUWWPkvr1kqmDyphe2z6I8QSIMR
+	DKCRLZ6BjlVnsL8o6UHumPUq8YJhtmYNstpB0+kLbBIlCdiDTOJ7zD4vbkqLn241WIFhWMR0Ibw
+	UeA==
+X-Received: by 2002:a5d:64ac:0:b0:382:4421:811a with SMTP id ffacd0b85a97d-385c6ef3978mr9554014f8f.49.1732882380633;
+        Fri, 29 Nov 2024 04:13:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHqm8ytnWuv05ZY06Ef0Fh9n4A7hRpCvVYueyB/Ni5Gj7Yi4MQqn0a4BAGfNg0zZYNRqa5RJA==
+X-Received: by 2002:a5d:64ac:0:b0:382:4421:811a with SMTP id ffacd0b85a97d-385c6ef3978mr9553975f8f.49.1732882380153;
+        Fri, 29 Nov 2024 04:13:00 -0800 (PST)
+Received: from ?IPV6:2003:cb:c71c:a700:bba7:849a:ecf1:5404? (p200300cbc71ca700bba7849aecf15404.dip0.t-ipconnect.de. [2003:cb:c71c:a700:bba7:849a:ecf1:5404])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3a7aesm4290556f8f.59.2024.11.29.04.12.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 04:12:59 -0800 (PST)
+Message-ID: <84fed269-3f82-47f7-89cb-671fcee5a23a@redhat.com>
+Date: Fri, 29 Nov 2024 13:12:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156f:b0:3a6:ad61:7ff8 with SMTP id
- e9e14a558f8ab-3a7c556a18fmr109546125ab.12.1732882352198; Fri, 29 Nov 2024
- 04:12:32 -0800 (PST)
-Date: Fri, 29 Nov 2024 04:12:32 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6749afb0.050a0220.253251.00b2.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_btree_path_peek_slot
-From: syzbot <syzbot+3ebaf90b49bd97e920ee@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf: map pages in advance
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Matthew Wilcox <willy@infradead.org>
+References: <20241128113714.492474-1-lorenzo.stoakes@oracle.com>
+ <9f9fd840-6421-43b5-9a12-edfa96e067cc@redhat.com>
+ <1af66528-0551-4735-87f3-d5feadadf33a@lucifer.local>
+ <926b3829-784f-47b8-9903-ea7b9ad484ac@redhat.com>
+ <31e8202d-f3db-4dcd-a988-2f531b14e40f@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <31e8202d-f3db-4dcd-a988-2f531b14e40f@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 28.11.24 15:23, Lorenzo Stoakes wrote:
+> On Thu, Nov 28, 2024 at 02:37:17PM +0100, David Hildenbrand wrote:
+>> On 28.11.24 14:20, Lorenzo Stoakes wrote:
+>>> On Thu, Nov 28, 2024 at 02:08:27PM +0100, David Hildenbrand wrote:
+>>>> On 28.11.24 12:37, Lorenzo Stoakes wrote:
+> [snip]
+>>>>> It makes sense semantically to establish a PFN map too - we are managing
+>>>>> the pages internally and so it is appropriate to mark this as a special
+>>>>> mapping.
+>>>>
+>>>> It's rather sad seeing more PFNMAP users where PFNMAP is not really required
+>>>> (-> this is struct page backed).
+>>>>
+>>>> Especially having to perform several independent remap_pfn_range() calls
+>>>> rather looks like yet another workaround ...
+>>>>
+>>>> Would we be able to achieve something comparable with vm_insert_pages(), to
+>>>> just map them in advance?
+>>>
+>>> Well, that's the thing, we can't use VM_MIXEDMAP as vm_insert_pages() and
+>>> friends all refer vma->vm_page_prot which is not yet _correctly_ established at
+>>> the point of the f_op->mmap() hook being invoked :)
+>>
+>> So all you want is a vm_insert_pages() variant where we can pass in the
+>> vm_page_prot?
+> 
+> Hmm, looking into the code I don't think VM_MIXEDMAP is correct after all.
+> 
+> We don't want these pages touched at all, we manage them ourselves, and
+> VM_MIXEDMAP, unless mapping memory mapped I/O pages, will treat them as such.
+> 
+> For instance, vm_insert_page() -> insert_page() -> insert_page_into_pte_locked()
+> acts as if this is a folio, manipulating the ref count and invoking
+> folio_add_file_rmap_pte() - which we emphatically do not want.
 
-syzbot found the following issue on:
+Right, but that should be independent of what you want to achieve in 
+this series, or am I wrong?
 
-HEAD commit:    65ae975e97d5 Merge tag 'net-6.13-rc1' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14794d30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3891b550f14aea0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=3ebaf90b49bd97e920ee
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+vm_insert_page()/vm_insert_pages() is our mechanism to install kernel 
+allocations into the page tables. (note "kernel allocations", not 
+"kernel memory", which might or might not have "struct pages")
 
-Unfortunately, I don't have any reproducer for this issue yet.
+There is the bigger question how we could convert all users to either 
+(a) not refcount + mapcount (and we discussed a separate memdesc type 
+for that) (b) still refcount (similarly, likely separate memdesc).
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-65ae975e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/53fd215a7a86/vmlinux-65ae975e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/589c729ff0b2/bzImage-65ae975e.xz
+But that will be a problem to be solved by all similar drives.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3ebaf90b49bd97e920ee@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/btree_iter.c:1816!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 4683 Comm: kworker/u5:1 Not tainted 6.12.0-syzkaller-10681-g65ae975e97d5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: bcachefs bch2_write_point_do_index_updates
-RIP: 0010:bch2_btree_path_peek_slot+0xf50/0xf90 fs/bcachefs/btree_iter.c:1816
-Code: f7 ff ff 48 89 34 24 be 08 00 00 00 44 89 44 24 08 e8 c4 fa e3 fd 48 8b 34 24 44 8b 44 24 08 e9 50 f7 ff ff e8 51 12 79 fd 90 <0f> 0b e8 49 12 79 fd 90 0f 0b e8 21 4a b6 07 e8 3c 12 79 fd 90 0f
-RSP: 0018:ffffc9000de4c0a0 EFLAGS: 00010293
-RAX: ffffffff841cd22f RBX: 0000000000002164 RCX: ffff88801f290000
-RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
-RBP: ffffc9000de4c1b0 R08: ffffffff841cc410 R09: 0000000000000000
-R10: ffffc9000de4c300 R11: fffff52001bc9862 R12: dffffc0000000000
-R13: 1ffff1100adc228d R14: ffff888056e11448 R15: 1ffff1100adc228c
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe0e030d38 CR3: 000000004f5d2000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_btree_iter_peek_slot+0xa2f/0x2550 fs/bcachefs/btree_iter.c:2658
- __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:575 [inline]
- bch2_bkey_get_iter fs/bcachefs/btree_iter.h:589 [inline]
- try_alloc_bucket fs/bcachefs/alloc_foreground.c:305 [inline]
- bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:525 [inline]
- bch2_bucket_alloc_trans+0x1997/0x3a50 fs/bcachefs/alloc_foreground.c:648
- bch2_bucket_alloc_set_trans+0x517/0xd30 fs/bcachefs/alloc_foreground.c:808
- __open_bucket_add_buckets+0x13d0/0x1ec0 fs/bcachefs/alloc_foreground.c:1057
- open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1101
- bch2_alloc_sectors_start_trans+0xce9/0x2030
- __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:339 [inline]
- bch2_btree_reserve_get+0x612/0x1890 fs/bcachefs/btree_update_interior.c:549
- bch2_btree_update_start+0xe56/0x14e0 fs/bcachefs/btree_update_interior.c:1247
- bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1856
- bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:942
- __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
- bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
- btree_key_cache_flush_pos fs/bcachefs/btree_key_cache.c:432 [inline]
- bch2_btree_key_cache_journal_flush+0x97d/0xe70 fs/bcachefs/btree_key_cache.c:512
- journal_flush_pins+0x5f7/0xb20 fs/bcachefs/journal_reclaim.c:565
- __bch2_journal_reclaim+0x789/0xdc0 fs/bcachefs/journal_reclaim.c:698
- __journal_res_get+0x1de3/0x2670 fs/bcachefs/journal.c:581
- bch2_journal_res_get_slowpath+0xe6/0x710 fs/bcachefs/journal.c:606
- bch2_journal_res_get fs/bcachefs/journal.h:382 [inline]
- bch2_trans_journal_res_get fs/bcachefs/btree_trans_commit.c:350 [inline]
- bch2_trans_commit_error+0xd91/0x1390 fs/bcachefs/btree_trans_commit.c:962
- __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
- bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
- __bch2_data_update_index_update+0x56bb/0x77f0 fs/bcachefs/data_update.c:368
- bch2_data_update_index_update+0x63/0x90 fs/bcachefs/data_update.c:414
- __bch2_write_index+0x16d1/0x2140 fs/bcachefs/io_write.c:527
- bch2_write_point_do_index_updates+0x32e/0x690 fs/bcachefs/io_write.c:635
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_btree_path_peek_slot+0xf50/0xf90 fs/bcachefs/btree_iter.c:1816
-Code: f7 ff ff 48 89 34 24 be 08 00 00 00 44 89 44 24 08 e8 c4 fa e3 fd 48 8b 34 24 44 8b 44 24 08 e9 50 f7 ff ff e8 51 12 79 fd 90 <0f> 0b e8 49 12 79 fd 90 0f 0b e8 21 4a b6 07 e8 3c 12 79 fd 90 0f
-RSP: 0018:ffffc9000de4c0a0 EFLAGS: 00010293
-RAX: ffffffff841cd22f RBX: 0000000000002164 RCX: ffff88801f290000
-RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
-RBP: ffffc9000de4c1b0 R08: ffffffff841cc410 R09: 0000000000000000
-R10: ffffc9000de4c300 R11: fffff52001bc9862 R12: dffffc0000000000
-R13: 1ffff1100adc228d R14: ffff888056e11448 R15: 1ffff1100adc228c
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe0e030d38 CR3: 000000004f5d2000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Slapping in a remap_pfn_range() + VM_PFNMAP in now in the absence of 
+having solved the bigger problem there sounds quite suboptimal to me. 
+remap_pfn_range() saw sufficient abuse already, and the way we hacked in 
+VM_PAT handling in there really makes it something we don't want to 
+reuse as is when trying to come up with a clean way to map kernel 
+allocations. I strongly assume that some of the remap_pfn_range() users 
+we currently have do actually deal with kernel allocations as well, and 
+likely they should all get converted to something better once we have it.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+So, isn't this something to just solve independently of what you are 
+actually trying to achieve in this series (page->index and page->mapping)?
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+[...]
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>>>
+>>> We set the field in __mmap_new_vma(), _but_ importantly, we defer the
+>>> writenotify check to __mmap_complete() (set in vma_set_page_prot()) - so if we
+>>> were to try to map using VM_MIXEDMAP in the f_op->mmap() hook, we'd get
+>>> read/write mappings, which is emphatically not what we want - we want them
+>>> read-only mapped, and for vm_ops->pfn_mkwrite() to be called so we can make the
+>>> first page read/write and the rest read-only.
+>>>
+>>> It's this requirement that means this is really the only way to do this as far
+>>> as I can tell.
+>>>
+>>> It is appropriate and correct that this is either a VM_PFNMAP or VM_MIXEDMAP
+>>> mapping, as the pages reference kernel-allocated memory and are managed by perf,
+>>> not put on any LRU, etc.
+>>>
+>>> It sucks to have to loop like this and it feels like a workaround, which makes
+>>> me wonder if we need a new interface to better allow this stuff on mmap...
+>>>
+>>> In any case I think this is the most sensible solution currently available that
+>>> avoids the pre-existing situation of pretending the pages are folios but
+>>> somewhat abusing the interface to allow page_mkwrite() to work correctly by
+>>> setting page->index, mapping.
+>>
+>> Yes, that page->index stuff is nasty.
+> 
+> It's the ->mapping that is more of the issue I think, as that _has_ to be set in
+> the original version, I can't actually see why index _must_ be set, there should
+> be no case in which rmap is used on the page, so possibly was a mistake, but
+> both fields are going from struct page so both must be eliminated :)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+:) Yes.
 
-If you want to undo deduplication, reply with:
-#syz undup
+>>> The alternative to this would be to folio-fy, but these are emphatically _not_
+>>> folios, that is userland memory managed as userland memory, it's a mapping onto
+>>> kernel memory exposed to userspace.
+>>
+>> Yes, we should even move away from folios completely in the future for
+>> vm_insert_page().
+> 
+> Well, isn't VM_MIXEDMAP intended specifically so you can mix normal user pages
+> that live in the LRU and have an rmap etc. etc. with PFN mappings to I/O mapped
+> memory? :) so then that's folios + raw PFN's.
+
+VM_MIXEDMAP was abused over the years for all kinds of stuff. I consider 
+this rather a current "side effect" of using vm_insert_pages() than 
+something we'll need in the long term (below).
+
+> 
+>>
+>>>
+>>> It feels like probably VM_MIXEDMAP is a better way of doing it, but you'd need
+>>> to expose an interface that doesn't assume the VMA is already fully set
+>>> up... but I think one for a future series perhaps.
+>>
+>> If the solution to your problem is as easy as making vm_insert_pages() pass
+>> something else than vma->vm_page_prot to insert_pages(), then I think we
+>> should go for that. Like ... vm_insert_pages_prot().
+> 
+> Sadly no for reasons above.
+
+Is the reason "refcount+mapcount"? Then it might be a problem better 
+tackled separately as raised above. Sorry if I missed another point.
+
+> 
+>>
+>> Observe how we already have vmf_insert_pfn() vs. vmf_insert_pfn_prot(). But
+>> yes, in an ideal world we'd avoid having temporarily messed up
+>> vma->vm_page_prot. So we'd then document clearly how vm_insert_pages_prot()
+>> may be used.
+> 
+> I think the thing with the delay in setting vma->vm_page_prot properly that is
+> we have a chicken and egg scenario (oh so often the case in mmap_region()
+> logic...) in that the mmap hook might change some of these flags which changes
+> what that function will do...
+
+Yes, that's ugly.
+
+> 
+> I was discussing with Liam recently how perhaps we should see how feasible it is
+> to do away with this hook and replace it with something where drivers specify
+> which VMA flags they want to set _ahead of time_, since this really is the only
+> thing they should be changing other than vma->vm_private_data.
+
+Yes.
+
+> 
+> Then we could possibly have a hook _only_ for assigning vma->vm_private_data to
+> allow for any driver-specific init logic and doing mappings, and hey presto we
+> have made things vastly saner. Could perhaps pass a const struct vm_area_struct
+> * to make this clear...
+> 
+> But I may be missing some weird corner cases (hey probably am) or being too
+> optimistic :>)
+
+It's certainly one area we should be cleaning up ...
+
+> 
+>>
+>> --
+>> Cheers,
+>>
+>> David / dhildenb
+>>
+> 
+> I wonder if we need a new interface then for 'pages which we don't want touched
+> but do have a struct page' that is more expressed by the interface than
+> remap_pfn_range() expresses.
+> 
+> I mean from the comment around vm_normal_page():
+> 
+>   * "Special" mappings do not wish to be associated with a "struct page" (either
+>   * it doesn't exist, or it exists but they don't want to touch it). In this
+>   * case, NULL is returned here. "Normal" mappings do have a struct page.
+> 
+> ...
+> 
+>   * A raw VM_PFNMAP mapping (ie. one that is not COWed) is always considered a
+>   * special mapping (even if there are underlying and valid "struct pages").
+>   * COWed pages of a VM_PFNMAP are always normal.
+> 
+> So there's precedence for us just putting pages we allocate/manage ourselves in
+> a VM_PFNMAP.
+> 
+> So I guess this interface would be something like:
+> 
+> 	int remap_kernel_pages(struct vm_area_struct *vma, unsigned long addr,
+> 			       struct page **pages, unsigned long size,
+> 			       pgprot_t prot);
+> 
+
+
+Well, I think we simply will want vm_insert_pages_prot() that stops 
+treating these things like folios :) . *likely*  we'd want a distinct 
+memdesc/type.
+
+We could start that work right now by making some user (iouring, 
+ring_buffer) set a new page->_type, and checking that in 
+vm_insert_pages_prot() + vm_normal_page(). If set, don't touch the 
+refcount and the mapcount.
+
+Because then, we can just make all the relevant drivers set the type, 
+refuse in vm_insert_pages_prot() anything that doesn't have the type 
+set, and refuse in vm_normal_page() any pages with this memdesc.
+
+Maybe we'd have to teach CoW to copy from such pages, maybe not. GUP of 
+these things will stop working, I hope that is not a problem.
+
+
+There is one question is still had for a long time: maybe we *do* want 
+to refcount these kernel allocations. When refcounting them, it's 
+impossible that we might free them in our driver without having some 
+reference lurking somewhere in some page table of a process. I would 
+hope that this is being take care of differently. (e.g., VMA lifetime)
+
+
+But again, I'd hope this is something we can sort out independent of 
+this series.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
