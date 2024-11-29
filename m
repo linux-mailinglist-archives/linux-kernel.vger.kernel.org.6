@@ -1,138 +1,111 @@
-Return-Path: <linux-kernel+bounces-425552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 636DC9DE6A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:44:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0859DE6A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:44:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5E97B22480
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D68164C81
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4823B19D892;
-	Fri, 29 Nov 2024 12:43:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B4819D884;
+	Fri, 29 Nov 2024 12:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="etihQ2hZ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D25C199934
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B49C199934;
+	Fri, 29 Nov 2024 12:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732884238; cv=none; b=NpZzEcw5dPjb3QtwUTUVg/K+SXc+5ZkMvlLeGtmkiazbdi4BoNmojiqmrP7ksNEV2OdoTb/9dejgshSyauj44r+/SyrdBO3VspW+2c2De1EUeScf3yGV1VBUuzFA301Bu5+OPNZ0RSCS/Pd4LyxI53kzTZVmi9I/t2TMGW2FZFI=
+	t=1732884281; cv=none; b=FxQD0MsmSimXepM3x4mxKrz667BEUNsGfQhOZPUePmBvS5WCHlt6uFSB1OrqSLFxO3sc9N5n2m9GMVGcDVB8Ux6PHmvGjWToF6TwQ9dyEK5Z7226WYWddfqFgFo2QCSvwcbCG74LzW6UXKwGrfus2XFxTVubPGVSTtp1Tm71dn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732884238; c=relaxed/simple;
-	bh=NTSz5gwA4107nePYwmw10itH9A9C/xXBIcQiN0xMn6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OI1EZnOxZzSm71ZaCuRgo78h/PldVNS6SCHziQ8BG3y+QIUNCChy3LPBHHsxlJsfwXUZA13H5LT8jLsckidDS5h5i0HYmPUyAetbO6/vR9a7H9J3TZONlK7T7yvC3p4IqSfOfEopE6kjdPuIwZ9+Qwmp8knfxs/b0e2dPTae6Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tH0LT-00045D-0h; Fri, 29 Nov 2024 13:43:39 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tH0LR-000n1t-0v;
-	Fri, 29 Nov 2024 13:43:38 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id B67CF381226;
-	Fri, 29 Nov 2024 12:43:37 +0000 (UTC)
-Date: Fri, 29 Nov 2024 13:43:37 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Charan Pedumuru <charan.pedumuru@microchip.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrew Lunn <andrew+netdev@lunn.ch>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: net: can: atmel: Convert to json schema
-Message-ID: <20241129-excellent-optimal-rattlesnake-b352fa-mkl@pengutronix.de>
-References: <20241120-can-v3-1-da5bb4f6128d@microchip.com>
+	s=arc-20240116; t=1732884281; c=relaxed/simple;
+	bh=+CBAHM6mr8xHf8WEZoE7ttKYOrQDETuiJpZBiiUHjQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRqox56LN8QPNy31pQldNFoTgqQuI+JQ+sdVJWIKdQquzbj0Q4g5EXRfkDV1AZblEcuVOJFpwPMOgZpozbJ2VzyxFSy5g73TzTmevQrwNd0n/YAAh5jHppPa40B14AcrWetglN+2pPqQkkzt+DaWCs/z/sUwfQgRz96bm1dEgpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=etihQ2hZ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 86C34BDB;
+	Fri, 29 Nov 2024 13:44:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732884251;
+	bh=+CBAHM6mr8xHf8WEZoE7ttKYOrQDETuiJpZBiiUHjQo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=etihQ2hZWFk5HQuA6zJOHamcFfPiUkwlTZEOW5mkvcwsyW0EAToP+VdMd1ZJEeCuf
+	 mIR971EOONAmKfiZaE2Z3SdSM4UOKBXsnsICCSQ5ictBI+dw+2Pm7Triyb5Hij/DmQ
+	 X3NlldRcia7wEGisMnrQmnm5SdsWWhgMDzSf8pTA=
+Message-ID: <c9f640d9-221c-40d2-b71f-feef7518ab55@ideasonboard.com>
+Date: Fri, 29 Nov 2024 14:44:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dfxtl2sovlzdezlx"
-Content-Disposition: inline
-In-Reply-To: <20241120-can-v3-1-da5bb4f6128d@microchip.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] i2c: atr: Fix client detach
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Romain Gantois <romain.gantois@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Cosmin Tanislav <demonsingur@gmail.com>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ stable@vger.kernel.org
+References: <20241122-i2c-atr-fixes-v2-0-0acd325b6916@ideasonboard.com>
+ <20241122-i2c-atr-fixes-v2-1-0acd325b6916@ideasonboard.com>
+ <20241126091441.345d4493@booty>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+In-Reply-To: <20241126091441.345d4493@booty>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi Romain,
 
---dfxtl2sovlzdezlx
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3] dt-bindings: net: can: atmel: Convert to json schema
-MIME-Version: 1.0
+On 26/11/2024 10:14, Luca Ceresoli wrote:
+> Hello Tomi,
+> 
+> +Cc: Romain who is doing a different kind of sorcery on i2c-atr.c, so
+> he is aware of this series.
+> 
+> On Fri, 22 Nov 2024 14:26:18 +0200
+> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+> 
+>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>
+>> i2c-atr catches the BUS_NOTIFY_DEL_DEVICE event on the bus and removes
+>> the translation by calling i2c_atr_detach_client().
+>>
+>> However, BUS_NOTIFY_DEL_DEVICE happens when the device is about to be
+>> removed from this bus, i.e. before removal, and thus before calling
+>> .remove() on the driver. If the driver happens to do any i2c
+>> transactions in its remove(), they will fail.
+>>
+>> Fix this by catching BUS_NOTIFY_REMOVED_DEVICE instead, thus removing
+>> the translation only after the device is actually removed.
+>>
+>> Fixes: a076a860acae ("media: i2c: add I2C Address Translator (ATR) support")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> 
+> Looks good:
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> 
 
-On 20.11.2024 13:58:08, Charan Pedumuru wrote:
-> Convert old text based binding to json schema.
-> Changes during conversion:
-> - Add a fallback for `microchip,sam9x60-can` as it is compatible with the
->   CAN IP core on `atmel,at91sam9x5-can`.
-> - Add the required properties `clock` and `clock-names`, which were
->   missing in the original binding.
-> - Update examples and include appropriate file directives to resolve
->   errors identified by `dt_binding_check` and `dtbs_check`.
->=20
-> Signed-off-by: Charan Pedumuru <charan.pedumuru@microchip.com>
-> ---
-> Changes in v3:
-> - Modified the commit message with reasons for each change
-> - Link to v2: https://lore.kernel.org/r/20241003-can-v2-1-85701d3296dd@mi=
-crochip.com
->=20
-> Changes in v2:
-> - Renamed the title to "Microchip AT91 CAN controller"
-> - Removed the unnecessary labels and add clock properties to examples
-> - Removed if condition statements and made clock properties as default re=
-quired properties
-> - Link to v1: https://lore.kernel.org/r/20240912-can-v1-1-c5651b1809bb@mi=
-crochip.com
+Can you test this one with your setup, and give your Rb/Tb?
 
-Applied with fixing indention in example.
+I think it's an obvious fix, and could be merged separately from the 
+rest, which still need discussion.
 
-regards,
-Marc
+  Tomi
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---dfxtl2sovlzdezlx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdJtvYACgkQKDiiPnot
-vG8hDAf/RR6qkSZh/4/lRzmSO1k04OMiEoWCXmhlM3ceBWDO7RKSUFaV5SO+bJ28
-oFpMj2ly5MimZpjnm8oaeFGPCBl5l4dY0YJn/Ghw7wZeS/Kvsg1MLQmaZ6GeP0EX
-6YizPxq9+0ZqAO4YwA2RZtA4CxLdB28XWDj9pIuFTxrSaWq1s9LZ1rcYHXX7tZry
-TM6ZxAKA5IcWrMLS3/uN/unIPAOID7av9vTyM98YeGe1kgQ7KSOZJ7m7oraOPnvr
-/+ZrGQveyEHDwNfbKQ9o4khWkp77w+pVttx86+SZtxMBgFeqcIQpGHc8qZo9Szik
-jBXrO5qN25gTCXiz2LUXeW2MNtjNnA==
-=Yz1e
------END PGP SIGNATURE-----
-
---dfxtl2sovlzdezlx--
 
