@@ -1,74 +1,153 @@
-Return-Path: <linux-kernel+bounces-425455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF519DC252
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:41:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDCCF164DEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:41:36 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74474198851;
-	Fri, 29 Nov 2024 10:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="pYJKblk+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D413A9DC254
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:42:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B9E155345;
-	Fri, 29 Nov 2024 10:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47203B22071
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:42:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3111192B83;
+	Fri, 29 Nov 2024 10:42:39 +0000 (UTC)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B35155345;
+	Fri, 29 Nov 2024 10:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732876888; cv=none; b=BPI8q6+9+zF1mOcM2MDvFg3OmcmYGN/jWpu/zj8fNneTyZ/uWY+Osl/zrCvJsNnJQPkvnJoN01Fn5iLws0LdE+KWXUGJLnjYEZB20C9PHq3I0DWiknQCRDI9glhnyI5bpKpYgpxRl9fqCrh7lbuVKaVkyRGuV1itUkzN410jYLI=
+	t=1732876959; cv=none; b=JjLghC0ANBpSivBS6ErJ2SRwlgwAvFOcUehEu8JoZDKy6kAR6PZfx6RQYxu3Naxd2RuZ8TSGQBIBDUbms9IDGJlvQvIQbc2Bm66zOX4lYS6JxctKfkF/F++j+eFPbhIHfsrdFRtCcpvvTLjACvB5pIpPnb6GRidMDQOd29/ZmUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732876888; c=relaxed/simple;
-	bh=hjOK0zywSeokD3DvA4azctX4cWAnxYzpu0R5TPG192g=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GV1wFY2oJSS0d6pgdxaaAXy6Tr8kJ0OT5oxU/wxDqXH6EzMuipYuc8Ryoft/8FM6aAySCs3YdA6C2B7YWELEC7+j5oyohVHecP0Pee6oUPRwGCIU5IJuoBHfJMI3JGbIuRlZgVW9pkddwJkONVLQ5A2Oy79irKYMhuKgBvxOne8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=pYJKblk+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0BABC4CED2;
-	Fri, 29 Nov 2024 10:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1732876888;
-	bh=hjOK0zywSeokD3DvA4azctX4cWAnxYzpu0R5TPG192g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pYJKblk+fhZ7TJuHqJ10qD1WMfJRsstNB9mSpwXkfGW5OWEmKthLmc2XlmhfJK0z9
-	 D5/TNREub82nIMd6n0kVWL/jtm/qP/wPTvsOniF6BgbDySRZY4TBAFLTNnck0cTsFY
-	 S2RH9/LtiVzVFctHpds8WHi8Ww0mVf9y1nv7wsho=
-Date: Fri, 29 Nov 2024 02:41:27 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Zi Yan
- <ziy@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, David
- Hildenbrand <david@redhat.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] arch_numa: Restore nid checks before registering a
- memblock with a node
-Message-Id: <20241129024127.a150e574c57e05b3b3b2a96f@linux-foundation.org>
-In-Reply-To: <Z0mIDBD4KLyxyOCm@kernel.org>
-References: <20241127193000.3702637-1-maz@kernel.org>
-	<Z0gVxWstZdKvhY6m@kernel.org>
-	<87y113s3lt.wl-maz@kernel.org>
-	<Z0l6MPWQ66GjAyOC@kernel.org>
-	<87v7w6sa5s.wl-maz@kernel.org>
-	<Z0mIDBD4KLyxyOCm@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732876959; c=relaxed/simple;
+	bh=7ZpyTF/Rwz9DM3tIvFc5vhQ1fTGkPShbTMlMb0/iVsY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m7xywS5aeWyNxvFZMRu/iNIGP21b1Yv/Xc8BV90Mfsj6RYVxacqu48dKUOzJM7YJNVpWNR76iYJbz3FiV+6I5tO1Ef4T5hBqZAgToCJi7YUocogFL7/mt8ozI0uKxdVQdJ0yF3pNKLA/lx1cynRdZ1Wyx8lhiO8IO2ZUilsmDBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-51532deb867so413461e0c.0;
+        Fri, 29 Nov 2024 02:42:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732876956; x=1733481756;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nz4i8+hIryKOg+hkDrUGtXlPZUU0hx+Rc6UUOljWAf0=;
+        b=rDHReeDPqJEhoia98YAtQc8sgaJFvDadJ26ZaUYhMsNYRdGrLBT8n1uQq7XJxTyXJ/
+         5Ro2TwJbqpMDKA5kbdwXyWGDwj55oUSt0Wja4sIv6gAMmeN6cbXxHVOQq+zdbeqIDqyk
+         nrBLnih65+0pFcKuH5hY/tjB61WKdpcjcUHFbzYBo2SCjT6ajxwSilZNX/4nCzszo4bL
+         IDgS5NBihe5wqbCpcHNoc2mn3+DQbTk1SudOCkaSDxs4hOPaRmXjL1iLS+r3PeWzO2DT
+         1gilU0uZpFvIrvQQOhXE80bh87qIl7saIty3GfxYV49fdaPQxZkqlkkUczQLa/bddpoY
+         WPGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5O1OjtS3HuxqUy1KJxqWwBX4jpVxK6jb9GrSRPlL3OB8uvugtmA1uWZ7Ew7jnUTwQjrJPK+IVn4pl/Wk=@vger.kernel.org, AJvYcCWGaB6Oi6S4eZ2pdWaavMSCT0GtQuHKQwhp+SKh8pUJ62Y5/0W6HUDVEJ8VHkcjCFddXEnS86BP2RnhtrFb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5P7ok2j3dZ9aawnvJAcs/hUIeZd7TZOy/dOmDfH5KFFRxG3U9
+	asrAPVXnNSTaTQSXw3Anv1uW6nwWIqekDywDZ3Qu/U0jKHg5wscwTshSdurld5I=
+X-Gm-Gg: ASbGncsn/irHsoUZWKNp3UnojM2QsgljjaRRwcBs07DpL8KAYS7Gw2+y6D1n3GWnq63
+	iGQPn0Lea7d7WZgQSstOYzRBrY7fM0d8q1vZmoaTGfTZ7Jel3zZspeORgJay8zO4ZZClSmykEYP
+	uU85696z3hXgv/KUVlp8Ue3nFeezTcnfSQ+LckJ3t2fgn42tzmjj16gn4V0u/b6WhT6Hw5gat0l
+	wg51sRTTt2v1NRGPXMvX0+Prh98E8Bp2oen3i3cPG4EiQ+z8qnthS94F4y3ku7uJoFjKIjRboU/
+	gjQBib0sIc+7
+X-Google-Smtp-Source: AGHT+IHuTJNm9lMGiUwPp8kaef9NY1g0n5CaDi8UI1YjDEJi8oFJl5FmQsfL4ikvj+p0qzUg8PaDpw==
+X-Received: by 2002:a05:6122:8c13:b0:515:4fab:2f8e with SMTP id 71dfb90a1353d-51556ae31e9mr12625720e0c.10.1732876955898;
+        Fri, 29 Nov 2024 02:42:35 -0800 (PST)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5156cd231d2sm478028e0c.27.2024.11.29.02.42.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 02:42:34 -0800 (PST)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4aed6fdf04fso401525137.1;
+        Fri, 29 Nov 2024 02:42:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUnnmg0esluOvFBgS1XBNLupivJV/91t8+vrz8ULrblkV6OFFZNEKawHHjevXCqgFBHr1rh7Prj6tlt+1f/@vger.kernel.org, AJvYcCWQlqqzyfHo2RqbgfvEMkR3MD5DJz7BPvlXkZxqBsnju4daViQFi0WoqeF8lYsjkT19mzuYHShD69qfaGU=@vger.kernel.org
+X-Received: by 2002:a05:6102:d94:b0:4ad:4ce6:709 with SMTP id
+ ada2fe7eead31-4af448f6a3emr13108148137.6.1732876954639; Fri, 29 Nov 2024
+ 02:42:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <Z0lCihhE75lE9Zjd@kroah.com> <CAMuHMdXwdyb6RA5jksNfw-M9h_nERvm8M4b7XU1_1N-C+bf94A@mail.gmail.com>
+ <2024112952-headphone-vastness-3814@gregkh>
+In-Reply-To: <2024112952-headphone-vastness-3814@gregkh>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 29 Nov 2024 11:42:23 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW9j-=hEgvth0L=AS+BgdFwgFfOkt=xbB7RCP=4UAvocw@mail.gmail.com>
+Message-ID: <CAMuHMdW9j-=hEgvth0L=AS+BgdFwgFfOkt=xbB7RCP=4UAvocw@mail.gmail.com>
+Subject: Re: [GIT PULL] TTY / Serial driver changes for 6.13-rc1
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Slaby <jslaby@suse.cz>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 29 Nov 2024 11:23:24 +0200 Mike Rapoport <rppt@kernel.org> wrote:
+Hi Greg,
 
-> @Andrew, I can take both this and Marc's new patch via memblock tree if you
-> prefer.
+CC Claudiu
 
-Go for it.
+On Fri, Nov 29, 2024 at 11:31=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+> On Fri, Nov 29, 2024 at 08:58:28AM +0100, Geert Uytterhoeven wrote:
+> > On Fri, Nov 29, 2024 at 5:26=E2=80=AFAM Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+> > > The following changes since commit 42f7652d3eb527d03665b09edac47f85fb=
+600924:
+> > >
+> > >   Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+> > >
+> > > are available in the Git repository at:
+> > >
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/t=
+ty-6.13-rc1
+> > >
+> > > for you to fetch changes up to b5a23a60e8ab5711f4952912424347bf3864ce=
+8d:
+> > >
+> > >   serial: amba-pl011: fix build regression (2024-11-16 09:52:55 +0100=
+)
+> > >
+> > > ----------------------------------------------------------------
+> > > TTY / Serial driver updates for 6.13-rc1
+> >
+> > [...]
+> >
+> > > All of these have been in linux-next for a while with no reported
+> > > issues.
+> >
+> > Oh, how do I love this boilerplate...
+>
+> I hand-craft that every time :)
+>
+> > > Claudiu Beznea (1):
+> > >       serial: sh-sci: Clean sci_ports[0] after at earlycon exit
+> >
+> > "BUG: spinlock bad magic"
+> > https://lore.kernel.org/all/CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrq=
+v5dWZWYA@mail.gmail.com/
+>
+> Ah, yes, sorry, missed that.  I assumed that it would be fixed soon, do
+> you want me to revert it instead?
+
+Let's hope it gets fixed soon.
+It's not super-critical, as earlycon is not meant for regular use
+(although lots of unaffected non-Renesas platforms do have "earlycon"
+ in their DTS chosen/bootargs, sigh).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
