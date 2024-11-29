@@ -1,96 +1,160 @@
-Return-Path: <linux-kernel+bounces-425657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246559DE88F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:33:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B66C9DE89C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:35:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6125B22290
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:33:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7818AB228EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF96613AA35;
-	Fri, 29 Nov 2024 14:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A41B13A258;
+	Fri, 29 Nov 2024 14:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JsJnw3O8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F7Y65b9g"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D5528EC;
-	Fri, 29 Nov 2024 14:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FF428EC;
+	Fri, 29 Nov 2024 14:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732890812; cv=none; b=fnkCJIkCtYzh1Ig2zi607rt0djSeEEsxvdCjmP02R9a7jUXMa+fLaNKQZxRfd1kq1NRrRD0hVt07OjH+W1ISU1BTUE9Rqg2QooCpW2j77H9wvafFZNGTGRLXP47HwMAZf8Mqm5GUuXujZSV/Xj14OWWNP2bVyNfbJxtzpXF3LHI=
+	t=1732890895; cv=none; b=m2i9ReuLWJ5ZTJEmiVK/SzAhYDF0Mae91BueFADfQ0Udkmtg/+pN6UUWQiybLRPu2mMcEr5AIsWgMaTfIUFpMorWb5hrxRAtYTju0U0VchhW5ttoFdGzaa/B2pAav/+pHrr0b+hytxhCiXuPTfEfDs3Ro5souLJka5BxoNXPQTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732890812; c=relaxed/simple;
-	bh=ggcFP2TpUDuJc85F0rS6rmNVHScKViGvL5eID60yB8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6iuNTwfKuyikWmugbjDBOqb5tfwhjumVqLYMzhA0ROI8R06GDLn0FxsAJ+wgJmeh2qhqcPsXQrmw6pJf0xZQ7QLUilvbj4nmaNsxRj6kmJMkNyUDAGO2mQir/WGgRb4SOG55PUCYJTxxOC/3IZkEDVpxikqIVmh8JTMRHC4PYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JsJnw3O8; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732890811; x=1764426811;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ggcFP2TpUDuJc85F0rS6rmNVHScKViGvL5eID60yB8U=;
-  b=JsJnw3O8JGFX7gkDnIF5LdvDQSl5vMX4pyqNU+IGBfVejtlahCzkniGd
-   WMdh8jsV7j90C/Ipd3q0vvPJPlD8SdhDG8dRpJPvhRZEkJDcz2rnZIoYU
-   hkYm2UumbuMFL199Vy1pM2FT4W5h1S2QY2W4s+tD60GQF3g42y7R+Dosi
-   DeOXYOIjk/W40aPeBIcT+Iz8iBviCxvN6uWzaAkPJByL9/iyvTJxU++2X
-   4plUUImeilmxHM3kD2SzRycvXZcKZuu8xfPpfZojbsZUlKRhazqlJt1bv
-   q6/g9YH3VrbYMuKxdr0ttYGYDxW51kGTB5s7UEDREaFntFXhCZkuHXu8/
-   Q==;
-X-CSE-ConnectionGUID: klrqiUcLStSywiqAAwHG/g==
-X-CSE-MsgGUID: kOJKjDO7Q9iW7mV4z0P/QA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="43798409"
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="43798409"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 06:33:30 -0800
-X-CSE-ConnectionGUID: vVsuKraCRxqWXr46l3A5gQ==
-X-CSE-MsgGUID: OOjSRwHmTe2M7TRTpTY39Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="92385422"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 06:33:28 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tH23g-00000002GLo-44Eb;
-	Fri, 29 Nov 2024 16:33:24 +0200
-Date: Fri, 29 Nov 2024 16:33:24 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] iio: chemical: bme680: add regulators
-Message-ID: <Z0nQtMfGbEzxq8q0@smile.fi.intel.com>
-References: <20241128193246.24572-1-vassilisamir@gmail.com>
- <20241128193246.24572-3-vassilisamir@gmail.com>
+	s=arc-20240116; t=1732890895; c=relaxed/simple;
+	bh=G7glBFGXkb9AyLaluXKWALwClBK8DK2gdMoaU5DSx3Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TSaAniSwO/9l3eEVL445tHRBAf5RodZeam8NW4mp0x4+zM0OAwlJ68bysjGGvHQgF+EwdD3bHrLLiBV9lSiNuHR1AS3qRn14IKia/z067zwGQB+XDAEMiMnRnybyg58O1/rUpvqHW5RxhSHfSa45um8z/3XA1JJAbIgPGKswz84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F7Y65b9g; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa51d32fa69so278768866b.2;
+        Fri, 29 Nov 2024 06:34:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732890892; x=1733495692; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2EW0JawT1PO10Kg8thaG7n+twU1CCeYAzaZkbbW//NM=;
+        b=F7Y65b9gyTSIe6opJWkjuWBskPXWXal6d/fl5LWWrN9q5xhWHOdEvEBUkVbS0iuQtP
+         aJcg038jKk18Wm6qo3ENjtEO4N5XuzU1Od8ybknkRk62kZuo8kv6RTt05AaN8pak4C7q
+         s55tpT4jfW/ysnaU7AwmVbdk5rSl/EI5KyHbjZX1kjclWEImLG0TKET/3a6o3lq8chH7
+         i4QdUnHdKLDbdK8gSSqr+7sZuflFTlcpWs83R9UtBPAXrxGhyKOd7+d14R3qmTGIyoeG
+         aJEsrMzApQg3rJbgCrM083D0pkzmWNmxP3xK8zlEQUXAcYK+gFmXCWs578ynWFsfB4rw
+         ZgFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732890892; x=1733495692;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2EW0JawT1PO10Kg8thaG7n+twU1CCeYAzaZkbbW//NM=;
+        b=T9ZeoFiY1Y5tUIAMQ0cls8bAX41KwlG1I1Oj0i6ncphN4Em9Evj0gEFzoiN/tS/d0c
+         oaQTImYdDDeEd2wnQnbsTmeJVT/gqQw4xUyiWxBgEJSsJv2MnWqeBmBZ/I22qzl3ou7y
+         E/ZnTi2tl2XF95klX2JruQxMDpEJ+abV1a2AmBquiPB7mFhTp9bvBBw/3Kq6NMJN2Zy+
+         VYaBMR4X6cU4t/n0g4N+4HdX2zPej2cEi2zH9AKzch3xIY2mnuBov84jKhoIQwmDeHFY
+         JoaRBrJEg+9p80eVcTgGSKEMUyCXFQrFklXYlsS3Ysq7iRIHmSTSgUtwW8T5SFY/Jt8x
+         Gp8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUyE7rxd6bVfZUh/yTewYBs6UO/WA+vYOfmLJuUuoB8KTBWWSSUzmtqL6ZGn3SEbwA4oruQ4NjYKJSI1c7u@vger.kernel.org, AJvYcCVHcU2c4+HtPnObnzwV9GaRjycQSBxqS4DbHtFAbQ4ZExX3KByv6ks0jPIL7HFWOf+LGlAjyiLYi/eTfCfZ@vger.kernel.org, AJvYcCVRIkJxxE22zCN/T6rLT2aBlJefn1he8FLlKReq8Yj/SjxbGFJVYGRHnp2CpyFVydxI6E61XNFGAtoz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9ZGIAh6ytuAwlCg8sXHleewOyQuLhaEWPJDoTKIIqnd8wcsa0
+	lwwEwLnnNw7pflvg3W24wQ12NT/jSb22ePala1GUX/fCYAnSldzSTpAYRY6bcOQ031DkXhbI+/u
+	gRne1CGv+2df57kChOWhzUeVh6L4=
+X-Gm-Gg: ASbGncuydZwTSDZDKFIGV14fCbfYu2ekIchAgS2r5ze3EFv4ENiUvwDI9D7dFNoPSW1
+	8KZEvLje7X/QnIU1IFH1EsO+z460ac5Y=
+X-Google-Smtp-Source: AGHT+IGTp1x5hC1l96OlJsKaXiA4Oe7Dso8Ablax6bwVAMKteoI2Yz37r80Tz5wedAvjNweA28pN3NSZsyt616Pic9I=
+X-Received: by 2002:a17:906:3145:b0:aa5:1d08:dad7 with SMTP id
+ a640c23a62f3a-aa580ed0a63mr813721966b.9.1732890891699; Fri, 29 Nov 2024
+ 06:34:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128193246.24572-3-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241129-work-pidfs-v2-0-61043d66fbce@kernel.org> <5ff149339540d3bccb09eb30544fab35ea29a53f.camel@kernel.org>
+In-Reply-To: <5ff149339540d3bccb09eb30544fab35ea29a53f.camel@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 29 Nov 2024 15:34:40 +0100
+Message-ID: <CAOQ4uxg5aKctWOC1Vo=dMGhSowGFDSzVq-Fvdxp5LeNOkaTPKw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 0/3] pidfs: file handle preliminaries
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Erin Shepherd <erin.shepherd@e43.eu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 28, 2024 at 08:32:45PM +0100, Vasileios Amoiridis wrote:
-> Add support for the regulators described in the dt-binding.
+On Fri, Nov 29, 2024 at 3:27=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> On Fri, 2024-11-29 at 14:02 +0100, Christian Brauner wrote:
+> > Hey,
+> >
+> > This reworks the inode number allocation for pidfs in order to support
+> > file handles properly.
+> >
+> > Recently we received a patchset that aims to enable file handle encodin=
+g
+> > and decoding via name_to_handle_at(2) and open_by_handle_at(2).
+> >
+> > A crucical step in the patch series is how to go from inode number to
+> > struct pid without leaking information into unprivileged contexts. The
+> > issue is that in order to find a struct pid the pid number in the
+> > initial pid namespace must be encoded into the file handle via
+> > name_to_handle_at(2). This can be used by containers using a separate
+> > pid namespace to learn what the pid number of a given process in the
+> > initial pid namespace is. While this is a weak information leak it coul=
+d
+> > be used in various exploits and in general is an ugly wart in the
+> > design.
+> >
+> > To solve this problem a new way is needed to lookup a struct pid based
+> > on the inode number allocated for that struct pid. The other part is to
+> > remove the custom inode number allocation on 32bit systems that is also
+> > an ugly wart that should go away.
+> >
+> > So, a new scheme is used that I was discusssing with Tejun some time
+> > back. A cyclic ida is used for the lower 32 bits and a the high 32 bits
+> > are used for the generation number. This gives a 64 bit inode number
+> > that is unique on both 32 bit and 64 bit. The lower 32 bit number is
+> > recycled slowly and can be used to lookup struct pids.
+> >
+> > Thanks!
+> > Christian
+> >
+> > ---
+> > Changes in v2:
+> > - Remove __maybe_unused pidfd_ino_get_pid() function that was only ther=
+e
+> >   for initial illustration purposes.
+> > - Link to v1: https://lore.kernel.org/r/20241128-work-pidfs-v1-0-80f267=
+639d98@kernel.org
+> >
+> > ---
+> > Christian Brauner (3):
+> >       pidfs: rework inode number allocation
+> >       pidfs: remove 32bit inode number handling
+> >       pidfs: support FS_IOC_GETVERSION
+> >
+> >  fs/pidfs.c            | 118 ++++++++++++++++++++++++++++++++----------=
+--------
+> >  include/linux/pidfs.h |   2 +
+> >  kernel/pid.c          |  14 +++---
+> >  3 files changed, 86 insertions(+), 48 deletions(-)
+> > ---
+> > base-commit: b86545e02e8c22fb89218f29d381fa8e8b91d815
+> > change-id: 20241128-work-pidfs-2bd42c7ea772
+> >
+> >
+>
+> This seems like a good stopgap fix until we can sort out how to get to
+> 64-bit inode numbers internally everywhere.
+>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Yep. look good
 
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
