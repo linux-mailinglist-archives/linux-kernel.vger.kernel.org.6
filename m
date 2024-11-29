@@ -1,214 +1,130 @@
-Return-Path: <linux-kernel+bounces-425732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F779DE9EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:45:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E1416387F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:45:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CD7146D76;
-	Fri, 29 Nov 2024 15:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hYeP4OAb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356CD9DE9F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:52:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E1128691;
-	Fri, 29 Nov 2024 15:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E871F281417
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:51:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A850A145B1D;
+	Fri, 29 Nov 2024 15:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tI9l5WHN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7A312C54B
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732895152; cv=none; b=DU05V9GbsYeG+fXmWBoQ2U2lgF9WYzsW5VGNxxDGF0lZE/yULJBIkRj9G55mdo1qkoqfAdQILPgK2lxphTOG5wXQ1TxBKZDdyDoXzbsMQMvLyRBhFiiJdtGTKoUIhyOk74ErsefKPWNLIefIiaHVyajw+lRqNO/CIw7I8mXRUJM=
+	t=1732895516; cv=none; b=Zmk1S82NkEY35LPxaHzNmjpwZ74QrzL5ge20tLtOQ/i0CrBi0PN2AX16MmoqZU7CqqxPwPmaZMQiGoAhvSUKNGPV6s/qzJb9ZK3DDWzt4da0Va3aPRVULYHNYmnBCmKeI9axzd+fVPDrisfw7Lr7dk+PtPSXCkj9vAh8wVp7rM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732895152; c=relaxed/simple;
-	bh=o7W1XPHc0UrSEAIBbp2ndyg4m42IPYJNm2Sn1HvDST8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=j2BUNqooOHavyCZPvD5zK24ZYeclQOxQFxfnjGOhblpcKVEW3rExY48P5Oh0HCMYtFus+/1NlQmSKKhJINoyKm8lWgss/gjuMNtkYEfFLLUHftUNjH6eoYKwmBwZ76vmB+kFtdHTPY16Zq3qVnBVp5J8K9Qubwg3oqU10MVDSYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hYeP4OAb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT5Tlvm031805;
-	Fri, 29 Nov 2024 15:45:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:message-id:mime-version:subject:to; s=
-	pp1; bh=XnU3+4szxOoD7IWWIK6VUkloVBGT0gHsfpXNUkEESq0=; b=hYeP4OAb
-	lTiKiXoCJQH9AruXPHCgcbOHC0IbtEm8GqIqST3J/E0uL25yc6oPqE67/t/RPHAn
-	NOQ3O0GWWvPDJ7omMcz5P3h45xc0NHsVtRF1dsk8vV59iEmDU5PGD2HwZGzsGqEl
-	6eGHqvJo2tSjkW+LgCbzoUrBvQhiFLNF7qoGCpNCn0VtuS5i/ay9kUov9ucn9mj3
-	/Y2yLysXfjUQUfXoAJuTja8X5YxCpxUp264uVd5eQciNNAxYxFFhvp/WsUjpIiBi
-	hgGg53pLPNLH8jQbDEPmtRqdN6SS0VRPegVrvfG1vLUkxfTEeJbCFMAd7MXsqUz4
-	EYY5QHLhRAOp2w==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 436upa5843-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 15:45:48 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT9khQJ024981;
-	Fri, 29 Nov 2024 15:45:48 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43672em2bg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 15:45:48 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ATFjidf53215674
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Nov 2024 15:45:44 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BDBAD20040;
-	Fri, 29 Nov 2024 15:45:44 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 620E12004B;
-	Fri, 29 Nov 2024 15:45:44 +0000 (GMT)
-Received: from osiris (unknown [9.179.13.224])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 29 Nov 2024 15:45:44 +0000 (GMT)
-Date: Fri, 29 Nov 2024 16:45:42 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] more s390 updates for 6.13 merge window
-Message-ID: <20241129154542.8578-D-hca@linux.ibm.com>
+	s=arc-20240116; t=1732895516; c=relaxed/simple;
+	bh=cC7g//YZlXZQLesdTIo2E8ORnvcod1v2gyyt9pbt9GI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOUUK/ExHFcTA1HKSR1gYDZUMOkFl+dDOA9tUdp7odu0GH92Yp/q2zqTz54TZTdSKSQWBjlLOyU/w5HWzy6lcUq6mRRqNmkglLzl9E6YAhfuLtHfcWqjrI/EY4vZrJkOIsKFMwHoRegfkOcCMu2H2A1uNz2waY54+MVqtdR4a/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tI9l5WHN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD52C4CED2;
+	Fri, 29 Nov 2024 15:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732895515;
+	bh=cC7g//YZlXZQLesdTIo2E8ORnvcod1v2gyyt9pbt9GI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tI9l5WHNh32qQkQlGnT+MRouJUqKewiydJhKPvKs9hzCuwprZVcEePaemkrJy29sN
+	 tfu34qL8yCn4lvZX39NzUVxIWtL10x64A2Z/H/rgenV5SD75hD35jC2coftvOLv2VT
+	 9mvdHV7sJtJgPZfyNYSmrgaxBRLZJsSP+v5jK/f7I/JiJNjyqj56Gl0i4dWcHZDqNx
+	 8F/+N1O/5sG+WF65EmuzdHZegSFvRsC6ylhHSy0jMdd5Ngbl4OIbPijbtQPcmoUf6W
+	 XekDlM7rY527ojn/INbtZI16ICg6HuoAcdldGtAi21QvfG/m9IQuXiWJnghhrtSkV+
+	 YdKcCdQY/7ksw==
+Date: Fri, 29 Nov 2024 10:51:54 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Sima Vetter <sima@ffwll.ch>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [git pull] drm fixes for 6.13-rc1
+Message-ID: <Z0njGuEof47TzpMc@sashalap>
+References: <CAPM=9tzpFOhQN3yCb4+OpLsfYVrq4mLuUS+SP=H=gq=qSLDz7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: TaO3FT62_NsZXETtlH5KBxnLROpDloyq
-X-Proofpoint-GUID: TaO3FT62_NsZXETtlH5KBxnLROpDloyq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 mlxscore=0
- adultscore=0 mlxlogscore=999 phishscore=0 bulkscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411290126
+In-Reply-To: <CAPM=9tzpFOhQN3yCb4+OpLsfYVrq4mLuUS+SP=H=gq=qSLDz7g@mail.gmail.com>
 
-Hi Linus,
+On Fri, Nov 29, 2024 at 06:42:18AM +1000, Dave Airlie wrote:
+>Hi Linus,
+>
+>Merge window fixes, mostly amdgpu and xe, with a few other minor ones,
+>all looks fairly normal,
 
-please pull a couple more s390 updates for the 6.13 merge window.
+Hi folks,
 
+I've also started seeing the following warning after the merge into
+linus-next:
+
+[    4.495349] UBSAN: shift-out-of-bounds in ./include/linux/log2.h:57:13
+[    4.501876] shift exponent 32 is too large for 32-bit type 'long unsigned int'
+[    4.509101] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0 #1
+[    4.510096] Hardware name: Google Shuboz/Shuboz, BIOS Google_Shuboz.13434.780.2022_10_13_1418 09/12/2022
+[    4.510096] Call Trace:
+[    4.510096]  dump_stack_lvl+0x94/0xa4
+[    4.510096]  dump_stack+0x12/0x18
+[    4.510096]  __ubsan_handle_shift_out_of_bounds+0x156/0x320
+[    4.510096]  amdgpu_vm_adjust_size.cold+0x64/0x6c
+[    4.510096]  ? __lock_release.isra.0+0x5d/0x170
+[    4.510096]  ? amdgpu_device_skip_hw_access.part.0+0x6a/0x70
+[    4.510096]  ? gmc_v9_0_init_mem_ranges+0x14c/0x14c
+[    4.510096]  gmc_v9_0_sw_init+0x436/0x7c0
+[    4.510096]  ? nbio_v7_0_vcn_doorbell_range+0x74/0x74
+[    4.510096]  ? gmc_v9_0_init_mem_ranges+0x14c/0x14c
+[    4.510096]  amdgpu_device_ip_init+0xd4/0xa74
+[    4.510096]  amdgpu_device_init+0xc4a/0x1458
+[    4.510096]  amdgpu_driver_load_kms+0x19/0x9c
+[    4.510096]  amdgpu_pci_probe+0x153/0x570
+[    4.510096]  ? _raw_spin_unlock_irqrestore+0x2f/0x58
+[    4.510096]  pci_device_probe+0x8c/0x118
+[    4.510096]  ? sysfs_create_link+0x1d/0x38
+[    4.510096]  really_probe+0xc2/0x2ac
+[    4.510096]  ? _raw_spin_unlock_irq+0x1d/0x38
+[    4.510096]  ? pm_runtime_barrier+0x52/0x90
+[    4.510096]  __driver_probe_device+0x7a/0x180
+[    4.510096]  ? __driver_attach+0x8e/0x188
+[    4.510096]  driver_probe_device+0x23/0x108
+[    4.510096]  __driver_attach+0x97/0x188
+[    4.510096]  ? __device_attach_driver+0x120/0x120
+[    4.510096]  bus_for_each_dev+0x71/0xc0
+[    4.510096]  driver_attach+0x19/0x20
+[    4.510096]  ? __device_attach_driver+0x120/0x120
+[    4.510096]  bus_add_driver+0xc9/0x208
+[    4.510096]  driver_register+0x52/0x10c
+[    4.510096]  ? drm_sched_fence_slab_init+0x80/0x80
+[    4.510096]  __pci_register_driver+0x5f/0x68
+[    4.510096]  amdgpu_init+0x62/0xb0
+[    4.510096]  do_one_initcall+0x63/0x2a8
+[    4.510096]  ? rdinit_setup+0x40/0x40
+[    4.510096]  ? parse_args+0x14b/0x3f4
+[    4.510096]  do_initcalls+0xbc/0x148
+[    4.510096]  ? rdinit_setup+0x40/0x40
+[    4.510096]  kernel_init_freeable+0x15b/0x1fc
+[    4.510096]  ? kernel_init+0x18/0x1f4
+[    4.510096]  ? rest_init+0x1cc/0x1cc
+[    4.510096]  kernel_init+0x18/0x1f4
+[    4.510096]  ? schedule_tail+0x50/0x60
+[    4.510096]  ret_from_fork+0x38/0x44
+[    4.510096]  ? rest_init+0x1cc/0x1cc
+[    4.510096]  ret_from_fork_asm+0x12/0x18
+[    4.510096]  entry_INT80_32+0x108/0x108
+
+-- 
 Thanks,
-Heiko
-
-The following changes since commit 3f020399e4f1c690ce87b4c472f75b1fc89e07d5:
-
-  Merge tag 'sched-core-2024-11-18' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2024-11-19 14:16:06 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.13-2
-
-for you to fetch changes up to cc00550b2ae7ab1c7c56669fc004a13d880aaf0a:
-
-  Revert "s390/mm: Allow large pages for KASAN shadow mapping" (2024-11-29 13:41:11 +0100)
-
-----------------------------------------------------------------
-more s390 updates for 6.13 merge window
-
-- Add swap entry for hugetlbfs support
-
-- Add PTE_MARKER support for hugetlbs mappings; this fixes a regression
-  (possible page fault loop) which was introduced when support for
-  UFFDIO_POISON for hugetlbfs was added
-
-- Add ARCH_HAS_PREEMPT_LAZY and PREEMPT_DYNAMIC support
-
-- Mark IRQ entries in entry code, so that stack tracers can filter out the
-  non-IRQ parts of stack traces. This fixes stack depot capacity limit
-  warnings, since without filtering the number of unique stack traces is
-  huge
-
-- In PCI code fix leak of struct zpci_dev object, and fix potential double
-  remove of hotplug slot
-
-- Fix pagefault_disable() / pagefault_enable() unbalance in
-  arch_stack_user_walk_common()
-
-- A couple of inline assembly optimizations, more cmpxchg() to
-  try_cmpxchg() conversions, and removal of usages of xchg() and cmpxchg()
-  on one and two byte memory areas
-
-- Various other small improvements and cleanups
-
-----------------------------------------------------------------
-Alexander Gordeev (1):
-      s390/mm: Remove bogus comment in __tlb_flush_mm()
-
-Claudio Imbrenda (1):
-      s390/vfio-ap: Remove gmap_convert_to_secure() from vfio_ap_ops
-
-Gerald Schaefer (4):
-      s390/mm: Rearrange region-third and segment table entry SW bits
-      s390/mm: Introduce region-third and segment table entry present bits
-      s390/mm: Introduce region-third and segment table swap entries
-      s390/mm: Add PTE_MARKER support for hugetlbfs mappings
-
-Heiko Carstens (14):
-      s390/stacktrace: Use break instead of return statement
-      s390: Add missing _TIF defines
-      s390: Add ARCH_HAS_PREEMPT_LAZY support
-      s390/ap: Replace xchg() with WRITE_ONCE()
-      KVM: s390: Use try_cmpxchg() instead of cmpxchg() loops
-      KVM: s390: Remove one byte cmpxchg() usage
-      KVM: s390: Increase size of union sca_utility to four bytes
-      s390/mm/hugetlbfs: Add missing includes
-      s390: Support PREEMPT_DYNAMIC
-      s390/spinlock: Use symbolic names in inline assemblies
-      s390/spinlock: Remove condition code clobber from arch_spin_unlock()
-      s390/spinlock: Generate shorter code for arch_spin_unlock()
-      s390/spinlock: Use R constraint for arch_load_niai4()
-      s390/spinlock: Use flag output constraint for arch_cmpxchg_niai8()
-
-Niklas Schnelle (3):
-      s390/debug: Pass in and enforce output buffer size for format handlers
-      s390/pci: Fix leak of struct zpci_dev when zpci_add_device() fails
-      s390/pci: Fix potential double remove of hotplug slot
-
-Thomas Richter (1):
-      s390/cpum_sf: Simplify release of SDBs and SDBTs
-
-Vasily Gorbik (3):
-      s390/entry: Mark IRQ entries to fix stack depot warnings
-      s390/mm: Allow large pages for KASAN shadow mapping
-      Revert "s390/mm: Allow large pages for KASAN shadow mapping"
-
- arch/s390/Kconfig                   |   2 +
- arch/s390/include/asm/debug.h       |   8 ++-
- arch/s390/include/asm/gmap.h        |   4 +-
- arch/s390/include/asm/hugetlb.h     |   4 +-
- arch/s390/include/asm/kvm_host.h    |  15 +++--
- arch/s390/include/asm/pgtable.h     | 117 +++++++++++++++++++++++++++++-------
- arch/s390/include/asm/preempt.h     |  22 +++++--
- arch/s390/include/asm/spinlock.h    |   7 ++-
- arch/s390/include/asm/thread_info.h |  21 ++++---
- arch/s390/include/asm/tlbflush.h    |   5 --
- arch/s390/kernel/debug.c            |  83 ++++++++++++++-----------
- arch/s390/kernel/entry.S            |   4 ++
- arch/s390/kernel/kprobes.c          |   6 ++
- arch/s390/kernel/perf_cpum_sf.c     |  38 ++++--------
- arch/s390/kernel/stacktrace.c       |   2 +-
- arch/s390/kvm/gaccess.c             |  16 ++---
- arch/s390/kvm/interrupt.c           |  25 +++-----
- arch/s390/kvm/kvm-s390.c            |   4 +-
- arch/s390/kvm/pci.c                 |   5 +-
- arch/s390/lib/spinlock.c            |  34 ++++++++---
- arch/s390/mm/fault.c                |   3 +-
- arch/s390/mm/gmap.c                 |  12 ++--
- arch/s390/mm/hugetlbpage.c          |  31 +++++++---
- arch/s390/pci/pci.c                 |  55 ++++++++---------
- arch/s390/pci/pci_event.c           |  10 ++-
- drivers/s390/crypto/ap_bus.c        |   2 +-
- drivers/s390/crypto/vfio_ap_ops.c   |  32 +++++++---
- 27 files changed, 359 insertions(+), 208 deletions(-)
+Sasha
 
