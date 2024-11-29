@@ -1,117 +1,173 @@
-Return-Path: <linux-kernel+bounces-425756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2850F9DEAC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:17:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270CC9DEAC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:18:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1491B21EF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:17:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C986A163BA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1FE14AD3D;
-	Fri, 29 Nov 2024 16:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B0F14884D;
+	Fri, 29 Nov 2024 16:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpnIhCuj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w2SYQP0Q"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DA01B95B;
-	Fri, 29 Nov 2024 16:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93721B95B
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732897017; cv=none; b=k/0plpfs4Lk4XfNSukRMkqOrl5sL/vkOQq7rsk7mdLxscP25wRk8EelGvfXpFRbSSuP+T+yWAhSr1H8LEBy+jEDwoDKuQNaCdV60p1+1wnpCVU5hDxFjmn2Y8zamHYioYXkXdx/otcqPe0E+eP+2OaScn7CRUyeIwKqEQOJmujM=
+	t=1732897084; cv=none; b=OwNGhzkOSCGewyAXAblkB6URexQ13PZsIaFgfE7Zju9WJ7u3IZGt2Tv7frNxWU72mEeZxIQ8EMn+mhwRyMm0iu8p3+qbUiECSUTLFwUdQ1liDZRwl8+UXYPd05o7paYmV82rYCwiZ3k+vo9sTDkV4Cu3G6iw+axbUA/1/KJIaCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732897017; c=relaxed/simple;
-	bh=YDnw7vhkaJAuUXfPbYeU6lVbCicKP6s6NAPiGggiTN0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SNBBt6hKpQ6q3fz0YFfdTpU3oU/DJMOEnTAjbiRhCixNiVGYVwNXH0Gt1TQVKOF/5UTcehnIstP8+28a6eShKe8DgAM+uDyljYXH2q8lJqFr4uzuTLQmxaJezN517tyu7bNEVS2OMnJB1dBzn/eKZy1k1mnQmSzQKu49L68Pc5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpnIhCuj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1603BC4CECF;
-	Fri, 29 Nov 2024 16:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732897016;
-	bh=YDnw7vhkaJAuUXfPbYeU6lVbCicKP6s6NAPiGggiTN0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EpnIhCujLTETC/sjIDlyXc2ImoUzbqLJnhGewOt8JJZCWT7l2uXBUXhxb+quO08FW
-	 uN+9llytzHm3TA/GZ5dkYjxKPesLirqPExRlbsyiQ5NCnG+op+ahMU0lC9DXiWOhS1
-	 qumSEl923QAwicK00scDv3kNvEQ7Ai6Ly+sv2W/EOQIx6nj2zeHNz8XJDX4niHJyRG
-	 wV//L/8sRDZpiWLE/8Ne0Wv27cTKH+sFcgYUCWhNqkj5RpVaGopLCuQsFf8Bu/4cuW
-	 oNRwuSMQABTpzzYq2OZJcd4WTNYbdOv2nQgQA36+zZZcJmZTxDyJJzYnHja9+5WFh/
-	 ljX7io+RZ5SvA==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53de5ec22adso2603584e87.3;
-        Fri, 29 Nov 2024 08:16:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXKwPCjiNbioOJTUIwZBqOFfHEVGTqeT7MrLhOKO5DDp5+b0oxe+lZXwDJA185VsdwtY7BGpeZaZI4NsEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQWWirEN+5FE+SGe/Q1539DNVJG/yBvjgSdQ8e8F2n27HMIeVH
-	G7iOqNe0vhL9PCUU0p+xY2xcWRKTlchnMYYTQ1a4OtxpPq70L966H/2lNurW5dQ/B9tdnPyKx51
-	MmKIGko63DFmo6sBBid/t3d5QB88=
-X-Google-Smtp-Source: AGHT+IGErHUY7cr9BfVuAMx9rKVS+ddSGGA3Z630K06yUd7VA5OKmJogaNZfNPqMKSaMYyDVMEOTxBPHY3komw7MEE4=
-X-Received: by 2002:a19:2d0a:0:b0:53d:f4af:6fea with SMTP id
- 2adb3069b0e04-53df4af70dcmr4799168e87.4.1732897014342; Fri, 29 Nov 2024
- 08:16:54 -0800 (PST)
+	s=arc-20240116; t=1732897084; c=relaxed/simple;
+	bh=roLgGOXe80LCkb7io5v9Zxq35t3VrtIQwBD2oOtFWsw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WwV9UIew7xywCkusynmEK77/Sst/xG2itIPrFB7u02wjty/TvoKqrqp8StaWVu+wY0Wqhsndv+OPEoKItN7ZsduKC3IX+048zjSJSQMZ/B7P0BssB3ujBW4ifYQw1Jo/76HB2TL/xR38ZYtwHsC0jJ2JqXRM+2CWYBtO39888uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w2SYQP0Q; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a742481aso18499725e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:18:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732897081; x=1733501881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1pgAcs630TzDTKDtObcfoo94+cezV0ZoWFH+WNcOUWs=;
+        b=w2SYQP0QY9+HUfwFdr6O3aNPpHehDc1UfHPuc71xQrz01u39XVtuaYW46QQIaXW8DW
+         ZMBBC52CUR8vrje9z0E0U5ph78a0RmKyLXkVodwWNlkOkSE/PhqM7dLanN5QdoQOvwnf
+         N3B4cyeKuQ2YmVgZwiCSRg+Q08FgmkZxX+fZem3oVE0fXmkHsJGYl/3ICTQ+v0ulijFH
+         0I7HI4NFG6Ci3qvCjkYrBS8mcDt3dumhZnB4MnBTqWICj+uzLNvChjaN4FcMTSbTc5X1
+         P39OFLKErZOLn9IRQQnU6BSwNgisDnr0/72Q4/KW037Xo/dWbBR0go2oWutV/iNmDcyW
+         FsRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732897081; x=1733501881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1pgAcs630TzDTKDtObcfoo94+cezV0ZoWFH+WNcOUWs=;
+        b=VekbhKBoTqrq9jITvLoUT3TXB6OwDEf3718hT7uAGliffjr288ogjPUTDDTEyWCr8+
+         DtqZCGl+7Wo20J7+PBZfG2AF9TD/+fu9YXsFQtY1AfN0mySlSvlc8l9knpJ1GpJuk1mI
+         lV7Wf98n7LQ6OIW/ESfrh1GUFie01WRCZkFevrhmLgmQ5RK+2TmpR5wf3HOoZ//+dQtx
+         iHjUCk5esl1gi3ktHXFFrylKqrFmvU0gOz5V0JpRNxpmcrMWeGXweET86tYtCAnFWgjF
+         9sVuz8LkPrg1yzHXOCNpj/gzINOzyIRaRiWIuBObErVkrw+0MX40Hld6JN+bN7A36v62
+         hySw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYzOmHm16uQlS0rGVLEbx4ADO+f5aWM+/dn/N8dCU95CZEOOtcHMFtFmB6z4AbTAtANztE7tzWW+ptaCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1+QuMRh6DSQaviMqjg0As1Fei/NYsVIxTuWhw1GkpXtWvQUnd
+	WZoLvkhT0zsTMpL/T6HI7RwPDaCBq1AehJxJJ1GoekLltQkUzpYePG9S1q5kGQk=
+X-Gm-Gg: ASbGnct+dugOqnCCrUU9VfB0xHAXyk+GtP8x1IhBj52yTD5Z4u6vT8i4ABQg9vUxam3
+	AxdXAKxcPN4l1B72n7j2w3hdAtzI6syDhR3XxzSklq/W9K70j5A3Mk++ToAZHWr7bK4ZmboGaIn
+	PuuBftQbciLypPg+R9bVt4lv7H7phJUHz/8zAA587nxu3d/lLH+fJE2U1SyW/A88/IG1x+UoI+R
+	gJAk9r+gJHM1Wtle7TA/LAMjihIwW7pXHFsvh3DpjGQb7KUl6pTffQ7Q3I=
+X-Google-Smtp-Source: AGHT+IFhJKhDc7fN7OPbIMEkzbQNlVjeqjAyU9BQ63czvdPQf8UqJLg0lNIAnU76dNuh0sk0oLkm9Q==
+X-Received: by 2002:a05:600c:1d18:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-434a9dbbcc7mr121957555e9.4.1732897080704;
+        Fri, 29 Nov 2024 08:18:00 -0800 (PST)
+Received: from vingu-cube.. ([2a01:e0a:f:6020:c54b:5636:4db3:1028])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dbf95fsm56771665e9.15.2024.11.29.08.17.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 08:18:00 -0800 (PST)
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-kernel@vger.kernel.org
+Cc: kprateek.nayak@amd.com,
+	pauld@redhat.com,
+	efault@gmx.de,
+	luis.machado@arm.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH 0/10 v2] sched/fair: Fix statistics with delayed dequeue
+Date: Fri, 29 Nov 2024 17:17:46 +0100
+Message-ID: <20241129161756.3081386-1-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125041129.192999-1-ebiggers@kernel.org>
-In-Reply-To: <20241125041129.192999-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 29 Nov 2024 17:16:42 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHPXS3r244jABjOKTEWaqWX2TYf-KA9i+J2-C3B4XxmUQ@mail.gmail.com>
-Message-ID: <CAMj1kXHPXS3r244jABjOKTEWaqWX2TYf-KA9i+J2-C3B4XxmUQ@mail.gmail.com>
-Subject: Re: [PATCH 0/6] x86: new optimized CRC functions, with VPCLMULQDQ support
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 25 Nov 2024 at 05:12, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> This patchset is also available in git via:
->
->     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git crc-x86-v1
->
-> This patchset applies on top of my other recent CRC patchsets
-> https://lore.kernel.org/r/20241103223154.136127-1-ebiggers@kernel.org/ and
-> https://lore.kernel.org/r/20241117002244.105200-1-ebiggers@kernel.org/ .
-> Consider it a preview for what may be coming next, as my priority is
-> getting those two other patchsets merged first.
->
-> This patchset adds a new assembly macro that expands into the body of a
-> CRC function for x86 for the specified number of bits, bit order, vector
-> length, and AVX level.  There's also a new script that generates the
-> constants needed by this function, given a CRC generator polynomial.
->
-> This approach allows easily wiring up an x86-optimized implementation of
-> any variant of CRC-8, CRC-16, CRC-32, or CRC-64, including full support
-> for VPCLMULQDQ.  On long messages the resulting functions are up to 4x
-> faster than the existing PCLMULQDQ optimized functions when they exist,
-> or up to 29x faster than the existing table-based functions.
->
-> This patchset starts by wiring up the new macro for crc32_le,
-> crc_t10dif, and crc32_be.  Later I'd also like to wire up crc64_be and
-> crc64_rocksoft, once the design of the library functions for those has
-> been fixed to be like what I'm doing for crc32* and crc_t10dif.
->
-> A similar approach of sharing code between CRC variants, and vector
-> lengths when applicable, should work for other architectures.  The CRC
-> constant generation script should be mostly reusable.
->
-> Eric Biggers (6):
->   x86: move zmm exclusion list into CPU feature flag
->   scripts/crc: add gen-crc-consts.py
->   x86/crc: add "template" for [V]PCLMULQDQ based CRC functions
->   x86/crc32: implement crc32_le using new template
->   x86/crc-t10dif: implement crc_t10dif using new template
->   x86/crc32: implement crc32_be using new template
->
+Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until its
+lag has elapsed. As a result, it stays also visible in the statistics that
+are used to balance the system and in particular the field h_nr_running.
 
-Good stuff!
+This serie fixes those metrics by creating a new h_nr_queued that tracks
+all queued tasks. It renames h_nr_running into h_nr_runnable and restores
+the behavior of h_nr_running i.e. tracking the number of fair tasks that
+ want to run.
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+h_nr_runnable is used in several places to make decision on load balance:
+  - PELT runnable_avg
+  - deciding if a group is overloaded or has spare capacity
+  - numa stats
+  - reduced capacity management
+  - load balance between groups
 
-Would indeed be nice to get CRC-64 implemented this way as well, so we
-can use it on both x86 and arm64.
+While fixing h_nr_running, some fields have been renamed to follow the
+same pattern. We now have:
+  - cfs.h_nr_runnable : running tasks in the hierarchy
+  - cfs.h_nr_queued : enqueued tasks in the hierarchy either running or
+      delayed dequeue
+  - cfs.h_nr_idle : enqueued sched idle tasks in the hierarchy
+
+cfs.nr_running has been rename cfs.nr_queued because it includes the
+delayed dequeued entities
+
+The unused cfs.idle_nr_running has been removed
+
+Load balance compares the number of running tasks when selecting the
+busiest group or runqueue and tries to migrate a runnable task and not a
+sleeping delayed dequeue one.
+
+It should be noticed that this serie doesn't fix the problem of delayed
+dequeued tasks that can't migrate at wakeup.
+
+Some additional cleanups have been added:
+  - move variable declaration at the beginning of pick_next_entity() 
+  - sched_can_stop_tick() should use cfs.h_nr_enqueued instead of
+    cfs.nr_enqueued (previously cfs.nr_running) to know how many tasks
+    are running in the whole hierarchy instead of how many entities at
+    root level
+
+Changes since v1:
+- reorder the patches
+- rename fields into:
+  - h_nr_queued for all tasks queued both runnable and delayed dequeue
+  - h_nr_runnable for all runnable tasks
+  - h_nr_idle for all tasks with sched_idle policy
+- Cleanup how h_nr_runnable is updated in enqueue_task_fair() and
+  dequeue_entities
+
+Peter Zijlstra (1):
+  sched/eevdf: More PELT vs DELAYED_DEQUEUE
+
+Vincent Guittot (9):
+  sched/fair: Rename h_nr_running into h_nr_queued
+  sched/fair: Add new cfs_rq.h_nr_runnable
+  sched/fair: Removed unsued cfs_rq.h_nr_delayed
+  sched/fair: Rename cfs_rq.idle_h_nr_running into h_nr_idle
+  sched/fair: Remove unused cfs_rq.idle_nr_running
+  sched/fair: Rename cfs_rq.nr_running into nr_queued
+  sched/fair: Do not try to migrate delayed dequeue task
+  sched/fair: Fix sched_can_stop_tick() for fair tasks
+  sched/fair: Fix variable declaration position
+
+ kernel/sched/core.c  |   4 +-
+ kernel/sched/debug.c |  15 ++-
+ kernel/sched/fair.c  | 236 +++++++++++++++++++++++++------------------
+ kernel/sched/pelt.c  |   4 +-
+ kernel/sched/sched.h |  12 +--
+ 5 files changed, 152 insertions(+), 119 deletions(-)
+
+-- 
+2.43.0
+
 
