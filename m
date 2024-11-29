@@ -1,73 +1,87 @@
-Return-Path: <linux-kernel+bounces-426005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008CF9DEDAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:53:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3259DEDB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:54:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BDDDB21215
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:53:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BEE41638F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFF715530F;
-	Fri, 29 Nov 2024 23:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DCB1A0AE1;
+	Fri, 29 Nov 2024 23:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hUpHrD9t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmR/Gve0"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5974189B8F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84015530F;
+	Fri, 29 Nov 2024 23:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732924390; cv=none; b=Tp8LiKDHvYtXGSEE0l0F9ntCtRIVVu/EBRr2eqyizIYPZJQU5EAJ83Qhq5s2Fuqa4WVFS+MrCrTM9pm6xgHaSlgZUOqzKKGBohIjXePqBRiouKjaxs0BEydcIoqFowBPrruz509CU8bi3gFG3UefHDmav/fF+mPCzIyt6FWRdNw=
+	t=1732924491; cv=none; b=Ig1PJEGCnKdEOXF3FC1kNVqBF/zH3t0lpiccqz/q3tj59CbgTxEDUnJYsAbpwamIAKFfH3IxEuMQrbE3T88YEO/d2tX10/5kUWBFQvQPWy+merE6SWkFj7F7BCFWji+x3HgCeeb3ISH7vcu3CvMvYyYbYEv5pIW4MveWz2H7Els=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732924390; c=relaxed/simple;
-	bh=dMojtd1hKJIh3YUnjd/dXONV6TFdwZwQm6greqURNnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RtG2ITv3tZzxozCAIUcH+LQeBeQUibNYj3W5JHp8wmduXzWZVLgqqaDW00D4Sn952ca2bqCJ2WEDagsjKEx10zZZAix61i+EbrB82+VXIEkMOz0gt8I8YaWe/fWT26r+Ta2y/ctVOx3q4mizpy4HNZ9rtGbiKiF6oH0P1HJVm8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hUpHrD9t; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732924389; x=1764460389;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=dMojtd1hKJIh3YUnjd/dXONV6TFdwZwQm6greqURNnQ=;
-  b=hUpHrD9tM365YvgpvmS07ZUJlMZ6kRtxpMGIXLfcbT6oE4yV6pHu6E/X
-   7SWltgiTrb8HbRvK4mBZ5JKC6tYbEgeUAERByo7bzBkpwYMF8yGSxjlBt
-   Mh6TIuWNb3gFmdpBiHBdKuABCcvWGhY3Ws/TIfquGMeG1rb7fDtX9po0x
-   isM/M2Fg0NQhSsq6GB7G17UuynCVPXq4ElresoJCpLp/2QQmEQd2g0GJS
-   W+rRibhbjPxEtWlYkOjx7+R0XwVAXwwrj3WiS4DbZpYJwvbGxwkSpRmKq
-   IJkLgdRYfCNJTiK/CU0UEQHzGH4FhvGID2fgQdosw/IWeqvni/YYV78R7
-   Q==;
-X-CSE-ConnectionGUID: f64Dz6cCSeGk+0Vcqgbuaw==
-X-CSE-MsgGUID: tVLRFaVEQjWWio6PZ93YAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="36019812"
-X-IronPort-AV: E=Sophos;i="6.12,197,1728975600"; 
-   d="scan'208";a="36019812"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 15:53:08 -0800
-X-CSE-ConnectionGUID: j+faet0cR6mdqtIIg5nmDg==
-X-CSE-MsgGUID: 9n8EXdejTZerldv0VCBg0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,197,1728975600"; 
-   d="scan'208";a="92760198"
-Received: from lkp-server01.sh.intel.com (HELO 5e2646291792) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 29 Nov 2024 15:53:07 -0800
-Received: from kbuild by 5e2646291792 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tHAnI-0000m5-0w;
-	Fri, 29 Nov 2024 23:53:04 +0000
-Date: Sat, 30 Nov 2024 07:52:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Saurabh Sengar <ssengar@linux.microsoft.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Wei Liu <wei.liu@kernel.org>,
-	Michael Kelley <mikelley@microsoft.com>
-Subject: error: ran out of registers during register allocation
-Message-ID: <202411300710.sjbtlh3s-lkp@intel.com>
+	s=arc-20240116; t=1732924491; c=relaxed/simple;
+	bh=RXmFWIqBdeITpAI29tkUBBKRJ+AI8lY+rUqfD3si3xw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiHySReTLA427e1rgbxiMIWGAHVP5TDLWRW4KVEI7nDsk5A41RO0PivWrnJpn8u5rf6QjzmcoDoQSziBZMIOsBhdenWbFor/jIWRNAsSEr3GHnE7dLTqKG/lyvbghO9auiBBJcAHIVC46E5Zop3BxquV69YnWGOwY5ii4wifia4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AmR/Gve0; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385d7f19f20so872479f8f.1;
+        Fri, 29 Nov 2024 15:54:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732924488; x=1733529288; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EEPesXU+h9oIb2rQWQl22qE/+ZEA6qAcZJWXR1NmMyo=;
+        b=AmR/Gve0BiQryAy9PWJQ9NE6l2PAA0fM479sEmV0sJIvgIjidlZNTLauCipAs8SsyO
+         4s4Y2ov9JSCXVjq72VEDvvjuoVgZAEbH9uh1cR+/RUVo/CToJvRF/NCyxUskfWdzpTR5
+         Midg2SQjHdUahcFdnrjS+5Azv9+ATMASlUW3B+3l+lpME6YY0f7KoMiBhxS8FXYM0RQV
+         83Lwr28rUd0s9e8DmtPig83GgF6dWBHP/GMA35/4n0ldep0o6NOSRRFGx5QqGg7l2I6o
+         gyYHkdKEPI5gDk0qzwRTma8zVbzMTeuv+NRBR9Yzhtlp09yBoPsvFPQCS8zYvl3QZyan
+         0u3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732924488; x=1733529288;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EEPesXU+h9oIb2rQWQl22qE/+ZEA6qAcZJWXR1NmMyo=;
+        b=CM6EqVf2OkZEUzkHrbKOmz9CqYxXl5KP3X/J6RSrwMuVEL3TBzLpuu5skVRFA+k0O2
+         2BA4nLlHLy8Tg2azgLffr5LLlBrYlU+rxHt7DKJo3ETrurGGnS8TEeV8mGjungZbd8IR
+         A1Oa2IlUC6BnwpipeDeMXaFMgZvm9e47+lCfVBSCrV2lzkfHMjA35vfd1uAdKi4M+De5
+         H4xSXlIYZ/T49/bcnt2On7i7MTqAfwsA74e7Zwt798DenPokD8PEoqbrJRM7Xh+pfLoI
+         tyM6/IOAemFNyK6T6XidL6mvd6aRr7ah2Rd3gF91YOlQg4vyStvL7L+/qIFbl3e4EWCH
+         O9Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCVpyRmY+2qDncWtd7s6s/kDejHTtlhA8o3aY2qUTFdswIN/rqgANlUmWm8zNgrtilH21kiVG8KRCS0w@vger.kernel.org, AJvYcCWhCmI7XEpGLwO/IfaiQw4vwVYKiBk02l0BniKbgxCdCo6mqI5mR16DtN1fr5S1n1NHYaSEAJyMrBvjeNCQ@vger.kernel.org, AJvYcCX0YLTwhlF/APJod+QbrEHM+tYbMFK+0pG3rCYZnoQIjYy5vChQLQE99Cn/A3okBeEwXpy021Gmx3/X@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsm3Be1KJ4FEEYn22C6jZI8Sj/xixYmrQ0/w+Fxf5Qfpjr5fiG
+	T1ugMKyoE3w9aQQA+KypSmGKUjGdoM0LC7DZgtXPcHat7mVNNxPJ
+X-Gm-Gg: ASbGncvemqHPTFMbnneHnOJbclPqsbzEYX3ERKqE6H66+/uei7Nr1uwnJ71fYhojAnH
+	5oiN2PIMSenLAJ929guam5wylJpX2bbEL0x6QD8M8uR3nvDSDnfeEXOCVTSgBhtgmIHKbMZuOmt
+	DwVoJiiBvlmxZnA3NRIyWOVVyR2kSLuhGeV8XlyQ4hzOvKzBUvfN3L4OnrtfOq1BGIlMq1TM69H
+	5cHVDzuxKKgArCz0HqsixkD+D8SqyI03BRDtB1Mk6i0tBRQRvG44nJ3KE4=
+X-Google-Smtp-Source: AGHT+IHBMBxAfyqoTtOJA9LCRV8ah0cIhYx7tY0Qbu/qA0nUl6gfNdVPHblCaTGYtwp/2XGRgKx5Xg==
+X-Received: by 2002:a05:6000:1849:b0:385:e013:39ec with SMTP id ffacd0b85a97d-385e0133a41mr3770848f8f.8.1732924488446;
+        Fri, 29 Nov 2024 15:54:48 -0800 (PST)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:2250:4c83:a8d5:547])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd2e940sm5610573f8f.15.2024.11.29.15.54.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 15:54:47 -0800 (PST)
+Date: Sat, 30 Nov 2024 00:54:44 +0100
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ajarizzo@gmail.com, ak@it-klinger.de,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] iio: pressure: bmp280: Make time vars intuitive
+ and move to fsleep
+Message-ID: <Z0pURIPAG4MHRYH3@vamoirid-laptop>
+References: <20241128232450.313862-1-vassilisamir@gmail.com>
+ <20241128232450.313862-4-vassilisamir@gmail.com>
+ <Z0nXNW4751P6hDtC@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,60 +90,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Z0nXNW4751P6hDtC@smile.fi.intel.com>
 
-Hi Saurabh,
+On Fri, Nov 29, 2024 at 05:01:09PM +0200, Andy Shevchenko wrote:
+> On Fri, Nov 29, 2024 at 12:24:50AM +0100, Vasileios Amoiridis wrote:
+> > Add time unit abbreviation in the end of the variables to make the names
+> > more intuitive. While at it, move to new fsleep().
+> 
+> Seems to me the commit message's primary and secondary purposes should be
+> swapped, i.e. you do --> fsleep() conversions and while at it, rename variable.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+>
 
-FYI, the error/warning still remains.
+Hi Andy,
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2ba9f676d0a2e408aef14d679984c26373bf37b7
-commit: f83705a51275ed29117d46e1d68e8b16dcb40507 Driver: VMBus: Add Devicetree support
-date:   1 year, 7 months ago
-config: i386-buildonly-randconfig-002-20241130 (https://download.01.org/0day-ci/archive/20241130/202411300710.sjbtlh3s-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241130/202411300710.sjbtlh3s-lkp@intel.com/reproduce)
+Thank you very much for the review! I can change that in next version.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411300710.sjbtlh3s-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/x86/hyperv/mmu.c:3:
-   In file included from include/linux/hyperv.h:17:
-   In file included from include/linux/mm.h:1970:
-   include/linux/vmstat.h:516:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     516 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
-   1 warning and 5 errors generated.
---
-   In file included from arch/x86/hyperv/ivm.c:10:
-   In file included from include/linux/hyperv.h:17:
-   In file included from include/linux/mm.h:1970:
-   include/linux/vmstat.h:516:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     516 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> error: ran out of registers during register allocation
-   1 warning and 1 error generated.
---
-   In file included from arch/x86/hyperv/irqdomain.c:11:
-   In file included from include/linux/pci.h:1970:
-   In file included from arch/x86/include/asm/pci.h:5:
-   In file included from include/linux/mm.h:1970:
-   include/linux/vmstat.h:516:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     516 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
-   1 warning and 2 errors generated.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Vasilis
 
