@@ -1,139 +1,158 @@
-Return-Path: <linux-kernel+bounces-425803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994FA9DEB22
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:36:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393F19DEB25
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:36:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B6F0164099
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:36:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFB319F131;
+	Fri, 29 Nov 2024 16:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="STL2h9AV"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADF6281804
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:36:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A0A19C552;
-	Fri, 29 Nov 2024 16:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IPC2Vp6t"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B9044C77
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81CF1474A7;
+	Fri, 29 Nov 2024 16:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732898167; cv=none; b=izm3gG2WH1m8Pm7lhsbTOs0i3PHv/7ys4P+IVrMvSRY7GjtVG8zBYc3wEY3PNQnMTnsEB9rqv1H2jB5UXUGME6vLRUGIch2/kWgE1cETE+IK0ps1u5jAO6bWKZE7Jj8YWqgCPVLg6mGYnDH+sQjH9BvygHgH1odWR6EluFwpA2M=
+	t=1732898169; cv=none; b=tA+wGvzfcyRECtBeAKRthYGF4oViuILSL4njqoGmnie7yK5ZjaamJWTDTxspbpSgL8ZUpvMikLp2Uv32JeeX8GnN6Sb2J3Ts2LbIHngRK5/qYQ/pQ0z99NwiFXGBdEB8ug4TVcBRUlofOvcPoB8TBi5tKAIoQOj83AGwYmdYSHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732898167; c=relaxed/simple;
-	bh=InsIgXgLx7YQgnFJY31nsgNKsFevoHh8zNHdDTTAP4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tuWvnj0H50XOFQsAHCAm+P2E8yGgrZeK+As8ow9B0CMQvc6K/CslW5o/Y7APhx0TfCRGpXk5PIz2acheTNGtMU/aMMfBAcR01c3dkrRiuQYjgnzhIz3asfWKX5zKLz/hIebpCa8TzB3QBkCLoUMFkHd+SlIBeZGgYIl9EA5ZmKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IPC2Vp6t; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2142214abd2so16275405ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:36:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732898165; x=1733502965; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KAS4qmfhKfQCTxA5dEKDiEOUQ8ijX4qkasD6tbLsLDY=;
-        b=IPC2Vp6tUBD6IckBjhM4xhIBQtW6h2a6Vb+KKST/25Ev1SZT96/UDRqWq+nd0KZ5ui
-         xRiQVgQxuyNr6tFpO+Q21r/SwNqJ+aRmmeFqv8rhSeRgCe1Os1Ar4OzNJgFVwkwPczr/
-         MLubFE5MMUtxzTbYbZ1KYTePxz8vaz2plXYks2F2eSIIhhxSF6lxpe/DU8rcQ3to44k3
-         6ZTOH9SgvrJgleMjTcvxuzw2J2oIJQ5tXzJdr0FExIbZ+O2tdZhY++KEBH0WrEswuIK4
-         AYJjUi6uEkpSINUBb66kQkHLMH47Z+N+WmmC/dAuTJXjoKCfYeAlSwxJG0XGcwwOJthd
-         7hdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732898165; x=1733502965;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KAS4qmfhKfQCTxA5dEKDiEOUQ8ijX4qkasD6tbLsLDY=;
-        b=YyanWiDuSaiOzMg8KTQjxnpI4CZwWgc9wElby9PA9hMRhcbSXsDhlwzFzymMNKfe0Z
-         rdrPNHY5BZLeEG5cEIDT0K9yndrA9kjwJbYLr9I3xWNaMKnoOh2+RDveDjQJFIsPObaX
-         uvLjhtphV2wU33IRWwvFxQE0nHwke45yPkNq1P/l8l789hAb/3zUcmqHIvUYiL9Liqn0
-         DOpdEhOekGT5KjyUzLZFukMEZFHV0Pr/AllWLNB9qfWRmhQuL+p88K/Qj37OA8cFQERy
-         4pV38/4zkLOuJGfMKuEFqzmPYyDxoXEtVxBm6FXPwURvkKg1j8EujylZDkB4G0V7V7cZ
-         NbVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXK4WrGF3Ark4at5ZfTrVvickOwtGF2gF2HQ6Fp1YLeAm9icoCVU9pGE6h0QJbUEiJxkRSOsWSWQng03hQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzkcCC7SwM/ogTCIjOE3gpkt9VRBvP4IgLyiR6EecWgziRcfAx
-	P6p6dlv93eorygyZc1AJ16tr+e6fssIVoTsIJOiu/NzahYUou+DLZTGKPQFlpQ==
-X-Gm-Gg: ASbGncsTSD2qXxSe+nYj2M1js4d3NIqbdkjDdhTd7E2rVcQSMboGOQVoAINXprfYBAx
-	YO0FH5ANR4K/ioETXYI2iYAW5L+Hc9z/GDD0OGAvd2kfdn0laUR/fPc+kgE9woz/2dFTN5VlUrB
-	2S4TYRBji/aBIUJH0F1uXmb9piMHzlImRW/Kcrl3YaFywPc3P4E8+54HUM4rq9NlmkragIUCj6t
-	+qVfPUJLb3mvaWcDoRTChn1MIRP4CJ6+dm0yyHIVadYIQLX3K8Q5hjCHV9d
-X-Google-Smtp-Source: AGHT+IFsGXl/IU7bXt5NrZfPNWz7fsWHGMuIQFgh7MSCJkj2+YOoJBdoGnq61lBkrYp/j8HLEMymlA==
-X-Received: by 2002:a17:902:d491:b0:215:4e40:e4b0 with SMTP id d9443c01a7336-2154e40e808mr23212585ad.9.1732898165186;
-        Fri, 29 Nov 2024 08:36:05 -0800 (PST)
-Received: from thinkpad ([120.60.57.102])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215219c31a0sm32731185ad.249.2024.11.29.08.36.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 08:36:04 -0800 (PST)
-Date: Fri, 29 Nov 2024 22:05:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: kw@linux.com, gregkh@linuxfoundation.org, arnd@arndb.de,
-	lpieralisi@kernel.org, shuah@kernel.org, kishon@kernel.org,
-	aman1.gupta@samsung.com, p.rajanbabu@samsung.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bhelgaas@google.com, linux-arm-msm@vger.kernel.org, robh@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] selftests: pci_endpoint: Migrate to Kselftest
- framework
-Message-ID: <20241129163555.apf35xa6x5joscha@thinkpad>
-References: <20241129092415.29437-1-manivannan.sadhasivam@linaro.org>
- <20241129092415.29437-5-manivannan.sadhasivam@linaro.org>
- <Z0nG3oAx66plv4qI@ryzen>
+	s=arc-20240116; t=1732898169; c=relaxed/simple;
+	bh=St5I1KCUJ1mKkVweJS5J5SS0UjlUqUbGxRaIBGK0WEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eIO+O/eKIIc5TzpuHXyygXqAiRsmWLs9facPGJhuZ1vazZByO5XG3+X2QFRZ2OwCBdy6FI3NZdoyhNjfRsvLAuY02ol7jh3iRaaAIno0B4hh0OXIc++7I8rC3JCGXYhrnYN1kTyaBUn+8Zdg2p3+bctnltUfMTxtyaxWXVIA//Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=STL2h9AV; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=4W8Rqmae+GoUrIIxVWQgBlsh4/eEYJ7BEkZbzOEfoe0=; b=STL2h9AVW5w8fxtXk+D3f8rGqZ
+	IFV2a2gnGl0GCIBGf2F1iXFkfUGhluEr8ORItiHz2IXKqw09wQNhWxP4FItKVKEwZjl5/i+nhuwS3
+	xvyhOdy+CqYFHDc60NxDWxC4+Za5as/g0BlFH6mmQc/7FEkl5l3klufbWvo6IpFOKBGXz033QUYxS
+	j5bzLfu3l/vIkNCjbn+YplekwEeA5xeVSnqGku5PrJgGlTmI6JvpdJvSyaJryscj6IiUk473AzHKV
+	EImvBM3InjByigLfJ4A6C6fGbH6oZCNjCUE5Vwfs5gQbpF+XRr0LbdhEteeLVj54uU2oVoPtBtD6F
+	bUlGfH2A==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1tH3yI-0007RJ-TK; Fri, 29 Nov 2024 17:35:58 +0100
+Received: from [178.197.249.40] (helo=[192.168.1.114])
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1tH3yH-000Jf4-2G;
+	Fri, 29 Nov 2024 17:35:58 +0100
+Message-ID: <89424046-1142-447e-8a63-d8492ccd9abc@iogearbox.net>
+Date: Fri, 29 Nov 2024 17:35:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z0nG3oAx66plv4qI@ryzen>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v4 1/2] bpf: Remove bpf_probe_write_user()
+ warning message
+To: Marco Elver <elver@google.com>, Alexei Starovoitov <ast@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Nikola Grcevski <nikola.grcevski@grafana.com>,
+ bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241129090040.2690691-1-elver@google.com>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ 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
+In-Reply-To: <20241129090040.2690691-1-elver@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27472/Fri Nov 29 10:38:16 2024)
 
-On Fri, Nov 29, 2024 at 02:51:26PM +0100, Niklas Cassel wrote:
-> Hello Mani,
+On 11/29/24 9:59 AM, Marco Elver wrote:
+> The warning message for bpf_probe_write_user() was introduced in
+> 96ae52279594 ("bpf: Add bpf_probe_write_user BPF helper to be called in
+> tracers"), with the following in the commit message:
 > 
-> On Fri, Nov 29, 2024 at 02:54:15PM +0530, Manivannan Sadhasivam wrote:
-> > Migrate the PCI endpoint test to Kselftest framework. All the tests that
-> > were part of the previous pcitest.sh file were migrated.
-> > 
-> > Below is the exclusive list of tests:
-> > 
-> > 1. BAR Tests (BAR0 to BAR5)
-> > 2. Legacy IRQ Tests
-> > 3. MSI Interrupt Tests (MSI1 to MSI32)
-> > 4. MSI-X Interrupt Tests (MSI-X1 to MSI-X2048)
-> > 5. Read Tests - MEMCPY (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > 6. Write Tests - MEMCPY (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > 7. Copy Tests - MEMCPY (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > 8. Read Tests - DMA (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > 9. Write Tests - DMA (For 1, 1024, 1025, 1024000, 1024001 Bytes)
-> > 10. Copy Tests - DMA (For 1, 1024, 1025, 1024000, 1024001 Bytes)
+>      Given this feature is meant for experiments, and it has a risk of
+>      crashing the system, and running programs, we print a warning on
+>      when a proglet that attempts to use this helper is installed,
+>      along with the pid and process name.
 > 
-> I'm not sure if it is a great idea to add test case number 10.
+> After 8 years since 96ae52279594, bpf_probe_write_user() has found
+> successful applications beyond experiments [1, 2], with no other good
+> alternatives. Despite its intended purpose for "experiments", that
+> doesn't stop Hyrum's law, and there are likely many more users depending
+> on this helper: "[..] it does not matter what you promise [..] all
+> observable behaviors of your system will be depended on by somebody."
 > 
-> While it will work if you use the "dummy memcpy" DMA channel which uses
-> MMIO under the hood, if you actually enable a real DMA controller (which
-> often sets the DMA_PRIVATE cap in the DMA controller driver (e.g. if you
-> are using a DWC based PCIe EP controller and select CONFIG_DW_EDMA=y)),
-> pci_epf_test_copy() will fail with:
-> [   93.779444] pci_epf_test pci_epf_test.0: Cannot transfer data using DMA
+> The ominous "helper that may corrupt user memory!" has offered no real
+> benefit, and has been found to lead to confusion where the system
+> administrator is loading programs with valid use cases.
 > 
+> As such, remove the warning message.
+> 
+> Link: https://lore.kernel.org/lkml/20240404190146.1898103-1-elver@google.com/ [1]
+> Link: https://lore.kernel.org/r/lkml/CAAn3qOUMD81-vxLLfep0H6rRd74ho2VaekdL4HjKq+Y1t9KdXQ@mail.gmail.com/ [2]
+> Link: https://lore.kernel.org/all/CAEf4Bzb4D_=zuJrg3PawMOW3KqF8JvJm9SwF81_XHR2+u5hkUg@mail.gmail.com/
+> Signed-off-by: Marco Elver <elver@google.com>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-So the idea is to exercise all the options provided by the epf-test driver. In
-that sense, we need to have the DMA COPY test. However, I do agree that the
-common DMA controllers will fail this case. So how about just simulating the DMA
-COPY for controllers implementing DMA_PRIVATE cap? I don't think it hurts to
-have this feature in test driver.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
 
