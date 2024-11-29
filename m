@@ -1,196 +1,101 @@
-Return-Path: <linux-kernel+bounces-425938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0639DECBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:37:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107E19DECBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:42:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0542826D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEA75163389
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6F51A0BE1;
-	Fri, 29 Nov 2024 20:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C145B1A0BE1;
+	Fri, 29 Nov 2024 20:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DxrP20O0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t2ZNAuPx"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149A715697B
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 20:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAA044C77;
+	Fri, 29 Nov 2024 20:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732912613; cv=none; b=HsjZssza/gFxh0GcOO1Cqpjzkx5qEHhm9TdBwnP/0rQ1xKjDJmkG97L9vnJBONubMqTrHFLoJCW7nBwrsmW/IqpSVfHjJQsV/Dqe3sbOvjMwlIL0vU/Xb9Nqr1HyTafbV5XAaEpuoep5cnFqwjmU9jp2jAjVoSgJ9xFGYfP2GzM=
+	t=1732912950; cv=none; b=uImfw3rVSeHgXSM1f/eUIatby2ugo4XeFLouf/fFt5qWFnmjx79dF3bJUrYco1JmKxg+A74EQdLm8CpLhsQXrKPx7ZiuyDwQ6r7bcsh+hdia6yvl1KzSDwNEdiKKP3JaPwmZQ7vxk0V6gzrxMC48q4Oyt9dwwjvjNrID2zG/ims=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732912613; c=relaxed/simple;
-	bh=YZlE/jBpFo+64Z8yAfT8C1Ta79oTRVsY9z4cyYBUpFg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=IqjaFuEb9mrdOodygTE22M795fYv29fYMmIpWXse2efFEklMCHQSFNHz99i3KfydRxpEK3owpVwhgmO4/uCXpcGelTV4btRkDhBa/K9FJ3HhSOKMvMLIOrB7kqbjkvMTG7AXJrxWqZ5BhE4zh5CBISU9PEyYwmXgONvA2cohsL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DxrP20O0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732912611;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/a5M7IdP8lXOGSSM/sXvBBskiEQyvgFUKp3QFL06WRg=;
-	b=DxrP20O0fskGJ3v8vmBNSBZaTSFQ9CPs+ofLCLdIoSbB/IHof5vfNYVFrvRDnN9u2eC/aw
-	XdRtvhMo16tvOyXPeZ5PgVJOpL7HevjcsGGKCNTrv9KO/iLiU5kkxiChvemryqc+7h+OZp
-	1LeifA1gAkcDF/EG/dS+kIBwvvAJK7k=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-454-jRuj2I_4OEG2qe8KdOixPw-1; Fri,
- 29 Nov 2024 15:36:45 -0500
-X-MC-Unique: jRuj2I_4OEG2qe8KdOixPw-1
-X-Mimecast-MFC-AGG-ID: jRuj2I_4OEG2qe8KdOixPw
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6E69E1955DCA;
-	Fri, 29 Nov 2024 20:36:43 +0000 (UTC)
-Received: from lszubowi.redhat.com (unknown [10.22.88.155])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EF86E195605A;
-	Fri, 29 Nov 2024 20:36:40 +0000 (UTC)
-From: Lenny Szubowicz <lszubowi@redhat.com>
-To: pavan.chebbi@broadcom.com,
-	mchan@broadcom.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	george.shuklin@gmail.com,
-	andrea.fois@eventsense.it,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [patch v2] tg3: Disable tg3 PCIe AER on system reboot
-Date: Fri, 29 Nov 2024 15:36:40 -0500
-Message-ID: <20241129203640.54492-1-lszubowi@redhat.com>
+	s=arc-20240116; t=1732912950; c=relaxed/simple;
+	bh=KQXyE0PHNGnkB7ATfiEdHb7Pa/P9Cbq3A8rIsx+QRnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oL8+/0N/jOY7PUahIDQBhpIb4eW/s6Uzd9eOmwVHcTDVev5ghnTsNheKiFgqOegA2qS87jrykBUp78zlhgIvBq6eTsJ7d5j5JF56wVyM5MJEFQ3WQ8jVf5VXNLtSOWQgjpniBOB6Vw0lCOIOhGhsXIZYSdhaFQWv8AG0Tql0AQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=t2ZNAuPx; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=X7aBu5N32YIZ611CK1D8iT4+0u7ZGBBz/rE6KJZjVFg=; b=t2ZNAuPxV0pf9kDXS6US/VzS+W
+	cmxDeH26kCkiYsOv0Y1It2zg8JWcsZCLfaePB60voMWvlUo+i6EQZCmz6DRBjqO6dFKnYiFFkgfUA
+	nwYqXQ1286mFqkEoSTxqnhgn35yfCPMIf1JU2L3jQNZ6kT8DXVQQ6KBt2dp2gub6rIRqm0AunFvtC
+	IH7eaAXFoOV4e09lHvgLMj4U2nmvqTHQjkksbQzgixZx+/FVv79/9wYfzoPLVqMvPo03gAvx0103W
+	9mG4vC0aLbVL9Pr38W9FszMAJouZl7jj/rLF5F951GkmQf0/ouwRDYF/3wxR6uHanbpS+Ayk7u1cC
+	YXnjaAiw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tH7ob-00000004cmQ-3Ty6;
+	Fri, 29 Nov 2024 20:42:13 +0000
+Date: Fri, 29 Nov 2024 20:42:13 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] perf: map pages in advance
+Message-ID: <Z0onJRnxQ8ZaWeov@casper.infradead.org>
+References: <6cab3e8a-dff7-41d1-af22-f18b8f2820dc@lucifer.local>
+ <c8ecd378-c197-4e06-94ef-e03b5ee28616@redhat.com>
+ <94dabe57-232b-4a21-b2cf-bcfbda75c881@lucifer.local>
+ <6795cc9a-6230-431f-b089-7909f7bc4f30@redhat.com>
+ <60191c97-dce2-4a92-8b47-c402478ba336@lucifer.local>
+ <9d4ef1a2-11fb-455f-8b37-954215bf25d2@redhat.com>
+ <14895682-a013-419f-bee8-1476540ddedd@lucifer.local>
+ <f637de06-41de-44be-8e1f-6a5d429e0ec9@redhat.com>
+ <be33a685-f6e0-41b0-ba3b-d1d7c2d743b8@lucifer.local>
+ <fda2336c-7d00-4a5d-8a81-4cb1e58bb8ce@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fda2336c-7d00-4a5d-8a81-4cb1e58bb8ce@redhat.com>
 
-Disable PCIe AER on the tg3 device on system reboot on a limited
-list of Dell PowerEdge systems. This prevents a fatal PCIe AER event
-on the tg3 device during the ACPI _PTS (prepare to sleep) method for
-S5 on those systems. The _PTS is invoked by acpi_enter_sleep_state_prep()
-as part of the kernel's reboot sequence as a result of commit
-38f34dba806a ("PM: ACPI: reboot: Reinstate S5 for reboot").
+On Fri, Nov 29, 2024 at 03:48:33PM +0100, David Hildenbrand wrote:
+> Too long, but as some of these TODOs stand in the memdesc way, fortunately
+> other people might be able to give a helping hand at some point ;)
 
-There was an earlier fix for this problem by commit 2ca1c94ce0b6
-("tg3: Disable tg3 device on system reboot to avoid triggering AER").
-But it was discovered that this earlier fix caused a reboot hang
-when some Dell PowerEdge servers were booted via ipxe. To address
-this reboot hang, the earlier fix was essentially reverted by commit
-9fc3bc764334 ("tg3: power down device only on SYSTEM_POWER_OFF").
-This re-exposed the tg3 PCIe AER on reboot problem.
+;-)
 
-This fix is not an ideal solution because the root cause of the AER
-is in system firmware. Instead, it's a targeted work-around in the
-tg3 driver.
+> I'll play with using a page type for some of these "simple" cases and see
+> how hard it will get.
 
-Note also that the PCIe AER must be disabled on the tg3 device even
-if the system is configured to use "firmware first" error handling.
+I've deliberately made pagetype incompatible with setting a mapcount ...
+hugetlb being the exception because we only use entire_mapcount.
 
-Fixes: 9fc3bc764334 ("tg3: power down device only on SYSTEM_POWER_OFF")
-Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
----
- drivers/net/ethernet/broadcom/tg3.c | 59 +++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index 9cc8db10a8d6..12ae5a976ca7 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -55,6 +55,7 @@
- #include <linux/hwmon.h>
- #include <linux/hwmon-sysfs.h>
- #include <linux/crc32poly.h>
-+#include <linux/dmi.h>
- 
- #include <net/checksum.h>
- #include <net/gso.h>
-@@ -18192,6 +18193,51 @@ static int tg3_resume(struct device *device)
- 
- static SIMPLE_DEV_PM_OPS(tg3_pm_ops, tg3_suspend, tg3_resume);
- 
-+/*
-+ * Systems where ACPI _PTS (Prepare To Sleep) S5 will result in a fatal
-+ * PCIe AER event on the tg3 device if the tg3 device is not, or cannot
-+ * be, powered down.
-+ */
-+static const struct dmi_system_id tg3_restart_aer_quirk_table[] = {
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R440"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R540"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R640"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R650"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R740"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R750"),
-+		},
-+	},
-+	{}
-+};
-+
- static void tg3_shutdown(struct pci_dev *pdev)
- {
- 	struct net_device *dev = pci_get_drvdata(pdev);
-@@ -18208,6 +18254,19 @@ static void tg3_shutdown(struct pci_dev *pdev)
- 
- 	if (system_state == SYSTEM_POWER_OFF)
- 		tg3_power_down(tp);
-+	else if (system_state == SYSTEM_RESTART &&
-+		 dmi_first_match(tg3_restart_aer_quirk_table) &&
-+		 pdev->current_state <= PCI_D3hot) {
-+		/*
-+		 * Disable PCIe AER on the tg3 to avoid a fatal
-+		 * error during this system restart.
-+		 */
-+		pcie_capability_clear_word(pdev, PCI_EXP_DEVCTL,
-+					   PCI_EXP_DEVCTL_CERE |
-+					   PCI_EXP_DEVCTL_NFERE |
-+					   PCI_EXP_DEVCTL_FERE |
-+					   PCI_EXP_DEVCTL_URRE);
-+	}
- 
- 	rtnl_unlock();
- 
--- 
-2.45.2
+Anyway, I agree we need something better than what we have here.
+It needs to be simple for a device driver to allocate memory and
+map it into userspace.  I'm willing to allow perf's ringbuffer to be
+a bit harder than most because it's trying to do the weird thing of
+writable-first-page-rest-read-only.
 
 
