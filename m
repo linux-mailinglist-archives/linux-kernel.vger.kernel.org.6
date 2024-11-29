@@ -1,207 +1,275 @@
-Return-Path: <linux-kernel+bounces-425518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1BE9DC31D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:51:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3739E9DC31F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:54:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07876163DBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2EE5163C7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0344E19AA72;
-	Fri, 29 Nov 2024 11:51:35 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CA3199FC5;
+	Fri, 29 Nov 2024 11:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WxVyyEmT"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E5E33C5
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E6933C5;
+	Fri, 29 Nov 2024 11:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732881094; cv=none; b=m7YetiPko6bX2Yx86iOfmYxImZgmDxpxtf8KIqXyImxUbIozObts+0TB0XtQsOARztrCS/QPGdsb5yeyLE5hUYYeySD/7w3PLX6bpSP3CFtrQCsv9045e4qBElV2E+VYv5au9bTXCn0BwD7YpKOTcVv2zyShCjQPDFpsC8xMb5U=
+	t=1732881234; cv=none; b=inQUS6Ty/EvPR78UZvvG5iMcywspVGyDPbXBqwT91XULkDdHYQkZMb3G67odad4frHGbvcwaut+gUiUuO2rhVcdTBXMGobqsIWejGtofOwFIaO0T78jpdZePlSdK3GUDnpMkrw6/vq4iOU8N2Mqqkzdf9ah7bFsd/B/5Kpp3jOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732881094; c=relaxed/simple;
-	bh=qXFczppavFoU+TdvIIVz1vt4umFSKooy9vTHjdfMqpg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=G7BOPdOrlj1KMSuBf0FYCAdJtZ4ZuiE08+S6V4ZL5Y7hHtyZ7BjMhssXOv1DGdOj3i71quOpJ7TsUX0XE0G9tX03c7MuGf2mwIJkxdjz9AEBFJvX9v5WZrAwEwqnSvTXxZ4LEraXjxNCSJVxkDHwzme8xtFJQTwVApMJbm3xY6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a777d47a8eso32621885ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 03:51:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732881092; x=1733485892;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/L696noJTLs7e4Z/ajrqUxPUHx/7g3Ur+MmtyQgO5w4=;
-        b=OrjB5QAfvrmGpfELIdjSYCTAR3Oc/scXTVJhksDfSzsKOX4lFMGkJrz18t6hWi2nZi
-         WdpGQSd5+rD0nTJlvqfOAW61Yn3Ho3MfS2mbS0EXH3n2Mc5SN81WZt85t669HQBfbcAc
-         TgmuVIOKJ4s3lHhXinzKJ/CuAHHDbGg5W1rwDuqW9a0/MRtUHoYAS2sV2rhLkjdM6sDk
-         mqGYWYQj+7w51cA7nAJf1r+qXhQcuNXrjTX39uRs9f9Bz8PFRPtdQRjOBeVaXg+dBwwc
-         DGHWgT5y9t8gig9Tvhu3seTffRRbNw83+W7rXckRQ5X5sRm95FAT1HfFwO9yUjKOAzvC
-         Tn9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVp2umU0CdgxTILkqdFdbHsbTGlDx8wbmuXYmMKVktdmxwhWD6LQ/O0alTZbgc42hKkCp8iAIi98mXfmRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTrGGyDKS5W8rzUBLpnuhsWjJi7eI05iQJhVE57tTFx+iLQBgt
-	DiIMIezuSKgkjw2Zp5YtMH/uzhqDfmGdu9xLC9I/8r3Q2z+c+WY3Lob35jHDo0BmjFKzyPA6PVf
-	ADPLfYjZd+v5GXhiHWsh9mjv7TChGw43auPWEow2vZBeplU4j+5cNvTg=
-X-Google-Smtp-Source: AGHT+IEwWGk72rKN+Gun0tjbX0pc2glLeaa+juovNZHhIkcsUsFFiRpx1nbKZyyGwlb5LRjYkdwJ/DiA3QqHvOp/Hx3fK2GexzJo
+	s=arc-20240116; t=1732881234; c=relaxed/simple;
+	bh=j3kYlJUz0ZaK/afBJJ+9h38eNZLmTaPSKUIofRHnXP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NfTlgJmVwR/bOHvNJ5KgKkfTJvwT4zsXojmobVwjs80CBOxIfqXPoQumAhLa9a5LEkvdFw9P1Xuk9p3UZi+BPxJ+TqpvauvZjHlhII3RImPkN/crgQwSeRQ/mikCKaArx8R7byfvhc847rGo6C0UJyZTX1rscmHMcsrwavNUGxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WxVyyEmT; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2A1191BF20A;
+	Fri, 29 Nov 2024 11:53:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732881223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ye5nj48q3iId/qtqeEWPGVqgFmv3xruHRbkutNeHEUI=;
+	b=WxVyyEmTB/70tworDrjJS+kD+9bqjDVCwq05DAD1v0pCIWt8LKCMBRMvzBsxN1gKU9hp3Y
+	ifSIfGT9m0DXAmUDMWkfT4e7AKzGjCM9J3d5Lg+4STimT9hKP0SO3Tc+8yBv/OfX95/vIN
+	2YSN7yMEGUWVnZ3YqFa8iL32V0DxGLSGKXw8dGb2XB0WQdhH2MF70yEnLNs0WxXKKfFE2S
+	y/A7E2iJAeeMWNla4BCmo0NkXvPseXES1lDJVMyVG/Fuo2Hu+CUg3eFb1Zf9UDtRThoXRa
+	874VXHlnVDtKJhpnqIgq28r2xw8YyGLV+Cu2Waqk5YA3Jm1FT/CgVS8o8rRmTA==
+Date: Fri, 29 Nov 2024 12:53:40 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Wolfram Sang <wsa@kernel.org>, Mauro Carvalho
+ Chehab <mchehab@kernel.org>, Cosmin Tanislav <demonsingur@gmail.com>, Tomi
+ Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Romain Gantois
+ <romain.gantois@bootlin.com>, Matti Vaittinen
+ <Matti.Vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v2 2/3] i2c: atr: Allow unmapped addresses from nested
+ ATRs
+Message-ID: <20241129125340.0e2c57d9@booty>
+In-Reply-To: <30732dbb-21e6-4075-84b1-544fc6e6abce@ideasonboard.com>
+References: <20241122-i2c-atr-fixes-v2-0-0acd325b6916@ideasonboard.com>
+	<20241122-i2c-atr-fixes-v2-2-0acd325b6916@ideasonboard.com>
+	<20241126091610.05e2d7c7@booty>
+	<b954c7b7-1094-48f9-afd9-00e386cd2443@ideasonboard.com>
+	<20241127131931.19af84c2@booty>
+	<30732dbb-21e6-4075-84b1-544fc6e6abce@ideasonboard.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdaa:0:b0:3a7:7ded:53b9 with SMTP id
- e9e14a558f8ab-3a7c55ea440mr88474525ab.20.1732881092009; Fri, 29 Nov 2024
- 03:51:32 -0800 (PST)
-Date: Fri, 29 Nov 2024 03:51:31 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6749aac3.050a0220.253251.00b0.GAE@google.com>
-Subject: [syzbot] [wpan?] WARNING in __dev_change_net_namespace (3)
-From: syzbot <syzbot+3344d668bbbc12996d46@syzkaller.appspotmail.com>
-To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-wpan@vger.kernel.org, miquel.raynal@bootlin.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hello,
+Hi Tomi,
 
-syzbot found the following issue on:
++Cc Matti
 
-HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14e6775f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fb680913ee293bcc
-dashboard link: https://syzkaller.appspot.com/bug?extid=3344d668bbbc12996d46
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+On Thu, 28 Nov 2024 19:50:46 +0200
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> Hi,
+> 
+> On 27/11/2024 14:19, Luca Ceresoli wrote:
+> > Hello Tomi,
+> > 
+> > On Tue, 26 Nov 2024 10:35:46 +0200
+> > Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+> >   
+> >> Hi Luca,
+> >>
+> >> On 26/11/2024 10:16, Luca Ceresoli wrote:  
+> >>> Hello Tomi,
+> >>>
+> >>> On Fri, 22 Nov 2024 14:26:19 +0200
+> >>> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+> >>>      
+> >>>> From: Cosmin Tanislav <demonsingur@gmail.com>
+> >>>>
+> >>>> i2c-atr translates the i2c transactions and forwards them to its parent
+> >>>> i2c bus. Any transaction to an i2c address that has not been mapped on
+> >>>> the i2c-atr will be rejected with an error.
+> >>>>
+> >>>> However, if the parent i2c bus is another i2c-atr, the parent i2c-atr
+> >>>> gets a transaction to an i2c address that is not mapped in the parent
+> >>>> i2c-atr, and thus fails.  
+> >>>
+> >>> Nested ATRs are "interesting", to say the least! :-)
+> >>>
+> >>> I must say I don't understand the problem here. If this is the picture:
+> >>>
+> >>>     adapter ---->     ATR1     ---->     ATR2     ----> leaf device
+> >>>                       map:               map:              addr:
+> >>>                    alias addr         alias addr           0x10
+> >>>                    0x30  0x20         0x20  0x10
+> >>>
+> >>> Then I'd expect this:
+> >>>
+> >>>    1. the leaf device asks ATR2 for a transaction to 0x10
+> >>>    2. 0x10 is in ATR2 map, ATR2 translates address 0x10 to 0x20
+> >>>    3. ATR2 asks ATR1 for a transaction to 0x20
+> >>>    4. 0x20 is in ATR1 map, ATR1 translates address 0x20 to 0x30
+> >>>    5. ATR1 asks adapter for transaction on 0x30
+> >>>
+> >>> So ATR1 is never asked for 0x10.  
+> >>
+> >> Yes, that case would work. But in your example the ATR1 somehow has
+> >> created a mapping for ATR2's alias.  
+> > 
+> > You're of course right. I had kind of assumed ATR1 is somehow
+> > configured to map 0x30 on 0x20, but this is not going to happen
+> > magically and there is no code AFAIK to do that. So of course my
+> > comment is bogus, thanks for taking time to explain.
+> >   
+> >> Generally speaking, ATR1 has aliases only for devices in its master bus
+> >> (i.e. the i2c bus where the ATR1 is the master, not slave), and
+> >> similarly for ATR2. Thus I think a more realistic example is:
+> >>
+> >>       adapter ---->     ATR1     ---->     ATR2     ----> leaf device
+> >>                      addr: 0x50         addr: 0x30
+> >>                         map:               map:              addr:
+> >>                      alias addr         alias addr           0x10
+> >>                      0x40  0x30         0x20  0x10
+> >>
+> >> So, both ATRs create the alias mapping based on the i2c-aliases given to
+> >> them in the DT, for the slave devices in their i2c bus. Assumption is,
+> >> of course, that the aliases are not otherwise used, and not overlapping.
+> >>
+> >> Thus the aliases on ATR2 are not present in the alias table of ATR1.  
+> > 
+> > OK, so the above is what now I'd expect to be configured in the ATR
+> > alias tables.
+> > 
+> > I still fail to understand how that would work. This is the actions I'd
+> > expect:
+> > 
+> >    1. the leaf device asks ATR2 for a transaction to 0x10
+> >    2. 0x10 is in ATR2 map, ATR2 translates address 0x10 to 0x20
+> >    3. ATR2 asks ATR1 for a transaction to 0x20
+> >    4. 0x20 is *not* in ATR1 map, *but* this patch is applied  
+> >        => i2c-atr lets the transaction through, unmodified  
+> >    5. ATR1 asks adapter for transaction on 0x20
+> >    6. adapter sends transaction for 0x20 on wires
+> >    7. ATR1 chip receives transaction for 0x20  
+> >        => 0x20 not in its tables, ignores it  
+> > 
+> > Note steps 1-5 are in software (kernel). Step 7 may work if ATR1 were
+> > configured to let all transactions for unknown addresses go through
+> > unmodified, but I don't remember having seen patches to allow that in
+> > i2c-atr.c and I'm not even sure the hardware allows that, the DS90UB9xx
+> > at least.  
+> 
+> DS90UB9xx has I2C_PASS_THROUGH_ALL. However, our particular use case is 
+> with Maxim GMSL desers and sers. They're not as nice as the FPD-Link 
+> devices in this particular area.
+> 
+> Cosmin, feel free to elaborate or fix my mistakes, but here's a summary:
+> 
+> The deserializers don't have ATRs, whereas the serializers do (so vice 
+> versa compared to FPD-Link). The deserializers forward everything to all 
+> enabled GMSL ports. At probe/setup time we can enable a single link at a 
+> time, so that we can direct transactions to a specific serializer (or 
+> devices behind it), but after the setup, we need to keep all the ports 
+> enabled, as otherwise the video streams would stop for all the other 
+> ports except the one we want to send an i2c transaction to.
+> 
+> The serializers have their own i2c address, but transactions to anything 
+> else go through the ser's ATR. The ATR does the translation, if an entry 
+> exists in the table, but all transactions are forwarded, whether they 
+> are translated or not.
+> 
+> Where's the nested ATR, you ask? That's a detail which is a bit 
+> "interesting": all the serializers have a default i2c address. So we can 
+> have 4 serializers all replying to the same address. But we don't have 
+> an ATR at the deser. However, we can change the address of the 
+> serializer by writing to a serializer register. This must be done at the 
+> deser probe time (and before the ser driver probes) where we can enable 
+> just a single link at a time. So at probe time we change the addresses 
+> of the serializers to be distinct values.
+> 
+> Still no ATR, right? Well, the i2c-atr accomplishes the above quite 
+> nicely: there's an address pool (for the new ser addresses), 
+> .attach_client() where we can set the new address for the serializer, 
+> and .detach_client() where we can (optionally) restore the original 
+> address. This way the serializer driver will operate using the original 
+> address, but when it does an i2c transaction, the i2c-atr changes it to 
+> the new address.
+> 
+> So strictly speaking it's not an ATR, but this achieves the same.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-9f16d5e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/15be8a79f63a/vmlinux-9f16d5e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/82d8dde32162/bzImage-9f16d5e6.xz
+Thanks for the extensive and very useful explanation. I had completely
+missed the GMSL serder and their different I2C handling, apologies.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3344d668bbbc12996d46@syzkaller.appspotmail.com
+So, the "parent ATR" is the GMSL deser, which is not an ATR but
+implementing it using i2c-atr makes the implementation cleaner. That
+makes sense.
 
-FAULT_INJECTION: forcing a failure.
-name failslab, interval 1, probability 0, space 0, times 1
-CPU: 0 UID: 0 PID: 5337 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- fail_dump lib/fault-inject.c:53 [inline]
- should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:154
- should_failslab+0xac/0x100 mm/failslab.c:46
- slab_pre_alloc_hook mm/slub.c:4038 [inline]
- slab_alloc_node mm/slub.c:4114 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_noprof+0xd8/0x400 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:883 [inline]
- kobject_rename+0xf2/0x410 lib/kobject.c:495
- device_rename+0x16a/0x200 drivers/base/core.c:4577
- __dev_change_net_namespace+0x11fb/0x1820 net/core/dev.c:11736
- dev_change_net_namespace include/linux/netdevice.h:4018 [inline]
- cfg802154_switch_netns+0xc5/0x3d0 net/ieee802154/core.c:230
- nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2541
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2583
- ___sys_sendmsg net/socket.c:2637 [inline]
- __sys_sendmsg+0x269/0x350 net/socket.c:2669
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd56a57e819
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd56b299038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fd56a735fa0 RCX: 00007fd56a57e819
-RDX: 0000000000000000 RSI: 0000000020000f40 RDI: 0000000000000004
-RBP: 00007fd56b299090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007fd56a735fa0 R15: 00007ffe74561238
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5337 at net/core/dev.c:11738 __dev_change_net_namespace+0x16ed/0x1820 net/core/dev.c:11738
-Modules linked in:
-CPU: 0 UID: 0 PID: 5337 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__dev_change_net_namespace+0x16ed/0x1820 net/core/dev.c:11738
-Code: 01 90 48 c7 c7 a0 b6 0e 8d 48 c7 c6 80 b6 0e 8d ba 6f 2d 00 00 e8 33 28 b8 f7 90 0f 0b 90 90 e9 89 ea ff ff e8 14 82 f7 f7 90 <0f> 0b 90 e9 3a fb ff ff e8 06 82 f7 f7 90 0f 0b 90 e9 bc fe ff ff
-RSP: 0018:ffffc9000d2fef80 EFLAGS: 00010293
-RAX: ffffffff899e5dfc RBX: dffffc0000000000 RCX: ffff88801f1c2440
-RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000000
-RBP: ffffc9000d2ff3b8 R08: ffffffff899e592c R09: 1ffffffff2863f12
-R10: dffffc0000000000 R11: fffffbfff2863f13 R12: ffff888035e841a8
-R13: 1ffff92001a5fe61 R14: ffff888035e84724 R15: 00000000fffffff4
-FS:  00007fd56b2996c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056434e74f468 CR3: 0000000040842000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- dev_change_net_namespace include/linux/netdevice.h:4018 [inline]
- cfg802154_switch_netns+0xc5/0x3d0 net/ieee802154/core.c:230
- nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2541
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2583
- ___sys_sendmsg net/socket.c:2637 [inline]
- __sys_sendmsg+0x269/0x350 net/socket.c:2669
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd56a57e819
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd56b299038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fd56a735fa0 RCX: 00007fd56a57e819
-RDX: 0000000000000000 RSI: 0000000020000f40 RDI: 0000000000000004
-RBP: 00007fd56b299090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007fd56a735fa0 R15: 00007ffe74561238
- </TASK>
+However removing the checks in i2c_atr_map_msgs() is dangerous in the
+general case with "proper" ATRs (the TI ones and AFAIK the Rohm ones)
+and it conflicts with the FPC202 case as Romain pointed out.
 
+So I think we need those checks to be disabled only when in the the
+"nested ATR" scenario, which leads to Romain's suggestion of adding a
+flag when instantiating the ATR, so I'll switch to that branch of this
+discussion.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > And even in case that were possible, that would seems a bit fragile.
+> > What if two child ATRs attached to two different ports of the parent
+> > ATR use the same alias, and the parent ATR let transactions for such
+> > alias go through both ports unmodified? Sure, the alias pools can be
+> > carefully crafted to avoid such duplicated aliases, but pools have long  
+> 
+> Yes, the pools have to be non-overlapping and no overlap with anything 
+> on the main i2c bus.
+> 
+> I feel the GMSL HW requires quite strict design rules, and preferably 
+> the deser would be on an i2c bus alone. I think an eeprom at 0x10 and a 
+> remote sensor at 0x10 would cause trouble, without any way to deal with 
+> it in the SW.
+> 
+> > been considered a non-optimal solution, and they make no sense at all
+> > in cases like the FPC202 that Romain is working to support.
+> > 
+> > Again, I'm pretty sure I'm missing something here. If you could
+> > elaborate with a complete example, including the case of two child ATRs
+> > attached to two ports of the same parent ATR, I'm sure that would be
+> > very helpful.  
+> 
+> I hope my text above covered this.
+> 
+> > At my current level of understanding, it looks like the only correct
+> > way to manage nested ATRs is to add a "recursive alias mapping", i.e.
+> > to add for each alias another alias to all parent ATRs, up to the top
+> > one, like in my initial picture. I realize that would imply several
+> > complications, though.  
+> 
+> Yes, that has complications too. Say, if we have a device that has an 
+> ATR but also passes everything through (like the GMSL ser), then the 
+> driver has to manage two different kinds of aliases: one set for the 
+> actual ATR, and one that are just pass-through ones.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I agree this won't make sense for the GMSL case you described.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Luca
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
