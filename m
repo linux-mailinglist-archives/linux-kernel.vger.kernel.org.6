@@ -1,163 +1,154 @@
-Return-Path: <linux-kernel+bounces-425457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85399DC257
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:43:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434419DC258
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9737D2849C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:43:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A43284ABF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871E7194A53;
-	Fri, 29 Nov 2024 10:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D469A192B83;
+	Fri, 29 Nov 2024 10:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K51a38qm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFRnyGgp"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC16155345;
-	Fri, 29 Nov 2024 10:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90A1155345
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732877016; cv=none; b=ZDdwLBO4dH5NMJndFpgXwUFaQAOnc27PJsKGx+fCe/bGK15Vs1nZns98wO91FWP/W2qHm4dk7vLvIf4T7yR046PJeVoE8WvJnc8HrZrmLH5rMsF/pkiJmShfdeml3FWtLkIPY4iVfypuvN/vvoh6SbR+BTzrzb2DO3FHHJW7mCU=
+	t=1732877071; cv=none; b=k73Qgw4QGAY/BpgM3q1ZNuv5kxLCGc6bm1TFa6JuoGO88aL9n5AH6piW+Q5KFHYiALx5TPor5QTN1E7wesJsFqYkUdpxb3NwE96KgaCQlxZZJ62G7xfUW/G1Y96xNv9nHsaTlZwI2IlkYLwGc9xGShKPjWmRlkmTVXX3mWufzqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732877016; c=relaxed/simple;
-	bh=HiysAwR1vBFjGdYnJZFzoJcljRzrm2vPT3oVuBxYu9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gmnUb4NN9sCDQhS6T0njXhR8xXumWeXy+OCuHeVc9P5fAxfBxbqFFdohiLBV+o7KUpNTXdq63w9aorUE8ctzy/psjfXW2G0eu3OM67WKjrgwhww9QiezIhy1o11azcjNxqTgteYy6wfa4QuJl1gyUEyFK75rdQEYRWgI1/yiYXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K51a38qm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B50C6C4CECF;
-	Fri, 29 Nov 2024 10:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732877016;
-	bh=HiysAwR1vBFjGdYnJZFzoJcljRzrm2vPT3oVuBxYu9A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K51a38qmYoTLeO4YbOGeKRRFXRFZhiIaZBmRXyqll6DkIBDch0HDjH7J+6DwpQ/OA
-	 kbkpYhMdkAjY7WxM8m3ILXUKdHR1QynbBpCyV00+BtRs8O5DivUFFNDksJtuqFxhhz
-	 Kz+ssnC1CN9fFra3bUxM46+a09qHclb9y5zayuMvFKz4e2jFjPAhjLNHOfkNVJz7ep
-	 M351+IhULxukvWL7Q92MB4jCRh2m1DJ/4h9Lx0B/2yP7udIqsEWGzmZbaCx7I4JHql
-	 q3viCksAFHR0HyD1LTIrui6efA6wADmRGD4ddswTvSIlyyoYYfy1rgCk3ATrRPe1y4
-	 JqX4dBHiPQRYg==
-Message-ID: <3b0c410b-7dab-4864-a9bb-5201108a9d5a@kernel.org>
-Date: Fri, 29 Nov 2024 11:43:30 +0100
+	s=arc-20240116; t=1732877071; c=relaxed/simple;
+	bh=Phd/LB4UQBllK0RmKrAK6deJdMBBXi2MiYI40qMZVsE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AqayG2hXcvMB7dFESvCa4AQkZZQMWlqJhK97VDb6cr4dAei6P8+zBgURhAKCwadViZemqWE3Pin48NH/QnbFTrEgdkWivte5AXpns2sga64MYSqjHN/hkzO1cNCY6moijcLsJjBUyrb4poW3yMbwMvTfBXfrhQ8iKuHnREkuM3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFRnyGgp; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7fc99fc2b16so977931a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 02:44:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732877069; x=1733481869; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+tceCOdD9w17Xb0NF05p4gwCJE5PDpjfmbXsA+3YzBI=;
+        b=eFRnyGgpvoIyEKDuL+rug8RzK3kym6CfAkW9jxop5QEeUwGHl8bMOEgi8k5oaD8ky/
+         m6Vh8kaM08gJwn3lHxGaoRQfUOZaqRXRZBx38+Gjelrl3DWYtFUPRZfjlXMc3KzULe/v
+         QRK1VNEFhiez1ccAcToIQcMG4u234IgsYMGvOyaW20z7XuFOS4ZBhhNZyIIpvx0RVir8
+         H6AxltkcPEqv0yv/OpS6KODFaylhFnFH9yuVru6rbwTvI+KT8GVV5qXoRJa8TKfnv+TG
+         U96JWAqTyuUqypdzbfW1hTqliKkebniAnhCtVj5jEM+12kzLU0smxvC9AMwVBBcCpNy9
+         FMcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732877069; x=1733481869;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+tceCOdD9w17Xb0NF05p4gwCJE5PDpjfmbXsA+3YzBI=;
+        b=R5cEUI+Hmj2TuU70sayCkiLvkoSQA1KrkPNwUwDtChe7stJqZ6huFApJbkfoHflbal
+         cruottA3sV8jjTdLpjqM8kAuEgaW2I943ct18Ky28BF3WfQzqO7BioA47MV63jhRzZ4t
+         /mAQctavz+yQiU3lo1WCtUaTFgAtFAuLtWxGplZmEv+wIFJ6OaZOfbL4HfnBBjgecdK1
+         amoJ/WI8RyPVsiJdiPbcCmyGZdAtw7BADXG2hkM7fTIwvJadMFn2dXLB4AdVOHUYuAk8
+         mY2/3eIEV97xjI+PueZ2TbR/j/tmtljbYKOEoH5vt/kmrzqjbtOpqX3sf6fQNouPJYlN
+         RI1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVOyvnmxvWC6EpTvC/CH5+KsM35PeLDYej3rBBuzsO6z7ITzOeE1lj9rJFTZzOUVV28NGhqElWaiBK6DZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1DTZZ8ziSnUqyrvKraTj6O7r55bmM2tQvxYpMM/JG8cxubUHP
+	sYqWN/3TLbJaz4yqR9gCDe7CLjr0abXEYVxKtn5ESS0L0rZE6WdD
+X-Gm-Gg: ASbGncsrDA+k0y4/tOiGyHWdNnG6EY9Wsd4I3PpnDEuwpsdmm/Q1ljHkfM4eraxedK3
+	5GJyuJq11y+ddEI7DIraYQmjeKy7e8xqDMQK0Pj5r7TJ20ziHDbiYWufHkZERS8wsb8SeFr1D6V
+	e2RQb0fYh7Mrp20+NyGpop5SXcwsyoSyAlN9b7hYpMOnoYxxKbquYawYBt/RGRKYCoLj16TaG+p
+	S/ZrPCAWFEC7kIvz+qqXxFGMKCUEiTJB/SqlZw/z19hQCdG2tk09m/pcTKJOTiTdukw4IibDph0
+X-Google-Smtp-Source: AGHT+IFXf4FfV/mmpqOgApowWW1WEgFHCNbUvuebjgKU838+pqiz1rhyPZ+W2eSrg3lBkm0/2WC2QA==
+X-Received: by 2002:a05:6a20:9185:b0:1e0:d618:1fe3 with SMTP id adf61e73a8af0-1e0e0b249a3mr15187416637.26.1732877069118;
+        Fri, 29 Nov 2024 02:44:29 -0800 (PST)
+Received: from kernel-VirtualBox.. ([2401:4900:1c80:568a:3302:a169:fb39:495d])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-72541770310sm3153455b3a.74.2024.11.29.02.44.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 02:44:28 -0800 (PST)
+From: Atharva Tiwari <evepolonium@gmail.com>
+X-Google-Original-From: Atharva Tiwari <atharvatiwari1101@outlook.in>
+To: 
+Cc: atharvatiwari1101@outlook.in,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Ian Rogers <irogers@google.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Aditya Gupta <adityag@linux.ibm.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Eder Zulian <ezulian@redhat.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fix: add safety check for OPTION_END and refactor code for consistency
+Date: Fri, 29 Nov 2024 16:13:53 +0530
+Message-ID: <20241129104401.5997-1-atharvatiwari1101@outlook.in>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] power: supply: gpio-charger: Support to disable
- charger
-To: Stefan Raufhake <raufhakestefan@gmail.com>,
- Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: s.raufhake@beckhoff.com, s.dirkwinkel@beckhoff.com,
- Stefan Raufhake <s.raufhake@beckhoff.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <20241129103848.39963-1-raufhakestefan@gmail.com>
- <20241129103848.39963-2-raufhakestefan@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241129103848.39963-2-raufhakestefan@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/11/2024 11:38, Stefan Raufhake wrote:
-> From: Stefan Raufhake <s.raufhake@beckhoff.de>
-> 
-> We want to disable the built-in UPS in our device
+- Added a null check for 'o' before copying the last OPTION_END in options__order function to prevent potential uninitialized usage.
+- Refactored the parse_long_opt function for improved readability by aligning function signature.
+- Minor formatting fix to ensure consistency in the codebase.
+- Updated the wrapper script for pseries architecture to handle 'notext' option in a more reliable way.
 
-Thank you for your patch. There is something to discuss/improve.
+Signed-off-by: Atharva Tiwari <atharvatiwari1101@outlook.in>
+---
+ arch/powerpc/boot/wrapper        |  1 +
+ tools/lib/subcmd/parse-options.c | 10 +++++-----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
+diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
+index 1db60fe13802..d25ad8c622f4 100755
+--- a/arch/powerpc/boot/wrapper
++++ b/arch/powerpc/boot/wrapper
+@@ -267,6 +267,7 @@ pseries)
+     link_address='0x4000000'
+     if [ "$format" != "elf32ppc" ]; then
+ 	link_address=
++	notext='-z notext'
+ 	pie=-pie
+     fi
+     make_space=n
+diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
+index 555d617c1f50..f85b642bc9aa 100644
+--- a/tools/lib/subcmd/parse-options.c
++++ b/tools/lib/subcmd/parse-options.c
+@@ -360,8 +360,7 @@ static int parse_short_opt(struct parse_opt_ctx_t *p, const struct option *optio
+ 	return -2;
+ }
+ 
+-static int parse_long_opt(struct parse_opt_ctx_t *p, const char *arg,
+-                          const struct option *options)
++static int parse_long_opt(struct parse_opt_ctx_t *p, const char *arg, const struct option *options)
+ {
+ 	const char *arg_end = strchr(arg, '=');
+ 	const struct option *abbrev_option = NULL, *ambiguous_option = NULL;
+@@ -828,9 +827,10 @@ static struct option *options__order(const struct option *opts)
+ 
+ 		nr_parent = nr_opts;
+ 	}
+-	/* copy the last OPTION_END */
+-	memcpy(&ordered[nr_opts], o, sizeof(*o));
+-
++	/* Check whether o is  valid before using it to copy the last OPTION_END. */
++	if (o && o->type == OPTION_END) {
++		memcpy(&ordered[nr_opts], o, sizeof(*o));
++	}
+ 	/* sort each option group individually */
+ 	for (opt = group = ordered; opt->type != OPTION_END; opt++) {
+ 		if (opt->type == OPTION_GROUP) {
+-- 
+2.43.0
 
-> so that we can switch off the supply power of the
-> device with and without the support of the UPS.
-
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-
-> This commit will allow us to disable the ups by
-> using the command echo 1 > /sys/class/power_supply/xxx/charge_type
-> (1 = POWER_SUPPLY_CHARGE_TYPE_NONE) and enable the
-> charger by setting it to 4 (POWER_SUPPLY_CHARGE_TYPE_STANDARD).
-
-Please describe the hardware, not OS.
-
-> 
-> Signed-off-by: Stefan Raufhake <s.raufhake@beckhoff.de>
-> ---
->  .../bindings/power/supply/gpio-charger.yaml   |  6 +++
->  drivers/power/supply/gpio-charger.c           | 43 +++++++++++++++++++
-
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
-
->  2 files changed, 49 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> index 89f8e2bcb2d7..b2658b0b20e4 100644
-> --- a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> @@ -44,6 +44,10 @@ properties:
->      maxItems: 32
->      description: GPIOs used for current limiting
->  
-> +  charge-disable-gpios:
-> +    maxItems: 1
-> +    description: GPIO to disable the charger
-
-You just inverted existing "gpios" property, so no.
-
-Best regards,
-Krzysztof
 
