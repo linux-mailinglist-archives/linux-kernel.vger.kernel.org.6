@@ -1,139 +1,161 @@
-Return-Path: <linux-kernel+bounces-425863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F729DEBF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:13:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B735163467
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:13:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7185F1A0BE1;
-	Fri, 29 Nov 2024 18:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TCOswHG/"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FFE9DEC00
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:15:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7221A3029
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 18:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74A00B21AED
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:15:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5121A08A8;
+	Fri, 29 Nov 2024 18:15:39 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7B673451
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 18:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732903971; cv=none; b=V2lvptthvCX4j4HUy693rSs1rQzA1GdFdwsRen7NDxWSokV876O5mxERHEeAJT+vQ1e+lgkglG5ByrH017S/Ko8tW2n1etg9VU3rzFRatMWMTYXLrxFpXlI0eSDfCIKEUXxIR76GI4iBPrMxAnts92kArh9HykcUAsSZ8QimMvQ=
+	t=1732904138; cv=none; b=V0KAiOeN21AAGtjNFo45eyIWW3D0c0OPhDSQMTpZtRxUi+CAB6Kjrd5sO4Fq/SqrQg/8263WrSU+Ko6c8+AdplvFeT75zHC3TpGTkJnvTRuru1X8eigJkJIqPwiTEsN2XXVpjn6oHY3sqwISCj87SunHcdfpCMqCe/h4dGB27as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732903971; c=relaxed/simple;
-	bh=8m5EkwHWXTgiJwnuArld1Pc2dzxSHyhvXjaEvUO7Ng8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UQL1fpwOaDFFZhgFh4Z46XQ2BgTqpbl9bwtZqMNK/EH5x97U38HGKNOTaGZgJEcF77bkCGL0oRWMQDmLvd+JSR3OvyvHy5NEYnnlI+qOjvOl6Cn3zIEQPMqcon4XKAdDwCT7B3AOztKj/tt3VuFKTEq+n36DGyQEk7rqnyH53rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TCOswHG/; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 73BFD20002;
-	Fri, 29 Nov 2024 18:12:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732903961;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=agrCji/PzHghXXELIiWdgYLBGtoBMSEMrQmMun4PhKI=;
-	b=TCOswHG/5rcssTH0+xbAqtK6sG5e7+GpeamLQBtYNofJKrq2B0aiJB6eXVX33HgPUBONJ0
-	81HtguzDO1Gm41DMMxgg4Kbp+8uAVEdcnommHWlskydTgehjsDECdfjb8pfszWmwww808C
-	n487RHKXRngQwzY5qGRyNSzJ3QFRFn2PSlvleISm31HNRGBvt+1Q7c8PAn4ecWhb9KKQQf
-	1vT8Dogd5Oq15P0M2L4SpSRYHJpayG0nLb7eopkPwGJhN22GEeRBuFK9sXRQS863nu+eoT
-	UcK2CnlfwnOG90jPrXoeppL1lv7VcHx33db3FUF+/qmmNhnau270Zs5zDRDrNg==
-Date: Fri, 29 Nov 2024 19:12:39 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] misc: Kconfig: Make MCHP_LAN966X_PCI depend on OF, not
- select it
-Message-ID: <20241129191239.69b649e8@bootlin.com>
-In-Reply-To: <CANiDSCtVdPh4YX1pgRQ+M+KGTD+k5UPxWhZM09FBiT5+hDifjw@mail.gmail.com>
-References: <20241129-lan966x-depend-v1-1-603fc4996c4f@chromium.org>
-	<20241129184500.6d72a7e1@bootlin.com>
-	<CANiDSCtVdPh4YX1pgRQ+M+KGTD+k5UPxWhZM09FBiT5+hDifjw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1732904138; c=relaxed/simple;
+	bh=ODrikStavoiMY7VKXZ6vjJRz2baOE58fq/U84GkXlz4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Tht4WUYGp3XypLMwc5KGYM8eEgMDVl0SP5EymDTxnVART0OfzXKzNN1FWsQc85kAnqiDlHOa7mlTFu+kZLJlItNHUtZc01lTHP+hZsBEU+K+23DPhKVks72lV8e8YUGT29x3tc/nea+qbJqWtX1V6WXE0JsC9LaBO0W0txydzJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a79088e7abso18511265ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:15:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732904136; x=1733508936;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=84075KVo47fiijVJfrB0Ak1lJCREGTv5YUnoksiNDDk=;
+        b=Aa/+RqhovRvp00yHHnH962XAwiQcx4tzakUQ3ZTekHkILg0bjgLRkQmKiEQS18XORk
+         DQ8NH3HYKihpEAyKmI6ErZpTqVC99lu38NmYlTw4wk0CVPePLaJWTmmNlglnboIRvwBe
+         j4eM/8reLaHYdlRTaduaa+CK/6tRbp+qQSZwD4fbR7FrC7yGKSU6smrBCwmp9jWX5qHE
+         1Bg/unI/dEEaEc18apbbc+3owWzTX8TXDUZvCqXyk7tCIKnftf8B25tbWcfnAJhxz5Bl
+         VZzSqEkRNYm0tiKxDzxNvOKmMM6dix6O+bsAQV9goXxfUV0MgKdmmdaHN14OWG9N7T+u
+         TqMg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2mIwq4t3b7c32J1mbaC7TLQLRG4tcmQcJAFASPOUk5wUjwatvJyHmtVQFb1/TFZ7ux0dNoRo3zQk9DR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1NkJPWeZAomUyRXivqkI2fEsvthrffadTELhfvz2mGryaGTE4
+	LOvWweH8pUX67w0O0K84N1ZParKLLCRxUcXP9i8KOcyzuS8+8uZPArAdyDyc2Trmd6APCATpFre
+	KfTLp8zC8+uzjgn9SYV/pAmCejMcd8onYWEezhyM1KOBrp45Vvmeagig=
+X-Google-Smtp-Source: AGHT+IEfcI4U46a3fb5BxRHFVEiNPHGyuhDoEemNgA7f2YUTyHDcdVRn3HvPkmB9d+uSuR2TrwHjRGJY/W26gsZ7QNgRkUtvBAI7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+X-Received: by 2002:a05:6e02:17cc:b0:3a6:cac0:1299 with SMTP id
+ e9e14a558f8ab-3a7c5580a93mr105066565ab.14.1732904135338; Fri, 29 Nov 2024
+ 10:15:35 -0800 (PST)
+Date: Fri, 29 Nov 2024 10:15:35 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674a04c7.050a0220.253251.00bf.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in probe
+From: syzbot <syzbot+5b2a06382baebaf31011@syzkaller.appspotmail.com>
+To: kvalo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	srini.raju@purelifi.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ricardo,
+Hello,
 
-On Fri, 29 Nov 2024 18:57:09 +0100
-Ricardo Ribalda <ribalda@chromium.org> wrote:
+syzbot found the following issue on:
 
-> Thanks for the headsup
-> 
-> On Fri, 29 Nov 2024 at 18:45, Herve Codina <herve.codina@bootlin.com> wrote:
-> >
-> > Hi Ricardo,
-> >
-> > On Fri, 29 Nov 2024 10:41:17 +0000
-> > Ricardo Ribalda <ribalda@chromium.org> wrote:
-> >  
-> > > Most (maybe all?) the drivers depend on OF instead of selecting it. This
-> > > is more convenient for CI because we can have test scripts that do:
-> > > make allyesconfig
-> > > scripts/config -d OF
-> > > make olddefconfig
-> > >
-> > > Without this patch, OF cannot be disabled that way.
-> > >
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  drivers/misc/Kconfig | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> > > index 902c306bc972..2ea5f40ff4e4 100644
-> > > --- a/drivers/misc/Kconfig
-> > > +++ b/drivers/misc/Kconfig
-> > > @@ -612,8 +612,7 @@ config MARVELL_CN10K_DPI
-> > >
-> > >  config MCHP_LAN966X_PCI
-> > >       tristate "Microchip LAN966x PCIe Support"
-> > > -     depends on PCI
-> > > -     select OF
-> > > +     depends on PCI && OF
-> > >       select OF_OVERLAY
-> > >       select IRQ_DOMAIN
-> > >       help
-> > >
-> > > ---
-> > > base-commit: 7af08b57bcb9ebf78675c50069c54125c0a8b795
-> > > change-id: 20241129-lan966x-depend-8bc69b4954e5
-> > >  
-> >
-> > Not sure it should be done that way (See [1]). Also I pointed out this
-> > patch in the discussion.
-> >  
-> 
-> I have no strong opinion for my version or:
-> 
-> depends on PCI && OF_OVERLAY
-> 
-> 
-> Shall I send a v2 or you prefer to handle it yourself?
+HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=177d65c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d8bc8a5565eebec6
+dashboard link: https://syzkaller.appspot.com/bug?extid=5b2a06382baebaf31011
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-You can send a v2 with
-  depends on PCI
-  depends on OF_OVERLAY
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you send a v2, can you add people listed in
-  https://lore.kernel.org/all/dywwnh7ns47ffndsttstpcsw44avxjvzcddmceha7xavqjdi77@cqdgmpdtywol/
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-9f16d5e6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dbaabe559df8/vmlinux-9f16d5e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5fe0afceb260/bzImage-9f16d5e6.xz
 
-Best regards,
-Hervé
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5b2a06382baebaf31011@syzkaller.appspotmail.com
+
+plfxlc 10-1:0.133: request_firmware failed (-110)
+plfxlc 10-1:0.133: FPGA download failed (-110)
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 8769 at drivers/net/wireless/purelifi/plfxlc/mac.c:105 plfxlc_mac_release+0x89/0xb0 drivers/net/wireless/purelifi/plfxlc/mac.c:105
+Modules linked in:
+CPU: 0 UID: 0 PID: 8769 Comm: kworker/0:5 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: usb_hub_wq hub_event
+Code: 4d 37 dc fa 48 8d bb 08 33 00 00 be ff ff ff ff e8 6c 3c 7c 04 31 ff 89 c3 89 c6 e8 71 39 dc fa 85 db 75 d4 e8 28 37 dc fa 90 <0f> 0b 90 5b 5d e9 1d 37 dc fa 48 c7 c7 74 c9 60 90 e8 a1 13 3f fb
+RSP: 0018:ffffc9000355ef48 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff86b2839f
+RDX: ffff8880273ca440 RSI: ffffffff86b283a8 RDI: 0000000000000005
+RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff920006abdf0
+R13: ffff8880650a9000 R14: ffff8880548230a0 R15: ffff8880650a9078
+FS:  0000000000000000(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055ba1743e680 CR3: 000000000df7e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ probe+0x84a/0xba0 drivers/net/wireless/purelifi/plfxlc/usb.c:694
+ usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3672
+ usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3672
+ usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2d9a/0x4e10 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
