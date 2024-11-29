@@ -1,131 +1,212 @@
-Return-Path: <linux-kernel+bounces-425364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E039DC10B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:05:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5869DC10F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:07:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73CD516068A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BBB281FCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBD0143C40;
-	Fri, 29 Nov 2024 09:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="snOZ+VX8"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D23016B75C;
+	Fri, 29 Nov 2024 09:07:24 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63860147C91
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2A4143C40
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732871102; cv=none; b=hb3rN+Rhg/ao8G30y5JypNEFCQ/rp+23jzwa3KF+48HBHbf2FXrbzJjiGPUwprPU54WzqR5Pjk+G2wkvu8nYcody8EqIAueJ1mLyzz4FMYM51slSTP4HvcP12vJ6ZvG0IV2dbqTmUhTC0dCjfXA3GphvgyKn+c4Jfl9sbM9Rr9s=
+	t=1732871243; cv=none; b=a4Ptas+UukKExDLPiq3hLxxsZILbLftkMa2XJprAJw5mnRfpLkoW85JzQTyWMHG+wnzAhL1Azh9SNPwbOvK5HXUZiHY6jHvaC1gy/jon/LYeaeidaxmmlP+RkuslGHKu2k5sP27Mj6/PdBPkmfrrvAaq8ywZJnneK505a8371CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732871102; c=relaxed/simple;
-	bh=vO9ByBT/SONTBhVHpVkxBH/3ubi5rKJXvHi2ak4c5rU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mr8YYrJr3HV66q3G0kTINgYRWDqi8Dg9ERw2cd7Gy8deeXejqbcr9+ibIUC1U6qWq5Md95hrmJGaRuh8yjj7UM6tGyQ1O6NgLOg+yDT23i4k0C9qrrI784R8B2N2pcXcczMMnmzPBJCQZB2HWobhtA9fi931kKB9cGXNwNYDd6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=snOZ+VX8; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-212a3067b11so15954795ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 01:05:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732871100; x=1733475900; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NmzgYiTHuT38Cq1Mm5SUp1x96rSOx0XuBvQMGFzhB/s=;
-        b=snOZ+VX8GgUZEPuf/7YeaZGbp3HR1aCyAOswJ/zlFoJgZsvcsBFPhJOiJcf7Nb7J31
-         GuBYXJCQRUu31MTYIuxj9nsEi9EbAtysPGaZTKpZMT3Uer/G0tOB/HqV7FjxcnJLI6SA
-         KHhRGHpFcrZc+30TI4RWLJ5WhGtigHqHdY/HPSyzpdiq+LM8FGWWuYn4yomdRfpc8v4D
-         gz8vF+OUHc8fliXpkjM8ENc3yWKofqOqjS3qYbVcSxjqEb50WUaZMNu1LLtOOeRonX4s
-         0qGUomDOlTjjkf/Y1scXVJEi7ZJrvsbb7h4XQl4t5m2dVgHlMKuO7QLYSnZTrrJAQDj9
-         37zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732871100; x=1733475900;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NmzgYiTHuT38Cq1Mm5SUp1x96rSOx0XuBvQMGFzhB/s=;
-        b=Ui7S1W+q0Llvpig2BkK3ioO/Ct8unLPiEhkzIGZH8DzIyaENg4xmIR4fwTJj7ej/7Q
-         WmIJQd3PI2pX7BL/emE2hsiaNULWbIkYJIZODjZB1R/yRNzAoJsv0w9rBZs4wm9XtZK6
-         mOpNO4Ewiega902kx1erM59Wy4iQ13sx/0Zp/DJQBLRCQ5k0pKJGJjqVuUT4Q2kM0vCP
-         y4B2P71O2WS3Olv1jN35yQCGnpeZVob8eTFEh9XORLEuTk5H9+oSmyOlYXuA0wcelY5c
-         xE2uZ1P/dHMWaoJIBTjELdnqhC9SVussPfZr5Fn/237EXoS8Hv5DwmFU/9nZ0XOPEw12
-         LVag==
-X-Forwarded-Encrypted: i=1; AJvYcCXk+aP07JL2X5a+P6EEdW1YooNAEtXQc72ybiuWbAwIBeUQNtIGbVMMnmlh8dJr52Js+vECBc1LyX7pMPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ9nQ2rQMOiAO1AOruX/ducP27ooNJpGehPhgw/PnQdVknpDhh
-	wUtuiEnslv41c/LFsKbnKOvtwFDne0jDUhZ7kFKqfVZUddUrmAHwE95lDIS7Zgo=
-X-Gm-Gg: ASbGncv70MrdE4cY30N8+ZtD4pkq1fDqjYJqENN2TSqSzFww2wt+k0OiUxPbntJ0eKx
-	GvzlK/qgq8A9fPMZiqCm0TGF0sQWEPw/UfIm25ZSP292+UzG2x5QwlLPSjnLccWCL2D+msokI36
-	Niae2XVj4RZXMkO4PYIN3CAjcTPw021X7jRLHXCSSQ09GiBijgaBAM78qRYMRHMVXjbBbODgLJA
-	A5ty9bysvX1LASCqsvuP7KmAFbywz0Ocxec49k6Nd4J7wwp/OK8
-X-Google-Smtp-Source: AGHT+IGg1qw57WoQi6dR9QPFZwX2ihLooOHM8ZDLeNgvNGkx/nUn4iMKoXAEtGbpgf57okVCQmDWxA==
-X-Received: by 2002:a17:902:b716:b0:212:4c82:e3d4 with SMTP id d9443c01a7336-21501d6133cmr117311875ad.46.1732871100576;
-        Fri, 29 Nov 2024 01:05:00 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21544fd9b4dsm6314165ad.223.2024.11.29.01.04.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 01:04:59 -0800 (PST)
-Date: Fri, 29 Nov 2024 14:34:57 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] OPP: add index check to assert to avoid buffer
- overflow in _read_freq()
-Message-ID: <20241129090457.4ibsyulffydnc3ns@vireshk-i7>
-References: <20241128-topic-opp-fix-assert-index-check-v1-0-cb8bd4c0370e@linaro.org>
- <20241128-topic-opp-fix-assert-index-check-v1-1-cb8bd4c0370e@linaro.org>
- <20241129084052.wfi7nakgcnt3zkur@vireshk-i7>
- <c6b5b6f7-ab55-4d46-888e-f9e00b269c9c@linaro.org>
+	s=arc-20240116; t=1732871243; c=relaxed/simple;
+	bh=XYQfHvqX9F3V3jPH4pKQJlRoOPMlLf9YqrS9mD82um0=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=iQS8DKaahQm3/f2etuqYEbKHa56KPDMMwQTuH4BwTjGuc10bkomx06fybQUroiqtdW8WJI+KnMTrchitqkbNLasSVi9hSP4qMpHgAm9aD9tGg6q9ICl+ZZaFX9QFhMfS7bJXyWPIqH7ImlJ5ltMvXrf4+pVPbCX/Rs8Pwu5u6TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Y06hD5Mmqz1T5r2;
+	Fri, 29 Nov 2024 17:05:00 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id B399B1A016C;
+	Fri, 29 Nov 2024 17:07:11 +0800 (CST)
+Received: from [10.173.127.72] (10.173.127.72) by
+ kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 29 Nov 2024 17:07:10 +0800
+Subject: Re: [RFC PATCH] mm: memory-failure: add soft-offline stat in mf_stats
+To: "Tomohiro Misono (Fujitsu)" <misono.tomohiro@fujitsu.com>, 'Jiaqi Yan'
+	<jiaqiyan@google.com>
+CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>
+References: <20241121045504.2233544-1-misono.tomohiro@fujitsu.com>
+ <c25e8ca8-5858-987e-6b1e-2e139d901dc5@huawei.com>
+ <TYCPR01MB961779970E6BFA06BD4BF46EE5282@TYCPR01MB9617.jpnprd01.prod.outlook.com>
+ <CACw3F51TiRZJMkze-u3a3E_3w65=PMhEUBaBQLUgNwRNuY6+3w@mail.gmail.com>
+ <TYCPR01MB961770DF6F58C0D8A16185F7E5292@TYCPR01MB9617.jpnprd01.prod.outlook.com>
+ <098640ac-f1c1-95b6-e367-a2673c3ceaae@huawei.com>
+ <TYCPR01MB9617A2CC29E34D10B6B85ACFE52A2@TYCPR01MB9617.jpnprd01.prod.outlook.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <cc401793-5ef6-55db-0028-728b865e33e0@huawei.com>
+Date: Fri, 29 Nov 2024 17:07:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6b5b6f7-ab55-4d46-888e-f9e00b269c9c@linaro.org>
+In-Reply-To: <TYCPR01MB9617A2CC29E34D10B6B85ACFE52A2@TYCPR01MB9617.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
-On 29-11-24, 09:53, Neil Armstrong wrote:
-> Hi,
+On 2024/11/29 16:26, Tomohiro Misono (Fujitsu) wrote:
+>> On 2024/11/28 13:46, Tomohiro Misono (Fujitsu) wrote:
+>>>>>> On 2024/11/21 12:55, Tomohiro Misono wrote:
+>>>>>>> commit 44b8f8bf2438 ("mm: memory-failure: add memory failure stats
+>>>>>>
+>>>>>> Sorry for late, I've been swamped recently.
+>>>>>
+>>>>> Hi,
+>>>>> Thanks for your comments.
+>>>>>
+>>>>>>
+>>>>>>> to sysfs") introduces per NUMA memory error stats which show
+>>>>>>> breakdown of HardwareCorrupted of /proc/meminfo in
+>>>>>>> /sys/devices/system/node/nodeX/memory_failure.
+>>>>>>
+>>>>>> Thanks for your patch.
+>>>>>>
+>>>>>>>
+>>>>>>> However, HardwareCorrupted also counts soft-offline pages. So, add
+>>>>>>> soft-offline stats in mf_stats too to represent more accurate status.
+>>>>>>
+>>>>>> Adding soft-offline stats makes sense to me.
+>>>>>
+>>>>> Thanks for confirming.
+>>>>
+>>>> Agreed with Miaohe.
+>>>>
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> This updates total count as:
+>>>>>>>   total = recovered + ignored + failed + delayed + soft_offline>
+>>>>>>> Test example:
+>>>>>>> 1) # grep HardwareCorrupted /proc/meminfo
+>>>>>>>      HardwareCorrupted:     0 kB
+>>>>>>> 2) soft-offline 1 page by madvise(MADV_SOFT_OFFLINE)
+>>>>>>> 3) # grep HardwareCorrupted /proc/meminfo
+>>>>>>>      HardwareCorrupted:     4 kB
+>>>>>>>    # grep -r "" /sys/devices/system/node/node0/memory_failure
+>>>>>>>    /sys/devices/system/node/node0/memory_failure/total:1
+>>>>>>>    /sys/devices/system/node/node0/memory_failure/soft_offline:1
+>>>>>>>    /sys/devices/system/node/node0/memory_failure/recovered:0
+>>>>>>>    /sys/devices/system/node/node0/memory_failure/ignored:0
+>>>>>>>    /sys/devices/system/node/node0/memory_failure/failed:0
+>>>>>>>    /sys/devices/system/node/node0/memory_failure/delayed:0
+>>>>>>>
+>>>>>>> Signed-off-by: Tomohiro Misono <misono.tomohiro@fujitsu.com>
+>>>>>>> ---
+>>>>>>> Hello
+>>>>>>>
+>>>>>>> This is RFC because I'm not sure adding SOFT_OFFLINE in enum
+>>>>>>> mf_result is a right approach. Also, maybe is it better to move
+>>>>>>> update_per_node_mf_stats() into num_poisoned_pages_inc()?
+>>>>>>>
+>>>>>>> I omitted some cleanups and sysfs doc update in this version to
+>>>>>>> highlight changes. I'd appreciate any suggestions.
+>>>>>>>
+>>>>>>> Regards,
+>>>>>>> Tomohiro Misono
+>>>>>>>
+>>>>>>>  include/linux/mm.h     | 2 ++
+>>>>>>>  include/linux/mmzone.h | 4 +++-
+>>>>>>>  mm/memory-failure.c    | 9 +++++++++
+>>>>>>>  3 files changed, 14 insertions(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>>>>>> index 5d6cd523c7c0..7f93f6883760 100644
+>>>>>>> --- a/include/linux/mm.h
+>>>>>>> +++ b/include/linux/mm.h
+>>>>>>> @@ -3991,6 +3991,8 @@ enum mf_result {
+>>>>>>>     MF_FAILED,      /* Error: handling failed */
+>>>>>>>     MF_DELAYED,     /* Will be handled later */
+>>>>>>>     MF_RECOVERED,   /* Successfully recovered */
+>>>>>>> +
+>>>>>>> +   MF_RES_SOFT_OFFLINE, /* Soft-offline */
+>>>>>>
+>>>>>> It might not be a good idea to add MF_RES_SOFT_OFFLINE here. 'mf_result' is used to record
+>>>>>> the result of memory failure handler. So it might be inappropriate to add MF_RES_SOFT_OFFLINE
+>> here.
+>>>>>
+>>>>> Understood. As I don't see other suitable place to put ENUM value, how about changing like below?
+>>>>> Or, do you prefer adding another ENUM type instead of this?
+>>>>
+>>>> I think SOFT_OFFLINE-ed is one of the results of successfully
+>>>> recovered, and the other one is HARD_OFFLINE-ed. So how about make a
+>>>> separate sub-ENUM for MF_RECOVERED? Something like:
+>>>
+>>> Thanks for the suggestion.
+>>>
+>>>>
+>>>> enum mf_recovered_result {
+>>>>   MF_RECOVERED_SOFT_OFFLINE,
+>>>>   MF_RECOVERED_HARD_OFFLINE,
+>>>> };
+>>>
+>>> Ok.
+>>>
+>>>>
+>>>> And
+>>>> 1. total = recovered + ignored + failed + delayed
+>>>> 2. recovered = soft_offline + hard_offline
+>>>
+>>> Do you mean mf_stats now have 7 entries in sysfs?
+>>> (total, ignored, failed, delayed, recovered, hard_offline, soft_offline, then recovered = hard_offline +
+>> soft_offline)
+>>> Or 6 entries ? (in that case, hard_offline = recovered - soft_offline)
+>>> It might be simpler to understand for user if total is just the sum of other entries like this RFC,
+>>> but I'd like to know other opinions.
+>>
+>> Will it be better to have below items?
+>> "
+>> total
+>> ignored
+>> failed
+>> dalayed
+>> hard_offline
+>> soft_offline
+>> "
+>>
+>> though this will break the previous interface.
+>> Any thoughts?
 > 
-> On 29/11/2024 09:40, Viresh Kumar wrote:
-> > On 28-11-24, 11:07, Neil Armstrong wrote:
-> > > Pass the freq index to the assert function to make sure
-> > > we do not read a freq out of the opp->rates[] table.
-> > > 
-> > > Without that the index value is never checked when called from
-> > > dev_pm_opp_find_freq_exact_indexed() or
-> > > dev_pm_opp_find_freq_ceil/floor_indexed().
-> > 
-> > These APIs aren't supported for cases where we have more than one clks
-> > available and hence assert for single clk.
-> > 
+> That would be great, but these files are under stable ABI and 
+> I don't think we can change them, right?
 > 
-> I don't understand, the _indexed functions clearly have an index parameter
-> which is documented as "Clock index"
+> https://docs.kernel.org/admin-guide/abi-stable.html
+> Userspace programs are free to use these interfaces with no restrictions, and backward
+> compatibility for them will be guaranteed for at least 2 years.
+> Most interfaces (like syscalls) are expected to never change and always be available.
 
-Ahh, I missed that there are few _indexed() helpers as well which you are
-correctly modifying.
+Thanks for your information. So we need to propose a better solution. Looking forward to hearing more suggestions.
 
-> I agree we could leave the other ones with assert_single_clk, but we would
-> need to duplicate it to have one with the index parameter, so it felt simpler
-> to use assert_clk_index everywhere but indeed we do not exclude them for
-> when there's multiple clock...
+Thanks.
+.
 
-What prevents a user to call dev_pm_opp_find_freq_exact() for a multi-clk setup
-after your patch ? As we use Index = 0 here in the code.
+> 
+> Regards,
+> Tomohiro Misono
+> 
 
-That's why I would prefer the earlier assert for all these, except the indexed
-ones.
-
--- 
-viresh
 
