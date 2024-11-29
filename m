@@ -1,168 +1,138 @@
-Return-Path: <linux-kernel+bounces-425414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4D99DC1CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:56:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4258116332B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:56:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC00189B83;
-	Fri, 29 Nov 2024 09:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GYiZsStW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D019DC1D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:58:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB0A185920;
-	Fri, 29 Nov 2024 09:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0F3CB220A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:58:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D303E188CDC;
+	Fri, 29 Nov 2024 09:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+K4O+HP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC071865E5;
+	Fri, 29 Nov 2024 09:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732874178; cv=none; b=qxdk3thMZr39afYECOm+Y63xy2INelYvS4EmX28NiJUSqoNrw4Xyu7DbVxAk2K+q+0930+ZmuqkzCBQRIA+PEPf0RJILHXSUUuO4Fj34CQjjKcLcl7+ztunc5Ij6LBvq6DjSIazYQzjlwU+cbx/irB1h3jom0iE+owxWuZDsS3w=
+	t=1732874282; cv=none; b=e19ZITxP80st3Iloq9xdBGGyeYVme48KjWFsG4rcDO69FRoida/vtqmDO9sMfVWo1/4861DXtmUj8h7n02KbC591lCfYrkbGJXRs7nQah1WcPWlioDRqA80xedSYWsazJ0BK9D6WfeYNMSEuBcoxjJ2jlodZ2YShLbgEFfQTJg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732874178; c=relaxed/simple;
-	bh=P02ni/rru9fj/6y3EeERYLHGEPXUvFJQBcszmPDVgDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RB7duc970UleF696LrF/Kz9oC7PwCkUDESNEbzPfMPq5vJnBuCwIiUMBwXomk7DYcffHrcChlKctr6yqblXHNETi4boJg7qwHa93WKm/NdCrdqRsDdDFV3dB0h4OzzKBjX/QQFJ78iXMtus9RONeTBIWK9/Bj2G7nAZqRyZvnPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GYiZsStW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASNbiTk029780;
-	Fri, 29 Nov 2024 09:56:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wzpKw6mHEq1jlBCAbrkFm+p8emD1Wsk/7ZXFz/Ace88=; b=GYiZsStWrL2vZwAF
-	KJ04D5PGh1PDl20BfBse5aSg6K0ZaxF0143RlTrM0O8OB3h04xKzXs72qryZ3cLm
-	Kr5bgn5RzTnbNJZa+wTuOLVXrjN7Ovt73zZb0PlVmlS6PjWRY/yXqRqqCsAjGeSs
-	/BXFo4071leXzUgFGLwG6dsNfyz+kk5KHJxWdstfs0zuNukEDeHCla9jWUR2XDlW
-	46gL4UL2MyFRDbzzsVATcYZRzpBximRQ+G0kmEm+YOw+yLEqB6srhiEkvaQMUHXi
-	GkvYLqxDqx7r14CUNCg2qu1b9XU9GJ85ZQIhdB9v9zjeXba3zjfCvdIqHTzI6esE
-	t/ZMXQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366y051x9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 09:55:59 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AT9twRR003175
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 09:55:58 GMT
-Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 29 Nov
- 2024 01:55:51 -0800
-Message-ID: <4b4a7609-0d9e-4b52-9193-a79583419902@quicinc.com>
-Date: Fri, 29 Nov 2024 17:55:48 +0800
+	s=arc-20240116; t=1732874282; c=relaxed/simple;
+	bh=1hDbGfUA23ougGXXcYk+JyKRByc2HiBrBs3Qlvj72oo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pHoh2Urm2Yz+v5pidw0q6JHzBx0s6I3zOZxwxNMRSdolZHgTb+vM/eHOnoSdlkW/EmxkLWMBlyTJKPGZx6mBkJvBfEUoyBRO0v8AZQ1abIKqsuXqWC6cPsk4ooIWtQftu1dodSUEnIiyK6jWs/5ult/rP8ZbewMUA7zle3c8orI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+K4O+HP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0405C4CED3;
+	Fri, 29 Nov 2024 09:58:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732874281;
+	bh=1hDbGfUA23ougGXXcYk+JyKRByc2HiBrBs3Qlvj72oo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=S+K4O+HP1s/SOyDC2ZaronkJTlXMeh+hei9/UDdAxMKNVRc+w6Pa1aw8Wy/DJU1La
+	 h4gsxSkfjjHuE0XXYfO6gFNUrCspcr+HTbPhdSP3Y9+RrnGRSnW4CuzZVta1CwZYmX
+	 ppOLZYX5ErLP7rIzLKzKTuvY1HH5BVYfec6Ex0H4mdezvnIgoJYlIdWgqzaqgb8hey
+	 O/pE9VO4WFda/D1SwRz7D2YJw1JY/Ged/UQVd8iy1pgkjWlSSu9suevByjn6LBpNCs
+	 9xn7zPdTsLfS1hnpgk4O5hB2/f9rlKDXqyCBNrzdWyn15J/MpBb5nMO7NQz+0WWobH
+	 invGq3vz+janw==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa52a5641f8so215526966b.3;
+        Fri, 29 Nov 2024 01:58:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUIGJgE1O6T9j1RTVOsfcHbTQj0m8Gkm8EPOcUl/Kc74O6vWOZYbaw5btM8SNdmJc3/brOPae+ngF/q@vger.kernel.org, AJvYcCVYre6f+e6ajmPnyDXrVvg0kajUEOJhvvBtG1pSKwpaFGEOUB2TKcqpfRH0GM6whFQL6eLA0mc2wT/EIqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznKymqE8+2siblTody7xYE7WzysUyMknEwWr3Rmnk4gErtHEqC
+	tdiyDmOwqbmQ5FJjlsynJ0oDHQ4ZPf4EXpTer0OlmEpyWlVj8sIRFVbUZfav9+FvA5ROD5QxAn5
+	83bqwlF5VWn57hx/wrOCgcO/4ZSI=
+X-Google-Smtp-Source: AGHT+IEDszHNASRg00jYgRLxlywJhuAd9svadYgJOxs6e8sVD3iACRRDC1RVnQFlbOIIyEy7xCtsiG/ayUapIS8OKWE=
+X-Received: by 2002:a17:906:3cb2:b0:aa5:2a41:d2c8 with SMTP id
+ a640c23a62f3a-aa58103c784mr800573466b.38.1732874280276; Fri, 29 Nov 2024
+ 01:58:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] drm/msm: mdss: Add QCS8300 support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Ritesh Kumar <quic_riteshk@quicinc.com>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
- <20241127-mdss_qcs8300-v1-3-29b2c3ee95b8@quicinc.com>
- <nllulh3vskl3hm3hvjux4khxtanqj7cpoytodwkzphwn4ajmo7@g46rgnhp637b>
-Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <nllulh3vskl3hm3hvjux4khxtanqj7cpoytodwkzphwn4ajmo7@g46rgnhp637b>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2RDeD0lqI0DOTLdIK1pgT5hdFL1hoJ_t
-X-Proofpoint-GUID: 2RDeD0lqI0DOTLdIK1pgT5hdFL1hoJ_t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 adultscore=0 suspectscore=0
- mlxlogscore=999 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2411290080
+References: <20241128070227.1071352-1-wangming01@loongson.cn>
+In-Reply-To: <20241128070227.1071352-1-wangming01@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 29 Nov 2024 17:57:48 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4rrQ5v85TXSF-oFAxSxFgvvXR+O2YmDhOPhCcwuOzVuA@mail.gmail.com>
+Message-ID: <CAAhV-H4rrQ5v85TXSF-oFAxSxFgvvXR+O2YmDhOPhCcwuOzVuA@mail.gmail.com>
+Subject: Re: [PATCH] rtc: loongson: clear TOY_MATCH0_REG in loongson_rtc_isr
+To: Ming Wang <wangming01@loongson.cn>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, WANG Xuerui <git@xen0n.name>, 
+	Binbin Zhou <zhoubinbin@loongson.cn>, linux-rtc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lixuefeng@loongson.cn, gaojuxin@loongson.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
+On Thu, Nov 28, 2024 at 3:02=E2=80=AFPM Ming Wang <wangming01@loongson.cn> =
+wrote:
+>
+> The TOY_MATCH0_REG should be cleared to 0 in the RTC interrupt handler,
+> otherwise the interrupt cannot be cleared, which will cause the
+> loongson_rtc_isr to be triggered multiple times.
+Function names usually use () postfixes, e.g., loongson_rtc_isr() and
+loongson_rtc_handler().
 
-On 2024/11/27 21:46, Dmitry Baryshkov wrote:
-> On Wed, Nov 27, 2024 at 03:05:03PM +0800, Yongxing Mou wrote:
->> Add Mobile Display Subsystem (MDSS) support for the QCS8300 platform.
-> 
-> Please mention, why do you need it at all. I see that the UBWC swizzle
-> and HBB settings are different. Is this really the case? Is it because
-> of the different memory being used on those platforms?
-> 
-Thanks, will modify the comment to add more information .QCS8300 UBWC 
-setting is quite different with SA8775P,it use different memory,so their 
-recommended configurations are not quite the same.this is really setting.
->>
->> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->> ---
->>   drivers/gpu/drm/msm/msm_mdss.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
->> index b7bd899ead44bf86998e7295bccb31a334fa6811..90d8fe469d3134ec73f386153509ac257d75930a 100644
->> --- a/drivers/gpu/drm/msm/msm_mdss.c
->> +++ b/drivers/gpu/drm/msm/msm_mdss.c
->> @@ -568,6 +568,16 @@ static const struct msm_mdss_data qcm2290_data = {
->>   	.reg_bus_bw = 76800,
->>   };
->>   
->> +static const struct msm_mdss_data qcs8300_data = {
->> +	.ubwc_enc_version = UBWC_4_0,
->> +	.ubwc_dec_version = UBWC_4_0,
->> +	.ubwc_swizzle = 6,
->> +	.ubwc_static = 1,
->> +	.highest_bank_bit = 3,
->> +	.macrotile_mode = 1,
->> +	.reg_bus_bw = 74000,
->> +};
->> +
->>   static const struct msm_mdss_data sa8775p_data = {
->>   	.ubwc_enc_version = UBWC_4_0,
->>   	.ubwc_dec_version = UBWC_4_0,
->> @@ -715,6 +725,7 @@ static const struct of_device_id mdss_dt_match[] = {
->>   	{ .compatible = "qcom,mdss" },
->>   	{ .compatible = "qcom,msm8998-mdss", .data = &msm8998_data },
->>   	{ .compatible = "qcom,qcm2290-mdss", .data = &qcm2290_data },
->> +	{ .compatible = "qcom,qcs8300-mdss", .data = &qcs8300_data },
->>   	{ .compatible = "qcom,sa8775p-mdss", .data = &sa8775p_data },
->>   	{ .compatible = "qcom,sdm670-mdss", .data = &sdm670_data },
->>   	{ .compatible = "qcom,sdm845-mdss", .data = &sdm845_data },
->>
->> -- 
->> 2.34.1
->>
-> 
+>
+> The previous code cleared TOY_MATCH0_REG in the loongson_rtc_handler,
+> which is an ACPI interrupt. This did not prevent loongson_rtc_isr
+> from being triggered multiple times.
+>
+> This commit moves the clearing of TOY_MATCH0_REG to the loongson_rtc_isr
+> to ensure that the interrupt is properly cleared.
+>
+> Fixes: 1b733a9ebc3d ("rtc: Add rtc driver for the Loongson family chips")
+> Signed-off-by: Ming Wang <wangming01@loongson.cn>
+> ---
+>  drivers/rtc/rtc-loongson.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/rtc/rtc-loongson.c b/drivers/rtc/rtc-loongson.c
+> index e8ffc1ab90b0..0aa30095978b 100644
+> --- a/drivers/rtc/rtc-loongson.c
+> +++ b/drivers/rtc/rtc-loongson.c
+> @@ -114,6 +114,12 @@ static irqreturn_t loongson_rtc_isr(int irq, void *i=
+d)
+>         struct loongson_rtc_priv *priv =3D (struct loongson_rtc_priv *)id=
+;
+>
+>         rtc_update_irq(priv->rtcdev, 1, RTC_AF | RTC_IRQF);
+> +
+> +       /*
+> +        * The TOY_MATCH0_REG should be cleared 0 here,
+> +        * otherwise the interrupt cannot be cleared.
+> +        */
+> +       regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
+There is usually a blank line before the return statement.
 
+Huacai
+
+>         return IRQ_HANDLED;
+>  }
+>
+> @@ -131,11 +137,7 @@ static u32 loongson_rtc_handler(void *id)
+>         writel(RTC_STS, priv->pm_base + PM1_STS_REG);
+>         spin_unlock(&priv->lock);
+>
+> -       /*
+> -        * The TOY_MATCH0_REG should be cleared 0 here,
+> -        * otherwise the interrupt cannot be cleared.
+> -        */
+> -       return regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
+> +       return ACPI_INTERRUPT_HANDLED;
+>  }
+>
+>  static int loongson_rtc_set_enabled(struct device *dev)
+> --
+> 2.43.0
+>
 
