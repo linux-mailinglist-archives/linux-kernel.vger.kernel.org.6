@@ -1,100 +1,142 @@
-Return-Path: <linux-kernel+bounces-425948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D5D9DECD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 22:18:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F089DECDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 22:19:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83C30163798
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:19:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43A21A070E;
+	Fri, 29 Nov 2024 21:19:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6AAB281E6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:18:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212071A08AB;
-	Fri, 29 Nov 2024 21:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQJe0Nft"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2286915AF6;
-	Fri, 29 Nov 2024 21:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA740155300
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 21:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732915119; cv=none; b=a7BQjFEBmEVh4v08PejP8WyKnrqEzBZU4mpuZYAReq3ZrHESbe/CohQ3VuhOWjZ0it+5CV6rPNoFwn9pDQwXs9EDj6svNXa5FUZMXyvj8tjb/jW6PmTfURIm4kVGuuys3WDKWcqrnCbhOQZiZSv7sXU/0JXRCrsZNcdDONi61bg=
+	t=1732915159; cv=none; b=bAQuajDuwxM8RfpKQxUZgnNmdyhFoLLNIA7gasCUizDg+HTzdLnHJSIglXmKdFg3nmm/al3VePmW7VgZLOuSMcmqyNdqpxz4bY9MkAb/c1DHpotmnMslXyLvk31e27bF9agzonQsI27XX4P2gpDPHiOvSh+dVK7N6lBcA7I8j2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732915119; c=relaxed/simple;
-	bh=9onmvIaJLISG67vwgchmVef7Mm+BpVYqrZJhuC2/nSA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZnhCxhOzTfCzgXu5tSzquaY4kKwO9jYHLruF9oAjx4Br/i6OUMMkJTJfaAGti2lNzrU059MrB5dh2sI2oWKQfhya40oF+Vpb8hMcMmm6Vkh15W7iwjHzmtNLn6sgUkJ2Rqp3UuEzKqtitAWjEaCZQzjVb+uvdkvK9mAOQ0s/xyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NQJe0Nft; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b66d5f6ec8so153649285a.0;
-        Fri, 29 Nov 2024 13:18:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732915117; x=1733519917; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9onmvIaJLISG67vwgchmVef7Mm+BpVYqrZJhuC2/nSA=;
-        b=NQJe0NftObYCyitn6dHM6W73QUmkgRy6c6l5A3K95dGtytvBhRfeovS7QYGxm5dDaA
-         Bu963OucFXfpyiGLluPo41R/H/rOiCkrVh0e5j3qHPjJggw0PyDo/LbMr+eynkqJcy/L
-         xHjrorpnTup4QMUv900wQpchmZRY4MkfIHu1rkoOkxDJKWY09kOYcFSWUigmxUKZe1tI
-         LTwXAU8KYJjCpOz8ftmzdofynjhiuZg3iVMZDi2GJTrsHRWs0PbTyBAQPwj8mzo2nXYu
-         0eLAWmbxjK7AmgIXRocu4P53RkcV4nBfyMf1URcqDLYcEgXIKl1LqVLziLOJ+LqVXUrF
-         sMrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732915117; x=1733519917;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9onmvIaJLISG67vwgchmVef7Mm+BpVYqrZJhuC2/nSA=;
-        b=w4vkDHDw/90rhfV9z5oZpCgADoWaa0zH1EtZ8vDdNk+oWq0wg8iDScKIxZvYw4R4AR
-         GIM3IGlJF/2IM2UASd4UU4tL5NB3bjlRxpmb9MJP2UF1MpVWOfHFKhSy2KFWb31VFATx
-         wicmPb2Hrp1zDS1W/qd9cYlRjEKySKtBOu7qCwx10RC0hL25vn5nMTYqpVDZMqjxuZz8
-         7ccqdmQfGd2oy4CCGZJDm3E/Gnr5M+AWSWaDfnCP04chq5HJiAZsxakUZYw+BvpfBQLl
-         65pcPf1fqeby50wThm8V2Bb24Ltdl8gOVx+xl3tBkuxMqBCpPZK5JiY823CTSgR1bN/r
-         bVDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFmbjJpvNbSGuNbBfgyh7kgtudySNcYtcoY37fHjF7yLOfzeuUD8g56TDoW6vTO2dOIxK7GDomFV0rmoc=@vger.kernel.org, AJvYcCVJDYfulta4SfAfIRN3JUoExwJsfM7iMehuaSldn1wUu9Nqti6vAPR1SeYUEZidB9PCgfJnxdAu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgRylA9N/X37HthOzcKKfOyxY+i7mmSG76xydkh3qCYBFtOExt
-	e8TARDeWOv9so8PiX/ZeZMYXI3H7gySVPb7XMPHz5u/MnA0G5Y+NptlyY1maSakGuPK+1oBebMd
-	AqXIeeR85FXhsre2nL6gWTsv+wik=
-X-Gm-Gg: ASbGncthoHVj1SwYtCFty1aEUtjB6jiwTiPRWmErrp4HlTDyNezu1nrBbeJy3/R3hr9
-	lEfStLju4er+57WsrEfr4ajiG1eHCTZWakLt7Fm6DbVeIYcSMqhGwWE96
-X-Google-Smtp-Source: AGHT+IEkWpCGrfP+Fw8sEVM7ooU4K9gi3GzorgaZIVsmnsijPL3UKcok7+Lxti1KIwLzS+qUu0AIzifd42VpEKhIF5A=
-X-Received: by 2002:a05:620a:2715:b0:7a4:d685:caa9 with SMTP id
- af79cd13be357-7b67c46384emr2348891085a.48.1732915117107; Fri, 29 Nov 2024
- 13:18:37 -0800 (PST)
+	s=arc-20240116; t=1732915159; c=relaxed/simple;
+	bh=S9ZDFfMfAmMlUPX4Ibwgq27YQHuxi9tVo+ygMzYiatk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Wclo6SKhncZIgJbWItIRfgIFzyenJc1oFOqOMxhWRNmkiJBQTK7Cu3yhdURKVDhAZdRvVJzO18BBxXHUCMlkZx4d2Dbj1+FwFze2MA7RcfYokQz6i7m185mGvKBAcowx6Zv0F+wCFoZ88P2n0wba5agO65diy0K8LiQgaJcoSe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1tH8Nv-00058G-Qc; Fri, 29 Nov 2024 22:18:43 +0100
+Message-ID: <9ca967aea19d6c28327f3a9bb77e23f6245603e9.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/5] PCI: stm32: Add PCIe host support for STM32MP25
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Bjorn Helgaas <helgaas@kernel.org>, Christian Bruel
+	 <christian.bruel@foss.st.com>, Rob Herring <robh+dt@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
+ robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+ conor+dt@kernel.org,  mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,  cassel@kernel.org,
+ quic_schintav@quicinc.com, fabrice.gasnier@foss.st.com, 
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Date: Fri, 29 Nov 2024 22:18:40 +0100
+In-Reply-To: <20241129205822.GA2772018@bhelgaas>
+References: <20241129205822.GA2772018@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240115232718.209642-1-sashal@kernel.org> <20240115232718.209642-11-sashal@kernel.org>
- <20241128115924.GAZ0hbHKsbtCixVqAe@fat_crate.local> <Z0iRzPpGvpeYzA4H@sashalap>
- <20241128164310.GCZ0idnhjpAV6wFWm6@fat_crate.local> <Z0kJHvesUl6xJkS7@sashalap>
- <CAL2Jzuxygf+kp0b9y5c+SY7xQEp7j24zNuKqaTAOUGHZrmWROw@mail.gmail.com>
- <20241129133310.GDZ0nClg7mDbFaqxft@fat_crate.local> <Z0nfomc6TKd-17S9@sashalap>
-In-Reply-To: <Z0nfomc6TKd-17S9@sashalap>
-From: Erwan Velu <erwanaliasr1@gmail.com>
-Date: Fri, 29 Nov 2024 22:18:26 +0100
-Message-ID: <CAL2Jzux9JrS95dTAOgH6+FFa8suHZ2SLcDwF4+dXNg4xxYG8Wg@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.15 11/12] x86/barrier: Do not serialize MSR
- accesses on AMD
-To: Sasha Levin <sashal@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com, 
-	x86@kernel.org, puwen@hygon.cn, seanjc@google.com, kim.phillips@amd.com, 
-	jmattson@google.com, babu.moger@amd.com, peterz@infradead.org, 
-	rick.p.edgecombe@intel.com, brgerst@gmail.com, ashok.raj@intel.com, 
-	mjguzik@gmail.com, jpoimboe@kernel.org, nik.borisov@suse.com, aik@amd.com, 
-	vegard.nossum@oracle.com, daniel.sneddon@linux.intel.com, acdunlap@google.com, 
-	pavel@denx.de
-Content-Type: text/plain; charset="UTF-8"
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-> Or LPC? I don't usually end up attending KR but Greg is always there :)
-<innocent tone>
-You should come once, it's such a nice conference!
-</innocent>
+Am Freitag, dem 29.11.2024 um 14:58 -0600 schrieb Bjorn Helgaas:
+> [+to Rob, DMA mask question]
+>=20
+> On Tue, Nov 26, 2024 at 04:51:16PM +0100, Christian Bruel wrote:
+> > Add driver for the STM32MP25 SoC PCIe Gen2 controller based on the
+> > DesignWare PCIe core.
+>=20
+> Can you include the numeric rate, not just "gen2", so we don't have to
+> search for it?
+>=20
+> > +static int stm32_pcie_resume_noirq(struct device *dev)
+> > +{
+> > +	struct stm32_pcie *stm32_pcie =3D dev_get_drvdata(dev);
+> > +	struct dw_pcie *pci =3D stm32_pcie->pci;
+> > +	struct dw_pcie_rp *pp =3D &pci->pp;
+> > +	int ret;
+> > +
+> > +	/* init_state must be called first to force clk_req# gpio when no
+> > +	 * device is plugged.
+> > +	 */
+>=20
+> Use drivers/pci/ conventional comment style:
+>=20
+>   /*
+>    * text ...
+>    */
+>=20
+> > +static bool is_stm32_pcie_driver(struct device *dev)
+> > +{
+> > +	/* PCI bridge */
+> > +	dev =3D get_device(dev);
+> > +
+> > +	/* Platform driver */
+> > +	dev =3D get_device(dev->parent);
+> > +
+> > +	return (dev->driver =3D=3D &stm32_pcie_driver.driver);
+> > +}
+> > +
+> > +/*
+> > + * DMA masters can only access the first 4GB of memory space,
+> > + * so we setup the bus DMA limit accordingly.
+> > + */
+> > +static int stm32_dma_limit(struct pci_dev *pdev, void *data)
+> > +{
+> > +	dev_dbg(&pdev->dev, "disabling DMA DAC for device");
+> > +
+> > +	pdev->dev.bus_dma_limit =3D DMA_BIT_MASK(32);
+>=20
+> I don't think this is the right way to do this.  Surely there's a way
+> to describe the DMA capability of the bridge once instead of iterating
+> over all the downstream devices?  This quirk can't work for hot-added
+> devices anyway.
+>=20
+This should simply be a dma-ranges property in the PCIe host controller
+DT node, which should describe the DMA address range limits for
+transactions passing through the host.
+
+Regards,
+Lucas
+
+> > +	return 0;
+> > +}
+> > +
+> > +static void quirk_stm32_dma_mask(struct pci_dev *pci)
+> > +{
+> > +	struct pci_dev *root_port;
+> > +
+> > +	root_port =3D pcie_find_root_port(pci);
+> > +
+> > +	if (root_port && is_stm32_pcie_driver(root_port->dev.parent))
+> > +		pci_walk_bus(pci->bus, stm32_dma_limit, NULL);
+> > +}
+> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_SYNOPSYS, 0x0550, quirk_stm32_dm=
+a_mask);
+>=20
+
 
