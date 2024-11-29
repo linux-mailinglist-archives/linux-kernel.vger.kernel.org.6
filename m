@@ -1,156 +1,123 @@
-Return-Path: <linux-kernel+bounces-425846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB9E9DEBCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:37:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B7D9DEBCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 461A7B21AD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 763AC281F9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F75C1A08A8;
-	Fri, 29 Nov 2024 17:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB81A19DF60;
+	Fri, 29 Nov 2024 17:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jsfNbPPn"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=mandrillapp.com header.i=@mandrillapp.com header.b="n+purXCC";
+	dkim=pass (2048-bit key) header.d=vates.tech header.i=thierry.escande@vates.tech header.b="pM1PdLas"
+Received: from mail136-20.atl41.mandrillapp.com (mail136-20.atl41.mandrillapp.com [198.2.136.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D6A14B962;
-	Fri, 29 Nov 2024 17:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D02314B077
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 17:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.2.136.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732901806; cv=none; b=NVhM7jfXsjkaCbMhetkpi3PXAFPQ8IE71khMSpFfPi/6+LOLkvrg7iqt0WRmbVQ64lyiMe4CzmLsJMDgkAd6LPFmf5FG5CgAU2FKreHuq3K4AJ6WqOZXkug/RbkBLIRPwN45yF8t85g/5fx/q17Zq6g+CXNZ2SNmW1HSoiVKMKU=
+	t=1732901804; cv=none; b=I1RQpT8re2wS9+Vr83Tre+Ce5VpIPu/OqjoMqmbOMWOtjNGsAo5EiB+WWa7/W78wgPJDKHd9QoecyTXQOqScSXdKg1uwGQVtvKhyGfNs8EZ+lhcHHorY7MV6HFNcvbVih7yB+3g5Mu1f9V/STSFj7K2a3Rz1yPt3OzQKj3I+uzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732901806; c=relaxed/simple;
-	bh=Am9e06vfxrQwa7zePLWjQsY8vfb6jcJtBoyeRsKXqNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ep76YtgVEBkulCqL7q2IpQKj697HzSFjKCuYqQzE3GKBu2/7axvtGkrI5ug+uZnExoFk6IEvJTCGlzCwxRw64r2QQ3J6o1aHfc1CHgTC1UkdbmmBurztYoebJFs6yhmhLZROwYHo/z6gDXabUgnk/9bOQMl6E2MnbnAlZbJeMpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jsfNbPPn; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A47B9240015;
-	Fri, 29 Nov 2024 17:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732901800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z02MjlJuh3b3hDQPFS72EpBOSuOXivey6EAK77/5mEo=;
-	b=jsfNbPPng/GRegUIEJ4p4mxJOa8AY12nYR20XbQ8t3rkvxi4NdJbUYcQ4tQvsVxfaJEpx5
-	OD9BHE20vUPRbjY9K3HLWUewLAcPcTLeIBpdT3VN6pCSeVNisCLFZ0uZd1xQsWAyXCVJGX
-	mYiS1Sz1N3iPyl7AdZ2WC8wFTLlUGWraMIy0SBIkA54GSVixqK0aJZPAjdiXm7Bc6k5HIi
-	Hn5iJf899ZRyhy0R6cvRjOt38EzG/5YZA2sv0hgstXCMZ9fplreT4vwb8ct4D1G9BTqPvN
-	e2FWnmGmQ6zaah6xPjFkOIxCYtVO8hGsdI92t1qD45flUEypQIWtibQRa8/B2g==
-Date: Fri, 29 Nov 2024 18:36:36 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Michal Kubecek <mkubecek@suse.cz>, Andy
- Shevchenko <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>,
- Lee Jones <lee@kernel.org>, "derek.kiernan@amd.com"
- <derek.kiernan@amd.com>, "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, Lars Povlsen
- <lars.povlsen@microchip.com>, Steen Hegelund
- <Steen.Hegelund@microchip.com>, Daniel Machon
- <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, "David S .
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Netdev
- <netdev@vger.kernel.org>, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Ricardo Ribalda
- <ribalda@chromium.org>
-Subject: Re: [PATCH v9 1/6] misc: Add support for LAN966x PCI device
-Message-ID: <20241129183636.7043fa66@bootlin.com>
-In-Reply-To: <CAMuHMdWgqEZtd82hSp0iYahtTcTnORFytTm11EiZOjLf8V9tQw@mail.gmail.com>
-References: <20241010063611.788527-1-herve.codina@bootlin.com>
-	<20241010063611.788527-2-herve.codina@bootlin.com>
-	<dywwnh7ns47ffndsttstpcsw44avxjvzcddmceha7xavqjdi77@cqdgmpdtywol>
-	<20241129091013.029fced3@bootlin.com>
-	<1a895f7c-bbfc-483d-b36b-921788b07b36@app.fastmail.com>
-	<CAMuHMdWXgXiHNUhrXB9jT4opnOQYUxtW=Vh0yBQT0jJS49+zsw@mail.gmail.com>
-	<93ad42dc-eac6-4914-a425-6dbcd5dccf44@app.fastmail.com>
-	<CAMuHMdWgqEZtd82hSp0iYahtTcTnORFytTm11EiZOjLf8V9tQw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1732901804; c=relaxed/simple;
+	bh=5zCWXC9TUj94GjK/21Ix29jy73icDrRa/bMqvLhV2Ko=;
+	h=From:Subject:Message-Id:To:Cc:References:In-Reply-To:Date:
+	 MIME-Version:Content-Type; b=WqSw0FKCI9fp2ClFywBt4igJ+j3zbdOn+5BZQCE6kRcTKHXGVXJJ6P4I36FNVck7uTKKvExsHKHCou50n0e6rpwFzy89/GwfUQbL6HtqmtB7RlGGuRVJj4TA8q9lZ+Vn2xKuJ2sBOw993c1CE7W+nGFw2+WpK/rlHN0VwD0FfRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vates.tech; spf=pass smtp.mailfrom=bounce.vates.tech; dkim=pass (2048-bit key) header.d=mandrillapp.com header.i=@mandrillapp.com header.b=n+purXCC; dkim=pass (2048-bit key) header.d=vates.tech header.i=thierry.escande@vates.tech header.b=pM1PdLas; arc=none smtp.client-ip=198.2.136.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vates.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bounce.vates.tech
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com;
+	s=mte1; t=1732901801; x=1733162301;
+	bh=2DFaOg6NuCFtrE/G4yKsOhsAMmOaVP7yOxEacPXZjy8=;
+	h=From:Subject:Message-Id:To:Cc:References:In-Reply-To:Feedback-ID:
+	 Date:MIME-Version:Content-Type:Content-Transfer-Encoding:CC:Date:
+	 Subject:From;
+	b=n+purXCCvPT7Mh6jL/Hofbk4MNnlQvWPYMGBZkdJb1p3vJUurufsCIswJsIECGh4i
+	 rO5BY3LHzeBbPLNb5gcEM54x0g0nLCGPqzm267ErHEyi4dqWLT7JaHPwkbRVLqXzk1
+	 ceszh/rIhomYi04yhrqd5Z4jmKK4Nfj8zAfIcXy9bwBNvezbXVc2SOeDJjEnVZKVY4
+	 WKlwLygfREYurDH101VCh5Af5aOtq3lpQySJhs/GOq5Jcyr0bJhnZxSprmdkjTZFB5
+	 P7FUAkT++nbC7oIhUBIdPew1ckJu3SAg9t2NQ1neJhKhSFGlott/g/8tueZkz5kGIa
+	 6vTSgMUsDHLfQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vates.tech; s=mte1;
+	t=1732901801; x=1733162301; i=thierry.escande@vates.tech;
+	bh=2DFaOg6NuCFtrE/G4yKsOhsAMmOaVP7yOxEacPXZjy8=;
+	h=From:Subject:Message-Id:To:Cc:References:In-Reply-To:Feedback-ID:
+	 Date:MIME-Version:Content-Type:Content-Transfer-Encoding:CC:Date:
+	 Subject:From;
+	b=pM1PdLasCaDY9qGJFRDrpduvkkNtPlKq9Mmq3ABo0BwJSRz/Y/DC8kZrCJ1fGT8gq
+	 j69VTLooXWwMq550umE8JAQO7de2+VlhUEIDVqYljuJmxLIakpmnGdQQ6PngX9Y8mh
+	 k56hmwQH0wXAQBzCajnBKfnDCjOKY7R1UdAv5F6qqyddx9uKERM1RDCBCQrg3uCy8T
+	 JLhbxW3zJ6Z0p5ZmgcsyDgoZksYbhqLaGtyz6kxPjfJUKtI9nZKF74ty7PbR+fkhJX
+	 yDm5GOjpsSxQK8bV+IkiewPIXfOrbYm1x3eEUFLfunMtWuz57MZ8MBkZvMnKbD82hr
+	 i1tYoRtZ/SNGQ==
+Received: from pmta11.mandrill.prod.atl01.rsglab.com (localhost [127.0.0.1])
+	by mail136-20.atl41.mandrillapp.com (Mailchimp) with ESMTP id 4Y0L2d4WzBzCf9Nc1
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 17:36:41 +0000 (GMT)
+From: "Thierry Escande" <thierry.escande@vates.tech>
+Subject: =?utf-8?Q?Re:=20[PATCH=20v2=201/2]=20xen/swiotlb:=20add=20alignment=20check=20for=20dma=20buffers?=
+Received: from [37.26.189.201] by mandrillapp.com id 8c81f47df04449da8fe38b771be48ac9; Fri, 29 Nov 2024 17:36:41 +0000
+X-Bm-Milter-Handled: 4ffbd6c1-ee69-4e1b-aabd-f977039bd3e2
+X-Bm-Transport-Timestamp: 1732901799832
+Message-Id: <e6ceb22d-3fa7-430c-9410-3c5ffd9ded2d@vates.tech>
+To: "Juergen Gross" <jgross@suse.com>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Cc: "Stefano Stabellini" <sstabellini@kernel.org>, "Oleksandr Tyshchenko" <oleksandr_tyshchenko@epam.com>, xen-devel@lists.xenproject.org, jbeulich@suse.com
+References: <20240916064748.18071-1-jgross@suse.com> <20240916064748.18071-2-jgross@suse.com>
+In-Reply-To: <20240916064748.18071-2-jgross@suse.com>
+X-Native-Encoded: 1
+X-Report-Abuse: =?UTF-8?Q?Please=20forward=20a=20copy=20of=20this=20message,=20including=20all=20headers,=20to=20abuse@mandrill.com.=20You=20can=20also=20report=20abuse=20here:=20https://mandrillapp.com/contact/abuse=3Fid=3D30504962.8c81f47df04449da8fe38b771be48ac9?=
+X-Mandrill-User: md_30504962
+Feedback-ID: 30504962:30504962.20241129:md
+Date: Fri, 29 Nov 2024 17:36:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
 Hi,
 
-+Cc Ricardo
+On 16/09/2024 08:47, Juergen Gross wrote:
+> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> index 35155258a7e2..ddf5b1df632e 100644
+> --- a/drivers/xen/swiotlb-xen.c
+> +++ b/drivers/xen/swiotlb-xen.c
+> @@ -78,9 +78,15 @@ static inline int range_straddles_page_boundary(phys_addr_t p, size_t size)
+>  {
+>  	unsigned long next_bfn, xen_pfn = XEN_PFN_DOWN(p);
+>  	unsigned int i, nr_pages = XEN_PFN_UP(xen_offset_in_page(p) + size);
+> +	phys_addr_t algn = 1ULL << (get_order(size) + PAGE_SHIFT);
+>  
+>  	next_bfn = pfn_to_bfn(xen_pfn);
+>  
+> +	/* If buffer is physically aligned, ensure DMA alignment. */
+> +	if (IS_ALIGNED(p, algn) &&
+> +	    !IS_ALIGNED(next_bfn << XEN_PAGE_SHIFT, algn))
+> +		return 1;
 
-On Fri, 29 Nov 2024 11:29:44 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+There is a regression in the mpt3sas driver because of this change.
+When, in a dom0, this driver creates its DMA pool at probe time and
+calls dma_pool_zalloc() (see [1]), the call to
+range_straddles_page_boundary() (from xen_swiotlb_alloc_coherent())
+returns 1 because of the alignment checks added by this patch. Then the
+call to xen_create_contiguous_region() in xen_swiotlb_alloc_coherent()
+fails because the passed size order is too big (> MAX_CONTIG_ORDER).
+This driver sets the pool allocation block size to 2.3+ MBytes.
 
-> Hi Arnd,
-> 
-> On Fri, Nov 29, 2024 at 10:23 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Fri, Nov 29, 2024, at 09:44, Geert Uytterhoeven wrote:  
-> > > On Fri, Nov 29, 2024 at 9:25 AM Arnd Bergmann <arnd@arndb.de> wrote:  
-> > >> On Fri, Nov 29, 2024, at 09:10, Herve Codina wrote:
-> > >> I would write in two lines as
-> > >>
-> > >>         depends on PCI
-> > >>         depends on OF_OVERLAY
-> > >>
-> > >> since OF_OVERLAY already depends on OF, that can be left out.
-> > >> The effect is the same as your variant though.  
-> > >
-> > > What about
-> > >
-> > >     depends on OF
-> > >     select OF_OVERLAY
-> > >
-> > > as "OF" is a clear bus dependency, due to the driver providing an OF
-> > > child bus (cfr. I2C or SPI bus controller drivers depending on I2C or
-> > > SPI), and OF_OVERLAY is an optional software mechanism?  
-> >
+From previous discussions on the v1 patch, these checks are not
+necessary from xen_swiotlb_alloc_coherent() that already ensures
+alignment, right?
 
-A patch has be done in that way by Ricardo Ribalda
-  https://lore.kernel.org/all/20241129-lan966x-depend-v1-1-603fc4996c4f@chromium.org/
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/scsi/mpt3sas/mpt3sas_base.c?h=v6.12.1#n6227
 
-> > OF_OVERLAY is currently a user visible option, so I think it's
-> > intended to be used with 'depends on'. The only other callers
-> > of this interface are the kunit test modules that just leave
-> > out the overlay code if that is disabled.  
-> 
-> Indeed, there are no real upstream users of OF_OVERLAY left.
-> Until commit 1760eb547276299a ("drm: rcar-du: Drop leftovers
-> dependencies from Kconfig"), the rcar-lvds driver selected OF_OVERLAY
-> to be able to fix up old DTBs.
-> 
-> > If we decide to treat OF_OVERLAY as a library instead, it should
-> > probably become a silent Kconfig option that gets selected by
-> > all its users including the unit tests, and then we can remove
-> > the #ifdef checks there.  
-> 
-> Yep.
-> 
-> > Since OF_OVERLAY pulls in OF_DYNAMIC, I would still prefer that
-> > to be a user choice. Silently enabling OF_OVERLAY definitely has
-> > a risk of introducing regressions since it changes some of the
-> > interesting code paths in the core, in particular it enables
-> > reference counting in of_node_get(), which many drivers get wrong.  
-> 
-> Distro kernels will have to enable this anyway, if they want to
-> support LAN966x...
-> 
-
-Best regards,
-Hervé
+Regards,
+Thierry
 
