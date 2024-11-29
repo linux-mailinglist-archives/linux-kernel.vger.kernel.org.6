@@ -1,139 +1,208 @@
-Return-Path: <linux-kernel+bounces-425436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDAE9DC20A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:19:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C629DC211
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47476B21A15
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:19:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C22CB22BA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1022816A95B;
-	Fri, 29 Nov 2024 10:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uBIKmpE/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D1218D63E;
+	Fri, 29 Nov 2024 10:23:51 +0000 (UTC)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F524AD23
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9770155753;
+	Fri, 29 Nov 2024 10:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732875542; cv=none; b=AScqqePfS2MjRW3i34+hrw9+WvnDXzlYYEf0QPwQFBSB1aOqfzBX8VwMOmzTxyjQiccXeYM9uRL8LSFUoXqRGSGqgscRW80JZoDncTPNFSDfn66jn1J29SZVFvP4ygJspDh1Vd4dCxMltuLY6BfC495zHfKr0Iwflg3GVIAzd+I=
+	t=1732875830; cv=none; b=lUH3szDIdQ2uGkdOBX/Mz3CEI4vzU65BH5dOX8vGjmHadPydmfTnhEeDzBblsHn4vueKCjEHQ5AZwI49KsSZcSOnUQMqGDb5vpt1RorOVmZux8LfqCOEYMHMUsyYudHictbZntd7x6TB2n2grWx6p9hBFeqBJUMDtt+uBOnLFck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732875542; c=relaxed/simple;
-	bh=RvPdE7kX8hLmqDnAOQy1BJSUud0BOZblF6cXs2tZAwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGX6FeJWXjgarI0gPmfdY0bFqNaUIA/aPFtWWvb8wcM8vkldj+/zt68OALtTtxvVdH8513lkF+SeyICSo5CoSvQ04utdyS1fFb/7/djrWT11moQMeyY73lQInXa8T3jmTMNubiAV3wrIUZ8zgoDdXYgwTkVP0beRSVYQ032mfRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uBIKmpE/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=S2lf3TI/b6E6++0Yk0fvViEeZdn8XaWt6mnXyZys+vY=; b=uBIKmpE/ZELKv2ml/OIelYLYbH
-	ueFirbyO6WPV64o2O0LGXogBiSutdQGwFz5jQuV5OzSs3Tbv8ppdajBaZm/oJ5hncvJZ+s1LkgiSO
-	4r/R/KtHeURUSMB33TWaUllr5bAKE0FoS5xOm4HFjtRWrrzQkQtm7wj4/31CYYP4ZQZhgjbiyr8Ah
-	cPBWIGq6IOn82hr5NKWWT5Z8SEh+q+RhuWU7F+Ln/SWXuQPuVDhCRz5hr2+n0X8bM+KOcp3jZp8er
-	/nmCYYlz1xIrLQKKq8OxOqv5Z3TfAzvPPRkO5rbXwkWlunHxUKMrVjKcl88SzGIf2G8Xqy5NQMzLk
-	2aB0pdTw==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGy5I-00000003szb-2W9R;
-	Fri, 29 Nov 2024 10:18:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 76F8E30026A; Fri, 29 Nov 2024 11:18:49 +0100 (CET)
-Date: Fri, 29 Nov 2024 11:18:49 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Adam Li <adamli@os.amperecomputing.com>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	patches@amperecomputing.com, cl@linux.com, christian.loehle@arm.com,
-	vineethr@linux.ibm.com
-Subject: Re: [PATCH] sched/fair: Untangle NEXT_BUDDY and pick_next_task()
-Message-ID: <20241129101849.GB33464@noisy.programming.kicks-ass.net>
-References: <20241127055610.7076-1-adamli@os.amperecomputing.com>
- <20241127055610.7076-2-adamli@os.amperecomputing.com>
- <670a0d54-e398-4b1f-8a6e-90784e2fdf89@amd.com>
- <20241129095500.GD15382@noisy.programming.kicks-ass.net>
- <20241129101541.GA33464@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1732875830; c=relaxed/simple;
+	bh=N0sqU8NkAOZabHcNlGMMpaPfV+bPF/O7Yg+flTk9yhU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fgHsOTV+obs9LjZmfX3YJqH/l+8W9rEyvkWi7KQFdD589j80Oh8D6Tjh+bDY+6xGWGgo7tQ1D0D+KyRRtWYRbm6XafZpvUwSbbRs9i4MTq4U2r2Vu+iEKhmR+gFeve1e7fSKoQAxayPdXBhDw0nNXNcZvVHlKEFOt1zEoOJzE1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4af4575ec4cso559601137.2;
+        Fri, 29 Nov 2024 02:23:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732875827; x=1733480627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lb0O6wOGoEZfGObCxjbicwXvMy3aEqtM9vf1++Bs8QA=;
+        b=kdFxJAeeZhzMYdTYnJLnD31wH0rZLYnpjjAowvFe+7TypxCbW9IZ4SxusOkmL8f8po
+         6cp2qYTSFZz1h7E43/9isrqEXP9d9ee/7eyoT9j9OXKvX3YlVKqdgzl+b872TLUu+OwD
+         LxDrRXG419Xnrze76cgrJZCVVBYJqsPgaXYQpoHrDMXJKTnXA0SwY1mwpCV73heIHHXZ
+         sxVxLVs7U5HIR4/p6V+5vD89aW8DCXkPUOOn9oEGJPtuOQiCXNmB+vbkhh8vX4rb+Gnw
+         eEbNhuOgiSeR3LdTaXA1W0zDC3B1vBp1Ee/TJ6LDTZmp4MrV0ICCVnm+OGAEYevuA4Xm
+         XPvg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0ZKJHG3JfNgC1H9l45f9bktXYz42ebWUyNLFoIYj3u/Kk/NsryvquFCR8awy1NQZaO8NJRvul6iGi@vger.kernel.org, AJvYcCVA412TR6WOvw5xbKCCYUfFPxrbnoEK22SX16QRXcoWoWwpfBq31cW4HmUYzlnpwjxuvGYd2O9UKNDTmFD7E6GDNkU=@vger.kernel.org, AJvYcCVUV4gxXPZs6K/pLhz4ySi0ZRQl1p5rbTCiY2BHbmNJWGoqsBY5MhCECtwdao+Q+sKYraAuYdd63Ixp@vger.kernel.org, AJvYcCXBNu0HKvDvlKNONUQHqCoRX3HYy6EQ6mylkFHgp9FhDHdfjsomoMMkalNtF5BjYimG2ODNwMXsZD3rVEX+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyYRP/46pN2DrVvclRhrjUleF20zZrKXNuCi9NzDCFFtVPtIu+
+	bKu8BhVZq29j7mV66LkM9cfEiVpCCcBKKDeRRSvn1vi+aERdRdYhEDoDRHzDVtA=
+X-Gm-Gg: ASbGncvpdl/1wf9z0MmeMz6AYxFryftiBI48urIV8pFdZ5rynO3qBEs512acL2a72mV
+	HdGTrn0MrzG0/NF8Ql4QnHzYDmalkFJH1W6a5euhXesFVDik/VcowXRL7miu6GBAHBAK8YyokbA
+	H6mhvf0Haubbl+djs4hukpX5mOY5turgSShxSPuKqeFWF/yu2xOKVPtE+PZw0SB8rRuxNjoAPHJ
+	2teIcZhaYfhTpMFkU/DeU2Ttva8plic6SSLFbsSyvFp/Ti6nXnKTu7oNkza7l/NElMiYspcYWdH
+	csCAv4xaaxGK
+X-Google-Smtp-Source: AGHT+IGPX4Z7XXeacRRkXvXJizJ93foOwZUyFckFAkluw3CyKCBGUmwkUccHt2INEhkiufUAO5bY8w==
+X-Received: by 2002:a05:6102:26cc:b0:4af:496b:1bce with SMTP id ada2fe7eead31-4af496b1cfemr8687733137.4.1732875826855;
+        Fri, 29 Nov 2024 02:23:46 -0800 (PST)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85b82a0e475sm703509241.7.2024.11.29.02.23.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 02:23:46 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4af1578d288so466789137.3;
+        Fri, 29 Nov 2024 02:23:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUcn1q0dXCDFkFpgHEhylaUADDDhfhlvTFgp++SELeluTHJBl0C+4iBKM/gQprG30Dl2xKNRQxcj2fB@vger.kernel.org, AJvYcCWAqRINAOa3tw+EC1RjI5YZ4aQv/gDuqH4xehJWfgTPkA9Ql9J22mXKPjlv+im/y0KFIDZdNU3VAttHGIcACuq1E10=@vger.kernel.org, AJvYcCWIQKPiASQf6yZO3Or4DbpRX6pD5iDDCeN2hmE9RPYbivKsJhorBZfUNuBACq69nWp35+2BGyQy/Yt+v66V@vger.kernel.org, AJvYcCXpF5SFVD1986BIGPOKMSTWnFH3izzLQ2M8+o0G/YWltTmHSNGPc33Nbwz+GprxUfOFc3MENbrLfbw2@vger.kernel.org
+X-Received: by 2002:a05:6102:390e:b0:4af:30c3:6a2c with SMTP id
+ ada2fe7eead31-4af4492c932mr14186029137.10.1732875825820; Fri, 29 Nov 2024
+ 02:23:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241129101541.GA33464@noisy.programming.kicks-ass.net>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-3-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUvmTQeQXxhsXtj23-OS=aL3UgsyOtnawdmnusrEJ2JQw@mail.gmail.com>
+ <32fa7eb8-2139-454c-8866-cb264d060616@tuxon.dev> <CAMuHMdXPQnCPjKRxoSceYabWPHF9Z_A7qVN85yaUZjPG7-o7tg@mail.gmail.com>
+In-Reply-To: <CAMuHMdXPQnCPjKRxoSceYabWPHF9Z_A7qVN85yaUZjPG7-o7tg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 29 Nov 2024 11:23:34 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXLVKDybzgeXc0rqiOFXFfRrat0LDEAEsBdHA3rmDiL0w@mail.gmail.com>
+Message-ID: <CAMuHMdXLVKDybzgeXc0rqiOFXFfRrat0LDEAEsBdHA3rmDiL0w@mail.gmail.com>
+Subject: Re: [PATCH v2 02/15] soc: renesas: Add SYSC driver for Renesas RZ family
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
+	gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com, 
+	christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 29, 2024 at 11:15:41AM +0100, Peter Zijlstra wrote:
-> On Fri, Nov 29, 2024 at 10:55:00AM +0100, Peter Zijlstra wrote:
-> 
-> > Anyway..  I'm sure I started a patch series cleaning up the whole next
-> > buddy thing months ago (there's more problems here), but I can't seem to
-> > find it in a hurry :/
-> 
-> There was this..
+On Fri, Nov 29, 2024 at 9:54=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+> On Fri, Nov 29, 2024 at 9:48=E2=80=AFAM Claudiu Beznea <claudiu.beznea@tu=
+xon.dev> wrote:
+> > On 28.11.2024 17:24, Geert Uytterhoeven wrote:
+> > > On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxo=
+n.dev> wrote:
+> > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >>
+> > >> The RZ/G3S system controller (SYSC) has various registers that contr=
+ol
+> > >> signals specific to individual IPs. IP drivers must control these si=
+gnals
+> > >> at different configuration phases.
+> > >>
+> > >> Add SYSC driver that allows individual SYSC consumers to control the=
+se
+> > >> signals. The SYSC driver exports a syscon regmap enabling IP drivers=
+ to
+> > >> use a specific SYSC offset and mask from the device tree, which can =
+then be
+> > >> accessed through regmap_update_bits().
+> > >>
+> > >> Currently, the SYSC driver provides control to the USB PWRRDY signal=
+, which
+> > >> is routed to the USB PHY. This signal needs to be managed before or =
+after
+> > >> powering the USB PHY off or on.
+> > >>
+> > >> Other SYSC signals candidates (as exposed in the the hardware manual=
+ of the
+> > >>
+> > >> * PCIe:
+> > >> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+> > >> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+> > >>   register
+> > >> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+> > >>
+> > >> * SPI:
+> > >> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+> > >>   register
+> > >>
+> > >> * I2C/I3C:
+> > >> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+> > >>   (x=3D0..3)
+> > >> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+> > >>
+> > >> * Ethernet:
+> > >> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+> > >>   registers (x=3D0..1)
+> > >>
+> > >> As different Renesas RZ SoC shares most of the SYSC functionalities
+> > >> available on the RZ/G3S SoC, the driver if formed of a SYSC core
+> > >> part and a SoC specific part allowing individual SYSC SoC to provide
+> > >> functionalities to the SYSC core.
+> > >>
+> > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >
+> > >> --- /dev/null
+> > >> +++ b/drivers/soc/renesas/r9a08g045-sysc.c
+> > >> @@ -0,0 +1,31 @@
+> > >> +// SPDX-License-Identifier: GPL-2.0
+> > >> +/*
+> > >> + * RZ/G3S System controller driver
+> > >> + *
+> > >> + * Copyright (C) 2024 Renesas Electronics Corp.
+> > >> + */
+> > >> +
+> > >> +#include <linux/array_size.h>
+> > >> +#include <linux/bits.h>
+> > >> +#include <linux/init.h>
+> > >> +
+> > >> +#include "rz-sysc.h"
+> > >> +
+> > >> +#define SYS_USB_PWRRDY         0xd70
+> > >> +#define SYS_USB_PWRRDY_PWRRDY_N        BIT(0)
+> > >> +#define SYS_MAX_REG            0xe20
+> > >> +
+> > >> +static const struct rz_sysc_signal_init_data rzg3s_sysc_signals_ini=
+t_data[] __initconst =3D {
+> > >
+> > > This is marked __initconst...
+> > >
+> > >> +       {
+> > >> +               .name =3D "usb-pwrrdy",
+> > >> +               .offset =3D SYS_USB_PWRRDY,
+> > >> +               .mask =3D SYS_USB_PWRRDY_PWRRDY_N,
+> > >> +               .refcnt_incr_val =3D 0
+> > >> +       }
+> > >> +};
+> > >> +
+> > >> +const struct rz_sysc_init_data rzg3s_sysc_init_data =3D {
+> > >
+> > > ... but this is not __init, causing a section mismatch.
+> >
+> > Do you know if there is a way to detect this?
+>
+> The kernel should tell you during the build...
 
-And this I think.
+Sorry, I hit send too early; I was still verifying this...
+And it indeed doesn't trigger, strange...
 
-Adam, what was the reason you were enabling NEXT_BUDDY in the first
-place?
+Gr{oetje,eeting}s,
 
-I think someone (Ingo?) was proposing we kill the wakeup preempt thing;
-and I suspect you don't actually care about that but instead want either
-the cgroup or the yield_to_task()/KVM thing working.
+                        Geert
 
----
-Subject: sched/fair: Add CGROUP_BUDDY feature
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Fri Nov 29 10:49:45 CET 2024
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Add a feature to toggle the cgroup optimization.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/sched/fair.c     |    3 ++-
- kernel/sched/features.h |    8 +++++++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
-
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7126,7 +7126,8 @@ static int dequeue_entities(struct rq *r
- 			 * Bias pick_next to pick a task from this cfs_rq, as
- 			 * p is sleeping when it is within its sched_slice.
- 			 */
--			if (task_sleep && se && !throttled_hierarchy(cfs_rq))
-+			if (sched_feat(CGROUP_BUDDY) &&
-+			    task_sleep && se && !throttled_hierarchy(cfs_rq))
- 				set_next_buddy(se);
- 			break;
- 		}
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -32,11 +32,17 @@ SCHED_FEAT(PREEMPT_SHORT, true)
- SCHED_FEAT(NEXT_BUDDY, false)
- 
- /*
-+ * Optimization for cgroup scheduling where a dequeue + pick tries
-+ * to share as much of the hierarchy as possible.
-+ */
-+SCHED_FEAT(CGROUP_BUDDY, true)
-+
-+/*
-  * Allow completely ignoring cfs_rq->next; which can be set from various
-  * places:
-  *   - NEXT_BUDDY (wakeup preemption)
-  *   - yield_to_task()
-- *   - cgroup dequeue / pick
-+ *   - CGROUP_BUDDY (cgroup dequeue / pick)
-  */
- SCHED_FEAT(PICK_BUDDY, true)
- 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
