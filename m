@@ -1,152 +1,152 @@
-Return-Path: <linux-kernel+bounces-425429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CEDD9DC1ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:06:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575E19DC1F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:07:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 133F6162DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:07:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE00189F3B;
+	Fri, 29 Nov 2024 10:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ap9xPIpJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D93EB20FF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:06:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DED189BA8;
-	Fri, 29 Nov 2024 10:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NwNgrWnh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zF4kRas2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ngvX9RxB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BiSx415H"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D0614C5B0;
-	Fri, 29 Nov 2024 10:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BDF14C5B0;
+	Fri, 29 Nov 2024 10:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732874776; cv=none; b=kcWCV7ERYbRFNueYbR2uyDuE4VPisHU0AFhouazKGGt9O+dmHSinqt+KzkLJqcFsQFACbpgrYi7DL+Ezxf9XrN+bTB7Mn2IoQf/r1PPMjR6LdHJq0Z8vOQ6LACogCHQreN7cfulpy71NKaG0IceV4yMZJQkk8dOCCPRaI4FJd38=
+	t=1732874837; cv=none; b=jF3zresKI2CsX6bPyvaYbGYNE+KJ3rfRYawvIGIkH90ZFfFIfKlGuNIaDFVheS/2sMXhOP2T/2AXMtM3X1gh8kTDT4NNvQCwWeqjLjDYlkEAzLQzn266oRYLiaWEv2IcyZQ1b79THO6gpJcIi/9+0aMqQOP65WZn2MoCyG10XDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732874776; c=relaxed/simple;
-	bh=Hl00BjCfhciezHzis82v2nRi92k9UMOvV3Faam5pOTQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IbbZGP1j/1IE5ENrcyESD4BjHzrVAt9b7UcmjrXnvOu1jrme93Hh7YaTJ0gBVw+/3z+Q7CHpm/wtCPZi+YvE9Lbl73Fr3diNZ5LUXLvdn2st8rDgIsJH8WLnm+mnX+bj8EXRkIIH+IA/ieG2Jjsky6cX+9xqZUTDK5byRiDBw44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NwNgrWnh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zF4kRas2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ngvX9RxB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BiSx415H; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D847621177;
-	Fri, 29 Nov 2024 10:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732874773; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+IwV0x9dYzcu5k7ay/kKo733CnYrSOVULCe8y3xhN4=;
-	b=NwNgrWnhhZF2kAxwl1xiC8X7cHxevc2Z9DzNG/10v1LNiFxXhvTnu9QImc+rAjXoaQ/pDX
-	TX0jNyaLXWXGt0wFKZ4ABOe4LAXFU7rHwWkEmkhNKbr6bkVqz/Wf+aLfEeGc33A4b1iOdD
-	TVsesujBxiJGs8lFHXt1fn8IsnGqR3w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732874773;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+IwV0x9dYzcu5k7ay/kKo733CnYrSOVULCe8y3xhN4=;
-	b=zF4kRas2vqASLwupo9EwIDgMCKwLKAEOH7YxSGItRoDLwBeahIOEhUk6/A0Y9NKnQ4LpiQ
-	1KeQ7nCZDBd11+BA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ngvX9RxB;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=BiSx415H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732874772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+IwV0x9dYzcu5k7ay/kKo733CnYrSOVULCe8y3xhN4=;
-	b=ngvX9RxBtFZrUuW+6tXdAHaHIc6lxQrVw/2t22LLObMKikZonjdvLKYuJ7LA8OtgXky9IU
-	TcEdm1W0is7601rL7whBzB6k6P0VX29DKrIDszVANmatKQz0TMdoknLCU5BUIHNEBfEhet
-	1gSbCmybVSgaWSHhW9CeGF9Qs80O9Hk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732874772;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+IwV0x9dYzcu5k7ay/kKo733CnYrSOVULCe8y3xhN4=;
-	b=BiSx415Hzw9eVTBTKdGLyPw/4s+kjWCoDQnFSrKY24JWin5qhaLGGLH6z7B1MfsyXnvne9
-	quUpkSgRE4GxxCDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7553133F3;
-	Fri, 29 Nov 2024 10:06:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AyigJxSSSWdoXQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 29 Nov 2024 10:06:12 +0000
-Date: Fri, 29 Nov 2024 11:06:12 +0100
-Message-ID: <87o71y5p7v.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: bo liu <bo.liu@senarytech.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	feng.liu@senarytech.com
-Subject: Re: [PATCH V2] ALSA: hda/conexant: fix Z60MR100 startup pop issue
-In-Reply-To: <20241129014441.437205-1-bo.liu@senarytech.com>
-References: <20241129014441.437205-1-bo.liu@senarytech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1732874837; c=relaxed/simple;
+	bh=7JVmOPvtBz4LvbFvICECa1qU7hFPqceu8DH4qXeqYWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=leIMJq+rT5SDshvG4hUe4bYa4gh55ACkNlgv3Eegys5KEegiM+4XKtH0CWWAcq/7Wj5lXHyZFBxAEsYv3UZ3AFPt4o0O8pLgiJXU0/nNrW6Sgx4wq8AiawccKaMW8C3+7/ZLX8N1BxR3UfJODsLAW/CAIPB5BUR6RuvIKTq+NTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ap9xPIpJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASMP29p008881;
+	Fri, 29 Nov 2024 10:07:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FuqEPMr3yJ2WoSGhOwobCFy8dOjlepO8z+V4KVGYV38=; b=ap9xPIpJ3xkQeyFn
+	7cOCdfLx0uTxXppUhz/iY8zg+d+P3CQGHg1FNTvi+9C4YqWZBGF5pTNfaG6snBHY
+	EVC49GfJn0Mkqk3WI8bhbWar8BEEhtn2w6zGj/J8DyHhEs9hBo/CHPsYkxAja5x3
+	DwHMQ9XyQOT8G4wx9wSzXXT/EC356fyDyiZeZ3XHRYFNELe4WENyx63eoSNOXE5B
+	XEQEIQONr6fxtaC2yBadf4rzg/cqJ1+8bd8qGTNOxWt4EaLcDLS9C8SEtmXl5NXM
+	i9opHEuPlclUOqOaar2KhdRrxn5ZY6lso1LsWOV8wcE4Ugf49fCjQ9maxA5s+HHp
+	y8COuA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xy53km-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 10:07:04 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ATA6YKT019834
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 10:06:34 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 29 Nov
+ 2024 02:06:28 -0800
+Message-ID: <acb85352-78fd-4c78-93a0-e8acf9432485@quicinc.com>
+Date: Fri, 29 Nov 2024 18:06:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: D847621177
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] Display enablement changes for Qualcomm QCS8300
+ platform
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>,
+        Ritesh Kumar
+	<quic_riteshk@quicinc.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
+ <675c41cb-afa8-4386-8dc9-026a36bc1152@kernel.org>
+ <8982d065-9bc6-4036-8004-80b1681eaf3c@quicinc.com>
+ <amhqdc6kv6vd66bwwyhozlqptqjzuefddiabgw5ndko3rj2gwv@5choqknbpeb2>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <amhqdc6kv6vd66bwwyhozlqptqjzuefddiabgw5ndko3rj2gwv@5choqknbpeb2>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NCETI47nTAGV-ZrzYsytx2dxC9exI2bU
+X-Proofpoint-ORIG-GUID: NCETI47nTAGV-ZrzYsytx2dxC9exI2bU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 suspectscore=0 adultscore=0 mlxlogscore=895
+ mlxscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411290083
 
-On Fri, 29 Nov 2024 02:44:41 +0100,
-bo liu wrote:
+
+
+On 2024/11/27 21:51, Dmitry Baryshkov wrote:
+> On Wed, Nov 27, 2024 at 06:54:10PM +0800, Yongxing Mou wrote:
+>>
+>>
+>> On 2024/11/27 15:13, Krzysztof Kozlowski wrote:
+>>> On 27/11/2024 08:05, Yongxing Mou wrote:
+>>>> This series introduces support to enable the Mobile Display Subsystem (MDSS)
+>>>> and Display Processing Unit (DPU) for the Qualcomm QCS8300 target. It
+>>>> includes the addition of the hardware catalog, compatible string,
+>>>> relevant device tree changes, and their YAML bindings.
+>>>>
+>>>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>>>> ---
+>>>> This series depends on following series:
+>>>> https://lore.kernel.org/all/20241114-qcs8300-mm-cc-dt-patch-v1-1-7a974508c736@quicinc.com/
+>>>> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
+>>> Above was not part of this merge window, so nothing from your patchset
+>>> can be merged for this v6.14.
+>>>
+>>> If you want things to get merged, I suggest decoupling dependencies.
+>>>
+>> Thanks for reviewing.Can we keep the dependency on above changes and merge
+>> our changes after the dependent changes are merged?
 > 
-> When Z60MR100 startup, speaker will output a pop. To fix this issue,
-> we mute codec by init verbs in bios when system startup, and set GPIO
-> to low to unmute codec in codec driver when it loaded .
+> Just drop _all_dependencies from display/msm patches. Otherwise I won't
+> be able to pick them up until 6.15-rc. Use ephemeral DT nodes in the
+> examples.
 > 
-> Signed-off-by: bo liu <bo.liu@senarytech.com>
+Thanks, got it. will update it in next patchset.
 
-Applied with minor white-space fixes now.  Thanks.
-
-
-Takashi
 
