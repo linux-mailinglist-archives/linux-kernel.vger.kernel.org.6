@@ -1,260 +1,103 @@
-Return-Path: <linux-kernel+bounces-425236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6A29DBF25
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:55:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87BD9DBF27
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:58:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7466B22443
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A1A28217E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B7F155CB3;
-	Fri, 29 Nov 2024 04:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E11155C9E;
+	Fri, 29 Nov 2024 04:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pP34Ozw0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KVJIeaFt"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6C722EE4;
-	Fri, 29 Nov 2024 04:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B95D22EE4;
+	Fri, 29 Nov 2024 04:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732856137; cv=none; b=S2qNKGcU/jWy/c95MTObeRq+lII0dWxa3CSGFvryJLH+zF2McZDjOIjP/86Uubk0SD++S2LAU8ObhMmp9V8RGMuK7GZooywMQMdLa5mrnlEqk0x29jPEREHwjCjgjJxoekjnTNfUHO4hkVwPDfBfBgT33MATv4SC/Vd90foNK+Y=
+	t=1732856277; cv=none; b=rkbYZhznmMrd1qa1b49JH7KldkVRe+no7NfMyYXSNZPw+EHw5IakdxXGoobsB20Ij9zdU/gFOtLDtDen3D0z2C07dYJKXR4UWkgFO2oRxkMzvQncCFVxQO/SwADuQ4yVIip5a0vDrmrR/Iz3qZ6HVvDzYYnv+foM22f7eOjFgWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732856137; c=relaxed/simple;
-	bh=v1+DV+clltBWkI28wkoIZMgw3UCDbD3aUrdNIMjxxh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DX+Wf0NjJTHh6h354qHNb25lK/E8EvMubLMsO0sr3UWLHQE8QW9eYC2Nv2W+7enFIyB2qPn2Lrpam2ufRatEcCfl9Zi+rkkeer4GYQ+68JSOCM4PzNK6kEto+sxPXabw27J7AV8NhMjknXqcLervycWYJkzkpgI1MRf72yI6a2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pP34Ozw0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASMBJFV005202;
-	Fri, 29 Nov 2024 04:55:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PfeJXRYiD6OxAQIRHwQBONi9OeXoG+H3tiX8WCnNxPc=; b=pP34Ozw09qTZDNRm
-	q4+Fm4D3woD5y2XTk1NaDRNNerZQygoRLrtDr0Jf0EY6AwyiaaV49K8SC5qt6Mw9
-	fXo20Sp56RG8oYn7q5PT4rJlDDhl8AUPXAb9+ng6wgXbK7aS6vFsLSpFECjGN6wZ
-	1UMC9Nsm0g2yTIVoQDfx42hmYNYmXVf/WKO7my9r9UGTiSpEBjL1ogUvKEAu0mR+
-	sZxYJY7WxBFRVcUSEc6KAh2iOBDbpOzuaj69s99Ih24/zsjZLj3BIO7vZiOSfu+K
-	7AS78GYdzBkYcGYw0ZNNiTNtiUjxtGFII8nCJdXmmsgm/NxsrUj1et3CmhRDfZLa
-	G9jWrA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xxmfru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 04:55:12 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AT4tBrH006092
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 04:55:11 GMT
-Received: from [10.64.16.151] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 28 Nov
- 2024 20:55:05 -0800
-Message-ID: <ce4210dc-9bd6-4b21-a7ff-f6a9afa22741@quicinc.com>
-Date: Fri, 29 Nov 2024 12:55:02 +0800
+	s=arc-20240116; t=1732856277; c=relaxed/simple;
+	bh=5U6h1Z5fr+R0QY54TWNq1gNMDGrt+6cwosjjIV8xsQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sWej5a4uC9DZS6XVHvuS4Fx/0HrvwLVuBoWDc8gKjE+88NtIiiFL1MB7GXgRf023ssWPk0henbffuclMlbX0YCgYGg/u4zMjDpCw23Xbdj8nSGS46IoXOTcN+WAUCNfYw9+xkWvCzjSRwV4gzK9U1YaF+mfLLQ87Awcjh3PeV6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KVJIeaFt; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=1rLvYlqK/58eJQCTQLKYZ9N7ZVCL+zhzpVOIkaFzhEo=; b=KVJIeaFtZFPs8bCw2fpoeycqQD
+	mePfPq5n/MSSPkBZ7r9S5/W/et/5RiLFiKgF0+q5nnqBGsdkcKkE6Rl9sM6UiRjkiCsgJ8V7Qn5tg
+	YuOVrMsKXLemwqWcJlOQ8uRc3MRUBhrAqdMHRe9lmhVuEu7s+c6H1ShMkL3eFxTaAW5yHlQftoWN8
+	Tn5zOPHWEkaBQBvOE+yukOTxkrwdk74GBboWVQM5StCsT7m2GP1sZtYCTP3Tk3WFcJLVoSihFweQQ
+	XQMqnzqCNUlae6IodP+qbEjfgBC8l/QJnxtKcetnIpeeAh0mHrwFkB8P/OkVrjbdW0sUT5QqyFgy+
+	1+vdxA4Q==;
+Received: from [50.53.2.24] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGt4j-0000000GtuG-35QM;
+	Fri, 29 Nov 2024 04:57:54 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Len Brown <len.brown@intel.com>,
+	linux-pm@vger.kernel.org,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Subject: [PATCH] kernel.h: add comments for system_states
+Date: Thu, 28 Nov 2024 20:57:50 -0800
+Message-ID: <20241129045750.456251-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 9/9] arm64: dts: qcom: Add display support for QCS615
- RIDE board
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Krishna
- Manikandan" <quic_mkrishn@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Catalin
- Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Li Liu
-	<quic_lliu6@quicinc.com>,
-        Xiangxu Yin <quic_xiangxuy@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com>
- <20241122-add-display-support-for-qcs615-platform-v3-9-35252e3a51fe@quicinc.com>
- <azdmcs7uafw3n6cqbq4ei66oybzhtyvdyz2xl4wtaf3u5zextb@vdhbs6wnbeg4>
- <520419eb-cedf-465b-a14a-12d97ab257a0@quicinc.com>
- <CAA8EJpqvkeMWgeWCx9D-HcJhRfipZJdEvpvag0wk-WXazkPahA@mail.gmail.com>
-Content-Language: en-US
-From: fange zhang <quic_fangez@quicinc.com>
-In-Reply-To: <CAA8EJpqvkeMWgeWCx9D-HcJhRfipZJdEvpvag0wk-WXazkPahA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wSxIzY7Q56qwHsCqgxI6Muy0vK8xA0Tf
-X-Proofpoint-ORIG-GUID: wSxIzY7Q56qwHsCqgxI6Muy0vK8xA0Tf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2411290037
+Content-Transfer-Encoding: 8bit
 
+Provide some basic comments about the system_states and what they imply.
+Also convert the comments to kernel-doc format.
 
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Len Brown <len.brown@intel.com>
+Cc: linux-pm@vger.kernel.org
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+---
+ include/linux/kernel.h |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-On 2024/11/26 6:08, Dmitry Baryshkov wrote:
-> On Mon, 25 Nov 2024 at 09:39, fange zhang <quic_fangez@quicinc.com> wrote:
->>
->>
->>
->> On 2024/11/22 18:22, Dmitry Baryshkov wrote:
->>> On Fri, Nov 22, 2024 at 05:56:52PM +0800, Fange Zhang wrote:
->>>> From: Li Liu <quic_lliu6@quicinc.com>
->>>>
->>>> Add display MDSS and DSI configuration for QCS615 RIDE board.
->>>> QCS615 has a DP port, and DP support will be added in a later patch.
->>>>
->>>> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
->>>> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/qcs615-ride.dts | 76 ++++++++++++++++++++++++++++++++
->>>>    1 file changed, 76 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> index ee6cab3924a6d71f29934a8debba3a832882abdd..cc7dadc411ab79b9e60ccb15eaff84ea5f997c4c 100644
->>>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> @@ -202,6 +202,82 @@ &gcc {
->>>>                <&sleep_clk>;
->>>>    };
->>>>
->>>> +&i2c2 {
->>>> +    clock-frequency = <400000>;
->>>> +    status = "okay";
->>>> +
->>>> +    ioexp: gpio@3e {
->>>> +            compatible = "semtech,sx1509q";
->>>> +            reg = <0x3e>;
->>>> +            interrupt-parent = <&tlmm>;
->>>> +            interrupts = <58 0>;
->>>> +            gpio-controller;
->>>> +            #gpio-cells = <2>;
->>>> +            interrupt-controller;
->>>> +            #interrupt-cells = <2>;
->>>> +            semtech,probe-reset;
->>>> +    };
->>>> +
->>>> +    i2c-mux@77 {
->>>> +            compatible = "nxp,pca9542";
->>>> +            reg = <0x77>;
->>>> +            #address-cells = <1>;
->>>> +            #size-cells = <0>;
->>>> +            i2c@0 {
->>>> +                    reg = <0>;
->>>> +                    #address-cells = <1>;
->>>> +                    #size-cells = <0>;
->>>> +
->>>> +                    anx7625@58 {
->>>> +                            compatible = "analogix,anx7625";
->>>> +                            reg = <0x58>;
->>>> +                            interrupt-parent = <&ioexp>;
->>>> +                            interrupts = <0 0>;
->>>> +                            enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
->>>> +                            reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
->>>> +                            wakeup-source;
->>>> +
->>>> +                            ports {
->>>> +                                    #address-cells = <1>;
->>>> +                                    #size-cells = <0>;
->>>> +
->>>> +                                    port@0 {
->>>> +                                            reg = <0>;
->>>> +                                            anx_7625_in: endpoint {
->>>> +                                                    remote-endpoint = <&mdss_dsi0_out>;
->>>> +                                            };
->>>> +                                    };
->>>> +
->>>> +                                    port@1 {
->>>> +                                            reg = <1>;
->>>> +                                            anx_7625_out: endpoint {
-+ remote-endpoint = <&dp_connector_out>;
->>>> +                                            };
->>>
->>> Where is it connected? Is it DP port? USB-C? eDP?
->> yes, it's DP port
-> 
-> So, I'd expect to see a dp-connector node at the end, not the
-> unterminated anx7625.
-got it, will add it in next patch
-+       dp-connector {
-+               compatible = "dp-connector";
-+               label = "DP";
-+               type = "mini";
-+
-+               port {
-+                       dp_connector_out: endpoint {
-+                               remote-endpoint = <&anx_7625_out>;
-+                       };
-+               };
-+       };
-> 
->>>
->>>> +                                    };
->>>> +                            };
->>>> +                    };
->>>> +            };
->>>> +    };
->>>> +};
->>>> +
->>>> +&mdss {
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>> +&mdss_dsi0 {
->>>> +    vdda-supply = <&vreg_l11a>;
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>> +&mdss_dsi0_out {
->>>> +    remote-endpoint = <&anx_7625_in>;
->>>> +    data-lanes = <0 1 2 3>;
->>>> +};
->>>> +
->>>> +&mdss_dsi0_phy {
->>>> +    vdds-supply = <&vreg_l5a>;
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>>    &qupv3_id_0 {
->>>>       status = "okay";
->>>>    };
->>>>
->>>> --
->>>> 2.34.1
->>>>
->>>
->>
-> 
-> 
-
+--- linux-next-20241125.orig/include/linux/kernel.h
++++ linux-next-20241125/include/linux/kernel.h
+@@ -176,9 +176,19 @@ extern int root_mountflags;
+ 
+ extern bool early_boot_irqs_disabled;
+ 
+-/*
+- * Values used for system_state. Ordering of the states must not be changed
++/**
++ * enum system_states - Values used for system_state.
++ * Ordering of the states must not be changed
+  * as code checks for <, <=, >, >= STATE.
++ *
++ * @SYSTEM_BOOTING:	%0, no init needed
++ * @SYSTEM_SCHEDULING:	system is ready for scheduling; OK to use RCU
++ * @SYSTEM_FREEING_INITMEM: system is freeing all of initmem; almost running
++ * @SYSTEM_RUNNING:	system is up and running
++ * @SYSTEM_HALT:	system entered clean system halt state
++ * @SYSTEM_POWER_OFF:	system entered shutdown/clean power off state
++ * @SYSTEM_RESTART:	system entered emergency power off or normal restart
++ * @SYSTEM_SUSPEND:	system entered suspend or hibernate state
+  */
+ extern enum system_states {
+ 	SYSTEM_BOOTING,
 
