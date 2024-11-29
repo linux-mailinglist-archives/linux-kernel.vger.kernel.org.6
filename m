@@ -1,187 +1,334 @@
-Return-Path: <linux-kernel+bounces-425157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4089DBE44
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 01:40:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115B39DBE3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 01:21:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD63CB21F04
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:40:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D1D7B2267E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FB89461;
-	Fri, 29 Nov 2024 00:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5258FC125;
+	Fri, 29 Nov 2024 00:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="uRwZeHub"
-Received: from sonic305-21.consmr.mail.ir2.yahoo.com (sonic305-21.consmr.mail.ir2.yahoo.com [77.238.177.83])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cOYHb5rz"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD98C8F0
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.177.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD492749C
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732840800; cv=none; b=pkl7mLzlqnHFTmtEhnnGe9HvB7pnuVrZm61RvX9xD0J26YfkuGK5KDuB5bdIo5ZLd5ei47nKSX25jpmYwpeBDDu75ryrblf/bH1aQHvPcQktEC9SWfgqoDm5t5shf5zkSn5rTxhBfHkkXpd191O4nDK3xJsaSd4ln9+pbLtxHS4=
+	t=1732839706; cv=none; b=aSWCycp8lXGXsMtmzZ5Xw7QTz3idHuvWJO/puXwfMt2ud1euBQ/axP2qxwfcxVUFaHl2ys3usFb+foKKuWsV2tRy7qzXaGs3fRP2uIWom0YipXe1kcrqvAQZ9wFNR8DaZMEzNsCr09D0DTjiZesMkYn5CMqvSa/3nejiqChEj6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732840800; c=relaxed/simple;
-	bh=c4Vuc+rZvDA6Fe6d7paNieEGinsYbVZphbFiascz20Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EB6UExPaB6y1duof+suLwXmwi0/jeIScJ9EUqOTwFCW2ToMzZ/9o2Ff2o+c+vH1TdKAKwYX3ylqUmVsNafCrYUivGqmguxzAc7fmScv2we1RoKAKnDZO22+JFUy/bw+K6j3LZTQU8EH5+MervPOYGqfybuNbGA9PeC2z51ySr9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=uRwZeHub; arc=none smtp.client-ip=77.238.177.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1732840796; bh=rxSduJZx9rogduBx+cQJKkxDL7Rx1oRXXgPW3tAzkqw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=uRwZeHub34xvkzWnfG/3T6gFX4VF4R0BdE9PR5Oh0aAMdm38s3oPwO0whwt/kRqTmUO7EzhDy4n9MvidmcFBnosraR6MAXyRwOoCd5Gf68B4l9fW/t9hbV5s7fxvuFfflMDkBt7MK78miLmV/i3tclFJX1G6fIFH32221gvdqZZwOf84a/AqIGZ+M12ta22bUB54hBddLBxDNWfAVWF1IHeeOaqZe3NITA+IaCJWahDpbySMeEVbvtQtU6i0i/gOy11PfJjDOoBCn86r3zt2JYQBl+FX0MkoTnPmgm/Q2O+N//U2fEGGO/sHXBYJsxh8cX8WZVW62VDkrvRhL/siww==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732840796; bh=HS81YGS6ReW3HF/S2CAzZdD2pOLaD5DAKjk02UL5hYT=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZgXjhFwbC9GnOpw9DTiQ3pUlrCD/i+nTPefATsT67aJhXBsF2iz/wQLIdO3nLjZY4nIfgtdLjtE5tlEvrfyLxeu0/72CO7kcHH2UFzuanTb/E8oqEfIvE8rhM+GJDK8Gd+/biTGIWs5rVSMjurfPYykqBG0ONojgSjujOs+DoNDfvwbOFwoY06mPHg2K6lzytfZyM9zFAUXH66ZMdjsNuZJ2zQGZE3JaRZioj7hsQtPmAtDzBq7AZrFkSgXXqTl+zVptgm7y66vcHeihp6ikatvatOiT4c6DRSfqjlr2CVPULG7bPczWgEXQ3qBLOKnL5JvfKx1rKevMm4NZiXutGQ==
-X-YMail-OSG: jp6i37kVM1nAOO5PF.0i3BMY7J9Fa0hsP6MhKiIPUTjLk76mc0VYHm36q8fTBXh
- 36a._8nENMPUyGM2xwPSX5FSdHXBhprcXhf5DaoXlASDCCBM9bRgIcusp2wSDPmbo7LVssI3dwss
- B4J9H4SxwYeR5in4DI4mWR2A1yKMjcCJukEsaorpdWIckAolD5jYE0QksFx7xsvftPQWn2TnlcEU
- DNISswOzbohGRmezAXfYLSPBMGna_AWT38c6RrE8JEThbc8lacRuDXA9Ux3rNTGrq1tI7.GHQA5v
- LRcP2RyNxPuGDNtzBxqPerueKOdmrP.27Y.TG7Znc7vFgf_43CNXpR7.B3F3HVJcWxYLl9OlcJiv
- PXCywKJ76XL0TyKHhB.deGMtd4Ui1Y2YLqMQ4bDBNkZpDemraZSEmVNOdUabIK88XQJTcvOJcEwe
- Izu4y9WBacvicTME242XIZMAT18BIaQQH4D6SajgHLKAiM0P.gwhpUdnfQ_4y61Mkv31lTzzEP6N
- aQIOjSwE47tZA8l_XifFq7U4LexLPBKmXrHBjUR1BrMf99_smb9_GnFl5HEFTMbzbJIBB4HSAfQs
- qeEZgnr2X3G58NGm54oxgL6SNqft55ym1QGErh22wfWLh3rwgkJhKiY2pncg37.iQBtieBLs8n5L
- iAth0q1SzXtEqaXL.py3QPtmieXO3ink8ZUbVtdxh_b6WyqWmJRb4yUQYqPB0kRpWTe3QMNLtshT
- CmjGMeyOhR.IqN9A6R1iMaxioQDygisjwMFSq1IfYKEN7ua9ezil_5vqMexjw3AGcw6K.haIDrgY
- kGz1ik72FjxzyXGdMPANLcOkCtfxo9PiL2Lf_47JffNexAJ0dU5UUy8VROhkJf6BHhs.3yGyNSGT
- 6NAEkiZ8zXNHP7TaPq_CV_hiUfDKBQxzlKl1AG97w7OVmDDcWPml16RVygfW3Sx9oD7n4pzJ.CiT
- S2mMzNz0BwKqbmlsx.pBmjHVl069pjjrXB0UzAv6DEebIWfcMGS0hb8nFqiYVLXfwEA.A8i03L94
- 6BCebRSVC9aorRGEemrLxEUmL8CLyrCm.ElMVC7TFXf_D1A1N7h0Dp5XPIEpGABEO0ezpaAPdbPM
- 4loiQ6sL3UO1mSiECdm1S.HwAlsSgVhLuYjFd7dRaAMWVo9.WAWmHnRrVI5FDXSMuwixwbiaV2tA
- jUWgRuhOECHKRE8zGqXrpBY7zPdb._QqTkGchjBlJgNSQ3j5CD4MvZFd8o5V2_6KOgdwZMKFRWAa
- SUxgJFYfhpgzDpa6CZyVORmkkL_fOWnd5Wqg8vEDIL6ysFNcvaVVjwUP6CCjd0VbxKXg5kZb2h72
- yQcwHPFA79ooT5t6VbQW0mMzcDr5XXrLUnPeCJpMb8xi_VCmjzgb3YbH9g8Unp7yifiylPLUpTGg
- 0wkkUiK3buDlZxv4_1_i_LpkuWuYhDtVpGykPndrRj17tPoYKS.OfnUDFwePUM1lZOHRKWLsasot
- ITKQGWwpPUCqvL2U6ToEG2VzVb.rge8ueVxJKtHT3vou.Uhh1K1m52KFl4T1cv1tH06wxvQlFZnM
- kwVyYwwkWkji9p5mPbSdTPjMiXR5KUATiAkgBlCTh0a_7taf0KPfuDAxF8VBlO3DXvaiUxTdUO4r
- 9ALVytd5HyiIkdKzLnfrDgHXhXIMmpiDh9GkuNeRqTJGp1zpI1lnNrQfgWSqCo39vJGTDTy_GMYp
- Ec3B_8qJ_bcNSUxSgHbUkPBKSnTVQu1WWNz38kKacFF3DTeLpyRfOk4aTi2HEUjUbN6uCtt17wv4
- Ue3q3AyuadxjruRA58J9DH6oCr8i0PXE.w.mfvgT8l_4VQqiSHdivHLkfRAMdpt7ZfGmRReOEc2S
- dRLoQXVoTD6hSRHef6lCGKJKiDujUMS_XrGULCcZuhG3W6rIpZfelJm_LdVsMnQFejbUPdXhQJ_1
- OXn1bCKytsHy1FjD9_uy9ncJKksLdoH39w6rO_qwqYrT1H8kxukGRoeEQU7BRnNyh2CnxKUfwQEA
- bzz1Y79RO5jpeLxGOkbwEV11l_TjLNWOK7lwMYX4RKu3Ejq50B4B80t7gHuwAnCx1Wtue6Up3ZtZ
- hzJdI9i3LGDGp6rvzbSZEcsGI82ah9QiDdcNxq26EokTION.bupEW6JqKk1PMeetNQ_Kr1oskKbP
- zeSplTtUXGUbxwz6812B8Wg5.qAW86VVdT0v1Z8ZKpjS2VsxEf8Eo2ZcJFeerBWsRLKDocL4_LTW
- bv5khgDJsyRZl_FuLCv8BexrpYFkGpWHWXhNk1HdCJnr_4D.1ngzn6KpUPOJe0Eua1VXNKzWWO94
- J1WDMe9r8g.dydFG3V7QJWZCbkOQs
-X-Sonic-MF: <jahau@rocketmail.com>
-X-Sonic-ID: 8e9ab39c-1cab-4e74-aecc-a803bef00087
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ir2.yahoo.com with HTTP; Fri, 29 Nov 2024 00:39:56 +0000
-Received: by hermes--production-ir2-c694d79d9-d879w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0c72a3444980250393be571c7b9276c0;
-          Fri, 29 Nov 2024 00:19:39 +0000 (UTC)
-Message-ID: <2662b991-bd22-4ff8-b309-77f0e0f6dc86@rocketmail.com>
-Date: Fri, 29 Nov 2024 01:19:38 +0100
+	s=arc-20240116; t=1732839706; c=relaxed/simple;
+	bh=0oqamsEkXX4bYHIVWICaGV7yM8vIVxO5+Ns44FFffEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f2VzZrcqi1dlhWOay5ZlTMwNIGGn54/BNobG/3B2GOAXcjj/qoZfWMyIcnfB6WqyLQZiF8p2FvnpvDpbAWIgLc3MKwbeMt4FhM77Sor3VF7dagMx83GqOpVHq3YGxROZiNKpc3btqDSpZf/BAmaQVhaz2ltsrkIGTYJBuxvxTvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cOYHb5rz; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21527bb7eb0so7305705ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 16:21:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732839704; x=1733444504; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=e63Qh8yDCGpehSbTHGGffUHGEEyMaGUtLTTzMlKXbLM=;
+        b=cOYHb5rz3Cr9QSy1GOAKDi7jEJan4GCeueKcjGuBeisKyRfvyQvPTBXjW8vZIOMQPp
+         /NYetlpyI177TpSUrUM/BEyCo7N+9iQhG+DYaQFUSOKq/9AVdNWn+rxD/SY2Bkk8sop1
+         Zqs2lCdKivmwO7mQGvUrbIXwrXjBlRoHaelis=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732839704; x=1733444504;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e63Qh8yDCGpehSbTHGGffUHGEEyMaGUtLTTzMlKXbLM=;
+        b=X2mSQ42bhumhCot24/8NIom6a3wMFn1stbdz49aqGylr87rgg3lFTI2d7pe3kzgBiL
+         kgjBKpgCUam31oByJDn5yK9Yjs9+CL72kjGffB5scSlaC1j7x36ogffwer943gXsCt7P
+         NeE4d8sNLh8anEcoZk1WL4BFRBHktWG20VWUr1ZaYhE2SAi4uYr+6y+gWxd+zg5gCjP+
+         Aycau0qmFmwPLnJUN7RYz1F2Tk1yn9CZbNRGzwuHOCmveVjhDN0QDbS7LljhH8ZJT5CT
+         u27uq/yW48ucp6a+OEm9RdgW4Ppl8NjWRQsqUzvyjhmJ43R9kaVgLN9RGqMoVoEwrJfL
+         t4/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXUl958kxvrfwhua7JFPenfqionywOEyc7yYuWSumow9W8/uTvEtXIyw4NLFLsB4M/4aYJRVtYi5TX5Rjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxstOy0GFSHXKM4maNr4w0wV46hpbUGu38UIi9D6MhsfJszZWA/
+	YMOWpAlB/HBxYb4Q9wx2pxS73tXubQXP8WfvgPGCY5bBbzypQinQUgBV7CWW2ZBHv0wwhjvJtqw
+	=
+X-Gm-Gg: ASbGnct9neuR0DetREdyZ1HzxxqdaP0stnntihNv7psJniLtrjyTjTIbPm7dzx2H9+g
+	JTgEtPKyE2gMUFzGk/TwhJ8Se+z3Tty8G4YmTlgKs0cOak272FTu/fS2mvFpNRognfjjOjcpu3q
+	93WoNFh69cdjAjOAnMeFHB+7FWY66j9IrxqBwpdZmHyKT/zAS+bkekpoFHX95Ai6EzSaUK1QF48
+	kXxXWidoB5sAEYD0zutoaf5m4LzEZ0trwsGOFpA0hw6vZj7IWVt+2cgNbSLUWL6Ym1ZkTobcRif
+	S3O56ErwDb+L
+X-Google-Smtp-Source: AGHT+IEsDNFpHOMsAP4I7ox4IRlaqdIUDs/7fYnjQ1XREGtMhSsnsI/hyOBxkZ1x3ofGUEFTg+0GRA==
+X-Received: by 2002:a17:902:d550:b0:20c:3d9e:5f2b with SMTP id d9443c01a7336-21501f7a22fmr105603505ad.57.1732839703724;
+        Thu, 28 Nov 2024 16:21:43 -0800 (PST)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com. [209.85.216.46])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215361fd5a6sm9201795ad.94.2024.11.28.16.21.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 16:21:41 -0800 (PST)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ee3737d2b5so567865a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 16:21:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVvnjVP33z0uRJNt3AKqtN5rlmJHKrLt20JEBei6rP0pibWHprPDNgb6nEu7ckiIdIoibP8KWrIsbrUUzk=@vger.kernel.org
+X-Received: by 2002:a17:90b:548f:b0:2ea:2a8d:dd2a with SMTP id
+ 98e67ed59e1d1-2ee095bff07mr10855096a91.27.1732839700516; Thu, 28 Nov 2024
+ 16:21:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: magnetometer: yas530: Use signed integer type for
- clamp limits
-To: David Laight <David.Laight@ACULAB.COM>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- kernel test robot <lkp@intel.com>
-References: <20241126234021.19749-1-jahau.ref@rocketmail.com>
- <20241126234021.19749-1-jahau@rocketmail.com>
- <a28168acf9374c60902cdb5aa7608dee@AcuMS.aculab.com>
-Content-Language: en-US
-From: Jakob Hauser <jahau@rocketmail.com>
-In-Reply-To: <a28168acf9374c60902cdb5aa7608dee@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22941 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
+ <20241127-uvc-fix-async-v2-1-510aab9570dd@chromium.org> <20241128221649.GE25731@pendragon.ideasonboard.com>
+ <CANiDSCuEPPoLjukjoO_BVVsRL22kebUnCxo3eTKJqMRg6J0fSw@mail.gmail.com> <20241128222807.GG25731@pendragon.ideasonboard.com>
+In-Reply-To: <20241128222807.GG25731@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 29 Nov 2024 01:21:28 +0100
+X-Gmail-Original-Message-ID: <CANiDSCt2SyDn48OsdNVV4aieWvpDBzEiAxboONprOuqkbBYf+Q@mail.gmail.com>
+Message-ID: <CANiDSCt2SyDn48OsdNVV4aieWvpDBzEiAxboONprOuqkbBYf+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] media: uvcvideo: Remove dangling pointers
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, 
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi David,
+On Thu, 28 Nov 2024 at 23:28, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Thu, Nov 28, 2024 at 11:25:25PM +0100, Ricardo Ribalda wrote:
+> > On Thu, 28 Nov 2024 at 23:17, Laurent Pinchart wrote:
+> > > On Wed, Nov 27, 2024 at 12:14:49PM +0000, Ricardo Ribalda wrote:
+> > > > When an async control is written, we copy a pointer to the file handle
+> > > > that started the operation. That pointer will be used when the device is
+> > > > done. Which could be anytime in the future.
+> > > >
+> > > > If the user closes that file descriptor, its structure will be freed,
+> > > > and there will be one dangling pointer per pending async control, that
+> > > > the driver will try to use.
+> > > >
+> > > > Clean all the dangling pointers during release().
+> > > >
+> > > > To avoid adding a performance penalty in the most common case (no async
+> > > > operation). A counter has been introduced with some logic to make sure
+> > >
+> > > s/). A/), a/
+> > >
+> > > > that it is properly handled.
+> > > >
+> > > > Cc: stable@vger.kernel.org
+> > > > Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
+> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > ---
+> > > >  drivers/media/usb/uvc/uvc_ctrl.c | 38 ++++++++++++++++++++++++++++++++++++--
+> > > >  drivers/media/usb/uvc/uvc_v4l2.c |  2 ++
+> > > >  drivers/media/usb/uvc/uvcvideo.h |  8 +++++++-
+> > > >  3 files changed, 45 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > > > index 4fe26e82e3d1..b6af4ff92cbd 100644
+> > > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > > > @@ -1589,7 +1589,12 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
+> > >
+> > > How about adding
+> >
+> > SGTM.
+> >
+> > >
+> > > static void uvc_ctrl_set_handle(struct uvc_control *ctrl, uvc_fh *handle)
+> > > {
+> > >         if (handle) {
+> > >                 if (!ctrl->handle)
+> > >                         handle->pending_async_ctrls++;
+> > >                 ctrl->handle = handle;
+> > >         } else if (ctrl->handle) {
+> > >                 ctrl->handle = NULL;
+> > >                 if (!WARN_ON(!handle->pending_async_ctrls))
+> >
+> > Unless you think otherwise. I will make this:
+> >
+> > WARN_ON(!handle->pending_async_ctrls);
+> > if (handle->pending_async_ctrls)
+> >    handle->pending_async_ctrls--;
+>
+> I'm fine with that, I went back and forth between the two.
+>
+> > The double negation is difficult to read. I am pretty sure the
+> > compiler will do its magic and merge the two checks.
+> >
+> > >                         handle->pending_async_ctrls--;
+> > >         }
+> > > }
 
-On 27.11.24 09:53, David Laight wrote:
-> From: Jakob Hauser <jahau@rocketmail.com>
->> Sent: 26 November 2024 23:40
->>
->> In the function yas537_measure() there is a clamp_val() with limits of
->> -BIT(13) and  BIT(13) - 1. The input clamp value h[] is of type s32. The BIT()
->> is of type unsigned long integer due to its define in include/vdso/bits.h.
->> The lower limit -BIT(13) is recognized as -8192 but expressed as an unsigned
->> long integer. The size of an unsigned long integer differs between 32-bit and
->> 64-bit architectures. Converting this to type s32 may lead to undesired
->> behavior.
-> 
-> I think you also need to say that the unsigned divide generates erronous
-> values on 32bit systems and that the clamp() call result is ignored.
+Now that I think about it. Now that we have inverted the patches 1 and
+2 we need to add the following change to your function:
 
-Ok, I'll expand the commit message in v2.
+diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+index d8d4bd2254ec..5ce9be812559 100644
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -1584,8 +1584,14 @@ static void uvc_ctrl_set_handle(struct
+uvc_control *ctrl, struct uvc_fh *handle)
+        /* chain->ctrl_mutex must be held. */
 
->> Declaring a signed integer with a value of BIT(13) allows to use it more
->> specifically as a negative value on the lower clamp limit.
->>
->> While at it, replace all BIT(13) in the function yas537_measure() by the signed
->> integer.
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202411230458.dhZwh3TT-lkp@intel.com/
->> Fixes: 65f79b501030 ("iio: magnetometer: yas530: Add YAS537 variant")
->> Cc: David Laight <david.laight@aculab.com>
->> Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
->> ---
->> The patch is based on torvalds/linux v6.12.
->>
->> The calculation lines h[0], h[1] and h[2] exceed the limit of 80 characters per
->> line. In terms of readability I would prefer to keep it that way.
->> ---
->>   drivers/iio/magnetometer/yamaha-yas530.c | 13 +++++++------
->>   1 file changed, 7 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/iio/magnetometer/yamaha-yas530.c b/drivers/iio/magnetometer/yamaha-yas530.c
->> index 65011a8598d3..938b35536e0d 100644
->> --- a/drivers/iio/magnetometer/yamaha-yas530.c
->> +++ b/drivers/iio/magnetometer/yamaha-yas530.c
->> @@ -372,6 +372,7 @@ static int yas537_measure(struct yas5xx *yas5xx, u16 *t, u16 *x, u16 *y1, u16 *y
->>   	u8 data[8];
->>   	u16 xy1y2[3];
->>   	s32 h[3], s[3];
->> +	int half_range = BIT(13);
->>   	int i, ret;
->>
->>   	mutex_lock(&yas5xx->lock);
->> @@ -406,13 +407,13 @@ static int yas537_measure(struct yas5xx *yas5xx, u16 *t, u16 *x, u16 *y1, u16 *y
->>   	/* The second version of YAS537 needs to include calibration coefficients */
->>   	if (yas5xx->version == YAS537_VERSION_1) {
->>   		for (i = 0; i < 3; i++)
->> -			s[i] = xy1y2[i] - BIT(13);
->> -		h[0] = (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / BIT(13);
->> -		h[1] = (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / BIT(13);
->> -		h[2] = (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / BIT(13);
->> +			s[i] = xy1y2[i] - half_range;
->> +		h[0] = (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / half_range;
->> +		h[1] = (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / half_range;
->> +		h[2] = (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / half_range;
->>   		for (i = 0; i < 3; i++) {
->> -			clamp_val(h[i], -BIT(13), BIT(13) - 1);
->> -			xy1y2[i] = h[i] + BIT(13);
->> +			clamp_val(h[i], -half_range, half_range - 1);
->> +			xy1y2[i] = h[i] + half_range;
-> 
-> NAK - that still ignores the result of clamp.
+        if (handle) {
+-               if (!ctrl->handle)
+-                       handle->pending_async_ctrls++;
++               if (ctrl->handle) {
++                       if (ctrl->handle == handle)
++                               return;
++                       WARN_ON(!ctrl->handle->pending_async_ctrls);
++                       if (ctrl->handle->pending_async_ctrls)
++                               ctrl->handle->pending_async_ctrls--;
++               }
++               handle->pending_async_ctrls++;
+                ctrl->handle = handle;
+        } else if (ctrl->handle) {
+                ctrl->handle = NULL;
 
-Ah, I didn't get that point! Now I realize that clamp_val() returns a 
-value and it's going nowhere here. I'll change that in v2.
+Otherwise, if the control is handled by another fh,
+pending_async_ctrls will be unbalanced.
 
-> and it should be clamp() not clamp_val().
+> > >
+> > > >       mutex_lock(&chain->ctrl_mutex);
+> > > >
+> > > >       handle = ctrl->handle;
+> > > > -     ctrl->handle = NULL;
+> > > > +     if (handle) {
+> > > > +             ctrl->handle = NULL;
+> > > > +             WARN_ON(!handle->pending_async_ctrls);
+> > > > +             if (handle->pending_async_ctrls)
+> > > > +                     handle->pending_async_ctrls--;
+> > > > +     }
+> > >
+> > > This would become
+> > >
+> > >         handle = ctrl->handle;
+> > >         uvc_ctrl_set_handle(ctrl, NULL);
+> > >
+> > > >
+> > > >       list_for_each_entry(mapping, &ctrl->info.mappings, list) {
+> > > >               s32 value = __uvc_ctrl_get_value(mapping, data);
+> > > > @@ -2046,8 +2051,11 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+> > > >       mapping->set(mapping, value,
+> > > >               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+> > > >
+> > > > -     if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+> > > > +     if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS) {
+> > > > +             if (!ctrl->handle)
+> > > > +                     handle->pending_async_ctrls++;
+> > > >               ctrl->handle = handle;
+> > > > +     }
+> > >
+> > > Here
+> > >
+> > >         if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+> > >                 uvc_ctrl_set_handle(ctrl, handle);
+> > >
+> > > >
+> > > >       ctrl->dirty = 1;
+> > > >       ctrl->modified = 1;
+> > > > @@ -2770,6 +2778,32 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+> > > > +{
+> > > > +     struct uvc_entity *entity;
+> > > > +
+> > > > +     guard(mutex)(&handle->chain->ctrl_mutex);
+> > > > +
+> > > > +     if (!handle->pending_async_ctrls)
+> > > > +             return;
+> > > > +
+> > > > +     list_for_each_entry(entity, &handle->chain->dev->entities, list) {
+> > > > +             for (unsigned int i = 0; i < entity->ncontrols; ++i) {
+> > > > +                     struct uvc_control *ctrl = &entity->controls[i];
+> > > > +
+> > > > +                     if (ctrl->handle != handle)
+> > > > +                             continue;
+> > > > +
+> > > > +                     ctrl->handle = NULL;
+> > > > +                     if (WARN_ON(!handle->pending_async_ctrls))
+> > > > +                             continue;
+> > > > +                     handle->pending_async_ctrls--;
+> > >
+> > > And here
+> > >
+> > >                         uvc_ctrl_set_handle(ctrl, NULL);
+> > >
+> > > It seems less error-prone to centralize the logic. I'd add a
+> > > lockdep_assert() in uvc_ctrl_set_handle(), but there's no easy access to
+> > > the chain there.
+> > >
+> > > > +             }
+> > > > +     }
+> > > > +
+> > > > +     WARN_ON(handle->pending_async_ctrls);
+> > > > +}
+> > > > +
+> > > >  /*
+> > > >   * Cleanup device controls.
+> > > >   */
+> > > > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> > > > index 97c5407f6603..b425306a3b8c 100644
+> > > > --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> > > > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> > > > @@ -652,6 +652,8 @@ static int uvc_v4l2_release(struct file *file)
+> > > >
+> > > >       uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
+> > > >
+> > > > +     uvc_ctrl_cleanup_fh(handle);
+> > > > +
+> > > >       /* Only free resources if this is a privileged handle. */
+> > > >       if (uvc_has_privileges(handle))
+> > > >               uvc_queue_release(&stream->queue);
+> > > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> > > > index 07f9921d83f2..c68659b70221 100644
+> > > > --- a/drivers/media/usb/uvc/uvcvideo.h
+> > > > +++ b/drivers/media/usb/uvc/uvcvideo.h
+> > > > @@ -337,7 +337,10 @@ struct uvc_video_chain {
+> > > >       struct uvc_entity *processing;          /* Processing unit */
+> > > >       struct uvc_entity *selector;            /* Selector unit */
+> > > >
+> > > > -     struct mutex ctrl_mutex;                /* Protects ctrl.info */
+> > > > +     struct mutex ctrl_mutex;                /*
+> > > > +                                              * Protects ctrl.info and
+> > > > +                                              * uvc_fh.pending_async_ctrls
+> > > > +                                              */
+> > > >
+> > > >       struct v4l2_prio_state prio;            /* V4L2 priority state */
+> > > >       u32 caps;                               /* V4L2 chain-wide caps */
+> > > > @@ -612,6 +615,7 @@ struct uvc_fh {
+> > > >       struct uvc_video_chain *chain;
+> > > >       struct uvc_streaming *stream;
+> > > >       enum uvc_handle_state state;
+> > > > +     unsigned int pending_async_ctrls;
+> > > >  };
+> > > >
+> > > >  struct uvc_driver {
+> > > > @@ -797,6 +801,8 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
+> > > >  int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
+> > > >                     struct uvc_xu_control_query *xqry);
+> > > >
+> > > > +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle);
+> > > > +
+> > > >  /* Utility functions */
+> > > >  struct usb_host_endpoint *uvc_find_endpoint(struct usb_host_interface *alts,
+> > > >                                           u8 epaddr);
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
-I assumed that clamp_val() is still needed because according to its 
-description in current mainline (6.12) include/linux/minmax.h, clamp() 
-does "strict typechecking". The input value h[] is of type s32 and the 
-limits derived from "half_range" are of type int. I had a try compiling 
-with clamp() and didn't get any warnings or errors. Does that mean that 
-clamp() isn't that strict in the current implementation (and considering 
-the patch being backported)? Does it just check signedness and is this 
-because in current __clamp_once() it uses __auto_type?
 
-Kind regards,
-Jakob
 
+-- 
+Ricardo Ribalda
 
