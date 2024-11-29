@@ -1,125 +1,170 @@
-Return-Path: <linux-kernel+bounces-425900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2418F9DEC60
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:26:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4D69DEC62
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:27:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4BEB163AF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:25:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EEF1B2128E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB671A9B31;
-	Fri, 29 Nov 2024 19:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BE51A2544;
+	Fri, 29 Nov 2024 19:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jMOK2cgK"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5TPKQZn"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9AF1A4B69
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB8F1E489
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732908316; cv=none; b=cKtyVHQ9gzmB8QzZh7E3mYIO32IrzfGfEpmXEAzJcRX2KtDVfeQb0UgiPnv6pkpn+OfbLdLN8/iUEmd4yY5aTQIj18reUuSLkp885pV+lW+PutCVDU80ffkI/bevjQxwdnQB9jRCfOtoKAF+vTIq+MZ/ijrj3ecfbKjIKgI8Jdc=
+	t=1732908463; cv=none; b=hT7nasXaGE/k0lSp6EThdlqA2Rtf6JCGKk8nALN+8s1pn3u0Vvb3nfFz+MytolDyxrKZI86hgrefR8O1/0srWqWccOaPJv0uBvcSRDR3fSIjfVxM940TxCE/ejixBQTNy+i/wmRegUbqPeSBGiw/q4NIQ06MmEEVBAX6Z/8iFqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732908316; c=relaxed/simple;
-	bh=XUx4menmu/stFBE7lkIhaln7CdzGv+6pSaMM952p6qE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L7PcU6uhH5+PrOui7iG8TfpK7liIx0GjEoGSw07y7aVzvm0TkTykb9GgpbE0n7E1IedfFkJ80AiUY6cN5EvlXNQKxpSxLRqlJ3gG4bFcM8xqVE6xIq3TiXHpAK/ETSmUexYVf4+BQgEHtRD0CPE6unnBo9DPPnX+8xMzyH/Z02A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jMOK2cgK; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6d849a93088so14256746d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:25:14 -0800 (PST)
+	s=arc-20240116; t=1732908463; c=relaxed/simple;
+	bh=QDC15UkYZ/+s/I5ls+EjNIy+tFDyDigncRmIJx3W+zM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VEvkBjD6x7N9PxfNgjElAykUvp1dBFeVxylzOJ/yVNGdHdaZIwYwcM5P5i+qsmLInk/tsbjK0nj042PS9UPaprSZNOPVjcLAYwhJm/gGGcq0HBr1YWRA3+uN9XzBBPLE8X/zoh2BeIWBf5nxCbMDf/pk1oNxsCkgJHydXHIfp54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c5TPKQZn; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7242f559a9fso2155657b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:27:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732908314; x=1733513114; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6nl7Ezol8cCw5t0X68ApdPTyYZfINMaJDWIUvhxei38=;
-        b=jMOK2cgK1OgEAg333gdphos+z+XIFir0okfHis0x8hV6M/xeXxy/ThdYgq2XESgGjz
-         gFNjEkjNV2jvyLMCGixePiIQQ1eLdZsYsYHh9gzjJ8ETm0r36khHnAgKTtLETs9qthJ7
-         fN2gk6rbGkjy3BNTg/3GeKsflsCUbhq7D6/iw=
+        d=gmail.com; s=20230601; t=1732908461; x=1733513261; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cHxTKw+tgsW+cNBVKDVH2eHtvRv/xPBbqCeToCysQC8=;
+        b=c5TPKQZn8JHFCTSgIT9CXmwiK5P2ve6Mks8XlVl9LF14VVkSjRO8WJQd7YNI+IUBXJ
+         4R6kEJvlZUIe3gg0/S50/QHm92KB9cZqq1A9IT+gsPBORUhi5GJ1Q1wTjyEKVYKxPtjM
+         EeYr4Faq8/YL5JLQovG8MlyrBjpChWHrpxKzn22HtcyAffYfkXcPaO/niHrRaAhZ7QaZ
+         f8JCPH+qd1f3KDvtJoj993taEJhsCUQEWNHoUFz4QEM6JEQbSo7/gDih+A71h1kU01Ig
+         HosNogLiyZJh8feIrwXcL6M42LwhXn3ylZfKEJTI8K35fnlNdvJLUIG3ZOcMAnaVgadG
+         OeMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732908314; x=1733513114;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6nl7Ezol8cCw5t0X68ApdPTyYZfINMaJDWIUvhxei38=;
-        b=Gm9WAYspMC+bfuxaqp6LZjH1jalOiepykDOcTzDANpZznIL96ccmVwC2ufQi6M8ip/
-         EwF9jn3QnFxrpgg58HsPH9FeAsE+8N3r/N3/vyGPPnv9LBJg5+peH8f1MnAISbWDMAq5
-         C3N/d6zq08Hrug2LMT+Gf2P8sXL4rr3FX80wfVJ5TBJP0noG8FJFKFYX1AQaDiMHiPB1
-         sSkAzPSTamx94AbQLidT8uBlHDEW7K5H7OClEF4csw75cWUzHWJ26AGuwWDbV5qoNw1S
-         bk6r2x5m0TCDKa6F4ezGMkMOgtLXLh5HIGqZn4uBOLWjdryUGFxflxZQXRBM6jG5txfg
-         xKng==
-X-Forwarded-Encrypted: i=1; AJvYcCUPSWt79OgqxqX7wnKIhBoK56lta9uFCDvIIFrNWI83Ru8tr+dRu7EKmDT3jlHJFI0szlMDiTYsiGRcaZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyAKlMcLR1EkHbpGTtLMT4l+WiLuqk5HF3i6YhKRYO1Z6kK7rM
-	cfz8KcHI7xnVEARplHM/Wj9sytPFldgS5XqcL6obIf5tFX8FvvoyVW9c4dkksw==
-X-Gm-Gg: ASbGncsG3ztPKV2XZjGpzNwam0fPKTJIykJAo/ihdKlKU/16uf2XnSpr5QfTkLIsx7r
-	8ePxwQhRkapJJVCZRIRDRVh/ZpPBzVYVq4SmVUF+pvgJfrz7O7GQxSn7Cy1p0rLQuXwgiftZisT
-	H30JP2jK63IxdtnIeIGtFAsGS24iIj1mjs25qyI1fBwb9L/vz5ZQG39SqMgRwb1aNFm8PF5Jvtk
-	YOWODTpQBofsKabxXnISb430iQJCqZDJWxTHQpL1lI+dnhRbr0wGspZtgcXYrSfOvJYWUlSOpSZ
-	i4uOYrWGDJOtJJD6GOpjTgzL
-X-Google-Smtp-Source: AGHT+IHjqJRktZLhz6NaZh+WfbURnZUbAXxMRHeD7FdgtGCNkYRC+4y7nJMCRQlFRwuCpsM1e0G4OQ==
-X-Received: by 2002:a0c:b542:0:b0:6d8:81cd:a0ce with SMTP id 6a1803df08f44-6d881cda2damr54003696d6.43.1732908313864;
-        Fri, 29 Nov 2024 11:25:13 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d87d899ec2sm14462146d6.50.2024.11.29.11.25.13
+        d=1e100.net; s=20230601; t=1732908461; x=1733513261;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cHxTKw+tgsW+cNBVKDVH2eHtvRv/xPBbqCeToCysQC8=;
+        b=nlr7IKClIEB9DviMxZAEPqrUUsQkVBcQF+PWcaJwh+25Xeav8oCXluxV1wcLKEEXoy
+         EGe8F2k0ePhX+2Z37jQudYK+2XwcvsLAFXxDBlQkBkC+yKR1n754D7V8TXGFg4OBlA3/
+         lV7EwiFy5pIE4Kn6NL5tUuGgtAI88Buhr3/Nw/E6tPfrLMjovaTLhXrXLYLHd+J658QM
+         Lf3Mb971reorOFkkzr3lgBsJvU09XuQU1rCRPM1eHTvwY6OkqSmjlspuGhh4IuoycXNa
+         vFRdR3R9NpJkX2A00zdDcRQUAbiVdk7JPhU44ktuKMohs/pSMZYSj0dcSFoXYrtelwzK
+         ry2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX6RWw37sIqUxcjOCIhwbfiNT/3ck0XP+/oTsC+xY6ivk7wb7pY9Ch3XCx2lStAX62ql0USA2f4LwEKyOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVnT6Anqi1TA8LKhiZyAvDQxCQ/WNH01MosYR2zctHT8L7fRyQ
+	bglJr5U2mVtJIXmzOv0eluT6P76cncorThHhTT0AUwZKebGcUTNN
+X-Gm-Gg: ASbGncsoEAv3jqyNSFuvXvDzFLUAst+HnrBa+fyckXN2JRTT/fDcqYQp/ZO9rBqnhvb
+	Kplk4nppoKhWbIySQEbs/YvnDyUJ7GCr/FbuvA2scYIdOHVulp1ahj2w4ieXrobRAWAjL5ir0tu
+	H9MWF40YCIGhI6bVQThzoPo9Kd5PCItAJNv7EcTxPXYqNZ4tsAi/6sQdBsZH1PEZThnWa8JmBkH
+	1p7oBvjAeJMxECnfTUnd/ry550RyaiZa8uPX1ndCu9md7O47w==
+X-Google-Smtp-Source: AGHT+IF/T1Vb/QV/gqlkoH9fY4JGFndHqbP8raWpOLMWLCxX6I4TJtpK7d/NClHaFR/+TNRaWVNexw==
+X-Received: by 2002:a17:90b:1e51:b0:2ea:bf1c:1e40 with SMTP id 98e67ed59e1d1-2ee08fc9026mr14535123a91.22.1732908460566;
+        Fri, 29 Nov 2024 11:27:40 -0800 (PST)
+Received: from localhost ([216.228.125.131])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee2b22d08dsm3629096a91.24.2024.11.29.11.27.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 11:25:13 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 29 Nov 2024 19:25:05 +0000
-Subject: [PATCH v3 4/4] media: uvcvideo: Remove redundant NULL assignment
+        Fri, 29 Nov 2024 11:27:40 -0800 (PST)
+Date: Fri, 29 Nov 2024 11:27:37 -0800
+From: Yury Norov <yury.norov@gmail.com>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] nodemask: Introduce
+ for_each_node_mask_wrap/for_each_node_state_wrap()
+Message-ID: <Z0oVqfrfsMjmvdZX@yury-ThinkPad>
+References: <20241129181230.69213-1-arighi@nvidia.com>
+ <20241129181230.69213-2-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241129-uvc-fix-async-v3-4-ab675ce66db7@chromium.org>
-References: <20241129-uvc-fix-async-v3-0-ab675ce66db7@chromium.org>
-In-Reply-To: <20241129-uvc-fix-async-v3-0-ab675ce66db7@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, 
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129181230.69213-2-arighi@nvidia.com>
 
-ctrl->handle will only be different than NULL for controls that have
-mappings. This is because that assignment is only done inside
-uvc_ctrl_set() for mapped controls.
+On Fri, Nov 29, 2024 at 06:54:31PM +0100, Andrea Righi wrote:
+> Introduce NUMA node iterators to support circular iteration, starting
+> from a specified node.
+> 
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> ---
+>  include/linux/nodemask.h | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
+> index b61438313a73..c99cea40dfac 100644
+> --- a/include/linux/nodemask.h
+> +++ b/include/linux/nodemask.h
+> @@ -392,6 +392,16 @@ static inline void __nodes_fold(nodemask_t *dstp, const nodemask_t *origp,
+>  	for ((node) = 0; (node) < 1 && !nodes_empty(mask); (node)++)
+>  #endif /* MAX_NUMNODES */
+>  
+> +#if MAX_NUMNODES > 1
+> +#define for_each_node_mask_wrap(node, nodemask, start)			\
+> +	for_each_set_bit_wrap((node), (nodemask)->bits, MAX_NUMNODES, (start))
+> +#else /* MAX_NUMNODES == 1 */
+> +#define for_each_node_mask_wrap(node, mask, start)			\
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_ctrl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+There's a very well made historical mess of how nodemasks are
+implemented. Contrary to bitmaps and cpumasks, we pass nodemasks by
+value, not by pointer. For example, try_to_free_low() in mm/hugetlb.c
+takes a pointer, but has to 'dereference' it before passing to
+for_each_node_mask():
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 1b58e558604b..2d984060654c 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1657,10 +1657,8 @@ bool uvc_ctrl_status_event_async(struct urb *urb, struct uvc_video_chain *chain,
- 	struct uvc_device *dev = chain->dev;
- 	struct uvc_ctrl_work *w = &dev->async_ctrl;
- 
--	if (list_empty(&ctrl->info.mappings)) {
--		ctrl->handle = NULL;
-+	if (list_empty(&ctrl->info.mappings))
- 		return false;
--	}
- 
- 	w->data = data;
- 	w->urb = urb;
+  static void try_to_free_low(struct hstate *h, unsigned long count,
+                                                  nodemask_t *nodes_allowed)
+  {
+        for_each_node_mask(i, *nodes_allowed) {
+                ...
+        }
+  }
 
--- 
-2.47.0.338.g60cca15819-goog
+That's because all nodemask functions takes an address from a variable
+provided. For example the below nodes_empty() is implemented like:
 
+  #define nodes_empty(src) __nodes_empty(&(src), MAX_NUMNODES)
+  static __always_inline bool __nodes_empty(const nodemask_t *srcp, unsigned int nbits)
+  {
+          return bitmap_empty(srcp->bits, nbits);
+  }
+
+It means that your 'MAX_NUMNODES > 1' version doesn't match the
+existing for_each_node_mask(), i.e. doesn't pass a nodemask by value.
+The opencoded 'MAX_NUMNODES == 1' version does, although.
+
+> +	for ((node) = 0;						\
+> +	     (node) < 1 && !nodes_empty(mask);				\
+> +	     (node)++, (void)(start), (void)(cnt))
+
+This cnt is a leftover from v1, I guess.
+
+> +#endif /* MAX_NUMNODES */
+> +
+>  /*
+>   * Bitmasks that are kept for all the nodes.
+>   */
+> @@ -441,6 +451,9 @@ static inline int num_node_state(enum node_states state)
+>  #define for_each_node_state(__node, __state) \
+>  	for_each_node_mask((__node), node_states[__state])
+>  
+> +#define for_each_node_state_wrap(__node, __state, __start) \
+> +	for_each_node_mask_wrap((__node), &node_states[__state], __start)
+
+Can you also add for_each_online_node_wrap() to align with the
+existing for_each_online_node()?
+
+> +
+>  #define first_online_node	first_node(node_states[N_ONLINE])
+>  #define first_memory_node	first_node(node_states[N_MEMORY])
+>  static inline unsigned int next_online_node(int nid)
+> -- 
+> 2.47.1
 
