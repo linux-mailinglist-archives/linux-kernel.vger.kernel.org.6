@@ -1,260 +1,130 @@
-Return-Path: <linux-kernel+bounces-425594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75DDC9DE7B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:34:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D879DE788
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:29:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FC1CB2256A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:24:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 220F6B21C77
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0D219E806;
-	Fri, 29 Nov 2024 13:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C7219F48D;
+	Fri, 29 Nov 2024 13:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ecmx/PLi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEERrIyb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0665519CCEC
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBBF19884C;
+	Fri, 29 Nov 2024 13:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732886673; cv=none; b=ODA3Ju+Re0m6b2ARSIZcaiOhzn2F79UlVLb4vubGbywUbtaIMCJyeM3g2crjNnwTN/VZAlDA+FHAf/5+4p1hConZqKnjfdxK9WWYRbETbey0wrXOwFadULyfkFq81mq6QCv0dE2SZ+42j6Qm6M7vFJ8D6UNMkzm8dziJATe3klY=
+	t=1732886923; cv=none; b=Fzxssvb/6dALI6qg73xL5R/Ex2zubAkJm4YxHnhVoldUTbNAfPASPddfeq17eX/9WBZlNV4o1PIlNePX9JFhNnos8Cb9dHtP1JXSC1oT9CZ3A2mnAwtYwDsSMHzFnLCLksn1BWxcvdrCs639wP6JzMIjQ81KYS9s05fcaYykDKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732886673; c=relaxed/simple;
-	bh=Lh3wm/Y49FW/5Br6sAAGCXa8r7vzGq2aHfYVLCjVaqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MsDfLjh0qSalSNSFMtVeI8eLKrgYNrpwgLfR8Vst2wVBYSyG5CDn1zs/B6BBrKMWD4LTGa2553Gob8rgTaKPKDu/QGT5BkN+zGzgFMJpdUQY4VbzLirbA9DhI57M21pubxOqDpUdlAgN3FP9ks/LDfclq39455qJVzxUkJlcbCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ecmx/PLi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732886670;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nU/jhm6YJGAWyK6WiBgAqwh22b8bPeKCDvr+ExJWlOQ=;
-	b=Ecmx/PLilYe0qbsQZ9JFpfv81jx3yIq4CamFELgtMj8IT08jMrG6k63VpB4OJ2YOuMf7tU
-	L3r2qlfPJqqRhyUdH6CgTaTkl83p+Z6CzpZqlq2HrfwL22iIGDIePXDnc+mPA52Glqa9cU
-	exY7X/TRdJxddpPr80XnUEJ3Nt2ogOU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-616-p67se_3zMsiqQzk1KxESUA-1; Fri, 29 Nov 2024 08:24:29 -0500
-X-MC-Unique: p67se_3zMsiqQzk1KxESUA-1
-X-Mimecast-MFC-AGG-ID: p67se_3zMsiqQzk1KxESUA
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385e0f3873cso113567f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:24:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732886668; x=1733491468;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nU/jhm6YJGAWyK6WiBgAqwh22b8bPeKCDvr+ExJWlOQ=;
-        b=nbAU+YEDAEfzP/oNhDL54cury8/YucGyn/d7zU6v0pjvJyhTcgZfYz9P8dEGhIT5nf
-         x5inHTELxxSH796SumQpouYlLBPh5EpnEMuaOiNtvIifBdGdwII8uci8G+IKBP3KB+5w
-         mPe6vvAWabzMZ55c8w/Wg5ABWtjtUqJqkOWysVjx+UP+Qp0kUGwcPg66SrqSdAM5bza5
-         z5Yc7kAHgXLTmA7mv3cBOsCDNGKwH6V0xsnjvH8+Zlz1CN1yCHW9Vq+AppTQIPqNkSRE
-         zSOnI90J7QDQL45Uu0qf8BgzoxYJ7MMIUtLEJdaffdoCxk2tIMQtY/wgYPJ7jhvz/7x4
-         EtUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqSvXIVZJ7R7OdpPXz5N4rbvk0GeTvYfy6kgfYiYSGYmSORkON3yFqQ3HIkgwMyEoEm7ZxJczXzCIx1jI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQu2tMEleB/0zZih/pz1RMkjV0Eqj9ca0m4y1flUODliu0RJLP
-	Pfk+dG3YP8xTZUCw2M5fCRsi/TOzLxTTloNS5NgxdNtw2dexys266AqqSwb7KCE00iTiFT+AziJ
-	McxzYyTKciv++iZFqv5lsBmQNFeAtAh/xhZTD8dZ5X4vEHAUwIS5u56fNodT4YQ==
-X-Gm-Gg: ASbGncuItoYKruuQGMadEtfsUqwsm/62bn3rYLWY7kTGzI14Jbw9KaqGFedd0p/LJqr
-	CrH9CloVb4Ty/rPp9xh59/V9qF3t0ligNmXh3mRa11qwq6YHCwgVKcNohS90+OUulp6Ncjcd/lm
-	L8GcUbPJTqgJEhbiXPe3bCrKgnS2OFY95BF+Sc13bHp7193YCKqh1eVQw6V2RplTu7i3OnFwbzR
-	atDsgwYxzx/cFTV2Z7CxCPtcjavARbqiV88W60a1LJEKYJvQ93uQ32FOiKnziqezeytaB70RcTi
-	emgF2l9ekxb/Lo9oPtHsuvkDIde3/aSubM1eX64SlHeprJNEv2oyyDliL18kinbsLEbpdFXgnV9
-	ZLA==
-X-Received: by 2002:a05:6000:4009:b0:37d:4ef1:1820 with SMTP id ffacd0b85a97d-385c6edb1c4mr9170073f8f.40.1732886668048;
-        Fri, 29 Nov 2024 05:24:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHLKDmL48MsT1X5+ui/hTCh0Qw8COAwExjjwUMjnOm7abKhFVTHpkYAEIWAlS1RhZN754RaxA==
-X-Received: by 2002:a05:6000:4009:b0:37d:4ef1:1820 with SMTP id ffacd0b85a97d-385c6edb1c4mr9170033f8f.40.1732886667610;
-        Fri, 29 Nov 2024 05:24:27 -0800 (PST)
-Received: from ?IPV6:2003:cb:c71c:a700:bba7:849a:ecf1:5404? (p200300cbc71ca700bba7849aecf15404.dip0.t-ipconnect.de. [2003:cb:c71c:a700:bba7:849a:ecf1:5404])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e17574ebsm129495f8f.30.2024.11.29.05.24.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 05:24:26 -0800 (PST)
-Message-ID: <6795cc9a-6230-431f-b089-7909f7bc4f30@redhat.com>
-Date: Fri, 29 Nov 2024 14:24:24 +0100
+	s=arc-20240116; t=1732886923; c=relaxed/simple;
+	bh=+SW8uSY4kk9jy3nBqPD/Tm8uG6EdIVWhrds3tTcNqnU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rqaWKBZnaJfDlxYbcu8A859P0qtHL+bDBpIcz7hxct1ZB4Uu6QdFkvlIaqp36dEosgixU6dbu1rBpYJ6Vbj+5kZGy9WhwqTCpwbjVhH9sCrfryMU0pxC+oGlDD2Ko6BvTf+nCgJtbGUhzIzF/dkWi84bUFL3wQnjJSm7rKaU6fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEERrIyb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 04BB4C4CECF;
+	Fri, 29 Nov 2024 13:28:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732886923;
+	bh=+SW8uSY4kk9jy3nBqPD/Tm8uG6EdIVWhrds3tTcNqnU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=UEERrIybuUcMtPWtTuWAvnJP5TjdwDz7uRqoV/lAtYPeMOjkeR1oOgp+c4W+gi+di
+	 UnF5MQix3+YGPSM0l8ZFe2GbdQqUhG+rIuDJQaXCTy8TnUdKVC9kQRVvghGWKao6Hm
+	 anxoqWD7wXFF9WjtV2QR9syQMyVIBiPWpIHX6g1odAlYIFchmZWZBj7Uo6WPtEibbs
+	 +DrLSEUvmAcDllALu8e3LCsfH1JyFkkEdwe8ysLff0QJXqV1oyPI6k2Ei0HEnwZo+W
+	 X+ZD8XIog7zkAdQQqW+WQemOefLLbdYuij6EdsIt9fcGM1j1YwilvxFzv8Cr+BSLqH
+	 tfbD91/NBkDhg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9725D6EBF9;
+	Fri, 29 Nov 2024 13:28:42 +0000 (UTC)
+From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD_via_B4_Relay?= <devnull+cleverline1mc.gmail.com@kernel.org>
+Subject: [PATCH v6 0/4] Add support for attaching a regulator to w1: ds2482
+Date: Fri, 29 Nov 2024 14:25:52 +0100
+Message-Id: <20241129-ds2482-add-reg-v6-0-bd95ad171e19@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf: map pages in advance
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Matthew Wilcox <willy@infradead.org>
-References: <1af66528-0551-4735-87f3-d5feadadf33a@lucifer.local>
- <926b3829-784f-47b8-9903-ea7b9ad484ac@redhat.com>
- <31e8202d-f3db-4dcd-a988-2f531b14e40f@lucifer.local>
- <84fed269-3f82-47f7-89cb-671fcee5a23a@redhat.com>
- <20241129122624.GH24400@noisy.programming.kicks-ass.net>
- <74be541b-22ad-42b5-b3c5-79b201e28f04@redhat.com>
- <e97dba32-b5a8-43b1-9bea-e42daf6078c1@lucifer.local>
- <9d6be5bd-ffb9-4a27-b56d-521cf6b7486e@redhat.com>
- <6cab3e8a-dff7-41d1-af22-f18b8f2820dc@lucifer.local>
- <c8ecd378-c197-4e06-94ef-e03b5ee28616@redhat.com>
- <94dabe57-232b-4a21-b2cf-bcfbda75c881@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <94dabe57-232b-4a21-b2cf-bcfbda75c881@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAODASWcC/2XO0WrEIBAF0F9ZfK5FxzGaPvU/Sh9mdcwK3U3RE
+ lqW/HvNQiGNvl3h3Ll3UblkruLldBeFl1zzfGtheDqJcKHbxDLHlgUoQN2ejBXQg6QYZeFJJtY
+ GlKLo4iAa+iyc8vej8O295UuuX3P5efQvevv9q7LHqkVLJUPweB7pTBqG1+lK+eM5zFexVS2w4
+ wAdh8bJkjLMDiO5Izd7jh03jXs1xGTGMKLFI8c978dj4+gsOVI+prEbb/d87LjdxifP3kTUBv9
+ dX9f1F8ElUrSoAQAA
+X-Change-ID: 20241111-ds2482-add-reg-fe13200ad7d6
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Stefan Wahren <stefan.wahren@chargebyte.com>, 
+ Stefan Wahren <wahrenst@gmx.net>
+Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732886921; l=1667;
+ i=cleverline1mc@gmail.com; s=20241112; h=from:subject:message-id;
+ bh=+SW8uSY4kk9jy3nBqPD/Tm8uG6EdIVWhrds3tTcNqnU=;
+ b=u6WXxlaO9+lR/bChs8eqEQUIUnt8Llx1BqfeG3hnrBa7hwEUYcfc6+/SdfqLXAMmJFowXzGHW
+ i9YFM5f6Nl8AvqmCNG9BlE2v7GU6844qRVqt41s/sUyqpHmsWgHj/63
+X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
+ pk=EJoEbw03UiRORQuCiEyNA8gH1Q6fIpEWnn/MyaWOWX0=
+X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
+ auth_id=275
+X-Original-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+Reply-To: cleverline1mc@gmail.com
 
-On 29.11.24 14:19, Lorenzo Stoakes wrote:
-> On Fri, Nov 29, 2024 at 02:12:23PM +0100, David Hildenbrand wrote:
->> On 29.11.24 14:02, Lorenzo Stoakes wrote:
->>> On Fri, Nov 29, 2024 at 01:59:01PM +0100, David Hildenbrand wrote:
->>>> On 29.11.24 13:55, Lorenzo Stoakes wrote:
->>>>> On Fri, Nov 29, 2024 at 01:45:42PM +0100, David Hildenbrand wrote:
->>>>>> On 29.11.24 13:26, Peter Zijlstra wrote:
->>>>>>> On Fri, Nov 29, 2024 at 01:12:57PM +0100, David Hildenbrand wrote:
->>>>>>>
->>>>>>>> Well, I think we simply will want vm_insert_pages_prot() that stops treating
->>>>>>>> these things like folios :) . *likely*  we'd want a distinct memdesc/type.
->>>>>>>>
->>>>>>>> We could start that work right now by making some user (iouring,
->>>>>>>> ring_buffer) set a new page->_type, and checking that in
->>>>>>>> vm_insert_pages_prot() + vm_normal_page(). If set, don't touch the refcount
->>>>>>>> and the mapcount.
->>>>>>>>
->>>>>>>> Because then, we can just make all the relevant drivers set the type, refuse
->>>>>>>> in vm_insert_pages_prot() anything that doesn't have the type set, and
->>>>>>>> refuse in vm_normal_page() any pages with this memdesc.
->>>>>>>>
->>>>>>>> Maybe we'd have to teach CoW to copy from such pages, maybe not. GUP of
->>>>>>>> these things will stop working, I hope that is not a problem.
->>>>>>>
->>>>>>> Well... perf-tool likes to call write() upon these pages in order to
->>>>>>> write out the data from the mmap() into a file.
->>>>>
->>>>> I'm confused about what you mean, write() using the fd should work fine, how
->>>>> would they interact with the mmap? I mean be making a silly mistake here
->>>>
->>>> write() to file from the mmap()'ed address range to *some* file.
->>>>
->>>
->>> Yeah sorry my brain melted down briefly, for some reason was thinking of read()
->>> writing into the buffer...
->>>
->>>> This will GUP the pages you inserted.
->>>>
->>>> GUP does not work on PFNMAP.
->>>
->>> Well it _does_ if struct page **pages is set to NULL :)
->>
->> Hm? :)
->>
->> check_vma_flags() unconditionally refuses VM_PFNMAP.
-> 
-> Ha, funny with my name all over git blame there... ok yup missed this, the
-> vm_normal_page() == NULL stuff must but for mixed map (and those other weird
-> cases I think you can get0...
-> 
-> Well good. Where is write() invoking GUP? I'm kind of surprised it's not just
-> using uaccess?
-> 
-> One thing to note is I did run all the perf tests with no issues whatsoever. You
-> would _think_ this would have come up...
-> 
-> I'm editing some test code to explicitly write() from the buffer anyway to see.
-> 
-> If we can't do pfnmap, and we definitely can't do mixedmap (because it's
-> basically entirely equivalent in every way to just faulting in the pages as
-> before and requires the same hacks) then I will have to go back to the drawing
-> board or somehow change the faulting code.
-> 
-> This really sucks.
-> 
-> I'm not quite sure I even understand why we don't allow GUP used _just for
-> pinning_ on VM_PFNMAP when it is -in effect- already pinned on assumption
-> whatever mapped it will maintain the lifetime.
-> 
-> What a mess...
+Kept the exit_w1_remove path as requested in the review.
 
-Because VM_PFNMAP is dangerous as hell. To get a feeling for that (and also why I
-raised my refcounting comment earlier) just read recent:
+Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
+---
+Changes in v6:
+- Returned the exit_w1_remove path in the probe function
+- Link to v5: https://lore.kernel.org/r/20241129-ds2482-add-reg-v5-0-af8e83d41344@gmail.com
 
-commit 79a61cc3fc0466ad2b7b89618a6157785f0293b3
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed Sep 11 17:11:23 2024 -0700
+Changes in v5:
+- Refactored the driver to use devm_kzalloc() instead of kzalloc()
+- Link to v4: https://lore.kernel.org/r/20241125-ds2482-add-reg-v4-0-475a7a08df96@gmail.com
 
-     mm: avoid leaving partial pfn mappings around in error case
-     
-     As Jann points out, PFN mappings are special, because unlike normal
-     memory mappings, there is no lifetime information associated with the
-     mapping - it is just a raw mapping of PFNs with no reference counting of
-     a 'struct page'.
+Changes in v4:
+- Using dev_err_probe() instead of dev_err() for the regulator error.
+- Corrected patch order.
+- Link to v3: https://lore.kernel.org/r/20241124-ds2482-add-reg-v3-0-806df39c9454@gmail.com
 
+Changes in v3:
+- Switched from regulator_enable() to devm_regulator_get_enable()
+- Removed obvious comments.
+- Link to v2: https://lore.kernel.org/r/20241122-ds2482-add-reg-v2-0-a5a03ee74da7@gmail.com
 
-GUP relies on the refcount. In a PFNMAP you don't have any way to make sure the
-driver won't go down, free the page, to have it used by someone else while IO is still
-happening to that page.
+Changes in v2:
+- Removed property description
+- Changed commit message of binding commit
+- Link to v1: https://lore.kernel.org/r/20241115-ds2482-add-reg-v1-0-cc84b9aba126@gmail.com
 
+---
+Kryštof Černý (4):
+      dt-bindings: w1: ds2482: Add vcc-supply property
+      w1: ds2482: switch to devm_kzalloc() from kzalloc()
+      w1: ds2482: Add regulator support
+      w1: ds2482: Fix datasheet URL
+
+ .../devicetree/bindings/w1/maxim,ds2482.yaml       |  2 ++
+ drivers/w1/masters/ds2482.c                        | 26 ++++++++++------------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
+---
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+change-id: 20241111-ds2482-add-reg-fe13200ad7d6
+
+Best regards,
 -- 
-Cheers,
+Kryštof Černý <cleverline1mc@gmail.com>
 
-David / dhildenb
 
 
