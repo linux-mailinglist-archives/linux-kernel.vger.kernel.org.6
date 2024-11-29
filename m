@@ -1,77 +1,47 @@
-Return-Path: <linux-kernel+bounces-425316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9A89DC06B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:22:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC92D9DC06F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:23:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B22F16478B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:22:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8FB165F13;
+	Fri, 29 Nov 2024 08:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZgPJijN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05CE92821A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:22:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2250F15E5BB;
-	Fri, 29 Nov 2024 08:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b="fsxw1a3o"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C042D4204E
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944814204E;
+	Fri, 29 Nov 2024 08:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732868558; cv=none; b=F+tBO7hRryKl1hOuqWfIAyr3CAoMfEWqEb1EJ2I1Ww9VZqNsCJ//kahbvWzmbshNm2s2GDwGgjN0Hun4t3DYCLTnsqo0I0c5enrUIfyn2/zIPTFyllRLsTjyM5rsNBQqvoTbFIN8JChG/TFWj8cSM59miDip0NMXVgrfIrcfJkM=
+	t=1732868568; cv=none; b=pSvgkgz7efVnAvcgN3MM30PEwVT8Rn6ZK3x3HXESKT6sOd/thDcM6pSe4uZMzJZMNuQ66Eriqeti19O0v5nJl+QCful2LIW+OvnpSU/6U03fjCp+RDX3XUA3qAFXIx1/lXkSFGL0imbhVIU8is9kPetTi8AiKQ+y+mbwGIIMCUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732868558; c=relaxed/simple;
-	bh=562yHw0XBNbz/d+kvGdxMM55CvOCfYE2YRMXmMQ1hpk=;
+	s=arc-20240116; t=1732868568; c=relaxed/simple;
+	bh=vczarr0veD/or+eHrQIZd+87uwMUJz67vQoJatMVAWA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ONi0NozcXxo9nhnpuT/BLRn7kTpMPilVDdJuYfF199KLKO0/tebX9XLKnv2bAwu76iGKya4LZr8uq2m/EKS3NQeYoM7/owrLP0F9FC1qDA73l/7EPnxveno8IMhKEjbYqRvpt98h9TEVmMmp+e0xaLhbDT8MbslJEDE2djLN0yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev; spf=none smtp.mailfrom=sedlak.dev; dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b=fsxw1a3o; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=sedlak.dev
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa549d9dffdso214374066b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:22:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sedlak-dev.20230601.gappssmtp.com; s=20230601; t=1732868554; x=1733473354; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bpOpchybQJXD5CvZrpdSs1RBStnGyKaKUM/Uju5sP7Q=;
-        b=fsxw1a3oH0tW/K4dcEKMJlJK+wlIuH5k41HtuDb/J/sybSGf8tCD32eea41z1ueiwY
-         4oJunEtOTK4nxF26enPXohZ1gi4S3bhC9hbHqmiFA8TA83R4v2KIMqZyY6LsnnNl6XsR
-         j+t4/FW490gyxDJHjHM5zmVjs7BNmxsfjJ2Q4US3WjSe34Fpe+TCASLVVbZgsoKUbYwI
-         erIvdxY07GVREpGQuziGv5QqxSO+eCDr9FwvAvq203FbgTC2D1wh6s9goNtge7m5mYNJ
-         o8qvEWZK3aERS4vembs0UY7x9fYQwN6oc6d/qPrj1bPcmiRoVbRSiy4S/zDCWGzeN15O
-         2p7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732868554; x=1733473354;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bpOpchybQJXD5CvZrpdSs1RBStnGyKaKUM/Uju5sP7Q=;
-        b=ksUOJhuJDxXrJH+Gr+tQkib7F3hhCTWsWbszgEUKT5JgzUmP25OxpI4NtiDzq8wbJL
-         JEyvnlvVMWUh2180tAbGdDprudZxC7vMkEvCx4VcP+2rAQssYIXMeMtFicpyAHMoKXPE
-         dryvpRRGw+YxoqquURV0HD/imd7zFgtds+C0PYgoSarCM5lc4wXgLu561eLKLTbCPk1+
-         IS8tkIn2piYtjRk0vdblA1FhSniKGPb8fe5QKzQiwKyywDOPjGdgqGMrkphTgJ1VMSMT
-         rcs2evmY/y0FISQCk2YScARIxgIlH3UF0eZRHbi4JcOG/SEbd3GGHmpozNyqtRgpQfsu
-         /B9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWY1Solt7P81sz7ne7v7YVlFxK+ceyhXJfJVpeUIHyp2zyyLHAjtSlDCz2XQ7+IRXOCEzUmO88YhOAXpB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHTOQuFqOVnb4BVHL0UYfzOXkSByuSCtWe6QUfwSTG/v6xPi3U
-	l32jKaqv8sbAboYmfaGGPnnZ/Fbmhs16R1EZCTDgkLrXcu35la9snf2mtQyXl2g=
-X-Gm-Gg: ASbGnctXZBXhXqQubKARe0Klb+SBHIJwbF2iiSSk4JrTCJYk+tdZQrSn/HNFeyAtF9a
-	Dr19IZ+DaP52NgSVVnyWhfX2ktD0UpTJlEirvFOA6Btlg5fsPQ7xHNeotu2zOXclMJSRUwCKc9m
-	F857PmmIXqwLvMIKZE+OqRbQF5kGGzawqXyRNH+C4PxK98oGP0B4zfhUNtykbxR+fn5RA3X1mT/
-	QcgbQBCxzPYFBvhNl3yUE6/kl9sFWieFfPq6Mk/BKZLv9Xbp2Y=
-X-Google-Smtp-Source: AGHT+IHyI/nqfSxONykSF4kwQGUMItj0mjdcZ+BUKlRUULAfXTeC/1tNq1UOeKpwb/WJV4QJtInbew==
-X-Received: by 2002:a17:907:7751:b0:aa1:f9dc:f9bf with SMTP id a640c23a62f3a-aa580eee484mr832584866b.10.1732868553906;
-        Fri, 29 Nov 2024 00:22:33 -0800 (PST)
-Received: from [192.168.88.249] ([95.85.217.110])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6d7esm148314366b.114.2024.11.29.00.22.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 00:22:33 -0800 (PST)
-Message-ID: <0aa72bdd-7431-49bb-a6b4-e254787db0f1@sedlak.dev>
-Date: Fri, 29 Nov 2024 09:22:32 +0100
+	 In-Reply-To:Content-Type; b=FQYGEp8gJbystdhFti0zGoJdp9APDEY+78Q4Hv/7YEErAg2ULNeMRmr1fHrkP+mFCkqgv+jYv392mjA+q2mxOWucTdVS5BpYgl//itkdJ01uWlG6fDtmIU++Tncnj/smzJwpiu+nGwpIOmbF1wvpZPDT9q7EUbE9XDKddGCkX+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZgPJijN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE22C4CED3;
+	Fri, 29 Nov 2024 08:22:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732868568;
+	bh=vczarr0veD/or+eHrQIZd+87uwMUJz67vQoJatMVAWA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PZgPJijNruVqPqCLwZfz1uqLA9imFMzhCKQ/tyEeeJgcEatjnsQNx7kdJh0RCRR44
+	 iJtZD+Qf3gE/up4sJv86kSFewUMzlvTKXXMQBYBkV1beAVDHYWARnkFCjmWfGsP9/4
+	 9+pgzE5MHVKsBccHRs1JyK6zTq+igOpK/2/c3rutHL7No4nR06FbEaAirXAWb/+DrO
+	 2r5nsjuYtGetiGKrLk2IoB3mPxLTzS743EyNPFkpu/OtENfPF6sSnbIPzY5e/qchlb
+	 2Es0LjHhtH1qf5BHvV/ld3bd3Qjozb+Uf8zYQYfVPGg7IikLa9AQ4mFxjKktbkmmVM
+	 JHBViyCITnY+A==
+Message-ID: <d1eec09a-23ca-44de-a4e5-5f625a1ec73b@kernel.org>
+Date: Fri, 29 Nov 2024 09:22:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,98 +49,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] rust: Add `OnceLite` for executing code once
-To: jens.korinth@tuta.io
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Rust For Linux <rust-for-linux@vger.kernel.org>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>,
- Dirk Behme <dirk.behme@gmail.com>,
- Linux Kernel <linux-kernel@vger.kernel.org>
-References: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io>
- <20241126-pr_once_macros-v4-1-410b8ca9643e@tuta.io>
- <230b3602-5d68-4e79-969d-0d2df1fdf033@sedlak.dev> <OCj9As8--F-9@tuta.io>
+Subject: Re: [PATCH v9 1/6] misc: Add support for LAN966x PCI device
+To: Herve Codina <herve.codina@bootlin.com>, Michal Kubecek <mkubecek@suse.cz>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>, Simon Horman
+ <horms@kernel.org>, Lee Jones <lee@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>,
+ Dragan Cvetic <dragan.cvetic@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Lars Povlsen <lars.povlsen@microchip.com>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>,
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Horatiu Vultur <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Allan Nielsen <allan.nielsen@microchip.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20241010063611.788527-1-herve.codina@bootlin.com>
+ <20241010063611.788527-2-herve.codina@bootlin.com>
+ <dywwnh7ns47ffndsttstpcsw44avxjvzcddmceha7xavqjdi77@cqdgmpdtywol>
+ <20241129091013.029fced3@bootlin.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Daniel Sedlak <daniel@sedlak.dev>
-In-Reply-To: <OCj9As8--F-9@tuta.io>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241129091013.029fced3@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 11/27/24 8:46 PM, jens.korinth@tuta.io wrote:
->> Have you considered it to be implemented like `AtomicU32`? I think™ that
->> one atomic variable is more than enough.
+On 29/11/2024 09:10, Herve Codina wrote:
+>>> +config MCHP_LAN966X_PCI
+>>> +	tristate "Microchip LAN966x PCIe Support"
+>>> +	depends on PCI
+>>> +	select OF
+>>> +	select OF_OVERLAY  
+>>
+>> Are these "select" statements what we want? When configuring current
+>> mainline snapshot, I accidentally enabled this driver and ended up
+>> flooded with an enormous amount of new config options, most of which
+>> didn't make much sense on x86_64. It took quite long to investigate why.
+>>
+>> Couldn't we rather use
+>>
+>> 	depends on PCI && OF && OF_OVERLAY
+>>
+>> like other drivers?
+>>
 > 
-> Just to clarify - you mean something like this? Nevermind the magic numbers,
-> I'd replace them, of course.
+> I don't have a strong opinion on this 'select' vs 'depends on' for those
+> symbols.
 
-Yes, that's what I meant. But as Alice pointed out, you _may_ be able to 
-reduce it to the one AtomicBool.
 
-Daniel
-> 
-> diff --git a/rust/kernel/once_lite.rs b/rust/kernel/once_lite.rs
-> index 723c3244fc85..0622ecbfced5 100644
-> --- a/rust/kernel/once_lite.rs
-> +++ b/rust/kernel/once_lite.rs
-> @@ -16,7 +16,7 @@
-> //!
-> //! Reference: <https://doc.rust-lang.org/std/sync/struct.Once.html>
->   
-> -use core::sync::atomic::{AtomicBool, Ordering::Relaxed};
-> +use core::sync::atomic::{AtomicU32, Ordering::Acquire, Ordering::Relaxed};
->   
-> /// A low-level synchronization primitive for one-time global execution.
-> ///
-> @@ -44,13 +44,13 @@
-> /// assert_eq!(x, 42);
-> /// ```
-> ///
-> -pub struct OnceLite(AtomicBool, AtomicBool);
-> +pub struct OnceLite(AtomicU32);
->   
-> impl OnceLite {
->       /// Creates a new `OnceLite` value.
->       #[inline(always)]
->       pub const fn new() -> Self {
-> -        Self(AtomicBool::new(false), AtomicBool::new(false))
-> +        Self(AtomicU32::new(0))
->       }
->   
->       /// Performs an initialization routine once and only once. The given
-> @@ -71,10 +71,10 @@ pub const fn new() -> Self {
->       /// [`DO_ONCE_LITE_IF`]: srctree/include/once_lite.h
->       #[inline(always)]
->       pub fn call_once<F: FnOnce()>(&self, f: F) {
-> -        if !self.0.load(Relaxed) && !self.0.swap(true, Relaxed) {
-> -            f()
-> +        if self.0.load(Relaxed) == 0 && self.0.compare_exchange(0, 1, Acquire, Relaxed) == Ok(0) {
-> +            f();
-> +            self.0.store(2, Relaxed);
->           };
-> -        self.1.store(true, Relaxed);
->       }
->   
->       /// Returns `true` if some `call_once` call has completed successfully.
-> @@ -98,7 +98,7 @@ pub fn call_once<F: FnOnce()>(&self, f: F) {
->       /// ```
->       #[inline(always)]
->       pub fn is_completed(&self) -> bool {
-> -        self.1.load(Relaxed)
-> +        self.0.load(Relaxed) > 1
->       }
-> }
-> 
->> The `rust` part should be default value for rustdoc tests, can we please
->> omit that?
-> 
-> Will do!
-> 
-> Jens
+You should not select user-visible symbols, with exception of arch
+stuff. This is not arch, so you should use dependencies.
 
+
+Best regards,
+Krzysztof
 
