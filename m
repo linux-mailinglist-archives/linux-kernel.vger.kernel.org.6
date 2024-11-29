@@ -1,71 +1,73 @@
-Return-Path: <linux-kernel+bounces-425248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6C79DBF5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 06:57:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950609DBF5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 06:57:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CE76163B58
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42001163A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3474156991;
-	Fri, 29 Nov 2024 05:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33A8158520;
+	Fri, 29 Nov 2024 05:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eRALDRZJ"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="epSB6VLa"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89340BA4B
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976FF15624D
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732859849; cv=none; b=mFaZ2IKl363QMp0SKEunA9nN8dD6WoZEsm1jw4UiX0ZGM0AjZ+vusoCwcbm/Iby86mqDd5wiCiiBZSj5CxEqRoe9U/eE4dFixZVcHDzwD/0QaFQfHQgI+LZAKxocKX+WauJC+mlxOg5SEoQS1XrB20CUnQu57yURZNTO/zf/Fuc=
+	t=1732859850; cv=none; b=HJl72Zdv68qUsLFeltX1pf6Km9lNMaFwjZXM078DAQ1GWLER9sToSS1Qg8mmShFzsU9Mlgb1iODT7HB3IGa4p5V4ei1hgWf2uVoixwI3jYQQJ/hFRxFqaYmVMIJEoP9IKtR22hfTPMIxEqvB1n0Qyis13kwC5y82+3FkCIMn8ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732859849; c=relaxed/simple;
-	bh=2d22fSXH3xHtYPQeuQ5/HB+WWNcQefsX3YBG8H/58B0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PLODSkRmZ6C7dTAGQiU6qH11er6ssfq1SZGwi/YoQmKLpEHAJI2L4SjOLL/aZ25cmdoBjHKIcXOlVbJQYCiM8lzfbZbEFWVr3eXrphqaeV0MAXcKM6wdnUo2Ut8i7MK81+z928X/3Iowr6prkudCHgnxY2V2kf5D7xmYe8zVtbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eRALDRZJ; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1732859850; c=relaxed/simple;
+	bh=2U9nTkbm74paSVTFTs1PRSY08ro5QpmpIYYm03e10r0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GouVv/5IlW3saruPgORW1j3jIRBONx5OdujPAbjBIeP2nv3rOs38Ccw1etJMox1PMJnG5ak5IvNc/JvZ0OwtAc+CcDcNjU5gux7hQUD9yILiYnzH+8S4dMS+CCejODXEXIsbFp2IwBFfe3Ga82PwjHkLeEkxkulX8sdSQU4G3ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=epSB6VLa; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53de79c2be4so1732810e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 21:57:26 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa5500f7a75so215534066b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 21:57:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732859845; x=1733464645; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9WF3O3Q9CqJ+jQNAGLBDdeZMuKGc8yveqCJFxa21hM=;
-        b=eRALDRZJ2l8B6Rq+/V+W7pr8hF/WSwCihJ6xVRx0OrPiBI8Ce3g56K3Q8mpXNPCdhu
-         Gy8PbyvE5/nkWmPvW0YiOjw3azQQm8Ca/lwM8qwLdd7qhe5omRio40B79BXpy1DqE2cU
-         iSBoEn7Fqykwbg16NIiPpsxtXcwEZZPUh7R2U=
+        d=chromium.org; s=google; t=1732859847; x=1733464647; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FIal9P/vly9trTFOOFdtiwygL3gRq3FSgu7GS6el7Zc=;
+        b=epSB6VLaSZDR3EBFYwksqpPY+8BHWBV6Gi0Wzj203rAZFwpG9rNj4XxDaF4gum/iVp
+         Eu+zsYdMoSEXv/cpBj0K6RjDb75LsBNpA6BQVdimteut5GDdFa76IQhx5W6KPt7VYx7N
+         MfvzJ4fLzAfrRdusNUtgJOnklG5DsM+oxQbOY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732859845; x=1733464645;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w9WF3O3Q9CqJ+jQNAGLBDdeZMuKGc8yveqCJFxa21hM=;
-        b=lXxlnstNjQILVcgFjfcMxsnZ6ENLq67cFhwLqb/co+aBe8G21MgK9BLp/haWIOUZK8
-         QPAtOQb3hDEgiblDMHUwCsoOotAqX0CgHinf6XcqiV/uKmSn3Lagwsf296Xs3AeZT6D1
-         w85HpBhNsAiZ31aqrWxpZ/1/GhX5xbzGLThfL46ugXtrYbeZ4DK7og5e0HDKHkFKoRd5
-         V8K7m2AykSdXMFmLfbmyXA/mJ6xNKfsH/KeaaxlUzvD4zgb9XATsMbVATGZFpuM33Bnc
-         CmZCOrCd3aRTmvI7cKE/cbNPdpJfS913kgB3LiL0QeC5UEqcU3dPLe9qLIG/oZ+XqeIg
-         U0LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHdJIKDzrnHSTfsOTAlEquTUZPeZSkFetBDEqo1if2aItX9xCt8fwVnyGJsNv0vTHoXLsjjA6sE7E0Y+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/gDkB+KNfZ4SL0AUW1GYOqbMw+LnDISaS+H9goOzBm5RYZLcp
-	Yv+WXQ0ggZn8jd6lmuKIN7aMnkz1uT7yQn9ooSHQfy8p02/6o6sb2dtd35uH1Q==
-X-Gm-Gg: ASbGncst5qY3Q1vUhsutQJ9QEErx1DnMHwAU8iaFI2qrpweo1173SNz6E0Z7ZQqZdUa
-	HPjASbMc7dPU2Ny548BxD3q6e5ijADEyGEx0QPmboraz51ulHVaMyMF7425Gh5MyANDXmNogC5J
-	JuN2Li6gc68uvbz+kHh0XKZSDIz6lsNOh/+fYMGKsTDeFACo+/972JvC8FpP5VDJaJ9i+KRFbQG
-	mFP2Z+6IMmST8ZjLwC3mw50q+GfhnHXd5HpnbM+xlBLGRg252yzdVuFdM7IDTdFPE4dhHYRSKGc
-	PN8cbYU7
-X-Google-Smtp-Source: AGHT+IE65JzRNArxxc+ToexNBzoPm9HjhpdDJXXa/EKqSE7i98HFux8rxp92UCOg27WO0Cy7mDBO/w==
-X-Received: by 2002:a05:6512:2355:b0:53d:e41a:c182 with SMTP id 2adb3069b0e04-53df00dc9afmr5377517e87.31.1732859844507;
-        Thu, 28 Nov 2024 21:57:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732859847; x=1733464647;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FIal9P/vly9trTFOOFdtiwygL3gRq3FSgu7GS6el7Zc=;
+        b=hiLfSSlxs58LqTO0JDcMs02+UOViy5jB29suQ2X+ypnUtPleo/ekWINpz4YpqbiVYi
+         vqmHdY7X76yUHpONpnWDBxPoKr8RdKFSxM1jmCs+d4zumaaYZbFh8n39Ls9WG4OYg6wX
+         zCL14HD5MsR0PTvvLeN6eA8qJNA/sSBOJXyRPuPnFRu9gy4TfdtI9HFiQjMEOesyy+Sr
+         pghNY+AYDzLDjGpybg3MuV1Oq8i3sr8VnF2mzSb2hwnZA9vi7Xr7qFrNObJ7RHz1wbZJ
+         IEy3F0B3fUxyPrpK2JmR76ZU7veWfaNqo3rryJcrW3N/FspdtgP4X1esgYrhjXhYSvQ2
+         KLdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkNRmStgoNTyU990YXWa5D6TC4WB6M+aCw3s3lYrIrhTqnBnAUT3vWuTDvu76lJEbdVvpuno7N1X/GndI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpSt/vfdAUE4rhwCEmmTfiv8g4E8fnOJYv825DxMorw7OJ3E26
+	VbZOzcNO938JG5rE6umyYouhc30FUdIrbkGl5sQedJSIiLE5jvQMkSYsEuVgyA==
+X-Gm-Gg: ASbGncvOBRsTMo6cYweBjyHeH24w+wIIUn3XWZq/gPcvfixANO3uh3b4XvCCGeXAFmz
+	gCU119B2Yo4uCsCHcJf6h7DlJmklD8NGGS6g4W9oksyZr9whoYjjxSQuQMnkqkhdovYwUBA87gD
+	clz9+zwWg43LAuBWPvljmZGj/x5cVqK6OmE7ddXDXpi/rilKgI3mNy7P/oRwx6x5G4hyGSVbn9H
+	w55kBrXD2ssW0S8UeJCdgw2tR6kEAUsVkGEEGMgBC9E1gghZSne0zER0X2gkPpaHXJ2fDPQgIs+
+	oPBnq44g
+X-Google-Smtp-Source: AGHT+IFNv0zD6hK5Kn3ME6hU3vghtPqyWLs3uKgSZCZPb6u8aOBrQiKeDRnrEBES/faD2DMaT8va1w==
+X-Received: by 2002:a17:907:75d0:b0:aa5:3631:adcb with SMTP id a640c23a62f3a-aa58109066cmr648048866b.53.1732859846732;
+        Thu, 28 Nov 2024 21:57:26 -0800 (PST)
 Received: from localhost (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aa599955662sm136615766b.190.2024.11.28.21.57.22
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aa59997354bsm136283266b.199.2024.11.28.21.57.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 21:57:23 -0800 (PST)
+        Thu, 28 Nov 2024 21:57:26 -0800 (PST)
 From: Wojciech Macek <wmacek@chromium.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -80,11 +82,14 @@ To: Rob Herring <robh@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Cc: Wojciech Macek <wmacek@chromium.org>
-Subject: [PATCH v4 0/2] Add support for Starmie Chromebooks
-Date: Fri, 29 Nov 2024 05:57:18 +0000
-Message-ID: <20241129055720.3328681-1-wmacek@chromium.org>
+Cc: Wojciech Macek <wmacek@chromium.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v4 1/2] dt-bindings: arm: mediatek: Add MT8186 Starmie Chromebooks
+Date: Fri, 29 Nov 2024 05:57:19 +0000
+Message-ID: <20241129055720.3328681-2-wmacek@chromium.org>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+In-Reply-To: <20241129055720.3328681-1-wmacek@chromium.org>
+References: <20241129055720.3328681-1-wmacek@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,20 +102,43 @@ Add an entry for the MT8186 based Starmie Chromebooks, also known as the
 ASUS Chromebook Enterprise CM30 Detachable (CM3001). The device is
 a tablet style chromebook.
 
-Wojciech Macek (2):
-  dt-bindings: arm: mediatek: Add MT8186 Starmie Chromebooks
-  arm64: dts: mediatek: mt8186: Add Starmie device
+Signed-off-by: Wojciech Macek <wmacek@chromium.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+Changelog v4-v3:
+ - No changes
+Changelog v3-v2:
+ - No changes
+Changelog v2-v1:
+ - Fixed items/const bidings description in mediatek.yaml
+ Documentation/devicetree/bindings/arm/mediatek.yaml | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- .../devicetree/bindings/arm/mediatek.yaml     |  13 +
- arch/arm64/boot/dts/mediatek/Makefile         |   2 +
- .../mediatek/mt8186-corsola-starmie-sku0.dts  |  31 ++
- .../mediatek/mt8186-corsola-starmie-sku1.dts  |  31 ++
- .../dts/mediatek/mt8186-corsola-starmie.dtsi  | 465 ++++++++++++++++++
- 5 files changed, 542 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-starmie-sku0.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-starmie-sku1.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-starmie.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+index 1d4bb50fcd8d..6191a5320c14 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+@@ -263,6 +263,19 @@ properties:
+           - const: google,steelix-sku196608
+           - const: google,steelix
+           - const: mediatek,mt8186
++      - description: Google Starmie (ASUS Chromebook Enterprise CM30 (CM3001))
++        items:
++          - const: google,starmie-sku0
++          - const: google,starmie-sku2
++          - const: google,starmie-sku3
++          - const: google,starmie
++          - const: mediatek,mt8186
++      - description: Google Starmie (ASUS Chromebook Enterprise CM30 (CM3001))
++        items:
++          - const: google,starmie-sku1
++          - const: google,starmie-sku4
++          - const: google,starmie
++          - const: mediatek,mt8186
+       - description: Google Steelix (Lenovo 300e Yoga Chromebook Gen 4)
+         items:
+           - enum:
 -- 
 2.47.0.338.g60cca15819-goog
 
