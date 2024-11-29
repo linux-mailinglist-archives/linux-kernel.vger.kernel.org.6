@@ -1,141 +1,111 @@
-Return-Path: <linux-kernel+bounces-425677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68EF69DE8F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:53:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640CD9DE8FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:55:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F0C0281B57
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:53:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8A73B236D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8323413B2BB;
-	Fri, 29 Nov 2024 14:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D55B84D3E;
+	Fri, 29 Nov 2024 14:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AVZPrnmC"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="mZybXIg8"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4BD1F94A
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 14:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBF012C54B;
+	Fri, 29 Nov 2024 14:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732892022; cv=none; b=bovjo/9kInczYxCn3X8+OxVISNbUYEpLTTd1CWSBPsWP3aULavR2ETEaQ2aRUxyrxZKq0qruq6YQOgcIh7R0s24vrDCMurcXuJM3pIXYdWLT35OQxkZyMdi/gR08d24iv090XTEssqtraAp9y2dXCcf1XTJTgu8lOFPeCbzs2gA=
+	t=1732892113; cv=none; b=eIYPgen4qBFb5HBn49C/0WcQEiBYpjUlHZvzqR/fodLZUvSh8fMu/aQIyxFNk2sU7HNjYePOoTjbCiHONq3kZy2t2nvG64EkgFjEyC/wq4EsESPvLQ0TX+oAziQAhg+09b6SDjvK+exSyTsyShJdZZleqXpEmVITjSgB0S2eycw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732892022; c=relaxed/simple;
-	bh=qQRKHxdVhtRTuBlPJigpNhwOkk0DSpbeCMf+b8d6ko8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UozWl528x5wAtgwf8GIQBlDfrqn8NpuRs7+STFoAQAhz3DOCbwZGQd1YT4sFxaxh8QoDfONsBNQEeilh6fXaDNVAPQELxwdYDaQsO7jEvIAHryo7t8PhAgvTSQzdcEdSvOXvCrMg/DWaBLFIstPlgVUeLHFSqDelvEY+U6qyvpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AVZPrnmC; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3ea55c356caso1017983b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 06:53:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732892020; x=1733496820; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKaZ7N0R4VUPd9DsYfN09abKTlMIIX2S7i/GCAnFpd0=;
-        b=AVZPrnmCrr6x8OfH/H2bcuDClGQC9KSvstIOm4aatNmxgM+74OYuj7OuSNXlIv9snT
-         AA+a3ABHIroTV2gYhVTqwVl9RCECvr5090RFij/sjaDEDL+sKXB3PTvuvWUAgL23eEq5
-         2ocOYIu0sw9AC+gS+vtsQ0BGpBMShjfzNc95wAEt4GlZiETFNA4x4SSxrj9s7rto2uJK
-         IOD7oUQU407yxW5l4QZeC2Q3EMdbnsQuuh8onbMDqwAP7D1F21tq/gyxBCR8MA+EcEPH
-         nbbp5vUWTMGciZPg4XhSTOFY+bWZ/Fl5KrgRc76yuuc/TET/cUNIBj6TxNdd5CZIHM9K
-         VY1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732892020; x=1733496820;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKaZ7N0R4VUPd9DsYfN09abKTlMIIX2S7i/GCAnFpd0=;
-        b=noZqKcgfY7Qzo9EVz6Bt3IJw67hjeXrKKVRGSe/W2vMlqx5wyp6GFgxV5/zjNQDKKz
-         E3E+XbCkDTcLDaDiTOyueCqsaoztLD5rbkBEuX61gNoybTdksIzMVuMw8KZOsvubDPP/
-         O6BadvybQZ1a0WUCJRNW4mASMu3cBCL1nEcJ+F6K6aHwVKXt9bqXqwAC7PXhnrCFpRKe
-         zJ/VCB0n7z2jy2AEHAMOGYHkgQ7l7fi4BynPzfoUpDMPNX6mQkl1FDL9MGRm6z3HPMZf
-         3cOfmqNV6ZqcDKnlEKgtCCYirS6dslt7jVuElnXOq2ycYkeo0gGxuC/PcLuIeGggj+F5
-         mSZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlyDn7rVorgU4YFGSG80gPkSeAlgd7hxkUJ3kATv5i1t3HWc4nVpBa+q+SvuA9ga+hOEmjp6ULpIvMskk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGS71RC56hyk/wyNUnWPolpHFsgy/wyCTAKzmv9i1MRD2M0DEG
-	SFg6PDSP4d6sIz/7B9PXjI/WtjwGbpEU6CVRS5zd8NwmKyQwzV1kFgOCEDPJTMk0uXs8MOEoNTL
-	b
-X-Gm-Gg: ASbGncsNTbtkXH3dCBlKqpnETKZ86ladW+pbSN32VMKH2shho/otT6lbPo0clr5qtm5
-	c7gcmLROHS5OusA1AOUnn6YKFymSZXw2Rh2MgVxKrUvKE3nTsUAS2LYMSc4TAAIaeCU+q6sJ3n4
-	MebMmmcQEPZsvImE/d+USMM2UmCjPtFz2tnlPM2VWOkga5v5npsU2ODKB7L2OuIUl3i5FCeuq6L
-	HXawgWPcRHIAEZDezs6CrYjTCK6qYau4KNiI832S8H9KiGmSp8/VFMTblHokYUw9iP3iXZUrLz7
-	StEcvPUOSEE=
-X-Google-Smtp-Source: AGHT+IG26hEFasdm9mwT5xwvmPQUNmvasTkJOtP5JxOl97dPKY6Rs57GtDzI43nVLseP6IREK3j3Gg==
-X-Received: by 2002:a05:6808:2387:b0:3ea:4b5c:60a5 with SMTP id 5614622812f47-3ea6dc223ecmr7774692b6e.23.1732892020455;
-        Fri, 29 Nov 2024 06:53:40 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea86036a2dsm744423b6e.9.2024.11.29.06.53.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 06:53:39 -0800 (PST)
-Message-ID: <4d26fff0-d5db-40b7-bd5f-14cebc96abc3@baylibre.com>
-Date: Fri, 29 Nov 2024 08:53:37 -0600
+	s=arc-20240116; t=1732892113; c=relaxed/simple;
+	bh=kEElAU1E+We3ZBcTctUBKGoihHFzdNGpGT3cbuM8INo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Fk6TZJf9CTzDXOOhQYVst7afz8PH8mwMefyypWDweXKoafQAyBp/HDsCMwZ7VbPnoO9m4NYqQxw/hHYMJfl6THga8rhKJlUmIUAO7wpxuKCJ1JwEbIt5HLxaPgJ7OYzkDHLBjRopFTq8oC8PulzoMS84jI/spE5j0LKtk+tLT84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=mZybXIg8; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=W7oq4zTm1ZOU1rVeoCSofXuQ1USbEP/UBjNVYur5Kk8=; b=mZ
+	ybXIg8dpXXqRAAomWdxxsErNzazzw+eQmwEvc3jz5obAuVwuQIA+Hwi0Us9/ib4E+m3IoqSs5zz0e
+	F+eLgXM+epVgsTkmvVFSdbb614OAb+QFYWjCs9hvkVQVHQpWBqxGwNeYGaR8/uD3W3YlLZpFNi+vT
+	77/yP30N2PTN3mUZ5Rsg1mqucfd90VXCleVy+NIJ/kEUpPZyDBdn4zWY3mUTltUMlCpPbqo/3GFwU
+	O/ma2Gb4aRDlFGYRH8ffw2hZvOW7aHJvQB2DYYxa3N0/zJaj9B0xE2rWT4qlUI9+Bu+k/7xoGodAx
+	qrsteHds3Jrn0B/3i50ShyYidaw5G/Zw==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tH2OZ-0000TH-5h; Fri, 29 Nov 2024 15:54:59 +0100
+Received: from [185.17.218.86] (helo=zen.localdomain)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tH2OY-000JvI-1j;
+	Fri, 29 Nov 2024 15:54:58 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+Date: Fri, 29 Nov 2024 15:54:42 +0100
+Subject: [PATCH] dt-bindings: iio: st-sensors: Re-add IIS2MDC magnetometer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] iio: adc: ad7173: remove special handling for irq
- number
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Nuno Sa <nuno.sa@analog.com>, Michael Walle <michael@walle.cc>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>, Guillaume Ranquet <granquet@baylibre.com>
-References: <20241127-iio-adc-ad7313-fix-non-const-info-struct-v2-0-b6d7022b7466@baylibre.com>
- <20241127-iio-adc-ad7313-fix-non-const-info-struct-v2-2-b6d7022b7466@baylibre.com>
- <CAHp75Vc9BGu5FnUTcRkNuNSjtS5+tqXwOm-BND72v2_C2Fm8FQ@mail.gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CAHp75Vc9BGu5FnUTcRkNuNSjtS5+tqXwOm-BND72v2_C2Fm8FQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241129-stmagdt-v1-1-963f0347fb0a@geanix.com>
+X-B4-Tracking: v=1; b=H4sIALHVSWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyNL3eKS3MT0lBLdFCMzU8vEVCNzg9RkJaDqgqLUtMwKsEnRsbW1APV
+ oz9JZAAAA
+X-Change-ID: 20241129-stmagdt-d2659ae270ec
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Denis Ciocca <denis.ciocca@st.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>
+X-Mailer: b4 0.14.2
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27472/Fri Nov 29 10:38:16 2024)
 
-On 11/28/24 12:47 AM, Andy Shevchenko wrote:
-> On Wed, Nov 27, 2024 at 10:02 PM David Lechner <dlechner@baylibre.com> wrote:
->>
->> Remove the int irq_line field in struct ad_sigma_delta_info and all code
->> that referenced it.
->>
->> This struct is intended to be used as static const data. Currently, the
->> only user that doesn't uses the static const struct directly, namely the
->> ad7173 driver is making a copy of this struct to be able to modify the
->> irq_line field. However, this field is written and never used due to the
->> fact that ad_sd_init() which reads the field is called before
->> ad7173_fw_parse_device_config() which writes it.
->>
->> The runtime behavior does not change since ad_sd_init() was already
->> (unintentionally) being called with irq_line = 0.  But, even though
->> this could be considered a bug, the behavior was still correct. The SPI
->> subsystem always uses the first interrupt in the interrupts array from
->> the devicetree and the devicetree bindings for this family of chips
->> specify that the RDY interrupt is always the first interrupt. Therefore,
->> we don't actually need the special call to fwnode_irq_get_byname(), so
->> it is removed in this patch instead of moving it to the correct place.
-> 
-> ...
-> 
->>  struct ad7173_state {
->>         struct ad_sigma_delta sd;
->> -       struct ad_sigma_delta_info sigma_delta_info;
->> +       struct ad_sigma_delta_chip_info sigma_delta_info;
->>         const struct ad7173_device_info *info;
->>         struct ad7173_channel *channels;
->>         struct regulator_bulk_data regulators[3];
-> 
-> Has this patch been compile-tested? Because I don't understand this
-> change and how it's going to be compiled.
-> 
+"iio: st-sensors: Update ST Sensor bindings" accidentially dropped
+the compatible for the IIS2MDC magnetometer.
 
-I did compile test each commit, but it looks like I might have
-squashed a fix into the wrong patch. :-(
+Fixes: 0cd71145803d ("iio: st-sensors: Update ST Sensor bindings")
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+---
+ Documentation/devicetree/bindings/iio/st,st-sensors.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/iio/st,st-sensors.yaml b/Documentation/devicetree/bindings/iio/st,st-sensors.yaml
+index 71c1ee33a393e64b1c2ef8109175ba1180670a50..e955eb8e879795d3146f661a8b71e6b597b2ca54 100644
+--- a/Documentation/devicetree/bindings/iio/st,st-sensors.yaml
++++ b/Documentation/devicetree/bindings/iio/st,st-sensors.yaml
+@@ -65,6 +65,7 @@ properties:
+           - st,lsm9ds0-gyro
+       - description: STMicroelectronics Magnetometers
+         enum:
++          - st,iis2mdc
+           - st,lis2mdl
+           - st,lis3mdl-magn
+           - st,lsm303agr-magn
+
+---
+base-commit: a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
+change-id: 20241129-stmagdt-d2659ae270ec
+
+Best regards,
+-- 
+Sean Nyekjaer <sean@geanix.com>
+
 
