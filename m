@@ -1,115 +1,167 @@
-Return-Path: <linux-kernel+bounces-425847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C78B9DEBD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:45:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC19D9DEBD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:45:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE860B21ACC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:45:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EE72B21988
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DC419F12D;
-	Fri, 29 Nov 2024 17:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCFF19F40B;
+	Fri, 29 Nov 2024 17:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="acAEM3hM"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R6SXnReS";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0MfM48tm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEE61A00D6
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 17:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1DF13D520;
+	Fri, 29 Nov 2024 17:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732902306; cv=none; b=AY2bRhMUcR7dDEEPdRgI1lnaNsbvh7AEKaOkdMWi8FISYMzwWOdWcnSsW6w+ZHOVMq1PjGUu5B7dgVSMF64ews6H8ZVc4UemwuMLgugulJCBBJaGt4mjaH02tVeSfUB9qLIPkZ2f3LG47YE9rK4+i6bZVaQk/GlR/QtsAQJlJls=
+	t=1732902313; cv=none; b=I62eULZ9X98cQJhRoKGus1zL9Ry1ywyEB/aLsj0P3KuZtPipoqNgmsHnlUArpflKw74rZl4biyzN6Qvnv5GOXHVZjXgwHvgiekeTCjJWgHHsTfBJzuNXPpRRs0SGEwHf72+EIwVbNo/u6vbEs0iKZqVqSJokhtOl8yraYqkmAi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732902306; c=relaxed/simple;
-	bh=dN+m/OuOjAu8rOWkw1ptGTJSKEYTv9i6wNucxm9lJE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O2FLXBdOfGMTyP5F4FKbSicHOPob7x0zJnWu2td/A1n17bgplJ0pGpgp2/a+0JhV2z9EWeS2EZfJ0gq8tG9xyiUJRi4NtWZJEZt5w41PEz/ddzdiaP9xjK9BZ1RDpGNyJKMfYr0jv6mb0NO0/ZONsRDNAceP1YJL0hqHKTfM1RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=acAEM3hM; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 22B941BF206;
-	Fri, 29 Nov 2024 17:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732902302;
+	s=arc-20240116; t=1732902313; c=relaxed/simple;
+	bh=TnmoU5TP+FLl7Ofb9grKV8LgLXGcc1efbm5QIQsFSMo=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=mz8OjA7s3LB1nTOw1ysO3fqf8wbHhwMDLJkAPefn9BEA9MS/rIfjhctathbwyDDFkTYX5oIsDsu5lqqqRHLv1wg11D6jjqI3YqoHT7rJDlmkJajayURl3ihDsWIbHwyj9KBMi2WORKe0KzrBHICGR6zZuRcBI+3dnRhWzAzPht8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R6SXnReS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0MfM48tm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732902309;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cSrvf/Tz9Ahw456wh1QxtSPDS/KV+CEmOfTnenQNvw4=;
-	b=acAEM3hMBWtt61nkBLg4u9k/nNlb5fNAOm9Tt8mfctVm96A/lMCVzKoaSFmjkn4FKGaaeK
-	nTN7mSEJ8epZAO9oM5Xb7yGkXWI/QAmZdSM09Yqjrx/3figngxxuqxPyY5s7+4mNTYXihS
-	4MrL0TPRAhJNJkcg/5U7zdI+ikMXgOau/AoAxh622+TfK6/F5suBtCPh4SDAnC93Pj4QyT
-	XWXtu2ph7xAs95MksEHtgCNUy8muLw2rioJm3Lq1rvBqZhvs9L93rvtDwZzundEDV9Vjuy
-	ihukcGRKgldd5WeO7QLMdyb6CPFuQFguT3OLzIBBQ1Vp/OeIcxeOtVQHzpJXFQ==
-Date: Fri, 29 Nov 2024 18:45:00 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] misc: Kconfig: Make MCHP_LAN966X_PCI depend on OF, not
- select it
-Message-ID: <20241129184500.6d72a7e1@bootlin.com>
-In-Reply-To: <20241129-lan966x-depend-v1-1-603fc4996c4f@chromium.org>
-References: <20241129-lan966x-depend-v1-1-603fc4996c4f@chromium.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 in-reply-to:in-reply-to; bh=TnmoU5TP+FLl7Ofb9grKV8LgLXGcc1efbm5QIQsFSMo=;
+	b=R6SXnReSrE00cNIZqinb9hlhkaFAFNBbAY6yh/dAegTFNVE0pL5eQbQ2B4o3fAgiQXwmLj
+	zgiUawZ0+OZevVoDPmH8jHUjjdfnVZ+mJMlureG1pyDeEf690m8gh5YRDm7yeGBoZmJftS
+	ealh//fmdxdo/ujPuSkdu2OmuLr2pyO7G+l+SSnBid3mNax/Ip35Rx0Rema56X9WT1owuP
+	pmfcpCxHkGLIYH6LMJR06AkqXM7W39LG0LnKlSk3LIC1Z4U2LJuYoBQyvlnaUIo2DNtozq
+	LXeiConGjuzppjpCKHkgvqAJobrvpM5TTbXy4hCRfH03zbLd7aIdNrbInIs+rg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732902309;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=TnmoU5TP+FLl7Ofb9grKV8LgLXGcc1efbm5QIQsFSMo=;
+	b=0MfM48tmlBjwXmDOX2EM6p7s4VVa3Ae0g+yn+nDsey53GY5bLZUZM54/w3a3dah9dd0VYU
+	jODWcyT3qTV2iiBA==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
+ list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Wahren
+ <wahrenst@gmx.net>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+ Markus Schneider-Pargmann <msp@baylibre.com>, Ronald Wahl
+ <ronald.wahl@raritan.com>, Udit Kumar <u-kumar1@ti.com>, Griffin
+ Kroah-Hartman <griffin@kroah.com>, Rengarajan S
+ <rengarajan.s@microchip.com>, Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+ Serge Semin <fancer.lancer@gmail.com>,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH tty-next v3 4/6] serial: 8250: Specify console context
+ for rs485_start/stop_tx
+In-Reply-To: <ZyuOX4VVbfAFhMfV@pathway.suse.cz>
+Date: Fri, 29 Nov 2024 18:51:08 +0106
+Message-ID: <84ed2url23.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain
 
-Hi Ricardo,
+On 2024-11-06, Petr Mladek <pmladek@suse.com> wrote:
+>> For RS485 mode, if SER_RS485_RX_DURING_TX is not available, the
+>> console write callback needs to enable/disable TX. It does this
+>> by calling the rs485_start/stop_tx() callbacks. However, these
+>> callbacks will disable/enable interrupts, which is a problem
+>> for console write, as it must be responsible for
+>> disabling/enabling interrupts.
+>
+> It is not clear to me what exactly is the problem.
 
-On Fri, 29 Nov 2024 10:41:17 +0000
-Ricardo Ribalda <ribalda@chromium.org> wrote:
+serial8250_em485_stop_tx() blindly sets the RX interrupt bits in IER,
+because it assumes they were cleared in serial8250_stop_rx(). This is
+fine for the driver in general, but it is wrong for the console
+->write(), which restores those bits on its own later.
 
-> Most (maybe all?) the drivers depend on OF instead of selecting it. This
-> is more convenient for CI because we can have test scripts that do:
-> make allyesconfig
-> scripts/config -d OF
-> make olddefconfig
-> 
-> Without this patch, OF cannot be disabled that way.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/misc/Kconfig | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index 902c306bc972..2ea5f40ff4e4 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -612,8 +612,7 @@ config MARVELL_CN10K_DPI
->  
->  config MCHP_LAN966X_PCI
->  	tristate "Microchip LAN966x PCIe Support"
-> -	depends on PCI
-> -	select OF
-> +	depends on PCI && OF
->  	select OF_OVERLAY
->  	select IRQ_DOMAIN
->  	help
-> 
-> ---
-> base-commit: 7af08b57bcb9ebf78675c50069c54125c0a8b795
-> change-id: 20241129-lan966x-depend-8bc69b4954e5
-> 
+> Is the main problem calling pm_runtime*() API because it uses extra
+> locks and can cause deadlocks? Or is it more complicated?
 
-Not sure it should be done that way (See [1]). Also I pointed out this
-patch in the discussion.
+pm_runtime*() is a second issue. In the v1 feeback we talked about
+it. tglx summarized it well here:
 
-[1]  https://lore.kernel.org/all/dywwnh7ns47ffndsttstpcsw44avxjvzcddmceha7xavqjdi77@cqdgmpdtywol/
+https://lore.kernel.org/lkml/8734mbdwrf.ffs@tglx/
 
-Best regards,
-Hervé
+as well as explaining the need to split off the console-write code from
+the generic driver code.
+
+> IMHO, it would deserve some explanation.
+
+This commit message only talks about the first issue, which is enough to
+justify the patch. I will add that the callbacks are also not
+appropriate because they call into the PM code, which is not needed by
+console ->write() and is even unsafe in some contexts.
+
+> IMHO, one thing which makes things comlicated is that
+> serial8250_em485_start_tx() and serial8250_em485_stop_tx()
+> are not completely reversible operations. Especially,
+> the change done by __serial8250_stop_rx_mask_dr() is
+> not reverted in serial8250_em485_stop_tx(). It makes
+> things look tricky. But I think that it is beyond the scope
+> of this patchset to do anything about it.
+
+I agree that it is strange that the driver does not unmask DR later. I
+have now run tests and it seems the use of @read_status_mask is
+partially broken. I did some historical digging on it...
+
+For Linux 1.1.60 [0] the @read_status_mask usage was extended to support
+"stop listening to incoming characters" (text from the changelog
+[1]). Looking at that version, it is clear why and how it was used.
+
+For Linux 2.1.8 [2], the async handling was reworked, basically
+reverting the change from 1.1.60. However, that revert forgot the piece
+that clears the UART_LSR_DR bit in serial8250_stop_rx() (back then
+called rs_close()).
+
+And indeed, if you track the @read_status_mask value today, that bit
+remains cleared until serial8250_do_set_termios() happens to be
+called. But it didn't matter that the bit was not set again because that
+bit was not being evaluated at any call sites.
+
+For 4.6, RS485 support was added, but with a bug about re-enabling
+interrupts. When that bug was fixed [3], the fix did not set the
+UART_LSR_DR bit in @read_status_mask. Still that was not a problem
+because at that time, that bit still had no users.
+
+For 5.7, support was added to avoid reading characters when
+throttling. This re-introduced a user of the UART_LSR_DR bit in
+@read_status_mask. And thus now there _is_ a bug that the bit is not set
+when starting RX in __do_stop_tx_rs485(). Interestingly enough, the OMAP
+variant of the 8250 _did_ implement setting the bit when unthrottling
+[5] (also from the same series).
+
+So in summary, I will add a patch to my series that fixes [3] (or is it
+fixing [4]?) by setting the bit in __do_stop_tx_rs485() when re-enabling
+the RX interrupts.
+
+John
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/diff/drivers/char/serial.c?id=ba97e35a1a8b45ff87ed37a58fca3ecf39c1c893
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/diff/drivers/char/ChangeLog?id=ba97e35a1a8b45ff87ed37a58fca3ecf39c1c893
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/diff/drivers/char/serial.c?id=0f9cac5b27076f801b29a0867868e1bce7310e00
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=0c66940d584d1aac92f6a78460dc0ba2efd3b7ba
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=f19c3f6c8109b8bab000afd35580929958e087a9
+[5] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=f4b042a050062b2dec456adfced13d61341939e2
 
