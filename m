@@ -1,139 +1,267 @@
-Return-Path: <linux-kernel+bounces-425378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7BAD9DC14B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:15:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21BC9DC153
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:18:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DBA5B21526
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:15:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A34D2280CC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660FE172BA9;
-	Fri, 29 Nov 2024 09:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oa8u1sOQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39271175D35;
+	Fri, 29 Nov 2024 09:17:54 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0B0156C52;
-	Fri, 29 Nov 2024 09:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF596156F28;
+	Fri, 29 Nov 2024 09:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732871711; cv=none; b=s6aNG4Wg/+gOQ8UR7bfMaPl6XQxwTk8ksnJvOzEOFFyKw7vKhwGutVXWPJgE/vGdWqbZsrEff9Poqq1tkWQTiI7ZYxgKREVzXx5caLKXB466mjcnKS86S1ac2u0dDWbg1vfpUpyFxGy+kfaf+wZLstg2Mg0ECG+gVlTUnycgjaM=
+	t=1732871873; cv=none; b=GUYF77Ob822gvx/iqUNnRF8K0yEp/vFB/dao7VWt+H97vAWiLAQpH+WnYjBM5i0GQwVa1cVVY9pFay/faWGWNoa8bIqDwRcHXUZH6DFAFRzq/2bp70ggN1OwLgz6wqVqQ5Gas5xRc3I2cU4qtkuagqc5epUxS38gWbpTpa+gBQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732871711; c=relaxed/simple;
-	bh=NzNftm1ZnlpiAKgrKxuf0+RxODtl1oUuTFr/aTkSf5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WotN1VLUNGDFNFkP8omVEeWtBUgGz12LMtO6TX2046t1z2LQ9xCtV2WFnPi1hUPhPTOHndfaXXM0KviW5KoWgZ8j0NvY2gqAPcs6WPJQd0kOSjoeH78ca3i/kk9aJI5+RTJTORqkQvP94JDxMrjhO4ayh3CRMTcEOthOjMFlTFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oa8u1sOQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9954C4CED3;
-	Fri, 29 Nov 2024 09:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732871711;
-	bh=NzNftm1ZnlpiAKgrKxuf0+RxODtl1oUuTFr/aTkSf5A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Oa8u1sOQYbeO8k8CMZgNNVlek23VaiDJzKhysnmNdYkHe8bgjIKba7XZtJGOPkbIh
-	 0LU2PbPvTRiDLnVVxbicVssRxTGQXSN9SrfNFsq/NeZY0OQCR0Pay7vqaayCrg4CFX
-	 JhJpqZCWctYGE6ygZX6c09XUTBajnEYcEITfKybpQRERQZ9xflk9vorNFXIxjeqXWs
-	 W9JkoWP2dT1loQrS4DG1FdS9XpjG6H20Ees/FQR0Cc5MBVbsDb5dMDdTIlXgCSsoVS
-	 Gr5klivMjpgm/6X29FsDo+miFzCKrnUkG+4nF8hSgAaoG6GwaqifSfawD5xEejrsTS
-	 LASleBtpwSs1Q==
-Message-ID: <e57dfc3e-b702-4803-b776-20c6dbd98fef@kernel.org>
-Date: Fri, 29 Nov 2024 10:15:05 +0100
+	s=arc-20240116; t=1732871873; c=relaxed/simple;
+	bh=XaeKftVeXGyRZzGmIiuFCz58QtyDN9yONfT5pfxu1kg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bRxxIHSojDKbLdu1aeMTaWovRETyfdi112nyA4X5LDUoXWSqz8+mR5KRHvFWXd/KnHALR84Rb8TXOQ4Gyt++o50la5qHh/QQSj3O4MmOckj7rxVqkMm6s76MmSfGV5ewLmw7kTuAkFDvtiCdPVA6WjS0rk2G9KSSr6K+mI4yrDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y06yV08lRz4f3jXJ;
+	Fri, 29 Nov 2024 17:17:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D40F21A0568;
+	Fri, 29 Nov 2024 17:17:40 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCXc4eyhkln+8ShDA--.44415S4;
+	Fri, 29 Nov 2024 17:17:40 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: yukuai3@huawei.com,
+	axboe@kernel.dk,
+	jack@suse.cz
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] block, bfq: fix bfqq uaf in bfq_limit_depth()
+Date: Fri, 29 Nov 2024 17:15:09 +0800
+Message-Id: <20241129091509.2227136-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: misc: bist: Add BIST dt-binding for TI
- K3 devices
-To: Neha Malcom Francis <n-francis@ti.com>
-Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, u-kumar1@ti.com
-References: <20241128140825.263216-1-n-francis@ti.com>
- <20241128140825.263216-2-n-francis@ti.com>
- <ho7ktcnbtl7mvamfthqho23co2fc4z7bgjha7pu4wivxm6ndhu@tfbpveonhckz>
- <837d329b-bcdd-4c3b-b508-e916b110ce25@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <837d329b-bcdd-4c3b-b508-e916b110ce25@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXc4eyhkln+8ShDA--.44415S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxKw4xCFWxXF4UAFyrGw1Utrb_yoWxXrWkpr
+	ZIg393Ar48Ja45Xr4xt3W2kryFkF43W3srtFn3Kw1fZFWDAwnIgF90y3W0qF1F9r95Aa47
+	JF1vga4DXF17XFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUU
+	UUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 29/11/2024 08:43, Neha Malcom Francis wrote:
->>> +
->>> +  power-domains:
->>> +    maxItems: 1
->>> +
->>> +  ti,bist-instance:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description:
->>> +      the BIST instance in the SoC represented as an integer
->>
->> No instance indices are allowed. Drop.
->>
-> 
-> Question on this, this is not a property that is driven by software but rather 
-> indicates which register sequences have to be picked up for triggering this test 
-> from this instance. So I don't see how I can workaround this without getting 
-> this number. Or maybe call it ID rather than instance?
+From: Yu Kuai <yukuai3@huawei.com>
 
-I don't understand how the device operates, so what is exactly behind
-some sequences of registers for triggering this test. You described
-property as index or ID of one instance of the block. That's not what we
-want in the binding. That's said maybe other, different hardware
-characteristic is behind, who knows. Or maybe it's about callers... or
-maybe that's not hardware property at all, but runtime OS, who knows.
+Set new allocated bfqq to bic or remove freed bfqq from bic are both
+protected by bfqd->lock, however bfq_limit_depth() is deferencing bfqq
+from bic without the lock, this can lead to UAF if the io_context is
+shared by multiple tasks.
 
-Best regards,
-Krzysztof
+For example, test bfq with io_uring can trigger following UAF in v6.6:
+
+==================================================================
+BUG: KASAN: slab-use-after-free in bfqq_group+0x15/0x50
+
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x47/0x80
+ print_address_description.constprop.0+0x66/0x300
+ print_report+0x3e/0x70
+ kasan_report+0xb4/0xf0
+ bfqq_group+0x15/0x50
+ bfqq_request_over_limit+0x130/0x9a0
+ bfq_limit_depth+0x1b5/0x480
+ __blk_mq_alloc_requests+0x2b5/0xa00
+ blk_mq_get_new_requests+0x11d/0x1d0
+ blk_mq_submit_bio+0x286/0xb00
+ submit_bio_noacct_nocheck+0x331/0x400
+ __block_write_full_folio+0x3d0/0x640
+ writepage_cb+0x3b/0xc0
+ write_cache_pages+0x254/0x6c0
+ write_cache_pages+0x254/0x6c0
+ do_writepages+0x192/0x310
+ filemap_fdatawrite_wbc+0x95/0xc0
+ __filemap_fdatawrite_range+0x99/0xd0
+ filemap_write_and_wait_range.part.0+0x4d/0xa0
+ blkdev_read_iter+0xef/0x1e0
+ io_read+0x1b6/0x8a0
+ io_issue_sqe+0x87/0x300
+ io_wq_submit_work+0xeb/0x390
+ io_worker_handle_work+0x24d/0x550
+ io_wq_worker+0x27f/0x6c0
+ ret_from_fork_asm+0x1b/0x30
+ </TASK>
+
+Allocated by task 808602:
+ kasan_save_stack+0x1e/0x40
+ kasan_set_track+0x21/0x30
+ __kasan_slab_alloc+0x83/0x90
+ kmem_cache_alloc_node+0x1b1/0x6d0
+ bfq_get_queue+0x138/0xfa0
+ bfq_get_bfqq_handle_split+0xe3/0x2c0
+ bfq_init_rq+0x196/0xbb0
+ bfq_insert_request.isra.0+0xb5/0x480
+ bfq_insert_requests+0x156/0x180
+ blk_mq_insert_request+0x15d/0x440
+ blk_mq_submit_bio+0x8a4/0xb00
+ submit_bio_noacct_nocheck+0x331/0x400
+ __blkdev_direct_IO_async+0x2dd/0x330
+ blkdev_write_iter+0x39a/0x450
+ io_write+0x22a/0x840
+ io_issue_sqe+0x87/0x300
+ io_wq_submit_work+0xeb/0x390
+ io_worker_handle_work+0x24d/0x550
+ io_wq_worker+0x27f/0x6c0
+ ret_from_fork+0x2d/0x50
+ ret_from_fork_asm+0x1b/0x30
+
+Freed by task 808589:
+ kasan_save_stack+0x1e/0x40
+ kasan_set_track+0x21/0x30
+ kasan_save_free_info+0x27/0x40
+ __kasan_slab_free+0x126/0x1b0
+ kmem_cache_free+0x10c/0x750
+ bfq_put_queue+0x2dd/0x770
+ __bfq_insert_request.isra.0+0x155/0x7a0
+ bfq_insert_request.isra.0+0x122/0x480
+ bfq_insert_requests+0x156/0x180
+ blk_mq_dispatch_plug_list+0x528/0x7e0
+ blk_mq_flush_plug_list.part.0+0xe5/0x590
+ __blk_flush_plug+0x3b/0x90
+ blk_finish_plug+0x40/0x60
+ do_writepages+0x19d/0x310
+ filemap_fdatawrite_wbc+0x95/0xc0
+ __filemap_fdatawrite_range+0x99/0xd0
+ filemap_write_and_wait_range.part.0+0x4d/0xa0
+ blkdev_read_iter+0xef/0x1e0
+ io_read+0x1b6/0x8a0
+ io_issue_sqe+0x87/0x300
+ io_wq_submit_work+0xeb/0x390
+ io_worker_handle_work+0x24d/0x550
+ io_wq_worker+0x27f/0x6c0
+ ret_from_fork+0x2d/0x50
+ ret_from_fork_asm+0x1b/0x30
+
+Fix the problem by protecting bic_to_bfqq() with bfqd->lock.
+
+CC: Jan Kara <jack@suse.cz>
+Fixes: 76f1df88bbc2 ("bfq: Limit number of requests consumed by each cgroup")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ block/bfq-iosched.c | 37 ++++++++++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 13 deletions(-)
+
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 28c2bb06e859..95dd7b795935 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -582,23 +582,31 @@ static struct request *bfq_choose_req(struct bfq_data *bfqd,
+ #define BFQ_LIMIT_INLINE_DEPTH 16
+ 
+ #ifdef CONFIG_BFQ_GROUP_IOSCHED
+-static bool bfqq_request_over_limit(struct bfq_queue *bfqq, int limit)
++static bool bfqq_request_over_limit(struct bfq_data *bfqd,
++				    struct bfq_io_cq *bic, blk_opf_t opf,
++				    unsigned int act_idx, int limit)
+ {
+-	struct bfq_data *bfqd = bfqq->bfqd;
+-	struct bfq_entity *entity = &bfqq->entity;
+ 	struct bfq_entity *inline_entities[BFQ_LIMIT_INLINE_DEPTH];
+ 	struct bfq_entity **entities = inline_entities;
+-	int depth, level, alloc_depth = BFQ_LIMIT_INLINE_DEPTH;
+-	int class_idx = bfqq->ioprio_class - 1;
++	int alloc_depth = BFQ_LIMIT_INLINE_DEPTH;
+ 	struct bfq_sched_data *sched_data;
++	struct bfq_entity *entity;
++	struct bfq_queue *bfqq;
+ 	unsigned long wsum;
+ 	bool ret = false;
+-
+-	if (!entity->on_st_or_in_serv)
+-		return false;
++	int depth;
++	int level;
+ 
+ retry:
+ 	spin_lock_irq(&bfqd->lock);
++	bfqq = bic_to_bfqq(bic, op_is_sync(opf), act_idx);
++	if (!bfqq)
++		goto out;
++
++	entity = &bfqq->entity;
++	if (!entity->on_st_or_in_serv)
++		goto out;
++
+ 	/* +1 for bfqq entity, root cgroup not included */
+ 	depth = bfqg_to_blkg(bfqq_group(bfqq))->blkcg->css.cgroup->level + 1;
+ 	if (depth > alloc_depth) {
+@@ -643,7 +651,7 @@ static bool bfqq_request_over_limit(struct bfq_queue *bfqq, int limit)
+ 			 * class.
+ 			 */
+ 			wsum = 0;
+-			for (i = 0; i <= class_idx; i++) {
++			for (i = 0; i <= bfqq->ioprio_class - 1; i++) {
+ 				wsum = wsum * IOPRIO_BE_NR +
+ 					sched_data->service_tree[i].wsum;
+ 			}
+@@ -666,7 +674,9 @@ static bool bfqq_request_over_limit(struct bfq_queue *bfqq, int limit)
+ 	return ret;
+ }
+ #else
+-static bool bfqq_request_over_limit(struct bfq_queue *bfqq, int limit)
++static bool bfqq_request_over_limit(struct bfq_data *bfqd,
++				    struct bfq_io_cq *bic, blk_opf_t opf,
++				    unsigned int act_idx, int limit)
+ {
+ 	return false;
+ }
+@@ -704,8 +714,9 @@ static void bfq_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
+ 	}
+ 
+ 	for (act_idx = 0; bic && act_idx < bfqd->num_actuators; act_idx++) {
+-		struct bfq_queue *bfqq =
+-			bic_to_bfqq(bic, op_is_sync(opf), act_idx);
++		/* Fast path to check if bfqq is already allocated. */
++		if (!bic_to_bfqq(bic, op_is_sync(opf), act_idx))
++			continue;
+ 
+ 		/*
+ 		 * Does queue (or any parent entity) exceed number of
+@@ -713,7 +724,7 @@ static void bfq_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
+ 		 * limit depth so that it cannot consume more
+ 		 * available requests and thus starve other entities.
+ 		 */
+-		if (bfqq && bfqq_request_over_limit(bfqq, limit)) {
++		if (bfqq_request_over_limit(bfqd, bic, opf, act_idx, limit)) {
+ 			depth = 1;
+ 			break;
+ 		}
+-- 
+2.39.2
+
 
