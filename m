@@ -1,134 +1,171 @@
-Return-Path: <linux-kernel+bounces-425287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40309DBFFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:58:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1109A9DC02B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:01:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FCBFB21A43
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6361280FE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB16158862;
-	Fri, 29 Nov 2024 07:58:47 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D9C15C15A;
+	Fri, 29 Nov 2024 08:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TcTPMSXZ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAD11386DA;
-	Fri, 29 Nov 2024 07:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A2B155A34;
+	Fri, 29 Nov 2024 08:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732867127; cv=none; b=khYRyOF7TordxEB1DgPPa5tHkuyjI5B0S9SuBJbpWkrJRYwA4RCxk9IbIZlKvke5DYfiCkLm6WpjIG3XRXrLW2ohhCC5oidtMIdIybIeh50wZU1HUMiN+4jDqmQt6fvp5HqzEy9ul+0/Bt0cqaznzE4xSg35xuuT8THqfteY9kw=
+	t=1732867223; cv=none; b=ZCBjpVIPzu/9GLyrimTz9Qw0zx1hUIY44vfspS7dphzlQWpoxtcrHKdcsgDqlU23TlGVHksUEYCeym0wnGEVLlnqOvy83my0uSkjgrF40jkbDtV+C2dmI81pMPaMhLQGDz4Yl5F3iJCqH9mNweZmze5/ukKKZyIjB0fG507s3DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732867127; c=relaxed/simple;
-	bh=DGGweeKTa+RH+0DnaUtBC1/0fD3GQ1ZhcpPHK7Zfy7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qsbBAFF6eRlArrWDsU1RYxGJrnw5pEqNUcvd9kHU+owdTX9OzjC+7cQMdesjKQmWki409kqLA2L4X7Xfj/8H8MhjZH5tFlYjIG+TGawNQ8p+BkyZy9A3aRgmRAvluhHFD8uGxKpPGZYqyKcJ6b2NSQMORKeXlhanJxg9cUMF90A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-51514257e57so426557e0c.2;
-        Thu, 28 Nov 2024 23:58:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732867120; x=1733471920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s+Gp1qiNTq0xAIAUyk8qXxpMaz1cYGia2c+m2zi+2Rk=;
-        b=LHSuhS4quPTe+DvNOFd3dsYaCfIpL5VkmbwNAMBePQkiPuzkXVec2xToRFOxxWdgJC
-         xDcQeOdii9z3jYiturOtDKpre9EAgEGXjVa0FX8gQDfPmO9dOQVQ9e5jpYVGlzn/P2Eq
-         kVhfrTLZpQT/qC+FPVJLQcx5jTfxjCfm6wwkxTdVeAh4dXjPCMPlL60u99KGhxe3y8qU
-         CW0gTN0o3jfa+GuZ0GMt1NXPl0h/l1Mxz2Zv/JcTPvmGNiSfQ7QQVCGSuktzjOHK9akJ
-         BVvX59zCSVUpgV8pHwxdRqlLJgYIusDI2MVQ2qJHgTQfljuN+W3IC+YSH506u4QMZ7UY
-         0kdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVb9u4EnBXyr65+ZwsOJzVZEoYSy1A433bkkGRINykfMNbT8BVqe2FgK/LdFjVcLwUGYdCjNYQBHNyJV1xE@vger.kernel.org, AJvYcCVtPKlLOIuKfR4vnYXa/Ova3Nh7SZM5Urw/K0dEdfsKQDadidj+7Ubo9JsC65ZG0CCQ/5eV68kWzgu4a8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/qcwxpmCkDHYNIBXKTcxHkXiB0ozgdKJqGIT4l17kHujDZfBO
-	qSMThZcGiK8g18dIghMkmzwKohqolM2/oCrFHNjbMJafh/y6xMILHClWVpuDj4o=
-X-Gm-Gg: ASbGncuHIc78RbGP4b6ytzOE8GwEMWMurOG+5i6YFaMir2ne/Z0j2QzIw93oBxgw46J
-	aRTkYf+qpqkbfkCBIKtYXnnSWe1xZ+fYVArliFxI6oPadFWWpZjkioEDLn61S+KSe0lBylm/DS/
-	gawkucD5df8h8RUBNXwG2iVxsY8iXgYKKMF7vdFYONk3X5UWRHWkOGV2gLlqU5wcPk52JyBmCtv
-	XdMg0dqtTOrQoPHWHoyYwzTrKul91uMw5hJ7gYpWHLTVrZRHfdY7xxm/fO0lPmqjvzjAE09x3ox
-	d9NWoab3Q3Kp
-X-Google-Smtp-Source: AGHT+IEN5Mru+x7LyJ/6RxmLLiTi46Tt0KvF/yIkcVNiTr7ssz6fmSSCpHJghLNUiHV6uk6/4g5DZQ==
-X-Received: by 2002:a05:6122:458b:b0:515:4fab:b1a3 with SMTP id 71dfb90a1353d-51556762babmr12082065e0c.0.1732867120569;
-        Thu, 28 Nov 2024 23:58:40 -0800 (PST)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5156d0f8bf7sm434714e0c.52.2024.11.28.23.58.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 23:58:40 -0800 (PST)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4aefcb3242aso525754137.1;
-        Thu, 28 Nov 2024 23:58:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUCYixANJr7ZlfC4lK3splcdBRCSSXaiBRDQle7uJgTvZW+2pHU/BuVqGofvoaA8TZ23lnfllWNHSNMm3A=@vger.kernel.org, AJvYcCV8kXv00xSPhLtcWBbGJLOm4M5nwejAGpE6eRG1BABtXhn6TDmGMRTS+l2P4A3czL+FlLjmJqhWttqSxdHj@vger.kernel.org
-X-Received: by 2002:a05:6102:cd0:b0:4af:4983:d8c8 with SMTP id
- ada2fe7eead31-4af4983d95cmr10883213137.10.1732867119928; Thu, 28 Nov 2024
- 23:58:39 -0800 (PST)
+	s=arc-20240116; t=1732867223; c=relaxed/simple;
+	bh=EE0j3OFGnsz1j02CT8+neqmdL9qlDUKuUexQuyzC11Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l3oRttdx3pkmQxRRxJRAyPg3smEgppIkz1iLxgfbm7C1SeU67Ot3SRfUCS8wbSoKJi6cKZx/VDtghAEqmIHm+WqnCNcsRoVWYAd02VwiYqjHTDeZRkHQ7JTgMCD4FWjcIyvmDAeT/uUkRD9nJ0pjdV0UzN74vPadRwEQqWmsr98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TcTPMSXZ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT4vZZx001985;
+	Fri, 29 Nov 2024 08:00:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Qa5MTM
+	AN2Yo7nyBT06WXmdKxAMClxXhx/xz6OBXf3Eg=; b=TcTPMSXZR/owpFN9jiek9D
+	VPwwQg0sf+z6NV2MXLssV/P2jqdmt4HHAKgWtCwT2AGe3sh04lRlgzdqRUF19dSf
+	ERZw7jxMnRKGcq7EBZI4v5Tt75xAs6/AU1ikq9LCpiTFB/Va6X4lpZCCMxBoc2Kf
+	wiVQElUUXOysUTlwFYeYVF1lXWUAuFaRJ1QOpTIkjZi/V5QzZrQ/52JWj6Lbuxbf
+	GziBSed9KUUHQnzLOK6lQWZJvvBCQsmFrFTM6BE8cuyvUekkGoVmCcLWnM6iseiu
+	tg2mFQKd6yaw0h6vNHlktc1e8qsJKdjnfoPlHENumKFLfJaOr+GG47Wq1jDuHQ4A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 436tbec0m4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 08:00:13 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AT7ubTm021316;
+	Fri, 29 Nov 2024 08:00:13 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 436tbec0ky-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 08:00:13 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT73SxB009796;
+	Fri, 29 Nov 2024 08:00:11 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43672fjvt4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 08:00:11 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AT809mJ65405420
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 29 Nov 2024 08:00:09 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B7D9320106;
+	Fri, 29 Nov 2024 08:00:09 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7F6A220103;
+	Fri, 29 Nov 2024 08:00:06 +0000 (GMT)
+Received: from [9.61.255.2] (unknown [9.61.255.2])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 29 Nov 2024 08:00:06 +0000 (GMT)
+Message-ID: <e5702c85-9e69-4d53-9518-faf037dedad7@linux.ibm.com>
+Date: Fri, 29 Nov 2024 13:30:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z0lCihhE75lE9Zjd@kroah.com>
-In-Reply-To: <Z0lCihhE75lE9Zjd@kroah.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 29 Nov 2024 08:58:28 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXwdyb6RA5jksNfw-M9h_nERvm8M4b7XU1_1N-C+bf94A@mail.gmail.com>
-Message-ID: <CAMuHMdXwdyb6RA5jksNfw-M9h_nERvm8M4b7XU1_1N-C+bf94A@mail.gmail.com>
-Subject: Re: [GIT PULL] TTY / Serial driver changes for 6.13-rc1
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Slaby <jslaby@suse.cz>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] quota: flush quota_release_work upon quota
+ writeback
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.com>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-2-ojaswin@linux.ibm.com>
+Content-Language: en-GB
+From: Disha Goel <disgoel@linux.ibm.com>
+In-Reply-To: <20241121123855.645335-2-ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ajlh7paxQCYScBl7QPZ0BvrJahxtsVJv
+X-Proofpoint-ORIG-GUID: FyJAM0YoJt2WaNUMoU-q8LKSyfVdAxJk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 spamscore=0 impostorscore=0 malwarescore=0
+ bulkscore=0 mlxlogscore=999 clxscore=1011 mlxscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411290064
 
-Hi Greg,
+On 21/11/24 6:08 pm, Ojaswin Mujoo wrote:
 
-On Fri, Nov 29, 2024 at 5:26=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
-> The following changes since commit 42f7652d3eb527d03665b09edac47f85fb6009=
-24:
->
->   Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6=
-.13-rc1
->
-> for you to fetch changes up to b5a23a60e8ab5711f4952912424347bf3864ce8d:
->
->   serial: amba-pl011: fix build regression (2024-11-16 09:52:55 +0100)
->
-> ----------------------------------------------------------------
-> TTY / Serial driver updates for 6.13-rc1
+One of the paths quota writeback is called from is:
 
-[...]
+freeze_super()
+   sync_filesystem()
+     ext4_sync_fs()
+       dquot_writeback_dquots()
 
-> All of these have been in linux-next for a while with no reported
-> issues.
+Since we currently don't always flush the quota_release_work queue in
+this path, we can end up with the following race:
 
-Oh, how do I love this boilerplate...
+  1. dquot are added to releasing_dquots list during regular operations.
+  2. FS Freeze starts, however, this does not flush the quota_release_work queue.
+  3. Freeze completes.
+  4. Kernel eventually tries to flush the workqueue while FS is frozen which
+     hits a WARN_ON since transaction gets started during frozen state:
 
-> Claudiu Beznea (1):
->       serial: sh-sci: Clean sci_ports[0] after at earlycon exit
+   ext4_journal_check_start+0x28/0x110 [ext4] (unreliable)
+   __ext4_journal_start_sb+0x64/0x1c0 [ext4]
+   ext4_release_dquot+0x90/0x1d0 [ext4]
+   quota_release_workfn+0x43c/0x4d0
 
-"BUG: spinlock bad magic"
-https://lore.kernel.org/all/CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dW=
-ZWYA@mail.gmail.com/
+Which is the following line:
 
-Gr{oetje,eeting}s,
+   WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
 
-                        Geert
+Which ultimately results in generic/390 failing due to dmesg
+noise. This was detected on powerpc machine 15 cores.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+To avoid this, make sure to flush the workqueue during
+dquot_writeback_dquots() so we dont have any pending workitems after
+freeze.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Reported-by: Disha Goel <disgoel@linux.ibm.com>
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+
+Thanks for the fix patch Ojaswin.
+I have tested the patch on powerpc machine, and it fixes the generic/390 test failure.
+
+Tested-by: Disha Goel <disgoel@linux.ibm.com>
+
+---
+  fs/quota/dquot.c | 2 ++
+  1 file changed, 2 insertions(+)
+
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 3dd8d6f27725..f9578918cfb2 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -688,6 +688,8 @@ int dquot_writeback_dquots(struct super_block *sb, int type)
+  
+  	WARN_ON_ONCE(!rwsem_is_locked(&sb->s_umount));
+  
++	flush_delayed_work(&quota_release_work);
++
+  	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
+  		if (type != -1 && cnt != type)
+  			continue;
+
 
