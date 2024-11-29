@@ -1,102 +1,77 @@
-Return-Path: <linux-kernel+bounces-425203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EE89DBED4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:02:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4107F9DBED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B45B21B14
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:02:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6C93B21A93
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E5A7F7FC;
-	Fri, 29 Nov 2024 03:02:15 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEB715380A;
+	Fri, 29 Nov 2024 03:04:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8BA3C3C
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 03:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF2B13F42A;
+	Fri, 29 Nov 2024 03:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732849335; cv=none; b=foSMVMJyJuEVCgLACjzcdbbPa91+o6IhhQ+oc1RhWyUHdmjVg19kYCIObrIVcnSzr59I1AeJXOWzyGY26Sx2B2DHLbwlSctlRTEkrfjoOgdYSFoiEGAn0vS6aJcUDR5nmmR+FJ9CV1koZ9vQlJc3khrFeiyecolv78IA7jgKLJw=
+	t=1732849464; cv=none; b=h/xvzW1vaPmJI5K3TWhl3N7LOGpKTGXinCp55tPw0APG4Wyary7DDlnjc+kHhF7LJGHRZvCuW5gftc/IK9F4chM8I9yVeWre8DswO3D6F+GQusSLA1oZ8B3Q4/v7Ao0EV9m+QKQjF1+3oEc6SSZAafM3y5+54gmpIPBT9at7XaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732849335; c=relaxed/simple;
-	bh=wjk07jw1Mfrnejde7tfJqUHtjNnnPHt+rjSbnjMJMoE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b9TNSudZ71CA+/rshbX4p2IWpDI8wtHKeX8/pYqRVZiTOvzldlh44w7AJldCyfjHuVw1h/NuT8MrC8Pfoj/kjQJ5In2Cwx4DJ6EcHpj6+6xgFrMarYCYbHHMwLaWWk5lVg17JWK4m+mWEEkIBhii/PMeJoY+BRNZc2+dKRmW75g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4d11c3f4adfe11efa216b1d71e6e1362-20241129
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED, SA_EXISTED
-	SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:14d84a24-f49b-4c47-a252-0f4df906619b,IP:15,
-	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:25
-X-CID-INFO: VERSION:1.1.38,REQID:14d84a24-f49b-4c47-a252-0f4df906619b,IP:15,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:25
-X-CID-META: VersionHash:82c5f88,CLOUDID:35b8a1c97a67c95beb2957a9a36033dc,BulkI
-	D:2411291102005DW3XCYH,BulkQuantity:0,Recheck:0,SF:17|19|24|38|44|66|102,T
-	C:nil,Content:0,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,
-	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 4d11c3f4adfe11efa216b1d71e6e1362-20241129
-X-User: tianyaxiong@kylinos.cn
-Received: from ukylin-xiaoxinpro-16-irh8.. [(116.128.244.171)] by mailgw.kylinos.cn
-	(envelope-from <tianyaxiong@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 2099950808; Fri, 29 Nov 2024 11:01:59 +0800
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH] drivers core: bus: Remove unnecessary NULL assignments in the bus_register() function
-Date: Fri, 29 Nov 2024 11:01:30 +0800
-Message-ID: <20241129030130.3754-1-tianyaxiong@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1732849464; c=relaxed/simple;
+	bh=MOufZdl89X3FSEHAZ+ouhKzwUDYscQkyxZU8NxuMNZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VdqcHfOOMr+2h99C/KGggwGzriGvuVnJRME3AYEZKJzGcOyAUp3g8btsx9rrve2Wh6W5gP6/dsEaliMgfatAsvbdGbJvMdSg7e3BIWPXFTSI8WIRIHp3XarE3O28z5jDGVqRIz3xuOAdlgJUoPZB+gl7iDiSVFyI7F0rUmco56I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4B72C4CECE;
+	Fri, 29 Nov 2024 03:04:21 +0000 (UTC)
+Date: Thu, 28 Nov 2024 22:04:20 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Paul Moore <paul@paul-moore.com>, Justin
+ Stitt <justinstitt@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Kees Cook <keescook@chromium.org>
+Subject: Re: [GIT PULL] tracing: More updates for 6.13
+Message-ID: <20241128220420.6196a937@rorschach.local.home>
+In-Reply-To: <CALOAHbBB-__eyERw82QnS3Wmgi7_BpPaacY2urVmpWX3ZkVtvQ@mail.gmail.com>
+References: <20241127131941.3444fbd9@gandalf.local.home>
+	<CAHk-=wgwQ5gDdHgN54n8hsm566x5bauNPsdZPXm6uOCFvPA1+Q@mail.gmail.com>
+	<20241128155120.6e6cd300@rorschach.local.home>
+	<20241128182435.57a1ea6f@gandalf.local.home>
+	<CALOAHbBB-__eyERw82QnS3Wmgi7_BpPaacY2urVmpWX3ZkVtvQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-In bus_register(), Priv is a local pointer variable, so its assignment
-can be ignored and the function can be returned directly. This can reduce
-the NULL checks in the subsequent kfree function.
+On Fri, 29 Nov 2024 10:16:54 +0800
+Yafang Shao <laoar.shao@gmail.com> wrote:
 
-Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
----
- drivers/base/bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The issue appears to be a known GCC bug, though the root cause remains
+> unclear at this time.
+> 
+> A potential workaround has been proposed, which you can find here:
+> https://lore.kernel.org/linux-hardening/202410171059.C2C395030@keescook/
+> 
+> However, it seems that the patch has not yet been accepted into the mainline.
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 657c93c38b0d..c1fd2860e397 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -923,7 +923,7 @@ int bus_register(const struct bus_type *bus)
- bus_uevent_fail:
- 	kset_unregister(&priv->subsys);
- 	/* Above kset_unregister() will kfree @priv */
--	priv = NULL;
-+	return retval;
- out:
- 	kfree(priv);
- 	return retval;
--- 
-2.25.1
+Thanks, I applied that to my "fixes" patch that is used to fix other
+issues that are not related to my code so that I can continue testing.
 
+I just kicked off my tests again with that applied.
+
+-- Steve
 
