@@ -1,168 +1,103 @@
-Return-Path: <linux-kernel+bounces-425441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01399DC21E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:30:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BFF9DC225
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:31:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764AC2823A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F1EE164643
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3E319004B;
-	Fri, 29 Nov 2024 10:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6B0189BB0;
+	Fri, 29 Nov 2024 10:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juN9ka5C"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="a+m9uV1/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F4D155753;
-	Fri, 29 Nov 2024 10:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAB9155345;
+	Fri, 29 Nov 2024 10:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732876198; cv=none; b=aZvwgGLemEcXXF3iISRHi63gG4W5t8rAce1i7sfI4swkEKS8Ti+BPyfcm41JEaiaRIDCkoFUzMuRMU00CqYjBUI6WO6j3hvHAnJsm934PDlmxhIcAMHMe6YE4rTMF5hGub92RfVBHE6FQichpVwx2OHqPy153JS31n5XQkuGIgo=
+	t=1732876297; cv=none; b=HCs2WqGtT/H3nQEhLi+QNIHUK+pt3v0i2Qn3rJCUg4FplovxSXIqBB64S7cwtrEI6fCzBk+yWYXHM6LTnkzCVSQMX8WV7kC8TzBjYliXMtmH5P8QnBHe86pB6uyLk1YEmyu8KInr49aF6S+30kz16TCnjxxn6G2rrwNSSlD81Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732876198; c=relaxed/simple;
-	bh=HV+KcdHMNiDCGNGg2MmmAJ5nak2w5W33ipZ4Sc1GXhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KTvjNdxcMxiWL9asILWMIrEWr6VDFWZ837YShkE7LiRqO33unIK9zo+UE3iLEduiYkL32bf0UYQMIpytX0K3Q0txQyMOi+k95aYyJbo6ce63KC9vZw7G/aTvGicfCiy2gB+oKnoFtR6pwOt9fNLg6PoyRlv1BBeo8+gRPiVbWv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juN9ka5C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC5AC4CECF;
-	Fri, 29 Nov 2024 10:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732876196;
-	bh=HV+KcdHMNiDCGNGg2MmmAJ5nak2w5W33ipZ4Sc1GXhw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=juN9ka5CxUFx4jWCoyz+a+vgTGVvpJuN0wzxdCjdGfSsVolHoByTNIfj7EcZZ3N1n
-	 6cr3NOBJrhIKR7LhxSBI/V0Odqm690D9Pf6ZGjvTPqKw2ZMBjz4YvUdsVlUIq7EWTr
-	 ASAkYYw9/iunDsp8g3OOocJv6qgClxtQLj377c89+4fW9shwClGYpYhNq1YXy9Koi2
-	 Ll2qQPCyFFsUHMrApjZ7UMRa5j1su5lCoG9a0TxbkRhcoi+1hRpqr5HV4AzP44i/+9
-	 5srfxsk1HLh0tBqn0enJ8ARB6D63Dr+tcph+l8cmQfYdEeg5SG9l+6sh4klw5gfmrt
-	 lz6+DuGLdBz5g==
-Date: Fri, 29 Nov 2024 11:29:52 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, Jonathan
- Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, workflows@vger.kernel.org
-Subject: Re: [PATCH] docs: media: document media multi-committers rules and
- process
-Message-ID: <20241129112952.1f0c9222@foz.lan>
-In-Reply-To: <20241128190707.GA13852@pendragon.ideasonboard.com>
-References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
-	<20241126151930.GA5493@pendragon.ideasonboard.com>
-	<e0535e20-6e97-437f-8565-53fd257c7618@xs4all.nl>
-	<20241127132515.GH31095@pendragon.ideasonboard.com>
-	<20241128191543.289f0d84@foz.lan>
-	<20241128190707.GA13852@pendragon.ideasonboard.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1732876297; c=relaxed/simple;
+	bh=MUdsKdFNC83pwHZ9ib2CZlfuQfxhnj+kbQUat1E5wE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=riaEJlvaFl98Gmti1DUnx6mHh2eJwJCO3rmTMq9pidrQqiacSVKJXKT/kba27ZbcmMiI1RP49zRs+uPYhKz3Fthh6FmnrfEyHDRpStY62XmmbeCNctIToU/GKWDZlChnRxDHAdg6OZKiJ90sdmhotoXd8Xm9AFtDB53fCZWUyZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=a+m9uV1/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0785BC4CECF;
+	Fri, 29 Nov 2024 10:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732876296;
+	bh=MUdsKdFNC83pwHZ9ib2CZlfuQfxhnj+kbQUat1E5wE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a+m9uV1/FgmolhDcHAXkd3PB7YHfVq83UHqoh2AsOOZhVg14P0nyh/sy1ZbP3IOpl
+	 dU2sierdu9d30cBDAXYCWERvGlW9iEhGTslZ04JvT3r3+AQB+Lf4gtbrYqRFlTq/Nl
+	 fdajsldQZc1lqtnAGiCxkHT3YbIUcNy7l4lbQNqM=
+Date: Fri, 29 Nov 2024 11:31:33 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [GIT PULL] TTY / Serial driver changes for 6.13-rc1
+Message-ID: <2024112952-headphone-vastness-3814@gregkh>
+References: <Z0lCihhE75lE9Zjd@kroah.com>
+ <CAMuHMdXwdyb6RA5jksNfw-M9h_nERvm8M4b7XU1_1N-C+bf94A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXwdyb6RA5jksNfw-M9h_nERvm8M4b7XU1_1N-C+bf94A@mail.gmail.com>
 
-Em Thu, 28 Nov 2024 21:07:07 +0200
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
-
-> > With that in mind, every committer has duties of reviewing other
-> > developer's patches submitted for the drivers that they're listed as
-> > a maintainer at the MAINTAINERS file entries.  
+On Fri, Nov 29, 2024 at 08:58:28AM +0100, Geert Uytterhoeven wrote:
+> Hi Greg,
 > 
-> I'm sorry but that's not a multi-committer model, it's a co-maintenance
-> model. If that's what you really want we can reopen the discussion and
-> start anew, but I don't think it's a good idea.
+> On Fri, Nov 29, 2024 at 5:26 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+> >
+> >   Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.13-rc1
+> >
+> > for you to fetch changes up to b5a23a60e8ab5711f4952912424347bf3864ce8d:
+> >
+> >   serial: amba-pl011: fix build regression (2024-11-16 09:52:55 +0100)
+> >
+> > ----------------------------------------------------------------
+> > TTY / Serial driver updates for 6.13-rc1
 > 
-> As I said before, if it increases my work load, I don't want commit
-> rights. I'll keep sending pull requests, you'll have to keep processing
-> them, and patches will be merged slower. It will be a lose-lose
-> situation for everybody, you, me, contributors and users.
+> [...]
 > 
-> Starting with a situation where we are understaffed and trying to solve
-> it by putting more work on the few people who currently keep the
-> subsystem alive doesn't sound like a winning strategy. 
+> > All of these have been in linux-next for a while with no reported
+> > issues.
+> 
+> Oh, how do I love this boilerplate...
 
-After sleeping over it, I agree that you're partially right on this.
+I hand-craft that every time :)
 
-Doing timely reviews is orthogonal of being a committer. What defines
-if you need to do timely reviews is if you're listed or not at the
-MAINTANERS file as "M:" - e.g. if the developer is a maintainer
-(on its broader sense) or not. This applies for both PR and MR workflows.
+> > Claudiu Beznea (1):
+> >       serial: sh-sci: Clean sci_ports[0] after at earlycon exit
+> 
+> "BUG: spinlock bad magic"
+> https://lore.kernel.org/all/CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dWZWYA@mail.gmail.com/
 
-Still, if one is not fulfilling its duty as maintainer, he may end
-losing maintainership status and the corresponding committer rights.
+Ah, yes, sorry, missed that.  I assumed that it would be fixed soon, do
+you want me to revert it instead?
 
-I wrote a separate patch to make it clear. See below.
+thanks,
 
-Thanks,
-Mauro
-
----
-
-[PATCH] docs: media: profile: make it clearer about maintainership duties
-
-During the review of the media committes profile, it was noticed
-that the responsibility for timely review patches was not clear:
-such review is expected that all developers listed at MAINTAINERS
-with the "M:" tag (e.g. "maintainers" on its broad sense).
-
-This is orthogonal of being a media committer or not. Such duty
-is implied at:
-
-	Documentation/admin-guide/reporting-issues.rst
-
-and at the MAINTAINERS header, when it says that even when the
-status is "odd fixes", the patches will flow in.
-
-So, let make it explicit at the maintainer-entry-profile that
-maintainers need to do timely reviews.
-
-Also, while right now our focus is on granting committer rights to
-maintainers, the media-committer model may evolve in the future to
-accept other committers that don't have such duties.
-
-So, make it clear at the media-committer.rst that the duties
-related to reviewing patches from others are for the drivers
-they are maintainers as well.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
-index 650803c30c41..6daf71bc72c1 100644
---- a/Documentation/driver-api/media/maintainer-entry-profile.rst
-+++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
-@@ -147,6 +147,11 @@ b. Committers' workflow: patches are handled by media committers::
- On both workflows, all patches shall be properly reviewed at
- linux-media@vger.kernel.org before being merged at media-committers.git.
- 
-+Such patches will be timely-reviewed by developers listed as maintainers at
-+the MAINTAINERS file. Such maintainers will follow one of the above
-+workflows, e. g. they will either send a pull request or merge patches
-+directly at the media-committers tree.
-+
- When patches are picked by patchwork and when merged at media-committers,
- CI bots will check for errors and may provide e-mail feedback about
- patch problems. When this happens, the patch submitter must fix them
-diff --git a/Documentation/driver-api/media/media-committer.rst b/Documentation/driver-api/media/media-committer.rst
-index 1756a7af6353..a873ef84fbca 100644
---- a/Documentation/driver-api/media/media-committer.rst
-+++ b/Documentation/driver-api/media/media-committer.rst
-@@ -87,9 +87,9 @@ be delegating part of their maintenance tasks.
- Due to that, to become a committer or a core committer, a consensus between
- all subsystem maintainers is required, as they all need to trust a developer
- well enough to be delegated the responsibility to maintain part of the code
--and to properly review patches from third parties, in a timely manner and
--keeping the status of the reviewed code at https://patchwork.linuxtv.org
--updated.
-+and to properly review patches from third parties for the drivers they are
-+maintainers in a timely manner and keeping the status of the reviewed code
-+at https://patchwork.linuxtv.org updated.
- 
- .. Note::
- 
-
+greg k-h
 
