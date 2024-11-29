@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-425596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D879DE788
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:29:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2EF9DE787
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:29:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 220F6B21C77
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F31E281690
 	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C7219F48D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C481A00C9;
 	Fri, 29 Nov 2024 13:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEERrIyb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i50Rd3XD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBBF19884C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F0719C57C;
 	Fri, 29 Nov 2024 13:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732886923; cv=none; b=Fzxssvb/6dALI6qg73xL5R/Ex2zubAkJm4YxHnhVoldUTbNAfPASPddfeq17eX/9WBZlNV4o1PIlNePX9JFhNnos8Cb9dHtP1JXSC1oT9CZ3A2mnAwtYwDsSMHzFnLCLksn1BWxcvdrCs639wP6JzMIjQ81KYS9s05fcaYykDKE=
+	t=1732886923; cv=none; b=Vt4BgUoBh4NdphwSxObE2XOchC4/qofkMX8/qRW+x+jB1XWRitGT1d0OFqE/qF6K/94Bh2SoOLqs7Xu51PyogCPIvJsCgUsJL6ai7aU76Gv5cQXQzMRPA7NgiOW1kDUi66PA6ma6cBYVT2AvhpcwlCMncdByAOdkdFwf3S7fbsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732886923; c=relaxed/simple;
-	bh=+SW8uSY4kk9jy3nBqPD/Tm8uG6EdIVWhrds3tTcNqnU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rqaWKBZnaJfDlxYbcu8A859P0qtHL+bDBpIcz7hxct1ZB4Uu6QdFkvlIaqp36dEosgixU6dbu1rBpYJ6Vbj+5kZGy9WhwqTCpwbjVhH9sCrfryMU0pxC+oGlDD2Ko6BvTf+nCgJtbGUhzIzF/dkWi84bUFL3wQnjJSm7rKaU6fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEERrIyb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 04BB4C4CECF;
+	bh=1YvxV8C4GkKt1E6xAgYL7xkTCqRPwy3DRHYl12fL4dI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=dZEdpig4skoc3o1HvPiorAV9DFC4ZwQtY/5IXey3T7gkRK1Kodf5s7YuLt9cZmQnReny1MQtx4DdZGhHr++rpBkj4LZmy43NsnlrJoQkNuk/bC/M1C0Bp/s7Fe/fVL1t0KDOuwJvOxgFlYbMTAuHvdTmm/tlUsHuWBWXidXFUbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i50Rd3XD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0A078C4CED2;
 	Fri, 29 Nov 2024 13:28:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1732886923;
-	bh=+SW8uSY4kk9jy3nBqPD/Tm8uG6EdIVWhrds3tTcNqnU=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=UEERrIybuUcMtPWtTuWAvnJP5TjdwDz7uRqoV/lAtYPeMOjkeR1oOgp+c4W+gi+di
-	 UnF5MQix3+YGPSM0l8ZFe2GbdQqUhG+rIuDJQaXCTy8TnUdKVC9kQRVvghGWKao6Hm
-	 anxoqWD7wXFF9WjtV2QR9syQMyVIBiPWpIHX6g1odAlYIFchmZWZBj7Uo6WPtEibbs
-	 +DrLSEUvmAcDllALu8e3LCsfH1JyFkkEdwe8ysLff0QJXqV1oyPI6k2Ei0HEnwZo+W
-	 X+ZD8XIog7zkAdQQqW+WQemOefLLbdYuij6EdsIt9fcGM1j1YwilvxFzv8Cr+BSLqH
-	 tfbD91/NBkDhg==
+	bh=1YvxV8C4GkKt1E6xAgYL7xkTCqRPwy3DRHYl12fL4dI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=i50Rd3XDMEC6mHpbSMmqURZI9Tx4UyYP2bLtthY+OXkUJ9cxilnY2DSndo6dngTLa
+	 3boNdVuYOVGXv3Or3QIdqPvs9Ljm/9MurEEvfU2UHnRVRxlHsR1MPZbGfTzzzzPxSI
+	 KMNRjIJaOGpSKK8D0HR2ybBuaSxijAtvrxtznYPqtEFIQsQnqKV9BA3kPoS+OLdNgw
+	 ximaIpFpe8/282OIZLeE49grZJ4CswZiYn0c0gHgpL6bVgHPx9SdAPBGpJMkiQx87y
+	 OEkqYDeLK05ocAGwjBnzBKEvj1qbolHpEVbRGkVhx6jndzqsVh1dBrwLwyYFEd6kXv
+	 dSGVqEZWtVC1A==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9725D6EBF9;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD42D6EC0A;
 	Fri, 29 Nov 2024 13:28:42 +0000 (UTC)
 From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD_via_B4_Relay?= <devnull+cleverline1mc.gmail.com@kernel.org>
-Subject: [PATCH v6 0/4] Add support for attaching a regulator to w1: ds2482
-Date: Fri, 29 Nov 2024 14:25:52 +0100
-Message-Id: <20241129-ds2482-add-reg-v6-0-bd95ad171e19@gmail.com>
+Date: Fri, 29 Nov 2024 14:25:53 +0100
+Subject: [PATCH v6 1/4] dt-bindings: w1: ds2482: Add vcc-supply property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,12 +54,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAODASWcC/2XO0WrEIBAF0F9ZfK5FxzGaPvU/Sh9mdcwK3U3RE
- lqW/HvNQiGNvl3h3Ll3UblkruLldBeFl1zzfGtheDqJcKHbxDLHlgUoQN2ejBXQg6QYZeFJJtY
- GlKLo4iAa+iyc8vej8O295UuuX3P5efQvevv9q7LHqkVLJUPweB7pTBqG1+lK+eM5zFexVS2w4
- wAdh8bJkjLMDiO5Izd7jh03jXs1xGTGMKLFI8c978dj4+gsOVI+prEbb/d87LjdxifP3kTUBv9
- dX9f1F8ElUrSoAQAA
-X-Change-ID: 20241111-ds2482-add-reg-fe13200ad7d6
+Message-Id: <20241129-ds2482-add-reg-v6-1-bd95ad171e19@gmail.com>
+References: <20241129-ds2482-add-reg-v6-0-bd95ad171e19@gmail.com>
+In-Reply-To: <20241129-ds2482-add-reg-v6-0-bd95ad171e19@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Stefan Wahren <stefan.wahren@chargebyte.com>, 
@@ -69,11 +66,11 @@ Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
  =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>, 
  Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732886921; l=1667;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732886921; l=796;
  i=cleverline1mc@gmail.com; s=20241112; h=from:subject:message-id;
- bh=+SW8uSY4kk9jy3nBqPD/Tm8uG6EdIVWhrds3tTcNqnU=;
- b=u6WXxlaO9+lR/bChs8eqEQUIUnt8Llx1BqfeG3hnrBa7hwEUYcfc6+/SdfqLXAMmJFowXzGHW
- i9YFM5f6Nl8AvqmCNG9BlE2v7GU6844qRVqt41s/sUyqpHmsWgHj/63
+ bh=WhOk1GuCMyF4Uqf/5Sr9VOiQAo2chWTloYZnv0gVBic=;
+ b=51S0OcyVqUj81rp6pWj9Ift8o8hMmInJjnoc17JlHXbdjKu8iDlTmQBhnH9fMbJcHUOpLYE6P
+ 4PpyDMduPH1CNr15MqnjSdQfWdp94TopZl6owEPutuAF+K6Nygzv+U/
 X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
  pk=EJoEbw03UiRORQuCiEyNA8gH1Q6fIpEWnn/MyaWOWX0=
 X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
@@ -81,50 +78,33 @@ X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
 X-Original-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
 Reply-To: cleverline1mc@gmail.com
 
-Kept the exit_w1_remove path as requested in the review.
+From: Kryštof Černý <cleverline1mc@gmail.com>
+
+ds2482 has a VCC pin, accepting 2.9-5.5 V.
 
 Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
-Changes in v6:
-- Returned the exit_w1_remove path in the probe function
-- Link to v5: https://lore.kernel.org/r/20241129-ds2482-add-reg-v5-0-af8e83d41344@gmail.com
+ Documentation/devicetree/bindings/w1/maxim,ds2482.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v5:
-- Refactored the driver to use devm_kzalloc() instead of kzalloc()
-- Link to v4: https://lore.kernel.org/r/20241125-ds2482-add-reg-v4-0-475a7a08df96@gmail.com
+diff --git a/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml b/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml
+index 422becc6e1fa8d58665c5586ebdc611cd0b2c760..fe6b3f9a3f8bbd00366c3e36aad3ffa72ec1a31f 100644
+--- a/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml
++++ b/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml
+@@ -25,6 +25,8 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  vcc-supply: true
++
+ required:
+   - compatible
+   - reg
 
-Changes in v4:
-- Using dev_err_probe() instead of dev_err() for the regulator error.
-- Corrected patch order.
-- Link to v3: https://lore.kernel.org/r/20241124-ds2482-add-reg-v3-0-806df39c9454@gmail.com
-
-Changes in v3:
-- Switched from regulator_enable() to devm_regulator_get_enable()
-- Removed obvious comments.
-- Link to v2: https://lore.kernel.org/r/20241122-ds2482-add-reg-v2-0-a5a03ee74da7@gmail.com
-
-Changes in v2:
-- Removed property description
-- Changed commit message of binding commit
-- Link to v1: https://lore.kernel.org/r/20241115-ds2482-add-reg-v1-0-cc84b9aba126@gmail.com
-
----
-Kryštof Černý (4):
-      dt-bindings: w1: ds2482: Add vcc-supply property
-      w1: ds2482: switch to devm_kzalloc() from kzalloc()
-      w1: ds2482: Add regulator support
-      w1: ds2482: Fix datasheet URL
-
- .../devicetree/bindings/w1/maxim,ds2482.yaml       |  2 ++
- drivers/w1/masters/ds2482.c                        | 26 ++++++++++------------
- 2 files changed, 14 insertions(+), 14 deletions(-)
----
-base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
-change-id: 20241111-ds2482-add-reg-fe13200ad7d6
-
-Best regards,
 -- 
-Kryštof Černý <cleverline1mc@gmail.com>
+2.39.5
 
 
 
