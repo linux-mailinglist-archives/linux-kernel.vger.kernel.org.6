@@ -1,90 +1,182 @@
-Return-Path: <linux-kernel+bounces-425736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E28A9DE9FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:55:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994AF163884
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:55:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A1114884D;
-	Fri, 29 Nov 2024 15:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="SoKj2oXa"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C109DEB03
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:29:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA89140E34;
-	Fri, 29 Nov 2024 15:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F8A0B21B44
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:29:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F451A7066;
+	Fri, 29 Nov 2024 16:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Zai49uL5"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC901547FF;
+	Fri, 29 Nov 2024 16:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732895711; cv=none; b=XmQtPrYJoykLx/DCvO5y5xvYiIy5AhLljKx8oZ9juVMH8GGdKUMuLkNSi/Ln8vgyie23c/N+S3zDIMzoMM/dpTbj/yLwW/Z3q14TfGIOA7oQAAwYIZ6ZqVGyQQG+7qSBirK4HMD5ndQoLNXTzz9w7vfN9WhXocyAH36AOQ/Ov3E=
+	t=1732897713; cv=none; b=KtvYWwgEChj0HjHVXsu5eEXJtsYxBHHv0FAZciXpMKbWDUJvWAwB4cq/tk7QMt+IAe9Yy15hlE0o91nWdOrM7P9B2RjcRyzKuECY2CZ/JORz8jOyGPU2dhhCnRnHWDWxDCmx39ItHENwfE5SIBWx1G9bhOluWAZyiRK2L6zl9is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732895711; c=relaxed/simple;
-	bh=kC3k2ptxWAmZ0pSJaZ/GqEPlSHcg8ARsRjC1K/4EzZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CP1B1lqFch2BteJ2frS8VTtiphk73c0j9Y5s+m4pZw9jFac6lFdCdqtn0QyA8Aope3ZiwemdWLxRYlJS0fPEfVtNRSFhQPedAVubu+Lxs/qtZKDw4jNQ+BF69VUFqP7DC0xq3hkoOx2T8hObP/tBH0Pa0C/6MWdzOD3OtyXAnY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=SoKj2oXa; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=G3nR71lc/iIy9K8Syw7R0FIxtppl6TKV5Wan+unn58c=; b=SoKj2oXad/hOnKXgxOh5FtNXx/
-	pTwmnHVUCfW25PYXYspAI5ZzBOIauWGH+5bCxzeX/xZIorRlB2GFzBVxw5mJoa2zuzS1UzJpd/zVX
-	isisKqoILDWaZf8KmnQ85lIzc5Ul9OSgybXi1nUTMe340rq7RePukpqRsb+m6OxiI0wI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tH3Kd-00EmWm-V4; Fri, 29 Nov 2024 16:54:59 +0100
-Date: Fri, 29 Nov 2024 16:54:59 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Potin Lai <potin.lai.pt@gmail.com>
-Cc: Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Patrick Williams <patrick@stwcx.xyz>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Cosmo Chou <cosmo.chou@quantatw.com>,
-	Potin Lai <potin.lai@quantatw.com>
-Subject: Re: [PATCH] Revert "net/ncsi: change from ndo_set_mac_address to
- dev_set_mac_address"
-Message-ID: <33c32912-cf13-49c9-a786-a44c0bb482a6@lunn.ch>
-References: <20241129-potin-revert-ncsi-set-mac-addr-v1-1-94ea2cb596af@gmail.com>
+	s=arc-20240116; t=1732897713; c=relaxed/simple;
+	bh=XX0C2Et9q0+fKcYAwfuxgwl2sGZuOMtPTUd6hhHkFNM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aLHnFCr0GxCDYk4sjatIZ2Hs2xlYAjfCc7PeyY1Q+7uoQMZRx/pTxY9OFT7srRTVbIhdzwhbGSP7zRDVdCSXuAXtxEeeZx+VXwqtJfre6//vrS4gKCkY/L8ZWjElMFj6uVOvSFJWZbmL6SPRcbdHiq+RWFJLNSACiGDIETSmTbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Zai49uL5; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 6c5d0463aa7c4814; Fri, 29 Nov 2024 17:28:28 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 7827CA47B8B;
+	Fri, 29 Nov 2024 17:28:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1732897708;
+	bh=XX0C2Et9q0+fKcYAwfuxgwl2sGZuOMtPTUd6hhHkFNM=;
+	h=From:Subject:Date;
+	b=Zai49uL5kavDQ1GzqDEGlTZiuaHXweevroflx4QEtTgc+OcG3PiBxyxnTT2DNwb4m
+	 R1hZIGPMrY1TUckWGrFwXH13VDw7I7XBacmRezX2XC/eLyI/CiI8fIgmVEoAQEF++6
+	 60xEaNjZcJfQyZ0lpyc5znwxudThusbqfKeSNNL3LbtDJhqYBGemp8F0sh2CHhprQN
+	 kZXuTu7bK3oy4TFTyzXPqGaOyMi8Ca6bN7M30etyg0aL0NRjEAkmQCPX0NUFjun4m1
+	 /V8ebXRX8jufZb/Y83B7Q3YfDLsyCDUloTVW5c7gZQup4CRhrmnApE8t+VjkX6/XDV
+	 Boa0Q54i5lgww==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>
+Subject:
+ [RFC][PATCH v021 0/9] cpufreq: intel_pstate: Enable EAS on hybrid platforms
+ without SMT
+Date: Fri, 29 Nov 2024 16:55:12 +0100
+Message-ID: <5861970.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241129-potin-revert-ncsi-set-mac-addr-v1-1-94ea2cb596af@gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgdekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
 
-On Fri, Nov 29, 2024 at 05:12:56PM +0800, Potin Lai wrote:
-> From: Potin Lai <potin.lai@quantatw.com>
-> 
-> This reverts commit 790071347a0a1a89e618eedcd51c687ea783aeb3.
-> 
-> We are seeing kernel panic when enabling two NCSI interfaces at same
-> time. It looks like mutex lock is being used in softirq caused the
-> issue.
+Hi Everyone,
 
-So a revert does make sense, you are seeing a real problem from that
-commit.
+This is a new iteration of the "EAS for intel_pstate" work:
 
-However with the revert, is the code actually correct? Or is it
-missing some locking? Normally dev_addr_sem is used to protect against
-two calls to change the MAC address at once. Is this protection
-needed? It would also be typical to hold RTNL while changing the MAC
-address. So it would be nice to see an analysis of the locking, and
-maybe the revert commit message says this gets you from a broken state
-to a less broken state, and the real fix will be submitted soon?
+https://lore.kernel.org/linux-pm/3607404.iIbC2pHGDl@rjwysocki.net/
 
-	Andrew
+It contains a few new patches and almost all of the patches sent previously
+have been updated.
+
+The following paragraph from the original cover letter still applies:
+
+"The underlying observation is that on the platforms targeted by these changes,
+Lunar Lake at the time of this writing, the "small" CPUs (E-cores), when run at
+the same performance level, are always more energy-efficient than the "big" or
+"performance" CPUs (P-cores).  This means that, regardless of the scale-
+invariant utilization of a task, as long as there is enough spare capacity on
+E-cores, the relative cost of running it there is always lower."
+
+Thus the idea is still to register a perf domain per CPU type, but this time
+there may be more than just two of them because of the first patch.
+
+The states table in each of these perf domains is still one-element and that
+element only contains the cost value, but this time the costs are computed
+and not prescribed (see the last patch).  Nevertheless, the expected effect
+is still that the perf domains (or CPU types) with lower cost values will
+be preferred so long as there is enough spare capacity in them.
+
+The first two patches are not really RFC, but they are included here because
+patches [8-9/9] depend on patch [1/9].  They will be resent next week as
+non-RFC 6.14-candidate material.
+
+The difference made by them is significant because it is now not known in
+advance how many CPU types will be there and the cost values for each of
+them cannot be prescribed.
+
+Patch [3/9] is also a change that I'd like to make regardless of what
+happens to the rest of the series because it effectively moves EM code
+from the schedutil governor to EM where it belongs.  Of course, it is also
+depended on by patch [9/9].
+
+Patch [4/9] differs from its previous version,
+
+https://lore.kernel.org/linux-pm/1889415.atdPhlSkOF@rjwysocki.net/
+
+because gov is NULL not only when it is not used at all, but also during the
+cpufreq policy init and exit, so the check in the patch had to be adjusted
+to match the former case only.  [As a side note, I don't think that the code
+modified by patch [4/9] belongs to sched/topology as it messes around the
+cpufreq internals.  At least, it should be moved to cpufreq and called by
+sched_is_eas_possible(), but I'm also not convinced that it is necessary
+at all.  This is not directly related to the $subject series, though.]
+
+Patch [5/9] adds a new function needed by patch [9/9] and it is the same as
+its previous version:
+
+https://lore.kernel.org/linux-pm/2223963.Mh6RI2rZIc@rjwysocki.net/
+
+Patch [6/9] is almost the same as its previous version:
+
+https://lore.kernel.org/linux-pm/1821040.VLH7GnMWUR@rjwysocki.net/
+
+but its changelog has been expanded a bit as suggested by Dietmar.  It
+simply rearranges the EM code without changing its functionality, so the
+next patch looks more straightforward.
+
+Patch [7/9] is a somewhat updated counterpart of
+
+https://lore.kernel.org/linux-pm/2017201.usQuhbGJ8B@rjwysocki.net/
+
+It still changes the EM code to allow a perf domains with one-element states
+table to be registered without providing the :active_power() callback (which
+is then done in the last patch), but it is somewhat simpler.  It also
+contains some discussion regarding the requirement that the capacity of
+all CPUs in a perf domain must be the same.  In a short summary, I'm not
+convinced that it is actually valid.
+
+Patches [8-9/9] modify intel_pstate.  The first one is preparatory, but it
+is useful for explaining the basic concept, which is "hybrid domains" that
+each contain CPUs of the same type.
+
+The last patch is just the registration of EM perf domains (one for each hybrid
+domain), expanding them when needed and rebuilding sched domains in some corner
+cases.  It also contains some discussion that doesn't technically belong to the
+changelog, but is useful for explaining the background for some decisions.
+
+Please refer to the individual patch changelogs for details.
+
+For easier access, the series is available on the experimental/intel_ostate
+branch in linux-pm.git:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=experimental/intel_pstate
+
+Thanks!
+
+or
+
+https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=experimental/intel_pstate
+
+Thanks!
+
+
+
 
