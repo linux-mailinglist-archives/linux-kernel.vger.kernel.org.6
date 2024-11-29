@@ -1,210 +1,116 @@
-Return-Path: <linux-kernel+bounces-425978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E0F9DED3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:20:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0371B9DED3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:30:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DAC282269
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 22:20:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C435282487
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 22:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AD51A704C;
-	Fri, 29 Nov 2024 22:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2F11A08C1;
+	Fri, 29 Nov 2024 22:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5p0Hl5t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="cYEAoFVA"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3B454279;
-	Fri, 29 Nov 2024 22:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1AC54279
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 22:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732918794; cv=none; b=ElKjYT6ihijsR7xeFMNgBKlX6N+4LnxQ7V463x0N21dtiag40lu2YUTnMC0cZd0kp82lgjocDhfqlv/lpAUt7Cyt2PJ63H/FKeCCv5dEjE8xClywL1AQcpyE24NIfB4064JaYiaW8vWVPYW9M+KXRHRx5+JOXdjy94Zk/iCWLYc=
+	t=1732919403; cv=none; b=K88hasBlwe5GxH47bpock3LIXiXRuYRXV8q41YrZGBXLZo0LyLY9ZHpeuSGliNOSNzlokcAmpFE6TbbdlgC5iV2xvO/ZVrLThg4GYWhGS7nMIEnIamw3YNuy7mYxJ6N8iCKb0+sZOr7OWvpUdsCk+PDzsW6qJocgiou8Mczhodg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732918794; c=relaxed/simple;
-	bh=OJvU5bLoYGZXh8qACQ/T6IEV8oDjNatqYL+CeW3HsJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6J+y4trG6gaP981SbMfKlABk0A+efDzgh2pSzsX4f2H5OVWBI+A+eLx/O0G9lnsKR0kdOK4WeFSIDRs5Iy7DE32Hy3TwL9zQxTf6mmSqqtklFQRdGDL7weOpHUjJzfdf5YN9hI+7nEYJ7PLJV4SkVAOHiijyaZUHriuaHgpkrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5p0Hl5t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C894C4CECF;
-	Fri, 29 Nov 2024 22:19:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732918794;
-	bh=OJvU5bLoYGZXh8qACQ/T6IEV8oDjNatqYL+CeW3HsJg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o5p0Hl5t68sOGrNrYENKMovE5NztdhOpEAFABibzPZGUoqz1AXXaCH53QUmqJu9yj
-	 4Ymv5lTSZbEsDt+NPkbGOI0BMOSI/hhFnrmJFW+/qqVN7darYuDK67nomYfyn1WTZW
-	 BFRJMR/Fl9FeauFwTeTH3phw520rl/KLfJopadlpHQUp+IZrgAicwA5DrSA19U8kSy
-	 DpTFETeRTKi33P/1gcVkoaLTCtVby2dZtM0i0fCZSI8+UVXXGJuKWkaLG6dG9bq/8l
-	 w9ueF6Q3rudD7ZWIlpxFt0GwISNHkjcxLh8drdyWqw8+a9ohium7+Z6XshqrmZWZxx
-	 DWCgNchAqIpvQ==
-Date: Fri, 29 Nov 2024 23:19:51 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
-	x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Nicolas Saenz Julienne <nsaenzju@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 11/15] context-tracking: Introduce work deferral
- infrastructure
-Message-ID: <Z0o-B1ONq4wL1RHc@pavilion.home>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-12-vschneid@redhat.com>
- <Zz2_7MbxvfjKsz08@pavilion.home>
- <Zz3w0o_3wZDgJn0K@localhost.localdomain>
- <xhsmho729hlv0.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <Zz4cqfVfyb1enxql@localhost.localdomain>
- <xhsmh1pz39v0k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <Z0Oeme2yhxF_ArX0@pavilion.home>
- <xhsmhttbqm1s2.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1732919403; c=relaxed/simple;
+	bh=US4amykFr5ddVKxjiqf9qV7P1EFpR8NMhdlERjZso+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bcB1wKR/pvDPQUEr25USn8QDHitI3xqmG6qA8L8V+PGrlsHf2F49y1h5T4Ki+byjva79JoNRGrBY0Vs61Xd2SqEfP5ah8lwz98co+QmXJAvKIKtb4FRHjrJ9OFN8HL0lZ7qFIy3Crh4aCevk2ZadibuJat0jid16hDvnw1FNbNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=cYEAoFVA; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so419046266b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 14:30:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1732919400; x=1733524200; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hqk8vkSIGyKesedtaum1t29b3vRP4R5QQLHeiE2zpek=;
+        b=cYEAoFVAoqxdiCPSyhaqHPdnB3i2AHNJAhHmgMK23K+lENosGfFjRnFF8S1Dm3kY18
+         hq3VWUCiiZ+PsE6/rdL9vRZRqio1chzabuUFl7SfY2MCe/vpu4r5GXBBa48NOflbMzqE
+         8J/at3EN44E8LcasKrpuf9Nzr6HGNYSR3P2V1HroGkcnSO3yjQRgVce7h9B+Gg/I8+CY
+         Xcn5ntftO1ReNVjoeczMvvPd+hcvfBLIBZ0ucAd2TBmdMPTqEQ7gtipuOBazEZwyyiEE
+         5Zv/O6z/YUJqo5U5Ja08ZC+jen910T3k0xVT0cq9ckLQUsgLZjm/Re1ACkmGoaSeXlYp
+         n5dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732919400; x=1733524200;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hqk8vkSIGyKesedtaum1t29b3vRP4R5QQLHeiE2zpek=;
+        b=rpWeGr8S1hIIkWFXoOmLoFAIJfGZS4vQFVzqpcKZNd+whrE3wE+tW9wFs9VO0kpP6Z
+         qCk3mc9nNJCU/Nt+Ri3b0mMzWbThjIW8awMQm7/seh3NG1A9OTCAty6Q8Amt63P6Pz9q
+         YSNzd8tz+Vsx5Adpsy+2mn8KcJJc2dkGyUeCSfhurMLycOFQ1GsNxUw24qDpqUg3SFMW
+         penINTaiul8t/qIu6wk1AfREZwtNHXvY5VPBbA4GP6BRNaBfLN0hy5H1jkdrrRwYSTru
+         DymCcre6I9u97x14wg4F5SSGyvhvJwNXbKiGyhnDCROBhJc997zwMQR9NMbWUTGfJtN3
+         DjGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgEQYchhELWnjtwykv6kMC53JpQWCj8tn25SDBqVzQ3bJp70YmhTTxd6ZH6YrmllTVY6n7iKsoApeobqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrGKVtHJrAJwLPlXDHFowKY5nNNP8xCiglsnhD3zXTEQnX9/JE
+	/ngu97pgxpc9BKjJUNZfbeI0+czb7MTWJsuShdGWsi6D2ty4mLeIMyi3DjuR+dmesY5yj32fs7h
+	itTzTHSGaoaC1sUpdSRVSXMovlU2WtR/l3t2D4Q==
+X-Gm-Gg: ASbGncvhK6IIf6t3iTaMwkvi9htjeD0zCSKLy4zoNNWnvjf6el1/QkKmjwS1+jMnot4
+	bNY5Ubkc79lNBTYrK56cK/dftCpGhImjvepaE5XiU4GVNTph+48w+0p/wEf+6
+X-Google-Smtp-Source: AGHT+IGD6U3oaxtSMZQVfdy9TFXf1JM6pq//zBUlUW4tdizRmZ1hS6c7zHoDGfiwaAYKXgF9d5AcGO7Xuq+LWbOYwC4=
+X-Received: by 2002:a17:906:4c2:b0:aa2:c98:a078 with SMTP id
+ a640c23a62f3a-aa581076b06mr1442894966b.57.1732919400359; Fri, 29 Nov 2024
+ 14:30:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <xhsmhttbqm1s2.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+References: <CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com>
+ <3990750.1732884087@warthog.procyon.org.uk>
+In-Reply-To: <3990750.1732884087@warthog.procyon.org.uk>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Fri, 29 Nov 2024 23:29:49 +0100
+Message-ID: <CAKPOu+96b4nx3iHaH6Mkf2GyJ-dr0i5o=hfFVDs--gWkN7aiDQ@mail.gmail.com>
+Subject: Re: 6.12 WARNING in netfs_consume_read_data()
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Fri, Nov 29, 2024 at 05:40:29PM +0100, Valentin Schneider a écrit :
-> On 24/11/24 22:46, Frederic Weisbecker wrote:
-> > Le Fri, Nov 22, 2024 at 03:56:59PM +0100, Valentin Schneider a écrit :
-> >> On 20/11/24 18:30, Frederic Weisbecker wrote:
-> >> > Le Wed, Nov 20, 2024 at 06:10:43PM +0100, Valentin Schneider a écrit :
-> >> >> On 20/11/24 15:23, Frederic Weisbecker wrote:
-> >> >>
-> >> >> > Ah but there is CT_STATE_GUEST and I see the last patch also applies that to
-> >> >> > CT_STATE_IDLE.
-> >> >> >
-> >> >> > So that could be:
-> >> >> >
-> >> >> > bool ct_set_cpu_work(unsigned int cpu, unsigned int work)
-> >> >> > {
-> >> >> >    struct context_tracking *ct = per_cpu_ptr(&context_tracking, cpu);
-> >> >> >    unsigned int old;
-> >> >> >    bool ret = false;
-> >> >> >
-> >> >> >    preempt_disable();
-> >> >> >
-> >> >> >    old = atomic_read(&ct->state);
-> >> >> >
-> >> >> >    /* CT_STATE_IDLE can be added to last patch here */
-> >> >> >    if (!(old & (CT_STATE_USER | CT_STATE_GUEST))) {
-> >> >> >            old &= ~CT_STATE_MASK;
-> >> >> >            old |= CT_STATE_USER;
-> >> >> >    }
-> >> >>
-> >> >> Hmph, so that lets us leverage the cmpxchg for a !CT_STATE_KERNEL check,
-> >> >> but we get an extra loop if the target CPU exits kernelspace not to
-> >> >> userspace (e.g. vcpu or idle) in the meantime - not great, not terrible.
-> >> >
-> >> > The thing is, what you read with atomic_read() should be close to reality.
-> >> > If it already is != CT_STATE_KERNEL then you're good (minus racy changes).
-> >> > If it is CT_STATE_KERNEL then you still must do a failing cmpxchg() in any case,
-> >> > at least to make sure you didn't miss a context tracking change. So the best
-> >> > you can do is a bet.
-> >> >
-> >> >>
-> >> >> At the cost of one extra bit for the CT_STATE area, with CT_STATE_KERNEL=1
-> >> >> we could do:
-> >> >>
-> >> >>   old = atomic_read(&ct->state);
-> >> >>   old &= ~CT_STATE_KERNEL;
-> >> >
-> >> > And perhaps also old |= CT_STATE_IDLE (I'm seeing the last patch now),
-> >> > so you at least get a chance of making it right (only ~CT_STATE_KERNEL
-> >> > will always fail) and CPUs usually spend most of their time idle.
-> >> >
-> >> 
-> >> I'm thinking with:
-> >> 
-> >>         CT_STATE_IDLE		= 0,
-> >>         CT_STATE_USER		= 1,
-> >>         CT_STATE_GUEST		= 2,
-> >>         CT_STATE_KERNEL		= 4, /* Keep that as a standalone bit */
-> >
-> > Right!
-> >
-> >> 
-> >> we can stick with old &= ~CT_STATE_KERNEL; and that'll let the cmpxchg
-> >> succeed for any of IDLE/USER/GUEST.
-> >
-> > Sure but if (old & CT_STATE_KERNEL), cmpxchg() will consistently fail.
-> > But you can make a bet that it has switched to CT_STATE_IDLE between
-> > the atomic_read() and the first atomic_cmpxchg(). This way you still have
-> > a tiny chance to succeed.
-> >
-> > That is:
-> >
-> >    old = atomic_read(&ct->state);
-> >    if (old & CT_STATE_KERNEl)
-> >       old |= CT_STATE_IDLE;
-> >    old &= ~CT_STATE_KERNEL;
-> >
-> >
-> >    do {
-> >       atomic_try_cmpxchg(...)
-> >
-> > Hmm?
-> 
-> But it could equally be CT_STATE_{USER, GUEST}, right? That is, if we have
-> all of this enabled them we assume the isolated CPUs spend the least amount
-> of time in the kernel, if they don't we get to blame the user.
+On Fri, Nov 29, 2024 at 1:41=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
+> Could you try:
+>
+>         https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs=
+.git/log/?h=3Dnetfs-writeback
+>
+> I think the patches there should fix it.
 
-Unless CONTEXT_TRACKING_WORK_IDLE=y yes.
+I have encountered multiple hangs with that branch; for example:
 
-Anyway that's just a detail that can be refined in the future. I'm fine with
-just clearing CT_STATE_KERNEL and go with that.
+ [<0>] folio_wait_private_2_killable+0xfb/0x180
+ [<0>] netfs_write_begin+0xe0/0x450
+ [<0>] ceph_write_begin+0x27/0x50
+ [<0>] generic_perform_write+0xcd/0x280
+ [<0>] ceph_write_iter+0x4d9/0x640
+ [<0>] iter_file_splice_write+0x308/0x550
+ [<0>] splice_file_range_actor+0x29/0x40
+ [<0>] splice_direct_to_actor+0xee/0x270
+ [<0>] splice_file_range+0x80/0xc0
+ [<0>] ceph_copy_file_range+0xb5/0x5b0
+ [<0>] vfs_copy_file_range+0x320/0x5b0
+ [<0>] __x64_sys_copy_file_range+0xef/0x200
+ [<0>] do_syscall_64+0x64/0x100
+ [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Thanks.
+I can't be 100% sure if this was caused by your branch or if this is
+just another 6.12 regression, but I haven't seen this with 6.11.
 
