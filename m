@@ -1,276 +1,268 @@
-Return-Path: <linux-kernel+bounces-425753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D759DEAB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:11:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DDD163418
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:10:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5478114B075;
-	Fri, 29 Nov 2024 16:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="fSzEwOTR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="46JWbP08"
-Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47D19DEABA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:13:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F5A168DA;
-	Fri, 29 Nov 2024 16:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64B6F2817D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:13:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5EE14A098;
+	Fri, 29 Nov 2024 16:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GI3ZQH3z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494AB168DA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732896653; cv=none; b=Y12KsgMA+y+BGP2yc3Ws8DWyVn9Wez/XVEMn2SoNoB1e2gwEcgIedzW/RbEb+aBCNvt8PEzrYYMc048IhmnJDywW8ssBKtEu7BGxkzUsSSRWGKcgzjW3e438f/3YnwobHvmsVXZ7g2+fymxvD04N1Fu8b4OnFEp/wbxRp6UfuqA=
+	t=1732896780; cv=none; b=H2Sd5APxeqikB1Ar+hNuSIF+otKw+wVgwcPIhJQtuuoJAprSOxoQAqNrDzYSn2zkV/wiZVhEiGFdviMow02pqICa1+RlhMKH+welNJoh4gZ4xgQB7NxlcprtGlaVHvWH9p6yhqp+KapPNadFoblPToOjDl3dDHLPBsexmxG6dyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732896653; c=relaxed/simple;
-	bh=JFetJ0WzBBJsSHNN5vePTOMGR91U7H26ZU/3zPT4BMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ROJDO6SMcmw7IeCBqg+XEMaU/Y6HRAUg/FMglUwEmU1kuVmanf/jUZYRy2kOLyTOkE/wtsoJjHdUzE4Dvata4ynaQ6ilW84oBiGQpHEJP3yWRMJiswii4DhJXftkLNQhmAhbzTWM1DrngkFo2u6EckxDeToOBOk98kNqKnBOyEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=fSzEwOTR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=46JWbP08; arc=none smtp.client-ip=202.12.124.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id 93E3A1D40D4A;
-	Fri, 29 Nov 2024 11:10:47 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Fri, 29 Nov 2024 11:10:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1732896647; x=1732900247; bh=71hovPwKy11ySr9JPOOX62sWDw4+4hQe
-	L1AKeFDFs8Y=; b=fSzEwOTRbOAu+yS0faDIUkxvfVommRCUVTaE/XGUKqQhgH9s
-	saIJuLUfP3jvJyIPC1pFJWNnmAJOa7vSUfMLY0qmOXlRqnfVdb3vM9CZt87AGV33
-	tv7i8kA/kVrOuS09M1wQ1seDAUGWM4+XrTVG7BNaoIWcN6zG+gboi3TxWN8KEOu7
-	8ZUcupcudmxSNH8uHYEInFaWJS6/iunieP9a0ClrawaXAfPWwRsgPdeLz9Tj2K5t
-	1XL/l102jxs/HrxDWrqk+c2uRMfSv7kzB3Yg335KL20M05n40IMG6ihCKvb4gVIj
-	7CNpHB3zhLI0dKhuB5pXJ0LFXPPJtqZXOGP/5g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732896647; x=
-	1732900247; bh=71hovPwKy11ySr9JPOOX62sWDw4+4hQeL1AKeFDFs8Y=; b=4
-	6JWbP08Fl9Q1oWJC9fi2bJrtwFgdpZJqeOz5cgPNKdGqG57vGdlTssdKVzXhwqRa
-	kkGee98gTjvrrRR13MlkBCmplU338ifi2AE/sw4x/0dfM+HkS/2bivjZ7rnQsp+G
-	biN5ANj/KUlH4nOwCsc1ksnHg8Dqb7zs+X7w7GbgcYthiBGfbG2UY7R/rqAQZdPv
-	a7N6uKcD3DuVJcUn+ZG2oix96dMYxAUfCdQh5tYngubtEpGp4hGMT2HfZ1LDtp14
-	HZy7g4Qh1pVX/pYHwpRHK0f+9itGd9ijDEI6VCwrVbT0lpf1+jTc+RMymN6FQXBQ
-	Wpjf9U5PMYyNg24KArn6g==
-X-ME-Sender: <xms:hudJZxueW_kVs2ohxxUEPv_tJaLLeBPRnEItJkehkTt2-RusJrNIJg>
-    <xme:hudJZ6ev6O6QFFK6JYMoo_gXOM0XYz71vUAASUvlmhiJ2Fc7TvFQPgPKXyG9d6S8L
-    G5OonhD-vgc47jZkjQ>
-X-ME-Received: <xmr:hudJZ0wsN35bCznX5KQsKyfhgXb3hm5clUdCb31XgmJ_OzmUQn90Vbbtyn0e>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgdekfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
-    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
-    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepveduvddtveehteekvdeiueegheeiveej
-    keetfefgfeeffeejgfdvfedtleeufeegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsuges
-    qhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepuddupdhmohguvgepsh
-    hmthhpohhuthdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtgho
-    mhdprhgtphhtthhopegrnhhtohhnihhosehophgvnhhvphhnrdhnvghtpdhrtghpthhtoh
-    epvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprh
-    gtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhmpdhrtghpthht
-    oheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:h-dJZ4OQPVI-aJ407RFetLnV2QX09M6Pt4cKiikVdSQl7RoBitFTdw>
-    <xmx:h-dJZx_-E2Pt_PFCgtdz4ISYZzgv-YVBiOXwInL1jvt3-3wKfzbxOQ>
-    <xmx:h-dJZ4WpTc3NwUAE8aaIWubeXwv16SLuSEue_6EDNZAf1A2VX1cquA>
-    <xmx:h-dJZyc9mD9m4yE-PZ2bKgQOcnsrfqqPl2wh2M5tgy23BiTApP_7qQ>
-    <xmx:h-dJZ9S_eUS3ZsCvHyQHod2WvHzLv7cA3uzjeQUwYpsuNgZTP1g8eghy>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 29 Nov 2024 11:10:46 -0500 (EST)
-Date: Fri, 29 Nov 2024 17:10:43 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Antonio Quartulli <antonio@openvpn.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH net-next v11 09/23] ovpn: implement basic RX path (UDP)
-Message-ID: <Z0nng5uN6dlQrQEa@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-9-de4698c73a25@openvpn.net>
- <eabe28f9-d6a4-4bdc-a988-418e5137f3cb@gmail.com>
- <288f68cd-533a-4253-85c4-951cc4a9c862@openvpn.net>
- <aac209cc-589c-4b8a-9123-e44df9e794e4@gmail.com>
+	s=arc-20240116; t=1732896780; c=relaxed/simple;
+	bh=CmjVgATqZJEEX4NyzDINfv8QhIxwJcdSI48pre3gvVg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rwUIQpGPfEqHXCT/Mh38EyCt7Uil/YtwrwlmqXNRlG/M1MhwCQVFDTeQ7bqulljPUHb64QQCWiBaDfwoNmm9/mZdHSXBqwrxHoOYE6b0PF8euL6ECixdtJ96VYdyj3UrIO5Gm7yhj/TgPx4mLKWu8hXuSGSNCwYsb1ZjqiHM2m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GI3ZQH3z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732896777;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ev/779P6/ivLvufd6X9UU2VfWDhin/qY7HAkdMd5KSY=;
+	b=GI3ZQH3zZ5CNAF7DAiice1T2nlH+wvm5H3ZLMfP8veGcZmMJsjpBsdo8iaoWXUgu8ha1jt
+	hl6mjUlS8sQEMomw5AR16AoQfRTsuunQD9OnVOIhHYHElFtUlZQwV/6hZfva1coLKZbnfE
+	e3mQu2OVf0OegQz+SqPcXj9yrJ+alR4=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-554-YgWwgnsOP2WN7KVdHaU51w-1; Fri, 29 Nov 2024 11:12:56 -0500
+X-MC-Unique: YgWwgnsOP2WN7KVdHaU51w-1
+X-Mimecast-MFC-AGG-ID: YgWwgnsOP2WN7KVdHaU51w
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d881cf6707so13972986d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:12:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732896775; x=1733501575;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ev/779P6/ivLvufd6X9UU2VfWDhin/qY7HAkdMd5KSY=;
+        b=u9LEq/eo3h4XUrJedXSDL3p/OBqaFmn+xp4w7jOisO24t9v2KYt4cc1H945D/38GKj
+         JTjiiI9Vaf6aoP5KXfevzsLBJynnOoJj7GOD684mlAXcqaJGbEP1/Er1S3gs2NY4EnZ0
+         XKv1+jRmKx07FAfpOGBt8tLsXuguVJv+ewZujwuPl6EYX7GTXJc/LsSXEmaUO0FiSbBX
+         9f6IMZsoq0ppNeVDM3eEyWQbKbpudkpqLS+c7oVpWfafYd6TX8g1KiDs0oambk2IFnin
+         noqiy/fHEtQhPFkSCvQk3unO0Bbi+x4Xx+UC98XN22Cqhz4heyu9ZHmm5QaOtGMK5Q7L
+         EiLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXn3fOG8GV2W3hXpyTOLyXU7WMy3a363TCPa+DU9dZyP4yWvMh1ehmQ8dTGbQ4co6YOVNfzimu2HCYorL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww24r2tVF0P/lRAwivwRJry/tJOoLS6tpItnXz5Rx0YA+9ROhS
+	RRvyrecGCbvsLx8WoFMaFRbjCASzyRFIPfkGRiiWzRiHAbr00jVnD9P4Oy80cUL4oLfScF+Ak/y
+	xBOsWWKOPSvw6PyOn+psS0cnast/Xwa7oF39DFjRHdlHa181knrMtYK/H/9koCA==
+X-Gm-Gg: ASbGncsA75JhkrTHukBNxHGWFPtf2ZZlkxxFx3tb0RLa8L7i3PbYKMirGbqiE7ykKZI
+	qavy7SfnYxx7mDk6ry2fx40UnWApFZ2iLyxKqeXo+9eeH1GR72iaaRuAxEg+qUZZ0/RzUDvC3bF
+	pn6KiQ5QXk5sXLjqNvz/gl1FB7uwcxtqxyDfYwbW1jwowb3kqMX2gJiJyJW89DIZAkJwsa99sn0
+	1jpCG/tk00+duq8dfg4vEySppa4Jtp7NtbTL77btRKA8SIbHJUvuxC3XkSNdv66nSEddaiCZ2NH
+	MgTuBlWTwXfR/AxAN+ey2/3n13tCTMXjKXEKxQ0W3w==
+X-Received: by 2002:a05:6214:21e8:b0:6cb:ef1f:d1ab with SMTP id 6a1803df08f44-6d864d8aef7mr160482116d6.30.1732896775283;
+        Fri, 29 Nov 2024 08:12:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IExpXj2o0mq4c/YcClrxXHbwMCytsXtpgHlNKbRHUYBfNPW8ClGEsBKWB8n/hlgLFKeXxg2cQ==
+X-Received: by 2002:a05:6214:21e8:b0:6cb:ef1f:d1ab with SMTP id 6a1803df08f44-6d864d8aef7mr160481476d6.30.1732896774760;
+        Fri, 29 Nov 2024 08:12:54 -0800 (PST)
+Received: from thinkpad-p1.localdomain (pool-174-112-193-187.cpe.net.cable.rogers.com. [174.112.193.187])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d87516342fsm17869646d6.26.2024.11.29.08.12.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 08:12:54 -0800 (PST)
+Message-ID: <de1201930a55aa3b13f413b9bee986d85e2b4283.camel@redhat.com>
+Subject: Re: [PATCH v8 1/2] cacheinfo: Allocate memory during CPU hotplug if
+ not done from the primary CPU
+From: Radu Rendec <rrendec@redhat.com>
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, x86@kernel.org
+Cc: Andreas Herrmann <aherrmann@suse.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Chen Yu <yu.c.chen@intel.com>, Len Brown
+ <len.brown@intel.com>, Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen
+ <puwen@hygon.cn>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Sudeep
+ Holla <sudeep.holla@arm.com>, Srinivas Pandruvada
+ <srinivas.pandruvada@linux.intel.com>,  Will Deacon <will@kernel.org>,
+ Zhang Rui <rui.zhang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>, 
+ Huang Ying <ying.huang@intel.com>, Ricardo Neri <ricardo.neri@intel.com>,
+ linux-kernel@vger.kernel.org
+Date: Fri, 29 Nov 2024 11:12:52 -0500
+In-Reply-To: <20241128002247.26726-2-ricardo.neri-calderon@linux.intel.com>
+References: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
+	 <20241128002247.26726-2-ricardo.neri-calderon@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aac209cc-589c-4b8a-9123-e44df9e794e4@gmail.com>
 
-2024-11-26, 02:32:38 +0200, Sergey Ryazanov wrote:
-> On 15.11.2024 17:02, Antonio Quartulli wrote:
-> > On 11/11/2024 02:54, Sergey Ryazanov wrote:
-> > [...]
-> > > > +    skb_reset_transport_header(skb);
-> > > > +    skb_probe_transport_header(skb);
-> > > > +    skb_reset_inner_headers(skb);
-> > > > +
-> > > > +    memset(skb->cb, 0, sizeof(skb->cb));
-> > > 
-> > > Why do we need to zero the control buffer here?
-> > 
-> > To avoid the next layer to assume the cb is clean while it is not.
-> > Other drivers do the same as well.
-> 
-> AFAIR, there is no convention to clean the control buffer before the handing
-> over. The common practice is a bit opposite, programmer shall not assume
-> that the control buffer has been zeroed.
-> 
-> Not a big deal to clean it here, we just can save some CPU cycles avoiding
-> it.
-> 
-> > I think this was recommended by Sabrina as well.
-> 
-> Curious. It's macsec that does not zero it, or I've not understood how it
-> was done.
+On Wed, 2024-11-27 at 16:22 -0800, Ricardo Neri wrote:
+> Commit 5944ce092b97 ("arch_topology: Build cacheinfo from primary CPU")
+> adds functionality that architectures can use to optionally allocate and
+> build cacheinfo early during boot. Commit 6539cffa9495 ("cacheinfo: Add
+> arch specific early level initializer") lets secondary CPUs correct (and
+> reallocate memory) cacheinfo data if needed.
+>=20
+> If the early build functionality is not used and cacheinfo does not need
+> correction, memory for cacheinfo is never allocated. x86 does not use the
+> early build functionality. Consequently, during the cacheinfo CPU hotplug
+> callback, last_level_cache_is_valid() attempts to dereference a NULL
+> pointer:
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0 BUG: kernel NULL pointer dereference, address: 0=
+000000000000100
+> =C2=A0=C2=A0=C2=A0=C2=A0 #PF: supervisor read access in kernel mode
+> =C2=A0=C2=A0=C2=A0=C2=A0 #PF: error_code(0x0000) - not present page
+> =C2=A0=C2=A0=C2=A0=C2=A0 PGD 0 P4D 0
+> =C2=A0=C2=A0=C2=A0=C2=A0 Oops: 0000 [#1] PREEPMT SMP NOPTI
+> =C2=A0=C2=A0=C2=A0=C2=A0 CPU: 0 PID 19 Comm: cpuhp/0 Not tainted 6.4.0-rc=
+2 #1
+> =C2=A0=C2=A0=C2=A0=C2=A0 RIP: 0010: last_level_cache_is_valid+0x95/0xe0a
+>=20
+> Allocate memory for cacheinfo during the cacheinfo CPU hotplug callback i=
+f
+> not done earlier.
+>=20
+> Moreover, before determining the validity of the last-level cache info,
+> ensure that it has been allocated. Simply checking for non-zero
+> cache_leaves() is not sufficient, as some architectures (e.g., Intel
+> processors) have non-zero cache_leaves() before allocation.
+>=20
+> Dereferencing NULL cacheinfo can occur in update_per_cpu_data_slice_size(=
+).
+> This function iterates over all online CPUs. However, a CPU may have come
+> online recently, but its cacheinfo may not have been allocated yet.
+>=20
+> While here, remove an unnecessary indentation in allocate_cache_info().
+>=20
+> Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
+> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+> Reviewed-by: Radu Rendec <rrendec@redhat.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Tested-by: Andreas Herrmann <aherrmann@suse.de>
+> Fixes: 6539cffa9495 ("cacheinfo: Add arch specific early level initialize=
+r")
+> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> ---
+> Cc: Andreas Herrmann <aherrmann@suse.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Chen Yu <yu.c.chen@intel.com>
+> Cc: Huang Ying <ying.huang@intel.com>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: Nikolay Borisov <nik.borisov@suse.com>
+> Cc: Radu Rendec <rrendec@redhat.com>
+> Cc: Pierre Gondois <Pierre.Gondois@arm.com>
+> Cc: Pu Wen <puwen@hygon.cn>
+> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: stable@vger.kernel.org=C2=A0# 6.3+
+> ---
+> Change since v7:
+> =C2=A0* None
+>=20
+> Changes since v6:
+> =C2=A0* Merged patches 1 and 2 of v6 into one. (Borislav)
+> =C2=A0* Merged the history of patches 1 and 2ino this patch.
+> =C2=A0* Kept the Reviewed-by and Tested-by tags from the two merged patch=
+es.
+> =C2=A0* Fixed a formatting issue in allocate_cache_info(). (Borislav)
+>=20
+> Changes since v5:
+> =C2=A0* Fixed nonsensical subject (Nikolay).
+> =C2=A0* Added Reviewed-by and Tested-by tags from Andreas. Thanks!
+> =C2=A0* Added Reviewed-by tag from Nikolay. Thanks!
+>=20
+> Changes since v4:
+> =C2=A0* Combined checks for per_cpu_cacheinfo() and cache_leaves() in a s=
+ingle
+> =C2=A0=C2=A0 line. (Sudeep)
+> =C2=A0* Added Reviewed-by tag from Sudeep. Thanks!
+>=20
+> Changes since v3:
+> =C2=A0* Added Reviewed-by tag from Radu and Sudeep. Thanks!
+>=20
+> Changes since v2:
+> =C2=A0* Introduced this patch.
+>=20
+> Changes since v1:
+> =C2=A0* N/A
+>=20
+> ---
+> The motivation for commit 5944ce092b97 was to prevent a BUG splat in
+> PREEMPT_RT kernels during memory allocation. This splat is not observed o=
+n
+> x86 because the memory allocation for cacheinfo happens in
+> detect_cache_attributes() from the cacheinfo CPU hotplug callback.
+>=20
+> The dereference of a NULL cacheinfo is not observed today because
+> cache_leaves(cpu) is zero until after init_cache_level() is called
+> (during the CPU hotplug callback). A subsequent changeset will set
+> the number of cache leaves earlier and the NULL-pointer dereference
+> will be observed.
+> ---
+> =C2=A0drivers/base/cacheinfo.c | 11 +++++++----
+> =C2=A01 file changed, 7 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+> index 7a7609298e18..a1afc478e0e8 100644
+> --- a/drivers/base/cacheinfo.c
+> +++ b/drivers/base/cacheinfo.c
+> @@ -58,7 +58,7 @@ bool last_level_cache_is_valid(unsigned int cpu)
+> =C2=A0{
+> =C2=A0	struct cacheinfo *llc;
+> =C2=A0
+> -	if (!cache_leaves(cpu))
+> +	if (!cache_leaves(cpu) || !per_cpu_cacheinfo(cpu))
+> =C2=A0		return false;
+> =C2=A0
+> =C2=A0	llc =3D per_cpu_cacheinfo_idx(cpu, cache_leaves(cpu) - 1);
+> @@ -466,8 +466,7 @@ int __weak populate_cache_leaves(unsigned int cpu)
+> =C2=A0static inline
+> =C2=A0int allocate_cache_info(int cpu)
+> =C2=A0{
+> -	per_cpu_cacheinfo(cpu) =3D kcalloc(cache_leaves(cpu),
+> -					 sizeof(struct cacheinfo), GFP_ATOMIC);
+> +	per_cpu_cacheinfo(cpu) =3D kcalloc(cache_leaves(cpu), sizeof(struct cac=
+heinfo), GFP_ATOMIC);
+> =C2=A0	if (!per_cpu_cacheinfo(cpu)) {
+> =C2=A0		cache_leaves(cpu) =3D 0;
+> =C2=A0		return -ENOMEM;
+> @@ -539,7 +538,11 @@ static inline int init_level_allocate_ci(unsigned in=
+t cpu)
+> =C2=A0	 */
+> =C2=A0	ci_cacheinfo(cpu)->early_ci_levels =3D false;
+> =C2=A0
+> -	if (cache_leaves(cpu) <=3D early_leaves)
+> +	/*
+> +	 * Some architectures (e.g., x86) do not use early initialization.
+> +	 * Allocate memory now in such case.
+> +	 */
+> +	if (cache_leaves(cpu) <=3D early_leaves && per_cpu_cacheinfo(cpu))
+> =C2=A0		return 0;
+> =C2=A0
+> =C2=A0	kfree(per_cpu_cacheinfo(cpu));
 
-I only remember discussing a case [1] where one function within ovpn
-was expecting a cleared skb->cb to behave correctly but the caller did
-not clear it. In general, as you said, clearing cb "to be nice to
-other layers" is not expected. Sorry if some comments I made were
-confusing.
+Since Borislav explicitly said you were not supposed to keep the tags,
+I reviewed it again, and I'm OK to keep mine. Thanks!
 
-[1] https://lore.kernel.org/netdev/ZtXOw-NcL9lvwWa8@hog
+Reviewed-by: Radu Rendec <rrendec@redhat.com>
 
+--
+Best regards,
+Radu
 
-> > > > +struct ovpn_struct *ovpn_from_udp_sock(struct sock *sk)
-> > > > +{
-> > > > +    struct ovpn_socket *ovpn_sock;
-> > > > +
-> > > > +    if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) !=
-> > > > UDP_ENCAP_OVPNINUDP))
-> > > > +        return NULL;
-> > > > +
-> > > > +    ovpn_sock = rcu_dereference_sk_user_data(sk);
-> > > > +    if (unlikely(!ovpn_sock))
-> > > > +        return NULL;
-> > > > +
-> > > > +    /* make sure that sk matches our stored transport socket */
-> > > > +    if (unlikely(!ovpn_sock->sock || sk != ovpn_sock->sock->sk))
-> > > > +        return NULL;
-> > > > +
-> > > > +    return ovpn_sock->ovpn;
-> > > 
-> > > Now, returning of this pointer is safe. But the following TCP
-> > > transport support calls the socket release via a scheduled work.
-> > > What extends socket lifetime and makes it possible to receive a UDP
-> > > packet way after the interface private data release. Is it correct
-> > > assumption?
-> > 
-> > Sorry you lost me when sayng "following *TCP* transp[ort support calls".
-> > This function is invoked only in UDP context.
-> > Was that a typ0?
-> 
-> Yeah, you are right. The question sounds like a riddle. I should eventually
-> stop composing emails at midnight. Let me paraphrase it.
-> 
-> The potential issue is tricky since we create it patch-by-patch.
-> 
-> Up to this patch the socket releasing procedure looks solid and reliable.
-> E.g. the P2P netdev destroying:
-> 
->   ovpn_netdev_notifier_call(NETDEV_UNREGISTER)
->     ovpn_peer_release_p2p
->       ovpn_peer_del_p2p
->         ovpn_peer_put
->           ovpn_peer_release_kref
->             ovpn_peer_release
->               ovpn_socket_put
->                 ovpn_socket_release_kref
->                   ovpn_socket_detach
->                     ovpn_udp_socket_detach
->                       setup_udp_tunnel_sock
->   netdev_run_todo
->     rcu_barrier  <- no running ovpn_udp_encap_recv after this point
-
-It's more the synchronize_net in unregister_netdevice_many_notify?
-rcu_barrier waits for pending kfree_rcu/call_rcu, synchronize_rcu
-waits for rcu_read_lock sections (see the comments for rcu_barrier and
-synchronize_rcu in kernel/rcu/tree.c).
-
->     free_netdev
-> 
-> After the setup_udp_tunnel_sock() call no new ovpn_udp_encap_recv() will be
-> spawned. And after the rcu_barrier() all running ovpn_udp_encap_recv() will
-> be done. All good.
-> 
-> Then, the following patch 'ovpn: implement TCP transport' disjoin
-> ovpn_socket_release_kref() and ovpn_socket_detach() by scheduling the socket
-> detach function call:
-> 
->   ovpn_socket_release_kref
->     ovpn_socket_schedule_release
->       schedule_work(&sock->work)
-> 
-> And long time after the socket will be actually detached:
-> 
->   ovpn_socket_release_work
->     ovpn_socket_detach
->       ovpn_udp_socket_detach
->         setup_udp_tunnel_sock
-> 
-> And until this detaching will take a place, UDP handler can call
-> ovpn_udp_encap_recv() whatever number of times.
-> 
-> So, we can end up with this scenario:
-> 
->   ovpn_netdev_notifier_call(NETDEV_UNREGISTER)
->     ovpn_peer_release_p2p
->       ovpn_peer_del_p2p
->         ovpn_peer_put
->           ovpn_peer_release_kref
->             ovpn_peer_release
->               ovpn_socket_put
->                 ovpn_socket_release_kref
->                   ovpn_socket_schedule_release
->                     schedule_work(&sock->work)
->   netdev_run_todo
->     rcu_barrier
->     free_netdev
-> 
->   ovpn_udp_encap_recv  <- called for an incoming UDP packet
->     ovpn_from_udp_sock <- returns pointer to freed memory
->     // Any access to ovpn pointer is the use-after-free
-> 
->   ovpn_socket_release_work  <- kernel finally ivoke the work
->     ovpn_socket_detach
->       ovpn_udp_socket_detach
->         setup_udp_tunnel_sock
-> 
-> To address the issue, I see two possible solutions:
-> 1. flush the workqueue somewhere before the netdev release
-> 2. set ovpn_sock->ovpn = NULL before scheduling the socket detach
-
-Going with #2, we could fully split detach into a synchronous part and
-async part (with async not needed for UDP). detach_sync clears the
-pointers (CBs, strp_stop(), ovpn_sock->ovpn, setup_udp_tunnel_sock) so
-that no more packets will be sent through the ovpn driver.
-
-Related to that topic, I'm not sure what's keeping a reference on the
-peer to guarantee it doesn't get freed before we're done with
-peer->tcp.tx_work at the end of ovpn_tcp_socket_detach. Maybe all this
-tcp stuff should move from the peer to ovpn_socket?
-
--- 
-Sabrina
 
