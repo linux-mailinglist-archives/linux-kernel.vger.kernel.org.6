@@ -1,152 +1,152 @@
-Return-Path: <linux-kernel+bounces-425527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB329DC339
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:09:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3844F9DC33D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:10:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0869B16430B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:09:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9356F1644CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE12F19CC06;
-	Fri, 29 Nov 2024 12:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D20319D884;
+	Fri, 29 Nov 2024 12:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PJfXO83S"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LIC54FVV"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA5E14C5B0;
-	Fri, 29 Nov 2024 12:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D8F19CD0B;
+	Fri, 29 Nov 2024 12:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732882192; cv=none; b=agtUbJqDFe+L2ZgeC1PgbrlWdRSeN05EVDIajxRSqQ+RUACFDWrsswzJ5Hfqr9SySfwMO9ja8LhfJrJYZTbpL+tTXCM6bnu1q4O1IiJAcLTfB8qfoZlfxykqBMEHOIaU2Z8DjzCEeM2Kh1FU7U6eBO/Z+BZ2rjp/GwHbUybfzRA=
+	t=1732882196; cv=none; b=kAwG+rqz7p1d5XWvJV4+aykLFDyC3+scy6KQfK2Dr0cAi1KlIo02KFwVky+eKOFIsUjqPPtBLXg087Cfkg8OvQW9vRnpJ6E5bSfRAxMJTG2DY3JlQ8R/Kq/8d4z7xkl1331++x1DDwCgdndpu2tRD/1UKV9oXV407Mnw4bdqPQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732882192; c=relaxed/simple;
-	bh=+9T5hDCUImgIsQR2tmkVDHCIFRYEKBBt7oXFAQYmXzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B1yN+PmAj1fJEdFyKVYjmk5x1dGJiZyCJWs+EPerhsy1RbaFx717u6xVoamOJpF38pN9bWWSaXXpSaW8aFJUd8WokhhcHU4dorxai1k3wnJ5xOrvc7H4fDdfCbybDz/BQRhR7EX29+hszVo+iyCGMl53VvZLMw1XR07xvo+hZlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PJfXO83S; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732882191; x=1764418191;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+9T5hDCUImgIsQR2tmkVDHCIFRYEKBBt7oXFAQYmXzs=;
-  b=PJfXO83SLibjy7RhzRaeDDlC0FK0YTqgSTtpjlk7O9vTbEAVSNNtAqRz
-   YAKOH3Qh10i54Pa8hNH1gHNbKCagkhR9ouRTnBi6hcEgmjIQiVj1jahyK
-   oR8Qpyxnnv9JO6Ie/IjnTqhq6IU5dcTZWiNyo2N0mo0shw/1gHkACEn/c
-   taWIO/R5fL9pKH6tN4TDuN2DzVeCSnmpQg6Mqm4s/nJfp/yjFG4FKBAnr
-   uuK6nNBliLcmoOtduXeF5AIGg6cR0zxIrsecueA2QlxpGhj8GCy+d+NTp
-   P6yTeXzY1vYVvDe0fU4xnpjcqJi6YdO0Qs/0mJWL1t3GVLCGaJPjxDdfk
-   w==;
-X-CSE-ConnectionGUID: luUSy2ZrTnSmbC1MiJ/o+A==
-X-CSE-MsgGUID: M8JdrM31Q0eRKgDn47Rr5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="58524769"
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="58524769"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 04:09:49 -0800
-X-CSE-ConnectionGUID: L224+3XaSS+/yyzPl/+ogQ==
-X-CSE-MsgGUID: p51c/rr4SJibhokZHpbfVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="96892792"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.245.167]) ([10.245.245.167])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 04:09:47 -0800
-Message-ID: <2d541e31-b5e0-41d9-9f08-8b6f0a20d716@linux.intel.com>
-Date: Fri, 29 Nov 2024 13:09:33 +0100
+	s=arc-20240116; t=1732882196; c=relaxed/simple;
+	bh=jAJdSp15+3ttSJ3dw0H0gS0lYJCcfjp4txGBVJvg2VE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEm7619t9u4mvs9uQewQDP+lmpTghNUJeW/NfyhoOj1se+UNo8lLZxO68GGIu7yABdbCidkQxfH5wYD8whFkEOoqOqkyGedFP1mHeKuLsCViUFlSfU4ZY4K6gHrcwTcCSNaSHpS3y+ZMowMuCs4emai7l3AVMw7cppdWixnBkZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LIC54FVV; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=bcF2+uKv+THIH1HdaMT8XOaR+gAw7l3df+j7RVgj46g=; b=LIC54FVVsAQLuUlBTptoz80eFn
+	MSRfSt+dFjzI6lE0IxP4+eO3AfNIPWaPx+KRxNT8QxQRrAANmNBj2pxnj3lVxl+Hg8Dr3tFldMqx2
+	9j8BZBF5GI6L+9YcDR3YSJxRbPfyTzaIksLpIJ3b7TykGXFGuwaT6Cyo+8lMBhezwpj0E5htokGpA
+	QtrEVISprtDXxdtjyG+h4BIoYdQv5mbPn0RqVVm1NdVIfOhJH+Nt9uL6McT3OIXeRjrkjndUappFX
+	4NAC7yxUvnKePBDWqfOX/o6IAy+0So6n+Us+PCVkbbYU1hAvuhQ9jxZVXRHX5WsOZtNkLrg99Bypj
+	RXXlSLPA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGzoa-00000001je5-2qlb;
+	Fri, 29 Nov 2024 12:09:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DBAC830026A; Fri, 29 Nov 2024 13:09:39 +0100 (CET)
+Date: Fri, 29 Nov 2024 13:09:39 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ruan Bonan <bonan.ruan@u.nus.edu>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"longman@redhat.com" <longman@redhat.com>,
+	"boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kpsingh@kernel.org" <kpsingh@kernel.org>,
+	"mattbobrowski@google.com" <mattbobrowski@google.com>,
+	"ast@kernel.org" <ast@kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"andrii@kernel.org" <andrii@kernel.org>,
+	"martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"eddyz87@gmail.com" <eddyz87@gmail.com>,
+	"song@kernel.org" <song@kernel.org>,
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"sdf@fomichev.me" <sdf@fomichev.me>,
+	"haoluo@google.com" <haoluo@google.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Fu Yeqi <e1374359@u.nus.edu>, akinobu.mita@gmail.com, tytso@mit.edu,
+	Jason@zx2c4.com
+Subject: Re: [BUG] possible deadlock in __schedule (with reproducer available)
+Message-ID: <20241129120939.GG35539@noisy.programming.kicks-ass.net>
+References: <24481522-69BF-4CE7-A05D-1E7398400D80@u.nus.edu>
+ <20241129173554.11e3b2b2f5126c2b72c6a78e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/4] x86/smp: Allow calling mwait_play_dead with an
- arbitrary hint
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, peterz@infradead.org,
- dave.hansen@linux.intel.com, tglx@linutronix.de, len.brown@intel.com,
- artem.bityutskiy@linux.intel.com
-References: <20241127161518.432616-1-patryk.wlazlyn@linux.intel.com>
- <20241127161518.432616-2-patryk.wlazlyn@linux.intel.com>
- <Z0lCtdZKzZQXTWxF@BLRRASHENOY1.amd.com>
-Content-Language: en-US
-From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-In-Reply-To: <Z0lCtdZKzZQXTWxF@BLRRASHENOY1.amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129173554.11e3b2b2f5126c2b72c6a78e@kernel.org>
 
->> The MWAIT instruction needs different hints on different CPUs to reach
->> specific idle states. The current hint calculation in mwait_play_dead()
->> code works in practice on current Intel hardware, but is not documented
->> and fails on a recent Intel's Sierra Forest and possibly some future
->> ones. Those newer CPUs' power efficiency suffers when the CPU is put
->> offline.
->>
->> Allow cpuidle code to provide mwait_play_dead with a known hint for
->> efficient play_dead code.
->
->
-> Just a couple of minor nits:
->
-> You could just reword this something along the lines of:
->
-> "Introduce a helper function to allow offlined CPUs to enter FFh idle
-> states with a specific MWAIT hint. The new helper will be used in
-> subsequent patches by the acpi_idle and intel_idle drivers. This patch
-> should not have any functional impact."
->
-> There is no need to mention MWAIT hint calculation and the Sierra
-> Forest failure in this patch, as this patch is not doing anything to
-> fix the issue. Very likely you will be covering that in Patch 4.
+On Fri, Nov 29, 2024 at 05:35:54PM +0900, Masami Hiramatsu wrote:
+> On Sat, 23 Nov 2024 03:39:45 +0000
+> Ruan Bonan <bonan.ruan@u.nus.edu> wrote:
+> 
+> > 
+> >        vprintk_emit+0x414/0xb90 kernel/printk/printk.c:2406
+> >        _printk+0x7a/0xa0 kernel/printk/printk.c:2432
+> >        fail_dump lib/fault-inject.c:46 [inline]
+> >        should_fail_ex+0x3be/0x570 lib/fault-inject.c:154
+> >        strncpy_from_user+0x36/0x230 lib/strncpy_from_user.c:118
+> >        strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+> >        bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
+> >        ____bpf_probe_read_user_str kernel/trace/bpf_trace.c:224 [inline]
+> 
+> Hmm, this is a combination issue of BPF and fault injection.
+> 
+> static void fail_dump(struct fault_attr *attr)
+> {
+>         if (attr->verbose > 0 && __ratelimit(&attr->ratelimit_state)) {
+>                 printk(KERN_NOTICE "FAULT_INJECTION: forcing a failure.\n"
+>                        "name %pd, interval %lu, probability %lu, "
+>                        "space %d, times %d\n", attr->dname,
+>                        attr->interval, attr->probability,
+>                        atomic_read(&attr->space),
+>                        atomic_read(&attr->times));
+> 
+> This printk() acquires console lock under rq->lock has been acquired.
+> 
+> This can happen if we use fault injection and trace event too because
+> the fault injection caused printk warning.
 
-Ok. I thought that giving some context on how the change originated might be
-useful, but people doesn't seem to like that that much ;]
+Ah indeed. Same difference though, if you don't know the context, most
+things are unsafe to do.
 
-> "(...) This patch should not have any functional impact."
+> I think this should be a bug of the fault injection, not tracing/BPF.
+> And to solve this issue, we may be able to check the context and if
+> it is tracing/NMI etc, fault injection should NOT make it failure.
 
-Yeah, forgot to put that no functional change intended.
+Well, it should be okay to cause the failure, but it must be very
+careful how it goes about doing that. Tripping printk() definitely is
+out.
 
->>
->> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
->> ---
->>  arch/x86/include/asm/smp.h |  4 +-
->>  arch/x86/kernel/smpboot.c  | 86 ++++++++++++++++++++------------------
->>  2 files changed, 49 insertions(+), 41 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
->> index ca073f40698f..ab90b95037f3 100644
->> --- a/arch/x86/include/asm/smp.h
->> +++ b/arch/x86/include/asm/smp.h
->> @@ -114,6 +114,7 @@ void wbinvd_on_cpu(int cpu);
->>  int wbinvd_on_all_cpus(void);
->>  
->>  void smp_kick_mwait_play_dead(void);
->> +void mwait_play_dead_with_hint(unsigned int hint);
+But there's a much bigger problem there, get_random*() is not wait-free,
+in fact it takes a spinlock_t which makes that it is unusable from most
+context, and it's definitely out for tracing.
 
-That actually is needed.
+Notably, this spinlock_t makes that it is unsafe to use from anything
+that holds a raw_spinlock_t or is from hardirq context, or has
+preempt_disable() -- which is a TON of code.
 
->>  
->>  void native_smp_send_reschedule(int cpu);
->>  void native_send_call_func_ipi(const struct cpumask *mask);
->> @@ -151,7 +152,6 @@ static inline struct cpumask *cpu_l2c_shared_mask(int cpu)
->>  {
->>      return per_cpu(cpu_l2c_shared_map, cpu);
->>  }
->> -
+On this alone I would currently label the whole of fault-injection
+broken. The should_fail() call itself is unsafe where many of its
+callsites are otherwise perfectly fine -- eg. usercopy per the above.
 
-Yeah, missed that one when submitting.
+Perhaps it should use a simple PRNG, a simple LFSR should be plenty good
+enough to provide failure conditions.
 
->>  #else /* !CONFIG_SMP */
->>  #define wbinvd_on_cpu(cpu)     wbinvd()
->>  static inline int wbinvd_on_all_cpus(void)
->
-> This hunk is not relevant to this patch.
-
+And yeah, I would just completely rip out the printk. Trying to figure
+out where and when it's safe to call printk() is non-trivial and just
+not worth the effort imo.
 
