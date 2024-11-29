@@ -1,313 +1,276 @@
-Return-Path: <linux-kernel+bounces-425752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A199DEAB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:10:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D759DEAB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5C77163461
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:10:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DDD163418
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FE814A4DD;
-	Fri, 29 Nov 2024 16:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5478114B075;
+	Fri, 29 Nov 2024 16:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rY0PH76c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="fSzEwOTR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="46JWbP08"
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B00168DA;
-	Fri, 29 Nov 2024 16:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F5A168DA;
+	Fri, 29 Nov 2024 16:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732896605; cv=none; b=V2lc7XknoLvmxg0G5RqUJt79V7SqWV7ddanNvkxVfOpKYmSnZbhrnpKJy7ukGss4G6miqHtGgKUATtJx/fBXAfe+yDMIFFaTR2i8TbItMGpiKbpBhxTMiMEmPgxPbtYDDha6HoNr5qBVC6gZAvA6WmKpuGoqk4o+K4ptAMbX09s=
+	t=1732896653; cv=none; b=Y12KsgMA+y+BGP2yc3Ws8DWyVn9Wez/XVEMn2SoNoB1e2gwEcgIedzW/RbEb+aBCNvt8PEzrYYMc048IhmnJDywW8ssBKtEu7BGxkzUsSSRWGKcgzjW3e438f/3YnwobHvmsVXZ7g2+fymxvD04N1Fu8b4OnFEp/wbxRp6UfuqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732896605; c=relaxed/simple;
-	bh=tLYTMDQXQL2x03mcwzCL/tJ5nbkPDv3owmBLoLTD5ls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ifiljuWMsf7OAQXgrcTyl4e3W3xHALXtIZcQsA46sd1sqjyl71Xx8xiKtYlKtOObbeY5R9X+385TH3xq31Yd2V5wmp67VWyuWQv0YvtGojo05utRFAv/ZjxWiANO6/iGmqnCCJZ50LK9HKa8389vJbnKdUt/pBKNJxhFJG1DLbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rY0PH76c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3660C4CECF;
-	Fri, 29 Nov 2024 16:10:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732896604;
-	bh=tLYTMDQXQL2x03mcwzCL/tJ5nbkPDv3owmBLoLTD5ls=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rY0PH76c1wgpAeKxhWcaKFkgqDS5Lsrva/gfCJdHnGCEXZzW0jJioosld76FLZ8Cq
-	 SrzV52ih/tHWpOPS80Thr2gvGRL8eklsudGsQGgBLtuB9N52yITHGPrElhXTQ9evVY
-	 RzFfxFN7HJAsLDOzpojqt3rg6hQzxtZsIkTlAfL3OPtbDx+j5YxgI2Hbc5adBOtWYV
-	 nKwFswdviCbhXvODG+tXzPUw+OlOH5gnC0ozri7dfnLasg0GAfO59ymFm3tclmPYP7
-	 m/5SjGWlX9TD++grf7BhzVNHLc9q9ma0dh4sxGNTbGD1K7kPKjL/Uj0mEUfWE5TOvU
-	 pnJ0/5uoStlOQ==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffc86948dcso21854461fa.2;
-        Fri, 29 Nov 2024 08:10:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW3PfElU5l3fh1zniVcY/+EMxlhJs62Bww9BAwv0DjkAN2TOHimDiX/maiRC86U3ppxaKlQKN1whePUjOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHcnZ+vojLeZ93CpbhIPf5RH8CODnPvVIUuFQ2bcUopGlMBFNt
-	RSy+mLXAr9CBqWbbKbxfxdnzPp6gjXO4L/RdjPV8G5GZ54THskuGD63fSgasQdY9HfycybWfNr+
-	iSf6g9d+ek3hjn9oi3VTDQ9jyydc=
-X-Google-Smtp-Source: AGHT+IGo4vefS3BVGJC9QJug0PEfkjnPfa3kCPinOGxYkgjXIUmmaZK82yRudLOCMXnKx/EBKpPPSuYxtPZWeQxLY1Y=
-X-Received: by 2002:a05:6512:3d8b:b0:539:8f4d:a7dc with SMTP id
- 2adb3069b0e04-53df0111eb8mr7269672e87.48.1732896602997; Fri, 29 Nov 2024
- 08:10:02 -0800 (PST)
+	s=arc-20240116; t=1732896653; c=relaxed/simple;
+	bh=JFetJ0WzBBJsSHNN5vePTOMGR91U7H26ZU/3zPT4BMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ROJDO6SMcmw7IeCBqg+XEMaU/Y6HRAUg/FMglUwEmU1kuVmanf/jUZYRy2kOLyTOkE/wtsoJjHdUzE4Dvata4ynaQ6ilW84oBiGQpHEJP3yWRMJiswii4DhJXftkLNQhmAhbzTWM1DrngkFo2u6EckxDeToOBOk98kNqKnBOyEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=fSzEwOTR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=46JWbP08; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailflow.stl.internal (Postfix) with ESMTP id 93E3A1D40D4A;
+	Fri, 29 Nov 2024 11:10:47 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Fri, 29 Nov 2024 11:10:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
+	 t=1732896647; x=1732900247; bh=71hovPwKy11ySr9JPOOX62sWDw4+4hQe
+	L1AKeFDFs8Y=; b=fSzEwOTRbOAu+yS0faDIUkxvfVommRCUVTaE/XGUKqQhgH9s
+	saIJuLUfP3jvJyIPC1pFJWNnmAJOa7vSUfMLY0qmOXlRqnfVdb3vM9CZt87AGV33
+	tv7i8kA/kVrOuS09M1wQ1seDAUGWM4+XrTVG7BNaoIWcN6zG+gboi3TxWN8KEOu7
+	8ZUcupcudmxSNH8uHYEInFaWJS6/iunieP9a0ClrawaXAfPWwRsgPdeLz9Tj2K5t
+	1XL/l102jxs/HrxDWrqk+c2uRMfSv7kzB3Yg335KL20M05n40IMG6ihCKvb4gVIj
+	7CNpHB3zhLI0dKhuB5pXJ0LFXPPJtqZXOGP/5g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732896647; x=
+	1732900247; bh=71hovPwKy11ySr9JPOOX62sWDw4+4hQeL1AKeFDFs8Y=; b=4
+	6JWbP08Fl9Q1oWJC9fi2bJrtwFgdpZJqeOz5cgPNKdGqG57vGdlTssdKVzXhwqRa
+	kkGee98gTjvrrRR13MlkBCmplU338ifi2AE/sw4x/0dfM+HkS/2bivjZ7rnQsp+G
+	biN5ANj/KUlH4nOwCsc1ksnHg8Dqb7zs+X7w7GbgcYthiBGfbG2UY7R/rqAQZdPv
+	a7N6uKcD3DuVJcUn+ZG2oix96dMYxAUfCdQh5tYngubtEpGp4hGMT2HfZ1LDtp14
+	HZy7g4Qh1pVX/pYHwpRHK0f+9itGd9ijDEI6VCwrVbT0lpf1+jTc+RMymN6FQXBQ
+	Wpjf9U5PMYyNg24KArn6g==
+X-ME-Sender: <xms:hudJZxueW_kVs2ohxxUEPv_tJaLLeBPRnEItJkehkTt2-RusJrNIJg>
+    <xme:hudJZ6ev6O6QFFK6JYMoo_gXOM0XYz71vUAASUvlmhiJ2Fc7TvFQPgPKXyG9d6S8L
+    G5OonhD-vgc47jZkjQ>
+X-ME-Received: <xmr:hudJZ0wsN35bCznX5KQsKyfhgXb3hm5clUdCb31XgmJ_OzmUQn90Vbbtyn0e>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgdekfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
+    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
+    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepveduvddtveehteekvdeiueegheeiveej
+    keetfefgfeeffeejgfdvfedtleeufeegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsuges
+    qhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepuddupdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtgho
+    mhdprhgtphhtthhopegrnhhtohhnihhosehophgvnhhvphhnrdhnvghtpdhrtghpthhtoh
+    epvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprh
+    gtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhmpdhrtghpthht
+    oheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
+    rhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:h-dJZ4OQPVI-aJ407RFetLnV2QX09M6Pt4cKiikVdSQl7RoBitFTdw>
+    <xmx:h-dJZx_-E2Pt_PFCgtdz4ISYZzgv-YVBiOXwInL1jvt3-3wKfzbxOQ>
+    <xmx:h-dJZ4WpTc3NwUAE8aaIWubeXwv16SLuSEue_6EDNZAf1A2VX1cquA>
+    <xmx:h-dJZyc9mD9m4yE-PZ2bKgQOcnsrfqqPl2wh2M5tgy23BiTApP_7qQ>
+    <xmx:h-dJZ9S_eUS3ZsCvHyQHod2WvHzLv7cA3uzjeQUwYpsuNgZTP1g8eghy>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 29 Nov 2024 11:10:46 -0500 (EST)
+Date: Fri, 29 Nov 2024 17:10:43 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+Cc: Antonio Quartulli <antonio@openvpn.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH net-next v11 09/23] ovpn: implement basic RX path (UDP)
+Message-ID: <Z0nng5uN6dlQrQEa@hog>
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-9-de4698c73a25@openvpn.net>
+ <eabe28f9-d6a4-4bdc-a988-418e5137f3cb@gmail.com>
+ <288f68cd-533a-4253-85c4-951cc4a9c862@openvpn.net>
+ <aac209cc-589c-4b8a-9123-e44df9e794e4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125041129.192999-1-ebiggers@kernel.org> <20241125041129.192999-3-ebiggers@kernel.org>
-In-Reply-To: <20241125041129.192999-3-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 29 Nov 2024 17:09:51 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFGs8Ur0yt9GetVaub8LzbeWJ77jaZ4ZstvECb3JH9Pvg@mail.gmail.com>
-Message-ID: <CAMj1kXFGs8Ur0yt9GetVaub8LzbeWJ77jaZ4ZstvECb3JH9Pvg@mail.gmail.com>
-Subject: Re: [PATCH 2/6] scripts/crc: add gen-crc-consts.py
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aac209cc-589c-4b8a-9123-e44df9e794e4@gmail.com>
 
-On Mon, 25 Nov 2024 at 05:12, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Add a Python script that generates constants for computing the given CRC
-> variant(s) using x86's pclmulqdq or vpclmulqdq instructions.
->
+2024-11-26, 02:32:38 +0200, Sergey Ryazanov wrote:
+> On 15.11.2024 17:02, Antonio Quartulli wrote:
+> > On 11/11/2024 02:54, Sergey Ryazanov wrote:
+> > [...]
+> > > > +    skb_reset_transport_header(skb);
+> > > > +    skb_probe_transport_header(skb);
+> > > > +    skb_reset_inner_headers(skb);
+> > > > +
+> > > > +    memset(skb->cb, 0, sizeof(skb->cb));
+> > > 
+> > > Why do we need to zero the control buffer here?
+> > 
+> > To avoid the next layer to assume the cb is clean while it is not.
+> > Other drivers do the same as well.
+> 
+> AFAIR, there is no convention to clean the control buffer before the handing
+> over. The common practice is a bit opposite, programmer shall not assume
+> that the control buffer has been zeroed.
+> 
+> Not a big deal to clean it here, we just can save some CPU cycles avoiding
+> it.
+> 
+> > I think this was recommended by Sabrina as well.
+> 
+> Curious. It's macsec that does not zero it, or I've not understood how it
+> was done.
 
-There is nothing x86 specific about this, right? Except perhaps the
-choice of fold distances?
+I only remember discussing a case [1] where one function within ovpn
+was expecting a cleared skb->cb to behave correctly but the caller did
+not clear it. In general, as you said, clearing cb "to be nice to
+other layers" is not expected. Sorry if some comments I made were
+confusing.
 
-> It can also generate the traditional byte-at-a-time tables.
->
-> Only small changes should be needed for this script to also work to
-> generate the constants needed for CRC computation on other architectures
-> with a carryless multiplication instruction, such as arm64.
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  scripts/crc/gen-crc-consts.py | 207 ++++++++++++++++++++++++++++++++++
->  1 file changed, 207 insertions(+)
->  create mode 100755 scripts/crc/gen-crc-consts.py
->
-> diff --git a/scripts/crc/gen-crc-consts.py b/scripts/crc/gen-crc-consts.py
-> new file mode 100755
-> index 0000000000000..84f0902e1cd7b
-> --- /dev/null
-> +++ b/scripts/crc/gen-crc-consts.py
-> @@ -0,0 +1,207 @@
-> +#!/usr/bin/env python3
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +#
-> +# Script that generates constants for computing the given CRC variant(s).
-> +#
-> +# Copyright 2024 Google LLC
-> +#
-> +# Author: Eric Biggers <ebiggers@google.com>
-> +
-> +import sys
-> +
-> +# XOR (add) an iterable of polynomials.
-> +def xor(iterable):
-> +    res = 0
-> +    for val in iterable:
-> +        res ^= val
-> +    return res
-> +
-> +# Multiply two polynomials.
-> +def clmul(a, b):
-> +    return xor(a << i for i in range(b.bit_length()) if (b & (1 << i)) != 0)
-> +
-> +# Polynomial division floor(a / b).
-> +def div(a, b):
-> +    q = 0
-> +    while a.bit_length() >= b.bit_length():
-> +        q ^= 1 << (a.bit_length() - b.bit_length())
-> +        a ^= b << (a.bit_length() - b.bit_length())
-> +    return q
-> +
-> +# Reduce the polynomial 'a' modulo the polynomial 'b'.
-> +def reduce(a, b):
-> +    return a ^ clmul(div(a, b), b)
-> +
-> +# Pretty-print a polynomial.
-> +def pprint_poly(prefix, poly):
-> +    terms = ['1' if i == 0 else 'x' if i == 1 else f'x^{i}'
-> +             for i in reversed(range(poly.bit_length()))
-> +             if (poly & (1 << i)) != 0]
-> +    j = 0
-> +    while j < len(terms):
-> +        s = prefix + terms[j] + (' +' if j < len(terms) - 1 else '')
-> +        j += 1
-> +        while j < len(terms) and len(s) < 72:
-> +            s += ' ' + terms[j] + (' +' if j < len(terms) - 1 else '')
-> +            j += 1
-> +        print(s)
-> +        prefix = ' * ' + (' ' * (len(prefix) - 3))
-> +
-> +# Reverse the bits of a polynomial.
-> +def bitreverse(poly, num_bits):
-> +    return xor(1 << (num_bits - 1 - i) for i in range(num_bits)
-> +               if (poly & (1 << i)) != 0)
-> +
-> +# Format a polynomial as hex.  Bit-reflect it if the CRC is LSB-first.
-> +def fmt_poly(variant, poly, num_bits):
-> +    if variant.lsb:
-> +        poly = bitreverse(poly, num_bits)
-> +    return f'0x{poly:0{2*num_bits//8}x}'
-> +
-> +# Print a comment describing constants generated for the given CRC variant.
-> +def print_header(variant, what):
-> +    print('/*')
-> +    s = f'{"least" if variant.lsb else "most"}-significant-bit-first CRC-{variant.bits}'
-> +    print(f' * {what} generated for {s} using')
-> +    pprint_poly(' * G(x) = ', variant.G)
-> +    print(' */')
-> +
-> +# Print a polynomial as hex, but drop a term if needed to keep it in 64 bits.
-> +def print_poly_truncate65thbit(variant, poly, num_bits, desc):
-> +    if num_bits > 64:
-> +        assert num_bits == 65
-> +        if variant.lsb:
-> +            assert (poly & 1) != 0
-> +            poly >>= 1
-> +            desc += ' - 1'
-> +        else:
-> +            poly ^= 1 << 64
-> +            desc += ' - x^64'
-> +        num_bits = 64
-> +    print(f'\t\t{fmt_poly(variant, poly, num_bits)},\t/* {desc} */')
-> +
-> +class CrcVariant:
-> +    def __init__(self, bits, generator_poly, bit_order):
-> +        self.bits = bits
-> +        if bit_order not in ['lsb', 'msb']:
-> +            raise ValueError('Invalid value for bit_order')
-> +        self.lsb = bit_order == 'lsb'
-> +        self.name = f'crc{bits}_{bit_order}_0x{generator_poly:0{(2*bits+7)//8}x}'
-> +        if self.lsb:
-> +            generator_poly = bitreverse(generator_poly, bits)
-> +        self.G = generator_poly ^ (1 << bits)
-> +
-> +# Generate tables for byte-at-a-time CRC computation.
-> +def gen_sliceby1_tables(variants):
-> +    for v in variants:
-> +        print('')
-> +        print_header(v, 'CRC table')
-> +        print(f'static const u{v.bits} __maybe_unused {v.name}_table[256] = {{')
-> +        s = ''
-> +        for i in range(256):
-> +            remainder = (bitreverse(i, 8) if v.lsb else i) << (v.bits - 8)
-> +            for _ in range(8):
-> +                remainder <<= 1
-> +                if (remainder & (1 << v.bits)) != 0:
-> +                    remainder ^= v.G
-> +            next_entry = fmt_poly(v, remainder, v.bits) + ','
-> +            if len(s + next_entry) > 71:
-> +                print(f'\t{s}')
-> +                s = ''
-> +            s += (' ' if s else '') + next_entry
-> +        if s:
-> +            print(f'\t{s}')
-> +        print('};')
-> +
-> +# Generate constants for carryless multiplication based CRC computation.
-> +def gen_x86_pclmul_consts(variants):
-> +    # These are the distances, in bits, to generate folding constants for.
-> +    FOLD_DISTANCES = [2048, 1024, 512, 256, 128]
-> +
-> +    for v in variants:
-> +        print('')
-> +        print_header(v, 'CRC folding constants')
-> +        print('static const struct {')
-> +        if not v.lsb:
-> +            print('\tu8 bswap_mask[16];')
-> +        for i in FOLD_DISTANCES:
-> +            print(f'\tu64 fold_across_{i}_bits_consts[2];')
-> +        print('\tu8 shuf_table[48];')
-> +        print('\tu64 barrett_reduction_consts[2];')
-> +        if v.lsb and v.bits < 64:
-> +            print('\tu64 extract_crc_mask[2];')
-> +        print(f'}} {v.name}_consts __cacheline_aligned __maybe_unused = {{')
-> +
-> +        # Byte-reflection mask, needed for MSB CRCs
-> +        if not v.lsb:
-> +            print('\t.bswap_mask = {' + ', '.join(str(i) for i in reversed(range(16))) + '},')
-> +
-> +        # Fold constants for all distances down to 128 bits
-> +        k = v.bits - 65 if v.lsb else 0
-> +        for i in FOLD_DISTANCES:
-> +            print(f'\t.fold_across_{i}_bits_consts = {{')
-> +            for j in [64, 0] if v.lsb else [0, 64]:
-> +                const = reduce(1<<(i+j+k), v.G)
-> +                pow_desc = f'{i}{"+" if j >= 0 else "-"}{abs(j)}'
-> +                if k != 0:
-> +                    pow_desc += f'{"+" if k >= 0 else "-"}{abs(k)}'
-> +                print(f'\t\t{fmt_poly(v, const, v.bits)},\t/* x^({pow_desc}) mod G(x) */')
-> +            print('\t},')
-> +
-> +        # Shuffle table for handling 1..15 bytes at end
-> +        print('\t.shuf_table = {')
-> +        print('\t\t' + (16*'-1, ').rstrip())
-> +        print('\t\t' + ''.join(f'{i:2}, ' for i in range(16)).rstrip())
-> +        print('\t\t' + (16*'-1, ').rstrip())
-> +        print('\t},')
-> +
-> +        # Barrett reduction constants for reducing 128 bits to the final CRC
-> +        m = 63 if v.lsb else 64
-> +        print('\t.barrett_reduction_consts = {')
-> +        print_poly_truncate65thbit(v, div(1<<(m+v.bits), v.G), m+1,
-> +                                   f'floor(x^{m+v.bits} / G(x))')
-> +        print_poly_truncate65thbit(v, v.G, v.bits+1, 'G(x)')
-> +        print('\t},')
-> +        if v.lsb and v.bits < 64:
-> +            print(f'\t.extract_crc_mask = {{0, 0x{(1<<(v.bits))-1:x}}},')
-> +
-> +        print('};')
-> +
-> +def parse_crc_variants(vars_string):
-> +    variants = []
-> +    for var_string in vars_string.split(','):
-> +        bits, bit_order, generator_poly = var_string.split('_')
-> +        assert bits.startswith('crc')
-> +        bits = int(bits.removeprefix('crc'))
-> +        assert generator_poly.startswith('0x')
-> +        generator_poly = generator_poly.removeprefix('0x')
-> +        assert len(generator_poly) % 2 == 0
-> +        generator_poly = int(generator_poly, 16)
-> +        variants.append(CrcVariant(bits, generator_poly, bit_order))
-> +    return variants
-> +
-> +if len(sys.argv) != 3:
-> +    sys.stderr.write(f'Usage: {sys.argv[0]} CONSTS_TYPE[,CONSTS_TYPE]... CRC_VARIANT[,CRC_VARIANT]...\n')
-> +    sys.stderr.write('  CONSTS_TYPE can be sliceby1 or x86_pclmul\n')
-> +    sys.stderr.write('  CRC_VARIANT is crc${num_bits}_${bit_order}_${generator_poly_as_hex}\n')
-> +    sys.stderr.write('     E.g. crc16_msb_0x8bb7 or crc32_lsb_0xedb88320\n')
-> +    sys.stderr.write('     Polynomial must use the given bit_order and exclude x^{num_bits}\n')
-> +    sys.exit(1)
-> +
-> +print('/* SPDX-License-Identifier: GPL-2.0-or-later */')
-
-Does it make sense to add a GPL header into a generated file?
+[1] https://lore.kernel.org/netdev/ZtXOw-NcL9lvwWa8@hog
 
 
-> +print('/*')
-> +print(' * CRC constants generated by:')
-> +print(' *')
-> +print(f' *\t{sys.argv[0]} {" ".join(sys.argv[1:])}')
-> +print(' *')
-> +print(' * Do not edit manually.')
-> +print(' */')
-> +consts_types = sys.argv[1].split(',')
-> +variants = parse_crc_variants(sys.argv[2])
-> +for consts_type in consts_types:
-> +    if consts_type == 'sliceby1':
-> +        gen_sliceby1_tables(variants)
-> +    elif consts_type == 'x86_pclmul':
-> +        gen_x86_pclmul_consts(variants)
-> +    else:
-> +        raise ValueError(f'Unknown consts_type: {consts_type}')
-> --
-> 2.47.0
->
+> > > > +struct ovpn_struct *ovpn_from_udp_sock(struct sock *sk)
+> > > > +{
+> > > > +    struct ovpn_socket *ovpn_sock;
+> > > > +
+> > > > +    if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) !=
+> > > > UDP_ENCAP_OVPNINUDP))
+> > > > +        return NULL;
+> > > > +
+> > > > +    ovpn_sock = rcu_dereference_sk_user_data(sk);
+> > > > +    if (unlikely(!ovpn_sock))
+> > > > +        return NULL;
+> > > > +
+> > > > +    /* make sure that sk matches our stored transport socket */
+> > > > +    if (unlikely(!ovpn_sock->sock || sk != ovpn_sock->sock->sk))
+> > > > +        return NULL;
+> > > > +
+> > > > +    return ovpn_sock->ovpn;
+> > > 
+> > > Now, returning of this pointer is safe. But the following TCP
+> > > transport support calls the socket release via a scheduled work.
+> > > What extends socket lifetime and makes it possible to receive a UDP
+> > > packet way after the interface private data release. Is it correct
+> > > assumption?
+> > 
+> > Sorry you lost me when sayng "following *TCP* transp[ort support calls".
+> > This function is invoked only in UDP context.
+> > Was that a typ0?
+> 
+> Yeah, you are right. The question sounds like a riddle. I should eventually
+> stop composing emails at midnight. Let me paraphrase it.
+> 
+> The potential issue is tricky since we create it patch-by-patch.
+> 
+> Up to this patch the socket releasing procedure looks solid and reliable.
+> E.g. the P2P netdev destroying:
+> 
+>   ovpn_netdev_notifier_call(NETDEV_UNREGISTER)
+>     ovpn_peer_release_p2p
+>       ovpn_peer_del_p2p
+>         ovpn_peer_put
+>           ovpn_peer_release_kref
+>             ovpn_peer_release
+>               ovpn_socket_put
+>                 ovpn_socket_release_kref
+>                   ovpn_socket_detach
+>                     ovpn_udp_socket_detach
+>                       setup_udp_tunnel_sock
+>   netdev_run_todo
+>     rcu_barrier  <- no running ovpn_udp_encap_recv after this point
+
+It's more the synchronize_net in unregister_netdevice_many_notify?
+rcu_barrier waits for pending kfree_rcu/call_rcu, synchronize_rcu
+waits for rcu_read_lock sections (see the comments for rcu_barrier and
+synchronize_rcu in kernel/rcu/tree.c).
+
+>     free_netdev
+> 
+> After the setup_udp_tunnel_sock() call no new ovpn_udp_encap_recv() will be
+> spawned. And after the rcu_barrier() all running ovpn_udp_encap_recv() will
+> be done. All good.
+> 
+> Then, the following patch 'ovpn: implement TCP transport' disjoin
+> ovpn_socket_release_kref() and ovpn_socket_detach() by scheduling the socket
+> detach function call:
+> 
+>   ovpn_socket_release_kref
+>     ovpn_socket_schedule_release
+>       schedule_work(&sock->work)
+> 
+> And long time after the socket will be actually detached:
+> 
+>   ovpn_socket_release_work
+>     ovpn_socket_detach
+>       ovpn_udp_socket_detach
+>         setup_udp_tunnel_sock
+> 
+> And until this detaching will take a place, UDP handler can call
+> ovpn_udp_encap_recv() whatever number of times.
+> 
+> So, we can end up with this scenario:
+> 
+>   ovpn_netdev_notifier_call(NETDEV_UNREGISTER)
+>     ovpn_peer_release_p2p
+>       ovpn_peer_del_p2p
+>         ovpn_peer_put
+>           ovpn_peer_release_kref
+>             ovpn_peer_release
+>               ovpn_socket_put
+>                 ovpn_socket_release_kref
+>                   ovpn_socket_schedule_release
+>                     schedule_work(&sock->work)
+>   netdev_run_todo
+>     rcu_barrier
+>     free_netdev
+> 
+>   ovpn_udp_encap_recv  <- called for an incoming UDP packet
+>     ovpn_from_udp_sock <- returns pointer to freed memory
+>     // Any access to ovpn pointer is the use-after-free
+> 
+>   ovpn_socket_release_work  <- kernel finally ivoke the work
+>     ovpn_socket_detach
+>       ovpn_udp_socket_detach
+>         setup_udp_tunnel_sock
+> 
+> To address the issue, I see two possible solutions:
+> 1. flush the workqueue somewhere before the netdev release
+> 2. set ovpn_sock->ovpn = NULL before scheduling the socket detach
+
+Going with #2, we could fully split detach into a synchronous part and
+async part (with async not needed for UDP). detach_sync clears the
+pointers (CBs, strp_stop(), ovpn_sock->ovpn, setup_udp_tunnel_sock) so
+that no more packets will be sent through the ovpn driver.
+
+Related to that topic, I'm not sure what's keeping a reference on the
+peer to guarantee it doesn't get freed before we're done with
+peer->tcp.tx_work at the end of ovpn_tcp_socket_detach. Maybe all this
+tcp stuff should move from the peer to ovpn_socket?
+
+-- 
+Sabrina
 
