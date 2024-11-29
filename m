@@ -1,142 +1,269 @@
-Return-Path: <linux-kernel+bounces-425988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1E69DED71
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:05:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A039DED72
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:06:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0E32820CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:05:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E212FB20308
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 23:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A81189B8F;
-	Fri, 29 Nov 2024 23:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="W1gxdIm0"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A57189BAD;
+	Fri, 29 Nov 2024 23:06:34 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE33C155345
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C01B155345
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 23:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732921519; cv=none; b=j4US7MXJEUB4Uj50M1AhNsYEMvND2f3v3vBK9oT/xsWDIPMtoYo1QZcEAnFxph9k7+8wnblka92Ocz9jd7lRWzGAHLED6dsP2kMup9gjTlqIYr2pBst8QLa2Kqy8Kl46DLAFY4U7w9bwaoozKL6sWlSPE3Z5qOECpv4sqk6yKdo=
+	t=1732921593; cv=none; b=tI4LmAhnP0svm90VG4rOVnSawa7jh51pAWaq03OPTYu9KnCndIeTZ/5elmpEVqWr0ID9yQXReOgew/5Sna+QAUYCJcn1LvAH36ASsq7mzRyw+lZwECLmQk3wge5u9iD5AYEa8QZnZi0AbjYQwN/99pTs9C5rI+g/v+Fvf090OjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732921519; c=relaxed/simple;
-	bh=/XjiQkz89NjPFaLmlTWkQFETq4k8QO+tV1ULpeWlfr4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VkEkYK9fTdlOcpEwv8aZVC98FFZiBAneGPUJDBoyFqatvkkLmjZPOngSJfm5VrKEUiBJJ+eHRGq6IKJ2xupcPKJPSBnGC6LvgVWGJiMhx/BQJwdftb46bD7x/oiePcMOeyGHMtlMRFRzXKus+tJB5k3lpcgsfyglwDCiA3Q4OWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=W1gxdIm0; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732921510;
-	bh=/XjiQkz89NjPFaLmlTWkQFETq4k8QO+tV1ULpeWlfr4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=W1gxdIm00MBYscJ39wRgOoITf53apLxQw1+GKwvkDoVLjAPPz6hPEmIPl/z6IfrRF
-	 WBh9o2iXMMsvHZXj2NF1AlfEZr3SAmTXkWrUylpsCeHwKM4vbeAfF1/5hCQdDeiRyD
-	 3WnAHzSvxKTh+n9469BVoTPfduwjZYZy3aEyiS86cqyKNAoiv9FRtU2EevuECPmNXU
-	 MdmmRgyFIvh16vyDMsxUrCMPR7Pal5Rhe+ege5h7z22HfS5XuLvr/cKg09s2KvHcHr
-	 1btQIKurTxLSXiXIC3OrDSyCNdPqqu9lA5gyA4DwpXieNKSB0GALqNwOdKjBZhBd6l
-	 a+n0SoflJYdHw==
-Received: from localhost (unknown [86.120.21.57])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0AD6917E09F7;
-	Sat, 30 Nov 2024 00:05:10 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Sat, 30 Nov 2024 01:04:53 +0200
-Subject: [PATCH] drm/bridge: dw-hdmi: Sync comments with actual bus formats
- order
+	s=arc-20240116; t=1732921593; c=relaxed/simple;
+	bh=pzEWoU+bfecrHV4D76alBUMGh9oMpbM+iw18D7c9LQQ=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=MkuC52omz/ER9b9oCtbcImlnZP5z9u5H5S317YqEfmSP+/9lCwNl3/EBwA+cDpuEsPPZ8jJylXnb02a2s4HTp2Ca1Zbd2yigGyjdg9UPhyJPDJGgsLg7R6+gH0+ojTgAt76L9HyX3tsJucpcG3cYOrpZMoPT3HCX3a7oHL8MAe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 2BFC22F3325;
+	Sat, 30 Nov 2024 00:06:22 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id 5pBWlA9SbUrQ; Sat, 30 Nov 2024 00:06:21 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 864622F3327;
+	Sat, 30 Nov 2024 00:06:21 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id nkZMIfBnR2Fx; Sat, 30 Nov 2024 00:06:21 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 5E2EF2F3325;
+	Sat, 30 Nov 2024 00:06:21 +0100 (CET)
+Date: Sat, 30 Nov 2024 00:06:21 +0100 (CET)
+From: Richard Weinberger <richard@nod.at>
+To: torvalds <torvalds@linux-foundation.org>
+Cc: linux-um <linux-um@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1155823186.11802667.1732921581257.JavaMail.zimbra@nod.at>
+Subject: [GIT PULL] UML changes for v6.13-rc1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241130-dw-hdmi-bus-fmt-order-v1-1-510b5fb6b990@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAJRISmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQ2MD3ZRy3YyU3EzdpNJi3bTcEt38opTUIl3zNLOUJNOUJKM0g0QloN6
- CotS0zAqwudGxtbUAI+F0n2cAAAA=
-X-Change-ID: 20241130-dw-hdmi-bus-fmt-order-7f6db5db2f0a
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF133 (Linux)/8.8.12_GA_3809)
+Thread-Index: gf7mK4lP8xbhHza8ouj6OwxcU1Y1gA==
+Thread-Topic: UML changes for v6.13-rc1
 
-Commit d3d6b1bf85ae ("drm: bridge: dw_hdmi: fix preference of RGB modes
-over YUV420") changed the order of the output bus formats, but missed to
-update accordingly the affected comment blocks related to
-dw_hdmi_bridge_atomic_get_output_bus_fmts().
+Linus,
 
-Fix the misleading comments and a context related typo.
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b=
+:
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 996733ed2c004c83a989cb8da54d8b630d9f2c02..d76aede757175d7ad5873c5d7623abf2d12da73c 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2621,6 +2621,7 @@ static int dw_hdmi_connector_create(struct dw_hdmi *hdmi)
-  * - MEDIA_BUS_FMT_UYYVYY12_0_5X36,
-  * - MEDIA_BUS_FMT_UYYVYY10_0_5X30,
-  * - MEDIA_BUS_FMT_UYYVYY8_0_5X24,
-+ * - MEDIA_BUS_FMT_RGB888_1X24,
-  * - MEDIA_BUS_FMT_YUV16_1X48,
-  * - MEDIA_BUS_FMT_RGB161616_1X48,
-  * - MEDIA_BUS_FMT_UYVY12_1X24,
-@@ -2631,7 +2632,6 @@ static int dw_hdmi_connector_create(struct dw_hdmi *hdmi)
-  * - MEDIA_BUS_FMT_RGB101010_1X30,
-  * - MEDIA_BUS_FMT_UYVY8_1X16,
-  * - MEDIA_BUS_FMT_YUV8_1X24,
-- * - MEDIA_BUS_FMT_RGB888_1X24,
-  */
- 
- /* Can return a maximum of 11 possible output formats for a mode/connector */
-@@ -2669,7 +2669,7 @@ static u32 *dw_hdmi_bridge_atomic_get_output_bus_fmts(struct drm_bridge *bridge,
- 	}
- 
- 	/*
--	 * If the current mode enforces 4:2:0, force the output but format
-+	 * If the current mode enforces 4:2:0, force the output bus format
- 	 * to 4:2:0 and do not add the YUV422/444/RGB formats
- 	 */
- 	if (conn->ycbcr_420_allowed &&
-@@ -2698,14 +2698,14 @@ static u32 *dw_hdmi_bridge_atomic_get_output_bus_fmts(struct drm_bridge *bridge,
- 		}
- 	}
- 
-+	/* Default 8bit RGB fallback */
-+	output_fmts[i++] = MEDIA_BUS_FMT_RGB888_1X24;
-+
- 	/*
- 	 * Order bus formats from 16bit to 8bit and from YUV422 to RGB
--	 * if supported. In any case the default RGB888 format is added
-+	 * if supported.
- 	 */
- 
--	/* Default 8bit RGB fallback */
--	output_fmts[i++] = MEDIA_BUS_FMT_RGB888_1X24;
--
- 	if (max_bpc >= 16 && info->bpc == 16) {
- 		if (info->color_formats & DRM_COLOR_FORMAT_YCBCR444)
- 			output_fmts[i++] = MEDIA_BUS_FMT_YUV16_1X48;
+are available in the Git repository at:
 
----
-base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
-change-id: 20241130-dw-hdmi-bus-fmt-order-7f6db5db2f0a
+  git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-=
+linus-6.13-rc1
 
+for you to fetch changes up to bed2cc482600296fe04edbc38005ba2851449c10:
+
+  hostfs: Fix the NULL vs IS_ERR() bug for __filemap_get_folio() (2024-11-1=
+5 20:55:32 +0100)
+
+----------------------------------------------------------------
+This pull request contains the following changes for UML:
+
+- Lots of cleanups, mostly from Benjamin Berg and Tiwei Bie
+ - Removal of unused code
+ - Fix for sparse warnings
+ - Cleanup around stub_exe()
+
+----------------------------------------------------------------
+Benjamin Berg (30):
+      um: Remove unused os_process_pc
+      um: Remove unused os_process_parent
+      um: Remove unused os_stop_process
+      um: Remove unused os_getpgrp function
+      um: Set HAVE_EFFICIENT_UNALIGNED_ACCESS for x86
+      um: always use the internal copy of the FP registers
+      um: remove auxiliary FP registers
+      um: Add generic stub_syscall1 function
+      um: use execveat to create userspace MMs
+      um: Set parent death signal for userspace process
+      um: Set parent death signal for winch thread/process
+      um: Add compile time assert that stub fits on a page
+      um: Calculate stub data address relative to stub code
+      um: Limit TASK_SIZE to the addressable range
+      um: Discover host_task_size from envp
+      um: clear all memory in new userspace processes
+      um: Switch to 4 level page tables on 64 bit
+      um: insert scheduler ticks when userspace does not yield
+      um: switch to regset API and depend on XSTATE
+      um: fix sparse warnings from regset refactor
+      um: fix sparse warnings in signal code
+      um: set DONTDUMP and DONTFORK flags on KASAN shadow memory
+      um: always include kconfig.h and compiler-version.h
+      um: remove file sync for stub data
+      um: remove duplicate UM_NSEC_PER_SEC definition
+      um: remove broken double fault detection
+      um: virtio_uml: send SET_MEM_TABLE message with the exact size
+      um: virtio_uml: fix call_fd IRQ allocation
+      um: virtio_uml: query the number of vqs if supported
+      um: move thread info into task
+
+David Gow (1):
+      um: Fix misaligned stack in stub_exe
+
+Johannes Berg (5):
+      um: make stub_exe _start() pure inline asm
+      um: restore process name
+      um: remove fault_catcher infrastructure
+      um: remove PATH_MAX use
+      um: fix stub exe build with CONFIG_GCOV
+
+Masahiro Yamada (1):
+      um: remove dependency on undefined CC_CAN_LINK_STATIC_NO_RUNTIME_DEPS
+
+Nathan Chancellor (2):
+      um: Fix passing '-n' to linker for stub_exe
+      um: Disable auto variable initialization for stub_exe.c
+
+Shaojie Dong (1):
+      um: Remove double zero check
+
+Thomas Wei=C3=9Fschuh (1):
+      um: vdso: Always reject undefined references in during linking
+
+Tiwei Bie (26):
+      um: Remove the redundant declaration of high_physmem
+      um: Fix potential integer overflow during physmem setup
+      um: Remove highmem leftovers
+      um: Fix the definition for physmem_size
+      um: Fix the return value of elf_core_copy_task_fpregs
+      um: Remove 3-level page table support on i386
+      um: Remove UML specific debug parameter
+      um: Do not propagate mem parameter to kernel
+      um: Do not propagate uml_dir parameter to kernel
+      um: Do not propagate dtb parameter to kernel
+      um: Do not propagate noreboot parameter to kernel
+      hostfs: Do not propagate hostfs parameter to kernel
+      um: hostaudio: Do not propagate dsp parameter to kernel
+      um: hostaudio: Do not propagate mixer parameter to kernel
+      um: Do not propagate initrd parameter to kernel
+      um: Abandon the _PAGE_NEWPROT bit
+      um: Rename _PAGE_NEWPAGE to _PAGE_NEEDSYNC
+      um: Add os_set_pdeathsig helper function
+      um: Set parent-death signal for ubd io thread/process
+      um: Set parent-death signal for write_sigio thread/process
+      um: Use os_set_pdeathsig helper in winch thread/process
+      um: ubd: Initialize ubd's disk pointer in ubd_add
+      um: ubd: Do not use drvdata in release
+      um: net: Do not use drvdata in release
+      um: vector: Do not use drvdata in release
+      um: Always dump trace for specified task in show_stack
+
+ZhangPeng (1):
+      hostfs: Fix the NULL vs IS_ERR() bug for __filemap_get_folio()
+
+ arch/um/Kconfig                                    |  24 +-
+ arch/um/Makefile                                   |   7 +-
+ arch/um/Makefile-skas                              |  14 +-
+ arch/um/configs/i386_defconfig                     |   1 -
+ arch/um/drivers/chan_user.c                        |   2 +
+ arch/um/drivers/hostaudio_kern.c                   |   2 +
+ arch/um/drivers/net_kern.c                         |   2 +-
+ arch/um/drivers/ubd_kern.c                         |   5 +-
+ arch/um/drivers/vector_kern.c                      |   3 +-
+ arch/um/drivers/vhost_user.h                       |   4 +-
+ arch/um/drivers/virtio_uml.c                       |  51 +++-
+ arch/um/include/asm/Kbuild                         |   1 -
+ arch/um/include/asm/current.h                      |  23 ++
+ arch/um/include/asm/page.h                         |  34 +--
+ arch/um/include/asm/pgalloc.h                      |  11 +-
+ arch/um/include/asm/pgtable-2level.h               |   2 +-
+ .../asm/{pgtable-3level.h =3D> pgtable-4level.h}     |  59 ++--
+ arch/um/include/asm/pgtable.h                      |  83 ++---
+ arch/um/include/asm/processor-generic.h            |   7 +-
+ arch/um/include/asm/thread_info.h                  |  18 --
+ arch/um/include/asm/tlbflush.h                     |   4 +-
+ arch/um/include/shared/as-layout.h                 |  10 +-
+ arch/um/include/shared/common-offsets.h            |  15 -
+ arch/um/include/shared/kern_util.h                 |   1 -
+ arch/um/include/shared/mem_user.h                  |   5 +-
+ arch/um/include/shared/os.h                        |  15 +-
+ arch/um/include/shared/registers.h                 |   6 -
+ arch/um/include/shared/skas/stub-data.h            |  12 +-
+ arch/um/include/shared/timetravel.h                |   5 +-
+ arch/um/include/shared/user.h                      |   2 +-
+ arch/um/kernel/dtb.c                               |   1 +
+ arch/um/kernel/dyn.lds.S                           |   5 +-
+ arch/um/kernel/initrd.c                            |   1 +
+ arch/um/kernel/irq.c                               | 112 -------
+ arch/um/kernel/mem.c                               |  20 +-
+ arch/um/kernel/physmem.c                           |  39 +--
+ arch/um/kernel/process.c                           |  24 +-
+ arch/um/kernel/skas/.gitignore                     |   2 +
+ arch/um/kernel/skas/Makefile                       |  38 ++-
+ arch/um/kernel/skas/mmu.c                          |  28 +-
+ arch/um/kernel/skas/process.c                      |   4 +-
+ arch/um/kernel/skas/stub.c                         |  10 -
+ arch/um/kernel/skas/stub_exe.c                     |  95 ++++++
+ arch/um/kernel/skas/stub_exe_embed.S               |  11 +
+ arch/um/kernel/sysrq.c                             |   8 +-
+ arch/um/kernel/time.c                              |  20 ++
+ arch/um/kernel/tlb.c                               |  74 ++---
+ arch/um/kernel/trap.c                              |  16 -
+ arch/um/kernel/um_arch.c                           |  75 ++---
+ arch/um/kernel/uml.lds.S                           |   2 -
+ arch/um/os-Linux/Makefile                          |   2 +
+ arch/um/os-Linux/file.c                            |   6 -
+ arch/um/os-Linux/main.c                            |  23 +-
+ arch/um/os-Linux/mem.c                             |  14 +-
+ arch/um/os-Linux/process.c                         |  88 +-----
+ arch/um/os-Linux/registers.c                       |  11 +-
+ arch/um/os-Linux/sigio.c                           |   1 +
+ arch/um/os-Linux/signal.c                          |  55 +---
+ arch/um/os-Linux/skas/mem.c                        |  21 --
+ arch/um/os-Linux/skas/process.c                    | 231 +++++++++-----
+ arch/um/os-Linux/umid.c                            |   2 +
+ arch/um/os-Linux/util.c                            |   4 +-
+ arch/x86/um/Kconfig                                |  12 +-
+ arch/x86/um/Makefile                               |   2 +-
+ arch/x86/um/asm/elf.h                              |   2 +
+ arch/x86/um/asm/ptrace.h                           |  10 +
+ arch/x86/um/os-Linux/Makefile                      |   2 +-
+ arch/x86/um/os-Linux/registers.c                   | 145 +++------
+ arch/x86/um/os-Linux/task_size.c                   | 151 ---------
+ arch/x86/um/ptrace.c                               | 267 ++++++++++++++++
+ arch/x86/um/ptrace_32.c                            |  84 ++----
+ arch/x86/um/ptrace_64.c                            |  43 +--
+ arch/x86/um/shared/sysdep/ptrace.h                 |   8 +-
+ arch/x86/um/shared/sysdep/ptrace_32.h              |   4 -
+ arch/x86/um/shared/sysdep/ptrace_64.h              |   4 -
+ arch/x86/um/shared/sysdep/ptrace_user.h            |   6 -
+ arch/x86/um/shared/sysdep/stub_32.h                |  18 +-
+ arch/x86/um/shared/sysdep/stub_64.h                |  27 +-
+ arch/x86/um/signal.c                               | 336 +++++++----------=
+----
+ arch/x86/um/user-offsets.c                         |   8 -
+ arch/x86/um/vdso/Makefile                          |   5 +-
+ arch/x86/um/vdso/checkundef.sh                     |  11 -
+ fs/hostfs/hostfs_kern.c                            |   5 +-
+ 83 files changed, 1227 insertions(+), 1394 deletions(-)
+ create mode 100644 arch/um/include/asm/current.h
+ rename arch/um/include/asm/{pgtable-3level.h =3D> pgtable-4level.h} (60%)
+ create mode 100644 arch/um/kernel/skas/.gitignore
+ create mode 100644 arch/um/kernel/skas/stub_exe.c
+ create mode 100644 arch/um/kernel/skas/stub_exe_embed.S
+ delete mode 100644 arch/x86/um/os-Linux/task_size.c
+ create mode 100644 arch/x86/um/ptrace.c
+ delete mode 100644 arch/x86/um/vdso/checkundef.sh
 
