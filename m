@@ -1,165 +1,148 @@
-Return-Path: <linux-kernel+bounces-425329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB4F9DC0A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:41:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D92D59DC0A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AE1B281DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:41:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CD1AB22706
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5A1161321;
-	Fri, 29 Nov 2024 08:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uTyFxjVu"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0778B166F34;
+	Fri, 29 Nov 2024 08:41:28 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7816165F1F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12322165F1F
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732869676; cv=none; b=eiVHQopnWU7v7pA9tUniNSGOVTeQ1DjohDDji84uNLTnrePQYhHCoRIqN0RuHJgRebeBCf8FKqhIp9W9fncEoPZJ7OeRV9sOkis7gPStErsLFAmqzk4RmY79PK8AhbodQeyUgPKX+r8KK5OrBpspux6VKmoXzX8yRdh04KXkWGg=
+	t=1732869687; cv=none; b=S9l1V39pniFQQ+8qxsZ1vpybWlSw6mdUWyzGe3oV1S5OimItlk0m/v8lP71JRbQvkYH1D8TVen32Tdnb4pW1gh6eEiCj+ZQU5W75+zqpweJgg0R5/QcdythDekShO9knQI1RxoR7WDjKZUjVC75WcQJ2GFCb4/2l7tyySEKm1pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732869676; c=relaxed/simple;
-	bh=7DUtd75xdBGIj0fyWgDLUpPB07zHBJIM/NDe7IrC2jE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CPqHtS9+oke6vYeG6HQIkc3AZguQqA8d65XxoP4Zs7OuZ6usStMQyaIfUC4xTfvgVlmh0q4bfO5dFg1N0STMFMPCq8v/7NV0LNb3E13jwBcw3Hs46XblvWIeTaFFp9mhQcRMP+mD5RF8/WW9RP6yW9086AQ8LbJnZAH57riiH5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uTyFxjVu; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee397a82f6so849432a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:41:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732869674; x=1733474474; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ua08itlNT1SHCtREOy/qtqXKvLOkks4jIn2aZch620M=;
-        b=uTyFxjVuWRJytGnI0IwaXSGWxHFViM6d2QVmzsTt6kg2dXlgQGm/CaxqDhy9L7OTeF
-         taw9rl6uMw1w3hSUdUWR3ALf0j1LmuopggjQZ5avS7t5KatmoPXEHlrvktGTyP5r8GBB
-         4nzj8WS1UiDUdN9aKMr8CMH30i+zhcWHn4UWFFISSmqVxJHWgS6xvFnLERSM+SGsID7s
-         chyoa3Gb+nEbQp7VhQ2wJ8a1La+D5MjKmffoDncex8vwty1I9Sfznj3NbMV9GnIiKMdA
-         q8+yTTdAfvKoBHgxIxzed4Nf8cjkjew26cQcLfGBksDUjfGRwzaBBvGX5/W5fMegsH6+
-         ucLw==
+	s=arc-20240116; t=1732869687; c=relaxed/simple;
+	bh=SNdU0PEn+cuYgXF44Co+Rge1DK841us3OBlD4TvT318=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CEqDTmydyKIinu9IOQmlQ9BxsOoepZxlr70hguGZTppU8e2t/xASuSbV4dAbhFwgZJaW0ASRxZ1J/Ktv6H9JM+erqEFlbBSzNdgE8ATlsD2OdcmxU6WWTDpKWLj9499TSerzWcXWQOWqfyQQiL3Ybza0YPE4Wevas57bv2ktR0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841ac3f9391so139176339f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:41:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732869674; x=1733474474;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ua08itlNT1SHCtREOy/qtqXKvLOkks4jIn2aZch620M=;
-        b=VMtmxrZfABVfFUmXBIz8hYFseklYfCapUF/dZs7GE9tL0+wdCOrOX6sh6QW+fHhyTv
-         cBTiAmixzKp2iKjes+3JeJumsv0XGG6K4wZRB4L3DBi2NVmwP3dhMKXA8lrJ5eYXKZWC
-         /ShW8cEPONQ6PkvEnMPwsRhnpVp9ULMpemWlbKKdXaq29XPNrShSymZL5TKfSO7f3bGX
-         pzhae7cMz6phGO0K3mddTtoKvT9qJsMKWctzj/Xx7bmfQm0/luYKDqSRT3IJJk/70Ixv
-         UYD6UF/ow1vnLI6RUEOEfAnXnbpwaGFmMBL5WXM7VjbalL4vJyVlRDF4AmZ/Um74QsAA
-         kvOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSNdPQFlYUErQpGpBIExg3rX6jAHKJ/5ZNbzqgA4helnCDJ+cTe2ckyEZTumOTUUmcpxN6w4z4jE4xlng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwONXM8xSqziMEr9wbir59zH8ZQ4hf2wt65bLx9FiQsbwaUrVCq
-	ldj/mTmvGc4f2tvkStyg3LaVqq/yMx7/8BczEsMx3pN6vATr0Ugff+Ws5x9Yf6Q=
-X-Gm-Gg: ASbGnctmF2FKtC7wacbPwyHwr9orQpaiIwF+5wT2XYeKzHEwW++K4QVvgedIEACXCYf
-	yKPNmtiBYNMLzpvqiEbaQlAHhYSwOEEosM/T1rT+GhNH8rLlPZSz0L8zwsD6/ZvKqfBrVUWjoze
-	OQsPpwfZIx+AcKJD8ExWKbjnqaOcISTvvDVyjxVOwnfdEmOsETeGg9cS2wySLw1fKxGEGykAxbL
-	zvO5apSm+mX7Zm2Xar2dVPojU5vn6qTcJcXE2qEU8kv0z1ZoyXs
-X-Google-Smtp-Source: AGHT+IHt88htp1V5FejLAaRGGVGWdc3kx1MdmnWhz5bW4J4RdhEdxoxP75JgbFzMrURNpD1QDKs5JQ==
-X-Received: by 2002:a17:90b:1dd2:b0:2ea:4578:46cf with SMTP id 98e67ed59e1d1-2ee094cb814mr13155649a91.30.1732869674054;
-        Fri, 29 Nov 2024 00:41:14 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee2b01af0fsm2739995a91.22.2024.11.29.00.41.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 00:41:13 -0800 (PST)
-Date: Fri, 29 Nov 2024 14:11:11 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] OPP: fix dev_pm_opp_find_bw_*() when bandwidth table
- not initialized
-Message-ID: <20241129084111.ifwak4y4irxjnpru@vireshk-i7>
-References: <20241128-topic-opp-fix-assert-index-check-v1-0-cb8bd4c0370e@linaro.org>
- <20241128-topic-opp-fix-assert-index-check-v1-2-cb8bd4c0370e@linaro.org>
+        d=1e100.net; s=20230601; t=1732869685; x=1733474485;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x9+YNKS/fHWT9ol9oL2UFpxQXZ6Ne6p8vFn7/Foknxw=;
+        b=LYM2c0/sh726GDCVSZUfL8+n1m15wK+xtw5r+te5fqKuxBv5Nnvj/+QRZiLAsxdLZr
+         xPWzp9r735vKiZCQ0GKfCrRdeEaLZgbn1tbYmxppEJO69ogf1F8OfXMvnDE0udZWrBBC
+         xu4y67Tg3UdgR2cKO7Z+zpqc9OiDXYNtYjamrC8ac1+IR2vaoDy0Wcweey2FmICOsZIn
+         lJTL2fbZ5t0QcYdhDfxjIGW6s5u8xYlqIgrHJHioyLyn7mpNJTHzzDhXgGVejZMkUeQs
+         mAbkEQ4mIZWe5USxaMbNoRcEqwF4uMBHl69SQ11R7Bo6JAfz3hBIkKojIdg0T4xZW8nT
+         zmGQ==
+X-Gm-Message-State: AOJu0Yz1214Zd085kzLqxHZWtsy63SI/jcnLro+jrPg2oZFc+3aWOWwY
+	TizF6O05fdO7indg2uiih3yBcf+CrDnE5Wz6/ZOauYfZlrz/mPGjZZUOe01PwWnVvR8V4h1Bjxr
+	Tnqay8Ii1yjQbOtjbfSnQrHKfoFzbUByfLgAYL+2Am924vp0cqOYY9Hw=
+X-Google-Smtp-Source: AGHT+IFZsw49BIXLKk9Mgiyl3hH6vs28SPLtwIsb3vPZYfofueOXzmZt1JIv4hGPhPGZcELgNEFwM0iKtqrEjw+iUbuSwnBU3W2L
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128-topic-opp-fix-assert-index-check-v1-2-cb8bd4c0370e@linaro.org>
+X-Received: by 2002:a05:6e02:13af:b0:3a6:b445:dc92 with SMTP id
+ e9e14a558f8ab-3a7c555eca0mr110749945ab.10.1732869685146; Fri, 29 Nov 2024
+ 00:41:25 -0800 (PST)
+Date: Fri, 29 Nov 2024 00:41:25 -0800
+In-Reply-To: <674773cd.050a0220.21d33d.0027.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67497e35.050a0220.253251.00a6.GAE@google.com>
+Subject: Re: [syzbot] Re: KMSAN: uninit-value in gfs2_quota_init()
+From: syzbot <syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 28-11-24, 11:07, Neil Armstrong wrote:
-> If a driver calls dev_pm_opp_find_bw_ceil/floor() the retrieve bandwidth
-> from the OPP table but the bandwidth table was not created because the
-> interconnect properties were missing in the OPP consumer node, the
-> kernel will crash with:
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000004
-> ...
-> pc : _read_bw+0x8/0x10
-> lr : _opp_table_find_key+0x9c/0x174
-> ...
-> Call trace:
->   _read_bw+0x8/0x10 (P)
->   _opp_table_find_key+0x9c/0x174 (L)
->   _find_key+0x98/0x168
->   dev_pm_opp_find_bw_ceil+0x50/0x88
-> ...
-> 
-> In order to fix the crash, create an assert function to check
-> if the bandwidth table were created before trying to get a
-> bandwidth with _read_bw().
-> 
-> Fixes: add1dc094a74 ("OPP: Use generic key finding helpers for bandwidth key")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/opp/core.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 8692e8ce05b7c31a725ea3a7928f238c7a1d6f51..178780e294dad49c22d866930efb7b8b13ae2d61 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -114,6 +114,14 @@ static bool assert_clk_index(struct opp_table *opp_table, int index)
->  	return opp_table->clk_count > index;
->  }
->  
-> +/*
-> + * Returns true if bandwidth table is large enough to contain the bandwidth index.
-> + */
-> +static bool assert_bandwidth_index(struct opp_table *opp_table, int index)
-> +{
-> +	return opp_table->path_count > index;
-> +}
-> +
->  /**
->   * dev_pm_opp_get_bw() - Gets the bandwidth corresponding to an opp
->   * @opp:	opp for which bandwidth has to be returned for
-> @@ -913,7 +921,8 @@ struct dev_pm_opp *dev_pm_opp_find_bw_ceil(struct device *dev, unsigned int *bw,
->  	unsigned long temp = *bw;
->  	struct dev_pm_opp *opp;
->  
-> -	opp = _find_key_ceil(dev, &temp, index, true, _read_bw, NULL);
-> +	opp = _find_key_ceil(dev, &temp, index, true, _read_bw,
-> +			     assert_bandwidth_index);
->  	*bw = temp;
->  	return opp;
->  }
-> @@ -944,7 +953,8 @@ struct dev_pm_opp *dev_pm_opp_find_bw_floor(struct device *dev,
->  	unsigned long temp = *bw;
->  	struct dev_pm_opp *opp;
->  
-> -	opp = _find_key_floor(dev, &temp, index, true, _read_bw, NULL);
-> +	opp = _find_key_floor(dev, &temp, index, true, _read_bw,
-> +			      assert_bandwidth_index);
->  	*bw = temp;
->  	return opp;
->  }
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Applied. Thanks.
+***
 
--- 
-viresh
+Subject: Re: KMSAN: uninit-value in gfs2_quota_init()
+Author: dmantipov@yandex.ru
+
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 7af08b57bcb9ebf78675c50069c54125c0a8b795
+
+diff --git a/fs/gfs2/dir.c b/fs/gfs2/dir.c
+index dbf1aede744c..85736135bcf5 100644
+--- a/fs/gfs2/dir.c
++++ b/fs/gfs2/dir.c
+@@ -299,6 +299,10 @@ static int gfs2_dir_read_data(struct gfs2_inode *ip, __be64 *buf,
+ 				goto fail;
+ 			BUG_ON(extlen < 1);
+ 			bh = gfs2_meta_ra(ip->i_gl, dblock, extlen);
++			if (IS_ERR(bh)) {
++				error = PTR_ERR(bh);
++				goto fail;
++			}
+ 		} else {
+ 			error = gfs2_meta_read(ip->i_gl, dblock, DIO_WAIT, 0, &bh);
+ 			if (error)
+diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
+index fea3efcc2f93..18957afed91a 100644
+--- a/fs/gfs2/meta_io.c
++++ b/fs/gfs2/meta_io.c
+@@ -532,7 +532,7 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
+ 	first_bh = gfs2_getbuf(gl, dblock, CREATE);
+ 
+ 	if (buffer_uptodate(first_bh))
+-		goto out;
++		return first_bh;
+ 	bh_read_nowait(first_bh, REQ_META | REQ_PRIO);
+ 
+ 	dblock++;
+@@ -546,11 +546,10 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
+ 		dblock++;
+ 		extlen--;
+ 		if (!buffer_locked(first_bh) && buffer_uptodate(first_bh))
+-			goto out;
++			return first_bh;
+ 	}
+ 
+ 	wait_on_buffer(first_bh);
+-out:
+-	return first_bh;
++	return buffer_uptodate(first_bh) ? first_bh : ERR_PTR(-EIO);
+ }
+ 
+diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+index 72b48f6f5561..d919edfb8dda 100644
+--- a/fs/gfs2/quota.c
++++ b/fs/gfs2/quota.c
+@@ -1427,8 +1427,10 @@ int gfs2_quota_init(struct gfs2_sbd *sdp)
+ 		}
+ 		error = -EIO;
+ 		bh = gfs2_meta_ra(ip->i_gl, dblock, extlen);
+-		if (!bh)
++		if (IS_ERR(bh)) {
++			error = PTR_ERR(bh);
+ 			goto fail;
++		}
+ 		if (gfs2_metatype_check(sdp, bh, GFS2_METATYPE_QC))
+ 			goto fail_brelse;
+ 
+diff --git a/fs/gfs2/recovery.c b/fs/gfs2/recovery.c
+index f4fe7039f725..527353c36aa5 100644
+--- a/fs/gfs2/recovery.c
++++ b/fs/gfs2/recovery.c
+@@ -49,7 +49,7 @@ int gfs2_replay_read_block(struct gfs2_jdesc *jd, unsigned int blk,
+ 
+ 	*bh = gfs2_meta_ra(gl, dblock, extlen);
+ 
+-	return error;
++	return IS_ERR(*bh) ? PTR_ERR(*bh) : 0;
+ }
+ 
+ int gfs2_revoke_add(struct gfs2_jdesc *jd, u64 blkno, unsigned int where)
 
