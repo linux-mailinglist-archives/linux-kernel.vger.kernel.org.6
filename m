@@ -1,130 +1,207 @@
-Return-Path: <linux-kernel+bounces-425233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDA29DBF1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:46:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7439DBEFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:24:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87305164A58
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:24:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F46154BFC;
+	Fri, 29 Nov 2024 04:24:05 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35715281EEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:46:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6CC155A34;
-	Fri, 29 Nov 2024 04:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="DF1XsP5r"
-Received: from sonic303-1.consmr.mail.bf2.yahoo.com (sonic303-1.consmr.mail.bf2.yahoo.com [74.6.131.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BDF1531D5
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.131.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4432914;
+	Fri, 29 Nov 2024 04:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732855587; cv=none; b=gCHLhFyJ/b+a4jnMaK9akZYnA9ZAOkQnW44kQdywL8xpiRT+s8xAvm56Ku4oKO3B2m2rxoISbmsunHrEs8ueunR3iQzcPlIw0Yod7l84metGWP3YLPMKGuu2Jl4gvlcQws33jHWuiF4SPqeKyYpHKmvCNMoL2k/BlRQdubgMeYw=
+	t=1732854245; cv=none; b=fcbfs7Y6WmMz31PSivzdFWuWufAS/cJlen0qOt9JNV1PvcaOGqpsSe0qZKal+OjNAumkqjKLGKnwsfWDOFK+bwy1FRjYxDITNl4zwZI2Zoy0eR44XvMgkquK+Z7aBSRwxquhl5sLC/B32+8nwl9B7R0p9oTP0KGECiDqVnuR1jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732855587; c=relaxed/simple;
-	bh=At14nQ9bt4ZXGROW9mDC30YLZ5CMdzjPOgVAugksG4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HnkIhtpffxQX/b55vzi0vlEuC9qwfwnJmXnus/Aw/U7k326WaAXSOvqUctrtVk3CHwiAfExwhtRl2XCEyrnE5wwqNOx4zyijpFAcenWwPhY+ciSo7uTsXo+vQGOuxEBqUTqU/M6DMKn4jPmrZf9IRvidlAluei0y7wfyL+g9UY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=DF1XsP5r; arc=none smtp.client-ip=74.6.131.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1732855583; bh=CcBr8CthFfnn4DMiOiwdM5Xy1AM8khizAvAFJ5en5HU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=DF1XsP5rc/0VV9afAHcS21qYxwjO1cDBz3KbhtASqLrlUI8SKYeWWZKZqg3YcE+GSmKsew4tkeU1DhrhpT/8ClnU/muWh1OVZ+y4pctsIIeBqEPycnDHKlbhPKTQtnBm8x1cFCNY7eHp7LtJ3QXjF+xs0UuxlezJq9ycynDTnup9BwmnJCj/Agiy585ZT2TyUTNzfu4mjhNhC4Bzz5fCBdMo+IkzYIshS+iUdsGqvk0EohoVtbyI7Gff2kUms1nNetbQXsPE8SUDzUNgo2cWT4hEpmcPPYrfenK8fWzwf13Q0pHM7B5E8gsqMJN3sSIdgds7+VhaCxcEoWipnmo+uw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732855583; bh=kW/m/fJQZkPLjJ0Qeo+WzWUobUtr9Fv2E/gcjFck/AU=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=k9ZrvkN7fpV28V+r2Og0+bvnn495l/P1IACVZsVfxVOkkg1duba92gRrW7nmgDWCsFQfs2IMNvg6R0SWUEm/QmrYasrVj4XdETJBl9AtNYcbQWRv6seh9dIzA///eJLceL14GeuLk2Go87+xsAvT7mWqgqoomd1EtezHOa+joUNgdYC12ux03VRrFucu8eVNpCw9Z4bxa+/1YkiCRkk6JXg8oOPxPLBzGk0FlApfQFy4BLvX6aanpJbsiMf+r1WaqIQEiOnjJrac+Gwj+prnUVwc+Hj22oaTNCWIprSaPT9KHEt2XVJOejPjoIttMOnCguv+v0JKH3xauXEFmW4j4w==
-X-YMail-OSG: 06Tdy_8VM1mpRmzWtSYPXcumG9Hh9.79lzmDdh9F6sbP3uwxUNG2BVEykE8.tMI
- vRsjY0jSLaaJ8nlzYoUjG8P7NLNDZMTxrSBLSqpIlqgkIpZHzEkK8RYezOZoRQrPFc0f3VH0e97n
- lqtl2WDROBKuGfIjW26N.YwoE5ijW6RBQUXFHUmhyCeAlCtmNgn3H_bsxjySQohtnQKoFOjjjJG.
- aJdKLfLfE4Nqcwa8FrrsBxZVPNB_TsAhTUX97jDGHXrjWlU3SSNe5xXF95CviuLwREMUl5mteZU4
- oxzqTV85H_iRbzP.1xcKUUpS5eLrxAvnT0JwGNoR3AlE01u3u0ThdgzHK72cG4X_w4ITRw.YWwQg
- AZ6RfxZ7iPv_thjyeCxXsNrk7Esyr39E4dVnFnYaw1ITv9sNtYIK_v_OjL9FGAWS7y5EXkVOs9KI
- zM9anJIB2Azj5_Jw2ZtC9AmLiaXH9y4UKCRzU5XyjIu8C.PgmTlxNfenOq1QcMQF8ZQiqUEGzP1k
- iBT3D5Lop9FBapShFEtQCyKF_n.SsIIEQrqBziqwVZrbz8o1Cf45I0CZ4N0xaB78caCq6uuk43dV
- 6k_QHctk8J7ZlclCnyzwW_2tXs8rA_JjN_y3OWQMxWQyO8L5cfpXbtDuIEuGuCsW8hqEuDmy8Vis
- .LuCgf0C2Aduorgcq_OZiAsPluv1X.4KyZPo._q_w54jh7eTHz7BcK_A76dOHHcPRpAeAM.NCrTK
- DdGEgFUR6Wfsrj2o1c3Kp5lyqRv6QCkxFqDXKkUMQGuqjzMbkOBcg0MdJUDzP1GvG5qOIRWNzVuB
- Evx8ynFI2Jl0FkC8JukTf36lUNzHt0w3qaH4ZUlEWZxdvIeHhV2jLJZFJewACgsoVtoq6wgFjZfU
- nTwTDpXBu.7oVNtpLwWccen6P2138Y0MstPDDT9kWKXkR5FsF8eSl.trYuEg9_C2OP_WkhZihQF0
- C3uCHUIXWU6ZlCDYLQwjGNJaur_5wKnXxVn3aO8jhoIOydy9qcqzJ1xoLaVDWlM5a1bbyq3SL3Od
- fxIglL_YdueztVVE2Vt2c_ke8XZnXI8637XGpSlPGI2xLklgdor9.ugewexz1VTV0pnUOoWYs7tz
- N0Zjz4Qg3IINxJ237kg.XUGAxRDj72QIQRy9SUVLa8OS_EJI6jJr47KAHQTbDzAPT1n.NXKLBYiN
- vtgLll6X.I8TGush45bSWOngShRfKNkgdjycZBncku1InpNiBFuvpnrgFRl_W6fanh3JR0L8VwZU
- F6JpmiDipF3PaKgaHIBmhzEPAKKtA2NhHkfGz0bUAvmpH7AjFliCaxco7AJ2A49qUicHnU1DhO5.
- wpwbdA66FA8i3OmQxM_1OnL9N.KF4iod4AYZq6UrzqzbZy3V8_6blfPZXg8WpZL5OzoMuiGhgdQ8
- G5Vo8sNAjIfBlrQOez4jrKtRPEFlZY4TqhMrWQe32X.advsZXE4KIH_hf8e_entFen8VCe5jepoU
- 7u02v5GDB5BSVmtiwfL8V6yeqNtiQPBMiNvJzUg._IlpeQQAZeVPDrogqaebRXZ_VbaFL4DA7K.J
- Fp32SwSEylaoNhieCryNJRtaoprVkMXxfr4HonmhY72hSqgnG_bMCyTvlXAcFJLDmvpTXxlHWc4B
- N2V1N39qpRARAYN3K.41a_2YYmyWm3gmzk987cwgm4Ncg4okPyZZnCAmEqhXFIbYWTo9XaTHhiGE
- FSXUM39Vu6x5E3tCkq36YPZ7AIqONvUtZ9L0fGjvtl3EBaerwRSvu3oqO7yO7HltmG7bxz8Vrwyu
- _xX_5gkA_4LdsDya7QF8x91UmuDTMR0oyTMlTrLiegU9O.ok9JuL3H8VnJPV0Fqkrvq4zrlidJ5i
- JUEaXgAhTOJAgl3CpS.JmlqRcxMegPUvVECLYBcV0sZwuIfjGssj9X2PU0R.Id84Dew29OBZH3Mo
- W0N.0Icy43jRd4Gc8YIkIXr9WmiNigej.anzi8u11BLZRKbR1hn5V2bgpTHg68BTMj5A4TQQycwy
- cHmq5RzUTVX0zCgpuAzMOfBvhstJ_jdlP299Ya568gFo.NKwKc.n.PRmn3WrA7XGXfZ3aMUv4ILu
- 0eZN2k2PX_0F8Xqvtmhf10ZNbSCp2uiNXULW98K8gVU8c_LGYhZHCIIiOHf1nGQrQyVnH4EjZjgC
- ttY9y_hvFEOj6rpULXdLaVhmZyBocvUv.sAT.xJeMWBCSdhxyak.lSd05yaVrCzkgIjOsqo8e6cm
- l1p5roIgENs7JS3ek6kJ7iFziNG3UBJipfwPYT6SG7khCcQUuZGfv5xsTL.qIxOWlbMPJx.O1DAx
- 0jXwEEwfOCCQAYH37zLk-
-X-Sonic-MF: <bluescreen_avenger@verizon.net>
-X-Sonic-ID: 00e5bcf1-ff1e-4af2-ac3a-38d045cad805
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Fri, 29 Nov 2024 04:46:23 +0000
-Received: by hermes--production-bf1-66bb576cbb-h2pjb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID af1c0b40292d512b9d850181f2953147;
-          Fri, 29 Nov 2024 04:15:59 +0000 (UTC)
-From: n3rdopolis <bluescreen_avenger@verizon.net>
-To: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: n3rdopolis <bluescreen_avenger@verizon.net>
-Subject: [PATCH 2/2] tty: Change order of ttynull to be loaded sooner.
-Date: Thu, 28 Nov 2024 23:15:49 -0500
-Message-ID: <20241129041549.778959-3-bluescreen_avenger@verizon.net>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241129041549.778959-1-bluescreen_avenger@verizon.net>
-References: <20241129041549.778959-1-bluescreen_avenger@verizon.net>
+	s=arc-20240116; t=1732854245; c=relaxed/simple;
+	bh=VIIOJWLcq42/oGQuTy22sIrkrMe4MdfBULso45Tqik4=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=adGhdXuJRJN0EneeT95vqZouzu7wLnhpG+EMtIPk5Rmqvz9RDLv4tPx74qcw6KVb3hW9d/O9k0aDCp5mXEW0YTupELJUzCYP1XPKqfC09dY3kPWnI/g1utzytngtB/H3KkjdcWcU1sZJgIRcqI0quPI20rGrYEJOIAZmnQXbzV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:39730)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tGsXr-005YHH-2J; Thu, 28 Nov 2024 21:23:55 -0700
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:50162 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tGsXp-009XyY-N9; Thu, 28 Nov 2024 21:23:54 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Kees Cook
+ <kees@kernel.org>,  linux-kernel@vger.kernel.org,  Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>,  Nir Lichtman <nir@lichtman.org>,  Tycho
+ Andersen <tandersen@netflix.com>,  Vegard Nossum
+ <vegard.nossum@oracle.com>, linux-security-module@vger.kernel.org, Al Viro
+ <viro@zeniv.linux.org.uk>
+References: <202411210651.CD8B5A3B98@keescook>
+	<CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
+	<05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org>
+	<CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
+	<202411271645.04C3508@keescook>
+	<CAHk-=wi+_a9Y8DtEp2P9RnDCjn=gd4ym_5ddSTEAadAyzy1rkw@mail.gmail.com>
+	<20241128020558.GF3387508@ZenIV>
+	<CAHk-=whb+V5UC0kuJkBByeEkeRGyLhTupBvpF-z57Hvmn7kszA@mail.gmail.com>
+	<13223528-74FF-4B68-B0CF-25DCC995D0A0@kernel.org>
+	<CAHk-=wgKgi5eqo6oW0bBS2-Cr+d4jraoKfVq6wbmdiWWsZbMLw@mail.gmail.com>
+	<20241129033419.GI3387508@ZenIV>
+Date: Thu, 28 Nov 2024 22:23:18 -0600
+In-Reply-To: <20241129033419.GI3387508@ZenIV> (Al Viro's message of "Fri, 29
+	Nov 2024 03:34:19 +0000")
+Message-ID: <87h67qoeh5.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1tGsXp-009XyY-N9;;;mid=<87h67qoeh5.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/kDxxtqD/RD4hbP6ZFSoFAob7QKt0QrJI=
+X-Spam-Level: **
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4430]
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+	*  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+	*  0.0 T_TooManySym_03 6+ unique symbols in subject
+	*  1.0 XMSubMetaSx_00 1+ Sexy Words
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Casey Schaufler <casey@schaufler-ca.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 533 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 12 (2.2%), b_tie_ro: 10 (1.9%), parse: 1.25
+	(0.2%), extract_message_metadata: 15 (2.7%), get_uri_detail_list: 2.5
+	(0.5%), tests_pri_-2000: 9 (1.8%), tests_pri_-1000: 2.5 (0.5%),
+	tests_pri_-950: 1.21 (0.2%), tests_pri_-900: 1.00 (0.2%),
+	tests_pri_-90: 155 (29.1%), check_bayes: 153 (28.8%), b_tokenize: 9
+	(1.7%), b_tok_get_all: 62 (11.6%), b_comp_prob: 2.9 (0.5%),
+	b_tok_touch_all: 76 (14.3%), b_finish: 0.93 (0.2%), tests_pri_0: 320
+	(59.9%), check_dkim_signature: 0.56 (0.1%), check_dkim_adsp: 2.9
+	(0.5%), poll_dns_idle: 1.08 (0.2%), tests_pri_10: 3.0 (0.6%),
+	tests_pri_500: 11 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org, vegard.nossum@oracle.com, tandersen@netflix.com, nir@lichtman.org, christophe.jaillet@wanadoo.fr, linux-kernel@vger.kernel.org, kees@kernel.org, torvalds@linux-foundation.org, casey@schaufler-ca.com
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
-will become the default primary console device, based on the load order.
-Users and distributions that are migrating away from CONFIG_VT will
-benefit from this as /dev/console would not suddenly become /dev/ttyS0
-which could otherwise cause some user space behavior changes, namely the
-TCGETS ioctl failing, which causes libc's isatty() to incorrectly return
-false when /dev/ttyS0 is disabled, and will prevent a device that is
-connected to a user's /dev/ttyS0 to suddenly start getting kernel log
-messages.
-Signed-off-by: n3rdopolis <bluescreen_avenger@verizon.net>
----
- drivers/tty/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-index 07aca5184a55..03bb47e11e1c 100644
---- a/drivers/tty/Makefile
-+++ b/drivers/tty/Makefile
-@@ -11,6 +11,8 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
- obj-$(CONFIG_N_GSM)		+= n_gsm.o
- 
- obj-y				+= vt/
-+obj-$(CONFIG_NULL_TTY)		+= ttynull.o
-+
- obj-$(CONFIG_HVC_DRIVER)	+= hvc/
- obj-y				+= serial/
- obj-$(CONFIG_SERIAL_DEV_BUS)	+= serdev/
-@@ -20,7 +22,6 @@ obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
- obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
- obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
- obj-$(CONFIG_NOZOMI)		+= nozomi.o
--obj-$(CONFIG_NULL_TTY)	        += ttynull.o
- obj-$(CONFIG_SYNCLINK_GT)	+= synclink_gt.o
- obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
- obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
--- 
-2.45.2
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
+> On Thu, Nov 28, 2024 at 06:43:31PM -0800, Linus Torvalds wrote:
+>> A sane setup has lots of options
+>> 
+>>  - just use execve() with the actual name of the executable
+>> 
+>>  - use hardlinks and use execveat()
+>> 
+>>  - use open() on a symlink and then execveat() of that file, and get
+>> the actual name of the executable behind the symlink
+>> 
+>>  - disagree about comm[] being relevant at all, and don't use it, and
+>> don't use tools that do
+>> 
+>> and none of those are wrong decisions.
+>
+> Just one thing - IMO we want to use the relative pathname when it's
+> not empty.  Even in execveat().  Because some wanker *will* decide
+> that newer is better and make libc use execveat() to implement execve().
+> Which won't be spotted for about a year, and when it does we'll get
+> seriously stuck.
+
+For clarity the only patches I have seen so far have been
+about the fexecve subset of execveat.  AKA when execveat is has
+not been supplied a path.
+
+> I agree that for fexecve() the only sane approach is to go by whatever
+> that opened file refers to; I'm not sold on the _usefulness_ of
+> fexecve() to start with, but if we want that thing, that's the way
+> to go.
+
+The craziness is that apparently systemd wants to implement execve in
+terms of fexecve, not execveat.
+
+...
+
+Wanting to see what is going on I cloned the most recent version of
+systemd.  I see some calls that are generally redundant.  That is
+systemd opens the executable and fstat's the executable to make
+certain the executable is a regular file and not a directory symlink.
+
+Which seems harmless but pointless unless something is interesting
+is going to happen with the executable_fd before it is passed to
+the kernel to execute.
+
+The only case in systemd that does something interesting with the
+executable_fd (that I could see) has to do with smack.  Please see
+the code below.
+
+Casey do you have any idea why systemd would want to read the label from
+the executable and apply it to the current process?  Is the systemd
+smack support sensible?
+
+As it is written this seems like the kind of logic every process that
+calls execve will want to repeat.
+
+So I am wondering isn't it easier just to get the kernel to do the right
+thing and not have deeply special smack code in systemd?  Does the
+kernel already do the right thing and systemd is just confused?
+
+Right now it looks like the sane path is to sort out the systemd's
+smack support and then systemd should be able to continue using
+execve like any sane program.
+
+#if ENABLE_SMACK
+static int setup_smack(
+                const ExecParameters *params,
+                const ExecContext *context,
+                int executable_fd) {
+        int r;
+
+        assert(params);
+        assert(executable_fd >= 0);
+
+        if (context->smack_process_label) {
+                r = mac_smack_apply_pid(0, context->smack_process_label);
+                if (r < 0)
+                        return r;
+        } else if (params->fallback_smack_process_label) {
+                _cleanup_free_ char *exec_label = NULL;
+
+                r = mac_smack_read_fd(executable_fd, SMACK_ATTR_EXEC, &exec_label);
+                if (r < 0 && !ERRNO_IS_XATTR_ABSENT(r))
+                        return r;
+
+                r = mac_smack_apply_pid(0, exec_label ?: params->fallback_smack_process_label);
+                if (r < 0)
+                        return r;
+        }
+
+        return 0;
+}
+#endif
+
+Eric
 
