@@ -1,117 +1,90 @@
-Return-Path: <linux-kernel+bounces-425737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016D69DEA01
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:56:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E28A9DE9FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71F0D1631F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994AF163884
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9573B14884D;
-	Fri, 29 Nov 2024 15:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A1114884D;
+	Fri, 29 Nov 2024 15:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="jStDHHxR"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="SoKj2oXa"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5888513D619
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 15:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732895810; cv=pass; b=rsXekBU6h62bTn+KjTqH6XZVkaCnTjDWHzG0HT7X2H+m6QRGiOYUQvAQhFNo5szSeDHjCOaKMzUBHKpkMaHlUODQHKjbAoOwSnXJLclOnTuRkEw4uh8AGFt7PptifP3KvHgPHwSgq/MUIbBcoJnU0UgBPIqskvbA3JXFYepwuek=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732895810; c=relaxed/simple;
-	bh=2oeyQZofW2ewahnY7DM1cwBEiJvAaxX6dlSVcTdh7sE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IHirffB2QeSXAVqFv0ASTvNcCifVywmOQYj9EHPKjoSsqMYmP2WVfAonoPHCUOfe/XyIUxpDxA1oYjNMuU+ewydk9uDjXdmFCbPn+ykt+QxwL4h9jHLqljGfycg7Rp4BhiwjJ+CuC24bFNRYJKRFwUPdhezEKBgbNK60JZbtHE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=jStDHHxR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732895794; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=IqLUoYyKTo3n0TGyZeEphOuMc+1H8wvqeyrcWo+gSs3aYmKMCBa5EvAYzrhuj3/WOka/+8veIgW/duf33PodGWATC1OMesNXBRLVzccu/Nv8f2vdHYQonO5gRRuodtbh4GmzWfTuSmwuqhrZ79DVBf/UFha0QPUDNWvFHGUHCjc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732895794; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=L1n0P1PyrA42r5RgU2rWlUpygAiAbYbhSvSFfsMFi7Y=; 
-	b=hmsYM/ZEylEpWoNJHDAbxBkaaxgen9SdqsBBQqua4fq2cFnI7dhoUW/q6mJvMmLKLLZ0L9IlF49kKciXdAH5CZiIzoyoMRUAATqC4zqRXcTUM5eEDzsl+BLDKBpqlnMyrwsYDZsTDKDXZlThKli8WZnlvyGGsYWDBRJXxXHsghQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732895794;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=L1n0P1PyrA42r5RgU2rWlUpygAiAbYbhSvSFfsMFi7Y=;
-	b=jStDHHxRGzpaSWiQJPPb2SKgDWfFEgt9l38M1M8ATPfgt4/3d3iJh8zH0IW3GPya
-	tj5YZS6Fch/B48tXbyBJph2ZADHeBEy8HZ2QMcPUKYhulgFT9GoPVXjbj2WjtKEOJlt
-	nydq1c0t3OEEtqJ4+lcf2M6RFiTeuC3QE0868x6I=
-Received: by mx.zohomail.com with SMTPS id 1732895792071583.5803474673253;
-	Fri, 29 Nov 2024 07:56:32 -0800 (PST)
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: David Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Kim Dongwon <dongwon.kim@intel.com>,
-	Kasireddy Vivek <vivek.kasireddy@intel.com>
-Cc: Rob Clark <robdclark@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH v1] drm/virtio: Set missing bo->attached flag
-Date: Fri, 29 Nov 2024 18:53:57 +0300
-Message-ID: <20241129155357.2265357-1-dmitry.osipenko@collabora.com>
-X-Mailer: git-send-email 2.47.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA89140E34;
+	Fri, 29 Nov 2024 15:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732895711; cv=none; b=XmQtPrYJoykLx/DCvO5y5xvYiIy5AhLljKx8oZ9juVMH8GGdKUMuLkNSi/Ln8vgyie23c/N+S3zDIMzoMM/dpTbj/yLwW/Z3q14TfGIOA7oQAAwYIZ6ZqVGyQQG+7qSBirK4HMD5ndQoLNXTzz9w7vfN9WhXocyAH36AOQ/Ov3E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732895711; c=relaxed/simple;
+	bh=kC3k2ptxWAmZ0pSJaZ/GqEPlSHcg8ARsRjC1K/4EzZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CP1B1lqFch2BteJ2frS8VTtiphk73c0j9Y5s+m4pZw9jFac6lFdCdqtn0QyA8Aope3ZiwemdWLxRYlJS0fPEfVtNRSFhQPedAVubu+Lxs/qtZKDw4jNQ+BF69VUFqP7DC0xq3hkoOx2T8hObP/tBH0Pa0C/6MWdzOD3OtyXAnY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=SoKj2oXa; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=G3nR71lc/iIy9K8Syw7R0FIxtppl6TKV5Wan+unn58c=; b=SoKj2oXad/hOnKXgxOh5FtNXx/
+	pTwmnHVUCfW25PYXYspAI5ZzBOIauWGH+5bCxzeX/xZIorRlB2GFzBVxw5mJoa2zuzS1UzJpd/zVX
+	isisKqoILDWaZf8KmnQ85lIzc5Ul9OSgybXi1nUTMe340rq7RePukpqRsb+m6OxiI0wI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tH3Kd-00EmWm-V4; Fri, 29 Nov 2024 16:54:59 +0100
+Date: Fri, 29 Nov 2024 16:54:59 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Potin Lai <potin.lai.pt@gmail.com>
+Cc: Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Patrick Williams <patrick@stwcx.xyz>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Cosmo Chou <cosmo.chou@quantatw.com>,
+	Potin Lai <potin.lai@quantatw.com>
+Subject: Re: [PATCH] Revert "net/ncsi: change from ndo_set_mac_address to
+ dev_set_mac_address"
+Message-ID: <33c32912-cf13-49c9-a786-a44c0bb482a6@lunn.ch>
+References: <20241129-potin-revert-ncsi-set-mac-addr-v1-1-94ea2cb596af@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129-potin-revert-ncsi-set-mac-addr-v1-1-94ea2cb596af@gmail.com>
 
-VirtIO-GPU driver now supports detachment of shmem BOs from host, but
-doing it only for imported dma-bufs. Mark all shmem BOs as attached, not
-just dma-bufs. This is a minor correction since detachment of a non-dmabuf
-BOs not supported today.
+On Fri, Nov 29, 2024 at 05:12:56PM +0800, Potin Lai wrote:
+> From: Potin Lai <potin.lai@quantatw.com>
+> 
+> This reverts commit 790071347a0a1a89e618eedcd51c687ea783aeb3.
+> 
+> We are seeing kernel panic when enabling two NCSI interfaces at same
+> time. It looks like mutex lock is being used in softirq caused the
+> issue.
 
-Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
----
- drivers/gpu/drm/virtio/virtgpu_prime.c | 1 -
- drivers/gpu/drm/virtio/virtgpu_vq.c    | 3 +++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+So a revert does make sense, you are seeing a real problem from that
+commit.
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
-index 688810d1b611..33084ce1d01d 100644
---- a/drivers/gpu/drm/virtio/virtgpu_prime.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
-@@ -249,7 +249,6 @@ static int virtgpu_dma_buf_init_obj(struct drm_device *dev,
- 	virtio_gpu_cmd_resource_create_blob(vgdev, bo, &params,
- 					    ents, nents);
- 	bo->guest_blob = true;
--	bo->attached = true;
- 
- 	dma_buf_unpin(attach);
- 	dma_resv_unlock(resv);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index ad91624df42d..062639250a4e 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -1300,6 +1300,9 @@ virtio_gpu_cmd_resource_create_blob(struct virtio_gpu_device *vgdev,
- 
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
- 	bo->created = true;
-+
-+	if (nents)
-+		bo->attached = true;
- }
- 
- void virtio_gpu_cmd_set_scanout_blob(struct virtio_gpu_device *vgdev,
--- 
-2.47.0
+However with the revert, is the code actually correct? Or is it
+missing some locking? Normally dev_addr_sem is used to protect against
+two calls to change the MAC address at once. Is this protection
+needed? It would also be typical to hold RTNL while changing the MAC
+address. So it would be nice to see an analysis of the locking, and
+maybe the revert commit message says this gets you from a broken state
+to a less broken state, and the real fix will be submitted soon?
 
+	Andrew
 
