@@ -1,385 +1,172 @@
-Return-Path: <linux-kernel+bounces-425904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846389DEC68
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:28:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706829DEC6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:29:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35954160E8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:28:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC6F9B21008
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2969A1A257A;
-	Fri, 29 Nov 2024 19:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A989A1A255A;
+	Fri, 29 Nov 2024 19:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YMKiYfRV"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Oq6SxJrm"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927861A255A
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EEB19F423;
+	Fri, 29 Nov 2024 19:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732908511; cv=none; b=d46paWxYLhxwq5zDMNVHkMlRS99fw0j4jrp3/k9DW380oM1319ZABGsJ3QUOVqPXHkvQKjDXKlUtH/AZsFWB9I560UYT+pPqMWIAjeU65OqcTAJu244NCrhA0tofvcL6pDymR5i1GlhR+GlOpoAojhknPH3JfNCbWFI5JUk5cJw=
+	t=1732908583; cv=none; b=PZYh8ChiQ63XotOPBAZrs57jvJaZ4VEUGx3BV/rxJr+KUWl2L8bChqVv0DS28Y5L+xZD8XX6HvfpY6vZaxQJC82Dp2+m+B1bHsQ+fBKV4YqURtyX4ARhRfQib8pyQl5pla4sfiM7b15XesCu7J/DRtl95h5O8DpjjFufKIxAFO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732908511; c=relaxed/simple;
-	bh=Cgcbp6qez5SBKxJsZZNqx/40+s6dzeX0l7p170v6KME=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NOXdfsgHbD92mvRGHShDlLOsk9E8KtFA7YUmXNH58OlqsEbAe0YYsfWZ8bq7q3t98wH0RQGgSeVYDc4IhklWJhSm7clkZKTFZxNeZemP9cGP5rANg1Fgp2MVmB4VTtQ6prq23SeOsz/CNxV162yiMPL8ef80dlmGzHbYsgGr7g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YMKiYfRV; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b66a740de4so155726985a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:28:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732908508; x=1733513308; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nMjLrhak7emeEGQAr5hNiFOWhZ4QE7VyWOQvbrmhiU4=;
-        b=YMKiYfRVo25q37THIG8MQj01vtYKTv5JYFpEn2vZO0yDw0Lq3JTA52CUdLaD/H5fKr
-         LgWpKe5UvhH+rE9k5tlSDTmyDAnmn1ywJdPrS+Q7n4xgAKulT469JiMOnzjq3wO8XvZV
-         0dw5YjOdb8BjZ6fyivW+/2qrNNUYpSPZ75XPo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732908508; x=1733513308;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nMjLrhak7emeEGQAr5hNiFOWhZ4QE7VyWOQvbrmhiU4=;
-        b=Ntc1lRlZODcjEhLjsIKkG5548vY/LS0wKGdG4Wj0+k00TmlRw2P10hsSVzXkKCfQ/W
-         6h9xCrQZrT8VyjILk0Bsuq1sn7aH5vaaX7FHHp4Mv6q2IQvJsKTkeaeirss9RE2eqYj3
-         sdX1JRE+MnfQOZ6rY/iYuoDVdrwNWfoZEo+UJv08jcByMjjBDlhAYd90XznSHdSMzY5W
-         m558bjH+bbcdNp+FwD6o05r05UAKIrSL59i3shiEzh+tgcrA+iGzypv6Az4fWyvX/VQe
-         SZ+7c8+TxD76ncq0JZneQVN3jQewZ2Yid2ADSBsxL/r8kCvwXucfzbMLVMshKhM9Wq4H
-         v21g==
-X-Forwarded-Encrypted: i=1; AJvYcCUo+mNNsLHVCI70zRZgJTv+Iv0pg2giPSYhpaSCysonVgVvNM+hpEI2ytMmaTrTdgm1GRHViVxUaN7enWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRALB/qmdkBjF0/CASoOc+5nrLK+v7VWjBxTzlC/WIjU1Q17Ul
-	rWkHNIb2QMODoadVdmJI4MjRSqUTon139mOaz8FjZvDs/tHYbd0D86PL/bJ0ow==
-X-Gm-Gg: ASbGncudKbaXpQpKVciAcxoXXe41dsqiUoZ7EboBbhy/A3FjfO+To9Z7xFRoQP3mA9k
-	FRdB0HzSATXY6CxPUnjRXnPlfC4th9ztO2/Tpift1C0xnkPcRdo1tgCcp1Uv1gKrRJVGbrPbEKy
-	WEhPNyi5J9tvL17t6vJIL02+eDZwG4WQCe112yB6ZRUyu4niYMzO2Sf6/U5yB1L7I4YBeUPTfmR
-	Cr/3RguEaAuHANow8zad1Cv7KzsLZrM89e1pm/s1wq021AK/cJbVp3cj4gKEqei2QDNQAIWQKvk
-	KWLQVjQpUNg4QWFLrNcPnK1m
-X-Google-Smtp-Source: AGHT+IGuCDNyzHI8S9pwqB2Ms7ffUr3w3ETlMCIDqHDQA3SZ/AAMCR53hhJ2/xIYpkwRNeRhRDlG+A==
-X-Received: by 2002:a05:620a:2794:b0:7ae:310a:84e5 with SMTP id af79cd13be357-7b67c2525b8mr1853428585a.8.1732908508517;
-        Fri, 29 Nov 2024 11:28:28 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849b7275sm165318885a.105.2024.11.29.11.28.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 11:28:27 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 29 Nov 2024 19:28:26 +0000
-Subject: [PATCH v2] media: uvcvideo: Remove duplicated cap/out code
+	s=arc-20240116; t=1732908583; c=relaxed/simple;
+	bh=/J52vrmfcRnK7jbiYRJT3pVi4JjkolvStR/bcNydMJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZcFdeKYwe/5bf34A9dRrSqKVfH3oD74mW8D+IYkBKzr7ctR7oU8mqvZ5Gf36GKd4BLk/5yjYqCIaa9q6ch6/ZG+G3ijq/0DCtQY1WXm9fz/T+g3vicqXE01kf7mmqSkTOvGmrVb1WJ4HmsUp4iqejRDSjSLafycsk/uNhsShSsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Oq6SxJrm; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1732908569; x=1733513369; i=w_armin@gmx.de;
+	bh=A9ePkhf5Nu7hLnolpjIecmRfXH2fTSGVAzXsoIu+/c0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Oq6SxJrmx7RZPyMdr4K2Vbqcrg0O5lkv5MRXFu2vtxikdxciVxdZjMgHWXZnnw2C
+	 lKAtd78mnCbjiYfH9Gswd0ZUlhEy2SN69dsst/V0iKwDjXzpYbvFU/MquVIk8V7Rs
+	 Kw7c2o698aQ7AB7AYUxMAx8D6bJGMjiPO6ZnFkXGJVz99a5sygGP5ZN18qa1177Ld
+	 EdUd5r7pSO2IIQtFY3XFDCoOBJoqP7TIJ/LNAMviQn0Qvc3l2EYiI1JPx8erxUVjM
+	 DZeuUnpcfUARzF0w6KDHSpvRLGWttv77afgIWTEI5Y5uEv7gVUh/Hx5bSZRs8mYB3
+	 vVMqLbr9lHPSsjGFhA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M1Ycr-1tEdhi29jH-00Fp1O; Fri, 29
+ Nov 2024 20:29:29 +0100
+Message-ID: <a56a1bed-de18-4530-aed5-ea8471962c71@gmx.de>
+Date: Fri, 29 Nov 2024 20:29:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: asus-wmi: Ignore return value when writing
+ thermal policy
+To: Hans de Goede <hdegoede@redhat.com>, auslands-kv@gmx.de,
+ corentin.chary@gmail.com, luke@ljones.dev
+Cc: ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241124171941.29789-1-W_Armin@gmx.de>
+ <13590dd6-1529-487c-842a-85b44c577811@redhat.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <13590dd6-1529-487c-842a-85b44c577811@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241129-uvc-dup-cap-out-v2-1-596cb9bdd5e8@chromium.org>
-X-B4-Tracking: v=1; b=H4sIANkVSmcC/3WNOw7CMBBErxJtzSJ/EEhU3AOl8I94i8TROrZAk
- e+OSY+meiPNmx1yYAoZ7sMOHCplSksHdRrARbNMAcl3BiXURUp1w1Id+rKiMyumsuHVCO2EDFo
- YDX21cnjR+zA+x86R8pb4cxxU+Wv/u6rEHuud8coba8XDRU4zlfmceIKxtfYFbddg9rEAAAA=
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+X-Provags-ID: V03:K1:8LvAS8TCA7ldVXthPmQ+/nOv9jKYXF1kZbDWHUYH3kFMmUYe0yu
+ t3SaLmEY1LuUpL8S5nejG9KODvPpWcFN4orqsWFywEKMAlwrJpR6Bol7NYIPjkLQJu9V9GF
+ +mrDYlvDTh4tc9/eU0WFriXXahmSOk8z/jDoeLgCSpwRwPdWbrFr+mjFOwDbaWUIRogTZXX
+ OfOf7vDs14N6O3r0DFl+A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+pwvYrRx9Bo=;L2Y0D0ldyucPb2B5Dq3ZufIAsT7
+ hMZiXd+iUwbu2WGl+cdocz9Ci4q/INYY5gcfMpG+dpg8O8SPMNptLMe5c+7+xZTd5hj+WBiSz
+ UjzP9AlqfL7v5lDpSw8lIiemillwle2IZ3FakborNUVQSOsQU/xzj7743R75uyYeFy1+m2x7T
+ s3GNRw85gWlXD61wR2YHaUcrQzVuBglLkKeWv9f8HfpcRU6HWZbq4zPDMQePd42B/ADC+Q00S
+ sBGFZnghQhPOUW5CLiKxEJWL2dhBwpiXp/j1MY7aw523sxg/+RVJucTlDnNhT8W5hKgf+9qz8
+ CUBzBZZ6DAtkCyXhkP/w6spWQ30hfss0EACssgQP8ANpeB5ID7HFiwNhwJcYVkjhWUkScl096
+ PSPVfH6wZUFlikSD7X+CMcG4cZYsKZKdMEPqOOOOV02knivoGbVhlSRpDd9DowfnUGLmD3FU9
+ e9Zw5y3SE7F004dM37SplRBq/e5ij08I2ng/4W4beYof8Xe+85M32fjpfTbFyQhf5s8xnUV2k
+ QFJv61fz4s3FAIqhtAvdTx3oTlvX8AcunA2yuNqZL8KmUFBCmdEzCEjELOhEXEnyrUzqc9puj
+ 2Flh54JBK6KX7PISFJgYLSvGLNuN+Yi51k+S3J/Fd2T0laDM8R23sXPK8wWh/XK5WeNUDY1S8
+ HNrWNWubI6g1R5adtZMH02FY3oEBMNhevfhSscKanyK1DuQVM7iYrPwNGGO85fH6Suo3UQgKu
+ 75v0nvag7PI/Q9UxXsiIj2BcowBAzhAMAZiIwWPhKGPMi4Eb4s2xdi9pGe9JOGW5ql0+f6NbI
+ jdQjD6ZBfgtAwsR/SVEcYja/bn6yAoA9H149mULvvEBi2LDQgGUMmzZZSZC1E7byEU+awygC7
+ D2joKdJa4zK3ISU8f+LgctL0EoyZdncTAG1E1EOmmEyxPBMjCHW0nTKmLkuQzAJUpNRj/c5uP
+ Pty2VJ8PwyyGbdShtPxOhz0FYKB29+wZNg2gjbeOjI4vEWso0Yibe8lydMW4BpH5H5dHk2Yl7
+ ev/267MRobJMYv+36jZsDHl6xK1GicwUdYpjngkKOwrtGK3YAgfRsNlIKNEQtsN/X25hCUvs1
+ oVYf2CMBScoHxj3EBRvtKvRJITvFG8
 
-The *_vid_cap and *_vid_out helpers seem to be identical:
-- Remove all the cap/out duplicated code.
-- Remove s/g_parm helpers
-- Reorder uvc_ioctl_ops
+Am 25.11.24 um 10:39 schrieb Hans de Goede:
 
-And now that we are at it, fix a comment for uvc_acquire_privileges()
+> Hi,
+>
+> On 24-Nov-24 6:19 PM, Armin Wolf wrote:
+>> On some machines like the ASUS Vivobook S14 writing the thermal policy
+>> returns the currently writen thermal policy instead of an error code.
+>>
+>> Ignore the return code to avoid falsely returning an error when the
+>> thermal policy was written successfully.
+>>
+>> Reported-by: auslands-kv@gmx.de
+>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219517
+>> Fixes: 2daa86e78c49 ("platform/x86: asus_wmi: Support throttle thermal policy")
+>> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> Thanks, patch looks good to me:
+>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>
+> Regards,
+>
+> Hans
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-Unless I miss something, cap and out helpers are identical. So there is
-no need to duplicate code
----
-Changes in v2:
-- Add missing acquire_privileges.
-- Also remove helper for s/g_parm.
-- Reorder callbacks.
-- Link to v1: https://lore.kernel.org/r/20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org
----
- drivers/media/usb/uvc/uvc_v4l2.c | 162 +++++++++++----------------------------
- 1 file changed, 43 insertions(+), 119 deletions(-)
+I forgot to add the following tag:
 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 97c5407f6603..42f0f8a89865 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -26,6 +26,8 @@
- 
- #include "uvcvideo.h"
- 
-+static int uvc_acquire_privileges(struct uvc_fh *handle);
-+
- static int uvc_control_add_xu_mapping(struct uvc_video_chain *chain,
- 				      struct uvc_control_mapping *map,
- 				      const struct uvc_xu_control_mapping *xmap)
-@@ -361,9 +363,11 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
- 	return ret;
- }
- 
--static int uvc_v4l2_get_format(struct uvc_streaming *stream,
--	struct v4l2_format *fmt)
-+static int uvc_ioctl_g_fmt(struct file *file, void *fh,
-+			   struct v4l2_format *fmt)
- {
-+	struct uvc_fh *handle = fh;
-+	struct uvc_streaming *stream = handle->stream;
- 	const struct uvc_format *format;
- 	const struct uvc_frame *frame;
- 	int ret = 0;
-@@ -395,14 +399,20 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
- 	return ret;
- }
- 
--static int uvc_v4l2_set_format(struct uvc_streaming *stream,
--	struct v4l2_format *fmt)
-+static int uvc_ioctl_s_fmt(struct file *file, void *fh,
-+			   struct v4l2_format *fmt)
- {
-+	struct uvc_fh *handle = fh;
-+	struct uvc_streaming *stream = handle->stream;
- 	struct uvc_streaming_control probe;
- 	const struct uvc_format *format;
- 	const struct uvc_frame *frame;
- 	int ret;
- 
-+	ret = uvc_acquire_privileges(handle);
-+	if (ret)
-+		return ret;
-+
- 	if (fmt->type != stream->type)
- 		return -EINVAL;
- 
-@@ -426,10 +436,12 @@ static int uvc_v4l2_set_format(struct uvc_streaming *stream,
- 	return ret;
- }
- 
--static int uvc_v4l2_get_streamparm(struct uvc_streaming *stream,
--		struct v4l2_streamparm *parm)
-+static int uvc_ioctl_g_parm(struct file *file, void *fh,
-+			    struct v4l2_streamparm *parm)
- {
- 	u32 numerator, denominator;
-+	struct uvc_fh *handle = fh;
-+	struct uvc_streaming *stream = handle->stream;
- 
- 	if (parm->type != stream->type)
- 		return -EINVAL;
-@@ -461,9 +473,11 @@ static int uvc_v4l2_get_streamparm(struct uvc_streaming *stream,
- 	return 0;
- }
- 
--static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
--		struct v4l2_streamparm *parm)
-+static int uvc_ioctl_s_parm(struct file *file, void *fh,
-+			    struct v4l2_streamparm *parm)
- {
-+	struct uvc_fh *handle = fh;
-+	struct uvc_streaming *stream = handle->stream;
- 	struct uvc_streaming_control probe;
- 	struct v4l2_fract timeperframe;
- 	const struct uvc_format *format;
-@@ -472,6 +486,10 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
- 	unsigned int i;
- 	int ret;
- 
-+	ret = uvc_acquire_privileges(handle);
-+	if (ret < 0)
-+		return ret;
-+
- 	if (parm->type != stream->type)
- 		return -EINVAL;
- 
-@@ -573,6 +591,7 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
-  * - VIDIOC_S_INPUT
-  * - VIDIOC_S_PARM
-  * - VIDIOC_S_FMT
-+ * - VIDIOC_CREATE_BUFS
-  * - VIDIOC_REQBUFS
-  */
- static int uvc_acquire_privileges(struct uvc_fh *handle)
-@@ -685,11 +704,13 @@ static int uvc_ioctl_querycap(struct file *file, void *fh,
- 	return 0;
- }
- 
--static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
-+static int uvc_ioctl_enum_fmt(struct file *file, void *fh,
- 			      struct v4l2_fmtdesc *fmt)
- {
--	const struct uvc_format *format;
-+	struct uvc_fh *handle = fh;
-+	struct uvc_streaming *stream = handle->stream;
- 	enum v4l2_buf_type type = fmt->type;
-+	const struct uvc_format *format;
- 	u32 index = fmt->index;
- 
- 	if (fmt->type != stream->type || fmt->index >= stream->nformats)
-@@ -707,82 +728,8 @@ static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
- 	return 0;
- }
- 
--static int uvc_ioctl_enum_fmt_vid_cap(struct file *file, void *fh,
--				      struct v4l2_fmtdesc *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--
--	return uvc_ioctl_enum_fmt(stream, fmt);
--}
--
--static int uvc_ioctl_enum_fmt_vid_out(struct file *file, void *fh,
--				      struct v4l2_fmtdesc *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--
--	return uvc_ioctl_enum_fmt(stream, fmt);
--}
--
--static int uvc_ioctl_g_fmt_vid_cap(struct file *file, void *fh,
--				   struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--
--	return uvc_v4l2_get_format(stream, fmt);
--}
--
--static int uvc_ioctl_g_fmt_vid_out(struct file *file, void *fh,
--				   struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--
--	return uvc_v4l2_get_format(stream, fmt);
--}
--
--static int uvc_ioctl_s_fmt_vid_cap(struct file *file, void *fh,
--				   struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--	int ret;
--
--	ret = uvc_acquire_privileges(handle);
--	if (ret < 0)
--		return ret;
--
--	return uvc_v4l2_set_format(stream, fmt);
--}
--
--static int uvc_ioctl_s_fmt_vid_out(struct file *file, void *fh,
--				   struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--	int ret;
--
--	ret = uvc_acquire_privileges(handle);
--	if (ret < 0)
--		return ret;
--
--	return uvc_v4l2_set_format(stream, fmt);
--}
--
--static int uvc_ioctl_try_fmt_vid_cap(struct file *file, void *fh,
--				     struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--	struct uvc_streaming_control probe;
--
--	return uvc_v4l2_try_format(stream, fmt, &probe, NULL, NULL);
--}
--
--static int uvc_ioctl_try_fmt_vid_out(struct file *file, void *fh,
--				     struct v4l2_format *fmt)
-+static int uvc_ioctl_try_fmt(struct file *file, void *fh,
-+			     struct v4l2_format *fmt)
- {
- 	struct uvc_fh *handle = fh;
- 	struct uvc_streaming *stream = handle->stream;
-@@ -1212,29 +1159,6 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
- 	return 0;
- }
- 
--static int uvc_ioctl_g_parm(struct file *file, void *fh,
--			    struct v4l2_streamparm *parm)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--
--	return uvc_v4l2_get_streamparm(stream, parm);
--}
--
--static int uvc_ioctl_s_parm(struct file *file, void *fh,
--			    struct v4l2_streamparm *parm)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--	int ret;
--
--	ret = uvc_acquire_privileges(handle);
--	if (ret < 0)
--		return ret;
--
--	return uvc_v4l2_set_streamparm(stream, parm);
--}
--
- static int uvc_ioctl_enum_framesizes(struct file *file, void *fh,
- 				     struct v4l2_frmsizeenum *fsize)
- {
-@@ -1543,15 +1467,17 @@ static unsigned long uvc_v4l2_get_unmapped_area(struct file *file,
- #endif
- 
- const struct v4l2_ioctl_ops uvc_ioctl_ops = {
-+	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt,
-+	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt,
-+	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt,
-+	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt,
-+	.vidioc_g_parm = uvc_ioctl_g_parm,
-+	.vidioc_s_parm = uvc_ioctl_s_parm,
- 	.vidioc_querycap = uvc_ioctl_querycap,
--	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt_vid_cap,
--	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt_vid_out,
--	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt_vid_cap,
--	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt_vid_out,
--	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt_vid_cap,
--	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt_vid_out,
--	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt_vid_cap,
--	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt_vid_out,
-+	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt,
-+	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt,
-+	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt,
-+	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt,
- 	.vidioc_reqbufs = uvc_ioctl_reqbufs,
- 	.vidioc_querybuf = uvc_ioctl_querybuf,
- 	.vidioc_qbuf = uvc_ioctl_qbuf,
-@@ -1570,8 +1496,6 @@ const struct v4l2_ioctl_ops uvc_ioctl_ops = {
- 	.vidioc_try_ext_ctrls = uvc_ioctl_try_ext_ctrls,
- 	.vidioc_querymenu = uvc_ioctl_querymenu,
- 	.vidioc_g_selection = uvc_ioctl_g_selection,
--	.vidioc_g_parm = uvc_ioctl_g_parm,
--	.vidioc_s_parm = uvc_ioctl_s_parm,
- 	.vidioc_enum_framesizes = uvc_ioctl_enum_framesizes,
- 	.vidioc_enum_frameintervals = uvc_ioctl_enum_frameintervals,
- 	.vidioc_subscribe_event = uvc_ioctl_subscribe_event,
+Tested-by: auslands-kv@gmx.de
 
----
-base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
-change-id: 20241127-uvc-dup-cap-out-6a03c01e30a3
+Can we pick this patch for the next fixes pull?
 
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
+Thanks,
+Armin Wolf
 
+>> ---
+>>   drivers/platform/x86/asus-wmi.c | 11 ++---------
+>>   1 file changed, 2 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+>> index ba8b6d028f9f..8bd187e8b47f 100644
+>> --- a/drivers/platform/x86/asus-wmi.c
+>> +++ b/drivers/platform/x86/asus-wmi.c
+>> @@ -3696,7 +3696,6 @@ static int asus_wmi_custom_fan_curve_init(struct asus_wmi *asus)
+>>   /* Throttle thermal policy ****************************************************/
+>>   static int throttle_thermal_policy_write(struct asus_wmi *asus)
+>>   {
+>> -	u32 retval;
+>>   	u8 value;
+>>   	int err;
+>>
+>> @@ -3718,8 +3717,8 @@ static int throttle_thermal_policy_write(struct asus_wmi *asus)
+>>   		value = asus->throttle_thermal_policy_mode;
+>>   	}
+>>
+>> -	err = asus_wmi_set_devstate(asus->throttle_thermal_policy_dev,
+>> -				    value, &retval);
+>> +	/* Some machines do not return an error code as a result, so we ignore it */
+>> +	err = asus_wmi_set_devstate(asus->throttle_thermal_policy_dev, value, NULL);
+>>
+>>   	sysfs_notify(&asus->platform_device->dev.kobj, NULL,
+>>   			"throttle_thermal_policy");
+>> @@ -3729,12 +3728,6 @@ static int throttle_thermal_policy_write(struct asus_wmi *asus)
+>>   		return err;
+>>   	}
+>>
+>> -	if (retval != 1) {
+>> -		pr_warn("Failed to set throttle thermal policy (retval): 0x%x\n",
+>> -			retval);
+>> -		return -EIO;
+>> -	}
+>> -
+>>   	/* Must set to disabled if mode is toggled */
+>>   	if (asus->cpu_fan_curve_available)
+>>   		asus->custom_fan_curves[FAN_CURVE_DEV_CPU].enabled = false;
+>> --
+>> 2.39.5
+>>
+>
 
