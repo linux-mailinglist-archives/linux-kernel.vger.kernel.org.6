@@ -1,164 +1,385 @@
-Return-Path: <linux-kernel+bounces-425903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC699DEC66
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:28:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846389DEC68
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:28:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D761E281ED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:28:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35954160E8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5DB1A256A;
-	Fri, 29 Nov 2024 19:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2969A1A257A;
+	Fri, 29 Nov 2024 19:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUFwsCwt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YMKiYfRV"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8C01A2540;
-	Fri, 29 Nov 2024 19:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927861A255A
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732908493; cv=none; b=LAJdpvJt9gtlAt3RrJll8OvqS1iSlcSmJI53gxuy/AJB0F/Qpuq8m1kzdG1vCeOLSNs8RKUd+uUYW2g9wzIJSIJoFcNkUxU5V+rwow95ms3hdZVGhCYkOj5BQ61WVE3JEMYnQB2r5MTFb6L9QecNt7S4uOhendFY5xQhKPRhkKA=
+	t=1732908511; cv=none; b=d46paWxYLhxwq5zDMNVHkMlRS99fw0j4jrp3/k9DW380oM1319ZABGsJ3QUOVqPXHkvQKjDXKlUtH/AZsFWB9I560UYT+pPqMWIAjeU65OqcTAJu244NCrhA0tofvcL6pDymR5i1GlhR+GlOpoAojhknPH3JfNCbWFI5JUk5cJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732908493; c=relaxed/simple;
-	bh=YUBNEKerjnF9sJxgRIEtwczqegjsidQJrznhM2o8pkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=INbFzFIxg+SGtk4IPC7ewpOJR+p4N4OnBqf5QLyS4VkLGieQgYL0eQlo9TxrCfpC/HoJo1UWxmibQRH0t1kUNavyXkHGR3O83gEti8fKx5NjLnAmDlLOlegst/RlJmv/Nl2pGlQ3DUuEEH+BJnAT2Qvg/cwWMYxRiPwtrMWgl2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUFwsCwt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04474C4CECF;
-	Fri, 29 Nov 2024 19:28:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732908493;
-	bh=YUBNEKerjnF9sJxgRIEtwczqegjsidQJrznhM2o8pkw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=jUFwsCwtnFS4q5m1lQdJSStT+G7aKpE1fVpnWt2427fGo69gVAg3vu92BcvE2LNRl
-	 Tv+R74fB52jK7AMU2HAW/njHE09M03+j8hgNEqGUeM6V03pwXdh8X2fO4RiyTvmKFk
-	 UeKu0mBnlSozBn7UOrjMYtA5+mgsDHZLwYgeqXmYmzqD6rM3fFZtQjPgsmdL6wh3QI
-	 1yhely6z6XDrjPW4fv04ScAed/Qx74iZp/78kJuPn/+MdFfK5K+zlpRvw6o9cmAyxx
-	 BvUl2k9+TifYIVSTTekRDGCKrkSdV2n92X043pDD08c7Rpfzvg9TgH8ILpFNF+4Zmj
-	 csr+UVWl+MZ5A==
-Date: Fri, 29 Nov 2024 13:28:11 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>
-Subject: Re: [PATCH 6.13] PCI/pwrctrl: Skip NULL of_node when unregistering
-Message-ID: <20241129192811.GA2768738@bhelgaas>
+	s=arc-20240116; t=1732908511; c=relaxed/simple;
+	bh=Cgcbp6qez5SBKxJsZZNqx/40+s6dzeX0l7p170v6KME=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NOXdfsgHbD92mvRGHShDlLOsk9E8KtFA7YUmXNH58OlqsEbAe0YYsfWZ8bq7q3t98wH0RQGgSeVYDc4IhklWJhSm7clkZKTFZxNeZemP9cGP5rANg1Fgp2MVmB4VTtQ6prq23SeOsz/CNxV162yiMPL8ef80dlmGzHbYsgGr7g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YMKiYfRV; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b66a740de4so155726985a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:28:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732908508; x=1733513308; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nMjLrhak7emeEGQAr5hNiFOWhZ4QE7VyWOQvbrmhiU4=;
+        b=YMKiYfRVo25q37THIG8MQj01vtYKTv5JYFpEn2vZO0yDw0Lq3JTA52CUdLaD/H5fKr
+         LgWpKe5UvhH+rE9k5tlSDTmyDAnmn1ywJdPrS+Q7n4xgAKulT469JiMOnzjq3wO8XvZV
+         0dw5YjOdb8BjZ6fyivW+/2qrNNUYpSPZ75XPo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732908508; x=1733513308;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nMjLrhak7emeEGQAr5hNiFOWhZ4QE7VyWOQvbrmhiU4=;
+        b=Ntc1lRlZODcjEhLjsIKkG5548vY/LS0wKGdG4Wj0+k00TmlRw2P10hsSVzXkKCfQ/W
+         6h9xCrQZrT8VyjILk0Bsuq1sn7aH5vaaX7FHHp4Mv6q2IQvJsKTkeaeirss9RE2eqYj3
+         sdX1JRE+MnfQOZ6rY/iYuoDVdrwNWfoZEo+UJv08jcByMjjBDlhAYd90XznSHdSMzY5W
+         m558bjH+bbcdNp+FwD6o05r05UAKIrSL59i3shiEzh+tgcrA+iGzypv6Az4fWyvX/VQe
+         SZ+7c8+TxD76ncq0JZneQVN3jQewZ2Yid2ADSBsxL/r8kCvwXucfzbMLVMshKhM9Wq4H
+         v21g==
+X-Forwarded-Encrypted: i=1; AJvYcCUo+mNNsLHVCI70zRZgJTv+Iv0pg2giPSYhpaSCysonVgVvNM+hpEI2ytMmaTrTdgm1GRHViVxUaN7enWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRALB/qmdkBjF0/CASoOc+5nrLK+v7VWjBxTzlC/WIjU1Q17Ul
+	rWkHNIb2QMODoadVdmJI4MjRSqUTon139mOaz8FjZvDs/tHYbd0D86PL/bJ0ow==
+X-Gm-Gg: ASbGncudKbaXpQpKVciAcxoXXe41dsqiUoZ7EboBbhy/A3FjfO+To9Z7xFRoQP3mA9k
+	FRdB0HzSATXY6CxPUnjRXnPlfC4th9ztO2/Tpift1C0xnkPcRdo1tgCcp1Uv1gKrRJVGbrPbEKy
+	WEhPNyi5J9tvL17t6vJIL02+eDZwG4WQCe112yB6ZRUyu4niYMzO2Sf6/U5yB1L7I4YBeUPTfmR
+	Cr/3RguEaAuHANow8zad1Cv7KzsLZrM89e1pm/s1wq021AK/cJbVp3cj4gKEqei2QDNQAIWQKvk
+	KWLQVjQpUNg4QWFLrNcPnK1m
+X-Google-Smtp-Source: AGHT+IGuCDNyzHI8S9pwqB2Ms7ffUr3w3ETlMCIDqHDQA3SZ/AAMCR53hhJ2/xIYpkwRNeRhRDlG+A==
+X-Received: by 2002:a05:620a:2794:b0:7ae:310a:84e5 with SMTP id af79cd13be357-7b67c2525b8mr1853428585a.8.1732908508517;
+        Fri, 29 Nov 2024 11:28:28 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849b7275sm165318885a.105.2024.11.29.11.28.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 11:28:27 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 29 Nov 2024 19:28:26 +0000
+Subject: [PATCH v2] media: uvcvideo: Remove duplicated cap/out code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126210443.4052876-1-briannorris@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241129-uvc-dup-cap-out-v2-1-596cb9bdd5e8@chromium.org>
+X-B4-Tracking: v=1; b=H4sIANkVSmcC/3WNOw7CMBBErxJtzSJ/EEhU3AOl8I94i8TROrZAk
+ e+OSY+meiPNmx1yYAoZ7sMOHCplSksHdRrARbNMAcl3BiXURUp1w1Id+rKiMyumsuHVCO2EDFo
+ YDX21cnjR+zA+x86R8pb4cxxU+Wv/u6rEHuud8coba8XDRU4zlfmceIKxtfYFbddg9rEAAAA=
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-[+cc Jon, Saurabh]
+The *_vid_cap and *_vid_out helpers seem to be identical:
+- Remove all the cap/out duplicated code.
+- Remove s/g_parm helpers
+- Reorder uvc_ioctl_ops
 
-On Tue, Nov 26, 2024 at 01:04:34PM -0800, Brian Norris wrote:
-> of_find_device_by_node() doesn't like a NULL pointer, and may end up
-> identifying an arbitrary device, which we then start tearing down. We
-> should check for NULL first.
+And now that we are at it, fix a comment for uvc_acquire_privileges()
 
-I assume pci_pwrctrl_unregister() is unregistering something added by
-pci_pwrctrl_create_devices() in pci_bus_add_device()?
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Unless I miss something, cap and out helpers are identical. So there is
+no need to duplicate code
+---
+Changes in v2:
+- Add missing acquire_privileges.
+- Also remove helper for s/g_parm.
+- Reorder callbacks.
+- Link to v1: https://lore.kernel.org/r/20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org
+---
+ drivers/media/usb/uvc/uvc_v4l2.c | 162 +++++++++++----------------------------
+ 1 file changed, 43 insertions(+), 119 deletions(-)
 
-There are a couple things I don't like about this code (these are
-unrelated to this particular regression fix, but they make me worry
-that I'm misunderstanding how this all works):
+diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+index 97c5407f6603..42f0f8a89865 100644
+--- a/drivers/media/usb/uvc/uvc_v4l2.c
++++ b/drivers/media/usb/uvc/uvc_v4l2.c
+@@ -26,6 +26,8 @@
+ 
+ #include "uvcvideo.h"
+ 
++static int uvc_acquire_privileges(struct uvc_fh *handle);
++
+ static int uvc_control_add_xu_mapping(struct uvc_video_chain *chain,
+ 				      struct uvc_control_mapping *map,
+ 				      const struct uvc_xu_control_mapping *xmap)
+@@ -361,9 +363,11 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
+ 	return ret;
+ }
+ 
+-static int uvc_v4l2_get_format(struct uvc_streaming *stream,
+-	struct v4l2_format *fmt)
++static int uvc_ioctl_g_fmt(struct file *file, void *fh,
++			   struct v4l2_format *fmt)
+ {
++	struct uvc_fh *handle = fh;
++	struct uvc_streaming *stream = handle->stream;
+ 	const struct uvc_format *format;
+ 	const struct uvc_frame *frame;
+ 	int ret = 0;
+@@ -395,14 +399,20 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
+ 	return ret;
+ }
+ 
+-static int uvc_v4l2_set_format(struct uvc_streaming *stream,
+-	struct v4l2_format *fmt)
++static int uvc_ioctl_s_fmt(struct file *file, void *fh,
++			   struct v4l2_format *fmt)
+ {
++	struct uvc_fh *handle = fh;
++	struct uvc_streaming *stream = handle->stream;
+ 	struct uvc_streaming_control probe;
+ 	const struct uvc_format *format;
+ 	const struct uvc_frame *frame;
+ 	int ret;
+ 
++	ret = uvc_acquire_privileges(handle);
++	if (ret)
++		return ret;
++
+ 	if (fmt->type != stream->type)
+ 		return -EINVAL;
+ 
+@@ -426,10 +436,12 @@ static int uvc_v4l2_set_format(struct uvc_streaming *stream,
+ 	return ret;
+ }
+ 
+-static int uvc_v4l2_get_streamparm(struct uvc_streaming *stream,
+-		struct v4l2_streamparm *parm)
++static int uvc_ioctl_g_parm(struct file *file, void *fh,
++			    struct v4l2_streamparm *parm)
+ {
+ 	u32 numerator, denominator;
++	struct uvc_fh *handle = fh;
++	struct uvc_streaming *stream = handle->stream;
+ 
+ 	if (parm->type != stream->type)
+ 		return -EINVAL;
+@@ -461,9 +473,11 @@ static int uvc_v4l2_get_streamparm(struct uvc_streaming *stream,
+ 	return 0;
+ }
+ 
+-static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
+-		struct v4l2_streamparm *parm)
++static int uvc_ioctl_s_parm(struct file *file, void *fh,
++			    struct v4l2_streamparm *parm)
+ {
++	struct uvc_fh *handle = fh;
++	struct uvc_streaming *stream = handle->stream;
+ 	struct uvc_streaming_control probe;
+ 	struct v4l2_fract timeperframe;
+ 	const struct uvc_format *format;
+@@ -472,6 +486,10 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
+ 	unsigned int i;
+ 	int ret;
+ 
++	ret = uvc_acquire_privileges(handle);
++	if (ret < 0)
++		return ret;
++
+ 	if (parm->type != stream->type)
+ 		return -EINVAL;
+ 
+@@ -573,6 +591,7 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
+  * - VIDIOC_S_INPUT
+  * - VIDIOC_S_PARM
+  * - VIDIOC_S_FMT
++ * - VIDIOC_CREATE_BUFS
+  * - VIDIOC_REQBUFS
+  */
+ static int uvc_acquire_privileges(struct uvc_fh *handle)
+@@ -685,11 +704,13 @@ static int uvc_ioctl_querycap(struct file *file, void *fh,
+ 	return 0;
+ }
+ 
+-static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
++static int uvc_ioctl_enum_fmt(struct file *file, void *fh,
+ 			      struct v4l2_fmtdesc *fmt)
+ {
+-	const struct uvc_format *format;
++	struct uvc_fh *handle = fh;
++	struct uvc_streaming *stream = handle->stream;
+ 	enum v4l2_buf_type type = fmt->type;
++	const struct uvc_format *format;
+ 	u32 index = fmt->index;
+ 
+ 	if (fmt->type != stream->type || fmt->index >= stream->nformats)
+@@ -707,82 +728,8 @@ static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
+ 	return 0;
+ }
+ 
+-static int uvc_ioctl_enum_fmt_vid_cap(struct file *file, void *fh,
+-				      struct v4l2_fmtdesc *fmt)
+-{
+-	struct uvc_fh *handle = fh;
+-	struct uvc_streaming *stream = handle->stream;
+-
+-	return uvc_ioctl_enum_fmt(stream, fmt);
+-}
+-
+-static int uvc_ioctl_enum_fmt_vid_out(struct file *file, void *fh,
+-				      struct v4l2_fmtdesc *fmt)
+-{
+-	struct uvc_fh *handle = fh;
+-	struct uvc_streaming *stream = handle->stream;
+-
+-	return uvc_ioctl_enum_fmt(stream, fmt);
+-}
+-
+-static int uvc_ioctl_g_fmt_vid_cap(struct file *file, void *fh,
+-				   struct v4l2_format *fmt)
+-{
+-	struct uvc_fh *handle = fh;
+-	struct uvc_streaming *stream = handle->stream;
+-
+-	return uvc_v4l2_get_format(stream, fmt);
+-}
+-
+-static int uvc_ioctl_g_fmt_vid_out(struct file *file, void *fh,
+-				   struct v4l2_format *fmt)
+-{
+-	struct uvc_fh *handle = fh;
+-	struct uvc_streaming *stream = handle->stream;
+-
+-	return uvc_v4l2_get_format(stream, fmt);
+-}
+-
+-static int uvc_ioctl_s_fmt_vid_cap(struct file *file, void *fh,
+-				   struct v4l2_format *fmt)
+-{
+-	struct uvc_fh *handle = fh;
+-	struct uvc_streaming *stream = handle->stream;
+-	int ret;
+-
+-	ret = uvc_acquire_privileges(handle);
+-	if (ret < 0)
+-		return ret;
+-
+-	return uvc_v4l2_set_format(stream, fmt);
+-}
+-
+-static int uvc_ioctl_s_fmt_vid_out(struct file *file, void *fh,
+-				   struct v4l2_format *fmt)
+-{
+-	struct uvc_fh *handle = fh;
+-	struct uvc_streaming *stream = handle->stream;
+-	int ret;
+-
+-	ret = uvc_acquire_privileges(handle);
+-	if (ret < 0)
+-		return ret;
+-
+-	return uvc_v4l2_set_format(stream, fmt);
+-}
+-
+-static int uvc_ioctl_try_fmt_vid_cap(struct file *file, void *fh,
+-				     struct v4l2_format *fmt)
+-{
+-	struct uvc_fh *handle = fh;
+-	struct uvc_streaming *stream = handle->stream;
+-	struct uvc_streaming_control probe;
+-
+-	return uvc_v4l2_try_format(stream, fmt, &probe, NULL, NULL);
+-}
+-
+-static int uvc_ioctl_try_fmt_vid_out(struct file *file, void *fh,
+-				     struct v4l2_format *fmt)
++static int uvc_ioctl_try_fmt(struct file *file, void *fh,
++			     struct v4l2_format *fmt)
+ {
+ 	struct uvc_fh *handle = fh;
+ 	struct uvc_streaming *stream = handle->stream;
+@@ -1212,29 +1159,6 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
+ 	return 0;
+ }
+ 
+-static int uvc_ioctl_g_parm(struct file *file, void *fh,
+-			    struct v4l2_streamparm *parm)
+-{
+-	struct uvc_fh *handle = fh;
+-	struct uvc_streaming *stream = handle->stream;
+-
+-	return uvc_v4l2_get_streamparm(stream, parm);
+-}
+-
+-static int uvc_ioctl_s_parm(struct file *file, void *fh,
+-			    struct v4l2_streamparm *parm)
+-{
+-	struct uvc_fh *handle = fh;
+-	struct uvc_streaming *stream = handle->stream;
+-	int ret;
+-
+-	ret = uvc_acquire_privileges(handle);
+-	if (ret < 0)
+-		return ret;
+-
+-	return uvc_v4l2_set_streamparm(stream, parm);
+-}
+-
+ static int uvc_ioctl_enum_framesizes(struct file *file, void *fh,
+ 				     struct v4l2_frmsizeenum *fsize)
+ {
+@@ -1543,15 +1467,17 @@ static unsigned long uvc_v4l2_get_unmapped_area(struct file *file,
+ #endif
+ 
+ const struct v4l2_ioctl_ops uvc_ioctl_ops = {
++	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt,
++	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt,
++	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt,
++	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt,
++	.vidioc_g_parm = uvc_ioctl_g_parm,
++	.vidioc_s_parm = uvc_ioctl_s_parm,
+ 	.vidioc_querycap = uvc_ioctl_querycap,
+-	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt_vid_cap,
+-	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt_vid_out,
+-	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt_vid_cap,
+-	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt_vid_out,
+-	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt_vid_cap,
+-	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt_vid_out,
+-	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt_vid_cap,
+-	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt_vid_out,
++	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt,
++	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt,
++	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt,
++	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt,
+ 	.vidioc_reqbufs = uvc_ioctl_reqbufs,
+ 	.vidioc_querybuf = uvc_ioctl_querybuf,
+ 	.vidioc_qbuf = uvc_ioctl_qbuf,
+@@ -1570,8 +1496,6 @@ const struct v4l2_ioctl_ops uvc_ioctl_ops = {
+ 	.vidioc_try_ext_ctrls = uvc_ioctl_try_ext_ctrls,
+ 	.vidioc_querymenu = uvc_ioctl_querymenu,
+ 	.vidioc_g_selection = uvc_ioctl_g_selection,
+-	.vidioc_g_parm = uvc_ioctl_g_parm,
+-	.vidioc_s_parm = uvc_ioctl_s_parm,
+ 	.vidioc_enum_framesizes = uvc_ioctl_enum_framesizes,
+ 	.vidioc_enum_frameintervals = uvc_ioctl_enum_frameintervals,
+ 	.vidioc_subscribe_event = uvc_ioctl_subscribe_event,
 
-  - pci_pwrctrl_create_devices() and pci_pwrctrl_unregister() are not
-    parallel names.
+---
+base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
+change-id: 20241127-uvc-dup-cap-out-6a03c01e30a3
 
-  - pci_pwrctrl_create_devices() has a loop and potentially creates
-    several pwrctrl devices, one for each child that has a "*-supply"
-    property, but there is no corresponding loop in
-    pci_pwrctrl_unregister().
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
-I see that 681725afb6b9 ("PCI/pwrctl: Remove pwrctl device without
-iterating over all children of pwrctl parent") is at least partly
-*about* removing without iterating, and the commit log has some
-explanation about how pwrctrl devices lying around will get removed,
-but the lack of parallelism is a hassle for readers.
-
-The subject and commit log also refer to "*the* pwrctl device," which
-suggests there is only one, but that seems slightly misleading even
-though it goes on to mention "any pwrctl devices lying around."
-
-If they get removed when the parent gets removed, why do we need to
-remove *any* of them?  Is the real point that we need to clear
-OF_POPULATED?
-
-Maybe I'm missing the whole point here?
-
-> [  222.965216] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000c0
-> ...
-> [  223.107395] CPU: 3 UID: 0 PID: 5095 Comm: bash Tainted: G        WC         6.12.0-rc1 #3
-> ...
-> [  223.227750] Call trace:
-> [  223.230501]  pci_stop_bus_device+0x190/0x1b0
-> [  223.235314]  pci_stop_and_remove_bus_device_locked+0x28/0x48
-> [  223.241672]  remove_store+0xa0/0xb8
-> [  223.245616]  dev_attr_store+0x20/0x40
-> [  223.249737]  sysfs_kf_write+0x4c/0x68
-> [  223.253859]  kernfs_fop_write_iter+0x128/0x200
-> [  223.253887]  do_iter_readv_writev+0xdc/0x1e0
-> [  223.263631]  vfs_writev+0x100/0x2a0
-> [  223.267550]  do_writev+0x84/0x130
-> [  223.271273]  __arm64_sys_writev+0x28/0x40
-> [  223.275774]  invoke_syscall+0x50/0x120
-> [  223.279988]  el0_svc_common.constprop.0+0x48/0xf0
-> [  223.285270]  do_el0_svc+0x24/0x38
-> [  223.288993]  el0_svc+0x34/0xe0
-> [  223.292426]  el0t_64_sync_handler+0x120/0x138
-> [  223.297311]  el0t_64_sync+0x190/0x198
-> [  223.301423] Code: 17fffff8 91030000 d2800101 f9800011 (c85f7c02)
-> [  223.308248] ---[ end trace 0000000000000000 ]---
-> 
-> Fixes: 681725afb6b9 ("PCI/pwrctl: Remove pwrctl device without iterating over all children of pwrctl parent")
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
-> 
->  drivers/pci/remove.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-> index 963b8d2855c1..efc37fcb73e2 100644
-> --- a/drivers/pci/remove.c
-> +++ b/drivers/pci/remove.c
-> @@ -19,14 +19,19 @@ static void pci_free_resources(struct pci_dev *dev)
->  
->  static void pci_pwrctrl_unregister(struct device *dev)
->  {
-> +	struct device_node *np;
->  	struct platform_device *pdev;
->  
-> -	pdev = of_find_device_by_node(dev_of_node(dev));
-> +	np = dev_of_node(dev);
-> +	if (!np)
-> +		return;
-> +
-> +	pdev = of_find_device_by_node(np);
->  	if (!pdev)
->  		return;
->  
->  	of_device_unregister(pdev);
-> -	of_node_clear_flag(dev_of_node(dev), OF_POPULATED);
-> +	of_node_clear_flag(np, OF_POPULATED);
->  }
->  
->  static void pci_stop_dev(struct pci_dev *dev)
-> -- 
-> 2.47.0.338
-> 
 
