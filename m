@@ -1,117 +1,154 @@
-Return-Path: <linux-kernel+bounces-425622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072B99DE7DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:41:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8753A9DE7DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:41:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E0D2B23F2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 486AA280CE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068B519F487;
-	Fri, 29 Nov 2024 13:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49E51A08AB;
+	Fri, 29 Nov 2024 13:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VilcuBxj"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Ngk+Hi0X";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ABysHRM4"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D4019F419
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAF219CCEC;
+	Fri, 29 Nov 2024 13:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732887648; cv=none; b=Y8IKBwlNjWQnl0qCUJBoEdwJBuvuqDxqPniAPA4623U/kV5pHsanc8hwiNQxvBBqqe9j+xAH2iQPTQj7lmAlay99xhZFRITBVCMhLNievkaOZkbKWuERGnkPs4NkNexZRW30w4SOofEZi3z1HvNBl9zSOr62FWAW5ACdSxoQZk8=
+	t=1732887643; cv=none; b=oc8gcXvn+gYKw4bMlDGftT1FmoJIZbykt/bsR9yWDU+O0Kh+VIJ7mPbVGX6pty+hDpdkEMy9GrShgFg8a6xYyp5lRA82a+KUlbdjWpokWIXKuH20LB1B6+VS865x/9dy2XUMZq6cKdd38/EmAuq/jNX8PHDzFwc7zJX/e817hBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732887648; c=relaxed/simple;
-	bh=ubuGP/4Pf2xhQwHiSesHilRhCNMS6HxKjdB3pjoi4EQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=I7DtgEZ2Vv8bhGuUv3KoiFhb2au0eDaduZ09qErqCrkQHzy6SMeUJHipU/t7w1PXYlTK3BHewD9OIFilcTj9Gs7nuoigNX9nWY96cOaoqsma+5ZBqnzcMEQkxHxfZYppg+Al2qygruaG5L/MSA45qb3Jp7XKWvSQwWxJf7/cIaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VilcuBxj; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1732887619; x=1733492419; i=markus.elfring@web.de;
-	bh=4aLJg9VUB9HRRVJ0YdwC4TyhT84p0PsQe/a585jAmAk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:Cc:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VilcuBxjyKCJ7DLw02D+LKg3lI3vQsR7w17unbjMW/4hKrRj6tkWlUGX92+9DvQZ
-	 0c+EQPcKZV0e74oTUtly47T1khYXMw6/eZkI3fPtiRm7SgP5VTnAtpG98lNkFRn3g
-	 f/O40EGDiu9uxkilokXfwVqsx0aM55FVrjFsW+4kqXHQMaMeJl7hV+NfnGJ70dqA0
-	 t7NlOZ9UMGzDKMerkHcmH5yClD64MiU36FG+jsUXK+6ORTr8eZq3LhD1vrKTVgF9P
-	 A8KqledJc8fPXB8OjDm2tj9Kv929SPa/wpC81E95PLkPP2BWsnnB4rKhXyq6vlPKX
-	 7tRLXxDvLXFthO/coA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9cHJ-1tmU5u30rt-012ROY; Fri, 29
- Nov 2024 14:40:19 +0100
-Message-ID: <39f00e80-120f-4c00-a966-53e745349e3f@web.de>
-Date: Fri, 29 Nov 2024 14:40:19 +0100
+	s=arc-20240116; t=1732887643; c=relaxed/simple;
+	bh=dFpk9+Oi8CaTJlXtBdCrQJEm0FQh2/JS7AzsTZ1GUcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cyyNj7uSaYyJ9q7ATDNOzpL0Mg1Okh3DDt8pI4x+zK78JA3pw4WuYPUMW4Zci8kzL6cPul99e02x994UMBHlGT4rlTDxd48mFHe65YAkvTcjjwQtzq1Og5BmMkJqTA/JBFp29OEyB5ua3ODys2tckMyrtbaFj1c6nH7G0rTwHOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Ngk+Hi0X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ABysHRM4; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id D5FAD1380679;
+	Fri, 29 Nov 2024 08:40:37 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Fri, 29 Nov 2024 08:40:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1732887637; x=
+	1732974037; bh=h46sUWkmGOYezCFJtOC5vKVOrSkLwYy7bd1paRuMmx4=; b=N
+	gk+Hi0X85vWgyt65XNrWgjZNvRWl9o6tt+R63M+CGmXij/Y5biOzwgu7GL1Bg1SN
+	FnhSqeYfpCY5oBiYYOT2UXWR7LssANB2KFQAetoSX3nl7y7CqTPJj+q93SaPSqB7
+	BE3oOxoeS/peOsuCEb1oeaPiHODlDvV0fbAcj4Wfr01p8QUXVb4ySmfvgDiuUYYR
+	+NhMNTOmRdUTWVNKdBNmjqmd850b37cOqZ+GXbPIcKnqzYMFJCBcbH7EwaH46eoM
+	WgwCrg6lc/FbrcbKYdwRj+YjwBzIxOizPzF1qOZ/xerquDKbKEjsx1PKMYoCIwnx
+	GT8CSJRllH2YhYrC/AR2Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732887637; x=1732974037; bh=h46sUWkmGOYezCFJtOC5vKVOrSkLwYy7bd1
+	paRuMmx4=; b=ABysHRM4mlKrqpp/V50m4xqjyx8b8YDyk0e5rbq+I2A5I2Gl3Qe
+	1K/4iX4j8rUxAsRdm9YEKYBYmt2LM5jqXAJY640Ov3/bv1Jn2YXAkbrV2V1bIL91
+	zd1lbEEwlujMfz2RtNpErqorsNhN6cBcCWoSTBXZ4FV1BZOODxZBj9PhVVIoeCku
+	70Q6g9euYTYs/Lla+ty/tyvL9nsYNGw8t0mQMV+tziQug+gsIKKcErXdl/QAO1Vu
+	o9l1t92KOgsZjG6KMY0xEEWxhywEGASoCBlX66zE6kunFHdTk+WrEwjkO1gCaiZk
+	Y1SzezHPRnTxnU/AO9A5soTc2jT/ds3UNGQ==
+X-ME-Sender: <xms:VMRJZysEK7njFXfPZPT4DgTUOO60QaJPiquOE_wwwSvA061a8n-MeA>
+    <xme:VMRJZ3eEqeZtGXbDhnNeYTteOMxIk23lrJCz3c6k5NC5eAzn8tidk1Qr-nNw0-OoX
+    AYmGbaUE-74LifqsKg>
+X-ME-Received: <xmr:VMRJZ9yoRMoptZf8V8l7R6QsWG2j1f2jiwB2vYeN5X33uIcSjVFGn_5iEssNu5c_oPnouQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgdehfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
+    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
+    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepleetudegtdfgheduudfh
+    teelieeuvddtheeijeejudefjeefgeettedutdeggfdunecuffhomhgrihhnpehkvghrnh
+    gvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtoheple
+    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgt
+    ohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtph
+    htthhopehshiiisghothdolehflegrjehfjeeffhgstdejlegsvdefkeejrgeisehshiii
+    khgrlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtohhmpdhrtghpthhtohepfihilhhlhi
+    esihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhho
+    uhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepkhhirhhilhhlrdhshhhuthgvmhhovh
+    eslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhuggrnhhtohhnsehsihhn
+    rgdrtghomh
+X-ME-Proxy: <xmx:VMRJZ9P5pIY_pWc98BnmQXaanJLdbcrbCFXDW2VkEDq6eKEFiEsd_A>
+    <xmx:VMRJZy-1eREtLVml4Npi1-AmohyWzF-VlSCnfiztMHJc6DDzx_CkmA>
+    <xmx:VMRJZ1X71BPSEkrh-gRVyES_BgDuXyFdDnECcPTc-yFT3soq8u57mA>
+    <xmx:VMRJZ7fydqbW0_HYs5EcZlyGeqWsA8XKEifHukyQr7NngQdGGttF_g>
+    <xmx:VcRJZ1Y1iOpIh6JgnvalbtOJz5q9fPocmTlQ1Ds3Pg5g0nJJMdbp-vEY>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 29 Nov 2024 08:40:33 -0500 (EST)
+Date: Fri, 29 Nov 2024 15:40:29 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Hillf Danton <hdanton@sina.com>
+Subject: Re: [PATCH v1] mm/filemap: don't call folio_test_locked() without a
+ reference in next_uptodate_folio()
+Message-ID: <2r2suyel6m6ngntarnxwtobicwignmmm3lfivvp5goufzis56e@rwtncfi7nxxn>
+References: <20241129125303.4033164-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [PATCH 01/11] coccinelle: Add script to reorder capable()
- calls
-To: Victor Gambier <victor.gambier@inria.fr>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, cocci@inria.fr
-References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
- <20241125104011.36552-11-cgoettsche@seltendoof.de>
- <b30c7227-c596-4980-aa46-a75b1d429354@web.de>
- <667e5848-a8e4-4308-a464-006800039029@inria.fr>
-Content-Language: en-GB
-Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>,
- LKML <linux-kernel@vger.kernel.org>, Nicolas Palix <nicolas.palix@imag.fr>,
- Serge Hallyn <serge@hallyn.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <667e5848-a8e4-4308-a464-006800039029@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:ihsjtGwThE3NOxosREOFxtonYZcVaZzp+KzdSy5Pukrvn2GxZi8
- nZUppE/qNkThq2JlAWUe8w1J2F6MZzU1EX47Ib2ua2NsDD/Gs2t8sY+p1TgKcTjdRDERvDY
- +QtVDkpnJyRR64cAnenpsqD5QKOGBwwF0LCF7kXX4OQpV9x6nYl4fIycyMdSfCwcHslgWla
- HMPIpzui3IQihcCnskl6Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tIihcw65Yjo=;JSw3pFncyWEQ290xs99IRCzj06g
- /Fizon/FQiGGPLEifFjYb+LEjyZrvJowAo2LSf99jQrxQ0ujy84ye1OS/r83aR6TSgvx3ynbm
- FFMiXfb6QBVaK8RqVnNk8Galp9+awREnvuCXePMROhZFZFaDdZ8+7Jca52cuf5dbyhH2PpZjz
- LC54fWqk0VOcHEdAl4IJZGO0diTPtsud4ef8w42AkX0YZ90ogC5fVdhzKSMPTF/gR4ZKWTYZc
- +TMCYOyJZKJry+9joBpokJEY2B+X04NXZy/nGOhWFzohBx45iQPO93WUzG7o7ZVeEDQMrrXE6
- OEQRaQgOxm4pIhR2QMxseljRTQVsRNhITSw43OU7ERFJ3Pj6GF4phsJd8M3uWOlTaX30UP9DG
- AarRISMnHyprq5J5695NRczeZpNeWsFiXXAxyZw4mDWWkRDRNlsT+6bmrBvhFB1HF49X8/WPq
- 1xowZhpeBqXzIVIlNo7aOwVLOhqgFcp19dqI7XDi4ot0gxyoD1P1TQcJ/EK4YXYngUYcTY6DU
- JAhDO1tWgycd1G31plkBUpBTCKLuCj3lGHdGLB/bTAKVXcBOD3oYCyc40Q7zZOQN7jG+3KZxw
- Nya1CRuQItM9GyfNKGvWrTGll1YTzUNQp89cORWHC9mOdfXj/NewheMyqQ7UpXg/oUhjkLsiz
- +jibDUAhNxDerndDabBl4lmY7fy1Mf0mrkfFBxdbU4abDr1zS6yIag1IdqQDpk93qcwjtVKFy
- PSUzehUO8apimIxg1b8JESO6fbrf6Ii9WvE5JIt+OhxdqshFQFhgdcWvzJffhPE7wUUsrRZ6d
- ZHN36DpWUhTJKGAptHAEiLNUf3hdTuzgbj9qrqJNRS0AyTbxnY8uOkbtrOH065+YZRe/8PN9V
- zjkIao12eC41m6T6fXef50+SMpDp+DqxAx53xWA75jdl+x2G8u32Cd+U/YnZeB9z4jhxFVQt+
- lC2BaOFy7kutBp/TcziH3TFqP0/Sbm/uG7oNHLCyXNxNqDErzWY21ShJSf5yFftFL2HIodFUY
- rqUrxAHSti+F786vQ8edXbKqE5szdzklgamgIGkagebHoddOSkn9vQ0G2Quhvwx0jDGfdcIi4
- 1AVY4g4Xw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129125303.4033164-1-david@redhat.com>
 
-> Feel free to ignore Markus's comments,
+On Fri, Nov 29, 2024 at 01:53:03PM +0100, David Hildenbrand wrote:
+> The folio can get freed + buddy-merged + reallocated in the meantime,
+> resulting in us calling folio_test_locked() possibly on a tail page.
+> 
+> This makes const_folio_flags VM_BUG_ON_PGFLAGS() when stumbling over
+> the tail page.
+> 
+> Could this result in other issues? Doesn't look like it. False positives
+> and false negatives don't really matter, because this folio would get
+> skipped either way when detecting that they have been reallocated in
+> the meantime.
+> 
+> Fix it by performing the folio_test_locked() checked after grabbing a
+> reference. If this ever becomes a real problem, we could add a special
+> helper that racily checks if the bit is set even on tail pages ... but
+> let's hope that's not required so we can just handle it cleaner:
+> work on the folio after we hold a reference.
+> 
+> Do we really need the folio_test_locked() check if we are going to
+> trylock briefly after? Well, we can at least avoid a xas_reload().
+> 
+> It's a bit unclear which exact change introduced that issue. Likely,
+> ever since we made PG_locked obey to the PF_NO_TAIL policy it could have
+> been triggered in some way.
+> 
+> Reported-by: syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/lkml/674184c9.050a0220.1cc393.0001.GAE@google.com/
+> Fixes: 48c935ad88f5 ("page-flags: define PG_locked behavior on compound pages")
+> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Hillf Danton <hdanton@sina.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-I wonder about such a response.
+Looks reasonable:
 
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-> he is not a maintainer
-
-How does such information matter here?
-
-
->                        and as usual,
-> his questions don't make a ton of sense.
-How did you come to such a conclusion?
-
-Can software development clarifications become more constructive again?
-
-Regards,
-Markus
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
