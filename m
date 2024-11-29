@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-425582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8ED9DE705
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:12:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFA69DE708
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:12:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4722E1646C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:11:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3C1A164006
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0864919D8BE;
-	Fri, 29 Nov 2024 13:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AC819D8BB;
+	Fri, 29 Nov 2024 13:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fyBz51hG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EnS94GXv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AA7156991
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD7C156991
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 13:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732885913; cv=none; b=DPRjTXiMdi2vxJ/ATSVZAFMrLRYkZblrjrE/9rHEmmOJAe18hw+tCgHNEuCOruIbwOZZk1DTRKAeCffgfzK7UMGgd0+Fdrpk0PonT4Km7IwSiKAHXLz6pwUf+GO4ABA5MN4wLw/SybNjf3jF/CBkMt/pXL55ouiwHLPuiN3az2I=
+	t=1732885961; cv=none; b=Gv2V68MkHe6Bmq/r9QmJZEIbYaNekZyzsJPYFKaV95N+PqmsBkYo4RlRlb8DpTRIZFOcpRPWT/acYj7us7ctzVFQKufprx+3k0xk0btlm8oGJAYqQcpQGemFlZaT29YNgSn38ZjIXL8psHVj9JuVv3EOZAQYjn5Pq+VxHSqNQwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732885913; c=relaxed/simple;
-	bh=YnJzF9KYRCS2bZhD8BFhUI1QeJMyl7hozeHKO1WcYL8=;
+	s=arc-20240116; t=1732885961; c=relaxed/simple;
+	bh=jeExHsTopGg3lPs7vDqTygzkFIo/Hh0Ypi4h74FHzCM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pxHvtF/DX+LdICXZaj4bPvSrpoAcSJfePHVudeK3wUYkSnMzQSAGpagbVMDIm/TXmmCs2Lnl58RHTbgrb3yLMvaFDl7y/2v26kVMwXJEQ5V4VB+3fAKwt6glBG/2gs7h6NBRBt5HQXHmJ2uVBr9E/MJNWh9+x9AjE1lO+dGBgEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fyBz51hG; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=fg6axDJzVALZY4QsBx+/QY4tAizKZN2QkeDwymjIeCXtP1oNo8m54Am5LzuYch3jn5pY1U2c4KiR0QD1Fg+GwVaCKzHfZmqPh+ivuH3hVVsYyty8mBGCbSUtAd+s6mVZ/JniiZ7bwODj6J2y/N0M7JIfUgzKyCrCWpJ8HzxcDmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EnS94GXv; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732885910;
+	s=mimecast20190719; t=1732885958;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7/lsbs4eMAFpBMNNwe7aa+EDadcLAy15/Z7Xw2L/Pw8=;
-	b=fyBz51hGtYajIvHgArW4YiM4xTfQdS4E+qX8nuz6/hOoRBwWzvEwaBnt3ZU29AACQi49rE
-	QsmKam6bvTTsg/xipRX4c0ajzbmWrKUAUqh8J+GORwqioUiKJvblpX9GLfB7dZXf+qaPQX
-	f63uhfvpKuPEVgRlQxyCy9BeWm0VwQM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=/hwYR3GugWMMQOPEFk6JjTcCSdLv4Wb1R0aJ/cKX0Rk=;
+	b=EnS94GXvRuDu/96fhzLdOLQ+v9eimZpTH/yzWwBdKqjKWqD5HJ6k8jvKAdPzPgEGJ4nvOB
+	8cXSJODVvigHCI2L9KlEdA2N7wgEruaJMq+zK3nseZNYIitOYlhALIvqkRdYhvrf+x9ZUL
+	ST3J0WmXaVVcd+Ek2c/61geMHwRo1TM=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-225-ZCnyL0L9PtWrvjEb3vIXuw-1; Fri, 29 Nov 2024 08:11:49 -0500
-X-MC-Unique: ZCnyL0L9PtWrvjEb3vIXuw-1
-X-Mimecast-MFC-AGG-ID: ZCnyL0L9PtWrvjEb3vIXuw
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4349fd2965fso16882425e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:11:48 -0800 (PST)
+ us-mta-170-w_YwSdL1M6KbUJPzpQ4rsQ-1; Fri, 29 Nov 2024 08:12:36 -0500
+X-MC-Unique: w_YwSdL1M6KbUJPzpQ4rsQ-1
+X-Mimecast-MFC-AGG-ID: w_YwSdL1M6KbUJPzpQ4rsQ
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385e03f54d0so209820f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 05:12:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732885907; x=1733490707;
+        d=1e100.net; s=20230601; t=1732885954; x=1733490754;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=7/lsbs4eMAFpBMNNwe7aa+EDadcLAy15/Z7Xw2L/Pw8=;
-        b=rsXrPUasB4uFbu5mRMYBTu/iBqlWqfsg2U8VySMw6dRGDuB9f0WKVsZdg74FdV3kJz
-         SMUZe4iByJD4tpQblDceE5HRzu4CS+VlJI+DrmOcWXRveFedh13rftsIXX9wX1/XMEQ8
-         yQrRSL4YtekZxbC5edHYD85jEBW9HCvdXMd6cAufOFts4pLu+pQECQG0It9ngvJvANdI
-         ENt1lJbJw8A8ndQuVv+WbE4PBLh+gO11hMN0DT8x5yAHI34NTUJYXzc3sTkg0+5L8N9B
-         VgV+IbWU2hsO7q0hkUXUlIouzoYdI9qlOi4DjjG4iw9qpecLkHnVlTT2AmJ8ryr8fHJn
-         V7Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWktDr/UVW6JYgiCmhM7/NBveE7sY/5hilPdZ0vNESfYCNIIiHQjA/KJp5qcbWF0nW2CQszaU/mgJPEVng=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/dJfiAgX7//eAPc13l042fOOPilVrtAYyZU6xfODTC7SyvRkW
-	oHaXh5oQdL8+eFF85G1cMwDKL03Gn149Y00n4wGuLnJzaGXY0pxxo87ViIIZ1kV0L+bLVAaHaRI
-	DI7SoyElW5wwOa59/FRAcetLk0zdBqtVXt7GXdz9NGzJ8NWsTRFVfMbT/FSU3AQ==
-X-Gm-Gg: ASbGnctYsjtVhq1dkc3CR23izmkJ12vJ1E3kj1TzDo5x94dzKn1sLpnotvzk3sTPX4O
-	7L3Sm/cNhi67240TiXnTlvkpSCxYkh+OWcPZugvaGN7zPnxbt2gdA6+7J+uBkEfQxlP3FoENvW0
-	8+ubFhn97cdEMcay4gry0pBwGRJRHj2pvqw0KDEqZnyTowulNajbG96LsjPrVI+Ri3cld2357YI
-	8ENzBCa5i8JvJnNQE4/aDygurqyaozF8U/6iKkW2ufu0DSTEEWBQju8XmcBFI1/EPhKe22aJMKa
-	AxEb0egvk0QCka/C2+Cq309KJcDo4QJDJyfyFlS/XTO8DLxcOlP/JEuoSk7uliautTxhVHGAyt/
-	GBQ==
-X-Received: by 2002:a05:6000:1f8b:b0:385:e176:43e8 with SMTP id ffacd0b85a97d-385e17644c1mr262936f8f.33.1732885907125;
-        Fri, 29 Nov 2024 05:11:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHOir4XnE0JlO93OYdRaExLw6gTrk+WtrxLfp0VTyXJDHkBmEzbXxU+gtV/8YndlL6HVGYuZg==
-X-Received: by 2002:a05:6000:1f8b:b0:385:e176:43e8 with SMTP id ffacd0b85a97d-385e17644c1mr259702f8f.33.1732885885041;
-        Fri, 29 Nov 2024 05:11:25 -0800 (PST)
+        bh=/hwYR3GugWMMQOPEFk6JjTcCSdLv4Wb1R0aJ/cKX0Rk=;
+        b=X/3UxE8+vcLL2rsqHaaDvquOsu4Wu9zTOoC5yj6kG3026DKANNvdOJ/MJWaQWUG4FL
+         mKpEZqOfBiqAeSgOI0iYK/XtXO2gQHXQmIUIx0z1tm0nHzYVKsrhCVDwFU/r3AkOx7rG
+         JHXLNEYX++s4+NidFDswulIiPPFJPF7JUaKWoxyicII6OssrMSGYybSibBFXLKBWQFJU
+         pcAPfVh40GX9U2AYg8tsvY5jsadtu6xj+rdT7cJyDopO8PwGOh8N/1xF+sjsBeiu3Fvk
+         bangMeIXNFlMibS6I3YETyKfqsN8uUOLWCT4j+CbGtwpnkyZYNtg6miqdCVYrfXrhRBg
+         g35w==
+X-Forwarded-Encrypted: i=1; AJvYcCVPnGg8tBJVCy5OaLEu5cv+R0TGerF++MSu0frIUdeDKO054nA1gYB7QEWSJUY6zkurGTYFSfT4/wtcPJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBWUwggngqtXgfbAglbWMnUNNFxo0m2tce9VOUG+bfKV+d8wmn
+	F0kdqdexciubw6Y2DLHa0w3xDTa1I0QuARDF++GioeFlrRvK25kwAyzcJY6CjYryzs/l26FZMLG
+	lgoqgc4Bjb//vFntuuF9ztrrQtcc4HP7ZbOYqfSKzOIdEE//ROoFPyXc7ErffAg==
+X-Gm-Gg: ASbGnctORYeFFniR2R5wW0g5nteSMAqDJCbFdqMZ0yO/HO3rdPljyAapsSteP2L1kmB
+	lVUafpGRWfERdGYRV4IF+8a3vkJCHX08BunN7QFSmvMCUsYyHEwyGuBFEAFzfGX5qLuZyTQToDZ
+	kwAwufQ32aKMQcEGFwgvVaHPRrSkFkHAlHRHQb68nOrD23Fr120SWdgckXQnohVRXVYOxLlVypN
+	+q+Li+5lzZHkaryKf4sgG7kmWcXRhcPXLu2E2ebnhj8gFf3zBW080ozOeWTUtD/pVuwmPaoioVi
+	drbsyDEoWE95hq5skWHNacOBIE98tI/ySFgoF5oZMZmOcsukgVbN++jBosBJk4mtpOhycqhkaLV
+	LJA==
+X-Received: by 2002:a05:6000:156c:b0:382:22f4:7773 with SMTP id ffacd0b85a97d-385c6baa5e6mr10230037f8f.0.1732885953649;
+        Fri, 29 Nov 2024 05:12:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IExEsoo67CVLNXO6FfxW8tgx24WlQQ/AN54SY+SW6f+rWspF1wsgU4wFEKp8G3gjjeOVuSyCw==
+X-Received: by 2002:a05:6000:156c:b0:382:22f4:7773 with SMTP id ffacd0b85a97d-385c6baa5e6mr10229012f8f.0.1732885945142;
+        Fri, 29 Nov 2024 05:12:25 -0800 (PST)
 Received: from ?IPV6:2003:cb:c71c:a700:bba7:849a:ecf1:5404? (p200300cbc71ca700bba7849aecf15404.dip0.t-ipconnect.de. [2003:cb:c71c:a700:bba7:849a:ecf1:5404])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa76a8e0sm84214255e9.15.2024.11.29.05.11.16
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74f2c7sm85744075e9.2.2024.11.29.05.12.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 05:11:18 -0800 (PST)
-Message-ID: <8376a446-1e8d-4359-ac69-626790ebcd97@redhat.com>
-Date: Fri, 29 Nov 2024 14:11:16 +0100
+        Fri, 29 Nov 2024 05:12:24 -0800 (PST)
+Message-ID: <c8ecd378-c197-4e06-94ef-e03b5ee28616@redhat.com>
+Date: Fri, 29 Nov 2024 14:12:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,7 +106,11 @@ References: <20241128113714.492474-1-lorenzo.stoakes@oracle.com>
  <926b3829-784f-47b8-9903-ea7b9ad484ac@redhat.com>
  <31e8202d-f3db-4dcd-a988-2f531b14e40f@lucifer.local>
  <84fed269-3f82-47f7-89cb-671fcee5a23a@redhat.com>
- <03f654d5-424a-4d23-828e-323aff46fa61@lucifer.local>
+ <20241129122624.GH24400@noisy.programming.kicks-ass.net>
+ <74be541b-22ad-42b5-b3c5-79b201e28f04@redhat.com>
+ <e97dba32-b5a8-43b1-9bea-e42daf6078c1@lucifer.local>
+ <9d6be5bd-ffb9-4a27-b56d-521cf6b7486e@redhat.com>
+ <6cab3e8a-dff7-41d1-af22-f18b8f2820dc@lucifer.local>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -154,39 +158,53 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <03f654d5-424a-4d23-828e-323aff46fa61@lucifer.local>
+In-Reply-To: <6cab3e8a-dff7-41d1-af22-f18b8f2820dc@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 29.11.24 13:48, Lorenzo Stoakes wrote:
-> Will reply inline also but to be clear - we should differentiate between
-> ongoing discussion about how best to tackle these things going forward
-> vs. whether _this patch_ is OK :)
+On 29.11.24 14:02, Lorenzo Stoakes wrote:
+> On Fri, Nov 29, 2024 at 01:59:01PM +0100, David Hildenbrand wrote:
+>> On 29.11.24 13:55, Lorenzo Stoakes wrote:
+>>> On Fri, Nov 29, 2024 at 01:45:42PM +0100, David Hildenbrand wrote:
+>>>> On 29.11.24 13:26, Peter Zijlstra wrote:
+>>>>> On Fri, Nov 29, 2024 at 01:12:57PM +0100, David Hildenbrand wrote:
+>>>>>
+>>>>>> Well, I think we simply will want vm_insert_pages_prot() that stops treating
+>>>>>> these things like folios :) . *likely*  we'd want a distinct memdesc/type.
+>>>>>>
+>>>>>> We could start that work right now by making some user (iouring,
+>>>>>> ring_buffer) set a new page->_type, and checking that in
+>>>>>> vm_insert_pages_prot() + vm_normal_page(). If set, don't touch the refcount
+>>>>>> and the mapcount.
+>>>>>>
+>>>>>> Because then, we can just make all the relevant drivers set the type, refuse
+>>>>>> in vm_insert_pages_prot() anything that doesn't have the type set, and
+>>>>>> refuse in vm_normal_page() any pages with this memdesc.
+>>>>>>
+>>>>>> Maybe we'd have to teach CoW to copy from such pages, maybe not. GUP of
+>>>>>> these things will stop working, I hope that is not a problem.
+>>>>>
+>>>>> Well... perf-tool likes to call write() upon these pages in order to
+>>>>> write out the data from the mmap() into a file.
+>>>
+>>> I'm confused about what you mean, write() using the fd should work fine, how
+>>> would they interact with the mmap? I mean be making a silly mistake here
+>>
+>> write() to file from the mmap()'ed address range to *some* file.
+>>
 > 
-> I don't think you're objecting to the patch as such, just disappointed
-> about VM_PFNMAP and wanting to discuss this more generally?
-
-Well, a bit of both :)
-
+> Yeah sorry my brain melted down briefly, for some reason was thinking of read()
+> writing into the buffer...
 > 
-> As I say below, we can't use VM_MIXEDMAP as it's broken for our case (we
-> have to use page->mapping if there's a struct page), so I think _right now_
-> this is the only sane solution.
+>> This will GUP the pages you inserted.
+>>
+>> GUP does not work on PFNMAP.
+> 
+> Well it _does_ if struct page **pages is set to NULL :)
 
-I'm not so sure ...
+Hm? :)
 
-I've also been wondering whether this particular user really wants to 
-allocate and work on folios for the time being :/
-
-
-Putting aside the remainder of what we discuss further below for now, 
-I've just been wondering if we could somehow have two mappings with two 
-separate ops. The one for the single R/W page, the other for the R/O 
-pages ...
-
-... but I'm not sure yet if that would completely help.
-
-... still trying to grasp all the details here, and how to keep GUP working.
+check_vma_flags() unconditionally refuses VM_PFNMAP.
 
 -- 
 Cheers,
