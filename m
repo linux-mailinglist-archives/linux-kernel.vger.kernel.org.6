@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-425920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247039DEC8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:50:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE6A51639E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:50:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D33F1A2C21;
-	Fri, 29 Nov 2024 19:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pub/Leiz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D599DEC8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:51:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B01F15AF6;
-	Fri, 29 Nov 2024 19:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E116B2229D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:51:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C030315AF6;
+	Fri, 29 Nov 2024 19:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TPukD1hE"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758B0155391
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732909802; cv=none; b=hnweeZNE84AC5ICtmOGXAM9GODr3xuC5uXqO4g1b9Y0v/ebfN0WphcnsZhct7XJZAMJu3w8ms9FbRIWKb7Fqj1M0/lsr6N9Yvdoo98qFRxz7iiC5Vxvl0DtA+RBDzDo9K8i/mRsTaIdwDYL24hlPHPPCl80qW7LxAE15VEom+KM=
+	t=1732909878; cv=none; b=HoqQHMkqU9DKz6141maZqpH1bQBMZTO/ZjKytCr1z0Qq7rkS44SG1Jv21spgEP0hM2KP6KnrouKqpAKBpCZyMtdfGLkTOBtTOImRXj/HcG397MnfbboanI52AO16XzC63t12Wzh+om6SNZ1Xwuy4l2TzEMaYZiOgkMW84wpvArI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732909802; c=relaxed/simple;
-	bh=oRzBt4nPMu99Ci+wT4DlAwimuDa54cGJKx/M3usRIKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=HOOnB61/dnTwWFHoK35NGDDnbKI4KyIewr6+nKjTVv4T+qD+WZmZKpPK2PEtRJryZVZheiVmQfOPX5qt/1mpm3qy65VB18JTnSWqec6cW3AKovXtVC3z9INcEgeJEwf11K7EAPRT07z9nKT6vtZ5ntUmrREFs1apy6mbdKSvGGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pub/Leiz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C627EC4CECF;
-	Fri, 29 Nov 2024 19:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732909802;
-	bh=oRzBt4nPMu99Ci+wT4DlAwimuDa54cGJKx/M3usRIKg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=pub/LeizZgMYiJGOjc4mtj9HeGJ2vGWzjTJP1QZvQTg8T3Wb0tTXOhsLsqHttqRI9
-	 9AaEtGxfrs3/6KSj26ZNjKN/e9IiAFlAxWt1LBaCUCHTHrO/2LAYmZ4XrPrWjchmt5
-	 ljwlc4w2cWTwHGlEmHIaX5rkIbp0hAzEWNsaWkY4vBAjfBmjgWV+jukztINfZFFUfX
-	 r4I6K887CdLk2W3z9l6tyLI1dH+qrxvUxUYdnmjmTJzQvAIoxZOBFFwVFgH/bSC/2p
-	 /h2WBlKtTJA5o+4KkXN/7m3aXIyezj0WHy0zB+R0lLMvcpm3dNdwk3sRlhOJHq28Nd
-	 uzqIOaJXt8j0Q==
-Date: Fri, 29 Nov 2024 13:50:00 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Chen Wang <unicorn_wang@outlook.com>
-Cc: kw@linux.com, u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu,
-	arnd@arndb.de, bhelgaas@google.com, conor+dt@kernel.org,
-	guoren@kernel.org, inochiama@outlook.com, krzk+dt@kernel.org,
-	lee@kernel.org, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
-	paul.walmsley@sifive.com, pbrobinson@gmail.com, robh@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com,
-	fengchun.li@sophgo.com
-Subject: Re: [PATCH 2/5] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-Message-ID: <20241129195000.GA2770247@bhelgaas>
+	s=arc-20240116; t=1732909878; c=relaxed/simple;
+	bh=iTaxrum4RWbRMxEoY8krvugViqTvIJqlx4xVF8pjTSY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n9njk8hOAH2ekaLGECpZcrAxhoh3U3lJ/HNDk3AY6/G4UYo4by9mCiejSvbGqwn5i2gWl7oWk5wY4WbGp4jOcRRyvQtlj11TuaJdDjARLvvtGy1gc9YsDWyMVRzYMftjk/ymUdlGIwmvLFGFbozAScJav98Tb71HDH6F0O4yHO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TPukD1hE; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cfc18d5259so18392a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:51:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732909875; x=1733514675; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DakFNAdlgvG9kZOIFDKFoMmE+nLP/gOLaXT7j6tD6Ds=;
+        b=TPukD1hEcRv0DfCGzbfzmMtoR5/TOxiXK0f2GkXHLGD2CdQHsyQPTBw5A9BcHXmihu
+         rnOGNQBYJ11UDjbbKzVNraUsD3fX5oG2BY/aPnD2L0rhKdOqQOter38/WIsY1TKBkD5W
+         mRmNk6CnPNf0UoYxQxhxd/FHY6xeZnB5Bl3aQgZxIfQcE+8f4xFG4K740XH0XYGqOZmJ
+         NcrPWQrJHJy0yPMxRmXX/KtVZeOtb1mgIYOYE6kbQHgR0klwWN4+BAn+FR4m3DHFzO92
+         +Jw4foDz9+okDsIIgwDF6umEBfWyxfER6HDDIu+o9W77WsqKY6aaYj9ypKk7E4RckfSj
+         nS9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732909875; x=1733514675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DakFNAdlgvG9kZOIFDKFoMmE+nLP/gOLaXT7j6tD6Ds=;
+        b=W1kToLSB4lwCTRkbHls/Cu5qE/GSdFqsZ2H9iS2pIPPgndUhaH2PnyuyiH9i+nTOED
+         klYPLoEeiFwLNPXMBxdd9wfU8ByM1ypx7hbbkWKlJam30EYQpe/3+qiShN9SGReVW6Qb
+         yCBF8mWKDwBBDJeJvaEKiH7rh5sRH11fA+po0WV80jgJT7jzMUQmXXRO0KurcJ/gHZpv
+         pOeb2TviNZruB5DRnCmfysHgD1KNPvzIdvlpg1mnI7xY5IR0gAvyZct8p5tG/TQ7c7xA
+         0+3SjSY0jeLJ6wm+cHzuOYtKUIW3v759Q9lYXnzIL4OAHd3lSdQSP2Kr/ubBDc99k5xY
+         Z8FA==
+X-Forwarded-Encrypted: i=1; AJvYcCXysGnkKBPjcPynG/op3PjGlBTtOj1X9VaLjHPTvqey1rklrYsX7quPkJPbMK+XQdAf6//oQwDVnY/K5nk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/bbmY1uvXmjySOYVdcCRZD93SxB0SWMdSQJyOGgy6A9X47s2L
+	3yTtIePovKvrOsnMkCWeD0e5nVx28Uui4scy/egYulry4nBxlGs7f367GJeVK2ijVOGH8X9/+VX
+	gdHAlPvLVJyV08LVmfWPC3wsLakNEvGF6xL+R
+X-Gm-Gg: ASbGncvsvoN+gtO1RDU20iwyvAbEQLhFdH6GeYmDTP+oqBoeCwhQHry2zwypO0MCLZs
+	MLZFIaSFjRDgeZ6eAhkvI5JTtf/R8IV6xl8gOVJn66yySKEpYtHnqPLwEmPQ=
+X-Google-Smtp-Source: AGHT+IGlaSsjv6kt+38Zjk6dLy2h4xxAeTLK604DNvrzBYzm9ozC/f76QckgvNB7y/dBp8gVjL8EAn6TLInXBILZe3U=
+X-Received: by 2002:a05:6402:35c2:b0:5d0:a982:91a7 with SMTP id
+ 4fb4d7f45d1cf-5d0a982a46bmr75993a12.6.1732909874361; Fri, 29 Nov 2024
+ 11:51:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <MAXPR01MB3984C307B163E615811A25AAFE2A2@MAXPR01MB3984.INDPRD01.PROD.OUTLOOK.COM>
+References: <ee3ec63269b43b34e1c90dd8c9743bf8@finder.org>
+In-Reply-To: <ee3ec63269b43b34e1c90dd8c9743bf8@finder.org>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 29 Nov 2024 20:50:38 +0100
+Message-ID: <CAG48ez0vg9W=oatvEqxvTSYNUx7htY23LxPrYCiuLZhZQuaGjg@mail.gmail.com>
+Subject: Re: GPM & Emacs broken in Linux 6.7 -- ok to relax check?
+To: Jared Finder <jared@finder.org>, =?UTF-8?Q?Hanno_B=C3=B6ck?= <hanno@hboeck.de>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-hardening@vger.kernel.org, regressions@lists.linux.dev, 
+	kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 29, 2024 at 05:51:39PM +0800, Chen Wang wrote:
-> On 2024/11/13 5:20, Bjorn Helgaas wrote:
-> > On Mon, Nov 11, 2024 at 01:59:56PM +0800, Chen Wang wrote:
-> > > From: Chen Wang <unicorn_wang@outlook.com>
-> > > 
-> > > Add support for PCIe controller in SG2042 SoC. The controller
-> > > uses the Cadence PCIe core programmed by pcie-cadence*.c. The
-> > > PCIe controller will work in host mode only.
-> > > +++ b/drivers/pci/controller/cadence/Kconfig
-> > > @@ -67,4 +67,15 @@ config PCI_J721E_EP
-> > >   	  Say Y here if you want to support the TI J721E PCIe platform
-> > >   	  controller in endpoint mode. TI J721E PCIe controller uses Cadence PCIe
-> > >   	  core.
-> > > +
-> > > +config PCIE_SG2042
-> > > +	bool "Sophgo SG2042 PCIe controller (host mode)"
-> > > +	depends on ARCH_SOPHGO || COMPILE_TEST
-> > > +	depends on OF
-> > > +	select PCIE_CADENCE_HOST
-> > > +	help
-> > > +	  Say Y here if you want to support the Sophgo SG2042 PCIe platform
-> > > +	  controller in host mode. Sophgo SG2042 PCIe controller uses Cadence
-> > > +	  PCIe core.
-> >
-> > Reorder to keep these menu items in alphabetical order by vendor.
-> 
-> Sorry, I don't understand your question. I think the menu items in this
-> Kconfig file are already sorted alphabetically.
++regression list, LKML, maintainers, patch authors
 
-Here's what menuconfig looks like after this patch:
+On Fri, Nov 29, 2024 at 8:38=E2=80=AFPM Jared Finder <jared@finder.org> wro=
+te:
+> The change to restrict access to TIOCLINUX that was added in Linux 6.7
+> breaks Emacs rendering of the mouse pointer. This change was previous
+> discussed in
+> https://lwn.net/ml/kernel-hardening/20230402160815.74760f87.hanno@hboeck.=
+de/.
 
-  [*] Cadence platform PCIe controller (host mode)
-  [*] Cadence platform PCIe controller (endpoint mode)
-  [*] TI J721E PCIe controller (host mode)
-  [*] TI J721E PCIe controller (endpoint mode)
-  [ ] Sophgo SG2042 PCIe controller (host mode) (NEW)
+This landed as commit 8d1b43f6a6df ("tty: Restrict access to
+TIOCLINUX' copy-and-paste subcommands").
 
-"Sophgo" sorts *before* "TI".
+#regzbot introduced: 8d1b43f6a6df
 
-> > > +	if (pcie->link_id == 1) {
-> > > +		regmap_write(pcie->syscon, REG_LINK1_MSI_ADDR_LOW,
-> > > +			     lower_32_bits(pcie->msi_phys));
-> > > +		regmap_write(pcie->syscon, REG_LINK1_MSI_ADDR_HIGH,
-> > > +			     upper_32_bits(pcie->msi_phys));
-> > > +
-> > > +		regmap_read(pcie->syscon, REG_LINK1_MSI_ADDR_SIZE, &value);
-> > > +		value = (value & REG_LINK1_MSI_ADDR_SIZE_MASK) | MAX_MSI_IRQS;
-> > > +		regmap_write(pcie->syscon, REG_LINK1_MSI_ADDR_SIZE, value);
-> > > +	} else {
-> > > +		regmap_write(pcie->syscon, REG_LINK0_MSI_ADDR_LOW,
-> > > +			     lower_32_bits(pcie->msi_phys));
-> > > +		regmap_write(pcie->syscon, REG_LINK0_MSI_ADDR_HIGH,
-> > > +			     upper_32_bits(pcie->msi_phys));
-> > > +
-> > > +		regmap_read(pcie->syscon, REG_LINK0_MSI_ADDR_SIZE, &value);
-> > > +		value = (value & REG_LINK0_MSI_ADDR_SIZE_MASK) | (MAX_MSI_IRQS << 16);
-> > > +		regmap_write(pcie->syscon, REG_LINK0_MSI_ADDR_SIZE, value);
-> > > +	}
-> >
-> > Lot of pcie->link_id checking going on here.  Consider saving these
-> > offsets in the struct sg2042_pcie so you don't need to test
-> > everywhere.
-> 
-> Actually, there are not many places in the code to check link_id. If to add
-> storage information in struct sg2042_pcie, at least four  u32 are needed.
-> And this logic will only be called one time in the probe. So I think it is
-> better to keep the current method. What do you think?
+> An associated Emacs bug report, bug #74220, is discussed at
+> https://lists.gnu.org/archive/html/bug-gnu-emacs/2024-11/msg00275.html.
+>
+> I wanted to ask if it made sense for the restriction to not apply to the
+> following three selection modes for TIOCL_SETSEL:
+>
+> TIOCL_SELPOINTER   3 /* show the pointer */
+> TIOCL_SELCLEAR   4 /* clear visibility of selection */
+> TIOCL_SELMOUSEREPORT   16 /* report beginning of selection */
+>
+> On a glance over the selection code, none of these interact with
+> vc_sel.buffer and therefore are unrelated to the exploit linked in the
+> original report. Only SELPOINTER is necessary to be available to fix
+> Emacs bug #74220. I imagine such a change would involve moving the
+> capability check from tioclinux(), case TIOCL_SETSEL to inside
+> vc_do_selection().
+>
+> Note: This is my first time emailing a Linux kernel mailing list, so
+> please let me know if there's any additional conventions I should be
+> following here.
 
-1) I don't think "link_id" is a very good name since it appears to
-refer to one of two PCIe Root Ports.  mvebu uses "marvell,pcie-port"
-which looks like a similar usage, although unnecessarily
-Marvell-specific.  And arch/arm/boot/dts/marvell/armada-370-db.dts has
-separate stanzas for two Root Ports, without needing a property to
-distinguish them, which would be even better.  I'm not sure why
-arch/arm/boot/dts/marvell/armada-370.dtsi needs "marvell,pcie-port"
-even though it also has separate stanzas.
+FYI, for next time: There is some documentation at
+https://docs.kernel.org/admin-guide/reporting-regressions.html
+specifically for reporting regressions (with a focus on what to do so
+that your regression report doesn't get lost).
 
-2) I think checking pcie->link_id is likely to be harder to maintain
-in the future, e.g., if a new chip adds more Root Ports, you'll have
-to touch each use.
-
-Bjorn
+> Thank you for your time.
+>
+>    -- MJF
+>
 
