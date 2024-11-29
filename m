@@ -1,138 +1,196 @@
-Return-Path: <linux-kernel+bounces-425937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EE69DECB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:35:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25EBE16333A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:35:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76773158555;
-	Fri, 29 Nov 2024 20:35:05 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E0639DECBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:37:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B1313AA35;
-	Fri, 29 Nov 2024 20:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0542826D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:37:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6F51A0BE1;
+	Fri, 29 Nov 2024 20:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DxrP20O0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149A715697B
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 20:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732912505; cv=none; b=Oe8Rh+j1ZOTUjMwjsuWf/7bLjpG7idtX4ScR/nxfv1ZPeZa1nQKeJ7lJMCfpUzV0BOgrX6v1qjYYiCTy0JuqhtlQVnIN5pMSf39xoQOgZnFCZuc+7FS4HtaI2fVYoW+gCQC4xnxkw81eVl05qf/KML5pciXNCMapQZXsDZlR/LU=
+	t=1732912613; cv=none; b=HsjZssza/gFxh0GcOO1Cqpjzkx5qEHhm9TdBwnP/0rQ1xKjDJmkG97L9vnJBONubMqTrHFLoJCW7nBwrsmW/IqpSVfHjJQsV/Dqe3sbOvjMwlIL0vU/Xb9Nqr1HyTafbV5XAaEpuoep5cnFqwjmU9jp2jAjVoSgJ9xFGYfP2GzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732912505; c=relaxed/simple;
-	bh=YMFWazRWvhRQepmnWfacv5koAFIfgM6etwtnuQizzpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lywr0p3pfxHmd5/aeS8INExmzFv/xWMFvw1Kt5UqqmChUvhyqnXgGrmO8WxLOJqbAefcCOgRd23e9siGlLqvWXSJmo2vHhUwJzNlwhf672+13lzVbIRUGycmLvBZRGGEeD788MZ9Cfc11irrCcBEAWgDCBhHkjkzQ/afTW7Fj9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 1BC381C00A0; Fri, 29 Nov 2024 21:34:54 +0100 (CET)
-Date: Fri, 29 Nov 2024 21:34:53 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Pavel Machek <pavel@denx.de>, Borislav Petkov <bp@alien8.de>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, puwen@hygon.cn, seanjc@google.com,
-	kim.phillips@amd.com, jmattson@google.com, babu.moger@amd.com,
-	peterz@infradead.org, rick.p.edgecombe@intel.com, brgerst@gmail.com,
-	ashok.raj@intel.com, mjguzik@gmail.com, jpoimboe@kernel.org,
-	nik.borisov@suse.com, aik@amd.com, vegard.nossum@oracle.com,
-	daniel.sneddon@linux.intel.com, acdunlap@google.com,
-	Erwan Velu <erwanaliasr1@gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.15 11/12] x86/barrier: Do not serialize MSR
- accesses on AMD
-Message-ID: <Z0olbd3OYQnlmW+D@duo.ucw.cz>
-References: <20240115232718.209642-1-sashal@kernel.org>
- <20240115232718.209642-11-sashal@kernel.org>
- <20241128115924.GAZ0hbHKsbtCixVqAe@fat_crate.local>
- <Z0iRzPpGvpeYzA4H@sashalap>
- <20241128164310.GCZ0idnhjpAV6wFWm6@fat_crate.local>
- <Z0mNTEw2vK1nJpOo@duo.ucw.cz>
- <Z0nD6NZc3wmq8_v9@sashalap>
+	s=arc-20240116; t=1732912613; c=relaxed/simple;
+	bh=YZlE/jBpFo+64Z8yAfT8C1Ta79oTRVsY9z4cyYBUpFg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=IqjaFuEb9mrdOodygTE22M795fYv29fYMmIpWXse2efFEklMCHQSFNHz99i3KfydRxpEK3owpVwhgmO4/uCXpcGelTV4btRkDhBa/K9FJ3HhSOKMvMLIOrB7kqbjkvMTG7AXJrxWqZ5BhE4zh5CBISU9PEyYwmXgONvA2cohsL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DxrP20O0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732912611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/a5M7IdP8lXOGSSM/sXvBBskiEQyvgFUKp3QFL06WRg=;
+	b=DxrP20O0fskGJ3v8vmBNSBZaTSFQ9CPs+ofLCLdIoSbB/IHof5vfNYVFrvRDnN9u2eC/aw
+	XdRtvhMo16tvOyXPeZ5PgVJOpL7HevjcsGGKCNTrv9KO/iLiU5kkxiChvemryqc+7h+OZp
+	1LeifA1gAkcDF/EG/dS+kIBwvvAJK7k=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-454-jRuj2I_4OEG2qe8KdOixPw-1; Fri,
+ 29 Nov 2024 15:36:45 -0500
+X-MC-Unique: jRuj2I_4OEG2qe8KdOixPw-1
+X-Mimecast-MFC-AGG-ID: jRuj2I_4OEG2qe8KdOixPw
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6E69E1955DCA;
+	Fri, 29 Nov 2024 20:36:43 +0000 (UTC)
+Received: from lszubowi.redhat.com (unknown [10.22.88.155])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EF86E195605A;
+	Fri, 29 Nov 2024 20:36:40 +0000 (UTC)
+From: Lenny Szubowicz <lszubowi@redhat.com>
+To: pavan.chebbi@broadcom.com,
+	mchan@broadcom.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	george.shuklin@gmail.com,
+	andrea.fois@eventsense.it,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [patch v2] tg3: Disable tg3 PCIe AER on system reboot
+Date: Fri, 29 Nov 2024 15:36:40 -0500
+Message-ID: <20241129203640.54492-1-lszubowi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="E/ga9PEn1OI4TTxc"
-Content-Disposition: inline
-In-Reply-To: <Z0nD6NZc3wmq8_v9@sashalap>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+Disable PCIe AER on the tg3 device on system reboot on a limited
+list of Dell PowerEdge systems. This prevents a fatal PCIe AER event
+on the tg3 device during the ACPI _PTS (prepare to sleep) method for
+S5 on those systems. The _PTS is invoked by acpi_enter_sleep_state_prep()
+as part of the kernel's reboot sequence as a result of commit
+38f34dba806a ("PM: ACPI: reboot: Reinstate S5 for reboot").
 
---E/ga9PEn1OI4TTxc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There was an earlier fix for this problem by commit 2ca1c94ce0b6
+("tg3: Disable tg3 device on system reboot to avoid triggering AER").
+But it was discovered that this earlier fix caused a reboot hang
+when some Dell PowerEdge servers were booted via ipxe. To address
+this reboot hang, the earlier fix was essentially reverted by commit
+9fc3bc764334 ("tg3: power down device only on SYSTEM_POWER_OFF").
+This re-exposed the tg3 PCIe AER on reboot problem.
 
-On Fri 2024-11-29 08:38:48, Sasha Levin wrote:
-> On Fri, Nov 29, 2024 at 10:45:48AM +0100, Pavel Machek wrote:
-> > Hi!
-> >=20
-> > > > You've missed the 5.10 mail :)
-> > >=20
-> > > You mean in the flood? ;-P
-> > >=20
-> > > > Pavel objected to it so I've dropped it: https://lore.kernel.org/al=
-l/Zbli7QIGVFT8EtO4@sashalap/
-> > >=20
-> > > So we're not backporting those anymore? But everything else? :-P
-> > >=20
-> > > And 5.15 has it already...
-> > >=20
-> > > Frankly, with the amount of stuff going into stable, I see no problem=
- with
-> > > backporting such patches. Especially if the people using stable kerne=
-ls will
-> > > end up backporting it themselves and thus multiply work. I.e., Erwan'=
-s case.
-> >=20
-> > Well, some people would prefer -stable to only contain fixes for
-> > critical things, as documented.
-> >=20
-> > stable-kernel-rules.rst:
-> >=20
-> > - It must fix a problem that causes a build error (but not for things
-> >   marked CONFIG_BROKEN), an oops, a hang, data corruption, a real
-> >   security issue, or some "oh, that's not good" issue.  In short, somet=
-hing
-> >   critical.
-> >=20
-> > Now, you are right that reality and documentation are not exactly
-> > "aligned". I don't care much about which one is fixed, but I'd really
-> > like them to match (because that's what our users expect).
->=20
-> You should consider reading past the first bullet in that section :)
->=20
->   - Serious issues as reported by a user of a distribution kernel may also
->     be considered if they fix a notable performance or interactivity issu=
-e.
->=20
-> It sounds like what's going on here, no?
+This fix is not an ideal solution because the root cause of the AER
+is in system firmware. Instead, it's a targeted work-around in the
+tg3 driver.
 
-Is it? I'd not expect this to be visible in anything but
-microbenchmarks. Do you have user reports hitting this?
+Note also that the PCIe AER must be disabled on the tg3 device even
+if the system is configured to use "firmware first" error handling.
 
-It is not like this makes kernel build 10% slower, is it?
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Fixes: 9fc3bc764334 ("tg3: power down device only on SYSTEM_POWER_OFF")
+Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+---
+ drivers/net/ethernet/broadcom/tg3.c | 59 +++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
---E/ga9PEn1OI4TTxc
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index 9cc8db10a8d6..12ae5a976ca7 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -55,6 +55,7 @@
+ #include <linux/hwmon.h>
+ #include <linux/hwmon-sysfs.h>
+ #include <linux/crc32poly.h>
++#include <linux/dmi.h>
+ 
+ #include <net/checksum.h>
+ #include <net/gso.h>
+@@ -18192,6 +18193,51 @@ static int tg3_resume(struct device *device)
+ 
+ static SIMPLE_DEV_PM_OPS(tg3_pm_ops, tg3_suspend, tg3_resume);
+ 
++/*
++ * Systems where ACPI _PTS (Prepare To Sleep) S5 will result in a fatal
++ * PCIe AER event on the tg3 device if the tg3 device is not, or cannot
++ * be, powered down.
++ */
++static const struct dmi_system_id tg3_restart_aer_quirk_table[] = {
++	{
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R440"),
++		},
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R540"),
++		},
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R640"),
++		},
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R650"),
++		},
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R740"),
++		},
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R750"),
++		},
++	},
++	{}
++};
++
+ static void tg3_shutdown(struct pci_dev *pdev)
+ {
+ 	struct net_device *dev = pci_get_drvdata(pdev);
+@@ -18208,6 +18254,19 @@ static void tg3_shutdown(struct pci_dev *pdev)
+ 
+ 	if (system_state == SYSTEM_POWER_OFF)
+ 		tg3_power_down(tp);
++	else if (system_state == SYSTEM_RESTART &&
++		 dmi_first_match(tg3_restart_aer_quirk_table) &&
++		 pdev->current_state <= PCI_D3hot) {
++		/*
++		 * Disable PCIe AER on the tg3 to avoid a fatal
++		 * error during this system restart.
++		 */
++		pcie_capability_clear_word(pdev, PCI_EXP_DEVCTL,
++					   PCI_EXP_DEVCTL_CERE |
++					   PCI_EXP_DEVCTL_NFERE |
++					   PCI_EXP_DEVCTL_FERE |
++					   PCI_EXP_DEVCTL_URRE);
++	}
+ 
+ 	rtnl_unlock();
+ 
+-- 
+2.45.2
 
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ0olbQAKCRAw5/Bqldv6
-8nqWAKCCRon2Yj6x3KIUKSIIIdoM+cRC2ACeN7Blhft5imjMVc0BI9j3TD6S7DE=
-=OHlZ
------END PGP SIGNATURE-----
-
---E/ga9PEn1OI4TTxc--
 
