@@ -1,134 +1,107 @@
-Return-Path: <linux-kernel+bounces-425921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D599DEC8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:51:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1419DEC91
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:55:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC59163A0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:55:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C8C1A38C2;
+	Fri, 29 Nov 2024 19:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRzevYF+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E116B2229D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:51:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C030315AF6;
-	Fri, 29 Nov 2024 19:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TPukD1hE"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758B0155391
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 19:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DDF15AF6;
+	Fri, 29 Nov 2024 19:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732909878; cv=none; b=HoqQHMkqU9DKz6141maZqpH1bQBMZTO/ZjKytCr1z0Qq7rkS44SG1Jv21spgEP0hM2KP6KnrouKqpAKBpCZyMtdfGLkTOBtTOImRXj/HcG397MnfbboanI52AO16XzC63t12Wzh+om6SNZ1Xwuy4l2TzEMaYZiOgkMW84wpvArI=
+	t=1732910139; cv=none; b=Jpw+uJEcxK5DXOJ212S+6QmZzHGyVtBNjV6TgfJGK+Ozw3OX6R8XT35JV7F8HXY3EpANgWlSY+UEwmWOtw5M69N3HfNtgpwZaZ4NWPsvBREVdlAEGyFW6p5RiLj6SVm05sHAYkg76FiJx8iWgR+hizEwKkcCEdlDxy38TJiijEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732909878; c=relaxed/simple;
-	bh=iTaxrum4RWbRMxEoY8krvugViqTvIJqlx4xVF8pjTSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n9njk8hOAH2ekaLGECpZcrAxhoh3U3lJ/HNDk3AY6/G4UYo4by9mCiejSvbGqwn5i2gWl7oWk5wY4WbGp4jOcRRyvQtlj11TuaJdDjARLvvtGy1gc9YsDWyMVRzYMftjk/ymUdlGIwmvLFGFbozAScJav98Tb71HDH6F0O4yHO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TPukD1hE; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cfc18d5259so18392a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 11:51:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732909875; x=1733514675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DakFNAdlgvG9kZOIFDKFoMmE+nLP/gOLaXT7j6tD6Ds=;
-        b=TPukD1hEcRv0DfCGzbfzmMtoR5/TOxiXK0f2GkXHLGD2CdQHsyQPTBw5A9BcHXmihu
-         rnOGNQBYJ11UDjbbKzVNraUsD3fX5oG2BY/aPnD2L0rhKdOqQOter38/WIsY1TKBkD5W
-         mRmNk6CnPNf0UoYxQxhxd/FHY6xeZnB5Bl3aQgZxIfQcE+8f4xFG4K740XH0XYGqOZmJ
-         NcrPWQrJHJy0yPMxRmXX/KtVZeOtb1mgIYOYE6kbQHgR0klwWN4+BAn+FR4m3DHFzO92
-         +Jw4foDz9+okDsIIgwDF6umEBfWyxfER6HDDIu+o9W77WsqKY6aaYj9ypKk7E4RckfSj
-         nS9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732909875; x=1733514675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DakFNAdlgvG9kZOIFDKFoMmE+nLP/gOLaXT7j6tD6Ds=;
-        b=W1kToLSB4lwCTRkbHls/Cu5qE/GSdFqsZ2H9iS2pIPPgndUhaH2PnyuyiH9i+nTOED
-         klYPLoEeiFwLNPXMBxdd9wfU8ByM1ypx7hbbkWKlJam30EYQpe/3+qiShN9SGReVW6Qb
-         yCBF8mWKDwBBDJeJvaEKiH7rh5sRH11fA+po0WV80jgJT7jzMUQmXXRO0KurcJ/gHZpv
-         pOeb2TviNZruB5DRnCmfysHgD1KNPvzIdvlpg1mnI7xY5IR0gAvyZct8p5tG/TQ7c7xA
-         0+3SjSY0jeLJ6wm+cHzuOYtKUIW3v759Q9lYXnzIL4OAHd3lSdQSP2Kr/ubBDc99k5xY
-         Z8FA==
-X-Forwarded-Encrypted: i=1; AJvYcCXysGnkKBPjcPynG/op3PjGlBTtOj1X9VaLjHPTvqey1rklrYsX7quPkJPbMK+XQdAf6//oQwDVnY/K5nk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/bbmY1uvXmjySOYVdcCRZD93SxB0SWMdSQJyOGgy6A9X47s2L
-	3yTtIePovKvrOsnMkCWeD0e5nVx28Uui4scy/egYulry4nBxlGs7f367GJeVK2ijVOGH8X9/+VX
-	gdHAlPvLVJyV08LVmfWPC3wsLakNEvGF6xL+R
-X-Gm-Gg: ASbGncvsvoN+gtO1RDU20iwyvAbEQLhFdH6GeYmDTP+oqBoeCwhQHry2zwypO0MCLZs
-	MLZFIaSFjRDgeZ6eAhkvI5JTtf/R8IV6xl8gOVJn66yySKEpYtHnqPLwEmPQ=
-X-Google-Smtp-Source: AGHT+IGlaSsjv6kt+38Zjk6dLy2h4xxAeTLK604DNvrzBYzm9ozC/f76QckgvNB7y/dBp8gVjL8EAn6TLInXBILZe3U=
-X-Received: by 2002:a05:6402:35c2:b0:5d0:a982:91a7 with SMTP id
- 4fb4d7f45d1cf-5d0a982a46bmr75993a12.6.1732909874361; Fri, 29 Nov 2024
- 11:51:14 -0800 (PST)
+	s=arc-20240116; t=1732910139; c=relaxed/simple;
+	bh=QgPr2KbA1m5SASDhjMe9rxnKS5wNsj8DTXHscwQGniQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qewbXTDbbQY+0yVf65HkcDblbpFb3BpbHSQY+55dauWj+JgBwxscS4isqigFNoZaUwpFjOsmtqoeZPeRBtVcTZRid1xFzkyCY8a/eW4gTkBfwQn+uAYQQKFKuVx2DfSc4c1azBQ09FwGWGp0H9zFW6Tzc9Rxrj0MIsNQxxE1uCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRzevYF+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B039EC4CECF;
+	Fri, 29 Nov 2024 19:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732910138;
+	bh=QgPr2KbA1m5SASDhjMe9rxnKS5wNsj8DTXHscwQGniQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MRzevYF+2OY5SSW4Ix/KHVpQOF67UlBFka9imFkzWURDQV/B57ur0TtMXYgNxjTRQ
+	 +6qZvYxlJdlXnVMkVLQDgrzmIbU3uhJM3toKuxqas+ERWBBgInmeweruRkK0Y2TyCU
+	 NLfpYa6PbZJGWT7Sgs8+BcDCxtSgAd4+jTOw4eZbVgJTdvYM0ocYgijHIGPb/mstY7
+	 05ek5KsbxfQmKQ+cPo5c2DDkOO6QEuO7qei+p34Q04QG6OnQHaNxCS2cCt9ZRnTckC
+	 GUxZfdfwLmYY9o5rU56vWiIPRquKOL5zWPtvU9JfLvxvJw7RJIgaZAzUkEjK5UnSiK
+	 gaXx7Nscm0syQ==
+Date: Fri, 29 Nov 2024 13:55:37 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: kw@linux.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+	lpieralisi@kernel.org, shuah@kernel.org, kishon@kernel.org,
+	aman1.gupta@samsung.com, p.rajanbabu@samsung.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org, robh@kernel.org,
+	linux-kselftest@vger.kernel.org, stable+noautosel@kernel.org
+Subject: Re: [PATCH v2 1/4] PCI: qcom-ep: Mark BAR0/BAR2 as 64bit BARs and
+ BAR1/BAR3 as RESERVED
+Message-ID: <20241129195537.GA2770926@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ee3ec63269b43b34e1c90dd8c9743bf8@finder.org>
-In-Reply-To: <ee3ec63269b43b34e1c90dd8c9743bf8@finder.org>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 29 Nov 2024 20:50:38 +0100
-Message-ID: <CAG48ez0vg9W=oatvEqxvTSYNUx7htY23LxPrYCiuLZhZQuaGjg@mail.gmail.com>
-Subject: Re: GPM & Emacs broken in Linux 6.7 -- ok to relax check?
-To: Jared Finder <jared@finder.org>, =?UTF-8?Q?Hanno_B=C3=B6ck?= <hanno@hboeck.de>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-hardening@vger.kernel.org, regressions@lists.linux.dev, 
-	kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129092415.29437-2-manivannan.sadhasivam@linaro.org>
 
-+regression list, LKML, maintainers, patch authors
+On Fri, Nov 29, 2024 at 02:54:12PM +0530, Manivannan Sadhasivam wrote:
+> On all Qcom endpoint SoCs, BAR0/BAR2 are 64bit BARs by default and software
+> cannot change the type. So mark the those BARs as 64bit BARs and also mark
+> the successive BAR1/BAR3 as RESERVED BARs so that the EPF drivers cannot
+> use them.
 
-On Fri, Nov 29, 2024 at 8:38=E2=80=AFPM Jared Finder <jared@finder.org> wro=
-te:
-> The change to restrict access to TIOCLINUX that was added in Linux 6.7
-> breaks Emacs rendering of the mouse pointer. This change was previous
-> discussed in
-> https://lwn.net/ml/kernel-hardening/20230402160815.74760f87.hanno@hboeck.=
-de/.
+"Default" implies an initial setting that can be changed, but you say
+"by default" and also "software cannot change the type."  Can they be
+anything *other* than 64-bit BARs?
 
-This landed as commit 8d1b43f6a6df ("tty: Restrict access to
-TIOCLINUX' copy-and-paste subcommands").
+If they're hardwired to be 64-bit BARs, I would just say that.
 
-#regzbot introduced: 8d1b43f6a6df
+> Cc: stable+noautosel@kernel.org # depends on patch introducing only_64bit flag
 
-> An associated Emacs bug report, bug #74220, is discussed at
-> https://lists.gnu.org/archive/html/bug-gnu-emacs/2024-11/msg00275.html.
->
-> I wanted to ask if it made sense for the restriction to not apply to the
-> following three selection modes for TIOCL_SETSEL:
->
-> TIOCL_SELPOINTER   3 /* show the pointer */
-> TIOCL_SELCLEAR   4 /* clear visibility of selection */
-> TIOCL_SELMOUSEREPORT   16 /* report beginning of selection */
->
-> On a glance over the selection code, none of these interact with
-> vc_sel.buffer and therefore are unrelated to the exploit linked in the
-> original report. Only SELPOINTER is necessary to be available to fix
-> Emacs bug #74220. I imagine such a change would involve moving the
-> capability check from tioclinux(), case TIOCL_SETSEL to inside
-> vc_do_selection().
->
-> Note: This is my first time emailing a Linux kernel mailing list, so
-> please let me know if there's any additional conventions I should be
-> following here.
+If stable maintainers need to act on this, do they need to search for
+the patch introducing only_64bit flag?  That seems onerous; is there a
+SHA1 that would make it easier?
 
-FYI, for next time: There is some documentation at
-https://docs.kernel.org/admin-guide/reporting-regressions.html
-specifically for reporting regressions (with a focus on what to do so
-that your regression report doesn't get lost).
-
-> Thank you for your time.
->
->    -- MJF
->
+> Fixes: f55fee56a631 ("PCI: qcom-ep: Add Qualcomm PCIe Endpoint controller driver")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> index e588fcc54589..f925c4ad4294 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> @@ -823,6 +823,10 @@ static const struct pci_epc_features qcom_pcie_epc_features = {
+>  	.msi_capable = true,
+>  	.msix_capable = false,
+>  	.align = SZ_4K,
+> +	.bar[BAR_0] = { .only_64bit = true, },
+> +	.bar[BAR_1] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_2] = { .only_64bit = true, },
+> +	.bar[BAR_3] = { .type = BAR_RESERVED, },
+>  };
+>  
+>  static const struct pci_epc_features *
+> -- 
+> 2.25.1
+> 
 
