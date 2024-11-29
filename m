@@ -1,216 +1,187 @@
-Return-Path: <linux-kernel+bounces-425822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899409DEB5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:59:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B389DEB62
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:00:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4875528229F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 769032822F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB4519C54D;
-	Fri, 29 Nov 2024 16:59:30 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1657155393;
+	Fri, 29 Nov 2024 17:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="IELm5I2a";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="raccWWOV"
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B45189BAD
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7A13224;
+	Fri, 29 Nov 2024 17:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732899570; cv=none; b=uI3K/BAr8raATK3/mz9cmBA4PoAU7taHXXWvaUs0kRfVvVASsNUZmfVOIKluyzndpW1NApcUiIDXNu1zjtbkGzvysNQ79ugwF3f9aT/aYgY9yqIHqwSenwryap43b25SrDj0vB0B7NfLO7AMsyZrLTXsXTihgngSAXy4Joi61bo=
+	t=1732899624; cv=none; b=U8jPiEbL0rX0Ert1cjLztLdferR4i62yMryfaJ98itba0W4SPi5MYSxYwoSTKT5veQJ7VmmXKeaxVcn9bfxrYa27HKUzxGyoHihJtvnz1/ZBcc46YPI6BBGuOhjRUXe/11rDuflWOFR5DnMineEelDPKCX8Xhv7CiRxL3B5qaeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732899570; c=relaxed/simple;
-	bh=iFv5/mWKvj/JRccoK1G0RBXj2d/z7yUkhpA4mOWvtDM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ngSZWboHNF1n263v6VxOJG98eA1kVkUk9N5picY6Rt1Bd8CsvIcypzdMJO6/XidJe2PITY9U5DsFnVWTtLc309V0xLSNCLbfasu+SqRX5LCeCmvuKfo60QBYAPtf/M8GrWI1MCRwvfE3BZ2Gcgh7pQW8v8BVg1jmA2/rDaCLftI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-841a4a82311so156612439f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:59:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732899567; x=1733504367;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k+FyDG9g553pO0ZmNwOUpE/geCJO3+/QbeJ2puP/TEs=;
-        b=reTZbWvBG93ln6z0N0nRp5WkbkjmFKZYNdcr2QEU2ETUXbBt13hFLTFmo6pc4xa7YS
-         8Brb54luKaJ2Ee8PCvicmL1CjTdc83tAEX/R4DEGQqwCreCqYaVZ0wP6biQHqk3Ahd4b
-         v5Q7qfKRmWr+4tWBLrxm4HXlT335hBRaK82+kw0Jr3ccgpOc+m7tRGGYGJ0HDb7/hGs4
-         z3jKmnTwLxR1q3s7hjAPjhvcoFAZ0MgPZyK31ZxW5Bz61m74XvxL6gu08YLvui485LC3
-         tg7XSboEpvO3+d8EYlheiGzEidygkbJsNIeMiQabulPg+6Xjbq8vrxCyJlBcVqxuaZyj
-         d0hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeGhfhZz1qyExzNj9IUc8pyaP1Vk0OTiaFds69GRVX579vk08KFX7jGjLgAkLc/po2fE3zAFnbJiHRhEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwByiNUc96JfukbtWmTDIF7acFx7ZHbDO8BDekgK4Aqyp7NMvLG
-	Z1BfvZZi+wBA3tDYeSLkyYswzFIQWXQxjedi515VAP4SHAXtWwB4V/8n2xA29JZeF9MkefzG03K
-	lfkuUssXwYTfe0yjlmdbSH9MSunL8gmGV7wIdbdvoLpicVPfuNMzo9y0=
-X-Google-Smtp-Source: AGHT+IERG2FFnIrUUW5v7sNk16vU9/ClX6KYg20d9vMlQTP/gK0RSz4mkNvM5nYyp846bPZspNdjgTw2BsJiKfjMhZ5XhpPBh4a2
+	s=arc-20240116; t=1732899624; c=relaxed/simple;
+	bh=CtNzinqF27+J7mwoo0xd6N7UlEds77+5yvAiOjYpCc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f4r2UJP3jUstejRBjAmuBOxr48toZvgpQY1Cse19TX4/KATXA3x89x4Lj0n9bHTYLF9DcKtliWSk0c58UvGKflxe/v26PqUGG6AcONKe23Ji1y1vDjClqX5cVZzl9gHmRUyx3b4ywQWZt9bO8iexAG45mgf77tbPNjtDe3y4WgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=IELm5I2a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=raccWWOV; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailflow.stl.internal (Postfix) with ESMTP id 0D5981D40E15;
+	Fri, 29 Nov 2024 12:00:19 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Fri, 29 Nov 2024 12:00:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1732899618; x=
+	1732903218; bh=vCE1zA7yi53FRV7humf9JVIisBT66Uzk/D9uQNQavhY=; b=I
+	ELm5I2a5NXbgjCWiWYREEVQZcDrdguNkRHXu6W5IuWZ0nNCWvmD43G7Ib2Klrv2Y
+	n+2eUv8JlHcVCzU4L77YvPl8M6pbUXVPKjAa44i6eklZJU0LnUOVWk4uys8n2FMh
+	3JXGEH3nBTKcM49rk7oeirsswbgbcA+71LQgABi+j35c12Hei/mstreQdj59KDCu
+	3wM5O8VpgQbkKPnZyZSkFrAVQylc9FRJ1aH/nxhF6bdVYQh4uRD2rRy57yRMzfDN
+	wgwqkjHfVUnI4GlZw+KwOcds8GkhTYy2AB8y6bFsuiiOAAaPifMkJHKdO6SF8SWZ
+	RTr5QxrI6CklpX+WParrA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732899618; x=1732903218; bh=vCE1zA7yi53FRV7humf9JVIisBT66Uzk/D9
+	uQNQavhY=; b=raccWWOVFBvPEEjUI06/G1PUS2N24zz3LJCuvlkhAaHZ6iLfgTZ
+	mCaSzfEIeAnSSVIPuFEYHwm22LmNvct9a1h+fK91XhUyAgz7cCKfKHYvrzA07rxR
+	qeTCA5hlF19NLpBtXFmHZC0ZhMBNDmRZzKAJP2rj8WMVz++Vbbh0LJf2WStP2PLQ
+	yuCkYHpotwj/iKsSZQ5UbqZFrj9341B4p5uMDVZr/CjPJ8gBZKSdwO0BIsikwcA8
+	umMbo03ZDzoCKF6i/5ftDSTSC7lob/GcqvnEa93DWBTMVj+b0L3AarGYEbAsRWAD
+	/g6/Fa/iltagiYYL3oRpi0huEZFGHcBfhMQ==
+X-ME-Sender: <xms:IfNJZwRNfydcXxZb-CUjNYjlEjnAkqHQMiKAGEZxsAyzPyCeThFNWQ>
+    <xme:IfNJZ9x-C_Aq0o-do3WyPXEZsEeX4wuechzypK1VBB3iHx0WqB86yi-UeQoyacloK
+    knJjWPtCtYwMDgtlrU>
+X-ME-Received: <xmr:IfNJZ90DDzs6nCR_kR1o1R1yywUYHWpcMXet-jXlJtZu8ukydvQEABo4Uxzl>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgdelfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
+    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
+    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
+    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
+    tghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
+    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhu
+    nhhtvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:IfNJZ0CffB1Y_xp9dHTt_Ujsf3MyJmCKT-YItExT9FafTjCQ9Bqd-w>
+    <xmx:IfNJZ5gSZxA6E8Ug-KKsXfw_e1W4D5TCG69MHkP_AbwcCVKkZfOXzQ>
+    <xmx:IfNJZwoXngtXpsSlW4IojqsalD8eDc7gQVajDZGHeCzEGRnRJpsvLQ>
+    <xmx:IfNJZ8hc2FYcm3yKsJ8rW1dklHeRYKAUrfB6ClFl3jF8Z-fzh_q1vg>
+    <xmx:IvNJZ6WdqvQKEu_UCIlXiPKXKbHYXft45fx0_yCyLrIM61LIXkwV-iew>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 29 Nov 2024 12:00:16 -0500 (EST)
+Date: Fri, 29 Nov 2024 18:00:14 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v11 18/23] ovpn: implement peer
+ add/get/dump/delete via netlink
+Message-ID: <Z0nzHn3OsNeUIQPZ@hog>
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
+ <ZzIlxRbic7qLVD4F@hog>
+ <136282ad-77d9-4799-bd2d-f3c3c9df99c0@openvpn.net>
+ <ZzSH-Ke4wuJcis0q@hog>
+ <5ae6f624-5196-42f7-a0b8-85e2847b3fdf@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a6:b0:3a7:783d:93d7 with SMTP id
- e9e14a558f8ab-3a7c552596amr134010185ab.4.1732899566794; Fri, 29 Nov 2024
- 08:59:26 -0800 (PST)
-Date: Fri, 29 Nov 2024 08:59:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6749f2ee.050a0220.253251.00bb.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_bkey_val_validate
-From: syzbot <syzbot+09c915024af5057b77da@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5ae6f624-5196-42f7-a0b8-85e2847b3fdf@openvpn.net>
 
-Hello,
+2024-11-14, 11:32:36 +0100, Antonio Quartulli wrote:
+> On 13/11/2024 12:05, Sabrina Dubroca wrote:
+> > 2024-11-12, 15:26:59 +0100, Antonio Quartulli wrote:
+> > > On 11/11/2024 16:41, Sabrina Dubroca wrote:
+> > > > 2024-10-29, 11:47:31 +0100, Antonio Quartulli wrote:
+> > > > > +void ovpn_peer_hash_vpn_ip(struct ovpn_peer *peer)
+> > > > > +	__must_hold(&peer->ovpn->peers->lock)
+> > > > 
+> > > > Changes to peer->vpn_addrs are not protected by peers->lock, so those
+> > > > could be getting updated while we're rehashing (and taking peer->lock
+> > > > in ovpn_nl_peer_modify as I'm suggesting above also wouldn't prevent
+> > > > that).
+> > > > 
+> > > 
+> > > /me screams :-D
+> > 
+> > Sorry :)
+> > 
+> > > Indeed peers->lock is only about protecting the lists, not the content of
+> > > the listed objects.
+> > > 
+> > > How about acquiring the peers->lock before calling ovpn_nl_peer_modify()?
+> > 
+> > It seems like it would work. Maybe a bit weird to have conditional
+> > locking (MP mode only), but ok. You already have this lock ordering
+> > (hold peers->lock before taking peer->lock) in
+> > ovpn_peer_keepalive_work_mp, so there should be no deadlock from doing
+> > the same thing in the netlink code.
+> 
+> Yeah.
+> 
+> > 
+> > Then I would also do that in ovpn_peer_float to protect that rehash.
+> 
+> I am not extremely comfortable with this, because it means acquiring
+> peers->lock on every packet (right now we do so only on peer->lock) and it
+> may defeat the advantage of the RCU locking on the hashtables.
+> Wouldn't you agree?
 
-syzbot found the following issue on:
+Hmpf, yeah. Then I think you could keep most of the current code,
+except doing the rehash under both locks (peers + peer), and get
+ss+sa_len for the rehash directly from peer->bind (instead of using
+the ones we just defined locally in ovpn_peer_float, since they may
+have changed while we released peer->lock to grab peers->lock). We may
+end up "rehashing" twice into the same bucket if we have 2 concurrent
+peer_float calls (call 1 sets remote r1, call 2 sets a new one r2,
+call 1 hashes according to r2, call 2 also rehashes based on r2). That
+should be ok (it can happen anyway that a "real" rehash lands in the
+same bucket).
 
-HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1465dee8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ce1e2eda2213557
-dashboard link: https://syzkaller.appspot.com/bug?extid=09c915024af5057b77da
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+peer_float {
+  spin_lock(peer)
+  match/update bind
+  spin_unlock(peer)
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2fcdec73c0f3/disk-9f16d5e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d4dc8d1847e1/vmlinux-9f16d5e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/db0e04822d2c/bzImage-9f16d5e6.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+09c915024af5057b77da@syzkaller.appspotmail.com
-
- done
-bcachefs (loop2): going read-write
-bcachefs (loop2): journal_replay...
-=====================================================
-BUG: KMSAN: uninit-value in bch2_backpointer_validate+0x63a/0x8f0 fs/bcachefs/backpointers.c:57
- bch2_backpointer_validate+0x63a/0x8f0 fs/bcachefs/backpointers.c:57
- bch2_bkey_val_validate+0x2b5/0x440 fs/bcachefs/bkey_methods.c:143
- bset_key_validate fs/bcachefs/btree_io.c:841 [inline]
- validate_bset_keys+0x1531/0x2080 fs/bcachefs/btree_io.c:910
- validate_bset_for_write+0x142/0x290 fs/bcachefs/btree_io.c:1942
- __bch2_btree_node_write+0x53df/0x6830 fs/bcachefs/btree_io.c:2152
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2284
- btree_node_write_if_need fs/bcachefs/btree_io.h:151 [inline]
- __btree_node_flush+0x606/0x680 fs/bcachefs/btree_trans_commit.c:252
- bch2_btree_node_flush1+0x38/0x60 fs/bcachefs/btree_trans_commit.c:266
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:565
- journal_flush_done+0x156/0x3f0 fs/bcachefs/journal_reclaim.c:822
- bch2_journal_flush_pins+0x2a9/0x3b0 fs/bcachefs/journal_reclaim.c:852
- bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
- bch2_journal_replay+0x4937/0x4d30 fs/bcachefs/recovery.c:383
- bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:191 [inline]
- bch2_run_recovery_passes+0xaf9/0xf80 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x447b/0x5b00 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0x13ea/0x22d0 fs/bcachefs/fs.c:2170
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
- path_mount+0x742/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x722/0x810 fs/namespace.c:4034
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
- x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- memcpy_u64s_small fs/bcachefs/util.h:393 [inline]
- bkey_p_copy fs/bcachefs/bkey.h:47 [inline]
- bch2_sort_keys_keep_unwritten_whiteouts+0x12d5/0x19d0 fs/bcachefs/bkey_sort.c:187
- __bch2_btree_node_write+0x3ae8/0x6830 fs/bcachefs/btree_io.c:2095
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2284
- btree_node_write_if_need fs/bcachefs/btree_io.h:151 [inline]
- __btree_node_flush+0x606/0x680 fs/bcachefs/btree_trans_commit.c:252
- bch2_btree_node_flush1+0x38/0x60 fs/bcachefs/btree_trans_commit.c:266
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:565
- journal_flush_done+0x156/0x3f0 fs/bcachefs/journal_reclaim.c:822
- bch2_journal_flush_pins+0x2a9/0x3b0 fs/bcachefs/journal_reclaim.c:852
- bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
- bch2_journal_replay+0x4937/0x4d30 fs/bcachefs/recovery.c:383
- bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:191 [inline]
- bch2_run_recovery_passes+0xaf9/0xf80 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x447b/0x5b00 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0x13ea/0x22d0 fs/bcachefs/fs.c:2170
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
- path_mount+0x742/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x722/0x810 fs/namespace.c:4034
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
- x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- ___kmalloc_large_node+0x22c/0x370 mm/slub.c:4219
- __kmalloc_large_node_noprof+0x3f/0x1e0 mm/slub.c:4236
- __do_kmalloc_node mm/slub.c:4252 [inline]
- __kmalloc_node_noprof+0x9d6/0xf50 mm/slub.c:4270
- __kvmalloc_node_noprof+0xc0/0x2d0 mm/util.c:658
- btree_bounce_alloc fs/bcachefs/btree_io.c:124 [inline]
- btree_node_sort+0x78a/0x1d30 fs/bcachefs/btree_io.c:323
- bch2_btree_post_write_cleanup+0x1b0/0xf20 fs/bcachefs/btree_io.c:2248
- bch2_btree_node_write+0x21c/0x2e0 fs/bcachefs/btree_io.c:2289
- btree_node_write_if_need fs/bcachefs/btree_io.h:151 [inline]
- __btree_node_flush+0x606/0x680 fs/bcachefs/btree_trans_commit.c:252
- bch2_btree_node_flush0+0x35/0x60 fs/bcachefs/btree_trans_commit.c:261
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:565
- journal_flush_done+0x156/0x3f0 fs/bcachefs/journal_reclaim.c:822
- bch2_journal_flush_pins+0x2a9/0x3b0 fs/bcachefs/journal_reclaim.c:852
- bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
- bch2_journal_replay+0x4937/0x4d30 fs/bcachefs/recovery.c:383
- bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:191 [inline]
- bch2_run_recovery_passes+0xaf9/0xf80 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x447b/0x5b00 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0x13ea/0x22d0 fs/bcachefs/fs.c:2170
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
- path_mount+0x742/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x722/0x810 fs/namespace.c:4034
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
- x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 6059 Comm: syz.2.30 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
+  if (MP) {
+    spin_lock(peers)
+    spin_lock(peer)
+    rehash using peer->bind->remote rather than ss
+    spin_unlock(peer)
+    spin_unlock(peers)
+  }
+}
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Does that sound reasonable?
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Sabrina
 
