@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-425931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564169DECAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:27:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95F7F163FAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:27:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B601A3BAD;
-	Fri, 29 Nov 2024 20:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KC1ieI8n"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169309DECAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 21:28:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062CE154C04;
-	Fri, 29 Nov 2024 20:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87376B21D35
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 20:28:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11EC1A257A;
+	Fri, 29 Nov 2024 20:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VBO8wR+m"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED56414D428
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 20:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732912024; cv=none; b=X2YbWgvPHQF4aQPoEVL75jhY3MshHDw5eW0iBGPYfNVAOWU0p88iti3SJvih9mrxiBVc0vLCfpkmVbbHN5wpIjx0KkztVuBT8DUu+jos9j+vWsmTDMkqpwoxiyjiX55Un4nR/34AHwyF8yFvelbRJPLs5hRUJ8i8DViN0RR4JsY=
+	t=1732912110; cv=none; b=ZPvhEVsdlKOhJ6zhAV77N37uw6VIPfVpSyiasyAXVQBi7takMwyVpciZd0o3W2E3wGaSZQdkfmGfrbykuq7UqPN15tHlnbPsPEwm3Napue2LkW2lDn54eX4fjzSvlcsmD5XlWQS14tiwnW7xGuHKAxHUyu6agcjCYmwU6DYwK3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732912024; c=relaxed/simple;
-	bh=NYIbTf7tmHYdVhLCzQLXCTQ/QK0YYqNw9srpQmRe1QA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CcjFgN67aY/JFUzvJ+eHtRqpYE5CtQMeoyokKVz7PXdc+iMJTikkCiIEEv2QUyyhC5wvtSdJ914u5xRD4aUyulXoM+/MXJIl2th5ldhG/haPcdujncRy+IpWN6z6S95TjJ6r2ilgaMTPDO1/xL3tW0Z0drw0ETso/Bm1rsgaoLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KC1ieI8n; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ATAFP73027337;
-	Fri, 29 Nov 2024 20:26:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=NY6l9TYMOSUhgOxd/kH4qvMmvUhFE+n2M671enH/a
-	3s=; b=KC1ieI8nr6gpPgHCkzJFKFANERFqyfzvTkR77QJS1+qCBR5gasGJqaZLl
-	n+rzlAzrz5WvUbTfpHSqYVbfmodWag9eHGeUTaDREkc0A6CsreA/ZsJ86rMpRuWD
-	iZEohF9wxs16aPD9c58Tmwakc8jf5T9V+gKXrD8rv7TFleH6ia5n/hgC7sfSzLoL
-	OPHTxHjm/4mGYnlss2y32VVjfFoBQq9d+oBFsM6c+7tqBsCCei5x/eg9E2AbTEkd
-	hffJRX5df7g9kSepDuEZemnV1faT0HUXAcuU4CFSbKJA+rCmRhI61HN4iVrNKKoR
-	WAIJvAFYEYPE6Zvp5MKpuPlrkKLrQ==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 436ym5dja3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 20:26:27 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ATArMIu002585;
-	Fri, 29 Nov 2024 20:26:26 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43672gmghn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 20:26:26 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ATKQPMO29294904
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Nov 2024 20:26:25 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0773F20040;
-	Fri, 29 Nov 2024 20:26:25 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7274620043;
-	Fri, 29 Nov 2024 20:26:22 +0000 (GMT)
-Received: from li-bd3f974c-2712-11b2-a85c-df1cec4d728e.ibm.com.com (unknown [9.43.27.30])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 29 Nov 2024 20:26:22 +0000 (GMT)
-From: Hari Bathini <hbathini@linux.ibm.com>
-To: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        "Naveen N. Rao" <naveen@kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] selftests/ftrace: adjust offset for kprobe syntax error test
-Date: Sat, 30 Nov 2024 01:56:21 +0530
-Message-ID: <20241129202621.721159-1-hbathini@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732912110; c=relaxed/simple;
+	bh=gwUK9l6qgO892ybXoJEt3H9VFyiJ8/SwoppMeYF9Y68=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p7vnR103dz7DoDCwOhd3qQ83Jhks++bQow3yr09/WrBpM1Tnf+49/dBWbQtCh3PMGapHkR4Xw5IhAbX+JYGFh5TmzGAIOhcY/XPToFbso/NXWUhw+JNw2/1pnAczJGA2Hro3UZkqsLYKwxYor+caQP/epje0tkoI1rz7i3J24d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VBO8wR+m; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa535eed875so324505566b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:28:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732912106; x=1733516906; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4wXiyYa/UqigkuopokYOURbzNGQMtk7G4o13Nu/4ERk=;
+        b=VBO8wR+mBUx7KQNMmprGFLcRH/vRiVX6hQ8P6/VP0A1oRvxGye1XEi7Dcd2cGKe0CJ
+         4NVyoe4CFLnDx2b6d07yobcURkT6taQp5mclCLpTXthMPgyM5B25k1tbII3t2Aty41me
+         /+wmxiaYBqp2V77AejOR9RsyX5njtpJB5SKw0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732912106; x=1733516906;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4wXiyYa/UqigkuopokYOURbzNGQMtk7G4o13Nu/4ERk=;
+        b=f5aZPB60hJwCr0LysdKq8GdPSZ9M4cnZreFrEHdYWNFbbEv4RYLjhH6+8XqpppmDvy
+         F/mRjtyoIFXfWjeSTxdvNSjcLsv90VG9almSYIW0gTZmAtK3XwwAS/573cCB66jHXf4h
+         hcEP9uOlXffVY9KFXJXibSsOqn6ZiON8NLhifcAuLoZNNpfhsOgHfWG1tF5qKmByGVGw
+         13Fv+vx5bHxw1IU8eVmpjkS1+UUHKymSf/9nE3F/omtFfCtaoqTuvUmZlkO43NhMBgya
+         l/+Taty29G4YR4egFebSpSFiE9Gy52WvEV/QaCy9DLK1AiLjBMZpMHzAc1wb2XfmBHMH
+         5tKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoy3voZAMcpP+MD8L1SX2ObkqpD7grHNH46l2MrXTsznsc7t476LmZSiiyLTSFaxfB320PMkfAItG4SGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSkf6X6TJCD8fyBnWik1q5YiQufwAP0BTpp3qLp5cDVbfhKiuY
+	X1YSFQh6e14jDcIAEmLON6iT2GzRro6GoU9iIgA9XSekyKBwzsIQeqli6RgnrTpLBrSd69VMi5F
+	KYe9/4A==
+X-Gm-Gg: ASbGncsXTk3M78l0Xs6G1qXdetAeXrtENT7I9N1/zFEcaXz0xoh3C2CGaRpG7UVLsWb
+	U3WYfeBdGuciAyehX5GgYi3+oTA2isWS0esO2OkYAhDPiQf5U+Yv0XdbNsyDpzhI3Dx259ZVvXA
+	BRiHTXN8MK0Pjyp+DxsYHDcGWPPQyEf+iOe2k6PTtO4s4fBUWw+D2/4pAvLU+hHWhXz5pf2LKjG
+	DVzYs2MwV++temex/q/qG/SM7kCLKeVQvB99ZYlgQNIqDNU/YlERVyLxa7x51dqRIlna3bV7EYr
+	iQUla5a0ghVf7WWa8ADUuKeh
+X-Google-Smtp-Source: AGHT+IEsUEvPsMESbJ+pa75t0/D15JKvt8YHItjafQ9vpL9uVVhSk1c0qSjDW3Ia/6uivOPb7t9ZWw==
+X-Received: by 2002:a17:906:3109:b0:aa1:e60e:6fe7 with SMTP id a640c23a62f3a-aa580ef31e1mr1002612866b.11.1732912106061;
+        Fri, 29 Nov 2024 12:28:26 -0800 (PST)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599956eb0sm208424266b.196.2024.11.29.12.28.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 12:28:24 -0800 (PST)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa549f2fa32so319580566b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 12:28:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWL/1g2fq1WMyQ5dQ6Xtp8VBxrdWpfPS/Zzwmq7vkQmyimCTRaIVD1PcEdxRt/9TFSm44O9NI734wVwUeY=@vger.kernel.org
+X-Received: by 2002:a17:906:311b:b0:aa5:b1b9:5d6a with SMTP id
+ a640c23a62f3a-aa5b1b96013mr334340866b.54.1732912103149; Fri, 29 Nov 2024
+ 12:28:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: C_LDRTXyuQyNz_z28Lbw92rC3hQBsEWN
-X-Proofpoint-ORIG-GUID: C_LDRTXyuQyNz_z28Lbw92rC3hQBsEWN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1015
- bulkscore=0 spamscore=0 suspectscore=0 adultscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411290160
+References: <Z0lCihhE75lE9Zjd@kroah.com>
+In-Reply-To: <Z0lCihhE75lE9Zjd@kroah.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 29 Nov 2024 12:28:07 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiXUMgkaJyQiQbUBNR-fVQC8LO-QPJ7y-30oThQCBDLag@mail.gmail.com>
+Message-ID: <CAHk-=wiXUMgkaJyQiQbUBNR-fVQC8LO-QPJ7y-30oThQCBDLag@mail.gmail.com>
+Subject: Re: [GIT PULL] TTY / Serial driver changes for 6.13-rc1
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In 'NOFENTRY_ARGS' test case for syntax check, any offset X of
-`vfs_read+X` except function entry offset (0) fits the criterion,
-even if that offset is not at instruction boundary, as the parser
-comes before probing. But with "ENDBR64" instruction on x86, offset
-4 is treated as function entry. So, X can't be 4 as well. Thus, 8
-was used as offset for the test case. On 64-bit powerpc though, any
-offset <= 16 can be considered function entry depending on build
-configuration (see arch_kprobe_on_func_entry() for implementation
-details). So, use `vfs_read+20` to accommodate that scenario too.
+On Thu, 28 Nov 2024 at 20:26, Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> TTY / Serial driver updates for 6.13-rc1
 
-Suggested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
----
+Greg - I've dropped this pull request since it sounds like it will
+need a bit of fixup.
 
-Changes in v2:
-* Use 20 as offset for all arches.
+But holler if you prefer I take it as-is and I guess we can fix it up later.
 
-
- .../selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc      | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-index a16c6a6f6055..8f1c58f0c239 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-@@ -111,7 +111,7 @@ check_error 'p vfs_read $arg* ^$arg*'		# DOUBLE_ARGS
- if !grep -q 'kernel return probes support:' README; then
- check_error 'r vfs_read ^$arg*'			# NOFENTRY_ARGS
- fi
--check_error 'p vfs_read+8 ^$arg*'		# NOFENTRY_ARGS
-+check_error 'p vfs_read+20 ^$arg*'		# NOFENTRY_ARGS
- check_error 'p vfs_read ^hoge'			# NO_BTFARG
- check_error 'p kfree ^$arg10'			# NO_BTFARG (exceed the number of parameters)
- check_error 'r kfree ^$retval'			# NO_RETVAL
--- 
-2.47.0
-
+            Linus
 
