@@ -1,297 +1,238 @@
-Return-Path: <linux-kernel+bounces-425375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843FB9DC13A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:13:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CC49DC13D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:13:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6DE41651C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:13:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8E42B23FD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAC217625C;
-	Fri, 29 Nov 2024 09:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C19316DEDF;
+	Fri, 29 Nov 2024 09:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fFkN5daD"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Nh8MyWTQ"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C690E170A0A
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CCC170A15;
+	Fri, 29 Nov 2024 09:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732871574; cv=none; b=X90newEDks7OAUcFiQ7m7G5tvkp3txXrvQm7Ze58YO11xPiFtXDCePwJiGdFZN8GLILU625zWZeFbenx7PnA1D5VmJeEJnI56BB8/ZeIBSOtQQ7f7gIhaojJrrVEvUtpmCgo6A0v57v4RQ10OBw7vRXz2fHQug697/V9NrKLeho=
+	t=1732871596; cv=none; b=o13ulheFsc66vqmPpkd+dacvGgm1P2aUArv+Ii2a0tYTdRXimU8hRQmW7KklJCSihQwRxxmhvsJ7cFn7ASrmTVS6Fx9R1EpiG/HPbzcRm3A8Z9DPdUOYq1rPjaQu7XpCBc0ypp0oK7c3Ino87ehkQJtzlSS9byWWDC+clGlaqlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732871574; c=relaxed/simple;
-	bh=1bnVnZ6g/RMKpFN6pROmGByLVFcvNA8/ZgUKEpHMa2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=faZl/ZJ1oxHaD0306aU0GtHedgs6GM3BepPmvH0jId3cdbp400L6A138UDyTO6VRktPiz3SdIYP+xzglAHBVIkWb7GJ6mtCxMVi4No3w+5/9MWZnAbxrQzMHIWNtzHRS4n5adGBvqhyh3MjCDOIl1iGyjqEm8jWSpkOSu/Zd2Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fFkN5daD; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a10588f3so10001095e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 01:12:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1732871571; x=1733476371; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sb8gO4uA+vo8kcJyPPhqX5i7haSv+q2JYHt3gAOv4Y0=;
-        b=fFkN5daDx5C4IP+M2K9BheZExYOitRDImSD4IClty7KWVw6kGsNlBLBHmbFgRxZiuq
-         lweIquyLSvl5YEt0Yn6J3MzsPMlYzothNseGTvwsxjS047fQ509z2gjZt71+/KA+c0hq
-         UWkI5C98RxUSzkZTTEkLft223TIdESlYec/5KumR+fEKSo5zSnMsdpCvHihgmzLh+Eds
-         em1M+nHzBCS1fWst4ueC7R4gX/BdxlWRHANeGgBKUj3HAxc6XdhiFi2BqxtRcOTbrQXv
-         MgSjx3zFg1W5Hpby6+XL0KpqtZt7LMG+9djo6OukFi3NqaXL5hgcgD9ktYQQSQDKhVaD
-         b0ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732871571; x=1733476371;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sb8gO4uA+vo8kcJyPPhqX5i7haSv+q2JYHt3gAOv4Y0=;
-        b=Y7eDvbAklczgvZSpv+WC1YksIl0G2cVJcBKHySAjvYCM0+bNSRHo2Zxp2ECWWCyS01
-         7sC3FqAWpgUUIZElgheMtBrj9oCtbVxJfllpm12KChYhoW5cJov5XNHvo0Lb/UlKX75T
-         NqWMFPIrTH1jv/RsmmW8p+XNRX2DJq4RpvY2SASZUVpKJ60Y2I1uLjG9Qmh4n8C1hc11
-         qQl6W7XiEi12dY6foI72SUGUIeBYVBg8VS/1eLwU7VBqW/kS6pNSVU3TgbtJ8Zdu/uxF
-         Eoj1ztDYyoPSi3QPCB5EsKhAPrY2EZPrHXm5t9SbHcxrhPRGj5hGYR1qlehukZCl9+Sq
-         S7gA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7IbykvNnIuNqvUI+1H6J4pI71vXvwXbxFlIqHPl4PXxnX7Ig8B+qCPwERwWdd1l6+vDgntiEQAWgLLBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwPx5dsDQQVkUbXqS9BiCfVD4VE3KictpMtXecS/vxkFCyh67c
-	PHQzPGtAAhljpiP2cYPd8/Dx4//5oY2MV5ZC7YCJE/DOWINNbCYF+t3NDStTxuA=
-X-Gm-Gg: ASbGncvQrMiaTAoCdtATeqHcnBWOAIy1LmrI9+oWIUjO7hfGSrwqPjZNv0l/kl8qSIg
-	AkvIp66fPcYFLWrOgX+Y+9iXZSXTeIu61Ijc7a2F2FxMMXHIvLJHKHLlDYIqHkkB91SpZOMNrcr
-	VRTOz5OUsN7zKfq7Z8hzptemLyr2zh++m+JcbmK5BT6LfxA1bEkG7MKUOYoXAmlKqPk2h6vlCNN
-	V8ARRy30DWaB5N7u75kK5g2j5EabHnzKBQWg4BBpKNo2v0en8rvfRiK1Q==
-X-Google-Smtp-Source: AGHT+IHmwDZAWFKDepsiDLw8yd17aIS/lp5WnEmXUs3bmN9CBmiHsuGbPOMSIZoIaRXxGX02f7LuEg==
-X-Received: by 2002:a05:600c:3b1a:b0:434:a968:89b5 with SMTP id 5b1f17b1804b1-434a9dc35f7mr102361905e9.9.1732871571093;
-        Fri, 29 Nov 2024 01:12:51 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd36a02sm3890362f8f.37.2024.11.29.01.12.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 01:12:50 -0800 (PST)
-Message-ID: <4d2a4d8b-9951-4454-b662-0a14d73e61a0@tuxon.dev>
-Date: Fri, 29 Nov 2024 11:12:48 +0200
+	s=arc-20240116; t=1732871596; c=relaxed/simple;
+	bh=gf9f49tviEAzV4fvUAEwrimuRbxrjsaGei4k5zUY64Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pe2H+CXNiXiZCggvXwuoBI2LRKlF4AFMq4umv27vqrU+Q1vi8x7ooh131dKOLXn8N6B3itImqecQ2W07OnZX74eL9bBvyofvXs2xY0v/i1LcpscSgamITg6c8U4zPbkNghfXgVEGGrHwwMI1MFzL1QfmlNPISSQjcCpesKyLPiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Nh8MyWTQ; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT12tr8032173;
+	Fri, 29 Nov 2024 01:13:02 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=OOEqDqIyVktPaA1eakQuPDXEQ
+	1AB2rfzBRUEWU0hoI0=; b=Nh8MyWTQNN0U1DJeo8hj0wSZGQ+RUz5Vh5vqRwc/E
+	u+OUpMmnZuxe0hkfBrvRnK4Abm1wVzWj6LoMwKBaBVi9Z1l3RQN7TTwQjqbWUJgR
+	6wtvRw9MfSFLyR/M7aaEtY1ZNPz1GP08QE2JtZO3Ac2rMKz5K8154i9N2NRrI4Go
+	YHkMjGtQ2Zw9rHvXHO49eiFha73B+BdJ3ixGOhxBlvCoaGdA+vlNxnLRr2RMbTep
+	h/4B60d4GoYnuHspH6ThRgCtKdMGKZezkdM90zL8Kp2XQNbS/YGra1aZlOkMji7H
+	8pps43N72NB81osiqDBZ5+Me1AZNtiQigvbKNu8QaYZng==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4373jv0qhs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 01:13:02 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 29 Nov 2024 01:13:01 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 29 Nov 2024 01:13:01 -0800
+Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
+	by maili.marvell.com (Postfix) with SMTP id 12D795C68E3;
+	Fri, 29 Nov 2024 01:12:56 -0800 (PST)
+Date: Fri, 29 Nov 2024 14:42:55 +0530
+From: Linu Cherian <lcherian@marvell.com>
+To: <suzuki.poulose@arm.com>, <mike.leach@linaro.org>, <james.clark@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <corbet@lwn.net>, <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gcherian@marvell.com>
+Subject: Re: [PATCH v12 0/8] Coresight for Kernel panic and watchdog reset
+Message-ID: <20241129091255.GA1150491@hyd1403.caveonetworks.com>
+References: <20241129084714.3057080-1-lcherian@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/15] soc: renesas: Add SYSC driver for Renesas RZ
- family
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
- gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com,
- christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
- <20241126092050.1825607-3-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUvmTQeQXxhsXtj23-OS=aL3UgsyOtnawdmnusrEJ2JQw@mail.gmail.com>
- <32fa7eb8-2139-454c-8866-cb264d060616@tuxon.dev>
- <CAMuHMdXPQnCPjKRxoSceYabWPHF9Z_A7qVN85yaUZjPG7-o7tg@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdXPQnCPjKRxoSceYabWPHF9Z_A7qVN85yaUZjPG7-o7tg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241129084714.3057080-1-lcherian@marvell.com>
+X-Proofpoint-ORIG-GUID: sDqqnwTgwogyxTdadwkaEuKDWOlnLppZ
+X-Proofpoint-GUID: sDqqnwTgwogyxTdadwkaEuKDWOlnLppZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
+Hi,
 
-
-On 29.11.2024 10:54, Geert Uytterhoeven wrote:
-> Hi Claudiu,
+On 2024-11-29 at 14:17:06, Linu Cherian (lcherian@marvell.com) wrote:
+> This patch series is rebased on coresight-next-v6.12.rc4
 > 
-> On Fri, Nov 29, 2024 at 9:48 AM Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->> On 28.11.2024 17:24, Geert Uytterhoeven wrote:
->>> On Tue, Nov 26, 2024 at 10:21 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> The RZ/G3S system controller (SYSC) has various registers that control
->>>> signals specific to individual IPs. IP drivers must control these signals
->>>> at different configuration phases.
->>>>
->>>> Add SYSC driver that allows individual SYSC consumers to control these
->>>> signals. The SYSC driver exports a syscon regmap enabling IP drivers to
->>>> use a specific SYSC offset and mask from the device tree, which can then be
->>>> accessed through regmap_update_bits().
->>>>
->>>> Currently, the SYSC driver provides control to the USB PWRRDY signal, which
->>>> is routed to the USB PHY. This signal needs to be managed before or after
->>>> powering the USB PHY off or on.
->>>>
->>>> Other SYSC signals candidates (as exposed in the the hardware manual of the
->>>>
->>>> * PCIe:
->>>> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
->>>> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
->>>>   register
->>>> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
->>>>
->>>> * SPI:
->>>> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
->>>>   register
->>>>
->>>> * I2C/I3C:
->>>> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
->>>>   (x=0..3)
->>>> - af_bypass I3C signal controlled through SYS_I3C_CFG register
->>>>
->>>> * Ethernet:
->>>> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
->>>>   registers (x=0..1)
->>>>
->>>> As different Renesas RZ SoC shares most of the SYSC functionalities
->>>> available on the RZ/G3S SoC, the driver if formed of a SYSC core
->>>> part and a SoC specific part allowing individual SYSC SoC to provide
->>>> functionalities to the SYSC core.
->>>>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>>> --- /dev/null
->>>> +++ b/drivers/soc/renesas/r9a08g045-sysc.c
->>>> @@ -0,0 +1,31 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * RZ/G3S System controller driver
->>>> + *
->>>> + * Copyright (C) 2024 Renesas Electronics Corp.
->>>> + */
->>>> +
->>>> +#include <linux/array_size.h>
->>>> +#include <linux/bits.h>
->>>> +#include <linux/init.h>
->>>> +
->>>> +#include "rz-sysc.h"
->>>> +
->>>> +#define SYS_USB_PWRRDY         0xd70
->>>> +#define SYS_USB_PWRRDY_PWRRDY_N        BIT(0)
->>>> +#define SYS_MAX_REG            0xe20
->>>> +
->>>> +static const struct rz_sysc_signal_init_data rzg3s_sysc_signals_init_data[] __initconst = {
->>>
->>> This is marked __initconst...
->>>
->>>> +       {
->>>> +               .name = "usb-pwrrdy",
->>>> +               .offset = SYS_USB_PWRRDY,
->>>> +               .mask = SYS_USB_PWRRDY_PWRRDY_N,
->>>> +               .refcnt_incr_val = 0
->>>> +       }
->>>> +};
->>>> +
->>>> +const struct rz_sysc_init_data rzg3s_sysc_init_data = {
->>>
->>> ... but this is not __init, causing a section mismatch.
->>
->> Do you know if there is a way to detect this?
+> * Patches 1 & 2 adds support for allocation of trace buffer pages from reserved RAM
+> * Patches 3 & 4 adds support for saving metadata at the time of kernel panic 
+> * Patch 5 adds support for reading trace data captured at the time of panic
+> * Patches 6 & 7 adds support for disabling coresight blocks at the time of panic
+> * Patch 8: Gives the full description about this feature as part of documentation 
 > 
-> The kernel should tell you during the build...
+> V11 is posted here,
+> https://lore.kernel.org/linux-arm-kernel/20241111124746.2210378-1-lcherian@marvell.com/
+> 
+> Changelog from v11:
+> Convert all commands to literal code blocks, that was missed out in v11.
+> No other code changes.
 
-I'll look carefully, I haven't noticed it. Thank you!
+To make it clear, this is just some missed out fixes in Patch 8,
+Documentation.
 
 > 
->>
->>>
->>>> +       .signals_init_data = rzg3s_sysc_signals_init_data,
->>>> +       .num_signals = ARRAY_SIZE(rzg3s_sysc_signals_init_data),
->>>> +       .max_register_offset = SYS_MAX_REG,
->>>> +};
->>>
->>>> --- /dev/null
->>>> +++ b/drivers/soc/renesas/rz-sysc.c
->>>
->>>> +/**
->>>> + * struct rz_sysc - RZ SYSC private data structure
->>>> + * @base: SYSC base address
->>>> + * @dev: SYSC device pointer
->>>> + * @signals: SYSC signals
->>>> + * @num_signals: number of SYSC signals
->>>> + */
->>>> +struct rz_sysc {
->>>> +       void __iomem *base;
->>>> +       struct device *dev;
->>>> +       struct rz_sysc_signal *signals;
->>>> +       u8 num_signals;
->>>
->>> You could change signals to a flexible array at the end, tag it with
->>> __counted_by(num_signals), and allocate space for both struct rz_sysc
->>> and the signals array using struct_size(), reducing the number of
->>> allocations.
->>
->> I'll look into this.
+> Changelog from v10:
+> * Converted all csdev_access_* to readl functions in tmc_panic_sync_*
+> * Added "tmc" prefix for register snapshots in struct tmc_crash_metadata
+> * Converted dev_info to dev_dbg in panic handlers 
+> * Converted dsb to dmb in panic handlers 
+> * Fixed marking metadata as invalid when a user is trying to use the
+>   reserved buffer. Earlier this was wrongly set at the time of reading
+>   reserved trace buffer.
+> * Moved common validation checks to is_tmc_crashdata_valid and minor
+>   code rearrangements for efficiency
+> * Got rid of sink specific prepare/unprepare invocations  
+> * Got rid of full from struct tmc_resrv_buf
+> * While reading crashdata, size is now calculated from metdata instead 
+>   of relying on reserved buffer size populated by dtb 
+> * Minor documenation fixes
 > 
->>>> --- /dev/null
->>>> +++ b/drivers/soc/renesas/rz-sysc.h
->>>> @@ -0,0 +1,52 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0 */
->>>> +/*
->>>> + * Renesas RZ System Controller
->>>> + *
->>>> + * Copyright (C) 2024 Renesas Electronics Corp.
->>>> + */
->>>> +
->>>> +#ifndef __SOC_RENESAS_RZ_SYSC_H__
->>>> +#define __SOC_RENESAS_RZ_SYSC_H__
->>>> +
->>>> +#include <linux/refcount.h>
->>>> +#include <linux/types.h>
->>>> +
->>>> +/**
->>>> + * struct rz_sysc_signal_init_data - RZ SYSC signals init data
->>>> + * @name: signal name
->>>> + * @offset: register offset controling this signal
->>>> + * @mask: bitmask in register specific to this signal
->>>> + * @refcnt_incr_val: increment refcnt when setting this value
->>>> + */
->>>> +struct rz_sysc_signal_init_data {
->>>> +       const char *name;
->>>> +       u32 offset;
->>>> +       u32 mask;
->>>> +       u32 refcnt_incr_val;
->>>> +};
->>>> +
->>>> +/**
->>>> + * struct rz_sysc_signal - RZ SYSC signals
->>>> + * @init_data: signals initialization data
->>>> + * @refcnt: reference counter
->>>> + */
->>>> +struct rz_sysc_signal {
->>>> +       const struct rz_sysc_signal_init_data *init_data;
->>>
->>> Can't you just embed struct rz_sysc_signal_init_data?
->>
->> Meaning to have directly the members of struct rz_sysc_signal_init_data
->> here or to drop the const qualifier along with __initconst on
->> rzg3s_sysc_signals_init_data[]  and re-use the platfom data w/o allocate
->> new memory?
+> Changelog from v9:
+> * Add common helper function of_tmc_get_reserved_resource_by_name
+>   for better code reuse
+> * Reserved buffer validity and crashdata validity has been separated to
+>   avoid interdependence
+> * New fields added to crash metadata: version, ffcr, ffsr, mode
+> * Version checks added for metadata validation
+> * Special file /dev/crash_tmc_xxx would be available only when
+>   crash metadata is valid
+> * Removed READ_CRASHDATA mode meant for special casing crashdata reads.
+>   Instead, dedicated read function added for crashdata reads from reserved
+>   buffer which is common for both ETR and ETF sinks as well.
+> * Documentation added to Documentation/tracing/coresight/panic.rst
 > 
-> I mean
+> Changelog from v8:
+> * Added missing exit path on error in __tmc_probe.
+> * Few whitespace fixes, checkpatch fixes.
+> * With perf sessions honouring stop_on_flush sysfs attribute, 
+>   removed redundant variable stop_on_flush_en. 
 > 
->     struct rz_sysc_signal {
->           struct rz_sysc_signal_init_data init_data;
->           ...
->     };
+> Changelog from v7:
+> * Fixed breakage on perf test -vvvv  "arm coresight".
+>   No issues seen with and without "resrv" buffer mode
+> * Moved the crashdev registration into a separate function.
+> * Removed redundant variable in tmc_etr_setup_crashdata_buf
+> * Avoided a redundant memcpy in tmc_panic_sync_etf.
+> * Tested kernel panic with trace session started uisng perf.   
+>   Please see the title "Perf based testing" below for details.
+>   For this, stop_on_flush sysfs attribute is taken into 
+>   consideration while starting perf sessions as well. 
 > 
-> Currently you allocate rz_sysc_signal_init_data separately.
-> When embedded, it will be part of rz_sysc, cfr. above.
-
-Ah, your right. I initially had this as a pointer and re-used the init data
-(rzg3s_sysc_signals_init_data[], w/o having __initconst qualifier for it).
-I dropped that approach but missed to drop the pointer here.
-
-Thank you,
-Claudiu
-
+> Changelog from v6:
+> * Added special device files for reading crashdata, so that
+>   read_prevboot mode flag is removed. 
+> * Added new sysfs TMC device attribute, stop_on_flush.
+>   Stop on flush trigger event is disabled by default. 
+>   User need to explicitly enable this from sysfs for panic stop
+>   to work.
+> * Address parameter for panicstop ETM configuration is   
+>   chosen as kernel "panic" address by default.
+> * Added missing tmc_wait_for_tmcready during panic handling
+> * Few other misc code rearrangements. 
 > 
->>> That way you could allocate the rz_sysc_signal and
->>> rz_sysc_signal_init_data structures in a single allocation.
+> Changelog from v5:
+> * Fixed issues reported by CONFIG_DEBUG_ATOMIC_SLEEP
+> * Fixed a memory leak while reading data from /dev/tmc_etrx in
+>   READ_PREVBOOT mode
+> * Tested reading trace data from crashdump kernel
 > 
-> Gr{oetje,eeting}s,
+> Changelog from v4:
+> * Device tree binding
+>   - Description is made more explicit on the usage of reserved memory
+>     region
+>   - Mismatch in memory region names in dts binding and driver fixed
+>   - Removed "mem" suffix from the memory region names
+> * Rename "struct tmc_register_snapshot" ->  "struct tmc_crash_metadata",
+>   since it contains more than register snapshot.
+>   Related variables are named accordingly.
+> * Rename struct tmc_drvdata members
+>    resrv_buf -> crash_tbuf
+>    metadata  -> crash_mdata
+> * Size field in metadata refers to RSZ register and hence indicates the
+>   size in 32 bit words. ETR metadata follows this convention, the same
+>   has been extended to ETF metadata as well.
+> * Added crc32 for more robust metadata and tracedata validation.
+> * Added/modified dev_dbg messages during metadata validation
+> * Fixed a typo in patch 5 commit description
 > 
->                         Geert
+> Changelog from v3:
+> * Converted the Coresight ETM driver change to a named configuration.
+>   RFC tag has been removed with this change.
+> * Fixed yaml issues reported by "make dt_binding_check"
+> * Added names for reserved memory regions 0 and 1
+> * Added prevalidation checks for metadata processing
+> * Fixed a regression introduced in RFC v3
+>   - TMC Status register was getting saved wrongly
+> * Reverted memremap attribute changes from _WB to _WC to match
+>   with the dma map attributes
+> * Introduced reserved buffer mode specific .sync op.
+>   This fixes a possible crash when reserved buffer mode was used in
+>   normal trace capture, due to unwanted dma maintenance operations.
+> 
+> 
+> 
+>  
+> Linu Cherian (8):
+>   dt-bindings: arm: coresight-tmc: Add "memory-region" property
+>   coresight: tmc-etr: Add support to use reserved trace memory
+>   coresight: core: Add provision for panic callbacks
+>   coresight: tmc: Enable panic sync handling
+>   coresight: tmc: Add support for reading crash data
+>   coresight: tmc: Stop trace capture on FlIn
+>   coresight: config: Add preloaded configuration
+>   Documentation: coresight: Panic support
+> 
+>  .../bindings/arm/arm,coresight-tmc.yaml       |  26 ++
+>  Documentation/trace/coresight/panic.rst       | 362 ++++++++++++++++++
+>  drivers/hwtracing/coresight/Makefile          |   2 +-
+>  .../coresight/coresight-cfg-preload.c         |   2 +
+>  .../coresight/coresight-cfg-preload.h         |   2 +
+>  .../hwtracing/coresight/coresight-cfg-pstop.c |  83 ++++
+>  drivers/hwtracing/coresight/coresight-core.c  |  42 ++
+>  .../hwtracing/coresight/coresight-tmc-core.c  | 326 +++++++++++++++-
+>  .../hwtracing/coresight/coresight-tmc-etf.c   |  92 ++++-
+>  .../hwtracing/coresight/coresight-tmc-etr.c   | 181 ++++++++-
+>  drivers/hwtracing/coresight/coresight-tmc.h   | 104 +++++
+>  include/linux/coresight.h                     |  12 +
+>  12 files changed, 1222 insertions(+), 12 deletions(-)
+>  create mode 100644 Documentation/trace/coresight/panic.rst
+>  create mode 100644 drivers/hwtracing/coresight/coresight-cfg-pstop.c
+> 
+> -- 
+> 2.34.1
+> 
 > 
 
