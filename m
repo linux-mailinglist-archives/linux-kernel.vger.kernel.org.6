@@ -1,255 +1,253 @@
-Return-Path: <linux-kernel+bounces-425222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D24A9DBF0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:28:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4393A164B03
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:28:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C124155325;
-	Fri, 29 Nov 2024 04:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="j8zbglSi"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2075.outbound.protection.outlook.com [40.107.220.75])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946E89DBF0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:31:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F7D154BE0
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732854511; cv=fail; b=PCiXi9/qMU8zdBrTTOoi4Jdk7vx+gwSWhfP4yJw0bIMsZWa6TJpJe+I5tBEFIWrP76qnrgXfemFLHhgCD4D2WBlGfFhs6J5iggH2x/TtiH7Ktkb8BzBq1NZTHw2hSEz2CthOISBJxzBZ7L/dlPJKc4NCY7hM3L2iXsYRBdJJ7/A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732854511; c=relaxed/simple;
-	bh=7kVcFUF1MaW8PYGoy98K6vBAPv0EV/vXf//gLZvz7Xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aC5GBlieH0E/k6MeBdB1l/ahr9IrzaBQzTVgvvFa2AormlsCKq5/up+Rh1VO8Pgx/W5ySypEwQ+bvZF0GfzP0GA72fPrtqTYRNgZehACuV0UgeSSplP1gIAjDc/P6zwk/w36gZyzfGqEtFsb3qpKdVw7nkUnsc+2HAw+cvTS6Qs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=j8zbglSi; arc=fail smtp.client-ip=40.107.220.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NEixYjjp+l3ygOko+6ABq5GlXC2pO5gywmxJPXuOFhBNA9fwM7dMt5VzbqbNXnYHyRwOj/5f8adFjA15zLdBHca6I8i3HId+IU+SJfSufl06T0dR7vHGzlkn42pzFdiwVEr3JiHKMiKM4ICRaMLU6qH2BL3gqFOe9fhhCdk7cuae7hgk3+LjdUdgFDev85/QGvu72UaJM3tciO9F9FZOCGborvs9d+7OH43rlX5YtS3YOhzJOTtmIi1bLF4QTZEHqw20uq2gidp0pb90CDk5QB9mqcNdyyqrXHeSouw8A31meMWq+AGwyYsiBXm1+r+4jZ0L/6xh7C/kkXO619D0sA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f2Yl10rsxiuYeUuuse0FbXwBCBUIXF529wIp5RC7R58=;
- b=S/kjbNbs/Nq6RKg234UbpN+Ud1ipzKva0uGOSo5HlfZY+p4dEW0pPFCXynemfAZs2K8F4VWjfOCCKCI6qGvusT1ZMtasfQSl8CzbBJzNooZ9F+wAE5JwYjLCjsAI3X7NqbglizBes/c0LHekpipeZzF1HmK2tgDF5TM2VVGhS9H62CYjDFI3bpj41o8PQ+NVm/YxMwZTdjJqochP+/Zo8R4ysndpYaoBM5a0M3xSvn8lDhbPfnOYqyKOWIngLponU0blHiTod29j4B7FXtVmOyNuERNAbRWaq92NqdTP8RVajbcYA3QUNMdmhTl3FeZ6hMibBbEYIoEukDGlfDU1Eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=os.amperecomputing.com
- smtp.mailfrom=amd.com; dmarc=pass (p=quarantine sp=quarantine pct=100)
- action=none header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f2Yl10rsxiuYeUuuse0FbXwBCBUIXF529wIp5RC7R58=;
- b=j8zbglSikG2F5B8wyfIJvo3ClIAa/UI/QYN5PG/loPqCj3oaOvEgEo3RTDMEja51GEyyMXs7RDhqexEC23jhbbISAoajqIGJtn6mfPPdwYp0uDw4jGNzPzMEFSaX7/jh5Xc/KjGZNsK5DSO+9ArBdz1BJhRcS5lyPZ0LkboHO2I=
-Received: from BL1PR13CA0224.namprd13.prod.outlook.com (2603:10b6:208:2bf::19)
- by MW4PR12MB6850.namprd12.prod.outlook.com (2603:10b6:303:1ed::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.14; Fri, 29 Nov
- 2024 04:28:25 +0000
-Received: from BL02EPF0001A0FB.namprd03.prod.outlook.com
- (2603:10b6:208:2bf:cafe::70) by BL1PR13CA0224.outlook.office365.com
- (2603:10b6:208:2bf::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8158.17 via Frontend Transport; Fri,
- 29 Nov 2024 04:28:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF0001A0FB.mail.protection.outlook.com (10.167.242.102) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8207.12 via Frontend Transport; Fri, 29 Nov 2024 04:28:24 +0000
-Received: from [10.136.33.212] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Nov
- 2024 22:28:19 -0600
-Message-ID: <d16cc372-b4ae-473f-bf86-83469fbead99@amd.com>
-Date: Fri, 29 Nov 2024 09:58:17 +0530
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D9E7281A50
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:31:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6126C155300;
+	Fri, 29 Nov 2024 04:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HInVN0nJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF58B28371
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732854678; cv=none; b=fkB2Q2ZnvPUyOf65liNH5ufj5M4mO+e0UM+pSKEQqMh4KJ7EsD0onPmsruRKiEsnTILjnxEh08JB5rwQfP3qDSK7YFdVE7b8lvVCvsTthSwCh6UwCFol6C+TwBmjCpxE7Np2hm7sidw0q7AAObBQ0oQ8Q8G1kMcxneC9fewghbg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732854678; c=relaxed/simple;
+	bh=nhVJ2KsFTU6vdZyrFjJy+CpqJVuOIfZcG0UnLygKl20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rBUwhC4oIl15HwFKpZn1tG8Q0Aq71vt9foNWbIUTghCNtdUcGVajpz0ssDi+WLIvTRN08r9ylIqNNpU41dOJvFqLJJRD0OacXW135ArT/wsqoN4RDWd8zMZXn86eQrY7LNnpsnPCK7GWoYPToQYTUmfymv45Bsf1SArnlYzf/5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HInVN0nJ; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732854676; x=1764390676;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nhVJ2KsFTU6vdZyrFjJy+CpqJVuOIfZcG0UnLygKl20=;
+  b=HInVN0nJcctwMCpHPVTasn1t86YuYZBiFSGlU9vF5n8JQDscpZ0mjVvy
+   ePyIEbdY8BVPvIXEszrFoWPQPFV0LmjHy+mXIq+bL5qlQ7gewln/PFv8s
+   iYpeX/pNIGeEhVPubiJWuptxZiQFT7QlNAYH3kg1DY7Qu23OkjRj7NnX9
+   0Xk1I5LMMwPXR2hyJHtCeYQHpVZ122sef0I0H0s19JpxVcqurnyEuMXmJ
+   QKLuP3yunPCgHcENXkOcBhUrNXnDVniWw4RjM7DiS4Cjpw8RM4jNNU3OR
+   pzLku6Ypcv79t3eJeURbpH9DxphMrpKRjRFXHZgqHBONwPweT4BFUPwQZ
+   g==;
+X-CSE-ConnectionGUID: j6eZN2/cTrOmXOAMiyKpyQ==
+X-CSE-MsgGUID: sk7ZKq1/T/GAIyCrj+4Zag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="58495748"
+X-IronPort-AV: E=Sophos;i="6.12,194,1728975600"; 
+   d="scan'208";a="58495748"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 20:31:15 -0800
+X-CSE-ConnectionGUID: 7+ctehuyTaqXPs1MF1yt2g==
+X-CSE-MsgGUID: 8udd5Dm+TGClDUig78Zgfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,194,1728975600"; 
+   d="scan'208";a="92193838"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 28 Nov 2024 20:31:09 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tGsep-000AL9-0P;
+	Fri, 29 Nov 2024 04:31:07 +0000
+Date: Fri, 29 Nov 2024 12:30:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eliav Farber <farbere@amazon.com>, linux@armlinux.org.uk,
+	catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+	maddy@linux.ibm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, tglx@linutronix.de, ebiederm@xmission.com,
+	akpm@linux-foundation.org, bhe@redhat.com, hbathini@linux.ibm.com,
+	sourabhjain@linux.ibm.com, adityag@linux.ibm.com,
+	songshuaishuai@tinylab.org, takakura@valinux.co.jp,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	kexec@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jonnyc@amazon.com
+Subject: Re: [PATCH v3 1/2] kexec: Consolidate
+ machine_kexec_mask_interrupts() implementation
+Message-ID: <202411291225.18ZMjZcQ-lkp@intel.com>
+References: <20241128201027.10396-2-farbere@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] sched/fair: Fix warning if NEXT_BUDDY enabled
-To: Adam Li <adamli@os.amperecomputing.com>, <peterz@infradead.org>,
-	<mingo@redhat.com>, <juri.lelli@redhat.com>, <vincent.guittot@linaro.org>
-CC: <dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<patches@amperecomputing.com>, <cl@linux.com>, <christian.loehle@arm.com>,
-	<vineethr@linux.ibm.com>
-References: <20241127055610.7076-1-adamli@os.amperecomputing.com>
- <20241127055610.7076-2-adamli@os.amperecomputing.com>
- <670a0d54-e398-4b1f-8a6e-90784e2fdf89@amd.com>
- <3deb3671-64df-4dd9-a539-3d41009f9875@os.amperecomputing.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <3deb3671-64df-4dd9-a539-3d41009f9875@os.amperecomputing.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FB:EE_|MW4PR12MB6850:EE_
-X-MS-Office365-Filtering-Correlation-Id: dc99ea5f-0a8a-4408-507b-08dd102e4391
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ckpTWnF1QURhT2JHYkx5QXN2akdRQXNCOTg5WUxXOFlPSVZDN3l3RURGNnlw?=
- =?utf-8?B?QURLYzFHTkEvTkhUblp4Nm9xakdhd0dJZ0lXYUZ1alBsczlnWmVidS91V3ov?=
- =?utf-8?B?bGxlRzExVHN6Zlg2bDVXelY0V1ZnS0dpREZRSnVDWnRNMWhsekg4VGhiYmo5?=
- =?utf-8?B?ZGozL3BPOU9nUFdXalg0c3IvZ3Q0MXYwV3lRY21ORnpwMmRMWW9aMGpzZEFt?=
- =?utf-8?B?NHFkbFMzQ2JLVVFtWHVPNzlEd3crZzYwb2FoVVRQT0ovaHprODFpZzc1NDVn?=
- =?utf-8?B?Q2QvVTBFdmZDSGN5dU5UcHR4TERKa0NXYUN0UFdkWUR4SHhyRTA0Y3JoaDlT?=
- =?utf-8?B?M1JBcHRQOFpSdnhrYzAxV29pa0p3L2gveDdscGNMcE04S2wxTnkwNVp0Tjgy?=
- =?utf-8?B?bDBGejkwbEUyUkFJQlpkbS9STW5oeE0wUDI2RUVXMG50amFNaGF5ai9Od0hX?=
- =?utf-8?B?Yk9tUzVpU1k5NTdBRjJtbjBsZG0wZXM5eVVSbkJtNnlEUzdxbVFoamRsTk83?=
- =?utf-8?B?bTFQcWcvMFJualhBbFhHaFlXU2hPbk9DQWVMS09CVmdlOVB1eS9zV3hjRVZ2?=
- =?utf-8?B?UlExL1NSZTRwcEVwdFNoZXZjelJucEhzcW5UbGRpSm5WQTlWVTg4WE9BWHov?=
- =?utf-8?B?bnRmbTFzRjlCdkhMRTBNc0o2YzgwaDJzTjFOaDh6ZVd4bFBtVkt3cjV3enFM?=
- =?utf-8?B?RHRTWEFhVFlnQzZVTUlQTDBXMGFBTVZRU2Q0RkJ2L1Nha1E5Y2plVGt4SUlS?=
- =?utf-8?B?NDl2dVRBaXpWYTFiQVV3VWhWV2E5Q1VoUVI0Qms5OHNnei9EUkdQdG9SaFV3?=
- =?utf-8?B?bjBBQlpLVTJtSGhJZ2Z4WUtnRmxVQ2xjN202RU9ZQ2xzcE5DRmxVNEpGdWVB?=
- =?utf-8?B?c1RrYk5QNVFWcmxGUjdaNm5RMHBIbGo3Z1lDaEN0ZytDZ0pMaFl6TkNwaFQ4?=
- =?utf-8?B?VmhIMnJ1YWxYTVBiNmliYjN5aWlkRklzaUgxN2FDUEM3L2hUK3RxMEMzbXBK?=
- =?utf-8?B?aXFlckVYdk9namVBZWhPSHlSMURCNjFJZTRSVHcvd2hsblNnRGpGUVpTbWFk?=
- =?utf-8?B?TFg0NExTZ2trMHNQcEd6Y1VMSmR1dGpBcXlyeWw2WHkxbzlNbXlzZDlpUnVk?=
- =?utf-8?B?dmxwS1d1ZVk1NnMxdnVhVVJOckZKZVV1SDBac1BjbG1UU3d3VnpRcnEzOVZ0?=
- =?utf-8?B?RTJNNmdzN0s0aU5wOTVhWktWOThUMlp5WXZGV3lkcFV4TXdXdmtUaXV2ZGJ6?=
- =?utf-8?B?N2wyQXJRbUZhT01KL20yRzgvQ0pYM2pTNDY2Rlo1VzVyQjdpVGdTR2hvYXM2?=
- =?utf-8?B?aU05L1lIQTNDMFp2VG91eWZSRFpPVmUzUkRoUlZlaW9xMGpYb1pOVU5naEc0?=
- =?utf-8?B?ckhsbHl0akV0WnFjOHFENWNIWUw2aDNVODVsTmZxY1c4c1hyQ2Q1K3oycUts?=
- =?utf-8?B?aWhPa3Vjck0vK29wQ0N3dm5PQXh4ODhZZnhMWEt1NGhOaTVuS2E4RjVNQ2Zo?=
- =?utf-8?B?aW1oYXJlempFVkJjcnVWYUZSdTE2dUJibVRBcS9oWWk3NU1sZTdkVGtieW56?=
- =?utf-8?B?UXpxUHM4RUlHK2FwY2VHaVFpTWh4VXFvbERyYXl1K2lOdHNiUzZRWUNENTRC?=
- =?utf-8?B?blo0cU1ySzd0dVVkT1dVb0RkT2pUbW9VT2JwTE54RkZuZ2x0RFpwNll5cisz?=
- =?utf-8?B?bUdRTXNVZVRnUEliWldMdVVtSGhFNElVVEk0eGpyOTNOUEcyUTBERng4K2Q2?=
- =?utf-8?B?Ui9CNEVTMlZvNG54SEsyVENBei9FdngweW9lZGlIeERXdUk5WHN1Wis1WTk2?=
- =?utf-8?B?a20yUWFpbUFiR29LTURCN0hXYzJINXJNK2xiL3pLbVpydmFkclBwNWE1aVQ4?=
- =?utf-8?B?UFllK3dqditkTWRBRHdlcVY2SjlXeHpkQnlpcnJDaHQyZUE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2024 04:28:24.3834
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc99ea5f-0a8a-4408-507b-08dd102e4391
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FB.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6850
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128201027.10396-2-farbere@amazon.com>
 
-Hello Adam,
+Hi Eliav,
 
-On 11/29/2024 8:51 AM, Adam Li wrote:
-> On 11/28/2024 3:29 PM, K Prateek Nayak wrote:
->> Hello Adam,
->>
-> Hi Prateek,
-> Thanks for comments.
-> 
->> On 11/27/2024 11:26 AM, Adam Li wrote:
->>> Enabling NEXT_BUDDY triggers warning, and rcu stall:
->>>
->>> [  124.977300] cfs_rq->next->sched_delayed
->>
->> I could reproduce this with a run of "perf bench sched messaging" but
->> given that we hit this warning, it also means that either
->> set_next_buddy() has incorrectly set a delayed entity as next buddy, or
->> clear_next_buddy() did not clear a delayed entity.
->>
-> Yes. The logic of this patch is a delayed entity should not be set as next buddy.
-> 
->> I also see PSI splats like:
->>
->>      psi: inconsistent task state! task=2524:kworker/u1028:2 cpu=154 psi_flags=10 clear=14 set=0
->>
->> but the PSI flags it has set "(TSK_MEMSTALL_RUNNING | TSK_MEMSTALL)" and
->> the flags it is trying to clear
->> "(TSK_MEMSTALL_RUNNING | TSK_MEMSTALL | TSK_RUNNING)" seem to be only
->> possible if you have picked a dequeued entity for running before its
->> wakeup, which is also perhaps why the "nr_running" computation goes awry
->> and pick_eevdf() returns NULL (which it should never since
->> pick_next_entity() is only called when rq->cfs.nr_running is > 0)
-> IIUC, one path for pick_eevdf() to return NULL is:
-> pick_eevdf():
-> <snip>
-> 	if (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
-> 		curr = NULL; <--- curr is set to NULL
+kernel test robot noticed the following build errors:
 
-"on_rq" is only cleared when the entity is dequeued so "curr" is in fact
-going to sleep (proper sleep) and we've reached at pick_eevdf(),
-otherwise, if "curr" is not eligible, there is at least one more tasks
-on the cfs_rq which implies best has be found and will be non-null.
+[auto build test ERROR on powerpc/next]
+[also build test ERROR on powerpc/fixes tip/irq/core arm64/for-next/core linus/master v6.12 next-20241128]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> <snip>
-> found:
-> 	if (!best || (curr && entity_before(curr, best)))
-> 		best = curr; <--- curr and best are both NULL
+url:    https://github.com/intel-lab-lkp/linux/commits/Eliav-Farber/kexec-Consolidate-machine_kexec_mask_interrupts-implementation/20241129-041259
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
+patch link:    https://lore.kernel.org/r/20241128201027.10396-2-farbere%40amazon.com
+patch subject: [PATCH v3 1/2] kexec: Consolidate machine_kexec_mask_interrupts() implementation
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20241129/202411291225.18ZMjZcQ-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241129/202411291225.18ZMjZcQ-lkp@intel.com/reproduce)
 
-Say "curr" is going to sleep, and there is no "best", in which case
-"curr" is already blocked and "cfs_rq->nr_running" should be 0 and it
-should have not reached pick_eevdf() in the first place since
-pick_next_entity() is only called by pick_task_fair() if
-"cfs_rq->nr_running" is non-zero.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411291225.18ZMjZcQ-lkp@intel.com/
 
-So as long as "cfs_rq->nr_running" is non-zero, pick_eevdf() should
-return a valid runnable entity. Failure to do so perhaps points to
-"entity_eligible()" check going sideways somewhere or a bug in
-"nr_running" accounting.
+All errors (new ones prefixed by >>):
 
-Chenyu had proposed a similar fix long back in
-https://lore.kernel.org/lkml/20240226082349.302363-1-yu.c.chen@intel.com/
-but the consensus was it was covering up a larger problem which
-then boiled down to avg_vruntime being computed incorrectly
-https://lore.kernel.org/lkml/ZiAWTU5xb%2FJMn%2FHs@chenyu5-mobl2/
+   In file included from kernel/kexec_core.c:9:
+   In file included from include/linux/btf.h:8:
+   In file included from include/linux/bpfptr.h:6:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> kernel/kexec_core.c:1085:10: error: call to undeclared function 'irq_desc_get_chip'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1085 |                 chip = irq_desc_get_chip(desc);
+         |                        ^
+>> kernel/kexec_core.c:1085:8: error: incompatible integer to pointer conversion assigning to 'struct irq_chip *' from 'int' [-Wint-conversion]
+    1085 |                 chip = irq_desc_get_chip(desc);
+         |                      ^ ~~~~~~~~~~~~~~~~~~~~~~~
+>> kernel/kexec_core.c:1097:24: error: incomplete definition of type 'struct irq_chip'
+    1097 |                 if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
+         |                                  ~~~~^
+   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
+    1082 |                 struct irq_chip *chip;
+         |                        ^
+>> kernel/kexec_core.c:1097:37: error: call to undeclared function 'irqd_irq_inprogress'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1097 |                 if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
+         |                                                   ^
+>> kernel/kexec_core.c:1097:62: error: incomplete definition of type 'struct irq_desc'
+    1097 |                 if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
+         |                                                                        ~~~~^
+   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
+      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
+         |               ^
+   kernel/kexec_core.c:1098:8: error: incomplete definition of type 'struct irq_chip'
+    1098 |                         chip->irq_eoi(&desc->irq_data);
+         |                         ~~~~^
+   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
+    1082 |                 struct irq_chip *chip;
+         |                        ^
+   kernel/kexec_core.c:1098:23: error: incomplete definition of type 'struct irq_desc'
+    1098 |                         chip->irq_eoi(&desc->irq_data);
+         |                                        ~~~~^
+   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
+      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
+         |               ^
+   kernel/kexec_core.c:1100:11: error: incomplete definition of type 'struct irq_chip'
+    1100 |                 if (chip->irq_mask)
+         |                     ~~~~^
+   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
+    1082 |                 struct irq_chip *chip;
+         |                        ^
+   kernel/kexec_core.c:1101:8: error: incomplete definition of type 'struct irq_chip'
+    1101 |                         chip->irq_mask(&desc->irq_data);
+         |                         ~~~~^
+   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
+    1082 |                 struct irq_chip *chip;
+         |                        ^
+   kernel/kexec_core.c:1101:24: error: incomplete definition of type 'struct irq_desc'
+    1101 |                         chip->irq_mask(&desc->irq_data);
+         |                                         ~~~~^
+   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
+      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
+         |               ^
+   kernel/kexec_core.c:1103:11: error: incomplete definition of type 'struct irq_chip'
+    1103 |                 if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
+         |                     ~~~~^
+   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
+    1082 |                 struct irq_chip *chip;
+         |                        ^
+   kernel/kexec_core.c:1103:29: error: call to undeclared function 'irqd_irq_disabled'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1103 |                 if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
+         |                                           ^
+   kernel/kexec_core.c:1103:29: note: did you mean 'arch_irqs_disabled'?
+   arch/x86/include/asm/irqflags.h:145:28: note: 'arch_irqs_disabled' declared here
+     145 | static __always_inline int arch_irqs_disabled(void)
+         |                            ^
+   kernel/kexec_core.c:1103:52: error: incomplete definition of type 'struct irq_desc'
+    1103 |                 if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
+         |                                                              ~~~~^
+   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
+      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
+         |               ^
+   kernel/kexec_core.c:1104:8: error: incomplete definition of type 'struct irq_chip'
+    1104 |                         chip->irq_disable(&desc->irq_data);
+         |                         ~~~~^
+   kernel/kexec_core.c:1082:10: note: forward declaration of 'struct irq_chip'
+    1082 |                 struct irq_chip *chip;
+         |                        ^
+   kernel/kexec_core.c:1104:27: error: incomplete definition of type 'struct irq_desc'
+    1104 |                         chip->irq_disable(&desc->irq_data);
+         |                                            ~~~~^
+   include/linux/irqnr.h:10:15: note: forward declaration of 'struct irq_desc'
+      10 | extern struct irq_desc *irq_to_desc(unsigned int irq);
+         |               ^
+   4 warnings and 15 errors generated.
 
-> 
-> 	return best;  <--- return NULL
-> 
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index fbdca89c677f..cd1188b7f3df 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -8748,6 +8748,8 @@ static void set_next_buddy(struct sched_entity *se)
->>>                return;
->>>            if (se_is_idle(se))
->>>                return;
->>> +        if (se->sched_delayed)
->>> +            return;
->>
->> I tried to put a SCHED_WARN_ON() here to track where this comes from and
->> seems like it is usually from attach_task() in the load balancing path
->> pulling a delayed task which is set as the next buddy in
->> check_preempt_wakeup_fair()
->>
->> Can you please try the following diff instead of the first two patches
->> and see if you still hit these warnings, stalls, and pick_eevdf()
->> returning NULL?
->>
-> Tested. Run specjbb with NEXT_BUDDY enabled, warnings, stalls and panic disappear.
 
-Thank you for testing. I'll let Peter come back on which approach he
-prefers :)
+vim +/irq_desc_get_chip +1085 kernel/kexec_core.c
 
-> 
-> Regards,
-> -adam
+  1075	
+  1076	void machine_kexec_mask_interrupts(void)
+  1077	{
+  1078		unsigned int i;
+  1079		struct irq_desc *desc;
+  1080	
+  1081		for_each_irq_desc(i, desc) {
+  1082			struct irq_chip *chip;
+  1083			int check_eoi = 1;
+  1084	
+> 1085			chip = irq_desc_get_chip(desc);
+  1086			if (!chip)
+  1087				continue;
+  1088	
+  1089			if (IS_ENABLED(CONFIG_ARM64)) {
+  1090				/*
+  1091				 * First try to remove the active state. If this fails, try to EOI the
+  1092				 * interrupt.
+  1093				 */
+  1094				check_eoi = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE, false);
+  1095			}
+  1096	
+> 1097			if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
 
 -- 
-Thanks and Regards,
-Prateek
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
