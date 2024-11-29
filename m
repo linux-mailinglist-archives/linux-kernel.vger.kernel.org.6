@@ -1,470 +1,508 @@
-Return-Path: <linux-kernel+bounces-425344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308C39DC0CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:49:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090E3164F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:49:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920C7175D2D;
-	Fri, 29 Nov 2024 08:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Xr/ahpGn"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8CA9DC0D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:50:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BCA189F42;
-	Fri, 29 Nov 2024 08:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69424B226CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:50:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B401117799F;
+	Fri, 29 Nov 2024 08:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NK8eZdsA"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B0D177998
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732870107; cv=none; b=OsPK0c7rsYJSt2qX6M163lCiakJniMZjBAVj/j4uJEWsNmGLI0K+eHkPW19lf3kP6W0daNKQJo7kLs6tAW2TOjtVR9t2VNlK03vBsDdMMITkG0xWNptG6j6k41g+sbfOLdR2R+ZtjzebOYvPtaXyRpdnqLNHk+t8dqW0xRZt4Uw=
+	t=1732870125; cv=none; b=l01coe6bSgR1TxabF3QNYpcijnGznSlLHStPMCOXKxq6B5/fvFlCCs6AC5ZTCkQJJiIAmw+TiAgrMzZVLoYWbzJmeaSoDytU5DDhFSwu4e8+YnaYfMJtbjp6/jDWKcK2QYrQgwwdMsL7QCwJG2u7WJ2BHG7WznG4bBiTKo+5p24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732870107; c=relaxed/simple;
-	bh=6SSQfiepsXRuPSGQRjM5cWVV78yPdH711a4JCojkiIo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SfLybbvxiWPwthFdoAqvv04qNS4cOHW8le2QnhKwmSiNzrIUITrj2xyZ9zLtwTExEdynrkPcJZ/iqXkjXMfO+x4sdO5KfhyKP7ZNusXf9jPq6I+Ap5sqsVzaqUHO2qxifPEyTLgB7YsUXEQMGplHPhM3Wet75bLx85F1RCh428A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Xr/ahpGn; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AT3jiPj022854;
-	Fri, 29 Nov 2024 00:48:16 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=r
-	TDADkoswnOGavBsUKMrXpBws6pg4hctR4JWyRH2EX0=; b=Xr/ahpGnt4jt+GdzL
-	MWhBNP2bXBzoPy72jZATFQvIqE3PUC6EHvs0jnwKw1pG9kEIvCxt3ai8jXqCRDuP
-	ck4bfIWljNv86PjRkAe+GQuFyvF5BV6d+0iv8v78RW9d3JUqIhU+nY5nnNfBnrFA
-	ffh3bKLVWdCQcKWFhiF7LC6PqrXRtFP6JLdzVOn4vEC931wl8nBz/K1vLUE9iw6S
-	cIDmF+PonH9ffPuC6Og3bcu+sO2riL4V1Q1zQV9VtI0hNspgZP7BSwYj7HX/HRxD
-	Tb5Ct3n5mZwvsK0CzbvqvrPawtlGtnrHWn6e/4iPqYVawieT0CnxerMkwGj1Fi6U
-	1g0nQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4376078egy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Nov 2024 00:48:16 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 29 Nov 2024 00:48:15 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 29 Nov 2024 00:48:15 -0800
-Received: from virtx40.. (unknown [10.28.34.196])
-	by maili.marvell.com (Postfix) with ESMTP id 6118E5C68F3;
-	Fri, 29 Nov 2024 00:48:11 -0800 (PST)
-From: Linu Cherian <lcherian@marvell.com>
-To: <suzuki.poulose@arm.com>, <mike.leach@linaro.org>, <james.clark@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <corbet@lwn.net>, <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
-        <gcherian@marvell.com>, Linu Cherian <lcherian@marvell.com>
-Subject: [PATCH v12 8/8] Documentation: coresight: Panic support
-Date: Fri, 29 Nov 2024 14:17:14 +0530
-Message-ID: <20241129084714.3057080-9-lcherian@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241129084714.3057080-1-lcherian@marvell.com>
-References: <20241129084714.3057080-1-lcherian@marvell.com>
+	s=arc-20240116; t=1732870125; c=relaxed/simple;
+	bh=A/Ieu612X5VBXK0dP//wDTEnDsl0CWq1frDOz0M0XCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f+EAkDI8Oxu5Jv9ORcDUVDSGxvX7lSYMDVp27zBAl1Ch8QVMKIcxHGymtGQMPKGFb4fx+qEoJu1Cv5pxRocjC6XFGt+qjav6Df55+xiS3YZVQ338C4UnpzK0NLmDhAG+2L7eZsCDg2ECTGwkb2DTnM/X8OPzSzPfJDgfUD9mnjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NK8eZdsA; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434a2033562so14701595e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:48:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1732870121; x=1733474921; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2PkQyuhys7G1VNXO6ofg16FC0sS07Akwiu7JTGVbtJ8=;
+        b=NK8eZdsALaQ7cvAFaoMhwZPD4q9MxBLQyEhBDSCw9QMMPpNqPzbEAOYqN0MwqFN4hg
+         QKnK85+FJgse+shHo4wuYK9LJvt1IjyA2zsmZdL6FWx0NIGaL17mZ/zaVCmTZof/rY7a
+         31WTheYDel3hpLxWvxVylbmLhsDo4+jmXOW4QpK2nbsl9WTlBIq43y+FbNGT8zYZ0guc
+         aJuMub4RiN+uQZorje8xLYomoZZR3aOT2+12MKRVfwfu8jrE3zcxBM7bxYoqJfFfP1PD
+         5rPFMLvJ1QwjvimkhlhhCD/9YIw2qloG+gF2jF6YxV1lHYCH7X6myJZfzhBnH4YaLeFl
+         AHAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732870121; x=1733474921;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2PkQyuhys7G1VNXO6ofg16FC0sS07Akwiu7JTGVbtJ8=;
+        b=JVLD/+QPucod9LX98ET6JEKcyfIkSnQ9mJuEHGgz14PUfOjVdlr8v3jK3e5/mE3XGm
+         55aq2JP65eFIAJJSi3jwH+e4dIuNgPxkcspg8Wjy5Cpd2+zG57JZ0HtxoMEYLn6NZXh8
+         MzvNuWetelItaEBU0mGDfA/ecnovOMu7YzuzvAtt3yWVZHOQuqFHtReu98KCOs5TE/SM
+         3HR/qNtxyAPWbkv4S8wZFF6RajVlM51WbxUqt8zR+Gw1FpQ8QyZcBdsC7DdemdWXDDvP
+         zNZ0r6YfEqm5W5LVrAq0119QFPpD8UBBBPTYrJyur/ToR1ofvSvwYTchhggkoJJtwRKB
+         Qt1A==
+X-Forwarded-Encrypted: i=1; AJvYcCW42nMTdJP50xI5J8dZQ5Uq2mFpPTwlC+n5IyDHzaI3wTcluU3hIJYOmle4qosjxmL7JeRTiR3uIeBKCaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXG2KnZ3xFvPz4lZGRpAWqTCABitx21bwH7orUxDC5WttfqQEO
+	EOubRnofFcesLPJt/vY8Wbe3sLgsBsCFAtguw1ZpzKo+EKGBWxeMGkm5twvO8lg=
+X-Gm-Gg: ASbGncvZviqRkmxZfcJymWkThKJtF19AsPzG4VJVhIt+53zDvO4gZ/acHmvLa09Ahld
+	/dcx4PczzSPBZ14LJtedhgckZ2L+1HBo178XIC3XvCNo/Ssc1llxaBkb7eB9tfZ8gAUq19BorQv
+	fOi6bgXv+D87ZYFJESGuLtkrSMia5eqH9fsj1BL0cIbX+MB22UJ88OY/UAdCZ5HtSZ2K09VGuiz
+	e97bzVAjtwYNiN0JEfTQmapXMZDuIiVpg7GKyLEjznAuVrHC97omsQ/8A==
+X-Google-Smtp-Source: AGHT+IHOrdw05njzpGOyCesmp5YA3v4j4ngUQt/RUP7bLsFXyj13G3qk8T1q/D5WDxY5zb5XKDBk4A==
+X-Received: by 2002:a05:600c:1d18:b0:426:8884:2c58 with SMTP id 5b1f17b1804b1-434a9dbbcc7mr100701195e9.4.1732870119927;
+        Fri, 29 Nov 2024 00:48:39 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70cb2sm45550775e9.37.2024.11.29.00.48.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 00:48:39 -0800 (PST)
+Message-ID: <32fa7eb8-2139-454c-8866-cb264d060616@tuxon.dev>
+Date: Fri, 29 Nov 2024 10:48:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/15] soc: renesas: Add SYSC driver for Renesas RZ
+ family
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
+ gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com,
+ christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-3-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUvmTQeQXxhsXtj23-OS=aL3UgsyOtnawdmnusrEJ2JQw@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdUvmTQeQXxhsXtj23-OS=aL3UgsyOtnawdmnusrEJ2JQw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: XW1ONvWrhUjP7fCkG50JjXQ5g4gVihDf
-X-Proofpoint-ORIG-GUID: XW1ONvWrhUjP7fCkG50JjXQ5g4gVihDf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
- definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
 
-Add documentation on using coresight during panic
-and watchdog.
+Hi, Geert,
 
-Signed-off-by: Linu Cherian <lcherian@marvell.com>
----
-Changelog from v11:
-Convert all commands to literal code block that was missed out in v11.
+On 28.11.2024 17:24, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> Thanks for your patch!
+> 
+> On Tue, Nov 26, 2024 at 10:21 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The RZ/G3S system controller (SYSC) has various registers that control
+>> signals specific to individual IPs. IP drivers must control these signals
+>> at different configuration phases.
+>>
+>> Add SYSC driver that allows individual SYSC consumers to control these
+>> signals. The SYSC driver exports a syscon regmap enabling IP drivers to
+>> use a specific SYSC offset and mask from the device tree, which can then be
+>> accessed through regmap_update_bits().
+>>
+>> Currently, the SYSC driver provides control to the USB PWRRDY signal, which
+>> is routed to the USB PHY. This signal needs to be managed before or after
+>> powering the USB PHY off or on.
+>>
+>> Other SYSC signals candidates (as exposed in the the hardware manual of the
+> 
+> s/the the/the/
+> 
+>> RZ/G3S SoC) include:
+>>
+>> * PCIe:
+>> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+>> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+>>   register
+>> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+>>
+>> * SPI:
+>> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+>>   register
+>>
+>> * I2C/I3C:
+>> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+>>   (x=0..3)
+>> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+>>
+>> * Ethernet:
+>> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+>>   registers (x=0..1)
+>>
+>> As different Renesas RZ SoC shares most of the SYSC functionalities
+>> available on the RZ/G3S SoC, the driver if formed of a SYSC core
+>> part and a SoC specific part allowing individual SYSC SoC to provide
+>> functionalities to the SYSC core.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+>> --- /dev/null
+>> +++ b/drivers/soc/renesas/r9a08g045-sysc.c
+>> @@ -0,0 +1,31 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * RZ/G3S System controller driver
+>> + *
+>> + * Copyright (C) 2024 Renesas Electronics Corp.
+>> + */
+>> +
+>> +#include <linux/array_size.h>
+>> +#include <linux/bits.h>
+>> +#include <linux/init.h>
+>> +
+>> +#include "rz-sysc.h"
+>> +
+>> +#define SYS_USB_PWRRDY         0xd70
+>> +#define SYS_USB_PWRRDY_PWRRDY_N        BIT(0)
+>> +#define SYS_MAX_REG            0xe20
+>> +
+>> +static const struct rz_sysc_signal_init_data rzg3s_sysc_signals_init_data[] __initconst = {
+> 
+> This is marked __initconst...
+> 
+>> +       {
+>> +               .name = "usb-pwrrdy",
+>> +               .offset = SYS_USB_PWRRDY,
+>> +               .mask = SYS_USB_PWRRDY_PWRRDY_N,
+>> +               .refcnt_incr_val = 0
+>> +       }
+>> +};
+>> +
+>> +const struct rz_sysc_init_data rzg3s_sysc_init_data = {
+> 
+> ... but this is not __init, causing a section mismatch.
 
- Documentation/trace/coresight/panic.rst | 362 ++++++++++++++++++++++++
- 1 file changed, 362 insertions(+)
- create mode 100644 Documentation/trace/coresight/panic.rst
+Do you know if there is a way to detect this?
 
-diff --git a/Documentation/trace/coresight/panic.rst b/Documentation/trace/coresight/panic.rst
-new file mode 100644
-index 000000000000..a58aa914c241
---- /dev/null
-+++ b/Documentation/trace/coresight/panic.rst
-@@ -0,0 +1,362 @@
-+===================================================
-+Using Coresight for Kernel panic and Watchdog reset
-+===================================================
-+
-+Introduction
-+------------
-+This documentation is about using Linux coresight trace support to
-+debug kernel panic and watchdog reset scenarios.
-+
-+Coresight trace during Kernel panic
-+-----------------------------------
-+From the coresight driver point of view, addressing the kernel panic
-+situation has four main requirements.
-+
-+a. Support for allocation of trace buffer pages from reserved memory area.
-+   Platform can advertise this using a new device tree property added to
-+   relevant coresight nodes.
-+
-+b. Support for stopping coresight blocks at the time of panic
-+
-+c. Saving required metadata in the specified format
-+
-+d. Support for reading trace data captured at the time of panic
-+
-+Allocation of trace buffer pages from reserved RAM
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+A new optional device tree property "memory-region" is added to the
-+Coresight TMC device nodes, that would give the base address and size of trace
-+buffer.
-+
-+Static allocation of trace buffers would ensure that both IOMMU enabled
-+and disabled cases are handled. Also, platforms that support persistent
-+RAM will allow users to read trace data in the subsequent boot without
-+booting the crashdump kernel.
-+
-+Note:
-+For ETR sink devices, this reserved region will be used for both trace
-+capture and trace data retrieval.
-+For ETF sink devices, internal SRAM would be used for trace capture,
-+and they would be synced to reserved region for retrieval.
-+
-+
-+Disabling coresight blocks at the time of panic
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+In order to avoid the situation of losing relevant trace data after a
-+kernel panic, it would be desirable to stop the coresight blocks at the
-+time of panic.
-+
-+This can be achieved by configuring the comparator, CTI and sink
-+devices as below::
-+
-+           Trigger on panic
-+    Comparator --->External out --->CTI -->External In---->ETR/ETF stop
-+
-+Saving metadata at the time of kernel panic
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+Coresight metadata involves all additional data that are required for a
-+successful trace decode in addition to the trace data. This involves
-+ETR/ETF/ETB register snapshot etc.
-+
-+A new optional device property "memory-region" is added to
-+the ETR/ETF/ETB device nodes for this.
-+
-+Reading trace data captured at the time of panic
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+Trace data captured at the time of panic, can be read from rebooted kernel
-+or from crashdump kernel using a special device file /dev/crash_tmc_xxx.
-+This device file is created only when there is a valid crashdata available.
-+
-+General flow of trace capture and decode incase of kernel panic
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+1. Enable source and sink on all the cores using the sysfs interface.
-+   ETR sinks should have trace buffers allocated from reserved memory,
-+   by selecting "resrv" buffer mode from sysfs.
-+
-+2. Run relevant tests.
-+
-+3. On a kernel panic, all coresight blocks are disabled, necessary
-+   metadata is synced by kernel panic handler.
-+
-+   System would eventually reboot or boot a crashdump kernel.
-+
-+4. For  platforms that supports crashdump kernel, raw trace data can be
-+   dumped using the coresight sysfs interface from the crashdump kernel
-+   itself. Persistent RAM is not a requirement in this case.
-+
-+5. For platforms that supports persistent RAM, trace data can be dumped
-+   using the coresight sysfs interface in the subsequent Linux boot.
-+   Crashdump kernel is not a requirement in this case. Persistent RAM
-+   ensures that trace data is intact across reboot.
-+
-+Coresight trace during Watchdog reset
-+-------------------------------------
-+The main difference between addressing the watchdog reset and kernel panic
-+case are below,
-+
-+a. Saving coresight metadata need to be taken care by the
-+   SCP(system control processor) firmware in the specified format,
-+   instead of kernel.
-+
-+b. Reserved memory region given by firmware for trace buffer and metadata
-+   has to be in persistent RAM.
-+   Note: This is a requirement for watchdog reset case but optional
-+   in kernel panic case.
-+
-+Watchdog reset can be supported only on platforms that meet the above
-+two requirements.
-+
-+Sample commands for testing a Kernel panic case with ETR sink
-+-------------------------------------------------------------
-+
-+1. Boot Linux kernel with "crash_kexec_post_notifiers" added to the kernel
-+   bootargs. This is mandatory if the user would like to read the tracedata
-+   from the crashdump kernel.
-+
-+2. Enable the preloaded ETM configuration::
-+
-+    #echo 1 > /sys/kernel/config/cs-syscfg/configurations/panicstop/enable
-+
-+3. Configure CTI using sysfs interface::
-+
-+    #./cti_setup.sh
-+
-+    #cat cti_setup.sh
-+
-+
-+    cd /sys/bus/coresight/devices/
-+
-+    ap_cti_config () {
-+      #ETM trig out[0] trigger to Channel 0
-+      echo 0 4 > channels/trigin_attach
-+    }
-+
-+    etf_cti_config () {
-+      #ETF Flush in trigger from Channel 0
-+      echo 0 1 > channels/trigout_attach
-+      echo 1 > channels/trig_filter_enable
-+    }
-+
-+    etr_cti_config () {
-+      #ETR Flush in from Channel 0
-+      echo 0 1 > channels/trigout_attach
-+      echo 1 > channels/trig_filter_enable
-+    }
-+
-+    ctidevs=`find . -name "cti*"`
-+
-+    for i in $ctidevs
-+    do
-+            cd $i
-+
-+            connection=`find . -name "ete*"`
-+            if [ ! -z "$connection" ]
-+            then
-+                    echo "AP CTI config for $i"
-+                    ap_cti_config
-+            fi
-+
-+            connection=`find . -name "tmc_etf*"`
-+            if [ ! -z "$connection" ]
-+            then
-+                    echo "ETF CTI config for $i"
-+                    etf_cti_config
-+            fi
-+
-+            connection=`find . -name "tmc_etr*"`
-+            if [ ! -z "$connection" ]
-+            then
-+                    echo "ETR CTI config for $i"
-+                    etr_cti_config
-+            fi
-+
-+            cd ..
-+    done
-+
-+Note: CTI connections are SOC specific and hence the above script is
-+added just for reference.
-+
-+4. Choose reserved buffer mode for ETR buffer::
-+
-+    #echo "resrv" > /sys/bus/coresight/devices/tmc_etr0/buf_mode_preferred
-+
-+5. Enable stop on flush trigger configuration::
-+
-+    #echo 1 > /sys/bus/coresight/devices/tmc_etr0/stop_on_flush
-+
-+6. Start Coresight tracing on cores 1 and 2 using sysfs interface
-+
-+7. Run some application on core 1::
-+
-+    #taskset -c 1 dd if=/dev/urandom of=/dev/null &
-+
-+8. Invoke kernel panic on core 2::
-+
-+    #echo 1 > /proc/sys/kernel/panic
-+    #taskset -c 2 echo c > /proc/sysrq-trigger
-+
-+9. From rebooted kernel or crashdump kernel, read crashdata::
-+
-+    #dd if=/dev/crash_tmc_etr0 of=/trace/cstrace.bin
-+
-+10. Run opencsd decoder tools/scripts to generate the instruction trace.
-+
-+Sample instruction trace dump
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+Core1 dump::
-+
-+    A                                  etm4_enable_hw: ffff800008ae1dd4
-+    CONTEXT EL2                        etm4_enable_hw: ffff800008ae1dd4
-+    I                                  etm4_enable_hw: ffff800008ae1dd4:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1dd8:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1ddc:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1de0:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1de4:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1de8:
-+    d503233f   paciasp
-+    I                                  etm4_enable_hw: ffff800008ae1dec:
-+    a9be7bfd   stp     x29, x30, [sp, #-32]!
-+    I                                  etm4_enable_hw: ffff800008ae1df0:
-+    910003fd   mov     x29, sp
-+    I                                  etm4_enable_hw: ffff800008ae1df4:
-+    a90153f3   stp     x19, x20, [sp, #16]
-+    I                                  etm4_enable_hw: ffff800008ae1df8:
-+    2a0003f4   mov     w20, w0
-+    I                                  etm4_enable_hw: ffff800008ae1dfc:
-+    900085b3   adrp    x19, ffff800009b95000 <reserved_mem+0xc48>
-+    I                                  etm4_enable_hw: ffff800008ae1e00:
-+    910f4273   add     x19, x19, #0x3d0
-+    I                                  etm4_enable_hw: ffff800008ae1e04:
-+    f8747a60   ldr     x0, [x19, x20, lsl #3]
-+    E                                  etm4_enable_hw: ffff800008ae1e08:
-+    b4000140   cbz     x0, ffff800008ae1e30 <etm4_starting_cpu+0x50>
-+    I    149.039572921                 etm4_enable_hw: ffff800008ae1e30:
-+    a94153f3   ldp     x19, x20, [sp, #16]
-+    I    149.039572921                 etm4_enable_hw: ffff800008ae1e34:
-+    52800000   mov     w0, #0x0                        // #0
-+    I    149.039572921                 etm4_enable_hw: ffff800008ae1e38:
-+    a8c27bfd   ldp     x29, x30, [sp], #32
-+
-+    ..snip
-+
-+        149.052324811           chacha_block_generic: ffff800008642d80:
-+    9100a3e0   add     x0,
-+    I    149.052324811           chacha_block_generic: ffff800008642d84:
-+    b86178a2   ldr     w2, [x5, x1, lsl #2]
-+    I    149.052324811           chacha_block_generic: ffff800008642d88:
-+    8b010803   add     x3, x0, x1, lsl #2
-+    I    149.052324811           chacha_block_generic: ffff800008642d8c:
-+    b85fc063   ldur    w3, [x3, #-4]
-+    I    149.052324811           chacha_block_generic: ffff800008642d90:
-+    0b030042   add     w2, w2, w3
-+    I    149.052324811           chacha_block_generic: ffff800008642d94:
-+    b8217882   str     w2, [x4, x1, lsl #2]
-+    I    149.052324811           chacha_block_generic: ffff800008642d98:
-+    91000421   add     x1, x1, #0x1
-+    I    149.052324811           chacha_block_generic: ffff800008642d9c:
-+    f100443f   cmp     x1, #0x11
-+
-+
-+Core 2 dump::
-+
-+    A                                  etm4_enable_hw: ffff800008ae1dd4
-+    CONTEXT EL2                        etm4_enable_hw: ffff800008ae1dd4
-+    I                                  etm4_enable_hw: ffff800008ae1dd4:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1dd8:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1ddc:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1de0:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1de4:
-+    d503201f   nop
-+    I                                  etm4_enable_hw: ffff800008ae1de8:
-+    d503233f   paciasp
-+    I                                  etm4_enable_hw: ffff800008ae1dec:
-+    a9be7bfd   stp     x29, x30, [sp, #-32]!
-+    I                                  etm4_enable_hw: ffff800008ae1df0:
-+    910003fd   mov     x29, sp
-+    I                                  etm4_enable_hw: ffff800008ae1df4:
-+    a90153f3   stp     x19, x20, [sp, #16]
-+    I                                  etm4_enable_hw: ffff800008ae1df8:
-+    2a0003f4   mov     w20, w0
-+    I                                  etm4_enable_hw: ffff800008ae1dfc:
-+    900085b3   adrp    x19, ffff800009b95000 <reserved_mem+0xc48>
-+    I                                  etm4_enable_hw: ffff800008ae1e00:
-+    910f4273   add     x19, x19, #0x3d0
-+    I                                  etm4_enable_hw: ffff800008ae1e04:
-+    f8747a60   ldr     x0, [x19, x20, lsl #3]
-+    E                                  etm4_enable_hw: ffff800008ae1e08:
-+    b4000140   cbz     x0, ffff800008ae1e30 <etm4_starting_cpu+0x50>
-+    I    149.046243445                 etm4_enable_hw: ffff800008ae1e30:
-+    a94153f3   ldp     x19, x20, [sp, #16]
-+    I    149.046243445                 etm4_enable_hw: ffff800008ae1e34:
-+    52800000   mov     w0, #0x0                        // #0
-+    I    149.046243445                 etm4_enable_hw: ffff800008ae1e38:
-+    a8c27bfd   ldp     x29, x30, [sp], #32
-+    I    149.046243445                 etm4_enable_hw: ffff800008ae1e3c:
-+    d50323bf   autiasp
-+    E    149.046243445                 etm4_enable_hw: ffff800008ae1e40:
-+    d65f03c0   ret
-+    A                                ete_sysreg_write: ffff800008adfa18
-+
-+    ..snip
-+
-+    I     149.05422547                          panic: ffff800008096300:
-+    a90363f7   stp     x23, x24, [sp, #48]
-+    I     149.05422547                          panic: ffff800008096304:
-+    6b00003f   cmp     w1, w0
-+    I     149.05422547                          panic: ffff800008096308:
-+    3a411804   ccmn    w0, #0x1, #0x4, ne  // ne = any
-+    N     149.05422547                          panic: ffff80000809630c:
-+    540001e0   b.eq    ffff800008096348 <panic+0xe0>  // b.none
-+    I     149.05422547                          panic: ffff800008096310:
-+    f90023f9   str     x25, [sp, #64]
-+    E     149.05422547                          panic: ffff800008096314:
-+    97fe44ef   bl      ffff8000080276d0 <panic_smp_self_stop>
-+    A                                           panic: ffff80000809634c
-+    I     149.05422547                          panic: ffff80000809634c:
-+    910102d5   add     x21, x22, #0x40
-+    I     149.05422547                          panic: ffff800008096350:
-+    52800020   mov     w0, #0x1                        // #1
-+    E     149.05422547                          panic: ffff800008096354:
-+    94166b8b   bl      ffff800008631180 <bust_spinlocks>
-+    N    149.054225518                 bust_spinlocks: ffff800008631180:
-+    340000c0   cbz     w0, ffff800008631198 <bust_spinlocks+0x18>
-+    I    149.054225518                 bust_spinlocks: ffff800008631184:
-+    f000a321   adrp    x1, ffff800009a98000 <pbufs.0+0xbb8>
-+    I    149.054225518                 bust_spinlocks: ffff800008631188:
-+    b9405c20   ldr     w0, [x1, #92]
-+    I    149.054225518                 bust_spinlocks: ffff80000863118c:
-+    11000400   add     w0, w0, #0x1
-+    I    149.054225518                 bust_spinlocks: ffff800008631190:
-+    b9005c20   str     w0, [x1, #92]
-+    E    149.054225518                 bust_spinlocks: ffff800008631194:
-+    d65f03c0   ret
-+    A                                           panic: ffff800008096358
-+
-+Perf based testing
-+------------------
-+
-+Starting perf session
-+~~~~~~~~~~~~~~~~~~~~~
-+ETF::
-+
-+    perf record -e cs_etm/panicstop,@tmc_etf1/ -C 1
-+    perf record -e cs_etm/panicstop,@tmc_etf2/ -C 2
-+
-+ETR::
-+
-+    perf record -e cs_etm/panicstop,@tmc_etr0/ -C 1,2
-+
-+Reading trace data after panic
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+Same sysfs based method explained above can be used to retrieve and
-+decode the trace data after the reboot on kernel panic.
--- 
-2.34.1
+> 
+>> +       .signals_init_data = rzg3s_sysc_signals_init_data,
+>> +       .num_signals = ARRAY_SIZE(rzg3s_sysc_signals_init_data),
+>> +       .max_register_offset = SYS_MAX_REG,
+>> +};
+> 
+>> --- /dev/null
+>> +++ b/drivers/soc/renesas/rz-sysc.c
+> 
+>> +/**
+>> + * struct rz_sysc - RZ SYSC private data structure
+>> + * @base: SYSC base address
+>> + * @dev: SYSC device pointer
+>> + * @signals: SYSC signals
+>> + * @num_signals: number of SYSC signals
+>> + */
+>> +struct rz_sysc {
+>> +       void __iomem *base;
+>> +       struct device *dev;
+>> +       struct rz_sysc_signal *signals;
+>> +       u8 num_signals;
+> 
+> You could change signals to a flexible array at the end, tag it with
+> __counted_by(num_signals), and allocate space for both struct rz_sysc
+> and the signals array using struct_size(), reducing the number of
+> allocations.
 
+I'll look into this.
+
+> 
+>> +};
+> 
+>> +static struct rz_sysc_signal *rz_sysc_off_to_signal(struct rz_sysc *sysc, unsigned int offset,
+>> +                                                   unsigned int mask)
+>> +{
+>> +       struct rz_sysc_signal *signals = sysc->signals;
+>> +
+>> +       for (u32 i = 0; i < sysc->num_signals; i++) {
+> 
+> s/u32/unsigned int/
+> 
+>> +               if (signals[i].init_data->offset != offset)
+>> +                       continue;
+>> +
+>> +               /*
+>> +                * In case mask == 0 we just return the signal data w/o checking the mask.
+>> +                * This is useful when calling through rz_sysc_reg_write() to check
+>> +                * if the requested setting is for a mapped signal or not.
+>> +                */
+>> +               if (mask) {
+>> +                       if (signals[i].init_data->mask == mask)
+>> +                               return &signals[i];
+>> +               } else {
+>> +                       return &signals[i];
+>> +               }
+> 
+> if (!mask || signals[i].init_data->mask == mask)
+>         return &signals[i];
+
+Looks better, indeed!
+
+> 
+>> +       }
+>> +
+>> +       return NULL;
+>> +}
+>> +
+>> +static int rz_sysc_reg_update_bits(void *context, unsigned int off,
+>> +                                  unsigned int mask, unsigned int val)
+>> +{
+>> +       struct rz_sysc *sysc = context;
+>> +       struct rz_sysc_signal *signal;
+>> +       bool update = false;
+>> +
+>> +       signal = rz_sysc_off_to_signal(sysc, off, mask);
+>> +       if (signal) {
+>> +               if (signal->init_data->refcnt_incr_val == val) {
+>> +                       if (!refcount_read(&signal->refcnt)) {
+>> +                               refcount_set(&signal->refcnt, 1);
+>> +                               update = true;
+>> +                       } else {
+>> +                               refcount_inc(&signal->refcnt);
+>> +                       }
+>> +               } else {
+>> +                       update = refcount_dec_and_test(&signal->refcnt);
+>> +               }
+>> +       } else {
+>> +               update = true;
+>> +       }
+> 
+> You could reduce indentation/number of lines by reordering the logic:
+> 
+>     if (!signal) {
+>             update = true;
+>     } else if (signal->init_data->refcnt_incr_val != val) {
+>             update = refcount_dec_and_test(&signal->refcnt);
+>     } else if (!refcount_read(&signal->refcnt)) {
+>             refcount_set(&signal->refcnt, 1);
+>             update = true;
+>     } else {
+>             refcount_inc(&signal->refcnt);
+>     }
+
+Looks better, indeed!
+
+> 
+>> +
+>> +       if (update) {
+>> +               u32 tmp;
+>> +
+>> +               tmp = readl(sysc->base + off);
+>> +               tmp &= ~mask;
+>> +               tmp |= val & mask;
+>> +               writel(tmp, sysc->base + off);
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int rz_sysc_reg_write(void *context, unsigned int off, unsigned int val)
+>> +{
+>> +       struct rz_sysc *sysc = context;
+>> +       struct rz_sysc_signal *signal;
+>> +
+>> +       /*
+>> +        * Force using regmap_update_bits() for signals to have reference counter
+>> +        * per individual signal in case there are multiple signals controlled
+>> +        * through the same register.
+>> +        */
+>> +       signal = rz_sysc_off_to_signal(sysc, off, 0);
+>> +       if (signal) {
+>> +               dev_err(sysc->dev,
+>> +                       "regmap_write() not allowed on register controlling a signal. Use regmap_update_bits()!");
+>> +               return -EOPNOTSUPP;
+>> +       }
+>> +
+> 
+> Can you ever get here, given rz_sysc_writeable_reg() below would have
+> returned false? 
+
+Yes, in case the user wants to access a register having a signal associated.
+
+If user does this:
+
+regmap_write(regmap, signal_offset, value);
+
+The rz_sysc_writeable_reg() returns true (as it checks only the signal
+offset but not the mask) and the rz_sysc_reg_write() reach this point. If
+we allow it to continue we can break reference counting for the existing
+implemented signals, or, if there are multiple signals handled thorough the
+same register, we can break other signals.
+
+> If not, is there any point in having this function?
+
+I chose to have it for (currently unexisting) other use cases of the syscon
++ regmap exported by this driver. For the moment, it is not necessary,
+indeed. I can drop it if you prefer.
+
+> 
+>> +       writel(val, sysc->base + off);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static bool rz_sysc_writeable_reg(struct device *dev, unsigned int off)
+>> +{
+>> +       struct rz_sysc *sysc = dev_get_drvdata(dev);
+>> +       struct rz_sysc_signal *signal;
+>> +
+>> +       /* Any register containing a signal is writeable. */
+>> +       signal = rz_sysc_off_to_signal(sysc, off, 0);
+>> +       if (signal)
+>> +               return true;
+>> +
+>> +       return false;
+>> +}
+> 
+>> +static int rz_sysc_signals_show(struct seq_file *s, void *what)
+>> +{
+>> +       struct rz_sysc *sysc = s->private;
+>> +
+>> +       seq_printf(s, "%-20s Enable count\n", "Signal");
+>> +       seq_printf(s, "%-20s ------------\n", "--------------------");
+>> +
+>> +       for (u8 i = 0; i < sysc->num_signals; i++) {
+>> +               seq_printf(s, "%-20s %d\n", sysc->signals[i].init_data->name,
+>> +                          refcount_read(&sysc->signals[i].refcnt));
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +DEFINE_SHOW_ATTRIBUTE(rz_sysc_signals);
+> 
+> What is the use-case for this? Just (initial) debugging?
+
+Only debugging.
+
+> 
+>> +
+>> +static void rz_sysc_debugfs_remove(void *data)
+>> +{
+>> +       debugfs_remove_recursive(data);
+>> +}
+>> +
+>> +static int rz_sysc_signals_init(struct rz_sysc *sysc,
+>> +                               const struct rz_sysc_signal_init_data *init_data,
+>> +                               u32 num_signals)
+>> +{
+>> +       struct dentry *root;
+>> +       int ret;
+>> +
+>> +       sysc->signals = devm_kcalloc(sysc->dev, num_signals, sizeof(*sysc->signals),
+>> +                                    GFP_KERNEL);
+>> +       if (!sysc->signals)
+>> +               return -ENOMEM;
+>> +
+>> +       for (u32 i = 0; i < num_signals; i++) {
+> 
+> unsigned int
+> 
+>> +               struct rz_sysc_signal_init_data *id;
+>> +
+>> +               id = devm_kzalloc(sysc->dev, sizeof(*id), GFP_KERNEL);
+>> +               if (!id)
+>> +                       return -ENOMEM;
+>> +
+>> +               id->name = devm_kstrdup(sysc->dev, init_data->name, GFP_KERNEL);
+>> +               if (!id->name)
+>> +                       return -ENOMEM;
+>> +
+>> +               id->offset = init_data->offset;
+>> +               id->mask = init_data->mask;
+>> +               id->refcnt_incr_val = init_data->refcnt_incr_val;
+>> +
+>> +               sysc->signals[i].init_data = id;
+>> +               refcount_set(&sysc->signals[i].refcnt, 0);
+>> +       }
+>> +
+>> +       sysc->num_signals = num_signals;
+>> +
+>> +       root = debugfs_create_dir("renesas-rz-sysc", NULL);
+>> +       ret = devm_add_action_or_reset(sysc->dev, rz_sysc_debugfs_remove, root);
+>> +       if (ret)
+>> +               return ret;
+>> +       debugfs_create_file("signals", 0444, root, sysc, &rz_sysc_signals_fops);
+>> +
+>> +       return 0;
+>> +}
+> 
+>> --- /dev/null
+>> +++ b/drivers/soc/renesas/rz-sysc.h
+>> @@ -0,0 +1,52 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Renesas RZ System Controller
+>> + *
+>> + * Copyright (C) 2024 Renesas Electronics Corp.
+>> + */
+>> +
+>> +#ifndef __SOC_RENESAS_RZ_SYSC_H__
+>> +#define __SOC_RENESAS_RZ_SYSC_H__
+>> +
+>> +#include <linux/refcount.h>
+>> +#include <linux/types.h>
+>> +
+>> +/**
+>> + * struct rz_sysc_signal_init_data - RZ SYSC signals init data
+>> + * @name: signal name
+>> + * @offset: register offset controling this signal
+>> + * @mask: bitmask in register specific to this signal
+>> + * @refcnt_incr_val: increment refcnt when setting this value
+>> + */
+>> +struct rz_sysc_signal_init_data {
+>> +       const char *name;
+>> +       u32 offset;
+>> +       u32 mask;
+>> +       u32 refcnt_incr_val;
+>> +};
+>> +
+>> +/**
+>> + * struct rz_sysc_signal - RZ SYSC signals
+>> + * @init_data: signals initialization data
+>> + * @refcnt: reference counter
+>> + */
+>> +struct rz_sysc_signal {
+>> +       const struct rz_sysc_signal_init_data *init_data;
+> 
+> Can't you just embed struct rz_sysc_signal_init_data?
+
+Meaning to have directly the members of struct rz_sysc_signal_init_data
+here or to drop the const qualifier along with __initconst on
+rzg3s_sysc_signals_init_data[]  and re-use the platfom data w/o allocate
+new memory?
+
+Thank you for your review,
+Claudiu
+
+
+> That way you could allocate the rz_sysc_signal and
+> rz_sysc_signal_init_data structures in a single allocation.
+> 
+>> +       refcount_t refcnt;
+>> +};
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
