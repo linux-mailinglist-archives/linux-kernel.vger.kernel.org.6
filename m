@@ -1,47 +1,77 @@
-Return-Path: <linux-kernel+bounces-425314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFCD9DC066
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:21:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6149DC06A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55EE9281F1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8BA281E61
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7DC15C15A;
-	Fri, 29 Nov 2024 08:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA6315D5B8;
+	Fri, 29 Nov 2024 08:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7hJyQr2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="X/9NX6cI"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B920912B93;
-	Fri, 29 Nov 2024 08:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116D215A87C
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732868480; cv=none; b=P+J3yrvBfZRqsgFusHuqaiVMrbjL/OiYf/NcDjZdPCcOrjyt7Zfug77CuM1HSjkNNGMcfrzPBcLw+uQkkleHiVyjradfGxybW38FLPMtqLfvuY/9mfrZKDsb3uR297rNY6PS7Yuu69mWenmZnDONUjNeXUb8PC6/18AaJIyvp2E=
+	t=1732868518; cv=none; b=PTl9O54iGB97yw2FdfO7+63l+tAXB8lufpePUy5kKPO8xQ66AGrojkIfOAvivvAXNOvK+1uSQOt/6z8p5NuATIqLDd5rn9qxdN+B+ZM56kSUHmxRxNCDUW5mrGbRcO5z6pCfm4BEIgV0gSfLKZ+MvunA3DjC0E3ol08QvE6QDEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732868480; c=relaxed/simple;
-	bh=KZ7ntoFjiRE4qae6dkopyRJLmQ10JWGG6InjMJTRkT4=;
+	s=arc-20240116; t=1732868518; c=relaxed/simple;
+	bh=8x9Kh+cZWUrWlnSkWaTCpm5ku0xz9dhIg3QhOlVxXuo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ntt6Rpv4G+1+FCZtVbN275QhvvZ94Y2FgeHKt6AGCxOLXoGjAYYKOjJestCI+zQQ+dhNcAy7NQ82EE5z42bD9O/MxIWNEPCpAaPui9GDVrJSV+tJccrhLJoT7w7Kw1OErSPXB7PX8DyGhzjVR6pamnldjGuSN9HKTnu/DqS/7H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7hJyQr2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 856B5C4CECF;
-	Fri, 29 Nov 2024 08:21:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732868480;
-	bh=KZ7ntoFjiRE4qae6dkopyRJLmQ10JWGG6InjMJTRkT4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B7hJyQr2adnxbl6WkkiCsz6QtzYu1jwp6HCl2VfCsV6WebVjB7BjLa3xkpSjWoB2z
-	 Jiyt9WU94BvPBNU7fK6mPQodt+BjouxOEpilzk9cXeESLUMNK6QgyN1/W3kC2fr/Lx
-	 L+2fEDVTfpBvV3ng9HGequHoLsgDw/GHhBUEz/CsGW2g55c1N+Bx66IBPriSXAtFoV
-	 a2Sqp4Hd4mza32JS7i9MgEWCQMza7IRw1Blv1LzQ/XYvJQChz4Cc3V6uqlc1grFou0
-	 akHoETfTE+Cf3sv2pA27SNWevNtAWBPa4bYn8Pa0mS5TCKmQTDtZTABkLz+4p+aINE
-	 Xpp7sVNNj6epw==
-Message-ID: <b3f89c19-a6d6-40a0-9225-111cc59221a2@kernel.org>
-Date: Fri, 29 Nov 2024 09:21:08 +0100
+	 In-Reply-To:Content-Type; b=mDucwZ+X237mKTI05auAoKeWthiN46D89RGcWbgkaa7NWNGE0/Sy3kh7QeH1Vjv+jaA377im5Fydjz2A8OYKD6MWkSNJqMoKl6F8MZ5/Q82h0mgIcqKZ3VW30ZDMQWjWdioChxpGDUrAC5eEed5Fr5DG3Ul1Zyb7E9TKSpENqRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=X/9NX6cI; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a1833367so9308295e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:21:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1732868513; x=1733473313; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E2oOz52GRWsp3a1EBMDsE5PXCndawDHZAsuExiF65WQ=;
+        b=X/9NX6cIEBtf/AQ6OfgTQjyaSFaAPXT1oYAhK11VClcUg4oTJEwW/fMiaVrGvt6nDK
+         HdujgYqp0WIWbj0OrCE25PdyEmseCvZWdnWwWyTRIWsvRxCw47y4+vBCkEC7CTK6IPlt
+         4yO3pO+Rt0W4egHCd/lo69z7sg68hr5H1Ny4FNuPUY/v9iSZo3hZ/x+zOH5aTfi07ToR
+         YD5JciB6Hk/CCuSSz/YMuHJKQU6dGjHDPYzL0XWNocsiL5fF/zWys9cSI82in0EAd4DN
+         QQWcO9vntQ1Ir4omfdu0P6+zeQUDOHniPqwCl/EUIQZWCmGKWkVXo4sqyRtBkUrXhzjy
+         26pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732868513; x=1733473313;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E2oOz52GRWsp3a1EBMDsE5PXCndawDHZAsuExiF65WQ=;
+        b=VG3k514myD+0GUccOxOzrELox/id908i1vMkM/X0iDcIS0Dd1+/PuUuVe8khOeYQDw
+         hzROWGZqoRG7Uu9u/7v3e6goB5/rVSWsqxO8ltWTtsaji3wwelJTz8v96Q/c9lYBv73O
+         LVEs3PdB25tw/yJADLIX/AZAd9c3yWJvUlvxf9+yb/jP/FoNyIyxEhOHaxEEPLdxKcaY
+         lRxg4Aajp0Wn+cxp+zCCdjdn9KrN7J1xhACcpSGIqXa78TklVjkbqBaBz1jeTPM4Ypvf
+         dBhG02I/abwdQxk44OeiglTayBj2vkxP3HQ7/G/ZR+1PAvupgO0O7GWh9/1Knq/wB7pc
+         vqWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhdDTjyNlAnXqrmavpEmiZlL9wYTE+cG+mKo7kjeENwjx692NCd+IXIrK5oke9cNcWOcHZ29gr363chBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSig5L9jr2regK+0t5ToscnH9GQ52APsryYaC/6XNRCX40lxeu
+	04zj889acMkq9XKdT+n8nt+Dan2YDGoClDB2APFuHD8LDnQmG24T+HU+UPh+A+A=
+X-Gm-Gg: ASbGncu7VnsPamVMgxwL/Kdg/TYnw1PQ/mjoVyzYKWn0t8EHQyKPYE2xEZMGbPOBza4
+	ahN7Q/krqKzw0jH/Cx+9wRO1a/8SYq5CPnp56v2xZoWBmWaZF88jiDTuHogzLEnm3LdAb14VZ8V
+	5PJPsuHj3RUafBM0qf0e4Zve4lsOHUUouFGFa3SvBxHl8h19AqXWq7fqRP1TD9MiPDOCcU0ni+z
+	+I/FgWh9oL2OpBGRjAnx8yf+UVavGRrBIxlwTnpOrFLLFmiU1RBTvNRbA==
+X-Google-Smtp-Source: AGHT+IHPjkSVuExv6ChzcQIL1kJ3xfTqnGBTSThOnNcT1tNDPayzcwSyl+9WJecuplBzRyFAZebpLg==
+X-Received: by 2002:a05:600c:4fc9:b0:431:5226:1633 with SMTP id 5b1f17b1804b1-434afba0023mr53549255e9.6.1732868513186;
+        Fri, 29 Nov 2024 00:21:53 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f7150esm44698395e9.42.2024.11.29.00.21.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2024 00:21:52 -0800 (PST)
+Message-ID: <0bb9f461-c7a2-4db0-9492-c04cc298504d@tuxon.dev>
+Date: Fri, 29 Nov 2024 10:21:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +79,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] drm/msm/dp: Support external GPIO HPD with 3rd
- pinctrl chip
-To: Xiangxu Yin <quic_xiangxuy@quicinc.com>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, quic_lliu6@quicinc.com, quic_fangez@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-gpio@vger.kernel.org
-References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
- <20241129-add-displayport-support-for-qcs615-platform-v1-8-09a4338d93ef@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 01/15] dt-bindings: soc: renesas: renesas,rzg2l-sysc:
+ Add #renesas,sysc-signal-cells
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241129-add-displayport-support-for-qcs615-platform-v1-8-09a4338d93ef@quicinc.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
+ gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com,
+ christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWjzR6vgbr_CfR7r-h1FqWxs1nY0hm274kxFmoHjCtRAA@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdWjzR6vgbr_CfR7r-h1FqWxs1nY0hm274kxFmoHjCtRAA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/11/2024 08:57, Xiangxu Yin wrote:
->  
-> +	if (of_find_property(pdev->dev.of_node, "dp-hpd-gpio", NULL)) {
-> +		dp->ext_gpio = true;
-> +		dp->gpio_num = of_get_named_gpio(pdev->dev.of_node, "dp-hpd-gpio", 0);
-> +		if (dp->gpio_num < 0) {
-> +			dev_err(&pdev->dev, "Failed to get gpio:%d\n", dp->gpio_num);
-> +			return dp->gpio_num;
-> +		}
-> +
-> +		if (!gpio_is_valid(dp->gpio_num)) {
-> +			DRM_ERROR("gpio(%d) invalid\n", dp->gpio_num);
-> +			return -EINVAL;
-> +		}
-> +
-> +		rc = gpio_request(dp->gpio_num, "dp-hpd-gpio");
-This is not how you request GPIOs. All this code is just wrong. See
-Gpiolib API description/document. Or any other driver using GPIOs.
+Hi, Geert,
 
-Best regards,
-Krzysztof
+On 28.11.2024 17:46, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> CC Ulf
+> 
+> Thanks for your patch!
+> 
+> On Tue, Nov 26, 2024 at 10:21 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The RZ/G3S system controller (SYSC) has registers to control signals that
+>> are routed to various IPs. These signals must be controlled during
+>> configuration of the respective IPs. One such signal is the USB PWRRDY,
+>> which connects the SYSC and the USB PHY. This signal must to be controlled
+>> before and after the power to the USB PHY is turned off/on.
+>>
+>> Other similar signals include the following (according to the RZ/G3S
+>> hardware manual):
+>>
+>> * PCIe:
+>> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+>> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+>>   register
+>> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+>>
+>> * SPI:
+>> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+>>   register
+>>
+>> * I2C/I3C:
+>> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+>>   (x=0..3)
+>> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+>>
+>> * Ethernet:
+>> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+>>   registers (x=0..1)
+>>
+>> Add #renesas,sysc-signal-cells DT property to allow different SYSC signals
+>> consumers to manage these signals.
+>>
+>> The goal is to enable consumers to specify the required access data for
+>> these signals (through device tree) and let their respective drivers
+>> control these signals via the syscon regmap provided by the system
+>> controller driver. For example, the USB PHY will describe this relation
+>> using the following DT property:
+>>
+>> usb2_phy1: usb-phy@11e30200 {
+>>         // ...
+>>         renesas,sysc-signal = <&sysc 0xd70 0x1>;
+>>         // ...
+>> };
+> 
+> IIUIC, the consumer driver will  appear to control the SYSC bits
+> directly, but due to the use of custom validating regmap accessors
+> and reference counting in the SYSC driver, this is safe?
+
+I'm not sure I fully understand the safety concern.
+
+> The extra safety requires duplicating the register bits in both DT
+> and the SYSC driver.
+
+One other option I saw was to have common defines for registers that could
+have been shared b/w driver and DTSes. But it looked better to me the way
+it has been presented in this series.
+
+> Both usb-phy nodes on RZG3S use the same renesas,sysc-signal, so the
+> reference counting is indeed needed.  They are in different power
+> domains, could that be an issue w.r.t. ordering?
+
+In chapter "32.4.2.1 USB/PHY related pins", section "When either Port1 or
+Port2 is unused" of the RZ/G3S HW manual it is mentioned "Since USB_VDD18 /
+USB_VDD33 are common to 2 Port PHY, it is necessary to supply power even
+when one of the
+ ports is not in use".
+
+(From the discussions w/ the internal HW team) The PWRRDY is an (software
+controlled) indicator to the USB PHY that power supply is ready.
+
+From that and [1] I get that both PHYs are powered by the same regulators
+(USB_VDD18/USB_VDD33) and the USB PWRRDY signal need to be set before/after
+the USB PHY power off/on. Because of this I consider the order doesn't matter.
+
+[1] https://gcdnb.pbrd.co/images/0a1zYBFZXZVb.png
+
+> 
+> I am not a big fan of describing register bits in DT,
+
++1
+
+> but for the other
+> SYSC users you list above, syscon+regmap seems to be a valid solution.
+> For USB and PCIe control, the situation is different. I more liked the
+> approach with "reset IDs" you had in v1, as it abstracts the DT
+> description from the register bits,
+
++1
+
+> and the USB and PCIe reset bits use
+> a different polarity (on RZ/G3S). If future SoC integration changes
+> the polarity, you have to handle that in the consumer (USB or PCIe)
+> driver, too.
+
+That's true. The idea of this implementation was that the consumer would
+know what they need to set for themselves on the SYSC side.
+
+> Unfortunately such "reset IDs" are only suitable for
+> use with the reset or pmdomain frameworks, which didn't survive the
+> earlier discussions.
+> 
+> One other option would be to let SYSC expose regulators?
+
+We can try, but we can hit the wall again, as the PWRRDY signal is not a
+regulator either. From the internal HW discussion is an indicator (software
+controlled) that the power to the USB PHY is ready.
+
+> While that would work for USB and PCIe control, we would still need
+> syscon+regmap for the other bits.
+
+That is true.
+
+> 
+> So the more I think about it, the more I like your (clever) solution...
+> 
+>> Along with it, add the syscon to the compatible list as it will be
+>> requested by the consumer drivers. The syscon was added to the rest of
+>> system controller variants as these are similar with RZ/G3S and can
+>> benefit from the implementation proposed in this series.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
