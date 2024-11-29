@@ -1,250 +1,151 @@
-Return-Path: <linux-kernel+bounces-425584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6929DE70B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:13:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4CB9DE710
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08146163F68
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:13:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E2B164BCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 13:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E40C19DFA2;
-	Fri, 29 Nov 2024 13:13:21 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4A819E83C;
+	Fri, 29 Nov 2024 13:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="UiOLbgIr"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9391156991;
-	Fri, 29 Nov 2024 13:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D91F19E7D0;
+	Fri, 29 Nov 2024 13:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732886000; cv=none; b=uKp1AnhjQx1NwenNuiepf4GSeA1ZdNECHvQmJj+IInepgGB1+tN8Je0Ko7qtE9+fu+IeuPW/ksR+ncrfeCVWmzI2A2uTherYubh5c74z6UyewRVscUZLx3VG52xiViCbtXgzgJvXHGPiXl8Ht/gle1JHSVeOyIQeXC5KMeL/7uY=
+	t=1732886042; cv=none; b=mEeC2nl5G9r32xHK+cVGK2A/NY4mITwd1Ecr2yFH56kWjsqr1HxZidWMcSajnjbUiuJzjoMVyZtWddv3r5Ic0WIGYEAr5o+G+Yh/sqSEdW7E7sg0Gqv3JbuJDEoErSisUm6z4JT2HPej/tSloJteAgmecrx78ty0TLbsAssgYF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732886000; c=relaxed/simple;
-	bh=lXVzxIz6MaczSsMhbCoU8ecJVJFukXTIwVyAeUq5Qng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YHqMiX0iapu1e5nvrta60F9vXouHZD2q1Xgs9NXkJX7HLdStIa/KNZpxWfxwezRUf7qpA+eqXAMnP0i4AlzAA+4s5g4Hk3SsFicZtmY7bw9GNAE0CgFrZFFdDJJF/xcHG0X/uL3Csz6zqkLIOsSrkIqwtvFaX3ZW8SoUajYAen4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 655C4C4CECF;
-	Fri, 29 Nov 2024 13:13:18 +0000 (UTC)
-Message-ID: <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl>
-Date: Fri, 29 Nov 2024 14:13:16 +0100
+	s=arc-20240116; t=1732886042; c=relaxed/simple;
+	bh=MhDXriinalpNr+V/p3gCLOYLmh5yVPXLt+uAcLHPNiE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m8nWAFj40z+TkDo5IbGt9Zt58XZbXsTI8dbuLM93VeD8A0SEdaMsODzIrdraoldtez1vFJ82u3645bKOYJ24NaHXSWA10iatMLgJRvGiir9bjkOjLfsQjULRbzoONyG3d9yU6g0IerDJZ99rQBvhJ1PP/e4bcinoR33wVx0NK8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=UiOLbgIr; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ATBku2A018125;
+	Fri, 29 Nov 2024 08:13:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=gOwni8TXokS15RCv6YxyJiH8bwP
+	XyoCaPMYem5f0jek=; b=UiOLbgIrWl6Oq9yTGwNGSY4ph2UKNeAkm/HSvQCdHwD
+	6iPJTsf2ER/7jIFa+45ld4aay4Rko1PjV1hEhkpNffMqMLSAvlIPpnGzNv3ggAMu
+	hZz+OlLEJcw1eQqGZf3p5pCIy1FaExMSeebqp5dnEzNpT83kRWvb8rchjijNELO3
+	aAbD0YA3YHr379qHc96bzkR1k6e2dtaR/W2Bf6LMG99Wu2G6e9oQzsMhrfg44Oly
+	VzEnG781ySxjM9/kis40av5NgpkXjqPYubd3T138odlt0/P+Lp7RTZSeCN/7w5mm
+	lJ3lRmrZdSSueCXNZs4ZE0l4nYlLxmi0CH4hyLeKfUA==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 436715t0b5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Nov 2024 08:13:34 -0500 (EST)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4ATDDXUh047457
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 29 Nov 2024 08:13:33 -0500
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 29 Nov 2024 08:13:33 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 29 Nov 2024 08:13:33 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 29 Nov 2024 08:13:33 -0500
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4ATDDLs7027156;
+	Fri, 29 Nov 2024 08:13:23 -0500
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v5 0/4] Timestamp and PulSAR support for ad4000
+Date: Fri, 29 Nov 2024 10:13:17 -0300
+Message-ID: <cover.1732885470.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
- by other fh
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
- <20241127-uvc-fix-async-v2-2-510aab9570dd@chromium.org>
- <20241128222232.GF25731@pendragon.ideasonboard.com>
- <CANiDSCvyMbAffdyi7_TrA0tpjbHe3V_D_VkTKiW-fNDnwQfpGA@mail.gmail.com>
- <20241128223343.GH25731@pendragon.ideasonboard.com>
- <7eeab6bd-ce02-41a6-bcc1-7c2750ce0359@xs4all.nl>
- <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
- <20241129110640.GB4108@pendragon.ideasonboard.com>
- <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: Ex1scHEu2xRMN87rdoQTfcojG-Wt80AB
+X-Proofpoint-GUID: Ex1scHEu2xRMN87rdoQTfcojG-Wt80AB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ suspectscore=0 mlxscore=0 bulkscore=0 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411290108
 
-On 29/11/2024 12:54, Ricardo Ribalda wrote:
-> On Fri, 29 Nov 2024 at 12:06, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
->>
->> On Fri, Nov 29, 2024 at 11:59:27AM +0100, Ricardo Ribalda wrote:
->>> On Fri, 29 Nov 2024 at 11:36, Hans Verkuil wrote:
->>>> On 28/11/2024 23:33, Laurent Pinchart wrote:
->>>>> On Thu, Nov 28, 2024 at 11:28:29PM +0100, Ricardo Ribalda wrote:
->>>>>> On Thu, 28 Nov 2024 at 23:22, Laurent Pinchart wrote:
->>>>>>>
->>>>>>> Hi Ricardo,
->>>>>>>
->>>>>>> (CC'ing Hans Verkuil)
->>>>>>>
->>>>>>> Thank you for the patch.
->>>>>>>
->>>>>>> On Wed, Nov 27, 2024 at 12:14:50PM +0000, Ricardo Ribalda wrote:
->>>>>>>> If a file handle is waiting for a response from an async control, avoid
->>>>>>>> that other file handle operate with it.
->>>>>>>>
->>>>>>>> Without this patch, the first file handle will never get the event
->>>>>>>> associated with that operation, which can lead to endless loops in
->>>>>>>> applications. Eg:
->>>>>>>> If an application A wants to change the zoom and to know when the
->>>>>>>> operation has completed:
->>>>>>>> it will open the video node, subscribe to the zoom event, change the
->>>>>>>> control and wait for zoom to finish.
->>>>>>>> If before the zoom operation finishes, another application B changes
->>>>>>>> the zoom, the first app A will loop forever.
->>>>>>>
->>>>>>> Hans, the V4L2 specification isn't very clear on this. I see pros and
->>>>>>> cons for both behaviours, with a preference for the current behaviour,
->>>>>>> as with this patch the control will remain busy until the file handle is
->>>>>>> closed if the device doesn't send the control event for any reason. What
->>>>>>> do you think ?
->>>>>>
->>>>>> Just one small clarification. The same file handler can change the
->>>>>> value of the async control as many times as it wants, even if the
->>>>>> operation has not finished.
->>>>>>
->>>>>> It will be other file handles that will get -EBUSY if they try to use
->>>>>> an async control with an unfinished operation started by another fh.
->>>>>
->>>>> Yes, I should have been more precised. If the device doesn't send the
->>>>> control event, then all other file handles will be prevented from
->>>>> setting the control until the file handle that set it first gets closed.
->>>>
->>>> I think I need a bit more background here:
->>>>
->>>> First of all, what is an asynchronous control in UVC? I think that means
->>>> you can set it, but it takes time for that operation to finish, so you
->>>> get an event later when the operation is done. So zoom and similar operations
->>>> are examples of that.
->>>>
->>>> And only when the operation finishes will the control event be sent, correct?
->>>
->>> You are correct.  This diagrams from the spec is more or less clear:
->>> https://ibb.co/MDGn7F3
->>>
->>>> While the operation is ongoing, if you query the control value, is that reporting
->>>> the current position or the final position?
->>>
->>> I'd expect hardware will return either the current position, the start
->>> position or the final position. I could not find anything in the spec
->>> that points in one direction or the others.
->>
->> Figure 2-21 in UVC 1.5 indicates that the device should STALL the
->> GET_CUR and SET_CUR requests if a state change is in progress.
->>
->>> And in the driver I believe that we might have a bug handling this
->>> case (will send a patch if I can confirm it)
->>> the zoom is at 0 and you set it 10
->>> if you read the value 2 times before the camera reaches value 10:
->>> - First value will come from the hardware and the response will be cached
->>
->> Only if the control doesn't have the auto-update flag set, so it will be
->> device-dependent. As GET_CUR should stall that's not really relevant,
->> except for the fact that devices may not stall the request.
-> 
-> I missed that the device will likely stall during async operations.
-> 
-> What do you think of something like this? I believe it can work with
-> compliant and non compliant devices.
-> Note that the event will be received by the device that originated the
-> operation, not to the second one that might receive an error during
-> write/read.
-> 
-> 
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 4fe26e82e3d1..9a86c912e7a2 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1826,14 +1826,15 @@ static int uvc_ctrl_commit_entity(struct
-> uvc_device *dev,
->                         continue;
-> 
->                 /*
-> -                * Reset the loaded flag for auto-update controls that were
-> +                * Reset the loaded flag for auto-update controls and for
-> +                * asynchronous controls with pending operations, that were
->                  * marked as loaded in uvc_ctrl_get/uvc_ctrl_set to prevent
->                  * uvc_ctrl_get from using the cached value, and for write-only
->                  * controls to prevent uvc_ctrl_set from setting bits not
->                  * explicitly set by the user.
->                  */
->                 if (ctrl->info.flags & UVC_CTRL_FLAG_AUTO_UPDATE ||
-> -                   !(ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR))
-> +                   !(ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR) || ctrl->handle)
->                         ctrl->loaded = 0;
-> 
->                 if (!ctrl->dirty)
-> @@ -2046,8 +2047,18 @@ int uvc_ctrl_set(struct uvc_fh *handle,
->         mapping->set(mapping, value,
->                 uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
-> 
-> -       if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
-> -               ctrl->handle = handle;
-> +       if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS) {
-> +               /*
-> +                * Other file handle is waiting for an operation on
-> +                * this asynchronous control. If the device is compliant
-> +                * this operation will fail.
-> +                *
-> +                * Do not replace the handle pointer, so the original file
-> +                * descriptor will get the completion event.
-> +                */
-> +               if (!ctrl->handle)
-> +                       ctrl->handle = handle;
+Complement the ad4000 driver with a timestamp channel, a minor adjust in
+transfer timing, and support for single-channel PulSAR devices.
 
-I don't think this is right: you want the completion event for async
-controls to go to all filehandles that are subscribed to that control.
+Change log v4 -> v5
+[IIO]
+- No changes.
+[Device tree]
+- Added const items for fallback compatibles.
 
-Which is what happens if handle == NULL (as I understand the code).
+Change log v3 -> v4
+[IIO]
+- No changes.
+[Device tree]
+- Sorted compatible strings in alphabetical order.
+- Left only fallback compatibles in allOf check list for adi,sdi-pin property.
 
-Regards,
+Change log v2 -> v3
+[IIO]
+- Reverted to direct assignment of ad4000_time_spec structs.
+[Device tree]
+- No changes.
 
-	Hans
+Change log v1 -> v2
+- Added Suggested-by and Reviewed-by tags.
+[IIO]
+- Commented the removal of unused AD4000_TQUIET1_NS define in commit body.
+- Made a common macro to assign ad4000_time_spec.
+- Explicitly initialized PulSAR t_quiet2_ns with 0 as those don't need any quiet time.
+- Improved PulSAR support commit description with more context.
+- Dropped support for AD7694.
+[Device tree]
+- Made "cs" the default adi,sdi-pin value for PulSAR devices.
 
-> +       }
-> 
->         ctrl->dirty = 1;
->         ctrl->modified = 1;
-> 
->>
->>> - Second value will be the cached one
->>>
->>> now the camera  is at zoom 10
->>> If you read the value, you will read the cached value
->>>
->>>> E.g.: the zoom control is at value 0 and I set it to 10, then I poll the zoom control
->>>> value: will that report the intermediate values until it reaches 10? And when it is
->>>> at 10, the control event is sent?
->>>>
->>>>>>>> Cc: stable@vger.kernel.org
->>>>>>>> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
->>>>>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>>>>>>> ---
->>>>>>>>  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++++
->>>>>>>>  1 file changed, 4 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
->>>>>>>> index b6af4ff92cbd..3f8ae35cb3bc 100644
->>>>>>>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
->>>>>>>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
->>>>>>>> @@ -1955,6 +1955,10 @@ int uvc_ctrl_set(struct uvc_fh *handle,
->>>>>>>>       if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
->>>>>>>>               return -EACCES;
->>>>>>>>
->>>>>>>> +     /* Other file handle is waiting a response from this async control. */
->>>>>>>> +     if (ctrl->handle && ctrl->handle != handle)
->>>>>>>> +             return -EBUSY;
->>>>>>>> +
->>>>>>>>       /* Clamp out of range values. */
->>>>>>>>       switch (mapping->v4l2_type) {
->>>>>>>>       case V4L2_CTRL_TYPE_INTEGER:
->>
->> --
->> Regards,
->>
->> Laurent Pinchart
-> 
-> 
-> 
+Link to v4: https://lore.kernel.org/linux-iio/cover.1732660478.git.marcelo.schmitt@analog.com/
+Link to v3: https://lore.kernel.org/linux-iio/cover.1732020224.git.marcelo.schmitt@analog.com/
+Link to v2: https://lore.kernel.org/linux-iio/cover.1731953012.git.marcelo.schmitt@analog.com/
+Link to v1: https://lore.kernel.org/linux-iio/cover.1731626099.git.marcelo.schmitt@analog.com/
+
+
+Marcelo Schmitt (4):
+  dt-bindings: iio: adc: adi,ad4000: Add PulSAR
+  iio: adc: ad4000: Add timestamp channel
+  iio: adc: ad4000: Use device specific timing for SPI transfers
+  iio: adc: ad4000: Add support for PulSAR devices
+
+ .../bindings/iio/adc/adi,ad4000.yaml          |  59 ++++
+ drivers/iio/adc/ad4000.c                      | 311 +++++++++++++++---
+ 2 files changed, 319 insertions(+), 51 deletions(-)
+
+
+base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
+-- 
+2.45.2
 
 
