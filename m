@@ -1,165 +1,105 @@
-Return-Path: <linux-kernel+bounces-425816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E729DEB4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:49:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC949DEB4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:52:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D966EB24317
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA51A28213D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D094719CC1C;
-	Fri, 29 Nov 2024 16:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9F81974FE;
+	Fri, 29 Nov 2024 16:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iobigL/S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB2278276;
-	Fri, 29 Nov 2024 16:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="fqX2TvD9"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743CA78276
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732898925; cv=none; b=pKpFbzZrGjsICqFJBHM85J6hPNJ90tYW9N8mFXCK6EoZ5lOiqjfd6JD+xLqMh7wblkHOzZ4HgJeRrAy9jIMcjR1QBOIz6olK+7Ok56xxjEq5M6VmGaBPtlr3G4PmbmRCE/1MKG8iZRfj6OlC7Md7auIy5UPh+XPhmDtdA6rbrec=
+	t=1732899117; cv=none; b=OPBq9H8X3o4uvXwq8e31SE8KFNKYyKZyyTY2mGPXG/GXlnLe/B38DH0nXBnnaHjpdamOeOCKzXB7jVK8YDcp0RGymPqnWVH/zC30LV3InPuS/8oIAHTWwuodNumtX7cl94caUTFOUZzO/rGoR732qgPgwM88DtKKFBPFpdXHhXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732898925; c=relaxed/simple;
-	bh=/wkJeDupE0S2YFw2GJZXNRuiJiFo7UvOtoxklJ0O1A8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VYqTxqeRlLfPvhWM7/8v90Snfiad2eOuOY+u7o36OxiEaEYO1hPNnw7d8HkW7+b3lAfpuvylK2Ik+eGp+eqHnPB9QrjxYnvSJDkUq5LXmOHVbGm7FNVXP8K8yCvTeWCFBfVM7r6eLQMduJuGDXYvXt0IHhqGUkwVGO89o8U3vyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iobigL/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08DA4C4CED2;
-	Fri, 29 Nov 2024 16:48:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732898925;
-	bh=/wkJeDupE0S2YFw2GJZXNRuiJiFo7UvOtoxklJ0O1A8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iobigL/Smk8BLze7nrcfcJZOvfMFXJsrXMc2tyWYylQVDuDpha7HAeMFj5gUCsRFz
-	 OAP6mpFQOYJgDhzTz14t3afrsfN79FocbczYMcQYuaKNytWUqiX3ftICNKLJr786vy
-	 T2pzf0FMHM67H1QHZ1AVz/Ps1X2TzvOB8qOsSjPtlaYfrLiHUlYHnz7qW2aXBSXbGT
-	 icbiWDEBp2egNIX9AsXHN+EN0C+O9Uk8mY640xsGHyci6GphY1BV2yXZztFEi23em4
-	 Sz2jfZCN9QUsc31uLf3cZxaReuz9eaIlBoX9Bx2ycgTZ79bkeDV2Mmjn4If2Gw4IVn
-	 b6Wvpbiy0O+eQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Naveen N Rao <naveen@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] tracing/dynevent: Adopt guard() and scoped_guard()
-Date: Sat, 30 Nov 2024 01:48:40 +0900
-Message-ID: <173289891992.73724.9491350426847416169.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <173289885627.73724.13632317993038475335.stgit@devnote2>
-References: <173289885627.73724.13632317993038475335.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1732899117; c=relaxed/simple;
+	bh=d6NinvUuWTKaXw7mA/SrT0xN3cZpoKHINerF5cdEjKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SMcZNt19NFCvhpv/hdoOGlhDVP9//IP64N3Y5m7CoQ4y3XoQlwtWfGFA+yDWgPxHUTF31YlDcxQ93v1s8ktUkpE1A/BCzwFeGWJ35/s4EczySjYmn6nHG4CqMOJZ0j5Zk2Im92Mc5/nKZPYsjlaBAexFhS0+RBUpGn5l9f2qzmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=fqX2TvD9; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id C7CBC14C1E1;
+	Fri, 29 Nov 2024 17:51:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1732899107;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=td5Pg2qCCZ84Cz1o4OZYGGXXxg/WaDPyDpc9W3ziyUI=;
+	b=fqX2TvD9TNJNPZH+QbtKgFP5OHXV3kvsTTSgjiGjr53NdV1NYoukFtGz/XrfUKln9QyuEJ
+	XDPVDozHlTZ+EahY5C0NGZfTjH7xMkCIwarDct/+wwbgy1wUfIlwGug9kOiBIBoN8f5bKD
+	WIt+qqae7E7pPp5rtq4N7y1jqlltV3b1qmKJ58oprrH4pBG/G4MV80ao5W6CDDwRTGAtP+
+	zGrsOzGyUSFvS2z1Ekv50ID+y2uw6QSNQ3dDIW35eB0iMShheR+s/5mB3m4Uaurvk7hJD8
+	ZW6OnEWx7jWHFbzSZd2y6OCgo9RYSNe6q2M4oIsRnqWc6u1GYlZOEYZxDhrojA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 3f466bd0;
+	Fri, 29 Nov 2024 16:51:44 +0000 (UTC)
+Date: Sat, 30 Nov 2024 01:51:29 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] 9p fixes for 6.13-rc1
+Message-ID: <Z0nxET2etduwcfj0@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
 
-Use guard() or scoped_guard() in dynamic events for critical sections
-rather than discrete lock/unlock pairs.
+  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v2:
-  - Use scoped_guard() instead of guard() to avoid goto warnings.
----
- kernel/trace/trace_dynevent.c |   35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+are available in the Git repository at:
 
-diff --git a/kernel/trace/trace_dynevent.c b/kernel/trace/trace_dynevent.c
-index 4376887e0d8a..eb8f669c15e1 100644
---- a/kernel/trace/trace_dynevent.c
-+++ b/kernel/trace/trace_dynevent.c
-@@ -63,9 +63,8 @@ int dyn_event_register(struct dyn_event_operations *ops)
- 		return -EINVAL;
- 
- 	INIT_LIST_HEAD(&ops->list);
--	mutex_lock(&dyn_event_ops_mutex);
-+	guard(mutex)(&dyn_event_ops_mutex);
- 	list_add_tail(&ops->list, &dyn_event_ops_list);
--	mutex_unlock(&dyn_event_ops_mutex);
- 	return 0;
- }
- 
-@@ -106,20 +105,20 @@ int dyn_event_release(const char *raw_command, struct dyn_event_operations *type
- 		goto out;
- 	}
- 
--	mutex_lock(&event_mutex);
--	for_each_dyn_event_safe(pos, n) {
--		if (type && type != pos->ops)
--			continue;
--		if (!pos->ops->match(system, event,
--				argc - 1, (const char **)argv + 1, pos))
--			continue;
--
--		ret = pos->ops->free(pos);
--		if (ret)
--			break;
-+	scoped_guard(mutex, &event_mutex) {
-+		for_each_dyn_event_safe(pos, n) {
-+			if (type && type != pos->ops)
-+				continue;
-+			if (!pos->ops->match(system, event,
-+					argc - 1, (const char **)argv + 1, pos))
-+				continue;
-+
-+			ret = pos->ops->free(pos);
-+			if (ret)
-+				break;
-+		}
-+		tracing_reset_all_online_cpus();
- 	}
--	tracing_reset_all_online_cpus();
--	mutex_unlock(&event_mutex);
- out:
- 	argv_free(argv);
- 	return ret;
-@@ -133,13 +132,12 @@ static int create_dyn_event(const char *raw_command)
- 	if (raw_command[0] == '-' || raw_command[0] == '!')
- 		return dyn_event_release(raw_command, NULL);
- 
--	mutex_lock(&dyn_event_ops_mutex);
-+	guard(mutex)(&dyn_event_ops_mutex);
- 	list_for_each_entry(ops, &dyn_event_ops_list, list) {
- 		ret = ops->create(raw_command);
- 		if (!ret || ret != -ECANCELED)
- 			break;
- 	}
--	mutex_unlock(&dyn_event_ops_mutex);
- 	if (ret == -ECANCELED)
- 		ret = -EINVAL;
- 
-@@ -198,7 +196,7 @@ int dyn_events_release_all(struct dyn_event_operations *type)
- 	struct dyn_event *ev, *tmp;
- 	int ret = 0;
- 
--	mutex_lock(&event_mutex);
-+	guard(mutex)(&event_mutex);
- 	for_each_dyn_event(ev) {
- 		if (type && ev->ops != type)
- 			continue;
-@@ -216,7 +214,6 @@ int dyn_events_release_all(struct dyn_event_operations *type)
- 	}
- out:
- 	tracing_reset_all_online_cpus();
--	mutex_unlock(&event_mutex);
- 
- 	return ret;
- }
+  https://github.com/martinetd/linux tags/9p-for-6.13-rc1
 
+for you to fetch changes up to e0260d530b73ee969ae971d14daa02376dcfc93f:
+
+  net/9p/usbg: allow building as standalone module (2024-11-22 23:48:14 +0900)
+
+----------------------------------------------------------------
+9p update for 6.13-rc1
+
+- usbg: fix alloc failure handling & build-as-module
+- xen: couple of fixes
+- v9fs_cache_register/unregister code cleanup
+
+----------------------------------------------------------------
+Alex Zenla (2):
+      9p/xen: fix init sequence
+      9p/xen: fix release of IRQ
+
+Colin Ian King (1):
+      fs/9p: replace functions v9fs_cache_{register|unregister} with direct calls
+
+Dominique Martinet (1):
+      net/9p/usbg: allow building as standalone module
+
+Mirsad Todorovac (1):
+      net/9p/usbg: fix handling of the failed kzalloc() memory allocation
+
+ fs/9p/v9fs.c        | 21 +++------------------
+ net/9p/Kconfig      |  4 ++--
+ net/9p/trans_usbg.c |  4 ++--
+ net/9p/trans_xen.c  |  9 ++++++---
+ 4 files changed, 13 insertions(+), 25 deletions(-)
+
+--
+Dominique Martinet | Asmadeus
 
