@@ -1,56 +1,65 @@
-Return-Path: <linux-kernel+bounces-425468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C759DC281
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 024AB9DC283
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 12:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704BE283298
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:06:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72482833EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 11:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351B21990CF;
-	Fri, 29 Nov 2024 11:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CB21991BB;
+	Fri, 29 Nov 2024 11:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sWFCzKZt"
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qxxpXQsA"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02563184524;
-	Fri, 29 Nov 2024 11:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8C3155726;
+	Fri, 29 Nov 2024 11:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732878389; cv=none; b=AU3TH3BSgcffOEZqLvdXcPG7zsCNJXCgrWF404h4KioLrnBJYV+kwKIlj1cbSPCFqP/J8ukLNS/7IfSJ+AKZPSKe7NRFBPZ9xaDDulkdw/z33bhJgI2tKa4jqwClbOvtC2EpGt4rfZ9GWM6vBOxtBP2fOzR3B53SAEFu707a0hw=
+	t=1732878414; cv=none; b=WAqwSevw0g43u+rV4CTgMl4InYf2QN+FBwquRfgQQTFgpPpMxQRNpfu8Sag4v4h6Jxj6Jw00ptc9HHH+OcJh+Iij+P70iYE7+U+GJD3xEIGBCd2Amq61KTQXJiJhsY3/x5UZGelpKeAwns6k5cGMiXqEj5SYQ5o45T6vDfc7e1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732878389; c=relaxed/simple;
-	bh=lj4eDYqbYdjupZipJN8fhEJ7s26lsXctGr4H6NmwG84=;
+	s=arc-20240116; t=1732878414; c=relaxed/simple;
+	bh=TwdrBaS4qYS6OdOtx8q9Yeagwt8UgVRcTEqq9YSfMBc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NAL2XL3cNl1/iy/joj+HKrb1VF1bJVNXFZypSbPx4yNh/OeRQpPh3OFv6R7w8s1TJNjy/2ccMJgGb6UjaZqfU1VINDeQLXf+jbu9xak69kf+GTRgQuQVgbYHAqRAQYvpGvi7dEcrhf1jo/ctbeh/GtgI0/2crAq0puaSUX2yTAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sWFCzKZt; arc=none smtp.client-ip=83.166.143.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y09N66zVLzZxv;
-	Fri, 29 Nov 2024 12:06:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732878374;
-	bh=sk5O8qlAHiV7cMD7GbstXdEJp+CIadyhGsvX+tNEQ9c=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=n1uhqG7BbsI4f9GQcd76mq+yGSSogNALnj5GSoFuJmnXJa0LpD+rYVdgT+/+ZpSihgYueTse9qxMqzPW5XezX+GOQZruxUqTvT2oEJpoMfBwk/jBSEf3xOf5cIPiQUC6Vu1e1nHnBvMiJxuoi2anib/7yscEJNZtRVCsA5SjiEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qxxpXQsA; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 469E7A8F;
+	Fri, 29 Nov 2024 12:06:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732878386;
+	bh=TwdrBaS4qYS6OdOtx8q9Yeagwt8UgVRcTEqq9YSfMBc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sWFCzKZtvOt/w/6oU3RMKFOEl57k/tiOpt8ZWBGddK6gFGlwChg0IEHNlTaToXGAJ
-	 HNbdFBgXfi6FwnSKKQZMFpzdWKZM6K171POLw8lV4JeTk2CKqaF1La/BTP4qhjJMmy
-	 qsIGymwaMjEBZBrIIUjevgDqdVxgbGBMZnUkxvZ4=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y09N60dsvzGSY;
-	Fri, 29 Nov 2024 12:06:13 +0100 (CET)
-Date: Fri, 29 Nov 2024 12:06:11 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, audit@vger.kernel.org, 
-	Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH] ima: instantiate the bprm_creds_for_exec() hook
-Message-ID: <20241129.keeDathoo3Oh@digikod.net>
-References: <20241127210234.121546-1-zohar@linux.ibm.com>
+	b=qxxpXQsA+neGZrBhgXAjDjR7ecZQv87V4hi+PuFEC0EtZC4tTdf/sEmYL5SKXenKc
+	 dCyPI9qK9WzNVqmhOs/ZtDFWNeTbJhj0u5OIPUlmoI0ATGmHk1gp7l2lcrT06H7Vez
+	 KwcIIDX+QcV3IFgKX2CluVcPheiAQ09ItDPhcvFY=
+Date: Fri, 29 Nov 2024 13:06:40 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control
+ owned by other fh
+Message-ID: <20241129110640.GB4108@pendragon.ideasonboard.com>
+References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
+ <20241127-uvc-fix-async-v2-2-510aab9570dd@chromium.org>
+ <20241128222232.GF25731@pendragon.ideasonboard.com>
+ <CANiDSCvyMbAffdyi7_TrA0tpjbHe3V_D_VkTKiW-fNDnwQfpGA@mail.gmail.com>
+ <20241128223343.GH25731@pendragon.ideasonboard.com>
+ <7eeab6bd-ce02-41a6-bcc1-7c2750ce0359@xs4all.nl>
+ <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,328 +68,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241127210234.121546-1-zohar@linux.ibm.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
 
-For reference, here is the base patch series:
-https://lore.kernel.org/all/20241112191858.162021-1-mic@digikod.net/
-
-CCing audit@
-
-On Wed, Nov 27, 2024 at 04:02:34PM -0500, Mimi Zohar wrote:
-> Like direct file execution (e.g. ./script.sh), indirect file execution
-> (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
-> the new security_bprm_creds_for_exec() hook to measure and verify the
-> indirect file's integrity.  Unlike direct file execution, indirect file
-> execution integrity is optionally enforced by the interpreter.
+On Fri, Nov 29, 2024 at 11:59:27AM +0100, Ricardo Ribalda wrote:
+> On Fri, 29 Nov 2024 at 11:36, Hans Verkuil wrote:
+> > On 28/11/2024 23:33, Laurent Pinchart wrote:
+> > > On Thu, Nov 28, 2024 at 11:28:29PM +0100, Ricardo Ribalda wrote:
+> > >> On Thu, 28 Nov 2024 at 23:22, Laurent Pinchart wrote:
+> > >>>
+> > >>> Hi Ricardo,
+> > >>>
+> > >>> (CC'ing Hans Verkuil)
+> > >>>
+> > >>> Thank you for the patch.
+> > >>>
+> > >>> On Wed, Nov 27, 2024 at 12:14:50PM +0000, Ricardo Ribalda wrote:
+> > >>>> If a file handle is waiting for a response from an async control, avoid
+> > >>>> that other file handle operate with it.
+> > >>>>
+> > >>>> Without this patch, the first file handle will never get the event
+> > >>>> associated with that operation, which can lead to endless loops in
+> > >>>> applications. Eg:
+> > >>>> If an application A wants to change the zoom and to know when the
+> > >>>> operation has completed:
+> > >>>> it will open the video node, subscribe to the zoom event, change the
+> > >>>> control and wait for zoom to finish.
+> > >>>> If before the zoom operation finishes, another application B changes
+> > >>>> the zoom, the first app A will loop forever.
+> > >>>
+> > >>> Hans, the V4L2 specification isn't very clear on this. I see pros and
+> > >>> cons for both behaviours, with a preference for the current behaviour,
+> > >>> as with this patch the control will remain busy until the file handle is
+> > >>> closed if the device doesn't send the control event for any reason. What
+> > >>> do you think ?
+> > >>
+> > >> Just one small clarification. The same file handler can change the
+> > >> value of the async control as many times as it wants, even if the
+> > >> operation has not finished.
+> > >>
+> > >> It will be other file handles that will get -EBUSY if they try to use
+> > >> an async control with an unfinished operation started by another fh.
+> > >
+> > > Yes, I should have been more precised. If the device doesn't send the
+> > > control event, then all other file handles will be prevented from
+> > > setting the control until the file handle that set it first gets closed.
+> >
+> > I think I need a bit more background here:
+> >
+> > First of all, what is an asynchronous control in UVC? I think that means
+> > you can set it, but it takes time for that operation to finish, so you
+> > get an event later when the operation is done. So zoom and similar operations
+> > are examples of that.
+> >
+> > And only when the operation finishes will the control event be sent, correct?
 > 
-> Update the audit messages to differentiate between kernel and userspace
-> enforced integrity.
-
-I'm not sure to see the full picture.  What is the difference between
-execveat() calls and execveat() + AT_EXECVE_CHECK calls?  Both are from
-user space, the only difference is that the first can lead to a full
-execution, but the intent is the same.
-
+> You are correct.  This diagrams from the spec is more or less clear:
+> https://ibb.co/MDGn7F3
 > 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  security/integrity/ima/ima_appraise.c | 84 ++++++++++++++++++++-------
->  security/integrity/ima/ima_main.c     | 22 +++++++
->  2 files changed, 86 insertions(+), 20 deletions(-)
+> > While the operation is ongoing, if you query the control value, is that reporting
+> > the current position or the final position?
 > 
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 656c709b974f..b5f8e49cde9d 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -8,6 +8,7 @@
->  #include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/file.h>
-> +#include <linux/binfmts.h>
->  #include <linux/fs.h>
->  #include <linux/xattr.h>
->  #include <linux/magic.h>
-> @@ -16,6 +17,7 @@
->  #include <linux/fsverity.h>
->  #include <keys/system_keyring.h>
->  #include <uapi/linux/fsverity.h>
-> +#include <linux/securebits.h>
->  
->  #include "ima.h"
->  
-> @@ -276,7 +278,8 @@ static int calc_file_id_hash(enum evm_ima_xattr_type type,
->   */
->  static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  			struct evm_ima_xattr_data *xattr_value, int xattr_len,
-> -			enum integrity_status *status, const char **cause)
-> +			enum integrity_status *status, const char **cause,
-> +			bool is_check)
->  {
->  	struct ima_max_digest_data hash;
->  	struct signature_v2_hdr *sig;
-> @@ -292,9 +295,11 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  		if (*status != INTEGRITY_PASS_IMMUTABLE) {
->  			if (iint->flags & IMA_DIGSIG_REQUIRED) {
->  				if (iint->flags & IMA_VERITY_REQUIRED)
-> -					*cause = "verity-signature-required";
-> +					*cause = !is_check ? "verity-signature-required" :
-> +						"verity-signature-required(userspace)";
+> I'd expect hardware will return either the current position, the start
+> position or the final position. I could not find anything in the spec
+> that points in one direction or the others.
 
-This looks simpler (same for all following checks):
-is_check ? "verity-signature-required(userspace)" : "verity-signature-required";
+Figure 2-21 in UVC 1.5 indicates that the device should STALL the
+GET_CUR and SET_CUR requests if a state change is in progress.
 
->  				else
-> -					*cause = "IMA-signature-required";
-> +					*cause = !is_check ? "IMA-signature-required" :
-> +						"IMA-signature-required(userspace)";
->  				*status = INTEGRITY_FAIL;
->  				break;
->  			}
-> @@ -314,7 +319,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  		else
->  			rc = -EINVAL;
->  		if (rc) {
-> -			*cause = "invalid-hash";
-> +			*cause = !is_check ? "invalid-hash" :
-> +				"invalid-hash(userspace)";
->  			*status = INTEGRITY_FAIL;
->  			break;
->  		}
-> @@ -325,14 +331,16 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  
->  		mask = IMA_DIGSIG_REQUIRED | IMA_VERITY_REQUIRED;
->  		if ((iint->flags & mask) == mask) {
-> -			*cause = "verity-signature-required";
-> +			*cause = !is_check ? "verity-signature-required" :
-> +				"verity-signature-required(userspace)";
->  			*status = INTEGRITY_FAIL;
->  			break;
->  		}
->  
->  		sig = (typeof(sig))xattr_value;
->  		if (sig->version >= 3) {
-> -			*cause = "invalid-signature-version";
-> +			*cause = !is_check ? "invalid-signature-version" :
-> +				"invalid-signature-version(userspace)";
->  			*status = INTEGRITY_FAIL;
->  			break;
->  		}
-> @@ -353,7 +361,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  						     iint->ima_hash->digest,
->  						     iint->ima_hash->length);
->  		if (rc) {
-> -			*cause = "invalid-signature";
-> +			*cause = !is_check ? "invalid-signature" :
-> +				"invalid-signature(userspace)";
->  			*status = INTEGRITY_FAIL;
->  		} else {
->  			*status = INTEGRITY_PASS;
-> @@ -364,7 +373,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  
->  		if (iint->flags & IMA_DIGSIG_REQUIRED) {
->  			if (!(iint->flags & IMA_VERITY_REQUIRED)) {
-> -				*cause = "IMA-signature-required";
-> +				*cause = !is_check ? "IMA-signature-required" :
-> +					"IMA-signature-required(userspace)";
->  				*status = INTEGRITY_FAIL;
->  				break;
->  			}
-> @@ -372,7 +382,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  
->  		sig = (typeof(sig))xattr_value;
->  		if (sig->version != 3) {
-> -			*cause = "invalid-signature-version";
-> +			*cause = !is_check ? "invalid-signature-version" :
-> +				"invalid-signature-version(userspace)";
->  			*status = INTEGRITY_FAIL;
->  			break;
->  		}
-> @@ -382,7 +393,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  				       container_of(&hash.hdr,
->  					       struct ima_digest_data, hdr));
->  		if (rc) {
-> -			*cause = "sigv3-hashing-error";
-> +			*cause = !is_check ? "sigv3-hashing-error" :
-> +				"sigv3-hashing-error(userspace)";
->  			*status = INTEGRITY_FAIL;
->  			break;
->  		}
-> @@ -392,7 +404,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  					     xattr_len, hash.digest,
->  					     hash.hdr.length);
->  		if (rc) {
-> -			*cause = "invalid-verity-signature";
-> +			*cause = !is_check ? "invalid-verity-signature" :
-> +				"invalid-verify-signature(userspace)";
->  			*status = INTEGRITY_FAIL;
->  		} else {
->  			*status = INTEGRITY_PASS;
-> @@ -401,7 +414,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
->  		break;
->  	default:
->  		*status = INTEGRITY_UNKNOWN;
-> -		*cause = "unknown-ima-data";
-> +		*cause = !is_check ? "unknown-ima-data" :
-> +			"unknown-ima-data(userspace)";
->  		break;
->  	}
->  
-> @@ -469,6 +483,18 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
->  	return rc;
->  }
->  
-> +static int is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
-> +{
-> +	struct linux_binprm *bprm = NULL;
-> +
-> +	if (func == BPRM_CHECK) {
-> +		bprm = container_of(&file, struct linux_binprm, file);
-> +		if (bprm->is_check)
-> +			return 1;
-> +	}
-> +	return 0;
-> +}
-> +
->  /*
->   * ima_appraise_measurement - appraise file measurement
->   *
-> @@ -489,11 +515,24 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
->  	enum integrity_status status = INTEGRITY_UNKNOWN;
->  	int rc = xattr_len;
->  	bool try_modsig = iint->flags & IMA_MODSIG_ALLOWED && modsig;
-> +	bool is_check = false;
->  
->  	/* If not appraising a modsig, we need an xattr. */
->  	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
->  		return INTEGRITY_UNKNOWN;
->  
-> +	/*
-> +	 * Unlike any of the other LSM hooks where the kernel enforces file
-> +	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
-> +	 * LSM hook is left up to the discretion of the script interpreter
-> +	 * (userspace).
-> +	 *
-> +	 * Since the SECBIT_EXEC_RESTRICT_FILE flag is just a hint as to
-> +	 * userspace intentions, simply annotate the audit messages indicating
-> +	 * a userspace based query.
-> +	 */
-> +	is_check = is_bprm_creds_for_exec(func, file);
-> +
->  	/* If reading the xattr failed and there's no modsig, error out. */
->  	if (rc <= 0 && !try_modsig) {
->  		if (rc && rc != -ENODATA)
-> @@ -501,11 +540,14 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
->  
->  		if (iint->flags & IMA_DIGSIG_REQUIRED) {
->  			if (iint->flags & IMA_VERITY_REQUIRED)
-> -				cause = "verity-signature-required";
-> +				cause = !is_check ? "verity-signature-required" :
-> +					"verity-signature-required(userspace)";
->  			else
-> -				cause = "IMA-signature-required";
-> +				cause = !is_check ? "IMA-signature-required" :
-> +					"IMA-signature-required(userspace)";
->  		} else {
-> -			cause = "missing-hash";
-> +			cause = !is_check ? "missing-hash" :
-> +				"missing-hash(userspace)";
->  		}
->  
->  		status = INTEGRITY_NOLABEL;
-> @@ -531,14 +573,15 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
->  			break;
->  		fallthrough;
->  	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
-> -		cause = "missing-HMAC";
-> +		cause = !is_check ? "missing-HMAC" : "missing-HMAC(userspace)";
->  		goto out;
->  	case INTEGRITY_FAIL_IMMUTABLE:
->  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
-> -		cause = "invalid-fail-immutable";
-> +		cause = !is_check ? "invalid-fail-immutable" :
-> +		       "invalid-fail-immutable(userspace)";
->  		goto out;
->  	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
-> -		cause = "invalid-HMAC";
-> +		cause = !is_check ? "invalid-HMAC" : "invalid-HMAC(userspace)";
->  		goto out;
->  	default:
->  		WARN_ONCE(true, "Unexpected integrity status %d\n", status);
-> @@ -546,7 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
->  
->  	if (xattr_value)
->  		rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
-> -				  &cause);
-> +				  &cause, is_check);
->  
->  	/*
->  	 * If we have a modsig and either no imasig or the imasig's key isn't
-> @@ -568,7 +611,8 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
->  	    ((inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) ||
->  	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
->  		status = INTEGRITY_FAIL;
-> -		cause = "unverifiable-signature";
-> +		cause = !is_check ? "unverifiable-signature" :
-> +			"unverifiable-signature(userspace)";
->  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
->  				    op, cause, rc, 0);
+> And in the driver I believe that we might have a bug handling this
+> case (will send a patch if I can confirm it)
+> the zoom is at 0 and you set it 10
+> if you read the value 2 times before the camera reaches value 10:
+> - First value will come from the hardware and the response will be cached
 
-Instead of adding new causes, another option would be to add a new audit
-record type (e.g. AUDIT_INTEGRITY_DATA_CHECK).  This would help filter
-these new kind of messages and I guess scale better.
+Only if the control doesn't have the auto-update flag set, so it will be
+device-dependent. As GET_CUR should stall that's not really relevant,
+except for the fact that devices may not stall the request.
 
-Another alternative would be to extend the audit message with a new
-field (e.g. "check=1"), but that would not help for efficient filtering.
-
->  	} else if (status != INTEGRITY_PASS) {
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 06132cf47016..2b5d6bae77a4 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -554,6 +554,27 @@ static int ima_bprm_check(struct linux_binprm *bprm)
->  				   MAY_EXEC, CREDS_CHECK);
->  }
->  
-> +/**
-> + * ima_bprm_creds_for_exec - based on policy, collect/store/appraise measurement.
-> + * @bprm: contains the linux_binprm structure
-> + *
-> + * Based on the IMA policy and the execvat(2) AT_CHECK flag, measure and
-> + * appraise the integrity of a file to be executed by script interpreters.
-> + * Unlike any of the other LSM hooks where the kernel enforces file integrity,
-> + * enforcing file integrity is left up to the discretion of the script
-> + * interpreter (userspace).
-> + *
-> + * On success return 0.  On integrity appraisal error, assuming the file
-> + * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-> + */
-> +static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
-> +{
-> +	if (!bprm->is_check)
-> +		return 0;
-> +
-> +	return ima_bprm_check(bprm);
-> +}
-> +
->  /**
->   * ima_file_check - based on policy, collect/store measurement.
->   * @file: pointer to the file to be measured
-> @@ -1177,6 +1198,7 @@ static int __init init_ima(void)
->  
->  static struct security_hook_list ima_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-> +	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
-
-Why not replace bprm_check_security with bprm_creds_for_exec
-implementation altogether?
-
->  	LSM_HOOK_INIT(file_post_open, ima_file_check),
->  	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
->  	LSM_HOOK_INIT(file_release, ima_file_free),
-> -- 
-> 2.47.0
+> - Second value will be the cached one
 > 
-> 
+> now the camera  is at zoom 10
+> If you read the value, you will read the cached value
+>
+> > E.g.: the zoom control is at value 0 and I set it to 10, then I poll the zoom control
+> > value: will that report the intermediate values until it reaches 10? And when it is
+> > at 10, the control event is sent?
+> >
+> > >>>> Cc: stable@vger.kernel.org
+> > >>>> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
+> > >>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > >>>> ---
+> > >>>>  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++++
+> > >>>>  1 file changed, 4 insertions(+)
+> > >>>>
+> > >>>> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > >>>> index b6af4ff92cbd..3f8ae35cb3bc 100644
+> > >>>> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > >>>> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > >>>> @@ -1955,6 +1955,10 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+> > >>>>       if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
+> > >>>>               return -EACCES;
+> > >>>>
+> > >>>> +     /* Other file handle is waiting a response from this async control. */
+> > >>>> +     if (ctrl->handle && ctrl->handle != handle)
+> > >>>> +             return -EBUSY;
+> > >>>> +
+> > >>>>       /* Clamp out of range values. */
+> > >>>>       switch (mapping->v4l2_type) {
+> > >>>>       case V4L2_CTRL_TYPE_INTEGER:
+
+-- 
+Regards,
+
+Laurent Pinchart
 
