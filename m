@@ -1,178 +1,221 @@
-Return-Path: <linux-kernel+bounces-425190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B149DBEB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:25:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1339DBEB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 03:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FF8280E13
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 02:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB4F280E7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 02:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7F514D6F6;
-	Fri, 29 Nov 2024 02:25:18 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B049314E2E6;
+	Fri, 29 Nov 2024 02:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jkC6Ezmi"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2077.outbound.protection.outlook.com [40.107.22.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF1F14B088
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 02:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732847118; cv=none; b=urAy/CkPQbC7l0frugLsMfHtAkjBNL22ZFu+P2MeHDJ+TXMLCD3JNu8GsD6MgKONGDdeA8z40Zo4Jt1ORyV4aZw73cIT5ovJMQPMEjPDbVGcEGIwQz51KBU5mem0UYknn7/4zJ25hGGi3m45IsQwqMLb7WjKZIcKeQPhUZfHnkU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732847118; c=relaxed/simple;
-	bh=ioaytzW6Zje28ozOlBr8TdG9570mz60lVng3cRfG3cM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=K5IBpt/rdpRRu1ClztNNOIsSkQmrGpvHORLr46ZFfVkOD01D6vp3uT21qgyYNIHSPecAGMe3UgkKnoM/PB5x+YkUsNrYVsu4RzLey1VpgJ0ysjvnNst64gwBfcFbErpSeeL68YriWuL8PKvbrTG9ANZrlhOWocL5TGJbkaEiDPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XzxlY20nRzPppV;
-	Fri, 29 Nov 2024 10:22:17 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id A06C1140120;
-	Fri, 29 Nov 2024 10:25:04 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 29 Nov
- 2024 10:25:03 +0800
-Message-ID: <bf98a80a-2be0-413f-8a7a-34bb17f053cc@huawei.com>
-Date: Fri, 29 Nov 2024 10:25:02 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B670642AA5;
+	Fri, 29 Nov 2024 02:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732847179; cv=fail; b=I0G5PW+QBZeky7YleL+CjtIVMyta1p4Qh8g7IJ/qmd1+ae6RCw0/YpzP8xHNEDRd+B1nLz+Z7jGgB/ZEXR2wvziOJnWhlrJYIEBCGnTxUun4pnmnyULLOUs63eViozenIK3jeKlmXSh3bi0HFI4BLd23xKa8aLYlHKu9FCTtz5Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732847179; c=relaxed/simple;
+	bh=iYU3JhZjWUovb05dGA/Ngozo7WZbb/MjroMOovIyyTk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VjRyjtNpHpWWOG0AgftbMp+CkL43DcKcX/+uxjxWX6hNjEQv3/SwAmx0rrU/B9dFaCJPM1Hp2PdMGxlpHrjXPYKSFfYgXq2EEVKBwVli7mRUIY7mj0X9RFFW/8MMwXXi9fW+8Qj5VxKOk3E94ErRrOlA7FILxOeT9mFoWOMotfQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jkC6Ezmi; arc=fail smtp.client-ip=40.107.22.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JVf6xznNGU9QOiHphsr+1UgcyBl/ZP+AMwLi9IsfB/wBaLA5ZgCxzp+tW9QLSbJtNGLBFfYOmugkePBC7p0bxdnNI20rPL5RTUP26nZA9/aRWauM4sUY9Uetif8pS2520cYY36O6Yb16J+lHmQ7TSS3JUZ4oroAGX4XTPLJuMnKXAGiyluFu94fwvKlqfD+AtGhY6RJzrCQL5B1r1i+O0R6ndZ5gqvH1xJLs5C7H7UckIcKV+ANQIS2EjQetYozsJq7HGd3KxOfQkl3kQq9YDWrA4XUgiFARarzbZyEOQNq3QENlvfZJfDRWB2ab4XzJR1TBKT2o7Oou5KHa2+f8wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iYU3JhZjWUovb05dGA/Ngozo7WZbb/MjroMOovIyyTk=;
+ b=ohrxDjwsniV++R/65NR9oejI5Bo2ISeQxUAVw5MEJ4fy30kR/dKDWU2p6ZeKL6ky/hgo1hD8ylt4BMmuyQMxm8nSmOVaWJHacBVNt5bhS2lGaj2y3ZhaUkmLJ/n8W5z5rAIjD3uaUF4bcAlC2wgODAt6CZmcvCGsvAbYcWiUJ6UMTEoJfdwmkKRXOIxYIkt6MH/iV1y67o0d2m0ZD4eK3rLBzz8n7dJ27xRRqsWJ04aiOXLwruDE6JVeCB8gtThd+IKIDOmzbgs/8JuvOMqg9VmZZ7FTPTfBWsb2RpcIyq3Y5SPLHj7Ggwj3V0xWfhmNCpQTOCs61lc5509hk/7GxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iYU3JhZjWUovb05dGA/Ngozo7WZbb/MjroMOovIyyTk=;
+ b=jkC6Ezmi7xyyShGlPWBmtfeQBUGq0kEnBiynsKjKHf0UDYSHUclINsF20xoUYmsauH4EUlfy9NmbJC3336kEXCba2YVCcAUbtxBrsoFiq3CBAaDsFZ9qXDY5ZC5gpWqnbnJmvMpWx+e9xc/WdGQ7PqP9fJvr+bNhP3sRQvW0PfeC51x+qVSfEHajanWWjxrJdTo7HUtTn22kqBH4fGMxKfTuo2e7zoTbmPLlTmXPDg8y1I7VInF1qrleVmoDHrzzn/iWHBMc7mv562Hs0GgtqlwC0YOI/k6cT+VIBX9XfiTKecYZBlOiBo/KrPHo0o6xPHntHobl50MHA2lAhPrWlQ==
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
+ by AS8PR04MB7926.eurprd04.prod.outlook.com (2603:10a6:20b:2ab::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.15; Fri, 29 Nov
+ 2024 02:26:13 +0000
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334%5]) with mapi id 15.20.8182.018; Fri, 29 Nov 2024
+ 02:26:13 +0000
+From: Bough Chen <haibo.chen@nxp.com>
+To: Mark Brown <broonie@kernel.org>
+CC: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "brgl@bgdev.pl"
+	<brgl@bgdev.pl>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"marek.vasut@gmail.com" <marek.vasut@gmail.com>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: RE: [PATCH v2] gpio: pca953x: do not enable regmap cache when there
+ is no regulator
+Thread-Topic: [PATCH v2] gpio: pca953x: do not enable regmap cache when there
+ is no regulator
+Thread-Index: AQHbQTldnx3oWSGqB0WWsEVltN7DarLMn5YAgADgyEA=
+Date: Fri, 29 Nov 2024 02:26:13 +0000
+Message-ID:
+ <DU0PR04MB9496A16FB98C8492C9F012CD902A2@DU0PR04MB9496.eurprd04.prod.outlook.com>
+References: <20241128020042.3124957-1-haibo.chen@nxp.com>
+ <f71643eb-ee9c-4b39-af26-738ae82fd4bd@sirena.org.uk>
+In-Reply-To: <f71643eb-ee9c-4b39-af26-738ae82fd4bd@sirena.org.uk>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9496:EE_|AS8PR04MB7926:EE_
+x-ms-office365-filtering-correlation-id: db9dc4e2-507c-4c41-32d3-08dd101d3202
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?aGgwRjcxdzlNQVBIMWNXa1JxRFRlcXVHVStZNzhzd1RPTlJNbEg0MStMRDlo?=
+ =?gb2312?B?TVBycWQ4dnlONnhnVmZkWTd0bThBRG8xRnVpQ2s0YnFFVkpZb2Uva1NpcG1i?=
+ =?gb2312?B?UncyZUoyTmZuL3FjMXNkNlJFb1RrTjJEanFpOFFWd0RUU0RvSWpPOUpUVHI2?=
+ =?gb2312?B?eHNUNERBUU9tdTYzdlV6Y1ZoQWIvSk40L2RIYzA0Kzc5T2VGOS9uOHR3MnRF?=
+ =?gb2312?B?T0lpTWhBQzg0SlordUlQY1YwdnBrclVra09oNkFOcTAzSEY1NEhhU2R0cFhq?=
+ =?gb2312?B?QVhZNkE4cG84WEczUDQwZnh3ODFwSkxCWkI0WUZkRkdwOHlIR2RwTWFCSmNx?=
+ =?gb2312?B?bm5iazR1OWJzZy95TGY0dC9IdEo1NU0zTlZIUkRiMENXczBOZHpoVDR6bVpQ?=
+ =?gb2312?B?YkdjUU11QUFwb2FWU05WcStweWdJcVdqMmswdCtJUFFEK1BaZ2pmM3hTYkNt?=
+ =?gb2312?B?QzhsVUhMUnRlU0NMd2ZBUWV4dGhWV00rVllacWQ3R1prUVE5WFRTa291RGE4?=
+ =?gb2312?B?MVFlOXB0TENEOHhvZVhESTRuZjlhRzdmMWtzYmZ1RVlEbllxU1V5YUx0NXBn?=
+ =?gb2312?B?Q3I4Qnd5azhJYUczV2ExREpSWnFVcU92WmFoS1hNZGpnaWYwbU9WSlA0RG40?=
+ =?gb2312?B?Z0ZtK0U1dHVFQU5FSHBGQjhsTXRsWFdmNFJBNTB2Mks1MDZKTWI3aC9kbzM0?=
+ =?gb2312?B?bTVZYjdTZ3ljcGNsWTFmdXRFYXl4ek9xcHU3OHUrd2lsVTFvbFUrck9odE16?=
+ =?gb2312?B?b0IxZjFoSW1hdWt2eFdaN1hud24yV1dOMXVOb0hlSVlMQXJUR1FiSTViNGl1?=
+ =?gb2312?B?NlRnaXVKNzNyZUNFd1dDSnJlWnMvZEYxbDNsTlNHYVRSSG5idXRjcndrNnpC?=
+ =?gb2312?B?VVBwQ09zZEpveU4vRnR1bFlrRXYrMHpoblJRNTRQQ0RZcFFOUzFhVmpsUFlu?=
+ =?gb2312?B?L1Q3RHFXVzl5Z1ZXZlprWkh2enNnZ3RINEV3dHRCOHpFa3JBeTV1OTJpN3Zu?=
+ =?gb2312?B?WTMyVGZHa2gyVCtGOWVvcHF5Uk9CQnB1b1dIZTVVbzJCY0lFdHJ4SWNnU25p?=
+ =?gb2312?B?ZEZCemE0T1VOYW5Nd0dlRGJsU1hDaTRhS2ZXY3BuTEM1NU80K3JIdit3VmlE?=
+ =?gb2312?B?dURKMmMrcGlHNGZsb3padVBqMERoSmRpTy9LVTYxVG1NdkVCeS9NZ1pFbEdJ?=
+ =?gb2312?B?U2ZSL3k4UDZrNmtsajlnS0QwSzhIU2gxcWEwQk40bVBPNVVGdzdRNWc0RkRh?=
+ =?gb2312?B?OFI0bEdYeTFXMWgvcWxsS0Y3dXd1YzdtK1htQzF0NVVtZ3FQZzFLeXZQS1Er?=
+ =?gb2312?B?L1dadkY5RTlobTRNbWV1cEFVU1J6MFFTbG9ROFBuNlhJMDIzRFl2ZUJZemZ6?=
+ =?gb2312?B?UTRlUWllK3FQaGRVM2Q2alhzTUNwaHpaSCtFMFR5VXRSZmV2aWg3a3lDNEg1?=
+ =?gb2312?B?UFR1MWE1dGFmSDlsTS9mN0k1QUdoeWcxbDFaNSt2WFJKdGxOOU1sRG1kb0J3?=
+ =?gb2312?B?RS92YndtUm82V0JHM1FmNFdJcU13Wm9hZzczbU56bmJGLzV4MVQydnBzdlNk?=
+ =?gb2312?B?eE5EWnF1T3ErN01PZjQyZzQvNk5MZEcwWGQwYm1pQ2g3K0VrczQ3SW13YnZG?=
+ =?gb2312?B?RWdGVDhXUk1ZVnhGMjY0TC9lYit5MHE1Ulp4eUVYd1JLZGJUVnIzVGxJYmVk?=
+ =?gb2312?B?MHBvcnpNcm5UVzNIRzBHMkxJczVWNE1hQ0hoYUZnaHd2cGVDaEtkT0JUcnJM?=
+ =?gb2312?B?cGN1aVIvUklkeFVPYTdOY3ZYUmR6QVk4VXFGY0FMejArWDFsYitDa21kclY1?=
+ =?gb2312?B?KzZWTGFIa2dRWFB6RVUzOFhiSEJFZWlSSGV0Z05NMlJ0aGtGK0owMTJlMm1p?=
+ =?gb2312?B?VTNqdHluWnBBNjh3TnBlT3NldEJ1dW5BclZJS0VyWUVETVE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?QWV4VGlma3FLeFJJZytzNFRmK01GQnAyeDRRWGMzNUg3RHB5a05nRlJUWGtX?=
+ =?gb2312?B?Rkthd0xvTm5jTGFwRFBpbjlOVk1Bd2NRaFJLMU1BL2lrczkzcTVDZDRFV2Na?=
+ =?gb2312?B?MHhKWWJpbXZpa2VZWVVqQkFCL0UwS3FtcVpYYTVMZUgvQ05oKzVqMmZQeUcx?=
+ =?gb2312?B?VWhJMTVTWHRPYmpya0JxT1NjcDRlbkdYYWRpUWw5UDFNS3dMYXJJMElJdXVD?=
+ =?gb2312?B?dUVOSkp2UlArZ2RkSEVSZHdKbXozNndyTWJjSktxR2RrdThRSkQra0dJRFgz?=
+ =?gb2312?B?VU13V3hMcnBzdDJKTDlJcXRLNTJ1bjA3cklhRHFndWRrUi9vdkZmWUZMczhL?=
+ =?gb2312?B?MC9DaUtjZVMweUZ6dE9XRVo4Y3FCS0VNKzhDOHFBMWRpNFNRVXZLWVdPa2VC?=
+ =?gb2312?B?djRXRGRaWmxxbUtJNnFQUDJnUzJZeEY2aGZmZC92cXVMRnhqOGZSYm1WdDFW?=
+ =?gb2312?B?MXM0K2IwQ205a1oxcThmYmJLekRRUVYxcGdpN0c4c3NpUW9jampDRGFCMUYv?=
+ =?gb2312?B?emRNOFNMWUxiVlNPek16b0RMdDF2VnZ2Z2IyMEdzTmszSXJ6c0tNUElJNGFP?=
+ =?gb2312?B?YUYxM2FGWEpiaGFqOU0xYTMyQ1cyTGc3SEJtbHhsTml3MGd3WHNnTlltTWJJ?=
+ =?gb2312?B?ZDdBZFJiZDdGdVJtN29KOGx3Vjlmc0JxalI1aTdjbnVqRzhhR1AwMkdIWFhp?=
+ =?gb2312?B?SUMyL2dMTDVQZVNxWTFjL3I2eUt3QVRncGpENko0UjRjeHpDcFRqZG50dFJw?=
+ =?gb2312?B?eGlTVndZWUJ1Z2Jza1U4eWgwVnlOOWM4U2R6MkU2UEFhZUFxdEx1UUFzdVV5?=
+ =?gb2312?B?WVBYZzlyNGlOc0h2Vm5FUU9vRHVobDF2eGQvNUhSRWgrWm9Ed3dxMU9LNXlo?=
+ =?gb2312?B?aFRvc0Ryekcwcm9oUEN2eG1uem1wdXZrZWRMWXg4QUJYTlBGTkc1dzhhQUU5?=
+ =?gb2312?B?d3NRYjVDNk1vNWdxSmx4WTF3QUxrTEwwRW03WVFkRmJoVjdrQ0RNUjFLUUJE?=
+ =?gb2312?B?Ulk1Rnc5U2NaVVlpOWlpbEhZWmNoSlp1TlZhZUpFaGNjc1lYNm9JcE0vWWZ0?=
+ =?gb2312?B?SkVXOXBrYTlQdk5aMFJmcjRLQXhWNlRYWEdmdDZMaGhPWjNqU0ZPd29iZ2Iw?=
+ =?gb2312?B?Z0lWWSttRHpJTHdzckhsRFF2bmF0MndGcmFCb0Q4L3g3Z3YyUXkwWFJoNGVz?=
+ =?gb2312?B?UkFPaE9kbHVuOWpSUWRNR0NVanh5VUJJanp1ME1vWm1KOGl2Qnh1T2RKUzRR?=
+ =?gb2312?B?VjZDMHlYOWhZWGQ1YktKUnV6YjZvZEtPakI0NWxHdEx4S01RamdJdEJ5QWMr?=
+ =?gb2312?B?V0xRT3ZYbjd6WmFia0M4R1VYOEg3YXRVdjBKVnlQZEJyR1VHOHI1RzE2SDBw?=
+ =?gb2312?B?ZWIyMG05dDBaUUJvUHZGUWkyNmhMY3pkclZrNmJiQVhCbVJqMHJyZmRuMXlV?=
+ =?gb2312?B?UXdpOEJZSFBvQTF2T1VoQisrL3Q1a1JFY0lWdHVwV3FRT0pNR2plTzJPMXRa?=
+ =?gb2312?B?ODhTcGprSXh3eW1OQ3Nmd1BrRG5aRGhLRjZwL0tWdDBVVkxtUzhuZHA4bWR3?=
+ =?gb2312?B?TVdFWEw1VnBvMXVyeW5DWUJZMSsrVGdPZVRZdEV0WStZRVFFVmMrUW5XNld2?=
+ =?gb2312?B?TFMvMmxTeFp3eFA3anp6MmgyVlBpZFJiV0pyaXY5NEQ1ZzF6K0FZanJ0TzFm?=
+ =?gb2312?B?SjR2WTdhL3lnR1RNaEkzcEFVSHVKdjYwdDZUTmNTOGdKdDcxcXZDcm5CaWR6?=
+ =?gb2312?B?a0lrNTZ6R2JmK0FyVVkwcERVbEgvWERublRFLzNrSHpDd0l4akR1cDhrTmUz?=
+ =?gb2312?B?VHFyZ0lGcWNabnpZZWR1L0tTOW9WSWpSSzhYeGkwckR6L3dnL0JQbW5ZWmNM?=
+ =?gb2312?B?ZTFsdFFHNllHVWorZnJlK1hucm81RmdReFdOMSthRDV3QXRXTzBuMHVNNjVX?=
+ =?gb2312?B?TnJYSFJiSVk5ekJvZGx3ZS9KeG1TV0huRXB4NmJHNzhIcFZmb21LS09BR1l4?=
+ =?gb2312?B?MVJNaWEvamczTkFkbWZCNlRWWE9lZUtCQ2ZLai9qenhuNk5Qd3JnV09JUjhR?=
+ =?gb2312?B?SUdBcFRVM0gyTExhL1JkSHp3NEw5VGxUN0prQ1UySkJFTFdVOUNSdWh4M2dJ?=
+ =?gb2312?Q?ZbyA=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/1] mm/vmscan: move the written-back folios to the
- tail of LRU after shrinking
-To: Barry Song <21cnbao@gmail.com>, Yu Zhao <yuzhao@google.com>
-CC: Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, Chen
- Ridong <chenridong@huaweicloud.com>, <akpm@linux-foundation.org>,
-	<mhocko@suse.com>, <hannes@cmpxchg.org>, <yosryahmed@google.com>,
-	<yuzhao@google.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<wangweiyang2@huawei.com>, <xieym_ict@hotmail.com>
-References: <20241116091658.1983491-1-chenridong@huaweicloud.com>
- <20241116091658.1983491-2-chenridong@huaweicloud.com>
- <Zzq8jsAQNYgDKSGN@casper.infradead.org>
- <CAGsJ_4x0OrdhorQdz8PyLD84GOYVZJ7kLfGV_5yupLG_ZQ_B3w@mail.gmail.com>
- <ZzrA5nXldoE2PWx4@casper.infradead.org>
- <7e617fe7-388f-43a1-b0fa-e2998194b90c@huawei.com>
- <CAGsJ_4yA5graSSE3cBf_RB=cGc3hLpcB-3pR9ymVfzKx_dg3Zg@mail.gmail.com>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <CAGsJ_4yA5graSSE3cBf_RB=cGc3hLpcB-3pR9ymVfzKx_dg3Zg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db9dc4e2-507c-4c41-32d3-08dd101d3202
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2024 02:26:13.5008
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: imH19TjyqE45/RyoeQZh7wRYSp1zYwi7YqZUIiXNymqfq4MUeKkN8ez3qdsPAPmg2SbdOmn8JqsaMMPbz6+wbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7926
 
-
-
-On 2024/11/29 7:08, Barry Song wrote:
-> On Mon, Nov 25, 2024 at 2:19 PM chenridong <chenridong@huawei.com> wrote:
->>
->>
->>
->> On 2024/11/18 12:21, Matthew Wilcox wrote:
->>> On Mon, Nov 18, 2024 at 05:14:14PM +1300, Barry Song wrote:
->>>> On Mon, Nov 18, 2024 at 5:03 PM Matthew Wilcox <willy@infradead.org> wrote:
->>>>>
->>>>> On Sat, Nov 16, 2024 at 09:16:58AM +0000, Chen Ridong wrote:
->>>>>> 2. In shrink_page_list function, if folioN is THP(2M), it may be splited
->>>>>>    and added to swap cache folio by folio. After adding to swap cache,
->>>>>>    it will submit io to writeback folio to swap, which is asynchronous.
->>>>>>    When shrink_page_list is finished, the isolated folios list will be
->>>>>>    moved back to the head of inactive lru. The inactive lru may just look
->>>>>>    like this, with 512 filioes have been move to the head of inactive lru.
->>>>>
->>>>> I was hoping that we'd be able to stop splitting the folio when adding
->>>>> to the swap cache.  Ideally. we'd add the whole 2MB and write it back
->>>>> as a single unit.
->>>>
->>>> This is already the case: adding to the swapcache doesn’t require splitting
->>>> THPs, but failing to allocate 2MB of contiguous swap slots will.
->>>
->>> Agreed we need to understand why this is happening.  As I've said a few
->>> times now, we need to stop requiring contiguity.  Real filesystems don't
->>> need the contiguity (they become less efficient, but they can scatter a
->>> single 2MB folio to multiple places).
->>>
->>> Maybe Chris has a solution to this in the works?
->>>
->>
->> Hi, Chris, do you have a better idea to solve this issue?
-> 
-> Not Chris. As I read the code again, we have already the below code to fixup
-> the issue "missed folio_rotate_reclaimable()" in evict_folios():
-> 
->                 /* retry folios that may have missed
-> folio_rotate_reclaimable() */
->                 list_move(&folio->lru, &clean);
-> 
-> It doesn't work for you?
-> 
-> commit 359a5e1416caaf9ce28396a65ed3e386cc5de663
-> Author: Yu Zhao <yuzhao@google.com>
-> Date:   Tue Nov 15 18:38:07 2022 -0700
->     mm: multi-gen LRU: retry folios written back while isolated
-> 
->     The page reclaim isolates a batch of folios from the tail of one of the
->     LRU lists and works on those folios one by one.  For a suitable
->     swap-backed folio, if the swap device is async, it queues that folio for
->     writeback.  After the page reclaim finishes an entire batch, it puts back
->     the folios it queued for writeback to the head of the original LRU list.
-> 
->     In the meantime, the page writeback flushes the queued folios also by
->     batches.  Its batching logic is independent from that of the page reclaim.
->     For each of the folios it writes back, the page writeback calls
->     folio_rotate_reclaimable() which tries to rotate a folio to the tail.
-> 
-> 
->     folio_rotate_reclaimable() only works for a folio after the page reclaim
->     has put it back.  If an async swap device is fast enough, the page
->     writeback can finish with that folio while the page reclaim is still
->     working on the rest of the batch containing it.  In this case, that folio
->     will remain at the head and the page reclaim will not retry it before
->     reaching there.
-> 
->     This patch adds a retry to evict_folios().  After evict_folios() has
->     finished an entire batch and before it puts back folios it cannot free
->     immediately, it retries those that may have missed the rotation.
->     Before this patch, ~60% of folios swapped to an Intel Optane missed
->     folio_rotate_reclaimable().  After this patch, ~99% of missed folios were
->     reclaimed upon retry.
-> 
->     This problem affects relatively slow async swap devices like Samsung 980
->     Pro much less and does not affect sync swap devices like zram or zswap at
->     all.
-> 
->>
->> Best regards,
->> Ridong
-> 
-> Thanks
-> Barry
-
-Thank you for your reply, Barry.
-I found this issue with 5.10 version. I reproduced this issue with the
-next version, but the CONFIG_LRU_GEN_ENABLED kconfig is disabled. I
-tested again with  CONFIG_LRU_GEN_ENABLED enabled, and this issue can be
-fixed.
-
-IIUC, the 359a5e1416caaf9ce28396a65ed3e386cc5de663 commit can only work
-when CONFIG_LRU_GEN_ENABLED is enabled, but this issue exists when
-CONFIG_LRU_GEN_ENABLED is disabled and it should be fixed.
-
-I read the code of commit 359a5e1416caaf9ce28396a65ed3e386cc5de663, it
-found folios that are missed to rotate in a more complicated way, but it
- makes it much clearer what is being done. Should I implement in Yu
-Zhao's way?
-
-Best regards,
-Ridong
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJrIEJyb3duIDxicm9vbmll
+QGtlcm5lbC5vcmc+DQo+IFNlbnQ6IDIwMjTE6jEx1MIyOMjVIDIwOjI4DQo+IFRvOiBCb3VnaCBD
+aGVuIDxoYWliby5jaGVuQG54cC5jb20+DQo+IENjOiBsaW51cy53YWxsZWlqQGxpbmFyby5vcmc7
+IGJyZ2xAYmdkZXYucGw7IGxnaXJkd29vZEBnbWFpbC5jb207DQo+IG1hcmVrLnZhc3V0QGdtYWls
+LmNvbTsgbGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
+cm5lbC5vcmc7IGlteEBsaXN0cy5saW51eC5kZXYNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2Ml0g
+Z3BpbzogcGNhOTUzeDogZG8gbm90IGVuYWJsZSByZWdtYXAgY2FjaGUgd2hlbiB0aGVyZQ0KPiBp
+cyBubyByZWd1bGF0b3INCj4gDQo+IE9uIFRodSwgTm92IDI4LCAyMDI0IGF0IDEwOjAwOjQyQU0g
+KzA4MDAsIGhhaWJvLmNoZW5AbnhwLmNvbSB3cm90ZToNCj4gDQo+ID4gUmVnbWFwIGNhY2hlIG1l
+Y2hhbmlzbSBpcyBlbmFibGVkIGluIGRlZmF1bHQuIFRodXMsIElPIGV4cGFuZGVyDQo+ID4gd291
+bGRuJ3QgaGFuZGxlIEdQSU8gc2V0IHJlYWxseSBiZWZvcmUgcmVzdW1pbmcgYmFjay4NCj4gDQo+
+ID4gQnV0IHRoZXJlIGFyZSBjYXNlcyBuZWVkIHRvIHRvZ2dsZSBncGlvIGluIE5PX0lSUSBzdGFn
+ZS4NCj4gPiBlLmcuIFRvIGFsaWduIHdpdGggUENJZSBzcGVjaWZpY2F0aW9uLCBQRVJTVCMgc2ln
+bmFsIGNvbm5lY3RlZCBvbiB0aGUNCj4gPiBJTyBleHBhbmRlciBtdXN0IGJlIHRvZ2dsZWQgZHVy
+aW5nIFBDSWUgUkMncyBOT19JUlFfUkVTVU1FLg0KPiANCj4gPiBEbyBub3QgZW5hYmxlIHRoZSBy
+ZWdtYXAgY2FjaGUgd2hlbiBJTyBleHBhbmRlciBkb2Vzbid0IGhhdmUgdGhlDQo+ID4gcmVndWxh
+dG9yIGR1cmluZyBzeXN0ZW0gUE0uIFRoYXQgbWVhbnMgdGhlIHBvd2VyIG9mIElPIGV4cGFuZGVy
+IHdvdWxkDQo+ID4gYmUga2VwdCBvbiwgYW5kIHRoZSBHUElPcyBvZiB0aGUgSU8gZXhwYW5kZXIg
+Y2FuIGJlIHRvZ2dsZWQgcmVhbGx5IGR1cmluZw0KPiBzeXN0ZW0gUE0uDQo+IA0KPiBBc2lkZSBm
+cm9tIHRoZSBmYWN0IHRoYXQgdGhlIGRldmljZSB3aWxsIGFsd2F5cyBoYXZlIGEgcmVndWxhdG9y
+IChwb3dlciBpc24ndA0KPiBvcHRpb25hbCkgdGhpcyBpcyBvYnZpb3VzbHkgbm90IHJlbGF0ZWQg
+dG8gYW55IHNlcXVlbmNpbmcgbmVlZHMgdGhhdCB5b3UgaGF2ZSBvbg0KPiByZXN1bWUuICBJdCBt
+aWdodCBoYXBwZW4gdG8gd29yayBvbiB5b3VyIHN5c3RlbSwgYnV0IGl0IHdpbGwgcG90ZW50aWFs
+bHkgYnJlYWsNCj4gb3RoZXIgc3lzdGVtcyB3aGljaCBkbyBhY3R1YWxseSBuZWVkIHRoZSByZWdp
+c3RlcnMgcmVzdG9yaW5nIGJ1dCBkb24ndCBoYXZlIGENCj4gcmVndWxhdG9yIGV4cGxpY2l0bHkg
+ZGVmaW5lZCBhbmQgd2lsbCBmYWlsIHRvIGRvIGFueXRoaW5nIG9uIGEgc3lzdGVtIHdpdGggb3Jk
+ZXJpbmcNCg0KWWVzLCB5b3UgYXJlIHJpZ2h0LiBJIGRpZCBub3QgdGFrZSB0aGlzIGNhc2UgaW50
+byBjb25zaWRlcmF0aW9uLg0KDQo+IHJlcXVpcmVtZW50cyB0aGF0IGRvIGhhdmUgb25lIGRlZmlu
+ZWQuICBUaGUgZml4IGZvciB0aGlzIGlzIHRvIG1ha2UgdGhpcyBkcml2ZXINCj4gcmVzdW1lIGVh
+cmx5IGlmIGl0J3MgbmVlZGVkIGJ5IG90aGVyIHRoaW5ncyB0aGF0IHJ1biBpbiB0aGUgcmVzdW1l
+IHNlcXVlbmNlLg0KDQpJIG9uY2UgdGhvdWdodCB0byBtb3ZlIGN1cnJlbnQgc3lzdGVtIFBNIHRv
+IE5PSVJRIFBNLCBidXQgc2VlbXMgbm90IGFsbCBpMmMgYnVzIGNvbnRyb2xsZXIgc3VwcG9ydCBp
+MmMgb3BlcmF0aW9uIGR1cmluZyBOT0lSUSBQTS4NCkxldCBtZSB0aGluayB3aGV0aGVyIHRoZXJl
+IGlzIGEgYmV0dGVyIHNvbHV0aW9uLCBvciBkbyB5b3UgaGF2ZSBhbnkgc3VnZ2VzdGlvbj8NCiAN
+Cj4gDQo+ID4gLQlyZWcgPSBkZXZtX3JlZ3VsYXRvcl9nZXQoZGV2LCAidmNjIik7DQo+ID4gLQlp
+ZiAoSVNfRVJSKHJlZykpDQo+ID4gLQkJcmV0dXJuIGRldl9lcnJfcHJvYmUoZGV2LCBQVFJfRVJS
+KHJlZyksICJyZWcgZ2V0IGVyclxuIik7DQo+ID4gKwlyZWcgPSBkZXZtX3JlZ3VsYXRvcl9nZXRf
+b3B0aW9uYWwoZGV2LCAidmNjIik7DQo+ID4gKwlpZiAoSVNfRVJSKHJlZykpIHsNCj4gDQo+IFRo
+aXMgaXMgb2J2aW91c2x5IGJ1Z2d5LCB0aGUgbWFpbiBzdXBwbHkgZm9yIHRoZSBkZXZpY2UgaXMg
+bm90IGdvaW5nIHRvIGJlIG9wdGlvbmFsLg0KDQpBY2NvcmRpbmcgdG8gRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby1wY2E5NXh4LnlhbWwsIHRoZSB2Y2MgcmVndWxh
+dG9yIGlzIG9wdGlvbmFsLg0KDQpSZWdhcmRzDQpIYWlibyBDaGVuDQo=
 
