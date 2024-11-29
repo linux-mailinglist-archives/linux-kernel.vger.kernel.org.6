@@ -1,151 +1,136 @@
-Return-Path: <linux-kernel+bounces-425350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDA59DC0DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:54:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B5C9DC0E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1185B230FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:53:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8D55B2327E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A86A16D9B8;
-	Fri, 29 Nov 2024 08:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D6D17625C;
+	Fri, 29 Nov 2024 08:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xyb3x9v6"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBLEKQrV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45C1AD23
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FD21714D3;
+	Fri, 29 Nov 2024 08:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732870430; cv=none; b=TFSkE+u10LwCy4qTsVK/S/sbiwNRkN8gllFMFbf2IFmxJlHddw6Ky22DKFpzB903c2hFlXXQP1wEQdX9Yozen/laimZQ1OtNddozumj1dKbSSD2fCg41D9n33OnggAu9FQ4pZkZvDyz13MdVWuovUeRtgVCjQjcGOx6hdTjRwXo=
+	t=1732870433; cv=none; b=MvqxlINwWAV2Ved/KhvtYKaOfR/fvK/8Q6Xhe3c9y0D2Tw9pjpsWWN3nninb8y8U4yLlftUQo+oEf8kn7PUBIiGWXxvZP3ma4VdT8FYIrTzQ1ZQjeDY4F/Y3nwGIoiJv1cSC0EJ8xOhfn6AGUIdJXmMA7ITe//6rcTpbSd/YL7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732870430; c=relaxed/simple;
-	bh=n8IJdecDMHQzahVcw8xdhr9EL5oNee60NvkmMoAdlV8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=spFp3U9jGDFr0kXse63tS/Gchzw1QBKxwqpMUVcPiok+7Rb0/WzgX+FFP4M45s2jxDkAsxDAVehiFtzo46mN/EdxjNnKYSuhhil+jLBP9UuobedcyZfTF18Zhh3k4VuQveAeUIxpZv2iGqD9BbDSGyS78lVazaiUP2X4x8DhX4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xyb3x9v6; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a8640763so14780225e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 00:53:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732870427; x=1733475227; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u46XbdPL5l4Wfy/A3vmf4c64xyaqFvqK15sX5xGxSDk=;
-        b=Xyb3x9v6S5nyVHb1XQoz/t9YgLxc/GNINpLFDghP25pxfsoY9ho/HmmpQdwxYHiXGI
-         CltMBBQe4vu972tvLJ/gUIH58J+KyTZcX1+5pXd8O1zXyvOofoDzaBYSiv0dMFcXa0DJ
-         Iz93QrYu+uz7kmxCN29K5Zc7CTMaDjjx5k38m7Ikxle6IIulIV1rbyQJ2fAgTA++X3Cq
-         AekBUe5ObTxcnWvhZS4NLKCFfxXZXZa/n+hkIX5yLBc5mGMvZeAcsZf6BSM4QwO75/Aq
-         SPiRRs6EK2FIO4IbmpcFR3Mmcte9lYw3Hy0LOM97BCugmxCZeqQkX1kAE/+snbsq7Scx
-         6kkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732870427; x=1733475227;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=u46XbdPL5l4Wfy/A3vmf4c64xyaqFvqK15sX5xGxSDk=;
-        b=sLTS2s10lavWps809G4htqrdfHiNsp3LeUfnFnp2J1jHB7gqR+3/hRiW+aFaTEi0ph
-         YU7VtUluGfMf+0VXVrJqnrEOuFDlr9yZdOa/ZId+ehchQrh5EstRM/HgnaunNtfKMY5M
-         N2oQDiHZC8+gyGgwlk6pM5u7llSnJ9rQ4Tv8LzAICCuJpor9RTy8KYSast3bUlV+DzPc
-         yGUZHIag5IXtTl09pOGoMobnZpt7fISAKZaMtU8NWMvW3TT2WNE0REt9AFNamJJv80Ss
-         +9xlWGwJlNbvU28yNy/gzoEoaZgxpLwpjCvcnrlBLjRMBUlFYAd+5THEPQ6uuL4CiiFr
-         84NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXF3ImZLLqvJTIcbfY+m9ghEiW0Y7bl7DOTXslzNT6eNR+u8rOAGn+nrDfgfPFnZ66G9wALWUJ15YoSqiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWW7Di7D0zajbfAfcEeeWlkM16d3XZcVJOd9hG1eSp4DI04ioN
-	YzXCLoL3SPo2TAt0YXQ1HB6ip6LGok/Da5/DHh1BFNfDwqRJLtxxki//da2A080=
-X-Gm-Gg: ASbGncuzxAwPn1oZKGMLzOCwAHjlbTGxUU9ROBUbihjIiTg9c6LnNYy3juFEjQZYnMq
-	ePB1hSGpf5EgGoDNdJDbfFxD7OXUps/Qiuqdb93le+KNNrlrMNySwf8Y+z7fcTKCWW5aoQHSapK
-	Ni4qk6NIsfPBOoPve/VCdnUFauMGpm5AbMOQviRHFuHxDvnlCgHgmKt+SmdqRUrxcmBFKrCZnm1
-	euzLnelgjFIYM++rTbCxILGJRiHGq8/zjXKy9ChT93BBiy4YoMeDpOUtBfVDsF9Z1CFyTsp0lLo
-	/J6M1HW5nMmYjmUbYNARtlLE
-X-Google-Smtp-Source: AGHT+IHldnNNjjdF9Zj40j8crC1Nm/FHndf+0pCBRz6FsjlgY7JCbQ8VDIg87hlM9vjS8eO4PSt4XA==
-X-Received: by 2002:a05:600c:6d46:b0:434:a5d1:9917 with SMTP id 5b1f17b1804b1-434a9de4533mr80614775e9.21.1732870426941;
-        Fri, 29 Nov 2024 00:53:46 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f573:30fa:4c5:27df? ([2a01:e0a:982:cbb0:f573:30fa:4c5:27df])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa6e929csm80103585e9.0.2024.11.29.00.53.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2024 00:53:46 -0800 (PST)
-Message-ID: <c6b5b6f7-ab55-4d46-888e-f9e00b269c9c@linaro.org>
-Date: Fri, 29 Nov 2024 09:53:45 +0100
+	s=arc-20240116; t=1732870433; c=relaxed/simple;
+	bh=PWjGAU76nJzuPec0ckBdi9FcYElbQvNbyAFXD40o/MY=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=M8NqWm1z0fqhoKar5QLIEF2TPFDp1eSKc1YJVeXPtbRfaAKikjSy54CxI574pCJrs6T0hrC1SxT+w8xOq0SQ0/4gHTAYTHek07T4esUcQNioexPZ0V0QaSxvml0Floc79JezaHZgGdWssHGNs2v9QJvAdVusiWmeSk1yeW5xyx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBLEKQrV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DED1C4CED2;
+	Fri, 29 Nov 2024 08:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732870432;
+	bh=PWjGAU76nJzuPec0ckBdi9FcYElbQvNbyAFXD40o/MY=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=VBLEKQrV000Q1wZNquGeBb4ypPUKC6cnNAoJnOtXORzuqE+c+xHNqnMjNFZ5C4QXX
+	 qMakgu6HRuTKDtUoCeFQrHRewR25vEepbHPN/x1nJgjC5Dea0i77fXr2Uhdim16Ibg
+	 0qGcskpXexy+GBIp7FYhjJB6e4psoTb3vMht7kcWszhJcSb16eE0QUYQ+natd8BNJI
+	 jWIiIdvGSQxLCCzb//wiuvaNaO13RsAcBtI+hfLwDjz+TKRGbAaAs6L2ubufayHT7z
+	 Hok3kGlV9/GeWTHrfUU5QXnXyK7mc6pA/Zytl4BUzoY4R4zMw+QNKgL5TOupHxuuiV
+	 Igl4NeIyQfxwA==
+From: Kalle Valo <kvalo@kernel.org>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: linux-wireless@vger.kernel.org,  ath10k@lists.infradead.org,  LKML
+ <linux-kernel@vger.kernel.org>,  regressions@lists.linux.dev
+Subject: Re: WARNING: drivers/net/wireless/ath/ath10k/mac.c:8750
+ ath10k_mac_update_vif_chan+0x237/0x2e0 [ath10k_core]
+References: <637c5bb4-5278-44be-9ac3-9c0ef9297162@molgen.mpg.de>
+	<8734jcx60e.fsf@kernel.org>
+	<5c9bf757-a035-499c-a1ef-ac33c1c6e75b@molgen.mpg.de>
+Date: Fri, 29 Nov 2024 10:53:48 +0200
+In-Reply-To: <5c9bf757-a035-499c-a1ef-ac33c1c6e75b@molgen.mpg.de> (Paul
+	Menzel's message of "Fri, 29 Nov 2024 00:01:55 +0100")
+Message-ID: <8734jav2sj.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/2] OPP: add index check to assert to avoid buffer
- overflow in _read_freq()
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241128-topic-opp-fix-assert-index-check-v1-0-cb8bd4c0370e@linaro.org>
- <20241128-topic-opp-fix-assert-index-check-v1-1-cb8bd4c0370e@linaro.org>
- <20241129084052.wfi7nakgcnt3zkur@vireshk-i7>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241129084052.wfi7nakgcnt3zkur@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Paul Menzel <pmenzel@molgen.mpg.de> writes:
 
-On 29/11/2024 09:40, Viresh Kumar wrote:
-> On 28-11-24, 11:07, Neil Armstrong wrote:
->> Pass the freq index to the assert function to make sure
->> we do not read a freq out of the opp->rates[] table.
->>
->> Without that the index value is never checked when called from
->> dev_pm_opp_find_freq_exact_indexed() or
->> dev_pm_opp_find_freq_ceil/floor_indexed().
-> 
-> These APIs aren't supported for cases where we have more than one clks
-> available and hence assert for single clk.
-> 
+> Dear Kalle,
+>
+>
+> Thank you for your reply.
+>
+>
+> Am 27.11.24 um 12:36 schrieb Kalle Valo:
+>> Paul Menzel writes:
+>>=20
+>>> On the Dell XPS 13 9360 with Linux 6.12.0-08446-g228a1157fb9f, I
+>>> noticed the trace below:
+>> For others, commit 228a1157fb9f is from current merge window so the
+>> first release will be in v6.13-rc1.
+>>=20
+>>> [16805.002289] ------------[ cut here ]------------
+>>> [16805.002296] WARNING: CPU: 3 PID: 65835 at drivers/net/wireless/ath/a=
+th10k/mac.c:8750 ath10k_mac_update_vif_chan+0x237/0x2e0 [ath10k_core]
+>> [...]
+>>=20
+>>> I do not see such a message in the logs since September 19th, so I
+>>> believe it=E2=80=99s a regression.
+>> Have you seen it only this one time or multiple times?
+>
+> I have seen it only this one time.
 
-I don't understand, the _indexed functions clearly have an index parameter
-which is documented as "Clock index"
+Ok. Was it a network you regularly connect to or a new network? That
+could also make a difference.
 
-I agree we could leave the other ones with assert_single_clk, but we would
-need to duplicate it to have one with the index parameter, so it felt simpler
-to use assert_clk_index everywhere but indeed we do not exclude them for
-when there's multiple clock...
+>> What kernels have you been testing prior? I'm trying to pinpoint what
+>> versions kernel version work and what have this warning.
+>
+> Before I ran 6.12.0-07749-g28eb75e178d3 without seeing this. As it
+> only occurred once, that does not give any pointer though.
 
-Neil
+Yeah, if you have seen it only once it is difficult to make any
+conclusions. It could be as well an older bug which happens rarely. If
+you see it again, let us know.
+
+> PS:
+>
+> $ last reboot
+> reboot   system boot  6.12.0-10296-gaa Thu Nov 28 22:42 - still running
+> reboot   system boot  6.12-rc6-amd64   Wed Nov 27 14:04 - 22:42 (1+08:37)
+> reboot   system boot  6.12.0-10296-gaa Wed Nov 27 13:21 - 14:02  (00:40)
+> reboot   system boot  6.12.0-09568-g2f Tue Nov 26 18:41 - crash
+> reboot   system boot  6.12.0-08446-g22 Sat Nov 23 12:27 - 18:40 (3+06:13)
+> reboot   system boot  6.12.0-07749-g28 Fri Nov 22 10:14 - 10:24 (1+00:09)
+> reboot   system boot  6.12.0           Wed Nov 20 09:24 - crash
+> reboot   system boot  6.12.0-rc7       Wed Nov 20 09:22 - 09:23  (00:01)
+> reboot   system boot  6.12.0-rc7       Tue Nov 12 08:19 - 23:27 (7+15:08)
+> reboot   system boot  6.12.0-rc7       Mon Nov 11 21:54 - 00:16  (02:21)
+> reboot   system boot  6.11-amd64       Mon Nov 11 21:52 - crash
+> reboot   system boot  6.12.0-rc7       Mon Nov 11 20:43 - 21:52  (01:08)
+> reboot   system boot  6.12.0-rc7       Mon Nov 11 17:51 - 17:52  (00:01)
+> reboot   system boot  6.12.0-rc6-00077 Fri Nov  8 08:39 - 17:50 (3+09:11)
+> reboot   system boot  6.12.0-rc6-00077 Thu Nov  7 07:26 - 23:24  (15:58)
+> reboot   system boot  6.12.0-rc5-00047 Mon Nov  4 08:26 - crash
+> reboot   system boot  6.12.0-rc5-00047 Mon Nov  4 05:42 - 05:43  (00:00)
+> reboot   system boot  6.12.0-rc5-00047 Sun Nov  3 06:54 - 22:10  (15:15)
+> reboot   system boot  6.12.0-rc5-00047 Sat Nov  2 07:34 - 22:05  (14:31)
+
+Oh nice, looks really useful. I need to install that.
+
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
