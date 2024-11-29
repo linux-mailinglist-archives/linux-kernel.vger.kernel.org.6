@@ -1,178 +1,182 @@
-Return-Path: <linux-kernel+bounces-425385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC649DC167
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:24:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99DF19DC162
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:23:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8A7EB2298E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56FA31641B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86BD17DE16;
-	Fri, 29 Nov 2024 09:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2004A175D47;
+	Fri, 29 Nov 2024 09:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ddo/KhnB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tZt1gedD"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pznCXRW2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90F5156F28;
-	Fri, 29 Nov 2024 09:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A13714F135;
+	Fri, 29 Nov 2024 09:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732872228; cv=none; b=WikJCEf4eglfAAwzIm4jeWP76ftVzYQxQiHuOlcPSuh75pauU5w8rj0BAuwEq2+c8T0Ld/x6slTAL2tV64yj5ZLyL2p6I2zU5+9P5vAmWIRiY0JjIOVW70sfKiFxcvWsRQfmHzgbhubtAR+di0i0BajYfmDOwlTz/CVsgiB+dvU=
+	t=1732872218; cv=none; b=kxI1VtE1ubLxWKDyoy+GJoPvPErC2lziUxVqxLOyQaRqCwjG7fwMnx2Nj5KwUDgbpT6Xk8txdeIWpg77Hv3WQD21FzflgY7lvg/EnJ6JcOOncslh9yOZOhMaRpV2S/j/n7p0HQvFl/ZOCUQPebfyai/vhLHuauHf6QRTr2pz6Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732872228; c=relaxed/simple;
-	bh=+B/4weM0/EUGguG/BqQcks88RtE9urCqPFe8Kwp9UB4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Io8EHP/KiFf6j0DecGR0qaSZ+xecyvzAZ09IuVtLR3kUpjItiH1S7uL4EypW0jY1aGM9KEo8VPfeK46UeWmvZtBX3SUlys+pWjVdlEsMNnQ7+GdXb4sRxW9bC3rttIlz43uDW8zM7uuCh62/4I67AZcZ2SicTKujqA0TwxfoKEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ddo/KhnB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tZt1gedD; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 07B7625400F5;
-	Fri, 29 Nov 2024 04:23:45 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 29 Nov 2024 04:23:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1732872224;
-	 x=1732958624; bh=6JoH9bTLLNPgqK4rstk02jf2g1g5I4XEBTfZgtUBOaU=; b=
-	Ddo/KhnB/zvVE0eA+K+XdWB/soHKnOPOOmDyAnGvTKmKSrM80jkWjrdR/eW1a10u
-	hDiS8ZljUw1ee79JC2JMlqXNmoaobS+MDnTY12XV74X4XwLdnde6lu0ZSHSp6FUt
-	zy4ZzgyPR53mKV55Ou4bprp1aNHmKyOveZrnHMV0KkaZMd1OGZD7PHnk4tbbFDzn
-	8AGWRZa+QMcLaqCZwiWqja7Zeeg88A8nO04bShOuxDtdQh3LvhjZpamuiQ34n0Cz
-	q4NJgVcskQ9QlbDExitYtLle3KEwjaVH1TB6yTIVkMdZZAhqR7RGHuc7D9kIcul/
-	t6gRhNARly08EZRGKWmIvQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732872224; x=
-	1732958624; bh=6JoH9bTLLNPgqK4rstk02jf2g1g5I4XEBTfZgtUBOaU=; b=t
-	Zt1gedD41mirEjCd0k8Ry7bsJ7WNAJ5hzfyvUz1CaQtooYr7s+ENutSJHOma8PNS
-	XJ5XBgvqR3qTGxWzkTyzXnmz1ye31iWQAAauSFLt+z86xdXZSeFbWOOGDK9iFI2v
-	0F8NHUcYiBbgNxium9R7WKhJkShQVxdygDpHesV4HXP398wtx9paTpUnQfp0ArkM
-	Sk54toAgkqETaDfa2mGjiFxF2m3VQmF4N8+sIjOtywV1kVhQlNx39k34xpyhrZfL
-	S8YKy6XHHywCddE90HDC8O/iwgURjsmtPCe5YrbVY5ESGdepUSvWNilT2MS3o6Fi
-	sF3FYFZHRlbSiZq+e2FhQ==
-X-ME-Sender: <xms:H4hJZ2wScKKDoFkbmffti2XgLRon-rOtXwdmdn1I06hG8Y_7Rkiexg>
-    <xme:H4hJZyT8ysWmzOdm8l7RET9uRPFzX65262mo90h_HfZ2znHDnccno0AVXzZl3kqNM
-    MaAu3LYP0ILp3b4t_I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheefgddtvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeej
-    vdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeffedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvrhgvkhdrkhhivghrnhgrnhesrg
-    hmugdrtghomhdprhgtphhtthhopegurhgrghgrnhdrtghvvghtihgtsegrmhgurdgtohhm
-    pdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtg
-    hpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphht
-    thhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtph
-    htthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnugih
-    rdhshhgvvhgthhgvnhhkohesghhmrghilhdrtghomhdprhgtphhtthhopegshhgvlhhgrg
-    grshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhl
-    vgdrtghomh
-X-ME-Proxy: <xmx:H4hJZ4ULhjYre35Nr7LeimF34eDMT9QrYAEfvNLxQ4HCSaTeF-ZLPw>
-    <xmx:H4hJZ8jR697AYXyTB0_yJGKBx7Rr_wRabBiuDS9kaxfe5gelt6ANRA>
-    <xmx:H4hJZ4DGhdlI5HRWqxuGrW0gYHU11SKPh02XxTqCJ0hNpjkNIW8_fQ>
-    <xmx:H4hJZ9IgM013bnDtM7LQ9mwj85lQkdwUQ0OR4axgWyptEYcrYufw7A>
-    <xmx:IIhJZwa_k9cjV1TQWoNQPYleFfTjyB1NFLrbiBqw5uTGZlE1MY0Xmn5N>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B95212220071; Fri, 29 Nov 2024 04:23:43 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1732872218; c=relaxed/simple;
+	bh=U7SnWYNG5aseGqVDBZQRYjC0oqz+X5HcHgFpn1GDLNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lVy15hBjjjKWm87N1Kv6UCuHrF9BNHCxKlgSxlR+gXiwmgJaN/DfQfwCZTfAREApYFNCkpokhuRE7rwb4Ib4Bz8w3Cd8iX9pdxlQqcuGqq7VRv1ERRrqqrsjaJTnTsSJo0mWChg+MXGlNkTQ3dUHos8aVLFrmpP12t3ILRE6oYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pznCXRW2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2AB0C4CECF;
+	Fri, 29 Nov 2024 09:23:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732872218;
+	bh=U7SnWYNG5aseGqVDBZQRYjC0oqz+X5HcHgFpn1GDLNY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pznCXRW2tZpLBh+VwvXQ7WwJezCk6QmC77dABI64Et9uQaIICuScdtVpLmUukNVG4
+	 GDhutLyfl/afUkQ3DtLsGD+4SA6+AZO7QL+hVSs+t8AzMsRLyrw9ioGq3kNGGN5RRl
+	 i7Gn4ceCeC0qTy3wbN9EWMLemStK6lzANyn/Kx9xO1sImX+sVlXhgN1AKyQ1OWFTCS
+	 zTOaVMAr+pGF4Uc3+46Jaaj8GkbgdBKVWbwZ9I2In6EQshOlZXG57XAtWNGm1diE7l
+	 uPO59QKZ/8/wjwV+awom/hW6lLY3SngBAdF7yjSM5ijglrfuv4ckjvXWVRKAmJ/jMh
+	 XaKioSwRGgCeg==
+Date: Fri, 29 Nov 2024 11:23:24 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Zi Yan <ziy@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] arch_numa: Restore nid checks before registering a
+ memblock with a node
+Message-ID: <Z0mIDBD4KLyxyOCm@kernel.org>
+References: <20241127193000.3702637-1-maz@kernel.org>
+ <Z0gVxWstZdKvhY6m@kernel.org>
+ <87y113s3lt.wl-maz@kernel.org>
+ <Z0l6MPWQ66GjAyOC@kernel.org>
+ <87v7w6sa5s.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 29 Nov 2024 10:23:23 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>
-Cc: "Herve Codina" <herve.codina@bootlin.com>,
- "Michal Kubecek" <mkubecek@suse.cz>,
- "Andy Shevchenko" <andy.shevchenko@gmail.com>,
- "Simon Horman" <horms@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
- "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- "Philipp Zabel" <p.zabel@pengutronix.de>,
- "Lars Povlsen" <lars.povlsen@microchip.com>,
- "Steen Hegelund" <Steen.Hegelund@microchip.com>,
- "Daniel Machon" <daniel.machon@microchip.com>,
- UNGLinuxDriver@microchip.com, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Saravana Kannan" <saravanak@google.com>,
- "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>,
- "Horatiu Vultur" <horatiu.vultur@microchip.com>,
- "Andrew Lunn" <andrew@lunn.ch>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- "Allan Nielsen" <allan.nielsen@microchip.com>,
- "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
-Message-Id: <93ad42dc-eac6-4914-a425-6dbcd5dccf44@app.fastmail.com>
-In-Reply-To: 
- <CAMuHMdWXgXiHNUhrXB9jT4opnOQYUxtW=Vh0yBQT0jJS49+zsw@mail.gmail.com>
-References: <20241010063611.788527-1-herve.codina@bootlin.com>
- <20241010063611.788527-2-herve.codina@bootlin.com>
- <dywwnh7ns47ffndsttstpcsw44avxjvzcddmceha7xavqjdi77@cqdgmpdtywol>
- <20241129091013.029fced3@bootlin.com>
- <1a895f7c-bbfc-483d-b36b-921788b07b36@app.fastmail.com>
- <CAMuHMdWXgXiHNUhrXB9jT4opnOQYUxtW=Vh0yBQT0jJS49+zsw@mail.gmail.com>
-Subject: Re: [PATCH v9 1/6] misc: Add support for LAN966x PCI device
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87v7w6sa5s.wl-maz@kernel.org>
 
-On Fri, Nov 29, 2024, at 09:44, Geert Uytterhoeven wrote:
-> On Fri, Nov 29, 2024 at 9:25=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> =
-wrote:
->> On Fri, Nov 29, 2024, at 09:10, Herve Codina wrote:
->> I would write in two lines as
->>
->>         depends on PCI
->>         depends on OF_OVERLAY
->>
->> since OF_OVERLAY already depends on OF, that can be left out.
->> The effect is the same as your variant though.
->
-> What about
->
->     depends on OF
->     select OF_OVERLAY
->
-> as "OF" is a clear bus dependency, due to the driver providing an OF
-> child bus (cfr. I2C or SPI bus controller drivers depending on I2C or
-> SPI), and OF_OVERLAY is an optional software mechanism?
+On Fri, Nov 29, 2024 at 08:42:55AM +0000, Marc Zyngier wrote:
+> On Fri, 29 Nov 2024 08:24:16 +0000,
+> Mike Rapoport <rppt@kernel.org> wrote:
+> > 
+> > On Thu, Nov 28, 2024 at 04:52:14PM +0000, Marc Zyngier wrote:
+> > > Hi Mike,
+> > > 
+> > > On Thu, 28 Nov 2024 07:03:33 +0000,
+> > > Mike Rapoport <rppt@kernel.org> wrote:
+> > > > 
+> > > > Hi Marc,
+> > > > 
+> > > > > diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
+> > > > > index e187016764265..5457248eb0811 100644
+> > > > > --- a/drivers/base/arch_numa.c
+> > > > > +++ b/drivers/base/arch_numa.c
+> > > > > @@ -207,7 +207,21 @@ static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
+> > > > >  static int __init numa_register_nodes(void)
+> > > > >  {
+> > > > >  	int nid;
+> > > > > -
+> > > > > +	struct memblock_region *mblk;
+> > > > > +
+> > > > > +	/* Check that valid nid is set to memblks */
+> > > > > +	for_each_mem_region(mblk) {
+> > > > > +		int mblk_nid = memblock_get_region_node(mblk);
+> > > > > +		phys_addr_t start = mblk->base;
+> > > > > +		phys_addr_t end = mblk->base + mblk->size - 1;
+> > > > > +
+> > > > > +		if (mblk_nid == NUMA_NO_NODE || mblk_nid >= MAX_NUMNODES) {
+> > > > > +			pr_warn("Warning: invalid memblk node %d [mem %pap-%pap]\n",
+> > > > > +				mblk_nid, &start, &end);
+> > > > > +			return -EINVAL;
+> > > > > +		}
+> > > > 
+> > > > We have memblock_validate_numa_coverage() that checks that amount of memory
+> > > > with unset node id is less than a threshold. The loop here can be replaced
+> > > > with something like
+> > > > 
+> > > > 	if (!memblock_validate_numa_coverage(0))
+> > > > 		return -EINVAL;
+> > > 
+> > > Unfortunately, that doesn't seem to result in something that works
+> > > (relevant extract only):
+> > > 
+> > > [    0.000000] NUMA: no nodes coverage for 9MB of 65516MB RAM
+> > > [    0.000000] NUMA: Faking a node at [mem 0x0000000000500000-0x0000000fff0fffff]
+> > > [    0.000000] NUMA: no nodes coverage for 0MB of 65516MB RAM
+> > > [    0.000000] Unable to handle kernel paging request at virtual address 0000000000001d40
+> > > 
+> > > Any idea?
+> > 
+> > With 0 as the threshold the validation fails for the fake node, but it
+> > should be fine with memblock_validate_numa_coverage(1)
+> 
+> Huh, subtle. This indeed seems to work. I'll respin the patch next week.
 
-OF_OVERLAY is currently a user visible option, so I think it's
-intended to be used with 'depends on'. The only other callers
-of this interface are the kunit test modules that just leave
-out the overlay code if that is disabled.
+With the patch below memblock_validate_numa_coverage(0) should also work
+and it makes more sense.
 
-If we decide to treat OF_OVERLAY as a library instead, it should
-probably become a silent Kconfig option that gets selected by
-all its users including the unit tests, and then we can remove
-the #ifdef checks there.
+@Andrew, I can take both this and Marc's new patch via memblock tree if you
+prefer.
 
-Since OF_OVERLAY pulls in OF_DYNAMIC, I would still prefer that
-to be a user choice. Silently enabling OF_OVERLAY definitely has
-a risk of introducing regressions since it changes some of the
-interesting code paths in the core, in particular it enables
-reference counting in of_node_get(), which many drivers get wrong.
+From de55af44c02bc9aa43f05a785ac66a5aafa43354 Mon Sep 17 00:00:00 2001
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Date: Fri, 29 Nov 2024 11:13:47 +0200
+Subject: [PATCH] memblock: allow zero threshold in validate_numa_converage()
 
-      Arnd
+Currently memblock validate_numa_converage() returns false negative when
+threshold set to zero.
+
+Make the check if the memory size with invalid node ID is greater than
+the threshold exclusive to fix that.
+
+Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+---
+ mm/memblock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 0389ce5cd281..095c18b5c430 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -735,7 +735,7 @@ int __init_memblock memblock_add(phys_addr_t base, phys_addr_t size)
+ /**
+  * memblock_validate_numa_coverage - check if amount of memory with
+  * no node ID assigned is less than a threshold
+- * @threshold_bytes: maximal number of pages that can have unassigned node
++ * @threshold_bytes: maximal memory size that can have unassigned node
+  * ID (in bytes).
+  *
+  * A buggy firmware may report memory that does not belong to any node.
+@@ -755,7 +755,7 @@ bool __init_memblock memblock_validate_numa_coverage(unsigned long threshold_byt
+ 			nr_pages += end_pfn - start_pfn;
+ 	}
+ 
+-	if ((nr_pages << PAGE_SHIFT) >= threshold_bytes) {
++	if ((nr_pages << PAGE_SHIFT) > threshold_bytes) {
+ 		mem_size_mb = memblock_phys_mem_size() >> 20;
+ 		pr_err("NUMA: no nodes coverage for %luMB of %luMB RAM\n",
+ 		       (nr_pages << PAGE_SHIFT) >> 20, mem_size_mb);
+-- 
+2.45.2
+
+ 
+> Thanks for your help,
+> 
+> 	M.
+
+-- 
+Sincerely yours,
+Mike.
 
