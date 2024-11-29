@@ -1,267 +1,91 @@
-Return-Path: <linux-kernel+bounces-425380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21BC9DC153
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:18:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B529D9DC156
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:18:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A34D2280CC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17E231628A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39271175D35;
-	Fri, 29 Nov 2024 09:17:54 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFA21714D3;
+	Fri, 29 Nov 2024 09:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eKbYS7Na"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF596156F28;
-	Fri, 29 Nov 2024 09:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1F0170A15
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732871873; cv=none; b=GUYF77Ob822gvx/iqUNnRF8K0yEp/vFB/dao7VWt+H97vAWiLAQpH+WnYjBM5i0GQwVa1cVVY9pFay/faWGWNoa8bIqDwRcHXUZH6DFAFRzq/2bp70ggN1OwLgz6wqVqQ5Gas5xRc3I2cU4qtkuagqc5epUxS38gWbpTpa+gBQ8=
+	t=1732871932; cv=none; b=M3RzdGuqPc1mD/EjE/NTKJR8GeuOSpNNNWkjgGnHttvt+TIHZ/mx4YaQczqzyr8dh1ur3ywYZ8X3R2Y2zQAKFZKs9Wk4reB3eoYidqhB4w1mRr1feDIIln+kKWjxwL0yMrQ8Weolep9KEVaaeojx6+kp6zdcC+fn6bgnqZjolc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732871873; c=relaxed/simple;
-	bh=XaeKftVeXGyRZzGmIiuFCz58QtyDN9yONfT5pfxu1kg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bRxxIHSojDKbLdu1aeMTaWovRETyfdi112nyA4X5LDUoXWSqz8+mR5KRHvFWXd/KnHALR84Rb8TXOQ4Gyt++o50la5qHh/QQSj3O4MmOckj7rxVqkMm6s76MmSfGV5ewLmw7kTuAkFDvtiCdPVA6WjS0rk2G9KSSr6K+mI4yrDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y06yV08lRz4f3jXJ;
-	Fri, 29 Nov 2024 17:17:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D40F21A0568;
-	Fri, 29 Nov 2024 17:17:40 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCXc4eyhkln+8ShDA--.44415S4;
-	Fri, 29 Nov 2024 17:17:40 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: yukuai3@huawei.com,
-	axboe@kernel.dk,
-	jack@suse.cz
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH] block, bfq: fix bfqq uaf in bfq_limit_depth()
-Date: Fri, 29 Nov 2024 17:15:09 +0800
-Message-Id: <20241129091509.2227136-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1732871932; c=relaxed/simple;
+	bh=KhIhGJSDKJsSqVUnIK738vmv13+9dzdC760/7ev8XOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXNxNBmFevhqmTazDVD7fXSUqXTlE0HJcy0wsSdRG5z3wREp1axgJf+IajukKjQulJAmiYEtCu8vkobbqLsQGe//xOLGFNi9bZgw8UMF3IKZ2hyJJdYvHMibqq8tu8sgOn+uDb61JN/YWx6FqcIdhQcoUSLWnCypQz5YjPu5meA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eKbYS7Na; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=T0xzcoPiVpIQE2u/O1Rb0QJLQPq/7zFR/H5vTX4566A=; b=eKbYS7Na6LHmKY4y84dL3lKCkT
+	oBhmCcvGJgSNKQ3tYTRzxk8U0GDRlrDVmrCVadp+ZSWCnG3O9zgONj9lxIq9QemmdgX+2hdUOIuJR
+	JkyIYSF4ddp6dzPkLeyEyhvtREfQ9xsvdBBuIkd35Q86GD9KwN/L2C9zJIjIJa4GdeNI/VdB8DcU1
+	CA7jYog2qE65w6X74eCCq3O8OysdCIRpNCsCcj/8ue4I8xvz3HtuScWtjrPLFzhMh7QKrhHZSZGFA
+	+AIuomv50PvhUc26c3kHa7S1iDKlhis5JYQAccaqhMXNGyls1ehrloXak+zEGAtbvy45TkYbGXJFD
+	v8TgGS+Q==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGx90-00000001ih9-3kd1;
+	Fri, 29 Nov 2024 09:18:35 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1703D30026A; Fri, 29 Nov 2024 10:18:34 +0100 (CET)
+Date: Fri, 29 Nov 2024 10:18:33 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Adam Li <adamli@os.amperecomputing.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	patches@amperecomputing.com, cl@linux.com, christian.loehle@arm.com,
+	vineethr@linux.ibm.com
+Subject: Re: [PATCH v2 2/3] sched/fair: Fix panic if pick_eevdf() returns NULL
+Message-ID: <20241129091833.GC15382@noisy.programming.kicks-ass.net>
+References: <20241127055610.7076-1-adamli@os.amperecomputing.com>
+ <20241127055610.7076-3-adamli@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXc4eyhkln+8ShDA--.44415S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw4xCFWxXF4UAFyrGw1Utrb_yoWxXrWkpr
-	ZIg393Ar48Ja45Xr4xt3W2kryFkF43W3srtFn3Kw1fZFWDAwnIgF90y3W0qF1F9r95Aa47
-	JF1vga4DXF17XFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUU
-	UUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241127055610.7076-3-adamli@os.amperecomputing.com>
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Wed, Nov 27, 2024 at 05:56:09AM +0000, Adam Li wrote:
+> pick_eevdf() may return NULL, which triggers NULL pointer
+> dereference at pick_next_entity():
+> 	struct sched_entity *se = pick_eevdf(cfs_rq);
+> 	if (se->sched_delayed)
+> 
+>     [  297.371198] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000051
+>     [  297.406112] CPU: 116 UID: 0 PID: 10328 Comm: Grizzly-worker( Tainted: G        W   E      6.12.0.adam+ #1
+>     [  297.597362] Call trace:
+>     [  297.599795]  pick_task_fair+0x50/0x150 (P)
+>     [  297.603879]  pick_task_fair+0x50/0x150 (L)
+>     [  297.607963]  pick_next_task_fair+0x30/0x3c0
+>     [  297.612134]  __pick_next_task+0x4c/0x220
+>     [  297.616045]  pick_next_task+0x44/0x980
 
-Set new allocated bfqq to bic or remove freed bfqq from bic are both
-protected by bfqd->lock, however bfq_limit_depth() is deferencing bfqq
-from bic without the lock, this can lead to UAF if the io_context is
-shared by multiple tasks.
+Well, if you look at pick_task_fair() you'll see we'll not get there
+unless cfs_rq->nr_running is non-zero, at which point pick_eevdf()
+really should NOT be returning NULL.
 
-For example, test bfq with io_uring can trigger following UAF in v6.6:
-
-==================================================================
-BUG: KASAN: slab-use-after-free in bfqq_group+0x15/0x50
-
-Call Trace:
- <TASK>
- dump_stack_lvl+0x47/0x80
- print_address_description.constprop.0+0x66/0x300
- print_report+0x3e/0x70
- kasan_report+0xb4/0xf0
- bfqq_group+0x15/0x50
- bfqq_request_over_limit+0x130/0x9a0
- bfq_limit_depth+0x1b5/0x480
- __blk_mq_alloc_requests+0x2b5/0xa00
- blk_mq_get_new_requests+0x11d/0x1d0
- blk_mq_submit_bio+0x286/0xb00
- submit_bio_noacct_nocheck+0x331/0x400
- __block_write_full_folio+0x3d0/0x640
- writepage_cb+0x3b/0xc0
- write_cache_pages+0x254/0x6c0
- write_cache_pages+0x254/0x6c0
- do_writepages+0x192/0x310
- filemap_fdatawrite_wbc+0x95/0xc0
- __filemap_fdatawrite_range+0x99/0xd0
- filemap_write_and_wait_range.part.0+0x4d/0xa0
- blkdev_read_iter+0xef/0x1e0
- io_read+0x1b6/0x8a0
- io_issue_sqe+0x87/0x300
- io_wq_submit_work+0xeb/0x390
- io_worker_handle_work+0x24d/0x550
- io_wq_worker+0x27f/0x6c0
- ret_from_fork_asm+0x1b/0x30
- </TASK>
-
-Allocated by task 808602:
- kasan_save_stack+0x1e/0x40
- kasan_set_track+0x21/0x30
- __kasan_slab_alloc+0x83/0x90
- kmem_cache_alloc_node+0x1b1/0x6d0
- bfq_get_queue+0x138/0xfa0
- bfq_get_bfqq_handle_split+0xe3/0x2c0
- bfq_init_rq+0x196/0xbb0
- bfq_insert_request.isra.0+0xb5/0x480
- bfq_insert_requests+0x156/0x180
- blk_mq_insert_request+0x15d/0x440
- blk_mq_submit_bio+0x8a4/0xb00
- submit_bio_noacct_nocheck+0x331/0x400
- __blkdev_direct_IO_async+0x2dd/0x330
- blkdev_write_iter+0x39a/0x450
- io_write+0x22a/0x840
- io_issue_sqe+0x87/0x300
- io_wq_submit_work+0xeb/0x390
- io_worker_handle_work+0x24d/0x550
- io_wq_worker+0x27f/0x6c0
- ret_from_fork+0x2d/0x50
- ret_from_fork_asm+0x1b/0x30
-
-Freed by task 808589:
- kasan_save_stack+0x1e/0x40
- kasan_set_track+0x21/0x30
- kasan_save_free_info+0x27/0x40
- __kasan_slab_free+0x126/0x1b0
- kmem_cache_free+0x10c/0x750
- bfq_put_queue+0x2dd/0x770
- __bfq_insert_request.isra.0+0x155/0x7a0
- bfq_insert_request.isra.0+0x122/0x480
- bfq_insert_requests+0x156/0x180
- blk_mq_dispatch_plug_list+0x528/0x7e0
- blk_mq_flush_plug_list.part.0+0xe5/0x590
- __blk_flush_plug+0x3b/0x90
- blk_finish_plug+0x40/0x60
- do_writepages+0x19d/0x310
- filemap_fdatawrite_wbc+0x95/0xc0
- __filemap_fdatawrite_range+0x99/0xd0
- filemap_write_and_wait_range.part.0+0x4d/0xa0
- blkdev_read_iter+0xef/0x1e0
- io_read+0x1b6/0x8a0
- io_issue_sqe+0x87/0x300
- io_wq_submit_work+0xeb/0x390
- io_worker_handle_work+0x24d/0x550
- io_wq_worker+0x27f/0x6c0
- ret_from_fork+0x2d/0x50
- ret_from_fork_asm+0x1b/0x30
-
-Fix the problem by protecting bic_to_bfqq() with bfqd->lock.
-
-CC: Jan Kara <jack@suse.cz>
-Fixes: 76f1df88bbc2 ("bfq: Limit number of requests consumed by each cgroup")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/bfq-iosched.c | 37 ++++++++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 13 deletions(-)
-
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 28c2bb06e859..95dd7b795935 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -582,23 +582,31 @@ static struct request *bfq_choose_req(struct bfq_data *bfqd,
- #define BFQ_LIMIT_INLINE_DEPTH 16
- 
- #ifdef CONFIG_BFQ_GROUP_IOSCHED
--static bool bfqq_request_over_limit(struct bfq_queue *bfqq, int limit)
-+static bool bfqq_request_over_limit(struct bfq_data *bfqd,
-+				    struct bfq_io_cq *bic, blk_opf_t opf,
-+				    unsigned int act_idx, int limit)
- {
--	struct bfq_data *bfqd = bfqq->bfqd;
--	struct bfq_entity *entity = &bfqq->entity;
- 	struct bfq_entity *inline_entities[BFQ_LIMIT_INLINE_DEPTH];
- 	struct bfq_entity **entities = inline_entities;
--	int depth, level, alloc_depth = BFQ_LIMIT_INLINE_DEPTH;
--	int class_idx = bfqq->ioprio_class - 1;
-+	int alloc_depth = BFQ_LIMIT_INLINE_DEPTH;
- 	struct bfq_sched_data *sched_data;
-+	struct bfq_entity *entity;
-+	struct bfq_queue *bfqq;
- 	unsigned long wsum;
- 	bool ret = false;
--
--	if (!entity->on_st_or_in_serv)
--		return false;
-+	int depth;
-+	int level;
- 
- retry:
- 	spin_lock_irq(&bfqd->lock);
-+	bfqq = bic_to_bfqq(bic, op_is_sync(opf), act_idx);
-+	if (!bfqq)
-+		goto out;
-+
-+	entity = &bfqq->entity;
-+	if (!entity->on_st_or_in_serv)
-+		goto out;
-+
- 	/* +1 for bfqq entity, root cgroup not included */
- 	depth = bfqg_to_blkg(bfqq_group(bfqq))->blkcg->css.cgroup->level + 1;
- 	if (depth > alloc_depth) {
-@@ -643,7 +651,7 @@ static bool bfqq_request_over_limit(struct bfq_queue *bfqq, int limit)
- 			 * class.
- 			 */
- 			wsum = 0;
--			for (i = 0; i <= class_idx; i++) {
-+			for (i = 0; i <= bfqq->ioprio_class - 1; i++) {
- 				wsum = wsum * IOPRIO_BE_NR +
- 					sched_data->service_tree[i].wsum;
- 			}
-@@ -666,7 +674,9 @@ static bool bfqq_request_over_limit(struct bfq_queue *bfqq, int limit)
- 	return ret;
- }
- #else
--static bool bfqq_request_over_limit(struct bfq_queue *bfqq, int limit)
-+static bool bfqq_request_over_limit(struct bfq_data *bfqd,
-+				    struct bfq_io_cq *bic, blk_opf_t opf,
-+				    unsigned int act_idx, int limit)
- {
- 	return false;
- }
-@@ -704,8 +714,9 @@ static void bfq_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
- 	}
- 
- 	for (act_idx = 0; bic && act_idx < bfqd->num_actuators; act_idx++) {
--		struct bfq_queue *bfqq =
--			bic_to_bfqq(bic, op_is_sync(opf), act_idx);
-+		/* Fast path to check if bfqq is already allocated. */
-+		if (!bic_to_bfqq(bic, op_is_sync(opf), act_idx))
-+			continue;
- 
- 		/*
- 		 * Does queue (or any parent entity) exceed number of
-@@ -713,7 +724,7 @@ static void bfq_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
- 		 * limit depth so that it cannot consume more
- 		 * available requests and thus starve other entities.
- 		 */
--		if (bfqq && bfqq_request_over_limit(bfqq, limit)) {
-+		if (bfqq_request_over_limit(bfqd, bic, opf, act_idx, limit)) {
- 			depth = 1;
- 			break;
- 		}
--- 
-2.39.2
-
+If it does, something else is broken.
 
