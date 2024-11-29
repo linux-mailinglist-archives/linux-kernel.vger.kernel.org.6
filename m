@@ -1,116 +1,167 @@
-Return-Path: <linux-kernel+bounces-425273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EA69DBFB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:22:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2597F9DBFB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:20:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDD96281AC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D583D28180B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A097157A5A;
-	Fri, 29 Nov 2024 07:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052411581E1;
+	Fri, 29 Nov 2024 07:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="VCHrfQup"
-Received: from tarta.nabijaczleweli.xyz (tarta.nabijaczleweli.xyz [139.28.40.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3auW3c1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7A145C14
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.28.40.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61ECE45C14;
+	Fri, 29 Nov 2024 07:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732864960; cv=none; b=FG3Je5LlfFPU8e4jr/08pV6pWTNXLkkvoqf0b3EFJtN/ivFl9exE9g1Lr00MZVECLxho/JjaeTGL0Fm7jQ3uHkssjxiUQ2utbB3Xjf1oscAcMI0jj1eBlYkUhSSIDj1okQpruMHpimkIcWxm1iHt7JGi7APxYinPiyED9jroQPw=
+	t=1732864812; cv=none; b=fD5rojiJGMkb4pfU5QkF6OOkWvasfPuUBGeTLHA1qvWIKHY2Gqh5ErP7txqG7B00bAMMyJ9L0apCWdfxd3FgLz7WoVveIx40vv5lVmHZxTDdypfpacsQBHfXiOq2qeraL/IBvRrvkqMzJoRaVQe6Cxa78EXPiIxpOE1s11pfD14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732864960; c=relaxed/simple;
-	bh=hs1yApbpDZL/oadtYLt4c89Vl0iVNqyoVARy+SVs+dg=;
+	s=arc-20240116; t=1732864812; c=relaxed/simple;
+	bh=f5K7i1Tg3ZRRth7tKZoWQuEu/Q0cKzBkqzpXHnSj30I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CsWTpMgYhRXAppBMrtgr+opA5LcHaMDlO5rB2PPbTRTZPq3/U+VMADoX05srNJPhbtZXBsFSIUWb9UjECzEDujUqNF3RZHCcNB9zv1UBkai78IQHeVDyKLS+nAUeWE+CBOVMWBTq/TukpXgMF/kNr6EG/Hubhi+wR3O1luCMA9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz; spf=pass smtp.mailfrom=nabijaczleweli.xyz; dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b=VCHrfQup; arc=none smtp.client-ip=139.28.40.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabijaczleweli.xyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-	s=202405; t=1732864625;
-	bh=hs1yApbpDZL/oadtYLt4c89Vl0iVNqyoVARy+SVs+dg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAC3HDx2lXwjQAMFbjDZR3LomkDJQBOUE/zqVVwnIjVLkNdca6g528FIZBaIG2ydQqFPVIbUIBHaQR0+1gRgvJS3yAlCBQvF9tgkeArYgPLhZF2RFvIPk+n1NiaIPAPgM9EzL4+bY/wE6myh7T0XwvrUg+rVT+K18N4f21jHpUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3auW3c1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 464C2C4CECF;
+	Fri, 29 Nov 2024 07:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732864811;
+	bh=f5K7i1Tg3ZRRth7tKZoWQuEu/Q0cKzBkqzpXHnSj30I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VCHrfQupxOGuub2qScBmyNXW+ib85ei1VhIsNl9MTsJMGL83ykvs1L8UvOJh+swxn
-	 4MBa3TrL8D5wk0jPduEl2AJO9hnTche+NvQuX6mOR25Kic/w2XxuavDlqNabjQSaE5
-	 GkJPSPqd+tLvuzY/gTOwgcOKaA+Swua6Zqo0u0lHDviYGwC/Cp5V5km7YewTzJsibt
-	 Va7ZuiiQytwlG+FRwyF3iyv41/l65HbhEcq23jogGIqNyn9em15sO4HwnHM1jWnikt
-	 BM7hKQ4WFdJcABvld0xQ+Mkb5vAYkxwslvK40RHt16dji7tT8Is/l5Z4Xt0DQ8F2jy
-	 RqbJ4KrxADRCw==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 656839CB0;
-	Fri, 29 Nov 2024 08:17:05 +0100 (CET)
-Date: Fri, 29 Nov 2024 08:17:05 +0100
-From: =?utf-8?B?0L3QsNCx?= <nabijaczleweli@nabijaczleweli.xyz>
-To: Rui Ueyama <rui314@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Wislist for Linux from the mold linker's POV
-Message-ID: <enqsr7otef2osf5kmxwlf56y2jegiggiusbzklqxmkd4puk3rq@tarta.nabijaczleweli.xyz>
-References: <CACKH++baPUaoQQhL0+qcc_DzX7kGcmAOizgfaCQ8gG=oBKDDYw@mail.gmail.com>
+	b=E3auW3c1D7g2OnfW0zxlaGz+VnEVe0MCoZTpLvcH6B9G6ew1dDAd3wpTK3sVHcQYq
+	 q60LnPtWyeJVczx7yxjhZG2BIV5OUAuYcVR1iUlpwHM+qmIzpWAyAZrkubtKDIM8vv
+	 Rs41J8fBJi4LVu6xiJGe5zubQ2zG5drEcvnq0MZvgJjcLgFm6gPr4IEKA3z643ff6F
+	 207rFsAanfxSzmUr7iaQtkqcVlt5VREJDTUHPSdmXacMQQ+amOyknnIzvq2QmYYLED
+	 +Cd2zUuMEj3A3p/InDtwR4HLslNxMWi7KSTu62o40z8H0tCi2SKRl+o2D4bCmXtGEF
+	 4BEAYOv2hBLuQ==
+Date: Fri, 29 Nov 2024 08:20:08 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Neha Malcom Francis <n-francis@ti.com>
+Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, u-kumar1@ti.com
+Subject: Re: [PATCH 1/2] dt-bindings: misc: bist: Add BIST dt-binding for TI
+ K3 devices
+Message-ID: <ho7ktcnbtl7mvamfthqho23co2fc4z7bgjha7pu4wivxm6ndhu@tfbpveonhckz>
+References: <20241128140825.263216-1-n-francis@ti.com>
+ <20241128140825.263216-2-n-francis@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fmewhgv2r7hsugjw"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CACKH++baPUaoQQhL0+qcc_DzX7kGcmAOizgfaCQ8gG=oBKDDYw@mail.gmail.com>
-User-Agent: NeoMutt/20240329
+In-Reply-To: <20241128140825.263216-2-n-francis@ti.com>
 
+On Thu, Nov 28, 2024 at 07:38:24PM +0530, Neha Malcom Francis wrote:
+> Document the binding for TI K3 BIST (Built-In Self Test) block.
+> 
 
---fmewhgv2r7hsugjw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A nit, subject: drop second/last, redundant "dt-binding". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-Hi! one quick q to clarify, if you don't mind.
+> Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
+> ---
+>  .../bindings/misc/ti,j784s4-bist.yaml         | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/ti,j784s4-bist.yaml
 
-On Thu, Nov 28, 2024 at 11:52:35AM +0900, Rui Ueyama wrote:
-> - exit(2) takes a few hundred milliseconds for a large process
->=20
-> I believe this is because mold mmaps all input files and an output
-> file, and clearing/flushing memory-mapped data is fairly expensive.
->=20
-> To avoid this overhead, mold currently forks a child process, lets the
-> child handle the actual linking task, and then, as soon as the child
-> closes the output file, the parent exits (which takes no time since
-> the parent is lightweight). Since the child is not an interactive
-> process, it can afford to take its time for exit. While this works, I
-> would prefer to avoid it if possible, as it is somewhat a hacky
-> workaround.
-Sooo am I reading it right that the output file is not valid when mold exit=
-s,
-since you seem to be exiting /during/ exit->munmap->msync,
-while the contents of the file are undefined,
-so mold -o whatever && ./whatever is not valid
-(while mold -o whatever then ./whatever later is)?
+soc directory, not misc.
 
-Thanks,
+> 
+> diff --git a/Documentation/devicetree/bindings/misc/ti,j784s4-bist.yaml b/Documentation/devicetree/bindings/misc/ti,j784s4-bist.yaml
+> new file mode 100644
+> index 000000000000..bd1b42734b3d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/ti,j784s4-bist.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2024 Texas Instruments Incorporated
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/misc/ti,j784s4-bist.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments K3 BIST
+> +
+> +maintainers:
+> +  - Neha Malcom Francis <n-francis@ti.com>
+> +
+> +description:
+> +  The BIST (Built-In Self Test) module is an IP block present in K3 devices
+> +  that support triggering of BIST tests, both PBIST (Memory BIST) and LBIST
+> +  (Logic BIST) on a core. Both tests are destructive in nature. At boot, BIST
+> +  is executed by hardware for the MCU domain automatically as part of HW POST.
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,j784s4-bist
+> +
+> +  reg:
+> +    minItems: 2
 
---fmewhgv2r7hsugjw
-Content-Type: application/pgp-signature; name="signature.asc"
+Drop minItems
 
------BEGIN PGP SIGNATURE-----
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: cfg
+> +      - const: ctrl_mmr
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  ti,bist-instance:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      the BIST instance in the SoC represented as an integer
 
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmdJamsACgkQvP0LAY0m
-WPEeixAAu0UXC0rAXbYpe+sh7NaOvHVpm7nWxq6ZX2Ce6MB6ybzMhdjsJfIP1jWq
-B2xGq0RNNv/jEmmgQkLBSBQKNsv/IeTZzKeLxhQBm3wrOAWnuHoYDRqHlBdMwSHO
-9CjUrbhJ69qPIi+tBsN4tcOUsGMb0QunSsWbxqUCb3PVop5xrP5ICmW5g87B3/WP
-W3mw+2FSyTpzP21oT3Na5YK8GrRKhCeEOx2vs+COcmJuS87na0f7p80enRuqp16G
-Wv1TPq08957MulvOEidu+O/GrKnmdMLAHLebo2wwbkxNL++wOgnUxtHioI3TkZJ7
-lHpuIGd3LxS7RjdoNy7rpYsD5gsy4GAXPWs9zVTjFy+FcqL9mbr/xbGZGCfcBEjs
-La5pHEXg3326NKRtEuPOmYRpjlnC84+bSUhr19gJ7Pz8h6f/5kujHQxqRTA+8Lio
-TenV8ouB/LS+sfc97yA471QYhHwOtRHZGWiSb88r3CEgpkjA7h8oXO9wgLC0T1ut
-2LEZ138a0WMFeH54Uzq9QPHn3L+qFcDWcFk+yoN5gt93YWUEoo6pvKg5uNgi2cn9
-RQSySFErKExskyuIIeHiybgDZNyW/3wmyzEAT2KQy3Tz4EqxBjZgqQp2uCsOZUKO
-d8I/3XWdokCvBYXBYrmt3yLW2oKXOjiM/IX7svXmt0d22ThlGPs=
-=WcG3
------END PGP SIGNATURE-----
+No instance indices are allowed. Drop.
 
---fmewhgv2r7hsugjw--
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - ti,bist-instance
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
+> +    bus {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        bist@33c0000 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+Come with something, don't just use device name.
+
+> +            compatible = "ti,j784s4-bist";
+> +            reg = <0x00 0x033c0000 0x00 0x400>,
+> +            <0x00 0x0010c1a0 0x00 0x01c>;
+
+Misaligned code.
+
+Best regards,
+Krzysztof
+
 
