@@ -1,132 +1,495 @@
-Return-Path: <linux-kernel+bounces-426364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9B39DF22A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:11:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16DF9DF21E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92142161B55
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:11:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48F6E161757
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68891A4B69;
-	Sat, 30 Nov 2024 17:11:29 +0000 (UTC)
-Received: from zju.edu.cn (spam.zju.edu.cn [61.164.42.155])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2968468;
-	Sat, 30 Nov 2024 17:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.164.42.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A849F1A42C4;
+	Sat, 30 Nov 2024 17:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULCr3D5Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1D38468;
+	Sat, 30 Nov 2024 17:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732986689; cv=none; b=MeGkVf1Wlv+lqdb3RyeVedjWxLtZCLM0xrjYiH2OYGaQ+I6idJ+O776p6ZQV/gy7Aj1AyKCTnK0NZwuQt8ZMjaABQz/gtRDWJfehir/sKqG50WCIvYJT1iCgnC61MTk+LN96O5VexC0rckscO9d9aI44IOtXFkadzS9hpEOwBj8=
+	t=1732986370; cv=none; b=lG/Ik/iBCfq/9ygxwoYSzO2IDvuftyrZoXHPPFIrwye+W0ZO1Mn7AXpI/JwPovEO1P9QJxPU2FMsUfvXyWEQOdyXfNYYM4svpyMI9wdf3POh6xhkpx7ap/HbwIDVmo/x965kunLVNuFH0ZWA2NBJG77kKw4ZQc302JZ+OCLxjlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732986689; c=relaxed/simple;
-	bh=Dso1V0rhy/zLY7zeRFRdzfAdFp+fu8jhZhMvQReLTk4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ULSLIVEuKPIen9uOYayOFl+u0k7VwNGDToAxnnHZlOtAhYKXenfv/CcD/7cwuBywMbfSFpkkBZfdgovImMiDS06A7KnddRHxSmdtkyV6wc1ENBLHXyfJ5HvqDGiaxrHc9HEl8gF0A2uKOojqkAZH3j3eN/8dfuXucJv0nEzc4XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=61.164.42.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from localhost (unknown [10.193.223.147])
-	by mail-app3 (Coremail) with SMTP id cC_KCgA3o8DrRUtnvL8pAQ--.36275S2;
-	Sun, 01 Dec 2024 01:05:47 +0800 (CST)
-From: Lin Ma <linma@zju.edu.cn>
-To: johannes@sipsolutions.net,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Lin Ma <linma@zju.edu.cn>,
-	Cengiz Can <cengiz.can@canonical.com>
-Subject: [PATCH net] wifi: nl80211: fix NL80211_ATTR_MLO_LINK_ID off-by-one
-Date: Sun,  1 Dec 2024 01:05:26 +0800
-Message-Id: <20241130170526.96698-1-linma@zju.edu.cn>
-X-Mailer: git-send-email 2.39.0
+	s=arc-20240116; t=1732986370; c=relaxed/simple;
+	bh=YT8u8PQhT/FcidDay9cA3ZIOy2+NbSTHOTNHdq56/UU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZX95ItA6ChzENk3lOg/l3piHZcrtmsuvFwg2Ntut54MnXEorQAfAPYR9mNVO6D1XY8ngx/zBcHlyMaHZT/J5oilt/2bf5uMg6ffWr1Psknv3W2WSGxL7mhG2YkWmRtGGRK6zCdg1VY6w7IhVF3/7IgkzkOmiFudK5bhsFHyao+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULCr3D5Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A11EC4CECC;
+	Sat, 30 Nov 2024 17:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732986370;
+	bh=YT8u8PQhT/FcidDay9cA3ZIOy2+NbSTHOTNHdq56/UU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ULCr3D5QUsHcLQwWF13h2ojBRICMvtooxfBiIKainVGXOTn1wHDtsuXdD45Iyh4t4
+	 q1A7aiLOk0Z/UEhgJ6TSPaMQunHCHR7IfGGOIAUH8JHLamTvV4eQGYboxcBzKq6xH1
+	 MucEk2B6Eu5z+PsHi7+7ebhaW/jTLjG/ZI8WN4Xolx4XhzRXMmRg6NvPl1++/QEEmA
+	 oV5hf+0WQyUBgDkZi29sBT6jhsAfCK7qlUxkKK4padVU3u2wFI3UE0OMF2Z/ODr5RM
+	 H4wUfdujaxVFeVs+X09RFJQWK67Zl7SRTkuRQsi7wGPdVT/a+fvzYfYl4NP+kPlnNO
+	 MHNngmbKiS32A==
+Date: Sat, 30 Nov 2024 17:06:00 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <dlechner@baylibre.com>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH v7 8/8] iio: adc: ad4851: add ad485x driver
+Message-ID: <20241130170600.3488f987@jic23-huawei>
+In-Reply-To: <20241129153546.63584-9-antoniu.miclaus@analog.com>
+References: <20241129153546.63584-1-antoniu.miclaus@analog.com>
+	<20241129153546.63584-9-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cC_KCgA3o8DrRUtnvL8pAQ--.36275S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw4kJry3ZrWrJr1fKFy3urg_yoW5ZrW8pF
-	WkGryxJF1UK34vqFWfGF48GFyxXFs8Zr1UCw4xtr1fCFnYqry8GryjgFsxXrnxuF1qyayf
-	Z3WDJF4avw15J37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvq1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
-	w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
-	IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2
-	z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzx
-	vE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	JVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY
-	0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fKr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0x
-	ZFpf9x0JUBVbkUUUUU=
-X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Since the netlink attribute range validation provides inclusive
-checking, the *max* of attribute NL80211_ATTR_MLO_LINK_ID should be
-IEEE80211_MLD_MAX_NUM_LINKS - 1 otherwise causing an off-by-one.
+On Fri, 29 Nov 2024 17:35:46 +0200
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-One crash stack for demonstration:
-==================================================================
-BUG: KASAN: wild-memory-access in ieee80211_tx_control_port+0x3b6/0xca0 net/mac80211/tx.c:5939
-Read of size 6 at addr 001102080000000c by task fuzzer.386/9508
+> Add support for the AD485X a fully buffered, 8-channel simultaneous
+> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
+> differential, wide common-mode range inputs.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v7:
+>  - use new iio backend os enable/disable functions
+>  - implement separate scan_type for both signed and unsigned.
+>  - drop ext_scan_type for 16-bit chips
+>  - rework scan_index ordering.
+>  - add separate scales for diff/single-ended channels
+>  - parse iio channels via dts properties.
+Hi Antoniu
 
-CPU: 1 PID: 9508 Comm: syz.1.386 Not tainted 6.1.70 #2
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x177/0x231 lib/dump_stack.c:106
- print_report+0xe0/0x750 mm/kasan/report.c:398
- kasan_report+0x139/0x170 mm/kasan/report.c:495
- kasan_check_range+0x287/0x290 mm/kasan/generic.c:189
- memcpy+0x25/0x60 mm/kasan/shadow.c:65
- ieee80211_tx_control_port+0x3b6/0xca0 net/mac80211/tx.c:5939
- rdev_tx_control_port net/wireless/rdev-ops.h:761 [inline]
- nl80211_tx_control_port+0x7b3/0xc40 net/wireless/nl80211.c:15453
- genl_family_rcv_msg_doit+0x22e/0x320 net/netlink/genetlink.c:756
- genl_family_rcv_msg net/netlink/genetlink.c:833 [inline]
- genl_rcv_msg+0x539/0x740 net/netlink/genetlink.c:850
- netlink_rcv_skb+0x1de/0x420 net/netlink/af_netlink.c:2508
- genl_rcv+0x24/0x40 net/netlink/genetlink.c:861
- netlink_unicast_kernel net/netlink/af_netlink.c:1326 [inline]
- netlink_unicast+0x74b/0x8c0 net/netlink/af_netlink.c:1352
- netlink_sendmsg+0x882/0xb90 net/netlink/af_netlink.c:1874
- sock_sendmsg_nosec net/socket.c:716 [inline]
- __sock_sendmsg net/socket.c:728 [inline]
- ____sys_sendmsg+0x5cc/0x8f0 net/socket.c:2499
- ___sys_sendmsg+0x21c/0x290 net/socket.c:2553
- __sys_sendmsg net/socket.c:2582 [inline]
- __do_sys_sendmsg net/socket.c:2591 [inline]
- __se_sys_sendmsg+0x19e/0x270 net/socket.c:2589
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x45/0x90 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
+The bot clearly found a few places where data got added but not used
+that need fixing up.  Some other comments below.
 
-Update the policy to ensure correct validation.
+> diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
+> new file mode 100644
+> index 000000000000..e8e5c0def29e
+> --- /dev/null
+> +++ b/drivers/iio/adc/ad4851.c
+> @@ -0,0 +1,1346 @@
 
-Fixes: 7b0a0e3c3a88 ("wifi: cfg80211: do some rework towards MLO link APIs")
-Signed-off-by: Lin Ma <linma@zju.edu.cn>
-Suggested-by: Cengiz Can <cengiz.can@canonical.com>
----
- net/wireless/nl80211.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +struct ad4851_chip_info {
+> +	const char *name;
+> +	unsigned int product_id;
+> +	int num_scales;
+> +	const struct iio_chan_spec *channels;
+> +	unsigned int num_channels;
+Some of these appear to be optional. If so, I think this structure should
+have some docs to explain why.
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 9d2edb71f981..dd84fc54fb9b 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -814,7 +814,7 @@ static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
- 	[NL80211_ATTR_MLO_LINKS] =
- 		NLA_POLICY_NESTED_ARRAY(nl80211_policy),
- 	[NL80211_ATTR_MLO_LINK_ID] =
--		NLA_POLICY_RANGE(NLA_U8, 0, IEEE80211_MLD_MAX_NUM_LINKS),
-+		NLA_POLICY_RANGE(NLA_U8, 0, IEEE80211_MLD_MAX_NUM_LINKS - 1),
- 	[NL80211_ATTR_MLD_ADDR] = NLA_POLICY_EXACT_LEN(ETH_ALEN),
- 	[NL80211_ATTR_MLO_SUPPORT] = { .type = NLA_FLAG },
- 	[NL80211_ATTR_MAX_NUM_AKM_SUITES] = { .type = NLA_REJECT },
--- 
-2.39.2
+> +	unsigned long max_sample_rate_hz;
+> +	unsigned int resolution;
+> +	int (*parse_channels)(struct iio_dev *indio_dev);
+> +};
 
+
+> +#define AD4851_IIO_CHANNEL(index, ch, diff)					\
+> +	.type = IIO_VOLTAGE,							\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |			\
+> +		BIT(IIO_CHAN_INFO_CALIBBIAS) |					\
+> +		BIT(IIO_CHAN_INFO_SCALE),					\
+> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ) |		\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),				\
+> +	.info_mask_shared_by_all_available =					\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),				\
+> +	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE),		\
+> +	.indexed = 1,								\
+> +	.differential = diff,							\
+> +	.channel = ch,								\
+> +	.channel2 = ch + (diff * 8),						\
+> +	.scan_index = index,							\
+Why the final line continuation?
+
+> +
+> +#define AD4858_IIO_CHANNEL(index, ch, diff, bits)				\
+> +{										\
+> +	AD4851_IIO_CHANNEL(index, ch, diff)					\
+> +	.ext_scan_type = ad4851_scan_type_##bits##_##diff,			\
+> +	.num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_##bits##_##diff),	\
+
+Seems you set this again below.
+
+> +}
+> +
+> +#define AD4857_IIO_CHANNEL(index, ch, diff, bits)				\
+> +{										\
+> +	AD4851_IIO_CHANNEL(index, ch, diff)					\
+> +	.scan_type = {								\
+> +		.sign = 's',							\
+> +		.realbits = bits,						\
+> +		.storagebits = bits,						\
+> +	},									\
+> +}
+> +
+> +static const struct iio_chan_spec ad4858_channels[] = {
+> +	AD4858_IIO_CHANNEL(0, 0, 0, 20),
+> +	AD4858_IIO_CHANNEL(1, 0, 1, 20),
+> +	AD4858_IIO_CHANNEL(2, 1, 0, 20),
+> +	AD4858_IIO_CHANNEL(3, 1, 1, 20),
+> +	AD4858_IIO_CHANNEL(4, 2, 0, 20),
+> +	AD4858_IIO_CHANNEL(5, 2, 1, 20),
+> +	AD4858_IIO_CHANNEL(6, 3, 0, 20),
+> +	AD4858_IIO_CHANNEL(7, 3, 1, 20),
+> +	AD4858_IIO_CHANNEL(8, 4, 0, 20),
+> +	AD4858_IIO_CHANNEL(9, 4, 1, 20),
+> +	AD4858_IIO_CHANNEL(10, 5, 0, 20),
+> +	AD4858_IIO_CHANNEL(11, 5, 1, 20),
+> +	AD4858_IIO_CHANNEL(12, 6, 0, 20),
+> +	AD4858_IIO_CHANNEL(13, 6, 1, 20),
+> +	AD4858_IIO_CHANNEL(14, 7, 0, 20),
+> +	AD4858_IIO_CHANNEL(15, 7, 1, 20),
+> +};
+> +
+> +static const struct iio_chan_spec ad4857_channels[] = {
+> +	AD4857_IIO_CHANNEL(0, 0, 0, 16),
+> +	AD4857_IIO_CHANNEL(1, 0, 1, 16),
+> +	AD4857_IIO_CHANNEL(2, 1, 0, 16),
+> +	AD4857_IIO_CHANNEL(3, 1, 1, 16),
+> +	AD4857_IIO_CHANNEL(4, 2, 0, 16),
+> +	AD4857_IIO_CHANNEL(5, 2, 1, 16),
+> +	AD4857_IIO_CHANNEL(6, 3, 0, 16),
+> +	AD4857_IIO_CHANNEL(7, 3, 1, 16),
+> +	AD4857_IIO_CHANNEL(8, 4, 0, 16),
+> +	AD4857_IIO_CHANNEL(9, 4, 1, 16),
+> +	AD4857_IIO_CHANNEL(10, 5, 0, 16),
+> +	AD4857_IIO_CHANNEL(11, 5, 1, 16),
+> +	AD4857_IIO_CHANNEL(12, 6, 0, 16),
+> +	AD4857_IIO_CHANNEL(13, 6, 1, 16),
+> +	AD4857_IIO_CHANNEL(14, 7, 0, 16),
+> +	AD4857_IIO_CHANNEL(15, 7, 1, 16),
+> +};
+> +
+> +static int ad4857_parse_channels(struct iio_dev *indio_dev)
+> +{
+> +	struct device *dev = indio_dev->dev.parent;
+> +	struct ad4851_state *st = iio_priv(indio_dev);
+> +	struct iio_chan_spec *ad4851_channels;
+> +	const struct iio_chan_spec ad4851_chan = AD4857_IIO_CHANNEL(0, 0, 0, 16);
+> +	const struct iio_chan_spec ad4851_chan_diff = AD4857_IIO_CHANNEL(0, 0, 1, 16);
+> +	unsigned int num_channels, index = 0, reg;
+> +	int ret;
+> +
+> +	num_channels = device_get_child_node_count(dev);
+> +	if (num_channels > AD4851_MAX_CH_NR)
+> +		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n",
+> +				     num_channels);
+> +
+> +	ad4851_channels = devm_kcalloc(dev, num_channels,
+> +				       sizeof(*ad4851_channels), GFP_KERNEL);
+> +	if (!ad4851_channels)
+> +		return -ENOMEM;
+> +
+> +	indio_dev->channels = ad4851_channels;
+> +	indio_dev->num_channels = num_channels;
+> +
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		ret = fwnode_property_read_u32(child, "reg", &reg);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					     "Missing channel number\n");
+> +		if (fwnode_property_present(child, "diff-channels")) {
+> +			*ad4851_channels = ad4851_chan_diff;
+> +			ad4851_channels->scan_index = index++;
+> +			ad4851_channels->channel = reg;
+> +			ad4851_channels->channel2 = reg + AD4851_MAX_CH_NR;
+> +		} else {
+> +			*ad4851_channels = ad4851_chan;
+> +			ad4851_channels->scan_index = index++;
+> +			ad4851_channels->channel = reg;
+> +			ret = regmap_write(st->regmap, AD4851_REG_CHX_SOFTSPAN(reg),
+> +					   AD4851_SOFTSPAN_0V_40V);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +		ad4851_channels++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad4858_parse_channels(struct iio_dev *indio_dev)
+
+> +{
+> +	struct device *dev = indio_dev->dev.parent;
+> +	struct ad4851_state *st = iio_priv(indio_dev);
+> +	struct iio_chan_spec *ad4851_channels;
+> +	const struct iio_chan_spec ad4851_chan = AD4858_IIO_CHANNEL(0, 0, 0, 20);
+> +	const struct iio_chan_spec ad4851_chan_diff = AD4858_IIO_CHANNEL(0, 0, 1, 20);
+> +	unsigned int num_channels, index = 0, reg;
+> +	int ret;
+> +
+> +	num_channels = device_get_child_node_count(dev);
+> +	if (num_channels > AD4851_MAX_CH_NR)
+> +		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n",
+> +				     num_channels);
+> +
+> +	ad4851_channels = devm_kcalloc(dev, num_channels,
+> +				       sizeof(*ad4851_channels), GFP_KERNEL);
+> +	if (!ad4851_channels)
+> +		return -ENOMEM;
+> +
+> +	indio_dev->channels = ad4851_channels;
+> +	indio_dev->num_channels = num_channels;
+> +
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		ret = fwnode_property_read_u32(child, "reg", &reg);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					     "Missing channel number\n");
+> +		if (fwnode_property_present(child, "diff-channels")) {
+> +			*ad4851_channels = ad4851_chan_diff;
+> +			ad4851_channels->scan_index = index++;
+> +			ad4851_channels->channel = reg;
+> +			ad4851_channels->channel2 = reg + AD4851_MAX_CH_NR;
+> +			ad4851_channels->ext_scan_type = ad4851_scan_type_20_1;
+i think this is already set appropriately in the AD4858_IIO_CHANNEL() macro.
+ 
+> +			ad4851_channels->num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_20_1);
+> +
+> +		} else {
+> +			*ad4851_channels = ad4851_chan;
+> +			ad4851_channels->scan_index = index++;
+> +			ad4851_channels->channel = reg;
+> +			ad4851_channels->ext_scan_type = ad4851_scan_type_20_0;
+> +			ad4851_channels->num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_20_0);
+as above.
+
+With those dealt with there is a huge amount of duplication between this and
+ ad4857_parse_channels.  Perhaps factor out a helper function into which
+the two iio_chan_spec are passed.
+
+> +			ret = regmap_write(st->regmap, AD4851_REG_CHX_SOFTSPAN(reg),
+> +					   AD4851_SOFTSPAN_0V_40V);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +		ad4851_channels++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct ad4851_chip_info ad4851_info = {
+> +	.name = "ad4851",
+> +	.product_id = 0x67,
+> +	.max_sample_rate_hz = 250 * KILO,
+> +	.resolution = 16,
+> +	.parse_channels = ad4857_parse_channels,
+> +};
+> +
+> +static const struct ad4851_chip_info ad4852_info = {
+> +	.name = "ad4852",
+> +	.product_id = 0x66,
+> +	.max_sample_rate_hz = 250 * KILO,
+> +	.resolution = 20,
+> +	.parse_channels = ad4858_parse_channels,
+> +};
+> +
+> +static const struct ad4851_chip_info ad4853_info = {
+> +	.name = "ad4853",
+> +	.product_id = 0x65,
+> +	.max_sample_rate_hz = 1 * MEGA,
+> +	.resolution = 16,
+> +	.parse_channels = ad4857_parse_channels,
+> +};
+> +
+> +static const struct ad4851_chip_info ad4854_info = {
+> +	.name = "ad4854",
+> +	.product_id = 0x64,
+> +	.max_sample_rate_hz = 1 * MEGA,
+> +	.resolution = 20,
+> +	.parse_channels = ad4858_parse_channels,
+> +};
+> +
+> +static const struct ad4851_chip_info ad4855_info = {
+> +	.name = "ad4855",
+> +	.product_id = 0x63,
+> +	.max_sample_rate_hz = 250 * KILO,
+> +	.resolution = 16,
+> +	.parse_channels = ad4857_parse_channels,
+> +};
+> +
+> +static const struct ad4851_chip_info ad4856_info = {
+> +	.name = "ad4856",
+> +	.product_id = 0x62,
+> +	.max_sample_rate_hz = 250 * KILO,
+> +	.resolution = 20,
+> +	.parse_channels = ad4858_parse_channels,
+> +};
+> +
+> +static const struct ad4851_chip_info ad4857_info = {
+> +	.name = "ad4857",
+> +	.product_id = 0x61,
+> +	.max_sample_rate_hz = 1 * MEGA,
+> +	.resolution = 16,
+> +	.channels = ad4857_channels,
+> +	.num_channels = ARRAY_SIZE(ad4857_channels),
+> +	.parse_channels = ad4857_parse_channels,
+> +};
+> +
+> +static const struct ad4851_chip_info ad4858_info = {
+> +	.name = "ad4858",
+> +	.product_id = 0x60,
+> +	.max_sample_rate_hz = 1 * MEGA,
+> +	.resolution = 20,
+
+A lot of these are not setting all the fields.
+If intentional I'd like some comments in here to remind us
+why.
+
+> +	.parse_channels = ad4858_parse_channels,
+> +};
+> +
+> +static const struct ad4851_chip_info ad4858i_info = {
+> +	.name = "ad4858i",
+> +	.product_id = 0x6F,
+> +	.max_sample_rate_hz = 1 * MEGA,
+> +	.resolution = 20,
+> +	.parse_channels = ad4858_parse_channels,
+> +};
+> +
+> +static const struct iio_info ad4851_iio_info = {
+> +	.debugfs_reg_access = ad4851_reg_access,
+> +	.read_raw = ad4851_read_raw,
+> +	.write_raw = ad4851_write_raw,
+> +	.update_scan_mode = ad4851_update_scan_mode,
+> +	.get_current_scan_type = &ad4851_get_current_scan_type,
+> +	.read_avail = ad4851_read_avail,
+> +};
+
+> +
+> +static int ad4851_probe(struct spi_device *spi)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct device *dev = &spi->dev;
+> +	struct ad4851_state *st;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	st = iio_priv(indio_dev);
+> +	st->spi = spi;
+> +
+> +	ret = devm_mutex_init(dev, &st->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_regulator_bulk_get_enable(dev,
+> +					     ARRAY_SIZE(ad4851_power_supplies),
+> +					     ad4851_power_supplies);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "failed to get and enable supplies\n");
+> +
+> +	ret = devm_regulator_get_enable_optional(dev, "vddh");
+> +	if (ret < 0 && ret != -ENODEV)> +		return dev_err_probe(dev, ret, "failed to enable vddh voltage\n");
+> +
+> +	ret = devm_regulator_get_enable_optional(dev, "vddl");
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return dev_err_probe(dev, ret, "failed to enable vddl voltage\n");
+> +
+> +	st->vrefbuf = devm_regulator_get_optional(dev, "vrefbuf");
+> +	if (IS_ERR(st->vrefbuf)) {
+> +		if (PTR_ERR(st->vrefbuf) != -ENODEV)
+> +			return dev_err_probe(dev, PTR_ERR(st->vrefbuf),
+> +					     "Failed to get vrefbuf regulator\n");
+> +	}
+> +
+> +	st->vrefio = devm_regulator_get_optional(dev, "vrefio");
+> +	if (IS_ERR(st->vrefio)) {
+> +		if (PTR_ERR(st->vrefio) != -ENODEV)
+> +			return dev_err_probe(dev, PTR_ERR(st->vrefio),
+> +					     "Failed to get vrefio regulator\n");
+> +	}
+> +
+> +	st->pd_gpio = devm_gpiod_get_optional(dev, "pd", GPIOD_OUT_LOW);
+> +	if (IS_ERR(st->pd_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(st->pd_gpio),
+> +				     "Error on requesting pd GPIO\n");
+> +
+> +	st->cnv = devm_pwm_get(dev, NULL);
+> +	if (IS_ERR(st->cnv))
+> +		return dev_err_probe(dev, PTR_ERR(st->cnv),
+> +				     "Error on requesting pwm\n");
+> +
+> +	ret = devm_add_action_or_reset(&st->spi->dev, ad4851_pwm_disable,
+
+I think this belongs after ad4841_set_sampling_freq as that includes
+enabling the pwm.  A devm cleanup action should be registered immediately
+after whatever it is undoing.
+
+
+> +				       st->cnv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->info = spi_get_device_match_data(spi);
+> +	if (!st->info)
+> +		return -ENODEV;
+> +
+> +	st->regmap = devm_regmap_init_spi(spi, &regmap_config);
+> +	if (IS_ERR(st->regmap))
+> +		return PTR_ERR(st->regmap);
+> +
+> +	ret = ad4851_scale_fill(st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ad4851_set_sampling_freq(st, HZ_PER_MHZ);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ad4851_setup(st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	indio_dev->name = st->info->name;
+> +	indio_dev->info = &ad4851_iio_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +
+> +	ret = st->info->parse_channels(indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->back = devm_iio_backend_get(dev, NULL);
+> +	if (IS_ERR(st->back))
+> +		return PTR_ERR(st->back);
+> +
+> +	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_iio_backend_enable(dev, st->back);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ad4851_calibrate(st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_iio_device_register(dev, indio_dev);
+> +}
 
