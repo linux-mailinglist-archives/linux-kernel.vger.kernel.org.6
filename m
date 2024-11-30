@@ -1,281 +1,127 @@
-Return-Path: <linux-kernel+bounces-426482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D819DF399
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 23:59:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4FD9DF3C5
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 00:03:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71FEEB21937
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 22:59:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E9EB218AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 23:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43A61AA1F3;
-	Sat, 30 Nov 2024 22:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1C61ABEB4;
+	Sat, 30 Nov 2024 23:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Yzto8W8v"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=andrewstrohman-com.20230601.gappssmtp.com header.i=@andrewstrohman-com.20230601.gappssmtp.com header.b="lq6Fg0Am"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AB01531CB;
-	Sat, 30 Nov 2024 22:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B711A76B4
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 23:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733007545; cv=none; b=twSPp6XgHhnEo7n8hCOoG5uddTnXkq6ZGF6lrB2u2LglLo9ba0bC8gGkmxTiM+QpkvFL5lNW+eRpWyPULqSpLNh4nCGxifmnKiv4Ukidiu7SWcEp3uWVIcI+YoxfFpN1dIskwX6fF0XZJUSKhPGDlfEgFeSqCO3IRRV+j0IUy9k=
+	t=1733007816; cv=none; b=Uu3p/g05zAsIIu7y+P8g7no7mV5fpO8sAXzkGCigDHA48J40uNrhBBswfLBVq1o9YctxZtAivqUXK+AukM1Xg3NZ3az9JHrTpKGQIQdha83Zj84oT1qiSfldn0lA8PuhloxJOZxnmz39VfDtC1Jc7Zr0GnuERjJjjFwiFcw5mRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733007545; c=relaxed/simple;
-	bh=fS0WQP5cCPXYY+Y/FoVBTN23kq8pu/KZLCAggos1bPA=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=g9pKhzUq2wBlC+Ru4TNaXRoGsMSjaelhWc4ByOJxltTFiclWUa2/yZYfvYIANIrc31RwdqdOpZJWw0vmMj6yJHpXl+8aSJxSJQdmjve6e1h4DgVKhsW677Cv/UcMl9g+6w5jXTDRh23E8wFDYVwAcpcwh6iHJBQJLZGFvLxnQIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Yzto8W8v; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
-	by mail.mainlining.org (Postfix) with ESMTPSA id B6CAAE4804;
-	Sat, 30 Nov 2024 22:58:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1733007535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d7Fmp2Vm9h54P0By8INbgnYQdGpqYIwhyYeNHMQrmwQ=;
-	b=Yzto8W8v2WpU8VujX7JbwNyEQh0rN1z6u5agGMbF7CnstJvtG3MS1shWhmoSaqe56xvcIo
-	efwFLVnEI49f3UjzdOfjzEz+/Zs+wckmenHWGY44gjZWtBW+pSXyZW1IMtkOdS3dE0p1ND
-	AHm3KJ+geB8V9dOeJiMiJ4oBHf0mgt1d2FL6sGJDKf+5/H0bM44SmX7bEPwdq8EUqGgJ5H
-	eGfTOjEfUSD5d88EvVXcvYWJDdUNA47imoFSzdXCFs6oNSuzYuUzUL23T21efAaAZISe+u
-	gfKT8VDm6SBE3HMxtWY7piQFXS03+9G989j4NeNEWQFwUoykzEBwAaHrcBMXqA==
+	s=arc-20240116; t=1733007816; c=relaxed/simple;
+	bh=Oj23kvXML5YxbzImIPjLr7bu4A1f9m4DYN95To+LWn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eez+xYfYUpOIfDlpJm38m5/Lxumds87wNXPmjwbfoc3MMFiQxIXbvO3TNgM4Pmpms6JsbaEF4vvdS1Nud2q6/yE66gzdswMWnXupYR46Qpg6msA7bBs6BSw9Ug3pta+MiBK/ebiuC+g6uw1d8OxKf7V0XE49UR+PKr8dTIAw1WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=andrewstrohman.com; spf=none smtp.mailfrom=andrewstrohman.com; dkim=pass (2048-bit key) header.d=andrewstrohman-com.20230601.gappssmtp.com header.i=@andrewstrohman-com.20230601.gappssmtp.com header.b=lq6Fg0Am; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=andrewstrohman.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=andrewstrohman.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3985aabf43so1551514276.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:03:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=andrewstrohman-com.20230601.gappssmtp.com; s=20230601; t=1733007814; x=1733612614; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+lZDk59n4UHv5yZ4bNmxMnAKZtUzjiM3soOA0zJRIR8=;
+        b=lq6Fg0AmWbnv+5LSzi3KTFh3YXayo9bVjWEHegEzKD1fG4lRyPrktXM0BJ5EBwwrDi
+         x11i/bcgfKN9gtiehuyNFu4aW/2EIZtjSM7DdP6Sqq/ePAuPqEUJNYAgL2u70ynu9ODH
+         5CSz4iNHck3I8W+aQIeQ6+2PufnhycaH4xWxeQfUCLVlqt1uQ1JK0zizTHUqv4lO3RRF
+         Qtfz1EfapPUrA2/VYIilB+3jDzSPO1Bq2kFLciSsnDQwLx9gXuMFP5+ifGsLGwQnA+vH
+         8Cwj6X4mzQyOc2S7Jl3/XeW9xwLpzhP7d/t6cvZJP22pzRZUFqYFDNt8ExlMuAiWVD3D
+         x0Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733007814; x=1733612614;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+lZDk59n4UHv5yZ4bNmxMnAKZtUzjiM3soOA0zJRIR8=;
+        b=hesEE+RrmIMsx73FQ4fw6NVwcoWfOkGkmASAYdE65/gPRc/vEpqRsQzAVy/wvQTywT
+         eOKdIaSe8sTnCJTMwWBuess8ErPZDF1pq4IeGcpNRK+pgBfbNkedNpHzopuocmBRZ1Ln
+         GLBeTc4EKejMCgYn9GyugbdHS4UYr0ZHofuNkRQxbprt+9wh0S5m6/T64Hs0kzXFATu+
+         96fMdgtgGklLHX2gIeR80jGDff6TysgJVFr+kgX3jyv1FF2Q8v94g8sxFQMqp4Bs/fl0
+         nW/GKDj2lkWEL3sL7K1+QdR4jZTScf8R0l8nu5szUfk0jID9P9SToG+6h8slkQIMXjJP
+         Kdfg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0Gppk+1NCPtljn+WWoBuQLcciO/zRfjhV3EvJe1iPVp/yQ9Ktuso5kQkLuJwDfLQlCNSjCLSu6M4+T28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwDD99HI+8qJxavfvHpjztPgoRn5L6rrFBsV/hEQJnqOPWgqHZ
+	I9OJjbPKOsjRHIsSpGd4xxhHohSngJWKZnxDK4dwTUeenY7M3ZLGSLEP5N6vQnxJz0ZtpfIG1Hq
+	aYYrj0WDDr9nOew+Z/rJhf76CC8NkqW4I8vCtqw==
+X-Gm-Gg: ASbGncvIDumHy8KBz5g0Xu9boSpoavPgUWzBqjzQkWC3nWWBZJGxZQBxuEYLDnuOuNH
+	Ixhr+7FYax+IhzlXRmpUtXwXUvWd7Quo=
+X-Google-Smtp-Source: AGHT+IH81R4XFg2CPj0gwX0HCIBF9TK4lO6eQU9i9Eh6UvUy1XLoSg/49272JtHDhspwSlHmAL7DhLTLqjgun/Hp2yM=
+X-Received: by 2002:a05:6902:1549:b0:e38:c692:14a4 with SMTP id
+ 3f1490d57ef6-e395b93b17dmr15727852276.36.1733007813990; Sat, 30 Nov 2024
+ 15:03:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 30 Nov 2024 23:58:55 +0100
-From: barnabas.czeman@mainlining.org
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Robert Foss
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Yassine Oudjana
- <y.oudjana@protonmail.com>
-Subject: Re: [PATCH v2] media: qcom: camss: fix VFE pm domain off
-In-Reply-To: <c8020803-ecbd-4496-9361-f19352ddf462@linaro.org>
-References: <20241128-vfe_pm_domain_off-v2-1-0bcbbe7daaaf@mainlining.org>
- <3a5fd596-b442-4d3f-aae2-f454d0cd8e5c@linaro.org>
- <5cccec71-0cc7-492a-9fb9-903970da05c5@linaro.org>
- <d3a8d38c-9129-4fbd-8bd6-c91131d950ad@linaro.org>
- <a08e95fc03fce6cb0809a06900982c6c@mainlining.org>
- <8dfd2ee1-9baf-441f-8eb9-fa11e830334a@linaro.org>
- <ac765a062e94d549f4c34cf4c8b2c199@mainlining.org>
- <f4e47953-5a68-4ec5-860b-820b8eff2a2a@linaro.org>
- <05e91ae70902f0cd9c47bb4197d8fef1@mainlining.org>
- <93028653-9919-460e-83d3-84bf5ade56d4@linaro.org>
- <c7a9a43eea8bd1e6302ae4fa2d79dd80@mainlining.org>
- <c8020803-ecbd-4496-9361-f19352ddf462@linaro.org>
-Message-ID: <02282c0d493153c633e7eccf5559452a@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241130000802.2822146-1-andrew@andrewstrohman.com>
+ <Z0s3pDGGE0zXq0UE@penguin> <20241130160815.4n5hnr44v6ea3m44@skbuf>
+In-Reply-To: <20241130160815.4n5hnr44v6ea3m44@skbuf>
+From: Andrew Strohman <andrew@andrewstrohman.com>
+Date: Sat, 30 Nov 2024 15:03:23 -0800
+Message-ID: <CAA8ajJ=Grm47nKZ+Yp-TEXAFfyoDOkJ9Kbc+NnUOx6ehg0o=vg@mail.gmail.com>
+Subject: Re: [PATCH net-next] bridge: Make the FDB consider inner tag for Q-in-Q
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Nikolay Aleksandrov <razor@blackwall.org>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>, 
+	Petr Machata <petrm@nvidia.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, UNGLinuxDriver@microchip.com, 
+	Shahed Shaikh <shshaikh@marvell.com>, Manish Chopra <manishc@marvell.com>, GR-Linux-NIC-Dev@marvell.com, 
+	Simon Horman <horms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Roopa Prabhu <roopa@nvidia.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bridge@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-11-30 22:48, Bryan O'Donoghue wrote:
-> On 29/11/2024 23:52, barnabas.czeman@mainlining.org wrote:
->> On 2024-11-30 00:07, Bryan O'Donoghue wrote:
->>> On 29/11/2024 22:45, barnabas.czeman@mainlining.org wrote:
->>>> On 2024-11-29 23:08, Bryan O'Donoghue wrote:
->>>>> On 29/11/2024 13:46, barnabas.czeman@mainlining.org wrote:
->>>>>> On 2024-11-29 13:25, Bryan O'Donoghue wrote:
->>>>>>> On 29/11/2024 11:44, barnabas.czeman@mainlining.org wrote:
->>>>>>>>> The change does not describe how to reproduce the problem, 
->>>>>>>>> which commit
->>>>>>>>> base is tested, which platform is testes, there is no enough 
->>>>>>>>> information,
->>>>>>>>> unfortunately.
->>>>>>>> I can reproduce the problem with megapixels-sensorprofile on 
->>>>>>>> msm8953 and
->>>>>>>> it can be reproduced with megapixels on msm8996.
->>>>>>>> The base is the last commit on next.
->>>>>>> 
->>>>>>> Can you verify if vfe_domain_on has run and if so whether or not 
->>>>>>> genpd_link is NULL when that function exists.
->>>>>>> 
->>>>>> I have added some debug logs it seems pm_domain_on and 
->>>>>> pm_domain_off is called twice on the same object.
->>>>>> [   63.473360] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 
->>>>>> link 42973800
->>>>>> [   63.481524] qcom-camss 1b00020.camss: pm_domain_on 19840080 
->>>>>> link 4e413800
->>>>>> [   63.481555] qcom-camss 1b00020.camss: pm_domain_on 19842ce8 
->>>>>> link 42973800
->>>>>> [   63.481632] qcom-camss 1b00020.camss: pm_domain_off 19840080 
->>>>>> link 4e413800
->>>>>> [   63.481641] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 
->>>>>> link 42973800
->>>>>> [   63.654004] qcom-camss 1b00020.camss: pm_domain_off 19842ce8 
->>>>>> link 0
->>>>>>> That's the question.
->>>>>>> 
->>>>>>> ---
->>>>>>> bod
->>>>> 
->>>>> Could you provide this output ?
->>>>> 
->>>>> index 80a62ba112950..b25b8f6b00be1 100644
->>>>> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
->>>>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
->>>>> @@ -595,6 +595,9 @@ void vfe_isr_reset_ack(struct vfe_device *vfe)
->>>>>   */
->>>>>  void vfe_pm_domain_off(struct vfe_device *vfe)
->>>>>  {
->>>>> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
->>>>> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
->>>>> +
->>>>>         if (!vfe->genpd)
->>>>>                 return;
->>>>> 
->>>>> @@ -609,7 +612,8 @@ void vfe_pm_domain_off(struct vfe_device *vfe)
->>>>>  int vfe_pm_domain_on(struct vfe_device *vfe)
->>>>>  {
->>>>>         struct camss *camss = vfe->camss;
->>>>> -
->>>>> +dev_info(camss->dev, "%s VFE %d genpd %pK genpd_link %pK\n",
->>>>> +        __func__, vfe->id, vfe->genpd, vfe->genpd_link);
->>>>>         if (!vfe->genpd)
->>>>>                 return 0;
->>>>> 
->>>>> ---
->>>>> bod
->>>> I think logging in pm_domain_on should be placed after 
->>>> device_link_add because only NULL
->>>> will be visible.
->>>> [   83.040694] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 
->>>> genpd 000000009bd8355f genpd_link 0000000000000000
->>>> [   83.049293] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 
->>>> genpd 00000000bfb65e7c genpd_link 0000000000000000
->>>> [   83.049353] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 
->>>> genpd 000000009bd8355f genpd_link 00000000ccb0acd9
->>>> [   83.049641] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 0 
->>>> genpd 00000000bfb65e7c genpd_link 00000000348ac3c1
->>>> [   83.049654] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
->>>> genpd 000000009bd8355f genpd_link 00000000ccb0acd9
->>>> [   83.241498] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 
->>>> genpd 000000009bd8355f genpd_link 0000000000000000
->>> 
->>> Could you add
->>> 
->>> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
->>> @@ -786,7 +786,7 @@ int vfe_get(struct vfe_device *vfe)
->>>         int ret;
->>> 
->>>         mutex_lock(&vfe->power_lock);
->>> -
->>> +dev_info(vfe->camss->dev, "%s vfe %d power_count %d\n", __func__, 
->>> vfe->id, vfe->power_count);
->>>         if (vfe->power_count == 0) {
->>>                 ret = vfe->res->hw_ops->pm_domain_on(vfe);
->>>                 if (ret < 0)
->>> @@ -823,6 +823,7 @@ int vfe_get(struct vfe_device *vfe)
->>> 
->>>         mutex_unlock(&vfe->power_lock);
->>> 
->>> +dev_info(camss->vfe->dev, "%s vfe %d err=%d\n", __func__, 
->>> camss->vfe- >id, 0);
->>>         return 0;
->>> 
->>>  error_reset:
->>> @@ -835,7 +836,7 @@ int vfe_get(struct vfe_device *vfe)
->>> 
->>>  error_pm_domain:
->>>         mutex_unlock(&vfe->power_lock);
->>> -
->>> +dev_info(camss->vfe->dev, "%s vfe %d err=%d\n", __func__, 
->>> camss->vfe- >id, ret);
->>>         return ret;
->>>  }
->>> 
->>> ?
->>> 
->>> ---
->>> bod
->> I have added little more from the logs because it is only failing in 
->> edge cases megapixels-sensorprofile failing by
->> different reason quickly and trying to release the device.
->> [   54.719030] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
->> [   54.750124] qcom-camss 1b00020.camss: vfe_get vfe 0 power_count 1
->> [   54.750236] qcom-camss 1b00020.camss: vfe_get vfe 0 err=0
->> [   54.751270] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 0 genpd 
->> 00000000beaef03c genpd_link 00000000251644d9
-> 
->> [   54.751433] qcom-camss 1b00020.camss: vfe_pm_domain_on VFE 1 genpd 
->> 000000007ce2da53 genpd_link 0000000000000000
->> [   54.755531] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
->> 000000007ce2da53 genpd_link 0000000058dcd4d6
-> 
-> that's a bug genpd_link should be NULL unless power_count != 0
-> 
->> [  143.922868] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
->> 000000007ce2da53 genpd_link 00000000d1fcd54b
->> [  144.126535] qcom-camss 1b00020.camss: vfe_pm_domain_off VFE 1 genpd 
->> 000000007ce2da53 genpd_link 0000000000000000
-> 
-> this is the corollary of the bug
-> 
-> can you provide the output of the attached please ?
-[   50.787730] qcom-camss 1b00020.camss: vfe_get/806 vfe 1 power_count 0
-[   50.794888] qcom-camss 1b00020.camss: vfe_get/811 vfe 1 power_count 0
-[   50.795040] qcom-camss 1b00020.camss: vfe_get/816 vfe 1 power_count 0
-[   50.795131] qcom-camss 1b00020.camss: vfe_get/822 vfe 1 power_count 0
-[   50.795172] qcom-camss 1b00020.camss: vfe_get/827 vfe 1 power_count 0
-[   50.795180] qcom-camss 1b00020.camss: vfe_get/830 vfe 1 power_count 0
-[   50.795188] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 1
-[   50.795413] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 1
-[   50.795422] qcom-camss 1b00020.camss: vfe_put/874 vfe 1 power_count 1
-[   50.795429] qcom-camss 1b00020.camss: vfe_put/882 vfe 1 power_count 1
-[   50.795468] qcom-camss 1b00020.camss: vfe_put/884 vfe 1 power_count 1
-[   50.799936] qcom-camss 1b00020.camss: vfe_put/886 vfe 1 power_count 1
-[   50.800247] qcom-camss 1b00020.camss: vfe_put/888 vfe 1 power_count 1
-[   50.800257] qcom-camss 1b00020.camss: vfe_put/891 vfe 1 power_count 1
-[   50.800263] qcom-camss 1b00020.camss: vfe_put/893 vfe 1 power_count 0
-[   51.086159] qcom-camss 1b00020.camss: vfe_get/801 vfe 0 power_count 0
-[   51.088158] qcom-camss 1b00020.camss: vfe_get/806 vfe 0 power_count 0
-[   51.092782] qcom-camss 1b00020.camss: vfe_get/811 vfe 0 power_count 0
-[   51.092872] qcom-camss 1b00020.camss: vfe_get/816 vfe 0 power_count 0
-[   51.092945] qcom-camss 1b00020.camss: vfe_get/822 vfe 0 power_count 0
-[   51.092980] qcom-camss 1b00020.camss: vfe_get/827 vfe 0 power_count 0
-[   51.092987] qcom-camss 1b00020.camss: vfe_get/830 vfe 0 power_count 0
-[   51.092994] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 1
-[   51.117104] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 2
-[   52.181802] qcom-camss 1b00020.camss: vfe_put/868 vfe 0 power_count 2
-[   52.181828] qcom-camss 1b00020.camss: vfe_put/891 vfe 0 power_count 2
-[   52.181834] qcom-camss 1b00020.camss: vfe_put/893 vfe 0 power_count 1
-[   52.189017] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 2
-[   64.920259] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 3
-[   64.920337] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 4
-[   64.920368] qcom-camss 1b00020.camss: vfe_get/801 vfe 1 power_count 0
-[   64.920656] qcom-camss 1b00020.camss: vfe_get/806 vfe 1 power_count 0
-[   64.920667] qcom-camss 1b00020.camss: vfe_get/811 vfe 1 power_count 0
-[   64.920706] qcom-camss 1b00020.camss: vfe_get/816 vfe 1 power_count 0
-[   64.920734] qcom-camss 1b00020.camss: vfe_get/822 vfe 1 power_count 0
-[   64.920868] qcom-camss 1b00020.camss: vfe_get/827 vfe 1 power_count 0
-[   64.920877] qcom-camss 1b00020.camss: vfe_get/830 vfe 1 power_count 0
-[   64.920886] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 1
-[   64.920963] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 2
-[   64.921008] qcom-camss 1b00020.camss: vfe_get/841 vfe 1 power_count 3
-[   64.921871] qcom-camss 1b00020.camss: vfe_put/868 vfe 0 power_count 4
-[   64.921896] qcom-camss 1b00020.camss: vfe_put/891 vfe 0 power_count 4
-[   64.921904] qcom-camss 1b00020.camss: vfe_put/893 vfe 0 power_count 3
-[   64.927278] qcom-camss 1b00020.camss: vfe_get/841 vfe 0 power_count 4
-[   65.096857] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 3
-[   65.096883] qcom-camss 1b00020.camss: vfe_put/891 vfe 1 power_count 3
-[   65.096889] qcom-camss 1b00020.camss: vfe_put/893 vfe 1 power_count 2
-[   65.096903] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 2
-[   65.096908] qcom-camss 1b00020.camss: vfe_put/891 vfe 1 power_count 2
-[   65.096914] qcom-camss 1b00020.camss: vfe_put/893 vfe 1 power_count 1
-[   65.096927] qcom-camss 1b00020.camss: vfe_put/868 vfe 1 power_count 1
-[   65.096933] qcom-camss 1b00020.camss: vfe_put/874 vfe 1 power_count 1
-[   65.096938] qcom-camss 1b00020.camss: vfe_put/882 vfe 1 power_count 1
-[   65.096958] qcom-camss 1b00020.camss: vfe_put/884 vfe 1 power_count 1
-[   65.096964] qcom-camss 1b00020.camss: vfe_put/886 vfe 1 power_count 1
+Hi Vladimir,
+
+ Thanks for the review.
+
+> I was also going to plan asking Andy what is his plan on making
+> switchdev digest this.
+
+Since switchdev switches don't seem to support this, I wasn't planning on
+making switchdev digest this. I was thinking that it should just
+be disabled for those hardware switches.
+
+
+>The switch ASICs I'm most familiar with can learn
+> on inner VID or outer VID, but not both.
+
+I don't know of a switch ASIC that supports this.
+
+Is that a problem? I thought that it would be OK to add features to
+a software bridge that don't exist in any hardware bridge.
+
+I've tried to see if anyone else was facing this same problem.
+All I found were concerns about the fact that the provider bridge
+needed to learn all the customer's MACs.  As a result, it looks
+like 802.1Qay was created.
+
+It seems that 802.1Qay is primarily addressing a concern about TCAM
+limitations, and decoupling the provider and customer networks.
+I think it's possible that 802.1Qay has inadvertently
+fixed this issue for provider backbone bridges. But for my use case,
+I'm not concerned about TCAM usage. I just want isolation between
+the inner vlans.
 
