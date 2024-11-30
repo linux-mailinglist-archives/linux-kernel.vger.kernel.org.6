@@ -1,232 +1,201 @@
-Return-Path: <linux-kernel+bounces-426131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632229DEF53
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:24:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C839DEF5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:28:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181251637E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3262F2818A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D0C14B959;
-	Sat, 30 Nov 2024 08:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279EE14AD17;
+	Sat, 30 Nov 2024 08:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NHJt8hrc"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QO9F+vIZ"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E7E2FC52
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 08:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FA282890
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 08:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732955080; cv=none; b=XoLMfwtMaAC/JjsA5vrEAo2Eka0EumSuzbZrYlUk5w6gprU62l2XQ49P2P55JhIIgo0UoOSk7s9NliMVV7z2t8KdUoX3L9Bj5k6QtbEuv8A1ngud7diFiUlZ0BM/89XvlPcCr3BBLvfUj2FlnMIjb0ZLilxuOsLG9Db8Nz8bfdM=
+	t=1732955292; cv=none; b=ciGkP0DfdRaejL6+gEFjaWEkWfVYnb8yMe+kcQz1DyPphAAxUjSrIZ0FTe/kL/pEZhPQfArKI7dDssMHaabeSSRvMTIrtrqwOFum0GmxPXC+5NvhVWGwW4reITZGs9y+wp69rsYDKpVcHu6EUVYd55B8O0RMqcSJE5Zcf5jmPuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732955080; c=relaxed/simple;
-	bh=T3ZEkR8FRmoGfS+iUyMyev1GAYYNn73koObaMJIbYTs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HBfMLk3ZHGNAp34rLOgl0Gy8DlYgNljjTRuqn4UC6XyKQxvNOUzzuSpflmrARWTeMIg2UTCQO5sn+yxFEkig0k/L3bqw2PYF0Pb58kZH3IOYlZ6OepCrSXwoJA67E/QxsFJyFu3n25DWPLZJ6BoDso8tkhW8QMhcVSzX+UGphvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NHJt8hrc; arc=none smtp.client-ip=209.85.219.173
+	s=arc-20240116; t=1732955292; c=relaxed/simple;
+	bh=fYn442T/AQOKnN21tdYpJy8wXXVO0asEBiPBzRbbUe0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NYhRGBMmWxACzwN4TxafhAlsiun12wef79AYGhh69J2tKDucJatD5CfdE2B8DGbo3LyYtWXT1uayCXkOSd8uKM4GXy/L1wCyWR9fT2gRe9jIjDgO1uN87Wb1OYyIF8UaOkloiu6jhjSm9xsWzpUypFGgUV0VISEQsLN3p9QgWrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QO9F+vIZ; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e398273d6ffso1601548276.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:24:38 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53de84e4005so3009228e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:28:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732955077; x=1733559877; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/ULrCe/2Ff2FSpV/AO7lLO8UIbyUN2jMxQuSykRyzA=;
-        b=NHJt8hrciPsj4dP5MblfovlRQUFihV/MU8C/dhYWcMpQrTzHiWR22MuxIc62cGSRnR
-         xbOjWKkivNTo9KZpDd+Lu1X31zAVKLJvjlnk+zuaO9rwnsciaCqn/i08AGNOpzfjnfif
-         wASpwo/Rq9ZIxxEoZdDMh0gj95Rc+CqPvj5Pt/3RuM9i/ZI9l6mpEJvR2K/Zbd4FodZV
-         SRlKzpyyYIBO+SYS+7GUmm8IZs3X4f8VE50rm/hHdE6suSbd9hpKC7xDqw8EwAay0Wx0
-         Z1J/Lu3efgKuhai4e6o45CB/LA34ccTHYr0qe3jceyLlDW1i76F4F79xyataFk82nqUt
-         2uOg==
+        d=linaro.org; s=google; t=1732955289; x=1733560089; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbSnMoGC544U7zX5fIfp831y8T12sKgnt66TAb2i060=;
+        b=QO9F+vIZB9VDc/r+6+RJVUK++vVu9vSPPuKe6la2OWKS/Lf7kahpvZhcEO+qA/PG3i
+         rwtVfqUilYRFIbYDY2M7fkUefsf+MOqAYp9NJRwVVCeMcHFp49NgygzGZIWbPyE3eCUQ
+         C/mWXe9E6aQQ2FcfTgLxZei7W909mYOMorQXOt3LHLhFBmRkPw4vKQIo5Z3BKnw/iZlI
+         rLgkhlR3DMHil+0EqTh82+2dF/V3p5E2BSSOYfENYRGWHev4FBqqn4DJ4dFCB0W3hPvz
+         2VgF87/HjpXNRVWaqxkuBh0WMUZ58BQsSxnKo7slYggZgxMBC0Vk3/6gX8Czhy0SgfGP
+         ofhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732955077; x=1733559877;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H/ULrCe/2Ff2FSpV/AO7lLO8UIbyUN2jMxQuSykRyzA=;
-        b=Uxou1uk0cPXhh7Gjtt+9owAdoYYptZYRlufQUUHTb8HrYQJePyVgQmYTcK21L+Op3J
-         Ng5U38ySxiQyExP4qcwix1nroZcXRp9Jz4Mle3E/7GtKlHs0c4tmH6TQmE2z/j4zZ4Ag
-         tf9NBkjjj+paat6l6FhjXCjOF81sdw0U3eLwHS6DnJM5kemJdo7fIV8wRU1eVPN7g/HC
-         MLKU34JT1ofwsUokPM056fcmQhwO1DR4GgHLXwSHHTUnktiVa7AWoufws9l/qsoc9jP2
-         Naavrh4aCh8p5iBonJzRjopbfegmWcsf1owTCLGomnpMwtD+kYSomYt4lOztug0zabQI
-         YFGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNWvV6P4/ZVNtk31OiiJdSkqJOUYT3zTMPPc+Otz7zLC5DY7SRYVqhEShxnO+s0MF7WSwFm8pfTB753fc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhxH2fFGgFZAB5OEw7m/M2C864d9hrxv8D5WpOW3oOa0ncfwLG
-	b5aLc36UcDPomW1e3xpX28tdw8Se/lMp/ccX1muthHTyRx4f7x70gJwR+EcJC3L3t+Cmk1xPqiY
-	H1ZvFudEKQmCtc/bc8yIYbvT6dOJXZona/Q+q/A==
-X-Gm-Gg: ASbGnct2Ye/Gw7+mlD1QBG3CAVh2cwJihY+1bjXaGgCrMygjoNEqQpzo4701ELeAjDC
-	5uljGX2YQ1t9SabD6R+OYOAw2zqHjHqlG
-X-Google-Smtp-Source: AGHT+IHFtwIx+xIGxgtLl06FwKCAMpkX4wI1vOoW0DJY8p3/N1CSY9tG7GAJulWq+lCQjzID8VtEYI/abuGt1T7MRbQ=
-X-Received: by 2002:a05:6902:f84:b0:e38:b6be:1d58 with SMTP id
- 3f1490d57ef6-e395b893aaemr18050418276.21.1732955077495; Sat, 30 Nov 2024
- 00:24:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732955289; x=1733560089;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cbSnMoGC544U7zX5fIfp831y8T12sKgnt66TAb2i060=;
+        b=jSSMpMyJPZTo2TSCiE5dBA7uObB9XKmTIHMn4kB7mKHYBM0VONqAT5cJnHDIs0tYCk
+         goPnJsRnV4j2t99bJt7NJdEeQzRmUsq7B4IICXCLA9S1vhSF1UiuqDEedUNMCPpyKLIA
+         wK+Eh9LOqHP9YwGmkzpI/zZtxCn35+f7/tUkZtX/FOg1TJPIGSyi0Zx3Z4YBCDZNS6Uq
+         dMGJVRTMXpBSQSPMi6DUNRty4Fyic+OPAUsXXK6Omqtmu/18zySOAfixe3cFmrR7Js7h
+         y49y8b+42LSqCinLNUJg+c7VCNhCM6x5RwqAy6RuarPOyMzsvUA1fIYDm2CoJRvFeyDm
+         HDRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXplgpaHDK8Lh7OgMVmuwOsW819OkvnmpXgc8sOh9qM3/PtYeCmhjphVTJ+Te8filAPzAxKdmswMsU1pRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5h4fY6ht/eHq40OssMTVhgt6S+w/+34WtQ52wgCy84uUmxZR0
+	SCtvF+HTLCCAS0tBBNe4pLpHg3vKXfLoiZsOhBCQwv+MoO9fVb2eYz4ztS5dDwk=
+X-Gm-Gg: ASbGnctyWqvY/AYW9XWkvdflRQzU1AVLkadU9lDwyAcjCYYbWtanQuU0ze8AnReyQAj
+	s/JWRROdDuNYnPFQQRUzhVJ47NKExSSi2iu0wRKTGDWqUjX41qzEJ63+Fo8AtBDPqpXrRD6xGUg
+	za7b6slijuXINo69wDWAu8QAqJV5L50OlU/oEX3P5UdbSJieJgPewZK3+HQheAddABzRdNczDFc
+	XyfnoLcWcBUXojUF8hZZvDkD9htAHXIxQSMovs5k74bECQOp2iFJoREKGQ8ZEO6s8QPUKmJ7x4T
+	SsJVC3HhLCCkudWX/fZ+fjDua8T4Gw==
+X-Google-Smtp-Source: AGHT+IFgWR3gAkOG9mafLXj/TmNlCERT2tB84SZRTKkdRAWB1jZom71zptQRqQUiP9OjF7eSxCiFOQ==
+X-Received: by 2002:a05:6512:3c9c:b0:53d:e544:3fda with SMTP id 2adb3069b0e04-53df0114865mr9728745e87.55.1732955288602;
+        Sat, 30 Nov 2024 00:28:08 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f2cesm689752e87.121.2024.11.30.00.28.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2024 00:28:07 -0800 (PST)
+Date: Sat, 30 Nov 2024 10:28:04 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sandor Yu <sandor.yu@nxp.com>
+Cc: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	"jonas@kwiboo.se" <jonas@kwiboo.se>, "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, 
+	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"vkoul@kernel.org" <vkoul@kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, "mripard@kernel.org" <mripard@kernel.org>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, 
+	Oliver Brown <oliver.brown@nxp.com>, 
+	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>, "sam@ravnborg.org" <sam@ravnborg.org>
+Subject: Re: [PATCH v18 6/8] phy: freescale: Add DisplayPort/HDMI Combo-PHY
+ driver for i.MX8MQ
+Message-ID: <ux55oif6kyp6thojj55ymlcjjgsmqbrc35wtmmfbaun7qlxfuw@k6fi3ea5laty>
+References: <cover.1730172244.git.Sandor.yu@nxp.com>
+ <411e42c70e71dce33a80059f663fb6c58fb2ac8c.1730172244.git.Sandor.yu@nxp.com>
+ <efciuvoptv7qxwauswfseb6zlt5w4fmjdbm3huxfsn63a6bm7u@kfgkkvqoz5x4>
+ <PAXPR04MB9448F638D47B5495CF78007AF4522@PAXPR04MB9448.eurprd04.prod.outlook.com>
+ <76D430C8-3DBB-4D89-9361-9B5D3EDCF067@linaro.org>
+ <PAXPR04MB9448A7F6973D9DAE98115716F42F2@PAXPR04MB9448.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
- <20241120095428.1122935-2-quic_chejiang@quicinc.com> <454tdpuglu23nmxfqqesv42h5rk3vqiji7spo3naf2djqwojqt@6x3ram3lnlkq>
- <fb5bc38b-83b3-4924-b1d0-39219a2927b4@quicinc.com> <CAA8EJpqAOD_+SLG2LbiodWOs28_rquvMefmSH5CY1yB_rkiZPg@mail.gmail.com>
- <a7ec9426-8c8a-49b3-9916-4c2660c38e49@quicinc.com>
-In-Reply-To: <a7ec9426-8c8a-49b3-9916-4c2660c38e49@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 30 Nov 2024 10:24:26 +0200
-Message-ID: <CAA8EJpqpzwGL38F_MYUJVuAT8q96QZO7CSh00ZpNBU5cGWUqqA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
-To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
-	quic_zijuhu@quicinc.com, linux-bluetooth@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, quic_mohamull@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB9448A7F6973D9DAE98115716F42F2@PAXPR04MB9448.eurprd04.prod.outlook.com>
 
-On Sat, 30 Nov 2024 at 05:48, Cheng Jiang (IOE)
-<quic_chejiang@quicinc.com> wrote:
->
-> Hi Dmitry,
->
-> On 11/21/2024 12:38 PM, Dmitry Baryshkov wrote:
-> > On Thu, 21 Nov 2024 at 06:02, Cheng Jiang <quic_chejiang@quicinc.com> wrote:
-> >>
-> >> Hi Dmitry,
-> >>
-> >> On 11/20/2024 6:43 PM, Dmitry Baryshkov wrote:
-> >>> On Wed, Nov 20, 2024 at 05:54:25PM +0800, Cheng Jiang wrote:
-> >>>> Several Qualcomm projects will use the same Bluetooth chip, each
-> >>>> focusing on different features. For instance, consumer projects
-> >>>> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
-> >>>> SINK feature, which may have more optimizations for coexistence when
-> >>>> acting as a SINK. Due to the patch size, it is not feasible to include
-> >>>> all features in a single firmware.
-> >>>>
-> >>>> Therefore, the 'product-variant' devicetree property is used to provide
-> >>>> product information for the Bluetooth driver to load the appropriate
-> >>>> firmware.
-> >>>>
-> >>>> If this property is not defined, the default firmware will be loaded,
-> >>>> ensuring there are no backward compatibility issues with older
-> >>>> devicetrees.
-> >>>>
-> >>>> The product-variant defines like this:
-> >>>>   0 - 15 (16 bits) are product line specific definitions
-> >>>>   16 - 23 (8 bits) are for the product line.
-> >>>>   24 - 31 (8 bits) are reserved for future use, 0 currently
-> >>>
-> >>> Please use text strings instead of encoding this information into random
-> >>> integers and then using just 3 bits out of 32.
-> >> Ack. Originally intended to make it more flexible for future use. It can be
-> >> text strings for current requirement.
-> >
-> > No, fixed-format data isn't flexible. Fine-grained properties are.
-> > Please define exactly what is necessary rather than leaving empty
-> > holes "for future expansion".=
-> >
-> >>>
-> >>>>
-> >>>> |---------------------------------------------------------------------|
-> >>>> |                       32 Bits                                       |
-> >>>> |---------------------------------------------------------------------|
-> >>>> |  31 - 24 (bits)   |    23 - 16 (bits)   | 15 - 0 (16 bits)          |
-> >>>> |---------------------------------------------------------------------|
-> >>>> |   Reserved        |    0: default       | 0: default                |
-> >>>> |                   |    1: CE            |                           |
-> >>>> |                   |    2: IoT           |                           |
-> >>>> |                   |    3: Auto          |                           |
-> >>>> |                   |    4: Reserved      |                           |
-> >>>> |---------------------------------------------------------------------|
-> >>>>
-> >>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
-> >>>> ---
-> >>>>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml          | 6 ++++++
-> >>>>  1 file changed, 6 insertions(+)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> >>>> index 7bb68311c609..9019fe7bcdc6 100644
-> >>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> >>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> >>>> @@ -110,6 +110,12 @@ properties:
-> >>>>      description:
-> >>>>        boot firmware is incorrectly passing the address in big-endian order
-> >>>>
-> >>>> +  qcom,product-variant:
-> >>>> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >>>> +    description:
-> >>>> +      specify the product information for driver to load the appropriate firmware
-> >>>
-> >>> DT describes hardware. Is this a hardware property?
-> >>
-> >> It has been added to identify the firmware image for the platform. The driver
-> >> parses it, and then the rampatch is selected from a specify directory. Currently,
-> >> there is a 'firmware-name' parameter, but it is only used to specify the NVM
-> >> (config) file. We also need to specify the rampatch (TLV file).
-> >>
-> >>
-> >> Can we re-use the "firmware-name"? add two segments like the following?
-> >> firmware-name = "rampatch_xx.tlv",  "nvm_xx.bin";
-> >
-> > I think this is the better solution
-> >
-> How about the following logic for handling 'firmware-name' property:
-> 1. If there is only one string in firmware-name, it must be the NVM file, which is used
->    for backward compatibility.
->
-> 2. If there are two strings in firmware-name, the first string is for the rampatch, and
->    the second string is for the NVM.
+On Tue, Nov 26, 2024 at 02:12:04PM +0000, Sandor Yu wrote:
+> > 
+> > 
+> > On 5 November 2024 14:05:51 GMT, Sandor Yu <sandor.yu@nxp.com> wrote:
+> > >>
+> > >> On Tue, Oct 29, 2024 at 02:02:14PM +0800, Sandor Yu wrote:
+> > >> > Add Cadence HDP-TX DisplayPort and HDMI PHY driver for i.MX8MQ.
+> > >> >
+> > >> > Cadence HDP-TX PHY could be put in either DP mode or HDMI mode
+> > base
+> > >> > on the configuration chosen.
+> > >> > DisplayPort or HDMI PHY mode is configured in the driver.
+> > >> >
+> > >> > Signed-off-by: Sandor Yu <Sandor.yu@nxp.com>
+> > >> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > >> > ---
+> > >> > v17->v18:
+> > >> > - fix build error as code rebase to latest kernel version.
+> > >> >
+> > >> >  drivers/phy/freescale/Kconfig                |   10 +
+> > >> >  drivers/phy/freescale/Makefile               |    1 +
+> > >> >  drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c | 1337
+> > >> ++++++++++++++++++
+> > >> >  3 files changed, 1348 insertions(+)  create mode 100644
+> > >> > drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c
+> > >> >
+> > >> > diff --git a/drivers/phy/freescale/Kconfig
+> > >> > b/drivers/phy/freescale/Kconfig index dcd9acff6d01a..2b1210367b31c
+> > >> > 100644
+> > >> > --- a/drivers/phy/freescale/Kconfig
+> > >> > +++ b/drivers/phy/freescale/Kconfig
+> > >> > @@ -35,6 +35,16 @@ config PHY_FSL_IMX8M_PCIE
+> > >> >         Enable this to add support for the PCIE PHY as found on
+> > >> >         i.MX8M family of SOCs.
+> > >> >
+> > >> > +config PHY_FSL_IMX8MQ_HDPTX
+> > >> > +     tristate "Freescale i.MX8MQ DP/HDMI PHY support"
+> > >> > +     depends on OF && HAS_IOMEM
+> > >> > +     depends on COMMON_CLK
+> > >> > +     select GENERIC_PHY
+> > >> > +     select CDNS_MHDP_HELPER
+> > >>
+> > >> This can have problems with being satisfied on randconfig builds,
+> > >> because CDNS_MHDP_HELPER is deep inside the DRM tree.
+> > >
+> > >Yes, it should be. Change it to "depend on CDNS_MHDP_HELPER" will
+> > eliminate this problem.
+> > 
+> > No, depending on a non-user-selectable symbol is a bad idea. You should
+> > either depend/select all necessary symbols or, better in my opinion, move
+> > your helpers out of the DRM tree.
+> 
+> How about change CDNS_MHDP_HELPER to user selectable? such as
+> 
+>  config CDNS_MHDP_HELPER
+>          tristate "Cadence MHDP Helper driver"
+>          help
+>            Enable Cadence MHDP helpers for mailbox, HDMI and DP.
+>            This driver provides a foundational layer of mailbox communication for
+>            various Cadence MHDP IP implementations, such as HDMI and DisplayPort
 
-I'd say, other way around: the first one is always NVM, the second one
-is rampatch and it is optional.
+I'd say, it's a bad idea. Helpers should be automatically selected.
 
->
-> 3. Due to variations in RF performance of chips from different foundries, different NVM
->    configurations are used based on the board ID. If the second string ends with boardid,
->    the NVM file will be selected according to the board ID.
+> 
+> Finding a suitable location for the helper code is challenging. 
+> It needs to be shared among various IP versions (essentially different SoCs) 
+> and across different driver types to facilitate mailbox access.
+> I've searched the kernel code but haven't found a good precedent. 
+> Placing this helper in either drivers/gpu/drm/bridge/cadence or drivers/soc/ (as you previously suggested) has its drawbacks. 
+> drivers/gpu/drm/bridge/cadence at least provides better context for readers.
 
-Is there a reason why you can not use the exact firmware name? The
-firmware name is a part of the board DT file. I assume you know the
-board ID that has been used for the board.
+Yes, I understand the issue. However you might as well use drivers/phy/
+for the helpers: your DRM driver already depends on GENERIC_PHY, but
+there is no dependency from the PHY onto the DRM.
 
->
->
-> Here are two examples:
->
->  firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.bin";
-> In this configuration, the driver will use the two files directly.
->
->
->  firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.boardid";
-> In this configuration, the driver will replace boardid with the actual board information.
-> If the board id is 0x0206, the nvm file name will be qca/QCA6698/hpnv21.b0206
->
-> >>
-> >> Or add a new property to specify the rampatch file?
-> >> rampatch-name = "rampatch_xx.tlv";
-> >>
-> >>>
-> >>>> +
-> >>>> +
-> >>>>  required:
-> >>>>    - compatible
-> >>>>
-> >>>> --
-> >>>> 2.25.1
-> >>>>
-> >>>
-> >>
-> >
-> >
->
+> 
+> > 
+> > 
+> > >
+> > >>
+> > >> > +     help
+> > >> > +       Enable this to support the Cadence HDPTX DP/HDMI PHY
+> > driver
+> > >> > +       on i.MX8MQ SOC.
+> > >> > +
+> > >> >  config PHY_FSL_IMX8QM_HSIO
+> > >> >       tristate "Freescale i.MX8QM HSIO PHY"
+> > >> >       depends on OF && HAS_IOMEM
 
---
+-- 
 With best wishes
 Dmitry
 
