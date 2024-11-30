@@ -1,275 +1,183 @@
-Return-Path: <linux-kernel+bounces-426381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623C49DF261
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:49:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29109DF264
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:51:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0AF162DD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:51:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710EC1A76B4;
+	Sat, 30 Nov 2024 17:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlrZt+Sc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18452281445
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:49:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A211A76BB;
-	Sat, 30 Nov 2024 17:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PzppHvLj"
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F9A1A00D6;
-	Sat, 30 Nov 2024 17:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C626943AA1;
+	Sat, 30 Nov 2024 17:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732988985; cv=none; b=l4iMLMfXbLYTqaLwkoBjUjC7vX6nCcI3lc7A/5syuWkn+7JAw7n6R/x7dVHDXe7Ceiu7PvPxf4zkURd75vv6lUat7Mzvj3T3ENo1H29m0jQMPlUUwv6JZ0z17OsprRSybZOWDNawNzVIyDueHRyHIrrGxpGjVJltYxmgmP8wxuM=
+	t=1732989109; cv=none; b=RahAKdHaJ9nkZMTaN5Z1YnBKjv7inUD4PZFxnmQA8iEu9RCBlOfDwut13bv8oQSdDvrQQHfsWAabU+pK78UEGKRtBvu3pjyNhgYlDLo93UnbkJi8XWQ1XDalFIsIEFzdaCvUh92EVxopjTffEsl/zx0W+QyZlLtgk2CCX1OaTxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732988985; c=relaxed/simple;
-	bh=L/mnVv/QdU9IQuhb7S6ybelrX6vlhMxb/DG4k5UrV4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SeITHWOUdPilC3NQw+IGodEx8uD2OzkpPFiQ2CfN2Z/kBlsP1jN+b/9f/EuoBynS1QYksvMyM4ktzxsD577LO6qOJg/HmpKB21kJSDPzvgzyTV93XQRKe1udyUY5AotsxNzxcN5nw5eJTQdFOcuKJrQvNRXFkqVD6+UrrD7nof8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PzppHvLj; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id HRZztNh1xe67ZHRa0ttR0o; Sat, 30 Nov 2024 18:48:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1732988908;
-	bh=mnMhbLJd2P2Le/VIBazI/NgKkeWIHLuoIZ6P6sJndBY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=PzppHvLjaX9NthVW8Ikmrq4T7u8YOtH9bYxJi5WHGTCmzMGH4Lzv8DsnDrrOTyiCx
-	 CWyleEiCnZLr05yqPGjzDrUjZD+yDU74UsiMPOp398Osswsb4out6K5vr9+ItKNFv7
-	 rtbK1rDNejRq2h+6l5TvDwbImZ9R5UyrUf2WAHfjxNy+tgw1VJEJohlWb4RHj27H80
-	 dSmbCMw/HyTd8Zfiwtr9kTCJXbS/V0ujMAKmUuASRIHexYWLC9pf6mt3vcCdyBfdoE
-	 AKjZGqqxpYivtD1fCray62/g6KwWvoYXgJb1Fi+J46cwv8lN7bMoLRMX/JHTbzcrBE
-	 rCaZgvCLi7Xmw==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 30 Nov 2024 18:48:28 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: 
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org,
-	sre@kernel.org
-Subject: Re: [PATCH v5 2/2] power: supply: Add STC3117 fuel gauge unit driver
-Date: Sat, 30 Nov 2024 18:47:57 +0100
-Message-ID: <20241130174819.19551-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241129114200.13351-3-bhavin.sharma@siliconsignals.io>
-References: <20241129114200.13351-3-bhavin.sharma@siliconsignals.io>
+	s=arc-20240116; t=1732989109; c=relaxed/simple;
+	bh=629BkUmlK3pxMrDH/XihQ9fTKurt97vAapob71sv82k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JNY8EPsS48rOAztUd6TgYdo6GB3LO6KHZooKXqpoYCUgBGjwT937YtvAeJ8bIePwkLNC9LPXfZ2PdFn4+j3LnMJd1++l9Cg3MJQx/etCpDyjMIazCzbr43fdQJpUEg/6YP8aGCqE9Ldyt8BdLfG3RZ9JPIEelIejXQGft5VVfSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlrZt+Sc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1051CC4CECC;
+	Sat, 30 Nov 2024 17:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732989109;
+	bh=629BkUmlK3pxMrDH/XihQ9fTKurt97vAapob71sv82k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dlrZt+Scz7ohFHP9uEuBcZrErJBJpd/5CQy5VaSTL3SO9PZks7i17MOUa5hXI8g4/
+	 kk3ckgWfr1hMDYJoVSDDKNV7gUCi/lJHJJqVfxa2Wn7s9S27A0lQrxwd1ORt+fGxaf
+	 daM3R90MG/nR13+4N28zj8aveJ3edIXp+0kZGsIojcgyBNw9IX4Y4pIkjWAadegf48
+	 rmvGpy/rFFd5NH5DPySHlnpD/15Zy68R5bYjyC5f9DqjX4RTiT9YnPYFdiWSkqJgXP
+	 tY9kUdrt8mDcx1yD7CNur8a19WcVrNfmmsSPhtfkUw+0XzmSJYQwGiAnZO7S5snh8p
+	 4P0y7CSLYRnew==
+Date: Sat, 30 Nov 2024 17:51:41 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] iio: gts: Simplify using __free
+Message-ID: <20241130175141.14d3589a@jic23-huawei>
+In-Reply-To: <1f8e1388b69df8a5a1a87748e9c748d2a3aa0533.1732811829.git.mazziesaccount@gmail.com>
+References: <cover.1732811829.git.mazziesaccount@gmail.com>
+	<1f8e1388b69df8a5a1a87748e9c748d2a3aa0533.1732811829.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-My mailer refuses adesses at @siliconsignals.io. So not every one is in this reply
+On Thu, 28 Nov 2024 18:50:24 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-
-Le 29/11/2024 à 12:40, Bhavin Sharma a écrit :
-> Adds initial support for the STC3117 fuel gauge.
+> The error path in the gain_to_scaletables() uses goto for unwinding an
+> allocation on failure. This can be slightly simplified by using the
+> automated free when exiting the scope.
 > 
-> The driver provides functionality to monitor key parameters including:
-> - Voltage
-> - Current
-> - State of Charge (SOC)
-> - Temperature
-> - Status
+> Use __free(kfree) and drop the goto based error handling.
 > 
-> Signed-off-by: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
-> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 > ---
+> This is derived from the:
+> https://lore.kernel.org/lkml/5efc30d832275778d1f48d7e2c75b1ecc63511d5.1732105157.git.mazziesaccount@gmail.com/
 
-...
+Hi Matti
 
-> +/* Bit mask definition */
-> +#define STC3117_ID			        0x16
-> +#define STC3117_MIXED_MODE			0x00
-> +#define STC3117_VMODE				BIT(0)
-> +#define STC3117_GG_RUN				BIT(4)
-> +#define STC3117_CC_MODE				BIT(5)
-One unneeded extra tab?
+A few comments on specific parts of this below
 
-> +#define STC3117_BATFAIL			BIT(3)
-> +#define STC3117_PORDET				BIT(4)
-> +#define STC3117_RAM_SIZE			16
-> +#define STC3117_OCV_TABLE_SIZE			16
-> +#define STC3117_RAM_TESTWORD			0x53A9
-> +#define STC3117_SOFT_RESET                      0x11
-> +#define STC3117_NOMINAL_CAPACITY		2600
+Thanks,
 
-...
+Jonathan
 
-> +static int stc3117_set_para(struct stc3117_data *data)
+> +static int build_combined_table(struct iio_gts *gts, int **gains, size_t gain_bytes)
 > +{
-> +	int ret;
+> +	int ret, i, j, new_idx, time_idx;
+> +	int *all_gains __free(kfree) = kcalloc(gts->num_itime, gain_bytes,
+> +					       GFP_KERNEL);
 > +
-> +	ret = regmap_write(data->regmap, STC3117_ADDR_MODE, STC3117_VMODE);
-> +
-> +	for (int i = 0; i < STC3117_OCV_TABLE_SIZE; i++)
-> +		regmap_write(data->regmap, STC3117_ADDR_OCV_TABLE + i,
-> +						ocvValue[i] * 100 / 55);
-Should there be a ret |= ?
+>  	if (!all_gains)
+>  		return -ENOMEM;
+>  
+> @@ -232,10 +238,9 @@ static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
+>  
+>  	gts->avail_all_scales_table = kcalloc(new_idx, 2 * sizeof(int),
+>  					      GFP_KERNEL);
 
-> +	if (data->soc_tab[1] != 0)
-> +		regmap_bulk_write(data->regmap, STC3117_ADDR_SOC_TABLE,
-> +				  data->soc_tab, STC3117_OCV_TABLE_SIZE);
-Should there be a ret |= ?
-If it is needed, some other places in the driver may alos need it.
+I'm not particularly keen in a partial application of __free magic.
 
-> +
-> +	ret |= regmap_write(data->regmap, STC3117_ADDR_CC_CNF_H,
-> +					(ram_data.reg.cc_cnf >> 8) & 0xFF);
-> +
-> +	ret |= regmap_write(data->regmap, STC3117_ADDR_CC_CNF_L,
-> +					ram_data.reg.cc_cnf & 0xFF);
-> +
-> +	ret |= regmap_write(data->regmap, STC3117_ADDR_VM_CNF_H,
-> +					(ram_data.reg.vm_cnf >> 8) & 0xFF);
-> +
-> +	ret |= regmap_write(data->regmap, STC3117_ADDR_VM_CNF_L,
-> +					ram_data.reg.vm_cnf & 0xFF);
-> +
-> +	ret |= regmap_write(data->regmap, STC3117_ADDR_CTRL, 0x03);
-> +
-> +	ret |= regmap_write(data->regmap, STC3117_ADDR_MODE,
-> +					STC3117_MIXED_MODE | STC3117_GG_RUN);
-> +
-> +	return ret;
-> +};
+Perhaps you can use a local variable for this and a no_free_ptr() to assign it after we know
+there can't be an error that requires it to be freed.
 
-...
-
-> +static int stc3117_get_property(struct power_supply *psy,
-> +	enum power_supply_property psp, union power_supply_propval *val)
-> +{
-> +	struct stc3117_data *data = power_supply_get_drvdata(psy);
-> +
-> +	switch (psp) {
-> +	case POWER_SUPPLY_PROP_STATUS:
-> +		if (data->soc > BATTERY_FULL)
-> +			val->intval = POWER_SUPPLY_STATUS_FULL;
-This is dead-code. "val->intval" is over-written in ALL paths below.
-The logic looks broken.
-
-> +		if (data->batt_current < 0)
-> +			val->intval = POWER_SUPPLY_STATUS_CHARGING;
-> +		else if (data->batt_current > 0)
-> +			val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
-> +		else
-> +			val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
-> +		break;
-> +	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> +		val->intval = data->voltage;
-> +		break;
-> +	case POWER_SUPPLY_PROP_CURRENT_NOW:
-> +		val->intval = data->batt_current;
-> +		break;
-> +	case POWER_SUPPLY_PROP_CAPACITY:
-> +		val->intval = data->soc;
-> +		break;
-> +	case POWER_SUPPLY_PROP_TEMP:
-> +		val->intval = data->temp;
-> +		break;
-> +	case POWER_SUPPLY_PROP_PRESENT:
-> +		val->intval = data->presence;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	return 0;
-> +}
-
-...
-
-> +static int stc3117_probe(struct i2c_client *client)
-> +{
-> +	struct stc3117_data *data;
-> +	struct power_supply_config psy_cfg = {};
-> +	struct power_supply_battery_info *info;
-> +	int ret;
-> +
-> +	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
+> -	if (!gts->avail_all_scales_table) {
+> -		ret = -ENOMEM;
+> -		goto free_out;
+> -	}
+> +	if (!gts->avail_all_scales_table)
 > +		return -ENOMEM;
 > +
-> +	data->client = client;
-> +	data->regmap = devm_regmap_init_i2c(client, &stc3117_regmap_config);
-> +	if (IS_ERR(data->regmap))
-> +		return PTR_ERR(data->regmap);
-> +
-> +	i2c_set_clientdata(client, data);
-Is it needed?
-(there is no i2c_get_clientdata() in the code)
-
-> +	psy_cfg.drv_data = data;
-> +
-> +	crc8_populate_msb(stc3117_crc_table, CRC8_POLYNOMIAL);
-> +
-> +	data->battery = devm_power_supply_register(&client->dev,
-> +						   &stc3117_battery_desc, &psy_cfg);> +	if (IS_ERR(data->battery))
-> +		return dev_err_probe(&client->dev, PTR_ERR(data->battery),
-> +						"failed to register battery\n");
-> +
-> +	ret = device_property_read_u32(&client->dev, "sense-resistor",
-> +				       &battery_info.sense_resistor);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +						"failed to get sense-register\n");
-Should it be "failed to get sense-resistor\n"?
-
-> +
-> +	ret = power_supply_get_battery_info(data->battery, &info);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +					"failed to get battery information\n");
-> +
-> +	battery_info.battery_capacity = info->charge_full_design_uah * 1000;
-> +	battery_info.voltage_min = info->voltage_min_design_uv * 1000;
-> +	battery_info.voltage_max = info->voltage_min_design_uv * 1000;
-Should it be voltage_max_design_uv?
-
-> +
-> +	ret = stc3117_init(data);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +				"failed to initialization of stc3117\n");
-"failed initialization" of "failed to initialize"?
-
-> +
-> +	INIT_DELAYED_WORK(&data->update_work, fuel_gauge_update_work);
-> +
-> +	schedule_delayed_work(&data->update_work, 0);
-> +
+>  	gts->num_avail_all_scales = new_idx;
+>  
+>  	for (i = 0; i < gts->num_avail_all_scales; i++) {
+> @@ -246,14 +251,25 @@ static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
+>  		if (ret) {
+>  			kfree(gts->avail_all_scales_table);
+>  			gts->num_avail_all_scales = 0;
+> -			goto free_out;
+> +			return ret;
+>  		}
+>  	}
+>  
+> -free_out:
+> -	kfree(all_gains);
 > +	return 0;
 > +}
+>  
+> -	return ret;
+> +static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
+> +{
+> +	int ret;
+> +	size_t gain_bytes;
 > +
-> +static const struct i2c_device_id stc3117_id[] = {
-> +	{"stc3117", 0},
-Spaces sould be added to match stc3117_of_match below.
-
-> +	{},
-Unneeded ending comma after a terminator entry.
-
-> +};
-> +MODULE_DEVICE_TABLE(i2c, stc3117_id);
+> +	ret = fill_and_sort_scaletables(gts, gains, scales);
+> +	if (ret)
+> +		return ret;
 > +
-> +static const struct of_device_id stc3117_of_match[] = {
-> +	{ .compatible = "st,stc3117" },
-> +	{},
-Unneeded ending comma after a terminator entry.
+> +	gain_bytes = array_size(gts->num_hwgain, sizeof(int));
 
-> +};
-> +MODULE_DEVICE_TABLE(of, stc3117_of_match);
-...
+array_size is documented as being for 2D arrays, not an array of a multi byte
+type.  We should not use it for this purpose.
 
-CJ
+I'd be tempted to not worry about overflow, but if you do want to be sure then
+copy what kcalloc does and use a check_mul_overflow()
+
+https://elixir.bootlin.com/linux/v6.12.1/source/include/linux/slab.h#L919
+
+You don't have to tidy that up in this patch though.
+
+> +
+> +	return build_combined_table(gts, gains, gain_bytes);
+>  }
+
+>  
+> +/**
+> + * iio_gts_build_avail_time_table - build table of available integration times
+> + * @gts:	Gain time scale descriptor
+> + *
+> + * Build the table which can represent the available times to be returned
+> + * to users using the read_avail-callback.
+> + *
+> + * NOTE: Space allocated for the tables must be freed using
+> + * iio_gts_purge_avail_time_table() when the tables are no longer needed.
+> + *
+> + * Return: 0 on success.
+> + */
+> +static int iio_gts_build_avail_time_table(struct iio_gts *gts)
+Hmm. I guess this wrapper exists because perhaps you aren't comfortable
+yet with the __free() handling mid function.  It does not harm so I'm fine
+having this.
+
+> +{
+> +	if (!gts->num_itime)
+> +		return 0;
+> +
+> +	return __iio_gts_build_avail_time_table(gts);
+> +}
+> +
+>  /**
+>   * iio_gts_purge_avail_time_table - free-up the available integration time table
+>   * @gts:	Gain time scale descriptor
+
 
