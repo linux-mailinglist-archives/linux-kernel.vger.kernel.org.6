@@ -1,82 +1,91 @@
-Return-Path: <linux-kernel+bounces-426144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF019DEF78
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:26:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C079DEF7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C463AB212B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466E128152F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D575814D6ED;
-	Sat, 30 Nov 2024 09:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2141B14F10E;
+	Sat, 30 Nov 2024 09:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qWA/Vrjf"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nmZ4IlbB"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F12D1448F2
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D1F14A0AA
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732958808; cv=none; b=M995ATM/mzQXJKaxVODtQ4AErCdzq/COMo8PM/nbd8z0KLVhg3A7ZwaYCzTofrSm5QUtlXHwc0g+mNdGKoOEL80TTPlWFopfNuKaxX1gopd0lDupgjkWKEEJ4bmVZR0eERKtsqZ+KtLiZeSgT8YRM3K/zLG5TI+ZlcfU2GSVAOc=
+	t=1732958955; cv=none; b=lgQNDk5LXYZApnpahWrcHHGC3tQ24pBCY0rc5gNFzmjKZ7U6/B/uJsX/+V946YJ9n++CnqNjLIspu+EL54u/yV84CWSAredaYOd/c6BS4WoSP6Bw0yCpUl8r/tBj6wBKg0BFFszTZrLpKWJxlKHrHiWHR/nFmh9QrusZblLL7zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732958808; c=relaxed/simple;
-	bh=rpaND6MMN5dZJIlvr6NBRQ5KjSTiK1a89fv4aqev05w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JZN3ArSQMO4DYvWuxeOV8N4QcMjvp7yWj/Ft0POvxydGJRWy+56+CZfhLALUgGWXuaaod5eLnM9RJnHD8XCCTpr6IeyqE4C5xRAeWmOejKCezm4zn2RcmEtOg95hSdArgwpT6tyqTfcLKDjSSxtNrRwg3BPNqFYVZUEDFwIuCq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qWA/Vrjf; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1732958955; c=relaxed/simple;
+	bh=FfPE6OCKs0rVL6ByPFDJev9uHue0zM+Tzx9izcE96Ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GISKx5XnQaSLjwaGsgjPQET9Uo8hoJQJLMmtxc+W5tjM3hHUN74rhMbqnQfJWff9zId88zzw5dXIBJNrv7gWGDShq7N+l7qN1Lq9BwziVEKZOD+liW4fZOp08RcOLPlCIvv1Xi9kWciQ1ihVdtAn3Qw8srz28PJ3+l5SIvVMCYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nmZ4IlbB; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa543c4db92so352599966b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 01:26:46 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffd6af012eso32729341fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 01:29:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732958805; x=1733563605; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Uw/EotuC9q7RRzaotT29tAEiNazhDbbCz+xEzj7qC/o=;
-        b=qWA/VrjfmC3AWJelpc4QzSgf13G9Evr0vaAcO3v7d+WEyXt1y3CUlXY25Bo4kTmMo5
-         leeSnhfCvMPJJrWP4spSY7Qlqoi6RHdxSjYPIHbCPXdNtg1jJ4OUYKFPs/Q8zy18TcBO
-         47pA5tIVYySswcRgOYEjBTOhDxJDkz/IXqs68N0pCFrgag43heEZGhFz3qFxlm6LhlaH
-         GftP+utVc18Z1lGHyxjBr5kfKlMMuoPsw6koyS9u6IqALts7Oj7z954F4WBow6bTmfSV
-         TakGmdb+aO3t51CjNfyBuCOjoiEWam5inYja1x+gUPZuNNVJuMLNFe855ZW6KV42ha0E
-         2DnQ==
+        d=linaro.org; s=google; t=1732958951; x=1733563751; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IpRQspEiuHgaK9/cz1EDevOchifMLvBhbguqiLnF3lA=;
+        b=nmZ4IlbBw8UdkmRfOauL5BLP+Ot71Cx1Dtk6oVGgrc5sKhESZogNo5w/CK+l37OW3I
+         B5x34qFp9ceYHD9aQCwib6ab9D1b28y+VoPDjmKY4TFNRafdifAD+7KaBTWgccSFa56x
+         69I7UK/90IajwsxI3YQpxjijEdPP0l6/OnqyWU/6xQvPR70i4Q+ZBJzG4AVjr0KZ43Bl
+         6KqX11ok+mhskmAg+Ovl0ocX/iXL721YQ5W48VSYJGyzSlwxSumoZmSlQQIS8LnRRBRL
+         3Aq8vHmUKP7qAtNqRphGz8Inv9WF0WhH2Pg+NTeqJNIp2YjALsVEz8BUSZhICRLeI57s
+         UwQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732958805; x=1733563605;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uw/EotuC9q7RRzaotT29tAEiNazhDbbCz+xEzj7qC/o=;
-        b=eSgtvxS7jC4OQfjzvYQqSnJBfJmZ9XBknh9O+CkpipycezrLe33vOfHWmzbs9A4QEw
-         MarvxvqoYKTo7BGKVhfaffGcajbo5QkYkC60h+aX1kzFpI+AIwA0xiq1oveg6J8w1uxw
-         izk7YolWb3udoPNN504PxByPZcld/p0ppwm87rWHdixOZxkE8Z/q+3H+QjvRUJoqgElE
-         Q1vnmcy7D0uZs00F86iwzjqd/vW4Fm3tKfmrDJ6jicguRYHOCIwnM2qLWtVgk5d105p9
-         h8FipN5zgl8fqKfPxK0PwGg6p440HsfybD4IFtn6GfJLRJT6pdbkcPy7GZmlL6Za6QHl
-         dtkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsBOKoMI7hDEMrq7AS54xTB+55+Zai3EJdfnAXOjLRsUzyPP9P5gzYouvCgumU1WiipSufGwCH3JQFhK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLbDslHEkS0fX9WS0WizpRka6FRPGTSuq8a6cSOm002IXEG/cj
-	NzH19jx/yAX5GIBDhB0WhHMxFsKSVH8XfNOBRTliUEUGvdjwHqOlLajXsdJumAw=
-X-Gm-Gg: ASbGncsHa039kSGEcQ80eST54q/OgBnxpJa+XWDfzyzWrw0Pcug0Lk48i86AbxH1xlL
-	fHT+eXkQEdzdgdRJ+9CzybTfVs2kzEY+rIpUv1uJUF33PZJtSugt7kMtb6SUEI76hTp04y2ogdx
-	/7WLue1W2HTUTlGH0+7FRa5b25QdG583O6Dp+WUIqiBf9dTYSHRefXIipEaJjnwJkyL3FRhNH3g
-	idbyZGJ/4us0Tez8CmAvoTY0ABYFABlBODaLG0dYxPgWruZJwOfnGHmWYXJMK1pSovWrVYO
-X-Google-Smtp-Source: AGHT+IEmHIp6AbQZjgJeJn2nGJp/qWEims+cAU3oNMLqJCVxe2daNqhXMQxjmc1Juq0/xjb5P/aaSg==
-X-Received: by 2002:a17:906:2182:b0:aa5:3853:5535 with SMTP id a640c23a62f3a-aa581028f7dmr1328325066b.38.1732958804702;
-        Sat, 30 Nov 2024 01:26:44 -0800 (PST)
-Received: from localhost (h1109.n1.ips.mtn.co.ug. [41.210.145.9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599943614sm260237466b.175.2024.11.30.01.26.43
+        d=1e100.net; s=20230601; t=1732958951; x=1733563751;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IpRQspEiuHgaK9/cz1EDevOchifMLvBhbguqiLnF3lA=;
+        b=oGXuywVGh67lmhmAZXcgByDS7s8XIKIjd8ms+g6vlCuiA43WRZwvVLYTRCzClJY3M2
+         LJXdWX5oXfK/yjJOIfX2iFc5oAkv7Zm/cf/MDXVpOYeCzMZAjT8sXL0Pnraj/8J98CSu
+         A2VYNVgZHyqgnWH3QF26p8DPbHDnL5CCTMtwsaH7oBqTvvRiiBs8vA5FGwD/jEpuI8o6
+         uxQrUIOWL6jCetyxksVIVTMUbne4x3YHCSf9TCh30az0366OD9Gbtkn4W5otwB3kVLAQ
+         TZanij4xCRWtost9ZF+BBRNRqaVYJYP3RT86B/pscbZW193fGi+z03qf8y0IUb+fwCYH
+         ycjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVX5WNB4ioAGntLXMn11o3qNv0hI79hQBZlTQjcQLgvqUCIHHx2xZTSzaD/b1C5O38UQOaa2Vk+6uESc54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlCAoTAxdm3g+EpZZNSiNNWPuckAktwVLjhW84KCCd4r2iKlWs
+	LmNxFFxmsWLE4ECzD7hl7aiY/KxVbEIkPXXTRbH6KmUReXFB+SvDE9opOt/DltQ=
+X-Gm-Gg: ASbGncuUS2EWGY1mIfJMj8rgG6TD6FcaEF0/NBLlObZ/K5o3JiAXt2qtk7LZUjQ8vUE
+	C/D30g2OUTv23ST4Y0qtMi7bMkAzg+j8X9BIESqKeggLHa4jlss6vno3ZcF4IP/LSS6As1WqKd3
+	6zr9VCMEH5jqxW2A6NwNJl/yCwiolg7MfauupHppQmlZHtOFLIwTgPmA/G0lBwf+Bn+Gajxhh73
+	XtVvUpO6nf0nljJLyHlpzlzp96toAK33PqMtuF6RZOvsys0kSd8MM1/bVWs3MMJyTZ65WHv9nAi
+	k6NZ/5jEllNdWefIskaxBOf+KosH3Q==
+X-Google-Smtp-Source: AGHT+IEoAUpP4j461xugrDIohAeQkQyYVO7kZSMRugj2wAeGKt3piuntKdnV5mmKD7056IcVvwlsIQ==
+X-Received: by 2002:a05:6512:3e08:b0:53d:d3cb:debb with SMTP id 2adb3069b0e04-53df0016150mr9333515e87.0.1732958951285;
+        Sat, 30 Nov 2024 01:29:11 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f328sm722481e87.149.2024.11.30.01.29.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 01:26:44 -0800 (PST)
-Date: Sat, 30 Nov 2024 12:26:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Selvin Xavier <selvin.xavier@broadcom.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
-	Damodharam Ammepalli <damodharam.ammepalli@broadcom.com>
-Subject: drivers/infiniband/hw/bnxt_re/qplib_fp.c:1090 bnxt_qplib_create_qp()
- error: we previously assumed 'res->dattr' could be null (see line 985)
-Message-ID: <38c06486-6a1d-4129-839d-a68e29b21e40@stanley.mountain>
+        Sat, 30 Nov 2024 01:29:09 -0800 (PST)
+Date: Sat, 30 Nov 2024 11:29:07 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: fnkl.kernel@gmail.com
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nick Chan <towinchenmi@gmail.com>
+Subject: Re: [PATCH v2 3/5] drm: panel: Add a panel driver for the Summit
+ display
+Message-ID: <pokf4zrrm7utx4dlq7sfob3pb4m2dh47eyw2g345tvh75x3s2s@ylajym3brih3>
+References: <20241126-adpdrm-v2-0-c90485336c09@gmail.com>
+ <20241126-adpdrm-v2-3-c90485336c09@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,244 +94,225 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241126-adpdrm-v2-3-c90485336c09@gmail.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   9f16d5e6f220661f73b36a4be1b21575651d8833
-commit: 07f830ae4913d0b986c8c0ff88a7d597948b9bd8 RDMA/bnxt_re: Adds MSN table capability for Gen P7 adapters
-date:   12 months ago
-config: x86_64-randconfig-161-20241122 (https://download.01.org/0day-ci/archive/20241125/202411250359.DWxho9P8-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+On Tue, Nov 26, 2024 at 05:34:22PM +0100, Sasha Finkelstein via B4 Relay wrote:
+> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> 
+> This is the display panel used for the touchbar on laptops that have it.
+> 
+> Co-developed-by: Nick Chan <towinchenmi@gmail.com>
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> ---
+>  drivers/gpu/drm/panel/Kconfig        |   9 +++
+>  drivers/gpu/drm/panel/Makefile       |   1 +
+>  drivers/gpu/drm/panel/panel-summit.c | 143 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 153 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index d7469c565d1db8b8e974dd6c45d03d9352d99d63..5085a82e4bc695e85cabbc3200859bbe10cb0f91 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -925,6 +925,15 @@ config DRM_PANEL_SIMPLE
+>  	  that it can be automatically turned off when the panel goes into a
+>  	  low power state.
+>  
+> +config DRM_PANEL_SUMMIT
+> +	tristate "Apple Summit display panel"
+> +	depends on OF
+> +	depends on DRM_MIPI_DSI
+> +	depends on BACKLIGHT_CLASS_DEVICE
+> +	help
+> +	  Say Y if you want to enable support for the "Summit" display panel
+> +	  used as a touchbar on certain Apple laptops.
+> +
+>  config DRM_PANEL_SYNAPTICS_R63353
+>  	tristate "Synaptics R63353-based panels"
+>  	depends on OF
+> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> index 7dcf72646cacff11bab90c78e3b8b1f357e5f14a..10ac2e850f5cd6d6546439de75483466e4015d1a 100644
+> --- a/drivers/gpu/drm/panel/Makefile
+> +++ b/drivers/gpu/drm/panel/Makefile
+> @@ -89,6 +89,7 @@ obj-$(CONFIG_DRM_PANEL_SHARP_LS060T1SX01) += panel-sharp-ls060t1sx01.o
+>  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7701) += panel-sitronix-st7701.o
+>  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7703) += panel-sitronix-st7703.o
+>  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7789V) += panel-sitronix-st7789v.o
+> +obj-$(CONFIG_DRM_PANEL_SUMMIT) += panel-summit.o
+>  obj-$(CONFIG_DRM_PANEL_SYNAPTICS_R63353) += panel-synaptics-r63353.o
+>  obj-$(CONFIG_DRM_PANEL_SONY_ACX565AKM) += panel-sony-acx565akm.o
+>  obj-$(CONFIG_DRM_PANEL_SONY_TD4353_JDI) += panel-sony-td4353-jdi.o
+> diff --git a/drivers/gpu/drm/panel/panel-summit.c b/drivers/gpu/drm/panel/panel-summit.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..16bd9fa1213d7bc3f022b878ea5cfeadbd468995
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/panel-summit.c
+> @@ -0,0 +1,143 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +#include <linux/backlight.h>
+> +#include <drm/drm_device.h>
+> +#include <drm/drm_mipi_dsi.h>
+> +#include <drm/drm_mode.h>
+> +#include <drm/drm_modes.h>
+> +#include <drm/drm_panel.h>
+> +#include <video/mipi_display.h>
+> +
+> +struct summit_data {
+> +	struct mipi_dsi_device *dsi;
+> +	struct backlight_device *bl;
+> +	struct drm_panel panel;
+> +};
+> +
+> +static int summit_set_brightness(struct device *dev)
+> +{
+> +	struct summit_data *s_data = dev_get_drvdata(dev);
+> +	int level = backlight_get_brightness(s_data->bl);
+> +
+> +	return mipi_dsi_dcs_set_display_brightness(s_data->dsi, level);
+> +}
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202411250359.DWxho9P8-lkp@intel.com/
+Inline this function.
 
-New smatch warnings:
-drivers/infiniband/hw/bnxt_re/qplib_fp.c:1090 bnxt_qplib_create_qp() error: we previously assumed 'res->dattr' could be null (see line 985)
+> +
+> +static int summit_bl_update_status(struct backlight_device *dev)
+> +{
+> +	return summit_set_brightness(&dev->dev);
+> +}
+> +
+> +static int summit_bl_get_brightness(struct backlight_device *dev)
+> +{
+> +	return backlight_get_brightness(dev);
+> +}
 
-vim +1090 drivers/infiniband/hw/bnxt_re/qplib_fp.c
+Should not be necessary, please drop. Moreover
+backlight_get_brightness() uses blanking information to override
+brightness. As such it is not suitable for the .get_brightness()
+callback.
 
-1ac5a404797523 Selvin Xavier      2017-02-10   967  int bnxt_qplib_create_qp(struct bnxt_qplib_res *res, struct bnxt_qplib_qp *qp)
-1ac5a404797523 Selvin Xavier      2017-02-10   968  {
-1ac5a404797523 Selvin Xavier      2017-02-10   969  	struct bnxt_qplib_rcfw *rcfw = res->rcfw;
-0c4dcd60281750 Devesh Sharma      2020-02-15   970  	struct bnxt_qplib_hwq_attr hwq_attr = {};
-0c4dcd60281750 Devesh Sharma      2020-02-15   971  	struct bnxt_qplib_sg_info sginfo = {};
-ff015bcd213b5d Selvin Xavier      2023-03-30   972  	struct creq_create_qp_resp resp = {};
-ff015bcd213b5d Selvin Xavier      2023-03-30   973  	struct bnxt_qplib_cmdqmsg msg = {};
-1ac5a404797523 Selvin Xavier      2017-02-10   974  	struct bnxt_qplib_q *sq = &qp->sq;
-1ac5a404797523 Selvin Xavier      2017-02-10   975  	struct bnxt_qplib_q *rq = &qp->rq;
-ff015bcd213b5d Selvin Xavier      2023-03-30   976  	struct cmdq_create_qp req = {};
-fddcbbb02af42a Devesh Sharma      2020-04-02   977  	int rc, req_size, psn_sz = 0;
-1ac5a404797523 Selvin Xavier      2017-02-10   978  	struct bnxt_qplib_hwq *xrrq;
-c50866e2853a03 Devesh Sharma      2019-02-22   979  	struct bnxt_qplib_pbl *pbl;
-c50866e2853a03 Devesh Sharma      2019-02-22   980  	u32 qp_flags = 0;
-99bf84e24eb83d Devesh Sharma      2020-04-02   981  	u8 pg_sz_lvl;
-84cf229f4001c1 Selvin Xavier      2020-08-24   982  	u32 tbl_indx;
-159fb4ceacd79b Devesh Sharma      2020-07-15   983  	u16 nsge;
-1ac5a404797523 Selvin Xavier      2017-02-10   984  
-07f830ae4913d0 Selvin Xavier      2023-12-07  @985  	if (res->dattr)
-                                                            ^^^^^^^^^^
-This assumes ->dattr can be NULL
+> +
+> +static const struct backlight_ops summit_bl_ops = {
+> +	.get_brightness = summit_bl_get_brightness,
+> +	.update_status	= summit_bl_update_status,
+> +};
+> +
+> +static int summit_get_modes(struct drm_panel *panel,
+> +			    struct drm_connector *connector)
+> +{
+> +	struct drm_display_mode *mode = drm_mode_create(connector->dev);
+> +
+> +	connector->display_info.non_desktop = true;
+> +	drm_object_property_set_value(&connector->base,
+> +				      connector->dev->mode_config.non_desktop_property,
+> +				      connector->display_info.non_desktop);
+> +
+> +	mode->vdisplay = 2008;
+> +	mode->hdisplay = 60;
+> +	mode->hsync_start = mode->hdisplay + 8;
+> +	mode->hsync_end = mode->hsync_start + 80;
+> +	mode->htotal = mode->hsync_end + 40;
+> +	mode->vsync_start = mode->vdisplay + 1;
+> +	mode->vsync_end = mode->vsync_start + 15;
+> +	mode->vtotal = mode->vsync_end + 6;
+> +	mode->clock = (mode->vtotal * mode->htotal * 60) / 1000;
+> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> +	mode->flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_NVSYNC;
+> +	drm_mode_set_name(mode);
+> +	drm_mode_probed_add(connector, mode);
+> +	return 1;
+> +}
+> +
+> +static const struct drm_panel_funcs summit_panel_funcs = {
+> +	.get_modes = summit_get_modes,
+> +};
+> +
+> +static int summit_probe(struct mipi_dsi_device *dsi)
+> +{
+> +	struct backlight_properties props = { 0 };
+> +	struct device *dev = &dsi->dev;
+> +	struct summit_data *s_data;
+> +	int ret;
+> +
+> +	s_data = devm_kzalloc(dev, sizeof(*s_data), GFP_KERNEL);
+> +	if (!s_data)
+> +		return -ENOMEM;
+> +
+> +	mipi_dsi_set_drvdata(dsi, s_data);
+> +	s_data->dsi = dsi;
+> +
+> +	ret = device_property_read_u32(dev, "max-brightness", &props.max_brightness);
+> +	if (ret)
+> +		return ret;
+> +	props.type = BACKLIGHT_RAW;
+> +
+> +	s_data->bl = devm_backlight_device_register(dev, dev_name(dev),
+> +						   dev, s_data, &summit_bl_ops, &props);
+> +	if (IS_ERR(s_data->bl))
+> +		return PTR_ERR(s_data->bl);
+> +
+> +	drm_panel_init(&s_data->panel, dev, &summit_panel_funcs,
+> +		       DRM_MODE_CONNECTOR_DSI);
+> +	drm_panel_add(&s_data->panel);
+> +
+> +	return mipi_dsi_attach(dsi);
+> +}
+> +
+> +static void summit_remove(struct mipi_dsi_device *dsi)
+> +{
+> +	struct summit_data *s_data = mipi_dsi_get_drvdata(dsi);
+> +
+> +	mipi_dsi_detach(dsi);
+> +	drm_panel_remove(&s_data->panel);
+> +}
+> +
+> +static int summit_resume(struct device *dev)
+> +{
+> +	return summit_set_brightness(dev);
 
-07f830ae4913d0 Selvin Xavier      2023-12-07   986  		qp->dev_cap_flags = res->dattr->dev_cap_flags;
-07f830ae4913d0 Selvin Xavier      2023-12-07   987  
-3a4304d8269501 Chandramohan Akula 2023-10-23   988  	sq->dbinfo.flags = 0;
-e576adf583b525 Selvin Xavier      2023-03-30   989  	bnxt_qplib_rcfw_cmd_prep((struct cmdq_base *)&req,
-e576adf583b525 Selvin Xavier      2023-03-30   990  				 CMDQ_BASE_OPCODE_CREATE_QP,
-e576adf583b525 Selvin Xavier      2023-03-30   991  				 sizeof(req));
-1ac5a404797523 Selvin Xavier      2017-02-10   992  
-1ac5a404797523 Selvin Xavier      2017-02-10   993  	/* General */
-1ac5a404797523 Selvin Xavier      2017-02-10   994  	req.type = qp->type;
-1ac5a404797523 Selvin Xavier      2017-02-10   995  	req.dpi = cpu_to_le32(qp->dpi->dpi);
-1ac5a404797523 Selvin Xavier      2017-02-10   996  	req.qp_handle = cpu_to_le64(qp->qp_handle);
-1ac5a404797523 Selvin Xavier      2017-02-10   997  
-1ac5a404797523 Selvin Xavier      2017-02-10   998  	/* SQ */
-37f91cff2de017 Devesh Sharma      2019-02-07   999  	if (qp->type == CMDQ_CREATE_QP_TYPE_RC) {
-1801d87b3598b1 Selvin Xavier      2023-12-07  1000  		psn_sz = bnxt_qplib_is_chip_gen_p5_p7(res->cctx) ?
-37f91cff2de017 Devesh Sharma      2019-02-07  1001  			 sizeof(struct sq_psn_search_ext) :
-37f91cff2de017 Devesh Sharma      2019-02-07  1002  			 sizeof(struct sq_psn_search);
-07f830ae4913d0 Selvin Xavier      2023-12-07  1003  
-07f830ae4913d0 Selvin Xavier      2023-12-07  1004  		if (BNXT_RE_HW_RETX(qp->dev_cap_flags)) {
-07f830ae4913d0 Selvin Xavier      2023-12-07  1005  			psn_sz = sizeof(struct sq_msn_search);
-07f830ae4913d0 Selvin Xavier      2023-12-07  1006  			qp->msn = 0;
-07f830ae4913d0 Selvin Xavier      2023-12-07  1007  		}
-37f91cff2de017 Devesh Sharma      2019-02-07  1008  	}
-0c4dcd60281750 Devesh Sharma      2020-02-15  1009  
-0c4dcd60281750 Devesh Sharma      2020-02-15  1010  	hwq_attr.res = res;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1011  	hwq_attr.sginfo = &sq->sg_info;
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1012  	hwq_attr.stride = sizeof(struct sq_sge);
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1013  	hwq_attr.depth = bnxt_qplib_get_depth(sq);
-0c4dcd60281750 Devesh Sharma      2020-02-15  1014  	hwq_attr.aux_stride = psn_sz;
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1015  	hwq_attr.aux_depth = bnxt_qplib_set_sq_size(sq, qp->wqe_mode);
-07f830ae4913d0 Selvin Xavier      2023-12-07  1016  	/* Update msn tbl size */
-07f830ae4913d0 Selvin Xavier      2023-12-07  1017  	if (BNXT_RE_HW_RETX(qp->dev_cap_flags) && psn_sz) {
-07f830ae4913d0 Selvin Xavier      2023-12-07  1018  		hwq_attr.aux_depth = roundup_pow_of_two(bnxt_qplib_set_sq_size(sq, qp->wqe_mode));
-07f830ae4913d0 Selvin Xavier      2023-12-07  1019  		qp->msn_tbl_sz = hwq_attr.aux_depth;
-07f830ae4913d0 Selvin Xavier      2023-12-07  1020  		qp->msn = 0;
-07f830ae4913d0 Selvin Xavier      2023-12-07  1021  	}
-07f830ae4913d0 Selvin Xavier      2023-12-07  1022  
-0c4dcd60281750 Devesh Sharma      2020-02-15  1023  	hwq_attr.type = HWQ_TYPE_QUEUE;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1024  	rc = bnxt_qplib_alloc_init_hwq(&sq->hwq, &hwq_attr);
-1ac5a404797523 Selvin Xavier      2017-02-10  1025  	if (rc)
-07d5ce14b2aa22 Kalesh AP          2023-05-18  1026  		return rc;
-1ac5a404797523 Selvin Xavier      2017-02-10  1027  
-159fb4ceacd79b Devesh Sharma      2020-07-15  1028  	rc = bnxt_qplib_alloc_init_swq(sq);
-159fb4ceacd79b Devesh Sharma      2020-07-15  1029  	if (rc)
-1ac5a404797523 Selvin Xavier      2017-02-10  1030  		goto fail_sq;
-fddcbbb02af42a Devesh Sharma      2020-04-02  1031  
-fddcbbb02af42a Devesh Sharma      2020-04-02  1032  	if (psn_sz)
-fddcbbb02af42a Devesh Sharma      2020-04-02  1033  		bnxt_qplib_init_psn_ptr(qp, psn_sz);
-fddcbbb02af42a Devesh Sharma      2020-04-02  1034  
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1035  	req.sq_size = cpu_to_le32(bnxt_qplib_set_sq_size(sq, qp->wqe_mode));
-1ac5a404797523 Selvin Xavier      2017-02-10  1036  	pbl = &sq->hwq.pbl[PBL_LVL_0];
-1ac5a404797523 Selvin Xavier      2017-02-10  1037  	req.sq_pbl = cpu_to_le64(pbl->pg_map_arr[0]);
-99bf84e24eb83d Devesh Sharma      2020-04-02  1038  	pg_sz_lvl = (bnxt_qplib_base_pg_size(&sq->hwq) <<
-99bf84e24eb83d Devesh Sharma      2020-04-02  1039  		     CMDQ_CREATE_QP_SQ_PG_SIZE_SFT);
-99bf84e24eb83d Devesh Sharma      2020-04-02  1040  	pg_sz_lvl |= (sq->hwq.level & CMDQ_CREATE_QP_SQ_LVL_MASK);
-99bf84e24eb83d Devesh Sharma      2020-04-02  1041  	req.sq_pg_size_sq_lvl = pg_sz_lvl;
-159fb4ceacd79b Devesh Sharma      2020-07-15  1042  	req.sq_fwo_sq_sge =
-159fb4ceacd79b Devesh Sharma      2020-07-15  1043  		cpu_to_le16(((sq->max_sge & CMDQ_CREATE_QP_SQ_SGE_MASK) <<
-159fb4ceacd79b Devesh Sharma      2020-07-15  1044  			     CMDQ_CREATE_QP_SQ_SGE_SFT) | 0);
-1ac5a404797523 Selvin Xavier      2017-02-10  1045  	req.scq_cid = cpu_to_le32(qp->scq->id);
-1ac5a404797523 Selvin Xavier      2017-02-10  1046  
-1ac5a404797523 Selvin Xavier      2017-02-10  1047  	/* RQ */
-159fb4ceacd79b Devesh Sharma      2020-07-15  1048  	if (!qp->srq) {
-3a4304d8269501 Chandramohan Akula 2023-10-23  1049  		rq->dbinfo.flags = 0;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1050  		hwq_attr.res = res;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1051  		hwq_attr.sginfo = &rq->sg_info;
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1052  		hwq_attr.stride = sizeof(struct sq_sge);
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1053  		hwq_attr.depth = bnxt_qplib_get_depth(rq);
-0c4dcd60281750 Devesh Sharma      2020-02-15  1054  		hwq_attr.aux_stride = 0;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1055  		hwq_attr.aux_depth = 0;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1056  		hwq_attr.type = HWQ_TYPE_QUEUE;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1057  		rc = bnxt_qplib_alloc_init_hwq(&rq->hwq, &hwq_attr);
-1ac5a404797523 Selvin Xavier      2017-02-10  1058  		if (rc)
-159fb4ceacd79b Devesh Sharma      2020-07-15  1059  			goto sq_swq;
-159fb4ceacd79b Devesh Sharma      2020-07-15  1060  		rc = bnxt_qplib_alloc_init_swq(rq);
-159fb4ceacd79b Devesh Sharma      2020-07-15  1061  		if (rc)
-1ac5a404797523 Selvin Xavier      2017-02-10  1062  			goto fail_rq;
-159fb4ceacd79b Devesh Sharma      2020-07-15  1063  
-159fb4ceacd79b Devesh Sharma      2020-07-15  1064  		req.rq_size = cpu_to_le32(rq->max_wqe);
-1ac5a404797523 Selvin Xavier      2017-02-10  1065  		pbl = &rq->hwq.pbl[PBL_LVL_0];
-1ac5a404797523 Selvin Xavier      2017-02-10  1066  		req.rq_pbl = cpu_to_le64(pbl->pg_map_arr[0]);
-99bf84e24eb83d Devesh Sharma      2020-04-02  1067  		pg_sz_lvl = (bnxt_qplib_base_pg_size(&rq->hwq) <<
-99bf84e24eb83d Devesh Sharma      2020-04-02  1068  			     CMDQ_CREATE_QP_RQ_PG_SIZE_SFT);
-99bf84e24eb83d Devesh Sharma      2020-04-02  1069  		pg_sz_lvl |= (rq->hwq.level & CMDQ_CREATE_QP_RQ_LVL_MASK);
-99bf84e24eb83d Devesh Sharma      2020-04-02  1070  		req.rq_pg_size_rq_lvl = pg_sz_lvl;
-159fb4ceacd79b Devesh Sharma      2020-07-15  1071  		nsge = (qp->wqe_mode == BNXT_QPLIB_WQE_MODE_STATIC) ?
-159fb4ceacd79b Devesh Sharma      2020-07-15  1072  			6 : rq->max_sge;
-159fb4ceacd79b Devesh Sharma      2020-07-15  1073  		req.rq_fwo_rq_sge =
-159fb4ceacd79b Devesh Sharma      2020-07-15  1074  			cpu_to_le16(((nsge &
-159fb4ceacd79b Devesh Sharma      2020-07-15  1075  				      CMDQ_CREATE_QP_RQ_SGE_MASK) <<
-159fb4ceacd79b Devesh Sharma      2020-07-15  1076  				     CMDQ_CREATE_QP_RQ_SGE_SFT) | 0);
-37cb11acf1f72a Devesh Sharma      2018-01-11  1077  	} else {
-37cb11acf1f72a Devesh Sharma      2018-01-11  1078  		/* SRQ */
-37cb11acf1f72a Devesh Sharma      2018-01-11  1079  		qp_flags |= CMDQ_CREATE_QP_QP_FLAGS_SRQ_USED;
-37cb11acf1f72a Devesh Sharma      2018-01-11  1080  		req.srq_cid = cpu_to_le32(qp->srq->id);
-37cb11acf1f72a Devesh Sharma      2018-01-11  1081  	}
-1ac5a404797523 Selvin Xavier      2017-02-10  1082  	req.rcq_cid = cpu_to_le32(qp->rcq->id);
-99bf84e24eb83d Devesh Sharma      2020-04-02  1083  
-99bf84e24eb83d Devesh Sharma      2020-04-02  1084  	qp_flags |= CMDQ_CREATE_QP_QP_FLAGS_RESERVED_LKEY_ENABLE;
-99bf84e24eb83d Devesh Sharma      2020-04-02  1085  	qp_flags |= CMDQ_CREATE_QP_QP_FLAGS_FR_PMR_ENABLED;
-99bf84e24eb83d Devesh Sharma      2020-04-02  1086  	if (qp->sig_type)
-99bf84e24eb83d Devesh Sharma      2020-04-02  1087  		qp_flags |= CMDQ_CREATE_QP_QP_FLAGS_FORCE_COMPLETION;
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1088  	if (qp->wqe_mode == BNXT_QPLIB_WQE_MODE_VARIABLE)
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1089  		qp_flags |= CMDQ_CREATE_QP_QP_FLAGS_VARIABLE_SIZED_WQE_ENABLED;
-9a381f7e5aa299 Selvin Xavier      2021-09-15 @1090  	if (_is_ext_stats_supported(res->dattr->dev_cap_flags) && !res->is_vf)
-                                                                                    ^^^^^^^^^^
-Unchecked dereference
+Doesn't the generic code already handle that for you?
 
-9a381f7e5aa299 Selvin Xavier      2021-09-15  1091  		qp_flags |= CMDQ_CREATE_QP_QP_FLAGS_EXT_STATS_ENABLED;
-9a381f7e5aa299 Selvin Xavier      2021-09-15  1092  
-1ac5a404797523 Selvin Xavier      2017-02-10  1093  	req.qp_flags = cpu_to_le32(qp_flags);
-99bf84e24eb83d Devesh Sharma      2020-04-02  1094  
-1ac5a404797523 Selvin Xavier      2017-02-10  1095  	/* ORRQ and IRRQ */
-1ac5a404797523 Selvin Xavier      2017-02-10  1096  	if (psn_sz) {
-1ac5a404797523 Selvin Xavier      2017-02-10  1097  		xrrq = &qp->orrq;
-1ac5a404797523 Selvin Xavier      2017-02-10  1098  		xrrq->max_elements =
-1ac5a404797523 Selvin Xavier      2017-02-10  1099  			ORD_LIMIT_TO_ORRQ_SLOTS(qp->max_rd_atomic);
-1ac5a404797523 Selvin Xavier      2017-02-10  1100  		req_size = xrrq->max_elements *
-1ac5a404797523 Selvin Xavier      2017-02-10  1101  			   BNXT_QPLIB_MAX_ORRQE_ENTRY_SIZE + PAGE_SIZE - 1;
-1ac5a404797523 Selvin Xavier      2017-02-10  1102  		req_size &= ~(PAGE_SIZE - 1);
-0c4dcd60281750 Devesh Sharma      2020-02-15  1103  		sginfo.pgsize = req_size;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1104  		sginfo.pgshft = PAGE_SHIFT;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1105  
-0c4dcd60281750 Devesh Sharma      2020-02-15  1106  		hwq_attr.res = res;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1107  		hwq_attr.sginfo = &sginfo;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1108  		hwq_attr.depth = xrrq->max_elements;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1109  		hwq_attr.stride = BNXT_QPLIB_MAX_ORRQE_ENTRY_SIZE;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1110  		hwq_attr.aux_stride = 0;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1111  		hwq_attr.aux_depth = 0;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1112  		hwq_attr.type = HWQ_TYPE_CTX;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1113  		rc = bnxt_qplib_alloc_init_hwq(xrrq, &hwq_attr);
-1ac5a404797523 Selvin Xavier      2017-02-10  1114  		if (rc)
-159fb4ceacd79b Devesh Sharma      2020-07-15  1115  			goto rq_swq;
-1ac5a404797523 Selvin Xavier      2017-02-10  1116  		pbl = &xrrq->pbl[PBL_LVL_0];
-1ac5a404797523 Selvin Xavier      2017-02-10  1117  		req.orrq_addr = cpu_to_le64(pbl->pg_map_arr[0]);
-1ac5a404797523 Selvin Xavier      2017-02-10  1118  
-1ac5a404797523 Selvin Xavier      2017-02-10  1119  		xrrq = &qp->irrq;
-1ac5a404797523 Selvin Xavier      2017-02-10  1120  		xrrq->max_elements = IRD_LIMIT_TO_IRRQ_SLOTS(
-1ac5a404797523 Selvin Xavier      2017-02-10  1121  						qp->max_dest_rd_atomic);
-1ac5a404797523 Selvin Xavier      2017-02-10  1122  		req_size = xrrq->max_elements *
-1ac5a404797523 Selvin Xavier      2017-02-10  1123  			   BNXT_QPLIB_MAX_IRRQE_ENTRY_SIZE + PAGE_SIZE - 1;
-1ac5a404797523 Selvin Xavier      2017-02-10  1124  		req_size &= ~(PAGE_SIZE - 1);
-0c4dcd60281750 Devesh Sharma      2020-02-15  1125  		sginfo.pgsize = req_size;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1126  		hwq_attr.depth =  xrrq->max_elements;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1127  		hwq_attr.stride = BNXT_QPLIB_MAX_IRRQE_ENTRY_SIZE;
-0c4dcd60281750 Devesh Sharma      2020-02-15  1128  		rc = bnxt_qplib_alloc_init_hwq(xrrq, &hwq_attr);
-1ac5a404797523 Selvin Xavier      2017-02-10  1129  		if (rc)
-1ac5a404797523 Selvin Xavier      2017-02-10  1130  			goto fail_orrq;
-1ac5a404797523 Selvin Xavier      2017-02-10  1131  
-1ac5a404797523 Selvin Xavier      2017-02-10  1132  		pbl = &xrrq->pbl[PBL_LVL_0];
-1ac5a404797523 Selvin Xavier      2017-02-10  1133  		req.irrq_addr = cpu_to_le64(pbl->pg_map_arr[0]);
-1ac5a404797523 Selvin Xavier      2017-02-10  1134  	}
-1ac5a404797523 Selvin Xavier      2017-02-10  1135  	req.pd_id = cpu_to_le32(qp->pd->id);
-1ac5a404797523 Selvin Xavier      2017-02-10  1136  
-ff015bcd213b5d Selvin Xavier      2023-03-30  1137  	bnxt_qplib_fill_cmdqmsg(&msg, &req, &resp, NULL, sizeof(req),
-ff015bcd213b5d Selvin Xavier      2023-03-30  1138  				sizeof(resp), 0);
-ff015bcd213b5d Selvin Xavier      2023-03-30  1139  	rc = bnxt_qplib_rcfw_send_message(rcfw, &msg);
-cc1ec769b87c7d Devesh Sharma      2017-05-22  1140  	if (rc)
-1ac5a404797523 Selvin Xavier      2017-02-10  1141  		goto fail;
-cc1ec769b87c7d Devesh Sharma      2017-05-22  1142  
-cc1ec769b87c7d Devesh Sharma      2017-05-22  1143  	qp->id = le32_to_cpu(resp.xid);
-1ac5a404797523 Selvin Xavier      2017-02-10  1144  	qp->cur_qp_state = CMDQ_MODIFY_QP_NEW_STATE_RESET;
-f218d67ef00431 Selvin Xavier      2017-06-29  1145  	INIT_LIST_HEAD(&qp->sq_flush);
-f218d67ef00431 Selvin Xavier      2017-06-29  1146  	INIT_LIST_HEAD(&qp->rq_flush);
-6f53196bc5e7fd Devesh Sharma      2020-02-15  1147  	qp->cctx = res->cctx;
-6f53196bc5e7fd Devesh Sharma      2020-02-15  1148  	sq->dbinfo.hwq = &sq->hwq;
-6f53196bc5e7fd Devesh Sharma      2020-02-15  1149  	sq->dbinfo.xid = qp->id;
-6f53196bc5e7fd Devesh Sharma      2020-02-15  1150  	sq->dbinfo.db = qp->dpi->dbr;
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1151  	sq->dbinfo.max_slot = bnxt_qplib_set_sq_max_slot(qp->wqe_mode);
-6f53196bc5e7fd Devesh Sharma      2020-02-15  1152  	if (rq->max_wqe) {
-6f53196bc5e7fd Devesh Sharma      2020-02-15  1153  		rq->dbinfo.hwq = &rq->hwq;
-6f53196bc5e7fd Devesh Sharma      2020-02-15  1154  		rq->dbinfo.xid = qp->id;
-6f53196bc5e7fd Devesh Sharma      2020-02-15  1155  		rq->dbinfo.db = qp->dpi->dbr;
-2bb3c32c5c5fe9 Devesh Sharma      2020-07-15  1156  		rq->dbinfo.max_slot = bnxt_qplib_set_rq_max_slot(rq->wqe_size);
-6f53196bc5e7fd Devesh Sharma      2020-02-15  1157  	}
-84cf229f4001c1 Selvin Xavier      2020-08-24  1158  	tbl_indx = map_qp_id_to_tbl_indx(qp->id, rcfw);
-84cf229f4001c1 Selvin Xavier      2020-08-24  1159  	rcfw->qp_tbl[tbl_indx].qp_id = qp->id;
-84cf229f4001c1 Selvin Xavier      2020-08-24  1160  	rcfw->qp_tbl[tbl_indx].qp_handle = (void *)qp;
-1ac5a404797523 Selvin Xavier      2017-02-10  1161  
-1ac5a404797523 Selvin Xavier      2017-02-10  1162  	return 0;
-1ac5a404797523 Selvin Xavier      2017-02-10  1163  fail:
-0c4dcd60281750 Devesh Sharma      2020-02-15  1164  	bnxt_qplib_free_hwq(res, &qp->irrq);
-1ac5a404797523 Selvin Xavier      2017-02-10  1165  fail_orrq:
-0c4dcd60281750 Devesh Sharma      2020-02-15  1166  	bnxt_qplib_free_hwq(res, &qp->orrq);
-159fb4ceacd79b Devesh Sharma      2020-07-15  1167  rq_swq:
-159fb4ceacd79b Devesh Sharma      2020-07-15  1168  	kfree(rq->swq);
-1ac5a404797523 Selvin Xavier      2017-02-10  1169  fail_rq:
-0c4dcd60281750 Devesh Sharma      2020-02-15  1170  	bnxt_qplib_free_hwq(res, &rq->hwq);
-159fb4ceacd79b Devesh Sharma      2020-07-15  1171  sq_swq:
-159fb4ceacd79b Devesh Sharma      2020-07-15  1172  	kfree(sq->swq);
-1ac5a404797523 Selvin Xavier      2017-02-10  1173  fail_sq:
-0c4dcd60281750 Devesh Sharma      2020-02-15  1174  	bnxt_qplib_free_hwq(res, &sq->hwq);
-1ac5a404797523 Selvin Xavier      2017-02-10  1175  	return rc;
-1ac5a404797523 Selvin Xavier      2017-02-10  1176  }
+> +}
+> +
+> +static int summit_suspend(struct device *dev)
+> +{
+> +	struct summit_data *s_data = dev_get_drvdata(dev);
+> +
+> +	return mipi_dsi_dcs_set_display_brightness(s_data->dsi, 0);
+
+And here too.
+
+> +}
+> +
+> +static DEFINE_SIMPLE_DEV_PM_OPS(summit_pm_ops, summit_suspend,
+> +				summit_resume);
+> +
+> +static const struct of_device_id summit_of_match[] = {
+> +	{ .compatible = "apple,summit" },
+> +	{},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, summit_of_match);
+> +
+> +static struct mipi_dsi_driver summit_driver = {
+> +	.probe = summit_probe,
+> +	.remove = summit_remove,
+> +	.driver = {
+> +		.name = "panel-summit",
+> +		.of_match_table = summit_of_match,
+> +		.pm = pm_sleep_ptr(&summit_pm_ops),
+> +	},
+> +};
+> +module_mipi_dsi_driver(summit_driver);
+> +
+> +MODULE_DESCRIPTION("Summit Display Panel Driver");
+> +MODULE_LICENSE("GPL");
+> 
+> -- 
+> 2.47.1
+> 
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+With best wishes
+Dmitry
 
