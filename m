@@ -1,234 +1,99 @@
-Return-Path: <linux-kernel+bounces-426094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED7E9DEEDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:48:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73676163A9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:48:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AD3132103;
-	Sat, 30 Nov 2024 03:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XdjfO7w2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 234069DEED8
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:45:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DAE4409;
-	Sat, 30 Nov 2024 03:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E16CB217A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:45:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAE3126C05;
+	Sat, 30 Nov 2024 03:44:58 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331B84C91;
+	Sat, 30 Nov 2024 03:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732938494; cv=none; b=hHceVGnTHhJAhOOY5qNvOVgWQXIg6xOGspgt6SF5yEp7vGi61AYYLocnCm/mXtYPmm7ASYBvb9UU0OIseXyx9mhQDgULf+WSscUrJST/nGBy4LAkjECn7VOoyEVwEsWFMv1pGW1oTBFQ802KunN+O7Uhh4zRQ35UG6KBTY0LK2g=
+	t=1732938298; cv=none; b=JD63awIS9i+GmsCiH2vGk9p+F80XFp6PcwC9hjnTkGYEKnkmLHO4Sfw6rxKyqlC7rvk6x3m8QdN/DoWeYTjLPA8MwHLjKmYpIMS3X4NDxYU2nxJK6dwqsGgQ0X8WPUCf5UKJ6LNMqJBT5jW4lla96lzap3KuTjZgs5U8UKlzHCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732938494; c=relaxed/simple;
-	bh=1u1yknuIjL5wQT7LjOQNoAmLdWofmhNaxLsmkQqQNZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=szOO9eeUQ+2LoWLHEF4GwoQKO+R8wHqjMsZB4/Puv8VTMHYX3m5sYe4IZa2fRrDVI/A1TstZTLW6ZZC2xpNTU9vVTdfSkrHbJDZh0YajBsNjvfWrkGDuXU4I3dvNVewTtcA+QPRhROtPgkY0XJ30cnfKlNZVN7BqpYr5e4JVpa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XdjfO7w2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AU2q2Th001942;
-	Sat, 30 Nov 2024 03:47:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yCQ2SiwnMZW1pZ368yk8MW7kCeYayQpW3AOXamZsQjM=; b=XdjfO7w2/d9P+v8B
-	S07lDjXSnAU7Upnld4Emeh62cmIgRIz5j3smZ6zXBOQiefi5qvV25wLtUNNN2EEq
-	jZ7rdvIAq8qXzB7nCgWPA1J7TH5bPKkv/ZMuk+UU4+oSPJoPyVPsRPQclTYvX4Yp
-	m7OL3+501BvwddXjDPKK55ObhYMJ3LDbeB/3K2DWgmu0myoQ9XAz0on+XNKlkN/b
-	I+rbgmNCS6dpfjh65AfHhCNSbxsRT0uvjGc9uMvUqU9BEXApA9pyulfUSUPwCy5s
-	YcOZX4T5SxV89qffka98dBuKlE/uv1WKg3ttAJSjWWaNxOdEXG6wHl8nUq+nbpNW
-	N0e12Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ta2r24f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 30 Nov 2024 03:47:54 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AU3lr9o008676
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 30 Nov 2024 03:47:53 GMT
-Received: from [10.253.74.19] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 29 Nov
- 2024 19:47:48 -0800
-Message-ID: <a7ec9426-8c8a-49b3-9916-4c2660c38e49@quicinc.com>
-Date: Sat, 30 Nov 2024 11:47:46 +0800
+	s=arc-20240116; t=1732938298; c=relaxed/simple;
+	bh=w6wIyl4oSgwtkrTkqr9kBN08s9lyvuxOirJvQfE70wc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h4li7XygfpGAJenM9WH5S1nv8uNw46TVvK6mVwTdS2b2RvyA1MpAj8LfOSVH8OwHUh2RmnGGpETdDJne1DA2oZrHp8b5z84gSD0bN5+onra2tOfm7jmNL6OuGkFaZ08/ol0T7oDUHWA0863+1/TTIPu7xej+RwlWjvbFF7iCMok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Y0bT01c2FzPppP;
+	Sat, 30 Nov 2024 11:41:56 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 18B221800D9;
+	Sat, 30 Nov 2024 11:44:44 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 30 Nov
+ 2024 11:44:43 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>
+CC: <trond.myklebust@hammerspace.com>, <jlayton@kernel.org>,
+	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>
+Subject: [PATCH] nfs: pass ro flag to second superblock
+Date: Sat, 30 Nov 2024 11:58:18 +0800
+Message-ID: <20241130035818.1459775-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao
-	<quic_rjliao@quicinc.com>, <quic_zijuhu@quicinc.com>,
-        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_mohamull@quicinc.com>
-References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
- <20241120095428.1122935-2-quic_chejiang@quicinc.com>
- <454tdpuglu23nmxfqqesv42h5rk3vqiji7spo3naf2djqwojqt@6x3ram3lnlkq>
- <fb5bc38b-83b3-4924-b1d0-39219a2927b4@quicinc.com>
- <CAA8EJpqAOD_+SLG2LbiodWOs28_rquvMefmSH5CY1yB_rkiZPg@mail.gmail.com>
-Content-Language: en-US
-From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-In-Reply-To: <CAA8EJpqAOD_+SLG2LbiodWOs28_rquvMefmSH5CY1yB_rkiZPg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: s_qNxJtoX2dZ6plOiyh5CSbKM8o8HTuz
-X-Proofpoint-GUID: s_qNxJtoX2dZ6plOiyh5CSbKM8o8HTuz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 impostorscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
- phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411300029
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-Hi Dmitry,
+During the process of mounting an NFSv4 client, two superblocks will be
+created in sequence. The first superblock corresponds to the root
+directory exported by the server, and the second superblock corresponds to
+the directory that will be actually mounted. The first superblock will
+eventually be destroyed.
+The flag passed from user mode will only be passed to the first
+superblock, resulting in the actual used superblock not carrying the flag
+passed from user mode(fs_context_for_submount() will set sb_flags as 0).
 
-On 11/21/2024 12:38 PM, Dmitry Baryshkov wrote:
-> On Thu, 21 Nov 2024 at 06:02, Cheng Jiang <quic_chejiang@quicinc.com> wrote:
->>
->> Hi Dmitry,
->>
->> On 11/20/2024 6:43 PM, Dmitry Baryshkov wrote:
->>> On Wed, Nov 20, 2024 at 05:54:25PM +0800, Cheng Jiang wrote:
->>>> Several Qualcomm projects will use the same Bluetooth chip, each
->>>> focusing on different features. For instance, consumer projects
->>>> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
->>>> SINK feature, which may have more optimizations for coexistence when
->>>> acting as a SINK. Due to the patch size, it is not feasible to include
->>>> all features in a single firmware.
->>>>
->>>> Therefore, the 'product-variant' devicetree property is used to provide
->>>> product information for the Bluetooth driver to load the appropriate
->>>> firmware.
->>>>
->>>> If this property is not defined, the default firmware will be loaded,
->>>> ensuring there are no backward compatibility issues with older
->>>> devicetrees.
->>>>
->>>> The product-variant defines like this:
->>>>   0 - 15 (16 bits) are product line specific definitions
->>>>   16 - 23 (8 bits) are for the product line.
->>>>   24 - 31 (8 bits) are reserved for future use, 0 currently
->>>
->>> Please use text strings instead of encoding this information into random
->>> integers and then using just 3 bits out of 32.
->> Ack. Originally intended to make it more flexible for future use. It can be
->> text strings for current requirement.
-> 
-> No, fixed-format data isn't flexible. Fine-grained properties are.
-> Please define exactly what is necessary rather than leaving empty
-> holes "for future expansion".=
-> 
->>>
->>>>
->>>> |---------------------------------------------------------------------|
->>>> |                       32 Bits                                       |
->>>> |---------------------------------------------------------------------|
->>>> |  31 - 24 (bits)   |    23 - 16 (bits)   | 15 - 0 (16 bits)          |
->>>> |---------------------------------------------------------------------|
->>>> |   Reserved        |    0: default       | 0: default                |
->>>> |                   |    1: CE            |                           |
->>>> |                   |    2: IoT           |                           |
->>>> |                   |    3: Auto          |                           |
->>>> |                   |    4: Reserved      |                           |
->>>> |---------------------------------------------------------------------|
->>>>
->>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->>>> ---
->>>>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml          | 6 ++++++
->>>>  1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> index 7bb68311c609..9019fe7bcdc6 100644
->>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> @@ -110,6 +110,12 @@ properties:
->>>>      description:
->>>>        boot firmware is incorrectly passing the address in big-endian order
->>>>
->>>> +  qcom,product-variant:
->>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>> +    description:
->>>> +      specify the product information for driver to load the appropriate firmware
->>>
->>> DT describes hardware. Is this a hardware property?
->>
->> It has been added to identify the firmware image for the platform. The driver
->> parses it, and then the rampatch is selected from a specify directory. Currently,
->> there is a 'firmware-name' parameter, but it is only used to specify the NVM
->> (config) file. We also need to specify the rampatch (TLV file).
->>
->>
->> Can we re-use the "firmware-name"? add two segments like the following?
->> firmware-name = "rampatch_xx.tlv",  "nvm_xx.bin";
-> 
-> I think this is the better solution
-> 
-How about the following logic for handling 'firmware-name' property:
-1. If there is only one string in firmware-name, it must be the NVM file, which is used
-   for backward compatibility.
+Since the superblock of NFS does not carry the ro tag, the file system
+status displayed by /proc/self/mountstats shows that NFS is always in the
+rw state, which may mislead users.
 
-2. If there are two strings in firmware-name, the first string is for the rampatch, and 
-   the second string is for the NVM.
+Pass ro flag passed by user carried by the fc to second superblock to fix
+it.
 
-3. Due to variations in RF performance of chips from different foundries, different NVM
-   configurations are used based on the board ID. If the second string ends with boardid,
-   the NVM file will be selected according to the board ID.
+Fixes: 281cad46b34d ("NFS: Create a submount rpc_op")
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+ fs/nfs/nfs4super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-Here are two examples:
-
- firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.bin";
-In this configuration, the driver will use the two files directly.
-
-
- firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.boardid";
-In this configuration, the driver will replace boardid with the actual board information.
-If the board id is 0x0206, the nvm file name will be qca/QCA6698/hpnv21.b0206
-
->>
->> Or add a new property to specify the rampatch file?
->> rampatch-name = "rampatch_xx.tlv";
->>
->>>
->>>> +
->>>> +
->>>>  required:
->>>>    - compatible
->>>>
->>>> --
->>>> 2.25.1
->>>>
->>>
->>
-> 
-> 
+diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+index b29a26923ce0..6c3ea620b75d 100644
+--- a/fs/nfs/nfs4super.c
++++ b/fs/nfs/nfs4super.c
+@@ -233,6 +233,7 @@ static int do_nfs4_mount(struct nfs_server *server,
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
++	dentry->d_sb->s_flags |= (fc->sb_flags & SB_RDONLY);
+ 	fc->root = dentry;
+ 	return 0;
+ }
+-- 
+2.31.1
 
 
