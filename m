@@ -1,146 +1,134 @@
-Return-Path: <linux-kernel+bounces-426353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A9E9DF208
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:40:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EBAD9DF20C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:40:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7649EB215CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 16:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E43E1631A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 16:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAA61A2C27;
-	Sat, 30 Nov 2024 16:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323671A9B2A;
+	Sat, 30 Nov 2024 16:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KGThtjdv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sq4dOyIO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1861A262D;
-	Sat, 30 Nov 2024 16:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820991A262D;
+	Sat, 30 Nov 2024 16:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732984793; cv=none; b=ZqyYfy+Z+5ktWd6sVXYz8Y8kbXevdB+a7gJRzuJje3BlzAKibukT9+Pxe4o5B9M6X3XqH6benu0lyJ+dsuFfY0Yi6TrRcJzytc9bEl2DGCjy+HbAPakE3ELnnf+Sqqa7ZPpUCoMjhIA8JW79SlK7UxXwt2pdEhA3bsfU7E8P8H4=
+	t=1732984798; cv=none; b=eAPbmijypIKiPFBYIWTY3PFdo2og3NDSg6gJkop2EglGhx8sywpTt5zH0S6qhuwe9BHvKVdeg31pNyjZUFHlURhO1142RrmHI6tUS5fuqZ1MM1ecX2Yw01+V21gKAyV9bxSVi1Z/13eSHlFFN8hXV9ZrJubnu5iMCipxv12X3s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732984793; c=relaxed/simple;
-	bh=P/Ora394aiAIsv2E40+bNDx45WNlD9B4Bex2g9v0SAU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nAPUAPBBfi1zvTY4GmLWhRpiRNk4/+U56nOcSt2fu3uPbkKvq5eNGMKuRcq3GVLePXcWYqPYtljWZFATobHwcXVuPrm19089+nSDm74LFwhd+vZBm+QiTEijZ63sTbe7BMVxDBDFz6+4+ilLDx030GhGH2u719ijKnIvxc2PbXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KGThtjdv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7FB9C4CED3;
-	Sat, 30 Nov 2024 16:39:49 +0000 (UTC)
+	s=arc-20240116; t=1732984798; c=relaxed/simple;
+	bh=+u8LgIOvUlPBz2HK5bh0o3+XbmSU74QqH3PJbLYocJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GOr9mYm6tVr3t/7RW6wNGHhlx4VqP3NzVOc/DLryW0wYYuktdYtPmXYeDVcRWWl6qARWypEbRH2levXvTUEh31FPXuuStXxS8Gws/t6hdN3YoKp6hpqIsOcyWmsrIFjb39Cpc6RyVZZ5GnN2NTTh/l0eV3mGtBHEGkAURDHIjLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sq4dOyIO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23193C4CED4;
+	Sat, 30 Nov 2024 16:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732984793;
-	bh=P/Ora394aiAIsv2E40+bNDx45WNlD9B4Bex2g9v0SAU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KGThtjdvUKYypb4b8OVKCKjvU1uK3aTvE1x/X/57Xkk/QTjB6H2DKPir0KZ/vrHyr
-	 hp7eTjk91zemieUWVFygz7cQ4DDt5l0IGJuNhc3iJpM15dMbS2ElkQyxUTyU8C6qX+
-	 pWLeY3Ymi5I/8047ItiGFGnc0yZd58o/u5Of4GPCKB951TbwgZrvIl3DIPDepVwJW9
-	 9TaufzhO1daP7PiW6Zvda9inBCPFKQ9Gmj6iGsE4YWPYKtR8aMOe4Nl8/s22KA4NAF
-	 xKnkEalrXHPYDdX0J235vbpeJIZe/txZSfbShk3mvJPG3/tSqAHSCfB4+Arw1fqmcA
-	 uEZoxNW9SsJDA==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Sat, 30 Nov 2024 17:39:37 +0100
-Subject: [PATCH 2/2] pmdomain: core: Support naming idle states
+	s=k20201202; t=1732984798;
+	bh=+u8LgIOvUlPBz2HK5bh0o3+XbmSU74QqH3PJbLYocJU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sq4dOyIO46GyiPRltR/GLigKM2kEfYbgEmzaB+Ub2t+CF4L8cBBAM9237MtPlOfWJ
+	 wtdeWIL5XXl5PvH5cg9xtrhfBI7iYyH5cC0BvbFIMuFahBGPuxtcxscQedySeuyKWR
+	 dm/n/95Z/ojvT2Aa1mLwqaBfr0d4FeqiS+3qUaWHy4Yd9yH3IV7aMfYH9tLAkyCc14
+	 3DP30fISyInWZTZ9bO+cNEQWSZJAfpb9hSyoU9gsdy/hdmuJJ6uWY1UX3k/CkyhcqK
+	 +OuZeRsaGEMRJ4rTbi7XXKkMYcOIyoYKjgETUAeSnMUK/fQr6VHVTpWmyAWLZErfNG
+	 vy99UXUY00Bgw==
+Date: Sat, 30 Nov 2024 16:39:48 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: adf4371: add rdiv2 and doubler
+Message-ID: <20241130163948.269289dc@jic23-huawei>
+In-Reply-To: <20241129153356.63547-2-antoniu.miclaus@analog.com>
+References: <20241129153356.63547-1-antoniu.miclaus@analog.com>
+	<20241129153356.63547-2-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241130-topic-idle_state_name-v1-2-d0ff67b0c8e9@oss.qualcomm.com>
-References: <20241130-topic-idle_state_name-v1-0-d0ff67b0c8e9@oss.qualcomm.com>
-In-Reply-To: <20241130-topic-idle_state_name-v1-0-d0ff67b0c8e9@oss.qualcomm.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732984781; l=2553;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=u/1xp80sxdJbOQMI7rGBW5elAYaMjhAKE1/mS4dnTnA=;
- b=LMvarwmd6uBjNHLDuSkBpgjXVhlwG/EfRBwLpXNOxW9vPgNSb4G6GtBDcMPbTXEzO+1aqKTSy
- XvvNh8qfmqdBEmIfSnMoagGWReHU4hFsQC6YwyOVblZNt+VYyfO0qO7
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Fri, 29 Nov 2024 17:33:52 +0200
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-Commit 422f2d418186 ("arm64: dts: qcom: Drop undocumented domain
-"idle-state-name"") brought to light the common misbelief that
-idle-state-names also applies to e.g. PSCI power domain idle states.
+> Add support for reference doubler enable and reference divide by 2
+> clock.
+> 
+> Both of these blocks are optional on the frequency path within the
+> chip and can be adjusted depending on the custom needs of the
+> applications.
+Thanks for the additional info!
+> 
+> The doubler is useful for increasing the PFD comparison frequency
+> which will result in a noise performance of the system.
 
-Make that a reality, mimicking the property name used by cpuidle
-states.
+So I'll play devil's advocate. Improved noise performance sounds
+good. If it doesn't take me out of range of allowed frequencies, why
+would I not turn it on?  What is it about the surrounding circuitry
+etc that would make this a bad idea for some uses of this chip
+but not others?
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- drivers/pmdomain/core.c   | 15 ++++++++++++---
- include/linux/pm_domain.h |  1 +
- 2 files changed, 13 insertions(+), 3 deletions(-)
+> 
+> The reference divide by 2 divides the reference signal by 2,
+> resulting in a 50% duty cycle PFD frequency.
 
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index a6c8b85dd02478e227ac74886225a3fbad330eac..6f41ebdbc24fdfdf02021d4db1b2f324736940ae 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -3171,6 +3171,8 @@ static int genpd_parse_state(struct genpd_power_state *genpd_state,
- 	if (!err)
- 		genpd_state->residency_ns = 1000LL * residency;
- 
-+	of_property_read_string(state_node, "idle-state-name", &genpd_state->name);
-+
- 	genpd_state->power_on_latency_ns = 1000LL * exit_latency;
- 	genpd_state->power_off_latency_ns = 1000LL * entry_latency;
- 	genpd_state->fwnode = &state_node->fwnode;
-@@ -3449,7 +3451,10 @@ static int idle_states_show(struct seq_file *s, void *data)
- 	seq_puts(s, "State          Time Spent(ms) Usage          Rejected\n");
- 
- 	for (i = 0; i < genpd->state_count; i++) {
--		idle_time += genpd->states[i].idle_time;
-+		struct genpd_power_state *state = &genpd->states[i];
-+		char state_name[15];
-+
-+		idle_time += state->idle_time;
- 
- 		if (genpd->status == GENPD_STATE_OFF && genpd->state_idx == i) {
- 			now = ktime_get_mono_fast_ns();
-@@ -3459,9 +3464,13 @@ static int idle_states_show(struct seq_file *s, void *data)
- 			}
- 		}
- 
-+		if (!state->name)
-+			snprintf(state_name, ARRAY_SIZE(state_name), "S%-13d", i);
-+
- 		do_div(idle_time, NSEC_PER_MSEC);
--		seq_printf(s, "S%-13i %-14llu %-14llu %llu\n", i, idle_time,
--			   genpd->states[i].usage, genpd->states[i].rejected);
-+		seq_printf(s, "%-14s %-14llu %-14llu %llu\n",
-+			   state->name ?: state_name, idle_time,
-+			   state->usage, state->rejected);
- 	}
- 
- 	genpd_unlock(genpd);
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 45646bfcaf1a5eb7169e497677c3a2acd9263a9c..1aab31370065caad13bf951179f75ff3cf798a96 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -147,6 +147,7 @@ struct genpd_governor_data {
- };
- 
- struct genpd_power_state {
-+	const char *name;
- 	s64 power_off_latency_ns;
- 	s64 power_on_latency_ns;
- 	s64 residency_ns;
+why would I want one of those? My 'guess' is this makes sense
+if the reference frequency is too high after the application of
+the scaling done by the 5 bit counter.  In effect it means the
+division circuitry does divide by 1-31, 2-64 in steps of 2.
 
--- 
-2.47.1
+That could all be wrapped up in the existing control of the
+frequency, and so far I'm still not seeing a strong reason why
+it belongs in DT.
+
+The 50% cycle thing is a bit of a red herring as assuming it
+is triggered on say the rising edge of the high frequency signal
+to toggle the divided signal, that will always be a 50% duty cycle.
+
+Jonathan
+
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v3:
+>  - add explanation in commit body
+>  .../devicetree/bindings/iio/frequency/adf4371.yaml    | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+> index 1cb2adaf66f9..ef241c38520c 100644
+> --- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+> +++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+> @@ -40,6 +40,17 @@ properties:
+>        output stage will shut down until the ADF4371/ADF4372 achieves lock as
+>        measured by the digital lock detect circuitry.
+>  
+> +  adi,reference-doubler-enable:
+> +    type: boolean
+> +    description:
+> +      If this property is present, the reference doubler block is enabled.
+> +
+> +  adi,adi,reference-div2-enable:
+> +    type: boolean
+> +    description:
+> +      If this property is present, the reference divide by 2 clock is enabled.
+> +      This feature can be used to provide a 50% duty cycle signal to the PFD.
+> +
+>  required:
+>    - compatible
+>    - reg
 
 
