@@ -1,160 +1,113 @@
-Return-Path: <linux-kernel+bounces-426209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB509DF04F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:26:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB2F9DF050
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:27:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C116528119A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2BF7162F53
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4B2198A3F;
-	Sat, 30 Nov 2024 12:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADEA19307D;
+	Sat, 30 Nov 2024 12:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="GWUf/UUt"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Lgok3lwe"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF651474D3;
-	Sat, 30 Nov 2024 12:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F6716EB56
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 12:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732969597; cv=none; b=HDse0AxDKEq7YlJRVdPwx5uVoG+vjT/5JlnGqNkRceMGtFa1suY0pcx2rN8vaGv7q+/FupEJUPTR1lepnXU1dYKkuZSlZvDVhHHCuOXy7775OuK5CC1nwEc8k9W6hC+zI4w/bxHFzC0S1alvyex8LaVyXVA5u+7n8f1Kii/1+TQ=
+	t=1732969622; cv=none; b=NvcTPQFCLkYG5ABIHIjuN0YAu7SYd6wz5JaBUP+hmP7b+Rkj4ERtWtZSwKt8BtW1tTFo1JYD4fBDkrALGvF+1qDESLoZpcA1q5d6P2abwEivFptAMh6tEJcrLNpiCGslMkTgZtkKIZHq8DrnFT5k/7wDj+69WAOKWk9bwIXlnB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732969597; c=relaxed/simple;
-	bh=z0K3Q0sj0LQ1spLuLoShahbeHYa305BCVD8UYZTR13M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h0bQawhZRkN8zkqlYGo3UPIh6bBuSW/oiJkFhA2Yf89uRsiv8o/RuZ4AwKMHGSTdFqObvr/Hi/r9yb1FqumGpUj94g5KrBEkT8iwPEj+Cl7seOjQTk+9qQKL6/lemS1GB1Y34zRLX22Yb/2c+aDUH4R7lxK12n9STxLIU+gzVX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=GWUf/UUt; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KW2SziV8Wa3Uewwj5yveby6tJ3bU6qMDTrg+jh/M0jk=; t=1732969593; x=1733574393; 
-	b=GWUf/UUtyoOjnn4MomI+kxUkELhWcFcyGCq5Qg8MjYM7fRXoURFF4a/SZuWS2kTyI8vnN4dcPaM
-	+VMRb0SQw3UlOaHQPbnAUrCtoR1tKCQPFrisxtpKJL3EUstsoSWpkjW4xvoteS7pirRknegRwgVCB
-	UeSP9Ut0W2LZojIwpnoIr7KIordZq/x2tFcRbcLQSwtm8kbkGs2dPijOjfTZiZ/cr3UMb9yEztvFG
-	Cl0oV8RLZr9rZx111qHnGXrMnt5JZn5ke0Kf96kARvA1MgZF5UbCm3XaQ9RKoOyIP3m0t1CKbkTKI
-	63M0bi5zd7HSdNrCMqkbib0KoYQ5A9+4Wurg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1tHMYG-00000003zuh-1mt2; Sat, 30 Nov 2024 13:26:20 +0100
-Received: from dynamic-078-054-081-111.78.54.pool.telefonica.de ([78.54.81.111] helo=[192.168.178.50])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1tHMYG-00000001QkK-0rW7; Sat, 30 Nov 2024 13:26:20 +0100
-Message-ID: <4484ee7c2eb6a3a5aadb9cff745b07453c76a8d2.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH V2 3/3] SH: cpuinfo: Fix a warning for
- CONFIG_CPUMASK_OFFSTACK
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Huacai Chen <chenhuacai@loongson.cn>, Arnd Bergmann <arnd@arndb.de>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Yoshinori Sato
- <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>
-Cc: loongarch@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Huacai Chen <chenhuacai@gmail.com>, Guo Ren	
- <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang	
- <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org,
- linux-sh@vger.kernel.org, 	stable@vger.kernel.org
-Date: Sat, 30 Nov 2024 13:26:19 +0100
-In-Reply-To: <20220714084136.570176-3-chenhuacai@loongson.cn>
-References: <20220714084136.570176-1-chenhuacai@loongson.cn>
-	 <20220714084136.570176-3-chenhuacai@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1732969622; c=relaxed/simple;
+	bh=+md5XKQtp1HGP8cWJAlUcT/mtjiD68rmg7hfdZAywFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KWEtdkj50Gis2XoSKKVw2Dt2lCRbZj8xPVrvO6swePIt11e9/bLlOONNee40q/JVPRKX1PiO49j7ZAeO/nBhwvnsmHqH7IBFhtTLzyAEd0d+r+f8kcQJ2O1b1tO/dgFStomONl8JjR/Xr8ROrGQhqJWunjGJxsDGC54DOzM6cjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Lgok3lwe; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E072340E0269;
+	Sat, 30 Nov 2024 12:26:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 8j_yPeIUIkxB; Sat, 30 Nov 2024 12:26:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732969612; bh=9b7rsjWYOUmku+dAyh3+ep0fV3qRv+nk40t8NGxwypc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Lgok3lweqO3mbM8bDzAGdIHD1MTXHt6xEV3+nVLEFbXVYBFPzV6ANaV14pyFudpj2
+	 gj4+Ils6v5UwR0BeR3xKT3ERW/f5RLDQ5KS7qjUCVErGDv0rvfpqJ31WnvJ0EwI1yZ
+	 Y7Ptne0anLCtj/ngT4AcEa4HHnUzn00HcHncI8n+tr/RCvgNcoi42+gMk/Gms7bwtP
+	 A+us7UeQe4P7zcTUwkfRgzCcICwOFILoTamUV2rca9lAACM6lv7ZDRnxfmR2gH2+xu
+	 iMApvOZ4LIsrTCAMFiwAljXTOxmyfWx/Kzk2HoXfOOIQkuEmYBD5sm7SIqzBr+VJnP
+	 oTLGcq1/BlIkByTpf5KGyun7I8otM7B8jPXpqMwT9GQ4ZJMcMhRAAAXXFAiDkxRslI
+	 YCX3qoieQ7QH8JclAG4WrnyTGeJqjJvdOhqgNf7XddxB2xU3B7LMo+M7p5nVTSMrb+
+	 Mk5oyKWFsOTZX1uDGqnukSJMn4Pp2o9fyrW6nN2iqro984nRA/NX17QwgURvhn5HlY
+	 IpBC7t+CqR/uTWHSw57x2NOgr82gx9Ab3cTAJpf879mNK+lFKUnIyJqZn+m6NgcCZc
+	 QQxk2bh48t6sg2M0NOlM0WSprU+lAG6L/ieQwUcYGixHiY45R1Qxa9IBHNAcBHoWP9
+	 aIGLRFlsmTMXL3RvzcgIpOjs=
+Received: from zn.tnic (p200300ea9736a15f329C23FffEA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a15f:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0A36240E0200;
+	Sat, 30 Nov 2024 12:26:49 +0000 (UTC)
+Date: Sat, 30 Nov 2024 13:26:44 +0100
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
+To: x86-ml <x86@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86/boot/compressed: Remove unused header includes from
+ kaslr.c
+Message-ID: <20241130122644.GAZ0sEhD3Bm_9ZAIuc@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Thu, 2022-07-14 at 16:41 +0800, Huacai Chen wrote:
-> When CONFIG_CPUMASK_OFFSTACK and CONFIG_DEBUG_PER_CPU_MAPS is selected,
-> cpu_max_bits_warn() generates a runtime warning similar as below while
-> we show /proc/cpuinfo. Fix this by using nr_cpu_ids (the runtime limit)
-> instead of NR_CPUS to iterate CPUs.
->=20
-> [    3.052463] ------------[ cut here ]------------
-> [    3.059679] WARNING: CPU: 3 PID: 1 at include/linux/cpumask.h:108 show=
-_cpuinfo+0x5e8/0x5f0
-> [    3.070072] Modules linked in: efivarfs autofs4
-> [    3.076257] CPU: 0 PID: 1 Comm: systemd Not tainted 5.19-rc5+ #1052
-> [    3.099465] Stack : 9000000100157b08 9000000000f18530 9000000000cf846c=
- 9000000100154000
-> [    3.109127]         9000000100157a50 0000000000000000 9000000100157a58=
- 9000000000ef7430
-> [    3.118774]         90000001001578e8 0000000000000040 0000000000000020=
- ffffffffffffffff
-> [    3.128412]         0000000000aaaaaa 1ab25f00eec96a37 900000010021de80=
- 900000000101c890
-> [    3.138056]         0000000000000000 0000000000000000 0000000000000000=
- 0000000000aaaaaa
-> [    3.147711]         ffff8000339dc220 0000000000000001 0000000006ab4000=
- 0000000000000000
-> [    3.157364]         900000000101c998 0000000000000004 9000000000ef7430=
- 0000000000000000
-> [    3.167012]         0000000000000009 000000000000006c 0000000000000000=
- 0000000000000000
-> [    3.176641]         9000000000d3de08 9000000001639390 90000000002086d8=
- 00007ffff0080286
-> [    3.186260]         00000000000000b0 0000000000000004 0000000000000000=
- 0000000000071c1c
-> [    3.195868]         ...
-> [    3.199917] Call Trace:
-> [    3.203941] [<90000000002086d8>] show_stack+0x38/0x14c
-> [    3.210666] [<9000000000cf846c>] dump_stack_lvl+0x60/0x88
-> [    3.217625] [<900000000023d268>] __warn+0xd0/0x100
-> [    3.223958] [<9000000000cf3c90>] warn_slowpath_fmt+0x7c/0xcc
-> [    3.231150] [<9000000000210220>] show_cpuinfo+0x5e8/0x5f0
-> [    3.238080] [<90000000004f578c>] seq_read_iter+0x354/0x4b4
-> [    3.245098] [<90000000004c2e90>] new_sync_read+0x17c/0x1c4
-> [    3.252114] [<90000000004c5174>] vfs_read+0x138/0x1d0
-> [    3.258694] [<90000000004c55f8>] ksys_read+0x70/0x100
-> [    3.265265] [<9000000000cfde9c>] do_syscall+0x7c/0x94
-> [    3.271820] [<9000000000202fe4>] handle_syscall+0xc4/0x160
-> [    3.281824] ---[ end trace 8b484262b4b8c24c ]---
->=20
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
->  arch/sh/kernel/cpu/proc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/sh/kernel/cpu/proc.c b/arch/sh/kernel/cpu/proc.c
-> index a306bcd6b341..5f6d0e827bae 100644
-> --- a/arch/sh/kernel/cpu/proc.c
-> +++ b/arch/sh/kernel/cpu/proc.c
-> @@ -132,7 +132,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
-> =20
->  static void *c_start(struct seq_file *m, loff_t *pos)
->  {
-> -	return *pos < NR_CPUS ? cpu_data + *pos : NULL;
-> +	return *pos < nr_cpu_ids ? cpu_data + *pos : NULL;
->  }
->  static void *c_next(struct seq_file *m, void *v, loff_t *pos)
->  {
+Nothing is using the linux/ namespace headers anymore. Remove them.
 
-Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
 
-Adrian
+I'm really surprised how nothing really needs those includes anymore - at
+least my couple of 100 randbuilds all pass.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+ arch/x86/boot/compressed/kaslr.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index f4d82379bf44..f03d59ea6e40 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -25,10 +25,6 @@
+ #include "efi.h"
+ 
+ #include <generated/compile.h>
+-#include <linux/module.h>
+-#include <linux/uts.h>
+-#include <linux/utsname.h>
+-#include <linux/ctype.h>
+ #include <generated/utsversion.h>
+ #include <generated/utsrelease.h>
+ 
+-- 
+2.43.0
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
