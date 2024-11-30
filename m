@@ -1,190 +1,152 @@
-Return-Path: <linux-kernel+bounces-426224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C329DF084
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:35:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD6F9DF094
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3275A281466
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:35:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 889DAB2145D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E28119AD7D;
-	Sat, 30 Nov 2024 13:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB3819D084;
+	Sat, 30 Nov 2024 13:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JkJXOAUp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FtWhyN5S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026C141987
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA5D1990C0;
+	Sat, 30 Nov 2024 13:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732973698; cv=none; b=Kwinq8Pn/ZAkx2bQcluP0JvjH6+iiqiIC8KnLE+D6K+fDptb4ALlIzh9sFrbJP/wzFF6gIgog7v1RluodLHt8YcxKmV0bTx6TZqJz07OVZ4RGMsjyh2JTa3+sIXUmQN4doGoybvWKlus2MejYou5vodIUYPvh8hEla7cKHT4n2k=
+	t=1732973954; cv=none; b=XzHuedE8GWYTBVfnsGT2piSPC/RHZJUugXrZpTxJWjsViZT6rMbRmo16Oy7lk/OPgbVU7x8cD+XMs6j5BXSf2SI42BTI77PHeEr+jcOADrSmUi137iS35HqDGBthYL4amXSZIY69B8yZWz4Gok0okLlqB4ZlOocZk09Kg03tf4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732973698; c=relaxed/simple;
-	bh=Usr4LZHuY36YIyHUlhmC56voNmbZ83rVw7kX6gPo2gc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a2IxmRp6YgXSfrOjNDKSkyX6OFCISpS2hTIW/BdZ5KjxOgAgDWbZKv7ZhYmNo9kE0cdi0BHU5SnqfZnRFmnmjQElMTPyGneKFSuigeG3xiBGQX/mlH+UrFO8HSLB4laLC5iaTCeO60+6Yg2X2QOumvpAtnQFN9T2T9uOPurTNR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JkJXOAUp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AU8GKs3010783
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:34:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	v2VLO7yzmzpBOk/kD1jBsRCrAVGZQXpmF5LywqF4XOk=; b=JkJXOAUprXDAvALa
-	pcOXfUSsdRAJ5RPVymR/Z7u1xHQWZvJq73naqbEg8NpRg+g/kOl/nHTLArcyxgO+
-	cgke9hQq98WCxRgWiSWww5UCk/J9Cg9agYMyYspHLthIa1NMSRGKozqXCNBg3Xey
-	Ugn6HKUFtTeDrAZIfC+1zNMs/jgWE6wsznQZ7ne/hCQ6LiYjFmhewc5fYk6ca8h+
-	CFaVNgFd1hJg692/X+Vn1+VO14WnD2M1kcXjTNqvWCWuZGaHNYr6hGIVc891kDF9
-	EottyI5sXlTvD298+OQmWpT9r+Q+SysZLbuJObvGb8VxN8Qq3zByhWxC38Ekyn70
-	EYoZaw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437t1g8um3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:34:55 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4667cab5e1bso4961201cf.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 05:34:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732973694; x=1733578494;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v2VLO7yzmzpBOk/kD1jBsRCrAVGZQXpmF5LywqF4XOk=;
-        b=C0SeCEimASN4y7IdEzbZETtuApaX3q89/mKkTLeEfql8ybMaYGSB23E1tJpkW+7UEp
-         VlwwsSuWBU9kXOQ3ygCG1etTvV8yHSGromTxoaen4Wg0ZG4JvW0KCrOSgc6T/mgMCv8T
-         Uok/YETdP0R01iNnCPG0c2boRUjGd+XjHTBCTWbUi66PFPlI1mmKST0V7W+LJ8Gmm/hP
-         LZ3v+FW8f+z27ByyzU8K6CNNIe3N9IwEmX2+dU5wW5sDqnrqPTT0v0vBJ+9DieESDWtF
-         udnrEbPi6gXsqYtIMD49man0BrgpRK0Ls4lIOdqBWToZxveGr9CK/lO9RG5pzr5jRPLi
-         g4kw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/aDdLy4hA4yxxP8+alqeJB2yn8Mm1OQfr9xPdfQv+i35W/troWh+vMTLLm9hpxzKhb02jGvLLTX+Fq/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKAe7G41vGWWoazYU344SiBK3gf3u3K8PIZA1czc6iOB8l+sGI
-	HUtuVFuTPY/XLdlksv1uCxH5dpYKrz8UfwUTms3wDJCnS7tKEHw5M4LG2gj68qvoyCqNrRCh6qE
-	WLcNQ77BSfEFh6o/LqbltD43Fuc/99SIvZDF6TbQhMva7iSYx24/o2FReiEtfIp0=
-X-Gm-Gg: ASbGncsvDnfuhDyMNZpWUGyj7njjF7FiD6W68eAEaLErk+5V6HjfmR9snfD8ilytMNa
-	MqZGM8sbMdgWrPEJvV5N6Ik3ok4YmR96DX/iVKEPKBz8k6cS+1GyIVEdIDszf/JthP4iaPUJNhR
-	t5/sJxX6ktycI560LHeWg9sKSz691jBwBD4uuPOzMRGdZXhmR9DNQ9OpxNTPf/BX6PWz/h4LCOs
-	nqJc3TOzDEJGQxwEGUMUMRbYuDi13ZTSjp0+PW4viXi7DmTLFJxLjuGK4Sfdds0AyGW56ssVKZt
-	Niz/K5VU48EIWYhM0RNnrm7qF+Y3onM=
-X-Received: by 2002:a05:622a:5cf:b0:463:16ee:bd7 with SMTP id d75a77b69052e-466b357ee1amr92420651cf.9.1732973694635;
-        Sat, 30 Nov 2024 05:34:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFkRA/kQnxX8r0wEF6WBiAAJPb1xtL3Uef0kpFMGTVXF0cYbIVZY1PdQhdGQgKvLe+UgQ4tFg==
-X-Received: by 2002:a05:622a:5cf:b0:463:16ee:bd7 with SMTP id d75a77b69052e-466b357ee1amr92420501cf.9.1732973694301;
-        Sat, 30 Nov 2024 05:34:54 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e771csm285187766b.127.2024.11.30.05.34.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 05:34:53 -0800 (PST)
-Message-ID: <1f1fa37a-a6b3-45e5-b1cb-66abf0f5430b@oss.qualcomm.com>
-Date: Sat, 30 Nov 2024 14:34:51 +0100
+	s=arc-20240116; t=1732973954; c=relaxed/simple;
+	bh=AtoMv+qZEg3Jrjb92TD+QP+vPH9tNZ1fEkpRkBwkvCs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iEuMX3UjzHHjwsUepWWxIWbQlhe6yuiebjI6JoNJHKZvlxP19/qeKmCVZHKklgTgIw+OryTiWzS2q1QxuzX3F18mGORJlSb3E4Ftu9ywOM3v5bJSXchuAFMmcd4ueKU6RXia78zLxT/a4G60XNFOel9phI01GCyroDNWBpKXg7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FtWhyN5S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D313C4CECC;
+	Sat, 30 Nov 2024 13:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732973954;
+	bh=AtoMv+qZEg3Jrjb92TD+QP+vPH9tNZ1fEkpRkBwkvCs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=FtWhyN5SGodUWhs/LCaXDVaYgeAgHu957ETyuDh+cqKsAiU/Y/y7ZddQgta4Fr3Kn
+	 dFWIT5SwX4Pku9jXBJNqZxzmXAUgu0NzHThNgvek0RVG9thWnhZ5+rj8FjOcxiIr3R
+	 hI0ReOZV4veZIAaWmlgz6uh05Fg4gNODOm3BzeaVbzq5W/xUEK/dVLDXwmCA2bGYZw
+	 X9QEs+kU0Lz25wJg8ftS7eFe2ukS3CCzWbaI7GPvbc/9uF6Sa6fSFUhfBr7fn3BMaj
+	 bCxb8SGx0iNmIAxhg0nuLFG15QqudtXD4JSwNBuncuQ3iE4ABRQTIOJAKsQ2EZOtyJ
+	 hq4byjdPNRUTA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 116ABD73607;
+	Sat, 30 Nov 2024 13:39:14 +0000 (UTC)
+From: Levi Zim via B4 Relay <devnull+rsworktech.outlook.com@kernel.org>
+Subject: [PATCH net 0/2] Fix NPE discovered by running bpf kselftest
+Date: Sat, 30 Nov 2024 21:38:21 +0800
+Message-Id: <20241130-tcp-bpf-sendmsg-v1-0-bae583d014f3@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: add venus node for the qcs615
-To: Renjiang Han <quic_renjiang@quicinc.com>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
- <20241125-add-venus-for-qcs615-v3-3-5a376b97a68e@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241125-add-venus-for-qcs615-v3-3-5a376b97a68e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: A0e2vaC61IqrZIv1wdSANpOk2RDRjwBi
-X-Proofpoint-ORIG-GUID: A0e2vaC61IqrZIv1wdSANpOk2RDRjwBi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 mlxscore=0 malwarescore=0
- spamscore=0 priorityscore=1501 clxscore=1015 suspectscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411300111
+X-B4-Tracking: v=1; b=H4sIAE0VS2cC/x3MQQqAIBBA0avErBvQjMiuEi1Kx5pFJk5EEN09a
+ fkW/z8glJkEhuqBTBcLH7FA1xW4bY4rIftiaFTTam0Uni7hkgIKRb/LiiEYZ33fUmcNlCplCnz
+ /xxEinTC97wd7UFMuZgAAAA==
+X-Change-ID: 20241130-tcp-bpf-sendmsg-ff3c9d84e693
+To: John Fastabend <john.fastabend@gmail.com>, 
+ Jakub Sitnicki <jakub@cloudflare.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Levi Zim <rsworktech@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1994;
+ i=rsworktech@outlook.com; h=from:subject:message-id;
+ bh=AtoMv+qZEg3Jrjb92TD+QP+vPH9tNZ1fEkpRkBwkvCs=;
+ b=owEBbQKS/ZANAwAIAW87mNQvxsnYAcsmYgBnSxV3VGLEL49AHZ7R/d7EbVg6R8VkrJZM9QKxj
+ wCbxoE/uROJAjMEAAEIAB0WIQQolnD5HDY18KF0JEVvO5jUL8bJ2AUCZ0sVdwAKCRBvO5jUL8bJ
+ 2HlIEACiRItsYjOk5RJI2/JZUvDi3jlt5j1sj93UCDJRXYAm7dQQpxq38P+uHO3Iyxuz3kgIYfi
+ uZmFtrsoU8/kikiFo+JFV7iMebGXZWugkcZFrZ2TpCWXvpKHd7bU/vwo9KhaeC0gQ2e0wsLI8Ee
+ Y3DRi7EZyxX/mKIWzLxogiHDpT6esl6AslnH+sbdkIgeK9dpBtB1Ni+ligxBduKwgQDAKqM0MqX
+ T1iQoTEAucGQXrAum66ejeeJ81quXXUKl1S/U+rJ0V1Yz2O3m6KZxy8Igz5nxcjbbe5hOHG3xm1
+ JCgRW//D/ixRf4fy75vATRQp9tdQsSD/qp4AYBysk5LeBkvz88im03z2W7INhtzMwoONTwfG9ia
+ rFQRjDvjfnXuTQ6v1P/3DGiXxPSK/VxAeScG5YTuUA62DcC1lZ38ToiL2wEdWfeSQmCd4lIBk8T
+ aBZnwb3dlzy8eXrx/u6CNGIi8N9MWHuTvrdaEHwnXTZat2oLitWCc7ZT5Nmjw/IX7xWnVGKP/R9
+ RmxOW/Xb5tBj2vpmViC61p3JFxeqvVVp4CWp0/3fJ2+pF+5MqusfPNAz17qLUifRFRWvdWFhR5J
+ OG69JQPI8jYZnBJk3hqGtAgAo/OVeDy0Jl5TEiwte8qdOrbAwV9xptooTrXljidJ3iIs8FQNU4W
+ +SqowYYutsCwnIg==
+X-Developer-Key: i=rsworktech@outlook.com; a=openpgp;
+ fpr=17AADD6726DDC58B8EE5881757670CCFA42CCF0A
+X-Endpoint-Received: by B4 Relay for rsworktech@outlook.com/default with
+ auth_id=219
+X-Original-From: Levi Zim <rsworktech@outlook.com>
+Reply-To: rsworktech@outlook.com
 
-On 25.11.2024 6:34 AM, Renjiang Han wrote:
-> Add venus node into devicetree for the qcs615 video.
-> 
-> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs615.dtsi | 86 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 86 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> index 06deb5c499fe83f0eb20d7957ca14948de7aab34..18ad4da5ed194458aded424560f45a3a9f3163dc 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> @@ -394,6 +394,11 @@ smem_region: smem@86000000 {
->  			no-map;
->  			hwlocks = <&tcsr_mutex 3>;
->  		};
-> +
-> +		pil_video_mem: pil-video@93400000 {
-> +			reg = <0x0 0x93400000 0x0 0x500000>;
-> +			no-map;
-> +		};
->  	};
->  
->  	soc: soc@0 {
-> @@ -530,6 +535,87 @@ gem_noc: interconnect@9680000 {
->  			qcom,bcm-voters = <&apps_bcm_voter>;
->  		};
->  
-> +		venus: video-codec@aa00000 {
-> +			compatible = "qcom,qcs615-venus";
-> +			reg = <0x0 0xaa00000 0x0 0x100000>;
+I found that bpf kselftest sockhash::test_txmsg_cork_hangs in
+test_sockmap.c triggers a kernel NULL pointer dereference:
 
-Please pad the address part to 8 hex digits with leading zeroes
+BUG: kernel NULL pointer dereference, address: 0000000000000008
+ ? __die_body+0x6e/0xb0
+ ? __die+0x8b/0xa0
+ ? page_fault_oops+0x358/0x3c0
+ ? local_clock+0x19/0x30
+ ? lock_release+0x11b/0x440
+ ? kernelmode_fixup_or_oops+0x54/0x60
+ ? __bad_area_nosemaphore+0x4f/0x210
+ ? mmap_read_unlock+0x13/0x30
+ ? bad_area_nosemaphore+0x16/0x20
+ ? do_user_addr_fault+0x6fd/0x740
+ ? prb_read_valid+0x1d/0x30
+ ? exc_page_fault+0x55/0xd0
+ ? asm_exc_page_fault+0x2b/0x30
+ ? splice_to_socket+0x52e/0x630
+ ? shmem_file_splice_read+0x2b1/0x310
+ direct_splice_actor+0x47/0x70
+ splice_direct_to_actor+0x133/0x300
+ ? do_splice_direct+0x90/0x90
+ do_splice_direct+0x64/0x90
+ ? __ia32_sys_tee+0x30/0x30
+ do_sendfile+0x214/0x300
+ __se_sys_sendfile64+0x8e/0xb0
+ __x64_sys_sendfile64+0x25/0x30
+ x64_sys_call+0xb82/0x2840
+ do_syscall_64+0x75/0x110
+ entry_SYSCALL_64_after_hwframe+0x4b/0x53
 
-> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
-> +				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
-> +				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>,
-> +				 <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
-> +				 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
-> +			clock-names = "core",
-> +				      "iface",
-> +				      "bus",
-> +				      "vcodec0_core",
-> +				      "vcodec0_bus";
-> +
-> +			power-domains = <&videocc VENUS_GDSC>,
-> +					<&videocc VCODEC0_GDSC>,
-> +					<&rpmhpd RPMHPD_CX>;
-> +			power-domain-names = "venus",
-> +					     "vcodec0",
-> +					     "cx";
-> +
-> +			operating-points-v2 = <&venus_opp_table>;
-> +
-> +			interconnects = <&mmss_noc MASTER_VIDEO_P0 0
+This is caused by tcp_bpf_sendmsg() returning a larger value(12289) than
+size(8192), which causes the while loop in splice_to_socket() to release
+an uninitialized pipe buf.
 
-QCOM_ICC_TAG_ALWAYS
+The underlying cause is that this code assumes sk_msg_memcopy_from_iter()
+will copy all bytes upon success but it actually might only copy part of
+it.
 
-> +					 &mc_virt SLAVE_EBI1 0>,
-> +					<&gem_noc MASTER_APPSS_PROC 0
-> +					 &config_noc SLAVE_VENUS_CFG 0>;
+This series change sk_msg_memcopy_from_iter() to return copied bytes on
+success and tcp_bpf_sendmsg() to use the real copied bytes instead of
+assuming all bytes gets copied.
 
-QCOM_ICC_TAG_ACTIVE_ONLY
+Signed-off-by: Levi Zim <rsworktech@outlook.com>
+---
+Levi Zim (2):
+      skmsg: return copied bytes in sk_msg_memcopy_from_iter
+      tcp_bpf: fix copied value in tcp_bpf_sendmsg
 
-Konrad
+ net/core/skmsg.c   | 5 +++--
+ net/ipv4/tcp_bpf.c | 8 ++++----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+---
+base-commit: f1cd565ce57760923d5e0fbd9e9914b415c0620a
+change-id: 20241130-tcp-bpf-sendmsg-ff3c9d84e693
+
+Best regards,
+-- 
+Levi Zim <rsworktech@outlook.com>
+
+
 
