@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-426289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6738A9DF148
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:48:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF769DF14B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:48:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C095281285
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7489281252
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC19B19EEBF;
-	Sat, 30 Nov 2024 14:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C53519D884;
+	Sat, 30 Nov 2024 14:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cPSnlZhO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSrUhEed"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC2718A6B0
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 14:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D51E18A6B0;
+	Sat, 30 Nov 2024 14:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732978117; cv=none; b=CjWzdx3ivaPTiHZdyS+9BUPeTuBg0t8hgoBa3+rpY+R/uOvSGPC1HnR7dy3dsUzoGmiZB5rsQARsTRwnmgott0r4VEfgXZszsdff/zX5so53enUqLLct8xq2DarGoilA/x9fAVWiN8RC9o0aYIGbi3m3zz33dGUptMCerY4A3/E=
+	t=1732978122; cv=none; b=X6WgXg0rFCk5oy+qduHS7qSCyQFqXKPjmxuTRN26Oi1czUj9WXa/8fnaimy2NvZkrzcxPJN2jfjnTyOG8Ng1GTaSeBa2f8HiRTdxe+vPxvbVsCaGzp87UKvkDkyMNQC5uQLL3p9KFdYZZntp5LZPitrqIHTTXYw2ioAzofONLzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732978117; c=relaxed/simple;
-	bh=SxMKZqWHINuMIWk2ERrR36po+nHqNifEB9pvK/kYI2o=;
+	s=arc-20240116; t=1732978122; c=relaxed/simple;
+	bh=XpBt2IA2C1y1bAgrhc+9pDm8IfbSAPsRs9l8LxNyhYc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lyG8JhgcBTlIxVN1WQTGiAabgk1YwNiB9Uax8tUsVYR5T5LZeLIjUxeh6oRYoYCgEy5W6vOcaAK4Ndq04YTcTiCAQx+OGtA62CJBj8rsk5UG3he6TXOvns9GNL2JJMng9hTBwwIJqcjIV1MsexGjC51c0vxerHLUc58qz0oo41c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cPSnlZhO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AUAuiW8002702
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 14:48:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7zbg7/a8AqK410FZRMTiXn+gGp6N3/qpdAoKw9aQPDA=; b=cPSnlZhOmCSuNKf8
-	MOcZ7IfdAGB8gnU9/BqK03ExM9nLkh3UW2rLySGRgXXjw3C+ry1YJhCeLh9Y5yL3
-	K5YJ8reZicLXW3YNLv3i5YyFScbiAvJEWzu4J08VodkendnU58ydgULvg1rjrf9m
-	QeVf2JYkhuVt4EduLYMnBBlNrzZnMSZkfEg3rQxFmwV4/SCznoIZcSGT5Uq7Prum
-	vDOBYpLRqZv4ledSsI+4fuHsPiEbISXDDYI2Bhq7lWbCZSLg9r3qgboMizbVR1ao
-	ZCvoC9BiKCEbBeM135rcMIbaQ+IRSDmgZOFZHCIBQkxMgB6T8pVweUdRpjazLIC7
-	BGFqPw==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ufe0t99-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 14:48:34 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d88fe63f21so1597916d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 06:48:34 -0800 (PST)
+	 In-Reply-To:Content-Type; b=S3y48s56iNvURCgL5sxs48gK61eIEkPgpM2JLuQ+YfdWSuzB01I5H5KdIXHcz/Oau/JGVpURgiIyznpSvPH6DCj+sX0tUxjtGhO5tMMXW2KVLskE3ybRTcf+t0Io5i+R2k72x+lC1N96Gx/79/iFYHXBvriwQTteDg89TU+omgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSrUhEed; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53de771c5ebso3144208e87.2;
+        Sat, 30 Nov 2024 06:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732978119; x=1733582919; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bjBN8FHqofZFhfGz5zgZiUkeKx5ijBV2yFNDfXzDp5g=;
+        b=ZSrUhEedgdj1CMdrNDW7vOqFDo4YiiiFDgKpCJYjOuon1sOjg3/bidAWmnclpchW+I
+         IiV8rhLMXIaHtfsxO3YO1rS+k8kkfUX+bHSvj/UK4rxohCHXSfpKmuloRBtzM8f0T+wj
+         TnozBZVF+qlH94eUCiuROJ9XeTKFqpix/K2gScLOSH5eUh5bGVGfVr73oI6XQzXfj5Jx
+         tMUnnPBTYe52NNpuc9dNPIhtQeP3oI1SqTtXQ80/yZTGE4lsvBKZl40lfNtkbdgTS2SV
+         DghSztYh/HQ5Stqs+HmG9TXJWXOOTbSFs9biYK458oeFMzjmQXbjVfdzwQMm+m8KEdzY
+         IWCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732978113; x=1733582913;
+        d=1e100.net; s=20230601; t=1732978119; x=1733582919;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7zbg7/a8AqK410FZRMTiXn+gGp6N3/qpdAoKw9aQPDA=;
-        b=LyJa8/9YOZ7xXK0z7Sew486w0cwW8Ha7KUjKWMVBZLfbxFUiN2tFCC5yIj433G1Ka1
-         X28LMoO3bPQlD4Reul7N5xYL1xejRzCTiFnUNFQIFJlp4lE/7qwnStdfEi69ARyjFLUA
-         B2jEBlw9iVBVbpM1NCRZhfI4tF+O6dI7I9BG5v961zo2UKJfAa02PjosyJEsH777ubC1
-         qPBqY1vHhPvEgfw8tOr6SypOTaHj8tyX0IUTywe6qnL8wTTN6KyMY1KtvnTsq7fv6FKU
-         FDGdz83sASsgFb7Mn/zYoHDYcJcC6Za3wFc7InEeHpPiWnBORwppTPNkWgkZXB3WjwWa
-         4/eA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrfczUPpLCj+k4CgbPIugsWvPcfpDCl0SqNDskbE0O8Vcp+/YFgkZOIiNYE8XrXw39L1/0xzlp6MmIghU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeFG2uqDf/eaa94hzeq+YQ4Ln7WtCiDyEtJuvSmIlyEdbS84ZA
-	t7BZhMosbOOzkVHIrFrYdRjPymEs5DBntYa+9uUvA6xF/p/L2Zw7GHhbmLGhLTjQ0Ueidwbuxba
-	G7+glpK3d19d1kFX3TmQFcJUz7elRTdirW+jjUg0h1Z72oI//y1ga0w1zuvIIxBM=
-X-Gm-Gg: ASbGncv3X1t9vSPKDuYZh2ImDZoU/6w5wJvip4H//ZnEnQYyr/3o3pw2lZnN3r4eOOC
-	sulGscF5281I8S0CR5PZ6+Fz4LoU6M1Q4om2NaqimJxziSREwkBy0237a+WZBQUPo+AZqXdEtVS
-	WFaVFoFRZJgThOIUQ4XehyU3oHgODWMlo+Eo4CuiKw5hdB6QocpQLCoJgesIH5EOvmUXXV8+Dy5
-	yQHkDRkphCkw6rYPUyIC1B/C/QyF2WBRt8Z9BQAcrlUpoTiCdxU+PYiaihDmOljemarRLPWhqwJ
-	xepB+i+ltoKM1Su7HsV0oBTItrpb8OE=
-X-Received: by 2002:a05:620a:400a:b0:7b3:5cd2:783 with SMTP id af79cd13be357-7b67c2ecb97mr812516185a.5.1732978113492;
-        Sat, 30 Nov 2024 06:48:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGeY8KeawgKDJwviovT2Bn0JoxwOM88gdpGWgJSdYTdl6Hh3GheAU3zBCTDOc9MEO5DqXkVhg==
-X-Received: by 2002:a05:620a:400a:b0:7b3:5cd2:783 with SMTP id af79cd13be357-7b67c2ecb97mr812514685a.5.1732978113206;
-        Sat, 30 Nov 2024 06:48:33 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0ac78c0f2sm1964681a12.10.2024.11.30.06.48.31
+        bh=bjBN8FHqofZFhfGz5zgZiUkeKx5ijBV2yFNDfXzDp5g=;
+        b=GPEMNOaXZVA2idFYHyekkE5szAjbrflBzPKd2dlUCMovAjM4eEs3bsgVYX42G1j5LY
+         3cehfndeUIRcTXqxtFiGRWC8c2N3WinRgpd3AcmjQemZtJ/kqQt3ajQWt3UxWK3NLTM4
+         h+2nZiB7qmGhVSOYXdde5+UZPE6SsV6++0zH/briMMUZT3HrkvP09gbW2Hzq2pWH/ySJ
+         LybFx9+EulSBqetaZowGiJSGjGSZOlCQCrgBoxrgmdrME+hBlQQSUMlTCuTRgQXwAR/R
+         dIKuRqo2jxHOTsgsyMW78utPM3TkyHjZlpRDwmOI9Wr+joDL+x3VBMnBSxQ5dHYy9qd3
+         gw6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUb0FLuMz3dRpF6EDt4fJLfNExibll2biFqkWv56TMikxkcpmWKQ8aZ+vDYDNwFvHsKA92iStqZiKPH@vger.kernel.org, AJvYcCWIig185vM1OvuWmYN5fALp4J5+12PSSN4NLzxSw10aTCnUplWhuXhNfdFgYBfHaQLxcQnmIedYzV+oXU9b@vger.kernel.org, AJvYcCWgIFsi9nQ2BR+3WVK0xXkFI4+qIiY1k58vGzzNifFaoUFapfhKpLElr+kYGP8hIE/yOr9K4FKzhd6r@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyr5VjblH3jIXQZtwae2rmrkOGefHAjsSFYH6UOeOl/KptR3zO
+	8gTx9u1LwhO2cp5ec2ywTekQ+LMeAB8B907tFMRKSi/mXsf9C2Xi
+X-Gm-Gg: ASbGncsQTeArjfrbvS0W8PNL1Xc2ypakTUIlcTv5UhaczlBThHpMIAbI6PuuCu/xiNE
+	zFl1YzHUkGbSRczbLYk7CBD4Schlzmzfqk1WfRnEuoAfPlX2h9f/X4YsRckio9pQPGz5HwFPVmi
+	dNbWrUpiRmw1UZcuOwOrrzkoRo/9t9TyH42va1R4S0FsEUtzQYCK7x4RIN9uKJI77/NjvTaAfJq
+	12A6TGs72GfWOA4NNGtmRC5XH+AUToaHWTeTl0FKiFC/e8Zsk1IQmAxeEbldwFQ/brSwh8RWbNu
+	04jBjtSUTCl9ESvK4/h/79nZaPPIj6A=
+X-Google-Smtp-Source: AGHT+IFFmt53FkWLvs52tT0yFLqkml98yksR+S4w0x/5qHa4y4YXGIOmEoHRtxWOCqi/BLr1I0ZHtg==
+X-Received: by 2002:a05:6512:3a87:b0:539:8fcd:510 with SMTP id 2adb3069b0e04-53df00d0392mr9915981e87.20.1732978118984;
+        Sat, 30 Nov 2024 06:48:38 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6496bdbsm770953e87.208.2024.11.30.06.48.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 06:48:32 -0800 (PST)
-Message-ID: <a76ef7d1-8407-4ec0-8180-83ff39cc0487@oss.qualcomm.com>
-Date: Sat, 30 Nov 2024 15:48:30 +0100
+        Sat, 30 Nov 2024 06:48:37 -0800 (PST)
+Message-ID: <19ab6891-0549-4cf3-9baf-661e867f1234@gmail.com>
+Date: Sat, 30 Nov 2024 16:48:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,41 +80,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] arm64: dts: qcom: ipq6018: add 1.5GHz CPU
- Frequency
-To: Chukun Pan <amadeus@jmu.edu.cn>, Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241110140019.3426181-1-amadeus@jmu.edu.cn>
- <20241110140019.3426181-3-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241110140019.3426181-3-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 0/2] Drop BU27008 and BU27010
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Arthur Becker <arthur.becker@sentec.com>,
+ Emil Gedenryd <emil.gedenryd@axis.com>, Marek Vasut <marex@denx.de>,
+ Mudit Sharma <muditsharma.info@gmail.com>,
+ Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1732819203.git.mazziesaccount@gmail.com>
+ <Z0nOxEtNk6APoNo0@smile.fi.intel.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <Z0nOxEtNk6APoNo0@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 4guiBlLP1-Ad6pN-a7BS3DA_iWpBQnUP
-X-Proofpoint-GUID: 4guiBlLP1-Ad6pN-a7BS3DA_iWpBQnUP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=692 clxscore=1015 adultscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411300122
 
-On 10.11.2024 3:00 PM, Chukun Pan wrote:
-> The early version of IPQ6000 (SoC id: IPQ6018, SBL version:
-> BOOT.XF.0.3-00077-IPQ60xxLZB-2) and IPQ6005 SoCs can reach
-> a max frequency of 1.5GHz, so add this CPU frequency.
+On 29/11/2024 16:25, Andy Shevchenko wrote:
+> On Thu, Nov 28, 2024 at 09:34:54PM +0200, Matti Vaittinen wrote:
+>> Drop the support for ROHM BD72008 and BD72010 RGB sensors
+>>
+>> I accidentally hit a BU27008 data-sheet which had a big red text saying
+>> "Obsolete". After a few queries I received a word that the ROHM BU27008
+>> and BU27010 RGB sensors were cancelled and never entered mass production.
+>> Supporting not existing hardware makes no sense, so it's probably best
+>> to drop the drivers and dt-bindings.
+>>
+>> There is still a RGB sensor from ROHM called BU27006.
+>> https://www.rohm.com/products/sensors-mems/color-sensor-ics/bu27006muc-z-product
+>> Based on a quick glance this should be very similar to the BU27010. If
+>> someone wants to create a driver for this, then the bu27008.c might be
+>> worth looking at.
+>>
+>> As writing of this I don't have the BU27006 at my hands, and when I
+>> asked about creating a driver for this IC from the HQ ... I got an
+>> impression that at the moment ROHM rather pays me for doing something
+>> else. So, currently I have no plan to add support for the BD27006.
+>> We can always dig the bu27008.c from the depths of the git, if it later
+>> appears such a driver would be a good idea.
 > 
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> ---
+> The best series ever from you, Matti, on which I have
+> not a tiny disagreement with!
+> 
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Similarly, I can't seem to find anything to back this up
+Thanks for the review. I guess you might've had something to comment 
+regarding the recipient list though XD
 
-Konrad
+I don't really know what I did to get the patch names in recipients. Sorry.
+
 
