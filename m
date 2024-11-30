@@ -1,167 +1,108 @@
-Return-Path: <linux-kernel+bounces-426141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F229DEF6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:55:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A629DEF71
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:07:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F026B16364D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:55:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A3492815C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E1C14831D;
-	Sat, 30 Nov 2024 08:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE53B14A0AA;
+	Sat, 30 Nov 2024 09:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dkl30hIx"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tgPJX4Wv"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB711C6A3
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 08:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C1D12B93
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732956944; cv=none; b=D9AnA68KmUfkN8OpERSuxEZpuk1ncRcdPWfzpSWQ1qPm/P25fd4kAfGNDqVN2wZC272o6JY8QyWlOkz9CeRC6If9FTIptKAROxC3eOX3xo7p7aw8mldsnlGwMnxy5bZYWTJEdSOxV1jsSUAfAnI23FfWxQBlE5/51NI1D5fo3Nc=
+	t=1732957647; cv=none; b=XixPcpdqtQNpFcdsfAqtHuIQAmVV9bsf55uA8GddfPrOi+hWvv+dok087+wxs7JeJOHM3wtEa7zc6cqN54KXTjKmfY1wroOXGPN1h1v2GfQswo6vgyiIW8j2sTrA5hCtjxgTNjD0/8jaoygpzn9G77osY7sk6ezV4PUPu0qMyOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732956944; c=relaxed/simple;
-	bh=TJhmFdfaVjwr17f3IT79WpIJd1EULklSXl6L077M+tg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KBl7+iRjnb8YdDD3EzNj8ByDzkx1rGka042E7FVn/Bsr0H26K01ZaETyyWwq0xrZ9oVxjTA2aIgDzck4NX8Plk1g76SsfQCTru1j5qPevFdSp+WxTet1ge7jjRkMOchZGPIOK5mLOz1g7Y8A8uqMb5XY3WZP9qv5ersgqvWmlNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dkl30hIx; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53dd0cb9ce3so2242220e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:55:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732956941; x=1733561741; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tWYIp2XJ9QFXc1y2xfe4G78/qq9zuMJu2hdWvSe+Nws=;
-        b=Dkl30hIximcw4/rPSUXilojk2Rb73wR+7hc6v6lfebAKtBv6Crh8rGFzswcKc8t0yc
-         fINCiCkEZ/BgcnVYmkaRcxADi8Fk4COt7+1CQj/PiwLjNVJz4hPXomUmpot1kddIohDs
-         D5yknsQj+xVYNMcGR/obiPJ/D+Y7gjiYv6MNW5gPjhqBmpSSz7Okc+RloEsPTSugSVZX
-         fkD0DZTaTUx6wyAWPOVsoNqPzrVeK6ZdL5SBuIx1ljzmDvicfqYblDy0hXwGZDO+pZRO
-         +67OpRf0wsxYewu8WgoyTILmee77nKjvZ5cArTtjvqYgforJX4T9tDshLmro87Pd1euM
-         ys3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732956941; x=1733561741;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tWYIp2XJ9QFXc1y2xfe4G78/qq9zuMJu2hdWvSe+Nws=;
-        b=qIj1dWrZpbZMXvn/8K05DBCpfodstkv/8+9NfcyJnKyB7RF2cVOuu/o49Sw54kRFp6
-         xUPTIyrLyhvG1RBjiDMMUWUlKVhKdRt+sC+qM5uhwO8MaSWSg4xfo7WEdbX3gWpf5SJb
-         IeZ2wc9AI33x7qZgDw8MYFLtHhjr99tDC6vRZzkFAB3tLjXAE7wYfWbETmVXTey1keB6
-         DuJs6krJ0OhiOpc9lR5UwVLAM2lnnOKu2gK7iG3mCJAXmU6WvZxqj1BHmlwFY9iAuGWB
-         qXjzF9AB88/n1qNp0Abb6ppDWHGkKcws1y4TtCN0NXXQFfxudRhMpVxF/QSUl55UXhn8
-         CYXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Vl/xI6bXhC48ThRyolMG9HNWn3I5RtaGQVZN0SnUwRBjaZZYlXF3WYO91Wre92wpi/jg/riBrRyGq5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj1Iwr7jkCZLiMkkeBophXtUiQI7pEHCY2g0cDYPqINHTKTCyD
-	gGHOWdP37/C8QB87xMetlddRd1hEm3nlkB3c3s8F5ZS12OCczeX86Mg2AbfzHZo=
-X-Gm-Gg: ASbGncv41vfVXA3iJxsd0Z7ddU3qoeB/L20rrRYUkddqIAcqytdpc+RRccR3gMEDZYa
-	+J/+olJak4NXp6+R6Z9K/IWDHW1wRNddQHTf2WCep9nWjPe7gEm4w/PevOfBIWPP/prV9ktkoGc
-	65Et8u5SustUc43UPUPXAabxAyOHn0s99E2pzk8l82Oi2r9HDcymOCX5SWSAbWfk27S4j1vD5eh
-	g6ND9bXuaXauhacimFZJFQNi4LVmhSqatMpsas3TkDswxOB3pybUkAj5KI3soHdwg+G3qb9IVt5
-	FuAWhpy2N723Q/CzOI+f7JnR8EslQA==
-X-Google-Smtp-Source: AGHT+IFGpIIuU0NV+ptiObgzcvj/OfHO1P/2xGAhJue3uJys9uUaaKu+obE+URGKCHPGZpBab5Jpbg==
-X-Received: by 2002:a05:6512:2398:b0:53d:e7b6:c6ec with SMTP id 2adb3069b0e04-53df010493emr5483484e87.41.1732956940996;
-        Sat, 30 Nov 2024 00:55:40 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64a09e6sm718764e87.264.2024.11.30.00.55.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 00:55:39 -0800 (PST)
-Date: Sat, 30 Nov 2024 10:55:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Xin Ji <xji@analogixsemi.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, bliang@analogixsemi.com, 
-	qwen@analogixsemi.com, treapking@google.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge:anx7625: Update HDCP status at
- atomic_disable()
-Message-ID: <rsorgspggl325hx3atrvn3jqhbhy3sg5tvd4ckufrw7hsphrpv@6z63jtk5co4v>
-References: <20241127030221.1586352-1-xji@analogixsemi.com>
+	s=arc-20240116; t=1732957647; c=relaxed/simple;
+	bh=v3XiGRlFoJi38O3HfXRTZmLGrna0ussIYJTi+lvVRgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=fd8Ai+vNyduANxG/SWfCsA2sNTPUjqxqKj0wUswJ63XN9WyQD/v4q9nuSe0FaCN4xK7jLFPSE1KudTcVZQ9vI2fkJ3hqA7sfrTyMzFFmVDHBvPm3JhDs0NfWJnK7lIScw7c+rpAlyOAPl03sjTvY35/6Nod/giHmDXy2YvoEBXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tgPJX4Wv; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732957620; x=1733562420; i=markus.elfring@web.de;
+	bh=v3XiGRlFoJi38O3HfXRTZmLGrna0ussIYJTi+lvVRgw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tgPJX4Wv3ZqrSWtpjpT8fwPwlaooUGn3Gnh+ZGKLLN+4yb26j0q6bEvPyN83dVbB
+	 oK1gMONdvTMUJMZsnV1YJy4zBfecUV9k03RoKNrHxPyyrpQt4AXPFOhpbvmfhKBGu
+	 H3mVvC6q1q9i1GJmUAUVrGqjCig2/SSFuzr+CRsww6fgTvojIBLRnPmOLdgX9v+Gz
+	 V1KO8Bou5F73ZBx6PcRI2vp+av/U4dk0ro8umASi2aPDuzy0JwZVfczV4KVMU4MqP
+	 u1PKJacjJ4DzOdkj67g0xZL8GFezBsQeUnr1AMuKZdEBfrPYthccgAB4L2l667B53
+	 ewjTeK7P7E+EjWqDag==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2Phc-1tFfY228Ss-005wSW; Sat, 30
+ Nov 2024 10:07:00 +0100
+Message-ID: <17dd41d7-0bd0-4c38-aaf3-c68b3209f46b@web.de>
+Date: Sat, 30 Nov 2024 10:06:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127030221.1586352-1-xji@analogixsemi.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [01/11] coccinelle: Add script to reorder capable() calls
+To: Victor Gambier <victor.gambier@inria.fr>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, cocci@inria.fr
+References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
+ <20241125104011.36552-11-cgoettsche@seltendoof.de>
+ <b30c7227-c596-4980-aa46-a75b1d429354@web.de>
+ <667e5848-a8e4-4308-a464-006800039029@inria.fr>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>,
+ LKML <linux-kernel@vger.kernel.org>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Serge Hallyn <serge@hallyn.com>
+In-Reply-To: <667e5848-a8e4-4308-a464-006800039029@inria.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:srVKkclM4O0bE293ZCMRz8INZsxhExnVXDBpD386uF0bQaeHsc6
+ 99l9nbI3AYUJxz6sJPK4LWb9tmseRHEVdvS9jN8FyqfN6PWgr+u/xOEDWe9W3OQYeVI70V1
+ UEfs1wQox6vc2I0bCQi/KQegp8jMsXsDCZHk4a8FzRtmdTA2HnpaDKdYvSKu5S6cVL5u7J2
+ dOf2GXcTl2UZ1Iya2eo8A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PfjgmX8EOI8=;cyofF5wjBKdHn81m0/JDe9DKGLA
+ hX1ca9dCR8N2EulZZyzekl7R8J6nNVZ1Xexl0VbYI+D0cxY7uz6qLi+5lDanjQyhb+pT0hs6H
+ mw/W+laR37PfvLUO6fMJedkrDnzkwap5obXSlGsy4xBJQ1QoWK/a3pVg+gtGv4UakCThk704J
+ 1J9yGhrL+dkBh+qMdtyNaHK2lUWMcHtHtEw+7icwKFYe6ywGBCIjHmXDG1QZPGFmijGHf4lI+
+ 38VfeH/utxkFS1QlY5LOO+TaLo1itnsO6cjMm6kRHECjjcTWQFDrTWruHYq+ebi+K1j/VCdMS
+ qTyX2d3tbvEbcDHPFjsV6WkWTttrSELG9jGai5YY5BUKK6F7yz87rI/WapT03gQyQJpKP2aXx
+ c3JeWa76YIdRoYLg2TRLioZs/vJvSlH3KOkku9gm6LwcTPezojsDgHSaIvZ/+ctsnNhj+fSIh
+ uK9VveYd4zvV2vykb1iJKY0OofNeD3x8fDDaaJuUV1AwpvfNeWgc+7OZHxQCcMsg7A5ROp2pA
+ uX6sjHof+N06bkMAKUff1AHLQ33wFK+Qn6ng2jM9FZnZzpXpTe/LwGBGUGGUTlF3qc1jhykME
+ biGyBSxAY6OiQYkcpzDPLhn4qFqR4AaM37ENPbzuIH4E3MnUaaRfSBMALK02SaJHtK6wdPCvu
+ t+6C0SDzcruNzV+so6xLZiM3U3YEzvkW7gl6fmLN0gigBC2JBuAAiHgEEcMD7qAgA3QEG3fUQ
+ 9wM7mF525CO/lMsJL8bM4OHVox3i7lUAeQYCr9s0VhwYaG7U7vP5E+zkd4Qb6rIll5LXameNq
+ ES1HXKBpcGhC+YbIC4qwMShb4rnHO3pWwxukOXun7sUK/RKAlXyUdJHucEAXNugxG/+DN0QaY
+ 9inFvHwtplVRGIc8Ggnr9wNuRh3DxiAmhSRxVhvqg/KjnfM4BBdYPGWJ2qvWNCWt0nuj6u1Lq
+ vQoUTja7OA4zrLHk7sgx8mlNC4U1nZXniFsMHdHq9AROjuqlm2bHSUsd6aJ3/e/SUDo89oGVA
+ GpTmsH+7EJAiHLkQD+/bUewowt7CUTO7qwNrQpgSHBya1WVTzZ+yo+TyCXFS41ycImOyuUqsj
+ MvBTa5MyQ=
 
-On Wed, Nov 27, 2024 at 11:02:20AM +0800, Xin Ji wrote:
-> Update HDCP content_protection to DRM_MODE_CONTENT_PROTECTION_UNDESIRED
-> in bridge .atomic_disable().
+> =E2=80=A6, his questions don't make a ton of sense.
 
-PLease describe why, not what.
+Would you still like to clarify mentioned software implementation details =
+anyhow?
 
-> 
-> Signed-off-by: Xin Ji <xji@analogixsemi.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 25 ++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> index a2675b121fe4..a75f519ddcb8 100644
-> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_data *ctx)
->  				 TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
->  }
->  
-> +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ctx)
-> +{
-> +	struct device *dev = ctx->dev;
-> +
-> +	if (!ctx->connector)
-> +		return;
-> +
-> +	anx7625_hdcp_disable(ctx);
-> +
-> +	ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> +	drm_hdcp_update_content_protection(ctx->connector,
-> +					   ctx->hdcp_cp);
-> +
-> +	dev_dbg(dev, "update CP to UNDESIRE\n");
-> +}
-> +
->  static int anx7625_hdcp_enable(struct anx7625_data *ctx)
->  {
->  	u8 bcap;
-> @@ -2165,11 +2181,8 @@ static int anx7625_connector_atomic_check(struct anx7625_data *ctx,
->  			dev_err(dev, "current CP is not ENABLED\n");
->  			return -EINVAL;
->  		}
-> -		anx7625_hdcp_disable(ctx);
-> -		ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> -		drm_hdcp_update_content_protection(ctx->connector,
-> -						   ctx->hdcp_cp);
-> -		dev_dbg(dev, "update CP to UNDESIRE\n");
-> +
-> +		anx7625_hdcp_disable_and_update_cp(ctx);
->  	}
->  
->  	if (cp == DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> @@ -2449,6 +2462,8 @@ static void anx7625_bridge_atomic_disable(struct drm_bridge *bridge,
->  
->  	dev_dbg(dev, "drm atomic disable\n");
->  
-> +	anx7625_hdcp_disable_and_update_cp(ctx);
-> +
->  	ctx->connector = NULL;
->  	anx7625_dp_stop(ctx);
->  
-> -- 
-> 2.25.1
-> 
+Can the willingness grow to achieve a better understanding for algorithmic=
+ properties?
 
--- 
-With best wishes
-Dmitry
+Regards,
+Markus
 
