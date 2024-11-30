@@ -1,157 +1,170 @@
-Return-Path: <linux-kernel+bounces-426159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2226D9DEFA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:42:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A39939DEFB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:48:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A40C2B21654
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:42:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3FF41631E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ED41537CE;
-	Sat, 30 Nov 2024 09:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B7615539F;
+	Sat, 30 Nov 2024 09:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMMup1VW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqEg5BQq"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3246729A0;
-	Sat, 30 Nov 2024 09:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C38146D7F
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732959748; cv=none; b=n02QkquIkzBUiCMDyHOcuFrDGCFpn0sGNY+wyB86FL+Pjghfd/HlE3w9AGjPLgwPk7hdxixS0hycDy18cKrCdeQuKKoqJxs6yCFypj42MpAGkgjfVINPl3YaLtjxhmqERbKyVisAFF8ONgk5FoPFx7RISagyZqMePGCsyoBYxGc=
+	t=1732960087; cv=none; b=qsXUkZNREfrJsFF4FWAdnD65UwB5SBTPJS5/lVaTHBzqB5oyr1FrGDtOu6OZyYWIlMye+5ystAkHTr6qblDCU4TdV5DKZqlSqnOc85fGYoktryHXOmHSh3E3DeRlOqgcQ/kiH0DBqVp/LPCqKm2wc1MPhLx1bzTer+mwNhJvQ6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732959748; c=relaxed/simple;
-	bh=ChA8MaKv7FB791eaVmMD6k6drakoh/CD0dYxRF0wTpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNFmDpvcIAZj6KmZup0Ms7NGwbcPy4ulYDNp1nD/FZwkA2FucoQDic0ssF/nTFn71qERyAwpRWeqVnYuO2fLGWF/Zf3mxLXKOv2At78csBykSiIIbsIYyf+Mm/UfgOE5apVNUQQekpsxMP9AWmTaievHFOboJqtGfAdC5rJuA4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMMup1VW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61D0C4CECC;
-	Sat, 30 Nov 2024 09:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732959746;
-	bh=ChA8MaKv7FB791eaVmMD6k6drakoh/CD0dYxRF0wTpc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tMMup1VWFBUr30C29DJm1UDQsxJnfz8Amx9ZLw35AzC0UQ7XmprGJyNT09G9cRRbS
-	 aqloYdIb6Wq54UyVp4/xJIgfIWIOQskytqb9940L4r5egzBFhd9hZNAnbYVr4T6Ztq
-	 pmiaI+4LVlje//sEQpZyOFl9tAtkLjlUjY09Sdf9AdwyHmBfVTaeJZ3xi9wTLoPcP5
-	 2JeuWOIXk76LtrTNVGipu42X7UBR/o7Fy9ndHVBCKztTZdQl8fejHcblA/oSoc772b
-	 1hrBi1278XCBCPdGawFyV+Y1zpCcAno+ryiLo96eA0gLJJUKSP8OOshhkJ7FaKIvGA
-	 nqM3Mk3viF4VA==
-Date: Sat, 30 Nov 2024 10:42:23 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v5 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
-Message-ID: <vjdi3s5cvhg72hqodybrh4ydbh5lvol2rczn324cmqp3ehetnh@7fnvi66smqky>
-References: <cover.1732885470.git.marcelo.schmitt@analog.com>
- <93f63a7b5973c8596cfc3216e833d0129d8c61a4.1732885470.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1732960087; c=relaxed/simple;
+	bh=GlCVO+kLbVQTddt0lqq8TR/JxbNulJ9bzIayK53xUc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YGO+Jxi5gWkCZWCRv3MlKz+aNvK8TJjz9W63df6oM2v6yBak4qDgVXXJrDyBw6W0gKI1N+Vni6u1QEr7nkH/3Cmbdf5aVbZaF96VdFRGTQ5FGOUh4A1NXKsYPVH5FmodKRAObGB+azGEJdoPaV1BcgZ90oDWKQ51wfYjcCC151k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bqEg5BQq; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a36b82b7so2224445e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 01:48:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732960082; x=1733564882; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QMZ3vQAZGlKurLBaRPYkpSZkQS2FApMbIvFv0fZWybg=;
+        b=bqEg5BQqu4Y4o0fmHWj921p/yBrisgpZrduOIG6fKdjpVdu9MCEi4d1ElcEbizf8yc
+         XyeOG557hW6TnLjgmppPS0sIHF3fBq2GSvjR/DAXyqeo8DCcljOBBhxM0k8sMAFDxY0g
+         2n5um9Jk4E89OLyVTha0FhkuU6RDPgNOQnysnrst+2UUqg4lNrEqejyvDauvZryr2pk2
+         z75N4+U25MUbjgkuPsCgjWKISV5myC4t5LqNV73MFBaBjvUOreV4hVCKhOtVI76kwr8Z
+         WrODD6XTVIucsPV9CHVnJTUMLLUNvs7yx6nDMujQWPYd/fVXU3Vwzz4/9J7A+Im/dxBC
+         Xx4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732960082; x=1733564882;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QMZ3vQAZGlKurLBaRPYkpSZkQS2FApMbIvFv0fZWybg=;
+        b=dQ81LTO2P/Rf0pSe6fIlDVgO9fJ6NUnwmnDtMsR5If4zLlBbAelue+Smla3kebCXSg
+         FTaFwgee2scdkIRU00nSbnIpen9VW0t1QI4V+id9njnPOLOiVYGRzETTaGGb74HIhonq
+         WZd6ok+71Sv2/tIUoYYshB5hfN/wy9SyQDvujYnUSSui/+nX9z0tqSVYfUP5/MiYxUV+
+         BWyDoMEB/7+thTIgWVE75dEVz0JglaWLgrDfQTiK+66/89ic6or/4UpnTulnXid99kHj
+         RxQ6zxdGDOzXgauRwO7k1h04okXVZBp8WWjYOPJQoIJ6upoGdm78G4Ql7Tqoumh6Vuv4
+         nNiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoZsxsjMrkunoIfx1rc6r79YQgwpo2Tswzf3d38ixDUUWwGmqS9oW0btPEhBtL6Vfh3c4p3yFAwqI3/zI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ9GsU4fxCvM9xt8/JAWZJaQ8crvnZgWzQDHs6v5+5MGw+Pg8T
+	N2AFY/Qlasy+BQxHbD+CKrkCuj3TgfKeLA3w3sKcPVURVguOSQpHeKFRSURODBI=
+X-Gm-Gg: ASbGnctfMcxXbJxVkeqjOHaj/PY5Hffa0DP6Mtst7WuMltFFWzVJNlhwfy1aXBpaeZ4
+	wxOY7Fs0hwx8f0Q5PKxPn6YTkTliTI38SLTiJwGqcBF4GwCqduUOga/uvXWALeGxNug6981C0bh
+	SxohPRW3UlzxEt0sT4n8IwrZsKiLywITqRmgoJ9/uvUBiZAAi7yVv1PeNOstSpRGrTPZbYsdz8d
+	2LZM6RBYWedyXdyFZUphVkzgHm6gdJC3tadhdT8plQMvaiyR6ZzfWe3lf53R0g=
+X-Google-Smtp-Source: AGHT+IGAD//hnR/MMYCCnkHt3edWtS0NmQaVqN57BZvJFzV3wr/U7GG9jNuDIxTQAxhDIXQ/JnVhbA==
+X-Received: by 2002:a05:600c:198d:b0:434:a1e4:d32d with SMTP id 5b1f17b1804b1-434a9d4f18cmr53980355e9.0.1732960082560;
+        Sat, 30 Nov 2024 01:48:02 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74fec9sm110637725e9.6.2024.11.30.01.48.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2024 01:48:00 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bhupesh Sharma <bhupesh.linux@gmail.com>
+Subject: [PATCH] dt-bindings: Drop Bhupesh Sharma from maintainers
+Date: Sat, 30 Nov 2024 10:47:58 +0100
+Message-ID: <20241130094758.15553-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <93f63a7b5973c8596cfc3216e833d0129d8c61a4.1732885470.git.marcelo.schmitt@analog.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 29, 2024 at 10:13:35AM -0300, Marcelo Schmitt wrote:
-> Extend the AD4000 series device tree documentation to also describe
-> PulSAR devices.
-> 
-> The single-channel series of PulSAR devices is similar to the AD4000 series
-> except PulSAR devices sample at slower rates and don't have a
-> configuration register. Because PulSAR devices don't have a configuration
-> register, they don't support all features of AD4000 devices and thus fewer
-> interfaces are provided to user space. Also, while AD4000 may have their
-> SDI pin connected to SPI host MOSI line, PulSAR SDI pin is never connected
-> to MOSI.
-> 
-> Some devices within the PulSAR series are just faster versions of others.
-> >From fastest to slowest, AD7980, AD7988-5, AD7686, AD7685, and AD7988-1 are
-> all 16-bit pseudo-differential pin-for-pin compatible ADCs. Devices that
-> only vary on the sample rate are documented with a common fallback
-> compatible.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
-> Change log v4 -> v5
-> - Added const items for fallback compatibles.
-> 
->  .../bindings/iio/adc/adi,ad4000.yaml          | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> index e413a9d8d2a2..5b6662f5f40f 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> @@ -19,6 +19,20 @@ description: |
->      https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf
->  
->  $ref: /schemas/spi/spi-peripheral-props.yaml#
->  
-> @@ -63,6 +77,35 @@ properties:
->  
->        - const: adi,adaq4003
->  
-> +      - const: adi,ad7983
+For more than a year all emails to Bhupesh Sharma's Linaro emails bounce
+and there were no updates to mailmap.  No reviews from Bhupesh, either,
+so change the maintainer to Bjorn and Konrad (Qualcomm SoC maintainers).
 
-Why this is here but not in enum?
+Cc: Bhupesh Sharma <bhupesh.linux@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/crypto/qcom-qce.yaml         | 3 ++-
+ Documentation/devicetree/bindings/mmc/sdhci-msm.yaml           | 3 ++-
+ Documentation/devicetree/bindings/net/qcom,ethqos.yaml         | 3 ++-
+ .../devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml        | 3 ++-
+ 4 files changed, 8 insertions(+), 4 deletions(-)
 
-> +      - items:
-> +          - enum:
-> +              - adi,ad7685
-> +              - adi,ad7686
-> +              - adi,ad7980
-> +              - adi,ad7988-1
-> +              - adi,ad7988-5
-> +          - const: adi,ad7983
-> +
-> +      - const: adi,ad7687
-> +      - items:
-> +          - enum:
-> +              - adi,ad7688
-> +              - adi,ad7693
-> +          - const: adi,ad7687
-> +
-> +      - const: adi,ad7691
-> +      - items:
-> +          - enum:
-> +              - adi,ad7690
-> +              - adi,ad7982
-> +              - adi,ad7984
-> +          - const: adi,ad7691
-> +
-> +      - enum:
-> +          - adi,ad7942
-> +          - adi,ad7946
-
-Look, you have here enum for all single-compatible cases. Add all of
-other cases here as well. That's the convention in 99% of bindings.
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/crypto/qcom-qce.yaml b/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
+index c09be97434ac..62310add2e44 100644
+--- a/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
++++ b/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
+@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm crypto engine driver
+ 
+ maintainers:
+-  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konradybcio@kernel.org>
+ 
+ description:
+   This document defines the binding for the QCE crypto
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+index 8b393e26e025..eed9063e9bb3 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
++++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm SDHCI controller (sdhci-msm)
+ 
+ maintainers:
+-  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konradybcio@kernel.org>
+ 
+ description:
+   Secure Digital Host Controller Interface (SDHCI) present on
+diff --git a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
+index 0bcd593a7bd0..f117471fb06f 100644
+--- a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
++++ b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
+@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Ethernet ETHQOS device
+ 
+ maintainers:
+-  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konradybcio@kernel.org>
+ 
+ description:
+   dwmmac based Qualcomm ethernet devices which support Gigabit
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+index 758adb06c8dd..059cb87b4d6c 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm SM6115 Peripheral Authentication Service
+ 
+ maintainers:
+-  - Bhupesh Sharma <bhupesh.sharma@linaro.org>
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konradybcio@kernel.org>
+ 
+ description:
+   Qualcomm SM6115 SoC Peripheral Authentication Service loads and boots
+-- 
+2.43.0
 
 
