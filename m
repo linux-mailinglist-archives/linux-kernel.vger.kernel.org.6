@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-426231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065EF9DF09B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:43:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B68C09DF09C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:47:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA2CC281869
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E50162F25
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C3819C55E;
-	Sat, 30 Nov 2024 13:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB1419C575;
+	Sat, 30 Nov 2024 13:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VK10XMiY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P3+kqHzJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA1E19307D
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2E0159596
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732974193; cv=none; b=J/O5/pC2QRTWjQ5KkJCxAoZ4rtmKlbWgT7pl/BQJWz/E8pmq4KIrqXUVmm9BqdjFL8mtfq5CvGrmA1fjkI0lHyvVdocLVuvFBoSg6QaSMmN4Wt4RT8/NpqUQjI12ZBzJJ48WWcOnBzWTDqPUDbm45MYUKANamshxR47hCQ6jy4Q=
+	t=1732974429; cv=none; b=Rpc3w7X4NJG7MWN/oGttMSzaT6tj/OvE57JADd/K6MDppLj8TKQJuyLXt6ygyzdmXk/KFbrg4EqMdo5knNF8SVsnmOcXCPaNcC2tx1h7Wh/8a986+tidiF2P1foaN2iLqATB0RtVindfJzgV0mOwWvBsY7unzo/bTS8UODlxZho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732974193; c=relaxed/simple;
-	bh=grBrgWFBcLUOaiRSE3/edYKfFqN2iEQy2qQlclkTI4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ty8hOp79fLGULlPMBPr+RLDXazpl06BN9/WUo9tHCxYyX91YtTmnlT3zXfnUGs0Pf2hsS0Gar3oKIeRY03gt6EXCYRzqUlqY4kA9PTY191YbU7gXvxahJiuyz5JYdPYP6TxJox1YwVVlWN29lnjaVpgHQT/JcbY/V4F6tRLaBDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VK10XMiY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AUC0lSv030874
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:43:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	v1hS0vcVSga+NYrQR8U/CivFXM7UEZxTji0ocr8yqOk=; b=VK10XMiYuCXFjxS/
-	eAqZ3dfXq8qKyu/rrY43Y3ZJGwx78ZoIRWSvjMImoJBcRwDnYUHHdSnYmY3cxY1I
-	m23ZYB7KjmMjCZd/tNlJV6noIHfJ+ye6BUaGXFzKwnJQLmAeYdch6ngUwrKjJXkl
-	gjpoFyI2LXrm45kut4peL6cHb7E9U05B8db3gn5PpXn2PHedymU/4xDuSNfSdLx7
-	podsbl+zhxffV5SFP15AmV23vqyXqeF0zJrFeX5mTDf2Z7FnsHsT+lxlERER3WYa
-	mA8uL5Zw4o7XqBA0wAa2e3r5Sh9yfVpTzOvnnSh83qpHAyU35E8hOW6CArRa6PnX
-	BtxL/Q==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437rde903d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:43:11 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4668f2d0e50so4523731cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 05:43:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732974190; x=1733578990;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v1hS0vcVSga+NYrQR8U/CivFXM7UEZxTji0ocr8yqOk=;
-        b=SZnqp+TtFwjxKbA79gQwCe1KuTNwJbECdjA2DZpsUwLqUbIK3UEF2iNC4Gf97y05w9
-         Oaq6acUil//aM1crHw/birO3zftl9OgMWSaJ/du5HJGBDOvfHBrHrw8CKRe35TTcya03
-         2C5uJMRzYwrBo+xqDZUvgy2NXJHmobsUB+92jkFNQiLVffFARyuf5XHm+XytSPUBWRva
-         vQX4CaSF2qpXR15OGZgkDFoOhI08DmseKim8KOITUifIHL61FkHvtwJMHnDhzqgXMqFb
-         MSw8//B7UYLjWI6BHNzE+OFUhmnmSEq6gfEmNU1THwscXQd1G6lPCUf10Eeb2DZSEiC4
-         +3mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgvNGtexCfWZSRnPBWITPNCdsWN7jBP4dDZGvBOpt63Zc64yrgUwtkXsJkYHAOrP1QOe5BzOuWUGrhbbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1ar4/KoHLVQ34M9S0K1cN94YrRpFRGVSpC/NmDY7nZAh+0BKT
-	VAIrig5NOo68IXVP/7lGihoobvZeXcdfGVblKar0PiR+def4Lw1wYcSwwl5QE+EDW1N8BFCnfGP
-	yvKPQOCUy/9wLHcE0CeSjtTyI3Tcrifw/nZ6KWNUDGeRDWJFKgrrW+pALteP7o4w=
-X-Gm-Gg: ASbGncuFXF/psI4XMHWt6mZSisGqNdbcf5XK8rAZaJHE65jzxuvfpAkzoYN7ZZqYJBs
-	/ljlk3YnwcCgfXNKxyr7JNp+WSp0CJ4ddnLstT4wfARMKQjanX5uFMC0ZBcEHOICcJjUfYXNdbk
-	rakhIeGDUH+l5YPdFHWrbUT5BKOZV9jGJR99TzcHxjgSQ5s+rNWFiGfUUSaOuQJt31zBSgyPO/H
-	krinT8ni6tS6whVrx8XoObO/iMWcg4FEx0E2WV9blfKtYHSxVYqbbnwxM3g2uWxHGz+Ib0dTY77
-	ewPuQDXuSh180+c6hlgYP/iyOtimTGQ=
-X-Received: by 2002:a05:622a:19a2:b0:460:9acd:68be with SMTP id d75a77b69052e-466b34ed7b1mr95186541cf.5.1732974190127;
-        Sat, 30 Nov 2024 05:43:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFdQkV3XDgMM42xOm0M80R9Lb5K62gj/42Xpq3XSJPAi+a1WhSXxCbcCgvSEKn5dX73E2jDew==
-X-Received: by 2002:a05:622a:19a2:b0:460:9acd:68be with SMTP id d75a77b69052e-466b34ed7b1mr95186381cf.5.1732974189776;
-        Sat, 30 Nov 2024 05:43:09 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59994b837sm279071466b.176.2024.11.30.05.43.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 05:43:09 -0800 (PST)
-Message-ID: <7dc72269-63f0-4370-9564-e329bf53ea66@oss.qualcomm.com>
-Date: Sat, 30 Nov 2024 14:43:07 +0100
+	s=arc-20240116; t=1732974429; c=relaxed/simple;
+	bh=eie+VG3mSd+zyjGWGVcXMLzvzcIzdqbr/m2yl2JIP80=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ncj6qlHglxjWoX4NfDSMjss4sp5/YZsZeCFkG/I3Z4tR5/9dzXyzZj7D3WHCn/gjfs1nJJ928Ne9dm+i4rIBF7SG3isxwN/Z1j55g2FHUIIu7gZ66WVGH1q2qFEh7qf8wiPSZO7BEZBiXtGIBw7SBKW3RBlWIGTq6YJa6nMbymk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P3+kqHzJ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732974428; x=1764510428;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=eie+VG3mSd+zyjGWGVcXMLzvzcIzdqbr/m2yl2JIP80=;
+  b=P3+kqHzJ3fol6RWelkEQQdX4k0/zkXZHifwQTOd5BxG/KWpvnSIVVACm
+   /dL6dUYIWvkkYS8Q1f6cHk9QysX7u3J/4CkI/ZPlFY8mrJsxcNx5yRUNB
+   znzkc5iB6itqjbhd3on48IdGT5W5syUj6/x0c0WLZKJRPQnQSEJI2lxcZ
+   PMsYQIefbg11V3vqLqp29TbvoPHfxZ7ON7miqtqtgl/ox018XgKL4WVfd
+   pMePVgs9oqsGMEm4LjopOjY8hYosQPEnbsmPi4lzjP18wlcoGYy5XtQa+
+   NH06Xjte97ITWhExcGgHRM+FbCa5WjjZ809TlmpMAXln4F1pUZjwnE59l
+   w==;
+X-CSE-ConnectionGUID: qs6cC0KwSzuJSYLJuomHdw==
+X-CSE-MsgGUID: OCgKgIQCRcm/anvwEpj5iw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="32542536"
+X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
+   d="scan'208";a="32542536"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 05:47:07 -0800
+X-CSE-ConnectionGUID: Tyu/aA5FTk2erCVD6As5YA==
+X-CSE-MsgGUID: s8C7v7jaSG+Uq4wgPAihgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
+   d="scan'208";a="93159975"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 30 Nov 2024 05:47:06 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHNoO-0000hy-0X;
+	Sat, 30 Nov 2024 13:47:04 +0000
+Date: Sat, 30 Nov 2024 21:43:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Steve French <stfrench@microsoft.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: fs/smb/client/connect.c:2614:6-25: WARNING: atomic_dec_and_test
+ variation before object free at line 2622.
+Message-ID: <202411302131.YXhblRGy-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm64: qcom: qcs8300: Add ADSP and CDSP0 fastrpc nodes
-To: Ling Xu <quic_lxu5@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org
-Cc: quic_kuiw@quicinc.com, quic_ekangupt@quicinc.com, kernel@quicinc.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241119120635.687936-1-quic_lxu5@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241119120635.687936-1-quic_lxu5@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: aaQ7JcjSp37zhBQgiTrdTI-Mk5EmyYxq
-X-Proofpoint-GUID: aaQ7JcjSp37zhBQgiTrdTI-Mk5EmyYxq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- adultscore=0 malwarescore=0 mlxlogscore=699 phishscore=0 suspectscore=0
- impostorscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411300113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 19.11.2024 1:06 PM, Ling Xu wrote:
-> Add ADSP and CDSP0 fastrpc nodes for QCS8300 platform.
-> 
-> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> ---
-> This patch depends on patch https://lore.kernel.org/all/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com/#t
-> Changes since v1:
->  - Remove duplicate cdsp fastrpc nodes
->  - Add adsp memory-region and vmids
-> Changes since v2:
->  - Remove extra duplicate cdsp fastrpc nodes
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2ba9f676d0a2e408aef14d679984c26373bf37b7
+commit: 38c8a9a52082579090e34c033d439ed2cd1a462d smb: move client and server files to common directory fs/smb
+date:   1 year, 6 months ago
+config: i386-randconfig-051-20241118 (https://download.01.org/0day-ci/archive/20241130/202411302131.YXhblRGy-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
-You removed effectively- duplicate iommus entries, no nodes were
-removed compared to v2.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411302131.YXhblRGy-lkp@intel.com/
 
-Also, I hope you gave this a smoke test, as some platforms in the
-past had very strict sid/mask matching policies that didn't really
-evaluate the effective value.
+cocci warnings: (new ones prefixed by >>)
+>> fs/smb/client/connect.c:2614:6-25: WARNING: atomic_dec_and_test variation before object free at line 2622.
 
-But it looks good now
+vim +2614 fs/smb/client/connect.c
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+d00c28de55a69d fs/cifs/connect.c Jeff Layton 2010-04-24  2607  
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2608  void
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2609  cifs_put_tlink(struct tcon_link *tlink)
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2610  {
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2611  	if (!tlink || IS_ERR(tlink))
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2612  		return;
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2613  
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06 @2614  	if (!atomic_dec_and_test(&tlink->tl_count) ||
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2615  	    test_bit(TCON_LINK_IN_TREE, &tlink->tl_flags)) {
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2616  		tlink->tl_time = jiffies;
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2617  		return;
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2618  	}
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2619  
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2620  	if (!IS_ERR(tlink_tcon(tlink)))
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2621  		cifs_put_tcon(tlink_tcon(tlink));
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06 @2622  	kfree(tlink);
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2623  	return;
+9d002df492b14c fs/cifs/connect.c Jeff Layton 2010-10-06  2624  }
+d00c28de55a69d fs/cifs/connect.c Jeff Layton 2010-04-24  2625  
 
-Konrad
+:::::: The code at line 2614 was first introduced by commit
+:::::: 9d002df492b14c690425d9785530371b6c1ccbca cifs: add routines to build sessions and tcons on the fly
+
+:::::: TO: Jeff Layton <jlayton@redhat.com>
+:::::: CC: Steve French <sfrench@us.ibm.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
