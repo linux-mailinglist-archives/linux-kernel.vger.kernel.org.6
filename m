@@ -1,178 +1,174 @@
-Return-Path: <linux-kernel+bounces-426437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FE89DF2F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:25:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AFD49DF2FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:28:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED4C162CE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:25:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6812162EB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFF41AA78C;
-	Sat, 30 Nov 2024 20:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E111AAE05;
+	Sat, 30 Nov 2024 20:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0zKLputJ"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqK9O5j4"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94934132103;
-	Sat, 30 Nov 2024 20:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9FC2F2A;
+	Sat, 30 Nov 2024 20:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732998336; cv=none; b=tbFr7AP5NgLrZNQYe+K1JJfkfe0sLRfkeGxjBN9M5tgC6cCd005wxImLjodGk2rtAn5nwCtf9+kNo5G5vAy6b/34N5sG4ZGX4B2TtuZx5uAkK+QtTosIlPxCZ0sL9NhozVJzkv678e2fQ9+u091kLGDxJvq7wP1twwSlz11fPfI=
+	t=1732998518; cv=none; b=j9TlqGcQLbcuq6dJFrzywaTU7ZWhpug68gVAHv5P5l0WWYmYyI74JnZmNrvxt7NpaU06ykXsMpAxNnUJ3oaxF6MltPxFrot/aKLrrMuCeQAlL3VlHoLy74C7sPizXJ7DqB3U4Nn013FLHzdBWW3K7vZPBDYz6L2JkF5/ELjdYYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732998336; c=relaxed/simple;
-	bh=uHokISs9XKOrrY5wB5eLy6qU757AOKlXohfQCDsXHdg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oPunogi+4wBddljlCWu/TPgqTeZcTsoqyf1JkaECENNYqVFgh1QlH7fRczvgXnVQmUNmXgUfJvzAj6RxbkNa0+vxdNxtmC7w/TuGaGkaPq8kvqsggvwgPw+2+C4V5nnXsoavp3m/WpRRdtVogqVTpkMVaCpI5x+E2X3XR2YVOFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0zKLputJ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7zLaGCMDGsCJKOc1IwLPI+bZJjfcisw70zunW0yk10M=; b=0zKLputJip9nTRlXLWyCCTQ13n
-	1f/TZEKJPD/pkyR4NLE51GUwc7dCni98FZE/XXSaF9f0Ih5jKhQoUMWm2vcG4vAw95L/qERg2x67l
-	S/tTkfeWDzDr38USyDKIzP6O9sjp1tWRMpBoYORU8GccFAXgGaqL2rwEihHXg2QhAixwg/fPfAK3K
-	7ivms/2XXWzV6dkE8eX6HVMxNkZjX2yXpXFVz193aqEhvOG2i6w8TylQrCdRgFrKRB4K/6hv9tCPj
-	7egDlw08oLvW1tEHuAJv819qMZFd1gnkaBft7CofvqxX6l9FROxThpBfvGdWuUY9VXvjqqFZCoPh1
-	B4GIpIOg==;
-Received: from i5e86190f.versanet.de ([94.134.25.15] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tHU1h-0005Ux-7S; Sat, 30 Nov 2024 21:25:13 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- rfoss@kernel.org, vkoul@kernel.org, sebastian.reichel@collabora.com,
- cristian.ciocaltea@collabora.com, l.stach@pengutronix.de,
- andy.yan@rock-chips.com, hjc@rock-chips.com, algea.cao@rock-chips.com,
- kever.yang@rock-chips.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org
-Subject:
- Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support for eDP
- mode
-Date: Sat, 30 Nov 2024 21:25:12 +0100
-Message-ID: <2886747.Y6S9NjorxK@diego>
-In-Reply-To: <6e1f35c0-5ea8-414f-b3ea-4e7222c605ef@rock-chips.com>
-References:
- <20241127075157.856029-1-damon.ding@rock-chips.com>
- <2131853.KlZ2vcFHjT@diego>
- <6e1f35c0-5ea8-414f-b3ea-4e7222c605ef@rock-chips.com>
+	s=arc-20240116; t=1732998518; c=relaxed/simple;
+	bh=0r1qCaNQ8896psz/23Amr/8t26Zd2P1fIR7fO/MWjKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mz9qcs7J8D0FYg+47kwdibv4bjaLg57sFAEIaOXCOzNpkfgVhxAkBjdVd/PAAFH7ufpgHaBNxXrzaR1wDQ5S/b/14qqauyfspmh/z6a26qzTGVag96MYzM/wgaPvr9taH8mdNFL2oEqqKSbRogY3MJy4sD6+myCYQxQosWo1aHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqK9O5j4; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d0bd12374cso916627a12.3;
+        Sat, 30 Nov 2024 12:28:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732998515; x=1733603315; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WyuIvPsDL28UptMe7uSjLO9ElhKUA/RSz9Xy4L6BC4E=;
+        b=lqK9O5j4stJp6qfvAnk1cQnvJzO2qMMTGGaPcxkenociS08w4P6z0dQUHYK4ElAkZy
+         Lbl4PkoPDCrAb91AwPdwrBkykvEj50QIVG1iVpto1xviyRe9Jw9cNe0FkN+TWlUuAxjf
+         EdMIuTG173SMnXSYIBz42oZzJ58K5CbtxtXLW8Rm8EIdJlA5fraUxSRdPm/4+XTN7zGY
+         5JGBY8CurNuh19wruZDDuCq9NA3/jCvGvqe8a2QWGjAhanLr7j5XDiZArGprulEUPO92
+         UAuYYModXA64eOZBXOWHZTzECqg4e6s8vjIQbiYtWNJ0Xt/dztQb4NwUD7otyQ0YvLcW
+         bhGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732998515; x=1733603315;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WyuIvPsDL28UptMe7uSjLO9ElhKUA/RSz9Xy4L6BC4E=;
+        b=CyoBpMOlHAcW0X2JsYtz0qBN4qXmFfJqOibFYWZvNEeg0CJ0UaWjpcvjJC2sWSB0Q+
+         4RDcMYJQ1NqR4R8JYgmGkqRQr/kjrneL7Rh1N8J0IOEwJ+wrEFk3HkcWu0+hfDbbuBWZ
+         ZyajXTiKLweOSknYrXpSTvT3hznGw7QLTzFzxo6RdwsskaeDWKaKDvgCSQTPKo9QGU0j
+         Mky0FOs0XwTKGdM/CjcFtmzFM1xaPCl9rDSHgXI/wRRbIVRVrHfMY4qZJ6UmVUl5Qqwu
+         s63zKYBDyOG5olxuWaKg5xy23FO41vfnOa5thBrcIluwbSl1ClOqyHfudjRUcHOLB+02
+         s7aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmJt4hbXlO3C55+H7rkwc55+3W8QBtjDLB4P0INMatQk5ZoDesntU+Ck3bDmK5e8Ek9jwJXzD2rL6FxvT8S9bz@vger.kernel.org, AJvYcCVCvuLEC+lyVnVY1WGo47TuFuAFjG5hEXlhQREWZk3qvFPe5tzx8umuAt7+gjVCQ7M8UXZbJLSz/3xYIbOf@vger.kernel.org, AJvYcCXe2qPdn1jPZD+qsbrt8wDYY/bRZOgaIX+UxjYnDnAdNvXq2Qo13X6HtcWQ4nxvRxbdoEZTRIMQ0oKuS7rW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvrdekGjwCyAE8V9GeGR50Mr75/mfOmHZmeZbJgwMMsNXYf3Y0
+	oxJzh/yGP4hIeiRsKE2PZjX/FvjZMj9+glie2R66ZPg6GD7cgcgu
+X-Gm-Gg: ASbGncs21UuXBwH710/WSySMRIG2sqOZKR3aKsI2KnSjiW2A+EA/jFcA796YRvkY5WR
+	9bPEz9AL/cHj06YU9CWbj75SKWfFcH1vNQiTWuY64+XX8C+oYqLnPJoazC3cf4bd8HFGVGiPm91
+	EVBcrqp0sQv6kXPWc18Vc1Lckmiv8rmsDMpes5P+sxflMW+C7NlD+wO077OPjug234p/Q7Hvv4/
+	3QcE3tKZbVLdUv9QW4qe7/Lv8ZaWdhw9xNvAV/MmSzR8FwnmMjMc2RBhraO6e4cgw==
+X-Google-Smtp-Source: AGHT+IH71PGkxMLJ3V53CD3l5A9uWkt1XBSzU+Pr2sONfbSmaJosGfTGrGB9uADN9NjOgAmOY2YJyw==
+X-Received: by 2002:aa7:d889:0:b0:5d0:c697:1f02 with SMTP id 4fb4d7f45d1cf-5d0c6971f0dmr6845571a12.17.1732998514576;
+        Sat, 30 Nov 2024 12:28:34 -0800 (PST)
+Received: from f (cst-prg-87-214.cust.vodafone.cz. [46.135.87.214])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097dd685csm3129447a12.44.2024.11.30.12.28.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2024 12:28:33 -0800 (PST)
+Date: Sat, 30 Nov 2024 21:28:07 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Tycho Andersen <tandersen@netflix.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Eric Biederman <ebiederm@xmission.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] exec: fix up /proc/pid/comm in the
+ execveat(AT_EMPTY_PATH) case
+Message-ID: <ej5vp7iifyy4s2faxsh72dytcfjmpktembvgw6n65sucyf77ze@gmbn2bjvdoau>
+References: <20241130045437.work.390-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241130045437.work.390-kees@kernel.org>
 
-Hi Damon,
+On Fri, Nov 29, 2024 at 08:54:38PM -0800, Kees Cook wrote:
+> Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> switching to execveat() for service execution, but can't, because the
+> contents of /proc/pid/comm are the file descriptor which was used,
+> instead of the path to the binary. This makes the output of tools like
+> top and ps useless, especially in a world where most fds are opened
+> CLOEXEC so the number is truly meaningless.
+> 
+> When the filename passed in is empty (e.g. with AT_EMPTY_PATH), use the
+> dentry's filename for "comm" instead of using the useless numeral from
+> the synthetic fdpath construction. This way the actual exec machinery
+> is unchanged, but cosmetically the comm looks reasonable to admins
+> investigating things.
+> 
+> Instead of adding TASK_COMM_LEN more bytes to bprm, use one of the unused
+> flag bits to indicate that we need to set "comm" from the dentry.
+> 
+> Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
+> Suggested-by: Tycho Andersen <tandersen@netflix.com>
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> CC: Aleksa Sarai <cyphar@cyphar.com>
+> Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: linux-mm@kvack.org
+> Cc: linux-fsdevel@vger.kernel.org
+> 
+> Here's what I've put together from the various suggestions. I didn't
+> want to needlessly grow bprm, so I just added a flag instead. Otherwise,
+> this is very similar to what Linus and Al suggested.
+> ---
+>  fs/exec.c               | 22 +++++++++++++++++++---
+>  include/linux/binfmts.h |  4 +++-
+>  2 files changed, 22 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 5f16500ac325..d897d60ca5c2 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1347,7 +1347,21 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  		set_dumpable(current->mm, SUID_DUMP_USER);
+>  
+>  	perf_event_exec();
+> -	__set_task_comm(me, kbasename(bprm->filename), true);
+> +
+> +	/*
+> +	 * If the original filename was empty, alloc_bprm() made up a path
+> +	 * that will probably not be useful to admins running ps or similar.
+> +	 * Let's fix it up to be something reasonable.
+> +	 */
+> +	if (bprm->comm_from_dentry) {
+> +		rcu_read_lock();
+> +		/* The dentry name won't change while we hold the rcu read lock. */
+> +		__set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
+> +				true);
 
-Am Freitag, 29. November 2024, 03:43:57 CET schrieb Damon Ding:
-> On 2024/11/27 19:04, Heiko St=FCbner wrote:
-> > Am Mittwoch, 27. November 2024, 12:00:10 CET schrieb Damon Ding:
-> >> On 2024/11/27 17:29, Heiko St=FCbner wrote:
-> >>> Am Mittwoch, 27. November 2024, 08:51:51 CET schrieb Damon Ding:
-> >>>> +static int rk_hdptx_phy_set_mode(struct phy *phy, enum phy_mode mod=
-e,
-> >>>> +				 int submode)
-> >>>> +{
-> >>>> +	return 0;
-> >>>> +}
-> >>>
-> >>> I think it might make sense to go the same way as the DCPHY and also
-> >>> naneng combophy, to use #phy-cells =3D 1 to select the phy-mode via D=
-T .
-> >>>
-> >>> See [0] for Sebastians initial suggestion regarding the DC-PHY.
-> >>> The naneng combophy already uses that scheme of mode-selection too.
-> >>>
-> >>> There is of course the issue of backwards-compatibility, but that can=
- be
-> >>> worked around in the binding with something like:
-> >>>
-> >>>    '#phy-cells':
-> >>>       enum: [0, 1]
-> >>>       description: |
-> >>>         If #phy-cells is 0, PHY mode is set to PHY_TYPE_HDMI
-> >>>         If #phy-cells is 1 mode is set in the PHY cells. Supported mo=
-des are:
-> >>>           - PHY_TYPE_HDMI
-> >>>           - PHY_TYPE_DP
-> >>>         See include/dt-bindings/phy/phy.h for constants.
-> >>>
-> >>> PHY_TYPE_HDMI needs to be added to include/dt-bindings/phy/phy.h
-> >>> but PHY_TYPE_DP is already there.
-> >>>
-> >>> That way we would standardize on one form of accessing phy-types
-> >>> on rk3588 :-) .
-> >>>
-> >>> Also see the Mediatek CSI rx phy doing this too already [1]
-> >>>
-> >>>
-> >>> Heiko
-> >>>
-> >>> [0] https://lore.kernel.org/linux-rockchip/udad4qf3o7kt45nuz6gxsvsmpr=
-h4rnyfxfogopmih6ucznizih@7oj2jrnlfonz/
-> >>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t/tree/Documentation/devicetree/bindings/phy/mediatek,mt8365-csi-rx.yaml
-> >>>
-> >>
-> >> It is really a nice way to separate HDMI and DP modes.
->=20
-> I apologize for reopening the discussion about the phy-types setting.
+This does not sound legit whatsoever as it would indicate all renames
+wait for rcu grace periods to end, which would be prettye weird.
 
-there is definitly no need to apologize. We're trying to find the best
-solution afterall :-) .
+Even commentary above dentry_cmp states:
+         * Be careful about RCU walk racing with rename:
+         * use 'READ_ONCE' to fetch the name pointer.
+         *
+         * NOTE! Even if a rename will mean that the length
+         * was not loaded atomically, we don't care.
 
+It may be this is considered tolerable, but there should be no
+difficulty getting a real name there?
 
-> With the .set_mode() of struct phy_ops, the HDMI and eDP dynamic=20
-> switching can be achieved, which just depends on the right setting of
-> enum phy_mode in include/linux/phy/phy.h. So the previous way of=20
-> configuring phy mode may be also good.
-
-I think the deciding factor is, is there a use-case for needing to switch
-modes at runtime.
-
-I do think the mode for the dc-phy and also the hdptx-phy is pretty much
-decided by the board design.
-
-I.e. when you end up in a DP-connector (or eDP-panel) on your board you
-need DP mode, and when you end up in a hdmi-connector you need the
-HDMI phy mode.
-
-So I think the phy-mode for the hdptx-phy is largely dictated by the static
-board definition (like devicetree), hence going with the dt-argument for
-the mode.
-
-Like similar to the Naneng combophy, selecting its mode via argument
-because deciding if it ends up in a sata port is a board-design thing.
-
-
-Is there a use-case where you need to switch at runtime between
-hdmi and eDP? Like starting the phy in eDP mode but then needing
-to switch to HDMI mode, while the device is running?
-
-
-> And other phys may want to support dynamic switching too, like the=20
-> Rockchip USBDP combo phy.
-
-I guess USBDP is special in that in also does both modes dynamical
-depending on its use (like type-c with option DP altmode)
-
-
-Have a great weekend
-Heiko
-
-
+Regardless, the comment looks bogus.
 
