@@ -1,161 +1,139 @@
-Return-Path: <linux-kernel+bounces-426227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B499DF08C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:39:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 065EF9DF09B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:43:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76A83281422
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA2CC281869
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8F81993B7;
-	Sat, 30 Nov 2024 13:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C3819C55E;
+	Sat, 30 Nov 2024 13:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OeKZHEE0"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VK10XMiY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B401145B10;
-	Sat, 30 Nov 2024 13:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA1E19307D
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732973933; cv=none; b=PqeFfyAehVlU/M4kC22lDko4PncmlN2mFVlJSq93Pmbfs5Xirt3jFf/7EWN7acEHP3nJe1Ntg0dbw/meVcLKF3NBg3UViXOSgxc8ywFOndNVZ+TTtclv1xdEIXBd8mLklemY2rFpffqXhR1pxMwhhMsKNXdtXPrPVjLrFxy1lb4=
+	t=1732974193; cv=none; b=J/O5/pC2QRTWjQ5KkJCxAoZ4rtmKlbWgT7pl/BQJWz/E8pmq4KIrqXUVmm9BqdjFL8mtfq5CvGrmA1fjkI0lHyvVdocLVuvFBoSg6QaSMmN4Wt4RT8/NpqUQjI12ZBzJJ48WWcOnBzWTDqPUDbm45MYUKANamshxR47hCQ6jy4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732973933; c=relaxed/simple;
-	bh=bUI1N88P7xCbhKkol6eoEsKyp4u4uzfpvzMUgzX9GuM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kQlNxpJ0/3Gck30I8t6Og6bgLXBfH5mdTeao+PBGjFMi/D1MFaa7fElY/HJD/GONnIprNjEiVid0DbgWoJzKWnGNWCpKHUCbp53vbZB2lQYNIUxkgm3AnejORrOrJOGrl7v0rycGYPKfUnADm0axSTZyCt9qbGLl2UfW6fDoiXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OeKZHEE0; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2155e9dcbe7so4114595ad.3;
-        Sat, 30 Nov 2024 05:38:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732973930; x=1733578730; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8WdudPSttzD3lDEy6mYrl4aEv9XWR7fCdViuLxOP5ZE=;
-        b=OeKZHEE0x75ONA86kDhxSrEQP3S1753V7DhUnIi8wRVwEclqForWixsuECnhsKitJi
-         kJxX/d066QOpU2rGV8PRGS+Er+Ma6oLaNxGDfm/nuS7ZTuGxDntDtsnrKQd7mmuiDNbA
-         WdP7U+qBHjLV2may2KrH+4tOhV9K9N4kocWk6s/9Phs3V8HKyV+h5tlTkKWJ/Hl/SwO1
-         GVUqRCjKXcpOi0P53khCXq6IUVmyR+na8St/jT1/lNRGJI3fcQQGBS5IhN19L1FwWnSV
-         YtW0tP4RLYjVCJURELpEDIn/VqI8LW/RMsb1AruW4dGJ3EiH6UmomtfXXUBOLkYUd/fA
-         IAyw==
+	s=arc-20240116; t=1732974193; c=relaxed/simple;
+	bh=grBrgWFBcLUOaiRSE3/edYKfFqN2iEQy2qQlclkTI4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ty8hOp79fLGULlPMBPr+RLDXazpl06BN9/WUo9tHCxYyX91YtTmnlT3zXfnUGs0Pf2hsS0Gar3oKIeRY03gt6EXCYRzqUlqY4kA9PTY191YbU7gXvxahJiuyz5JYdPYP6TxJox1YwVVlWN29lnjaVpgHQT/JcbY/V4F6tRLaBDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VK10XMiY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AUC0lSv030874
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:43:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	v1hS0vcVSga+NYrQR8U/CivFXM7UEZxTji0ocr8yqOk=; b=VK10XMiYuCXFjxS/
+	eAqZ3dfXq8qKyu/rrY43Y3ZJGwx78ZoIRWSvjMImoJBcRwDnYUHHdSnYmY3cxY1I
+	m23ZYB7KjmMjCZd/tNlJV6noIHfJ+ye6BUaGXFzKwnJQLmAeYdch6ngUwrKjJXkl
+	gjpoFyI2LXrm45kut4peL6cHb7E9U05B8db3gn5PpXn2PHedymU/4xDuSNfSdLx7
+	podsbl+zhxffV5SFP15AmV23vqyXqeF0zJrFeX5mTDf2Z7FnsHsT+lxlERER3WYa
+	mA8uL5Zw4o7XqBA0wAa2e3r5Sh9yfVpTzOvnnSh83qpHAyU35E8hOW6CArRa6PnX
+	BtxL/Q==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437rde903d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:43:11 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4668f2d0e50so4523731cf.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 05:43:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732973930; x=1733578730;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8WdudPSttzD3lDEy6mYrl4aEv9XWR7fCdViuLxOP5ZE=;
-        b=DWvk+iJ2wIME8LuGilS+RYPzBhoQ5bAs5u0s5had3pB0+IudzSjFOiYurriaC2ayK/
-         UfP8V+o/gRCPN73MysuFal9VGQYKPQXnmqUj+Zb2w2JLeGVORLUIy/FWOH3IstFaQ42F
-         Z+09nMLxm6WpQhKbQbLuQzO5sQ/WYRj/3+YNtuohaRlAgNUqC1hSdbShaGOC1IiLoMHN
-         Isiqv3uqApLrRDdyASksa9uTrCbFTKDLNXne7GAvKOdsqckVKaapLIShMUvs99m6nEzl
-         1Qspa6OxkHDuIJCXqTD5ezZGcXhIc8HrdUOiX8VsUWFibL6julafPKgC6q9Ga3H4GsMm
-         KJdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhAvX7IodYBXma1nz42mmYNJ8I09CPmrEA57W+GW6UjSHcLjIkAJy2NbEiNUOTYkUDgYfGBJuUGpk=@vger.kernel.org, AJvYcCVVEhJMQV1aq36/VOUQCjxuNpdrZiMolp5dJLslegBWaV98gmGMnTGS51wfzjrfxp4yY5vOeUwBg/qAy38=@vger.kernel.org, AJvYcCX8MZsax0SLTxOG6pz2hVXCYoF83Zl93O3XpyJLZn2V/Fy43FvHqFOnB37FMHOeS+YfB54cEp9I+aRNmcjE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM7qpHvl3vSDb4eiTX2CbhtVI1ZzzVIG5lLmBqRg4IPg/OU2gb
-	SAbaMFzvlQklRYqEmy9ix2HpOv9nSgaXqHyYp0ntn/mF7v5nXWnt
-X-Gm-Gg: ASbGncsTFjm8Fu21qbv7nBV+6VTZHsPVdFeB1iu4v4FjujsRDn17hrf+iVn2eHE+otx
-	ylqoHxLDr/jSB2Lc20AMEQYQ6GTTGgPipOoM5wgPjizMxrfeVEmaEEEJTL4ZnvhhB1lab7Hm8ZB
-	kcccBIu8KgDjpAX1PjCqOTszSeFq30wlocfHQEG1bZJzbIPf7S/usLVtFjL8O0Kyhxc9OyqMeWc
-	yr6XfUXvpfcndmvubdtW+By5UqGmy1rdE/LH17ignKQ2+uzJmmhyJdJLFfOQ5WV
-X-Google-Smtp-Source: AGHT+IHyHe8V3s7+Z7XjtyH0gBWA7NAxzM1jkdFiODM0yCPB0SZHE0sPCWmXiIxUQVlMp+BN9VbIBA==
-X-Received: by 2002:a17:902:f641:b0:212:5f9b:249 with SMTP id d9443c01a7336-21501097483mr229993905ad.23.1732973930349;
-        Sat, 30 Nov 2024 05:38:50 -0800 (PST)
-Received: from localhost.localdomain ([38.47.127.59])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2156b1601basm5954215ad.196.2024.11.30.05.38.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 05:38:49 -0800 (PST)
-From: Li XingYang <yanhuoguifan@gmail.com>
-To: eugene.shalygin@gmail.com
-Cc: jdelvare@suse.com,
-	linux@roeck-us.net,
-	corbet@lwn.net,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li XingYang <yanhuoguifan@gmail.com>
-Subject: [PATCH 1/1] hwmon: (asus-ec-sensors) add TUF GAMING X670E PLUS
-Date: Sat, 30 Nov 2024 21:38:34 +0800
-Message-ID: <20241130133837.24454-2-yanhuoguifan@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241130133837.24454-1-yanhuoguifan@gmail.com>
-References: <20241130133837.24454-1-yanhuoguifan@gmail.com>
+        d=1e100.net; s=20230601; t=1732974190; x=1733578990;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1hS0vcVSga+NYrQR8U/CivFXM7UEZxTji0ocr8yqOk=;
+        b=SZnqp+TtFwjxKbA79gQwCe1KuTNwJbECdjA2DZpsUwLqUbIK3UEF2iNC4Gf97y05w9
+         Oaq6acUil//aM1crHw/birO3zftl9OgMWSaJ/du5HJGBDOvfHBrHrw8CKRe35TTcya03
+         2C5uJMRzYwrBo+xqDZUvgy2NXJHmobsUB+92jkFNQiLVffFARyuf5XHm+XytSPUBWRva
+         vQX4CaSF2qpXR15OGZgkDFoOhI08DmseKim8KOITUifIHL61FkHvtwJMHnDhzqgXMqFb
+         MSw8//B7UYLjWI6BHNzE+OFUhmnmSEq6gfEmNU1THwscXQd1G6lPCUf10Eeb2DZSEiC4
+         +3mw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgvNGtexCfWZSRnPBWITPNCdsWN7jBP4dDZGvBOpt63Zc64yrgUwtkXsJkYHAOrP1QOe5BzOuWUGrhbbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1ar4/KoHLVQ34M9S0K1cN94YrRpFRGVSpC/NmDY7nZAh+0BKT
+	VAIrig5NOo68IXVP/7lGihoobvZeXcdfGVblKar0PiR+def4Lw1wYcSwwl5QE+EDW1N8BFCnfGP
+	yvKPQOCUy/9wLHcE0CeSjtTyI3Tcrifw/nZ6KWNUDGeRDWJFKgrrW+pALteP7o4w=
+X-Gm-Gg: ASbGncuFXF/psI4XMHWt6mZSisGqNdbcf5XK8rAZaJHE65jzxuvfpAkzoYN7ZZqYJBs
+	/ljlk3YnwcCgfXNKxyr7JNp+WSp0CJ4ddnLstT4wfARMKQjanX5uFMC0ZBcEHOICcJjUfYXNdbk
+	rakhIeGDUH+l5YPdFHWrbUT5BKOZV9jGJR99TzcHxjgSQ5s+rNWFiGfUUSaOuQJt31zBSgyPO/H
+	krinT8ni6tS6whVrx8XoObO/iMWcg4FEx0E2WV9blfKtYHSxVYqbbnwxM3g2uWxHGz+Ib0dTY77
+	ewPuQDXuSh180+c6hlgYP/iyOtimTGQ=
+X-Received: by 2002:a05:622a:19a2:b0:460:9acd:68be with SMTP id d75a77b69052e-466b34ed7b1mr95186541cf.5.1732974190127;
+        Sat, 30 Nov 2024 05:43:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFdQkV3XDgMM42xOm0M80R9Lb5K62gj/42Xpq3XSJPAi+a1WhSXxCbcCgvSEKn5dX73E2jDew==
+X-Received: by 2002:a05:622a:19a2:b0:460:9acd:68be with SMTP id d75a77b69052e-466b34ed7b1mr95186381cf.5.1732974189776;
+        Sat, 30 Nov 2024 05:43:09 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59994b837sm279071466b.176.2024.11.30.05.43.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2024 05:43:09 -0800 (PST)
+Message-ID: <7dc72269-63f0-4370-9564-e329bf53ea66@oss.qualcomm.com>
+Date: Sat, 30 Nov 2024 14:43:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] arm64: qcom: qcs8300: Add ADSP and CDSP0 fastrpc nodes
+To: Ling Xu <quic_lxu5@quicinc.com>, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org
+Cc: quic_kuiw@quicinc.com, quic_ekangupt@quicinc.com, kernel@quicinc.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241119120635.687936-1-quic_lxu5@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241119120635.687936-1-quic_lxu5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: aaQ7JcjSp37zhBQgiTrdTI-Mk5EmyYxq
+X-Proofpoint-GUID: aaQ7JcjSp37zhBQgiTrdTI-Mk5EmyYxq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ adultscore=0 malwarescore=0 mlxlogscore=699 phishscore=0 suspectscore=0
+ impostorscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411300113
 
-add asus-ec-sensors on the mainboard TUF GAMING X670E PLUS
-support these sensors:
-SENSOR_TEMP_CPU, SENSOR_TEMP_CPU_PACKAGE, SENSOR_TEMP_MB
-SENSOR_TEMP_VRM, SENSOR_TEMP_WATER_IN, SENSOR_TEMP_WATER_OUT
-and SENSOR_FAN_CPU_OPT
+On 19.11.2024 1:06 PM, Ling Xu wrote:
+> Add ADSP and CDSP0 fastrpc nodes for QCS8300 platform.
+> 
+> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+> ---
+> This patch depends on patch https://lore.kernel.org/all/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com/#t
+> Changes since v1:
+>  - Remove duplicate cdsp fastrpc nodes
+>  - Add adsp memory-region and vmids
+> Changes since v2:
+>  - Remove extra duplicate cdsp fastrpc nodes
 
-Signed-off-by: Li XingYang <yanhuoguifan@gmail.com>
----
- Documentation/hwmon/asus_ec_sensors.rst |  1 +
- drivers/hwmon/asus-ec-sensors.c         | 13 +++++++++++++
- 2 files changed, 14 insertions(+)
+You removed effectively- duplicate iommus entries, no nodes were
+removed compared to v2.
 
-diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
-index ca38922f4ec5..d049a62719b0 100644
---- a/Documentation/hwmon/asus_ec_sensors.rst
-+++ b/Documentation/hwmon/asus_ec_sensors.rst
-@@ -17,6 +17,7 @@ Supported boards:
-  * ROG CROSSHAIR VIII IMPACT
-  * ROG CROSSHAIR X670E HERO
-  * ROG CROSSHAIR X670E GENE
-+ * TUF GAMING X670E PLUS
-  * ROG MAXIMUS XI HERO
-  * ROG MAXIMUS XI HERO (WI-FI)
-  * ROG STRIX B550-E GAMING
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index 9555366aeaf0..d9b4074080bd 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -250,6 +250,8 @@ static const struct ec_sensor_info sensors_family_amd_600[] = {
- 		EC_SENSOR("Water_In", hwmon_temp, 1, 0x01, 0x00),
- 	[ec_sensor_temp_water_out] =
- 		EC_SENSOR("Water_Out", hwmon_temp, 1, 0x01, 0x01),
-+	[ec_sensor_fan_cpu_opt] =
-+		EC_SENSOR("CPU_Opt", hwmon_fan, 2, 0x00, 0xb0),
- };
- 
- static const struct ec_sensor_info sensors_family_intel_300[] = {
-@@ -354,6 +356,15 @@ static const struct ec_board_info board_info_crosshair_x670e_hero = {
- 	.family = family_amd_600_series,
- };
- 
-+static const struct ec_board_info board_info_tuf_gaming_x670e_plus = {
-+	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
-+		SENSOR_TEMP_MB | SENSOR_TEMP_VRM |
-+		SENSOR_TEMP_WATER_IN | SENSOR_TEMP_WATER_OUT |
-+		SENSOR_FAN_CPU_OPT,
-+	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
-+	.family = family_amd_600_series,
-+};
-+
- static const struct ec_board_info board_info_crosshair_x670e_gene = {
- 	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
- 		SENSOR_TEMP_T_SENSOR |
-@@ -512,6 +523,8 @@ static const struct dmi_system_id dmi_table[] = {
- 					&board_info_crosshair_x670e_hero),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG CROSSHAIR X670E GENE",
- 					&board_info_crosshair_x670e_gene),
-+	DMI_EXACT_MATCH_ASUS_BOARD_NAME("TUF GAMING X670E-PLUS",
-+					&board_info_tuf_gaming_x670e_plus),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG MAXIMUS XI HERO",
- 					&board_info_maximus_xi_hero),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG MAXIMUS XI HERO (WI-FI)",
--- 
-2.47.1
+Also, I hope you gave this a smoke test, as some platforms in the
+past had very strict sid/mask matching policies that didn't really
+evaluate the effective value.
 
+But it looks good now
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
