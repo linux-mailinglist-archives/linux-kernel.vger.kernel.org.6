@@ -1,199 +1,86 @@
-Return-Path: <linux-kernel+bounces-426357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8979DF215
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:52:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62829DF21A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:00:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA024280F73
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 16:52:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573F71631DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8812D1A265D;
-	Sat, 30 Nov 2024 16:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8D91A38C4;
+	Sat, 30 Nov 2024 17:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HcYyZQEi"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082271922F1;
-	Sat, 30 Nov 2024 16:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="VpsFLVa6"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53188468;
+	Sat, 30 Nov 2024 17:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732985570; cv=none; b=IOmfqOf+XLlBMyQYQ9QIYj6c9llc87GNTZ+B4djb/di9ODIdmSI5Y3LNA9tmEZ+SnwH0AkhrU0yS/wFXcLVFSGqOcmxnsllN5ZMBfkjrbfzrBw8Ph3ScYs14IK9IsRY/ZlKzJgLvkYUOmeXRa+TKrO2nKOkOh9TZiXb7CLFV4w8=
+	t=1732986048; cv=none; b=swYEiAAatamOo8fTn9svCvxaIt8NuwZVP1b5l9u0QtS4sdwP32WsgfmMrSUgLK8XQtv3cmZwnFXDT8RxlmlpfLCr8W0jAfwj2L70+mqqkwnuOegAHiX9loSJktFqHhIdSqhbV3pC6/EwIeRxsYg+sbH6Tf3lF+/I+RVnU+wngS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732985570; c=relaxed/simple;
-	bh=qK012MOKjo/DdO+iPYPNzwrb0I9jjlABwSvNAjlnZ1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W6DwtWw4Y2xuPFPjQOjKqQWfg6GLM59QnXl/gP2/0h6LPZob6Otb4sqSrihKoO3AnTxxXFT4lE/hUEVSK8ZS0uFiWGtLhtiGDvCbK4SBn11Srd5oePe2bFK2uYI6k0clbch4iQoQJSWgdMXoQlgXiaPp8tpK17FRY3utXmcGRLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HcYyZQEi; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21561af95c3so4312345ad.3;
-        Sat, 30 Nov 2024 08:52:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732985568; x=1733590368; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=2F2dTosiAf2t/hqtpNg9kLil//AQHtCi8gSiX9bgYj0=;
-        b=HcYyZQEil4d5br5mRvg3s4JVjjW4gNceMGkRGXQPmM/jxw+c+4lAZ/igHXDF0MN31l
-         xzq+jAfy2JVIBf3DawWDgFkxl2ySvXPI+NeoKCjsZdY/cGhjVCb/z8hcnUTh8EAxG7U9
-         dP4F6w6kwsO8QKee+dIRa7eeMhgCl20FA1n7KUDe5pCxbKwu2iH8nCuLNpMHDe5szeqR
-         0BC3xit0J78VXrlbMsvKV4nvWf8V+fCcQ332uP4Op11IO3ruGbKhVblWOnGDVOOTu8wz
-         hwg/s6wSPJ6MV0tpzUAWNVx7Vj6V2pLrerhHuSvJv4a/Ti4MPW21y1H6HJ1adifHLy9N
-         3C7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732985568; x=1733590368;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2F2dTosiAf2t/hqtpNg9kLil//AQHtCi8gSiX9bgYj0=;
-        b=nqIc+cyTlDP4PxhdOyseeSFl1Mkf2ettv6xuIMbopYHzRkPY0qsf8hH9cq2Ukbsn3a
-         fOHGFkAQQQ/TazvouLXxu08dYXNQDTnWjAWvLxRQaaC99YpCf+Is7/RlBxk8jmaiVzYl
-         rOp0c5vebAkQ+v/w0Xx6LOwNmxkgWwQnnYDsn19O3RPnECxUGU5MjSONx6jol3h2ONyK
-         YxR06sNCiWqc6aKpHEqVxJmMA7KVUefY0GYP1jqxXb0QPtZiWsZcO+2X5pP5BFS88jHa
-         utuGnTbyan0f5HAFCQV+hx8AfffVRmgP+QGRkpy5v8cycvuuczvDkiNEB/5TFuYu8COH
-         1v1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1P+eq6OZU/sGi2A1HdQpr1Fjq/9lxt1QA7bYv0HPBqt4JsoNpQnjX5fofD5xnG09GCFi+YqQvtPeESl/C@vger.kernel.org, AJvYcCWyg+W2WCP8Pw1TeN8l12gpyNGWyGoHd+64MWCsBp0fgM6F1FZp0H3dL3OzmIr51cm05GHGX8zJyIsZcSw=@vger.kernel.org, AJvYcCXDNtm5vN031PrN5uXYnoOsjz8T0TMiL6ZRdUfvVpvQUpAerKxM6Z3a4LQ2OdpVQxE+AkTkolGfqgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydQXjm+NSQGALs5fHhwDNvOeskipF7lUKIoAx/rePE7hc5Tw/P
-	f3man01k9thaq8i9VbTq0PKAPzaEBZGvxdqqssQ2jJuqZBFsBALt
-X-Gm-Gg: ASbGncsXy8HrZQETEOkunFp/OcDZMxhDoGupcjCJ7RGE9OfAiSEOTKpixHm9akZNyVR
-	V1BrnkulnxEfoalfpKIPZYu5BclC5pMhDw2G9DdtO/Gb0PVzsElrFMAaC2QSqpj8Dxo5b57oHVH
-	HHBcGQwDWi8W4zItmE33WlbUkrEMkwDdIt2r+BmcqxCK0crQtN/DlWsj5f2oGU/iXOt6vdFMZvr
-	iVpib6OZRCGNwqhbAyz+0+1hcUyS+kyanxPR83jAy5pQOdyxsXAseYt7rd2DanyqLhasTEwMLwA
-	ruZhRGT1urH6y3l9v1FLyh0=
-X-Google-Smtp-Source: AGHT+IHRR/Wg8MSXoSRf2ZFdLhRQhbHbJEkx/6NanZPZJt+34nJu3TBALCItle0ZULBIi/ZTjg2jAA==
-X-Received: by 2002:a17:902:dac8:b0:20c:70ab:b9c3 with SMTP id d9443c01a7336-21501a44acfmr219881885ad.34.1732985568321;
-        Sat, 30 Nov 2024 08:52:48 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21530753d15sm41270945ad.52.2024.11.30.08.52.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 08:52:47 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <72181994-c982-49e8-beae-4ee16a789f4a@roeck-us.net>
-Date: Sat, 30 Nov 2024 08:52:46 -0800
+	s=arc-20240116; t=1732986048; c=relaxed/simple;
+	bh=Mex2PmB+lb1e6ar9mx92l20Ruaz93Dtf08qL0dt5sVQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=hS4LMY3CIKF0/5AmdaQ+Smh1VAVxg2f06V7B5f09g8amgStkn5ddNUtHaTKRP35x+e19l+oZpbIVLiGk7ztmlX1pjweyXc60MH1+dBvAS0QoDLOwT/6uEcjlrmxv8BfdTQGtjcbICPCj0jbkgIUsb+MxQkE7SCpQGh2b+J6+jFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=VpsFLVa6 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=na6BrjzcVfZyNtqJpP0Qfw+RMkb2Q5lrEVXf1+Vsfss=; b=V
+	psFLVa6s+tEzpmw/940rrbzqECzmJbVqwLbtVTWKb/Pp+vncKwSOQ42CntLoLT24
+	mDMqcsWGpqsCnWMAI1GTRZ44sfmUeVh0nBzdscleIOHvcRdNL/4oCwM8GAguDXzo
+	7P4un3hpNofC16pQ4BYmsN82sbV+zNQK5sAGiUwYmo=
+Received: from 00107082$163.com ( [111.35.188.140] ) by
+ ajax-webmail-wmsvr-40-121 (Coremail) ; Sun, 1 Dec 2024 00:59:45 +0800 (CST)
+Date: Sun, 1 Dec 2024 00:59:45 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Jens Axboe" <axboe@kernel.dk>
+Cc: chris.bainbridge@gmail.com, bvanassche@acm.org, hch@lst.de, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	regressions@lists.linux.dev, semen.protsenko@linaro.org
+Subject: Re: [REGRESSION] ioprio performance hangs, bisected
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <09db95ba-b396-4734-9ff0-9331579c92b7@kernel.dk>
+References: <CAP-bSRZehc2BxRC_z5MXKQ6qHNPXPgZoOQTtkiK_CFd494D_Fg@mail.gmail.com>
+ <20241130060949.122381-1-00107082@163.com>
+ <09db95ba-b396-4734-9ff0-9331579c92b7@kernel.dk>
+X-NTES-SC: AL_Qu2YAPWTukEj4yGQYOkXn0oTju85XMCzuv8j3YJeN500kiTuyDE8bG5ZHEnH/PmCOyCmoQmnSDptzMZCd5BjXpPiisEkb4hIt4eeUdsJzlGJ
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] hwmon: (asus-ec-sensors) add TUF GAMING X670E PLUS
-To: Eugene Shalygin <eugene.shalygin@gmail.com>
-Cc: Li XingYang <yanhuoguifan@gmail.com>, corbet@lwn.net, jdelvare@suse.com,
- linux-doc@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CAB95QAROXwFPZB8gSkz0-thPtuzWkhAHmbqEy2QBg4fMmx7NKQ@mail.gmail.com>
- <20241130144733.51627-1-yanhuoguifan@gmail.com>
- <d8e00909-a946-4ce4-811d-ac968bc54c7b@roeck-us.net>
- <CAB95QATeOynGJ=MMJrsMXatMms0u9ec+qJbh6QfAEUTnjNmZdA@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CAB95QATeOynGJ=MMJrsMXatMms0u9ec+qJbh6QfAEUTnjNmZdA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <3a051f26.3be2.1937e0398a5.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:eSgvCgDnv_mCREtnOeszAA--.32805W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hKnqmdLIM0JDgACsJ
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On 11/30/24 07:47, Eugene Shalygin wrote:
-> Hi Günter,
-> 
->>> diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
->>> index ca38922f4ec5..d049a62719b0 100644
->>> --- a/Documentation/hwmon/asus_ec_sensors.rst
->>> +++ b/Documentation/hwmon/asus_ec_sensors.rst
->>> @@ -17,6 +17,7 @@ Supported boards:
->>>     * ROG CROSSHAIR VIII IMPACT
->>>     * ROG CROSSHAIR X670E HERO
->>>     * ROG CROSSHAIR X670E GENE
->>> + * TUF GAMING X670E PLUS
->>>     * ROG MAXIMUS XI HERO
->>>     * ROG MAXIMUS XI HERO (WI-FI)
->>>     * ROG STRIX B550-E GAMING
->>
->> I don't understand how this is "sorted". What is the sorting criteria ?
-> 
-> I believe the list in  static const struct dmi_system_id dmi_table[]
-> and the list in the .rst file are in the same order, and I want the
-> board declarations to follow that.
-> 
-
-So you don't care about alphabetic order, just about using the same order
-in both files ? Fine with me, and I don't have to understand it, but it is a
-deviation from the current model and should be documented for reference to
-ensure that I don't call out people for not using non-alphabetic order
-in the future. If there is some other order, it would be even more important
-to document it to help people understand what it is supposed to be.
-
->>> diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
->>> index 9555366aeaf0..f02e4f5cc6db 100644
->>> --- a/drivers/hwmon/asus-ec-sensors.c
->>> +++ b/drivers/hwmon/asus-ec-sensors.c
->>> @@ -250,6 +250,8 @@ static const struct ec_sensor_info sensors_family_amd_600[] = {
->>>                EC_SENSOR("Water_In", hwmon_temp, 1, 0x01, 0x00),
->>>        [ec_sensor_temp_water_out] =
->>>                EC_SENSOR("Water_Out", hwmon_temp, 1, 0x01, 0x01),
->>> +     [ec_sensor_fan_cpu_opt] =
->>> +             EC_SENSOR("CPU_Opt", hwmon_fan, 2, 0x00, 0xb0),
->>
->> This is an unrelated change. It affects other boards of the same family.
->> It needs to be a separate patch, it needs to be explained, and it needs to
->> get some confirmation that it works on the other boards of the same series.
-> 
-> Well, it is the same register as in the previous generation, and while
-> it would be nice to confirm that it works in other models of the 600th
-> family, I can't see how XingYang can do that. I can check with the AMD
-> 800th series though...
-> 
-
-Ok with me if you confirm it, but it still needs to be a separate patch
-since it it not about adding support for a specific board.
-
-Guenter
-
+CkF0IDIwMjQtMTItMDEgMDA6MDA6MjAsICJKZW5zIEF4Ym9lIiA8YXhib2VAa2VybmVsLmRrPiB3
+cm90ZToKPk9uIDExLzI5LzI0IDExOjA5IFBNLCBEYXZpZCBXYW5nIHdyb3RlOgo+PiBXb3VsZCBm
+aXgvcmV2ZXJ0IHJlYWNoIDYuMTMtcmMxPyBJIHRoaW5rIHRoaXMgcmVncmVzc2lvbiBoYXMKPj4g
+c2lnbmlmaWNhbnQgbmFnYXRpdmUgaW1wYWN0IG9uIGRhaWx5IHVzYWdlLiBGcm9tIHRpbWUgdG8g
+dGltZSwKPj4gbXkgc3lzdGVtIHdvdWxkICpzdHVjayogZm9yIHNlY29uZHMsIHNvbWV0aW1lcyBl
+dmVuIHdoZW4KPj4gIGp1c3QgYGNhdGAgc29tZSBzbWFsbCBmaWxlIGl0IHdvdWxkIHRha2Ugc2Vj
+b25kcywgYW5kIG9uY2UsCj4+IG15IGRlc2t0b3AgZmFpbGVkIHRvIHJlc3VtZSBmcm9tIGEgc3Vz
+cGVuZCwgSSBoYWQgdG8gcG93ZXIgY3ljbGUgdGhlIHN5c3RlbTsKPj4gUG9sbGluZyAvcHJvYy9k
+aXNrc3RhdHMsICBJIG5vdGljZWQgQmxvY2stSU8gcmVhZCBsYXRlbmN5LAo+PiBkZWx0YSgjIG9m
+IG1pbGxpc2Vjb25kcyBzcGVudCByZWFkaW5nKS9kZWx0YSgjIG9mIHJlYWRzIGNvbXBsZXRlZCks
+Cj4+IGlzIHZlcnkgaGlnaCwgfjIwMG1zIGF2ZXJhZ2UsIGFuZCBmcmVxdWVudGx5IHJlYWNoZXMg
+MTBzLgo+PiAgKFN0cmFuZ2VseSBibG9jay1pbyB3cml0ZSBsYXRlbmN5IHNlZW1zIG5vcm1hbC4p
+Cj4+IE15IGJpc2VjdCBhbHNvIGxhbmQgb24gdGhpcyBjb21taXQsIHJldmVydCBvciBhcHBseSB0
+aGlzIHBhdGNoIHdvdWxkCj4+IGZpeCBpdC4KPj4gCj4+IEtpbmQgb2YgdGhpbmsgdGhhdCA2LjEz
+LXJjMSB3b3VsZCBiZSB2ZXJ5IHVucGxlc2VhbnQgdG8gdXNlIHdpdGhvdXQKPj4gYSBmaXgvcmV2
+ZXJ0IGZvciB0aGlzLgo+Cj5UaGUgcHVsbCBpbmNsdWRpbmcgdGhpcyBmaXggaGFzIGJlZW4gc2Vu
+dCBvZmYgdG8gTGludXMgeWVzdGVyZGF5LAo+aXQgc2hvdWxkIG1ha2UgLXJjMS4KPgo+LS0gCj5K
+ZW5zIEF4Ym9lCgpHb29kIHRvIGtub3d+CgpUaGFua3MKRGF2aWQ=
 
