@@ -1,238 +1,177 @@
-Return-Path: <linux-kernel+bounces-426112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D959DEF21
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 07:17:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762EC9DEF27
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 07:31:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4A93161EC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 06:17:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7D32818CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 06:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406B813C3D3;
-	Sat, 30 Nov 2024 06:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C4613E3F5;
+	Sat, 30 Nov 2024 06:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QvD1k/+Y"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0C4224D4
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 06:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pp78LVYv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E362D29B0
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 06:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732947451; cv=none; b=R7xviKlEP6E6P6B8S4Nf2hhul/KTv6ZrGa0J1puxYkS9JrUTDLCKDjgthnhQ7X4I2rd7Jt7XbhFly9CdlAFaGc1PvOnfLrXE58RmV88Mpdn2lBhCYNTrBTLRGjN4eB3bUGy0fRDvrNE9yjfeQZqa6PXFhq0bePT+yaM5KIfRwM8=
+	t=1732948300; cv=none; b=ZsX9gwSouuzlztGbVpIJ49tTxsRh/K/dHkaMilHE+tw6dMRSLJrWsTtm9aSGQ1mQRRv0IZACt2WLhOiYNMpQnWHfteGnxAgVhhOxZT0Oc8tKXNps9XQj31ZWYIfeRIKOKF34iY6ibau7dh7aWLyCaE2XsbJvQInON7czcOGGr4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732947451; c=relaxed/simple;
-	bh=nPzA4awnZioieH5/GUiWH6Q1g6NGKZF7/J7a0r9M+Co=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q0J3EqhqDveNGztLFbgoPo5vxF0GXPFhAxmsISIYsrPlWSy2NhrNs8OkfvW/oifdVGm4zqsgUBTToE0XpaLPIasTS/kzYrqcb+xPcViaovZVFmZmOBZeHu9SfPlUTA7bowBo5edoe77t0A6oC3joVtyDzZnUHW6KwWFZWH62tv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QvD1k/+Y; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=OsyGn
-	ki5o6g212ZSCtqYRDaMbguZhKpJrnZFCLHi8p8=; b=QvD1k/+Y2m+ebnDPeZnt2
-	0ikqIm/CJiR/MDYvDAeGr6NdTCdyeEyz/jDD1FMIco5CRksiSUFRDFr5vdecirr7
-	Ylj22BAgHz26iffppNuYmB9vtThCNNelL6L6iX2L1LNTkhG9sQY1nlw2WvwS7j1Q
-	mLXeSda6sFcDvo20LruxXg=
-Received: from Jerry-PC.. (unknown [115.204.198.71])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDnDxSbrUpnaUe5CA--.19233S2;
-	Sat, 30 Nov 2024 14:16:12 +0800 (CST)
-From: Jerry <jerrydeng079@163.com>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Jerry <jerrydeng079@163.com>
-Subject: 
-Date: Sat, 30 Nov 2024 14:15:52 +0800
-Message-ID: <20241130061552.78630-1-jerrydeng079@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1732948300; c=relaxed/simple;
+	bh=7sV9A8Q4a7fuBUggpipeqhTSHFLT/RBGrZWGScbAJ7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m4z2Apw0pt59o5SJvB1BeA+NVs4FHDiyTBSwJKXRUcC9KC+VhwAiBCj5O+ft5JMywdh+T4zoM017+6WQ/aAIuwCfdMUscf9KyRSHnkVlpjWY39Wqzjw2+sv9k9dtVJvoKTFCBxnNwV7oQqXv0JBa1w3dai7viRWMgJqWvv6HfeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pp78LVYv; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732948298; x=1764484298;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=7sV9A8Q4a7fuBUggpipeqhTSHFLT/RBGrZWGScbAJ7M=;
+  b=Pp78LVYvtxkazQ5/AkjLur/n34nyz2SDGsgjH2TTs7zKvV7N//J1KU6v
+   bWnQGK7JLexq89lGhFTLDdgNf4m8gyQSLukrd332SMENocjch1fmAq4xT
+   GpnkCHVpgEr6c3rTrdUPzg7Eb6DDT3Zw/q9dSZvigTeMv9UtTCG+HoxqA
+   j1Mv9a5M14+IJIxEHlToQmDFJh2JRFVprtvBqtJFmAUQ9+Ix9htd0w4sU
+   qLOVp+VE2rFl9OWz4PoEXau60tEVnPO++/fWIhUOiELJzXx6wGsNe/y1R
+   VFAWJmP/hPY7P+jvo4D2WTNfFV3Ei3JKGP3Q5mnHGzIRIdvs9sTRsfkYG
+   w==;
+X-CSE-ConnectionGUID: diybJHLXRc+Q/OtkNygFTg==
+X-CSE-MsgGUID: 0t7IwA9EQe6ib2G1o1cHiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="44551779"
+X-IronPort-AV: E=Sophos;i="6.12,197,1728975600"; 
+   d="scan'208";a="44551779"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 22:31:37 -0800
+X-CSE-ConnectionGUID: sOdusK3ZSIq3O0r4D18Cyw==
+X-CSE-MsgGUID: tQHgUqswR9uY4wlN7cMTDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,197,1728975600"; 
+   d="scan'208";a="115911818"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 29 Nov 2024 22:31:35 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHH0u-00008l-2w;
+	Sat, 30 Nov 2024 06:31:32 +0000
+Date: Sat, 30 Nov 2024 14:31:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Guixin Liu <kanie@linux.alibaba.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>,
+	Dmitry Bogdanov <d.bogdanov@yadro.com>,
+	Christoph Hellwig <hch@lst.de>, Chaitanya Kulkarni <kch@nvidia.com>
+Subject: drivers/nvme/target/pr.c:831:8-15: WARNING: kzalloc should be used
+ for data, instead of kmalloc/memset
+Message-ID: <202411301434.LEckbcWx-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnDxSbrUpnaUe5CA--.19233S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCw4fur1DZw4UJFy3GFW3Jrb_yoW7JF1kpF
-	Wayw1FyrW8JFy7WrZ3CayUZF4a93yIkFW7Ary7Ga9IyrsxKF1jkFyavFy0yr10krZ8GrWa
-	vr45trW7Gr48Cr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UhVy3UUUUU=
-X-CM-SenderInfo: xmhu25pghqwiixz6il2tof0z/1tbiNgOn22dKoZHLGAAAsH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Jerry <jerrydeng079@163.com>
----
- mm/backing-dev.c    |  1 +
- mm/filemap.c        |  6 ++++-
- mm/page-writeback.c | 61 +++++++++++++++++++++++++++++++++++++++++----
- 3 files changed, 62 insertions(+), 6 deletions(-)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2ba9f676d0a2e408aef14d679984c26373bf37b7
+commit: 5a47c2080a7316f184107464e4f76737c0c05186 nvmet: support reservation feature
+date:   3 weeks ago
+config: hexagon-randconfig-r051-20241130 (https://download.01.org/0day-ci/archive/20241130/202411301434.LEckbcWx-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
 
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index dd08ab928..0b86bd980 100755
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -878,6 +878,7 @@ void bdi_unregister(struct backing_dev_info *bdi)
- 	/* make sure nobody finds us on the bdi_list anymore */
- 	bdi_remove_from_list(bdi);
- 	wb_shutdown(&bdi->wb);
-+	wake_up(&(bdi->wb_waitq));
- 	cgwb_bdi_unregister(bdi);
- 
- 	/*
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 3b0d8c6dd..3282840f0 100755
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3300,6 +3300,7 @@ ssize_t generic_perform_write(struct file *file,
- 	long status = 0;
- 	ssize_t written = 0;
- 	unsigned int flags = 0;
-+	errseq_t err = 0;
- 
- 	do {
- 		struct page *page;
-@@ -3368,8 +3369,11 @@ ssize_t generic_perform_write(struct file *file,
- 		}
- 		pos += copied;
- 		written += copied;
--
- 		balance_dirty_pages_ratelimited(mapping);
-+		err = errseq_check(&mapping->wb_err, 0);
-+		if (err)
-+			return err;
-+
- 	} while (iov_iter_count(i));
- 
- 	return written ? written : status;
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index b2c916474..e013a6d01 100755
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -146,6 +146,16 @@ struct dirty_throttle_control {
- 	unsigned long		pos_ratio;
- };
- 
-+
-+
-+struct bdi_wq_callback_entry {
-+
-+	struct task_struct *tsk;
-+	struct wait_queue_entry  wq_entry;
-+	int bdi_unregister;
-+};
-+
-+
- /*
-  * Length of period for aging writeout fractions of bdis. This is an
-  * arbitrarily chosen number. The longer the period, the slower fractions will
-@@ -1567,6 +1577,22 @@ static inline void wb_dirty_limits(struct dirty_throttle_control *dtc)
- 	}
- }
- 
-+
-+static int wake_up_bdi_waitq(wait_queue_entry_t *wait, unsigned int mode,
-+				int sync, void *key)
-+{
-+
-+	struct bdi_wq_callback_entry *bwce =
-+		container_of(wait, struct bdi_wq_callback_entry, wq_entry);
-+
-+	bwce->bdi_unregister = 1;
-+	if (bwce->tsk)
-+		wake_up_process(bwce->tsk);
-+
-+	return 0;
-+}
-+
-+
- /*
-  * balance_dirty_pages() must be called by processes which are generating dirty
-  * data.  It looks at the number of dirty pages in the machine and will force
-@@ -1574,7 +1600,7 @@ static inline void wb_dirty_limits(struct dirty_throttle_control *dtc)
-  * If we're over `background_thresh' then the writeback threads are woken to
-  * perform some writeout.
-  */
--static void balance_dirty_pages(struct bdi_writeback *wb,
-+static int balance_dirty_pages(struct bdi_writeback *wb,
- 				unsigned long pages_dirtied)
- {
- 	struct dirty_throttle_control gdtc_stor = { GDTC_INIT(wb) };
-@@ -1595,6 +1621,16 @@ static void balance_dirty_pages(struct bdi_writeback *wb,
- 	struct backing_dev_info *bdi = wb->bdi;
- 	bool strictlimit = bdi->capabilities & BDI_CAP_STRICTLIMIT;
- 	unsigned long start_time = jiffies;
-+	struct bdi_wq_callback_entry bwce = {NULL};
-+	int ret = 0;
-+
-+
-+	if (!test_bit(WB_registered, &wb->state))
-+		return -EIO;
-+
-+	init_waitqueue_func_entry(&(bwce.wq_entry), wake_up_bdi_waitq);
-+	bwce.tsk = current;
-+	add_wait_queue(&(bdi->wb_waitq), &(bwce.wq_entry));
- 
- 	for (;;) {
- 		unsigned long now = jiffies;
-@@ -1816,6 +1852,12 @@ static void balance_dirty_pages(struct bdi_writeback *wb,
- 		wb->dirty_sleep = now;
- 		io_schedule_timeout(pause);
- 
-+		/* bid is unregister NULL, all bdi memory is illegal */
-+		if (bwce.bdi_unregister) {
-+			ret = -EIO;
-+			break;
-+		}
-+
- 		current->dirty_paused_when = now + pause;
- 		current->nr_dirtied = 0;
- 		current->nr_dirtied_pause = nr_dirtied_pause;
-@@ -1843,12 +1885,15 @@ static void balance_dirty_pages(struct bdi_writeback *wb,
- 		if (fatal_signal_pending(current))
- 			break;
- 	}
-+
-+	if (bwce.bdi_unregister == 0)
-+		remove_wait_queue(&(bdi->wb_waitq), &(bwce.wq_entry));
- 
- 	if (!dirty_exceeded && wb->dirty_exceeded)
- 		wb->dirty_exceeded = 0;
- 
- 	if (writeback_in_progress(wb))
--		return;
-+		return ret;
- 
- 	/*
- 	 * In laptop mode, we wait until hitting the higher threshold before
-@@ -1859,10 +1904,12 @@ static void balance_dirty_pages(struct bdi_writeback *wb,
- 	 * background_thresh, to keep the amount of dirty memory low.
- 	 */
- 	if (laptop_mode)
--		return;
-+		return ret;
- 
- 	if (nr_reclaimable > gdtc->bg_thresh)
- 		wb_start_background_writeback(wb);
-+
-+	return ret;
- }
- 
- static DEFINE_PER_CPU(int, bdp_ratelimits);
-@@ -1944,8 +1991,12 @@ void balance_dirty_pages_ratelimited(struct address_space *mapping)
- 	}
- 	preempt_enable();
- 
--	if (unlikely(current->nr_dirtied >= ratelimit))
--		balance_dirty_pages(wb, current->nr_dirtied);
-+	if (unlikely(current->nr_dirtied >= ratelimit)) {
-+
-+		if (balance_dirty_pages(wb, current->nr_dirtied) < 0)
-+			errseq_set(&(mapping->wb_err), -EIO);
-+
-+	}
- 
- 	wb_put(wb);
- }
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411301434.LEckbcWx-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+>> drivers/nvme/target/pr.c:831:8-15: WARNING: kzalloc should be used for data, instead of kmalloc/memset
+
+vim +831 drivers/nvme/target/pr.c
+
+   802	
+   803	static void nvmet_execute_pr_report(struct nvmet_req *req)
+   804	{
+   805		u32 cdw11 = le32_to_cpu(req->cmd->common.cdw11);
+   806		u32 cdw10 = le32_to_cpu(req->cmd->common.cdw10);
+   807		u32 num_bytes = 4 * (cdw10 + 1); /* cdw10 is number of dwords */
+   808		u8 eds = cdw11 & 1; /* Extended data structure, bit 00 */
+   809		struct nvme_registered_ctrl_ext *ctrl_eds;
+   810		struct nvme_reservation_status_ext *data;
+   811		struct nvmet_pr *pr = &req->ns->pr;
+   812		struct nvmet_pr_registrant *holder;
+   813		struct nvmet_pr_registrant *reg;
+   814		u16 num_ctrls = 0;
+   815		u16 status;
+   816		u8 rtype;
+   817	
+   818		/* nvmet hostid(uuid_t) is 128 bit. */
+   819		if (!eds) {
+   820			req->error_loc = offsetof(struct nvme_common_command, cdw11);
+   821			status = NVME_SC_HOST_ID_INCONSIST | NVME_STATUS_DNR;
+   822			goto out;
+   823		}
+   824	
+   825		if (num_bytes < sizeof(struct nvme_reservation_status_ext)) {
+   826			req->error_loc = offsetof(struct nvme_common_command, cdw10);
+   827			status = NVME_SC_INVALID_FIELD | NVME_STATUS_DNR;
+   828			goto out;
+   829		}
+   830	
+ > 831		data = kmalloc(num_bytes, GFP_KERNEL);
+   832		if (!data) {
+   833			status = NVME_SC_INTERNAL;
+   834			goto out;
+   835		}
+   836		memset(data, 0, num_bytes);
+   837		data->gen = cpu_to_le32(atomic_read(&pr->generation));
+   838		data->ptpls = 0;
+   839		ctrl_eds = data->regctl_eds;
+   840	
+   841		rcu_read_lock();
+   842		holder = rcu_dereference(pr->holder);
+   843		rtype = holder ? holder->rtype : 0;
+   844		data->rtype = rtype;
+   845	
+   846		list_for_each_entry_rcu(reg, &pr->registrant_list, entry) {
+   847			num_ctrls++;
+   848			/*
+   849			 * continue to get the number of all registrans.
+   850			 */
+   851			if (((void *)ctrl_eds + sizeof(*ctrl_eds)) >
+   852			    ((void *)data + num_bytes))
+   853				continue;
+   854			/*
+   855			 * Dynamic controller, set cntlid to 0xffff.
+   856			 */
+   857			ctrl_eds->cntlid = cpu_to_le16(NVME_CNTLID_DYNAMIC);
+   858			if (rtype == NVME_PR_WRITE_EXCLUSIVE_ALL_REGS ||
+   859			    rtype == NVME_PR_EXCLUSIVE_ACCESS_ALL_REGS)
+   860				ctrl_eds->rcsts = 1;
+   861			if (reg == holder)
+   862				ctrl_eds->rcsts = 1;
+   863			uuid_copy((uuid_t *)&ctrl_eds->hostid, &reg->hostid);
+   864			ctrl_eds->rkey = cpu_to_le64(reg->rkey);
+   865			ctrl_eds++;
+   866		}
+   867		rcu_read_unlock();
+   868	
+   869		put_unaligned_le16(num_ctrls, data->regctl);
+   870		status = nvmet_copy_to_sgl(req, 0, data, num_bytes);
+   871		kfree(data);
+   872	out:
+   873		nvmet_req_complete(req, status);
+   874	}
+   875	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
