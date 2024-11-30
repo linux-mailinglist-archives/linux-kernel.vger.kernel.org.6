@@ -1,83 +1,78 @@
-Return-Path: <linux-kernel+bounces-426390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6FA9DF27A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 758E49DF27D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:08:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32016280EC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:07:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B42328140B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84641AA1CE;
-	Sat, 30 Nov 2024 18:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5515D1A9B33;
+	Sat, 30 Nov 2024 18:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADnPo+1c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QURUlMyH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3D41A76C8;
-	Sat, 30 Nov 2024 18:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11F9192D6E;
+	Sat, 30 Nov 2024 18:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732990072; cv=none; b=kFP7nvDV5HYl+WzACcyGE8ZEjMV1641wBIWd6IkfKVL54OYjqAfyCpx8U2h2TGaj4lmytBZ/FD9uFW8S8nbLba5uKNPnQibUpYKGeNHwEZ4m79+WQOGqW7mALvtBgA/qugBENDFtm1b0oMjG+GeZ02MzzPBgNXmnzdnyBiW/KMk=
+	t=1732990097; cv=none; b=IKyh/D3+zOi95wRe0qQkNweKcXrL0gmK+DC5ej6cCVYw8MUywY5pAyujfk5oES9EQt6/2w43UAAV1ayCFONezExa1K1cRCv1ute3C6Njx37tj+9AP/HK7Ehyd+Uq4va/YcS6kajuC6nNU2JV/V0XQRXWPQmAoZtNDKP3ROzg/Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732990072; c=relaxed/simple;
-	bh=88+9+I2Z44erwubt8hq/SYIwnfvUT6eFbrcBNzpKCm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MZdogZ8IY5dh59L2QvWMag3+aJCCySaIAEJO/3ZSWReUC1sSWcnpnmE0SLifmIa9Zq8VpuHLKAnJviV7jdaSMC5KEzz4DsfVIhjM24aHjafa8vV8SJdMxclKF7/HsggZ2XovxoSeI/Ah31SLLT18HEvtjUAACCUj/U7oox+rPCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADnPo+1c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A68CC4CED7;
-	Sat, 30 Nov 2024 18:07:47 +0000 (UTC)
+	s=arc-20240116; t=1732990097; c=relaxed/simple;
+	bh=Qau+AFXSd9vD4oiWpRHO+CA2hUi5q0a3TV5aPJWtQLY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OAjLTW2jWey/cbNEBsbsxbSwiAB3F5DBcT1pDbxHsu8aXGbMcWywTOK6tuxpVJaafASuhO3O+sG15HN4ms5fqNFRNxC2xFzaAwBL2kq0Hjqh5RY8K5JM75BhhR5tA6UuvOmXszl4XZ4B3vdazQmmLp4DqGhph3TcdXxtE9rLy7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QURUlMyH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8961CC4CECC;
+	Sat, 30 Nov 2024 18:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732990071;
-	bh=88+9+I2Z44erwubt8hq/SYIwnfvUT6eFbrcBNzpKCm4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ADnPo+1c+hD6Latm3DZ0BmUCNBBLwT1wO2MKSf+iZIr5QCQvxz/NuZigm8hCp4jjR
-	 ZpJf03Sul8qq2ol78ytflG567su+MnD8B1ksCGvkhMDtG5/QwLvfc5ZwD0PmtLz1ru
-	 FU2UgKjaIWYMCaZfIQWe9Lm3mC/Ci13nRVNKbbjkbk3kLDh3JsoOPxoQrcYDsqrZxv
-	 PbKoIgKmkzhDiyZjwNjrBGfYVerZ8FMpXGqxce6rIG0KDdz9Dt6n1wetAYsEIakCu6
-	 MSBAcZeXGgO8Eol5jbQ95tfZbfPEiEgkH9yQzswdw6iAfgAbxEktYo4JHp0bveqqkN
-	 75FvxsToTGDjw==
-Date: Sat, 30 Nov 2024 18:07:42 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] iio: accel: kx022a: Support KX134-1211
-Message-ID: <20241130180742.149edeae@jic23-huawei>
-In-Reply-To: <6e95af6b425df6a5ff5218825ec8923f1341f7c3.1732783834.git.mazziesaccount@gmail.com>
-References: <cover.1732783834.git.mazziesaccount@gmail.com>
-	<6e95af6b425df6a5ff5218825ec8923f1341f7c3.1732783834.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732990097;
+	bh=Qau+AFXSd9vD4oiWpRHO+CA2hUi5q0a3TV5aPJWtQLY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=QURUlMyHvA1KmIP3kWPJwfFzzIo7syNVNvCPNKXpgBzrnJhHS3k9WSeIQRh33Srtv
+	 TVcTS0Hmfs7vtK7geu697gBTMCtS3tsNKDclhoXLUpUc+ccunoK81IfOcil2Ee5MD7
+	 Bqmj0Fi+tGyR2A54vNyCIbrZrjHXbx5WTMg+SIqxqoOc+XunYWM3DffighCjQWo4wC
+	 Lb8i7PoFZlTDsGESW8RCpMZP4hABIkERTVZ4vRczgWVnG8zCj7/mXLFKr4pTJz1Nx+
+	 kurlvlaVcq9lCY67P3mi7nBN0dciZCTKiTtk2X0v8ICKjXyDmaNYLeiq98ILQBw0XH
+	 CPMjg4ztu3zww==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 717AA380A944;
+	Sat, 30 Nov 2024 18:08:32 +0000 (UTC)
+Subject: Re: [GIT PULL] TTY / Serial driver changes for 6.13-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z0lCihhE75lE9Zjd@kroah.com>
+References: <Z0lCihhE75lE9Zjd@kroah.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Z0lCihhE75lE9Zjd@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.13-rc1
+X-PR-Tracked-Commit-Id: b5a23a60e8ab5711f4952912424347bf3864ce8d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 718632467d88e98816fa01ab12681ef1c2aa56f8
+Message-Id: <173299011090.2443317.8330340376359997623.pr-tracker-bot@kernel.org>
+Date: Sat, 30 Nov 2024 18:08:30 +0000
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu, 28 Nov 2024 11:03:18 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+The pull request you sent on Fri, 29 Nov 2024 05:26:50 +0100:
 
-> The ROHM KX134-1211 has very similar register interface as KX132-1211
-> does. The main differencies are the content of the "Who am I"
-> identification register and different g-ranges. The KX132-1211 can
-> measure ranges from +/- 2g to +/-16g where the KX134-1211 supports
-> measuring ranges +/- 8g to +/- 64g.
-> 
-> Support the ROHM KX134-1211.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Applied 5-6 to the testing branch of iio.git.
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.13-rc1
 
-Thanks,
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/718632467d88e98816fa01ab12681ef1c2aa56f8
 
-Jonathan
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
