@@ -1,97 +1,87 @@
-Return-Path: <linux-kernel+bounces-426122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8399DEF3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:25:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D765F9DEF3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF88BB215CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 07:25:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A362B215F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 07:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E29146D6B;
-	Sat, 30 Nov 2024 07:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BEC1482F2;
+	Sat, 30 Nov 2024 07:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="WiS74vGm"
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SUBqivC9"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565343F9C5;
-	Sat, 30 Nov 2024 07:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8882F3B;
+	Sat, 30 Nov 2024 07:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732951514; cv=none; b=E4il0swQVYigPnWnduHBrkD+fjrPXypUEsydl5yQBnB17T/mfJiG8VschXToMPirHgV7RIGznWu+4zbKNzpgyRuclFFy1lOf0moWVvZU1pZRb5rSqtQAMM0vl0LZfoB1fb6IZ+NCV36e7gwEbVqQ9MZXRPwGgC8JgC5B/J9oXR4=
+	t=1732951934; cv=none; b=CWf9Dqn3v3nUX3yWqxp4dXFTYEVl/nXJLSt98SmGSK9m6IiV2OtrRmVO05fGEpDP4+Ddyr1/CDbwkJlZlqwe1LQl/tCDG9ZP4k9kjFUS/SmAO80pzjf2Z/r51EBs/KrHGxaEhF1fXST9rA+VJcXnzWANnIy5qfqzIuf+0vEmqyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732951514; c=relaxed/simple;
-	bh=LICcckQkru5CpGOmAfj2wJHeUlAGjzb19Eq74fabSP4=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=H/A21EeKUwxPAg5+5aMkSAR41irO1LYbCTUvoSqTqTiYJ/4LIf6BdsFLz8wAVGM94wsOX6pNpuTudr/yhlVkrQQUgcouuw0f0OrWqD4BHSK1uVQ4ZPpK9no1V+8yqjErkOr579TEsFdOV8QoU5o+qsSisZd8dvxyNOjI1622bcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=WiS74vGm; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1732951204; bh=+hzNBE9amkyYQdP9ayXOyy9tr1GoK7JE/JfLRn4dZDA=;
-	h=From:To:Cc:Subject:Date;
-	b=WiS74vGmJzs+Gp/eCzEcy4jK8XQdTtcpT1PFg9h6RbCzhjdd2r62PlpUnLLckEvbB
-	 tzxg5NnQjUnL59Aec5CVr8zzms4pMHxFlTWO+kJLxjYCrzVLQ0Q2tgowZOwgDHvotR
-	 WIZvZYRezQuWV4wPsQ00did8FBaBM0NVBKbTMlfI=
-Received: from archlinux-sandisk.localdomain ([115.153.151.69])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 502846A3; Sat, 30 Nov 2024 15:20:02 +0800
-X-QQ-mid: xmsmtpt1732951202tjysz4kw6
-Message-ID: <tencent_DCE08C78F5890298305882057326444C4C0A@qq.com>
-X-QQ-XMAILINFO: NsET35+4SAsGeiDbM1wcA9SeIqU5HoWtlbxqNJE4pbpnFw9K+3Lb9sERzpkfOm
-	 pnRJ43XoCVK9H1AYq8vSmQbPumHwe2FraVjaThndwlR0F3TJkEofpYVObI1Dt92IeAsA471vK70E
-	 unoBpPHfNbRiLPp4tu/Sn7cAFXY3b70dKPBXwUJldHtqq4m3JCMaTUZuwiqbuwe5QwjYUtLNTmaT
-	 jslSDuHvDWqDZ0JTO6KIo1CVIdJmZ2peQXIpRjaQkBZGh0bWHKpJE83EZywK+UcuJpgn+AtuxVMj
-	 ekJwd81bMRDomgU1wsLTfluwnlalr6cR2AQqZzdXDy1wJSLrBJtx11YnzWgJpL8qrEigPVwoLgfu
-	 fWfp/LALkYYNQjHb21F0D4SwBYj+PrJxXqNXbDD1OiiqEcLHxKZACUNeWZdAY+h1aWf6j3QgAjEl
-	 DknwQr/VnSda5juEbFtbUaFKDc3ZFaHEL7TPUoY1sUGGrJ97fpB2JiSMDtMDKFnDEu8a3P+qC1xU
-	 11cpvZRJ66yJn2XPYYrBQ7a5gPXPBnDcGdv8XFndmwM6W1wOrZR5FQB8dayP/EsWM7/OWEfOqEHj
-	 whSIHUTihRGm0Su6fkhfIsTwPePZElRQnlcqMMnWqqtwcNBGDw/CF7tGjFjTIzWw+YPRiZCwx81E
-	 Ny9rIAbS6kCEQWLCbNZMOnRlxmBVS5irW6C/02MPaBeXjhFaVea5X+m1b3RNQemFvJiOlrUQsoyq
-	 tzjt05dl3PB7tjdj+r9dcnU+gjk9lTXCOkV3BRAggQwdeK09AV4eVVlP+DXeGa5AfoHWxddo1SLU
-	 h0WKxB4oKlLIx9Y4gKnPcXmborIi6nJSUddUng3Z+23OnLa7mo4x4SC3rRy528NFeBzE21ngBM9r
-	 Qla7vgwgfcmgQ5YgQ4kC277DPhJQqN98E7rUYIFusL1BbZevUlj9c7G+GwIXSlZsh2nADL5tQr
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Jiale Yang <295107659@qq.com>
-To: tiwai@suse.com
-Cc: perex@perex.cz,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiale Yang <295107659@qq.com>
-Subject: [PATCH] sound: remove unnecessary return statement
-Date: Sat, 30 Nov 2024 15:20:00 +0800
-X-OQ-MSGID: <20241130072000.1091-1-295107659@qq.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1732951934; c=relaxed/simple;
+	bh=6YMG6y2Kkc+7uY7RG8Hi/vjdkJelv9vecIQ8ViSNtAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=i8iug7Vhe+7qFNYae+k52IamNJBFAdfhrE8hr4BqNalA5qJUfGyf7NVLUr/JHvBXZlfrBIakwdFtlDDomPaQtOw1IRgPb6RGJ1FL2jfe3yRdw6x6/ZsymqnAdP5jfvjp10F69Oe9Dqirogb46pfrdIxm1kLmJspACC6fZCw35q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SUBqivC9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=8MZ4ngk1qOxllnRLjNQ8Wt4T5xxHz6hB4mpn7yWaUD0=; b=SUBqivC9PNUSXZDDSypJIqGfF4
+	Ndt3xd8KUvZArhKrPSGNmcIK6LxI3BBlhsegjVkMdgAcZeQxyC9le9mj/5d8wkDQpxR8vwy58he4r
+	TtUHhR97PohjCbad1YdnMSbyTUOeoYqA1h/DgHs/CpNPhgk3STv30Cqu1Abzr1YLbmTJk7PZ23p0g
+	6V0HfQS6j1ionaQzpq2FX70eqAdpw511WjVmo5fDXulR5Vk43WmELFy7/gNF2GLUhAWMRV3gIMVx8
+	S3W3k7/MzEs/fxYWGfywE+b9ZBk/SxGPJR37AoH8LzrBXD1SU321xESr49RQnRnFfU5g/+SWDuqv+
+	qslTvUNQ==;
+Received: from 2a02-8389-2341-5b80-0664-dc97-c221-7f73.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:664:dc97:c221:7f73] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tHHxY-00000001a29-2ml8;
+	Sat, 30 Nov 2024 07:32:09 +0000
+Date: Sat, 30 Nov 2024 08:32:05 +0100
+From: Christoph Hellwig <hch@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Subject: [GIT PULL] dma-mapping fix for Linux 6.13
+Message-ID: <Z0q_dVrMZGDv9cvY@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-A return statement at the end of a void function is unnecessary.
+The following changes since commit 22293c33738c14bb84b9d3e771bc37150e7cf8e7:
 
-Signed-off-by: Jiale Yang <295107659@qq.com>
----
- sound/core/init.c | 1 -
- 1 file changed, 1 deletion(-)
+  dma-mapping: save base/size instead of pointer to shared DMA pool (2024-11-14 10:45:09 +0100)
 
-diff --git a/sound/core/init.c b/sound/core/init.c
-index 114fb87de..f16d78d58 100644
---- a/sound/core/init.c
-+++ b/sound/core/init.c
-@@ -616,7 +616,6 @@ void snd_card_free_when_closed(struct snd_card *card)
- 
- 	snd_card_disconnect(card);
- 	put_device(&card->card_dev);
--	return;
- }
- EXPORT_SYMBOL(snd_card_free_when_closed);
- 
--- 
-2.47.1
+are available in the Git repository at:
 
+  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.13-2024-11-30
+
+for you to fetch changes up to aef7ee7649e02f7fc0d2e5e532f352496976dcb1:
+
+  dma-debug: fix physical address calculation for struct dma_debug_entry (2024-11-28 10:19:16 +0100)
+
+----------------------------------------------------------------
+dma-mapping fix for Linux 6.13
+
+ - fix physical address calculation for struct dma_debug_entry
+   (Fedor Pchelkin)
+
+----------------------------------------------------------------
+Fedor Pchelkin (1):
+      dma-debug: fix physical address calculation for struct dma_debug_entry
+
+ kernel/dma/debug.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
