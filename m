@@ -1,204 +1,275 @@
-Return-Path: <linux-kernel+bounces-426379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92CA9DF259
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:43:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 623C49DF261
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:49:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9E42813AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:43:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18452281445
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485C31A9B4B;
-	Sat, 30 Nov 2024 17:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A211A76BB;
+	Sat, 30 Nov 2024 17:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KVsBsjWR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PzppHvLj"
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F661A9B2E;
-	Sat, 30 Nov 2024 17:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F9A1A00D6;
+	Sat, 30 Nov 2024 17:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732988601; cv=none; b=mLEJB0CIj8FUdx8IOHskuf36SRah1rNcx24SNkkKqJ/K6HFchdFJgGuULaPDlQMKvoaA5ZznHUG4D0AITmtADVAjAVwkQDR0CbVGspgLWwaI5kkMVvS30vWIC6u0XNu7+/smPB/7+35kOJKSru597TY22pXnfflI/+e7CB5qKKY=
+	t=1732988985; cv=none; b=l4iMLMfXbLYTqaLwkoBjUjC7vX6nCcI3lc7A/5syuWkn+7JAw7n6R/x7dVHDXe7Ceiu7PvPxf4zkURd75vv6lUat7Mzvj3T3ENo1H29m0jQMPlUUwv6JZ0z17OsprRSybZOWDNawNzVIyDueHRyHIrrGxpGjVJltYxmgmP8wxuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732988601; c=relaxed/simple;
-	bh=hp79E4kQ26QL67QnIKLFTCKPhH95s/jPskxdhk6jR3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tvPHlMzZQE0a7BHhy/LESp7Xy1nGz0pey1Dd0QF3EbFkDFRkl7d4mnG0HtOv4JiUP+UFGe+NQd+ADW3OxfipuJDNAWA43yx6ASxDqMeFoVHNmVZ2MYMpHLgwI8NdcGVA9IgbTPQmDgE1xZ19qtBtI1MxFVLVYfwivDHjQQ0PBwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KVsBsjWR; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732988599; x=1764524599;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hp79E4kQ26QL67QnIKLFTCKPhH95s/jPskxdhk6jR3A=;
-  b=KVsBsjWRuN2cN0wCJDJbq7KFL907NGl6wAp/N6bFv/TRXZaMuwWukx7U
-   eJAUcxihT8JpSzidaphshqcR4OqDjcyafJ3QlqXE3+duQ3klX+423favA
-   6bkqWT2QTUZPT4hrcqEbiiqRh2OmykI3u84Vo3lDxw9dzUz+ObMa6yRHU
-   IoOdJZFSD7n7ebV2WmadX8KmzT9ERU1W7IrXD9Agx93wLI4swF0TRtZ4P
-   KcNYeUHSY+VK8VDcM1ympygWP0mavyseQs6Aox2UkTckDQX/2mi99QlsC
-   jekK7JamVCbLnRwX/PhWvGiR2Vdq+4UB5kvbhFBrJ+VsclDv2d7oVx/2Z
-   w==;
-X-CSE-ConnectionGUID: rHfEG30LTzeeiGZgVkLhOg==
-X-CSE-MsgGUID: 2IdsykmdQU6HHhKOx6YAZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="33319829"
-X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
-   d="scan'208";a="33319829"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 09:43:18 -0800
-X-CSE-ConnectionGUID: STfJSgtMSQuLn6aITruuUg==
-X-CSE-MsgGUID: 9i8jZTqRS2GKg5alYFu95w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
-   d="scan'208";a="93546463"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 30 Nov 2024 09:43:12 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tHRUs-0000s3-29;
-	Sat, 30 Nov 2024 17:43:10 +0000
-Date: Sun, 1 Dec 2024 01:42:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?unknown-8bit?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Lee Chun-Yi <jlee@suse.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Ike Panhc <ike.pan@canonical.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Alexis Belmonte <alexbelm48@gmail.com>,
-	Uwe =?unknown-8bit?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>,
-	"open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	Matthew Schwartz <matthew.schwartz@linux.dev>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Armin Wolf <W_Armin@gmx.de>
-Subject: Re: [PATCH v8 02/22] platform/x86/dell: dell-pc: Create platform
- device
-Message-ID: <202412010129.zSeGQmOm-lkp@intel.com>
-References: <20241130140454.455-3-mario.limonciello@amd.com>
+	s=arc-20240116; t=1732988985; c=relaxed/simple;
+	bh=L/mnVv/QdU9IQuhb7S6ybelrX6vlhMxb/DG4k5UrV4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SeITHWOUdPilC3NQw+IGodEx8uD2OzkpPFiQ2CfN2Z/kBlsP1jN+b/9f/EuoBynS1QYksvMyM4ktzxsD577LO6qOJg/HmpKB21kJSDPzvgzyTV93XQRKe1udyUY5AotsxNzxcN5nw5eJTQdFOcuKJrQvNRXFkqVD6+UrrD7nof8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PzppHvLj; arc=none smtp.client-ip=80.12.242.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id HRZztNh1xe67ZHRa0ttR0o; Sat, 30 Nov 2024 18:48:28 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1732988908;
+	bh=mnMhbLJd2P2Le/VIBazI/NgKkeWIHLuoIZ6P6sJndBY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=PzppHvLjaX9NthVW8Ikmrq4T7u8YOtH9bYxJi5WHGTCmzMGH4Lzv8DsnDrrOTyiCx
+	 CWyleEiCnZLr05yqPGjzDrUjZD+yDU74UsiMPOp398Osswsb4out6K5vr9+ItKNFv7
+	 rtbK1rDNejRq2h+6l5TvDwbImZ9R5UyrUf2WAHfjxNy+tgw1VJEJohlWb4RHj27H80
+	 dSmbCMw/HyTd8Zfiwtr9kTCJXbS/V0ujMAKmUuASRIHexYWLC9pf6mt3vcCdyBfdoE
+	 AKjZGqqxpYivtD1fCray62/g6KwWvoYXgJb1Fi+J46cwv8lN7bMoLRMX/JHTbzcrBE
+	 rCaZgvCLi7Xmw==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 30 Nov 2024 18:48:28 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: 
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org,
+	sre@kernel.org
+Subject: Re: [PATCH v5 2/2] power: supply: Add STC3117 fuel gauge unit driver
+Date: Sat, 30 Nov 2024 18:47:57 +0100
+Message-ID: <20241130174819.19551-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241129114200.13351-3-bhavin.sharma@siliconsignals.io>
+References: <20241129114200.13351-3-bhavin.sharma@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241130140454.455-3-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-Hi Mario,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 2ba9f676d0a2e408aef14d679984c26373bf37b7]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/ACPI-platform-profile-Add-a-name-member-to-handlers/20241130-221102
-base:   2ba9f676d0a2e408aef14d679984c26373bf37b7
-patch link:    https://lore.kernel.org/r/20241130140454.455-3-mario.limonciello%40amd.com
-patch subject: [PATCH v8 02/22] platform/x86/dell: dell-pc: Create platform device
-config: i386-buildonly-randconfig-003-20241130 (https://download.01.org/0day-ci/archive/20241201/202412010129.zSeGQmOm-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241201/202412010129.zSeGQmOm-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412010129.zSeGQmOm-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/platform/x86/dell/dell-pc.c: In function 'thermal_init':
->> drivers/platform/x86/dell/dell-pc.c:252:32: warning: passing argument 1 of 'ERR_PTR' makes integer from pointer without a cast [-Wint-conversion]
-     252 |                 return ERR_PTR(platform_device);
-         |                                ^~~~~~~~~~~~~~~
-         |                                |
-         |                                struct platform_device *
-   In file included from include/linux/kernfs.h:9,
-                    from include/linux/sysfs.h:16,
-                    from include/linux/kobject.h:20,
-                    from include/linux/dmi.h:6,
-                    from drivers/platform/x86/dell/dell-pc.c:15:
-   include/linux/err.h:39:48: note: expected 'long int' but argument is of type 'struct platform_device *'
-      39 | static inline void * __must_check ERR_PTR(long error)
-         |                                           ~~~~~^~~~~
->> drivers/platform/x86/dell/dell-pc.c:252:24: warning: returning 'void *' from a function with return type 'int' makes integer from pointer without a cast [-Wint-conversion]
-     252 |                 return ERR_PTR(platform_device);
-         |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+My mailer refuses adesses at @siliconsignals.io. So not every one is in this reply
 
 
-vim +/ERR_PTR +252 drivers/platform/x86/dell/dell-pc.c
+Le 29/11/2024 à 12:40, Bhavin Sharma a écrit :
+> Adds initial support for the STC3117 fuel gauge.
+> 
+> The driver provides functionality to monitor key parameters including:
+> - Voltage
+> - Current
+> - State of Charge (SOC)
+> - Temperature
+> - Status
+> 
+> Signed-off-by: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
+> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+> ---
 
-   233	
-   234	static int thermal_init(void)
-   235	{
-   236		int ret;
-   237		int supported_modes;
-   238	
-   239		/* If thermal commands are not supported, exit without error */
-   240		if (!dell_smbios_class_is_supported(CLASS_INFO))
-   241			return 0;
-   242	
-   243		/* If thermal modes are not supported, exit without error */
-   244		ret = thermal_get_supported_modes(&supported_modes);
-   245		if (ret < 0)
-   246			return ret;
-   247		if (!supported_modes)
-   248			return 0;
-   249	
-   250		platform_device = platform_device_register_simple("dell-pc", PLATFORM_DEVID_NONE, NULL, 0);
-   251		if (IS_ERR(platform_device))
- > 252			return ERR_PTR(platform_device);
-   253	
-   254		thermal_handler = devm_kzalloc(&platform_device->dev, sizeof(*thermal_handler), GFP_KERNEL);
-   255		if (!thermal_handler) {
-   256			ret = -ENOMEM;
-   257			goto cleanup_platform_device;
-   258		}
-   259		thermal_handler->name = "dell-pc";
-   260		thermal_handler->profile_get = thermal_platform_profile_get;
-   261		thermal_handler->profile_set = thermal_platform_profile_set;
-   262	
-   263		if (supported_modes & DELL_QUIET)
-   264			set_bit(PLATFORM_PROFILE_QUIET, thermal_handler->choices);
-   265		if (supported_modes & DELL_COOL_BOTTOM)
-   266			set_bit(PLATFORM_PROFILE_COOL, thermal_handler->choices);
-   267		if (supported_modes & DELL_BALANCED)
-   268			set_bit(PLATFORM_PROFILE_BALANCED, thermal_handler->choices);
-   269		if (supported_modes & DELL_PERFORMANCE)
-   270			set_bit(PLATFORM_PROFILE_PERFORMANCE, thermal_handler->choices);
-   271	
-   272		/* Clean up if failed */
-   273		ret = platform_profile_register(thermal_handler);
-   274		if (ret)
-   275			goto cleanup_thermal_handler;
-   276	
-   277		return 0;
-   278	
-   279	cleanup_thermal_handler:
-   280		thermal_handler = NULL;
-   281	
-   282	cleanup_platform_device:
-   283		platform_device_unregister(platform_device);
-   284	
-   285		return ret;
-   286	}
-   287	
+...
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +/* Bit mask definition */
+> +#define STC3117_ID			        0x16
+> +#define STC3117_MIXED_MODE			0x00
+> +#define STC3117_VMODE				BIT(0)
+> +#define STC3117_GG_RUN				BIT(4)
+> +#define STC3117_CC_MODE				BIT(5)
+One unneeded extra tab?
+
+> +#define STC3117_BATFAIL			BIT(3)
+> +#define STC3117_PORDET				BIT(4)
+> +#define STC3117_RAM_SIZE			16
+> +#define STC3117_OCV_TABLE_SIZE			16
+> +#define STC3117_RAM_TESTWORD			0x53A9
+> +#define STC3117_SOFT_RESET                      0x11
+> +#define STC3117_NOMINAL_CAPACITY		2600
+
+...
+
+> +static int stc3117_set_para(struct stc3117_data *data)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_write(data->regmap, STC3117_ADDR_MODE, STC3117_VMODE);
+> +
+> +	for (int i = 0; i < STC3117_OCV_TABLE_SIZE; i++)
+> +		regmap_write(data->regmap, STC3117_ADDR_OCV_TABLE + i,
+> +						ocvValue[i] * 100 / 55);
+Should there be a ret |= ?
+
+> +	if (data->soc_tab[1] != 0)
+> +		regmap_bulk_write(data->regmap, STC3117_ADDR_SOC_TABLE,
+> +				  data->soc_tab, STC3117_OCV_TABLE_SIZE);
+Should there be a ret |= ?
+If it is needed, some other places in the driver may alos need it.
+
+> +
+> +	ret |= regmap_write(data->regmap, STC3117_ADDR_CC_CNF_H,
+> +					(ram_data.reg.cc_cnf >> 8) & 0xFF);
+> +
+> +	ret |= regmap_write(data->regmap, STC3117_ADDR_CC_CNF_L,
+> +					ram_data.reg.cc_cnf & 0xFF);
+> +
+> +	ret |= regmap_write(data->regmap, STC3117_ADDR_VM_CNF_H,
+> +					(ram_data.reg.vm_cnf >> 8) & 0xFF);
+> +
+> +	ret |= regmap_write(data->regmap, STC3117_ADDR_VM_CNF_L,
+> +					ram_data.reg.vm_cnf & 0xFF);
+> +
+> +	ret |= regmap_write(data->regmap, STC3117_ADDR_CTRL, 0x03);
+> +
+> +	ret |= regmap_write(data->regmap, STC3117_ADDR_MODE,
+> +					STC3117_MIXED_MODE | STC3117_GG_RUN);
+> +
+> +	return ret;
+> +};
+
+...
+
+> +static int stc3117_get_property(struct power_supply *psy,
+> +	enum power_supply_property psp, union power_supply_propval *val)
+> +{
+> +	struct stc3117_data *data = power_supply_get_drvdata(psy);
+> +
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_STATUS:
+> +		if (data->soc > BATTERY_FULL)
+> +			val->intval = POWER_SUPPLY_STATUS_FULL;
+This is dead-code. "val->intval" is over-written in ALL paths below.
+The logic looks broken.
+
+> +		if (data->batt_current < 0)
+> +			val->intval = POWER_SUPPLY_STATUS_CHARGING;
+> +		else if (data->batt_current > 0)
+> +			val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
+> +		else
+> +			val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
+> +		break;
+> +	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> +		val->intval = data->voltage;
+> +		break;
+> +	case POWER_SUPPLY_PROP_CURRENT_NOW:
+> +		val->intval = data->batt_current;
+> +		break;
+> +	case POWER_SUPPLY_PROP_CAPACITY:
+> +		val->intval = data->soc;
+> +		break;
+> +	case POWER_SUPPLY_PROP_TEMP:
+> +		val->intval = data->temp;
+> +		break;
+> +	case POWER_SUPPLY_PROP_PRESENT:
+> +		val->intval = data->presence;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +	return 0;
+> +}
+
+...
+
+> +static int stc3117_probe(struct i2c_client *client)
+> +{
+> +	struct stc3117_data *data;
+> +	struct power_supply_config psy_cfg = {};
+> +	struct power_supply_battery_info *info;
+> +	int ret;
+> +
+> +	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->client = client;
+> +	data->regmap = devm_regmap_init_i2c(client, &stc3117_regmap_config);
+> +	if (IS_ERR(data->regmap))
+> +		return PTR_ERR(data->regmap);
+> +
+> +	i2c_set_clientdata(client, data);
+Is it needed?
+(there is no i2c_get_clientdata() in the code)
+
+> +	psy_cfg.drv_data = data;
+> +
+> +	crc8_populate_msb(stc3117_crc_table, CRC8_POLYNOMIAL);
+> +
+> +	data->battery = devm_power_supply_register(&client->dev,
+> +						   &stc3117_battery_desc, &psy_cfg);> +	if (IS_ERR(data->battery))
+> +		return dev_err_probe(&client->dev, PTR_ERR(data->battery),
+> +						"failed to register battery\n");
+> +
+> +	ret = device_property_read_u32(&client->dev, "sense-resistor",
+> +				       &battery_info.sense_resistor);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +						"failed to get sense-register\n");
+Should it be "failed to get sense-resistor\n"?
+
+> +
+> +	ret = power_supply_get_battery_info(data->battery, &info);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +					"failed to get battery information\n");
+> +
+> +	battery_info.battery_capacity = info->charge_full_design_uah * 1000;
+> +	battery_info.voltage_min = info->voltage_min_design_uv * 1000;
+> +	battery_info.voltage_max = info->voltage_min_design_uv * 1000;
+Should it be voltage_max_design_uv?
+
+> +
+> +	ret = stc3117_init(data);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +				"failed to initialization of stc3117\n");
+"failed initialization" of "failed to initialize"?
+
+> +
+> +	INIT_DELAYED_WORK(&data->update_work, fuel_gauge_update_work);
+> +
+> +	schedule_delayed_work(&data->update_work, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id stc3117_id[] = {
+> +	{"stc3117", 0},
+Spaces sould be added to match stc3117_of_match below.
+
+> +	{},
+Unneeded ending comma after a terminator entry.
+
+> +};
+> +MODULE_DEVICE_TABLE(i2c, stc3117_id);
+> +
+> +static const struct of_device_id stc3117_of_match[] = {
+> +	{ .compatible = "st,stc3117" },
+> +	{},
+Unneeded ending comma after a terminator entry.
+
+> +};
+> +MODULE_DEVICE_TABLE(of, stc3117_of_match);
+...
+
+CJ
 
