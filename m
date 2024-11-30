@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-426275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FC09DF11D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:17:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6289E9DF15E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:58:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FBBBB21158
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:17:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E808B203B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB5919924A;
-	Sat, 30 Nov 2024 14:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6992C19F121;
+	Sat, 30 Nov 2024 14:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZIUBds8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="kNP1i5Wx"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E3A22066;
-	Sat, 30 Nov 2024 14:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14F3198E99;
+	Sat, 30 Nov 2024 14:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732976243; cv=none; b=KwGDmoNMnZZiU3sOt3VBTx6OGVEDmmgcCrG4gknc8TrRNWw3kC+ETge+yEEh+otX/YTnswHokChgQLUiblMbA5h96aGOvnOem7tu1Xv1Sls2eJMEvdhty1qGzcbtlGB6QtvyschaQV+NrLiEqZYUE4G3bdk5UaPaHbo/QUq3A9M=
+	t=1732978719; cv=none; b=MyghkJGGUCLAhP0L0MuOb9Cahs9Qc6NCju4FhVYRUB0XbpFQOXph9GGXZImGW+KwqFgvNo/HtJC4uJ0HHTwcZjGOzv5/cJQlRvlBsnD640YmsAhAnAhFq/YpnGBnvgvR9VL3mJg83ElPdWB5G2GZOWyJJJsm8b54CfcxpbQ7hHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732976243; c=relaxed/simple;
-	bh=keq1fj17YGKkaMLYkvdWE8QAKY7I2GxLdVVzbjy7hMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fVAGsDB35udNMbrhoUfMth3YVmldeQPOlttriKJLraNvIry+VUlxLCEpwm+p9EdJADiMKHMeEl+hU04MEPiRnyOG8+8l8CyN3RQLYFWYOVsZCwGyUOZfYf7VegpUi7fMXby7lmpYvdQ5L2zxZcldkiKz1CIS6ZoL6JOHqipRqGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZIUBds8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6507AC4CECC;
-	Sat, 30 Nov 2024 14:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732976242;
-	bh=keq1fj17YGKkaMLYkvdWE8QAKY7I2GxLdVVzbjy7hMM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AZIUBds8kTaxjr/vdiVkzP8JLZJr3SZoEPiA3gFKdAih2mIq6FNxlY8KnE9jWclcB
-	 htutKykRPY3r9x/hUNdIvBVhZ1bVoGbZNZfwibR409Xv80nCtTwVHhIv7KdwQ3mcWg
-	 4uK2QdyPoa2BOi+wgtrmsPEa+BsrHSe13xXi/XIOZLHZwr4Wt32P2ZEnRh6F5gN0n0
-	 0+Nf9FwH3L/z3tr3TilblXEn8emS1CGojPusvdQVwnSFkXETZa2F6ONMerF7rIpX6F
-	 jO4QIYaPutcsES7TP7CqWEpvpSXjijIw+kz4rvI1VRL7xKQ0AyDIevWBRWy2sPeWXd
-	 itq1zJ18WqSxw==
-Date: Sat, 30 Nov 2024 14:17:14 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, krzysztof.kozlowski@linaro.org, nuno.sa@analog.com,
- u.kleine-koenig@baylibre.com, abhashkumarjha123@gmail.com,
- jstephan@baylibre.com, dlechner@baylibre.com, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 5/6] iio: common: ssp_sensors: make use of
- iio_is_soft_ts_enabled()
-Message-ID: <20241130141714.7ef99a77@jic23-huawei>
-In-Reply-To: <20241130002710.18615-6-vassilisamir@gmail.com>
-References: <20241130002710.18615-1-vassilisamir@gmail.com>
-	<20241130002710.18615-6-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732978719; c=relaxed/simple;
+	bh=hRHt1lKznXLvZ2Cm50+cd/mXkEiynz1ejTZcgSUzC8Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M5ZzQ9dq34+ylBnCKn+tbd/gYwbj+qOJS2w7Md4C2FU/0fZNLm4MjNI4MpJL/dG+g3AuOLCaG9eO/yKJTgqL32mjlVH3JD63dazJ1sNmr0OvrJQN74aeLFaq4wdOY7gn3wWL5MHoNhxXttRHuRnv9c3bFUNy3GSQwroxUQWN/OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=kNP1i5Wx; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:
+	To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=LBqtIkKqqs3bjj0mz+CKgjkWz2efBS8qbc1Tcg5LZaI=; b=kNP1i5WxNv3Jj6oqGm67tOKT0M
+	l5b9i72VFafsO6LBqtqglQeA86VHYbMYweAc3y9BwvGmFiUSzlpKjuV4P17YMkin613UYI0i025eK
+	AJz6v67LBD4E8pezHQeOa5s9dau+oat8Pu7wb8/EcA2g5HPRgpUfzxbXo+S4fp40tk8E=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:61203 helo=localhost.localdomain)
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1tHOHn-008ZQH-VJ; Sat, 30 Nov 2024 15:17:28 +0100
+From: Matthias Fend <matthias.fend@emfend.at>
+To: Michael Riesch <michael.riesch@wolfvision.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: dt-bindings: sony,imx415: add required clock-names property
+Date: Sat, 30 Nov 2024 15:17:15 +0100
+Message-Id: <20241130141716.1007115-1-matthias.fend@emfend.at>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-On Sat, 30 Nov 2024 01:27:09 +0100
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+The imx415 driver expects a clock with the name "inck".
+Document this in the bindings.
 
-> Use the iio_is_soft_ts_enabled() accessor to access the value of the
-> scan_timestamp. This way, it can be marked as __private when there
-> are no direct accessors of it.
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+---
+ .../devicetree/bindings/media/i2c/sony,imx415.yaml          | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> ---
->  drivers/iio/common/ssp_sensors/ssp_iio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/common/ssp_sensors/ssp_iio.c b/drivers/iio/common/ssp_sensors/ssp_iio.c
-> index 88b8b56bfa51..c38bf1dfb7bd 100644
-> --- a/drivers/iio/common/ssp_sensors/ssp_iio.c
-> +++ b/drivers/iio/common/ssp_sensors/ssp_iio.c
-> @@ -82,7 +82,7 @@ int ssp_common_process_data(struct iio_dev *indio_dev, void *buf,
->  	 */
->  	memcpy(spd->buffer, buf, len);
->  
-> -	if (indio_dev->scan_timestamp) {
-> +	if (iio_is_soft_ts_enabled(indio_dev)) {
-
-It might be simpler to just drop this conditional in favour of always computing the
-value.
-
-
-
->  		memcpy(&time, &((char *)buf)[len], SSP_TIME_SIZE);
->  		calculated_time =
->  			timestamp + (int64_t)le32_to_cpu(time) * 1000000;
-
-Good to replace this with something more modern like.
-
-		calculated_time =
-			timestamp + get_unaligned_le32(buf + len) * MEGA;
-
-Jonathan
+diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml
+index 34962c5c7006..e110b39bb391 100644
+--- a/Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml
+@@ -31,6 +31,10 @@ properties:
+     description: Input clock (24 MHz, 27 MHz, 37.125 MHz, 72 MHz or 74.25 MHz)
+     maxItems: 1
+ 
++  clock-names:
++    items:
++      - const: inck
++
+   avdd-supply:
+     description: Analog power supply (2.9 V)
+ 
+@@ -76,6 +80,7 @@ required:
+   - compatible
+   - reg
+   - clocks
++  - clock-names
+   - avdd-supply
+   - dvdd-supply
+   - ovdd-supply
+@@ -96,6 +101,7 @@ examples:
+             reg = <0x1a>;
+             avdd-supply = <&vcc2v9_cam>;
+             clocks = <&clock_cam>;
++            clock-names = "inck";
+             dvdd-supply = <&vcc1v1_cam>;
+             lens-focus = <&vcm>;
+             orientation = <2>;
+-- 
+2.34.1
 
 
