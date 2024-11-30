@@ -1,127 +1,185 @@
-Return-Path: <linux-kernel+bounces-426386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1838F9DF26E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:03:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A66D9DF273
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:05:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 937B3B20FC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:03:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B032280ED0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60CB1A38D7;
-	Sat, 30 Nov 2024 18:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MDn4Mcu0"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A611A9B42;
+	Sat, 30 Nov 2024 18:05:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4888519C54D
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 18:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89E71A072A
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 18:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732989780; cv=none; b=Iuy8rG6pYmheTiesZPSMFD00f70iL8Bmr5quRuWosYM4fXXrKHY+51yjhJ7sUUJpkkXqw03p+gVAYJr6Tn0ycgL8AShRE1zs57lwvkT81UKxML9T8h0R3r1iaQC+KQoJjJuNI6ZmsP8e0Y4qW7wzg858u2pGl52/xgEmUX21eTQ=
+	t=1732989930; cv=none; b=Na7b9BqGd+cWaoTvMqS+V4Lz2ut9TTNBn+qfe9PR/DGQCDZl59UOMR8h07HsK8OpCyRQMmCxOpkgAGXhO6XaGdSfJmZ4QBy9ZFk9qc6ABIyXN3Vs2vvR7kMhCrqBpWNZ7RABvoaGo+NvO8296iU6YsI8jWYcKI6PZBUBeQgd1hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732989780; c=relaxed/simple;
-	bh=5COwjKHdAiMaJwK/Hx+9BfwsgIdb3l+pVKvrV5yLzNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hqMKAnp1egFZMEvDtKYo45oIdWbES9cygQIeKEYkdVXs62LrknAyGCKM7s68gAaE7VcDfEEtEKQheVpT5Qql05/W92ElzSzjaq3qLbtYFxD+qe6xIrig6/XQxs1/Yo/iXVYBZ7TmwG6JxnTv1e98sO72T7s/neIzaPOeACudKkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MDn4Mcu0; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa578d10d50so462635466b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:02:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732989776; x=1733594576; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RbB2vuXpy4jWACIjXNfh0gThH+CYe3wsKjjW9mdP8c8=;
-        b=MDn4Mcu0gDjNRbSoHPSu8hDwTO5QWjIwD77e9hX0KddQlF1wy0LoFOC7QNj92YOZWI
-         9tSOpPgnQ7163HgXuo6WeYjozAKDIU5c8VvGCsBXiujNlwPA6w94CU8xm2cujHLnVFh3
-         xT2+d+8pbqNnpyC+o0qQ/7x1uDSTGcG2SajBU=
+	s=arc-20240116; t=1732989930; c=relaxed/simple;
+	bh=2C4d7UEKbKI1mAkzDFtYC51rOUqkJDdUDhD2OKE+FbY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=h+LLAle2iR1j8CFKrfIulNKvLJkL5QpquH0NyvIIAO6IsZfUzM5S3mOkNTpjmj9VvT2CW3W6h5vVKE9t3SJoKtJ9RI73sIEnSRSaGFb9yyz6oboIrPedvfqGt5AfQ0Yo99OrayqMu/CHhFuM7i7nZgfJ7q9rSza1VBm9FaPZq54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a778ce76fbso28354635ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:05:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732989776; x=1733594576;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RbB2vuXpy4jWACIjXNfh0gThH+CYe3wsKjjW9mdP8c8=;
-        b=LbipmLx0zKkx+gDEzr/SaSqjHIxMwzZU2o4nIAShjj6AUP+0k4ZweVLBaSxd3z07x0
-         ueFF+fJxHmWy+/atybEYR/GZM0NqdR4O+gsM/s6tmzV+EFfKBnKY9ihjn2SMvXyM3z3A
-         lJgxW6vAZBlcFOBY1Rpa5mDyDQ3P6YDsQ6NZZiBuPE6i3ivGE5L4w0/gaKtjCDuAi/MQ
-         vvpESamMrqLFblP/rrlg5eg+jNy4A8BRkTizbo6z/QRjjfbkQlnTwQqm3+d9k31/A7Vv
-         WR9ORtVZxqc9AM3YW9MWRPA+MbiCmBdCBu0FyEr0z3e1i+ulpcIqTswTDkT/WzDfYfV5
-         hA3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUNLm/E7EVIxMICoQ/Qo6GxHxapPgMSRBLhx3CjCSK4IrEY6urLeVCD0vs2vAhcMmlhMEH8OoGcX8M8Eyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLETLYiGZYTwJ3sgiIfndgiQA71Z1Tbo/yd89d1PnTmRLHLV/O
-	IprBlc3AWk3z7OCj8aBtrFUpYfdmzBbTMS7VSaX8Q0quE/Ev6bufAPp2DzpYHdGf/+CTU9+GEiv
-	f4r9CeQ==
-X-Gm-Gg: ASbGncuHJRRo2vHdmzqlpEepSwgQX9bhH7ca7VfWaclO6znYyDdkdEuWolktN+47NTY
-	V1Zakfg+i8/dM65WP/COQdLs4rP67snHP01JT2xsuhD6c8/driFfnl048bJTIJrHLrKrIJt4Y7p
-	OfZgj6q0FlxcHY1GZzOog3OmKIWlhbUpCV/zb1shaFoKUljfnXZdUb+acbAv1YCz9NRiIMsrhrm
-	LACypEna/od3pg3cMobT2NFSWZzBop6XoZPkBHo1r6j6hdw4ADrj48Dg4wPf2ijjRQgfi/C60j6
-	F9mL0O2hfALmQFtgLOOXd825
-X-Google-Smtp-Source: AGHT+IFAc1aMkI/Ngcii5Bevcwcu4u4pxYraz7+jHqc/TIY5Kdy/x0TF6n83DeXKm38rOZesy4N4Gw==
-X-Received: by 2002:a17:906:2181:b0:aa5:1df4:f57d with SMTP id a640c23a62f3a-aa580ee0131mr1558667166b.2.1732989776474;
-        Sat, 30 Nov 2024 10:02:56 -0800 (PST)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59995562csm302379866b.189.2024.11.30.10.02.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 10:02:54 -0800 (PST)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so521757466b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:02:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV45nDBDcqrjjx+KYrWe+Sy638TQX5rLwh3zeoCg7y6E+X56rPZ4puEOxHSWre+hhRS0KSFZdl5uopg9Es=@vger.kernel.org
-X-Received: by 2002:a17:906:1ba9:b0:aa5:cec:2785 with SMTP id
- a640c23a62f3a-aa580f50e22mr1700257566b.25.1732989774448; Sat, 30 Nov 2024
- 10:02:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732989928; x=1733594728;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VRHMMbOM9jVJYYNqroswi5u/gwQteibRbzcIjAytvhM=;
+        b=qHYNFEa0L8YynBzIU60AcxaQLx7mKq0bqkFw0QPOVRiSfZ27trwhDRfAKN4Qls2eMA
+         BNqlLrIHta/XnpBWo2wtaPUviPIaRkKEmlrW3SSOs6gx+nciUflY8XHP7dPr53Zo24to
+         91hxeeYi9SgPGQaVzscRE2Ak6xmI6lI52kARJ7O5ZahFLx5VcVein7rpxM9fHikgRXfU
+         MnxaNpTkfp+LbmX7qiXKF8P58QiKHyLYUs/OCZ9bb60Fj+wbqD4BLp+x4n9c+BRhTLBi
+         u98tpAhhK/5jkMhXWFTGl7lXvO4GE/pr1OR+mTCo+0udvDMlv1hs814Ip53ZXZSnVOoo
+         rD8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWqoS/UuQViZAst894EgQUc4oR8vA98EXqmDl86I8EUwyZ8UeMqoFOoBKZCsrnLeBzr5d6ZW5FbXkq2zj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2CHwTBXkfHM0PUGivq7SoJMlIAq14ZA0DFEicsLJ9BSo8EGSS
+	zp0vTPyeynqIaVzYklEZg73kW5HwytcUJwtlhnIn+zCEnIGooyZi8Q7yemfNmb1z64TueeU0NOv
+	n1VlVFr3j2GNOesHPAaVkzfR9C+vw75qu1QaYnhfNnRX5MBeaSumsF/I=
+X-Google-Smtp-Source: AGHT+IEv6YmrCOe0vSZf00GEMUS/16hEGNr7prLtk9Itu6MSY1XWR6kc8bNn8216SRdyU83X52rWfu30sjWxoil4Suf9kjb036JK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130045437.work.390-kees@kernel.org> <20241130-ohnegleichen-unweigerlich-ce3b8af0fa45@brauner>
-In-Reply-To: <20241130-ohnegleichen-unweigerlich-ce3b8af0fa45@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 30 Nov 2024 10:02:38 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi=uOYxfCp+fDT0qoQnvTEb91T25thpZQYw1vkifNVvMQ@mail.gmail.com>
-Message-ID: <CAHk-=wi=uOYxfCp+fDT0qoQnvTEb91T25thpZQYw1vkifNVvMQ@mail.gmail.com>
-Subject: Re: [PATCH] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH)
- case
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	Tycho Andersen <tandersen@netflix.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
+X-Received: by 2002:a05:6e02:1569:b0:3a7:c072:c69a with SMTP id
+ e9e14a558f8ab-3a7c5524090mr206778105ab.3.1732989928071; Sat, 30 Nov 2024
+ 10:05:28 -0800 (PST)
+Date: Sat, 30 Nov 2024 10:05:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674b53e8.050a0220.253251.00e0.GAE@google.com>
+Subject: [syzbot] [bpf?] [netfilter?] INFO: rcu detected stall in sys_sendmmsg (7)
+From: syzbot <syzbot+53e660acb94e444b9d63@syzkaller.appspotmail.com>
+To: andrii@kernel.org, anna-maria@linutronix.de, ast@kernel.org, 
+	bpf@vger.kernel.org, daniel@iogearbox.net, frederic@kernel.org, 
+	kadlec@netfilter.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, pablo@netfilter.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 30 Nov 2024 at 04:30, Christian Brauner <brauner@kernel.org> wrote:
->
-> What does the smp_load_acquire() pair with?
+Hello,
 
-I'm not sure we have them everywhere, but at least this one at dentry
-creation time.
+syzbot found the following issue on:
 
-__d_alloc():
-        /* Make sure we always see the terminating NUL character */
-        smp_store_release(&dentry->d_name.name, dname); /* ^^^ */
+HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12cd4f78580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f8e5d0648de624aa
+dashboard link: https://syzkaller.appspot.com/bug?extid=53e660acb94e444b9d63
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-so even at rename time, when we swap the d_name.name pointers
-(*without* using a store-release at that time), both of the dentry
-names had memory orderings before.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-That said, looking at swap_name() at the non-"swap just the pointers"
-case, there we do just "memcpy()" the name, and it would probably be
-good to update the target d_name.name with a smp_store_release.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7afd648f7c25/disk-b86545e0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/40e3ee6c8cc8/vmlinux-b86545e0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/53bc5977cfb0/bzImage-b86545e0.xz
 
-In practice, none of this ever matters. Anybody who uses the dentry
-name without locking either doesn't care enough (like comm[]) or will
-use the sequence number thing to serialize at a much higher level. So
-the smp_load_acquire() could probably be a READ_ONCE(), and nobody
-would ever see the difference.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+53e660acb94e444b9d63@syzkaller.appspotmail.com
 
-            Linus
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	1-...0: (6 ticks this GP) idle=545c/1/0x4000000000000000 softirq=161841/161847 fqs=2100
+rcu: 	         hardirqs   softirqs   csw/system
+rcu: 	 number:        0          0            0
+rcu: 	cputime:        0          0            0   ==> 52500(ms)
+rcu: 	(detected by 0, t=10505 jiffies, g=202837, q=172 ncpus=2)
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 1553 Comm: syz.8.7708 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:advance_sched+0x36/0xca0 net/sched/sch_taprio.c:916
+Code: 54 53 48 81 ec 98 00 00 00 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 79 e7 c8 f7 49 8d 5e 88 48 89 d8 48 c1 e8 03 80 3c 28 00 <74> 08 48 89 df e8 50 a3 30 f8 48 8b 03 48 89 84 24 88 00 00 00 48
+RSP: 0018:ffffc90000a18c70 EFLAGS: 00000046
+RAX: 1ffff1100c0f9259 RBX: ffff8880607c92c8 RCX: ffff88802d349e00
+RDX: 0000000000010000 RSI: 0000000000000000 RDI: ffff8880607c9340
+RBP: dffffc0000000000 R08: ffffffff8183463f R09: 1ffffffff203a606
+R10: dffffc0000000000 R11: ffffffff89ccfc90 R12: dffffc0000000000
+R13: ffffffff89ccfc90 R14: ffff8880607c9340 R15: ffff88802d34a8c8
+FS:  00007f7bb35f66c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000110c32f64a CR3: 0000000070470000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <IRQ>
+ __run_hrtimer kernel/time/hrtimer.c:1739 [inline]
+ __hrtimer_run_queues+0x59b/0xd50 kernel/time/hrtimer.c:1803
+ hrtimer_interrupt+0x403/0xa40 kernel/time/hrtimer.c:1865
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
+ __sysvec_apic_timer_interrupt+0x110/0x420 arch/x86/kernel/apic/apic.c:1055
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+ sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1049
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:finish_task_switch+0x1ea/0x870 kernel/sched/core.c:5243
+Code: c9 50 e8 79 07 0c 00 48 83 c4 08 4c 89 f7 e8 9d 39 00 00 e9 de 04 00 00 4c 89 f7 e8 70 2f 6f 0a e8 2b 9a 38 00 fb 48 8b 5d c0 <48> 8d bb f8 15 00 00 48 89 f8 48 c1 e8 03 49 be 00 00 00 00 00 fc
+RSP: 0018:ffffc900033771a8 EFLAGS: 00000286
+RAX: a5530211a14c0a00 RBX: ffff88802d349e00 RCX: ffffffff9a3f7903
+RDX: dffffc0000000000 RSI: ffffffff8c0ad980 RDI: ffffffff8c6083a0
+RBP: ffffc900033771f0 R08: ffffffff901d3037 R09: 1ffffffff203a606
+R10: dffffc0000000000 R11: fffffbfff203a607 R12: 1ffff110170e7eac
+R13: dffffc0000000000 R14: ffff8880b863e740 R15: ffff8880b873f560
+ context_switch kernel/sched/core.c:5372 [inline]
+ __schedule+0x1803/0x4be0 kernel/sched/core.c:6756
+ __schedule_loop kernel/sched/core.c:6833 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6848
+ schedule_timeout+0xb0/0x290 kernel/time/sleep_timeout.c:75
+ unix_wait_for_peer+0x250/0x340 net/unix/af_unix.c:1529
+ unix_dgram_sendmsg+0x127f/0x1f80 net/unix/af_unix.c:2131
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:726
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2583
+ ___sys_sendmsg net/socket.c:2637 [inline]
+ __sys_sendmmsg+0x36a/0x720 net/socket.c:2726
+ __do_sys_sendmmsg net/socket.c:2753 [inline]
+ __se_sys_sendmmsg net/socket.c:2750 [inline]
+ __x64_sys_sendmmsg+0xa0/0xb0 net/socket.c:2750
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7bb5780809
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7bb35f6058 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 00007f7bb5945fa0 RCX: 00007f7bb5780809
+RDX: 0000000000000651 RSI: 0000000020000000 RDI: 0000000000000007
+RBP: 00007f7bb57f393e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f7bb5945fa0 R15: 00007ffe8b8d0818
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
