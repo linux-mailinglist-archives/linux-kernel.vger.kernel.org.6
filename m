@@ -1,127 +1,124 @@
-Return-Path: <linux-kernel+bounces-426483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4FD9DF3C5
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 00:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4119DF3C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 00:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E9EB218AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 23:03:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE2D0B21ADD
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 23:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1C61ABEB4;
-	Sat, 30 Nov 2024 23:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9221A1ABEA6;
+	Sat, 30 Nov 2024 23:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=andrewstrohman-com.20230601.gappssmtp.com header.i=@andrewstrohman-com.20230601.gappssmtp.com header.b="lq6Fg0Am"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ApAgDkAH"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B711A76B4
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 23:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0525E15956C
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 23:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733007816; cv=none; b=Uu3p/g05zAsIIu7y+P8g7no7mV5fpO8sAXzkGCigDHA48J40uNrhBBswfLBVq1o9YctxZtAivqUXK+AukM1Xg3NZ3az9JHrTpKGQIQdha83Zj84oT1qiSfldn0lA8PuhloxJOZxnmz39VfDtC1Jc7Zr0GnuERjJjjFwiFcw5mRo=
+	t=1733008298; cv=none; b=tcNtg9tvv2KVbt+Si0gHVQc8YdO7MatZ0EEoMxp97oFtGO5s1SYqdIpwVjsQe8S6wQ2/9i873+vhRrJIDTFrKFOn/FerLsq8tJ/0BXFOihahqqr3MYC7BZ/YPr1ZsVXRkjyF+Bg3Qwd/ysPfq92wN2QnZ+hqmzO0Zkw4d+GHsPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733007816; c=relaxed/simple;
-	bh=Oj23kvXML5YxbzImIPjLr7bu4A1f9m4DYN95To+LWn4=;
+	s=arc-20240116; t=1733008298; c=relaxed/simple;
+	bh=igWI8mrhgsOvImsfULhcXfwMtkGJFUnIjBAYjDygDVg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eez+xYfYUpOIfDlpJm38m5/Lxumds87wNXPmjwbfoc3MMFiQxIXbvO3TNgM4Pmpms6JsbaEF4vvdS1Nud2q6/yE66gzdswMWnXupYR46Qpg6msA7bBs6BSw9Ug3pta+MiBK/ebiuC+g6uw1d8OxKf7V0XE49UR+PKr8dTIAw1WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=andrewstrohman.com; spf=none smtp.mailfrom=andrewstrohman.com; dkim=pass (2048-bit key) header.d=andrewstrohman-com.20230601.gappssmtp.com header.i=@andrewstrohman-com.20230601.gappssmtp.com header.b=lq6Fg0Am; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=andrewstrohman.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=andrewstrohman.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3985aabf43so1551514276.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:03:34 -0800 (PST)
+	 To:Cc:Content-Type; b=OJ+kLqTXpdp4jpjMeC3YgWo4JZ0VaZvYwJnZoMOr9w1fZUWNOpbYFFnw0Uz9UirdcRt6F/o78o5lTEOR26QzUMy1SyCKvwwpOilfx+7snbZ08arTzjXNrCI3gWYVmKcYkmAUpzGZGGoHy3TzGeSTPTqg2Lzl4T4hycnbriVhia8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ApAgDkAH; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cfddb70965so3699127a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:11:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=andrewstrohman-com.20230601.gappssmtp.com; s=20230601; t=1733007814; x=1733612614; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1733008295; x=1733613095; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+lZDk59n4UHv5yZ4bNmxMnAKZtUzjiM3soOA0zJRIR8=;
-        b=lq6Fg0AmWbnv+5LSzi3KTFh3YXayo9bVjWEHegEzKD1fG4lRyPrktXM0BJ5EBwwrDi
-         x11i/bcgfKN9gtiehuyNFu4aW/2EIZtjSM7DdP6Sqq/ePAuPqEUJNYAgL2u70ynu9ODH
-         5CSz4iNHck3I8W+aQIeQ6+2PufnhycaH4xWxeQfUCLVlqt1uQ1JK0zizTHUqv4lO3RRF
-         Qtfz1EfapPUrA2/VYIilB+3jDzSPO1Bq2kFLciSsnDQwLx9gXuMFP5+ifGsLGwQnA+vH
-         8Cwj6X4mzQyOc2S7Jl3/XeW9xwLpzhP7d/t6cvZJP22pzRZUFqYFDNt8ExlMuAiWVD3D
-         x0Fw==
+        bh=GSLp2FeQX6v0+DpLPCnxxi3sSbb+vr+koAirOocK+fM=;
+        b=ApAgDkAHmF0l90AW21clbWq1Hora23ZCfcd0uA7h2je6FkdpipubI0sqz0JrQhx1+N
+         wNqp/Jg2JrmVr8zSDSQqwayRcwPIHLqVIbVF59TVzzn3IanguYNiWnFYDqO5E4XgYx7d
+         XcRKLhDaGoQnA23dnpoIwFrv8R57JArwEuGYc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733007814; x=1733612614;
+        d=1e100.net; s=20230601; t=1733008295; x=1733613095;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+lZDk59n4UHv5yZ4bNmxMnAKZtUzjiM3soOA0zJRIR8=;
-        b=hesEE+RrmIMsx73FQ4fw6NVwcoWfOkGkmASAYdE65/gPRc/vEpqRsQzAVy/wvQTywT
-         eOKdIaSe8sTnCJTMwWBuess8ErPZDF1pq4IeGcpNRK+pgBfbNkedNpHzopuocmBRZ1Ln
-         GLBeTc4EKejMCgYn9GyugbdHS4UYr0ZHofuNkRQxbprt+9wh0S5m6/T64Hs0kzXFATu+
-         96fMdgtgGklLHX2gIeR80jGDff6TysgJVFr+kgX3jyv1FF2Q8v94g8sxFQMqp4Bs/fl0
-         nW/GKDj2lkWEL3sL7K1+QdR4jZTScf8R0l8nu5szUfk0jID9P9SToG+6h8slkQIMXjJP
-         Kdfg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0Gppk+1NCPtljn+WWoBuQLcciO/zRfjhV3EvJe1iPVp/yQ9Ktuso5kQkLuJwDfLQlCNSjCLSu6M4+T28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwDD99HI+8qJxavfvHpjztPgoRn5L6rrFBsV/hEQJnqOPWgqHZ
-	I9OJjbPKOsjRHIsSpGd4xxhHohSngJWKZnxDK4dwTUeenY7M3ZLGSLEP5N6vQnxJz0ZtpfIG1Hq
-	aYYrj0WDDr9nOew+Z/rJhf76CC8NkqW4I8vCtqw==
-X-Gm-Gg: ASbGncvIDumHy8KBz5g0Xu9boSpoavPgUWzBqjzQkWC3nWWBZJGxZQBxuEYLDnuOuNH
-	Ixhr+7FYax+IhzlXRmpUtXwXUvWd7Quo=
-X-Google-Smtp-Source: AGHT+IH81R4XFg2CPj0gwX0HCIBF9TK4lO6eQU9i9Eh6UvUy1XLoSg/49272JtHDhspwSlHmAL7DhLTLqjgun/Hp2yM=
-X-Received: by 2002:a05:6902:1549:b0:e38:c692:14a4 with SMTP id
- 3f1490d57ef6-e395b93b17dmr15727852276.36.1733007813990; Sat, 30 Nov 2024
- 15:03:33 -0800 (PST)
+        bh=GSLp2FeQX6v0+DpLPCnxxi3sSbb+vr+koAirOocK+fM=;
+        b=o0x82EmOX++ztB0jiOqNHQrMiSw0nnlrH/gRWmnKiBJ9+fjrOgsRjEs6NjSBNJsMUf
+         wu2k8+CEyhufBI7h8fQfXtExIHSK+9QGRYOzyWwmv7/gIRVqqM5lvrD05S71DZYxhFp7
+         MZQAYpC9QOEumUuDa9to5PqS1Pf8XXuiYCTGE3kS0uQyyXHC/RpHzyC0c5eNRDOEYyv+
+         MxuodL5L1ud1xEklKzgvq8PNn46sJiLCE5douL3urArucegl3c+6QCknSx/+gndH+GOi
+         E53w9ciFJ78H1WzckAaR3Qv10mXV+ht031pKS71jSlQywDoVF75vEeNKrIE9TVe1TaZa
+         Bp0w==
+X-Gm-Message-State: AOJu0Yx4s1gIrEGXzJTVojxLjpxjb+uF2W+O+MaS5XF7tXnSbToOCP6q
+	1TY4RUwjgRACondMh1FGCulc76cn0IlC2CkyqL/esXEtlgA5Ni9RJciRv91jMOCiexPmLrLpkRC
+	PeJfEjA==
+X-Gm-Gg: ASbGncsG/ShGpBnB7H+fBUZS5mGyRZM1vFSNNz2zCaks7W2vsvcFaLgrSyOlW9x1EGE
+	pd9u51BX5UGnpEI6R/n7kc8IhTms/AhnRrzz4F2Jnv25JEHmvRFvw/ZFi30GwkCckczy9IiQG2F
+	WlUQLhfBrRpBFBNIPssVa/1i3/EPLjmc5S8fI8GH42r150Gyk4NvXN0pPU7tX24JbrmlLS/JZ5X
+	Otji8cAs3SWc7/WMR3RaRsfL7p1prqKrGwXTbtmmi0bXT0qAELfRVkpT5Nv+3Pmy0S836G9fBLl
+	38OVqlT/vm9XHC+i0oqMQas1
+X-Google-Smtp-Source: AGHT+IFZqpcVmYBKsF96QGwTpuuTo8Z+rKApeMBjkP0OXTAZfqnzkGU3zXTtFMoZB6p3cdbWwJvrlA==
+X-Received: by 2002:a17:906:cc12:b0:a9e:c881:80bd with SMTP id a640c23a62f3a-aa581057f88mr1208104866b.37.1733008295277;
+        Sat, 30 Nov 2024 15:11:35 -0800 (PST)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599943614sm325840166b.175.2024.11.30.15.11.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2024 15:11:34 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9e8522445dso406865766b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:11:34 -0800 (PST)
+X-Received: by 2002:a17:906:3195:b0:aa5:9303:1b96 with SMTP id
+ a640c23a62f3a-aa593031ccemr1127506566b.50.1733008293952; Sat, 30 Nov 2024
+ 15:11:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130000802.2822146-1-andrew@andrewstrohman.com>
- <Z0s3pDGGE0zXq0UE@penguin> <20241130160815.4n5hnr44v6ea3m44@skbuf>
-In-Reply-To: <20241130160815.4n5hnr44v6ea3m44@skbuf>
-From: Andrew Strohman <andrew@andrewstrohman.com>
-Date: Sat, 30 Nov 2024 15:03:23 -0800
-Message-ID: <CAA8ajJ=Grm47nKZ+Yp-TEXAFfyoDOkJ9Kbc+NnUOx6ehg0o=vg@mail.gmail.com>
-Subject: Re: [PATCH net-next] bridge: Make the FDB consider inner tag for Q-in-Q
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Nikolay Aleksandrov <razor@blackwall.org>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>, 
-	Petr Machata <petrm@nvidia.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, UNGLinuxDriver@microchip.com, 
-	Shahed Shaikh <shshaikh@marvell.com>, Manish Chopra <manishc@marvell.com>, GR-Linux-NIC-Dev@marvell.com, 
-	Simon Horman <horms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Roopa Prabhu <roopa@nvidia.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bridge@lists.linux.dev
+References: <20241129231841.139239-1-pbonzini@redhat.com>
+In-Reply-To: <20241129231841.139239-1-pbonzini@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 30 Nov 2024 15:11:17 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjP5pBmMLpGtb=G7wUed5+CXSSAa0vfc-ZKgLHPvDpUqg@mail.gmail.com>
+Message-ID: <CAHk-=wjP5pBmMLpGtb=G7wUed5+CXSSAa0vfc-ZKgLHPvDpUqg@mail.gmail.com>
+Subject: Re: [GIT PULL] Second batch of KVM changes for Linux 6.13
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Vladimir,
+On Fri, 29 Nov 2024 at 15:18, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> This was acked on the mailing list by the RISC-V maintainer, see
+>   https://patchew.org/linux/20240726084931.28924-1-yongxuan.wang@sifive.com/
 
- Thanks for the review.
+Please don't use random links.
 
-> I was also going to plan asking Andy what is his plan on making
-> switchdev digest this.
+Maybe patchew will stay around. Maybe it won't. This is the first I
+ever see of it.
 
-Since switchdev switches don't seem to support this, I wasn't planning on
-making switchdev digest this. I was thinking that it should just
-be disabled for those hardware switches.
+It seems to be maintained by Red Hat, and yes, at least it contains
+the email message ID as part of the URL.
 
+But when I tried to go to patchew.org and then click on lkml.org, I
+get " https://patchew.org/lkml.org/" and a big "Not found" page.
 
->The switch ASICs I'm most familiar with can learn
-> on inner VID or outer VID, but not both.
+And when I clicked on "Linux", I get a working page, I can't even see
+the raw messages without downloading some "patch mbox".
 
-I don't know of a switch ASIC that supports this.
+So "maintained" is perhaps too strong a word.
 
-Is that a problem? I thought that it would be OK to add features to
-a software bridge that don't exist in any hardware bridge.
+Please use lore.kernel.org links instead. Maybe that won't stay around
+forever either, but at least it works.
 
-I've tried to see if anyone else was facing this same problem.
-All I found were concerns about the fact that the provider bridge
-needed to learn all the customer's MACs.  As a result, it looks
-like 802.1Qay was created.
+Lore also deals with a *lot* more lists, and has a lot more history. I
+tried to look up old stuff on patchew.org, and it just doesn't exist.
 
-It seems that 802.1Qay is primarily addressing a concern about TCAM
-limitations, and decoupling the provider and customer networks.
-I think it's possible that 802.1Qay has inadvertently
-fixed this issue for provider backbone bridges. But for my use case,
-I'm not concerned about TCAM usage. I just want isolation between
-the inner vlans.
+Put another way: patchew is objectively *much* worse than lore. So
+don't try to make it a thing.
+
+            Linus
 
