@@ -1,282 +1,235 @@
-Return-Path: <linux-kernel+bounces-426118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B12F9DEF33
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:03:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A7B9DEF34
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:03:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EFBDB215D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 07:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E722817DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 07:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B620142659;
-	Sat, 30 Nov 2024 07:02:56 +0000 (UTC)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D21147C79;
+	Sat, 30 Nov 2024 07:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z6xY00Sp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4ECB1FB3
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 07:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732950176; cv=none; b=Sp6SdEY9Y9ziYh+nzEBALeIKYm0qaXG8dgqseUZ5hJoOxWhaEsLL8V2cEsHxUo5k3j1uE57q5A6H1OTYaGhgTDImz476I7BBem3k4T/iASjwW6eH5UuX+BxxO4hRuQPy+4AZX/oqwKyQ3ttluB9WD9kFNjGiuG736Pe/dm8YTyo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732950176; c=relaxed/simple;
-	bh=kjRDG8WtbeouequKvj/UVCrYwsbfhnEMa1rqxfGhPlA=;
-	h=From:To:Subject:Cc:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KsOaJDYourWJXF5395qI9BuFOBABiZ4oupsM9d8FPRtGBfT/EGC3/2RuLYFYesN8+EMEvxBIdUbq2hczKXbjX/3zLTtWYwBl65+8DDfUEXzeS1IrxF8cCIMQxjvSkTk9zMxx2MqxlSt/N3AwUwFaVpTv7GhQBUhDP8AmdchYph4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kiloview.com; spf=pass smtp.mailfrom=kiloview.com; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kiloview.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kiloview.com
-X-QQ-mid: bizesmtpsz9t1732950142tnpjxr2
-X-QQ-Originating-IP: 0g6bZfZ0ltr5uNCgu700GvvUu30xhMU5fM0jgkGFeyE=
-Received: from [IPv6:::ffff:192.168.40.115] ( [113.240.218.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 30 Nov 2024 15:02:21 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14619738396533929951
-From: Luoxi <kaixa@kiloview.com>
-To: Jerry <jerrydeng079@163.com>
-Subject: Re: [PATCH] Fix issue: Writing a block devices case dead loop.
- generic_perform_write()-> balance_dirty_pages_ratelimited()->
- balance_dirty_pages() At this point, if the block device removed, the process
- may trapped in a dead loop. and the memory of the bdi device hass also been
- released. I found this issue through SCSI devices
-Cc: linux-mm@kvack.org, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Jerry <jerrydeng079@163.com>
-Date: Sat, 30 Nov 2024 07:02:20 +0000
-Message-Id: <em69028b68-d2c5-485d-a2ec-463c4673e723@f742d22a.com>
-In-Reply-To: <20241130063431.79079-1-jerrydeng079@163.com>
-References: <20241130063431.79079-1-jerrydeng079@163.com>
-Reply-To: Luoxi <kaixa@kiloview.com>
-User-Agent: eM_Client/10.1.4588.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D411813F43B;
+	Sat, 30 Nov 2024 07:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732950206; cv=fail; b=g0e2GkIsKRzGNJhUcxcsuz9OycD37QJw24JSbpgjpBm9dSZEpfjZRgUm3KIhtUT46vVc9C/PuuhJgOwaNto+gTztVT8u/N3ccozXlVOpAY9DtlJZJBzVAVX0gbKv3mzGFFgaNRugJMfJ473eLYq67DGLvTc+piEW/8UeAVYCmuI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732950206; c=relaxed/simple;
+	bh=+TqHRoheY9DsfMCcHELVgB/1+CRpg++9SH3zZzld9sc=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=ct2qgjKwPCWZPMWD7Z2FIlTMMgSHw0ndaHG7BjzKM+lOGvZ3ubNrOdbUK4pl/BnUXXQDqvDkNM7oRVg6hqWxqzfFZq+AyspRJ7N1C94cw4v0+2RlITMRrHbS6hBWQMkUWUqCwf2NU1pwpITzsjX6TNGKSX/DgQ+ggwMlQqw91/Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z6xY00Sp; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732950205; x=1764486205;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=+TqHRoheY9DsfMCcHELVgB/1+CRpg++9SH3zZzld9sc=;
+  b=Z6xY00SpsVeiWZmkl7H7c8KtR7WvgdtbQwELXJZ6RYJFBlylg4pKk6Vd
+   sBT9dQU4ACGgKutiF/jhdnjMeoHbxDnvx8yMUDE+mF2DG7xrqy1wKYtcB
+   f23DwAqMvaurEBRlKh2bYLgN5LlBDAH0ZdremVnMtx4eXbl216dXnAMPw
+   MDkSHUgPqXpLycdPx2gaa0FhhHH5pNHUIWKN1bfRsmzxkm/7RKLeyOAXx
+   AOyoUZe/GT+cUIIOIhr0x8y/ofWVAZGiPtEgRc/XOgshMj/cmFovDBPKR
+   VZvwW0f1rQjgNhJGcg976zU509jEgL062edr5zob5M4OVeTYiIatebTxM
+   w==;
+X-CSE-ConnectionGUID: t74hPFWXTzuuCUe25p0VUw==
+X-CSE-MsgGUID: jnuXK5QiSpiOVvhWJfGZXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="33299331"
+X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
+   d="scan'208";a="33299331"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 23:03:24 -0800
+X-CSE-ConnectionGUID: CYKv0KJxTxCqKXjA77GGxg==
+X-CSE-MsgGUID: idRY3QKpTfKCaGGQblFLRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
+   d="scan'208";a="92964599"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Nov 2024 23:03:24 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 29 Nov 2024 23:03:23 -0800
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 29 Nov 2024 23:03:23 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.48) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 29 Nov 2024 23:03:23 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ofeBcsmBUCTqu9/U2v3WoFco1Lk3nqyuc68JD4lQ4dO50XY9tTUCn8Be8JHiBGnkQz0FARwODch9ynh9MoQfC4wH5+v7+/Z6hMkgONDZDidFN2sarG5SOfpTFb36qs2C43ZEkjN2HwiEkIK3nqzP0Pu+rFu2u5X6FHbzu8HuaygRv35e1HAKRIkYzHAScTIsw6TCVMgmEYy1M9r8Lw+1eMOEZ2Hip428fE3Z+UC/gD+DG+FkdDIEuIdFqz4v7JerNGBprKSC2LhafCJQ4FhCx/Vtd3i94MeXIDFfHnmmRiiMD8FtDQOu+3XnIUvdt6VLji+LlrUPNl85MCObN6z6Iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6eTbZtIDTMpWsAIm6nOiWar4d/Pa+Fqi42J6j/0D4h8=;
+ b=cKjpIJnmra8q1E1lZnnrSm0BPobUqKvgi1yY1d5hJ+G69bJaPqNA8i/sDKqR/HAdHxeObfeDX2Jgnm79Ia1Mb1CD06LT+GzoJH7N1ux9EkmZVfEVrN9nFG/hQOSe5RuPldtTGYiKp5MM7tDvZpRKUkBV1LY2tGaeGpYj8GoiN9ILucP35y/7JxDkzIevkE6AfLLzpO9NQHuco2PRTx5y6YqTqhrqsAAYWvKEatnLTOldTSGITdOSrxJEm8fpDZ8v7cil57GTNYOwqXJ3L3ggiAM0ReWvgqAsLYiQhKxAYHiio64W34juLJBWCmZeeNXbGXHISD9uE/W68FLY1ClAiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by PH0PR11MB7445.namprd11.prod.outlook.com (2603:10b6:510:26e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.14; Sat, 30 Nov
+ 2024 07:03:21 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%6]) with mapi id 15.20.8207.014; Sat, 30 Nov 2024
+ 07:03:21 +0000
+Date: Sat, 30 Nov 2024 15:03:10 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Namhyung Kim <namhyung@kernel.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	James Clark <james.clark@linaro.org>, Ravi Bangoria <ravi.bangoria@amd.com>,
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>,
+	Atish Patra <atishp@atishpatra.org>, Mingwei Zhang <mizhang@google.com>,
+	Kajol Jain <kjain@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>, <linux-perf-users@vger.kernel.org>,
+	<oliver.sang@intel.com>
+Subject: [linus:master] [perf tools]  af954f76ee:
+ perf-sanity-tests.Test_data_symbol.fail
+Message-ID: <202411301431.799e5531-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SGBP274CA0018.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::30)
+ To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:kiloview.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: ODfrXIp+dl2w0Tx+qK+NAOe8j3Owh+ScZGRJlcaB6u+b/sDg1J9lZ+Kf
-	QEbg6XInsxzt+/mb7EDhlF3Ks76FAJy2rv/+cBDU6OiaoxfU2LV69mu6xhRBzwYI8Zly/sk
-	CKORoKhqtmT1jwfV+4xKyNgdZWpGRm/BHlyaeLhE+XtXbrUI67Qvdcvz/OSl79bcEJUGAhI
-	2DFLWXlkzYvkVhpEd5Xd2ckbQ5rCEeAFdjscOfavThfhRcdgtL0W32TllYnuCA4gkMp2y6a
-	WrD0tSkkN2q7R8go/Yghk3s1+3qn8lsxO6nXQhjOsKIBEcefg7DX4FsHb+cRyRgGZTChCM2
-	LgqHSSv/sRoiP937+HdPjWeDmo9phiQPb/jvHrMXpce+MfnUD2y9nWi8eqBt6Obvd4ax+2a
-	ranlf+L/cEeMBNk0j1FVhBwcWQWdEaldTxZ+c4J8IXZdZGb2KwHKFeO72YQU1MsSx0ecrGI
-	x3bghbMTvg78WqI4upqk281fn4+CPNAAde16pehQlWuL1emF/KILedlRLpvmSEmpoKZveNk
-	USxu6IibPr1MO8PmWFJfP2MYsxGBV1iu4alQYoNv82g2CDQjnDQo/npJBzk2GDN4yxpb8FK
-	YEavjZGpo0HIW/bgk3UU5GPka1Gm8lMijAVgDvhZJ/J6vbaMVrD5TxVfm8Cbxm/XgnbD42C
-	jVk2e2ou2kvqhqSurCu98YcWPrr6Jtzdxi7+2upocEf5XAQ48+EWJT0asu05sp1deCTvZSw
-	jQ94qTF74scKMNjcoGUf45+cn+iwtc81xVtPXqO72StN1Zv9gJvDuV+qSLxZv9cydVZZgPA
-	g7+r/WoRS4dsWaae1tU2io2uaGmh+J34ZMp47CFmZg/qq9tAZbnkUPlR9LQq+Rw1Ovlq1ST
-	q6ZkDfIAJn7ipijgFnHfpiW7ZpJdJjDYx2+J/B5zoi1H+kwVDRhBOMxMXQoLLpSWG5w2KRa
-	PC3eF+aXNUxRvzer/BBAJN3T0
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH0PR11MB7445:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c7e6e40-938f-484e-e829-08dd110d131a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Lg39d+iuinOFdnc2EXbQdebph1uPmVSdX4e7RZQdvMUR1Rngxu4riLDaY79s?=
+ =?us-ascii?Q?82gysvU6DNtqQCZzifb+CkviBMIFw76vlrfLlqpAXrt5KZnOcppvGg4hmKiB?=
+ =?us-ascii?Q?vQ6EbG8p6abu1luZVkuzZfXk3FJe+6/PbRP18BqHimZGaYG+QySnYIlp4n7k?=
+ =?us-ascii?Q?v/Fmd4n/Cy/2fnsofUEVNYO3wYvjAIEdPqUCnruYlO63E/E0lbpuYtkQ1fFR?=
+ =?us-ascii?Q?Wxa2+D0vWKj5Asd0xzqRe15w9wKiwJESW27d1qEPBhW/SNI3JDTimotvtXB5?=
+ =?us-ascii?Q?4jCUUSWOR+rjtSyoYMw6sC5Ogc6oq7toF//jaeNIdi76rgg/qOCaj6ZJj8Kp?=
+ =?us-ascii?Q?ZVYs2OJfw2h2L1NWIg8TzggsjMYtoTyaOwjpbduiMb+McrY/oyoz4y3SjcAO?=
+ =?us-ascii?Q?1JYfrjiTZSwGyANazlVqdwEmZSIo/z4uwBG1a/mSuX0BqfjBrrj4F5ckdkBa?=
+ =?us-ascii?Q?GZDba5bY5QU8A+0Jq4A6r3dIc+SsXW5E+PCUHCZADXQlufcU7iH7pXaPr3Es?=
+ =?us-ascii?Q?suw86d1hcjFq/6nTEUD60HTf0pzgCBky51u/oWH8lpYENkuxzljP8vAZiSuI?=
+ =?us-ascii?Q?SdgjsYmghxH8wbF4Z2XFHS3/l6HAWTKrh2+PxOGbO6sTFb+veWbXO7joMkTO?=
+ =?us-ascii?Q?k1hFv4SJ8nHNBfrF9R1tGa+4YoqynJ/NUSEJYf4WavhQGM44vOsCAj01Mw0p?=
+ =?us-ascii?Q?lTn4K6eL/NUAUCf8OT2M0EIGcs8O/+LHWp1kXXqK8mVLbL5IRISE7CE5B3va?=
+ =?us-ascii?Q?cs7qDjlf0vlTwwK5A/3mhsBIN3rgpD/uIrE1t4VA/9xqQEVaeF9TpKWdMU4n?=
+ =?us-ascii?Q?vjfIftf2m8i0TDKXP1UGmQ6amBnE5i9SGfW3MCNaqL6LGFBnymqBsJkRGrU1?=
+ =?us-ascii?Q?tFGccCuEX+F/D6d5ZQ9BI1sYAakuMt9eMwNqvjW6Td8iG8CpGBuc6Lf0y6Ge?=
+ =?us-ascii?Q?gC+hGaNIYWqWC6oeEPNz7aQWch0olIFGrovZyPmDRergxILUfudwxKK8Fp1N?=
+ =?us-ascii?Q?MugV4je+xcsxnKQW6muimOvE5WpKRXEyUW09d61NzfmA8+lFicKMDG9/JMad?=
+ =?us-ascii?Q?ySOF+qs/0EnTlCSLtIBiYSNXs+q1xyJYcOCvO1lEsXM6kuHj4BV+iTwL13fM?=
+ =?us-ascii?Q?ifVVfXXCYdXSUaQT8YOCOKbvTfMjcCy7w7YO9FoJDol+2XqjzR3IZPzwdiPS?=
+ =?us-ascii?Q?wWOiHaDu3t1CqMfYsKTc3pHYysCqnTLQkIevH4YXSVUehDvxJOZ7KfGktPF8?=
+ =?us-ascii?Q?w/5Wx651Qw2QQdr7WnMorB5yl485enZwYQlQZcbMXua3lxnsmvRlxFewdKAU?=
+ =?us-ascii?Q?v4RmNSVXo7f2fPcD4S/aX2+n?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?W0yBbXHyKkFhfXLIBVKD7wkXyVZ/6X167gHLr6auak62q92ZkiRSLi3J5KpF?=
+ =?us-ascii?Q?dlxRx54NF6Q/+ej4vs1HJ4HlNBuPISVFZxykPFisot4oSlzXo3QJhtDi5xL7?=
+ =?us-ascii?Q?pmh6TIvDTJJ8Ah0sra9FG5Nhagytsfq48rtKroy/xiHOkMKdO0rvXfqnKiV/?=
+ =?us-ascii?Q?5G4I5oWS9YUadrf38gYg50lX3VH6x70D78aeScEliyiejJsqG3n31QcKda9s?=
+ =?us-ascii?Q?W0qGQp3t3Eum0irbYH5nwZhnhXZzBSknQMzo9fOXobB7GQ23CmFM9CsrDatG?=
+ =?us-ascii?Q?D68EvsqtPJmgMjJVTjWzQ5W+3S2rrrYDqraSUNca6FHeQZZn+OdMC4LfcPbd?=
+ =?us-ascii?Q?g+krSFSSZck5HVZ2RLKJLNAwH8VG7WVXw/W0xfE7vJ+YS3hfZLpkJ+36RVcu?=
+ =?us-ascii?Q?K7IFgFrLHNcyIS4cKlaOIahjX/G9nTlwOrRt6rFB4sA7J8DB7zuQQaUonNe1?=
+ =?us-ascii?Q?9sr1fyM8y03RblfVs5i0nHphJ7Ljk70QFL0zbemw5fybHSWQxJNkrYJtepuO?=
+ =?us-ascii?Q?Vb8rEmOw2rdG9utPZD3tbhmAiMQAX7LfmT1AehF1d9nDt4ys6hlHe7XqfTnK?=
+ =?us-ascii?Q?rixKuomdCHZGnxH85WpjObQ+1Hl/O9KFo64iCwKZJS7AA6OdBo90ldz/zoWq?=
+ =?us-ascii?Q?/3gE5QwTBe9UjrpB8tQUMjNvIz0Oke6AY7TFeZbqG5TOefdzTxADN/QJC/Pe?=
+ =?us-ascii?Q?xya8SXQSh8M3Zl3UG+4JKPIWw5zAe1o8lj+ZzjU/y1pAXNmzexQCixe3GBiE?=
+ =?us-ascii?Q?09K6IlqyTgHEkqShR5WKGB21xk2uyZjXiB7Aeaxkm4Qle4IyuuKFeE5brYm6?=
+ =?us-ascii?Q?fGyZr2LdHpLGLEn3T5e7qsRBwnb2agxgUOltn0iQRDaqfYfzWJtjYY6N6qfi?=
+ =?us-ascii?Q?ZClB4q5knUZkvljnDiJ8g5kCRWEQpAvZWqR55QpuaXlcNjTpGcQI7K0ntp5x?=
+ =?us-ascii?Q?N+Kry6ep6cHXangp9XZVLZw2MeoDqjea6FtDXv1QhwpWp90l4SLGFU1JAtgb?=
+ =?us-ascii?Q?+i00G9mcP2TC7ZR/5ah/b+Wj16ud0cUPOLasEV8ZBujz/X8SRxl+X/qB9O8d?=
+ =?us-ascii?Q?hrKrw4C41/y1ZqzhRrwbu742HaFk6TZDTcjb4N9Cw7rc3fJ1AZHj/GrPLf7d?=
+ =?us-ascii?Q?C4k13uI+ZH2UR8fba4y+zbF5uIJzYjSAracr7L9rOdFdx0XiB4sCCve7nLYk?=
+ =?us-ascii?Q?WhvAlSqiX/LWJUg2JD3+ZrpjRL/gw6g9+jl87R80loS1D/beN4wH8XYwi9VF?=
+ =?us-ascii?Q?WCgLqu167RYBay2LOZKmw1xiONaLLgikEHLtTPcU1pU39Ju3tfsg5Kl+tVB2?=
+ =?us-ascii?Q?eSd3N0fsqY9IH+Dm/h7Cw4DmJovdVcnYanQNTwKEonnIE4hBkw7HxLKI07Oc?=
+ =?us-ascii?Q?dJf4rMDokD84S5uvY0GkJocqmBxsiCn3WK0iTMptH2a/29yPP7mxd0P1pwph?=
+ =?us-ascii?Q?aF4mFWq0QDesQOiWJGXzirng21iUALwi3RRh6LE48k1dxHYukEYXbavK4ER+?=
+ =?us-ascii?Q?bQoqL/xRPKidej/Tb2s0avshGRWmMJEDvOqqoMjZbapsVKwJJVEm8KwG+100?=
+ =?us-ascii?Q?uy+FaI5jB/+NSo0wZJj1oXwTJ6pX3mmoPohdZ8KbWHrmTR66Z8i1rOr7V0YI?=
+ =?us-ascii?Q?9Q=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c7e6e40-938f-484e-e829-08dd110d131a
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2024 07:03:21.0335
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1b/LO2EG7nc+1iv7/g3o4DuP7a3JUnxp8zzQ1taRzwQ5O4qo80wNm01pvUTTOQV3DnWL/un+K9mDj4sXNHYu0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7445
+X-OriginatorOrg: intel.com
 
-Hi, Jerry
 
-On 2024/11/30 14:34:31 +0800=EF=BC=8C"Jerry" <jerrydeng079@163.com> wrote:
 
->Signed-off-by: Jerry <jerrydeng079@163.com>
->---
->  mm/backing-dev.c    |  1 +
->  mm/filemap.c        |  6 ++++-
->  mm/page-writeback.c | 61 +++++++++++++++++++++++++++++++++++++++++----
->  3 files changed, 62 insertions(+), 6 deletions(-)
->
->diff --git a/mm/backing-dev.c b/mm/backing-dev.c
->index dd08ab928..0b86bd980 100755
->--- a/mm/backing-dev.c
->+++ b/mm/backing-dev.c
->@@ -878,6 +878,7 @@ void bdi_unregister(struct backing_dev_info *bdi)
->  	/* make sure nobody finds us on the bdi_list anymore */
->  	bdi_remove_from_list(bdi);
->  	wb_shutdown(&bdi->wb);
->+	wake_up(&(bdi->wb_waitq));
->  	cgwb_bdi_unregister(bdi);
->
->  	/*
->diff --git a/mm/filemap.c b/mm/filemap.c
->index 3b0d8c6dd..3282840f0 100755
->--- a/mm/filemap.c
->+++ b/mm/filemap.c
->@@ -3300,6 +3300,7 @@ ssize_t generic_perform_write(struct file *file,
->  	long status =3D 0;
->  	ssize_t written =3D 0;
->  	unsigned int flags =3D 0;
->+	errseq_t err =3D 0;
->
->  	do {
->  		struct page *page;
->@@ -3368,8 +3369,11 @@ ssize_t generic_perform_write(struct file *file,
->  		}
->  		pos +=3D copied;
->  		written +=3D copied;
->-
->  		balance_dirty_pages_ratelimited(mapping);
->+		err =3D errseq_check(&mapping->wb_err, 0);
->+		if (err)
->+			return err;
->+
->  	} while (iov_iter_count(i));
->
->  	return written ? written : status;
->diff --git a/mm/page-writeback.c b/mm/page-writeback.c
->index b2c916474..e013a6d01 100755
->--- a/mm/page-writeback.c
->+++ b/mm/page-writeback.c
->@@ -146,6 +146,16 @@ struct dirty_throttle_control {
->  	unsigned long		pos_ratio;
->  };
->
->+
->+
->+struct bdi_wq_callback_entry {
->+
->+	struct task_struct *tsk;
->+	struct wait_queue_entry  wq_entry;
->+	int bdi_unregister;
->+};
->+
->+
->  /*
->   * Length of period for aging writeout fractions of bdis. This is an
->   * arbitrarily chosen number. The longer the period, the slower fraction=
-s will
->@@ -1567,6 +1577,22 @@ static inline void wb_dirty_limits(struct dirty_thr=
-ottle_control *dtc)
->  	}
->  }
->
->+
->+static int wake_up_bdi_waitq(wait_queue_entry_t *wait, unsigned int mode,
->+				int sync, void *key)
->+{
->+
->+	struct bdi_wq_callback_entry *bwce =3D
->+		container_of(wait, struct bdi_wq_callback_entry, wq_entry);
->+
->+	bwce->bdi_unregister =3D 1;
->+	if (bwce->tsk)
->+		wake_up_process(bwce->tsk);
->+
->+	return 0;
->+}
->+
->+
->  /*
->   * balance_dirty_pages() must be called by processes which are generatin=
-g dirty
->   * data.  It looks at the number of dirty pages in the machine and will=
- force
->@@ -1574,7 +1600,7 @@ static inline void wb_dirty_limits(struct dirty_thro=
-ttle_control *dtc)
->   * If we're over `background_thresh' then the writeback threads are woke=
-n to
->   * perform some writeout.
->   */
->-static void balance_dirty_pages(struct bdi_writeback *wb,
->+static int balance_dirty_pages(struct bdi_writeback *wb,
->  				unsigned long pages_dirtied)
->  {
->  	struct dirty_throttle_control gdtc_stor =3D { GDTC_INIT(wb) };
->@@ -1595,6 +1621,16 @@ static void balance_dirty_pages(struct bdi_writebac=
-k *wb,
->  	struct backing_dev_info *bdi =3D wb->bdi;
->  	bool strictlimit =3D bdi->capabilities & BDI_CAP_STRICTLIMIT;
->  	unsigned long start_time =3D jiffies;
->+	struct bdi_wq_callback_entry bwce =3D {NULL};
->+	int ret =3D 0;
->+
->+
->+	if (!test_bit(WB_registered, &wb->state))
->+		return -EIO;
->+
->+	init_waitqueue_func_entry(&(bwce.wq_entry), wake_up_bdi_waitq);
->+	bwce.tsk =3D current;
->+	add_wait_queue(&(bdi->wb_waitq), &(bwce.wq_entry));
->
->  	for (;;) {
->  		unsigned long now =3D jiffies;
->@@ -1816,6 +1852,12 @@ static void balance_dirty_pages(struct bdi_writebac=
-k *wb,
->  		wb->dirty_sleep =3D now;
->  		io_schedule_timeout(pause);
->
->+		/* bid is unregister NULL, all bdi memory is illegal */
->+		if (bwce.bdi_unregister) {
->+			ret =3D -EIO;
->+			break;
->+		}
->+
->  		current->dirty_paused_when =3D now + pause;
->  		current->nr_dirtied =3D 0;
->  		current->nr_dirtied_pause =3D nr_dirtied_pause;
->@@ -1843,12 +1885,15 @@ static void balance_dirty_pages(struct bdi_writeba=
-ck *wb,
->  		if (fatal_signal_pending(current))
->  			break;
->  	}
->+
->+	if (bwce.bdi_unregister =3D=3D 0)
->+		remove_wait_queue(&(bdi->wb_waitq), &(bwce.wq_entry));
->
->  	if (!dirty_exceeded && wb->dirty_exceeded)
->  		wb->dirty_exceeded =3D 0;
->
->  	if (writeback_in_progress(wb))
->-		return;
->+		return ret;
->
->  	/*
->  	 * In laptop mode, we wait until hitting the higher threshold before
->@@ -1859,10 +1904,12 @@ static void balance_dirty_pages(struct bdi_writeba=
-ck *wb,
->  	 * background_thresh, to keep the amount of dirty memory low.
->  	 */
->  	if (laptop_mode)
->-		return;
->+		return ret;
->
->  	if (nr_reclaimable > gdtc->bg_thresh)
->  		wb_start_background_writeback(wb);
->+
->+	return ret;
->  }
->
->  static DEFINE_PER_CPU(int, bdp_ratelimits);
->@@ -1944,8 +1991,12 @@ void balance_dirty_pages_ratelimited(struct address=
-_space *mapping)
->  	}
->  	preempt_enable();
->
->-	if (unlikely(current->nr_dirtied >=3D ratelimit))
->-		balance_dirty_pages(wb, current->nr_dirtied);
->+	if (unlikely(current->nr_dirtied >=3D ratelimit)) {
->+
->+		if (balance_dirty_pages(wb, current->nr_dirtied) < 0)
->+			errseq_set(&(mapping->wb_err), -EIO);
->+
->+	}
->
->  	wb_put(wb);
->  }
->--
->2.43.0
->
->
-I think the title may be misplaced and needs to be described in concise=20
-sentences. :)
-For detailed process, please refer to this link:=20
-https://docs.kernel.org/process/submitting-patches.html
+Hello,
 
-Regards,
-Luoxi
+kernel test robot noticed "perf-sanity-tests.Test_data_symbol.fail" on:
+
+commit: af954f76eea56453713ae657f6812d4063f9bc57 ("perf tools: Check fallback error and order")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+[test failed on linus/master      7af08b57bcb9ebf78675c50069c54125c0a8b795]
+[test failed on linux-next/master f486c8aa16b8172f63bddc70116a0c897a7f3f02]
+
+in testcase: perf-sanity-tests
+version: 
+with following parameters:
+
+	perf_compiler: gcc
+
+
+
+config: x86_64-rhel-8.3-bpf
+compiler: gcc-12
+test machine: 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480+ (Sapphire Rapids) with 256G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202411301431.799e5531-lkp@intel.com
+
+
+
+2024-11-28 08:31:19 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-af954f76eea56453713ae657f6812d4063f9bc57/tools/perf/perf test 121
+121: Test data symbol                                                : FAILED!
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20241130/202411301431.799e5531-lkp@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
