@@ -1,191 +1,188 @@
-Return-Path: <linux-kernel+bounces-426156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB019DEF9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:35:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE65C9DEFA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:41:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71C731630AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:41:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B35814BF87;
+	Sat, 30 Nov 2024 09:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESgqSE/k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE00E281604
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:35:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14CF14A60F;
-	Sat, 30 Nov 2024 09:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q0iZSo34"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCAF7083A
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F212829A0;
+	Sat, 30 Nov 2024 09:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732959341; cv=none; b=KR7HOsyDagYejlbdTa6tWAcUU4ypptytUUYeYauVXl6dZ3Iqlbaoakbz0v962A+c+OpZVzlbtGdAPCtHicOllW8wgbsOEZALN4rwcWDMfmnwKXAxH7ECxHRXTtzt3wR0OtM2NZJFsQZanIw9lLSbAdIge9S7AZYWL7OeVRbBuWM=
+	t=1732959711; cv=none; b=DSV2a1ScI7L/NqfmE9/Q4tufZns1BhrR299CfsPnwdrVpQnDvYAZUT7rPF5dyE5q4H8anki17vCkKgidlf3HnGlUulE52SOEJf4Oiwwx6h2gW7iODhZpTJVeHv6gbVS9TjQgJ0nvJlDXz0D7W6iz7BTGynNGuyZJxGwSijHU5hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732959341; c=relaxed/simple;
-	bh=YAPIWZ+2TdFjhG9dutenVS7y+qNnSmr0JSVMDPAVx6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvnRIjS/xk8k4mFpCqQBIZSyHXPQCuLsQr0r6FkROH6aByaBlmZU1F9x7FtP7BPs4tbyYdHmBi0Tsoi2GU39vTrBXfEnU0zJIE8bV9GFWDAKXOPg2Mthd3hfzIHEHEu6FldR5NghrNaRcWub3L6Jq70btze4WiPPUcoaSSfQEJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q0iZSo34; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53de852a287so2803569e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 01:35:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732959337; x=1733564137; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DJpAceZsvwXrkIr1FtmUK4kMCTXmq7VlVQ0IrLAf8OE=;
-        b=Q0iZSo34urcIbhCfD0ik0I/IrnEU2FIMuvW4G+KMWUieFv26Dz154N7EQpjOYoXXz9
-         hBhM6lV1iDkXrEYx193Zx6bP04+rKBZDlXRAoSRcky85zmxHd6gzD78FsMIJ0+kLxuV8
-         Hm3VCJKdLqXbY9VYCzWGZFqrmR6q338PWTW13UDMUqaJDy1O+8NjIpnZR0xQ12sDJ4ey
-         ccf376yA9bKiNqHeV44EXRUC+5+VvlVrkeXy4ItZUBR6HoTga5tJZ/IjlHtccULa9yTF
-         WX3x8bbxTYz2ruVeyk2xz/wH1VilNGKDPttAqE3oLYk4Mujq86xwjmPsrq0hCtsS0HuC
-         GpBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732959337; x=1733564137;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DJpAceZsvwXrkIr1FtmUK4kMCTXmq7VlVQ0IrLAf8OE=;
-        b=EpfKli6ZMzlXpQRd8pJbvbPCptT72LkIpBBodYXlY0lKzkMLU5eMotD0zUs5pkJr4X
-         SojsD8xJ8W44HZnwNSTGMFUz/PrUsEjDHAzCuPqjS7mNpV/O2T6ZAVRykwIot6ZKCT/7
-         3ni3cdH1wuOgI3NrWicvrDYw4wniguacNPj4jmnDtnTayeBqzlIhinlzE6xb3/P7wMPX
-         23PepStQQeHNL/qP2CPH8thm38ZQi9R8k8uPCXykpqaWN3346KCkCBIjnJrBxImYFrkG
-         YrHfOIRsFphpltnL10r2lQ9gpH4kMvz2Le8upKrGb2WkVzlFNQTJMj2/8pZsYgaSQN9J
-         Tbnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVV2IS5ZVpdFpWo+a/fpnKFBgZDOygBldGTKxbi6PRaV1xh9+erBUW5//rSp1lTRRrOTgxf7etO7NWp9hw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRVwlpugNXMILy+8BfLykZo84idD3jkDf3lmy0XeMc6RmutxzR
-	QCXh1ksF4U2d8G9BRdjLXn/4XbQtoBG+Sg0PSKZX4s3hcziIgQ8Su80Ho3WnpcU=
-X-Gm-Gg: ASbGncvAiZ0iWg3k9ZfT7jqcFxxE0/ojP0YK8/DxXHsueZnnuv1WGwuOPN53HwKi9Iu
-	lfsJuXK1vIYrOpuWiyqaP8wdeKgnO9b7phwKzZkzo6A1yA+G0/XMHnmWiZ3iWgQgN3X0w5gwwSS
-	6LVCfgwwZa/XgnDr+GdK+CZO1RK6h8LeldKtAOfaZkiLwO39GK6qr4MMkSFk+c1oYrPVbAUqDb/
-	ThkURQeHgaI8dAchpcFi+2xXk4GXQMlCoRKKcDKAYKyQt6oAWSFaEElX7hF2LJPo/3MJN5CpUf0
-	gowgJywabwlC0/K7fPuAEoNi8oM0AA==
-X-Google-Smtp-Source: AGHT+IFbMjYux+SSZ96v0jN8KYReJVZhl0TeMioEfshmhbV98iI9mESjw7Z64iU8uw4lxUzUNRlHYg==
-X-Received: by 2002:a05:6512:39d0:b0:53d:e5f0:32bb with SMTP id 2adb3069b0e04-53df01120a0mr5805994e87.51.1732959336835;
-        Sat, 30 Nov 2024 01:35:36 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64432d6sm722760e87.85.2024.11.30.01.35.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 01:35:35 -0800 (PST)
-Date: Sat, 30 Nov 2024 11:35:34 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Nikolaus Voss <nv@vosn.de>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, 
-	Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Fabio Estevam <festevam@denx.de>, Marek Vasut <marex@denx.de>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, nikolaus.voss@haag-streit.com
-Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-Message-ID: <lio6natmz5d5hdmdxwuj5ghfbpl4medb2orhw2m27m6g3rvaga@tanmydgbufg2>
-References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
+	s=arc-20240116; t=1732959711; c=relaxed/simple;
+	bh=b3Cn9OADpfYM9TykmqE6t+awP7J/1DjwXMd5WafSOrQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=djjzOoJFQuf8TzRNTrrVuvKFQ/7sWjeGqdt3ZLfT2x1HYRcQUBIOEs6isdp5wPoo0Ax/Z9FfhTyHZQVn6OleZ1MM9l50gvxZE8wr28VV7zqVTnk+N1KrYEAee5D8n+o8poWihpdim3ICknzhJpUmWB7XIO416+5hE6eguAVaQQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ESgqSE/k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80BDCC4CECC;
+	Sat, 30 Nov 2024 09:41:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732959710;
+	bh=b3Cn9OADpfYM9TykmqE6t+awP7J/1DjwXMd5WafSOrQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ESgqSE/kqikW8V7uNJ6/1Ibv0yU4qwMVtFEOrwh0qlF3fFZg3py1x4Sq/l+RTA90j
+	 DsOOkMZuoE9fT56KayybWk4+dw4m8WH5vh7teppoijNwZvex0wuwSbxJ6IYf6VX68P
+	 HprCMTI6AlvaHBIPZs9OzmaklR/7fxKZFsjPPfhGy7b+6JEOqCxxltPl2pUQB2BdvK
+	 cEdQ5qDkYKDlLr9uKHtSM5+kfQpF7Mv/bIEsNgC3QAgOvVVLD/Ay+4nI3pOK+6z3Cl
+	 uTkZVgoUcy4fiDkG1THW+m7hJ9RTnTxbu9Mt6VMRPbZALHpoRcZokSFSR14O2KNqoW
+	 PompB0uROIWqQ==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53ddb99e9dcso2614239e87.3;
+        Sat, 30 Nov 2024 01:41:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVT1HrCpRDgA5NqPb2FzoXwh9ZhFrouceuV6wobqhJ0SYb0z2F0TpQ20Cggh4QG9QoHYN+85ea1tI0sl1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdX26bWwHwTMZzs/f6W/09Yx1+05nq67TG7/gy0Zfy1movRlXw
+	Q+dTgPfJU0weyL3YE5KFZM8T5jygz0F5kPqMn5E74fR51BQYQpTWTGpbFOtWhr4o3do/eQEVREg
+	kh+iF6hD6XWgtDXenLMH1x9nMKHY=
+X-Google-Smtp-Source: AGHT+IEw/ZPznzF/7J5qZU4q5NBlncMKiKWpBcJvAqQp+pLiflYA7vB9T3FzxhFvwg2hiI4ySmzYt3rM8vekLpZgvf4=
+X-Received: by 2002:a05:6512:b15:b0:539:e317:b05f with SMTP id
+ 2adb3069b0e04-53df00de3a9mr9577563e87.28.1732959709166; Sat, 30 Nov 2024
+ 01:41:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126172610.AD8B51622C@mail.steuer-voss.de>
+References: <20241014141345.5680-1-david.hunter.linux@gmail.com>
+ <20241014141345.5680-6-david.hunter.linux@gmail.com> <CAK7LNAQmV=CGzEyJtBRSfz+YW6yTfWza7mf1dPXEiaJDT7z5xQ@mail.gmail.com>
+ <fe9de0fe-b069-49b8-b7a3-cfb81c82199a@gmail.com>
+In-Reply-To: <fe9de0fe-b069-49b8-b7a3-cfb81c82199a@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 30 Nov 2024 18:41:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARv+2r1v8t8HwjzQVQqz4M+-WUn52XL+jb1=0OgHqOY5A@mail.gmail.com>
+Message-ID: <CAK7LNARv+2r1v8t8HwjzQVQqz4M+-WUn52XL+jb1=0OgHqOY5A@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] streamline_config.pl: fix: implement choice for kconfigs
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shuah@kernel.org, javier.carrasco.cruz@gmail.com, 
+	Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 04:45:54PM +0100, Nikolaus Voss wrote:
-> LDB clock has to be a fixed multiple of the pixel clock.
-> As LDB and pixel clock are derived from different clock sources
-> (at least on imx8mp), this constraint cannot be satisfied for
-> any pixel clock, which leads to flickering and incomplete
-> lines on the attached display.
-> 
-> To overcome this, check this condition in mode_fixup() and
-> adapt the pixel clock accordingly.
-> 
-> Cc: <stable@vger.kernel.org>
-> 
-> Signed-off-by: Nikolaus Voss <nv@vosn.de>
-> ---
->  drivers/gpu/drm/bridge/fsl-ldb.c | 40 ++++++++++++++++++++++++++++----
->  1 file changed, 36 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-> index 0e4bac7dd04ff..e341341b8c600 100644
-> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> @@ -104,12 +104,14 @@ static inline struct fsl_ldb *to_fsl_ldb(struct drm_bridge *bridge)
->  	return container_of(bridge, struct fsl_ldb, bridge);
->  }
->  
-> +static unsigned int fsl_ldb_link_freq_factor(const struct fsl_ldb *fsl_ldb)
-> +{
-> +	return fsl_ldb_is_dual(fsl_ldb) ? 3500 : 7000;
-> +}
-> +
->  static unsigned long fsl_ldb_link_frequency(struct fsl_ldb *fsl_ldb, int clock)
->  {
-> -	if (fsl_ldb_is_dual(fsl_ldb))
-> -		return clock * 3500;
-> -	else
-> -		return clock * 7000;
-> +	return clock * fsl_ldb_link_freq_factor(fsl_ldb);
->  }
->  
->  static int fsl_ldb_attach(struct drm_bridge *bridge,
-> @@ -121,6 +123,35 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
->  				 bridge, flags);
->  }
->  
-> +static bool fsl_ldb_mode_fixup(struct drm_bridge *bridge,
-> +				const struct drm_display_mode *mode,
-> +				struct drm_display_mode *adjusted_mode)
+On Wed, Nov 27, 2024 at 10:18=E2=80=AFPM David Hunter
+<david.hunter.linux@gmail.com> wrote:
+>
+> On 11/5/24 18:33, Masahiro Yamada wrote:
+> > I previously suggested checking how the 'if' statement is handled.
+> > https://lore.kernel.org/lkml/CAK7LNAQ8D4OVT81iTVs8jjrBXX6Zgwc+VJ_vb7hb4=
+J-vCZZN=3Dg@mail.gmail.com/
+> >
+> I think I understand now what you were saying. I misunderstood what you
+> were saying because I thought that you were saying that the "if" blocks
+> were not implemented.
+>
+> To paraphrase, I believe that you are saying that the "choice" blocks
+> should have a similar style to the "if" blocks.
+>
+> I will take a look at the patch that you sent and figure out how it
+> would work. I would like some clarification on the information in the
+> choice blocks that are not "depends." Should those also have the same
+> style as the "if" block?
+>
 
-The driver uses atomic callbacks. Please use .atomic_check() instead.
+I am not sure if I understood your question correctly, but I guess you are
+referring to the similarity between the following two constructs:
 
-> +{
-> +	const struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
-> +	unsigned long requested_link_freq =
-> +		mode->clock * fsl_ldb_link_freq_factor(fsl_ldb);
-> +	unsigned long freq = clk_round_rate(fsl_ldb->clk, requested_link_freq);
-> +
-> +	if (freq != requested_link_freq) {
-> +		/*
-> +		 * this will lead to flicker and incomplete lines on
-> +		 * the attached display, adjust the CRTC clock
-> +		 * accordingly.
-> +		 */
-> +		int pclk = freq / fsl_ldb_link_freq_factor(fsl_ldb);
-> +
-> +		if (adjusted_mode->clock != pclk) {
-> +			dev_warn(fsl_ldb->dev, "Adjusted pixel clk to match LDB clk (%d kHz -> %d kHz)!\n",
-> +				 adjusted_mode->clock, pclk);
-> +
-> +			adjusted_mode->clock = pclk;
-> +			adjusted_mode->crtc_clock = pclk;
-> +		}
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
->  				  struct drm_bridge_state *old_bridge_state)
->  {
-> @@ -280,6 +311,7 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
->  
->  static const struct drm_bridge_funcs funcs = {
->  	.attach = fsl_ldb_attach,
-> +	.mode_fixup = fsl_ldb_mode_fixup,
->  	.atomic_enable = fsl_ldb_atomic_enable,
->  	.atomic_disable = fsl_ldb_atomic_disable,
->  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
-> -- 
-> 2.43.0
-> 
 
--- 
-With best wishes
-Dmitry
+[1]
+choice
+      prompt "choice"
+      depends on X
+
+     [ code block]
+
+endchoice
+
+
+
+[2]
+if X
+
+   [code block]
+
+endif
+
+
+
+choice  ...  endchoice
+if    ...   endif
+are similar in the sense that they both define a code block.
+
+
+The if ... endif construct is always associated with a dependency.
+
+The choice ... endchoice construct can optionally have a 'depends on'
+statement. If it does, the dependency is applied to the entire code block
+within choice ... endchoice.
+
+
+
+
+
+
+> I am not sure if you saw this email:
+> https://lore.kernel.org/all/994efba2-2829-4874-b5fa-9f5317f6ea6b@gmail.co=
+m/
+>
+> There are lots of information, specifically "prompts" and "defaults"
+> that are distributed to each of the config options in the "choice" blocks=
+.
+
+- A choice entry cannot have a 'select' property.
+
+- A choice entry should always have 'prompt', otherwise
+   the choice statement is non-sense.
+
+- A choice entry can optionally have 'default'.
+ If 'default' is not explicitly specified, the first CONFIG option within
+  the choice block is the default.
+
+- A choice entry can optionally have 'depends on'.
+
+
+
+
+
+
+
+
+> >
+> > BTW, 'menu' also can have 'depends on'.
+> >
+> >
+> > menu "menu"
+> >           depends on FOO
+> > config A
+> >             bool "A"
+> > config B
+> >             bool "B"
+> > endmenu
+> >
+> >
+> > This is not implemented, either.
+> >
+> > I am not sure how much effort should be invested in this script, though=
+.
+> >
+> >
+> I will look into distributing the "menu" information.
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
