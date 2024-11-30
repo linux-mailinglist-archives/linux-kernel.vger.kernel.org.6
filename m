@@ -1,85 +1,102 @@
-Return-Path: <linux-kernel+bounces-426400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A62C09DF293
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:33:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7959D9DF296
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:37:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32849B210E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:33:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F70281464
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D121A0AE1;
-	Sat, 30 Nov 2024 18:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D7C1A76D1;
+	Sat, 30 Nov 2024 18:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mw8gVNMi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+XmOBBn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212848468;
-	Sat, 30 Nov 2024 18:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FD6158D87;
+	Sat, 30 Nov 2024 18:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732991614; cv=none; b=Xs31jjPAsLFL+ubfWFNw8d/XX76s7fjHOX8/BUOF5aSFc4wb8opzF5CEqQpB44Ek35fl3oo+IsD/aX8tXeLM1f2Qjjv9HHwszABHIoDKa5Xavqzk1+7Ricfzi6d6ZYOoocgLw0Ks5e8irLVoVAeTQsmDvTBmGxUEbrPNzZOzpB8=
+	t=1732991826; cv=none; b=m9iZuUx40qrzaCOcTn3orIXcsDxij4qxIYVJccglf10BwvvKwTUqxIV/rDhyu9cEMO/vBFb3FAnqRZGtB0F5moUczAAhij9c0q4fefP2EK/g1SP3JlUYiRSuR+naiNTReTKy+S6xiQXdJ+8Y++l+kg5QRffUn6ajdCV/7B3pWw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732991614; c=relaxed/simple;
-	bh=G6cxAoo8aANqBqALY8Yiq6mVLF6A30FZQ+H8hiJuSZM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SKMknSmJIsBrFvDiJSR7/lpYeA6w0za9sryqQEmWJ5JBCZ5vBsYE/4qzNJRW3NoXvMT/94G/A9cyqGYhhEWvL3ZD9RCqnklUprNjKZm5kpCCb4jt17z5FJit8pulfiRevBbp54zRAzP34i2ZMW6bG6bEgrVzBaLcWBeHOkxhJbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mw8gVNMi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73C0CC4CECC;
-	Sat, 30 Nov 2024 18:33:33 +0000 (UTC)
+	s=arc-20240116; t=1732991826; c=relaxed/simple;
+	bh=5CGTaXv3qcM8izuf0G3IuTtdL47UzEnEwiMt4SQGzng=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uCNEOCdgPlvwHXM5ppffZOM0TJJHAIg8EeuZS+kpJ93c/2drN80aZLhCIJi1fjIHvUi8I3wlSJCzfixH1j8AlmODN+4yNML7NT0KvmuYj8KN/JEd+bBz4Sf2haO3Xj0c/Rk8Genli6pxfL+zeEOXczfIwoQA6W8yXeT/cnLBKmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+XmOBBn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DB7C4CECC;
+	Sat, 30 Nov 2024 18:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732991613;
-	bh=G6cxAoo8aANqBqALY8Yiq6mVLF6A30FZQ+H8hiJuSZM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Mw8gVNMipPXnfjvEKB+8Bq3tnUT1DNcq0boVdHO5IzPELjG22a26ekQeTqIVUuMwN
-	 Zla+nCzd3DiK4Lyr1uekaZt/X7ScMySII5R+VbeIB3oP51sFYnUIMo54mN7BwHm/mv
-	 GiQrD9za4OVYPx/JEMlYjfGK6qWlc0bRNQecLr70bOvHhQOJx3fz2pAZQYvjbHoVef
-	 6vDpX8PybcMepZenR5LRrvnBP3O6rFulDoNKrNYJ/DqmFvyDMQPEwy1uKKniW6wxSw
-	 z0kiup5QfSBhaPbDSHtL64E5RgczXgdXV0ZQCrmJqbc5YpRGCIoLX9aE2lv7Fm8E6E
-	 gBF1Vi30HG3Yw==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: DAMON Beer/Coffee/Tea chat reminder for the week of 2024-11-18
-Date: Sat, 30 Nov 2024 10:33:30 -0800
-Message-Id: <20241130183330.58568-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241115012529.83546-1-sj@kernel.org>
-References: 
+	s=k20201202; t=1732991826;
+	bh=5CGTaXv3qcM8izuf0G3IuTtdL47UzEnEwiMt4SQGzng=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=d+XmOBBnXCHc8xl+sEgI9y+sZ5RaJrGt+nMaEjJkVWI+Ty3E8L09wNPJyfoLgOBoH
+	 26b4kVnQqfA+A1HDsTVdRTYoZPRt6Rm+hv0DAXA67CBbmA3GoQ7gOXmlFLMTov5fbN
+	 mXNWl6FDYESyMi/HCbpiwBmDgHqZY26Txb9raGcxAnmrWh/SEtndPr39io9ouRqmy4
+	 oJmcTYJungsIFblLM5Vq+xtlGIdT4ZJkCA0U/ottWVndfKk2KLsEBLndE1pVY0g8NE
+	 xLGN/rGljtqhJkbi9C7Y/3O1wdEPGm+3gTp2mYeEtTgLl7sK7Bw8tE4EVi9B5k7ugM
+	 ogPHQGCdM26hg==
+Date: Sat, 30 Nov 2024 10:37:04 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Michael Kelley <mhklinux@outlook.com>, Maxim Levitsky
+ <mlevitsk@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, Shradha
+ Gupta <shradhagupta@linux.microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Konstantin Taranov
+ <kotaranov@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Eric
+ Dumazet <edumazet@google.com>, "linux-hyperv@vger.kernel.org"
+ <linux-hyperv@vger.kernel.org>, Long Li <longli@microsoft.com>, "David S.
+ Miller" <davem@davemloft.net>, Leon Romanovsky <leon@kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Souradeep
+ Chakrabarti <schakrabarti@linux.microsoft.com>, Dexuan Cui
+ <decui@microsoft.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: mana: Fix memory leak in mana_gd_setup_irqs
+Message-ID: <20241130103704.7129538f@kernel.org>
+In-Reply-To: <Z0kjRcX1hXYQhw2Q@yury-ThinkPad>
+References: <20241128194300.87605-1-mlevitsk@redhat.com>
+	<SN6PR02MB4157DBBACA455AC00A24EA08D4292@SN6PR02MB4157.namprd02.prod.outlook.com>
+	<Z0kjRcX1hXYQhw2Q@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
-
-On Thu, 14 Nov 2024 17:25:29 -0800 SeongJae Park <sj@kernel.org> wrote:
-
-> Hello,
+On Thu, 28 Nov 2024 18:13:25 -0800 Yury Norov wrote:
+> > FWIW, there's a related error path leak. If the kcalloc() to populate
+> > gc->irq_contexts fails, the irqs array is not freed. Probably could
+> > extend this patch to fix that leak as well.
+> > 
+> > Michael  
 > 
-> 
-> This is yet another reminder of upcoming DAMON Beer/Coffee/Tea chats
-> (https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing)
-> for the week of 2024-11-18.
-> 
-> After the two instances for the week of 2024-11-18, the week of 2024-12-02 was
-> originally the next meetings week.  But I have conflicts on the week, so moved
-> those one week forward.  Please check the schedule.
+> That's why we've got a __free() macro in include/linux/cleanup.h
 
-This is a reminder of the above meeting reschedule.  We will not have meetings
-next week, but a week after.
+Quoting documentation:
 
-
-Thanks,
-SJ
-
-[...]
+  Using device-managed and cleanup.h constructs
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Netdev remains skeptical about promises of all "auto-cleanup" APIs,
+  including even ``devm_`` helpers, historically. They are not the preferred
+  style of implementation, merely an acceptable one.
+  
+  Use of ``guard()`` is discouraged within any function longer than 20 lines,
+  ``scoped_guard()`` is considered more readable. Using normal lock/unlock is
+  still (weakly) preferred.
+  
+  Low level cleanup constructs (such as ``__free()``) can be used when building
+  APIs and helpers, especially scoped iterators. However, direct use of
+  ``__free()`` within networking core and drivers is discouraged.
+  Similar guidance applies to declaring variables mid-function.
+  
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#using-device-managed-and-cleanup-h-constructs
 
