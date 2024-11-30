@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-426083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BDC9DEE97
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:30:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C06761636E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 02:30:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801624502F;
-	Sat, 30 Nov 2024 02:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kAcksueG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673C49DEE99
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:31:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ECB27447
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C799281888
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 02:31:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F83045979;
+	Sat, 30 Nov 2024 02:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmbOpj5T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A7227447;
+	Sat, 30 Nov 2024 02:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732933823; cv=none; b=UMsT1BQ1OH/to2jdYobf3cm9ChML8bNcBj6xeMq6FZNE1wKOrKauA3Kdk3bVG8MvCVmU0g960HOaD8ne6E9tRK8QXB4ilZInMj+imT9Gt0olRhzS+iMDo2zajcuetpjrUTbMyvwP/eE2mCgCaks4x0nM0ndVZW2VyUrGz75PX2c=
+	t=1732933891; cv=none; b=u8WEes3zH6h7/lqwwfLMqmikewziRYwH8sHPH9FlwDASKarTuAUpolNhsUP6+a+D7HfE+o1c/+O5phURWaaCwEiGK76B6YTIFa4bq48wjmj9ptpyXKSKiROf4UwzIWBQBQYympybmw2DCtxeDJ1raqrKwjuwWfqDXXICi2iE2Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732933823; c=relaxed/simple;
-	bh=QTTzkZOC5MBVdCuadILcBtuFm4pszBJTnpD249ArpeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rRgTrU9tWMWh2NOjni3nzKiAi+nMkxvy6prlN9a9A5756KgnkGMXLnPy/BjN6qw20CFkNbYW+WgzAhcEzxcJyxk2WwlGgk9XbCIf453gCp3Mq3q3LEFFVMl1DjSYenb3eyfh/W7lpSxRj6YhjfSTEdgKWyskb7WpSuLr4EBrFHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kAcksueG; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732933822; x=1764469822;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=QTTzkZOC5MBVdCuadILcBtuFm4pszBJTnpD249ArpeA=;
-  b=kAcksueGJL8WE+dHfIFSCUGEnnqdfdi1NfHzi0z62tXijF0a9ixe8cqx
-   0i/Cpgi62QBgDWan2odAgOHqcQyDpWktwQFQ2BIWT0QO/YRF4PLq/MPfj
-   CSyu0ndbhrvFWz+CpQd18jBUMCR7MQ1ipXP8hBIKA/nRMiNxLlzJ9D232
-   iBND4cblDYO4hm6cY7KXECln+zAoFNs6pFk5XuBrL1iRHvZRxU5wkxs32
-   RwzpxRmIEkgKIWfW1ItbGSs7RNla35EZEHbkV+hMN2iwTxH8sQf+B6KDF
-   XB53FUwAawsXd0ozyGLswkfPp3G5TMg8V2GW+sNA0+wyXfaNbHaDdOFnm
-   w==;
-X-CSE-ConnectionGUID: tSY36cWPRgGawOtXOqq1kA==
-X-CSE-MsgGUID: OH2K8rQTSMCuI6X0bsq1Yg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="32526273"
-X-IronPort-AV: E=Sophos;i="6.12,197,1728975600"; 
-   d="scan'208";a="32526273"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 18:30:22 -0800
-X-CSE-ConnectionGUID: uVEm4WtUTciVvL2pT+q+bA==
-X-CSE-MsgGUID: x9PUayGlTWuTK2Tk70Es5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,197,1728975600"; 
-   d="scan'208";a="93082941"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 29 Nov 2024 18:30:20 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tHDFA-00001t-0E;
-	Sat, 30 Nov 2024 02:30:06 +0000
-Date: Sat, 30 Nov 2024 10:29:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Ilpo =?unknown-8bit?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>
-Subject: drivers/platform/x86/x86-android-tablets/other.c:605:12: sparse:
- sparse: symbol 'crystal_cove_pwrsrc_psy' was not declared. Should it be
- static?
-Message-ID: <202411301001.1glTy7Xm-lkp@intel.com>
+	s=arc-20240116; t=1732933891; c=relaxed/simple;
+	bh=RSJENjqJosmq3Y9HmvX0RY4Poam/2+UR9oDounQg3OQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=UWQtKBI4IbTwY1dQZXjkyA25js6q8zmcjrtJSphmqdnH51CNTmp2ka6oVF3jqvdjAglj0y4xCxgw9zX6Gc43ocujvVxTkSYdButzsL98V9eE6hc2tFNbUKMTIp0Y6dYhprT0Reh8a4L4LNTNvTJYMY78m38FnNHgBW24NQqnWeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmbOpj5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B75C4CECF;
+	Sat, 30 Nov 2024 02:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732933890;
+	bh=RSJENjqJosmq3Y9HmvX0RY4Poam/2+UR9oDounQg3OQ=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=kmbOpj5TriQHbG65RX2jCfYz0Iyy4Te91bI/jP2mdD0g5G0kruSX5+SOqoY0K9Ny7
+	 zUSd1IzbCuM21EcggN1NDm16GanCPaZj+Y/OgLKAml4+cCzyZoGdVndGXfyowpT9+d
+	 rthdiR7kPfewr5/6qEJiqmGT3OQEvkOqKNqj0NBsQE66d4ig8OY2hvOfOXPLTjisZd
+	 pg6bmHf9KKiqL8jWD3hBApZbAulRHv+qTV2OgoVtlp9IVpvVEJ/odk9FyMtv4J4P6y
+	 VasrLEEntTTjTQcPPuk7soH/9Dc8RnGArEvK8JXxiIS4EF/cmHrY/xGFFHQfFXyZfi
+	 x6UXJC1mlmpHQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=unknown-8bit
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 30 Nov 2024 04:31:25 +0200
+Message-Id: <D5Z5SKSAX8UT.2NXLQ5HZNP617@kernel.org>
+Cc: "David Howells" <dhowells@redhat.com>, "Nathan Chancellor"
+ <nathan@kernel.org>, "Nick Desaulniers" <ndesaulniers@google.com>, "Bill
+ Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
+ "Eric Snowberg" <eric.snowberg@oracle.com>, <keyrings@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
+Subject: Re: [PATCH] keys: drop shadowing dead prototype
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: <cgzones@googlemail.com>
+X-Mailer: aerc 0.18.2
+References: <20241125110342.49015-1-cgoettsche@seltendoof.de>
+In-Reply-To: <20241125110342.49015-1-cgoettsche@seltendoof.de>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2ba9f676d0a2e408aef14d679984c26373bf37b7
-commit: 06f876def3469b44737df6c2efe6dd811838c9e7 platform/x86: x86-android-tablets: Add support for Vexia EDU ATLA 10 tablet
-date:   3 weeks ago
-config: i386-randconfig-061-20241130 (https://download.01.org/0day-ci/archive/20241130/202411301001.1glTy7Xm-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241130/202411301001.1glTy7Xm-lkp@intel.com/reproduce)
+On Mon Nov 25, 2024 at 1:03 PM EET, Christian G=C3=B6ttsche wrote:
+> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+>
+> The global variable pkcs7 does not exist.
+> Drop the variable declaration, but keep the struct prototype needed for
+> is_key_on_revocation_list().
+>
+> Reported by clang:
+>
+>     ./include/keys/system_keyring.h:104:67: warning: declaration shadows =
+a variable in the global scope [-Wshadow]
+>       104 | static inline int is_key_on_revocation_list(struct pkcs7_mess=
+age *pkcs7)
+>           |                                                              =
+     ^
+>     ./include/keys/system_keyring.h:76:30: note: previous declaration is =
+here
+>        76 | extern struct pkcs7_message *pkcs7;
+>           |                              ^
+>
+> Fixes: 56c5812623f9 ("certs: Add EFI_CERT_X509_GUID support for dbx entri=
+es")
+> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> ---
+>  include/keys/system_keyring.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.=
+h
+> index 8365adf842ef..a6c2897bcc63 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -73,7 +73,6 @@ static inline void __init set_machine_trusted_keys(stru=
+ct key *keyring)
+>  }
+>  #endif
+> =20
+> -extern struct pkcs7_message *pkcs7;
+>  #ifdef CONFIG_SYSTEM_BLACKLIST_KEYRING
+>  extern int mark_hash_blacklisted(const u8 *hash, size_t hash_len,
+>  			       enum blacklist_hash_type hash_type);
+> @@ -93,6 +92,7 @@ static inline int is_binary_blacklisted(const u8 *hash,=
+ size_t hash_len)
+>  }
+>  #endif
+> =20
+> +struct pkcs7_message;
+>  #ifdef CONFIG_SYSTEM_REVOCATION_LIST
+>  extern int add_key_to_revocation_list(const char *data, size_t size);
+>  extern int is_key_on_revocation_list(struct pkcs7_message *pkcs7);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411301001.1glTy7Xm-lkp@intel.com/
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/platform/x86/x86-android-tablets/other.c:605:12: sparse: sparse: symbol 'crystal_cove_pwrsrc_psy' was not declared. Should it be static?
->> drivers/platform/x86/x86-android-tablets/other.c:612:28: sparse: sparse: symbol 'vexia_edu_atla10_ulpmc_node' was not declared. Should it be static?
-
-vim +/crystal_cove_pwrsrc_psy +605 drivers/platform/x86/x86-android-tablets/other.c
-
-   600	
-   601	/*
-   602	 * Vexia EDU ATLA 10 tablet, Android 4.2 / 4.4 + Guadalinex Ubuntu tablet
-   603	 * distributed to schools in the Spanish Andalucía region.
-   604	 */
- > 605	const char * const crystal_cove_pwrsrc_psy[] = { "crystal_cove_pwrsrc" };
-   606	
-   607	static const struct property_entry vexia_edu_atla10_ulpmc_props[] = {
-   608		PROPERTY_ENTRY_STRING_ARRAY("supplied-from", crystal_cove_pwrsrc_psy),
-   609		{ }
-   610	};
-   611	
- > 612	const struct software_node vexia_edu_atla10_ulpmc_node = {
-   613		.properties = vexia_edu_atla10_ulpmc_props,
-   614	};
-   615	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+BR, Jarkko
 
