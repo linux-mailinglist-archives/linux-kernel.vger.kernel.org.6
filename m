@@ -1,78 +1,179 @@
-Return-Path: <linux-kernel+bounces-426492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A059DF3D7
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 00:52:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3409DF3E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 00:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179C1162FC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 23:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DDAC162FFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 23:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8941F1662E9;
-	Sat, 30 Nov 2024 23:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23127172BD3;
+	Sat, 30 Nov 2024 23:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ob4hmebz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yE6iTeh+"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8283154429;
-	Sat, 30 Nov 2024 23:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2170B154429
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 23:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733010753; cv=none; b=C514qvhVmkwsy34VcVIgtnNG0dKZsr7RNRUsebvKlSQ+tO0abYaeiSzJDjh0GzvO3ozwySJTgVpntyetT9BtMrNfhmSeLnVnu5WSwXB0CTAge6jKNTeha7wkweTRoGXdynsOneRn1it2EYKfRaHHuRUlpPbtQ65ZpyoUFz6G2bE=
+	t=1733010933; cv=none; b=g52qYsCDFfQo5IwJKTCMz58uP5Mz9ZcXdBYLuxMMLd8uv1v5WrKzzAbgUuPZ4Hr6G0tb8Pp/JW+TifAsZc+tlmg0Rr96jnH0cOVk2BvmVTODRA8P+KkVo4XNB4Wy2k2tNf3aStv+ia5OI0fgmjkTGJGYD3zJqcbxrLqvlmPPSRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733010753; c=relaxed/simple;
-	bh=iNGnEv/SIfwKB88RPRDT2qMbsV2eLZCAFlMWNH1XUMo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=T4sEFVDL0/qIFB5fgul4pJTLDZPfBo/AtfjJgn7HsplkSjuy8umNCMJQ+06awM+MRCEsg6+rcsyKwSGg6jLmQYnlwFNB1VNr1Z/ApoqGt/ffmq6zQ0WLnZCvAN+IwTRA2UXXObXXdJJD1/g9i81Wq9KF8pheSj6VKLpOmnfQr6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ob4hmebz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C74C4CECC;
-	Sat, 30 Nov 2024 23:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733010753;
-	bh=iNGnEv/SIfwKB88RPRDT2qMbsV2eLZCAFlMWNH1XUMo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ob4hmebzGuzOzee7J1FMyqfZwZLL5+lU/+ig4RaPzIKTnITX9yNawK3SP+epEiGDj
-	 sc/V2V2uyc8B5cMoeIJYoeiNoiPbtxdyaawtiEVmsctNh3nBsH7NLyIFw5zHOPmD6T
-	 +IyE+1R3xvpIo/DDtQ3gLbtSu9h4MBgQI7ZPDHEfpZs8FCwQ7nD0H25mxM1U+tIkdo
-	 cw5L85etjGyObAiotIu8mFz9i1lQoOSlg+XOip2C307VC09SZ+qwgihh+5pzd9Tcce
-	 S0NPYqJ06L9Wir8cBD5W/4Y05Nes/zq0xauJw77hxdKIWDAnRIzQtm+iPkxO0mHsjq
-	 lE2/xKpE0EtPw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFC0380A944;
-	Sat, 30 Nov 2024 23:52:48 +0000 (UTC)
-Subject: Re: [GIT PULL] dma-mapping fix for Linux 6.13
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Z0q_dVrMZGDv9cvY@infradead.org>
-References: <Z0q_dVrMZGDv9cvY@infradead.org>
-X-PR-Tracked-List-Id: <iommu.lists.linux.dev>
-X-PR-Tracked-Message-Id: <Z0q_dVrMZGDv9cvY@infradead.org>
-X-PR-Tracked-Remote: git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.13-2024-11-30
-X-PR-Tracked-Commit-Id: aef7ee7649e02f7fc0d2e5e532f352496976dcb1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 133577cad6bf48e5a7848c4338124081393bfe8a
-Message-Id: <173301076731.2511415.18336472225121327742.pr-tracker-bot@kernel.org>
-Date: Sat, 30 Nov 2024 23:52:47 +0000
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+	s=arc-20240116; t=1733010933; c=relaxed/simple;
+	bh=h9SpCjrnoVeyG6yy+hC7dnaQqGomdEDru9YX9FtBpig=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Yxk+4aT2BX2uTOzNpFskCzjZwqWmngvhEd/Bs+00H2y3wK1mAfGodT+Oy1wfNcFghY/e7YqlU1/xqGaJ4yPIdkEcU8rsZN2T+gH7A/vizbhf4j6PIpKjIrhWVUsMNw5xjY4tsMbHC6NxlA8QWcNgPGDQKKOr0bmzJBTlOvHEVNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yE6iTeh+; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffb5b131d0so29384981fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:55:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733010929; x=1733615729; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=igdGJ+6WFp5yYbSTVfMkHAFbN2LBIGOZkBsdW6CIVmA=;
+        b=yE6iTeh+7ndrnGLLQo05hhUOapS1TEw4SzI6x2wNytpBQubdztYeEIJ4Kn8HOGHQjs
+         HmvNobZyW1GTLgAwhM3/qkENBrLoWcU4tG8s8X4tbZ5d9ps/K2S4sosPStYFEN0mwaQ3
+         Y8Ryi/89z1WPH1PKz4ylUqpBEHKoKc/IA963FzYKu8EVfbVSiHLma8jzgRZiwth19WxR
+         Em5u4VDYVokIgbEO7ETbIUR8tKJfbwQCqrZd25XRCcx63HYwk83QDAOYbq9OK4/fGvKz
+         BXoAJmCPT4o+dtd08bb+NUGEIw8gBgRhmqim5G6mkyG5cr8faRVuYGqX59OBCAx/1IYv
+         bQCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733010929; x=1733615729;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=igdGJ+6WFp5yYbSTVfMkHAFbN2LBIGOZkBsdW6CIVmA=;
+        b=Mz3AUFpnAziXvSjwExzzz6njoDOzPYWLCB6B8KPcRnUxK9aN4D68Rn6oiqaVPUL0lN
+         RP6LlRbonnoIk5ZPJ4BlgMCT33loOsA3poV6NoIAc+3jrbNxoVC0NEo8Fv8LOyFR3nWL
+         PjooSlsyTdk0X5AZZEwbtSibxpd6rc4l+yMBMsIwJRUgGmJIMFihTrX/WyoQ3e7ve2ZD
+         6PK5qb9XgUIQAqFY5KLkVgQFySfa051ddgu2behTxXnuffKHtypl0xVAWAH8ULUpV3P2
+         sjlhTc07Jciy0eSGxi1/nYyDjR8BtJMCzU70Z+GnVNg/rrJkolpSftowuha0vEwRckND
+         6zOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn26igSGxPEwOZOs5rSPxXvTePec9fLBp4KWgEOIdyhtxHpEKBkUFEVOnWyCitm3tiWq3Uyxx187w115o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPATztcQlo7gakeO/N3yxVhw9hKNgpG+Q1AN8b2pFrud6xlzfp
+	diyIVY30TJprpqJGhWl/4m6rJU8M2kU1e+nNmGbiEhOFNzAJMQtpkk6LSHh8Pz8=
+X-Gm-Gg: ASbGncubMKA1cfSY/XBXKANycYklJEIy7ud5hRZsqBBFVhEoHoD6FgDsfkyNkudqa89
+	IoSvZnYRNxBoEttxijBKfsbuta2B2aiGpIxsd2lCct5FXt4q8KLYOQPpJUJGl1uY/khmP9+Zsg6
+	kxYTNuuD2TwfG5rBIoYsP5YUHHOG5DlSMehVWSECmLm/bK37aN5RbMLYDzIS77SkQOQx9FTNqmN
+	MhrrTcpjw1mBPnj/nzmZq4jpMLKqBkm1AD5rMeBIcKtwDjQK3SGsB4IFA==
+X-Google-Smtp-Source: AGHT+IH/lMi82z0v/iMa3bnH3O48sOuTvGtLHugaIGP26xUYLLpIeMPo9osg0TDFc6RKyN8BchLK9A==
+X-Received: by 2002:a05:6512:124f:b0:53d:de48:7409 with SMTP id 2adb3069b0e04-53df001cb8amr5926461e87.0.1733010929250;
+        Sat, 30 Nov 2024 15:55:29 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649647dsm900706e87.195.2024.11.30.15.55.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2024 15:55:27 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 00/10] drm/connector: add eld_mutex to protect
+ connector->eld
+Date: Sun, 01 Dec 2024 01:55:17 +0200
+Message-Id: <20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOWlS2cC/x2MwQqDMBAFf0X23AUTFWx/RXoIyVMXNJGNLYL47
+ wYvA3OYOSlDBZk+1UmKv2RJsYh5VeRnFyewhOJka9saWxsOurJPMcLvSRlL4PW34+DeNW/XdCj
+ oqdSbYpTjOQ/f67oB3wr3/2kAAAA=
+X-Change-ID: 20241201-drm-connector-eld-mutex-8a39a35e9a38
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2285;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=h9SpCjrnoVeyG6yy+hC7dnaQqGomdEDru9YX9FtBpig=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnS6XsZ1/pqxgC30AKzvdNBVrv5HQb2dJZaZ5zn
+ VEhrpDwtKOJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ0ul7AAKCRCLPIo+Aiko
+ 1ew4CACbQcTx0V9Sgmz8qhhsUnlM0Vh+dbbDTDz41dhDdcEgbBBokvib8Go3fPRoR2hiD5m4p3q
+ Inrqmtu6WxnuFTZ0QoZhHX0EdGBd/UJUWQcfS5pdXJ3Xg23dIDNSEqxBkJVEmRicpeJ9ZaUAQMi
+ YdIJpl1FT2/ANTrI2tncuw5hhWL1lQ7u+U8y6VrDr5QZjFXAAeZ0Zu3y8lTuITAxcxTLjSfCapq
+ SK73gIYvnestQ4yiI9RsX3EIyujQ6z18dGKF1awnRjx9cXrXrBMiBVD5XtL8+PtSrfWgAuHy9qW
+ g8v2j0eW+fy5k2eNqU4JbP7IJfm7WWm2CTjtdsikNnIqWkIv
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The pull request you sent on Sat, 30 Nov 2024 08:32:05 +0100:
+The connector->eld is accessed by the .get_eld() callback. This access
+can collide with the drm_edid_to_eld() updating the data at the same
+time. Add drm_connector.eld_mutex to protect the data from concurrenct
+access.
 
-> git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.13-2024-11-30
+The individual drivers were just compile tested. I propose to merge the
+drm_connector and bridge drivers through drm-misc, allowing other
+maintainers either to ack merging through drm-misc or merging the
+drm-misc into their tree and then picking up correcponding patch.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/133577cad6bf48e5a7848c4338124081393bfe8a
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (10):
+      drm/connector: add mutex to protect ELD from concurrent access
+      drm/bridge: anx7625: use eld_mutex to protect access to connector->eld
+      drm/bridge: ite-it66121: use eld_mutex to protect access to connector->eld
+      drm/amd/display: use eld_mutex to protect access to connector->eld
+      drm/exynos: hdmi: use eld_mutex to protect access to connector->eld
+      drm/i915/audio: use eld_mutex to protect access to connector->eld
+      drm/msm/dp: use eld_mutex to protect access to connector->eld
+      drm/radeon: use eld_mutex to protect access to connector->eld
+      drm/sti: hdmi: use eld_mutex to protect access to connector->eld
+      drm/vc4: hdmi: use eld_mutex to protect access to connector->eld
 
-Thank you!
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 ++
+ drivers/gpu/drm/bridge/analogix/anx7625.c         | 2 ++
+ drivers/gpu/drm/bridge/ite-it66121.c              | 2 ++
+ drivers/gpu/drm/drm_connector.c                   | 1 +
+ drivers/gpu/drm/drm_edid.c                        | 4 ++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c              | 2 ++
+ drivers/gpu/drm/i915/display/intel_audio.c        | 3 +++
+ drivers/gpu/drm/msm/dp/dp_audio.c                 | 2 ++
+ drivers/gpu/drm/radeon/radeon_audio.c             | 2 ++
+ drivers/gpu/drm/sti/sti_hdmi.c                    | 2 ++
+ drivers/gpu/drm/vc4/vc4_hdmi.c                    | 4 ++--
+ include/drm/drm_connector.h                       | 5 ++++-
+ 12 files changed, 28 insertions(+), 3 deletions(-)
+---
+base-commit: 44cff6c5b0b17a78bc0b30372bcd816cf6dd282a
+change-id: 20241201-drm-connector-eld-mutex-8a39a35e9a38
 
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
