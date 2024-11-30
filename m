@@ -1,199 +1,176 @@
-Return-Path: <linux-kernel+bounces-426184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1F69DEFF8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:43:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF6D9DEFFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:49:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FAA3281A22
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C09E16363F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E10915B13D;
-	Sat, 30 Nov 2024 10:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89139153BEE;
+	Sat, 30 Nov 2024 10:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksIB8+CL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fcszgs8u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B990828EA;
-	Sat, 30 Nov 2024 10:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECC31C6A3
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732963429; cv=none; b=I5QtOO7tFQW1cTnHwbQ3du0Jk3Gfu2XCXKbjlEbqchIPrerB9STsaim/Xw0e8Mg3j8jB+BGkZtgMR5KQlBWwcNm4YlEwrrXOt8uIKHE4BFz4hE5g/42haOSQCbZLf9qcy72vFmOUS3ewJe9x6bZwKekPGZFkjGcGp+IssE9LnwE=
+	t=1732963744; cv=none; b=JESenOalwMdphT1WEhfF95KpEKdF0GFe+pixL8CeKJgILx0oDnvxE3kyYDgkPDRr3dtIR+F/PB5zJ0zsNAghXQ3SHz+NJwh8RXY0ZYSe1sowZZTdrdjxZVYhokCSuHTqLqHyr8bjxtfE2aq56ET4VccmA3rcmdEDecz6a5wvF3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732963429; c=relaxed/simple;
-	bh=JsEWPPVS3Tn2e8xjl6YAbjJAZSsxj83BULLAIhY9qjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EOxMaf9JOqfmSY6yczYaIa0MROOtMLyMSHA8AVCtlYFqPX4qnAUvRhgZSnIpZnbdZYkPxOclcOFrFYsottLHip1zLBJjaatO0dRl85dVOeEdxcmth7/2a4oYaP366bnJRVGQE0/S9MTu1E1EvZWxuV+t9YnggPgAMxVupDiYpk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksIB8+CL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C15C4CECC;
-	Sat, 30 Nov 2024 10:43:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732963429;
-	bh=JsEWPPVS3Tn2e8xjl6YAbjJAZSsxj83BULLAIhY9qjI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ksIB8+CLfgOJmCAKII/NrcrxK0Luz+4zOV+sGaWBCznVGYDWJMeN6MorY/Gc3YwIv
-	 N1xiojF6jeWgltB/FVE3vXqgMEUjCNrrHRcwnJ+C+93tuGUcwCdFQ2jVXZQ0p/b4Y/
-	 RQz5bA+DoTmCC8APzocCpkuphDOEWyHOg5cCIYwfaBBZRfJ//yPgcAhrI+vaT0Isnv
-	 4wLAgg3xEvVOHlpU233V00mVT0tFkH9AkjFLzCSlr7PeS2SWKIjQ/GvOgnTD3xBJ8E
-	 ZHn615c85M4vqZXdbisWVEsY43v/Xy4MViPUMzUZL+Zk7F9aIqvwQ+uojS15fbQI8E
-	 YkZvCNyR20TIA==
-Message-ID: <7778fea9-c127-428d-9653-e66e84f23c98@kernel.org>
-Date: Sat, 30 Nov 2024 11:43:34 +0100
+	s=arc-20240116; t=1732963744; c=relaxed/simple;
+	bh=MVvl0W1+H3sOktW4I+R3Dq6tD3ip0O/yNIfi6Whjllg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eXLOMK/jVqcXurX4GhkUYafvf8Ih+4oJ1kyZSxAl8viwoEMnak1CZgUKPbmQsCozF0IHSFvT53NRt/dndRmISjHBp5EqgwZ5yAbV8fJV+gv1eJQ8hSMjELE3faDHyzpTXxe3gL2R1fcl7dMcCILJpXL1qv2dFksV846Q662/RQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fcszgs8u; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732963743; x=1764499743;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MVvl0W1+H3sOktW4I+R3Dq6tD3ip0O/yNIfi6Whjllg=;
+  b=Fcszgs8uuKLE7uR1OBwmhmjKwQSLtg0GjkCehrMk+z77Fwezkv5Jsajq
+   XcB+9Si1eBPxmo/7O1+w0xlYgEZ/Xrv404U4dp4UjpWIvlQGS7q/EkNbn
+   kz4uvLFyhRecag+Z5EOuWfFAbICsIi3GozexZxtq5FW5iiI+8g+ICBrsT
+   cZ0fdeX2H2zfAJdnOW5UlG6uKAjJn/838G1HyBo+1PASTsh293XwrdmkC
+   ThS/lh70eOKjPiCKL43CSvGGKWBy9vMS/+W2AdGdinyLFwQVl3iXW3FEs
+   mZ+Qt68flqVkAuHjWFxVX6ZL1loldXI9nzecDb+iEA7RGi/7LKLzbXQcQ
+   g==;
+X-CSE-ConnectionGUID: KSLYoy/xQHOE9ppwZDqmdw==
+X-CSE-MsgGUID: 6ue78v80RmqOR1uqVae6dw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="20764203"
+X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
+   d="scan'208";a="20764203"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 02:49:02 -0800
+X-CSE-ConnectionGUID: XUN5KfFnRBSDDaxiqNgkuQ==
+X-CSE-MsgGUID: YEDs9fPFR3CIqt+bkW4Xag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
+   d="scan'208";a="97640669"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 30 Nov 2024 02:48:59 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHL20-0000ad-2e;
+	Sat, 30 Nov 2024 10:48:56 +0000
+Date: Sat, 30 Nov 2024 18:48:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jocelyn Falempe <jfalempe@redhat.com>
+Subject: Re: [PATCH 5/5] drm/i915: Add drm_panic support
+Message-ID: <202411302022.wlwTKMBh-lkp@intel.com>
+References: <20241129162232.7594-6-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 20/31] arm64: dts: qcom: ipq5018: move board clocks to
- ipq5018.dtsi file
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Leo Yan <leo.yan@linux.dev>,
- Joseph Gates <jgates@squareup.com>, Georgi Djakov <djakov@kernel.org>,
- Shawn Guo <shawn.guo@linaro.org>, Stephan Gerhold <stephan@gerhold.net>,
- Zac Crosby <zac@squareup.com>, =?UTF-8?Q?Bastian_K=C3=B6cher?=
- <git@kchr.de>, Andy Gross <andy.gross@linaro.org>,
- Jeremy McNicoll <jeremymc@redhat.com>,
- Rohit Agarwal <quic_rohiagar@quicinc.com>,
- Melody Olvera <quic_molvera@quicinc.com>,
- Bhupesh Sharma <bhupesh.sharma@linaro.org>,
- cros-qcom-dts-watchers@chromium.org, Stephen Boyd <swboyd@chromium.org>,
- Rajendra Nayak <quic_rjendra@quicinc.com>,
- Martin Botka <martin.botka@somainline.org>,
- Jonathan Marek <jonathan@marek.ca>, Vinod Koul <vkoul@kernel.org>,
- Tengfei Fan <quic_tengfan@quicinc.com>,
- Fenglin Wu <quic_fenglinw@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Abel Vesa
- <abel.vesa@linaro.org>, Alexandru Marc Serdeliuc <serdeliuk@yahoo.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Sibi Sankar <quic_sibis@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Jun Nie <jun.nie@linaro.org>,
- James Willcox <jwillcox@squareup.com>, Max Chen <mchen@squareup.com>,
- Vincent Knecht <vincent.knecht@mailoo.org>, Benjamin Li <benl@squareup.com>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241130-fix-board-clocks-v2-0-b9a35858657e@linaro.org>
- <20241130-fix-board-clocks-v2-20-b9a35858657e@linaro.org>
- <83990b97-3f37-47f0-9cc6-fdaa730a8df1@linaro.org>
- <zdhevcnj6gszvaayhu2dghubwm23cdoyeik2dcnqo376gcstnz@xv46iu6l6yvu>
- <90418b49-5b19-4bef-b0cd-398bb562aa8c@kernel.org>
- <26lttxx7obu2oqvf4xnooqi3o7qwodhjzyjh4trjq5tlj2gzxs@uwihybmwbdid>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <26lttxx7obu2oqvf4xnooqi3o7qwodhjzyjh4trjq5tlj2gzxs@uwihybmwbdid>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129162232.7594-6-jfalempe@redhat.com>
 
-On 30/11/2024 11:26, Dmitry Baryshkov wrote:
-> On Sat, Nov 30, 2024 at 11:00:32AM +0100, Krzysztof Kozlowski wrote:
->> On 30/11/2024 10:57, Dmitry Baryshkov wrote:
->>> On Sat, Nov 30, 2024 at 10:29:38AM +0100, Krzysztof Kozlowski wrote:
->>>> On 30/11/2024 02:44, Dmitry Baryshkov wrote:
->>>>> IPQ5018 is one of the platforms where board-level clocks (XO, sleep)
->>>>> definitions are split between the SoC dtsi file and the board file.
->>>>> This is not optimal, as the clocks are a part of the SoC + PMICs design.
->>>>> Frequencies are common for the whole set of devices using the same SoC.
->>>>> Remove the split and move frequencies to the SoC DTSI file.
->>>>>
->>>>> Suggested-by: Bjorn Andersson <andersson@kernel.org>
->>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>
->>>> This contradicts DTS coding style and all my existing review. Obviously
->>>> that's a NAK from me. If you want to merge this patch, please kindly
->>>> carry my formal objection for this and all following "move board clocks"
->>>> patches:
->>>>
->>>> Nacked-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>
->>> I'd kindly ask Bjorn to chime in as a platform maintainer.
->>
->>
->> To change my NAK? NAK is still a NAK. We discussed it many, many times
->> already. We have coding style for this explicitly mentioning this case.
->> Could not be more specific... plus all my reviews for Qualcomm, NXP, TI,
->> ST and other platforms. I would be quite unpredictable or unfair if I
->> gave here some sort of exception while expecting different code from
->> other platforms.
->>
->> Please carry my NAK.
-> 
-> Of course. I didn't mean to drop your tag or your objection.
-> 
-> BTW, would it be possible for you to clarify the policy on external
-> references? I mean, is it fine for DTSI to reference a label which is
-> not defined within that file or within one of the files that it includes?
+Hi Jocelyn,
 
+kernel test robot noticed the following build warnings:
 
-It is fine, you have plenty of such examples of shared components like
-some audio blocks or PMICs.
+[auto build test WARNING on 44cff6c5b0b17a78bc0b30372bcd816cf6dd282a]
 
-All Qualcomm PMICs DTSI (e.g. arch/arm64/boot/dts/qcom/pmi632.dtsi )
-reference them. Chromebooks are even "worse" here:
-arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-Nothing gets included there but hundred of phandles!
+url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-i915-fbdev-Add-intel_fbdev_getvaddr/20241130-002536
+base:   44cff6c5b0b17a78bc0b30372bcd816cf6dd282a
+patch link:    https://lore.kernel.org/r/20241129162232.7594-6-jfalempe%40redhat.com
+patch subject: [PATCH 5/5] drm/i915: Add drm_panic support
+config: i386-randconfig-061-20241130 (https://download.01.org/0day-ci/archive/20241130/202411302022.wlwTKMBh-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241130/202411302022.wlwTKMBh-lkp@intel.com/reproduce)
 
-Are you planning to "fix" these as well?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411302022.wlwTKMBh-lkp@intel.com/
 
-These are just Qualcomm, but same cases are everywhere else.
+sparse warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/i915/display/intel_atomic_plane.c:1273:55: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem *vaddr_iomem @@     got void *[assigned] ptr @@
+   drivers/gpu/drm/i915/display/intel_atomic_plane.c:1273:55: sparse:     expected void [noderef] __iomem *vaddr_iomem
+   drivers/gpu/drm/i915/display/intel_atomic_plane.c:1273:55: sparse:     got void *[assigned] ptr
 
-But *that's not even important* because I do not suggest to move clocks
-to DTSI. I suggest - and was almost always suggesting as best compromise
-- to follow DTS coding style by doing opposite of what this patch is
-doing. That's why I NAKed this and following patches, except last two
-which are different.
+vim +1273 drivers/gpu/drm/i915/display/intel_atomic_plane.c
 
+  1228	
+  1229	static int intel_get_scanout_buffer(struct drm_plane *plane,
+  1230					    struct drm_scanout_buffer *sb)
+  1231	{
+  1232		struct intel_plane_state *plane_state;
+  1233		struct drm_gem_object *gem_obj;
+  1234		struct drm_i915_gem_object *obj;
+  1235		struct drm_framebuffer *fb;
+  1236		struct drm_i915_private *dev_priv = to_i915(plane->dev);
+  1237		void *ptr;
+  1238		enum i915_map_type has_type;
+  1239	
+  1240		if (!plane->state || !plane->state->fb || !plane->state->visible)
+  1241			return -ENODEV;
+  1242	
+  1243		plane_state = to_intel_plane_state(plane->state);
+  1244		fb = plane_state->hw.fb;
+  1245		gem_obj = intel_fb_bo(fb);
+  1246		if (!gem_obj)
+  1247			return -ENODEV;
+  1248	
+  1249		obj = to_intel_bo(gem_obj);
+  1250	
+  1251		if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev)) {
+  1252			ptr = intel_fbdev_getvaddr(dev_priv->display.fbdev.fbdev);
+  1253			if (!ptr)
+  1254				return -ENOMEM;
+  1255		} else {
+  1256			/* can't disable tiling if DPT is in use */
+  1257			if (fb->modifier && HAS_DPT(dev_priv))
+  1258				return -EOPNOTSUPP;
+  1259	
+  1260			/* Taken from i915_gem_object_pin_map() */
+  1261			ptr = page_unpack_bits(obj->mm.mapping, &has_type);
+  1262			if (!ptr) {
+  1263				if (i915_gem_object_has_struct_page(obj))
+  1264					ptr = i915_gem_object_map_page(obj, I915_MAP_WB);
+  1265				else
+  1266					ptr = i915_gem_object_map_pfn(obj, I915_MAP_WB);
+  1267				if (IS_ERR(ptr))
+  1268					return -ENOMEM;
+  1269			}
+  1270		}
+  1271	
+  1272		if (i915_gem_object_has_iomem(obj))
+> 1273			iosys_map_set_vaddr_iomem(&panic_map, ptr);
+  1274		else
+  1275			iosys_map_set_vaddr(&panic_map, ptr);
+  1276	
+  1277		sb->map[0] = panic_map;
+  1278		sb->width = fb->width;
+  1279		sb->height = fb->height;
+  1280		sb->format = fb->format;
+  1281		sb->pitch[0] = fb->pitches[0];
+  1282	
+  1283		return 0;
+  1284	}
+  1285	
 
-Best regards,
-Krzysztof
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
