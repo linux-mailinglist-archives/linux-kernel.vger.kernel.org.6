@@ -1,225 +1,659 @@
-Return-Path: <linux-kernel+bounces-426434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897849DF2EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:14:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 201649DF2F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77E66B207C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:14:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B5B2B21063
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEE01AA1F0;
-	Sat, 30 Nov 2024 20:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77401AA78A;
+	Sat, 30 Nov 2024 20:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DEa/sRn3"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlenVg1h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6487117BD3
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 20:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE9A2F2A;
+	Sat, 30 Nov 2024 20:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732997656; cv=none; b=oeqjifTp6j7IElcI32QUJeEunzCcxW5zKkwrFimIaP/0fpZ0R1K6oRnbgmUPnvjVrICyExuLRkyC1ZtswVLNXHriJTOn5e4xmTMAFmWZdHsGOBRc8I1ndeyVdKD/1sKqt8IZ9fcU6EGLHkBu9ggyEJdCt5cyX4bIBuLqSCqPLeQ=
+	t=1732997842; cv=none; b=OldgzTAhLL3dgl4GzEDSiZX2da7wg0GB48ffjG4kv7zaqGcAIsMKt3c7JcUHn62yl0D66do8cfC7QPSuIelvEaDFXKFycmzfjS2Crs8ifu2OuYc7+OasNrKTKT3tSOKjLdvbjacGPWLoIiG9NtkAQmlOe0+BZNvJjVzug6J/K6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732997656; c=relaxed/simple;
-	bh=gzcaby2HyJAHKdOSuPzNnIo9c9OQwgNevAUxBsyaaxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ct0PscTgD6FsLoXn7ywn0sO5dy50vqC8/TX/wuEGdy05lARD1uAQYXL9E973n4KSQhfm6QG/hDs6pWtrAvPXqt6y+SKhiySMZQJipPpUr2rhqd4Hg3RDrSkkP7F5sxQy090xIierawka8PULLDJOQFrl18E8V/CdRI8EeSKxHjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DEa/sRn3; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df7f6a133so3071313e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 12:14:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732997652; x=1733602452; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YQnwH/LUU+Smj6DytGhxhh3Q/k+FhhcvJy+0gsHfMM0=;
-        b=DEa/sRn3NCSdHXMAOdsrvN1ofEXA8xIiiH15S/vQ7qSzoVKlyjp/R73nqxnhl3WRLY
-         qjiusjrHXQFHMR/eQ2+kBxAjqnYVoTS7BY08L2e8DSjWhy+APLP6PFmQ6JSj9ekVwTLI
-         IJTnozftwQuvLtlpLnx/wT4VrNQ2MUS54aMnT7yFYh3d62n9Y5SAUhhzSXs6sqfcQSow
-         LzYEStzvHLB0qhUgKSsJ/G6Q2MBGT0mefXU94B5lnnDAUPnsU6Tq2yuQlYzYgnJxsvxQ
-         xgkIPkKEebXbq4nIv83TOUIC2EBGoHmMV11bNJAod+6B6wAvJRaWwQjSYeU0ntQsIN+f
-         wRow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732997652; x=1733602452;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YQnwH/LUU+Smj6DytGhxhh3Q/k+FhhcvJy+0gsHfMM0=;
-        b=fuBNTRNzpahprjCvxppSx5vo/BYO2aeT2MKACnruryp3QbuT3tdSJQgiJ0lcOQB/bJ
-         PjsyU+vWbcggzmt2MdVxAxUytxxyTzSksqjQ+aWK6WgN4lR0uZEfAO7gaWtJmT8TU0zO
-         P1Rxdii7hIgJucRNdO3jDP+16Q9Aah8mMF5PCSC6qBRgQyTxBxBJ6NbOTvzqvJR03MMQ
-         sbhVH+pZGWckpmLgmz3/hlX6viJLk1MhBqN6zsxP1+jrEb/U6+SDNsHyPhcIJ8sFYdZh
-         9E7TK+JAgoCO6Z7Gyx82CTd/7Q95yfSr1jxSQfQ/T7vzvngn55wcUrcHQtr7x4mWulUI
-         ak5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVNytw/tTTjPhZzrVJ2XGd6gm4aqKev5TfUnFnA9AYSlxeKm6YTAd9zF9bRp0lL99SXVVtOaoN4g8Hw5dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNEWjfo3EqLxlPp0HSH+oFOtquUUw969OEuD8wfUn3TRbGJqNu
-	yvVWlAUUsizuHfE/CNWDB4Ff+Xu36zu5fmKe+8DvkUPZG+lJN+/n7DQcQ9rk+w4=
-X-Gm-Gg: ASbGncvGuqEo9QONPXPkzSQzPyfO28NeNrMD2nxdApU/DPVjSHNNiV6PVse0077WNUq
-	U9ipAvcq1R6srfb2hI29NEGyTdwOSVk7jiXfntK+ubvHUFo9dy8Y9RQ5Ln2lNAIKOaFBzhUTGT0
-	W+tfhU7ud1tg8vOs8yW6JH/7l0dqqbcuxDNEGc1w65Zy3fZCmTDDg/eJw4psNaSv6DgCysUxUTg
-	6fWSawuPfwBNCeyIQbM5orGV/ACNaQ8c8hvbInGOPO0CIhuzSP98t1vX/I5i00YmnRFW5VDAuIM
-	zCaIyyHpOsWXpMFb3qnYlA2y8VNeEQ==
-X-Google-Smtp-Source: AGHT+IGfLTfcEm+aaMxybBxbVKL1US/VY5OZiq/tUksfQrDmttijCUwRwCJjRKEGbqDV/mDp0pZhPw==
-X-Received: by 2002:a05:6512:b14:b0:53d:dda4:8b0c with SMTP id 2adb3069b0e04-53df00d0332mr10008210e87.18.1732997650904;
-        Sat, 30 Nov 2024 12:14:10 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6496467sm858800e87.187.2024.11.30.12.14.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 12:14:09 -0800 (PST)
-Date: Sat, 30 Nov 2024 22:14:07 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Nikolaus Voss <nv@vosn.de>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, 
-	Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Fabio Estevam <festevam@denx.de>, Marek Vasut <marex@denx.de>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	nikolaus.voss@haag-streit.com
-Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-Message-ID: <ljxbp7e6ywj2btbo22gvh3ijuwq6hzaahcph2vcsh6xiyzdyla@vuz437cyxe3e>
-References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
- <lio6natmz5d5hdmdxwuj5ghfbpl4medb2orhw2m27m6g3rvaga@tanmydgbufg2>
- <c05e762f-a9c3-4655-7b21-8490d91fd858@vosn.de>
+	s=arc-20240116; t=1732997842; c=relaxed/simple;
+	bh=WmG4sD1AshVvDkT+kDzHXRFkL2znAxOK1jriKyrFc5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PQZZwCiOz9AGW4PJzU5g7ge/LajCDrLoyQE2mt4LHbulhQDoiERKO4w6A4owLtFciOsxUCRHlTHx+GidBehoEV2pMN0JotSfCZM3wqQSqZBgg4e7eaM/9KXamFoI4G55V9t04h4VKv5AUzI7OFALFyGR0zlXnHWt/qQbCUHwIEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RlenVg1h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F76C4CECC;
+	Sat, 30 Nov 2024 20:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732997842;
+	bh=WmG4sD1AshVvDkT+kDzHXRFkL2znAxOK1jriKyrFc5M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RlenVg1h6BZAFQ8lVG1C+IC68ELwnbfGKkS2jjpWi2M4RkL9acojeOp7Hko53JUBp
+	 ZyWepIsUEbvoN01FEq/bPTx/RII7g1msZXlTBgWyrjcsSTMRrtdzrhYlJ5/l8mWQqs
+	 X1//ap2sO32vPY+rP5FNGE/XSPjvYCayp9rVxCe0sz9fkTN0D5HiaIzEKoJO0ynMDe
+	 hOE7wvdEDkcW5b+8Wh3wNwHI1a1bZ08G8+yauKAEA8X8+Meid8luOhDNkMeOjE4mv3
+	 lXMyixPdS4FxaQwtHpdJiUTlESmLZIlE9Ni0JPbfo6iG63+6ZhAdQS8YckMTPgviDi
+	 0SyL2AcbiOUug==
+Date: Sat, 30 Nov 2024 20:17:14 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: light: add support for veml6031x00 ALS series
+Message-ID: <20241130201714.73d54a5b@jic23-huawei>
+In-Reply-To: <20241126-veml6031x00-v1-2-4affa62bfefd@gmail.com>
+References: <20241126-veml6031x00-v1-0-4affa62bfefd@gmail.com>
+	<20241126-veml6031x00-v1-2-4affa62bfefd@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c05e762f-a9c3-4655-7b21-8490d91fd858@vosn.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 30, 2024 at 07:57:17PM +0100, Nikolaus Voss wrote:
-> Hi Dmitry,
+On Tue, 26 Nov 2024 22:51:55 +0100
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+
+> These sensors provide two light channels (ALS and IR), I2C communication
+> and a multiplexed interrupt line to signal data ready and configurable
+> threshold alarms.
 > 
-> On Sat, 30 Nov 2024, Dmitry Baryshkov wrote:
-> > On Tue, Nov 26, 2024 at 04:45:54PM +0100, Nikolaus Voss wrote:
-> > > LDB clock has to be a fixed multiple of the pixel clock.
-> > > As LDB and pixel clock are derived from different clock sources
-> > > (at least on imx8mp), this constraint cannot be satisfied for
-> > > any pixel clock, which leads to flickering and incomplete
-> > > lines on the attached display.
-> > > 
-> > > To overcome this, check this condition in mode_fixup() and
-> > > adapt the pixel clock accordingly.
-> > > 
-> > > Cc: <stable@vger.kernel.org>
-> > > 
-> > > Signed-off-by: Nikolaus Voss <nv@vosn.de>
-> > > ---
-> > >  drivers/gpu/drm/bridge/fsl-ldb.c | 40 ++++++++++++++++++++++++++++----
-> > >  1 file changed, 36 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-> > > index 0e4bac7dd04ff..e341341b8c600 100644
-> > > --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> > > +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> > > @@ -104,12 +104,14 @@ static inline struct fsl_ldb *to_fsl_ldb(struct drm_bridge *bridge)
-> > >  	return container_of(bridge, struct fsl_ldb, bridge);
-> > >  }
-> > > 
-> > > +static unsigned int fsl_ldb_link_freq_factor(const struct fsl_ldb *fsl_ldb)
-> > > +{
-> > > +	return fsl_ldb_is_dual(fsl_ldb) ? 3500 : 7000;
-> > > +}
-> > > +
-> > >  static unsigned long fsl_ldb_link_frequency(struct fsl_ldb *fsl_ldb, int clock)
-> > >  {
-> > > -	if (fsl_ldb_is_dual(fsl_ldb))
-> > > -		return clock * 3500;
-> > > -	else
-> > > -		return clock * 7000;
-> > > +	return clock * fsl_ldb_link_freq_factor(fsl_ldb);
-> > >  }
-> > > 
-> > >  static int fsl_ldb_attach(struct drm_bridge *bridge,
-> > > @@ -121,6 +123,35 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
-> > >  				 bridge, flags);
-> > >  }
-> > > 
-> > > +static bool fsl_ldb_mode_fixup(struct drm_bridge *bridge,
-> > > +				const struct drm_display_mode *mode,
-> > > +				struct drm_display_mode *adjusted_mode)
-> > 
-> > The driver uses atomic callbacks. Please use .atomic_check() instead.
-> 
-> So it is okay to modify drm_crtc_state->adjusted_mode in .atomic_check()? I
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Hi Javier,
 
-Yes. samsung-dsim, anx7625 do that (I stopped checking after the second
-one).
+Various comments below, but in general looks pretty good to me.
 
-> chose .mode_fixup() because the function name and args make it more obvious
-> what is done there. Btw, the API reference doesn't say this call is
-> deprecated.
+Jonathan
 
-It's not deprecated. But as the driver is using atomic calls (vs legacy
-calls) it makes more sense to use atomic_check() too.
+> diff --git a/drivers/iio/light/veml6031x00.c b/drivers/iio/light/veml6031x00.c
+> new file mode 100644
+> index 000000000000..fd4c111db13f
+> --- /dev/null
+> +++ b/drivers/iio/light/veml6031x00.c
+> @@ -0,0 +1,1129 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * VEML6031X00 Ambient Light Sensor
+> + *
+> + * Copyright (c) 2024, Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/units.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/sysfs.h>
+> +#include <linux/iio/events.h>
+> +#include <linux/iio/trigger.h>
+> +#include <linux/iio/trigger_consumer.h>
+> +#include <linux/iio/triggered_buffer.h>
+> +
+> +/* Device registers */
+> +#define VEML6031X00_REG_CONF0       0x00
+> +#define VEML6031X00_REG_CONF1       0x01
+> +#define VEML6031X00_REG_WH_L        0x04
+> +#define VEML6031X00_REG_WH_H        0x05
+> +#define VEML6031X00_REG_WL_L        0x06
+> +#define VEML6031X00_REG_WL_H        0x07
+> +#define VEML6031X00_REG_ALS_L       0x10
+> +#define VEML6031X00_REG_ALS_H       0x11
+> +#define VEML6031X00_REG_IR_L        0x12
+> +#define VEML6031X00_REG_IR_H        0x13
+> +#define VEML6031X00_REG_ID_L        0x14
+> +#define VEML6031X00_REG_ID_H        0x15
+> +#define VEML6031X00_REG_INT         0x17
+> +#define VEML6031X00_REG_DATA(ch)    (VEML6031X00_REG_ALS_L + (ch))
+> +
+> +/* Bit masks for specific functionality */
+> +#define VEML6031X00_ALL_CH_MASK     GENMASK(1, 0)
+> +#define VEML6031X00_CONF0_SD        BIT(0)
+> +#define VEML6031X00_CONF0_AF_TRIG   BIT(2)
+> +#define VEML6031X00_CONF0_AF        BIT(3)
+> +#define VEML6031X00_CONF1_GAIN      GENMASK(4, 3)
+> +#define VEML6031X00_CONF1_PD_D4     BIT(6)
+> +#define VEML6031X00_CONF1_IR_SD     BIT(7)
+> +#define VEML6031X00_INT_MASK        GENMASK(3, 1)
 
-> A second thought:
-> Maybe it would be a good idea to reject modes which result in an adjusted
-> mode pclk that is not within certain boundaries, even if this patch doesn't
-> do it yet. As I see it, that would be only possible in mode_fixup().
+As these next lot are bits in the INT MASK, I'd prefer you build it
+as VEML6031X00_INT_TH_H | VEML6031X00_INT_TH_L | VEML6031X00_INT_DRDY
 
-atomic_check() can definitely reject whatever is being stuffed to it.
+> +#define VEML6031X00_INT_TH_H        BIT(1)
+> +#define VEML6031X00_INT_TH_L        BIT(2)
+> +#define VEML6031X00_INT_DRDY        BIT(3)
 
-> 
-> > 
-> > > +{
-> > > +	const struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
-> > > +	unsigned long requested_link_freq =
-> > > +		mode->clock * fsl_ldb_link_freq_factor(fsl_ldb);
-> > > +	unsigned long freq = clk_round_rate(fsl_ldb->clk, requested_link_freq);
-> > > +
-> > > +	if (freq != requested_link_freq) {
-> > > +		/*
-> > > +		 * this will lead to flicker and incomplete lines on
-> > > +		 * the attached display, adjust the CRTC clock
-> > > +		 * accordingly.
-> > > +		 */
-> > > +		int pclk = freq / fsl_ldb_link_freq_factor(fsl_ldb);
-> > > +
-> > > +		if (adjusted_mode->clock != pclk) {
-> > > +			dev_warn(fsl_ldb->dev, "Adjusted pixel clk to match LDB clk (%d kHz -> %d kHz)!\n",
-> > > +				 adjusted_mode->clock, pclk);
-> > > +
-> > > +			adjusted_mode->clock = pclk;
-> > > +			adjusted_mode->crtc_clock = pclk;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	return true;
-> > > +}
-> > > +
-> > >  static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
-> > >  				  struct drm_bridge_state *old_bridge_state)
-> > >  {
-> > > @@ -280,6 +311,7 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
-> > > 
-> > >  static const struct drm_bridge_funcs funcs = {
-> > >  	.attach = fsl_ldb_attach,
-> > > +	.mode_fixup = fsl_ldb_mode_fixup,
-> > >  	.atomic_enable = fsl_ldb_atomic_enable,
-> > >  	.atomic_disable = fsl_ldb_atomic_disable,
-> > >  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
-> > > --
-> > > 2.43.0
-> > > 
-> > 
-> > 
-> 
-> -- 
-> Nikolaus Voss
-> 
+> +
+> +static const int veml6031x00_it[][2] = {
+> +	{0, 3125},
+> +	{0, 6250},
+> +	{0, 12500},
+> +	{0, 25000},
+> +	{0, 50000},
+> +	{0, 100000},
+> +	{0, 200000},
+> +	{0, 400000},
+> +};
+> +
+> +static const int veml6031x00_gains[][2] = {
+> +	{0, 125000},
+> +	{0, 165000},
+> +	{0, 250000},
+> +	{0, 500000},
+> +	{0, 660000},
+> +	{1, 0},
+> +	{2, 0},
+	{ 2, 0 },
 
--- 
-With best wishes
-Dmitry
+for formatting these arrays.  I'm slowly standardising on this in IIO in the interests
+of picking on consistent choice.
+> +};
+> +
+> +/*
+> + * Persistence = 1/2/4/8 x integration time
+> + * Minimum time for which light readings must stay above configured
+> + * threshold to assert the interrupt.
+> + */
+> +static const char * const period_values[] = {
+> +		"0.003125 0.00625 0.0125 0.025",
+> +		"0.00625 0.0125 0.025 0.05",
+> +		"0.0125 0.025 0.05 0.1",
+> +		"0.025 0.050 0.1 0.2",
+> +		"0.05 0.1 0.2 0.4",
+> +		"0.1 0.2 0.4 0.8",
+> +		"0.2 0.4 0.8 1.6",
+> +		"0.4 0.8 1.6 3.2"
+> +};
+> +
+> +/*
+> + * Return list of valid period values in seconds corresponding to
+> + * the currently active integration time.
+> + */
+> +static ssize_t in_illuminance_period_available_show(struct device *dev,
+> +						    struct device_attribute *attr,
+> +						    char *buf)
+> +{
+> +	struct veml6031x00_data *data = iio_priv(dev_to_iio_dev(dev));
+> +	int ret, reg;
+> +
+> +	ret = regmap_field_read(data->rf.it, &reg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (reg < 0 || reg >= ARRAY_SIZE(period_values))
+> +		return -EINVAL;
+> +
+> +	return sysfs_emit(buf, "%s\n", period_values[reg]);
+
+I'd rather this was done with read_avail if possible.
+It can be a little fiddly but in a case where is a selection like this
+rather than computed values, it shouldn't be too bad.
+
+> +}
+> +
+> +static IIO_DEVICE_ATTR_RO(in_illuminance_period_available, 0);
+> +
+> +static struct attribute *veml6031x00_event_attributes[] = {
+> +	&iio_dev_attr_in_illuminance_period_available.dev_attr.attr,
+> +	NULL
+> +};
+> +
+> +static const struct attribute_group veml6031x00_event_attr_group = {
+> +	.attrs = veml6031x00_event_attributes,
+> +};
+> +
+> +/*
+> + * Two shutdown bits (SD and ALS_IR_SD) must be cleared to power on
+> + * the device.
+> + */
+> +static int veml6031x00_als_power_on(struct veml6031x00_data *data)
+> +{
+> +	int ret;
+> +
+> +	ret =  regmap_clear_bits(data->regmap, VEML6031X00_REG_CONF0,
+> +				 VEML6031X00_CONF0_SD);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =  regmap_clear_bits(data->regmap, VEML6031X00_REG_CONF1,
+> +				 VEML6031X00_CONF1_IR_SD);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+return regmap_clear.
+
+Also, check for extra spaces like in the ret =__ above and clean them up.
+
+> +}
+
+
+> +static int veml6031x00_get_it_usec(struct veml6031x00_data *data, int *it_usec)
+> +{
+> +	int ret, reg;
+> +
+> +	ret = regmap_field_read(data->rf.it, &reg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	switch (reg) {
+> +	case 0:
+
+Maybe a lookup in a table?  Up to you.
+
+> +		*it_usec = 3125;
+> +		break;
+> +	case 1:
+> +		*it_usec = 6250;
+> +		break;
+> +	case 2:
+> +		*it_usec = 12500;
+> +		break;
+> +	case 3:
+> +		*it_usec = 25000;
+> +		break;
+> +	case 4:
+> +		*it_usec = 50000;
+> +		break;
+> +	case 5:
+> +		*it_usec = 100000;
+> +		break;
+> +	case 6:
+> +		*it_usec = 200000;
+> +		break;
+> +	case 7:
+> +		*it_usec = 400000;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return IIO_VAL_INT_PLUS_MICRO;
+> +}
+> +
+> +static int veml6031x00_set_it(struct iio_dev *iio, int val, int val2)
+> +{
+> +	struct veml6031x00_data *data = iio_priv(iio);
+> +	int ret, new_it;
+> +
+> +	if (val)
+> +		return -EINVAL;
+> +
+> +	switch (val2) {
+> +	case 3125:
+> +		new_it = 0x00;
+> +		break;
+> +	case 6250:
+> +		new_it = 0x01;
+> +		break;
+> +	case 12500:
+> +		new_it = 0x02;
+> +		break;
+> +	case 25000:
+> +		new_it = 0x03;
+> +		break;
+> +	case 50000:
+> +		new_it = 0x04;
+> +		break;
+> +	case 100000:
+> +		new_it = 0x05;
+> +		break;
+> +	case 200000:
+> +		new_it = 0x06;
+> +		break;
+> +	case 400000:
+> +		new_it = 0x07;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = regmap_field_write(data->rf.it, new_it);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+return regmap_field_write()
+
+> +}
+
+> +
+> +static int veml6031x00_single_read(struct iio_dev *iio, enum iio_chan_type type,
+> +				   int *val)
+> +{
+> +	struct veml6031x00_data *data = iio_priv(iio);
+> +	int addr, it_usec, ret;
+> +	__le16 reg;
+> +
+> +	switch (type) {
+> +	case IIO_LIGHT:
+> +		addr = VEML6031X00_REG_ALS_L;
+> +	break;
+> +	case IIO_INTENSITY:
+> +		addr = VEML6031X00_REG_IR_L;
+> +	break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +	ret = pm_runtime_resume_and_get(data->dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = veml6031x00_get_it_usec(data, &it_usec);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* integration time + 10 % to ensure completion */
+> +	fsleep(it_usec + (it_usec / 10));
+> +
+> +	iio_device_claim_direct_scoped(return -EBUSY, iio) {
+There is some debate about conditional guards ongoing.  We may well end up
+ripping them out.  Here there is relatively little benefit anyway
+so I'd prefer we don't add another one.
+	ret = iio_device_claim_direct_mode();
+	if (ret)
+		return ret;
+	ret = regmap_...
+	iio_device_release_direct_mode()
+	if (ret)
+		return ret;
+
+etc.
+
+> +		ret = regmap_bulk_read(data->regmap, addr, &reg, 2);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +	pm_runtime_mark_last_busy(data->dev);
+> +	pm_runtime_put_autosuspend(data->dev);
+> +
+> +	*val = le16_to_cpu(reg);
+> +
+> +	return IIO_VAL_INT;
+> +}
+
+
+> +static const struct iio_info veml6031x00_info = {
+> +	.read_raw  = veml6031x00_read_raw,
+> +	.read_avail  = veml6031x00_read_avail,
+> +	.write_raw = veml6031x00_write_raw,
+> +	.read_event_value = veml6031x00_read_event_val,
+> +	.write_event_value	= veml6031x00_write_event_val,
+> +	.read_event_config = veml6031x00_read_event_config,
+> +	.write_event_config	= veml6031x00_write_event_config,
+
+Some odd spacing here. Just use a single space rather than trying to align with tabs etc.
+
+> +	.event_attrs = &veml6031x00_event_attr_group,
+> +};
+>
+
+> +static irqreturn_t veml6031x00_trig_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *iio = pf->indio_dev;
+> +	struct veml6031x00_data *data = iio_priv(iio);
+> +	int ch, ret, i = 0;
+> +	__le16 reg;
+> +	struct {
+> +		__le16 chans[2];
+> +		aligned_s64 timestamp;
+> +	} scan;
+> +
+> +	memset(&scan, 0, sizeof(scan));
+> +
+> +	if (*iio->active_scan_mask == VEML6031X00_ALL_CH_MASK) {
+> +		ret = regmap_bulk_read(data->regmap,
+> +				       VEML6031X00_REG_ALS_L,
+> +				       &reg, sizeof(scan.chans));
+> +		if (ret)
+> +			goto done;
+> +	} else {
+
+Is this optimization worthwhile? People tend to want all or most of their
+channels. You could just set available_scan_masks and let the IIO core
+deal with providing only the channels requested.
+
+> +		iio_for_each_active_channel(iio, ch) {
+> +			ret = regmap_bulk_read(data->regmap,
+> +					       VEML6031X00_REG_DATA(ch),
+> +					       &scan.chans[i++], 2);
+> +			if (ret)
+> +				goto done;
+> +		}
+> +	}
+> +
+> +	iio_push_to_buffers_with_timestamp(iio, &scan, pf->timestamp);
+> +
+> +done:
+> +	iio_trigger_notify_done(iio->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static void veml6031x00_validate_part_id(struct veml6031x00_data *data)
+> +{
+> +	int part_id, ret;
+> +	__le16 reg;
+> +
+> +	ret = regmap_bulk_read(data->regmap, VEML6031X00_REG_ID_L, &reg, 2);
+
+sizeof(reg)
+
+> +	if (ret) {
+> +		dev_info(data->dev, "Failed to read ID\n");
+I'd like an error return on this. Failure to read the register would definitely
+make it an incompatible part.
+
+> +		return;
+> +	}
+> +
+> +	part_id = le16_to_cpu(reg);
+> +	if (part_id != data->chip->part_id)
+> +		dev_info(data->dev, "Unknown ID %#02x\n", part_id);
+but return success either way here.
+> +}
+> +
+> +static int veml6031x00_hw_init(struct iio_dev *iio)
+> +{
+> +	struct veml6031x00_data *data = iio_priv(iio);
+> +	struct device *dev = data->dev;
+> +	int ret, val;
+> +	__le16 reg;
+> +
+> +	reg = cpu_to_le16(0);
+> +	ret = regmap_bulk_write(data->regmap, VEML6031X00_REG_WL_L, &reg, 2);
+sizeof(reg)
+Same in all these.
+
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to set low threshold\n");
+> +
+> +	reg = cpu_to_le16(U16_MAX);
+> +	ret = regmap_bulk_write(data->regmap, VEML6031X00_REG_WH_L, &reg, 2);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to set high threshold\n");
+> +
+> +	ret = regmap_field_write(data->rf.int_en, 0);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = regmap_read(data->regmap, VEML6031X00_REG_INT, &val);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to clear interrupts\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static int veml6031x00_setup_irq(struct i2c_client *i2c, struct iio_dev *iio)
+> +{
+> +	struct veml6031x00_data *data = iio_priv(iio);
+> +	struct device *dev = data->dev;
+> +	int ret;
+> +
+> +	data->trig = devm_iio_trigger_alloc(dev, "%s-drdy%d", iio->name,
+> +					    iio_device_id(iio));
+> +	if (!data->trig)
+> +		return -ENOMEM;
+> +
+> +	data->trig->ops = &veml6031x00_trigger_ops;
+> +	iio_trigger_set_drvdata(data->trig, iio);
+> +
+> +	ret = devm_iio_trigger_register(dev, data->trig);
+> +	if (ret)
+> +		return ret;
+> +
+> +	iio->trig = iio_trigger_get(data->trig);
+> +	ret = devm_request_threaded_irq(dev, i2c->irq, NULL,
+> +					veml6031x00_interrupt,
+> +					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+
+Direction should come from firmware, not be controlled by the driver
+(there might be an inverter in the path for example that the driver cannot
+know about - often done as a cheap level converter)
+
+> +					iio->name, iio);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to request irq %d\n",
+> +				     i2c->irq);
+> +
+> +	iio->info = &veml6031x00_info;
+I'd put this at caller so it is obviously 'matched' with the other set of info.
+It's also not as such anything to do with seting up the irq.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int veml6031x00_probe(struct i2c_client *i2c)
+> +{
+> +	struct device *dev = &i2c->dev;
+> +	struct veml6031x00_data *data;
+> +	struct iio_dev *iio;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = devm_regmap_init_i2c(i2c, &veml6031x00_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(dev, PTR_ERR(regmap),
+> +				     "Failed to set regmap\n");
+> +
+> +	iio = devm_iio_device_alloc(dev, sizeof(*data));
+> +	if (!iio)
+> +		return -ENOMEM;
+> +
+> +	data = iio_priv(iio);
+> +	i2c_set_clientdata(i2c, iio);
+> +	data->dev = dev;
+> +	data->regmap = regmap;
+> +
+> +	mutex_init(&data->lock);
+For new code prefer
+	ret = devm_mutex_init(&data->lock)
+	if (ret)
+		return ret;
+
+It won't fail unless out of memory so no need to print anything on error.
+
+> +
+> +	ret = veml6031x00_regfield_init(data);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to init regfield\n");
+> +
+> +	ret = devm_regulator_get_enable(dev, "vdd");
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to enable regulator\n");
+> +
+> +	data->chip = i2c_get_match_data(i2c);
+> +	if (!data->chip)
+> +		return dev_err_probe(dev, -EINVAL, "Failed to get chip data\n");
+> +
+> +	ret = devm_add_action_or_reset(dev, veml6031x00_als_sd_action, data);
+when registering a cleanup action that isn't obvious matched with a setup
+one I'd like to see a comment on why.  Here I guess the device comes up not
+in shutdown mode?
+
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to add shut down action\n");
+> +
+> +	ret = pm_runtime_set_active(dev);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to activate PM runtime\n");
+> +
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to enable PM runtime\n");
+> +
+> +	pm_runtime_get_noresume(dev);
+> +	pm_runtime_set_autosuspend_delay(dev, VEML6031X00_AUTOSUSPEND_MS);
+> +	pm_runtime_use_autosuspend(dev);
+> +
+> +	veml6031x00_validate_part_id(data);
+As above - this can fail in a fashion we should handle (read didn't work)
+
+> +
+> +	iio->name = data->chip->name;
+> +	iio->channels = veml6031x00_channels;
+> +	iio->num_channels = ARRAY_SIZE(veml6031x00_channels);
+> +	iio->modes = INDIO_DIRECT_MODE;
+> +
+> +	if (i2c->irq) {
+> +		ret = veml6031x00_setup_irq(i2c, iio);
+> +		if (ret < 0)
+> +			return ret;
+> +	} else {
+> +		iio->info = &veml6031x00_info_no_irq;
+> +	}
+> +
+> +	ret = veml6031x00_hw_init(iio);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = devm_iio_triggered_buffer_setup(dev, iio, NULL,
+> +					      veml6031x00_trig_handler,
+> +					      &veml6031x00_buffer_setup_ops);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Failed to register triggered buffer");
+> +
+> +	pm_runtime_mark_last_busy(dev);
+> +	pm_runtime_put_autosuspend(dev);
+> +
+> +	ret = devm_iio_device_register(dev, iio);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to register iio device");
+> +
+> +	return 0;
+> +}
+> +
+> +static int veml6031x00_runtime_suspend(struct device *dev)
+> +{
+> +	struct veml6031x00_data *data = iio_priv(dev_get_drvdata(dev));
+> +
+> +	return veml6031x00_als_sd(data);
+
+Maybe spell out sd / shutdown.  I briefly wondered what it was!
+
+> +}
+> +
+> +static int veml6031x00_runtime_resume(struct device *dev)
+> +{
+> +	struct veml6031x00_data *data = iio_priv(dev_get_drvdata(dev));
+> +
+> +	return veml6031x00_als_power_on(data);
+> +}
 
