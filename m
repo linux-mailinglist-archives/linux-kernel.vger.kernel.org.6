@@ -1,113 +1,148 @@
-Return-Path: <linux-kernel+bounces-426463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A20979DF34D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 22:34:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6ADA9DF354
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 22:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA30281227
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:34:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6442EB20C4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705611AAE00;
-	Sat, 30 Nov 2024 21:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZhUzwRpO"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED161AB6EF;
+	Sat, 30 Nov 2024 21:40:51 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F6B132103
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 21:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFE3132103
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 21:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733002468; cv=none; b=ZHmqG2mjVn9Ou8CvY/vXJXaS9+9M+ji/o/d0PPsKBRtSJWhaagHSDJOI5WZg+lnqfcjEOPuQztjdpPE1y/5DPc5EbMt4/htsqidXfE3Jy0+20zm/KOeNd9tUUdcu0oFCxS3ENlAXmG/CFNJQS3NQ3MvIu9TBfdGLMyXHEw1t7eY=
+	t=1733002851; cv=none; b=JBlU9Qn6Bk0yoPUHGIz2UjgYmqh7IFCqLX8HDahK4X0AfyjATqhzfgBj+lNX3wteLuJdsJeZ7c1f0XL2gtx5idtw08wT3QQCd46/H4Ec+1WoyNzL2GQS9+iBjDQCRjSdmaWpUMppHCkovMPTI5j91oxeHtV+jtruKSx/ZbFUdoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733002468; c=relaxed/simple;
-	bh=9dW6bWsFGFk529Smtr9Gpb2nVhhhhNJjaw2Mew5NbpU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iuxvq0BpabpgdiWLnQg/D4uBq9PlzS6SuxCvOkFJZoIIfWm0gMEzWREO999etoc4WD+Cf2Tia0QLGNcx7b0WfVDDPbXGKPjS26PHHah00S5wSK9SbxS++1PHiS30df2AXickwKBrClDdVJ+Is/pNHdLGw7jrXpY2g0f0MNk7Z68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZhUzwRpO; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d0ca0f67b6so1241846a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:34:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733002465; x=1733607265; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RNyysF0czXG+9VpzTWGbzEwJuxUcYyjjRR4QdXrg+wU=;
-        b=ZhUzwRpOSGdelDJvL6ta2G8xuA1qBd/9/0OkfN6hTTiK2lz7pO8GOc4e9y5QYoK6i0
-         pJOe9y8m682QBLiJi4lRFMTzrC/8Vns0YfCqLTQsOYs3SusOBo3V9weP6sHgPbBFAO0y
-         FSFKN59N460NzNNT8bRvSHiDoKehAlFyL3AtY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733002465; x=1733607265;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RNyysF0czXG+9VpzTWGbzEwJuxUcYyjjRR4QdXrg+wU=;
-        b=pe7/eu1xWZZku4eUzqUfF2CH76IAOLNgJwba8u5PXw7SL4j19Z18DmAlt3vQvryvL9
-         SR4409IC7MaIU+zAAGmHdhOMeVRkboZOfXpF26XBY7d4JVC+hoPPbhcY+D0Ssat2qIlG
-         WppwHW/GWGVjKyVd3ktkkHc20Lr1jJLBCf0TIV4qIkdfsUD6wgX929EcleBCqZkfhGXf
-         7+NTb2QgXlloABfkTAAOT8nZcyhiVRWrQOlySqHACJ5FitZLrIB87ktDyvAUMgWf1anP
-         vOoKzDL4qYwjeLkcLzqPYpfPwRlSnZ6upJTq41Hkf4jabI/Ygv4Tl3vEtoy4SfrWBYzg
-         jhnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ2927JfScDorUr0gLrgub9HC3gIQZRrrlLavK8+/Et+UhWOMu+43Ku217Mtw9FYJCLXhIDFTpgiPt3pk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlMpqjjo1HyCKxQxqM7CNtodYkrLT0/4LefvCwqeZDKaG9ZeEq
-	PBr7nWVFvKYiGiqgjiF6V7mhmXPqvzvkDk7oOMfoVLsV/0MJ09I/2PXg0Vh7NFuDT6AU4IJJQ9c
-	9JKwNOw==
-X-Gm-Gg: ASbGnctWfDt8GfVUrI7N7rpslE+5KUle5ojnkQ4/X+leQn8H52V1n0E9CV2M/XbAZ9A
-	H7Xs2KqGmsAiHroKdp06YHNjc44dKieliDcbJpb3/BGY6sQ6s4FwOARUekAJTdFWhz4/chov38C
-	n7KVT4ioZchnpgPtKHzRRV7jHZzumOul3ocCOtx95VyXoRg/sF2xyJzX1x1rEOKOBzxjvvfhOzo
-	ApWLjUbt2pGlf3rNkm2mcZ4FUfQoBhZAJ6emygDgA/ysh9z03Xq0DpL/sVcvnLTCcpoHZre/Q7K
-	+OYiweaWEMtp0Jyg3313i8w1
-X-Google-Smtp-Source: AGHT+IF12lwaRm27PLKag31F5mXfRybgBlkWxOxZaPcBWHuIVMf9xlFr9oF5RaIih9EjgdGZLokvVw==
-X-Received: by 2002:a05:6402:524d:b0:5d0:c67e:e263 with SMTP id 4fb4d7f45d1cf-5d0c67ee4a2mr6773398a12.8.1733002465096;
-        Sat, 30 Nov 2024 13:34:25 -0800 (PST)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0c757c8d4sm1274964a12.46.2024.11.30.13.34.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 13:34:24 -0800 (PST)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5ceca0ec4e7so3711570a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:34:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUfYDau6OjWBgcOkAQJsxP7WsrihRNulSVNAr5y7V53dWUvFfCAll4J2WMl+jxXkpobIvozhgHE+L8bZww=@vger.kernel.org
-X-Received: by 2002:a17:907:ca20:b0:aa5:3b5c:f640 with SMTP id
- a640c23a62f3a-aa58108aa80mr1263837466b.54.1733002462844; Sat, 30 Nov 2024
- 13:34:22 -0800 (PST)
+	s=arc-20240116; t=1733002851; c=relaxed/simple;
+	bh=D5xcJAsDkXmo34++46K3Zh1aU9K5vOZ0aFsvamdr0Ys=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=e6TSX4qFd/Nb4YZBM27q6uUeuIvF06lBIV3uUy60t99VwcAXeUWQKrlCSAo9pZ9oGCGfWqob8J2SJqT6wO9QRe73k+we1m2QmMk5WFSRTM9h7ivBpk2W5y6LRzjoHi2jFzKElm57wxZSj4qPsX9JoX5G5rEHpMcnaychvJptTvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-188-g14xKN3oMnyOJnv5xybuBA-1; Sat, 30 Nov 2024 21:40:38 +0000
+X-MC-Unique: g14xKN3oMnyOJnv5xybuBA-1
+X-Mimecast-MFC-AGG-ID: g14xKN3oMnyOJnv5xybuBA
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 30 Nov
+ 2024 21:40:14 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 30 Nov 2024 21:40:14 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Kees Cook' <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Ingo Molnar
+	<mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
+	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jens Axboe
+	<axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Chen Yu <yu.c.chen@intel.com>, Shuah Khan
+	<skhan@linuxfoundation.org>, =?iso-8859-1?Q?Micka=EBl_Sala=FCn?=
+	<mic@digikod.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>
+Subject: RE: [PATCH] exec: Make sure task->comm is always NUL-terminated
+Thread-Topic: [PATCH] exec: Make sure task->comm is always NUL-terminated
+Thread-Index: AQHbQuM3vGxCxoQWAEqauiNGu7/fqLLQWTBw
+Date: Sat, 30 Nov 2024 21:40:14 +0000
+Message-ID: <b11a985992a44152bf8106c084747ed4@AcuMS.aculab.com>
+References: <20241130044909.work.541-kees@kernel.org>
+In-Reply-To: <20241130044909.work.541-kees@kernel.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130045437.work.390-kees@kernel.org> <ej5vp7iifyy4s2faxsh72dytcfjmpktembvgw6n65sucyf77ze@gmbn2bjvdoau>
-In-Reply-To: <ej5vp7iifyy4s2faxsh72dytcfjmpktembvgw6n65sucyf77ze@gmbn2bjvdoau>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 30 Nov 2024 13:34:06 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgAVEbjFzhNpqvgTxKymCi6uE5UO7BzyB6ch7pDiUz+Yg@mail.gmail.com>
-Message-ID: <CAHk-=wgAVEbjFzhNpqvgTxKymCi6uE5UO7BzyB6ch7pDiUz+Yg@mail.gmail.com>
-Subject: Re: [PATCH] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH)
- case
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	Tycho Andersen <tandersen@netflix.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Eric Biederman <ebiederm@xmission.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: aMLdyz_CVeK_he1qcZpbYzq8FIpPC24wTLwQM4VGXdk_1733002836
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 30 Nov 2024 at 12:28, Mateusz Guzik <mjguzik@gmail.com> wrote:
+From: Kees Cook
+> Sent: 30 November 2024 04:49
 >
-> > +             /* The dentry name won't change while we hold the rcu read lock. */
-> > +             __set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
-> > +                             true);
->
-> This does not sound legit whatsoever as it would indicate all renames
-> wait for rcu grace periods to end, which would be prettye weird.
+> Instead of adding a new use of the ambiguous strncpy(), we'd want to
+> use memtostr_pad() which enforces being able to check at compile time
+> that sizes are sensible, but this requires being able to see string
+> buffer lengths. Instead of trying to inline __set_task_comm() (which
+> needs to call trace and perf functions), just open-code it. But to
+> make sure we're always safe, add compile-time checking like we already
+> do for get_task_comm().
+...
+> Here's what I'd prefer to use to clean up set_task_comm(). I merged
+> Linus and Eric's suggestions and open-coded memtostr_pad().
+> ---
+>  fs/exec.c             | 12 ++++++------
+>  include/linux/sched.h |  9 ++++-----
+>  io_uring/io-wq.c      |  2 +-
+>  io_uring/sqpoll.c     |  2 +-
+>  kernel/kthread.c      |  3 ++-
+>  5 files changed, 14 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/fs/exec.c b/fs/exec.c
+> index e0435b31a811..5f16500ac325 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1200,16 +1200,16 @@ char *__get_task_comm(char *buf, size_t buf_size,=
+ struct task_struct *tsk)
+>  EXPORT_SYMBOL_GPL(__get_task_comm);
+>=20
+>  /*
+> - * These functions flushes out all traces of the currently running execu=
+table
+> - * so that a new one can be started
+> + * This is unlocked -- the string will always be NUL-terminated, but
+> + * may show overlapping contents if racing concurrent reads.
+>   */
+> -
+>  void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec=
+)
+>  {
+> -=09task_lock(tsk);
+> +=09size_t len =3D min(strlen(buf), sizeof(tsk->comm) - 1);
+> +
+>  =09trace_task_rename(tsk, buf);
+> -=09strscpy_pad(tsk->comm, buf, sizeof(tsk->comm));
+> -=09task_unlock(tsk);
+> +=09memcpy(tsk->comm, buf, len);
+> +=09memset(&tsk->comm[len], 0, sizeof(tsk->comm) - len);
+>  =09perf_event_comm(tsk, exec);
 
-Yes, the "won't change" should be "won't go away from under us".
+Why not do strscpy_pad() into a local char[16] and then do a 16 byte
+memcpy() into the target buffer?
 
-          Linus
+Then non-constant input data will always give a valid '\0' terminated strin=
+g
+regardless of how strscpy_pad() is implemented.
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
