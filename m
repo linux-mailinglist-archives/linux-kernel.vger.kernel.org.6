@@ -1,126 +1,85 @@
-Return-Path: <linux-kernel+bounces-426399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01859DF292
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:26:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62C09DF293
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:33:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2375162F57
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:26:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32849B210E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857A51AA1D7;
-	Sat, 30 Nov 2024 18:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D121A0AE1;
+	Sat, 30 Nov 2024 18:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1yAdpZJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mw8gVNMi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC7C1DFF7;
-	Sat, 30 Nov 2024 18:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212848468;
+	Sat, 30 Nov 2024 18:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732991199; cv=none; b=dz/iTPDmWxL1SejoREhVkcAXEu565MHEvset+81QUxxQQGt5SXpqiqat2D2SoeH4MK9nAiLDHMOS9uqBZcAy2smMYlPUlA8sVEPnxkHLDiixhXiV7GcCnraIdHBMfk7gKhsx4MJrMOtI0MNYjwZSYndNAwAMMh4Dha2qDsygCfE=
+	t=1732991614; cv=none; b=Xs31jjPAsLFL+ubfWFNw8d/XX76s7fjHOX8/BUOF5aSFc4wb8opzF5CEqQpB44Ek35fl3oo+IsD/aX8tXeLM1f2Qjjv9HHwszABHIoDKa5Xavqzk1+7Ricfzi6d6ZYOoocgLw0Ks5e8irLVoVAeTQsmDvTBmGxUEbrPNzZOzpB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732991199; c=relaxed/simple;
-	bh=UzuY+8ESGGJXDkWdvBN0logfSHYVgFf/GHn0SF5b6fE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PtSwVmTG7Y/EPM1LnrLLYbM91n5wCTl9vszkVdNcKcYVvq0DaMb+IaK3XIwa64Si+qul7MuI/zUKUJOwYPT7n8uLkfvNYMkpBUGrdVcNlUumcfs2rcOvGU7apln/yQ/QTqo0kp5ye/0X/FX5FzMwg3c8+SH7xW/xPiPDoXOoU+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1yAdpZJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0A1AC4CECC;
-	Sat, 30 Nov 2024 18:26:34 +0000 (UTC)
+	s=arc-20240116; t=1732991614; c=relaxed/simple;
+	bh=G6cxAoo8aANqBqALY8Yiq6mVLF6A30FZQ+H8hiJuSZM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SKMknSmJIsBrFvDiJSR7/lpYeA6w0za9sryqQEmWJ5JBCZ5vBsYE/4qzNJRW3NoXvMT/94G/A9cyqGYhhEWvL3ZD9RCqnklUprNjKZm5kpCCb4jt17z5FJit8pulfiRevBbp54zRAzP34i2ZMW6bG6bEgrVzBaLcWBeHOkxhJbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mw8gVNMi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73C0CC4CECC;
+	Sat, 30 Nov 2024 18:33:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732991198;
-	bh=UzuY+8ESGGJXDkWdvBN0logfSHYVgFf/GHn0SF5b6fE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D1yAdpZJwj+hl9KdAOg1fknHqRHgeJMsv0d4Yy9KfXccIO2pDU1OCC7GK/GAaCxjh
-	 tSURKD3Ze70vMhShB4GjrHYA5O/hhxYCjQb2CHiz1sWuhW+W/Fj74Zc2wY0sngp85N
-	 qmJZyfnweRYxAOQY3U/Fu42RxhIUPxbBcNa+6lR0hLpY5F/K4UQcLCXZH0Q/fdCUt3
-	 SoY/ME72nmycDaZMd7WwY+l6El5j6P40FyodAXPO5y/DV30g6UZZNQx3hGpBtylN0m
-	 lNQHjCADZpvLoRDhM/xhFxFyL4ifZBKyC7BdYMnoNJiQX3rdnUNTE6XAj8Gs1+sX+K
-	 X5xVP/6HSNaGA==
-Date: Sat, 30 Nov 2024 18:26:28 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] iio: accel: kx022a: align with subsystem way
-Message-ID: <20241130182628.3d35817b@jic23-huawei>
-In-Reply-To: <20241130181506.27d0c72a@jic23-huawei>
-References: <cover.1732783834.git.mazziesaccount@gmail.com>
-	<9b63813ecf10b1cd0126cb950bc09514c4287b9a.1732783834.git.mazziesaccount@gmail.com>
-	<20241130181506.27d0c72a@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732991613;
+	bh=G6cxAoo8aANqBqALY8Yiq6mVLF6A30FZQ+H8hiJuSZM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Mw8gVNMipPXnfjvEKB+8Bq3tnUT1DNcq0boVdHO5IzPELjG22a26ekQeTqIVUuMwN
+	 Zla+nCzd3DiK4Lyr1uekaZt/X7ScMySII5R+VbeIB3oP51sFYnUIMo54mN7BwHm/mv
+	 GiQrD9za4OVYPx/JEMlYjfGK6qWlc0bRNQecLr70bOvHhQOJx3fz2pAZQYvjbHoVef
+	 6vDpX8PybcMepZenR5LRrvnBP3O6rFulDoNKrNYJ/DqmFvyDMQPEwy1uKKniW6wxSw
+	 z0kiup5QfSBhaPbDSHtL64E5RgczXgdXV0ZQCrmJqbc5YpRGCIoLX9aE2lv7Fm8E6E
+	 gBF1Vi30HG3Yw==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: DAMON Beer/Coffee/Tea chat reminder for the week of 2024-11-18
+Date: Sat, 30 Nov 2024 10:33:30 -0800
+Message-Id: <20241130183330.58568-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241115012529.83546-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sat, 30 Nov 2024 18:15:06 +0000
-Jonathan Cameron <jic23@kernel.org> wrote:
+Hello,
 
-> On Thu, 28 Nov 2024 11:03:40 +0200
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
-> > Many of the Kionix/ROHM accelerometers have a "PC1 - bit" which enables
-> > the accelerometer. While a sensor configuration like ODR, g-range, FIFO
-> > status etc. are changed, the PC1 bit must be cleared (sensor must be
-> > disabled). (See the description for different CNTL registers [1])
-> > 
-> > In order to ensure this the kx022a driver uses a mutex, which is locked
-> > when the PC1 bit is cleared, and held for the duration of the
-> > configuration, and released after PC1 bit is set again (enabling the
-> > sensor).
-> > 
-> > The locking and PC1 bit toggling was implemented using functions:
-> > kx022a_turn_off_lock() and kx022a_turn_on_unlock().
-> > 
-> > Based on a discussions [2], the IIO subsystem prefers open-coding the
-> > locking with scoped_guard() over these functions.
-> > 
-> > Drop the kx022a_turn_off_lock() and kx022a_turn_on_unlock() and use
-> > scoped_guard() instead.
-> > 
-> > [1]: https://fscdn.rohm.com/kionix/en/datasheet/kx022acr-z-e.pdf
-> > [2]: https://lore.kernel.org/all/20241126175550.4a8bedf3@jic23-huawei/
-> > 
-> > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> > 
-> > ---
-> > Revision history:
-> > v2 => v3:
-> >  - New patch
-> > 
-> > NOTE: This patch uses the if_not_cond_guard() which is currently missing
-> > the iio_testing.
-> > https://lore.kernel.org/all/20241001-cleanup-if_not_cond_guard-v1-1-7753810b0f7a@baylibre.com/T/#m69982b23da9f71e72d84855b34e9b142cb3a1920  
-> 
-> Looks good to me.  If no one else comments, I'll pick this up when
-> I have the precursor available (so hopefully just after rc1)
-or maybe not.
-https://lore.kernel.org/all/CAHk-=whn07tnDosPfn+UcAtWHBcLg=KqA16SHVv0GV4t8P1fHw@mail.gmail.com/
+On Thu, 14 Nov 2024 17:25:29 -0800 SeongJae Park <sj@kernel.org> wrote:
 
-Seems Linus is unconvinced.  
-Hmmm. We might have to roll back the uses of cond_guard() entirely.
-Which will be a pain.  Ah well. Sometimes an idea turns out to not be as useful
-as it initially seemed. 
-46 instances to get rid of in the tree today...
-
-Jonathan
-
-> 
-> Thanks,
-> 
-> Jonathan
+> Hello,
 > 
 > 
+> This is yet another reminder of upcoming DAMON Beer/Coffee/Tea chats
+> (https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing)
+> for the week of 2024-11-18.
+> 
+> After the two instances for the week of 2024-11-18, the week of 2024-12-02 was
+> originally the next meetings week.  But I have conflicts on the week, so moved
+> those one week forward.  Please check the schedule.
 
+This is a reminder of the above meeting reschedule.  We will not have meetings
+next week, but a week after.
+
+
+Thanks,
+SJ
+
+[...]
 
