@@ -1,129 +1,126 @@
-Return-Path: <linux-kernel+bounces-426474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD4E9DF374
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 23:01:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2209DF372
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 23:01:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951C528140F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 22:01:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ADA1B216C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 22:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4C01ABEA6;
-	Sat, 30 Nov 2024 22:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D151AC423;
+	Sat, 30 Nov 2024 22:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLHnbaER"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pNQpKRaV"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74961AA7B1;
-	Sat, 30 Nov 2024 22:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACFC1AA7B1
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 22:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733004063; cv=none; b=DlHoo7JbTof1HcFgZYahoOXghCHDqhqlEzJvWTjY1JXu8LT/pudlJG8aBEVtivFRAu1N8lWTHzPhv9bWi3P6mKK+gZL2+go0rnoPWtjgZf+D5RZ78K9sbDqBkFa6NvorbBTTIFwYdbZcfVXg6ifCpITtndFYBL1Rf2BjZjx5joE=
+	t=1733004057; cv=none; b=Ko7n1XINN6rh2XlN36Lac5vL0NdkOU8TkCQKudJrkR8Nhi2aMpzR8IEN87zVyk8VlHJd6gbRiQPLNkSiPGuLt6JJToAFjkdlnbvXknR11BwRRNWUc8ss+3ToZwQORfSza1WzDuXdxovxDvdFpGOydRuspL2YIzSii/mpeL7ZUyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733004063; c=relaxed/simple;
-	bh=Mf0csG0iS3wJNdsD8vZqXml7YbGbVZl0cpgv1Z1zVlQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=FtZXiLgkSS3JOffJ6h5PDZJUUSqDl+xdSu+gMQDRG886KSHhkKRiQVOwSVGqMoR5Nv1U+K2bawT8+yqU78l+/4oayNQIID6eMagfU21D+dQFA+OryiQwmOpaA+YEcFAoixC5MosNZ4hBrEX+AYdIM5yTTvUD5X7AFP++gPxQMOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLHnbaER; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43750C4CED4;
-	Sat, 30 Nov 2024 22:01:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733004063;
-	bh=Mf0csG0iS3wJNdsD8vZqXml7YbGbVZl0cpgv1Z1zVlQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=eLHnbaERLW1z3Rxdf5/DQkrXS4soCQMqr76MdqF+25ysDo2oeS0KfZz9Bcg36Jh7B
-	 vU1ZUISqbw1Wu4N/fzc1r7vJolRfME2kUf/NgOOKt5DTMKHl/MLMFJagKw7C+V6nfP
-	 x91e0lgiZ9AGbLbWxmYE8nwfLLTBKSNtbOXy150rBfp06S7+PgYB1WTArkg7T7U/zM
-	 g82ORxHa7eu7KlnR+ntqhrfGdVZpRgX2R+QsoiUKjQ962PQAQJx/v9mwNYrQ9y8VJb
-	 SW5yGcMVUnuN+70vsj1xAsp0XsQCikrwxu4HIseSP6HvhElB9CstkOokqTzJEqvNAi
-	 vd49c7kME/OJQ==
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3ea45abb4e1so1144702b6e.3;
-        Sat, 30 Nov 2024 14:01:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWr7a4UKTOxSvx1JTKFrB7mMB15AoawztbFIgovD3jE7724Xe7eY0RM0wXkH81Bh4+Gtw1f7w7ebZuN8Xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuogm6lwuimk1Doq6uAEXQPflGiL4M/3WiIhQPjyEQJdMz4xEI
-	yJviOdJjGw735VUiMUIifF/L6aArLGzkneZZzB9/ncPTcaORld0Mg3+1U4NgNL1s89QmZjekVEC
-	J8TC6hu0gZ5MKgrwluzYmv43VGzY=
-X-Google-Smtp-Source: AGHT+IGgYJ4IxB3f3+Hs9t9DQ4lfe5BRz4bAPiTSQU84HIPLR5JlpIyyBrV0+lnL8xzeyNRec9tO49BXjxuIDoFhCc0=
-X-Received: by 2002:a05:6808:1791:b0:3e5:fd5a:c39b with SMTP id
- 5614622812f47-3ea6db6ed21mr12014671b6e.4.1733004062645; Sat, 30 Nov 2024
- 14:01:02 -0800 (PST)
+	s=arc-20240116; t=1733004057; c=relaxed/simple;
+	bh=4jKUrEqb0qz1HZi2C+0lGSNoRJQgPPrXQ/svYUCrylo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dD3Avo7sZPZnF/J9dH6ZSQpZhkPMexIVSrGgN66swekuei+VyRTOdNjoEy8Gpbyt3qN3iQa5EQtH/38o0vFOxaRfwfT349l0XD34oZL/QbxHFFGPsU2+oM7H+OlUtLv2flrZ1yYHg5+3seWfN7LPR6lGnFA7BDNYlrqvmS1kfNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pNQpKRaV; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d0bdeb0374so1605022a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 14:00:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733004053; x=1733608853; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yXqltZOaXbaCylytu6cgEm/tOOiTm+pVQLO5Vzyc1Pg=;
+        b=pNQpKRaVclih2iuG8liHPM4r6qVasScL758pFnRZfbM3TF0+CMtfqvkUD+fdmvZvsN
+         F51RkJ/il8n2ngdPL4eIU6EyaW+3sveXLdPH11KSlxhOZ1y2YeT6sj3tHus55HtuguKd
+         LiITcHIiyizmx1TDpCubKZpizZsSziAu1yzW7Cab48isy0iHjjp/xos4RzRF+JB4ICEq
+         yxqmKTymB8Y7m07Hi1Lh4auAmRCUyj8FJS7Lh8xQbo+JfOmNvFvteMzaEmSiTtjxoq+2
+         0JsZ93M6bDqt1XhiFTThxslaELeXapSx8nJPU+2Fnp/ewlpK5pik4CE8UdNdqbhcRubs
+         8y9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733004053; x=1733608853;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yXqltZOaXbaCylytu6cgEm/tOOiTm+pVQLO5Vzyc1Pg=;
+        b=FPkjzPhvbaej8QEs3mjiO5EDy/+WcIrHwBt4b+YWpkBMRtSPnCzxLsE/68LOK/nZtz
+         r2jwvHSFXM72Zsr6/HHLQTdufHcgr2mPmQRhBMDHObTHPJVTbZUPfJ3sjE+jB4hkVLmD
+         +lEu11fEptPtSUoa32up4IG3R4zjf945btyDwtGKFUu2PPmflGymsiclCQabCvhH7sM8
+         GWaxbHnAXS2/xN3g9ei8m1YAgwE2KROMT1wACvclT1PBw99JNn0Fp1RWbOJxmhwmpX/3
+         MVELxfxLindSSD1hu/0Yn/yVvONhG4gKqNJTRg36R1gj/R6a569F7fbQupQXf81VeMCJ
+         0rQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwwIYJ3qavAZAsmYKWid9OJKGn+9U4DgPdZ9L/K4RTc1vNfQEyy5uB2u7++jk5Zouim2hzY4MwFx/F9SE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtzRQP7g7n3R4BhcmDfktk/SWsgj+LyWpa6TNrFY2WumLlpGV9
+	eJHyQ1ZusR7c+KMvD80Qepe6zhCVQSEC6ze6lNQBeKfsA+e9KCxUHdg8lgk+aJE=
+X-Gm-Gg: ASbGncvHsoznZOtc7xC38lfAKurMgOXhXYRG1FelElHbUjDhUwSPMlCfCkg0Ni/dRtd
+	OzbuV9L4mzL2cVnmzhoiPedQPU1o0qJoCtGTLNyzDtimKym7+U7rhZqihTOP2Ws95q1ygCn47QN
+	MwNWrpQQHtWTx5tb4sg3gN2KkeVVySlZyHzsizGVUjf11RzbqgnjR5OwTeuN3gsixJBzTJPPbzm
+	cUXYJuJXHe3M2wtzscNih46/FOUgAFgZIVSwWgPMKF3ojvE+4bnaqwNCRTRIYY=
+X-Google-Smtp-Source: AGHT+IFKToM+82d0DNr5W/JKUGy7n/psVJX2ZAC/XLf6sSDmlW9mbYvjOVqCf5/YDUUWCaNBvDem8A==
+X-Received: by 2002:a05:6402:13cc:b0:5d0:ceec:dedf with SMTP id 4fb4d7f45d1cf-5d0ceece155mr2621710a12.13.1733004053519;
+        Sat, 30 Nov 2024 14:00:53 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0c6a8e9b0sm1334131a12.41.2024.11.30.14.00.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2024 14:00:52 -0800 (PST)
+Message-ID: <20e62ee5-719c-40c5-98ef-cdbceb1c5746@linaro.org>
+Date: Sat, 30 Nov 2024 22:00:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Len Brown <lenb@kernel.org>
-Date: Sat, 30 Nov 2024 17:00:51 -0500
-X-Gmail-Original-Message-ID: <CAJvTdKmFGmc2EDJHVRUg8rz9Z7zRw2sruB2rofJuf_aVk9HPOg@mail.gmail.com>
-Message-ID: <CAJvTdKmFGmc2EDJHVRUg8rz9Z7zRw2sruB2rofJuf_aVk9HPOg@mail.gmail.com>
-Subject: [GIT PULL] turbostat 2024.11.30 for Linux 6.13-merge
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: add venus node for the qcs615
+To: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-3-5a376b97a68e@quicinc.com>
+ <55124ce8e15740d1a4a55733455ce27c@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <55124ce8e15740d1a4a55733455ce27c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 25/11/2024 08:50, Renjiang Han (QUIC) wrote:
+> On Mon 11/25/2024 1:35 PM, Renjiang Han wrote:
+>> Add venus node into devicetree for the qcs615 video.
+> Forgot to add Reviewed-by, next version will add Reviewed-by: Bryan O'Donoghue<bryan.odonoghue@linaro.org>
 
-Please pull these turbostat-2024.11.30 patches.
+You'll need to drop the video-encoder and video-decoder nodes per 
+Krzysztof's feeback.
 
-thanks!
-Len Brown, Intel Open Source Technology Center
+https://lore.kernel.org/linux-arm-msm/436145fd-d65f-44ec-b950-c434775187ca@kernel.org
 
-The following changes since commit adc218676eef25575469234709c2d87185ca223a:
+You could do that with this series:
 
-  Linux 6.12 (2024-11-17 14:15:08 -0800)
+https://lore.kernel.org/linux-media/20241128-media-staging-24-11-25-rb3-hw-compat-string-v4-0-fd062b399374@linaro.org/T/#m55b26747af4692da928ec9b531c4288c4e45c4d2
 
-are available in the Git repository at:
+And the following change to your resource structure.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git
-tags/turbostat-2024.11.30
+static const struct venus_resources qcs615_res = {
++	.dec_nodename = "video-decoder",
++	.enc_nodename = "video-encoder",
+};
 
-for you to fetch changes up to 86d237734091201d2ab2c1d2e1063893621c770f:
-
-  tools/power turbostat: 2024.11.30 (2024-11-30 16:48:56 -0500)
-
-----------------------------------------------------------------
-turbostat version 2024.11.30
-
-since 2024.07.26:
-
-assorted minor bug fixes
-assorted platform specific tweaks
-initial RAPL PSYS (SysWatt) support
-
-----------------------------------------------------------------
-Len Brown (1):
-      tools/power turbostat: 2024.11.30
-
-Patryk Wlazlyn (6):
-      tools/power turbostat: Fix column printing for PMT xtal_time counters
-      tools/power turbostat: Allow using cpu device in perf counters
-on hybrid platforms
-      tools/power turbostat: Honor --show CPU, even when even when num_cpus=1
-      tools/power turbostat: Force --no-perf in --dump mode
-      tools/power turbostat: Fix child's argument forwarding
-      tools/power turbostat: Add RAPL psys as a built-in counter
-
-Todd Brandt (1):
-      tools/power turbostat: fix GCC9 build regression
-
-Zhang Rui (11):
-      tools/power turbostat: Fix trailing '\n' parsing
-      tools/power turbostat: Remove PC7/PC9 support on MTL
-      tools/power turbostat: Add back PC8 support on Arrowlake
-      tools/power turbostat: Rename arl_features to lnl_features
-      tools/power turbostat: Remove PC3 support on Lunarlake
-      tools/power turbostat: Add initial support for GraniteRapids-D
-      tools/power turbostat: Enhance platform divergence description
-      tools/power turbostat: Remove unnecessary fflush() call
-      tools/power turbostat: Consolidate graphics sysfs access
-      tools/power turbostat: Cache graphics sysfs file descriptors during probe
-      tools/power turbostat: Add support for /sys/class/drm/card1
-
- tools/power/x86/turbostat/turbostat.8 |  27 +++
- tools/power/x86/turbostat/turbostat.c | 425 ++++++++++++++++++++++++----------
- 2 files changed, 325 insertions(+), 127 deletions(-)
+---
+bod
 
