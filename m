@@ -1,169 +1,254 @@
-Return-Path: <linux-kernel+bounces-426091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72879DEED4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:17:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED139DEED6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79369163AC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:16:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1674A163AD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAE01292CE;
-	Sat, 30 Nov 2024 03:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C195588B;
+	Sat, 30 Nov 2024 03:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NKudz865"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="keI0BoRC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D883C2F3B;
-	Sat, 30 Nov 2024 03:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC7D2F3B
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 03:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732936612; cv=none; b=jhNcQNT+ejd0I8TjLWVzR/a+daFALYZCkJYtbiaRoqJBBPfSJHrI0JfcQp4yvDUM1ZJsdQNRpjbWvJiKj0GjYz/+h1om2JMBQIcU+js3UYbEKwhtbRxlw2B/qm29wqNDJ12J8hFG+4uomAo9aFQQIEaUr3GJM7ynyx7jU550Ls0=
+	t=1732936949; cv=none; b=C8M+hsyDTGWrvLt5Bq5hddPSuHnyblC2X47JqJlGKglLx0vRi1dCrxE7/baQddRTxIrwPAHYfZq39tkal5V8txPGaB9MJZZjf4BnReHipAmGPamY9TYB8usDSvwVO/Q+VtGAwhPJFdewlxLnN5hCnXbEaCtQLfvNnC4gYFOydcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732936612; c=relaxed/simple;
-	bh=2l3KfqoOvZDkJTmLIM0ptsydik6v8ezmtCOy/dYLd3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=W+uftp8v+xik9gA2gy+7mRByIb3o0ZfI6ZzNLg9Im9fDAUHCFDxOmP0fMKJJs1UiJVDqPNZbQ6JMbO3tEduuAg9sEWj3ZNg2N+p3Judk3Ob55DJZ/eP/Vn2UvGMRmGM8YX2dtG/Wad8N2imAYuphdy2HyTwFejEZB9o1LxtwIXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NKudz865; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AU0q3nQ020987;
-	Sat, 30 Nov 2024 03:16:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LxpVgLo3JnamRIJ/XC6YKJPsC09k5vJCje9OieMiSLM=; b=NKudz865BFm5Ik07
-	uvx7TtMz2PMmWOZirimcJpEGW+pkhcV6WleILclDuLTgbKIIr4y21QU1EZS9tcIJ
-	o8P+xzqOQuekAKBcgj6qvKYDtVw2Ct9mgJev/5vih0GSzdT0lDwmC2cdgrh29Mx3
-	+IXOpnxMHPp0gCXw9sghoIVZ5vWMri005nS+0GwAa4/6kUzIVR8AxbEutonEuVjC
-	kN7+q4hXvxWTjf7uxDch/qGmW78FspBa03Zss000DoeruKj7pzYVPEmtxNt9ohZL
-	xD9ZeymCfM5y/svxskuAaw+nXeQuI+GLosF+bY+CMoWi8xWqeJxdQXmqipLOFxuZ
-	FI7/lQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43671eexg1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 30 Nov 2024 03:16:42 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AU3Gf7u028597
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 30 Nov 2024 03:16:41 GMT
-Received: from [10.253.74.19] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 29 Nov
- 2024 19:16:36 -0800
-Message-ID: <a82af64b-da8f-40c5-bd8c-9ea7621c4556@quicinc.com>
-Date: Sat, 30 Nov 2024 11:16:33 +0800
+	s=arc-20240116; t=1732936949; c=relaxed/simple;
+	bh=4JxGwtZZdWPpCoP3dRLOQEapfTtkOtXycUEA5b2OO+k=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BKB7vTjnp2fG0FdwScRoxphG1jTl+x8EgHPBdp1UnhK1d3IT/iuW2P9mGba38O+oxq9kD2GoPQOXnpTcIw4cPyNpez/o9yzigjNlwW3yf9HHlDTaKBgJ7btuLqeYrb/5rMqKkrdjtwdUriKOlCy5Aw8tqnlTYIsuLGjANM3NLEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=keI0BoRC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38232C4CECC;
+	Sat, 30 Nov 2024 03:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1732936949;
+	bh=4JxGwtZZdWPpCoP3dRLOQEapfTtkOtXycUEA5b2OO+k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=keI0BoRCl7KTK+oDSHbpM1vO3HDzTOzekJLQfb/IeXbwK3Kfr8LmqE4GYLI5r/wyy
+	 1XMXVWRHBxCbGo8aV3Ga8OmRZKr7RNO5MuClQQOf/0qSY2yITx0tCcQAuxdzjr+sPR
+	 wf1H6O2lKYmW00vqJGCBUsk57Idnp7Z2f8rNX/ts=
+Date: Fri, 29 Nov 2024 19:22:28 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: liuye <liuye@kylinos.cn>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, Mel Gorman
+ <mgorman@techsingularity.net>, Hugh Dickins <hughd@google.com>, Yang Shi
+ <yang@os.amperecomputing.com>
+Subject: Re: [PATCH v2 RESEND] mm/vmscan: Fix hard LOCKUP in function
+ isolate_lru_folios
+Message-Id: <20241129192228.6f08e74a555bedcad71d32f4@linux-foundation.org>
+In-Reply-To: <20241119060842.274072-1-liuye@kylinos.cn>
+References: <20240919021443.9170-1-liuye@kylinos.cn>
+	<20241119060842.274072-1-liuye@kylinos.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] dt-bindings: net: Add QCA6698 Bluetooth
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao
-	<quic_rjliao@quicinc.com>,
-        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_mohamull@quicinc.com>, <quic_zijuhu@quicinc.com>,
-        <quic_jiaymao@quicinc.com>
-References: <20241128120922.3518582-1-quic_chejiang@quicinc.com>
- <20241128120922.3518582-3-quic_chejiang@quicinc.com>
- <jaq7tjdq4srboo7m4byfofdbigy5hyeeqwyrgh72t23xgwb65m@lz5yivskxbwd>
- <cd82ea16-7c37-41cf-bfb1-7cc6d743d8e9@quicinc.com>
- <vlmdm5yfekmx5miv5twjpukwhudcpjoijk3jxoobhzvecpsb54@her62ghhpruy>
-Content-Language: en-US
-From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-In-Reply-To: <vlmdm5yfekmx5miv5twjpukwhudcpjoijk3jxoobhzvecpsb54@her62ghhpruy>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NJw95Kfa6I3jPVzKxJ82UHrJkm85GjHt
-X-Proofpoint-GUID: NJw95Kfa6I3jPVzKxJ82UHrJkm85GjHt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- impostorscore=0 mlxscore=0 phishscore=0 priorityscore=1501 clxscore=1015
- bulkscore=0 lowpriorityscore=0 spamscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2411300025
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Dmitry,
+On Tue, 19 Nov 2024 14:08:42 +0800 liuye <liuye@kylinos.cn> wrote:
 
-On 11/30/2024 1:13 AM, Dmitry Baryshkov wrote:
-> On Fri, Nov 29, 2024 at 10:30:00AM +0800, Cheng Jiang (IOE) wrote:
->> Hi Dmitry,
->>
->> On 11/28/2024 8:58 PM, Dmitry Baryshkov wrote:
->>> On Thu, Nov 28, 2024 at 08:09:21PM +0800, Cheng Jiang wrote:
->>>> Add the compatible for the Bluetooth part of the Qualcomm QCA6698 chipset.
->>>
->>> ... 
->>> And you have misssed to explain why do you need to add it and how it is
->>> different from WCN6855.
->>>
->> Got it. I just explain in the dts/driver change, forget to explain here. 
->>
->> If use the firmware-name solution, do we still need add the new compatible
->> string for qcom,qca6698-bt here? The driver may not use this string.   
+> This fixes the following hard lockup in function isolate_lru_folios
+> when memory reclaim.If the LRU mostly contains ineligible folios
+> May trigger watchdog.
 > 
-> DT describes the hardware. If you want, you can still add new string
-> _and_ use old one as a fallback compatible: "qcom,qca6698-bt",
-> "qcom,wcn6855-bt".
-Got it. Thanks! 
+> watchdog: Watchdog detected hard LOCKUP on cpu 173
+> RIP: 0010:native_queued_spin_lock_slowpath+0x255/0x2a0
+> Call Trace:
+> 	_raw_spin_lock_irqsave+0x31/0x40
+> 	folio_lruvec_lock_irqsave+0x5f/0x90
+> 	folio_batch_move_lru+0x91/0x150
+> 	lru_add_drain_per_cpu+0x1c/0x40
+> 	process_one_work+0x17d/0x350
+> 	worker_thread+0x27b/0x3a0
+> 	kthread+0xe8/0x120
+> 	ret_from_fork+0x34/0x50
+> 	ret_from_fork_asm+0x1b/0x30
 > 
->>>>
->>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->>>> ---
->>>>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> index 7bb68311c..82105382a 100644
->>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> @@ -18,6 +18,7 @@ properties:
->>>>      enum:
->>>>        - qcom,qca2066-bt
->>>>        - qcom,qca6174-bt
->>>> +      - qcom,qca6698-bt
->>>>        - qcom,qca9377-bt
->>>>        - qcom,wcn3988-bt
->>>>        - qcom,wcn3990-bt
->>>> @@ -170,6 +171,7 @@ allOf:
->>>>            contains:
->>>>              enum:
->>>>                - qcom,wcn6855-bt
->>>> +              - qcom,qca6698-bt
->>>>      then:
->>>>        required:
->>>>          - vddrfacmn-supply
->>>> -- 
->>>> 2.25.1
->>>>
->>>
->>
+> lruvec->lru_lock owner：
 > 
+> PID: 2865     TASK: ffff888139214d40  CPU: 40   COMMAND: "kswapd0"
+>  #0 [fffffe0000945e60] crash_nmi_callback at ffffffffa567a555
+>  #1 [fffffe0000945e68] nmi_handle at ffffffffa563b171
+>  #2 [fffffe0000945eb0] default_do_nmi at ffffffffa6575920
+>  #3 [fffffe0000945ed0] exc_nmi at ffffffffa6575af4
+>  #4 [fffffe0000945ef0] end_repeat_nmi at ffffffffa6601dde
+>     [exception RIP: isolate_lru_folios+403]
+>     RIP: ffffffffa597df53  RSP: ffffc90006fb7c28  RFLAGS: 00000002
+>     RAX: 0000000000000001  RBX: ffffc90006fb7c60  RCX: ffffea04a2196f88
+>     RDX: ffffc90006fb7c60  RSI: ffffc90006fb7c60  RDI: ffffea04a2197048
+>     RBP: ffff88812cbd3010   R8: ffffea04a2197008   R9: 0000000000000001
+>     R10: 0000000000000000  R11: 0000000000000001  R12: ffffea04a2197008
+>     R13: ffffea04a2197048  R14: ffffc90006fb7de8  R15: 0000000003e3e937
+>     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+>     <NMI exception stack>
+>  #5 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
+>  #6 [ffffc90006fb7cf8] shrink_active_list at ffffffffa597f788
+>  #7 [ffffc90006fb7da8] balance_pgdat at ffffffffa5986db0
+>  #8 [ffffc90006fb7ec0] kswapd at ffffffffa5987354
+>  #9 [ffffc90006fb7ef8] kthread at ffffffffa5748238
+> crash>
+> 
+> Scenario:
+> User processe are requesting a large amount of memory and keep page active.
+> Then a module continuously requests memory from ZONE_DMA32 area.
+> Memory reclaim will be triggered due to ZONE_DMA32 watermark alarm reached.
+> However pages in the LRU(active_anon) list are mostly from
+> the ZONE_NORMAL area.
+> 
+> Reproduce:
+> Terminal 1: Construct to continuously increase pages active(anon).
+> mkdir /tmp/memory
+> mount -t tmpfs -o size=1024000M tmpfs /tmp/memory
+> dd if=/dev/zero of=/tmp/memory/block bs=4M
+> tail /tmp/memory/block
+> 
+> Terminal 2:
+> vmstat -a 1
+> active will increase.
+> procs ---memory--- ---swap-- ---io---- -system-- ---cpu--- ...
+>  r  b   swpd   free  inact active   si   so    bi    bo
+>  1  0   0 1445623076 45898836 83646008    0    0     0
+>  1  0   0 1445623076 43450228 86094616    0    0     0
+>  1  0   0 1445623076 41003480 88541364    0    0     0
+>  1  0   0 1445623076 38557088 90987756    0    0     0
+>  1  0   0 1445623076 36109688 93435156    0    0     0
+>  1  0   0 1445619552 33663256 95881632    0    0     0
+>  1  0   0 1445619804 31217140 98327792    0    0     0
+>  1  0   0 1445619804 28769988 100774944    0    0     0
+>  1  0   0 1445619804 26322348 103222584    0    0     0
+>  1  0   0 1445619804 23875592 105669340    0    0     0
+> 
+> cat /proc/meminfo | head
+> Active(anon) increase.
+> MemTotal:       1579941036 kB
+> MemFree:        1445618500 kB
+> MemAvailable:   1453013224 kB
+> Buffers:            6516 kB
+> Cached:         128653956 kB
+> SwapCached:            0 kB
+> Active:         118110812 kB
+> Inactive:       11436620 kB
+> Active(anon):   115345744 kB
+> Inactive(anon):   945292 kB
+> 
+> When the Active(anon) is 115345744 kB, insmod module triggers
+> the ZONE_DMA32 watermark.
+> 
+> perf record -e vmscan:mm_vmscan_lru_isolate -aR
+> perf script
+> isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=2
+> nr_skipped=2 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=0
+> nr_skipped=0 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=28835844
+> nr_skipped=28835844 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=28835844
+> nr_skipped=28835844 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=29
+> nr_skipped=29 nr_taken=0 lru=active_anon
+> isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=0
+> nr_skipped=0 nr_taken=0 lru=active_anon
+> 
+> See nr_scanned=28835844.
+> 28835844 * 4k = 115343376KB approximately equal to 115345744 kB.
+> 
+> If increase Active(anon) to 1000G then insmod module triggers
+> the ZONE_DMA32 watermark. hard lockup will occur.
+> 
+> In my device nr_scanned = 0000000003e3e937 when hard lockup.
+> Convert to memory size 0x0000000003e3e937 * 4KB = 261072092 KB.
+> 
+>    [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
+>     ffffc90006fb7c30: 0000000000000020 0000000000000000
+>     ffffc90006fb7c40: ffffc90006fb7d40 ffff88812cbd3000
+>     ffffc90006fb7c50: ffffc90006fb7d30 0000000106fb7de8
+>     ffffc90006fb7c60: ffffea04a2197008 ffffea0006ed4a48
+>     ffffc90006fb7c70: 0000000000000000 0000000000000000
+>     ffffc90006fb7c80: 0000000000000000 0000000000000000
+>     ffffc90006fb7c90: 0000000000000000 0000000000000000
+>     ffffc90006fb7ca0: 0000000000000000 0000000003e3e937
+>     ffffc90006fb7cb0: 0000000000000000 0000000000000000
+>     ffffc90006fb7cc0: 8d7c0b56b7874b00 ffff88812cbd3000
+> 
+> About the Fixes:
+> Why did it take eight years to be discovered?
+> 
+> The problem requires the following conditions to occur:
+> 1. The device memory should be large enough.
+> 2. Pages in the LRU(active_anon) list are mostly from the ZONE_NORMAL area.
+> 3. The memory in ZONE_DMA32 needs to reach the watermark.
+> 
+> If the memory is not large enough, or if the usage design of ZONE_DMA32
+> area memory is reasonable, this problem is difficult to detect.
+> 
+> notes:
+> The problem is most likely to occur in ZONE_DMA32 and ZONE_NORMAL,
+> but other suitable scenarios may also trigger the problem.
+>
+> Fixes: b2e18757f2c9 ("mm, vmscan: begin reclaiming pages on a per-node basis")
+>
 
+Thanks.
+
+This is old code.  I agree on b2e18757f2c9 and thanks for digging that
+out.
+
+I'll add a cc:stable and shall queue it for testing, pending review
+from others (please).  It may be that the -stable tree maintainers ask
+for a backport of this change into pre-folio-conversion kernels.  But
+given the obscurity of the workload, I'm not sure this would be worth
+doing.  Opinions are sought?
+
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -223,6 +223,7 @@ enum {
+>  };
+>  
+>  #define SWAP_CLUSTER_MAX 32UL
+> +#define SWAP_CLUSTER_MAX_SKIPPED (SWAP_CLUSTER_MAX << 10)
+>  #define COMPACT_CLUSTER_MAX SWAP_CLUSTER_MAX
+>  
+>  /* Bit flag in swap_map */
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 28ba2b06fc7d..0bdfae413b4c 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -1657,6 +1657,7 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
+>  	unsigned long nr_skipped[MAX_NR_ZONES] = { 0, };
+>  	unsigned long skipped = 0;
+>  	unsigned long scan, total_scan, nr_pages;
+> +	unsigned long max_nr_skipped = 0;
+>  	LIST_HEAD(folios_skipped);
+>  
+>  	total_scan = 0;
+> @@ -1671,9 +1672,12 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
+>  		nr_pages = folio_nr_pages(folio);
+>  		total_scan += nr_pages;
+>  
+> -		if (folio_zonenum(folio) > sc->reclaim_idx) {
+> +		/* Using max_nr_skipped to prevent hard LOCKUP*/
+> +		if (max_nr_skipped < SWAP_CLUSTER_MAX_SKIPPED &&
+> +		    (folio_zonenum(folio) > sc->reclaim_idx)) {
+>  			nr_skipped[folio_zonenum(folio)] += nr_pages;
+>  			move_to = &folios_skipped;
+> +			max_nr_skipped++;
+>  			goto move;
+>  		}
+>  
+> -- 
+> 2.25.1
 
