@@ -1,160 +1,78 @@
-Return-Path: <linux-kernel+bounces-426405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332ED9DF29E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF019DF298
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02451630A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:38:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01AF6162FF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D213C1AA787;
-	Sat, 30 Nov 2024 18:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033D81A0AE1;
+	Sat, 30 Nov 2024 18:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjSwTHqO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gx10rEwM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1D11AA1E2;
-	Sat, 30 Nov 2024 18:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631428468
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 18:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732991930; cv=none; b=Y8zQlbgZ3uNueTELIuNuB2CA8rC7SJLeYZIn1tJQL/pAKCQ3uwLc9Aego0NiYQHthzoNvrdip0FFbs4Ep082BTsS8hlUgjZ/tuz6B1V+5GjDl+SQtr+SM6u42htLAWPt5KbJXrZVPvvRa0l/PiCo/TbBTxFnx4V83G3R+faXSfs=
+	t=1732991909; cv=none; b=Ffp6nPHMqsYXaUzr2zjEFIVnNEhZoBCV8zglfrnYAnuTJH7qvT6rbWxSh4UO2Ka8K3+3Lf3hcrWy9LM8mI0/BKFsEfXGuXW2ZzgIgUwR+r8SL2YkK014FcKdgThzjuvc3d4vclzSwbJUFCTPWduDre22nRzlVMWypvPQR7mF5NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732991930; c=relaxed/simple;
-	bh=DZpg1x2kzkyruGc7zDK9ya8CbERy6DEqz4wV7j57D6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J7/XRGi4XqYGWUST7efwp1sAMFk/W8+JUUZ70fQ2B4y3EJIll6B4W2AcLKAvZokz0H4p+6cQBAeD2L2DZcvLEkPRF81Lo1E7Kgl3BIm+bNfILMB63Ar5D8hxjMxJrbM1lc2la5Wqy9OfrcyFY9N9I3XgBwnooYhqOG5Dhmhejh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjSwTHqO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EAC3C4CECC;
-	Sat, 30 Nov 2024 18:38:45 +0000 (UTC)
+	s=arc-20240116; t=1732991909; c=relaxed/simple;
+	bh=W/QJuPQIZUogHzPC03u+zV7UBqdHKiYcFHeWPcuY+h4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=pNK/RI1Huo570/YgW8ZHxCqZMsev4ZvQ7LvnRMTO1UlbBaoV1NNcGdawj6IGjW8gAS7H2bIIMlNhYIkMoKvgfv7wxc7PUtGXkVdA6V9KMuSVqePJiPpQzhVu2nLjeGk2MQRuM2OhMLUhu6fwbPRay48uipdubP2c7VyGCgP/N0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gx10rEwM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46E22C4CECC;
+	Sat, 30 Nov 2024 18:38:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732991929;
-	bh=DZpg1x2kzkyruGc7zDK9ya8CbERy6DEqz4wV7j57D6A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gjSwTHqOe7D38RgDr6jKi75NHVLQiVS0ClfSAoI+iigmscVAD2K87xoYQPKlKAoW6
-	 LUh+unMzuxn0RSe4TY9tcwdK9RrV4EJumfI9VmKNIaqa16Yxttb4guxgLzHjf4ijUE
-	 1dKKvsPrY2tx6lQATc0T5VxtEL1t693wcunl6oTEYUWYWGAlgXAG6Vu7d3C9Pp8z//
-	 eguo8tRg9dlJ904U2gnuqXtXo2qV3+9qjbh4Fl8GQDCNGkNi0FNh6Vfw32AW7Qj0OI
-	 dUQwZU3u+x8eIKDU/l3yJOAVXUxr1sdy3XX+F0AhhR9AyKimlWL8MOAa27tcaNLgLe
-	 2yIwUQS5BEWGA==
-Date: Sat, 30 Nov 2024 18:38:39 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Alisa-Dariana Roman <alisadariana@gmail.com>
-Cc: Alisa-Dariana Roman <alisa.roman@analog.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Michael Hennerich
- <michael.hennerich@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter
- Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v1 3/3] iio: adc: ad7192: Add sync gpio
-Message-ID: <20241130183839.1fd5884f@jic23-huawei>
-In-Reply-To: <20241128125811.11913-4-alisa.roman@analog.com>
-References: <20241128125811.11913-1-alisa.roman@analog.com>
-	<20241128125811.11913-4-alisa.roman@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732991909;
+	bh=W/QJuPQIZUogHzPC03u+zV7UBqdHKiYcFHeWPcuY+h4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=gx10rEwMnsCW5SNUWSLF3SfOrwaQOu1i1tVcSTq9sxZSv75Tv7KVc5SjmP+OOOqHQ
+	 iYXDvc7zQgohVpxKd/dXWMZxkA1rGz9xre2QJlbv+2vMXqZeI+ImD51iLpDbEWciLQ
+	 rzX/8DLkegLkfqOX59GDvXrxfeXJBz623qdmWAJfQaDv8eENtedfwqDOaLcN2NwSho
+	 ddxnnbPsLkzZS5+DkXQjW8G0DU0OLCOU2K3q3IVFPEGDPEgSmMfQmnrK60haU30ZDi
+	 HUzSJfkiDQbYDLYKTi1ZlO/ZpySCZB8620JxdbqPm9MtYYp72NCNrGRfqvDw4LyTTO
+	 j3M8BFS8toWHg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34478380A944;
+	Sat, 30 Nov 2024 18:38:44 +0000 (UTC)
+Subject: Re: [GIT PULL] UML changes for v6.13-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <1155823186.11802667.1732921581257.JavaMail.zimbra@nod.at>
+References: <1155823186.11802667.1732921581257.JavaMail.zimbra@nod.at>
+X-PR-Tracked-List-Id: <linux-um.lists.infradead.org>
+X-PR-Tracked-Message-Id: <1155823186.11802667.1732921581257.JavaMail.zimbra@nod.at>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linus-6.13-rc1
+X-PR-Tracked-Commit-Id: bed2cc482600296fe04edbc38005ba2851449c10
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 831c1926ee728c3e747255f7c0f434762e8e863d
+Message-Id: <173299192287.2451487.16897611469630516621.pr-tracker-bot@kernel.org>
+Date: Sat, 30 Nov 2024 18:38:42 +0000
+To: Richard Weinberger <richard@nod.at>
+Cc: torvalds <torvalds@linux-foundation.org>, linux-um <linux-um@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu, 28 Nov 2024 14:55:03 +0200
-Alisa-Dariana Roman <alisadariana@gmail.com> wrote:
+The pull request you sent on Sat, 30 Nov 2024 00:06:21 +0100 (CET):
 
-> Add support for the SYNC pin of AD719x devices. This pin is controlled
-> through a GPIO. The pin allows synchronization of digital filters and
-> analog modulators when using multiple devices.
-> 
-> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
-Hi.
+> git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linus-6.13-rc1
 
-Like all userspace ABI, this needs documentation.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/831c1926ee728c3e747255f7c0f434762e8e863d
 
-It's an unusual feature, so some usecases would help.
+Thank you!
 
-It is also cross multiple devices which makes this odd as only one device
-can presumably acquire the gpio?
-
-An alternative would be to look at how to do this with a 'wrapper' sort of device
-so that we have one instance to which this applies.
-
-I'm not sure that helps that much though as we'd still need some for of
-'I'm setup for all channels, now you can go' ABI.
-
-Jonathan
-
-> ---
->  drivers/iio/adc/ad7192.c | 112 ++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 111 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
-> index 955e9eff0099..542db7280e99 100644
-> --- a/drivers/iio/adc/ad7192.c
-> +++ b/drivers/iio/adc/ad7192.c
-> @@ -10,6 +10,7 @@
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/device.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/kernel.h>
->  #include <linux/slab.h>
->  #include <linux/sysfs.h>
-> @@ -196,6 +197,7 @@ struct ad7192_chip_info {
->  	u8				num_channels;
->  	const struct ad_sigma_delta_info	*sigma_delta_info;
->  	const struct iio_info		*info;
-> +	const struct iio_info		*info_sync;
->  	int (*parse_channels)(struct iio_dev *indio_dev);
->  };
->  
-> @@ -216,6 +218,8 @@ struct ad7192_state {
->  	struct mutex			lock;	/* protect sensor state */
->  	u8				syscalib_mode[8];
->  
-> +	struct gpio_desc		*sync_gpio;
-> +
->  	struct ad_sigma_delta		sd;
->  };
->  
-> @@ -783,6 +787,36 @@ static void ad7192_update_filter_freq_avail(struct ad7192_state *st)
->  	st->filter_freq_avail[3][0] = DIV_ROUND_CLOSEST(fadc * 272, 1024);
->  }
->  
-> +static ssize_t sync_gpio_show(struct device *dev,
-> +			      struct device_attribute *attr,
-> +			      char *buf)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct ad7192_state *st = iio_priv(indio_dev);
-> +
-> +	return sysfs_emit(buf, "%d\n", gpiod_get_value(st->sync_gpio));
-> +}
-> +
-> +static ssize_t sync_gpio_store(struct device *dev,
-> +			       struct device_attribute *attr,
-> +			       const char *buf,
-> +			       size_t len)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct ad7192_state *st = iio_priv(indio_dev);
-> +	int val;
-> +	int ret;
-> +
-> +	ret = kstrtoint(buf, 0, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (st->sync_gpio)
-> +		gpiod_set_value(st->sync_gpio, val);
-> +
-> +	return len;
-> +}
-
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
