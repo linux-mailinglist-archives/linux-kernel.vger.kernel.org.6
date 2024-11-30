@@ -1,129 +1,102 @@
-Return-Path: <linux-kernel+bounces-426211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC409DF052
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:30:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A243F9DF057
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:35:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A422815FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:30:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18730B21A3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7557E198E74;
-	Sat, 30 Nov 2024 12:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7F9197531;
+	Sat, 30 Nov 2024 12:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoBByyPm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="V2xPQZWP"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE925156F30;
-	Sat, 30 Nov 2024 12:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B30A13C3F2;
+	Sat, 30 Nov 2024 12:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732969798; cv=none; b=OWab6rFBhak9OX5BSAt3uk9uJLH2GxmMnftpySaJjQU4+oyvul+Xg1VjwTih4J846PYtKA+lXVZir426HrbR6Bl8cGfYp6vMR8BRlw3wX/1TqXj84fT7AMZ9qzXnfB8YQG9593+VEI9XTDIhtQjsmbUF2AWC479ltkuB8ZFX4wk=
+	t=1732970095; cv=none; b=U2DxavzWAWIExrfFl895BF/zwWjfjL1qCvGykGfQHpY2L8R8ha9hW2LGZtr8xD3ewAdSew43lZuKorHsdcHjM6d3TgnyQuNXea2kLmskKE/f28QVz+5ZooiWzHTJRvTDN2N+5tj3qIZWPyCHa3a8bkGYhK0NsOO+KwCVgZzVoh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732969798; c=relaxed/simple;
-	bh=0B7+NJKg6PDFktmYDGKBJZxB5QZ8x8bluiluB7gfHbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4KJ5aD3uLubNDjpFd3oxVVKbuVUgOID4IVbut67kmJ1F4wTjm+DHEys/eVRNKShr6bXv3l0O6fFodoFXA9di2QJIh0EaArUDFKRqMNzIZkenA2KjtAUPXLYnePnmS3nBIS3jNnovobuNnzp33Jxpx2KC5UfToZczUHnaydZg0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoBByyPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EBAEC4CECC;
-	Sat, 30 Nov 2024 12:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732969798;
-	bh=0B7+NJKg6PDFktmYDGKBJZxB5QZ8x8bluiluB7gfHbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uoBByyPmW9thOAgNMA++sY/TzO60gZgiNi8cCqo6Y5MAS9aKZwVs7+iOD5Ojmo+1N
-	 zKpmYi5jn5hDP1U52B+D8AQWxi7wF27LyIHkRE2Q6Y9o+tBq5NJgEYxiok4AY3Jak4
-	 JRu1DjANRWU8+4bC1v/cqplcZbmS2FqXxotV3mAPU7rJPaaBiqLkHEQNoB6jrL+czB
-	 nUVAT/PzU+UkvGhC1yyCcycdrUk/C96IYKN3nHAxGD3b2Um8J6jbmgd6ylBKX5K/QS
-	 4+9cYYIZP/bpSaoddmNZL6n1ES6fq80OIB0zONDx2dmDE7LrAcFHytYMxoz/DahKxv
-	 sOFYd13zcUSWw==
-Date: Sat, 30 Nov 2024 13:29:52 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Tycho Andersen <tandersen@netflix.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] exec: fix up /proc/pid/comm in the
- execveat(AT_EMPTY_PATH) case
-Message-ID: <20241130-ohnegleichen-unweigerlich-ce3b8af0fa45@brauner>
-References: <20241130045437.work.390-kees@kernel.org>
+	s=arc-20240116; t=1732970095; c=relaxed/simple;
+	bh=XZIJk2adA4rlPgleUP7ccoyQv05KntzbvvNTIhOf97c=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=iYwMw+X1V8ttr1iyxVDwH2gVDWeHRDeS2xMlYsbHX02Ii9cP5BdGhv5jp/LVzCMnJhn58vJx36kTufnlXT9iPS5l4jhzYryNPbsvzoA+8AeysMUc3XU4I56xqwispZaEprRj1cavLKzhOabo0BT5T7h6NPC3DxeszOcrsfNfk34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=V2xPQZWP; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732970067; x=1733574867; i=markus.elfring@web.de;
+	bh=EKTFWHVdKPv4zouKlHIVlvi8TUgd1IyhKWUXdDSdmnY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=V2xPQZWPLXe9pEFCtvBynTKYWcTalBPohQYBL6ON+lgniy3okqcdHc0J/hzVuIAA
+	 2oeYoWAl5nPoULV/vu0P9YBOa9GnduWTxnfozb1NYnXmzaQ10I1JmPYCBFPdgfjzj
+	 gR0rpvwNpgA68gnJgMy7rOi42KxTazX7TwcCJknQkeGeYKCsJycxML/+ONJ6iKqni
+	 wP4Bzg0Xh1hl7MJryCR7XZZJimOmuYq7+KVOr7oNJlBI1uYiqy0OkLHwWsBubB6tO
+	 s9iYK4OkVSWBI9s1oRUn+senIO0CXhg/4Hcs63DUUm+2xMjwONRZn17hN7fQoIUxX
+	 4uKBV0X3qge8lGCHlA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N79N8-1tlKEZ0D3E-017cg7; Sat, 30
+ Nov 2024 13:34:27 +0100
+Message-ID: <6fd72d7d-8a6d-46b0-a7aa-08111093738a@web.de>
+Date: Sat, 30 Nov 2024 13:34:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241130045437.work.390-kees@kernel.org>
+User-Agent: Mozilla Thunderbird
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ linux-riscv@lists.infradead.org, Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Drew Fustini <drew@pdp7.com>, Fu Wei <wefu@redhat.com>,
+ Guo Ren <guoren@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>
+References: <bda05d7b-5a6e-4f57-a124-ba56f51da031@stanley.mountain>
+Subject: Re: [PATCH] mailbox: th1520: Fix a NULL vs IS_ERR() bug
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <bda05d7b-5a6e-4f57-a124-ba56f51da031@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:uxeDcr6BH8BxBkN6tuLsL50ywJWugil/p7X9C1bf7AWIfWPi0zi
+ rsYjH2uwJEDsogJzQcV+vk9mn57E2LNDPOMkVHbcx7Y9LNHnb6WoY+1RM67VXs4o+bS3KN0
+ tqbxL8QzDJbDfQO+NsnFMDiksz00Fgue3xjDETmMqdsI5Lpn9JxbTJbGD0/pcVkovoVvumY
+ AusXQqaPnE6C6ZgXG3p1g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:V0SMgdf1a7k=;WA/kuaWxdjyIv3fUoke2JJqcdTM
+ 0T18UrQgQ2yfyPRY7tJwuKhWtjE3whwJVbdlAvOsxeYym3jtii8/pdkw39fpw9tU3EYuk5k10
+ CKcEyo1jKTdbduccRKXb/CIf+wDsm3+260wehGpXgpBG3um5tK33HrcGNETcI7VPIHqa7Y+I7
+ zvorhSoh92Zxe0AjWbQD6OSMBNKaTuXMITyoODIxfaArzqTuGFF0TUslqp9zF5vTRjLNviR40
+ oU7kuhYvD6nvlkSotIU6sNrkdAB+EzZIN+VxZKiwtrDlCXgR70iax3HpF5icjyJ4vLm3YX5h5
+ kmLayr7nVTqgXDnGq6e5UV6/A1j3n7GYNmJefgRkKv5t3u47WNNRArEPF9YODS1YdLGCkeYyx
+ 3ZVAQaoWg0J0bsJev03t4oulO7AqTUe4nJ0L5DplvRlXXEQLuZUIusdeTipF3nvCy26sxlWja
+ 4f+Dz13kSU+kKfLM3E2qHtuy4QJlV3c1rJSEXIMtr6jqPA4livJVcIu8QtD0nLLteb3yAgr18
+ 8ZDEt05pfgjlxOjs10RekH6or0U2W35oMPgs4eXgHa896kiE5z+czjpOcKcsqjc6AHIf7y9Ve
+ muag1vpxlhZN8To8QxVdCvJWX/QiYOLubmiF4nHfp3vD0SO7GeXfIrtCZE6tp1ItOEbrqSPkQ
+ +HUt6M8jU2YoTXcS8v7YtRM72Hl/cQBr0uainDDjEb0WYzHhQPLB91sjTjHCbwdzoxSfYMKfR
+ Z2X1WeSFJIlzuY8QDDM1MhlWJ39Bev6lh4Z8EeU/cb2HSMyPaCVmGlleRmG8AuN1kktQNQjGl
+ 1zAobMVWngetpqmqFfn3DfwPnAhReBui7Hyuj3jjHWD8E87lMe1zmedwWoTXJhyVvnguQa/BD
+ edpwwzTJaZKmQt9AjaT0IzmvJ1m4BQUXbZUJ0UimDc7qS6se9pwBXma5l/W22Dj1icKLivjTl
+ xcQlntQnkfIueMQKJ3i3KXTxpt3M8rv/5BRrl9RNa8ROQijas75dGaY6i4Gu+LPzdjRixeQSq
+ c3bxXawLN/sG7Qc6AyIOKxbT0iNmkJDtLKSVj43ywiJ9+bJgIvpsoSda8xUt6JIoY3bzT29OQ
+ QSAJwH3Kc=
 
-On Fri, Nov 29, 2024 at 08:54:38PM -0800, Kees Cook wrote:
-> Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> switching to execveat() for service execution, but can't, because the
-> contents of /proc/pid/comm are the file descriptor which was used,
-> instead of the path to the binary. This makes the output of tools like
-> top and ps useless, especially in a world where most fds are opened
-> CLOEXEC so the number is truly meaningless.
-> 
-> When the filename passed in is empty (e.g. with AT_EMPTY_PATH), use the
-> dentry's filename for "comm" instead of using the useless numeral from
-> the synthetic fdpath construction. This way the actual exec machinery
-> is unchanged, but cosmetically the comm looks reasonable to admins
-> investigating things.
-> 
-> Instead of adding TASK_COMM_LEN more bytes to bprm, use one of the unused
-> flag bits to indicate that we need to set "comm" from the dentry.
-> 
-> Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
-> Suggested-by: Tycho Andersen <tandersen@netflix.com>
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> CC: Aleksa Sarai <cyphar@cyphar.com>
-> Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-mm@kvack.org
-> Cc: linux-fsdevel@vger.kernel.org
-> 
-> Here's what I've put together from the various suggestions. I didn't
-> want to needlessly grow bprm, so I just added a flag instead. Otherwise,
-> this is very similar to what Linus and Al suggested.
-> ---
->  fs/exec.c               | 22 +++++++++++++++++++---
->  include/linux/binfmts.h |  4 +++-
->  2 files changed, 22 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 5f16500ac325..d897d60ca5c2 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1347,7 +1347,21 @@ int begin_new_exec(struct linux_binprm * bprm)
->  		set_dumpable(current->mm, SUID_DUMP_USER);
->  
->  	perf_event_exec();
-> -	__set_task_comm(me, kbasename(bprm->filename), true);
-> +
-> +	/*
-> +	 * If the original filename was empty, alloc_bprm() made up a path
-> +	 * that will probably not be useful to admins running ps or similar.
-> +	 * Let's fix it up to be something reasonable.
-> +	 */
-> +	if (bprm->comm_from_dentry) {
-> +		rcu_read_lock();
-> +		/* The dentry name won't change while we hold the rcu read lock. */
-> +		__set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
+> The devm_ioremap() function doesn't return error pointers, it returns
+> NULL.  Update the error checking to match.
 
-What does the smp_load_acquire() pair with?
+  on execution failure?
+
+
+Regards,
+Markus
 
