@@ -1,182 +1,222 @@
-Return-Path: <linux-kernel+bounces-426384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB1259DF26B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:58:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A0B9DF26D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:01:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ED0DB20D1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:58:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCD2AB21059
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B52F1A76D1;
-	Sat, 30 Nov 2024 17:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAAD1A38D7;
+	Sat, 30 Nov 2024 18:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZgUDMrT"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQeuvl0/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3472B1A3BD5;
-	Sat, 30 Nov 2024 17:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76E0192D6E;
+	Sat, 30 Nov 2024 18:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732989501; cv=none; b=TXNLk+FnjpEfBohOTAAGDZJSJaPmCyQTmHf7ZcHdveqLNxNQK4DhxfrLfvDBKM/jgBTswm5vcyADIt8w/xc7Pn4fHx2kdKZKxba9BQju2paHBBjWK/sw/uEfGOvVm7TC9Hm1ttXia6+p4JUDs+F0XdWyISMp/8yN1qIhPyA38Ik=
+	t=1732989685; cv=none; b=sCVPkESYEiV8jz3fBEtFd9RYiwku/gSlJJMsi3DzdW3Nbjb9FWS1BF+xyGcKyWoFgspPPuZ8x7wDe9siSOH81RmWMN25s1hc9jH3CEGzJ4oy1LhbYFrf1uf0EN675VTZEBCVnB6/6dIn0zkDQgNfghFZEuwWmiZmOgBz8Ipp+Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732989501; c=relaxed/simple;
-	bh=STvU6bgqFJGzdDVQRbsBPbfg2Qza9Pjril3rE9JdYj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AgotnZ0YkZS6DlPhAxjgpokuOS8qgpVpbN8OB2yvUJ+G3W1z86lB5MdXuuArAAwccW+7dVXi06PtMyY6JhnDUClbBBcYigkNdxIi1MbA8+EN0lGYe8fFsbXiowWryaVnVHM0EgEiQHVxqfttgNRsHWfjvrxEFFC1TWJcvxz53pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZgUDMrT; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-724fc1aaa91so2630160b3a.3;
-        Sat, 30 Nov 2024 09:58:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732989499; x=1733594299; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=EW/0da8K2VHNaYJltUzc1fWYpfK+bQDkVqio8uz+pI0=;
-        b=gZgUDMrTNpo/yYw5/YZbixS9T2wzUzX+nXwpVmb4AurWC6YiLG2NiErWfz1v92H8ni
-         N49AtuIWmhSc0aCt5ATEVU6HCVmP7IJMPQ/fsbBnemBdClEntNHuhjuRxLnC4FTxRCcE
-         klWuu827zIdsQN6yGSU9qJwJp0NVmRxr5zP3218tU2siuNX/M8oVZvK8tRmjlhz5yCD0
-         E3QqUntQSJNsxi4kClnXTlrrZNaYxF7QBDOI60u30gCLLInk8A+aUKCOtTw5qgfkFpbe
-         TaYJZ7CTTOQTlVt337QhL9TPPTUi1KRzvCKakDXxUOh3d4lQcH8bdioh6zwki7GQqO5U
-         +EJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732989499; x=1733594299;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EW/0da8K2VHNaYJltUzc1fWYpfK+bQDkVqio8uz+pI0=;
-        b=JiriTF6AwrMHVLrhLOpCqB5wMTkgAYpmMGU4yljhPrJSbBHHQZbg+aHGatgq7RCU9I
-         ssFP4iHPK8HokTAYb1QpS6UszuMkLZpwekqOjurSrrxBuLkfaE3RM8qPhjGMN8wjEnqj
-         F2T2iHziHAxq5P1YLiuyF1i9K9vVZLmhD73QZVh7/rA3/5bim4SaRoxbb2jOwe6mdq5j
-         hLTVEFmAqDcbZ4t6Apf0TzaJVx8Xfjf2T+LCKupJBcPQk/CkqoDrOII6Y0fukQwjgLte
-         FbD8YsFGNfC05FkVoM4vgOr0DL2QbwgUFXnDMh6FeGCHo6OWBKLP7RxEGXJ5jaKjT6jm
-         oA1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWKBPTI27WJAK5Fv7LOFYIyOgODIP4RIE1cfIWtgrLo/KZv08zAZ/2TqhIJB5tdtdzilYngEkNDJDLM4Yg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/Wc7WFLspWpUQLai1/KjEW9uKdEo50C3BJytiBjTIZ8QAH4bo
-	kZCAhcuA2dVyWHjRt7jhzKE7aA94ldiPGpEibpCpen/T/Q2RzCs8
-X-Gm-Gg: ASbGncs9fx5Byv0mpC1ifKlLSRuaBxbbqmf9iBJ4yoO3Q/knSt1fTuXTFQ6BC9z0XcI
-	WOSXBa12kiZStzrIpDEPP79FHAnBPQFgcfmu+OjhpblAU7DOdBQfbizLYEy8H+feBrR0q9tYLBq
-	1yXSx5p91GVqM+RwcQ2WRvLvqSCj+un0luBZKfDGQmaQTaTp3x0qO2fkXqUjaBOaWkxE40sG50L
-	LZNZkqLWoXk+nR4S1KrWQDbUBwXTtQwz22BqxwPsRNGJkBgJex07J2zBEMJJ7JBh1HNv15K3XzV
-	fxP58c0BR19QjK6rkYyV5V0=
-X-Google-Smtp-Source: AGHT+IGOspVBeCRywftg/WOFcwxmZZeB+BjrNZAkL1m1H/jofGq2xR2mqEQvpmqvUNFHsmYu+UWjMA==
-X-Received: by 2002:a05:6a00:2381:b0:71e:55e2:2c43 with SMTP id d2e1a72fcca58-7253005a02bmr22033365b3a.14.1732989499442;
-        Sat, 30 Nov 2024 09:58:19 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417725e9sm5449028b3a.80.2024.11.30.09.58.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 09:58:18 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <fcf06424-c014-4e87-9ac5-ced1ea679fdd@roeck-us.net>
-Date: Sat, 30 Nov 2024 09:58:17 -0800
+	s=arc-20240116; t=1732989685; c=relaxed/simple;
+	bh=MK9TfLeWISJA+7KJl6jJJ7/NmaphMBufNbyqpX/RkdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sP+i30tpCytYgexKyyqTA0XCJEprf9yOYZhk44kkXW47+3uJ6HmfIoFsJTDVGJ0OH1TLw77626yjDl32ZUxd4kVjlDXOh1r5MaRqmtxic2Be7DbopizdYoebiLO2QncsG8iAsdUPYNXBJ48SFnhIsBx+nF+BGod0THTttAbcDNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQeuvl0/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F81CC4CECC;
+	Sat, 30 Nov 2024 18:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732989685;
+	bh=MK9TfLeWISJA+7KJl6jJJ7/NmaphMBufNbyqpX/RkdU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EQeuvl0/2vsMks9ijTy1TDNHYBopgnY9j/H+vdmH7uHQY8C16BqZ6x5yIE7NWZ7mR
+	 M0r7+kveBGpGBaUPzwYLO5ErdYI/9UHNasHfnwOrTDVoRk497oAb0MBWwi8fOAdTs9
+	 OviPvS2hwn9xQF7w4b4mnAUO8Vd0zFQmu5ljluySMXcdj6Vx4AlKUHFm25EZBMygOR
+	 Ye+I2jO2hKLcry1sRW86F2B/WpVef881HbfUDZQ66/UxzFmC2RI8Cdv0kZlThvXi4B
+	 53IEE+L+VUqyyRVaykhr3DfHLoQvhk9DiNiaUjq5FQ8gVLJ3mO7UcU9zHQxudeeJ04
+	 KjjwvV+8Kz1sA==
+Date: Sat, 30 Nov 2024 18:01:17 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] iio: gts: simplify scale table build
+Message-ID: <20241130180117.088352ce@jic23-huawei>
+In-Reply-To: <4b05448b65969f9f433f7ac3aa234c33025ad262.1732811829.git.mazziesaccount@gmail.com>
+References: <cover.1732811829.git.mazziesaccount@gmail.com>
+	<4b05448b65969f9f433f7ac3aa234c33025ad262.1732811829.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: (tmp108) Add basic regulator support
-To: Stanislav Jakubek <stano.jakubek@gmail.com>,
- Jean Delvare <jdelvare@suse.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- Frank Li <Frank.Li@nxp.com>
-References: <Z0WJg5MMu_1AFYog@standask-GA-A55M-S2HP>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <Z0WJg5MMu_1AFYog@standask-GA-A55M-S2HP>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 11/26/24 00:40, Stanislav Jakubek wrote:
-> TMP108/P3T1085 are powered by the V+/VCC regulator, add support for it.
+On Thu, 28 Nov 2024 18:51:00 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+
+> The GTS helpers offer two different set of "available scales" -tables.
+> Drivers can choose to advertice the scales which are available on a
+> currently selected integration time (by just changing the hwgain).
+> Another option is to list all scales which can be supported using any of
+> the integration times. This is useful for drivers which allow scale
+> setting to also change the integration time to meet the scale user
+> prefers.
 > 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> The helper function which build these tables for the GTS did firstbuild
+The helper function which builds these tables for the GTS first builds the "time specific" ..
+
+> the "time specific" scale arrays for all the times. This is done by
+> calculating the scales based on the integration time specific "total
+> gain" arrays (gain contributed by both the integration time and hw-gain).
+> 
+> After this the helper code calculates an array for all available scales.
+> This is done combining all the time specific total-gains into one sorted
+> array, removing dublicate gains and finally converting the gains to
+> scales as above.
+> 
+> This can be somewhat simplified by changing the logic for calculating
+> the 'all available scales' -array to directly use the time specific
+> scale arrays instead of time specific total-gain arrays. Code can
+> directly just add all the already computed time specific scales to one
+> big 'all scales'-array, keep it sorted and remove duplicates.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+Minor comments inline.
+
+Thanks,
+
+Jonathan
+
 > ---
->   drivers/hwmon/tmp108.c | 5 +++++
->   1 file changed, 5 insertions(+)
 > 
-> diff --git a/drivers/hwmon/tmp108.c b/drivers/hwmon/tmp108.c
-> index 1f36af2cd2d9..85e4466259a3 100644
-> --- a/drivers/hwmon/tmp108.c
-> +++ b/drivers/hwmon/tmp108.c
-> @@ -17,6 +17,7 @@
->   #include <linux/init.h>
->   #include <linux/jiffies.h>
->   #include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
->   #include <linux/slab.h>
->   
->   #define	DRIVER_NAME "tmp108"
-> @@ -331,6 +332,10 @@ static int tmp108_common_probe(struct device *dev, struct regmap *regmap, char *
->   	u32 config;
->   	int err;
->   
-> +	err = devm_regulator_get_enable(dev, "vcc");
-> +	if (err)
-> +		return dev_err_probe(dev, err, "Failed to enable regulator\n");
+> This has been tested by IIO-gts kunit tests only. All testing is
+> appreciated.
+> 
+> Comparing the scales is not as pretty as comparing the gains was, as
+> scales are in two ints where the gains were in one. This makes the code
+> slightly more hairy. I however believe that the logic is now more
+> obvious. This might be more important for one reading this later...
+> ---
+>  drivers/iio/industrialio-gts-helper.c | 109 ++++++++++----------------
+>  1 file changed, 42 insertions(+), 67 deletions(-)
+> 
+> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
+> index 7f900f578f1d..31101848b194 100644
+> --- a/drivers/iio/industrialio-gts-helper.c
+> +++ b/drivers/iio/industrialio-gts-helper.c
+> @@ -191,86 +191,61 @@ static int fill_and_sort_scaletables(struct iio_gts *gts, int **gains, int **sca
+>  	return 0;
+>  }
+>  
+> -static int combine_gain_tables(struct iio_gts *gts, int **gains,
+> -			       int *all_gains, size_t gain_bytes)
+> +static int scale_eq(int *sc1, int *sc2)
+>  {
+> -	int i, new_idx, time_idx;
+> +	return *sc1 == *sc2 && *(sc1 + 1) == *(sc2 + 1);
+	return sc1[0] == sc2[0] && sc1[1] == sc2[1];
+
+Would be easier to read in my opinion.
+
+> +}
+>  
+> -	/*
+> -	 * We assume all the gains for same integration time were unique.
+> -	 * It is likely the first time table had greatest time multiplier as
+> -	 * the times are in the order of preference and greater times are
+> -	 * usually preferred. Hence we start from the last table which is likely
+> -	 * to have the smallest total gains.
+> -	 */
+> -	time_idx = gts->num_itime - 1;
+> -	memcpy(all_gains, gains[time_idx], gain_bytes);
+> -	new_idx = gts->num_hwgain;
+> +static int scale_smaller(int *sc1, int *sc2)
+> +{
+> +	if (*sc1 != *sc2)
+> +		return *sc1 < *sc2;
 > +
+> +	/* If integer parts are equal, fixp parts */
+> +	return *(sc1 + 1) < *(sc2 + 1);
+> +}
+> +
+> +static int do_combined_scaletable(struct iio_gts *gts, int **scales, size_t scale_bytes)
+> +{
+> +	int t_idx, i, new_idx;
+> +	int *all_scales = kcalloc(gts->num_itime, scale_bytes, GFP_KERNEL);
+>  
+> -	while (time_idx-- > 0) {
+> -		for (i = 0; i < gts->num_hwgain; i++) {
+> -			int candidate = gains[time_idx][i];
+> +	if (!all_scales)
+> +		return -ENOMEM;
+> +
+> +	t_idx = gts->num_itime - 1;
+> +	memcpy(all_scales, scales[t_idx], scale_bytes);
+> +	new_idx = gts->num_hwgain * 2;
+> +
+> +	while (t_idx-- > 0) {
+maybe a reverse for loop is clearer
 
-Problem with this is that existing devicetree bindings do not provide
-a reference to the regulator. Those would now fail to instantiate,
-which would be unacceptable. I think you'll need something like
+	for (tidx = t_idx; tidx; tidx--)
+For me a for loop indicates bounds are known and we change the index
+one per loop. While loop indicates either unknown bounds, or that we are
+modifying the index other than than in the loop controls.
 
-	err = devm_regulator_get_enable_optional(dev, "vcc");
-	if (err && err != -ENODEV)
-		return dev_err_probe(dev, err, "Failed to enable regulator\n");
 
-Even though the regulator is now mandatory, existing devicetree bindings
-don't know that.
+> +		for (i = 0; i < gts->num_hwgain ; i++) {
 
-Guenter
+Extra space after hwgain
+
+> +			int *candidate = &scales[t_idx][i * 2];
+>  			int chk;
+>  
+> -			if (candidate > all_gains[new_idx - 1]) {
+> -				all_gains[new_idx] = candidate;
+> -				new_idx++;
+> +			if (scale_smaller(candidate, &all_scales[new_idx - 2])) {
+> +				all_scales[new_idx] = *candidate;
+
+Maybe candidate[0] and candidate[1] will be more readable as it's effectively a row of
+of 2D matrix.
+
+> +				all_scales[new_idx + 1] = *(candidate + 1);
+> +				new_idx += 2;
+>  
+>  				continue;
+>  			}
+> -			for (chk = 0; chk < new_idx; chk++)
+> -				if (candidate <= all_gains[chk])
+> +			for (chk = 0; chk < new_idx; chk += 2)
+> +				if (!scale_smaller(candidate, &all_scales[chk]))
+>  					break;
+>  
+> -			if (candidate == all_gains[chk])
+> +
+> +			if (scale_eq(candidate, &all_scales[chk]))
+>  				continue;
+>  
+> -			memmove(&all_gains[chk + 1], &all_gains[chk],
+> +			memmove(&all_scales[chk + 2], &all_scales[chk],
+>  				(new_idx - chk) * sizeof(int));
+> -			all_gains[chk] = candidate;
+> -			new_idx++;
+> +			all_scales[chk] = *candidate;
+As above. Maybe treat as a 2 element array.
+
+> +			all_scales[chk + 1] = *(candidate + 1);
+> +			new_idx += 2;
+>  		}
+>  	}
+
 
 
