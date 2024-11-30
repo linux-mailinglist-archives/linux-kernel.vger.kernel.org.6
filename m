@@ -1,71 +1,57 @@
-Return-Path: <linux-kernel+bounces-426210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB2F9DF050
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:27:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2BF7162F53
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:27:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADEA19307D;
-	Sat, 30 Nov 2024 12:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Lgok3lwe"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC409DF052
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:30:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F6716EB56
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 12:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732969622; cv=none; b=NvcTPQFCLkYG5ABIHIjuN0YAu7SYd6wz5JaBUP+hmP7b+Rkj4ERtWtZSwKt8BtW1tTFo1JYD4fBDkrALGvF+1qDESLoZpcA1q5d6P2abwEivFptAMh6tEJcrLNpiCGslMkTgZtkKIZHq8DrnFT5k/7wDj+69WAOKWk9bwIXlnB0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732969622; c=relaxed/simple;
-	bh=+md5XKQtp1HGP8cWJAlUcT/mtjiD68rmg7hfdZAywFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KWEtdkj50Gis2XoSKKVw2Dt2lCRbZj8xPVrvO6swePIt11e9/bLlOONNee40q/JVPRKX1PiO49j7ZAeO/nBhwvnsmHqH7IBFhtTLzyAEd0d+r+f8kcQJ2O1b1tO/dgFStomONl8JjR/Xr8ROrGQhqJWunjGJxsDGC54DOzM6cjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Lgok3lwe; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E072340E0269;
-	Sat, 30 Nov 2024 12:26:56 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8j_yPeIUIkxB; Sat, 30 Nov 2024 12:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732969612; bh=9b7rsjWYOUmku+dAyh3+ep0fV3qRv+nk40t8NGxwypc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Lgok3lweqO3mbM8bDzAGdIHD1MTXHt6xEV3+nVLEFbXVYBFPzV6ANaV14pyFudpj2
-	 gj4+Ils6v5UwR0BeR3xKT3ERW/f5RLDQ5KS7qjUCVErGDv0rvfpqJ31WnvJ0EwI1yZ
-	 Y7Ptne0anLCtj/ngT4AcEa4HHnUzn00HcHncI8n+tr/RCvgNcoi42+gMk/Gms7bwtP
-	 A+us7UeQe4P7zcTUwkfRgzCcICwOFILoTamUV2rca9lAACM6lv7ZDRnxfmR2gH2+xu
-	 iMApvOZ4LIsrTCAMFiwAljXTOxmyfWx/Kzk2HoXfOOIQkuEmYBD5sm7SIqzBr+VJnP
-	 oTLGcq1/BlIkByTpf5KGyun7I8otM7B8jPXpqMwT9GQ4ZJMcMhRAAAXXFAiDkxRslI
-	 YCX3qoieQ7QH8JclAG4WrnyTGeJqjJvdOhqgNf7XddxB2xU3B7LMo+M7p5nVTSMrb+
-	 Mk5oyKWFsOTZX1uDGqnukSJMn4Pp2o9fyrW6nN2iqro984nRA/NX17QwgURvhn5HlY
-	 IpBC7t+CqR/uTWHSw57x2NOgr82gx9Ab3cTAJpf879mNK+lFKUnIyJqZn+m6NgcCZc
-	 QQxk2bh48t6sg2M0NOlM0WSprU+lAG6L/ieQwUcYGixHiY45R1Qxa9IBHNAcBHoWP9
-	 aIGLRFlsmTMXL3RvzcgIpOjs=
-Received: from zn.tnic (p200300ea9736a15f329C23FffEA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a15f:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A422815FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:30:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7557E198E74;
+	Sat, 30 Nov 2024 12:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoBByyPm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0A36240E0200;
-	Sat, 30 Nov 2024 12:26:49 +0000 (UTC)
-Date: Sat, 30 Nov 2024 13:26:44 +0100
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-To: x86-ml <x86@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86/boot/compressed: Remove unused header includes from
- kaslr.c
-Message-ID: <20241130122644.GAZ0sEhD3Bm_9ZAIuc@fat_crate.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE925156F30;
+	Sat, 30 Nov 2024 12:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732969798; cv=none; b=OWab6rFBhak9OX5BSAt3uk9uJLH2GxmMnftpySaJjQU4+oyvul+Xg1VjwTih4J846PYtKA+lXVZir426HrbR6Bl8cGfYp6vMR8BRlw3wX/1TqXj84fT7AMZ9qzXnfB8YQG9593+VEI9XTDIhtQjsmbUF2AWC479ltkuB8ZFX4wk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732969798; c=relaxed/simple;
+	bh=0B7+NJKg6PDFktmYDGKBJZxB5QZ8x8bluiluB7gfHbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z4KJ5aD3uLubNDjpFd3oxVVKbuVUgOID4IVbut67kmJ1F4wTjm+DHEys/eVRNKShr6bXv3l0O6fFodoFXA9di2QJIh0EaArUDFKRqMNzIZkenA2KjtAUPXLYnePnmS3nBIS3jNnovobuNnzp33Jxpx2KC5UfToZczUHnaydZg0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoBByyPm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EBAEC4CECC;
+	Sat, 30 Nov 2024 12:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732969798;
+	bh=0B7+NJKg6PDFktmYDGKBJZxB5QZ8x8bluiluB7gfHbw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uoBByyPmW9thOAgNMA++sY/TzO60gZgiNi8cCqo6Y5MAS9aKZwVs7+iOD5Ojmo+1N
+	 zKpmYi5jn5hDP1U52B+D8AQWxi7wF27LyIHkRE2Q6Y9o+tBq5NJgEYxiok4AY3Jak4
+	 JRu1DjANRWU8+4bC1v/cqplcZbmS2FqXxotV3mAPU7rJPaaBiqLkHEQNoB6jrL+czB
+	 nUVAT/PzU+UkvGhC1yyCcycdrUk/C96IYKN3nHAxGD3b2Um8J6jbmgd6ylBKX5K/QS
+	 4+9cYYIZP/bpSaoddmNZL6n1ES6fq80OIB0zONDx2dmDE7LrAcFHytYMxoz/DahKxv
+	 sOFYd13zcUSWw==
+Date: Sat, 30 Nov 2024 13:29:52 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Tycho Andersen <tandersen@netflix.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] exec: fix up /proc/pid/comm in the
+ execveat(AT_EMPTY_PATH) case
+Message-ID: <20241130-ohnegleichen-unweigerlich-ce3b8af0fa45@brauner>
+References: <20241130045437.work.390-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,40 +60,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241130045437.work.390-kees@kernel.org>
 
-Nothing is using the linux/ namespace headers anymore. Remove them.
+On Fri, Nov 29, 2024 at 08:54:38PM -0800, Kees Cook wrote:
+> Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> switching to execveat() for service execution, but can't, because the
+> contents of /proc/pid/comm are the file descriptor which was used,
+> instead of the path to the binary. This makes the output of tools like
+> top and ps useless, especially in a world where most fds are opened
+> CLOEXEC so the number is truly meaningless.
+> 
+> When the filename passed in is empty (e.g. with AT_EMPTY_PATH), use the
+> dentry's filename for "comm" instead of using the useless numeral from
+> the synthetic fdpath construction. This way the actual exec machinery
+> is unchanged, but cosmetically the comm looks reasonable to admins
+> investigating things.
+> 
+> Instead of adding TASK_COMM_LEN more bytes to bprm, use one of the unused
+> flag bits to indicate that we need to set "comm" from the dentry.
+> 
+> Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
+> Suggested-by: Tycho Andersen <tandersen@netflix.com>
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> CC: Aleksa Sarai <cyphar@cyphar.com>
+> Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: linux-mm@kvack.org
+> Cc: linux-fsdevel@vger.kernel.org
+> 
+> Here's what I've put together from the various suggestions. I didn't
+> want to needlessly grow bprm, so I just added a flag instead. Otherwise,
+> this is very similar to what Linus and Al suggested.
+> ---
+>  fs/exec.c               | 22 +++++++++++++++++++---
+>  include/linux/binfmts.h |  4 +++-
+>  2 files changed, 22 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 5f16500ac325..d897d60ca5c2 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1347,7 +1347,21 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  		set_dumpable(current->mm, SUID_DUMP_USER);
+>  
+>  	perf_event_exec();
+> -	__set_task_comm(me, kbasename(bprm->filename), true);
+> +
+> +	/*
+> +	 * If the original filename was empty, alloc_bprm() made up a path
+> +	 * that will probably not be useful to admins running ps or similar.
+> +	 * Let's fix it up to be something reasonable.
+> +	 */
+> +	if (bprm->comm_from_dentry) {
+> +		rcu_read_lock();
+> +		/* The dentry name won't change while we hold the rcu read lock. */
+> +		__set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
-
-I'm really surprised how nothing really needs those includes anymore - at
-least my couple of 100 randbuilds all pass.
-
- arch/x86/boot/compressed/kaslr.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index f4d82379bf44..f03d59ea6e40 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -25,10 +25,6 @@
- #include "efi.h"
- 
- #include <generated/compile.h>
--#include <linux/module.h>
--#include <linux/uts.h>
--#include <linux/utsname.h>
--#include <linux/ctype.h>
- #include <generated/utsversion.h>
- #include <generated/utsrelease.h>
- 
--- 
-2.43.0
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+What does the smp_load_acquire() pair with?
 
