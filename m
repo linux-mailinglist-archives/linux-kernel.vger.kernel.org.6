@@ -1,146 +1,209 @@
-Return-Path: <linux-kernel+bounces-426096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FA59DEEE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 05:05:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9023B9DEEE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 05:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B780A163677
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:05:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44D0616364C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2348A1369AA;
-	Sat, 30 Nov 2024 04:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAskCHrb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1490136E21;
+	Sat, 30 Nov 2024 04:08:53 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7074A1EB3D;
-	Sat, 30 Nov 2024 04:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE29820330;
+	Sat, 30 Nov 2024 04:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732939512; cv=none; b=eELGwFCuyQnzarKX1GAuFDEDjeZNN9MLoWryPwpLEp0t87R954RdfYN5Hk86CXSol44uxI3oZLdG5/JhLnB6CKKum0UFtoflBdIPTqzZ2lxNlmlcio3M10xix1yIP3/6IMvFS+QD2Q6WOrA7mDaA9ytr0UrYIb4VexQ0u9syVow=
+	t=1732939733; cv=none; b=QS4QDk9bKBbfQ/GREpCOrvYD+37kEa3A7Uma7gXT7iuFcawJZV70wpbKthU0k5i/mi/rx4dntrhWkkzB8EWLN8sSszO9pXM/FWQeq/WGoS2SSHI7jwkz0EHgtWUynSVYBW4eNsORUpvqdocRpV3APBQ+v7g+crzeZ8tgzYAPmHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732939512; c=relaxed/simple;
-	bh=J+yWMeElKC/wy0LdewAgmAXpJwqJQdoSPQCF/yS6RMg=;
+	s=arc-20240116; t=1732939733; c=relaxed/simple;
+	bh=Ra/qEqGylz90/Ef1ecdWd7CfA5ffLRvRAFot+tP+KTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JssLgw/ERLeAfgFeQu0wbkBVO0aTcsqYirpTsI4C6FsuyekIlnJFrt3lyF65pn7WhYRv/4tLaWf7b6aIkAE5f3zYyuTLWNsUc0JfQvM4Xb06d4YEUDivaNxhp6sSVGBm5H9XE2GUar9OCS8heXTHjKQxBM7iBre0RCtvjnZSgzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAskCHrb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B10CDC4CECC;
-	Sat, 30 Nov 2024 04:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732939512;
-	bh=J+yWMeElKC/wy0LdewAgmAXpJwqJQdoSPQCF/yS6RMg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gAskCHrb95155Uf1w6MZKbLwh0Gegiy8PcWe7bGNuq7Saj7PvX4KiNn0Gi4Fq3ASx
-	 lmaIKj7kSEYPcO1oIexORufR9D8bsljEeVeF/f5EoybQnoKK96Ff3SX6C4V94f4jyC
-	 x9hOXLTR31sfjPzV2SYY6WFgNxnBy1K3PL91s+1msQhL74ZY0RJYnoSdLohnyjSpCf
-	 CRIEK4atexATnJoAPWP3ldksrGuijNNPT83Xb/bfC8UkWPwe+mgQGBxlwG3gB4u+Hd
-	 G+BfqM888p22gXW9qHKlRtHQ78FIBACuz3goeEVukeBPNbFLYxbSnZio95p9glDpy7
-	 BwbWHrad6Lnmw==
-Date: Fri, 29 Nov 2024 22:05:07 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-spi@vger.kernel.org, quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com
-Subject: Re: [PATCH v2 1/2] dmaengine: qcom: gpi: Add GPI immediate DMA
- support
-Message-ID: <fbpdzrwmlmqhyblchgaq6etmnc5wjd3ierwmtrer5hnwjf7qb3@axgwdegmbs6z>
-References: <20241128133351.24593-1-quic_jseerapu@quicinc.com>
- <20241128133351.24593-2-quic_jseerapu@quicinc.com>
- <obv72hhaqvremd7b4c4efpqv6vy7blz54upwc7jqx3pvrzg24t@zebke7igb3nl>
- <1666035c-d674-43dd-bc33-83231d64e5f7@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hze5IrXAasFcfraG5gqaIJVVwrQ4hdrgkW4oSaDCk0LEggCm4vrEzN8G3H1R1CUPMW6ksD5tIblIpQ5OK6v5MfgKqrUH6QWOYpvqg798GFdUgBYJ7h79pDpztbRHQoLtr7XoGIfITHyVOprJwBSzfbzinhZfltkOk4kXV7FvK1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 118AD654; Fri, 29 Nov 2024 22:08:42 -0600 (CST)
+Date: Fri, 29 Nov 2024 22:08:42 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: cgzones@googlemail.com
+Cc: linux-security-module@vger.kernel.org, Serge Hallyn <serge@hallyn.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org,
+	cocci@inria.fr
+Subject: Re: [PATCH 01/11] coccinelle: Add script to reorder capable() calls
+Message-ID: <20241130040842.GB65112@mail.hallyn.com>
+References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
+ <20241125104011.36552-11-cgoettsche@seltendoof.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1666035c-d674-43dd-bc33-83231d64e5f7@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241125104011.36552-11-cgoettsche@seltendoof.de>
 
-On Fri, Nov 29, 2024 at 05:02:22PM +0530, Jyothi Kumar Seerapu wrote:
-> On 11/28/2024 8:53 PM, Bjorn Andersson wrote:
-> > On Thu, Nov 28, 2024 at 07:03:50PM +0530, Jyothi Kumar Seerapu wrote:
-> > > diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
-[..]
-> > 
-> > >   	/* first create config tre if applicable */
-> > >   	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
-> > > @@ -1763,14 +1767,32 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
-> > >   	tre_idx++;
-> > >   	address = sg_dma_address(sgl);
-> > > -	tre->dword[0] = lower_32_bits(address);
-> > > -	tre->dword[1] = upper_32_bits(address);
-> > > +	len = sg_dma_len(sgl);
-> > > -	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
-> > > +	/* Support Immediate dma for write transfers for data length up to 8 bytes */
-> > 
-> > And what happens if the developer writing the SPI driver forgets to read
-> > this comment and sets QCOM_GPI_IMMEDIATE_DMA for a 9 byte transfer?
-> In V2 patch, QCOM_GPI_IMMEDIATE_DMA is set based on
-> QCOM_GPI_IMMEDIATE_DMA_LEN only.
+On Mon, Nov 25, 2024 at 11:40:04AM +0100, Christian Göttsche wrote:
+> From: Christian Göttsche <cgzones@googlemail.com>
 > 
-
-I assume you mean "patch 2/2". So, what happens if someone refactors the
-SPI driver in the future, will they read this comment?
-
-> As per Hardware programming guide, immediate dma support is for up to 8
-> bytes only.
-> Need to check what is the behavior if we want to handle 9 bytes using
-> immediate dma feature support.
+> capable() calls refer to enabled LSMs whether to permit or deny the
+> request.  This is relevant in connection with SELinux, where a
+> capability check results in a policy decision and by default a denial
+> message on insufficient permission is issued.
+> It can lead to three undesired cases:
+>   1. A denial message is generated, even in case the operation was an
+>      unprivileged one and thus the syscall succeeded, creating noise.
+>   2. To avoid the noise from 1. the policy writer adds a rule to ignore
+>      those denial messages, hiding future syscalls, where the task
+>      performs an actual privileged operation, leading to hidden limited
+>      functionality of that task.
+>   3. To avoid the noise from 1. the policy writer adds a rule to permit
+>      the task the requested capability, while it does not need it,
+>      violating the principle of least privilege.
 > 
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 
-I'm saying that you have a comment here which says that the caller must
-not pass len > 8. Write that comment in code to avoid mistakes - either
-now or in the future.
+Hi,
 
-> > 
-> > > +	if ((spi->flags & QCOM_GPI_IMMEDIATE_DMA) && direction == DMA_MEM_TO_DEV) {
-> > 
-> > Why is this flag introduced?
-> > 
-> > If I understand the next patch, all DMA_MEM_TO_DEV transfers of <=
-> > QCOM_GPI_IMMEDIATE_DMA_LEN can use the immediate mode, so why not move
-> > the condition here?
-> > 
-> > Also ordering[1].
-> > 
-> > 	if (direction == DMA_MEM_TO_DEV && len <= 2 * sizeof(tre->dword[0]))
-> > 
-> > 
-> Sure, thanks for the suggestion.
-> so, instead using "QCOM_GPI_IMMEDIATE_DMA_LEN" need to use " 2 *
-> sizeof(tre->dword[0])" for 8 bytes length check.
+these all look good to me.
+
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+
+Except for, in fact, this patch, as I'm not versed in .cocci and
+can't tell whether it's doing the right thing.  Looks like it is,
+based on the patches you sent...
+
+> ---
+>  MAINTAINERS                                |  1 +
+>  scripts/coccinelle/api/capable_order.cocci | 98 ++++++++++++++++++++++
+>  2 files changed, 99 insertions(+)
+>  create mode 100644 scripts/coccinelle/api/capable_order.cocci
 > 
-
-Either one works, but I'm guessing that while 8 is the right number the
-reason for 8 is that the data is passed in 2 * dword.
-
-
-The important thing is that you're encoding the length check here, so
-that the client can't by mistake trigger immediate mode with > 8 bytes.
-As a side effect, you no longer need the QCOM_GPI_IMMEDIATE_DMA flag and
-should be able to drop patch 2.
-
-> > [1] Compare "all transfers of length 8 or less, which are mem to device"
-> > vs "all transfers which are mem to device, with a length of 8 or less".
-> > The bigger "selection criteria" is the direction, then that's fine tuned
-> > by the length query.
-> > 
-> > > +		buf = sg_virt(sgl);
-> > 
-> > It's a question of style, but I think you could just put the sg_virt()
-> > directly in the memcpy() call and avoid the extra variable.
-> 
-> Okay, i will directly put sg_virt() in memcpy().
-
-Try it out, pick the option that look the best.
-
-Regards,
-Bjorn
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e7f017097701..ab5ea47b61e2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5106,6 +5106,7 @@ S:	Supported
+>  F:	include/linux/capability.h
+>  F:	include/uapi/linux/capability.h
+>  F:	kernel/capability.c
+> +F:	scripts/coccinelle/api/capable_order.cocci
+>  F:	security/commoncap.c
+>  
+>  CAPELLA MICROSYSTEMS LIGHT SENSOR DRIVER
+> diff --git a/scripts/coccinelle/api/capable_order.cocci b/scripts/coccinelle/api/capable_order.cocci
+> new file mode 100644
+> index 000000000000..4150d91b0f33
+> --- /dev/null
+> +++ b/scripts/coccinelle/api/capable_order.cocci
+> @@ -0,0 +1,98 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +///
+> +/// Checks for capable() calls of the left side of a binary expression.
+> +/// Reordering might avoid needless checks, LSM log messages, and more
+> +/// restrictive LSM security policies (e.g. SELinux).
+> +/// Can report false positives if the righthand side contains a nested
+> +/// capability check or has side effects.
+> +///
+> +// Confidence: Moderate
+> +// Copyright: (C) 2024 Christian Göttsche.
+> +// Options: --no-includes --include-headers
+> +// Keywords: capable, ns_capable, sockopt_ns_capable
+> +//
+> +
+> +virtual patch
+> +virtual context
+> +virtual org
+> +virtual report
+> +
+> +//----------------------------------------------------------
+> +//  Pattern to ignore
+> +//----------------------------------------------------------
+> +
+> +@ignore@
+> +identifier F1 = { capable, ns_capable, sockopt_ns_capable };
+> +identifier F2 = { capable, ns_capable, sockopt_ns_capable };
+> +binary operator op,op1,op2;
+> +expression E;
+> +position p;
+> +@@
+> +
+> +(
+> +F1@p(...) op F2(...)
+> +|
+> +E op1 F1@p(...) op2 F2(...)
+> +)
+> +
+> +
+> +//----------------------------------------------------------
+> +//  For patch mode
+> +//----------------------------------------------------------
+> +
+> +@ depends on patch@
+> +identifier F = { capable, ns_capable, sockopt_ns_capable };
+> +binary operator op,op1,op2;
+> +expression E,E1,E2;
+> +expression list EL;
+> +position p != ignore.p;
+> +@@
+> +
+> +(
+> +-  F@p(EL) op E
+> ++  E op F(EL)
+> +|
+> +-  E1 op1 F@p(EL) op2 E2
+> ++  E1 op1 E2 op2 F(EL)
+> +)
+> +
+> +
+> +//----------------------------------------------------------
+> +//  For context mode
+> +//----------------------------------------------------------
+> +
+> +@r1 depends on !patch exists@
+> +identifier F = { capable, ns_capable, sockopt_ns_capable };
+> +binary operator op,op1,op2;
+> +expression E, E1, E2;
+> +position p != ignore.p;
+> +@@
+> +
+> +(
+> +*  F@p(...) op E
+> +|
+> +*  E1 op1 F@p(...) op2 E2
+> +)
+> +
+> +
+> +//----------------------------------------------------------
+> +//  For org mode
+> +//----------------------------------------------------------
+> +
+> +@script:python depends on org@
+> +p << r1.p;
+> +@@
+> +
+> +cocci.print_main("WARNING opportunity for capable reordering",p)
+> +
+> +
+> +//----------------------------------------------------------
+> +//  For report mode
+> +//----------------------------------------------------------
+> +
+> +@script:python depends on report@
+> +p << r1.p;
+> +@@
+> +
+> +msg = "WARNING opportunity for capable reordering"
+> +coccilib.report.print_report(p[0], msg)
+> -- 
+> 2.45.2
 
