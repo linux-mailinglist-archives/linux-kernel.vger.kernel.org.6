@@ -1,84 +1,82 @@
-Return-Path: <linux-kernel+bounces-426170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9CD9DEFD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:06:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8785A9DEFD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DFC4163078
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A95416314D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94CD155CB0;
-	Sat, 30 Nov 2024 10:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261EC155742;
+	Sat, 30 Nov 2024 10:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VS/zch+m"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZcAq/0oX"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813611531CB
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C091537CE
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732961210; cv=none; b=tLpoabRvdG+l4D9i1lwTs1XmTlV6k3fxMHBLJyHpR56/dBID7XKHsEkOY9z1lL9OZkHvz4uY8gP1bKYOm6+L2mssX9miL7lnT720oqiNItpIgTxUF8s3K3KezFnrhGttMEOJoNiVMydrWUPJcvzk1VT9bNc7MhiLnqaqt1PTI/M=
+	t=1732961250; cv=none; b=Oz9NoYfH5xyIsq1jj8FaI1POauIdhPmUgMBxd01eUIIslvNocZ9o9wJ/m1SpI2WDkgCsYXPSLJbyqFcZtVDFskANcQDnVgzk9Nx/XD6Bk2pPOc0rH0jdS+CTaHY0DmSREkYMWHcEKsRtcMsMrgXmoP3sfIsxbh6mH3so/mNXNms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732961210; c=relaxed/simple;
-	bh=yF4jc/0jnas8u7mphux/NDbZLQaah9CybZy/aj1SKX8=;
+	s=arc-20240116; t=1732961250; c=relaxed/simple;
+	bh=R+Jgx/e6IiVY0ZpZJeWh0nRjB/zOm/DuktMO1fY1cTM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tsyQywSUkPJaD6rg4VPBqI8WGbcZ9HsbuoijBmyT51Gp2+/SZbBVTO2B0StDmgnSj/z0OfGWwEPKWanZILOeP9yDtneDJ4GxAhb1xSOr8Vjd0N0+sTLB0MyVTo38D/vRgb4oR0DAXg9+F5tKBR1bgUnza7jsSlwD0RGMnLaOUqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VS/zch+m; arc=none smtp.client-ip=209.85.208.44
+	 Content-Disposition; b=QexsnwM4xvWoW7ZCnHDJfrJ0qz8+FN/gOVevvr+dCwpcAeVJ65Z2r5O7yrV8oSALQ6pCHpi1egMe8cpyhC7R3HwqdIP/ue9OtRHdGax7K8GUGEvGhSZXXDbm/ZLIhFRXB0Ejb6V1xHq71GSlLxmTvNs5IzhtuzCg6rmXNyFUSg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZcAq/0oX; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cfbeed072dso4036451a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:06:47 -0800 (PST)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa560a65fd6so456070466b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:07:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732961206; x=1733566006; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732961247; x=1733566047; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=c8lTqcXsmGRMOtMxTUX660jV7KdM2uwrFwbDJ8pCTWo=;
-        b=VS/zch+m09chtAANJf75Mhcb0ZQcPj5smcPYN9Qdmn3GwT8IaMs3dNiwBqi+Eref0w
-         JGTk4lZG/FvqYZY0ZMbh/KOakPJoeA308dY8OwC9HY9M+iBWsdAwLOUvueJEhUGIQZON
-         yeJdXzV9V5YbZCzMYshLFMkam99FbSUwL8+p8DARNw59uQ6x7kv1OV1BJiQNgXDhS9gb
-         sUiuy5mEvExGdmImNyRwbz5PvVtGvmnkQPVMHBsZLTi6ZvPx2U9nrm5WuV+x0OfHjIyf
-         vG89wIjEvmTyZ4tDSZ5ukP6y8JsgXvtHb7oyoM+VTV7CJSEHWtbrcW4cHyg9klKXuChP
-         XfNQ==
+        bh=q3IOEa3AQiadqfvRPE7ZHtURn1mAXU3PzuocV6bnPJs=;
+        b=ZcAq/0oX7C8KVYG/ZNEWGiq+rODl3cW/stpoSOxufwo+VTslKfcHeFABBy7igwICUN
+         YssiZ2pNY6Z/NGNPlWyJbisSS9MBPs91L1rO86BdyyJiTRdfmgB3FXxSQ4yq9EEX2sg/
+         OoNlcHOtLd6jfWZn6R3FDyIHQhrBQm9dGFUvQUn58d3f4Hq7WXhIh3TIG614ubAn/zQR
+         ez0pe9Td24qrcbTc+r59kUQeeU0ShIzSlnx2dhvMX7vsDRAyuhdTatDdXbJKCyvctgZM
+         qKBTe6nRDTbKxEJNl4SAG0eScdO62k1GlI8vpHrIy8Ax58JFBN3korfX+uEewUpC1oyJ
+         R5tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732961206; x=1733566006;
+        d=1e100.net; s=20230601; t=1732961247; x=1733566047;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8lTqcXsmGRMOtMxTUX660jV7KdM2uwrFwbDJ8pCTWo=;
-        b=Pm0Ce08G/IWPrONrD5JmP/WqM2pLzrKuXhT07Dhg0DGlimY3+DQaUv9rRgxW/XTd/K
-         8XLvfgh7v4y2OpSVSPYhLOSz5qKLAFy5zYNG8X01/P0NOrISxLFA9CgPuv9tGUdKMMpz
-         a0UMH8qW7quYq4et7AiaZ0VyWK69xENdCUAMrsEq+TXIYWpE3q0aRf9WQ42SMCfuh/9E
-         bWZGLlI1lAbdiODiZ5MDhcoXrf0IHIWt0+CddGC1LbWjxTxMlMCQK3nwWv4RFyNOas7N
-         4o8oyskGV5PV04TtIM7C9XlqzdKFjcDVuT7XC6B+nZtWi0oSIi90omMHoHchX85j8Be+
-         gQ1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrrBAo4OpQa/7RzQCyFnFdQP4JBtNFUtOm+F5DLojxhOyVrjLxqxZMJxMr4hTl6rwBe/b5ZLKej6RUE28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynRQgP8X4HmYZ0EX4jcMm7LyeA3J6kihrDrQxkTdoxJgbGuyKH
-	ESxpCZbuxzrPfKFZQLnFVcGwE27AKxZ3YtxLzBDC4RFtpv6yOxHt9thiwkPtHGc=
-X-Gm-Gg: ASbGncvCbJThGzLLriqXnvYz4OJTh66uB0+B2sP9eTuGhL+TO+zgTL1yzqlI8aczNlp
-	NHRxTeNTcMrgQSUZwUXER6zY3OJoaIGxkH2icJNFGlH/kKoD2yYBiAgC9ffzS85g+LXQoteCppZ
-	yi04ND3eJBYYpbbSMq6Ibsfp339vcBs3ruVjfD8uTmif8a0yB0fZC8wGQmJAUatEC9ANeaKwXvd
-	0R3vTucAl4vsqgC6WHCNZ34ZP8myvH0vduixOC3UcdYxpvkoEr/el3PQ0qniI2aJR9l3YhD
-X-Google-Smtp-Source: AGHT+IG1JrcrPGtyAZJteVJCHxH7vH8ZY5O7MkjzsGsefj4ES1XpFTzV8A+g+FkUnjuwPIicEV56fQ==
-X-Received: by 2002:a05:6402:1d50:b0:5d0:b931:8db9 with SMTP id 4fb4d7f45d1cf-5d0b9319043mr5867129a12.20.1732961205855;
-        Sat, 30 Nov 2024 02:06:45 -0800 (PST)
+        bh=q3IOEa3AQiadqfvRPE7ZHtURn1mAXU3PzuocV6bnPJs=;
+        b=GL+2dg3L/dN5Of8Yz2vSsPJ0mWH3VEF3QVF1rfYOE6/lGkjSjQO+zt57WcKCGbbn2T
+         dgFRyBbNu+xSxdmP9UZcYWTkoEPA2eiRMT2DiyRYewVvg6NxZ4mTJ9FBAU9MPm7KAsIR
+         JDe7jv3UecTWIXcfRMCssI50sEdGYF4iVjiv8cTHPA4LHVFInSVhq/wWbv0KUvhxEPKL
+         MBxO/RgRfqvaJpEaQGOGJ5K552s49szWka3eHnyDRCs7/INjsFSY638mzxI0YERl4aJE
+         iIlBnjudlVi8Gw5TGv/+Hnl7F6YZ8LI3wQ6oqnSX2WzrKjMp8tsNob5J4OQp7k9N5yap
+         NP5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUF8QFCTszpDoyBi9wiY1z+M27dWmFj5ewEG01XWVRrMU2a8sQ/urlU0ihih2HY/ReJ/W1dwbA19B2WEaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5z+aRTSS5UTncMeRpTztqk+Oho5+C2snl3MJfxlFQcqIYumDR
+	c5n4AZNF556HDYqnsXhYTrXn0SdN4WhQkE8pExka0gXR66dVF2BQqHLGwv7U/EQ=
+X-Gm-Gg: ASbGncthGeKdGLl3bafRnldsd2qK23O8JkralRHIvxXen9Uh+cRQvugyes0r9p61ygx
+	pGVE1OYKyt7qe//Kf4OA65GXWNKAQgr0j6+WS4BzIWoYktmMd4MBMNEv+pFGcbbxCJIQXAenirZ
+	239U9VC6GggjCX+RRvIUGgqPICM6ZJzKGc7B1PTVBes1WRKDa7ocpZjFb2ChH5BDZFL+nGClNDn
+	ql8w77Myxt9L9XeJDnTk+GjRq8D9IRamFtojmr/ERbiFWXgK3pzwH0ZMIt6XW4iXpJbhuad
+X-Google-Smtp-Source: AGHT+IGEehsqRqqchxpEeMpH2p56+C1aMQS6P8kLj4wjLRwyQQPVWBU9FOYoHm9xPFqfOvMYDmrCvQ==
+X-Received: by 2002:a17:907:7ba0:b0:a9e:b08f:867e with SMTP id a640c23a62f3a-aa5945dd02fmr1077135366b.16.1732961247420;
+        Sat, 30 Nov 2024 02:07:27 -0800 (PST)
 Received: from localhost (h1109.n1.ips.mtn.co.ug. [41.210.145.9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996df78csm267844366b.67.2024.11.30.02.06.44
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59990a783sm264103866b.171.2024.11.30.02.07.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 02:06:45 -0800 (PST)
-Date: Sat, 30 Nov 2024 13:06:41 +0300
+        Sat, 30 Nov 2024 02:07:27 -0800 (PST)
+Date: Sat, 30 Nov 2024 13:07:23 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Roland Dreier <roland@kernel.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Erick Archer <erick.archer@gmx.com>,
-	Akiva Goldberger <agoldberger@nvidia.com>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: Daire McNamara <daire.mcnamara@microchip.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] RDMA/uverbs: Prevent integer overflow issue
-Message-ID: <b8765ab3-c2da-4611-aae0-ddd6ba173d23@stanley.mountain>
+Subject: [PATCH] mailbox: mpfs: fix copy and paste bug in probe
+Message-ID: <9e760329-80ed-4bf7-8d4f-dbb16a736497@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,70 +87,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-In the expression "cmd.wqe_size * cmd.wr_count", both variables are u32
-values that come from the user so the multiplication can lead to integer
-wrapping.  Then we pass the result to uverbs_request_next_ptr() which also
-could potentially wrap.  The "cmd.sge_count * sizeof(struct ib_uverbs_sge)"
-multiplication can also overflow on 32bit systems although it's fine on
-64bit systems.
+This code accidentally checks ->ctrl_base instead of ->mbox_base so the
+error handling can never be triggered.
 
-This patch does two things.  First, I've re-arranged the condition in
-uverbs_request_next_ptr() so that the use controlled variable "len" is on
-one side of the comparison by itself without any math.  Then I've modified
-all the callers to use size_mul() for the multiplications.
-
-Fixes: 67cdb40ca444 ("[IB] uverbs: Implement more commands")
-Cc: stable@vger.kernel.org
+Fixes: a4123ffab9ec ("mailbox: mpfs: support new, syscon based, devicetree configuration")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/infiniband/core/uverbs_cmd.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/mailbox/mailbox-mpfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
-index 66b02fbf077a..5ad14c39d48c 100644
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -161,7 +161,7 @@ static const void __user *uverbs_request_next_ptr(struct uverbs_req_iter *iter,
- {
- 	const void __user *res = iter->cur;
+diff --git a/drivers/mailbox/mailbox-mpfs.c b/drivers/mailbox/mailbox-mpfs.c
+index 4df546e3b7ea..d5d9effece97 100644
+--- a/drivers/mailbox/mailbox-mpfs.c
++++ b/drivers/mailbox/mailbox-mpfs.c
+@@ -251,7 +251,7 @@ static inline int mpfs_mbox_syscon_probe(struct mpfs_mbox *mbox, struct platform
+ 		return PTR_ERR(mbox->sysreg_scb);
  
--	if (iter->cur + len > iter->end)
-+	if (len > iter->end - iter->cur)
- 		return (void __force __user *)ERR_PTR(-ENOSPC);
- 	iter->cur += len;
- 	return res;
-@@ -2008,11 +2008,13 @@ static int ib_uverbs_post_send(struct uverbs_attr_bundle *attrs)
- 	ret = uverbs_request_start(attrs, &iter, &cmd, sizeof(cmd));
- 	if (ret)
- 		return ret;
--	wqes = uverbs_request_next_ptr(&iter, cmd.wqe_size * cmd.wr_count);
-+	wqes = uverbs_request_next_ptr(&iter, size_mul(cmd.wqe_size,
-+						       cmd.wr_count));
- 	if (IS_ERR(wqes))
- 		return PTR_ERR(wqes);
--	sgls = uverbs_request_next_ptr(
--		&iter, cmd.sge_count * sizeof(struct ib_uverbs_sge));
-+	sgls = uverbs_request_next_ptr(&iter,
-+				       size_mul(cmd.sge_count,
-+						sizeof(struct ib_uverbs_sge)));
- 	if (IS_ERR(sgls))
- 		return PTR_ERR(sgls);
- 	ret = uverbs_request_finish(&iter);
-@@ -2198,11 +2200,11 @@ ib_uverbs_unmarshall_recv(struct uverbs_req_iter *iter, u32 wr_count,
- 	if (wqe_size < sizeof(struct ib_uverbs_recv_wr))
- 		return ERR_PTR(-EINVAL);
+ 	mbox->mbox_base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(mbox->ctrl_base))
++	if (IS_ERR(mbox->mbox_base))
+ 		return PTR_ERR(mbox->mbox_base);
  
--	wqes = uverbs_request_next_ptr(iter, wqe_size * wr_count);
-+	wqes = uverbs_request_next_ptr(iter, size_mul(wqe_size, wr_count));
- 	if (IS_ERR(wqes))
- 		return ERR_CAST(wqes);
--	sgls = uverbs_request_next_ptr(
--		iter, sge_count * sizeof(struct ib_uverbs_sge));
-+	sgls = uverbs_request_next_ptr(iter, size_mul(sge_count,
-+						      sizeof(struct ib_uverbs_sge)));
- 	if (IS_ERR(sgls))
- 		return ERR_CAST(sgls);
- 	ret = uverbs_request_finish(iter);
+ 	return 0;
 -- 
 2.45.2
 
