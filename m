@@ -1,176 +1,229 @@
-Return-Path: <linux-kernel+bounces-426185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF6D9DEFFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:49:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C09E16363F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:49:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89139153BEE;
-	Sat, 30 Nov 2024 10:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fcszgs8u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7299DEFFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:50:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECC31C6A3
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 912EAB2164A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:50:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14A7153BEE;
+	Sat, 30 Nov 2024 10:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IJeS6ACo"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3391C6A3
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732963744; cv=none; b=JESenOalwMdphT1WEhfF95KpEKdF0GFe+pixL8CeKJgILx0oDnvxE3kyYDgkPDRr3dtIR+F/PB5zJ0zsNAghXQ3SHz+NJwh8RXY0ZYSe1sowZZTdrdjxZVYhokCSuHTqLqHyr8bjxtfE2aq56ET4VccmA3rcmdEDecz6a5wvF3s=
+	t=1732963820; cv=none; b=OC4gyfaOTvvhi9BXElDD8OpE4l6+xki4TQ5Wu1eXqmFdmUTw71im6AfJACuEnnrt6WotzuDh5xQRJBdE4UQcSOWXmPURDevvnu5kgDQ+Vuftz9ltMTysPMsY8DimZDPwQ4w0gyOkqrBD6k5zV27x3S0qkj0g5WapmEmDVTXEeVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732963744; c=relaxed/simple;
-	bh=MVvl0W1+H3sOktW4I+R3Dq6tD3ip0O/yNIfi6Whjllg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXLOMK/jVqcXurX4GhkUYafvf8Ih+4oJ1kyZSxAl8viwoEMnak1CZgUKPbmQsCozF0IHSFvT53NRt/dndRmISjHBp5EqgwZ5yAbV8fJV+gv1eJQ8hSMjELE3faDHyzpTXxe3gL2R1fcl7dMcCILJpXL1qv2dFksV846Q662/RQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fcszgs8u; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732963743; x=1764499743;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MVvl0W1+H3sOktW4I+R3Dq6tD3ip0O/yNIfi6Whjllg=;
-  b=Fcszgs8uuKLE7uR1OBwmhmjKwQSLtg0GjkCehrMk+z77Fwezkv5Jsajq
-   XcB+9Si1eBPxmo/7O1+w0xlYgEZ/Xrv404U4dp4UjpWIvlQGS7q/EkNbn
-   kz4uvLFyhRecag+Z5EOuWfFAbICsIi3GozexZxtq5FW5iiI+8g+ICBrsT
-   cZ0fdeX2H2zfAJdnOW5UlG6uKAjJn/838G1HyBo+1PASTsh293XwrdmkC
-   ThS/lh70eOKjPiCKL43CSvGGKWBy9vMS/+W2AdGdinyLFwQVl3iXW3FEs
-   mZ+Qt68flqVkAuHjWFxVX6ZL1loldXI9nzecDb+iEA7RGi/7LKLzbXQcQ
-   g==;
-X-CSE-ConnectionGUID: KSLYoy/xQHOE9ppwZDqmdw==
-X-CSE-MsgGUID: 6ue78v80RmqOR1uqVae6dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="20764203"
-X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
-   d="scan'208";a="20764203"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 02:49:02 -0800
-X-CSE-ConnectionGUID: XUN5KfFnRBSDDaxiqNgkuQ==
-X-CSE-MsgGUID: YEDs9fPFR3CIqt+bkW4Xag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,198,1728975600"; 
-   d="scan'208";a="97640669"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 30 Nov 2024 02:48:59 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tHL20-0000ad-2e;
-	Sat, 30 Nov 2024 10:48:56 +0000
-Date: Sat, 30 Nov 2024 18:48:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jocelyn Falempe <jfalempe@redhat.com>
-Subject: Re: [PATCH 5/5] drm/i915: Add drm_panic support
-Message-ID: <202411302022.wlwTKMBh-lkp@intel.com>
-References: <20241129162232.7594-6-jfalempe@redhat.com>
+	s=arc-20240116; t=1732963820; c=relaxed/simple;
+	bh=avIiZnETVH/3VkupZbAJg21hJTgUU1spUjS8F/J34Nc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TWbHrmHOhhmxEVZZe/LaOoVlvtFzCoqZ/3WctskPK+R84aMgeddrhwEbc8iaaXjhiljMu5gdYKXRxrsgUMehURed2aBle6Ac17tALAdxhGCjKIWEnoaojdCF6s6T9QPQ0NPnVRrz9rdXyeB2w+A/Zvn3pNDTl6HqHR8g8ONVd2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IJeS6ACo; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e9ff7a778cso2714531a91.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:50:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732963817; x=1733568617; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NJ4q1dNF8qJCePii0NxxAZvBJ0pPmCKcd6A67qAPMcE=;
+        b=IJeS6ACodKFuCUriySGuWoDWRWKr59fpl6oOG6iLJrQzjDjEfs9YTLq3BsEpUR7ysU
+         rpoS6mN4BuCI0Ns3+4zkzaJgT6DbQsUD9k+99W2ooYej74vLI8DGTbd6q1M2xkmtF6b8
+         Am/aryYRIi4eGZgy7KXUHdNSL8NVthKNoLrF0GrzpK/xH8UPRXD7FVbTNVrj3UmsowB+
+         0mmanN5CZ32O7D1OlGoAB950X/MuuhPns/ZPVD3QSUAVFbQMiU3yP+qJFNTBC89+xzE0
+         XUTc8LWM4pBSRrAlG6/j7CwvUW9d4cEt3VlD/8dNEr1xh8VTDx3wv753ez8YeqmGqvsE
+         5Q0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732963817; x=1733568617;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NJ4q1dNF8qJCePii0NxxAZvBJ0pPmCKcd6A67qAPMcE=;
+        b=hi6BizJZUMUbzt9rPW0Rj8H3vl+YGX3CPC78B/EAm1tOojN2S/o20KONxCP4t9xNX7
+         ONzZ5H4ihgYaVD1xKPAD/tJlhY3fULjxTGDRR9Ffb9A21XFdAnmcN8F9kBqgqBCSCyO3
+         jiOP+yLkH66Qb8ikVrJFh/EQiPTIE+VAELZgyqMgwmAvdba4jlfYvXIHVOr66zhqa5LH
+         JGjnsqbS8LAzk1vArazzj2pz7cIZFJj0YEdM0IgL5IM38e2T+nYgitANZqWdSmhNP6pk
+         7YFHojASBpUP0/fysfkmwFfuCrNEUQMhwy3p6bNsGenVWiL/IzTO5Cr6VGdV9P2qTsS7
+         trlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSGXA7RqoceGR9J+yCvYhb0eW112V9xNzd4X5m3jYx7TiEwfViMpA/BB8cKtejA9FUwH/8T8cpIeYR1Eg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6goRuu5xX+ZWWNK6NJBpL+YQcRBxWxYiLgbU6KYaw3k2Zd0o1
+	vJFJZn9Mtdknds3SD6FFlDI7KqA96TxalSJPkD4896cqKMXQsuN0UOsG40iZxuugyu7koxCUnOc
+	Xw3cDI/+C4wNcGNlQfg31v1oCGfzJ8aQF59pUFA==
+X-Gm-Gg: ASbGncuuH7+FivrYnXwmKB9gYPO36Hg2pxBoNyo1VImDF6EiXwMllVHCE+W5wwnHrb7
+	ICGxFrPsR8gj03mHbJ1Jfz5pen5J+NRJObk63H6n55dU55c2I1YcegiGuHAlV
+X-Google-Smtp-Source: AGHT+IFE8Gj/VCLODC+B+5FYP1MbAu4KK9L0LthS+VPwlos1nkSUxVMBl0n1EuwSPcjV9dUTkFTycnH1T2TzjaCGm1Y=
+X-Received: by 2002:a17:90b:8f:b0:2ee:4b72:fb47 with SMTP id
+ 98e67ed59e1d1-2ee4b72fcfbmr10868891a91.6.1732963817494; Sat, 30 Nov 2024
+ 02:50:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241129162232.7594-6-jfalempe@redhat.com>
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org> <d690510c-c3c0-4551-bf18-e1b62269c8cc@arm.com>
+In-Reply-To: <d690510c-c3c0-4551-bf18-e1b62269c8cc@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Sat, 30 Nov 2024 11:50:06 +0100
+Message-ID: <CAKfTPtDbAmYkJ9KKzeFa9yJM4psiN6=eYj6ZN7h0gE0zJGWscQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] sched/fair: Rework EAS to handle more cases
+To: Hongyan Xia <hongyan.xia2@arm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
+	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jocelyn,
+Hi Hongyan,
 
-kernel test robot noticed the following build warnings:
+On Thu, 28 Nov 2024 at 18:24, Hongyan Xia <hongyan.xia2@arm.com> wrote:
+>
+> Hi Vincent,
+>
+> On 30/08/2024 14:03, Vincent Guittot wrote:
+> > The current Energy Aware Scheduler has some known limitations which have
+> > became more and more visible with features like uclamp as an example. This
+> > serie tries to fix some of those issues:
+> > - tasks stacked on the same CPU of a PD
+> > - tasks stuck on the wrong CPU.
+> >
+> > Patch 1 fixes the case where a CPU is wrongly classified as overloaded
+> > whereas it is capped to a lower compute capacity. This wrong classification
+> > can prevent periodic load balancer to select a group_misfit_task CPU
+> > because group_overloaded has higher priority.
+> >
+> >
+> > Patch 2 creates a new EM interface that will be used by Patch 3
+> >
+> >
+> > Patch 3 fixes the issue of tasks being stacked on same CPU of a PD whereas
+> > others might be a better choice. feec() looks for the CPU with the highest
+> > spare capacity in a PD assuming that it will be the best CPU from a energy
+> > efficiency PoV because it will require the smallest increase of OPP.
+> > This is often but not always true, this policy filters some others CPUs
+> > which would be as efficients because of using the same OPP but with less
+> > running tasks as an example.
+> > In fact, we only care about the cost of the new OPP that will be
+> > selected to handle the waking task. In many cases, several CPUs will end
+> > up selecting the same OPP and as a result having the same energy cost. In
+> > such cases, we can use other metrics to select the best CPU with the same
+> > energy cost. Patch 3 rework feec() to look 1st for the lowest cost in a PD
+> > and then the most performant CPU between CPUs.
+> >
+> > perf sched pipe on a dragonboard rb5 has been used to compare the overhead
+> > of the new feec() vs current implementation.
+> > sidenote: delayed dequeue has been disable for all tests.
+> >
+> > 9 iterations of perf bench sched pipe -T -l 80000
+> >                  ops/sec  stdev
+> > tip/sched/core  13490    (+/- 1.7%)
+> > + patches 1-3   14095    (+/- 1.7%)  +4.5%
+> >
+> >
+> > When overutilized, the scheduler stops looking for an energy efficient CPU
+> > and fallback to the default performance mode. Although this is the best
+> > choice when a system is fully overutilized, it also breaks the energy
+> > efficiency when one CPU becomes overutilized for a short time because of
+> > kworker and/or background activity as an example.
+> > Patch 4 calls feec() everytime instead of skipping it when overutlized,
+> > and fallback to default performance mode only when feec() can't find a
+> > suitable CPU. The main advantage is that the task placement remains more
+> > stable especially when there is a short and transient overutilized state.
+> > The drawback is that the overhead can be significant for some CPU intensive
+> > use cases.
+> >
+> > The overhead of patch 4 has been stressed with hackbench on dragonboard rb5
+> >
+> >                                 tip/sched/core        + patches 1-4
+> >                              Time    stdev         Time    stdev
+> > hackbench -l 5120 -g 1         0.724   +/-1.3%       0.765   +/-3.0% (-5.7%)
+> > hackbench -l 1280 -g 4         0.740   +/-1.1%       0.768   +/-1.8% (-3.8%)
+> > hackbench -l 640  -g 8         0.792   +/-1.3%       0.812   +/-1.6% (-2.6%)
+> > hackbench -l 320  -g 16        0.847   +/-1.4%       0.852   +/-1.8% (-0.6%)
+> >
+> > hackbench -p -l 5120 -g 1      0.878   +/-1.9%       1.115   +/-3.0% (-27%)
+> > hackbench -p -l 1280 -g 4      0.789   +/-2.6%       0.862   +/-5.0% (-9.2%)
+> > hackbench -p -l 640  -g 8      0.732   +/-1.9%       0.801   +/-4.3% (-9.4%)
+> > hackbench -p -l 320  -g 16     0.710   +/-4.7%       0.767   +/-4.9% (-8.1%)
+> >
+> > hackbench -T -l 5120 -g 1      0.756   +/-3.9%       0.772   +/-1.63 (-2.0%)
+> > hackbench -T -l 1280 -g 4      0.725   +/-1.4%       0.737   +/-2.0% (-1.3%)
+> > hackbench -T -l 640  -g 8      0.767   +/-1.5%       0.809   +/-2.6% (-5.5%)
+> > hackbench -T -l 320  -g 16     0.812   +/-1.2%       0.823   +/-2.2% (-1.4%)
+> >
+> > hackbench -T -p -l 5120 -g 1   0.941   +/-2.5%       1.190   +/-1.6% (-26%)
+> > hackbench -T -p -l 1280 -g 4   0.869   +/-2.5%       0.931   +/-4.9% (-7.2%)
+> > hackbench -T -p -l 640  -g 8   0.819   +/-2.4%       0.895   +/-4.6% (-9.3%)
+> > hackbench -T -p -l 320  -g 16  0.763   +/-2.6%       0.863   +/-5.0% (-13%)
+> >
+> > Side note: Both new feec() and current feec() give similar overheads with
+> > patch 4.
+> >
+> > Although the highest reachable CPU throughput is not the only target of EAS,
+> > the overhead can be significant in some cases as shown in hackbech results
+> > above. That being said I still think it's worth the benefit for the stability
+> > of tasks placement and a better control of the power.
+> >
+> >
+> > Patch 5 solves another problem with tasks being stuck on a CPU forever
+> > because it doesn't sleep anymore and as a result never wakeup and call
+> > feec(). Such task can be detected by comparing util_avg or runnable_avg
+> > with the compute capacity of the CPU. Once detected, we can call feec() to
+> > check if there is a better CPU for the stuck task. The call can be done in
+> > 2 places:
+> > - When the task is put back in the runnnable list after its running slice
+> >    with the balance callback mecanism similarly to the rt/dl push callback.
+> > - During cfs tick when there is only 1 running task stuck on the CPU in
+> >    which case the balance callback can't be used.
+> >
+> > This push callback doesn't replace the current misfit task mecanism which
+> > is already implemented but this could be considered as a follow up serie.
+> >
+> >
+> > This push callback mecanism with the new feec() algorithm ensures that
+> > tasks always get a chance to migrate on the best suitable CPU and don't
+> > stay stuck on a CPU which is no more the most suitable one. As examples:
+> > - A task waking on a big CPU with a uclamp max preventing it to sleep and
+> >    wake up, can migrate on a smaller CPU once it's more power efficient.
+> > - The tasks are spread on CPUs in the PD when they target the same OPP.
+> >
+> > This series implements some of the topics discussed at OSPM [1]. Other
+> > topics will be part of an other serie
+> >
+> > [1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
+> >
+> > Vincent Guittot (5):
+> >    sched/fair: Filter false overloaded_group case for EAS
+> >    energy model: Add a get previous state function
+> >    sched/fair: Rework feec() to use cost instead of spare capacity
+> >    sched/fair: Use EAS also when overutilized
+> >    sched/fair: Add push task callback for EAS
+> >
+> >   include/linux/energy_model.h |  18 +
+> >   kernel/sched/fair.c          | 693 +++++++++++++++++++++++------------
+> >   kernel/sched/sched.h         |   2 +
+> >   3 files changed, 488 insertions(+), 225 deletions(-)
+> >
+>
+> On second look, I do wonder if this series should be split into
+> individual patches or mini-series. Some of the ideas, like
+> overloaded_groups or calling EAS at more locations rather than just
+> wake-up events, might be easier to review and merge if they are independent.
 
-[auto build test WARNING on 44cff6c5b0b17a78bc0b30372bcd816cf6dd282a]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-i915-fbdev-Add-intel_fbdev_getvaddr/20241130-002536
-base:   44cff6c5b0b17a78bc0b30372bcd816cf6dd282a
-patch link:    https://lore.kernel.org/r/20241129162232.7594-6-jfalempe%40redhat.com
-patch subject: [PATCH 5/5] drm/i915: Add drm_panic support
-config: i386-randconfig-061-20241130 (https://download.01.org/0day-ci/archive/20241130/202411302022.wlwTKMBh-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241130/202411302022.wlwTKMBh-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411302022.wlwTKMBh-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/i915/display/intel_atomic_plane.c:1273:55: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void [noderef] __iomem *vaddr_iomem @@     got void *[assigned] ptr @@
-   drivers/gpu/drm/i915/display/intel_atomic_plane.c:1273:55: sparse:     expected void [noderef] __iomem *vaddr_iomem
-   drivers/gpu/drm/i915/display/intel_atomic_plane.c:1273:55: sparse:     got void *[assigned] ptr
-
-vim +1273 drivers/gpu/drm/i915/display/intel_atomic_plane.c
-
-  1228	
-  1229	static int intel_get_scanout_buffer(struct drm_plane *plane,
-  1230					    struct drm_scanout_buffer *sb)
-  1231	{
-  1232		struct intel_plane_state *plane_state;
-  1233		struct drm_gem_object *gem_obj;
-  1234		struct drm_i915_gem_object *obj;
-  1235		struct drm_framebuffer *fb;
-  1236		struct drm_i915_private *dev_priv = to_i915(plane->dev);
-  1237		void *ptr;
-  1238		enum i915_map_type has_type;
-  1239	
-  1240		if (!plane->state || !plane->state->fb || !plane->state->visible)
-  1241			return -ENODEV;
-  1242	
-  1243		plane_state = to_intel_plane_state(plane->state);
-  1244		fb = plane_state->hw.fb;
-  1245		gem_obj = intel_fb_bo(fb);
-  1246		if (!gem_obj)
-  1247			return -ENODEV;
-  1248	
-  1249		obj = to_intel_bo(gem_obj);
-  1250	
-  1251		if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(dev_priv->display.fbdev.fbdev)) {
-  1252			ptr = intel_fbdev_getvaddr(dev_priv->display.fbdev.fbdev);
-  1253			if (!ptr)
-  1254				return -ENOMEM;
-  1255		} else {
-  1256			/* can't disable tiling if DPT is in use */
-  1257			if (fb->modifier && HAS_DPT(dev_priv))
-  1258				return -EOPNOTSUPP;
-  1259	
-  1260			/* Taken from i915_gem_object_pin_map() */
-  1261			ptr = page_unpack_bits(obj->mm.mapping, &has_type);
-  1262			if (!ptr) {
-  1263				if (i915_gem_object_has_struct_page(obj))
-  1264					ptr = i915_gem_object_map_page(obj, I915_MAP_WB);
-  1265				else
-  1266					ptr = i915_gem_object_map_pfn(obj, I915_MAP_WB);
-  1267				if (IS_ERR(ptr))
-  1268					return -ENOMEM;
-  1269			}
-  1270		}
-  1271	
-  1272		if (i915_gem_object_has_iomem(obj))
-> 1273			iosys_map_set_vaddr_iomem(&panic_map, ptr);
-  1274		else
-  1275			iosys_map_set_vaddr(&panic_map, ptr);
-  1276	
-  1277		sb->map[0] = panic_map;
-  1278		sb->width = fb->width;
-  1279		sb->height = fb->height;
-  1280		sb->format = fb->format;
-  1281		sb->pitch[0] = fb->pitches[0];
-  1282	
-  1283		return 0;
-  1284	}
-  1285	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The series is almost ready, I was waiting for the support of v6.12 on
+a device like pixel 6 to run some benchmarks but it is not yet
+available publicly at least so I might send the serie without such
+figures. I also wanted to test it with delayed dequeued enabled this
+time unlike previous version:
+https://lore.kernel.org/lkml/20241129161756.3081386-1-vincent.guittot@linaro.org/
 
