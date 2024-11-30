@@ -1,67 +1,60 @@
-Return-Path: <linux-kernel+bounces-426401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7959D9DF296
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:37:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332ED9DF29E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:39:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F70281464
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02451630A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D7C1A76D1;
-	Sat, 30 Nov 2024 18:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D213C1AA787;
+	Sat, 30 Nov 2024 18:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+XmOBBn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjSwTHqO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FD6158D87;
-	Sat, 30 Nov 2024 18:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1D11AA1E2;
+	Sat, 30 Nov 2024 18:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732991826; cv=none; b=m9iZuUx40qrzaCOcTn3orIXcsDxij4qxIYVJccglf10BwvvKwTUqxIV/rDhyu9cEMO/vBFb3FAnqRZGtB0F5moUczAAhij9c0q4fefP2EK/g1SP3JlUYiRSuR+naiNTReTKy+S6xiQXdJ+8Y++l+kg5QRffUn6ajdCV/7B3pWw8=
+	t=1732991930; cv=none; b=Y8zQlbgZ3uNueTELIuNuB2CA8rC7SJLeYZIn1tJQL/pAKCQ3uwLc9Aego0NiYQHthzoNvrdip0FFbs4Ep082BTsS8hlUgjZ/tuz6B1V+5GjDl+SQtr+SM6u42htLAWPt5KbJXrZVPvvRa0l/PiCo/TbBTxFnx4V83G3R+faXSfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732991826; c=relaxed/simple;
-	bh=5CGTaXv3qcM8izuf0G3IuTtdL47UzEnEwiMt4SQGzng=;
+	s=arc-20240116; t=1732991930; c=relaxed/simple;
+	bh=DZpg1x2kzkyruGc7zDK9ya8CbERy6DEqz4wV7j57D6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uCNEOCdgPlvwHXM5ppffZOM0TJJHAIg8EeuZS+kpJ93c/2drN80aZLhCIJi1fjIHvUi8I3wlSJCzfixH1j8AlmODN+4yNML7NT0KvmuYj8KN/JEd+bBz4Sf2haO3Xj0c/Rk8Genli6pxfL+zeEOXczfIwoQA6W8yXeT/cnLBKmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+XmOBBn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DB7C4CECC;
-	Sat, 30 Nov 2024 18:37:05 +0000 (UTC)
+	 MIME-Version:Content-Type; b=J7/XRGi4XqYGWUST7efwp1sAMFk/W8+JUUZ70fQ2B4y3EJIll6B4W2AcLKAvZokz0H4p+6cQBAeD2L2DZcvLEkPRF81Lo1E7Kgl3BIm+bNfILMB63Ar5D8hxjMxJrbM1lc2la5Wqy9OfrcyFY9N9I3XgBwnooYhqOG5Dhmhejh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjSwTHqO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EAC3C4CECC;
+	Sat, 30 Nov 2024 18:38:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732991826;
-	bh=5CGTaXv3qcM8izuf0G3IuTtdL47UzEnEwiMt4SQGzng=;
+	s=k20201202; t=1732991929;
+	bh=DZpg1x2kzkyruGc7zDK9ya8CbERy6DEqz4wV7j57D6A=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=d+XmOBBnXCHc8xl+sEgI9y+sZ5RaJrGt+nMaEjJkVWI+Ty3E8L09wNPJyfoLgOBoH
-	 26b4kVnQqfA+A1HDsTVdRTYoZPRt6Rm+hv0DAXA67CBbmA3GoQ7gOXmlFLMTov5fbN
-	 mXNWl6FDYESyMi/HCbpiwBmDgHqZY26Txb9raGcxAnmrWh/SEtndPr39io9ouRqmy4
-	 oJmcTYJungsIFblLM5Vq+xtlGIdT4ZJkCA0U/ottWVndfKk2KLsEBLndE1pVY0g8NE
-	 xLGN/rGljtqhJkbi9C7Y/3O1wdEPGm+3gTp2mYeEtTgLl7sK7Bw8tE4EVi9B5k7ugM
-	 ogPHQGCdM26hg==
-Date: Sat, 30 Nov 2024 10:37:04 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Michael Kelley <mhklinux@outlook.com>, Maxim Levitsky
- <mlevitsk@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, Shradha
- Gupta <shradhagupta@linux.microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Haiyang Zhang <haiyangz@microsoft.com>, Konstantin Taranov
- <kotaranov@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Eric
- Dumazet <edumazet@google.com>, "linux-hyperv@vger.kernel.org"
- <linux-hyperv@vger.kernel.org>, Long Li <longli@microsoft.com>, "David S.
- Miller" <davem@davemloft.net>, Leon Romanovsky <leon@kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Souradeep
- Chakrabarti <schakrabarti@linux.microsoft.com>, Dexuan Cui
- <decui@microsoft.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: mana: Fix memory leak in mana_gd_setup_irqs
-Message-ID: <20241130103704.7129538f@kernel.org>
-In-Reply-To: <Z0kjRcX1hXYQhw2Q@yury-ThinkPad>
-References: <20241128194300.87605-1-mlevitsk@redhat.com>
-	<SN6PR02MB4157DBBACA455AC00A24EA08D4292@SN6PR02MB4157.namprd02.prod.outlook.com>
-	<Z0kjRcX1hXYQhw2Q@yury-ThinkPad>
+	b=gjSwTHqOe7D38RgDr6jKi75NHVLQiVS0ClfSAoI+iigmscVAD2K87xoYQPKlKAoW6
+	 LUh+unMzuxn0RSe4TY9tcwdK9RrV4EJumfI9VmKNIaqa16Yxttb4guxgLzHjf4ijUE
+	 1dKKvsPrY2tx6lQATc0T5VxtEL1t693wcunl6oTEYUWYWGAlgXAG6Vu7d3C9Pp8z//
+	 eguo8tRg9dlJ904U2gnuqXtXo2qV3+9qjbh4Fl8GQDCNGkNi0FNh6Vfw32AW7Qj0OI
+	 dUQwZU3u+x8eIKDU/l3yJOAVXUxr1sdy3XX+F0AhhR9AyKimlWL8MOAa27tcaNLgLe
+	 2yIwUQS5BEWGA==
+Date: Sat, 30 Nov 2024 18:38:39 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: Alisa-Dariana Roman <alisa.roman@analog.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Michael Hennerich
+ <michael.hennerich@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter
+ Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v1 3/3] iio: adc: ad7192: Add sync gpio
+Message-ID: <20241130183839.1fd5884f@jic23-huawei>
+In-Reply-To: <20241128125811.11913-4-alisa.roman@analog.com>
+References: <20241128125811.11913-1-alisa.roman@analog.com>
+	<20241128125811.11913-4-alisa.roman@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,32 +64,97 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 28 Nov 2024 18:13:25 -0800 Yury Norov wrote:
-> > FWIW, there's a related error path leak. If the kcalloc() to populate
-> > gc->irq_contexts fails, the irqs array is not freed. Probably could
-> > extend this patch to fix that leak as well.
-> > 
-> > Michael  
+On Thu, 28 Nov 2024 14:55:03 +0200
+Alisa-Dariana Roman <alisadariana@gmail.com> wrote:
+
+> Add support for the SYNC pin of AD719x devices. This pin is controlled
+> through a GPIO. The pin allows synchronization of digital filters and
+> analog modulators when using multiple devices.
 > 
-> That's why we've got a __free() macro in include/linux/cleanup.h
+> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
+Hi.
 
-Quoting documentation:
+Like all userspace ABI, this needs documentation.
 
-  Using device-managed and cleanup.h constructs
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  Netdev remains skeptical about promises of all "auto-cleanup" APIs,
-  including even ``devm_`` helpers, historically. They are not the preferred
-  style of implementation, merely an acceptable one.
-  
-  Use of ``guard()`` is discouraged within any function longer than 20 lines,
-  ``scoped_guard()`` is considered more readable. Using normal lock/unlock is
-  still (weakly) preferred.
-  
-  Low level cleanup constructs (such as ``__free()``) can be used when building
-  APIs and helpers, especially scoped iterators. However, direct use of
-  ``__free()`` within networking core and drivers is discouraged.
-  Similar guidance applies to declaring variables mid-function.
-  
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#using-device-managed-and-cleanup-h-constructs
+It's an unusual feature, so some usecases would help.
+
+It is also cross multiple devices which makes this odd as only one device
+can presumably acquire the gpio?
+
+An alternative would be to look at how to do this with a 'wrapper' sort of device
+so that we have one instance to which this applies.
+
+I'm not sure that helps that much though as we'd still need some for of
+'I'm setup for all channels, now you can go' ABI.
+
+Jonathan
+
+> ---
+>  drivers/iio/adc/ad7192.c | 112 ++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 111 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
+> index 955e9eff0099..542db7280e99 100644
+> --- a/drivers/iio/adc/ad7192.c
+> +++ b/drivers/iio/adc/ad7192.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/device.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/kernel.h>
+>  #include <linux/slab.h>
+>  #include <linux/sysfs.h>
+> @@ -196,6 +197,7 @@ struct ad7192_chip_info {
+>  	u8				num_channels;
+>  	const struct ad_sigma_delta_info	*sigma_delta_info;
+>  	const struct iio_info		*info;
+> +	const struct iio_info		*info_sync;
+>  	int (*parse_channels)(struct iio_dev *indio_dev);
+>  };
+>  
+> @@ -216,6 +218,8 @@ struct ad7192_state {
+>  	struct mutex			lock;	/* protect sensor state */
+>  	u8				syscalib_mode[8];
+>  
+> +	struct gpio_desc		*sync_gpio;
+> +
+>  	struct ad_sigma_delta		sd;
+>  };
+>  
+> @@ -783,6 +787,36 @@ static void ad7192_update_filter_freq_avail(struct ad7192_state *st)
+>  	st->filter_freq_avail[3][0] = DIV_ROUND_CLOSEST(fadc * 272, 1024);
+>  }
+>  
+> +static ssize_t sync_gpio_show(struct device *dev,
+> +			      struct device_attribute *attr,
+> +			      char *buf)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct ad7192_state *st = iio_priv(indio_dev);
+> +
+> +	return sysfs_emit(buf, "%d\n", gpiod_get_value(st->sync_gpio));
+> +}
+> +
+> +static ssize_t sync_gpio_store(struct device *dev,
+> +			       struct device_attribute *attr,
+> +			       const char *buf,
+> +			       size_t len)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct ad7192_state *st = iio_priv(indio_dev);
+> +	int val;
+> +	int ret;
+> +
+> +	ret = kstrtoint(buf, 0, &val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (st->sync_gpio)
+> +		gpiod_set_value(st->sync_gpio, val);
+> +
+> +	return len;
+> +}
+
+
 
