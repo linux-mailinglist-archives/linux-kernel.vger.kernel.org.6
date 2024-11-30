@@ -1,148 +1,147 @@
-Return-Path: <linux-kernel+bounces-426464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6ADA9DF354
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 22:41:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0965E9DF357
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 22:44:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6442EB20C4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A8A162D32
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED161AB6EF;
-	Sat, 30 Nov 2024 21:40:51 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5C91AB6C2;
+	Sat, 30 Nov 2024 21:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kIZCebaJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFE3132103
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 21:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1BA130E27;
+	Sat, 30 Nov 2024 21:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733002851; cv=none; b=JBlU9Qn6Bk0yoPUHGIz2UjgYmqh7IFCqLX8HDahK4X0AfyjATqhzfgBj+lNX3wteLuJdsJeZ7c1f0XL2gtx5idtw08wT3QQCd46/H4Ec+1WoyNzL2GQS9+iBjDQCRjSdmaWpUMppHCkovMPTI5j91oxeHtV+jtruKSx/ZbFUdoA=
+	t=1733003051; cv=none; b=IXZSkZxhTaVyYX3NI8yGBOHk/w4hm0T+ZuoSPDIpVDrD1GsregPEqkS6E/DKmr5/00wnffLl17WFnnd0sO60MZueHO6LsQfFPv/bS186MBmoNSDeWTtBoUsdahyOCEUDjzZ0MCZf/l2WvBjNdXOycDjaT281H6XElCepC2htDq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733002851; c=relaxed/simple;
-	bh=D5xcJAsDkXmo34++46K3Zh1aU9K5vOZ0aFsvamdr0Ys=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=e6TSX4qFd/Nb4YZBM27q6uUeuIvF06lBIV3uUy60t99VwcAXeUWQKrlCSAo9pZ9oGCGfWqob8J2SJqT6wO9QRe73k+we1m2QmMk5WFSRTM9h7ivBpk2W5y6LRzjoHi2jFzKElm57wxZSj4qPsX9JoX5G5rEHpMcnaychvJptTvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-188-g14xKN3oMnyOJnv5xybuBA-1; Sat, 30 Nov 2024 21:40:38 +0000
-X-MC-Unique: g14xKN3oMnyOJnv5xybuBA-1
-X-Mimecast-MFC-AGG-ID: g14xKN3oMnyOJnv5xybuBA
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 30 Nov
- 2024 21:40:14 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 30 Nov 2024 21:40:14 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Kees Cook' <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>
-CC: Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Ingo Molnar
-	<mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
-	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jens Axboe
-	<axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Chen Yu <yu.c.chen@intel.com>, Shuah Khan
-	<skhan@linuxfoundation.org>, =?iso-8859-1?Q?Micka=EBl_Sala=FCn?=
-	<mic@digikod.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "io-uring@vger.kernel.org"
-	<io-uring@vger.kernel.org>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>
-Subject: RE: [PATCH] exec: Make sure task->comm is always NUL-terminated
-Thread-Topic: [PATCH] exec: Make sure task->comm is always NUL-terminated
-Thread-Index: AQHbQuM3vGxCxoQWAEqauiNGu7/fqLLQWTBw
-Date: Sat, 30 Nov 2024 21:40:14 +0000
-Message-ID: <b11a985992a44152bf8106c084747ed4@AcuMS.aculab.com>
-References: <20241130044909.work.541-kees@kernel.org>
-In-Reply-To: <20241130044909.work.541-kees@kernel.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733003051; c=relaxed/simple;
+	bh=YvnE6yXibYSRVphsfuLW0ZRPXneTASycCwxmcTa7ToE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJ+/0M0N4pVb8BeEE3pk6rjzjkzIZ3GxLnrvi76LerMe6jc0m6NWL8btK5NyVyoBv0XlKS0bsQmWWGvo/3veIRwtqjGGtW2qaRvUTkcLwa4YLKErnlrEFIHWf2h/HA/HsZclXDuJ9yFk7FfNn/tFkEbtMlP5B55c8BPiP3GDgSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kIZCebaJ; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733003050; x=1764539050;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YvnE6yXibYSRVphsfuLW0ZRPXneTASycCwxmcTa7ToE=;
+  b=kIZCebaJ7+kcYDqhxU6O2iqhKp/eRmmcEaCJawPiuY+MZMYLCnUAdgXd
+   dXFwuKHGc8QPPjpAo/wBQaDXY/eyokMtjHTx5k1A6lEpnu8VhdH2KN0Y3
+   3/dyaO9lxaoVxubj0wu73tD+pSdHUhvkGbYpz5poBUcrc7wrW3smnloRe
+   +JZScie2aNRa4x0aEoJ9QZwdPdvCSsu7P5vvE9yE5t6GsK9RwUk0klD7l
+   fEsY4OSpgSfZID5p23Riw+gT+4fea1ZeVyj0Bbiz7xhdDCCTQloUCGpPY
+   KeB9YM5T55kpVsLM/muVfHjTaha08JAaRdcFICo7GcrY8YtN0YOIMT5tA
+   w==;
+X-CSE-ConnectionGUID: a7W3K7EGQxy1a7g/X4h8/g==
+X-CSE-MsgGUID: p8/Q1FanRTmb2PFqDMxMZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="20786533"
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="20786533"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 13:44:09 -0800
+X-CSE-ConnectionGUID: 3GdDkVDnRBmnWmn/6oAlKQ==
+X-CSE-MsgGUID: mJ3/5bgLSiW7NwRkn0XL6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="116020974"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 13:44:07 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tHVG0-00000002fhb-2b2B;
+	Sat, 30 Nov 2024 23:44:04 +0200
+Date: Sat, 30 Nov 2024 23:44:04 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] device property: do not leak child nodes when using
+ NULL/error pointers
+Message-ID: <Z0uHJJKMog-REw1D@smile.fi.intel.com>
+References: <20241128053937.4076797-1-dmitry.torokhov@gmail.com>
+ <Z0hsbNqXSkQjsR1v@smile.fi.intel.com>
+ <Z0j3EtRmYBmGFApu@google.com>
+ <Z0nUpytu0GFUgQ9V@smile.fi.intel.com>
+ <Z0q75n_P3sZYnviO@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: aMLdyz_CVeK_he1qcZpbYzq8FIpPC24wTLwQM4VGXdk_1733002836
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0q75n_P3sZYnviO@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Kees Cook
-> Sent: 30 November 2024 04:49
->
-> Instead of adding a new use of the ambiguous strncpy(), we'd want to
-> use memtostr_pad() which enforces being able to check at compile time
-> that sizes are sensible, but this requires being able to see string
-> buffer lengths. Instead of trying to inline __set_task_comm() (which
-> needs to call trace and perf functions), just open-code it. But to
-> make sure we're always safe, add compile-time checking like we already
-> do for get_task_comm().
+On Fri, Nov 29, 2024 at 11:16:54PM -0800, Dmitry Torokhov wrote:
+> On Fri, Nov 29, 2024 at 04:50:15PM +0200, Andy Shevchenko wrote:
+> > On Thu, Nov 28, 2024 at 03:04:50PM -0800, Dmitry Torokhov wrote:
+> > > On Thu, Nov 28, 2024 at 03:13:16PM +0200, Andy Shevchenko wrote:
+> > > > On Wed, Nov 27, 2024 at 09:39:34PM -0800, Dmitry Torokhov wrote:
+
 ...
-> Here's what I'd prefer to use to clean up set_task_comm(). I merged
-> Linus and Eric's suggestions and open-coded memtostr_pad().
-> ---
->  fs/exec.c             | 12 ++++++------
->  include/linux/sched.h |  9 ++++-----
->  io_uring/io-wq.c      |  2 +-
->  io_uring/sqpoll.c     |  2 +-
->  kernel/kthread.c      |  3 ++-
->  5 files changed, 14 insertions(+), 14 deletions(-)
->=20
-> diff --git a/fs/exec.c b/fs/exec.c
-> index e0435b31a811..5f16500ac325 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1200,16 +1200,16 @@ char *__get_task_comm(char *buf, size_t buf_size,=
- struct task_struct *tsk)
->  EXPORT_SYMBOL_GPL(__get_task_comm);
->=20
->  /*
-> - * These functions flushes out all traces of the currently running execu=
-table
-> - * so that a new one can be started
-> + * This is unlocked -- the string will always be NUL-terminated, but
-> + * may show overlapping contents if racing concurrent reads.
->   */
-> -
->  void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec=
-)
->  {
-> -=09task_lock(tsk);
-> +=09size_t len =3D min(strlen(buf), sizeof(tsk->comm) - 1);
-> +
->  =09trace_task_rename(tsk, buf);
-> -=09strscpy_pad(tsk->comm, buf, sizeof(tsk->comm));
-> -=09task_unlock(tsk);
-> +=09memcpy(tsk->comm, buf, len);
-> +=09memset(&tsk->comm[len], 0, sizeof(tsk->comm) - len);
->  =09perf_event_comm(tsk, exec);
 
-Why not do strscpy_pad() into a local char[16] and then do a 16 byte
-memcpy() into the target buffer?
+> > > > > @@ struct fwnode_handle *device_get_next_child_node(const struct device *dev,
+> > > > >  	const struct fwnode_handle *fwnode = dev_fwnode(dev);
+> > > > >  	struct fwnode_handle *next;
+> > > > 
+> > > > > -	if (IS_ERR_OR_NULL(fwnode))
+> > > > > +	if (IS_ERR_OR_NULL(fwnode)) {
+> > > > > +		fwnode_handle_put(child);
+> > > > >  		return NULL;
+> > > > > +	}
+> > > > 
+> > > > >  	/* Try to find a child in primary fwnode */
+> > > > >  	next = fwnode_get_next_child_node(fwnode, child);
+> > > > 
+> > > > So, why not just moving the original check (w/o dropping the reference) here?
+> > > > Wouldn't it have the same effect w/o explicit call to the fwnode_handle_put()?
+> > > 
+> > > Because if you rely on check in fwnode_get_next_child_node() you would
+> > > not know if it returned NULL because there are no more children or
+> > > because the node is invalid. In the latter case you can't dereference
+> > > fwnode->secondary.
+> > 
+> > Yes, so, how does it contradict my proposal?
+> 
+> I guess I misunderstood your proposal then. Could you please explain it
+> in more detail?
 
-Then non-constant input data will always give a valid '\0' terminated strin=
-g
-regardless of how strscpy_pad() is implemented.
 
-=09David
+Current code (in steps):
+	if (IS_ERR_OR_NULL()) check
+	trying primary
+	trying secondary if previous is NULL
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+
+My proposal
+
+	trying primary
+	return if not NULL
+	if (IS_ERR_OR_NULL()) check in its current form (no put op)
+	trying secondary
+
+After your first patch IIUC this is possible as trying primary will put child uncoditionally.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
