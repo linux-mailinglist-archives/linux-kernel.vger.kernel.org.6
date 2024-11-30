@@ -1,131 +1,179 @@
-Return-Path: <linux-kernel+bounces-426216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A354D9DF061
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:44:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7E59DF064
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BEA22821A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:44:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB948B2122F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAA419753F;
-	Sat, 30 Nov 2024 12:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608E5149011;
+	Sat, 30 Nov 2024 12:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="GGUM9j+X"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pyyD8LzA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6823613C3F2;
-	Sat, 30 Nov 2024 12:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0907E320B
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 12:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732970673; cv=none; b=HyQoIX29sUO7DquSIycRoNW9DvMaCOJTKYpKEw9Zq83GifAML6sDw5nOlXcoRyFZZEc9KNw0qZfyfPVpXiuq9VKrsAIyExcYoMdQV4Pn4wpVLqnEkYg3yD9pFFEeuSNRXeOaFPqPziPoG3mxqj1M0LfFQvYcqTdzkzNq0Q+62nw=
+	t=1732971005; cv=none; b=GAoMw/S1wwBS3VVpwPek+JiVSt3oOGBMi+lFSCm7/WYDDsqX608lhAmyWvAJzLDoef+VaeS71Qs1dqUXzjnDUioAp+uysaCLvrRZl2gYXO01+T29cIGPi8MD/wpGBdEnD2AfcgmpQYoKHVYGEQVDXWraVL66EKAiz0oYR6Z+naY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732970673; c=relaxed/simple;
-	bh=1SI+u4Ruu5NC+CKZ19d2+gIbTPUulj0vTfhBIWrf1yQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VhgldxqkRvdjti4in6ib45sulbN6HBJWhwy76KnXgx05g4lIXtu9ywgUBuVNG6m307p6cdGpYe7u/rB3u598LmvnmgUYNxRZSFQxwZZc1H2oU8Rr2019zScAuZaE8ecI9nj0XLpJaxeTNWqFO8dv4cVYooX3SKIojEes7t7898o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=GGUM9j+X; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/QWQFR/J1zJYpOazoefg7VcgFFTkEebLmPHwededqA0=; t=1732970670; x=1733575470; 
-	b=GGUM9j+XDRlqgDz3O3oRy1hUSAEMErvPyAtDqvTjWQFcUKrma4QZSwP+//dUbKKHls9J9GB7r3O
-	eZ6J8yKywfM9+ohYTYLr/tYD7hRVXZINNkX1B9wTsvwyROkAXfH1gkzJfw/HWew/OuDfXNOKJUSrO
-	OL25mlbJEKEw7Tl/PHOJAuFRpEvy7xOqP1N0ScYvwHjCrS3r3FFoodkvmCjdcYLg9MAvysBWENuCB
-	xthe6RK8gqkaeBHlDTJU7IZ+vL85d9PC95EHmiJUzEWUh5xgvPhRthTQX+d04Jw2i3GX4z+pm080T
-	o3RsRO5M9ofIyVq9t9fh19zg1qudcdRP2jew==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1tHMpn-000000043YC-10ac; Sat, 30 Nov 2024 13:44:27 +0100
-Received: from dynamic-078-054-081-111.78.54.pool.telefonica.de ([78.54.81.111] helo=[192.168.178.50])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1tHMpn-00000001SuH-0ASF; Sat, 30 Nov 2024 13:44:27 +0100
-Message-ID: <a9fe22747f20cae9fcc9b9d20109e7afbf8e6b93.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 13/13] sh/irq: use seq_put_decimal_ull_width() for
- decimal values
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: David Wang <00107082@163.com>, ysato@users.sourceforge.jp,
- dalias@libc.org
-Cc: linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org
-Date: Sat, 30 Nov 2024 13:44:26 +0100
-In-Reply-To: <bc772ca68b843e89ec201db46e3dc94d55faebaf.camel@physik.fu-berlin.de>
-References: <20241108162634.9945-1-00107082@163.com>
-	 <bc772ca68b843e89ec201db46e3dc94d55faebaf.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1732971005; c=relaxed/simple;
+	bh=QDea+3e+cuoPAYkLcmeYbatc/ECyB4Kti6MbiVdXAmY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ucWoerSh10/n4cYmzlcB3/Uhm0w01OHTC46odkMAf3U9Q5bxHaCpUvvvDdd9vL3S2J+9dKuR2fhnhOKbQbc1nSMVKiHfLRu/uwXA0eIV7uoqaMaf8nJPOmHMwnwv6vcRB8Uh1qHqM4p5k9PpLVuuYYk1ZzBd2eIkUM4Wa8wN374=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pyyD8LzA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AUCgDfh030323
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 12:50:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hwEVoeZgfVpqkrEBH0FyIu3xxM7tj2jKoU6z06itptc=; b=pyyD8LzA+RyeCqfj
+	WsAo2JjFrSRAhYatAeT8MzKEw1CEyO3IG/oGRJ6KoKmrbpaA6veGFithDwoy2MTY
+	qx5xFZdVMdjXq8jkf9r//mYuEYAhxg+nve8EKPBo96WD5UjWsiCFC/JMAZH2Q1oc
+	c8+qywFaFZz8VGi6ifKDTl+ui4GBpzs35+N76AVuc6DxVELkSG7HTzEf1JRCsYUr
+	WyAb+oLvyi9j6GPWFpLR5XeZw1ULxSFO6YXVbLpy5R5X1d3Bpj0ltigiewjYHSj+
+	gLdOWF9KML6MeGpArTbTiOIvha40pKshDZqGs0EbTa0LkjWNuTSRmrP6AZiQiLN+
+	Vf5JWg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ta2rr81-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 12:50:02 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4667cab5e1bso4860511cf.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 04:50:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732971002; x=1733575802;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hwEVoeZgfVpqkrEBH0FyIu3xxM7tj2jKoU6z06itptc=;
+        b=alDjC2Snshlt3UIVxv5q2j2u0aAQ5saYIWIWzl+/T4vIb+yrfcnLg/6K8FnNDVeWcg
+         vMXpxDVV8+Bg3tDofyFc7MzsByOhc5kCQ/x4z2PzflrUAIsxf+5sQ7wiPoc51KTPhTWU
+         7z8qSgWgpibYgA5ZcKo8Yk69MKfgCaKHAvjkYuWOHEJFElnXYcBedg96Dq5JSgSXCB19
+         4BuEUlz56RYGyYDlNsRC0u+qBz20I0++onwPkxhmskQAq3qWji5lx4DChLnLl8hthOmk
+         inPPgl8TVGEPWr5Y2v8MIwWbZVMDCZkCKLBpwcx5+6GipZYz+d0tmyqtcG1M+1yPZFNd
+         gdbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDHpaHy0nisut78A3AOSe4HTkoVwE1teOG9/eCU8NJ66glAE20O4s7LZUaKstgM1lS5LRNyWm1FDcnafI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0dgIyjytkD1JGTZdWqdVI/uRmOcDZ01WTpc4TG9oT6ZzcaNXb
+	ftRhyTz2d82DOkyg2elKbZ40S7NDQ3YpXn4GIl+BSSz6RQTBaTAevkU32jh/VZHUansaRKznauz
+	V87fpDz9DI7fY9KTv6oCgiqRvl2giG/zfe9uSMtm2sd+IswvnUJrMldNGc9uAIio=
+X-Gm-Gg: ASbGnctrLB4m/i7cV+N4NMGO5KPpIALjtaime52DehlCUgT4MDrqFwbl1ZEDZaOKODM
+	8V9PXQ5uC+Sx0bR+1/6zNSQg6bFt1TFHEgG88o/ZQEH+CKA74OwfSF+Jm/Vv15ZUItBlLqxUXtK
+	zKxCqbpNNvI/588VH5LJ1tFLSCBmqKeofGIGhNMNwnfdU/QO6GcX3YSTjZcdcMpc/7CXva558iL
+	f7kzVrkA7JxOt72J9sYqJv1QXiY9zzhkYU5/ybacu/Mov5Vgqts5p4zq7AvwJmS1CRWmgGRMKhI
+	/0TDZ9osBQpydvC0lZ9LtDNL2i4iS2o=
+X-Received: by 2002:a05:622a:389:b0:462:fb65:cbb5 with SMTP id d75a77b69052e-466b36886b8mr96997801cf.16.1732971001979;
+        Sat, 30 Nov 2024 04:50:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFcEk4zpcaPKGI305nMIFuY+OFtLWrdliZRQ3XgvCXbaX18+LdB778zQ6l/S2wnobvtgyPCVg==
+X-Received: by 2002:a05:622a:389:b0:462:fb65:cbb5 with SMTP id d75a77b69052e-466b36886b8mr96997421cf.16.1732971001537;
+        Sat, 30 Nov 2024 04:50:01 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097d9f330sm2815866a12.9.2024.11.30.04.49.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2024 04:50:00 -0800 (PST)
+Message-ID: <2b95cc25-a842-4edd-a5f3-2351038d264e@oss.qualcomm.com>
+Date: Sat, 30 Nov 2024 13:49:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 1/4] interconnect: qcom: Add multidev EPSS L3 support
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Odelu Kukatla <quic_okukatla@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>,
+        Sibi Sankar
+ <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241125174511.45-1-quic_rlaggysh@quicinc.com>
+ <20241125174511.45-2-quic_rlaggysh@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241125174511.45-2-quic_rlaggysh@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: pRO4gzhD4gumpJ3G4QxeaPk-Qehoi-WD
+X-Proofpoint-GUID: pRO4gzhD4gumpJ3G4QxeaPk-Qehoi-WD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411300105
 
-Hi David,
+On 25.11.2024 6:45 PM, Raviteja Laggyshetty wrote:
+> EPSS on SA8775P has two instances which requires creation of two device
+> nodes with different compatible and device data because of unique
+> icc node id and name limitation in interconnect framework.
+> Add multidevice support to osm-l3 code to get unique node id from IDA
+> and node name is made unique by appending node address.
+> 
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> ---
 
-On Sat, 2024-11-30 at 13:41 +0100, John Paul Adrian Glaubitz wrote:
-> On Sat, 2024-11-09 at 00:26 +0800, David Wang wrote:
-> > Performance improvement for reading /proc/interrupts on arch sh
-> >=20
-> > Signed-off-by: David Wang <00107082@163.com>
-> > ---
-> >  arch/sh/kernel/irq.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/arch/sh/kernel/irq.c b/arch/sh/kernel/irq.c
-> > index 4e6835de54cf..9022d8af9d68 100644
-> > --- a/arch/sh/kernel/irq.c
-> > +++ b/arch/sh/kernel/irq.c
-> > @@ -43,9 +43,9 @@ int arch_show_interrupts(struct seq_file *p, int prec=
-)
-> >  {
-> >  	int j;
-> > =20
-> > -	seq_printf(p, "%*s: ", prec, "NMI");
-> > +	seq_printf(p, "%*s:", prec, "NMI");
-> >  	for_each_online_cpu(j)
-> > -		seq_printf(p, "%10u ", per_cpu(irq_stat.__nmi_count, j));
-> > +		seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat.__nmi_count, j), =
-10);
-> >  	seq_printf(p, "  Non-maskable interrupts\n");
-> > =20
-> >  	seq_printf(p, "%*s: %10u\n", prec, "ERR", atomic_read(&irq_err_count)=
-);
->=20
-> Sorry for the very late reply!
->=20
-> I don't quite understand why seq_put_decimal_ull_width() should be faster=
- than seq_printf().
->=20
-> Can you elaborate on this a bit more?
+[...]
 
-I just checked existing merges of this patch for other architectures which =
-include
-a more elaborate patch description. If you could do that for SH as well, I =
-can pick
-the patch for v6.14.
+> +	ret = of_property_read_reg(pdev->dev.of_node, 0, &addr, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+>  	qp->base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(qp->base))
+>  		return PTR_ERR(qp->base);
+> @@ -242,8 +262,13 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
+>  
+>  	icc_provider_init(provider);
+>  
+> +	/* Allocate unique id for qnodes */
+> +	for (i = 0; i < num_nodes; i++)
+> +		qnodes[i]->id = ida_alloc_min(&osm_l3_id, OSM_L3_NODE_ID_START, GFP_KERNEL);
 
-Adrian
+As I've said in my previous emails, this is a framework-level problem.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Up until now we've simply silently ignored the possibility of an
+interconnect provider having more than one instance, as conveniently
+most previous SoCs had a bunch of distinct bus masters.
+
+Currently, debugfs-client.c relies on the node names being unique.
+Keeping them as such is also useful for having a sane sysfs/debugfs
+interface. But it's not always feasible, and a hierarchical approach
+(like in pmdomain) may be a better fit.
+
+Then, node->id is used for creating links, and we unfortunately cannot
+assume that both src and dst are within the same provider.
+I'm not a fan of these IDs being hardcoded, but there are some drivers
+that rely on that, which itself is also a bit unfortunate..
+
+
+If Mike (who introduced debugfs-client and is probably the main user)
+doesn't object to a small ABI break (which is "fine" with a debugfs
+driver that requires editing the source code to be compiled), we could
+add a property within icc_provider like `bool dynamic_ids` and have an
+ICC-global IDA that would take care of any conflicts.
+
+Provider drivers whose consumers don't already rely on programmatical
+use of hardcoded IDs *and* don't have cross-provider links could then
+enable that flag and have the node IDs and names set like you did in
+this patch. This also sounds very useful for icc-clk.
+
+Konrad
 
