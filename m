@@ -1,87 +1,43 @@
-Return-Path: <linux-kernel+bounces-426360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CF39DF21B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:03:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9B39DF22A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:11:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA6FFB2155E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:03:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92142161B55
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162081A2574;
-	Sat, 30 Nov 2024 17:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJB4A7gb"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8DE8468
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 17:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68891A4B69;
+	Sat, 30 Nov 2024 17:11:29 +0000 (UTC)
+Received: from zju.edu.cn (spam.zju.edu.cn [61.164.42.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2968468;
+	Sat, 30 Nov 2024 17:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.164.42.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732986188; cv=none; b=BSMiSbQcvWPh3VPRJFXCOEU082SAumxF0vw+j5sYafikIKxoCDXFtU+CRyBQgUKiHch4A15+p1ca3ucKC2ldSzxLJBoDXUWu/GaNvv+rBte1rQMXJQd2PDjXr7oShhgC6GEUj3frsaNfdcloP4kQeKBD0QeMQReJqEfjlISbWYw=
+	t=1732986689; cv=none; b=MeGkVf1Wlv+lqdb3RyeVedjWxLtZCLM0xrjYiH2OYGaQ+I6idJ+O776p6ZQV/gy7Aj1AyKCTnK0NZwuQt8ZMjaABQz/gtRDWJfehir/sKqG50WCIvYJT1iCgnC61MTk+LN96O5VexC0rckscO9d9aI44IOtXFkadzS9hpEOwBj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732986188; c=relaxed/simple;
-	bh=Zw1sBRqcwlHgAA4AYzEtDzFNIg/E1q5FbDk3YLmW27w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fNUiv+w4TdTXspWNn7BIwE9RMTbnQC/p4f7yQm1c1uzcC5uhFdZHLw5/ruum8wYEADfbMLJZpkY2iRzaMNBdb1Zr/aX8/BEZvuX4b69MuNlRRovCJBdADZVQtsXVTL+vNvF4sas6f57oZlZObfgQ1ueyIlM7DiXZjMUl3wwADa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJB4A7gb; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7251331e756so2701477b3a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:03:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732986186; x=1733590986; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R0AaYkKFQsr+kvv/7MjgBXXDtojf1j/34zDnDrr0iLo=;
-        b=OJB4A7gblnWGshSatkhO0zH46/pLaqUipMA8vfPA2gsvhYi7ncR2N2bbW8poDQuikJ
-         jAjHKu0ygIW6W0OsJvR3KsEV4SJLMkbwt2uhBWVu8jkvAvDtIfz8+o0SLRqNqmn3Sn6t
-         A7MtlzL4Xa1Kkj5ov8jlDJPwnRFNoFGHxAnbI3TbbubODKdgZcOda48jM0ThHgOPK0b/
-         Xa+2XKv1wbXEHfOGw4m3tlhUpxgkWGpFxrnP4yxfgMcTFhMvKXWqmxZSXNewWcjsxuDl
-         TuUj3aua7UnBhXJvlqdUib1hWDg9iGJMsUEYB59lEnKaVRDEzbUIhsGFmhsLVDIFjziq
-         5dQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732986186; x=1733590986;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R0AaYkKFQsr+kvv/7MjgBXXDtojf1j/34zDnDrr0iLo=;
-        b=W2S9DkqvsWjO2dHVZeCwsEZSFIUS8ANeZre6s6Cw0C4jRecM9JfNT+eBz5WPqJ/cM+
-         XvtTflmk7A4MTjPLUXQSWPMgtZz8020ywMhTXAUk74BJpzXOWkDf5WRHPkgDoGKhbYxi
-         TdLNrPB4u0Kh8efZmNTUR+xcHY7qBn1LJdmo6vD+5ZDP2qQgrFcQ8NkL59FneFl+hWKm
-         37ZOF5+3VyWkJ4nLQMplBicJABeP9htO4QfQpBbiugqzrfscV2WYhMAYzgddtgOjIcvG
-         QxQNG9/9yqvpUwvcAJdXxoJLPt9M0cvateiimHcX5KmrJkqefnMC/0izdZTkPjScc95r
-         LY5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWLjEgnEaygp5V3smNsabXIRODpIymgNoLf2SIlYBM8zAIBaQ37NCIMxgwcID/+XJ5SIpClTgHguQehIbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBNAl4meR743/HLAMGjqJ8H1HGQ0PTwQ17SGV8t/JvLKXnHecQ
-	RlqazauMYL7kGHut5SYM26oNyady9pE3hrQvJhkQQ/LA1NF966Xh
-X-Gm-Gg: ASbGnctoqpsO0hEbtGiLC4oTJoCTtgHYvCJ1KhU6F70omKzJuEOzUJJv6NC9eH+Yj0M
-	RHiwe0+bw0QxNAsYQGwzPxbjfI6lhPdShYXAu4hEweRRLSyM793oCzCBLpHEH3bgA70PuTbkEf5
-	FB/EMKipbedAsmhmwbH4I5o/iRawF3zfUyJsbjsRYUq2dM0o/G5DIH1EsXZyQsE+vTjzqcVu2C2
-	E/mTszOzR+78Py+X9aw9ohTDHYkEByjisn654yqts+ahz2ztL+aSu8=
-X-Google-Smtp-Source: AGHT+IHQKp97T17O74v5McT9T0BT8I/76CwyQ8bY2zWeqhgmq05Cw932j8Sn1yhdnHCSU0pyiULZTw==
-X-Received: by 2002:a05:6a00:410b:b0:725:31f2:5d0f with SMTP id d2e1a72fcca58-72531f25d78mr25094931b3a.8.1732986186262;
-        Sat, 30 Nov 2024 09:03:06 -0800 (PST)
-Received: from eleanor-wkdl.. ([140.116.96.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725442c086csm5319466b3a.189.2024.11.30.09.03.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 09:03:05 -0800 (PST)
-From: Yu-Chun Lin <eleanor15x@gmail.com>
-To: hch@lst.de,
-	sagi@grimberg.me,
-	kch@nvidia.com
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	visitorckw@gmail.com,
-	jserv@ccns.ncku.edu.tw,
-	Yu-Chun Lin <eleanor15x@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] nvmet: replace kmalloc + memset with kzalloc for data allocation
-Date: Sun,  1 Dec 2024 01:02:58 +0800
-Message-ID: <20241130170258.103954-1-eleanor15x@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1732986689; c=relaxed/simple;
+	bh=Dso1V0rhy/zLY7zeRFRdzfAdFp+fu8jhZhMvQReLTk4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ULSLIVEuKPIen9uOYayOFl+u0k7VwNGDToAxnnHZlOtAhYKXenfv/CcD/7cwuBywMbfSFpkkBZfdgovImMiDS06A7KnddRHxSmdtkyV6wc1ENBLHXyfJ5HvqDGiaxrHc9HEl8gF0A2uKOojqkAZH3j3eN/8dfuXucJv0nEzc4XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=61.164.42.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from localhost (unknown [10.193.223.147])
+	by mail-app3 (Coremail) with SMTP id cC_KCgA3o8DrRUtnvL8pAQ--.36275S2;
+	Sun, 01 Dec 2024 01:05:47 +0800 (CST)
+From: Lin Ma <linma@zju.edu.cn>
+To: johannes@sipsolutions.net,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lin Ma <linma@zju.edu.cn>,
+	Cengiz Can <cengiz.can@canonical.com>
+Subject: [PATCH net] wifi: nl80211: fix NL80211_ATTR_MLO_LINK_ID off-by-one
+Date: Sun,  1 Dec 2024 01:05:26 +0800
+Message-Id: <20241130170526.96698-1-linma@zju.edu.cn>
+X-Mailer: git-send-email 2.39.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,44 +45,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cC_KCgA3o8DrRUtnvL8pAQ--.36275S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw4kJry3ZrWrJr1fKFy3urg_yoW5ZrW8pF
+	WkGryxJF1UK34vqFWfGF48GFyxXFs8Zr1UCw4xtr1fCFnYqry8GryjgFsxXrnxuF1qyayf
+	Z3WDJF4avw15J37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvq1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
+	w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
+	IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2
+	z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzx
+	vE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	JVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+	AKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY
+	0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fKr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JUBVbkUUUUU=
+X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/
 
-cocci warnings: (new ones prefixed by >>)
->> drivers/nvme/target/pr.c:831:8-15: WARNING: kzalloc should be used for data, instead of kmalloc/memset
+Since the netlink attribute range validation provides inclusive
+checking, the *max* of attribute NL80211_ATTR_MLO_LINK_ID should be
+IEEE80211_MLD_MAX_NUM_LINKS - 1 otherwise causing an off-by-one.
 
-The pattern of using 'kmalloc' followed by 'memset' is replaced with
-'kzalloc', which is functionally equivalent to 'kmalloc' + 'memset',
-but more efficient. 'kzalloc' automatically zeroes the allocated
-memory, making it a faster and more streamlined solution.
+One crash stack for demonstration:
+==================================================================
+BUG: KASAN: wild-memory-access in ieee80211_tx_control_port+0x3b6/0xca0 net/mac80211/tx.c:5939
+Read of size 6 at addr 001102080000000c by task fuzzer.386/9508
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202411301434.LEckbcWx-lkp@intel.com/
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+CPU: 1 PID: 9508 Comm: syz.1.386 Not tainted 6.1.70 #2
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x177/0x231 lib/dump_stack.c:106
+ print_report+0xe0/0x750 mm/kasan/report.c:398
+ kasan_report+0x139/0x170 mm/kasan/report.c:495
+ kasan_check_range+0x287/0x290 mm/kasan/generic.c:189
+ memcpy+0x25/0x60 mm/kasan/shadow.c:65
+ ieee80211_tx_control_port+0x3b6/0xca0 net/mac80211/tx.c:5939
+ rdev_tx_control_port net/wireless/rdev-ops.h:761 [inline]
+ nl80211_tx_control_port+0x7b3/0xc40 net/wireless/nl80211.c:15453
+ genl_family_rcv_msg_doit+0x22e/0x320 net/netlink/genetlink.c:756
+ genl_family_rcv_msg net/netlink/genetlink.c:833 [inline]
+ genl_rcv_msg+0x539/0x740 net/netlink/genetlink.c:850
+ netlink_rcv_skb+0x1de/0x420 net/netlink/af_netlink.c:2508
+ genl_rcv+0x24/0x40 net/netlink/genetlink.c:861
+ netlink_unicast_kernel net/netlink/af_netlink.c:1326 [inline]
+ netlink_unicast+0x74b/0x8c0 net/netlink/af_netlink.c:1352
+ netlink_sendmsg+0x882/0xb90 net/netlink/af_netlink.c:1874
+ sock_sendmsg_nosec net/socket.c:716 [inline]
+ __sock_sendmsg net/socket.c:728 [inline]
+ ____sys_sendmsg+0x5cc/0x8f0 net/socket.c:2499
+ ___sys_sendmsg+0x21c/0x290 net/socket.c:2553
+ __sys_sendmsg net/socket.c:2582 [inline]
+ __do_sys_sendmsg net/socket.c:2591 [inline]
+ __se_sys_sendmsg+0x19e/0x270 net/socket.c:2589
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x45/0x90 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Update the policy to ensure correct validation.
+
+Fixes: 7b0a0e3c3a88 ("wifi: cfg80211: do some rework towards MLO link APIs")
+Signed-off-by: Lin Ma <linma@zju.edu.cn>
+Suggested-by: Cengiz Can <cengiz.can@canonical.com>
 ---
-build test only.
+ net/wireless/nl80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/nvme/target/pr.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/nvme/target/pr.c b/drivers/nvme/target/pr.c
-index 25a02b50d9f3..90e9f5bbe581 100644
---- a/drivers/nvme/target/pr.c
-+++ b/drivers/nvme/target/pr.c
-@@ -828,12 +828,11 @@ static void nvmet_execute_pr_report(struct nvmet_req *req)
- 		goto out;
- 	}
- 
--	data = kmalloc(num_bytes, GFP_KERNEL);
-+	data = kzalloc(num_bytes, GFP_KERNEL);
- 	if (!data) {
- 		status = NVME_SC_INTERNAL;
- 		goto out;
- 	}
--	memset(data, 0, num_bytes);
- 	data->gen = cpu_to_le32(atomic_read(&pr->generation));
- 	data->ptpls = 0;
- 	ctrl_eds = data->regctl_eds;
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 9d2edb71f981..dd84fc54fb9b 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -814,7 +814,7 @@ static const struct nla_policy nl80211_policy[NUM_NL80211_ATTR] = {
+ 	[NL80211_ATTR_MLO_LINKS] =
+ 		NLA_POLICY_NESTED_ARRAY(nl80211_policy),
+ 	[NL80211_ATTR_MLO_LINK_ID] =
+-		NLA_POLICY_RANGE(NLA_U8, 0, IEEE80211_MLD_MAX_NUM_LINKS),
++		NLA_POLICY_RANGE(NLA_U8, 0, IEEE80211_MLD_MAX_NUM_LINKS - 1),
+ 	[NL80211_ATTR_MLD_ADDR] = NLA_POLICY_EXACT_LEN(ETH_ALEN),
+ 	[NL80211_ATTR_MLO_SUPPORT] = { .type = NLA_FLAG },
+ 	[NL80211_ATTR_MAX_NUM_AKM_SUITES] = { .type = NLA_REJECT },
 -- 
-2.43.0
+2.39.2
 
 
