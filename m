@@ -1,183 +1,148 @@
-Return-Path: <linux-kernel+bounces-426328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1C99DF1C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 16:36:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEBFD1630BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:36:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DC21A08C1;
-	Sat, 30 Nov 2024 15:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiO7CeS2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8983A9DF1CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 16:37:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8FB42AA4
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E83A2816D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:37:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B5B1A01CD;
+	Sat, 30 Nov 2024 15:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="yaFPs75B"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D443A42AA4
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732980989; cv=none; b=ZohKkAnyLrP8ZYEfS7kgeYnAy3pU1Gco6stFseMsLo7vqdF7Ee6nIMjn8CY9/8wk0SvjAbJubgT5GwFxro+gqLZGsWd1TdtBwebAVAsxTuHHTWkvaMz1yWz9pxdm29afn881q0fHCJkCURm0T3JGgEsj79X+1N8TRiz6BYftzCU=
+	t=1732981054; cv=none; b=ow7pBe6wkqCbtLK+xWB6nN43VLSFvCJQbn6UTvjW9TqYow8iucP6bYtHtTxWy1ifjWD58nSVr7npHdSfYIP2x6qsyPznDaaptqbvU91qfFhfc+8lGQ4FwSjQ/HE6MQEYqMgVKc3+XPWiKDz2VH+nTq6OwJU0xj6SRNXsm4gppzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732980989; c=relaxed/simple;
-	bh=i2wtbIqmpawPaNp5Btdx5Ar7zkC857Xk8v4whaZ01vs=;
+	s=arc-20240116; t=1732981054; c=relaxed/simple;
+	bh=IfHj8arS58dxUpHrxfI2d7SUYf3amaDgz9NoPNRS6zk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q1qNZolxEwCrx5P4c9zVdbYBaM1wmdVvzyVm7axTeVvBNFDle20z9ypFVB70BOxBaONTcnLRmVkGrcyJKbtXaCaVcZTn0+9A/yX9J1NmcH3A8zij7IySneUHlCEt6vx0lAFHQ9QP4E/2CW+aBossiPdP/3WmO69YanYFv4dptEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiO7CeS2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A01F3C4CEDC
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732980988;
-	bh=i2wtbIqmpawPaNp5Btdx5Ar7zkC857Xk8v4whaZ01vs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CiO7CeS2vsEIgTLlls4gOdNxdqWDV6mk4yi8iXoCspP3vDrRwMQfReixKraH7cjeI
-	 0FHLGd+mi4RaTkM/mneIM+9rCreIJPnOf7+9eDCPeA36bhQV0qWFrJ6ENgTjS/foMm
-	 WFF3cKrpqN0fa3OZsaR4LplpY3GTK1lJopKyws07napUANn9AnKOBXeKaVP5yrPqX4
-	 G5lPmcSWpLP083O5ydfiY/B4s4w7RxN/9BCjVHuKK3AJVSW+XU5nVt7rWR33p3U02E
-	 H+YnY4Kq+j3mwH1bDPYoRAxYixrpjK7AgaDdhn+ZdjJIkkO7dyrHZg2zx4B1+bRD6g
-	 CNd5qmx1DW1HA==
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9ec267b879so398655866b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 07:36:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVpCV6WTGCs1XW6YHjVI8aDL/98kqFv/hoA2zy25ZWzwM3dAYxoFp2uOs0cfNX9nRm5ONgfDywRIO6NWBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw55L2UAqXVPORKwoY8qCfXLkpwhPjAylCQ49pYy0TPVf12/nA5
-	aZqdnWUMWa4vbGP+4UI2Z8YZTDY+wiyiApeOfS8wX6x3yExf6HYthvcGm/hq44lgFjaOxxHZqiU
-	+r5RsZTYcAI9bYcnzjgSAOnRmtbA=
-X-Google-Smtp-Source: AGHT+IFCbSZTXAOHJScz3jShbtoC55XaWETe6KCUxwT/Fq9CLf8JLid4BoIIEkr2VsAivDhAk3kDfg+Q5MIIOdO5iyI=
-X-Received: by 2002:a17:906:c4d5:b0:aa5:392a:f5a7 with SMTP id
- a640c23a62f3a-aa581066f35mr1161420066b.57.1732980987180; Sat, 30 Nov 2024
- 07:36:27 -0800 (PST)
+	 To:Cc:Content-Type; b=D5GUKq6KyniaukqfzOn6nAFBJ47WKxB8G/lZycIrJbpU+FuAxBUfkfvVTcOCgMnxiPia2RooLlSzLaTxpV/Ooc7MQZZDrbd9MGAZ9eg+vr7g7/wb5NM04bac+GG3MI1cWglYNL/4NUwtbvnW7nFANpvKdih32yNrY+Oz6Fn16Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=yaFPs75B; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ffd711274dso33151981fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 07:37:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1732981050; x=1733585850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/j5RX3MP964cNRKKWQKaoJ36XFkjCCUdFUttOGIg2Z8=;
+        b=yaFPs75BQngagAgW3YABCScbhjbPpF+oSM8QFKuM6YhpICdnMKZ/AvhzeDY+9d0gjE
+         +NF1uFvOwZo8aw+7OxHj+nIhdEwv3ZvuvFiE+1ewoFC7BXRbZtxngoq/jdqJgwIUmUjT
+         L1tFyd1ApqVMkd6C2xdcdAPGlXmlFVwPekc1S98+LQuOV4oc7968+IXuNQSfkLh0hnsa
+         jrTDbkYJrhC2nLjp2FP26V5+Fsm/U7FsXjAH75MhWsJ97tl6jIwdDUBdkz69YEipVzng
+         7SLV5RspY8Fr+2ablPRCPMRO7YUN8R4bUUTHD3JwCdOiSz5QHpI0gKezc+v/zqdZFjQ0
+         7KQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732981050; x=1733585850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/j5RX3MP964cNRKKWQKaoJ36XFkjCCUdFUttOGIg2Z8=;
+        b=vWaW76WhlUxxchIZ367G6nhnybbRS2zjY3EedbJwLDHbikAih9S0UE0eAU6uy9+FHb
+         cQ7NMWHq+Vi6vfKit7nqPPN0X/oHoMWWky5zGTxFrhZ6K4zy2nTrPP2eEIHOoPtqwLOT
+         GL41/MZNyREAbhTbhTNYITeUbX3Dla+WwER3gC/FTiGDX2qUDoLU8Pe7Tsn4ZMuaHwzV
+         OmQRn3k7iCq7fUF/Bnd/LIwXjuRK3cxAVzfGD28Jvx0tYCi+dj/3xi0QoHaq5m7iUIy5
+         31U3buNcvu07ZrDb3/dzviw35CxJw8YeohMDM78Mp8RjkrPD3rSVfIkc4Q1FAgBb99vR
+         7kKQ==
+X-Gm-Message-State: AOJu0YwJULUTEWGEzvc1y/db0KPmd7DlD2HisvZ1H0Vr3qs4jbONcb1I
+	bNQFHk1WRIwBX+WwrodZiAdrFzX1LuaVDFbhh8Hm8mGVnnDEAyidpw0p5O/30zFgfrxclBpenbx
+	T+c2jaVrszSNOkIDt2lMNY2hce9vcBVK73nJwvQ31VB59OFGw
+X-Gm-Gg: ASbGncuK90ctLOuCqiWFLU+RdYDuNYU+VGjF+GKdmIqADt3zdB+2eeqjMWXBsTQSe0t
+	eDcq6ftLjdIrH6MqwTdfOTpDAZpQz+2xJWyKRqA7SQHudwPjIuXE8/CB9plijiT4=
+X-Google-Smtp-Source: AGHT+IE1M+NzYQCMccnmg8fuPm2rVuofQwMi/nH5uhuyr6yUH9TSyqqTfUQBhZ0X/ylREXAh/c0xgYasYanKK7hbic8=
+X-Received: by 2002:a05:6512:2806:b0:53d:f7f5:bede with SMTP id
+ 2adb3069b0e04-53df7f5bef1mr3844873e87.25.1732981049810; Sat, 30 Nov 2024
+ 07:37:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130115355.3316160-1-guoren@kernel.org> <CAJF2gTQhfr-wsj2VZwwP7sWq=yp9HtT_kzzr68xh1VpKLSbybQ@mail.gmail.com>
-In-Reply-To: <CAJF2gTQhfr-wsj2VZwwP7sWq=yp9HtT_kzzr68xh1VpKLSbybQ@mail.gmail.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Sat, 30 Nov 2024 23:36:15 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRcaZhHdETFk9KbL1rUdO-U4dX8Ydta7ViAUQ3unrbScg@mail.gmail.com>
-Message-ID: <CAJF2gTRcaZhHdETFk9KbL1rUdO-U4dX8Ydta7ViAUQ3unrbScg@mail.gmail.com>
-Subject: Re: [PATCH] riscv: Fixup boot failure when CONFIG_RT_MUTEXES=y
-To: paul.walmsley@sifive.com, palmer@dabbelt.com, guoren@kernel.org, 
-	bjorn@rivosinc.com, conor@kernel.org, leobras@redhat.com, 
-	peterz@infradead.org, parri.andrea@gmail.com, will@kernel.org, 
-	longman@redhat.com, boqun.feng@gmail.com, arnd@arndb.de, 
-	alexghiti@rivosinc.com
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Guo Ren <guoren@linux.alibaba.com>
+References: <20241014122551.116491-1-brgl@bgdev.pl> <CAMRc=MfscDCr8mdxSiC8zWUgdzdqLCo3=PKhuWhWueGoq_c82w@mail.gmail.com>
+ <CAMRc=MehYdep3YvfDjZPmut4d2uKq+Cb5tQecJCQMjAEJxSdTw@mail.gmail.com> <2c69d0e0-c090-76be-3bd2-e5e92c585ffb@axentia.se>
+In-Reply-To: <2c69d0e0-c090-76be-3bd2-e5e92c585ffb@axentia.se>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Sat, 30 Nov 2024 16:37:18 +0100
+Message-ID: <CAMRc=Meo9rL62hNLJE6RuXe3S2N7vRJ1bWxeG2LbgqrJRmW7HQ@mail.gmail.com>
+Subject: Re: [PATCH] mux: constify mux class
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 30, 2024 at 8:02=E2=80=AFPM Guo Ren <guoren@kernel.org> wrote:
+On Tue, Nov 5, 2024 at 10:53=E2=80=AFPM Peter Rosin <peda@axentia.se> wrote=
+:
 >
-> On Sat, Nov 30, 2024 at 7:54=E2=80=AFPM <guoren@kernel.org> wrote:
-> >
-> > From: Guo Ren <guoren@linux.alibaba.com>
-> >
-> > When CONFIG_RT_MUTEXES=3Dy, mutex_lock->rt_mutex_try_acquire would
-> Correct: CONFIG_DEBUG_RT_MUTEXES=3Dy
-Abandoned.
-
-Here is the RESEND PATCH:
-https://lore.kernel.org/linux-riscv/20241130153310.3349484-1-guoren@kernel.=
-org/
-
+> Hi Bartosz,
 >
-> > change from rt_mutex_cmpxchg_acquire to rt_mutex_slowtrylock():
-> >         raw_spin_lock_irqsave(&lock->wait_lock, flags);
-> >         ret =3D __rt_mutex_slowtrylock(lock);
-> >         raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
+> 2024-11-01 at 15:21, Bartosz Golaszewski wrote:
+> > On Thu, Oct 24, 2024 at 9:08=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev=
+.pl> wrote:
+> >>
+> >> On Mon, Oct 14, 2024 at 2:25=E2=80=AFPM Bartosz Golaszewski <brgl@bgde=
+v.pl> wrote:
+> >>>
+> >>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>>
+> >>> All class functions used here take a const pointer to the class
+> >>> structure so we can make the struct itself constant.
+> >>>
+> >>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>> ---
+> >>>  drivers/mux/core.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/mux/core.c b/drivers/mux/core.c
+> >>> index 78c0022697ec..02be4ba37257 100644
+> >>> --- a/drivers/mux/core.c
+> >>> +++ b/drivers/mux/core.c
+> >>> @@ -42,7 +42,7 @@ struct mux_state {
+> >>>         unsigned int state;
+> >>>  };
+> >>>
+> >>> -static struct class mux_class =3D {
+> >>> +static const struct class mux_class =3D {
+> >>>         .name =3D "mux",
+> >>>  };
+> >>>
+> >>> --
+> >>> 2.43.0
+> >>>
+> >>
+> >> Gentle ping.
+> >>
+> >> Bart
 > >
-> > Because queued_spin_#ops to ticket_#ops is changed one by one by
-> > jump_label, raw_spin_lock/unlock would cause a deadlock during the
-> > changing.
+> > Peter,
 > >
-> > That means in arch/riscv/kernel/jump_label.c:
-> > 1.
-> > arch_jump_label_transform_queue() ->
-> > mutex_lock(&text_mutex); +-> raw_spin_lock  -> queued_spin_lock
-> >                          |-> raw_spin_unlock -> queued_spin_unlock
-> > patch_insn_write -> change the raw_spin_lock to ticket_lock
-> > mutex_unlock(&text_mutex);
-> > ...
-> >
-> > 2. /* Dirty the lock value */
-> > arch_jump_label_transform_queue() ->
-> > mutex_lock(&text_mutex); +-> raw_spin_lock -> *ticket_lock*
-> >                          |-> raw_spin_unlock -> *queued_spin_unlock*
-> >                           /* BUG: ticket_lock with queued_spin_unlock *=
-/
-> > patch_insn_write  ->  change the raw_spin_unlock to ticket_unlock
-> > mutex_unlock(&text_mutex);
-> > ...
-> >
-> > 3. /* Dead lock */
-> > arch_jump_label_transform_queue() ->
-> > mutex_lock(&text_mutex); +-> raw_spin_lock -> ticket_lock /* deadlock! =
-*/
-> >                          |-> raw_spin_unlock -> ticket_unlock
-> > patch_insn_write -> change other raw_spin_#op -> ticket_#op
-> > mutex_unlock(&text_mutex);
-> >
-> > So, the solution is to disable mutex usage of
-> > arch_jump_label_transform_queue() during early_boot_irqs_disabled, just
-> > like we have done for stop_machine.
-> >
-> > Reported-by: Conor Dooley <conor@kernel.org>
-> > Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
-> > Signed-off-by: Guo Ren <guoren@kernel.org>
-> > Fixes: ab83647fadae ("riscv: Add qspinlock support")
-> > Link: https://lore.kernel.org/linux-riscv/CAJF2gTQwYTGinBmCSgVUoPv0_q4E=
-Pt_+WiyfUA1HViAKgUzxAg@mail.gmail.com/T/#mf488e6347817fca03bb93a7d34df33d86=
-15b3775
-> > Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> > Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > ---
-> >  arch/riscv/kernel/jump_label.c | 12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_la=
-bel.c
-> > index 6eee6f736f68..654ed159c830 100644
-> > --- a/arch/riscv/kernel/jump_label.c
-> > +++ b/arch/riscv/kernel/jump_label.c
-> > @@ -36,9 +36,15 @@ bool arch_jump_label_transform_queue(struct jump_ent=
-ry *entry,
-> >                 insn =3D RISCV_INSN_NOP;
-> >         }
-> >
-> > -       mutex_lock(&text_mutex);
-> > -       patch_insn_write(addr, &insn, sizeof(insn));
-> > -       mutex_unlock(&text_mutex);
-> > +       if (early_boot_irqs_disabled) {
-> > +               riscv_patch_in_stop_machine =3D 1;
-> > +               patch_insn_write(addr, &insn, sizeof(insn));
-> > +               riscv_patch_in_stop_machine =3D 0;
-> > +       } else {
-> > +               mutex_lock(&text_mutex);
-> > +               patch_insn_write(addr, &insn, sizeof(insn));
-> > +               mutex_unlock(&text_mutex);
-> > +       }
-> >
-> >         return true;
-> >  }
-> > --
-> > 2.40.1
-> >
+> > Your email doesn't bounce so I assume you are getting this. Any reason
+> > why this simple change is not being picked up?
 >
+> I'm here, and am just being slow as usual. Sorry about that. I have now
+> added the patch to linux-next.
 >
-> --
-> Best Regards
->  Guo Ren
+> Cheers,
+> Peter
 
+Peter,
 
+This commit is in next but it's not gone upstream and it's almost the
+end of the merge window. I don't see any pending PR from you. Can this
+go upstream?
 
---=20
-Best Regards
- Guo Ren
+Bartosz
 
