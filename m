@@ -1,80 +1,117 @@
-Return-Path: <linux-kernel+bounces-426198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383419DF02C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:35:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BCF9DF02F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:37:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F20CC28237E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:35:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91045B21D4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC8C1974FE;
-	Sat, 30 Nov 2024 11:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noznAvTz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A28192B83;
+	Sat, 30 Nov 2024 11:36:54 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D648141987;
-	Sat, 30 Nov 2024 11:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E570E70815;
+	Sat, 30 Nov 2024 11:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732966510; cv=none; b=lWliv3AwZDX/5xRowIC8aUIaaPOue9SiCVOPBUhWvnTQZhnX26Wo7BzG5fMLL7w9L0399/rpk++aC6Fije88pbkt6HuPIXn4j9OnT1oOPUL8nT2QA4y7IJoH1H7qnuZ8SGj8feYDn5HZf8P1BbkevA1ShHbAjPAIzacaRN1PIxA=
+	t=1732966613; cv=none; b=a4XYzZ6zWTAqHo5v9ozKi80ByreVdn7b6jTK3O/MALjzfvzMM4pCZkmFVDtnxoY3NeQNjH7ZvVpan8xWX6PZ8Q5IGDuaHGXxsWdxeMiyGZ4VfHAL+ovVVXpw6sYpmC0B8kRqeKT7DUIwr8KSnyCv+kalIRfIRSh6HhcsWCGL+TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732966510; c=relaxed/simple;
-	bh=4mKUgRZefasJ1JIzQreXBbGxRktCpSzRvmcINfOabW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=glp/vP/FjUVKinT42FCVo0izb4QRKm5BVOHVVlvS3lUOnYumiTg+4Dt73S5UG/bBrHNLBaHAC3FwZ47zpykb5BxOsAAPkJHCL0d+O58iagOqQi/mxW+B91x3u31QDjaz4pYlJ0yomFRfHYFwTXqTio2h5WI2an3D6pGdUwzpNvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noznAvTz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3428DC4CECC;
-	Sat, 30 Nov 2024 11:35:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732966510;
-	bh=4mKUgRZefasJ1JIzQreXBbGxRktCpSzRvmcINfOabW8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=noznAvTzciGgC+5xIkJh3AkV0sNi8HqQjNGfIPmmHtx51N1BAz0NDZeYUeZl5V130
-	 ZMHZDAmlKk/Z9XTlYzrDsnrLLbS4enKyEo3w29Q+KS3uDBXHp8AxmL16MTzQgKeKKj
-	 y85yf0BY8f4EBNH7t9aQmIRD9PoPMGKflCZh1sYe6jvVK75nYrJD7+ZvEjkHglfzyL
-	 jhXPkS721/e2GBgs2x9IhkRUqwmsBKDmpi0WNmMW0eJuX+rCRDBYsdUZA4p+AX/RNV
-	 KF8fGcAy5MpEZMIeAqZKVYDqkW6sDo7Cj2e3yaH0gQqVBWnw2J7FR/QH7GOaQ/Lrp3
-	 WqUdh0hTb2lpw==
-Message-ID: <aad1fa32-0b23-4c32-b7dc-154c07907603@kernel.org>
-Date: Sat, 30 Nov 2024 12:35:03 +0100
+	s=arc-20240116; t=1732966613; c=relaxed/simple;
+	bh=HZCbGKOwusP883CYdY1gqxJQ4ngWAbaH2Jfxd1KPOTw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MYcl8lszXJ/h9xcbPHWvWH2g6qbmfgnwDLvB/A4NUFktB7nkm3KmBYOSElfsBYcGugX3sy98xh1U2U0PsXFE9u5Bq4BoXW1hcCr9BsZ5n7IdcPjB8pD9cJPvCUVuTDgN+OWBXpsdziocRgUdon3DeAweahH4p5QhXKj8flwn7fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 2D4BC1F00036;
+	Sat, 30 Nov 2024 11:36:49 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id A42C3A66A3A; Sat, 30 Nov 2024 11:36:48 +0000 (UTC)
+X-Spam-Level: *
+Received: from localhost.localdomain (unknown [192.168.1.64])
+	by laika.paulk.fr (Postfix) with ESMTP id C5D45A66A38;
+	Sat, 30 Nov 2024 11:36:35 +0000 (UTC)
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org
+Cc: Paul Kocialkowski <paulk@sys-base.io>
+Subject: [PATCH] MAINTAINERS: Update own email address from Bootlin to sys-base
+Date: Sat, 30 Nov 2024 12:36:32 +0100
+Message-ID: <20241130113632.3227864-1-paulk@sys-base.io>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: Drop Bhupesh Sharma from maintainers
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: Bhupesh Sharma <bhupesh.linux@gmail.com>
-References: <20241130094758.15553-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20241130094758.15553-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30.11.2024 10:47 AM, Krzysztof Kozlowski wrote:
-> For more than a year all emails to Bhupesh Sharma's Linaro emails bounce
-> and there were no updates to mailmap.  No reviews from Bhupesh, either,
-> so change the maintainer to Bjorn and Konrad (Qualcomm SoC maintainers).
-> 
-> Cc: Bhupesh Sharma <bhupesh.linux@gmail.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+Update my email address as I am no longer working at Bootlin and have
+started my own consulting company: sys-base.
 
-Acked-by: Konrad Dybcio <konradybcio@kernel.org>
+Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+---
+ MAINTAINERS | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Konrad
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c1fcc56bf2fb..ce165fd144ed 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -816,7 +816,7 @@ F:	drivers/media/platform/sunxi/sun4i-csi/
+ 
+ ALLWINNER A31 CSI DRIVER
+ M:	Yong Deng <yong.deng@magewell.com>
+-M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
++M:	Paul Kocialkowski <paulk@sys-base.io>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ T:	git git://linuxtv.org/media.git
+@@ -824,7 +824,7 @@ F:	Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml
+ F:	drivers/media/platform/sunxi/sun6i-csi/
+ 
+ ALLWINNER A31 ISP DRIVER
+-M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
++M:	Paul Kocialkowski <paulk@sys-base.io>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ T:	git git://linuxtv.org/media.git
+@@ -833,7 +833,7 @@ F:	drivers/staging/media/sunxi/sun6i-isp/
+ F:	drivers/staging/media/sunxi/sun6i-isp/uapi/sun6i-isp-config.h
+ 
+ ALLWINNER A31 MIPI CSI-2 BRIDGE DRIVER
+-M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
++M:	Paul Kocialkowski <paulk@sys-base.io>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ T:	git git://linuxtv.org/media.git
+@@ -876,7 +876,7 @@ F:	drivers/thermal/sun8i_thermal.c
+ 
+ ALLWINNER VPU DRIVER
+ M:	Maxime Ripard <mripard@kernel.org>
+-M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
++M:	Paul Kocialkowski <paulk@sys-base.io>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	drivers/staging/media/sunxi/cedrus/
+@@ -7219,7 +7219,7 @@ F:	Documentation/devicetree/bindings/display/panel/lg,sw43408.yaml
+ F:	drivers/gpu/drm/panel/panel-lg-sw43408.c
+ 
+ DRM DRIVER FOR LOGICVC DISPLAY CONTROLLER
+-M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
++M:	Paul Kocialkowski <paulk@sys-base.io>
+ S:	Supported
+ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+ F:	drivers/gpu/drm/logicvc/
+-- 
+2.47.0
+
 
