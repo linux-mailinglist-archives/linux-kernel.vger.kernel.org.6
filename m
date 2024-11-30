@@ -1,495 +1,210 @@
-Return-Path: <linux-kernel+bounces-426361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16DF9DF21E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:06:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48F6E161757
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:06:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A849F1A42C4;
-	Sat, 30 Nov 2024 17:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULCr3D5Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C81039DF220
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:07:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1D38468;
-	Sat, 30 Nov 2024 17:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 416ACB215EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:07:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991B01A2C19;
+	Sat, 30 Nov 2024 17:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7TNoBRS"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DCB8468
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 17:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732986370; cv=none; b=lG/Ik/iBCfq/9ygxwoYSzO2IDvuftyrZoXHPPFIrwye+W0ZO1Mn7AXpI/JwPovEO1P9QJxPU2FMsUfvXyWEQOdyXfNYYM4svpyMI9wdf3POh6xhkpx7ap/HbwIDVmo/x965kunLVNuFH0ZWA2NBJG77kKw4ZQc302JZ+OCLxjlI=
+	t=1732986467; cv=none; b=e1A7bXGBWMD8I1XyZp4HK8gd7v+e3rL/w/UvAjf20pAS0TwkOjEFNqLklmYzzdp52laHSyWDqqI2epki70ZrWwov8oc+BiMxgFFZMI7c8REyy3+BKV4KtywrFH5lLe5Bc4cNSZ1gN7dbSD2Sr0GcBYZ/DEU0c29oXQlezQmxseQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732986370; c=relaxed/simple;
-	bh=YT8u8PQhT/FcidDay9cA3ZIOy2+NbSTHOTNHdq56/UU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZX95ItA6ChzENk3lOg/l3piHZcrtmsuvFwg2Ntut54MnXEorQAfAPYR9mNVO6D1XY8ngx/zBcHlyMaHZT/J5oilt/2bf5uMg6ffWr1Psknv3W2WSGxL7mhG2YkWmRtGGRK6zCdg1VY6w7IhVF3/7IgkzkOmiFudK5bhsFHyao+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULCr3D5Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A11EC4CECC;
-	Sat, 30 Nov 2024 17:06:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732986370;
-	bh=YT8u8PQhT/FcidDay9cA3ZIOy2+NbSTHOTNHdq56/UU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ULCr3D5QUsHcLQwWF13h2ojBRICMvtooxfBiIKainVGXOTn1wHDtsuXdD45Iyh4t4
-	 q1A7aiLOk0Z/UEhgJ6TSPaMQunHCHR7IfGGOIAUH8JHLamTvV4eQGYboxcBzKq6xH1
-	 MucEk2B6Eu5z+PsHi7+7ebhaW/jTLjG/ZI8WN4Xolx4XhzRXMmRg6NvPl1++/QEEmA
-	 oV5hf+0WQyUBgDkZi29sBT6jhsAfCK7qlUxkKK4padVU3u2wFI3UE0OMF2Z/ODr5RM
-	 H4wUfdujaxVFeVs+X09RFJQWK67Zl7SRTkuRQsi7wGPdVT/a+fvzYfYl4NP+kPlnNO
-	 MHNngmbKiS32A==
-Date: Sat, 30 Nov 2024 17:06:00 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <dlechner@baylibre.com>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH v7 8/8] iio: adc: ad4851: add ad485x driver
-Message-ID: <20241130170600.3488f987@jic23-huawei>
-In-Reply-To: <20241129153546.63584-9-antoniu.miclaus@analog.com>
-References: <20241129153546.63584-1-antoniu.miclaus@analog.com>
-	<20241129153546.63584-9-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732986467; c=relaxed/simple;
+	bh=J6y5ZqQoQKKt4aDphP3WTv7xg3cQ2l0HTafGOFM7qjc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OlAPiiZg6dgLSyp2DfQa48nfYj5XT+aktsLE5GKKPaVxOYJFiBs6sEi2eSo0xKI/fWSDjsLffVGOJRNmkjVGuc56ShqnVjkukW76kA8qsbLs0DWU9eshDyJdgheGoTNMOL7fqaPq9pXtn3mrv9BfOHAubslB6UTzVFaM5637nFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i7TNoBRS; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21561af95c3so4370985ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:07:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732986465; x=1733591265; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=XAykXrPepQnWzrhG5eob9wgrwoTKq9xYWLzbBJZitOM=;
+        b=i7TNoBRSpEKypk/PUDeFAn+UoMPwKoVV/4tJdOpNOdYvR4xnqFpSrZUYlfhwamyxY5
+         ruir7MHwKaGuO2fB2ctzwNFp5gq0cYeX/NnYyx7k5J8MGNIQhZMt3TUgigePrAtrwqvm
+         WJsffI5XJrMezClJkImHoT3KQu6mr/uyGdOVDl7o85uwcjJIYLoHhjqIFPKKnfg2E0w9
+         nn9CGseqNfTiRrAgRWUGSRX8J5V6FYgJHvag8fm25Q7RhgU7iiESrL5o0NyZSWhv3FC+
+         InRDu5/4gF9c1u4lTImDOJXuaPg/XNjjM1qDNfJQ4Zg6I1GmxFRN8HtcfTFqfTv+ZNPL
+         Ou1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732986465; x=1733591265;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XAykXrPepQnWzrhG5eob9wgrwoTKq9xYWLzbBJZitOM=;
+        b=GtTYcEH/KasKJVzyTGIMY7fA19xaU3Xk+bv+Fkh13Y54YmdhZRUX9TafKxIFtM125L
+         BEkuitHU8kwitWjWOGxQe2FTKYjIX91Ia2V5FXXX+cIci7ksheWwJPrJyhICqmSjnXmA
+         NG3a8eU7eJ9Lkoiptp5dEb7DRuibJx+dTsOgEspZlVivmmRv5y8VShMeKyOKVTfIqcKZ
+         AW+7asrXOAirYnBqIgLLEp2yiaw0aNn/zlGM+GTXPdl6wHBc02hncofuRAPXOXk8EtCV
+         uXIhJA52m5Sm0PNyRQQ/scPh7zFBMYnP1Adp4ifH6EFzw9Ary4H087yNZmDoEL/79uh2
+         0GIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBvHf3PPi37jtf0umi7ZwtiOB7hpVAvnB3xmsZIDdMCTYUIY7jvpdzwf1S3PpjxqJVQwZS/J+VeSNQ9Os=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcTfpqZPs7Yle5428qIkA3Ug4fxrLbm6aR/obZXAj3zY9wqWY8
+	qeyvRXSSTOlGHfJwrBxau8LzaTMrrwnBwC8rTiVQznwkk9Q98PpD5P+RlA==
+X-Gm-Gg: ASbGnctLs+Sa95CHTRriUY0apmnq+Awsdc3BXs2raPAE3Fdo/pxj1dncqa48DzoMmkx
+	MJjVd83eF1Iy+yWNgZ6FWplCc2k8FOvERCaLe+twp5d6ZfB2b3Q1SFPU/VGiLYe7V3JNPhw0YOW
+	YWqvLwpyoVrE86H4lL6/EGB+ARFEIrVpFQhj1KxeWlHurUSPQqL9kyfV40zgaUiNmWAOm9ohwJ5
+	0vjh9v9x7MV7PCdro3yTuXSblM8z9DojuFJmpBG7TEEaV/RJKmC5DSwy7CrkuMu8sTiAKT240+s
+	yzNbGfQ5mayLEUKQcDUb2AE=
+X-Google-Smtp-Source: AGHT+IGE77B4US9yC+cx/cf2ZW+f5ZsDyTURwt5qccjN2BDHQshKCH4EUnjWWTHQoTM7fT3NXIbmgA==
+X-Received: by 2002:a17:903:2347:b0:215:6c9a:15 with SMTP id d9443c01a7336-2156c9a0365mr21355905ad.42.1732986463450;
+        Sat, 30 Nov 2024 09:07:43 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2156996d276sm9042845ad.238.2024.11.30.09.07.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2024 09:07:42 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <7d7e65af-b818-45de-a92c-ee59a864dbdb@roeck-us.net>
+Date: Sat, 30 Nov 2024 09:07:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] Staging driver changes for 6.13-rc1
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev, Dave Penkler <dpenkler@gmail.com>
+References: <Z0lCyXBV06VyH96s@kroah.com>
+ <f10e976e-7a04-4454-b38d-39cd18f142da@roeck-us.net>
+ <2024113025-sly-footer-3462@gregkh>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <2024113025-sly-footer-3462@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 29 Nov 2024 17:35:46 +0200
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
-
-> Add support for the AD485X a fully buffered, 8-channel simultaneous
-> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
-> differential, wide common-mode range inputs.
+On 11/30/24 08:15, Greg KH wrote:
+> On Sat, Nov 30, 2024 at 08:10:55AM -0800, Guenter Roeck wrote:
+>> Hi,
+>>
+>> On Fri, Nov 29, 2024 at 05:27:53AM +0100, Greg KH wrote:
+>>> The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+>>>
+>>>    Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+>>>
+>>> are available in the Git repository at:
+>>>
+>>>    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-6.13-rc1
+>>>
+>>> for you to fetch changes up to 114eae3c9fde35220cca623840817a740a2eb7b3:
+>>>
+>>>    Staging: gpib: gpib_os.c - Remove unnecessary OOM message (2024-11-10 08:04:18 +0100)
+>>>
+>>> ----------------------------------------------------------------
+>> [ ...]
+>>
+>>> Dave Penkler (33):
+>>>        staging: gpib: Add common include files for GPIB drivers
+>>>        staging: gpib: Add user api include files
+>>>        staging: gpib: Add GPIB common core driver
+>>>        staging: gpib: Add tms9914 GPIB chip driver
+>>>        staging: gpib: Add nec7210 GPIB chip driver
+>>>        staging: gpib: Add HP/Agilent/Keysight 8235xx PCI GPIB driver
+>>>        staging: gpib: Add Agilent/Keysight 82357x USB GPIB driver
+>>>        staging: gpib: Add Computer Boards GPIB driver
+>>
+>> I seem to be unable to find the patch introducing the problem (the link
+>> provided with the patch is invalid), so I report it here.
+>>
+>> With i386 allmodconfig builds:
+>>
+>> Building i386:allyesconfig ... failed
+>> --------------
+>> Error log:
+>> drivers/staging/gpib/cec/cec_gpib.c: In function 'cec_pci_attach':
+>> drivers/staging/gpib/cec/cec_gpib.c:300:28: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+>>    300 |         nec_priv->iobase = (void *)(pci_resource_start(cec_priv->pci_device, 3));
+>>        |                            ^
+>> drivers/staging/gpib/ines/ines_gpib.c: In function 'ines_common_pci_attach':
+>> drivers/staging/gpib/ines/ines_gpib.c:783:28: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+>>    783 |         nec_priv->iobase = (void *)(pci_resource_start(ines_priv->pci_device,
+>>        |                            ^
+>>
+>> pci_resource_start() returns resource_size_t, which is not a pointer, and thus
+>> can not be cast to one.
 > 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> changes in v7:
->  - use new iio backend os enable/disable functions
->  - implement separate scan_type for both signed and unsigned.
->  - drop ext_scan_type for 16-bit chips
->  - rework scan_index ordering.
->  - add separate scales for diff/single-ended channels
->  - parse iio channels via dts properties.
-Hi Antoniu
+> This is odd, why hasn't 0-day or any other build testing found this?
 
-The bot clearly found a few places where data got added but not used
-that need fixing up.  Some other comments below.
+Good question. Another good question is why I see this only with i386 builds,
+but not with other 32-bit builds. It should be easy to reproduce, though.
 
-> diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
-> new file mode 100644
-> index 000000000000..e8e5c0def29e
-> --- /dev/null
-> +++ b/drivers/iio/adc/ad4851.c
-> @@ -0,0 +1,1346 @@
+make ARCH=i386 allmodconfig
+make ARCH-i386 drivers/staging/gpib/cec/cec_gpib.o
 
-> +struct ad4851_chip_info {
-> +	const char *name;
-> +	unsigned int product_id;
-> +	int num_scales;
-> +	const struct iio_chan_spec *channels;
-> +	unsigned int num_channels;
-Some of these appear to be optional. If so, I think this structure should
-have some docs to explain why.
+does it for me, independent of gcc version (I tried 11.4 and 13.3).
+I don't see it with clang.
 
-> +	unsigned long max_sample_rate_hz;
-> +	unsigned int resolution;
-> +	int (*parse_channels)(struct iio_dev *indio_dev);
-> +};
+Having said this, using the return value from pci_resource_start() directly as pointer
+is quite unusual. Typically drivers use ioremap(), request_region(), pci_iomap(), or
+a similar function on it to get a pointer.
 
+Guenter
 
-> +#define AD4851_IIO_CHANNEL(index, ch, diff)					\
-> +	.type = IIO_VOLTAGE,							\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |			\
-> +		BIT(IIO_CHAN_INFO_CALIBBIAS) |					\
-> +		BIT(IIO_CHAN_INFO_SCALE),					\
-> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ) |		\
-> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),				\
-> +	.info_mask_shared_by_all_available =					\
-> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),				\
-> +	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE),		\
-> +	.indexed = 1,								\
-> +	.differential = diff,							\
-> +	.channel = ch,								\
-> +	.channel2 = ch + (diff * 8),						\
-> +	.scan_index = index,							\
-Why the final line continuation?
-
-> +
-> +#define AD4858_IIO_CHANNEL(index, ch, diff, bits)				\
-> +{										\
-> +	AD4851_IIO_CHANNEL(index, ch, diff)					\
-> +	.ext_scan_type = ad4851_scan_type_##bits##_##diff,			\
-> +	.num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_##bits##_##diff),	\
-
-Seems you set this again below.
-
-> +}
-> +
-> +#define AD4857_IIO_CHANNEL(index, ch, diff, bits)				\
-> +{										\
-> +	AD4851_IIO_CHANNEL(index, ch, diff)					\
-> +	.scan_type = {								\
-> +		.sign = 's',							\
-> +		.realbits = bits,						\
-> +		.storagebits = bits,						\
-> +	},									\
-> +}
-> +
-> +static const struct iio_chan_spec ad4858_channels[] = {
-> +	AD4858_IIO_CHANNEL(0, 0, 0, 20),
-> +	AD4858_IIO_CHANNEL(1, 0, 1, 20),
-> +	AD4858_IIO_CHANNEL(2, 1, 0, 20),
-> +	AD4858_IIO_CHANNEL(3, 1, 1, 20),
-> +	AD4858_IIO_CHANNEL(4, 2, 0, 20),
-> +	AD4858_IIO_CHANNEL(5, 2, 1, 20),
-> +	AD4858_IIO_CHANNEL(6, 3, 0, 20),
-> +	AD4858_IIO_CHANNEL(7, 3, 1, 20),
-> +	AD4858_IIO_CHANNEL(8, 4, 0, 20),
-> +	AD4858_IIO_CHANNEL(9, 4, 1, 20),
-> +	AD4858_IIO_CHANNEL(10, 5, 0, 20),
-> +	AD4858_IIO_CHANNEL(11, 5, 1, 20),
-> +	AD4858_IIO_CHANNEL(12, 6, 0, 20),
-> +	AD4858_IIO_CHANNEL(13, 6, 1, 20),
-> +	AD4858_IIO_CHANNEL(14, 7, 0, 20),
-> +	AD4858_IIO_CHANNEL(15, 7, 1, 20),
-> +};
-> +
-> +static const struct iio_chan_spec ad4857_channels[] = {
-> +	AD4857_IIO_CHANNEL(0, 0, 0, 16),
-> +	AD4857_IIO_CHANNEL(1, 0, 1, 16),
-> +	AD4857_IIO_CHANNEL(2, 1, 0, 16),
-> +	AD4857_IIO_CHANNEL(3, 1, 1, 16),
-> +	AD4857_IIO_CHANNEL(4, 2, 0, 16),
-> +	AD4857_IIO_CHANNEL(5, 2, 1, 16),
-> +	AD4857_IIO_CHANNEL(6, 3, 0, 16),
-> +	AD4857_IIO_CHANNEL(7, 3, 1, 16),
-> +	AD4857_IIO_CHANNEL(8, 4, 0, 16),
-> +	AD4857_IIO_CHANNEL(9, 4, 1, 16),
-> +	AD4857_IIO_CHANNEL(10, 5, 0, 16),
-> +	AD4857_IIO_CHANNEL(11, 5, 1, 16),
-> +	AD4857_IIO_CHANNEL(12, 6, 0, 16),
-> +	AD4857_IIO_CHANNEL(13, 6, 1, 16),
-> +	AD4857_IIO_CHANNEL(14, 7, 0, 16),
-> +	AD4857_IIO_CHANNEL(15, 7, 1, 16),
-> +};
-> +
-> +static int ad4857_parse_channels(struct iio_dev *indio_dev)
-> +{
-> +	struct device *dev = indio_dev->dev.parent;
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +	struct iio_chan_spec *ad4851_channels;
-> +	const struct iio_chan_spec ad4851_chan = AD4857_IIO_CHANNEL(0, 0, 0, 16);
-> +	const struct iio_chan_spec ad4851_chan_diff = AD4857_IIO_CHANNEL(0, 0, 1, 16);
-> +	unsigned int num_channels, index = 0, reg;
-> +	int ret;
-> +
-> +	num_channels = device_get_child_node_count(dev);
-> +	if (num_channels > AD4851_MAX_CH_NR)
-> +		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n",
-> +				     num_channels);
-> +
-> +	ad4851_channels = devm_kcalloc(dev, num_channels,
-> +				       sizeof(*ad4851_channels), GFP_KERNEL);
-> +	if (!ad4851_channels)
-> +		return -ENOMEM;
-> +
-> +	indio_dev->channels = ad4851_channels;
-> +	indio_dev->num_channels = num_channels;
-> +
-> +	device_for_each_child_node_scoped(dev, child) {
-> +		ret = fwnode_property_read_u32(child, "reg", &reg);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "Missing channel number\n");
-> +		if (fwnode_property_present(child, "diff-channels")) {
-> +			*ad4851_channels = ad4851_chan_diff;
-> +			ad4851_channels->scan_index = index++;
-> +			ad4851_channels->channel = reg;
-> +			ad4851_channels->channel2 = reg + AD4851_MAX_CH_NR;
-> +		} else {
-> +			*ad4851_channels = ad4851_chan;
-> +			ad4851_channels->scan_index = index++;
-> +			ad4851_channels->channel = reg;
-> +			ret = regmap_write(st->regmap, AD4851_REG_CHX_SOFTSPAN(reg),
-> +					   AD4851_SOFTSPAN_0V_40V);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +		ad4851_channels++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad4858_parse_channels(struct iio_dev *indio_dev)
-
-> +{
-> +	struct device *dev = indio_dev->dev.parent;
-> +	struct ad4851_state *st = iio_priv(indio_dev);
-> +	struct iio_chan_spec *ad4851_channels;
-> +	const struct iio_chan_spec ad4851_chan = AD4858_IIO_CHANNEL(0, 0, 0, 20);
-> +	const struct iio_chan_spec ad4851_chan_diff = AD4858_IIO_CHANNEL(0, 0, 1, 20);
-> +	unsigned int num_channels, index = 0, reg;
-> +	int ret;
-> +
-> +	num_channels = device_get_child_node_count(dev);
-> +	if (num_channels > AD4851_MAX_CH_NR)
-> +		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n",
-> +				     num_channels);
-> +
-> +	ad4851_channels = devm_kcalloc(dev, num_channels,
-> +				       sizeof(*ad4851_channels), GFP_KERNEL);
-> +	if (!ad4851_channels)
-> +		return -ENOMEM;
-> +
-> +	indio_dev->channels = ad4851_channels;
-> +	indio_dev->num_channels = num_channels;
-> +
-> +	device_for_each_child_node_scoped(dev, child) {
-> +		ret = fwnode_property_read_u32(child, "reg", &reg);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "Missing channel number\n");
-> +		if (fwnode_property_present(child, "diff-channels")) {
-> +			*ad4851_channels = ad4851_chan_diff;
-> +			ad4851_channels->scan_index = index++;
-> +			ad4851_channels->channel = reg;
-> +			ad4851_channels->channel2 = reg + AD4851_MAX_CH_NR;
-> +			ad4851_channels->ext_scan_type = ad4851_scan_type_20_1;
-i think this is already set appropriately in the AD4858_IIO_CHANNEL() macro.
- 
-> +			ad4851_channels->num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_20_1);
-> +
-> +		} else {
-> +			*ad4851_channels = ad4851_chan;
-> +			ad4851_channels->scan_index = index++;
-> +			ad4851_channels->channel = reg;
-> +			ad4851_channels->ext_scan_type = ad4851_scan_type_20_0;
-> +			ad4851_channels->num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_20_0);
-as above.
-
-With those dealt with there is a huge amount of duplication between this and
- ad4857_parse_channels.  Perhaps factor out a helper function into which
-the two iio_chan_spec are passed.
-
-> +			ret = regmap_write(st->regmap, AD4851_REG_CHX_SOFTSPAN(reg),
-> +					   AD4851_SOFTSPAN_0V_40V);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +		ad4851_channels++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct ad4851_chip_info ad4851_info = {
-> +	.name = "ad4851",
-> +	.product_id = 0x67,
-> +	.max_sample_rate_hz = 250 * KILO,
-> +	.resolution = 16,
-> +	.parse_channels = ad4857_parse_channels,
-> +};
-> +
-> +static const struct ad4851_chip_info ad4852_info = {
-> +	.name = "ad4852",
-> +	.product_id = 0x66,
-> +	.max_sample_rate_hz = 250 * KILO,
-> +	.resolution = 20,
-> +	.parse_channels = ad4858_parse_channels,
-> +};
-> +
-> +static const struct ad4851_chip_info ad4853_info = {
-> +	.name = "ad4853",
-> +	.product_id = 0x65,
-> +	.max_sample_rate_hz = 1 * MEGA,
-> +	.resolution = 16,
-> +	.parse_channels = ad4857_parse_channels,
-> +};
-> +
-> +static const struct ad4851_chip_info ad4854_info = {
-> +	.name = "ad4854",
-> +	.product_id = 0x64,
-> +	.max_sample_rate_hz = 1 * MEGA,
-> +	.resolution = 20,
-> +	.parse_channels = ad4858_parse_channels,
-> +};
-> +
-> +static const struct ad4851_chip_info ad4855_info = {
-> +	.name = "ad4855",
-> +	.product_id = 0x63,
-> +	.max_sample_rate_hz = 250 * KILO,
-> +	.resolution = 16,
-> +	.parse_channels = ad4857_parse_channels,
-> +};
-> +
-> +static const struct ad4851_chip_info ad4856_info = {
-> +	.name = "ad4856",
-> +	.product_id = 0x62,
-> +	.max_sample_rate_hz = 250 * KILO,
-> +	.resolution = 20,
-> +	.parse_channels = ad4858_parse_channels,
-> +};
-> +
-> +static const struct ad4851_chip_info ad4857_info = {
-> +	.name = "ad4857",
-> +	.product_id = 0x61,
-> +	.max_sample_rate_hz = 1 * MEGA,
-> +	.resolution = 16,
-> +	.channels = ad4857_channels,
-> +	.num_channels = ARRAY_SIZE(ad4857_channels),
-> +	.parse_channels = ad4857_parse_channels,
-> +};
-> +
-> +static const struct ad4851_chip_info ad4858_info = {
-> +	.name = "ad4858",
-> +	.product_id = 0x60,
-> +	.max_sample_rate_hz = 1 * MEGA,
-> +	.resolution = 20,
-
-A lot of these are not setting all the fields.
-If intentional I'd like some comments in here to remind us
-why.
-
-> +	.parse_channels = ad4858_parse_channels,
-> +};
-> +
-> +static const struct ad4851_chip_info ad4858i_info = {
-> +	.name = "ad4858i",
-> +	.product_id = 0x6F,
-> +	.max_sample_rate_hz = 1 * MEGA,
-> +	.resolution = 20,
-> +	.parse_channels = ad4858_parse_channels,
-> +};
-> +
-> +static const struct iio_info ad4851_iio_info = {
-> +	.debugfs_reg_access = ad4851_reg_access,
-> +	.read_raw = ad4851_read_raw,
-> +	.write_raw = ad4851_write_raw,
-> +	.update_scan_mode = ad4851_update_scan_mode,
-> +	.get_current_scan_type = &ad4851_get_current_scan_type,
-> +	.read_avail = ad4851_read_avail,
-> +};
-
-> +
-> +static int ad4851_probe(struct spi_device *spi)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct device *dev = &spi->dev;
-> +	struct ad4851_state *st;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +	st->spi = spi;
-> +
-> +	ret = devm_mutex_init(dev, &st->lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_regulator_bulk_get_enable(dev,
-> +					     ARRAY_SIZE(ad4851_power_supplies),
-> +					     ad4851_power_supplies);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "failed to get and enable supplies\n");
-> +
-> +	ret = devm_regulator_get_enable_optional(dev, "vddh");
-> +	if (ret < 0 && ret != -ENODEV)> +		return dev_err_probe(dev, ret, "failed to enable vddh voltage\n");
-> +
-> +	ret = devm_regulator_get_enable_optional(dev, "vddl");
-> +	if (ret < 0 && ret != -ENODEV)
-> +		return dev_err_probe(dev, ret, "failed to enable vddl voltage\n");
-> +
-> +	st->vrefbuf = devm_regulator_get_optional(dev, "vrefbuf");
-> +	if (IS_ERR(st->vrefbuf)) {
-> +		if (PTR_ERR(st->vrefbuf) != -ENODEV)
-> +			return dev_err_probe(dev, PTR_ERR(st->vrefbuf),
-> +					     "Failed to get vrefbuf regulator\n");
-> +	}
-> +
-> +	st->vrefio = devm_regulator_get_optional(dev, "vrefio");
-> +	if (IS_ERR(st->vrefio)) {
-> +		if (PTR_ERR(st->vrefio) != -ENODEV)
-> +			return dev_err_probe(dev, PTR_ERR(st->vrefio),
-> +					     "Failed to get vrefio regulator\n");
-> +	}
-> +
-> +	st->pd_gpio = devm_gpiod_get_optional(dev, "pd", GPIOD_OUT_LOW);
-> +	if (IS_ERR(st->pd_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(st->pd_gpio),
-> +				     "Error on requesting pd GPIO\n");
-> +
-> +	st->cnv = devm_pwm_get(dev, NULL);
-> +	if (IS_ERR(st->cnv))
-> +		return dev_err_probe(dev, PTR_ERR(st->cnv),
-> +				     "Error on requesting pwm\n");
-> +
-> +	ret = devm_add_action_or_reset(&st->spi->dev, ad4851_pwm_disable,
-
-I think this belongs after ad4841_set_sampling_freq as that includes
-enabling the pwm.  A devm cleanup action should be registered immediately
-after whatever it is undoing.
-
-
-> +				       st->cnv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->info = spi_get_device_match_data(spi);
-> +	if (!st->info)
-> +		return -ENODEV;
-> +
-> +	st->regmap = devm_regmap_init_spi(spi, &regmap_config);
-> +	if (IS_ERR(st->regmap))
-> +		return PTR_ERR(st->regmap);
-> +
-> +	ret = ad4851_scale_fill(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad4851_set_sampling_freq(st, HZ_PER_MHZ);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad4851_setup(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev->name = st->info->name;
-> +	indio_dev->info = &ad4851_iio_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +
-> +	ret = st->info->parse_channels(indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->back = devm_iio_backend_get(dev, NULL);
-> +	if (IS_ERR(st->back))
-> +		return PTR_ERR(st->back);
-> +
-> +	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_iio_backend_enable(dev, st->back);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad4851_calibrate(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_iio_device_register(dev, indio_dev);
-> +}
 
