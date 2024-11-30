@@ -1,230 +1,169 @@
-Return-Path: <linux-kernel+bounces-426221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8592E9DF078
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:14:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62CE9DF07B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA6F281463
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:14:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D78E1B21046
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 13:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0702154456;
-	Sat, 30 Nov 2024 13:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35047199FC9;
+	Sat, 30 Nov 2024 13:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b7qbHyrC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="QM1uTdQy"
+Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8914E15665D
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121AC42AA4;
+	Sat, 30 Nov 2024 13:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732972462; cv=none; b=CBZgJUMrDcqaGPowMKor7nIQ0OZjhuWQqJus8uVQT0P1UFgI4rar/kb9Jz7WgvcqG3cVNblnliJ0NS4aaCCkNTOOnMBYB+jxITJBi6lxFqzv0a/awnKZqttVjJaJfdXzlwG3aP5n2yWE+xUxwjHbw4OHEoQBLJqhNFZ4Sd1Z8cQ=
+	t=1732973261; cv=none; b=jUzvONVUwelRYsFS1rnpbR192u8dv8ghxSF7MUJPaGEQ+AlY4nPW3HgsbYGZMT09AMzQH8C5Lqoi4y6KycmCom8ZUatFgxbkkZOVA8cMkqYvXPYQAjHqf9gGcD3Q6ns6AwCu6O29pnlJDceBQHNNH1Y8jhpetbh+od8ETjWHaeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732972462; c=relaxed/simple;
-	bh=kLX1VYA8sW6oxdP+/dNLxcauKYs7nG88C4U391PejSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FI5ucaDySbO96eGdtLAWaEG6elnz1BLvVWKLKWbaNXvolKb15G0yAHYh7UPDTCklb5RHVrWir96efJy7sGSIsMK0UK8uXIPmn8IXbIurZWAT2BHLqr0etBgHBdii2er9Bq/LDJ+A8uPdVDiqksDM4qEEata3+Jn4iSHcTXo7uoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b7qbHyrC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AUBUBbf009087
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:14:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	l13Ngj9yg6PunixOCdqY1iHYHScDPLBYSD9xTzyt0g0=; b=b7qbHyrCQgJp6fbX
-	NNtWz7cTMfuVMLLZf4KwNp95e5ri8UeehBdXlR98ztNKTgjSLSDdwQLu6VGhdIiy
-	gOrh1PR6L+t9o5rSamPdvZYXOUH+eOHkw5NcXyMp7aPiu1SWC09kMkyECE8bwxwX
-	qRpfu+AGHzLRq02ywAPQO19QbQVySyHW0v2O7DwZBT30Ap/LdroVKfsdyWUvOn4a
-	VCrwgq8dYcghCEl3VaASoaFRa6vYAsZDCP12OdacWiKiKR75Cc1O+2H1Y/fX9G8W
-	5q1NlVQc1wZ8gxgcS0TppVbB+8Q9f1hT8NVotib3QbR4tmY4GuLXoqtJGQ5FZHjc
-	vXq5wA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437v07gn6a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 13:14:19 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d885afca84so3871946d6.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 05:14:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732972458; x=1733577258;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l13Ngj9yg6PunixOCdqY1iHYHScDPLBYSD9xTzyt0g0=;
-        b=fadmQi9UM2EJS/TKZ5qCBItNbPzRWC0PNoZidhPB0em+bcV6MFp/yWcEqcCBE2sc0X
-         oK5fbiVAwK/CxedQh/GDvjDY1eAVBS05UfT10SNxhKwOitOudG7oFRSuKVadEaT4Wlas
-         3zmmhd6QeZnbKxiPW32rKOW4TI7R8Tam+FQW3aHlR1j3lKblYNBtzFVB7HLM9kSkydTA
-         oYuYZvEV58jSOvmCsIIia9kOsED1fhdDO9l4Fz3Fx3cpsJeJI4cnb1ZvhHDV5rfohlAw
-         0MjpLIElKvfAjGTQs5UsCuYSuIn0VCjMzs4dzRSljs5ERf2f41VFl5AjJvnNbnD8aUf1
-         zWsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQcBTxO5QSnSivRWVvuYYomanzEeIwEmh90lQyt7AC9XJ/njXIZE+JV/kM7yBiq3RJpT5kPTXAYj6Ut+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsdeyjnN9v2nwUPozzjd0xHj/dCd+Pi91fva8D+eFu95x/e//V
-	Q4MklNBUYGHCHvIDdlzbLfP9qyz/6ZFyPhMLibqkUee5bYxor/ypDePteFV6n1q+uTPr5xfPj4p
-	mRCCnoj8dHWYmYfz7ECAYBf0MSqwq9ncTmf3Uh8mhdlj9KRnEyOg9IdrxxjO00SQ=
-X-Gm-Gg: ASbGnct0EFBAg3NHNmFkA69zoI+ZAJHEQuRYj05kAHMWbgYJ1vkmTgbxhuvuFA80yWJ
-	+tnmM/Xr8Z7vj2hZhLjBWWfewsxFvNLlpxexFDNU880GU1tnaPs1EFJAWhSVNPPO1ggMzAjmVdp
-	/DmCccYj5EHAVqd5UEzIFTous/pBA5i66GbTYcOScYCXYChG/Y8dPcW02ajEgs96puHA5mIfo1c
-	9ed1PJbq/5XP8ivge7PidxR6ddM/OtCBaJFj315247ySN+V+8ttd2yBhzk9t2Y2n3xjgP3jG8xT
-	nen1OuFAHps2J/zzW0X8G4gPYAIIs7Y=
-X-Received: by 2002:a05:622a:1a13:b0:460:62a1:70be with SMTP id d75a77b69052e-466b36737d2mr99634261cf.13.1732972458194;
-        Sat, 30 Nov 2024 05:14:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFtTVwwWV3W9+rLGygXE9EvB/WZiYgfOlNYU0gte1Iqi7uX/ksU1QhL9Hub2qmRCfqcXtBFbw==
-X-Received: by 2002:a05:622a:1a13:b0:460:62a1:70be with SMTP id d75a77b69052e-466b36737d2mr99634031cf.13.1732972457739;
-        Sat, 30 Nov 2024 05:14:17 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599905c56sm278909366b.142.2024.11.30.05.14.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 05:14:17 -0800 (PST)
-Message-ID: <13c83db3-12fa-4555-9e86-e5dbece8cb7a@oss.qualcomm.com>
-Date: Sat, 30 Nov 2024 14:14:12 +0100
+	s=arc-20240116; t=1732973261; c=relaxed/simple;
+	bh=4Ed0nz5m12QW8u8SRV5ZWuoAH3uPzVjZw1PS/ibNFrE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a2TQzOYrQ3L1taPrCmoWA99JSBQsHI9w+xB173DTYuErQULnb61vYXUNclLi7MGPPJu+Zk73HLlhdhBu1FHp5yqctDYykX38XS9VEhD3ioSsHojssbnw0XJhyDuhEkJfUxFtMCkVG2tsSjVHUX+iGHD1vIjZSMp6d/w8SMmSqIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=QM1uTdQy; arc=none smtp.client-ip=178.154.239.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:1814:0:640:37e9:0])
+	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id A641C60F59;
+	Sat, 30 Nov 2024 16:27:26 +0300 (MSK)
+Received: from kniv-nix.yandex-team.ru (unknown [2a02:6b8:b081:11::1:15])
+	by mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id ARcU322IZa60-pmXXibCX;
+	Sat, 30 Nov 2024 16:27:25 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1732973245;
+	bh=+eyGxWAtd/f4CQXvN7ri9iNKbNFEua2Am/b4Jgy2ocI=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=QM1uTdQyFu4dvuEOKwVOPMYy+L0FH5C3D+1JGz/m2sJh8eyEaP6yAB/hvt+OkMwIO
+	 QgSH9ML0iTelIawlsx0KJmMj37gXFJU4Oq+PaDiK7j6rlWoDWYLOKnNcoaNPLBnRPw
+	 UZs03AiWUbKOXwgfBrk5TPCEg0XgL7WA1y6kc+oY=
+Authentication-Results: mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Nikolay Kuratov <kniv@yandex-team.ru>
+To: stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	x86@kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Nikolay Kuratov <kniv@yandex-team.ru>
+Subject: [PATCH 6.6] KVM: x86/mmu: Ensure that kvm_release_pfn_clean() takes exact pfn from kvm_faultin_pfn()
+Date: Sat, 30 Nov 2024 16:27:02 +0300
+Message-Id: <20241130132702.1974626-1-kniv@yandex-team.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 20/31] arm64: dts: qcom: ipq5018: move board clocks to
- ipq5018.dtsi file
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Leo Yan <leo.yan@linux.dev>,
-        Joseph Gates <jgates@squareup.com>, Georgi Djakov <djakov@kernel.org>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>, Zac Crosby <zac@squareup.com>,
-        =?UTF-8?Q?Bastian_K=C3=B6cher?=
- <git@kchr.de>,
-        Andy Gross <andy.gross@linaro.org>,
-        Jeremy McNicoll <jeremymc@redhat.com>,
-        Rohit Agarwal <quic_rohiagar@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jonathan Marek <jonathan@marek.ca>, Vinod Koul <vkoul@kernel.org>,
-        Tengfei Fan <quic_tengfan@quicinc.com>,
-        Fenglin Wu <quic_fenglinw@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Abel Vesa
- <abel.vesa@linaro.org>,
-        Alexandru Marc Serdeliuc <serdeliuk@yahoo.com>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Jun Nie <jun.nie@linaro.org>, James Willcox <jwillcox@squareup.com>,
-        Max Chen <mchen@squareup.com>,
-        Vincent Knecht <vincent.knecht@mailoo.org>,
-        Benjamin Li <benl@squareup.com>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241130-fix-board-clocks-v2-0-b9a35858657e@linaro.org>
- <20241130-fix-board-clocks-v2-20-b9a35858657e@linaro.org>
- <83990b97-3f37-47f0-9cc6-fdaa730a8df1@linaro.org>
- <zdhevcnj6gszvaayhu2dghubwm23cdoyeik2dcnqo376gcstnz@xv46iu6l6yvu>
- <90418b49-5b19-4bef-b0cd-398bb562aa8c@kernel.org>
- <26lttxx7obu2oqvf4xnooqi3o7qwodhjzyjh4trjq5tlj2gzxs@uwihybmwbdid>
- <7778fea9-c127-428d-9653-e66e84f23c98@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <7778fea9-c127-428d-9653-e66e84f23c98@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: EMkqe1Nrh5ixtwE6xpECLqIHs5OeNBpq
-X-Proofpoint-GUID: EMkqe1Nrh5ixtwE6xpECLqIHs5OeNBpq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- adultscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2411300109
+Content-Transfer-Encoding: 8bit
 
-On 30.11.2024 11:43 AM, Krzysztof Kozlowski wrote:
-> On 30/11/2024 11:26, Dmitry Baryshkov wrote:
->> On Sat, Nov 30, 2024 at 11:00:32AM +0100, Krzysztof Kozlowski wrote:
->>> On 30/11/2024 10:57, Dmitry Baryshkov wrote:
->>>> On Sat, Nov 30, 2024 at 10:29:38AM +0100, Krzysztof Kozlowski wrote:
->>>>> On 30/11/2024 02:44, Dmitry Baryshkov wrote:
->>>>>> IPQ5018 is one of the platforms where board-level clocks (XO, sleep)
->>>>>> definitions are split between the SoC dtsi file and the board file.
->>>>>> This is not optimal, as the clocks are a part of the SoC + PMICs design.
->>>>>> Frequencies are common for the whole set of devices using the same SoC.
->>>>>> Remove the split and move frequencies to the SoC DTSI file.
->>>>>>
->>>>>> Suggested-by: Bjorn Andersson <andersson@kernel.org>
->>>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>>
->>>>> This contradicts DTS coding style and all my existing review. Obviously
->>>>> that's a NAK from me. If you want to merge this patch, please kindly
->>>>> carry my formal objection for this and all following "move board clocks"
->>>>> patches:
->>>>>
->>>>> Nacked-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>>
->>>> I'd kindly ask Bjorn to chime in as a platform maintainer.
->>>
->>>
->>> To change my NAK? NAK is still a NAK. We discussed it many, many times
->>> already. We have coding style for this explicitly mentioning this case.
->>> Could not be more specific... plus all my reviews for Qualcomm, NXP, TI,
->>> ST and other platforms. I would be quite unpredictable or unfair if I
->>> gave here some sort of exception while expecting different code from
->>> other platforms.
->>>
->>> Please carry my NAK.
->>
->> Of course. I didn't mean to drop your tag or your objection.
->>
->> BTW, would it be possible for you to clarify the policy on external
->> references? I mean, is it fine for DTSI to reference a label which is
->> not defined within that file or within one of the files that it includes?
-> 
-> 
-> It is fine, you have plenty of such examples of shared components like
-> some audio blocks or PMICs.
-> 
-> All Qualcomm PMICs DTSI (e.g. arch/arm64/boot/dts/qcom/pmi632.dtsi )
-> reference them. Chromebooks are even "worse" here:
-> arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-> Nothing gets included there but hundred of phandles!
-> 
-> Are you planning to "fix" these as well?
-> 
-> These are just Qualcomm, but same cases are everywhere else.
-> 
-> But *that's not even important* because I do not suggest to move clocks
-> to DTSI. I suggest - and was almost always suggesting as best compromise
-> - to follow DTS coding style by doing opposite of what this patch is
-> doing. That's why I NAKed this and following patches, except last two
-> which are different.
+Since 5.16 and prior to 6.13 KVM can't be used with FSDAX
+guest memory (PMD pages). To reproduce the issue you need to reserve
+guest memory with `memmap=` cmdline, create and mount FS in DAX mode
+(tested both XFS and ext4), see doc link below. ndctl command for test:
+ndctl create-namespace -v -e namespace1.0 --map=dev --mode=fsdax -a 2M
+Then pass memory object to qemu like:
+-m 8G -object memory-backend-file,id=ram0,size=8G,\
+mem-path=/mnt/pmem/guestmem,share=on,prealloc=on,dump=off,align=2097152 \
+-numa node,memdev=ram0,cpus=0-1
+QEMU fails to run guest with error: kvm run failed Bad address
+and there are two warnings in dmesg:
+WARN_ON_ONCE(!page_count(page)) in kvm_is_zone_device_page() and
+WARN_ON_ONCE(folio_ref_count(folio) <= 0) in try_grab_folio() (v6.6.63)
 
-Many of these components are simply not "fully on board" or "fully on SoC"
-on Qualcomm platforms, and probably others too.
-A number of components are tightly coupled and there are lots of circular
-dependencies, or in-between cases (like RPM(h)cc which abstract clocks
-specific to a SoC+PMIC combo).
-Some are effectively represented multiple times.
+It looks like in the past assumption was made that pfn won't change from
+faultin_pfn() to release_pfn_clean(), e.g. see
+commit 4cd071d13c5c ("KVM: x86/mmu: Move calls to thp_adjust() down a level")
+But kvm_page_fault structure made pfn part of mutable state, so
+now release_pfn_clean() can take hugepage-adjusted pfn.
+And it works for all cases (/dev/shm, hugetlb, devdax) except fsdax.
+Apparently in fsdax mode faultin-pfn and adjusted-pfn may refer to
+different folios, so we're getting get_page/put_page imbalance.
 
-There's also a lot of internal routing which can't be well-represented
-in DT without adding thousands of lines that Linux would register as
-virtual clocks that do absolutely nothing. There's also clocks that
-are not even visible from software POV that are physically connected.
+To solve this preserve faultin pfn in separate kvm_page_fault
+field and pass it in kvm_release_pfn_clean(). Patch tested for all
+mentioned guest memory backends with tdp_mmu={0,1}.
 
-And as the final point, any given platform requires a fixed frequency
-crystal is present and will (to my understanding) not function otherwise.
+No bug in upstream as it was solved fundamentally by
+commit 8dd861cc07e2 ("KVM: x86/mmu: Put refcounted pages instead of blindly releasing pfns")
+and related patch series.
 
-Hence, I think this is really form over function that gets in the way..
+Link: https://nvdimm.docs.kernel.org/2mib_fs_dax.html
+Fixes: 2f6305dd5676 ("KVM: MMU: change kvm_tdp_mmu_map() arguments to kvm_page_fault")
+Signed-off-by: Nikolay Kuratov <kniv@yandex-team.ru>
+---
+ arch/x86/kvm/mmu/mmu.c          | 5 +++--
+ arch/x86/kvm/mmu/mmu_internal.h | 2 ++
+ arch/x86/kvm/mmu/paging_tmpl.h  | 2 +-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-Konrad
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 294775b7383b..2105f3bc2e59 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4321,6 +4321,7 @@ static int kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault,
+ 	smp_rmb();
+ 
+ 	ret = __kvm_faultin_pfn(vcpu, fault);
++	fault->faultin_pfn = fault->pfn;
+ 	if (ret != RET_PF_CONTINUE)
+ 		return ret;
+ 
+@@ -4398,7 +4399,7 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+ 
+ out_unlock:
+ 	write_unlock(&vcpu->kvm->mmu_lock);
+-	kvm_release_pfn_clean(fault->pfn);
++	kvm_release_pfn_clean(fault->faultin_pfn);
+ 	return r;
+ }
+ 
+@@ -4474,7 +4475,7 @@ static int kvm_tdp_mmu_page_fault(struct kvm_vcpu *vcpu,
+ 
+ out_unlock:
+ 	read_unlock(&vcpu->kvm->mmu_lock);
+-	kvm_release_pfn_clean(fault->pfn);
++	kvm_release_pfn_clean(fault->faultin_pfn);
+ 	return r;
+ }
+ #endif
+diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
+index decc1f153669..a016b51f9c62 100644
+--- a/arch/x86/kvm/mmu/mmu_internal.h
++++ b/arch/x86/kvm/mmu/mmu_internal.h
+@@ -236,6 +236,8 @@ struct kvm_page_fault {
+ 	/* Outputs of kvm_faultin_pfn.  */
+ 	unsigned long mmu_seq;
+ 	kvm_pfn_t pfn;
++	/* pfn copy for kvm_release_pfn_clean(), constant after kvm_faultin_pfn() */
++	kvm_pfn_t faultin_pfn;
+ 	hva_t hva;
+ 	bool map_writable;
+ 
+diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
+index c85255073f67..b945dde6e3be 100644
+--- a/arch/x86/kvm/mmu/paging_tmpl.h
++++ b/arch/x86/kvm/mmu/paging_tmpl.h
+@@ -848,7 +848,7 @@ static int FNAME(page_fault)(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+ 
+ out_unlock:
+ 	write_unlock(&vcpu->kvm->mmu_lock);
+-	kvm_release_pfn_clean(fault->pfn);
++	kvm_release_pfn_clean(fault->faultin_pfn);
+ 	return r;
+ }
+ 
+-- 
+2.34.1
+
 
