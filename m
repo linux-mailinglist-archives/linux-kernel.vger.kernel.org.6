@@ -1,237 +1,159 @@
-Return-Path: <linux-kernel+bounces-426317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9769DF1A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 16:24:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DC99DF1AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 16:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B22A2163FA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B11163AC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CC91A0B06;
-	Sat, 30 Nov 2024 15:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6F219F118;
+	Sat, 30 Nov 2024 15:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="i320SDkv"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="May7g7uJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250E1AE00B;
-	Sat, 30 Nov 2024 15:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732980070; cv=fail; b=Ik5HIJ0Y0q4ahnKJD9UJzDSlLk5i/6JAdKZXVpo5GuLpplzmq0I2+Q1AauxpPOZB7CkPmOYOs4zxJ8u1WcZ5WjNccssro1s3tVI94tavj0g+HwxPN03TQhV3dfWPdofoYIY9yFFdWcsRZbbxRhd3nQ/Mla9HhFzQDKZF4Fzfw0s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732980070; c=relaxed/simple;
-	bh=Q7DY709JgBs+QNd6i5wQZjcCds4ZMiJT05soWR23iNM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rlred2T8S1hVbs6Oy2i9FE6w6qIAzebNF+OMh125ggQELfv1hE9X1JRkAF4whuzoVF2dXx3CzzGo+rlyQESSPq3tWD9NjEscgYu3/OoGYmDssufDle3hdtWwvn+eSruHGpGRYu1Dt5L26BiF6fKsnmvja9NHq0HRvg1P0ieZ1/g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=i320SDkv; arc=fail smtp.client-ip=40.107.93.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nM7K1JICHPbHqy5SNC0aQFd/6hCC3BziwTR4andiGpCK5kBGIEC/hVu5D+q+7k/2qdPw3oetV2Bcvau1sOBvtC5uxNmecfwXA+eNZTTT86gMKWWCrHNZ5/nKY6BlQJTL1SnYWtn3uCMBMp2G55oOb3rSgoU1O1R4BZEf0dQdINiX97uh9Uv9vPmx+O1FIXOOIjHnmX7QBGg0ocY+daKvNVSybnbw2FFTkVQjGvw50+Ak2rLyXOmg/o9ctN1IyhLhDjy6lZ9rYwWupSkE7D5YQ6ejIGzKkvJ/nZ7YTNxNLRZxgyt8qi/DQzQ6/5stukwvwUgk+VnQ5W0Smb5Kz2s/sQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CbsR33tA3QUueZBtjGdlP0wv8lbAXeI77bNgCXHd8C8=;
- b=GF8jRaqtgR0g3hV/FArZEYXUpmtFoQfAih24LHJ4TXqMuJ3AP7YJ235Cfrp7Tij5Wh1Ot/xtklmF8tl8kyj0yLHnwf/uHiw41wBoYzDRyVnUYKHYi3TRyvlTmVwMVbJsg5Ay6aSA9ZUkqxJ2HZNEJQuFEb1dKexlrq//aDPwGA9ngNgt29T4LlckZ74vLB9XIbrYEmog+VQ2dw/QsZOST3FO1T+eI2wCTIEDooIcK5BW8nQQR3aKAQZ5hKMPrlef8B5oTWfT0548Wo66mt1gxXT4/NEUGqi8kfwOnStTOfPeCv/iyTcwxL39tbtA8OgvdEfOuprJK6+hrNizdAg3Qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CbsR33tA3QUueZBtjGdlP0wv8lbAXeI77bNgCXHd8C8=;
- b=i320SDkv1UiOVNs/dNFeE1ESCf6+P1bInDa+6qazFHdGovb+PAxQXnyfbahtd3Pqg8cyibzaCIa1JpWEUbFcp8UxNdcqkcKk8CZJnhEfsvloH1Y6wWs/DlY+E2lJoZ4o5lm8mcvnZLU5zLyUqUm8As+6g2BdVvE8QjMzbXP+DVo=
-Received: from DM5PR07CA0057.namprd07.prod.outlook.com (2603:10b6:4:ad::22) by
- DS0PR12MB8341.namprd12.prod.outlook.com (2603:10b6:8:f8::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.16; Sat, 30 Nov 2024 15:21:02 +0000
-Received: from DS3PEPF0000C37F.namprd04.prod.outlook.com
- (2603:10b6:4:ad:cafe::80) by DM5PR07CA0057.outlook.office365.com
- (2603:10b6:4:ad::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.15 via Frontend Transport; Sat,
- 30 Nov 2024 15:21:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF0000C37F.mail.protection.outlook.com (10.167.23.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Sat, 30 Nov 2024 15:21:02 +0000
-Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sat, 30 Nov
- 2024 09:21:00 -0600
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: <x86@kernel.org>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, "Mario
- Limonciello" <mario.limonciello@amd.com>, Perry Yuan <perry.yuan@amd.com>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>, "Shyam
- Sundar S K" <Shyam-sundar.S-k@amd.com>
-Subject: [PATCH v7 12/12] platform/x86/amd: hfi: Add debugfs support
-Date: Sat, 30 Nov 2024 09:20:23 -0600
-Message-ID: <20241130152023.684-13-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241130152023.684-1-mario.limonciello@amd.com>
-References: <20241130152023.684-1-mario.limonciello@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E6319F12A
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732980235; cv=none; b=HYV1n/XNHxhqowdoSyEaW3+gRohysvddxCoU3SMDxm0j1pFH+O9BLIUO6Dk8IixiANCFFD5QyIBNy581K3N+BipgYmGCg5MdCx8ydR9sI3KwgWP2A6VRKy4O86ak6IS9jvMY+qkR8hDEfE0Ceg5ObIXvPkPkp6Q2jdtbg89vDeY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732980235; c=relaxed/simple;
+	bh=1JwAP/DY0HuGX8Ns1/kV/YEVAJX6VPdtZ9g52TJPUg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P1yp+a+j+5208cPOAH+msfZmLTC9UT9Vxg1VYGABQlk5FTDpG87tnG0WKaNzjDkJGOoe3jg1TJvRDf0fohmKCiVLxp0rPb4JVa/PisV9ZWjoK08ycLCizh80RY99nk5JIfG2+VMBTVYTDVEZVtoZcQneY2TMVlalEDh4YuCmRos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=May7g7uJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AUE0FVb003736
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:23:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	037rDtr++WF9xhkbVafxJsPvXwUinKUzUyY36hB/xW8=; b=May7g7uJUtlaFy2l
+	Ka3dgiCYMnXv3RQtyX9D14TIUyybJnTQdHayHlDpLcFECnAc1eNCTssz5myKnoO1
+	/9Ge1o12CALsPqo4O5Oodvf86zRsDKjlAZq7xAm9M2gzA/7/GXZRK2Hr4rM5JUMt
+	GxKjjR5aH4yqbNMdHPowZBRs+APdgKZ1w2qcm6DGvdLWEGqwS704Xwubffi4lwWJ
+	yWCuv3S26O8olc9zR/wA2QFo9OeMB7X36/pL/+XnLaNA9Q2105m+aykck6u6qpID
+	AvgC2/QFNjRHC4w/KLKn2WtPQAEKuzqSlChYpnTipPFbLViesby0s+ggLvgK7tKH
+	VIEsKQ==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437snqs162-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:23:52 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d880eea0a1so6633826d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 07:23:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732980231; x=1733585031;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=037rDtr++WF9xhkbVafxJsPvXwUinKUzUyY36hB/xW8=;
+        b=wI63mFC+QpJjS/c+xkgAM2IIMzdI0yMeCOQj0v6lplZICTn8Nw3DVjTQ8T4wp9ZALr
+         Y/KdTl62Vo9IvLLgVgdPZ1R2fneQ2XjKuh5lNmHp4D+SCAgt4J+Gx+a9AJgD52MUR/Ha
+         XP8JdzlCWYvViaMLkAOsT2evB/flmZnytnaUQJO+DUwtvmPJKUPyYI9JNAya3HdgMxGN
+         2Yv0zuHTkE4leS5QJXbGuOFhiAACeGkSYAnLCh6/nrxba8TUZSGevmuz7OhRRkxTqEHR
+         Cu1HhnYzPtAauvaimkH3SzazJXA5YOzgY5UajIQvFNG6RpEIQUHBFbguhiUUi4GrKDoI
+         /nQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQRqXjSnYUIYHtGRloC8dRVcmd6/FvP9VlbBKrCrtiEGQrz+/hMM0ahFafz4kQ3QsXlsyleYlmL+zD834=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBX17ggqCRuM2OcC3bWE3HlT2bK0z49o0YC/nng4/fbAhID10U
+	V0VmMxv4Rx0sVzxRwqSMiGsUfUKsyR5UwWgnx70CwGYZHI/Zs13laRPp1MTZJu8M9r22c9Kqrb5
+	Si2zLraV3pIU/Dkw3/wkQ85J7MvlwDrJrCeK4z6lzjIIVLVSFkU9QZbAJq/692nM=
+X-Gm-Gg: ASbGncvLqwKnLzrbBvmiVty1iGNwKokWyCtTyzL+uwJZra8L6n8zVlt0V5hnAFWyA9O
+	v6QK2Y96D+K1FIdq797l+d/bWZjN3S14HCcK5Axitjanm/mzKK8iCw1S/srTCVRrjwbzqFTA0Ju
+	uve2Qp0PgTJ8bsVFpQBAQTHNOaX/HG4nTCwPnTem+2Qhl5Z9xc37BNZY5ZBVWlDuuI2beQTGF3m
+	x9a65XT2ndDVD7tg57477Sf7rbSk+0/p9rjcATKhQ5CvQECntq/DZ8fEw4qJhWSgB54+McGM76u
+	oJ3xH22HH9CEOghzcg0aNsqC76MnBig=
+X-Received: by 2002:a05:620a:1915:b0:7b3:577b:6da8 with SMTP id af79cd13be357-7b67c2d1483mr899580585a.4.1732980231462;
+        Sat, 30 Nov 2024 07:23:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGOtBc+pt0MjB68ivLwzYOUuJ8boKc8KNsv4m3RWKwf3pIlcjxxa8ff8a+52/R/8drqQ6A3Pw==
+X-Received: by 2002:a05:620a:1915:b0:7b3:577b:6da8 with SMTP id af79cd13be357-7b67c2d1483mr899579285a.4.1732980231126;
+        Sat, 30 Nov 2024 07:23:51 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d40f4sm293422066b.65.2024.11.30.07.23.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2024 07:23:50 -0800 (PST)
+Message-ID: <2304eb69-c3f9-4946-85b6-183fedaf2f7c@oss.qualcomm.com>
+Date: Sat, 30 Nov 2024 16:23:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37F:EE_|DS0PR12MB8341:EE_
-X-MS-Office365-Filtering-Correlation-Id: b04c5e12-6ba0-4744-2f76-08dd11529a10
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7wz+gVJQMHftqp9NqYnNyyZQwV0+1QDiuaf0bB/Ht0Kz/Qll23XCL+tN2eRL?=
- =?us-ascii?Q?hMgid1A4rekBhrVmvQpBxZMdPEc8c2ZP1L6CLhlibpRR+BVvZYuJz/zYfapc?=
- =?us-ascii?Q?T615bsxxMHoDA13OpHvJSmP0qOqUa9WrXCUlELc5Io5xkdnDYFWM0PZWBVmR?=
- =?us-ascii?Q?fAWmM4AN8zTJzI+tyK3GA0gNzoBeg+MBsrnlx0g6krt4/9s9xR2paC2G47HY?=
- =?us-ascii?Q?rk2T9Jal8SyDpID5gQWFpl0ed2o7g/ZlrTjkKZmTjTRju+BtaxH2yDayacVz?=
- =?us-ascii?Q?LsbO1JBlb1KDo06vD9yUsYlt2cnU8k3g/OBoTbyWbQkbkFaUuatfB4j07rzY?=
- =?us-ascii?Q?iM3lQBA9Kc12JS31gBh5uJrOYvQtmpbGWeFUKLkSQrft7uuW4IMd9c3NfpuR?=
- =?us-ascii?Q?jfcNnFjgL693EG8e2Q913xgFMuBq1fiTSeO9mBzyf0x4G1/74I0taAkE31DE?=
- =?us-ascii?Q?ruilF2WuEV+LMcDcsBxMvvu7xuapqVAKlF8LRDHVWpHf1x8FFmtxhV/f4v+H?=
- =?us-ascii?Q?SQhcmfH7s5IySOe5aSLgYNhgkVfhAmxxS3bilUw9dkDn1bUcEEjES0fY3kxl?=
- =?us-ascii?Q?vBHR/uoyx7sWemT29iZdCGpf6OK2GLqUIfZwtfXzrqqQehEyw0YlowiyGMHL?=
- =?us-ascii?Q?slZWaK7qwCCuG4BsTrzojs1u+Mcwz+iMGqJwAamizB4XYSv/QhR+w3XaIr14?=
- =?us-ascii?Q?or+D4uvUTkTM7JkjcwFxgnVDJxHBrXG5Unwk2Wqz8qZ9cPaWix9TRQxrwjp+?=
- =?us-ascii?Q?kUtSvCWsWr4i5JaeDoMeN4xtzJxaoQKyxd4lEov+TBmwP0HBOyjj1FkqY4tl?=
- =?us-ascii?Q?lAs8O7DV+GNFlXjQY8huI1b9QkEggFsYto72W+LrEBkd2H/BviOiSMxAqAl9?=
- =?us-ascii?Q?pkni6/1SnFi6uC930Haynwfo5vPNwR+9hMKQ9tzx76qM+g1I9ZKoAEGkD8Dl?=
- =?us-ascii?Q?Dtk26/fNt01L/Tb7wkP5jX0cmmd0Wr7UA3oVzJAzAQh07KTAC27tlG9d9jsR?=
- =?us-ascii?Q?Gl4pqBLNuY7EksHbsPn6uqUwE5RLSuv+7QpQ1dNXyT6BDjLakWt7JnsN86mq?=
- =?us-ascii?Q?zyitkoMhNRVvNfkHkXRFQft+VP1C6QwIjt3t9z5Vlzk/iRgxchNaEOwZGvUF?=
- =?us-ascii?Q?OfPC9SAOxF2Y+VzwYPobbLFT/xn+LoHh0iG94BU9XUjxvjeCaXY22nTJSLI3?=
- =?us-ascii?Q?LfKMsMtTyYNk196JAwImf3k3rpRA330ArSi8wzUzLO2Ml8DpmJQZAIvAT71O?=
- =?us-ascii?Q?RhyMJu2gv0z0eZ7sAOPYy3v5wdaa8BgtcOmjzXp9h114hicMq3n8AoASXXxm?=
- =?us-ascii?Q?BLNLUOdx8mPIEkGnL45ErO9Ly2BHwBOwHTVqC76pqb4agiZK8HesPTs7fAkj?=
- =?us-ascii?Q?1MzOjBGCR927XW03eDNbWlFXU2vwySbnSLum39a4qvcwq/rYT0fGs4ezcFp4?=
- =?us-ascii?Q?WRGmLySHyJQ7B6KsDWZ/PN9D2yTXnbgw?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2024 15:21:02.5127
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b04c5e12-6ba0-4744-2f76-08dd11529a10
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8341
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e78100-t14s: Enable support for
+ both Type-A USB ports
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241105-x1e80100-qcp-t14-enable-usb-type-a-ports-v1-0-b4386def91d8@linaro.org>
+ <20241105-x1e80100-qcp-t14-enable-usb-type-a-ports-v1-1-b4386def91d8@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241105-x1e80100-qcp-t14-enable-usb-type-a-ports-v1-1-b4386def91d8@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: V98Ur333xNfT7ILeovaqvR5S3knNzTSl
+X-Proofpoint-GUID: V98Ur333xNfT7ILeovaqvR5S3knNzTSl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ phishscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=628 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2411300128
 
-Add a dump of the class and capabilities table to debugfs to assist
-with debugging scheduler issues.
+On 5.11.2024 12:37 PM, Abel Vesa wrote:
+> The Thinkpad T14s has 2 USB-A ports, both connected to the USB
+> multiport controller, each one via a separate NXP PTN3222 eUSB2-to-USB2
+> redriver to the eUSB2 PHY for High-Speed support, with a dedicated QMP
+> PHY for SuperSpeed support.
+> 
+> Describe each redriver and then enable each pair of PHYs and the
+> USB controller itself, in order to enable support for the 2 USB-A ports.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/platform/x86/amd/hfi/hfi.c | 36 ++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+> +
+> +&usb_mp {
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_hsphy0 {
+> +	vdd-supply = <&vreg_l2e_0p8>;
+> +	vdda12-supply = <&vreg_l3e_1p2>;
 
-diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
-index 0940950dd7adc..b6dc379bfd546 100644
---- a/drivers/platform/x86/amd/hfi/hfi.c
-+++ b/drivers/platform/x86/amd/hfi/hfi.c
-@@ -13,6 +13,7 @@
- #include <linux/acpi.h>
- #include <linux/cpu.h>
- #include <linux/cpumask.h>
-+#include <linux/debugfs.h>
- #include <linux/gfp.h>
- #include <linux/init.h>
- #include <linux/io.h>
-@@ -74,6 +75,8 @@ struct amd_hfi_data {
- 	void __iomem		*pcc_comm_addr;
- 	struct acpi_subtable_header	*pcct_entry;
- 	struct amd_shmem_info	*shmem;
-+
-+	struct dentry *dbgfs_dir;
- };
- 
- /**
-@@ -234,6 +237,13 @@ static int amd_hfi_alloc_class_data(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void amd_hfi_remove(struct platform_device *pdev)
-+{
-+	struct amd_hfi_data *dev = platform_get_drvdata(pdev);
-+
-+	debugfs_remove_recursive(dev->dbgfs_dir);
-+}
-+
- static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *hfi_cpuinfo, int cpu)
- {
- 	for (int i = 0; i < hfi_cpuinfo->nr_class; i++)
-@@ -388,6 +398,27 @@ static int amd_hfi_metadata_parser(struct platform_device *pdev,
- 	return ret;
- }
- 
-+static int class_capabilities_show(struct seq_file *s, void *unused)
-+{
-+	int cpu, idx;
-+
-+	seq_puts(s, "CPU #\tWLC\tPerf\tEff\n");
-+	for_each_present_cpu(cpu) {
-+		struct amd_hfi_cpuinfo *hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
-+
-+		seq_printf(s, "%d", cpu);
-+		for (idx = 0; idx < hfi_cpuinfo->nr_class; idx++) {
-+			seq_printf(s, "\t%d\t%d\t%d\n",
-+				   idx,
-+				   hfi_cpuinfo->amd_hfi_classes[idx].perf,
-+				   hfi_cpuinfo->amd_hfi_classes[idx].eff);
-+		}
-+	}
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(class_capabilities);
-+
- static int amd_hfi_pm_resume(struct device *dev)
- {
- 	int ret, cpu;
-@@ -463,6 +494,10 @@ static int amd_hfi_probe(struct platform_device *pdev)
- 
- 	schedule_work(&sched_amd_hfi_itmt_work);
- 
-+	amd_hfi_data->dbgfs_dir = debugfs_create_dir("amd_hfi", arch_debugfs_dir);
-+	debugfs_create_file("class_capabilities", 0644, amd_hfi_data->dbgfs_dir, pdev,
-+			    &class_capabilities_fops);
-+
- 	return 0;
- }
- 
-@@ -474,6 +509,7 @@ static struct platform_driver amd_hfi_driver = {
- 		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
- 	},
- 	.probe = amd_hfi_probe,
-+	.remove = amd_hfi_remove,
- };
- 
- static int __init amd_hfi_init(void)
--- 
-2.43.0
+> +
+> +	phys = <&eusb6_repeater>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_qmpphy0 {
+> +	vdda-phy-supply = <&vreg_l3e_1p2>;
+> +	vdda-pll-supply = <&vreg_l3c_0p8>;
+> +
+> +	status = "okay";
+> +};
 
+Please sort these alphabetically
+
+with that:
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
