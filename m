@@ -1,88 +1,84 @@
-Return-Path: <linux-kernel+bounces-426168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1D09DEFC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:01:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F75F9DEFCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:01:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DBCE163873
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:01:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 192D6B21BDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99900155CB0;
-	Sat, 30 Nov 2024 10:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CB9155336;
+	Sat, 30 Nov 2024 10:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xJDwtJWJ"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LXY3bTJa"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B86414B97E
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C5C14D28C
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732960881; cv=none; b=CbMyZ18henfmwKf0DqoDN8ZDntQ2kRCc/FQJVS23pZgFidQazRgUSQqieZ0pNqJFFbDrANHSR9sXSRCqUMeWR0FLasO7EH8+jBc72oSuxj6YcZ1t28xgjdFOBrQG+BjD8CgP2pC+XisyplHJ6b2pl+hhnY7LtwtqYM163VkxPdE=
+	t=1732960904; cv=none; b=FgJx+uRa95U3FkttIeCcaNHJ4MzO/QOGRyoJcOWuegkRRFrnxbbQ3aqR+fLXN9yEXCcy2/hIUkUr7rwqnCyXbwzT+d2dDBS2gf95N0wGOcyJW+fHR5EhaE4KE8cCz74FyOTDGXIxwxsi3VAJile+mECHADL6DZOngDE5F6g9sag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732960881; c=relaxed/simple;
-	bh=pwCVrSo2d63QozkbYlTrgoal5OaXwx+yCaGWKkdfnss=;
+	s=arc-20240116; t=1732960904; c=relaxed/simple;
+	bh=SIBkMDM9PgjbFAyR8EA5YSQSJxCLhTUPXO4IfXW4hxA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Cp2EnJ/8FbbqdobwlBWxCaKORxgMjnt1ypnWTGr8lJHmp7dkAV6SOvcEleaM/gFX77nYIP1uVV6+7hBcZF3mNb6d48fAB0cXROA7UvHBwXbXdI/k/cpWO+V27y92AmZ5JgtQvoKVKDXgPbzfZGrR2PSguwhjaWcFj8ByrNyUmBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xJDwtJWJ; arc=none smtp.client-ip=209.85.208.52
+	 Content-Disposition; b=b/m37dVSO+YF7uYezxcubiljIVKd6SbnZqOQmYfXlDeeFnXvKAzo/KZBfeDgvJaQgvWsNrrAMBERH83zZ+1sibT+Lkp/P95N7fT+XOkPOAxXW9uPak8akGCLP5EPV15LbYx4JJtEMVgdjw7Iq6gWDpSfoXrn5nUDueo/IGQ+jcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LXY3bTJa; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cfc19065ffso2973727a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:01:18 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cf6f804233so3003627a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:01:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732960877; x=1733565677; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732960901; x=1733565701; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aK0dV1gfejvgX5AVRAv0AO9jA2ssYUcI54wSBwP2RLM=;
-        b=xJDwtJWJ5nVVYoF8BeAwKwPx19hTzgGsYMyVveS/HUx/+9EhIYH5A/O1785udRsVQe
-         AMUgPTTC8wFIg11nGNEPm29CLucQOHlZWF6CaserezMgX9bMvWBoUoNCcldIi2m3Sxva
-         s0Vlif+LVIFuiamCOKtOPO9u37LmTIiu8HPte1A86ZgQPtVPjyuHvBoTZck3cOYfh5As
-         PowTScUTXytEOhD9GNC5CXfPs9AyhTbFsvMk1jbHGg/deDV0MhhNEYpziiF09MSb6B7s
-         Mx823j+dqBIkBVwLJfwWlAAC210nBtQWZy1IewM3Z4sXY2vg9CsvPZ/spqHsV+rx+CXl
-         WkuA==
+        bh=gI0rRaj3h2iBiBAn9r1ZitfB9ykqVmf7MWwf3cvySCI=;
+        b=LXY3bTJajK069OeOXmcH4TERJntYiYTHdfzKYaSPfOBG7gGyEX5hJw0BCwUSEBOu0m
+         jMBXCzQ0WqpllbX36EYDR2r1yJABe11sJcH/cO9L1bxoACo+0sUqJcoHdGhppLppr7MP
+         98b6m2lJ7X6L1m7ou8nXwNYmJXhJUqnXuzPGYQOs8JFOC9xsv5OwTKmEL7W4Hx8n9HSS
+         SgBXocONN4dVhs43GA0x4c6Ei1RGFZ1Iacx9YliDpBAKM4wEtzz55bIQ2bkfKCJFoOEL
+         6v+1cANgeDDsS8TXibQDrH4gHSETrRVlj+uoF95WHEJq+SMMAkM9+hJMAtM5b4BRXtcK
+         Bk7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732960877; x=1733565677;
+        d=1e100.net; s=20230601; t=1732960901; x=1733565701;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aK0dV1gfejvgX5AVRAv0AO9jA2ssYUcI54wSBwP2RLM=;
-        b=Z9rlabRpGinrvThlCPApW5ag8rzHKZwCl0XCltGsoQZQtDd8GO73VeXxZZ6vVYJRiM
-         O1q1RbZ+SUKfotq3e78lThSk4Wr/Hg+OdS8eH+GiP34T7jT6nsaH6wNJuPUsAgHOJlgz
-         LYerA62E72sSSuaYSvaTt/Z3bPIQ4zWEKx0KgqlStYsIpd7ohSgG7Xk+VXbJX70XGEZp
-         po7MKjh7C61dg2IA9qyM+x3lAjdPx8DuH388Kzn2oO9Wq7eLF5+ufZi3Q18oxusmybvX
-         Nz+l3I2xNLgutcSWgntjkOyjDx08t8q29x0VHcnyOAJTSRB0Fvk5SE12rq6+FlZ82KYP
-         +uAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpaRI9CMk9Wd7oaNHh7e6fmDP5e1VKBDTlHO9kr/hpnj6x01uaUsgGkPgrLwGJjyrhfhX7wQcFB1Samh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIu/kFBi60PRUK00mdhYPQ42z2mm6efMLqFSQjB4OnscB8pIzY
-	rHjDuTYbo0Ihi9tTrguGcJHtpXAcjr1voKDk/+oj6mxa96NaCnOQBY9vB3PRIL4=
-X-Gm-Gg: ASbGncvzbaiiDzyzdw+OklZqkgfJRL3PJ9AM33fwodPsijQFgQZDHXTqtkE/scPqh7W
-	stshro4xrx6ZudoAmdCYVfQhLHKqltndRaUnopOB1erRtdfmn1s8PWcJZ5LzsxwR0GZbbQImeVJ
-	0Gu7/5UbAeRY/XYlL73O14WMTvw2pVQNjo0uwVUPwQa56JEiPnwF8h1mrBKyjD+GF1WgcYhKPlt
-	RD7OZvZ1XE0rY8EtBGPnfH12D2y32BXbagItkN6hz1BoTXpL5WORInyD6Bf2RrzyLp5vk2u
-X-Google-Smtp-Source: AGHT+IEtv6gd869K+dRtqKZE6OGZWNVbaOzagbrsUDx5xx6VOeUmeXvzJOk8eFEsMgnWDlwVcluldw==
-X-Received: by 2002:a05:6402:2116:b0:5cf:e3cf:38af with SMTP id 4fb4d7f45d1cf-5d080b8d46fmr14459310a12.2.1732960876730;
-        Sat, 30 Nov 2024 02:01:16 -0800 (PST)
+        bh=gI0rRaj3h2iBiBAn9r1ZitfB9ykqVmf7MWwf3cvySCI=;
+        b=eQ6O0zNabqmWPgWV2Qt+DWOQVa8UWNVVnZ1jOEswzV1krCySscyKn6Kz3rYJiZhtfN
+         cw4ed38XzOymgPKUa9zB89cq4sK+g9qZlXmo5MmcGW9RoTRJutchJRXXnKVMhG70+n8g
+         2DnKxFW8r9zxir4W7u1Ct5AfULwiKdFV5wDDQ4mH7VTu8AO1V2/4mAmf+P0PzxeMD1KE
+         qVwkomv1L2WjosMrwJey/XfJiTfnFcLWIfD3zPmJcRb0fqWeZVjitW+58TJmRanypaRO
+         LdQFKnXPpVA5Lksik3uuFkZ9qjlK7ENT6+UUY2/KI/nuNK6UsvlLJmhc4jtrgoAsmKC3
+         L+LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsXfpSHoGaHNw2Dm0RbhGL6SsU402x75uLcMXXIwu0mXWTG3MDd3xEuPrZNCO8vM2YfxM389dmu7GFksI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzNeUBUqS9o7euhwFQI0JiuCQS9Gg7b6l1Fk41ix4YLfAcZqZr
+	qrWR+IxVRkodOG/hvQWU4dzgfNbFRrV1D56Ki/mcMD9IeL/bauuVVOlTnDRxw1s=
+X-Gm-Gg: ASbGncve9yAnh9qEnijq8NixEhjbsDc9u/49b/uCR9l/M49nYROqDYOCbXCa/4nZkKP
+	0PcPMod5i55PuWRft8PQBTzITF5eo46jJd6hiNuNyxsHkX6qVWUqYMOSXXkbrsTNrhUld1BkSBG
+	+Fd/hCkVzZGlMjGcMCIkLNRV7uCINY5kRWt0ISE9KmJf1cV/jONjhRjZXeJrhR6/uzjWhWQpWNA
+	1k3xqnwJ5VLcTaKA6n0MPAUhaBgYGlNRdWUkacnUMDCRYkW8aB3aJQJa/VUzxhS0mQdU3Za
+X-Google-Smtp-Source: AGHT+IEFpMg8pm0uwYaiFZHM3DW/3ch6uaXaKn10ANQVIeghH2SzJao+XGL30yqtSajOxrJ4Wm207w==
+X-Received: by 2002:a05:6402:1d4f:b0:5d0:840d:ed04 with SMTP id 4fb4d7f45d1cf-5d0840deeb0mr13550421a12.8.1732960901059;
+        Sat, 30 Nov 2024 02:01:41 -0800 (PST)
 Received: from localhost (h1109.n1.ips.mtn.co.ug. [41.210.145.9])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097d9f5fdsm2670060a12.15.2024.11.30.02.01.15
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0d0a026e6sm222374a12.80.2024.11.30.02.01.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 02:01:16 -0800 (PST)
-Date: Sat, 30 Nov 2024 13:01:12 +0300
+        Sat, 30 Nov 2024 02:01:40 -0800 (PST)
+Date: Sat, 30 Nov 2024 13:01:37 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] PCI: rockchip-ep: Fix error code in
- rockchip_pcie_ep_init_ob_mem()
-Message-ID: <8b0fefdf-0e5b-42bb-b1ee-ccdddd13856d@stanley.mountain>
+To: Atul Gupta <atul.gupta@chelsio.com>
+Cc: Potnuri Bharat Teja <bharat@chelsio.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Casey Leedom <leedom@chelsio.com>,
+	Michael Werner <werner@chelsio.com>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] cxgb4: prevent potential integer overflow on 32bit
+Message-ID: <86b404e1-4a75-4a35-a34e-e3054fa554c7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,25 +89,36 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Return -ENOMEM if pci_epc_mem_alloc_addr() fails.  Don't return success.
+The "gl->tot_len" variable is controlled by the user.  It comes from
+process_responses().  On 32bit systems, the "gl->tot_len +
+sizeof(struct cpl_pass_accept_req) + sizeof(struct rss_header)" addition
+could have an integer wrapping bug.  Use size_add() to prevent this.
 
-Fixes: c35a85126116 ("PCI: rockchip-ep: Refactor rockchip_pcie_ep_probe() memory allocations")
+Fixes: a08943947873 ("crypto: chtls - Register chtls with net tls")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/pci/controller/pcie-rockchip-ep.c | 1 +
- 1 file changed, 1 insertion(+)
+This is from static analysis.  I've spent some time reviewing this code
+but I might be wrong.
 
-diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-index 1064b7b06cef..34162ca14093 100644
---- a/drivers/pci/controller/pcie-rockchip-ep.c
-+++ b/drivers/pci/controller/pcie-rockchip-ep.c
-@@ -784,6 +784,7 @@ static int rockchip_pcie_ep_init_ob_mem(struct rockchip_pcie_ep *ep)
- 						  SZ_1M);
- 	if (!ep->irq_cpu_addr) {
- 		dev_err(dev, "failed to reserve memory space for MSI\n");
-+		err = -ENOMEM;
- 		goto err_epc_mem_exit;
- 	}
+ drivers/infiniband/hw/cxgb4/device.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/cxgb4/device.c b/drivers/infiniband/hw/cxgb4/device.c
+index 80970a1738f8..034b85c42255 100644
+--- a/drivers/infiniband/hw/cxgb4/device.c
++++ b/drivers/infiniband/hw/cxgb4/device.c
+@@ -1114,8 +1114,10 @@ static inline struct sk_buff *copy_gl_to_skb_pkt(const struct pkt_gl *gl,
+ 	 * The math here assumes sizeof cpl_pass_accept_req >= sizeof
+ 	 * cpl_rx_pkt.
+ 	 */
+-	skb = alloc_skb(gl->tot_len + sizeof(struct cpl_pass_accept_req) +
+-			sizeof(struct rss_header) - pktshift, GFP_ATOMIC);
++	skb = alloc_skb(size_add(gl->tot_len,
++				 sizeof(struct cpl_pass_accept_req) +
++				 sizeof(struct rss_header)) - pktshift,
++			GFP_ATOMIC);
+ 	if (unlikely(!skb))
+ 		return NULL;
  
 -- 
 2.45.2
