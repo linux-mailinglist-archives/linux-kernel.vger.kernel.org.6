@@ -1,187 +1,183 @@
-Return-Path: <linux-kernel+bounces-426187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5809DF008
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:08:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D309DF009
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:09:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA2A163165
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:09:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBCC15697A;
+	Sat, 30 Nov 2024 11:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R2EkLtge";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yZhDDu+O"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CB62B215F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:08:36 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F49D15B99E;
-	Sat, 30 Nov 2024 11:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tnvVy9lb"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7661531E6
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 11:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A36313C3F2
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 11:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732964909; cv=none; b=F2tKXlm2v6p+v/j4GL77ExOpeXOIqp7yKSUrPsmqfZeA528vLQ/KAUCJwa8wQnu8XKan4CCANsw2ozDVEdHKO3wJMlHbvZqhfMYYl7IkhNoqV1tNnbb22F9Acz9rl8a386nOnAKqEK8CLgWfSwQb7T4NprrAWLoNicwsbJyw2rc=
+	t=1732964971; cv=none; b=Q+mFxvmdbLalY4RVEyutl7gxA06lotTSowHm3pey7M4PLWh1XAHuspGAzeQ9JH7+EZaqeIPWA7r0Acx/KlmhkmcEg4+jdbAjs7qMMZ8f7DzCvDTuKg9USkR2GDfM5CWaZ2b8knFuFZ6XIirYiCeGJ33fpTskZH2tseINfFFh4wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732964909; c=relaxed/simple;
-	bh=NSEA1SSDSL084X4JuRKIRhUhOQDaB/BENf8Zl0fCm94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LL04da3EyN2qEjDjOclU+N0X64EE+ToME6YQV56pXMhDZdZqrkQHHmH70rsa9QofSEpH9Nii6f9bcSkkjq/gkUW9AaqetBxZNcAM0qz7aj2eUgaW9rYxYXbukwxJjS1+GtsKy8miDa1vKvWjoOR98ottuQiIQM5tobEBU3G3RRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tnvVy9lb; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53de8ecb39bso3089064e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 03:08:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732964905; x=1733569705; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VyBDDQ9RN1xVnr3Ge/Kd+7GiNG8p1vU/7DTAOuAlE7I=;
-        b=tnvVy9lbXN/RaEfZp08h2oBdrZo1vL/DbbV/igFbwRHTJehpIt15Iel9/kvPgABa2m
-         +l4LFIXe7YmkUMyi7s7gEvi/zek7RjHqSIRrkhEIVHhxcMl1wIxaN+seTpvLUOcFcg4U
-         S7BFohp6lO1HNVtkR+xFtT+eKyomqz+HvTG69WVR0ewMRy3huC3gvCWJtT//DTTlPC2g
-         tVgabiAjOzFhcNIB1hBSpuCknhtNOqoLOJEJWKKMmSLSU74Anhda2XGJ+gNAIIOjkxCU
-         sMEKz441kDJmIRmAAQcha2BRbrgRl0tfIaGk0IwZzFZk2zhCaa/JIfBYo++lFW0As77W
-         ZjYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732964905; x=1733569705;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VyBDDQ9RN1xVnr3Ge/Kd+7GiNG8p1vU/7DTAOuAlE7I=;
-        b=LmJUT3PTOWeKHxLPVPGVdM8D0cCxtvdTS7FQBtZpjqGUXrRGdYvu+J7Xg2U8ntSFla
-         y+GS9TtfBosRXunft9IOAuECnd2OrAoFudbIjBW51+mpgl96s6F6aPr6/eTAioyh0xLD
-         yhfYRBhOzdWf9W6eW7AHRVbSvza5OqlUrLiagegN+rVvg9pz9XvyyNq7Di3R0EsGhLIM
-         BxlqtpE8C0/SGfQZ33iPKAklDScTspfH0QMHHA1ZHQZKrjbWTi4lMkrAszaLjHBepDRP
-         uOaDDkbqUYWqQSuaimbheARPsNvNuvceVi543+2WQ69+Vrdmu4/MNipsUiybYW4PBDZb
-         C3jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnlzjIJl926m6YJGfI0bux/sCP2mAcMQrROZHnIhup3/s8F5j4BGS0U6MqoWQVhsBb7R5Yv9BIceoDA1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMXrigul64+Ll+7ptSOnrgi0vU1GsbZZ75ZjzWTWDoXnZY2SH7
-	JRdCJNeZaHGK2CgB6ptrXuzYLUT5+AIPAQ5nypavHcbHo6WDt0OUn847ytAh0us=
-X-Gm-Gg: ASbGncszYmqMDBhBbT1FxSRGrteaqa7eI5MP2ymIdIsVimI9tPrAqjQg9MA7LcSI6OT
-	HKWwiy92Qircs6Rsv0W7MJkSXgDVbykaPLdzWVSFg6AGgo3TnM2ZxTka6OynsDqK4VqfWkXmva1
-	9HQXkjkmq+7AFm5Oz4tI1GMBhBmsbw1eGIslvrA9kpxpwCHjriTqbeMwNl9a+SexqXpEJF1LoON
-	EO7tiSQJQMMHYCLJy5goWdGKwivahzoQIIpjYlrxhn3iLopZEgBMkOuBqlkqwj9gJvlG+PoublI
-	eTsQlQNnOadQ36UbLgD/jPVagHS6Sg==
-X-Google-Smtp-Source: AGHT+IGLsmBOtgxyMFI4fiUTJseDYY5c3VGf49SiTbcFYm56bV9Q7A9gzamHW6K2Byi57Jf8ndDGvg==
-X-Received: by 2002:a05:6512:3d02:b0:53d:cef7:d88d with SMTP id 2adb3069b0e04-53df00dce40mr8808221e87.31.1732964905112;
-        Sat, 30 Nov 2024 03:08:25 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df643121esm734460e87.56.2024.11.30.03.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 03:08:23 -0800 (PST)
-Date: Sat, 30 Nov 2024 13:08:21 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Leo Yan <leo.yan@linux.dev>, Joseph Gates <jgates@squareup.com>, 
-	Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, 
-	Stephan Gerhold <stephan@gerhold.net>, Zac Crosby <zac@squareup.com>, 
-	Bastian =?utf-8?Q?K=C3=B6cher?= <git@kchr.de>, Andy Gross <andy.gross@linaro.org>, 
-	Jeremy McNicoll <jeremymc@redhat.com>, Rohit Agarwal <quic_rohiagar@quicinc.com>, 
-	Melody Olvera <quic_molvera@quicinc.com>, Bhupesh Sharma <bhupesh.sharma@linaro.org>, 
-	cros-qcom-dts-watchers@chromium.org, Stephen Boyd <swboyd@chromium.org>, 
-	Rajendra Nayak <quic_rjendra@quicinc.com>, Martin Botka <martin.botka@somainline.org>, 
-	Jonathan Marek <jonathan@marek.ca>, Vinod Koul <vkoul@kernel.org>, 
-	Tengfei Fan <quic_tengfan@quicinc.com>, Fenglin Wu <quic_fenglinw@quicinc.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
-	Alexandru Marc Serdeliuc <serdeliuk@yahoo.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Sibi Sankar <quic_sibis@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Jun Nie <jun.nie@linaro.org>, James Willcox <jwillcox@squareup.com>, 
-	Max Chen <mchen@squareup.com>, Vincent Knecht <vincent.knecht@mailoo.org>, 
-	Benjamin Li <benl@squareup.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 20/31] arm64: dts: qcom: ipq5018: move board clocks to
- ipq5018.dtsi file
-Message-ID: <wvrelorcsajlux73jfqysgsox5dge7udfvhktt2sto2yg2xb3a@t7cpherrt6z7>
-References: <20241130-fix-board-clocks-v2-0-b9a35858657e@linaro.org>
- <20241130-fix-board-clocks-v2-20-b9a35858657e@linaro.org>
- <83990b97-3f37-47f0-9cc6-fdaa730a8df1@linaro.org>
- <zdhevcnj6gszvaayhu2dghubwm23cdoyeik2dcnqo376gcstnz@xv46iu6l6yvu>
- <90418b49-5b19-4bef-b0cd-398bb562aa8c@kernel.org>
- <26lttxx7obu2oqvf4xnooqi3o7qwodhjzyjh4trjq5tlj2gzxs@uwihybmwbdid>
- <7778fea9-c127-428d-9653-e66e84f23c98@kernel.org>
+	s=arc-20240116; t=1732964971; c=relaxed/simple;
+	bh=v4w8vyhsXyVoxX3ovqAl05cCmbdCW+Rmn6zOFLeePj4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SBefLmBTYJKvo0O+Iob8WvWOK/xw+5yUyENlNhubGjTnXlL3JikSqneMgYzKTVVGHhOf5S0cEXCCQC8CzBNjSIoSkKrhRmEE8G7+ghyp4yeRi2RKmijVDOGTr8qBSio0skQ5fMI+Utu6yRC88tb1SdR5HFR6UK4/6ARlLyMZ21w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R2EkLtge; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yZhDDu+O; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732964966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O7hP4TcnSHrpXTa8PPHEqfKDeA5XRzAAdThS5PJerWw=;
+	b=R2EkLtgeKPi08mI+Nj28EiSvmNLuIONj1K4EcYE4xCgJ/sLrGgOjc+NhxfNaFOi1X8IRvq
+	JsnWIhvTOmv0YGhrEqsPI+7kHuYn04bp9JQvL+KnCYwot5ogT5+NCQ5hELTU74XBHDj9wz
+	aLV2FdG7IjEb+bKSKgcaop/ar/n3FIwFlYolM3TirDCshLxrRf2tGag+8Bq2gskyAqT9cd
+	BaA6SOPfRtLE32gX8oQp+O8zltTdE1vD4iebooDBRfxh9Buo8Cw0M0sVe0KSUTmRNm0NwA
+	v7igI9MpZIPlHnMYhLWlaVirTOz6fm2uwyV2y5x6GK538Ij8WtTP3LDxLTUn7Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732964966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O7hP4TcnSHrpXTa8PPHEqfKDeA5XRzAAdThS5PJerWw=;
+	b=yZhDDu+O8wTaUCp9AIumD1aDYwjBdI0bZ3ctg6KXFF2LAPiGJjQbrYIUZ1nEg3owJvgQ8O
+	umpq7Ho+sL34GdDQ==
+To: Guenter Roeck <linux@roeck-us.net>, John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [patch 2/2] timekeeping: Always check for negative motion
+In-Reply-To: <2b732d25-63e7-40f7-8d66-b1e6dc0b701d@roeck-us.net>
+References: <20241031115448.978498636@linutronix.de>
+ <20241031120328.599430157@linutronix.de>
+ <387b120b-d68a-45e8-b6ab-768cd95d11c2@roeck-us.net>
+ <CANDhNCo1RtcfqUJsuAQ+HdS7E29+gByfek5-4KYiAk3Njk4M3Q@mail.gmail.com>
+ <65b412ef-fc57-4988-bf92-3c924a1c74a5@roeck-us.net> <87cyifxvgj.ffs@tglx>
+ <2cb25f89-50b9-4e72-9b18-bee78e09c57c@roeck-us.net> <874j3qxmk7.ffs@tglx>
+ <2b732d25-63e7-40f7-8d66-b1e6dc0b701d@roeck-us.net>
+Date: Sat, 30 Nov 2024 12:09:26 +0100
+Message-ID: <87r06tvuzd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7778fea9-c127-428d-9653-e66e84f23c98@kernel.org>
+Content-Type: text/plain
 
-On Sat, Nov 30, 2024 at 11:43:34AM +0100, Krzysztof Kozlowski wrote:
-> On 30/11/2024 11:26, Dmitry Baryshkov wrote:
-> > On Sat, Nov 30, 2024 at 11:00:32AM +0100, Krzysztof Kozlowski wrote:
-> >> On 30/11/2024 10:57, Dmitry Baryshkov wrote:
-> >>> On Sat, Nov 30, 2024 at 10:29:38AM +0100, Krzysztof Kozlowski wrote:
-> >>>> On 30/11/2024 02:44, Dmitry Baryshkov wrote:
-> >>>>> IPQ5018 is one of the platforms where board-level clocks (XO, sleep)
-> >>>>> definitions are split between the SoC dtsi file and the board file.
-> >>>>> This is not optimal, as the clocks are a part of the SoC + PMICs design.
-> >>>>> Frequencies are common for the whole set of devices using the same SoC.
-> >>>>> Remove the split and move frequencies to the SoC DTSI file.
-> >>>>>
-> >>>>> Suggested-by: Bjorn Andersson <andersson@kernel.org>
-> >>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>>>
-> >>>> This contradicts DTS coding style and all my existing review. Obviously
-> >>>> that's a NAK from me. If you want to merge this patch, please kindly
-> >>>> carry my formal objection for this and all following "move board clocks"
-> >>>> patches:
-> >>>>
-> >>>> Nacked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >>>
-> >>> I'd kindly ask Bjorn to chime in as a platform maintainer.
-> >>
-> >>
-> >> To change my NAK? NAK is still a NAK. We discussed it many, many times
-> >> already. We have coding style for this explicitly mentioning this case.
-> >> Could not be more specific... plus all my reviews for Qualcomm, NXP, TI,
-> >> ST and other platforms. I would be quite unpredictable or unfair if I
-> >> gave here some sort of exception while expecting different code from
-> >> other platforms.
-> >>
-> >> Please carry my NAK.
-> > 
-> > Of course. I didn't mean to drop your tag or your objection.
-> > 
-> > BTW, would it be possible for you to clarify the policy on external
-> > references? I mean, is it fine for DTSI to reference a label which is
-> > not defined within that file or within one of the files that it includes?
-> 
-> 
-> It is fine, you have plenty of such examples of shared components like
-> some audio blocks or PMICs.
-> 
-> All Qualcomm PMICs DTSI (e.g. arch/arm64/boot/dts/qcom/pmi632.dtsi )
-> reference them. Chromebooks are even "worse" here:
-> arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-> Nothing gets included there but hundred of phandles!
-> 
-> Are you planning to "fix" these as well?
+On Fri, Nov 29 2024 at 08:09, Guenter Roeck wrote:
+> On 11/29/24 04:16, Thomas Gleixner wrote:
+> [   13.860000] WARNING: CPU: 0 PID: 0 at kernel/time/timekeeping_internal.h:44 timekeeping_advance+0x844/0x9d0
+> [   13.860000] clocksource_delta() time going backward: now=0xd60127 last=0x85170f4 mask=0xffffff ret=0x849033
 
-No.
+So this is a idle sleep which took longer than max_idle_ns. The rest is
+the consequence of this as timekeeping does not advance and the timers
+are rearmed on the stale time.
 
-> 
-> These are just Qualcomm, but same cases are everywhere else.
-> 
-> But *that's not even important* because I do not suggest to move clocks
-> to DTSI. I suggest - and was almost always suggesting as best compromise
-> - to follow DTS coding style by doing opposite of what this patch is
-> doing. That's why I NAKed this and following patches, except last two
-> which are different.
+Can you try the patch below?
 
-If you remmember my first attempt was implemented other way around. But
-I think it still better to have both frequencies in the SoC dtsi, it
-points out that it is tightly coupled with the RPM CC (and can not be
-easily changed), it saves us from 32 kHz / 32.768 kHz / 32.764 kHz
-typos, etc.
+Thanks,
 
--- 
-With best wishes
-Dmitry
+        tglx
+---
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -49,6 +49,7 @@ struct module;
+  * @archdata:		Optional arch-specific data
+  * @max_cycles:		Maximum safe cycle value which won't overflow on
+  *			multiplication
++ * @max_raw_delta:	Maximum safe delta value for negative motion detection
+  * @name:		Pointer to clocksource name
+  * @list:		List head for registration (internal)
+  * @freq_khz:		Clocksource frequency in khz.
+@@ -109,6 +110,7 @@ struct clocksource {
+ 	struct arch_clocksource_data archdata;
+ #endif
+ 	u64			max_cycles;
++	u64			max_raw_delta;
+ 	const char		*name;
+ 	struct list_head	list;
+ 	u32			freq_khz;
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -24,7 +24,7 @@ static void clocksource_enqueue(struct c
+ 
+ static noinline u64 cycles_to_nsec_safe(struct clocksource *cs, u64 start, u64 end)
+ {
+-	u64 delta = clocksource_delta(end, start, cs->mask);
++	u64 delta = clocksource_delta(end, start, cs->mask, cs->max_raw_delta);
+ 
+ 	if (likely(delta < cs->max_cycles))
+ 		return clocksource_cyc2ns(delta, cs->mult, cs->shift);
+@@ -993,6 +993,15 @@ static inline void clocksource_update_ma
+ 	cs->max_idle_ns = clocks_calc_max_nsecs(cs->mult, cs->shift,
+ 						cs->maxadj, cs->mask,
+ 						&cs->max_cycles);
++
++	/*
++	 * Threshold for detecting negative motion in clocksource_delta().
++	 *
++	 * Allow for 0.875 of the mask value so that overly long idle
++	 * sleeps which go slightly over mask/2 do not trigger the negative
++	 * motion detection.
++	 */
++	cs->max_raw_delta = (cs->mask >> 1) + (cs->mask >> 2) + (cs->mask >> 3);
+ }
+ 
+ static struct clocksource *clocksource_find_best(bool oneshot, bool skipcur)
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -755,7 +755,8 @@ static void timekeeping_forward_now(stru
+ 	u64 cycle_now, delta;
+ 
+ 	cycle_now = tk_clock_read(&tk->tkr_mono);
+-	delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask);
++	delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
++				  tk->tkr_mono.clock->max_raw_delta);
+ 	tk->tkr_mono.cycle_last = cycle_now;
+ 	tk->tkr_raw.cycle_last  = cycle_now;
+ 
+@@ -2230,7 +2231,8 @@ static bool timekeeping_advance(enum tim
+ 		return false;
+ 
+ 	offset = clocksource_delta(tk_clock_read(&tk->tkr_mono),
+-				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask);
++				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
++				   tk->tkr_mono.clock->max_raw_delta);
+ 
+ 	/* Check if there's really nothing to do */
+ 	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
+--- a/kernel/time/timekeeping_internal.h
++++ b/kernel/time/timekeeping_internal.h
+@@ -30,15 +30,15 @@ static inline void timekeeping_inc_mg_fl
+ 
+ #endif
+ 
+-static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
++static inline u64 clocksource_delta(u64 now, u64 last, u64 mask, u64 max_delta)
+ {
+ 	u64 ret = (now - last) & mask;
+ 
+ 	/*
+-	 * Prevent time going backwards by checking the MSB of mask in
+-	 * the result. If set, return 0.
++	 * Prevent time going backwards by checking against the result
++	 * against @max_delta. If greater, return 0.
+ 	 */
+-	return ret & ~(mask >> 1) ? 0 : ret;
++	return ret > max_delta ? 0 : ret;
+ }
+ 
+ /* Semi public for serialization of non timekeeper VDSO updates. */
+
+
 
