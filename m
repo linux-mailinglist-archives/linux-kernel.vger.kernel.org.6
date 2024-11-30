@@ -1,144 +1,198 @@
-Return-Path: <linux-kernel+bounces-426295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A74F9DF159
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:54:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C769DF15B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:57:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39432814ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:54:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6701162B0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EBE1A072C;
-	Sat, 30 Nov 2024 14:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5C019C57C;
+	Sat, 30 Nov 2024 14:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NES5W6+Z"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="I/LXIHdL"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802AA19DF4D;
-	Sat, 30 Nov 2024 14:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078B0146A68
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 14:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732978444; cv=none; b=G02fRpNQbDmhVob2i2m7KWRoMBOKDS53VXP/M/DTWMMFT8LbkBgSWs0mJuqnjlSKc7LUEHeEEy2mEsnFhmgO792TL5cHsxDvyaWPxHrv+xAZBA6txT0wj9fh5K8eUJxgJ4WUZ288BvbGrdmOjKtLch8zk89mNQZiVl01mcUBp/s=
+	t=1732978663; cv=none; b=hSntRyAOFFWoiQOlq/OyphTW+LPpF4F21gbSvLRrk5nMcxCjIfJzPTM1B4lhKh4WVEqJkpL+0V/nKX7smDFRXI0wBqU7kvqMdYr8QfN617Roi6S346IS+40wE09VUohJwfkG47ufOzqzkPuTf+VvmrRO1kGsVewZamZi4raZc8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732978444; c=relaxed/simple;
-	bh=92PhFQce9FtDEUc92I3nyICR45LQNMich6Qadn7I7rs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=at2F70l3amjrcq0BjwiVXtW3kII6+Mbwjb49oPI0mJc7wlYh9/pbPCa26lauajijviLzwrxSxv15FR5jQlH7wMRYDe944Uq1LgF8qfjr+Eiw2GQ6Hyyl2tV/f7b4i/fDVab04MhvpN9mVem0dr7ZOfdVUCjCIPriGtc3vrMsYRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NES5W6+Z; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffe2700e91so23067791fa.2;
-        Sat, 30 Nov 2024 06:54:02 -0800 (PST)
+	s=arc-20240116; t=1732978663; c=relaxed/simple;
+	bh=QPy9R6U/ZGwM7zCobvnycx0uhgbjXZKJpWo3pI5a2wc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z1aaGftkzoVa51LnYyEubOh0liCVLWdsARYasp6dJLp7R5EIimB4VzJCA3cWp7ohLqQJv44r/YHa03q6tHleWZ1lty/rGNAsjpo/VyIW6hlNMw0N50EoObjrBEfJHKJL4smbGpKFvf+iors7EkswQHEPZRMKJHZVLm697Vbnyk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=I/LXIHdL; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a1fe2b43so25032305e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 06:57:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732978441; x=1733583241; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=auyeQ/WJf0LlFGEUDmM1nqoy+rzADdBnKGFsMbkyEUw=;
-        b=NES5W6+Z88sOYkmMD/ITVVSxyWi2VFEqxYfT6jmpCAdFPCiz+uqpe0PuFCC9llHL3c
-         L0+HegVdp1u6tccdFuVVcZJpxp9cS7lrSv8Jh2zn11L8pi0XXAmYlrd7xkyVBdQRLdEZ
-         2ySpmqYQ5RrdfvUKX1f7z7WSSoCfe5eJo5Siw+Et06N9+yz50kC8unIsrLJe/5pfm7Bq
-         Q74Ws5Am1chVs44l9j5NnytyWUy3bsOzpX73fY4rQeHU2EYwrqB7biByBF8hfKH9WJUu
-         WH2FrOzZu3w6h4LOjLZpRgyJjz/gScCVuOUaw3DJzCGULqdSYPFEq0ISW8LF/dqtcwwr
-         Ey9Q==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732978659; x=1733583459; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a0fyEAOE0jO76pqaUwrR6CdaRsVoTj8N7qDbmkHzYuA=;
+        b=I/LXIHdLP2mA8G2jajQ2YTcJ/sXRITGe9EiYsQWpFXlq824tmY2etbx/ytA5Wk1sme
+         UHC5wQY0wKELHVpzRLoF+VZ+SFCbWN2QAkEAkXcLTB/DzJF40NN3cAHXF6g89SvGWC5P
+         y1AbwxOEqpy7DBHuYKoUKnFoWfW6G9stm9Ew/8c03QUiA8+simqEHTV7Sl2BZtVYd3sO
+         3MuvL3ZpK6xatgoUdEqqlsG4KCfXjv0w3OBnhzXOnOAszQ7hhf/4WSk+y9QlOkAjEyne
+         gprA5iTZzYb9hyKiWFzBFznda7+UzdmLKyEDwqj+W9Fh3rD2ySOKxedEjJsOduBSukPE
+         q3ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732978441; x=1733583241;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=auyeQ/WJf0LlFGEUDmM1nqoy+rzADdBnKGFsMbkyEUw=;
-        b=i+X0JQC7SVZeFcvTOttVCI5SkPU893PdmeVcmAD2RkvOGEaz2arRCh3pKQazEakhGo
-         dHQgKr5fc2gWPnGCkYK/UR3vShkxVqn6WnlVZ5GrkfoXm/ckdVfXUjLON7/bkONfD+nW
-         uvG7Hxj21QgvjTR/bnybI+XDM4iYdkpsgba9SnIjckdLR4z8K2eLKiY4ojBa/4FamHrm
-         dWuzFrAwxi66teFO3EWIu6Qnsk3O7/Un3ggTQ698Uu5RaTAQNqFZ5wE75/EHEtxjHh1V
-         maK7jNLZA6twahB3/NN4VvA/dA3jppok3M9C2bf6rzQ3fN40VF14Uh8aoPMaFOGw9Mag
-         snYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUlunysLOloJ4OE35Ksd0vH56ocbBkmC3owV4+VbnLQWe05NMr1pv9MctfzPwpF7HdZ9NVr3w5pt+H@vger.kernel.org, AJvYcCUejfLPXhNRIJ0cuWupsIbknR+Km6WiDtdhLtggIDT/4rpxSIZfqZ2gjfabKWJTBKW1UWmVHIpqvBPb@vger.kernel.org, AJvYcCXTajAoMVsIQPRzC/X3L+L3ZPx6SHRB1HvJhZXzHJJEiVRUlJYP4a1XbXZM353wsxUjiy/7hIJtupuEKCrB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQZ9wzm6wp9pE7Nw/XvX4+gsLrMb5RQWlQOzOkOmZ6vN63IP7X
-	4yV4hcZ8jINS17isQJVoWbDhfaAHeMJk/QKln2LxPErVPgcIZbHT
-X-Gm-Gg: ASbGncvtlas+QwgrEVDNB9kzr7jVx3iQzaydkYgZF+53Pn1hSqQuIK/a0P93X+Z0+OP
-	OOk7nufm78yW8Oa3ibV5E18N8xdzexaVF3u0tuhS1eGc9HAog50rGijmdu250I2sqrojda+s/0n
-	keRcsTEJlqfkqKbWL5o8Ey6Y+4grw11DxfC+BVvTBGTZLc3VElSGUKrqjvffkeODerJ3MusvcrR
-	1I5bpFYjFvyCTCRz+F/ChHUO5G/HO7bZlfij/VsP5LWuYvOF2EnWLKZYr19cVcItJZZxVxNErhR
-	9wo8g+t54QMYAAMl0UStQ75jnnSlll0=
-X-Google-Smtp-Source: AGHT+IH6wmJukU/nF+TIlMtoDRRBXaZ+XMVXEbGWauhGgOh3ZIbdgC6h0zDEhle0WnRHjQe1X7rU/Q==
-X-Received: by 2002:a2e:88cb:0:b0:2ff:d81f:2d33 with SMTP id 38308e7fff4ca-2ffd81f7beamr86649811fa.28.1732978440425;
-        Sat, 30 Nov 2024 06:54:00 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbdae77sm7176751fa.28.2024.11.30.06.53.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 06:53:58 -0800 (PST)
-Message-ID: <66cb5639-550b-4c00-9b90-b58dcd09405d@gmail.com>
-Date: Sat, 30 Nov 2024 16:53:55 +0200
+        d=1e100.net; s=20230601; t=1732978659; x=1733583459;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a0fyEAOE0jO76pqaUwrR6CdaRsVoTj8N7qDbmkHzYuA=;
+        b=jg4eA1LqeqrX9ZJ3B4QNUKIKKsQw8WK1CwRULFzLkwmZeFQSyfewlHcXPQNNWmSLAq
+         ZxL0Ja+S787d91MkWA1gIiJfzywEQiUw1f9qRmCOBtX89Iy15WGmBIt+kLWeeUEAhrwk
+         2+dbz/C6BuI3VaFHV84P4KYdS98uOO0a08mDHCrQbusptmqxdyYSKivUX3Wx4Mqn4nkN
+         He55wKDqG6BNoYuhi6i0GaZwj/2QgJdkavToxIinxXdXGsZf+N3U5ACZV5Bw9HPZzv0t
+         uN5rFNlecVES2pTg7GU2Diwgz1HYU599bcXfebdx0CO2PVidc3a6Qgua6kx6a/y8nhBT
+         hcQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjfIt0lHSH5C6HvsSIAxyjLA3BmqX4eF4YslgWFbRhZ9Ptx44ywt64/oT+iwoKGhg9YrCNZf+dMki5heE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdQcTFifxy7ozRUGHcOMuLfYc2TCzsWdkNgMrK2TKYaZe06XI8
+	04eU4tIXSbNII3caad41rBFgAjGJbnRQReT5hYeKIqT01ofd+FqdM/LxPjA361U=
+X-Gm-Gg: ASbGncvkj6z7bhBzGC4h3hK0SItbsazjB+T75TCi9npf4l7NCndzlk1dGic8zcyask4
+	nDOQnaSnKsqNhfvATvScxHbGnnIZkBQJ6+IARH4g0RF7BYXNSp4mP+5PtTXmJEICLLZbM30rdRM
+	xzUIkp1i9aMxm2cbaJ8jA4fxbC1UPIBjdhDQaWDQIvINrReZQQqmxHP6bjLzXburkFro/gtocFM
+	3pIVQcuJ+9cmDLRNCHzB/z4Nzsjtn5AvVjqrljUOVtsLvWpzw==
+X-Google-Smtp-Source: AGHT+IGYVxJ7aqYLAf3AhiYPeay9ff+XBH4Jlv0ovdKhdRX0QOJ4ExSxSEPz//Ru/8O/XqqV8nhp3A==
+X-Received: by 2002:a05:600c:5490:b0:42c:c28c:e477 with SMTP id 5b1f17b1804b1-434a9de55ebmr131732505e9.23.1732978659168;
+        Sat, 30 Nov 2024 06:57:39 -0800 (PST)
+Received: from localhost ([2a02:8071:b783:6940:7ca4:5604:f5:65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e30c54bfsm2263755f8f.110.2024.11.30.06.57.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2024 06:57:38 -0800 (PST)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Paul Burton <paulburton@kernel.org>,
+	Erick Archer <erick.archer@outlook.com>,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] auxdisplay: Switch back to struct platform_driver::remove()
+Date: Sat, 30 Nov 2024 15:57:27 +0100
+Message-ID: <20241130145727.900020-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Drop BU27008 and BU27010
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Arthur Becker <arthur.becker@sentec.com>,
- Emil Gedenryd <emil.gedenryd@axis.com>, Marek Vasut <marex@denx.de>,
- Mudit Sharma <muditsharma.info@gmail.com>,
- Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1732819203.git.mazziesaccount@gmail.com>
- <20241130143842.34d29a51@jic23-huawei>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20241130143842.34d29a51@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3495; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=QPy9R6U/ZGwM7zCobvnycx0uhgbjXZKJpWo3pI5a2wc=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnSyfXJ1dM7IQP9oFCtpJutajSwaTt4+1A3YC5W R9BPuB0rwuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ0sn1wAKCRCPgPtYfRL+ TtHKB/wKCi0MHVWGq+J5UApHmpRfdSUcy13HQzBL19/VOF2hwmw1k0fkxwT+ueK5604lThdhzBR 4m5BuSDnh74xG9XYtIfuMHTypfSlskPmy2K1oFOuK6ch2YQy0fs5g6GuZnWMXqr09NVyIizCwyx 3fYKSOORhfSyC4yt7EUIzIuwGyTMlMIEY335uvklZT/+vgmKpdsBoV5+VmFv6FaF+oT9P3raGfH zzFDJ4HBQdGA7m6zmYAVg2+GcLQXETUY9ySeAd1gj6LNqhIi0qd5+SE9DnL5EeNLDjXcdFEPF5R XYpcFm43EdHbXhujNGSKoeRDegfPtacDS7WEI2JX+NwFUbTZ
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On 30/11/2024 16:38, Jonathan Cameron wrote:
-> On Thu, 28 Nov 2024 21:34:54 +0200
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> Drop the support for ROHM BD72008 and BD72010 RGB sensors
->>
->> I accidentally hit a BU27008 data-sheet which had a big red text saying
->> "Obsolete". After a few queries I received a word that the ROHM BU27008
->> and BU27010 RGB sensors were cancelled and never entered mass production.
->> Supporting not existing hardware makes no sense, so it's probably best
->> to drop the drivers and dt-bindings.
->>
->> There is still a RGB sensor from ROHM called BU27006.
->> https://www.rohm.com/products/sensors-mems/color-sensor-ics/bu27006muc-z-product
->> Based on a quick glance this should be very similar to the BU27010. If
->> someone wants to create a driver for this, then the bu27008.c might be
->> worth looking at.
->>
->> As writing of this I don't have the BU27006 at my hands, and when I
->> asked about creating a driver for this IC from the HQ ... I got an
->> impression that at the moment ROHM rather pays me for doing something
->> else. So, currently I have no plan to add support for the BD27006.
->> We can always dig the bu27008.c from the depths of the git, if it later
->> appears such a driver would be a good idea.
-> 
-> Applied.  I'm not going to rush it in because a driver for hardware
-> that no one has is not really a problem as long as no one does any more
-> work on it.  So queued up in my testing branch which will go upstream
-> next merge cycle.
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers.
 
-Thanks. This makes perfect sense, and I didn't expect them to go in 
-sooner :)
+Convert all platform drivers below drivers/auxdisplay to use .remove(),
+with the eventual goal to drop struct platform_driver::remove_new(). As
+.remove() and .remove_new() have the same prototypes, conversion is done
+by just changing the structure member name in the driver initializer.
 
-> You have my sympathies wrt to wasted work!
+While touching these drivers, make the alignment of the touched
+initializers consistent.
 
-It indeed hurts. You do always hope things you tinker with would be 
-useful. Well, not the first cancelled product I am working with - and I 
-believe not a last one either...
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+Hello,
 
-Yours,
-	-- Matti
+this is based on Friday's next, feel free to drop changes that result in
+a conflict when you come around to apply this. I'll care for the fallout
+at a later time then. (Having said that, if you use b4 am -3 and git am
+-3, there should be hardly any conflict.)
+
+This is merge window material.
+
+Best regards
+Uwe
+
+ drivers/auxdisplay/cfag12864bfb.c  | 6 +++---
+ drivers/auxdisplay/hd44780.c       | 6 +++---
+ drivers/auxdisplay/img-ascii-lcd.c | 4 ++--
+ drivers/auxdisplay/seg-led-gpio.c  | 2 +-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/auxdisplay/cfag12864bfb.c b/drivers/auxdisplay/cfag12864bfb.c
+index 2b74dabe7e17..471ec6c7d459 100644
+--- a/drivers/auxdisplay/cfag12864bfb.c
++++ b/drivers/auxdisplay/cfag12864bfb.c
+@@ -107,10 +107,10 @@ static void cfag12864bfb_remove(struct platform_device *device)
+ }
+ 
+ static struct platform_driver cfag12864bfb_driver = {
+-	.probe	= cfag12864bfb_probe,
+-	.remove_new = cfag12864bfb_remove,
++	.probe = cfag12864bfb_probe,
++	.remove = cfag12864bfb_remove,
+ 	.driver = {
+-		.name	= CFAG12864BFB_NAME,
++		.name = CFAG12864BFB_NAME,
+ 	},
+ };
+ 
+diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
+index 025dc6855cb2..edbb4bcfb6c3 100644
+--- a/drivers/auxdisplay/hd44780.c
++++ b/drivers/auxdisplay/hd44780.c
+@@ -339,9 +339,9 @@ MODULE_DEVICE_TABLE(of, hd44780_of_match);
+ 
+ static struct platform_driver hd44780_driver = {
+ 	.probe = hd44780_probe,
+-	.remove_new = hd44780_remove,
+-	.driver		= {
+-		.name	= "hd44780",
++	.remove = hd44780_remove,
++	.driver = {
++		.name = "hd44780",
+ 		.of_match_table = hd44780_of_match,
+ 	},
+ };
+diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
+index 9ba132dc6143..71bd834b83c7 100644
+--- a/drivers/auxdisplay/img-ascii-lcd.c
++++ b/drivers/auxdisplay/img-ascii-lcd.c
+@@ -286,12 +286,12 @@ static void img_ascii_lcd_remove(struct platform_device *pdev)
+ }
+ 
+ static struct platform_driver img_ascii_lcd_driver = {
+-	.driver = {
++	.driver	= {
+ 		.name		= "img-ascii-lcd",
+ 		.of_match_table	= img_ascii_lcd_matches,
+ 	},
+ 	.probe	= img_ascii_lcd_probe,
+-	.remove_new = img_ascii_lcd_remove,
++	.remove	= img_ascii_lcd_remove,
+ };
+ module_platform_driver(img_ascii_lcd_driver);
+ 
+diff --git a/drivers/auxdisplay/seg-led-gpio.c b/drivers/auxdisplay/seg-led-gpio.c
+index 183ab3011cbb..d839fe803606 100644
+--- a/drivers/auxdisplay/seg-led-gpio.c
++++ b/drivers/auxdisplay/seg-led-gpio.c
+@@ -97,7 +97,7 @@ MODULE_DEVICE_TABLE(of, seg_led_of_match);
+ 
+ static struct platform_driver seg_led_driver = {
+ 	.probe = seg_led_probe,
+-	.remove_new = seg_led_remove,
++	.remove = seg_led_remove,
+ 	.driver = {
+ 		.name = "seg-led-gpio",
+ 		.of_match_table = seg_led_of_match,
+
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+-- 
+2.45.2
+
 
