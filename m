@@ -1,254 +1,234 @@
-Return-Path: <linux-kernel+bounces-426092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED139DEED6
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:22:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BED7E9DEEDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1674A163AD7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:22:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73676163A9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C195588B;
-	Sat, 30 Nov 2024 03:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AD3132103;
+	Sat, 30 Nov 2024 03:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="keI0BoRC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XdjfO7w2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC7D2F3B
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 03:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DAE4409;
+	Sat, 30 Nov 2024 03:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732936949; cv=none; b=C8M+hsyDTGWrvLt5Bq5hddPSuHnyblC2X47JqJlGKglLx0vRi1dCrxE7/baQddRTxIrwPAHYfZq39tkal5V8txPGaB9MJZZjf4BnReHipAmGPamY9TYB8usDSvwVO/Q+VtGAwhPJFdewlxLnN5hCnXbEaCtQLfvNnC4gYFOydcs=
+	t=1732938494; cv=none; b=hHceVGnTHhJAhOOY5qNvOVgWQXIg6xOGspgt6SF5yEp7vGi61AYYLocnCm/mXtYPmm7ASYBvb9UU0OIseXyx9mhQDgULf+WSscUrJST/nGBy4LAkjECn7VOoyEVwEsWFMv1pGW1oTBFQ802KunN+O7Uhh4zRQ35UG6KBTY0LK2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732936949; c=relaxed/simple;
-	bh=4JxGwtZZdWPpCoP3dRLOQEapfTtkOtXycUEA5b2OO+k=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=BKB7vTjnp2fG0FdwScRoxphG1jTl+x8EgHPBdp1UnhK1d3IT/iuW2P9mGba38O+oxq9kD2GoPQOXnpTcIw4cPyNpez/o9yzigjNlwW3yf9HHlDTaKBgJ7btuLqeYrb/5rMqKkrdjtwdUriKOlCy5Aw8tqnlTYIsuLGjANM3NLEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=keI0BoRC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38232C4CECC;
-	Sat, 30 Nov 2024 03:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1732936949;
-	bh=4JxGwtZZdWPpCoP3dRLOQEapfTtkOtXycUEA5b2OO+k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=keI0BoRCl7KTK+oDSHbpM1vO3HDzTOzekJLQfb/IeXbwK3Kfr8LmqE4GYLI5r/wyy
-	 1XMXVWRHBxCbGo8aV3Ga8OmRZKr7RNO5MuClQQOf/0qSY2yITx0tCcQAuxdzjr+sPR
-	 wf1H6O2lKYmW00vqJGCBUsk57Idnp7Z2f8rNX/ts=
-Date: Fri, 29 Nov 2024 19:22:28 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: liuye <liuye@kylinos.cn>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, Mel Gorman
- <mgorman@techsingularity.net>, Hugh Dickins <hughd@google.com>, Yang Shi
- <yang@os.amperecomputing.com>
-Subject: Re: [PATCH v2 RESEND] mm/vmscan: Fix hard LOCKUP in function
- isolate_lru_folios
-Message-Id: <20241129192228.6f08e74a555bedcad71d32f4@linux-foundation.org>
-In-Reply-To: <20241119060842.274072-1-liuye@kylinos.cn>
-References: <20240919021443.9170-1-liuye@kylinos.cn>
-	<20241119060842.274072-1-liuye@kylinos.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732938494; c=relaxed/simple;
+	bh=1u1yknuIjL5wQT7LjOQNoAmLdWofmhNaxLsmkQqQNZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=szOO9eeUQ+2LoWLHEF4GwoQKO+R8wHqjMsZB4/Puv8VTMHYX3m5sYe4IZa2fRrDVI/A1TstZTLW6ZZC2xpNTU9vVTdfSkrHbJDZh0YajBsNjvfWrkGDuXU4I3dvNVewTtcA+QPRhROtPgkY0XJ30cnfKlNZVN7BqpYr5e4JVpa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XdjfO7w2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AU2q2Th001942;
+	Sat, 30 Nov 2024 03:47:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yCQ2SiwnMZW1pZ368yk8MW7kCeYayQpW3AOXamZsQjM=; b=XdjfO7w2/d9P+v8B
+	S07lDjXSnAU7Upnld4Emeh62cmIgRIz5j3smZ6zXBOQiefi5qvV25wLtUNNN2EEq
+	jZ7rdvIAq8qXzB7nCgWPA1J7TH5bPKkv/ZMuk+UU4+oSPJoPyVPsRPQclTYvX4Yp
+	m7OL3+501BvwddXjDPKK55ObhYMJ3LDbeB/3K2DWgmu0myoQ9XAz0on+XNKlkN/b
+	I+rbgmNCS6dpfjh65AfHhCNSbxsRT0uvjGc9uMvUqU9BEXApA9pyulfUSUPwCy5s
+	YcOZX4T5SxV89qffka98dBuKlE/uv1WKg3ttAJSjWWaNxOdEXG6wHl8nUq+nbpNW
+	N0e12Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ta2r24f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 30 Nov 2024 03:47:54 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AU3lr9o008676
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 30 Nov 2024 03:47:53 GMT
+Received: from [10.253.74.19] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 29 Nov
+ 2024 19:47:48 -0800
+Message-ID: <a7ec9426-8c8a-49b3-9916-4c2660c38e49@quicinc.com>
+Date: Sat, 30 Nov 2024 11:47:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Balakrishna
+ Godavarthi" <quic_bgodavar@quicinc.com>,
+        Rocky Liao
+	<quic_rjliao@quicinc.com>, <quic_zijuhu@quicinc.com>,
+        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_mohamull@quicinc.com>
+References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
+ <20241120095428.1122935-2-quic_chejiang@quicinc.com>
+ <454tdpuglu23nmxfqqesv42h5rk3vqiji7spo3naf2djqwojqt@6x3ram3lnlkq>
+ <fb5bc38b-83b3-4924-b1d0-39219a2927b4@quicinc.com>
+ <CAA8EJpqAOD_+SLG2LbiodWOs28_rquvMefmSH5CY1yB_rkiZPg@mail.gmail.com>
+Content-Language: en-US
+From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+In-Reply-To: <CAA8EJpqAOD_+SLG2LbiodWOs28_rquvMefmSH5CY1yB_rkiZPg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: s_qNxJtoX2dZ6plOiyh5CSbKM8o8HTuz
+X-Proofpoint-GUID: s_qNxJtoX2dZ6plOiyh5CSbKM8o8HTuz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411300029
 
-On Tue, 19 Nov 2024 14:08:42 +0800 liuye <liuye@kylinos.cn> wrote:
+Hi Dmitry,
 
-> This fixes the following hard lockup in function isolate_lru_folios
-> when memory reclaim.If the LRU mostly contains ineligible folios
-> May trigger watchdog.
+On 11/21/2024 12:38 PM, Dmitry Baryshkov wrote:
+> On Thu, 21 Nov 2024 at 06:02, Cheng Jiang <quic_chejiang@quicinc.com> wrote:
+>>
+>> Hi Dmitry,
+>>
+>> On 11/20/2024 6:43 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Nov 20, 2024 at 05:54:25PM +0800, Cheng Jiang wrote:
+>>>> Several Qualcomm projects will use the same Bluetooth chip, each
+>>>> focusing on different features. For instance, consumer projects
+>>>> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
+>>>> SINK feature, which may have more optimizations for coexistence when
+>>>> acting as a SINK. Due to the patch size, it is not feasible to include
+>>>> all features in a single firmware.
+>>>>
+>>>> Therefore, the 'product-variant' devicetree property is used to provide
+>>>> product information for the Bluetooth driver to load the appropriate
+>>>> firmware.
+>>>>
+>>>> If this property is not defined, the default firmware will be loaded,
+>>>> ensuring there are no backward compatibility issues with older
+>>>> devicetrees.
+>>>>
+>>>> The product-variant defines like this:
+>>>>   0 - 15 (16 bits) are product line specific definitions
+>>>>   16 - 23 (8 bits) are for the product line.
+>>>>   24 - 31 (8 bits) are reserved for future use, 0 currently
+>>>
+>>> Please use text strings instead of encoding this information into random
+>>> integers and then using just 3 bits out of 32.
+>> Ack. Originally intended to make it more flexible for future use. It can be
+>> text strings for current requirement.
 > 
-> watchdog: Watchdog detected hard LOCKUP on cpu 173
-> RIP: 0010:native_queued_spin_lock_slowpath+0x255/0x2a0
-> Call Trace:
-> 	_raw_spin_lock_irqsave+0x31/0x40
-> 	folio_lruvec_lock_irqsave+0x5f/0x90
-> 	folio_batch_move_lru+0x91/0x150
-> 	lru_add_drain_per_cpu+0x1c/0x40
-> 	process_one_work+0x17d/0x350
-> 	worker_thread+0x27b/0x3a0
-> 	kthread+0xe8/0x120
-> 	ret_from_fork+0x34/0x50
-> 	ret_from_fork_asm+0x1b/0x30
+> No, fixed-format data isn't flexible. Fine-grained properties are.
+> Please define exactly what is necessary rather than leaving empty
+> holes "for future expansion".=
 > 
-> lruvec->lru_lock owner：
+>>>
+>>>>
+>>>> |---------------------------------------------------------------------|
+>>>> |                       32 Bits                                       |
+>>>> |---------------------------------------------------------------------|
+>>>> |  31 - 24 (bits)   |    23 - 16 (bits)   | 15 - 0 (16 bits)          |
+>>>> |---------------------------------------------------------------------|
+>>>> |   Reserved        |    0: default       | 0: default                |
+>>>> |                   |    1: CE            |                           |
+>>>> |                   |    2: IoT           |                           |
+>>>> |                   |    3: Auto          |                           |
+>>>> |                   |    4: Reserved      |                           |
+>>>> |---------------------------------------------------------------------|
+>>>>
+>>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>>>> ---
+>>>>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml          | 6 ++++++
+>>>>  1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>>>> index 7bb68311c609..9019fe7bcdc6 100644
+>>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>>>> @@ -110,6 +110,12 @@ properties:
+>>>>      description:
+>>>>        boot firmware is incorrectly passing the address in big-endian order
+>>>>
+>>>> +  qcom,product-variant:
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>> +    description:
+>>>> +      specify the product information for driver to load the appropriate firmware
+>>>
+>>> DT describes hardware. Is this a hardware property?
+>>
+>> It has been added to identify the firmware image for the platform. The driver
+>> parses it, and then the rampatch is selected from a specify directory. Currently,
+>> there is a 'firmware-name' parameter, but it is only used to specify the NVM
+>> (config) file. We also need to specify the rampatch (TLV file).
+>>
+>>
+>> Can we re-use the "firmware-name"? add two segments like the following?
+>> firmware-name = "rampatch_xx.tlv",  "nvm_xx.bin";
 > 
-> PID: 2865     TASK: ffff888139214d40  CPU: 40   COMMAND: "kswapd0"
->  #0 [fffffe0000945e60] crash_nmi_callback at ffffffffa567a555
->  #1 [fffffe0000945e68] nmi_handle at ffffffffa563b171
->  #2 [fffffe0000945eb0] default_do_nmi at ffffffffa6575920
->  #3 [fffffe0000945ed0] exc_nmi at ffffffffa6575af4
->  #4 [fffffe0000945ef0] end_repeat_nmi at ffffffffa6601dde
->     [exception RIP: isolate_lru_folios+403]
->     RIP: ffffffffa597df53  RSP: ffffc90006fb7c28  RFLAGS: 00000002
->     RAX: 0000000000000001  RBX: ffffc90006fb7c60  RCX: ffffea04a2196f88
->     RDX: ffffc90006fb7c60  RSI: ffffc90006fb7c60  RDI: ffffea04a2197048
->     RBP: ffff88812cbd3010   R8: ffffea04a2197008   R9: 0000000000000001
->     R10: 0000000000000000  R11: 0000000000000001  R12: ffffea04a2197008
->     R13: ffffea04a2197048  R14: ffffc90006fb7de8  R15: 0000000003e3e937
->     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
->     <NMI exception stack>
->  #5 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
->  #6 [ffffc90006fb7cf8] shrink_active_list at ffffffffa597f788
->  #7 [ffffc90006fb7da8] balance_pgdat at ffffffffa5986db0
->  #8 [ffffc90006fb7ec0] kswapd at ffffffffa5987354
->  #9 [ffffc90006fb7ef8] kthread at ffffffffa5748238
-> crash>
+> I think this is the better solution
 > 
-> Scenario:
-> User processe are requesting a large amount of memory and keep page active.
-> Then a module continuously requests memory from ZONE_DMA32 area.
-> Memory reclaim will be triggered due to ZONE_DMA32 watermark alarm reached.
-> However pages in the LRU(active_anon) list are mostly from
-> the ZONE_NORMAL area.
-> 
-> Reproduce:
-> Terminal 1: Construct to continuously increase pages active(anon).
-> mkdir /tmp/memory
-> mount -t tmpfs -o size=1024000M tmpfs /tmp/memory
-> dd if=/dev/zero of=/tmp/memory/block bs=4M
-> tail /tmp/memory/block
-> 
-> Terminal 2:
-> vmstat -a 1
-> active will increase.
-> procs ---memory--- ---swap-- ---io---- -system-- ---cpu--- ...
->  r  b   swpd   free  inact active   si   so    bi    bo
->  1  0   0 1445623076 45898836 83646008    0    0     0
->  1  0   0 1445623076 43450228 86094616    0    0     0
->  1  0   0 1445623076 41003480 88541364    0    0     0
->  1  0   0 1445623076 38557088 90987756    0    0     0
->  1  0   0 1445623076 36109688 93435156    0    0     0
->  1  0   0 1445619552 33663256 95881632    0    0     0
->  1  0   0 1445619804 31217140 98327792    0    0     0
->  1  0   0 1445619804 28769988 100774944    0    0     0
->  1  0   0 1445619804 26322348 103222584    0    0     0
->  1  0   0 1445619804 23875592 105669340    0    0     0
-> 
-> cat /proc/meminfo | head
-> Active(anon) increase.
-> MemTotal:       1579941036 kB
-> MemFree:        1445618500 kB
-> MemAvailable:   1453013224 kB
-> Buffers:            6516 kB
-> Cached:         128653956 kB
-> SwapCached:            0 kB
-> Active:         118110812 kB
-> Inactive:       11436620 kB
-> Active(anon):   115345744 kB
-> Inactive(anon):   945292 kB
-> 
-> When the Active(anon) is 115345744 kB, insmod module triggers
-> the ZONE_DMA32 watermark.
-> 
-> perf record -e vmscan:mm_vmscan_lru_isolate -aR
-> perf script
-> isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=2
-> nr_skipped=2 nr_taken=0 lru=active_anon
-> isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=0
-> nr_skipped=0 nr_taken=0 lru=active_anon
-> isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=28835844
-> nr_skipped=28835844 nr_taken=0 lru=active_anon
-> isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=28835844
-> nr_skipped=28835844 nr_taken=0 lru=active_anon
-> isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=29
-> nr_skipped=29 nr_taken=0 lru=active_anon
-> isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=0
-> nr_skipped=0 nr_taken=0 lru=active_anon
-> 
-> See nr_scanned=28835844.
-> 28835844 * 4k = 115343376KB approximately equal to 115345744 kB.
-> 
-> If increase Active(anon) to 1000G then insmod module triggers
-> the ZONE_DMA32 watermark. hard lockup will occur.
-> 
-> In my device nr_scanned = 0000000003e3e937 when hard lockup.
-> Convert to memory size 0x0000000003e3e937 * 4KB = 261072092 KB.
-> 
->    [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
->     ffffc90006fb7c30: 0000000000000020 0000000000000000
->     ffffc90006fb7c40: ffffc90006fb7d40 ffff88812cbd3000
->     ffffc90006fb7c50: ffffc90006fb7d30 0000000106fb7de8
->     ffffc90006fb7c60: ffffea04a2197008 ffffea0006ed4a48
->     ffffc90006fb7c70: 0000000000000000 0000000000000000
->     ffffc90006fb7c80: 0000000000000000 0000000000000000
->     ffffc90006fb7c90: 0000000000000000 0000000000000000
->     ffffc90006fb7ca0: 0000000000000000 0000000003e3e937
->     ffffc90006fb7cb0: 0000000000000000 0000000000000000
->     ffffc90006fb7cc0: 8d7c0b56b7874b00 ffff88812cbd3000
-> 
-> About the Fixes:
-> Why did it take eight years to be discovered?
-> 
-> The problem requires the following conditions to occur:
-> 1. The device memory should be large enough.
-> 2. Pages in the LRU(active_anon) list are mostly from the ZONE_NORMAL area.
-> 3. The memory in ZONE_DMA32 needs to reach the watermark.
-> 
-> If the memory is not large enough, or if the usage design of ZONE_DMA32
-> area memory is reasonable, this problem is difficult to detect.
-> 
-> notes:
-> The problem is most likely to occur in ZONE_DMA32 and ZONE_NORMAL,
-> but other suitable scenarios may also trigger the problem.
->
-> Fixes: b2e18757f2c9 ("mm, vmscan: begin reclaiming pages on a per-node basis")
->
+How about the following logic for handling 'firmware-name' property:
+1. If there is only one string in firmware-name, it must be the NVM file, which is used
+   for backward compatibility.
 
-Thanks.
+2. If there are two strings in firmware-name, the first string is for the rampatch, and 
+   the second string is for the NVM.
 
-This is old code.  I agree on b2e18757f2c9 and thanks for digging that
-out.
+3. Due to variations in RF performance of chips from different foundries, different NVM
+   configurations are used based on the board ID. If the second string ends with boardid,
+   the NVM file will be selected according to the board ID.
 
-I'll add a cc:stable and shall queue it for testing, pending review
-from others (please).  It may be that the -stable tree maintainers ask
-for a backport of this change into pre-folio-conversion kernels.  But
-given the obscurity of the workload, I'm not sure this would be worth
-doing.  Opinions are sought?
 
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -223,6 +223,7 @@ enum {
->  };
->  
->  #define SWAP_CLUSTER_MAX 32UL
-> +#define SWAP_CLUSTER_MAX_SKIPPED (SWAP_CLUSTER_MAX << 10)
->  #define COMPACT_CLUSTER_MAX SWAP_CLUSTER_MAX
->  
->  /* Bit flag in swap_map */
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 28ba2b06fc7d..0bdfae413b4c 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1657,6 +1657,7 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
->  	unsigned long nr_skipped[MAX_NR_ZONES] = { 0, };
->  	unsigned long skipped = 0;
->  	unsigned long scan, total_scan, nr_pages;
-> +	unsigned long max_nr_skipped = 0;
->  	LIST_HEAD(folios_skipped);
->  
->  	total_scan = 0;
-> @@ -1671,9 +1672,12 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
->  		nr_pages = folio_nr_pages(folio);
->  		total_scan += nr_pages;
->  
-> -		if (folio_zonenum(folio) > sc->reclaim_idx) {
-> +		/* Using max_nr_skipped to prevent hard LOCKUP*/
-> +		if (max_nr_skipped < SWAP_CLUSTER_MAX_SKIPPED &&
-> +		    (folio_zonenum(folio) > sc->reclaim_idx)) {
->  			nr_skipped[folio_zonenum(folio)] += nr_pages;
->  			move_to = &folios_skipped;
-> +			max_nr_skipped++;
->  			goto move;
->  		}
->  
-> -- 
-> 2.25.1
+Here are two examples:
+
+ firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.bin";
+In this configuration, the driver will use the two files directly.
+
+
+ firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.boardid";
+In this configuration, the driver will replace boardid with the actual board information.
+If the board id is 0x0206, the nvm file name will be qca/QCA6698/hpnv21.b0206
+
+>>
+>> Or add a new property to specify the rampatch file?
+>> rampatch-name = "rampatch_xx.tlv";
+>>
+>>>
+>>>> +
+>>>> +
+>>>>  required:
+>>>>    - compatible
+>>>>
+>>>> --
+>>>> 2.25.1
+>>>>
+>>>
+>>
+> 
+> 
+
 
