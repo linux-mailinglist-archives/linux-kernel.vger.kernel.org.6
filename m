@@ -1,172 +1,144 @@
-Return-Path: <linux-kernel+bounces-426426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8E39DF2DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:55:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D809DF2DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:57:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DD8162E55
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:57:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A821B1A9B33;
+	Sat, 30 Nov 2024 19:57:04 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1913228124B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:55:34 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC51E1A76CD;
-	Sat, 30 Nov 2024 19:55:29 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F16139579
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 19:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DAC3D3B3;
+	Sat, 30 Nov 2024 19:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732996529; cv=none; b=FnuUeJAh5QEdLQMF7NSuSdBLqnYXqKCSYvho7Tm87HSjM9p4cjrD+iwVnFRnXziIKHHsf743xXg0uULeqWU/UTQIuYTecXK29RIJQWAEf0MGX+M5QgGxTkGcEm/yVjqy09ULHRFoJY51kqsuDAiRfPmw0v8bq4jc5H/a2QIS5fE=
+	t=1732996624; cv=none; b=g5HvFKDPedaEGBpN7vNG10kFXai40Hv8lAnJfO4QseI6+vGfb0moVJcEhIGdt/Wt2KxKqq9O4O6r0MAuQDmgYGscqthmunvdtzPU+AiXQoUycL6zdifkorlYZfBWbMA1vaP6IGVWv79c/8H/8FkLMHaVN+KZRviGkQ8UBz1VijI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732996529; c=relaxed/simple;
-	bh=8Xb8dc5W1OVfb4SyUJ2sRpNQaZyUdnqMowgn3Luzl1c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VbEWwgiDk91iG2zxwk1jgbaR8uzGCRqavGfK3oggVC7MyQueBQnPKU9YEDohVP2F4El/vFcULK+taEl4goUGP5LYG7W3O6Zek5WwSkLE09PSMdzEK5GGCFixyh23NAa0PogCHytlbkKorTI1gDyoo8gqgE8Y38VM6uaOCRWqIv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a79afe7a0bso35570735ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 11:55:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732996527; x=1733601327;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R3MGNedngZW8LYXo//0pHRzhZsyCDjUrOn5DgJSX8jM=;
-        b=bs//SQxoWIoxWigjtVtF8SlX15Mc1MRI/Vtf2jVyEhCNIdzgnQwdD0yEFXR9H54Fnq
-         I8F5/dEoxV+nI9aYUZ3EN2/uW/8YgXVa+cinzQ/Oeof4qpKANLDcecm8kG0z4bOL+HSE
-         XWvA4QVHIrpmRjNAJgC/cPYEvTooZXPJqshbl7QZvQa98l1qQySNR+5ZmmUNFXupHKkk
-         Mje5f/QmEw008VDj02rXvsbethgt9mEvx2ondP12LtYW0UzPkN1h096so7LWtY7VN37+
-         XvYDxWQZm/HA2DJYEiO7lfnYM5sgWJpqX2bWqIgTZPlE8X07R8Lf7yg1TNGqdE2Pj3fi
-         dY4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUGYsEZHG6HQCMTbzMq9ulV0K3dD1DHwkl6zke1GMV1QlamGnTH7o95tVP0KGBCWyskzSgQlTbv8+TRurk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxChc97b+OdnkBCdxmNb9pkVMiYz5YMUtcd82apU0zq8mTUZdgT
-	YC76Oxihfkso74tdm5u2ZEXq5VzAK07/Z/WU+u2GsdXql3kgRZ4/ftkLRoEGBnkPJ/y+1YpBSe3
-	ibEieIjTPpXMK+66DnoPhYjKN8LMeF2dUn4qlHpi82hLOnkUJwYzprMk=
-X-Google-Smtp-Source: AGHT+IGtS0xTjRJDW15NrnI0Fzbu8Q0S9T3o0mti+BpuGsWzTtdgiZSdrEG68YEB5Zsgw2tDwMnPYbWzuAZIcT4c7yJ4QQYOOoV/
+	s=arc-20240116; t=1732996624; c=relaxed/simple;
+	bh=iliAV4e1ag5AmPwuqTfpm94XBTsvFbIoc0GjRaaazmI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cAezEQQ6dHDvUPXpWWkpnPOLUrMA4y4uZ2qpvIo+xYL1wopGprl3cuUAe3+uMzK6VpAsxYBCcXBLNSeMKTLZSMVNFl1j1h7oUjuzbmNrvN5VHQ77R43w2YdU6ZZayKfqSh57QJMsM8LQVLK0/fDJ1/6uS9uAmQp5wWisDB4E3PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tHTa0-000000006XM-3qRr;
+	Sat, 30 Nov 2024 14:56:36 -0500
+Message-ID: <e1d810d7c2bc77961828ee38ef322f5ec49181d8.camel@surriel.com>
+Subject: Re: [linus:master] [x86/mm/tlb] 7e33001b8b:
+ will-it-scale.per_thread_ops 20.7% improvement
+From: Rik van Riel <riel@surriel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, Ingo Molnar
+ <mingo@kernel.org>,  Andy Lutomirski	 <luto@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>
+Date: Sat, 30 Nov 2024 14:56:36 -0500
+In-Reply-To: <CAHk-=wj0HyNR+d+=te8x3CEApCDJFwFfb22DH5TAVyPArNK9Tg@mail.gmail.com>
+References: <202411301528.342383d8-lkp@intel.com>
+	 <069d686ab958d973563cfad52373ec6c8aad72ca.camel@surriel.com>
+	 <CAHk-=wj0HyNR+d+=te8x3CEApCDJFwFfb22DH5TAVyPArNK9Tg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1786:b0:3a7:1bfc:97c6 with SMTP id
- e9e14a558f8ab-3a7c55d6862mr150481965ab.16.1732996526872; Sat, 30 Nov 2024
- 11:55:26 -0800 (PST)
-Date: Sat, 30 Nov 2024 11:55:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674b6dae.050a0220.253251.00e3.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_dirent_validate
-From: syzbot <syzbot+652199d534e8c0a1c0ac@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Sender: riel@surriel.com
 
-Hello,
+On Sat, 2024-11-30 at 09:54 -0800, Linus Torvalds wrote:
+> On Sat, 30 Nov 2024 at 09:31, Rik van Riel <riel@surriel.com> wrote:
+> >=20
+> > 1) Stop using the mm_cpumask altogether on x86
+>=20
+> I think you would still want it as a "this is the upper bound" thing
+> -
+> exactly like your lazy code effectively does now.
+>=20
+> It's not giving some precise "these are the CPU's that have TLB
+> contents", but instead just a "these CPU's *might* have TLB
+> contents".
+>=20
+> But that's a *big* win for any single-threaded case, to not have to
+> walk over potentially hundreds of CPUs when that thing has only ever
+> actually been on one or two cores.
+>=20
+> Because a lot of short-lived processes only ever live on a single
+> CPU.
+>=20
+Good point. We do want to keep optimizations for single
+threaded processes in place.
 
-syzbot found the following issue on:
+> The benchmarks you are optimizing for - as well as the ones that
+> regress - are
+>=20
+> =C2=A0(a) made up micobenchmark loads
+>=20
+> =C2=A0(b) ridiculously many threads
+>=20
+> and I think you should take some of what they say with a big pinch of
+> salt.
+>=20
+> Those "20% difference" numbers aren't actually *real*, is what I'm
+> saying.
 
-HEAD commit:    7af08b57bcb9 Merge tag 'trace-v6.13-2' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=167b4d30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d66c9f9a88c492bd
-dashboard link: https://syzkaller.appspot.com/bug?extid=652199d534e8c0a1c0ac
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Agreed that it won't be a 20% difference on real
+workloads, but there are a few real world workloads
+where these optimizations do make a fairly significant
+difference.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+For example, this change below made a 2% performance
+difference for a memcache style workload on 2 socket
+systems back in 2018, when CPU counts were much smaller
+than today:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9c3165413ea6/disk-7af08b57.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bdc591e3d285/vmlinux-7af08b57.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bef82d827bd2/bzImage-7af08b57.xz
+e9d8c6155768 ("x86/mm/tlb: Skip atomic operations for 'init_mm' in
+switch_mm_irqs_off()")
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+652199d534e8c0a1c0ac@syzkaller.appspotmail.com
+>=20
+> > 2) Instead, at context switch time just update
+> > =C2=A0=C2=A0 per_cpu variables like cpu_tlbstate.loaded_mm
+> > =C2=A0=C2=A0 and friends
+>=20
+> See aboive. I think you'll still want to limit the actual real
+> situation of "look, ma, I'm a single-threaded compiler".
+>=20
+> > 3) At (much rarer) TLB flush time:
+> > =C2=A0=C2=A0 - Iterate over all CPUs
+>=20
+> Change this to "iterate over mm_cpumask", and I think it will work a
+> whole lot better.
+>=20
+> Because yes, clearly with just the *pure* lazy mm_cpumask, you won
+> some at scheduling time, but you lost a *lot* by just forcing
+> pointless stale IPIs instead.
 
-=====================================================
-BUG: KMSAN: uninit-value in bch2_dirent_name_bytes fs/bcachefs/dirent.c:27 [inline]
-BUG: KMSAN: uninit-value in bch2_dirent_get_name fs/bcachefs/dirent.c:37 [inline]
-BUG: KMSAN: uninit-value in bch2_dirent_validate+0x5ee/0xc30 fs/bcachefs/dirent.c:107
- bch2_dirent_name_bytes fs/bcachefs/dirent.c:27 [inline]
- bch2_dirent_get_name fs/bcachefs/dirent.c:37 [inline]
- bch2_dirent_validate+0x5ee/0xc30 fs/bcachefs/dirent.c:107
- bch2_bkey_val_validate+0x2b5/0x440 fs/bcachefs/bkey_methods.c:143
- bset_key_validate fs/bcachefs/btree_io.c:841 [inline]
- validate_bset_keys+0x1531/0x2080 fs/bcachefs/btree_io.c:910
- validate_bset_for_write+0x142/0x290 fs/bcachefs/btree_io.c:1942
- __bch2_btree_node_write+0x53df/0x6830 fs/bcachefs/btree_io.c:2152
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2284
- btree_node_write_if_need fs/bcachefs/btree_io.h:151 [inline]
- __btree_node_flush+0x606/0x680 fs/bcachefs/btree_trans_commit.c:252
- bch2_btree_node_flush1+0x38/0x60 fs/bcachefs/btree_trans_commit.c:266
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:565
- __bch2_journal_reclaim+0xda8/0x1670 fs/bcachefs/journal_reclaim.c:698
- bch2_journal_reclaim_thread+0x18e/0x760 fs/bcachefs/journal_reclaim.c:740
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+I struggle to think of a way to synchronize clearing
+bits from the mm_cpumask that does not involve IPIs,
+but I suppose we could rate limit that clearing to
+something like once a second?
 
-Uninit was stored to memory at:
- memcpy_u64s_small fs/bcachefs/util.h:393 [inline]
- bkey_p_copy fs/bcachefs/bkey.h:47 [inline]
- bch2_sort_keys_keep_unwritten_whiteouts+0x12d5/0x19d0 fs/bcachefs/bkey_sort.c:187
- __bch2_btree_node_write+0x3ae8/0x6830 fs/bcachefs/btree_io.c:2095
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2284
- btree_node_write_if_need fs/bcachefs/btree_io.h:151 [inline]
- __btree_node_flush+0x606/0x680 fs/bcachefs/btree_trans_commit.c:252
- bch2_btree_node_flush1+0x38/0x60 fs/bcachefs/btree_trans_commit.c:266
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:565
- __bch2_journal_reclaim+0xda8/0x1670 fs/bcachefs/journal_reclaim.c:698
- bch2_journal_reclaim_thread+0x18e/0x760 fs/bcachefs/journal_reclaim.c:740
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+The rest of the time we could compare whether a
+CPU's cpustate_loaded_mm matches the target mm, and
+skip sending an IPI to that CPU?
 
-Uninit was created at:
- ___kmalloc_large_node+0x22c/0x370 mm/slub.c:4238
- __kmalloc_large_node_noprof+0x3f/0x1e0 mm/slub.c:4255
- __do_kmalloc_node mm/slub.c:4271 [inline]
- __kmalloc_node_noprof+0xc96/0x1250 mm/slub.c:4289
- __kvmalloc_node_noprof+0xc0/0x2d0 mm/util.c:650
- btree_bounce_alloc fs/bcachefs/btree_io.c:124 [inline]
- btree_node_sort+0x78a/0x1d30 fs/bcachefs/btree_io.c:323
- bch2_btree_post_write_cleanup+0x1b0/0xf20 fs/bcachefs/btree_io.c:2248
- bch2_btree_node_write+0x21c/0x2e0 fs/bcachefs/btree_io.c:2289
- btree_node_write_if_need fs/bcachefs/btree_io.h:151 [inline]
- __btree_node_flush+0x606/0x680 fs/bcachefs/btree_trans_commit.c:252
- bch2_btree_node_flush0+0x35/0x60 fs/bcachefs/btree_trans_commit.c:261
- journal_flush_pins+0xce6/0x1780 fs/bcachefs/journal_reclaim.c:565
- __bch2_journal_reclaim+0xda8/0x1670 fs/bcachefs/journal_reclaim.c:698
- bch2_journal_reclaim_thread+0x18e/0x760 fs/bcachefs/journal_reclaim.c:740
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+We already seem to be passing info through to
+tlb_is_not_lazy, so the logic could all be implemented
+inside there if we wanted to.
 
-CPU: 0 UID: 0 PID: 6699 Comm: bch-reclaim/loo Not tainted 6.12.0-syzkaller-10689-g7af08b57bcb9 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--=20
+All Rights Reversed.
 
