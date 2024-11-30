@@ -1,319 +1,160 @@
-Return-Path: <linux-kernel+bounces-426442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C1A9DF312
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:39:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759E99DF317
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94404162D38
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:39:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A07D162D31
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B711AAE18;
-	Sat, 30 Nov 2024 20:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9E51AAE2B;
+	Sat, 30 Nov 2024 20:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uEWu9BjS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Py46m11q"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD1317BD3;
-	Sat, 30 Nov 2024 20:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9829317BD3;
+	Sat, 30 Nov 2024 20:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732999179; cv=none; b=M+HBjDwJhAcZvtkqgHiTN2RYwYcn37Xyv+A0zJ7AnFwM0p8OujRCH1tXllK2mbDSKL7myPclDHcaPWH055gVn4T/i5OipcLOCXJFnLxp1eBQ/CwhbjF2vfzOPefyg6i2llggwQ7NdNzChM8DKgcUDFFf9dESlFIbIKykSg9APlM=
+	t=1732999220; cv=none; b=VR3u1OqL4mk2otNNHyS7zh71Au7SO+HZ2C2oSDrRtC0Frx5leM+Kr2V5z7An94VUwwqRjrPHPvJeHAQEXlheNod4I10QYz0v9IMmFAIZ9mY7lBTbtJxyTxrnw7zBHu6j382MBojShpf2RRtYzU/w6B/wB/h23HU1uaLKPrXfaiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732999179; c=relaxed/simple;
-	bh=qRfK5PtAMC0vE9aCNwX6k13FTpxAWYYO+TlvjaJvqUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ONX3yvB8/pnvlxS9/eF4q+Pp/arWYp2OV0G1o+L49pBV0H+iKB4pyNOmocDAQk9lGT3yJ7YVi/EVdM3Yp+xcrVgpYYoGBRa0WWM4F3inZaNrUc7/3l6LsZqBuO+bF4SWFfboiGER7ZOgUWq/ySIGzSNiacqu6tVA6IvGjjxTjLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uEWu9BjS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35A6C4CECC;
-	Sat, 30 Nov 2024 20:39:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732999178;
-	bh=qRfK5PtAMC0vE9aCNwX6k13FTpxAWYYO+TlvjaJvqUM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uEWu9BjS7dRxjjxuSsKCWRgeHYrsoPaHKQWRxv7XQrv5jDnrgUgPWwQXV3yZ6tyFk
-	 DonYgQGmsmE6PtD7HzVZAmgIG6ErU22pAmhHNzIkLAGUNFvxCOSBStKB52S2Wf9OmN
-	 9d/NlEoYyl37PiH+mFuZmFeRBiH+z9hf3+VsnjAa7K9nzJNJihNNl/We+SqmTrCiXB
-	 ChdPvVItxqdEzSXx+YsNtzwBNCGhp9Ee7WOcpYUiiGatBOpTxg01bSJa+6HW1by1FR
-	 cNHgEV3pN0emSywRDOAbFeo05zMhhYePIBsF9hA5+HWvKqDBvkVH/hQFi5i3FYRBTf
-	 Njt9RqfXNqDQw==
-Date: Sat, 30 Nov 2024 20:39:29 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, cmo@melexis.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] iio: temperature: Add Nuvoton NCT7718W support
-Message-ID: <20241130203929.67c6c7f6@jic23-huawei>
-In-Reply-To: <20241126074005.546447-3-tmyu0@nuvoton.com>
-References: <20241126074005.546447-1-tmyu0@nuvoton.com>
-	<20241126074005.546447-3-tmyu0@nuvoton.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732999220; c=relaxed/simple;
+	bh=AGgw7bUaxLs40W+V8rhQeGaF++UwW6ua6eP0UO6jARg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=k4R07TmcB4CxBX5aGhAEctta0PM/OWFTmZKMMyqlgfx9Dym1azSNZWqlVQfqfT+QT2QHEqAJdnK//K+BrVRZlHU1ZtZa1c0O5ca0FYCxZJOwW7YqnS0pg6qiyrw2Fq4xzTpKCduMba7NPNM3BVoOzl7mphgz4mxW2AuZFr+7AL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Py46m11q; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AUJsSms012522;
+	Sat, 30 Nov 2024 20:40:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TkfM4jPIEkOSfi0KqwHeWHaLc1IN4qtuXoiy4NOqbJM=; b=Py46m11qyoMALde2
+	/2BMYyreKCWHak1EoSjw2GNRqq+HfiKak2554zfX+FdbWIw8ZO24aTJMONXk8Gpz
+	CxDepR88AArCspX3adlKKPLZMVdGPxeGFr83Gs2/ZgglnuJCizE5cMrPIqLLm0KH
+	RRF+ny1TykaeMUUhZYmCjicKwIr6GnoPy6BJdcKP1/s0CSrvaJhplpnE62E5FnIF
+	LKf6Ki+hvJaIObBXyufvk+aoggspZJ6PE27YotGb8ipCqr3e+QsbNKJFhkkwiArM
+	vsxsAyf1JfiwN9ReKu+5Ki8A1kx2xx5ntmpExSjpv2sTLcAuawGNM1LJ1rRSODlS
+	4LIIEw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437u3698at-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 30 Nov 2024 20:40:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AUKe9Vf000494
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 30 Nov 2024 20:40:09 GMT
+Received: from [10.216.58.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 30 Nov
+ 2024 12:40:03 -0800
+Message-ID: <cbbaba67-cc17-49ea-8c76-6fdf401cde23@quicinc.com>
+Date: Sun, 1 Dec 2024 02:09:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/7] drm/msm: adreno: add defines for gpu & gmu
+ frequency table sizes
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20241128-topic-sm8x50-gpu-bw-vote-v3-0-81d60c10fb73@linaro.org>
+ <20241128-topic-sm8x50-gpu-bw-vote-v3-1-81d60c10fb73@linaro.org>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <20241128-topic-sm8x50-gpu-bw-vote-v3-1-81d60c10fb73@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Cw0hmv0RyJZ5DAUWt21PmKMBRbJK7duU
+X-Proofpoint-ORIG-GUID: Cw0hmv0RyJZ5DAUWt21PmKMBRbJK7duU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ clxscore=1015 bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
+ mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411300175
 
-On Tue, 26 Nov 2024 15:40:05 +0800
-Ming Yu <a0282524688@gmail.com> wrote:
-
-> This patch adds support for the Nuvoton NCT7718W temperature sensor.
+On 11/28/2024 3:55 PM, Neil Armstrong wrote:
+> Even if the code uses ARRAY_SIZE() to fill those tables,
+> it's still a best practice to not use magic values for
+> tables in structs.
 > 
-Hi Ming, I'll give this a quick look only as I suspect you will end
-up moving over to hwmon.
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Thanks,
+Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-Jonathan
+-Akhil
 
-> Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
-...
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> index b4a79f88ccf45cfe651c86d2a9da39541c5772b3..88f18ea6a38a08b5b171709e5020010947a5d347 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> @@ -19,6 +19,9 @@ struct a6xx_gmu_bo {
+>  	u64 iova;
+>  };
+>  
+> +#define GMU_MAX_GX_FREQS	16
+> +#define GMU_MAX_CX_FREQS	4
+> +
+>  /*
+>   * These define the different GMU wake up options - these define how both the
+>   * CPU and the GMU bring up the hardware
+> @@ -79,12 +82,12 @@ struct a6xx_gmu {
+>  	int current_perf_index;
+>  
+>  	int nr_gpu_freqs;
+> -	unsigned long gpu_freqs[16];
+> -	u32 gx_arc_votes[16];
+> +	unsigned long gpu_freqs[GMU_MAX_GX_FREQS];
+> +	u32 gx_arc_votes[GMU_MAX_GX_FREQS];
+>  
+>  	int nr_gmu_freqs;
+> -	unsigned long gmu_freqs[4];
+> -	u32 cx_arc_votes[4];
+> +	unsigned long gmu_freqs[GMU_MAX_CX_FREQS];
+> +	u32 cx_arc_votes[GMU_MAX_CX_FREQS];
+>  
+>  	unsigned long freq;
+>  
+> 
 
-> diff --git a/drivers/iio/temperature/nct7718.c b/drivers/iio/temperature/nct7718.c
-> new file mode 100644
-> index 000000000000..60624b3de629
-> --- /dev/null
-> +++ b/drivers/iio/temperature/nct7718.c
-> @@ -0,0 +1,505 @@
-
-> +struct nct7718_data {
-> +	struct i2c_client *client;
-> +	struct mutex lock;
-Locks need a comment to say what data they are protecting.
-
-> +	u16 status_mask;
-> +};
-
-> +static int nct7718_write_event_config(struct iio_dev *indio_dev,
-> +				      const struct iio_chan_spec *chan,
-> +				      enum iio_event_type type,
-> +				      enum iio_event_direction dir,
-> +				      int state)
-> +{
-> +	struct nct7718_data *data = iio_priv(indio_dev);
-> +	unsigned int status_mask;
-> +	int ret;
-> +
-> +	switch (chan->channel2) {
-> +	case IIO_MOD_TEMP_AMBIENT:
-> +		if (dir == IIO_EV_DIR_RISING)
-> +			status_mask = NCT7718_MSK_LTH;
-> +		break;
-> +	case IIO_MOD_TEMP_OBJECT:
-> +		if (dir == IIO_EV_DIR_RISING)
-> +			status_mask = NCT7718_MSK_RT1H;
-> +		else
-> +			status_mask = NCT7718_MSK_RT1L;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	mutex_lock(&data->lock);
-> +	ret = i2c_smbus_read_byte_data(data->client, NCT7718_ALERTMASK_REG);
-> +	mutex_unlock(&data->lock);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (state)
-> +		ret &= ~status_mask;
-> +	else
-> +		ret |=  status_mask;
-I would not bother with this sort of alignment. It tends to be fragile longer
-term as code gets modified and doesn't make much difference to readablility.
-
-> +
-> +	return i2c_smbus_write_byte_data(data->client, NCT7718_ALERTMASK_REG,
-> +					 data->status_mask = ret);
-> +}
-
-> +
-> +static int nct7718_write_thresh(struct iio_dev *indio_dev,
-> +				const struct iio_chan_spec *chan,
-> +				enum iio_event_type type,
-> +				enum iio_event_direction dir,
-> +				enum iio_event_info info,
-> +				int val, int val2)
-> +{
-> +	struct nct7718_data *data = iio_priv(indio_dev);
-> +	struct i2c_client *client = data->client;
-> +	u8 msb_reg, lsb_reg;
-> +	s16 thresh;
-> +	int ret, s_val;
-> +
-> +	switch (chan->channel2) {
-> +	case IIO_MOD_TEMP_AMBIENT:
-> +		val = clamp_val(val, NCT7718_LOCAL_TEMP_MIN,
-> +				NCT7718_LOCAL_TEMP_MAX);
-> +
-> +		if (dir == IIO_EV_DIR_RISING) {
-> +			return i2c_smbus_write_byte_data(client,
-> +							 NCT7718_LT_HALERT_REG,
-> +							 val);
-> +		}
-> +		break;
-> +	case IIO_MOD_TEMP_OBJECT:
-> +		s_val = (val < 0) ? ((val * 1000000) - val2) :
-> +				    ((val * 1000000) + val2);
-> +
-> +		s_val = clamp_val(s_val, NCT7718_REMOTE_TEMP_MIN_MICRO,
-> +				  NCT7718_REMOTE_TEMP_MAX_MICRO);
-> +
-> +		if (dir == IIO_EV_DIR_RISING) {
-> +			msb_reg = NCT7718_RT1_HALERT_MSB_REG;
-> +			lsb_reg = NCT7718_RT1_HALERT_LSB_REG;
-> +		} else {
-> +			msb_reg = NCT7718_RT1_LALERT_MSB_REG;
-> +			lsb_reg = NCT7718_RT1_LALERT_LSB_REG;
-> +		}
-> +
-> +		thresh = (s16)(s_val / (1000000 >> 3));
-> +		ret = i2c_smbus_write_byte_data(client,
-> +						msb_reg, thresh >> 3);
-> +		if (ret < 0)
-> +			return ret;
-> +		return i2c_smbus_write_byte_data(client,
-> +						 lsb_reg, thresh << 5);
-> +	default:
-> +		break;
-return -EINVAL; and drop return below.
-
-> +	}
-> +
-> +	return -EINVAL;
-> +}
->
-> +
-> +static bool nct7718_check_id(struct i2c_client *client)
-> +{
-> +	int chip_id, vendor_id, device_id;
-> +
-> +	chip_id = i2c_smbus_read_byte_data(client, NCT7718_VID_REG);
-> +	if (chip_id < 0)
-> +		return false;
-> +
-> +	vendor_id = i2c_smbus_read_byte_data(client, NCT7718_VID_REG);
-> +	if (vendor_id < 0)
-> +		return false;
-> +
-> +	device_id = i2c_smbus_read_byte_data(client, NCT7718_DID_REG);
-> +	if (device_id < 0)
-> +		return false;
-> +
-> +	return (chip_id == NCT7718_CHIP_ID &&
-> +		vendor_id == NCT7718_VENDOR_ID &&
-> +		device_id == NCT7718_DEVICE_ID);
-As below. Don't treat this failing as an error.   It is an error if
-you can't read anything however.
-
-> +}
-> +
-> +static int nct7718_chip_config(struct nct7718_data *data)
-> +{
-> +	int ret;
-> +
-> +	/* Enable MSK_LTH, MSK_RT1H, and MSK_RT1L to monitor alarm */
-Code makes this fairly obvoius.
-
-> +	ret = i2c_smbus_read_byte_data(data->client,
-> +				       NCT7718_ALERTMASK_REG);
-> +	if (ret < 0)
-> +		return ret;
-> +	data->status_mask = ret;
-> +	data->status_mask &= ~(NCT7718_MSK_LTH	|
-> +			       NCT7718_MSK_RT1H	|
-> +			       NCT7718_MSK_RT1L);
-> +
-> +	ret = i2c_smbus_write_byte_data(data->client,
-> +					NCT7718_ALERTMASK_REG,
-> +					data->status_mask);
-
-Perhaps consider regmap for it's richer set of functionality.
-
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Config ALERT Mode Setting to comparator mode */
-
-Ideally (like here) the code should be self explanatory so you don't
-need comments.  When that is the case the comment is both unnecessary
-and a source of possible future confusion if the code changes and we
-fail to keep the comment in sync.
-
-> +	return i2c_smbus_write_byte_data(data->client,
-> +					 NCT7718_ALERTMODE_REG,
-> +					 NCT7718_MOD_COMP);
-> +}
-> +
-> +static int nct7718_probe(struct i2c_client *client)
-> +{
-> +	struct nct7718_data *data;
-> +	struct iio_dev *indio_dev;
-> +	int ret;
-> +
-> +	if (!nct7718_check_id(client)) {
-> +		dev_err(&client->dev, "No NCT7718 device\n");
-
-If you get an ID missmatch, it is fine to print a message, but carry on anyway.
-This is necessary because DT has fallback compatibles to allow for newer devices
-working with older drivers.  That only works if we believe the firmware and
-ignore a mismatched ID.
-
-> +		return -ENODEV;
-> +	}
-> +
-> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data = iio_priv(indio_dev);
-> +	data->client = client;
-> +	mutex_init(&data->lock);
-
-For new code prefer
-	ret = devm_mutex_init()
-	if (ret)
-		return ret;
-
-> +
-> +	indio_dev->name = client->name;
-
-client->name doesn't always end up as the part number which is what
-we need here.  Just put "nct7718" in here directly.
-
-Some drivers do this wrong and we can't fix them without breaking 
-userspace, but we don't want to introduce more.
-
-> +	indio_dev->channels = nct7718_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(nct7718_channels);
-> +	indio_dev->info = &nct7718_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +
-> +	ret = nct7718_chip_config(data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (client->irq) {
-> +		ret = devm_request_threaded_irq(&client->dev,
-> +						client->irq,
-> +						NULL,
-> +						nct7718_alert_handler,
-> +						IRQF_TRIGGER_FALLING |
-> +						IRQF_ONESHOT,
-> +						"nct7718", indio_dev);
-> +		if (ret) {
-> +			dev_err(&client->dev, "Failed to request irq!\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
 
