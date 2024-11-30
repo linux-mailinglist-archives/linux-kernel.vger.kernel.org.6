@@ -1,101 +1,89 @@
-Return-Path: <linux-kernel+bounces-426133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF56C9DEF5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:29:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F509DEF5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:31:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED782817F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:29:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC14B213D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E11614AD24;
-	Sat, 30 Nov 2024 08:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9CC14A4FB;
+	Sat, 30 Nov 2024 08:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HkzHa6u0"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KzAhad+v"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34E87080A
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 08:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AC033F9
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 08:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732955391; cv=none; b=BfLgZZm2QSyG9kJyai7wikOy2NZoryi+BpIMP2o56qy3C+Xu2FvJ15euBxk4yZPO+cixHq3XtO5U9yK3DLCSFgrQMP/g1qhTX8KDSHCvyjMOhhgK+NaN2lGOGI2551ayg170Ry30qI643pPiJ86e5jQL6dA8fMQ81MKp/Jb9+ic=
+	t=1732955505; cv=none; b=nms/o4I8WB4e1nHP6BAXSULKe0s5GrNhfhd7oYCWfqKXm0jYmpNyfiaFNfvj45N1HXxtfGPf7a7/nDuLY8GJFJUKZlaHFGwivzDRQe9YF9RC3oFWxcvrjoZB2X/SHM50XK7lfQB5DunQb6CI84ofeKcvL7/IYaszmn/XjcVNmQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732955391; c=relaxed/simple;
-	bh=0fSqyzR++e7auylOPjp0yiY8ODsmjbPZaFBt/OyXsBw=;
+	s=arc-20240116; t=1732955505; c=relaxed/simple;
+	bh=2vU3DW+i1nRl5BuWN6iuv1YL42295447JcJg71SdVrY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K+axALYGwG4hsdukkLALLuqu+HY2eb1SYyIdrVB270knKZx8I/0Qk+tCuVXc4RgR71kPmNSHnWHfVu0DLaujDryVS3tEPDfii7hclUJOsp4dTAUxNzxo19MXt55x8MjPEVxTxdGJ88K58xKrUrLDYocx7q4HSvxUm5NLV70tVdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HkzHa6u0; arc=none smtp.client-ip=209.85.167.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=FwC0AutEd/QTJlnnwwAENNGWnKYprVNxGb0kDivbxm38hfZq7wFCxj1qE+wYbrk8Ww7JgzKB6Xv70mibihEdN68lH0riFpe0xzoJVEvbjn7nXmNI8LnN5Y5o4rWlBKwLXD0i8q7XU3iFRejw3iXEpSDVtpuksZO+1asK1ueT0aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KzAhad+v; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53de101525eso3469658e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:29:48 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ffe4569fbeso20311131fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:31:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732955387; x=1733560187; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732955502; x=1733560302; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YwEfcn5Pby1DuMjHVg1b1o/lcfJvv/jFNZtuiy5rgCw=;
-        b=HkzHa6u0UNBNQY+pUjgl/qbTDrT6IFFvje/xc/ylVkCidfqh3wYlHHRv04jq4V1FC3
-         B21z9OWxtC6fk/2yrioQcHKtnKkha5NnLRGQsFP5Oj0ORZS/jMlP4Gn0OHunTfttQY/H
-         4iDauQU28wHVwxEN+cePCphA4E8S6PMCasp0wf38V5jlwS2FyCnA2tN2N7t+FSCdGg18
-         l2h3LQsMw9biL+XpbCYiCiviwORV8PHhHJ9YfUOvS1PrhvGpnXaZxlP/fEH6x+TyfwJS
-         tVUzcTr0JuPZETryJgmGNnEeaswkSUYXbjcD0OVBT+dVPf+Sm8j7KefxZb9JLrCamdqN
-         vETA==
+        bh=jAlLAAAGM9bVH738rgOjUvG+kp8ufe3wXv46mmUzS24=;
+        b=KzAhad+vzp08qvJKtNcoq6+1Bixm2r9J/KmKKb8n33YGUQs/CWLc85Zj38Wx51wSVa
+         CfgQWhVHjKW3gdATtQolurTkofnGt9LS1Vgv67rRgU4lGvXo4y6fkVO2ptNab75hMIRD
+         Dsu828TPYjDP+RgQNM3k1aGhuaxZ716BVCi0zwEZn6FL1aw7vTKSXaYQ7oOTJibCAA3S
+         AcUH3Oksl5uukTF86WV1ViMozCSki5e0b/qYbzHE8Crep9E+mTWqzi+acDYfhghsBI1s
+         LkEFh5dvIKIc6DL1enRXiQ5bv591a82SKfjDUnwzANJWDUgPndIfAZ7fF2FECJiGg+NO
+         MOtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732955387; x=1733560187;
+        d=1e100.net; s=20230601; t=1732955502; x=1733560302;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YwEfcn5Pby1DuMjHVg1b1o/lcfJvv/jFNZtuiy5rgCw=;
-        b=c3y59UPU0leB6w1xG/5aAGbnMI6K06zXBP4RugRPmR9eNOqxttkjD2JfTFKKktKh+s
-         1adKhTpCFCM32FSBTbGBe/843LwKeRPSk3F0wI5JXuzdLefGLWD196XoLF4ra8I5MzC2
-         L0glb7zU8HgettD00Wrw0vCMGmS/9TLgj4SVBV2JiNL4kvP66munGm07aQoHyfyaN57U
-         TnJ/txJ1tiem/hSIQbuvWHg7f2r1b73YyphRtzBxFwJPtrhwmSOlrAdWO4aV0H8rCaxm
-         ZHsuxIm+nLMjyNffua2SvdI9asi3I9WcQCoqQEJgGEs0BZU1KX8N5LpYxCT+T8/Lhr53
-         vGRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6PQHmu+hnUVRTSS578aPqhm7ZXERDobL2LA2ZGl0Hcv1kxhv6yTr3PTs07FE8S8GALliHQobIcyEBHmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7PSujtoKlvisnmGSVXlh+pmCwmzoIhdPCXP+ja3hfX1Af8hnS
-	n2YYsifKxgEg6s9X8M3K5QtHv+MZ/Y9vnNYQDo7+eYJmor8VlN5FcBB4UAF+p7o=
-X-Gm-Gg: ASbGncu3KKTaW4AJs2bh3sIh2D4WUb+xsllOY9P3CW9vH3ksvfnfjTMeTUJrmmIseYy
-	GWMQPRo6QKrttCUc+g+44zZwbeALRTmgckdQQw88hzmvLfKHUmtvO0LXMzDD+HnL24P/SIAqfHQ
-	96IffspuKbwY78XFhJFUbscJHBuauyYt89xcvtcOeKZk/iW7Na725maIVHYB1ZM4IjUhoFWYf3k
-	p5/f/NeXOqgm3g5kTVoO5y5o52BDn+obI8HiIvRHbj3E/wa9r0XdfpYe24lFwFKFc2GRqoprcIY
-	ScI9SGADHj+24PIvaBCgIQSHaI4aBg==
-X-Google-Smtp-Source: AGHT+IG7msEs9hgIu3ta16vL9mWEiaIEtxRrnODIuHdyaMtVbZhaiQTdxZhi9NhcUgHBW26OK3t30w==
-X-Received: by 2002:a05:6512:3f7:b0:53d:f583:81df with SMTP id 2adb3069b0e04-53df5838209mr2781109e87.28.1732955387112;
-        Sat, 30 Nov 2024 00:29:47 -0800 (PST)
+        bh=jAlLAAAGM9bVH738rgOjUvG+kp8ufe3wXv46mmUzS24=;
+        b=mPl0LA998AzTQTQHdzaMwAgIJ9NtXCgQnc6I9Fv4Mpa6DPKJerzjzDgPZnNl1oaSye
+         OkSMw3thKg/c4kz3Dxh8yxzfBe3eDL56zu0haRqoXlM75jE9kw7iNXc5NFmnagOhBKeL
+         Cbu6seowLgeu8h+ACQllJz3kEdgjTpzIhSHRVdXUAnMoYtW99IJiYKe//BqzcHlAsxwb
+         CyBBIhpq4eK19oKWuKs1qFoR38LrUlYV3uzrQf2XkXIy8SUyyTif9e6YJSfts44wHmQd
+         r1v/1qz85hfRNIPvEL1kQB7rrxZlpsm4K3OkJxWtglCalqfZMiW4kQCzYrOMpm03kJXU
+         4D7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVVlyRf4WEAELCEcm5XtwBWcBC/fVKVyf6jlvEy8PLkQ/6kkg+OMfmPrRPbwGrg7t/oj4/jD30NAYJgLu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9m0Bb+8dZZzltktjnAaT3BgxGE5uiYrtvKFylwCZx/5dggjtc
+	ZnYYNQOPZqRp8LCNNfNNQg/gaECqFMyaZIpgSiqr53et3eSkflgbedwZCVEEgLvcxf8RSaEnxLn
+	s
+X-Gm-Gg: ASbGnct4qchx4nI82HZoMA7gWV3grw7VO/ba7feoqo6g0ziNldKTyEXFCXy+q54QTkk
+	FqZDfK8d/LgrLhfAfLxkGwYA5eqBc3SZqg0VljKRq9k5pS958tkVIT7NYQ3UEhZ6FfyKIB6g/Nl
+	EcAjAqtPcP0ZjsbKjLhCGHYKA+XMvHXlmjnlY2OLajYDC7lFKiMY9ChDaTlTOkH2IRVVhivXn5f
+	karhTfLsVKVBEmBy9WmqpBKMoEYmgHicSms110JQBmH3h+QlXNgcoXeXD47S1phYik2Op4zOxUV
+	qicmUPKoCNBRmsKB7vPicDkgsy1zZA==
+X-Google-Smtp-Source: AGHT+IHqlibCJpfN5cUZPPd4TL/8XxztYBv4PAhJSEPCWQRqaxNuibgDwkMBYYVSBLF2QupVe40mkw==
+X-Received: by 2002:a2e:b8c3:0:b0:2ef:28ed:1ff5 with SMTP id 38308e7fff4ca-2ffde23dfe7mr37315291fa.15.1732955502004;
+        Sat, 30 Nov 2024 00:31:42 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64a05ebsm703544e87.255.2024.11.30.00.29.44
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbb8fc5sm6296371fa.22.2024.11.30.00.31.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 00:29:45 -0800 (PST)
-Date: Sat, 30 Nov 2024 10:29:43 +0200
+        Sat, 30 Nov 2024 00:31:40 -0800 (PST)
+Date: Sat, 30 Nov 2024 10:31:38 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sandor Yu <sandor.yu@nxp.com>
-Cc: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	"jonas@kwiboo.se" <jonas@kwiboo.se>, "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, 
-	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
-	"vkoul@kernel.org" <vkoul@kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, "mripard@kernel.org" <mripard@kernel.org>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, 
-	Oliver Brown <oliver.brown@nxp.com>, 
-	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>, "sam@ravnborg.org" <sam@ravnborg.org>
-Subject: Re: [EXT] Re: [PATCH v18 6/8] phy: freescale: Add DisplayPort/HDMI
- Combo-PHY driver for i.MX8MQ
-Message-ID: <foi2sizfkppmunq4yqt4pex47alsvsjyqi3rk32fwyz4f5xepn@zdsx74bzzda4>
-References: <cover.1730172244.git.Sandor.yu@nxp.com>
- <411e42c70e71dce33a80059f663fb6c58fb2ac8c.1730172244.git.Sandor.yu@nxp.com>
- <efciuvoptv7qxwauswfseb6zlt5w4fmjdbm3huxfsn63a6bm7u@kfgkkvqoz5x4>
- <PAXPR04MB9448F638D47B5495CF78007AF4522@PAXPR04MB9448.eurprd04.prod.outlook.com>
- <z6p6bewmykmufsghdojr4lvziurmmfpnrr5m4w3pfjlqzobpwr@zq2d2ukjvtac>
- <PAXPR04MB9448D68A5CA9755036E9B23DF42F2@PAXPR04MB9448.eurprd04.prod.outlook.com>
+To: Guy Chronister <guyc.linux.patches@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm:panel-orientation-quirks Added DeckHD support to
+ panel orientation quirks for Steam Deck This commit introduces a new quirk
+ to handle specific orientation issues for DeckHD panels on the Steam Deck.
+ The quirk ensures the correct display orientation for these panels,
+ enhancing the user experience on Steam Deck devices. Tested on my Steam Deck
+ to ensure reliability. Feedback and further testing are welcome.
+Message-ID: <t4faz7cyi5lnib2zsxxv3j5ykltrecsjee6hrb3ky2g6gdypju@6u6ggrhuisjr>
+References: <20241127203545.17475-1-guyc.linux.patches@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,62 +92,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB9448D68A5CA9755036E9B23DF42F2@PAXPR04MB9448.eurprd04.prod.outlook.com>
+In-Reply-To: <20241127203545.17475-1-guyc.linux.patches@gmail.com>
 
-On Tue, Nov 26, 2024 at 02:12:19PM +0000, Sandor Yu wrote:
->  
-> > 
-> > On Tue, Nov 05, 2024 at 02:05:51PM +0000, Sandor Yu wrote:
-> > > >
-> > > > On Tue, Oct 29, 2024 at 02:02:14PM +0800, Sandor Yu wrote:
-> > > > > Add Cadence HDP-TX DisplayPort and HDMI PHY driver for i.MX8MQ.
-> > > > >
-> > > > > Cadence HDP-TX PHY could be put in either DP mode or HDMI mode
-> > > > > base on the configuration chosen.
-> > > > > DisplayPort or HDMI PHY mode is configured in the driver.
-> > > > >
-> > > > > Signed-off-by: Sandor Yu <Sandor.yu@nxp.com>
-> > > > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > > > > ---
-> > > > > v17->v18:
-> > > > > - fix build error as code rebase to latest kernel version.
-> > > > >
-> > > > >  drivers/phy/freescale/Kconfig                |   10 +
-> > > > >  drivers/phy/freescale/Makefile               |    1 +
-> > > > >  drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c | 1337
-> > > > ++++++++++++++++++
-> > > > >  3 files changed, 1348 insertions(+)  create mode 100644
-> > > > > drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c
-> > > > >
-> > > > > diff --git a/drivers/phy/freescale/Kconfig
-> > > > > b/drivers/phy/freescale/Kconfig index dcd9acff6d01a..2b1210367b31c
-> > > > > 100644
-> > > > > --- a/drivers/phy/freescale/Kconfig
-> > > > > +++ b/drivers/phy/freescale/Kconfig
-> > 
-> > [...]
-> > 
-> > I'm sorry, my email client cut the email.
-> > 
-> > > > > +static int cdns_hdptx_dp_configure(struct phy *phy,
-> > > > > +                                union phy_configure_opts
-> > *opts) {
-> > > > > +     struct cdns_hdptx_phy *cdns_phy = phy_get_drvdata(phy);
-> > > > > +
-> > > > > +     cdns_phy->dp.link_rate = opts->dp.link_rate;
-> > > > > +     cdns_phy->dp.lanes = opts->dp.lanes;
-> > > >
-> > > > Shouldn't this be conditional on set_rate / set_lanes ?
-> > >
-> > > PHY do not support reconfigure link rate and lane count.
-> > 
-> > So, you don't support reconfiguring the rate / count, but you still copy the new
-> > rate and lanes into your driver data. That sounds strange.
+On Wed, Nov 27, 2024 at 02:35:45PM -0600, Guy Chronister wrote:
+> Signed-off-by: Guy Chronister <guyc.linux.patches@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+
+It seems that you didn't break the subject / commit message properly.
+Please add an empty line after the subject line in the Git commit
+message and post v2.
+
 > 
-> The PHY will use link rate and lane count to configure its registers
-
-I'm not sure if I follow it. Do you mean that rate / count configuration
-is static?
+> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> index 3f2e2b851cbc..c412273799cb 100644
+> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> @@ -456,6 +456,13 @@ static const struct dmi_system_id orientation_data[] = {
+>  		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galaxy Book 10.6"),
+>  		},
+>  		.driver_data = (void *)&lcd1280x1920_rightside_up,
+> +	}, {	/* Valve Steam Deck (Jupiter) with DeckHD */
+> +		.matches = {
+> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
+> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Jupiter"),
+> +		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
+> +		},
+> +		.driver_data = (void *)&lcd1200x1920_rightside_up,
+>  	}, {	/* Valve Steam Deck (Jupiter) */
+>  		.matches = {
+>  		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
+> -- 
+> 2.45.2
+> 
 
 -- 
 With best wishes
