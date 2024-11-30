@@ -1,87 +1,167 @@
-Return-Path: <linux-kernel+bounces-426415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBBB9DF2BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:05:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277639DF2BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:06:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC445280D2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53DC162D73
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E46B1A9B3E;
-	Sat, 30 Nov 2024 19:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E751AA1EE;
+	Sat, 30 Nov 2024 19:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WPQTCV2v"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xh6VdmDj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A3C132103
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 19:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1CC132103;
+	Sat, 30 Nov 2024 19:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732993534; cv=none; b=X3ufzCJrH+oW3c/rO6F+BNUpOZnAryjPYRuwifrtIwXvocLf/rq5pe5R31pGnVL0dBpk0OkLi5RAIT6f202A52L91a2VjW7mWhlYyRNsxrDSdtX7+3ilaRk5z+na6pF+7wZ/qrfWdustGA5pQ2UeEvjxbfUg1+Bi+k35YSYCLwo=
+	t=1732993603; cv=none; b=IPMc4rQevvY2TZ56SlHyt6uUBHCEF/ONQBIROIUaSPIIJnZq2rIM+YpkgBLyn6VDM8LDEdd716BnGEh/5EkREmvsFWFoyYcCuySp7iDX5xYHQpMjl4Bl5Ds3P8zZt16pqFMS9Bu22CVkoLWr5OF9swqEv99E7g9VTEGPYiTXoKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732993534; c=relaxed/simple;
-	bh=ek7RYw4xwoblLAdujwbp98Ocgk+BFMHHW7AT1mVVMPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wrw6Mm0lnUT1833GIiYL5OL8tgbV7snPhSlP9q2jiObgFFLOVK5ViGSYp7uk0lSJz2qNPqAuUPB+kftVjey358BZKwkwJzZVyVD0/R26pLV2+g4TseSwkmYVMzBMRInD86ZzcfqEAV/2n33bFL7oGDr2Kl2zlRMe1+VGeOyJDBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WPQTCV2v; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732993530;
-	bh=ek7RYw4xwoblLAdujwbp98Ocgk+BFMHHW7AT1mVVMPM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WPQTCV2vOisCQKF9yGCv5IBGziCapwnmPdq+DL1aWJ5mBdkef2AsWBAVXKN0+gUuB
-	 UBDJ7qbvWLGFYgXRB5WMImheW6xO/pmpqg2S9VemtfshUfF/uj8w02yJPZ8z5CYqQm
-	 AVcF+Vfbx/94H0YAf6H7B9DsKTdalBeiNNyyH9UOXEIMLYExy1Q02GmqLJqkRRMsiH
-	 A+OGDzTUoGEjCmCJfjNehv21ZCDzSldoWVckB2eLPGPT5/gpqD3YnFfVSFLWArOsVA
-	 96W/UEg6zryf+vex9wAbMKphy/bX7uiStkPXDXoyqi9QDoDcukbi8q0JnHQmlipGaD
-	 jYw3vihyvP3Hg==
-Received: from [192.168.1.90] (unknown [86.120.21.57])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 90CBD17E37C5;
-	Sat, 30 Nov 2024 20:05:30 +0100 (CET)
-Message-ID: <ca8c796e-fa89-412e-acdc-2515efeb6ca5@collabora.com>
-Date: Sat, 30 Nov 2024 21:05:29 +0200
+	s=arc-20240116; t=1732993603; c=relaxed/simple;
+	bh=k8M+6H2Ej7owqhe2CTFOEGvZgjli0JoJ1iFZHtwqqB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bg2aUpcqbKVf/LYd98PQOjpbdOAbfYPPROXMdf+WdHj+Vjuj1SglRtdM9gWv8C83+KUfb8nSRogcIg5BGyFIAj4U3lpPi8nKxqztbwW7cOO/wotHslaO0lEX4N25/8WK3X7Z3xba8xEruliqmBUITYynvvK7K5D4v6IGPAS8250=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xh6VdmDj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ECC4C4CECC;
+	Sat, 30 Nov 2024 19:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732993602;
+	bh=k8M+6H2Ej7owqhe2CTFOEGvZgjli0JoJ1iFZHtwqqB8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Xh6VdmDjUbG/SCLj1APQhRdP2yGV1/QuoPIOUYos5Z3ts+8IsPbrhwOLXYjRXmPWl
+	 Zd6YnadOzhoodJ/8t3kSKIacKpr5DsVY1CsBHON/Xmwt/Jz1sB2T4W9K8fv86boJ4r
+	 xJDKnuWFz3XUB+hkPuGiPCjrZGlMGvibYeONWGzEnodRBP3HnVC2l9qR9sgp+gsomf
+	 uEx8dgPChBKolRiV9xnYz+lU9GJvCHzIF9VEU5394ELhrXAtNkxIn4fH11r1um4PxT
+	 LtLrevsll+Fw54JiMOnoaS0mcgghE8mzNKcGxDOnFQS02GNAO6SWHa/cv1Wsy//KW1
+	 wdR+Ilp2rM9LQ==
+Date: Sat, 30 Nov 2024 19:06:33 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Ranquet <granquet@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: adc: ad-sigma-delta: Document ABI for sigma
+ delta adc
+Message-ID: <20241130190633.34489853@jic23-huawei>
+In-Reply-To: <20241127-ad411x_calibration-v2-2-66412dac35aa@baylibre.com>
+References: <20241127-ad411x_calibration-v2-0-66412dac35aa@baylibre.com>
+	<20241127-ad411x_calibration-v2-2-66412dac35aa@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] drm/connector: hdmi: Allow using the YUV420 output
- format
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241130-hdmi-conn-yuv-v1-0-254279a08671@collabora.com>
- <6hcjgagu7hvbnn6rp5znwjxeaa6wqkeecgvvqkzvtma2ni6mfz@lrbmtbogkzgm>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Content-Language: en-US
-In-Reply-To: <6hcjgagu7hvbnn6rp5znwjxeaa6wqkeecgvvqkzvtma2ni6mfz@lrbmtbogkzgm>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 11/30/24 10:38 AM, Dmitry Baryshkov wrote:
-> On Sat, Nov 30, 2024 at 01:56:31AM +0200, Cristian Ciocaltea wrote:
->> Provide the basic support to enable using YUV420 as an RGB fallback when
->> computing the best output format and color depth.
+On Wed, 27 Nov 2024 10:06:14 +0100
+Guillaume Ranquet <granquet@baylibre.com> wrote:
+
+> Add common calibration nodes for sigma delta adc.
 > 
-> The HDMI Connector functionality has pretty good KUnit coverage. Please
-> expand KUnits to cover your patches too.
+> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+Hi Guillaume.
 
-Sure, will handle this in v2.
+I think there are some issues with the old docs that should be tidied up whilst
+we are here :(
 
-Thanks for reviewing,
-Cristian
+Just fix them up in this patch then mention it in the patch description.
+Or if you prefer move and then fix in separate patches.
+
+
+Jonathan
+
+> ---
+>  .../ABI/testing/sysfs-bus-iio-adc-ad-sigma-delta   | 23 +++++++++++++++++++++
+>  Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192 | 24 ----------------------
+>  2 files changed, 23 insertions(+), 24 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad-sigma-delta b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad-sigma-delta
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c2c55a966163736aea8d46fc5089c08dac747b84
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad-sigma-delta
+> @@ -0,0 +1,23 @@
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration
+in_voltageY_sys_calibration
+
+(as indices are capital letters and X is used earlier).
+
+
+> +KernelVersion:
+Make an estimate of this I'll never remember to fill them in whilst applying.
+
+It should make the next merge window I hope!
+
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		This attribute, if available, initiates the system calibration procedure. This is done on a
+> +		single channel at a time. Write '1' to start the calibration.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration_mode_available
+> +KernelVersion:
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		This attribute, if available, returns a list with the possible calibration modes.
+> +		There are two available options:
+> +		"zero_scale" - calibrate to zero scale
+> +		"full_scale" - calibrate to full scale
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration_mode
+> +KernelVersion:
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		This attribute, if available, sets up the calibration mode used in the system calibration
+> +		procedure. Reading returns the current calibration mode.
+> +		Writing sets the system calibration mode.
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192 b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192
+> index f8315202c8f0df2bd4b7216f5cf8d3c2780fcf3f..28be1cabf1124ac7593392e17e4759ddfac829e8 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192
+> @@ -19,33 +19,9 @@ Description:
+>  		the bridge can be disconnected (when it is not being used
+>  		using the bridge_switch_en attribute.
+>  
+> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration
+Huh.  That would explain the x above. I assume it is per channel?
+
+> -KernelVersion:
+> -Contact:	linux-iio@vger.kernel.org
+> -Description:
+> -		Initiates the system calibration procedure. This is done on a
+> -		single channel at a time. Write '1' to start the calibration.
+> -
+>  What:		/sys/bus/iio/devices/iio:deviceX/in_voltage2-voltage2_shorted_raw
+>  KernelVersion:
+>  Contact:	linux-iio@vger.kernel.org
+>  Description:
+>  		Measure voltage from AIN2 pin connected to AIN(+)
+>  		and AIN(-) shorted.
+> -
+> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration_mode_available
+> -KernelVersion:
+> -Contact:	linux-iio@vger.kernel.org
+> -Description:
+> -		Reading returns a list with the possible calibration modes.
+> -		There are two available options:
+> -		"zero_scale" - calibrate to zero scale
+> -		"full_scale" - calibrate to full scale
+> -
+> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration_mode
+> -KernelVersion:
+> -Contact:	linux-iio@vger.kernel.org
+> -Description:
+> -		Sets up the calibration mode used in the system calibration
+> -		procedure. Reading returns the current calibration mode.
+> -		Writing sets the system calibration mode.
+> 
+
 
