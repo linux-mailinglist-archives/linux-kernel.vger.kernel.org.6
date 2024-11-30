@@ -1,161 +1,200 @@
-Return-Path: <linux-kernel+bounces-426202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60D89DF03A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:38:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636899DF03C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85111280D14
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:38:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B99B0B21B7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5851974FE;
-	Sat, 30 Nov 2024 11:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJXYOaFr"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EE2192B95;
+	Sat, 30 Nov 2024 11:41:14 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BBA15990E;
-	Sat, 30 Nov 2024 11:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8D7165F0C
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 11:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732966715; cv=none; b=oDwr5cm+mDd6M9mPQFU4rIXlSuJQTz867oyacFRX+X/WeLRN2em79ox8cxweAee77ieyJEeJCcrbSMiGgqoxQjDX817MA7ZiECRhc9/a6CEtXG2YNrsj2PrQVXxm23oKmHwSLwp27EWJnoXY6TVb0d5TYPRoL7Pb0j2qbQtA7Xk=
+	t=1732966873; cv=none; b=LTZZdRmZYIwTeimi4zj1L4SGrc4x94ivq9JGopWWxW2fLsmy60Z5qKXCmycgimsBreJScfh4X5YMtPX6KTlBnOR0WE2rvF+/vWzqmNb6HaXSf54qd0h5nM/Gg00JuXeAqYaFUPJzULUQ66IVyfz1fGNWP2RsnExTOV9J0xu3UoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732966715; c=relaxed/simple;
-	bh=llwMWTWTWdxE0Hpd9KZKubPcqkDdkWEnwBHV/Go2mvU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mNz6f6wsA3guxvwjLVlwMF5+2XjIzvHb6E413N1nRfLdjit4j3ZlcaTcbOgDKNFggD+XIhbjvIWaOp5bHg8SQ1IgP+7VuISLa2qqi4CfaemVrFiScPEpp44ZdK3/m2IRZMQoOx93BWTH6r5cI3CAnoOgLvSghIXEsPmEVUcPCMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eJXYOaFr; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-856e7bc5651so1570286241.0;
-        Sat, 30 Nov 2024 03:38:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732966712; x=1733571512; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lbrr2qfB6+/BjJuq7E43lJE1sJas5MBGpSJDZ+XWZO4=;
-        b=eJXYOaFrsK7Yy2du7WmIEQmRindZajWqBehrpZlIt1RjUn36YyGlTkvGHkoReG7Jjh
-         6F8N5iWZd5EBZeGjHZXf+WYEJ6wBZji9kJjfAhUjU92AYnffxsmoPHkNxdi4D9e16v2C
-         Zvb6uZKropQdXliRABiWjRB5oOvrDwm4Optr2wh9fPbZFPt7LcE756sU0dWvFP3C4K0j
-         RREQExnwZasnlkMNjtqDRy4VSJfyHw70I8Y5d8WtCK82uvDq+Zb1VlHKTzwbSFJfG8xU
-         sJBWSvItbwruLRICbZc8D0i+vmn6VsnQiGyBEIGrzryIsxcr0QXvhobLcJA4MZSmGv7j
-         29dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732966712; x=1733571512;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lbrr2qfB6+/BjJuq7E43lJE1sJas5MBGpSJDZ+XWZO4=;
-        b=BUOd0D1qCLfm3ZJRjqj/WgMZ1X0Mosm1oJbvGbNeajs9quGgO/WDQ/bw5IWmXk07Mj
-         GRjFsgdN8Xn3lZ3/l/NLfcUv/4J5rk/RjsRWz04Lh8WqqMpvgbl+dL6QBtr8fDadwyHI
-         oF2+zARv7pnqoBU1yF4w0Xisuu2ygnSETmlqxxA6xWRCppuSRjwr2FikFBGUDSSm0wP7
-         6/zDBVXiKvJNKAuul8Qs2CxVqb5RNy0qlx6wJOnOAKLk+2zAPjhhX8UH4jBZqqpq8zrw
-         WNL//wf3raJjUeffr6Scps9QhKgOOmIPyYnutiCjyYxT4Lx8xB4qquRj2RayGKLc8vdw
-         kwQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtFtUjqNtt11OQETWeM9if6ga3t57lAfU4g4qpSItn6f7DDwk0Fzq882effNOrLK5HmFWkQESiTQY=@vger.kernel.org, AJvYcCW+L8hYv+4ODWfIXUZN7rPb4Zepr+NJOAyR1pToR7Jhh+CV0k8Qcjj95WSk8Vn5WVOq9B1g6ykVEJJMT4/tIZV+Tkk=@vger.kernel.org, AJvYcCW6Zp9olCuMnhvvvF4D/I/XNeZSGW+6kaI30uzBoIMGFQf7nUPsgrUGwHli5mvmKfAOAqxknxOp61+C@vger.kernel.org, AJvYcCWqsyTzIL508OCzUZ0pPvqS23msn4U/GapUr+7jcnTvtRf8ckquZ3Ct7TTpM+PYqEOPSmrElAtv47MHa41aEQ==@vger.kernel.org, AJvYcCX7q9oFyjWKdSUIHCdt5JWngaR49T3s2n6NyK+JkFp9g7P7jWaLTxNs+klMNsMqUBi6mmtlrvX3OqzhQM4S@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywto91/sXJd4aO9rcr8ihvG7GQ9bbjxjjF0Z5gHb65QYz0i1gaf
-	X/JsXb/jH4cQOqoF+iQuywcvjSWbc0sT3+jFbak/nvwmQ0NRjLCFYbtc7poIPTCvPActApQ0Hpr
-	FZBOS31WpIkwN7irr+3quTWXEjhI=
-X-Gm-Gg: ASbGncuh80iUqb8Kk0PRiB0Mocy6cvzMOqCDjguX59GMnOsGVQrHGRJdRyhphRN6n1C
-	2bMmHwkTzTQuTgBHoXV22kQqJQ3eraQ==
-X-Google-Smtp-Source: AGHT+IEOjlIPuE+ZgXLyvfndQVoFGvXTAQTOLhdzhSDM04yBi3Tp+D0cxFQCuCqvm5sj20DBHerEXbDd1U2rr4EjqZ4=
-X-Received: by 2002:a05:6102:1519:b0:4af:586c:6197 with SMTP id
- ada2fe7eead31-4af586c620emr14093624137.0.1732966712559; Sat, 30 Nov 2024
- 03:38:32 -0800 (PST)
+	s=arc-20240116; t=1732966873; c=relaxed/simple;
+	bh=ZkgM0jh3bG1eg6LsqeL9J5DryQDqaeaGQHF+dekYHLg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=JvzJGa4j3rB7LdoHoadqrNC8y/8fxIN2400ve0pnw2RNQWJ5OJ0VdGCXL6jc+326StuokZMuj4KISV0DJ6qHb/39jU+/s1OLD92JnSNMSMpohOFnw6lCH9sn/iS+lo10TSC8DYdQX57b5epx5Vy/XL2E/7pzvEMNwgIlpewDZlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-275-FE_uBcOWMd6AjZiYwVeYLA-1; Sat, 30 Nov 2024 11:41:06 +0000
+X-MC-Unique: FE_uBcOWMd6AjZiYwVeYLA-1
+X-Mimecast-MFC-AGG-ID: FE_uBcOWMd6AjZiYwVeYLA
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 30 Nov
+ 2024 11:40:45 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 30 Nov 2024 11:40:45 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Jakob Hauser' <jahau@rocketmail.com>, Jonathan Cameron
+	<jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: Linus Walleij <linus.walleij@linaro.org>, "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
+Subject: RE: [PATCH v2] iio: magnetometer: yas530: Use signed integer type for
+ clamp limits
+Thread-Topic: [PATCH v2] iio: magnetometer: yas530: Use signed integer type
+ for clamp limits
+Thread-Index: AQHbQqUs2JSj3AGLWkSCiQkgtAYVhLLPsp/w
+Date: Sat, 30 Nov 2024 11:40:45 +0000
+Message-ID: <9f5793f03c2440d2aa18630469df06df@AcuMS.aculab.com>
+References: <11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
+ <11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
+In-Reply-To: <11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108-b4-max17042-v4-0-87c6d99b3d3d@gmail.com>
- <20241108-b4-max17042-v4-2-87c6d99b3d3d@gmail.com> <a7182597-b45e-40cf-baeb-60f69ec2365d@marvell.com>
-In-Reply-To: <a7182597-b45e-40cf-baeb-60f69ec2365d@marvell.com>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Sat, 30 Nov 2024 14:38:21 +0300
-Message-ID: <CABTCjFB9ybKmNh-xuF0qaWQc_j4zNXW36vimdrEPh2hzP1VsBw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] power: supply: max17042: add platform driver variant
-To: Amit Singh Tomar <amitsinght@marvell.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, Purism Kernel Team <kernel@puri.sm>, 
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: WiY3Sq9FfiiquDcVF0PEeITQ7wpW7_6uxq66m9FrZxA_1732966866
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D1=82, 29 =D0=BD=D0=BE=D1=8F=D0=B1. 2024=E2=80=AF=D0=B3. =D0=B2 17:0=
-3, Amit Singh Tomar <amitsinght@marvell.com>:
->
-> Hi,
->
-> >
-> > The solution here add and option to use max17042 driver as a MFD
-> > sub device, thus allowing any additional functionality be implemented a=
-s
-> > another sub device. This will help to reduce code duplication in MFD
-> > fuel gauge drivers.
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> > ---
-> > Changes in v4:
-> > - rename module_init and module_exit fuctions
-> > - rework max17042_init
-> > - assign chip_type in probe function
-> > - pass i2c_client as pointer on pointer, to use same pointer created in
-> >     MFD. This allows devm_regmap_init_i2c to cleanup gracefully.
-> >
-> > Changes in v3:
-> > - pass dev pointer in max17042_probe
-> > - remove prints
-> > ---
-> >    drivers/power/supply/max17042_battery.c | 116 ++++++++++++++++++++++=
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----=
--------------------
-> >    1 file changed, 92 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/su=
-pply/max17042_battery.c
-(...)
-> > +static int max17042_platform_probe(struct platform_device *pdev)
-> > +{
-> > +     struct device *dev =3D &pdev->dev;
-> > +     struct i2c_client **i2c =3D dev_get_platdata(dev);
-> This seems a bit unusual; can't we just use:
-> struct i2c_client *i2c =3D dev_get_platdata(&pdev->dev); instead?
-> > +     const struct platform_device_id *id =3D platform_get_device_id(pd=
-ev);
-> > +
-> > +     if (!i2c)
-> > +             return -EINVAL;
-> > +
-> > +     return max17042_probe(*i2c, dev, id->driver_data);
-> and then just pass "i2c" here ?
+From: Jakob Hauser
 
-This leads to hang on freeing devm resources, when unloading modules.
+Copying Andrew M - he might want to take this through his mm tree.
 
-Platform driver version intended to be used as MFD sub device, where mfd
-creates a dummy i2c client, and passes it to max17042 via platform data.
-Sequence is: insmod MFD; insmod max17042; rmmod max17042; rmmod MFD; hang h=
-ere.
+> Sent: 29 November 2024 21:25
+>=20
+> In the function yas537_measure() there is a clamp_val() with limits of
+> -BIT(13) and  BIT(13) - 1. The input clamp value h[] is of type s32. The =
+BIT()
+> is of type unsigned long integer due to its define in include/vdso/bits.h=
+.
+> The lower limit -BIT(13) is recognized as -8192 but expressed as an unsig=
+ned
+> long integer. The size of an unsigned long integer differs between 32-bit=
+ and
+> 64-bit architectures. Converting this to type s32 may lead to undesired
+> behavior.
+>=20
+> Additionally, in the calculation lines h[0], h[1] and h[2] the unsigned l=
+ong
+> integer divisor BIT(13) causes an unsigned division, shifting the left-ha=
+nd
+> side of the equation back and forth, possibly ending up in large positive
+> values instead of negative values on 32-bit architectures.
+>=20
+> To solve those two issues, declare a signed integer with a value of BIT(1=
+3).
+>=20
+> There is another omission in the clamp line: clamp_val() returns a value =
+and
+> it's going nowhere here. Self-assign it to h[i] to make use of the clamp
+> macro.
+>=20
+> Finally, replace clamp_val() macro by clamp() because after changing the =
+limits
+> from type unsigned long integer to signed integer it's fine that way.
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202411230458.dhZwh3TT-lkp@i=
+ntel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202411282222.oF0B4110-lkp@i=
+ntel.com/
+> Fixes: 65f79b501030 ("iio: magnetometer: yas530: Add YAS537 variant")
+> Cc: David Laight <david.laight@aculab.com>
+> Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
 
-My guess is that it is caused by a new pointer to the i2c-client. New point=
-er
-created at `platform_device_add_data` function call in `mfd_add_device`.
-Since C is pass by value, new pointer is assigned to platform device data.
+Reviewed-by: David Laight <david.laight@aculab.com>
 
---=20
+I THINK all the other BIT() and GENMASK() are ok.
+The code also rather heavily relies on u16 being promoted to 'signed int'.
 
-Best regards,
-Dzmitry
+=09David
+
+
+> ---
+> The patch is based on torvalds/linux v6.12.
+>=20
+> The calculation lines h[0], h[1] and h[2] exceed the limit of 80 characte=
+rs per
+> line. In terms of readability I would prefer to keep it that way.
+>=20
+> Changes in v2:
+>  - Self-assigned the clamp macro to h[i].
+>  - Changed from clamp_val() macro to clamp().
+>  - In commit message added issues on divisor BIT(13) and missing clamp
+>    assignment.
+>  - In tags added another (duplicate) report by the kernel test robot.
+>=20
+> Link to v1: https://lore.kernel.org/linux-iio/20241126234021.19749-1-jaha=
+u@rocketmail.com/T/#t
+> ---
+>  drivers/iio/magnetometer/yamaha-yas530.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/iio/magnetometer/yamaha-yas530.c b/drivers/iio/magne=
+tometer/yamaha-yas530.c
+> index 65011a8598d3..c55a38650c0d 100644
+> --- a/drivers/iio/magnetometer/yamaha-yas530.c
+> +++ b/drivers/iio/magnetometer/yamaha-yas530.c
+> @@ -372,6 +372,7 @@ static int yas537_measure(struct yas5xx *yas5xx, u16 =
+*t, u16 *x, u16 *y1, u16 *y
+>  =09u8 data[8];
+>  =09u16 xy1y2[3];
+>  =09s32 h[3], s[3];
+> +=09int half_range =3D BIT(13);
+>  =09int i, ret;
+>=20
+>  =09mutex_lock(&yas5xx->lock);
+> @@ -406,13 +407,13 @@ static int yas537_measure(struct yas5xx *yas5xx, u1=
+6 *t, u16 *x, u16 *y1, u16 *y
+>  =09/* The second version of YAS537 needs to include calibration coeffici=
+ents */
+>  =09if (yas5xx->version =3D=3D YAS537_VERSION_1) {
+>  =09=09for (i =3D 0; i < 3; i++)
+> -=09=09=09s[i] =3D xy1y2[i] - BIT(13);
+> -=09=09h[0] =3D (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / B=
+IT(13);
+> -=09=09h[1] =3D (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / B=
+IT(13);
+> -=09=09h[2] =3D (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / B=
+IT(13);
+> +=09=09=09s[i] =3D xy1y2[i] - half_range;
+> +=09=09h[0] =3D (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / h=
+alf_range;
+> +=09=09h[1] =3D (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / h=
+alf_range;
+> +=09=09h[2] =3D (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / h=
+alf_range;
+>  =09=09for (i =3D 0; i < 3; i++) {
+> -=09=09=09clamp_val(h[i], -BIT(13), BIT(13) - 1);
+> -=09=09=09xy1y2[i] =3D h[i] + BIT(13);
+> +=09=09=09h[i] =3D clamp(h[i], -half_range, half_range - 1);
+> +=09=09=09xy1y2[i] =3D h[i] + half_range;
+>  =09=09}
+>  =09}
+>=20
+> --
+> 2.43.0
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
