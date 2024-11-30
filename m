@@ -1,183 +1,142 @@
-Return-Path: <linux-kernel+bounces-426382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29109DF264
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:51:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0AF162DD7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:51:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710EC1A76B4;
-	Sat, 30 Nov 2024 17:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlrZt+Sc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A879DF267
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:55:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C626943AA1;
-	Sat, 30 Nov 2024 17:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BDB42814B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:55:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754791A76BB;
+	Sat, 30 Nov 2024 17:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FA9qHEJZ"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415CF43AA1
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 17:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732989109; cv=none; b=RahAKdHaJ9nkZMTaN5Z1YnBKjv7inUD4PZFxnmQA8iEu9RCBlOfDwut13bv8oQSdDvrQQHfsWAabU+pK78UEGKRtBvu3pjyNhgYlDLo93UnbkJi8XWQ1XDalFIsIEFzdaCvUh92EVxopjTffEsl/zx0W+QyZlLtgk2CCX1OaTxQ=
+	t=1732989302; cv=none; b=MyGHJsV3z74azqQp/RH41H5EjFt5H/oUzR2ynNhQ7dCONCyXV52Vh72Jkx4WzXAJqc9yufjDgQNtVZYYHIhx1UH0TlQkb4R7N+8k4iZhLtCdeE/wZhIX+yByDifLBjtrEvreV5iz/dgjSLJC3vSKOkIYkWmf4vZzLAPQey9aAjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732989109; c=relaxed/simple;
-	bh=629BkUmlK3pxMrDH/XihQ9fTKurt97vAapob71sv82k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JNY8EPsS48rOAztUd6TgYdo6GB3LO6KHZooKXqpoYCUgBGjwT937YtvAeJ8bIePwkLNC9LPXfZ2PdFn4+j3LnMJd1++l9Cg3MJQx/etCpDyjMIazCzbr43fdQJpUEg/6YP8aGCqE9Ldyt8BdLfG3RZ9JPIEelIejXQGft5VVfSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlrZt+Sc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1051CC4CECC;
-	Sat, 30 Nov 2024 17:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732989109;
-	bh=629BkUmlK3pxMrDH/XihQ9fTKurt97vAapob71sv82k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dlrZt+Scz7ohFHP9uEuBcZrErJBJpd/5CQy5VaSTL3SO9PZks7i17MOUa5hXI8g4/
-	 kk3ckgWfr1hMDYJoVSDDKNV7gUCi/lJHJJqVfxa2Wn7s9S27A0lQrxwd1ORt+fGxaf
-	 daM3R90MG/nR13+4N28zj8aveJ3edIXp+0kZGsIojcgyBNw9IX4Y4pIkjWAadegf48
-	 rmvGpy/rFFd5NH5DPySHlnpD/15Zy68R5bYjyC5f9DqjX4RTiT9YnPYFdiWSkqJgXP
-	 tY9kUdrt8mDcx1yD7CNur8a19WcVrNfmmsSPhtfkUw+0XzmSJYQwGiAnZO7S5snh8p
-	 4P0y7CSLYRnew==
-Date: Sat, 30 Nov 2024 17:51:41 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] iio: gts: Simplify using __free
-Message-ID: <20241130175141.14d3589a@jic23-huawei>
-In-Reply-To: <1f8e1388b69df8a5a1a87748e9c748d2a3aa0533.1732811829.git.mazziesaccount@gmail.com>
-References: <cover.1732811829.git.mazziesaccount@gmail.com>
-	<1f8e1388b69df8a5a1a87748e9c748d2a3aa0533.1732811829.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732989302; c=relaxed/simple;
+	bh=TBkohQCe2NGHE89Lnt7hpzegbj2T78s6vHSK58z3pLM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oa6SuCnA2Pupuvac4m0z87mNSF2boSRKwLGRY0vGFxNIuyaqlwK7LYSHQIZJdeyTPnCG0rddy6UkVts6Pcv6XQEIhR3snnV5G9x+7prgpIvJj1noJTU93OJ5WW+kgnycUCaHJqtEnpvGleUe8GDQFykgBFmdTiadXcoFAjkwxpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FA9qHEJZ; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa5366d3b47so443323466b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:54:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732989297; x=1733594097; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UmhUEJ3l16+JAXSnSdZ675vJ19gWez6ArVsbJQ9w8QQ=;
+        b=FA9qHEJZglcnSKOUnddX17x1L48R2SQuuJduUsr3mptOyXebGFsvAhfHHref6Zu4Xu
+         hS9BGvNCpk5IeoDfZE1dDnRm1jP8yg8MkdXVCdOgG7ObNGg1BjX+9WR793QY4eic+f+E
+         t2R/642pqzP6cUY1gRybGsYzw7bniiqt6ySy8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732989297; x=1733594097;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UmhUEJ3l16+JAXSnSdZ675vJ19gWez6ArVsbJQ9w8QQ=;
+        b=Gh8Suwrj5mYwjS0RQ5fdemo7GIDpdqPlsedL4Re2rBnZK6CuBCmpSBWlo8SqZDuvfG
+         lwUiajBIuK5J7kkItGkjDdhJsv8gYTvY3oH79qNPxIQ4eN3oDtyKqpEJDg1uFdCQC5n1
+         JLV9GbAvtht17RoLBqhQCeP4HmfkSd3hDewnThvDxCuNHkRai2q90ysCiYrdI30t3KI1
+         7fWQAldylCIP9xAuzrvHpzP0WL9aPrT+cnfNUUBfs+Q2Etp9RhIY2lPgMngYNOp5a3ir
+         w1ILX4YIwYQnxK6ZzNBm5dDD/XIzF+1hgrl9GBEJQy4NcBApqK7RKZ/v/dc9oqd+SpBb
+         3m5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVfG0/rbdTwNU8Nx2U7pEHYAk36JLhzc3X/45L0TVd/AOBJHuXI+Qubm0J5gRwy/frZMmCf1da0D7o8XPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFQQ9jYQl1aNskIKicz4O0iWA3bEdv3lYqlNsQKJsGk3fA+m6i
+	/pf/pJEYClFCHQ6rn7u/Wyh6qxfOESw760CZR7ne8f/vqqFKW8v5xVnXCmeE1xc4XGyFZeQn8IO
+	4FSAdgQ==
+X-Gm-Gg: ASbGncuBIyvoH1BJNzxSfb+tQ7LW0QP4AKbXApopwi/RzwlVCau2MEMSzTuMkkyTDEe
+	MybY3eWh4GnpWcD7VMGQtSLv1sW5/c/wI9KScdDmZm8eLzj+JTDAkA9/wLaM0YtiYJXKj4xkgxn
+	6yFrGduUI52mcURU5isggIBBxF8TSv59iyajIKrOeGXdEpcIjlPgJ0girdSHbWEt2XNdfG6jyCu
+	ruJks/LWGgJGvvTMcmslDD2DwVS0lYbvlB/EMUpp5/K9X5srKPXpdOWz5qfcQbatxSjYJaiv/Mk
+	UQ4lwTfe+toy+AH6KLyKEcWi
+X-Google-Smtp-Source: AGHT+IEzWqSAsmkGSXCmjCw4KrLoLFyu1UDEXaehpxvuq5mHa56iuRDGAKt881RQIMrHvsuTiV368g==
+X-Received: by 2002:a17:906:cd2:b0:aa5:2575:e75d with SMTP id a640c23a62f3a-aa580edfbd0mr1223666366b.2.1732989297388;
+        Sat, 30 Nov 2024 09:54:57 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599905c56sm300565566b.142.2024.11.30.09.54.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2024 09:54:56 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa52a5641f8so399935166b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:54:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUu9rCI1Z/alhIuC+2PrjkogQ1PlS5W+2LrIr70arvGPoiiQUMVwfJSBFWyBolR2g7vp6F7jX2QY3ioIXc=@vger.kernel.org
+X-Received: by 2002:a17:907:780e:b0:aa5:1d6a:540b with SMTP id
+ a640c23a62f3a-aa580edf9f2mr1127107466b.1.1732989296168; Sat, 30 Nov 2024
+ 09:54:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <202411301528.342383d8-lkp@intel.com> <069d686ab958d973563cfad52373ec6c8aad72ca.camel@surriel.com>
+In-Reply-To: <069d686ab958d973563cfad52373ec6c8aad72ca.camel@surriel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 30 Nov 2024 09:54:40 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj0HyNR+d+=te8x3CEApCDJFwFfb22DH5TAVyPArNK9Tg@mail.gmail.com>
+Message-ID: <CAHk-=wj0HyNR+d+=te8x3CEApCDJFwFfb22DH5TAVyPArNK9Tg@mail.gmail.com>
+Subject: Re: [linus:master] [x86/mm/tlb] 7e33001b8b: will-it-scale.per_thread_ops
+ 20.7% improvement
+To: Rik van Riel <riel@surriel.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 28 Nov 2024 18:50:24 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+On Sat, 30 Nov 2024 at 09:31, Rik van Riel <riel@surriel.com> wrote:
+>
+> 1) Stop using the mm_cpumask altogether on x86
 
-> The error path in the gain_to_scaletables() uses goto for unwinding an
-> allocation on failure. This can be slightly simplified by using the
-> automated free when exiting the scope.
-> 
-> Use __free(kfree) and drop the goto based error handling.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> ---
-> This is derived from the:
-> https://lore.kernel.org/lkml/5efc30d832275778d1f48d7e2c75b1ecc63511d5.1732105157.git.mazziesaccount@gmail.com/
+I think you would still want it as a "this is the upper bound" thing -
+exactly like your lazy code effectively does now.
 
-Hi Matti
+It's not giving some precise "these are the CPU's that have TLB
+contents", but instead just a "these CPU's *might* have TLB contents".
 
-A few comments on specific parts of this below
+But that's a *big* win for any single-threaded case, to not have to
+walk over potentially hundreds of CPUs when that thing has only ever
+actually been on one or two cores.
 
-Thanks,
+Because a lot of short-lived processes only ever live on a single CPU.
 
-Jonathan
+The benchmarks you are optimizing for - as well as the ones that regress - are
 
-> +static int build_combined_table(struct iio_gts *gts, int **gains, size_t gain_bytes)
-> +{
-> +	int ret, i, j, new_idx, time_idx;
-> +	int *all_gains __free(kfree) = kcalloc(gts->num_itime, gain_bytes,
-> +					       GFP_KERNEL);
-> +
->  	if (!all_gains)
->  		return -ENOMEM;
->  
-> @@ -232,10 +238,9 @@ static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
->  
->  	gts->avail_all_scales_table = kcalloc(new_idx, 2 * sizeof(int),
->  					      GFP_KERNEL);
+ (a) made up micobenchmark loads
 
-I'm not particularly keen in a partial application of __free magic.
+ (b) ridiculously many threads
 
-Perhaps you can use a local variable for this and a no_free_ptr() to assign it after we know
-there can't be an error that requires it to be freed.
+and I think you should take some of what they say with a big pinch of salt.
 
-> -	if (!gts->avail_all_scales_table) {
-> -		ret = -ENOMEM;
-> -		goto free_out;
-> -	}
-> +	if (!gts->avail_all_scales_table)
-> +		return -ENOMEM;
-> +
->  	gts->num_avail_all_scales = new_idx;
->  
->  	for (i = 0; i < gts->num_avail_all_scales; i++) {
-> @@ -246,14 +251,25 @@ static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
->  		if (ret) {
->  			kfree(gts->avail_all_scales_table);
->  			gts->num_avail_all_scales = 0;
-> -			goto free_out;
-> +			return ret;
->  		}
->  	}
->  
-> -free_out:
-> -	kfree(all_gains);
-> +	return 0;
-> +}
->  
-> -	return ret;
-> +static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
-> +{
-> +	int ret;
-> +	size_t gain_bytes;
-> +
-> +	ret = fill_and_sort_scaletables(gts, gains, scales);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gain_bytes = array_size(gts->num_hwgain, sizeof(int));
+Those "20% difference" numbers aren't actually *real*, is what I'm saying.
 
-array_size is documented as being for 2D arrays, not an array of a multi byte
-type.  We should not use it for this purpose.
+> 2) Instead, at context switch time just update
+>    per_cpu variables like cpu_tlbstate.loaded_mm
+>    and friends
 
-I'd be tempted to not worry about overflow, but if you do want to be sure then
-copy what kcalloc does and use a check_mul_overflow()
+See aboive. I think you'll still want to limit the actual real
+situation of "look, ma, I'm a single-threaded compiler".
 
-https://elixir.bootlin.com/linux/v6.12.1/source/include/linux/slab.h#L919
+> 3) At (much rarer) TLB flush time:
+>    - Iterate over all CPUs
 
-You don't have to tidy that up in this patch though.
+Change this to "iterate over mm_cpumask", and I think it will work a
+whole lot better.
 
-> +
-> +	return build_combined_table(gts, gains, gain_bytes);
->  }
+Because yes, clearly with just the *pure* lazy mm_cpumask, you won
+some at scheduling time, but you lost a *lot* by just forcing
+pointless stale IPIs instead.
 
->  
-> +/**
-> + * iio_gts_build_avail_time_table - build table of available integration times
-> + * @gts:	Gain time scale descriptor
-> + *
-> + * Build the table which can represent the available times to be returned
-> + * to users using the read_avail-callback.
-> + *
-> + * NOTE: Space allocated for the tables must be freed using
-> + * iio_gts_purge_avail_time_table() when the tables are no longer needed.
-> + *
-> + * Return: 0 on success.
-> + */
-> +static int iio_gts_build_avail_time_table(struct iio_gts *gts)
-Hmm. I guess this wrapper exists because perhaps you aren't comfortable
-yet with the __free() handling mid function.  It does not harm so I'm fine
-having this.
-
-> +{
-> +	if (!gts->num_itime)
-> +		return 0;
-> +
-> +	return __iio_gts_build_avail_time_table(gts);
-> +}
-> +
->  /**
->   * iio_gts_purge_avail_time_table - free-up the available integration time table
->   * @gts:	Gain time scale descriptor
-
+            Linus
 
