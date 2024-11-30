@@ -1,85 +1,93 @@
-Return-Path: <linux-kernel+bounces-426126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2374D9DEF41
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:52:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9B99DEF43
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:01:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE834281470
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 07:52:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29CC728179B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350C51494BB;
-	Sat, 30 Nov 2024 07:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNQo3m4b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B9A149E16;
+	Sat, 30 Nov 2024 08:01:43 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FD929A0;
-	Sat, 30 Nov 2024 07:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F861C6A3;
+	Sat, 30 Nov 2024 08:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732953126; cv=none; b=OsQFPJTvYh4AcIrD6Bfbhhtpr23iFjgCyLBhABfBMjvjbqmC76FqcSxiqW6PfVYxbCD4jDLy2YmIgWU1Fes6ygDm8YU5/dicAcmVwjBhAPlAYLPFV5CNEOSjO4dzGNrxmqIusm6bN/B8XNRxc2+U/K5OwPafpnvixuS+igZs+fA=
+	t=1732953703; cv=none; b=UeCzod22+XS9jjHOU/9BoN1KZ0iWEYjW3kG4IpTSGCatTYmyMQ+pfnsOUiVk2RupngKl6BIgV5uR41VdGRhgr1tUhQmRMKX3CRDHtyiZEreI0TwVGbHjRqWHOqv22WKmN9ojIT+5MkpZTUeWVkz5UwWXA8sXM/zDXmZTZaVYa2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732953126; c=relaxed/simple;
-	bh=B2jqdqUMq9AblgtpyT+tux0MiGaM+gLl7c0wRNYaxqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qPfm2DjoVE2sCP01OPprSEfDSGHV6JE6rVBzQ62oDdmaH3G8tTRWR38Bjxo8+yJ/wWUOMhhX/FhqoaOa5APp/Ly1+YXC0cC0ptIupkmYQdK5blX0KM56EeR1J6zkZ5QbBl81VnYgW3JkxGuLMnPAHV/OXGfJqBM1wqfoa2k/56U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNQo3m4b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7410C4CECC;
-	Sat, 30 Nov 2024 07:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732953125;
-	bh=B2jqdqUMq9AblgtpyT+tux0MiGaM+gLl7c0wRNYaxqk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nNQo3m4bVtcCQHKBrv3xkJJB4jlXRF3Og/dbAKUaGSsN8TB+ZFdPoa/97oXqaQrvG
-	 ga8YjCA5PgdHBmtewxQyb3FgJe+Yo0ldZuRQoPqiXNfsYgbLn5YEozGgoyH82T8fT1
-	 apT2s7OeG8oK0CqUwrW3aPu0hjPWyQjVLPGpdINoPht62Fo2Gz2R/73MA+BXvg0NQK
-	 yWUBxAxkFVGDrkrkSuIOWXz+BB0BOVT0ODqWPedfQKtxXm5NB8mxqiLe6XUesVmXJf
-	 dHvpbL/v2Xg97dDmSPIRbDrpTmSvy4oSmroktIYFMaC5zxuiVl1rdmMoxKJBqWwhtQ
-	 4ks3dx3RP5CMQ==
-Message-ID: <144c7ba3-786d-4bca-bca7-f02781c82caf@kernel.org>
-Date: Sat, 30 Nov 2024 08:52:00 +0100
+	s=arc-20240116; t=1732953703; c=relaxed/simple;
+	bh=WDRIO5B62V/XAvaiuOU/9/QRjdq0+4qwe+kGMGXbQFE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VpQf5F9vhBQl2w1Q61ABlx8luhZQ1xuj7fJw6Z/xqMlNQnkM3H6sdbahoXXfMMkej8OYmFj3abfFnK/+NPDtHa7Jtt54GFA0Owd1+oaTR9EGQUluZNy05J+aJ0/9zVQfQE3K07xAzr4Lvu7D5nYO4TAH3RAzAMLWekzTrKIEEZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y0jDT4Rbvz1JDJc;
+	Sat, 30 Nov 2024 16:01:29 +0800 (CST)
+Received: from kwepemd200024.china.huawei.com (unknown [7.221.188.85])
+	by mail.maildlp.com (Postfix) with ESMTPS id B31911402DA;
+	Sat, 30 Nov 2024 16:01:32 +0800 (CST)
+Received: from localhost.huawei.com (10.90.30.45) by
+ kwepemd200024.china.huawei.com (7.221.188.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 30 Nov 2024 16:01:32 +0800
+From: Chenghai Huang <huangchenghai2@huawei.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<qianweili@huawei.com>, <wangzhou1@hisilicon.com>
+Subject: [PATCH] crypto: hisilicon/debugfs - fix the struct pointer incorrectly offset problem
+Date: Sat, 30 Nov 2024 16:01:31 +0800
+Message-ID: <20241130080131.906598-1-huangchenghai2@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: TPM/EFI issue [Was: Linux 6.12]
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?Q?Peter_H=C3=BCwe?= <PeterHuewe@gmx.de>,
- Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-integrity@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
- "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>
-References: <CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com>
- <9c893c52-e960-4f30-98ce-ba7d873145bb@kernel.org>
- <ca741d8eade72aa68c389a88d2520f4fe541a1e7.camel@HansenPartnership.com>
- <2a238b61-fa03-4ae4-9dc4-f73834aa3228@kernel.org>
- <70bc83bd7cfb236da030e584e93bfc62c1d9eb6a.camel@HansenPartnership.com>
- <7773891b-b699-4f1d-b9ba-220c649aee9d@kernel.org>
- <02060553aafac7e145e96510a66a6845d389d6ff.camel@HansenPartnership.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <02060553aafac7e145e96510a66a6845d389d6ff.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200024.china.huawei.com (7.221.188.85)
 
-On 29. 11. 24, 17:03, James Bottomley wrote:
->>   But well, fs/fat/ received no significant changes either.
-> 
-> We don't use that at all in the EFI stub (and neither does systemd-
-> boot).  We use the protocols EFI provides to read fat volumes, so any
-> issue would be in the edk2 (or in your case ovmf) FatPkg.
+Offset based on (id * size) is wrong for sqc and cqc.
+(*sqc/*cqc + 1) can already offset sizeof(struct(Xqc)) length.
 
-Sure, I had an FS corruption (during initrd write) in my mind.
+Fixes: 15f112f9cef5 ("crypto: hisilicon/debugfs - mask the unnecessary info from the dump")
+Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
+---
+ drivers/crypto/hisilicon/debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/crypto/hisilicon/debugfs.c b/drivers/crypto/hisilicon/debugfs.c
+index 1b9b7bccdeff..45e130b901eb 100644
+--- a/drivers/crypto/hisilicon/debugfs.c
++++ b/drivers/crypto/hisilicon/debugfs.c
+@@ -192,7 +192,7 @@ static int qm_sqc_dump(struct hisi_qm *qm, char *s, char *name)
+ 
+ 	down_read(&qm->qps_lock);
+ 	if (qm->sqc) {
+-		memcpy(&sqc, qm->sqc + qp_id * sizeof(struct qm_sqc), sizeof(struct qm_sqc));
++		memcpy(&sqc, qm->sqc + qp_id, sizeof(struct qm_sqc));
+ 		sqc.base_h = cpu_to_le32(QM_XQC_ADDR_MASK);
+ 		sqc.base_l = cpu_to_le32(QM_XQC_ADDR_MASK);
+ 		dump_show(qm, &sqc, sizeof(struct qm_sqc), "SOFT SQC");
+@@ -229,7 +229,7 @@ static int qm_cqc_dump(struct hisi_qm *qm, char *s, char *name)
+ 
+ 	down_read(&qm->qps_lock);
+ 	if (qm->cqc) {
+-		memcpy(&cqc, qm->cqc + qp_id * sizeof(struct qm_cqc), sizeof(struct qm_cqc));
++		memcpy(&cqc, qm->cqc + qp_id, sizeof(struct qm_cqc));
+ 		cqc.base_h = cpu_to_le32(QM_XQC_ADDR_MASK);
+ 		cqc.base_l = cpu_to_le32(QM_XQC_ADDR_MASK);
+ 		dump_show(qm, &cqc, sizeof(struct qm_cqc), "SOFT CQC");
 -- 
-js
-suse labs
+2.33.0
+
 
