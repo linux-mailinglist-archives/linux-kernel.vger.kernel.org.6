@@ -1,168 +1,225 @@
-Return-Path: <linux-kernel+bounces-426433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367B79DF2EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 897849DF2EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:14:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BC18B21497
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:12:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77E66B207C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BB61AB539;
-	Sat, 30 Nov 2024 20:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEE01AA1F0;
+	Sat, 30 Nov 2024 20:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="JRaoZ/aK"
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DEa/sRn3"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CA81AAE37
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 20:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6487117BD3
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 20:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732997515; cv=none; b=iMQ/yDvihdO6E/IPHn7y9nHt7q+s9M3yEsMlCWYlrzi/hAPSmOcJUkCMnoZ6E4MVQyzZoxiTqzQ503Kx+OgHSc1dF/K3yfJ4ytLnE5bIbMjsyLUz0uTbSJxo3Kf6B4ops4rRASppDbQnsQ8S4O+CdfKv6m3KR8B5XcK3CFymYpc=
+	t=1732997656; cv=none; b=oeqjifTp6j7IElcI32QUJeEunzCcxW5zKkwrFimIaP/0fpZ0R1K6oRnbgmUPnvjVrICyExuLRkyC1ZtswVLNXHriJTOn5e4xmTMAFmWZdHsGOBRc8I1ndeyVdKD/1sKqt8IZ9fcU6EGLHkBu9ggyEJdCt5cyX4bIBuLqSCqPLeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732997515; c=relaxed/simple;
-	bh=g92KyX6CAIPOtrfBng7B/GZYyEPmh6nGdN2J1VAHcy8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wj+MqcH7q/d3B7TM2TKrUFC4OEcVxDGlFhcnJvE43G4yxI4NPWuZ4ogR0tySZBK0R+TeNVs02cdVmS+JYiYFtuEBrKt0lV9REeFTpRRZT99ZxN/Vdb2KPtkmO6G8FEfvPnKtr/T02NvNMuAOgHmaQGUMJ6qMm4Wf7PBQptyvYNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=JRaoZ/aK; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1732997656; c=relaxed/simple;
+	bh=gzcaby2HyJAHKdOSuPzNnIo9c9OQwgNevAUxBsyaaxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ct0PscTgD6FsLoXn7ywn0sO5dy50vqC8/TX/wuEGdy05lARD1uAQYXL9E973n4KSQhfm6QG/hDs6pWtrAvPXqt6y+SKhiySMZQJipPpUr2rhqd4Hg3RDrSkkP7F5sxQy090xIierawka8PULLDJOQFrl18E8V/CdRI8EeSKxHjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DEa/sRn3; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df7f6a133so3071313e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 12:14:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732997515; x=1764533515;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zoZ/+qDc221WdsVhvoxlHSC6W9U8KUsHn4lZh61HM1Y=;
-  b=JRaoZ/aKsQXXtXy+x7uwDNs9T0bzx+25VcyoKLkDwAR0yZaePhUVu4de
-   mA5/eWJ0gxYpGzDe1FkhqoQXsAmNHIQH8CENhXIMAYKkwnRJLkNKJAjcW
-   HFcC+Pu2YIRVgny4DvPxJtFng+BRbr3Q4P2+p2AD0ovo6rg7XQRlOsZv8
-   k=;
-X-IronPort-AV: E=Sophos;i="6.12,199,1728950400"; 
-   d="scan'208";a="447165625"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 20:11:50 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:19230]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.32.230:2525] with esmtp (Farcaster)
- id a6a52d1b-8c83-4dfa-ade4-e0f66ee20537; Sat, 30 Nov 2024 20:11:48 +0000 (UTC)
-X-Farcaster-Flow-ID: a6a52d1b-8c83-4dfa-ade4-e0f66ee20537
-Received: from EX19D013UWB003.ant.amazon.com (10.13.138.111) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sat, 30 Nov 2024 20:11:44 +0000
-Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
- EX19D013UWB003.ant.amazon.com (10.13.138.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sat, 30 Nov 2024 20:11:44 +0000
-Received: from email-imr-corp-prod-iad-all-1a-47ca2651.us-east-1.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Sat, 30 Nov 2024 20:11:44 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com (dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com [172.19.116.181])
-	by email-imr-corp-prod-iad-all-1a-47ca2651.us-east-1.amazon.com (Postfix) with ESMTP id D7D6F404CE;
-	Sat, 30 Nov 2024 20:11:43 +0000 (UTC)
-Received: by dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com (Postfix, from userid 14301484)
-	id 96751719D; Sat, 30 Nov 2024 20:11:43 +0000 (UTC)
-From: Eliav Farber <farbere@amazon.com>
-To: <linux@armlinux.org.uk>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<mpe@ellerman.id.au>, <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
-	<naveen@kernel.org>, <maddy@linux.ibm.com>, <paul.walmsley@sifive.com>,
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <tglx@linutronix.de>,
-	<akpm@linux-foundation.org>, <bhe@redhat.com>, <farbere@amazon.com>,
-	<hbathini@linux.ibm.com>, <sourabhjain@linux.ibm.com>,
-	<adityag@linux.ibm.com>, <songshuaishuai@tinylab.org>,
-	<takakura@valinux.co.jp>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-riscv@lists.infradead.org>
-CC: <jonnyc@amazon.com>
-Subject: [PATCH v5 2/2] kexec: Prevent redundant IRQ masking by checking state before shutdown
-Date: Sat, 30 Nov 2024 20:11:43 +0000
-Message-ID: <20241130201143.48808-3-farbere@amazon.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20241130201143.48808-1-farbere@amazon.com>
-References: <20241130201143.48808-1-farbere@amazon.com>
+        d=linaro.org; s=google; t=1732997652; x=1733602452; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YQnwH/LUU+Smj6DytGhxhh3Q/k+FhhcvJy+0gsHfMM0=;
+        b=DEa/sRn3NCSdHXMAOdsrvN1ofEXA8xIiiH15S/vQ7qSzoVKlyjp/R73nqxnhl3WRLY
+         qjiusjrHXQFHMR/eQ2+kBxAjqnYVoTS7BY08L2e8DSjWhy+APLP6PFmQ6JSj9ekVwTLI
+         IJTnozftwQuvLtlpLnx/wT4VrNQ2MUS54aMnT7yFYh3d62n9Y5SAUhhzSXs6sqfcQSow
+         LzYEStzvHLB0qhUgKSsJ/G6Q2MBGT0mefXU94B5lnnDAUPnsU6Tq2yuQlYzYgnJxsvxQ
+         xgkIPkKEebXbq4nIv83TOUIC2EBGoHmMV11bNJAod+6B6wAvJRaWwQjSYeU0ntQsIN+f
+         wRow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732997652; x=1733602452;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YQnwH/LUU+Smj6DytGhxhh3Q/k+FhhcvJy+0gsHfMM0=;
+        b=fuBNTRNzpahprjCvxppSx5vo/BYO2aeT2MKACnruryp3QbuT3tdSJQgiJ0lcOQB/bJ
+         PjsyU+vWbcggzmt2MdVxAxUytxxyTzSksqjQ+aWK6WgN4lR0uZEfAO7gaWtJmT8TU0zO
+         P1Rxdii7hIgJucRNdO3jDP+16Q9Aah8mMF5PCSC6qBRgQyTxBxBJ6NbOTvzqvJR03MMQ
+         sbhVH+pZGWckpmLgmz3/hlX6viJLk1MhBqN6zsxP1+jrEb/U6+SDNsHyPhcIJ8sFYdZh
+         9E7TK+JAgoCO6Z7Gyx82CTd/7Q95yfSr1jxSQfQ/T7vzvngn55wcUrcHQtr7x4mWulUI
+         ak5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVNytw/tTTjPhZzrVJ2XGd6gm4aqKev5TfUnFnA9AYSlxeKm6YTAd9zF9bRp0lL99SXVVtOaoN4g8Hw5dg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNEWjfo3EqLxlPp0HSH+oFOtquUUw969OEuD8wfUn3TRbGJqNu
+	yvVWlAUUsizuHfE/CNWDB4Ff+Xu36zu5fmKe+8DvkUPZG+lJN+/n7DQcQ9rk+w4=
+X-Gm-Gg: ASbGncvGuqEo9QONPXPkzSQzPyfO28NeNrMD2nxdApU/DPVjSHNNiV6PVse0077WNUq
+	U9ipAvcq1R6srfb2hI29NEGyTdwOSVk7jiXfntK+ubvHUFo9dy8Y9RQ5Ln2lNAIKOaFBzhUTGT0
+	W+tfhU7ud1tg8vOs8yW6JH/7l0dqqbcuxDNEGc1w65Zy3fZCmTDDg/eJw4psNaSv6DgCysUxUTg
+	6fWSawuPfwBNCeyIQbM5orGV/ACNaQ8c8hvbInGOPO0CIhuzSP98t1vX/I5i00YmnRFW5VDAuIM
+	zCaIyyHpOsWXpMFb3qnYlA2y8VNeEQ==
+X-Google-Smtp-Source: AGHT+IGfLTfcEm+aaMxybBxbVKL1US/VY5OZiq/tUksfQrDmttijCUwRwCJjRKEGbqDV/mDp0pZhPw==
+X-Received: by 2002:a05:6512:b14:b0:53d:dda4:8b0c with SMTP id 2adb3069b0e04-53df00d0332mr10008210e87.18.1732997650904;
+        Sat, 30 Nov 2024 12:14:10 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6496467sm858800e87.187.2024.11.30.12.14.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2024 12:14:09 -0800 (PST)
+Date: Sat, 30 Nov 2024 22:14:07 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Nikolaus Voss <nv@vosn.de>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Fabio Estevam <festevam@denx.de>, Marek Vasut <marex@denx.de>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	nikolaus.voss@haag-streit.com
+Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
+Message-ID: <ljxbp7e6ywj2btbo22gvh3ijuwq6hzaahcph2vcsh6xiyzdyla@vuz437cyxe3e>
+References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
+ <lio6natmz5d5hdmdxwuj5ghfbpl4medb2orhw2m27m6g3rvaga@tanmydgbufg2>
+ <c05e762f-a9c3-4655-7b21-8490d91fd858@vosn.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c05e762f-a9c3-4655-7b21-8490d91fd858@vosn.de>
 
-During machine kexec, the function machine_kexec_mask_interrupts() is
-responsible for disabling or masking all interrupts. While the irq_disable
-hook ensures that an already-disabled IRQ is not disabled again, the
-current implementation unconditionally invokes the irq_mask() function for
-every interrupt descriptor, even when the interrupt is already masked.
+On Sat, Nov 30, 2024 at 07:57:17PM +0100, Nikolaus Voss wrote:
+> Hi Dmitry,
+> 
+> On Sat, 30 Nov 2024, Dmitry Baryshkov wrote:
+> > On Tue, Nov 26, 2024 at 04:45:54PM +0100, Nikolaus Voss wrote:
+> > > LDB clock has to be a fixed multiple of the pixel clock.
+> > > As LDB and pixel clock are derived from different clock sources
+> > > (at least on imx8mp), this constraint cannot be satisfied for
+> > > any pixel clock, which leads to flickering and incomplete
+> > > lines on the attached display.
+> > > 
+> > > To overcome this, check this condition in mode_fixup() and
+> > > adapt the pixel clock accordingly.
+> > > 
+> > > Cc: <stable@vger.kernel.org>
+> > > 
+> > > Signed-off-by: Nikolaus Voss <nv@vosn.de>
+> > > ---
+> > >  drivers/gpu/drm/bridge/fsl-ldb.c | 40 ++++++++++++++++++++++++++++----
+> > >  1 file changed, 36 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+> > > index 0e4bac7dd04ff..e341341b8c600 100644
+> > > --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+> > > +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+> > > @@ -104,12 +104,14 @@ static inline struct fsl_ldb *to_fsl_ldb(struct drm_bridge *bridge)
+> > >  	return container_of(bridge, struct fsl_ldb, bridge);
+> > >  }
+> > > 
+> > > +static unsigned int fsl_ldb_link_freq_factor(const struct fsl_ldb *fsl_ldb)
+> > > +{
+> > > +	return fsl_ldb_is_dual(fsl_ldb) ? 3500 : 7000;
+> > > +}
+> > > +
+> > >  static unsigned long fsl_ldb_link_frequency(struct fsl_ldb *fsl_ldb, int clock)
+> > >  {
+> > > -	if (fsl_ldb_is_dual(fsl_ldb))
+> > > -		return clock * 3500;
+> > > -	else
+> > > -		return clock * 7000;
+> > > +	return clock * fsl_ldb_link_freq_factor(fsl_ldb);
+> > >  }
+> > > 
+> > >  static int fsl_ldb_attach(struct drm_bridge *bridge,
+> > > @@ -121,6 +123,35 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
+> > >  				 bridge, flags);
+> > >  }
+> > > 
+> > > +static bool fsl_ldb_mode_fixup(struct drm_bridge *bridge,
+> > > +				const struct drm_display_mode *mode,
+> > > +				struct drm_display_mode *adjusted_mode)
+> > 
+> > The driver uses atomic callbacks. Please use .atomic_check() instead.
+> 
+> So it is okay to modify drm_crtc_state->adjusted_mode in .atomic_check()? I
 
-A specific issue was observed in the crash kernel flow after unbinding a
-device (prior to kexec) that used a GPIO as an IRQ source. The warning was
-triggered by the gpiochip_disable_irq() function, which attempted to clear
-the FLAG_IRQ_IS_ENABLED flag when FLAG_USED_AS_IRQ was not set:
+Yes. samsung-dsim, anx7625 do that (I stopped checking after the second
+one).
 
-```
-void gpiochip_disable_irq(struct gpio_chip *gc, unsigned int offset)
-{
-	struct gpio_desc *desc = gpiochip_get_desc(gc, offset);
+> chose .mode_fixup() because the function name and args make it more obvious
+> what is done there. Btw, the API reference doesn't say this call is
+> deprecated.
 
-	if (!IS_ERR(desc) &&
-	    !WARN_ON(!test_bit(FLAG_USED_AS_IRQ, &desc->flags)))
-		clear_bit(FLAG_IRQ_IS_ENABLED, &desc->flags);
-}
-```
+It's not deprecated. But as the driver is using atomic calls (vs legacy
+calls) it makes more sense to use atomic_check() too.
 
-This issue surfaced after commit a8173820f441 ("gpio: gpiolib: Allow GPIO
-IRQs to lazy disable") introduced lazy disablement for GPIO IRQs. It
-replaced disable/enable hooks with mask/unmask hooks. Unlike the disable
-hook, the mask hook doesn't handle already-masked IRQs.
+> A second thought:
+> Maybe it would be a good idea to reject modes which result in an adjusted
+> mode pclk that is not within certain boundaries, even if this patch doesn't
+> do it yet. As I see it, that would be only possible in mode_fixup().
 
-When a GPIO-IRQ driver is unbound, the IRQ is released, triggering
-__irq_disable() and irq_state_set_masked(). A subsequent call to
-machine_kexec_mask_interrupts() re-invokes chip->irq_mask(). This results
-in a call chain, including gpiochip_irq_mask() and gpiochip_disable_irq().
-Since FLAG_USED_AS_IRQ was cleared earlier, a warning occurs.
+atomic_check() can definitely reject whatever is being stuffed to it.
 
-Replace calls to irq_mask() and irq_disable() hooks with a simplified call
-to irq_shutdown(), and check if the interrupt is started (irqd_is_started)
-before calling the shutdown.
+> 
+> > 
+> > > +{
+> > > +	const struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
+> > > +	unsigned long requested_link_freq =
+> > > +		mode->clock * fsl_ldb_link_freq_factor(fsl_ldb);
+> > > +	unsigned long freq = clk_round_rate(fsl_ldb->clk, requested_link_freq);
+> > > +
+> > > +	if (freq != requested_link_freq) {
+> > > +		/*
+> > > +		 * this will lead to flicker and incomplete lines on
+> > > +		 * the attached display, adjust the CRTC clock
+> > > +		 * accordingly.
+> > > +		 */
+> > > +		int pclk = freq / fsl_ldb_link_freq_factor(fsl_ldb);
+> > > +
+> > > +		if (adjusted_mode->clock != pclk) {
+> > > +			dev_warn(fsl_ldb->dev, "Adjusted pixel clk to match LDB clk (%d kHz -> %d kHz)!\n",
+> > > +				 adjusted_mode->clock, pclk);
+> > > +
+> > > +			adjusted_mode->clock = pclk;
+> > > +			adjusted_mode->crtc_clock = pclk;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return true;
+> > > +}
+> > > +
+> > >  static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
+> > >  				  struct drm_bridge_state *old_bridge_state)
+> > >  {
+> > > @@ -280,6 +311,7 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
+> > > 
+> > >  static const struct drm_bridge_funcs funcs = {
+> > >  	.attach = fsl_ldb_attach,
+> > > +	.mode_fixup = fsl_ldb_mode_fixup,
+> > >  	.atomic_enable = fsl_ldb_atomic_enable,
+> > >  	.atomic_disable = fsl_ldb_atomic_disable,
+> > >  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+> > > --
+> > > 2.43.0
+> > > 
+> > 
+> > 
+> 
+> -- 
+> Nikolaus Voss
+> 
 
-Signed-off-by: Eliav Farber <farbere@amazon.com>
----
-V4 -> V5:
- - The phrase 'This patch' has been removed from the commit message.
-
- kernel/irq/kexec.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/irq/kexec.c b/kernel/irq/kexec.c
-index 0f9548c1708d..1a3deffe6b5b 100644
---- a/kernel/irq/kexec.c
-+++ b/kernel/irq/kexec.c
-@@ -17,7 +17,7 @@ void machine_kexec_mask_interrupts(void)
- 		int check_eoi = 1;
- 
- 		chip = irq_desc_get_chip(desc);
--		if (!chip)
-+		if (!chip || !irqd_is_started(&desc->irq_data))
- 			continue;
- 
- 		if (IS_ENABLED(CONFIG_GENERIC_IRQ_KEXEC_CLEAR_VM_FORWARD)) {
-@@ -31,10 +31,6 @@ void machine_kexec_mask_interrupts(void)
- 		if (check_eoi && chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
- 			chip->irq_eoi(&desc->irq_data);
- 
--		if (chip->irq_mask)
--			chip->irq_mask(&desc->irq_data);
--
--		if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
--			chip->irq_disable(&desc->irq_data);
-+		irq_shutdown(desc);
- 	}
- }
 -- 
-2.40.1
-
+With best wishes
+Dmitry
 
