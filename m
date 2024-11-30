@@ -1,142 +1,182 @@
-Return-Path: <linux-kernel+bounces-426383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A879DF267
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:55:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1259DF26B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 18:58:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BDB42814B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:55:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ED0DB20D1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 17:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754791A76BB;
-	Sat, 30 Nov 2024 17:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B52F1A76D1;
+	Sat, 30 Nov 2024 17:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FA9qHEJZ"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZgUDMrT"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415CF43AA1
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 17:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3472B1A3BD5;
+	Sat, 30 Nov 2024 17:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732989302; cv=none; b=MyGHJsV3z74azqQp/RH41H5EjFt5H/oUzR2ynNhQ7dCONCyXV52Vh72Jkx4WzXAJqc9yufjDgQNtVZYYHIhx1UH0TlQkb4R7N+8k4iZhLtCdeE/wZhIX+yByDifLBjtrEvreV5iz/dgjSLJC3vSKOkIYkWmf4vZzLAPQey9aAjQ=
+	t=1732989501; cv=none; b=TXNLk+FnjpEfBohOTAAGDZJSJaPmCyQTmHf7ZcHdveqLNxNQK4DhxfrLfvDBKM/jgBTswm5vcyADIt8w/xc7Pn4fHx2kdKZKxba9BQju2paHBBjWK/sw/uEfGOvVm7TC9Hm1ttXia6+p4JUDs+F0XdWyISMp/8yN1qIhPyA38Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732989302; c=relaxed/simple;
-	bh=TBkohQCe2NGHE89Lnt7hpzegbj2T78s6vHSK58z3pLM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oa6SuCnA2Pupuvac4m0z87mNSF2boSRKwLGRY0vGFxNIuyaqlwK7LYSHQIZJdeyTPnCG0rddy6UkVts6Pcv6XQEIhR3snnV5G9x+7prgpIvJj1noJTU93OJ5WW+kgnycUCaHJqtEnpvGleUe8GDQFykgBFmdTiadXcoFAjkwxpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FA9qHEJZ; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa5366d3b47so443323466b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:54:59 -0800 (PST)
+	s=arc-20240116; t=1732989501; c=relaxed/simple;
+	bh=STvU6bgqFJGzdDVQRbsBPbfg2Qza9Pjril3rE9JdYj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AgotnZ0YkZS6DlPhAxjgpokuOS8qgpVpbN8OB2yvUJ+G3W1z86lB5MdXuuArAAwccW+7dVXi06PtMyY6JhnDUClbBBcYigkNdxIi1MbA8+EN0lGYe8fFsbXiowWryaVnVHM0EgEiQHVxqfttgNRsHWfjvrxEFFC1TWJcvxz53pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZgUDMrT; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-724fc1aaa91so2630160b3a.3;
+        Sat, 30 Nov 2024 09:58:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732989297; x=1733594097; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UmhUEJ3l16+JAXSnSdZ675vJ19gWez6ArVsbJQ9w8QQ=;
-        b=FA9qHEJZglcnSKOUnddX17x1L48R2SQuuJduUsr3mptOyXebGFsvAhfHHref6Zu4Xu
-         hS9BGvNCpk5IeoDfZE1dDnRm1jP8yg8MkdXVCdOgG7ObNGg1BjX+9WR793QY4eic+f+E
-         t2R/642pqzP6cUY1gRybGsYzw7bniiqt6ySy8=
+        d=gmail.com; s=20230601; t=1732989499; x=1733594299; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=EW/0da8K2VHNaYJltUzc1fWYpfK+bQDkVqio8uz+pI0=;
+        b=gZgUDMrTNpo/yYw5/YZbixS9T2wzUzX+nXwpVmb4AurWC6YiLG2NiErWfz1v92H8ni
+         N49AtuIWmhSc0aCt5ATEVU6HCVmP7IJMPQ/fsbBnemBdClEntNHuhjuRxLnC4FTxRCcE
+         klWuu827zIdsQN6yGSU9qJwJp0NVmRxr5zP3218tU2siuNX/M8oVZvK8tRmjlhz5yCD0
+         E3QqUntQSJNsxi4kClnXTlrrZNaYxF7QBDOI60u30gCLLInk8A+aUKCOtTw5qgfkFpbe
+         TaYJZ7CTTOQTlVt337QhL9TPPTUi1KRzvCKakDXxUOh3d4lQcH8bdioh6zwki7GQqO5U
+         +EJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732989297; x=1733594097;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UmhUEJ3l16+JAXSnSdZ675vJ19gWez6ArVsbJQ9w8QQ=;
-        b=Gh8Suwrj5mYwjS0RQ5fdemo7GIDpdqPlsedL4Re2rBnZK6CuBCmpSBWlo8SqZDuvfG
-         lwUiajBIuK5J7kkItGkjDdhJsv8gYTvY3oH79qNPxIQ4eN3oDtyKqpEJDg1uFdCQC5n1
-         JLV9GbAvtht17RoLBqhQCeP4HmfkSd3hDewnThvDxCuNHkRai2q90ysCiYrdI30t3KI1
-         7fWQAldylCIP9xAuzrvHpzP0WL9aPrT+cnfNUUBfs+Q2Etp9RhIY2lPgMngYNOp5a3ir
-         w1ILX4YIwYQnxK6ZzNBm5dDD/XIzF+1hgrl9GBEJQy4NcBApqK7RKZ/v/dc9oqd+SpBb
-         3m5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVfG0/rbdTwNU8Nx2U7pEHYAk36JLhzc3X/45L0TVd/AOBJHuXI+Qubm0J5gRwy/frZMmCf1da0D7o8XPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFQQ9jYQl1aNskIKicz4O0iWA3bEdv3lYqlNsQKJsGk3fA+m6i
-	/pf/pJEYClFCHQ6rn7u/Wyh6qxfOESw760CZR7ne8f/vqqFKW8v5xVnXCmeE1xc4XGyFZeQn8IO
-	4FSAdgQ==
-X-Gm-Gg: ASbGncuBIyvoH1BJNzxSfb+tQ7LW0QP4AKbXApopwi/RzwlVCau2MEMSzTuMkkyTDEe
-	MybY3eWh4GnpWcD7VMGQtSLv1sW5/c/wI9KScdDmZm8eLzj+JTDAkA9/wLaM0YtiYJXKj4xkgxn
-	6yFrGduUI52mcURU5isggIBBxF8TSv59iyajIKrOeGXdEpcIjlPgJ0girdSHbWEt2XNdfG6jyCu
-	ruJks/LWGgJGvvTMcmslDD2DwVS0lYbvlB/EMUpp5/K9X5srKPXpdOWz5qfcQbatxSjYJaiv/Mk
-	UQ4lwTfe+toy+AH6KLyKEcWi
-X-Google-Smtp-Source: AGHT+IEzWqSAsmkGSXCmjCw4KrLoLFyu1UDEXaehpxvuq5mHa56iuRDGAKt881RQIMrHvsuTiV368g==
-X-Received: by 2002:a17:906:cd2:b0:aa5:2575:e75d with SMTP id a640c23a62f3a-aa580edfbd0mr1223666366b.2.1732989297388;
-        Sat, 30 Nov 2024 09:54:57 -0800 (PST)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599905c56sm300565566b.142.2024.11.30.09.54.56
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1732989499; x=1733594299;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EW/0da8K2VHNaYJltUzc1fWYpfK+bQDkVqio8uz+pI0=;
+        b=JiriTF6AwrMHVLrhLOpCqB5wMTkgAYpmMGU4yljhPrJSbBHHQZbg+aHGatgq7RCU9I
+         ssFP4iHPK8HokTAYb1QpS6UszuMkLZpwekqOjurSrrxBuLkfaE3RM8qPhjGMN8wjEnqj
+         F2T2iHziHAxq5P1YLiuyF1i9K9vVZLmhD73QZVh7/rA3/5bim4SaRoxbb2jOwe6mdq5j
+         hLTVEFmAqDcbZ4t6Apf0TzaJVx8Xfjf2T+LCKupJBcPQk/CkqoDrOII6Y0fukQwjgLte
+         FbD8YsFGNfC05FkVoM4vgOr0DL2QbwgUFXnDMh6FeGCHo6OWBKLP7RxEGXJ5jaKjT6jm
+         oA1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKBPTI27WJAK5Fv7LOFYIyOgODIP4RIE1cfIWtgrLo/KZv08zAZ/2TqhIJB5tdtdzilYngEkNDJDLM4Yg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/Wc7WFLspWpUQLai1/KjEW9uKdEo50C3BJytiBjTIZ8QAH4bo
+	kZCAhcuA2dVyWHjRt7jhzKE7aA94ldiPGpEibpCpen/T/Q2RzCs8
+X-Gm-Gg: ASbGncs9fx5Byv0mpC1ifKlLSRuaBxbbqmf9iBJ4yoO3Q/knSt1fTuXTFQ6BC9z0XcI
+	WOSXBa12kiZStzrIpDEPP79FHAnBPQFgcfmu+OjhpblAU7DOdBQfbizLYEy8H+feBrR0q9tYLBq
+	1yXSx5p91GVqM+RwcQ2WRvLvqSCj+un0luBZKfDGQmaQTaTp3x0qO2fkXqUjaBOaWkxE40sG50L
+	LZNZkqLWoXk+nR4S1KrWQDbUBwXTtQwz22BqxwPsRNGJkBgJex07J2zBEMJJ7JBh1HNv15K3XzV
+	fxP58c0BR19QjK6rkYyV5V0=
+X-Google-Smtp-Source: AGHT+IGOspVBeCRywftg/WOFcwxmZZeB+BjrNZAkL1m1H/jofGq2xR2mqEQvpmqvUNFHsmYu+UWjMA==
+X-Received: by 2002:a05:6a00:2381:b0:71e:55e2:2c43 with SMTP id d2e1a72fcca58-7253005a02bmr22033365b3a.14.1732989499442;
+        Sat, 30 Nov 2024 09:58:19 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417725e9sm5449028b3a.80.2024.11.30.09.58.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 09:54:56 -0800 (PST)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa52a5641f8so399935166b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 09:54:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUu9rCI1Z/alhIuC+2PrjkogQ1PlS5W+2LrIr70arvGPoiiQUMVwfJSBFWyBolR2g7vp6F7jX2QY3ioIXc=@vger.kernel.org
-X-Received: by 2002:a17:907:780e:b0:aa5:1d6a:540b with SMTP id
- a640c23a62f3a-aa580edf9f2mr1127107466b.1.1732989296168; Sat, 30 Nov 2024
- 09:54:56 -0800 (PST)
+        Sat, 30 Nov 2024 09:58:18 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <fcf06424-c014-4e87-9ac5-ced1ea679fdd@roeck-us.net>
+Date: Sat, 30 Nov 2024 09:58:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202411301528.342383d8-lkp@intel.com> <069d686ab958d973563cfad52373ec6c8aad72ca.camel@surriel.com>
-In-Reply-To: <069d686ab958d973563cfad52373ec6c8aad72ca.camel@surriel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 30 Nov 2024 09:54:40 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj0HyNR+d+=te8x3CEApCDJFwFfb22DH5TAVyPArNK9Tg@mail.gmail.com>
-Message-ID: <CAHk-=wj0HyNR+d+=te8x3CEApCDJFwFfb22DH5TAVyPArNK9Tg@mail.gmail.com>
-Subject: Re: [linus:master] [x86/mm/tlb] 7e33001b8b: will-it-scale.per_thread_ops
- 20.7% improvement
-To: Rik van Riel <riel@surriel.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hwmon: (tmp108) Add basic regulator support
+To: Stanislav Jakubek <stano.jakubek@gmail.com>,
+ Jean Delvare <jdelvare@suse.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Frank Li <Frank.Li@nxp.com>
+References: <Z0WJg5MMu_1AFYog@standask-GA-A55M-S2HP>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <Z0WJg5MMu_1AFYog@standask-GA-A55M-S2HP>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 30 Nov 2024 at 09:31, Rik van Riel <riel@surriel.com> wrote:
->
-> 1) Stop using the mm_cpumask altogether on x86
+On 11/26/24 00:40, Stanislav Jakubek wrote:
+> TMP108/P3T1085 are powered by the V+/VCC regulator, add support for it.
+> 
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> ---
+>   drivers/hwmon/tmp108.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/hwmon/tmp108.c b/drivers/hwmon/tmp108.c
+> index 1f36af2cd2d9..85e4466259a3 100644
+> --- a/drivers/hwmon/tmp108.c
+> +++ b/drivers/hwmon/tmp108.c
+> @@ -17,6 +17,7 @@
+>   #include <linux/init.h>
+>   #include <linux/jiffies.h>
+>   #include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+>   #include <linux/slab.h>
+>   
+>   #define	DRIVER_NAME "tmp108"
+> @@ -331,6 +332,10 @@ static int tmp108_common_probe(struct device *dev, struct regmap *regmap, char *
+>   	u32 config;
+>   	int err;
+>   
+> +	err = devm_regulator_get_enable(dev, "vcc");
+> +	if (err)
+> +		return dev_err_probe(dev, err, "Failed to enable regulator\n");
+> +
 
-I think you would still want it as a "this is the upper bound" thing -
-exactly like your lazy code effectively does now.
+Problem with this is that existing devicetree bindings do not provide
+a reference to the regulator. Those would now fail to instantiate,
+which would be unacceptable. I think you'll need something like
 
-It's not giving some precise "these are the CPU's that have TLB
-contents", but instead just a "these CPU's *might* have TLB contents".
+	err = devm_regulator_get_enable_optional(dev, "vcc");
+	if (err && err != -ENODEV)
+		return dev_err_probe(dev, err, "Failed to enable regulator\n");
 
-But that's a *big* win for any single-threaded case, to not have to
-walk over potentially hundreds of CPUs when that thing has only ever
-actually been on one or two cores.
+Even though the regulator is now mandatory, existing devicetree bindings
+don't know that.
 
-Because a lot of short-lived processes only ever live on a single CPU.
+Guenter
 
-The benchmarks you are optimizing for - as well as the ones that regress - are
-
- (a) made up micobenchmark loads
-
- (b) ridiculously many threads
-
-and I think you should take some of what they say with a big pinch of salt.
-
-Those "20% difference" numbers aren't actually *real*, is what I'm saying.
-
-> 2) Instead, at context switch time just update
->    per_cpu variables like cpu_tlbstate.loaded_mm
->    and friends
-
-See aboive. I think you'll still want to limit the actual real
-situation of "look, ma, I'm a single-threaded compiler".
-
-> 3) At (much rarer) TLB flush time:
->    - Iterate over all CPUs
-
-Change this to "iterate over mm_cpumask", and I think it will work a
-whole lot better.
-
-Because yes, clearly with just the *pure* lazy mm_cpumask, you won
-some at scheduling time, but you lost a *lot* by just forcing
-pointless stale IPIs instead.
-
-            Linus
 
