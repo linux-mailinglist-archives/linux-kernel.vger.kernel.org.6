@@ -1,200 +1,121 @@
-Return-Path: <linux-kernel+bounces-426203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 636899DF03C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:41:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34CE9DF03F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:46:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B99B0B21B7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7565D162D67
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EE2192B95;
-	Sat, 30 Nov 2024 11:41:14 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDF414A630;
+	Sat, 30 Nov 2024 11:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lIb8eqCT"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8D7165F0C
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 11:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD2D14A4FB
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 11:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732966873; cv=none; b=LTZZdRmZYIwTeimi4zj1L4SGrc4x94ivq9JGopWWxW2fLsmy60Z5qKXCmycgimsBreJScfh4X5YMtPX6KTlBnOR0WE2rvF+/vWzqmNb6HaXSf54qd0h5nM/Gg00JuXeAqYaFUPJzULUQ66IVyfz1fGNWP2RsnExTOV9J0xu3UoQ=
+	t=1732967157; cv=none; b=gLfTvTVTTC9pu5pFOVBxA+QLDP0KSmhgSSxhiKmFKgaJCC2rHnfvH/Pd+SvVcza/Upz5b2LacQa1bYWavuvZysRdjw6ovALMqf0SCULHrmGRYXwqLH6V+PqPOGCmHm0oJAwBvXB4BO8ezcbuAsFlTE2vhRNpZX8uH125QWOGL6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732966873; c=relaxed/simple;
-	bh=ZkgM0jh3bG1eg6LsqeL9J5DryQDqaeaGQHF+dekYHLg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=JvzJGa4j3rB7LdoHoadqrNC8y/8fxIN2400ve0pnw2RNQWJ5OJ0VdGCXL6jc+326StuokZMuj4KISV0DJ6qHb/39jU+/s1OLD92JnSNMSMpohOFnw6lCH9sn/iS+lo10TSC8DYdQX57b5epx5Vy/XL2E/7pzvEMNwgIlpewDZlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-275-FE_uBcOWMd6AjZiYwVeYLA-1; Sat, 30 Nov 2024 11:41:06 +0000
-X-MC-Unique: FE_uBcOWMd6AjZiYwVeYLA-1
-X-Mimecast-MFC-AGG-ID: FE_uBcOWMd6AjZiYwVeYLA
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 30 Nov
- 2024 11:40:45 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 30 Nov 2024 11:40:45 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Jakob Hauser' <jahau@rocketmail.com>, Jonathan Cameron
-	<jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Andrew Morton
-	<akpm@linux-foundation.org>
-CC: Linus Walleij <linus.walleij@linaro.org>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
-Subject: RE: [PATCH v2] iio: magnetometer: yas530: Use signed integer type for
- clamp limits
-Thread-Topic: [PATCH v2] iio: magnetometer: yas530: Use signed integer type
- for clamp limits
-Thread-Index: AQHbQqUs2JSj3AGLWkSCiQkgtAYVhLLPsp/w
-Date: Sat, 30 Nov 2024 11:40:45 +0000
-Message-ID: <9f5793f03c2440d2aa18630469df06df@AcuMS.aculab.com>
-References: <11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
- <11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
-In-Reply-To: <11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1732967157; c=relaxed/simple;
+	bh=r1e0yUCyDDwKPlm63GtdgkD7CHFhpuCqZeRfGb0SRpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IeRvND98MU1hml5v0KWy+yfU6zOKMTNwCGGwbSV3f6hxFPZfAHGRElcCS9ENEzsAyWG7XYt9F9w8YIybplP6cuxLWH03mEomz80MRVPT57l1d6qpyhz3yMnTo9ebDajgrBufqz0lR3vkfTwp50C54Sv2hg5qJO/X+zZoRbbVItA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lIb8eqCT; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso1940961a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 03:45:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732967155; x=1733571955; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZLt8uumTsVK4PRtt2vPFNMECzkd5X7pvdUrrrYwcuk=;
+        b=lIb8eqCTB/teUES3ilAePby0+wZ5lipqBQsr5ydfF4sU2VLfZfLSYnpldF61qz1duX
+         IiNpI+799ApHZPB0Fp4vFOMuHioeT/hTDiaDgeN7gWbCgKmRws2PMmxTnSaI0a7kK6ug
+         AmX1pv1gH8QgTA+OErVhuJeok8V8X4V6cs1fI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732967155; x=1733571955;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SZLt8uumTsVK4PRtt2vPFNMECzkd5X7pvdUrrrYwcuk=;
+        b=cuj3nAXw90aNB5cSXpcOI7tC4iAT0yEPxJQlWqFdQSz4cJKQ8fD7F4uYMOVbnT8NLa
+         dxEGmWrXeiwNqq/ymmjt3UlyZjNsSAvJJTNV8ZxP+z+GaeqAzVWbXAJ1P773Ffa3mhni
+         c+toDhbsFYIYc/f3Kb4r2vRjVWw+W9g9jwXFl+jypX7HbMdZv+OoGmV1vZ82m/QglLnz
+         aSk+IHbuNjBnFHG2dqWFEiA1cMEuyP070d99Ib+L1I0Be2uaq9HZsdgGm8dR3+f3Xtc2
+         9muKWC2/WKgyeq6s/mrBGguWokdMV/PDSdfpk0sEB2VkE7UxCEo5/YYHl/bTA3YXhrNw
+         yx1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFlXqB2hiR95/LSW8ON/4KYtzeBkDHz/zv0EliQJR0qGMtFEPV/wZJjrd7BLMfVGNPWKaYBZxVMJt5fe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeAgFpcu92DCPY5+ly2iymEK3XLMjJRKzumlv/B8R0KgvizMUG
+	175EXO/Ll6KN2lKMJmfQaBln24cnldHRWEtW0RXUFJFrHcS2leZkD6kM0Nm42A==
+X-Gm-Gg: ASbGnctn07HBqaNlSJDx6v6I1hyfI0+qXHUOHD4MSvYgByKSLms3WaSt/HZYftpVwkn
+	EHtZOxKoHSyeOF94BWoDOXT+UZZ6xgIis4SUp8nX9V7gdNRqvVONGZOHKq9mOqIN7VzouSHTyPK
+	Ur5hcb9kzImEcDyJTeqJ1grsX4nOwOqAVrObBW2eW8Krtuv1PVrF1Es/gnPpDNXCYeXfIW6fJqR
+	mR4tei7xS1Clk8t8aym6v6Kez8wfAnLSit695t/Q4Of9Rvxm7g5Hw==
+X-Google-Smtp-Source: AGHT+IHgAsdwCtIGni0kUusDMWjJYG3oPVjW5T6ZOyx1CHulNmaI/ielGsyBmh1jVqjnM8DFAz+dAg==
+X-Received: by 2002:a17:90b:3b87:b0:2ea:83a0:4792 with SMTP id 98e67ed59e1d1-2ee097bdd2emr16602262a91.28.1732967155689;
+        Sat, 30 Nov 2024 03:45:55 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:18ff:40bf:9e68:65f3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fad03bcsm6794650a91.33.2024.11.30.03.45.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2024 03:45:55 -0800 (PST)
+Date: Sat, 30 Nov 2024 20:45:49 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: 20241015061522.25288-1-rui.zhang@intel.com,
+	Zhang Rui <rui.zhang@intel.com>, hpa@zytor.com,
+	peterz@infradead.org, thorsten.blum@toblux.com,
+	yuntao.wang@linux.dev, tony.luck@intel.com, len.brown@intel.com,
+	srinivas.pandruvada@intel.com, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com,
+	x86@kernel.org, linux-pm@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: bisected: [PATCH V4] x86/apic: Always explicitly disarm
+ TSC-deadline timer
+Message-ID: <20241130114549.GI10431@google.com>
+References: <20241128111844.GE10431@google.com>
+ <87o71xvuf3.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: WiY3Sq9FfiiquDcVF0PEeITQ7wpW7_6uxq66m9FrZxA_1732966866
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o71xvuf3.ffs@tglx>
 
-From: Jakob Hauser
+On (24/11/30 12:21), Thomas Gleixner wrote:
+> > WARNING: vmlinux.o(__ex_table+0x447c): Section mismatch in reference from the (unknown reference) (unknown) to the (unknown reference) .irqentry.text:(unknown)
+> > The relocation at __ex_table+0x447c references
+> > section ".irqentry.text" which is not in the list of
+> > authorized sections.
+> >
+> > WARNING: vmlinux.o(__ex_table+0x4480): Section mismatch in reference from the (unknown reference) (unknown) to the (unknown reference) .irqentry.text:(unknown)
+> > The relocation at __ex_table+0x4480 references
+> > section ".irqentry.text" which is not in the list of
+> > authorized sections.
+> >
+> > FATAL: modpost: Section mismatches detected.
+> >
+> > Specifically because of wrmsrl.
+> >
+> > I'm aware of the section mismatch errors on linux-5.4 (I know), not
+> > aware of any other stable versions (but I haven't checked).  Is this
+> > something specific to linux-5.4?
+> 
+> So it seems the compiler inlines the inner guts of
+> sysvec_apic_timer_interrupt() and local_apic_timer_interrupt().
+> 
+> Can you try the patch below?
 
-Copying Andrew M - he might want to take this through his mm tree.
-
-> Sent: 29 November 2024 21:25
->=20
-> In the function yas537_measure() there is a clamp_val() with limits of
-> -BIT(13) and  BIT(13) - 1. The input clamp value h[] is of type s32. The =
-BIT()
-> is of type unsigned long integer due to its define in include/vdso/bits.h=
-.
-> The lower limit -BIT(13) is recognized as -8192 but expressed as an unsig=
-ned
-> long integer. The size of an unsigned long integer differs between 32-bit=
- and
-> 64-bit architectures. Converting this to type s32 may lead to undesired
-> behavior.
->=20
-> Additionally, in the calculation lines h[0], h[1] and h[2] the unsigned l=
-ong
-> integer divisor BIT(13) causes an unsigned division, shifting the left-ha=
-nd
-> side of the equation back and forth, possibly ending up in large positive
-> values instead of negative values on 32-bit architectures.
->=20
-> To solve those two issues, declare a signed integer with a value of BIT(1=
-3).
->=20
-> There is another omission in the clamp line: clamp_val() returns a value =
-and
-> it's going nowhere here. Self-assign it to h[i] to make use of the clamp
-> macro.
->=20
-> Finally, replace clamp_val() macro by clamp() because after changing the =
-limits
-> from type unsigned long integer to signed integer it's fine that way.
->=20
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202411230458.dhZwh3TT-lkp@i=
-ntel.com/
-> Closes: https://lore.kernel.org/oe-kbuild-all/202411282222.oF0B4110-lkp@i=
-ntel.com/
-> Fixes: 65f79b501030 ("iio: magnetometer: yas530: Add YAS537 variant")
-> Cc: David Laight <david.laight@aculab.com>
-> Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
-
-Reviewed-by: David Laight <david.laight@aculab.com>
-
-I THINK all the other BIT() and GENMASK() are ok.
-The code also rather heavily relies on u16 being promoted to 'signed int'.
-
-=09David
-
-
-> ---
-> The patch is based on torvalds/linux v6.12.
->=20
-> The calculation lines h[0], h[1] and h[2] exceed the limit of 80 characte=
-rs per
-> line. In terms of readability I would prefer to keep it that way.
->=20
-> Changes in v2:
->  - Self-assigned the clamp macro to h[i].
->  - Changed from clamp_val() macro to clamp().
->  - In commit message added issues on divisor BIT(13) and missing clamp
->    assignment.
->  - In tags added another (duplicate) report by the kernel test robot.
->=20
-> Link to v1: https://lore.kernel.org/linux-iio/20241126234021.19749-1-jaha=
-u@rocketmail.com/T/#t
-> ---
->  drivers/iio/magnetometer/yamaha-yas530.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/iio/magnetometer/yamaha-yas530.c b/drivers/iio/magne=
-tometer/yamaha-yas530.c
-> index 65011a8598d3..c55a38650c0d 100644
-> --- a/drivers/iio/magnetometer/yamaha-yas530.c
-> +++ b/drivers/iio/magnetometer/yamaha-yas530.c
-> @@ -372,6 +372,7 @@ static int yas537_measure(struct yas5xx *yas5xx, u16 =
-*t, u16 *x, u16 *y1, u16 *y
->  =09u8 data[8];
->  =09u16 xy1y2[3];
->  =09s32 h[3], s[3];
-> +=09int half_range =3D BIT(13);
->  =09int i, ret;
->=20
->  =09mutex_lock(&yas5xx->lock);
-> @@ -406,13 +407,13 @@ static int yas537_measure(struct yas5xx *yas5xx, u1=
-6 *t, u16 *x, u16 *y1, u16 *y
->  =09/* The second version of YAS537 needs to include calibration coeffici=
-ents */
->  =09if (yas5xx->version =3D=3D YAS537_VERSION_1) {
->  =09=09for (i =3D 0; i < 3; i++)
-> -=09=09=09s[i] =3D xy1y2[i] - BIT(13);
-> -=09=09h[0] =3D (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / B=
-IT(13);
-> -=09=09h[1] =3D (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / B=
-IT(13);
-> -=09=09h[2] =3D (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / B=
-IT(13);
-> +=09=09=09s[i] =3D xy1y2[i] - half_range;
-> +=09=09h[0] =3D (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / h=
-alf_range;
-> +=09=09h[1] =3D (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / h=
-alf_range;
-> +=09=09h[2] =3D (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / h=
-alf_range;
->  =09=09for (i =3D 0; i < 3; i++) {
-> -=09=09=09clamp_val(h[i], -BIT(13), BIT(13) - 1);
-> -=09=09=09xy1y2[i] =3D h[i] + BIT(13);
-> +=09=09=09h[i] =3D clamp(h[i], -half_range, half_range - 1);
-> +=09=09=09xy1y2[i] =3D h[i] + half_range;
->  =09=09}
->  =09}
->=20
-> --
-> 2.43.0
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+That works, as far as I can tell, thank you!
 
