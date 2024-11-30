@@ -1,89 +1,86 @@
-Return-Path: <linux-kernel+bounces-426134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F509DEF5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:31:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5399DEF61
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 09:38:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC14B213D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:31:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F662818B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 08:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9CC14A4FB;
-	Sat, 30 Nov 2024 08:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E39E14A62A;
+	Sat, 30 Nov 2024 08:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KzAhad+v"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d+Ks5heF"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AC033F9
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 08:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF9F33F9
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 08:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732955505; cv=none; b=nms/o4I8WB4e1nHP6BAXSULKe0s5GrNhfhd7oYCWfqKXm0jYmpNyfiaFNfvj45N1HXxtfGPf7a7/nDuLY8GJFJUKZlaHFGwivzDRQe9YF9RC3oFWxcvrjoZB2X/SHM50XK7lfQB5DunQb6CI84ofeKcvL7/IYaszmn/XjcVNmQQ=
+	t=1732955923; cv=none; b=F1WuFg3dHLPP6gDi8vFjDCSS6RxLY5I2YolLY5jCbeTd/u3vl6EzawG5rbRqbZUzE7toR9vN3bc0n6YmGdrRZXiUq7VRiPhKxOOURlxoFByqK8D8QKiyQJRsms5PLLWBqW/tvTb1xBmgAUH0NQ+Ky22y0xIxIeOgDLA8kT5QTak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732955505; c=relaxed/simple;
-	bh=2vU3DW+i1nRl5BuWN6iuv1YL42295447JcJg71SdVrY=;
+	s=arc-20240116; t=1732955923; c=relaxed/simple;
+	bh=urA4yCemASuyVfSXMxGjKDtEv61zvBoJ3sI3Cx/BflI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FwC0AutEd/QTJlnnwwAENNGWnKYprVNxGb0kDivbxm38hfZq7wFCxj1qE+wYbrk8Ww7JgzKB6Xv70mibihEdN68lH0riFpe0xzoJVEvbjn7nXmNI8LnN5Y5o4rWlBKwLXD0i8q7XU3iFRejw3iXEpSDVtpuksZO+1asK1ueT0aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KzAhad+v; arc=none smtp.client-ip=209.85.208.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2VWB218uavCAHSDx4M3N3j7PLeIw2KO7X/G7TNJptjxE5valaslfLllA5ER6/T6lJWF3ir1nvemJ/cFfyU1/mdwYWwOb4Wdif1X6risQekJu1tfcRWnufxx0MDmApwW+jK06QM4VWQlX4RkhedqcrL90V4xd8hRFtApL2Dc1X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d+Ks5heF; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ffe4569fbeso20311131fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:31:43 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53ddb99e9dcso2588141e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:38:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732955502; x=1733560302; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732955920; x=1733560720; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jAlLAAAGM9bVH738rgOjUvG+kp8ufe3wXv46mmUzS24=;
-        b=KzAhad+vzp08qvJKtNcoq6+1Bixm2r9J/KmKKb8n33YGUQs/CWLc85Zj38Wx51wSVa
-         CfgQWhVHjKW3gdATtQolurTkofnGt9LS1Vgv67rRgU4lGvXo4y6fkVO2ptNab75hMIRD
-         Dsu828TPYjDP+RgQNM3k1aGhuaxZ716BVCi0zwEZn6FL1aw7vTKSXaYQ7oOTJibCAA3S
-         AcUH3Oksl5uukTF86WV1ViMozCSki5e0b/qYbzHE8Crep9E+mTWqzi+acDYfhghsBI1s
-         LkEFh5dvIKIc6DL1enRXiQ5bv591a82SKfjDUnwzANJWDUgPndIfAZ7fF2FECJiGg+NO
-         MOtA==
+        bh=NXAcZGkWBHX25QfRBDyi8tlFp6pK1qwOt+Zj/h2BOrI=;
+        b=d+Ks5heFQRb+m3CT+SGT80UnCnnkaAipQgK///LDSoDLgHfkVg5rVGCY5WiLxMTh+n
+         Fp7Ac1ROhfsHr5vLpJjGaS6Zhus/Lh5e+mxFX1qmoAx2oKnH9zioeVDZLiXqN3drRYGX
+         Wue9+StnOfkxU+5jJdIzGw2XN1sRLmoQsk66SRG+Z/1k9jEsb2pGspD0KW8Ju2Adq76P
+         At2ofTB6krg49cwt5ZFaOj9bDm0uaz+V0oIEoqS/raAmqAvuBrlQkLfP9IfRgLqd/x2k
+         rr4+jiVf7pthx0g4gxtOzaHRi4QrCyi+5qgdri/bh0r0lwvGolHE0I+7lr4nksZd/m5+
+         ZeNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732955502; x=1733560302;
+        d=1e100.net; s=20230601; t=1732955920; x=1733560720;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jAlLAAAGM9bVH738rgOjUvG+kp8ufe3wXv46mmUzS24=;
-        b=mPl0LA998AzTQTQHdzaMwAgIJ9NtXCgQnc6I9Fv4Mpa6DPKJerzjzDgPZnNl1oaSye
-         OkSMw3thKg/c4kz3Dxh8yxzfBe3eDL56zu0haRqoXlM75jE9kw7iNXc5NFmnagOhBKeL
-         Cbu6seowLgeu8h+ACQllJz3kEdgjTpzIhSHRVdXUAnMoYtW99IJiYKe//BqzcHlAsxwb
-         CyBBIhpq4eK19oKWuKs1qFoR38LrUlYV3uzrQf2XkXIy8SUyyTif9e6YJSfts44wHmQd
-         r1v/1qz85hfRNIPvEL1kQB7rrxZlpsm4K3OkJxWtglCalqfZMiW4kQCzYrOMpm03kJXU
-         4D7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVVlyRf4WEAELCEcm5XtwBWcBC/fVKVyf6jlvEy8PLkQ/6kkg+OMfmPrRPbwGrg7t/oj4/jD30NAYJgLu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9m0Bb+8dZZzltktjnAaT3BgxGE5uiYrtvKFylwCZx/5dggjtc
-	ZnYYNQOPZqRp8LCNNfNNQg/gaECqFMyaZIpgSiqr53et3eSkflgbedwZCVEEgLvcxf8RSaEnxLn
-	s
-X-Gm-Gg: ASbGnct4qchx4nI82HZoMA7gWV3grw7VO/ba7feoqo6g0ziNldKTyEXFCXy+q54QTkk
-	FqZDfK8d/LgrLhfAfLxkGwYA5eqBc3SZqg0VljKRq9k5pS958tkVIT7NYQ3UEhZ6FfyKIB6g/Nl
-	EcAjAqtPcP0ZjsbKjLhCGHYKA+XMvHXlmjnlY2OLajYDC7lFKiMY9ChDaTlTOkH2IRVVhivXn5f
-	karhTfLsVKVBEmBy9WmqpBKMoEYmgHicSms110JQBmH3h+QlXNgcoXeXD47S1phYik2Op4zOxUV
-	qicmUPKoCNBRmsKB7vPicDkgsy1zZA==
-X-Google-Smtp-Source: AGHT+IHqlibCJpfN5cUZPPd4TL/8XxztYBv4PAhJSEPCWQRqaxNuibgDwkMBYYVSBLF2QupVe40mkw==
-X-Received: by 2002:a2e:b8c3:0:b0:2ef:28ed:1ff5 with SMTP id 38308e7fff4ca-2ffde23dfe7mr37315291fa.15.1732955502004;
-        Sat, 30 Nov 2024 00:31:42 -0800 (PST)
+        bh=NXAcZGkWBHX25QfRBDyi8tlFp6pK1qwOt+Zj/h2BOrI=;
+        b=NL9LvVVqaIEyKZzzs6PZao9iS3yCLfVIFEL6zzZ20yXZo6E3N3Z6GSCIwDasvjhLnt
+         PisHPjOXJ58WMbwcZ0CmCMEY/7Uh7ywL5T3rg+mD25rYhxoJOh9VC4sfpoIRzIEDx1/9
+         hq3jj1YXc3yceFEPDEHb412s3FRMiyAKO1vCyedsHk67EBrrwJ4MeYrAEe+3xlMJ7CL7
+         i1bBn7edGXnnQZEWyGWYVoYr36FgdZKRwEK1oLxL9zCBQRXT4YzE5rqT2Y4wqGeyF9e7
+         TXagmvcynccEm6JCuu2RQ0iem7YxjPUVovMJ3pAlRbEN4eJ6MRhX9WPlcWAs21erf0F2
+         JSng==
+X-Forwarded-Encrypted: i=1; AJvYcCUFQQGdIeqC/tD84nQOJJXc3apeDxJml21nkB6O3TtkHNx1axh8FsK1dOYr8PkyEyhvmj3+Ko4idFTn+0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMh4sQsyNItqbp2yD7rT9OeMRf3iYPG9zVaxam0FmAp5ugJDZk
+	tF86Jp61PxPSTm7TMzWXZM00NuEKG6CmGxsnh6gXELvBuXFDQj7iDuNrbyyDr08=
+X-Gm-Gg: ASbGncuF5a/dfhMygjHjzEAE43+Fs123wmk0Mjd69eRBKrCk1KSvh9B7zjhjxNz5Vp7
+	9RUUOCpffKHurAfjfiWSXAfLe9KAIlH4Hrwn6M0atIqh90DLYF2RYky5EBfMdHXFIs5MmZrSM8j
+	z0KIYNJPu1IPOBSZ2UhDLfxqj8sEz9c7K3LLWBKeTFCse3t3ngZG9Y34l01ytgIw3COzn2vEecW
+	qsAhsyiiqWcItyk/73suHVxWvNpCcHYsmIdwJZV85qMu5G1cpPn/qsHTnw5Th+ZChd24hLjCALj
+	t0sQ5iUcp3NAbWxSYUXR5M+7/awv6g==
+X-Google-Smtp-Source: AGHT+IFp/JR40e+9hDYErdoRaIfhKywKkgp97604Qk0oyKGBNI/opThDDUUCyOtQ8USzlicY6WVnRQ==
+X-Received: by 2002:a05:6512:3b23:b0:53d:e88b:ebc with SMTP id 2adb3069b0e04-53df00d7bbbmr9468255e87.24.1732955920272;
+        Sat, 30 Nov 2024 00:38:40 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbb8fc5sm6296371fa.22.2024.11.30.00.31.39
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df643121esm700415e87.56.2024.11.30.00.38.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 00:31:40 -0800 (PST)
-Date: Sat, 30 Nov 2024 10:31:38 +0200
+        Sat, 30 Nov 2024 00:38:38 -0800 (PST)
+Date: Sat, 30 Nov 2024 10:38:37 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Guy Chronister <guyc.linux.patches@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm:panel-orientation-quirks Added DeckHD support to
- panel orientation quirks for Steam Deck This commit introduces a new quirk
- to handle specific orientation issues for DeckHD panels on the Steam Deck.
- The quirk ensures the correct display orientation for these panels,
- enhancing the user experience on Steam Deck devices. Tested on my Steam Deck
- to ensure reliability. Feedback and further testing are welcome.
-Message-ID: <t4faz7cyi5lnib2zsxxv3j5ykltrecsjee6hrb3ky2g6gdypju@6u6ggrhuisjr>
-References: <20241127203545.17475-1-guyc.linux.patches@gmail.com>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] drm/connector: hdmi: Allow using the YUV420 output
+ format
+Message-ID: <6hcjgagu7hvbnn6rp5znwjxeaa6wqkeecgvvqkzvtma2ni6mfz@lrbmtbogkzgm>
+References: <20241130-hdmi-conn-yuv-v1-0-254279a08671@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,39 +89,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241127203545.17475-1-guyc.linux.patches@gmail.com>
+In-Reply-To: <20241130-hdmi-conn-yuv-v1-0-254279a08671@collabora.com>
 
-On Wed, Nov 27, 2024 at 02:35:45PM -0600, Guy Chronister wrote:
-> Signed-off-by: Guy Chronister <guyc.linux.patches@gmail.com>
-> ---
->  drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+On Sat, Nov 30, 2024 at 01:56:31AM +0200, Cristian Ciocaltea wrote:
+> Provide the basic support to enable using YUV420 as an RGB fallback when
+> computing the best output format and color depth.
 
-It seems that you didn't break the subject / commit message properly.
-Please add an empty line after the subject line in the Git commit
-message and post v2.
+The HDMI Connector functionality has pretty good KUnit coverage. Please
+expand KUnits to cover your patches too.
 
 > 
-> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> index 3f2e2b851cbc..c412273799cb 100644
-> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> @@ -456,6 +456,13 @@ static const struct dmi_system_id orientation_data[] = {
->  		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galaxy Book 10.6"),
->  		},
->  		.driver_data = (void *)&lcd1280x1920_rightside_up,
-> +	}, {	/* Valve Steam Deck (Jupiter) with DeckHD */
-> +		.matches = {
-> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
-> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Jupiter"),
-> +		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
-> +		},
-> +		.driver_data = (void *)&lcd1200x1920_rightside_up,
->  	}, {	/* Valve Steam Deck (Jupiter) */
->  		.matches = {
->  		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
-> -- 
-> 2.45.2
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+> Cristian Ciocaltea (3):
+>       drm/connector: hdmi: Evaluate limited range after computing format
+>       drm/connector: hdmi: Add support for YUV420 format verification
+>       drm/connector: hdmi: Use YUV420 output format as an RGB fallback
+> 
+>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 55 ++++++++++++++++++++-----
+>  1 file changed, 45 insertions(+), 10 deletions(-)
+> ---
+> base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+> change-id: 20241130-hdmi-conn-yuv-e1fa596df768
 > 
 
 -- 
