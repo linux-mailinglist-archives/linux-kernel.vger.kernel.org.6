@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-426015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2F29DEDC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 01:14:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575ED9DEDC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 01:14:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 300F7B21E7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19764163D90
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 00:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778D929B0;
-	Sat, 30 Nov 2024 00:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F761846C;
+	Sat, 30 Nov 2024 00:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GsPGlvs5"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rKy0FrVd"
 Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736EF19A
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4323A28EA
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 00:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732925669; cv=none; b=u3NzvhggGl8eHzqch/gjTT4KcCcPNTABQXwUFixtliREAnTyIwFVbjIig5XcD/Jy52HbqroUDAzZFqjWxgo7m2w1Qebk4U3+fMnA5TGF8AYrLgW126OoeILqwZy0nswT2Z9bhRLRwAdlCWI2mw2mFi4sbLh85PSokX9dD0ALH0A=
+	t=1732925671; cv=none; b=XrM44/jqOfxgCzRsAS+12vTg2KQGohHE8uJIQgLZktukKVHuh+u+2uHl1YdF9/TZrPecFynD4/vuvnpu/50K0y07qU1Dy8yieLwujO5nek66hI0Vx3BjDqSOMc6m/avL3j6tvgn+QRHVt71xOQuHWRgso9BOLZMN4Ur+OXKIx5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732925669; c=relaxed/simple;
-	bh=fIW5X8p4akL+99rAUyvfz1McmCobJzGIw5O5AOWEAQI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Uqiylz0uw7E3MLuPUy7XdSxYclwGHBIemG7TVWFr91h4VT2FONBjsFYlX0vUkE74W+2XhIoM3oIg9Re+4Ln+u+0c22ixLgz+CaqRuZ1O58iLJf4Al+5i+KVCqZ1Q4zNK95iF55OuUIjAk5vhgcnzRs2WNKTdGaMxUHqDoJDcPPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GsPGlvs5; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1732925671; c=relaxed/simple;
+	bh=MEF9DxNJa8aYJ5cq2tp04ev4Wc7/xbftCxnd8fnJ2a8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=QYuEDYCvXJKKWGMKkWd6KI1v/HvnMdG1mZ1snGO6jIb084WMn6wizeTQP0Xkf/t/r66R5MiGlkUU45Ne6bOZmcqtwphj2X65vQP6zvhEP8UNfeih3o3cTktqyWSqv0fTwGQ6G75OiWXPbYtGIrEGrMW2XSKvXs2eG+3hO+5MH84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rKy0FrVd; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7f71e2fc065so1737616a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:14:28 -0800 (PST)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7fb96d3a3a8so1700340a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:14:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732925668; x=1733530468; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Msn5ydSsXJvK7W3o2JvmJ38LPMa5eKoJY2o5aCZVyQY=;
-        b=GsPGlvs5XFuTtekiulwIHwugSLfFRaoojUA3bbYV0i6nJeTssHAKwC88NqPEelULnb
-         906SKMny6PyiaYasMAU7gPpaQwDPK2ltPXH4AQ9boIkjDNaInhW9qkJnBINFkenQGO1t
-         btM4QpZ/laf0WL/VqxG8Y/RjheDHMfBU0wcbpB6dVnoL7hCTFL7LLAy+zrCsLgP6Jmew
-         7uHcNS30XZZPhbhNNremIhe7fKI+SOol7MAXeAzhlTnB8okN9ioAYmjTYcSIMyBdmKM8
-         M8qcXaovWMX11QBlCvzZYf+7je+nWMtIjosi37qsVfyRBouGouwY7R8kLTNomjUNbUbv
-         Ro3g==
+        d=google.com; s=20230601; t=1732925670; x=1733530470; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EpxKrm09+SAPJmqxiOga34L0FlTVIOyjiLSP0mnmo8Q=;
+        b=rKy0FrVd4msxohX3BnPXxJj+kqvQLTzfn1riFXVb78Ms7oi/45bHlQwdFdUO2CjBMI
+         qvW8b2jQa54vCLdzwswus4FGhAsyUfph6wTFtdnT2WdoOYOGA3zSZhY6C+a2RV/esbvs
+         nXmNROGTskBoLT3hA9UmfXlGlQeIE9mA4TIBg89HXcjGrLvzOi5VlBnCan7wYTZSFSNr
+         ZTa+yq5PuzS5JfdmOv7SQw+tSf3Fh61E07HOyOTeOntqRTTD2h/XZHadz5bZwApC+Ubb
+         6ujBaiSoXsxvhmpIuVLT5V6hVixqRoGBS9FMRwkv+CunpZyNK01yo8IghRv7Q+57w1VR
+         ByIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732925668; x=1733530468;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Msn5ydSsXJvK7W3o2JvmJ38LPMa5eKoJY2o5aCZVyQY=;
-        b=hnOf0OzRUns7wTEXWTUTrQNmWHOkFwhwK5Ia4tAs30Xp/6iFeVQSnAdZHFBVihjQ23
-         +mia0MrzheWTvaYep7KAlUkXWptVokYlMNoXBD4+orqXkWiTzRcQ1ZOpJ+eARrTKEu9t
-         B7CPPy8zis+xQjfE8muHz6JJv42mRWhuIjgmpCq6SsjlW8maNXKz+p+iknMNcqtaoLQG
-         02+sIVLti3mVQApvhDqQ/+IoVV68FaBH6lfzdX5YjRUlhP2TOxJOHA3bhzLrhCjPxEmT
-         O0Gb3NoQ/ezp71l2iQJSHmcaeGrP8fA94QEO3ZG3SDJVLTmrZZl/cJz77qFAtgBMYYDL
-         i4+w==
-X-Forwarded-Encrypted: i=1; AJvYcCU7qVfmAnRZ+3JdlTpFKDA++IHGgZnJCDuZicWkrB3fYaCndiq9HmzXXGdDrSSzRCrG4pxAISZhGW0X3c0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqfsXtFtPeNw5cmOHacoZlPlyIbRuVd5gQZIsb/pZD2FRcbMny
-	/PXAuPPuYdUPo3T0taLU2xo0e2zJt0tYG0hTCsaFB1Sx5Um8GkcmwZY6NAgDx8lNgPvQOm4s1/W
-	l1A==
-X-Google-Smtp-Source: AGHT+IEZ5ARDUBAksQwZjcJ+vr4ytuA3q37Am5GZLCfm/nnP/vqItHhnwL+g58/Cgk/lpSFI0Dl6QgR1MCA=
-X-Received: from pfaw9.prod.google.com ([2002:a05:6a00:ab89:b0:724:fde8:58a])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a10f:b0:1e0:cc21:19a2
- with SMTP id adf61e73a8af0-1e0e0aaf55bmr19045608637.1.1732925667676; Fri, 29
- Nov 2024 16:14:27 -0800 (PST)
-Date: Fri, 29 Nov 2024 16:14:22 -0800
+        d=1e100.net; s=20230601; t=1732925670; x=1733530470;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EpxKrm09+SAPJmqxiOga34L0FlTVIOyjiLSP0mnmo8Q=;
+        b=uciotrP1blFU3XJFSB12BRBL7/ayMzPHdZf9D7+xuUh8oK3PGzwJmlN8NO1ZVkQif5
+         NCfFtkj1vDUM8F3tBUdivErRYMFyGU+WQ1xGj+GfmnRXQ4NOXAZFzzcH8hQdB68+gHtC
+         DwUZzuFSb2HWaFbXPP531uUiS2mlm19XUnqRHOLQyW49AtEUYYoC1U86p8B6B+8OJKzT
+         4kfPeJwGwcOnKZU+G7YFdNuwhVX2efe1DqZ8yUu77eE2YgPfzbwM+nASiTwBPvgntG3O
+         PAmrvYDEcOrY1/3rUw8mGcgNZhyDV2XhAOcx8ZqmrfusFBu/rSvShvPocuH0rp1xP2fp
+         SV+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXYje0kvPdNLf0LtZmeMrPZw6ycsRThT0HHyZA/Y/cYXxXEK9RXN7usuMHGTz74LOqTAXNzilSaUWBXN+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1KYz0cIoadlD3TkuKowQPfNIr0uoEP82dKII8QWhD7jm7kKo6
+	6XXz5DZPf1Gjc5K6z7RnEnoIs20xOo4dVZP3L4uwSKQZ0n8w6Cn9hwDvjId/U+SmSkTg7aDiOlY
+	+SQ==
+X-Google-Smtp-Source: AGHT+IEO1jq34I3S812cs/LC0CKsK8aw91gm2TSktbeu+lByPR5ov0es7eD7kBYzK9Z3arRorDrO9sMmpoc=
+X-Received: from pgvz26.prod.google.com ([2002:a65:665a:0:b0:7ea:618a:6e04])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:99a5:b0:1e0:df27:10b8
+ with SMTP id adf61e73a8af0-1e0e0b52839mr22679442637.31.1732925669775; Fri, 29
+ Nov 2024 16:14:29 -0800 (PST)
+Date: Fri, 29 Nov 2024 16:14:23 -0800
+In-Reply-To: <20241130001423.1114965-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241130001423.1114965-1-surenb@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241130001423.1114965-1-surenb@google.com>
-Subject: [PATCH 1/2] alloc_tag: fix module allocation tags populated area calculation
+Message-ID: <20241130001423.1114965-2-surenb@google.com>
+Subject: [PATCH 2/2] alloc_tag: fix set_codetag_empty() when !CONFIG_MEM_ALLOC_PROFILING_DEBUG
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, pasha.tatashin@soleen.com, rppt@kernel.org, 
 	yuzhao@google.com, souravpanda@google.com, 00107082@163.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, surenb@google.com, 
-	kernel test robot <oliver.sang@intel.com>
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-vm_module_tags_populate() calculation of the populated area assumes that
-area starts at a page boundary and therefore when new pages are allocation,
-the end of the area is page-aligned as well. If the start of the area is
-not page-aligned then allocating a page and incrementing the end of the
-area by PAGE_SIZE leads to an area at the end but within the area boundary
-which is not populated. Accessing this are will lead to a kernel panic.
-Fix the calculation by down-aligning the start of the area and using that
-as the location allocated pages are mapped to.
+It was recently noticed that set_codetag_empty() might be used not only
+to mark NULL alloctag references as empty to avoid warnings but also to
+reset valid tags (in clear_page_tag_ref()). Since set_codetag_empty() is
+defined as NOOP for CONFIG_MEM_ALLOC_PROFILING_DEBUG=n, such use of
+set_codetag_empty() leads to subtle bugs.
+Fix set_codetag_empty() for CONFIG_MEM_ALLOC_PROFILING_DEBUG=n to reset
+the tag reference.
 
-Fixes: 0f9b685626da ("alloc_tag: populate memory for module tags as needed")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202411132111.6a221562-lkp@intel.com
+Fixes: a8fc28dad6d5 ("alloc_tag: introduce clear_page_tag_ref() helper function")
+Reported-by: David Wang <00107082@163.com>
+Closes: https://lore.kernel.org/lkml/20241124074318.399027-1-00107082@163.com/
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
 Applies over mm-unstable
 
- lib/alloc_tag.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ include/linux/alloc_tag.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index 2414a7ee7ec7..668c4e128fa4 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -393,19 +393,20 @@ static bool find_aligned_area(struct ma_state *mas, unsigned long section_size,
+diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+index 7c0786bdf9af..f6a1b73f5663 100644
+--- a/include/linux/alloc_tag.h
++++ b/include/linux/alloc_tag.h
+@@ -63,7 +63,12 @@ static inline void set_codetag_empty(union codetag_ref *ref)
+ #else /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
  
- static int vm_module_tags_populate(void)
- {
--	unsigned long phys_size = vm_module_tags->nr_pages << PAGE_SHIFT;
-+	unsigned long phys_end = ALIGN_DOWN(module_tags.start_addr, PAGE_SIZE) +
-+				 (vm_module_tags->nr_pages << PAGE_SHIFT);
-+	unsigned long new_end = module_tags.start_addr + module_tags.size;
+ static inline bool is_codetag_empty(union codetag_ref *ref) { return false; }
+-static inline void set_codetag_empty(union codetag_ref *ref) {}
++
++static inline void set_codetag_empty(union codetag_ref *ref)
++{
++	if (ref)
++		ref->ct = NULL;
++}
  
--	if (phys_size < module_tags.size) {
-+	if (phys_end < new_end) {
- 		struct page **next_page = vm_module_tags->pages + vm_module_tags->nr_pages;
--		unsigned long addr = module_tags.start_addr + phys_size;
- 		unsigned long more_pages;
- 		unsigned long nr;
+ #endif /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
  
--		more_pages = ALIGN(module_tags.size - phys_size, PAGE_SIZE) >> PAGE_SHIFT;
-+		more_pages = ALIGN(new_end - phys_end, PAGE_SIZE) >> PAGE_SHIFT;
- 		nr = alloc_pages_bulk_array_node(GFP_KERNEL | __GFP_NOWARN,
- 						 NUMA_NO_NODE, more_pages, next_page);
- 		if (nr < more_pages ||
--		    vmap_pages_range(addr, addr + (nr << PAGE_SHIFT), PAGE_KERNEL,
-+		    vmap_pages_range(phys_end, phys_end + (nr << PAGE_SHIFT), PAGE_KERNEL,
- 				     next_page, PAGE_SHIFT) < 0) {
- 			/* Clean up and error out */
- 			for (int i = 0; i < nr; i++)
-
-base-commit: 539cd49425a4e9a66d601d9a8124f5c70e238d56
 -- 
 2.47.0.338.g60cca15819-goog
 
