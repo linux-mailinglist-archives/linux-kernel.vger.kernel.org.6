@@ -1,119 +1,108 @@
-Return-Path: <linux-kernel+bounces-426084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673C49DEE99
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:31:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC289DEE9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 03:36:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C799281888
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 02:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5577162BA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 02:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F83045979;
-	Sat, 30 Nov 2024 02:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EC143ACB;
+	Sat, 30 Nov 2024 02:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmbOpj5T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Kz4QcoHy"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A7227447;
-	Sat, 30 Nov 2024 02:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3949E3224
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732933891; cv=none; b=u8WEes3zH6h7/lqwwfLMqmikewziRYwH8sHPH9FlwDASKarTuAUpolNhsUP6+a+D7HfE+o1c/+O5phURWaaCwEiGK76B6YTIFa4bq48wjmj9ptpyXKSKiROf4UwzIWBQBQYympybmw2DCtxeDJ1raqrKwjuwWfqDXXICi2iE2Y4=
+	t=1732934159; cv=none; b=e2eRd7BiZLsSgPEmIt8KLIK0yZTkmxaXCEQ93ocAf410lO9NI82dqyXznHjYUcu+EhIjZ4sYvnv9M6pfohPwpXYh3nIJnCI6/5zEt3W/l9iGu6ZmhXSxG28Oq4TJCvkjafPnBOf07LSK254RSU27Khc/+xIJEtFcIMv/kKDSMp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732933891; c=relaxed/simple;
-	bh=RSJENjqJosmq3Y9HmvX0RY4Poam/2+UR9oDounQg3OQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=UWQtKBI4IbTwY1dQZXjkyA25js6q8zmcjrtJSphmqdnH51CNTmp2ka6oVF3jqvdjAglj0y4xCxgw9zX6Gc43ocujvVxTkSYdButzsL98V9eE6hc2tFNbUKMTIp0Y6dYhprT0Reh8a4L4LNTNvTJYMY78m38FnNHgBW24NQqnWeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmbOpj5T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B75C4CECF;
-	Sat, 30 Nov 2024 02:31:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732933890;
-	bh=RSJENjqJosmq3Y9HmvX0RY4Poam/2+UR9oDounQg3OQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=kmbOpj5TriQHbG65RX2jCfYz0Iyy4Te91bI/jP2mdD0g5G0kruSX5+SOqoY0K9Ny7
-	 zUSd1IzbCuM21EcggN1NDm16GanCPaZj+Y/OgLKAml4+cCzyZoGdVndGXfyowpT9+d
-	 rthdiR7kPfewr5/6qEJiqmGT3OQEvkOqKNqj0NBsQE66d4ig8OY2hvOfOXPLTjisZd
-	 pg6bmHf9KKiqL8jWD3hBApZbAulRHv+qTV2OgoVtlp9IVpvVEJ/odk9FyMtv4J4P6y
-	 VasrLEEntTTjTQcPPuk7soH/9Dc8RnGArEvK8JXxiIS4EF/cmHrY/xGFFHQfFXyZfi
-	 x6UXJC1mlmpHQ==
+	s=arc-20240116; t=1732934159; c=relaxed/simple;
+	bh=bzHt9T+FI2Nq3+fjIsmf95OgZrFD4R707PwXg8g8Jhk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LBjab62xfsuse/3MBG386+CHcdIUckOXAipiC6ub8eqrxiVkiX6AnAnfXGB8bYRZ/7aQpifKU5nP51UH8HiBo8+16c9rzo1qabwMx5gqE69Z34lxkzqRBBvYTsK3sG0lsL8HnNGaRhXpd2ytLhWU6qTOsxZJwu8eu9Xpg5mBUrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Kz4QcoHy; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=CENE67omF4txQDfD5xaTRSsaRoJ1PEywoIzFFsuu9cQ=; b=Kz4QcoHygPxmbQxjJMMyo0A+KU
+	o1kfwJfpSWseWhXkC36WpvMxfXiV3gMWxmQwUJcYxOBM3GGTSmgSCtT4UUEi/KeBn2/qq8HzwFoXN
+	9olro+cCrhEyiWmkb9KypYQ4rwqYc5soEPLa1MasMi//PA2FRrfTawlGVwcdTW8GRv95G25rf2vCc
+	TD7iFMo+QaM8G/2/fOB9ZgoeVQ/7WyP4nAq8tBoqdxCo11actOT+RSXbKxrYI1iqFZsRMuES3nlfv
+	iwZecaZnGxCzWpdIDSDr7aB6d1E1nfOFLLpA1SyowwPVTh8468+q4jKGG3OLCtF5l9IFbknEo64iE
+	n7Un0FKg==;
+Received: from [50.53.2.24] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tHDKv-00000001Jkq-0lxW;
+	Sat, 30 Nov 2024 02:35:57 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Aviya Erenfeld <aviya.erenfeld@intel.com>,
+	Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH] devcoredump: cleanup some comments
+Date: Fri, 29 Nov 2024 18:35:54 -0800
+Message-ID: <20241130023554.538820-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 30 Nov 2024 04:31:25 +0200
-Message-Id: <D5Z5SKSAX8UT.2NXLQ5HZNP617@kernel.org>
-Cc: "David Howells" <dhowells@redhat.com>, "Nathan Chancellor"
- <nathan@kernel.org>, "Nick Desaulniers" <ndesaulniers@google.com>, "Bill
- Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- "Eric Snowberg" <eric.snowberg@oracle.com>, <keyrings@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
-Subject: Re: [PATCH] keys: drop shadowing dead prototype
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: <cgzones@googlemail.com>
-X-Mailer: aerc 0.18.2
-References: <20241125110342.49015-1-cgoettsche@seltendoof.de>
-In-Reply-To: <20241125110342.49015-1-cgoettsche@seltendoof.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon Nov 25, 2024 at 1:03 PM EET, Christian G=C3=B6ttsche wrote:
-> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
->
-> The global variable pkcs7 does not exist.
-> Drop the variable declaration, but keep the struct prototype needed for
-> is_key_on_revocation_list().
->
-> Reported by clang:
->
->     ./include/keys/system_keyring.h:104:67: warning: declaration shadows =
-a variable in the global scope [-Wshadow]
->       104 | static inline int is_key_on_revocation_list(struct pkcs7_mess=
-age *pkcs7)
->           |                                                              =
-     ^
->     ./include/keys/system_keyring.h:76:30: note: previous declaration is =
-here
->        76 | extern struct pkcs7_message *pkcs7;
->           |                              ^
->
-> Fixes: 56c5812623f9 ("certs: Add EFI_CERT_X509_GUID support for dbx entri=
-es")
-> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> ---
->  include/keys/system_keyring.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.=
-h
-> index 8365adf842ef..a6c2897bcc63 100644
-> --- a/include/keys/system_keyring.h
-> +++ b/include/keys/system_keyring.h
-> @@ -73,7 +73,6 @@ static inline void __init set_machine_trusted_keys(stru=
-ct key *keyring)
->  }
->  #endif
-> =20
-> -extern struct pkcs7_message *pkcs7;
->  #ifdef CONFIG_SYSTEM_BLACKLIST_KEYRING
->  extern int mark_hash_blacklisted(const u8 *hash, size_t hash_len,
->  			       enum blacklist_hash_type hash_type);
-> @@ -93,6 +92,7 @@ static inline int is_binary_blacklisted(const u8 *hash,=
- size_t hash_len)
->  }
->  #endif
-> =20
-> +struct pkcs7_message;
->  #ifdef CONFIG_SYSTEM_REVOCATION_LIST
->  extern int add_key_to_revocation_list(const char *data, size_t size);
->  extern int is_key_on_revocation_list(struct pkcs7_message *pkcs7);
+Correct a spello, remove an extra space between words, and fix
+one kernel-doc warning:
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+drivers/base/devcoredump.c:292: warning: No description found for return value of 'devcd_read_from_sgtable'
 
-BR, Jarkko
+Fixes: 522566376a3f ("devcoredump: add scatterlist support")
+Fixes: 01daccf74832 ("devcoredump : Serialize devcd_del work")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Aviya Erenfeld <aviya.erenfeld@intel.com>
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+I prefer "in parallel" but the internet says that "parallelly" is a word.
+
+ drivers/base/devcoredump.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- linux-next-20241125.orig/drivers/base/devcoredump.c
++++ linux-next-20241125/drivers/base/devcoredump.c
+@@ -186,9 +186,9 @@ static ssize_t disabled_show(const struc
+  *             mutex_lock(&devcd->mutex);
+  *
+  *
+- * In the above diagram, It looks like disabled_store() would be racing with parallely
++ * In the above diagram, it looks like disabled_store() would be racing with parallelly
+  * running devcd_del() and result in memory abort while acquiring devcd->mutex which
+- * is called after kfree of devcd memory  after dropping its last reference with
++ * is called after kfree of devcd memory after dropping its last reference with
+  * put_device(). However, this will not happens as fn(dev, data) runs
+  * with its own reference to device via klist_node so it is not its last reference.
+  * so, above situation would not occur.
+@@ -285,6 +285,8 @@ static void devcd_free_sgtable(void *dat
+  * @offset: start copy from @offset@ bytes from the head of the data
+  *	in the given scatterlist
+  * @data_len: the length of the data in the sg_table
++ *
++ * Returns: the number of bytes copied
+  */
+ static ssize_t devcd_read_from_sgtable(char *buffer, loff_t offset,
+ 				       size_t buf_len, void *data,
 
