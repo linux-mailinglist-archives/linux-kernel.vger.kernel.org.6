@@ -1,130 +1,183 @@
-Return-Path: <linux-kernel+bounces-426327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD499DF1C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 16:36:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1C99DF1C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 16:36:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ABA4B21408
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:36:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEBFD1630BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC62119F424;
-	Sat, 30 Nov 2024 15:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DC21A08C1;
+	Sat, 30 Nov 2024 15:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nh2.me header.i=@nh2.me header.b="k2qrgdRD"
-Received: from mail.nh2.me (mail.nh2.me [116.202.188.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiO7CeS2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECED31A0AF5
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.188.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8FB42AA4
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732980974; cv=none; b=NQIfiLNeyNnGovrFhERY+855Zu4MCMClFl83p62dUmGPJIqwzuWoBaffn83PsoWwisOfoKiDfZEMPYkKzHYnUxcV8pPvuikqf8EwvjNMIC6i02Gh6N1t3oGvTgWNZqoetMpxQnCf7WzSOC+b0EisQcTv1EJbR0qOpzTOx7rY+f0=
+	t=1732980989; cv=none; b=ZohKkAnyLrP8ZYEfS7kgeYnAy3pU1Gco6stFseMsLo7vqdF7Ee6nIMjn8CY9/8wk0SvjAbJubgT5GwFxro+gqLZGsWd1TdtBwebAVAsxTuHHTWkvaMz1yWz9pxdm29afn881q0fHCJkCURm0T3JGgEsj79X+1N8TRiz6BYftzCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732980974; c=relaxed/simple;
-	bh=9w6EZjWLohBs+LSKZHCsRLrBAHest8jgaZ7Ee5F5wck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ekfygzvmTeTnMrOj8ccOn5VpiEn8i5HZbztSTfOZXAKtmLyNWtnFUyiU8SVCE91eQFCoOSzFi+dMJg0n3snyjrEBHLTieXm0VcnYpF+oMhyjfsCAXBM3I6IVOBpoZ4lHcKCVNyweT0OoNNZDK8e4dWta62m7OJG2uvQPPO6+HV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nh2.me; spf=pass smtp.mailfrom=nh2.me; dkim=pass (2048-bit key) header.d=nh2.me header.i=@nh2.me header.b=k2qrgdRD; arc=none smtp.client-ip=116.202.188.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nh2.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nh2.me
-Message-ID: <7df5f683-692c-42c7-a50a-9cafe672212f@nh2.me>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nh2.me; s=mail;
-	t=1732980961; bh=VHTrYpQwSTl014FPiU0AGrODbQMkWajNDJ9CPjWglSg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=k2qrgdRDMde453sf9Fv7YhJaw+Z12zDsDjzlCWD6kaUFEHLOt7T3fGX8ucgIqEVjp
-	 sp0rztBCqjw6SBH/0bNPKEhtBJm1y7Mm8m0J/lAQHomiq08qswtRHawP/y7wrGsoFZ
-	 xdPbYaHj5nG7tW0B5c64hwQaraVB1eztq7O/Dk7quQUAL6KNysXe7JChIrYvhX/0Oe
-	 cjqwM8LAR0hwwbtXTIBDOZEJf+bLBJBDb8tqGCjK+n4y05PJ7SZXPxUkqSIs9Y3GSF
-	 vnWnxmbBPoOyJ7B6zfpzwSFO98RDplQDuzHZuxPyXfuxnL3xrR61UMrSZ1jJxEw/2T
-	 ur6+ApEaoh8ww==
-Date: Sat, 30 Nov 2024 16:36:00 +0100
+	s=arc-20240116; t=1732980989; c=relaxed/simple;
+	bh=i2wtbIqmpawPaNp5Btdx5Ar7zkC857Xk8v4whaZ01vs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q1qNZolxEwCrx5P4c9zVdbYBaM1wmdVvzyVm7axTeVvBNFDle20z9ypFVB70BOxBaONTcnLRmVkGrcyJKbtXaCaVcZTn0+9A/yX9J1NmcH3A8zij7IySneUHlCEt6vx0lAFHQ9QP4E/2CW+aBossiPdP/3WmO69YanYFv4dptEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiO7CeS2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A01F3C4CEDC
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 15:36:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732980988;
+	bh=i2wtbIqmpawPaNp5Btdx5Ar7zkC857Xk8v4whaZ01vs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CiO7CeS2vsEIgTLlls4gOdNxdqWDV6mk4yi8iXoCspP3vDrRwMQfReixKraH7cjeI
+	 0FHLGd+mi4RaTkM/mneIM+9rCreIJPnOf7+9eDCPeA36bhQV0qWFrJ6ENgTjS/foMm
+	 WFF3cKrpqN0fa3OZsaR4LplpY3GTK1lJopKyws07napUANn9AnKOBXeKaVP5yrPqX4
+	 G5lPmcSWpLP083O5ydfiY/B4s4w7RxN/9BCjVHuKK3AJVSW+XU5nVt7rWR33p3U02E
+	 H+YnY4Kq+j3mwH1bDPYoRAxYixrpjK7AgaDdhn+ZdjJIkkO7dyrHZg2zx4B1+bRD6g
+	 CNd5qmx1DW1HA==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9ec267b879so398655866b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 07:36:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVpCV6WTGCs1XW6YHjVI8aDL/98kqFv/hoA2zy25ZWzwM3dAYxoFp2uOs0cfNX9nRm5ONgfDywRIO6NWBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw55L2UAqXVPORKwoY8qCfXLkpwhPjAylCQ49pYy0TPVf12/nA5
+	aZqdnWUMWa4vbGP+4UI2Z8YZTDY+wiyiApeOfS8wX6x3yExf6HYthvcGm/hq44lgFjaOxxHZqiU
+	+r5RsZTYcAI9bYcnzjgSAOnRmtbA=
+X-Google-Smtp-Source: AGHT+IFCbSZTXAOHJScz3jShbtoC55XaWETe6KCUxwT/Fq9CLf8JLid4BoIIEkr2VsAivDhAk3kDfg+Q5MIIOdO5iyI=
+X-Received: by 2002:a17:906:c4d5:b0:aa5:392a:f5a7 with SMTP id
+ a640c23a62f3a-aa581066f35mr1161420066b.57.1732980987180; Sat, 30 Nov 2024
+ 07:36:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: Wislist for Linux from the mold linker's POV
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Rui Ueyama <rui314@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
- Florian Weimer <fw@deneb.enyo.de>
-References: <CACKH++baPUaoQQhL0+qcc_DzX7kGcmAOizgfaCQ8gG=oBKDDYw@mail.gmail.com>
- <87ttbrs1c5.fsf@mid.deneb.enyo.de>
- <CACKH++br0qCHhxsy1kuyK29OB_bgME3FUXA_XepRL=7FYXOvQA@mail.gmail.com>
- <2c33be3f-8c41-48f1-a6ad-b4ea00ec515f@nh2.me>
- <20241129181244.GA11702@mit.edu>
-Content-Language: en-US
-From: =?UTF-8?Q?Niklas_Hamb=C3=BCchen?= <mail@nh2.me>
-In-Reply-To: <20241129181244.GA11702@mit.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241130115355.3316160-1-guoren@kernel.org> <CAJF2gTQhfr-wsj2VZwwP7sWq=yp9HtT_kzzr68xh1VpKLSbybQ@mail.gmail.com>
+In-Reply-To: <CAJF2gTQhfr-wsj2VZwwP7sWq=yp9HtT_kzzr68xh1VpKLSbybQ@mail.gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Sat, 30 Nov 2024 23:36:15 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRcaZhHdETFk9KbL1rUdO-U4dX8Ydta7ViAUQ3unrbScg@mail.gmail.com>
+Message-ID: <CAJF2gTRcaZhHdETFk9KbL1rUdO-U4dX8Ydta7ViAUQ3unrbScg@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Fixup boot failure when CONFIG_RT_MUTEXES=y
+To: paul.walmsley@sifive.com, palmer@dabbelt.com, guoren@kernel.org, 
+	bjorn@rivosinc.com, conor@kernel.org, leobras@redhat.com, 
+	peterz@infradead.org, parri.andrea@gmail.com, will@kernel.org, 
+	longman@redhat.com, boqun.feng@gmail.com, arnd@arndb.de, 
+	alexghiti@rivosinc.com
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Guo Ren <guoren@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ted,
+On Sat, Nov 30, 2024 at 8:02=E2=80=AFPM Guo Ren <guoren@kernel.org> wrote:
+>
+> On Sat, Nov 30, 2024 at 7:54=E2=80=AFPM <guoren@kernel.org> wrote:
+> >
+> > From: Guo Ren <guoren@linux.alibaba.com>
+> >
+> > When CONFIG_RT_MUTEXES=3Dy, mutex_lock->rt_mutex_try_acquire would
+> Correct: CONFIG_DEBUG_RT_MUTEXES=3Dy
+Abandoned.
 
-On 2024-11-29 19:12, Theodore Ts'o wrote:
-> It's not actually an fsync() in the close case).  We initiate
-> writeback, but we don't actually wait for the writes to complete on
-> the close().  [..]  But in the case where the
-> application programmer is too lazy to call fsync(2), the delayed
-> completion of the transaction complete is the implicit commit, and
-> nothing is bloced behind it.  (See below for more details.)
-Then I actually have a question for you, as it seems I do have a situation where the close-without-rename blocks the userspace application's `close(2)` on ext4.
+Here is the RESEND PATCH:
+https://lore.kernel.org/linux-riscv/20241130153310.3349484-1-guoren@kernel.=
+org/
 
-I have program which, when writing files, uses
+>
+> > change from rt_mutex_cmpxchg_acquire to rt_mutex_slowtrylock():
+> >         raw_spin_lock_irqsave(&lock->wait_lock, flags);
+> >         ret =3D __rt_mutex_slowtrylock(lock);
+> >         raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
+> >
+> > Because queued_spin_#ops to ticket_#ops is changed one by one by
+> > jump_label, raw_spin_lock/unlock would cause a deadlock during the
+> > changing.
+> >
+> > That means in arch/riscv/kernel/jump_label.c:
+> > 1.
+> > arch_jump_label_transform_queue() ->
+> > mutex_lock(&text_mutex); +-> raw_spin_lock  -> queued_spin_lock
+> >                          |-> raw_spin_unlock -> queued_spin_unlock
+> > patch_insn_write -> change the raw_spin_lock to ticket_lock
+> > mutex_unlock(&text_mutex);
+> > ...
+> >
+> > 2. /* Dirty the lock value */
+> > arch_jump_label_transform_queue() ->
+> > mutex_lock(&text_mutex); +-> raw_spin_lock -> *ticket_lock*
+> >                          |-> raw_spin_unlock -> *queued_spin_unlock*
+> >                           /* BUG: ticket_lock with queued_spin_unlock *=
+/
+> > patch_insn_write  ->  change the raw_spin_unlock to ticket_unlock
+> > mutex_unlock(&text_mutex);
+> > ...
+> >
+> > 3. /* Dead lock */
+> > arch_jump_label_transform_queue() ->
+> > mutex_lock(&text_mutex); +-> raw_spin_lock -> ticket_lock /* deadlock! =
+*/
+> >                          |-> raw_spin_unlock -> ticket_unlock
+> > patch_insn_write -> change other raw_spin_#op -> ticket_#op
+> > mutex_unlock(&text_mutex);
+> >
+> > So, the solution is to disable mutex usage of
+> > arch_jump_label_transform_queue() during early_boot_irqs_disabled, just
+> > like we have done for stop_machine.
+> >
+> > Reported-by: Conor Dooley <conor@kernel.org>
+> > Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+> > Signed-off-by: Guo Ren <guoren@kernel.org>
+> > Fixes: ab83647fadae ("riscv: Add qspinlock support")
+> > Link: https://lore.kernel.org/linux-riscv/CAJF2gTQwYTGinBmCSgVUoPv0_q4E=
+Pt_+WiyfUA1HViAKgUzxAg@mail.gmail.com/T/#mf488e6347817fca03bb93a7d34df33d86=
+15b3775
+> > Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> > Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > ---
+> >  arch/riscv/kernel/jump_label.c | 12 +++++++++---
+> >  1 file changed, 9 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_la=
+bel.c
+> > index 6eee6f736f68..654ed159c830 100644
+> > --- a/arch/riscv/kernel/jump_label.c
+> > +++ b/arch/riscv/kernel/jump_label.c
+> > @@ -36,9 +36,15 @@ bool arch_jump_label_transform_queue(struct jump_ent=
+ry *entry,
+> >                 insn =3D RISCV_INSN_NOP;
+> >         }
+> >
+> > -       mutex_lock(&text_mutex);
+> > -       patch_insn_write(addr, &insn, sizeof(insn));
+> > -       mutex_unlock(&text_mutex);
+> > +       if (early_boot_irqs_disabled) {
+> > +               riscv_patch_in_stop_machine =3D 1;
+> > +               patch_insn_write(addr, &insn, sizeof(insn));
+> > +               riscv_patch_in_stop_machine =3D 0;
+> > +       } else {
+> > +               mutex_lock(&text_mutex);
+> > +               patch_insn_write(addr, &insn, sizeof(insn));
+> > +               mutex_unlock(&text_mutex);
+> > +       }
+> >
+> >         return true;
+> >  }
+> > --
+> > 2.40.1
+> >
+>
+>
+> --
+> Best Regards
+>  Guo Ren
 
-    openat(..., O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC)
 
-In `strace -T`, writing 1 GiB to a file in an empty directory, it shows
 
-    close(3<output.bin>) = 0 <0.000005>
-
-but in a directory where `file2` already exists, it takes 2.5 seconds:
-
-    close(3<output.bin>) = 0 <2.527808>
-
-Is that expected?
-
-Repro:
-
-    time python -c 'with open("output.bin", "wb") as f: f.write(b"a" * (1024 * 1024 * 1024))'
-
-The first run is fast, subsequent runs are slow; `rm output.bin` makes it fast again.
-
-Environment: Linux 6.6.33 x86_64, mount with `ext4 (ro,relatime,errors=remount-ro)`
-> But yes, the reason behind this is applications such as tuxracer
-Ahah glorious, I didn't know that.
-"But boss, the new kernel reduces global server throughput by 10x..." -- "Whatever the cost, my tuxracer high score MUST NOT BE LOST."
-
-> In essence, file system developers are massively outnumbered by
-> application programs, and for some reason as a class application
-> programmers don't seem to be very careful about data corruption
-> compared to file system developers --- and users *always* blame the
-> file system developers.
-Personally (as an application programmer) I would probably prefer the old behaviour, because now as a correct application it is difficult to opt out of the performance penalty, and understanding your own performance and benchmarking becomes ever more complex.
-Writing fast apps that do file processing with intermediate files now requires inspecting which FS we're on and what their mount options, and implementing "quirks" style workarounds like "rm + rename instead of just rename".
-
-But I equally relate to the frustration of users that lost files, and I can understand why you added this.
-
-One can also blame the POSIX API for this to some extent, as it doesn't make it easy for the application programmer to do the right thing.
-
-AppDev:    How do I write a file?
-Posix:     write() + close().
-AppDev:    Really?
-Posix:     Actually, no. You also need to fsync() if you care about the data.
-AppDev:    OK I added it, good?
-Posix:     Actually, no. You also need to fsync() the parent dir if you care about the data and the file is new.
-AppDev:    How many more surprise steps will there be?
-Fsyncgate: Hi
-
-I'm wondering if there's a way out of this, to make the trade-offs less global and provide an opt-out.
-(As an application programmer I can't ask my users to enable `noauto_da_alloc`, because who knows what other applications they run.)
-Maybe an `open(O_I_READ_THE_DOCS)` + fcntl flag, which disables wrong-application heuristics?
-It should probably have a more technical name.
-
-I realise this is fighting complexity with somewhat more complexity, but maybe buffering-by-default-and-fsync-for-durability was the wrong default all along, and close-is-durable-by-default-and-there-is-and-opt-out would be the better model; not sure.
-
-Niklas
+--=20
+Best Regards
+ Guo Ren
 
