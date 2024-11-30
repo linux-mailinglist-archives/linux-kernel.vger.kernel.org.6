@@ -1,113 +1,325 @@
-Return-Path: <linux-kernel+bounces-426422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804C49DF2D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:11:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE789DF2D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4487E162512
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:11:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D4ED162D65
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049421AA1EF;
-	Sat, 30 Nov 2024 19:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocn6HNVF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96D61AA1F2;
+	Sat, 30 Nov 2024 19:22:30 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FC8132103;
-	Sat, 30 Nov 2024 19:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7073078289
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 19:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732993906; cv=none; b=UAE2VpJDfele7OUepIijjJ5O/Vr7k6HaHhPEcrxryv1wHsNgzVDDtWn+8tMcOjl7FJnKXNSW2oGdT0Oe+ZkiV3g8GtcpM6suxgGnhX2RcWCn7Fp/zSL08FqmO7D1DR2DUtHqnvrKXtd/5VU70LkEkNvsin2HIdqYEdkJKrUAyWg=
+	t=1732994550; cv=none; b=mr6MC6SKdvcrQgWM4tYJqiSIJNWw4Ssn0ph+RUStJJHieKtl3GtNeUBCXvY/qbDakCFme4coB5PWVcH+D9MtYMImoGdq5p+YH2hLMtnOOWFjblTMVhGot1t6EQSehbnHEyMiCx75uXYOvzzvKRAwvuPyFn18NBkyacV2ahtxkkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732993906; c=relaxed/simple;
-	bh=BpVgzT7FdWl77Qo9oj7U6K3hkOGDi2LgFiUZtBKX5Pc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ATex9TnXuPn6VCj0rRvX3dKFss+KzAnZp8Y9WNureARvZkdP50qtAA2THc+FmTq7h/CrnxIrfRSplE+fOxYwYEhuz5fvvrrHdnmUkWCEUnFKdq5Ks38ddSzz1qd15E58y5ajTSuop6vKhnIu0jHH0IQevNwWv5h3CP+e8WQBRPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocn6HNVF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 212B6C4CECC;
-	Sat, 30 Nov 2024 19:11:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732993906;
-	bh=BpVgzT7FdWl77Qo9oj7U6K3hkOGDi2LgFiUZtBKX5Pc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ocn6HNVF5qnC5X206ebpTgt3GxrbhDNQlsB8PX47JALwajsjHqJ9AsFCiSgvjuzuT
-	 5AUugAV9JY6DOoR/Uz5W/61L8MyXBJGKymbg//5BkvNBR9Af9u2+tYCkLRg2RXu/G/
-	 GvZiMbmGpYtK67Om5kPV0skPMbwy8if/LJpb9fDrqlfayLWfqGqPLMW4oq9DWcyMia
-	 v2eqJu8l0AIjbKsLPr4IGu2r1m+sfmO8WR5Qfx3capsP24JdRfLtxmZPN6aVqBnFeP
-	 Dk8E6HYriOH/vxMiZ3LwPGMdPdaK7CdapUxh3U39xwvU/1/P/3n4GdcD3Qt1MMM6P8
-	 G1OuZBSm7zHjA==
-Date: Sat, 30 Nov 2024 19:11:38 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Ranquet <granquet@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] iio: adc: ad7173: add calibration support
-Message-ID: <20241130191138.6305f23c@jic23-huawei>
-In-Reply-To: <20241127-ad411x_calibration-v2-1-66412dac35aa@baylibre.com>
-References: <20241127-ad411x_calibration-v2-0-66412dac35aa@baylibre.com>
-	<20241127-ad411x_calibration-v2-1-66412dac35aa@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732994550; c=relaxed/simple;
+	bh=31/CFZJlEL6qa7SlVx8LTH8YQhk/9E3WSjuzplrxkgg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MXOsPdMnpE9M4NnFIkC2I/TnSIrA2IiM82YuuiXyWyNzLkwmdWxX1YTIjFOreD9EFaNXX+cKMf+EOZIOk0nbc+C5jf50YcOjg5H+HEj0y3gOc12zQcDpFS/T9PPRu4+RTUyJYW50UZVu8H3EgOy1NM6rW6emWI9QwERcnnO77Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7cf41b54eso54242805ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 11:22:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732994547; x=1733599347;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=25b4GeI0ihUnJKqCXa6ULDLb7C7s6hytPp3kKo7gqYA=;
+        b=DHGmK88kAdyToYzU/qjHE3nKhmMPUl/6122mHFZQBhtYtJ3FwaRUkN5SINVEeN40S6
+         IThpKpmJDouVPOd2x9C4nfZJav1rEAtFYeHAZ38DL6WZDmnC0D1uycjzAgRuokTnUz0j
+         45hVFakzwmN7z0KHbi26PeAp81tSEKv5eHaRRa8tc/jg6Ra7MRXYWHRd1ZWH43dAvrX0
+         cubQzpB9RovHEvgnF30JBgsnkpJOc0aFC46ODWkEO31AECqNoB9X5ts6SN8QFzsNN1sx
+         kP1sYEUzh6Qv6EwbQ+BCyMz/WnxYzadtFBXuJ8uuuL5h08WQp7Tz+QDXg9R5X21jS9xM
+         T+AA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeCRdnZztwXc5ipFIukIidsavCFyn+PZdtNZN5xmfakJkm2kedTLmgiOULAXgUwFfvKeKf8m8x3ndIaWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFUAX1/EH5z721O0IZnpTZIFDBtCdUDMRwQDMICsO7V+Xzafcx
+	hySS5jhrKENfL0UEt8MTxjYX0xY/IUH4MEbAxN++T+u1a97BJVjfT3gbyGKrDKBszp88qLX3bYo
+	r2eXJAVwA6byydrBTH2RtXU/V4xz0N5rmLFLZQvOybD9U9vIaqhKZwx8=
+X-Google-Smtp-Source: AGHT+IEr2049YLIAJA3B/LRrjfhDvbrO1YvkdyhX6qWhqbv9n0J85JObyoYfM8NTB9Rc4ceSSfV6DyfigqUh+RoMqCYL9L/Pc7MB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1d9a:b0:3a7:d7dd:e70f with SMTP id
+ e9e14a558f8ab-3a7d7dde9dcmr63988935ab.12.1732994547648; Sat, 30 Nov 2024
+ 11:22:27 -0800 (PST)
+Date: Sat, 30 Nov 2024 11:22:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674b65f3.050a0220.253251.00e1.GAE@google.com>
+Subject: [syzbot] [block?] possible deadlock in elevator_disable
+From: syzbot <syzbot+dbad16606916438a362a@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 27 Nov 2024 10:06:13 +0100
-Guillaume Ranquet <granquet@baylibre.com> wrote:
+Hello,
 
-> The ad7173 family of chips has up to four calibration modes.
-> 
-> Internal zero scale: removes ADC core offset errors.
-> Internal full scale: removes ADC core gain errors.
-> System zero scale: reduces offset error to the order of channel noise.
-> System full scale: reduces gain error to the order of channel noise.
-> 
-> All voltage channels will undergo an internal zero/full scale
-> calibration at bootup.
-> 
-> System zero/full scale can be done after bootup using the newly created
-> iio interface 'sys_calibration' and 'sys_calibration_mode'
-> 
-> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+syzbot found the following issue on:
+
+HEAD commit:    7eef7e306d3c Merge tag 'for-6.13/dm-changes' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17c2cf5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8df9bf3383f5970
+dashboard link: https://syzkaller.appspot.com/bug?extid=dbad16606916438a362a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ea7fc4bd274d/disk-7eef7e30.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2b75212b0174/vmlinux-7eef7e30.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f1ab50706485/bzImage-7eef7e30.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dbad16606916438a362a@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-syzkaller-09567-g7eef7e306d3c #0 Not tainted
+------------------------------------------------------
+syz.3.433/7118 is trying to acquire lock:
+ffff888025a200b8 (&eq->sysfs_lock){+.+.}-{4:4}, at: elevator_exit block/elevator.c:158 [inline]
+ffff888025a200b8 (&eq->sysfs_lock){+.+.}-{4:4}, at: elevator_disable+0xd3/0x3f0 block/elevator.c:674
+
+but task is already holding lock:
+ffff8880256fdde0 (&q->sysfs_lock){+.+.}-{4:4}, at: blk_mq_elv_switch_none block/blk-mq.c:4847 [inline]
+ffff8880256fdde0 (&q->sysfs_lock){+.+.}-{4:4}, at: __blk_mq_update_nr_hw_queues block/blk-mq.c:4925 [inline]
+ffff8880256fdde0 (&q->sysfs_lock){+.+.}-{4:4}, at: blk_mq_update_nr_hw_queues+0x3fa/0x1ae0 block/blk-mq.c:4985
+
+which lock already depends on the new lock.
 
 
->  static const struct iio_chan_spec ad7173_temp_iio_channel_template = {
-> @@ -1213,6 +1329,7 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
->  	struct iio_chan_spec *chan_arr, *chan;
->  	unsigned int ain[AD7173_NO_AINS_PER_CHANNEL], chan_index = 0;
->  	int ref_sel, ret, num_channels;
-> +	u8 *calib_mode;
->  
->  	num_channels = device_get_child_node_count(dev);
->  
-> @@ -1240,8 +1357,14 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
->  	if (!chans_st_arr)
->  		return -ENOMEM;
->  
-> +	calib_mode = devm_kcalloc(dev, st->num_channels, sizeof(*st->syscalib_mode),
-> +				  GFP_KERNEL);
-As it is per channel, can we put it in struct ad7173_channel?
+the existing dependency chain (in reverse order) is:
 
-This driver already has a lot of small allocations. Avoiding an extra one would nice!
+-> #5 (&q->sysfs_lock){+.+.}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       blk_mq_elv_switch_none block/blk-mq.c:4847 [inline]
+       __blk_mq_update_nr_hw_queues block/blk-mq.c:4925 [inline]
+       blk_mq_update_nr_hw_queues+0x3fa/0x1ae0 block/blk-mq.c:4985
+       nbd_start_device+0x16c/0xaa0 drivers/block/nbd.c:1413
+       nbd_start_device_ioctl drivers/block/nbd.c:1464 [inline]
+       __nbd_ioctl drivers/block/nbd.c:1539 [inline]
+       nbd_ioctl+0x5dc/0xf40 drivers/block/nbd.c:1579
+       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> +	if (!calib_mode)
-> +		return -ENOMEM;
-> +
->  	indio_dev->channels = chan_arr;
->  	st->channels = chans_st_arr;
-> +	st->syscalib_mode = calib_mode;
->  
->  	if (st->info->has_temp) {
->  		chan_arr[chan_index] = ad7173_temp_iio_channel_template;
-> 
+-> #4 (&q->q_usage_counter(io)#53){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       bio_queue_enter block/blk.h:75 [inline]
+       blk_mq_submit_bio+0x1536/0x23a0 block/blk-mq.c:3092
+       __submit_bio+0x2c6/0x560 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+       submit_bh fs/buffer.c:2819 [inline]
+       block_read_full_folio+0x93b/0xcd0 fs/buffer.c:2446
+       filemap_read_folio+0x14b/0x630 mm/filemap.c:2366
+       filemap_update_page mm/filemap.c:2450 [inline]
+       filemap_get_pages+0x17af/0x2540 mm/filemap.c:2571
+       filemap_read+0x45c/0xf50 mm/filemap.c:2646
+       blkdev_read_iter+0x2d8/0x430 block/fops.c:767
+       new_sync_read fs/read_write.c:484 [inline]
+       vfs_read+0x991/0xb70 fs/read_write.c:565
+       ksys_read+0x18f/0x2b0 fs/read_write.c:708
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+-> #3 (mapping.invalidate_lock#2){.+.+}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
+       filemap_invalidate_lock_shared include/linux/fs.h:873 [inline]
+       filemap_fault+0x6e8/0x1950 mm/filemap.c:3332
+       __do_fault+0x135/0x460 mm/memory.c:4907
+       do_shared_fault mm/memory.c:5386 [inline]
+       do_fault mm/memory.c:5460 [inline]
+       do_pte_missing mm/memory.c:3979 [inline]
+       handle_pte_fault+0x1140/0x68a0 mm/memory.c:5801
+       __handle_mm_fault mm/memory.c:5944 [inline]
+       handle_mm_fault+0x1053/0x1ad0 mm/memory.c:6112
+       faultin_page mm/gup.c:1187 [inline]
+       __get_user_pages+0x1c82/0x49e0 mm/gup.c:1485
+       __get_user_pages_locked mm/gup.c:1751 [inline]
+       faultin_page_range+0x4e7/0x850 mm/gup.c:1975
+       madvise_populate mm/madvise.c:951 [inline]
+       do_madvise+0x6e5/0x4d10 mm/madvise.c:1681
+       __do_sys_madvise mm/madvise.c:1700 [inline]
+       __se_sys_madvise mm/madvise.c:1698 [inline]
+       __x64_sys_madvise+0xa6/0xc0 mm/madvise.c:1698
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&mm->mmap_lock
+){++++}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __might_fault+0xc6/0x120 mm/memory.c:6751
+       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
+       _copy_from_user+0x2a/0xc0 lib/usercopy.c:18
+       copy_from_user include/linux/uaccess.h:212 [inline]
+       __blk_trace_setup kernel/trace/blktrace.c:626 [inline]
+       blk_trace_ioctl+0x1ad/0x9a0 kernel/trace/blktrace.c:740
+       blkdev_ioctl+0x40c/0x6a0 block/ioctl.c:682
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (
+&q->debugfs_mutex){+.+.}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       blk_mq_exit_sched+0x106/0x4a0 block/blk-mq-sched.c:531
+       elevator_exit block/elevator.c:159 [inline]
+       elevator_disable+0xde/0x3f0 block/elevator.c:674
+       blk_mq_elv_switch_none block/blk-mq.c:4861 [inline]
+       __blk_mq_update_nr_hw_queues block/blk-mq.c:4925 [inline]
+       blk_mq_update_nr_hw_queues+0x646/0x1ae0 block/blk-mq.c:4985
+       nbd_start_device+0x16c/0xaa0 drivers/block/nbd.c:1413
+       nbd_start_device_ioctl drivers/block/nbd.c:1464 [inline]
+       __nbd_ioctl drivers/block/nbd.c:1539 [inline]
+       nbd_ioctl+0x5dc/0xf40 drivers/block/nbd.c:1579
+       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (
+&eq->sysfs_lock){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       elevator_exit block/elevator.c:158 [inline]
+       elevator_disable+0xd3/0x3f0 block/elevator.c:674
+       blk_mq_elv_switch_none block/blk-mq.c:4861 [inline]
+       __blk_mq_update_nr_hw_queues block/blk-mq.c:4925 [inline]
+       blk_mq_update_nr_hw_queues+0x646/0x1ae0 block/blk-mq.c:4985
+       nbd_start_device+0x16c/0xaa0 drivers/block/nbd.c:1413
+       nbd_start_device_ioctl drivers/block/nbd.c:1464 [inline]
+       __nbd_ioctl drivers/block/nbd.c:1539 [inline]
+       nbd_ioctl+0x5dc/0xf40 drivers/block/nbd.c:1579
+       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &eq->sysfs_lock --> &q->q_usage_counter(io)#53 --> &q->sysfs_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&q->sysfs_lock);
+                               lock(&q->q_usage_counter(io)#53);
+                               lock(&q->sysfs_lock);
+  lock(&eq->sysfs_lock);
+
+ *** DEADLOCK ***
+
+5 locks held by syz.3.433/7118:
+ #0: ffff8880258dc198 (&nbd->config_lock){+.+.}-{4:4}, at: nbd_ioctl+0x13c/0xf40 drivers/block/nbd.c:1572
+ #1: ffff8880258dc0d8 (&set->tag_list_lock){+.+.}-{4:4}, at: blk_mq_update_nr_hw_queues+0xc2/0x1ae0 block/blk-mq.c:4984
+ #2: ffff8880256fd8b0 (&q->q_usage_counter(io)#52){+.+.}-{0:0}, at: nbd_start_device+0x16c/0xaa0 drivers/block/nbd.c:1413
+ #3: ffff8880256fd8e8 (&q->q_usage_counter(queue)#36){+.+.}-{0:0}, at: nbd_start_device+0x16c/0xaa0 drivers/block/nbd.c:1413
+ #4: ffff8880256fdde0 (&q->sysfs_lock){+.+.}-{4:4}, at: blk_mq_elv_switch_none block/blk-mq.c:4847 [inline]
+ #4: ffff8880256fdde0 (&q->sysfs_lock){+.+.}-{4:4}, at: __blk_mq_update_nr_hw_queues block/blk-mq.c:4925 [inline]
+ #4: ffff8880256fdde0 (&q->sysfs_lock){+.+.}-{4:4}, at: blk_mq_update_nr_hw_queues+0x3fa/0x1ae0 block/blk-mq.c:4985
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 7118 Comm: syz.3.433 Not tainted 6.12.0-syzkaller-09567-g7eef7e306d3c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+ elevator_exit block/elevator.c:158 [inline]
+ elevator_disable+0xd3/0x3f0 block/elevator.c:674
+ blk_mq_elv_switch_none block/blk-mq.c:4861 [inline]
+ __blk_mq_update_nr_hw_queues block/blk-mq.c:4925 [inline]
+ blk_mq_update_nr_hw_queues+0x646/0x1ae0 block/blk-mq.c:4985
+ nbd_start_device+0x16c/0xaa0 drivers/block/nbd.c:1413
+ nbd_start_device_ioctl drivers/block/nbd.c:1464 [inline]
+ __nbd_ioctl drivers/block/nbd.c:1539 [inline]
+ nbd_ioctl+0x5dc/0xf40 drivers/block/nbd.c:1579
+ blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5d32580809
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5d333ec058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f5d32745fa0 RCX: 00007f5d32580809
+RDX: 0000000000000000 RSI: 000000000000ab03 RDI: 0000000000000003
+RBP: 00007f5d325f393e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f5d32745fa0 R15: 00007ffd8ba200a8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
