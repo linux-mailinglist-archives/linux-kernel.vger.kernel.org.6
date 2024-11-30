@@ -1,229 +1,203 @@
-Return-Path: <linux-kernel+bounces-426186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7299DEFFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:50:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BDF9DF00E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 12:11:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FFFE163719
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:11:48 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D611816A94B;
+	Sat, 30 Nov 2024 11:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="F4ps5g9z";
+	dkim=permerror (0-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="0emyQyRX"
+Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [81.169.146.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 912EAB2164A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:50:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14A7153BEE;
-	Sat, 30 Nov 2024 10:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IJeS6ACo"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3391C6A3
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732963820; cv=none; b=OC4gyfaOTvvhi9BXElDD8OpE4l6+xki4TQ5Wu1eXqmFdmUTw71im6AfJACuEnnrt6WotzuDh5xQRJBdE4UQcSOWXmPURDevvnu5kgDQ+Vuftz9ltMTysPMsY8DimZDPwQ4w0gyOkqrBD6k5zV27x3S0qkj0g5WapmEmDVTXEeVQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732963820; c=relaxed/simple;
-	bh=avIiZnETVH/3VkupZbAJg21hJTgUU1spUjS8F/J34Nc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TWbHrmHOhhmxEVZZe/LaOoVlvtFzCoqZ/3WctskPK+R84aMgeddrhwEbc8iaaXjhiljMu5gdYKXRxrsgUMehURed2aBle6Ac17tALAdxhGCjKIWEnoaojdCF6s6T9QPQ0NPnVRrz9rdXyeB2w+A/Zvn3pNDTl6HqHR8g8ONVd2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IJeS6ACo; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e9ff7a778cso2714531a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:50:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732963817; x=1733568617; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NJ4q1dNF8qJCePii0NxxAZvBJ0pPmCKcd6A67qAPMcE=;
-        b=IJeS6ACodKFuCUriySGuWoDWRWKr59fpl6oOG6iLJrQzjDjEfs9YTLq3BsEpUR7ysU
-         rpoS6mN4BuCI0Ns3+4zkzaJgT6DbQsUD9k+99W2ooYej74vLI8DGTbd6q1M2xkmtF6b8
-         Am/aryYRIi4eGZgy7KXUHdNSL8NVthKNoLrF0GrzpK/xH8UPRXD7FVbTNVrj3UmsowB+
-         0mmanN5CZ32O7D1OlGoAB950X/MuuhPns/ZPVD3QSUAVFbQMiU3yP+qJFNTBC89+xzE0
-         XUTc8LWM4pBSRrAlG6/j7CwvUW9d4cEt3VlD/8dNEr1xh8VTDx3wv753ez8YeqmGqvsE
-         5Q0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732963817; x=1733568617;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NJ4q1dNF8qJCePii0NxxAZvBJ0pPmCKcd6A67qAPMcE=;
-        b=hi6BizJZUMUbzt9rPW0Rj8H3vl+YGX3CPC78B/EAm1tOojN2S/o20KONxCP4t9xNX7
-         ONzZ5H4ihgYaVD1xKPAD/tJlhY3fULjxTGDRR9Ffb9A21XFdAnmcN8F9kBqgqBCSCyO3
-         jiOP+yLkH66Qb8ikVrJFh/EQiPTIE+VAELZgyqMgwmAvdba4jlfYvXIHVOr66zhqa5LH
-         JGjnsqbS8LAzk1vArazzj2pz7cIZFJj0YEdM0IgL5IM38e2T+nYgitANZqWdSmhNP6pk
-         7YFHojASBpUP0/fysfkmwFfuCrNEUQMhwy3p6bNsGenVWiL/IzTO5Cr6VGdV9P2qTsS7
-         trlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSGXA7RqoceGR9J+yCvYhb0eW112V9xNzd4X5m3jYx7TiEwfViMpA/BB8cKtejA9FUwH/8T8cpIeYR1Eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6goRuu5xX+ZWWNK6NJBpL+YQcRBxWxYiLgbU6KYaw3k2Zd0o1
-	vJFJZn9Mtdknds3SD6FFlDI7KqA96TxalSJPkD4896cqKMXQsuN0UOsG40iZxuugyu7koxCUnOc
-	Xw3cDI/+C4wNcGNlQfg31v1oCGfzJ8aQF59pUFA==
-X-Gm-Gg: ASbGncuuH7+FivrYnXwmKB9gYPO36Hg2pxBoNyo1VImDF6EiXwMllVHCE+W5wwnHrb7
-	ICGxFrPsR8gj03mHbJ1Jfz5pen5J+NRJObk63H6n55dU55c2I1YcegiGuHAlV
-X-Google-Smtp-Source: AGHT+IFE8Gj/VCLODC+B+5FYP1MbAu4KK9L0LthS+VPwlos1nkSUxVMBl0n1EuwSPcjV9dUTkFTycnH1T2TzjaCGm1Y=
-X-Received: by 2002:a17:90b:8f:b0:2ee:4b72:fb47 with SMTP id
- 98e67ed59e1d1-2ee4b72fcfbmr10868891a91.6.1732963817494; Sat, 30 Nov 2024
- 02:50:17 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE4613C3F2;
+	Sat, 30 Nov 2024 11:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732965099; cv=pass; b=qFCql+7VF0nVO8xInN11+JAuz5Vx8mBFd9iegA9p8dqUILzXmuNAVkaVCa2vxxXbYB2YEowf/qhJsFdNge/CpuZ0Zl8tEc4EBXudpZVQpU0GsSEmD9dBlgpLTiOGCktVKn26uGAQknq2ooeW4KpDOgqy2EWrgF5y5hYLL4rgyYg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732965099; c=relaxed/simple;
+	bh=Lal23WwM3grnfFq2PGxDkv9fm1BPR93AVPi/DnsQIdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZJP/Eq8Ckre3Lc8KegnD7tsEUA2SEhEAGHL2jR0EuxEGcNno6p/GJbigayyVzPAZNaXodDxVrbbpSlKKgFzre3v0x1bQAJb2G4K1ol5X/ID8DZeGz0KyXYwfQ19BF5vIkWZZh8kN7XZxJg1uJh0ZC86bFBQ5mrdiuXT+p5TaLc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gerhold.net; spf=none smtp.mailfrom=gerhold.net; dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b=F4ps5g9z; dkim=permerror (0-bit key) header.d=gerhold.net header.i=@gerhold.net header.b=0emyQyRX; arc=pass smtp.client-ip=81.169.146.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gerhold.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=gerhold.net
+ARC-Seal: i=1; a=rsa-sha256; t=1732964368; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=nA9HgE1GTTLFq+gFYvOa3LO+b1/9gHmSzEs/8SHxOSXl3aIqVtZq2MyMTin425T19I
+    le2ZK2YneM/gfACB/guYDPRDDNEtff8KP95WXy8f3uygvtyEM2sBC0q5k+VTPnmDu4PF
+    KIYagSfCovjKowBZdG1a4Qgv8SkERWBMEDx57zY2buMBa40xlkCX/qzHyWwi4kjOD/d5
+    Z6jgPQhXZAWZm5LS/wQOAgv+wyucFvvsj0ZhSf2PdAhHDKM8wTIEgGcK9DrmFejENLh7
+    YYuO6RGC//Mgsq4IJwuQKYGahE2Sqw0ssjIAmAeIF1LWwkuyFepucX9JEJ5H9Rr9t/4K
+    EuJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1732964368;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=IuCKuBhmqhPKmuHwQ+z2MxXyeSZUC4dD8RoNANFUEEc=;
+    b=AF551vqk6G7SsKD5AnRQ+gKog0efiqSe1cgWTTeBPfSd7md7jnGIbaQo2ytlkfvIUZ
+    uGW2R2Xc55ALCI+W9rdmFHmn2Owd3XAACu7qNUEcDIdKkSMW9yht59PKgBJ0Z9ED5ObP
+    7ZrwjMN9hcFU9bmerMmtvDgVbYgjlSuzUhHvSGpsr9JrCGVHMkM8LuyQit9x7ELB+E2E
+    WrNB9qvPC+flQX3YXY9yPGmjTpUTbE9W6/BQYvBecfAzbHNl4AJa9Yp3b14UNgMBss9T
+    lwgMUNcbZP6fp2SGGcqlFpNtycMvS0pyntBfXyFb2io4jR2NcGyFP16YLGRDl/T6Qmzg
+    7Rjw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo03
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1732964368;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=IuCKuBhmqhPKmuHwQ+z2MxXyeSZUC4dD8RoNANFUEEc=;
+    b=F4ps5g9z+rSz1oVv72g0Ae8OHGTT4LBrzolpmsh7yXJYxZXPqIox10yf3VB0eisT3R
+    4aL5mCGM5xyqykRcfavbe+LDAnxwyC9/V+57Sfs0MZHfWETR76bpQR1fpXRVwv269JJZ
+    1YhsFSBVPBP2RiL2VupY5ZaOkvU0z3mXhEdfqVyVfdmg3pKo5z6l7OJejroyf/x2qyiL
+    anp5x0TsnIo9Ts0mTDQAtR3Nha+j3mGe1nOQ+nObTHabA/Zg6khWhwlRLmtFZVqBINAv
+    nV6772ouFx+b9199XdlnHe7LGqBRZjjM/h9RxhHTEalW1GaZvuJD6ZY/QgrkFbJKNqQo
+    VLCw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1732964368;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=IuCKuBhmqhPKmuHwQ+z2MxXyeSZUC4dD8RoNANFUEEc=;
+    b=0emyQyRXg202tsYfiNHGi9fyH2oKrEDYzsb20LzfBlERnlGSnjMywUXrxQ9YxYW+tx
+    RK+fUeLsBzx02E9lmFCQ==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQ7UOGqRde+a0fiL2ZfaQ"
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 51.2.11 AUTH)
+    with ESMTPSA id R9fca90AUAxR7Zu
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Sat, 30 Nov 2024 11:59:27 +0100 (CET)
+Date: Sat, 30 Nov 2024 11:59:26 +0100
+From: Stephan Gerhold <stephan@gerhold.net>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Leo Yan <leo.yan@linux.dev>,
+	Joseph Gates <jgates@squareup.com>,
+	Georgi Djakov <djakov@kernel.org>, Shawn Guo <shawn.guo@linaro.org>,
+	Zac Crosby <zac@squareup.com>,
+	Bastian =?iso-8859-1?Q?K=F6cher?= <git@kchr.de>,
+	Jeremy McNicoll <jeremymc@redhat.com>,
+	Rohit Agarwal <quic_rohiagar@quicinc.com>,
+	Melody Olvera <quic_molvera@quicinc.com>,
+	cros-qcom-dts-watchers@chromium.org,
+	Stephen Boyd <swboyd@chromium.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Martin Botka <martin.botka@somainline.org>,
+	Jonathan Marek <jonathan@marek.ca>, Vinod Koul <vkoul@kernel.org>,
+	Tengfei Fan <quic_tengfan@quicinc.com>,
+	Fenglin Wu <quic_fenglinw@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Alexandru Marc Serdeliuc <serdeliuk@yahoo.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Jun Nie <jun.nie@linaro.org>,
+	Vincent Knecht <vincent.knecht@mailoo.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: Re: [PATCH v2 01/31] arm64: dts: qcom: msm8916: correct sleep clock
+ frequency
+Message-ID: <Z0rvVT98rPMXsTS_@gerhold.net>
+References: <20241130-fix-board-clocks-v2-0-b9a35858657e@linaro.org>
+ <20241130-fix-board-clocks-v2-1-b9a35858657e@linaro.org>
+ <Z0rnRC_BqgkE3w1P@gerhold.net>
+ <al3tckby2jg7imhieehqwemygf6y5csfg7xfjta7alawhwfqv7@6gha46tr3rhx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org> <d690510c-c3c0-4551-bf18-e1b62269c8cc@arm.com>
-In-Reply-To: <d690510c-c3c0-4551-bf18-e1b62269c8cc@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Sat, 30 Nov 2024 11:50:06 +0100
-Message-ID: <CAKfTPtDbAmYkJ9KKzeFa9yJM4psiN6=eYj6ZN7h0gE0zJGWscQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] sched/fair: Rework EAS to handle more cases
-To: Hongyan Xia <hongyan.xia2@arm.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
-	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <al3tckby2jg7imhieehqwemygf6y5csfg7xfjta7alawhwfqv7@6gha46tr3rhx>
+Content-Transfer-Encoding: 7bit
 
-Hi Hongyan,
+On Sat, Nov 30, 2024 at 12:42:24PM +0200, Dmitry Baryshkov wrote:
+>On Sat, Nov 30, 2024 at 11:21:56AM +0100, Stephan Gerhold wrote:
+>> On Sat, Nov 30, 2024 at 03:44:13AM +0200, Dmitry Baryshkov wrote:
+>> > The MSM8916 platform uses PM8916 to provide sleep clock. According to the
+>> > documentation, that clock has 32.7645 kHz frequency. Correct the sleep
+>> > clock definition.
+>> >
+>> > Fixes: f4fb6aeafaaa ("arm64: dts: qcom: msm8916: Add fixed rate on-board oscillators")
+>> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>
+>> Thanks for spotting this! This fix looks good independent of the more
+>> controversial "arm64: dts: qcom: move board clocks to SoC DTSI files"
+>> changes. Maybe move these to a separate series?
+>>
+>> > ---
+>> > arch/arm64/boot/dts/qcom/msm8916.dtsi | 2 +-
+>> > 1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+>> > index 5e558bcc9d87893486352e5e211f131d4a1f67e5..8f35c9af18782aa1da7089988692e6588c4b7c5d 100644
+>> > --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
+>> > +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+>> > @@ -125,7 +125,7 @@ xo_board: xo-board {
+>> > 		sleep_clk: sleep-clk {
+>> > 			compatible = "fixed-clock";
+>> > 			#clock-cells = <0>;
+>> > -			clock-frequency = <32768>;
+>> > +			clock-frequency = <32764>;
+>>
+>> To be precise the PM8916 specification says the sleep clock is "The 19.2
+>> MHz XO divided by 586". Maybe we can actually describe it that way with
+>> a fixed-factor-clock?
+>>
+>> 		sleep_clk: sleep-clk {
+>> 			compatible = "fixed-factor-clock";
+>> 			clocks = <&xo_board>;
+>> 			#clock-cells = <0>;
+>> 			clock-div = <586>;
+>> 			clock-mult = <1>;
+>> 		};
+>
+>I thought about it, but then it's also not complete truth (at least for
+>some of PMICs, don't remember if that's the case for PM8916): there is
+>an external XO and also there is an on-PMIC RC, which is further
+>divided with PMIC actually selecting which source to use as a source for
+>sleep_clk.
+>
 
-On Thu, 28 Nov 2024 at 18:24, Hongyan Xia <hongyan.xia2@arm.com> wrote:
->
-> Hi Vincent,
->
-> On 30/08/2024 14:03, Vincent Guittot wrote:
-> > The current Energy Aware Scheduler has some known limitations which have
-> > became more and more visible with features like uclamp as an example. This
-> > serie tries to fix some of those issues:
-> > - tasks stacked on the same CPU of a PD
-> > - tasks stuck on the wrong CPU.
-> >
-> > Patch 1 fixes the case where a CPU is wrongly classified as overloaded
-> > whereas it is capped to a lower compute capacity. This wrong classification
-> > can prevent periodic load balancer to select a group_misfit_task CPU
-> > because group_overloaded has higher priority.
-> >
-> >
-> > Patch 2 creates a new EM interface that will be used by Patch 3
-> >
-> >
-> > Patch 3 fixes the issue of tasks being stacked on same CPU of a PD whereas
-> > others might be a better choice. feec() looks for the CPU with the highest
-> > spare capacity in a PD assuming that it will be the best CPU from a energy
-> > efficiency PoV because it will require the smallest increase of OPP.
-> > This is often but not always true, this policy filters some others CPUs
-> > which would be as efficients because of using the same OPP but with less
-> > running tasks as an example.
-> > In fact, we only care about the cost of the new OPP that will be
-> > selected to handle the waking task. In many cases, several CPUs will end
-> > up selecting the same OPP and as a result having the same energy cost. In
-> > such cases, we can use other metrics to select the best CPU with the same
-> > energy cost. Patch 3 rework feec() to look 1st for the lowest cost in a PD
-> > and then the most performant CPU between CPUs.
-> >
-> > perf sched pipe on a dragonboard rb5 has been used to compare the overhead
-> > of the new feec() vs current implementation.
-> > sidenote: delayed dequeue has been disable for all tests.
-> >
-> > 9 iterations of perf bench sched pipe -T -l 80000
-> >                  ops/sec  stdev
-> > tip/sched/core  13490    (+/- 1.7%)
-> > + patches 1-3   14095    (+/- 1.7%)  +4.5%
-> >
-> >
-> > When overutilized, the scheduler stops looking for an energy efficient CPU
-> > and fallback to the default performance mode. Although this is the best
-> > choice when a system is fully overutilized, it also breaks the energy
-> > efficiency when one CPU becomes overutilized for a short time because of
-> > kworker and/or background activity as an example.
-> > Patch 4 calls feec() everytime instead of skipping it when overutlized,
-> > and fallback to default performance mode only when feec() can't find a
-> > suitable CPU. The main advantage is that the task placement remains more
-> > stable especially when there is a short and transient overutilized state.
-> > The drawback is that the overhead can be significant for some CPU intensive
-> > use cases.
-> >
-> > The overhead of patch 4 has been stressed with hackbench on dragonboard rb5
-> >
-> >                                 tip/sched/core        + patches 1-4
-> >                              Time    stdev         Time    stdev
-> > hackbench -l 5120 -g 1         0.724   +/-1.3%       0.765   +/-3.0% (-5.7%)
-> > hackbench -l 1280 -g 4         0.740   +/-1.1%       0.768   +/-1.8% (-3.8%)
-> > hackbench -l 640  -g 8         0.792   +/-1.3%       0.812   +/-1.6% (-2.6%)
-> > hackbench -l 320  -g 16        0.847   +/-1.4%       0.852   +/-1.8% (-0.6%)
-> >
-> > hackbench -p -l 5120 -g 1      0.878   +/-1.9%       1.115   +/-3.0% (-27%)
-> > hackbench -p -l 1280 -g 4      0.789   +/-2.6%       0.862   +/-5.0% (-9.2%)
-> > hackbench -p -l 640  -g 8      0.732   +/-1.9%       0.801   +/-4.3% (-9.4%)
-> > hackbench -p -l 320  -g 16     0.710   +/-4.7%       0.767   +/-4.9% (-8.1%)
-> >
-> > hackbench -T -l 5120 -g 1      0.756   +/-3.9%       0.772   +/-1.63 (-2.0%)
-> > hackbench -T -l 1280 -g 4      0.725   +/-1.4%       0.737   +/-2.0% (-1.3%)
-> > hackbench -T -l 640  -g 8      0.767   +/-1.5%       0.809   +/-2.6% (-5.5%)
-> > hackbench -T -l 320  -g 16     0.812   +/-1.2%       0.823   +/-2.2% (-1.4%)
-> >
-> > hackbench -T -p -l 5120 -g 1   0.941   +/-2.5%       1.190   +/-1.6% (-26%)
-> > hackbench -T -p -l 1280 -g 4   0.869   +/-2.5%       0.931   +/-4.9% (-7.2%)
-> > hackbench -T -p -l 640  -g 8   0.819   +/-2.4%       0.895   +/-4.6% (-9.3%)
-> > hackbench -T -p -l 320  -g 16  0.763   +/-2.6%       0.863   +/-5.0% (-13%)
-> >
-> > Side note: Both new feec() and current feec() give similar overheads with
-> > patch 4.
-> >
-> > Although the highest reachable CPU throughput is not the only target of EAS,
-> > the overhead can be significant in some cases as shown in hackbech results
-> > above. That being said I still think it's worth the benefit for the stability
-> > of tasks placement and a better control of the power.
-> >
-> >
-> > Patch 5 solves another problem with tasks being stuck on a CPU forever
-> > because it doesn't sleep anymore and as a result never wakeup and call
-> > feec(). Such task can be detected by comparing util_avg or runnable_avg
-> > with the compute capacity of the CPU. Once detected, we can call feec() to
-> > check if there is a better CPU for the stuck task. The call can be done in
-> > 2 places:
-> > - When the task is put back in the runnnable list after its running slice
-> >    with the balance callback mecanism similarly to the rt/dl push callback.
-> > - During cfs tick when there is only 1 running task stuck on the CPU in
-> >    which case the balance callback can't be used.
-> >
-> > This push callback doesn't replace the current misfit task mecanism which
-> > is already implemented but this could be considered as a follow up serie.
-> >
-> >
-> > This push callback mecanism with the new feec() algorithm ensures that
-> > tasks always get a chance to migrate on the best suitable CPU and don't
-> > stay stuck on a CPU which is no more the most suitable one. As examples:
-> > - A task waking on a big CPU with a uclamp max preventing it to sleep and
-> >    wake up, can migrate on a smaller CPU once it's more power efficient.
-> > - The tasks are spread on CPUs in the PD when they target the same OPP.
-> >
-> > This series implements some of the topics discussed at OSPM [1]. Other
-> > topics will be part of an other serie
-> >
-> > [1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
-> >
-> > Vincent Guittot (5):
-> >    sched/fair: Filter false overloaded_group case for EAS
-> >    energy model: Add a get previous state function
-> >    sched/fair: Rework feec() to use cost instead of spare capacity
-> >    sched/fair: Use EAS also when overutilized
-> >    sched/fair: Add push task callback for EAS
-> >
-> >   include/linux/energy_model.h |  18 +
-> >   kernel/sched/fair.c          | 693 +++++++++++++++++++++++------------
-> >   kernel/sched/sched.h         |   2 +
-> >   3 files changed, 488 insertions(+), 225 deletions(-)
-> >
->
-> On second look, I do wonder if this series should be split into
-> individual patches or mini-series. Some of the ideas, like
-> overloaded_groups or calling EAS at more locations rather than just
-> wake-up events, might be easier to review and merge if they are independent.
+This exists on PM8916 as well, but I'm not sure it's worth taking it
+into consideration here. The PM8916 specification says XO "is the source
+of sleep clock when the device is in active and sleep mode". The RC is
+used "during PMIC power-up" and "in active or sleep mode only if other
+sources are unavailable".
 
-The series is almost ready, I was waiting for the support of v6.12 on
-a device like pixel 6 to run some benchmarks but it is not yet
-available publicly at least so I might send the serie without such
-figures. I also wanted to test it with delayed dequeued enabled this
-time unlike previous version:
-https://lore.kernel.org/lkml/20241129161756.3081386-1-vincent.guittot@linaro.org/
+>>
+>> If we keep the fixed-clock with the hardcoded frequency I wonder if we
+>> should put 32765 instead of 32764. If you calculate it exactly it's
+>> slightly closer to 32765 than 32764. :-)
+>>
+>> 	19200000/586 = 32764.505119453926 = ~32765
+>
+>Well, I think according to the most typical rounding rules it is 32764.
+
+I think typically you round up on .5? But it's not even exactly half-way
+at .500 - given that it's .505, I think any rounding function other than
+floor() should round that up to 32765. :-)
+
+Thanks,
+Stephan
 
