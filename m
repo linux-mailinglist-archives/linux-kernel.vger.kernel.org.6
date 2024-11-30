@@ -1,227 +1,144 @@
-Return-Path: <linux-kernel+bounces-426294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 646C99DF157
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:54:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A74F9DF159
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 15:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24288281540
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39432814ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 14:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE59D19EEC2;
-	Sat, 30 Nov 2024 14:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EBE1A072C;
+	Sat, 30 Nov 2024 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="j9ymIdNo"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NES5W6+Z"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A94B146A68
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 14:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802AA19DF4D;
+	Sat, 30 Nov 2024 14:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732978442; cv=none; b=rqTmq0uUjbj7nEX6APCoHwDTDGBzVXbAsJcBP9L3Ow3GqjoslH4FJPT7Lt7LiSWssncSc3IAvkKd9KndH9xJiS+n28szRJt9X2yDcI69uUVZrtuqrTHQm7JQeU7CqqmKJKEQOzog45n+XqaQlyiZetphENDe84n7kAp8EKMU58Y=
+	t=1732978444; cv=none; b=G02fRpNQbDmhVob2i2m7KWRoMBOKDS53VXP/M/DTWMMFT8LbkBgSWs0mJuqnjlSKc7LUEHeEEy2mEsnFhmgO792TL5cHsxDvyaWPxHrv+xAZBA6txT0wj9fh5K8eUJxgJ4WUZ288BvbGrdmOjKtLch8zk89mNQZiVl01mcUBp/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732978442; c=relaxed/simple;
-	bh=KXZ3g46ZGg7f/iC0+oUPjcmJI5u7vEpntocDHxCb0aU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ag9WtomgpBDD5OUJgLAugWocc5+EYNki3KBCKnv2cTQkqcauLYtZfiAC44G57fNcJgANh53rkt0UgiE/pFHCGQzFkOOTv28nGI7kCOfALtVSo6LmxP/xTrVAF4TU9H50WiYmQWHcVUjQbU+VPLWGNBsjSz9FLbkZbBnPE2wB5dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=j9ymIdNo; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434a8b94fb5so16486935e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 06:53:58 -0800 (PST)
+	s=arc-20240116; t=1732978444; c=relaxed/simple;
+	bh=92PhFQce9FtDEUc92I3nyICR45LQNMich6Qadn7I7rs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=at2F70l3amjrcq0BjwiVXtW3kII6+Mbwjb49oPI0mJc7wlYh9/pbPCa26lauajijviLzwrxSxv15FR5jQlH7wMRYDe944Uq1LgF8qfjr+Eiw2GQ6Hyyl2tV/f7b4i/fDVab04MhvpN9mVem0dr7ZOfdVUCjCIPriGtc3vrMsYRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NES5W6+Z; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffe2700e91so23067791fa.2;
+        Sat, 30 Nov 2024 06:54:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732978437; x=1733583237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CpFrrOTLGr3RFQFCUUv1pCgo8CbioVSw3fd+gaG+5uc=;
-        b=j9ymIdNoWgrd9eEZPnsjTw07ZKmmtD0NYPGcZhmm8Ogout+f0/EOqKVNNms3UCx7Od
-         WLPpYf+5aOHuvfN43JgTwFBQWt9VCbWC1vT2HhjvupqujxBF4ii398cHahgYOk5xc5Wq
-         uUtARJ1qmIIPSvYfKn9Abz+WHIKnxeeJ0FrGsCvuZ0o5lVXheR+SswpR1+8aFMluakyK
-         CjEpJ03Rm4tKj/LiAI2KTEeGEuWkAm+HxzK926rUZy73mi73ODrAxeIMHa1eHitleA7d
-         cyyuZIQJ2+g/LelcfxS3nn1oropAfQe/YAoNduZBSupqOislahYm1893kr5wOJZhB6u9
-         DWTw==
+        d=gmail.com; s=20230601; t=1732978441; x=1733583241; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=auyeQ/WJf0LlFGEUDmM1nqoy+rzADdBnKGFsMbkyEUw=;
+        b=NES5W6+Z88sOYkmMD/ITVVSxyWi2VFEqxYfT6jmpCAdFPCiz+uqpe0PuFCC9llHL3c
+         L0+HegVdp1u6tccdFuVVcZJpxp9cS7lrSv8Jh2zn11L8pi0XXAmYlrd7xkyVBdQRLdEZ
+         2ySpmqYQ5RrdfvUKX1f7z7WSSoCfe5eJo5Siw+Et06N9+yz50kC8unIsrLJe/5pfm7Bq
+         Q74Ws5Am1chVs44l9j5NnytyWUy3bsOzpX73fY4rQeHU2EYwrqB7biByBF8hfKH9WJUu
+         WH2FrOzZu3w6h4LOjLZpRgyJjz/gScCVuOUaw3DJzCGULqdSYPFEq0ISW8LF/dqtcwwr
+         Ey9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732978437; x=1733583237;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CpFrrOTLGr3RFQFCUUv1pCgo8CbioVSw3fd+gaG+5uc=;
-        b=mSDJLaPHdXgMrzo+BhTm+mZypHoc/epwOE+i0beZBOkDzvemAWUPQJwfjIF8arnoaA
-         Poo0GVWxo+z7LOL8hFKJaRjsvZeszN33tR7qOAjPmjljEnk8CkHnATuByrC3mT9lL814
-         fjkxqZN0fGYK/Iz35R1DF2y5Am0q9IyK6KmVdRZbiefl7H+QVoR4lZDT9efSamyYKuiV
-         MI8sgfhwCuUqRUFqmPnSp93IuVwWKLFxvd2fTYSimP1dmxUaNIpacz+oYnkIsUUQSJk6
-         799LP926F6uoVTtYnhjNoO+3u+fvpP2wse+yVGNpPwtLRig8QttRCL2+G5sjNt3cxpzn
-         QElg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5F+d1i6ipN/oOOzBWcXaaT2A2UCtoFyN02jut0nRqvpnRhd6xcAPYeH5sMGbl3VTqIMVWQDyYVMdekC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdetPqH6BIpAOHYShYyCJenVugtU3piZCqgeHEfIDhDC/y+CJP
-	vgqaw8qGyiUGpBSYPRumsG5WTaEP228vFAk0tn+VcMrZZzi4dA/U5tu31NvkY1c=
-X-Gm-Gg: ASbGncsRK01iZuUULD6azEA2dwluY+ik1tzohm2+9mHxNfJ7UEEQuqoXCHZA0yO5M2q
-	E28z/jbbACvKUikgsSQtgzmEZmLPJSrxSt3EsDrwx7xyktX4NPjFyDqqJN+U6ado2pjIPZoWGHz
-	E0SGtKs3TSfLK2WeFlDJEw1C1NHxTc8DQqJ6LI0U5mb3mSbk2HFz/1NhtMuSvp21QpVTnIn3vEt
-	172Y3ChSKtpYy+76A9iZZDjR7D+QGrwS7ljpc34rF9wdO39gQ==
-X-Google-Smtp-Source: AGHT+IGrynxoFgzJT6PAs7OFtv48vmNwvaUskq+U4o+wWjvVE477AQcSVTslrt5OwnhmboCvp40VYQ==
-X-Received: by 2002:a05:600c:1c01:b0:434:9d55:620 with SMTP id 5b1f17b1804b1-434afbd337amr103748095e9.11.1732978437237;
-        Sat, 30 Nov 2024 06:53:57 -0800 (PST)
-Received: from localhost ([2a02:8071:b783:6940:7ca4:5604:f5:65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e4a54b71sm1537613f8f.79.2024.11.30.06.53.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 06:53:56 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: Yangbo Lu <yangbo.lu@nxp.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ptp: Switch back to struct platform_driver::remove()
-Date: Sat, 30 Nov 2024 15:53:49 +0100
-Message-ID: <20241130145349.899477-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1732978441; x=1733583241;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=auyeQ/WJf0LlFGEUDmM1nqoy+rzADdBnKGFsMbkyEUw=;
+        b=i+X0JQC7SVZeFcvTOttVCI5SkPU893PdmeVcmAD2RkvOGEaz2arRCh3pKQazEakhGo
+         dHQgKr5fc2gWPnGCkYK/UR3vShkxVqn6WnlVZ5GrkfoXm/ckdVfXUjLON7/bkONfD+nW
+         uvG7Hxj21QgvjTR/bnybI+XDM4iYdkpsgba9SnIjckdLR4z8K2eLKiY4ojBa/4FamHrm
+         dWuzFrAwxi66teFO3EWIu6Qnsk3O7/Un3ggTQ698Uu5RaTAQNqFZ5wE75/EHEtxjHh1V
+         maK7jNLZA6twahB3/NN4VvA/dA3jppok3M9C2bf6rzQ3fN40VF14Uh8aoPMaFOGw9Mag
+         snYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUlunysLOloJ4OE35Ksd0vH56ocbBkmC3owV4+VbnLQWe05NMr1pv9MctfzPwpF7HdZ9NVr3w5pt+H@vger.kernel.org, AJvYcCUejfLPXhNRIJ0cuWupsIbknR+Km6WiDtdhLtggIDT/4rpxSIZfqZ2gjfabKWJTBKW1UWmVHIpqvBPb@vger.kernel.org, AJvYcCXTajAoMVsIQPRzC/X3L+L3ZPx6SHRB1HvJhZXzHJJEiVRUlJYP4a1XbXZM353wsxUjiy/7hIJtupuEKCrB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQZ9wzm6wp9pE7Nw/XvX4+gsLrMb5RQWlQOzOkOmZ6vN63IP7X
+	4yV4hcZ8jINS17isQJVoWbDhfaAHeMJk/QKln2LxPErVPgcIZbHT
+X-Gm-Gg: ASbGncvtlas+QwgrEVDNB9kzr7jVx3iQzaydkYgZF+53Pn1hSqQuIK/a0P93X+Z0+OP
+	OOk7nufm78yW8Oa3ibV5E18N8xdzexaVF3u0tuhS1eGc9HAog50rGijmdu250I2sqrojda+s/0n
+	keRcsTEJlqfkqKbWL5o8Ey6Y+4grw11DxfC+BVvTBGTZLc3VElSGUKrqjvffkeODerJ3MusvcrR
+	1I5bpFYjFvyCTCRz+F/ChHUO5G/HO7bZlfij/VsP5LWuYvOF2EnWLKZYr19cVcItJZZxVxNErhR
+	9wo8g+t54QMYAAMl0UStQ75jnnSlll0=
+X-Google-Smtp-Source: AGHT+IH6wmJukU/nF+TIlMtoDRRBXaZ+XMVXEbGWauhGgOh3ZIbdgC6h0zDEhle0WnRHjQe1X7rU/Q==
+X-Received: by 2002:a2e:88cb:0:b0:2ff:d81f:2d33 with SMTP id 38308e7fff4ca-2ffd81f7beamr86649811fa.28.1732978440425;
+        Sat, 30 Nov 2024 06:54:00 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbdae77sm7176751fa.28.2024.11.30.06.53.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2024 06:53:58 -0800 (PST)
+Message-ID: <66cb5639-550b-4c00-9b90-b58dcd09405d@gmail.com>
+Date: Sat, 30 Nov 2024 16:53:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4567; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=KXZ3g46ZGg7f/iC0+oUPjcmJI5u7vEpntocDHxCb0aU=; b=owGbwMvMwMXY3/A7olbonx/jabUkhnRvtX8f2z3CV89J8TVjO2Ao2PnoFqd03qwT3KkvOK1lz 5tw3d/cyWjMwsDIxSArpshi37gm06pKLrJz7b/LMINYmUCmMHBxCsBEqjPY/4d/FHwd7fpD45Zv bdna5Lc6rdWLWO+zrWFeJSIZLjsloZt7U7Bu2maJFa6xaeqnLwX5ehS+un53m80RD5tXbAFri2d 8sZz3iOVjmd7TqVKaS56tezJxvup8lbMSQs+ve8qLyJawmdULKXwVn8fsurfLUWhTR1cdi9fhUq GvzYUKIk1+HhyZLZH89Sn8jfkfg9Skv+S4XPs2vyL63z/79E8fTA3i0+uVeI7Usl/pThQWbgkO7 RO8nSV+6Pj8fWGdeVc1VoktUQt4d+H0t5Tm2ckW8taZp+T/LJ36QVerZnfnyZWnJgr4lv2OvxP0 jEt8jfaBu29Y9ackfI48olrLNSl/Uf2+9mNnn0Zkeh0CAA==
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Drop BU27008 and BU27010
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Arthur Becker <arthur.becker@sentec.com>,
+ Emil Gedenryd <emil.gedenryd@axis.com>, Marek Vasut <marex@denx.de>,
+ Mudit Sharma <muditsharma.info@gmail.com>,
+ Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1732819203.git.mazziesaccount@gmail.com>
+ <20241130143842.34d29a51@jic23-huawei>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241130143842.34d29a51@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers.
+On 30/11/2024 16:38, Jonathan Cameron wrote:
+> On Thu, 28 Nov 2024 21:34:54 +0200
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> 
+>> Drop the support for ROHM BD72008 and BD72010 RGB sensors
+>>
+>> I accidentally hit a BU27008 data-sheet which had a big red text saying
+>> "Obsolete". After a few queries I received a word that the ROHM BU27008
+>> and BU27010 RGB sensors were cancelled and never entered mass production.
+>> Supporting not existing hardware makes no sense, so it's probably best
+>> to drop the drivers and dt-bindings.
+>>
+>> There is still a RGB sensor from ROHM called BU27006.
+>> https://www.rohm.com/products/sensors-mems/color-sensor-ics/bu27006muc-z-product
+>> Based on a quick glance this should be very similar to the BU27010. If
+>> someone wants to create a driver for this, then the bu27008.c might be
+>> worth looking at.
+>>
+>> As writing of this I don't have the BU27006 at my hands, and when I
+>> asked about creating a driver for this IC from the HQ ... I got an
+>> impression that at the moment ROHM rather pays me for doing something
+>> else. So, currently I have no plan to add support for the BD27006.
+>> We can always dig the bu27008.c from the depths of the git, if it later
+>> appears such a driver would be a good idea.
+> 
+> Applied.  I'm not going to rush it in because a driver for hardware
+> that no one has is not really a problem as long as no one does any more
+> work on it.  So queued up in my testing branch which will go upstream
+> next merge cycle.
 
-Convert all platform drivers below drivers/ptp to use .remove(), with
-the eventual goal to drop struct platform_driver::remove_new(). As
-.remove() and .remove_new() have the same prototypes, conversion is done
-by just changing the structure member name in the driver initializer.
+Thanks. This makes perfect sense, and I didn't expect them to go in 
+sooner :)
 
-While touching these drivers, make the alignment of the touched
-initializers consistent.
+> You have my sympathies wrt to wasted work!
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
-Hello,
+It indeed hurts. You do always hope things you tinker with would be 
+useful. Well, not the first cancelled product I am working with - and I 
+believe not a last one either...
 
-this is based on Friday's next, feel free to drop changes that result in
-a conflict when you come around to apply this. I'll care for the fallout
-at a later time then. (Having said that, if you use b4 am -3 and git am
--3, there should be hardly any conflict.)
-
-This is merge window material.
-
-Best regards
-Uwe
-
- drivers/ptp/ptp_clockmatrix.c | 2 +-
- drivers/ptp/ptp_dte.c         | 4 ++--
- drivers/ptp/ptp_fc3.c         | 2 +-
- drivers/ptp/ptp_idt82p33.c    | 2 +-
- drivers/ptp/ptp_ines.c        | 4 ++--
- drivers/ptp/ptp_qoriq.c       | 2 +-
- drivers/ptp/ptp_vmclock.c     | 2 +-
- 7 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/ptp/ptp_clockmatrix.c b/drivers/ptp/ptp_clockmatrix.c
-index b6f1941308b1..fbb3fa8fc60b 100644
---- a/drivers/ptp/ptp_clockmatrix.c
-+++ b/drivers/ptp/ptp_clockmatrix.c
-@@ -2471,7 +2471,7 @@ static struct platform_driver idtcm_driver = {
- 		.name = "8a3400x-phc",
- 	},
- 	.probe = idtcm_probe,
--	.remove_new = idtcm_remove,
-+	.remove = idtcm_remove,
- };
- 
- module_platform_driver(idtcm_driver);
-diff --git a/drivers/ptp/ptp_dte.c b/drivers/ptp/ptp_dte.c
-index 449ff90927be..372168578a30 100644
---- a/drivers/ptp/ptp_dte.c
-+++ b/drivers/ptp/ptp_dte.c
-@@ -326,8 +326,8 @@ static struct platform_driver ptp_dte_driver = {
- 		.pm = PTP_DTE_PM_OPS,
- 		.of_match_table = ptp_dte_of_match,
- 	},
--	.probe    = ptp_dte_probe,
--	.remove_new = ptp_dte_remove,
-+	.probe = ptp_dte_probe,
-+	.remove = ptp_dte_remove,
- };
- module_platform_driver(ptp_dte_driver);
- 
-diff --git a/drivers/ptp/ptp_fc3.c b/drivers/ptp/ptp_fc3.c
-index 879b82f03535..cfced36c70bc 100644
---- a/drivers/ptp/ptp_fc3.c
-+++ b/drivers/ptp/ptp_fc3.c
-@@ -1003,7 +1003,7 @@ static struct platform_driver idtfc3_driver = {
- 		.name = "rc38xxx-phc",
- 	},
- 	.probe = idtfc3_probe,
--	.remove_new = idtfc3_remove,
-+	.remove = idtfc3_remove,
- };
- 
- module_platform_driver(idtfc3_driver);
-diff --git a/drivers/ptp/ptp_idt82p33.c b/drivers/ptp/ptp_idt82p33.c
-index d5732490ed9d..b2fd94d4f863 100644
---- a/drivers/ptp/ptp_idt82p33.c
-+++ b/drivers/ptp/ptp_idt82p33.c
-@@ -1461,7 +1461,7 @@ static struct platform_driver idt82p33_driver = {
- 		.name = "82p33x1x-phc",
- 	},
- 	.probe = idt82p33_probe,
--	.remove_new = idt82p33_remove,
-+	.remove = idt82p33_remove,
- };
- 
- module_platform_driver(idt82p33_driver);
-diff --git a/drivers/ptp/ptp_ines.c b/drivers/ptp/ptp_ines.c
-index 14a23d3a27f2..3d723a2aa6bb 100644
---- a/drivers/ptp/ptp_ines.c
-+++ b/drivers/ptp/ptp_ines.c
-@@ -781,8 +781,8 @@ static const struct of_device_id ines_ptp_ctrl_of_match[] = {
- MODULE_DEVICE_TABLE(of, ines_ptp_ctrl_of_match);
- 
- static struct platform_driver ines_ptp_ctrl_driver = {
--	.probe  = ines_ptp_ctrl_probe,
--	.remove_new = ines_ptp_ctrl_remove,
-+	.probe = ines_ptp_ctrl_probe,
-+	.remove = ines_ptp_ctrl_remove,
- 	.driver = {
- 		.name = "ines_ptp_ctrl",
- 		.of_match_table = ines_ptp_ctrl_of_match,
-diff --git a/drivers/ptp/ptp_qoriq.c b/drivers/ptp/ptp_qoriq.c
-index 879cfc1537ac..4d488c1f1941 100644
---- a/drivers/ptp/ptp_qoriq.c
-+++ b/drivers/ptp/ptp_qoriq.c
-@@ -670,7 +670,7 @@ static struct platform_driver ptp_qoriq_driver = {
- 		.of_match_table	= match_table,
- 	},
- 	.probe       = ptp_qoriq_probe,
--	.remove_new  = ptp_qoriq_remove,
-+	.remove      = ptp_qoriq_remove,
- };
- 
- module_platform_driver(ptp_qoriq_driver);
-diff --git a/drivers/ptp/ptp_vmclock.c b/drivers/ptp/ptp_vmclock.c
-index cdca8a3ad1aa..0a2cfc8ad3c5 100644
---- a/drivers/ptp/ptp_vmclock.c
-+++ b/drivers/ptp/ptp_vmclock.c
-@@ -601,7 +601,7 @@ MODULE_DEVICE_TABLE(acpi, vmclock_acpi_ids);
- 
- static struct platform_driver vmclock_platform_driver = {
- 	.probe		= vmclock_probe,
--	.remove_new	= vmclock_remove,
-+	.remove		= vmclock_remove,
- 	.driver	= {
- 		.name	= "vmclock",
- 		.acpi_match_table = vmclock_acpi_ids,
-
-base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
--- 
-2.45.2
-
+Yours,
+	-- Matti
 
