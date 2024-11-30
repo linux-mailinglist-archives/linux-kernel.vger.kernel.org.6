@@ -1,144 +1,132 @@
-Return-Path: <linux-kernel+bounces-426427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D809DF2DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:57:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DD8162E55
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 19:57:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A821B1A9B33;
-	Sat, 30 Nov 2024 19:57:04 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CD29DF2E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 21:08:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DAC3D3B3;
-	Sat, 30 Nov 2024 19:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BAD4B2115C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 20:07:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEE61AA79E;
+	Sat, 30 Nov 2024 20:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fqD03A5D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B541417BD3;
+	Sat, 30 Nov 2024 20:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732996624; cv=none; b=g5HvFKDPedaEGBpN7vNG10kFXai40Hv8lAnJfO4QseI6+vGfb0moVJcEhIGdt/Wt2KxKqq9O4O6r0MAuQDmgYGscqthmunvdtzPU+AiXQoUycL6zdifkorlYZfBWbMA1vaP6IGVWv79c/8H/8FkLMHaVN+KZRviGkQ8UBz1VijI=
+	t=1732997271; cv=none; b=LyDG0dP1q3ko65Xr1z3hiMvZ5QQ1mM/plsi7x4OqeEdlXdggq/OsGMHUnuwVsozm5rBcIbaCnpQlb5J4juj2Shxm5WVLauGs9uQdx4iU8HeFkEKvGyIC0Am+pXrVgR77MJRnVELxIFnUmoYFtb7PqcjMlvCQBZcUCYHbJDkIFv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732996624; c=relaxed/simple;
-	bh=iliAV4e1ag5AmPwuqTfpm94XBTsvFbIoc0GjRaaazmI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cAezEQQ6dHDvUPXpWWkpnPOLUrMA4y4uZ2qpvIo+xYL1wopGprl3cuUAe3+uMzK6VpAsxYBCcXBLNSeMKTLZSMVNFl1j1h7oUjuzbmNrvN5VHQ77R43w2YdU6ZZayKfqSh57QJMsM8LQVLK0/fDJ1/6uS9uAmQp5wWisDB4E3PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tHTa0-000000006XM-3qRr;
-	Sat, 30 Nov 2024 14:56:36 -0500
-Message-ID: <e1d810d7c2bc77961828ee38ef322f5ec49181d8.camel@surriel.com>
-Subject: Re: [linus:master] [x86/mm/tlb] 7e33001b8b:
- will-it-scale.per_thread_ops 20.7% improvement
-From: Rik van Riel <riel@surriel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, linux-kernel@vger.kernel.org, Ingo Molnar
- <mingo@kernel.org>,  Andy Lutomirski	 <luto@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>
-Date: Sat, 30 Nov 2024 14:56:36 -0500
-In-Reply-To: <CAHk-=wj0HyNR+d+=te8x3CEApCDJFwFfb22DH5TAVyPArNK9Tg@mail.gmail.com>
-References: <202411301528.342383d8-lkp@intel.com>
-	 <069d686ab958d973563cfad52373ec6c8aad72ca.camel@surriel.com>
-	 <CAHk-=wj0HyNR+d+=te8x3CEApCDJFwFfb22DH5TAVyPArNK9Tg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1732997271; c=relaxed/simple;
+	bh=gA6EPb72gVsgpMXnMkReyXmS2VCY76gjR1DkpggEPOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7eJud/i0FKxUTbxExgWlf8VxRtskyRV6dAgLDRC0rTEdWlvVNaso9a1LV9NCVzZ0a9CTvLbnoEM3x8jdtC4jKX2G1gOxj/aK0moUmeNzslzUnhw2D9oGp9jIuzi3bZJPUEd+cPB9lXB03tnhYPEHZMLhwDNjEbQFi/Qql9mMW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fqD03A5D; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732997270; x=1764533270;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gA6EPb72gVsgpMXnMkReyXmS2VCY76gjR1DkpggEPOY=;
+  b=fqD03A5D7FJI5ysR3HF63+EJr0TNblr8Qko78WOAViigHjsfXXPVM7dx
+   egnM60fWTKroesYgzXnGHeA/aMwQt0rp+MvbZ0DBeqOphJkEZdsc6/oHS
+   71YOkj/OwPZWcclZ7sTbPt0u5mnAn4/MttBSWvvouahnfbXrqKs6stCqj
+   u6D1znt3fHPZna8dE+n+8Hzk4MLYDIAz9jx++ykuysQ03/KfXaSrqsPvK
+   W/1jAZ9HX2uzLts+0cqZz1rptGI4VYmsHIN7tNkHD9m8xYtctXBRU0fSP
+   IuArJeOAFGo848xtE10uJVLWSA4DGUVuAg2rk3By5dsl+ZgeG26r1I9Si
+   A==;
+X-CSE-ConnectionGUID: OXyE9H0VSACoeI1QrOOyAA==
+X-CSE-MsgGUID: XE8nNzoEQuKqjmAWrrP5sQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="32549627"
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="32549627"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 12:07:49 -0800
+X-CSE-ConnectionGUID: cWDN9k1hSDi9IvGF9R1afw==
+X-CSE-MsgGUID: r9FfSjUUTEqQ24qj4fNIyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="123688168"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 30 Nov 2024 12:07:45 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHTkh-0000wn-3D;
+	Sat, 30 Nov 2024 20:07:41 +0000
+Date: Sun, 1 Dec 2024 04:07:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	NXP S32 Linux <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+Subject: Re: [PATCH v5 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+Message-ID: <202412010328.kJoRexZK-lkp@intel.com>
+References: <20241126114414.419469-4-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126114414.419469-4-ciprianmarian.costea@oss.nxp.com>
 
-On Sat, 2024-11-30 at 09:54 -0800, Linus Torvalds wrote:
-> On Sat, 30 Nov 2024 at 09:31, Rik van Riel <riel@surriel.com> wrote:
-> >=20
-> > 1) Stop using the mm_cpumask altogether on x86
->=20
-> I think you would still want it as a "this is the upper bound" thing
-> -
-> exactly like your lazy code effectively does now.
->=20
-> It's not giving some precise "these are the CPU's that have TLB
-> contents", but instead just a "these CPU's *might* have TLB
-> contents".
->=20
-> But that's a *big* win for any single-threaded case, to not have to
-> walk over potentially hundreds of CPUs when that thing has only ever
-> actually been on one or two cores.
->=20
-> Because a lot of short-lived processes only ever live on a single
-> CPU.
->=20
-Good point. We do want to keep optimizations for single
-threaded processes in place.
+Hi Ciprian,
 
-> The benchmarks you are optimizing for - as well as the ones that
-> regress - are
->=20
-> =C2=A0(a) made up micobenchmark loads
->=20
-> =C2=A0(b) ridiculously many threads
->=20
-> and I think you should take some of what they say with a big pinch of
-> salt.
->=20
-> Those "20% difference" numbers aren't actually *real*, is what I'm
-> saying.
+kernel test robot noticed the following build errors:
 
-Agreed that it won't be a 20% difference on real
-workloads, but there are a few real world workloads
-where these optimizations do make a fairly significant
-difference.
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on arm64/for-next/core linus/master v6.12]
+[cannot apply to abelloni/rtc-next next-20241128]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-For example, this change below made a 2% performance
-difference for a memcache style workload on 2 socket
-systems back in 2018, when CPU counts were much smaller
-than today:
+url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/rtc-s32g-add-NXP-S32G2-S32G3-SoC-support/20241128-095523
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241126114414.419469-4-ciprianmarian.costea%40oss.nxp.com
+patch subject: [PATCH v5 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+config: nios2-allmodconfig (https://download.01.org/0day-ci/archive/20241201/202412010328.kJoRexZK-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241201/202412010328.kJoRexZK-lkp@intel.com/reproduce)
 
-e9d8c6155768 ("x86/mm/tlb: Skip atomic operations for 'init_mm' in
-switch_mm_irqs_off()")
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412010328.kJoRexZK-lkp@intel.com/
 
->=20
-> > 2) Instead, at context switch time just update
-> > =C2=A0=C2=A0 per_cpu variables like cpu_tlbstate.loaded_mm
-> > =C2=A0=C2=A0 and friends
->=20
-> See aboive. I think you'll still want to limit the actual real
-> situation of "look, ma, I'm a single-threaded compiler".
->=20
-> > 3) At (much rarer) TLB flush time:
-> > =C2=A0=C2=A0 - Iterate over all CPUs
->=20
-> Change this to "iterate over mm_cpumask", and I think it will work a
-> whole lot better.
->=20
-> Because yes, clearly with just the *pure* lazy mm_cpumask, you won
-> some at scheduling time, but you lost a *lot* by just forcing
-> pointless stale IPIs instead.
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-I struggle to think of a way to synchronize clearing
-bits from the mm_cpumask that does not involve IPIs,
-but I suppose we could rate limit that clearing to
-something like once a second?
+>> ERROR: modpost: "__udivdi3" [drivers/rtc/rtc-s32g.ko] undefined!
 
-The rest of the time we could compare whether a
-CPU's cpustate_loaded_mm matches the target mm, and
-skip sending an IPI to that CPU?
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
-We already seem to be passing info through to
-tlb_is_not_lazy, so the logic could all be implemented
-inside there if we wanted to.
-
---=20
-All Rights Reversed.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
