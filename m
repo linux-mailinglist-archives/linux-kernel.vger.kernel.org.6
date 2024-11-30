@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-426072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBDD9DEE7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 02:54:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F03019DEE7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 02:54:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 484B116269A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 01:54:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF31628206E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 01:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7EA1552EB;
-	Sat, 30 Nov 2024 01:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBEB155CBF;
+	Sat, 30 Nov 2024 01:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uGtzDa3g"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wdTfdkmv"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BD873446
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 01:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97782154C04
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 01:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732931579; cv=none; b=Boqhuwg+9X7Onil12wzHN+wGcNnkHHIuVsRdhOf20JQ6mFJTKck7mKw2XWAWTbszg6hzEAgcPmqxsOPfbcV0Si2iqjE27OeQEMr8ioaurBXt92vxfsBNeYkRZtOPiFo7WbEGFIemv1Tkntv/1+aVofdNQPU+IPOoI+g9JgwRrmA=
+	t=1732931581; cv=none; b=oY6U1Fo6yXO6fAk+FHTYbtZCQh1u9ohS4cZMf21xoBWDpmAI76nUrRnjbchSy2+GdT6034VT5WKvqrx4Bpf6ikxlWVrubzHIaPRhc6HRfAdOLLRsJcDJ9iQKXrMWZTYgs0sQdyFUTQFOVDrwVxQWuEtDFSQDSF2+mzmg14pbCo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732931579; c=relaxed/simple;
-	bh=CHPPIcbOk/4oF+oFDkgVgA19LBW1SDNLoLgjIjG3wi4=;
+	s=arc-20240116; t=1732931581; c=relaxed/simple;
+	bh=UjNMLqX51SwfyB+kbUbjnJt95fAbmRoKvLYOPQ8ek9c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Pin3QUbKAPSbe5/UGLPcmwHkMWxS03z7Ra21AV6gLexJjY9SWHXsP7UjSAmoGiYljMmNu3dEKW/Tcp3nVppTPn7PzMS9hWX2/St9ynXMDvL++ZGjFTRHGigeMTCkil0sZgOiyadVHw4coRdd6tO2UILGnrxr1gevDtxgGi64d6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uGtzDa3g; arc=none smtp.client-ip=209.85.167.49
+	 In-Reply-To:To:Cc; b=lX7eSRcKuHfejcMGKAVxxX3d/xV0uzOiJNxmHQB/NvEzLqnLyt0IsSdwB8hOTepsLdf2q3+O21YE+FiKT9TyAMcAFPDhonsHXW3SS/1lNbYZh1RwHjUHtFJCieVRy1+So6v1EC0Ml4i19AY4ZkrI5FEHPrfe/Ni+R9idGf+zvwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wdTfdkmv; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53de035ea13so2446677e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 17:52:56 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53df1d1b726so2909647e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 17:52:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732931575; x=1733536375; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732931578; x=1733536378; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+hHECBYEofE1LVFfISufmiOFENr43Xg+pptUAkUKUyA=;
-        b=uGtzDa3gQUI5/7JmPAAIGhqW47ZSnUsNq92UfJNm4+gOm7M08+CcqertiQZqX0lVCU
-         rh7NDQnEnqINmNODudekZtvaFOg2h9STZNvgptE+3ltGEI4t/A3lDhDbB96NtEwypeuV
-         mqmjpWgazWMalEng5y8E7m8xHoc2cYUEoOPArpgO55WRZR4ORTdUkfD/T0aoDVDfpHxD
-         PAZmO1Ko+XLTUvke/g31GSVuIX5ZrSh2VvKX0zRcZege4G9HCMFTCJuZ0ebp9QAHUwam
-         px4Y6qyQ4iJgpxlOZ2TcVQyVTgtUmDBBPZECJ+td7p+ey8a6sCibXKMRxDh379lBy70z
-         2oCQ==
+        bh=n9wxCYXwjuFpbEm8J6hnlc7LqgHEUz/bPD6SI90IVR0=;
+        b=wdTfdkmvmw4L0GQNEFTySHzCI2OGyhSvxv2GXWp9DwRQI+L8T2lujnIYEG3OoqJ0/g
+         39xS1NjKNUnev0Ay9YqYQO5ILkksqVRB055bJ8dI7Z5rCcRBX8e5Xs5cw/TRgWNfuDpg
+         GVjrqd+/8Vxs1mR2RMw+92WwKayfZNGV0i9VwogZehbACdsfNLvRvcrErD6mQWJzf23H
+         8K66HqFOQJYXiAydpCAI8KgEdahg0yM1jxmlfDx8DXh7BvV3K3QiPQtkVWV4Mzg8NjGR
+         Kmltk0g4UlPbmoTh3SFuCOtYmabEgNF9mJ5Xxnr/w5+9cJRsU7kjWUGlDLMFEIC0PfUv
+         7VVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732931575; x=1733536375;
+        d=1e100.net; s=20230601; t=1732931578; x=1733536378;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+hHECBYEofE1LVFfISufmiOFENr43Xg+pptUAkUKUyA=;
-        b=IJbdy4M5cFwn15D13o/HbE0GJTaroNu+lJDo10KomM2S6u16qRsuPHo93qWMyksXtb
-         dDTPN08YCnEXoBbR3sNTLIQvfqunhlFcpYbVU08RxuU7HPQGgQdKODQNDdWbA2Ll3sLZ
-         bbC6o71nj4xz5xSoRwcFMpurQ8OreL0pauunRHjsC5F6l1+M6x/02Jzdy8TStHgQuml2
-         sEPGiZiUTuiBGs3++CusY8svtpeQlmzs9KFGD4mNHDXCmpFaflxqNxTcRPs0CL6/Rf8A
-         sUjiawq/ApdhtB8NwQzaW6SCOXVwbm9y+OEmmqWvH21TsBhaHag7O/uFmRV7Dc2mVpxI
-         M7ng==
-X-Forwarded-Encrypted: i=1; AJvYcCVsI1YpgtlbEjsmU6rO60dZcGeY65sm7rgC3Ik0vy2O1t9/5jmzH9jgouMRtJEylfLUnk20FbTDfCQE5M8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmmPO3xsVblgPiDkix0Hf1YjIPR1melLJqHGxxRaAx9DbdYyuv
-	9p16/rSrkV2M64UBEW43NKYc1Cc2f2+Wy6JfpgqZaZ6h3HiIgc74Nhfh7S7qfbU=
-X-Gm-Gg: ASbGncuUwAJVJ6VzM+j5zta/Ssjt9QnCFCtP50jWocUmec8QOlDg2/xapnuCcAWRkeV
-	8KSeUgZUKGUOcIzfG/Ne5ME8yXlwzoenJHy5DMn5GpoARLBYkZDxAdz44t7+2djLRiBfUDdMtFy
-	SuaXrBBQpqQAWzdebHrS2PsHinCMXLA3kZJgAyPfUlb+EaSaOJ/Xm7vHbYkwQT7dHYAauDx7tGC
-	wcO516hafBKJVXAiGvKz7DAPUaVRBIClDao3cPM6p5V8j5TXyO4beZrbg==
-X-Google-Smtp-Source: AGHT+IGpbKPr0jDpuxGiDeE7FvrQMAmAyXEng/ZnD9YgSk62wmodTKnHm1As1pVrSEzDd0Rvi+mmbQ==
-X-Received: by 2002:a05:6512:3b25:b0:53d:ed08:5712 with SMTP id 2adb3069b0e04-53df00d3c8bmr8073919e87.23.1732931575393;
-        Fri, 29 Nov 2024 17:52:55 -0800 (PST)
+        bh=n9wxCYXwjuFpbEm8J6hnlc7LqgHEUz/bPD6SI90IVR0=;
+        b=C1NXtQn4vnIx9Sjg7J9aQBOW3oDJmGalur/rJsEZYpPgf3To1/wEiyWnmagvWIC957
+         04DOZLVW0+PrqMrZkQMm06oWNMdNFnDB8gsoj5xzVZ1ztuHLTTB3RAtgN14vZK8w4r2w
+         iQdOhDDRqPML+2qhqSfq+2Yn71INNKektpCo1KAnx6ABHze4VOFg+uUpnP2aelpuEgZT
+         HoQpntCF8ZkutssaahhFiQ5Sh3fzWRYLGcc8JikRZyHrM4QPytmnQxCSOGQqkMFHycXS
+         dxqK5iVp8S2qmDsAcfdkfcRc5rfqg1mhvEeTqLEsFd7zAmcn7AkVbASwznlu2FafwZEO
+         PmMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWmLXDns1h5rTGJXcLxDoOpKF8GEg/Pei2Gj+7LtlCY75fATK77SmT+YXuQGd5283Ewz2gjUaLcF6Qey0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxb092YEQrjeMA4oV1QzFB96mZcqq7W6TMyf5j0M3PvmnYRKNU
+	wJWuxkLthdMHa2uPpheItQSSS7qxdehPxoS2i99Ddmi4So7CA9vuFzC0Qb5S4fa+aVQCGyNOeu2
+	w
+X-Gm-Gg: ASbGnctaI3zOwI0zdLX6PBI7fzEbGQ4k7XVlPemhsYiSRuj+9Zdto9R1OitR7lSQjnw
+	vpcb/s1ApteIn9bu02UlaIokV3avN75YDlyRm+6NWLZhTnP4jlW69CURjVQaI6XfZCMpOZtj8cY
+	BFE5dL4TSuIdfDNtNjIGmLTVgORd9ulo/rkC4fQ1MQ9GigG3rxDVeoU6eVFv+7CnSV9kDUz37Wr
+	4CfLgmG3y2Bt2sQ1aJVGFTQMbKerM3NKN9weamPqJMY3QG3FJTkwsRiLg==
+X-Google-Smtp-Source: AGHT+IEPMkwzovF1BGtYWQPhSNDkhj65yoNCvxf3xV+YxR9n/u9tv7nbpK4B1sxwKYxaX0pKkPUYkw==
+X-Received: by 2002:a05:6512:3c81:b0:53d:ea1d:50fc with SMTP id 2adb3069b0e04-53df0111f03mr8755501e87.48.1732931577781;
+        Fri, 29 Nov 2024 17:52:57 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6443172sm636408e87.84.2024.11.29.17.52.53
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6443172sm636408e87.84.2024.11.29.17.52.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 17:52:54 -0800 (PST)
+        Fri, 29 Nov 2024 17:52:56 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 30 Nov 2024 03:52:33 +0200
-Subject: [PATCH v5 08/10] drm/bridge: lontium-lt9611: drop TMDS char rate
- check in mode_valid
+Date: Sat, 30 Nov 2024 03:52:34 +0200
+Subject: [PATCH v5 09/10] drm/bridge: dw-hdmi-qp: replace mode_valid with
+ tmds_char_rate
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241130-hdmi-mode-valid-v5-8-742644ec3b1f@linaro.org>
+Message-Id: <20241130-hdmi-mode-valid-v5-9-742644ec3b1f@linaro.org>
 References: <20241130-hdmi-mode-valid-v5-0-742644ec3b1f@linaro.org>
 In-Reply-To: <20241130-hdmi-mode-valid-v5-0-742644ec3b1f@linaro.org>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -100,51 +101,65 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1393;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2092;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=CHPPIcbOk/4oF+oFDkgVgA19LBW1SDNLoLgjIjG3wi4=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnSm/gZYVRxsPvBuVk2hROVkIaUSrjCIe8xd0oY
- EGWuQDCOl2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ0pv4AAKCRCLPIo+Aiko
- 1TwnB/95gm5vag8iFN5M1sSaLORbtyefXMqgXK+UYyOyMGH3WsrGBMV3zrqFa3hOpYrpMOPCJ0p
- 2qpzknExme8zQHyG/cCZzlAZZ0eO6hM0CQ4/s+rxguRsevb95fQ5hLPrn9R2wyESwkIQNRYRb3a
- 2aXx6WQ49NUOzerBIcauDv7aYjXAkWdIRA7hLYiNDTUg5XaxsEmn/6wFvWpYIa8jK6QejHWd7y4
- sTqgUxNX89KPdleAyprS2KSf4PwrAVlhpqMiALo1t+TdddoHZRFuKOltrZOe72vM5ukHKooMl5i
- xPpLai8cV0tXWnmKjXAfd+Ca/6CUJ/aMT3RViERTh2qn2xln
+ bh=UjNMLqX51SwfyB+kbUbjnJt95fAbmRoKvLYOPQ8ek9c=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnSm/hP4NTjv4z5OlKc/siHNPmPX53A9tMpMizW
+ QagCkkZEseJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ0pv4QAKCRCLPIo+Aiko
+ 1YEYCACSjhD/Ij07xD1HSZ7Kb4z+Son1xvlSmJAJ4SpssXNb9iPUFIVI8goXplbGswSwyMT7gN/
+ TJA4uoW5pm1VZfjXG6tfbVQkLp1egYiDvrum1DeygQ92wEt56uRPyVIx4IdIfPtB4T4NeaaxRHz
+ LQnkHZDgA5FLhdyenT4uGiwtnYN42jAeIQOKN9kR+a3UWYD+yYdlR7SqZ/7LE57ljVXynJbKs6g
+ U1MS/hQbvYoXlzbGG88vk9XYuwEsCee0SN0HMVpBvPgf+iAWlBzry2fAO18n4a3PcxUb5yoO8pZ
+ BJV4wpwjoTw7LieiIOIG62SIWjAAknBD03dVAhxa/2O9Jx3N
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Drop manual check of the TMDS char rate in the mode_valid callback. This
-check is now being performed by the core.
+Replace .mode_valid() callback with .hdmi_tmds_char_rate_valid(). It is
+more generic and is used in other mode validation paths. The rate
+validation for .mode_valid() will be performed by the
+drm_bridge_connector code.
 
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/bridge/lontium-lt9611.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/lontium-lt9611.c b/drivers/gpu/drm/bridge/lontium-lt9611.c
-index 8f25b338a8d8f95dc0691735ac6343675098f7f7..1ffbe473e4103dfc315a8cd3571e9407bf518797 100644
---- a/drivers/gpu/drm/bridge/lontium-lt9611.c
-+++ b/drivers/gpu/drm/bridge/lontium-lt9611.c
-@@ -757,7 +757,6 @@ static enum drm_mode_status lt9611_bridge_mode_valid(struct drm_bridge *bridge,
- 						     const struct drm_display_mode *mode)
- {
- 	struct lt9611 *lt9611 = bridge_to_lt9611(bridge);
--	unsigned long long rate;
- 
- 	if (mode->hdisplay > 3840)
- 		return MODE_BAD_HVALUE;
-@@ -765,8 +764,7 @@ static enum drm_mode_status lt9611_bridge_mode_valid(struct drm_bridge *bridge,
- 	if (mode->hdisplay > 2000 && !lt9611->dsi1_node)
- 		return MODE_PANEL;
- 
--	rate = drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
--	return bridge->funcs->hdmi_tmds_char_rate_valid(bridge, mode, rate);
-+	return MODE_OK;
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+index 181c5164b23192f0b557624d73c6223032b90ec6..c686671e4850a1af75b82995185ffc3cbb22a447 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+@@ -442,16 +442,14 @@ dw_hdmi_qp_bridge_edid_read(struct drm_bridge *bridge,
  }
  
- static int lt9611_bridge_atomic_check(struct drm_bridge *bridge,
+ static enum drm_mode_status
+-dw_hdmi_qp_bridge_mode_valid(struct drm_bridge *bridge,
+-			     const struct drm_display_info *info,
+-			     const struct drm_display_mode *mode)
++dw_hdmi_qp_bridge_tmds_char_rate_valid(const struct drm_bridge *bridge,
++				       const struct drm_display_mode *mode,
++				       unsigned long long rate)
+ {
+ 	struct dw_hdmi_qp *hdmi = bridge->driver_private;
+-	unsigned long long rate;
+ 
+-	rate = drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
+ 	if (rate > HDMI14_MAX_TMDSCLK) {
+-		dev_dbg(hdmi->dev, "Unsupported mode clock: %d\n", mode->clock);
++		dev_dbg(hdmi->dev, "Unsupported TMDS char rate: %lld\n", rate);
+ 		return MODE_CLOCK_HIGH;
+ 	}
+ 
+@@ -510,7 +508,7 @@ static const struct drm_bridge_funcs dw_hdmi_qp_bridge_funcs = {
+ 	.atomic_disable = dw_hdmi_qp_bridge_atomic_disable,
+ 	.detect = dw_hdmi_qp_bridge_detect,
+ 	.edid_read = dw_hdmi_qp_bridge_edid_read,
+-	.mode_valid = dw_hdmi_qp_bridge_mode_valid,
++	.hdmi_tmds_char_rate_valid = dw_hdmi_qp_bridge_tmds_char_rate_valid,
+ 	.hdmi_clear_infoframe = dw_hdmi_qp_bridge_clear_infoframe,
+ 	.hdmi_write_infoframe = dw_hdmi_qp_bridge_write_infoframe,
+ };
 
 -- 
 2.39.5
