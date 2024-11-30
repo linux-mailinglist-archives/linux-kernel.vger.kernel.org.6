@@ -1,209 +1,149 @@
-Return-Path: <linux-kernel+bounces-426097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9023B9DEEE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 05:08:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44D0616364C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:08:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1490136E21;
-	Sat, 30 Nov 2024 04:08:53 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0C59DEEE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 05:14:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE29820330;
-	Sat, 30 Nov 2024 04:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A693281952
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 04:14:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF327139579;
+	Sat, 30 Nov 2024 04:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fjBboPFn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578B013665B
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 04:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732939733; cv=none; b=QS4QDk9bKBbfQ/GREpCOrvYD+37kEa3A7Uma7gXT7iuFcawJZV70wpbKthU0k5i/mi/rx4dntrhWkkzB8EWLN8sSszO9pXM/FWQeq/WGoS2SSHI7jwkz0EHgtWUynSVYBW4eNsORUpvqdocRpV3APBQ+v7g+crzeZ8tgzYAPmHA=
+	t=1732940040; cv=none; b=c0fZYDeEF73nO2nNHaDIBdj334UyQeSZ09ekZ7OII7S0eNU9DVWCPsTKOXfXGwwGRKcNX49Ax+JQQGfy+KM11OKL72oCuwuH3kMsXYzN3BaIeWLASUtYRjM1IyEGnGE+bweVMtD3TrJZg1v2Z2QOF/lIWy9aSgLLIkGq5TJesmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732939733; c=relaxed/simple;
-	bh=Ra/qEqGylz90/Ef1ecdWd7CfA5ffLRvRAFot+tP+KTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hze5IrXAasFcfraG5gqaIJVVwrQ4hdrgkW4oSaDCk0LEggCm4vrEzN8G3H1R1CUPMW6ksD5tIblIpQ5OK6v5MfgKqrUH6QWOYpvqg798GFdUgBYJ7h79pDpztbRHQoLtr7XoGIfITHyVOprJwBSzfbzinhZfltkOk4kXV7FvK1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 118AD654; Fri, 29 Nov 2024 22:08:42 -0600 (CST)
-Date: Fri, 29 Nov 2024 22:08:42 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: cgzones@googlemail.com
-Cc: linux-security-module@vger.kernel.org, Serge Hallyn <serge@hallyn.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org,
-	cocci@inria.fr
-Subject: Re: [PATCH 01/11] coccinelle: Add script to reorder capable() calls
-Message-ID: <20241130040842.GB65112@mail.hallyn.com>
-References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
- <20241125104011.36552-11-cgoettsche@seltendoof.de>
+	s=arc-20240116; t=1732940040; c=relaxed/simple;
+	bh=5iDOvJyTxSFCN1jrThPj2mBIc1+msd8owR4C2nIUR5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YN+4dUSBo9/gtpATycTlKq+aEbLrM907s5m8IBN1+SZV+JlzcMs+DuhYEh1267AFYM5q/PAiYM12THDWiixEripwyRURneMsVSK/G4UBnQuWtpjiCQVX2Rg5+BYOVDOXbIrSugDcWAHZhTMg4LDXDK44fHZQ1xf1ktJsXl7g9s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fjBboPFn; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732940039; x=1764476039;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=5iDOvJyTxSFCN1jrThPj2mBIc1+msd8owR4C2nIUR5s=;
+  b=fjBboPFnW+X+LtwYExt4Apn+xpNlpjqJPq23HDmJr/fa2VEsBNQPIAac
+   U3G7Q7XydHxJb2ShhnEeBkaZkUZdfCKl0kDA2exZNoZDHuF8Q5vweAFzd
+   /suOUuSvjZjoNbjxyeHdzfE88AzklTGk85NcKlAKMJnrlOd38o4ggUgVA
+   9ux3n1ZTkb5Fqd3j4B7479eel9bbLgGqMj2pl3Mony3RtDWF2Yi7ZrdJH
+   3o53XyZlsDXSrxlKndtHdHA5XgbBtoQVh+zNIH1fpgebhoGqdOZXpA2Da
+   EbQ8DsUTN1zGrm8kV9pmGQebZWmcWWpwZwvO/oYD407Cezw2/gCRSisIc
+   Q==;
+X-CSE-ConnectionGUID: S5ARkmE6TaClQB0z2f6/fg==
+X-CSE-MsgGUID: iUJYqmX5RbuLGxvpe87CIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="33027497"
+X-IronPort-AV: E=Sophos;i="6.12,197,1728975600"; 
+   d="scan'208";a="33027497"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 20:13:58 -0800
+X-CSE-ConnectionGUID: lfookdxFRIWiR9QzEDCUlw==
+X-CSE-MsgGUID: XGP/rtb/QB2eblhoBIzr0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,197,1728975600"; 
+   d="scan'208";a="92942844"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 29 Nov 2024 20:13:56 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHEri-00004r-0u;
+	Sat, 30 Nov 2024 04:13:54 +0000
+Date: Sat, 30 Nov 2024 12:12:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aurelien Jarno <aurelien@aurel32.net>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>
+Subject: drivers/usb/core/devio.c:2045:13: sparse: sparse: cast removes
+ address space '__user' of expression
+Message-ID: <202411301208.hn3ay9DH-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241125104011.36552-11-cgoettsche@seltendoof.de>
 
-On Mon, Nov 25, 2024 at 11:40:04AM +0100, Christian Göttsche wrote:
-> From: Christian Göttsche <cgzones@googlemail.com>
-> 
-> capable() calls refer to enabled LSMs whether to permit or deny the
-> request.  This is relevant in connection with SELinux, where a
-> capability check results in a policy decision and by default a denial
-> message on insufficient permission is issued.
-> It can lead to three undesired cases:
->   1. A denial message is generated, even in case the operation was an
->      unprivileged one and thus the syscall succeeded, creating noise.
->   2. To avoid the noise from 1. the policy writer adds a rule to ignore
->      those denial messages, hiding future syscalls, where the task
->      performs an actual privileged operation, leading to hidden limited
->      functionality of that task.
->   3. To avoid the noise from 1. the policy writer adds a rule to permit
->      the task the requested capability, while it does not need it,
->      violating the principle of least privilege.
-> 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2ba9f676d0a2e408aef14d679984c26373bf37b7
+commit: 6df2a016c0c8a3d0933ef33dd192ea6606b115e3 riscv: fix build with binutils 2.38
+date:   2 years, 10 months ago
+config: riscv-randconfig-r123-20241120 (https://download.01.org/0day-ci/archive/20241130/202411301208.hn3ay9DH-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241130/202411301208.hn3ay9DH-lkp@intel.com/reproduce)
 
-Hi,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411301208.hn3ay9DH-lkp@intel.com/
 
-these all look good to me.
+sparse warnings: (new ones prefixed by >>)
+>> drivers/usb/core/devio.c:2045:13: sparse: sparse: cast removes address space '__user' of expression
+   drivers/usb/core/devio.c: note: in included file (through include/linux/gfp.h, include/linux/radix-tree.h, include/linux/fs.h):
+   include/linux/mmzone.h:1526:40: sparse: sparse: self-comparison always evaluates to false
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+vim +/__user +2045 drivers/usb/core/devio.c
 
-Except for, in fact, this patch, as I'm not versed in .cocci and
-can't tell whether it's doing the right thing.  Looks like it is,
-based on the patches you sent...
+2ef47001b3ee3d Alan Stern     2017-11-08  2014  
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2015  static int processcompl(struct async *as, void __user * __user *arg)
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2016  {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2017  	struct urb *urb = as->urb;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2018  	struct usbdevfs_urb __user *userurb = as->userurb;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2019  	void __user *addr = as->userurb;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2020  	unsigned int i;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2021  
+2ef47001b3ee3d Alan Stern     2017-11-08  2022  	compute_isochronous_actual_length(urb);
+7152b592593b9d Alan Stern     2010-03-06  2023  	if (as->userbuffer && urb->actual_length) {
+3d97ff63f89977 Hans de Goede  2012-07-04  2024  		if (copy_urb_data_to_user(as->userbuffer, urb))
+d794a02111cd33 Oliver Neukum  2009-06-28  2025  			goto err_out;
+7152b592593b9d Alan Stern     2010-03-06  2026  	}
+e015268d2fcfca Alan Stern     2007-08-24  2027  	if (put_user(as->status, &userurb->status))
+d794a02111cd33 Oliver Neukum  2009-06-28  2028  		goto err_out;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2029  	if (put_user(urb->actual_length, &userurb->actual_length))
+d794a02111cd33 Oliver Neukum  2009-06-28  2030  		goto err_out;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2031  	if (put_user(urb->error_count, &userurb->error_count))
+d794a02111cd33 Oliver Neukum  2009-06-28  2032  		goto err_out;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2033  
+93cf9b909efb77 Alan Stern     2007-07-30  2034  	if (usb_endpoint_xfer_isoc(&urb->ep->desc)) {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2035  		for (i = 0; i < urb->number_of_packets; i++) {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2036  			if (put_user(urb->iso_frame_desc[i].actual_length,
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2037  				     &userurb->iso_frame_desc[i].actual_length))
+d794a02111cd33 Oliver Neukum  2009-06-28  2038  				goto err_out;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2039  			if (put_user(urb->iso_frame_desc[i].status,
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2040  				     &userurb->iso_frame_desc[i].status))
+d794a02111cd33 Oliver Neukum  2009-06-28  2041  				goto err_out;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2042  		}
+668a9541a56af5 Christopher Li 2005-04-18  2043  	}
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2044  
+^1da177e4c3f41 Linus Torvalds 2005-04-16 @2045  	if (put_user(addr, (void __user * __user *)arg))
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2046  		return -EFAULT;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2047  	return 0;
+d794a02111cd33 Oliver Neukum  2009-06-28  2048  
+d794a02111cd33 Oliver Neukum  2009-06-28  2049  err_out:
+d794a02111cd33 Oliver Neukum  2009-06-28  2050  	return -EFAULT;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2051  }
+^1da177e4c3f41 Linus Torvalds 2005-04-16  2052  
 
-> ---
->  MAINTAINERS                                |  1 +
->  scripts/coccinelle/api/capable_order.cocci | 98 ++++++++++++++++++++++
->  2 files changed, 99 insertions(+)
->  create mode 100644 scripts/coccinelle/api/capable_order.cocci
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e7f017097701..ab5ea47b61e2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5106,6 +5106,7 @@ S:	Supported
->  F:	include/linux/capability.h
->  F:	include/uapi/linux/capability.h
->  F:	kernel/capability.c
-> +F:	scripts/coccinelle/api/capable_order.cocci
->  F:	security/commoncap.c
->  
->  CAPELLA MICROSYSTEMS LIGHT SENSOR DRIVER
-> diff --git a/scripts/coccinelle/api/capable_order.cocci b/scripts/coccinelle/api/capable_order.cocci
-> new file mode 100644
-> index 000000000000..4150d91b0f33
-> --- /dev/null
-> +++ b/scripts/coccinelle/api/capable_order.cocci
-> @@ -0,0 +1,98 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +///
-> +/// Checks for capable() calls of the left side of a binary expression.
-> +/// Reordering might avoid needless checks, LSM log messages, and more
-> +/// restrictive LSM security policies (e.g. SELinux).
-> +/// Can report false positives if the righthand side contains a nested
-> +/// capability check or has side effects.
-> +///
-> +// Confidence: Moderate
-> +// Copyright: (C) 2024 Christian Göttsche.
-> +// Options: --no-includes --include-headers
-> +// Keywords: capable, ns_capable, sockopt_ns_capable
-> +//
-> +
-> +virtual patch
-> +virtual context
-> +virtual org
-> +virtual report
-> +
-> +//----------------------------------------------------------
-> +//  Pattern to ignore
-> +//----------------------------------------------------------
-> +
-> +@ignore@
-> +identifier F1 = { capable, ns_capable, sockopt_ns_capable };
-> +identifier F2 = { capable, ns_capable, sockopt_ns_capable };
-> +binary operator op,op1,op2;
-> +expression E;
-> +position p;
-> +@@
-> +
-> +(
-> +F1@p(...) op F2(...)
-> +|
-> +E op1 F1@p(...) op2 F2(...)
-> +)
-> +
-> +
-> +//----------------------------------------------------------
-> +//  For patch mode
-> +//----------------------------------------------------------
-> +
-> +@ depends on patch@
-> +identifier F = { capable, ns_capable, sockopt_ns_capable };
-> +binary operator op,op1,op2;
-> +expression E,E1,E2;
-> +expression list EL;
-> +position p != ignore.p;
-> +@@
-> +
-> +(
-> +-  F@p(EL) op E
-> ++  E op F(EL)
-> +|
-> +-  E1 op1 F@p(EL) op2 E2
-> ++  E1 op1 E2 op2 F(EL)
-> +)
-> +
-> +
-> +//----------------------------------------------------------
-> +//  For context mode
-> +//----------------------------------------------------------
-> +
-> +@r1 depends on !patch exists@
-> +identifier F = { capable, ns_capable, sockopt_ns_capable };
-> +binary operator op,op1,op2;
-> +expression E, E1, E2;
-> +position p != ignore.p;
-> +@@
-> +
-> +(
-> +*  F@p(...) op E
-> +|
-> +*  E1 op1 F@p(...) op2 E2
-> +)
-> +
-> +
-> +//----------------------------------------------------------
-> +//  For org mode
-> +//----------------------------------------------------------
-> +
-> +@script:python depends on org@
-> +p << r1.p;
-> +@@
-> +
-> +cocci.print_main("WARNING opportunity for capable reordering",p)
-> +
-> +
-> +//----------------------------------------------------------
-> +//  For report mode
-> +//----------------------------------------------------------
-> +
-> +@script:python depends on report@
-> +p << r1.p;
-> +@@
-> +
-> +msg = "WARNING opportunity for capable reordering"
-> +coccilib.report.print_report(p[0], msg)
-> -- 
-> 2.45.2
+:::::: The code at line 2045 was first introduced by commit
+:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
+
+:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
+:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
