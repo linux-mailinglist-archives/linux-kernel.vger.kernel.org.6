@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-426172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D7B9DEFD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:07:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978979DEFD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 11:08:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A081630EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:07:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2CA2B219C2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2024 10:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F92155CBF;
-	Sat, 30 Nov 2024 10:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98155156225;
+	Sat, 30 Nov 2024 10:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KlmFOoiR"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b3GBR9rd"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EADC155336
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8585F1537CE
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 10:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732961266; cv=none; b=ASyMcKTNiJPpFrORkQDhdYqUhXI8MR2U7VbucR6MdpNrbF1H/z2hsBceRLgo2Ag0HJBsFqQj3owYH9lNR4SN6JrEKzQ9zZ4FBtExk+yzPo8O7JkRCVfB60DJAxLBZStKfX0pf5WF8o2YSAkQzVNQ5AKApMghEAJTA/TC1UHVV/g=
+	t=1732961283; cv=none; b=uHnF0mVWkuc0QMhw4m2/rh2JyH6O7NK6+WUVfsMaPMGCNmFFeM3czJgQWj/Eg+/L0JJH1KFTzOLahGmq68djvXSNDJmjUwjq36HnFf03GI924fQkuPzXbkoR6rYSR3ipcfkAa2nJue/BQ0FijrpZiPj9u+R512a8RSG2HEziIGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732961266; c=relaxed/simple;
-	bh=/Lqq8JaXt4nCGNvsOy0aZbqLE2wFjoQdnXCeO4UCcfk=;
+	s=arc-20240116; t=1732961283; c=relaxed/simple;
+	bh=7zmpFrkNE9b9fiTObZOVjwcI3iZNrUR2CLn6+i8hq2o=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Q3Nc3SNNeGKdkCwm9fsg2QToJrmOiJ6vzuDK0ENQ8WZ68vaiBIrA65gAa/1rFICOrptWk2I4i0lfKJsgFTd/JJ13Pn2phKQ/uhP/hLy7vXwXGnNuvwdSBTgIjNnlF/jVRH8rtr+e0EGSusW7UTdG61DyTtCwKhxGJ8tRiVZ6lMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KlmFOoiR; arc=none smtp.client-ip=209.85.218.47
+	 Content-Disposition; b=pJwcJCR2Sn+vBoQHRV9E0+9+Fi8pJyuQSvXo4hst/gc3+HSYDsDT4Vc/frNBusfRPC+pr26imwtdwF1CME3r5XITwcUeMNKcZ12zkUwiXAsz8H412fIeOce1IYp7/6xfqAaPmVxuU1KiEqsJEDfTrbVTd2NRNa1a4T/GerDK9Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b3GBR9rd; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa531a70416so155914666b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:07:44 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso361149466b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 02:08:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732961263; x=1733566063; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732961280; x=1733566080; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LTiN4AcsE0vQHpWePTXXpdIk4ANIHC/O3POgP94FzkU=;
-        b=KlmFOoiRNiKz0bmAJL57GEISkQoQ512U25sLcZT2hsC8tO8m5haKOCdgJUHuyjppJf
-         KWoKC3uHZWLPpq5vL46C6bLn95vUyhHEWPz1UljzjN9KvEF96ZDqG/WAYg4itPQubq7j
-         EBfOagcrQ+dOxFdLjQ1q1/x756AQY7lngM6ufHZY5r+lRmAGYdxTPxnLXcGmXmf6p1iq
-         q5uT22WixjfX3OV2CLM8n7lKc3mPFxUdt1mndKhGiS0oamSBjj1eqz+Ve4ffeW3BzbkA
-         nse6GpSnavW30ilngbrCWsnixHl6pC1BA8CJDTAFxz7H3Qu04LZtlO60ghpH+YFt6RO3
-         Me2A==
+        bh=bF1qKdUD6G82UToWOeQ2OIejZEXXxD5wyzBbKqaeajo=;
+        b=b3GBR9rd0hyfCgYKbu8TnWR3qKxYGOMQvNRF3pPW54jLcHrFjMguPv5NyYyQOP/YDm
+         xS1dSKvt+9R/eR5S8HICejlOgGrg3re5qSYaL0q8UW9qmQNmxllmN1YcAEP3qHENpyQH
+         wtFEK6EJmi0nPi4VAVQzhJyVXj6cK9+e4yCfq0eNHGQyBIUWhrTiA4TZx1E50Puvuyqm
+         Hc5hO/jiXVBPKMBe5EBA3D5G/sNkyeHn1qALIuKFAW+NtTiZ/13P0b0jKei9fEPxKTSv
+         ET4wwN1gmBSt5AT9FUTVpAMrMVG4RqqC1cq3D3k5B5asl4+ABWPuQje1Yh6MyZDfwdJH
+         VlTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732961263; x=1733566063;
+        d=1e100.net; s=20230601; t=1732961280; x=1733566080;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTiN4AcsE0vQHpWePTXXpdIk4ANIHC/O3POgP94FzkU=;
-        b=VXQBhkLYlzVpQ5Ss9qgCOt1qA5P96ZhMBaWXf9yAfvRx6kCYD8Kmp3O+YANLGQalz4
-         r0S6LHKBhIwVkG69j/tv++NSy7R6UM4HfjoDtp8Hm93BFodNLttaKp0w+pIAdaTtmqr2
-         bcMmh62kUuHeRvlrtEwakSD8TgIoHcDZZP4P00YttlytkItvwZVqgQWL1h19zXDvE7sA
-         2x9Uc9gNtMAJOi6z8YbMIFsIeAECYnGj/nHd4Vcik9IEP87ALvpOvxa+3M2waXex0Teo
-         8OWZKbQvtedv/aXR85J0639QLEiz2AMdBSkFuvTlgo9rHKgf1H2+T3oLsXpsQQdx6RE8
-         e5DA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3emiS95oUAjpIySCmCHbj5ESRMk1F7NnrVsafVFXWgG0isSCOe3tpEbLxDqHJntgyjvgNcLTg5GlyAKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3EJyk2OBnvzibdT6rrklIhXg52kiwFZMivhc3u49DUK6EaZx8
-	GE2jgekemuRfAH1kMvHNhdbIQ/iI2RyosmPP4LvE4YOaW+5RcMCXvjuyZmghE88=
-X-Gm-Gg: ASbGncsz6l7CuUGtEW7cDVEnNqyiuNygzjhciXjmMuJfYAxWif7pGv3GT95eMy4qkKH
-	Bf/OITMSXxHCf94AlVfQ0Xi+qtwfBU99sNXtFifBhI5n9FMUCxNC4QFmEi/Br9v/6lAexpZTXpD
-	CumZSo+mbmnb8MfF3cs66bMTXFjizTCfgA6WEiQhyMOIlFVxndHAZS6STROtHlg7+DnjBCuG30z
-	mDpckQtxkLx+1CpDF4Cl42FtA15Ujz5s5bMcqhlu7KMF3bqacTsAr11Px8Vp+Tk5DjY0kh/
-X-Google-Smtp-Source: AGHT+IHcv3RQB0ttGHB3rHF8kVixpbGo6oU/NmsBDLLe1zSp/r+M8Q40bOxX/CZl1ALhhzeDN+WQDw==
-X-Received: by 2002:a05:6402:3589:b0:5d0:ced8:d22d with SMTP id 4fb4d7f45d1cf-5d0ced8d41amr1610681a12.22.1732961262750;
-        Sat, 30 Nov 2024 02:07:42 -0800 (PST)
+        bh=bF1qKdUD6G82UToWOeQ2OIejZEXXxD5wyzBbKqaeajo=;
+        b=GDG0EExixBoiR+btXwGKfA7vuheoclqk5gOYIKMeyFFcGJAFXSU16f/5pvFyambRCx
+         H6/V/deWxsp4XRjrPyVBQ49NCJ+v+/nyERNPzgGWLBypzbYW5uNKvEKkWrYwbzXG62Sa
+         U+yanabcaHSyKD5EO7oFiqKo3X6zD/dJpMq/nT01rFFeS5ZnZthmkweOIEbiA9tS6rEp
+         ojnniKOe6i2Y/Bn6DjN1bfc4rSl9rjTTo9G03BtAQrUz9Y6Oiel534k+6sok5fszni29
+         ejwdyXwXBBI+P0wwndOJzPtvQLYA8Ho2hsYHBDkKKaCFYKua3xpqPy5YcuYFC4LDGYo/
+         oiqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdHiLyzPlfJ/jQumoUZ+I/sgihkj6IRnrWPmPuosw+3K+hAYhb81flzrehft69UAg1G9oAHU6RBdfC970=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu/BLFSUFPmlvdO5BnX1JtFqY96+9uUZVf8n3vlmr2Q7tX2SZS
+	EOBOZ2oNRrA17R3hCh7lMSWbmhTBDhOA99GgCaIdryBboElxuHf5shKWzWZNiRI=
+X-Gm-Gg: ASbGncsTLXLFOLYfH1DCT8SjJKZ8Dvfq+4kUqb8vkZuV/hcpazTXvW6+7HYO2riuQaT
+	5ZsWG0X15aw+Vqqv5T8M8zhPYkuhp65LHuHRjD7eeJeDPntVh3gUZJ8PQx55TN3xnpOoT91+97+
+	5NKhLEWP7mz4vF/0u5McLolyLdltAvrKH91mY1arU37sCc0/CxV3hhv0hC+t0p95k1zhmcVbt5a
+	7ioWX2D8RtIjLzjBNe9vEN70xz1sc1rEs/HJGTWfq5uYdr61E7kFSFlRnyIKk6ZMF33e32Q
+X-Google-Smtp-Source: AGHT+IGFFkuSzUzBV6MpzgZNlz2YgAq3cRPDWZKCNGkjjw0xQWjwQCZY0kfL1J0lIP1VbayZcSBWxw==
+X-Received: by 2002:a17:907:7819:b0:aa5:b2b:f236 with SMTP id a640c23a62f3a-aa580f353f3mr1240877266b.28.1732961280003;
+        Sat, 30 Nov 2024 02:08:00 -0800 (PST)
 Received: from localhost (h1109.n1.ips.mtn.co.ug. [41.210.145.9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d4124sm269133866b.64.2024.11.30.02.07.41
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996de7e7sm264394866b.71.2024.11.30.02.07.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 02:07:42 -0800 (PST)
-Date: Sat, 30 Nov 2024 13:07:39 +0300
+        Sat, 30 Nov 2024 02:07:59 -0800 (PST)
+Date: Sat, 30 Nov 2024 13:07:56 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Jassi Brar <jassisinghbrar@gmail.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] mailbox: th1520: Fix a NULL vs IS_ERR() bug
-Message-ID: <bda05d7b-5a6e-4f57-a124-ba56f51da031@stanley.mountain>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] opp: core: Fix off by one in dev_pm_opp_get_bw()
+Message-ID: <41ae307c-f6ff-49fb-a962-eb488152de71@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,31 +86,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_ioremap() function doesn't return error pointers, it returns
-NULL.  Update the error checking to match.
+The "opp->bandwidth" array has "opp->opp_table->path_count" number of
+elements.  It's allocated in _opp_allocate().  So this > needs to be >=
+to prevent an out of bounds access.
 
-Fixes: 5d4d263e1c6b ("mailbox: Introduce support for T-head TH1520 Mailbox driver")
+Fixes: d78653dcd8bf ("opp: core: implement dev_pm_opp_get_bw")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/mailbox/mailbox-th1520.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/opp/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mailbox/mailbox-th1520.c b/drivers/mailbox/mailbox-th1520.c
-index 4e84640ac3b8..e16e7c85ee3c 100644
---- a/drivers/mailbox/mailbox-th1520.c
-+++ b/drivers/mailbox/mailbox-th1520.c
-@@ -387,8 +387,10 @@ static void __iomem *th1520_map_mmio(struct platform_device *pdev,
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index d4a0030a0228..09a1432561f6 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -121,7 +121,7 @@ unsigned long dev_pm_opp_get_bw(struct dev_pm_opp *opp, bool peak, int index)
+ 		return 0;
+ 	}
  
- 	mapped = devm_ioremap(&pdev->dev, res->start + offset,
- 			      resource_size(res) - offset);
--	if (IS_ERR(mapped))
-+	if (!mapped) {
- 		dev_err(&pdev->dev, "Failed to map resource: %s\n", res_name);
-+		return ERR_PTR(-ENOMEM);
-+	}
+-	if (index > opp->opp_table->path_count)
++	if (index >= opp->opp_table->path_count)
+ 		return 0;
  
- 	return mapped;
- }
+ 	if (!opp->bandwidth)
 -- 
 2.45.2
 
