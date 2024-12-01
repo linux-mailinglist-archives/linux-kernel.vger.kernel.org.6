@@ -1,150 +1,260 @@
-Return-Path: <linux-kernel+bounces-426555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101B89DF4EB
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 08:14:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5069DF4EF
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 08:37:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 916EDB20A87
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 07:14:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B49162C9B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 07:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E357082A;
-	Sun,  1 Dec 2024 07:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LYjZ7MW7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE5E54740;
+	Sun,  1 Dec 2024 07:37:28 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0626014A84;
-	Sun,  1 Dec 2024 07:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED6B33F6
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 07:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733037232; cv=none; b=T9P/K5pLHhUECy3ob4phchsYNyJvchf+E8T2+nAq8AJCPNEJpGTBs5KfkOMalCUA33K7ZZAdi3WreR7k41PuDV8//McmzR01+Uw/e+J6mGZtNDe2UDBbIjy9Nj6ZOUXHwwFhoPEiozTxMG6fYxhvY4tHC5fN9lA2Qub22aUDeHc=
+	t=1733038647; cv=none; b=ILmOoaszkbvWClwHHHzNYV1T78VCAV/mqlIP6xs89ZHqQVBamnPvoftiY6DeVwYbGVAF4Vi1oJrXJRUM341zurjzWk9I7LgXvTcrRYjjjSpJiTRnkmlPh7nVdjupSbgXL7pMES+jXeVsI1tzmxDsEK64fEf8yOlq48I3zbTG93U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733037232; c=relaxed/simple;
-	bh=eF7SwQDQq8X4sYZVBnIdTlRL5EJnGXcq1h+TUQPdAC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z0YQVJdQOKfdiNy9IsscUcayq3cwLRO/M+3K5+SJD+T72GY34wVyxzgctZ2ajHXeXqrJVeZ+mI0rcDtHDYNlabVlOYLwzGUl16NQPm0CKgIfQONw9XL365NwTWB+AvZ3orLeJ+QwhNIVXdIFsWyJGNENeIZc/sthH3E6Qz6zEcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LYjZ7MW7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B16FvWJ012825;
-	Sun, 1 Dec 2024 07:13:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5C/OYn75vUeGpVMKi1UlDtSYMsW9MJxYmqzuHkavfPQ=; b=LYjZ7MW7jpf4OglP
-	UmhI4r8W3IGz/0r2uO0StPV7Jp7QQXJtOX5dcEBkbSOUI9FMaOi49gUh2pNv8rwT
-	K8R83KEanIMx0uPU3SlpKvxkR+yYf6IJHsVr9WQ6bgPtvdfSmOaeeAvh2Nng5HMD
-	Aq7e2C6pjEvNT+NKSHwj5MfjYka5UPQv7uu9ZZYslFZMXx8OC1t0RZYNnBE+YWc1
-	HDVNPleSuzWTUwTV8eRskqd9v2BvQAfjqeebYJ6dJS7ImUyOVq10KJPEkQiFvZg1
-	lcq1DmnjyhjwNB/LhDgacMoQP+FNYTO+hOcOkWa1e0saXdNpQ9nhODPKDlboQ7Tn
-	zvjybA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437u369w6e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 01 Dec 2024 07:13:34 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B17DXPC010545
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 1 Dec 2024 07:13:33 GMT
-Received: from [10.231.207.28] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 30 Nov
- 2024 23:13:27 -0800
-Message-ID: <c425b639-20a8-439c-9e9a-8b5095f8d3b0@quicinc.com>
-Date: Sun, 1 Dec 2024 15:13:25 +0800
+	s=arc-20240116; t=1733038647; c=relaxed/simple;
+	bh=JZ58AWpjRA4rzBtP7+wOf4OVfuIUU7mJN02rHLLvmy4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XFBGqO/tzHaHx83n90VlNxlO6t/ix27F4F5nU9rhMrC9McJy9D0Dx80rorgmhcT8bOprsSABNLDHitNI1MYb6ok6PmUz+k2h04NhawScuP/3IBBzctXAVhQCRM4dY3DFqnGpv/nwn2i5reIUDhqTLGUOvTf3669Ag8AIN86BCAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8419aa46a87so311376339f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 23:37:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733038645; x=1733643445;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eOdvTkw1xe00oxjEaZU2uM2/VpeN3spJBuPCHGSdB14=;
+        b=L+q9609ZnGEBnOzkx6muI0Q3SBhtoPAI31yWFK3tGprmFgcVkb+JvQvG5nwyofUu+H
+         JX3VdQN9Rk1DxC9bqAc3lLu9BBOl9XQvDWv+WgaaZsJ5n2tf5LmR1dI+1a7YZfdPuTC+
+         qUX0XySeHl9TCaj+U6fGFWHOtYlAei2kuba0D8ycshkT9CyzlB+Bn+7bp8kXdxagSoHQ
+         v/zbIvsOIR4OM4thtAyWh6KEs5iTwEDaujd7PQMcDKwyzLJcc3peAOiOmDrwW16aclfe
+         G6OabOVzXa2ImMyBF4fnCAY9PB9zuE4/FQ5VGH5w5p1z3Pa1gBxJDunpazvHpeDnK7u/
+         tgvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVle73zfHjstLY4/AeLSFRP59FFHxCDDEWoprHzuIrrZkEeCQqfx8EKeHUxRYk3KOy6KU5eQGxmrUBuFE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/6ePbyLwltCvvTUIS/dAeRAbIvyU3ACqXTJEd/dgR8yTmCe/Y
+	T+fHfe/1BeILVv7S9HigRWuGvn7YuehQ7K7t/6sy25BVxL84OkfM2LHBf5xnYQOvRLGOX7yZ8Qj
+	NivasDX+CNe0FC9012y0SQaBQGH/XBmNLEkoVrnhJ5lgj7RwGWF9GABw=
+X-Google-Smtp-Source: AGHT+IGIt54bVqGCyAFye/ilOMwv1ZYyuijirqoHQsplr+mlX4XsPu2Cwpu2LXCaHVlC0t5W30PoQfLLPyDb9qA2Y/F+2UGWwtZ5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Adds SPMI bus, PMIC and peripherals for
- qcs8300-ride
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <kernel@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-0-001c0bed7c67@quicinc.com>
- <sxbjxywwjbep5rlndxoi5k62hqs24biryslkwbcxtvz3ilypvl@qi4omifueyqu>
-Content-Language: en-US
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-In-Reply-To: <sxbjxywwjbep5rlndxoi5k62hqs24biryslkwbcxtvz3ilypvl@qi4omifueyqu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: R43pZ14axOHVs73jyCuiNvQNmuLpBXGD
-X-Proofpoint-ORIG-GUID: R43pZ14axOHVs73jyCuiNvQNmuLpBXGD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- clxscore=1015 bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412010056
+X-Received: by 2002:a05:6e02:1569:b0:3a7:6636:eb48 with SMTP id
+ e9e14a558f8ab-3a7c55d4c48mr199467255ab.18.1733038645191; Sat, 30 Nov 2024
+ 23:37:25 -0800 (PST)
+Date: Sat, 30 Nov 2024 23:37:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674c1235.050a0220.ad585.0032.GAE@google.com>
+Subject: [syzbot] [erofs?] KASAN: slab-use-after-free Read in z_erofs_decompress_queue
+From: syzbot <syzbot+7ff87b095e7ca0c5ac39@syzkaller.appspotmail.com>
+To: chao@kernel.org, dhavale@google.com, huyue2@coolpad.com, 
+	jefflexu@linux.alibaba.com, linux-erofs@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	xiang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    2ba9f676d0a2 Merge tag 'drm-next-2024-11-29' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a9ff5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7903df3280dd39ea
+dashboard link: https://syzkaller.appspot.com/bug?extid=7ff87b095e7ca0c5ac39
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e84f83a0add4/disk-2ba9f676.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7468420d8610/vmlinux-2ba9f676.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fd3f74d41f94/bzImage-2ba9f676.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7ff87b095e7ca0c5ac39@syzkaller.appspotmail.com
+
+erofs (device loop7): failed to decompress -41 in[4096, 0] out[9000]
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: slab-use-after-free in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: slab-use-after-free in queued_spin_trylock include/asm-generic/qspinlock.h:92 [inline]
+BUG: KASAN: slab-use-after-free in do_raw_spin_trylock+0x72/0x1f0 kernel/locking/spinlock_debug.c:123
+Read of size 4 at addr ffff888057feb0b0 by task kworker/u9:4/5836
+
+CPU: 0 UID: 0 PID: 5836 Comm: kworker/u9:4 Not tainted 6.12.0-syzkaller-11677-g2ba9f676d0a2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: erofs_worker z_erofs_decompressqueue_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:489
+ kasan_report+0x143/0x180 mm/kasan/report.c:602
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ queued_spin_trylock include/asm-generic/qspinlock.h:92 [inline]
+ do_raw_spin_trylock+0x72/0x1f0 kernel/locking/spinlock_debug.c:123
+ __raw_spin_trylock include/linux/spinlock_api_smp.h:89 [inline]
+ _raw_spin_trylock+0x20/0x80 kernel/locking/spinlock.c:138
+ spin_trylock include/linux/spinlock.h:361 [inline]
+ z_erofs_put_pcluster fs/erofs/zdata.c:959 [inline]
+ z_erofs_decompress_pcluster fs/erofs/zdata.c:1403 [inline]
+ z_erofs_decompress_queue+0x3798/0x3ef0 fs/erofs/zdata.c:1425
+ z_erofs_decompressqueue_work+0x99/0xe0 fs/erofs/zdata.c:1437
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa68/0x1840 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 9865:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __kmalloc_cache_noprof+0x243/0x390 mm/slub.c:4314
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ erofs_init_fs_context+0x55/0x2c0 fs/erofs/super.c:790
+ alloc_fs_context+0x68c/0x800 fs/fs_context.c:318
+ do_new_mount+0x160/0xb40 fs/namespace.c:3486
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 8390:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2338 [inline]
+ slab_free mm/slub.c:4598 [inline]
+ kfree+0x196/0x430 mm/slub.c:4746
+ erofs_kill_sb+0x197/0x1c0 fs/erofs/super.c:824
+ deactivate_locked_super+0xc6/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x251/0x310 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888057feb000
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 176 bytes inside of
+ freed 1024-byte region [ffff888057feb000, ffff888057feb400)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x57fe8
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801ac41dc0 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801ac41dc0 dead000000000100 dead000000000122
+head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea00015ffa01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5838, tgid 5838 (syz-executor), ts 79303051865, free_ts 23181394506
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x140 mm/slub.c:2408
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2574
+ new_slab mm/slub.c:2627 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3815
+ __slab_alloc+0x58/0xa0 mm/slub.c:3905
+ __slab_alloc_node mm/slub.c:3980 [inline]
+ slab_alloc_node mm/slub.c:4141 [inline]
+ __do_kmalloc_node mm/slub.c:4282 [inline]
+ __kmalloc_node_track_caller_noprof+0x2e9/0x4c0 mm/slub.c:4302
+ kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:609
+ __alloc_skb+0x1f3/0x440 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1323 [inline]
+ nlmsg_new include/net/netlink.h:1018 [inline]
+ inet6_rt_notify+0xba/0x240 net/ipv6/route.c:6195
+ fib6_add_rt2node net/ipv6/ip6_fib.c:1259 [inline]
+ fib6_add+0x1e33/0x4420 net/ipv6/ip6_fib.c:1488
+ __ip6_ins_rt net/ipv6/route.c:1317 [inline]
+ ip6_route_add+0x8b/0x160 net/ipv6/route.c:3857
+ addrconf_prefix_route net/ipv6/addrconf.c:2486 [inline]
+ addrconf_add_linklocal+0x61a/0xa30 net/ipv6/addrconf.c:3338
+ addrconf_addr_gen+0x510/0xbb0
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0xdef/0x1130 mm/page_alloc.c:2657
+ free_contig_range+0x152/0x550 mm/page_alloc.c:6630
+ destroy_args+0x92/0x910 mm/debug_vm_pgtable.c:1017
+ debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
+ do_one_initcall+0x24a/0x870 init/main.c:1266
+ do_initcall_level+0x157/0x210 init/main.c:1328
+ do_initcalls+0x3f/0x80 init/main.c:1344
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1577
+ kernel_init+0x1d/0x2b0 init/main.c:1466
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff888057feaf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888057feb000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888057feb080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ ffff888057feb100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888057feb180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 11/28/2024 9:10 PM, Dmitry Baryshkov wrote:
-> On Thu, Nov 28, 2024 at 05:40:15PM +0800, Tingguo Cheng wrote:
->> Enable SPMI bus, PMIC and PMIC peripherals for qcs8300-ride board. The
->> qcs8300-ride use 2 pmics(pmm8620au:0,pmm8650au:1) on the board, which
->> are variants of pmm8654au used on sa8775p/qcs9100 -ride(4x pmics).
->>
->> This patch series depends on the patch series:
->> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
->>
->> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
->> ---
->> Changes in v2:
->> - Fixed comments in community.
-> 
-> comments in community? What does that mean?
-Comments given by the opensource community in the Email list. Sorry for 
-not being clear about this.
-> 
->> - Added arbiter version(5.2.0) in commit message.
->> - Link to v1: https://lore.kernel.org/r/20241126-adds-spmi-pmic-peripherals-for-qcs8300-v1-0-28af84cb86f8@quicinc.com
->>
->> ---
->> Tingguo Cheng (2):
->>        arm64: dts: qcom: qcs8300: Adds SPMI support
->>        arm64: dts: qcom: qcs8300-ride: Enable PMIC peripherals
->>
->>   arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
->>   arch/arm64/boot/dts/qcom/qcs8300.dtsi     | 22 ++++++++++++++++++++++
->>   2 files changed, 45 insertions(+)
->> ---
->> base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
->> change-id: 20241122-adds-spmi-pmic-peripherals-for-qcs8300-0a3c4458cf7e
->> prerequisite-change-id: 20240925-qcs8300_initial_dtsi-ea614fe45341:v2
->> prerequisite-patch-id: 73c78f31fa1d504124d4a82b578a6a14126cccd8
->> prerequisite-patch-id: 5a01283c8654ae7c696d9c69cb21505b71c5ca27
->> prerequisite-patch-id: dc633d5aaac790776a8a213ea2faa4890a3f665d
->> prerequisite-patch-id: 9ecf4cb8b5842ac64e51d6baa0e6c1fbe449ee66
->>
->> Best regards,
->> -- 
->> Tingguo Cheng <quic_tingguoc@quicinc.com>
->>
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-Thank you & BRs
-Tingguo
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
