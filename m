@@ -1,180 +1,304 @@
-Return-Path: <linux-kernel+bounces-426641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F02C9DF5F5
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 15:31:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4329DF609
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 16:11:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD851631B5
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:31:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72543281A8F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 15:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9193C1D6191;
-	Sun,  1 Dec 2024 14:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UMtj5vAD"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5441D5ADE;
+	Sun,  1 Dec 2024 15:11:31 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EE613AA38;
-	Sun,  1 Dec 2024 14:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5E71D2B1C
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 15:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733063497; cv=none; b=B85V8Dx9VHtAK5coTRpwlVMoLfM24L+bkEnBsGX7rV2SN+Z6drST0HdW3N6Q2k54jnZHpsbqmoR7Cjai69Nx0G3WtrWHO9myRWUSAvWW8caIQgzXZ2N889KDE8I+VX3Ea9inzgOgp2kwI0CF3bM8BFV+e58ZmEE2IdJoJIYXdJA=
+	t=1733065890; cv=none; b=HuGG8pZzXXHmlVjYc12V7PEQVehJ3VTDnXQp1BOGDFXKxIMEtAb/k9376bFm+Exlucg76fJ4ZvMzbB5fD9ZjqiM4yqYIDieEl392OuV3sQ5yLkdzU/5s4/kNDBWCx7QmOhoMJM+7tWuitHvs3rkC9q9pnYP9wtrJC9bt8Aw0DvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733063497; c=relaxed/simple;
-	bh=cs07FUKuBT285LCr8xyS8sJE5bAzCSjYVFNiRrNf6e0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSCn2J9aFPPMAU7ESKldf+8hT2xX/W+AvLBxSRQb+u9D7zeLHqn/sUamwoofx2eUds0SVovQnqFD+xgMcYivWDEuyRhJUZu/0Z9h4/ADAq506VBBXzdiAG1OwtHbjwPf9cXmIIB3GM0ZPQGgdkKbZYgDrFFCjHiQl/3+OIQ0PyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UMtj5vAD; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21288ce11d7so28866735ad.2;
-        Sun, 01 Dec 2024 06:31:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733063494; x=1733668294; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dSs1okWPJ9Uo0V4mm18+tBBS4yF0aCTku8uJEQLNf9w=;
-        b=UMtj5vADnGfyt/yIUlrivvbkTUZvB6d2NgK9bjovReJP5qxF1MCs+sp5DKzIMyfxd1
-         kdsCCAZmrySq/x0SFumMcr7GVs9iPwiN5gHJvFXrEc7+huErAdbBWcDocSKuy8Gjuj7X
-         hvl16YZHBdfmAQ+PUJoKe2MnFdJRgOpe6V2tXJeBbnichnPIe5JY6M00PRu7w4kHq6Kl
-         S1weHkyir8NLy2R7hWw1FILZYA56MVU6a0K7N/jP7ldyYxSL/gNOPaCrUb0iPLVVVqiM
-         +cp8FCZWKFTDQf2K1IuaW8l5eHxbCtvu9G7CRF/s2tYyrQwn5GdPJ5/WWWjmNHUfBDvE
-         2QMQ==
+	s=arc-20240116; t=1733065890; c=relaxed/simple;
+	bh=7LgfWzu/P6xTKOFg/einuJWbMME7j5fMNdqJ9p0JOA8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=b6xAb03iL363ncYJFbgKa/gf/r+Z2oclnKY6qwKYJrK2kTlspwIHmn3W02Aj5gmBS9Og/DGsQ3THWMae23v83aie/xrbjdY9X58uvFVeS9Wqtky3KTYIcsA2QLnRUiON5Z6qOoyyGBx54EsBSPt0GqUcm8G8F8YQgt3TpCGY5Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a78421a2e1so34580675ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 07:11:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733063494; x=1733668294;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dSs1okWPJ9Uo0V4mm18+tBBS4yF0aCTku8uJEQLNf9w=;
-        b=aTlpy9bD5WdF5jC3fdyLfH7CbmldWqTDywY8YqsuPw/kC1t53CkY8RTGAWapy0Cl1F
-         axoLkSsHuA5ymGUxqyJQxE96TOUQwsXfGO1shs24goLfpDZeRj6eJw4wO5m4AfOv1udx
-         0ys2IAj5fbIt8saSfYfS/Tmt0fUi4Ji27W1gcUrwIgBiOXmzKfzNOMWhBrFiMhee4B/N
-         IkG56N7uCaiWm9CxtcQ+eWKq9eotL/sohlN8JMxTnl12if6Ip9TpGKheIdF223flGA+m
-         oz2VabcKoLiu6lx6IwVdb0Ikx3dUhVkBg+NDRQlcm7fju8owRmFNrFiddC0sKRWQEW3a
-         waZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYnFJ2X/bIHnRT3YzxPasik6AYnSsD8LI39RY889aYmy03GXm8aLDOvFOQUTI0jbl7/eea+dFNJ+iD@vger.kernel.org, AJvYcCUZTrRWv5Wu6tpE7d/FFKGq2V4V7NNL+kRBljGTvuqOml+EKCswd6A+aOpOoP8IyWjcXHJr/HvZGhb5LZIB@vger.kernel.org, AJvYcCUjQ79PVQOfeM2IBaxMjyE24ANhTuvRJNqrYXrxfUPGIrtBU0RScoNln71qAoWBstCB6tQ7IzRJJ7yAnV1H@vger.kernel.org, AJvYcCUnpovNeYCm7aX2Vovn9cE27i7NUiNvfRrqWhc5KVKoFiTv+lKJ4mAhV9OhVlUC45xaadIxh6y4oFD5+DjXgUY=@vger.kernel.org, AJvYcCVFg1kSJnupBOE9hChk7QXlpngzc6x61Vf8G8G0wjWDgycjDpebJ4VUZKpTBySGjVPwybmG093K7Lk9@vger.kernel.org, AJvYcCVVDT/qT5ly/Y9XsDyR/dVoajBNw4o6HtRhzxaPGj/e/kp3FPxTWMJ7R+SwXiDQ3DuDYSwGEkqfLjtf@vger.kernel.org, AJvYcCXRKezgB4VLLDUBvMZb4/xAJryewxipFRmgwhCfDMYlWRXEY+xTjg0MR9OZdHj0o73g5Nx8k6okneEDLQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX3kxSiphgopXUBAUbvB4dNtAHrIo8xZTAwa4st/CbKLzFjmcz
-	05DbHNkyPJkrJVvslahYMJBgHSuatR2FNHzPnTa28LFLNv4ddV47
-X-Gm-Gg: ASbGncuNEcLI4UvrABdBHhRusVtqjkQrqlB+DltdXUzvrUFLvTZco2TDyViEISO2Pbq
-	9Q5WlHKlov5I50mbnG/lC5DWD5UrgCo8v7/EZTd3D1kSGumpvJoHDEUzIYoJmYz9/TJQ4J2nVj/
-	/n4BvYjRfX+RmOw8S9/Pz7d2H+rZu3gNkm5e8nCwuzWZOC1KTweC9ZoSHHCtyjTulRl6i579JcC
-	UhJIpJ7kP+N7fuOK74E1EBUbyaJtDXuk7vHrsivOSiF1WSj/EtQ0EfNWXpj1gg=
-X-Google-Smtp-Source: AGHT+IHez05EYi6Jr4b/fsMBN/z//mvCD2nUHZ3frqiYhHt5hXzXEq52h6WucQvOD9jNiEl0syoZRg==
-X-Received: by 2002:a17:902:f70b:b0:212:46c2:6330 with SMTP id d9443c01a7336-21501381475mr240993735ad.18.1733063494317;
-        Sun, 01 Dec 2024 06:31:34 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521986004sm60223015ad.184.2024.12.01.06.31.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 06:31:33 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 1 Dec 2024 06:31:32 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
-	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Li <davidxl@google.com>, Han Shen <shenhan@google.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Maksim Panchenko <max4bolt@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Yabin Cui <yabinc@google.com>,
-	Krzysztof Pszeniczny <kpszeniczny@google.com>,
-	Sriraman Tallam <tmsriram@google.com>,
-	Stephane Eranian <eranian@google.com>, x86@kernel.org,
-	linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>, linux-openrisc@vger.kernel.org
-Subject: Re: [PATCH v7 3/7] Adjust symbol ordering in text output section
- [openrisc boot failure]
-Message-ID: <5e032233-5b65-4ad5-ac50-d2eb6c00171c@roeck-us.net>
-References: <20241102175115.1769468-1-xur@google.com>
- <20241102175115.1769468-4-xur@google.com>
+        d=1e100.net; s=20230601; t=1733065888; x=1733670688;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=anlVY+yVLn+ojDOgt5liZFf+bjNBKilcTUFDfd+hgHI=;
+        b=BIbhAIjMQ/uABYbBy9X1oLvX9H7Tfo3IUO00RExwq5s0p+zfUxrUKnolQrFROd8EWx
+         +h/yVvMqJdSdKcQVnN2YWTm0NjdTrXcQ0p9gA2LM0+rDhUYIgQdHyolrg2I6r8Uof53x
+         tuTKQKm3FqukZgk4+a7PhNYkxaDTnaIUmPXNlYWMgFouOm6birwwPixLyrEkhKk1UKCk
+         T8cJxVxAIiBp7UBmkjzbiZkjjjrJFmKqAzApduY22BkH6vOrTcbeavuxECqVpIgfuy4r
+         aeJQtiv+hiwVJbQncLltrt65NabzP3/3oozYdCuOHcYzMAISuG75KGtRugpygcoEm3oY
+         XymA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJNOA9Siow1+4jS0dk13iCsLUnpB+K32goeGiuu9N00HMWf2ik+PLkMiSjsc1FSzOGlU2VrEtgAs95+38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPajlYcD+bx8xiOzZwH0fxGHaUeAWNJWJEUs4/o96HU29qNFGj
+	Cl56cNrkOSmkWLghK7za8AOuP9YS075zTiItRcIUv2Hz92yEIlpAgE3CdK+91IJ9axY71zq+p5x
+	rOP3b7dopvESUr7IdGDtw9iJMj8ZaZj9vGEDTgRVeFwy4DQLH8xfK/kA=
+X-Google-Smtp-Source: AGHT+IFBkW7YCDcmjP+gJvlxa+hlJqPPJdniRhY/yGyoOR/E+QX9XLWdnhSjWUdbMXAJ1AVcrVPU9L0BrZwk+uMb9QkuEHuDauqF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241102175115.1769468-4-xur@google.com>
+X-Received: by 2002:a05:6e02:1c45:b0:3a7:d792:d6c4 with SMTP id
+ e9e14a558f8ab-3a7d792dac9mr101116425ab.21.1733065887891; Sun, 01 Dec 2024
+ 07:11:27 -0800 (PST)
+Date: Sun, 01 Dec 2024 07:11:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674c7c9f.050a0220.48a03.000e.GAE@google.com>
+Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_xattr_ibody_set
+From: syzbot <syzbot+40ba330fa32f928caa97@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-On Sat, Nov 02, 2024 at 10:51:10AM -0700, Rong Xu wrote:
-> When the -ffunction-sections compiler option is enabled, each function
-> is placed in a separate section named .text.function_name rather than
-> putting all functions in a single .text section.
-> 
-...
-> 
-> Co-developed-by: Han Shen <shenhan@google.com>
-> Signed-off-by: Han Shen <shenhan@google.com>
-> Signed-off-by: Rong Xu <xur@google.com>
-> Suggested-by: Sriraman Tallam <tmsriram@google.com>
-> Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
-> Tested-by: Yonghong Song <yonghong.song@linux.dev>
-> Tested-by: Yabin Cui <yabinc@google.com>
-> Tested-by: Nathan Chancellor <nathan@kernel.org>
-> Reviewed-by: Kees Cook <kees@kernel.org>
+syzbot found the following issue on:
 
-With this patch in the tree, the openrisck qemu emulation using
-or1ksim_defconfig fails to boot. There is no log output, even with
-earlycon enabled.
+HEAD commit:    7af08b57bcb9 Merge tag 'trace-v6.13-2' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=146a5bc0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3891b550f14aea0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=40ba330fa32f928caa97
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Bisect log attached.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Guenter
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-7af08b57.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/63d6781734c3/vmlinux-7af08b57.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f3bd17982594/bzImage-7af08b57.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+40ba330fa32f928caa97@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 262144
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+warning: `syz.0.0' uses wireless extensions which will stop working for Wi-Fi 7 hardware; use nl80211
+overlayfs: upper fs does not support tmpfile.
+overlayfs: upper fs does not support RENAME_WHITEOUT.
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-syzkaller-10689-g7af08b57bcb9 #0 Not tainted
+------------------------------------------------------
+syz.0.0/5339 is trying to acquire lock:
+ffff88805843dbe0 (&oi->ip_alloc_sem){++++}-{4:4}, at: ocfs2_xattr_ibody_set+0x12c/0xd00 fs/ocfs2/xattr.c:2783
+
+but task is already holding lock:
+ffff888040a06958 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0x1e94/0x2110 fs/jbd2/transaction.c:448
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (jbd2_handle){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       start_this_handle+0x1eb4/0x2110 fs/jbd2/transaction.c:448
+       jbd2__journal_start+0x2da/0x5d0 fs/jbd2/transaction.c:505
+       jbd2_journal_start+0x29/0x40 fs/jbd2/transaction.c:544
+       ocfs2_start_trans+0x3c9/0x700 fs/ocfs2/journal.c:352
+       ocfs2_modify_bh+0xed/0x4d0 fs/ocfs2/quota_local.c:101
+       ocfs2_local_read_info+0x158f/0x19f0 fs/ocfs2/quota_local.c:771
+       dquot_load_quota_sb+0x762/0xbb0 fs/quota/dquot.c:2457
+       dquot_load_quota_inode+0x320/0x600 fs/quota/dquot.c:2494
+       ocfs2_enable_quotas+0x169/0x450 fs/ocfs2/super.c:926
+       ocfs2_fill_super+0x4ca1/0x5760 fs/ocfs2/super.c:1141
+       mount_bdev+0x20a/0x2d0 fs/super.c:1693
+       legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&journal->j_trans_barrier){.+.+}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
+       ocfs2_start_trans+0x3be/0x700 fs/ocfs2/journal.c:350
+       ocfs2_modify_bh+0xed/0x4d0 fs/ocfs2/quota_local.c:101
+       ocfs2_local_read_info+0x158f/0x19f0 fs/ocfs2/quota_local.c:771
+       dquot_load_quota_sb+0x762/0xbb0 fs/quota/dquot.c:2457
+       dquot_load_quota_inode+0x320/0x600 fs/quota/dquot.c:2494
+       ocfs2_enable_quotas+0x169/0x450 fs/ocfs2/super.c:926
+       ocfs2_fill_super+0x4ca1/0x5760 fs/ocfs2/super.c:1141
+       mount_bdev+0x20a/0x2d0 fs/super.c:1693
+       legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (sb_internal#2){.+.+}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1725 [inline]
+       sb_start_intwrite include/linux/fs.h:1908 [inline]
+       ocfs2_start_trans+0x2b9/0x700 fs/ocfs2/journal.c:348
+       ocfs2_setattr+0x9dd/0x1ef0 fs/ocfs2/file.c:1263
+       notify_change+0xbca/0xe90 fs/attr.c:552
+       ovl_do_notify_change fs/overlayfs/overlayfs.h:203 [inline]
+       ovl_workdir_create+0x782/0x980 fs/overlayfs/super.c:344
+       ovl_make_workdir fs/overlayfs/super.c:650 [inline]
+       ovl_get_workdir+0x311/0x1920 fs/overlayfs/super.c:808
+       ovl_fill_super+0x12a8/0x3560 fs/overlayfs/super.c:1376
+       vfs_get_super fs/super.c:1280 [inline]
+       get_tree_nodev+0xb7/0x140 fs/super.c:1299
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&oi->ip_alloc_sem){++++}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
+       ocfs2_xattr_ibody_set+0x12c/0xd00 fs/ocfs2/xattr.c:2783
+       __ocfs2_xattr_set_handle+0x128/0x10a0 fs/ocfs2/xattr.c:3322
+       ocfs2_xattr_set+0x128c/0x1930 fs/ocfs2/xattr.c:3650
+       __vfs_setxattr+0x468/0x4a0 fs/xattr.c:200
+       __vfs_setxattr_noperm+0x12e/0x660 fs/xattr.c:234
+       vfs_setxattr+0x221/0x430 fs/xattr.c:321
+       ovl_do_setxattr fs/overlayfs/overlayfs.h:314 [inline]
+       ovl_setxattr fs/overlayfs/overlayfs.h:326 [inline]
+       ovl_make_workdir fs/overlayfs/super.c:696 [inline]
+       ovl_get_workdir+0xd90/0x1920 fs/overlayfs/super.c:808
+       ovl_fill_super+0x12a8/0x3560 fs/overlayfs/super.c:1376
+       vfs_get_super fs/super.c:1280 [inline]
+       get_tree_nodev+0xb7/0x140 fs/super.c:1299
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &oi->ip_alloc_sem --> &journal->j_trans_barrier --> jbd2_handle
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(jbd2_handle);
+                               lock(&journal->j_trans_barrier);
+                               lock(jbd2_handle);
+  lock(&oi->ip_alloc_sem);
+
+ *** DEADLOCK ***
+
+8 locks held by syz.0.0/5339:
+ #0: ffff8880522e20e0 (&type->s_umount_key#46/1){+.+.}-{4:4}, at: alloc_super+0x221/0x9d0 fs/super.c:344
+ #1: ffff888000d92420 (sb_writers#11){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
+ #2: ffff88805843df40 (&sb->s_type->i_mutex_key#19){++++}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
+ #2: ffff88805843df40 (&sb->s_type->i_mutex_key#19){++++}-{4:4}, at: vfs_setxattr+0x1e1/0x430 fs/xattr.c:320
+ #3: ffff88805843dc78 (&oi->ip_xattr_sem){++++}-{4:4}, at: ocfs2_xattr_set+0x633/0x1930 fs/ocfs2/xattr.c:3583
+ #4: ffff888058431800 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#7){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
+ #4: ffff888058431800 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#7){+.+.}-{4:4}, at: ocfs2_reserve_suballoc_bits+0x192/0x4e70 fs/ocfs2/suballoc.c:786
+ #5: ffff888000d92610 (sb_internal#2){.+.+}-{0:0}, at: ocfs2_xattr_set+0x1192/0x1930 fs/ocfs2/xattr.c:3643
+ #6: ffff88801ce3d8e8 (&journal->j_trans_barrier){.+.+}-{4:4}, at: ocfs2_start_trans+0x3be/0x700 fs/ocfs2/journal.c:350
+ #7: ffff888040a06958 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0x1e94/0x2110 fs/jbd2/transaction.c:448
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5339 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-10689-g7af08b57bcb9 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ down_write+0x99/0x220 kernel/locking/rwsem.c:1577
+ ocfs2_xattr_ibody_set+0x12c/0xd00 fs/ocfs2/xattr.c:2783
+ __ocfs2_xattr_set_handle+0x128/0x10a0 fs/ocfs2/xattr.c:3322
+ ocfs2_xattr_set+0x128c/0x1930 fs/ocfs2/xattr.c:3650
+ __vfs_setxattr+0x468/0x4a0 fs/xattr.c:200
+ __vfs_setxattr_noperm+0x12e/0x660 fs/xattr.c:234
+ vfs_setxattr+0x221/0x430 fs/xattr.c:321
+ ovl_do_setxattr fs/overlayfs/overlayfs.h:314 [inline]
+ ovl_setxattr fs/overlayfs/overlayfs.h:326 [inline]
+ ovl_make_workdir fs/overlayfs/super.c:696 [inline]
+ ovl_get_workdir+0xd90/0x1920 fs/overlayfs/super.c:808
+ ovl_fill_super+0x12a8/0x3560 fs/overlayfs/super.c:1376
+ vfs_get_super fs/super.c:1280 [inline]
+ get_tree_nodev+0xb7/0x140 fs/super.c:1299
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f091ef80849
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f091fd9b058 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f091f145fa0 RCX: 00007f091ef80849
+RDX: 0000000020000080 RSI: 00000000200000c0 RDI: 0000000000000000
+RBP: 00007f091eff3986 R08: 0000000020000400 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f091f145fa0 R15: 00007ffcd52320d8
+ </TASK>
+overlayfs: upper fs missing required features.
+syz.0.0 (5339) used greatest stack depth: 17176 bytes left
+
 
 ---
-# bad: [bcc8eda6d34934d80b96adb8dc4ff5dfc632a53a] Merge tag 'turbostat-2024.11.30' of git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux
-# good: [2ba9f676d0a2e408aef14d679984c26373bf37b7] Merge tag 'drm-next-2024-11-29' of https://gitlab.freedesktop.org/drm/kernel
-git bisect start 'HEAD' '2ba9f676d0a2'
-# good: [831c1926ee728c3e747255f7c0f434762e8e863d] Merge tag 'uml-for-linus-6.13-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux
-git bisect good 831c1926ee728c3e747255f7c0f434762e8e863d
-# bad: [6a34dfa15d6edf7e78b8118d862d2db0889cf669] Merge tag 'kbuild-v6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild
-git bisect bad 6a34dfa15d6edf7e78b8118d862d2db0889cf669
-# bad: [e397a603e49cc7c7c113fad9f55a09637f290c34] kbuild: switch from lz4c to lz4 for compression
-git bisect bad e397a603e49cc7c7c113fad9f55a09637f290c34
-# good: [d6a91e28d11902e6cd5715633ed6f9b6df75de32] kconfig: qconf: remove unnecessary mode check in ConfigItem::updateMenu()
-git bisect good d6a91e28d11902e6cd5715633ed6f9b6df75de32
-# bad: [0afd73c5f5c606b0f8f8ff036e4f5d6c4b788d02] kbuild: replace two $(abs_objtree) with $(CURDIR) in top Makefile
-git bisect bad 0afd73c5f5c606b0f8f8ff036e4f5d6c4b788d02
-# bad: [db0b2991ae1aac5ca985ec6fd8ff9bd9b2126c9b] vmlinux.lds.h: Add markers for text_unlikely and text_hot sections
-git bisect bad db0b2991ae1aac5ca985ec6fd8ff9bd9b2126c9b
-# good: [315ad8780a129e82e2c5c65ee6e970d91a577acb] kbuild: Add AutoFDO support for Clang build
-git bisect good 315ad8780a129e82e2c5c65ee6e970d91a577acb
-# good: [52892ed6b03a14b961c1df783ed05763758abc73] MIPS: Place __kernel_entry at the beginning of text section
-git bisect good 52892ed6b03a14b961c1df783ed05763758abc73
-# bad: [0043ecea2399ffc8bfd99ed9dbbe766e7c79293c] vmlinux.lds.h: Adjust symbol ordering in text output section
-git bisect bad 0043ecea2399ffc8bfd99ed9dbbe766e7c79293c
-# first bad commit: [0043ecea2399ffc8bfd99ed9dbbe766e7c79293c] vmlinux.lds.h: Adjust symbol ordering in text output section
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
