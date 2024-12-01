@@ -1,151 +1,118 @@
-Return-Path: <linux-kernel+bounces-426576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7E79DF527
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 10:47:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 385769DF52B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 11:30:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18C92811F5
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 09:47:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93676B210D0
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 10:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE54213A3E4;
-	Sun,  1 Dec 2024 09:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="poc+1Opg"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8025183CD3;
+	Sun,  1 Dec 2024 10:29:57 +0000 (UTC)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05CE70834;
-	Sun,  1 Dec 2024 09:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8787AD5A
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 10:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733046452; cv=none; b=jr/MfL8Hfu4AdooU7SBkFEY2/HRPPnikItkKFNMyQDTsX+JTfKR7wyE84xCcKm8F1MQpkpv2ltc6lEUYqoihceN9L0p2Vmr0R5xWTmDEn27yZzwwfyyKveDjfA8ylxeb0c6TT8G00jAjYX0rCRsdf1YPYIw5qu4LFncidfHuaM4=
+	t=1733048997; cv=none; b=Uem3yR+YIu96YTlhfiqGdWX8bGzuSYfrpbFE4G/cEU471g0u5Fd0sQ54FtvqW5xb2zLoXBymL7MHPFfIGL7a/vurYrpyc9Drw3FIkDrY/RIWoXqaemHh8HLiKxionaur8f4pjonTWM92eUboRN0K7mr1dcUP2zSCsWm52v4ciNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733046452; c=relaxed/simple;
-	bh=as5tR6OwsTVcSX5GRX3q+z9vBr6Wgj7yFmegZs8oYs4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CmvVL4VvwGQxzgeEesUqb3iDiy35SH4mhKt7dWLZ8GoAMe2nWmiBDCQBzBI7j4NBZymDWjJOjtLf/5xP+mDTn7pUq/D6eIf3YcF9HW+kQQlicOrH+jL0efQsxhKReeNbb8DBYCWXM80N1U4qkw3XcqEVDQJg4TxU0cPn/JlB4yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=poc+1Opg; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B19l6HS036337;
-	Sun, 1 Dec 2024 03:47:06 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733046426;
-	bh=mX/4YXm19qrr2j4Z5gLyYBNF+BgxM8nmBWvl0k/FUHs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=poc+1OpgGHeGn2N7HxoqgWr0xsrc6KrrKmsrXQEgfK2VJinjszwQJ6syPntApacgO
-	 Q3T6n7UmDisVeE/jsgtIjn45DCzIOSohPm26bP/SR9cy/YEiA1sC7VHR9vOC3bSp32
-	 2Br4VMTFn9RhydIPC5f9DWHbjt4+2xmnqAM5D9BI=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B19l6j2003143
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 1 Dec 2024 03:47:06 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 1
- Dec 2024 03:47:05 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 1 Dec 2024 03:47:05 -0600
-Received: from [10.250.214.214] ([10.250.214.214])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B19l2q2015175;
-	Sun, 1 Dec 2024 03:47:02 -0600
-Message-ID: <b3446a0d-43e5-47ea-b3b0-f3e81d9c41c0@ti.com>
-Date: Sun, 1 Dec 2024 11:47:01 +0200
+	s=arc-20240116; t=1733048997; c=relaxed/simple;
+	bh=uLeJs9a4ziqCM+rM63lJMeasPcx2dm1ZTNIySsONDB8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=on8P/vhMLlQlHVaoT7+TxHngUe4pma8PTphhXMRa4AHUWd60LDvNq0TlrWS/HXOhunUTWrcf1eSjTwyqqrAHWc44OdYDaFKydC/DIbv65F1WAG5FSdFg2zBgAIdhUEXKj8TIR49PnCFGQsngxVo7XR0FCBXz1pjPjGt2Z72q6Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4aef1e4c3e7so820753137.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 02:29:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733048993; x=1733653793;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wcIOSYzjNwsQGO1A+69Z/y5g0kNFHzkKGIV0FYE+buU=;
+        b=Q7iNo5q6sgrGNYMc41fb1aNXR9rTuOi3/Uw0yfCWoN6tmxCaElQO22gTux5IQtbS3B
+         zqh53Rkfpn7lAV5qdfK9nQ3+UyUteceAYAiMi1uArMBmTOkEkqu2E/utVzbV5YQ6Kn5F
+         P3cDSWsyKt0taCh5fOcqVa1+RIrBmIHA6adzaFvUjMwR/aapMdGCsj37TGlcBA/48Ak+
+         9mE6qR2z5T1nBOdIcENQkD9x1yCnGgxiad56p7A8wSnO5EqDNSmeMh+x4DH4ZVeaidic
+         e39A0NRrbhpQbWiuZsq7bltRM66BoxYP7OSE6euH34YzDNfGwgcqhg7s0zBc7E1LFovg
+         6KHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUX00G2i6p1kyeZBLnvIPBPainNqr2xVseFbFvBI6bScGYpLP8oEYcYbJfmdWQnfwwGHDUWXgU4cS3vSaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8RMm6JJvsqV+fbrXEGPoGFC53wnFSnUPQhTftst2iYSLjT+mj
+	P7JPksKrMlR7nSApyyPMATRQ1Ox4KfQdC+oatkZ6FzJkork5E+pXQyfpoFIk
+X-Gm-Gg: ASbGncsmG1Z6xMmbdiXMk9izN9d6BcJgUD+fmMgxWJ1D3Crzt9Jxrpd9DJw5sF6QsIO
+	7d9UNThffgm+h4NFroLayKLNcrMQpo3zjMfPkDsCh2XXGQwrrNUIF5gCQzu4nOdRl16XizqRFvo
+	fIfncsZ6YyhdZ1qxsDyLem81T6W/U4N4VrfnoBxRkbytCb62WwbjPsmec568KG1RNAB/tnsw+dP
+	ZBM46IXcl4Id/j+iTWqlyO01FIz3j/w4TQx2TLEApHUyhtfNKLuwdgow9JqF2zAVtGajGK1Sjqt
+	eJq/iqBXwDJ5aQjf
+X-Google-Smtp-Source: AGHT+IGesYkdAcvzaFzoFv/OMWOk9o45c88IkRhGlXvVSUO7VOld1b8azSgrSSi2TuNAAqRqaq+3zA==
+X-Received: by 2002:a05:6102:f86:b0:4af:48a6:79d4 with SMTP id ada2fe7eead31-4af48a67c43mr21056427137.6.1733048993403;
+        Sun, 01 Dec 2024 02:29:53 -0800 (PST)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85b82a0d3f1sm1372807241.5.2024.12.01.02.29.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Dec 2024 02:29:52 -0800 (PST)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-514fab8ac5aso733628e0c.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 02:29:52 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXIOWHap0E6o5T5gcuOGQyRROOO0SzCLces6riZoIk0e4OrXdkyMWXlG3ab/1cjAmAyQJ9ACZ8mgtz/9io=@vger.kernel.org
+X-Received: by 2002:a05:6102:38c6:b0:4af:58f7:15ec with SMTP id
+ ada2fe7eead31-4af58f71c0bmr11615268137.4.1733048992532; Sun, 01 Dec 2024
+ 02:29:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/17] wifi: cc33xx: Add main.c
-To: Johannes Berg <johannes@sipsolutions.net>, Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20241107125209.1736277-1-michael.nemanov@ti.com>
- <20241107125209.1736277-10-michael.nemanov@ti.com>
- <685d782d68bfc664c4fcc594dff96546ffc30e5f.camel@sipsolutions.net>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <685d782d68bfc664c4fcc594dff96546ffc30e5f.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241130145727.900020-2-u.kleine-koenig@baylibre.com>
+In-Reply-To: <20241130145727.900020-2-u.kleine-koenig@baylibre.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 1 Dec 2024 11:29:41 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVm5D9bqpmdLe=_FPchttUqy80H7qdOUuXzm-af5gGSjw@mail.gmail.com>
+Message-ID: <CAMuHMdVm5D9bqpmdLe=_FPchttUqy80H7qdOUuXzm-af5gGSjw@mail.gmail.com>
+Subject: Re: [PATCH] auxdisplay: Switch back to struct platform_driver::remove()
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Paul Burton <paulburton@kernel.org>, Erick Archer <erick.archer@outlook.com>, 
+	Chris Packham <chris.packham@alliedtelesis.co.nz>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/8/2024 1:42 PM, Johannes Berg wrote:
->> +static void cc33xx_op_tx(struct ieee80211_hw *hw,
->> +			 struct ieee80211_tx_control *control,
->> +			 struct sk_buff *skb)
->> +{
->> +	struct cc33xx *cc = hw->priv;
->> +	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
->> +	struct ieee80211_vif *vif = info->control.vif;
->> +	struct cc33xx_vif *wlvif = NULL;
->> +	enum cc33xx_queue_stop_reason stop_reason = CC33XX_QUEUE_STOP_REASON_WATERMARK;
->> +	unsigned long flags;
->> +	int q, mapping;
->> +	u8 hlid;
->> +
->> +	if (!vif) {
->> +		ieee80211_free_txskb(hw, skb);
->> +		return;
->> +	}
->> +
->> +	wlvif = cc33xx_vif_to_data(vif);
->> +	mapping = skb_get_queue_mapping(skb);
->> +	q = cc33xx_tx_get_queue(mapping);
->> +
->> +	hlid = cc33xx_tx_get_hlid(cc, wlvif, skb, control->sta);
->> +
->> +	spin_lock_irqsave(&cc->cc_lock, flags);
->> +
->> +	/* drop the packet if the link is invalid or the queue is stopped
->> +	 * for any reason but watermark. Watermark is a "soft"-stop so we
->> +	 * allow these packets through.
->> +	 */
->> +
->> +	if (hlid == CC33XX_INVALID_LINK_ID ||
->> +	    (!test_bit(hlid, wlvif->links_map)) ||
->> +	    (cc33xx_is_queue_stopped_locked(cc, wlvif, q) &&
->> +	    !cc33xx_is_queue_stopped_by_reason_locked(cc, wlvif, q,
->> +						      stop_reason))) {
->> +		cc33xx_debug(DEBUG_TX, "DROP skb hlid %d q %d ", hlid, q);
->> +		ieee80211_free_txskb(hw, skb);
->> +		goto out;
->> +	}
-> 
-> I'd consider converting to itxq APIs, you already use them anyway via
-> ieee80211_handle_wake_tx_queue so you don't gain anything from not doing
-> it, but you gain a lot of flexibility from doing it and don't have to do
-> things like this?
-> 
-> It's not _that_ hard.
+On Sat, Nov 30, 2024 at 3:57=E2=80=AFPM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+>
+> Convert all platform drivers below drivers/auxdisplay to use .remove(),
+> with the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+>
+> While touching these drivers, make the alignment of the touched
+> initializers consistent.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
 
-OK, so just to make sure I understand - mac80211 now has Tx queues per 
-AC (struct ieee80211_txq) and it makes more sense to do something like 
-ath10k ([1])?
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Frames pushed via original Tx op are non-QoS traffic, right? (i.e, no 
-need to worry about frame order between the two handlers)
+Gr{oetje,eeting}s,
 
-Thank and regards,
-Michael.
+                        Geert
 
-[1] 
-https://elixir.bootlin.com/linux/v6.12/source/drivers/net/wireless/ath/ath10k/mac.c#L4728
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
