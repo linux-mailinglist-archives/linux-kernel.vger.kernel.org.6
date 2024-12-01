@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-426747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406979DF739
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 22:50:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874E89DF745
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 23:25:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D28281071
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 21:50:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42AD6B2121D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 22:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B391D9334;
-	Sun,  1 Dec 2024 21:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="L39OeohB"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8951D95A2;
+	Sun,  1 Dec 2024 22:24:52 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABD918AEA
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 21:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFBB134A8
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 22:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733089792; cv=none; b=VclWvTGBQawwDImI0tvkjvpbeNsqCmviE/xPl112Je2MkNfeALJLQGj4Q4wd9YN4Ck+nFUIVAAdy1iMxByvmqPCJ4wr/NraZ/ICiK2SQm1+JiFEHRs1gtQJjdvSe2bK/yPYjQfgmEt+luBuMHxRgVU8b3AsT4w9oudlZtWeqvCU=
+	t=1733091892; cv=none; b=EwcXHNGGoG53nSDoK+D+LTiM089FtrQpKgXX3O1ZkXE4qgbf2XMZ+FyXBTb6qY/O/9IXQb7kFW4+foYKTqwhcqbu3mEKVZTwwySgomBStnXKfAvveGv6D8x8AoAsQkDIyn+X7EvzciI6rw2YKOvOpzZtaHFfCaltGD0eC5+hblA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733089792; c=relaxed/simple;
-	bh=xXJPQ6YbYgc+LsntidKKs/X461vEK6auxVARRMkPIzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GSSObRdxILo2vBwMnL1UmPfxXsJtqspS823k8WhuIYNPaOEiTVA/I7sxL+zdxwopluxwr+9G/NeKYiu5Ydpeen60mXDkcpX5BtnPGhWKyeylwsCW9hmgETSoGL/h3ZLBEnGxrzLY3rVUOAwS8Eg0fDTbQF8HfVvsFy3tcWci8oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=L39OeohB; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7242f559a9fso3489045b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 13:49:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733089790; x=1733694590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ckF5QGnSsa0BB01QMlPw18K2Y6z5eE1xBtBTmSkmOrU=;
-        b=L39OeohBrATyQzBYGf4B7mSuB61Oo0AczOununI4eMr8/Gj9jeHZBzWs1oNGBjKx+D
-         ua80OZzaYqPz6BU8mNGMuySjhC4CSBohfAdtGmF8UWCn6Fx5dcvmc+bBCT70E+WGLCiH
-         s3YOJs2DPvrTgCpbJwonNarS8FcZs+FUgL8/7/tGI6PcdGBz2n8N91qpcJvT8Ef6dyKb
-         X3Eb0AOls8Ht5mMSgJxNqf0s0sEmO/WqMknhI866IgFD9pXnVemKaTsqqQ+a2MBUAKcF
-         wl6fiGw5DQJ95TvmeZFRRqjoNEncPdB4E3ODCFY8dDbwn0ueD0nmc0QhKOhkUJ5pN4LT
-         z7LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733089790; x=1733694590;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ckF5QGnSsa0BB01QMlPw18K2Y6z5eE1xBtBTmSkmOrU=;
-        b=WAArARs6ra3MDDLfvW9TnCsHMBqq0XjmKm0QwEf6P7xaAbjMWV3i+WQWF2Qr+vjNqY
-         WwJH44EktMbjILPrmT6wQ2Q/6zg5Udt3+CHn2G+ZzOIm0OypQgURTcti+xDp0AYNriAt
-         hkaCodPkI4KGrGXsNinZX1OjvpZohR/rAVxsPIgNzmGmbCArLmtDIxJgmzCgHJbnIM84
-         I9YlXdi0bqzrn1zYiULqpEbLJXDFP4ok+DP3Gx17TRg+HHWmCG2sZTnXgI381EvYEBms
-         +XMyZQfLegt7iqFuABCk08M+Z+geHveg3xp7dw5b/1DgohgYirAsYjwjZavTqzNExSRB
-         o3vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHq8fXSlXthkXSFlAbOD4fTjZ3JWrovH9n0C8GUFGvifdefUKoUNZcVGnoiK/eCB0oLCeKYeQxDN66Eo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnQtuJEvGC2MJUo8+PtLOdfe5GyZtxkFvU7zh9g4aGkh1zbCtw
-	IHdc2Zf7r3FBM23S4hkssfwAgZoSCmUI4gJ0tnEvzHO47QpQmA24yjyu4zvotLY=
-X-Gm-Gg: ASbGnctGCPqgSUrWlBe1oWE2/6AIPSAeS0y7R8KSRF6+JC/KddgLRqR+W2WyPwWtotg
-	kfHDbN2cXIQ3cE6YuNTALRU03aa6lUu5wup1J+2zPqL3r+rpDj1F2WlB9nVWyRcU//ZdMUee5kB
-	7hfrGh1m1gPT7znjX9S15tRrA3xhS97tHGTA7rrNPrljT+TLDUeE51Aj4hteEfIU3zVo6ak6qDP
-	+RmUe9noO5nZwm+iXvldSUhVmQjX/pmyD2Ai1ew4ureP2U=
-X-Google-Smtp-Source: AGHT+IEJ8i/d4RS5aNUgb0ZzcIBRhjMpR8RaWqdw3iTHbi813IFT7He4V5pwrlQ+TjGvCu78jA5zjQ==
-X-Received: by 2002:a05:6a00:2381:b0:71e:5d1d:1aa2 with SMTP id d2e1a72fcca58-7253000347emr24970119b3a.7.1733089790310;
-        Sun, 01 Dec 2024 13:49:50 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417725e9sm7069306b3a.80.2024.12.01.13.49.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Dec 2024 13:49:49 -0800 (PST)
-Message-ID: <be3a3bd5-0991-480e-8190-010faa5b4727@kernel.dk>
-Date: Sun, 1 Dec 2024 14:49:47 -0700
+	s=arc-20240116; t=1733091892; c=relaxed/simple;
+	bh=sE0JEij9txwEkjI07Nqgm8d+IF505qhXkkjA0V9EoeU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=unT6HJMNxCfbxjvvM6g2RG577vyjpo6+mJ0SBRIP/MsZ6ogwXzHnbQaCDjgQPwdTOv/sIZWmlcdvausMZPX6eXjjnsghOC8epXi13N0pIGixcp6/0QdPHi/mXsZQtux7u3S6jUpOUxUlgCkDJnYcets96Xg+RMzw2YC1ecBj6q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-347-fegmrYrnPLWdOsbPdJ2qHg-1; Sun, 01 Dec 2024 22:24:39 +0000
+X-MC-Unique: fegmrYrnPLWdOsbPdJ2qHg-1
+X-Mimecast-MFC-AGG-ID: fegmrYrnPLWdOsbPdJ2qHg
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 1 Dec
+ 2024 22:24:12 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 1 Dec 2024 22:24:12 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
+CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
+ Molnar" <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	"Andrew Cooper" <andrew.cooper3@citrix.com>, Josh Poimboeuf
+	<jpoimboe@kernel.org>, "bp@alien8.de" <bp@alien8.de>
+Subject: RE: [PATCH next] x86: mask_user_address() return base of guard page
+ for kernel addresses
+Thread-Topic: [PATCH next] x86: mask_user_address() return base of guard page
+ for kernel addresses
+Thread-Index: AdtEHKHDLvCr/TWKQ76WywrKdPgaxgAD2wgAAAKsUnA=
+Date: Sun, 1 Dec 2024 22:24:12 +0000
+Message-ID: <b853710c4cb94ec0bf869edb41a685b6@AcuMS.aculab.com>
+References: <e654a20c9045487eaacbd256f584ce45@AcuMS.aculab.com>
+ <CAHk-=wiG7dGtE6UsynOP3FuvApkh=FYrv1Q42DEVZmosuOFXnQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wiG7dGtE6UsynOP3FuvApkh=FYrv1Q42DEVZmosuOFXnQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] exec: Make sure task->comm is always NUL-terminated
-To: Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Pavel Begunkov <asml.silence@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Chen Yu <yu.c.chen@intel.com>,
- Shuah Khan <skhan@linuxfoundation.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20241130044909.work.541-kees@kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Sd2B_I0JPdOZyuvaR_QxoBQYE-OiwrIAYzduuwn96kQ_1733091878
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241130044909.work.541-kees@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 
-On 11/29/24 9:49 PM, Kees Cook wrote:
-> Using strscpy() meant that the final character in task->comm may be
-> non-NUL for a moment before the "string too long" truncation happens.
-> 
-> Instead of adding a new use of the ambiguous strncpy(), we'd want to
-> use memtostr_pad() which enforces being able to check at compile time
-> that sizes are sensible, but this requires being able to see string
-> buffer lengths. Instead of trying to inline __set_task_comm() (which
-> needs to call trace and perf functions), just open-code it. But to
-> make sure we're always safe, add compile-time checking like we already
-> do for get_task_comm().
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDEgRGVjZW1iZXIgMjAyNCAyMDowMw0KPiAN
+Cj4gT24gU3VuLCAxIERlYyAyMDI0IGF0IDEwOjEyLCBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdo
+dEBhY3VsYWIuY29tPiB3cm90ZToNCj4gPg0KPiA+IEkndmUgYnVpbHQgYW5kIHJ1biBhIGtlcm5l
+bCB3aXRoIGl0IC0gc28gbm90IGJyb2tlbiENCj4gDQo+IEkgd29ycnkgdGhhdCAnY21vdicgY291
+bGQgYmUgcHJlZGljdGVkIC0gbWFraW5nIHRoZSB3aG9sZSBzZXF1ZW5jZQ0KPiBwb2ludGxlc3Mu
+IEl0IHdvdWxkIGJlIGEgc3R1cGlkIHRoaW5nIGZvciBhIENQVSBjb3JlIHRvIGRvLCBidXQgaXQN
+Cj4gd291bGQgYmUgc2ltcGxlLg0KDQpOb3QgcmVhbGx5LCAncHJlZGljdGlvbicgaXMgYWxsIGFi
+b3V0IHRoZSB3aGVyZSB0aGUgJ2Zyb250IGVuZCcgcmVhZHMNCmluc3RydWN0aW9ucyBmcm9tIC0g
+YW5kIHRyeWluZyB0byBhdm9pZCBpdCBkZXBlbmRpbmcgb24gb3RoZXIgY3B1IHN0YXRlLg0KV2hp
+Y2ggaXMgd2h5IHNvbWUgY3B1IGRvbid0IGV2ZW4gY2hlY2sgdGhlIGluc3RydWN0aW9uIGlzIGV2
+ZW4gYSBicmFuY2guDQoNCldoZXJlYXMgJ2Ntb3YnIGlzIHByZXR0eSBtdWNoIGFuIEFMVSBpbnN0
+cnVjdGlvbiB3aXRoIHRoZSBvdXRwdXQNCmRlcGVuZGluZyBvbiB0aGUgc3RhdGUgb2YgcmVnaXN0
+ZXJzLg0KDQpBZ25lcidzIHRhYmxlcyBwcmV0dHkgbXVjaCBzaG93IHRoYXQgSW50ZWwgaW1wbGVt
+ZW50ZWQgYXMNCgl4ID0gY29uZCA/IHkgOiB4DQpzbyBpdCBzdWZmZXJzIGZyb20gYmVpbmcgYSAy
+IHUtb3AgaW5zdHJ1Y3Rpb24gKHRoZSBzYW1lIGFzIHNiYikNCm9uIG9sZGVyIGNvcmUtMiBjcHUu
+DQpPVE9IIEFNRCBoYXZlIGlzIGFzICc0IHBlciBjbG9jaycgKHRoZSBzYW1lIGFzIG1vdikgc28g
+Y291bGQgYmUNCmEgJ21vdicgd2l0aCB0aGUgd3JpdGUgZGlzYWJsZWQnIChidXQgSSdtIG5vdCBz
+dXJlIGhvdyB0aGF0DQp3b3VsZCB3b3JrIGlmICdtb3YnIGlzIGEgcmVnaXN0ZXIgcmVuYW1lKS4N
+Cg0KPiBPZiBjb3Vyc2UsICdzYmInIGNvdWxkIGJlIGRvbmUgdXNpbmcgcHJlZGljdGluZyB0aGUg
+Y2FycnkgZmxhZyB0b28uDQo+IFRoZXJlJ3MgYSBsb3Qgb2Ygd2F5cyB0byBzY3JldyB0aGlzIHVw
+Lg0KPiANCj4gSW50ZWwgYXQgc29tZSBwb2ludCBleHBsaWNpdGx5IHNhaWQNCj4gDQo+ICAiT3Ro
+ZXIgaW5zdHJ1Y3Rpb25zIHN1Y2ggYXMgQ01PVmNjLCBBTkQsIEFEQywgU0JCIGFuZCBTRVRjYyBj
+YW4gYWxzbw0KDQpQcmVzdW1hYmx5IHRoYXQgaXMgJ2FzIHdlbGwgYW4gbGZlbmNlJyA/DQpOb3Qg
+c3VyZSBob3cgbXVjaCB1c2Ugc2V0Y2MgY291bGQgYmUgLSBpdCBvbmx5IGNoYW5nZXMgJWFsLg0K
+DQo+IGJlIHVzZWQgdG8gcHJldmVudCBib3VuZHMNCj4gICBjaGVjayBieXBhc3MgYnkgY29uc3Ry
+YWluaW5nIHNwZWN1bGF0aXZlIGV4ZWN1dGlvbiBvbiBjdXJyZW50IGZhbWlseQ0KPiA2IHByb2Nl
+c3NvcnMgKEludGVswq4gQ29yZeKEoiwNCj4gICBJbnRlbMKuIEF0b23ihKIsIEludGVswq4gWGVv
+bsKuIGFuZCBJbnRlbMKuIFhlb24gUGhp4oSiIHByb2Nlc3NvcnMpLg0KPiBIb3dldmVyLCB0aGVz
+ZSBpbnN0cnVjdGlvbnMgbWF5IG5vdA0KPiAgIGJlIGd1YXJhbnRlZWQgdG8gZG8gc28gb24gZnV0
+dXJlIEludGVsIHByb2Nlc3NvcnMiDQo+IA0KPiBzbyBub25lIG9mIHRoZXNlIGFyZSBzYWZlIGFj
+Y29yZGluZyB0byB0aGF0Lg0KDQpXZWxsLCB0aGV5IGFyZSBhbGwgY3VycmVudGx5IHNhZmUsIGJ1
+dCB0aGUgZnV0dXJlIGlzIHVuZGVjaWRlZC4NClNvdW5kcyBsaWtlIGp1c3QgYmUgbm9uLWNvbW1p
+dHRhbC4uLg0KDQo+IE1heWJlIHRoZXJlIHdlcmUgbmV3ZXIgdXBkYXRlcyBvbiB0aGlzLCBidXQg
+aW4gdGhlIG1lYW50aW1lIEknZCByYXRoZXINCj4gaGF2ZSBqdXN0ICpvbmUqIHBhdHRlcm4sIG5v
+dCBzd2l0Y2ggYmV0d2VlbiBtdWx0aXBsZSBwb3NzaWJseQ0KPiBwcm9ibGVtYXRpYyBvbmVzLiBB
+bmQgc2JiIGhhcyBiZWVuIHRoYXQgdHJhZGl0aW9uYWwgb25lLg0KDQpXZWxsLCBhcnJheV9pbmRl
+eF9ub3NwZWMoKSBjb3VsZCBqdXN0IGJlIGEgY21wICsgY21vdi4NCklmIHlvdSBwYXNzICdzaXpl
+IC0gMScgdGhhdCBjYW4gYmUgdXNlZCBmb3IgdGhlICdvdXQgb2YgcmFuZ2UnIHZhbHVlLg0KT3Ro
+ZXJ3aXNlIHlvdSdkIG5lZWQgdG8gcGFzcyBpbiBhIHplcm8gKHRoYXQgdGhlIGNvbXBpbGVyIGNh
+biBnZW5lcmF0ZSBlYXJsaWVyKS4NClRoYXQgd291bGQgc2F2ZSBhbiBpbnN0cnVjdGlvbiAoYW5k
+IHJlZ2lzdGVyIGRlcGVuZGVuY3kpIGluIHRoZSAnaW5kZXggaW4gcmFuZ2UnIHBhdGguDQoNClRo
+ZSBvbmx5IG90aGVyIHVzZSBJIHNwb3R0ZWQgaXMgaW4gZmlsZXNfbG9va3VwX2ZkX3JhdygpIHdo
+aWNoIGFsc28gdXNlcyB0aGUNCjAvfjEgZnJvbSBhcnJheV9pbmRleF9tYXNrX25vc3BlYygpIHRv
+IGFsc28gbWFzayB0aGUgdmFsdWUgcmVhZCBmcm9tIHh4eFswXS4NCg0KPiBBbHNvLCBpZiBzYmIg
+aXMgZXZlciBtYWRlIHNwZWN1bGF0aXZlLCBJIHRoaW5rIGl0J3MgdGltZSB0byBqdXN0IGp1bXAg
+c2hpcC4NCg0KV2VsbCBBTkQgYW5kIChwcmVzdW1hYmx5KSBPUiBhcmUgYWxzbyBpbiB0aGUgbGlz
+dC4NCllvdSBhcmUgcmVseWluZyBvbiB0aG9zZSBhcyB3ZWxsIGFzIHRoZSBzYmIuDQoNCklmIHlv
+dSBnZXQgaXNzdWVzIGluIGEgbWlwcy1saWtlIGNwdSBpdCBhbGwgZ2V0cyBoYXJkZXIuDQpXaXRo
+b3V0IGEgJ2NhcnJ5IGZsYWcnIHlvdSBjYW4gdXNlciAnc2JiJy4NCkl0IGFsc28gbWFrZXMgYW55
+IGtpbmQgb2YgY21vdiBoYXJkIHRvIGltcGxlbWVudC4NCkkgZ3Vlc3MgY21vdi1vZGQgYW5kIGNt
+b3YtZXZlbiBjb3VsZCBiZSBpbXBsZW1lbnRlZCBieSBkaXNhYmxpbmcNCnRoZSByZWdpc3Rlci1m
+aWxlIHdyaXRlIChhbmQgdXNlZCBhZnRlciBhIGNtcCAtIHRoYXQgc2V0cyAwLzEpLg0KV2hldGhl
+ciB0aGUgYXJjaGl0ZWN0dXJlIGRlZmluZXMvaW1wbGVtZW50cyB0aGVtIGlzIGFub3RoZXIgbWF0
+dGVyLg0KVGhleSBhcmVuJ3QgaW4gdGhlIG9uZSBJIGltcGxlbWVudGVkIGVhcmxpZXIgaW4gdGhl
+IHllYXIuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1s
+ZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJh
+dGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-In terms of the io_uring changes, both of those looks fine to me. Feel
-free to bundle it with something else. If you're still changing things,
-then I do prefer = { }; rather than no space...
-
--- 
-Jens Axboe
 
