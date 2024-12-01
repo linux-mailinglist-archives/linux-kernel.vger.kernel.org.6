@@ -1,208 +1,155 @@
-Return-Path: <linux-kernel+bounces-426623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5A79DF5BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:14:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A23159DF5C4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:21:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBDD92817CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:14:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65065281809
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B6E1CB9E5;
-	Sun,  1 Dec 2024 13:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0391CCB27;
+	Sun,  1 Dec 2024 13:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4GOAVMp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDfg1AA6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FD31CB507;
-	Sun,  1 Dec 2024 13:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE8C2CA8;
+	Sun,  1 Dec 2024 13:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733058816; cv=none; b=nHsdw3oZFJ5OwuIZerd64/Hg6XzL6gDxpcykx5BUWXRmaVq68t7lVeici84Elrkld9wHH4UwPpMhZHHIe0nGDDcxJAZb+lRMsxgJD517cjIuJyPYV+/1WcFO4SeynEedA9mTxiZESI9PJGJ3RKLWs9y4FoPhIvF30/puXwOqxL0=
+	t=1733059263; cv=none; b=FpQ5QpYErCBrtcwOcSkS6iL8t3WaqCLwiA2nk+7psMWUeqgIuS7MXwpwfNRZGu2pFvw+3GlpCflgYn+1P+H36jLai+DRx+lBInNFRpZpcmPIowOm180qHhtAT56ed4qWMHzg87jzWpDSdqI8Q5vSI6WCgSkLJTqoofdtjeCK7rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733058816; c=relaxed/simple;
-	bh=TV3OWw6PnaSi79vN5C5jq4rek5728H681ST6MubeH+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oQk/FjZPDiFhDTeO2h/T+bln4wlEpJfR1KgbBu+MbWtFtfff4UZRravs01KwtvA3DgF4TN/wnf4ltMuf+RuO0pdxOWJBQOiyLfKkL+G72r3aMeLjQKl6C+X9tgZQ33FuKmAwYI+b+pystaCp+tJtlY/sn9Wm2Bggw7OyPLRq4Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4GOAVMp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87022C4CECF;
-	Sun,  1 Dec 2024 13:13:35 +0000 (UTC)
+	s=arc-20240116; t=1733059263; c=relaxed/simple;
+	bh=ztB5yIm9DtiaC8R6vn7o/JGvks6oHXhp3FH7dLKnQ4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vFW8sWELEz5RnCqlSfhgN80RXZ8+JEuNnXpwKTCi21kBMyU9n19sfDHptfEu+OxZLpkwAFI6AIEVaBUQ8zBPqsQZaCGkFcu9tMuVK7efvTAiIffDaputiqF/EAlCxkdcMRySySKiYDrKMfIBMwCOMymBsNSIVK+YM376AvN4KI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDfg1AA6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3066EC4CED2;
+	Sun,  1 Dec 2024 13:20:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733058815;
-	bh=TV3OWw6PnaSi79vN5C5jq4rek5728H681ST6MubeH+I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=e4GOAVMpLpHPiF/xBklqusrqgdl4ReS5Q/b+D/PgBhnviOyDXrN1T3qXzYM719JWb
-	 YDwmy2KOV7o5/IhKf3JLM1pfD97YK4+6L4TNl06DQezGeGtNgY2/JXDikUTKthTOtg
-	 RTrUAnBPs+SoE6s7XHzpIt5/XpNWaJcUDfLOzItNH0lXGhLw/hINxNXiqxpluKCbPc
-	 iTUcIYikUFrAaGg7OZkV7sbXrxECvapHgHD3PloBMK5xdLXMxye42zzr+Oj9/zhYBH
-	 zlYsBhnsDc0X2WHXgS524GNRpXYbiISj402pK7Rxq2Kk2tXgG2khhQWWIayDyj7iL4
-	 QEuJcd1zp7kew==
-Date: Sun, 1 Dec 2024 14:13:32 +0100
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.13-rc1-part3
-Message-ID: <Z0xg_JliD3EJmNtt@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=k20201202; t=1733059263;
+	bh=ztB5yIm9DtiaC8R6vn7o/JGvks6oHXhp3FH7dLKnQ4Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gDfg1AA6hjrimr5xEpEcdiOBniAytM82NBmbx8GepfFzwLCjjtNg9uajDh3kYVlO4
+	 r/OnYQAGF13mcYGK9hDaohp4x8hAMOS921pIhxjb/QdKX1DxgqxKiwDy6avhmB7HkR
+	 CWTYo3L9BWCxk6TyfL2nHDLKLIoGNFGmfkC8EMcrQVzKLMDTwA+l6t63U5V8ESPm5m
+	 ifdUQeUXv0m4y4J9TsHE6+fUIJeczjo8zb+prIfLwgr1HSlHMPRtkMA4pq2WFtY44Y
+	 N/ejWeQ1im6g839TjcrtYj8K9p41fz0JLzITZcwf0s0zz1ssez4NH90SZB5yrJsOMi
+	 95yqZGphHoVPA==
+Date: Sun, 1 Dec 2024 13:20:54 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
+Cc: Mikael Gonella-Bolduc via B4 Relay
+ <devnull+mgonellabolduc.dimonoff.com@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill
+ Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Mikael
+ Gonella-Bolduc <m.gonella.bolduc@gmail.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Matti
+ Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [PATCH 2/2] iio: light: Add APDS9160 ALS & Proximity sensor
+ driver
+Message-ID: <20241201132054.0c063a11@jic23-huawei>
+In-Reply-To: <Z0eY+1X1ZSkNui9U@uva.nl>
+References: <20241119-apds9160-driver-v1-0-fa00675b4ea4@dimonoff.com>
+	<20241119-apds9160-driver-v1-2-fa00675b4ea4@dimonoff.com>
+	<20241124211545.194a9f87@jic23-huawei>
+	<Z0eY+1X1ZSkNui9U@uva.nl>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1HKa28Cze5WOfw6w"
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
---1HKa28Cze5WOfw6w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, apds9160_of_match);
+> > > +
+> > > +static struct i2c_driver apds9160_driver = {
+> > > +	.driver	  = {
+> > > +		.name	= APDS9160_DRIVER_NAME,
+> > > +		.owner = THIS_MODULE,
+> > > +		.of_match_table = apds9160_of_match,
+> > > +	},
+> > > +	.probe    = apds9160_probe,
+> > > +	.remove	  = apds9160_remove,
+> > > +	.id_table = apds9160_id,
+> > > +};  
+> 
+> Hi Jonathan,
+> 
 
-Linus,
+Hi Mikael,
 
-so it happened not only to Andi but also to me that a series nearly fell
-through the cracks. This pull request contains a new feature which has
-been ready for some weeks but I forgot that we agreed that I2C is its
-path upstream :(
+One quick process thing first.  Please crop replies. It is far too easy to miss comments
+inline (I don't think there were any?) and reviewers aren't fond of scrolling through lots
+of context that isn't relevant to a particular discussion.
 
-So, given the amount of review by experienced people and the fact that
-the series only adds "opt-in" stuff (so less likely to cause
-regressions), I hope it is still possible to get it into 6.13. It has
-been in -next for a few days and build bots are happy now.
+> Thank you for the feedback. I'm currently in the process of integrating the comments from all the reviewers for a rev 2.
+> However, there's still some things that are not clear for me that I'm not sure on how to handle properly.
+> 
+> First, regarding the integration time/gain/scale parameters. I took a look at the datasheet again as there is a table
+> provided to get lux/count (scale?) for the ALS sensor depending on gain and integration time. 
+> 
+> It looks like the correlation in the table is almost linear but it's not as there is a loss of precision.
+> For example, at 1x gain with integration time 100ms the lux/count is 0.819 but at 3x the table is stating 0.269 instead of exepected 0.273.
+> 
+> Is it still possible to use the gts helpers in that case?
 
-Thanks and regards,
+Ah. Probably not if it goes non linear.  Matti? (+CC)
 
-   Wolfram
+> 
+> Second, regarding the use of the IIO_CHAN_INFO_HARDWAREGAIN channel info.
+> I took a look at a couple of recent drivers, some use the IIO_CHAN_INFO_SCALE to ajust gain type registers.
+> 
+> In my use case, it feels like the scale is read-only as it is affected by the gain and integration time and both can be set independently
+> with their respective available values. How should I handle this?
+The general preference is for the scale to be the primary control. 
+For a light sensor assuming the device doesn't support very long integration times, the
+trade off is normally set the integration time as high as possible (as that gives lowest
+noise) then tune the gain as necessary.
 
+Another model is to let the integration time be controllable and then try and adjust
+the gain to keep as close as possible to a requested scale.  Matti has spent more
+brain power on this than anyone so I'll over to him for more precise suggestions!
 
-The following changes since commit aaf20f870da056752f6386693cc0d8e25421ef35:
+> 
+> Finally, you mention to use a dma safe buffer when calling regmap_bulk_read. 
+> I took a look at other recent drivers and I don't see any differences on how they are handling this. 
+> Could you provide an example of how to ensure the buffer allocated on the stack is dma safe?
+Gah. Before going on, I'd failed to notice this was an I2C device and I2C transports
+don't need DMA safe buffers (whether or not accessed through regmap). So that comment
+was spurious.  Not sure why I thought it was an SPI device :(
 
-  Merge tag 'rpmsg-v6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux (2024-11-26 18:36:55 -0800)
+Anyhow for future reference:
+The only way to do a safe buffer on the stack is to allocate a huge buffer and then
+find an appropriate aligned padding.  We simply don't do that.  So reality is you can't use a buffer
+on the stack for transfers that require DMA safe buffers.  Either kzalloc the buffer
+or look at the many examples where the driver has __aligned(IIO_DMA_MINALIGN) data in iio_priv()
+accessed structure.
 
-are available in the Git repository at:
+The regmap case is a little less than clear though.  Last time I checked the reality was
+that regmap always bounce buffered anyway as part of it's handling for weird register
+formats.  It doesn't need to though and when I asked the maintainer a few years back the
+response was that we should continue to use dma safe buffers for bulk transfers if
+the underlying transport (e.g. SPI) requires them.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.13-rc1-part3
-
-for you to fetch changes up to caf4bdb558cbc9893524b0a15e6423ee6305cb0c:
-
-  MAINTAINERS: fix typo in I2C OF COMPONENT PROBER (2024-11-29 12:56:05 +0100)
-
-----------------------------------------------------------------
-i2c-for-6.13-rc1-part3
-
-core: add of based component probing
-
-Some devices are designed and manufactured with some components having
-multiple drop-in replacement options. These components are often
-connected to the mainboard via ribbon cables, having the same signals
-and pin assignments across all options. These may include the display
-panel and touchscreen on laptops and tablets, and the trackpad on
-laptops. Sometimes which component option is used in a particular device
-can be detected by some firmware provided identifier, other times that
-information is not available, and the kernel has to try to probe each
-device.
-
-Instead of a delicate dance between drivers and device tree quirks, this
-change introduces a simple I2C component probe function. For a given
-class of devices on the same I2C bus, it will go through all of them,
-doing a simple I2C read transfer and see which one of them responds. It
-will then enable the device that responds.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (8):
-      of: dynamic: Add of_changeset_update_prop_string
-      of: base: Add for_each_child_of_node_with_prefix()
-      i2c: Introduce OF component probe function
-      i2c: of-prober: Add simple helpers for regulator support
-      i2c: of-prober: Add GPIO support to simple helpers
-      platform/chrome: Introduce device tree hardware prober
-      arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and trackpads as fail
-      of: base: Document prefix argument for of_get_next_child_with_prefix()
-
-Liam Zuiderhoek (1):
-      i2c: Fix whitespace style issue
-
-Lukas Bulwahn (1):
-      MAINTAINERS: fix typo in I2C OF COMPONENT PROBER
+Jonathan
 
 
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Andrey Skvortsov (1):
-      (Test) i2c: of-prober: Add GPIO support to simple helpers
 
-Andy Shevchenko (3):
-      (Rev.) i2c: of-prober: Add GPIO support to simple helpers
-      (Rev.) i2c: of-prober: Add simple helpers for regulator support
-      (Rev.) i2c: Introduce OF component probe function
+> 
+> Best regards,
+> Mikael
 
-AngeloGioacchino Del Regno (7):
-      (Rev.) arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and trackpads as fail
-      (Rev.) platform/chrome: Introduce device tree hardware prober
-      (Rev.) i2c: of-prober: Add GPIO support to simple helpers
-      (Rev.) i2c: of-prober: Add simple helpers for regulator support
-      (Rev.) i2c: Introduce OF component probe function
-      (Rev.) of: base: Add for_each_child_of_node_with_prefix()
-      (Rev.) of: dynamic: Add of_changeset_update_prop_string
-
-Douglas Anderson (5):
-      (Rev.) arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and trackpads as fail
-      (Rev.) platform/chrome: Introduce device tree hardware prober
-      (Rev.) i2c: of-prober: Add GPIO support to simple helpers
-      (Rev.) i2c: of-prober: Add simple helpers for regulator support
-      (Rev.) i2c: Introduce OF component probe function
-
-Rob Herring (Arm) (2):
-      (Rev.) of: base: Add for_each_child_of_node_with_prefix()
-      (Rev.) of: dynamic: Add of_changeset_update_prop_string
-
- MAINTAINERS                                       |   8 +
- arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi |  14 +
- arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi      |   4 +-
- drivers/i2c/Makefile                              |   1 +
- drivers/i2c/i2c-core-of-prober.c                  | 415 ++++++++++++++++++++++
- drivers/i2c/i2c-core-smbus.c                      |   2 +-
- drivers/of/base.c                                 |  36 ++
- drivers/of/dynamic.c                              |  44 +++
- drivers/platform/chrome/Kconfig                   |  11 +
- drivers/platform/chrome/Makefile                  |   1 +
- drivers/platform/chrome/chromeos_of_hw_prober.c   | 154 ++++++++
- include/linux/i2c-of-prober.h                     | 140 ++++++++
- include/linux/of.h                                |  13 +
- 13 files changed, 840 insertions(+), 3 deletions(-)
- create mode 100644 drivers/i2c/i2c-core-of-prober.c
- create mode 100644 drivers/platform/chrome/chromeos_of_hw_prober.c
- create mode 100644 include/linux/i2c-of-prober.h
-
---1HKa28Cze5WOfw6w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdMYPcACgkQFA3kzBSg
-Kbbgfg/8CtGUoKvcg4Rj/TSty9ajgcq7S7OoCpZQ4QGWGRf44iK3TbGPsdpBTCkt
-pf4Hr+7DEAXdN12BzlTfbDx/QijclgrzMtll8nIKwqywsiZDpNQ6vWmqbrVegTOK
-HOUPVhLZx3HXHxpLUScT0zQtKoHou03U3MoxRcwvBIablxgzlYRH9wM4wAdwjrui
-Tpd6ny67NPtPpkS3kKNUk6nVYOZGawfGtvupCRAqV6Hn0WwD+ubUI4QZa8XvXKpf
-KpOjnsHg12ozyWyM9GNOe0lEPqauO/OPO1kYrPIkyMrMAOF+J42bPqZtpOS5wVpQ
-YsGwdRHvHBCWE/hUnf4tWz3dUIezyKSh9Qi2kvBVeVp9dHNtnobspNi4MlfyAh7u
-sZf/J9PCx2rP8oxAvH5Db/piH3gLUkBrgQ7LOAxdUjMlLOKh876Cyyk6VnqUEUkr
-OmIPkeSQPJMsr1x285P9/EVpzJNahMWfAFah21BNmndafJRhNf85jYl1semXC2i7
-PHGw3UZ5RpyqA14vW3CdNxT0midcaJ85L+OMhgsh2ozeyXhyWyiGVlndXP++y0uJ
-zeIlt/Miw0UTzNzMcFg3Qtjt9Mn2dB6YB/2m6P3MYlcElEJYPP/ycdU9alu1kfYQ
-pSaSCPBxPliUaBSB3eMcmufg8SmQvwiFSuGQukWf4jkSZJF1mMI=
-=lMyG
------END PGP SIGNATURE-----
-
---1HKa28Cze5WOfw6w--
 
