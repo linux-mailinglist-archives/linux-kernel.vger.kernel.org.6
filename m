@@ -1,78 +1,113 @@
-Return-Path: <linux-kernel+bounces-426529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5754A9DF470
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:42:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FDD9162EA1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:41:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63CC4206E;
-	Sun,  1 Dec 2024 02:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="raWFPlM8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5109DF472
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:48:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3672D05E;
-	Sun,  1 Dec 2024 02:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFA03B2111C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:48:12 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4138168BE;
+	Sun,  1 Dec 2024 02:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="gm7d2env"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B7BAD2F;
+	Sun,  1 Dec 2024 02:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733020897; cv=none; b=nbMjWX1FMyY+GItpEAg0IWP0+PsIvi73q8kQ5s1rRcJT4AANdele+uJXGTDwRNmhmuhT3iMGTRAyREZIk45Ttp3U7SQh3bYH/03eGJ2h7F6+spg3+ilcVKH77gkPo80QJx7w8GjmFJefB3ml8rj3STLYgIUObX4JFOALglZcXlA=
+	t=1733021287; cv=none; b=PgQ17+QI6JnOP7Qx9pVXkhKkyYZ7w3fv3SwrJ3kXBQTFtSmZM4tdmpeem19g/bv0KEjG23sXP3SprY2FiSNNvaK3sMC4L6ZjBdkV19YisH91xFi+jKjyRs2L2q3WCqzEiQTfjQbguwA0nmHPRqTHeF1dZhEYNnQc8aH5gJ3Y7s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733020897; c=relaxed/simple;
-	bh=0RHmullKYWWr6h/Aocqv6GyuPa/KJ7v/zPcWYH0u9UY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UWyJWEIvave7iou/Idxj5BbNGR0VbBER2Fdtpi9dfcY1K4gsKx2GtPhhP78QJxF1h3xALxAraEpkupF7mFwwwM2CqcQbK5qVNbXAgf91hNtvjRnk4K2frkc/11MuAJuINqJ3iz/+7Dny3uEsrWXLraGW+Liq915zpoQUxlBq+p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=raWFPlM8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8BDDC4CECC;
-	Sun,  1 Dec 2024 02:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733020897;
-	bh=0RHmullKYWWr6h/Aocqv6GyuPa/KJ7v/zPcWYH0u9UY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=raWFPlM83mbM6CaAKnA4KGXJPziAJANVIH4xl+VO/HCF26qJftX0J04gjrTA4fG5c
-	 knMbuiGNmoxQ45Y8zu/weYUyWn7sZ3LfEWo8VYtC0xUEdWJpCGX92rN4a786rFW6kl
-	 lAEfrsiazz6r5lp/aa6S/MZhfFaAgWg85+eHAQto7264/Oaq3Y0f1Lg3g2GojFdScy
-	 3vSMG+PXTncWawa3dOJ1QPa1r8uXwsnRCiVo7QAIYCI8iij9jeKHQjvbSfaCJUeDVf
-	 KDsjU1PWfgkFIgv48W9o+g4wvQOvjv8zuZBjqZmU79Uiz7+qr/hWT5kOkRvcYTWbSo
-	 pHP/7QHHYxRLg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE60380A944;
-	Sun,  1 Dec 2024 02:41:51 +0000 (UTC)
-Subject: Re: [GIT PULL] PCI fixes for v6.13
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241201001444.GA2843588@bhelgaas>
-References: <20241201001444.GA2843588@bhelgaas>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241201001444.GA2843588@bhelgaas>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.13-fixes-1
-X-PR-Tracked-Commit-Id: 5c8418cf4025388bedd4d65ada993f7d3786cc3a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0cb71708c5816569f8addd5c6f33cb9679e73b5b
-Message-Id: <173302091055.2541785.4359795961642404522.pr-tracker-bot@kernel.org>
-Date: Sun, 01 Dec 2024 02:41:50 +0000
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Brian Norris <briannorris@chromium.org>, Saurabh Sengar <ssengar@linux.microsoft.com>
+	s=arc-20240116; t=1733021287; c=relaxed/simple;
+	bh=/VSRMvT6+fhRg3ki/LdQRVg9gMWEYuL4F893ivPkmag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQQq0NID6Op/kzTh6dgqJdQwaXmzxvxgygNM/p/oeDNiJVLNZrdg0P2BnjsTJW9Zr5ksZamT0QJHzC47B/GwvSbn4Gt/vbplcBEN1hSk5yBBSjjx/eh2IvJ6k/QK/oXZdUj1q9EuFaNJaEOMNY63NkvUPr5952flNXhSx6vPpl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=gm7d2env; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=0gTfnan2PRic78M2GErX2vsIFTVHvia6IPklfDcQy5M=; b=gm7d2env4uAWWfbO
+	6gItubsi7E1dk/nmBoZldCWED4gqeBOgA9AfYk/cF1Q9in7qijg8HK14UzIMdpT+zsPe75qjt35du
+	un6HU+xQfztZjzMJGidcbzHqf1dgpLwjbcOcVNegsn98Mq0NT7FiC2/g/YIbtXXhxptBl489NuhdH
+	mZ82/i7Se3b5ODvyYri/9AOBy+bnyI/v7BU65gF/tABPIThe5ft/sKc6M2jV5HcB0zFY6Xw3n1wqi
+	uzijmk3Z0kel3QlQRxuW32bHq144GdKd/kTw6DYyrqk1AGml8yeah55kWJNOiVJrE++1hOV7KvHdM
+	NIB+yzb/8gv/EdPleQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tHZzx-002gpl-32;
+	Sun, 01 Dec 2024 02:47:49 +0000
+Date: Sun, 1 Dec 2024 02:47:49 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Petr Mladek <pmladek@suse.com>, kees@kernel.org, andy@kernel.org,
+	akpm@linux-foundation.org, linux@rasmusvillemoes.dk,
+	senozhatsky@chromium.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] printf: Remove unused 'bprintf'
+Message-ID: <Z0vOVRcZQir0cjjo@gallifrey>
+References: <20241002173147.210107-1-linux@treblig.org>
+ <Zv5SLrKeQIpWnhsS@pathway.suse.cz>
+ <20241003111346.0654f1ac@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20241003111346.0654f1ac@gandalf.local.home>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 02:47:25 up 206 days, 14:01,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-The pull request you sent on Sat, 30 Nov 2024 18:14:44 -0600:
+* Steven Rostedt (rostedt@goodmis.org) wrote:
+> On Thu, 3 Oct 2024 10:13:34 +0200
+> Petr Mladek <pmladek@suse.com> wrote:
+> 
+> > On Wed 2024-10-02 18:31:47, linux@treblig.org wrote:
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > 
+> > > bprintf() is unused. Remove it. It was added in the commit 4370aa4aa753
+> > > ("vsprintf: add binary printf") but as far as I can see was never used,
+> > > unlike the other two functions in that patch.
+> > > 
+> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > > Reviewed-by: Andy Shevchenko <andy@kernel.org>  
+> > 
+> > Looks good to me:
+> > 
+> > Acked-by: Petr Mladek <pmladek@suse.com>
+> > 
+> > I assume that Sven is going to take it via the ftrace tree as he
+> 
+>                Steven ;-)
+> 
+> > suggested at https://lore.kernel.org/r/20241002104807.42b4b64e@gandalf.local.home
+> 
+> Yeah, since I'm basically the only user of it, it's best it goes through my
+> testing.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.13-fixes-1
+Hmm, did you pick this one up?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0cb71708c5816569f8addd5c6f33cb9679e73b5b
+Dave
 
-Thank you!
-
+> Thanks,
+> 
+> -- Steve
+> 
+> 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
