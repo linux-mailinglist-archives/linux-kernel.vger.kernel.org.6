@@ -1,173 +1,156 @@
-Return-Path: <linux-kernel+bounces-426572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57CD79DF51A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 10:27:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16289DF51B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 10:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CD9DB212E8
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 09:27:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5662811AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 09:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384F1136326;
-	Sun,  1 Dec 2024 09:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2551A81727;
+	Sun,  1 Dec 2024 09:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IneNPRJq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A7HmgBwg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84ACE35885;
-	Sun,  1 Dec 2024 09:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14562CA8
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 09:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733045233; cv=none; b=sS+Jqfi+HfUjUQQn68lfvnH7ZeQD7orC0Svk8yLRPuVaRgewLloH+/p4ob+7SWetIPKC2jdW07H7isARkNXSrarSKn8hnHOtHf6td8lUiJKfxhXemVaE9O2dQucr4KTu/JZ8EeV1ucD31qPqoJndqtg1TJoWF3kHo1XVY7CyT4g=
+	t=1733045760; cv=none; b=NJCUNvz3sXM1vpu3Km0Ju3q88qmkcZYH2bCLbQJg6FWnxIgZmGw29FLeEzXaYjp9kUIZT+GEvCsL7fBM5nO4F2M4pTIiaBQXqGfzQT2V6az3A8kohbDwRHl6i34hnc9ho8kTdOocJUDxVxoAGqT5ulBulcGLrS1/BrGKvuqNiNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733045233; c=relaxed/simple;
-	bh=zcbZ5C94UpyjRTNgMJYOeQ/XAomR1B1C5ovJjWWHEAg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gysslja+L6kkkWb/lDutr4XIv51rKzkCw8Gpek9hMgSShN6goFgF5PhXzOcT2xmp49qsCpkn/ZvqBEjBb+kJkbyyHbw2p3msB7VO8lhLeRfOXuBE/Zu3My+c1MYPb2/T3fL7K+gKltclF3Pz6Dge7WhyxoovkwoBBx1We8ZB7H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IneNPRJq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47036C4CECF;
-	Sun,  1 Dec 2024 09:27:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733045233;
-	bh=zcbZ5C94UpyjRTNgMJYOeQ/XAomR1B1C5ovJjWWHEAg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IneNPRJqcK80axyt5a+U/ificQI1XoBtFYspojqZP9+i+APgwkD/I4jWp11jOGKSA
-	 gCbtcZcFuGRU0JgswHdE6UleDFdN8rSZyXOt2Z9U++ocuaqye2KBUXLBnpjMwueR5q
-	 pfxAsoFrSZvP2L6n0Ha2DZAFbHNBpoRomt81ip7zMY0oWXI3QKm8yTFnQYn5otqgNs
-	 3Fw40Qm2RCilaGF9q+kEIq3gTR6MRhEpZQdVlazf6LnJbghXwtRdAOTNQAasfSmrXh
-	 0f9gZ52n2dAoGxJxyxzbkhymbVOWOEyq4aK/THaMPWOZeAOM3fN5+t4OAQHnbZ7f00
-	 hDE2ApTEpcudw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tHgEQ-00H3r2-Uw;
-	Sun, 01 Dec 2024 09:27:11 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] arch_numa: Restore nid checks before registering a memblock with a node
-Date: Sun,  1 Dec 2024 09:27:02 +0000
-Message-Id: <20241201092702.3792845-1-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1733045760; c=relaxed/simple;
+	bh=Stho1LITp7cgqHUmCplR2naLR5n8smAKlOObDrZXyhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lM6PUR7XDNSdytY056VAFrajjrHRKpn38UQaiqFd84SD6twKcmFxwvSP1tCiQodDBWRfgd6ACjrMpt7k3KnqC5uyemJJt7vXTJUJJTfuIggKnaxmsoImGoYQxOjaEkGNyEtpjE3Soo+8AEdf9e35yQ1M775EJV7bRmz2PguzwWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A7HmgBwg; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733045757; x=1764581757;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Stho1LITp7cgqHUmCplR2naLR5n8smAKlOObDrZXyhA=;
+  b=A7HmgBwgSa/OAXjMyVkCfZlaS2nZ2qbPlJBlrDL4wt9psyAh5ee7ERJs
+   a85jzFo03ZehtdbVrpan0qiAjhFGx3eavtcTBFm26PAhxuff9n0nw5jJf
+   11gkMtLjWMM2Yu9XMINzZWnabT9zTo+MFFA3qCVdhjXM7kTaTbAswqsou
+   lpfOAVtlnJFwya/iecF9UknwfiEmDxhjHt+a+CAv19elJe7eHVuUBd+Ys
+   ZG/t9nVF0RAuFhas+JQHXLeI8l74paDtfX69mG6kwAji+Sjy/EUR/ngdp
+   ZqcDDCmq2kxOfxtjNvVBiPuYl0rBaPDUVPhuhDHRWQ9eA5SddgSEB3sLz
+   g==;
+X-CSE-ConnectionGUID: /rA9W6QBRlGJmu5DNR/hxg==
+X-CSE-MsgGUID: 5CxESyv/QtOupRgUGgPsrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="32575894"
+X-IronPort-AV: E=Sophos;i="6.12,200,1728975600"; 
+   d="scan'208";a="32575894"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 01:35:57 -0800
+X-CSE-ConnectionGUID: ccCwIqkbQq2lhZC6L9Omeg==
+X-CSE-MsgGUID: vF2GWBjISLisA95SML3dAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,200,1728975600"; 
+   d="scan'208";a="92745875"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 01 Dec 2024 01:35:56 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHgL6-0001Qh-2i;
+	Sun, 01 Dec 2024 09:35:03 +0000
+Date: Sun, 1 Dec 2024 17:29:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: arch/x86/kvm/../../../virt/kvm/guest_memfd.c:540:18: sparse: sparse:
+ incompatible types in comparison expression (different address spaces):
+Message-ID: <202412011712.1CoGhyrO-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rppt@kernel.org, catalin.marinas@arm.com, will@kernel.org, ziy@nvidia.com, dan.j.williams@intel.com, david@redhat.com, akpm@linux-foundation.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Commit 767507654c22 ("arch_numa: switch over to numa_memblks")
-significantly cleaned up the NUMA registration code, but also
-dropped a significant check that was refusing to accept to
-configure a memblock with an invalid nid.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   bcc8eda6d34934d80b96adb8dc4ff5dfc632a53a
+commit: 17573fd971f9e31ddee420eca8359ceff87e9e51 KVM: guest_memfd: extract __kvm_gmem_get_pfn()
+date:   7 months ago
+config: x86_64-randconfig-122-20241116 (https://download.01.org/0day-ci/archive/20241201/202412011712.1CoGhyrO-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241201/202412011712.1CoGhyrO-lkp@intel.com/reproduce)
 
-On "quality hardware" such as my ThunderX machine, this results
-in a kernel that dies immediately:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412011712.1CoGhyrO-lkp@intel.com/
 
-[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x431f0a10]
-[    0.000000] Linux version 6.12.0-00013-g8920d74cf8db (maz@valley-girl) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #3872 SMP PREEMPT Wed Nov 27 15:25:49 GMT 2024
-[    0.000000] KASLR disabled due to lack of seed
-[    0.000000] Machine model: Cavium ThunderX CN88XX board
-[    0.000000] efi: EFI v2.4 by American Megatrends
-[    0.000000] efi: ESRT=0xffce0ff18 SMBIOS 3.0=0xfffb0000 ACPI 2.0=0xffec60000 MEMRESERVE=0xffc905d98
-[    0.000000] esrt: Reserving ESRT space from 0x0000000ffce0ff18 to 0x0000000ffce0ff50.
-[    0.000000] earlycon: pl11 at MMIO 0x000087e024000000 (options '115200n8')
-[    0.000000] printk: legacy bootconsole [pl11] enabled
-[    0.000000] NODE_DATA(0) allocated [mem 0xff6754580-0xff67566bf]
-[    0.000000] Unable to handle kernel paging request at virtual address 0000000000001d40
-[    0.000000] Mem abort info:
-[    0.000000]   ESR = 0x0000000096000004
-[    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
-[    0.000000]   SET = 0, FnV = 0
-[    0.000000]   EA = 0, S1PTW = 0
-[    0.000000]   FSC = 0x04: level 0 translation fault
-[    0.000000] Data abort info:
-[    0.000000]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-[    0.000000]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[    0.000000]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[    0.000000] [0000000000001d40] user address but active_mm is swapper
-[    0.000000] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.0-00013-g8920d74cf8db #3872
-[    0.000000] Hardware name: Cavium ThunderX CN88XX board (DT)
-[    0.000000] pstate: a00000c5 (NzCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    0.000000] pc : sparse_init_nid+0x54/0x428
-[    0.000000] lr : sparse_init+0x118/0x240
-[    0.000000] sp : ffff800081da3cb0
-[    0.000000] x29: ffff800081da3cb0 x28: 0000000fedbab10c x27: 0000000000000001
-[    0.000000] x26: 0000000ffee250f8 x25: 0000000000000001 x24: ffff800082102cd0
-[    0.000000] x23: 0000000000000001 x22: 0000000000000000 x21: 00000000001fffff
-[    0.000000] x20: 0000000000000001 x19: 0000000000000000 x18: ffffffffffffffff
-[    0.000000] x17: 0000000001b00000 x16: 0000000ffd130000 x15: 0000000000000000
-[    0.000000] x14: 00000000003e0000 x13: 00000000000001c8 x12: 0000000000000014
-[    0.000000] x11: ffff800081e82860 x10: ffff8000820fb2c8 x9 : ffff8000820fb490
-[    0.000000] x8 : 0000000000ffed20 x7 : 0000000000000014 x6 : 00000000001fffff
-[    0.000000] x5 : 00000000ffffffff x4 : 0000000000000000 x3 : 0000000000000000
-[    0.000000] x2 : 0000000000000000 x1 : 0000000000000040 x0 : 0000000000000007
-[    0.000000] Call trace:
-[    0.000000]  sparse_init_nid+0x54/0x428
-[    0.000000]  sparse_init+0x118/0x240
-[    0.000000]  bootmem_init+0x70/0x1c8
-[    0.000000]  setup_arch+0x184/0x270
-[    0.000000]  start_kernel+0x74/0x670
-[    0.000000]  __primary_switched+0x80/0x90
-[    0.000000] Code: f865d804 d37df060 cb030000 d2800003 (b95d4084)
-[    0.000000] ---[ end trace 0000000000000000 ]---
-[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
-[    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
+sparse warnings: (new ones prefixed by >>)
+>> arch/x86/kvm/../../../virt/kvm/guest_memfd.c:540:18: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c:540:18: sparse:    struct file *
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c:540:18: sparse:    struct file [noderef] __rcu *
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c:121:17: sparse: sparse: context imbalance in 'kvm_gmem_invalidate_begin' - different lock contexts for basic block
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c: note: in included file (through include/linux/wait.h, include/linux/wait_bit.h, include/linux/fs.h, ...):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c:293:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct file **f @@     got struct file [noderef] __rcu ** @@
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c:293:33: sparse:     expected struct file **f
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c:293:33: sparse:     got struct file [noderef] __rcu **
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c:293:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct file **f @@     got struct file [noderef] __rcu ** @@
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c:293:33: sparse:     expected struct file **f
+   arch/x86/kvm/../../../virt/kvm/guest_memfd.c:293:33: sparse:     got struct file [noderef] __rcu **
 
-while previous kernel versions were able to recognise how brain-damaged
-the machine is, and only build a fake node.
+vim +540 arch/x86/kvm/../../../virt/kvm/guest_memfd.c
 
-Use the memblock_validate_numa_coverage() helper to restore some sanity
-and a "working" system.
+   530	
+   531	static int __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
+   532			       gfn_t gfn, kvm_pfn_t *pfn, int *max_order, bool prepare)
+   533	{
+   534		pgoff_t index = gfn - slot->base_gfn + slot->gmem.pgoff;
+   535		struct kvm_gmem *gmem = file->private_data;
+   536		struct folio *folio;
+   537		struct page *page;
+   538		int r;
+   539	
+ > 540		if (file != slot->gmem.file) {
+   541			WARN_ON_ONCE(slot->gmem.file);
+   542			return -EFAULT;
+   543		}
+   544	
+   545		gmem = file->private_data;
+   546		if (xa_load(&gmem->bindings, index) != slot) {
+   547			WARN_ON_ONCE(xa_load(&gmem->bindings, index));
+   548			return -EIO;
+   549		}
+   550	
+   551		folio = kvm_gmem_get_folio(file_inode(file), index, prepare);
+   552		if (IS_ERR(folio))
+   553			return PTR_ERR(folio);
+   554	
+   555		if (folio_test_hwpoison(folio)) {
+   556			r = -EHWPOISON;
+   557			goto out_unlock;
+   558		}
+   559	
+   560		page = folio_file_page(folio, index);
+   561	
+   562		*pfn = page_to_pfn(page);
+   563		if (max_order)
+   564			*max_order = 0;
+   565	
+   566		r = 0;
+   567	
+   568	out_unlock:
+   569		folio_unlock(folio);
+   570	
+   571		return r;
+   572	}
+   573	
 
-Fixes: 767507654c22 ("arch_numa: switch over to numa_memblks")
-Suggested-by: Mike Rapoport <rppt@kernel.org>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: stable@vger.kernel.org
----
- drivers/base/arch_numa.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
-index e187016764265..c63a72a1fed64 100644
---- a/drivers/base/arch_numa.c
-+++ b/drivers/base/arch_numa.c
-@@ -208,6 +208,10 @@ static int __init numa_register_nodes(void)
- {
- 	int nid;
- 
-+	/* Check the validity of the memblock/node mapping */
-+	if (!memblock_validate_numa_coverage(1))
-+		return -EINVAL;
-+
- 	/* Finally register nodes. */
- 	for_each_node_mask(nid, numa_nodes_parsed) {
- 		unsigned long start_pfn, end_pfn;
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
