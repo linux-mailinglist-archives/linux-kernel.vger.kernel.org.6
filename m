@@ -1,149 +1,115 @@
-Return-Path: <linux-kernel+bounces-426730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8272A9DF711
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 21:23:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121A19DF715
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 21:48:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1E5328187C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 20:23:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C25F1281685
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 20:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901D51D8A08;
-	Sun,  1 Dec 2024 20:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2202F1D8DF6;
+	Sun,  1 Dec 2024 20:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ClVM0sNK"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDpNEHwV"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F9915A8
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 20:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E90F70803;
+	Sun,  1 Dec 2024 20:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733084628; cv=none; b=kigLodbmtUcyPwhipsED9B6/OFF2pkRR2GXWfVW/j7j+L8D82y8bTeb/epSZt9cF82Q4ZXxOS3rFLRQILNBBkPT8YcOyaId8eryRh8vPmFOE7UjsHaO+IS/CpJNktGyzIyOyGn5fvtPyTvYehYAJ+ytPKhAY2Gx8wh8x4lRmkzg=
+	t=1733086096; cv=none; b=qjZ7sfV7bKStCryNOPWz1YPoQRNeA3kxwoVQE7IGN8OpPYBE8mMDULtM4T15Pz3tD0eAGjn3tIO38SWI8exFuTgfSu97GgSZg5M3V6d2RkaW2xst3w6J4+qGMqeBAekmCQycM9cDh1BIW4oJ84ml4Y7fwD1ccOC2psqvHQ4sRhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733084628; c=relaxed/simple;
-	bh=4xGNzN9Wp70Q9GgcCs1b92wuOYHLnPfSc5E75h7FS04=;
+	s=arc-20240116; t=1733086096; c=relaxed/simple;
+	bh=oEUek/oLoEOUG2Zsp9jaU7h3xjAClbKuAkjW6nkgCQk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SgD4JS1NPSicO5B9mzheCr9dEZfCL47B9HrW9vT6J2cFaJWL/YhvOlz1SFnTRiJhZnfHweF6gGbxR5jbTo6VGHCkNG61wHQTXlcID5TRjEGqJ/MEI1pwocIJ24HHXbe3QHQq0G7rd+S66LdfSIx4Qsewb71iSjshKGgkMRiqcMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ClVM0sNK; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso599066266b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 12:23:46 -0800 (PST)
+	 To:Cc:Content-Type; b=fj+BZ3a8x4+24+QPlaG9La2aScOWxcpC/cuTuWjMgIZeLax/Wu3XwNRKXwGd3aD0QcQ1JsElg3y4X59Abmx4R4SgESOyr/K+5gx04pyCdFNe24BhoLuDtmG1DARDanI6OKdKPn/Amrk7knE2VW2alkhwj1XsLbFQ4eGkleve5Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDpNEHwV; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a7d94b545aso10569035ab.3;
+        Sun, 01 Dec 2024 12:48:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733084625; x=1733689425; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733086094; x=1733690894; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0PBRuUNrVMG3jWkuVgZ+alnShpvbiX+xpV3R8jGwMw=;
-        b=ClVM0sNKSDnknCjA3+6BriVdMXCWvq/v6OkJMNg9JoNcL3X79C/ftYQ+14DJC1mx4U
-         qfO2kxc3bDTVWRzi+RWEn/hQZ5rWx7eutN9cMxZakQNRaX3DjIWuPZURlz7NoPbEsCCX
-         KdLh53i/Ex5q2TVXjCLcKiwnCHPBXrRDWqDes=
+        bh=GPHxfSACZ+2h2VPEaq6+rYqVaulrzLUGki8m/llPT3c=;
+        b=jDpNEHwVu8xAU/b6krZjMfOrLRJPuSZyaIbXhoa+pdnGn55IFwEVZA0Owo2e9U/3i4
+         B4ZcRyAUxkXIGdPFZnVaqAsY3Z12dUZCzwmkTtqAeS0hJGIukZT7/2WJcAMvoix+EnN5
+         uPfbUhJuELuq/0y1PU72HZMYjh1u21F0Nxl60N9q+sXFeQHgS2Yai9nM+ozlhJdVBTPF
+         A/yruA9PWI67cs3HMf8ZPwy99i0GZqDWzYTTljVPe0UtDcKN+RgnJxTdiwPCDpoT7l/O
+         qYVefj8awHLCWAcQUjXiLLaiW77CL7lDPACZ2XzOV4eYKq8n1A11L6C0VLZqP9fzfiV8
+         79Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733084625; x=1733689425;
+        d=1e100.net; s=20230601; t=1733086094; x=1733690894;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N0PBRuUNrVMG3jWkuVgZ+alnShpvbiX+xpV3R8jGwMw=;
-        b=GGT3Sy/ZzS9p2W4zgHiFF8OO8fbyYOW2hVRwBp09rLW6c87WhwfVb/duQEQzx/o6xo
-         7k6bHgKHYihGm99nUFhlT9KCZfH8NglTEZaKBhrsbwlqutvdkLxVoSmYePJb35Z+2AiH
-         2sBDjz0vIbujrQU4t7jGO3L4XuYydqQQyJUbrxYSduoothPmIHkPHug5GaYIat2VwbUS
-         i6U1P3sZq6O1mm82XZceGGqdWCPr/Tkfpqu8XpO9RabMAlOkUkmYRHycL5lTVgpzbLUg
-         nv6sJ0Viegt3dNDFn9GcTowh8yHzRi2tawawX/rX07g9wuYhPIBPdOKwMYYGriNcv51P
-         Y1mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpjrKiK5vF16CAe2La7Y7IBAbWBXh21SjX2FYYodjyGZojM+NCasn3uFXEH8o1KI2iyGhkRRoqiDm8iRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuevEoahDmm5MknVNU19cxrPE5Edq6pLA67TeiylOMj9XbYjJj
-	YaYoB+JmyNap3B++FrkmYhSX2+3vG+mXK0T5J41kOsi3JU9ycxJW/1puV/OsbSr3LnXNtx2DKrL
-	X8K4TEw==
-X-Gm-Gg: ASbGncu4o56TEnPA8SiREAd22mkpYqYi3P/kS+PIDlm7El6rXVzARTTeLJjwaro31lL
-	cU/fvunvvtzKl9vFeZ1RQDWBTIg2M8kj4T5gfHajuXwvRnGcPb+4GzgNjxZ2lpLEX69jlgMjfHl
-	SnSEJgS04Zw2zOEjJGRMOnv4ANEsbMpV6gTqGwTxw1ANxzTzaVQwHxhKl/CS1fq9xRF22lpNC+w
-	0j6EgV88K4BEtdwRP0L9gbMmbcscrTCLsRbydcry9H1IrFZvryub7S/N3SsFWId205qtMIJHhVM
-	zsz78iPU3+tFqdZQtZNUv28R
-X-Google-Smtp-Source: AGHT+IFU9E4QNZ8kKafTOXYbZDQkprApFKtAwRDXC7N3krZzjerD2Ehf9fGtYtruhKUr0zHkfHxxrg==
-X-Received: by 2002:a17:907:8713:b0:aa5:da4:3c0a with SMTP id a640c23a62f3a-aa581066ba7mr1437745766b.59.1733084624777;
-        Sun, 01 Dec 2024 12:23:44 -0800 (PST)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5997d40desm429702966b.82.2024.12.01.12.23.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Dec 2024 12:23:43 -0800 (PST)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa54adcb894so480652266b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 12:23:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXdMmFi9/sEGdqSu/KUrWlF0+mc2UWxWrA7lxoyXxoc+S2HpZePBt4GV3QXkqLJbE8LOoFVa11uJ+I2tAE=@vger.kernel.org
-X-Received: by 2002:a17:906:3090:b0:aa5:1585:ef33 with SMTP id
- a640c23a62f3a-aa580f1ae0emr1684398666b.23.1733084623092; Sun, 01 Dec 2024
- 12:23:43 -0800 (PST)
+        bh=GPHxfSACZ+2h2VPEaq6+rYqVaulrzLUGki8m/llPT3c=;
+        b=Av62Hs+AF033C7h1AoT7welkAjsLwczKLVSzDwTOmae9gvDeBuaLcQwuakuRNJjOnB
+         PO7eJUWFOA7EeImZMHKqzlg9Mhi/UbCHwZuYn1+4XIqz5Ldo4zVUHil5zlhz5+azVF8N
+         Xf4bPMb7Ouejl9SnMBvMPbTRAO2Ki1zFVWn8Hm9fP7LilcJ/u76V+bOGp97fPtqUYkxO
+         mEAhvPNLRqow1rgZXsp2mubEBthfDfk/Tee45f/b1hRfDshUt6Dd9Ru3cwDf48jQMxZz
+         tr60rlTZSJbYfl2CerU2bI5IJVJpF4ku7oHMgQBtaZqIWgVLW/mtHSSA8ypr+RFwN2p8
+         SZcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwoEhUToP5vMLYuLOf2sL11FX8Cc/L77dGtSZT09AyToMlhCcGKKgjS8F792PoLPuxgsthPLz6IR4NhILC@vger.kernel.org, AJvYcCVTNxrmneBg09OHCKsqLfOKSIV77tb9RoygcVVou/mawNyCFrj2cJ8IsG0vl6ByOLShz/KkZvG8ATOqjRs=@vger.kernel.org, AJvYcCWzV30JxY0vVIAqUo+f5+EvZZlw2zA6G/Arr9BSOoBG9ZeV2IZ+qTSyDbMLKtYFMFJlkPx+5/TQArc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1BSOxPxNC/RrOp0u+ZN4/tj9jhWpG6/pVQw11/Nh4+5rj4iME
+	S5lLrtjhIfSfcQ9lvnKULL8ptZu8G34koMrbfkb46WQWXCameXbNav7oAsx1pVcP9Fzl1dazlSr
+	vO7T8ve3DhHG0j8a9B/QtbMzbAbc=
+X-Gm-Gg: ASbGnctG06ri94AbAGHjdWqIzO/+JXJRVKy31BsNcailScn4r8fLK7P7kbv6QtQlKpS
+	NWbtgtn+xF2Y9pYlDSVbYzrZiTiaYaT6wTNSEk3hr5ERuOsD3TKlQQQVHGqQ6/E4=
+X-Google-Smtp-Source: AGHT+IHw0PoW86iu90bgBJH5l9I3IFB97my7HbCGQAgg8zibDjFR3wOY92iHdJmWWUjUCCEJP9pzqDq/0AokWh1FtHE=
+X-Received: by 2002:a05:6e02:4518:20b0:3a7:c5b1:a55e with SMTP id
+ e9e14a558f8ab-3a7c5b1a735mr113260755ab.0.1733086094131; Sun, 01 Dec 2024
+ 12:48:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130044909.work.541-kees@kernel.org> <CAHk-=wjAmu9OBS--RwB+HQn4nhUku=7ECOnSRP8JG0oRU97-kA@mail.gmail.com>
-In-Reply-To: <CAHk-=wjAmu9OBS--RwB+HQn4nhUku=7ECOnSRP8JG0oRU97-kA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 1 Dec 2024 12:23:26 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiGWbU-MpmrXnHdqey5kDkyXnPxQ-ZsGVGBkZQ5d5g0mw@mail.gmail.com>
-Message-ID: <CAHk-=wiGWbU-MpmrXnHdqey5kDkyXnPxQ-ZsGVGBkZQ5d5g0mw@mail.gmail.com>
-Subject: Re: [PATCH] exec: Make sure task->comm is always NUL-terminated
-To: Kees Cook <kees@kernel.org>
-Cc: Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chen Yu <yu.c.chen@intel.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
+References: <CAB95QAROXwFPZB8gSkz0-thPtuzWkhAHmbqEy2QBg4fMmx7NKQ@mail.gmail.com>
+ <20241130144733.51627-1-yanhuoguifan@gmail.com> <d8e00909-a946-4ce4-811d-ac968bc54c7b@roeck-us.net>
+ <Z0u5QWzWSXGUTUO0@gmail.com> <64783a84-5f21-4c33-b74b-5e6d79107c33@roeck-us.net>
+In-Reply-To: <64783a84-5f21-4c33-b74b-5e6d79107c33@roeck-us.net>
+From: Eugene Shalygin <eugene.shalygin@gmail.com>
+Date: Sun, 1 Dec 2024 21:48:03 +0100
+Message-ID: <CAB95QATT51L7FtVKdhTpTMo6sCwkihqyb5GtQBbLRR0jyRmMUg@mail.gmail.com>
+Subject: Re: [PATCH v2] hwmon: (asus-ec-sensors) add TUF GAMING X670E PLUS
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Li XingYang <yanhuoguifan@gmail.com>, corbet@lwn.net, jdelvare@suse.com, 
+	linux-doc@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 29 Nov 2024 at 23:15, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+Hi,
+
+> >> This is an unrelated change. It affects other boards of the same family.
+> >> It needs to be a separate patch, it needs to be explained, and it needs to
+> >> get some confirmation that it works on the other boards of the same series.
+
+> > I found that in the LibreHardwareMonitor project,
+> > the registers used by Amd600 to operate FanCPUOpt are described:
+> > https://github.com/LibreHardwareMonitor/LibreHardwareMonitor/blob/master/LibreHardwareMonitorLib/Hardware/Motherboard/Lpc/EC/EmbeddedController.cs
+> > BoardFamily.Amd600, new Dictionary<ECSensor, EmbeddedControllerSource>
+> > {
+> > { ECSensor.FanCPUOpt,  new EmbeddedControllerSource("CPU Optional Fan", SensorType.Fan, 0x00b0, 2) },
+> > }
+> >
+> > I think this is suitable for the AMD 600 motherboard, and it does work on my motherboard as well.
 >
-> And yes, we could make the word-at-a-time case also know about masking
-> the last word, but it's kind of annoying and depends on byte ordering.
+> That makes sense, but it is still unrelated to this patch and, worse,
+> not even mentioned in the patch description. See "Separate your changes"
+> in Documentation/process/submitting-patches.rst.
 
-Actually, it turned out to be really trivial to do. It does depend on
-byte order, but not in a very complex way.
+Can confirm CPU_Opt is still at 0xb0 for ProArt X870E Creator Wifi, so
+it is the same in AMD families 500 to 800. The introduction of the
+sensor to the 600th family should not affect other boards, because
+they do not use it yet,
 
-Also, doing the memory accesses with READ_ONCE() might be good for
-clarity, but it makes gcc have conniptions and makes the code
-generation noticeably worse.
-
-I'm not sure why, but gcc stops doing address generation in the memory
-instruction for volatile accesses. I've seen that before, but
-completely forgot about how odd the code generation becomes.
-
-This actually generates quite good code - apart from the later
-'memset()' by strscpy_pad().  Kind of sad, since the word-at-a-time
-code by 'strscpy()' actually handles comm[] really well (the buffer is
-a nice multiple of the word length), and extending it to padding would
-be trivial.
-
-The whole sized_strscpy_pad() macro is in fact all kinds of stupid. It does
-
-        __wrote = sized_strscpy(__dst, __src, __count);
-        if (__wrote >= 0 && __wrote < __count)
-
-and that '__wrote' name is actively misleading, and the "__wrote <
-__count" test is pointless.
-
-The underlying sized_strscpy() function doesn't return how many
-characters it wrote, it returns the length of the resulting string (or
-error if it truncated it), so the return value is *always* smaller
-than __count.
-
-That's the whole point of the function, after all.
-
-Oh well. I'll just commit my strscpy() improvement as a fix.
-
-And I'll think about how to do the "pad" version better too. Just because.
-
-                Linus
+Kind regards,
+Eugene
 
