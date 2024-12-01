@@ -1,191 +1,153 @@
-Return-Path: <linux-kernel+bounces-426531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E789DF476
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:56:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854459DF47D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 04:14:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 581AF281381
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:56:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A347162A9C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F54134B0;
-	Sun,  1 Dec 2024 02:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF342BAEC;
+	Sun,  1 Dec 2024 03:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hV3mrotw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DsCRGPtz"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7892BF9E8;
-	Sun,  1 Dec 2024 02:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13898380
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 03:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733021767; cv=none; b=i4gi+KYAWioHaMyL5dyTdUr1rDl+YIGypNXP5nhdqJcQko9Y7gi+fzx41zFJqucYCiAbTrdy3KInsfINXiOAUnvYQXwJ5VCspMJxjfJtkajfsCh2vEQmvW5ckoveUQZ2/DHTIRowRKWZJQTt5Vxf3oneC+eiVkqFLAmNFCOFy4I=
+	t=1733022888; cv=none; b=XkqkOkmTmNefp7rI0U4ulpKSA3YJJlQL+b7zRJEjx6AEYT1M9NUpjlB317jmtMU8lUyfNAZjzZy8nnM2BHtiobwARgx15aisaik5SoZ4c6cKCY4NGx72ilCTcGMZeEwW293cVejd2v0LMP3XjmvEm4k59zTgbo+UyQQWzIDwVWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733021767; c=relaxed/simple;
-	bh=2MDLGdtixIr+eogn07QqelKmKPJW7oyKKYZK2ByJj5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=keAe4c+uavuY44QhCcoVQQz5q5qt7NjBcPudaLQ2oexUQYgTxTCElTRifBZMrKC8q+gPVKI2HSb34s5ModJLztVD+Z3UBKb5PXfcyBfu/7LWhXUx5V1UZiD8kU+JjBQZnXhr8ptTp8VYzH16fvBBYGLoLCg+vwv17SiK3I7PWMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hV3mrotw; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733021765; x=1764557765;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2MDLGdtixIr+eogn07QqelKmKPJW7oyKKYZK2ByJj5Y=;
-  b=hV3mrotwWQCv5TVV+POUpRLLshlMDO+NGJ2+G4WFHtFkURLjdnaprQ/7
-   rRkFtYJyKUM24LuWdta1GHezFQLZQdo09yzqU92r95m6kr+jdQv46M4yb
-   2MOvC7nlYfUCVIhadw+1b07fTzwBaq6W5YSZmSAQQuygou9F2DaxUTBjd
-   uocDk2qwBTPNdfVja8JRCdgzCl9saIBc+XovGJakgBjDpcwhfOZUD9PEJ
-   fKi4zJoT1u/ZQOkw/rCjrzeA/lDkfO6QqXzUxbILVS9WMGe2I3MPXVab7
-   +Gmq2R1EMS4aoNNc+rCLNnJmpT/Xgsk5MLNRNKrdykSrVUmN+NliMKMAJ
-   g==;
-X-CSE-ConnectionGUID: HXJMo9GbT/SI+gbM/GSATw==
-X-CSE-MsgGUID: jX1s19gDSuW6T6tPpbEqLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="44248029"
-X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
-   d="scan'208";a="44248029"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 18:56:04 -0800
-X-CSE-ConnectionGUID: awvlkQ0XQouCl51C2mZQ+w==
-X-CSE-MsgGUID: NoGx+l5vQ26mWR/7dI8L2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
-   d="scan'208";a="97890037"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 30 Nov 2024 18:55:59 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tHa7o-0001An-2a;
-	Sun, 01 Dec 2024 02:55:56 +0000
-Date: Sun, 1 Dec 2024 10:55:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?unknown-8bit?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Lee Chun-Yi <jlee@suse.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Ike Panhc <ike.pan@canonical.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Alexis Belmonte <alexbelm48@gmail.com>,
-	Uwe =?unknown-8bit?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>,
-	"open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	Matthew Schwartz <matthew.schwartz@linux.dev>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Armin Wolf <W_Armin@gmx.de>
-Subject: Re: [PATCH v8 02/22] platform/x86/dell: dell-pc: Create platform
- device
-Message-ID: <202412011002.Hb0aRIsM-lkp@intel.com>
-References: <20241130140454.455-3-mario.limonciello@amd.com>
+	s=arc-20240116; t=1733022888; c=relaxed/simple;
+	bh=/c9nDbTyDnsTU/IXGr9Y3UwKa6KDl4HSGz7JUK5GUh0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=rD1ZCQPjyrhfNzFTs9C9SBqXCJdT15mdgJf+T99hUBNvY6zzvN88NOJSLHRpElr/dZuIw02L4jKJtsu6CJVIRNWsUVbRGJdRY56cnn++8DaPwlTMEDS7gMp7b42Eu8FnJ2HqGpEV9RFfxJhbvE4cI/Ue0qkNJvh15CiysS7PlTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DsCRGPtz; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733022883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M7DCEiN8KnkC92T6ACDy+l0PONNF1zjnEOfw/bgxVvw=;
+	b=DsCRGPtzEiV7AGKx/3/wcfaJWCWJGKJvdtIaXAb43y7pFpK14Hu4M1LD6Q8ViiMdHRxcCW
+	sQuemTLgHRXhY96+OU12ViF7TGwr74055sLMU/Qpub/VclCIkPtPHbIvlKufGzikqQ+Yzc
+	1fi7qvIOHd/ht+XlQUyxN3qBv6JFUQo=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241130140454.455-3-mario.limonciello@amd.com>
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.15\))
+Subject: Re: [PATCH v30 00/30] Introduce QC USB SND audio offloading support
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <d0da6552-238a-41be-b596-58da6840efbb@quicinc.com>
+Date: Sat, 30 Nov 2024 21:14:36 -0600
+Cc: Takashi Iwai <tiwai@suse.de>,
+ Greg KH <gregkh@linuxfoundation.org>,
+ srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com,
+ perex@perex.cz,
+ conor+dt@kernel.org,
+ dmitry.torokhov@gmail.com,
+ corbet@lwn.net,
+ broonie@kernel.org,
+ lgirdwood@gmail.com,
+ krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com,
+ tiwai@suse.com,
+ robh@kernel.org,
+ linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org,
+ linux-usb@vger.kernel.org,
+ linux-input@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CF49CA0A-4562-40BC-AA98-E550E39B366A@linux.dev>
+References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+ <edfeb642-297e-42bb-ad09-cbf74f995514@quicinc.com>
+ <2024111655-approve-throwback-e7df@gregkh>
+ <2f512d8d-e5f3-4bdd-8172-37114a382a69@quicinc.com>
+ <875xoi3wqw.wl-tiwai@suse.de>
+ <d0da6552-238a-41be-b596-58da6840efbb@quicinc.com>
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Mario,
+Sorry to chime in late, I only look at email occasionally.
 
-kernel test robot noticed the following build warnings:
+>> Well, from the sound subsystem side, the only concerns are the design
+>> issues: namely, whether the implementations with two cards are
+>> acceptable, and whether the current control of PCM mapping is OK from
+>> the user POV.  IIRC, there were discussions with Intel people and
+>> others, and I haven't followed whether we got consensus.
+>> If we reached some agreement, it'd be appreciated if you can put acks
+>> from them in the patches, too.
 
-[auto build test WARNING on 2ba9f676d0a2e408aef14d679984c26373bf37b7]
+My Reviewed-by tags were added in the last updates. I am not sure if =
+anyone else at Intel had the time to review this large patchset.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/ACPI-platform-profile-Add-a-name-member-to-handlers/20241130-221102
-base:   2ba9f676d0a2e408aef14d679984c26373bf37b7
-patch link:    https://lore.kernel.org/r/20241130140454.455-3-mario.limonciello%40amd.com
-patch subject: [PATCH v8 02/22] platform/x86/dell: dell-pc: Create platform device
-config: x86_64-randconfig-121-20241201 (https://download.01.org/0day-ci/archive/20241201/202412011002.Hb0aRIsM-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241201/202412011002.Hb0aRIsM-lkp@intel.com/reproduce)
+> I believe Amadeusz was still against having the two card design, and =
+wants the routing to automatically happen when playback happens on the =
+sound card created by the USB SND layer.  However, even with that kind =
+of implementation, the major pieces brought in by this series should =
+still be relevant, ie soc-usb and the vendor offload driver.  The only =
+thing that would really change is adding a path from the USB SND PCM ops =
+to interact with the ASoC entities.  Complexity-wise, this would =
+obviously have a good amount of changes to the USB SND/ASoC core =
+drivers.  Some things I can think of that we'd need to introduce:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412011002.Hb0aRIsM-lkp@intel.com/
+The notion of two cards was agreed inside Intel as far back as 2018, =
+when Rakesh first looked at USB offload.=20
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/platform/x86/dell/dell-pc.c:252:32: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected long error @@     got struct platform_device *static [assigned] [toplevel] platform_device @@
-   drivers/platform/x86/dell/dell-pc.c:252:32: sparse:     expected long error
-   drivers/platform/x86/dell/dell-pc.c:252:32: sparse:     got struct platform_device *static [assigned] [toplevel] platform_device
->> drivers/platform/x86/dell/dell-pc.c:252:31: sparse: sparse: incorrect type in return expression (different base types) @@     expected int @@     got void * @@
-   drivers/platform/x86/dell/dell-pc.c:252:31: sparse:     expected int
-   drivers/platform/x86/dell/dell-pc.c:252:31: sparse:     got void *
+Having a single USB card in IMHO more complicated:  what happens for =
+example if you plug-in two or more USB devices? Which of the USB cards =
+will expose an optimized path? The design with an ASoC-based card which =
+exposes as many PCM devices as the SOC can support is simpler =
+conceptually and scales well. This would allow e.g. to allocate these =
+PCM devices with different policies (last plugged, preferred, etc).
 
-vim +252 drivers/platform/x86/dell/dell-pc.c
+Conceptually for the simple case with a single USB device, it does not =
+really matter if there are two cards or not. What matters is that there =
+is a clear mapping visible to userspace so that application can decide =
+to use the optimized PCM device, when enabled, instead of the legacy =
+one. And in the end, the application is *always* in control in terms of =
+routing. It=E2=80=99s really similar to the compress offload path, some =
+application changes will be required.=20
 
-   233	
-   234	static int thermal_init(void)
-   235	{
-   236		int ret;
-   237		int supported_modes;
-   238	
-   239		/* If thermal commands are not supported, exit without error */
-   240		if (!dell_smbios_class_is_supported(CLASS_INFO))
-   241			return 0;
-   242	
-   243		/* If thermal modes are not supported, exit without error */
-   244		ret = thermal_get_supported_modes(&supported_modes);
-   245		if (ret < 0)
-   246			return ret;
-   247		if (!supported_modes)
-   248			return 0;
-   249	
-   250		platform_device = platform_device_register_simple("dell-pc", PLATFORM_DEVID_NONE, NULL, 0);
-   251		if (IS_ERR(platform_device))
- > 252			return ERR_PTR(platform_device);
-   253	
-   254		thermal_handler = devm_kzalloc(&platform_device->dev, sizeof(*thermal_handler), GFP_KERNEL);
-   255		if (!thermal_handler) {
-   256			ret = -ENOMEM;
-   257			goto cleanup_platform_device;
-   258		}
-   259		thermal_handler->name = "dell-pc";
-   260		thermal_handler->profile_get = thermal_platform_profile_get;
-   261		thermal_handler->profile_set = thermal_platform_profile_set;
-   262	
-   263		if (supported_modes & DELL_QUIET)
-   264			set_bit(PLATFORM_PROFILE_QUIET, thermal_handler->choices);
-   265		if (supported_modes & DELL_COOL_BOTTOM)
-   266			set_bit(PLATFORM_PROFILE_COOL, thermal_handler->choices);
-   267		if (supported_modes & DELL_BALANCED)
-   268			set_bit(PLATFORM_PROFILE_BALANCED, thermal_handler->choices);
-   269		if (supported_modes & DELL_PERFORMANCE)
-   270			set_bit(PLATFORM_PROFILE_PERFORMANCE, thermal_handler->choices);
-   271	
-   272		/* Clean up if failed */
-   273		ret = platform_profile_register(thermal_handler);
-   274		if (ret)
-   275			goto cleanup_thermal_handler;
-   276	
-   277		return 0;
-   278	
-   279	cleanup_thermal_handler:
-   280		thermal_handler = NULL;
-   281	
-   282	cleanup_platform_device:
-   283		platform_device_unregister(platform_device);
-   284	
-   285		return ret;
-   286	}
-   287	
+>=20
+> 1.  Exposing some of the ASoC PCM (soc-pcm) APIs to be able to be =
+called by soc-usb (to mimic a FE open from ASoC), so we can trigger ASoC =
+DAI ops when USB SND FE is opened.
+>=20
+> 2.  Proper fallback mechanism in case offload path enablement fails to =
+the legacy USB SND path.
+>=20
+> 3.  Master kcontrol to disable offload logic for each USB SND device.
+>=20
+> IMO, both the points you mentioned correspond to the same topic.  If =
+we go with having offload being operated on one FE, then there is no =
+need for the kcontrol of PCM mapping.  If we have two cards, then we =
+will need the control for offload device mapping.  Can't speak for =
+Pierre, but at least with my discussions with him, I don't think he's =
+against the two card design, just as long as we have the proper kcontrol =
+that notifies userspace of how to utilize the offload path.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Even if there=E2=80=99s a single card you need to have a mapping between =
+a =E2=80=98legacy=E2=80=99 PCM device and an =E2=80=98optimized=E2=80=99 =
+one. This would be a scalar mapping instead of a (card, device) pair, =
+but it=E2=80=99s a minor change.
+
+-Pierre=
 
