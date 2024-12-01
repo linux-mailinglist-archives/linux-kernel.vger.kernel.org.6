@@ -1,131 +1,368 @@
-Return-Path: <linux-kernel+bounces-426711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBC09DF6E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 19:15:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E627E9DF6F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 19:44:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E43162DBF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 18:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4EBD281861
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 18:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DD81D798E;
-	Sun,  1 Dec 2024 18:15:29 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170AA1D86FF;
+	Sun,  1 Dec 2024 18:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="aWMQqYrV"
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDDD18593A
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 18:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84371B6555;
+	Sun,  1 Dec 2024 18:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733076929; cv=none; b=GF/d2stozwvH7gdnuroMQ7Vb+MEgL0EyCSzM832oa+9+JEILHXqCvWOgYiMIRHPpa6bhQaDGXh+/wG1u7yzn8qpbc/yHeobe2OAIzWixY0MgiSst7D/1q+xVgT9s63IkLdqRgTlZaa776Q7X8WI/pn7Wm9gFTrx/ZON7NkGqplU=
+	t=1733078685; cv=none; b=gPYumq7yl+Vyfk+wW26QQJtFVW0Rp4OrKs1/1XI05jJch2b0IsbnwHjItFvB6z7ccvHy2jqoRnPK9tDvCIhnKpDObC0KfhWwLRi0xB1EMCP23LdCas+RHrInlaEWgDOhF21zWo1f7/uW9kAnEsmZJHU+Gw01NyrOrVXjJUt/vDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733076929; c=relaxed/simple;
-	bh=Qm6OLsuIxJ8I0u+ZD2CtmuobsW18gm+oqJ0SiZ+Mllk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JseMyGSktMZ2N01drYiVHkp4onEQxDRop1sqoToIm63zDDlOz/8ofcVlkR4nV254VbG9169r7TRNFA1p87Wta4/hXie5bBEDjbOaHICk103ye3583/1ktUf4uy4mPNPWWIy6aR2sXnXuMK2TraPml0peu6Z6ogf8BmTg77n2cdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a77a808c27so41233945ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 10:15:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733076927; x=1733681727;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AfXWxKK2+ijvkbDiUUwCtHhzQL1apk9vqakJtaqZfgc=;
-        b=dTtBJpepbymgM042l3iJD+HCLN2IHPASYDtC29HkKj6xRNaYhHZrWkACdnlR23MKfv
-         97koL0YYp5JdZkjEdBE4hPn80heWD6J8pU34RO13Syf4twa4uqHf40qK4Q8d0rR+xUNx
-         eBfxvxf3p7PTaY12uhXPAXyRU6bdSMJXSX/k/RQSk7VXlQydnLv4zUPypnER2Xf4vh9h
-         rD/2Q/c1hA7gaL9wn/QC3R0c2J/1++YYF0uNLuZiw9NAivGhe7nEV4pstOnbMfbCrhoo
-         TW5U9qNA43APSvU/HTAh7wfT/2qpQ7B1MbPOtfvGoC/C86n4GL+acL3jH5j9fPAvOFWJ
-         zv3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUS30AlhHnE48RcCwATrg/I5VplUD1SLX6UBnd40NIlUmia8LYG2lJGruL25Njs/NrM0Si9yI2Hx87tpFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbTQUAcvTN6h974FsqJr8X5ssXCluh5ef5eMEYvHWyIU+cyEcB
-	foGyoSv1o4PaGDE0av0ieoqUgiVZIJ+yRW2Yi1CAxG+VK6be1coijSk1gTDVu3LFjSxo5TDjmrF
-	GcUf3XDK2cUT6Et9dFV370kmn4zK4U4Ub8pqBT5I0cfWTK8Gw0XLVGdE=
-X-Google-Smtp-Source: AGHT+IFNUwNrHO3nfBaeEVSHwic7+12RpAhdgcQCUxJaqFwv/Qrn6SwhHR/iC0x9u/ILxjPdmovr0tivIV+6hfwqPQNgJU5rDERb
+	s=arc-20240116; t=1733078685; c=relaxed/simple;
+	bh=7RnqtiIs3yxjelXw16vVWhcdS9fqa1m8NOdcsIZw86Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HzMYFzy6Yi303VTkWs0tajQoXnEd6bSNqiLrFIJacSbMfPElIXGadhY7yubz63cezFLjMq4Kt1+nB0QPj4QcvDZ3zYM2YdVFGQO6X34il3m7ySKeFVQmuyBi2XK2+wctQ3J6bOJyvdL1Y7eeuZ85QFSnZCI+aGtRMq5pWn+pgrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=aWMQqYrV; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=/4nI2FAaoA3rsXi7OjP//bqodmp6s6H263icRSEzEr8=; b=aWMQqYrVsUnFUbN7iY4fxIj3+t
+	qjZzkiDXaLKSAuBsk2Cv7acHxaVYDjk2jwEEcXaZ+aZ5zR67RZnxOq2KtzJ0CYh2aLYCcKvb9Qwc8
+	FFqYdYx4RYKeyFoRWBnz5EzMjHgOJ10FcAlH6mGlCc/LerFbfwN/uNC1GEvyFVOt7AkzvtDFJU34y
+	Dvvo7IiNgrVlkDyEYznMnceghUQ8nDdjyZJepWl2Au9GK8h1ZJA27pTlgc1FNFKD6UdfUK3NbfrGu
+	Os/aFsqqjFUve+2hadRIMDvkwleKnyly8TsH6l5KYOYMWFL0PwFDYq+mJvn5C2QXjFgJ2/8zcUeLH
+	RZrc84WQ==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1tHob6-0005M6-0V;
+	Sun, 01 Dec 2024 19:23:08 +0100
+Received: from [77.64.252.106] (helo=framework.lan)
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1tHob6-000NxA-15;
+	Sun, 01 Dec 2024 19:23:08 +0100
+Message-ID: <16eebeed3cbc45394d12a67a393315a454cdbd5a.camel@apitzsch.eu>
+Subject: Re: [PATCH v2 09/13] media: i2c: imx214: Extract format and crop
+ settings
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Ricardo Ribalda <ribalda@kernel.org>, Mauro Carvalho Chehab
+	 <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Stevenson
+	 <dave.stevenson@raspberrypi.com>
+Date: Sun, 01 Dec 2024 19:23:07 +0100
+In-Reply-To: <20241021-imx214-v2-9-fbd23e99541e@apitzsch.eu>
+References: <20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu>
+	 <20241021-imx214-v2-9-fbd23e99541e@apitzsch.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148e:b0:3a7:e047:733f with SMTP id
- e9e14a558f8ab-3a7e0477ab5mr90652305ab.1.1733076927014; Sun, 01 Dec 2024
- 10:15:27 -0800 (PST)
-Date: Sun, 01 Dec 2024 10:15:26 -0800
-In-Reply-To: <673ac3cd.050a0220.87769.001f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674ca7be.050a0220.ad585.003c.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] WARNING in netfs_writepages
-From: syzbot <syzbot+06023121b0153752a3d3@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Authenticated-Sender: andre@apitzsch.eu
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27474/Sun Dec  1 10:42:26 2024)
 
-syzbot has found a reproducer for the following issue on:
+Hi,
 
-HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=136ba7c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
-dashboard link: https://syzkaller.appspot.com/bug?extid=06023121b0153752a3d3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119abf78580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1527dd30580000
+I'll drop this patch for now. The changes included are not needed to
+make imx214 work with libcamera. And with [1] the patch might need a
+rework anyway.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
+Best regards,
+Andr=C3=A9
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+06023121b0153752a3d3@syzkaller.appspotmail.com
+[1]
+https://lore.kernel.org/linux-media/20241129095142.87196-1-sakari.ailus@lin=
+ux.intel.com/
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 35 at fs/netfs/write_issue.c:583 netfs_writepages+0x8ff/0xb60 fs/netfs/write_issue.c:583
-Modules linked in:
-CPU: 1 UID: 0 PID: 35 Comm: kworker/u8:2 Not tainted 6.12.0-next-20241128-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: writeback wb_workfn (flush-9p-1)
-RIP: 0010:netfs_writepages+0x8ff/0xb60 fs/netfs/write_issue.c:583
-Code: 10 4c 89 f2 48 8d 4c 24 70 e8 ad a6 85 ff 48 85 c0 0f 84 e6 00 00 00 48 89 c3 e8 cc dc 49 ff e9 4a fe ff ff e8 c2 dc 49 ff 90 <0f> 0b 90 e9 a9 fe ff ff e8 b4 dc 49 ff 4c 89 e7 be 08 00 00 00 e8
-RSP: 0018:ffffc90000ab70c0 EFLAGS: 00010293
-RAX: ffffffff8255983e RBX: 810f000000000000 RCX: ffff888020a9da00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 810f000000000000
-RBP: ffffc90000ab7190 R08: ffffffff825596e2 R09: 1ffff1100415a855
-R10: dffffc0000000000 R11: ffffed100415a856 R12: ffff888020ad42d8
-R13: dffffc0000000000 R14: ffffea0001b5e580 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f475ed5bd58 CR3: 00000000771b4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_writepages+0x35f/0x880 mm/page-writeback.c:2702
- __writeback_single_inode+0x14f/0x10d0 fs/fs-writeback.c:1680
- writeback_sb_inodes+0x820/0x1360 fs/fs-writeback.c:1976
- __writeback_inodes_wb+0x11b/0x260 fs/fs-writeback.c:2047
- wb_writeback+0x427/0xb80 fs/fs-writeback.c:2158
- wb_check_background_flush fs/fs-writeback.c:2228 [inline]
- wb_do_writeback fs/fs-writeback.c:2316 [inline]
- wb_workfn+0xc4b/0x1080 fs/fs-writeback.c:2343
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Am Montag, dem 21.10.2024 um 00:13 +0200 schrieb Andr=C3=A9 Apitzsch via B4
+Relay:
+> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+>=20
+> Remove format and crop settings from register sequences and set them
+> programmatically.
+>=20
+> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> ---
+> =C2=A0drivers/media/i2c/imx214.c | 129 ++++++++++++++++++++++++++++++++++=
+-
+> ----------
+> =C2=A01 file changed, 97 insertions(+), 32 deletions(-)
+>=20
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index
+> cb443d8bee6fe72dc9378b2c2d3caae09f8642c5..87a03e292e19ccd71f1b2dcee34
+> 09826b2f5cb6f 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -96,6 +96,9 @@
+> =C2=A0#define IMX214_REG_PREPLLCK_VT_DIV	CCI_REG8(0x0305)
+> =C2=A0#define IMX214_REG_PLL_VT_MPY		CCI_REG16(0x0306)
+> =C2=A0#define IMX214_REG_OPPXCK_DIV		CCI_REG8(0x0309)
+> +#define IMX214_OPPXCK_DIV_COMP6		6
+> +#define IMX214_OPPXCK_DIV_COMP8		8
+> +#define IMX214_OPPXCK_DIV_RAW10		10
+> =C2=A0#define IMX214_REG_OPSYCK_DIV		CCI_REG8(0x030b)
+> =C2=A0#define IMX214_REG_PLL_MULT_DRIV	CCI_REG8(0x0310)
+> =C2=A0#define IMX214_PLL_SINGLE		0
+> @@ -132,6 +135,9 @@
+> =C2=A0#define IMX214_BINNING_NONE		0
+> =C2=A0#define IMX214_BINNING_ENABLE		1
+> =C2=A0#define IMX214_REG_BINNING_TYPE		CCI_REG8(0x0901)
+> +#define IMX214_BINNING_1X1		0
+> +#define IMX214_BINNING_2X2		0x22
+> +#define IMX214_BINNING_4X4		0x44
+> =C2=A0#define IMX214_REG_BINNING_WEIGHTING	CCI_REG8(0x0902)
+> =C2=A0#define IMX214_BINNING_AVERAGE		0x00
+> =C2=A0#define IMX214_BINNING_SUMMED		0x01
+> @@ -211,36 +217,22 @@ static const struct cci_reg_sequence
+> mode_4096x2304[] =3D {
+> =C2=A0	{ IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+> =C2=A0	{ IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH
+> },
+> =C2=A0	{ IMX214_REG_EXPOSURE_RATIO, 1 },
+> -	{ IMX214_REG_X_ADD_STA, 56 },
+> -	{ IMX214_REG_Y_ADD_STA, 408 },
+> -	{ IMX214_REG_X_ADD_END, 4151 },
+> -	{ IMX214_REG_Y_ADD_END, 2711 },
+> =C2=A0	{ IMX214_REG_X_EVEN_INC, 1 },
+> =C2=A0	{ IMX214_REG_X_ODD_INC, 1 },
+> =C2=A0	{ IMX214_REG_Y_EVEN_INC, 1 },
+> =C2=A0	{ IMX214_REG_Y_ODD_INC, 1 },
+> -	{ IMX214_REG_BINNING_MODE, IMX214_BINNING_NONE },
+> -	{ IMX214_REG_BINNING_TYPE, 0 },
+> =C2=A0	{ IMX214_REG_BINNING_WEIGHTING, IMX214_BINNING_AVERAGE },
+> =C2=A0	{ CCI_REG8(0x3000), 0x35 },
+> =C2=A0	{ CCI_REG8(0x3054), 0x01 },
+> =C2=A0	{ CCI_REG8(0x305C), 0x11 },
+> =C2=A0
+> -	{ IMX214_REG_CSI_DATA_FORMAT, IMX214_CSI_DATA_FORMAT_RAW10
+> },
+> -	{ IMX214_REG_X_OUTPUT_SIZE, 4096 },
+> -	{ IMX214_REG_Y_OUTPUT_SIZE, 2304 },
+> =C2=A0	{ IMX214_REG_SCALE_MODE, IMX214_SCALE_NONE },
+> =C2=A0	{ IMX214_REG_SCALE_M, 2 },
+> -	{ IMX214_REG_DIG_CROP_X_OFFSET, 0 },
+> -	{ IMX214_REG_DIG_CROP_Y_OFFSET, 0 },
+> -	{ IMX214_REG_DIG_CROP_WIDTH, 4096 },
+> -	{ IMX214_REG_DIG_CROP_HEIGHT, 2304 },
+> =C2=A0
+> =C2=A0	{ IMX214_REG_VTPXCK_DIV, 5 },
+> =C2=A0	{ IMX214_REG_VTSYCK_DIV, 2 },
+> =C2=A0	{ IMX214_REG_PREPLLCK_VT_DIV, 3 },
+> =C2=A0	{ IMX214_REG_PLL_VT_MPY, 150 },
+> -	{ IMX214_REG_OPPXCK_DIV, 10 },
+> =C2=A0	{ IMX214_REG_OPSYCK_DIV, 1 },
+> =C2=A0	{ IMX214_REG_PLL_MULT_DRIV, IMX214_PLL_SINGLE },
+> =C2=A0
+> @@ -281,36 +273,22 @@ static const struct cci_reg_sequence
+> mode_1920x1080[] =3D {
+> =C2=A0	{ IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+> =C2=A0	{ IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH
+> },
+> =C2=A0	{ IMX214_REG_EXPOSURE_RATIO, 1 },
+> -	{ IMX214_REG_X_ADD_STA, 1144 },
+> -	{ IMX214_REG_Y_ADD_STA, 1020 },
+> -	{ IMX214_REG_X_ADD_END, 3063 },
+> -	{ IMX214_REG_Y_ADD_END, 2099 },
+> =C2=A0	{ IMX214_REG_X_EVEN_INC, 1 },
+> =C2=A0	{ IMX214_REG_X_ODD_INC, 1 },
+> =C2=A0	{ IMX214_REG_Y_EVEN_INC, 1 },
+> =C2=A0	{ IMX214_REG_Y_ODD_INC, 1 },
+> -	{ IMX214_REG_BINNING_MODE, IMX214_BINNING_NONE },
+> -	{ IMX214_REG_BINNING_TYPE, 0 },
+> =C2=A0	{ IMX214_REG_BINNING_WEIGHTING, IMX214_BINNING_AVERAGE },
+> =C2=A0	{ CCI_REG8(0x3000), 0x35 },
+> =C2=A0	{ CCI_REG8(0x3054), 0x01 },
+> =C2=A0	{ CCI_REG8(0x305C), 0x11 },
+> =C2=A0
+> -	{ IMX214_REG_CSI_DATA_FORMAT, IMX214_CSI_DATA_FORMAT_RAW10
+> },
+> -	{ IMX214_REG_X_OUTPUT_SIZE, 1920 },
+> -	{ IMX214_REG_Y_OUTPUT_SIZE, 1080 },
+> =C2=A0	{ IMX214_REG_SCALE_MODE, IMX214_SCALE_NONE },
+> =C2=A0	{ IMX214_REG_SCALE_M, 2 },
+> -	{ IMX214_REG_DIG_CROP_X_OFFSET, 0 },
+> -	{ IMX214_REG_DIG_CROP_Y_OFFSET, 0 },
+> -	{ IMX214_REG_DIG_CROP_WIDTH, 1920 },
+> -	{ IMX214_REG_DIG_CROP_HEIGHT, 1080 },
+> =C2=A0
+> =C2=A0	{ IMX214_REG_VTPXCK_DIV, 5 },
+> =C2=A0	{ IMX214_REG_VTSYCK_DIV, 2 },
+> =C2=A0	{ IMX214_REG_PREPLLCK_VT_DIV, 3 },
+> =C2=A0	{ IMX214_REG_PLL_VT_MPY, 150 },
+> -	{ IMX214_REG_OPPXCK_DIV, 10 },
+> =C2=A0	{ IMX214_REG_OPSYCK_DIV, 1 },
+> =C2=A0	{ IMX214_REG_PLL_MULT_DRIV, IMX214_PLL_SINGLE },
+> =C2=A0
+> @@ -623,6 +601,7 @@ static int imx214_set_format(struct v4l2_subdev
+> *sd,
+> =C2=A0	struct v4l2_mbus_framefmt *__format;
+> =C2=A0	struct v4l2_rect *__crop;
+> =C2=A0	const struct imx214_mode *mode;
+> +	unsigned int bin_h, bin_v, bin;
+> =C2=A0
+> =C2=A0	mode =3D v4l2_find_nearest_size(imx214_modes,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ARRAY_SIZE(imx214_modes),
+> width, height,
+> @@ -637,9 +616,32 @@ static int imx214_set_format(struct v4l2_subdev
+> *sd,
+> =C2=A0
+> =C2=A0	*__format =3D format->format;
+> =C2=A0
+> +	/*
+> +	 * Use binning to maximize the crop rectangle size, and
+> centre it in the
+> +	 * sensor.
+> +	 */
+> +	bin_h =3D IMX214_PIXEL_ARRAY_WIDTH / __format->width;
+> +	bin_v =3D IMX214_PIXEL_ARRAY_HEIGHT / __format->height;
+> +
+> +	switch (min(bin_h, bin_v)) {
+> +	case 1:
+> +		bin =3D 1;
+> +		break;
+> +	case 2:
+> +	case 3:
+> +		bin =3D 2;
+> +		break;
+> +	case 4:
+> +	default:
+> +		bin =3D 4;
+> +		break;
+> +	}
+> +
+> =C2=A0	__crop =3D v4l2_subdev_state_get_crop(sd_state, 0);
+> -	__crop->width =3D mode->width;
+> -	__crop->height =3D mode->height;
+> +	__crop->width =3D __format->width * bin;
+> +	__crop->height =3D __format->height * bin;
+> +	__crop->left =3D (IMX214_NATIVE_WIDTH - __crop->width) / 2;
+> +	__crop->top =3D (IMX214_NATIVE_HEIGHT - __crop->height) / 2;
+> =C2=A0
+> =C2=A0	if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
+> =C2=A0		int exposure_max;
+> @@ -847,7 +849,62 @@ static int imx214_ctrls_init(struct imx214
+> *imx214)
+> =C2=A0	return 0;
+> =C2=A0};
+> =C2=A0
+> -static int imx214_start_streaming(struct imx214 *imx214)
+> +static int imx214_set_framefmt(struct imx214 *imx214,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct v4l2_subdev_state *state)
+> +{
+> +	const struct v4l2_mbus_framefmt *format;
+> +	const struct v4l2_rect *crop;
+> +	u64 bin_mode;
+> +	u64 bin_type;
+> +	int ret =3D 0;
+> +
+> +	format =3D v4l2_subdev_state_get_format(state, 0);
+> +	crop =3D v4l2_subdev_state_get_crop(state, 0);
+> +
+> +	cci_write(imx214->regmap, IMX214_REG_X_ADD_STA,
+> +		=C2=A0 crop->left - IMX214_PIXEL_ARRAY_LEFT, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_X_ADD_END,
+> +		=C2=A0 crop->left - IMX214_PIXEL_ARRAY_LEFT + crop->width
+> - 1, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_Y_ADD_STA,
+> +		=C2=A0 crop->top - IMX214_PIXEL_ARRAY_TOP, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_Y_ADD_END,
+> +		=C2=A0 crop->top - IMX214_PIXEL_ARRAY_TOP + crop->height
+> - 1, &ret);
+> +
+> +	/* Proper setting is required even if cropping is not used
+> */
+> +	cci_write(imx214->regmap, IMX214_REG_DIG_CROP_WIDTH, crop-
+> >width, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_DIG_CROP_HEIGHT, crop-
+> >height, &ret);
+> +
+> +	switch (crop->width / format->width) {
+> +	case 1:
+> +	default:
+> +		bin_mode =3D IMX214_BINNING_NONE;
+> +		bin_type =3D IMX214_BINNING_1X1;
+> +		break;
+> +	case 2:
+> +		bin_mode =3D IMX214_BINNING_ENABLE;
+> +		bin_type =3D IMX214_BINNING_2X2;
+> +		break;
+> +	case 4:
+> +		bin_mode =3D IMX214_BINNING_ENABLE;
+> +		bin_type =3D IMX214_BINNING_4X4;
+> +		break;
+> +	}
+> +
+> +	cci_write(imx214->regmap, IMX214_REG_BINNING_MODE, bin_mode,
+> &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_BINNING_TYPE, bin_type,
+> &ret);
+> +
+> +	cci_write(imx214->regmap, IMX214_REG_X_OUTPUT_SIZE, format-
+> >width, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_Y_OUTPUT_SIZE, format-
+> >height, &ret);
+> +
+> +	cci_write(imx214->regmap, IMX214_REG_CSI_DATA_FORMAT,
+> +		=C2=A0 IMX214_CSI_DATA_FORMAT_RAW10, &ret);
+> +	cci_write(imx214->regmap, IMX214_REG_OPPXCK_DIV,
+> IMX214_OPPXCK_DIV_RAW10, &ret);
+> +
+> +	return ret;
+> +};
+> +
+> +static int imx214_start_streaming(struct imx214 *imx214,
+> +				=C2=A0 struct v4l2_subdev_state *state)
+> =C2=A0{
+> =C2=A0	int ret;
+> =C2=A0
+> @@ -865,6 +922,14 @@ static int imx214_start_streaming(struct imx214
+> *imx214)
+> =C2=A0		return ret;
+> =C2=A0	}
+> =C2=A0
+> +	/* Apply format and crop settings */
+> +	ret =3D imx214_set_framefmt(imx214, state);
+> +	if (ret) {
+> +		dev_err(imx214->dev, "%s failed to set frame format:
+> %d\n",
+> +			__func__, ret);
+> +		return ret;
+> +	}
+> +
+> =C2=A0	ret =3D cci_multi_reg_write(imx214->regmap, imx214->cur_mode-
+> >reg_table,
+> =C2=A0				=C2=A0 imx214->cur_mode->num_of_regs,
+> NULL);
+> =C2=A0	if (ret < 0) {
+> @@ -913,7 +978,7 @@ static int imx214_s_stream(struct v4l2_subdev
+> *subdev, int enable)
+> =C2=A0			return ret;
+> =C2=A0
+> =C2=A0		state =3D
+> v4l2_subdev_lock_and_get_active_state(subdev);
+> -		ret =3D imx214_start_streaming(imx214);
+> +		ret =3D imx214_start_streaming(imx214, state);
+> =C2=A0		v4l2_subdev_unlock_state(state);
+> =C2=A0		if (ret < 0)
+> =C2=A0			goto err_rpm_put;
+>=20
 
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
