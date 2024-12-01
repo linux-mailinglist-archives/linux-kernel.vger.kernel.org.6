@@ -1,242 +1,421 @@
-Return-Path: <linux-kernel+bounces-426606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384969DF58E
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:44:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D30B9DF596
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:51:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09B72816EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:44:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC66F162115
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E640A1B6D00;
-	Sun,  1 Dec 2024 12:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5AD1BE87E;
+	Sun,  1 Dec 2024 12:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxurlaju"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngTbm/U8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0A61B5ED2;
-	Sun,  1 Dec 2024 12:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBB91BDAA5;
+	Sun,  1 Dec 2024 12:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733057071; cv=none; b=dKzX9zPVah12dHiM7kaY167y1z4r50R82B6s+by/4oksqhsP/a8D9XslakftsaRQ4JLpkZA5rPOOqJb2ZiQ8LqZivgmMmtODLzyCeoB+1WfuB/q8BbqIbyWGtDFIBoirVgzz1DClZmSlv/vnyWODKQfkdTa+nAo35y6Y32DX634=
+	t=1733057477; cv=none; b=DNex1BAUNbIgqTQSQoBu/Tiylky381pP5dJY7J1PWG7QzC4CXKL8UrcezsNTFGoQ+b2nscAnsYBW00D3F32vegbhGIDC8RJ+A/uZJeun7vOy9PZnYRcXquhdffBAfTRsH3RC+QRz48dApL7+tEm6jKSjqOmCvho3tg6CTlndYUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733057071; c=relaxed/simple;
-	bh=nQhuu5MfVqbZIpR7AYSOP+J9kx/Y1gcr7gzCBGZE8B8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EW2zWAldKWdPUwWoskcfMJ5cnx7FZT3ZIjzpz24gK8Dm3yIaSIr5eSC2tyvSfgQJzPgvtIsjyNraJowRw2LsudzrKlMK9bUxAU90F8I/9J51MtxPF6G2eESf/4dZhoNvDxRr/7FqqKwrLR70YG0GynYUJBVgdk8Hf2VVeItPz3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxurlaju; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 890BCC4CED2;
-	Sun,  1 Dec 2024 12:44:28 +0000 (UTC)
+	s=arc-20240116; t=1733057477; c=relaxed/simple;
+	bh=KV44k5BTKi83D3nxirIEoEGOXK/oY3nsQ9bqh8HasWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QL3lJQt1ZnYyC5vVh8Fx7NFBW0PmySGygqGyenGlOeJC3U1vACY4hmRTqEU34EDXzckySwLItCkvDSsyxS9BIIkONM5MuHlHxvdh0hV89BMoNqTjm2JaQwVU2uNSw54FSgZa/88PLS+eTVfWaKw3nrO2x1hBA6JqeAOeFoTYGRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngTbm/U8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A645BC4CECF;
+	Sun,  1 Dec 2024 12:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733057071;
-	bh=nQhuu5MfVqbZIpR7AYSOP+J9kx/Y1gcr7gzCBGZE8B8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sxurlajuwmmgABTrDYYkcmKxJ2EHc6tLaPaxFDIGYfJnT3ATi653kH01JIsWGCOWM
-	 mg9/xxJJoKztb5i1ys/lrrj+hpato7zmeuQNxE5zlglOGaX8rC630tlITYajetJJVr
-	 vmwrifTpZOlDEYcPEd3DHqkeICY8k1Q9qgfBO+UYGz94R8qCjcmL/r/NV9NX7T7qyo
-	 3N4l5PwAdWG7yq+kjR20t52fH5Ipey3v1gwcCuH9n2vi/2SSxg22MI/+D502Zqj+hS
-	 mJZFD4NXnUMchte1HyeQ48V/87uXn3TqrYSsZIjlhUYUst/Bh2fTQVSkfRh6zBN7UR
-	 13aDGr9g7Bdgw==
-Date: Sun, 1 Dec 2024 13:44:22 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Erin Shepherd <erin.shepherd@e43.eu>, Jeff Layton <jlayton@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH RFC 0/6] pidfs: implement file handle support
-Message-ID: <20241201-mehreinnahmen-unehrlich-3a980ecbdfdc@brauner>
-References: <20241129-work-pidfs-v2-0-61043d66fbce@kernel.org>
- <20241129-work-pidfs-file_handle-v1-0-87d803a42495@kernel.org>
- <CAOQ4uxhKVkaWm_Vv=0zsytmvT0jCq1pZ84dmrQ_buhxXi2KEhw@mail.gmail.com>
- <20241130-witzbold-beiwagen-9b14358b7b17@brauner>
- <CAOQ4uxh2yfa_OeUYgrxc6nZqyZF4edx3pswPJkHPh5x=KOzj8w@mail.gmail.com>
+	s=k20201202; t=1733057477;
+	bh=KV44k5BTKi83D3nxirIEoEGOXK/oY3nsQ9bqh8HasWg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ngTbm/U8J0b3ZysSQ6eSCHEVLqh5Jn3XdYJiBbMscbf7NImJ3jvWy2l0gTKKSb3zG
+	 zLj/IjD5mDPrqMP1xqamoUjV1owp2vHwj9FZWTNbzX2kIeWeXLV37XwZBIHW6tj7c7
+	 PHKAPWG6gE27p703/f2o2NNFW949ZqtNxO2zKOm/1WxBqHftuqVoW9Bc1vfsmoC7Fl
+	 f+Hr2PAYhzAJQKUQeEtA3hSmoVIZ7jRM/i7/HEKSQ4HwgVou6bW28fD1xNOd3yPA46
+	 5PyGX7uEBBBHQO9kmwwU3FYJviuv8vqzH3810djiKVo93imsuI/Wg/tDTAlO61FASM
+	 mV0uga/uZrCmw==
+Date: Sun, 1 Dec 2024 12:51:07 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Per-Daniel Olsson <perdaniel.olsson@axis.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <rickard.andersson@axis.com>,
+ <kernel@axis.com>
+Subject: Re: [PATCH v8 2/2] iio: light: Add support for TI OPT4060 color
+ sensor
+Message-ID: <20241201125107.2e62ffcc@jic23-huawei>
+In-Reply-To: <20241126155312.1660271-3-perdaniel.olsson@axis.com>
+References: <20241126155312.1660271-1-perdaniel.olsson@axis.com>
+	<20241126155312.1660271-3-perdaniel.olsson@axis.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxh2yfa_OeUYgrxc6nZqyZF4edx3pswPJkHPh5x=KOzj8w@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Dec 01, 2024 at 01:09:17PM +0100, Amir Goldstein wrote:
-> On Sun, Dec 1, 2024 at 9:43 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Sat, Nov 30, 2024 at 01:22:05PM +0100, Amir Goldstein wrote:
-> > > On Fri, Nov 29, 2024 at 2:39 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > Hey,
-> > > >
-> > > > Now that we have the preliminaries to lookup struct pid based on its
-> > > > inode number alone we can implement file handle support.
-> > > >
-> > > > This is based on custom export operation methods which allows pidfs to
-> > > > implement permission checking and opening of pidfs file handles cleanly
-> > > > without hacking around in the core file handle code too much.
-> > > >
-> > > > This is lightly tested.
-> > >
-> > > With my comments addressed as you pushed to vfs-6.14.pidfs branch
-> > > in your tree, you may add to the patches posted:
-> > >
-> > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > >
-> > > HOWEVER,
-> > > IMO there is still one thing that has to be addressed before merge -
-> > > We must make sure that nfsd cannot export pidfs.
-> > >
-> > > In principal, SB_NOUSER filesystems should not be accessible to
-> > > userspace paths, so exportfs should not be able to configure nfsd
-> > > export of pidfs, but maybe this limitation can be worked around by
-> > > using magic link paths?
-> >
-> > I don't see how. I might be missing details.
-> 
-> AFAIK, nfsd gets the paths to export from userspace via
-> svc_export_parse() =>  kern_path(buf, 0, &exp.ex_path)
-> afterwards check_export() validates exp.ex_path and I see that regular
-> files can be exported.
-> I suppose that a pidfs file can have a magic link path no?
-> The question is whether this magic link path could be passed to nfsd
-> via the exportfs UAPI.
+On Tue, 26 Nov 2024 16:53:12 +0100
+Per-Daniel Olsson <perdaniel.olsson@axis.com> wrote:
 
-Ah, ok. I see what you mean. You're thinking about specifying
-/proc/<pid>/fd/<pidfd> in /etc/exports. Yes, that would work.
+> Add support for Texas Instruments OPT4060 RGBW Color sensor.
+> 
+> Signed-off-by: Per-Daniel Olsson <perdaniel.olsson@axis.com>
 
-> 
-> >
-> > > I think it may be worth explicitly disallowing nfsd export of SB_NOUSER
-> > > filesystems and we could also consider blocking SB_KERNMOUNT,
-> > > but may there are users exporting ramfs?
-> >
-> > No need to restrict it if it's safe, I guess.
-> >
-> > > Jeff has mentioned that he thinks we are blocking export of cgroupfs
-> > > by nfsd, but I really don't see where that is being enforced.
-> > > The requirement for FS_REQUIRES_DEV in check_export() is weak
-> > > because user can overrule it with manual fsid argument to exportfs.
-> > > So maybe we disallow nfsd export of kernfs and backport to stable kernels
-> > > to be on the safe side?
-> >
-> > File handles and nfs export have become two distinct things and there
-> > filesystems based on kernfs, and pidfs want to support file handles
-> > without support nfs export.
-> >
-> > So I think instead of having nfs check what filesystems may be exported
-> > we should let the filesystems indicate that they cannot be exported and
-> > make nfs honour that.
-> 
-> Yes, I agree, but...
-> 
-> >
-> > So something like the untested sketch:
-> >
-> > diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-> > index 1358c21837f1..a5c75cb1c812 100644
-> > --- a/fs/kernfs/mount.c
-> > +++ b/fs/kernfs/mount.c
-> > @@ -154,6 +154,7 @@ static const struct export_operations kernfs_export_ops = {
-> >         .fh_to_dentry   = kernfs_fh_to_dentry,
-> >         .fh_to_parent   = kernfs_fh_to_parent,
-> >         .get_parent     = kernfs_get_parent_dentry,
-> > +       .flags          = EXPORT_OP_FILE_HANDLE,
-> >  };
-> >
-> >  /**
-> > diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-> > index eacafe46e3b6..170c5729e7f2 100644
-> > --- a/fs/nfsd/export.c
-> > +++ b/fs/nfsd/export.c
-> > @@ -417,6 +417,7 @@ static struct svc_export *svc_export_lookup(struct svc_export *);
-> >  static int check_export(struct path *path, int *flags, unsigned char *uuid)
-> >  {
-> >         struct inode *inode = d_inode(path->dentry);
-> > +       const struct export_operations *nop;
-> >
-> >         /*
-> >          * We currently export only dirs, regular files, and (for v4
-> > @@ -449,11 +450,16 @@ static int check_export(struct path *path, int *flags, unsigned char *uuid)
-> >                 return -EINVAL;
-> >         }
-> >
-> > -       if (!exportfs_can_decode_fh(inode->i_sb->s_export_op)) {
-> > +       if (!exportfs_can_decode_fh(nop)) {
-> >                 dprintk("exp_export: export of invalid fs type.\n");
-> >                 return -EINVAL;
-> >         }
-> >
-> > +       if (nop && nop->flags & EXPORT_OP_FILE_HANDLE) {
-> > +               dprintk("exp_export: filesystem only supports non-exportable file handles.\n");
-> > +               return -EINVAL;
-> > +       }
-> > +
-> >         if (is_idmapped_mnt(path->mnt)) {
-> >                 dprintk("exp_export: export of idmapped mounts not yet supported.\n");
-> >                 return -EINVAL;
-> > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> > index 9aa7493b1e10..d1646c0789e1 100644
-> > --- a/fs/overlayfs/util.c
-> > +++ b/fs/overlayfs/util.c
-> > @@ -83,10 +83,15 @@ void ovl_revert_creds(const struct cred *old_cred)
-> >   */
-> >  int ovl_can_decode_fh(struct super_block *sb)
-> >  {
-> > +       const struct export_operations *nop = sb->s_export_op;
-> > +
-> >         if (!capable(CAP_DAC_READ_SEARCH))
-> >                 return 0;
-> >
-> > -       if (!exportfs_can_decode_fh(sb->s_export_op))
-> > +       if (!exportfs_can_decode_fh(nop))
-> > +               return 0;
-> > +
-> > +       if (nop && nop->flags & EXPORT_OP_FILE_HANDLE)
-> >                 return 0;
-> >
-> >         return sb->s_export_op->encode_fh ? -1 : FILEID_INO32_GEN;
-> > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > index dde3e4e90ea9..9d98b5461dc7 100644
-> > --- a/fs/pidfs.c
-> > +++ b/fs/pidfs.c
-> > @@ -570,6 +570,7 @@ static const struct export_operations pidfs_export_operations = {
-> >         .fh_to_dentry   = pidfs_fh_to_dentry,
-> >         .open           = pidfs_export_open,
-> >         .permission     = pidfs_export_permission,
-> > +       .flags          = EXPORT_OP_FILE_HANDLE,
-> >  };
-> >
-> >  static int pidfs_init_inode(struct inode *inode, void *data)
-> > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> > index a087606ace19..98f7cb17abee 100644
-> > --- a/include/linux/exportfs.h
-> > +++ b/include/linux/exportfs.h
-> > @@ -280,6 +280,7 @@ struct export_operations {
-> >                                                 */
-> >  #define EXPORT_OP_FLUSH_ON_CLOSE       (0x20) /* fs flushes file data on close */
-> >  #define EXPORT_OP_ASYNC_LOCK           (0x40) /* fs can do async lock request */
-> > +#define EXPORT_OP_FILE_HANDLE          (0x80) /* fs only supports file handles, no proper export */
-> 
-> This is a bad name IMO, since pidfs clearly does support file handles
-> and supports the open_by_handle_at() UAPI.
-> 
-> I was going to suggest EXPORT_OP_NO_NFS_EXPORT, but it also
-> sounds silly, so maybe:
-> 
-> #define EXPORT_OP_LOCAL_FILE_HANDLE          (0x80) /* fs only
-> supports local file handles, no nfs export */
+Hi Per-Daniel.
 
-Thank you. I'll send a reply with a proper patch to this thread in a second.
+I think we've been talking a bit cross purposes on the scale.  That
+needs to be a multiplier, not a multiplied channel reading.
 
-> With that you may add:
+Other than that, I'd previously missed some issues around races wrt to the enabling
+and disabling of the buffer.   They are unlikely to happen, but also fairly easy
+to close, particularly if you don't mind not allowing channel reads via sysfs
+at the same time as buffered capture.  This is a common restriction because
+it greatly simplifies some drivers and the combined case isn't a usecase normally
+cares about.
+
+Thanks,
+
+Jonathan
+
+> diff --git a/Documentation/iio/opt4060.rst b/Documentation/iio/opt4060.rst
+> new file mode 100644
+> index 000000000000..f12552f27b26
+> --- /dev/null
+> +++ b/Documentation/iio/opt4060.rst
+> @@ -0,0 +1,58 @@
+
+> +
+> +3. Scaled color values
+> +=============================
+> +
+> +The driver supports scaled values for red, green and blue. The raw values are
+> +scaled so that for a particular test light source, typically white, the
+> +measurement intensity is the same across the different color channels. This is
+> +calculated in the following way:
+> +
+> +R = RED_RAW x 2.4
+> +G = GREEN_RAW x 1.0
+> +B = BLUE_RAW x 1.3
+> +
+> +The values are accessed from:
+> +/sys/bus/iio/devices/iio:deviceX/in_intensity_red_scale
+> +/sys/bus/iio/devices/iio:deviceX/in_intensity_green_scale
+> +/sys/bus/iio/devices/iio:deviceX/in_intensity_blue_scale
+
+This doesn't work with the normal IIO ABI definitions.  Those scales should be 2.4, 1.0 and 1.3
+not a value calculated from the current value.
+
+
+> +
+> +The data sheet suggests using the scaled values to normalize the scaled R, G
+> +and B values. This is useful to get a value for the ratio between colors
+> +independent of light intensity. A userspace appliction can do this in the
+> +following way:
+> +
+> +R_NORMALIZED = R / (R + G + B)
+> +G_NORMALIZED = G / (R + G + B)
+> +B_NORMALIZED = B / (R + G + B)
+> +
+> +See section 8.4.5.2 in the data sheet for additional details.
+>
+> diff --git a/drivers/iio/light/opt4060.c b/drivers/iio/light/opt4060.c
+> new file mode 100644
+> index 000000000000..086fe87e1325
+> --- /dev/null
+> +++ b/drivers/iio/light/opt4060.c
+> @@ -0,0 +1,1289 @@
+
+> +static int opt4060_trigger_one_shot(struct opt4060_chip *chip)
+> +{
+> +	int ret;
+> +	unsigned int ctrl_reg;
+> +
+> +	/* Enable interrupt for conversion ready of all channels */
+> +	ret = opt4060_set_int_state(chip, OPT4060_INT_CTRL_ALL_CH);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(chip->regmap, OPT4060_CTRL, &ctrl_reg);
+> +	if (ret < 0) {
+> +		dev_err(chip->dev, "Failed to read ctrl register\n");
+> +		return ret;
+> +	}
+> +
+> +	/* If the device is already in continuous mode, one-shot is not needed. */
+> +	if (FIELD_GET(OPT4060_CTRL_OPER_MODE_MASK, ctrl_reg) ==
+> +	    OPT4060_CTRL_OPER_MODE_CONTINUOUS)
+With change suggested below to claim direct mode for read_raw() paths to here,
+I think this only applies if the threshold interrupts are enabled?  If so
+perhaps amend the comment if you do block the buffered capture and sysfs
+at the same time path.
+
+> +		return 0;
+> +
+> +	ctrl_reg &= ~OPT4060_CTRL_OPER_MODE_MASK;
+> +	ctrl_reg |= FIELD_PREP(OPT4060_CTRL_OPER_MODE_MASK,
+> +				OPT4060_CTRL_OPER_MODE_ONE_SHOT);
+> +
+> +	/* Trigger a new conversion by writing to CRTL register. */
+> +	ret = regmap_write(chip->regmap, OPT4060_CTRL, ctrl_reg);
+> +	if (ret)
+> +		dev_err(chip->dev, "Failed to set ctrl register\n");
+> +	return ret;
+> +}
 > 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> 
-> Thanks,
-> Amir.
+> +
+> +static int opt4060_trigger_new_samples(struct iio_dev *indio_dev)
+> +{
+> +	struct opt4060_chip *chip = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	/*
+> +	 * The conversion time should be 500us startup time plus the integration time
+> +	 * times the number of channels. An exact timeout isn't critical, it's better
+> +	 * not to get incorrect errors in the log. Setting the timeout to double the
+> +	 * theoretical time plus and extra 100ms margin.
+> +	 */
+> +	unsigned int timeout_us = (500 + OPT4060_NUM_CHANS *
+> +				  opt4060_int_time_reg[chip->int_time][0]) * 2 + 100000;
+> +
+> +	if (chip->irq) {
+> +		reinit_completion(&chip->completion);
+> +		ret = opt4060_trigger_one_shot(chip);
+> +		if (ret)
+> +			return ret;
+> +		if (wait_for_completion_timeout(&chip->completion,
+> +						usecs_to_jiffies(timeout_us)) == 0) {
+> +			dev_err(chip->dev, "Completion timed out.\n");
+> +			return -ETIME;
+> +		}
+> +		/*
+> +		 * The opt4060_trigger_one_shot() function will enable irq on
+> +		 * every conversion. If the buffer isn't enabled, irq should
+> +		 * only be enabled for thresholds.
+> +		 */
+> +		if (!iio_buffer_enabled(indio_dev)) {
+
+This is the race with buffer enable / disable in read_raw() call stack. That transition
+can be avoided by iio_device_claim_direct_mode().  For this one I don't think we care
+about that potentially blocking reads via sysfs.  That's a common thing anyway
+for drivers to not support when the buffer is in use because it greatly simplifies the
+code and normally mixing buffered interface and sysfs reads isn't something anyone does.
+
+> +			ret = opt4060_set_int_state(chip, OPT4060_INT_CTRL_THRESHOLD);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +	} else {
+> +		unsigned int ready;
+> +
+> +		ret = opt4060_trigger_one_shot(chip);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_read_poll_timeout(chip->regmap, OPT4060_RES_CTRL,
+> +					       ready, (ready & OPT4060_RES_CTRL_CONV_READY),
+> +					       1000, timeout_us);
+> +		if (ret)
+> +			dev_err(chip->dev, "Conversion ready did not finish within timeout.\n");
+> +	}
+> +	return ret;
+> +}
+
+> +
+> +/*
+> + * Scales the raw value so that for a particular test light source, typically
+> + * white, the measurement intensity is the same across different color channels.
+
+I got lost in previous review discussion, but I thought we were getting rid of this.
+Userspace software tends to assume that if it takes no actions to change
+the configuration, scales will remain fixed.
+
+If we really need to role these into sensors readings then we need to provide
+a channel that does this.
+
+Personally I see this as a user space problem.  I don't mind providing the
+color factors as scale, but not a manipulated version of the channel reading.
+
+Scale is applied as a multiplier on raw, not meaning 'scaled already channel'.
+
+
+
+> + */
+> +static int opt4060_read_chan_scale(struct iio_dev *indio_dev,
+> +				   struct iio_chan_spec const *chan,
+> +				   int *val, int *val2)
+> +{
+> +	struct opt4060_chip *chip = iio_priv(indio_dev);
+> +	static const u32 color_factors[] = { 24, 10, 13 };
+> +	u32 adc_raw;
+> +	int ret;
+> +
+> +	ret = opt4060_trigger_new_samples(indio_dev);
+> +	if (ret) {
+> +		dev_err(chip->dev, "Failed to trigger new samples.\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = opt4060_read_raw_value(chip, chan->address, &adc_raw);
+> +	if (ret) {
+> +		dev_err(chip->dev, "Reading raw channel data failed\n");
+> +		return ret;
+> +	}
+> +	adc_raw *= color_factors[chan->scan_index];
+> +	*val = DIV_U64_ROUND_CLOSEST((u64)adc_raw, 10);
+> +	return IIO_VAL_INT;
+> +}
+
+
+> +static int opt4060_read_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	struct opt4060_chip *chip = iio_priv(indio_dev);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		return opt4060_read_chan_raw(indio_dev, chan, val);
+
+As mentioned elsewhere, this code relies on the mode not transitioning form
+buffered to polled (or the opposite). So you should claim direct mode to pin
+it as not moving to buffered mode.
+
+> +	case IIO_CHAN_INFO_SCALE:
+> +		return opt4060_read_chan_scale(indio_dev, chan, val, val2);
+> +	case IIO_CHAN_INFO_PROCESSED:
+> +		return opt4060_read_illuminance(indio_dev, chan, val);
+> +	case IIO_CHAN_INFO_INT_TIME:
+> +		*val = 0;
+> +		*val2 = opt4060_int_time_reg[chip->int_time][0];
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+> +
+> +static int opt4060_read_available(struct iio_dev *indio_dev,
+> +				  struct iio_chan_spec const *chan,
+> +				  const int **vals, int *type, int *length,
+> +				  long mask)
+> +{
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_INT_TIME:
+> +		*length = ARRAY_SIZE(opt4060_int_time_available) * 2;
+> +		*vals = (const int *)opt4060_int_time_available;
+> +		*type = IIO_VAL_INT_PLUS_MICRO;
+> +		return IIO_AVAIL_LIST;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int opt4060_event_set_state(struct iio_dev *indio_dev, bool state)
+> +{
+> +	struct opt4060_chip *chip = iio_priv(indio_dev);
+> +	int ret = 0;
+> +
+> +	if (state)
+> +		ret = opt4060_set_continous_mode(chip, true);
+> +	else if (!iio_buffer_enabled(indio_dev) && chip->irq)
+
+See below - this is the call that races because we don't have the
+device fixed in a particular state.
+
+> +		ret = opt4060_set_continous_mode(chip, false);
+> +
+> +	if (ret)
+> +		dev_err(chip->dev, "Failed to set event state.\n");
+> +
+> +	return ret;
+> +}
+
+>
+> +static int opt4060_write_event_config(struct iio_dev *indio_dev,
+> +				      const struct iio_chan_spec *chan,
+> +				      enum iio_event_type type,
+> +				      enum iio_event_direction dir, bool state)
+> +{
+> +	int ch_sel, ch_idx = chan->scan_index;
+> +	struct opt4060_chip *chip = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (chan->type != IIO_INTENSITY)
+> +		return -EINVAL;
+> +	if (type != IIO_EV_TYPE_THRESH)
+> +		return -EINVAL;
+> +
+> +	ret = opt4060_get_channel_sel(chip, &ch_sel);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (state) {
+> +		/* Only one channel can be active at the same time */
+> +		if ((chip->thresh_event_lo_active ||
+> +			chip->thresh_event_hi_active) && (ch_idx != ch_sel))
+> +			return -EBUSY;
+> +		if (dir == IIO_EV_DIR_FALLING)
+> +			chip->thresh_event_lo_active = true;
+> +		else if (dir == IIO_EV_DIR_RISING)
+> +			chip->thresh_event_hi_active = true;
+> +		ret = opt4060_set_channel_sel(chip, ch_idx);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		if (ch_idx == ch_sel) {
+> +			if (dir == IIO_EV_DIR_FALLING)
+> +				chip->thresh_event_lo_active = false;
+> +			else if (dir == IIO_EV_DIR_RISING)
+> +				chip->thresh_event_hi_active = false;
+> +		}
+> +	}
+> +
+This makes me a little nervous because we are allowing the control of
+continous mode from here and the buffer setup and not preventing them
+running at the same time.  Maybe there are no races, but I'm not convinced.
+
+It is possible to avoid this, but fiddly as we shouldn't directly
+take the iio_dev->mlock from a driver (which protects the buffer state
+transitions.  Basically we need to successfully pin the device in
+either direct or buffered mode and if we miss in both (due to a transition
+in flight) retry.
+
+There is one example doing this in the max30102.c
+https://elixir.bootlin.com/linux/v6.12.1/source/drivers/iio/health/max30102.c#L479
+(that one is weird because we read the channel in an entirely different way depending
+ on the device mode).
+
+I suspect we have other cases missed during review however.
+
+The tricky bit is that most races around buffer enable are harmless
+as they tend to mean we get one extra or one less sample pushed to the
+buffer, or an read that perturbs the buffered capture timing.  So it
+is fairly hard to spot a real one :(
+
+This one is vanishingly unlikely though so I'm fine taking the driver
+on the basis you'll take another look at close the race if you agree
+with my analysis.  The side effect of this one is that we either
+burn some power when no one is interested, or fail to enable data capture
+if we hit the race. Neither is great, but not that bad either.
+
+Jonathan
+
+
+> +	return opt4060_event_set_state(indio_dev, chip->thresh_event_hi_active |
+> +				       chip->thresh_event_lo_active);
+> +}
+
+
 
