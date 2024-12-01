@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-426748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874E89DF745
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 23:25:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DAE9DF746
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 23:28:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42AD6B2121D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 22:25:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FAE41627AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 22:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8951D95A2;
-	Sun,  1 Dec 2024 22:24:52 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04061D88B1;
+	Sun,  1 Dec 2024 22:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BT7midV6"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFBB134A8
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 22:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8E0134A8
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 22:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733091892; cv=none; b=EwcXHNGGoG53nSDoK+D+LTiM089FtrQpKgXX3O1ZkXE4qgbf2XMZ+FyXBTb6qY/O/9IXQb7kFW4+foYKTqwhcqbu3mEKVZTwwySgomBStnXKfAvveGv6D8x8AoAsQkDIyn+X7EvzciI6rw2YKOvOpzZtaHFfCaltGD0eC5+hblA=
+	t=1733092098; cv=none; b=o1bC/eDQgEM9UFX6N8LoaN0yGvgEEjIQecMvnaMjLAUlsYNgzsdVlgkHIAJEX5aKB44NeM4xrVaK8kvqZ7KbZBmwUj+6+sV1mg9nf2zT8stv+Es8SCrrmRwwXzCKtTOlFRQVX/hflMWP1C292ovLrbNTGmTge8Gpa+he1hiX6sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733091892; c=relaxed/simple;
-	bh=sE0JEij9txwEkjI07Nqgm8d+IF505qhXkkjA0V9EoeU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=unT6HJMNxCfbxjvvM6g2RG577vyjpo6+mJ0SBRIP/MsZ6ogwXzHnbQaCDjgQPwdTOv/sIZWmlcdvausMZPX6eXjjnsghOC8epXi13N0pIGixcp6/0QdPHi/mXsZQtux7u3S6jUpOUxUlgCkDJnYcets96Xg+RMzw2YC1ecBj6q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-347-fegmrYrnPLWdOsbPdJ2qHg-1; Sun, 01 Dec 2024 22:24:39 +0000
-X-MC-Unique: fegmrYrnPLWdOsbPdJ2qHg-1
-X-Mimecast-MFC-AGG-ID: fegmrYrnPLWdOsbPdJ2qHg
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 1 Dec
- 2024 22:24:12 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 1 Dec 2024 22:24:12 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
-CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	"Andrew Cooper" <andrew.cooper3@citrix.com>, Josh Poimboeuf
-	<jpoimboe@kernel.org>, "bp@alien8.de" <bp@alien8.de>
-Subject: RE: [PATCH next] x86: mask_user_address() return base of guard page
- for kernel addresses
-Thread-Topic: [PATCH next] x86: mask_user_address() return base of guard page
- for kernel addresses
-Thread-Index: AdtEHKHDLvCr/TWKQ76WywrKdPgaxgAD2wgAAAKsUnA=
-Date: Sun, 1 Dec 2024 22:24:12 +0000
-Message-ID: <b853710c4cb94ec0bf869edb41a685b6@AcuMS.aculab.com>
-References: <e654a20c9045487eaacbd256f584ce45@AcuMS.aculab.com>
- <CAHk-=wiG7dGtE6UsynOP3FuvApkh=FYrv1Q42DEVZmosuOFXnQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wiG7dGtE6UsynOP3FuvApkh=FYrv1Q42DEVZmosuOFXnQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733092098; c=relaxed/simple;
+	bh=HVHjqd5ArMInsTlzeAE1K8Fc/fXUnl5xq9dembC7XP8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b+YLehPd33ClTjnZidjeihi9Vvzjwr58AXTkaOIXGZeGPhowkVT13AWQGzJWi1cNcJHbaOEviiO2UNkxpJUs4DWIrpeSdO8SrHNWjYhdFdgHkebAwUBjoywiMWtuinL7QNG63DCj3GFzGUcq2yQq2sduOky9uWVFbukeTtJtbDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BT7midV6; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aaddeso4604564a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 14:28:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1733092094; x=1733696894; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pueL5vLC1i3O7SsGqxmJ3wHWCUirMgwN+qZMp3Xlvs4=;
+        b=BT7midV6O9+b7clZ902zMMqkcm/EKkCr2iuHVVD9ah/hTBZXDrZf+DHlfAI/DVnQ4X
+         QKUXG9KA2nwvbrEb3w9giLBrbU+7Ie+mG7oqE3xezPwloRCWSi6SWc0gqdR28Nn8EC1H
+         xN3M/gD25GxZ936HHpR66lHPchYFbo5aBZWag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733092094; x=1733696894;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pueL5vLC1i3O7SsGqxmJ3wHWCUirMgwN+qZMp3Xlvs4=;
+        b=Z7SMtu9stlazqVTExRy7ddMz0ba6Uze3KcOzROMIF9ZsylP/16Ug3idWY6LWMy8VXE
+         SgnfFKx8eWHGE+hWLm0D4KxWUEZ1TTjZ2zSUoVqqQq0B3GVFUx3dwiSpqtf0/3g7+V0U
+         nDXid9hDaqjFLj9g4kaBwtZ5BX6z3J+4eGbd6Pq02RjicrtCF0yHv7dNPol31o3+Bykj
+         xj0so1aBmiUDNVOowRt5YYIpbucDnUoi78sXlRxu7qK+yVTIUM7TFhtMixMXnWMNSvaH
+         X8cDr7I+zQ/pCLizTdS1vY+qvB+9+pr8GgtszKea4/Qxrdez45Pmnr67IiLsJsy8kL//
+         TF3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXaKu4wx0XCHXB7bd9tzubxbeHl7Kkw19bGvcbntwJdr0hx+R+XneC8M/mTdszqLl/Om7O2BAVkC4mYQag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx51X4UFQpZvblPpWB8onnvHJGSWzddjWNFXodzkAc3760iRsAb
+	c3dk0MWd3jwSmG528bshcxDONGdhtr608bLG8hVO/cupQJSxXj/0FQI5jFtSxm/hdBwMOYHgwHR
+	tXyaVWw==
+X-Gm-Gg: ASbGncuC7pp83g7OERdTRRGHM+QhauoRgmJhtfyF1zIzFn7A1qCRfBX1MaYGOfbJrDw
+	lwFmf2JR6tSFyvlQmdZCEJvy03jX5v0w/Oav7iCTizO+HuENwoR9PTNhYOOqATTviie54JTO18W
+	wzs13yJZ0/3B3wqpXA6kEczAhGNSQsO48EmI6+WoRo/8Wo0T2cwzMTJmNQkLUAzcsiUJ/5v8hEp
+	NzsDYRE4za5aUKCK4RJ1+QeANyGm5P+e16Swy2cge58/w4c1rSzJ9OhX83YZ3bJr7stCMMoQWcg
+	KQHat6WnkWshSfqquWEVAPg=
+X-Google-Smtp-Source: AGHT+IFFSkvBheOgLLp3wLPlC9tWv/fq1ZmtX5/stC4b3OK0nZpsZjjjWzIJ3giNhopO63ESj1ZUMA==
+X-Received: by 2002:a05:6402:3484:b0:5cf:5ff9:2a24 with SMTP id 4fb4d7f45d1cf-5d080c68f70mr21465145a12.32.1733092094267;
+        Sun, 01 Dec 2024 14:28:14 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097dd617asm4274659a12.42.2024.12.01.14.28.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Dec 2024 14:28:12 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso543536766b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 14:28:12 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXQlRe0bzKBIp90vIwM9Vf01QMhT8VuWWlOxznIuBc885tHsr3RcSJEVW1YvBXS7cSw5cyIKKgZELwUdE0=@vger.kernel.org
+X-Received: by 2002:a17:906:23e1:b0:aa4:9ab1:19d5 with SMTP id
+ a640c23a62f3a-aa58102abc1mr1635001466b.42.1733092091729; Sun, 01 Dec 2024
+ 14:28:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Sd2B_I0JPdOZyuvaR_QxoBQYE-OiwrIAYzduuwn96kQ_1733091878
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <e654a20c9045487eaacbd256f584ce45@AcuMS.aculab.com>
+ <CAHk-=wiG7dGtE6UsynOP3FuvApkh=FYrv1Q42DEVZmosuOFXnQ@mail.gmail.com> <b853710c4cb94ec0bf869edb41a685b6@AcuMS.aculab.com>
+In-Reply-To: <b853710c4cb94ec0bf869edb41a685b6@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Sun, 1 Dec 2024 14:27:55 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wirneQCq0uMkQbudTKK4Gm-AjzvuZNkxhCaNfu0jw=aLw@mail.gmail.com>
+Message-ID: <CAHk-=wirneQCq0uMkQbudTKK4Gm-AjzvuZNkxhCaNfu0jw=aLw@mail.gmail.com>
+Subject: Re: [PATCH next] x86: mask_user_address() return base of guard page
+ for kernel addresses
+To: David Laight <David.Laight@aculab.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Andrew Cooper <andrew.cooper3@citrix.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	"bp@alien8.de" <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDEgRGVjZW1iZXIgMjAyNCAyMDowMw0KPiAN
-Cj4gT24gU3VuLCAxIERlYyAyMDI0IGF0IDEwOjEyLCBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdo
-dEBhY3VsYWIuY29tPiB3cm90ZToNCj4gPg0KPiA+IEkndmUgYnVpbHQgYW5kIHJ1biBhIGtlcm5l
-bCB3aXRoIGl0IC0gc28gbm90IGJyb2tlbiENCj4gDQo+IEkgd29ycnkgdGhhdCAnY21vdicgY291
-bGQgYmUgcHJlZGljdGVkIC0gbWFraW5nIHRoZSB3aG9sZSBzZXF1ZW5jZQ0KPiBwb2ludGxlc3Mu
-IEl0IHdvdWxkIGJlIGEgc3R1cGlkIHRoaW5nIGZvciBhIENQVSBjb3JlIHRvIGRvLCBidXQgaXQN
-Cj4gd291bGQgYmUgc2ltcGxlLg0KDQpOb3QgcmVhbGx5LCAncHJlZGljdGlvbicgaXMgYWxsIGFi
-b3V0IHRoZSB3aGVyZSB0aGUgJ2Zyb250IGVuZCcgcmVhZHMNCmluc3RydWN0aW9ucyBmcm9tIC0g
-YW5kIHRyeWluZyB0byBhdm9pZCBpdCBkZXBlbmRpbmcgb24gb3RoZXIgY3B1IHN0YXRlLg0KV2hp
-Y2ggaXMgd2h5IHNvbWUgY3B1IGRvbid0IGV2ZW4gY2hlY2sgdGhlIGluc3RydWN0aW9uIGlzIGV2
-ZW4gYSBicmFuY2guDQoNCldoZXJlYXMgJ2Ntb3YnIGlzIHByZXR0eSBtdWNoIGFuIEFMVSBpbnN0
-cnVjdGlvbiB3aXRoIHRoZSBvdXRwdXQNCmRlcGVuZGluZyBvbiB0aGUgc3RhdGUgb2YgcmVnaXN0
-ZXJzLg0KDQpBZ25lcidzIHRhYmxlcyBwcmV0dHkgbXVjaCBzaG93IHRoYXQgSW50ZWwgaW1wbGVt
-ZW50ZWQgYXMNCgl4ID0gY29uZCA/IHkgOiB4DQpzbyBpdCBzdWZmZXJzIGZyb20gYmVpbmcgYSAy
-IHUtb3AgaW5zdHJ1Y3Rpb24gKHRoZSBzYW1lIGFzIHNiYikNCm9uIG9sZGVyIGNvcmUtMiBjcHUu
-DQpPVE9IIEFNRCBoYXZlIGlzIGFzICc0IHBlciBjbG9jaycgKHRoZSBzYW1lIGFzIG1vdikgc28g
-Y291bGQgYmUNCmEgJ21vdicgd2l0aCB0aGUgd3JpdGUgZGlzYWJsZWQnIChidXQgSSdtIG5vdCBz
-dXJlIGhvdyB0aGF0DQp3b3VsZCB3b3JrIGlmICdtb3YnIGlzIGEgcmVnaXN0ZXIgcmVuYW1lKS4N
-Cg0KPiBPZiBjb3Vyc2UsICdzYmInIGNvdWxkIGJlIGRvbmUgdXNpbmcgcHJlZGljdGluZyB0aGUg
-Y2FycnkgZmxhZyB0b28uDQo+IFRoZXJlJ3MgYSBsb3Qgb2Ygd2F5cyB0byBzY3JldyB0aGlzIHVw
-Lg0KPiANCj4gSW50ZWwgYXQgc29tZSBwb2ludCBleHBsaWNpdGx5IHNhaWQNCj4gDQo+ICAiT3Ro
-ZXIgaW5zdHJ1Y3Rpb25zIHN1Y2ggYXMgQ01PVmNjLCBBTkQsIEFEQywgU0JCIGFuZCBTRVRjYyBj
-YW4gYWxzbw0KDQpQcmVzdW1hYmx5IHRoYXQgaXMgJ2FzIHdlbGwgYW4gbGZlbmNlJyA/DQpOb3Qg
-c3VyZSBob3cgbXVjaCB1c2Ugc2V0Y2MgY291bGQgYmUgLSBpdCBvbmx5IGNoYW5nZXMgJWFsLg0K
-DQo+IGJlIHVzZWQgdG8gcHJldmVudCBib3VuZHMNCj4gICBjaGVjayBieXBhc3MgYnkgY29uc3Ry
-YWluaW5nIHNwZWN1bGF0aXZlIGV4ZWN1dGlvbiBvbiBjdXJyZW50IGZhbWlseQ0KPiA2IHByb2Nl
-c3NvcnMgKEludGVswq4gQ29yZeKEoiwNCj4gICBJbnRlbMKuIEF0b23ihKIsIEludGVswq4gWGVv
-bsKuIGFuZCBJbnRlbMKuIFhlb24gUGhp4oSiIHByb2Nlc3NvcnMpLg0KPiBIb3dldmVyLCB0aGVz
-ZSBpbnN0cnVjdGlvbnMgbWF5IG5vdA0KPiAgIGJlIGd1YXJhbnRlZWQgdG8gZG8gc28gb24gZnV0
-dXJlIEludGVsIHByb2Nlc3NvcnMiDQo+IA0KPiBzbyBub25lIG9mIHRoZXNlIGFyZSBzYWZlIGFj
-Y29yZGluZyB0byB0aGF0Lg0KDQpXZWxsLCB0aGV5IGFyZSBhbGwgY3VycmVudGx5IHNhZmUsIGJ1
-dCB0aGUgZnV0dXJlIGlzIHVuZGVjaWRlZC4NClNvdW5kcyBsaWtlIGp1c3QgYmUgbm9uLWNvbW1p
-dHRhbC4uLg0KDQo+IE1heWJlIHRoZXJlIHdlcmUgbmV3ZXIgdXBkYXRlcyBvbiB0aGlzLCBidXQg
-aW4gdGhlIG1lYW50aW1lIEknZCByYXRoZXINCj4gaGF2ZSBqdXN0ICpvbmUqIHBhdHRlcm4sIG5v
-dCBzd2l0Y2ggYmV0d2VlbiBtdWx0aXBsZSBwb3NzaWJseQ0KPiBwcm9ibGVtYXRpYyBvbmVzLiBB
-bmQgc2JiIGhhcyBiZWVuIHRoYXQgdHJhZGl0aW9uYWwgb25lLg0KDQpXZWxsLCBhcnJheV9pbmRl
-eF9ub3NwZWMoKSBjb3VsZCBqdXN0IGJlIGEgY21wICsgY21vdi4NCklmIHlvdSBwYXNzICdzaXpl
-IC0gMScgdGhhdCBjYW4gYmUgdXNlZCBmb3IgdGhlICdvdXQgb2YgcmFuZ2UnIHZhbHVlLg0KT3Ro
-ZXJ3aXNlIHlvdSdkIG5lZWQgdG8gcGFzcyBpbiBhIHplcm8gKHRoYXQgdGhlIGNvbXBpbGVyIGNh
-biBnZW5lcmF0ZSBlYXJsaWVyKS4NClRoYXQgd291bGQgc2F2ZSBhbiBpbnN0cnVjdGlvbiAoYW5k
-IHJlZ2lzdGVyIGRlcGVuZGVuY3kpIGluIHRoZSAnaW5kZXggaW4gcmFuZ2UnIHBhdGguDQoNClRo
-ZSBvbmx5IG90aGVyIHVzZSBJIHNwb3R0ZWQgaXMgaW4gZmlsZXNfbG9va3VwX2ZkX3JhdygpIHdo
-aWNoIGFsc28gdXNlcyB0aGUNCjAvfjEgZnJvbSBhcnJheV9pbmRleF9tYXNrX25vc3BlYygpIHRv
-IGFsc28gbWFzayB0aGUgdmFsdWUgcmVhZCBmcm9tIHh4eFswXS4NCg0KPiBBbHNvLCBpZiBzYmIg
-aXMgZXZlciBtYWRlIHNwZWN1bGF0aXZlLCBJIHRoaW5rIGl0J3MgdGltZSB0byBqdXN0IGp1bXAg
-c2hpcC4NCg0KV2VsbCBBTkQgYW5kIChwcmVzdW1hYmx5KSBPUiBhcmUgYWxzbyBpbiB0aGUgbGlz
-dC4NCllvdSBhcmUgcmVseWluZyBvbiB0aG9zZSBhcyB3ZWxsIGFzIHRoZSBzYmIuDQoNCklmIHlv
-dSBnZXQgaXNzdWVzIGluIGEgbWlwcy1saWtlIGNwdSBpdCBhbGwgZ2V0cyBoYXJkZXIuDQpXaXRo
-b3V0IGEgJ2NhcnJ5IGZsYWcnIHlvdSBjYW4gdXNlciAnc2JiJy4NCkl0IGFsc28gbWFrZXMgYW55
-IGtpbmQgb2YgY21vdiBoYXJkIHRvIGltcGxlbWVudC4NCkkgZ3Vlc3MgY21vdi1vZGQgYW5kIGNt
-b3YtZXZlbiBjb3VsZCBiZSBpbXBsZW1lbnRlZCBieSBkaXNhYmxpbmcNCnRoZSByZWdpc3Rlci1m
-aWxlIHdyaXRlIChhbmQgdXNlZCBhZnRlciBhIGNtcCAtIHRoYXQgc2V0cyAwLzEpLg0KV2hldGhl
-ciB0aGUgYXJjaGl0ZWN0dXJlIGRlZmluZXMvaW1wbGVtZW50cyB0aGVtIGlzIGFub3RoZXIgbWF0
-dGVyLg0KVGhleSBhcmVuJ3QgaW4gdGhlIG9uZSBJIGltcGxlbWVudGVkIGVhcmxpZXIgaW4gdGhl
-IHllYXIuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1s
-ZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJh
-dGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+On Sun, 1 Dec 2024 at 14:24, David Laight <David.Laight@aculab.com> wrote:
+>
+> OTOH AMD have is as '4 per clock' (the same as mov) so could be
+> a 'mov' with the write disabled' (but I'm not sure how that
+> would work if 'mov' is a register rename).
 
+It could work exactly by just predicting it one way or the other.
+
+That's my point.
+
+I don't think / hope anybody does it, but it's a particularly easy
+mistake to do.
+
+             Linus
 
