@@ -1,214 +1,129 @@
-Return-Path: <linux-kernel+bounces-426675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86059DF683
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 17:36:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B80C99DF686
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 17:55:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 303D9B2155F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 16:36:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F013B1629EE
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 16:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C9D1D6DC9;
-	Sun,  1 Dec 2024 16:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB951D5CE8;
+	Sun,  1 Dec 2024 16:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qs18ijzA"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FG0bsvZF"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12147AD5A;
-	Sun,  1 Dec 2024 16:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FBB1CD15
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 16:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733070997; cv=none; b=ZyrVQ9Gzos32OJ7KoEbVtLPGtwuFxV+b03W0NN15ofM2eGunUi568TyG7qpzfx+Bsr4IEKvXOGasMcq46/zD8v1tCyCP+IpRTOu1dikAXcL46mZjtT4vMsKz5vsX8ej1c4dcIQwxnuvN7BjMglALiLMblT8ubqAdv25fq+M0EAI=
+	t=1733072103; cv=none; b=N/kWv5wmbmnUm5GzZd28JIi+hawAE+5oooAiYiW+Qy1o151XBqx55dUJqbB2dhWLzhi4QQzgqHoi6lVyxeBTI4DePshrGPmZLM2Dnx3blq8RtnQBdiDrtLKRg1WybyN1rTqei7pXyX/e62ar5aCI6o+SgHQ7nJfWRc6gKtef5Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733070997; c=relaxed/simple;
-	bh=Uco+KKE46gpgDDPQ+eoNKFB2QASJWra3Sc8yRNd+H9o=;
+	s=arc-20240116; t=1733072103; c=relaxed/simple;
+	bh=Wu7aLMR8bgAYmwBV8FIHf7YQhTXWw6T7z4NKroXjPYI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aHRbNsxogafsKO+s02SNE32heMOSKfchgeTEryBFmcBzbeOwPSS20MfDmyenz2DlpZP67Xd2ebNSn6HylDTsNtqQVpFaH24tGFvx56iEkAAko/xHaU9BplGyA/NOFg+uRgWnR35o1xTTvCFDGFp4fO54tb/uEiFVyYGXN7gXzq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qs18ijzA; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-841acc8151aso123684139f.1;
-        Sun, 01 Dec 2024 08:36:35 -0800 (PST)
+	 To:Cc:Content-Type; b=Jg4nsJd/Mi9FMRvogE4QZH2CmOoNHFVZn+HxGLiFXp8Xq4HyvEJunzphEPsvqVxk6fSrwoyxjxjpYbYJ6i/O96rX+5Gr0zWJaXc1/56pgYTK7ywXEGI7t812fKTt/SdhxcH0rXIE2dOvbr4Hzu1tCMZs0kqj7AfcNlbFyqhR6wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FG0bsvZF; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d0bdeb0419so2264888a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 08:55:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733070995; x=1733675795; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+35eOzfvYajKV3Nm3HQixZpInvCrAeOE/bEVYUk458g=;
-        b=Qs18ijzAfPT3Zw38xFpCDLZIZ/9IEZ1EwSTPlBVPEVXNJRZRToHocppqZROF4d4AoT
-         9Mmn1t7RU5uq1Ko0AsFo8XLiKW0VZPLNF/4AJPdtvmA/WYTz/sSG5bfaTQpdTtHJRsu6
-         oFu8qdMArP0y1GWiZJ4Xwx3x2ToDBSSq594tb/nWlZ1WwV+cd56HOu0/PWyHoUpotcZz
-         ZSJs/LEeCz9r2Z7UaVCeC/b/YmWV0outNVaY97crtP4sXkq5AWAIthCPixv6WO7RpREV
-         Z5CpTFsALHjSXavaQU7HjQOun4Xyf/1XvnkkDSocDKjfjQN1YK0OxEdC8aVoHU9jS1TI
-         NfCQ==
+        d=linux-foundation.org; s=google; t=1733072099; x=1733676899; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=q5z2s0WfIwLJLVHUR6snQ9W2d5ktmXbetex9wVs407g=;
+        b=FG0bsvZFpa3JWJ/zIwxbTGBhniCz9sjRZ2yCIcHp/CiJymhHvk8VGQDuodam5ewwEq
+         pfdUhI8vyQfdGLmsdZY2Z/rvOJgO5hnoK8jBfZ+nbA3uuY/8lt8lPxupVTKIOKGmhoym
+         eCw0MH8VPyhhZao/sodWuEpMVh/9Dpweo+Buc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733070995; x=1733675795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+35eOzfvYajKV3Nm3HQixZpInvCrAeOE/bEVYUk458g=;
-        b=DanpyHzBHK3hNhagNRQ3ScdeIg08qd75jfphhiqt3KZxzqPsGTXGjxUyHosaRdf2UU
-         8rZWtgPJMIg19cztM9O99gJp9iNcRpaWHD3OBFOCdVlFsSO0QZPxuX4x1RHwx42uTUjj
-         sZYi0GNDYgfn1k81o7h/nh8ru/Mj09UFSwTmLiNHFeE/6Qu3SdommjeXLS4GFQ5/KLtn
-         BgkYtOuYWIjA87zhCoyEYsNz6apdAvchcLl5JsTDjxz6u2XzYLBrdl/zfPZrI8nWd15B
-         /laeMkulJx8fl9WtmeC+165CLUDbUtjnU39T8QAz94+mgsVRWqRYnBs6NzwNpwEDsed3
-         6tqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnGD4YoKRNgCR42jDy+Lju9qwLR3obXuR7+OG/D3ewOZU//0/t7WasUYgpJ9sls8qN+ZAuKWEvRi/tgCzj@vger.kernel.org, AJvYcCWBaxvnyqqpzNA1h2VAzHPS9td7YKkcQIH6SOZWDZzd5jAVgzkBTZh4xEEnGLrdJMpMSyliPer2OvX7IHkY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyudTTzvAKGXjg1IEjoOMQm6RI9K6QobN/Sux3iACaetKOyRjCA
-	KkwqR+3tCnw4uvwI+tazeHFGhbf8+/ch2TGvwcU+Zalz5pbqdl2Qn/5hk9hooI7DKtW3wCanWwD
-	LaPLGS+qEqBNLpAoyHuxb70vUBRU=
-X-Gm-Gg: ASbGncujy7qvpLe7yQmzeHguDtP2ohqWzQuTgKY3uHn7S7ruTkDLQpc5C0aGj7mzhKo
-	qQzLexNyoGL5EUphmhJtIyvLBoP0bUho=
-X-Google-Smtp-Source: AGHT+IGAFxd+VmGnfW2AJOQn/sdbZ1aJbEv+tkoCAMmunmiIAyzosR/XXQh7YEEUfl26fOoBWaBNVr43pumc1fETHe4=
-X-Received: by 2002:a05:6602:2d84:b0:834:f2d5:c758 with SMTP id
- ca18e2360f4ac-843ed01ca9amr1900930739f.13.1733070995124; Sun, 01 Dec 2024
- 08:36:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733072099; x=1733676899;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q5z2s0WfIwLJLVHUR6snQ9W2d5ktmXbetex9wVs407g=;
+        b=pqYHOWzZUV931fRjZJgATe3VnKlAFdC7W5R4mhRp9uxaSxI/evdclxIGy+HdOqQVmJ
+         8O+92jZLTpuATiuKCXnyxEasKSQ0jojDeRQUxL48GtgPgBSENwJTDW8fXQdCqCGx3k/i
+         7MQ9qPensKyrbGhzTtqd1VmqClT9w5s9Vpry88wOqAwBRp57AQU7FTUH3xMebvel8w8e
+         MECXQyztWCeAywAYnuHGWXU5xldWEtKPQRfylxqPZQeDcoX9AzAAv5KsQW3dWPmJ4J4A
+         R6px1ySO4C0fJJo63ts8YfGJdu/ZAsZJQODgqo8CIdeV+4GpZ0nmw4XgfRaPPl7CaJ5e
+         FEXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmqSXbGT//MC0/+hAZMQurnmQpDrX28aHOR6iYgrtj2Btx46B0IS5Gm8lxxDqjbDpmxKt9Ylspskuzgs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt59o6K135qDZZhRw//bgcNaVCEBkclLVloBe9yhr3s/Am+R0v
+	Vgi3AMlV1tVRTXvbDnEowVjngKVTFbAFe07VbNeBL+w8meY5FZREtaxETivcwCNVEL3jWfTqpuA
+	b7vQ=
+X-Gm-Gg: ASbGncu36wyht2I4IQOP4Ra1IbVqBX7+NADlkr0T/LmEjv1+wQYpXGzEC0Uguv/oT+f
+	AOvfWHF/uflaSfZa8OBcvrX69aFbUCpvwCoix78SSKZSNtbXqA6cOlhmaTycuhSyMqVCmXf+tG5
+	pZMNeSKPCUICsfhNFsb5txoNZ71s6G+SDEmN3pFh8CV600bHXOVMKrpGAJCzdmLzW/vtQOUz1yn
+	fV/YWe6TH0pWTYnSA7slNNZ06KDIPIjoSPG2nu+E2HNnsYsT0oCR151sIK06G537kPJPhMVJQwL
+	rW7hqBbnkUXysKYRHubtarNa
+X-Google-Smtp-Source: AGHT+IFK0ZVg5ddgLBXMHFCvIpD70vveEvyoYtpEVAZ+/mFzFZ0ERmaS7WLoCPp9vRTbhuL2RewBdQ==
+X-Received: by 2002:a17:906:3153:b0:aa5:43ee:2ff6 with SMTP id a640c23a62f3a-aa580ee8d40mr1764715766b.1.1733072099509;
+        Sun, 01 Dec 2024 08:54:59 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6a57sm419415666b.120.2024.12.01.08.54.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Dec 2024 08:54:58 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa5b0d8bd41so367962966b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 08:54:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWUdzZE0WA0yM/mkFcCtGH9hSpsVxiEXPjDaSI25+MGDl9+agtkOfrscBg245STciAQtIWqHo2joxwAJDo=@vger.kernel.org
+X-Received: by 2002:a17:906:3d29:b0:aa5:1699:e25a with SMTP id
+ a640c23a62f3a-aa580ee98eamr1451183366b.10.1733072098046; Sun, 01 Dec 2024
+ 08:54:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125-a612-gpu-support-v2-0-b7cc38e60191@quicinc.com>
- <20241125-a612-gpu-support-v2-1-b7cc38e60191@quicinc.com> <752484b5-2db1-4714-8046-17cd5496d81d@oss.qualcomm.com>
- <0aa547fc-4c88-4457-8d01-81f93fb3832c@quicinc.com>
-In-Reply-To: <0aa547fc-4c88-4457-8d01-81f93fb3832c@quicinc.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Sun, 1 Dec 2024 08:36:23 -0800
-Message-ID: <CAF6AEGvqPEFN+j0Txa5KPmxF8tXCn_uUsM86i4uo+tc2mTWYgg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] drm/msm/adreno: Introduce ADRENO_QUIRK_NO_SYSCACHE
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>
+References: <20241130045437.work.390-kees@kernel.org> <20241130-ohnegleichen-unweigerlich-ce3b8af0fa45@brauner>
+ <CAHk-=wi=uOYxfCp+fDT0qoQnvTEb91T25thpZQYw1vkifNVvMQ@mail.gmail.com> <20241201-konglomerat-genial-c1344842c88b@brauner>
+In-Reply-To: <20241201-konglomerat-genial-c1344842c88b@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 1 Dec 2024 08:54:41 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgcbq=2N8m5X8vJuUNgM9gpVjqpQzrnCsu19MP8SV5TYA@mail.gmail.com>
+Message-ID: <CAHk-=wgcbq=2N8m5X8vJuUNgM9gpVjqpQzrnCsu19MP8SV5TYA@mail.gmail.com>
+Subject: Re: [PATCH] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH)
+ case
+To: Christian Brauner <brauner@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	Tycho Andersen <tandersen@netflix.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 30, 2024 at 12:30=E2=80=AFPM Akhil P Oommen
-<quic_akhilpo@quicinc.com> wrote:
+On Sun, 1 Dec 2024 at 06:17, Christian Brauner <brauner@kernel.org> wrote:
 >
-> On 11/30/2024 7:01 PM, Konrad Dybcio wrote:
-> > On 25.11.2024 5:33 PM, Akhil P Oommen wrote:
-> >> There are a few chipsets which don't have system cache a.k.a LLC.
-> >> Currently, the assumption in the driver is that the system cache
-> >> availability correlates with the presence of GMU or RPMH, which
-> >> is not true. For instance, Snapdragon 6 Gen 1 has RPMH and a GPU
-> >> with a full blown GMU, but doesnot have a system cache. So,
-> >> introduce an Adreno Quirk flag to check support for system cache
-> >> instead of using gmu_wrapper flag.
-> >>
-> >> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> >> ---
-> >>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 3 ++-
-> >>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 7 +------
-> >>  drivers/gpu/drm/msm/adreno/adreno_gpu.h   | 1 +
-> >>  3 files changed, 4 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/d=
-rm/msm/adreno/a6xx_catalog.c
-> >> index 0c560e84ad5a..5e389f6b8b8a 100644
-> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> >> @@ -682,6 +682,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
-> >>              },
-> >>              .gmem =3D (SZ_128K + SZ_4K),
-> >>              .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
-> >> +            .quirks =3D ADRENO_QUIRK_NO_SYSCACHE,
-> >>              .init =3D a6xx_gpu_init,
-> >>              .zapfw =3D "a610_zap.mdt",
-> >>              .a6xx =3D &(const struct a6xx_info) {
-> >> @@ -1331,7 +1332,7 @@ static const struct adreno_info a7xx_gpus[] =3D =
-{
-> >>              },
-> >>              .gmem =3D SZ_128K,
-> >>              .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
-> >> -            .quirks =3D ADRENO_QUIRK_HAS_HW_APRIV,
-> >> +            .quirks =3D ADRENO_QUIRK_HAS_HW_APRIV | ADRENO_QUIRK_NO_S=
-YSCACHE,
-> >>              .init =3D a6xx_gpu_init,
-> >>              .zapfw =3D "a702_zap.mbn",
-> >>              .a6xx =3D &(const struct a6xx_info) {
-> >
-> > +a619_holi
-> >
-> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/m=
-sm/adreno/a6xx_gpu.c
-> >> index 019610341df1..a8b928d0f320 100644
-> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> >> @@ -1863,10 +1863,6 @@ static void a7xx_llc_activate(struct a6xx_gpu *=
-a6xx_gpu)
-> >>
-> >>  static void a6xx_llc_slices_destroy(struct a6xx_gpu *a6xx_gpu)
-> >>  {
-> >> -    /* No LLCC on non-RPMh (and by extension, non-GMU) SoCs */
-> >> -    if (adreno_has_gmu_wrapper(&a6xx_gpu->base))
-> >> -            return;
-> >> -
-> >>      llcc_slice_putd(a6xx_gpu->llc_slice);
-> >>      llcc_slice_putd(a6xx_gpu->htw_llc_slice);
-> >>  }
-> >> @@ -1876,8 +1872,7 @@ static void a6xx_llc_slices_init(struct platform=
-_device *pdev,
-> >>  {
-> >>      struct device_node *phandle;
-> >>
-> >> -    /* No LLCC on non-RPMh (and by extension, non-GMU) SoCs */
-> >> -    if (adreno_has_gmu_wrapper(&a6xx_gpu->base))
-> >> +    if (a6xx_gpu->base.info->quirks & ADRENO_QUIRK_NO_SYSCACHE)
-> >>              return;
-> >
-> > I think A612 is the "quirky" one here.. it has some sort of a GMU,
-> > but we're choosing not to implement it. maybe a check for
-> >
-> > if (adreno_has_gmu_wrapper && !adreno_is_a612)
-> >
-> > would be clearer here, with a comment that RGMU support is not
-> > implemented
-> >
-> >
-> >
-> > But going further, I'm a bit concerned about dt-bindings.. If we
-> > implement RGMU on the driver side in the future, that will require
-> > DT changes which will make the currently proposed description invalid.
-> >
-> > I think a better angle would be to add a adreno_has_rgmu() func with
-> > a qcom,adreno-rgmu compatible and plumb it correctly from the get-go.
-> >
-> > This way, we can avoid this syscache quirk as well.
-> >
->
-> I am aware of at least Adreno 710 which doesn't have syscache, but has
-> proper GMU. And I don't see any reason why there couldn't be another one
-> in future to save silicon area. So, a quirk flag doesn't seem so bad in
-> this case.
->
-> The correct way to avoid this quirk flag is by making LLCC driver return
-> a proper error to detect the absence of syscache. Currently, it just
-> returns EPROBE_DEFER which put driver in an infinite probe loop.
+> /*
+>  * Hold rcu lock to keep the name from being freed behind our back.
+>  * Use cquire semantics to make sure the terminating NUL from
+>  * __d_alloc() is seen.
+>  *
+>  * Note, we're deliberately sloppy here. We don't need to care about
+>  * detecting a concurrent rename and just want a sensible name.
+>  */
 
-Hmm, this seems solvable?  llcc has a node in the dt, so it seems like
-it should be able to tell the difference between not existing and not
-being probed yet.  Something maybe like, initialize drv_data to NULL
-instead of -EPROBE_DEFER, and then in the various entry points, if
-(!drv_data) return not_probed_helper(); which would check if a
-compatible node exists in dt?
+Sure. Note that even "sensible" isn't truly guaranteed in theory,
+since a concurrent rename could be doing a "memcpy()" into the
+dentry->d_name.name area at the same time on another CPU.
 
-BR,
--R
+But "theoretically hard guarantees" isn't what this code cares about.
 
-> Agree about the dt binding suggestion. I will define a new compatible
-> string for rgmu.
->
-> -Akhil.
->
-> > Konrad
->
+The only really hard rule is that the end result in comm[] needs to be
+NUL-terminated at all times (and hey, even *that* is arguably a "don't
+print garbage" rule rather than something truly fatal), and everything
+else is "do the best you can".
+
+Could we take the dentry lock to be really careful? Sure. We simply
+don't care enough, and while other parts of execve() are much more
+expensive, let's not.
+
+              Linus
 
