@@ -1,179 +1,222 @@
-Return-Path: <linux-kernel+bounces-426563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57029DF4FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 09:34:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF129DF505
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 09:43:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE56C162B4F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 08:43:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB5F83CD3;
+	Sun,  1 Dec 2024 08:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ovew2DYh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01CD281294
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 08:34:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00307083E;
-	Sun,  1 Dec 2024 08:34:30 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41B32E40B
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 08:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652A62E40B;
+	Sun,  1 Dec 2024 08:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733042070; cv=none; b=imNj84C5GGuQxSHLIiGF6lnDVsckvLj5UT3nJB7ahQjSmBuDA8cxxz6SeueiCv9rz6N6cSJ46twhqu4KODj6lr7f4PQ1Fcm3JGaGoa24sCDTn/wrnXcEkU05k5OpUcRTObFCE5/SR9EQGAQGCx7uCw1TsTIgHMLK+VZ06ndDZUE=
+	t=1733042618; cv=none; b=jZv6quuh/sDz2t1LFXrOxWZRRaVl44veoYKC4h/RWsDq1T+NLjtT8DqXMlAIVuvgLlV1cnIxe+rRf7F2M5xR2bIydC7hnp4vbsjWUy8fLsCE2gdyDziWHDSVRTfa5gAWSKyP/RLN3UcaFqJgAFcvSPuGxPmOmrUiUJ5rybodOCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733042070; c=relaxed/simple;
-	bh=xo7iAfSM7u3LF/kSQ7PIU5z3RdO0smnf+ZelQZanKRU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cJQqjmiXDcdmXg91f+c1psQJJ01HUkihlYc4853qsftMFgkjKzIZZ4P3K3joGcmbO6mOJt8lEJIqehJixIyX/2s0e7xPmWyjGf6s85Ihaq//SaTSDAwYzrnkH+bS/2SJmdkyXJ/TMvw8durqpPO929Tw3FM0KNm3bXhNpvP0guc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a794990ef3so35976385ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 00:34:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733042068; x=1733646868;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EhaivmOwcdzarv/0HqZoatOD3z1I1AJiAjYdWR2LWzs=;
-        b=B6hFqv7N5c0GOSV2qUpDGe6/E9feMgqtopiXKpjDcapWE5LW2GBVo8+/iTYaDOEgrV
-         sqgbCclhJM5Auw7OidD6MRyjdjflv2TmAMjO7PSVLwJ3dpZiduZpvRjyecvYy+FmOVIS
-         DsvT5Fa2eul99/OxsQ56ykWY2Ky2Z+Io+rYTwHH4gC37OuRCGbV9nVZZ3qhVgsEo6tSS
-         gLaRraHyDhw+5yP9fin8x6Yu20fCpsK/cvqvizKjQo/HpyAUzXRM+c1tmJBdEXmGBqNr
-         wek635NolRglCIgc6Iq+Sbo1nxL8c4JEjSZywt4xecW9gTCJMTpwtz4BKeP6bowHs2zV
-         cOEg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7QyMzCPVvmJGIZ/ZYoOPDmVaCT5CQ4972iP+HsX+/0WciN7peONruGj1n9DUQT6UWed0aDYXPndBs9nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy127WGozqu5juHJTsfuqgZwcruHvxiGXxbpujCYdmgEmsmiYM7
-	31GCnK5FHeGt94a4fRYS3yt+1JkBxwJHr7m61cgMyJllLA3HTylv4zCZwCRKWPi5b1p82/8kc7S
-	YnwhWN3MogxWmrwcxy8DFHsEIDaKLUeGah44UIt05rqplMxHxhzx77pw=
-X-Google-Smtp-Source: AGHT+IEAJu7ZjRp11q0rt5teutxnpYaeZrKqlt7eWDm78Hb/DxZE0zu/2NQvL08TM26A5GmD5Nz/dhnFNXXoxxEQz2py6wIAJh15
+	s=arc-20240116; t=1733042618; c=relaxed/simple;
+	bh=8VENiXlv73ozid2HjMLr+tXbk6AVzqo55p3RfWHrlUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDzNKypydpNgW84/ysnteCNSzJz9d2uEQiYpvm4pbC08FqbCEUEgJD8bI43XDokI082A/fQsRAEveIuSPqU1aMfBomskW0pnz6WuQfRb/LTBnoxOqpFWPMjmJmQSjsIDHLYoJwOomK6iGlbree+6NHqDFZzNsHkCvVq8WbM0Fvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ovew2DYh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB67C4CECF;
+	Sun,  1 Dec 2024 08:43:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733042617;
+	bh=8VENiXlv73ozid2HjMLr+tXbk6AVzqo55p3RfWHrlUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ovew2DYhtQtGcJKL+uEimeAREv5QtTnE4QCOzBuFXrTELv6Awda8TI/p2fcMBhu3z
+	 YB50ByT6G6qNT3T6zoGRQmDtnNJh01KZjvJfx5HW7xtcuNwMYUAfOepooXaPbxSye3
+	 tLSXWqQ1AQROB1m4i5m4tb63ooM/ZeGnAsARqxpLvOEDYgxN+oVHzsjPszLBhVdH6G
+	 QeJwGPnHy5G93L7tG6nBePPeyQJaLIwiZD0Fah55x0X898AM2JYmVj3gWBTQynkZXF
+	 wP7t0bTiJvCeiaPJVdtjxc/GwiUOHdqB/B5Fm8TDblgEfaojjBw/Il0Wm6Q29vnoNM
+	 suGxFgn+yHGtw==
+Date: Sun, 1 Dec 2024 09:43:28 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Erin Shepherd <erin.shepherd@e43.eu>, Jeff Layton <jlayton@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH RFC 0/6] pidfs: implement file handle support
+Message-ID: <20241130-witzbold-beiwagen-9b14358b7b17@brauner>
+References: <20241129-work-pidfs-v2-0-61043d66fbce@kernel.org>
+ <20241129-work-pidfs-file_handle-v1-0-87d803a42495@kernel.org>
+ <CAOQ4uxhKVkaWm_Vv=0zsytmvT0jCq1pZ84dmrQ_buhxXi2KEhw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cd:b0:3a7:e786:afb4 with SMTP id
- e9e14a558f8ab-3a7e786bb16mr23765285ab.2.1733042067896; Sun, 01 Dec 2024
- 00:34:27 -0800 (PST)
-Date: Sun, 01 Dec 2024 00:34:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674c1f93.050a0220.48a03.0009.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_bkey_ptrs_validate
-From: syzbot <syzbot+5d8a06a9e86672d9f71f@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxhKVkaWm_Vv=0zsytmvT0jCq1pZ84dmrQ_buhxXi2KEhw@mail.gmail.com>
 
-Hello,
+On Sat, Nov 30, 2024 at 01:22:05PM +0100, Amir Goldstein wrote:
+> On Fri, Nov 29, 2024 at 2:39 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > Hey,
+> >
+> > Now that we have the preliminaries to lookup struct pid based on its
+> > inode number alone we can implement file handle support.
+> >
+> > This is based on custom export operation methods which allows pidfs to
+> > implement permission checking and opening of pidfs file handles cleanly
+> > without hacking around in the core file handle code too much.
+> >
+> > This is lightly tested.
+> 
+> With my comments addressed as you pushed to vfs-6.14.pidfs branch
+> in your tree, you may add to the patches posted:
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> 
+> HOWEVER,
+> IMO there is still one thing that has to be addressed before merge -
+> We must make sure that nfsd cannot export pidfs.
+> 
+> In principal, SB_NOUSER filesystems should not be accessible to
+> userspace paths, so exportfs should not be able to configure nfsd
+> export of pidfs, but maybe this limitation can be worked around by
+> using magic link paths?
 
-syzbot found the following issue on:
+I don't see how. I might be missing details.
 
-HEAD commit:    445d9f05fa14 Merge tag 'nfsd-6.13' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=150f83c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c5486b9d7cc64830
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d8a06a9e86672d9f71f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+> I think it may be worth explicitly disallowing nfsd export of SB_NOUSER
+> filesystems and we could also consider blocking SB_KERNMOUNT,
+> but may there are users exporting ramfs?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+No need to restrict it if it's safe, I guess.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7024ceac9339/disk-445d9f05.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ebf50afbcd15/vmlinux-445d9f05.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9e60e080ed9e/bzImage-445d9f05.xz
+> Jeff has mentioned that he thinks we are blocking export of cgroupfs
+> by nfsd, but I really don't see where that is being enforced.
+> The requirement for FS_REQUIRES_DEV in check_export() is weak
+> because user can overrule it with manual fsid argument to exportfs.
+> So maybe we disallow nfsd export of kernfs and backport to stable kernels
+> to be on the safe side?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5d8a06a9e86672d9f71f@syzkaller.appspotmail.com
+File handles and nfs export have become two distinct things and there
+filesystems based on kernfs, and pidfs want to support file handles
+without support nfs export.
 
-=====================================================
-BUG: KMSAN: uninit-value in __extent_entry_type fs/bcachefs/extents.h:54 [inline]
-BUG: KMSAN: uninit-value in bch2_bkey_ptrs_validate+0x589/0x2df0 fs/bcachefs/extents.c:1239
- __extent_entry_type fs/bcachefs/extents.h:54 [inline]
- bch2_bkey_ptrs_validate+0x589/0x2df0 fs/bcachefs/extents.c:1239
- bch2_bkey_val_validate+0x2b5/0x440 fs/bcachefs/bkey_methods.c:143
- bset_key_validate fs/bcachefs/btree_io.c:841 [inline]
- validate_bset_keys+0x1531/0x2080 fs/bcachefs/btree_io.c:910
- validate_bset_for_write+0x142/0x290 fs/bcachefs/btree_io.c:1942
- __bch2_btree_node_write+0x53df/0x6830 fs/bcachefs/btree_io.c:2152
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2284
- bch2_btree_node_rewrite+0x1442/0x1930 fs/bcachefs/btree_update_interior.c:2179
- async_btree_node_rewrite_trans fs/bcachefs/btree_update_interior.c:2236 [inline]
- async_btree_node_rewrite_work+0x485/0x1710 fs/bcachefs/btree_update_interior.c:2249
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+So I think instead of having nfs check what filesystems may be exported
+we should let the filesystems indicate that they cannot be exported and
+make nfs honour that.
 
-Uninit was stored to memory at:
- memcpy_u64s_small fs/bcachefs/util.h:393 [inline]
- bkey_p_copy fs/bcachefs/bkey.h:47 [inline]
- bch2_sort_keys_keep_unwritten_whiteouts+0x12d5/0x19d0 fs/bcachefs/bkey_sort.c:187
- __bch2_btree_node_write+0x3ae8/0x6830 fs/bcachefs/btree_io.c:2095
- bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2284
- bch2_btree_node_rewrite+0x1442/0x1930 fs/bcachefs/btree_update_interior.c:2179
- async_btree_node_rewrite_trans fs/bcachefs/btree_update_interior.c:2236 [inline]
- async_btree_node_rewrite_work+0x485/0x1710 fs/bcachefs/btree_update_interior.c:2249
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+So something like the untested sketch:
 
-Uninit was created at:
- ___kmalloc_large_node+0x22c/0x370 mm/slub.c:4238
- __kmalloc_large_node_noprof+0x3f/0x1e0 mm/slub.c:4255
- __do_kmalloc_node mm/slub.c:4271 [inline]
- __kmalloc_node_noprof+0xc96/0x1250 mm/slub.c:4289
- __kvmalloc_node_noprof+0xc0/0x2d0 mm/util.c:650
- btree_node_data_alloc fs/bcachefs/btree_cache.c:153 [inline]
- __bch2_btree_node_mem_alloc+0x2be/0xa80 fs/bcachefs/btree_cache.c:198
- bch2_fs_btree_cache_init+0x4e4/0xb50 fs/bcachefs/btree_cache.c:653
- bch2_fs_alloc fs/bcachefs/super.c:917 [inline]
- bch2_fs_open+0x4d3a/0x5b40 fs/bcachefs/super.c:2065
- bch2_fs_get_tree+0x983/0x22d0 fs/bcachefs/fs.c:2157
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
- path_mount+0x742/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x722/0x810 fs/namespace.c:4034
- __ia32_sys_mount+0xe3/0x150 fs/namespace.c:4034
- ia32_sys_call+0x260e/0x4180 arch/x86/include/generated/asm/syscalls_32.h:22
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+index 1358c21837f1..a5c75cb1c812 100644
+--- a/fs/kernfs/mount.c
++++ b/fs/kernfs/mount.c
+@@ -154,6 +154,7 @@ static const struct export_operations kernfs_export_ops = {
+ 	.fh_to_dentry	= kernfs_fh_to_dentry,
+ 	.fh_to_parent	= kernfs_fh_to_parent,
+ 	.get_parent	= kernfs_get_parent_dentry,
++	.flags		= EXPORT_OP_FILE_HANDLE,
+ };
+ 
+ /**
+diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+index eacafe46e3b6..170c5729e7f2 100644
+--- a/fs/nfsd/export.c
++++ b/fs/nfsd/export.c
+@@ -417,6 +417,7 @@ static struct svc_export *svc_export_lookup(struct svc_export *);
+ static int check_export(struct path *path, int *flags, unsigned char *uuid)
+ {
+ 	struct inode *inode = d_inode(path->dentry);
++	const struct export_operations *nop;
+ 
+ 	/*
+ 	 * We currently export only dirs, regular files, and (for v4
+@@ -449,11 +450,16 @@ static int check_export(struct path *path, int *flags, unsigned char *uuid)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (!exportfs_can_decode_fh(inode->i_sb->s_export_op)) {
++	if (!exportfs_can_decode_fh(nop)) {
+ 		dprintk("exp_export: export of invalid fs type.\n");
+ 		return -EINVAL;
+ 	}
+ 
++	if (nop && nop->flags & EXPORT_OP_FILE_HANDLE) {
++		dprintk("exp_export: filesystem only supports non-exportable file handles.\n");
++		return -EINVAL;
++	}
++
+ 	if (is_idmapped_mnt(path->mnt)) {
+ 		dprintk("exp_export: export of idmapped mounts not yet supported.\n");
+ 		return -EINVAL;
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 9aa7493b1e10..d1646c0789e1 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -83,10 +83,15 @@ void ovl_revert_creds(const struct cred *old_cred)
+  */
+ int ovl_can_decode_fh(struct super_block *sb)
+ {
++	const struct export_operations *nop = sb->s_export_op;
++
+ 	if (!capable(CAP_DAC_READ_SEARCH))
+ 		return 0;
+ 
+-	if (!exportfs_can_decode_fh(sb->s_export_op))
++	if (!exportfs_can_decode_fh(nop))
++		return 0;
++
++	if (nop && nop->flags & EXPORT_OP_FILE_HANDLE)
+ 		return 0;
+ 
+ 	return sb->s_export_op->encode_fh ? -1 : FILEID_INO32_GEN;
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index dde3e4e90ea9..9d98b5461dc7 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -570,6 +570,7 @@ static const struct export_operations pidfs_export_operations = {
+ 	.fh_to_dentry	= pidfs_fh_to_dentry,
+ 	.open		= pidfs_export_open,
+ 	.permission	= pidfs_export_permission,
++	.flags          = EXPORT_OP_FILE_HANDLE,
+ };
+ 
+ static int pidfs_init_inode(struct inode *inode, void *data)
+diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+index a087606ace19..98f7cb17abee 100644
+--- a/include/linux/exportfs.h
++++ b/include/linux/exportfs.h
+@@ -280,6 +280,7 @@ struct export_operations {
+ 						*/
+ #define EXPORT_OP_FLUSH_ON_CLOSE	(0x20) /* fs flushes file data on close */
+ #define EXPORT_OP_ASYNC_LOCK		(0x40) /* fs can do async lock request */
++#define EXPORT_OP_FILE_HANDLE		(0x80) /* fs only supports file handles, no proper export */
+ 	unsigned long	flags;
+ };
 
-CPU: 0 UID: 0 PID: 3613 Comm: kworker/u8:11 Tainted: G        W          6.12.0-syzkaller-09734-g445d9f05fa14 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: btree_node_rewrite async_btree_node_rewrite_work
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> On top of that, we may also want to reject nfsd export of any fs
+> with custom ->open() or ->permission() export ops, on the grounds
+> that nfsd does not call these ops?
+> 
+> Regarding the two other kernel users of exportfs, namely,
+> overlayfs and fanotify -
+> 
+> For overlayfs, I think that in ovl_can_decode_fh() we can safely
+> opt-out of SB_NOUSER and SB_KERNMOUNT filesystems,
+> to not allow nfs exporting of overlayfs over those lower fs.
+> 
+> For fanotify, there is already a check in fanotify_events_supported()
+> to disallow sb/mount marks on SB_NOUSER and a comment that
+> questions the value of allowing them for SB_KERNMOUNT.
+> So for pidfs there is no risk wrt fanotify and it does not look like pidfs
+> is going to generate any fanotify events anyway.
 
