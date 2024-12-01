@@ -1,151 +1,150 @@
-Return-Path: <linux-kernel+bounces-426709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F789DF6E4
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 18:59:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F34162E90
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 17:59:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E5E1D7E54;
-	Sun,  1 Dec 2024 17:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VGWhUhDD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB299DF6E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 19:13:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4241D7E57
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 17:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B4FCB21135
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 18:13:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416C51D5CE8;
+	Sun,  1 Dec 2024 18:12:57 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7891CD1F
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 18:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733075982; cv=none; b=RWWUyMEBz4IgKtEPl+AWGbQ3ju7jkPCaMjxm/V1gzstRq1yA6eZkrofANEAdizXKslllfYK+udTXZyuClLLZfReNifw45LOAiACVEp1P7xPKGQod1URir4ME4kxrwuz8o3WjFbbLPtGmpP9ScObZ28x9yPZzwonK5TzZGiJX3L8=
+	t=1733076776; cv=none; b=oWZaVWu86noLgN72R3n1Y4NPJArwglH9v1XA7hNMLv+1So/m5t5yz5bVEsMob5ubwlUGw49kxj9GDySnlnESPK0tCEMKBXHmGsxivOvTArwqBepPO+cc9a2btxqP00fqGo7oAvenP4GoJ53r6grhtUV68C7gmjUTA29ish7NkB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733075982; c=relaxed/simple;
-	bh=aCcFCSZJUXI54+bKPh/05TzVJL4t5c3nMnUzxLQ+3Kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9I88ANUtyCH4chPITAgYK1IBIVkNlffjVUu27745rDWClihnKITLnBJafjUekTSq1i0Yjf0xwayClpd7W0FGOcatdFVquffYv0txi+fxAFbsvEpXtZXx9loMRmp4k66Qnf/11s9hG9g+D8MlIPQj19awStFWHmTpTYB1HP2L78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VGWhUhDD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733075979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0A+hdS0S9TZs4FCHTCUNfBMXeoZLW6DBQh4uakYhdW8=;
-	b=VGWhUhDDE6m+b2rIaDPxKgBtziQo68vTQzjnol33SUi5a7WqBSAxX3J8dbcFrfOmSUwi4l
-	PMReeGzgyXw9S4COcKUsPozB5lUbftasOmkYhrKSUW3pxS0iEJQ8XDFsCOkie2R4LY2MDs
-	UmWTclP2zOs1LOwyZhdE3FGltIQEBBk=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-219-ufpaLKO2NlmMTm_m6ZSF4Q-1; Sun, 01 Dec 2024 12:59:38 -0500
-X-MC-Unique: ufpaLKO2NlmMTm_m6ZSF4Q-1
-X-Mimecast-MFC-AGG-ID: ufpaLKO2NlmMTm_m6ZSF4Q
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7e39b48a2so18116085ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 09:59:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733075977; x=1733680777;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0A+hdS0S9TZs4FCHTCUNfBMXeoZLW6DBQh4uakYhdW8=;
-        b=L/7V1BU+5ZsGvsfN6MPki+MtGFBNm7OYP7U/bFoBN9r2WXjQKOPUqeUHDC9Fp/vol8
-         0NkoTgtsdXr39L9rAyWI8Nd6H8117pdZ9A6n+pgaWvJ/1GKwoDclCv4R0Z7EcM+2kyeL
-         5+pDWV2V72WIWTVc3BVO+Ti0twdJkU+DW17rpKTIEzCmcnF2xklrYqvKbs9ch8/6u5OZ
-         ALY9Tn4AqZxxDkcX6PHo5gOkC+iMLG7i9HiXdoJ1BCatKZWXJ3Ku1SAx5gnLsfLOMowv
-         D04jpjwJnWZFUUxFIYKKqNFPOtsyT0CS9VyWKs1wt3bhArZzvQ/nqHZnq7b3Ubg5tDxv
-         6Wbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZhsar0dKXDB3v8WP5957XfYJpyVGqw8FhqW8pOj+9PNbxWZPZ4ACh/I7i5brPO+uwiUlDPt1RFuyDjFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2tGDNVtr+9q2Taw2RLv7UpF0vCfrfrYs3pSd+G0DTPnCADzLq
-	hSXxxXwBgVL8fgCgL7HvUcHhfvHGlmC2A4k4gf08KgMCpqBusTnC01D5fQTvToDR6yzGGAGpRO3
-	otgC6PrvYGFoogYz4y27N690f4qz1V3Ov+TzNV/7SWSLl6VckZiL23ab5dRIv6A==
-X-Gm-Gg: ASbGncsuWv8oizP7O7ceIcapXiON77WDn6AgRCw9rmIqSu4tgL424Zam7jlX1Q7kugU
-	E5s/0ZBI/D7XbrUk0vf5fxDrxetO7gh2uS78tGW0pZVXEPrRu0qPUP/c2Il9yuAytA6KuJOS3+R
-	InQZSG+tplKs6PQyZVOjUTRk7uhPFNqfLmk6ZKEPI1slhIRNPXLIAYHLBbp7gGio1D6EAOKnBVl
-	bEtrLNM1vjUwc6oAr6BR88nBpsQl2uoolk4/ywKYH5u3a7JkT6lZT8ODzEzJWkCKEhANzswsE+u
-	s6f2aHhbtKE=
-X-Received: by 2002:a05:6e02:2192:b0:3a7:dd45:bca1 with SMTP id e9e14a558f8ab-3a7dd45c5e2mr85506565ab.17.1733075977450;
-        Sun, 01 Dec 2024 09:59:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHry52UnkIwNHPlxMfjuNJbz0kuNzIn+XivMrF6Q+kiRWIeU+o9LVgyCqSYZICKYohcFcyI2w==
-X-Received: by 2002:a05:6e02:2192:b0:3a7:dd45:bca1 with SMTP id e9e14a558f8ab-3a7dd45c5e2mr85506025ab.17.1733075977146;
-        Sun, 01 Dec 2024 09:59:37 -0800 (PST)
-Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a7ccc0b987sm18690775ab.34.2024.12.01.09.59.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 09:59:36 -0800 (PST)
-Date: Sun, 1 Dec 2024 12:59:33 -0500
-From: Peter Xu <peterx@redhat.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk,
-	jgg@nvidia.com, david@redhat.com, rientjes@google.com,
-	fvdl@google.com, jthoughton@google.com, seanjc@google.com,
-	pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com,
-	jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev,
-	mike.kravetz@oracle.com, erdemaktas@google.com,
-	vannapurve@google.com, qperret@google.com, jhubbard@nvidia.com,
-	willy@infradead.org, shuah@kernel.org, brauner@kernel.org,
-	bfoster@redhat.com, kent.overstreet@linux.dev, pvorel@suse.cz,
-	rppt@kernel.org, richard.weiyang@gmail.com, anup@brainfault.org,
-	haibo1.xu@intel.com, ajones@ventanamicro.com, vkuznets@redhat.com,
-	maciej.wieczor-retman@intel.com, pgonda@google.com,
-	oliver.upton@linux.dev, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org
-Subject: Re: [RFC PATCH 14/39] KVM: guest_memfd: hugetlb: initialization and
- cleanup
-Message-ID: <Z0ykBZAOZUdf8GbB@x1n>
-References: <cover.1726009989.git.ackerleytng@google.com>
- <3fec11d8a007505405eadcf2b3e10ec9051cf6bf.1726009989.git.ackerleytng@google.com>
+	s=arc-20240116; t=1733076776; c=relaxed/simple;
+	bh=mnoj6b/+Tkn0pEuRi2CLR/E5pFflKReO3V9XaWABA5c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V+o8d3YLodO3YCKtEuzVmghSSFXKoGJOOetjdgsPOfMIG0lYdnguG7nYxwd5D6pJVh/bsD2Aw/yI2IST3k7UXHEj1LdrTSK8CtGym4l5USKwvcwp6FJa3NmeXCsxvAOqqnaARhyNRTzdmTt+XLzC5QXg/RCLqwNqwfUh5GhkRyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-14-D1SDPVzzOO2hg2ZoGC2v1g-1; Sun, 01 Dec 2024 18:12:52 +0000
+X-MC-Unique: D1SDPVzzOO2hg2ZoGC2v1g-1
+X-Mimecast-MFC-AGG-ID: D1SDPVzzOO2hg2ZoGC2v1g
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 1 Dec
+ 2024 18:12:25 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 1 Dec 2024 18:12:25 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linuxfoundation.org>, "'x86@kernel.org'"
+	<x86@kernel.org>, "'linux-kernel@vger.kernel.org'"
+	<linux-kernel@vger.kernel.org>, 'Thomas Gleixner' <tglx@linutronix.de>,
+	"'Ingo Molnar'" <mingo@redhat.com>, 'Dave Hansen'
+	<dave.hansen@linux.intel.com>
+CC: 'Andrew Cooper' <andrew.cooper3@citrix.com>, 'Josh Poimboeuf'
+	<jpoimboe@kernel.org>, "'bp@alien8.de'" <bp@alien8.de>
+Subject: [PATCH next] x86: mask_user_address() return base of guard page for
+ kernel addresses
+Thread-Topic: [PATCH next] x86: mask_user_address() return base of guard page
+ for kernel addresses
+Thread-Index: AdtEHKHDLvCr/TWKQ76WywrKdPgaxg==
+Date: Sun, 1 Dec 2024 18:12:25 +0000
+Message-ID: <e654a20c9045487eaacbd256f584ce45@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3fec11d8a007505405eadcf2b3e10ec9051cf6bf.1726009989.git.ackerleytng@google.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: ELuz8t-L36gtp0uZebmLhAAX7hREi0WQRYkjc7F0Vk4_1733076771
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 11:43:45PM +0000, Ackerley Tng wrote:
-> +/**
-> + * Removes folios in range [@lstart, @lend) from page cache of inode, updates
-> + * inode metadata and hugetlb reservations.
-> + */
-> +static void kvm_gmem_hugetlb_truncate_folios_range(struct inode *inode,
-> +						   loff_t lstart, loff_t lend)
-> +{
-> +	struct kvm_gmem_hugetlb *hgmem;
-> +	struct hstate *h;
-> +	int gbl_reserve;
-> +	int num_freed;
-> +
-> +	hgmem = kvm_gmem_hgmem(inode);
-> +	h = hgmem->h;
-> +
-> +	num_freed = kvm_gmem_hugetlb_filemap_remove_folios(inode->i_mapping,
-> +							   h, lstart, lend);
-> +
-> +	gbl_reserve = hugepage_subpool_put_pages(hgmem->spool, num_freed);
-> +	hugetlb_acct_memory(h, -gbl_reserve);
+mask_user_address() currently return ~0 for kernel addresses.
+This is fine for avoiding speculative reads and get_user()
+but is problematic for the code pattern:
+=09=09if (can_do_masked_user_access())
+=09=09=09from =3D masked_user_access_begin(from);
+=09=09else if (!user_read_access_begin(from, sizeof(*from)))
+=09=09=09return -EFAULT;
+=09=09unsafe_get_user(to->p, &from->p, Efault);
+=09=09unsafe_get_user(to->size, &from->size, Efault);
+=09=09user_read_access_end();
+because of the requirement that the base address be accessed first.
 
-I wonder whether this is needed, and whether hugetlb_acct_memory() needs to
-be exported in the other patch.
+Changing mask_user_address() to return the base of the guard page
+means that any address within 4k of the tested address will fault
+and the order of the structure member access is no longer critical.
 
-IIUC subpools manages the global reservation on its own when min_pages is
-set (which should be gmem's case, where both max/min set to gmem size).
-That's in hugepage_put_subpool() -> unlock_or_release_subpool().
+The change replaces the 'sbb, or' with a 'cmov' so is also shorter.
 
-> +
-> +	spin_lock(&inode->i_lock);
-> +	inode->i_blocks -= blocks_per_huge_page(h) * num_freed;
-> +	spin_unlock(&inode->i_lock);
-> +}
+Signed-off-by: David Laight <david.laight@aculab.com>
+---
 
--- 
-Peter Xu
+I've built and run a kernel with it - so not broken!
+
+Probably ought to be a follow up patch to rename it to bound_user_access()
+before there are too many users.
+
+ arch/x86/include/asm/uaccess_64.h | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uacce=
+ss_64.h
+index b0a887209400..4cdace8c93b3 100644
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -57,19 +57,22 @@ static inline unsigned long __untagged_addr_remote(stru=
+ct mm_struct *mm,
+ =09((__force unsigned long)(x) <=3D runtime_const_ptr(USER_PTR_MAX))
+=20
+ /*
+- * Masking the user address is an alternative to a conditional
+- * user_access_begin that can avoid the fencing. This only works
+- * for dense accesses starting at the address.
++ * Bound a user address to the base of the guard page.
++ * This can be used to avoid speculative accesses following access_ok(),
++ * or as an alternative to a conditional user_access_begin.
++ * Both without expensive fencing.
++ * Valid provided the accesses are 'reasonably sequnential'
++ * (no jumps of a page size).
+  */
+ static inline void __user *mask_user_address(const void __user *ptr)
+ {
+-=09unsigned long mask;
+-=09asm("cmp %1,%0\n\t"
+-=09    "sbb %0,%0"
+-=09=09:"=3Dr" (mask)
+-=09=09:"r" (ptr),
+-=09=09 "0" (runtime_const_ptr(USER_PTR_MAX)));
+-=09return (__force void __user *)(mask | (__force unsigned long)ptr);
++=09void __user *bounded =3D (__force void __user *)runtime_const_ptr(USER_=
+PTR_MAX);
++
++=09asm("cmp %0,%1\n\t"
++=09    "cmovc %1,%0"
++=09=09:"+r" (bounded)
++=09=09:"r" (ptr));
++=09return bounded;
+ }
+ #define masked_user_access_begin(x) ({=09=09=09=09\
+ =09__auto_type __masked_ptr =3D (x);=09=09=09=09\
+--=20
+2.17.1
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
