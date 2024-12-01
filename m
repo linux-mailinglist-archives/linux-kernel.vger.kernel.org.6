@@ -1,253 +1,239 @@
-Return-Path: <linux-kernel+bounces-426750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391B09DF747
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 23:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AAEF9DF748
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 23:32:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90A37281608
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 22:31:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E04281774
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 22:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FF61D9324;
-	Sun,  1 Dec 2024 22:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DECA1D90B6;
+	Sun,  1 Dec 2024 22:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fr4DUEh3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L2GrDAQA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92D51D86F1
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 22:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ED21D86F1
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 22:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733092308; cv=none; b=iThVLxoJub5SOEIAbVqNsC0/nX8a4HO7pUxPBY7D3qPdLUOnbseOb1zMx7tb3N1W61zk8uqh2DygDCYUG46/mGvf3v64Jd2unFfZgRzCNPgg4+Ur9X1eJSDvtY3u3Wy/rKvD18ylGWZa9gZTH772TrEIKqt1JEMQ+eHXlp6vOO8=
+	t=1733092358; cv=none; b=WMESBa/KNRzNDGcskVv5UGJ+XVQMlRp6v6JBB15WSp6u5j4xciO3FgXKgD0dJzFJHJkM2nN5Po1tq1lIZaF/DhP4/QxtF7M3+a0Ik021HMep8LNKFqbnRWunrFYHbRI3RmEGzS7oYRj1KL7HpL+9yWnuhQbueyZQNptecdO+fkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733092308; c=relaxed/simple;
-	bh=o/ZcRs0TmEbaXEbtEkgp8PMkcFmqFni61T1n008tANQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=iQHIYgmC/ZIch1Ke8IElUfqdEbwQIhFghvLgZrwCZ5HNHlCHBIqGpHnjOr+5VeM3A1I6fvjt0r4z/nOF1qJkPrekZcZwKZ1O17q4er0P4plEbL63D5MwTK7CNjCeUlWwkTDAVqggdOcejTQS9teCPHx8T/pApIThZo+xhE+5BIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fr4DUEh3; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1733092358; c=relaxed/simple;
+	bh=I+2uCJdx7tOqPWPR+lcT/i2MyevZPIgQHllL6FkysVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KA9N4DRLauA2LI1sD+zR35VwiBt9g6l1WjTq4GpQTou1p1h0uy5dhLbwrsJHslq69DiDEOo7JeZ5SjB4IzPh0V4odS2I1G7QbHER76sdtXbVy3GmzB9kobHqjZec69Qw58TrlyZqabzHfr4WJhM+2UtWRlOi6I2WO900prla+SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L2GrDAQA; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733092307; x=1764628307;
-  h=date:from:to:cc:subject:message-id;
-  bh=o/ZcRs0TmEbaXEbtEkgp8PMkcFmqFni61T1n008tANQ=;
-  b=Fr4DUEh3R7Vvx6UoRHRPXvLFEnIS9LKtghAM3YIzD2c3UdUxVEPtP2LZ
-   EQeyfD5zw2yyQ6Lgg795U4Sjn0bK/MSvceFhbk406UGLxlFpHUmDeLmQl
-   jLig4h+6ef9loXTI8nROD8gFlnu6bzVfcFHNCMK0dBm1JyAvorlSb1LNz
-   lVYKq5pQjIehKq2sBpjbNwv5gtfqtmVQQqGISgOXS88n+ICEsEbaSvfSu
-   nFRRyfapHJgPAraPopf78Mybjz0bZHM7Z5PbjtZAriAa5GCeLOC6NUGaZ
-   m1m7NbmJAIP8O7p/rmK9Z56p3yDakH5iPnSqSXb/bQ/xehz6nYnKghsX1
-   w==;
-X-CSE-ConnectionGUID: xyBfP8VQTfirMoxBdilZsw==
-X-CSE-MsgGUID: ykESAJM4TMClmr+J+So16A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="58644903"
+  t=1733092357; x=1764628357;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=I+2uCJdx7tOqPWPR+lcT/i2MyevZPIgQHllL6FkysVc=;
+  b=L2GrDAQAAOm+sC/44T5OFni5yb5rjAgV1fdIMBP55N9OTsxqR6ahAXUl
+   ylk2n9Ol5edgMiYYBHvvRRi193zkW8ZaOUVJRSFtPviKuCgkkiEjFCfft
+   iTBfVh7m6Lj1T5WrgX7kuTnbj+ONbrHX3W3cAvuHPDXTMSFqtScMZ8Z04
+   ni8B1IWl4xdZyFnMb6s9mx+GI7X9C8AbuhtY6sroXRI+ayf3rJF7WIuQN
+   4VLTXRJCqJrf4fBFH9++4HjzKOr0oWdqno3kaw6qDPAKSTCwPHijSZeJW
+   pM/6M3eP1qHkseJCcNB191t/bzlW75eC75uuNmi+j5TNizieJdyB6KPhP
+   A==;
+X-CSE-ConnectionGUID: vcwvCUmvRhiH0wFFGD3bkg==
+X-CSE-MsgGUID: 503ZFPY7StukoJRh/Ds5gw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="33399934"
 X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
-   d="scan'208";a="58644903"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 14:31:46 -0800
-X-CSE-ConnectionGUID: dVqtM39sQsyPNXYsrWtHig==
-X-CSE-MsgGUID: UY1ZXO65SbWN0+kIPdNowg==
+   d="scan'208";a="33399934"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 14:32:36 -0800
+X-CSE-ConnectionGUID: ScfAQ3TsRYuuu22mKszPPA==
+X-CSE-MsgGUID: 9PdYWVWiRkmPT202Acq+sw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
-   d="scan'208";a="93105234"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 01 Dec 2024 14:31:45 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tHsTf-0001tZ-0F;
-	Sun, 01 Dec 2024 22:31:43 +0000
-Date: Mon, 02 Dec 2024 06:29:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:tip/urgent] BUILD SUCCESS
- ee044f0ee9c4ac706010c543b5dc470c4a600cb4
-Message-ID: <202412020616.90cdqY6y-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+   d="scan'208";a="97712712"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 14:32:36 -0800
+Date: Sun, 1 Dec 2024 14:39:21 -0800
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Radu Rendec <rrendec@redhat.com>
+Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
+	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] cacheinfo: Allocate memory during CPU hotplug if
+ not done from the primary CPU
+Message-ID: <20241201223920.GA32487@ranerica-svr.sc.intel.com>
+References: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
+ <20241128002247.26726-2-ricardo.neri-calderon@linux.intel.com>
+ <de1201930a55aa3b13f413b9bee986d85e2b4283.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <de1201930a55aa3b13f413b9bee986d85e2b4283.camel@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
-branch HEAD: ee044f0ee9c4ac706010c543b5dc470c4a600cb4  Merge branch into tip/master: 'x86/urgent'
+On Fri, Nov 29, 2024 at 11:12:52AM -0500, Radu Rendec wrote:
+> On Wed, 2024-11-27 at 16:22 -0800, Ricardo Neri wrote:
+> > Commit 5944ce092b97 ("arch_topology: Build cacheinfo from primary CPU")
+> > adds functionality that architectures can use to optionally allocate and
+> > build cacheinfo early during boot. Commit 6539cffa9495 ("cacheinfo: Add
+> > arch specific early level initializer") lets secondary CPUs correct (and
+> > reallocate memory) cacheinfo data if needed.
+> > 
+> > If the early build functionality is not used and cacheinfo does not need
+> > correction, memory for cacheinfo is never allocated. x86 does not use the
+> > early build functionality. Consequently, during the cacheinfo CPU hotplug
+> > callback, last_level_cache_is_valid() attempts to dereference a NULL
+> > pointer:
+> > 
+> >      BUG: kernel NULL pointer dereference, address: 0000000000000100
+> >      #PF: supervisor read access in kernel mode
+> >      #PF: error_code(0x0000) - not present page
+> >      PGD 0 P4D 0
+> >      Oops: 0000 [#1] PREEPMT SMP NOPTI
+> >      CPU: 0 PID 19 Comm: cpuhp/0 Not tainted 6.4.0-rc2 #1
+> >      RIP: 0010: last_level_cache_is_valid+0x95/0xe0a
+> > 
+> > Allocate memory for cacheinfo during the cacheinfo CPU hotplug callback if
+> > not done earlier.
+> > 
+> > Moreover, before determining the validity of the last-level cache info,
+> > ensure that it has been allocated. Simply checking for non-zero
+> > cache_leaves() is not sufficient, as some architectures (e.g., Intel
+> > processors) have non-zero cache_leaves() before allocation.
+> > 
+> > Dereferencing NULL cacheinfo can occur in update_per_cpu_data_slice_size().
+> > This function iterates over all online CPUs. However, a CPU may have come
+> > online recently, but its cacheinfo may not have been allocated yet.
+> > 
+> > While here, remove an unnecessary indentation in allocate_cache_info().
+> > 
+> > Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
+> > Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+> > Reviewed-by: Radu Rendec <rrendec@redhat.com>
+> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > Tested-by: Andreas Herrmann <aherrmann@suse.de>
+> > Fixes: 6539cffa9495 ("cacheinfo: Add arch specific early level initializer")
+> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> > ---
+> > Cc: Andreas Herrmann <aherrmann@suse.com>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Chen Yu <yu.c.chen@intel.com>
+> > Cc: Huang Ying <ying.huang@intel.com>
+> > Cc: Len Brown <len.brown@intel.com>
+> > Cc: Nikolay Borisov <nik.borisov@suse.com>
+> > Cc: Radu Rendec <rrendec@redhat.com>
+> > Cc: Pierre Gondois <Pierre.Gondois@arm.com>
+> > Cc: Pu Wen <puwen@hygon.cn>
+> > Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> > Cc: Sudeep Holla <sudeep.holla@arm.com>
+> > Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Zhang Rui <rui.zhang@intel.com>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: stable@vger.kernel.org # 6.3+
+> > ---
+> > Change since v7:
+> >  * None
+> > 
+> > Changes since v6:
+> >  * Merged patches 1 and 2 of v6 into one. (Borislav)
+> >  * Merged the history of patches 1 and 2ino this patch.
+> >  * Kept the Reviewed-by and Tested-by tags from the two merged patches.
+> >  * Fixed a formatting issue in allocate_cache_info(). (Borislav)
+> > 
+> > Changes since v5:
+> >  * Fixed nonsensical subject (Nikolay).
+> >  * Added Reviewed-by and Tested-by tags from Andreas. Thanks!
+> >  * Added Reviewed-by tag from Nikolay. Thanks!
+> > 
+> > Changes since v4:
+> >  * Combined checks for per_cpu_cacheinfo() and cache_leaves() in a single
+> >    line. (Sudeep)
+> >  * Added Reviewed-by tag from Sudeep. Thanks!
+> > 
+> > Changes since v3:
+> >  * Added Reviewed-by tag from Radu and Sudeep. Thanks!
+> > 
+> > Changes since v2:
+> >  * Introduced this patch.
+> > 
+> > Changes since v1:
+> >  * N/A
+> > 
+> > ---
+> > The motivation for commit 5944ce092b97 was to prevent a BUG splat in
+> > PREEMPT_RT kernels during memory allocation. This splat is not observed on
+> > x86 because the memory allocation for cacheinfo happens in
+> > detect_cache_attributes() from the cacheinfo CPU hotplug callback.
+> > 
+> > The dereference of a NULL cacheinfo is not observed today because
+> > cache_leaves(cpu) is zero until after init_cache_level() is called
+> > (during the CPU hotplug callback). A subsequent changeset will set
+> > the number of cache leaves earlier and the NULL-pointer dereference
+> > will be observed.
+> > ---
+> >  drivers/base/cacheinfo.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+> > index 7a7609298e18..a1afc478e0e8 100644
+> > --- a/drivers/base/cacheinfo.c
+> > +++ b/drivers/base/cacheinfo.c
+> > @@ -58,7 +58,7 @@ bool last_level_cache_is_valid(unsigned int cpu)
+> >  {
+> >  	struct cacheinfo *llc;
+> >  
+> > -	if (!cache_leaves(cpu))
+> > +	if (!cache_leaves(cpu) || !per_cpu_cacheinfo(cpu))
+> >  		return false;
+> >  
+> >  	llc = per_cpu_cacheinfo_idx(cpu, cache_leaves(cpu) - 1);
+> > @@ -466,8 +466,7 @@ int __weak populate_cache_leaves(unsigned int cpu)
+> >  static inline
+> >  int allocate_cache_info(int cpu)
+> >  {
+> > -	per_cpu_cacheinfo(cpu) = kcalloc(cache_leaves(cpu),
+> > -					 sizeof(struct cacheinfo), GFP_ATOMIC);
+> > +	per_cpu_cacheinfo(cpu) = kcalloc(cache_leaves(cpu), sizeof(struct cacheinfo), GFP_ATOMIC);
+> >  	if (!per_cpu_cacheinfo(cpu)) {
+> >  		cache_leaves(cpu) = 0;
+> >  		return -ENOMEM;
+> > @@ -539,7 +538,11 @@ static inline int init_level_allocate_ci(unsigned int cpu)
+> >  	 */
+> >  	ci_cacheinfo(cpu)->early_ci_levels = false;
+> >  
+> > -	if (cache_leaves(cpu) <= early_leaves)
+> > +	/*
+> > +	 * Some architectures (e.g., x86) do not use early initialization.
+> > +	 * Allocate memory now in such case.
+> > +	 */
+> > +	if (cache_leaves(cpu) <= early_leaves && per_cpu_cacheinfo(cpu))
+> >  		return 0;
+> >  
+> >  	kfree(per_cpu_cacheinfo(cpu));
+> 
+> Since Borislav explicitly said you were not supposed to keep the tags,
+> I reviewed it again, and I'm OK to keep mine. Thanks!
+> 
+> Reviewed-by: Radu Rendec <rrendec@redhat.com>
 
-elapsed time: 721m
-
-configs tested: 161
-configs skipped: 17
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-20
-alpha                            allyesconfig    gcc-14.2.0
-alpha                               defconfig    clang-20
-arc                              allmodconfig    clang-20
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-20
-arc                              allyesconfig    gcc-13.2.0
-arc                          axs101_defconfig    gcc-14.2.0
-arc                          axs103_defconfig    gcc-14.2.0
-arc                   randconfig-001-20241201    gcc-13.2.0
-arc                   randconfig-002-20241201    gcc-13.2.0
-arc                    vdk_hs38_smp_defconfig    gcc-13.2.0
-arm                              allmodconfig    clang-20
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-20
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-20
-arm                              allyesconfig    gcc-14.2.0
-arm                         axm55xx_defconfig    gcc-14.2.0
-arm                          exynos_defconfig    clang-20
-arm                      footbridge_defconfig    clang-20
-arm                       imx_v4_v5_defconfig    clang-16
-arm                           imxrt_defconfig    gcc-14.2.0
-arm                          ixp4xx_defconfig    gcc-14.2.0
-arm                            mps2_defconfig    clang-20
-arm                        multi_v7_defconfig    clang-20
-arm                        mvebu_v5_defconfig    clang-20
-arm                       netwinder_defconfig    gcc-14.2.0
-arm                            qcom_defconfig    clang-20
-arm                   randconfig-001-20241201    clang-20
-arm                   randconfig-002-20241201    gcc-14.2.0
-arm                   randconfig-003-20241201    clang-20
-arm                   randconfig-004-20241201    clang-20
-arm                           sama7_defconfig    clang-20
-arm                        shmobile_defconfig    gcc-14.2.0
-arm                           stm32_defconfig    clang-20
-arm                           sunxi_defconfig    clang-20
-arm                           u8500_defconfig    gcc-14.2.0
-arm                         vf610m4_defconfig    gcc-14.2.0
-arm                         wpcm450_defconfig    clang-20
-arm                         wpcm450_defconfig    gcc-14.2.0
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20241201    clang-15
-arm64                 randconfig-002-20241201    clang-20
-arm64                 randconfig-003-20241201    gcc-14.2.0
-arm64                 randconfig-004-20241201    clang-20
-csky                              allnoconfig    gcc-14.2.0
-csky                                defconfig    gcc-14.2.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-20
-i386        buildonly-randconfig-001-20241201    gcc-12
-i386        buildonly-randconfig-002-20241201    clang-19
-i386        buildonly-randconfig-003-20241201    clang-19
-i386        buildonly-randconfig-004-20241201    gcc-12
-i386        buildonly-randconfig-005-20241201    clang-19
-i386        buildonly-randconfig-006-20241201    gcc-12
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch                 loongson3_defconfig    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                         amcore_defconfig    gcc-14.2.0
-m68k                        m5407c3_defconfig    clang-20
-m68k                       m5475evb_defconfig    clang-20
-m68k                        mvme16x_defconfig    clang-20
-m68k                        stmark2_defconfig    clang-20
-m68k                           sun3_defconfig    clang-20
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                         bigsur_defconfig    gcc-14.2.0
-mips                         db1xxx_defconfig    clang-20
-mips                        maltaup_defconfig    clang-20
-mips                        qi_lb60_defconfig    clang-20
-nios2                             allnoconfig    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-20
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-20
-powerpc                          allyesconfig    gcc-14.2.0
-powerpc                    amigaone_defconfig    gcc-14.2.0
-powerpc                      chrp32_defconfig    clang-20
-powerpc                      cm5200_defconfig    clang-20
-powerpc                    gamecube_defconfig    clang-20
-powerpc                    ge_imp3a_defconfig    gcc-14.2.0
-powerpc                      katmai_defconfig    clang-20
-powerpc                     kmeter1_defconfig    gcc-14.2.0
-powerpc                   lite5200b_defconfig    clang-14
-powerpc                   motionpro_defconfig    clang-17
-powerpc                   motionpro_defconfig    clang-20
-powerpc                 mpc8313_rdb_defconfig    clang-20
-powerpc                  mpc866_ads_defconfig    clang-20
-powerpc                    mvme5100_defconfig    clang-20
-powerpc                      pasemi_defconfig    clang-20
-powerpc                     ppa8548_defconfig    gcc-14.2.0
-powerpc                      ppc64e_defconfig    gcc-14.2.0
-powerpc                      ppc6xx_defconfig    gcc-14.2.0
-powerpc                     sequoia_defconfig    clang-20
-powerpc                    socrates_defconfig    clang-20
-powerpc                     tqm8555_defconfig    clang-20
-powerpc                         wii_defconfig    clang-20
-powerpc64                        alldefconfig    clang-20
-riscv                            allmodconfig    clang-20
-riscv                            allmodconfig    gcc-14.2.0
-riscv                             allnoconfig    clang-20
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-20
-riscv                            allyesconfig    gcc-14.2.0
-s390                             alldefconfig    gcc-14.2.0
-s390                             allmodconfig    clang-20
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    clang-20
-s390                       zfcpdump_defconfig    clang-20
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                         apsh4a3a_defconfig    gcc-14.2.0
-sh                        apsh4ad0a_defconfig    gcc-14.2.0
-sh                         ecovec24_defconfig    gcc-14.2.0
-sh                 kfr2r09-romimage_defconfig    gcc-14.2.0
-sh                      rts7751r2d1_defconfig    gcc-14.2.0
-sh                          sdk7780_defconfig    gcc-14.2.0
-sh                           se7619_defconfig    gcc-14.2.0
-sh                     sh7710voipgw_defconfig    gcc-14.2.0
-sh                        sh7757lcr_defconfig    clang-20
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-17
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                               allyesconfig    gcc-12
-um                             i386_defconfig    clang-20
-um                           x86_64_defconfig    gcc-14.2.0
-x86_64      buildonly-randconfig-001-20241201    clang-19
-x86_64      buildonly-randconfig-002-20241201    gcc-12
-x86_64      buildonly-randconfig-003-20241201    gcc-12
-x86_64      buildonly-randconfig-004-20241201    clang-19
-x86_64      buildonly-randconfig-005-20241201    clang-19
-x86_64      buildonly-randconfig-006-20241201    gcc-12
-xtensa                           alldefconfig    gcc-14.2.0
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                       common_defconfig    gcc-14.2.0
-xtensa                  nommu_kc705_defconfig    clang-20
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thank you!
 
