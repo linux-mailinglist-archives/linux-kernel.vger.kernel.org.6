@@ -1,213 +1,174 @@
-Return-Path: <linux-kernel+bounces-426683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0ED9DF6A0
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 18:21:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F7F9DF6A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 18:39:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F20A2B21509
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 17:21:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6DA6162C9B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 17:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D037D1D7E33;
-	Sun,  1 Dec 2024 17:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61EB1D79B4;
+	Sun,  1 Dec 2024 17:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="S1jrKzlW"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPLPLtGx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79392B9BC;
-	Sun,  1 Dec 2024 17:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2177E1F94D;
+	Sun,  1 Dec 2024 17:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733073705; cv=none; b=RcHgkuLcah2gy7u14fYGasLHe9pdJ2hn2nHJeKd+b0P4wyTe0d1qZKxmEBplnfl310LHg81mi+2UQQ0Rv45A25H+/rXDkRipISMbXAutJoqSzdlTuwpu1gDS9jOHKras/K3UaFu5kLn6RvkCgB0oRCW3o/HbnIj2GcSnvHJLd5U=
+	t=1733074753; cv=none; b=Cj+YHvyHsC8IB/DtiPqVRvpMs3b2c/0LDzb4JHZQAQzTyifxtfKy1/GhK/NWE9rDodzKJueJAjmnvX0xd+n2Mbznm++cHsqn8Ug0karraCN7A100xR9u7UX/+KCu852spUJcSUHAWXOjdrK1uaqa7F8UuJBxo6uyMUyXD2f1jZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733073705; c=relaxed/simple;
-	bh=WYM+3aoWpBMkzrC1SLc9RmBAak0AnFq3MZSg+R4I5xk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dilZY04E6XzdcaZk0UCDfzz9FQlQ5ATnHQ6knGFs8/ZUVrONp3CiHjWPjEdzHE7dQvicJLayQvZecWAP0Xy/jqaHg1aYDyoOkHo1Y4SUVkBzzkPHIGIRZ59yKD3FovC5K1MI5HvpK8CPWCGQbNbcsaKyKZvaVilEKRrZodYum04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=S1jrKzlW; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1733073631; x=1733678431; i=w_armin@gmx.de;
-	bh=jCx+3gGsxs2P5V42DaDTiaCKoU2vBLgtwXwpBVRgqlk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=S1jrKzlWF/B6mA8RU7kpThweWpZWnIaI1zEip/u1ScCci/Vxrr8ILUdYEGwPLouQ
-	 MdkJXniPL8jfkZ2A2eHvGnJBKKRzZcQRXtJ6uKcmGL7/4vDMqFCru5jZR2Uf8PUz3
-	 EN8qICsRxqlLdAhdRlILL6QqGbPBnimD1egCuMTDQF0UM3nHmjpIiJ27OXbzrx7qv
-	 E0CVnDWqIquVZYRjZ1cMvU2/4tAld5OwxU1RP7q452DA+OnTPl4U2pRiEBBkpy7QX
-	 qvUM2Tb71tYG0VwAg2okggWI+Nta3idcT/dWRytc3/GbQWJhsltXQP5I5khlR6s1h
-	 9JL8Lg4LzJ1SCesH7A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MK3Vu-1sxVqL0shC-00KkXS; Sun, 01
- Dec 2024 18:20:31 +0100
-Message-ID: <fcc69efe-2c3f-467e-acd3-05af69082234@gmx.de>
-Date: Sun, 1 Dec 2024 18:20:26 +0100
+	s=arc-20240116; t=1733074753; c=relaxed/simple;
+	bh=iZrQ+PW/aXC6+qenIK7Cj0znypPYiGYtdnrpzgUGfqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nk+LahBCGtIPTZ/P5DJ8O29NruAK5pxBKz6A0mo8QaPDVZZw9yURsSgP3CNpW6RZKt8MRT+xlw2ALOkGt79BfB2OofeDKdgFcdc9WcIQnu7DlfdgzXjm7Mbo9d/QRNSYPgan9+BgPfdAYdOpT0vElyKk+2QmSZGl43j8DZZ5mGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPLPLtGx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE4EC4CED2;
+	Sun,  1 Dec 2024 17:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733074752;
+	bh=iZrQ+PW/aXC6+qenIK7Cj0znypPYiGYtdnrpzgUGfqc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uPLPLtGxOGzr6k5Vhm7x4/+S3DEqVjFl4BHb1BnHtUZf9OOSbHCMIB5E0GU9lI1q4
+	 Jxc7aXKe8QIaHn1xGm00DSQ1uTgTJ3HxYXeKk7RpwjnVpdlezu+OKXBtojtj0x2hxx
+	 wqxlQRWOFicDz4lBgKZpsn+HEKKkooeAKkmj73ryjYhygkhoY28UDi5CxBqGwKjMmx
+	 j2/LFowZDzrurbM9SIU1ixiur5B0/mMkgxbST66t7nIr/mLpmDSDVP+ZciC0kQSUpT
+	 ZhrIgfL2h0/7h5FeC3mSwP/nsB/V3Uy/wyook0brQ2WhlXikRbrCjJJYfG+MtZrxsz
+	 y+NDXsVgTqRmQ==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfa1ec3b94so4076998a12.2;
+        Sun, 01 Dec 2024 09:39:12 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXOcpTMZqxTnH0FKXQNzEF3ghylOZLtnRBe+VRjpEYAcitPAkohjX/PWHib9XbWn/JJz4IbRY2EKRRVpDhb@vger.kernel.org, AJvYcCXPgejcYohsmN6Q/TkWvGni50iEOP8635udqkx9swggbqmZv+BAkeb9LaBTbACxlvUJoSWlybtHNobI3w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwguztDDBQTIbqucqWW2ldth+9GbJEqaOPKrIZYFNKRwwJZZFw/
+	o05nXd4hnM7ni9u6Sr2Z/7tj2lJkEt3JR3WPgH6UYnl3/aBY6aO7rfG1eSWaZvQGcASWwy3vFvZ
+	wKojkvsPYom6u9sSf8ZhGxbkIwtg=
+X-Google-Smtp-Source: AGHT+IFLeaiTo/1WhCZIw191BzL2IzSWg3sRObmO7/YIA19fQmQjtycwdWjFt3tVQHYrPb336rlZrwbFZ1b7Vefm3To=
+X-Received: by 2002:a17:906:3198:b0:aa5:d06:4578 with SMTP id
+ a640c23a62f3a-aa580f55bb8mr1827749866b.28.1733074751007; Sun, 01 Dec 2024
+ 09:39:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 02/22] platform/x86/dell: dell-pc: Create platform
- device
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241130140454.455-1-mario.limonciello@amd.com>
- <20241130140454.455-3-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241130140454.455-3-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20241201112550.107383-1-zhenghaoran154@gmail.com>
+In-Reply-To: <20241201112550.107383-1-zhenghaoran154@gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Sun, 1 Dec 2024 17:38:34 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H4P9O-6jay6cPYLrrX85y1t52QRQ=_feifY_A0D7p_gLQ@mail.gmail.com>
+Message-ID: <CAL3q7H4P9O-6jay6cPYLrrX85y1t52QRQ=_feifY_A0D7p_gLQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: Fix data race in btrfs_drop_extents
+To: Hao-ran Zheng <zhenghaoran154@gmail.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WylpFN/tvFGO1rQ2y2VT0txw3KcXPEIJRnYHXv2ZZ0j6CXPnORa
- 1LlHK/NNeSL61mIXf9xVY5VTmdlV7MqrHvqQdhbmwJIk9Kvl9RhkTaPqW852Qe588xgWclE
- 6t3UJoSyMLlnJ4ZU5zINDqJcTlTyfu8n0Pp3DSRPrmpL7qz9lDm1eLQHb13S17e7c9Oqdto
- 9d2Wr9Bnz0S6rMiYR7MQQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vlPctLMIxKU=;GEAkJyy6WXnzLoClOZJc4riVMCn
- QB27P9KKRW563JdiGQ5zmnQ7W99fFXHovDEc8c5g7/cOI3lgR69eDfiAPmgW0wSYz+0rOw+1V
- 6cvLeK1qJgPXCit6PXePcZPwt7aFU6osOinveiwenIaH1o+v6Cd9AmHImpi7iKUkoybzqyPs7
- KiDNZlarsPUM19sm6n90z63jSK5Rte0S6OcKjC+6OwNv/RjcdrDtQBLNXKJVosyillJ+M4Az9
- fx/tMk+39pAcVhoVXdNCH9xBX6U0664qR8QLsBIdqgerYHbPBIFyAvt6EsqJBS1yuubFrNeGs
- 7XAJ+xnpZlMqiBJdzhB6jfSJ8QxUWwLYFA+ra3SM1K9AImQGdNlsbYYeWes4HfB1q4M6ThOx5
- AGZf0ecfQoINIkqPeS06RoEleyLF8Gu6TcriP15kRyBFAqusTKT2vK7pJ++klXs1p+tE/BApK
- BskyfSjmU7QVIiuzRbWX9O8Ss+ntTV4KouowrmFPl2MPFioJU0hj+ezPaA3dm26m+XB1VywXz
- X93QXxV44u8DBWuHMimbFm49XcsyY4m/CjKC7zt/GfABRa7VLAYP+NQIqztj2mk8UrGClorBF
- 6yRuhOYMJsBVHEcjvjbyZjnn4pREREn2d+9Ac1xAMCl0eCq4WjEohOhi+peSNscmAU4JbPSQI
- LoTs8qVkokKvft0ATCT2oK5lfzQnXr6+KAGvRB/r+tcL9RDWn8hO703Ml4yYNrPw50lpfB7z/
- xEa2aOYwXFJWAngm6KnkwYYSSG1SkkbVx3nY+POdOzp0lOfNbWJk3Srvu3mjcuYe/fc6hrDBG
- yUgjXpDV2J+XsbmgbR8OrL4qgqS9NtrvO8AIu5J6Pg8waKCs0dXwEd0GQD1TM/oWa4zPv+F4P
- Ch2qY5h3V/adONmPn5qbXD5lam+i8Zv7KWOuw7cTPE8FGl15OC19r1Cl3TC7b5WRDNMWIUVmG
- 1r9ttrODRd+RdXSkkTb9VEAIGtSeCZMn+JMTnjw3AgcbASXWuLlWxXucAgIcijXKPhxZNV4NB
- wXJF/Z9Ibo+mrmrwxoe6d+3ztFcoUMUK4pSNP5Xr5JoW8T0hcsE6vC1KqkofywJ1cRUtsKfxP
- D3c5lk12c5Z//m1J27418d2p7UUgh6
 
-Am 30.11.24 um 15:04 schrieb Mario Limonciello:
+On Sun, Dec 1, 2024 at 11:26=E2=80=AFAM Hao-ran Zheng <zhenghaoran154@gmail=
+.com> wrote:
+>
+> A data race occurs when the function `insert_ordered_extent_file_extent()=
+`
+> and the function `btrfs_inode_safe_disk_i_size_write()` are executed
+> concurrently. The function `insert_ordered_extent_file_extent()` is not
+> locked when reading inode->disk_i_size, causing
+> `btrfs_inode_safe_disk_i_size_write()`to cause data competition when
+> writing inode->disk_i_size, thus affecting the value of `modify_tree`,
+> leading to some unexpected results such as disk data being overwritten.
 
-> In order to have a device for the platform profile core to reference
-> create a platform device for dell-pc.
+How can that cause "disk data being overwritten"?
+And the results are not unexpected at all.
+
+The value of modify_tree is irrelevant from a correctness point of view.
+It's used for an optimization to avoid taking write locks on the btree
+in case we're doing a write at or beyond eof.
+
+If we end up taking a write lock when it's not needed, everything's
+fine - we just may unnecessarily block concurrent readers that need to
+access the same btree path (leaf and parent node).
+
+If we don't take a write lock and we need it, we will later figure
+that out and switch to a write lock.
+
+> The specific call stack that appears during testing is as follows:
 >
-> While doing this change the memory allocation for the thermal handler
-> to be device managed to follow the lifecycle of that device.
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DDATA_RACE=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+>  btrfs_drop_extents+0x89a/0xa060 [btrfs]
+>  insert_reserved_file_extent+0xb54/0x2960 [btrfs]
+>  insert_ordered_extent_file_extent+0xff5/0x1760 [btrfs]
+>  btrfs_finish_one_ordered+0x1b85/0x36a0 [btrfs]
+>  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
+>  finish_ordered_fn+0x3e/0x50 [btrfs]
+>  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
+>  process_scheduled_works+0x716/0xf10
+>  worker_thread+0xb6a/0x1190
+>  kthread+0x292/0x330
+>  ret_from_fork+0x4d/0x80
+>  ret_from_fork_asm+0x1a/0x30
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DOTHER_INFO=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+>  btrfs_inode_safe_disk_i_size_write+0x4ec/0x600 [btrfs]
+>  btrfs_finish_one_ordered+0x24c7/0x36a0 [btrfs]
+>  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
+>  finish_ordered_fn+0x3e/0x50 [btrfs]
+>  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
+>  process_scheduled_works+0x716/0xf10
+>  worker_thread+0xb6a/0x1190
+>  kthread+0x292/0x330
+>  ret_from_fork+0x4d/0x80
+>  ret_from_fork_asm+0x1a/0x30
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
 >
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> To address this issue, it is recommended to add locks when reading
+> inode->disk_i_size and setting the value of modify_tree to prevent
+> data inconsistency.
+
+Can also use data_race() here, as it's a harmless race.
+
+Also, please use a proper subject like for example:
+
+btrfs: fix data race when accessing the inode's disk_i_size at
+btrfs_drop_extents()
+
+Also please update the changelog with a proper analysis - saying it's
+a harmless race and why.
+
+Thanks.
+
+>
+> Signed-off-by: Hao-ran Zheng <zhenghaoran154@gmail.com>
 > ---
-> v8:
->   * Use IS_ERR()/ERR_PTR()
-> ---
->   drivers/platform/x86/dell/dell-pc.c | 34 ++++++++++++++++++++---------
->   1 file changed, 24 insertions(+), 10 deletions(-)
+>  fs/btrfs/file.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> diff --git a/drivers/platform/x86/dell/dell-pc.c b/drivers/platform/x86/=
-dell/dell-pc.c
-> index 3cf79e55e3129..8bacbde0f0506 100644
-> --- a/drivers/platform/x86/dell/dell-pc.c
-> +++ b/drivers/platform/x86/dell/dell-pc.c
-> @@ -18,10 +18,13 @@
->   #include <linux/kernel.h>
->   #include <linux/module.h>
->   #include <linux/platform_profile.h>
-> +#include <linux/platform_device.h>
->   #include <linux/slab.h>
+> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> index 4fb521d91b06..189708e6e91a 100644
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@ -242,8 +242,10 @@ int btrfs_drop_extents(struct btrfs_trans_handle *tr=
+ans,
+>         if (args->drop_cache)
+>                 btrfs_drop_extent_map_range(inode, args->start, args->end=
+ - 1, false);
 >
->   #include "dell-smbios.h"
+> +       spin_lock(&inode->lock);
+>         if (args->start >=3D inode->disk_i_size && !args->replace_extent)
+>                 modify_tree =3D 0;
+> +       spin_unlock(&inode->lock);
 >
-> +static struct platform_device *platform_device;
-> +
->   static const struct dmi_system_id dell_device_table[] __initconst =3D =
-{
->   	{
->   		.ident =3D "Dell Inc.",
-> @@ -244,9 +247,15 @@ static int thermal_init(void)
->   	if (!supported_modes)
->   		return 0;
+>         update_refs =3D (btrfs_root_id(root) !=3D BTRFS_TREE_LOG_OBJECTID=
+);
+>         while (1) {
+> --
+> 2.34.1
 >
-> -	thermal_handler =3D kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
-> -	if (!thermal_handler)
-> -		return -ENOMEM;
-> +	platform_device =3D platform_device_register_simple("dell-pc", PLATFOR=
-M_DEVID_NONE, NULL, 0);
-> +	if (IS_ERR(platform_device))
-> +		return ERR_PTR(platform_device);
-
-ERR_PTR() -> PTR_ERR()
-
-With that being fixed:
-
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-
-> +
-> +	thermal_handler =3D devm_kzalloc(&platform_device->dev, sizeof(*therma=
-l_handler), GFP_KERNEL);
-> +	if (!thermal_handler) {
-> +		ret =3D -ENOMEM;
-> +		goto cleanup_platform_device;
-> +	}
->   	thermal_handler->name =3D "dell-pc";
->   	thermal_handler->profile_get =3D thermal_platform_profile_get;
->   	thermal_handler->profile_set =3D thermal_platform_profile_set;
-> @@ -262,20 +271,25 @@ static int thermal_init(void)
 >
->   	/* Clean up if failed */
->   	ret =3D platform_profile_register(thermal_handler);
-> -	if (ret) {
-> -		kfree(thermal_handler);
-> -		thermal_handler =3D NULL;
-> -	}
-> +	if (ret)
-> +		goto cleanup_thermal_handler;
-> +
-> +	return 0;
-> +
-> +cleanup_thermal_handler:
-> +	thermal_handler =3D NULL;
-> +
-> +cleanup_platform_device:
-> +	platform_device_unregister(platform_device);
->
->   	return ret;
->   }
->
->   static void thermal_cleanup(void)
->   {
-> -	if (thermal_handler) {
-> +	if (thermal_handler)
->   		platform_profile_remove();
-> -		kfree(thermal_handler);
-> -	}
-> +	platform_device_unregister(platform_device);
->   }
->
->   static int __init dell_init(void)
 
