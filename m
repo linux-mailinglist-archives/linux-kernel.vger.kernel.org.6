@@ -1,94 +1,133 @@
-Return-Path: <linux-kernel+bounces-426725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CD89DF708
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 21:03:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 607689DF709
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 21:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5AB2816B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 20:03:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260622817BE
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 20:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F9F1D86EC;
-	Sun,  1 Dec 2024 20:03:08 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4085F1D86EC;
+	Sun,  1 Dec 2024 20:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hraSobH1"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1974D8A3
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 20:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75EF1D6DDC
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 20:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733083387; cv=none; b=Eq0Iupa3LEhmJz30aY3iPrGLPxhtG3IIVtCW306Sm5UtoPlMHAc0hNZ7bVIjbo5duCTSyFgmeah4VomNHV31HC4EItwa9oab7MyZjmZpON5nP9lIIoDaVzWC2ToZOpF25yF75ofNEMsF18p+l6UmdVSsXEtC4ba+D+NZIqFg1Z0=
+	t=1733083416; cv=none; b=Cj/9Nnom2vyeFkm08lrxbjvEhADIEwc5Q7ptjk6w0fXUgul0z/DcOTavuTCAVnS4wogbYPALV7OMUDpTxdF822nvHXnl4jItFpT0WmeWa9PNJad6k1AAeA9SMRe84lhXW3w6Vtlbhmd63Ldnc2nfnCXGJAZYQNYp0tF1kugoPPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733083387; c=relaxed/simple;
-	bh=dSsObhGUS8r1GhwLvZW7tZZh6u1pc/CKc749V17IzvY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jO031V3/rQYpkEHuVW7rD6QUik5ykqKYfEvroBrBQPnxLZDIImJ+ATZYXQxS9AI2/OZoKKIgM8WUECAVJa63/gOPdUm7GAAJybVTXmaq4PG001WgnLRoR2x1QWmk+ayi2Sl5uBFrL/4urLwbZoy/qjq1ThhnzXxhS+4DtJ64LaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7d60252cbso18462065ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 12:03:05 -0800 (PST)
+	s=arc-20240116; t=1733083416; c=relaxed/simple;
+	bh=YQYZv0nLZAWOwjNAYm5v5PWeyQRsVnUgFtgAxx+4OlY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eXbD/+rBaLcQnTHReDPo/S8V+nxxqBCcSglnLoI1yvEY4Rzk1gI68FmX88bLAg8c5oi9x/NWIK64JDvVsFDsWjCjOXoUNKQ1CZd+aiWesHhQlIrNmtkmGjQkc4uPhSqRbWRBw019MzEyRr/IiHyikyPTDyYdhPJN2OLabpRoEW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hraSobH1; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa531a70416so241854866b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 12:03:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1733083413; x=1733688213; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aU0Rubfxf3W1Wj6x6HtwFltcGwCY6ii8b+Gen11fGTo=;
+        b=hraSobH1zm7zEBsgGe8ddYua8RjCRz4Qygh0rnLqqqMnk1d4sTUx6rrK1Hl+munB/o
+         0hCqJ0E09mDgYR575fDffcxqUfSx7d2p923dqiYRvA7l3sQWGPt9/J4nvQ2iA5YK3kpF
+         f5fnjI3Js0IlWk1A+/8dUyOKOJ5xlvy5IWzQA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733083385; x=1733688185;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OaPPX1s8VAm+XGS2IFc62d3wok0VBUCA33fGXk3UaTo=;
-        b=XLFsyhJpbTObGvl9YjVJVUxJEeauLA4o1BjectpBBSWCVSvtglq5kLuZfNmuqNZfz7
-         dbe2GpKtfFqJYbQPCI4fpQ4/SQjYmOmxV7D/fvf3swHb8dkJHBMepUdJuL+/hKQJzfI3
-         vP38zTzP4KOyGrVNOQZCNPwlfqdHNhXJ4v87SRLP9tBWS3FzQSJdCXVOK3Xr52ekyHf4
-         Lf2Rto/lpffVuAQ+4IAOGWERCY6K9y8Meyqwlp33S0bCZ0Ys++jqqb2UjeDwW43MTwKR
-         5ieu+4v43j05HP2bcJr9OrgXfcmmde8UMjdjZlW4vWiJ7in0unNcA4EeP8pqC1ivvWZc
-         8hkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkY2eTqaR0h5Wu7T8iuneS+Q6INNcxf4IxVwGq+cK3F2dJ85YR8hMlTZwy8MAO9mU2OMeP7AQ1tUilDbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCwXA8CvMb40s4gHqzJGyn0aV2akpPiz/RgqQmxvrkWUSRMMNY
-	19v5w4UM8qCNryfLce3fD/TGTKQeFUL3iNqxe8tX0H5/au8AuaqV2cQ37beaWVlEkkJwBo2yPun
-	6sICasZBnull/C2SyKJ8QqDJY63hhboRwHiElUBeAgIbQ19SAL2Fojm8=
-X-Google-Smtp-Source: AGHT+IG1BsJDeDY+txAfsLEoO3aZBCIBBviJggagFT7PDbeJHoJDMx+EKxelgiGE9E+lChmAz9PfQRqFKHPAiGfA12SlL2xiBjhn
+        d=1e100.net; s=20230601; t=1733083413; x=1733688213;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aU0Rubfxf3W1Wj6x6HtwFltcGwCY6ii8b+Gen11fGTo=;
+        b=YDL6D8MfSOMfCibaQ91CGv+7l28++cGiPqxTcGA1Nf3KwxPjvBJ0sltFWawhn4fx1J
+         sQB5xSONEAc6+ZZKo1DXRCZyhkH9tW0gPrnseszTvYzdIm34KtZ/Fi7xdiPBLYFhCU6K
+         c1y5R6Gx8cFSnFU993er/XGVGLwQso4E0eBUBV9Oyf5CI9UhKA7Bx3nlwgoKhZR6Pdlq
+         TPsaBzOMiYo7UDKNl1gS4vHpuX/+UtaqJpEvdekO9ZMja7ILysGBIhqYFck+4N5Gu+Np
+         8/07oGohVNoOKta8NJyplcq5TE8C2zfTN3f0QQ3hgDtQLjIJp9xLboaAE1Pct5yvPiku
+         EeCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2lU4f/2M8WDnMm7uyfb7/a3PEHgHG1woblTMGEPdcQNjn6S3zhfApuUHRtvKnVPjrYpcEUhb/3MtY+v4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE7odCr3WLxTJ1LSnWW2VMLaT2ijmQsuHxqTFNAooAnYA11gqB
+	SqYZBMcBh6VeziTGKV935IRYq+WFaCw9tGNoo7JwBI6ze6jZdNpeBpOihCXwiUa8TJVvCbSbPck
+	S4Rg=
+X-Gm-Gg: ASbGncuLCQhswYDrvpxl17M7ibLWupkIAFFIncv72zo4oi7X1+fb0+m1HTvgJxqiRL0
+	YR2Q8plC8xW3j2IVX/XrQVppFn7Pu+VTFHwI/Fu4fffvLla59AA3ZSFOiGK0S4OmAPR7RVn7rcb
+	cY55XNAK0b6XzA7UCmTsrVPNKrw6F/eDPxMdU7y8gheCL6K/+ypLticKDQlOzXJrhAhQ287Os0O
+	yWwdEXSBDjNJ7poJ/AKtIIyXe3BECg3UCfqqm3PFmFRfsAJMMREZBFVgTMIpEAieunqxyjDZanY
+	7mHpCg8+4nZT0b6Eq6CzpNs=
+X-Google-Smtp-Source: AGHT+IGYHPDGHRk803HqsJ/h90af6xrIY7Mf7R19/B2Fn7IzgZFYLu/4zxNoDli0QRJMOCD6eIn4og==
+X-Received: by 2002:a05:6402:34c5:b0:5d0:d818:559d with SMTP id 4fb4d7f45d1cf-5d0d818590dmr7569797a12.11.1733083412708;
+        Sun, 01 Dec 2024 12:03:32 -0800 (PST)
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599905164sm426179966b.141.2024.12.01.12.03.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Dec 2024 12:03:31 -0800 (PST)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385e2880606so1863190f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 12:03:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWQM4jYMvSWdIlFAY3mbv9WjgR3X/JcV/lqzWzpl5lzA0TJJAuuPs6Ed1zN0nU3yCzCtugomoLFc+tqC5I=@vger.kernel.org
+X-Received: by 2002:a5d:47cd:0:b0:385:ed1e:20fe with SMTP id
+ ffacd0b85a97d-385ed1e2320mr4238223f8f.59.1733083411058; Sun, 01 Dec 2024
+ 12:03:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca07:0:b0:3a7:ca83:3f9 with SMTP id
- e9e14a558f8ab-3a7cbd14e14mr125608935ab.4.1733083385204; Sun, 01 Dec 2024
- 12:03:05 -0800 (PST)
-Date: Sun, 01 Dec 2024 12:03:05 -0800
-In-Reply-To: <6716e2ac.050a0220.1e4b4d.0064.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674cc0f9.050a0220.48a03.0012.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING: locking bug in rcu_pending_exit
-From: syzbot <syzbot+8d7226784b8fcb4c9d04@syzkaller.appspotmail.com>
-To: anton.ivanov@cambridgegreys.com, axboe@kernel.dk, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hch@lst.de, hpa@zytor.com, 
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, martin.petersen@oracle.com, mingo@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+References: <e654a20c9045487eaacbd256f584ce45@AcuMS.aculab.com>
+In-Reply-To: <e654a20c9045487eaacbd256f584ce45@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Sun, 1 Dec 2024 12:03:14 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiG7dGtE6UsynOP3FuvApkh=FYrv1Q42DEVZmosuOFXnQ@mail.gmail.com>
+Message-ID: <CAHk-=wiG7dGtE6UsynOP3FuvApkh=FYrv1Q42DEVZmosuOFXnQ@mail.gmail.com>
+Subject: Re: [PATCH next] x86: mask_user_address() return base of guard page
+ for kernel addresses
+To: David Laight <David.Laight@aculab.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Andrew Cooper <andrew.cooper3@citrix.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	"bp@alien8.de" <bp@alien8.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+On Sun, 1 Dec 2024 at 10:12, David Laight <David.Laight@aculab.com> wrote:
+>
+> I've built and run a kernel with it - so not broken!
 
-commit 5db755fbb1a0de4a4cfd5d5edfaa19853b9c56e6
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Fri May 31 07:47:56 2024 +0000
+I worry that 'cmov' could be predicted - making the whole sequence
+pointless. It would be a stupid thing for a CPU core to do, but it
+would be simple.
 
-    ubd: refactor the interrupt handler
+Of course, 'sbb' could be done using predicting the carry flag too.
+There's a lot of ways to screw this up.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1739bf78580000
-start commit:   2ba9f676d0a2 Merge tag 'drm-next-2024-11-29' of https://gi..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14b9bf78580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10b9bf78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a857d0dac7fee57c
-dashboard link: https://syzkaller.appspot.com/bug?extid=8d7226784b8fcb4c9d04
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1037f9e8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=155d1d30580000
+Intel at some point explicitly said
 
-Reported-by: syzbot+8d7226784b8fcb4c9d04@syzkaller.appspotmail.com
-Fixes: 5db755fbb1a0 ("ubd: refactor the interrupt handler")
+ "Other instructions such as CMOVcc, AND, ADC, SBB and SETcc can also
+be used to prevent bounds
+  check bypass by constraining speculative execution on current family
+6 processors (Intel=C2=AE Core=E2=84=A2,
+  Intel=C2=AE Atom=E2=84=A2, Intel=C2=AE Xeon=C2=AE and Intel=C2=AE Xeon Ph=
+i=E2=84=A2 processors).
+However, these instructions may not
+  be guaranteed to do so on future Intel processors"
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+so none of these are safe according to that.
+
+Maybe there were newer updates on this, but in the meantime I'd rather
+have just *one* pattern, not switch between multiple possibly
+problematic ones. And sbb has been that traditional one.
+
+Also, if sbb is ever made speculative, I think it's time to just jump ship.
+
+             Linus
 
