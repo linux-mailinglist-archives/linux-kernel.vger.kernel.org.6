@@ -1,269 +1,242 @@
-Return-Path: <linux-kernel+bounces-426605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD819DF58B
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:43:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384969DF58E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF65F2814DD
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:43:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09B72816EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CE21B654C;
-	Sun,  1 Dec 2024 12:43:43 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E640A1B6D00;
+	Sun,  1 Dec 2024 12:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxurlaju"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABAE1B5337;
-	Sun,  1 Dec 2024 12:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0A61B5ED2;
+	Sun,  1 Dec 2024 12:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733057023; cv=none; b=TayZFdn55JASXRj7hfAraIVC5MAhVBeOM27tyRjk1H3TuAyCO/5uX6stOGj/A53aHfnHf41M8DgbxXWN00ohdFSVCVF+kdGLs92ZjxCyFRIX2AqaUVj5kmZMbAEblw/8KctVXpRDahqT+lSGmkdnxbbntufpdLLx2vMPEig0mhY=
+	t=1733057071; cv=none; b=dKzX9zPVah12dHiM7kaY167y1z4r50R82B6s+by/4oksqhsP/a8D9XslakftsaRQ4JLpkZA5rPOOqJb2ZiQ8LqZivgmMmtODLzyCeoB+1WfuB/q8BbqIbyWGtDFIBoirVgzz1DClZmSlv/vnyWODKQfkdTa+nAo35y6Y32DX634=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733057023; c=relaxed/simple;
-	bh=kEFz7s9cS8bt1A3BnJLkQ42vnQvrBH9vKlkQzNuay44=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iVUouJJPnfwb9/5JbJfZi0tCmYRHGMRrkRfRWMxTfhsuhUoR+hpkzRqB0cp+IzFMcdgSAUwI4N2o+N6NPx22kNnWqJVeNtUSd/WYDKi62lR0KDwsGeTzSTz4Ichmn0LGc/CMIcev0UhB8bbNsuFMQTw8/QkBiFiQhaw/p3bvTT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434ab938e37so20449485e9.0;
-        Sun, 01 Dec 2024 04:43:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733057020; x=1733661820;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hwTgWmg6Nk+SeybaZH1G2SoKFC/4ATTBRTyPLSQfoDo=;
-        b=LreNNltUWimQmBYU6YEC7xNmpJx34PjtzrFCIZLSNewW8ACsypPqNvH+x4jm4hG44S
-         zkllh8CkU+zO/Wxr0tEkcDFoO6TO+s7ZupJs+dAzLF9/FpUnmTUWfxyiSpeQzDNElYCg
-         Tpv+zBw8MxKowu6phELgCg6fLDYGfq6Q9sEq7PTR7DpCvuckg2YAQ4FSjICJQVPZUvcu
-         Kpsf1QPNqggN4bt9OSQnJ/5YiiC3iu0K70BQBOWAgJsXltsj2ohzS3DrDzR0q+h/ovjd
-         1x+HDabI/KdrN6z2xZh0SLaHgZC97q05BmmpUfmQsLbjdImA5pkGCcvl6NPDW+7H+L26
-         H/dA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCd7JsGTxjrmQvdyM9Xyc6nr5af8MWcLMd/AZd1c+8p+JFU2lNmxujYJJxPF7n9MJU6TCGBQt6SSU/6cIw@vger.kernel.org, AJvYcCWVebBC9lKPJWS80U7rB3+LEKuKhRlwcmoa96l/MUenFt1fmB1Sup9mOl3EEHyfxjjZ7pU+8GSv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFopvbOuPrWzrnEY9O0dYyRNZ+a0nI4BldwqROkLRkYwCGtJJe
-	2Rf9HVL2i/54Tu7MAWEzOig1PUtayOvJnsbkRuVWPHCMZpcV7Y7caQBcuOScquc=
-X-Gm-Gg: ASbGncuXcYGjDjDU6WVxwifE26l2NBxO8pUlt0pchacFlHafJcrtiTJR1Uft3IzXeWA
-	i+US4gZ5XYNno8875Pi6m9g6v4lgDdZl1D8VmJ0MB27EGD/QrlUKb0DfiXyh7ZvKsFDdG6o2Yd9
-	Y/XkTUZWn75AxDi9cNV/8ddb4l9AkvUPbsnIChqoNhss25xCMfiTIjYIdbRN/XnAHYYv7r35dRG
-	KsufA9cB3ChIetKJKXSYJbvnHhgrkvRNAAsKzMwbXdBkU50Gid9BWRFBSbdoVIvrgI=
-X-Google-Smtp-Source: AGHT+IETkNM8+r32RNP4qhV2x33uBUhpJLEx/4ptuf4OfUoRO8MHH9mqdmcgeFc1qrYk89pxaaPaFg==
-X-Received: by 2002:a05:6000:1ac9:b0:382:4a7b:ba7b with SMTP id ffacd0b85a97d-385c6ee2174mr16120213f8f.48.1733057019624;
-        Sun, 01 Dec 2024 04:43:39 -0800 (PST)
-Received: from costa-tp.redhat.com ([2a00:a041:e280:5300:9068:704e:a31a:c135])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70d91sm114434985e9.39.2024.12.01.04.43.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 04:43:38 -0800 (PST)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: longman@redhat.com,
-	ming.lei@redhat.com,
-	pauld@redhat.com,
-	juri.lelli@redhat.com,
-	vschneid@redhat.com,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org
-Subject: [RFC PATCH v4 4/4] DO NOT MERGE: Test CPU isolation from managed interrupts
-Date: Sun,  1 Dec 2024 14:42:44 +0200
-Message-ID: <20241201124244.997754-5-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241201124244.997754-1-costa.shul@redhat.com>
-References: <20241201124244.997754-1-costa.shul@redhat.com>
+	s=arc-20240116; t=1733057071; c=relaxed/simple;
+	bh=nQhuu5MfVqbZIpR7AYSOP+J9kx/Y1gcr7gzCBGZE8B8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EW2zWAldKWdPUwWoskcfMJ5cnx7FZT3ZIjzpz24gK8Dm3yIaSIr5eSC2tyvSfgQJzPgvtIsjyNraJowRw2LsudzrKlMK9bUxAU90F8I/9J51MtxPF6G2eESf/4dZhoNvDxRr/7FqqKwrLR70YG0GynYUJBVgdk8Hf2VVeItPz3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxurlaju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 890BCC4CED2;
+	Sun,  1 Dec 2024 12:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733057071;
+	bh=nQhuu5MfVqbZIpR7AYSOP+J9kx/Y1gcr7gzCBGZE8B8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sxurlajuwmmgABTrDYYkcmKxJ2EHc6tLaPaxFDIGYfJnT3ATi653kH01JIsWGCOWM
+	 mg9/xxJJoKztb5i1ys/lrrj+hpato7zmeuQNxE5zlglOGaX8rC630tlITYajetJJVr
+	 vmwrifTpZOlDEYcPEd3DHqkeICY8k1Q9qgfBO+UYGz94R8qCjcmL/r/NV9NX7T7qyo
+	 3N4l5PwAdWG7yq+kjR20t52fH5Ipey3v1gwcCuH9n2vi/2SSxg22MI/+D502Zqj+hS
+	 mJZFD4NXnUMchte1HyeQ48V/87uXn3TqrYSsZIjlhUYUst/Bh2fTQVSkfRh6zBN7UR
+	 13aDGr9g7Bdgw==
+Date: Sun, 1 Dec 2024 13:44:22 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Erin Shepherd <erin.shepherd@e43.eu>, Jeff Layton <jlayton@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH RFC 0/6] pidfs: implement file handle support
+Message-ID: <20241201-mehreinnahmen-unehrlich-3a980ecbdfdc@brauner>
+References: <20241129-work-pidfs-v2-0-61043d66fbce@kernel.org>
+ <20241129-work-pidfs-file_handle-v1-0-87d803a42495@kernel.org>
+ <CAOQ4uxhKVkaWm_Vv=0zsytmvT0jCq1pZ84dmrQ_buhxXi2KEhw@mail.gmail.com>
+ <20241130-witzbold-beiwagen-9b14358b7b17@brauner>
+ <CAOQ4uxh2yfa_OeUYgrxc6nZqyZF4edx3pswPJkHPh5x=KOzj8w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxh2yfa_OeUYgrxc6nZqyZF4edx3pswPJkHPh5x=KOzj8w@mail.gmail.com>
 
-Test CPU isolation to ensure it is unaffected by managed interrupts.
+On Sun, Dec 01, 2024 at 01:09:17PM +0100, Amir Goldstein wrote:
+> On Sun, Dec 1, 2024 at 9:43 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Sat, Nov 30, 2024 at 01:22:05PM +0100, Amir Goldstein wrote:
+> > > On Fri, Nov 29, 2024 at 2:39 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > Hey,
+> > > >
+> > > > Now that we have the preliminaries to lookup struct pid based on its
+> > > > inode number alone we can implement file handle support.
+> > > >
+> > > > This is based on custom export operation methods which allows pidfs to
+> > > > implement permission checking and opening of pidfs file handles cleanly
+> > > > without hacking around in the core file handle code too much.
+> > > >
+> > > > This is lightly tested.
+> > >
+> > > With my comments addressed as you pushed to vfs-6.14.pidfs branch
+> > > in your tree, you may add to the patches posted:
+> > >
+> > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > >
+> > > HOWEVER,
+> > > IMO there is still one thing that has to be addressed before merge -
+> > > We must make sure that nfsd cannot export pidfs.
+> > >
+> > > In principal, SB_NOUSER filesystems should not be accessible to
+> > > userspace paths, so exportfs should not be able to configure nfsd
+> > > export of pidfs, but maybe this limitation can be worked around by
+> > > using magic link paths?
+> >
+> > I don't see how. I might be missing details.
+> 
+> AFAIK, nfsd gets the paths to export from userspace via
+> svc_export_parse() =>  kern_path(buf, 0, &exp.ex_path)
+> afterwards check_export() validates exp.ex_path and I see that regular
+> files can be exported.
+> I suppose that a pidfs file can have a magic link path no?
+> The question is whether this magic link path could be passed to nfsd
+> via the exportfs UAPI.
 
-Target: irq_restore_affinity_of_irq()
+Ah, ok. I see what you mean. You're thinking about specifying
+/proc/<pid>/fd/<pidfd> in /etc/exports. Yes, that would work.
 
-Managed interrupts can be created in various ways. One of them:
+> 
+> >
+> > > I think it may be worth explicitly disallowing nfsd export of SB_NOUSER
+> > > filesystems and we could also consider blocking SB_KERNMOUNT,
+> > > but may there are users exporting ramfs?
+> >
+> > No need to restrict it if it's safe, I guess.
+> >
+> > > Jeff has mentioned that he thinks we are blocking export of cgroupfs
+> > > by nfsd, but I really don't see where that is being enforced.
+> > > The requirement for FS_REQUIRES_DEV in check_export() is weak
+> > > because user can overrule it with manual fsid argument to exportfs.
+> > > So maybe we disallow nfsd export of kernfs and backport to stable kernels
+> > > to be on the safe side?
+> >
+> > File handles and nfs export have become two distinct things and there
+> > filesystems based on kernfs, and pidfs want to support file handles
+> > without support nfs export.
+> >
+> > So I think instead of having nfs check what filesystems may be exported
+> > we should let the filesystems indicate that they cannot be exported and
+> > make nfs honour that.
+> 
+> Yes, I agree, but...
+> 
+> >
+> > So something like the untested sketch:
+> >
+> > diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+> > index 1358c21837f1..a5c75cb1c812 100644
+> > --- a/fs/kernfs/mount.c
+> > +++ b/fs/kernfs/mount.c
+> > @@ -154,6 +154,7 @@ static const struct export_operations kernfs_export_ops = {
+> >         .fh_to_dentry   = kernfs_fh_to_dentry,
+> >         .fh_to_parent   = kernfs_fh_to_parent,
+> >         .get_parent     = kernfs_get_parent_dentry,
+> > +       .flags          = EXPORT_OP_FILE_HANDLE,
+> >  };
+> >
+> >  /**
+> > diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> > index eacafe46e3b6..170c5729e7f2 100644
+> > --- a/fs/nfsd/export.c
+> > +++ b/fs/nfsd/export.c
+> > @@ -417,6 +417,7 @@ static struct svc_export *svc_export_lookup(struct svc_export *);
+> >  static int check_export(struct path *path, int *flags, unsigned char *uuid)
+> >  {
+> >         struct inode *inode = d_inode(path->dentry);
+> > +       const struct export_operations *nop;
+> >
+> >         /*
+> >          * We currently export only dirs, regular files, and (for v4
+> > @@ -449,11 +450,16 @@ static int check_export(struct path *path, int *flags, unsigned char *uuid)
+> >                 return -EINVAL;
+> >         }
+> >
+> > -       if (!exportfs_can_decode_fh(inode->i_sb->s_export_op)) {
+> > +       if (!exportfs_can_decode_fh(nop)) {
+> >                 dprintk("exp_export: export of invalid fs type.\n");
+> >                 return -EINVAL;
+> >         }
+> >
+> > +       if (nop && nop->flags & EXPORT_OP_FILE_HANDLE) {
+> > +               dprintk("exp_export: filesystem only supports non-exportable file handles.\n");
+> > +               return -EINVAL;
+> > +       }
+> > +
+> >         if (is_idmapped_mnt(path->mnt)) {
+> >                 dprintk("exp_export: export of idmapped mounts not yet supported.\n");
+> >                 return -EINVAL;
+> > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> > index 9aa7493b1e10..d1646c0789e1 100644
+> > --- a/fs/overlayfs/util.c
+> > +++ b/fs/overlayfs/util.c
+> > @@ -83,10 +83,15 @@ void ovl_revert_creds(const struct cred *old_cred)
+> >   */
+> >  int ovl_can_decode_fh(struct super_block *sb)
+> >  {
+> > +       const struct export_operations *nop = sb->s_export_op;
+> > +
+> >         if (!capable(CAP_DAC_READ_SEARCH))
+> >                 return 0;
+> >
+> > -       if (!exportfs_can_decode_fh(sb->s_export_op))
+> > +       if (!exportfs_can_decode_fh(nop))
+> > +               return 0;
+> > +
+> > +       if (nop && nop->flags & EXPORT_OP_FILE_HANDLE)
+> >                 return 0;
+> >
+> >         return sb->s_export_op->encode_fh ? -1 : FILEID_INO32_GEN;
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index dde3e4e90ea9..9d98b5461dc7 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> > @@ -570,6 +570,7 @@ static const struct export_operations pidfs_export_operations = {
+> >         .fh_to_dentry   = pidfs_fh_to_dentry,
+> >         .open           = pidfs_export_open,
+> >         .permission     = pidfs_export_permission,
+> > +       .flags          = EXPORT_OP_FILE_HANDLE,
+> >  };
+> >
+> >  static int pidfs_init_inode(struct inode *inode, void *data)
+> > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> > index a087606ace19..98f7cb17abee 100644
+> > --- a/include/linux/exportfs.h
+> > +++ b/include/linux/exportfs.h
+> > @@ -280,6 +280,7 @@ struct export_operations {
+> >                                                 */
+> >  #define EXPORT_OP_FLUSH_ON_CLOSE       (0x20) /* fs flushes file data on close */
+> >  #define EXPORT_OP_ASYNC_LOCK           (0x40) /* fs can do async lock request */
+> > +#define EXPORT_OP_FILE_HANDLE          (0x80) /* fs only supports file handles, no proper export */
+> 
+> This is a bad name IMO, since pidfs clearly does support file handles
+> and supports the open_by_handle_at() UAPI.
+> 
+> I was going to suggest EXPORT_OP_NO_NFS_EXPORT, but it also
+> sounds silly, so maybe:
+> 
+> #define EXPORT_OP_LOCAL_FILE_HANDLE          (0x80) /* fs only
+> supports local file handles, no nfs export */
 
-qemu-img create -f qcow2 test.qcow2 100M
-virtme-ng -v --cpus 4 --rw --user root \
-	--qemu-opts '\-drive id=d1,if=none,file=test.qcow2 \
-	\-device nvme,id=i1,drive=d1,serial=1,bootindex=2'
+Thank you. I'll send a reply with a proper patch to this thread in a second.
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-
----
-
-v4:
-- Remove /sys/devices/system/cpu/cpu$isolate/online
-
-v3:
-- No changes
-
-v2:
-- use shell script only
----
- MAINTAINERS          |   2 +
- tests/managed_irq.sh | 135 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 137 insertions(+)
- create mode 100755 tests/managed_irq.sh
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1240e75ecf4b..4a753c2b34c1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26046,3 +26046,5 @@ S:	Buried alive in reporters
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
- F:	*
- F:	*/
-+
-+# disable warning
-diff --git a/tests/managed_irq.sh b/tests/managed_irq.sh
-new file mode 100755
-index 000000000000..3763183fc987
---- /dev/null
-+++ b/tests/managed_irq.sh
-@@ -0,0 +1,135 @@
-+#!/bin/zsh
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# shell script for testing dynamic isolation of managed interrupts.
-+# Target: irq_restore_affinity_of_irq()
-+
-+# cpu# to isolate
-+
-+isolate=1
-+
-+managed_affined=$(
-+	cd /sys/kernel/debug/irq/irqs/;
-+	grep -l -e "affinity: $isolate$" /dev/null $(grep -l IRQD_AFFINITY_MANAGED *) |
-+		head -n1
-+)
-+grep -l -e "affinity: $isolate$" /dev/null \
-+	$(grep -l IRQD_AFFINITY_MANAGED /sys/kernel/debug/irq/irqs/*)
-+test_irq=${managed_affined%% *}
-+echo test_irq=$test_irq
-+
-+[ -z $test_irq ] && { echo No managed IRQs found;exit 1}
-+
-+cp -R /sys/kernel/debug/irq/irqs 0.irqs
-+
-+# Restart CPUs without changing the isolated cpuset.
-+# Setup a baseline (the "control group")
-+# to compare against the test of isolated mask.
-+
-+echo 0 > /sys/devices/system/cpu/cpu$isolate/online
-+echo 0 > /sys/devices/system/cpu/cpu3/online
-+echo 1 > /sys/devices/system/cpu/cpu$isolate/online
-+echo 1 > /sys/devices/system/cpu/cpu3/online
-+
-+rm -rf baseline.irqs
-+cp -R /sys/kernel/debug/irq/irqs baseline.irqs
-+
-+cd /sys/fs/cgroup/
-+echo +cpuset > cgroup.subtree_control
-+mkdir -p test
-+echo isolated > test/cpuset.cpus.partition
-+
-+effective_affinity=/proc/irq/$test_irq/effective_affinity
-+test_irq_debug=/sys/kernel/debug/irq/irqs/$test_irq
-+
-+errors=0
-+
-+check()
-+{
-+	local _status=$?
-+	if [[ $_status == 0 ]]
-+	then
-+		echo PASS
-+	else
-+		let errors+=1
-+		echo "FAIL #$errors:"
-+		cat $test_irq_debug
-+	fi
-+	return $_status
-+}
-+
-+check_activated()
-+{
-+	echo "Check normal irq affinity"
-+	test 0 -ne $((0x$(cat $effective_affinity) & 1 << $isolate))
-+	check
-+	grep -q IRQD_ACTIVATED $test_irq_debug
-+	check
-+	grep -q IRQD_IRQ_STARTED $test_irq_debug
-+	check
-+	! grep -q IRQD_IRQ_DISABLED $test_irq_debug
-+	check
-+	! grep -q IRQD_IRQ_MASKED $test_irq_debug
-+	check
-+	! grep -q IRQD_MANAGED_SHUTDOWN $test_irq_debug
-+	check
-+}
-+
-+check_shutdown()
-+{
-+	echo "Check that irq affinity doesn't contain isolated cpu."
-+	test 0 -eq $((0x$(cat $effective_affinity) & 1 << $isolate))
-+	check
-+	! grep -q IRQD_ACTIVATED $test_irq_debug
-+	check
-+	! grep -q IRQD_IRQ_STARTED $test_irq_debug
-+	check
-+	grep -q IRQD_IRQ_DISABLED $test_irq_debug
-+	check
-+	grep -q IRQD_IRQ_MASKED $test_irq_debug
-+	check
-+	grep -q IRQD_MANAGED_SHUTDOWN $test_irq_debug
-+	check
-+}
-+
-+echo "Isolating CPU #$isolate"
-+echo $isolate > test/cpuset.cpus
-+
-+check_shutdown
-+
-+echo Reset cpuset
-+echo "" > test/cpuset.cpus
-+
-+check_activated
-+
-+echo "Isolating CPU #$isolate again"
-+echo $isolate > test/cpuset.cpus
-+
-+check_shutdown
-+
-+echo "Isolating CPU #3 and restore CPU #$isolate"
-+echo 3 > test/cpuset.cpus
-+
-+check_activated
-+
-+echo Reset cpuset
-+echo "" > test/cpuset.cpus
-+
-+rmdir test
-+cd -
-+
-+rm -rf final.irqs
-+cp -R /sys/kernel/debug/irq/irqs final.irqs
-+
-+sleep 1 # wait till IRQD_IRQ_INPROGRESS, IRQD_IRQ_MASKED
-+
-+if ! diff -r --ignore-matching-lines=Vector:: baseline.irqs final.irqs; then
-+	echo diff failed;
-+	let errors+=1
-+fi
-+
-+#
-+# return zero on success or number of errors
-+#
-+echo errors=$errors
-+(return $errors)
--- 
-2.47.0
-
+> With that you may add:
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> 
+> Thanks,
+> Amir.
 
