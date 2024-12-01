@@ -1,180 +1,130 @@
-Return-Path: <linux-kernel+bounces-426521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A469DF45F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:48:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31CF19DF460
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:58:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CEB3B211D4
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 01:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA7EF162B72
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 01:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAA7B665;
-	Sun,  1 Dec 2024 01:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W6rq2SxE"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40878BEE;
+	Sun,  1 Dec 2024 01:58:29 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7447494;
-	Sun,  1 Dec 2024 01:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3442AD5A
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 01:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733017723; cv=none; b=JYZ6hHXJ2fWKb2+h24WxE9y2LNafc9PznJmxyLtXpnd0mSPb1v9yO0/qc3EozGXQmjx0Xea0f54+0LCR2+zkp/WS5YS9Kt9w3ZRuzm5xRd2gtZpXiDCmvtPHEgYnEZpzTPN04DmasYVDb8NsNeamUxi8An+8LUvacdz9ptAD3cg=
+	t=1733018309; cv=none; b=ui/bcHYqcUWl1T7vzMwnRvvh8cKOQqwtJEGoycq4+8/GtvThX+Skh8UNRBP3AHOMGay6WRqLEbtXgk8DqqMOpiNxY36gvEi2UkxDQK5CSe2OU8MCep6ADqxbxGwrCZWvZWJsiVRAKONqoYOKdgb61qjlxytYo4wPgrxSaMZPifQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733017723; c=relaxed/simple;
-	bh=pHfRH4Ecn1vw3+tR8nxlPZC8y7ty2oeAEbB8n+ynOfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gw+WyuYNh7nM4snfYj6X8zJlBoFAW8cBZw3oYcPcfIadxLJVjVNvFgi2+WhvyDmEoYnpfZuUPGnhNfw76wDrI8KIt/Qj1imp+q1i/Hj2Cu/UPT0Aki5n7DIAgZjDqHFOq+bknct5SW2znCh7L3CASG4LULmARB0T+E5oh3YEXNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W6rq2SxE; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-724f383c5bfso2293338b3a.1;
-        Sat, 30 Nov 2024 17:48:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733017721; x=1733622521; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=og0xKAxL559d+qRruRz7WQP6LUEOG7PmoTfo4EUcMBE=;
-        b=W6rq2SxEK7buYMNuC4JugJuh+AirWpCAMRzgO/RFM0ORofflUAM/uqQB5V93uYsHlW
-         TrA5cQIvG4ipIjDKeoBqZ9U3COgsskvs9Z3nCYZ2IHwq4MXRfZ11cGWQatMeiFvv6F+e
-         SOl7pXkW+6w7G4Gb+XbnLngtndh9/ggCHKFaxxJQ2qPu8VSuJIzMLkwOHaji1Ku70GYx
-         6pk6BS9KHT6Tz6GWpczml9T34qewUcZwQduWlS7oIdPBT4S9uFparIzsIw06/oJLTD4v
-         TzZ1+0458SbQH9I6GSqlNfSb0yOuNXXRhfNo3m0r0hDMpW4viAunr3YiU9BViKmUuav1
-         G3yg==
+	s=arc-20240116; t=1733018309; c=relaxed/simple;
+	bh=zTMhgQ7GAngkohf2rn/P/5vDYoYLNJENEFkhFPgmq4A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JehKITyprtmoz5h8rTPSKn5H9PFhquHuUKix5yX17oDNjQ3wBjNZ4goLgHVF3vsiMAtwBlJMD/pUc4v0Ko7WnCmwyd0CXU9BSy94Fqp363tCD6Q9bfnfiqBiuxDz3S0UFFEiOeCdWGLO/qGmDiq5DtESQ/lKIi9clc/htRMdmE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a787d32003so29678585ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 17:58:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733017721; x=1733622521;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=og0xKAxL559d+qRruRz7WQP6LUEOG7PmoTfo4EUcMBE=;
-        b=h20peRqYnY6YzKJ7ukuT3r4/urNPo30XDLNEEjJJ7wRaS0Hr8tU5EuFdtlU+bAQ2lK
-         znpEB4iLiG0rSqgdOxhPhhrNYj4FEhenKUTnkGXc8rztAt/Ygy4aH+1MZVwjY3PG9c0o
-         zvTDyHG+wzvpLWr/liVNib2LlkaS4UQk4llRGRpRb8sr/+EAvL4FhwQRSr9c7JehXuTK
-         IDfwvdYZkCpj/084AJozH3qzFhNCEXtHUzplL9maSlqexqyTFajAQUyfQkR84gG1BsAJ
-         OZBdzo4MzjEXqYTc0Zgtes9RgfzMVT7mCxAuuatmEh+zJjx+tA84zJ4F5JKcMAa5G+sR
-         EPig==
-X-Forwarded-Encrypted: i=1; AJvYcCUYH88PeEp0HPsmRJhG1aVicdU5Rum5gUwTPwXVEuuerq7sEw+7GwLewWmmIht9ERBlyDt+rX3O6qlKOPs=@vger.kernel.org, AJvYcCVUoDE44hz2RmmAe+V0CC5owUcpgWL/UsbI/wMy/t4TG1eET6roWGst0T37FVSq3nBDuoJfjK5yOwU=@vger.kernel.org, AJvYcCXoryPp05O6qgMBy0J3iZDU5f/8b5YKiyjTIC1BIdCTVlAPcpXoKSy5Ags7LaFgUvdIejq5YBipSy6hcDrm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxExgj2UrVxtFkNhSvxjJ1EzFa4CgCgr2XPYWicenwJI0ExivdB
-	EtrJsEbbcdmgPy6tA6geJ0qPcz+NgUqqX3pVF8nECeSP6S6Kt3Lu7ufTqA==
-X-Gm-Gg: ASbGnctIiNml/C4dz0O9nK5Nzx9+5JmPgl8AJTyH/SI5HpdZYrHGdv8w4tlWDdgeEmB
-	1+1on74Ih5A9dk05G7g+ukgUTXUb+2BfYrHMUylzWK8pWunHC42v6YR4/YSNqQjcD8j3avLf1EU
-	RwT5MjFwMNo3NV6jOUj8/b8SKsA7YSOOBR6O5bMjGL3/Nnj8vL5z1xZD6QPf1wt6SLWeXPhOkfH
-	iOB5x9dHhL4AkK9Ijco+m4SOlVZG+yOawtTxUrkIDcfXEoOceipNv5/SlE4Gv5k/WmZfV2H7cXG
-	eSSQEPzLMBHrFyc6S/Jt25E=
-X-Google-Smtp-Source: AGHT+IFxwalVNBSI4x+49VrLerz4nhU+5cgmJA1iPtpB45swsE132SMN6oirGZ9ItFAF4Br9UtgvzA==
-X-Received: by 2002:a17:90b:1dc7:b0:2ea:853b:276d with SMTP id 98e67ed59e1d1-2ee08fca57fmr25883558a91.17.1733017720626;
-        Sat, 30 Nov 2024 17:48:40 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee45ec551asm4509105a91.16.2024.11.30.17.48.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Nov 2024 17:48:40 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <64783a84-5f21-4c33-b74b-5e6d79107c33@roeck-us.net>
-Date: Sat, 30 Nov 2024 17:48:38 -0800
+        d=1e100.net; s=20230601; t=1733018307; x=1733623107;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oga6qmMks5KjnhwQMu5wVri17WghvBrofAMjw1HSmnU=;
+        b=aI4BU2sGccz7E7/74oVoEkB9CEgXzyTNpxVuG0VlS3Fp0du8ko40hxMVgXuA1UcZbd
+         GvJTaNTGqIEEy+KWVtN1Zc37TqcUOd262tvMN88TJ5Ra5yaWwp/76aqo3cRl1aL2saqR
+         uPBHbRDWxXB9kaHA3xfuDMpKt7klQ5xbhk2xY7a5pwPb4nXgvwcP8RGsFxMZEsY3E0xx
+         PbQcIcFQQS6SHacdh11Q7hMCO9ghPfFtxS9F9PzGsfhJFlnB2d1cYoiDsKWK988jSLqx
+         DaeiC1QG0vVmeXLZJtl8coXnf8SFQMu/RkwXxRo3N+Tb5BuZaGK0tsThtyqKsr9U6EEg
+         uIqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOoP6Kxr3iSw+IEqgTjh3L7vXX/PYNfEZnrrBPO/7gxirDekSQeI1StpFgpISiwSxd8/uVWv+6QLxc6YA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhM8w+taWFUQfnLRgX0s3OZItWfCqWCOFel/yxyvgoz6YE+UND
+	6LjADoypndAtPJEMlSSQEl+zwUniSYSUDOVUWjBkhL34pChgXLVu7poZ6Vg1AfKZSggGLElUYOk
+	TtsRU00SXcgcwgOFVeHbgBnKdS+K91NvODJfYTr7TlJ8MOj35jYXuPRM=
+X-Google-Smtp-Source: AGHT+IHYOe4T8vhtQp3j52u+dUjdYd/xgSjj8rXSIWax2fDqxyDbFB3caVq0f/UT5o8T5Gh3oOPm1b1CEkH8R2dTiQP+hC1QAVzp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] hwmon: (asus-ec-sensors) add TUF GAMING X670E PLUS
-To: Li XingYang <yanhuoguifan@gmail.com>
-Cc: eugene.shalygin@gmail.com, corbet@lwn.net, jdelvare@suse.com,
- linux-doc@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CAB95QAROXwFPZB8gSkz0-thPtuzWkhAHmbqEy2QBg4fMmx7NKQ@mail.gmail.com>
- <20241130144733.51627-1-yanhuoguifan@gmail.com>
- <d8e00909-a946-4ce4-811d-ac968bc54c7b@roeck-us.net>
- <Z0u5QWzWSXGUTUO0@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <Z0u5QWzWSXGUTUO0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:12cc:b0:3a7:86ab:bebf with SMTP id
+ e9e14a558f8ab-3a7c55d432dmr165626055ab.19.1733018306816; Sat, 30 Nov 2024
+ 17:58:26 -0800 (PST)
+Date: Sat, 30 Nov 2024 17:58:26 -0800
+In-Reply-To: <673ac3cd.050a0220.87769.001f.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674bc2c2.050a0220.48a03.0002.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] WARNING in netfs_writepages
+From: syzbot <syzbot+06023121b0153752a3d3@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/30/24 17:17, Li XingYang wrote:
-[ ... ]
->> Please do not send new revisions of a patch as response of an older
->> series, and please always provide a change log.
->>
-> Sorry, I cannot fully understand this meaning.
-> Should I use the new version of the patch to reply to the old version of
-> the patch instead of responding to the questions raised
+syzbot has found a reproducer for the following issue on:
 
-If you send new revisions of a patch or patch series as reply to older
-versions of that patch series, it may get lost because it is not identified
-as updated patch but as reply to an older patch or patch series. Also see
-"Explicit In-Reply-To headers" in Documentation/process/submitting-patches.rst
+HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11c905e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
+dashboard link: https://syzkaller.appspot.com/bug?extid=06023121b0153752a3d3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c905e8580000
 
-[ ... ]
->> This is an unrelated change. It affects other boards of the same family.
->> It needs to be a separate patch, it needs to be explained, and it needs to
->> get some confirmation that it works on the other boards of the same series.
->>
->> Thanks,
->> Guenter
-> I found that in the LibreHardwareMonitor project,
-> the registers used by Amd600 to operate FanCPUOpt are described:
-> https://github.com/LibreHardwareMonitor/LibreHardwareMonitor/blob/master/LibreHardwareMonitorLib/Hardware/Motherboard/Lpc/EC/EmbeddedController.cs
-> BoardFamily.Amd600, new Dictionary<ECSensor, EmbeddedControllerSource>
-> {
-> { ECSensor.FanCPUOpt,  new EmbeddedControllerSource("CPU Optional Fan", SensorType.Fan, 0x00b0, 2) },
-> }
-> 
-> I think this is suitable for the AMD 600 motherboard, and it does work on my motherboard as well.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
 
-That makes sense, but it is still unrelated to this patch and, worse,
-not even mentioned in the patch description. See "Separate your changes"
-in Documentation/process/submitting-patches.rst.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+06023121b0153752a3d3@syzkaller.appspotmail.com
 
-Guenter
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 12 at fs/netfs/write_issue.c:583 netfs_writepages+0x8ff/0xb60 fs/netfs/write_issue.c:583
+Modules linked in:
+CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.12.0-next-20241128-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: writeback wb_workfn (flush-9p-3)
+RIP: 0010:netfs_writepages+0x8ff/0xb60 fs/netfs/write_issue.c:583
+Code: 10 4c 89 f2 48 8d 4c 24 70 e8 ad a6 85 ff 48 85 c0 0f 84 e6 00 00 00 48 89 c3 e8 cc dc 49 ff e9 4a fe ff ff e8 c2 dc 49 ff 90 <0f> 0b 90 e9 a9 fe ff ff e8 b4 dc 49 ff 4c 89 e7 be 08 00 00 00 e8
+RSP: 0018:ffffc900001170c0 EFLAGS: 00010293
+RAX: ffffffff8255983e RBX: 810f000000000000 RCX: ffff88801cac5a00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 810f000000000000
+RBP: ffffc90000117190 R08: ffffffff825596e2 R09: 1ffff110043d34b5
+R10: dffffc0000000000 R11: ffffed10043d34b6 R12: ffff888021e9a5d8
+R13: dffffc0000000000 R14: ffffea0001784fc0 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb76d7e4d58 CR3: 000000002fc7a000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_writepages+0x35f/0x880 mm/page-writeback.c:2702
+ __writeback_single_inode+0x14f/0x10d0 fs/fs-writeback.c:1680
+ writeback_sb_inodes+0x820/0x1360 fs/fs-writeback.c:1976
+ __writeback_inodes_wb+0x11b/0x260 fs/fs-writeback.c:2047
+ wb_writeback+0x427/0xb80 fs/fs-writeback.c:2158
+ wb_check_background_flush fs/fs-writeback.c:2228 [inline]
+ wb_do_writeback fs/fs-writeback.c:2316 [inline]
+ wb_workfn+0xc4b/0x1080 fs/fs-writeback.c:2343
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
