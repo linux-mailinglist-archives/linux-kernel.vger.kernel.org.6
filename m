@@ -1,253 +1,216 @@
-Return-Path: <linux-kernel+bounces-426754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7901C9DF75B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 00:00:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7149DF766
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 00:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 488991628EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 23:00:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDC14162A5A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 23:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939751D86DC;
-	Sun,  1 Dec 2024 23:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="XU4v3l9x"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3441D90B3;
+	Sun,  1 Dec 2024 23:03:32 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF5E10A3E;
-	Sun,  1 Dec 2024 23:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733094020; cv=pass; b=XfkaPKKELItt5E2pQ3y6Gn+v4zVFpYEYU6SOYxLesXOcKQD+qvT+qNn6rKSd89BpjkJxy39GJaUc5oSkA4q/iiC2kUnlPjHrNeCLN5MSbhrBOuZFnvz5rKUtF57ZHnB553bBPmo6+F/of37HrngPqLLTzVf9jhb4LLGE/MSADvI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733094020; c=relaxed/simple;
-	bh=5pGa4JNqs10EVsmcj0ibFw9kB9Wxnxmjz12xvBgQzD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVE0IHS7l2eIOba6TCtwIjliM+QxwFfQzaWLuhPu1WqS6Jky0vzp9onw9f4ixrI9+hrQFKuv5nhxm9oD+WsqH29pVTGreD+DOepb2/4+hZGedtS7z+uKoIuOSQEM/Xz4xxsERfNlQNOha2dmWIYNmmy4yo/26Cy6E5FtG3bE/5o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=XU4v3l9x; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733093992; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bE0WtpXaK8QuDqsEc8P7YE2eJ11W+5K5q9JbFrcQc/1A6ud8HQ2rITJLIXnJwhAy/+j4gLCSWgUIHYpKPYRncvWL29atBpkaTHRDO7KC2refctyA8rz0Io7kcHKDOczkb8JAUiQX1iS5Je5SDeM2PCwYGP9n0dGsBOV7D/IHY7Y=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733093992; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wFU3BBsk/0IMP6GXJyqeVrQbjT8QvAYTSLEUrZjXm+Q=; 
-	b=aY5PVHs04X4fQ07Lk2Sn8m1mhP3j4MsVayOiiwINFOEdgyukzfy5jwS7s0cRiZRjIHt5kwZhYar9jfgC4l8S5vwQHzJXS5GLEQuj9fzOfIIRelyPfAYiBR42GrSdMHSrFfMVrHON+FqcXEJBv9UTI5LZ2qZGnTJHeEN9hfSjgdM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733093992;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=wFU3BBsk/0IMP6GXJyqeVrQbjT8QvAYTSLEUrZjXm+Q=;
-	b=XU4v3l9xaClvU1VdLFMm14fvcMNigi9JybtvULqmvWazK3Ya87JRiMrPMFDAYRpd
-	oscHX7Dwgu8dnf/fSXQMVW7BhdqqgvqFXmcVG6Fn3KNYYuY2GlDUM9MwUeYIlmndur6
-	AGWmSf9bLjJe6bu3MBzYnCHtftE7AVn8EDzsinxM=
-Received: by mx.zohomail.com with SMTPS id 1733093989260596.7489467887624;
-	Sun, 1 Dec 2024 14:59:49 -0800 (PST)
-Received: by mercury (Postfix, from userid 1000)
-	id 773D410604CF; Sun, 01 Dec 2024 23:59:43 +0100 (CET)
-Date: Sun, 1 Dec 2024 23:59:43 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
-Cc: Damon Ding <damon.ding@rock-chips.com>, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, rfoss@kernel.org, vkoul@kernel.org, 
-	cristian.ciocaltea@collabora.com, l.stach@pengutronix.de, andy.yan@rock-chips.com, 
-	hjc@rock-chips.com, algea.cao@rock-chips.com, kever.yang@rock-chips.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support
- for eDP mode
-Message-ID: <h4giob7bcrh7qmtepti6huym2llw4ujfmeff76vrgpahb5zy6x@dz6zghsifww5>
-References: <20241127075157.856029-1-damon.ding@rock-chips.com>
- <2131853.KlZ2vcFHjT@diego>
- <6e1f35c0-5ea8-414f-b3ea-4e7222c605ef@rock-chips.com>
- <2886747.Y6S9NjorxK@diego>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973C310A3E
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 23:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733094212; cv=none; b=D0wo2g5MxbldjlDIDBEu1JocEio/kuaPEOF5g0aYyEcSwV7NASFCLXDoDc30yb3GKLTHWvBtC6mZ1AKnCRzyEv5epwQfaHo1aRW6xgM6JfhzUvtztfB2oxMDtcEXFCM1OCmna+w5dXn5/YpmQsjA99YdojGcjkbTWldFYC5id6c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733094212; c=relaxed/simple;
+	bh=kN3XJ+YVWB3V0ClvNdf6urdu9EM49Bphm3/PuaiIGlI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Hm0RDbaBA75nPfuYkYek3YmtDgRhP1gMLNOWXOotqQJhbbbKusmXCHPCnVRPnS8hHZRBR4C8mwtVxK9RCUwlFd+5+gK8E+N9FZ/rReGl+R///6WYG/8Lu19zte4CJ/pLvab1k6IpctXx3NxlB7BOktQ5t9t8/3y1+yWO8NhiNHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a77fad574cso31752045ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 15:03:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733094210; x=1733699010;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+3R5a1sE3BXqMiRu972WSrKfBX8E5WH/+BDgc03Tyhk=;
+        b=QX24lzU9S1e34+UKuJ4qB8oAcTOickZtAagIngksxtP1FjbHSTWNEr0N9OcmLPuxdf
+         B69vLlVzVprP1eyFYoqKC6TLX+zK9UFS9T5sWxHyW3VgyKXer1MfMVrPe1LdH+fpbyWH
+         OeXPNd7N/dr+ERYUF3wtHEH9pQxIvyI5WhqGaw2nmB9BA1QwJFD+nWSisDtKCXCqvNUQ
+         rSYXHe2kyuMucGwzeVOi/gSvPUIBuWHUovmHBuER1KdaErmPayz0YhYq/cQ4OG0N7vzF
+         xrY9PUFKpPYgBS4Yi3R5/qlf6ZsPb5PtR5xUZuVbHIEFYoEOVnLVTP5O2wdxHy/xlbou
+         bdEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVsMS8cdAirNjTV6tkdCMCnify0iWFyRvxUM8l6/Dt73fws9V4FeYXgjua4jhqyqXobcBmHybJjY/nE+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4+bDiquDbTIo4c8S0wRL1FNWXj8zddjnnnEG0BagpHHeQ9FgG
+	cckdubhgTl+9RCH32ZqQ1Q+9LqoWF4JUg66PEL+HwtiYaypMKkaNfdyVs7VYgmt/XJwY1mr4UTj
+	oHVIv9r4g1Vw2ktOIt+qk249MHiDM8tLBot7MpYM0MJbbNe8n8DNDL40=
+X-Google-Smtp-Source: AGHT+IEXOUSRAc2bVsgYzsYZDpc7piCvXxGewwr3QfRbFthdHfZ7joMwbFjSQ9OUs6LBErKOhyFJ09LurCnOg++2l6xwSs+mzJTf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4uvvjljskgf7wmee"
-Content-Disposition: inline
-In-Reply-To: <2886747.Y6S9NjorxK@diego>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/233.51.66
-X-ZohoMailClient: External
+X-Received: by 2002:a92:ca0e:0:b0:3a7:c378:3bab with SMTP id
+ e9e14a558f8ab-3a7c5445d3amr222449275ab.0.1733094209853; Sun, 01 Dec 2024
+ 15:03:29 -0800 (PST)
+Date: Sun, 01 Dec 2024 15:03:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674ceb41.050a0220.48a03.0018.GAE@google.com>
+Subject: [syzbot] [exfat?] general protection fault in exfat_init_ext_entry
+From: syzbot <syzbot+6f6c9397e0078ef60bce@syzkaller.appspotmail.com>
+To: Yuezhang.Mo@sony.com, daniel.palmer@sony.com, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
+	wataru.aoyama@sony.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1549f530580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f6c9397e0078ef60bce
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1443ef5f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1349f530580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/792711885a74/mount_0.gz
+
+The issue was bisected to:
+
+commit 8a3f5711ad74db9881b289a6e34d7f3b700df720
+Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Date:   Thu Sep 12 08:57:06 2024 +0000
+
+    exfat: reduce FAT chain traversal
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1145cf78580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1345cf78580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1545cf78580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6f6c9397e0078ef60bce@syzkaller.appspotmail.com
+Fixes: 8a3f5711ad74 ("exfat: reduce FAT chain traversal")
+
+syz-executor166: attempt to access beyond end of device
+loop3: rw=524288, sector=167, nr_sectors = 1 limit=64
+syz-executor166: attempt to access beyond end of device
+loop3: rw=0, sector=161, nr_sectors = 1 limit=64
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+CPU: 0 UID: 0 PID: 5890 Comm: syz-executor166 Not tainted 6.12.0-next-20241128-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:exfat_get_dentry_cached fs/exfat/dir.c:727 [inline]
+RIP: 0010:exfat_init_ext_entry+0x3fd/0x990 fs/exfat/dir.c:498
+Code: 48 98 49 8d 1c c6 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 01 26 89 ff 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 e4 25 89 ff 4c 8b 33 43 80 7c 3d
+RSP: 0018:ffffc900041ff318 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000028 RCX: 0000000000000009
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000020
+RBP: 0000000000000200 R08: ffffffff8281406f R09: 0000000000000002
+R10: ffff88805d092022 R11: ffffed100ba12407 R12: ffffc900041ff700
+R13: 1ffff9200083fee0 R14: ffffc900041ff710 R15: dffffc0000000000
+FS:  00007fb6d86536c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb6d8653d58 CR3: 000000002fc0c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ exfat_add_entry+0x529/0xaa0 fs/exfat/namei.c:517
+ exfat_create+0x1c7/0x570 fs/exfat/namei.c:565
+ lookup_open fs/namei.c:3649 [inline]
+ open_last_lookups fs/namei.c:3748 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3984
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_creat fs/open.c:1495 [inline]
+ __se_sys_creat fs/open.c:1489 [inline]
+ __x64_sys_creat+0x123/0x170 fs/open.c:1489
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb6d86c4099
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1b 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb6d8653218 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007fb6d87534b8 RCX: 00007fb6d86c4099
+RDX: 00007fb6d869bc26 RSI: 0000000000000000 RDI: 0000000020000e00
+RBP: 00007fb6d87534b0 R08: 00007ffed34fd087 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb6d8718d84
+R13: 00007fb6d8717880 R14: 0032656c69662f2e R15: 6f6f6c2f7665642f
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:exfat_get_dentry_cached fs/exfat/dir.c:727 [inline]
+RIP: 0010:exfat_init_ext_entry+0x3fd/0x990 fs/exfat/dir.c:498
+Code: 48 98 49 8d 1c c6 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 01 26 89 ff 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 e4 25 89 ff 4c 8b 33 43 80 7c 3d
+RSP: 0018:ffffc900041ff318 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000028 RCX: 0000000000000009
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000020
+RBP: 0000000000000200 R08: ffffffff8281406f R09: 0000000000000002
+R10: ffff88805d092022 R11: ffffed100ba12407 R12: ffffc900041ff700
+R13: 1ffff9200083fee0 R14: ffffc900041ff710 R15: dffffc0000000000
+FS:  00007fb6d86536c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055bc85806ca8 CR3: 000000002fc0c000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	48 98                	cltq
+   2:	49 8d 1c c6          	lea    (%r14,%rax,8),%rbx
+   6:	48 89 d8             	mov    %rbx,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 01 26 89 ff       	call   0xff89261d
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	48 83 c3 28          	add    $0x28,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 e4 25 89 ff       	call   0xff89261d
+  39:	4c 8b 33             	mov    (%rbx),%r14
+  3c:	43                   	rex.XB
+  3d:	80                   	.byte 0x80
+  3e:	7c 3d                	jl     0x7d
 
 
---4uvvjljskgf7wmee
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support
- for eDP mode
-MIME-Version: 1.0
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Hi,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-On Sat, Nov 30, 2024 at 09:25:12PM +0100, Heiko St=FCbner wrote:
-> Am Freitag, 29. November 2024, 03:43:57 CET schrieb Damon Ding:
-> > On 2024/11/27 19:04, Heiko St=FCbner wrote:
-> > > Am Mittwoch, 27. November 2024, 12:00:10 CET schrieb Damon Ding:
-> > >> On 2024/11/27 17:29, Heiko St=FCbner wrote:
-> > >>> Am Mittwoch, 27. November 2024, 08:51:51 CET schrieb Damon Ding:
-> > >>>> +static int rk_hdptx_phy_set_mode(struct phy *phy, enum phy_mode m=
-ode,
-> > >>>> +				 int submode)
-> > >>>> +{
-> > >>>> +	return 0;
-> > >>>> +}
-> > >>>analogix_dp_phy_power_on
-> > >>> I think it might make sense to go the same way as the DCPHY and also
-> > >>> naneng combophy, to use #phy-cells =3D 1 to select the phy-mode via=
- DT .
-> > >>>
-> > >>> See [0] for Sebastians initial suggestion regarding the DC-PHY.
-> > >>> The naneng combophy already uses that scheme of mode-selection too.
-> > >>>
-> > >>> There is of course the issue of backwards-compatibility, but that c=
-an be
-> > >>> worked around in the binding with something like:
-> > >>>
-> > >>>    '#phy-cells':
-> > >>>       enum: [0, 1]
-> > >>>       description: |
-> > >>>         If #phy-cells is 0, PHY mode is set to PHY_TYPE_HDMI
-> > >>>         If #phy-cells is 1 mode is set in the PHY cells. Supported =
-modes are:
-> > >>>           - PHY_TYPE_HDMI
-> > >>>           - PHY_TYPE_DP
-> > >>>         See include/dt-bindings/phy/phy.h for constants.
-> > >>>
-> > >>> PHY_TYPE_HDMI needs to be added to include/dt-bindings/phy/phy.h
-> > >>> but PHY_TYPE_DP is already there.
-> > >>>
-> > >>> That way we would standardize on one form of accessing phy-types
-> > >>> on rk3588 :-) .
-> > >>>
-> > >>> Also see the Mediatek CSI rx phy doing this too already [1]
-> > >>>
-> > >>>
-> > >>> Heiko
-> > >>>
-> > >>> [0] https://lore.kernel.org/linux-rockchip/udad4qf3o7kt45nuz6gxsvsm=
-prh4rnyfxfogopmih6ucznizih@7oj2jrnlfonz/
-> > >>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
-git/tree/Documentation/devicetree/bindings/phy/mediatek,mt8365-csi-rx.yaml
-> > >>>
-> > >>
-> > >> It is really a nice way to separate HDMI and DP modes.
-> >=20
-> > I apologize for reopening the discussion about the phy-types setting.
->=20
-> there is definitly no need to apologize. We're trying to find the best
-> solution afterall :-) .
->=20
-> > With the .set_mode() of struct phy_ops, the HDMI and eDP dynamic=20
-> > switching can be achieved, which just depends on the right setting of
-> > enum phy_mode in include/linux/phy/phy.h. So the previous way of=20
-> > configuring phy mode may be also good.
->=20
-> I think the deciding factor is, is there a use-case for needing to switch
-> modes at runtime.
->=20
-> I do think the mode for the dc-phy and also the hdptx-phy is pretty much
-> decided by the board design.
->=20
-> I.e. when you end up in a DP-connector (or eDP-panel) on your board you
-> need DP mode, and when you end up in a hdmi-connector you need the
-> HDMI phy mode.
->=20
-> So I think the phy-mode for the hdptx-phy is largely dictated by the stat=
-ic
-> board definition (like devicetree), hence going with the dt-argument for
-> the mode.
->=20
-> Like similar to the Naneng combophy, selecting its mode via argument
-> because deciding if it ends up in a sata port is a board-design thing.
->
-> Is there a use-case where you need to switch at runtime between
-> HDMI and eDP? Like starting the phy in eDP mode but then needing
-> to switch to HDMI mode, while the device is running?
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-I believe the eDP controller can only use the PHY in eDP mode and
-the HDMI controller can only use it in HDMI mode. So in order to
-support runtime switching, the following options are possible:
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-1. Enable both controllers, the PHY decides which one is really
-   used, the other one is basically a non-functional dummy device
-   until the PHY is reconfigured. This requires the set_mode()
-   callback, since the HDMI and eDP drivers both expect their
-   PHY to be enabled.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-2. Properly enable / disable the used controller, so that only one
-   controller is active at the same time. In this case the switching
-   is handled one layer above and the PHY has nothing to do with it.
-   The phy_enable call from each controller would just set it up in
-   the right mode.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-I guess option 1 is the hacked solution, which is easier to
-implement as DRM's hotplug abilities are quite limited at the moment
-as far as I know. I think the second solution looks much cleaner and
-should be prefered for upstream. That solution does not require
-calling set_mode() for runtime switching making this whole argument
-void :)
-
-FWIW I think the DT argument based mode setting and the runtime set_mode
-are not necessarily mutual exclusive. In theory one could support both
-and adding set_mode support later does not change any ABI as far as
-I can see. Basically handle it like pin mux/configuration settings,
-which are usually automatically handled by the device core based on
-DT information, except for some drivers which have special needs.
-
-> > And other phys may want to support dynamic switching too, like the=20
-> > Rockchip USBDP combo phy.
->=20
-> I guess USBDP is special in that in also does both modes dynamical
-> depending on its use (like type-c with option DP altmode)
-
-The USBDP PHY is indeed quite different from the PHYs in your list
-above, but for a different reason: All the combined PHYs you listed
-above only support one mode at the same time. E.g. you need to
-decide between PCIe, SATA and USB3 mode for the Naneng combophy.
-
-For the USBDP PHY the modes are not mutually exclusive. The USB
-controller can request the USBDP PHY in USB mode at the same time
-as the DP controller requests it in DP mode. Some additional
-registers configure how the lanes are being muxed. A typcial setup
-would be 2 lanes for USB3 and 2 lanes for DP.
-
-Greetings,
-
--- Sebastian
-
---4uvvjljskgf7wmee
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdM6lUACgkQ2O7X88g7
-+poROg/9ERk55HG40SbfPg+6kCZ6sywLSwJTZweCCXGjvq9Q9R7JK/pVHrkgVhtJ
-H28UpwMTj2wN+idMK64a1EGf4ls0jw8dpDXS9y6M8f7/5Lu7DpO+c6qu+HCEOavL
-rVfk4ISVpT0KmbVrDDew1KRXekee9ch+uSO+VQAj/febMToxvkdqFS9PUibzmq0h
-VoUsyfct/7Ek9NKhmDPkvLVlvMHYNOrk7RsmMqlRN53zcyzrJSnbHsHlLjKCobwl
-s7zl6vhanR1sYBeoQ+4UdENOIQrDFuzJzdVp+zP6LvIpl4KbxbOD89bSI2tQLPPz
-yQCC5vBj+lwwhca4SWBp7cwoAJnY2n8A5T8qbrqMYZA7bsjafmZTrYbg1Tqe1X/H
-kAnmcZSue5fhQWV10xh9TuMcSc7LZyBZaRK+7rCooTOy5za7J/6VLHJ64uYE41sv
-Bx1XvfG5uDUh4qz1s6cAoEHdu7FYs1q9tdFeBo+uAh6ei5eScxxgXcBISq0wlhsJ
-D051T1P0DWRh5PgMWluGS6WuhBGlMxx10bqNQC1ad6sdYHXVsEFsXRwSioCSbhYf
-YNdoLkCk7qKUdQ11PMzhDqAZtAqV4ddKz+g7ZdDQDBBx29WgKTR73UhWNA9LvIe7
-pdClppVvA3Xgarmd0hbGt7P8LI/T6u6TemJ6Xo8zft6aYlaZ4zw=
-=y/X7
------END PGP SIGNATURE-----
-
---4uvvjljskgf7wmee--
+If you want to undo deduplication, reply with:
+#syz undup
 
