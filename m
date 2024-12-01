@@ -1,158 +1,87 @@
-Return-Path: <linux-kernel+bounces-426505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8949DF42B
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 01:04:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B23A49DF42D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 01:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E4C7B212AF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 00:04:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30C8DB21118
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 00:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F674EC4;
-	Sun,  1 Dec 2024 00:04:47 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C689A15A8;
-	Sun,  1 Dec 2024 00:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983B823A6;
+	Sun,  1 Dec 2024 00:11:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDB6382
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 00:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733011487; cv=none; b=gV7m6TqHhrTx1+fK7zfNaneIHMMxpCehyPViamnKlhHjKnF5LiJoJ+8BbjFVH+C7CpKRaqFxCTA6lXrRo4XDXMr7nDQsEWJLEozjATr3unbceGxmvenQP6WmW1DE4mL0/H2bS9UPzv1In0W6WDDqEdcxnHT4v5Ecqifha/aXv28=
+	t=1733011865; cv=none; b=qGktmtpFlXHLc5PGk0Zx1D8B2/tnxobX+q845rhLW3IyJHuyOuuTapL4UCOqxnw8tDiQdIJkGBYTEv/zEjJ+YuFTo+KxI57P58H9ftdfIgKq3kPhte5Su/I/AJh8KV4rlvPHpivwnjBB+1VnxrlwTxfiiY6L5oivpaW4ivfkXWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733011487; c=relaxed/simple;
-	bh=MLnJgorJwh+hbxtr/zQo6L4PQuQDTv95fqiNd+XnGIM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PZ8I+cipW4uVvpSpR8mo2gcVJSS9PqeIukBZuxZSOqjMJnaue5V925J887DXS0nVlMaIm5n5XpFbN84XCqOfSrUjRfRgzJ7Md2189+G1ALmvQWWYJx1kPur10FhUYtkRB1sf70JTc/6VlY0lPLIzdnToEpH7lt/50PmHKlX4+sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id B841992009C; Sun,  1 Dec 2024 01:04:36 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id B1B9692009B;
-	Sun,  1 Dec 2024 00:04:36 +0000 (GMT)
-Date: Sun, 1 Dec 2024 00:04:36 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiri Slaby <jirislaby@kernel.org>
-cc: John Ogness <john.ogness@linutronix.de>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Petr Mladek <pmladek@suse.com>, 
-    Sergey Senozhatsky <senozhatsky@chromium.org>, 
-    Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, 
-    Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Rengarajan S <rengarajan.s@microchip.com>, 
-    Jeff Johnson <quic_jjohnson@quicinc.com>, 
-    Serge Semin <fancer.lancer@gmail.com>, 
-    Lino Sanfilippo <l.sanfilippo@kunbus.com>, 
-    Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for
- FIFO mode
-In-Reply-To: <2fab2ef8-d0d6-4b94-90b6-7c16641a2f68@kernel.org>
-Message-ID: <alpine.DEB.2.21.2411080343040.9262@angie.orcam.me.uk>
-References: <20241025105728.602310-1-john.ogness@linutronix.de> <20241025105728.602310-2-john.ogness@linutronix.de> <837a7ecd-be29-4865-9543-cb6f7e7e46e7@kernel.org> <alpine.DEB.2.21.2410310349450.40463@angie.orcam.me.uk>
- <2fab2ef8-d0d6-4b94-90b6-7c16641a2f68@kernel.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1733011865; c=relaxed/simple;
+	bh=UnACCVA7tlVE0+snJs6hfFSd9q31mo6Bh2V0d/9WTZY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TkGgFVaS+zcky364twpQ9seqMzxzbKgardTbTZSjRoKAqkCqADp6iO3kF3N+0KXHKNxHgYFhmkzs4rSkGvVZ2xracLCC6Zf0xL3OmgC5T4dWoeCJBvys3CrogWMpNJJ1jZxS+xnLXwCFb0q3hRpFq4mNX96Z84N91qN66+Liy2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-841963a1fb4so277498039f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 16:11:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733011863; x=1733616663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LIUUZTeJmZPeG8SX0991wAnoGzqpU1DgWIAyiJ4/+4Q=;
+        b=xE9secSB52qm6eHCEKFt6PrPq+3kOnjUrOB+7A6PmVidPdErsQKuSdHSAdcpQRUkMh
+         VC1XpOIO0mZk0+WPwcI/MKFDxN2GDDuzyXCd3OHm746aBtFtEp4Oi7HPVEemUXIKPRAc
+         MR+37rTmKCPI3wax8bjod+vorLxAJQYrZdmNaYoMwqvgfK/As8xPAevn63+FwpwV5VJu
+         sCUT+EnUOi2kTSsc3BNqj/9Ut26GvGf6O+37oD2B6lh4L8ISpnicuaMVWEvkg8fv09ue
+         4gPSlOYQcbo4DoA1yeKSXc7VnAfqfS4Es+WnUJwWqJHmAiCr+fCLaMbcG+eac9g6xsVV
+         +DiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAK6ppsC0HcEwbIvxYazt5OomW7P8soLf94QO2RA8ZPkDnsLFOtpMj/cFyj9Kv21Y/enI2m6AmD51HYR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIdmBTTfcc/s47moqCHdAsW0dA1p+l4RBgpZEijs4UpWIdiXUt
+	pmWFeveVsIHfsayDmM8ftd1mkeKFRDRPzfpsbs92oAQftBnQEPgcjg0BBm3orMmA52VgDswVaP6
+	+O0zHCRhGu1PnhNs3nf31I8UzjNYJGsS8Pgy3Vz9w74F1dT3NllyTsT4=
+X-Google-Smtp-Source: AGHT+IG13qg4YGnamlxKBNo4M0YAZ13YlT7S2DJYFqwTqU+6UUSxHU9xeLnGlTqgpnCs3Zo680wJlcaOZX3SmT9ezGeM/8L/4Vcz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Received: by 2002:a05:6e02:190c:b0:3a7:6a98:3fdf with SMTP id
+ e9e14a558f8ab-3a7c5580ea4mr170467365ab.14.1733011863168; Sat, 30 Nov 2024
+ 16:11:03 -0800 (PST)
+Date: Sat, 30 Nov 2024 16:11:03 -0800
+In-Reply-To: <20241130231432.2296-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674ba997.050a0220.48a03.0000.GAE@google.com>
+Subject: Re: [syzbot] [block?] possible deadlock in loop_reconfigure_limits
+From: syzbot <syzbot+867b0179d31db9955876@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 4 Nov 2024, Jiri Slaby wrote:
+Hello,
 
-> > > THRE only signals there is a space for one character.
-> > 
-> >   Nope[1]:
-> > 
-> > "In the FIFO mode, THRE is set when the transmit FIFO is empty; it is
-> > cleared when at least one byte is written to the transmit FIFO."
-> 
-> Hmm, I was confused by NXP's 16c650b [1] datasheet then (or I cannot parse):
-> ===
-> The THR empty flag in the LSR register will be set to a logic 1 when the
-> transmitter is empty or when data is transferred to the TSR. Note that a write
-> operation can be performed when the THR empty flag is set
-> (logic 0 = FIFO full; logic 1 = at least one FIFO location available).
-> ===
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
- This description seems broken indeed and I find your interpretation of it
-correct.  I do hope this is just an editorial mistake with the NXP device.
+Reported-by: syzbot+867b0179d31db9955876@syzkaller.appspotmail.com
+Tested-by: syzbot+867b0179d31db9955876@syzkaller.appspotmail.com
 
-> But indeed in the LSR[5] bit description, they state:
-> ===
-> In the FIFO mode, this bit is set when the transmit FIFO is
-> empty; it is cleared when at least 1 byte is written to the transmit FIFO.
-> ===
+Tested on:
 
- FWIW I chased documentation for the original 16550A device and it uses 
-analogous wording[1]:
+commit:         98c00f3a blktrace: move copy_[to|from]_user() out of -..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-6.14/block
+console output: https://syzkaller.appspot.com/x/log.txt?x=121205e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=131aa7b77993ec3e
+dashboard link: https://syzkaller.appspot.com/bug?extid=867b0179d31db9955876
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-"Bit 5: This bit is the Transmitter Holding Register Empty (THRE)
-indicator. Bit 5 indicates that the UART is ready to
-accept a new character for transmission. In addition, this bit
-causes the UART to issue an interrupt to the CPU when the
-Transmit Holding Register Empty Interrupt enable is set
-high. The THRE bit is set to a logic 1 when a character is
-transferred from the Transmitter Holding Register into the
-Transmitter Shift Register. The bit is reset to logic 0 concur-
-rently with the loading of the Transmitter Holding Register
-by the CPU. In the FIFO mode this bit is set when the XMIT
-FIFO is empty; it is cleared when at least 1 byte is written to
-the XMIT FIFO."
-
-It further documents polled operation for THRE[2]:
-
-"LSR5 will indicate when the XMIT FIFO is empty."
-
-and provides further details as to the transmit FIFO[3]:
-
-"The NS16550A transmitter optimizes the CPU/UART data
-transaction via the following features:
-
-"1. The depth of the Transmitter (Tx) FIFO ensures that as
-    many as 16 characters can be transferred when the
-    CPU services the Tx interrupt. Once again, this effec-
-    tively buffers the CPU transfer rate from the serial data
-    rate.
-
-"2. The Transmitter (Tx) FIFO is similar in structure to
-    FIFOs the user may have previously set up in RAM. The
-    Tx depth allows the CPU to load 16 characters each
-    time it switches context to the service routine. This re-
-    duces the impact of the CPU time lost in context switch-
-    ing.
-
-"3. Since a time lag in servicing an asynchronous transmit-
-    ter usually has no penalty, CPU latency time is of no
-    concern to transmitter operation."
-
-This design choice may result in "choppy" transmission due to the transmit 
-handler invocation latency, but as noted above it is intentional.  DMA can 
-be used with the NS16550A if it is required to avoid this issue, and later 
-compatible UART designs such as the 650 give more flexibility as to the Tx 
-FIFO fill level trigger threshold.
-
-References:
-
-[1] National Semiconductor Corporation, "Microcommunication Elements 
-    Databook, 1987 Edition", "NS16550A Universal Asynchronous 
-    Receiver/Transmitter with FIFOs", Section 8.4 "LINE STATUS REGISTER", 
-    p. 2-73
-
-[2] same, Section 8.12 "FIFO POLLED MODE OPERATION", p. 2-75
-
-[3] same, Martin S. Michael, Daniel G. Durich, Application Note 491, "The 
-    NS 16550A: UART Design and Application Considerations", Section 1.0 
-    "Design Considerations and Operation of the New UART Features", p. 5-4
-
-Available from: 
-<http://bitsavers.org/components/national/_dataBooks/1987_National_Microcommunications_Elements_Data_Book.pdf>.
-
- HTH,
-
-  Maciej
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
