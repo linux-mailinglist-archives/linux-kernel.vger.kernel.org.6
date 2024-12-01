@@ -1,96 +1,119 @@
-Return-Path: <linux-kernel+bounces-426524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B3A89DF466
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:32:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4269DF468
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:33:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8BC281399
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:32:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D933162DF4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF96E552;
-	Sun,  1 Dec 2024 02:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C52EE552;
+	Sun,  1 Dec 2024 02:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ayGo0g6V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ijdnRZub"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CEC79FD;
-	Sun,  1 Dec 2024 02:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15E5A94D
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 02:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733020344; cv=none; b=Ztt9vPTxevzNenhOw8Z/tQbjALcPw3AMkR+h0eKMIlqpEejiS48i3D6NUvm4kn0vwN5Qv6S8c59YbeGy4NwPn9UqWKDA1awUfGZ7+8xL1ujh2baAfV+1tSjHVpC0sQlYFbpFt9aBQ9a5mhvvIBcJro/3ztjc9qDS/2gPF35wigQ=
+	t=1733020413; cv=none; b=Hy1Vw8yEKRZZjj9LssBaU9+E05qwl305AJZvAGSIXBdq3DqVqvCYU0xZpaj6Bc2qKO9B1xY5giXCWVvWIzzPminnyRbfuqXb80kDaP06/VKyXB4ePWDnXuMEDFH77iU1ET7rEVyBOl5kCVBX+yyQbEM3r2MHkGQvFZ+/oiesLvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733020344; c=relaxed/simple;
-	bh=RZZtKohC1XvJ5nz0fjXOWMitmwZYdUfMh0yd0+o5EVk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CRIOi9IhNPRXbtlD5vdYwQ3TssLUs8DLWbqoNAXZP/dk70qL3ogZSYENabDaZNwGGvOSTPZlqeq4JA4l1qm9afBUb5lXc6cpbxOyq1qkcIHBVcDvT1wn6MIMpdaLk1+f44C7qSuSXfX5hQJGaPxAoWuWRdgPJL2f9VQGPGiyN1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ayGo0g6V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F4DCC4CECC;
-	Sun,  1 Dec 2024 02:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1733020343;
-	bh=RZZtKohC1XvJ5nz0fjXOWMitmwZYdUfMh0yd0+o5EVk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ayGo0g6VejOYBmjKASbQJGUbDjUCNGj3KCcIvRowXikR6X29/sKR46PnfvIz3VmPg
-	 Lpy3FKVKswQqpI6qYHcljFZ8kI1lGUePAxWTWVKEiharG9nyV/2BV3QY6HOKrnl2xT
-	 SekAyoOewZDlNV5r/jpYVQq1nm33Yx5S7mtsv3PI=
-Date: Sat, 30 Nov 2024 18:32:22 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Laight <David.Laight@ACULAB.COM>
-Cc: 'Jonathan Cameron' <jic23@kernel.org>, 'Jakob Hauser'
- <jahau@rocketmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij
- <linus.walleij@linaro.org>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2] iio: magnetometer: yas530: Use signed integer type
- for clamp limits
-Message-Id: <20241130183222.ecf271abffcff61b93bbae22@linux-foundation.org>
-In-Reply-To: <6f2c9946a9fe4b40ac7dd5a66003c8c4@AcuMS.aculab.com>
-References: <11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
-	<11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
-	<9f5793f03c2440d2aa18630469df06df@AcuMS.aculab.com>
-	<20241130143506.53973e40@jic23-huawei>
-	<6f2c9946a9fe4b40ac7dd5a66003c8c4@AcuMS.aculab.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733020413; c=relaxed/simple;
+	bh=OimiFsLOOKPfDXi5SZrnYrVngS//hSi2taR9num6zJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QXM6XWS05YkzE9wmuLMnBLvMVy0sKnBQxqNzF6Z8BbUVmiJ+q5kJ0dgLawaZaSgiYXI4gJJeJiup8MrSbbMLXoUQvYFBYIT2KwCdOr56oEGUVlJGd7HqaMbuuo4qHw/VccUSz8OpqkbEIUY20puC8lHV86Seqy+Tvd20ppNmuOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ijdnRZub; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733020412; x=1764556412;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=OimiFsLOOKPfDXi5SZrnYrVngS//hSi2taR9num6zJs=;
+  b=ijdnRZub7U1cvRAU8z3UhzqSEGxHTZLoUakUsPlkyPbaHVCCTEdP9Kld
+   XYVQG+vE1+zdcoV+u2Xnv01C0YqwvB+vXjBPNICFjGjcJW3wIGYF+WuQU
+   bLb2zBI7gmSbzGYBHq6PRN/Hku6x9byZM8rj18+biKKOO/eWPV1jBBHG2
+   MtVJoM4hU6Fm4YDiBRG5rM564Yw8top98bM57KtbxPTWmSittEnHVaZd9
+   UKOEzsY10Qd/b+2JFOVY5MR/dpUdFu4lWh4P77Bt5VA0rDqgRuI4xDqPZ
+   zbdsuZwpg9I86NUBFiXNiJDSmoGyMgsV29mk7Di9+YFOk9wlFsL/RZds1
+   Q==;
+X-CSE-ConnectionGUID: 4P9RkDGKTKy79HFum3gbQQ==
+X-CSE-MsgGUID: M9krsjLjQECwfNpKC8lTXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="44573542"
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="44573542"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 18:33:32 -0800
+X-CSE-ConnectionGUID: 5Lbfg5RzRZC3VG+PYSo3+Q==
+X-CSE-MsgGUID: +7csbx3NT7qZ1ST6r5amQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="92657157"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 30 Nov 2024 18:33:30 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHZlo-00019x-19;
+	Sun, 01 Dec 2024 02:33:14 +0000
+Date: Sun, 1 Dec 2024 10:32:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nick Terrell <terrelln@fb.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: arch/x86/boot/compressed/../../../../lib/zstd/decompress/zstd_decompress_internal.h:206
+ ZSTD_DCtx_get_bmi2() warn: inconsistent indenting
+Message-ID: <202412011024.uk7IjTsa-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 30 Nov 2024 20:59:22 +0000 David Laight <David.Laight@ACULAB.COM> wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   cfd47302ac64b595beb0a67a337b81942146448a
+commit: 2aa14b1ab2c41a4fe41efae80d58bb77da91f19f zstd: import usptream v1.5.2
+date:   2 years, 1 month ago
+config: i386-randconfig-141-20241119 (https://download.01.org/0day-ci/archive/20241201/202412011024.uk7IjTsa-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
-> From: Jonathan Cameron
-> > Sent: 30 November 2024 14:35
-> > 
-> > On Sat, 30 Nov 2024 11:40:45 +0000
-> > David Laight <David.Laight@ACULAB.COM> wrote:
-> > 
-> > > From: Jakob Hauser
-> > >
-> > > Copying Andrew M - he might want to take this through his mm tree.
-> > 
-> > I'm confused. Why?
-> > 
-> > Looks like a local bug in an IIO driver.  What am I missing?
-> 
-> The build test bot picked it up because a change to minmax.h that Andrew
-> committed to the mm tree showed up the bug.
-> To avoid W=1 builds failing Andrew had applied a temporary 'fix'.
-> So he needs to be in the loop at least.
-> I don't know the actual procedure :-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412011024.uk7IjTsa-lkp@intel.com/
 
-Jakob's minmax changes
-(https://lkml.kernel.org/r/c50365d214e04f9ba256d417c8bebbc0@AcuMS.aculab.com)
-are queued in mm.git for 6.14-rc1.  They require a yas530 fix to build.
+New smatch warnings:
+arch/x86/boot/compressed/../../../../lib/zstd/decompress/zstd_decompress_internal.h:206 ZSTD_DCtx_get_bmi2() warn: inconsistent indenting
+arch/x86/boot/compressed/../../../../lib/zstd/decompress/zstd_decompress_block.c:894 ZSTD_execSequenceEnd() warn: inconsistent indenting
+arch/x86/boot/compressed/../../../../lib/zstd/decompress/zstd_decompress_block.c:942 ZSTD_execSequenceEndSplitLitBuffer() warn: inconsistent indenting
+arch/x86/boot/compressed/../../../../lib/zstd/decompress/zstd_decompress_block.c:1009 ZSTD_execSequence() warn: inconsistent indenting
 
-So as I need to carry this yas530 fix in mm.git I'd like to merge it as
-a hotfix for 6.13-rcX, sometime in the next week or two.  So please
-send acks!
+Old smatch warnings:
+arch/x86/boot/compressed/../../../../lib/zstd/decompress/huf_decompress.c:598 HUF_decompress4X1_usingDTable_internal_body() warn: maybe use && instead of &
+arch/x86/boot/compressed/../../../../lib/zstd/decompress/huf_decompress.c:598 HUF_decompress4X1_usingDTable_internal_body() warn: maybe use && instead of &
+arch/x86/boot/compressed/../../../../lib/zstd/decompress/huf_decompress.c:1292 HUF_decompress4X2_usingDTable_internal_body() warn: maybe use && instead of &
+arch/x86/boot/compressed/../../../../lib/zstd/decompress/huf_decompress.c:1292 HUF_decompress4X2_usingDTable_internal_body() warn: maybe use && instead of &
+
+vim +206 arch/x86/boot/compressed/../../../../lib/zstd/decompress/zstd_decompress_internal.h
+
+   200	
+   201	MEM_STATIC int ZSTD_DCtx_get_bmi2(const struct ZSTD_DCtx_s *dctx) {
+   202	#if DYNAMIC_BMI2 != 0
+   203		return dctx->bmi2;
+   204	#else
+   205	    (void)dctx;
+ > 206		return 0;
+   207	#endif
+   208	}
+   209	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
