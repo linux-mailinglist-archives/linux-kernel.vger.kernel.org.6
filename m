@@ -1,81 +1,104 @@
-Return-Path: <linux-kernel+bounces-426613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E9B9DF5A8
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:02:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A1AF9DF5A9
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A1D9280F25
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:02:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCE48B21196
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE4B1C8315;
-	Sun,  1 Dec 2024 13:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B4A1C8FAC;
+	Sun,  1 Dec 2024 13:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqLpTHPm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iFEJT0uH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dJmRMUwE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1A628687;
-	Sun,  1 Dec 2024 13:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE1D1C82F0
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 13:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733058134; cv=none; b=i1Owc4j//iGCiTPb+GO4+V881idqXSB1ruoli4CCNi08BMKOm1h7iZe8FGft8kHwxSE85hmDPdH8TOS7Q//QDVK0kYglVTp9koK+kFFXeaiF/wgLdKfMwU982rdrShEYTg6Of9RAX/mV+T0mjYw6AJHlF2VImoLI5HdAFixSoaI=
+	t=1733058195; cv=none; b=pHsVUVWSfk1nXinKK0IyGxk/RDbdODdZ++cbEzDyqdfcMNotbI+YsojAvjVgSeEr/hPVxMrriNRssxG+ydTWaVX6u7GeGKboL2nOanblBWKBL3tf3vn2UJZ0jPn5PMoxqWi/GFRw4XmuC2Todi0jUa++K700oi4aUiLVfmP9R64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733058134; c=relaxed/simple;
-	bh=0Ma+nkdDmYaAt8VTjIxe5NKx3mhEpEl4RlavIfegqv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FTIqYpwjQFCU0gRxuUvpAqBv3NsbnjnW15dxoEgqLnGcaIR4iDY1MRgDJCSIZK8c1OgGwyWKVRi4jxDNNJ7qzIeeNAcL5fJTph8WLo2aqLfI8H/fn5U/ZwOyDvDYosrb1dEw5cXbH+VMXZBejuWf9xbeQbEA9c7s/Vay44mFzY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqLpTHPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B48D0C4CECF;
-	Sun,  1 Dec 2024 13:02:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733058134;
-	bh=0Ma+nkdDmYaAt8VTjIxe5NKx3mhEpEl4RlavIfegqv8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oqLpTHPme8emU7BAhbjJ3E/kQi+TWtix2OVYE4K5s6lO5uQ8z/7zMtcGBycTF84HW
-	 cIR6NTm9yZiYKH9ioDte7m7Ax7CeyvVlmM5RbN7v5x0asBF6mga6jCkq4vRON4I5Sr
-	 ee/oouDZnLdOwmpmBy0BGZzzKe7ckLJHln8UgwPmmghcqwWlYyfS8WjCkJupdQM/30
-	 8xjsPED8KfEToHCUOSdWvGDpIw9XyMjnt7PQOmn2qBWb8zKQkziTqTrSNZF5RxPJvD
-	 q9guxIS/qskjZz/uKGs5dM0ee9cxLb5T+XMEfEaYISNwcvi6kUgEUp7GFZ7rhU+yoC
-	 mOW/JEGLRX+7Q==
-Date: Sun, 1 Dec 2024 13:02:07 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iio: light: veml6030: add support for triggered
- buffer
-Message-ID: <20241201130207.57a30306@jic23-huawei>
-In-Reply-To: <20241124-veml6030_triggered_buffer-v3-1-565bb6b4b5c8@gmail.com>
-References: <20241124-veml6030_triggered_buffer-v3-1-565bb6b4b5c8@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733058195; c=relaxed/simple;
+	bh=IabiXLrBzOonyNjr8rnK+KVv2wHEXOy1LeY8IS9B2g8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KJSY9Hm7HYnfhpOSlLC4XSQkhItn96I1ZFQ1++QKHmW5UuBHpg2/INhwUdD4yxEUhG+5rt4gq8W5VZEiGvVCma1dTNt98vbFIRo2MUOwplwG+Zz8QKVv8fyOBRejG63SsF4RbRQsTXft0Ci55S7eQ0JghwS8GGojTvXxi1A7OGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iFEJT0uH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dJmRMUwE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733058192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cDx44ggQzhTmObuUgAWgM9i45B0XCKnpQa5KvP5zEcQ=;
+	b=iFEJT0uHqnNcnT4yktUa1Csgvlj8SaONP9qcDsgfpSzU5TS1PTWZ0ho0sQKd2Eu0JmXz2g
+	55wQGek05D0dIh64cccfE/hXA2h0JRhA2HSJkyDRwoLzQq+1gFu00UsvEOoBa6wMFY1imh
+	zSFV9qcFnrftiwtWsbSPOV02LIFCCk9ipVZzoPYG5W9uGl7gRoP1RcyeSZzbvOUCH8DrEk
+	8+PgDc67RtjVbHXRrkwCVn0YLhENTM8vqwYnC7E4WGx2AcIoTvfORmSPzyXgGS1ZoWBjli
+	rGZOwjLoAfn4T14XmZ6+wQsoka4vLPnN+YKDJTGhx3hNNsYrDdaM7oKpa4HrnA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733058192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cDx44ggQzhTmObuUgAWgM9i45B0XCKnpQa5KvP5zEcQ=;
+	b=dJmRMUwEPfPtOjkqniROoBQsFgfPyOKngvtpBzuR5LIo4h1o1as8uyBVc6FeERROFnltr7
+	7yqG7oZnlMC2zWAA==
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH tip] x86: vdso: Compute timens page offset statically
+In-Reply-To: <ZzqkEzxJ69dBSps_@zx2c4.com>
+References: <20240906190655.2777023-1-Jason@zx2c4.com>
+ <Zt8XxiQrma1R2a70@zx2c4.com> <8734m7btjo.ffs@tglx>
+ <ZuA5gaOhJNwDSb4x@zx2c4.com> <ZzqkEzxJ69dBSps_@zx2c4.com>
+Date: Sun, 01 Dec 2024 14:03:11 +0100
+Message-ID: <874j3nwo6o.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Sun, 24 Nov 2024 19:59:06 +0100
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+On Mon, Nov 18 2024 at 03:18, Jason A. Donenfeld wrote:
+> On Tue, Sep 10, 2024 at 02:20:17PM +0200, Jason A. Donenfeld wrote:
+>> On Tue, Sep 10, 2024 at 02:08:11PM +0200, Thomas Gleixner wrote:
+>> > On Mon, Sep 09 2024 at 17:44, Jason A. Donenfeld wrote:
+>> > > On Fri, Sep 06, 2024 at 09:06:55PM +0200, Jason A. Donenfeld wrote:
+>> > >> The expression `((void *)&__timens_vdso_data - (void *)&__vdso_data)`
+>> > >> seems harmless, but it actually results in quite a bit of code and two
+>> > >> jumps, in a place that's supposed to be somewhat lean on code. The value
+>> > >> of that calculation is always 3*PAGE_SIZE, as it turns out. Changing it
+>> > >> to that results in a more modest cmov instruction being emitted. It also
+>> > >> makes it a bit more clear what's happening.
+>> > >> 
+>> > >> To accomplish this, define offset macros in vvar.h, which can be shared
+>> > >> by C code and by the linker script that decides where these pages will
+>> > >> actually go.
+>> > >
+>> > > I noticed we've only got a week left til the merge window opens, so I
+>> > > thought I should poke you about this, if you want to take this through
+>> > > tip. I can also take it through my random.git tree with your ack, if
+>> > > that's easier for you. (Assuming, of course, that this patch is actually
+>> > > correct.) Let me know.
+>> > 
+>> > It's not the end of the world if this does not go in now. It's in my
+>> > back log and that VDSO stuff needs more care than this particular thing
+>> > as the recent discussion about vdso random on other architectures show.
+>> 
+>> Okay, that makes sense. And thanks for taking a look.
+>
+> Thought I'd poke again about this. It looks like this still applies to
+> tip.
 
-> All devices supported by this driver (currently veml6030, veml6035
-> and veml7700) have two 16-bit channels, and can profit for the same
-> configuration to support data access via triggered buffers.
-> 
-> The measurements are stored in two 16-bit consecutive registers
-> (addresses 0x04 and 0x05) as little endian, unsigned data.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Applied.
-
-Thanks for this and for fixing up the other cases where holes weren't
-initialized right!
-
-
-Jonathan
+It's on my radar...
 
