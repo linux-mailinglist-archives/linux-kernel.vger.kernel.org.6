@@ -1,193 +1,151 @@
-Return-Path: <linux-kernel+bounces-426708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56E69DF6E0
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 18:58:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F789DF6E4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 18:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF06162DEB
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 17:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F34162E90
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 17:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCB91D86C6;
-	Sun,  1 Dec 2024 17:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E5E1D7E54;
+	Sun,  1 Dec 2024 17:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="JtCLHlRJ"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VGWhUhDD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAC71BC094;
-	Sun,  1 Dec 2024 17:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4241D7E57
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 17:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733075931; cv=none; b=HkdkzyIJj3wnfr904ydmJRYYL7/St/wGq6DgfS7eaVXHJYbprbDJbe6r74owrqbTmNOLq4Ma9tbuOUnpSkzFOh0UZlvzF1+AfgAEk/ujMKOQAI78dQO4vapDH0KlOcBxcQEGLJfC58SCY779JnXApwpQ1X/O4A56oCeXcMuJVXI=
+	t=1733075982; cv=none; b=RWWUyMEBz4IgKtEPl+AWGbQ3ju7jkPCaMjxm/V1gzstRq1yA6eZkrofANEAdizXKslllfYK+udTXZyuClLLZfReNifw45LOAiACVEp1P7xPKGQod1URir4ME4kxrwuz8o3WjFbbLPtGmpP9ScObZ28x9yPZzwonK5TzZGiJX3L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733075931; c=relaxed/simple;
-	bh=Hq4481C+0KO6/BSBgy36PO7z+3nnE/ExcU1Z1tIJx18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LDegpPagWPm2n4YmlA+eGSDV9aveUaWNzKxqB515omJ/cYoQhuTjFUO6ZOhhSJIIZlimosCjMkR4Z0yTLv316j6ThLYTUZw5rzergR/kLAUMMyZh/MUb87K5MOhfG4jZaDa78mqEQfBdd9xMd4fKds6MeiJdYaRgknYthKuO1dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=JtCLHlRJ; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1733075920; x=1733680720; i=w_armin@gmx.de;
-	bh=rlHQ8/p3xS/Ykqg8LHS+OG2al5HrpauYglCNK+JgmU0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=JtCLHlRJ8upfiXrveCBT/fDIc11ApFOVPAxez/TVN90J8nLx0z58x0xNdKSWIA/W
-	 /ZzeTWYkBXCLLQebdMp1RdHk5NRXxQ042cWzPSf6pPIOPl5wSsgeLFawi+Tw66NJ4
-	 jn4BV3HvEhuigvsP/OuzWNIAaofE7A4z/QPVf5qld+zYbdpQr9+qR9haBC6bDdpHr
-	 A5gAshGnNpipLkpT3pvxl7/2YbF/7zDCIMy8545glWYc7HS+b7Lawkl/LnMg73eCs
-	 zeLuIl0J0c82IzLp6z4fnoh1bUup9Ik7jweSsv5eqMVe0H1yuNJyG5kHnozLcC/9y
-	 BMPcKCZjaNs67UQFrg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MQe5u-1t49DC1fug-00XTe3; Sun, 01
- Dec 2024 18:58:40 +0100
-Message-ID: <3530748f-4819-4a02-ae6c-c459952ba82f@gmx.de>
-Date: Sun, 1 Dec 2024 18:58:39 +0100
+	s=arc-20240116; t=1733075982; c=relaxed/simple;
+	bh=aCcFCSZJUXI54+bKPh/05TzVJL4t5c3nMnUzxLQ+3Kk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9I88ANUtyCH4chPITAgYK1IBIVkNlffjVUu27745rDWClihnKITLnBJafjUekTSq1i0Yjf0xwayClpd7W0FGOcatdFVquffYv0txi+fxAFbsvEpXtZXx9loMRmp4k66Qnf/11s9hG9g+D8MlIPQj19awStFWHmTpTYB1HP2L78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VGWhUhDD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733075979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0A+hdS0S9TZs4FCHTCUNfBMXeoZLW6DBQh4uakYhdW8=;
+	b=VGWhUhDDE6m+b2rIaDPxKgBtziQo68vTQzjnol33SUi5a7WqBSAxX3J8dbcFrfOmSUwi4l
+	PMReeGzgyXw9S4COcKUsPozB5lUbftasOmkYhrKSUW3pxS0iEJQ8XDFsCOkie2R4LY2MDs
+	UmWTclP2zOs1LOwyZhdE3FGltIQEBBk=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-219-ufpaLKO2NlmMTm_m6ZSF4Q-1; Sun, 01 Dec 2024 12:59:38 -0500
+X-MC-Unique: ufpaLKO2NlmMTm_m6ZSF4Q-1
+X-Mimecast-MFC-AGG-ID: ufpaLKO2NlmMTm_m6ZSF4Q
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7e39b48a2so18116085ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 09:59:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733075977; x=1733680777;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0A+hdS0S9TZs4FCHTCUNfBMXeoZLW6DBQh4uakYhdW8=;
+        b=L/7V1BU+5ZsGvsfN6MPki+MtGFBNm7OYP7U/bFoBN9r2WXjQKOPUqeUHDC9Fp/vol8
+         0NkoTgtsdXr39L9rAyWI8Nd6H8117pdZ9A6n+pgaWvJ/1GKwoDclCv4R0Z7EcM+2kyeL
+         5+pDWV2V72WIWTVc3BVO+Ti0twdJkU+DW17rpKTIEzCmcnF2xklrYqvKbs9ch8/6u5OZ
+         ALY9Tn4AqZxxDkcX6PHo5gOkC+iMLG7i9HiXdoJ1BCatKZWXJ3Ku1SAx5gnLsfLOMowv
+         D04jpjwJnWZFUUxFIYKKqNFPOtsyT0CS9VyWKs1wt3bhArZzvQ/nqHZnq7b3Ubg5tDxv
+         6Wbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZhsar0dKXDB3v8WP5957XfYJpyVGqw8FhqW8pOj+9PNbxWZPZ4ACh/I7i5brPO+uwiUlDPt1RFuyDjFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2tGDNVtr+9q2Taw2RLv7UpF0vCfrfrYs3pSd+G0DTPnCADzLq
+	hSXxxXwBgVL8fgCgL7HvUcHhfvHGlmC2A4k4gf08KgMCpqBusTnC01D5fQTvToDR6yzGGAGpRO3
+	otgC6PrvYGFoogYz4y27N690f4qz1V3Ov+TzNV/7SWSLl6VckZiL23ab5dRIv6A==
+X-Gm-Gg: ASbGncsuWv8oizP7O7ceIcapXiON77WDn6AgRCw9rmIqSu4tgL424Zam7jlX1Q7kugU
+	E5s/0ZBI/D7XbrUk0vf5fxDrxetO7gh2uS78tGW0pZVXEPrRu0qPUP/c2Il9yuAytA6KuJOS3+R
+	InQZSG+tplKs6PQyZVOjUTRk7uhPFNqfLmk6ZKEPI1slhIRNPXLIAYHLBbp7gGio1D6EAOKnBVl
+	bEtrLNM1vjUwc6oAr6BR88nBpsQl2uoolk4/ywKYH5u3a7JkT6lZT8ODzEzJWkCKEhANzswsE+u
+	s6f2aHhbtKE=
+X-Received: by 2002:a05:6e02:2192:b0:3a7:dd45:bca1 with SMTP id e9e14a558f8ab-3a7dd45c5e2mr85506565ab.17.1733075977450;
+        Sun, 01 Dec 2024 09:59:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHry52UnkIwNHPlxMfjuNJbz0kuNzIn+XivMrF6Q+kiRWIeU+o9LVgyCqSYZICKYohcFcyI2w==
+X-Received: by 2002:a05:6e02:2192:b0:3a7:dd45:bca1 with SMTP id e9e14a558f8ab-3a7dd45c5e2mr85506025ab.17.1733075977146;
+        Sun, 01 Dec 2024 09:59:37 -0800 (PST)
+Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a7ccc0b987sm18690775ab.34.2024.12.01.09.59.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Dec 2024 09:59:36 -0800 (PST)
+Date: Sun, 1 Dec 2024 12:59:33 -0500
+From: Peter Xu <peterx@redhat.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk,
+	jgg@nvidia.com, david@redhat.com, rientjes@google.com,
+	fvdl@google.com, jthoughton@google.com, seanjc@google.com,
+	pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com,
+	jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev,
+	mike.kravetz@oracle.com, erdemaktas@google.com,
+	vannapurve@google.com, qperret@google.com, jhubbard@nvidia.com,
+	willy@infradead.org, shuah@kernel.org, brauner@kernel.org,
+	bfoster@redhat.com, kent.overstreet@linux.dev, pvorel@suse.cz,
+	rppt@kernel.org, richard.weiyang@gmail.com, anup@brainfault.org,
+	haibo1.xu@intel.com, ajones@ventanamicro.com, vkuznets@redhat.com,
+	maciej.wieczor-retman@intel.com, pgonda@google.com,
+	oliver.upton@linux.dev, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org
+Subject: Re: [RFC PATCH 14/39] KVM: guest_memfd: hugetlb: initialization and
+ cleanup
+Message-ID: <Z0ykBZAOZUdf8GbB@x1n>
+References: <cover.1726009989.git.ackerleytng@google.com>
+ <3fec11d8a007505405eadcf2b3e10ec9051cf6bf.1726009989.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/1] platform: x86: tuxi: Implement TUXEDO TUXI ACPI
- TFAN as thermal subsystem
-To: Werner Sembach <wse@tuxedocomputers.com>, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20241127112141.42920-1-wse@tuxedocomputers.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241127112141.42920-1-wse@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iNXq5KMPgNzHhE4xDnFQPJr4UksiC/fnVp+SReufR23hjU+WSUV
- QopGLGtd2ONGe7spKIo9lDLxzRaaDIuHWlnhFiPiBqrbVSMAjit60fJ7du068MA45nUQpLK
- eLYnOrGPyIerCbaHaYBTq4QvJuhhkwgii9gDTZe+5sqf5DChRFEeh1yYOd1p061yZXnOqzg
- Yik55epFe5NruEMJ2vqzg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:AT2YW/6Yv30=;1HomO/3/SRCWf5iRXaGHRZEEsNJ
- 0NGcwDEuf2ffYfaOM2VgPr9OVbNA8A1t2ZeDgH3AyQcYXjHNDtQQiOKGg47s9qtWldBFDyagO
- ox46GfxTDP3UE+Toqc2M8kl4/wxSGSUJBMMh/Ga0JPe8TCwEi3BS+ddah5hGKLMWYfzQIO/4J
- XytJXPf0WrdHpPTNyxKLVoT2X6PR9P5P4qR6lJHY4fuBXPGzKjpLzVIliwvxOWzsvi8Ew+IBS
- culre0CN7Akst7JWHTWiFSYbR0NuPdWxtp7HCRkUu0jarp2lsyR5g8X2P/7FXPj/stZ3NZGJJ
- OvqD1S1Ref/TMtTTt62F/+6teFlx1MwCkJ7KORs8eaaQgZwmB9hrazpqLeU45jhqi6KuYoRWk
- D7J0Z5M9yPZQryELBA7LYNy7keY0diYzLiLwtMzopBxUjDQqqiVZ9Ca7WIi+DOyVTb6j85RDt
- oe87USKNGKJtqwPKCfRt5mMEZ7zfE6GndBQYrNrslLnrlYLx8HZqD4nv/CODwdAf9ST47h7G7
- Uv0R6KI3GX6JQfGT+XHcCbG90aeQpXCn2mfCvQ7o6aGI/VUkNK5SfJBJ0e8NJW5AaJbUhhe+a
- YTEpo815HFKRXts9arEKv2nZI2f4k/pnx6Ttim82cCFonoDLlv9QzL4I8upl18WS7WzAvnOl2
- k4CBZvmNMd63bWdnSLkiR7jyKGYEQ/mHUP9IMnx8Amv6ct9G2Bbm8W3gXxP3NGFSRZemsSClK
- 8qJl8daWNdMhpwm7421KDpXDleGo2RuBWmYZVoe1J7MnguTsMu5exTi38JwzSm+afnYLaH/pY
- MoOvfbu/7w3jvBhHgWLU3I9X0BHrVqqZ7RFUHseDJPjyUaZhR8/Bqi8rI8w6JbeDHkFUSn3at
- M+gv67XZ9ynZohRG+uWuocOUR010UFk+ZBK3QuETPorLds0sPTNCJupIcqsCEsG5Bp8pJbQZw
- pxOCU3PyXwyZBwN5STDduaEy+SAJFb6VgGrY7KPsHSGg3OsdzSxOOk8iwqJH1ZaJAL2pVHsLQ
- QlON+PtjyiSFHo6mKoDmcupdDDN1uhBoRSqcc0E+B9U7/4uwwokxPuMVq0uTr+sPgLRH62Ei4
- M44GysP1JcJYYgQoA7Cc1mh8z3VAR3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3fec11d8a007505405eadcf2b3e10ec9051cf6bf.1726009989.git.ackerleytng@google.com>
 
-Am 27.11.24 um 12:21 schrieb Werner Sembach:
+On Tue, Sep 10, 2024 at 11:43:45PM +0000, Ackerley Tng wrote:
+> +/**
+> + * Removes folios in range [@lstart, @lend) from page cache of inode, updates
+> + * inode metadata and hugetlb reservations.
+> + */
+> +static void kvm_gmem_hugetlb_truncate_folios_range(struct inode *inode,
+> +						   loff_t lstart, loff_t lend)
+> +{
+> +	struct kvm_gmem_hugetlb *hgmem;
+> +	struct hstate *h;
+> +	int gbl_reserve;
+> +	int num_freed;
+> +
+> +	hgmem = kvm_gmem_hgmem(inode);
+> +	h = hgmem->h;
+> +
+> +	num_freed = kvm_gmem_hugetlb_filemap_remove_folios(inode->i_mapping,
+> +							   h, lstart, lend);
+> +
+> +	gbl_reserve = hugepage_subpool_put_pages(hgmem->spool, num_freed);
+> +	hugetlb_acct_memory(h, -gbl_reserve);
 
-> Hi,
->
-> Following up to https://lore.kernel.org/all/172b7acd-4313-4924-bcbc-41b7=
-3b39ada0@tuxedocomputers.com/ and https://lore.kernel.org/all/f26d867e-f24=
-7-43bb-a78b-be0bce35c973@roeck-us.net/ I experimented with the thermal sub=
-system and these are my results so far, but I'm hitting a bit of a wall:
->
-> As far as I can tell to implement "2. As long as GTMP is > 80=C2=B0C fan=
- speed must be at least 30%." I would need to add a new gevenor, lets call=
- it "user_space_with_safeguards". I would be nice when the temp <-> fanspe=
-ed relation could be passed via the thermal_trip structure. And safeguardi=
-ng the hardware from userspace only works when I can restrict userspace fr=
-om just selecting the preexisting "user_space" govenor.
->
-> So my ideas/questions:
-> - Add a field "min_fanspeed_percent" to the thermal_trip struct that wil=
-l only be used by the "user_space_with_safeguards" govenor
-> - Add a "user_space_with_safeguards" govenor that is the same as the "us=
-er_space" govenor, but on trip, a minimum speed is applied
-> - How can i ensure that on further speed updates the min speed is applie=
-d to? I could just implement it directly in the cdev, but that would be sp=
-agetti coding around the govenor.
-> - Can I somehow restrict userspace from using certain govenors?
-> - I'm a litte bit confused about the thermal zone "mode" sysfs switch, h=
-ere it says deactivate for userspace control: https://elixir.bootlin.com/l=
-inux/v6.12/source/Documentation/ABI/testing/sysfs-class-thermal#L20, but w=
-hat about the user_space govenor then?
+I wonder whether this is needed, and whether hugetlb_acct_memory() needs to
+be exported in the other patch.
 
-Hi,
+IIUC subpools manages the global reservation on its own when min_pages is
+set (which should be gmem's case, where both max/min set to gmem size).
+That's in hugepage_put_subpool() -> unlock_or_release_subpool().
 
-i am having little experience with the thermal subsystem, but i suggest th=
-at policy decisions like "min_fanspeed_percent" should either:
+> +
+> +	spin_lock(&inode->i_lock);
+> +	inode->i_blocks -= blocks_per_huge_page(h) * num_freed;
+> +	spin_unlock(&inode->i_lock);
+> +}
 
-- come from the hardware/firmware itself
-- come from userspace
+-- 
+Peter Xu
 
-Effectively this driver tries to enforce a Tuxedo-specific policy that is =
-not directly based on hardware limits. The book "Linux Device Drivers"
-says:
-
-	"the role of a device driver is providing///mechanism/, not/policy/."
-
-Furthermore:
-
-	"When/writing/ drivers, a programmer should pay particular attention to t=
-his fundamental concept: write kernel code to access the hardware,
-	 but don't force particular policies on the user, since different users h=
-ave different needs. The driver should deal with making the hardware
-	 available, leaving all the issues about/how/ to use the hardware to the =
-applications. A driver, then, is flexible if it offers access to the
-	 hardware capabilities without adding constraints."
-
-The issue is that the Tuxedo-specific policy is not directly connected wit=
-h the hardware. Some hardware might need a bigger minimum fan speed than
-other hardware for example.
-
-The hardware (or rather firmware in this case) should communicate those co=
-nstraints to the linux driver so that we do not need to rely on random
-temperatures for hardware protection.
-
-This ACPI interface however basically provides us with a hwmon interface a=
-nd Tuxedo now wants the kernel to enforce their policy on it. I suspect th=
-at
-happens for warranty reasons, right?
-
-Maybe there is a way to enforce this policy through userspace applications=
-?
-
-Thanks,
-Armin Wolf
-
-> Best regards,
-> Werner
->
-> Werner Sembach (1):
->    platform: x86: tuxi: Implement TUXEDO TUXI ACPI TFAN as thermal
->      subsystem
->
->   drivers/platform/x86/Makefile                 |   3 +
->   drivers/platform/x86/tuxedo/Kbuild            |   6 +
->   drivers/platform/x86/tuxedo/nbxx/Kbuild       |   8 +
->   drivers/platform/x86/tuxedo/nbxx/Kconfig      |   9 +
->   drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c  |  96 +++++++
->   drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.h  |  84 ++++++
->   .../x86/tuxedo/nbxx/acpi_tuxi_thermal.c       | 241 ++++++++++++++++++
->   .../x86/tuxedo/nbxx/acpi_tuxi_thermal.h       |  14 +
->   8 files changed, 461 insertions(+)
->   create mode 100644 drivers/platform/x86/tuxedo/Kbuild
->   create mode 100644 drivers/platform/x86/tuxedo/nbxx/Kbuild
->   create mode 100644 drivers/platform/x86/tuxedo/nbxx/Kconfig
->   create mode 100644 drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c
->   create mode 100644 drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.h
->   create mode 100644 drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.=
-c
->   create mode 100644 drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.=
-h
->
 
