@@ -1,104 +1,107 @@
-Return-Path: <linux-kernel+bounces-426614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1AF9DF5A9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:03:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590729DF5AB
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCE48B21196
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:03:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19258281659
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B4A1C8FAC;
-	Sun,  1 Dec 2024 13:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264531C9B81;
+	Sun,  1 Dec 2024 13:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iFEJT0uH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dJmRMUwE"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYHQjSQw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE1D1C82F0
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 13:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826021C879A;
+	Sun,  1 Dec 2024 13:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733058195; cv=none; b=pHsVUVWSfk1nXinKK0IyGxk/RDbdODdZ++cbEzDyqdfcMNotbI+YsojAvjVgSeEr/hPVxMrriNRssxG+ydTWaVX6u7GeGKboL2nOanblBWKBL3tf3vn2UJZ0jPn5PMoxqWi/GFRw4XmuC2Todi0jUa++K700oi4aUiLVfmP9R64=
+	t=1733058244; cv=none; b=AxB8GgeGVYU+Q1i5YT06rCEdqJZPRc3+uzwtq8gjfwKd/1eiqnhAXw0B77Xlt6ldH5s09pFxagqzxCcFcS+Tsrq3kUIyjMZdiyRMtE3/Ml7bSZoDy/Tu1Rj0VXrTVEBvBeJ3TqrAmWaNVtX6cJTaX49BoDRLSpk50uAijcYXbLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733058195; c=relaxed/simple;
-	bh=IabiXLrBzOonyNjr8rnK+KVv2wHEXOy1LeY8IS9B2g8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KJSY9Hm7HYnfhpOSlLC4XSQkhItn96I1ZFQ1++QKHmW5UuBHpg2/INhwUdD4yxEUhG+5rt4gq8W5VZEiGvVCma1dTNt98vbFIRo2MUOwplwG+Zz8QKVv8fyOBRejG63SsF4RbRQsTXft0Ci55S7eQ0JghwS8GGojTvXxi1A7OGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iFEJT0uH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dJmRMUwE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733058192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cDx44ggQzhTmObuUgAWgM9i45B0XCKnpQa5KvP5zEcQ=;
-	b=iFEJT0uHqnNcnT4yktUa1Csgvlj8SaONP9qcDsgfpSzU5TS1PTWZ0ho0sQKd2Eu0JmXz2g
-	55wQGek05D0dIh64cccfE/hXA2h0JRhA2HSJkyDRwoLzQq+1gFu00UsvEOoBa6wMFY1imh
-	zSFV9qcFnrftiwtWsbSPOV02LIFCCk9ipVZzoPYG5W9uGl7gRoP1RcyeSZzbvOUCH8DrEk
-	8+PgDc67RtjVbHXRrkwCVn0YLhENTM8vqwYnC7E4WGx2AcIoTvfORmSPzyXgGS1ZoWBjli
-	rGZOwjLoAfn4T14XmZ6+wQsoka4vLPnN+YKDJTGhx3hNNsYrDdaM7oKpa4HrnA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733058192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cDx44ggQzhTmObuUgAWgM9i45B0XCKnpQa5KvP5zEcQ=;
-	b=dJmRMUwEPfPtOjkqniROoBQsFgfPyOKngvtpBzuR5LIo4h1o1as8uyBVc6FeERROFnltr7
-	7yqG7oZnlMC2zWAA==
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH tip] x86: vdso: Compute timens page offset statically
-In-Reply-To: <ZzqkEzxJ69dBSps_@zx2c4.com>
-References: <20240906190655.2777023-1-Jason@zx2c4.com>
- <Zt8XxiQrma1R2a70@zx2c4.com> <8734m7btjo.ffs@tglx>
- <ZuA5gaOhJNwDSb4x@zx2c4.com> <ZzqkEzxJ69dBSps_@zx2c4.com>
-Date: Sun, 01 Dec 2024 14:03:11 +0100
-Message-ID: <874j3nwo6o.ffs@tglx>
+	s=arc-20240116; t=1733058244; c=relaxed/simple;
+	bh=Ocy0drU9oNXPh1SbTPQFTPl36pbTOQf9YeIulwK1wd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fHo7Jz5G3kn3BIYrhgC0K1EkYzmnEojFfnd42ksMFU4Cis80s4Fo8H5I5A2Ljg8oeSCUmNzaW0gB6TI2noPltyurud9HcR9IgGq1K5oOvR2BF0UFFJ9aRrsJ2SJxRCCkduAzEnNBhzU7U4++lBD5zoZU2MJAu/7XZ0HuFlX0BZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rYHQjSQw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37EB4C4CECF;
+	Sun,  1 Dec 2024 13:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733058244;
+	bh=Ocy0drU9oNXPh1SbTPQFTPl36pbTOQf9YeIulwK1wd8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rYHQjSQw47OC7kna/w738iNb7+SpIqo+7Yus4JgIrv9SxzywUvPn6QDv4SFI4FlXV
+	 8gZ0JWHP4YWUPJz4fFV3wFVMQuJ+BwRm/oGwikB4uLmjVeFXnNXkyEDkJURCn06XA2
+	 EqF6Hqn2z+TIAm0lgKFpZp1eNWVxhrVLVcHTn6kKVuIJZN9byaAdqCkl4U1PcpsZ7f
+	 mBQmsjBY/2uQYW3SLsa+Vt9+pYQRKb1A0OLuvkVYpNAhg8qZCGaZgSYHHTuxqElFad
+	 YwREweM48V2wMD3THHTdRVjK0fI2lkvq3kMH50obwfFa9JwlUh71pfSlWgcaOeDXhA
+	 gSREbB7J20N/A==
+Date: Sun, 1 Dec 2024 13:03:56 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: lars@metafoo.de, dmurphy@ti.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH] iio: adc: ti-ads124s08: Use gpiod_set_value_cansleep()
+Message-ID: <20241201130356.3bf4c693@jic23-huawei>
+In-Reply-To: <20241122164308.390340-1-festevam@gmail.com>
+References: <20241122164308.390340-1-festevam@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 18 2024 at 03:18, Jason A. Donenfeld wrote:
-> On Tue, Sep 10, 2024 at 02:20:17PM +0200, Jason A. Donenfeld wrote:
->> On Tue, Sep 10, 2024 at 02:08:11PM +0200, Thomas Gleixner wrote:
->> > On Mon, Sep 09 2024 at 17:44, Jason A. Donenfeld wrote:
->> > > On Fri, Sep 06, 2024 at 09:06:55PM +0200, Jason A. Donenfeld wrote:
->> > >> The expression `((void *)&__timens_vdso_data - (void *)&__vdso_data)`
->> > >> seems harmless, but it actually results in quite a bit of code and two
->> > >> jumps, in a place that's supposed to be somewhat lean on code. The value
->> > >> of that calculation is always 3*PAGE_SIZE, as it turns out. Changing it
->> > >> to that results in a more modest cmov instruction being emitted. It also
->> > >> makes it a bit more clear what's happening.
->> > >> 
->> > >> To accomplish this, define offset macros in vvar.h, which can be shared
->> > >> by C code and by the linker script that decides where these pages will
->> > >> actually go.
->> > >
->> > > I noticed we've only got a week left til the merge window opens, so I
->> > > thought I should poke you about this, if you want to take this through
->> > > tip. I can also take it through my random.git tree with your ack, if
->> > > that's easier for you. (Assuming, of course, that this patch is actually
->> > > correct.) Let me know.
->> > 
->> > It's not the end of the world if this does not go in now. It's in my
->> > back log and that VDSO stuff needs more care than this particular thing
->> > as the recent discussion about vdso random on other architectures show.
->> 
->> Okay, that makes sense. And thanks for taking a look.
->
-> Thought I'd poke again about this. It looks like this still applies to
-> tip.
+On Fri, 22 Nov 2024 13:43:08 -0300
+Fabio Estevam <festevam@gmail.com> wrote:
 
-It's on my radar...
+> Using gpiod_set_value() to control the reset GPIO causes some verbose
+> warnings during boot when the reset GPIO is controlled by an I2C IO
+> expander.
+> 
+> As the caller can sleep, use the gpiod_set_value_cansleep() variant to
+> fix the issue.
+> 
+> Tested on a custom i.MX93 board with a ADS124S08 ADC.
+> 
+> Cc: <stable@kernel.org>
+> Fixes: e717f8c6dfec ("iio: adc: Add the TI ads124s08 ADC code")
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Hmm. Could be considered a feature, but fair enough as the change is
+trivial and you are setting it on a real board.
+
+Applied to the fixes-togreg branch of iio.git.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/adc/ti-ads124s08.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ti-ads124s08.c b/drivers/iio/adc/ti-ads124s08.c
+> index 425b48d8986f..f452f57f11c9 100644
+> --- a/drivers/iio/adc/ti-ads124s08.c
+> +++ b/drivers/iio/adc/ti-ads124s08.c
+> @@ -183,9 +183,9 @@ static int ads124s_reset(struct iio_dev *indio_dev)
+>  	struct ads124s_private *priv = iio_priv(indio_dev);
+>  
+>  	if (priv->reset_gpio) {
+> -		gpiod_set_value(priv->reset_gpio, 0);
+> +		gpiod_set_value_cansleep(priv->reset_gpio, 0);
+>  		udelay(200);
+> -		gpiod_set_value(priv->reset_gpio, 1);
+> +		gpiod_set_value_cansleep(priv->reset_gpio, 1);
+>  	} else {
+>  		return ads124s_write_cmd(indio_dev, ADS124S08_CMD_RESET);
+>  	}
+
 
