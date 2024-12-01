@@ -1,130 +1,208 @@
-Return-Path: <linux-kernel+bounces-426522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31CF19DF460
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:58:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D732B9DF463
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:12:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA7EF162B72
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 01:58:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A745B20F7F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40878BEE;
-	Sun,  1 Dec 2024 01:58:29 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AB8B641;
+	Sun,  1 Dec 2024 02:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="evisfQM+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3442AD5A
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 01:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796B7AD24
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 02:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733018309; cv=none; b=ui/bcHYqcUWl1T7vzMwnRvvh8cKOQqwtJEGoycq4+8/GtvThX+Skh8UNRBP3AHOMGay6WRqLEbtXgk8DqqMOpiNxY36gvEi2UkxDQK5CSe2OU8MCep6ADqxbxGwrCZWvZWJsiVRAKONqoYOKdgb61qjlxytYo4wPgrxSaMZPifQ=
+	t=1733019150; cv=none; b=U0vxVxnrEsZScOruSgOe6Y8coYXsbiWVyz9lH68bBHxKGQ4W/O+auvLN8AINCugY9IdUoieZMwOfnWTTaJgW61+XoSbkPpEG3hdrC8kZihOkqTf34ah3xmm2yY21BFfOdraVGOxknqX7y9eQN4PfoRYqRW3Rr/mYVclKsF3+SN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733018309; c=relaxed/simple;
-	bh=zTMhgQ7GAngkohf2rn/P/5vDYoYLNJENEFkhFPgmq4A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JehKITyprtmoz5h8rTPSKn5H9PFhquHuUKix5yX17oDNjQ3wBjNZ4goLgHVF3vsiMAtwBlJMD/pUc4v0Ko7WnCmwyd0CXU9BSy94Fqp363tCD6Q9bfnfiqBiuxDz3S0UFFEiOeCdWGLO/qGmDiq5DtESQ/lKIi9clc/htRMdmE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a787d32003so29678585ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 17:58:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733018307; x=1733623107;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oga6qmMks5KjnhwQMu5wVri17WghvBrofAMjw1HSmnU=;
-        b=aI4BU2sGccz7E7/74oVoEkB9CEgXzyTNpxVuG0VlS3Fp0du8ko40hxMVgXuA1UcZbd
-         GvJTaNTGqIEEy+KWVtN1Zc37TqcUOd262tvMN88TJ5Ra5yaWwp/76aqo3cRl1aL2saqR
-         uPBHbRDWxXB9kaHA3xfuDMpKt7klQ5xbhk2xY7a5pwPb4nXgvwcP8RGsFxMZEsY3E0xx
-         PbQcIcFQQS6SHacdh11Q7hMCO9ghPfFtxS9F9PzGsfhJFlnB2d1cYoiDsKWK988jSLqx
-         DaeiC1QG0vVmeXLZJtl8coXnf8SFQMu/RkwXxRo3N+Tb5BuZaGK0tsThtyqKsr9U6EEg
-         uIqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOoP6Kxr3iSw+IEqgTjh3L7vXX/PYNfEZnrrBPO/7gxirDekSQeI1StpFgpISiwSxd8/uVWv+6QLxc6YA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhM8w+taWFUQfnLRgX0s3OZItWfCqWCOFel/yxyvgoz6YE+UND
-	6LjADoypndAtPJEMlSSQEl+zwUniSYSUDOVUWjBkhL34pChgXLVu7poZ6Vg1AfKZSggGLElUYOk
-	TtsRU00SXcgcwgOFVeHbgBnKdS+K91NvODJfYTr7TlJ8MOj35jYXuPRM=
-X-Google-Smtp-Source: AGHT+IHYOe4T8vhtQp3j52u+dUjdYd/xgSjj8rXSIWax2fDqxyDbFB3caVq0f/UT5o8T5Gh3oOPm1b1CEkH8R2dTiQP+hC1QAVzp
+	s=arc-20240116; t=1733019150; c=relaxed/simple;
+	bh=J/wUxKYlG07eGTFBQlS196/dCwEk6KnTaQ1aehgqP0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Fffe8klvrF2YFVsJdIA6EsLjRhHclJYu/obvb9ORM46EYQmM8tK+GcLKyY9Jd4BYhYZ5ix090vIUwnt0eoKvGPrhaLgQzYa4uC3Eig8XXUH4C6QBuV36aUVimtVW1OoaanCLbIXW3VGzD+GkgAv0/+EdAV7Ug56Agz8Vy5QsObA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=evisfQM+; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733019148; x=1764555148;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=J/wUxKYlG07eGTFBQlS196/dCwEk6KnTaQ1aehgqP0g=;
+  b=evisfQM+1NFKehv/35Go+EcYm+meKNqXg0/izE+22p1q06uZEqE4a7sl
+   1nHHxwKnrajKXivUo8T81vvCkuk9Xx5w4C27hAQ1OP1MQ5BM+kDboWLPX
+   ptYITohShpdA3HhT3YLlG0m9NsaxrPbZ3+lOIS8xeENa3u5l8FokRl9vb
+   84FbKgmQiDtIrj4CLaabRXWyy6nlOBgQHDfjg8q340UiriKNr1NslHs0Q
+   zvn9R3egPoRhtLbC9ZybzB8pW0pX1yLSttuZ6rEMI3MHp5rHzeIZySupI
+   6cn9rPDn035+DuslEZZkH1YwVPdc7xhCH61YLufQSeYGX1iskwBKlE1MK
+   g==;
+X-CSE-ConnectionGUID: fR8LU4I+QD22B9QYL0g2GA==
+X-CSE-MsgGUID: a6A3q0mpR/ybLQ+yza7IQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="33449391"
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="33449391"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 18:12:27 -0800
+X-CSE-ConnectionGUID: GK8ZKd5tSsO9v10wVTylXA==
+X-CSE-MsgGUID: oZRzBf3cRpaRJVW9T8ZFNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="93246332"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 30 Nov 2024 18:12:25 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHZRf-00018n-21;
+	Sun, 01 Dec 2024 02:12:23 +0000
+Date: Sun, 1 Dec 2024 10:11:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20241114 6/22]
+ include/linux/compiler_types.h:523:45: error: call to
+ '__compiletime_assert_885' declared with attribute error: BUILD_BUG_ON
+ failed: conf->keylen < WLAN_KEY_LEN_CCMP
+Message-ID: <202412011049.nqm0p1W8-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cc:b0:3a7:86ab:bebf with SMTP id
- e9e14a558f8ab-3a7c55d432dmr165626055ab.19.1733018306816; Sat, 30 Nov 2024
- 17:58:26 -0800 (PST)
-Date: Sat, 30 Nov 2024 17:58:26 -0800
-In-Reply-To: <673ac3cd.050a0220.87769.001f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674bc2c2.050a0220.48a03.0002.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] WARNING in netfs_writepages
-From: syzbot <syzbot+06023121b0153752a3d3@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-syzbot has found a reproducer for the following issue on:
+Hi Gustavo,
 
-HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11c905e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
-dashboard link: https://syzkaller.appspot.com/bug?extid=06023121b0153752a3d3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c905e8580000
+FYI, the error/warning still remains.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241114
+head:   ffa0ea7cd2216fa4db0e24844e1675e94b7db1aa
+commit: 08dd8b1c450b2e86a7bdaec5e23ff58fcff6ae01 [6/22] wifi: iwlwifi: mvm: Use __counted_by() and avoid -Wfamnae warnings
+config: sparc-allmodconfig (https://download.01.org/0day-ci/archive/20241201/202412011049.nqm0p1W8-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241201/202412011049.nqm0p1W8-lkp@intel.com/reproduce)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+06023121b0153752a3d3@syzkaller.appspotmail.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412011049.nqm0p1W8-lkp@intel.com/
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 12 at fs/netfs/write_issue.c:583 netfs_writepages+0x8ff/0xb60 fs/netfs/write_issue.c:583
-Modules linked in:
-CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.12.0-next-20241128-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: writeback wb_workfn (flush-9p-3)
-RIP: 0010:netfs_writepages+0x8ff/0xb60 fs/netfs/write_issue.c:583
-Code: 10 4c 89 f2 48 8d 4c 24 70 e8 ad a6 85 ff 48 85 c0 0f 84 e6 00 00 00 48 89 c3 e8 cc dc 49 ff e9 4a fe ff ff e8 c2 dc 49 ff 90 <0f> 0b 90 e9 a9 fe ff ff e8 b4 dc 49 ff 4c 89 e7 be 08 00 00 00 e8
-RSP: 0018:ffffc900001170c0 EFLAGS: 00010293
-RAX: ffffffff8255983e RBX: 810f000000000000 RCX: ffff88801cac5a00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 810f000000000000
-RBP: ffffc90000117190 R08: ffffffff825596e2 R09: 1ffff110043d34b5
-R10: dffffc0000000000 R11: ffffed10043d34b6 R12: ffff888021e9a5d8
-R13: dffffc0000000000 R14: ffffea0001784fc0 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb76d7e4d58 CR3: 000000002fc7a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_writepages+0x35f/0x880 mm/page-writeback.c:2702
- __writeback_single_inode+0x14f/0x10d0 fs/fs-writeback.c:1680
- writeback_sb_inodes+0x820/0x1360 fs/fs-writeback.c:1976
- __writeback_inodes_wb+0x11b/0x260 fs/fs-writeback.c:2047
- wb_writeback+0x427/0xb80 fs/fs-writeback.c:2158
- wb_check_background_flush fs/fs-writeback.c:2228 [inline]
- wb_do_writeback fs/fs-writeback.c:2316 [inline]
- wb_workfn+0xc4b/0x1080 fs/fs-writeback.c:2343
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+All errors (new ones prefixed by >>):
+
+   In file included from <command-line>:
+   drivers/net/wireless/intel/iwlwifi/mvm/d3.c: In function 'iwl_mvm_gtk_rekey':
+>> include/linux/compiler_types.h:523:45: error: call to '__compiletime_assert_885' declared with attribute error: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_CCMP
+     523 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:504:25: note: in definition of macro '__compiletime_assert'
+     504 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:523:9: note: in expansion of macro '_compiletime_assert'
+     523 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2169:9: note: in expansion of macro 'BUILD_BUG_ON'
+    2169 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
+         |         ^~~~~~~~~~~~
+>> include/linux/compiler_types.h:523:45: error: call to '__compiletime_assert_886' declared with attribute error: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
+     523 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:504:25: note: in definition of macro '__compiletime_assert'
+     504 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:523:9: note: in expansion of macro '_compiletime_assert'
+     523 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2170:9: note: in expansion of macro 'BUILD_BUG_ON'
+    2170 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
+         |         ^~~~~~~~~~~~
+--
+   In file included from <command-line>:
+   d3.c: In function 'iwl_mvm_gtk_rekey':
+>> include/linux/compiler_types.h:523:45: error: call to '__compiletime_assert_885' declared with attribute error: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_CCMP
+     523 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:504:25: note: in definition of macro '__compiletime_assert'
+     504 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:523:9: note: in expansion of macro '_compiletime_assert'
+     523 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   d3.c:2169:9: note: in expansion of macro 'BUILD_BUG_ON'
+    2169 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
+         |         ^~~~~~~~~~~~
+>> include/linux/compiler_types.h:523:45: error: call to '__compiletime_assert_886' declared with attribute error: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
+     523 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:504:25: note: in definition of macro '__compiletime_assert'
+     504 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:523:9: note: in expansion of macro '_compiletime_assert'
+     523 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   d3.c:2170:9: note: in expansion of macro 'BUILD_BUG_ON'
+    2170 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
+         |         ^~~~~~~~~~~~
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+vim +/__compiletime_assert_885 +523 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  509  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  510  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  511  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  512  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  513  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  514   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  515   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  516   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  517   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  518   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  519   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  520   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  521   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  522  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @523  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  524  
+
+:::::: The code at line 523 was first introduced by commit
+:::::: eb5c2d4b45e3d2d5d052ea6b8f1463976b1020d5 compiler.h: Move compiletime_assert() macros into compiler_types.h
+
+:::::: TO: Will Deacon <will@kernel.org>
+:::::: CC: Will Deacon <will@kernel.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
