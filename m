@@ -1,148 +1,234 @@
-Return-Path: <linux-kernel+bounces-426538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4BC9DF48D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 04:48:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 471FE9DF48E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 04:52:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A989CB21570
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:48:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56F94B2118D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8958861FD8;
-	Sun,  1 Dec 2024 03:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304CC2D638;
+	Sun,  1 Dec 2024 03:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jITr2xi2"
-Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SLLzP2oK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F6F4C62E;
-	Sun,  1 Dec 2024 03:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAD317BD9;
+	Sun,  1 Dec 2024 03:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733024903; cv=none; b=BbmTgRHn9qYMyckUvL90bm5YpAH8DelQQj7GrU+Icbn6txMva6OOBDSkS96tOM5yVQrogQAhPv3ncivVOrLTwb/toBRQupQJH5Y4grmMlOgQ5YOzpALfwirwVXjQd3NQKn58d2pG6m0aji3gZo8TzCQyDR5o2d9cCgqzVj9nH64=
+	t=1733025119; cv=none; b=aLQTwoOxYbtptggWfYkzcHwpR4PyhHjlTuVTQeK+qX+thUf0Q4O9iFYFBrPEvwhn8BVrm+PerUvpRE/6uDu6r+iIM1zCNaUsvVfAXhQ0y7z5Fo6mQF7MUbhBE1bmjw+JTd6IiuuR+LhtmiGUEw7Ka5ua6jZToDTwK3qKa72Mr7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733024903; c=relaxed/simple;
-	bh=QUmMAsjeG99DwdFnyGNZiSfrmf7sPDG4WSpDHLtbmtg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V7T8RaAkv9QtKE083XKKPH6gDkQKmoRW0yES+gXOe++SK5VSxxONxSXccsmT696JPQa06Os3SevsMcAXkXQJcJIf0jQ7UbFC7vlaYXAxpYWWDghwPcJufe9X/ctx/YAZEhJwO95Zz6+K9Uu6XOXaGBdPtiTdmQR7swcnMVq2s5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jITr2xi2; arc=none smtp.client-ip=209.85.215.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-7fc1f1748a3so1876759a12.1;
-        Sat, 30 Nov 2024 19:48:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733024901; x=1733629701; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+uhzrsH8OTQDxGvLwR9Qrzbbyk+z63xmncKqVB1avBE=;
-        b=jITr2xi2NYICZc5EnBWdP0QwPkVcYYxBEl4X0bUr2P1hwWGLHyD7SbE9C+DzYryl6Q
-         YeXP76gzzqNp/h5IkfQpk+diDPRMF0+3PDRfzY+T9GFAIVUZRPoqr2ddDW2ITnwKwaWl
-         n1Z1ytaUwWPgsI0Qg5HxeH46JWubkD98eW+EFO6NZAlFhQ75HwwhgACMkAT22uxoVH5Q
-         U8Qe75llTTSVw2C5W/tZrODAAL+SB/C7NXkewpsjlYpKIuZy6iwMB07xc6KljQOKk/Oy
-         TAht6u3SybO1V5GbCVi2LsW9MVzKuUo9tZz7g4x8HGxMOyFkyV4zJ65NPMT6U9c3N/bF
-         xIKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733024901; x=1733629701;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+uhzrsH8OTQDxGvLwR9Qrzbbyk+z63xmncKqVB1avBE=;
-        b=fzupSv7MWkhtsfs+ppYbo8bPCJ0spp/Qf58Rca46o5ETWKBbCgqpgX6cYXryyvcDQ3
-         GpFSKhbJA9wBnZNU/eDN3ag5nyX4r7WQEpDGrdrI+OCL2VxFV6XU2N4qAn4OsPJaaleo
-         /oW4We4xJewyuugIsQTrW02neB4ltcech0i9131DMJphzbU0YepbIs6F+Nkpa6U5ZDRH
-         WY8bE9dKZkjQCrVg1CC3zcVmnIAldOgZUDbHHopIoICSGac+D3BLBgfOnS43OSaA3y8V
-         Bs4Fm2SJMzOl3sWeJt4UBerYfcfF27pBi71Rwako0k0ZVA257Sv+qR/9RnEXuVpYpRbw
-         bPwA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0SB+sOQ7/T/Dhq+Zk4onWSR3ygZhQhXAKcOs3lwj9Bm0aKmG7tlzouO7723+8TDnYGhoA3nVK/C0=@vger.kernel.org, AJvYcCU6UissKzXHJoNLpVa4lAmhAyKHD8PKxB80wMRcB6b+RgewcO+g4NvZvn8YZ1F8/n9Y0dfFYyJfthwGv31B@vger.kernel.org, AJvYcCXkAPZHOdgQsWe07hD+3dIS92l2+Ih3Ro6b/U3GaOqiIuxYihAwgiFsO2ziTmRd26TVtAs4Fr5x0nrlBc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtxNRdFqjTdITA7fNIhxzTAP66gxiEoAWTSMqd5q2RXGjWVqrz
-	wTxjqmhUx33lR02sDChsgMZsZ2t3YZjLYAS7ZCPR1jnD20AMs/Ir
-X-Gm-Gg: ASbGncviymkvs7IdoT1x3pVT+CFXgjMo6LCXyw3NnLNgOL7/akazuioEqE7DFNHyrvy
-	FAOLV8x8awnEkSiscg77YXWrwtd3AHuu43JPQpEfDv33aPr9lWi6PxcIh6YeuqQjXfKDXh62RX1
-	qany6DXvU4EXzfUn0lEnZzsOGrYh2G0fmIcrPip15rVZ7ErvzeMheEbqnYSBLNenDzTHUE4rrgv
-	cS6meuyyRvvmXQDoIzDngv+3Xokj6i21Ju23yW4RQTwE42A6lqDhVbu4bXk9OzF
-X-Google-Smtp-Source: AGHT+IHlvcFIf5K/8VjLo/7B7eq/4KDuEghrGQshWWELMBAkkhDe8oEUOUqJJaUyjkHHkFiTY3W0aA==
-X-Received: by 2002:a05:6a20:a108:b0:1d9:2408:aa4c with SMTP id adf61e73a8af0-1e0e0af5cdcmr25979505637.23.1733024900885;
-        Sat, 30 Nov 2024 19:48:20 -0800 (PST)
-Received: from localhost.localdomain ([38.47.127.59])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c321125sm5442471a12.45.2024.11.30.19.48.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 19:48:20 -0800 (PST)
-From: Li XingYang <yanhuoguifan@gmail.com>
-To: eugene.shalygin@gmail.com
-Cc: jdelvare@suse.com,
-	linux@roeck-us.net,
-	corbet@lwn.net,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1733025119; c=relaxed/simple;
+	bh=vGQflEwPvwJ0Lzq/VzKUMmpY6cfV6p22GJrcn1WxeZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r3IbNGP25Zxz8P+//6+ZoE4SlJsw7FW2fuwfMtl0oo5+x+8BrX05Ka+kfBh1VwY5SmfxCNO50DtxQdeothY9JT5iEfk5lQyZqVeC58cnGL+eQ/j8Y4Wsmxw8LLZ/uszCSEI1lz6wKEa32CfAbMqBP4rH3/ShfvvqnTLelft3KFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SLLzP2oK; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733025117; x=1764561117;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vGQflEwPvwJ0Lzq/VzKUMmpY6cfV6p22GJrcn1WxeZs=;
+  b=SLLzP2oKZou9WaVdSXGQNriFxbils4qrpNLhcgvfqE406Nd9+vUwR/vk
+   HVgS838YgInMhNtO6zrhXdRJP2KUkhiNBHj53iOmMYsp1MKzA5Oy13kbu
+   JaoHj6FKMAjEUuoVtVOx53iaY6wo2fdQBn2DwOjv54syamnnDVcT4zJoz
+   Uuz3dz3o2fo9Gk9J0S16vqXFQRCI8QRw6+FCUSxF+Q+h/O/OxKWy/flzE
+   0DkUUbm2Vum7GuUixIfR4Nfj/6WPfbRLqGxih9a+8zoqDPkdxtPhNOOOm
+   W4GOKDDRF1O8ZRZLfx6jRHxSWbqK3qSXiFCtco13hQMWGKAmx9FOssq5g
+   A==;
+X-CSE-ConnectionGUID: ZPWbcjMURTO3EXaxuRcV+A==
+X-CSE-MsgGUID: YohPrQdeT2iwZqNI8HFPDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="50725092"
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="50725092"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 19:51:57 -0800
+X-CSE-ConnectionGUID: 7JKxVE+vQ+eo4onj1Ay9WA==
+X-CSE-MsgGUID: +CPfsHgBTIivubTZssYVvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,199,1728975600"; 
+   d="scan'208";a="93257477"
+Received: from litbin-desktop.sh.intel.com ([10.239.156.93])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2024 19:51:53 -0800
+From: Binbin Wu <binbin.wu@linux.intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org
+Cc: rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com,
+	isaku.yamahata@intel.com,
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com,
+	michael.roth@amd.com,
 	linux-kernel@vger.kernel.org,
-	Li XingYang <yanhuoguifan@gmail.com>
-Subject: [PATCH v3 2/2] hwmon: (asus-ec-sensors) add TUF GAMING X670E PLUS
-Date: Sun,  1 Dec 2024 11:47:45 +0800
-Message-ID: <20241201034803.584482-3-yanhuoguifan@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241201034803.584482-1-yanhuoguifan@gmail.com>
-References: <20241201034803.584482-1-yanhuoguifan@gmail.com>
+	binbin.wu@linux.intel.com
+Subject: [PATCH 0/7] KVM: TDX: TDX hypercalls may exit to userspace
+Date: Sun,  1 Dec 2024 11:53:49 +0800
+Message-ID: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-add asus-ec-sensors support on the mainboard TUF GAMING X670E PLUS
+Hi,
 
-Signed-off-by: Li XingYang <yanhuoguifan@gmail.com>
----
- Documentation/hwmon/asus_ec_sensors.rst |  1 +
- drivers/hwmon/asus-ec-sensors.c         | 11 +++++++++++
- 2 files changed, 12 insertions(+)
+When executing in the TD, TDX can exit to the host VMM (KVM) for many
+reasons. These reasons are analogous to the exit reasons for VMX. Some of
+the exits will be handled within KVM in later changes. This series handles
+just the TDX exits that may be passed to userspace to handle, which are all
+via the TDCALL exit code. Although, these userspace exits have the same TDX
+exit code, they result in several different types of exits to userspace.
 
-diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
-index ca38922f4ec5..739636cf7994 100644
---- a/Documentation/hwmon/asus_ec_sensors.rst
-+++ b/Documentation/hwmon/asus_ec_sensors.rst
-@@ -29,6 +29,7 @@ Supported boards:
-  * ROG STRIX Z690-A GAMING WIFI D4
-  * ROG ZENITH II EXTREME
-  * ROG ZENITH II EXTREME ALPHA
-+ * TUF GAMING X670E PLUS
- 
- Authors:
-     - Eugene Shalygin <eugene.shalygin@gmail.com>
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index 381bf117104f..43e54dc513da 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -479,6 +479,15 @@ static const struct ec_board_info board_info_zenith_ii_extreme = {
- 	.family = family_amd_500_series,
- };
- 
-+static const struct ec_board_info board_info_tuf_gaming_x670e_plus = {
-+	.sensors = SENSOR_TEMP_CPU | SENSOR_TEMP_CPU_PACKAGE |
-+		SENSOR_TEMP_MB | SENSOR_TEMP_VRM |
-+		SENSOR_TEMP_WATER_IN | SENSOR_TEMP_WATER_OUT |
-+		SENSOR_FAN_CPU_OPT,
-+	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
-+	.family = family_amd_600_series,
-+};
-+
- #define DMI_EXACT_MATCH_ASUS_BOARD_NAME(name, board_info)                      \
- 	{                                                                      \
- 		.matches = {                                                   \
-@@ -540,6 +549,8 @@ static const struct dmi_system_id dmi_table[] = {
- 					&board_info_zenith_ii_extreme),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG ZENITH II EXTREME ALPHA",
- 					&board_info_zenith_ii_extreme),
-+	DMI_EXACT_MATCH_ASUS_BOARD_NAME("TUF GAMING X670E-PLUS",
-+					&board_info_tuf_gaming_x670e_plus),
- 	{},
- };
- 
+This patch set is one of several patch sets that are all needed to provide
+the ability to run a functioning TD VM. The goal of this patch set is to
+facilitate the review and finalization of the uAPI between KVM and userspace
+VMMs (e.g., QEMU). We would like get maintainers/reviewers feedback of the
+implementation (i.e. the design of individual KVM exits instead of one raw
+TDX exit), but we don't think it is ready for kvm-coco-queue yet.
+
+Base of this series
+===================
+This series is based off of a kvm-coco-queue commit and some pre-req series:
+1. commit ee69eb746754 ("KVM: x86/mmu: Prevent aliased memslot GFNs") (in
+   kvm-coco-queue).
+2. v7 of "TDX host: metadata reading tweaks and bug fixes and info dump" [0]
+3. v1 of "KVM: VMX: Initialize TDX when loading KVM module" [1]
+4. v2 of “TDX vCPU/VM creation” [2]
+5. v2 of "TDX KVM MMU part 2" [3]
+6  v1 of "TDX vcpu enter/exit" [4] with a few fixups based on review feedbacks.
+7. v4 of "KVM: x86: Prep KVM hypercall handling for TDX" [5]
+
+TDX hypercalls
+==============
+The TDX module specification defines TDG.VP.VMCALL API (TDVMCALL) for the
+guest TDs to make hypercall to VMM.  When a guest TD issues a TDVMCALL, it
+exits to VMM with a new exit reason.  The arguments from the guest TD and
+return values from the VMM are passed through the guest registers.  The
+ABI details for the guest TD hypercalls are specified in the TDX Guest-Host
+Communication Interface (GHCI) specification [6].
+
+There are two types of hypercalls defined in the GHCI specification:
+- Standard TDVMCALLs: When input of R10 from guest TD is set to 0, it
+  indicates that the TDVMCALL sub-function used in R11 is defined in GHCI
+  specification.
+- Vendor-Specific TDVMCALLs: When input of R10 from guest TD is non-zero,
+  it indicates a vendor-specific TDVMCALL. For KVM hypercalls from guest
+  TDs, KVM uses R10 as KVM hypercall number and R11-R14 as 4 arguments,
+  with the error code returned in R10.
+
+KVM hypercalls
+--------------
+This series supports KVM hypercalls from guest TDs following the 
+vendor-specific interface described above.  The KVM_HC_MAP_GPA_RANGE
+hypercall will need to exit to userspace for handling.
+
+Standard TDVMCALLs exiting to userspace
+---------------------------------------
+To support basic functionality of TDX,  this series includes the following
+standard TDVMCALL sub-functions, which reuse exist exit reasons when they
+need to exit to userspace for handling:
+- TDG.VP.VMCALL<MapGPA> reuses exit reason KVM_EXIT_HYPERCALL with the
+  hypercall number KVM_HC_MAP_GPA_RANGE.
+- TDG.VP.VMCALL<ReportFatalError> reuses exit reason KVM_EXIT_SYSTEM_EVENT
+  with a new event type KVM_SYSTEM_EVENT_TDX_FATAL.
+- TDG.VP.VMCALL<Instruction.IO> reuses exit reason KVM_EXIT_IO.
+- TDG.VP.VMCALL<#VE.RequestMMIO> reuses exit reason KVM_EXIT_MMIO.
+
+Support for TD attestation is currently excluded from the TDX basic enabling,
+so handling for TDG.VP.VMCALL<SetupEventNotifyInterrupt> and 
+TDG.VP.VMCALL<GetQuote> is not included in this patch series.
+
+Notable changes since v19
+=========================
+There are a several minor changes across the patches. A few more structural
+changes are highlighted below.
+
+Move out NMI, exception and external interrupt handling code
+------------------------------------------------------------
+Since this series is focusing on the hypercall that may exit to userspace,
+the code for handling NMI, exception and external interrupt has been moved
+out from "KVM: TDX: Add a place holder to handle TDX VM exit" to a future
+series focusing on interrupts.
+
+Remove the use of union tdx_exit_reason
+---------------------------------------
+As suggested by Sean, the use of union tdx_exit_reason has been removed.
+The VMX exit reason is used only when the return value of TDH.VP.ENTER has
+a valid VMX exit reason.
+https://lore.kernel.org/kvm/ZfSExlemFMKjBtZb@google.com/ 
+
+Remove the KVM exit reason KVM_EXIT_TDX
+---------------------------------------
+Each TDX hypercall needing to exit to userspace now has dedicated exit
+reason.  No new exit reasons are added in this series; existing exit reasons
+are reused though.
+
+Repos
+=====
+The full KVM branch is here:
+https://github.com/intel/tdx/tree/tdx_kvm_dev-2024-11-20-exits-userspace
+
+A matching QEMU is here:
+https://github.com/intel-staging/qemu-tdx/tree/tdx-qemu-upstream-v6.1
+
+Testing 
+======= 
+It has been tested as part of the development branch for the TDX base
+series. The testing consisted of TDX kvm-unit-tests and booting a Linux
+TD, and TDX enhanced KVM selftests.
+
+[0] https://lore.kernel.org/kvm/cover.1731318868.git.kai.huang@intel.com
+[1] https://lore.kernel.org/kvm/cover.1730120881.git.kai.huang@intel.com
+[2] https://lore.kernel.org/kvm/20241030190039.77971-1-rick.p.edgecombe@intel.com
+[3] https://lore.kernel.org/kvm/20241112073327.21979-1-yan.y.zhao@intel.com
+[4] https://lore.kernel.org/kvm/20241121201448.36170-1-adrian.hunter@intel.com
+[5] https://lore.kernel.org/kvm/20241128004344.4072099-1-seanjc@google.com
+[6] https://cdrdv2.intel.com/v1/dl/getContent/726792
+
+Binbin Wu (2):
+  KVM: TDX: Handle TDG.VP.VMCALL<MapGPA>
+  KVM: TDX: Handle TDG.VP.VMCALL<ReportFatalError>
+
+Isaku Yamahata (4):
+  KVM: TDX: Add a place holder to handle TDX VM exit
+  KVM: TDX: Add a place holder for handler of TDX hypercalls
+    (TDG.VP.VMCALL)
+  KVM: TDX: Handle KVM hypercall with TDG.VP.VMCALL
+  KVM: TDX: Handle TDX PV port I/O hypercall
+
+Sean Christopherson (1):
+  KVM: TDX: Handle TDX PV MMIO hypercall
+
+ Documentation/virt/kvm/api.rst    |   8 +
+ arch/x86/include/asm/shared/tdx.h |   1 +
+ arch/x86/include/asm/tdx.h        |   1 +
+ arch/x86/include/uapi/asm/vmx.h   |   4 +-
+ arch/x86/kvm/vmx/main.c           |  25 +-
+ arch/x86/kvm/vmx/tdx.c            | 578 +++++++++++++++++++++++++++++-
+ arch/x86/kvm/vmx/tdx.h            |   3 +
+ arch/x86/kvm/vmx/tdx_errno.h      |   3 +
+ arch/x86/kvm/vmx/x86_ops.h        |   8 +
+ arch/x86/kvm/x86.c                |   1 +
+ include/uapi/linux/kvm.h          |   1 +
+ virt/kvm/kvm_main.c               |   1 +
+ 12 files changed, 630 insertions(+), 4 deletions(-)
+
 -- 
-2.47.1
+2.46.0
 
 
