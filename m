@@ -1,204 +1,173 @@
-Return-Path: <linux-kernel+bounces-426569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1405F9DF510
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 10:07:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E071628E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 09:07:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33E4770E2;
-	Sun,  1 Dec 2024 09:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="nWnPhViS"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CD79DF51A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 10:27:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593C570828;
-	Sun,  1 Dec 2024 09:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CD9DB212E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 09:27:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384F1136326;
+	Sun,  1 Dec 2024 09:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IneNPRJq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84ACE35885;
+	Sun,  1 Dec 2024 09:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733044062; cv=none; b=Y+4GRHBDT9NOzcggrsfUWQyQPxz3wSRE0sfMfzbploRIH5Xa5hdSGaOgvSEPW6H+AuLBFzMzu5E74NEsBCJgZSo1rcC8Lpv39MYhrKl04PrDWGZh2BcjszxSeVk/Pi+FpvrInf3LrTFMUYH4hDtzIr0PyAyWyzpuy2GgtcaGf3E=
+	t=1733045233; cv=none; b=sS+Jqfi+HfUjUQQn68lfvnH7ZeQD7orC0Svk8yLRPuVaRgewLloH+/p4ob+7SWetIPKC2jdW07H7isARkNXSrarSKn8hnHOtHf6td8lUiJKfxhXemVaE9O2dQucr4KTu/JZ8EeV1ucD31qPqoJndqtg1TJoWF3kHo1XVY7CyT4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733044062; c=relaxed/simple;
-	bh=tDyqJ+AboZTWobOGJf8LRbTQ3qYwmJ3f7oimo9myEF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/aToRswnHCU97NLm/pUtbcWRZHQySdROzlUKXZteGStDEZ0wm3T7jeTx/n/AQ2gGOfYDz1AhTjOVsa8LltV0xmfJXLDNMNVxeChjtJhd09g09XlF1EXUT9RMp2F9i8LmLa2ZCSaL0w4hDEj0n4S179Z2I9dfuZ0XEpIzsSZvY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=nWnPhViS; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733043534;
-	bh=tDyqJ+AboZTWobOGJf8LRbTQ3qYwmJ3f7oimo9myEF0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nWnPhViSrmy+Dc3lyibeiuyLJXryBJqmq+wN5kWX59a0s969q3e4Xxs8JxVtB/SkN
-	 rio2k/7f20hyPz5LyJtfTaSX+WBoOKc8UAxiIPemszmurWuOU/FkpeMP8TsyyxKBSk
-	 IrPX3pAZEFzXXhbwz1e7bNQkXd0LS7S+24eMseL4=
-Date: Sun, 1 Dec 2024 09:58:54 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, linux-kernel@vger.kernel.org, Nicolas Schier <nicolas@fjasle.eu>, 
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] kconfig: prefer toolchain default for debug information
- choice
-Message-ID: <e367e522-64c5-4741-a348-4ab2545f1d41@t-8ch.de>
-References: <20241124-kbuild-allconfig_debug_info-v1-1-07a7ac8d9a73@weissschuh.net>
- <20241125145251.GA2067874@thelio-3990X>
- <5fdad1e3-1b0c-4292-9bb1-2f7654d9b816@t-8ch.de>
- <20241125185837.GA495243@thelio-3990X>
+	s=arc-20240116; t=1733045233; c=relaxed/simple;
+	bh=zcbZ5C94UpyjRTNgMJYOeQ/XAomR1B1C5ovJjWWHEAg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gysslja+L6kkkWb/lDutr4XIv51rKzkCw8Gpek9hMgSShN6goFgF5PhXzOcT2xmp49qsCpkn/ZvqBEjBb+kJkbyyHbw2p3msB7VO8lhLeRfOXuBE/Zu3My+c1MYPb2/T3fL7K+gKltclF3Pz6Dge7WhyxoovkwoBBx1We8ZB7H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IneNPRJq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47036C4CECF;
+	Sun,  1 Dec 2024 09:27:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733045233;
+	bh=zcbZ5C94UpyjRTNgMJYOeQ/XAomR1B1C5ovJjWWHEAg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IneNPRJqcK80axyt5a+U/ificQI1XoBtFYspojqZP9+i+APgwkD/I4jWp11jOGKSA
+	 gCbtcZcFuGRU0JgswHdE6UleDFdN8rSZyXOt2Z9U++ocuaqye2KBUXLBnpjMwueR5q
+	 pfxAsoFrSZvP2L6n0Ha2DZAFbHNBpoRomt81ip7zMY0oWXI3QKm8yTFnQYn5otqgNs
+	 3Fw40Qm2RCilaGF9q+kEIq3gTR6MRhEpZQdVlazf6LnJbghXwtRdAOTNQAasfSmrXh
+	 0f9gZ52n2dAoGxJxyxzbkhymbVOWOEyq4aK/THaMPWOZeAOM3fN5+t4OAQHnbZ7f00
+	 hDE2ApTEpcudw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tHgEQ-00H3r2-Uw;
+	Sun, 01 Dec 2024 09:27:11 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Mike Rapoport <rppt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Zi Yan <ziy@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] arch_numa: Restore nid checks before registering a memblock with a node
+Date: Sun,  1 Dec 2024 09:27:02 +0000
+Message-Id: <20241201092702.3792845-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241125185837.GA495243@thelio-3990X>
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rppt@kernel.org, catalin.marinas@arm.com, will@kernel.org, ziy@nvidia.com, dan.j.williams@intel.com, david@redhat.com, akpm@linux-foundation.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 2024-11-25 11:58:37-0700, Nathan Chancellor wrote:
-> On Mon, Nov 25, 2024 at 04:46:53PM +0100, Thomas Weißschuh wrote:
-> > On 2024-11-25 07:52:51-0700, Nathan Chancellor wrote:
-> > > On Sun, Nov 24, 2024 at 04:58:04PM +0100, Thomas Weißschuh wrote:
-> > > > Kconfig by default chooses the first entry of a choice setting.
-> > > > For the "debug information" choice this is DEBUG_INFO_NONE which
-> > > > disables debug information completely.
-> > > > 
-> > > > The kconfig choice itself recommends to use "Toolchain default":
-> > > > 
-> > > > 	Choose which version of DWARF debug info to emit. If unsure,
-> > > > 	select "Toolchain default".
-> > > > 
-> > > > Align the actual configuration with the recommendation by providing an
-> > > > explicit default.
-> > > > 
-> > > > This also enables more codepaths from allmodconfig/allyesconfig which
-> > > > depend on debug information being available.
-> > > > 
-> > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > > > ---
-> > > >  lib/Kconfig.debug | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > > > index 5d9eca035d470f7ba0c5ff932c37fd5869174269..0aefcd103d9012cd8067e5594404358b0e977644 100644
-> > > > --- a/lib/Kconfig.debug
-> > > > +++ b/lib/Kconfig.debug
-> > > > @@ -240,6 +240,7 @@ config AS_HAS_NON_CONST_ULEB128
-> > > >  choice
-> > > >  	prompt "Debug information"
-> > > >  	depends on DEBUG_KERNEL
-> > > > +	default DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
-> > > >  	help
-> > > >  	  Selecting something other than "None" results in a kernel image
-> > > >  	  that will include debugging info resulting in a larger kernel image.
-> > > > 
-> > > > ---
-> > > > base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
-> > > > change-id: 20241124-kbuild-allconfig_debug_info-f7449ba15be6
-> > > > 
-> > > > Best regards,
-> > > > -- 
-> > > > Thomas Weißschuh <linux@weissschuh.net>
-> > > > 
-> > > 
-> > > I am not the biggest fan of this because it appears to have around a 5%
-> > > penalty in compilation times when I benchmarked building allmodconfig
-> > > with and without this change.
-> > > 
-> > > With LLVM 19.1.4:
-> > > 
-> > >   Benchmark 1: DEBUG_INFO_NONE
-> > >     Time (mean ± σ):     715.858 s ±  0.531 s    [User: 38038.311 s, System: 3718.784 s]
-> > >     Range (min … max):   715.271 s … 716.307 s    3 runs
-> > > 
-> > >   Benchmark 2: DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
-> > >     Time (mean ± σ):     760.749 s ±  0.172 s    [User: 40699.800 s, System: 3817.819 s]
-> > >     Range (min … max):   760.617 s … 760.943 s    3 runs
-> > > 
-> > >   Summary
-> > >     DEBUG_INFO_NONE ran
-> > >       1.06 ± 0.00 times faster than DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
-> > > 
-> > > With GCC 14.2.0:
-> > > 
-> > >   Benchmark 1: DEBUG_INFO_NONE
-> > >     Time (mean ± σ):     830.524 s ±  0.342 s    [User: 43901.642 s, System: 4515.917 s]
-> > >     Range (min … max):   830.135 s … 830.777 s    3 runs
-> > > 
-> > >   Benchmark 2: DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
-> > >     Time (mean ± σ):     873.663 s ±  0.150 s    [User: 46102.416 s, System: 4968.065 s]
-> > >     Range (min … max):   873.565 s … 873.836 s    3 runs
-> > > 
-> > >   Summary
-> > >     DEBUG_INFO_NONE ran
-> > >       1.05 ± 0.00 times faster than DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
-> > > 
-> > > I understand the desire to have CONFIG_DEBUG_INFO_BTF be selected with
-> > > allmodconfig for the sake of coverage but that is going to add up for
-> > > builders doing many builds a day.
-> > 
-> > No argument on the increased cost.
-> > 
-> > But it's called "allyesconfig" not "ciconfig".
-> > I do realize that technically it is a Kconfig "choice" which
-> > does not have a "yes" answer. However I think it does fit the spirit.
-> 
-> Sure, I do not really disagree there. I more interpret allmodconfig and
-> allyesconfig to mean "build all code" not "build with every option
-> possible", which is a small distinction but meaningful in this case. Not
-> saying one is more correct than the other, just saying where I come from
-> :)
+Commit 767507654c22 ("arch_numa: switch over to numa_memblks")
+significantly cleaned up the NUMA registration code, but also
+dropped a significant check that was refusing to accept to
+configure a memblock with an invalid nid.
 
-FWIW SCHED_CLASS_EXT and some netfilter components also depend on debug
-info and are therefore currently not part of all{mod,yes}config.
-Looking at current trends I expect more subsystems to be in the same
-boat over time.
+On "quality hardware" such as my ThunderX machine, this results
+in a kernel that dies immediately:
 
-The (small) BTF support code is also affected.
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x431f0a10]
+[    0.000000] Linux version 6.12.0-00013-g8920d74cf8db (maz@valley-girl) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #3872 SMP PREEMPT Wed Nov 27 15:25:49 GMT 2024
+[    0.000000] KASLR disabled due to lack of seed
+[    0.000000] Machine model: Cavium ThunderX CN88XX board
+[    0.000000] efi: EFI v2.4 by American Megatrends
+[    0.000000] efi: ESRT=0xffce0ff18 SMBIOS 3.0=0xfffb0000 ACPI 2.0=0xffec60000 MEMRESERVE=0xffc905d98
+[    0.000000] esrt: Reserving ESRT space from 0x0000000ffce0ff18 to 0x0000000ffce0ff50.
+[    0.000000] earlycon: pl11 at MMIO 0x000087e024000000 (options '115200n8')
+[    0.000000] printk: legacy bootconsole [pl11] enabled
+[    0.000000] NODE_DATA(0) allocated [mem 0xff6754580-0xff67566bf]
+[    0.000000] Unable to handle kernel paging request at virtual address 0000000000001d40
+[    0.000000] Mem abort info:
+[    0.000000]   ESR = 0x0000000096000004
+[    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    0.000000]   SET = 0, FnV = 0
+[    0.000000]   EA = 0, S1PTW = 0
+[    0.000000]   FSC = 0x04: level 0 translation fault
+[    0.000000] Data abort info:
+[    0.000000]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[    0.000000]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    0.000000]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    0.000000] [0000000000001d40] user address but active_mm is swapper
+[    0.000000] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.0-00013-g8920d74cf8db #3872
+[    0.000000] Hardware name: Cavium ThunderX CN88XX board (DT)
+[    0.000000] pstate: a00000c5 (NzCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.000000] pc : sparse_init_nid+0x54/0x428
+[    0.000000] lr : sparse_init+0x118/0x240
+[    0.000000] sp : ffff800081da3cb0
+[    0.000000] x29: ffff800081da3cb0 x28: 0000000fedbab10c x27: 0000000000000001
+[    0.000000] x26: 0000000ffee250f8 x25: 0000000000000001 x24: ffff800082102cd0
+[    0.000000] x23: 0000000000000001 x22: 0000000000000000 x21: 00000000001fffff
+[    0.000000] x20: 0000000000000001 x19: 0000000000000000 x18: ffffffffffffffff
+[    0.000000] x17: 0000000001b00000 x16: 0000000ffd130000 x15: 0000000000000000
+[    0.000000] x14: 00000000003e0000 x13: 00000000000001c8 x12: 0000000000000014
+[    0.000000] x11: ffff800081e82860 x10: ffff8000820fb2c8 x9 : ffff8000820fb490
+[    0.000000] x8 : 0000000000ffed20 x7 : 0000000000000014 x6 : 00000000001fffff
+[    0.000000] x5 : 00000000ffffffff x4 : 0000000000000000 x3 : 0000000000000000
+[    0.000000] x2 : 0000000000000000 x1 : 0000000000000040 x0 : 0000000000000007
+[    0.000000] Call trace:
+[    0.000000]  sparse_init_nid+0x54/0x428
+[    0.000000]  sparse_init+0x118/0x240
+[    0.000000]  bootmem_init+0x70/0x1c8
+[    0.000000]  setup_arch+0x184/0x270
+[    0.000000]  start_kernel+0x74/0x670
+[    0.000000]  __primary_switched+0x80/0x90
+[    0.000000] Code: f865d804 d37df060 cb030000 d2800003 (b95d4084)
+[    0.000000] ---[ end trace 0000000000000000 ]---
+[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
+[    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
 
-> > > Maybe we could add a fragment to kernel/configs for easily flipping
-> > > this? Another alternative that I have thought about recently is allowing
-> > > developers to specify a directory that holds out of tree config
-> > > fragments (KBUILD_FRAGMENTS_DIR?) that would be searched like
-> > > kernel/configs and arch/*/configs, so that people could maintain their
-> > > own fragments for easily doing something like:
-> > > 
-> > >   allmodconfig debug_info_btf.config
-> > > 
-> > > during configuration. Regardless though, if others find this new default
-> > > desirable, I am fine with it.
-> > 
-> > The same could be used by the CI setups :-)
-> > 
-> > There should be less CI setups than regular developers, they known more
-> > about special or expensive configuration quirks and they should already
-> > have logic to filter and customize build configurations.
-> > 
-> > While I'm arguing here to accomodate for my personal laziness, I also do
-> > think that these are generally valid arguments.
-> > But if there if it's not convincing enough, I'll drop it.
-> 
-> Yes, I think there is definitely a fine argument here. I am certainly
-> not here to block anything, just giving my opinion as someone who does a
-> lot of builds every day :)
+while previous kernel versions were able to recognise how brain-damaged
+the machine is, and only build a fake node.
 
-Thanks for your input!
-The general interest seems to be very limited.
+Use the memblock_validate_numa_coverage() helper to restore some sanity
+and a "working" system.
 
-> > The out of tree fragments idea sounds personally useful but a bit
-> > inconsistent with the rest of kbuild.
-> > AFAIK there is nothing similar; for thing like CFLAGS etc.
-> 
-> KCFLAGS in Makefile or Documentation/kbuild/kbuild.rst?
+Fixes: 767507654c22 ("arch_numa: switch over to numa_memblks")
+Suggested-by: Mike Rapoport <rppt@kernel.org>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: stable@vger.kernel.org
+---
+ drivers/base/arch_numa.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Indeed. I meant for "similar" to mean "pointing to file locations
-outside of the source tree".
-But looking at it again, this is probably not a good argument.
-Having such a feature would also help us for the nolibc testsuite.
+diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
+index e187016764265..c63a72a1fed64 100644
+--- a/drivers/base/arch_numa.c
++++ b/drivers/base/arch_numa.c
+@@ -208,6 +208,10 @@ static int __init numa_register_nodes(void)
+ {
+ 	int nid;
+ 
++	/* Check the validity of the memblock/node mapping */
++	if (!memblock_validate_numa_coverage(1))
++		return -EINVAL;
++
+ 	/* Finally register nodes. */
+ 	for_each_node_mask(nid, numa_nodes_parsed) {
+ 		unsigned long start_pfn, end_pfn;
+-- 
+2.39.2
+
 
