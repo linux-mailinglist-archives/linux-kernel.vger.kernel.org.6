@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-426646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316499DF645
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 16:39:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597D01623D6
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 15:39:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC5B1D63D6;
-	Sun,  1 Dec 2024 15:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pQ+doSH8"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2067.outbound.protection.outlook.com [40.107.100.67])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76E59DF646
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 16:39:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD15F1632FB;
-	Sun,  1 Dec 2024 15:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.67
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 316D9B21927
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 15:39:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B8018AEA;
+	Sun,  1 Dec 2024 15:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fSCkw3cU"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2086.outbound.protection.outlook.com [40.107.92.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053CF1494DD
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 15:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733067554; cv=fail; b=rNch/dAn45fQZASKPLlXHQTNatgi9JCEiMCNhP5ksWMF+8rfAJ/QvZTfxg1C6LVT72Nv0T0IAeAyMY/GvgskUsWSWjagM2WaoyVDO3N2U0bxq783eTOLtgTO066KrYD+IRMC43AZMxYVVcjjY86Ylob4zdpt86WFN3j3pwhoio8=
+	t=1733067557; cv=fail; b=tzPY6QOUYTom7mX0y1HfQFN2W+zrmRmsHRW52gOziSJ7uCTlehQtUDTP/yS+/FzyeRBfhXSjIDtf/YY4o1kTU5pqgGijBeEUcX9HppfAtlYADc/y+HgiXHY4e/037JDvzMuZsJ6joFYopqT6x7M/Fq+z6hOeIipwUIqYc5poWG4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733067554; c=relaxed/simple;
-	bh=hZy3TTWshPAxImvze0gZD3WMP0vDm2FY/LGwd0ZCsdE=;
+	s=arc-20240116; t=1733067557; c=relaxed/simple;
+	bh=FWT2RbyW5fpOd7+VBI6RDDWiseonuI1NviEWMWwWQxU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XVE/UH8NIS/b0VaLfjFZv4q+OnvkpptRp5K5aVShCi2z5HNweqKoWxbzoRKpkDxFIWVAFZ6xFG2aEbeH6RQm6E228b0JNVDr9BmuCoxtufwaR6SnAuIGj3TxF6QWSzsZoY7JZxcpMdMLAt6NVjC01dCowH2tHZW0U7CFGTOmiAw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pQ+doSH8; arc=fail smtp.client-ip=40.107.100.67
+	 MIME-Version:Content-Type; b=oT/nYYDSlujlY8IeWiwYNahR1Q9uJfFs9T26rmr6FTvo4deLVMgaCLin3Z99nlAa0KHBcKRrfMItPZw22j5MCmE5IojwlHqc0yw4v5DfzMapRotpEMSPZVYiOMDKJ9F9EMzWmErZxPElBvFJlEi+Hv0F5tivKoUfl7k+9N/8J/k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fSCkw3cU; arc=fail smtp.client-ip=40.107.92.86
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gb5u9F5hK/odT+SAs6kUNC1rDMGYSVBJtXm9Zwtxma3v1WuoAq4QsPfn+p+XZnteauxk3okHDM6NrVvQP3g0pEfzbu/mJLAdVGJ5lFVy0m1TIW+GNpqeuRSfeG6JKbtfcBSnLgPAnI0K7xUOg5pxArqWjvIzS/5UiS4ruQVEo3wSvmwBhFsMFKNMqtKiAEDBl4kzkU0aH2+fnvIzAk8SdkbEaIuDFzDiAKw5lKQsHsS1IUPwCc5SOtoQ3OzKjDpzw0vjEMA0aP7irmAtQGayXEJt8nNEPth+UDz2eCirBsaPNqFoxkZCpYflYByhvmF6qm+SYjVOd/xS5zIxbsO2gw==
+ b=syGeH+gKJgDqE7aysx9U6Z0bB2HqRrtiiv7quCdbiYReQQjqzriVDRkpNNiSvkNao4YkyhEPVjHPSvWs4bYioNaJx8zmX5pJ/3lcjQDkQpjiiQcFduwgNiDTzWE+zTxJ11/3W30mr9MrRzAt0lKnz6P0RtuHU2T0xiZCydFXqmRQyCA9WoZuI9OLI7JDi6qmvQ9x+ujCA8Vz6Pom7IGCyT5DBcUZSzUOB9+w57WDBEVEsLGNmD2tfF+d1joqcjdpPv9U2Ibj9Dp0kr1X4webr50mT5E2zA9bo+ECLVydtHcxq9460jIiWpEqpz+kvKiHsy2qVX0aVFs0V0jbynfxTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=THqpOYzVxsi2M9Jxr93ZEPARXIH0jqWyq/8EdCQRhh4=;
- b=tgvggDPG7uUQaZBA64PfPyYFzUMI0hhuuEFZk7Fcyo04dQK4FPdo/vTuwo3GqiXlRGvXkR7aqayoROHdwGDaTseXqnBqWJONB37s5D43UcnOCklqCp+0GGc9EDEhCe7ye7h9OSHN/eH/9kdtRu4Wl6IzSLjYLFvPRmMQohexY92l93gU6ZSeuiXVgHyCrq4Y/TtBdPTJGsT+Fo7SvlYCPwjoDgHGJFmBvhPtNP4wyWc6yVzcTYXcxlBKlBZpTFJK9P8mTCkCaG++IreB33SwKKp47rKuV19sBPWtmzF9iADg7bXXrK4/UoqZYNnA6OdU0odDrW0oW69rBHYeNBOESA==
+ bh=B3EzOrANg4iCE+eMwCm/oM95tbuBSCOb5dUX6vHV3Qk=;
+ b=yPShB/E8V/tCWx3dq786jK41SFxdccRxJVFLGkDk2XIqf/HBS1ObOb4Q5HhadDjzeGKfjc22TOk19brqPLzKTqiffLawLwjo6xOujQogltmo0jiFtx+vA0B0yui5KpClJSXz7R4hSVNFG1z6JMuNU/Y8DSGBJfBA1S3ftikmboiM4lxhYx+Udc66B+Cc2r7fBy4wLBpwewcz27TKnPxTsz8HWQNE8JegmKo3/s2ANwiBp8loDRBpHaMSZXv1ouSb9YoRfvLbOvRbkh3pLF5kHrecJIEpJfwJS5XZiUdsHfQRXuJqBg6O4gycYRsb/VT/m2g7w0ijDd4wVQtqm/Xo6A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kvack.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=THqpOYzVxsi2M9Jxr93ZEPARXIH0jqWyq/8EdCQRhh4=;
- b=pQ+doSH864GJ+c/Ch66pVLvlp6uxuP4vahkZOt56OK8yzVEnUFUDIiYYSrV/nZuqJ/jNpCSDlQNHTrC18qnf7pQjRzObnjZl/xH/sBOThHf6DFMyp09p0LctaRLmBCpsbcOXzXu7tNxmhwNHgkNtHSgOS+xnWEIGCuJolONauVE=
-Received: from SJ0PR03CA0203.namprd03.prod.outlook.com (2603:10b6:a03:2ef::28)
- by DS0PR12MB9445.namprd12.prod.outlook.com (2603:10b6:8:1a1::19) with
+ bh=B3EzOrANg4iCE+eMwCm/oM95tbuBSCOb5dUX6vHV3Qk=;
+ b=fSCkw3cUeIDnNCP3YdvcVXpStLU9kT+jaOn15dr973dKYm6J6YnN3K9fa6VFCJLb6gETXotTCkEWklBs54dT+mwz1FHxGS9faPeOtRfrh9gwbjpm3fBJiQ+nAKiZEAsCwMri5p3FJtjULP6n/v+Yo8E1y4hmu/qvYzgTvXk8CGA=
+Received: from SJ0PR03CA0190.namprd03.prod.outlook.com (2603:10b6:a03:2ef::15)
+ by IA1PR12MB6412.namprd12.prod.outlook.com (2603:10b6:208:3af::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.15; Sun, 1 Dec
- 2024 15:39:04 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.17; Sun, 1 Dec
+ 2024 15:39:10 +0000
 Received: from CO1PEPF000044FB.namprd21.prod.outlook.com
- (2603:10b6:a03:2ef:cafe::cc) by SJ0PR03CA0203.outlook.office365.com
- (2603:10b6:a03:2ef::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.16 via Frontend Transport; Sun,
- 1 Dec 2024 15:39:04 +0000
+ (2603:10b6:a03:2ef:cafe::75) by SJ0PR03CA0190.outlook.office365.com
+ (2603:10b6:a03:2ef::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.15 via Frontend Transport; Sun,
+ 1 Dec 2024 15:39:10 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -64,11 +64,11 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
  CO1PEPF000044FB.mail.protection.outlook.com (10.167.241.201) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8251.1 via Frontend Transport; Sun, 1 Dec 2024 15:39:03 +0000
+ 15.20.8251.1 via Frontend Transport; Sun, 1 Dec 2024 15:39:10 +0000
 Received: from tunga.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 1 Dec
- 2024 09:38:56 -0600
+ 2024 09:39:02 -0600
 From: Raghavendra K T <raghavendra.kt@amd.com>
 To: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <gourry@gourry.net>,
 	<nehagholkar@meta.com>, <abhishekd@meta.com>, <david@redhat.com>,
@@ -79,10 +79,10 @@ CC: <willy@infradead.org>, <kirill.shutemov@linux.intel.com>,
 	<mgorman@techsingularity.net>, <vbabka@suse.cz>, <hughd@google.com>,
 	<rientjes@google.com>, <shy828301@gmail.com>, <Liam.Howlett@Oracle.com>,
 	<peterz@infradead.org>, <mingo@redhat.com>, Raghavendra K T
-	<raghavendra.kt@amd.com>, <linux-fsdevel@vger.kernel.org>
-Subject: [RFC PATCH V0 02/10] mm: Maintain mm_struct list in the system
-Date: Sun, 1 Dec 2024 15:38:10 +0000
-Message-ID: <20241201153818.2633616-3-raghavendra.kt@amd.com>
+	<raghavendra.kt@amd.com>
+Subject: [RFC PATCH V0 03/10] mm: Scan the mm and create a migration list
+Date: Sun, 1 Dec 2024 15:38:11 +0000
+Message-ID: <20241201153818.2633616-4-raghavendra.kt@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241201153818.2633616-1-raghavendra.kt@amd.com>
 References: <20241201153818.2633616-1-raghavendra.kt@amd.com>
@@ -98,302 +98,393 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FB:EE_|DS0PR12MB9445:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05cc5bb9-b9b7-4986-fe6b-08dd121e48b7
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044FB:EE_|IA1PR12MB6412:EE_
+X-MS-Office365-Filtering-Correlation-Id: d5669c10-1f3d-411e-08b9-08dd121e4cd1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|36860700013|376014|921020;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+xxasN5tC1YEgwOqWe7D9mzO3hoMyzCCl7+OGOoIqirHPX/+SMVbHqjhRTSf?=
- =?us-ascii?Q?sTuds4iwOoNBiDOaAA+1nwyaCLXuBGehRfeYhleaeM8rXJQtPYm2G6ntplVo?=
- =?us-ascii?Q?8A35QWIC+nuf9KYRTekb29yor9cdQQnE4g08I8UNxQ1TASQiRabUTuchECm5?=
- =?us-ascii?Q?SbNy8zEjFd743pUomJcFOJGQgMxQwi4zf8FR3nRf8uEJmF24brSwsMe2dPkC?=
- =?us-ascii?Q?JEwUIusuB3+V8Xb20fTT1N1Rp+dbH1fYO6Eh7RwD6Mwgj5EwnoZyeRd8RFv5?=
- =?us-ascii?Q?fhUOekLcLjTB6KMzooeD/BRa71/8nBBmBtz3TCR6/7oE0+MCGO8yh+6oXS63?=
- =?us-ascii?Q?9BcVEtPJSScTVGWJWTBlO6/JXOoPSQ0dz/L1SZBQ/Vuk4ndiWkFJ2x9JLKtr?=
- =?us-ascii?Q?UqKKRMompfQpSXX1Ji1pagoB1gwbqNxJ6BxraZ9oe4pdSgVQxBVWTYZ+SsC8?=
- =?us-ascii?Q?rf6MA4V638/8l04//QVFEaBzs0fbWEC6Ufn+ds005dFKvrGM76+38dSicb9j?=
- =?us-ascii?Q?LWWy8hFpJa0s3fiqFT/+ljlJttFRoVQg+5ew+204ViYbD/TEolWcjgvAOhz5?=
- =?us-ascii?Q?QecOQrYqi5L6cCRhvudR9OvklHUjpyL12V6RoMNmGMb8kN5W/bGvVAS0j+sV?=
- =?us-ascii?Q?+fkbr/nfJn3l24NR3yxyspleymd8+PZP4tuP95ICXcs8bv/Xtd547gnU2roR?=
- =?us-ascii?Q?kSRsUdxuRfB6sdwCDUg3NkRG9ti3QPA+7ZYX93NVzswdg9HUUqYjZ89noQ5j?=
- =?us-ascii?Q?o4j65UTly11UMbyiiIpKzWkz41vzNQ2jAK2CHmQ+ZP43EitJUzKGLObphusp?=
- =?us-ascii?Q?CiDwBXHSd5sBG7NHxiZd6nmXk6GbRFkyREGvR7mFzBaWUM3zAT44tNka9Eou?=
- =?us-ascii?Q?naYYIBJvLQMXh+pXp9w67SFq1R02gJP6d8IcXtR12/JmvjYBkSJF4ZzUKWOx?=
- =?us-ascii?Q?YRzyZOh7wPOSWvojLbhPtC4rehlYrIaPvhrcUfBYLyLHHpgxr+dOdmCkg3vn?=
- =?us-ascii?Q?Pu6GkHbM56FegXgAuqmCrRwHFil5X07ELERSMqqUgR2QB9YYeB2/VgRYc0H7?=
- =?us-ascii?Q?g5tLzBnhY//YIoXh997aylcAh/7pYvNrE1ElQnW2gkTTFQQD6DJwkbdhijFe?=
- =?us-ascii?Q?ewmPDQfrwEBQI2EOJPLVh3nun741yLQ8IlAca7XqeGn77GtJ/j8OQ4Difgm6?=
- =?us-ascii?Q?YFozVb1JwyRKoJyonOZPzR6QeXGLAJZvn/XtIsoysxf4MfG4eRmw0Vwv1a0v?=
- =?us-ascii?Q?t1OQob5QuHR3HKPRynASg8BWiosWsAuLEC6vvGozuOIWMVHsUQrGGqnf1A1F?=
- =?us-ascii?Q?kQr4M4l4zvvadqR1F5hHNpfl7vb++MbjOzsenlOaBN5OIxRw0FPgCVV5WMIO?=
- =?us-ascii?Q?4eTahIK7wsUVoM/d3R2cJ877VGr1aejbc4rqH9PF/qIs03UdgJ7EIDkPkXko?=
- =?us-ascii?Q?HFzRtg74gyZixCNepykqk+vf+B+HfR0TlDFKMoJVhMOiFtLw1nf2Kw=3D=3D?=
+	=?us-ascii?Q?wcg2HOEFQwkfbNvf+WHCIRz5/Qxg20G66Dn9ZbJ4zwcEqNmZV0YpLt3e7PD0?=
+ =?us-ascii?Q?wid7dlFa8XGPAevX37fgiU8SD8eZdYReHL62U5iPgA5HVVqGfUqr/YnwW7kV?=
+ =?us-ascii?Q?nPXfJeLb7HZFY/690TfWYNOqW2uJtjbE3OIGyqELGz0vBhILYRMfnCMDZFbV?=
+ =?us-ascii?Q?LScv5NgA525XdEZQGo6yhU/cUibe4FEZn+kYFiW7UWmNSVggjw2/nqlrsvdl?=
+ =?us-ascii?Q?DHdus3yNen7flSPSGnqbLM08L79f7ZqX66Oc117bOEV5NuSeFbuiSDnUQyfC?=
+ =?us-ascii?Q?VPHxBUwE20VOTTFNOHKf3/5k54EjRXlF3bdE5306FcNweiwxJnfBM8I6NOLP?=
+ =?us-ascii?Q?SRTkhB9UaGQXwgfpn8X37S8vrA2Jm9OVaNiSOkbFZG5DBIN7bNsbon9nLpWG?=
+ =?us-ascii?Q?tz0WdlQVIFKeg+gSGwD+prrAUDN99ESsh7kulUm56xqNDWDGSXjm5JHCsikM?=
+ =?us-ascii?Q?cPVSAujFSCgISUoTrwT01amvbG+Bq6mTldyBBEX1ZXgh7WkEtqZezW0py07L?=
+ =?us-ascii?Q?l4/JY2zORCwmbe62VAwMk/QW9f7l/PoLEi3qv6ZGOaRWGGxk2W3IOB5UlqoY?=
+ =?us-ascii?Q?ew5LrLe/qOVVksldY3Fyu9al2taD1vjva9N+2S+VWzCT9cPFv/tvXg4ArjHl?=
+ =?us-ascii?Q?EcLYc7er8jGXy2VUYmiU2R09bVMLNneG+HVN+sTmnqXcPhew2jf2NI+q9+fM?=
+ =?us-ascii?Q?sdXvofFgb7DNe97ODTvwDd+ugDzJOwAJEB86OgSsCrdbsWfwIeyj5mL2e541?=
+ =?us-ascii?Q?HS7haYt6G2tyKxLPHLx0kuH5xK6Hbzko2+ncCGOONVTRJmd3WgoRJTTpDKSX?=
+ =?us-ascii?Q?X+OQeWcaa+27PhUhUL8MaoqHMBRZ5it8RkhHMJsJPoEwQebEkGAURzJYkHQI?=
+ =?us-ascii?Q?RYiHeKpS2VzoOC1SgGEBpkVLWnLZJo0X0H0ceqeSQ0kJB/Dqm0ciCI8ENeM7?=
+ =?us-ascii?Q?dbk4xQAUZx1kSRVpIJWHzMfwRTPR09hVFm1iN9f4lUbcvOD8YVyuFcD05w14?=
+ =?us-ascii?Q?70P2Fc9tkdwHEuHyCTf0SvKnLNiVN2lvxsT7eOUgmBKcCcG/fRL1WFuOPlRE?=
+ =?us-ascii?Q?IV3GwSRvLZZB83ZQ0cUiSSK3hW6K65KTuXCnop437BIp6CsVnhHG6D9pk3xN?=
+ =?us-ascii?Q?pcVHyDWEgRWbIGlSkcc2BVzC+VyALW6hgDvODas7bU7HBfU4YoQHOGbQWMhZ?=
+ =?us-ascii?Q?xOT2lfk6Q62hpal7IK90KBnBVhKstka4SeXynxobJlEeRUjng87m9wm7IQ7S?=
+ =?us-ascii?Q?IMPFJkCjYcfl/OI6ZRYigilvXNbVrBnduZBHKa1BxNZWJXV5blAN5TWykwaN?=
+ =?us-ascii?Q?dY6CNgjxf8fDnGAP+qaq/8RtMQInIkvlIlkaPeW8J7mgEqzmj1YL+SmN6pud?=
+ =?us-ascii?Q?18KZ0C+9dnIhYoZLOiZAczZeUaY7YM7JxeLyHEufPUvaVr6ZPD9b912edFk3?=
+ =?us-ascii?Q?RGkrAV82EJqdvjtOQkc6gHR22tPSQS8b?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(36860700013)(376014)(921020);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2024 15:39:03.3252
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2024 15:39:10.1690
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05cc5bb9-b9b7-4986-fe6b-08dd121e48b7
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5669c10-1f3d-411e-08b9-08dd121e4cd1
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	CO1PEPF000044FB.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9445
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6412
 
-Add a hook in the fork and exec path to link mm_struct.
-Reuse the mm_slot infrastructure to aid insert and lookup of mm_struct.
+Since we already have list of mm_struct in the system, add a module to
+scan each mm that walks VMAs of each mm_struct and scan all the pages
+associated with that.
 
-CC: linux-fsdevel@vger.kernel.org
-Suggested-by: Bharata B Rao <bharata@amd.com>
+ In the scan path: Check for the recently acccessed pages (folios) belonging to
+slowtier nodes. Add all those folios to a migration list.
+
 Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
 ---
- fs/exec.c                |  4 ++
- include/linux/kmmscand.h | 30 ++++++++++++++
- kernel/fork.c            |  4 ++
- mm/kmmscand.c            | 86 +++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 123 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/kmmscand.h
+ mm/kmmscand.c | 268 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 264 insertions(+), 4 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 98cb7ba9983c..bd72107b2ab1 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -68,6 +68,7 @@
- #include <linux/user_events.h>
- #include <linux/rseq.h>
- #include <linux/ksm.h>
-+#include <linux/kmmscand.h>
- 
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -274,6 +275,8 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
- 	if (err)
- 		goto err_ksm;
- 
-+	kmmscand_execve(mm);
-+
- 	/*
- 	 * Place the stack at the largest stack address the architecture
- 	 * supports. Later, we'll move this to an appropriate place. We don't
-@@ -296,6 +299,7 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
- 	return 0;
- err:
- 	ksm_exit(mm);
-+	kmmscand_exit(mm);
- err_ksm:
- 	mmap_write_unlock(mm);
- err_free:
-diff --git a/include/linux/kmmscand.h b/include/linux/kmmscand.h
-new file mode 100644
-index 000000000000..b120c65ee8c6
---- /dev/null
-+++ b/include/linux/kmmscand.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_KMMSCAND_H_
-+#define _LINUX_KMMSCAND_H_
-+
-+#ifdef CONFIG_KMMSCAND
-+extern void __kmmscand_enter(struct mm_struct *mm);
-+extern void __kmmscand_exit(struct mm_struct *mm);
-+
-+static inline void kmmscand_execve(struct mm_struct *mm)
-+{
-+	__kmmscand_enter(mm);
-+}
-+
-+static inline void kmmscand_fork(struct mm_struct *mm, struct mm_struct *oldmm)
-+{
-+	__kmmscand_enter(mm);
-+}
-+
-+static inline void kmmscand_exit(struct mm_struct *mm)
-+{
-+	__kmmscand_exit(mm);
-+}
-+#else /* !CONFIG_KMMSCAND */
-+static inline void __kmmscand_enter(struct mm_struct *mm) {}
-+static inline void __kmmscand_exit(struct mm_struct *mm) {}
-+static inline void kmmscand_execve(struct mm_struct *mm) {}
-+static inline void kmmscand_fork(struct mm_struct *mm, struct mm_struct *oldmm) {}
-+static inline void kmmscand_exit(struct mm_struct *mm) {}
-+#endif
-+#endif /* _LINUX_KMMSCAND_H_ */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 1450b461d196..812b0032592e 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -85,6 +85,7 @@
- #include <linux/user-return-notifier.h>
- #include <linux/oom.h>
- #include <linux/khugepaged.h>
-+#include <linux/kmmscand.h>
- #include <linux/signalfd.h>
- #include <linux/uprobes.h>
- #include <linux/aio.h>
-@@ -659,6 +660,8 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
- 	mm->exec_vm = oldmm->exec_vm;
- 	mm->stack_vm = oldmm->stack_vm;
- 
-+	kmmscand_fork(mm, oldmm);
-+
- 	/* Use __mt_dup() to efficiently build an identical maple tree. */
- 	retval = __mt_dup(&oldmm->mm_mt, &mm->mm_mt, GFP_KERNEL);
- 	if (unlikely(retval))
-@@ -1350,6 +1353,7 @@ static inline void __mmput(struct mm_struct *mm)
- 	exit_aio(mm);
- 	ksm_exit(mm);
- 	khugepaged_exit(mm); /* must run before exit_mmap */
-+	kmmscand_exit(mm);
- 	exit_mmap(mm);
- 	mm_put_huge_zero_folio(mm);
- 	set_mm_exe_file(mm, NULL);
 diff --git a/mm/kmmscand.c b/mm/kmmscand.c
-index 23cf5638fe10..957128d4e425 100644
+index 957128d4e425..0496359d07f5 100644
 --- a/mm/kmmscand.c
 +++ b/mm/kmmscand.c
-@@ -7,13 +7,14 @@
+@@ -4,12 +4,19 @@
+ #include <linux/sched.h>
+ #include <linux/sched/mm.h>
+ #include <linux/mmu_notifier.h>
++#include <linux/rmap.h>
++#include <linux/pagewalk.h>
++#include <linux/page_ext.h>
++#include <linux/page_idle.h>
++#include <linux/page_table_check.h>
++#include <linux/pagemap.h>
  #include <linux/swap.h>
  #include <linux/mm_inline.h>
  #include <linux/kthread.h>
-+#include <linux/kmmscand.h>
+ #include <linux/kmmscand.h>
++#include <linux/memory-tiers.h>
++#include <linux/mempolicy.h>
  #include <linux/string.h>
- #include <linux/delay.h>
+-#include <linux/delay.h>
  #include <linux/cleanup.h>
  
  #include <asm/pgalloc.h>
- #include "internal.h"
--
-+#include "mm_slot.h"
- 
- static struct task_struct *kmmscand_thread __read_mostly;
- static DEFINE_MUTEX(kmmscand_mutex);
-@@ -30,10 +31,21 @@ static bool need_wakeup;
- 
+@@ -32,6 +39,7 @@ static bool need_wakeup;
  static unsigned long kmmscand_sleep_expire;
  
-+static DEFINE_SPINLOCK(kmmscand_mm_lock);
+ static DEFINE_SPINLOCK(kmmscand_mm_lock);
++static DEFINE_SPINLOCK(kmmscand_migrate_lock);
  static DECLARE_WAIT_QUEUE_HEAD(kmmscand_wait);
  
-+#define KMMSCAND_SLOT_HASH_BITS 10
-+static DEFINE_READ_MOSTLY_HASHTABLE(kmmscand_slots_hash, KMMSCAND_SLOT_HASH_BITS);
-+
-+static struct kmem_cache *kmmscand_slot_cache __read_mostly;
-+
-+struct kmmscand_mm_slot {
-+	struct mm_slot slot;
-+};
-+
- struct kmmscand_scan {
- 	struct list_head mm_head;
-+	struct kmmscand_mm_slot *mm_slot;
+ #define KMMSCAND_SLOT_HASH_BITS 10
+@@ -41,6 +49,7 @@ static struct kmem_cache *kmmscand_slot_cache __read_mostly;
+ 
+ struct kmmscand_mm_slot {
+ 	struct mm_slot slot;
++	long address;
  };
  
- struct kmmscand_scan kmmscand_scan = {
-@@ -76,6 +88,11 @@ static void kmmscand_migrate_folio(void)
+ struct kmmscand_scan {
+@@ -52,6 +61,21 @@ struct kmmscand_scan kmmscand_scan = {
+ 	.mm_head = LIST_HEAD_INIT(kmmscand_scan.mm_head),
+ };
+ 
++struct kmmscand_migrate_list {
++	struct list_head migrate_head;
++};
++
++struct kmmscand_migrate_list kmmscand_migrate_list = {
++	.migrate_head = LIST_HEAD_INIT(kmmscand_migrate_list.migrate_head),
++};
++
++struct kmmscand_migrate_info {
++	struct list_head migrate_node;
++	struct mm_struct *mm;
++	struct vm_area_struct *vma;
++	struct folio *folio;
++	unsigned long address;
++};
+ static int kmmscand_has_work(void)
  {
+ 	return !list_empty(&kmmscand_scan.mm_head);
+@@ -84,8 +108,140 @@ static void kmmscand_wait_work(void)
+ 	}
  }
  
-+static inline int kmmscand_test_exit(struct mm_struct *mm)
+-static void kmmscand_migrate_folio(void)
++static bool kmmscand_eligible_srcnid(int nid)
+ {
++	if (!node_is_toptier(nid))
++		return true;
++	return false;
++}
++
++static bool folio_idle_clear_pte_refs_one(struct folio *folio,
++					 struct vm_area_struct *vma,
++					 unsigned long addr,
++					 pte_t *ptep)
 +{
-+	return atomic_read(&mm->mm_users) == 0;
++	bool referenced = false;
++	struct mm_struct *mm = vma->vm_mm;
++	pmd_t *pmd = pmd_off(mm, addr);
++
++	if (ptep) {
++		if (ptep_clear_young_notify(vma, addr, ptep))
++			referenced = true;
++	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
++		if (!pmd_present(*pmd))
++			WARN_ON_ONCE(1);
++		if (pmdp_clear_young_notify(vma, addr, pmd))
++			referenced = true;
++	} else {
++		WARN_ON_ONCE(1);
++	}
++
++	if (referenced) {
++		folio_clear_idle(folio);
++		folio_set_young(folio);
++	}
++	return true;
++}
++
++static void page_idle_clear_pte_refs(struct page *page, pte_t *pte, struct mm_walk *walk)
++{
++	bool need_lock;
++	struct folio *folio =  page_folio(page);
++	unsigned long address;
++
++	if (!folio_mapped(folio) || !folio_raw_mapping(folio))
++		return;
++
++	need_lock = !folio_test_anon(folio) || folio_test_ksm(folio);
++	if (need_lock && !folio_trylock(folio))
++		return;
++	address = vma_address(walk->vma, page_pgoff(folio, page), compound_nr(page));
++	VM_BUG_ON_VMA(address == -EFAULT, vma);
++	folio_idle_clear_pte_refs_one(folio, walk->vma, address, pte);
++
++	if (need_lock)
++		folio_unlock(folio);
++}
++
++static int hot_vma_idle_pte_entry(pte_t *pte,
++				 unsigned long addr,
++				 unsigned long next,
++				 struct mm_walk *walk)
++{
++	struct page *page;
++	struct folio *folio;
++	struct mm_struct *mm;
++	struct vm_area_struct *vma;
++	struct kmmscand_migrate_info *info;
++	struct kmmscand_migrate_list *migrate_list = walk->private;
++	int srcnid;
++
++	pte_t pteval = ptep_get(pte);
++
++	if (pte_none(pteval))
++		return 1;
++	vma = walk->vma;
++	mm = vma->vm_mm;
++	page = pte_page(*pte);
++
++	page_idle_clear_pte_refs(page, pte, walk);
++
++	folio = page_folio(page);
++	folio_get(folio);
++
++	if (!folio || folio_is_zone_device(folio)) {
++		folio_put(folio);
++		return 1;
++	}
++
++	srcnid = folio_nid(folio);
++
++	if (!folio_test_idle(folio) || folio_test_young(folio) ||
++			mmu_notifier_test_young(mm, addr) ||
++			folio_test_referenced(folio) || pte_young(pteval)) {
++
++		/* Do not try to promote pages from regular nodes */
++		if (!kmmscand_eligible_srcnid(srcnid))
++			goto end;
++
++		info = kzalloc(sizeof(struct kmmscand_migrate_info), GFP_KERNEL);
++		if (info && migrate_list) {
++
++			info->mm = mm;
++			info->vma = vma;
++			info->folio = folio;
++
++			spin_lock(&kmmscand_migrate_lock);
++			list_add_tail(&info->migrate_node, &migrate_list->migrate_head);
++			spin_unlock(&kmmscand_migrate_lock);
++		}
++	}
++end:
++	folio_set_idle(folio);
++	folio_put(folio);
++	return 0;
++}
++
++static const struct mm_walk_ops hot_vma_set_idle_ops = {
++	.pte_entry = hot_vma_idle_pte_entry,
++	.walk_lock = PGWALK_RDLOCK,
++};
++
++static void kmmscand_walk_page_vma(struct vm_area_struct *vma)
++{
++	if (!vma_migratable(vma) || !vma_policy_mof(vma) ||
++	    is_vm_hugetlb_page(vma) || (vma->vm_flags & VM_MIXEDMAP)) {
++		return;
++	}
++
++	if (!vma->vm_mm ||
++	    (vma->vm_file && (vma->vm_flags & (VM_READ|VM_WRITE)) == (VM_READ)))
++		return;
++
++	if (!vma_is_accessible(vma))
++		return;
++
++	walk_page_vma(vma, &hot_vma_set_idle_ops, &kmmscand_migrate_list);
+ }
+ 
+ static inline int kmmscand_test_exit(struct mm_struct *mm)
+@@ -93,10 +249,113 @@ static inline int kmmscand_test_exit(struct mm_struct *mm)
+ 	return atomic_read(&mm->mm_users) == 0;
+ }
+ 
++static void kmmscand_collect_mm_slot(struct kmmscand_mm_slot *mm_slot)
++{
++	struct mm_slot *slot = &mm_slot->slot;
++	struct mm_struct *mm = slot->mm;
++
++	lockdep_assert_held(&kmmscand_mm_lock);
++
++	if (kmmscand_test_exit(mm)) {
++		/* free mm_slot */
++		hash_del(&slot->hash);
++		list_del(&slot->mm_node);
++
++		mm_slot_free(kmmscand_slot_cache, mm_slot);
++		mmdrop(mm);
++	}
++}
++
++static void kmmscand_migrate_folio(void)
++{
 +}
 +
  static unsigned long kmmscand_scan_mm_slot(void)
  {
- 	/* placeholder for scanning */
-@@ -123,6 +140,65 @@ static int kmmscand(void *none)
+-	/* placeholder for scanning */
+-	msleep(100);
++	bool update_mmslot_info = false;
++
++	unsigned long address;
++
++	struct mm_slot *slot;
++	struct mm_struct *mm;
++	struct vma_iterator vmi;
++	struct vm_area_struct *vma = NULL;
++	struct kmmscand_mm_slot *mm_slot;
++
++	/* Retrieve mm */
++	spin_lock(&kmmscand_mm_lock);
++
++	if (kmmscand_scan.mm_slot) {
++		mm_slot = kmmscand_scan.mm_slot;
++		slot = &mm_slot->slot;
++		address = mm_slot->address;
++	} else {
++		slot = list_entry(kmmscand_scan.mm_head.next,
++				     struct mm_slot, mm_node);
++		mm_slot = mm_slot_entry(slot, struct kmmscand_mm_slot, slot);
++		address = mm_slot->address;
++		kmmscand_scan.mm_slot = mm_slot;
++	}
++
++	mm = slot->mm;
++
++	spin_unlock(&kmmscand_mm_lock);
++
++	if (unlikely(!mmap_read_trylock(mm)))
++		goto outerloop_mmap_lock;
++
++	if (unlikely(kmmscand_test_exit(mm)))
++		goto outerloop;
++
++
++	vma_iter_init(&vmi, mm, address);
++
++	for_each_vma(vmi, vma) {
++		/* Count the scanned pages here to decide exit */
++		kmmscand_walk_page_vma(vma);
++
++		address = vma->vm_end;
++	}
++
++	if (!vma)
++		address = 0;
++
++	update_mmslot_info = true;
++
++outerloop:
++	/* exit_mmap will destroy ptes after this */
++	mmap_read_unlock(mm);
++
++outerloop_mmap_lock:
++	spin_lock(&kmmscand_mm_lock);
++	VM_BUG_ON(kmmscand_scan.mm_slot != mm_slot);
++
++	if (update_mmslot_info)
++		mm_slot->address = address;
++	/*
++	 * Release the current mm_slot if this mm is about to die, or
++	 * if we scanned all vmas of this mm.
++	 */
++	if (unlikely(kmmscand_test_exit(mm)) || !vma) {
++		/*
++		 * Make sure that if mm_users is reaching zero while
++		 * kmmscand runs here, kmmscand_exit will find
++		 * mm_slot not pointing to the exiting mm.
++		 */
++		if (slot->mm_node.next != &kmmscand_scan.mm_head) {
++			slot = list_entry(slot->mm_node.next,
++					struct mm_slot, mm_node);
++			kmmscand_scan.mm_slot =
++				mm_slot_entry(slot, struct kmmscand_mm_slot, slot);
++
++		} else
++			kmmscand_scan.mm_slot = NULL;
++
++		if (kmmscand_test_exit(mm))
++			kmmscand_collect_mm_slot(mm_slot);
++	}
++
++	spin_unlock(&kmmscand_mm_lock);
  	return 0;
  }
  
-+static inline void kmmscand_destroy(void)
-+{
-+	kmem_cache_destroy(kmmscand_slot_cache);
-+}
-+
-+void __kmmscand_enter(struct mm_struct *mm)
-+{
-+	struct kmmscand_mm_slot *kmmscand_slot;
-+	struct mm_slot *slot;
-+	int wakeup;
-+
-+	/* __kmmscand_exit() must not run from under us */
-+	VM_BUG_ON_MM(kmmscand_test_exit(mm), mm);
-+
-+	kmmscand_slot = mm_slot_alloc(kmmscand_slot_cache);
-+
-+	if (!kmmscand_slot)
-+		return;
-+
-+	slot = &kmmscand_slot->slot;
-+
-+	spin_lock(&kmmscand_mm_lock);
-+	mm_slot_insert(kmmscand_slots_hash, mm, slot);
-+
-+	wakeup = list_empty(&kmmscand_scan.mm_head);
-+	list_add_tail(&slot->mm_node, &kmmscand_scan.mm_head);
-+	spin_unlock(&kmmscand_mm_lock);
-+
-+	mmgrab(mm);
-+	if (wakeup)
-+		wake_up_interruptible(&kmmscand_wait);
-+}
-+
-+void __kmmscand_exit(struct mm_struct *mm)
-+{
-+	struct kmmscand_mm_slot *mm_slot;
-+	struct mm_slot *slot;
-+	int free = 0;
-+
-+	spin_lock(&kmmscand_mm_lock);
-+	slot = mm_slot_lookup(kmmscand_slots_hash, mm);
-+	mm_slot = mm_slot_entry(slot, struct kmmscand_mm_slot, slot);
-+	if (mm_slot && kmmscand_scan.mm_slot != mm_slot) {
-+		hash_del(&slot->hash);
-+		list_del(&slot->mm_node);
-+		free = 1;
-+	}
-+
-+	spin_unlock(&kmmscand_mm_lock);
-+
-+	if (free) {
-+		mm_slot_free(kmmscand_slot_cache, mm_slot);
-+		mmdrop(mm);
-+	} else if (mm_slot) {
-+		mmap_write_lock(mm);
-+		mmap_write_unlock(mm);
-+	}
-+}
-+
- static int start_kmmscand(void)
- {
- 	int err = 0;
-@@ -168,6 +244,13 @@ static int __init kmmscand_init(void)
- {
- 	int err;
+@@ -159,6 +418,7 @@ void __kmmscand_enter(struct mm_struct *mm)
+ 	if (!kmmscand_slot)
+ 		return;
  
-+	kmmscand_slot_cache = KMEM_CACHE(kmmscand_mm_slot, 0);
-+
-+	if (!kmmscand_slot_cache) {
-+		pr_err("kmmscand: kmem_cache error");
-+		return -ENOMEM;
-+	}
-+
- 	err = start_kmmscand();
- 	if (err)
- 		goto err_kmmscand;
-@@ -176,6 +259,7 @@ static int __init kmmscand_init(void)
++	kmmscand_slot->address = 0;
+ 	slot = &kmmscand_slot->slot;
  
- err_kmmscand:
- 	stop_kmmscand();
-+	kmmscand_destroy();
- 
- 	return err;
- }
+ 	spin_lock(&kmmscand_mm_lock);
 -- 
 2.39.3
 
