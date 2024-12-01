@@ -1,93 +1,119 @@
-Return-Path: <linux-kernel+bounces-426611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7ADE9DF5A2
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:58:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86C29DF5A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:59:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CBEA281629
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E800162A56
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F8B1C689D;
-	Sun,  1 Dec 2024 12:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC091C6F76;
+	Sun,  1 Dec 2024 12:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCsgRWSo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e4zwbsvr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jMN7Cj5f"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BB618A932;
-	Sun,  1 Dec 2024 12:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AC518A932;
+	Sun,  1 Dec 2024 12:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733057895; cv=none; b=ZDEBYLrL2cs7+Ipql5WQb7qtrXE5BATKAQhrwfEM7ffFNWsUzjVYVY2hgdwtc7JRX//2qcQdXhZA8O4tLaGkuB3sMb4LTVzFCw2hqa73dvh4sAio1pm9kglZXXB1rjZqXUu0EVIzK8SAL+1Be7L16Bvn5V4gWZCO23+FXNXM7+U=
+	t=1733057938; cv=none; b=WRct9RtiZoFj2Lv/J5/bWWGHcQep7XaQuU/kPegLf2lpD3YZu3IZjNHVhj+3Jvb3fwyUBu6DsYVImrItmGhpVJFSUP3iUR36qTl2djhXdFBu4bJcS2n93Z71Dl+H6WpD99LP5Iofr+QS6rAoLC58wJCJb9aOT1eHFsWuQ0kyoYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733057895; c=relaxed/simple;
-	bh=mFTkYjF9lZCa/vu703tNRRGVkcI+D0SERlF9fk5559E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jQV0x7NMpryLAnvm3DGT9YI2Hvl9R7yXkOlcBDTqoWtnN000tSxZk3xcuJH1GIgANeY6HOz7bMadlwlF4u3eZ6jAwXM5LM6+pqgWX44MxsXxZV9UwxufDV5+8mYWtmNfqccvotkztmgWqw2v3WVENMHaTzb2ze6DHUtsgycJP/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCsgRWSo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBCFFC4CECF;
-	Sun,  1 Dec 2024 12:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733057895;
-	bh=mFTkYjF9lZCa/vu703tNRRGVkcI+D0SERlF9fk5559E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aCsgRWSoOGNK3PxMRpqs/JTbysuInYwCW4wtV2NLTaXyCRO1J7DIBhRpWjGgXMu3s
-	 5nxKisIptPNeXJ5uENYCR018w1yhuIFe31Yy5CF23nQI10FoAQN13aKQ67xm4hMcUj
-	 HDO3yTMfMZLhyvu9MnZk5dZdzszaIv9KTmobXiChWoc5lE78F7TTaN4nGwijdvbEJu
-	 XhdAhPB+CcYyrLAF97lLI1324gjOHWf7x60S5DGb6RbnaZ/GYxLakOcwn9wb/te5Ud
-	 Yl53A12RCuO9lD+BD9z45RTI3H3AWoI6TMSb5HmvTFxw+dr3WOsDerQGc5CoOCztSx
-	 f/wIGf+HM+N+g==
-Date: Sun, 1 Dec 2024 12:58:07 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Kuldeep Pisda <pisdak79@gmail.com>
-Cc: lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: palmas: Fix typo in threshold calculation
- comment
-Message-ID: <20241201125807.2b3ea19a@jic23-huawei>
-In-Reply-To: <20241123112757.63928-1-pisdak79@gmail.com>
-References: <20241123112757.63928-1-pisdak79@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733057938; c=relaxed/simple;
+	bh=vqoBZ2lUTgcHB4SCknzvfuzB8hKb9prwsO4oHV1sr+c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lDbN/ihfJVoMmkQRT1DFr/hDrcOoSi04v2TFX1uZB5m+ot+YJwQRZfgRDixGJEOtZGJs2O+j62261OpOh8y7UxxMM0KzjZZz/p9lfd2S8Uz22FIZB6UsddHXYr0UiLpH0SW3OpTp1L6A2bAmvyp9s3vJEwkj6roAj4JHJ/NAars=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e4zwbsvr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jMN7Cj5f; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733057934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GqReeC4uSPSF0w1mSxqpdPoAVgG+54w5BCK3CxpeuCQ=;
+	b=e4zwbsvr8TV5RKRYs2w8q9h0cPIXejhUhnXus91iYiyBH2rvY2O/xVf/6AviQ5RhnDF4Ub
+	N8le4KSbwv4Y+0s1tAo+j/0z2ro2+14itleABCUeCbC1IlM/RpBpTP/yhypQkQ5G7jcLc5
+	rNpXN9d2sU76mbtjSdNJ3wM6fyJ4yvxn+fmxAjy0l8SmNfukzecI1GIiOKg+30iSJhnPob
+	jVLFANRAfSueGzdJBjhEvWjgnzxJH4jUwRxG5kb4Y3F/xoZ+OJJGxMgu5GJ4PMSHhBW+sA
+	dUFGK8EHYrpXeEuSbsyWJwjBhd8mck8lA9KuS0AAxOuWozZaqUJt0rn24lp0xA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733057934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GqReeC4uSPSF0w1mSxqpdPoAVgG+54w5BCK3CxpeuCQ=;
+	b=jMN7Cj5f0x4R1s1MRJY0gKbIK1fIJe5i0A2YJ1q0s1invMESoOJbTUSephg/XWlPKbOtUZ
+	F4Gb5WOfO+kTDMDg==
+To: Len Brown <lenb@kernel.org>, Dave Hansen <dave.hansen@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, peterz@infradead.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ Len Brown <len.brown@intel.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v3] x86/cpu: Add INTEL_LUNARLAKE_M to X86_BUG_MONITOR
+In-Reply-To: <CAJvTdKmi6-nEwhq8edPw5g2b+ME2_HX+ctePpcPFoZPbNcXqhQ@mail.gmail.com>
+References: <a4aa8842a3c3bfdb7fe9807710eef159cbf0e705.1731463305.git.len.brown@intel.com>
+ <c5f9c185-11b1-4bc8-96be-a81895c2a096@intel.com>
+ <CAJZ5v0iCR5ZbNz=OF1MbJUJdhCRh2P8M_MTF7eszPe5uv9_R1w@mail.gmail.com>
+ <95c5a803-efac-4d90-b451-4c6ec298bdb7@intel.com>
+ <CAJvTdKmi6-nEwhq8edPw5g2b+ME2_HX+ctePpcPFoZPbNcXqhQ@mail.gmail.com>
+Date: Sun, 01 Dec 2024 13:58:53 +0100
+Message-ID: <877c8jwodu.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 23 Nov 2024 11:27:57 +0000
-Kuldeep Pisda <pisdak79@gmail.com> wrote:
+On Thu, Nov 21 2024 at 05:22, Len Brown wrote:
+> On Wed, Nov 20, 2024 at 3:21=E2=80=AFPM Dave Hansen <dave.hansen@intel.co=
+m> wrote:
+>> I'm not going to lose sleep over it, but as a policy, I think we should
+>> backport CPU fixes to all the stable kernels. I don't feel like I have a
+>> good enough handle on what kernels folks run on new systems to make a
+>> prediction.
+>
+> FWIW, I sent a backport of a slightly earlier version of this patch,
+> but all I got back was vitriol about violating the kernel Documentation on
+> sending to stable.
+>
+> Maybe a native english speaker could re-write that Documentation,
+> so that a native english speaker can understand it?
 
-> Fix a typo in the GPADC threshold calculation documentation where
-> "paramenters" was incorrectly written instead of "parameters".
-> 
-> Signed-off-by: Kuldeep Pisda <pisdak79@gmail.com>
-Hi. I already have a patch queued that fixes this up.
+What's so hard to understand?
+
+ There are three options to submit a change to -stable trees:
+
+  1. Add a'stable tag' to the description of a patch you then submit for ma=
+inline
+     inclusion.
+
+  2. Ask the stable team to pick up a patch already mainlined.
+
+  3. Submit a patch to the stable team that is equivalent to a change
+     already mainlined.
+
+Is very clear and understandable english, no?
+
+#1    is the preferred one and only requires a "stable tag"
+
+#2/#3 can only be done once the fix is upstream as they require the
+      upstream commit id.
+
+It's clearly spelled out in the detailed descriptions of the three
+options.
 
 Thanks,
 
-Jonathan
-
-> ---
->  drivers/iio/adc/palmas_gpadc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
-> index 203cbbc70719..67d567ee21b4 100644
-> --- a/drivers/iio/adc/palmas_gpadc.c
-> +++ b/drivers/iio/adc/palmas_gpadc.c
-> @@ -456,7 +456,7 @@ static int palmas_gpadc_get_calibrated_code(struct palmas_gpadc *adc,
->   *   raw high threshold = (ideal threshold + INL) * gain error + offset error
->   *
->   * The gain error include both gain error, as specified in the datasheet, and
-> - * the gain error drift. These paramenters vary depending on device and whether
-> + * the gain error drift. These parameters vary depending on device and whether
->   * the channel is calibrated (trimmed) or not.
->   */
->  static int palmas_gpadc_threshold_with_tolerance(int val, const int INL,
-
+        tglx
 
