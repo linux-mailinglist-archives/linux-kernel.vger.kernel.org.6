@@ -1,129 +1,101 @@
-Return-Path: <linux-kernel+bounces-426626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509B89DF5CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:30:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D19D162F14
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:30:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401651CEE91;
-	Sun,  1 Dec 2024 13:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="APfCIZod"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CBC9DF5D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:33:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53371CEACA
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 13:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365292818F3
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:33:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382171CF5F4;
+	Sun,  1 Dec 2024 13:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQZUT1Gd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941F61CEEAD;
+	Sun,  1 Dec 2024 13:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733059833; cv=none; b=P3QeUMTpMp8WVeTh4pcE1LHfZLSk1TML7bcyDmMWXN9xgygS2fNcMJrYfQwIM0vNGiD0NkesneiwizotMtAfi1oyj5NBhJJT33hvBjGg9VMRFax+D4NhGafXHwylkb1CfQsqaebGiaxtjZPzzPTnYvLGr/mjndQw8ZNP1jAX4oM=
+	t=1733059992; cv=none; b=HXSJ5D/uVKemzIhp0JasC+G1JRu6iSyPg1/NFFg7YtNG/ZshC5tvGSD5zK5R3ahiqJZKbQ98eqLRFSXFbWuY/ZTUiTVZdbCp6n+VbHf2q2ZEQODh1+Rf7kjpRLFOB9l3ECkgrQZ+U83bDzIB2oNQ6YPZcHZi/pGiwJT7hznp+1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733059833; c=relaxed/simple;
-	bh=QVUTFHvGZh8CGYQLwGt+BR63WYTrM7H8z8im58kCPAg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=em+2gEseb/eaVAkUdFK/nh/AwEho8/uyO4EoM1Rhw1On+iC7aq1eJY1E3LhoeIIAFYQPxPmo6mTJ4Px/wV17yhOrfwh4p95Hrw6pWwRxdB9qts5hRYR84wXAyisPzgHh9C89p1aaMgYwSlkHJiMJwL+UsM0PIk1sd2HGctj+U0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=APfCIZod; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1733059808; x=1733664608; i=efault@gmx.de;
-	bh=BoMtv3zxb8PWhy7i2qOYQNapd6ybaAS3FvNvE/khAuc=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=APfCIZodsEvTflQflBEkOc9eJdtvCHcZfpakYvyAhD+h1iLDY95seefUw7OofCTG
-	 cDi5mx5kOGZ6Nu7CPVb1tPNUr1Q+crogC1ZiwBGXo31xD02PyXNCs4S8pHSh8RRMq
-	 2I+B4LttuiYz9EwRjZUUeen5CJBdzKqt+F7VQ4+AfEN7XbogNeKHVxRfHpw7GFKN6
-	 XQI/3OxLrs54PX0tu+R8yrA/5W1Vnpf6hufE409HYD9dyEjIrH6HZV2tKcXcto8E8
-	 QkMLqGVtVwSOXtYT+MTaAFjOMUXOpCfIBsO8q20r1YC2BFt5yBFQ09OMj+Cdu7duh
-	 gaWwde8LoooAFZRY1g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.84]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MiJZE-1tuwOk2vmY-00j7bm; Sun, 01
- Dec 2024 14:30:08 +0100
-Message-ID: <227863d758551e75cd0807a5f1f31916d695205b.camel@gmx.de>
-Subject: Re: [PATCH 0/10 v2] sched/fair: Fix statistics with delayed dequeue
-From: Mike Galbraith <efault@gmx.de>
-To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com, 
- peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com,  linux-kernel@vger.kernel.org
-Cc: kprateek.nayak@amd.com, pauld@redhat.com, luis.machado@arm.com
-Date: Sun, 01 Dec 2024 14:30:05 +0100
-In-Reply-To: <20241129161756.3081386-1-vincent.guittot@linaro.org>
-References: <20241129161756.3081386-1-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1733059992; c=relaxed/simple;
+	bh=nNskjfP3HTUO0q+xM778uzQKMG5EwFIqDXWEOhI91uo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cjEZ+yfEvFd5eLqkdPdQWdnmB7BonHsF3/rZI4jgD+klMDuodc/yMeUFhZlZcGUvukAqzt3I+b3XCDaG3XIw/LUnPT+2yR2o/6NfBGIY/RvLwtjl7ZLlLkxWKnj3Q2fMHGONaFXB5s6KOoIH1FK97ZTk8cbOYyX7pHLjUPEkIIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQZUT1Gd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D83C4CECF;
+	Sun,  1 Dec 2024 13:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733059992;
+	bh=nNskjfP3HTUO0q+xM778uzQKMG5EwFIqDXWEOhI91uo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rQZUT1GdppSM32v/vVOikEy6zRYCdOZJzQk10fO2MIOeoMfm57BkfV5eNtGFg9T0B
+	 A4QMowdZZWynBJ744ctnQYszSoYlrl1VKi2u53rAW2orPbgX3IVEZ67Gu/sYY8YRvG
+	 pascCr8db/pzDkezwzIVYB0yhxMah+u2E9w1nDOwgIkrBGECwc4Xp59NwClbsXOA0g
+	 ptLhxZSSezo+Y+GnHQf82L9Psor1Gyht5zh5Cb1YSoK6SwXlxb0R2IHc5BIkhNSxbD
+	 rOm5qUC7cx50IdQ2/kdBuSTSiwZgV3xpMNkpPUCxZoyummVxABTs0KNr+5SsHkl6M9
+	 QD3sSYCuQEVgQ==
+Date: Sun, 1 Dec 2024 13:33:01 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Dumitru Ceclan <mitrutzceclan@gmail.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Michael Walle
+ <michael@walle.cc>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Guillaume
+ Ranquet <granquet@baylibre.com>
+Subject: Re: [PATCH v2 0/3] iio: adc: ad7173: fix non-const info struct
+Message-ID: <20241201133301.34163b29@jic23-huawei>
+In-Reply-To: <2c6a435e-23aa-446c-bec6-6fc4d24e2d66@baylibre.com>
+References: <20241127-iio-adc-ad7313-fix-non-const-info-struct-v2-0-b6d7022b7466@baylibre.com>
+	<20241130184306.51e5bb8c@jic23-huawei>
+	<2c6a435e-23aa-446c-bec6-6fc4d24e2d66@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:enPXpd43l7w1xpaZ2RO2umpezVa441Xkgg6JrNa3XQJyvQxobYP
- BuY4e1ntQBs/+LX641TorMR6Z1teP9v4beh25Al7GGdHiHDeFnzvzplu4TSqQtYHjXvm3fK
- uXU2xoszWlR6oH3BytKqLjz+SAOar5FQRRmWT1XR4mUjNeJUF4vtBR4QsqkKHX2cFebXMSG
- pA1nK+S6MpP2qNMHVJGKg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NI5jxck7yAw=;JaZrvhw5f9WAphxQwF1tnbOA9OF
- sBwv0eqyfjq3w9TpZLO0v0ZqebWt3ojTBSFW3+VWAqKP3a++Lqr+NNxHQhTg9JGKpQyjDnN3o
- SMaQysTNsKanLnD9Zt8mXR3qiIoyfhKxRyTSY1sr9PM2A1/DCjk0SSE8Mc1twU8XXGXA5BjWH
- 5wR4pCKsi5XxtkukA08SV4Ozy/Qb+WlWln9GW18WVL8z3N1jIrXW+vBqVnOHpP7QCP9W4zIk4
- wKSpcFo7DdlHA6UDPnNO3+6ydyEDP+9AnpZaDQJh11sbqSuGmhNDt3vHhQkhusScnRt9DCtXO
- utrSq5pNwyEgEBhWHkzERuvEni/+beUj13kmtAFKmEb1SOvNrgD/bqmfA3lYz9A9U1ECUopwh
- KQ1yWALhffKzmjxwwiGRchjL5hk18ELMUasXlw8ZTjWUVH6dZyxtyElqC3oYx0IQ1exmuPFGP
- uUS5WfXehlCFsUz7CDvx2fnV6mkeT6AFxaArBOapIRldmG6X6+npct1rHXp19WumwKFq1UfsL
- 5yrbMy2Vp94XyJ3XZktgT51Ht6DL/lCany1rRKWzcvOKdzj+RRVPhe1dIFH6d8RwvxjFdoaz7
- qXBq7OSlopFmbfIuDcQdXC5ZOmM94HBmfRCy59yGcK8ybEIs33Uida3I3Kr97lx062qkQwJPx
- Ful2PKXiuZ+J+WIDDinmC0aMr9YeOGO4n1PjyCxIcWbcuX/Lzr1xSLZNRvADLP3hLPnpoINuy
- ewCZ7bvgnCkuNOZJ8i/bkO20ufvntmF4tgF5Ail8YEen8i5G+mA0kCk5LYrWUWf/2P18SBT0U
- DYS5KyzB8hSFW4vXK4HCkiINcR/RIxZIbdEzej2kxcipBbW/UT07CXqirOOulm+RzmrA59b7z
- nNxWg1/FSsfQmgeIyCLl92Rf0knZb3bnW9seA78S+3x5irgYe8FxZWD1jFPwB5MmE0fFCC27O
- Z6MpaS61NewYw19EGuOQgWadN1CP1pOp3HGZR0pYubfKw7KQlewj3JRsze6JX7afy/PB8dayR
- Q7tAoSWBQ7ye39Nio98rNqXP61SDCxDjEoWRMLBgEoA8XVXhd0rpWybFaKB2gN4EP9h0/yFcz
- Lof2gILlRCySJPiEEAsBDTIHXucBFJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Greetings,
+On Sat, 30 Nov 2024 12:50:39 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-On Fri, 2024-11-29 at 17:17 +0100, Vincent Guittot wrote:
-> Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until i=
-ts
-> lag has elapsed. As a result, it stays also visible in the statistics th=
-at
-> are used to balance the system and in particular the field h_nr_running.
->
-> This serie fixes those metrics by creating a new h_nr_queued that tracks
-> all queued tasks. It renames h_nr_running into h_nr_runnable and restore=
-s
-> the behavior of h_nr_running i.e. tracking the number of fair tasks that
-> =C2=A0want to run.
->
-> h_nr_runnable is used in several places to make decision on load balance=
-:
-> =C2=A0 - PELT runnable_avg
-> =C2=A0 - deciding if a group is overloaded or has spare capacity
-> =C2=A0 - numa stats
-> =C2=A0 - reduced capacity management
-> =C2=A0 - load balance between groups
+> On 11/30/24 12:43 PM, Jonathan Cameron wrote:
+> > On Wed, 27 Nov 2024 14:01:52 -0600
+> > David Lechner <dlechner@baylibre.com> wrote:
+> >   
+> >> While working ad7124, Uwe pointed out a bug in the ad7173 driver.
+> >> static struct ad_sigma_delta_info ad7173_sigma_delta_info was not const
+> >> and was being modified during driver probe, which could lead to race
+> >> conditions if two instances of the driver were probed at the same time.
+> >>
+> >> The actual fix part is fairly trivial but I have only compile tested it.
+> >> Guillaume has access to ad4111 hardware, so it would be good to get a
+> >> Tested-by from him to make sure this doesn't break anything.
+> >>  
+> > This is very big for a backport.  So I replied to previous version to suggest
+> > instead duplicating the data before modifying.  That has much less code
+> > movement and maybe a cleaner fix.  Perhaps we then cycle back to avoiding
+> > that copy later.
+> >   
+> That is exactly what I did in v2. "iio: adc: ad7173: fix using shared
+> static info struct" copies the struct before modifying it and is the
+> only patch with a Fixes: tag.
+> 
 
-I took the series for a spin in tip v6.12-10334-gb1b238fba309, but
-runnable seems to have an off-by-one issue, causing it to wander ever
-further south.
+Oops - brain fart. Applied patch 1 for now to the fixes-togreg branch of iio.git
+and marked it for stable.  I'll get the others once that's upstream.
 
-patches 1-3 applied.
-  .h_nr_runnable                 : -3046
-  .runnable_avg                  : 450189777126
+Thanks,
 
-full set applied.
-  .h_nr_runnable                 : -5707
-  .runnable_avg                  : 4391793519526
+Jonathan
 
-	-Mike
 
