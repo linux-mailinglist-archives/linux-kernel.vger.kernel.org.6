@@ -1,109 +1,78 @@
-Return-Path: <linux-kernel+bounces-426526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF249DF469
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:40:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DA89DF46C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 03:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2750228141C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:40:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CCCA280CD3
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 02:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7098FEAD8;
-	Sun,  1 Dec 2024 02:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C89101C8;
+	Sun,  1 Dec 2024 02:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jb+hZ8T4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdriaCgg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE542DF42
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 02:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926A0DF42;
+	Sun,  1 Dec 2024 02:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733020819; cv=none; b=pCFMj25i/U8z+c0b8Z67TUX5dIAxsHIebiJMwxEVafcE6ZZfrAN1chsgPByiZNM6M/UKYe1VJYJngugfqqJqy5ZFdXWYcasdoRcgq0LCr1JdjhlAenoKBS+wMeV1XrmwajORI1x4zi3ZzH+e7Wjx/+BavUwPqqLeji9Lfe5WJPU=
+	t=1733020892; cv=none; b=FAY9zkw59MU+R5uPW9doqUNon9hSA4rmF2gGnjxsB9+pk7EHnIauq9HGB6OueiHsjhcPMZnMTFvVHiX/Rw3/i5CZCN3dlYacJrihOGebcgre9pyxxYTS6RrdcIZW64y65cvueX960Y6zpfZkoZ1K/PxwMasK90cEdvB8c92D6mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733020819; c=relaxed/simple;
-	bh=LHF1g6N03INHLhmSoxcGvEMY+E3fwJL7iBE1QdZFklA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=M3lL716IFd9+ZxSkznG1SZIRQKZHaktTeRSACXZs0AyJustzzggL7om2muojCQskPk3gRu8ihx3cbHKOh1Qq7VXXtAx37uQc6hJbNyqqM0X8B+RmvYS/ZutLyMSyB0r4Qu9l9zNDWm5sogRw50A3X3L7zi7jQqCt95Cx+72Y6W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jb+hZ8T4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA61C4CECC;
-	Sun,  1 Dec 2024 02:40:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1733020818;
-	bh=LHF1g6N03INHLhmSoxcGvEMY+E3fwJL7iBE1QdZFklA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Jb+hZ8T4MSfmF5G0y14DPiO3Mhq5J0qHUrmIpKQbmcGMq4FjOe938Bujj+xZ5FEy2
-	 EQCBhZKqHMXlzPSyThaN/WFVEmS9GpHpKoTp4B4kxMO7DBGiK3ON7na2nBqmftPDy2
-	 IyK5FKc61XX+ubMOqBn3fygMsUxnd32hH4t+NTKk=
-Date: Sat, 30 Nov 2024 18:40:17 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Seiji Nishikawa <snishika@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- mgorman@techsingularity.net
-Subject: Re: [PATCH] mm: vmscan: account for free pages to prevent infinite
- Loop in throttle_direct_reclaim()
-Message-Id: <20241130184017.7290e756a5f2199b463a7172@linux-foundation.org>
-In-Reply-To: <20241130161236.433747-2-snishika@redhat.com>
-References: <20241129043936.316481-1-snishika@redhat.com>
-	<20241130161236.433747-1-snishika@redhat.com>
-	<20241130161236.433747-2-snishika@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733020892; c=relaxed/simple;
+	bh=oIy+fpkV87SScpCJs0xRIVPnkZgqozHMqFllGvGc+60=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=D1BBHa7lJWNWaVm8MgpUgDhH41+WKKxgV57UW0F3ko5IZ5b/xqBt0Dqx9Mu7a5YO2EtwDn0dfbMnHqxCX39ZRC0la3GWMm7JdI4iIvgMYHgFW9/4zln2d/dChGXtTLqupjdXegewIq8nTR2PIeeWtexy+De4Dan9n/V5HpuPuf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdriaCgg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F3E8C4CECC;
+	Sun,  1 Dec 2024 02:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733020892;
+	bh=oIy+fpkV87SScpCJs0xRIVPnkZgqozHMqFllGvGc+60=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=RdriaCggj3u9mgh0Ws/EJDZpopa99/UyBORjhPnwXTx4jKJMTr1Mld5F+aRjPIm6M
+	 WpZteVHbg2joNUSWoB0AGbKkS29aB90bozwh60G+GBmzAsVKW4i1HulffaFEOgW29U
+	 5XTlqUuiQd6/SbEkNrdmD/KEf+T32MTVghX7S5L27/xS8kTD1SL52kOnHjyrTt1+6L
+	 9eA4SuFfJKmgiHMcxGvN5e0babjDKrouPf8GZF0Qf5yYgDiGAAXlHv9MviPZMk0HDx
+	 23K34si022xd2+1umWw4IDYupyxfEk6FEQ3VOPbZOmC3gSnvxwjEre4IYfoeXM3XvS
+	 0EnOlj0masJhQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EFA380A944;
+	Sun,  1 Dec 2024 02:41:47 +0000 (UTC)
+Subject: Re: [GIT PULL] lsm/lsm-pr-20241129
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <86752346e28a77c830cb8249610f0f00@paul-moore.com>
+References: <86752346e28a77c830cb8249610f0f00@paul-moore.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <86752346e28a77c830cb8249610f0f00@paul-moore.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20241129
+X-PR-Tracked-Commit-Id: a65d9d1d893b124917141bd8cdf0e0e47ff96438
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8a6a03ad5b04a29f07fb79d2990d93c82394f730
+Message-Id: <173302090606.2541785.9230764380623435630.pr-tracker-bot@kernel.org>
+Date: Sun, 01 Dec 2024 02:41:46 +0000
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Sun,  1 Dec 2024 01:12:34 +0900 Seiji Nishikawa <snishika@redhat.com> wrote:
+The pull request you sent on Fri, 29 Nov 2024 21:27:33 -0500:
 
-> The kernel hangs due to a task stuck in throttle_direct_reclaim(),
-> caused by a node being incorrectly deemed balanced despite pressure in
-> certain zones, such as ZONE_NORMAL. This issue arises from
-> zone_reclaimable_pages() returning 0 for zones without reclaimable file-
-> backed or anonymous pages, causing zones like ZONE_DMA32 with sufficient
-> free pages to be skipped.
-> 
-> The lack of swap or reclaimable pages results in ZONE_DMA32 being
-> ignored during reclaim, masking pressure in other zones. Consequently,
-> pgdat->kswapd_failures remains 0 in balance_pgdat(), preventing fallback
-> mechanisms in allow_direct_reclaim() from being triggered, leading to an
-> infinite loop in throttle_direct_reclaim().
-> 
-> This patch modifies zone_reclaimable_pages() to account for free pages
-> (NR_FREE_PAGES) when no other reclaimable pages exist. This ensures
-> zones with sufficient free pages are not skipped, enabling proper
-> balancing and reclaim behavior.
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20241129
 
-We'll want to backport a fix for this into -stable kernels.  For that
-it's best to be able to identify a suitable Fixes: target, to tell
-others whether their kernel needs the fix.  Are you able to help
-identify that commit?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8a6a03ad5b04a29f07fb79d2990d93c82394f730
 
-Thanks.
+Thank you!
 
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -374,7 +374,14 @@ unsigned long zone_reclaimable_pages(struct zone *zone)
->  	if (can_reclaim_anon_pages(NULL, zone_to_nid(zone), NULL))
->  		nr += zone_page_state_snapshot(zone, NR_ZONE_INACTIVE_ANON) +
->  			zone_page_state_snapshot(zone, NR_ZONE_ACTIVE_ANON);
-> -
-> +	/*
-> +	 * If there are no reclaimable file-backed or anonymous pages, 
-> +	 * ensure zones with sufficient free pages are not skipped. 
-> +	 * This prevents zones like DMA32 from being ignored in reclaim 
-> +	 * scenarios where they can still help alleviate memory pressure.
-> +	 */
-> +	if (nr == 0)
-> +	    nr = zone_page_state_snapshot(zone, NR_FREE_PAGES);
->  	return nr;
->  }
->  
-> -- 
-> 2.47.0
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
