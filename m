@@ -1,279 +1,143 @@
-Return-Path: <linux-kernel+bounces-426556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DF39DF4ED
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 08:35:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFB09DF4F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 09:11:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00641162ABC
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 08:11:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6797F7082F;
+	Sun,  1 Dec 2024 08:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gCgiUxWK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5F13280F65
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 07:35:01 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB83B54277;
-	Sun,  1 Dec 2024 07:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=andrewstrohman-com.20230601.gappssmtp.com header.i=@andrewstrohman-com.20230601.gappssmtp.com header.b="oRlemten"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7715CB8
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 07:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC2954277
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 08:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733038497; cv=none; b=uDk/UxUSpoFwhUB+VcliVNMKVaLWnfUX44SffbeQfvtuwBQamy/WeFpsSr/oQnl8DF58fe46YG902hAkdRvDYEKK5tD0L/VP4gaAVUfj6p6DnHTwiT/1y7zSOt/0PXLJsx7cxTJiQl2IOC7nWTJC6hwOLoiSSmQGupdnHjsadWU=
+	t=1733040658; cv=none; b=bF+LJlTDwlX+fn0z2RJBdeSgJB8vhYDv5F5lm8hg3q9M4WLKWezf/VauaMQkbc/PEzTX5I7UQrXQGj+93iLk7QDu2PcVDOGp+dkADBdF99ACU1rWjBgnXwN8YhQxsMVbCH1zxG9BlYBuTl8R4MEu6It3fgILChWFPeWj9bgJCGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733038497; c=relaxed/simple;
-	bh=49Fgk/LPxVwDzp+3Lc/yxuGv7df3m4UXVA2SyzN0inQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eq5707B4gANILGEsIAn0hiZ+tw8c1H17enLHSKFf6wxckOTYBvTyjJ9uxIE7AO4C0sDohDLeFFgApo3HqIh8sfT1M+WXu1BFK4fYCCJ3/Fn8vKONB33IZoea+gNzGeo1i/kNwvKYN304XKz3t5z5diZsxlXuuF5GESFj5clbAVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=andrewstrohman.com; spf=none smtp.mailfrom=andrewstrohman.com; dkim=pass (2048-bit key) header.d=andrewstrohman-com.20230601.gappssmtp.com header.i=@andrewstrohman-com.20230601.gappssmtp.com header.b=oRlemten; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=andrewstrohman.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=andrewstrohman.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-724f383c5bfso2362115b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2024 23:34:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=andrewstrohman-com.20230601.gappssmtp.com; s=20230601; t=1733038495; x=1733643295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YeHqr8jmlOUaofAqiZhYBj3XDWjrqtNKIAYnibCbezQ=;
-        b=oRlemtenogwAfojGu0d4q574v451J741tzMSjHE71rww0OuvMiXlZO8SKmrYWQHkgb
-         StVJ/ct6osuGWx9E0Pt+QJrWWJ2wVJRvSSXGAfX5ts9j/hSb103v1YzMdUMSQXYpURy0
-         a92lSiaWgNFspoZwlqY7UiF1zWTdoojvhlKT/UNVNXkXrlJC+dSp/b6ZsjxCY6UTBT8L
-         y1qc2DjBB3hUczQV/a3feGkp+NgOHgMC5ddNJmsxEcCRZOCmt77dgyoKxklfeAZfPc0u
-         k9c7PdaJVe8DdcWW2B1Qepn2By1hFg/EQVKa79e4mUyx+YcKw9r7GH32RWWen+im6tps
-         mstA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733038495; x=1733643295;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YeHqr8jmlOUaofAqiZhYBj3XDWjrqtNKIAYnibCbezQ=;
-        b=D4LxBAjye+5eoJYVc6Av1rHNtzudmxni/vZQ7EdS6Yerb26q0fbFcFdC7r1TAFRTRF
-         AKRJw4HItW3cCwkxUcGdOgJFPPWTziYiA4ZOY+t+z5a4WOdpPHXsQACOfJU3RBp8GFBY
-         JlPZd41tDi6s4D3gb4vm80u+bsaoi6zga7S388IpOjMOU3vM0XDOBHJ1IF1LrXw9Hwkk
-         p8P6ymhRoddEGsx3rIpGNRaN0GZnR0wmSiTnBninWUKVJeWZJqRAL/KF65SFbOGqduW5
-         skEFkG8aV2ZFJQ28Kr5XRXq8p1TtiMFSMrEleSKMWn6xkJAUyWjCifQzL57flX8YgHFQ
-         yMRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhHmHuDrCjG3W8EIeHvMESrKoBtdkRB4mNSajpHZQgoAGaEccQuYM4odC4hjr8tXPNsZMbNARpr2lcToc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu4Gd98Ng7d7M2RckAJpzYH6XMEhoZZrpaxCoTPYkEzm3KsSFn
-	8vvZcPgau+f/dOBvGrpZNYAQulSR+Ahgax9x3SD9vsdyNgPkRWMY15QHXt8eNc8=
-X-Gm-Gg: ASbGnctKtd/jxrdIUNGK8Ay6hmpYuiS4pivNwoy0xmAFFuTo2bRX5VAv/HBVtSPUikc
-	U4J+SNhLgzl9PEQPON4dAJQWa+a1HlEGRrnOVIvSXc3ZI9U8/Ai8fZU3NtiuFLvI8R74dkvuJEp
-	kb/LDmrru7y94hSARzIYqp1D4TfUbaCNeu34mU5eslKSCgIGKLbK3l3C9sAtUb2J1sWU+LqX+VV
-	y5Ys1TeyAF67NKBQGYklHDg0HaB8fYa6oIrO8Tve6C7dEocLWh3x5kZr2aoMQuLVp1Bcktzk3lu
-	btu0hJNTYKaJC3k2CeN+pv7uHd7UUtZr
-X-Google-Smtp-Source: AGHT+IHA9QuhI3MpeCBeLdV0LQQNmGydAr84DTYftwbmoUdNO3COOY8xpoeFqaBwcub2nE+icCE9jA==
-X-Received: by 2002:a05:6a00:995:b0:724:60bd:e861 with SMTP id d2e1a72fcca58-72530133976mr24897493b3a.18.1733038494760;
-        Sat, 30 Nov 2024 23:34:54 -0800 (PST)
-Received: from localhost.localdomain (c-71-197-149-76.hsd1.wa.comcast.net. [71.197.149.76])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541848277sm6229007b3a.177.2024.11.30.23.34.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 23:34:54 -0800 (PST)
-From: Andy Strohman <andrew@andrewstrohman.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Simon Horman <horms@kernel.org>
-Cc: Andy Strohman <andrew@andrewstrohman.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] dsa: Make offloading optional on per port basis
-Date: Sun,  1 Dec 2024 07:42:11 +0000
-Message-Id: <20241201074212.2833277-1-andrew@andrewstrohman.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733040658; c=relaxed/simple;
+	bh=0+pgO/7qnysvbLifVDdhqfVsDMvDtd7xOM81/6jbjF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dkT0bbtHXRE++Ku/4juahfWzyLrrc7j/b/wfxw+nJDuNyAThY2bY5e6hbbE1OiB/xd9TrPL21fk30H/BoqsEqY7Y6xzyuVuG/BIO2KYOnEbks6l2YT6tzTaXJBa/6Zlt6bVvTXDwzLdl9l23ZokIS70Gq0/ftasW+MizQquSxW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gCgiUxWK; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733040657; x=1764576657;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=0+pgO/7qnysvbLifVDdhqfVsDMvDtd7xOM81/6jbjF8=;
+  b=gCgiUxWKpsoiHaXF1d6Fu8lLUcOnplfKuxDyxYLLmPmcNyysbLgo+1dW
+   br28p5Pq6QwEhhalBMHbdpVL5EnDmzR6+/HggXI1amBAS8HJ96tFoQSi7
+   7mUU8aDPNXPuW6Z9RMp2U1KFl8wwU3aCfWvnjIfNpSEeqH2MfpsVOtbGu
+   K39cXEFvmJnGj0qRVY9vhTLWV6wvmm/U31EJq8VxbcWkOoioIYmVqpUF0
+   KUDD/j2hsmj23PBGxt1uqOGZLqAaLlFoFrGzy5EaIe8/IvQqAlzj7SvG4
+   R0aPvK4tX2TgSgmXmxYKQccfoNI/QVLlYyV+gF8mACeV0HJVGhB0sWC/A
+   w==;
+X-CSE-ConnectionGUID: ENuCfl6BTvq4kdPOUTI7SA==
+X-CSE-MsgGUID: MXgnBP+GTVSuoZE2GpoUjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="36877941"
+X-IronPort-AV: E=Sophos;i="6.12,200,1728975600"; 
+   d="scan'208";a="36877941"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 00:10:56 -0800
+X-CSE-ConnectionGUID: CqnG80AFSWKbxVgF/Hj7+g==
+X-CSE-MsgGUID: VY8pMU5bRIOk3NwNG5HeQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,200,1728975600"; 
+   d="scan'208";a="116088813"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 01 Dec 2024 00:10:55 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHf1T-0001N5-1w;
+	Sun, 01 Dec 2024 08:09:50 +0000
+Date: Sun, 1 Dec 2024 16:06:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: John Crispin <john@phrozen.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paul Burton <paul.burton@mips.com>
+Subject: drivers/irqchip/irq-ath79-cpu.c:92:13: sparse: sparse: symbol
+ 'ath79_cpu_irq_init' was not declared. Should it be static?
+Message-ID: <202412011509.kGQkDr1y-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The author has a couple use cases for this:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   bcc8eda6d34934d80b96adb8dc4ff5dfc632a53a
+commit: 51fa4f8912c0934cf1410f435516d2abbcf88a9e MIPS: ath79: drop legacy IRQ code
+date:   6 years ago
+config: mips-randconfig-r122-20241119 (https://download.01.org/0day-ci/archive/20241201/202412011509.kGQkDr1y-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241201/202412011509.kGQkDr1y-lkp@intel.com/reproduce)
 
-1) Creating a sniffer, or ethernet tap, by bridging two or more
-non-offloaded ports to the bridge, and tcpdump'ing the member
-ports. Along the same lines, it would be nice to have the ability
-to temporarily disable offloading to sniff all traffic for debugging.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412011509.kGQkDr1y-lkp@intel.com/
 
-2) Work around bugs in the hardware switch or use features
-that are only available in software.
+sparse warnings: (new ones prefixed by >>)
+>> drivers/irqchip/irq-ath79-cpu.c:92:13: sparse: sparse: symbol 'ath79_cpu_irq_init' was not declared. Should it be static?
 
-DSA drivers can be modified to remove their port_bridge_join()
-dsa_switch_ops member to accomplish this. But, it would be better
-to make it this runtime configurable, and configurable on a per port
-basis.
+vim +/ath79_cpu_irq_init +92 drivers/irqchip/irq-ath79-cpu.c
 
-The key to signaling that a port is not offloading is by
-ensuring dp->bridge == NULL. With this, the VLAN and FDB
-operations that affect hardware (ie port_fdb_add, port_vlan_del, etc)
-will not run. dsa_user_fdb_event() will bail if !dp->bridge.
-dsa_user_port_obj_add() checks dsa_port_offloads_bridge_port(),
-and dsa_user_host_vlan_add() checks !dp->bridge.
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  58  
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  59  static int __init ar79_cpu_intc_of_init(
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  60  	struct device_node *node, struct device_node *parent)
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  61  {
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  62  	int err, i, count;
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  63  
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  64  	/* Fill the irq_wb_chan table */
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  65  	count = of_count_phandle_with_args(
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  66  		node, "qca,ddr-wb-channels", "#qca,ddr-wb-channel-cells");
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  67  
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  68  	for (i = 0; i < count; i++) {
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  69  		struct of_phandle_args args;
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  70  		u32 irq = i;
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  71  
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  72  		of_property_read_u32_index(
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  73  			node, "qca,ddr-wb-channel-interrupts", i, &irq);
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  74  		if (irq >= ARRAY_SIZE(irq_wb_chan))
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  75  			continue;
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  76  
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  77  		err = of_parse_phandle_with_args(
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  78  			node, "qca,ddr-wb-channels",
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  79  			"#qca,ddr-wb-channel-cells",
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  80  			i, &args);
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  81  		if (err)
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  82  			return err;
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  83  
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  84  		irq_wb_chan[irq] = args.args[0];
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  85  	}
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  86  
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  87  	return mips_cpu_irq_of_init(node, parent);
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  88  }
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  89  IRQCHIP_DECLARE(ar79_cpu_intc, "qca,ar7100-cpu-intc",
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  90  		ar79_cpu_intc_of_init);
+81ffb18ce4a0c4 Alban Bedel 2016-01-23  91  
+81ffb18ce4a0c4 Alban Bedel 2016-01-23 @92  void __init ath79_cpu_irq_init(unsigned irq_wb_chan2, unsigned irq_wb_chan3)
 
-By being configurable on a per port basis (as opposed to switch-wide),
-we can have some subset of a switch's ports offloading and others not.
+:::::: The code at line 92 was first introduced by commit
+:::::: 81ffb18ce4a0c400b051c3df67e452410d6be1ec irqchip/ath79-cpu: Move the CPU IRQ driver from arch/mips/ath79/
 
-While this approach is generic, and therefore will be available for all
-dsa switches, I have only tested this on a mt7530 switch. It may not be
-possible or feasible to disable offloading on other switches.
+:::::: TO: Alban Bedel <albeu@free.fr>
+:::::: CC: Jason Cooper <jason@lakedaemon.net>
 
-A flags member was added to the dsa user port netdev private data structure
-in order to facilitate adding future dsa specific flags more easily.
-IFLA_VLAN_FLAGS was used as an example when implementing the flags member.
-
-Signed-off-by: Andy Strohman <andrew@andrewstrohman.com>
----
- include/uapi/linux/if_link.h       | 10 ++++++++
- net/dsa/netlink.c                  | 38 ++++++++++++++++++++++++++++++
- net/dsa/switch.c                   |  3 ++-
- net/dsa/user.h                     |  2 ++
- tools/include/uapi/linux/if_link.h |  1 +
- 5 files changed, 53 insertions(+), 1 deletion(-)
-
-diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
-index f7f638f25020..c5e89064d48c 100644
---- a/include/uapi/linux/if_link.h
-+++ b/include/uapi/linux/if_link.h
-@@ -1972,9 +1972,19 @@ enum {
- 	IFLA_DSA_CONDUIT,
- 	/* Deprecated, use IFLA_DSA_CONDUIT instead */
- 	IFLA_DSA_MASTER = IFLA_DSA_CONDUIT,
-+	IFLA_DSA_FLAGS,
- 	__IFLA_DSA_MAX,
- };
- 
- #define IFLA_DSA_MAX	(__IFLA_DSA_MAX - 1)
- 
-+struct ifla_dsa_flags {
-+	__u32   flags;
-+	__u32   mask;
-+};
-+
-+enum dsa_flags {
-+	DSA_FLAG_OFFLOADING_DISABLED    = 0x1,
-+};
-+
- #endif /* _UAPI_LINUX_IF_LINK_H */
-diff --git a/net/dsa/netlink.c b/net/dsa/netlink.c
-index 1332e56349e5..376ba00957fe 100644
---- a/net/dsa/netlink.c
-+++ b/net/dsa/netlink.c
-@@ -9,13 +9,35 @@
- 
- static const struct nla_policy dsa_policy[IFLA_DSA_MAX + 1] = {
- 	[IFLA_DSA_CONDUIT]	= { .type = NLA_U32 },
-+	[IFLA_DSA_FLAGS]	= { .len = sizeof(struct ifla_dsa_flags) },
- };
- 
-+static int dsa_dev_change_flags(const struct net_device *dev, u32 flags, u32 mask)
-+{
-+	struct dsa_user_priv *p = netdev_priv(dev);
-+	u32 old_flags = p->flags;
-+
-+	/* For now, we only support make these changes when the port is not a member
-+	 * of a bridge (ie in standalone mode). If the user wants to alter these flags
-+	 * for ports that are currently members of a bridge need to first remove the
-+	 * interface from the bridge. Then they can add interface back
-+	 * after making their desired flag changes.
-+	 */
-+
-+	if (netif_is_bridge_port(dev))
-+		return -EBUSY;
-+
-+	p->flags = (old_flags & ~mask) | (flags & mask);
-+
-+	return 0;
-+}
-+
- static int dsa_changelink(struct net_device *dev, struct nlattr *tb[],
- 			  struct nlattr *data[],
- 			  struct netlink_ext_ack *extack)
- {
- 	int err;
-+	struct ifla_dsa_flags *flags;
- 
- 	if (!data)
- 		return 0;
-@@ -32,6 +54,12 @@ static int dsa_changelink(struct net_device *dev, struct nlattr *tb[],
- 		if (err)
- 			return err;
- 	}
-+	if (data[IFLA_DSA_FLAGS]) {
-+		flags = nla_data(data[IFLA_DSA_FLAGS]);
-+		err = dsa_dev_change_flags(dev, flags->flags, flags->mask);
-+		if (err)
-+			return err;
-+	}
- 
- 	return 0;
- }
-@@ -45,10 +73,20 @@ static size_t dsa_get_size(const struct net_device *dev)
- static int dsa_fill_info(struct sk_buff *skb, const struct net_device *dev)
- {
- 	struct net_device *conduit = dsa_user_to_conduit(dev);
-+	struct dsa_user_priv *dsa = netdev_priv(dev);
-+	struct ifla_dsa_flags f;
-+
- 
- 	if (nla_put_u32(skb, IFLA_DSA_CONDUIT, conduit->ifindex))
- 		return -EMSGSIZE;
- 
-+	if (dsa->flags) {
-+		f.flags = dsa->flags;
-+		f.mask = ~0;
-+		if (nla_put(skb, IFLA_DSA_FLAGS, sizeof(f), &f))
-+			return -EMSGSIZE;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/net/dsa/switch.c b/net/dsa/switch.c
-index 3d2feeea897b..f0bb354c3961 100644
---- a/net/dsa/switch.c
-+++ b/net/dsa/switch.c
-@@ -83,9 +83,10 @@ static int dsa_switch_bridge_join(struct dsa_switch *ds,
- 				  struct dsa_notifier_bridge_info *info)
- {
- 	int err;
-+	struct dsa_user_priv *priv = netdev_priv(info->dp->user);
- 
- 	if (info->dp->ds == ds) {
--		if (!ds->ops->port_bridge_join)
-+		if (!ds->ops->port_bridge_join || priv->flags & DSA_FLAG_OFFLOADING_DISABLED)
- 			return -EOPNOTSUPP;
- 
- 		err = ds->ops->port_bridge_join(ds, info->dp->index,
-diff --git a/net/dsa/user.h b/net/dsa/user.h
-index 016884bead3c..846af7ed819b 100644
---- a/net/dsa/user.h
-+++ b/net/dsa/user.h
-@@ -33,6 +33,8 @@ struct dsa_user_priv {
- 
- 	/* TC context */
- 	struct list_head	mall_tc_list;
-+
-+	u32			flags;
- };
- 
- void dsa_user_mii_bus_init(struct dsa_switch *ds);
-diff --git a/tools/include/uapi/linux/if_link.h b/tools/include/uapi/linux/if_link.h
-index 8516c1ccd57a..0982b309b09c 100644
---- a/tools/include/uapi/linux/if_link.h
-+++ b/tools/include/uapi/linux/if_link.h
-@@ -1970,6 +1970,7 @@ enum {
- 	IFLA_DSA_CONDUIT,
- 	/* Deprecated, use IFLA_DSA_CONDUIT instead */
- 	IFLA_DSA_MASTER = IFLA_DSA_CONDUIT,
-+	IFLA_DSA_FLAGS,
- 	__IFLA_DSA_MAX,
- };
- 
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
