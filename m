@@ -1,136 +1,105 @@
-Return-Path: <linux-kernel+bounces-426617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A939A9DF5AF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:11:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91CD9DF5B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:12:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57384162B8D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C51428178E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5B41CB330;
-	Sun,  1 Dec 2024 13:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24DC1CB513;
+	Sun,  1 Dec 2024 13:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdmDYbjf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85821CB306
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 13:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182541CB32A;
+	Sun,  1 Dec 2024 13:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733058706; cv=none; b=pxKGOGM9efHMVloEkWndeZK59KyAn5kO0IoxGoNH1KChrXi0sCBoVTUjRP79nVjXjl4O2X5uRU60ScZbM6coPftVVMm/aZkymoiaLZ/8JvN/8fGJwP+KvX/L4LmjksMX4h4NDurqs/IRiG+bAqRYuaJ43AvGPB/kVYqGedvpYB0=
+	t=1733058765; cv=none; b=UC6W5Cn1Eo8yS8eyUa2UdjfFUbUKVgASprBZhS4vQrKE83LE42ACerlQrOmn1UzDkuM2o0YAbuyn3EBy+clOoUzSoq1ihQu2qD6QAE4WxoV+eH9d/PL4dqLIcXeR5pDyuq3aQhX5dOtSoII+61KDYUToKsssHQpx1cY9XY0rvqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733058706; c=relaxed/simple;
-	bh=pSmDu/FocUYN8Q6UUmN+SAyaSjv1fnoWsplTvYO+cEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QMK/pVA8AZFcgab0POQYQ30o0rMjnPe8vBd+QM5O7aMrQWOaPQoKbb0+1+kkkaVMX8CDCfS8H79M1RBv8sUToqJOhC/Dsn9ZB7zARx0rVES5fVNZv0hudbgFInDOXdK2c03yNMr8QVCXrPW9gptdcLnWAkpQVrjn3/0yCa+vBiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8469C4CECF;
-	Sun,  1 Dec 2024 13:11:45 +0000 (UTC)
-Date: Sun, 1 Dec 2024 08:11:43 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Petr Mladek <pmladek@suse.com>, Andy Shevchenko <andy@kernel.org>, "Dr.
- David Alan Gilbert" <linux@treblig.org>
-Subject: [for-next][PATCH] vsnprintf: Remove unused 'bprintf'
-Message-ID: <20241201081143.558918e5@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733058765; c=relaxed/simple;
+	bh=5eOrIGq9ctcyy6UeIx1pTVhZJ9bmnz+/IJY5Z6k2n3Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sh/eskcL67I+2O8N4bEl/zwxGAQVX3Y2wOMIGHT7m0q1n9cfrFo9msu7UDpvm9QTe0ak90Wp2XWxtX1gikd3RVaxzerXplXs6XR1X/zoaMfHst/iAoApHub5KiiDWga3Fno/Lm0W5kmakdwGNxN2Nilu28YNIXSM5BWhIxE2hGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdmDYbjf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB17AC4CECF;
+	Sun,  1 Dec 2024 13:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733058765;
+	bh=5eOrIGq9ctcyy6UeIx1pTVhZJ9bmnz+/IJY5Z6k2n3Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sdmDYbjfV0iU0Nh5EcXAt8m5nXKS2ZAAIjK8x65ceIw5fKloEViKgwhoziQitj23N
+	 xaJI/Wf3WwHMH64GCfb9uFjlCgwamoWvspfrcXZZ1x+HXIT25ju2DFXMPFB691spxi
+	 L8yVvUrsYeHOWb6oVlJ0sb1IWP/sdR74/k2/IlDGcT2cVcgB3h51fJwASbMGZrmWB7
+	 ndtISIAuBVufacUy9DsbX/6FKnyB0xzEtU750QbCB0fyFrhXe0IkBpm9bik9mZOU76
+	 PVZP3NB5+muDBJykgurHCh7EnvPTKehz7PP0ISw/mxr7yZ+gt21XuM8551haRW55rA
+	 ZQUhBI3rnhHVQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Erin Shepherd <erin.shepherd@e43.eu>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	stable <stable@kernel.org>
+Subject: [PATCH 0/4] exportfs: add flag to allow marking export operations as only supporting file handles
+Date: Sun,  1 Dec 2024 14:12:24 +0100
+Message-ID: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20241201-work-exportfs-cd49bee773c5
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1384; i=brauner@kernel.org; h=from:subject:message-id; bh=5eOrIGq9ctcyy6UeIx1pTVhZJ9bmnz+/IJY5Z6k2n3Y=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT7JOwVPcnL1LPltdu3tXkSXlYnnuZf4PkvxXojwua+j zzr8jUJHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABN5HsfwV/D/M2WR5rzlx/mU dcLtVvMtOeLZUafwaZ6A8L/p30+fjmb4w5UwXen8Ym7NXkWVYuunUe0brr5e06y7JJhblIGlKca ZFQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+Hey,
 
-vsnprintf: Removal of bprintf()
+Some filesystems like kernfs and pidfs support file handles as a
+convenience to enable the use of name_to_handle_at(2) and
+open_by_handle_at(2) but don't want to and cannot be reliably exported.
+Add a flag that allows them to mark their export operations accordingly
+and make NFS check for its presence.
 
-- Remove unused bprintf() function
+@Amir, I'll reorder the patches such that this series comes prior to the
+pidfs file handle series. Doing it that way will mean that there's never
+a state where pidfs supports file handles while also being exportable.
+It's probably not a big deal but it's definitely cleaner. It also means
+the last patch in this series to mark pidfs as non-exportable can be
+dropped. Instead pidfs export operations will be marked as
+non-exportable in the patch that they are added in.
 
-  bprintf() was added with the rest of the "bin-printf" functions.
-  These are functions that are used by trace_printk() that allows to
-  quickly save the format and arguments into the ring buffer without
-  the expensive processing of converting numbers to ASCII. Then on
-  output, at a much later time, the ring buffer is read and the string
-  processing occurs then. The bprintf() was added for consistency but
-  was never used. It can be safely removed.
+Thanks!
+Christian
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace/for-next
+---
+Christian Brauner (4):
+      exportfs: add flag to indicate local file handles
+      kernfs: restrict to local file handles
+      ovl: restrict to exportable file handles
+      pidfs: restrict to local file handles
 
-Head SHA1: f69e63756f7822fcdad8a34f9967e8b243e883ee
+ fs/kernfs/mount.c        | 1 +
+ fs/nfsd/export.c         | 8 +++++++-
+ fs/overlayfs/util.c      | 7 ++++++-
+ fs/pidfs.c               | 1 +
+ include/linux/exportfs.h | 1 +
+ 5 files changed, 16 insertions(+), 2 deletions(-)
+---
+base-commit: 74e20c5946ab3f8ad959ea34f63f21e157d3ebae
+change-id: 20241201-work-exportfs-cd49bee773c5
 
-
-Dr. David Alan Gilbert (1):
-      printf: Remove unused 'bprintf'
-
-----
- include/linux/string.h |  1 -
- lib/vsprintf.c         | 23 -----------------------
- 2 files changed, 24 deletions(-)
----------------------------
-commit f69e63756f7822fcdad8a34f9967e8b243e883ee
-Author: Dr. David Alan Gilbert <linux@treblig.org>
-Date:   Wed Oct 2 18:31:47 2024 +0100
-
-    printf: Remove unused 'bprintf'
-    
-    bprintf() is unused. Remove it. It was added in the commit 4370aa4aa753
-    ("vsprintf: add binary printf") but as far as I can see was never used,
-    unlike the other two functions in that patch.
-    
-    Link: https://lore.kernel.org/20241002173147.210107-1-linux@treblig.org
-    Reviewed-by: Andy Shevchenko <andy@kernel.org>
-    Acked-by: Petr Mladek <pmladek@suse.com>
-    Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 0dd27afcfaf7..493ac4862c77 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -335,7 +335,6 @@ int __sysfs_match_string(const char * const *array, size_t n, const char *s);
- #ifdef CONFIG_BINARY_PRINTF
- int vbin_printf(u32 *bin_buf, size_t size, const char *fmt, va_list args);
- int bstr_printf(char *buf, size_t size, const char *fmt, const u32 *bin_buf);
--int bprintf(u32 *bin_buf, size_t size, const char *fmt, ...) __printf(3, 4);
- #endif
- 
- extern ssize_t memory_read_from_buffer(void *to, size_t count, loff_t *ppos,
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 6ac02bbb7df1..9d3dac38a3f4 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -3428,29 +3428,6 @@ int bstr_printf(char *buf, size_t size, const char *fmt, const u32 *bin_buf)
- }
- EXPORT_SYMBOL_GPL(bstr_printf);
- 
--/**
-- * bprintf - Parse a format string and place args' binary value in a buffer
-- * @bin_buf: The buffer to place args' binary value
-- * @size: The size of the buffer(by words(32bits), not characters)
-- * @fmt: The format string to use
-- * @...: Arguments for the format string
-- *
-- * The function returns the number of words(u32) written
-- * into @bin_buf.
-- */
--int bprintf(u32 *bin_buf, size_t size, const char *fmt, ...)
--{
--	va_list args;
--	int ret;
--
--	va_start(args, fmt);
--	ret = vbin_printf(bin_buf, size, fmt, args);
--	va_end(args);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(bprintf);
--
- #endif /* CONFIG_BINARY_PRINTF */
- 
- /**
 
