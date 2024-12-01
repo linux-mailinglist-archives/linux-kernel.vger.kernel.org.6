@@ -1,53 +1,62 @@
-Return-Path: <linux-kernel+bounces-426553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E2A9DF4E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 07:52:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42DA79DF4E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 08:00:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4B1281A87
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 06:52:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F37DF162DBA
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 06:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0764670809;
-	Sun,  1 Dec 2024 06:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F34F5473C;
+	Sun,  1 Dec 2024 06:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="rIh2oIaQ"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="nca0ZPjl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0BFE552;
-	Sun,  1 Dec 2024 06:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A4F29CE6
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 06:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733035938; cv=none; b=mws3KQdS4HVgo2lKYy8/0PqpX1UXRGZ814PyElvRqF9Q5zEchhgS/VaFuV087WN8tWiGIVBkz9mVzbXUCKsgkclHXdWGPdbM0FAn/izLeqQqyk/yeQiS7QCWGLipqFDa7WLFecnQUv+TWrdV0SLryNQrWB9Grkp2c8pi088mNIs=
+	t=1733036394; cv=none; b=TndN9O6ldNaQlUL8nKs/4K2avtJI8nYBQVamzfJosLvvQS6fEwND+DVZeejvdXkqPGCdWEAINPkK+SxBPKs8gfDbg5FwmotQPgKbME/qPjWzE0VULGTe7jsye6Lr2w/F9HjNKgVwb8U3G1BCIcdTsRD0Y/B3norYfbIy3Bj67dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733035938; c=relaxed/simple;
-	bh=LlAIxB8N/0m2snCylgWlUAAyLHpPp5k+nBPFKFA41Ic=;
+	s=arc-20240116; t=1733036394; c=relaxed/simple;
+	bh=gYLJdRFK4oBa/CZ9J3uxe9m9yhUdD2Er/DAuyttmBGk=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=WKmyUzc4FF3D0FdoofjAJaIGMapRsi3VWT5TZHmU+mbsIk+R2qV4/3kqynObLMK610YZKXJtepqkEtEmszANF06GPFevkHrVd9XjKJ9Nbcrp/1xnXnUqG7TwKcWwC9/I7CfJdp1MjxO9E0Si2RQml3JFOIMUxT8qo2gCTSMwke0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=rIh2oIaQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA0AFC4CECF;
-	Sun,  1 Dec 2024 06:52:17 +0000 (UTC)
+	 Mime-Version:Content-Type; b=Yq7q/1VK0CFgheV4gChNUtUSNr7cYvFGngyuoBUlouEObYxquqPYuI6FDn+o7WZj8eHLb7I0wJdMstdtLpwcdNnGEJ8PRxAmOd3tnQhFrJOYiXoJ5bPeW1qNxq6FNypvSmvNXYaIqnqQrK7WFLYVZ7GKmjYdv8nWOt5V1+7ujAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=nca0ZPjl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D31BBC4CECF;
+	Sun,  1 Dec 2024 06:59:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1733035938;
-	bh=LlAIxB8N/0m2snCylgWlUAAyLHpPp5k+nBPFKFA41Ic=;
+	s=korg; t=1733036394;
+	bh=gYLJdRFK4oBa/CZ9J3uxe9m9yhUdD2Er/DAuyttmBGk=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rIh2oIaQhCt58+TnxD62w8JKisKb9VciI8ivfsm7Sxm4DZpIFD5vY5ITRmpO89vQ9
-	 KZLjISKRT7drej/nBlQj+2ESs/ndpOFv0ZtyQklHxwXxv5zyvwjasB78cBM2uOIu02
-	 jZPIuDNXi3imwpVWMfIVn2gBgDVsTqqk1H8TN8OU=
-Date: Sat, 30 Nov 2024 22:52:17 -0800
+	b=nca0ZPjl9wwSpanyfQgFWWkyXkWFnXDJFtEpy4gwA45jLjRcbrdnkfr3vsTexIrpi
+	 B8+YbZnbXRk30JjnB3RtEyvSd7WSwzvPvJ8JxmBfK9gWRLM0tx88nohS/SxlK2/r57
+	 EQU8v6CMeha6U2jC+xZYQST/eQadpg1bwp52fdD8=
+Date: Sat, 30 Nov 2024 22:59:53 -0800
 From: Andrew Morton <akpm@linux-foundation.org>
-To: Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
- <corbet@lwn.net>, <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: Re: [PATCH -next] mm/hugetlb_cgroup: introduce peak and rsvd.peak
- to v2
-Message-Id: <20241130225217.6949f9f87d3f7fbbc1748948@linux-foundation.org>
-In-Reply-To: <20240702125728.2743143-1-xiujianfeng@huawei.com>
-References: <20240702125728.2743143-1-xiujianfeng@huawei.com>
+To: Miaohe Lin <linmiaohe@huawei.com>
+Cc: David Hildenbrand <david@redhat.com>, <nao.horiguchi@gmail.com>,
+ <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/memory-failure: fix
+ VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
+Message-Id: <20241130225953.dbb95dbf5f6c785e931f45f7@linux-foundation.org>
+In-Reply-To: <0519bf4b-49aa-6b81-a041-362a171b2a5e@huawei.com>
+References: <20240712064249.3882707-1-linmiaohe@huawei.com>
+	<20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
+	<8fe349f9-d3d3-65ab-6045-da0bd19249ea@huawei.com>
+	<00e18339-d911-4332-8732-e31bcecbf823@redhat.com>
+	<5f8107e2-2b37-d899-f7f2-5a6093d8b089@huawei.com>
+	<de73f251-08a0-4122-acfd-1d7fce7540ea@redhat.com>
+	<ec6ed1aa-0b6e-df66-1442-93786eabd1ef@huawei.com>
+	<dded1b96-8ff3-489a-a92e-b206829feb85@redhat.com>
+	<f3aa7133-5754-73f4-9ee1-bff1a8637c07@huawei.com>
+	<a4078c71-acf2-4652-92cb-fb9356703dc6@redhat.com>
+	<0519bf4b-49aa-6b81-a041-362a171b2a5e@huawei.com>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,110 +67,22 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 2 Jul 2024 12:57:28 +0000 Xiu Jianfeng <xiujianfeng@huawei.com> wrote:
+On Mon, 5 Aug 2024 14:25:14 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
 
-> Introduce peak and rsvd.peak to v2 to show the historical maximum
-> usage of resources, as in some scenarios it is necessary to configure
-> the value of max/rsvd.max based on the peak usage of resources.
+> >>>> Yup, this will be a good alternative. But will it be better to simply check PagePoisoned() instead?
+> >>>
+> >>> The memmap of offline memory sections shall not be touched, so .... don't touch it ;)
+> >>>
+> >>> Especially because that PagePoisoned() check is non-sensical without poisoining-during-memmap-init. You would still work with memory in offline sections.
+> >>>
+> >>> I think the code is even wrong in that regard: we allow for memory offlining to work with HWPoisoned pages, see __offline_isolated_pages(). Staring at unpoison_memory(), we might be putting these pages back to the buddy? Which is completely wrong.
+> >>
+> >> I agree with you. Thanks for detailed explanation. :)
+> >> Thanks David.
+> > 
+> > So ... I assume there will be a new patch? :)
 > 
+> I was just back from my two-weeks holidays. ;) I will try to send a new version when possible.
 
-The review for this patch was not compelling, so I'll drop this copy
-for now.  If you continue to believe that we should add this to Linux,
-please resend, perhaps with additional changelog details to help
-convince others.
-
-
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-Subject: mm/hugetlb_cgroup: introduce peak and rsvd.peak to v2
-Date: Tue, 2 Jul 2024 12:57:28 +0000
-
-Introduce peak and rsvd.peak to v2 to show the historical maximum usage of
-resources, as in some scenarios it is necessary to configure the value of
-max/rsvd.max based on the peak usage of resources.
-
-Since HugeTLB doesn't support page reclaim, enforcing the limit at page
-fault time implies that, the application will get SIGBUS signal if it
-tries to fault in HugeTLB pages beyond its limit.  Therefore the
-application needs to know exactly how many HugeTLB pages it uses before
-hand, and the sysadmin needs to make sure that there are enough available
-on the machine for all the users to avoid processes getting SIGBUS.
-
-When running some open-source software, it may not be possible to know the
-exact amount of hugetlb it consumes, so cannot correctly configure the max
-value.  If there is a peak metric, we can run the open-source software
-first and then configure the max based on the peak value.  In cgroup v1,
-the hugetlb controller provides the max_usage_in_bytes and
-rsvd.max_usage_in_bytes interface to display the historical maximum usage,
-so introduce peak and rsvd.peak to v2 to address this issue.
-
-Link: https://lkml.kernel.org/r/20240702125728.2743143-1-xiujianfeng@huawei.com
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Miaohe Lin <linmiaohe@huawei.com>
-Cc: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Zefan Li <lizefan.x@bytedance.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- Documentation/admin-guide/cgroup-v2.rst |    8 ++++++++
- mm/hugetlb_cgroup.c                     |   19 +++++++++++++++++++
- 2 files changed, 27 insertions(+)
-
---- a/Documentation/admin-guide/cgroup-v2.rst~mm-hugetlb_cgroup-introduce-peak-and-rsvdpeak-to-v2
-+++ a/Documentation/admin-guide/cgroup-v2.rst
-@@ -2659,6 +2659,14 @@ HugeTLB Interface Files
-         hugetlb pages of <hugepagesize> in this cgroup.  Only active in
-         use hugetlb pages are included.  The per-node values are in bytes.
- 
-+  hugetlb.<hugepagesize>.peak
-+	Show historical maximum usage for "hugepagesize" hugetlb.  It exists
-+        for all the cgroup except root.
-+
-+  hugetlb.<hugepagesize>.rsvd.peak
-+	Show historical maximum usage for "hugepagesize" hugetlb reservations.
-+        It exists for all the cgroup except root.
-+
- Misc
- ----
- 
---- a/mm/hugetlb_cgroup.c~mm-hugetlb_cgroup-introduce-peak-and-rsvdpeak-to-v2
-+++ a/mm/hugetlb_cgroup.c
-@@ -583,6 +583,13 @@ static int hugetlb_cgroup_read_u64_max(s
- 		else
- 			seq_printf(seq, "%llu\n", val * PAGE_SIZE);
- 		break;
-+	case RES_RSVD_MAX_USAGE:
-+		counter = &h_cg->rsvd_hugepage[idx];
-+		fallthrough;
-+	case RES_MAX_USAGE:
-+		val = (u64)counter->watermark;
-+		seq_printf(seq, "%llu\n", val * PAGE_SIZE);
-+		break;
- 	default:
- 		BUG();
- 	}
-@@ -739,6 +746,18 @@ static struct cftype hugetlb_dfl_tmpl[]
- 		.seq_show = hugetlb_cgroup_read_u64_max,
- 		.flags = CFTYPE_NOT_ON_ROOT,
- 	},
-+	{
-+		.name = "peak",
-+		.private = RES_MAX_USAGE,
-+		.seq_show = hugetlb_cgroup_read_u64_max,
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+	},
-+	{
-+		.name = "rsvd.peak",
-+		.private = RES_RSVD_MAX_USAGE,
-+		.seq_show = hugetlb_cgroup_read_u64_max,
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+	},
- 	{
- 		.name = "events",
- 		.seq_show = hugetlb_events_show,
-_
-
+Maybe I missed the v2.  I'll drop this v1 patch.
 
