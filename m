@@ -1,149 +1,126 @@
-Return-Path: <linux-kernel+bounces-426586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779B79DF54F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 11:58:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112349DF553
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4C1BB20DC3
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 10:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A2528115E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 11:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DDA139CE3;
-	Sun,  1 Dec 2024 10:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KoxfH2T9"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A2D139D13;
+	Sun,  1 Dec 2024 11:04:37 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1D82B9A2
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 10:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA033086
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 11:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733050697; cv=none; b=gRHViVmlYbztJze1KZSiv0CWxeG2SJ4MJpQHCpnx3dfrsqSuAaBPgfYg7HkR+mqEYHoqUkDJH+v+UdpGz7aZjMQMlT+92VMPLtQjLNQIcLGaUNhG3FoibFDIp7FGi5bVPwyvdZdkKisg99AFqusznynvn9E9Zy4A5Gh9UjsIFW8=
+	t=1733051077; cv=none; b=LfKz5p7wxd08t0yTgqn//5U+gAwrWfXZBr+SSEn7lqAeQ7MLI7e8fw7zljCgpgJW2nMONQCcSsUH5H7X6AayhLksckzadMzAja+uhgKYjJFXMiZGW7J5pRrBJ3CvbcQdE3FU7VydqE9tW56UrVSpBPhO08M1tjI8BvmvkzQaUsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733050697; c=relaxed/simple;
-	bh=mCH6LwWNKTAOxwyBbB2by2LIW3TpbnGbWIvmRqcUb2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TQZGAp+lY2eVHQoQk06rvFo16iBsfu0tqz53ct/zURPV/BtOxvw6rqPKgKHVCZdfWs8MnICovQX+4PMWT2VENnPhh6gqZmTi5vN8Emg7mTaHeADCXRoJKRKF9kZ0ycIvJ9MoypJ1NteIa0H1TXXHhUnDVWO7hh270p/Fz/cxkWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KoxfH2T9 reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9DDB440E021C;
-	Sun,  1 Dec 2024 10:58:12 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id M-lEFpz-gYGW; Sun,  1 Dec 2024 10:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733050686; bh=+3vY6/eXK/xfO05lSRYbZvSJw5V2HftOj5dgVgS4qEo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KoxfH2T9sirGfogdt0oGnKu1/qhKsIDquOTc4po2rQlkYjfuVH01TT6vm4jChzVyM
-	 fAlKqWBq4CtYe07mMCxOJk4QVJF2oyobjIrgj2pj/kUKQFOnCtEojm6fG+9+Fq6r8l
-	 BKFZa9+4pJBl9orUEvp10lhOU4oXLoLDY1E5jIGiYGzN6JBaW6LKCLqiHNTqkDC23A
-	 PRbZtIV11GDy6OYrrZGDMdZ5YDLQCpvIsgpH9JWzJ3a+Hc6RYwHNYyV8jx+uUfUrTw
-	 AzLtMEwp/ZS4JeK9x7+EhRLv/Htv2B5rwGnV9gqbSBVm/s9rYzeb00JlFZ7N9NSiD9
-	 bm8FD54Om8S2cQQsdvDU8KtU9tEDN21GAyAAWHYUWPvoZ+0k/1g0Z4ETsaybcQrYAE
-	 ftDCrPk2JS4q5hG+9wbgJnvPAZcLu9Ks9IVjA7Iv3YnkvSHNHFRuYvtIoR6cGADr6g
-	 IyMZ+R4vhUsD6Cy3rfkxF8ZJLvrqYkFW97ZLTsf7p7naXhVHtilZ6gMEabQAYH3epZ
-	 wOwDMpqHaGDZwXqJxm+VHjyD9oqA48V8Q9Rz87UA9HpI5gD5BC/xy0FTgapKOOKrKl
-	 oi8aoClBrRXlcbnTda4VOY5SXAEpOmFwWAJkAREnUcGxXHdjtsMaEuMFUEBQKbmd1j
-	 bYbYm3g3+VhE7i+77z/5+uE4=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B623440E0169;
-	Sun,  1 Dec 2024 10:58:03 +0000 (UTC)
-Date: Sun, 1 Dec 2024 11:58:02 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] irq/urgent for v6.13-rc1
-Message-ID: <20241201105802.GAZ0xBOqZH001RiV4D@fat_crate.local>
+	s=arc-20240116; t=1733051077; c=relaxed/simple;
+	bh=8PCK8noxfQxOLX2UgQKkA9FGoT5mmarNJdvRN7k9i/c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=tgWTyzV6TGKtQ2uuIlhbuklakfdhmn94BWIWnYsKORB9Djf1EP4ZkzGFaHITnh48NIcGvgHwr3YFUdKADf0nHDNEs2O6yjdKjZskvUXOmwEUwz2Vtzk8JhTO1kxKamIrcysmcl8/H5M1ip7NLqnAwJ6EHAeyLqhABbmaoMES8lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-81-UNdrD75uNSmZjokXFspD-w-1; Sun, 01 Dec 2024 11:04:32 +0000
+X-MC-Unique: UNdrD75uNSmZjokXFspD-w-1
+X-Mimecast-MFC-AGG-ID: UNdrD75uNSmZjokXFspD-w
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 1 Dec
+ 2024 11:04:07 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 1 Dec 2024 11:04:07 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Andrew Morton' <akpm@linux-foundation.org>
+CC: 'Jonathan Cameron' <jic23@kernel.org>, 'Jakob Hauser'
+	<jahau@rocketmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij
+	<linus.walleij@linaro.org>, "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
+Subject: RE: [PATCH v2] iio: magnetometer: yas530: Use signed integer type for
+ clamp limits
+Thread-Topic: [PATCH v2] iio: magnetometer: yas530: Use signed integer type
+ for clamp limits
+Thread-Index: AQHbQqUs2JSj3AGLWkSCiQkgtAYVhLLPsp/wgAAyLwCAAGnPcIAAXpgAgACOp1A=
+Date: Sun, 1 Dec 2024 11:04:07 +0000
+Message-ID: <c7a32b6f17e54dae94c4f5d16fd04df8@AcuMS.aculab.com>
+References: <11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
+	<11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
+	<9f5793f03c2440d2aa18630469df06df@AcuMS.aculab.com>
+	<20241130143506.53973e40@jic23-huawei>
+	<6f2c9946a9fe4b40ac7dd5a66003c8c4@AcuMS.aculab.com>
+ <20241130183222.ecf271abffcff61b93bbae22@linux-foundation.org>
+In-Reply-To: <20241130183222.ecf271abffcff61b93bbae22@linux-foundation.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: LhdkbCC9pOFVtlU0i5e8Xum_reN-jrhGluo-kL4yaPI_1733051071
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+From: Andrew Morton
+> Sent: 01 December 2024 02:32
+>=20
+> On Sat, 30 Nov 2024 20:59:22 +0000 David Laight <David.Laight@ACULAB.COM>=
+ wrote:
+>=20
+> > From: Jonathan Cameron
+> > > Sent: 30 November 2024 14:35
+> > >
+> > > On Sat, 30 Nov 2024 11:40:45 +0000
+> > > David Laight <David.Laight@ACULAB.COM> wrote:
+> > >
+> > > > From: Jakob Hauser
+> > > >
+> > > > Copying Andrew M - he might want to take this through his mm tree.
+> > >
+> > > I'm confused. Why?
+> > >
+> > > Looks like a local bug in an IIO driver.  What am I missing?
+> >
+> > The build test bot picked it up because a change to minmax.h that Andre=
+w
+> > committed to the mm tree showed up the bug.
+> > To avoid W=3D1 builds failing Andrew had applied a temporary 'fix'.
+> > So he needs to be in the loop at least.
+> > I don't know the actual procedure :-)
+>=20
+> Jakob's minmax changes
+> (https://lkml.kernel.org/r/c50365d214e04f9ba256d417c8bebbc0@AcuMS.aculab.=
+com)
+> are queued in mm.git for 6.14-rc1.  They require a yas530 fix to build.
 
-please pull the urgent IRQ fixes lineup for v6.13-rc1.
+Those are my changes, not Jakobs...
+(Not that it makes much difference here)
 
-Thx.
+=09David
 
----
+> So as I need to carry this yas530 fix in mm.git I'd like to merge it as
+> a hotfix for 6.13-rcX, sometime in the next week or two.  So please
+> send acks!
 
-The following changes since commit 7eef7e306d3c40a0c5b9ff6adc9b273cc894db=
-d5:
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-  Merge tag 'for-6.13/dm-changes' of git://git.kernel.org/pub/scm/linux/k=
-ernel/git/device-mapper/linux-dm (2024-11-25 18:54:00 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_f=
-or_v6.13_rc1
-
-for you to fetch changes up to cc47268cb4841c84d54f0ac73858986bcd515eb4:
-
-  irqchip: Switch back to struct platform_driver::remove() (2024-11-26 20=
-:09:06 +0100)
-
-----------------------------------------------------------------
-- Move the ->select callback to the correct ops structure in irq-mvebu-se=
-i to
-  fix some Marvell Armada platforms
-
-- Add a workaround for Hisilicon ITS erratum 162100801 which can cause so=
-me
-  virtual interrupts to get lost
-
-- More platform_driver::remove() conversion
-
-----------------------------------------------------------------
-Russell King (Oracle) (1):
-      irqchip/irq-mvebu-sei: Move misplaced select() callback to SEI CP d=
-omain
-
-Uwe Kleine-K=C3=B6nig (1):
-      irqchip: Switch back to struct platform_driver::remove()
-
-Zhou Wang (1):
-      irqchip/gicv3-its: Add workaround for hip09 ITS erratum 162100801
-
- Documentation/arch/arm64/silicon-errata.rst |  2 ++
- arch/arm64/Kconfig                          | 11 +++++++
- drivers/irqchip/irq-gic-v3-its.c            | 50 ++++++++++++++++++++++-=
-------
- drivers/irqchip/irq-imgpdc.c                |  2 +-
- drivers/irqchip/irq-imx-intmux.c            |  2 +-
- drivers/irqchip/irq-imx-irqsteer.c          |  2 +-
- drivers/irqchip/irq-keystone.c              |  2 +-
- drivers/irqchip/irq-ls-scfg-msi.c           |  2 +-
- drivers/irqchip/irq-madera.c                |  2 +-
- drivers/irqchip/irq-mvebu-pic.c             |  2 +-
- drivers/irqchip/irq-mvebu-sei.c             |  2 +-
- drivers/irqchip/irq-pruss-intc.c            |  2 +-
- drivers/irqchip/irq-renesas-intc-irqpin.c   |  2 +-
- drivers/irqchip/irq-renesas-irqc.c          |  2 +-
- drivers/irqchip/irq-renesas-rza1.c          |  2 +-
- drivers/irqchip/irq-ts4800.c                |  2 +-
- 16 files changed, 65 insertions(+), 24 deletions(-)
-
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
