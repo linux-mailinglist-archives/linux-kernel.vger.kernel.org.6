@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-426650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB989DF649
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 16:40:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EE1D1632C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 15:39:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3321D6DA4;
-	Sun,  1 Dec 2024 15:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FkuzqLkv"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2073.outbound.protection.outlook.com [40.107.220.73])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 191FA9DF64A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 16:40:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9E91D61AC
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 15:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.73
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D59C8281A3A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 15:40:16 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F3E1D63D2;
+	Sun,  1 Dec 2024 15:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FF0fC2z8"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86489AD5A
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 15:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.79
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733067575; cv=fail; b=THdGVAzvC1iWeS22VKinmiZjsa2x4Yq7o+RMSc7PQ0t5zaRa3O3odGgGEKSjie3NoxZshEWZT7nNG+a3a36+0RkXvg4Zj+gfUOUGidfh8scTDz3Z6GELCde8+zH+PnHprdETJGxJ1FQprtaXpY6l1nQwsFqrpb728lSGXQhdz3o=
+	t=1733067585; cv=fail; b=Eqr3fwdfEbL38dAoIDvi6ju/vikjcRpLIyh8hyiwleca6FrJwBJcFGOsAae5NyvXMTtAyIJHLD3c74WAo3prOPfz3Nr+ihK4C0GE0vlQlyPTDXr1Eom6vxxYpzrZs3KkQQIXo2wEn+RI47CCNGvERmsMDvT6vcAR9GBS9cvHNXI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733067575; c=relaxed/simple;
-	bh=HhQi3rDUNjGoDJYn0Yk5tmdNkFAkWcYhXub5r6gsKAU=;
+	s=arc-20240116; t=1733067585; c=relaxed/simple;
+	bh=zTxbnYSIPRZXkCY/xG3gA0h13UEazWNchmoHqFQj33A=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q/tSaVrN+553t4TSIEC6Bd3lr3Fve5YfH9oj3DnDahKL7IsLfY+PIi0CxM6NjmWrceXSGAsqUCFRc4/cylfUbczylw6dJshNHL2WP+wjBR006ipTgN6mQPJOts5UaPAIgsydrOBOCXfcxmx9JA1Xf4sTPQc1NSXUGIK1ordPDkU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FkuzqLkv; arc=fail smtp.client-ip=40.107.220.73
+	 MIME-Version:Content-Type; b=OlyD0L02JYECydi0/4co2YXxBNP9JRJBzAlxts7BQlyJFf9qTZcmJ0jatNFcse62Aj2eYkWYs+0Yjr50Gh9EUnB74JxerYTqqYpN32u9P0wOX5CJTRIlWh8CEk36zkulm94SD3oQbupfRoTJ/8ubc5ZNTtncBDjipbGS06Nsdlw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FF0fC2z8; arc=fail smtp.client-ip=40.107.92.79
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qgAZtCd/K6oEdWFTayvuFfzXTd4GuFgE868qmOAu5uKBC6bSYvikBUfsvCE87fcXYR0YPM89pE9Ezsx3rnSNzw8uigmJH53xLZ/fYuEbFIZ/GybZk8iJrG8sPXEUWhcapTYYuDU6+KTmLl8ujmssGf18BCjF+V2mMfbfAICFCjARiEDkj2WxB56Wv4Ie0a0A01FEuOtWhHAYTRxuo9bwfZVHxgQFQBA/qKM1BKKxlmbgbPlZtc9bO1RWL2wZA50vlWDXKVytnamcTDmFwfB9oN1BoCIOW0lDLrZiZ7LWIa/l8FriYD5ow6mmxMuymaKEohG4p59ITVSGCJum7QyNeQ==
+ b=yoD2Y+XEZmHfUC6Of8IQQ40/WNMF3+fWXmqquEfCmQYi5rhPBJrzmy34f38LONBtBL9REkosMMnPjPtVuMhL+LVsglxz+tUtVWxCn66JcHwWRbjlPU+LjHeQtiXUXFwBrjNOHVWoYnXef/edi2ZXf9HryfT8jPyK47MO+1DMG7Evg6JslU/TdexeoxQCeYEM31iKrWPZu3GH5DQ6PPiaL2moQZn9s/E6rijN9v+Di9yXMV8OooulyoGWk86Nc99Ux/ups8dNATiNz8j4OYKJY7SZa1kK8Lane1u2tXsZ0weVf9Xo5IKx9S7Kp/yI7waKylKRR/XYAVWQd1xBmm436Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bJv7WsTryDOyfwOqO3A2L59wJ0uSEjn6EgRQcX/ccfU=;
- b=L6Xj9vE+QOQd3XpfeG+9d/ujtNUbb58Bzqve2shGYYgHanLAFgcIPWnuh4I9RqgTN4Owbb49DD7vCSLO7iM2Zo2ko45XHl4Mvm4XjsKMhr5fEHREYXyssaplL3iVzKuforNQfZZLmdZQJL0yH+NZIBcmiBEFnTW4lxDvdHNscYBnvjQpP4cl3ub1G/SiMOGz0Xnj+kODSnLchvWxAJ6ktm0mYK54jY+SBIpIpmoZJpy7iH30JnXbp3uqMJrdfKLTe936jPVLCMvt4PXxQaz7jiOv5vTT9/ytoDTif6lP8BG1muE5wwR8+QJ4usKuKLx0rMDYsPK8JFIBFyuS2eR3Hg==
+ bh=X+xaFjNavCQ6nXnpTcSddvD7CT+2Vhgf2Amvg+doJEk=;
+ b=AXojOOOMc/mVv0JOIPf+Ft3rhk48GkDg1TcTdw2c47TRdCVcxDuR4djf2LQKXToenvl47VZ1mKXKU/sD4UR0KXu8mqzp5ItuO1FX1JT1L6O7v8yJIQv08u30D/P7guU7n6BiOQr3S16/EDYVrs2YMvZGxD277La6g5iWb08etB1W2eI0lkET0voiEW7Sb66iItjZwWFEbhoO9wKtsY5uyhGmEJKLhguJp4c3I7VOXC6Bs02PCUQQIZTVEonL8D/NP5sIiUkygPG6KH9xF1MKJ2wTQAlOqq3DXgyL3Cx/cc74Y2odaJC4Bsynob/qIMRvcGWfVbbVKryCBHP4wv+fyA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kvack.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bJv7WsTryDOyfwOqO3A2L59wJ0uSEjn6EgRQcX/ccfU=;
- b=FkuzqLkvKgZ+efC58wH+CVac4vcFL9HyTepB5JnTT+/5wDZ0VPtNkkpjAX7n2Xps6TIiX459+Sp/jUAZRQEdtWwHzFIk7Qbs4+Vjd2weZEpgEwu2yYkwnueWpcgGjVhThePOwkDTTB/6cw8B6+Mo5T0QZ6wPN096kJxhxhHkaUM=
-Received: from CH2PR11CA0027.namprd11.prod.outlook.com (2603:10b6:610:54::37)
- by LV8PR12MB9109.namprd12.prod.outlook.com (2603:10b6:408:18a::20) with
+ bh=X+xaFjNavCQ6nXnpTcSddvD7CT+2Vhgf2Amvg+doJEk=;
+ b=FF0fC2z8eCpx7yojIIXtBaCkpMKP9yXM2RZm1wSH3IAWF4k2z2LtEwSs3mj4ZV2Hc8nVYsDJdM3Vqkr/bWYAJdBU1IZsQnXTl0UUQp9icZLJoocVHNkhNAZP/+FvoGj8o+wFuC48pjfCZRPYteaeX3Z1rJa0YNt3MdAseMLplrM=
+Received: from CH2PR07CA0065.namprd07.prod.outlook.com (2603:10b6:610:5b::39)
+ by SA3PR12MB9108.namprd12.prod.outlook.com (2603:10b6:806:37d::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.17; Sun, 1 Dec
- 2024 15:39:29 +0000
-Received: from CH2PEPF00000149.namprd02.prod.outlook.com
- (2603:10b6:610:54:cafe::99) by CH2PR11CA0027.outlook.office365.com
- (2603:10b6:610:54::37) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.16 via Frontend Transport; Sun,
- 1 Dec 2024 15:39:29 +0000
+ 2024 15:39:36 +0000
+Received: from CH2PEPF00000146.namprd02.prod.outlook.com
+ (2603:10b6:610:5b:cafe::d0) by CH2PR07CA0065.outlook.office365.com
+ (2603:10b6:610:5b::39) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.15 via Frontend Transport; Sun,
+ 1 Dec 2024 15:39:35 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF00000149.mail.protection.outlook.com (10.167.244.106) with Microsoft
+ CH2PEPF00000146.mail.protection.outlook.com (10.167.244.103) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Sun, 1 Dec 2024 15:39:29 +0000
+ 15.20.8230.7 via Frontend Transport; Sun, 1 Dec 2024 15:39:35 +0000
 Received: from tunga.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 1 Dec
- 2024 09:39:22 -0600
+ 2024 09:39:28 -0600
 From: Raghavendra K T <raghavendra.kt@amd.com>
 To: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <gourry@gourry.net>,
 	<nehagholkar@meta.com>, <abhishekd@meta.com>, <david@redhat.com>,
@@ -80,9 +80,9 @@ CC: <willy@infradead.org>, <kirill.shutemov@linux.intel.com>,
 	<rientjes@google.com>, <shy828301@gmail.com>, <Liam.Howlett@Oracle.com>,
 	<peterz@infradead.org>, <mingo@redhat.com>, Raghavendra K T
 	<raghavendra.kt@amd.com>
-Subject: [RFC PATCH V0 06/10] mm: Add throttling of mm scanning using scan_size
-Date: Sun, 1 Dec 2024 15:38:14 +0000
-Message-ID: <20241201153818.2633616-7-raghavendra.kt@amd.com>
+Subject: [RFC PATCH V0 07/10] sysfs: Add sysfs support to tune scanning
+Date: Sun, 1 Dec 2024 15:38:15 +0000
+Message-ID: <20241201153818.2633616-8-raghavendra.kt@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241201153818.2633616-1-raghavendra.kt@amd.com>
 References: <20241201153818.2633616-1-raghavendra.kt@amd.com>
@@ -98,286 +98,313 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000149:EE_|LV8PR12MB9109:EE_
-X-MS-Office365-Filtering-Correlation-Id: e76979ae-80a3-4302-3fb7-08dd121e5822
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000146:EE_|SA3PR12MB9108:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12e304cc-4097-44b1-a8f8-08dd121e5be9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qfe4CLmuE/yJGcj7rRTQxFqxAuS7SWsVNnRs79Eg93zeovjtISjqO8t7H5sZ?=
- =?us-ascii?Q?fhTr/1VImRAmQWSQeaiguX02isW02L7gp3c+kP6ijdoWhkWD9Y+IJyKyC283?=
- =?us-ascii?Q?p68Otiirq+s+XG6ALt3HwGBX3YjvIYdIXqetDIkFW5wdrZx2fwtwM/huOYXY?=
- =?us-ascii?Q?2ELccibFoVez5DEmTbPq9pemcGp2MHmx8MsnplLDG1+K2oti4IVT7Z3O2PFA?=
- =?us-ascii?Q?SZ2HZQlDGjxLPvJsUydWzJmDXhjwIdyQ/Nss11ql/yxxuCKJZNyvnk/1gfsO?=
- =?us-ascii?Q?u6anmFXz99ZSOqNWKkMPgprAvVGVmeg+W6EwcduVYEymtTKEWzjAGGNa1gH8?=
- =?us-ascii?Q?vc6ljRpzWHZmY5MA0K7HU3tlC34WXEzxg+GbLl7LtkH5dVX3LbTy28xoKNu9?=
- =?us-ascii?Q?/NeKIB5cNYKTq+ext6EHTrYpJ8QBt/JJwTckh0hSou1lxWkNq2nBpT5Nc57N?=
- =?us-ascii?Q?U0OnjpqStpGgS8Y8sdFGFAGpptOZnYkxKUro2qHoVBqBvvcxd8cc3uUE10Pc?=
- =?us-ascii?Q?EoODyZ1Al+2/xPKrYvrrDbcB4ebHE4+nWeLyuhF6T6f+TdOdUG4R1DSVT16Z?=
- =?us-ascii?Q?T7CbOcqSPe4RvSflh/zy0PYfgHv1ySSZpFNFfEP6i5F27DO/B5ECYl4Hr896?=
- =?us-ascii?Q?mtPXGaPVvaWkhsa47T3idbideaudyQiiCF0QEE8UU3HJo8VD7ujLaWsC7gCp?=
- =?us-ascii?Q?BLlRFEershS6rOe4OBa3fm1e9eDyQr3Uo5rWdqQ9u+iZOHYXZzi/pPv/RZMB?=
- =?us-ascii?Q?KzbPOWBzzImH5Z+VD8disInrSIf09PN06xR+o9RGw2iuRpNbGDnp8x3PFtub?=
- =?us-ascii?Q?TPCVMrCtlwl5IL9y/qXIprfQ+nvgbA70tHLjB9SQM0ktoQm8my59Vk7I74cD?=
- =?us-ascii?Q?RS1MrLlhVUZC13cHJ06k3d9q8FDO9P1AsfsGCpokuqq3Cogbmp8ByYrFaNkp?=
- =?us-ascii?Q?85wzUPYT2Tgmhk9wI3RDt3j/WeHGgua4cGbZlAxnHpFubh/qkrY1HXtQwbkO?=
- =?us-ascii?Q?ZISKzLPaK3jHVs8+jHzYuVcjb1iWLpTLYWXP7GVMJ6kgWCxiP/LcYuI2BlTp?=
- =?us-ascii?Q?D+BPyLaDHbTlzBURVsWHE9hqe0jNNFlZWtgRHUDpeANkPBFlBa1bXeG7J7pr?=
- =?us-ascii?Q?ooeEmZLaTj+A0gcEAG552hFP+QjlS6huqZnBMlF5AGmBDbtzsvF8YC+ybP4T?=
- =?us-ascii?Q?B6x4hy8TBmfswAaoHD2HMgq/uj3ZQY+IYOyMmty12pMsYxw08xGV0g1eVjWA?=
- =?us-ascii?Q?X6etxKOl24IoWyadepRFVCeq0GeflW1f2OgsdtGWd3qOeP+eZ3rRHzK8s3eW?=
- =?us-ascii?Q?H/qL+00WI3vucEFf+aignMe9H/QRHEWno4hQCm6y4XZRKcls2EI/c586zTbC?=
- =?us-ascii?Q?KhWuBDod7DP+jEXbNClwTvAsBrwfcs1pvBojpePCFv/x/apLNncYi7eTiZJ2?=
- =?us-ascii?Q?E0AuX4xJpQbMQ2nND20fRJr5iMcqypqB6OuWQtcgK4eZ2YFeZZbNJg=3D=3D?=
+	=?us-ascii?Q?wlHk46/nKVXwem+HsIADIuIkA93XzVkjCjnEyGR8bIfKg8h8iWPwq1Z3pHs8?=
+ =?us-ascii?Q?qzkCFa119tVA4tlqWCFq6HbCu5j9vn2VHIKT9+8+0GPD0gbCrxgMTGieRm8g?=
+ =?us-ascii?Q?ZkWWrqbVJhxh6uEjtiU40/GnWwOuJWv25u0b9NJaPV4+qQY4KhXb1Bmd6GaP?=
+ =?us-ascii?Q?QM2EPrkJ5xVvHl4vlIdYauVYp1c6BgqEW6fguc/AtV7gv6tcX0ngoIjL/BxC?=
+ =?us-ascii?Q?6ZDYaVZ5903JB3reLHmw+49SCPlnbwPRKBojHbthofumaoTb2c32EUCohKuW?=
+ =?us-ascii?Q?oXsQz8F+RvANP7uEbXPiDT8kPpUzkpHPMGWUqi0N39cEiKUTD8TfMfGf438b?=
+ =?us-ascii?Q?zvkmq9tNH7mYPa9T70bSgpdvvhtWy7kdPEzW9HwBfwIsC0gnfASZ/mdOVnHQ?=
+ =?us-ascii?Q?uHehvQsIik8mVmP/jpEoCYYE//VuGUpm0nuhUjfXSmxQDtevRareViDabiRa?=
+ =?us-ascii?Q?UagF7gSxXnPoxeCUCo+4dwViU6JPNeAr4slxh1WMGItZoDngubrY65SxQDWq?=
+ =?us-ascii?Q?uWIiqkjRDNUi2ZW6pYlgn0y6R6gNp1HRbFjOzjXYqOTQfTHgOkzsguJ0m9ol?=
+ =?us-ascii?Q?bzwVK+dOsXTLSbEEP19F+WcxLL8U30/CRh4Nf+1uuMw706z/nK5GIOV98TiS?=
+ =?us-ascii?Q?4tr9JUBV3fFGDhQ1TEsbUycXVPgEIpltgqUH6oxzWHIAC5inA92UUjOCfBrD?=
+ =?us-ascii?Q?9aevBb14aTuZJqZswg/V57GXiqAiVwGhWpKIq1kKOQBRmv0XYPwGw00V799N?=
+ =?us-ascii?Q?NOVtrLo1kphicL3Z4PxZMA0xzawdbqsuSkkbrxoUPef5E4VpeHL1uv0Iuw6V?=
+ =?us-ascii?Q?H/u4R650ko5ScRCklskZ367YVTqvWY8cwX+gWtoEARluP7eznRh2G5Z+8+7T?=
+ =?us-ascii?Q?mrDE75Yo2CXqXgaMAAU6o2Qhmo1q58dc21RrPhrM3Syq7SD1tzihQLtrLHuP?=
+ =?us-ascii?Q?khLJ05WW+qLdCAr8gLqfY2sxd+USfOPmoqjWcYRg+TwtKRgO2DVCEafCLZBT?=
+ =?us-ascii?Q?E7LDPIhdp48dm1pcHYJYkrZuvTPiEftqRwIa3FlYA5/3fPr6JeMIIEiaj3Bh?=
+ =?us-ascii?Q?ZGQUnPmuiHwQ/GHM/2w3RND/Y+GcVeq/puUR1xjsJTypQIuajbXcs8U/blNe?=
+ =?us-ascii?Q?PjsSxJxSmilEyLu9jZZo0LNqnVitakbtEi4N2Y2UR0otGc36Y1Ux/r/nwsTm?=
+ =?us-ascii?Q?b8tsYSDAyHuEyXNrgDTCwHO6MZG98ugR3B4y3jeTLZCnt2OQKslXbow9YQHT?=
+ =?us-ascii?Q?6Ba+zJDYVZUJorIL799XJXOkTLeU6uEYgvJY1UPXWH8MAf2VaAB/nYSlUPU7?=
+ =?us-ascii?Q?oy6rEw62bvHiR/ciKGoAE+E08j5hbHtH9QEakbwXVEojr/zlQdpelxRSoRLJ?=
+ =?us-ascii?Q?sNJk3e5NF0aSmIs/OreMVx/tEEj0hoOF6/1YsoMD45swEHW2NA2PmS5tW/8A?=
+ =?us-ascii?Q?By01QVGGMUgug/xK+DNWPDVp+R+LaRWT66w3o1CyeaRbIsub0mePzg=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2024 15:39:29.2655
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2024 15:39:35.6055
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e76979ae-80a3-4302-3fb7-08dd121e5822
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12e304cc-4097-44b1-a8f8-08dd121e5be9
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000149.namprd02.prod.outlook.com
+	CH2PEPF00000146.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9109
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9108
 
-Before this patch, scanning is done on entire virtual address space
-of all the tasks. Now the scan size is shrunk or expanded based on the
-useful pages found in the last scan.
-
-This helps to quickly get out of unnecessary scanning thus burning
-lesser CPU.
-
-Drawback: If a useful chunk is at the other end of the VMA space, it
-will delay scanning and migration.
-
-Shrink/expand algorithm for scan_size:
-X : Number of useful pages in the last scan.
-Y : Number of useful pages found in current scan.
-Initial scan_size is 4GB
- case 1: (X = 0, Y = 0)
-  Decrease scan_size by 2
- case 2: (X = 0, Y > 0)
-  Aggressively change to MAX (16GB)
- case 3: (X > 0, Y = 0 )
-   No change
- case 4: (X > 0, Y > 0)
-   Increase scan_size by 2
-
-Scan size is clamped between MIN (512MB) and MAX (16GB)).
-TBD:  Tuning this based on real workload
-
-Experiment:
-============
-Abench microbenchmark,
-- Allocates 8GB/32GB of memory on CXL node
-- 64 threads created, and each thread randomly accesses pages in 4K
-  granularity.
-- 512 iterations.
-
-SUT: 512 CPU, 2 node 256GB, AMD EPYC.
-
-3 runs, command:  abench -m 2 -d 1 -i 512 -s <size>
-
-Calculates how much time is taken to complete the task, lower is better.
-Expectation is CXL node memory is expected to be migrated as fast as
-possible.
-
-Base case: 6.11-rc6    w/ numab mode = 2 (hot page promotion is enabled).
-patched case: 6.11-rc6 w/ numab mode = 0 (numa balancing is disabled).
-we expect daemon to do page promotion.
-
-Result:
-========
-         base                    patched
-         time in sec  (%stdev)   time in sec  (%stdev)     %gain
- 8GB     133.66       ( 0.38 )        113.77  ( 1.83 )     14.88
-32GB     584.77       ( 0.19 )        542.79  ( 0.11 )      7.17
-
-Overhead:
-The below time is calculated using patch 10. Actual overhead for patched
-case may be even lesser.
-
-               (scan + migration)  time in sec
-Total memory   base kernel    patched kernel       %gain
-8GB             65.743          13.93              78.8114324
-32GB           153.95          132.12              14.17992855
+Support below tunables:
+scan_enable: turn on or turn off mm_struct scanning
+scan_period: initial scan_period (default: 2sec)
+scan_sleep_ms: sleep time between two successive round of scanning and
+migration.
+mms_to_scan: total mm_struct to scan before taking a pause.
+target_node: default regular node to which migration of accessed pages
+is done
 
 Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
 ---
- mm/kmmscand.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 52 insertions(+), 3 deletions(-)
+ mm/kmmscand.c | 205 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 205 insertions(+)
 
 diff --git a/mm/kmmscand.c b/mm/kmmscand.c
-index 589aed604cd6..2efef53f9402 100644
+index 2efef53f9402..344a45bd2d3e 100644
 --- a/mm/kmmscand.c
 +++ b/mm/kmmscand.c
-@@ -28,6 +28,16 @@
- static struct task_struct *kmmscand_thread __read_mostly;
- static DEFINE_MUTEX(kmmscand_mutex);
+@@ -20,6 +20,7 @@
+ #include <linux/string.h>
+ #include <linux/cleanup.h>
+ #include <linux/minmax.h>
++#include <trace/events/kmem.h>
  
-+/*
-+ * Total VMA size to cover during scan.
-+ * Min: 512MB default: 4GB max: 16GB
-+ */
-+#define KMMSCAND_SCAN_SIZE_MIN	(512 * 1024 * 1024UL)
-+#define KMMSCAND_SCAN_SIZE_MAX	(16 * 1024 * 1024 * 1024UL)
-+#define KMMSCAND_SCAN_SIZE	(4 * 1024 * 1024 * 1024UL)
-+
-+static unsigned long kmmscand_scan_size __read_mostly = KMMSCAND_SCAN_SIZE;
-+
- /*
-  * Scan period for each mm.
-  * Min: 400ms default: 2sec Max: 5sec
-@@ -74,6 +84,8 @@ struct kmmscand_mm_slot {
- 	unsigned long next_scan;
- 	/* Tracks how many useful pages obtained for migration in the last scan */
- 	unsigned long scan_delta;
-+	/* Determines how much VMA address space to be covered in the scanning */
-+	unsigned long scan_size;
- 	long address;
+ #include <asm/pgalloc.h>
+ #include "internal.h"
+@@ -114,6 +115,170 @@ struct kmmscand_migrate_info {
+ 	unsigned long address;
  };
  
-@@ -484,6 +496,7 @@ static void kmmscand_migrate_folio(void)
-  */
- #define KMMSCAND_IGNORE_SCAN_THR	100
- 
-+#define SCAN_SIZE_CHANGE_SCALE	1
- /*
-  * X : Number of useful pages in the last scan.
-  * Y : Number of useful pages found in current scan.
-@@ -497,11 +510,22 @@ static void kmmscand_migrate_folio(void)
-  *		Increase scan_period by (2 << SCAN_PERIOD_CHANGE_SCALE).
-  *	case 4: (X > 0, Y > 0)
-  *		Decrease scan_period by SCAN_PERIOD_TUNE_PERCENT.
-+ * Tuning scan_size:
-+ * Initial scan_size is 4GB
-+ *	case 1: (X = 0, Y = 0)
-+ *		Decrease scan_size by (1 << SCAN_SIZE_CHANGE_SCALE).
-+ *	case 2: (X = 0, Y > 0)
-+ *		scan_size = KMMSCAND_SCAN_SIZE_MAX
-+ *  case 3: (X > 0, Y = 0 )
-+ *		No change
-+ *  case 4: (X > 0, Y > 0)
-+ *		Increase scan_size by (1 << SCAN_SIZE_CHANGE_SCALE).
-  */
- static inline void kmmscand_update_mmslot_info(struct kmmscand_mm_slot *mm_slot, unsigned long total)
++#ifdef CONFIG_SYSFS
++static ssize_t scan_sleep_ms_show(struct kobject *kobj,
++					 struct kobj_attribute *attr,
++					 char *buf)
++{
++	return sysfs_emit(buf, "%u\n", kmmscand_scan_sleep_ms);
++}
++
++static ssize_t scan_sleep_ms_store(struct kobject *kobj,
++					  struct kobj_attribute *attr,
++					  const char *buf, size_t count)
++{
++	unsigned int msecs;
++	int err;
++
++	err = kstrtouint(buf, 10, &msecs);
++	if (err)
++		return -EINVAL;
++
++	kmmscand_scan_sleep_ms = msecs;
++	kmmscand_sleep_expire = 0;
++	wake_up_interruptible(&kmmscand_wait);
++
++	return count;
++}
++static struct kobj_attribute scan_sleep_ms_attr =
++	__ATTR_RW(scan_sleep_ms);
++
++static ssize_t mm_scan_period_ms_show(struct kobject *kobj,
++					 struct kobj_attribute *attr,
++					 char *buf)
++{
++	return sysfs_emit(buf, "%u\n", kmmscand_mm_scan_period_ms);
++}
++
++/* If a value less than MIN or greater than MAX asked for store value is clamped */
++static ssize_t mm_scan_period_ms_store(struct kobject *kobj,
++					  struct kobj_attribute *attr,
++					  const char *buf, size_t count)
++{
++	unsigned int msecs, stored_msecs;
++	int err;
++
++	err = kstrtouint(buf, 10, &msecs);
++	if (err)
++		return -EINVAL;
++
++	stored_msecs = clamp(msecs, KMMSCAND_SCAN_PERIOD_MIN, KMMSCAND_SCAN_PERIOD_MAX);
++
++	kmmscand_mm_scan_period_ms = stored_msecs;
++	kmmscand_sleep_expire = 0;
++	wake_up_interruptible(&kmmscand_wait);
++
++	return count;
++}
++
++static struct kobj_attribute mm_scan_period_ms_attr =
++	__ATTR_RW(mm_scan_period_ms);
++
++static ssize_t mms_to_scan_show(struct kobject *kobj,
++					 struct kobj_attribute *attr,
++					 char *buf)
++{
++	return sysfs_emit(buf, "%lu\n", kmmscand_mms_to_scan);
++}
++
++static ssize_t mms_to_scan_store(struct kobject *kobj,
++					  struct kobj_attribute *attr,
++					  const char *buf, size_t count)
++{
++	unsigned long val;
++	int err;
++
++	err = kstrtoul(buf, 10, &val);
++	if (err)
++		return -EINVAL;
++
++	kmmscand_mms_to_scan = val;
++	kmmscand_sleep_expire = 0;
++	wake_up_interruptible(&kmmscand_wait);
++
++	return count;
++}
++
++static struct kobj_attribute mms_to_scan_attr =
++	__ATTR_RW(mms_to_scan);
++
++static ssize_t scan_enabled_show(struct kobject *kobj,
++					 struct kobj_attribute *attr,
++					 char *buf)
++{
++	return sysfs_emit(buf, "%u\n", kmmscand_scan_enabled ? 1 : 0);
++}
++
++static ssize_t scan_enabled_store(struct kobject *kobj,
++					  struct kobj_attribute *attr,
++					  const char *buf, size_t count)
++{
++	unsigned int val;
++	int err;
++
++	err = kstrtouint(buf, 10, &val);
++	if (err || val > 1)
++		return -EINVAL;
++
++	if (val) {
++		kmmscand_scan_enabled = true;
++		need_wakeup = true;
++	} else
++		kmmscand_scan_enabled = false;
++
++	kmmscand_sleep_expire = 0;
++	wake_up_interruptible(&kmmscand_wait);
++
++	return count;
++}
++
++static struct kobj_attribute scan_enabled_attr =
++	__ATTR_RW(scan_enabled);
++
++static ssize_t target_node_show(struct kobject *kobj,
++					 struct kobj_attribute *attr,
++					 char *buf)
++{
++	return sysfs_emit(buf, "%u\n", kmmscand_target_node);
++}
++
++static ssize_t target_node_store(struct kobject *kobj,
++					  struct kobj_attribute *attr,
++					  const char *buf, size_t count)
++{
++	int err, node;
++
++	err = kstrtoint(buf, 10, &node);
++	if (err)
++		return -EINVAL;
++
++	kmmscand_sleep_expire = 0;
++	if (!node_is_toptier(node))
++		return -EINVAL;
++
++	kmmscand_target_node = node;
++	wake_up_interruptible(&kmmscand_wait);
++
++	return count;
++}
++static struct kobj_attribute target_node_attr =
++	__ATTR_RW(target_node);
++
++static struct attribute *kmmscand_attr[] = {
++	&scan_sleep_ms_attr.attr,
++	&mm_scan_period_ms_attr.attr,
++	&mms_to_scan_attr.attr,
++	&scan_enabled_attr.attr,
++	&target_node_attr.attr,
++	NULL,
++};
++
++struct attribute_group kmmscand_attr_group = {
++	.attrs = kmmscand_attr,
++	.name = "kmmscand",
++};
++#endif
++
+ static int kmmscand_has_work(void)
  {
- 	unsigned int scan_period;
- 	unsigned long now;
-+	unsigned long scan_size;
- 	unsigned long old_scan_delta;
- 
- 	/* XXX: Hack to get rid of continuously failing/unmigrateable pages */
-@@ -509,6 +533,7 @@ static inline void kmmscand_update_mmslot_info(struct kmmscand_mm_slot *mm_slot,
- 		total = 0;
- 
- 	scan_period = mm_slot->scan_period;
-+	scan_size = mm_slot->scan_size;
- 
- 	old_scan_delta = mm_slot->scan_delta;
- 
-@@ -522,30 +547,38 @@ static inline void kmmscand_update_mmslot_info(struct kmmscand_mm_slot *mm_slot,
- 	if (!old_scan_delta && !total) {
- 		scan_period = (100 + SCAN_PERIOD_TUNE_PERCENT) * scan_period;
- 		scan_period /= 100;
-+		scan_size = scan_size >> SCAN_SIZE_CHANGE_SCALE;
- 	} else if (old_scan_delta && total) {
- 		scan_period = (100 - SCAN_PERIOD_TUNE_PERCENT) * scan_period;
- 		scan_period /= 100;
-+		scan_size = scan_size << SCAN_SIZE_CHANGE_SCALE;
- 	} else if (old_scan_delta && !total) {
- 		scan_period = scan_period << SCAN_PERIOD_CHANGE_SCALE;
- 	} else {
- 		scan_period = scan_period >> SCAN_PERIOD_CHANGE_SCALE;
-+		scan_size = KMMSCAND_SCAN_SIZE_MAX;
- 	}
- 
- 	scan_period = clamp(scan_period, KMMSCAND_SCAN_PERIOD_MIN, KMMSCAND_SCAN_PERIOD_MAX);
-+	scan_size = clamp(scan_size, KMMSCAND_SCAN_SIZE_MIN, KMMSCAND_SCAN_SIZE_MAX);
- 
- 	now = jiffies;
- 	mm_slot->next_scan = now + msecs_to_jiffies(scan_period);
- 	mm_slot->scan_period = scan_period;
-+	mm_slot->scan_size = scan_size;
- 	mm_slot->scan_delta = total;
+ 	return !list_empty(&kmmscand_scan.mm_head);
+@@ -738,9 +903,43 @@ static int kmmscand(void *none)
+ 	return 0;
  }
  
- static unsigned long kmmscand_scan_mm_slot(void)
- {
-+	bool next_mm = false;
- 	bool update_mmslot_info = false;
- 
- 	unsigned int mm_slot_scan_period;
- 	unsigned long now;
- 	unsigned long mm_slot_next_scan;
-+	unsigned long mm_slot_scan_size;
-+	unsigned long scanned_size = 0;
- 	unsigned long address;
- 	unsigned long folio_nr_access_s, folio_nr_access_e, total = 0;
- 
-@@ -572,6 +605,7 @@ static unsigned long kmmscand_scan_mm_slot(void)
- 
- 	mm_slot_next_scan = mm_slot->next_scan;
- 	mm_slot_scan_period = mm_slot->scan_period;
-+	mm_slot_scan_size = mm_slot->scan_size;
- 	mm = slot->mm;
- 
- 	spin_unlock(&kmmscand_mm_lock);
-@@ -579,8 +613,10 @@ static unsigned long kmmscand_scan_mm_slot(void)
- 	if (unlikely(!mmap_read_trylock(mm)))
- 		goto outerloop_mmap_lock;
- 
--	if (unlikely(kmmscand_test_exit(mm)))
-+	if (unlikely(kmmscand_test_exit(mm))) {
-+		next_mm = true;
- 		goto outerloop;
-+	}
- 
- 	now = jiffies;
- 	/*
-@@ -598,8 +634,20 @@ static unsigned long kmmscand_scan_mm_slot(void)
- 	for_each_vma(vmi, vma) {
- 		/* Count the scanned pages here to decide exit */
- 		kmmscand_walk_page_vma(vma);
--
-+		scanned_size += vma->vm_end - vma->vm_start;
- 		address = vma->vm_end;
++#ifdef CONFIG_SYSFS
++extern struct kobject *mm_kobj;
++static int __init kmmscand_init_sysfs(struct kobject **kobj)
++{
++	int err;
 +
-+		if (scanned_size >= mm_slot_scan_size) {
-+			folio_nr_access_e = atomic_long_read(&mm->nr_accessed);
-+			total = folio_nr_access_e - folio_nr_access_s;
-+			/* If we had got accessed pages, ignore the current scan_size threshold */
-+			if (total > KMMSCAND_IGNORE_SCAN_THR) {
-+				mm_slot_scan_size = KMMSCAND_SCAN_SIZE_MAX;
-+				continue;
-+			}
-+			next_mm = true;
-+			break;
-+		}
++	err = sysfs_create_group(*kobj, &kmmscand_attr_group);
++	if (err) {
++		pr_err("failed to register kmmscand group\n");
++		goto err_kmmscand_attr;
++	}
++
++	return 0;
++
++err_kmmscand_attr:
++	sysfs_remove_group(*kobj, &kmmscand_attr_group);
++	return err;
++}
++
++static void __init kmmscand_exit_sysfs(struct kobject *kobj)
++{
++		sysfs_remove_group(kobj, &kmmscand_attr_group);
++}
++#else
++static inline int __init kmmscand_init_sysfs(struct kobject **kobj)
++{
++	return 0;
++}
++static inline void __init kmmscand_exit_sysfs(struct kobject *kobj)
++{
++}
++#endif
++
+ static inline void kmmscand_destroy(void)
+ {
+ 	kmem_cache_destroy(kmmscand_slot_cache);
++	kmmscand_exit_sysfs(mm_kobj);
+ }
+ 
+ void __kmmscand_enter(struct mm_struct *mm)
+@@ -857,6 +1056,11 @@ static int __init kmmscand_init(void)
+ 		return -ENOMEM;
  	}
- 	folio_nr_access_e = atomic_long_read(&mm->nr_accessed);
- 	total = folio_nr_access_e - folio_nr_access_s;
-@@ -627,7 +675,7 @@ static unsigned long kmmscand_scan_mm_slot(void)
- 	 * Release the current mm_slot if this mm is about to die, or
- 	 * if we scanned all vmas of this mm.
- 	 */
--	if (unlikely(kmmscand_test_exit(mm)) || !vma) {
-+	if (unlikely(kmmscand_test_exit(mm)) || !vma || next_mm) {
- 		/*
- 		 * Make sure that if mm_users is reaching zero while
- 		 * kmmscand runs here, kmmscand_exit will find
-@@ -711,6 +759,7 @@ void __kmmscand_enter(struct mm_struct *mm)
  
- 	kmmscand_slot->address = 0;
- 	kmmscand_slot->scan_period = kmmscand_mm_scan_period_ms;
-+	kmmscand_slot->scan_size = kmmscand_scan_size;
- 	kmmscand_slot->next_scan = 0;
- 	kmmscand_slot->scan_delta = 0;
++	err = kmmscand_init_sysfs(&mm_kobj);
++
++	if (err)
++		goto err_init_sysfs;
++
+ 	err = start_kmmscand();
+ 	if (err)
+ 		goto err_kmmscand;
+@@ -865,6 +1069,7 @@ static int __init kmmscand_init(void)
  
+ err_kmmscand:
+ 	stop_kmmscand();
++err_init_sysfs:
+ 	kmmscand_destroy();
+ 
+ 	return err;
 -- 
 2.39.3
 
