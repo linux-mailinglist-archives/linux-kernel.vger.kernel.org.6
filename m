@@ -1,95 +1,56 @@
-Return-Path: <linux-kernel+bounces-426637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686619DF5E8
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:57:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4270E9DF5E9
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 15:01:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF41AB2194B
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:57:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99C9EB2143F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 14:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD761D2F49;
-	Sun,  1 Dec 2024 13:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501AF1D359D;
+	Sun,  1 Dec 2024 14:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ER99qdtM"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JAQVW9rH"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA901D27B9;
-	Sun,  1 Dec 2024 13:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637601D3596
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 14:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733061441; cv=none; b=LtnwJ3HwAQ0KNNcFRq/3pZTQC9gF5pmw+qj5fu6rvi5C2ynbyHYAh+Ok0TgBvu1afRABXBJ3DX3OjWq+myMnQsFT8k2fRTDjXU3zuG0bmxKsZfblTcZT/6Rguky13GYGmRGbZU6Igu0u1U/mdzut1KZgkJuquY9gLFmPggDrOWw=
+	t=1733061688; cv=none; b=p2WI+KcPz9fDyD23NGaGr5x9rZjZM6klsAZPwll4YR0t208CQHZOnRMzHQ0cheidqYS0kefNO4xMBKWjpTGDMdCTaNIElAdm2pFdpo4pAtGKPt+rlgqkeQasKOeCCCHmBSgnWUMsUVsZkqA2ym2kHNZb/ZvRjiDyWhNgPIoJhbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733061441; c=relaxed/simple;
-	bh=iGOS0BxMkN+goOQ2G0G1bCT84brcDpqwOAacbt0Gs+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VNqYFxvmlKlVDCP6yKNaSuuvTF5T4x5Wlzg1W5vlK6rqaYIWlJNI1yxz9nU4pJODz7GJd4lCLmSOZVIeZ4g0eIihIOwnRVRq87DbGRDHQzzBXx2hfPf3fS2nGfVzCz6t6DXsHd3W0aZdOh7MtXV2jlSHAI540AMTZGCzThbQJ8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ER99qdtM; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7253bc4d25eso2160429b3a.0;
-        Sun, 01 Dec 2024 05:57:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733061439; x=1733666239; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zSi63laDVLde5pIwB6wSgBpmbCeHCRHr3UINQDkHQJQ=;
-        b=ER99qdtMi4kEWHLJgiUVFP85qnwXkRLUOaFcPG2n+0SpKyqaRW43NFGwnkI+sj5nlQ
-         w8RbFmCjIyNDifbd2lhyTjMyjrmqoPjwqxaOtQI69D7PkN9Ud1JrcL3uflyvLv/iPPrq
-         iyHtOyGqFuG9yfqDBK9z9zuFpzghr7c4gUpeJIoyBrHyQ/veCKHjTEGbPEIGnTcXyiun
-         0TsNKTGiWooLWtR3lZl54eEmiz/IGsCORtKcnWy7t1YkCpGFuwMxs9ygoGevCb4phfug
-         CvQabfX0LTnR+smTKsVOXx/5Q6ak1CtXn1l1IwuHlXLeegjKEU1J8HQQzTWfIHNLFztq
-         j5cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733061439; x=1733666239;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zSi63laDVLde5pIwB6wSgBpmbCeHCRHr3UINQDkHQJQ=;
-        b=IgDM9sff5tHX+C2hQY5KKM1CNGkhGJP6NfN3R5b13Ms9amRtrafSWCW812sEjbsCHS
-         oQd1N/COIyYYP4wJw2HLzy0vxHI/WETgxRV+0oUFG/YXDmRXepA77UYX+awS4PFzYDP0
-         moOlfbrIf7xKG/Jvz8NwcaoGnb2tt4Od4Qsv5dGll8pC79OnDcdV/nDbUo2+ACvdjzz1
-         2exc9EhpgdyCGeHn9rzZ2sNO7SBN4aWY8/E8bNZcXPf6+ilf0x1heCn0SaMler6GsAES
-         CBMvwnKvg4pxEizFxalrEe1S3s0NaVHbeMRT4OncR43hDJhMC4VzRPz4VDVhCnBl/oMZ
-         gHdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoe5UYx54xG9jwlcFeFGGVnvXCIlfr10J1h1Hf2x8+ahXkd+4E1BfRY1O6tZPUBbIbCI3qs768MJ0f@vger.kernel.org, AJvYcCVT4sh43dyNYzunYUjqnblBaj0oVBuFa4bmTq8uKtosBLm8NxHVe5W8Ltn4Od70oNwcVBrKC6EhOFUCrx1s@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7tQIgNLEGvouGd/wCtjXi+8RYJn4w03zgydlvJxtRYLTZXbHW
-	uo9f+Izy/H34HShpg9mFfMbgGnMK4f+SbA8QKCz26yk+iSkGWptB
-X-Gm-Gg: ASbGncuU66IAISxcwSwrHZBDZaKx19aDocwzy36uQFWBu1arTPd+7vWmT3Fcs9E3ror
-	h6R+a9XfAiUWjiwfNNVbsnPLFnqbIFBoe4PpGjod/1piV96dsRDIYJuwpo9msCIj3WzfoQ1JbTM
-	kc43gJ2ubiwWZBVDoxO87o/Mim9E/Kf09oUO10qzOqquB3gN1PnD3UIwi6g9tSi5yH2gHgP3LPy
-	9fXe6PA31zHGyJ96liR6qHOGOFp06c31NTkCx1wuAOP9qaaJGJ7yYN2TtEa2VRvEbzP
-X-Google-Smtp-Source: AGHT+IFaEuhkU4qR7aHB0uV1Ch6t4H7GsWfvPfZ9GTPabcTVWYOp6CJKYF0f3EY1mkzg2xv4eosLWw==
-X-Received: by 2002:aa7:93b5:0:b0:725:3fb5:5151 with SMTP id d2e1a72fcca58-7253fb5528amr18770034b3a.12.1733061438923;
-        Sun, 01 Dec 2024 05:57:18 -0800 (PST)
-Received: from localhost.localdomain ([103.149.249.231])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c30e2d8sm5260617a12.38.2024.12.01.05.57.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 05:57:18 -0800 (PST)
-From: Jianhua Lu <lujianhua000@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ath11k@lists.infradead.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jianhua Lu <lujianhua000@gmail.com>
-Subject: [PATCH v4 3/3] arm64: dts: qcom: sm8250-xiaomi-elish: Add bluetooth node
-Date: Sun,  1 Dec 2024 21:57:16 +0800
-Message-ID: <20241201135716.141691-3-lujianhua000@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241201135716.141691-1-lujianhua000@gmail.com>
-References: <20241201135716.141691-1-lujianhua000@gmail.com>
+	s=arc-20240116; t=1733061688; c=relaxed/simple;
+	bh=YFSuX/3Pge/YTQ3iL8J93PAXkH2s+zZDGa9dawjJwws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oUCzpKg647CQvyF//zJFOhTi/kb4pJnSqmp51lQryQk7QpApQTJ9dzx2gFSi0+zQ0BXWnnyeCm+HaQHXyI28cr5nFVIWtJR3az5WeKPdqs9c7+1aTHSbquM/oLawOGt2ePBv0Dnlwj9GKPhsK+Vxt3KlrWdQQH7/DhjkvOCZybA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JAQVW9rH; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733061683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rSb7itKfSKg3WQK3DynsLBRqKwQ1qvtzFvtHQxo9MtI=;
+	b=JAQVW9rHja04CTXJsRgNRBwV7GkRXEyElPOGee28PiX4b+rz5riwXWQLMMZea22Wdyva7S
+	ZTFUlmrULfPyU99qXnaPQ0HUr/izM8ZpemAm2PKrvc0UCgW3SZ1CvGybRj9GelpdzWTCYb
+	I2lmxkXsP6cA1nvXXAZMVv8nNqFzUE4=
+From: Wen Yang <wen.yang@linux.dev>
+To: Joel Granados <joel.granados@kernel.org>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Wen Yang <wen.yang@linux.dev>,
+	Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v4] sysctl: simplify the min/max boundary check
+Date: Sun,  1 Dec 2024 22:00:58 +0800
+Message-Id: <20241201140058.5653-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,60 +58,213 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Add bluetooth node and this bluetooth module is connected to uart.
+The do_proc_dointvec_minmax_conv_param structure provides the minimum and
+maximum values for doing range checking for the proc_dointvec_minmax()
+handler, however min/max is a pointer and may be NULL, so the following
+code snippet appears multiple times:
+        if ((param->min && *param->min > tmp) ||
+            (param->max && *param->max < tmp))
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Jianhua Lu <lujianhua000@gmail.com>
+And int types also have min/max values, so when the pointer is NULL,
+explicitly setting min/max to INT_{MIN/MAX} could simplify the code a bit.
+
+Similar changes were also made for do_proc_douintvec_minmax_conv_param.
+
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: Joel Granados <joel.granados@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: linux-kernel@vger.kernel.org
 ---
-No changes in v4.
+ kernel/sysctl.c | 75 ++++++++++++++++++++++---------------------------
+ 1 file changed, 34 insertions(+), 41 deletions(-)
 
-No changes in v3.
-
-changes in v2:
-1. pick up Dmitry Baryshkov's Reviewed-by
-
- .../dts/qcom/sm8250-xiaomi-elish-common.dtsi  | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
-index 7a55e271c3ac..100607da42ad 100644
---- a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
-@@ -30,6 +30,10 @@ / {
- 	qcom,msm-id = <QCOM_ID_SM8250 0x20001>; /* SM8250 v2.1 */
- 	qcom,board-id = <0x10008 0>;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 79e6cb1d5c48..47e2fe4fe978 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -810,16 +810,16 @@ static int proc_taint(const struct ctl_table *table, int write,
  
-+	aliases {
-+		serial0 = &uart6;
-+	};
-+
- 	chosen {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -799,6 +803,21 @@ wlan_en_state: wlan-default-state {
- 	};
+ /**
+  * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
+- * @min: pointer to minimum allowable value
+- * @max: pointer to maximum allowable value
++ * @min: the minimum allowable value
++ * @max: the maximum allowable value
+  *
+  * The do_proc_dointvec_minmax_conv_param structure provides the
+  * minimum and maximum values for doing range checking for those sysctl
+- * parameters that use the proc_dointvec_minmax() handler.
++ * parameters that use the proc_dointvec_minmax(), proc_dou8vec_minmax() and so on.
+  */
+ struct do_proc_dointvec_minmax_conv_param {
+-	int *min;
+-	int *max;
++	int min;
++	int max;
  };
  
-+&uart6 {
-+	status = "okay";
+ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
+@@ -839,8 +839,7 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
+ 		return ret;
+ 
+ 	if (write) {
+-		if ((param->min && *param->min > tmp) ||
+-		    (param->max && *param->max < tmp))
++		if ((param->min > tmp) || (param->max < tmp))
+ 			return -EINVAL;
+ 		WRITE_ONCE(*valp, tmp);
+ 	}
+@@ -867,26 +866,26 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
+ int proc_dointvec_minmax(const struct ctl_table *table, int write,
+ 		  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	struct do_proc_dointvec_minmax_conv_param param = {
+-		.min = (int *) table->extra1,
+-		.max = (int *) table->extra2,
+-	};
++	struct do_proc_dointvec_minmax_conv_param param;
 +
-+	bluetooth {
-+		compatible = "qcom,qca6390-bt";
++	param.min = (table->extra1) ? *(int *) table->extra1 : INT_MIN;
++	param.max = (table->extra2) ? *(int *) table->extra2 : INT_MAX;
+ 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
+ 				do_proc_dointvec_minmax_conv, &param);
+ }
+ 
+ /**
+  * struct do_proc_douintvec_minmax_conv_param - proc_douintvec_minmax() range checking structure
+- * @min: pointer to minimum allowable value
+- * @max: pointer to maximum allowable value
++ * @min: minimum allowable value
++ * @max: maximum allowable value
+  *
+  * The do_proc_douintvec_minmax_conv_param structure provides the
+  * minimum and maximum values for doing range checking for those sysctl
+  * parameters that use the proc_douintvec_minmax() handler.
+  */
+ struct do_proc_douintvec_minmax_conv_param {
+-	unsigned int *min;
+-	unsigned int *max;
++	unsigned int min;
++	unsigned int max;
+ };
+ 
+ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+@@ -904,8 +903,7 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+ 		return ret;
+ 
+ 	if (write) {
+-		if ((param->min && *param->min > tmp) ||
+-		    (param->max && *param->max < tmp))
++		if ((param->min > tmp) || (param->max < tmp))
+ 			return -ERANGE;
+ 
+ 		WRITE_ONCE(*valp, tmp);
+@@ -936,10 +934,11 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+ int proc_douintvec_minmax(const struct ctl_table *table, int write,
+ 			  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	struct do_proc_douintvec_minmax_conv_param param = {
+-		.min = (unsigned int *) table->extra1,
+-		.max = (unsigned int *) table->extra2,
+-	};
++	struct do_proc_douintvec_minmax_conv_param param;
 +
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddbtcmx-supply = <&vreg_pmu_btcmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-+	};
-+};
++	param.min = (table->extra1) ? *(unsigned int *) table->extra1 : 0;
++	param.max = (table->extra2) ? *(unsigned int *) table->extra2 : UINT_MAX;
 +
- &usb_1 {
- 	/* USB 2.0 only */
- 	qcom,select-utmi-as-pipe-clk;
+ 	return do_proc_douintvec(table, write, buffer, lenp, ppos,
+ 				 do_proc_douintvec_minmax_conv, &param);
+ }
+@@ -965,23 +964,17 @@ int proc_dou8vec_minmax(const struct ctl_table *table, int write,
+ 			void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	struct ctl_table tmp;
+-	unsigned int min = 0, max = 255U, val;
++	unsigned int val;
+ 	u8 *data = table->data;
+-	struct do_proc_douintvec_minmax_conv_param param = {
+-		.min = &min,
+-		.max = &max,
+-	};
++	struct do_proc_douintvec_minmax_conv_param param;
+ 	int res;
+ 
+ 	/* Do not support arrays yet. */
+ 	if (table->maxlen != sizeof(u8))
+ 		return -EINVAL;
+ 
+-	if (table->extra1)
+-		min = *(unsigned int *) table->extra1;
+-	if (table->extra2)
+-		max = *(unsigned int *) table->extra2;
+-
++	param.min = (table->extra1) ? *(unsigned int *) table->extra1 : 0;
++	param.max = (table->extra2) ? *(unsigned int *) table->extra2 : 255U;
+ 	tmp = *table;
+ 
+ 	tmp.maxlen = sizeof(val);
+@@ -1022,7 +1015,7 @@ static int __do_proc_doulongvec_minmax(void *data,
+ 		void *buffer, size_t *lenp, loff_t *ppos,
+ 		unsigned long convmul, unsigned long convdiv)
+ {
+-	unsigned long *i, *min, *max;
++	unsigned long *i, min, max;
+ 	int vleft, first = 1, err = 0;
+ 	size_t left;
+ 	char *p;
+@@ -1033,8 +1026,9 @@ static int __do_proc_doulongvec_minmax(void *data,
+ 	}
+ 
+ 	i = data;
+-	min = table->extra1;
+-	max = table->extra2;
++	min = (table->extra1) ? *(unsigned long *) table->extra1 : 0;
++	max = (table->extra2) ? *(unsigned long *) table->extra2 : ULONG_MAX;
++
+ 	vleft = table->maxlen / sizeof(unsigned long);
+ 	left = *lenp;
+ 
+@@ -1066,7 +1060,7 @@ static int __do_proc_doulongvec_minmax(void *data,
+ 			}
+ 
+ 			val = convmul * val / convdiv;
+-			if ((min && val < *min) || (max && val > *max)) {
++			if ((val < min) || (val > max)) {
+ 				err = -EINVAL;
+ 				break;
+ 			}
+@@ -1236,8 +1230,7 @@ static int do_proc_dointvec_ms_jiffies_minmax_conv(bool *negp, unsigned long *lv
+ 		return ret;
+ 
+ 	if (write) {
+-		if ((param->min && *param->min > tmp) ||
+-				(param->max && *param->max < tmp))
++		if ((param->min > tmp) || (param->max < tmp))
+ 			return -EINVAL;
+ 		*valp = tmp;
+ 	}
+@@ -1269,10 +1262,10 @@ int proc_dointvec_jiffies(const struct ctl_table *table, int write,
+ int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, int write,
+ 			  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	struct do_proc_dointvec_minmax_conv_param param = {
+-		.min = (int *) table->extra1,
+-		.max = (int *) table->extra2,
+-	};
++	struct do_proc_dointvec_minmax_conv_param param;
++
++	param.min = (table->extra1) ? *(int *) table->extra1 : INT_MIN;
++	param.max = (table->extra2) ? *(int *) table->extra2 : INT_MAX;
+ 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
+ 			do_proc_dointvec_ms_jiffies_minmax_conv, &param);
+ }
 -- 
-2.47.0
+2.25.1
 
 
