@@ -1,561 +1,253 @@
-Return-Path: <linux-kernel+bounces-426753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0280C9DF74A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 23:47:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7901C9DF75B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 00:00:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 488991628EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 23:00:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939751D86DC;
+	Sun,  1 Dec 2024 23:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="XU4v3l9x"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE4A32819BE
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 22:47:50 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C4D1D8A14;
-	Sun,  1 Dec 2024 22:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RkZxxh2+"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4935118593A
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 22:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733093266; cv=none; b=o8XucjihqKr73KlHC1mkunMWN2Lbj3x8DSeXCrZseT5oI3nNb5gzmH6ZobmxcvL4+p/9y3yXLTKqOUL2XuvwhUnXC+O3CHc5VA1Dx88mocz7P8N3oTvNscKSAjBLcgJ32YKqidkqK79QjgH95ShSc+rpvsCaoiLZ9qjKKJ89+NA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733093266; c=relaxed/simple;
-	bh=W8/zUCGd0ACvGv9QpiRvHsyT+yP68F5XwDBoUIYBSrc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=MUCYir+dRMywHRuf/N98m4hU6JHRY67bF0grt4C5GPKRqqd5PtY6BZRxxvGu7fyBvjfyjruXfHCKOPWCyhf7UfOeZ5lblFCg3vgb/7OCGaw5B3wFiNi7lGhqfrIxG8ehccAKcqGo6DmozrdTYlp3QGSbF40QZKF/uhpWBirxXwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RkZxxh2+; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d0bdeb0374so2480070a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 14:47:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733093260; x=1733698060; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=f2nNkrXr3XpjZcIvimdKwJQMbPwGvDe1Cs2kuDB2IkM=;
-        b=RkZxxh2+xQuI4k+QDcCoSkFcfAJA1NzFt8c8oyOz/9EmqIr53GxueuiBWddRYpeh8L
-         AUMXEzQUuwAfMGu9+9H71MW3uIRfVXeid76diQ4a5+2Fbd1ktpYfaRUof+CYUPjua61I
-         lxzf+7Fm17dII3vg29EDLUiTd5j4ksP0vwmZw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733093260; x=1733698060;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f2nNkrXr3XpjZcIvimdKwJQMbPwGvDe1Cs2kuDB2IkM=;
-        b=C5/3pLfCkdG7Xhimwr96bxLUidsChYW1yUli5Dvq5yT2AnsnWvBijYI29Z0SqXKyuX
-         PprzcAhLgyaAEdeTugdhIbeW+ok+s9O7exAak1tNbx2TCD5NSD45vpJMaTiJ6FpmJkLb
-         qWrNdIfg2urUFJ3FLVpLv3Ssj1asL5nomGrSMQfIKBDiC6bnuXnCmu/0XPhNfkDm83ui
-         XhF4HZQKEs2M44jlbni9RlCtE/Rx2lBNKe02QHDmwAOjCGGSuQf0COZc/HaQRaYk7gmu
-         +GSgWmTzYGCF4Tr7Z5FEv6rbnPC5EVawrNjGH9KJ1dfezNi73gGslKWIpFta/MZb5yyw
-         gG7w==
-X-Gm-Message-State: AOJu0YwxTrTT1zTFCkmqRVpFydZxD1W7ayDApnZ/rnPonau/MUS9TNsg
-	xCOs2pt3w4ZBH8oOMl031W1mi1K5JirS3TgFTsgZUGwbb3mXRP1gBZgNO83Aqqg2oG7J6GtGElI
-	yVsjJLQ==
-X-Gm-Gg: ASbGnctYYgv5bXu6BIXqiu0Z7fnSEtFn5jaD6ZXYUsklJvTMBj11hEOj5g7NjsbHBR4
-	f/oNv4+YqyAJjnYihjXHdRFgFygtP55g0aT26aLH6SCS+JoWc2mvOmh+IYUdz+aAamgs8EWBXw0
-	0Kskz9hhruN++kxinLmwo3SOml7O7Y5G8laWdf2lV7Ih73m/GGmsYWDgXQg0Itx/dkIPpzcdgVM
-	EiEjESgvWNwMyqJB73ZOCWS14mcfGdtsxMr/WJSZA/4DuWu5xQUTKI5wZrkirIlA1Tev7PGbzsY
-	6EhApuJyToAAt2DZwu2ELO4F
-X-Google-Smtp-Source: AGHT+IHkDh0GCym4nnvRaEtx7yUdngKWqpoij4ACDMDsQVCTC1g3WEvLSQIlCMxU7h0ODwmR5ZAf1A==
-X-Received: by 2002:a05:6402:3225:b0:5d0:b7c5:c3fc with SMTP id 4fb4d7f45d1cf-5d0b7c5c655mr14551629a12.3.1733093260244;
-        Sun, 01 Dec 2024 14:47:40 -0800 (PST)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0b264f0d2sm3256280a12.72.2024.12.01.14.47.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Dec 2024 14:47:39 -0800 (PST)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa51d32fa69so575842766b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 14:47:38 -0800 (PST)
-X-Received: by 2002:a17:907:775a:b0:a99:ff43:ca8f with SMTP id
- a640c23a62f3a-aa580ed01dcmr1925805466b.10.1733093258028; Sun, 01 Dec 2024
- 14:47:38 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF5E10A3E;
+	Sun,  1 Dec 2024 23:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733094020; cv=pass; b=XfkaPKKELItt5E2pQ3y6Gn+v4zVFpYEYU6SOYxLesXOcKQD+qvT+qNn6rKSd89BpjkJxy39GJaUc5oSkA4q/iiC2kUnlPjHrNeCLN5MSbhrBOuZFnvz5rKUtF57ZHnB553bBPmo6+F/of37HrngPqLLTzVf9jhb4LLGE/MSADvI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733094020; c=relaxed/simple;
+	bh=5pGa4JNqs10EVsmcj0ibFw9kB9Wxnxmjz12xvBgQzD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVE0IHS7l2eIOba6TCtwIjliM+QxwFfQzaWLuhPu1WqS6Jky0vzp9onw9f4ixrI9+hrQFKuv5nhxm9oD+WsqH29pVTGreD+DOepb2/4+hZGedtS7z+uKoIuOSQEM/Xz4xxsERfNlQNOha2dmWIYNmmy4yo/26Cy6E5FtG3bE/5o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=XU4v3l9x; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733093992; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bE0WtpXaK8QuDqsEc8P7YE2eJ11W+5K5q9JbFrcQc/1A6ud8HQ2rITJLIXnJwhAy/+j4gLCSWgUIHYpKPYRncvWL29atBpkaTHRDO7KC2refctyA8rz0Io7kcHKDOczkb8JAUiQX1iS5Je5SDeM2PCwYGP9n0dGsBOV7D/IHY7Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733093992; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=wFU3BBsk/0IMP6GXJyqeVrQbjT8QvAYTSLEUrZjXm+Q=; 
+	b=aY5PVHs04X4fQ07Lk2Sn8m1mhP3j4MsVayOiiwINFOEdgyukzfy5jwS7s0cRiZRjIHt5kwZhYar9jfgC4l8S5vwQHzJXS5GLEQuj9fzOfIIRelyPfAYiBR42GrSdMHSrFfMVrHON+FqcXEJBv9UTI5LZ2qZGnTJHeEN9hfSjgdM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733093992;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=wFU3BBsk/0IMP6GXJyqeVrQbjT8QvAYTSLEUrZjXm+Q=;
+	b=XU4v3l9xaClvU1VdLFMm14fvcMNigi9JybtvULqmvWazK3Ya87JRiMrPMFDAYRpd
+	oscHX7Dwgu8dnf/fSXQMVW7BhdqqgvqFXmcVG6Fn3KNYYuY2GlDUM9MwUeYIlmndur6
+	AGWmSf9bLjJe6bu3MBzYnCHtftE7AVn8EDzsinxM=
+Received: by mx.zohomail.com with SMTPS id 1733093989260596.7489467887624;
+	Sun, 1 Dec 2024 14:59:49 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id 773D410604CF; Sun, 01 Dec 2024 23:59:43 +0100 (CET)
+Date: Sun, 1 Dec 2024 23:59:43 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: Damon Ding <damon.ding@rock-chips.com>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, rfoss@kernel.org, vkoul@kernel.org, 
+	cristian.ciocaltea@collabora.com, l.stach@pengutronix.de, andy.yan@rock-chips.com, 
+	hjc@rock-chips.com, algea.cao@rock-chips.com, kever.yang@rock-chips.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support
+ for eDP mode
+Message-ID: <h4giob7bcrh7qmtepti6huym2llw4ujfmeff76vrgpahb5zy6x@dz6zghsifww5>
+References: <20241127075157.856029-1-damon.ding@rock-chips.com>
+ <2131853.KlZ2vcFHjT@diego>
+ <6e1f35c0-5ea8-414f-b3ea-4e7222c605ef@rock-chips.com>
+ <2886747.Y6S9NjorxK@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 1 Dec 2024 14:47:21 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whiWXVxhd0BATPPd6t36HJ49vApdJXZOYuAJtRA5pRi1g@mail.gmail.com>
-Message-ID: <CAHk-=whiWXVxhd0BATPPd6t36HJ49vApdJXZOYuAJtRA5pRi1g@mail.gmail.com>
-Subject: Linux 6.13-rc1
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4uvvjljskgf7wmee"
+Content-Disposition: inline
+In-Reply-To: <2886747.Y6S9NjorxK@diego>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/233.51.66
+X-ZohoMailClient: External
+
+
+--4uvvjljskgf7wmee
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-
-So two weeks have passed, the merge window is over, and -rc1 is pushed out.
-
-And for once - possibly the first time ever(*) - it looks like the
-release cycle doesn't clash horribly up with the holiday season, and
-we'll have time both to stabilize this release, _and_ the work for
-6.14 won't be starting until well into January. Sure, I'd not be at
-all surprised if 6.14 ends up being smaller than average just because
-people hopefully take a rest over the holidays, but that sounds like a
-good thing.  I don't think we need to stretch the release timing out,
-but we most certainly can just relax a bit and make the next release
-smaller.
-
-Anyway, below is my "short mergelog" as usual, since the full log is
-way too big. I feel like we had more core VFS changes than usual, but
-that obviously doesn't really show up in the diff stats, since those
-are - as always - dominated by drivers.
-
-             Linus
-
-(*) Almost certainly not the first time, but it feels like we always
-tend to hit Christmas head on with some timing issue.
-
----
-
-Al Viro (4):
-    'struct fd' class updates
-    xattr updates
-    ufs updates
-    statx updates
-
-Alex Williamson (1):
-    VFIO updates
-
-Alexandre Belloni (2):
-    i3c updates
-    RTC updates
-
-Alexei Starovoitov (1):
-    bpf updates
-
-Amir Goldstein (1):
-    overlayfs updates
-
-Andreas Gruenbacher (1):
-    gfs2 updates
-
-Andreas Larsson (1):
-    sparc updates
-
-Andrew Morton (2):
-    MM updates
-    non-MM updates
-
-Andy Shevchenko (1):
-    auxdisplay update
-
-Ard Biesheuvel (1):
-    EFI updates
-
-Arnd Bergmann (5):
-    asm-generic updates
-    SoC devicetree updates
-    SoC driver updates
-    SoC defconfig updates
-    ARM SoC updates
-
-Bartosz Golaszewski (3):
-    gpio updates
-    power sequencing updates
-    gpio fixes
-
-Bjorn Andersson (2):
-    remoteproc updates
-    rpmsg update
-
-Bjorn Helgaas (2):
-    PCI updates
-    PCI fix
-
-Borislav Petkov (10):
-    EDAC updates
-    RAS updates
-    x86 cache resource control updates
-    x86 microcode loader update
-    x86 platform cleanup
-    x86 SEV updates
-    x86 cpuid updates
-    x86 fixes
-    irq fixes
-    timer fixes
-
-Carlos Maiolino (1):
-    xfs updates
-
-Catalin Marinas (2):
-    arm64 updates
-    arm64 fixes
-
-Christian Brauner (18):
-    vfs multigrain timestamps
-    vfs mount api conversions
-    misc vfs updates
-    vfs rust file abstractions
-    vfs pagecache updates
-    netfs updates
-    vfs file updates
-    overlayfs updates
-    pidfs update
-    copy_struct_to_user helper
-    tmpfs case folding updates
-    vfs untorn write support
-    ecryptfs updates
-    pid_namespace rust bindings
-    vfs exportfs updates
-    ecryptfs mount api conversion
-    deny_write_access revert
-    vfs fixes
-
-Christoph Hellwig (3):
-    configfs updates
-    dma-mapping updates
-    dma-mapping fix
-
-Chuck Lever (1):
-    nfsd updates
-
-Daniel Thompson (1):
-    kgdb updates
-
-Dave Airlie (2):
-    drm updates
-    drm fixes
-
-Dave Hansen (3):
-    sgx update
-    misc x86 updates
-    tdx updates
-
-Dave Jiang (1):
-    cxl updates
-
-Dave Kleikamp (1):
-    jfs updates
-
-David Sterba (1):
-    btrfs updates
-
-David Teigland (1):
-    dlm updates
-
-Dmitry Torokhov (1):
-    input updates
-
-Dominique Martinet (1):
-    9p updates
-
-Fan Wu (1):
-    IPE update
-
-Frederic Weisbecker (1):
-    RCU updates
-
-Gabriel Krisman Bertazi (1):
-    unicode updates
-
-Gao Xiang (1):
-    erofs updates
-
-Geert Uytterhoeven (1):
-    m68k updates
-
-Greg KH (5):
-    USB / Thunderbolt updates
-    staging driver updates
-    driver core updates
-    char/misc/IIO/whatever driver subsystem updates
-    tty / serial driver updates
-
-Greg Ungerer (1):
-    m68knommu updates
-
-Guenter Roeck (2):
-    hmon updates
-    hwmon fixes
-
-Heiko Carstens (2):
-    s390 updates
-    more s390 updates
-
-Helge Deller (2):
-    fbdev updates
-    parisc architecture update
-
-Herbert Xu (1):
-    crypto updates
-
-Huacai Chen (1):
-    LoongArch updates
-
-Ilpo J=C3=A4rvinen (1):
-    x86 platform driver updates
-
-Ilya Dryomov (1):
-    ceph updates
-
-Ingo Molnar (7):
-    locking updates
-    objtool updates
-    performance events updates
-    scheduler updates
-    x86 splitlock updates
-    x86 cleanups
-    x86 mm updates
-
-Ira Weiny (1):
-    nvdimm and DAX updates
-
-Jaegeuk Kim (1):
-    f2fs updates
-
-James Bottomley (1):
-    SCSI updates
-
-Jan Kara (3):
-    quota and isofs updates
-    reiserfs removal
-    fsnotify updates
-
-Jarkko Sakkinen (1):
-    TPM updates
-
-Jason Donenfeld (1):
-    random number generator updates
-
-Jason Gunthorpe (3):
-    iommufd updates
-    rdma updates
-    more iommufd updates
-
-Jassi Brar (1):
-    mailbox updates
-
-Jens Axboe (4):
-    block updates
-    io_uring updates
-    more io_uring updates
-    more block updates
-
-Jiri Kosina (1):
-    HID updates
-
-Joel Granados (1):
-    sysctl updates
-
-Joerg Roedel (1):
-    iommu updates
-
-John Johansen (1):
-    apparmor updates
-
-John Paul Adrian Glaubitz (1):
-    sh updates
-
-Jonathan Corbet (2):
-    documentation updates
-    more documentation updates
-
-Juergen Gross (1):
-    xen updates
-
-Kees Cook (2):
-    seccomp update
-    hardening updates
-
-Konstantin Komarov (1):
-    ntfs3 updates
-
-Lee Jones (2):
-    MFD updates
-    backlight updates
-
-Len Brown (1):
-    turbostat updates
-
-Linus Walleij (1):
-    pin control updates
-
-Luis Chamberlain (2):
-    modules updates
-    modules fixes
-
-Madhavan Srinivasan (1):
-    powerpc fixes
-
-Marco Elver (1):
-    Kernel Concurrency Sanitizer (KCSAN) updates
-
-Mark Brown (5):
-    regmap updates
-    regulator updates
-    spi updates
-    regulator fixes
-    spi fixes
-
-Masahiro Yamada (1):
-    Kbuild updates
-
-Masami Hiramatsu (1):
-    probes updates
-
-Mauro Carvalho Chehab (2):
-    media updates
-    media fix
-
-Michael Ellerman (1):
-    powerpc updates
-
-Michael Tsirkin (1):
-    virtio updates
-
-Michal Simek (1):
-    microblaze updates
-
-Miguel Ojeda (1):
-    rust updates
-
-Mike Rapoport (1):
-    memblock updates
-
-Miklos Szeredi (1):
-    fuse updates
-
-Mikulas Patocka (1):
-    device mapper updates
-
-Miquel Raynal (1):
-    MTD updates
-
-Namhyung Kim (1):
-    perf tools updates
-
-Namjae Jeon (1):
-    exfat updates
-
-Niklas Cassel (1):
-    ata updates
-
-Palmer Dabbelt (1):
-    RISC-v updates
-
-Paolo Abeni (2):
-    networking updates
-    networking fixes
-
-Paolo Bonzini (2):
-    kvm updates
-    more kvm updates
-
-Paul McKenney (3):
-    nolibc updates
-    scftorture updates
-    CSD-lock update
-
-Paul Moore (4):
-    audit updates
-    selinux updates
-    lsm updates
-    ima fix
-
-Petr Mladek (2):
-    printk updates
-    livepatching update
-
-Rafael Wysocki (8):
-    power management updates
-    thermal control updates
-    ACPI updates
-    more power management updates
-    more thermal control updates
-    more thermal control updates
-    morepower management updates
-    more ACPI updates
-
-Richard Weinberger (2):
-    JFFS2, UBI and UBIFS updates
-    UML updates
-
-Rob Herring (1):
-    devicetree updates
-
-Russell King (1):
-    ARM updates
-
-Sebastian Reichel (1):
-    power supply and reset updates
-
-Shuah Khan (2):
-    kselftest update
-    kunit updates
-
-Stafford Horne (1):
-    OpenRISC update
-
-Stephen Boyd (1):
-    clk updates
-
-Steve French (3):
-    smb client updates
-    smb server updates
-    smb client updates
-
-Steven Rostedt (7):
-    ftrace updates
-    trace ring-buffer updates
-    tracing tools updates
-    tracing updates
-    rust trace event support
-    more tracing updates
-    bprintf() removal
-
-Takashi Iwai (2):
-    sound updates
-    sound fixes
-
-Takashi Sakamoto (1):
-    firewire updates
-
-Ted Ts'o (1):
-    ext4 updates
-
-Tejun Heo (3):
-    workqueue updates
-    cgroup updates
-    sched_ext updates
-
-Thomas Bogendoerfer (2):
-    MIPS updates
-    MIPS updates
-
-Thomas Gleixner (4):
-    debugobjects updates
-    interrupt subsystem updates
-    vdso data page handling updates
-    timer updates
-
-Trond Myklebust (1):
-    NFS client updates
-
-Tzung-Bi Shih (2):
-    chrome platform updates
-    chrome platform firmware updates
-
-Ulf Hansson (2):
-    pmdomain updates
-    MMC updates
-
-Uwe Kleine-K=C3=B6nig (1):
-    pwm updates
-
-Vinod Koul (3):
-    dmaengine updates
-    phy updates
-    soundwire updates
-
-Vlastimil Babka (1):
-    slab updates
-
-Wolfram Sang (3):
-    i2c updates
-    more i2c updates
-    i2c component probing support
+Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support
+ for eDP mode
+MIME-Version: 1.0
+
+Hi,
+
+On Sat, Nov 30, 2024 at 09:25:12PM +0100, Heiko St=FCbner wrote:
+> Am Freitag, 29. November 2024, 03:43:57 CET schrieb Damon Ding:
+> > On 2024/11/27 19:04, Heiko St=FCbner wrote:
+> > > Am Mittwoch, 27. November 2024, 12:00:10 CET schrieb Damon Ding:
+> > >> On 2024/11/27 17:29, Heiko St=FCbner wrote:
+> > >>> Am Mittwoch, 27. November 2024, 08:51:51 CET schrieb Damon Ding:
+> > >>>> +static int rk_hdptx_phy_set_mode(struct phy *phy, enum phy_mode m=
+ode,
+> > >>>> +				 int submode)
+> > >>>> +{
+> > >>>> +	return 0;
+> > >>>> +}
+> > >>>analogix_dp_phy_power_on
+> > >>> I think it might make sense to go the same way as the DCPHY and also
+> > >>> naneng combophy, to use #phy-cells =3D 1 to select the phy-mode via=
+ DT .
+> > >>>
+> > >>> See [0] for Sebastians initial suggestion regarding the DC-PHY.
+> > >>> The naneng combophy already uses that scheme of mode-selection too.
+> > >>>
+> > >>> There is of course the issue of backwards-compatibility, but that c=
+an be
+> > >>> worked around in the binding with something like:
+> > >>>
+> > >>>    '#phy-cells':
+> > >>>       enum: [0, 1]
+> > >>>       description: |
+> > >>>         If #phy-cells is 0, PHY mode is set to PHY_TYPE_HDMI
+> > >>>         If #phy-cells is 1 mode is set in the PHY cells. Supported =
+modes are:
+> > >>>           - PHY_TYPE_HDMI
+> > >>>           - PHY_TYPE_DP
+> > >>>         See include/dt-bindings/phy/phy.h for constants.
+> > >>>
+> > >>> PHY_TYPE_HDMI needs to be added to include/dt-bindings/phy/phy.h
+> > >>> but PHY_TYPE_DP is already there.
+> > >>>
+> > >>> That way we would standardize on one form of accessing phy-types
+> > >>> on rk3588 :-) .
+> > >>>
+> > >>> Also see the Mediatek CSI rx phy doing this too already [1]
+> > >>>
+> > >>>
+> > >>> Heiko
+> > >>>
+> > >>> [0] https://lore.kernel.org/linux-rockchip/udad4qf3o7kt45nuz6gxsvsm=
+prh4rnyfxfogopmih6ucznizih@7oj2jrnlfonz/
+> > >>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git/tree/Documentation/devicetree/bindings/phy/mediatek,mt8365-csi-rx.yaml
+> > >>>
+> > >>
+> > >> It is really a nice way to separate HDMI and DP modes.
+> >=20
+> > I apologize for reopening the discussion about the phy-types setting.
+>=20
+> there is definitly no need to apologize. We're trying to find the best
+> solution afterall :-) .
+>=20
+> > With the .set_mode() of struct phy_ops, the HDMI and eDP dynamic=20
+> > switching can be achieved, which just depends on the right setting of
+> > enum phy_mode in include/linux/phy/phy.h. So the previous way of=20
+> > configuring phy mode may be also good.
+>=20
+> I think the deciding factor is, is there a use-case for needing to switch
+> modes at runtime.
+>=20
+> I do think the mode for the dc-phy and also the hdptx-phy is pretty much
+> decided by the board design.
+>=20
+> I.e. when you end up in a DP-connector (or eDP-panel) on your board you
+> need DP mode, and when you end up in a hdmi-connector you need the
+> HDMI phy mode.
+>=20
+> So I think the phy-mode for the hdptx-phy is largely dictated by the stat=
+ic
+> board definition (like devicetree), hence going with the dt-argument for
+> the mode.
+>=20
+> Like similar to the Naneng combophy, selecting its mode via argument
+> because deciding if it ends up in a sata port is a board-design thing.
+>
+> Is there a use-case where you need to switch at runtime between
+> HDMI and eDP? Like starting the phy in eDP mode but then needing
+> to switch to HDMI mode, while the device is running?
+
+I believe the eDP controller can only use the PHY in eDP mode and
+the HDMI controller can only use it in HDMI mode. So in order to
+support runtime switching, the following options are possible:
+
+1. Enable both controllers, the PHY decides which one is really
+   used, the other one is basically a non-functional dummy device
+   until the PHY is reconfigured. This requires the set_mode()
+   callback, since the HDMI and eDP drivers both expect their
+   PHY to be enabled.
+
+2. Properly enable / disable the used controller, so that only one
+   controller is active at the same time. In this case the switching
+   is handled one layer above and the PHY has nothing to do with it.
+   The phy_enable call from each controller would just set it up in
+   the right mode.
+
+I guess option 1 is the hacked solution, which is easier to
+implement as DRM's hotplug abilities are quite limited at the moment
+as far as I know. I think the second solution looks much cleaner and
+should be prefered for upstream. That solution does not require
+calling set_mode() for runtime switching making this whole argument
+void :)
+
+FWIW I think the DT argument based mode setting and the runtime set_mode
+are not necessarily mutual exclusive. In theory one could support both
+and adding set_mode support later does not change any ABI as far as
+I can see. Basically handle it like pin mux/configuration settings,
+which are usually automatically handled by the device core based on
+DT information, except for some drivers which have special needs.
+
+> > And other phys may want to support dynamic switching too, like the=20
+> > Rockchip USBDP combo phy.
+>=20
+> I guess USBDP is special in that in also does both modes dynamical
+> depending on its use (like type-c with option DP altmode)
+
+The USBDP PHY is indeed quite different from the PHYs in your list
+above, but for a different reason: All the combined PHYs you listed
+above only support one mode at the same time. E.g. you need to
+decide between PCIe, SATA and USB3 mode for the Naneng combophy.
+
+For the USBDP PHY the modes are not mutually exclusive. The USB
+controller can request the USBDP PHY in USB mode at the same time
+as the DP controller requests it in DP mode. Some additional
+registers configure how the lanes are being muxed. A typcial setup
+would be 2 lanes for USB3 and 2 lanes for DP.
+
+Greetings,
+
+-- Sebastian
+
+--4uvvjljskgf7wmee
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdM6lUACgkQ2O7X88g7
++poROg/9ERk55HG40SbfPg+6kCZ6sywLSwJTZweCCXGjvq9Q9R7JK/pVHrkgVhtJ
+H28UpwMTj2wN+idMK64a1EGf4ls0jw8dpDXS9y6M8f7/5Lu7DpO+c6qu+HCEOavL
+rVfk4ISVpT0KmbVrDDew1KRXekee9ch+uSO+VQAj/febMToxvkdqFS9PUibzmq0h
+VoUsyfct/7Ek9NKhmDPkvLVlvMHYNOrk7RsmMqlRN53zcyzrJSnbHsHlLjKCobwl
+s7zl6vhanR1sYBeoQ+4UdENOIQrDFuzJzdVp+zP6LvIpl4KbxbOD89bSI2tQLPPz
+yQCC5vBj+lwwhca4SWBp7cwoAJnY2n8A5T8qbrqMYZA7bsjafmZTrYbg1Tqe1X/H
+kAnmcZSue5fhQWV10xh9TuMcSc7LZyBZaRK+7rCooTOy5za7J/6VLHJ64uYE41sv
+Bx1XvfG5uDUh4qz1s6cAoEHdu7FYs1q9tdFeBo+uAh6ei5eScxxgXcBISq0wlhsJ
+D051T1P0DWRh5PgMWluGS6WuhBGlMxx10bqNQC1ad6sdYHXVsEFsXRwSioCSbhYf
+YNdoLkCk7qKUdQ11PMzhDqAZtAqV4ddKz+g7ZdDQDBBx29WgKTR73UhWNA9LvIe7
+pdClppVvA3Xgarmd0hbGt7P8LI/T6u6TemJ6Xo8zft6aYlaZ4zw=
+=y/X7
+-----END PGP SIGNATURE-----
+
+--4uvvjljskgf7wmee--
 
