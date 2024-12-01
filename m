@@ -1,421 +1,175 @@
-Return-Path: <linux-kernel+bounces-426607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D30B9DF596
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:51:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC66F162115
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:51:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5AD1BE87E;
-	Sun,  1 Dec 2024 12:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngTbm/U8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 818CA9DF59A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 13:53:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBB91BDAA5;
-	Sun,  1 Dec 2024 12:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0854B2120C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:53:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C971C2DB4;
+	Sun,  1 Dec 2024 12:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NtpV4EV7"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0011C1F32;
+	Sun,  1 Dec 2024 12:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733057477; cv=none; b=DNex1BAUNbIgqTQSQoBu/Tiylky381pP5dJY7J1PWG7QzC4CXKL8UrcezsNTFGoQ+b2nscAnsYBW00D3F32vegbhGIDC8RJ+A/uZJeun7vOy9PZnYRcXquhdffBAfTRsH3RC+QRz48dApL7+tEm6jKSjqOmCvho3tg6CTlndYUs=
+	t=1733057628; cv=none; b=aaW0fnZC2fpwUzFnhVExLcZYjUfc/kKhrdlBYBp71+A1Za7QrPFJSVMB/3CoIzyHuGxAyQTfJGllTwkRx4UWANgaK/qiFE7g4eRWlOr5+w6I6a0ibQKXXPSrR7bPrH/e4FAZK+ldGP+rs500ctqCII9xinHzelSKwy+nYVLH7bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733057477; c=relaxed/simple;
-	bh=KV44k5BTKi83D3nxirIEoEGOXK/oY3nsQ9bqh8HasWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QL3lJQt1ZnYyC5vVh8Fx7NFBW0PmySGygqGyenGlOeJC3U1vACY4hmRTqEU34EDXzckySwLItCkvDSsyxS9BIIkONM5MuHlHxvdh0hV89BMoNqTjm2JaQwVU2uNSw54FSgZa/88PLS+eTVfWaKw3nrO2x1hBA6JqeAOeFoTYGRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngTbm/U8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A645BC4CECF;
-	Sun,  1 Dec 2024 12:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733057477;
-	bh=KV44k5BTKi83D3nxirIEoEGOXK/oY3nsQ9bqh8HasWg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ngTbm/U8J0b3ZysSQ6eSCHEVLqh5Jn3XdYJiBbMscbf7NImJ3jvWy2l0gTKKSb3zG
-	 zLj/IjD5mDPrqMP1xqamoUjV1owp2vHwj9FZWTNbzX2kIeWeXLV37XwZBIHW6tj7c7
-	 PHKAPWG6gE27p703/f2o2NNFW949ZqtNxO2zKOm/1WxBqHftuqVoW9Bc1vfsmoC7Fl
-	 f+Hr2PAYhzAJQKUQeEtA3hSmoVIZ7jRM/i7/HEKSQ4HwgVou6bW28fD1xNOd3yPA46
-	 5PyGX7uEBBBHQO9kmwwU3FYJviuv8vqzH3810djiKVo93imsuI/Wg/tDTAlO61FASM
-	 mV0uga/uZrCmw==
-Date: Sun, 1 Dec 2024 12:51:07 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Per-Daniel Olsson <perdaniel.olsson@axis.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <rickard.andersson@axis.com>,
- <kernel@axis.com>
-Subject: Re: [PATCH v8 2/2] iio: light: Add support for TI OPT4060 color
- sensor
-Message-ID: <20241201125107.2e62ffcc@jic23-huawei>
-In-Reply-To: <20241126155312.1660271-3-perdaniel.olsson@axis.com>
-References: <20241126155312.1660271-1-perdaniel.olsson@axis.com>
-	<20241126155312.1660271-3-perdaniel.olsson@axis.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733057628; c=relaxed/simple;
+	bh=swYWVztl7R/XV5vyzXdHShiqPYgMrpHNocMOXVqEngI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HpDecCcrsEi8hY8j0bxUez3PDpJVKMQ9RxJzaon/UZ+ZczPaSPhxwEQxffQCksTwVrO9rFbWiGkWqOVyZchPVgMZmsJslxMlBdMhX/SsCyt9NR/DfLyiFZ8orTgEGdu4U19SpBLGWqwBfPRPpVemlf6RJCUjjbZEynqO274mjgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NtpV4EV7; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d87e0082b8so21274556d6.2;
+        Sun, 01 Dec 2024 04:53:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733057626; x=1733662426; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+GVWtIbIAnpeYXqJoSnTz1UiTRNCVUNdZXjZbPFhtMg=;
+        b=NtpV4EV7UqZYjkAXlT8Hm+LGh0+e1Adf0CNlhjuahZXhU1+VXv5sZyl+VmQur2YuRi
+         iMTRjY+DMHgoXUEjATI1np1LYb30Og4sCPBrY0HiINkut7zMdFXzlcR+SO8yjJ2cwnhg
+         yNSYK4dk9zYS1DGdqHX0Be1DiKSndUbOkOWe3ma7gFdOQxvTucwwhmZOceUDryfrHmlV
+         ojuprmEJMs4SV+EFz53d1him3muJ3Vc5AdAniTBJA1EPWdW2XIK6NHfxDeJpDdHGtpOW
+         U9FqUoX6vF0EihE/JgT3ysfX10gFEthluBZt8oTd6xCyT/VCygr5E61nv5Sa0lXRn+94
+         p8Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733057626; x=1733662426;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+GVWtIbIAnpeYXqJoSnTz1UiTRNCVUNdZXjZbPFhtMg=;
+        b=i3bfBCPO/eRP3FAwscwXlk1Uynl6LuFG1CGTw4AstDwPRUbn9Ic+WpZojGrDLaBeoP
+         Ng78k7FxzxcXA835mKzo/GfS020jWBLZmou4Iw+vbVmzUdxd7xaKScYYB8uC4WHjl0qF
+         QtlzV5y4Txw/OVY4Bhg14S6Vzhksmeq7qal7vO3bJpjX2gu+K0xbIhAkaHs+b5n6yldP
+         NNMo0CD/zNKc54RnfeDNT5erePGu/97+UbH7rr6Duj4+A+cHygWUTcmqsd9UmBVwnne4
+         5W+8/vIENJRVzoqsZlyGiBjh/o5wxKteXPkWExAwBHPr+LZXIoAr1Oi+Eh6KzjOHQ4vk
+         T7wA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKGYE6KsI0Siqx/cH1LS3Lgr8y7bcnUAso9cv8Dsf2iqaK5mm/TkRpkvVmQvhSNeoZYB6g8rWl@vger.kernel.org, AJvYcCVze4+m6MQhHZkn70F2HXQpbktsW+W8h8xDrDmVK2RgW+FqU2QadC81wRWCbdmE2ZyksC3ldEpkLEKUf5ir2kfjtOk9@vger.kernel.org, AJvYcCWs2A0JI08UQn6sOP8iniAOA1d0FyeP64AyF0+P3dR4CVrg0wAR83oTYVbwnv9eP1JYSTq7u3yx/4SlhVg6@vger.kernel.org, AJvYcCXj25gsphJ3sez9tfawtbIp7qrtGkaNfrHnWrqqSI886ZvlDCb8wgDD8/3P/E+/SntnHGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyoYzR64IzDma4WRs2h91jKWjhkQsrGS3oPkG364GbPpmHrnwr
+	Pbqws2qkaDXvUgX7y4+NlttlYL+ro8JSaCCbGuO56WPPU2flcYmy3RNc3OxwIJY6GE+JZc/rQFk
+	uv0pRp2h/SjxfKpH+e2Azo8BCVr4=
+X-Gm-Gg: ASbGncuRUzt9KUQwGtT9GcFinJZmto0R94i4EqxT2CReCKeMH9pyx4MeBptoHLRdkx3
+	abUk0GqYrQ1gNX0SKEcfRFZSdti+jEygoBIz7F41s3ER+MJ+1YWBpVJGAXQ==
+X-Google-Smtp-Source: AGHT+IGgwtwOP6tqXQqLQyPFg+9HwWnvlYrKm6Wd3xlS9AEmYhzmzUm0uqeInm+oHP92XrlHvZzF0UtwHtdZBi62qTQ=
+X-Received: by 2002:a05:6214:21e8:b0:6d4:1fbc:2f88 with SMTP id
+ 6a1803df08f44-6d864dac355mr310468856d6.39.1733057625664; Sun, 01 Dec 2024
+ 04:53:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <24481522-69BF-4CE7-A05D-1E7398400D80@u.nus.edu>
+ <20241129173554.11e3b2b2f5126c2b72c6a78e@kernel.org> <20241129120939.GG35539@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241129120939.GG35539@noisy.programming.kicks-ass.net>
+From: Akinobu Mita <akinobu.mita@gmail.com>
+Date: Sun, 1 Dec 2024 21:53:34 +0900
+Message-ID: <CAC5umyh49maikh0E4pUB_28=rqG1k9rvtQ70XOJNDMxNsu03sg@mail.gmail.com>
+Subject: Re: [BUG] possible deadlock in __schedule (with reproducer available)
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Ruan Bonan <bonan.ruan@u.nus.edu>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "will@kernel.org" <will@kernel.org>, 
+	"longman@redhat.com" <longman@redhat.com>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"song@kernel.org" <song@kernel.org>, "yonghong.song@linux.dev" <yonghong.song@linux.dev>, 
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "sdf@fomichev.me" <sdf@fomichev.me>, 
+	"haoluo@google.com" <haoluo@google.com>, "jolsa@kernel.org" <jolsa@kernel.org>, 
+	"rostedt@goodmis.org" <rostedt@goodmis.org>, 
+	"mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, Fu Yeqi <e1374359@u.nus.edu>, tytso@mit.edu, 
+	Jason@zx2c4.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 26 Nov 2024 16:53:12 +0100
-Per-Daniel Olsson <perdaniel.olsson@axis.com> wrote:
-
-> Add support for Texas Instruments OPT4060 RGBW Color sensor.
-> 
-> Signed-off-by: Per-Daniel Olsson <perdaniel.olsson@axis.com>
-
-Hi Per-Daniel.
-
-I think we've been talking a bit cross purposes on the scale.  That
-needs to be a multiplier, not a multiplied channel reading.
-
-Other than that, I'd previously missed some issues around races wrt to the enabling
-and disabling of the buffer.   They are unlikely to happen, but also fairly easy
-to close, particularly if you don't mind not allowing channel reads via sysfs
-at the same time as buffered capture.  This is a common restriction because
-it greatly simplifies some drivers and the combined case isn't a usecase normally
-cares about.
-
-Thanks,
-
-Jonathan
-
-> diff --git a/Documentation/iio/opt4060.rst b/Documentation/iio/opt4060.rst
-> new file mode 100644
-> index 000000000000..f12552f27b26
-> --- /dev/null
-> +++ b/Documentation/iio/opt4060.rst
-> @@ -0,0 +1,58 @@
-
-> +
-> +3. Scaled color values
-> +=============================
-> +
-> +The driver supports scaled values for red, green and blue. The raw values are
-> +scaled so that for a particular test light source, typically white, the
-> +measurement intensity is the same across the different color channels. This is
-> +calculated in the following way:
-> +
-> +R = RED_RAW x 2.4
-> +G = GREEN_RAW x 1.0
-> +B = BLUE_RAW x 1.3
-> +
-> +The values are accessed from:
-> +/sys/bus/iio/devices/iio:deviceX/in_intensity_red_scale
-> +/sys/bus/iio/devices/iio:deviceX/in_intensity_green_scale
-> +/sys/bus/iio/devices/iio:deviceX/in_intensity_blue_scale
-
-This doesn't work with the normal IIO ABI definitions.  Those scales should be 2.4, 1.0 and 1.3
-not a value calculated from the current value.
-
-
-> +
-> +The data sheet suggests using the scaled values to normalize the scaled R, G
-> +and B values. This is useful to get a value for the ratio between colors
-> +independent of light intensity. A userspace appliction can do this in the
-> +following way:
-> +
-> +R_NORMALIZED = R / (R + G + B)
-> +G_NORMALIZED = G / (R + G + B)
-> +B_NORMALIZED = B / (R + G + B)
-> +
-> +See section 8.4.5.2 in the data sheet for additional details.
+2024=E5=B9=B411=E6=9C=8829=E6=97=A5(=E9=87=91) 21:09 Peter Zijlstra <peterz=
+@infradead.org>:
 >
-> diff --git a/drivers/iio/light/opt4060.c b/drivers/iio/light/opt4060.c
-> new file mode 100644
-> index 000000000000..086fe87e1325
-> --- /dev/null
-> +++ b/drivers/iio/light/opt4060.c
-> @@ -0,0 +1,1289 @@
-
-> +static int opt4060_trigger_one_shot(struct opt4060_chip *chip)
-> +{
-> +	int ret;
-> +	unsigned int ctrl_reg;
-> +
-> +	/* Enable interrupt for conversion ready of all channels */
-> +	ret = opt4060_set_int_state(chip, OPT4060_INT_CTRL_ALL_CH);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(chip->regmap, OPT4060_CTRL, &ctrl_reg);
-> +	if (ret < 0) {
-> +		dev_err(chip->dev, "Failed to read ctrl register\n");
-> +		return ret;
-> +	}
-> +
-> +	/* If the device is already in continuous mode, one-shot is not needed. */
-> +	if (FIELD_GET(OPT4060_CTRL_OPER_MODE_MASK, ctrl_reg) ==
-> +	    OPT4060_CTRL_OPER_MODE_CONTINUOUS)
-With change suggested below to claim direct mode for read_raw() paths to here,
-I think this only applies if the threshold interrupts are enabled?  If so
-perhaps amend the comment if you do block the buffered capture and sysfs
-at the same time path.
-
-> +		return 0;
-> +
-> +	ctrl_reg &= ~OPT4060_CTRL_OPER_MODE_MASK;
-> +	ctrl_reg |= FIELD_PREP(OPT4060_CTRL_OPER_MODE_MASK,
-> +				OPT4060_CTRL_OPER_MODE_ONE_SHOT);
-> +
-> +	/* Trigger a new conversion by writing to CRTL register. */
-> +	ret = regmap_write(chip->regmap, OPT4060_CTRL, ctrl_reg);
-> +	if (ret)
-> +		dev_err(chip->dev, "Failed to set ctrl register\n");
-> +	return ret;
-> +}
-> 
-> +
-> +static int opt4060_trigger_new_samples(struct iio_dev *indio_dev)
-> +{
-> +	struct opt4060_chip *chip = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	/*
-> +	 * The conversion time should be 500us startup time plus the integration time
-> +	 * times the number of channels. An exact timeout isn't critical, it's better
-> +	 * not to get incorrect errors in the log. Setting the timeout to double the
-> +	 * theoretical time plus and extra 100ms margin.
-> +	 */
-> +	unsigned int timeout_us = (500 + OPT4060_NUM_CHANS *
-> +				  opt4060_int_time_reg[chip->int_time][0]) * 2 + 100000;
-> +
-> +	if (chip->irq) {
-> +		reinit_completion(&chip->completion);
-> +		ret = opt4060_trigger_one_shot(chip);
-> +		if (ret)
-> +			return ret;
-> +		if (wait_for_completion_timeout(&chip->completion,
-> +						usecs_to_jiffies(timeout_us)) == 0) {
-> +			dev_err(chip->dev, "Completion timed out.\n");
-> +			return -ETIME;
-> +		}
-> +		/*
-> +		 * The opt4060_trigger_one_shot() function will enable irq on
-> +		 * every conversion. If the buffer isn't enabled, irq should
-> +		 * only be enabled for thresholds.
-> +		 */
-> +		if (!iio_buffer_enabled(indio_dev)) {
-
-This is the race with buffer enable / disable in read_raw() call stack. That transition
-can be avoided by iio_device_claim_direct_mode().  For this one I don't think we care
-about that potentially blocking reads via sysfs.  That's a common thing anyway
-for drivers to not support when the buffer is in use because it greatly simplifies the
-code and normally mixing buffered interface and sysfs reads isn't something anyone does.
-
-> +			ret = opt4060_set_int_state(chip, OPT4060_INT_CTRL_THRESHOLD);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	} else {
-> +		unsigned int ready;
-> +
-> +		ret = opt4060_trigger_one_shot(chip);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_read_poll_timeout(chip->regmap, OPT4060_RES_CTRL,
-> +					       ready, (ready & OPT4060_RES_CTRL_CONV_READY),
-> +					       1000, timeout_us);
-> +		if (ret)
-> +			dev_err(chip->dev, "Conversion ready did not finish within timeout.\n");
-> +	}
-> +	return ret;
-> +}
-
-> +
-> +/*
-> + * Scales the raw value so that for a particular test light source, typically
-> + * white, the measurement intensity is the same across different color channels.
-
-I got lost in previous review discussion, but I thought we were getting rid of this.
-Userspace software tends to assume that if it takes no actions to change
-the configuration, scales will remain fixed.
-
-If we really need to role these into sensors readings then we need to provide
-a channel that does this.
-
-Personally I see this as a user space problem.  I don't mind providing the
-color factors as scale, but not a manipulated version of the channel reading.
-
-Scale is applied as a multiplier on raw, not meaning 'scaled already channel'.
-
-
-
-> + */
-> +static int opt4060_read_chan_scale(struct iio_dev *indio_dev,
-> +				   struct iio_chan_spec const *chan,
-> +				   int *val, int *val2)
-> +{
-> +	struct opt4060_chip *chip = iio_priv(indio_dev);
-> +	static const u32 color_factors[] = { 24, 10, 13 };
-> +	u32 adc_raw;
-> +	int ret;
-> +
-> +	ret = opt4060_trigger_new_samples(indio_dev);
-> +	if (ret) {
-> +		dev_err(chip->dev, "Failed to trigger new samples.\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = opt4060_read_raw_value(chip, chan->address, &adc_raw);
-> +	if (ret) {
-> +		dev_err(chip->dev, "Reading raw channel data failed\n");
-> +		return ret;
-> +	}
-> +	adc_raw *= color_factors[chan->scan_index];
-> +	*val = DIV_U64_ROUND_CLOSEST((u64)adc_raw, 10);
-> +	return IIO_VAL_INT;
-> +}
-
-
-> +static int opt4060_read_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan,
-> +			    int *val, int *val2, long mask)
-> +{
-> +	struct opt4060_chip *chip = iio_priv(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		return opt4060_read_chan_raw(indio_dev, chan, val);
-
-As mentioned elsewhere, this code relies on the mode not transitioning form
-buffered to polled (or the opposite). So you should claim direct mode to pin
-it as not moving to buffered mode.
-
-> +	case IIO_CHAN_INFO_SCALE:
-> +		return opt4060_read_chan_scale(indio_dev, chan, val, val2);
-> +	case IIO_CHAN_INFO_PROCESSED:
-> +		return opt4060_read_illuminance(indio_dev, chan, val);
-> +	case IIO_CHAN_INFO_INT_TIME:
-> +		*val = 0;
-> +		*val2 = opt4060_int_time_reg[chip->int_time][0];
-> +		return IIO_VAL_INT_PLUS_MICRO;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
-> +
-> +static int opt4060_read_available(struct iio_dev *indio_dev,
-> +				  struct iio_chan_spec const *chan,
-> +				  const int **vals, int *type, int *length,
-> +				  long mask)
-> +{
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_INT_TIME:
-> +		*length = ARRAY_SIZE(opt4060_int_time_available) * 2;
-> +		*vals = (const int *)opt4060_int_time_available;
-> +		*type = IIO_VAL_INT_PLUS_MICRO;
-> +		return IIO_AVAIL_LIST;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int opt4060_event_set_state(struct iio_dev *indio_dev, bool state)
-> +{
-> +	struct opt4060_chip *chip = iio_priv(indio_dev);
-> +	int ret = 0;
-> +
-> +	if (state)
-> +		ret = opt4060_set_continous_mode(chip, true);
-> +	else if (!iio_buffer_enabled(indio_dev) && chip->irq)
-
-See below - this is the call that races because we don't have the
-device fixed in a particular state.
-
-> +		ret = opt4060_set_continous_mode(chip, false);
-> +
-> +	if (ret)
-> +		dev_err(chip->dev, "Failed to set event state.\n");
-> +
-> +	return ret;
-> +}
-
+> On Fri, Nov 29, 2024 at 05:35:54PM +0900, Masami Hiramatsu wrote:
+> > On Sat, 23 Nov 2024 03:39:45 +0000
+> > Ruan Bonan <bonan.ruan@u.nus.edu> wrote:
+> >
+> > >
+> > >        vprintk_emit+0x414/0xb90 kernel/printk/printk.c:2406
+> > >        _printk+0x7a/0xa0 kernel/printk/printk.c:2432
+> > >        fail_dump lib/fault-inject.c:46 [inline]
+> > >        should_fail_ex+0x3be/0x570 lib/fault-inject.c:154
+> > >        strncpy_from_user+0x36/0x230 lib/strncpy_from_user.c:118
+> > >        strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+> > >        bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [i=
+nline]
+> > >        ____bpf_probe_read_user_str kernel/trace/bpf_trace.c:224 [inli=
+ne]
+> >
+> > Hmm, this is a combination issue of BPF and fault injection.
+> >
+> > static void fail_dump(struct fault_attr *attr)
+> > {
+> >         if (attr->verbose > 0 && __ratelimit(&attr->ratelimit_state)) {
+> >                 printk(KERN_NOTICE "FAULT_INJECTION: forcing a failure.=
+\n"
+> >                        "name %pd, interval %lu, probability %lu, "
+> >                        "space %d, times %d\n", attr->dname,
+> >                        attr->interval, attr->probability,
+> >                        atomic_read(&attr->space),
+> >                        atomic_read(&attr->times));
+> >
+> > This printk() acquires console lock under rq->lock has been acquired.
+> >
+> > This can happen if we use fault injection and trace event too because
+> > the fault injection caused printk warning.
 >
-> +static int opt4060_write_event_config(struct iio_dev *indio_dev,
-> +				      const struct iio_chan_spec *chan,
-> +				      enum iio_event_type type,
-> +				      enum iio_event_direction dir, bool state)
-> +{
-> +	int ch_sel, ch_idx = chan->scan_index;
-> +	struct opt4060_chip *chip = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (chan->type != IIO_INTENSITY)
-> +		return -EINVAL;
-> +	if (type != IIO_EV_TYPE_THRESH)
-> +		return -EINVAL;
-> +
-> +	ret = opt4060_get_channel_sel(chip, &ch_sel);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (state) {
-> +		/* Only one channel can be active at the same time */
-> +		if ((chip->thresh_event_lo_active ||
-> +			chip->thresh_event_hi_active) && (ch_idx != ch_sel))
-> +			return -EBUSY;
-> +		if (dir == IIO_EV_DIR_FALLING)
-> +			chip->thresh_event_lo_active = true;
-> +		else if (dir == IIO_EV_DIR_RISING)
-> +			chip->thresh_event_hi_active = true;
-> +		ret = opt4060_set_channel_sel(chip, ch_idx);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		if (ch_idx == ch_sel) {
-> +			if (dir == IIO_EV_DIR_FALLING)
-> +				chip->thresh_event_lo_active = false;
-> +			else if (dir == IIO_EV_DIR_RISING)
-> +				chip->thresh_event_hi_active = false;
-> +		}
-> +	}
-> +
-This makes me a little nervous because we are allowing the control of
-continous mode from here and the buffer setup and not preventing them
-running at the same time.  Maybe there are no races, but I'm not convinced.
+> Ah indeed. Same difference though, if you don't know the context, most
+> things are unsafe to do.
+>
+> > I think this should be a bug of the fault injection, not tracing/BPF.
+> > And to solve this issue, we may be able to check the context and if
+> > it is tracing/NMI etc, fault injection should NOT make it failure.
+>
+> Well, it should be okay to cause the failure, but it must be very
+> careful how it goes about doing that. Tripping printk() definitely is
+> out.
+>
+> But there's a much bigger problem there, get_random*() is not wait-free,
+> in fact it takes a spinlock_t which makes that it is unusable from most
+> context, and it's definitely out for tracing.
+>
+> Notably, this spinlock_t makes that it is unsafe to use from anything
+> that holds a raw_spinlock_t or is from hardirq context, or has
+> preempt_disable() -- which is a TON of code.
+>
+> On this alone I would currently label the whole of fault-injection
+> broken. The should_fail() call itself is unsafe where many of its
+> callsites are otherwise perfectly fine -- eg. usercopy per the above.
+>
+> Perhaps it should use a simple PRNG, a simple LFSR should be plenty good
+> enough to provide failure conditions.
 
-It is possible to avoid this, but fiddly as we shouldn't directly
-take the iio_dev->mlock from a driver (which protects the buffer state
-transitions.  Basically we need to successfully pin the device in
-either direct or buffered mode and if we miss in both (due to a transition
-in flight) retry.
+Sounds good.
 
-There is one example doing this in the max30102.c
-https://elixir.bootlin.com/linux/v6.12.1/source/drivers/iio/health/max30102.c#L479
-(that one is weird because we read the channel in an entirely different way depending
- on the device mode).
+> And yeah, I would just completely rip out the printk. Trying to figure
+> out where and when it's safe to call printk() is non-trivial and just
+> not worth the effort imo.
 
-I suspect we have other cases missed during review however.
-
-The tricky bit is that most races around buffer enable are harmless
-as they tend to mean we get one extra or one less sample pushed to the
-buffer, or an read that perturbs the buffered capture timing.  So it
-is fairly hard to spot a real one :(
-
-This one is vanishingly unlikely though so I'm fine taking the driver
-on the basis you'll take another look at close the race if you agree
-with my analysis.  The side effect of this one is that we either
-burn some power when no one is interested, or fail to enable data capture
-if we hit the race. Neither is great, but not that bad either.
-
-Jonathan
-
-
-> +	return opt4060_event_set_state(indio_dev, chip->thresh_event_hi_active |
-> +				       chip->thresh_event_lo_active);
-> +}
-
-
+Instead of removing the printk completely, How about setting the default va=
+lue
+of the verbose option to zero so it doesn't call printk and gives a loud
+warning when changing the verbose option?
 
