@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-426598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3212A9DF56F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:58:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FD49DF572
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:58:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DBF32810B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 11:58:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F498162881
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 11:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAE614A4C3;
-	Sun,  1 Dec 2024 11:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE4514D718;
+	Sun,  1 Dec 2024 11:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Iox82dyu"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6WBNGe2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D49E2D638;
-	Sun,  1 Dec 2024 11:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12A113A268;
+	Sun,  1 Dec 2024 11:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733054298; cv=none; b=E6cGwBthdSSUpSexJnxaPb8lmLgFXIEdfClq/HM6lUcfa9SFaqSmv0a1hY+WEHL98IaMNpUJRjX0ahb/Eodzz3MgN2ntJd0BAEPcbKZUfLChHlVDppPFVkc1lYOFMxgTmOkPF002aEOPOZpzoM1MHLywc1oVtNpQGLd1O0afD1c=
+	t=1733054330; cv=none; b=XQl1vHnifffPyJr5JScj2FElRW762WsSjZKCGY6m9sTAlory5sSJRnErh5lxSvyQH38Fs8mBLr8yW5SjLd8rBqhxYB8UlEr3LT1Ibhs6yJMpLPlW8gqK6vWCesnfOpswMNw7sxmVT5C+NLK2fd2pnoRdOqJf8eN1SsaHbZNCxGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733054298; c=relaxed/simple;
-	bh=ptqwHAfCvmbNQG4Rvgv67QkQhCWc7uN0tNgPHMsg2PA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pHB1Borv2DVBuKinDDsMSWOHnvjdY1snJZUtxh+tKo1uzOPbLWKOFK6i/MabD3DShopiRaBVmzmUrQd/rVR4tAnjYc1ELbuBEc0ycav9WCfV3yQ0YiEiJwTowtyhpncpK1iJ6BiAf97NArTkAEQZH87X3h+FxcI9MnTw4f8y7mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Iox82dyu; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=cqcR/KUWGqQpyf+QG9LZwc5OuV4mYTVRjEADhHm6mas=; b=Iox82dyu0t9vxfBG
-	JVTOMUlC5e6kFxaJ3fqWhE2dKyAXvKPTwmCMn/JosjUnpXjX8eJxTWSfnqf2j0M7J++tWRsS1hoeJ
-	/2a5mDFfwLRW7Ur2d6QFqjMqqHZ7cfaVUKMEj1y/Abzx07vZIz1igP6iGfPj6HRVEAfJ8D1ceGIBU
-	8Et7BClFN0SJfMoWoTzeUAiiN7SWOsMoxjX+86Wa9R7Vh9gJOfZugccKZ1Y5J2k/sj6xm93t6prLA
-	D2UDuIJJYb++TCahPwCulpaIBw+sqcmByXCRdMsKiyu5N11IbYnN+FyBvOIkCFrQhM3FyQcg1XBsy
-	1ZIQjjKhljX4cmnoKA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tHiaX-002hrS-21;
-	Sun, 01 Dec 2024 11:58:09 +0000
-Date: Sun, 1 Dec 2024 11:58:09 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Petr Mladek <pmladek@suse.com>, kees@kernel.org, andy@kernel.org,
-	akpm@linux-foundation.org, linux@rasmusvillemoes.dk,
-	senozhatsky@chromium.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] printf: Remove unused 'bprintf'
-Message-ID: <Z0xPUWMps0BzAQKe@gallifrey>
-References: <20241002173147.210107-1-linux@treblig.org>
- <Zv5SLrKeQIpWnhsS@pathway.suse.cz>
- <20241003111346.0654f1ac@gandalf.local.home>
- <Z0vOVRcZQir0cjjo@gallifrey>
- <20241130223936.136b2f1c@rorschach.local.home>
+	s=arc-20240116; t=1733054330; c=relaxed/simple;
+	bh=ww/5R5QLexsZheajEMB9wIqolOGPQwBsnhwtDOYv5xc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PufP7xg9ax8YYAGe9k5DgkGWJoptYRCK0iEJZlVixQVHYpqL8c845AzjXvkM/6OA1JVLqOTjsgyIUF0VC972MncQ1bCROf4n+48eiYA7659Re0/PCHdH1pN1uLVzTMOiZY5Dv4q7PMum6Dge/pa2srjDWV5Fm8fvOmjIV+dzVx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J6WBNGe2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F0C1C4CECF;
+	Sun,  1 Dec 2024 11:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733054330;
+	bh=ww/5R5QLexsZheajEMB9wIqolOGPQwBsnhwtDOYv5xc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=J6WBNGe2dFFCdUPslpLEb8jGQrAiZzdXI64LvDfYeH3lvQc5zZdE1UV1wVILYSSEJ
+	 DHvrHnzZKUvSzrGuiRKV+OgBeZp/tO/jfDUXg0/06Cmj6dKe/GKlDDY/OU6bPtGilh
+	 qNN5oM/qdFUJTMKNVZSAGacTR+UWn98aheiEErmjO5zPDdfzSD6RL4dHMmcKoIHu3v
+	 hm1tKdLGLaIL7Sv1fBXZLLfI9sykXGmg+/U/Z3FgZsxKIvKFs5hkNCgjyWhSAk3w2w
+	 X+4T/CECo+OtOieQ8Ck2GTbm6Nyt9buq3aoWNuF7hDgBHj8dKzcjIZdcGNrTBXdJfT
+	 GboUAE9yqKeHQ==
+Date: Sun, 1 Dec 2024 11:58:41 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 2/2] iio: light: Add support for the AMS TCS3430 color
+ sensor
+Message-ID: <20241201115841.0ee49736@jic23-huawei>
+In-Reply-To: <20241130174239.3298414-2-paulk@sys-base.io>
+References: <20241130174239.3298414-1-paulk@sys-base.io>
+	<20241130174239.3298414-2-paulk@sys-base.io>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20241130223936.136b2f1c@rorschach.local.home>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 11:57:00 up 206 days, 23:11,  1 user,  load average: 0.04, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-* Steven Rostedt (rostedt@goodmis.org) wrote:
-> On Sun, 1 Dec 2024 02:47:49 +0000
-> "Dr. David Alan Gilbert" <linux@treblig.org> wrote:
+On Sat, 30 Nov 2024 18:42:39 +0100
+Paul Kocialkowski <paulk@sys-base.io> wrote:
+
+> The AMS TCS3430 is a XYZ tristimulus color sensor, with an additional
+> infrared channel.
 > 
-> > > > suggested at https://lore.kernel.org/r/20241002104807.42b4b64e@gandalf.local.home  
-> > > 
-> > > Yeah, since I'm basically the only user of it, it's best it goes through my
-> > > testing.  
-> > 
-> > Hmm, did you pick this one up?
+> This driver implements support for all channels, with configurable
+> integration time and gain. Both direct reading and triggered-buffer
+> modes are supported.
 > 
-> Sorry, it wasn't in my patchwork and was missed.
-
-No problem.
-
-> I can add it and Linus
-> may even take it after -rc1. Or I'll have it in iinux-next for the next
-> merge window.
-
-Please do; no rush.
-
-Dave
-
-> -- Steve
+> The device's interrupt can be used to sample all channels at the end
+> of conversion and is optional.
 > 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> A thereshold mechanism is available in hardware but only applies to
+> the Z channel. As a result it is of very low interest and was not
+> implemented.
+> 
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+
+Hi Paul
+
+As at least some of the feedback I gave on your other driver applies
+here as well, I'm not going to review this version separately.
+
+I'd generally advise against sending multiple similar drivers for review
+at the same time as it is less efficient.  Sad truth is that reviewer
+time is generally a bigger bottleneck for kernel code than the time
+of driver authors.  Any time you can put in to help with that will generally
+also accelerate the rate at which we get to your code!
+
+Absolutely fine to overlap your submissions though. When the first
+driver is getting close to being merged, feel free to send the second
+one to get review started.
+
+Thanks,
+
+Jonathan
 
