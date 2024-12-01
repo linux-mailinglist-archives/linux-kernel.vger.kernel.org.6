@@ -1,155 +1,214 @@
-Return-Path: <linux-kernel+bounces-426674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89D69DF67F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 17:34:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86059DF683
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 17:36:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8B84B21422
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 16:34:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 303D9B2155F
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 16:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4E21D6DB6;
-	Sun,  1 Dec 2024 16:34:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C9D1D6DC9;
+	Sun,  1 Dec 2024 16:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qs18ijzA"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84C31CB33F
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 16:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12147AD5A;
+	Sun,  1 Dec 2024 16:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733070878; cv=none; b=CxTBte+Fil/5o+2xuobxyoVqakvhFLB9ri898d6KR8sfk7FvTkgknQmSMWGsM/AUi3pG6EIse1GWODfDwIdm/+z2VTP9bm1iZTsCz5cKKGrWyb0W/ItOLI7erjAtMJQEKag5cqmOatMg+SJlOYuNQWaoRiMZ/GkwCFdeOiHoxQE=
+	t=1733070997; cv=none; b=ZyrVQ9Gzos32OJ7KoEbVtLPGtwuFxV+b03W0NN15ofM2eGunUi568TyG7qpzfx+Bsr4IEKvXOGasMcq46/zD8v1tCyCP+IpRTOu1dikAXcL46mZjtT4vMsKz5vsX8ej1c4dcIQwxnuvN7BjMglALiLMblT8ubqAdv25fq+M0EAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733070878; c=relaxed/simple;
-	bh=eDpTNAH6M75aLn4JzjO4KQ/rBqXN2h0ml7bUKUNMBq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ma/z8T796dbpSOE1VpQGvQqw132gN1ATHQYF5cfU3KQF1tsGRxDT8sy6zMwM13PJCkDfU4Ii/linrUiKoWV4NUC6pDjtAmNEaEEJzmtuaj1ibykJa2V+Wl0Snu/bhWO8wwP3+tLhu2lW+CBN/I56/y7qZIMS7Nct/B+x5azrHMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2432CC4CECF;
-	Sun,  1 Dec 2024 16:34:37 +0000 (UTC)
-Date: Sun, 1 Dec 2024 11:34:35 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Petr Mladek <pmladek@suse.com>, Andy Shevchenko <andy@kernel.org>, "Dr.
- David Alan Gilbert" <linux@treblig.org>, LKML
- <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] vsnprintf: Removal of bprintf()
-Message-ID: <20241201113435.0350cdef@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733070997; c=relaxed/simple;
+	bh=Uco+KKE46gpgDDPQ+eoNKFB2QASJWra3Sc8yRNd+H9o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aHRbNsxogafsKO+s02SNE32heMOSKfchgeTEryBFmcBzbeOwPSS20MfDmyenz2DlpZP67Xd2ebNSn6HylDTsNtqQVpFaH24tGFvx56iEkAAko/xHaU9BplGyA/NOFg+uRgWnR35o1xTTvCFDGFp4fO54tb/uEiFVyYGXN7gXzq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qs18ijzA; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-841acc8151aso123684139f.1;
+        Sun, 01 Dec 2024 08:36:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733070995; x=1733675795; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+35eOzfvYajKV3Nm3HQixZpInvCrAeOE/bEVYUk458g=;
+        b=Qs18ijzAfPT3Zw38xFpCDLZIZ/9IEZ1EwSTPlBVPEVXNJRZRToHocppqZROF4d4AoT
+         9Mmn1t7RU5uq1Ko0AsFo8XLiKW0VZPLNF/4AJPdtvmA/WYTz/sSG5bfaTQpdTtHJRsu6
+         oFu8qdMArP0y1GWiZJ4Xwx3x2ToDBSSq594tb/nWlZ1WwV+cd56HOu0/PWyHoUpotcZz
+         ZSJs/LEeCz9r2Z7UaVCeC/b/YmWV0outNVaY97crtP4sXkq5AWAIthCPixv6WO7RpREV
+         Z5CpTFsALHjSXavaQU7HjQOun4Xyf/1XvnkkDSocDKjfjQN1YK0OxEdC8aVoHU9jS1TI
+         NfCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733070995; x=1733675795;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+35eOzfvYajKV3Nm3HQixZpInvCrAeOE/bEVYUk458g=;
+        b=DanpyHzBHK3hNhagNRQ3ScdeIg08qd75jfphhiqt3KZxzqPsGTXGjxUyHosaRdf2UU
+         8rZWtgPJMIg19cztM9O99gJp9iNcRpaWHD3OBFOCdVlFsSO0QZPxuX4x1RHwx42uTUjj
+         sZYi0GNDYgfn1k81o7h/nh8ru/Mj09UFSwTmLiNHFeE/6Qu3SdommjeXLS4GFQ5/KLtn
+         BgkYtOuYWIjA87zhCoyEYsNz6apdAvchcLl5JsTDjxz6u2XzYLBrdl/zfPZrI8nWd15B
+         /laeMkulJx8fl9WtmeC+165CLUDbUtjnU39T8QAz94+mgsVRWqRYnBs6NzwNpwEDsed3
+         6tqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnGD4YoKRNgCR42jDy+Lju9qwLR3obXuR7+OG/D3ewOZU//0/t7WasUYgpJ9sls8qN+ZAuKWEvRi/tgCzj@vger.kernel.org, AJvYcCWBaxvnyqqpzNA1h2VAzHPS9td7YKkcQIH6SOZWDZzd5jAVgzkBTZh4xEEnGLrdJMpMSyliPer2OvX7IHkY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyudTTzvAKGXjg1IEjoOMQm6RI9K6QobN/Sux3iACaetKOyRjCA
+	KkwqR+3tCnw4uvwI+tazeHFGhbf8+/ch2TGvwcU+Zalz5pbqdl2Qn/5hk9hooI7DKtW3wCanWwD
+	LaPLGS+qEqBNLpAoyHuxb70vUBRU=
+X-Gm-Gg: ASbGncujy7qvpLe7yQmzeHguDtP2ohqWzQuTgKY3uHn7S7ruTkDLQpc5C0aGj7mzhKo
+	qQzLexNyoGL5EUphmhJtIyvLBoP0bUho=
+X-Google-Smtp-Source: AGHT+IGAFxd+VmGnfW2AJOQn/sdbZ1aJbEv+tkoCAMmunmiIAyzosR/XXQh7YEEUfl26fOoBWaBNVr43pumc1fETHe4=
+X-Received: by 2002:a05:6602:2d84:b0:834:f2d5:c758 with SMTP id
+ ca18e2360f4ac-843ed01ca9amr1900930739f.13.1733070995124; Sun, 01 Dec 2024
+ 08:36:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241125-a612-gpu-support-v2-0-b7cc38e60191@quicinc.com>
+ <20241125-a612-gpu-support-v2-1-b7cc38e60191@quicinc.com> <752484b5-2db1-4714-8046-17cd5496d81d@oss.qualcomm.com>
+ <0aa547fc-4c88-4457-8d01-81f93fb3832c@quicinc.com>
+In-Reply-To: <0aa547fc-4c88-4457-8d01-81f93fb3832c@quicinc.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Sun, 1 Dec 2024 08:36:23 -0800
+Message-ID: <CAF6AEGvqPEFN+j0Txa5KPmxF8tXCn_uUsM86i4uo+tc2mTWYgg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/msm/adreno: Introduce ADRENO_QUIRK_NO_SYSCACHE
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Nov 30, 2024 at 12:30=E2=80=AFPM Akhil P Oommen
+<quic_akhilpo@quicinc.com> wrote:
+>
+> On 11/30/2024 7:01 PM, Konrad Dybcio wrote:
+> > On 25.11.2024 5:33 PM, Akhil P Oommen wrote:
+> >> There are a few chipsets which don't have system cache a.k.a LLC.
+> >> Currently, the assumption in the driver is that the system cache
+> >> availability correlates with the presence of GMU or RPMH, which
+> >> is not true. For instance, Snapdragon 6 Gen 1 has RPMH and a GPU
+> >> with a full blown GMU, but doesnot have a system cache. So,
+> >> introduce an Adreno Quirk flag to check support for system cache
+> >> instead of using gmu_wrapper flag.
+> >>
+> >> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> >> ---
+> >>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 3 ++-
+> >>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 7 +------
+> >>  drivers/gpu/drm/msm/adreno/adreno_gpu.h   | 1 +
+> >>  3 files changed, 4 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/d=
+rm/msm/adreno/a6xx_catalog.c
+> >> index 0c560e84ad5a..5e389f6b8b8a 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> >> @@ -682,6 +682,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >>              },
+> >>              .gmem =3D (SZ_128K + SZ_4K),
+> >>              .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> >> +            .quirks =3D ADRENO_QUIRK_NO_SYSCACHE,
+> >>              .init =3D a6xx_gpu_init,
+> >>              .zapfw =3D "a610_zap.mdt",
+> >>              .a6xx =3D &(const struct a6xx_info) {
+> >> @@ -1331,7 +1332,7 @@ static const struct adreno_info a7xx_gpus[] =3D =
+{
+> >>              },
+> >>              .gmem =3D SZ_128K,
+> >>              .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> >> -            .quirks =3D ADRENO_QUIRK_HAS_HW_APRIV,
+> >> +            .quirks =3D ADRENO_QUIRK_HAS_HW_APRIV | ADRENO_QUIRK_NO_S=
+YSCACHE,
+> >>              .init =3D a6xx_gpu_init,
+> >>              .zapfw =3D "a702_zap.mbn",
+> >>              .a6xx =3D &(const struct a6xx_info) {
+> >
+> > +a619_holi
+> >
+> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/m=
+sm/adreno/a6xx_gpu.c
+> >> index 019610341df1..a8b928d0f320 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> @@ -1863,10 +1863,6 @@ static void a7xx_llc_activate(struct a6xx_gpu *=
+a6xx_gpu)
+> >>
+> >>  static void a6xx_llc_slices_destroy(struct a6xx_gpu *a6xx_gpu)
+> >>  {
+> >> -    /* No LLCC on non-RPMh (and by extension, non-GMU) SoCs */
+> >> -    if (adreno_has_gmu_wrapper(&a6xx_gpu->base))
+> >> -            return;
+> >> -
+> >>      llcc_slice_putd(a6xx_gpu->llc_slice);
+> >>      llcc_slice_putd(a6xx_gpu->htw_llc_slice);
+> >>  }
+> >> @@ -1876,8 +1872,7 @@ static void a6xx_llc_slices_init(struct platform=
+_device *pdev,
+> >>  {
+> >>      struct device_node *phandle;
+> >>
+> >> -    /* No LLCC on non-RPMh (and by extension, non-GMU) SoCs */
+> >> -    if (adreno_has_gmu_wrapper(&a6xx_gpu->base))
+> >> +    if (a6xx_gpu->base.info->quirks & ADRENO_QUIRK_NO_SYSCACHE)
+> >>              return;
+> >
+> > I think A612 is the "quirky" one here.. it has some sort of a GMU,
+> > but we're choosing not to implement it. maybe a check for
+> >
+> > if (adreno_has_gmu_wrapper && !adreno_is_a612)
+> >
+> > would be clearer here, with a comment that RGMU support is not
+> > implemented
+> >
+> >
+> >
+> > But going further, I'm a bit concerned about dt-bindings.. If we
+> > implement RGMU on the driver side in the future, that will require
+> > DT changes which will make the currently proposed description invalid.
+> >
+> > I think a better angle would be to add a adreno_has_rgmu() func with
+> > a qcom,adreno-rgmu compatible and plumb it correctly from the get-go.
+> >
+> > This way, we can avoid this syscache quirk as well.
+> >
+>
+> I am aware of at least Adreno 710 which doesn't have syscache, but has
+> proper GMU. And I don't see any reason why there couldn't be another one
+> in future to save silicon area. So, a quirk flag doesn't seem so bad in
+> this case.
+>
+> The correct way to avoid this quirk flag is by making LLCC driver return
+> a proper error to detect the absence of syscache. Currently, it just
+> returns EPROBE_DEFER which put driver in an infinite probe loop.
 
-Linus,
+Hmm, this seems solvable?  llcc has a node in the dt, so it seems like
+it should be able to tell the difference between not existing and not
+being probed yet.  Something maybe like, initialize drv_data to NULL
+instead of -EPROBE_DEFER, and then in the various entry points, if
+(!drv_data) return not_probed_helper(); which would check if a
+compatible node exists in dt?
 
-vsnprintf: Removal of bprintf()
+BR,
+-R
 
-- Remove unused bprintf() function
-
-  bprintf() was added with the rest of the "bin-printf" functions.
-  These are functions that are used by trace_printk() that allows to
-  quickly save the format and arguments into the ring buffer without
-  the expensive processing of converting numbers to ASCII. Then on
-  output, at a much later time, the ring buffer is read and the string
-  processing occurs then. The bprintf() was added for consistency but
-  was never used. It can be safely removed.
-
-[
-  Note, this was sent back in October, and since tracing is the only
-  user of the bin-printf code, I said I'll take it through my tree and
-  run it through all my tests. Unfortunately, that got lost in my todo
-  list and I was just reminded about it. I know it's the last day of
-  the merge window, but since this change just removes an unused
-  function, I decided to send it now. If you want me to wait for the
-  next merge window I can just add it to that queue. It passed all my
-  tests and I'm fine with having you take this now, or just adding it
-  to my queue for the next time.
-]
-
-Please pull the latest trace-printf-v6.13 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-printf-v6.13
-
-Tag SHA1: b825aa3f0c933c2152598462f90eaed7e61a8804
-Head SHA1: f69e63756f7822fcdad8a34f9967e8b243e883ee
-
-
-Dr. David Alan Gilbert (1):
-      printf: Remove unused 'bprintf'
-
-----
- include/linux/string.h |  1 -
- lib/vsprintf.c         | 23 -----------------------
- 2 files changed, 24 deletions(-)
----------------------------
-commit f69e63756f7822fcdad8a34f9967e8b243e883ee
-Author: Dr. David Alan Gilbert <linux@treblig.org>
-Date:   Wed Oct 2 18:31:47 2024 +0100
-
-    printf: Remove unused 'bprintf'
-    
-    bprintf() is unused. Remove it. It was added in the commit 4370aa4aa753
-    ("vsprintf: add binary printf") but as far as I can see was never used,
-    unlike the other two functions in that patch.
-    
-    Link: https://lore.kernel.org/20241002173147.210107-1-linux@treblig.org
-    Reviewed-by: Andy Shevchenko <andy@kernel.org>
-    Acked-by: Petr Mladek <pmladek@suse.com>
-    Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 0dd27afcfaf7..493ac4862c77 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -335,7 +335,6 @@ int __sysfs_match_string(const char * const *array, size_t n, const char *s);
- #ifdef CONFIG_BINARY_PRINTF
- int vbin_printf(u32 *bin_buf, size_t size, const char *fmt, va_list args);
- int bstr_printf(char *buf, size_t size, const char *fmt, const u32 *bin_buf);
--int bprintf(u32 *bin_buf, size_t size, const char *fmt, ...) __printf(3, 4);
- #endif
- 
- extern ssize_t memory_read_from_buffer(void *to, size_t count, loff_t *ppos,
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 6ac02bbb7df1..9d3dac38a3f4 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -3428,29 +3428,6 @@ int bstr_printf(char *buf, size_t size, const char *fmt, const u32 *bin_buf)
- }
- EXPORT_SYMBOL_GPL(bstr_printf);
- 
--/**
-- * bprintf - Parse a format string and place args' binary value in a buffer
-- * @bin_buf: The buffer to place args' binary value
-- * @size: The size of the buffer(by words(32bits), not characters)
-- * @fmt: The format string to use
-- * @...: Arguments for the format string
-- *
-- * The function returns the number of words(u32) written
-- * into @bin_buf.
-- */
--int bprintf(u32 *bin_buf, size_t size, const char *fmt, ...)
--{
--	va_list args;
--	int ret;
--
--	va_start(args, fmt);
--	ret = vbin_printf(bin_buf, size, fmt, args);
--	va_end(args);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(bprintf);
--
- #endif /* CONFIG_BINARY_PRINTF */
- 
- /**
+> Agree about the dt binding suggestion. I will define a new compatible
+> string for rgmu.
+>
+> -Akhil.
+>
+> > Konrad
+>
 
