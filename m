@@ -1,126 +1,156 @@
-Return-Path: <linux-kernel+bounces-426587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112349DF553
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:04:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA1B9DF554
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 12:05:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A2528115E
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 11:04:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DCACB20BD9
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2024 11:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A2D139D13;
-	Sun,  1 Dec 2024 11:04:37 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1BF13C827;
+	Sun,  1 Dec 2024 11:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P1MmeQU9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA033086
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 11:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0DE33086
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Dec 2024 11:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733051077; cv=none; b=LfKz5p7wxd08t0yTgqn//5U+gAwrWfXZBr+SSEn7lqAeQ7MLI7e8fw7zljCgpgJW2nMONQCcSsUH5H7X6AayhLksckzadMzAja+uhgKYjJFXMiZGW7J5pRrBJ3CvbcQdE3FU7VydqE9tW56UrVSpBPhO08M1tjI8BvmvkzQaUsU=
+	t=1733051140; cv=none; b=pMaQgxjjvBxSZzEqvsuMJ9a6cDWa/xA8Yi1zY9s5kf5rxcgpB/6gmYRXV1fHTixx2NG/kAXogAt1qSpuOGpEaEIC6rX9dssjHp+WWeZt4kdNTEn0THgrZEGZ0mtdV+SLyaljyc7HZzW0aAbfBlwaLbAN+ItqWlgXNVfYOG9EVsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733051077; c=relaxed/simple;
-	bh=8PCK8noxfQxOLX2UgQKkA9FGoT5mmarNJdvRN7k9i/c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=tgWTyzV6TGKtQ2uuIlhbuklakfdhmn94BWIWnYsKORB9Djf1EP4ZkzGFaHITnh48NIcGvgHwr3YFUdKADf0nHDNEs2O6yjdKjZskvUXOmwEUwz2Vtzk8JhTO1kxKamIrcysmcl8/H5M1ip7NLqnAwJ6EHAeyLqhABbmaoMES8lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-81-UNdrD75uNSmZjokXFspD-w-1; Sun, 01 Dec 2024 11:04:32 +0000
-X-MC-Unique: UNdrD75uNSmZjokXFspD-w-1
-X-Mimecast-MFC-AGG-ID: UNdrD75uNSmZjokXFspD-w
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 1 Dec
- 2024 11:04:07 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 1 Dec 2024 11:04:07 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Andrew Morton' <akpm@linux-foundation.org>
-CC: 'Jonathan Cameron' <jic23@kernel.org>, 'Jakob Hauser'
-	<jahau@rocketmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij
-	<linus.walleij@linaro.org>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
-Subject: RE: [PATCH v2] iio: magnetometer: yas530: Use signed integer type for
- clamp limits
-Thread-Topic: [PATCH v2] iio: magnetometer: yas530: Use signed integer type
- for clamp limits
-Thread-Index: AQHbQqUs2JSj3AGLWkSCiQkgtAYVhLLPsp/wgAAyLwCAAGnPcIAAXpgAgACOp1A=
-Date: Sun, 1 Dec 2024 11:04:07 +0000
-Message-ID: <c7a32b6f17e54dae94c4f5d16fd04df8@AcuMS.aculab.com>
-References: <11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
-	<11609b2243c295d65ab4d47e78c239d61ad6be75.1732914810.git.jahau@rocketmail.com>
-	<9f5793f03c2440d2aa18630469df06df@AcuMS.aculab.com>
-	<20241130143506.53973e40@jic23-huawei>
-	<6f2c9946a9fe4b40ac7dd5a66003c8c4@AcuMS.aculab.com>
- <20241130183222.ecf271abffcff61b93bbae22@linux-foundation.org>
-In-Reply-To: <20241130183222.ecf271abffcff61b93bbae22@linux-foundation.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733051140; c=relaxed/simple;
+	bh=HALIbz4s2YRGdPjdnzVz3gtEcq5r7ZwQr6IBm+hWpU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DKqLlTpdvi/igVfxQl+Vz4ZyZPJJvaSWVnZ+DEb2vVIrt7ImWC+rUs2k+HKNTv7FVFhAcCQShPYIuC0BxMn2n5c/UD2RvxEasdt+iK9UmLOyCkGrG84ClYcgjSKc5vztVR4LG0hxl9nfeejLNinZI2p8eSLUA1VIMNWETC1vdXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P1MmeQU9; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733051139; x=1764587139;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=HALIbz4s2YRGdPjdnzVz3gtEcq5r7ZwQr6IBm+hWpU0=;
+  b=P1MmeQU9PeKGokvwSq22WpNKEu2146Z7m1VK5yB1hApR6INZFn0tdPvG
+   09iJHzBxdgN4UnRIayM7ACPk6llEQy1oagxyHgpS4q7sju3U673AEBd14
+   oQ7F3mfAw1VUFWAusV/IwJNWPZdBohVQochuXxpaE1+LMKJpiRpBAUkTl
+   x/slRvgft1/RxGe6dN4fHmsq7iB+biI+e+61AxU52XEeXYPvkUo8ogAK5
+   2UHk2u0OM6jQwO5Qqf9HEQNcUcqKUrF1C0Dh9tAffTG2FWGMJbXbfBIe2
+   JFsWtSHYSvB6OrMxBufZ5e9T0w/42U3uIECeAxi9rTMu4MxmR4c5pB9/6
+   A==;
+X-CSE-ConnectionGUID: HAOPB+CkT2epbGgKLHQWVQ==
+X-CSE-MsgGUID: vttVsrmfSZmRR90oXqKrnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11272"; a="33373995"
+X-IronPort-AV: E=Sophos;i="6.12,200,1728975600"; 
+   d="scan'208";a="33373995"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 03:05:39 -0800
+X-CSE-ConnectionGUID: iKyKunp8T3eT7i5I6Ysc0A==
+X-CSE-MsgGUID: V/9Etc/DRhu4EoaugM9Kzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,200,1728975600"; 
+   d="scan'208";a="92947396"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 01 Dec 2024 03:05:37 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tHhle-0001Tp-1M;
+	Sun, 01 Dec 2024 11:05:34 +0000
+Date: Sun, 1 Dec 2024 19:04:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vineet Gupta <vgupta@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org
+Subject: include/linux/compiler_types.h:328:45: error: call to
+ '__compiletime_assert_292' declared with attribute error: BUILD_BUG_ON
+ failed: (PTRS_PER_PTE * sizeof(pte_t)) > PAGE_SIZE
+Message-ID: <202412011908.nBxlyBTQ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: LhdkbCC9pOFVtlU0i5e8Xum_reN-jrhGluo-kL4yaPI_1733051071
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Andrew Morton
-> Sent: 01 December 2024 02:32
->=20
-> On Sat, 30 Nov 2024 20:59:22 +0000 David Laight <David.Laight@ACULAB.COM>=
- wrote:
->=20
-> > From: Jonathan Cameron
-> > > Sent: 30 November 2024 14:35
-> > >
-> > > On Sat, 30 Nov 2024 11:40:45 +0000
-> > > David Laight <David.Laight@ACULAB.COM> wrote:
-> > >
-> > > > From: Jakob Hauser
-> > > >
-> > > > Copying Andrew M - he might want to take this through his mm tree.
-> > >
-> > > I'm confused. Why?
-> > >
-> > > Looks like a local bug in an IIO driver.  What am I missing?
-> >
-> > The build test bot picked it up because a change to minmax.h that Andre=
-w
-> > committed to the mm tree showed up the bug.
-> > To avoid W=3D1 builds failing Andrew had applied a temporary 'fix'.
-> > So he needs to be in the loop at least.
-> > I don't know the actual procedure :-)
->=20
-> Jakob's minmax changes
-> (https://lkml.kernel.org/r/c50365d214e04f9ba256d417c8bebbc0@AcuMS.aculab.=
-com)
-> are queued in mm.git for 6.14-rc1.  They require a yas530 fix to build.
+Hi Vineet,
 
-Those are my changes, not Jakobs...
-(Not that it makes much difference here)
+FYI, the error/warning still remains.
 
-=09David
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   bcc8eda6d34934d80b96adb8dc4ff5dfc632a53a
+commit: d9820ff76f95fa26d33e412254a89cd65b23142d ARC: mm: switch pgtable_t back to struct page *
+date:   3 years, 3 months ago
+config: arc-randconfig-r131-20241118 (https://download.01.org/0day-ci/archive/20241201/202412011908.nBxlyBTQ-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241201/202412011908.nBxlyBTQ-lkp@intel.com/reproduce)
 
-> So as I need to carry this yas530 fix in mm.git I'd like to merge it as
-> a hotfix for 6.13-rcX, sometime in the next week or two.  So please
-> send acks!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412011908.nBxlyBTQ-lkp@intel.com/
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+All errors (new ones prefixed by >>):
 
+   arch/arc/mm/init.c:35:13: warning: no previous prototype for 'arc_get_mem_sz' [-Wmissing-prototypes]
+      35 | long __init arc_get_mem_sz(void)
+         |             ^~~~~~~~~~~~~~
+   arch/arc/mm/init.c:88:13: warning: no previous prototype for 'setup_arch_memory' [-Wmissing-prototypes]
+      88 | void __init setup_arch_memory(void)
+         |             ^~~~~~~~~~~~~~~~~
+   In file included from <command-line>:
+   arch/arc/mm/init.c: In function 'mem_init':
+>> include/linux/compiler_types.h:328:45: error: call to '__compiletime_assert_292' declared with attribute error: BUILD_BUG_ON failed: (PTRS_PER_PTE * sizeof(pte_t)) > PAGE_SIZE
+     328 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:309:25: note: in definition of macro '__compiletime_assert'
+     309 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:328:9: note: in expansion of macro '_compiletime_assert'
+     328 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   arch/arc/mm/init.c:194:9: note: in expansion of macro 'BUILD_BUG_ON'
+     194 |         BUILD_BUG_ON((PTRS_PER_PTE * sizeof(pte_t)) > PAGE_SIZE);
+         |         ^~~~~~~~~~~~
+
+
+vim +/__compiletime_assert_292 +328 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  314  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  315  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  316  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  317  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  318  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  319   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  320   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  321   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  322   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  323   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  324   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  325   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  326   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  327  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @328  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  329  
+
+:::::: The code at line 328 was first introduced by commit
+:::::: eb5c2d4b45e3d2d5d052ea6b8f1463976b1020d5 compiler.h: Move compiletime_assert() macros into compiler_types.h
+
+:::::: TO: Will Deacon <will@kernel.org>
+:::::: CC: Will Deacon <will@kernel.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
