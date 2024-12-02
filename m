@@ -1,316 +1,289 @@
-Return-Path: <linux-kernel+bounces-427266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2A59DFEDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:27:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE9B1161B83
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:27:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16191FCFCC;
-	Mon,  2 Dec 2024 10:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=allegrodvt.com header.i=@allegrodvt.com header.b="u1zkMt9j"
-Received: from PA5P264CU001.outbound.protection.outlook.com (mail-francecentralazon11020102.outbound.protection.outlook.com [52.101.167.102])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789949DFF18
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:38:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B52B1FBC84;
-	Mon,  2 Dec 2024 10:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.167.102
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 754DBB2B83D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:27:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8701FC7EF;
+	Mon,  2 Dec 2024 10:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VURg9/vY";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="RI/MqU8f"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83DD1FC10A;
+	Mon,  2 Dec 2024 10:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733135226; cv=fail; b=r1WT1u8eJWyyq/V2ZKvekxH7r8SzBJOocqNK4sIANsmgi5EBwtuMRgkWLB1sjDKDGE3zCWyRRK4/JhlNj8BxSfD+wxazi/01oEg/Hc9Gvgao8xf/YJt3kp2QCdifYScC7AbhQywwsA6nJ/3oG2YOVwH+TMytDbETqIxb3Mci2/Q=
+	t=1733135225; cv=fail; b=pEO6d8VSB2JjlXnBRVLtVmSgZe039EwTtzfkKoDzK+01ZTpL+Q/am0sxn0Wb3X2rS755/+qeJJKumpNpWLskToDdn0f7rH7NNtDB7yYh/jTlT7zEziilTO7L2of7ypa6eHGpySUF7fyD2fRgczfPeHxgeQfQ/Z1uTgiZJrYJx2k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733135226; c=relaxed/simple;
-	bh=hh4PyGGi2C4ABYEQLtnAtIUAxw+65w2GtE/5swnpOl8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=d5Meh4f3Z5lkkEuqWxt6tJz+GyKxWBQVP9U1+q1imJz23CJRl/4zdfwe90W+zyby+gw08fWXplCrg9kuXg8FYkM8XRKquitToR6jtmKQOg+/YSaPZNVACDNnSx8W3K2DG+YqdupMuvn30d7gyxKV3+EqWFcClR7roxltW3ZbSd4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=allegrodvt.com; spf=pass smtp.mailfrom=allegrodvt.com; dkim=pass (2048-bit key) header.d=allegrodvt.com header.i=@allegrodvt.com header.b=u1zkMt9j; arc=fail smtp.client-ip=52.101.167.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=allegrodvt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allegrodvt.com
+	s=arc-20240116; t=1733135225; c=relaxed/simple;
+	bh=NFaB13FKrfdqeS6DLbOmFYYGjB07OEBsmCmQt2YwTgg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ty/7Xm9muEZ9YS0QTjIBQgUCRLT5/amXh1Z5Bx+byron2dDkF7yBuRwq2sd4RZLbD2lC/zUSYgCOuuzi5ckCX5KCyi7sLg3eNo4+zyvqtrsCARhSah+sUyZeZ82iJYH+loQnD9vN3/C6PK1cojmZh0XKT3aqUkzJkor6tE5UBFs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VURg9/vY; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=RI/MqU8f; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B26X0VD015045;
+	Mon, 2 Dec 2024 10:26:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=OFh69IG+iHDBAAGAXD
+	Q433nSc+FEBUdfaObEFeRWfo8=; b=VURg9/vYbXQDo5TeG1uF2yCXZY0OIrlwAZ
+	HfbLhPa2FBxKuumM8E1zApbjV1dUhzCYIFK/JiKpwZhKqQfZJ+S+LvnPGAPIL8/y
+	t1+N/wxbFIVFJh233KBm0+65TG1h7sWoDfcfk5qZ1B1/3FEIx6IHteVqiDXieoRd
+	ye9KMh9esN2kEOv12EFJGXJ+mPGiPx9qOXrMJgUKvnfR0qy+2KhFp0rMusVt1nL+
+	leSzn2NUWdZCJPozGorVv0SPFejtT/qQGiDDiEOKwTG1Mp2d9UCutOsIhrFKO0F0
+	N6Pf4iIOM1FlXwdlfw5Q1h4TEs1w9gcFB3l5GzHs9A2TPS3Q5x/A==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437smaaj0k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Dec 2024 10:26:58 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28YVEn037167;
+	Mon, 2 Dec 2024 10:26:57 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437s56pqf0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Dec 2024 10:26:57 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Chp/HZefW/6Uz1BCCpyh8NNwnk2+Tp4er4jMv66GEhvbA5qOpCgfuahpGUUsbylAR7CPFXrbMpq1sEGewOBE6tc4naGewa8YOgMoD/bqIpLmz0ibSzSWVV58zXI3rfRodrvNwxuU0D3an51H5y9RMv6ikEo9MmImk5oJ2AHwP+AXYvdEcPNY/Os3fFTf0P27gESHlIz+yTz1DOekDYw8nNzFSu3rosRVmzhbflYpdc7e6S6Lv6mhB54YDPU0LGhMtjh8nVC3G3sK/F3Qxl1jjGGrZ1va0daHnPxVlYZg6NWHCMdimhhz0OCtmh7QMSC0DnJlnO5fYrQMO3tDWusXfw==
+ b=khIPC3MadWQcRZgVJH4Nqoz5TjDhWtX/erkcgP7Ukse8pySrjgcJBLENQXLcK7riyEmtLUm/yK21Mn6+fFjQIe1+so80/AjsLmHzE9hnTr1v8l/vtzVTNe7WKbqXanMxVkHqsjn4S565aN0px3cg+zm60dE4xInq6gq02cXhqC9Hd9piisw56UQaEfU+wDhgSTn34WpBU++UjwFtSQZO37cVI91yvfmpOAtDGo0or2xi2bQNSb6phg2tcN9DFqWHcKOi0WMaizQfoKaLAiq2x2wb3WG1vL3XROmx5Xo4AVeDl61acV1HzxBuNxY509sct/HkT+NSzrQLyeXZZ2rqaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eGvANRNh+rcpqx1BIdJLPzEZHvPorZcVc6rMfzU8drw=;
- b=wVbacINXxGRtz8X7nO1FVViCoDZUjCtkEgVqheXO+m5WZKgICtQr2pEQCBf/+qnXrsj50SAziKQDHx7R8UECVDUfcRRUqRU/+Qb/T3VKSrLjyaso70S+a2YUaTxEu54odhS+9FCiFQ0H9yxMHjbnbmMZKM9i2hlOieUPgY95DLaLZiuFzdYS1RGGBnphXvi6Yy/uX+mAfJ2NTxJNjeAfI3PDN5alF68gXRA2v1G7nIvKTSd+tVc+TYc7U3NR0UngTtEJbXDyTJLnhi1PUPM6GUa6dNk0K9StIDK8wFv39o8oOswT3sZ9fAZQXO13WGS6QDSKE/+8yWtFyPBLPTpdig==
+ bh=OFh69IG+iHDBAAGAXDQ433nSc+FEBUdfaObEFeRWfo8=;
+ b=D5xrdJasnVwqiN/d3nGWYSOe5E4u5TS7NMerlZUA0rbPW/XwVwaVL75Fj3s9wakv6cqwOkIhi0ydoDKPjKgo/lkb6TNnaqZa6G9eE9nNOJdLxKwsU7PBcWm974Dcez4RJdstBLWymV1jPPy5xo3nyNkf8Mv3A6T0Vjn7H+Z0V5kyTPqV4UDGYvp6tMUtEu7zJYiyL5gv3QNl9UmBaxVxSLbk5vreKaPY5j4gINYJswCy8Wz4gYkY0I50U5PD0KxkfTqGXer5kEF9TVYvtKv7Taa36F/bwCLZA7u8BGglXCQng17sGg72hMAm6hytMU8gnA9RnWzi6P5URZEAaOxxxw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=allegrodvt.com; dmarc=pass action=none
- header.from=allegrodvt.com; dkim=pass header.d=allegrodvt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=allegrodvt.com;
- s=selector1;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eGvANRNh+rcpqx1BIdJLPzEZHvPorZcVc6rMfzU8drw=;
- b=u1zkMt9jinVPcI4UICEoKNbvZuoPLY65OEW8ihHz+48hBbd4DsKmCEa0MH832qkpO1YLEKbF/T1q6G8iqxlYT2xM4TLYgFxj//p6hhf6uYKZcgdlk0Ov+1MJnPnyfI+91a77PaXOlY8beL4yBhvmUPbXqoB9dH0ExS2AuoOnRSmr3mFGqRwYgeRJjAKzI2rgPnxNAtpm5VddkiRLek6wUM7vseA6KrbDG0feNOxnOI8TxvZcu0+cjLG/5yedy37wv3qyIEX+gwOvyVdnY1iMLZj/81lWOnrn4azLpcL17Z4ayEGMrWrqyEpwfgp7XEhHljjEuTi2SIPZzpaoRDxfIw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=allegrodvt.com;
-Received: from MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:3d::18)
- by PAZP264MB2318.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:1f7::11) with
+ bh=OFh69IG+iHDBAAGAXDQ433nSc+FEBUdfaObEFeRWfo8=;
+ b=RI/MqU8fs26RYIFFzRv1PQn4zDMVBlPqS0oFM5b+urwxdzyeFeO/htCI5Ozm0nHYEgxZTUl8FKumywsSYt5XGcmmPUuDrM9/fp5f+7LYC2+oImcw/r8VZ5fEyNVwoZJRVDrx1g7b6UGX4zLh3187k34dIGRm6eNDqHhAJ2Au7LQ=
+Received: from PH0PR10MB5563.namprd10.prod.outlook.com (2603:10b6:510:f2::13)
+ by BN0PR10MB4872.namprd10.prod.outlook.com (2603:10b6:408:124::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Mon, 2 Dec
- 2024 10:26:56 +0000
-Received: from MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
- ([fe80::9f26:a361:4704:1a67]) by MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
- ([fe80::9f26:a361:4704:1a67%2]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 2024 10:26:55 +0000
+Received: from PH0PR10MB5563.namprd10.prod.outlook.com
+ ([fe80::1917:9c45:4a41:240]) by PH0PR10MB5563.namprd10.prod.outlook.com
+ ([fe80::1917:9c45:4a41:240%6]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
  10:26:55 +0000
-From: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
-To:
-Cc: yassine.ouaissa@allegrodvt.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Gaosheng Cui <cuigaosheng1@huawei.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/ZYNQ ARCHITECTURE)
-Subject: [PATCH] media: allegro-dvt: Moving the current driver to subdirectory
-Date: Mon,  2 Dec 2024 11:26:38 +0100
-Message-Id: <20241202102654.40472-1-yassine.ouaissa@allegrodvt.com>
-X-Mailer: git-send-email 2.30.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MR2P264CA0044.FRAP264.PROD.OUTLOOK.COM (2603:10a6:500::32)
- To MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:3d::18)
+From: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "sashal@kernel.org" <sashal@kernel.org>,
+        "stable@vger.kernel.org"
+	<stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "cgroups@vger.kernel.org"
+	<cgroups@vger.kernel.org>,
+        "shivani.agarwal@broadcom.com"
+	<shivani.agarwal@broadcom.com>
+Subject: Re: [PATCH 1/2] cgroup: Make operations on the cgroup root_list RCU
+ safe
+Thread-Topic: [PATCH 1/2] cgroup: Make operations on the cgroup root_list RCU
+ safe
+Thread-Index: AQHbRKS15T4HRONl8EGHQEYTD7LhXQ==
+Date: Mon, 2 Dec 2024 10:26:54 +0000
+Message-ID: <9953011d972d0ec2f38792e985aac55f2e4fda2e.camel@oracle.com>
+References: <2024120235-path-hangover-4717@gregkh>
+		 <20241202101102.91106-1-siddh.raman.pant@oracle.com>
+		 <2024120257-icky-audio-cf30@gregkh>
+In-Reply-To: <2024120257-icky-audio-cf30@gregkh>
+Accept-Language: en-US, en-IN
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR10MB5563:EE_|BN0PR10MB4872:EE_
+x-ms-office365-filtering-correlation-id: 1e3c5dca-7011-4d49-d8b7-08dd12bbd813
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Q0V3dXlPbmpINjVBOTduSHBWNDNVMlFtbm9ocnIvR0V6bExIN1poREtBUm8y?=
+ =?utf-8?B?UzZFUnNHTk9MV05SbE8vc3VLd0RXbEhDeTZZdWVlZzdYRXRVNzJYYW9aUlh4?=
+ =?utf-8?B?SzRPY3NWa0ZDNVdKR3NBUHpKNGRUbVkzMjFYUXNydkw1dVNrYTFsUWY4RXY3?=
+ =?utf-8?B?S3dzOFVYd0huYndpd2c2REN3TFRVSGVNOFd6dmM2TmdOYnIrakNicENFZ0k5?=
+ =?utf-8?B?eXBlenFkY3AyczQyanFpMFg4Tmx0d25zV05tT3cwUVB4OGRLem9ZOWhyNVNQ?=
+ =?utf-8?B?NCt0eFZnQ0NFY0dsZk5LUndjMjRieHVJL0JPc2VRSmEweHZQTDR2MUdtS093?=
+ =?utf-8?B?WkhIU2FscHVWa0ZaVjBoSCtpa3Q4SDUreFZUdERIVklNeGlKaVZOK3dGUElt?=
+ =?utf-8?B?NG5EMi95SXA5Ri9yU3JxZzhoQ0pjL2NCd3NSdllrWVg2VGpUOU1IODAwMUh0?=
+ =?utf-8?B?ckkwZFRLVUhjOGdDWGp2VlhiWWlPdlNTWnZJUWNIMnVrNTFJeWJOY0NzSzVo?=
+ =?utf-8?B?K3VJOXl2a1lKdk52Z2E2a1ltc0kxbHhibUh1V3YxeTlZcmV5aUh5dkpZZi9U?=
+ =?utf-8?B?R1RDU24vQlZUVTJaWmYrTVFHVTBEV0JPV3Q2cVNncFpjMTVxMHVCWWlaaDht?=
+ =?utf-8?B?bGl1QnZSMjZjaUZSejV4RmR2cXgzVGlyT0QySWNld2hLOXRXZjFNamp3ajMv?=
+ =?utf-8?B?UmNURWxwZjc1MmlQQU9QSEdSeGhUdHc2c1AwWUdlSUJjQUJSWCtHcmJFTmsr?=
+ =?utf-8?B?SmVKT3QvdjZaMTcwZzFqSGYzOTYrQVplNkl3R012KzY3blQ0SytsTlVGTERn?=
+ =?utf-8?B?Tllpb09oM0N6TTRtZFUySWJvZ2JEUE01Q2ZjdVFiOExTaFVqVzhPdjZ4MUFC?=
+ =?utf-8?B?a1NBZU0zazdNS000VDQvbmp0U3o1RjMzR2Nnd1JHc2lVS3hSbnpMT3A5OWtZ?=
+ =?utf-8?B?UWF4TmJMUHkrR0Mxek1YRFRVZlZEMVBlaW1pOWp3NmNralk3cC8zSHJ1TUt0?=
+ =?utf-8?B?a1NocUFabmZSVDUrc2F0THZrRW1mL3hQcTB6MFgxcFFpc2NVUnBiazZoNXBN?=
+ =?utf-8?B?UkhUT3pWR0piZVRLdXBiNnFSVzVCU0g1MnpiOWdNOXlDYzdJWWNReGhnRVph?=
+ =?utf-8?B?NW5mUkdvc1Z6dGx1RDh6bnFDdEUvUjZGSGlkTVBTcFRuNmt1UXdLK3IxZUlX?=
+ =?utf-8?B?aWt1K09wOFM3YUdycDJxVjBSUHVoeTBUckZtT3FDaWpPdTVvbFZITVAvaHlk?=
+ =?utf-8?B?NUZ1YVljRkF1eU43VDR1eHJzcDlaWlhNYlhyZ09OSm9sNDM4T2p6WkZZRS9V?=
+ =?utf-8?B?T3FPcDBWSVE0QmtuemdaVVRpVHRqbldWemxvYWNNNlBrV0JLcmNHaDhndWYz?=
+ =?utf-8?B?NGhzT1k3YzM0ZFQzcGduNm13UkpZMDllcGNCc0R4VFc5Nlo4cE9DK3ViSFVO?=
+ =?utf-8?B?MEtxdXBOTFYrald5V2pvYzVTZWN1VjR6MU1YNVpQeXc2bjVBamxjdFlReWtZ?=
+ =?utf-8?B?bFMzOFV0N3Z4RU16SG9YSExCcXA2d2NwZGozUkowa3hJWlBRQXJzQVh6L1pN?=
+ =?utf-8?B?UXk4aTgwaWNUelE0TkNhelZjUlExSzUyTWZRZXJ0dk43TEw4eGNxWUo0RzBk?=
+ =?utf-8?B?NFA5WDNFSmcvKzNtTkhwS013QkZ4VmdWU2dOODJjcWxXUVB2S1VqL00xSFlk?=
+ =?utf-8?B?dnMwY3M3ejBoS1lmNG8vQzNENndWM3l0d2psOERaSkpZS29rZWFORnl6Umlj?=
+ =?utf-8?B?Z0dNMUhmbXVxOWZRaUFCVWhZTE4zUDJod3BmTFc5MDcyUzFSTFUrVDZIcXdG?=
+ =?utf-8?B?LzZuaDdtQ2MrM2RnMStCMzAwQk5vNVdqU053V0g2cjFKRnpQN0VQSlVqeVMv?=
+ =?utf-8?B?R3h2cXYrQ3FlMDNraGVzcURvUnVHNXpYOGE2MmJDMEQyVnc9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5563.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?cUhrb2hoZ285aEd0bnBkZUx6MXUvSFBJRDg1V0h3UkRqb1BhMitrVllTMjh2?=
+ =?utf-8?B?anpYbDQ1Q2d1NDd0U1BOaG96bzZkcWM2T3NlcTludUdkdElXNEczRklXbDdu?=
+ =?utf-8?B?MDFoMHRMdGJyN3JmK0k2Uk1jNHFSaUdBR29DYzhxMlAxc29VejNEUTU1UHIw?=
+ =?utf-8?B?REhWcXpUdkhxdi82OXQ5a1ZUcncyVHJIQUlhaStZcWUyQ1d0WTh0SU5RQ256?=
+ =?utf-8?B?UUxGSjFncC9uNGs3cWt3RmRCcFloaHBwd1lhSDhNU0dibVEzTUc0VTFSNVlU?=
+ =?utf-8?B?aEZTZHkzVjViNkZ0WnFKeExVN3VzcncxVkM5Tm5SdVZUdGNrcCtYRzJWQXQ4?=
+ =?utf-8?B?YW1BQWJLbXE3djFBTWxOdXNLcEtGSlE1ZUdwL1c2YmFuWkVGUlkvTXF4VnZx?=
+ =?utf-8?B?L3hYS0M0djhBTHVndFFvTEg0VkhaOHBDR3NMcTQxV1ZaanhwMVhpWVJ6VzBW?=
+ =?utf-8?B?MktGOVlDVXIvQStSQTVma01Sd041OWdFUHVUQTNBbU5pWEZBV2E4T0t0c1lr?=
+ =?utf-8?B?elhvY0ljYUhLeWl3Q0cwa3BJcFZQbkNvOXRLVjhSL1FiR2h0L3MxbHIyNFFs?=
+ =?utf-8?B?NDNwZVVobStSZERHUWh3VWdEek0xeGViTUJaTDE1M2JHbDF6N3RXU0JaK3B4?=
+ =?utf-8?B?WDYvYUtBeWdPTmN0ckFVbkc0dWp4YThnS2pBeWQ4WHA1OW5IcE9SMlVLU01X?=
+ =?utf-8?B?TW9yRVRLYk9mZFlGYnVLTmtCYmszNmxQWUVqeGRRMHcxTWJSQU9YWjQ5b21W?=
+ =?utf-8?B?M2tESW00dzFHb0FaTEV1ejlZNHF6WmhqcWl6R0pRRi9OSlVDU3N0ZXlTQUlw?=
+ =?utf-8?B?WUdPdE91c0xVNEVwSGtvYTBTQWo4dTFLZVVQeE40MGpaNEd3ZDRCeFJEcHF4?=
+ =?utf-8?B?aXMyeTQ1WFpoS2xvUW9JU3pLV2NwbXRVM0ZvL1gzRS9FaHdXcGkzOVpVNGx2?=
+ =?utf-8?B?Q1FlSjZ3Zi9IanFMUHdIaXJlMG5jK3FjN242azUyUVRhZy85MnpQR0R3VEhU?=
+ =?utf-8?B?VmVSUUZoZUJ3QlNGVStsWjVac3VlR0QzNmZRbzFJNFdoQkRUcG5vRGFmd1Js?=
+ =?utf-8?B?YnJqWk1uMkw0MUpXTytaemo0VnVwdDVyZHhMUm42NW9udUVybk9TQ1czVGxL?=
+ =?utf-8?B?V1p0NTdMUjM5SjVRaDhTeHk3NXZvUHdWdHU1WThIeXFyTm9hZlB6TFdOR1hi?=
+ =?utf-8?B?WUZ4UTRDRHlOSUJla0dzTlhxNkdPSUtVS29FWmg2SmxQbG9UYXF6MkcvZksv?=
+ =?utf-8?B?YzlZbzJVZExIK1NhaEpiWFJORWJSWHEwUi9FNWpnb0hJVmMyUzJGVFZ1RXVU?=
+ =?utf-8?B?WCtZTHk2WlIwQUd0dkcxalpkQ0szU1F3d1AxYWhPVk9VaU4yTkwwcUlMcWN4?=
+ =?utf-8?B?RnQ5TVNEYjd5cXlmdTYyRUxickp5RWpZZnZoTGhCZWVORzM3OGtYMGJsZUtp?=
+ =?utf-8?B?SVJ4cHlaYzBpYi9JR05CS3pKTHAycTN3aGE3N1hoaU9mWXlvMzZvUmxqNmhS?=
+ =?utf-8?B?WThuaSs5R3NFTFAwRC9wcWxDU0NYMGVNYURIK044WnAzdUtmT1VUZDdmMC94?=
+ =?utf-8?B?OGFoc0RqcGk3N0NiNlZlYWNYdXlqMU9NZ3VBSzlEai9vU2pxZXkwZ1owbERp?=
+ =?utf-8?B?RzIwcGc5cUo5WCtsU2E1a0VJTElXRHdlQVI1amt6dFBzWUlZRFpqYnRIajR4?=
+ =?utf-8?B?c2dDNmZ5NVM0TnovRnZwZnBIRVYzb3NKUHBvVHJiOGxPOU5pRU9NOSttQUJD?=
+ =?utf-8?B?dWw3OGlvWUVhWm1lRHM3YTFITk9tTVVhbXRsZVp4SDNtZ1ZPSm5GRk9rb0N0?=
+ =?utf-8?B?SXJlY1FMcmxnZ0pCdmh1cUdSMmQ2UkRFRjAzZzBOY1o1elRSTE1pMWk5K2VV?=
+ =?utf-8?B?VmpsdTBRR24vRmNGWGw4anNreHlSSVR0MVhIazU4bVdUNG9zVmFaMU9Xbk5m?=
+ =?utf-8?B?clJVN0NyNFR2VHBhYjlPOG5mSi9kTzNYMUFnMk53emdWUnZBTDFHZnJvcWdE?=
+ =?utf-8?B?N05SOUFGcTVqM3ZkOThhWjFyaHo5aFkrb2oxZ3BmN29xRC9YUVRBZ2RscSs3?=
+ =?utf-8?B?VjllUktBTENNRGlENlU4SlRpWHliQWExTkRseXFpa3czTnJ4aDByVXdJd3dD?=
+ =?utf-8?B?cnVBZWNIN2dOa3NwMWcyN3hHTzQvMHJHbmZ3VERPYnpwY0JQU1dsMnErQjdY?=
+ =?utf-8?Q?aqLQQ6H7FoAjb1k7VOMHHic=3D?=
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-Bp4pj7CWrr84fVnkU7dy"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MR1P264MB3140:EE_|PAZP264MB2318:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06e1104a-ce77-4ab0-aea7-08dd12bbd85e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|7416014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YzPVs7kKCx+JyrXwvQdpTfD+czHVaFyWILo2q3e7BkE7D9BF42Rwy4HYkT6N?=
- =?us-ascii?Q?OMG6WgOyJS7/a+QxttDC6hSZ6KWrDo3FzsbgZr6/99hGqjXxoyWfFaolVGI2?=
- =?us-ascii?Q?u2thbGUtQnF56o/LKWNMMrFsbQKpC1bvWQrBBUM7ObrqVPwdZKNhPQIurM5B?=
- =?us-ascii?Q?8qoXsVw37YJlaybEBWPyOX/02h5kfiL00QX+iiQLiJk7dgwPwTrvrk0vyLId?=
- =?us-ascii?Q?BS93k3T4HoHWMexsFbaxRzyceRF6HiSQFsuJf1yawj39Yus+bCaPIVN9kOx9?=
- =?us-ascii?Q?3vIYymuDTE5SgD4GmLrnt98OwWE0d4alH6j7xgRTbIwwnLoGcMIKfmM4AIZM?=
- =?us-ascii?Q?YGtdMV1xqK8R9bGomR1CPiFPB4DAAUCIK/JLVFk3MUkwCjVQqRI0wNhdF+I7?=
- =?us-ascii?Q?eFqg1NmjREYluZt2/gTnEsMqdNC9E+rd2pan/r0TnrKBqsDp1DfUMu7i5nCP?=
- =?us-ascii?Q?BgNRqsphldtpiObM+EdXxxuyFlz5OGQwh76VOgwX0Qvf5qBZ8BP7udYArwho?=
- =?us-ascii?Q?cQwYXtKDPaP+o8Iz4U4bQL0HZSBUlepBijuqPLVVxH8PcEZAhSEMWhqeEJJu?=
- =?us-ascii?Q?qB9jJOZ7ybwWjcPbHVx6ggRbgWhR+Fya5w3W6igGrQNgKN/GATDdMeNy3N1C?=
- =?us-ascii?Q?EdE56mlHi3/QvMaMlCNCJ90dxl5bk9zWcotpEFOlcmnLQEPp/+HKtjXbIlVl?=
- =?us-ascii?Q?IHuU1OD2Uyg4IuuJJXA8wYtUr7lN/UyHOqGP+l/VGmCp6lPiHe620GTxW8TP?=
- =?us-ascii?Q?ksHYkLEX0keWhANgWT1fC32E30z1QNf3Fh8ZHOXYCgTDJpN0Pr/EwpTV03We?=
- =?us-ascii?Q?maqwUPbGZaq31yOjvN9w6ZFZ+nqOgVkT3cFHyJNBlsYi03GXPCkYNyM3UF23?=
- =?us-ascii?Q?l3gGmfmeOgvLaixMmtRIMrTDJlklPR1n2CVvANuts/pck+qYSy3M/ov69J0R?=
- =?us-ascii?Q?4ZHLBqMdF1d9fjH8Y7R/X1pibpDp7ApcPx4SV43i0P8ke/xP0FAtw/ghnkrW?=
- =?us-ascii?Q?S6xidbTAFKpOKo82unMGuRkGqljFTrnWpX2tRILI5UFicu5DB1JK3A0ZHp9Y?=
- =?us-ascii?Q?8dKiR2osn2NUEithadB0VALR8PJoQbkYv9TQb5gThp6MO/QD4ALLREgj/CY4?=
- =?us-ascii?Q?zyvGd+sk4Ccv9o5efDgGkOK2z7TjFVsyM5diI5rfI/aUNYHpxYxcY/B5ONDx?=
- =?us-ascii?Q?VqRezz6wXovi8cgs9KnQijRfBQK45vjr47yJGtKA7kqBxK7ma+f5g8B/6Yl+?=
- =?us-ascii?Q?TDGN76kn9X42t5xp1IhD51Buz4q2afr0wWobQiHYP5/U4XoooZtz3kh/iw+X?=
- =?us-ascii?Q?ZDefvQX9bMbjaQOXiIQhBz2vFKBVIe41k2Rtdkl5YVTs9LXsdv3r24inPJYY?=
- =?us-ascii?Q?w3zBaKh831c3NXzcDo3xQhYoIbpQSVIbofMvGCP/aB/ZoSD91Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fC7t2n5MHjVoXK5rlwDJt0YlxO614+XznuyAEBCjwnhg7GC8PpmKJl1mRkDE?=
- =?us-ascii?Q?9M8w0kOulg+Q2LvjOYgxbr9Spq97gjC9O91PRosM1kodnFd5+vFJslcnUfOk?=
- =?us-ascii?Q?51BWf6/DDD43jK12J2tPkU+qdeCqoJl/O6pPxpPy0VQzAFApLenV+ulqxK8S?=
- =?us-ascii?Q?SdysvZVs0SN7ICTVXJWjXFqOMuwLW3h8+/cDEVdpB8tblVLIPt++Vf2PGKTw?=
- =?us-ascii?Q?5jgQgxvN/7qYXK0KJkIEdhw/xWTY8GQkQp/UVLUR650Pz6KRfsOCbb1mvzTB?=
- =?us-ascii?Q?m0hxkGGNhi3cjsC9JjZrIngNhCPLYSbBRe0Hr+yaz5gqjeDsD1NeTJ2QODrS?=
- =?us-ascii?Q?EqO06g9smAH5hWXCprCi77BioOfUImset00dVwiaWO4NWFFSSwQpjqKujdBw?=
- =?us-ascii?Q?V+2PUvsD9OwgJL6tbBKG7QHUQmh7JL/bfzDAHVSesyZrUg/KOKIXtLfDhsqz?=
- =?us-ascii?Q?m0Yy+o3hRLaLZ6V/o1ChFSrT944MTDvAPFaM0r7v/Fgp+cn3xqEhHZzumtkA?=
- =?us-ascii?Q?9/PBjEPlVpSmIG1XlIVhvLzzF38uSoPbdcDKJmuqS1h58JZbV4Tp8EwcY+yc?=
- =?us-ascii?Q?txiPZMqMd4ppCGpWtWPXXthOAYBzuigwTqc9tmzUNGczu7RffMkeebg71gyb?=
- =?us-ascii?Q?AGpRNzZTpUUCqixLR/1Ln8GZub7n04yuVhcXlQppoUtHYi07XQCUgkk//sEq?=
- =?us-ascii?Q?hfm3m2VPRX147Q2SkxNWGJcNguWTrM0nPzRFu/3qruB6Qe8V3ACnJMbm+Uhb?=
- =?us-ascii?Q?lnMETT+hTh8/djHz2FkbLEQSPK+iLQcBx1kWL0W2byceQJp9oHbte/TqYLMc?=
- =?us-ascii?Q?H6G+dl9E08aHEkwhepME+qjObZHT3RR4jqrf8TWHkJIwxOebZ4aTOpaOhsPb?=
- =?us-ascii?Q?3mnC5XsHK7L6tyedarZ9hBG1xMdgj05k4QYa3gKWQc0zTqhVFhhnVOHvjNdn?=
- =?us-ascii?Q?LvTrvv2ddDPzfVIiZJcgOIuKCcAfb2lbY6VVLnTVZiCBq4GtzNLM+9aKFsNR?=
- =?us-ascii?Q?Q8L+J4hx5OA7mV4swMPsQI7uSbHtvvjFa418e/hqC6iBg44c5EM14OqzoTZz?=
- =?us-ascii?Q?LnUxQ8rdFTsqnwt6x8F0DiQXCmf2OUYnQ34h/1wVyYAg7gD/b/FfV0Yv5alL?=
- =?us-ascii?Q?VUiXmpU2X9QeP7bEd49P6kOuFH9H/93D6FnxuYx9HlNJD5A8zkIkB4krSv0v?=
- =?us-ascii?Q?CBe1FpWSPSHNZ1FozCA5JAPu+m0u76QLVPX+22wEcfRTynSBeL2czK9d7DB8?=
- =?us-ascii?Q?avbtYrHOBayNSjrB3osYaQMsY5OnFd+fDlsUvxYr3hBMOTsLQICKNOAFa4uv?=
- =?us-ascii?Q?OruymBtDiMo2Cgi8T9pXD89qNkaEVEFs4P4NV4zi/+83CmKYo5Q7fwCdSXAM?=
- =?us-ascii?Q?PWvkuTE8AU8/m0vebAEaGRz1NT72ISi8IxTzDitvv8fWZcHBgHgKHGMzXIvZ?=
- =?us-ascii?Q?/GIkZT1r4ud8O+eyX87VqQryEbEDbw0I9O2kpS2gZrVvtnNJQpX/9B7wEtgv?=
- =?us-ascii?Q?hhGZ4NsTkoqk3xPXO6s+mCvY8nqCMyE25vG4TnyefGFyBA6fm511ppGkgm6l?=
- =?us-ascii?Q?rzpjlbwH/8hNotAs/BLrepAo3F6EUXP/fS8K/OO1MTcR215BgyPPrtsR9ZEk?=
- =?us-ascii?Q?TQ=3D=3D?=
-X-OriginatorOrg: allegrodvt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06e1104a-ce77-4ab0-aea7-08dd12bbd85e
-X-MS-Exchange-CrossTenant-AuthSource: MR1P264MB3140.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	V8VaVybOUZpwiBRF5xZXidsg6MmTV+haQQNG6tkb94BlBdoz9yfrZHR1WKeyfFECYkYqGzHkny2QhJH8+9GmCdmP7tnYW7n4HaDeEFBpmJppK/W1VVa1dbjzvhS+lzy4u7SJMa8E083tVvILjVUAqD+50Ai8P7Exeaa5+2G/DwopSgfA2sSmsAc/O5iFrXT5vs1JWnLeI2vp7OIyCm7/afsncwpJ5YDCI06bX5haAvV1krFaX4z/Neb4ZIBoRW0R2DZW2GyLXjf3cLvoictz+hqS1GqydlaeLpf4I++pUQWFB9OB8CtyfkVv9TiYfbSUEa0kDlMndjeWIoWjMa6Bh3XbBxSAASvCwsX/JG3hanLxRgpVd1eorqRPZU1afRIxfgNE7xsPsxuqfAm4YDr9BqRX+ClOTfcUbinXt4X0mOpW+sWUXTbtj0FTex88vqEHzS8WPZqoN51z3z+mmDDjlKyGJeqY/8/anZgE4YbSpkWcxL/kPyRkRs9JS7/tnApv26ppIt2AViXWghBEKPN481WCCUEEiGNxSWDa1GsEE1BsGh6ckXbSlyZC0Npq1GuloaEFrsyJuyUQpyzloHdsN9Mv4HVs8hXKeyBaLqWTUU4=
+X-OriginatorOrg: oracle.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 10:26:55.6286
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5563.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e3c5dca-7011-4d49-d8b7-08dd12bbd813
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2024 10:26:54.9370
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 6c7a5ec0-2d92-465a-a3e1-9e3f1e9fd917
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l7ISmmANbZKGdXBf0tE1QunDt3sDV5lQHixc8HiB1cVIKWXo7rz3PmYY4etbuOO5qsOniSvQUSaZvkqO5fHiu2mNZL1pmRr7dpBi4VsMlyI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAZP264MB2318
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: U0x1N8f59H74pjGaVwGKzfOFetW2LyaP25aOfVUi4ZuYG+YrV/4Ygw5I3bblXmviFLV+5BhwEIL3vRjppgUYvj2oTn0GTvPgxaDSALkDIjE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4872
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-02_06,2024-11-28_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412020092
+X-Proofpoint-ORIG-GUID: WOhhWkrG0FHX5mnPBhQh6jyneePWDS9T
+X-Proofpoint-GUID: WOhhWkrG0FHX5mnPBhQh6jyneePWDS9T
 
-In preparation for the upcoming driver update, we need to realocate the
-current driver that is not maintained by us ( allegro-dvt ).
-This will help ensure a clean transition and avoid any potential
-conflicts with the new driver.
+--=-Bp4pj7CWrr84fVnkU7dy
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch is crucial for keeping our directory organized and
-facilitating a smooth integration of the new driver
+On Mon, Dec 02 2024 at 15:47:00 +0530, Greg Kroah-Hartman wrote:
+> On Mon, Dec 02, 2024 at 03:41:01PM +0530, Siddh Raman Pant wrote:
+> > From: Yafang Shao <laoar.shao@gmail.com>
+> >=20
+> > commit d23b5c577715892c87533b13923306acc6243f93 upstream.
+> >=20
+> > At present, when we perform operations on the cgroup root_list, we must
+> > hold the cgroup_mutex, which is a relatively heavyweight lock. In reali=
+ty,
+> > we can make operations on this list RCU-safe, eliminating the need to h=
+old
+> > the cgroup_mutex during traversal. Modifications to the list only occur=
+ in
+> > the cgroup root setup and destroy paths, which should be infrequent in =
+a
+> > production environment. In contrast, traversal may occur frequently.
+> > Therefore, making it RCU-safe would be beneficial.
+> >=20
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Signed-off-by: Tejun Heo <tj@kernel.org>
+> > [fp: adapt to 5.10 mainly because of changes made by e210a89f5b07
+> >  ("cgroup.c: add helper __cset_cgroup_from_root to cleanup duplicated
+> >  codes")]
+> > Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> > [Shivani: Modified to apply on v5.4.y]
+> > Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+> > Reviewed-by: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+>=20
+> I'm confused.  You do know what signed-off-by means, right?  When
+> sending a patch on, you MUST sign off on it.
 
-Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
----
- MAINTAINERS                                               | 2 +-
- drivers/media/platform/allegro-dvt/Kconfig                | 4 ++--
- drivers/media/platform/allegro-dvt/Makefile               | 8 ++------
- drivers/media/platform/allegro-dvt/zynqmp/Makefile        | 6 ++++++
- .../media/platform/allegro-dvt/{ => zynqmp}/nal-h264.c    | 0
- .../media/platform/allegro-dvt/{ => zynqmp}/nal-h264.h    | 0
- .../media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.c    | 0
- .../media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.h    | 0
- .../media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.c    | 0
- .../media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.h    | 0
- .../{allegro-core.c => zynqmp/zynqmp-allegro-core.c}      | 2 +-
- .../{allegro-mail.c => zynqmp/zynqmp-allegro-mail.c}      | 2 +-
- .../{allegro-mail.h => zynqmp/zynqmp-allegro-mail.h}      | 0
- 13 files changed, 13 insertions(+), 11 deletions(-)
- create mode 100644 drivers/media/platform/allegro-dvt/zynqmp/Makefile
- rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-h264.c (100%)
- rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-h264.h (100%)
- rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.c (100%)
- rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.h (100%)
- rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.c (100%)
- rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.h (100%)
- rename drivers/media/platform/allegro-dvt/{allegro-core.c => zynqmp/zynqmp-allegro-core.c} (99%)
- rename drivers/media/platform/allegro-dvt/{allegro-mail.c => zynqmp/zynqmp-allegro-mail.c} (99%)
- rename drivers/media/platform/allegro-dvt/{allegro-mail.h => zynqmp/zynqmp-allegro-mail.h} (100%)
+Even if I'm just *forwarding* the patch already posted on the mailing
+list? I just added an r-b for the patch because I reviewed it, and did
+no changes.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7292e4a1ddb8..d79efe6f8992 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -795,7 +795,7 @@ R:	Pengutronix Kernel Team <kernel@pengutronix.de>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/allegro,al5e.yaml
--F:	drivers/media/platform/allegro-dvt/
-+F:	drivers/media/platform/allegro-dvt/zynqmp
- 
- ALLIED VISION ALVIUM CAMERA DRIVER
- M:	Tommaso Merciai <tomm.merciai@gmail.com>
-diff --git a/drivers/media/platform/allegro-dvt/Kconfig b/drivers/media/platform/allegro-dvt/Kconfig
-index 2182e1277568..9bc7e99788b8 100644
---- a/drivers/media/platform/allegro-dvt/Kconfig
-+++ b/drivers/media/platform/allegro-dvt/Kconfig
-@@ -2,8 +2,8 @@
- 
- comment "Allegro DVT media platform drivers"
- 
--config VIDEO_ALLEGRO_DVT
--	tristate "Allegro DVT Video IP Core"
-+config VIDEO_ZYNQMP_ALLEGRO_DVT
-+	tristate "Allegro DVT Video IP Core for ZynqMP"
- 	depends on V4L_MEM2MEM_DRIVERS
- 	depends on VIDEO_DEV
- 	depends on ARCH_ZYNQMP || COMPILE_TEST
-diff --git a/drivers/media/platform/allegro-dvt/Makefile b/drivers/media/platform/allegro-dvt/Makefile
-index 66108a303774..04727c5f7ef4 100644
---- a/drivers/media/platform/allegro-dvt/Makefile
-+++ b/drivers/media/platform/allegro-dvt/Makefile
-@@ -1,6 +1,2 @@
--# SPDX-License-Identifier: GPL-2.0
--
--allegro-objs := allegro-core.o allegro-mail.o
--allegro-objs += nal-rbsp.o nal-h264.o nal-hevc.o
--
--obj-$(CONFIG_VIDEO_ALLEGRO_DVT) += allegro.o
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-y += zynqmp/
-diff --git a/drivers/media/platform/allegro-dvt/zynqmp/Makefile b/drivers/media/platform/allegro-dvt/zynqmp/Makefile
-new file mode 100644
-index 000000000000..a8ddb9cf93a8
---- /dev/null
-+++ b/drivers/media/platform/allegro-dvt/zynqmp/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+zynqmp-allegro-objs := zynqmp-allegro-core.o zynqmp-allegro-mail.o
-+zynqmp-allegro-objs += nal-rbsp.o nal-h264.o nal-hevc.o
-+
-+obj-$(CONFIG_VIDEO_ZYNQMP_ALLEGRO_DVT) += zynqmp-allegro.o
-diff --git a/drivers/media/platform/allegro-dvt/nal-h264.c b/drivers/media/platform/allegro-dvt/zynqmp/nal-h264.c
-similarity index 100%
-rename from drivers/media/platform/allegro-dvt/nal-h264.c
-rename to drivers/media/platform/allegro-dvt/zynqmp/nal-h264.c
-diff --git a/drivers/media/platform/allegro-dvt/nal-h264.h b/drivers/media/platform/allegro-dvt/zynqmp/nal-h264.h
-similarity index 100%
-rename from drivers/media/platform/allegro-dvt/nal-h264.h
-rename to drivers/media/platform/allegro-dvt/zynqmp/nal-h264.h
-diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.c b/drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.c
-similarity index 100%
-rename from drivers/media/platform/allegro-dvt/nal-hevc.c
-rename to drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.c
-diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.h b/drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.h
-similarity index 100%
-rename from drivers/media/platform/allegro-dvt/nal-hevc.h
-rename to drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.h
-diff --git a/drivers/media/platform/allegro-dvt/nal-rbsp.c b/drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.c
-similarity index 100%
-rename from drivers/media/platform/allegro-dvt/nal-rbsp.c
-rename to drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.c
-diff --git a/drivers/media/platform/allegro-dvt/nal-rbsp.h b/drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.h
-similarity index 100%
-rename from drivers/media/platform/allegro-dvt/nal-rbsp.h
-rename to drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.h
-diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
-similarity index 99%
-rename from drivers/media/platform/allegro-dvt/allegro-core.c
-rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
-index e491399afcc9..8895d7755987 100644
---- a/drivers/media/platform/allegro-dvt/allegro-core.c
-+++ b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
-@@ -31,7 +31,7 @@
- #include <media/videobuf2-dma-contig.h>
- #include <media/videobuf2-v4l2.h>
- 
--#include "allegro-mail.h"
-+#include "zynqmp-allegro-mail.h"
- #include "nal-h264.h"
- #include "nal-hevc.h"
- 
-diff --git a/drivers/media/platform/allegro-dvt/allegro-mail.c b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
-similarity index 99%
-rename from drivers/media/platform/allegro-dvt/allegro-mail.c
-rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
-index aadc947a77ae..88a98f9e5d00 100644
---- a/drivers/media/platform/allegro-dvt/allegro-mail.c
-+++ b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
-@@ -12,7 +12,7 @@
- #include <linux/string.h>
- #include <linux/videodev2.h>
- 
--#include "allegro-mail.h"
-+#include "zynqmp-allegro-mail.h"
- 
- const char *msg_type_name(enum mcu_msg_type type)
- {
-diff --git a/drivers/media/platform/allegro-dvt/allegro-mail.h b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.h
-similarity index 100%
-rename from drivers/media/platform/allegro-dvt/allegro-mail.h
-rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.h
--- 
-2.30.2
+I'm sorry if I mistook the convention. In that case, the previous
+patche emails I had sent has the signoff. I had thought that was
+incorrect.
 
+Thanks,
+Siddh
+
+
+
+--=-Bp4pj7CWrr84fVnkU7dy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEQ4+7hHLv3y1dvdaRBwq/MEwk8ioFAmdNi2gACgkQBwq/MEwk
+8iooOhAAhonS0MQxXJoF4jifa3vwtpX1fMazGN1c8eMAIBU3BqIty84ivhZ162fn
+RAL1S2igl4K52SZj+R8IgOvfNSWR0gtUAhqZwo6ZWMheoUdsoJ0Kn093y3xlxIH5
+1yV9cjuaVjymwe3P6OcEZB9OZTX/Apf0Yn8tNzl6QWsc39E/WcRo2RxaOBtmGhy7
+ShrWeShcQDcHh1vU9nOvytv69klgjJjEnMAuMniqCjWbuBqtMuUwX8blo5ba9BYC
+9E6cD3d4MzVXZogxnSU0lSMB+qWZj7Ix9NjjF8uoeiX8SayDthdxahVkVkuvpeHV
+JxKwP9zW2lan/ha8rIFFkF8OKhV6CJ+8jyly9a8fCWHwaKieBlshkJUZjHecsFx1
+6y6pPN4nGtIp7BB19OMbbuQrwfSBH1MfAUzqD0iiJahWjgE3eZIfoTCN/tAeGtGd
+SIY5rK4JwZrQXPfPWA7g492poHA6jtJ3ZUumH31hVuH22uW8zWj3TAuXl8gKjIib
+LK3CITjT6ZiFdMLeKb6hGTdgVrTqSS01tjM3xcGIrP4TQ5n+wQDBQL1V3+RAsJOv
+MQMecnyVwBUS9m1oqLM2zC93iFM0c/LrgKogVeTKz5fahCzffWZdsuAytuaiuGqU
+4PDAN+MRmfrLz9jUk3dKjH5vfbA3jVqD5CRy0h8pWFyMtE7H92Q=
+=qxO7
+-----END PGP SIGNATURE-----
+
+--=-Bp4pj7CWrr84fVnkU7dy--
 
