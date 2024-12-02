@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-426900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D13D9DF9EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:32:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29589DF9EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:32:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7FF28187C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:32:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82812B21C0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7731F8AFF;
-	Mon,  2 Dec 2024 04:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237E31F941D;
+	Mon,  2 Dec 2024 04:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXfVa5F8"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ef0Guuyu"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41B61F8F19;
-	Mon,  2 Dec 2024 04:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DB61F8F1E;
+	Mon,  2 Dec 2024 04:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733113895; cv=none; b=EVkQZyZDD5CrciNFPbtDusyMHs6oqNcdpm49J2bOwYHPopWnTPopp3yRWRk1PPbvS0YAxYUx84fPTUN9eK4J76eXLAiWO5iyezxGhujXSd1ojIuSYLgcP09dPwdVIosK1mV59fO9UKwlSex+wlI1A4loJ7kwMueeyEDLIs21nhk=
+	t=1733113897; cv=none; b=g+7QPE4+eKxPHbYyuPF/W9TxAes2mW5F/NWioF2qhKA28XwIl+HsT1ZzMTZymWYSsi83yVmP9DVBk3lc/pX64YDCSSWeHXHWYH8oFGmxuVggEFzAJdxcoYXZzZu9nJWxXVqENbLuiNLkE7QlrRRIbnzCFUm8VaSysjdRzquhF9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733113895; c=relaxed/simple;
-	bh=oY9lbTYj5kesSZ5kBO+VHe4hOcD3qbTqWUzofJFt5K0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=l6120EjqdKtRsJkeemlRBwrgkky7Q5FsMvFo1JxHxlM69o4eKqCUwE7cCkphw98qQtPkAleKxYFH5vfwOhWx/zCRMYYrVqhFQz6lViqU1SrTgYCHG+6y8Rm5ZHXdq4OEdiUpiQ7wRPY4p4qEX46KYQtTeKHGxF2jngYOlGad6wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CXfVa5F8; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1733113897; c=relaxed/simple;
+	bh=nP6q89VMPYBcSc3bkFze3v64dBfeGjwZ6jzt5hopwnc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NlGGtHrADcOpnFUkRSDFKfE3FiO1vAeDli6gidOHuF7jnlCauaYGsUdPzUfU8eHmlTTP756HLw5fJIpWzZX+21qIDtnKyx7q/V1rhKkubNsIAqHPqIG6rhg2EiFlj0HGokt642Ll6Fm2ZcZuK4TzyyfEGyyp/fzp5CM1ni100yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ef0Guuyu; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa5366d3b47so623273866b.0;
-        Sun, 01 Dec 2024 20:31:31 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa549d9dffdso621494566b.2;
+        Sun, 01 Dec 2024 20:31:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733113890; x=1733718690; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733113894; x=1733718694; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=oY9lbTYj5kesSZ5kBO+VHe4hOcD3qbTqWUzofJFt5K0=;
-        b=CXfVa5F8f2cWxQ3M6sB+WBx7k3JGSkDxElBG2UXeyKrtYMw7S4sfe1TVf4dfeQEV5D
-         Uj11WuN4/bhLhV9QE7HJsUznfAANyOQLLye8VhCIFdx2Du2TpDxYVpOlS7vVXsH+PCXq
-         m7hKLIOZj+rxNSB1InJClQ/Z4AIkYoBSuIDDkJtSO6xHjzx755asMmAbRlO1XJGQuawq
-         ZGaCEKz2vNEcq8nrB++5xSYV+qUyQwgw3r4d8VAsubtMAWKrlWq/13BXJ0vzuTmgvrrD
-         GfLofA2fjoQ7c1TcwzTq/ElX3Z6DnBYrEiSXksCedTZbsGpeiXJ129qfwjLOovBDuSlU
-         nLMg==
+        bh=nP6q89VMPYBcSc3bkFze3v64dBfeGjwZ6jzt5hopwnc=;
+        b=ef0Guuyul+neA6oePeg0j/lsTs3dTLvYXbCQx77uhqbkLnJpY+5sNlDGZWCkSg7sPP
+         UrzUfWFckt/BpdQ5dnJT/lIiTk1o/PktFNBuE8/tbK1HVzk1qYk+Fleb0t+ZGYZ/lbZH
+         0uuiSXi9tQ89yITfCVYxgn46Wg/Fkb2pugdglh1gxKjwL1USHuXJmnA2gtGR2uluaJru
+         cEYg4nJY7taZ5bfRvBqkZHO6VKzSZ67p1oj80ILRidKG3UW5SUI8TWObGaHc+f3b5ZTP
+         CE8lKhGrPAFks13tGvhPEgOCOfhQJeraMiR75JGHPBQr1sWvz6VbHHGTULauSDQ4dA8t
+         3uAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733113890; x=1733718690;
+        d=1e100.net; s=20230601; t=1733113894; x=1733718694;
         h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oY9lbTYj5kesSZ5kBO+VHe4hOcD3qbTqWUzofJFt5K0=;
-        b=qaoqUocYpQqpVYNKCOMSGa2J3CgMnjWjTjcdb3aG6Jd0IcUl9gIpXI0a8N6+r0cwBQ
-         BD12D+uKOnM2zfA52u9tK909XFWBKZ9sGjg5ATk4LtfGhilBj4ST43s74wHAPe+G4s1v
-         V8NIi5ldRE5XZiGqB3IGfQARpLqK/iQKerTU0MM2HnBULR+wACNdvxxBxarRh0J4KJb5
-         QTDjmEQY2N5gc+lc9zUbBDz7YEzuuITOqCvG4M18n7JDwoulQKfI8i6mTdnyZwloFJLa
-         /PXGR2Mzk4RS38uOl7N9s+fGcxrEAI2xSUgzN9TrBNibviSxXnFcblG2fHuZefAMJJ7/
-         sH1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXL0m9OkMsZBVCU6ET0NU6/jKvGisVm5L4BU8tTTgJ+MKuv7yoc1xM1OyvKp0R5SrPtUMWvQEf654RclGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5SoJdu0djEqn1aE4i5D0Ii5qUVH42Pv89nDLmPqqE3yzhuhdf
-	1nwaIORTj+R2z4w5TSbdTFxcxbeQLhpzwSu35+sQSmeH2xkF7ndoGuitAW5/CHn1HhB0mJ4J6Pd
-	D0jCQa2/ALF9hv8SbkVyAUluZ1zw=
-X-Gm-Gg: ASbGncvUbs+OgYoOQHGTbdgE1UBXVSrZxV59wDPjzj1nLPUsE1QdNEgSQCStI61l2Vw
-	5nHaKLi7mac1HoEo8s0fSmZczD5rXtODe
-X-Google-Smtp-Source: AGHT+IGLHgN2lSBuI8Vi73vkLuueEXO3I5ntd4QiZ9GlpDHGh0Mqp1BSoKpleMQ3LoRsw0Wpz72s8HhSs1bQ5VVsMC4=
-X-Received: by 2002:a17:907:778f:b0:aa5:1019:7ade with SMTP id
- a640c23a62f3a-aa580f1d550mr1609342466b.13.1733113889869; Sun, 01 Dec 2024
- 20:31:29 -0800 (PST)
+        bh=nP6q89VMPYBcSc3bkFze3v64dBfeGjwZ6jzt5hopwnc=;
+        b=Sbut7sxiruPn1PFmGz8e4jNhLCho7MBwx7qqjXb+54tCaktEIQ5EzXPixuctdTV0Wv
+         wbhShYnoHm8AWpkvrdg4Putn9+PjRIJwsFh4jGtiMP0mriJnnLRX3y5DFyQ7tj5PkpSo
+         aMwPbQYb1GZjPilQg3tHYUwvtXdKJrO41r83Ed7luB8NAuBEI4VDCgJI7758Vz3W7YnY
+         BECUK/wx+WdOXH7jp7gX+24Zcrl77jUv5TaeXK2W0hGM63f8egfx+KSetgxTA+Acm535
+         OWY6BaTECTeT8Dmxsme8ENiLdkqRJ9tREuBe1OT7PM78WN/4aPo1rVajs2dC1nQkIuDm
+         qECQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRUS9QZjKbd0VQRIyjCCDXfQ90oLuPuzleztjQ1/p2f2KHJHU5U04ZD8ZGd869Ve1vcm2vWUdjbWToaDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf6wMM7y1pVhcJv2xbp9eZGK1bfdKjnABz1uzUfg2HDFj5jRvh
+	H+QRTCZ18SQTF5bDIPcy+/Ou6s5a6v7MrDqrlXXFV6RgcxViAb+HMZ8ue15+YKhrycCai1U1to3
+	Ql0FlkQTipCK2XLM4tgUbKy9Gx8eP+UOU
+X-Gm-Gg: ASbGncseJRo3zr+7KGFClvpxStW+08vffMT6JK3J2QfvdKj8sHG6OSHIgEq1Y9bepk8
+	DxWm9LgQt42gji1sK0I8dHAG1EJroy7DL
+X-Google-Smtp-Source: AGHT+IG/BxKufK2xEWq/FlIo/lNZdA0vjxD9Oze68ycc32dTmLkD58uANCdSlfypJLXn0G76Fx/fHjkqA0wFUe/guvw=
+X-Received: by 2002:a17:906:31cc:b0:a9a:bbcc:508c with SMTP id
+ a640c23a62f3a-aa580ef2b02mr1733005766b.2.1733113894170; Sun, 01 Dec 2024
+ 20:31:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,92 +70,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: cheung wall <zzqq0103.hey@gmail.com>
-Date: Mon, 2 Dec 2024 12:31:18 +0800
-Message-ID: <CAKHoSAtO1vE+_-Fo9Gc9Tv2bgtubkBYk6uEOddJr79DNQvmSQQ@mail.gmail.com>
-Subject: "general protection fault in netlbl_unlhsh_add" in Linux Kernel
- Version 4.9
-To: paul@paul-moore.com, "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 2 Dec 2024 12:31:22 +0800
+Message-ID: <CAKHoSAtp6Eu3HoUvdGuaHxt21zoHkVWmmGrRK9mw2T+-r-fEYw@mail.gmail.com>
+Subject: =?UTF-8?Q?=E2=80=9CBUG=3A_unable_to_handle_kernel_paging_request_in_an?=
+	=?UTF-8?Q?on=5Finode=5Fgetfile=E2=80=9D_in_Linux_Kenrel_Version_2=2E6=2E32?=
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 I am writing to report a potential vulnerability identified in the
-Linux Kernel version 4.9
+Linux Kernel version 2.6.32, specifically on the PowerPC architecture.
 This issue was discovered using our custom vulnerability discovery
 tool.
 
-Affected File: netlabel_unlabeled.c
+Affected File:
 
-File: netlabel_unlabeled.c
-Function: netlbl_unlhsh_add_addr4
+File: fs/anon_inodes.c
 
-Detailed call trace:
+Function: anon_inode_getfile
 
-sr 1:0:0:0: [sr0] unaligned transfer
-tmpfs: Bad mount option nr_)nodes
-9pnet: Insufficient options for proto=fd
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
+Detailed Call Stack:
+
+b3f455be4663db/report0
+sched_yield()
+flistxattr(r7, &(0x7f0000003040)=""/124, 0x7c)
+dup(r4)
+#executor: Prog has number of calls = 30
+0x0
+Unable to handle kernel paging request for data at address 0x00000014
+Oops: Kernel access of bad area, sig: 11 [#1]
 Modules linked in:
-CPU: 1 PID: 6915 Comm: syz.2.719 Not tainted 4.9.0+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-task: ffff88006b952940 task.stack: ffff88005d920000
-RIP: 0010:[<ffffffff82f4e3e6>] [<ffffffff82f4e3e6>]
-netlbl_unlhsh_add_addr4 net/netlabel/netlabel_unlabeled.c:262 [inline]
-RIP: 0010:[<ffffffff82f4e3e6>] [<ffffffff82f4e3e6>]
-netlbl_unlhsh_add+0x8e6/0xf00 net/netlabel/netlabel_unlabeled.c:430
-RSP: 0018:ffff88005d9274c8 EFLAGS: 00010257
-RAX: 000000000100007f RBX: 0000000000000004 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000202 RDI: 0000000000000000
-RBP: ffff88005d9275b8 R08: 00000000000000a0 R09: ffff88005d80c000
-R10: 00000000e8d5b47c R11: 0000000097bb816a R12: ffff88006abcd680
-R13: 0000000000000000 R14: ffff88005d9bcae0 R15: ffff88006879542c
-FS: 00007f7c96bb1640(0000) GS:ffff88006d100000(0000) knlGS:0000000000000000
-CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7c96baff88 CR3: 0000000069138000 CR4: 00000000003406e0
-Stack:
-ffffffff81946e40 ffff88006abcd680 1ffff1000bb24e9e 0000012b83476cad
-0000000000000000 0000000041b58ab3 ffffffff834b7a00 ffffffff82f4db00
-ffff88005d927638 00000000024000c0 0000000000000022 ffff88005d927550
+REGS: c05cbc60 TRAP: 0300 Not tainted (2.6.32)
+DEAR: 00000014, ESR: 00000000
+GPR00: 00000000 c05cbd10 c0591330 00000009 c05cbd18 c78020c0 00000000 00000020
+GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+NIP [c00f23c0] anon_inode_getfile+0x90/0x170
+root/linux-2.6.32/fs/anon_inodes.c:109
 Call Trace:
-[<ffffffff82f4ed95>] netlbl_unlabel_staticadddef+0x395/0x460
-net/netlabel/netlabel_unlabeled.c:980
-[<ffffffff82915b6c>] genl_family_rcv_msg+0x69c/0xc30 net/netlink/genetlink.c:636
-[<ffffffff829162ab>] genl_rcv_msg+0x1ab/0x260 net/netlink/genetlink.c:660
-[<ffffffff82914477>] netlink_rcv_skb+0x297/0x390 net/netlink/af_netlink.c:2298
-[<ffffffff829154b8>] genl_rcv+0x28/0x40 net/netlink/genetlink.c:671
-[<ffffffff82912e84>] netlink_unicast_kernel
-net/netlink/af_netlink.c:1231 [inline]
-[<ffffffff82912e84>] netlink_unicast+0x4c4/0x6e0 net/netlink/af_netlink.c:1257
-[<ffffffff82913a17>] netlink_sendmsg+0x977/0xca0 net/netlink/af_netlink.c:1803
-[<ffffffff8280164a>] sock_sendmsg_nosec net/socket.c:621 [inline]
-[<ffffffff8280164a>] sock_sendmsg+0xca/0x110 net/socket.c:631
-[<ffffffff82803480>] ___sys_sendmsg+0x730/0x870 net/socket.c:1954
-[<ffffffff82804cf1>] __sys_sendmsg+0xd1/0x170 net/socket.c:1988
-[<ffffffff82804dbd>] SYSC_sendmsg net/socket.c:1999 [inline]
-[<ffffffff82804dbd>] SyS_sendmsg+0x2d/0x50 net/socket.c:1995
-[<ffffffff82f8f937>] entry_SYSCALL_64_fastpath+0x1a/0xa9
-Code: 14 02 4c 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 f4 02
-00 00 48 89 d9 48 ba 00 00 00 00 00 fc ff df 41 8b 07 48 c1 e9 03 <0f>
-b6 0c 11 48 89 da 83 e2 07 83 c2 03 38 ca 7c 08 84 c9 0f 85
-RIP [<ffffffff82f4e3e6>] netlbl_unlhsh_add_addr4
-net/netlabel/netlabel_unlabeled.c:262 [inline]
-RIP [<ffffffff82f4e3e6>] netlbl_unlhsh_add+0x8e6/0xf00
-net/netlabel/netlabel_unlabeled.c:430
-RSP <ffff88005d9274c8>
----[ end trace ec99797c85dd42d0 ]---
+[c05cbd50] [c00f3e3c] eventfd_file_create+0x8c/0xe0
+root/linux-2.6.32/fs/eventfd.c:341
+[c05cbd90] [c0003174] execute_syscall+0xcc/0xf0
+root/linux-2.6.32/init/executor.c:465
+[c05cbfa0] [c00052e8] executor_main+0x2c/0x54
+root/linux-2.6.32/init/executor.c:709
+[c05cbff0] [c0000398] skpinv+0x2b0/0x2ec
+7c00492d 40a2fff4 80090000 90610010 3f20c05d 3be0fff4 4bf28275 7c240b78
+---[ end trace 31fd0ba7d8756001 ]---
 
-Repro C Source Code: https://pastebin.com/aHhVhbJ4
 
 Root Cause:
 
-The root cause appears to be a NULL pointer dereference or improper
-memory handling within the netlbl_unlhsh_add function, likely due to
-misconfigurations or faulty memory accesses. This could be exacerbated
-by incorrect kernel options or mounting configurations, such as
-unaligned transfers or missing options for 9pnet.
+The root cause of this issue is the kernel's failure to properly
+handle memory access during the execution of the anon_inode_getfile
+function. This is likely due to invalid or uninitialized memory being
+accessed, possibly as a result of a bug in memory allocation or an
+issue with pointer dereferencing. The function attempts to access data
+at an invalid address (0x00000014), which leads to a kernel paging
+request error, causing a segmentation fault. This could be caused by
+improper initialization of the anon_inode structures, incorrect memory
+handling, or a bug in the relevant kernel subsystems dealing with
+anonymous inodes or file operations.
 
 Thank you for your time and attention.
 
