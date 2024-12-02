@@ -1,121 +1,104 @@
-Return-Path: <linux-kernel+bounces-426860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E4E9DF980
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:22:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA6F9DF983
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:24:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CEF4B22625
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:21:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57D15161E8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3B21E2823;
-	Mon,  2 Dec 2024 03:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="bd67FZgt"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71161E1043;
+	Mon,  2 Dec 2024 03:24:05 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2049E1E2831
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 03:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2695F1E22ED;
+	Mon,  2 Dec 2024 03:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733109703; cv=none; b=U4UGvyBdDFs9lLyVw6+k2ZzmYwcBtTwt57uX6gwRseJeQDmwJ6xZ85lRZ7IIFEmpIy7I1IOiTNSP3No4zuCmuaDLPmd7UwwaFf9jYRAlBRXNI+T0koUVy0nI44+miBVx9e8bm1nfcQ4roVBbug26mW7OoKSDKeuJf3NdI3idxS8=
+	t=1733109845; cv=none; b=LzUHcWJWuduzVz17gcFk36R7Daf3pzYnhs37Ihkmax5hcn08RiR9RSEB6OoOpvpA4Ii8ODM5TZPtexTZjnzYN0xYx39FBSg7yHlrhKwq4Anxygcm66lkVD2/xUBhzD7woCnn7QjArexQqfzrfywhUjry2PMw9IpF0thSG4gB/9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733109703; c=relaxed/simple;
-	bh=19k00t3bhSauQp6R24aL1bW0bHM8u7tNAtzDOGnrjIA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=VxrBwhg7kGq1QmqR37N/z3JxhEWc4IYMeIufUdxxmaoIXRje5HrRtwcWfBS+DqzlvDJc6BKvsbvKSoo4NFNdqYij4Ppa+9PEUTn1vfav7kP2F2S0EsWbS7m0qW8muUjhvpBLKYeQyg9TLW1fa2Z7Thnno2zc2yHbsivkm7iuGPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=bd67FZgt; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21571559c05so616195ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 19:21:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1733109696; x=1733714496; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LwpNUnjMlFvYQmQxOKj3RBcYwjK66Q7pEDvGTCX7zBM=;
-        b=bd67FZgtAosiN5zyQUj3fgGBqmDkRD/fCSP7ylltYe5uuGg63PbRc4J8nMRohuwQFy
-         Gjgd6Eb6wAl/N9rtMFyn5NeqNTKYUdn8D4om/40PBPMaVoJsjB7jt5B2NJNB2Zi3aNQe
-         1zS7ScHCWZsHDS8tlzeGg+PJp9BOEWs1z1bzhoggeWxb2F3eXCrEz2S8e6L3Z8aRQhnS
-         gJICYPUBWpReqwYU6yvVNGdsAqm9s04nZPu7uLgTxYsIANN1EVRBdDRaiXgrA05FOPUg
-         iIzKrIMnhFvv9eX35gfXLQlQ1/OWabzHxbzFsEcaohlew5YLmpb8u/2Ey5uqmVNpKhaf
-         NiRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733109696; x=1733714496;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwpNUnjMlFvYQmQxOKj3RBcYwjK66Q7pEDvGTCX7zBM=;
-        b=GHriZZQi/TEvCjTNYjsv78sDwTfas9arsmiT93pZuXEP7scfBHHHsKsbN5HwoPyo/R
-         3YEoTnkSo9lmPH9VSrSKRviY1g8IrlwGprkddo4unnu/qcfQDhornFIK9ImvWo07qtAP
-         Nx8hUe5l5ZVUQrAkhl1eeLt77uhSK5lftjMcK4yB6bW4X2F7i7ZrBl2KkUjlYtNpnhrD
-         UdXowY4n87g6rxuT8Phn49vJTfbGSWZ7tssSVF2YhORf8Gdri31Q3nusFePZZs9R7jIa
-         mj4SUxuiaRNaceCMHnhPfPQNjufK0GFBilSMLjeYWpZVM08gEqUJbKzksaIpK/5kC+Y2
-         Fe0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXfp3OqgEdM9PqxrKZm9gvHYZBZiNY8vhPgmH+GYJIo1+h+48heEnd/I6zXhtrJfbAKhtKB4JkavTVDUWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH36eEsdLPLw4m9cHVnbJPyyyQmdd5vvQ39MMdFqD/2mSYp2Uh
-	YCWVS4x8g68XB7sXznrS+0235xEwvXlZm5zm9eonfcnF+5al/WZFP8Qo3ecJO3o=
-X-Gm-Gg: ASbGncu+ZmRqUvr3oI6jjYOlMCOxlZHW09NQ7tPA1Y6BSDiGSCCOgVBn2L+Di6eBOJl
-	+h7/ChQVeeXJNoZEjvYH/yQuFPleU7tCimUbQJOss3SOXwHc6UvCQvDX1uPBt1ovBuDr1OcWEde
-	ER/3qwMkN7WiGWZm809HD2qQgt1lZ7ny6aGqFy2ZpYLkgLYjdvqFL5riOQoXAl37rjWP/63jFE3
-	QQMJFji8IIdOZDb9R5csnU4djB7ajSMVGiuAxFon9czLAHkysvKD7uPyMv0bVzAM02InawweTDk
-	PBhmGhDE6X6Bxg==
-X-Google-Smtp-Source: AGHT+IEJN88pnwqqXHYSIyic7eyBMjw0obUFHPnwV3eN7HNKvCq55lxxoodclMDswm8TKyzGp9aVVQ==
-X-Received: by 2002:a17:902:edd0:b0:215:435d:b41a with SMTP id d9443c01a7336-215435db4a5mr63665425ad.1.1733109696542;
-        Sun, 01 Dec 2024 19:21:36 -0800 (PST)
-Received: from ubuntu.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521986004sm66305725ad.184.2024.12.01.19.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 19:21:36 -0800 (PST)
-From: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	wenst@chromium.org,
-	hsinyi@chromium.org,
-	sean.wang@mediatek.com,
-	dianders@google.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
-Subject: [PATCH v4 4/4] arm64: dts: mediatek: Modify audio codec name for pmic
-Date: Mon,  2 Dec 2024 11:20:35 +0800
-Message-Id: <20241202032035.29045-5-xiazhengqiao@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241202032035.29045-1-xiazhengqiao@huaqin.corp-partner.google.com>
-References: <20241202032035.29045-1-xiazhengqiao@huaqin.corp-partner.google.com>
+	s=arc-20240116; t=1733109845; c=relaxed/simple;
+	bh=kB013ck6ZxRml5ouW81cc/qXpUazcGI4mjou5IaCfuQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mZLWFp8PA/Ryn6Bqs89ARsWH5gGqeL/4PuPj9vok5Tva3JvKKAblFEjOYoZAVGZnIwwv6i7bfsLg+NtImohme1+rkLgmKBzUxmaO6W006D0QI+2eS6RDCNcdxcIWSkNVox9UenWWvDpgPjp+XAlQHZuRdWznIClRA9FYzbj5Jc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from zq-Legion-Y7000.. (unknown [180.111.103.148])
+	by APP-05 (Coremail) with SMTP id zQCowADn7389KE1n_dUuBw--.9423S2;
+	Mon, 02 Dec 2024 11:23:42 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: anup@brainfault.org,
+	ajones@ventanamicro.com,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH v2 0/4] RISC-V: KVM: Allow Svvptc/Zabha/Ziccrse exts for guests
+Date: Mon,  2 Dec 2024 11:21:26 +0800
+Message-Id: <cover.1732854096.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADn7389KE1n_dUuBw--.9423S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZrWUGw43JrWkXr1xKFy7trb_yoW3AFXEya
+	4xAryfWw18Wa1UCFyxAFn3GFWxJFZYkF17XFnFvr15WFnrZryayw18Wr48Ar4UWa15X3WD
+	Ar1rXrZak34avjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbf8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbbo2UUUUUU==
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiDAcTBmdNBhJyIwABsw
 
-change `codec` in pmic (in mt8186-corsola.dtsi) to `audio-codec`
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-Signed-off-by: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
+Advertise Svvptc/Zabha/Ziccrse extensions to KVM guest
+when underlying host supports it.
+
 ---
- arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Change since v1:
+- Arrange Svvptc in alphabetical order (Andrew)
+- Add Reviewed-by tags
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-index e324e3fd347e..cebb134331fb 100644
---- a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-@@ -1276,7 +1276,7 @@
- 		interrupts-extended = <&pio 201 IRQ_TYPE_LEVEL_HIGH>;
- 		#interrupt-cells = <2>;
- 
--		mt6366codec: codec {
-+		mt6366codec: audio-codec {
- 			compatible = "mediatek,mt6366-sound", "mediatek,mt6358-sound";
- 			Avdd-supply = <&mt6366_vaud28_reg>;
- 			mediatek,dmic-mode = <1>; /* one-wire */
+---
+v1 link:
+https://lore.kernel.org/all/cover.1732762121.git.zhouquan@iscas.ac.cn/
+
+Quan Zhou (4):
+  RISC-V: KVM: Allow Svvptc extension for Guest/VM
+  RISC-V: KVM: Allow Zabha extension for Guest/VM
+  RISC-V: KVM: Allow Ziccrse extension for Guest/VM
+  KVM: riscv: selftests: Add Svvptc/Zabha/Ziccrse exts to get-reg-list
+    test
+
+ arch/riscv/include/uapi/asm/kvm.h                |  3 +++
+ arch/riscv/kvm/vcpu_onereg.c                     |  6 ++++++
+ tools/testing/selftests/kvm/riscv/get-reg-list.c | 12 ++++++++++++
+ 3 files changed, 21 insertions(+)
+
 -- 
-2.17.1
+2.34.1
 
 
