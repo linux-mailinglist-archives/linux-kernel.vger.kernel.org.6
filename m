@@ -1,120 +1,117 @@
-Return-Path: <linux-kernel+bounces-427411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E802F9E009C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:34:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358A19E009F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2055C163808
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:33:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1308164750
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAA81FECD1;
-	Mon,  2 Dec 2024 11:23:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F5D1FECA8;
+	Mon,  2 Dec 2024 11:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QJY4JO46"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C2B1FECA8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AB420ADD2
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138588; cv=none; b=mK4ocF7MPEHOvfIhe14iyjT55jBk8FCo63+lbLTYp2xVrSpLQeiMeA8JJHblctSHOn7Y+X1OdaTweigS12jZtFviIuKxyJyKBuA4sOR8poQhIVLl5JiWP3/Zx+HhN0iSMOqQUAGrpze/FFerf4oriBPJIov+/anP+m6g9Imnd0Q=
+	t=1733138613; cv=none; b=P96rjG7V1DITfKMAac/+ZmatJV5wYYfVtT5hx7IV1YcFfjl/9vuy7j86t4NnTr9fjjsT6dVJCPOWR+m2XiQBw8G33rmto218+q/PGEB1F60G4OnjVY/wtBmFpu/CGfwE0DfZ+jfWbXPX1L5G8QWUJz/3PS8VKZKuaM00HHfh5VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138588; c=relaxed/simple;
-	bh=ZPaXYv47e/WQG4obGp3rPX00hCB/gvGfq8LMT3XH96c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TsraWoVd6oJhD84VHZrWYuqoYST0GWzTQIlZj5+SCIUFXTkojOEQ7rRprcs/EobwmC4AAqf0PF97189/ts71uCxuNvMkg1PlNGGnp9AwO8O19wQSWC3KWBF6ts7LlNTBSvSIo2Y0rOjh09TirAcQUINQT7gZRvncA3TGSExtXjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tI4Ve-0000UJ-EC; Mon, 02 Dec 2024 12:22:34 +0100
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tI4Vd-001Ht1-05;
-	Mon, 02 Dec 2024 12:22:33 +0100
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tI4Vd-003R1L-2E;
-	Mon, 02 Dec 2024 12:22:33 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Mon, 02 Dec 2024 12:22:32 +0100
-Subject: [PATCH v2 4/4] nvmem: imx-ocotp-ele: set word length to 1
+	s=arc-20240116; t=1733138613; c=relaxed/simple;
+	bh=3CwUiYzQSS9zQX15Z8WynaPmt4FF3csoPX1C+MgznUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ipvpe0OzLdmBw4TKYNYlajVylsnrHVW0RoQprSSj8iea213KkbSfVnFvgRC8x+L0MmLb8rgp5Em881NHGPFSkzyFLGG7vwJ7LfSJ1yDNlGOyUSK1AjRHWer3juHQrNIinR4QwPvHInwpGBSUMbpfTNdKZwXt04v0WSTjYkO75VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QJY4JO46; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733138609;
+	bh=3CwUiYzQSS9zQX15Z8WynaPmt4FF3csoPX1C+MgznUY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QJY4JO46MD8RaA3KdmhUPZ9xQ7YVc6mQkbjYEfAhYkhi2SGFwHcGVpbNZ26OKO9VN
+	 ycW3Kc52HxivZNn0QoFo144355/t7+3FLJie14iQsyArF+GT8RMCAZ0nejyRuKvOg8
+	 FNm68HWcUd7wjcbaEKMWFExOeRzJlcOcKSun21hm1GceDWKPC8jPUWqH3LwdG1DQ0w
+	 CpIbH0PogSJ7DPZRmP8lB4rzh9n8mDeZdf1MrRK/CP2fl5gDDpGfR1we9Ahm6bdo0y
+	 w9Om0UC/tOOQHl/P+epf+64HIdfkzrOTnfHuunwJQ+4So4uBdb1vuDdua51i1zYGmM
+	 w6u75MoQnLjmQ==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DD4B717E3624;
+	Mon,  2 Dec 2024 12:23:28 +0100 (CET)
+Date: Mon, 2 Dec 2024 12:23:09 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Philipp Zabel
+ <p.zabel@pengutronix.de>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] drm/panfrost: Remove unused device property
+Message-ID: <20241202122309.12cf8e25@collabora.com>
+In-Reply-To: <20241128211223.1805830-9-adrian.larumbe@collabora.com>
+References: <20241128211223.1805830-1-adrian.larumbe@collabora.com>
+	<20241128211223.1805830-9-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-imx-ele-ocotp-fixes-v2-4-3c021a97eb5d@pengutronix.de>
-References: <20241202-imx-ele-ocotp-fixes-v2-0-3c021a97eb5d@pengutronix.de>
-In-Reply-To: <20241202-imx-ele-ocotp-fixes-v2-0-3c021a97eb5d@pengutronix.de>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Shawn Guo <shawnguo@kernel.org>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Peng Fan <peng.fan@nxp.com>
-Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, 
- stable <stable@kernel.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733138553; l=1541;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=ZPaXYv47e/WQG4obGp3rPX00hCB/gvGfq8LMT3XH96c=;
- b=5eU7lUWgrtgcrvC11GGxw98/t4z9jTOvrrvJztR35tRTHRnzL7ycIfw5wyjjSm/QbkFrm81FC
- nxc/gLkbVJ9Bjkiw12E7CkWNSqvRHmkKEmAtSXJ4EsUurRQCS+UiAQe
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The ELE hardware internally has a word length of 4. However, among other
-things we store MAC addresses in the ELE OCOTP. With a length of 6 bytes
-these are naturally unaligned to the word length. Therefore we must
-support unaligned reads in reg_read() and indeed it works properly when
-reg_read() is called via nvmem_reg_read(). Setting the word size to 4
-has the only visible effect that doing unaligned reads from userspace
-via bin_attr_nvmem_read() do not work because they are rejected by that
-function.
+On Thu, 28 Nov 2024 21:06:23 +0000
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Given that we have to abstract from word accesses to byte accesses in
-the driver, set the word size to 1. This allows bytewise accesses from
-userspace to be able to test what the driver has to support anyway.
+> The as_in_use_mask device state variable is no longer in use.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
 
-Fixes: 22e9e6fcfb504 ("nvmem: imx: support i.MX93 OCOTP")
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: stable <stable@kernel.org>
----
- drivers/nvmem/imx-ocotp-ele.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-diff --git a/drivers/nvmem/imx-ocotp-ele.c b/drivers/nvmem/imx-ocotp-ele.c
-index 422a6d53b10ef..ca6dd71d8a2e2 100644
---- a/drivers/nvmem/imx-ocotp-ele.c
-+++ b/drivers/nvmem/imx-ocotp-ele.c
-@@ -153,7 +153,7 @@ static int imx_ele_ocotp_probe(struct platform_device *pdev)
- 	priv->config.owner = THIS_MODULE;
- 	priv->config.size = priv->data->size;
- 	priv->config.reg_read = priv->data->reg_read;
--	priv->config.word_size = 4;
-+	priv->config.word_size = 1;
- 	priv->config.stride = 1;
- 	priv->config.priv = priv;
- 	priv->config.read_only = true;
-
--- 
-2.39.5
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_device.h | 1 -
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c    | 1 -
+>  2 files changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm=
+/panfrost/panfrost_device.h
+> index fc83d5e104a3..b91957f886ea 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+> @@ -117,7 +117,6 @@ struct panfrost_device {
+>  	DECLARE_BITMAP(is_suspended, PANFROST_COMP_BIT_MAX);
+> =20
+>  	spinlock_t as_lock;
+> -	unsigned long as_in_use_mask;
+>  	unsigned long as_alloc_mask;
+>  	unsigned long as_faulty_mask;
+>  	struct list_head as_lru_list;
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/pa=
+nfrost/panfrost_mmu.c
+> index 5e30888bea0e..95df39b463d8 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -604,7 +604,6 @@ static void panfrost_mmu_release_ctx(struct kref *kre=
+f)
+>  		pm_runtime_put_autosuspend(pfdev->base.dev);
+> =20
+>  		clear_bit(mmu->as, &pfdev->as_alloc_mask);
+> -		clear_bit(mmu->as, &pfdev->as_in_use_mask);
+>  		list_del(&mmu->list);
+>  	}
+>  	spin_unlock(&pfdev->as_lock);
 
 
