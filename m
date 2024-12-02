@@ -1,283 +1,375 @@
-Return-Path: <linux-kernel+bounces-427262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6867F9DFF2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:43:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F6519DFEBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:23:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1412B24BB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 200602817FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47F51FBC84;
-	Mon,  2 Dec 2024 10:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04D61FC11B;
+	Mon,  2 Dec 2024 10:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="JfQBi91v";
-	dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="48z6gCSB"
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PahSbI/X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612B91FC0FC;
-	Mon,  2 Dec 2024 10:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733135158; cv=pass; b=L2IKgGgFGS8eH/YuFmPO1qotqM5mzNut/tzI0TeDCbxpwtWrE8nsZ9Gj41BxotP/rJn4Njq681uaFwU0gTduDhu+wQzqVATF7B14TfF8/naP1JCSRQAPGQ/82DGSXEywuVtV3QwWGky1gYhXzgR51JDbzFiR1BpHX+NBEe42HIo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733135158; c=relaxed/simple;
-	bh=Amtrq3uG37yLQGZx5M//8x249jchyIj0eGx+jG6DnC8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q524XXfEKkvgeqg2qYojeaWYRKUgDfCeOl9VmaNXCVO+/TjhSn9XqsSYsmDkKiBW4hLJYpbSGdNC75rW7FcEZELxb2e6MDiZuHtbo5qgvpTrAkN6S8/3OqlpjPG0j/BCmHMK38tvG0XTiCF37G+JdBMgA0yPi8GH9Eb3Xs+T6aY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de; spf=pass smtp.mailfrom=aepfle.de; dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=JfQBi91v; dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=48z6gCSB; arc=pass smtp.client-ip=85.215.255.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aepfle.de
-ARC-Seal: i=1; a=rsa-sha256; t=1733134960; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=KaOPbF/TuU/VCGQHz9i8/pvudX45CL7HeG1iuP3xY6/f9geMfhxV0XshFc1dOHUvzA
-    yhKPG/eKVSUXpCXHYZ/wVPBeWVsBfDR2MU/+iaOrkzuIAy+GLC7h6OvtfvgRSUddfhhG
-    1CSgg845642x4eHD6IF3z3zelLepaCicytc4OzvKCbqWKaAe3ig2JUIOKYSBHaKxeIr+
-    fYwZDr3oy9qUkQqPkCMvYsh6vYdZ5kHuJN4zGC5iZnl2KNTgVoHK8NN662SyBIcx26Zl
-    /FhYWv9y33x8x+3v+8dm3EeZbzS5eip3ZuXhINqU4UUi8HFaLGDsJ+OHmciK+DgDx41k
-    BvLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1733134960;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=eMtgIuevZVFUMoAvNCXgsF1FZH8gzDNbszmiv3MyIi4=;
-    b=HFGeSc8mvb9kJgPDU5UwnA0r+PT5/mo81iDpuJVi9u3znY0vhPxzXQyr2rAlEXiD7r
-    AlItk+ZFSTl6tEGCaho49QTCR8bm3Dg0emx047e71WSlG1xVGfrp3Jn0lbUKv+NvRnZz
-    wSlBfj3c1QByI7cPwdp2rhCm4sdkLELJndTB/c2KIAGNrMxuEE8+lXxRDCgZc1K+DyQT
-    MoG4276x+A3YkXRqWjN8KKanIyYr1baItGydnGOiiDTQR7l0mhj061vrg0jzhj8xnmdL
-    LnPFvQNMDVMo4HWMl3HyeECVLUk4Rhi9uXUE6JgiVr8vsQdIAiNc9+gG95I9z9SO/mru
-    QPpA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1733134960;
-    s=strato-dkim-0002; d=aepfle.de;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=eMtgIuevZVFUMoAvNCXgsF1FZH8gzDNbszmiv3MyIi4=;
-    b=JfQBi91vlvjRLUbyNlXgjElDU6Lwz/JiLNB7uWS5dwREgRZlNz03xYqNfSSJwinx/x
-    UmMRZEAhq/Ro4amDl8nRYfr2gBrGCRmbWjBEs9UUPzWp07pNA3/pajVGVT0CSlfqhUZa
-    lOQiKDhm9eEQyIl77m64w+f+5izf7RO55/bP798UbKiMMJX4YONkbOSXGnysSAgqQPW7
-    EUgrgbKxl+uesSeGHoMCLTGsJXtsoO/Kay8g48io5Z3tlSydK1SnVlZLkelVNjwmLBFy
-    hJ++x4T8YwqlmzU7rmlxQMN8SwHSVKDpxZ63PGu30UL8xEHFXmpVHy1IhNifX9doNPEr
-    LyJA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1733134960;
-    s=strato-dkim-0003; d=aepfle.de;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=eMtgIuevZVFUMoAvNCXgsF1FZH8gzDNbszmiv3MyIi4=;
-    b=48z6gCSBrBX87T42AUE4R0UAxrt83UBwqUyjgyzgS3o9Em9FmdF6tE3cPU1p8JPJCk
-    cTxsB6VtSS8bBBF4bzCg==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0uv8ZofWaSUMjanMCZmxMwm2OGJkumVDfIDOsNMxne61spO"
-Received: from sender
-    by smtp.strato.de (RZmta 51.2.11 AUTH)
-    with ESMTPSA id Dd65250B2AMeokn
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 2 Dec 2024 11:22:40 +0100 (CET)
-From: Olaf Hering <olaf@aepfle.de>
-To: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH v1] tools/hv: update route parsing in kvp daemon
-Date: Mon,  2 Dec 2024 11:19:55 +0100
-Message-ID: <20241202102235.9701-1-olaf@aepfle.de>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3C31FA829;
+	Mon,  2 Dec 2024 10:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733135004; cv=none; b=fon6NZWXfykfcPNdSqN/ESEe1RFQ4WFyNOxeM07ZQC9RPICqSKUp0NwB1lVdiSNt44NWZxEaUXvuOnZDpEYQCja66ernQsAoZ6iOtr89acufgVWlhz+dXLW8AdR97mFQWWOd3aReMSLFpdkthcZJ4heF/5l8vHGyRGiEqBH4fps=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733135004; c=relaxed/simple;
+	bh=8BS/xJX6ypVQCl4Re3aAiciu/UhD3J9Ut8F6ZMNAF4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h55u7UeCfa+DYFA3qCRn2pY7DSVzd4nIIF6ICycmHi7Z90qV0rZKBiuro/pFdCSHNB/23kdB0PDS1CLnwFTe8lxsGEvB10oIU9rxti3e52vXXQVxznk8HKyAvetnBbr/zQg52qRNW7sg6+X25wg10C5QgawySCCoWK8hafPYxFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PahSbI/X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAD6AC4CED1;
+	Mon,  2 Dec 2024 10:23:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733135003;
+	bh=8BS/xJX6ypVQCl4Re3aAiciu/UhD3J9Ut8F6ZMNAF4A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PahSbI/X1m9veA7z+v/VgZe9eCxT9RYybHUNxemJSHqeKec0xNb6nWC2pVrGbV2+M
+	 W0xGRixWRGTeH3PRB+FRPyq9rc8UoYS7kxigWEwOmU5NIGYB4UObW6LJU97/vqF6Qd
+	 SvaWq59ByyFgr4fSkmxgQ7Gfsr7P2HJXM/C+pdDQiwZy41qycnO9epib2LBpICZdA2
+	 crs3fout2xem/o3rkqKbx8HTSuYt3VtaOv3/xN9HMn361/Y+FZQAPKL16+hcD5HRxN
+	 qCrrql54PiHv85/CGfj/NT8nM5FJqLjFsok2w3m5nK4ka0vXyehsefk8Xjkf1sLCNt
+	 pkhVokbG6tNVQ==
+Message-ID: <59c27c5d-3db7-44da-b3ac-7b8e7c8b6f16@kernel.org>
+Date: Mon, 2 Dec 2024 11:23:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/9] mfd: Add new driver for MAX77705 PMIC
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+ Purism Kernel Team <kernel@puri.sm>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org
+References: <20241202-starqltechn_integration_upstream-v9-0-a1adc3bae2b8@gmail.com>
+ <20241202-starqltechn_integration_upstream-v9-6-a1adc3bae2b8@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241202-starqltechn_integration_upstream-v9-6-a1adc3bae2b8@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-After recent changes in the VM network stack, the host fails to
-display the IP addresses of the VM. As a result the "IP Addresses"
-column in the "Networking" tab in the Windows Hyper-V Manager is
-empty. This is caused by a change in the expected output of the
-"ip route show" command. Previously the gateway address was shown
-in the third row. Now the gateway addresses might be split into
-several lines of output. As a result, the string "ra" instead of
-an IP address is sent to the host.
+On 02/12/2024 10:47, Dzmitry Sankouski wrote:
+> Add the core MFD driver for max77705 PMIC. We define five sub-devices
+> for which the drivers will be added in subsequent patches.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> 
 
-To me more specific, a VM with the wellknown wicked network
-managing tool still shows the expected output in recent openSUSE
-Tumbleweed snapshots:
 
-ip a show dev uplink;ip -4 route show;ip -6 route show
-2: uplink: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state ...
-    link/ether 00:15:5d:d0:93:08 brd ff:ff:ff:ff:ff:ff
-    inet 1.2.3.4/22 brd 1.2.3.255 scope global uplink
-       valid_lft forever preferred_lft forever
-    inet6 fe80::215:5dff:fed0:9308/64 scope link proto kernel_ll
-       valid_lft forever preferred_lft forever
-default via 1.2.3.254 dev uplink proto dhcp
-1.2.3.0/22 dev uplink proto kernel scope link src 1.2.3.4
-fe80::/64 dev uplink proto kernel metric 256 pref medium
-default via fe80::26fc:4e00:3b:74 dev uplink proto ra metric 1024 exp...
-default via fe80::6a22:8e00:fb:14f8 dev uplink proto ra metric 1024 e...
+...
 
-A similar VM, but with NetworkManager as network managing tool:
+> +
+> +static int max77705_i2c_probe(struct i2c_client *i2c)
+> +{
+> +	struct max77693_dev *max77705;
+> +	struct i2c_client *i2c_fg;
+> +	struct regmap_irq_chip_data *irq_data;
+> +	struct irq_domain *domain;
+> +	int ret;
+> +	unsigned int pmic_rev_value;
+> +	enum max77705_hw_rev pmic_rev;
+> +
+> +
 
-ip a show dev eth0;ip -4 route show;ip -6 route show
-2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP...
-    link/ether 00:15:5d:d0:93:0b brd ff:ff:ff:ff:ff:ff
-    inet 1.2.3.8/22 brd 1.2.3.255 scope global dynamic noprefixroute ...
-       valid_lft 1022sec preferred_lft 1022sec
-    inet6 fe80::215:5dff:fed0:930b/64 scope link noprefixroute
-       valid_lft forever preferred_lft forever
-default via 1.2.3.254 dev eth0 proto dhcp src 1.2.3.8 metric 100
-1.2.3.0/22 dev eth0 proto kernel scope link src 1.2.3.8 metric 100
-fe80::/64 dev eth0 proto kernel metric 1024 pref medium
-default proto ra metric 20100 pref medium
-        nexthop via fe80::6a22:8e00:fb:14f8 dev eth0 weight 1
-        nexthop via fe80::26fc:4e00:3b:74 dev eth0 weight 1
 
-Adjust the route parsing to use a single line for each line of
-output. Also use a single shell invocation to retrieve both IPv4
-and IPv6 information. The actual IP addresses are expected after
-the "via" keyword.
+Only one blank line
 
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
----
- tools/hv/hv_kvp_daemon.c | 108 ++++++++++++++++++++++++++++++---------
- 1 file changed, 84 insertions(+), 24 deletions(-)
+> +	max77705 = devm_kzalloc(&i2c->dev, sizeof(*max77705), GFP_KERNEL);
+> +	if (!max77705)
+> +		return -ENOMEM;
+> +
+> +	max77705->i2c = i2c;
+> +	max77705->dev = &i2c->dev;
+> +	max77705->irq = i2c->irq;
+> +	max77705->type = TYPE_MAX77705;
+> +	i2c_set_clientdata(i2c, max77705);
+> +
+> +	max77705->regmap = devm_regmap_init_i2c(i2c, &max77705_regmap_config);
+> +
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index ae57bf69ad4a..63b44b191320 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -24,6 +24,7 @@
- 
- #include <sys/poll.h>
- #include <sys/utsname.h>
-+#include <stdbool.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <unistd.h>
-@@ -677,6 +678,88 @@ static void kvp_process_ipconfig_file(char *cmd,
- 	pclose(file);
- }
- 
-+static bool kvp_verify_ip_address(const void *address_string)
-+{
-+	char verify_buf[sizeof(struct in6_addr)];
-+
-+	if (inet_pton(AF_INET, address_string, verify_buf) == 1)
-+		return true;
-+	if (inet_pton(AF_INET6, address_string, verify_buf) == 1)
-+		return true;
-+	return false;
-+}
-+
-+static void kvp_extract_routes(const char *line, void **output, size_t *remaining)
-+{
-+	static const char needle[] = "via ";
-+	const char *match, *haystack = line;
-+
-+	while ((match = strstr(haystack, needle))) {
-+		const char *address, *next_char;
-+
-+		/* Address starts after needle. */
-+		address = match + strlen(needle);
-+
-+		/* The char following address is a space or end of line. */
-+		next_char = strpbrk(address, " \t\\");
-+		if (!next_char)
-+			next_char = address + strlen(address) + 1;
-+
-+		/* Enough room for address and semicolon. */
-+		if (*remaining >= (next_char - address) + 1) {
-+			memcpy(*output, address, next_char - address);
-+			/* Terminate string for verification. */
-+			memcpy(*output + (next_char - address), "", 1);
-+			if (kvp_verify_ip_address(*output)) {
-+				/* Advance output buffer. */
-+				*output += next_char - address;
-+				*remaining -= next_char - address;
-+
-+				/* Each address needs a trailing semicolon. */
-+				memcpy(*output, ";", 1);
-+				*output += 1;
-+				*remaining -= 1;
-+			}
-+		}
-+		haystack = next_char;
-+	}
-+}
-+
-+static void kvp_get_gateway(void *buffer, size_t buffer_len)
-+{
-+	static const char needle[] = "default ";
-+	FILE *f;
-+	void *output = buffer;
-+	char *line = NULL;
-+	size_t alloc_size = 0, remaining = buffer_len - 1;
-+	ssize_t num_chars;
-+
-+	/* Show route information in a single line, for each address family */
-+	f = popen("ip --oneline -4 route show;ip --oneline -6 route show", "r");
-+	if (!f) {
-+		/* Convert buffer into C-String. */
-+		memcpy(output, "", 1);
-+		return;
-+	}
-+	while ((num_chars = getline(&line, &alloc_size, f)) > 0) {
-+		/* Skip short lines. */
-+		if (num_chars <= strlen(needle))
-+			continue;
-+		/* Skip lines without default route. */
-+		if (memcmp(line, needle, strlen(needle)))
-+			continue;
-+		/* Remove trailing newline to simplify further parsing. */
-+		if (line[num_chars - 1] == '\n')
-+			line[num_chars - 1] = '\0';
-+		/* Search routes after match. */
-+		kvp_extract_routes(line + strlen(needle), &output, &remaining);
-+	}
-+	/* Convert buffer into C-String. */
-+	memcpy(output, "", 1);
-+	free(line);
-+	pclose(f);
-+}
-+
- static void kvp_get_ipconfig_info(char *if_name,
- 				 struct hv_kvp_ipaddr_value *buffer)
- {
-@@ -685,30 +768,7 @@ static void kvp_get_ipconfig_info(char *if_name,
- 	char *p;
- 	FILE *file;
- 
--	/*
--	 * Get the address of default gateway (ipv4).
--	 */
--	sprintf(cmd, "%s %s", "ip route show dev", if_name);
--	strcat(cmd, " | awk '/default/ {print $3 }'");
--
--	/*
--	 * Execute the command to gather gateway info.
--	 */
--	kvp_process_ipconfig_file(cmd, (char *)buffer->gate_way,
--				(MAX_GATEWAY_SIZE * 2), INET_ADDRSTRLEN, 0);
--
--	/*
--	 * Get the address of default gateway (ipv6).
--	 */
--	sprintf(cmd, "%s %s", "ip -f inet6  route show dev", if_name);
--	strcat(cmd, " | awk '/default/ {print $3 }'");
--
--	/*
--	 * Execute the command to gather gateway info (ipv6).
--	 */
--	kvp_process_ipconfig_file(cmd, (char *)buffer->gate_way,
--				(MAX_GATEWAY_SIZE * 2), INET6_ADDRSTRLEN, 1);
--
-+	kvp_get_gateway(buffer->gate_way, sizeof(buffer->gate_way));
- 
- 	/*
- 	 * Gather the DNS state.
+No blank line. Theer is never blank line between call and its error check.
+
+> +	if (IS_ERR(max77705->regmap))
+> +		return PTR_ERR(max77705->regmap);
+> +
+> +	if (regmap_read(max77705->regmap, MAX77705_PMIC_REG_PMICREV, &pmic_rev_value) < 0)
+> +		return -ENODEV;
+> +
+> +	pmic_rev = pmic_rev_value & MAX77705_REVISION_MASK;
+> +
+
+Drop blank line.
+
+> +	if (pmic_rev != MAX77705_PASS3) {
+> +		dev_err(max77705->dev, "rev.0x%x is not tested",
+> +			pmic_rev);
+
+Unnecessary line wrap.
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	max77705->regmap_leds = devm_regmap_init_i2c(i2c, &max77705_leds_regmap_config);
+> +
+> +	if (IS_ERR(max77705->regmap_leds))
+> +		return PTR_ERR(max77705->regmap_leds);
+> +
+> +	ret = devm_regmap_add_irq_chip(max77705->dev, max77705->regmap,
+> +					max77705->irq,
+> +					IRQF_ONESHOT | IRQF_SHARED, 0,
+> +					&max77705_topsys_irq_chip,
+> +					&irq_data);
+> +
+
+Same issues, all over the code.
+
+> +	if (ret)
+> +		dev_err(max77705->dev, "failed to add irq chip: %d\n", ret);
+> +
+> +	/* Unmask interrupts from all blocks in interrupt source register */
+> +	ret = regmap_update_bits(max77705->regmap,
+> +				 MAX77705_PMIC_REG_INTSRC_MASK,
+> +				 MAX77705_SRC_IRQ_ALL, (unsigned int)~MAX77705_SRC_IRQ_ALL);
+
+
+The need for cast comes from some compiler warning?
+
+> +
+> +	if (ret < 0) {
+> +		dev_err(max77705->dev,
+> +			"Could not unmask interrupts in INTSRC: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	domain = regmap_irq_get_domain(irq_data);
+> +
+> +	i2c_fg = devm_i2c_new_dummy_device(max77705->dev, max77705->i2c->adapter, I2C_ADDR_FG);
+> +
+> +	if (IS_ERR(i2c_fg))
+> +		return PTR_ERR(i2c_fg);
+> +
+> +	max77705->i2c_fg = i2c_fg;
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(max77705_devs); i++) {
+> +		if (!strcmp(max77705_devs[i].name, FUEL_GAUGE_NAME)) {
+> +			max77705_devs[i].platform_data = &i2c_fg;
+> +			max77705_devs[i].pdata_size = sizeof(i2c_fg);
+> +		}
+> +	}
+> +
+> +	ret = devm_mfd_add_devices(max77705->dev, PLATFORM_DEVID_NONE,
+> +				   max77705_devs, ARRAY_SIZE(max77705_devs),
+> +				   NULL, 0, domain);
+> +
+> +	if (ret) {
+> +		dev_err(max77705->dev, "Failed to register child devices: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	device_init_wakeup(max77705->dev, true);
+> +
+> +	return 0;
+> +}
+> +
+> +static int max77705_suspend(struct device *dev)
+> +{
+> +	struct i2c_client *i2c = to_i2c_client(dev);
+> +	struct max77693_dev *max77705 = i2c_get_clientdata(i2c);
+> +
+> +	disable_irq(max77705->irq);
+> +
+> +	if (device_may_wakeup(dev))
+> +		enable_irq_wake(max77705->irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static int max77705_resume(struct device *dev)
+> +{
+> +	struct i2c_client *i2c = to_i2c_client(dev);
+> +	struct max77693_dev *max77705 = i2c_get_clientdata(i2c);
+> +
+> +	if (device_may_wakeup(dev))
+> +		disable_irq_wake(max77705->irq);
+> +
+> +	enable_irq(max77705->irq);
+> +
+> +	return 0;
+> +}
+> +DEFINE_SIMPLE_DEV_PM_OPS(max77705_pm_ops, max77705_suspend, max77705_resume);
+> +
+> +static const struct of_device_id max77705_i2c_of_match[] = {
+> +	{ .compatible = "maxim,max77705" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, max77705_i2c_of_match);
+> +
+> +static struct i2c_driver max77705_i2c_driver = {
+> +	.driver = {
+> +		.name			= "max77705",
+> +		.of_match_table		= max77705_i2c_of_match,
+> +		.pm			= pm_sleep_ptr(&max77705_pm_ops),
+> +		.suppress_bind_attrs	= true,
+> +	},
+> +	.probe = max77705_i2c_probe,
+> +};
+> +module_i2c_driver(max77705_i2c_driver);
+> +
+> +MODULE_DESCRIPTION("Maxim MAX77705 PMIC core driver");
+> +MODULE_AUTHOR("Dzmitry Sankouski <dsankouski@gmail.com>");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/mfd/max77693-common.h b/include/linux/mfd/max77693-common.h
+> index a5bce099f1ed..8665097892cd 100644
+> --- a/include/linux/mfd/max77693-common.h
+> +++ b/include/linux/mfd/max77693-common.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0+ */
+>  /*
+> - * Common data shared between Maxim 77693 and 77843 drivers
+> + * Common data shared between Maxim 77693, 77705 and 77843 drivers
+>   *
+>   * Copyright (C) 2015 Samsung Electronics
+>   */
+> @@ -11,6 +11,7 @@
+>  enum max77693_types {
+>  	TYPE_MAX77693_UNKNOWN,
+>  	TYPE_MAX77693,
+> +	TYPE_MAX77705,
+>  	TYPE_MAX77843,
+>  
+>  	TYPE_MAX77693_NUM,
+> @@ -25,6 +26,7 @@ struct max77693_dev {
+>  	struct i2c_client *i2c_muic;	/* 0x4A , MUIC */
+>  	struct i2c_client *i2c_haptic;	/* MAX77693: 0x90 , Haptic */
+>  	struct i2c_client *i2c_chg;	/* MAX77843: 0xD2, Charger */
+> +	struct i2c_client *i2c_fg;	/* MAX77843: 0xD2, Charger */
+
+
+You mix patchsets. Don't grow 77843 wigth 77705. Or is this not max77843?
+
+>  
+>  	enum max77693_types type;
+>  
+> @@ -32,6 +34,7 @@ struct max77693_dev {
+>  	struct regmap *regmap_muic;
+>  	struct regmap *regmap_haptic;	/* Only MAX77693 */
+>  	struct regmap *regmap_chg;	/* Only MAX77843 */
+> +	struct regmap *regmap_leds;	/* Only MAX77705 */
+>  
+>  	struct regmap_irq_chip_data *irq_data_led;
+>  	struct regmap_irq_chip_data *irq_data_topsys;
+> diff --git a/include/linux/mfd/max77705-private.h b/include/linux/mfd/max77705-private.h
+> new file mode 100644
+> index 000000000000..be781a0f9802
+
+
+...
+
+> +
+> +enum max77705_led_reg {
+> +	MAX77705_RGBLED_REG_BASE		= 0x30,
+> +	MAX77705_RGBLED_REG_LEDEN		= 0,
+> +	MAX77705_RGBLED_REG_LED0BRT,
+> +	MAX77705_RGBLED_REG_LED1BRT,
+> +	MAX77705_RGBLED_REG_LED2BRT,
+> +	MAX77705_RGBLED_REG_LED3BRT,
+> +	MAX77705_RGBLED_REG_LEDRMP,
+> +	MAX77705_RGBLED_REG_LEDBLNK,
+> +	MAX77705_LED_REG_END
+> +};
+> +
+> +enum max77705_charger_battery_state {
+> +	MAX77705_BATTERY_NOBAT,
+> +	MAX77705_BATTERY_PREQUALIFICATION,
+> +	MAX77705_BATTERY_DEAD,
+> +	MAX77705_BATTERY_GOOD,
+> +	MAX77705_BATTERY_LOWVOLTAGE,
+> +	MAX77705_BATTERY_OVERVOLTAGE,
+> +	MAX77705_BATTERY_RESERVED,
+> +};
+> +
+> +enum max77705_charger_charge_type {
+> +	MAX77705_CHARGER_CONSTANT_CURRENT	= 1,
+> +	MAX77705_CHARGER_CONSTANT_VOLTAGE,
+> +	MAX77705_CHARGER_END_OF_CHARGE,
+> +	MAX77705_CHARGER_DONE,
+> +};
+> +
+> +extern const struct dev_pm_ops max77705_pm_ops;
+
+
+Why do you need it in the header?
+
+> +
+> +#endif /* __LINUX_MFD_MAX77705_PRIV_H */
+> 
+
+
+Best regards,
+Krzysztof
 
