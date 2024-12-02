@@ -1,253 +1,147 @@
-Return-Path: <linux-kernel+bounces-427775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974BC9E0592
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:53:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9059E058F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB4528A8DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:53:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708A5287AA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BA320CCEB;
-	Mon,  2 Dec 2024 14:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D1920CCE8;
+	Mon,  2 Dec 2024 14:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iFUMtdVP"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y9qEOp6B"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FF920D4E5
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2119F20CCC7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733150710; cv=none; b=nGzsjgoZaogHrJSb8SYTq32cQrONib7inzrz7MDyZZqB2F+0wdDGxcfwzkZdUhf7v8hJnPJKdhNrwE8yhmOropKUakXgVcOAXlgE3OzRKnbVRcMNvNXfzmphuwUBJSF7TpAWrCv1C67F0qmPGA6qJKAu+GE/vMSlfBSumkYa8GU=
+	t=1733150703; cv=none; b=Q8W+JKMMouNuj8k6g4mK/Ah37qaS5KwkUPh85x6+vajSLUrFeQ94Sc9yuRbXav06D/guBqeaJGdUNfFhtDJhjkdOMpaUBnWq31xict7WeCTCuOigBZSVtLkjVDB733E6G0vJy6Bz8SuWIwkSMgHi5fXMB5A2AbjqhjosFBCsOWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733150710; c=relaxed/simple;
-	bh=LAR2OPaTHuw75CmRdL3urd56d1GQCR1zzyVJwcom4AE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CcfQyDpBkCJywwtGvgQGbH9Iy//MI1eml844vcMk7AyCL/UbQ2iLivbf7kxYZJr8XwuApOxKyOEd9p2pQK3GiI0zEKuV9tPiyZSxgSyOoimHqzNwrot9+OtkH9IzQb49XFadrlvyhcAndpsk9aF6o4pHUv/ii8mtUEU0HJz5ASo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iFUMtdVP; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cf3e36a76so39958895ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:45:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733150706; x=1733755506; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZPr+rqxrsBrYoMzAPXWAODr8cERzCFOtYTMVsGmGlwM=;
-        b=iFUMtdVPq/0ShCe8ovuiiuE3sHpvs2rnG6x3FfQe7fY08poq5MUtbyAGkjl2qgHMbu
-         Ot2q7Brkvo4zMpMnhaItm+Yah7lae+WWrwTI7/29+vIcEHRA6S+5LdUaYOEs2FhepSV5
-         KQ5DqvKt4IAw/EXnIcY7IA1DuksthfwLyFNqcWWH57vxu4/E9Q0KuP85TW5vQTpxXhVm
-         kSRbFGcNBwFtSTQQ0WsAJbWDAekWWJqnOW94cbe7z6gBHSqloNUr736Iuc87CDXZ3ISN
-         XQd6AEGjx22BF8b56p0ioE9VpFMit8ggibYqlZpjXlTOGJUWp12y2Cc/dpfc3xGUdrlu
-         MJDw==
+	s=arc-20240116; t=1733150703; c=relaxed/simple;
+	bh=J6NojA2RZH+RoRRnvD/OYyIay8Vieq6tR0DB9lycCcA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rJQmSazpeP1YayBzyQXOqOY5idwXbmT93Cu06E3T9nLpCjgUThMHc6H4G6Sq8vADXl9htrlz5HAIIjmOuxstR1rd1dQldrt5APsG6axgFCJPc/ZkJ9Jz0tcRJ2MooEiVUGXdy4Qjp500uttTo0mqvBVn2PrJoTiM9CFIICGwe3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y9qEOp6B; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733150701;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qh0LHQ0l/zAThehTKofaSdXJERCbtOgQsR2kqyENj+s=;
+	b=Y9qEOp6B6Nv+y7RlWvpuFIcrs2whi0EwFSZr1g9x+6P7lVhXiSfzny7fI4QLfZbtqmP1iQ
+	tHFkqfTf5w/XreCLIBjNcl69lWQJIfD12eHeHMucgYC8g4eBgntfXBIQoKXk0dJnft1eDy
+	yV5COqS0IOhHaQvAhZN4JSpRnpsGJmk=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-64-pUjNwnJfO6WaCLdEmYAZAw-1; Mon, 02 Dec 2024 09:45:00 -0500
+X-MC-Unique: pUjNwnJfO6WaCLdEmYAZAw-1
+X-Mimecast-MFC-AGG-ID: pUjNwnJfO6WaCLdEmYAZAw
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa53f3b322eso438093266b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:45:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733150706; x=1733755506;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1733150698; x=1733755498;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPr+rqxrsBrYoMzAPXWAODr8cERzCFOtYTMVsGmGlwM=;
-        b=vecpWjmXX1rDeglCukFdCn9TlraI0jtjJH3mNlon9I6/npsHhEZ3WSN1ABh3osG/+G
-         Y81ORWKeWUM8Mskyibd1Sm0u1A4JCxA9uJsR5dilMOLMCtV+AMypUUakb0JCdyjgng41
-         FJ9AV7PaqBsmM2gV9vTkcHo8h7jNL5dTeIbvz2qGZfKOvH96RKdbKqiUH1lXTlaFlWN6
-         QW7FpVKoqYM532giGuSqfKztrb4/3erbCgHVXHtPuWukOOJ5/XoAXWmgneugEkOTB60J
-         DOb4EDn5DiTUEbqLNNyMy6LSHzXc0wIIx2yzNzgPWPc69bLB/+1Z0J+sL1s3tyj7maKP
-         YBzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsyxF9dhTJIMTIk2kBrK2oDEgL43dLu/cG7f6TLcg+ZoBLuIJfa23Tjur0mipqYQrqfo2QzT6tmkv1rPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYPaNe7wV0jM6zfEgjFErTkppryJnKA/sh2fadoHSwHu1hWLdN
-	LrdVYdkDVQy0y7ITuB+Zb39Xf53J+m+7dIl9/58gqjZtD57sD7fB9KP2Pp8ZYg==
-X-Gm-Gg: ASbGnct0s7Jit6L6FSXytsf8Gjhabhq2IYQf4dvOItc0enIWhvVH/OgP6TOAHlWtpbO
-	ojWi4My+ZAo7LxgAH2YPlYoJx3FSaDNn9y3uEtMBaYgu63g6VsKuUltkMeYMBTYIU4lmvK+yoUq
-	rKs0TFsa/IUfLUjPtfahXgYNWC5T0B9M92Y0jKT/XbiVn7XnjjGaqdiBVTJlgw0/0wg5FTGABAH
-	3XkUfrbtqQ1da5heQsPhcnsSG+Mr4ikbZDAPd9kRxl6y+k4MOXWrnA9HDFZ1w==
-X-Google-Smtp-Source: AGHT+IFVCODuAccsYt/2/80+IXDxhd60+2Yn4zsceONDv9zG3hdrKNerpQeL5Z00zmSVyrmEYMEANw==
-X-Received: by 2002:a17:902:ce92:b0:215:7ce8:1363 with SMTP id d9443c01a7336-2157ce815f5mr100011155ad.19.1733150706219;
-        Mon, 02 Dec 2024 06:45:06 -0800 (PST)
-Received: from thinkpad ([120.60.140.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21530f1d769sm71106335ad.81.2024.12.02.06.45.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 06:45:05 -0800 (PST)
-Date: Mon, 2 Dec 2024 20:14:56 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Xin Liu <quic_liuxin@quicinc.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-	quic_jiegan@quicinc.com, quic_aiquny@quicinc.com,
-	quic_tingweiz@quicinc.com, quic_sayalil@quicinc.com
-Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: qcs615: add UFS node
-Message-ID: <20241202144456.scq5d2orw4d3dbxg@thinkpad>
-References: <20241122064428.278752-1-quic_liuxin@quicinc.com>
- <20241122064428.278752-3-quic_liuxin@quicinc.com>
+        bh=Qh0LHQ0l/zAThehTKofaSdXJERCbtOgQsR2kqyENj+s=;
+        b=teJvrNSbR9chFFqXaOj0N510ofE1ubAqMlvMyMEv5cf64TCBGf0HVfzLgtTrkjaTeH
+         fxZq4MBMe5DU+AhTCBHXeJrmEk7hjkwCT9xhG25gS3k92c8B+9wwbJXHj+1hN3msHkAF
+         tkYeUYq45Y5Whm0RW79bXFwm0nu6p3xgFbqM4d7ff7oyQoc4go895zdrKDLjuFA7iVBK
+         kzYuPkOw50ahPPiCwZf/KeQDEK/7NnIzNj4ZjTSzbbioa2LFMnnW5/aTEJqLEVlgeImb
+         n30xsHICboeoAyK0VWJzJIg/bDZwD0mnagQMMzikQ3nZRhntFudPQgj8IIYQvLwCGWSr
+         JW4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWhXgl/ZbwJQZk5K4NeHlgbE+ExxDzPw02zqF6GW/QhFqdPWOm+BLRPiYkMqNxeOhzndZRq6fE5kU11/ks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCi9mua4RD2J8hxZslE9EOGudKC5RaT/MTjspqziUMsnSiVlfQ
+	73x3M+TfstZJZ3J2EReL0bhnMeHlIcBd12gBlzLsSccG9YBPrSrFO0epp7RxlrAYMkcx8zMLkzP
+	DToN13QYMCfz4yFdsEkvqEkVuTuBbFNGvdyuRNkoExue9/0Yd0pT9lyeiQKeFXg==
+X-Gm-Gg: ASbGncuxEiHTi8VTW3JZlYJdhFtrku/4qfPC5sbCPTYKeUYQM/CI5YzNpqUrY31WCqS
+	8MUluwIUZPrn94MeJ2lOsvHOs+W59ib4T7alcYaipsLQq+4UDJMqfkJ4i4/VMTaomF31Y3fgn3i
+	VPUxlUa3AHP3IHlT2/2rhsvLj63W14mSzLXJOU5pus2E9C/+gsiBaNNkXvKbD5L29yH+AVzxuvl
+	nm/9seeAXRsEu5I6yL/bx1SFDirdr+Z+4GLJU+Lrrd0onVr2NKYyA==
+X-Received: by 2002:a17:907:31c4:b0:aa5:ee58:5b0b with SMTP id a640c23a62f3a-aa5ee585b94mr57507366b.25.1733150698560;
+        Mon, 02 Dec 2024 06:44:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGJ5xsPPDw4cMz2OuXoK45oswDh5+JI1Ux9Dyy0RZYl3J0FpDJcTTmFFvcexFdg7ZUlQCxJ0Q==
+X-Received: by 2002:a17:907:31c4:b0:aa5:ee58:5b0b with SMTP id a640c23a62f3a-aa5ee585b94mr57503366b.25.1733150698102;
+        Mon, 02 Dec 2024 06:44:58 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c19b5sm514217666b.5.2024.12.02.06.44.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 06:44:57 -0800 (PST)
+Message-ID: <0531da34-d35f-4f46-be14-a9f864f38784@redhat.com>
+Date: Mon, 2 Dec 2024 15:44:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241122064428.278752-3-quic_liuxin@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/5] media: uvcvideo: Remove redundant NULL assignment
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241202-uvc-fix-async-v5-0-6658c1fe312b@chromium.org>
+ <20241202-uvc-fix-async-v5-4-6658c1fe312b@chromium.org>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241202-uvc-fix-async-v5-4-6658c1fe312b@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 22, 2024 at 02:44:27PM +0800, Xin Liu wrote:
-> From: Sayali Lokhande <quic_sayalil@quicinc.com>
+Hi,
+
+On 2-Dec-24 3:24 PM, Ricardo Ribalda wrote:
+> ctrl->handle will only be different than NULL for controls that have
+> mappings. This is because that assignment is only done inside
+> uvc_ctrl_set() for mapped controls.
 > 
-> Add the UFS Host Controller node and its PHY for QCS615 SoC.
-> 
-> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
-> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
-> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Thanks, patch looks good to me:
 
-- Mani
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
 
 > ---
->  arch/arm64/boot/dts/qcom/qcs615.dtsi | 114 +++++++++++++++++++++++++++
->  1 file changed, 114 insertions(+)
+>  drivers/media/usb/uvc/uvc_ctrl.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> index 590beb37f441..5e501511e6db 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> @@ -458,6 +458,120 @@ mmss_noc: interconnect@1740000 {
->  			qcom,bcm-voters = <&apps_bcm_voter>;
->  		};
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 576e3854be91..e90bf2aeb5e4 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1672,10 +1672,8 @@ bool uvc_ctrl_status_event_async(struct urb *urb, struct uvc_video_chain *chain,
+>  	struct uvc_device *dev = chain->dev;
+>  	struct uvc_ctrl_work *w = &dev->async_ctrl;
 >  
-> +		ufs_mem_hc: ufshc@1d84000 {
-> +			compatible = "qcom,qcs615-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
-> +			reg = <0x0 0x01d84000 0x0 0x3000>,
-> +			      <0x0 0x01d90000 0x0 0x8000>;
-> +			reg-names = "std",
-> +				    "ice";
-> +
-> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
-> +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-> +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
-> +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
-> +				 <&gcc GCC_UFS_PHY_ICE_CORE_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
-> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
-> +			clock-names = "core_clk",
-> +				      "bus_aggr_clk",
-> +				      "iface_clk",
-> +				      "core_clk_unipro",
-> +				      "core_clk_ice",
-> +				      "ref_clk",
-> +				      "tx_lane0_sync_clk",
-> +				      "rx_lane0_sync_clk";
-> +
-> +			resets = <&gcc GCC_UFS_PHY_BCR>;
-> +			reset-names = "rst";
-> +
-> +			operating-points-v2 = <&ufs_opp_table>;
-> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "ufs-ddr",
-> +					     "cpu-ufs";
-> +
-> +			power-domains = <&gcc UFS_PHY_GDSC>;
-> +			required-opps = <&rpmhpd_opp_nom>;
-> +
-> +			iommus = <&apps_smmu 0x300 0x0>;
-> +			dma-coherent;
-> +
-> +			lanes-per-direction = <1>;
-> +
-> +			phys = <&ufs_mem_phy>;
-> +			phy-names = "ufsphy";
-> +
-> +			#reset-cells = <1>;
-> +
-> +			status = "disabled";
-> +
-> +			ufs_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-50000000 {
-> +					opp-hz = /bits/ 64 <50000000>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <37500000>,
-> +						 /bits/ 64 <75000000>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <0>;
-> +					required-opps = <&rpmhpd_opp_low_svs>;
-> +				};
-> +
-> +				opp-100000000 {
-> +					opp-hz = /bits/ 64 <100000000>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <75000000>,
-> +						 /bits/ 64 <150000000>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <0>;
-> +					required-opps = <&rpmhpd_opp_svs>;
-> +				};
-> +
-> +				opp-200000000 {
-> +					opp-hz = /bits/ 64 <200000000>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <150000000>,
-> +						 /bits/ 64 <300000000>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <0>,
-> +						 /bits/ 64 <0>;
-> +					required-opps = <&rpmhpd_opp_nom>;
-> +				};
-> +			};
-> +		};
-> +
-> +		ufs_mem_phy: phy@1d87000 {
-> +			compatible = "qcom,qcs615-qmp-ufs-phy", "qcom,sm6115-qmp-ufs-phy";
-> +			reg = <0x0 0x01d87000 0x0 0xe00>;
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
-> +				 <&gcc GCC_UFS_MEM_CLKREF_CLK>;
-> +			clock-names = "ref",
-> +				      "ref_aux",
-> +				      "qref";
-> +
-> +			power-domains = <&gcc UFS_PHY_GDSC>;
-> +
-> +			resets = <&ufs_mem_hc 0>;
-> +			reset-names = "ufsphy";
-> +
-> +			#clock-cells = <1>;
-> +			#phy-cells = <0>;
-> +
-> +			status = "disabled";
-> +		};
-> +
->  		tcsr_mutex: hwlock@1f40000 {
->  			compatible = "qcom,tcsr-mutex";
->  			reg = <0x0 0x01f40000 0x0 0x20000>;
-> -- 
-> 2.34.1
+> -	if (list_empty(&ctrl->info.mappings)) {
+> -		ctrl->handle = NULL;
+> +	if (list_empty(&ctrl->info.mappings))
+>  		return false;
+> -	}
+>  
+>  	w->data = data;
+>  	w->urb = urb;
 > 
 
--- 
-மணிவண்ணன் சதாசிவம்
 
