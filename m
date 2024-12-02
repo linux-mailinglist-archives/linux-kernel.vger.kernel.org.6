@@ -1,234 +1,126 @@
-Return-Path: <linux-kernel+bounces-427851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90729E0B1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:34:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 877C79E09F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:30:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72370BA7ECE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:18:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29C19B3627E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF44320FAA0;
-	Mon,  2 Dec 2024 15:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D2B2101A7;
+	Mon,  2 Dec 2024 15:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OAhxCH59"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="F4a39eXT"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528C220E32E;
-	Mon,  2 Dec 2024 15:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ECB20C001
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152306; cv=none; b=eyLx3XXMuqoWCJa5zTVjf+iFv7zgPTe7Wow8OEuLCYalLRj6jL7p8YqfvdkQs8yg6Wf6sukO+hTNqtSHv/BZUYBJjdlPd37PM92GYO9e+ciO4N3ErxNbjpPSiMHnM+r0h9Ty+OUFxxJa8pxltLEDntZZmpweYpnOvZrVF/6Mce4=
+	t=1733152355; cv=none; b=cirSJZ/rudFOBTOdUGotAzprUxWzjMmshFXcIcf3Vu3b5514M084OaFqEyeMOxmEBrYpDCSh5iOlSuRBs/4t7yZgdxc6JB9i4Q+i20qL7MqRXqpV7qK8GbSiz817kwOm+PyiOYHXpqMDE92SCneeOyKGUhBgL+sJbPZwFqI0nEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152306; c=relaxed/simple;
-	bh=NfcZdUCLxpBvLjKg8gBIysrlCbsp7eHgSGw1ARszsJs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eVoGPuZSkxf/M8xJxDxgFRhQG3bCAcmowm8JEQfc4x4EHJuDL/4Yar/5BfPKFHnMUnLRcCPFYHW8wM2d96xqFK9nAqOWpk/Jj9YppwDR5KqCc5RSunTX5LcDfgXbHFrCIha9HeJrN725jeBbrgqP6qyBur8Q8j0rQpfE+ocwdmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OAhxCH59; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso40384085e9.3;
-        Mon, 02 Dec 2024 07:11:44 -0800 (PST)
+	s=arc-20240116; t=1733152355; c=relaxed/simple;
+	bh=GsoW9jar33QFlPyu/o1BiPaUWwEOUgAaeEeggWZ8yM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vGasTU/mPn3Yd41FANCHSHTrlR/FWd/JYpa7nrSuCgQgIvIF1sd5FmqnrvAlKSexUGHnGLzmXQPlhe1BwyvBQNICjTIviqlrD9ocZY9uYjsK0cxFXntppfKVGYluG/QFyViT4lkOS+cwk8ajgKawZ87vlQURnVHGSmb5RzIxDFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=F4a39eXT; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b673aacf13so463010585a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:12:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733152302; x=1733757102; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QDEN2wA9x27SmjgM/ds1sGUcE8EH3J/NUqXM/kC7PUw=;
-        b=OAhxCH59dccroLZCIuLOdc9yCQZia1kv4k/AkhNew/r7abygtEEaHn/oYhqTWG9pof
-         5qthfc5GKMZLRC4pyyUw2ad08yNinkhQ2XB6KyB3rgMxpK7h298KV+igMAEfrYGaZth9
-         2yQFWZ8qtEmVrqZ5wJckbeWzo9kmYe6qVSgfoUX4P+kJxmYQsrp63kTwYMFeFy6yHKuK
-         iWU+kWPFnWDKyU6pXy0csHtgnUHhRuZpFuuDm/2bHFvyUN4jb1EotCmzmg2qJ37ecKLG
-         eAfdENyJ267wb9/0nap7MHm6zY5sHcCPzbYVXW3YR07cyGUMCIrxIYHKu9QAPH7W1EXw
-         r1fQ==
+        d=ziepe.ca; s=google; t=1733152353; x=1733757153; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XySwqa6vfF7/NLOEDfWEU6s1YzlqvfeDKk1Yx5q6yxw=;
+        b=F4a39eXT1+yYRrKpobXRA/bwip8nTcnmoM8INrY4D5ZE9y3/T3OV3CjrQfymqeN/nh
+         2NA+kFzTRMrQ3CC1lkzSV/CWGtJ+IxFOMZ+YayPiF0FA6tOrf3TqBD/jbDG8837uCta+
+         1WS/HH153/B6ix2oh2bioqc7bxWWxG4EwreNedS1hGN6U9Bwlg/MIoAGLWP5AEQan0Fh
+         cibqF1ONcWm3Wa0sBCH9rpDYK2lmMygoTbjpuQDvIk6eaPG/akIYQ3arga87HOyd9xfM
+         49cRqs0LHp48G3ba+s3MzXSqLa5bCAW8PtF89r0t/Q4cqxIfLjpxXFjfKL/iZ0a1hcce
+         Fs2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733152302; x=1733757102;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QDEN2wA9x27SmjgM/ds1sGUcE8EH3J/NUqXM/kC7PUw=;
-        b=RHRcnaoybqR7g64QtlbtIoL/jLqwQcUL89WVEvYsHgoT83rMOJF9i4B6067LBBCime
-         EihyoWT2uAgR23VAhP2h/sthPhsBR24SIN+dgQMAGM7Od5+uW+QaFPzes8z4NS78acd5
-         Eq1BbrBO7/YkvFbApMubkIUnW7l/SV2TneXQsBRf0Ck5SVJ3+Jf5hSztLkz5u+tiKVn4
-         jE9tjj8de2gdY0SCBG6QHh0RGmjYXRUxfoyks6EMUvv7fAUtcH9o1YXvpEjBtfE0IC8P
-         lcfalWbCUwvnASVkq4Y4UtElnNNJ+Z6ZSqJb+KDNtOO6SvCGbQw0xZ5rNTsBk2wb+yGM
-         yOvw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8ZQmFIKUf7tNeJp73iRYhAlvTLekLKH17V+s5tstLIuBwg6AYRB8sFbXXjBpu4HNavctEwcz0Qf/EllY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCNnXNf6EClFMem3fpPAiolfrj+KvMMtiQ8mmOcoDy/n4d3cq7
-	s2ViLC7EOi+8W9f0sfN9djYJ8hGWH0acxmjuZOPbc/DHJSBhyFDn
-X-Gm-Gg: ASbGnculJHwT87G/BoaGzYrBJF5GnBzGjKE/34vLRGEyGumU6CVJQpbjUPLd7VJbNyl
-	u8T4BCluczklpHBt/6vG/pl7DKeZfJm+8b7yUFeE/YuSkcWGK6C8iQI47/5C8un4W4Asf9ltU2X
-	8lEyVWnAdp5MCwXuVBhWgrpD2RafUXUTDQv085ODIdOFiyY/wWYoF6+7KJh0ScBWoH/oyr77jX6
-	6NznuSn6jsC+B2GuqySVDAzLuwaZUfdzr1/rR7KZj7F7AH5qP4iNLV/WagwmL6LAzttgGwc4qWd
-	E/iIm+Ube0IHU8C3lRLe
-X-Google-Smtp-Source: AGHT+IFN2/NKX/DJ3ApNnyH1wsE//gFyKiHyCiweX7Gvdgtdk+l/BLKcIpAIQxHOJRXU6n0VbPbV9w==
-X-Received: by 2002:a05:600c:4e8a:b0:42c:b52b:4335 with SMTP id 5b1f17b1804b1-434a9dc3e80mr241845915e9.10.1733152301730;
-        Mon, 02 Dec 2024 07:11:41 -0800 (PST)
-Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74ea95sm187069505e9.5.2024.12.02.07.11.41
+        d=1e100.net; s=20230601; t=1733152353; x=1733757153;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XySwqa6vfF7/NLOEDfWEU6s1YzlqvfeDKk1Yx5q6yxw=;
+        b=sVDs6yOWS5TFgdLCbq9dLXT/MubywYy/uq9A0JJ2du/4pWuBBmoL0hqWqktmnOZanp
+         +i8mo88Eys8iwrnXRYKw0pRzVYxC+nNwxPN+inNrfRao7XyC3xG0fphuwx63lPcpv9E0
+         G0J3x4q/DIDU8WUKu7O45XO7VIVKyQv6fYfeEubmCVbYasKwlb8ZkyyDN0uQyywLcP8m
+         0midmRSs5II4FdMRIuun/Ts+CnjaYWWMW0UHJEvp9jlyBNWqjebx61PSc6vTt3gs42UG
+         kFGTXN+jlbRgEgQCaqgZ6NgUqjf6lzjpFLQfRyvMvD9cVKPep/giFLe1B25WD7L0h5rZ
+         KV1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVaTAc3ldScCAHkCSWzaNGXjbSiP951nh3oEmNUhOBWCsPd0RD6yIj3zwZbGfX9yXFVZxkxFhAVrqjRy+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPZ3Avqhz4VkCl4ObbhIdKVCv8BtzzezDZv6fZdDyX2FehlHTD
+	wMC1W7UV7bm+7r1740U5os91/z+PDV6X3GL/AphxO3vR2gjxPcAJ6FndOue40KYXjbDwvb82P3I
+	p
+X-Gm-Gg: ASbGncvO6RirIQFSB9/HgHwUtIHpkHf6D2JrqVVLfc+tUwievL4lMS3gUEDw8Z8yo2r
+	XIdhTya7OgpDfI/4e1dz17Qjv/gjnRUQFSyAQvZwJAsvEGO9rNckwNFWeC0gD1SQ1GAMRCJsJtU
+	/t8ydraAfTNI9SJoSuhhEFBrCC3R/lrxIlO7mYrffn7VPKXuZZ1QazmuTTA8183gtFW6OdcYouZ
+	f5oAYdCbn1v/L7kP9t12nGY9DMKcHipOgGlUvI5bx5FOEsY1DDQTHKwQJtUkCw/OULvJExFR9yR
+	7pUZGHBN0xc9w+w+yBJxY4o=
+X-Google-Smtp-Source: AGHT+IF2qJsJ0FbtvmhHEABYAPzmLzYktVswQYCd1SC8IwO02PzmD/X8kcsImTR5inQFPXqmLqlW6w==
+X-Received: by 2002:a05:620a:3727:b0:7b6:5c7a:52 with SMTP id af79cd13be357-7b6839c563cmr3126058285a.4.1733152353039;
+        Mon, 02 Dec 2024 07:12:33 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b69e94bc88sm79209385a.47.2024.12.02.07.12.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 07:11:41 -0800 (PST)
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Date: Mon, 02 Dec 2024 16:11:08 +0100
-Subject: [PATCH 2/2] iio: iio-mux: kzalloc instead of devm_kzalloc to
- ensure page alignment
+        Mon, 02 Dec 2024 07:12:32 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tI86B-00000007EPt-4A1m;
+	Mon, 02 Dec 2024 11:12:31 -0400
+Date: Mon, 2 Dec 2024 11:12:31 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Dmitry Safonov <0x7f454c46@gmail.com>, pr-tracker-bot@kernel.org,
+	iommu@lists.linux.dev, open list <linux-kernel@vger.kernel.org>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [git pull] IOMMU Updates for Linux v6.13
+Message-ID: <20241202151231.GF773835@ziepe.ca>
+References: <CAJwJo6bu3vfogmzxpfzFV_guf5GS_1TsqdB29NZoUr-_6fd8pg@mail.gmail.com>
+ <CAHk-=wiG+jR7TJdCX_Xa7_dbQP8wU966e8eimUs48VVG9ac0sw@mail.gmail.com>
+ <Z0WtI9-Xxr1eY7Av@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-iio-kmalloc-align-v1-2-aa9568c03937@gmail.com>
-References: <20241202-iio-kmalloc-align-v1-0-aa9568c03937@gmail.com>
-In-Reply-To: <20241202-iio-kmalloc-align-v1-0-aa9568c03937@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Peter Rosin <peda@axentia.se>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Matteo Martelli <matteomartelli3@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0WtI9-Xxr1eY7Av@8bytes.org>
 
-During channel configuration, the iio-mux driver allocates a page with
-devm_kzalloc(PAGE_SIZE) to read channel ext_info. However, the resulting
-buffer points to an offset of the page due to the devres header sitting
-at the beginning of the allocated area. This leads to failure in the
-provider driver when sysfs_emit* helpers are used to format the ext_info
-attributes.
+On Tue, Nov 26, 2024 at 12:12:35PM +0100, Joerg Roedel wrote:
+> On Mon, Nov 25, 2024 at 06:45:00PM -0800, Linus Torvalds wrote:
+> > Those octopus merges may look cool, but you should never use an
+> > octopus merge for anything that has any conflicts, because they are
+> > hard to get right. Joerg clearly didn't get that one right.
+> 
+> Yeah, sorry, my bad. This time around there were unusually many
+> conflicts between the topic branches, which also forced me to create
+> two merge commits to put everything together. In this process I
+> overlooked that the iommu_present() definition slipped through.
 
-Switch to plain kzalloc version. The devres version is not strictly
-necessary as the buffer is only accessed during the channel
-configuration phase. Rely on __free cleanup to deallocate the buffer.
-Also, move the ext_info handling into a new function to have the page
-buffer definition and assignment in one statement as suggested by
-cleanup documentation.
+I know we talked about this before, but I think the topic branches and
+octopus merge flow is troublesome. This cycle had lots of all-driver
+work and it is a pain working like this.
 
-Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
----
- drivers/iio/multiplexer/iio-mux.c | 84 +++++++++++++++++++++------------------
- 1 file changed, 46 insertions(+), 38 deletions(-)
+We rarely seem to toss stuff out, it would be OK to just revert it, or
+run a delayed two step promotion like Andrew does.
 
-diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
-index 2953403bef53bbe47a97a8ab1c475ed88d7f86d2..c309d991490c63ba4299f1cda7102f10dcf54982 100644
---- a/drivers/iio/multiplexer/iio-mux.c
-+++ b/drivers/iio/multiplexer/iio-mux.c
-@@ -7,6 +7,7 @@
-  * Author: Peter Rosin <peda@axentia.se>
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/err.h>
- #include <linux/iio/consumer.h>
- #include <linux/iio/iio.h>
-@@ -237,49 +238,18 @@ static ssize_t mux_write_ext_info(struct iio_dev *indio_dev, uintptr_t private,
- 	return ret;
- }
- 
--static int mux_configure_channel(struct device *dev, struct mux *mux,
--				 u32 state, const char *label, int idx)
-+static int mux_configure_chan_ext_info(struct device *dev, struct mux *mux,
-+				       int idx, int num_ext_info)
- {
- 	struct mux_child *child = &mux->child[idx];
--	struct iio_chan_spec *chan = &mux->chan[idx];
- 	struct iio_chan_spec const *pchan = mux->parent->channel;
--	char *page = NULL;
--	int num_ext_info;
- 	int i;
- 	int ret;
- 
--	chan->indexed = 1;
--	chan->output = pchan->output;
--	chan->datasheet_name = label;
--	chan->ext_info = mux->ext_info;
--
--	ret = iio_get_channel_type(mux->parent, &chan->type);
--	if (ret < 0) {
--		dev_err(dev, "failed to get parent channel type\n");
--		return ret;
--	}
--
--	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_RAW))
--		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
--	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_SCALE))
--		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
--
--	if (iio_channel_has_available(pchan, IIO_CHAN_INFO_RAW))
--		chan->info_mask_separate_available |= BIT(IIO_CHAN_INFO_RAW);
--
--	if (state >= mux_control_states(mux->control)) {
--		dev_err(dev, "too many channels\n");
--		return -EINVAL;
--	}
--
--	chan->channel = state;
-+	char *page __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
-+	if (!page)
-+		return -ENOMEM;
- 
--	num_ext_info = iio_get_channel_ext_info_count(mux->parent);
--	if (num_ext_info) {
--		page = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
--		if (!page)
--			return -ENOMEM;
--	}
- 	child->ext_info_cache = devm_kcalloc(dev,
- 					     num_ext_info,
- 					     sizeof(*child->ext_info_cache),
-@@ -318,8 +288,46 @@ static int mux_configure_channel(struct device *dev, struct mux *mux,
- 		child->ext_info_cache[i].size = ret;
- 	}
- 
--	if (page)
--		devm_kfree(dev, page);
-+	return 0;
-+}
-+
-+static int mux_configure_channel(struct device *dev, struct mux *mux, u32 state,
-+				 const char *label, int idx)
-+{
-+	struct iio_chan_spec *chan = &mux->chan[idx];
-+	struct iio_chan_spec const *pchan = mux->parent->channel;
-+	int num_ext_info;
-+	int ret;
-+
-+	chan->indexed = 1;
-+	chan->output = pchan->output;
-+	chan->datasheet_name = label;
-+	chan->ext_info = mux->ext_info;
-+
-+	ret = iio_get_channel_type(mux->parent, &chan->type);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to get parent channel type\n");
-+		return ret;
-+	}
-+
-+	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_RAW))
-+		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
-+	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_SCALE))
-+		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
-+
-+	if (iio_channel_has_available(pchan, IIO_CHAN_INFO_RAW))
-+		chan->info_mask_separate_available |= BIT(IIO_CHAN_INFO_RAW);
-+
-+	if (state >= mux_control_states(mux->control)) {
-+		dev_err(dev, "too many channels\n");
-+		return -EINVAL;
-+	}
-+
-+	chan->channel = state;
-+
-+	num_ext_info = iio_get_channel_ext_info_count(mux->parent);
-+	if (num_ext_info)
-+		return mux_configure_chan_ext_info(dev, mux, idx, num_ext_info);
- 
- 	return 0;
- }
+I especially don't like that this flow recreates the octopus merge
+whenever the branches change so there is no stable tree for people to
+follow, or to submit patches on top of the current state of the tree.
 
--- 
-2.47.0
+IMHO the more traditional flow of just merging patches/PR forward on a
+single branch works better.
 
+Jason
 
