@@ -1,406 +1,147 @@
-Return-Path: <linux-kernel+bounces-428006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB4B9E0896
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:32:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFDCD9E0926
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:55:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15FC9282C3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:32:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EBAFBC6758
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D3A1DDC09;
-	Mon,  2 Dec 2024 16:29:52 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB5E1632E6;
+	Mon,  2 Dec 2024 16:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LZHtSpiI"
+Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0151199235;
-	Mon,  2 Dec 2024 16:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526C13C6BA
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733156991; cv=none; b=EBABubaCFH0qtq2RX/g5nbBjkKz5aqF2RCa0BE61yEh/mcZ4dNKaZbtf3utELCkFOag9QEteYPKkeeiyv/OuM1geu+rLAiMo8+jGPN9HV3ecltql7P1xiYdRMDlbWgVl+1ma/KWfTqCPaqNiaYAQ2IpCsBKaBS9695fREuDpIXo=
+	t=1733157011; cv=none; b=mQqYP96movtOSCjfQM9ULdTBn6QcTJ30jDfGNW52C/OUe4JcJUn//lY0984jKLuBC5nKcNt58FSyDfTK6S6yb06H+FTvUdr/gD4McNfwYOSxBhPr2gVwIxmbxn2YRxWxuyJ2z1FQ33iWILUmPL0i/DnsAuQv+pINos+7XF3oICk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733156991; c=relaxed/simple;
-	bh=NWcoolRJnlIcnRwWuYA3HRq67OUoRL+ks4l5fFcP5zw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z9EeX8AfDd5qxZE3sbRZHd77m/NknfNI/xP9o8bn38MxA1Jmi7ytRtD9XbkQEyyQCbJmzgw6T+r7DruhBxZajfqSHr79S48nNFpm1vWc40MxL49sUneR+uj+ZFApGrps+d6IR7KugQmuBPpkal4KMxyqcCDMcaqA0V2lZVCc13s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20cf3e36a76so41468935ad.0;
-        Mon, 02 Dec 2024 08:29:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733156989; x=1733761789;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IQa4xlJWlHUcobyR53zonKvvx8enhBXBuxLbjrutfQg=;
-        b=hWywH8KnYJ9NUbzRGpsdtYj22lpbhqJm4GO7T1GvLLUQpdY9ysytZDxom6RhgUwxwz
-         FpSNwvA63vHrWgfpZu6S7hiTudcVU3nO8+QkDS8sI+fnKFH25Dc+bTQKAqlodJymePzt
-         IsDntNmPMrmn44iTqJVHwAbeieByWwoQltwYF8OtH83HAdK++VzFf1xNQe1jw7Omn4+8
-         brDnu03rxv8ZiS3GZ8Ew3m6agM9EgQ+gTeMCMm1QeBuLHbNyhhQ/jkBWH8MmNy2oNrO7
-         6d5M2azs1Euy3xGja+zyeCnbG3Hv+PPb5d+9Doet6sh6bDkTTV4A+Hx3cU2Ea3N5/7Tp
-         rzfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRR45W5bP1r6ntspg6cb03vAqS80tx1cJC1kBSPbGZgnGXz2jABaBS0NQvyAChXiyUeKDvZ6WGx84=@vger.kernel.org, AJvYcCWuLBdPUUICZ+rj+GQ7QVQDyACZDzRAHjQMds/ALa7F6SwPT/QLHU6b+D2QZ9OOyILHw7PDroyg9O+S9USX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1O/bOL9hCjDkkloK/0M0zQfRPOyNwBF9JDghw09LHWy0P1tvh
-	dBgKFd3+Edv+U5lZltSN9sCLs2mJ0tOd+R0Hf3rkvOrg/jfiw8JkgU0pmiQ=
-X-Gm-Gg: ASbGncuGc0RIo5GMlJASgvFwDJrU4QTk/+QatXR+Psc6tpDpoiOPyNEGFflb09vEdfQ
-	lqERqm4KS06MVvuVoo0db8HXo0T0yqtjQ/Cbj3Dhxa7vqDHsdbSq6Ks4Em3FZbV8skaDQ9UN/FL
-	ydhzYHGLhA6On9MjU2Ooi9RizQdnKrwiEvrPr4uumEoZT3ERDUachTM+9OwPrFNBoEautTnXKoT
-	6u1ZrwiP7SoPdNWUJ8GQ4Drm8Rmtyyt1HM+VXg3rbs/IvGb7A==
-X-Google-Smtp-Source: AGHT+IHPCvJpFXyVbhWC4evBauoQ1MyHrC+f6PzMroLmwy0ASnMdCi5VGVDjSP7SZfgfbJpEQ5Bg8g==
-X-Received: by 2002:a17:903:41d2:b0:215:72ca:3c08 with SMTP id d9443c01a7336-21572ca3d62mr116364715ad.13.1733156988678;
-        Mon, 02 Dec 2024 08:29:48 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2156e0bf55csm36682965ad.5.2024.12.02.08.29.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 08:29:48 -0800 (PST)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	horms@kernel.org,
-	donald.hunter@gmail.com,
-	corbet@lwn.net,
-	andrew+netdev@lunn.ch,
-	kory.maincent@bootlin.com,
-	sdf@fomichev.me,
-	nicolas.dichtel@6wind.com
-Subject: [PATCH net-next v3 8/8] ethtool: regenerate uapi header from the spec
-Date: Mon,  2 Dec 2024 08:29:36 -0800
-Message-ID: <20241202162936.3778016-9-sdf@fomichev.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241202162936.3778016-1-sdf@fomichev.me>
-References: <20241202162936.3778016-1-sdf@fomichev.me>
+	s=arc-20240116; t=1733157011; c=relaxed/simple;
+	bh=Sz226XoxQNqwv6a0DZ9qgFudn74WRpAQ06Xjcrc8X00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rhyKdFbSSXi89EDrScrxI6IetKCX4piA9FICmN86J25IYwe2RU76s6YOWqFurHneCyNxgZAQiqqFXwdlyuOmzzgjMGtQ/xiMAW6d9dsSB4JC/bO17PIZPhykScuBv0y3/SIkUnAkYLGjz7M8XECHtodowhnoQyU92yC2OQqRYNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=LZHtSpiI; arc=none smtp.client-ip=158.69.130.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1733157008;
+	bh=Sz226XoxQNqwv6a0DZ9qgFudn74WRpAQ06Xjcrc8X00=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LZHtSpiIPK3//ZnACZjKmoHt5rspMUb2P35fsRJK5bL7ZL9JwNqo5Y3VqoLxFVdyh
+	 rLONdHf3DKqxz9hAsO5J5kgkAapGAD9gAp8NhWZuCI/QXIZ/7kJlNMyu9fzhjobP7s
+	 QyOgWvwHK0SOcVJ4eGDV4TpxCzFaBkHBBPI7+r+sVCaC1Ge0Xu/PsIFqPXxB4bZp3m
+	 zchRLo6rDxdSn0PGQOEdJo7E1KoM5xIU44RmBufni3CjrqkmpZkkGLJ5kbTKHhTUIQ
+	 bu21p16bZtMEVgLOPDKKl0cZGVXubgjoBhg/mdw6OqjMEPvCA62j81JFVDUyQdDXM4
+	 E32oRNjsNfEsw==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Y28QS0PKnzVDB;
+	Mon,  2 Dec 2024 11:30:08 -0500 (EST)
+Message-ID: <9b3bd9b0-fd5b-4239-8ee4-ebabd0667b4b@efficios.com>
+Date: Mon, 2 Dec 2024 11:30:07 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip:x86/mm] [x86/mm/tlb] 209954cbc7:
+ will-it-scale.per_thread_ops 13.2% regression
+To: Rik van Riel <riel@surriel.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+ Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Mel Gorman <mgorman@suse.de>
+References: <202411282207.6bd28eae-lkp@intel.com>
+ <Z0jIsYsuo_9w16tK@localhost.localdomain>
+ <8bf303a222ba27f3a86b357db58ee3df3fa7f82e.camel@surriel.com>
+Content-Language: en-US
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <8bf303a222ba27f3a86b357db58ee3df3fa7f82e.camel@surriel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-No functional changes. Mostly the following formatting:
-- extra docs
-- extra enums
-- XXX_MAX = __XXX_CNT - 1 -> XXX_MAX = (__XXX_CNT - 1)
-- newlines
+On 2024-11-28 21:52, Rik van Riel wrote:
+> On Thu, 2024-11-28 at 14:46 -0500, Mathieu Desnoyers wrote:
+>>
+>> I suspect you could use a similar per-cpu data structure per-mm
+>> to keep track of the pending TLB flush mask, and update it simply
+>> with
+>> load/store to per-CPU data rather than have to cacheline-bounce all
+>> over
+>> the place due to frequent mm_cpumask atomic updates.
+>>
+>> Then you get all the benefits without introducing a window where
+>> useless
+>> TLB flush IPIs get triggered.
+>>
+>> Of course it's slightly less compact in terms of memory footprint
+>> than a
+>> cpumask, but you gain a lot by removing cache line bouncing on this
+>> frequent context switch code path.
+>>
+>> Thoughts ?
+> 
+> The first thought that comes to mind is that we already
+> have a per-CPU variable indicating which is the currently
+> loaded mm on that CPU.
 
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- .../uapi/linux/ethtool_netlink_generated.h    | 89 ++++++++++++-------
- 1 file changed, 56 insertions(+), 33 deletions(-)
+Only on x86 though.
 
-diff --git a/include/uapi/linux/ethtool_netlink_generated.h b/include/uapi/linux/ethtool_netlink_generated.h
-index 35a24d490efe..b58f352fe4f2 100644
---- a/include/uapi/linux/ethtool_netlink_generated.h
-+++ b/include/uapi/linux/ethtool_netlink_generated.h
-@@ -1,23 +1,43 @@
- /* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* Do not edit directly, auto-generated from: */
-+/*	Documentation/netlink/specs/ethtool.yaml */
-+/* YNL-GEN uapi header */
-+
- #ifndef _UAPI_LINUX_ETHTOOL_NETLINK_GENERATED_H
- #define _UAPI_LINUX_ETHTOOL_NETLINK_GENERATED_H
- 
-+#define ETHTOOL_FAMILY_NAME	"ethtool"
-+#define ETHTOOL_FAMILY_VERSION	1
-+
- enum {
- 	ETHTOOL_UDP_TUNNEL_TYPE_VXLAN,
- 	ETHTOOL_UDP_TUNNEL_TYPE_GENEVE,
- 	ETHTOOL_UDP_TUNNEL_TYPE_VXLAN_GPE,
- 
--	__ETHTOOL_UDP_TUNNEL_TYPE_CNT
-+	/* private: */
-+	__ETHTOOL_UDP_TUNNEL_TYPE_CNT,
-+	ETHTOOL_UDP_TUNNEL_TYPE_MAX = (__ETHTOOL_UDP_TUNNEL_TYPE_CNT - 1)
- };
- 
-+/**
-+ * enum ethtool_header_flags - common ethtool header flags
-+ * @ETHTOOL_FLAG_COMPACT_BITSETS: use compact bitsets in reply
-+ * @ETHTOOL_FLAG_OMIT_REPLY: provide optional reply for SET or ACT requests
-+ * @ETHTOOL_FLAG_STATS: request statistics, if supported by the driver
-+ */
- enum ethtool_header_flags {
--	ETHTOOL_FLAG_COMPACT_BITSETS	= 1 << 0,	/* use compact bitsets in reply */
--	ETHTOOL_FLAG_OMIT_REPLY		= 1 << 1,	/* provide optional reply for SET or ACT requests */
--	ETHTOOL_FLAG_STATS		= 1 << 2,	/* request statistics, if supported by the driver */
-+	ETHTOOL_FLAG_COMPACT_BITSETS = 1,
-+	ETHTOOL_FLAG_OMIT_REPLY = 2,
-+	ETHTOOL_FLAG_STATS = 4,
- };
- 
- enum {
--	ETHTOOL_TCP_DATA_SPLIT_UNKNOWN = 0,
-+	ETHTOOL_PHY_UPSTREAM_TYPE_MAC,
-+	ETHTOOL_PHY_UPSTREAM_TYPE_PHY,
-+};
-+
-+enum ethtool_tcp_data_split {
-+	ETHTOOL_TCP_DATA_SPLIT_UNKNOWN,
- 	ETHTOOL_TCP_DATA_SPLIT_DISABLED,
- 	ETHTOOL_TCP_DATA_SPLIT_ENABLED,
- };
-@@ -30,7 +50,7 @@ enum {
- 	ETHTOOL_A_HEADER_PHY_INDEX,
- 
- 	__ETHTOOL_A_HEADER_CNT,
--	ETHTOOL_A_HEADER_MAX = __ETHTOOL_A_HEADER_CNT - 1
-+	ETHTOOL_A_HEADER_MAX = (__ETHTOOL_A_HEADER_CNT - 1)
- };
- 
- enum {
-@@ -40,7 +60,7 @@ enum {
- 	ETHTOOL_A_BITSET_BIT_VALUE,
- 
- 	__ETHTOOL_A_BITSET_BIT_CNT,
--	ETHTOOL_A_BITSET_BIT_MAX = __ETHTOOL_A_BITSET_BIT_CNT - 1
-+	ETHTOOL_A_BITSET_BIT_MAX = (__ETHTOOL_A_BITSET_BIT_CNT - 1)
- };
- 
- enum {
-@@ -48,7 +68,7 @@ enum {
- 	ETHTOOL_A_BITSET_BITS_BIT,
- 
- 	__ETHTOOL_A_BITSET_BITS_CNT,
--	ETHTOOL_A_BITSET_BITS_MAX = __ETHTOOL_A_BITSET_BITS_CNT - 1
-+	ETHTOOL_A_BITSET_BITS_MAX = (__ETHTOOL_A_BITSET_BITS_CNT - 1)
- };
- 
- enum {
-@@ -60,7 +80,7 @@ enum {
- 	ETHTOOL_A_BITSET_MASK,
- 
- 	__ETHTOOL_A_BITSET_CNT,
--	ETHTOOL_A_BITSET_MAX = __ETHTOOL_A_BITSET_CNT - 1
-+	ETHTOOL_A_BITSET_MAX = (__ETHTOOL_A_BITSET_CNT - 1)
- };
- 
- enum {
-@@ -69,7 +89,7 @@ enum {
- 	ETHTOOL_A_STRING_VALUE,
- 
- 	__ETHTOOL_A_STRING_CNT,
--	ETHTOOL_A_STRING_MAX = __ETHTOOL_A_STRING_CNT - 1
-+	ETHTOOL_A_STRING_MAX = (__ETHTOOL_A_STRING_CNT - 1)
- };
- 
- enum {
-@@ -77,7 +97,7 @@ enum {
- 	ETHTOOL_A_STRINGS_STRING,
- 
- 	__ETHTOOL_A_STRINGS_CNT,
--	ETHTOOL_A_STRINGS_MAX = __ETHTOOL_A_STRINGS_CNT - 1
-+	ETHTOOL_A_STRINGS_MAX = (__ETHTOOL_A_STRINGS_CNT - 1)
- };
- 
- enum {
-@@ -87,7 +107,7 @@ enum {
- 	ETHTOOL_A_STRINGSET_STRINGS,
- 
- 	__ETHTOOL_A_STRINGSET_CNT,
--	ETHTOOL_A_STRINGSET_MAX = __ETHTOOL_A_STRINGSET_CNT - 1
-+	ETHTOOL_A_STRINGSET_MAX = (__ETHTOOL_A_STRINGSET_CNT - 1)
- };
- 
- enum {
-@@ -95,7 +115,7 @@ enum {
- 	ETHTOOL_A_STRINGSETS_STRINGSET,
- 
- 	__ETHTOOL_A_STRINGSETS_CNT,
--	ETHTOOL_A_STRINGSETS_MAX = __ETHTOOL_A_STRINGSETS_CNT - 1
-+	ETHTOOL_A_STRINGSETS_MAX = (__ETHTOOL_A_STRINGSETS_CNT - 1)
- };
- 
- enum {
-@@ -105,7 +125,7 @@ enum {
- 	ETHTOOL_A_STRSET_COUNTS_ONLY,
- 
- 	__ETHTOOL_A_STRSET_CNT,
--	ETHTOOL_A_STRSET_MAX = __ETHTOOL_A_STRSET_CNT - 1
-+	ETHTOOL_A_STRSET_MAX = (__ETHTOOL_A_STRSET_CNT - 1)
- };
- 
- enum {
-@@ -114,7 +134,7 @@ enum {
- 	ETHTOOL_A_PRIVFLAGS_FLAGS,
- 
- 	__ETHTOOL_A_PRIVFLAGS_CNT,
--	ETHTOOL_A_PRIVFLAGS_MAX = __ETHTOOL_A_PRIVFLAGS_CNT - 1
-+	ETHTOOL_A_PRIVFLAGS_MAX = (__ETHTOOL_A_PRIVFLAGS_CNT - 1)
- };
- 
- enum {
-@@ -182,7 +202,7 @@ enum {
- 	ETHTOOL_A_LINKINFO_TRANSCEIVER,
- 
- 	__ETHTOOL_A_LINKINFO_CNT,
--	ETHTOOL_A_LINKINFO_MAX = __ETHTOOL_A_LINKINFO_CNT - 1
-+	ETHTOOL_A_LINKINFO_MAX = (__ETHTOOL_A_LINKINFO_CNT - 1)
- };
- 
- enum {
-@@ -199,7 +219,7 @@ enum {
- 	ETHTOOL_A_LINKMODES_RATE_MATCHING,
- 
- 	__ETHTOOL_A_LINKMODES_CNT,
--	ETHTOOL_A_LINKMODES_MAX = __ETHTOOL_A_LINKMODES_CNT - 1
-+	ETHTOOL_A_LINKMODES_MAX = (__ETHTOOL_A_LINKMODES_CNT - 1)
- };
- 
- enum {
-@@ -213,7 +233,7 @@ enum {
- 	ETHTOOL_A_LINKSTATE_EXT_DOWN_CNT,
- 
- 	__ETHTOOL_A_LINKSTATE_CNT,
--	ETHTOOL_A_LINKSTATE_MAX = __ETHTOOL_A_LINKSTATE_CNT - 1
-+	ETHTOOL_A_LINKSTATE_MAX = (__ETHTOOL_A_LINKSTATE_CNT - 1)
- };
- 
- enum {
-@@ -222,7 +242,7 @@ enum {
- 	ETHTOOL_A_DEBUG_MSGMASK,
- 
- 	__ETHTOOL_A_DEBUG_CNT,
--	ETHTOOL_A_DEBUG_MAX = __ETHTOOL_A_DEBUG_CNT - 1
-+	ETHTOOL_A_DEBUG_MAX = (__ETHTOOL_A_DEBUG_CNT - 1)
- };
- 
- enum {
-@@ -232,7 +252,7 @@ enum {
- 	ETHTOOL_A_WOL_SOPASS,
- 
- 	__ETHTOOL_A_WOL_CNT,
--	ETHTOOL_A_WOL_MAX = __ETHTOOL_A_WOL_CNT - 1
-+	ETHTOOL_A_WOL_MAX = (__ETHTOOL_A_WOL_CNT - 1)
- };
- 
- enum {
-@@ -244,7 +264,7 @@ enum {
- 	ETHTOOL_A_FEATURES_NOCHANGE,
- 
- 	__ETHTOOL_A_FEATURES_CNT,
--	ETHTOOL_A_FEATURES_MAX = __ETHTOOL_A_FEATURES_CNT - 1
-+	ETHTOOL_A_FEATURES_MAX = (__ETHTOOL_A_FEATURES_CNT - 1)
- };
- 
- enum {
-@@ -276,6 +296,7 @@ enum {
- enum {
- 	ETHTOOL_A_PROFILE_UNSPEC,
- 	ETHTOOL_A_PROFILE_IRQ_MODERATION,
-+
- 	__ETHTOOL_A_PROFILE_CNT,
- 	ETHTOOL_A_PROFILE_MAX = (__ETHTOOL_A_PROFILE_CNT - 1)
- };
-@@ -362,7 +383,6 @@ enum {
- 
- 	__ETHTOOL_A_TS_STAT_CNT,
- 	ETHTOOL_A_TS_STAT_MAX = (__ETHTOOL_A_TS_STAT_CNT - 1)
--
- };
- 
- enum {
-@@ -412,7 +432,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_HEADER,
- 
- 	__ETHTOOL_A_CABLE_TEST_CNT,
--	ETHTOOL_A_CABLE_TEST_MAX = __ETHTOOL_A_CABLE_TEST_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_MAX = (__ETHTOOL_A_CABLE_TEST_CNT - 1)
- };
- 
- enum {
-@@ -433,7 +453,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_CFG_PAIR,
- 
- 	__ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT,
--	ETHTOOL_A_CABLE_TEST_TDR_CFG_MAX = __ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_TDR_CFG_MAX = (__ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT - 1)
- };
- 
- enum {
-@@ -443,7 +463,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_NTF_NEST,
- 
- 	__ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT,
--	ETHTOOL_A_CABLE_TEST_TDR_NTF_MAX = __ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_TDR_NTF_MAX = (__ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT - 1)
- };
- 
- enum {
-@@ -452,7 +472,7 @@ enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_CFG,
- 
- 	__ETHTOOL_A_CABLE_TEST_TDR_CNT,
--	ETHTOOL_A_CABLE_TEST_TDR_MAX = __ETHTOOL_A_CABLE_TEST_TDR_CNT - 1
-+	ETHTOOL_A_CABLE_TEST_TDR_MAX = (__ETHTOOL_A_CABLE_TEST_TDR_CNT - 1)
- };
- 
- enum {
-@@ -580,6 +600,9 @@ enum {
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_UNSPEC,
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_MIN,
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_MAX,
-+
-+	__ETHTOOL_A_C33_PSE_PW_LIMIT_CNT,
-+	__ETHTOOL_A_C33_PSE_PW_LIMIT_MAX = (__ETHTOOL_A_C33_PSE_PW_LIMIT_CNT - 1)
- };
- 
- enum {
-@@ -613,7 +636,7 @@ enum {
- 	ETHTOOL_A_RSS_START_CONTEXT,
- 
- 	__ETHTOOL_A_RSS_CNT,
--	ETHTOOL_A_RSS_MAX = (__ETHTOOL_A_RSS_CNT - 1),
-+	ETHTOOL_A_RSS_MAX = (__ETHTOOL_A_RSS_CNT - 1)
- };
- 
- enum {
-@@ -662,8 +685,8 @@ enum {
- };
- 
- enum {
--	ETHTOOL_MSG_USER_NONE,
--	ETHTOOL_MSG_STRSET_GET,
-+	ETHTOOL_MSG_USER_NONE = 0,
-+	ETHTOOL_MSG_STRSET_GET = 1,
- 	ETHTOOL_MSG_LINKINFO_GET,
- 	ETHTOOL_MSG_LINKINFO_SET,
- 	ETHTOOL_MSG_LINKMODES_GET,
-@@ -710,12 +733,12 @@ enum {
- 	ETHTOOL_MSG_PHY_GET,
- 
- 	__ETHTOOL_MSG_USER_CNT,
--	ETHTOOL_MSG_USER_MAX = __ETHTOOL_MSG_USER_CNT - 1
-+	ETHTOOL_MSG_USER_MAX = (__ETHTOOL_MSG_USER_CNT - 1)
- };
- 
- enum {
--	ETHTOOL_MSG_KERNEL_NONE,
--	ETHTOOL_MSG_STRSET_GET_REPLY,
-+	ETHTOOL_MSG_KERNEL_NONE = 0,
-+	ETHTOOL_MSG_STRSET_GET_REPLY = 1,
- 	ETHTOOL_MSG_LINKINFO_GET_REPLY,
- 	ETHTOOL_MSG_LINKINFO_NTF,
- 	ETHTOOL_MSG_LINKMODES_GET_REPLY,
-@@ -763,7 +786,7 @@ enum {
- 	ETHTOOL_MSG_PHY_NTF,
- 
- 	__ETHTOOL_MSG_KERNEL_CNT,
--	ETHTOOL_MSG_KERNEL_MAX = __ETHTOOL_MSG_KERNEL_CNT - 1
-+	ETHTOOL_MSG_KERNEL_MAX = (__ETHTOOL_MSG_KERNEL_CNT - 1)
- };
- 
- #endif /* _UAPI_LINUX_ETHTOOL_NETLINK_GENERATED_H */
+> 
+> We could probably just skip sending IPIs to CPUs that do
+> not have the mm_struct currently loaded.
+> 
+> This can race against switch_mm_irqs_off() on a CPU
+> switching to that mm simultaneously with the TLB flush,
+> which should be fine because that CPU cannot load TLB
+> entries from previously cleared page tables.
+> 
+> However, it does mean we cannot safely clear bits
+> out of the mm_cpumask, because a race between clearing
+> the bit on one CPU, and setting it on another would not
+> be something we could easily catch at all, unless we
+> can figure out some clever memory ordering thing there.
+> 
+
+Or we just build a per-cpu mm_cpumask from per-CPU state
+every time we want to use the mm_cpumask. But AFAIU this
+is going to be a tradeoff between:
+
+- Overhead of context switch at scale
+
+(e.g. will-it-scale:)
+for a in $(seq 1 2); do (./context_switch1_threads -t 192 -s 20 &); done
+
+For reference, my POC reaches 50% performance improvement with this.
+
+   vs
+
+- Overhead of TLB flush
+
+(e.g. will-it-scale:)
+./tlb_flush2_threads -t 192 -s 20
+
+For reference, my POC has about 33% regression on that test case due
+to extra work when using mm_cpumask.
+
+So I guess what we end up doing really depends which scenario we consider
+most frequent.
+
+Thanks,
+
+Mathieu
+
 -- 
-2.47.0
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
