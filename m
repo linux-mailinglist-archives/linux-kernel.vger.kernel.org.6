@@ -1,147 +1,133 @@
-Return-Path: <linux-kernel+bounces-427304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608289DFF8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:01:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C010116053C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:01:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7AB1FBCAF;
-	Mon,  2 Dec 2024 11:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fEb6KN+Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30829DFF98
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:03:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422511F9EA4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733137278; cv=none; b=KIO8lcX0yE14ToMPU7CiJERuVY5dFSpvygoUGKPvp+W4GfcTHUAOLHxTwXng/n73uCcv8lsSGholJ7+tAl9jRZhaA9eTM8bPLVf3mO6D7sCZP9SH3yTUDihJ+XdnXKtZagLl8DY4hpVQq7dPfL/wSAmyAnE1NlJ9bPyuEmZX8Lg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733137278; c=relaxed/simple;
-	bh=6X1riY+VHXRDka4H1B+wNDkstNqFukhW6/fU6njkVS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rBXlcRyL/GDAM/H7mCoDP4qeq7pA/VFQ4NfB4idCjeKkABIQ9h41+Pk7OCkcPlJLVk2QYxz3DckU3MUa59SjUwbErwk2DFHJsXDxwm0FE2ZolNkpkkofMbjm5IfK+VbYBLJGXkNb7SkpftYuPUQBaJYXb++QRi1U/U4uusueq6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fEb6KN+Q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733137275;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5qe+kacRTUMIlGtiIXxBuiYgdy3mvLZJuJ7npnuXvo4=;
-	b=fEb6KN+QQaXnsIYUI8PJMjDpHQljP/yR3XCSguJOixBl/a8w/9Ac510soO72c82K8NIPxN
-	pgok7sf6+LpSv1VTVb+2s1HpOyC3fX2cgY0Fwt44e58Hq32N1wKoKr8y6ALOjFNm7s8kBQ
-	WqQWhtrvozKERF4jv7D8yAZAYxfeTNI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-675-KK3CtWbxPzCZTC6blB60FQ-1; Mon,
- 02 Dec 2024 06:01:14 -0500
-X-MC-Unique: KK3CtWbxPzCZTC6blB60FQ-1
-X-Mimecast-MFC-AGG-ID: KK3CtWbxPzCZTC6blB60FQ
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83E7F28188D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:03:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7087B1FCF78;
+	Mon,  2 Dec 2024 11:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IDsrlJbD"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EDEE0195421D;
-	Mon,  2 Dec 2024 11:01:12 +0000 (UTC)
-Received: from t14s.cit.tum.de (unknown [10.39.194.150])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 370C130000DF;
-	Mon,  2 Dec 2024 11:01:09 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v1] mm/memory_hotplug: move debug_pagealloc_map_pages() into online_pages_range()
-Date: Mon,  2 Dec 2024 12:01:08 +0100
-Message-ID: <20241202110108.451522-1-david@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114CD1FBC8B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733137397; cv=none; b=XzElrLNZoUJGHUeBlj9bA9l1Rrx6qYOowOXCS3FIP3T4HxXavlCQ2h4AhFIuR5no/KfdwelIhyJTkxPN6LWUw/6pZXU55PJUNwsizQFwfzXeFP9SYRTghVXuiKMx4JJouoWp+d8xQvh8l0riHBEHU3TgXD6B8ulq99thdzzj96E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733137397; c=relaxed/simple;
+	bh=mM8Ty9zubi84Tu0ptmDRpums5gqswtEyzEignt+0538=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d5hhRWwaqMykUMEsshsWCoBWi5dvAltPtTo718/qMPSQXZMYs0W45KOgiOZWvhTe81SKwY7153+jf/QGxoUAzB25O4BLmwSmytdxLqIMolsQ5eV8SZR5qD3nzTKdYe0tGg8TqIkTQsF1et/Z8QSbmCTg3Cmt+MByONtRLsdpo04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IDsrlJbD; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53de852a287so4604013e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 03:03:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733137393; x=1733742193; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6X4f5B7p/4ISxO7icMRqa8h5IT36sTqoFNtM1b1oYjE=;
+        b=IDsrlJbDff79X2j55Ye6ngR9Wa3zOFgJjfpt3jK4Q02vAjkiUUQxO4Aga2PQ9/7Ol5
+         XR1EJQtCpWKz4DQ1FxtHPHE3xjp3Hv2No0x5t5j2KYT/4k4bjHmRA7yEJE64BPigYEBZ
+         NiEjZCW8liPAOrVgkje9OTalgmS7OVTnySgzQlxipWXak6QsRwUv85yW/HHMwLZ7MSEl
+         Y/ZAeOa1fBHCv9fdx8YLK/sCzak0FMrOGbJAWSlfOtWGUUN2NdEIAle01a3DcNo+ThxW
+         I9YDzf3i+4eoV33dhY2ML4kbaU8+n0NFpLK5SnIhb9a8+/T3/tWbOLYmY0uocQr6U4cI
+         uenQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733137393; x=1733742193;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6X4f5B7p/4ISxO7icMRqa8h5IT36sTqoFNtM1b1oYjE=;
+        b=j1VZ5WRO/cGylbbnK6C9nngAPLV6BaUjM843mlnBcq++d7hszba0GRaSNJCAKAReSA
+         UPZNoz2CpI/pnb4EvBRJ+Fny3Q1GzAjTWQf5Qc1BNRd8TfEmnD3xqbTAvf6WhYQkC0od
+         EffKRj01uLHKea/Wuj4VwZ0THKb+hMXmPVo74erw2clp2s2WOOF1rMh4+nJ6uvotC2Sz
+         7pAHSqG2+5ju1PONsXiRhpi0He5Kmm6Vz9IsvmNgwMoeSGyEBCTEQDoQzloQVhMValXm
+         bsMUrTX3KIEaaHRHjWJDBHCS/CejuKHMTxsRbIevkjfwVEKuuanhFLRytZA/gUy7xhsQ
+         1yiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwxDLkDbmHuq2VI8Q1oZXWC9LmUzo8UONnL13m4SBy4nf6UwwcpejFOHNZBVoEN+EROnjrypvNfBQiqDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygP6hDe+UGBvZjVz8v6dYWkf1RdQ38wa/huiOGowqNW0UtbSXH
+	ooiOfcjGreH3cT1M4TvW+feU2trAbWxCpBx+3Xu5zd8aYVorhHXSRC2omUrGmms=
+X-Gm-Gg: ASbGnctMvCXDFVKdu8NfZmR3VzfOE42PsmGweiXV0cjjKRncnwkdyQd3tqXRNtLe8X6
+	252wbcq+GT4KcRS1q0rejOqJ+yp/gQa47I6Bit9H+IKzaoTxU0d/BsbQ6UsNAuwBGFbk/mWRYwW
+	prvZ+i0UorPFow3YvPJEXXRXO7q7TC7L7aDc7N9GLmM/XhlVRmYkuMKoVHdONe7oIDQxBjm6wmf
+	jGrSi4v9BgTaqMaVi7Yy4yOoWXAG9PMye415O2S5MIwYixN2Zcg3j7FQJkhnv39IHzDRxEKP0lG
+	lvP4DXMCpGXMK7rTCYB70RIUodmjcg==
+X-Google-Smtp-Source: AGHT+IFGDFefBhtw1PCqTOI5KhQIlj3rWjRnFP/b36RPBBTJEaQRx6orQjZk5ZBCQurK/QAedMSg2Q==
+X-Received: by 2002:a05:6512:2385:b0:53d:ed25:fb75 with SMTP id 2adb3069b0e04-53df00d3e65mr7699888e87.15.1733137392309;
+        Mon, 02 Dec 2024 03:03:12 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646efd9sm1443877e87.143.2024.12.02.03.03.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 03:03:10 -0800 (PST)
+Date: Mon, 2 Dec 2024 13:03:07 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	David Airlie <airlied@gmail.com>, Harry Wentland <harry.wentland@amd.com>, 
+	Inki Dae <inki.dae@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Leo Li <sunpeng.li@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Phong LE <ple@baylibre.com>, 
+	Raphael Gallais-Pou <rgallaispou@gmail.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Rob Clark <robdclark@gmail.com>, Robert Foss <rfoss@kernel.org>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Sean Paul <sean@poorly.run>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, Xinhui Pan <Xinhui.Pan@amd.com>
+Subject: Re: [PATCH 00/10] drm/connector: add eld_mutex to protect
+ connector->eld
+Message-ID: <ohbtatnn33jj6y3q4milf4txi4n7yirnny2eefdjddlkn2dnhp@eqjedetct4q3>
+References: <20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org>
+ <77545786331df8bfaf5fdcb309437358@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77545786331df8bfaf5fdcb309437358@kernel.org>
 
-In the near future, we want to have a single way to handover PageOffline
-pages to the buddy, whereby they could have:
+On Mon, Dec 02, 2024 at 10:19:41AM +0000, Maxime Ripard wrote:
+> On Sun, 1 Dec 2024 01:55:17 +0200, Dmitry Baryshkov wrote:
+> > The connector->eld is accessed by the .get_eld() callback. This access
+> > can collide with the drm_edid_to_eld() updating the data at the same
+> > time. Add drm_connector.eld_mutex to protect the data from concurrenct
+> > access.
+> > 
+> > 
+> > [ ... ]
+> 
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-(a) Never been exposed to the buddy before: kept PageOffline when onlining
-    the memory block.
-(b) Been allocated from the buddy, for example using
-    alloc_contig_range() to then be set PageOffline,
+Thanks!
 
-Let's start by making generic_online_page() less special compared to
-ordinary page freeing (e.g., free_contig_range()), and perform the
-debug_pagealloc_map_pages() call unconditionally, even when the online
-callback might decide to keep the pages offline.
+I'm going to post v2 to fix Jani's comment, but what should be the merge
+strategy? Merge patches 1-3, 5, 9-10 through drm-misc and the rest (AMD,
+i915, MSM, radeon) through the driver trees?
 
-All pages are already initialized with PageOffline, so nobody touches
-them either way.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/memory_hotplug.c | 10 +++++++++-
- mm/page_alloc.c     |  6 ------
- 2 files changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index c43b4e7fb298..20af14e695c7 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -650,6 +650,7 @@ static void online_pages_range(unsigned long start_pfn, unsigned long nr_pages)
- 	 * this and the first chunk to online will be pageblock_nr_pages.
- 	 */
- 	for (pfn = start_pfn; pfn < end_pfn;) {
-+		struct page *page = pfn_to_page(pfn);
- 		int order;
- 
- 		/*
-@@ -664,7 +665,14 @@ static void online_pages_range(unsigned long start_pfn, unsigned long nr_pages)
- 		else
- 			order = MAX_PAGE_ORDER;
- 
--		(*online_page_callback)(pfn_to_page(pfn), order);
-+		/*
-+		 * Exposing the page to the buddy by freeing can cause
-+		 * issues with debug_pagealloc enabled: some archs don't
-+		 * like double-unmappings. So treat them like any pages that
-+		 * were allocated from the buddy.
-+		 */
-+		debug_pagealloc_map_pages(page, 1 << order);
-+		(*online_page_callback)(page, order);
- 		pfn += (1UL << order);
- 	}
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cc3296cf8c95..01927f03af0b 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1293,12 +1293,6 @@ void __meminit __free_pages_core(struct page *page, unsigned int order,
- 			set_page_count(p, 0);
- 		}
- 
--		/*
--		 * Freeing the page with debug_pagealloc enabled will try to
--		 * unmap it; some archs don't like double-unmappings, so
--		 * map it first.
--		 */
--		debug_pagealloc_map_pages(page, nr_pages);
- 		adjust_managed_page_count(page, nr_pages);
- 	} else {
- 		for (loop = 0; loop < nr_pages; loop++, p++) {
 -- 
-2.47.1
-
+With best wishes
+Dmitry
 
