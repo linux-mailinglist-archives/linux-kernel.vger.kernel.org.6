@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-428461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF799E0EF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:31:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1529E0ECE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:19:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E4216563A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:19:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8301DF972;
+	Mon,  2 Dec 2024 22:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VObvzbY/"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EC2BB29102
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:19:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A7E1DFDAF;
-	Mon,  2 Dec 2024 22:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HywQGaoI"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C5A1DF746
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E422B1DE3B2;
+	Mon,  2 Dec 2024 22:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733177955; cv=none; b=qUXxkC5CRma3u21JFc25EAX80TaoAZOWXRP3eXfgN2+CBP4egPnbYJ5+ozArAISDCWyTWTNKcO8jJRXP+nYcnDFe7FcWGsjMhKZRLGexddlTuK6Kiy7L4xTC1EcTDeeH630/s4hIQROnWKpevSrB/FKUAaYHTfuKih/oCH7jRJs=
+	t=1733177953; cv=none; b=ms4/xLs68lahiFX5NsHyiWDbHHF8QcjH9z4rMteqOgrPn4GpIUG6tbb4HcORO3cRSwoIRsT6DNjyl/4PIsla0KfAVNlhN9mJ/xWKZt5I3IfWmyH79pgjJgOkN59Dy8LHJHjIs8qqPELWlSlYU4IyPfD+8i4GO4L9K1BPaux0j60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733177955; c=relaxed/simple;
-	bh=Z+QVSMEEjK0LS8J5R+iauWqCDh5TBeNBLgUPvSj2HjI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eUzJJ/Rqu87K9GMZmeY084L3AJMUWLLrZmRr8Ca/sKqvOu9t1eawrskzg8jdkPp6UOJIkYtbOeKxoKLpCa1DXZ+481ugsupOcga2KJVeCdrDTMpfVEAInK62ahUsSIagqvT2A7hhpgM9DViFTKfRLYBS4sx5UToNxDmoLKiP/LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HywQGaoI; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5f1e573e65dso1431155eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:19:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733177952; x=1733782752; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z+QVSMEEjK0LS8J5R+iauWqCDh5TBeNBLgUPvSj2HjI=;
-        b=HywQGaoIHK6l/tXk+KKB9lX0uI04IeJ7wf1BoHICrPxxN45dgvTpdek63DQa6VT1o9
-         ynGrvRiurO0/lrD0OeXqXMnJvMxkLg8hiYU7uP9DDLKzj5m9RQlXlOe0aTewdkgSGVlw
-         v9afg+/cCMPI4JvQ8whWOGPPeQ1F6obEZsC2O5U7i0EOFSUdrcQvaT51PFOV4CZTbcys
-         ryC8JmsdOr93FgP6ghfobEz87k+j8QwqU7knUvWxCC3PHwTy4Qw+BQdgEN6whnZ+sBa/
-         JJ5edTGbLdNnJniGvvNK2xHkxDUWmoZ7TYNWp+0SWBA/pIC+SJTtJvZ1LjcMt/0tTuMe
-         zLfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733177952; x=1733782752;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z+QVSMEEjK0LS8J5R+iauWqCDh5TBeNBLgUPvSj2HjI=;
-        b=dYAHZU5+fsIaoiiJZ4gtUVO88av7hwPe+LoeOfhGQXoGkadbWgYxPEVGdEu1BOMAyD
-         nnD5hX+WYV2edVYgNoNtype8zHBXqBkeof9ecVMbJ3i1HZnjGzFonX2m+OebViZiLFRm
-         juY3rAEYyFNBFSvC3UAZbKHFefmuJZU6ZpHyG/fCp0q77C7eQPqXQWS+gH1B3q8yxtaA
-         RDWwF4VF3jqbEgjGIUXbBzwASNTEARKXnxufMNJABKTaH7vMeg8/OJIbOegaS3pASYTA
-         HOuGUA12bsif9YNSofX9PQEn7t/KqmiZ6oRnHI9jOZrbG+dq6fDU9X67Nk6ipPPUZWwA
-         5osg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Qmay3ddmxfyv5r2HHLS7IU4WP+B8aiB4oFSdBj1/NgR9ITnCFMSn8c82idNTX+OH1dadfaqCbKCcPeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyWcx4W6+xrWPuVmXHYQVBQfrUd5hpkeoqlw2ROUuTQZiluLcR
-	X1F7Awsr51T/520L42iWE0ivAXcDjUDeitT3I3kqo9rpDsES7iMGNa1Q2H8VjA/wqzuJY+1H35u
-	hd+3FvX+hc3vPPrIDeWS3AwD3TMmXDV7K3fj3
-X-Gm-Gg: ASbGncuHeIBUK+V9czJLOi+GiWdn9mVu+3wOW69MzaDQAc+kpZIURSvUzM6MNyEuB1t
-	jQNkB8kNitWveggezqVkkaXcYb/PrCUCteVsEXjLAYWWd0LjGW2sa/oNejsJRLL0=
-X-Google-Smtp-Source: AGHT+IHUkaZPBeQviSYOsKB5i76bMkpozzTjH1NAPFuZVu+s8XxFCSKVHa/VsFE7PH6FEgTXJq6cL6qNXKZrXsbZuhk=
-X-Received: by 2002:a05:6358:d5a2:b0:1c6:7d9d:16c4 with SMTP id
- e5c5f4694b2df-1caeab9addcmr56797255d.19.1733177952383; Mon, 02 Dec 2024
- 14:19:12 -0800 (PST)
+	s=arc-20240116; t=1733177953; c=relaxed/simple;
+	bh=YdzNUb5yrjlOg/1mW+q0lnPWV9LnGDsoUDURf/Ndo4E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ef/D+c91OcvGd+8cipk3cl7CuSU8giOjmvqpZtM1Z1Do1pcziqiA8xnihzcLuOiS9uAD3M00l+1j8i66zxe7dO8wX5LnMTeFfTMAfJ6ItyyCYZG1Q/+5YL9lqgGXDAxqPs39tbHQFP1mfUx3Y1AJ72sTu6tL6JFRhwAxNW7s294=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VObvzbY/; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2MJ6eV1528297
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 2 Dec 2024 16:19:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733177946;
+	bh=4jVQ5OeIAGOJIdP9xObpEaYGeVtRlBcgDJDETqLejV4=;
+	h=From:To:CC:Subject:Date;
+	b=VObvzbY//u+ktja/loM5SiDIoYBGR6CCzIAoCOAfzwQ9uRypuI3FLzxjcrVNNGcTU
+	 8CgZwtd1QQIZI8a+nV31/5BYHNWmYZw4d0cQdx93WIrSWQhh5j+MIchA/hFxhOgj7v
+	 jc8mj1hKksozh9KvI9JRRr8DrNC9VkyO7PVIrRus=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2MJ6t0059127
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Dec 2024 16:19:06 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
+ Dec 2024 16:19:05 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 2 Dec 2024 16:19:06 -0600
+Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2MJ5Us068468;
+	Mon, 2 Dec 2024 16:19:05 -0600
+From: Andrew Davis <afd@ti.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew
+ Davis <afd@ti.com>
+Subject: [PATCH 1/4] remoteproc: wkup_m3: Use devm_pm_runtime_enable() helper
+Date: Mon, 2 Dec 2024 16:19:01 -0600
+Message-ID: <20241202221904.319149-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130001423.1114965-1-surenb@google.com>
-In-Reply-To: <20241130001423.1114965-1-surenb@google.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Mon, 2 Dec 2024 15:18:35 -0700
-Message-ID: <CAOUHufZdJEidYts3ZY+=oSReWNVakVovUQsRpuxKH=ogNxqVHw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] alloc_tag: fix module allocation tags populated area calculation
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, 
-	pasha.tatashin@soleen.com, rppt@kernel.org, souravpanda@google.com, 
-	00107082@163.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Nov 29, 2024 at 5:14=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> vm_module_tags_populate() calculation of the populated area assumes that
-> area starts at a page boundary and therefore when new pages are allocatio=
-n,
-> the end of the area is page-aligned as well. If the start of the area is
-> not page-aligned then allocating a page and incrementing the end of the
-> area by PAGE_SIZE leads to an area at the end but within the area boundar=
-y
-> which is not populated. Accessing this are will lead to a kernel panic.
-> Fix the calculation by down-aligning the start of the area and using that
-> as the location allocated pages are mapped to.
->
-> Fixes: 0f9b685626da ("alloc_tag: populate memory for module tags as neede=
-d")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202411132111.6a221562-lkp@intel.co=
-m
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Use device life-cycle managed runtime enable function to simplify probe
+and exit paths.
 
-Acked-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ drivers/remoteproc/wkup_m3_rproc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+index d8be21e717212..35c2145b12db7 100644
+--- a/drivers/remoteproc/wkup_m3_rproc.c
++++ b/drivers/remoteproc/wkup_m3_rproc.c
+@@ -148,7 +148,9 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	pm_runtime_enable(&pdev->dev);
++	ret = devm_pm_runtime_enable(dev);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
+ 	ret = pm_runtime_get_sync(&pdev->dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "pm_runtime_get_sync() failed\n");
+@@ -219,7 +221,6 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
+ 	rproc_free(rproc);
+ err:
+ 	pm_runtime_put_noidle(dev);
+-	pm_runtime_disable(dev);
+ 	return ret;
+ }
+ 
+@@ -230,7 +231,6 @@ static void wkup_m3_rproc_remove(struct platform_device *pdev)
+ 	rproc_del(rproc);
+ 	rproc_free(rproc);
+ 	pm_runtime_put_sync(&pdev->dev);
+-	pm_runtime_disable(&pdev->dev);
+ }
+ 
+ #ifdef CONFIG_PM
+-- 
+2.39.2
+
 
