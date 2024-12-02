@@ -1,133 +1,127 @@
-Return-Path: <linux-kernel+bounces-428021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5BC9E0911
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:52:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8669216C4A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:37:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11FB1DD884;
-	Mon,  2 Dec 2024 16:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N32fYeE1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BD99E08BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:37:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255C01DA622
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733157345; cv=none; b=KKjNzPFyj7qB8EtHoS3hx7wiC1ZmQy8m+ZqZcWneqKSxuLwFm0gf8qKet3Sq5SQ2BqBzIUy/I7eHn+FLeEXMCOnEhv7sMqgOiSXk/ANmhe76JOUlxWyT9Hxl3gJPhvY2g1nWAACb0Jz9AGUPpSVEVtRptoH6X1YYnAveyZXZD+4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733157345; c=relaxed/simple;
-	bh=lu/T8c/ONtFclthiZfbjtk5Klo4nJJWTbw0vZYcIpiE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JbQms+cq5ZavzqM04ZuKKmOYKdHjbP17OVVcKUfz2QzawTE57L3vlSkRYdiDiJBpSiMt2AmqIZuXVhAYxtMJ2bTfx//CFVowUGgn4sAFvQF1mdLMctzr4chPXYKvadGtIEpBGuT9+0CtG0X4msUPFObgyS8S0mHcZ01rPBMO+i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N32fYeE1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733157342;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MD7vpVzmNdr2zkj6ePakrYVQbOesXQVj6yS9qMqPqYA=;
-	b=N32fYeE1G+m5facH/k5Nu6Ky4lMiALJbXzk8QbVnjXX+JjzVF3r7Oo4BUZ/2P7iH6692wz
-	aPQ/rsWfVyg8xHKA2IUitd2gJcK8e/fNKiLdSU34mxIvdoTlDb7FxAhSxE3lbd44KhqCj3
-	J8/JpZcKpxJKJ732lU43ObUZdgmfrtI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-632-kTsgXmKUOoSBAhS4dEswpQ-1; Mon,
- 02 Dec 2024 11:35:36 -0500
-X-MC-Unique: kTsgXmKUOoSBAhS4dEswpQ-1
-X-Mimecast-MFC-AGG-ID: kTsgXmKUOoSBAhS4dEswpQ
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B62AB280DC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:37:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8D21DB55C;
+	Mon,  2 Dec 2024 16:35:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5DAAD195FD0C;
-	Mon,  2 Dec 2024 16:35:33 +0000 (UTC)
-Received: from rhel-developer-toolbox-2.redhat.com (unknown [10.45.225.22])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CD0471956067;
-	Mon,  2 Dec 2024 16:35:29 +0000 (UTC)
-From: Michal Schmidt <mschmidt@redhat.com>
-To: Rodolfo Giometti <giometti@enneenne.com>
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Ma Ke <make24@iscas.ac.cn>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	George Spelvin <linux@horizon.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] pps: use cdev_device_add()
-Date: Mon,  2 Dec 2024 17:34:51 +0100
-Message-ID: <20241202163451.1442566-7-mschmidt@redhat.com>
-In-Reply-To: <20241202163451.1442566-1-mschmidt@redhat.com>
-References: <20241202163451.1442566-1-mschmidt@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A1A1DA11B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733157344; cv=none; b=TxiXaen/FKyQNW4hp4rf56aPEwgiW+w1mCA3EYP0Uaah/JznPwarvbcfbh0l47DsO0f4wjyNLJjfgnesTxvpjI35yoJAAzSKyq1+SwbjIMO5iZBrstsCI1IikVVUEZQ/OTeMpBTTstmnZs1xqCm/cwce7r0DZMzQ8W6uMd2xcEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733157344; c=relaxed/simple;
+	bh=vzVYWqRuvJ/DR32lne+6U8YOTfeeJ6uP4kuNCyeLjfI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=okbrkVcK7iO9s6w7Rwhsj7raDcukFeqbz4yy+zKTfdu8bFHUAeNJgZ/qHN/IuW44QHKu/hhndsAwWfx7Fk9V+gkJqLa2+eyNaj/DsCT/eLZQMRHI9uEelwBfn+qgrF7gZgKBbHUeoMsoIf9AwXzsn84bvD9m/HLcw0ff05LiZ2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1tI9Od-0004Mi-5y; Mon, 02 Dec 2024 17:35:39 +0100
+From: Jonas Rebmann <jre@pengutronix.de>
+Date: Mon, 02 Dec 2024 17:35:20 +0100
+Subject: [PATCH 1/3] mtd: mchp48l640: make WEL behaviour configurable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-mb85rs128ty-v1-1-a660b6490dc8@pengutronix.de>
+References: <20241202-mb85rs128ty-v1-0-a660b6490dc8@pengutronix.de>
+In-Reply-To: <20241202-mb85rs128ty-v1-0-a660b6490dc8@pengutronix.de>
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Schocher <hs@denx.de>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, David Jander <david@protonic.nl>, 
+ kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1701; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=YnwbiJO7X9hCHNnU39mclSYSZ2iVlKIANZV6k28zZuk=;
+ b=owGbwMvMwCF2ZcYT3onnbjcwnlZLYkj3fXiTQyJWdanbbz0NQ9+fXg7zEnbl5J62kLRiYXDYn
+ nKsN3pvRykLgxgHg6yYIkusmpyCkLH/dbNKu1iYOaxMIEMYuDgFYCJ9Hxh+MX/JexrEXuhscKij
+ ZjdLEb9oXd1ayUNHt1yf2HNf/qL+AkaGe/ODy2ZNWvgk/dKuZ/KiL0UWtm1b4dm+bs11ic/7tdR
+ vcgMA
+X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
+ fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The cdev_set_parent() + cdev_add() + device_add() sequence is just
-open-coded cdev_device_add(). Use it.
+From: David Jander <david@protonic.nl>
 
-Signed-off-by: Michal Schmidt <mschmidt@redhat.com>
+The 48L640 resets the WEL bit (the Write Enable Latch bit in the status
+register) to zero on the completion of write operations. In preparation
+to support chips behaving differently, introduce .auto_disable_wel
+capability, and, if it's missing, explicitly reset the WEL bit after
+writes.
+
+Signed-off-by: David Jander <david@protonic.nl>
+Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
 ---
- drivers/pps/pps.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/mtd/devices/mchp48l640.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
-index 64a8b34aa4ce..89b502855e7b 100644
---- a/drivers/pps/pps.c
-+++ b/drivers/pps/pps.c
-@@ -361,13 +361,10 @@ int pps_register_cdev(struct pps_device *pps)
- 		goto put_dev;
- 	cdev_init(&pps->cdev, &pps_cdev_fops);
- 	pps->cdev.owner = pps->info.owner;
--	cdev_set_parent(&pps->cdev, &pps->dev.kobj);
--	err = cdev_add(&pps->cdev, devt, 1);
-+
-+	err = cdev_device_add(&pps->cdev, &pps->dev);
- 	if (err)
- 		goto put_dev;
--	err = device_add(&pps->dev);
--	if (err)
--		goto del_cdev;
+diff --git a/drivers/mtd/devices/mchp48l640.c b/drivers/mtd/devices/mchp48l640.c
+index f576e6a890e859e7d20aeeb2ede4ca0acf4850fc..4cdd24aaed416fc7e40a8060b5c7eaf6684fc6d5 100644
+--- a/drivers/mtd/devices/mchp48l640.c
++++ b/drivers/mtd/devices/mchp48l640.c
+@@ -27,6 +27,7 @@
+ struct mchp48_caps {
+ 	unsigned int size;
+ 	unsigned int page_size;
++	bool auto_disable_wel;
+ };
  
- 	/* Override the release function with our own */
- 	pps->dev.release = pps_device_destruct;
-@@ -377,8 +374,6 @@ int pps_register_cdev(struct pps_device *pps)
+ struct mchp48l640_flash {
+@@ -194,9 +195,15 @@ static int mchp48l640_write_page(struct mtd_info *mtd, loff_t to, size_t len,
+ 	else
+ 		goto fail;
  
+-	ret = mchp48l640_waitforbit(flash, MCHP48L640_STATUS_WEL, false);
+-	if (ret)
+-		goto fail;
++	if (flash->caps->auto_disable_wel) {
++		ret = mchp48l640_waitforbit(flash, MCHP48L640_STATUS_WEL, false);
++		if (ret)
++			goto fail;
++	} else {
++		ret = mchp48l640_write_prepare(flash, false);
++		if (ret)
++			goto fail;
++	}
+ 
+ 	kfree(cmd);
  	return 0;
+@@ -293,6 +300,7 @@ static int mchp48l640_read(struct mtd_info *mtd, loff_t from, size_t len,
+ static const struct mchp48_caps mchp48l640_caps = {
+ 	.size = SZ_8K,
+ 	.page_size = 32,
++	.auto_disable_wel = true,
+ };
  
--del_cdev:
--	cdev_del(&pps->cdev);
- put_dev:
- 	put_device(&pps->dev);
- 	scoped_guard(mutex, &pps_idr_lock)
-@@ -392,8 +387,7 @@ void pps_unregister_cdev(struct pps_device *pps)
- {
- 	pr_debug("unregistering pps%d\n", pps->id);
- 	pps->lookup_cookie = NULL;
--	device_del(&pps->dev);
--	cdev_del(&pps->cdev);
-+	cdev_device_del(&pps->cdev, &pps->dev);
- 	put_device(&pps->dev);
- }
- 
+ static int mchp48l640_probe(struct spi_device *spi)
+
 -- 
-2.47.0
+2.39.5
 
 
