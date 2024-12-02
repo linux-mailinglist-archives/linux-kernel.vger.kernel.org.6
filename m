@@ -1,208 +1,277 @@
-Return-Path: <linux-kernel+bounces-427213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5CD9DFE3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:07:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF20B9DFE45
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E87BEB266B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:07:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED0E280A76
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580A01FCCF8;
-	Mon,  2 Dec 2024 10:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4384F1FC7D0;
+	Mon,  2 Dec 2024 10:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="k9jur4wj"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010057.outbound.protection.outlook.com [52.101.69.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MmHDxedt"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489521FC0F8;
-	Mon,  2 Dec 2024 10:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733134006; cv=fail; b=S01V0lEoCHEABCCEhkeC0PUwSxbV/MXv6TW4J2CF6ELw3CGAPc2aS5E9G2vt7ghEKtnOZOkSMkXdZqI/fjBnjPGfW8LwCPzt95iKa+FX/aoPrLChvDJYGR3u4Wb2auYYBFjiHyAaSlRxfMQdWpxsIPy+MR9NOyr+o06Fn3x7Ijk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733134006; c=relaxed/simple;
-	bh=qQyrxbPlCzNkq479kIgOBKWmMz8++2RHjkK7nJEgMz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ZezzPGo+TYtVvwOZA7WIlAJBH12X532QxPSbEROthPH4C9PrteGKnKMtLQxxncT2pJODYgKJhTN63anZz8we+HLDnvlvxrwgI11fvLjzUgVcQNEK7zRVkTX7cJGvfkUhaMYCZa/q0YqPYd1+mV32hT2U6Zfnsr4O4LB6wFMOIPs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=k9jur4wj; arc=fail smtp.client-ip=52.101.69.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RDDrnEMar6+VkIc805+0iLzKtbxmbg6nAk0mV+oZKWNDDyzREtM+ajc0kXEgu5Y28TG8qvCZ0q7ZcwuAqQvtI80WB7de8o/KTCZZS6uwEWSqWx00Fe47urqUY+ZBnvw+Xs05YmiufPcNtC6Dg6afyvjls8FfkGUBcBCNitBGDV+m8rv/E3MdQMNF47/bIYNTLoYCYWIlVXKRn4/EfFW24eA8Q68hFboKjI16sXMg1vvY3p01UPfGXuPIWPh1DgJvcEjNM6IiUFSuKs1Cu2sZPrQkF6+aLqOPt76sKNT+KU2N+JLmdWBcXjArd/g/Avv9pabX7a+e0u9CNGVMZseIMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XerKtsjpv3BUWp8nrtkgV8pD8cTS2vNxa7jomy2zy7I=;
- b=rXefeSCBONNxCjJfOIuT2IjDhmla0c6YkLHluEVlNeFYcRCYB3rcqh33bKIH/EF1eacXEXCJtrmxhOjALaYfrbGF1iApU+QUW5lwEs8AH5rBiwRmBXxJLDSDDT6oa4Q8r6fHtMwIb4QtiQGn4rvpfvaP5vIQwkf8a1fh6+jn7nC4VhAnODaEZjCxsZF3Gx715/P0e+eX0spwgwEXfN7tHQr6ssLybIewhmqxw+Nsqkl+gYBD9BZgpVaJJHfPEjO3mg5cdKullBw16aq6NAthXBKS6mK4WtkpaJmxq29pEqnN6DYbXuZ1UKIVlYY94qfE2urYwSDfxYHD+ArPwggjwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XerKtsjpv3BUWp8nrtkgV8pD8cTS2vNxa7jomy2zy7I=;
- b=k9jur4wjtSBGzxlEcqW1DJQK54gZB38hbQ3NoLVwMjanCg51OlbOogxlSZi1WdKKuHHdpmIsR03nGBgRPkXCmygnT5r21BK7EcoxRM4n4sw4mar8zkPRX3mw7jkPAoRSYOLh3w54zDQe8qJuyDEv625VqogGoXdzlOiNMphqoak8W2R0+3tCrmdcEm5BhNgTclb2eUiaNRZlKpbCv4b+8vwPIMuVOaZQLqsoB0pXecfW5oJiaNw4c1MrRLFBWrFjbCK0TjOWtsZztT0L9cqPXv2NJaqDrNGDaQZ3l4WoljBFQsWDir22+dWZvCGp8eepm23UPfQvDkG3ADYdnT9YMw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by PR3PR04MB7402.eurprd04.prod.outlook.com (2603:10a6:102:89::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Mon, 2 Dec
- 2024 10:06:39 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 10:06:39 +0000
-Date: Mon, 2 Dec 2024 12:06:35 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Andrew Strohman <andrew@andrewstrohman.com>
-Cc: Nikolay Aleksandrov <razor@blackwall.org>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	UNGLinuxDriver@microchip.com, Shahed Shaikh <shshaikh@marvell.com>,
-	Manish Chopra <manishc@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
-	Simon Horman <horms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Roopa Prabhu <roopa@nvidia.com>, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bridge@lists.linux.dev
-Subject: Re: [PATCH net-next] bridge: Make the FDB consider inner tag for
- Q-in-Q
-Message-ID: <20241202100635.hkowskequgsrqqkf@skbuf>
-References: <20241130000802.2822146-1-andrew@andrewstrohman.com>
- <Z0s3pDGGE0zXq0UE@penguin>
- <CAA8ajJmn-jWTweDMO48y7Dtk3XPEhnH0QbFj5J5RH4KgXog4ZQ@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8ajJmn-jWTweDMO48y7Dtk3XPEhnH0QbFj5J5RH4KgXog4ZQ@mail.gmail.com>
-X-ClientProxiedBy: VI1PR02CA0043.eurprd02.prod.outlook.com
- (2603:10a6:802:14::14) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB4E1FDE28
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733134016; cv=none; b=o35ThMDwOeyZijLYpCQK5TC4UnnmdVBAXPOBvbjEd3KUugxPyt/UwY85GPFOJmNMni5yyi8gVaWpXGsd1FtGGJyDl8aXulIKFwI6Q8XZphnIU8Z8QoRqXe6j0tSPdZ0v6GI/0EyF2bX8/H7fKDH+BrOPy4EaJZP/g+qRJi0BvPE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733134016; c=relaxed/simple;
+	bh=BHA6I1XwPBT7nD2YhJCKM9NSNn36jIN2pw04W7hxTUc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=BLWh/6RTeCCKszoH3thTi4fZwQ5JUheYTWTZM72T3Xg/+tjmNNokAmPSzoTa8oythuDQ0iqwAuGxmgz2wMI7MIl0RjNOaHhqETUT36h2p4banpQwuFbertckXuva+UWhK0peCOQBW5Dtru9Ct6c6haBvPaCFHKfE+H/OLY9cS9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MmHDxedt; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de92be287so5624329e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:06:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733134013; x=1733738813; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=08p8JD14+c1Dtuoc1UVgr/yt4AmX7Hc+5DPlapkDHkM=;
+        b=MmHDxedtguUm3o1cTrkJleDiY4IlcdOQvWm7V99KXHsP3EVDKPrC2tuKWA02RFCifv
+         KtL0dxfC+v+9lvPhnOPvF9NDvw20RGFX+V1L+lXKNlkZg/wUhg0BtiYf89CtXxd9GNKn
+         Vvb1sAlYxZV+7/S96iZLDAFIHvqK3oEF2jTUCpT72Tv6TdVUg9EyV67aVlK6BaPw4o1r
+         tY6lbXKBWMWEhJIfjkil8eAHZblVL0Q0Z8rdSWMRkP4a69r0cHwgd9IfKivA8N9cAUVQ
+         FrFNgCyX+mplKTraA+17ZxJtvMhb52qfYStUAhQBszrIumK1SpITAwQfDHX4KyS3Mnob
+         IWmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733134013; x=1733738813;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=08p8JD14+c1Dtuoc1UVgr/yt4AmX7Hc+5DPlapkDHkM=;
+        b=sZb81TO5TASYSWHh73OSsu0SWNGjt7eF2jKJIKzzNqV6XT9iM5i+UHyOHSMAudXbIN
+         OoYkJpqHvfHUfCsaCrhNMF7NB+x9EykA6jCt87kEfDOBg5nn8OtW/VrAAOOQPwsIUDDS
+         p5xf2l7op46beIhNKMKdwZN7kLJUVzT2OWbUlN2B6xAgy0jXpo1sz2nxnnSaN5m1yXM2
+         BDcXI7XrNGz58dGfoMl107QZOiTuGSsI1Xcp6HxDFNdyLEfCi5LyUyEW/Uz29o+um4MA
+         z3IE0csOt8NH+hYlv/cW6X6wEzB3k8lwY5xmTpI6s7xYnXRCqopzVOFt1C7VIKL8dXzB
+         tzZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtWOgPV6tArJaDevszcMSLu8xz058v0yaSLvCyH1qGWRBFxInRI+OJ4qUgLiKZR2kqDiSLekaSWdKq7Qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvPVB1dQzTT7u17Q2hGXdiad3s8FPG4pNQilC6YC5yIBFy0j7Y
+	BlE0eLl2B3SslXBj/C2UnvWWsSuIM6/l1hhLsxLQfgpuedcdpfWNDg7ozIinLlQ=
+X-Gm-Gg: ASbGnctUOyMk4aEXVAr3Vi/PWA+XC11zlL+Xtn8PQTv2b6fqOpQprYHUvxAsw5D0rd/
+	s7kimFXJM7CXIV0/r1nNmtGPyYeDC1PBy4E+4KEFLRNNzq82thKjfk+1IpjThcFKQUxEtIdNFcu
+	uc6dQffmdaC9y3w1Di7o6xhshOdu+Yd+HJziAR6rSDHrO6vsA/bQQCz0k2NtZXAJrJhXJjVkxQ8
+	WzK0H87trQRqungrNYTFPeWv74ue+KpNHFAeqqWrMg/voelDhjgogxLNA==
+X-Google-Smtp-Source: AGHT+IHILNDYLiYvUtfTvAkPGfAuV3kENocpi6uZFYznl3/janUl3sKxqNc/wIstHcHwZwQIX8HT2w==
+X-Received: by 2002:a05:6512:3d86:b0:53d:a3a7:fe84 with SMTP id 2adb3069b0e04-53df00a96e8mr16969911e87.8.1733134012615;
+        Mon, 02 Dec 2024 02:06:52 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f191sm1418314e87.136.2024.12.02.02.06.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 02:06:51 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 02 Dec 2024 12:06:35 +0200
+Subject: [PATCH v2 05/14] drm/msm/dp: move I/O functions to global header
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PR3PR04MB7402:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ff05c0b-fdd9-4852-442c-08dd12b9039b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RIOXEroDTsZyN23B0cQv2bhqIfOy2Sf6VhGLYUY6UdAbERML/FmW4+aZciih?=
- =?us-ascii?Q?fb/ZWs2QHC7tSiSgEjMcqshHHLviGPzAMRuU59ki6LtN8jHyh+U0rjUJtv4s?=
- =?us-ascii?Q?KD4wmZuoc65m+EorY6Tds/+ZHgBmkBtKue2s/tsFcHQt2edTe9V1PaMjKbsL?=
- =?us-ascii?Q?aw621Zh4VF/AOyR1VrWk9ROv03V15aKoS8Si8KLt3K+1oU2dOBTpEAIBRGdt?=
- =?us-ascii?Q?eKEQVNg5MtXWBg3uQfkS+bAnM+bW3eCr7p4i45/EoSrCmz6TPpeGFkgxpera?=
- =?us-ascii?Q?QQmPOgfB0EsEQ2kulBmlwRQy5T1dqqyaPgn5qk+l21LLSErqOdcht2RlLsZ3?=
- =?us-ascii?Q?Nze/rey4k4p8wPp3LiLnUcuIZsKVX16wPidnoCm4Uby9N1VZGjiwxuFUUBql?=
- =?us-ascii?Q?zq2jGhqIa9LfJ/jWiwzwYjFn6cp6fixaSeLWeORuCkhqsGIRAJ7JmXflqLXJ?=
- =?us-ascii?Q?XG4yJd9Ie99ZSXEu/aGiqBCYqe28kDdVLmewMfLezsncAjPQAJmcZdf5yNAm?=
- =?us-ascii?Q?pc2kw20EDeqpI87hoQVi0y4WZNeMUkxoJ6E5GFlq3TgJzi92jmWqcNaFaP3q?=
- =?us-ascii?Q?LwCNuD1GXU5X074RzHoYN7gLXvJeNTs3rKNwU6tGaoo6jFFYFr+a7Zx4jCbI?=
- =?us-ascii?Q?2oaqsP1VU8drmWFEI5Jw4TXU8NEQRKKHlVM2HPe0qDHYc41fC6U3En2Fhp5c?=
- =?us-ascii?Q?puOf9fLAX7VDXyXtyUKuXmtCJsRNZGJcYCpaSQoZ1W03QnKaXdjaTzNpNFg6?=
- =?us-ascii?Q?N04kYRqfxvjLVRMGK3odVqawb3qWRfII1wamH/i+H2zZwRwahI/nc9V6jcGI?=
- =?us-ascii?Q?wjCcIPgMrynnFEJDQv5k1p6n2WgoqRvuq35+MUMzKJJ7lLKlCXyzoABy9/Eh?=
- =?us-ascii?Q?Nv0VN+uxS7xbsMszS1tzVTlaJl3c+MS8j+p57eq3i5HWVi/saEsydYQw/Kiu?=
- =?us-ascii?Q?Mp4JmzunaTzb94gICZI3X9LqA7sLOwpTi2Po4pxPNgPuMK4XDCfoc/7kQ08D?=
- =?us-ascii?Q?m1EboVC/E+llM0xl0ymSghxsokJWK9kIh3j19JTuSvNPyUpaUk3blOBhMKdm?=
- =?us-ascii?Q?kQeuGUh72ep35uSa13kOn8tt+djbLvPcO40bnjlKii5+NCGc41faQTyIrK0s?=
- =?us-ascii?Q?t9Gz4RzrvIwRESk/mxnZ4kwJ1uSQLO8ecP9cNFwtcFsBgUo4Qjcnqa9V716m?=
- =?us-ascii?Q?Io9/WyvdWl0+K088micWc0HkXsRETMvYxdNmD5cptXqK/9+JY03vdG/GdHSS?=
- =?us-ascii?Q?tX+6c0ork1MUMcU1B6vsYT0+FcGtbPTnT/5naKAO2ca//lgljXGifbFXJJz3?=
- =?us-ascii?Q?1Tk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4LxuaHrEq8bjJpbRCOEgquyJ0rB7eCjLXP1z0J7JVJPzHlbVLN1wP7qHGME2?=
- =?us-ascii?Q?F/pP1w2I0g4BjQ/oGDSzfWeS4qyaAzkRtosFumOIiSugIVUV5We/9y8+YqRG?=
- =?us-ascii?Q?8me5Rpe9FjcEDqVb6j/OgKScUx2xt0wgGHsAOtjbYxXkDxImUGrLGOhOwm4v?=
- =?us-ascii?Q?ykO421FF+ZspiIGLMZzUP+cZtsnLKNWKg4lovRFrWf5BbAUGFyyBdtFHINjU?=
- =?us-ascii?Q?3zFfJ65WfKCDiK+z2gH6Ou9jl0R0Ihu5VPXnDTTlx4R39me2U8U2d+Fzti7F?=
- =?us-ascii?Q?RxU9Lq6m4qKQEpJTBREt+E3Gpzuba3tWbLLliANIxRFZu8579Dm5UoBEQKGf?=
- =?us-ascii?Q?/+OY/JcRb0AoeZG1HN+Q0qGqaMLv2hBIuBMCUwE4muPMQZcE47DwysweFgoD?=
- =?us-ascii?Q?XsOz9xTqDZxIbSPPDkUm0XdQrTLbMVgsfx26eMZ97ruyrPCRi1UWUxZfhFC0?=
- =?us-ascii?Q?5yyOnq44tyaog8S+t8ygUko/HWFGtAsB707mhOREXrFLfhwkc2z/AqfCHgDv?=
- =?us-ascii?Q?Q/h8QOKTc57P/y/S4xA5i9ukDoKNT+aHOycDeICi5rScD1X0/K7a0WuCqhgq?=
- =?us-ascii?Q?lfZhDXP/2bhEd9D12qDeiQqmCsBPpXIjJC251PjnizJrvxMW5UT77Uk0B75y?=
- =?us-ascii?Q?8Klsy97dr8o/9FxR5dJQSev/fa5ZA4ClJwri/UZl7VkUhq8xAgYqQt6wWo9v?=
- =?us-ascii?Q?p7cum6+jF7jNVpr0/6Skf6LiZlpcwNQ5xYo1dfqHa6nYdP5ETx/7wBY7S1VX?=
- =?us-ascii?Q?Co1UivBBZI3wFPDgyzeMGCsK9vGQkC0fZnPk09/il9XV+hnCUN5pQhSlqYye?=
- =?us-ascii?Q?uFROb2AZO+I0xRpQDyYJXhegGAjn+u1R61/u5EhUha9isy4uk67FPeT5Db5k?=
- =?us-ascii?Q?XXJV+q0jECqt5lysaBVFBS9uV+lIHksWChqLj0DU3oaGXm5HFH5pWvL/fUbY?=
- =?us-ascii?Q?iLDpMVRVm0RS7Z/FlhnHvVEmOydna4LALc2Xu6oWKfy0QUfJ/85YzUEaV8OX?=
- =?us-ascii?Q?VK0PckHu6xZpcJgoS20B3f3/O9DQph4iKHSabYvJtQprbf9fIQY8mbYDFcg/?=
- =?us-ascii?Q?kcL5JBZEji/lZJx5xkyixdtjRkYyt72+YmmImOeTis8OEwG65eEsCSXz3MFy?=
- =?us-ascii?Q?9bP/XUuYGm3g4MxNfXqHRx2qZGZu0wj2E6wFndjR9mbl8oHHuysZbWlXhnvh?=
- =?us-ascii?Q?YjPcmSXuqolYk0IcOZQ+okXvMfyPQrWOWZs/TVdrARZ760k4Qz04xNCirpfV?=
- =?us-ascii?Q?h5qldm3HgBlhoceLHK8/T+/CHOLPnF0tTpkHxTzcKUdrWhjCw8U1LLiNYQxy?=
- =?us-ascii?Q?kDn+PBHL+5P/+4wXcs4cOZuya26DUfjGyaIeJdmD+IKxr1zE72AgwenMdWYf?=
- =?us-ascii?Q?mb5ihl/UOkLTlO4UL+hIzhA8/fgoVKOiDhSTqUfhs2sBBuwR8wDldiesZXJn?=
- =?us-ascii?Q?aduOCzzVHurgmsFvaKHRxkA0ZA/4xzvW0nZpo7bzOvSepGH4PW4ANYQ2jX+P?=
- =?us-ascii?Q?tE6cPg2rVu/LdwvfP9OppIvg7Nd6vyXPbyj+joXU1IkwYv5UicSEslSlLaGj?=
- =?us-ascii?Q?hKSdGKCtl0jncI3Qi707EIZFYvCdFQzDOdE4cPiNhB+TPbdddo8+HA6AvaWZ?=
- =?us-ascii?Q?Pg=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ff05c0b-fdd9-4852-442c-08dd12b9039b
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 10:06:39.7141
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VZnn7qyaMDSdXpOEs8ty2qPaftd6Nz2LjoVBEK6VUesk4utYJPpXk1ZxnLl36wKucqdEbctpY+PXcaHBi48wjA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7402
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-fd-dp-audio-fixup-v2-5-d9187ea96dad@linaro.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org>
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org>
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Paloma Arellano <quic_parellan@quicinc.com>
+Cc: Douglas Anderson <dianders@chromium.org>, 
+ Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5678;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=BHA6I1XwPBT7nD2YhJCKM9NSNn36jIN2pw04W7hxTUc=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnTYatBw61SPcrQ03U+/jMhzcuiW7ZqoVK1bYw1
+ xuvfFLA2DmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ02GrQAKCRCLPIo+Aiko
+ 1djpB/0XGEgU8e8GdO0l1XPGtDRZbyq2ZgP78lxAh8wDW69oG6+4jB1oCJOu52U4nF7mkGZgmVd
+ ALOrVlj0atGKRAzOVqy8KNnVlnE7A/60El+q1zqehI5LZ1sZBn8eyZ5p3U6LgzQg229iL9nwgG3
+ v+LEUDPwccWVVzdlHnj+mBA6VNUPfbBmMHTsJ6wU2pvWtEvtKtieIM4d1LrABOoLYu97Yw+dei+
+ dAJZne/GnyRmJ+N6vpLDE9upzCgGGy+M8Zc33VG/ZHsUZiZqm14n1SBiosYJv/qSzQA9wpX+KCw
+ Xmlv4XUyJe6I3Cu2nwQAMwUTdT98BajGSpWVCuiVC1hqInKp
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Sat, Nov 30, 2024 at 02:28:34PM -0800, Andrew Strohman wrote:
-> My personal use case is about simulating ethernet connections and VLAN aware
-> bridges, so that I can test networking equipment that provides VLAN
-> functionality with IVL.
-> https://github.com/andrewstrohman/topology-sim/raw/refs/heads/main/docs/Topology%20Simulation%20for%20Mesh%20Testing.pdf?download=
-> describes it, if you're interested in more information about it.
-> 
-> https://docs.google.com/drawings/d/1FybJP3UyCPxVQRGxAqGztO4Qc5mgXclV4m-QEyfUFQ8
-> is a diagram that shows what I'm thinking about. This case is not about
-> duplicate macs, but rather a frame being bridged in a way, such that it passes
-> through the same bridge twice via different ports depending on the inner
-> VLAN. In the commit message, this is what I meant by the poorly worded:
-> "L2 hairpining where different VLANs are used for each side of the hairpin".
-> 
-> The diagram depicts a network where a layer 2 segment is partitioned by a
-> L2 (bridging) firewall. I admit that this is contrived and not a typical
-> way of constructing networks.
-> 
-> In this case, my testing system would use a 802.1ad bridge to simulate a
-> VLAN aware bridge between .1q #1 and .1q #2. The problem is that the .1ad
-> bridge would get confused about which ports hosts A and B are behind.
-> The bridge would see them behind different ports depending on whether the
-> packet was heading to, or returning from the bridge mode firewall.
-> 
-> If these nodes were connected with an IVL .1q bridge instead of the .1ad
-> bridge, this topology would work. So it's a scenario where connectivity
-> failure would be due to my testing system (topology-sim) instead of the
-> networking equipment being tested.
+Move msm_dp_read()/msm_write_foo() functions to the dp_catalog.h,
+allowing other modules to access the data directly.
 
-What stops you from changing the 802.1ad bridge port pvids to unique
-values, like 3, 4, 5... instead of 3, 3, 3, and making each other
-j != i bridge port be a non-pvid member of port i's pvid?
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/gpu/drm/msm/dp/dp_catalog.c | 65 ------------------------------------
+ drivers/gpu/drm/msm/dp/dp_catalog.h | 66 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 66 insertions(+), 65 deletions(-)
 
-That would keep the MAC address isolation per 802.1ad bridge port, and
-would offer the same level of communication using 100% standard and
-available tools.
+diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
+index f02427dc08eb00e1b6a1b2e026a6bf5015c4b46e..bd9d875ca7a66aba7875085b977e75c55ba91578 100644
+--- a/drivers/gpu/drm/msm/dp/dp_catalog.c
++++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
+@@ -78,71 +78,6 @@ void msm_dp_catalog_snapshot(struct msm_dp_catalog *msm_dp_catalog, struct msm_d
+ 	msm_disp_snapshot_add_block(disp_state, msm_dp_catalog->p0_len, msm_dp_catalog->p0_base, "dp_p0");
+ }
+ 
+-static inline u32 msm_dp_read_aux(struct msm_dp_catalog *msm_dp_catalog, u32 offset)
+-{
+-	return readl_relaxed(msm_dp_catalog->aux_base + offset);
+-}
+-
+-static inline void msm_dp_write_aux(struct msm_dp_catalog *msm_dp_catalog,
+-			       u32 offset, u32 data)
+-{
+-	/*
+-	 * To make sure aux reg writes happens before any other operation,
+-	 * this function uses writel() instread of writel_relaxed()
+-	 */
+-	writel(data, msm_dp_catalog->aux_base + offset);
+-}
+-
+-static inline u32 msm_dp_read_ahb(const struct msm_dp_catalog *msm_dp_catalog, u32 offset)
+-{
+-	return readl_relaxed(msm_dp_catalog->ahb_base + offset);
+-}
+-
+-static inline void msm_dp_write_ahb(struct msm_dp_catalog *msm_dp_catalog,
+-			       u32 offset, u32 data)
+-{
+-	/*
+-	 * To make sure phy reg writes happens before any other operation,
+-	 * this function uses writel() instread of writel_relaxed()
+-	 */
+-	writel(data, msm_dp_catalog->ahb_base + offset);
+-}
+-
+-static inline void msm_dp_write_p0(struct msm_dp_catalog *msm_dp_catalog,
+-			       u32 offset, u32 data)
+-{
+-	/*
+-	 * To make sure interface reg writes happens before any other operation,
+-	 * this function uses writel() instread of writel_relaxed()
+-	 */
+-	writel(data, msm_dp_catalog->p0_base + offset);
+-}
+-
+-static inline u32 msm_dp_read_p0(struct msm_dp_catalog *msm_dp_catalog,
+-			       u32 offset)
+-{
+-	/*
+-	 * To make sure interface reg writes happens before any other operation,
+-	 * this function uses writel() instread of writel_relaxed()
+-	 */
+-	return readl_relaxed(msm_dp_catalog->p0_base + offset);
+-}
+-
+-static inline u32 msm_dp_read_link(struct msm_dp_catalog *msm_dp_catalog, u32 offset)
+-{
+-	return readl_relaxed(msm_dp_catalog->link_base + offset);
+-}
+-
+-static inline void msm_dp_write_link(struct msm_dp_catalog *msm_dp_catalog,
+-			       u32 offset, u32 data)
+-{
+-	/*
+-	 * To make sure link reg writes happens before any other operation,
+-	 * this function uses writel() instread of writel_relaxed()
+-	 */
+-	writel(data, msm_dp_catalog->link_base + offset);
+-}
+-
+ /* aux related catalog functions */
+ u32 msm_dp_catalog_aux_read_data(struct msm_dp_catalog *msm_dp_catalog)
+ {
+diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
+index 13486c9c8703748e69e846be681951368df0a29e..2c500dc0898edfe1d6bdac2eedf3c1b78056cf6b 100644
+--- a/drivers/gpu/drm/msm/dp/dp_catalog.h
++++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
+@@ -63,6 +63,72 @@ struct msm_dp_catalog {
+ 	size_t p0_len;
+ };
+ 
++/* IO */
++static inline u32 msm_dp_read_aux(struct msm_dp_catalog *msm_dp_catalog, u32 offset)
++{
++	return readl_relaxed(msm_dp_catalog->aux_base + offset);
++}
++
++static inline void msm_dp_write_aux(struct msm_dp_catalog *msm_dp_catalog,
++			       u32 offset, u32 data)
++{
++	/*
++	 * To make sure aux reg writes happens before any other operation,
++	 * this function uses writel() instread of writel_relaxed()
++	 */
++	writel(data, msm_dp_catalog->aux_base + offset);
++}
++
++static inline u32 msm_dp_read_ahb(const struct msm_dp_catalog *msm_dp_catalog, u32 offset)
++{
++	return readl_relaxed(msm_dp_catalog->ahb_base + offset);
++}
++
++static inline void msm_dp_write_ahb(struct msm_dp_catalog *msm_dp_catalog,
++			       u32 offset, u32 data)
++{
++	/*
++	 * To make sure phy reg writes happens before any other operation,
++	 * this function uses writel() instread of writel_relaxed()
++	 */
++	writel(data, msm_dp_catalog->ahb_base + offset);
++}
++
++static inline void msm_dp_write_p0(struct msm_dp_catalog *msm_dp_catalog,
++			       u32 offset, u32 data)
++{
++	/*
++	 * To make sure interface reg writes happens before any other operation,
++	 * this function uses writel() instread of writel_relaxed()
++	 */
++	writel(data, msm_dp_catalog->p0_base + offset);
++}
++
++static inline u32 msm_dp_read_p0(struct msm_dp_catalog *msm_dp_catalog,
++			       u32 offset)
++{
++	/*
++	 * To make sure interface reg writes happens before any other operation,
++	 * this function uses writel() instread of writel_relaxed()
++	 */
++	return readl_relaxed(msm_dp_catalog->p0_base + offset);
++}
++
++static inline u32 msm_dp_read_link(struct msm_dp_catalog *msm_dp_catalog, u32 offset)
++{
++	return readl_relaxed(msm_dp_catalog->link_base + offset);
++}
++
++static inline void msm_dp_write_link(struct msm_dp_catalog *msm_dp_catalog,
++			       u32 offset, u32 data)
++{
++	/*
++	 * To make sure link reg writes happens before any other operation,
++	 * this function uses writel() instread of writel_relaxed()
++	 */
++	writel(data, msm_dp_catalog->link_base + offset);
++}
++
+ /* Debug module */
+ void msm_dp_catalog_snapshot(struct msm_dp_catalog *msm_dp_catalog, struct msm_disp_state *disp_state);
+ 
+
+-- 
+2.39.5
+
 
