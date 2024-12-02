@@ -1,157 +1,178 @@
-Return-Path: <linux-kernel+bounces-428334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F1A9E0D0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:36:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0409E0D12
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA981163317
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:35:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7AC164FF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881671DEFC0;
-	Mon,  2 Dec 2024 20:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F0F1DED7D;
+	Mon,  2 Dec 2024 20:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SThf1rvm"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N0KwWqID"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B9C1DED67;
-	Mon,  2 Dec 2024 20:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE1A1DED67
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 20:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733171756; cv=none; b=ddscd6rWOTwvFL3Lg07fO8LFX6tdhcdmqOWP31aHPLNtQpvnFSB54wtLZt8k1cQSnI3UTGb5NtVdy1yk6aNMm7/+V1OV8Xvu6S4hnYPGx7Mc0ac/Ttix4jndT/l08Zb0RsYcaWvn3NkoEEG6em+hkgKBInvh2rXcdRbgEqgSgl8=
+	t=1733171794; cv=none; b=dCN9lNundXe1LMycXLnIe4mNMl1rwBVU059onV4auME23MNUcmm6PJV35j2ftrOLc5fzw/l04y9UVfFkvBuTc+R8KiSmMA/yLkbz+U3IDm4ixfqOoFv2rv5MT+CzG/KZJGV6f6Mr3BvFXdoyvb1dA3V+fzVUJyMFdY/h3Td1YWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733171756; c=relaxed/simple;
-	bh=K0SRLS1zBinq9uePKXPGIuJwFWqSYthf1EILnl68Y2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OGhcvYSr4Ob+6EtYMnbMwQuzBtxTsramVrhJSmb75dJsQEw1INV4C2Xv8v+8PV417owklP9LYSbg6mXOx+TO6SftuAY2/nubtmnxygrLEWpx9XvmbMJit/ypOHGWOJAVQOihkDNQ/CGtpf0/lQ58Q4MxCdAP6zTI/9KjytYGPIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SThf1rvm; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434a95095efso33766375e9.0;
-        Mon, 02 Dec 2024 12:35:53 -0800 (PST)
+	s=arc-20240116; t=1733171794; c=relaxed/simple;
+	bh=XD9iY38x8nxbzuUKa3NNEXIK3w94T0wlfzgrCdxAkQI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gDwbYof576HFZGKBflDw4VrOq3YBq8A+gguEWk1YiDS2txDNc9ipGw6kpn5ZW8gW8VsYP/f014G33nP/ZzNnEeOcuNs2FPUWHRMzSs72DAkifhvfXYkmCQoZgcR1Xs3ZnopvDF08nWpjWstsffE35iMrYbGaKN5jzXyk1mFpnqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N0KwWqID; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d87a55bc50so31770976d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 12:36:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733171752; x=1733776552; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OhcWIpnby9xGQEV4fZR6/EyTnMePzY+oDN+hxtPpgdI=;
-        b=SThf1rvmnZ5EwFLp0x+VZtT4fdTrpuE+Rw4w2tOa0mu5S3jW1WBnLlZrBNmVvpjNjU
-         zRQB9nytMlea6aXyTC4X9mEM/wIOSW3pLAMHfY/wLZx5emQdEGKQjQMUw77kFqnwlPAX
-         20YsBEg1burg10fpu1x1u9jpefvsx/YxStt0u0jmcATg5K+PSu4D3LL/4FvoUYe9vFwG
-         Bfn1Kr0Q2brXsh+65E7HSbRdKTYaj6od6qVbfk4x3hJi4YwMJKnNElHEZwSGDScDvs0L
-         O4TTSKSIJyKhm8BTss5LtKKpFyv2sp5nEdv5qe5HsVFG2iuXOseN+dRy1xcn+yJBMODX
-         Izyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733171752; x=1733776552;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1733171791; x=1733776591; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OhcWIpnby9xGQEV4fZR6/EyTnMePzY+oDN+hxtPpgdI=;
-        b=id/b6GpI/jpnp4fFhuVdeJkZLY6PEI/Wy3a37bWTK0G2/DiR8R21dwNRz1yiTlHhdA
-         z9KRGu4B3htyVeuBKgZ220CmWy+LmxP6Z59i/+Olm3KCBl6sdSQUR5JvYrOKtfVrlV8C
-         9V6pC4yTEzjPPI4N6FsafX1wOQ4uMjg7M2G/R171YlfqcLxKIhMC4FpWHFszYFgkF400
-         QubkxjCfrDq5VbDXtLGjG7pTi18mLd6QSSxuQlxmZ+VZp5EX9znJ6w15MalbA1nwC5Bt
-         Dc2xIjRF/Q4oNyk4oCfgm7ue9MaM2LtgOlR9XEmF2vYiGp/yeYOKVBX/whZWlzm2/Tvu
-         zGhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWUltzOshFu9R5YxhhH9WOkZlzncSY2AXo0/riMHt+/JyvMFbifUM+hP3Fgm0RfbonSAshRAbm37c8@vger.kernel.org, AJvYcCX+p2VVD9rpNu0SzBUv/wlaAeOs0X68lHdv98cbHdf0JIKVzkg+jBGs5rAxrD/zaZ4LCVFegj/8qUTB@vger.kernel.org, AJvYcCXsCe7LdASVaCgUC7aPAeurebf40yMaXGpV4+jXlvAWokr18u4AUOifAdIKu2NDn0eaNnPynVvQt4g1S7xD@vger.kernel.org
-X-Gm-Message-State: AOJu0YycGTiOgTk0o9vSXQqRfjEDitza2g3Ll0hzS6GAonXUPPgGwFCH
-	Y4QVem/550o0b4zpM3gE6KyZCX+eo9n4iy7GsSXJUgdDITnAZEY2
-X-Gm-Gg: ASbGncusHOkN7FtY8v8+voqsn7XLYBEeeqOtTDmypmTMzJxOiHXIyW6pOT+NvpyAvGR
-	LVAur3u/QUk74vy4Vcz0DTqZXyIoTHbK2WGrGT3zO0Iy+MmCD/AHy94J+MHwkyD3xpupjKJiHZc
-	TvNqo16F/8fvPI4F48fRz18CNzPYzch/yddSWfSq5/05QFguYGB+h2kB0hPwxtKPdyZMPzQBnD9
-	+OYei8/iVMAkZQ8LOrLlESos8drYzXDRrzqNetOLtdCLzpiitC3TNLsZGLX
-X-Google-Smtp-Source: AGHT+IEG0celYf1rLgnMGys32FMcLMcNhKL/v7R07oCF0IJqmSNqUGYsJbIgcTev0ZHvzgfCw3GxUg==
-X-Received: by 2002:a05:6000:18a5:b0:385:df84:849b with SMTP id ffacd0b85a97d-385df8486eemr12642549f8f.11.1733171752453;
-        Mon, 02 Dec 2024 12:35:52 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:ea8a:93ec:a066:eb25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa76a8e0sm196001075e9.15.2024.12.02.12.35.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 12:35:51 -0800 (PST)
-Date: Mon, 2 Dec 2024 21:35:50 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, u.kleine-koenig@pengutronix.de,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] iio: chemical: bme680: add power management
-Message-ID: <Z04aJg7eoBR9CYKe@vamoirid-laptop>
-References: <20241202192341.33187-1-vassilisamir@gmail.com>
- <20241202192341.33187-4-vassilisamir@gmail.com>
- <Z04N6GUSL2H0zt6_@smile.fi.intel.com>
+        bh=/dnX/R1eAhG3pFiUW62lup7SRGntNYB80vGLWFfHvFU=;
+        b=N0KwWqIDqAFqgtSvLhzv5PzZJvm9k98JaS0aT+ur5ZXcxuXy970fJJxI7VyjNZzwZE
+         sfz1EP0hf5w9e8Q/SZxFNk3q5pzzCDlVFyQFr8rSa1rpwIHvMD3dk848g+cIxmRClM3F
+         ZIo7d7UZb+YaaAt+VYl8Rh+knFOL3FeNPhzWAiRDFJhu9Yh+fWUNAyhw4EG6+1/7fRS9
+         qxFJ5T3QrjzcueOpk6nHpdDOXI+w6wNhRcOgL4BNExe9vXckoec6FKD8ERJvc35Kmk7d
+         fNXTjAFw4U8Ot9xxBvy+BFvNmzA+YnfuV5M1RhBNcWUskI0U7ny1VWjSvJNN3CY5RxVn
+         k6nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733171791; x=1733776591;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/dnX/R1eAhG3pFiUW62lup7SRGntNYB80vGLWFfHvFU=;
+        b=bmbN6fd+kjUWQzhQ+WI5JlNeFj5V/gsBV8QtdlUHP7f+0miDmwDJBfQPNn9n55qV8G
+         YnifptxbErGSF39Ajk/XaGBnVjF1ta6BJoCQGFuQLkY8C7jQmY1T6fpZDfGOYXLHTBZF
+         WY9uDzV58oXSpYRoHq5jld6j1/IfeQWNIozDSHOOnJGs5wxMNOck+OJoaa5isqjbWlA1
+         Qx+9/wh/Vo3GpheDkwGBCxOUfM40kQV7sHxpvaQtal6GIqxDu5SfhyoJeckZnI54znrM
+         bZYaXXqoSUYtBmtxcNF8kZG/JTkEWgoi7TrVi8gpwBNTTT/cmdZWBaGuzaCaFCaT9sqS
+         ZAOw==
+X-Forwarded-Encrypted: i=1; AJvYcCV01Eg2fnVqapRBm9AMXrSnepMRm3BJPKAooilG3st/gWIjTJTKVlLJ99pdxhotSCCUHkxEbrvRWHSlCw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCgIH/wIrODTuIxj+QtC+zS9oFGz1vCQAcAM7oKnz8JI3rlqpx
+	6rZFeAJt8bHBTxAujJmKO3XSCjPf0T8Tf2hQNWHU9SwcC2PmqC+TDEZG/Njjx5bWWeV7pAzIN2s
+	giIVSkibqcveumM2iwxeasLC0WKuAHGpLUb0J
+X-Gm-Gg: ASbGncv2C7VX7bsF5trboTamOQZVGNI5NeonQ03kgZH3ZAhIYTyf5UggDF7iwRmyvTK
+	PnIlVgiaDnde0g/pFBJMzjkI4BUF3
+X-Google-Smtp-Source: AGHT+IG1AClFTBW39Yk/jmXT+RGFuQs2al0GRUyyi1ND8H1F/qr/HPRF81yEQhpsm1ghgVrNDXVv2GxFhCIO3ziGwhc=
+X-Received: by 2002:ad4:5aa5:0:b0:6d8:8f81:e2e3 with SMTP id
+ 6a1803df08f44-6d8b72ecae5mr192196d6.8.1733171791392; Mon, 02 Dec 2024
+ 12:36:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z04N6GUSL2H0zt6_@smile.fi.intel.com>
+References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-5-ryncsn@gmail.com>
+ <CAJD7tkaO2AEeNH9b7utqUqgRqWowLtR-Ud09yC0YAhL5RQU5hw@mail.gmail.com>
+In-Reply-To: <CAJD7tkaO2AEeNH9b7utqUqgRqWowLtR-Ud09yC0YAhL5RQU5hw@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 2 Dec 2024 12:35:55 -0800
+Message-ID: <CAJD7tkaJt19hNF+PhTUuop0rbpsnzWRs7837jTCMpw6=uVTosg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] mm, swap_cgroup: remove global swap cgroup lock
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 02, 2024 at 09:43:36PM +0200, Andy Shevchenko wrote:
-> On Mon, Dec 02, 2024 at 08:23:41PM +0100, Vasileios Amoiridis wrote:
-> > Add runtime power management to the device.
-> 
-> ...
-> 
-> > +	ret = pm_runtime_resume_and_get(dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = __bme680_read_raw(indio_dev, chan, val, val2, mask);
-> > +	pm_runtime_mark_last_busy(dev);
-> > +	pm_runtime_put_autosuspend(dev);
-> 
-> Side note: as long as idle method is not defined (NULL) the above dance is
-> already taken into account in the regular put.
-> 
-> ...
-> 
+On Mon, Dec 2, 2024 at 11:28=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
+>
+> On Mon, Dec 2, 2024 at 10:42=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
+ote:
+> >
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > commit e9e58a4ec3b1 ("memcg: avoid use cmpxchg in swap cgroup maintaina=
+nce")
+> > replaced the cmpxchg/xchg with a global irq spinlock because some archs
+> > doesn't support 2 bytes cmpxchg/xchg. Clearly this won't scale well.
+> >
+> > And as commented in swap_cgroup.c, this lock is not needed for map
+> > synchronization.
+> >
+> > Emulation of 2 bytes cmpxchg/xchg with atomic isn't hard, so implement
+> > it to get rid of this lock.
+> >
+> > Testing using 64G brd and build with build kernel with make -j96 in 1.5=
+G
+> > memory cgroup using 4k folios showed below improvement (10 test run):
+> >
+> > Before this series:
+> > Sys time: 10730.08 (stdev 49.030728)
+> > Real time: 171.03 (stdev 0.850355)
+> >
+> > After this commit:
+> > Sys time: 9612.24 (stdev 66.310789), -10.42%
+> > Real time: 159.78 (stdev 0.577193), -6.57%
+> >
+> > With 64k folios and 2G memcg:
+> > Before this series:
+> > Sys time: 7626.77 (stdev 43.545517)
+> > Real time: 136.22 (stdev 1.265544)
+> >
+> > After this commit:
+> > Sys time: 6936.03 (stdev 39.996280), -9.06%
+> > Real time: 129.65 (stdev 0.880039), -4.82%
+> >
+> > Sequential swapout of 8G 4k zero folios (24 test run):
+> > Before this series:
+> > 5461409.12 us (stdev 183957.827084)
+> >
+> > After this commit:
+> > 5420447.26 us (stdev 196419.240317)
+> >
+> > Sequential swapin of 8G 4k zero folios (24 test run):
+> > Before this series:
+> > 19736958.916667 us (stdev 189027.246676)
+> >
+> > After this commit:
+> > 19662182.629630 us (stdev 172717.640614)
+> >
+> > Performance is better or at least not worse for all tests above.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> >  mm/swap_cgroup.c | 56 +++++++++++++++++++++++++++++++++++-------------
+> >  1 file changed, 41 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
+> > index a76afdc3666a..028f5e6be3f0 100644
+> > --- a/mm/swap_cgroup.c
+> > +++ b/mm/swap_cgroup.c
+> > @@ -5,6 +5,15 @@
+> >
+> >  #include <linux/swapops.h> /* depends on mm.h include */
+> >
+> > +#define ID_PER_UNIT (sizeof(atomic_t) / sizeof(unsigned short))
+> > +struct swap_cgroup_unit {
+> > +       union {
+> > +               int raw;
+> > +               atomic_t val;
+> > +               unsigned short __id[ID_PER_UNIT];
+> > +       };
+> > +};
+>
+> This doubles the size of the per-entry data, right?
 
-Hi Andy,
+Oh we don't, we just store 2 ids in an int instead of storing each id
+individually. But the question below still stands, can't we just use
+cmpxchg() directly on the id?
 
-Thanks again for the review! Indeed by looking at the code a bit, it
-looks like the suspend callback is being called if the idle one is not
-found. But I have seen this dance that you mention much more often in
-the IIO that's why I used it. We can see what Jonathan has to say as
-well, I think what you propose, simplifies things.
-
-> > +static int bme680_buffer_preenable(struct iio_dev *indio_dev)
-> > +{
-> > +	struct bme680_data *data = iio_priv(indio_dev);
-> > +	struct device *dev = regmap_get_device(data->regmap);
-> > +	int ret;
-> 
-> > +	ret = pm_runtime_resume_and_get(dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return 0;
-> 
-> Either this is broken (if the above can return positive codes), or can be
-> replaced with direct return:
-> 
-> 	return pm_...
-> 
-> (but I believe it's the former and you wanted something like if (ret < 0)
->  there).
-> 
-> > +}
-> 
-
-Well, pm_runtime_resume_and_get() looks like it returns 0 on success and
-negative value on error so I think the if (ret) is correct, no? But I
-agree with you that it can be simplified as you proposed.
-
-Cheers,
-Vasilis
-
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+>
+> Why do we need this? I thought cmpxchg() supports multiple sizes and
+> will already do the emulation for us.
 
