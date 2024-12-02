@@ -1,58 +1,70 @@
-Return-Path: <linux-kernel+bounces-427596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439989E0713
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:29:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33AA29E0711
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C526CB472AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:20:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49BB4B36DA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4EF201277;
-	Mon,  2 Dec 2024 13:19:28 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782D52040B0;
+	Mon,  2 Dec 2024 13:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PzySwLJq"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EA51FE469
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 13:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F9320101A;
+	Mon,  2 Dec 2024 13:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733145567; cv=none; b=Rbu7AcugymaPrI2dqWDqXV3KHpjk+eVoYarjCpcuOvQ8Gag3m5vhgiLXIVmyZGBRHh1sLaw1Te284tsuLtIkJ9/ikhmzVnmZWjkTgm0ioB0/cC2up0AOImdLYsshliFEvNC/DPG/N9DdyUa0Wi0O+zQtjO0uiPv4L8Y/9ldkYyU=
+	t=1733145358; cv=none; b=csoekq64Aud+MOTAsc3zK8kzdIPAWtqecLqd7PDayuqoPriBv1TR0RpWAOjba1O+CKmEbXwRw/2IHaRWIlZNbm2E6d51Nq3E+4nsZ1AWvCO+fD4ldikeDmSAiQzXNbwfwNw3e1SSBN2buB2OXzt7paRlgE5nyDXQOD/vBV3gSSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733145567; c=relaxed/simple;
-	bh=NTsXqS01zuSQIsY65nedfPZCqX835OZlrWsOlps8GAo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h7EmkumtPVR3sYKBXAHDcPCyY9IPkor7x7nWnvBX6UB2AfKt4KiBGKRaB3S9lOtXEsb6wEAgrpw51X0nouC9CLjZKSgGfxGwSoxlSa86wKBeaW9d/mwarCEbPZZRc/U8y7OskqtpbLGzJkKx55FIAH2Z1h+557VAFIcEQzCy91w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Y248B49HDzqTFr;
-	Mon,  2 Dec 2024 21:17:30 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 88D0C1800A2;
-	Mon,  2 Dec 2024 21:19:19 +0800 (CST)
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 2 Dec 2024 21:19:18 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 drm-dp 3/5] drm/hisilicon/hibmc: add dp hw moduel in hibmc
-Date: Mon, 2 Dec 2024 21:13:20 +0800
-Message-ID: <20241202131322.1847078-4-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20241202131322.1847078-1-shiyongbang@huawei.com>
-References: <20241202131322.1847078-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1733145358; c=relaxed/simple;
+	bh=pXG2lNKrNxbQNSXeEqbEkvWSgUB67r8uakq/Fw79NeU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gJdMfwU9eViqsEqj2/iZusralqJlqurt6HVy2J48CaeyNiugF/ZL2J+C55VuFnSEXUWDZpvLhcfJVIsn3k/hMgZ0r07hK/wySs75hXtR5WzUZHHSFIyDY9P6LvalQLes2W248F2jqhLspPvweH5SGAZnKMjnZubNkL3aYF4Vilk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PzySwLJq; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id E32BCC0012;
+	Mon,  2 Dec 2024 13:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733145349;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gJaxBHF3x4TI5XAw2BFga0+cPmQYa0O4/5xdJ6Zf6c8=;
+	b=PzySwLJqrPG3ReKWauwBKVGmVNmgrwx99UBlXv2W5kw5cr1Yxfez9Whjh5DkQXXSv7QGZJ
+	J2EurAtbvELBId28WM1QSIdueTLi8wQ0lVDrVhVPumbyEIETlByoCw6RYBrOhWBcuF/X/o
+	BY4GK29o6AAXswlNDRmEHMNpWHNMB7RFzInR6KCKeHeurvqsBbJAgQmM98Y+q6jngDhABJ
+	WQDsBh2wZjH0621/YrUtVtRr+BipVhuz90YmruePw3CYVSzFGEjVaJn3iUuI4fJgOpe+NB
+	7QWNjeiQqrEtW181ZFbI/mPK3rBtM2YMo0Bg8rtuAFF3FXP2NlkWpCy7y7OseQ==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lizhi Hou <lizhi.hou@amd.com>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH v4 6/6] PCI: of: Create device-tree PCI host bridge node
+Date: Mon,  2 Dec 2024 14:15:18 +0100
+Message-ID: <20241202131522.142268-7-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241202131522.142268-1-herve.codina@bootlin.com>
+References: <20241202131522.142268-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,404 +72,303 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+X-GND-Sasl: herve.codina@bootlin.com
 
-From: baihan li <libaihan@huawei.com>
+PCI devices device-tree nodes can be already created. This was
+introduced by commit 407d1a51921e ("PCI: Create device tree node for
+bridge").
 
-Build a dp level that hibmc driver can enable dp by
-calling their functions.
+In order to have device-tree nodes related to PCI devices attached on
+their PCI root bus (the PCI bus handled by the PCI host bridge), a PCI
+root bus device-tree node is needed. This root bus node will be used as
+the parent node of the first level devices scanned on the bus. On
+device-tree based systems, this PCI root bus device tree node is set to
+the node of the related PCI host bridge. The PCI host bridge node is
+available in the device-tree used to describe the hardware passed at
+boot.
 
-Signed-off-by: Baihan Li <libaihan@huawei.com>
-Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+On non device-tree based system (such as ACPI), a device-tree node for
+the PCI host bridge or for the root bus do not exist. Indeed, the PCI
+host bridge is not described in a device-tree used at boot simply
+because no device-tree are passed at boot.
+
+The device-tree PCI host bridge node creation needs to be done at
+runtime. This is done in the same way as for the creation of the PCI
+device nodes. I.e. node and properties are created based on computed
+information done by the PCI core. Also, as is done on device-tree based
+systems, this PCI host bridge node is used for the PCI root bus.
+
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
-ChangeLog:
-v5 -> v6:
-  - using drm_dbg_dp() to print debug info instead of drm_info(), suggested by Dmitry Baryshkov.
-  - adding code comments in hibmc_dp_set_sst(), suggested by Dmitry Baryshkov.
-v3 -> v4:
-  - changed the type of train_set to array, suggested by Dmitry Baryshkov.
-  - using actual link rate instead of magic num, suggested by Dmitry Baryshkov.
-  - deleting hibmc_dp_hw_uninit(), suggested by Dmitry Baryshkov.
-v2 -> v3:
-  - fix build errors reported by kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202410250931.UDQ9s66H-lkp@intel.com/
-v1 -> v2:
-  - changed some defines and functions to former patch, suggested by Dmitry Baryshkov.
-  - sorting the headers including in dp_hw.h and hibmc_drm_drv.c files, suggested by Dmitry Baryshkov.
-  - deleting struct dp_mode and dp_mode_cfg function, suggested by Dmitry Baryshkov.
-  - fix build errors reported by kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202410040328.VeVxM9yB-lkp@intel.com/
-  v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
----
- drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
- .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  19 ++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 220 ++++++++++++++++++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  28 +++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  41 ++++
- 5 files changed, 309 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+ drivers/pci/of.c          |  94 ++++++++++++++++++++++++++++++++++-
+ drivers/pci/of_property.c | 102 ++++++++++++++++++++++++++++++++++++++
+ drivers/pci/pci.h         |   6 +++
+ drivers/pci/probe.c       |   2 +
+ drivers/pci/remove.c      |   2 +
+ 5 files changed, 205 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-index 94d77da88bbf..214228052ccf 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
-+++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
- hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
--	       dp/dp_aux.o dp/dp_link.o
-+	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o
- 
- obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
-new file mode 100644
-index 000000000000..74dd9956144e
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Copyright (c) 2024 Hisilicon Limited. */
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index 3cca33105b85..a63799848aac 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -726,7 +726,99 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
+ out_free_name:
+ 	kfree(name);
+ }
+-#endif
 +
-+#ifndef DP_CONFIG_H
-+#define DP_CONFIG_H
-+
-+#define HIBMC_DP_BPP			24
-+#define HIBMC_DP_SYMBOL_PER_FCLK	4
-+#define HIBMC_DP_MSA1			0x20
-+#define HIBMC_DP_MSA2			0x845c00
-+#define HIBMC_DP_OFFSET			0x1e0000
-+#define HIBMC_DP_HDCP			0x2
-+#define HIBMC_DP_INT_RST		0xffff
-+#define HIBMC_DP_DPTX_RST		0x3ff
-+#define HIBMC_DP_CLK_EN			0x7
-+#define HIBMC_DP_SYNC_EN_MASK		0x3
-+#define HIBMC_DP_LINK_RATE_CAL		27
-+
-+#endif
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-new file mode 100644
-index 000000000000..a8d543881c09
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-@@ -0,0 +1,220 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// Copyright (c) 2024 Hisilicon Limited.
-+
-+#include <linux/io.h>
-+#include <linux/delay.h>
-+#include "dp_config.h"
-+#include "dp_comm.h"
-+#include "dp_reg.h"
-+#include "dp_hw.h"
-+
-+static void hibmc_dp_set_tu(struct hibmc_dp_dev *dp, struct drm_display_mode *mode)
++void of_pci_remove_host_bridge_node(struct pci_host_bridge *bridge)
 +{
-+	u32 tu_symbol_frac_size;
-+	u32 tu_symbol_size;
-+	u32 rate_ks;
-+	u8 lane_num;
-+	u32 value;
-+	u32 bpp;
++	struct device_node *np;
 +
-+	lane_num = dp->link.cap.lanes;
-+	if (lane_num == 0) {
-+		drm_err(dp->dev, "set tu failed, lane num cannot be 0!\n");
++	np = pci_bus_to_OF_node(bridge->bus);
++	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
++		return;
++
++	device_remove_of_node(&bridge->bus->dev);
++	device_remove_of_node(&bridge->dev);
++	of_changeset_revert(np->data);
++	of_changeset_destroy(np->data);
++	of_node_put(np);
++}
++
++void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
++{
++	struct device_node *np = NULL;
++	struct of_changeset *cset;
++	const char *name;
++	int ret;
++
++	/*
++	 * If there is already a device-tree node linked to the PCI bus handled
++	 * by this bridge (i.e. the PCI root bus), nothing to do.
++	 */
++	if (pci_bus_to_OF_node(bridge->bus))
++		return;
++
++	/* The root bus has no node. Check that the host bridge has no node too */
++	if (bridge->dev.of_node) {
++		pr_err("PCI host bridge of_node already set");
 +		return;
 +	}
 +
-+	bpp = HIBMC_DP_BPP;
-+	rate_ks = dp->link.cap.link_rate * HIBMC_DP_LINK_RATE_CAL;
-+	value = (mode->clock * bpp * 5) / (61 * lane_num * rate_ks);
-+
-+	if (value % 10 == 9) { /* 9 carry */
-+		tu_symbol_size = value / 10 + 1;
-+		tu_symbol_frac_size = 0;
-+	} else {
-+		tu_symbol_size = value / 10;
-+		tu_symbol_frac_size = value % 10 + 1;
++	/* Check if there is a DT root node to attach the created node */
++	if (!of_root) {
++		pr_err("of_root node is NULL, cannot create PCI host bridge node\n");
++		return;
 +	}
 +
-+	drm_dbg_dp(dp->dev, "tu value: %u.%u value: %u\n",
-+		   tu_symbol_size, tu_symbol_frac_size, value);
++	name = kasprintf(GFP_KERNEL, "pci@%x,%x", pci_domain_nr(bridge->bus),
++			 bridge->bus->number);
++	if (!name)
++		return;
 +
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_PACKET,
-+				 HIBMC_DP_CFG_STREAM_TU_SYMBOL_SIZE, tu_symbol_size);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_PACKET,
-+				 HIBMC_DP_CFG_STREAM_TU_SYMBOL_FRAC_SIZE, tu_symbol_frac_size);
-+}
++	cset = kmalloc(sizeof(*cset), GFP_KERNEL);
++	if (!cset)
++		goto out_free_name;
++	of_changeset_init(cset);
 +
-+static void hibmc_dp_set_sst(struct hibmc_dp_dev *dp, struct drm_display_mode *mode)
-+{
-+	u32 hblank_size;
-+	u32 htotal_size;
-+	u32 htotal_int;
-+	u32 hblank_int;
-+	u32 fclk; /* flink_clock */
++	np = of_changeset_create_node(cset, of_root, name);
++	if (!np)
++		goto out_destroy_cset;
 +
-+	fclk = dp->link.cap.link_rate * HIBMC_DP_LINK_RATE_CAL;
++	ret = of_pci_add_host_bridge_properties(bridge, cset, np);
++	if (ret)
++		goto out_free_node;
 +
-+	/* Considering the effect of spread spectrum, the value may be deviated.
-+	 * The coefficient (0.9947) is used to offset the deviation.
++	/*
++	 * This of_node will be added to an existing device. The of_node parent
++	 * is the root OF node and so this node will be handled by the platform
++	 * bus. Avoid any new device creation.
 +	 */
-+	htotal_int = mode->htotal * 9947 / 10000;
-+	htotal_size = htotal_int * fclk / (HIBMC_DP_SYMBOL_PER_FCLK * (mode->clock / 1000));
++	of_node_set_flag(np, OF_POPULATED);
++	np->fwnode.dev = &bridge->dev;
++	fwnode_dev_initialized(&np->fwnode, true);
 +
-+	hblank_int = mode->htotal - mode->hdisplay - mode->hdisplay * 53 / 10000;
-+	hblank_size = hblank_int * fclk * 9947 /
-+		      (mode->clock * 10 * HIBMC_DP_SYMBOL_PER_FCLK);
++	ret = of_changeset_apply(cset);
++	if (ret)
++		goto out_free_node;
 +
-+	drm_dbg_dp(dp->dev, "h_active %u v_active %u htotal_size %u hblank_size %u",
-+		   mode->hdisplay, mode->vdisplay, htotal_size, hblank_size);
-+	drm_dbg_dp(dp->dev, "flink_clock %u pixel_clock %d", fclk, mode->clock / 1000);
++	np->data = cset;
 +
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_HORIZONTAL_SIZE,
-+				 HIBMC_DP_CFG_STREAM_HTOTAL_SIZE, htotal_size);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_HORIZONTAL_SIZE,
-+				 HIBMC_DP_CFG_STREAM_HBLANK_SIZE, hblank_size);
++	/* Add the of_node to host bridge and the root bus */
++	device_add_of_node(&bridge->dev, np);
++	device_add_of_node(&bridge->bus->dev, np);
++
++	kfree(name);
++
++	return;
++
++out_free_node:
++	of_node_put(np);
++out_destroy_cset:
++	of_changeset_destroy(cset);
++	kfree(cset);
++out_free_name:
++	kfree(name);
 +}
 +
-+static void hibmc_dp_link_cfg(struct hibmc_dp_dev *dp, struct drm_display_mode *mode)
++#endif /* CONFIG_PCI_DYNAMIC_OF_NODES */
+ 
+ /**
+  * of_pci_supply_present() - Check if the power supply is present for the PCI
+diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
+index 400c4c2e434d..b03baff651ee 100644
+--- a/drivers/pci/of_property.c
++++ b/drivers/pci/of_property.c
+@@ -394,3 +394,105 @@ int of_pci_add_properties(struct pci_dev *pdev, struct of_changeset *ocs,
+ 
+ 	return 0;
+ }
++
++static bool of_pci_is_range_resource(const struct resource *res, u32 *flags)
 +{
-+	u32 timing_delay;
-+	u32 vblank;
-+	u32 hstart;
-+	u32 vstart;
++	if (!(resource_type(res) & IORESOURCE_MEM) &&
++	    !(resource_type(res) & IORESOURCE_MEM_64))
++		return false;
 +
-+	vblank = mode->vtotal - mode->vdisplay;
-+	timing_delay = mode->htotal - mode->hsync_start;
-+	hstart = mode->htotal - mode->hsync_start;
-+	vstart = mode->vtotal - mode->vsync_start;
++	if (of_pci_get_addr_flags(res, flags))
++		return false;
 +
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_TIMING_GEN_CONFIG0,
-+				 HIBMC_DP_CFG_TIMING_GEN0_HBLANK, mode->htotal - mode->hdisplay);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_TIMING_GEN_CONFIG0,
-+				 HIBMC_DP_CFG_TIMING_GEN0_HACTIVE, mode->hdisplay);
-+
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_TIMING_GEN_CONFIG2,
-+				 HIBMC_DP_CFG_TIMING_GEN0_VBLANK, vblank);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_TIMING_GEN_CONFIG2,
-+				 HIBMC_DP_CFG_TIMING_GEN0_VACTIVE, mode->vdisplay);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_TIMING_GEN_CONFIG3,
-+				 HIBMC_DP_CFG_TIMING_GEN0_VFRONT_PORCH,
-+				 mode->vsync_start - mode->vdisplay);
-+
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CONFIG0,
-+				 HIBMC_DP_CFG_STREAM_HACTIVE, mode->hdisplay);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CONFIG0,
-+				 HIBMC_DP_CFG_STREAM_HBLANK, mode->htotal - mode->hdisplay);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CONFIG2,
-+				 HIBMC_DP_CFG_STREAM_HSYNC_WIDTH,
-+				 mode->hsync_end - mode->hsync_start);
-+
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CONFIG1,
-+				 HIBMC_DP_CFG_STREAM_VACTIVE, mode->vdisplay);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CONFIG1,
-+				 HIBMC_DP_CFG_STREAM_VBLANK, vblank);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CONFIG3,
-+				 HIBMC_DP_CFG_STREAM_VFRONT_PORCH,
-+				 mode->vsync_start - mode->vdisplay);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CONFIG3,
-+				 HIBMC_DP_CFG_STREAM_VSYNC_WIDTH,
-+				 mode->vsync_end - mode->vsync_start);
-+
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_MSA0,
-+				 HIBMC_DP_CFG_STREAM_VSTART, vstart);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_MSA0,
-+				 HIBMC_DP_CFG_STREAM_HSTART, hstart);
-+
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CTRL, HIBMC_DP_CFG_STREAM_VSYNC_POLARITY,
-+				 mode->flags & DRM_MODE_FLAG_PVSYNC ? 1 : 0);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CTRL, HIBMC_DP_CFG_STREAM_HSYNC_POLARITY,
-+				 mode->flags & DRM_MODE_FLAG_PHSYNC ? 1 : 0);
-+
-+	/* MSA mic 0 and 1 */
-+	writel(HIBMC_DP_MSA1, dp->base + HIBMC_DP_VIDEO_MSA1);
-+	writel(HIBMC_DP_MSA2, dp->base + HIBMC_DP_VIDEO_MSA2);
-+
-+	hibmc_dp_set_tu(dp, mode);
-+
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CTRL, HIBMC_DP_CFG_STREAM_RGB_ENABLE, 0x1);
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CTRL, HIBMC_DP_CFG_STREAM_VIDEO_MAPPING, 0);
-+
-+	/* divide 2: up even */
-+	if (timing_delay % 2)
-+		timing_delay++;
-+
-+	hibmc_dp_reg_write_field(dp, HIBMC_DP_TIMING_MODEL_CTRL,
-+				 HIBMC_DP_CFG_PIXEL_NUM_TIMING_MODE_SEL1, timing_delay);
-+
-+	hibmc_dp_set_sst(dp, mode);
++	return true;
 +}
 +
-+int hibmc_dp_hw_init(struct hibmc_dp *dp)
++static int of_pci_host_bridge_prop_ranges(struct pci_host_bridge *bridge,
++					  struct of_changeset *ocs,
++					  struct device_node *np)
 +{
-+	struct drm_device *drm_dev = dp->drm_dev;
-+	struct hibmc_dp_dev *dp_dev;
-+
-+	dp_dev = devm_kzalloc(drm_dev->dev, sizeof(struct hibmc_dp_dev), GFP_KERNEL);
-+	if (!dp_dev)
-+		return -ENOMEM;
-+
-+	mutex_init(&dp_dev->lock);
-+
-+	dp->dp_dev = dp_dev;
-+
-+	dp_dev->dev = drm_dev;
-+	dp_dev->base = dp->mmio + HIBMC_DP_OFFSET;
-+
-+	hibmc_dp_aux_init(dp_dev);
-+
-+	dp_dev->link.cap.lanes = 0x2;
-+	dp_dev->link.cap.link_rate = DP_LINK_BW_2_7;
-+
-+	/* hdcp data */
-+	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
-+	/* int init */
-+	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
-+	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
-+	/* rst */
-+	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
-+	/* clock enable */
-+	writel(HIBMC_DP_CLK_EN, dp_dev->base + HIBMC_DP_DPTX_CLK_CTRL);
-+
-+	return 0;
-+}
-+
-+void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable)
-+{
-+	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
-+
-+	if (enable) {
-+		hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_VIDEO_CTRL, BIT(0), 0x1);
-+		writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
-+		hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_DPTX_GCTL0, BIT(10), 0x1);
-+		writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
-+	} else {
-+		hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_DPTX_GCTL0, BIT(10), 0);
-+		writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
-+		hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_VIDEO_CTRL, BIT(0), 0);
-+		writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
-+	}
-+
-+	msleep(50);
-+}
-+
-+int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
-+{
-+	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
++	struct resource_entry *window;
++	unsigned int ranges_sz = 0;
++	unsigned int n_range = 0;
++	struct resource *res;
++	int n_addr_cells;
++	u32 *ranges;
++	u64 val64;
++	u32 flags;
 +	int ret;
 +
-+	if (!dp_dev->link.status.channel_equalized) {
-+		ret = hibmc_dp_link_training(dp_dev);
-+		if (ret) {
-+			drm_err(dp->drm_dev, "dp link training failed, ret: %d\n", ret);
-+			return ret;
-+		}
++	n_addr_cells = of_n_addr_cells(np);
++	if (n_addr_cells <= 0 || n_addr_cells > 2)
++		return -EINVAL;
++
++	resource_list_for_each_entry(window, &bridge->windows) {
++		res = window->res;
++		if (!of_pci_is_range_resource(res, &flags))
++			continue;
++		n_range++;
 +	}
 +
-+	hibmc_dp_display_en(dp, false);
-+	hibmc_dp_link_cfg(dp_dev, mode);
++	if (!n_range)
++		return 0;
++
++	ranges = kcalloc(n_range,
++			 (OF_PCI_ADDRESS_CELLS + OF_PCI_SIZE_CELLS +
++			  n_addr_cells) * sizeof(*ranges),
++			 GFP_KERNEL);
++	if (!ranges)
++		return -ENOMEM;
++
++	resource_list_for_each_entry(window, &bridge->windows) {
++		res = window->res;
++		if (!of_pci_is_range_resource(res, &flags))
++			continue;
++
++		/* PCI bus address */
++		val64 = res->start;
++		of_pci_set_address(NULL, &ranges[ranges_sz], val64 - window->offset,
++				   0, flags, false);
++		ranges_sz += OF_PCI_ADDRESS_CELLS;
++
++		/* Host bus address */
++		if (n_addr_cells == 2)
++			ranges[ranges_sz++] = upper_32_bits(val64);
++		ranges[ranges_sz++] = lower_32_bits(val64);
++
++		/* Size */
++		val64 = resource_size(res);
++		ranges[ranges_sz] = upper_32_bits(val64);
++		ranges[ranges_sz + 1] = lower_32_bits(val64);
++		ranges_sz += OF_PCI_SIZE_CELLS;
++	}
++
++	ret = of_changeset_add_prop_u32_array(ocs, np, "ranges", ranges, ranges_sz);
++	kfree(ranges);
++	return ret;
++}
++
++int of_pci_add_host_bridge_properties(struct pci_host_bridge *bridge,
++				      struct of_changeset *ocs,
++				      struct device_node *np)
++{
++	int ret;
++
++	ret = of_changeset_add_prop_string(ocs, np, "device_type", "pci");
++	if (ret)
++		return ret;
++
++	ret = of_changeset_add_prop_u32(ocs, np, "#address-cells",
++					OF_PCI_ADDRESS_CELLS);
++	if (ret)
++		return ret;
++
++	ret = of_changeset_add_prop_u32(ocs, np, "#size-cells",
++					OF_PCI_SIZE_CELLS);
++	if (ret)
++		return ret;
++
++	ret = of_pci_host_bridge_prop_ranges(bridge, ocs, np);
++	if (ret)
++		return ret;
 +
 +	return 0;
 +}
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-new file mode 100644
-index 000000000000..4dc13b3d9875
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Copyright (c) 2024 Hisilicon Limited. */
-+
-+#ifndef DP_KAPI_H
-+#define DP_KAPI_H
-+
-+#include <linux/types.h>
-+#include <linux/delay.h>
-+#include <drm/drm_device.h>
-+#include <drm/drm_encoder.h>
-+#include <drm/drm_connector.h>
-+#include <drm/drm_print.h>
-+
-+struct hibmc_dp_dev;
-+
-+struct hibmc_dp {
-+	struct hibmc_dp_dev *dp_dev;
-+	struct drm_device *drm_dev;
-+	struct drm_encoder encoder;
-+	struct drm_connector connector;
-+	void __iomem *mmio;
-+};
-+
-+int hibmc_dp_hw_init(struct hibmc_dp *dp);
-+int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode);
-+void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
-+
-+#endif
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-index 0bd308eccdc5..4a515c726d52 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-@@ -14,8 +14,26 @@
- #define HIBMC_DP_AUX_STATUS			0x78
- #define HIBMC_DP_PHYIF_CTRL0			0xa0
- #define HIBMC_DP_VIDEO_CTRL			0x100
-+#define HIBMC_DP_VIDEO_CONFIG0			0x104
-+#define HIBMC_DP_VIDEO_CONFIG1			0x108
-+#define HIBMC_DP_VIDEO_CONFIG2			0x10c
-+#define HIBMC_DP_VIDEO_CONFIG3			0x110
-+#define HIBMC_DP_VIDEO_PACKET			0x114
-+#define HIBMC_DP_VIDEO_MSA0			0x118
-+#define HIBMC_DP_VIDEO_MSA1			0x11c
-+#define HIBMC_DP_VIDEO_MSA2			0x120
-+#define HIBMC_DP_VIDEO_HORIZONTAL_SIZE		0X124
-+#define HIBMC_DP_TIMING_GEN_CONFIG0		0x26c
-+#define HIBMC_DP_TIMING_GEN_CONFIG2		0x274
-+#define HIBMC_DP_TIMING_GEN_CONFIG3		0x278
-+#define HIBMC_DP_HDCP_CFG			0x600
- #define HIBMC_DP_DPTX_RST_CTRL			0x700
-+#define HIBMC_DP_DPTX_CLK_CTRL			0x704
- #define HIBMC_DP_DPTX_GCTL0			0x708
-+#define HIBMC_DP_INTR_ENABLE			0x720
-+#define HIBMC_DP_INTR_ORIGINAL_STATUS		0x728
-+#define HIBMC_DP_TIMING_MODEL_CTRL		0x884
-+#define HIBMC_DP_TIMING_SYNC_CTRL		0xFF0
- 
- #define HIBMC_DP_CFG_AUX_SYNC_LEN_SEL		BIT(1)
- #define HIBMC_DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
-@@ -31,5 +49,28 @@
- #define HIBMC_DP_CFG_AUX_STATUS			GENMASK(11, 4)
- #define HIBMC_DP_CFG_SCRAMBLE_EN		BIT(0)
- #define HIBMC_DP_CFG_PAT_SEL			GENMASK(7, 4)
-+#define HIBMC_DP_CFG_TIMING_GEN0_HACTIVE	GENMASK(31, 16)
-+#define HIBMC_DP_CFG_TIMING_GEN0_HBLANK		GENMASK(15, 0)
-+#define HIBMC_DP_CFG_TIMING_GEN0_VACTIVE	GENMASK(31, 16)
-+#define HIBMC_DP_CFG_TIMING_GEN0_VBLANK		GENMASK(15, 0)
-+#define HIBMC_DP_CFG_TIMING_GEN0_VFRONT_PORCH	GENMASK(31, 16)
-+#define HIBMC_DP_CFG_STREAM_HACTIVE		GENMASK(31, 16)
-+#define HIBMC_DP_CFG_STREAM_HBLANK		GENMASK(15, 0)
-+#define HIBMC_DP_CFG_STREAM_HSYNC_WIDTH		GENMASK(15, 0)
-+#define HIBMC_DP_CFG_STREAM_VACTIVE		GENMASK(31, 16)
-+#define HIBMC_DP_CFG_STREAM_VBLANK		GENMASK(15, 0)
-+#define HIBMC_DP_CFG_STREAM_VFRONT_PORCH	GENMASK(31, 16)
-+#define HIBMC_DP_CFG_STREAM_VSYNC_WIDTH		GENMASK(15, 0)
-+#define HIBMC_DP_CFG_STREAM_VSTART		GENMASK(31, 16)
-+#define HIBMC_DP_CFG_STREAM_HSTART		GENMASK(15, 0)
-+#define HIBMC_DP_CFG_STREAM_VSYNC_POLARITY	BIT(8)
-+#define HIBMC_DP_CFG_STREAM_HSYNC_POLARITY	BIT(7)
-+#define HIBMC_DP_CFG_STREAM_RGB_ENABLE		BIT(1)
-+#define HIBMC_DP_CFG_STREAM_VIDEO_MAPPING	GENMASK(5, 2)
-+#define HIBMC_DP_CFG_PIXEL_NUM_TIMING_MODE_SEL1	GENMASK(31, 16)
-+#define HIBMC_DP_CFG_STREAM_TU_SYMBOL_SIZE	GENMASK(5, 0)
-+#define HIBMC_DP_CFG_STREAM_TU_SYMBOL_FRAC_SIZE	GENMASK(9, 6)
-+#define HIBMC_DP_CFG_STREAM_HTOTAL_SIZE		GENMASK(31, 16)
-+#define HIBMC_DP_CFG_STREAM_HBLANK_SIZE		GENMASK(15, 0)
- 
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 2e40fc63ba31..0cdb2b3daea8 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -871,9 +871,15 @@ void of_pci_make_dev_node(struct pci_dev *pdev);
+ void of_pci_remove_node(struct pci_dev *pdev);
+ int of_pci_add_properties(struct pci_dev *pdev, struct of_changeset *ocs,
+ 			  struct device_node *np);
++void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge);
++void of_pci_remove_host_bridge_node(struct pci_host_bridge *bridge);
++int of_pci_add_host_bridge_properties(struct pci_host_bridge *bridge, struct of_changeset *ocs,
++				      struct device_node *np);
+ #else
+ static inline void of_pci_make_dev_node(struct pci_dev *pdev) { }
+ static inline void of_pci_remove_node(struct pci_dev *pdev) { }
++static inline void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge) { }
++static inline void of_pci_remove_host_bridge_node(struct pci_host_bridge *bridge) { }
  #endif
+ 
+ #ifdef CONFIG_PCIEAER
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 2e81ab0f5a25..629287f6b3d9 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1051,6 +1051,8 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
+ 		dev_info(&bus->dev, "root bus resource %pR%s\n", res, addr);
+ 	}
+ 
++	of_pci_make_host_bridge_node(bridge);
++
+ 	down_write(&pci_bus_sem);
+ 	list_add_tail(&bus->node, &pci_root_buses);
+ 	up_write(&pci_bus_sem);
+diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
+index efc37fcb73e2..9f7df2b20183 100644
+--- a/drivers/pci/remove.c
++++ b/drivers/pci/remove.c
+@@ -163,6 +163,8 @@ void pci_stop_root_bus(struct pci_bus *bus)
+ 					 &bus->devices, bus_list)
+ 		pci_stop_bus_device(child);
+ 
++	of_pci_remove_host_bridge_node(host_bridge);
++
+ 	/* stop the host bridge */
+ 	device_release_driver(&host_bridge->dev);
+ }
 -- 
-2.33.0
+2.47.0
 
 
