@@ -1,171 +1,139 @@
-Return-Path: <linux-kernel+bounces-427912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC179E08D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:40:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3289E076B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAA30B36315
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6ABF280C52
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2164544384;
-	Mon,  2 Dec 2024 15:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E1042AAD;
+	Mon,  2 Dec 2024 15:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zze8m65W"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="MRPqzPUx"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EA03BB48;
-	Mon,  2 Dec 2024 15:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85488BA53;
+	Mon,  2 Dec 2024 15:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154323; cv=none; b=rOFj50UO1yqzoAq2tCPwq5+KPiKdsaFgPNgvugV53OcknpZoE2KX1iW9L4ek/jl4WKzO4kcnSxvysOfL75uagd1+jQuSDhE2dBPDFrR46FeopWyf7ZPk4FQ5EIYSHiEpEXGkM4pFpFH3LRxKwyIOsKC1KcuGhmg9TNnZMeHJ3Ms=
+	t=1733154385; cv=none; b=lEZGGoUpPOrb7//IZrQZ6vy2/OXHS8KLg77gnz5Fhd+e7/qOO89vpwXfGRtwZa8ZerKW/qC1IWx1oJJUnrs/lih5JPQJpxsIcBZMVbYLnW/TTKrQnh7raErKUmFEkp31puXItzFmpjF3M/GBt7hasvg0P2xVa2/BM6HG4deGs6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154323; c=relaxed/simple;
-	bh=IfPb5EUoYdJYs1hy5/eHs2puOOO/sRNQcEJYmuuvUXE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FmwnTijU0bdGW38UBRvssG+Qu+s25vx111grEmc5Vlb7gHgTTXnmEg09ntyFXm1x/SZ597Tjw/k2K714bWY/agLvI1WbrT6+XTN1xOMWy+1R8o9/UoT3gkTwt6Su6bk3q1I6Ly8dHDL+bJ8p9/JblWAp/aAUmo4/jXRgthI8mfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zze8m65W; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so41582245e9.3;
-        Mon, 02 Dec 2024 07:45:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733154320; x=1733759120; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=MoUizhuqEAXgVu/0YeOyha2OmR9oGnm0hqMAD2OhirU=;
-        b=Zze8m65W1Y0Wz8qJSPvTKdiakk5QDYE2fuR2pzcQI7a2yhJoVdvErICGJKZ5P+LYdT
-         JtK3faSP+9zhm4jz8JI0zyGFoUqrwI2h+dZkp9jgqifidjuQPJa5rK1/S6xPB/lxiJnU
-         EI2VaKpdtQ+r6NLACQULzcyN6MYr3SRhT147yxoIba8j81jT2BGdM6HSzP04v9It4dPI
-         fYqyuhnJ0LPlEr6xVLZHPh4kmCOVnKV4bQZtvG60AOOlZXWh5FpF4wzfRobJnYMxMh1V
-         C1UdPE3ioh7pOy4iwSmzMeYPQPO9U8dJvzNqJe9mj8J7DA7roxkzO+yJEKDpoNRuojNw
-         unWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733154320; x=1733759120;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MoUizhuqEAXgVu/0YeOyha2OmR9oGnm0hqMAD2OhirU=;
-        b=Z/KPMT+Jao1zDOIMLBRxpL+QE4M8iSyYjBtlpPH7juOxse9rYURE+hyQ+lwmflPl0J
-         FgJfrwwCSH6hGZ+U6XP/qcZC2OlgJh81hmkP0/0ajkhFnjLE8CNoAWwgSzcthyEmK/c3
-         CKOdEBgczemd29idBZ/2qouW926aXDvipzp7aXXrZkNUCDjSQWHPHBzOxNvNgR8DYfpo
-         /3D5ovXpkgjmNYH3f/MFqftU9Qat7LI8CG112DVq646hAOzNFAYCF3vJWjHYe3cZCLNL
-         bnTnmGTjqQc0gSVK1Zh/MFlAj3sIA7ntmQAtqI+eI4B7Vn1TCOOiwZsOD9QAaJI3a7La
-         2WjA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+W/BxNBodnRy65P0mt1ycf8GyWb8wz5ITHmHs57+EHSG29LhtIsXmgOvqBKty5ROa2cyC8zzW2lA=@vger.kernel.org, AJvYcCX/ySlqEMeepNB/kbtwKJhuLQdkJjnkh6BQdRC00s9J0bD+J4H4ZxVP92qonSwKlqHZdi4Wg0eSc6hJ@vger.kernel.org, AJvYcCXZuP7qOFKXyNziV0cRzpnm/VvrovoqEGGHrGPiHcOoEDMMzs0IJuSgeVIIn+OZ0p4xo8RX77D8+QMe8Wnl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbzUQVGuK0/jyVa8V7v/0NKmNxrjyOc1XE8Nll+Gb4LQGvAv85
-	3bthGtA0DVpYd+t4xVlKHu0WGuNCBpC5QAHoLlfXdLMQyKtTjdre
-X-Gm-Gg: ASbGnctUMl8IETDnlwRSK00+xiboyLgBE2aMjKge9Z9AEZ7DOssxHuXOS2HR/T+GSFy
-	T+3NKFxsuMqanGTabNP8SrXdeDtveQUOHJbCCnVYXnrZeuYbJzHmiWKdUk9mLs8bNbt8ARQyggA
-	YVfvYI+I4MX6xmBM6Ew2GNKN5v8m/hP1eXmQWdu8HxXUu+gYJiWn6yt/aHCJxHUgmqW1waLS6hz
-	dWzexY2HP/enwECYCyJ3+HVtfDUgBYiH9QgjYb/2tK2IIQ+Gj9fxzfo6hUGROwcqkZVYkewHkPH
-	EurdEA==
-X-Google-Smtp-Source: AGHT+IHtub8MZwmpbSi8cbBQN+W9HkJP6rT/9hlN4QVwtkTVtRbw9Ou100Gw25JfII1BdilNaat2zQ==
-X-Received: by 2002:a05:600c:3b16:b0:434:a4fe:cd6d with SMTP id 5b1f17b1804b1-434a9dc02c5mr218940475e9.12.1733154319958;
-        Mon, 02 Dec 2024 07:45:19 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa78120dsm186781435e9.24.2024.12.02.07.45.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 07:45:19 -0800 (PST)
-Message-ID: <674dd60f.7b0a0220.2ba255.7b7a@mx.google.com>
-X-Google-Original-Message-ID: <Z03WDRk4dKxQZokO@Ansuel-XPS.>
-Date: Mon, 2 Dec 2024 16:45:17 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Document support for Airoha
- EN7581 CPUFreq
-References: <20241202151228.32609-1-ansuelsmth@gmail.com>
- <CAPDyKFqrY7uLD8ATqH0LghmkHgApQSsGtvGkOTd8UVazGu0_uA@mail.gmail.com>
+	s=arc-20240116; t=1733154385; c=relaxed/simple;
+	bh=j8bJcPAyXhajr6+nVYtUv3fihyXlaCItR0utCTFJF5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sCYpg4hTfrL7L+KLJiHpLTls99JpNVH/hCcYN1x1xsqR1UKmLnPTTBFcqVtzs1dTp2tTiefk4hklg/RGTwOxTEPcdvSpuoq/DkZBTbifspZgt9gXB5gWf8qJ1ruifiT7KjX48RLTgEOi3h1q1s209U/Qpx9YbWmPSbul7hz9N0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=MRPqzPUx; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1733154355; x=1733759155; i=wahrenst@gmx.net;
+	bh=S6AbZeNaZ6bTE249nttA7aUaHmMUAtPIQUa4jnYv9dg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=MRPqzPUxvHdhDzn6BrdRf9grvVpT8loh0TtvRFigS/N98YMO1eGNg2fMgFa1dSMq
+	 A6rbPAVQpkNh4opLucf/B62DtGd/jC7ZcbLP+KbiKZskMu2fA6wCez3Uw36yldNU6
+	 xqw432FV8UqXo21pJtc6yzUJYboQdW2gLJmFMOdTQ0GPqua7Bx6HAubqoWlA0Vrdl
+	 g4O/yXL5s/2BjEKL4dWmN+/2kyxxx+PH0S17cHZb2N48A3SZHfiNfmP1houYEQuEP
+	 yLo3hILr2K31IMW/wWJ6IRqSjJkbR51Z2IPUj5XS0qVbvRTUV3Ro2uwUWecOnMRR7
+	 e4CU2AzcVntMm0yiZA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([37.4.251.153]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MJVHU-1syHO72DwO-00LIU9; Mon, 02
+ Dec 2024 16:45:55 +0100
+Message-ID: <31d19aae-e2d2-4219-abe1-10516c42befe@gmx.net>
+Date: Mon, 2 Dec 2024 16:45:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqrY7uLD8ATqH0LghmkHgApQSsGtvGkOTd8UVazGu0_uA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] dt-bindings: gpio: brcmstb: add gpio-line-name
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+ linux-gpio@vger.kernel.org
+References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
+ <20241202-dt-bcm2712-fixes-v1-3-fac67cc2f98a@raspberrypi.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241202-dt-bcm2712-fixes-v1-3-fac67cc2f98a@raspberrypi.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:IOMHa3ZcSMqatNTk+ufT5/RmKhqFiwzBeWyjcIAIec/+E8wlQQC
+ fdKZZK9TLuHh1jL1hDr4uBSd7nS/U5aDZZXZGyDz4LM1c9B7zrueEd8FSeezrohk31PE2Ao
+ kKWLjdrAAAN6ZIjGLWWXIzaRkfq57UuXqprcF0rbPF9DTt7UrdPhwz4zmOiMbtqMFSEu5rx
+ h1u1Qozkm5XfeKRDKaH+w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ArgobiVFoHY=;i5fh4paZoVkp5qjDIySZTSIapOP
+ L7gJtxwiztdtk86rYcuduxH+osuuESVmiV89rg7PrCpE8vVfLgYAoj+htWE2bgwEJ7BkvNC9F
+ xYhcb6QFIky4cTsN1RaAB3dexZ3fK/p/uo16OfnhqKMkFzu9Q1+0l8rT6jp4Id2XROEpRnyUY
+ QQi+N28duCW9gzvHwldDlAlJvrElZRvGtqDZGYzHJrln0zeUfVP82t1UJTaRoODibhzE642O3
+ wqX4ggf/+QVbcbtMSoryU1RAVXlenFa6paCaCkyylC1AljpyFkTsJ9Ue6qKyH1D26NqjoETOo
+ RF0Ky2fsAcQKxmg9IyzC88/69hxUxO4PL+SDoMUSpcDak6lgngvdhoge9dQ4HHCBwOavx5mAM
+ W4yUBiKYJqXv6sxnm1cmCyVEy2YtNRXoI0HT65XeXu7THGIdKqoQcPI9HjSKnQslf5faGyESj
+ Q3kEDNYOZ9jmUlVDXrKfRJZ6uzFMjW2WDka3AyRWc9+yQ3krpHDdeGjnPI4at5yRUu/R/Lk+S
+ Osv3zlNNwx1a7tRs4DiU6bPcP2RFk19+oEEPChPwPVc1UvCRnzBagB8PFReV9j20OaAgVG9NJ
+ 187DPQdiomDkE/yjplISD8km/cI9WZixQ3+afgMscNuAjqKBsnV5+7gKDvZsvlS/lXOvLnBSD
+ OwBUIgZfMp8whoIryacYaQiJLuIu4cAMcNxIo/pOrGzdZ5MgnJJPy05XChz4q2uiRBn6tFchE
+ rHW0SQZxwl6JIXeSymrp6wHivbnco8pxhP9bRcVt2FhkRFvMNPxGcOMsb5fLzd0ZZLoFOg45/
+ z/rSwz3UXEtDgcggdgYU40LxDztxQkpEdmt1rBItTNmSf0f94BB+7VVU21dzA03+jaekZyTGP
+ YAknUnwpXcurCo9GJG5ST2pn3tzC2+RyXXsr3klzJyCVAlkwlZbnMug7HKXcfiPWaPkGPsDhG
+ QiSLAEWPxysBdU8lRb/ARji75WJqVV4GdYR996jOYP34CgN5aXqgbZVMfpuoj9u6HkiBUEo2V
+ Jn8JmYeHpoJ+QgzPR2uTk1UQ5ud66S7WQN0iQuHHoBlCvaCZ8skO0qzFTkdWGGxYcP/oO1A2z
+ tEH+w4eM6q17dL9vVwB3u4yEtMGqP8
 
-On Mon, Dec 02, 2024 at 04:42:33PM +0100, Ulf Hansson wrote:
-> On Mon, 2 Dec 2024 at 16:20, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> >
-> > Document required property for Airoha EN7581 CPUFreq .
-> >
-> > On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
-> > to ATF and no clocks are exposed to the OS.
-> >
-> > The SoC have performance state described by ID for each OPP, for this a
-> > Power Domain is used that sets the performance state ID according to the
-> > required OPPs defined in the CPU OPP tables.
-> >
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> > Changes v4:
-> > - Add this patch
-> >
-> >  .../cpufreq/airoha,en7581-cpufreq.yaml        | 259 ++++++++++++++++++
-> >  1 file changed, 259 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > new file mode 100644
-> > index 000000000000..a5bdea7f34b5
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> 
-> [...]
-> 
-> > +examples:
-> > +  - |
-> > +    / {
-> > +        #address-cells = <2>;
-> > +       #size-cells = <2>;
-> > +
-> > +        cpus {
-> > +            #address-cells = <1>;
-> > +            #size-cells = <0>;
-> > +
-> > +            cpu0: cpu@0 {
-> > +                device_type = "cpu";
-> > +                compatible = "arm,cortex-a53";
-> > +                reg = <0x0>;
-> > +                operating-points-v2 = <&cpu_opp_table>;
-> > +                enable-method = "psci";
-> > +                clocks = <&cpufreq>;
-> > +                clock-names = "cpu";
-> > +                power-domains = <&cpufreq>;
-> > +                power-domain-names = "cpu_pd";
-> 
-> Nitpick: Perhaps clarify the name to be "perf" or "cpu_perf", to
-> indicate it's a power-domain with performance scaling support.
-> 
+Hi Dave,
 
-Will change to cpu_perf. Thanks a lot for the review!
+Am 02.12.24 um 15:31 schrieb Dave Stevenson:
+> Support comes from gpiolib, so permit it through the binding.
+Sorry for the nitpicking, but gpiolib is a software part of Linux and we
+should describe the hardware here.
 
-> > +                next-level-cache = <&l2>;
-> > +                #cooling-cells = <2>;
-> > +            };
-> > +
-> 
-> [...]
-> 
-> Other than the very minor thing above, feel free to add:
-> 
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> 
-> Kind regards
-> Uffe
+Best regards
+>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+>   Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.ya=
+ml b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
+> index f096f286da19..086d016df6ef 100644
+> --- a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
+> @@ -64,6 +64,8 @@ properties:
+>
+>     gpio-ranges: true
+>
+> +  gpio-line-names: true
+> +
+>     wakeup-source:
+>       type: boolean
+>       description: >
+>
 
--- 
-	Ansuel
 
