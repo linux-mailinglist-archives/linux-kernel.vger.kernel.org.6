@@ -1,61 +1,84 @@
-Return-Path: <linux-kernel+bounces-427064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B8E9DFBDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:28:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A959DFBDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CEACB20F4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:28:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96865B2127F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126221F9EC0;
-	Mon,  2 Dec 2024 08:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6384D1F9EB9;
+	Mon,  2 Dec 2024 08:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DIs+Woqq"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fZSdml5a"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C151F9AAB
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2A81F9AAD;
+	Mon,  2 Dec 2024 08:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733128076; cv=none; b=LS4m+z/py2thrtVju4zPLmsVeX2zjMhmuBTU9JtFerbcm9m8G1snJ0tp+1s/reRkDiBBusar/4RK07DFDNkkTmHx+tlAPSAsdaw3CzcYByO7UMUXYzVVZwtxWbMUVC9qgVisJobbSY+Ja1Pz/BTU9Ubi3T0YxJdtejeSHheIVAw=
+	t=1733128086; cv=none; b=cCu9vRRaumZQ6ECCLwkAPGs4gZk4VXjQq2dL151e3lJBdenud2vpqyL+rW3+YRx+y+kJQYr0Yl4j2BZAFZRUHSK9gHoIFKuiJySNfyQLvnhGGG8kT9uuSNmANqQ8Q8dOTsSATqGafNZhAyRf3rTEuG8Teu9MZFo6CMWr/XJHfI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733128076; c=relaxed/simple;
-	bh=fviCnmdIUFTOMUOJ5oaDsl0vCRpjRkdfvT2zH4mYEOc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t0lGBE3t/Eqd9bUjcr8rx8F88hKichV8FCUTR5NnYAjYDB+9MdoYALkVe4cdq8d/9kRqxxxzN9pHmXPtuB+rFVQ7afoda8wMBaZAG+41nqLa/HFGjEKJ93Mi81iz62LVjLRCTlaGGKANgoxENq7KsrbbJshb+kK0dXmcBYAg86c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DIs+Woqq; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=tPgzHOjQWrK1Ou
-	Ac0tNb88us1ab3NJWe2Xbq9uzEE50=; b=DIs+Woqq1OoGm///fdUWwDjZwh4AzS
-	xxksGIi107pvOiUH9O64udy+UKvsDDjUv7OogGQ7idkr3R1rx6RgCRw+6FdYgqu1
-	sWM8SKabX9iG7oBNK3aoLxMjkTTU58zBhu2sWNfreQTfHrdqHZb3gQ4h7D6O7Pm2
-	FuKhLPw7NZSaTlbbdxeDbHBafVo4VGw6PWlA7Q+8P1lkhRL0FSjBWmxdanL1CbQN
-	K07sSZvTyK9sbRhge9uzhpg30+gbSexvWvLDTbBAUrq51/DJOzJ6E1DihYs7oM1/
-	M3ZnBz/5D8+X91kx5Lj0uB3xNhjLn717ZPAE5gjepQJismb1FKh3fSmA==
-Received: (qmail 2440099 invoked from network); 2 Dec 2024 09:27:48 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Dec 2024 09:27:48 +0100
-X-UD-Smtp-Session: l3s3148p1@YL7fUkUofuYujnum
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Subject: [PATCH] mctp i2c: drop check because i2c_unregister_device() is NULL safe
-Date: Mon,  2 Dec 2024 09:27:13 +0100
-Message-Id: <20241202082713.9719-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1733128086; c=relaxed/simple;
+	bh=jgncwBFw+nAZ7FP7lNL8o3Xsn2iuPgfKqTUh8xtE4h4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XOCn/bMNX86O15X9Zb5KI4nz4fRoZNMU7odZ+xbe6kTFaNiHhi8VAmBFeveKkHRTsoQFrquCXAxkDeCoRNVnZ4d0b6QjYsgQ4XiJVhw2F3gUlndVcVsLBnKYKDYvgz+dbImPFGG0zPw+wPgPTa4LFG/ATsXOQjBELkUV6Wmxa7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fZSdml5a; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B1Ji0Cs030566;
+	Mon, 2 Dec 2024 08:27:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=boD7gr6wETUVAOdp7AcuGDr9AoLg9R0LORT1dyV81
+	TI=; b=fZSdml5a+jVYA7nc57cAiSGnRz0mHal2xc9CB0BGlXpn3g5SxJvBvz4kx
+	Kw4B9r4him1uEsENqu3x/9w5aCVALajNQ436w9XJ+SP7FqX6xCC6ARB8k1IEaDt5
+	9qr0X1sHRcTb7DR51LJHl+Uk2UOABZqqVfhR3isaKERk9lmeXrdloVIJQjsA3j5U
+	lYYIPLttdZmeZfpriknlNe8Hft76tmIaUfTvIE2/IoiDqHCHNVvcPNM0NvkHLbTC
+	AZstdr5I0cWm104QXyLR/p2tgi95wjm6C4yR5JUgEYXUP3teaSm0FpFM8b6dMxD/
+	kmMfSLIIUqExHrnLZQe8UiFK1iW/Q==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tbx7byt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 08:27:51 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B271aPw007202;
+	Mon, 2 Dec 2024 08:27:50 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438ehkb62a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 08:27:50 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B28Rl6R44761598
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 2 Dec 2024 08:27:47 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 08CEE20043;
+	Mon,  2 Dec 2024 08:27:47 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CE07A20040;
+	Mon,  2 Dec 2024 08:27:46 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  2 Dec 2024 08:27:46 +0000 (GMT)
+From: Sumanth Korikkar <sumanthk@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>, linux-mm <linux-mm@kvack.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sumanth Korikkar <sumanthk@linux.ibm.com>
+Subject: [RFC PATCH 0/4] Support dynamic (de)configuration of memory
+Date: Mon,  2 Dec 2024 09:27:28 +0100
+Message-ID: <20241202082732.3959803-1-sumanthk@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,32 +86,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: V8g67JSdf12o8H9oVTCxxT37KzH761ZO
+X-Proofpoint-GUID: V8g67JSdf12o8H9oVTCxxT37KzH761ZO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ mlxscore=0 suspectscore=0 mlxlogscore=830 priorityscore=1501 bulkscore=0
+ phishscore=0 adultscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412020070
 
-No need to check the argument of i2c_unregister_device() because the
-function itself does it.
+This patchset provides a new interface for dynamic configuration and
+deconfiguration of hotplug memory, allowing for mixed altmap and
+non-altmap support. It is a follow-up on the discussion with David,
+when introducing memmap_on_memory support for s390:
+https://lore.kernel.org/all/ee492da8-74b4-4a97-8b24-73e07257f01d@redhat.com/
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-Build tested only. Please apply to your tree.
+The following suggestions from that discussion are addressed:
 
- drivers/net/mctp/mctp-i2c.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+* "Look into a proper interface to add/remove memory instead of relying
+  on online/offline ... (e.g., where user don't want an altmap because
+  of fragmentation)"
 
-diff --git a/drivers/net/mctp/mctp-i2c.c b/drivers/net/mctp/mctp-i2c.c
-index d2b3f5a59141..e3dcdeacc12c 100644
---- a/drivers/net/mctp/mctp-i2c.c
-+++ b/drivers/net/mctp/mctp-i2c.c
-@@ -177,8 +177,7 @@ static struct mctp_i2c_client *mctp_i2c_new_client(struct i2c_client *client)
- 	return mcli;
- err:
- 	if (mcli) {
--		if (mcli->client)
--			i2c_unregister_device(mcli->client);
-+		i2c_unregister_device(mcli->client);
- 		kfree(mcli);
- 	}
- 	return ERR_PTR(rc);
+With the new interface, users can dynamically specify which memory
+ranges should have altmap support, rather than having it statically
+enabled or disabled for all hot-plugged memory.
+
+It would also be possible to revert the
+MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers, that were previously
+added for s390, and move that part to the new interface handler. This is
+not yet done in this series, and might also need further evaluation,
+e.g. we would lose the memmap_on_memory feature for s390, when the new
+interface config option is not selected.
+
+* "Support variable-sized memory blocks long-term, or simulate that by
+  "grouping" memory blocks that share a same altmap located on the first
+  memory blocks in that group.  On s390x that adds all memory ahead of
+  time, it's hard to make a decision what the right granularity will be.
+  The user can give better hints when adding/removing memory
+  explicitly."
+
+With the new interface, the user could specify a memory range, including
+multiple blocks, and whether he wants altmap support for that range.
+This could allow for the mentioned altmap block grouping, or even
+variable-sized blocks, in the future.
+
+When the new interface is enabled, s390 will not add all possible
+hotplug memory in advance, like before, to make it visible in sysfs for
+online/offline actions. Instead, a new "max_configurable" sysfs
+attribute will give a hint on the presence of hotplug memory. Before it
+can be set online, it has to be configured via a new interface in
+/sys/bus/memory/devices/configure_memory, basically imitating what is
+done in ACPI handlers for other archs.
+
+Usage format for the new interface: echo
+config_mode,memoryrange,altmap_mode >
+/sys/bus/memory/devices/configure_memory
+
+E.g. to configure a range with altmap:
+echo 1,0x200000000-0x20fffffff,1 > /sys/bus/memory/devices/configure_memory
+
+lsmem/chmem tools can be adjusted to do all that transparently, so that
+there would be no visible impact to the user, at least not when using
+those tools. In addition, support for dynamic altmap configuration can
+be added to those tools.
+
+This could not only help to make s390 more flexible and similar to
+others (wrt adding hotplug memory in advance). It might also be possible
+to provide the dynamically configured altmap support for others. E.g.
+instead of directly doing an add_memory() in the ACPI handler, with the
+static altmap setting, you could instead defer that to the new interface
+which allows dynamic altmap configuration.
+
+Patch 1 provides necessary validation against user inputs for new
+/sys/bus/memory/devices/configure_memory sysfs interface.
+
+Patch 2 displays altmap support per memory block.
+CONFIG_RUNTIME_MEMORY_CONFIGURATION enables dynamic addition of memory
+with altmap/non-altmap support. Hence, providing concrete altmap
+information would be beneficial.
+
+Patch 3 adds /sys/devices/system/memory/max_configurable sysfs show
+interface to list maximum number of possible memory block supported by
+the architecture. This information would be beneficial for tools like
+lsmem to distinguish betweeen configured memory blocks and deconfigured
+memory blocks.
+
+Patch 4 provides support for both legacy boottime standby memory
+configuration or runtime configuration of standby memory. The patch also
+validates user inputs against /sys/bus/memory/devices/configure_memory
+interface and overrides /sys/devices/system/memory/max_configurable
+value.
+
+Thank you.
+
+
+Sumanth Korikkar (4):
+  mm/memory_hotplug: Add interface for runtime (de)configuration of
+    memory
+  mm/memory_hotplug: Add memory block altmap sysfs attribute
+  mm/memory_hotplug: Add max_configurable sysfs read attribute
+  s390/sclp: Add support for dynamic (de)configuration of memory
+
+ drivers/base/memory.c        | 153 +++++++++++++++++++++++++++++++++++
+ drivers/s390/char/sclp_cmd.c |  80 +++++++++++++++---
+ include/linux/memory.h       |   6 ++
+ mm/Kconfig                   |  16 ++++
+ 4 files changed, 246 insertions(+), 9 deletions(-)
+
 -- 
-2.39.2
+2.45.2
 
 
