@@ -1,151 +1,170 @@
-Return-Path: <linux-kernel+bounces-428122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814F39E0A65
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:48:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A852E9E0A67
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:48:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FAB6162B24
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:48:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6775528271F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9531DE8B4;
-	Mon,  2 Dec 2024 17:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B13B1DBB21;
+	Mon,  2 Dec 2024 17:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rTilyLOw"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkVjBiJr"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B271DE3DB
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FD21DB940
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733161592; cv=none; b=BxaR2nX2ccMwAmU6sD4f3TuI1FEkFiMLaV5hSl5dd68aTfeMqA7ntIbW+7rD2RNNzzj8ClpuNlaunG6FgVdtCV0yAHFxAi+oAC4bwejQBEmU2U880fsBpolLgjZtvqgtaZHbPymZgyntEegInwLHqSMR2eWVBxTQtQg8HFmmUgk=
+	t=1733161733; cv=none; b=Ge29+GdDTBya0mdQCrpgMZ1iRJN/0APWudDT/yZ1f0E5e7aiRzgWSilCamp41aO9ItFxYt9kpiYR5AX4Eph97ROG8x7IlAsCzU+dNR+yMbs6Kr22DW1Buyl1K+STDFQX1ye9sg4oiE7SLalT8p2NFNwW/Gqdez97KoGMK97U5Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733161592; c=relaxed/simple;
-	bh=Vojp+S10FMlBTIZkWSaI2ey2ZEYUoLBUhVC33mWSmAQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rtEpRebpiu9ttsfeOnB4OeWd8x4NJBaolxPkDPobO9umqPtbFxioS3JZfjubaQMGlx3SelLlsXPvT/TETgVeW0h20KLi2fTAaOM1x92c0wOyo1ZfUi+28w8dk2M3mouyh016ccZJ1AUGTIqoEIySpE2jpRw3BgUV2HKt2mY5onY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rTilyLOw; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53dd2fdcebcso5199257e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:46:30 -0800 (PST)
+	s=arc-20240116; t=1733161733; c=relaxed/simple;
+	bh=WKospFR6+WV+Zjl/3/4cyAzA9P+WMRVfkoIaOmiAd2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OGPf7CTqmoznLcacTFGPW5SBwZIsAnkg58AtDhxs7iVa9UcZOVbZ7qctCSbVEVK7JfEM+DRrxMbL7VSXNChWsU1eL+M2oUfhznb9TyWN20RhSLY6DOmVSjY6zEciqKacaSl/DyWGcHAB973a5Nt831jnS6kXSWbusLxQTn5Wqg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZkVjBiJr; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7fc41b4c78bso2441359a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:48:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733161588; x=1733766388; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IbVLdkKPCRYszk92Q0dE+wF18uSJwLunkcEs6Kf5hck=;
-        b=rTilyLOwLMASGlpGVv7XC3z0S2QSVayqRMVT5B2aWc6wfw30qiwmM7IxepIuimk+D8
-         4bysaDzB6WnPPrNBx21JJlEOOjT/LIbEMB65BhE8hYa03s6uv5nZ1wX/68wce5re5WHc
-         WffEhK3EMrMF1Bsb+jRoIB6KdkUpErtmvqCWexAWSa6PXYPv2Arimm+hSfCJS99tAh2V
-         o7y6XeeqnbVYi2cefH/cqM6lt82ncEct8Nq4ip6umr2nb/p4tdnTQcjIE3w9bsoAouJg
-         4udASn6nIHIt9OsmvjGoX0ZOO4A8hFe2zQSXKT7SOkhuACzzXsWDuo5dZsqnZ9FtdBPm
-         MG4g==
+        d=gmail.com; s=20230601; t=1733161731; x=1733766531; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=S8JMWjbRy8E+huOpI4PWDUpf5cc+KWX17p6yAqPuPD4=;
+        b=ZkVjBiJr5/FZks+lfOTjpOzjzV8HcHBXUhvjg1IlFBkMh/ppgV7bb/zeUeVEd2N0Hf
+         zzCG+/qHQQmrT6q1OIvHG2n0lrG7p7TfGss6PX92fMn4NpTyTNlTyw6Mwlm2HghRsjCB
+         L0EeYoMFKhmy6UO9v00vCOB8ZlTHlvp03ivHqK8CE4O3QftjsbWoecYLXHlyuPMHZy5+
+         So3KMzabO6/rmWLEycC4waxadvMJ9GNNz6L+cJ/cZUZvF6YBujhLkov0OZXpXlrXrUcN
+         aFWfQwx8pjDpcPTO82AO+3I62TKrkL8Nwu2ooQ6CC2a2XVg2SSZx/Dx1JtRORP74G5IA
+         oYvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733161588; x=1733766388;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IbVLdkKPCRYszk92Q0dE+wF18uSJwLunkcEs6Kf5hck=;
-        b=dmuLbPydZU3XEsoV/qfHelotVcLTckfMjiFlzELwMqGzMw1AA9DZj/dur70dm7SOCT
-         9W5oxybt/9GnGysip+uluFbwI2RHlPfDT+Wo7pK06WibcvzmJ6teqsoecxqyPvouRB27
-         MbVtoWkGNqkiMABP2IkWj0hgrdC7z5WqP/N46zO85jqmfDCabISc+YF9s5B6HqaF6M5V
-         gvDeYadM9DMUEE1unUysC8m7hjvgrZeCAIwF8aou4r6nSMozoomKX/8q9TouijSuidJq
-         S1DfuEBPtoIVYRU+yTP72misuPP0EFfPbe9sxZ/k+C0IGX8u1Hrc31RBEK3PRKj0gMf/
-         IKEw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8X39sRcjZahH4HV622cme5ZTdbdn1SSP9CQj7jV2/CYQ93SShds0APMi7kQUO9lKt2hpC2uXXU9/tAS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBfFnQ3zeCPRwROJre4isnP4BHYbDRjbQ276kJatMkc9wHAwrW
-	ta17PqaS7C/qsXace0L2Xd199OROvzkA1lrcA5CcXjoxTLwvHeBAIpBfaAZncUw=
-X-Gm-Gg: ASbGnctBI6GY1BuUsTGS+iRaTK3t1VBX36zdS83gaIGeQh1BBTsgVMpaVkGQzALUcrA
-	pqiX0AtslszhMQR2SWze+rNe4p+r18C5/bYU+4IURIwFhU41BLzja/xzrzD7vLe79WuJwkVng93
-	r5qB+8PBaxjl7+64Y8y/ryRsxtHuTpG3JR6NxUxUp4++r+FpqK9LgNYpr4L23ONWaA4BDUVGCL1
-	N8xDpDAXMUQqBOh3EyxJ0YoXZMKzj7GKulTS7qFqOjhCNquHkAVbNSk0MU=
-X-Google-Smtp-Source: AGHT+IGcDydITViSGX3ztqU2cL6GJWNKAM50r7tVAldIXwZqz3nTPBvOdtZFCrS8rRVhwikgYcPCDA==
-X-Received: by 2002:a19:2d0a:0:b0:53d:f4af:6fea with SMTP id 2adb3069b0e04-53df4af70dcmr9575869e87.4.1733161588449;
-        Mon, 02 Dec 2024 09:46:28 -0800 (PST)
-Received: from vingu-cube.. ([2a01:e0a:f:6020:f271:ff3b:369e:33b6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d29fbsm193275855e9.29.2024.12.02.09.46.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 09:46:27 -0800 (PST)
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org
-Cc: kprateek.nayak@amd.com,
-	pauld@redhat.com,
-	efault@gmx.de,
-	luis.machado@arm.com,
-	tj@kernel.org,
-	void@manifault.com,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 11/11 v3] sched/fair: Fix variable declaration position
-Date: Mon,  2 Dec 2024 18:46:06 +0100
-Message-ID: <20241202174606.4074512-12-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241202174606.4074512-1-vincent.guittot@linaro.org>
-References: <20241202174606.4074512-1-vincent.guittot@linaro.org>
+        d=1e100.net; s=20230601; t=1733161731; x=1733766531;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S8JMWjbRy8E+huOpI4PWDUpf5cc+KWX17p6yAqPuPD4=;
+        b=ZgdDXDEzRXr0blyaINFl6wA2mKqv9AFQ0csCR6elUivK0zsiBT7GCGo6yYSpCbPedQ
+         sR5XwPF4iCdkbdNSWhotEJk0HBE8muvWdjsndx74gTy7WRGKB8E1Hu3UrBJJthLhvMCE
+         E8xoG4MbqR6VRXZir4bkIIhirqlN0nYoJUhwsrLtmV0e9WXng11aoxl+31WZZIVYFRyw
+         ZkPBpdxunNC7OSEBpA3fB0CDqaUcMJRF/WAFOE6E5WJYMoxY0JLlZUtgtCp0QtvfXTmY
+         CyO3GVj/gucauK0PJWUnXoOKJ6iBuOseLMHYzhLHoe9jvOmcTVonHpo7AMoxPRt27Lwn
+         Lvwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzFOd7rSgchQab/tXhd8WXjztWhc9lnu+3SfzGtq9/mPpZkOnK/GUPr7k78FB3kKYSBQ1YwxWffZdFkV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCQFceksvc3s5yHZCvveAIJMQv7zmkAR5SaRFLlgemK18uw4s+
+	oy4K8NiJWVrPaAqG9o9fET+lmKRiO5DKJp4r/e5Id0nu7XOv0TNs
+X-Gm-Gg: ASbGncuMx2FKdSd8IKY/AZJW7JpKnybe31K9imp98xEly6a6oJku2GWCv5t49+uoXRO
+	jGmoeSNOYnhGtGT3CIsBdiqMPfXJhUWUOQE3fi+LrkP45yYx8CoTjT+oP0DpDj579LLvWBm58Ka
+	J2Ox2ue7wgDw3njqV5lCx8x7CgSI9p/osunIMmnau5hvW1GKNk6GoA3Fp50Mx27pP4M7xMv3GHU
+	IL0T435j3pBpnr9YL6Wx17c/CqbpdSolEj4YdbKypg1GOGBxZPh01nYDBaCw298uUUEpyS6eXcV
+	Bysu2HCtE5/jFqBsbEAVZv8=
+X-Google-Smtp-Source: AGHT+IGctXjbY1GfXjI9+V31YWmakVA/xpMLR9J82y/OAK1clFMOU3x213fpwCCX4aZRO94dpIjiZg==
+X-Received: by 2002:a05:6a20:6a09:b0:1e0:d104:4dab with SMTP id adf61e73a8af0-1e0e0b8d1cfmr34054425637.44.1733161731087;
+        Mon, 02 Dec 2024 09:48:51 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fb9adsm9082044b3a.127.2024.12.02.09.48.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 09:48:50 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <88c8ede5-47c0-49ec-805d-161293eec679@roeck-us.net>
+Date: Mon, 2 Dec 2024 09:48:49 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] staging: gpib: Fix i386 build issue
+To: Dave Penkler <dpenkler@gmail.com>, gregkh@linuxfoundation.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241202173301.6462-1-dpenkler@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241202173301.6462-1-dpenkler@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Move variable declaration at the beginning of the function
+On 12/2/24 09:33, Dave Penkler wrote:
+> Both drivers cast resource_type_t to void * causing the build to fail.
+> 
+> With CONFIG_X86_PAE enabled the resource_size_t type is a 64bit unsigned int
+> which cannot be cast to a 32 bit pointer.
+> 
+> Use ioremap() instead of pci_resource_start()
+> 
+> Reported_by: Guenter Roeck <linux@roeck-us.net>
+> Link: https://lore.kernel.org/all/f10e976e-7a04-4454-b38d-39cd18f142da@roeck-us.net/
+> Fixes: bb1bd92fa0f2 ("staging: gpib: Add ines GPIB driver")
+> Fixes: e1339245eba3 ("staging: gpib: Add Computer Equipment Corporation GPIB driver")
+> 
+> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+> ---
+> v1 -> v2 changed pci_resource_start to pci_resource_len for second parameter of ioremap
+> 
+Sorry, there are some more.
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/fair.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+drivers/staging/gpib/tnt4882/tnt4882_gpib.c: In function ‘ni_isa_attach_common’:
+drivers/staging/gpib/tnt4882/tnt4882_gpib.c:1430:26: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 555a9eba5486..fa2edb59d009 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5494,6 +5494,7 @@ static bool
- dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- {
- 	bool sleep = flags & DEQUEUE_SLEEP;
-+	int action = UPDATE_TG;
- 
- 	update_curr(cfs_rq);
- 
-@@ -5520,7 +5521,6 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 		}
- 	}
- 
--	int action = UPDATE_TG;
- 	if (entity_is_task(se) && task_on_rq_migrating(task_of(se)))
- 		action |= DO_DETACH;
- 
-@@ -5630,6 +5630,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags);
- static struct sched_entity *
- pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
- {
-+	struct sched_entity *se;
- 	/*
- 	 * Enabling NEXT_BUDDY will affect latency but not fairness.
- 	 */
-@@ -5640,7 +5641,7 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
- 		return cfs_rq->next;
- 	}
- 
--	struct sched_entity *se = pick_eevdf(cfs_rq);
-+	se = pick_eevdf(cfs_rq);
- 	if (se->sched_delayed) {
- 		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
- 		/*
--- 
-2.43.0
+drivers/staging/gpib/cb7210/cb7210.c: In function 'cb_pci_attach':
+drivers/staging/gpib/cb7210/cb7210.c:974:36: error: cast to pointer from integer of different size
+
+Not sure if that really fixes the problem though, since there is other code
+which maps the void * back to phys_addr_t (or, rather, to unsigned long).
+It might be better to work around the problem for now by disabling support
+for platforms where sizeof(phys_addr_t) > sizeof(void *).
+
+Guenter
 
 
