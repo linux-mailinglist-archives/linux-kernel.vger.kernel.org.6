@@ -1,139 +1,147 @@
-Return-Path: <linux-kernel+bounces-426920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509789DFA0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A91579DFA11
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DBA8281BBA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 685C2281BB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF021D6DDA;
-	Mon,  2 Dec 2024 04:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDBF1F8ADE;
+	Mon,  2 Dec 2024 04:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=matoro.tk header.i=@matoro.tk header.b="m+c6nVX4"
-Received: from matoro.tk (matoro.tk [104.188.251.153])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z8Ki21Qy"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46CE1D5CF9;
-	Mon,  2 Dec 2024 04:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.188.251.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A801D6DDF
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 04:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733115342; cv=none; b=VqGsJaeVe1OOLuu9nY2u4CDYeBy/7INMoXKtvnMPHmxxI2fnMadsWUaXpdGfAsBsFLIwtnaI+bAsOcU7ahNXwDnUhR0GSiX9tJW9kMdHaod59WK4Ruckq8fNjazYA752Avzjk8SHdbPLmKV2uyKYYURxwSOjn7sSDsUIXpaVE9U=
+	t=1733115487; cv=none; b=kxQRcGw4iIohCnuVjJvnysWRv19pvIDpSza680gXL2wZtCTriJWWLf/6Bdo5Uq3Orzt9lqDeDzwgE0SDCPuYsoeSiELpXZUCBRgH7s9grjXOjyz8sS5NSsPy+XbZV8Q4yJ4bszxSC5QvJ2XS+45ohsPe8vCKeRa6sRD/0+2stZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733115342; c=relaxed/simple;
-	bh=zPcXBBW8c+KQ0U+3drAZctmojlTnoxK6RX0o3bY3E3o=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=caG3wmjY6xofrD+hFk3JgTROFazNZBxX0CO+hg5QoyuSNSDTDtVDDKDEC8cidHr2jh+yYZ5qTLegkO9KISBkpvpqDyNGg3GkRS00sW/yGr5shAiiXEd3Zxof/FbiqAzzZ7PSl+HPyzjBmuCQxg8908S3F/O3hi0Os3je4QH4J7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=matoro.tk; spf=pass smtp.mailfrom=matoro.tk; dkim=pass (4096-bit key) header.d=matoro.tk header.i=@matoro.tk header.b=m+c6nVX4; arc=none smtp.client-ip=104.188.251.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=matoro.tk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matoro.tk
-DKIM-Signature: a=rsa-sha256; bh=/JshKyUPq3mOf+snPX4NT7ZNngHLlkIdkeTc+mS3z7k=;
- c=relaxed/relaxed; d=matoro.tk;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@matoro.tk; s=20241120; t=1733115330; v=1; x=1733547330;
- b=m+c6nVX4ZA1uzWFCzyhLYwwfw3amfDifJeY4jjB+0TAY26VK0EcR6ee+P7mMmAs4W5bJDe9M
- Jj7pd9PsmR2RidppeOUo3BL05qLDAI7tTuDna3wXOTJL/TJeVQryE+98ZGeahoBM/jJskz7+XXN
- 3qQuPdwNl4l2CFzWcCBbaCaoUEqezGxPue9ggHg2/joqJZt9pJeekKWt7bdXFvno6Ej+F1v0fap
- wJ1Et4rnkEO/shG/3U4fXGogTWfCdTmPdQwHb7cVDfkZynWqoxmfeYljoCWaAQDyDppPC0SmxHb
- b7q4nKTdq/XIkNZV1dir9/vwzkSyWJ7kTKf/URd9JBHEUkOFQ2t8X6Wfg3Y8Dbnhkrk+cVMwuuF
- f2heq4w6DFoQEvBeD9wp3qpN0CxQz/hE8NMjNhGMqq5X01ou1wbxNWo0JgGTF/XEC/L5zCRow6Y
- 1I4lxej43DnAcw0RRdJDzzZIpOC33AKDkeP1/10jXT37GTieDSDjc6sOOsCnfea4yLGRqH92si0
- Yj+bZCgC0HgwS+H5hwfnaeNkk1yYXEd7h1EyS0gxpmZeqY7CrmU5yw71vT73BTMjHGKfg6rGWNi
- Bi5W7L+Xm1MtXfrP/1PIAdJhNUizDsOHno+O578T4CITZLxhfkj2sImfVsSUR57Xg2+eZqbU7rV
- vqq8V1Ovtvw=
-Received: by matoro.tk (envelope-sender
- <matoro_mailinglist_kernel@matoro.tk>) with ESMTPS id e2fca5e6; Sun, 01 Dec
- 2024 23:55:30 -0500
+	s=arc-20240116; t=1733115487; c=relaxed/simple;
+	bh=nwOnFLjkl/AZuun/GsZ/MT/Esupxc6jZTrkx7WlRFtw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SxKQtuqA0icAAkf8TqfS2v2VrLxNFiMuh+gkoKdD6prXAO+ykMUk5UEagkkJyBwjcZa/hQUzv+IYfaLqRsVzgrRU3RtpfbfHu/nelzITdA9DR/PpPJy8iQ3GVl20Pd5Hs44j7O5F++fcs4zYM+/JzY7Ub5ax/EbpabSgf4V6hEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Z8Ki21Qy; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-29e45280bcfso1369090fac.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 20:58:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733115484; x=1733720284; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vDhO31tk1fZx5nO1D34ac67vgcEF+XlfAfCpGqdW5mI=;
+        b=Z8Ki21QyBsU+eNA1HqdAEMXlqb8i6Lqzc+ho+oawDBf6rqhZLn6l2zV8SvyIL+6Ov8
+         k2yo2xowBhYTJqQK0YVyFVncFpUBCSzwAwiIcaREDtTifvsh7tp5Ku4aAHWKi7DQQgHZ
+         zuF5ez44A8VthW+XNgkVDBN8Kqn43nhqIDYtc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733115484; x=1733720284;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vDhO31tk1fZx5nO1D34ac67vgcEF+XlfAfCpGqdW5mI=;
+        b=JlIWIrBVsSgRYRt8BWVJCTqG2n/UVFZLUUM4zCpN+pdCgO5wrrAggxdHb7bPZn6FXz
+         OLACLJ8RSlNMVoOVUs0zOIPB32XuqfKgCAHK6TRxUGK9pE0aQjRE8sKNH6D+LpAz3l41
+         V4HSCB4AS/IMvcUoxKSx4e+n1T6RK6JUsS38X9xMD5dhjPOqCKZ2UfVMMWokv0cWjBD0
+         3HNDi4s1GHhE0TCFOXk66dlnKFzygHL5Aig2mJ/1xmGvWBqezUGJYlmVNs/N0Rd98ir2
+         3GVnKhr4WCc/ImbmATil8iu4dwhusv3ATE2PY/XLd7QJx3fpUIGzJbksKTqiDrSG7sid
+         NovQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUZhmQqlKAFjRyikZqaPafkNusqVlbGauRhTR2EGyep79NzowtgmGgmRtMDbV2sFz8i7XyyAywJ7oePXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxclUAYuHlkTTqJQ7iCgR6Y6yMIsyv5iTmIJ2nKZIO3wRIYua4H
+	eQ5Fqxdq0IsgdeQyfl3+Q5PQbjBD2pMg/rvM8KPsnkEAVNTg/TMjBvwrLYRUKg==
+X-Gm-Gg: ASbGncvCj82aXlAMjYdutYXrDvNLmXRwzD5ShnbcHvbyyglYu4p7NV7Z972avJiOmy5
+	9p24nSylMjBp2xmB7ODvs4/oa3Ce0RjXN6fxnb6KXOM+TWDXvcLq5Ond90hkwGqwfXQqQsyL4CX
+	9W6pVgfoeIco0TdoM7BM2xT2k1IPHe1g18QymxUjQx7fS+7BVjVgnSPXvfTlx4Gb5oDOTgSPfgz
+	Ll3xIKMhNZBbVZKdSlA4X5kVR2KEvaK4N/UfETmx7+lWSvPXu2YZfGkBU9GL81Z2eXl
+X-Google-Smtp-Source: AGHT+IFb+ZRLH+3t3GZ+Wqs0KteaVy0F6ImlvlAlGAnh/Pchain6QOhSaXFDzaByBXFgCM7QNb8V/Q==
+X-Received: by 2002:a05:6808:2018:b0:3e6:3860:596b with SMTP id 5614622812f47-3ea6db6410dmr21148963b6e.8.1733115484363;
+        Sun, 01 Dec 2024 20:58:04 -0800 (PST)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:94c8:21f5:4a03:8964])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c2d5be4sm6970599a12.3.2024.12.01.20.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Dec 2024 20:58:03 -0800 (PST)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Frank Li <Frank.Li@nxp.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] dt-bindings: soc: fsl: cpm_qe: Limit matching to nodes with "fsl,qe"
+Date: Mon,  2 Dec 2024 12:57:55 +0800
+Message-ID: <20241202045757.39244-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 01 Dec 2024 23:55:29 -0500
-From: matoro <matoro_mailinglist_kernel@matoro.tk>
-To: John David Anglin <dave.anglin@bell.net>
-Cc: Linux Parisc <linux-parisc@vger.kernel.org>, deller@kernel.org, Deller
- <deller@gmx.de>, linmag7@gmail.com, Sam James <sam@gentoo.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [bisected] ext4 corruption on parisc since 6.12
-In-Reply-To: <31c884b9-77c8-48dc-b84c-20e52cdc4d44@bell.net>
-References: <84d7b3e1053b2a8397bcc7fc8eee8106@matoro.tk>
- <31c884b9-77c8-48dc-b84c-20e52cdc4d44@bell.net>
-Message-ID: <71fae3d3a9bd816ea268eb73c152b564@matoro.tk>
-X-Sender: matoro_mailinglist_kernel@matoro.tk
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hmm, this is my config, also on an rp3440:
+Otherwise the binding matches against random nodes with "simple-bus"
+giving out all kinds of invalid warnings:
 
-#
-# Timers subsystem
-#
-CONFIG_HZ_PERIODIC=y
-# CONFIG_NO_HZ_IDLE is not set
-# CONFIG_NO_HZ is not set
-# CONFIG_HIGH_RES_TIMERS is not set
-# end of Timers subsystem
+    $ make CHECK_DTBS=y mediatek/mt8188-evb.dtb
+      SYNC    include/config/auto.conf.cmd
+      UPD     include/config/kernel.release
+      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+      DTC [C] arch/arm64/boot/dts/mediatek/mt8188-evb.dtb
+    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: compatible:0: 'fsl,qe' was expected
+	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: compatible: ['simple-bus'] is too short
+	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000:compatible:0: 'fsl,qe-ic' was expected
+	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000:reg: [[0, 201326592, 0, 262144], [0, 201588736, 0, 2097152]] is too long
+	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000:#interrupt-cells:0:0: 1 was expected
+	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000: '#redistributor-regions', 'ppi-partitions' do not match any of the regexes: 'pinctrl-[0-9]+'
+	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: 'reg' is a required property
+	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
+    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: 'bus-frequency' is a required property
+	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
 
-lindholm can confirm on their hardware/config.  Maybe you can try that and 
-see if you can reproduce?  I will try your config as well.
+Fixes: ecbfc6ff94a2 ("dt-bindings: soc: fsl: cpm_qe: convert to yaml format")
+Cc: Frank Li <Frank.Li@nxp.com>
+Cc: <stable@vger.kernel.org> # v6.11+
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ .../devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml        | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-On 2024-12-01 20:47, John David Anglin wrote:
-> I haven't seen any file system corruption on rp3440 with several weeks of 
-> running with clock events.  I just
-> started running 6.12.1 today though.
-> 
-> I have the following timer config:
-> 
-> # Timers subsystem
-> #
-> CONFIG_TICK_ONESHOT=y
-> CONFIG_NO_HZ_COMMON=y
-> # CONFIG_HZ_PERIODIC is not set
-> CONFIG_NO_HZ_IDLE=y
-> # CONFIG_NO_HZ is not set
-> CONFIG_HIGH_RES_TIMERS=y
-> # end of Timers subsystem
-> 
-> There was some concern about this change on systems where the CPU timers 
-> aren't synchronized.  what
-> systems do you see this on?
-> 
-> Dave
-> 
-> On 2024-12-01 7:26 p.m., matoro wrote:
->> Hi Helge, when booting 6.12 here myself and another user (CC'd) both 
->> observed our ext4 filesystems to be immediately corrupted in the same 
->> manner.
->> 
->> Every file that is read or written will have its access/modify times set to 
->> 2446-05-10 18:38:55.0000, which is the maximum ext4 timestamp.  The 32-bit 
->> userspace doesn't seem to be able to handle this at all, as every further 
->> stat() call will error with "Value too large for defined data type".  
->> Unfortunately, simply rolling back to kernel 6.11 is insufficient to 
->> recover, as the filesystem corruption is persistent, and the errors come 
->> from userspace attempting to read the modified files.  I was able to 
->> recover with a command like:  find / -newermt 2446-01-01 -o -newerct 
->> 2446-01-01 -o -newerat 2446-01-01 | xargs touch -h
->> 
->> Luckily, lindholm was able to bisect and identified as the culprit commit:  
->> b5ff52be891347f8847872c49d7a5c2fa29400a7 ("parisc: Convert to generic 
->> clockevents").  Some other comments from the discussion:
->> 
->> 17:20:37 <awilfox> would be curious if keeping that patch + CONFIG_SMP=n 
->> fixes it
->> 17:20:44 <awilfox> this doesn't look necessarily correct on MP machines
->> 17:23:56 <awilfox> time_keeper_id is now unused; the old code specifically 
->> marked the clocksource as unstable on MP machines despite having per_cpu 
->> before
->> 17:24:11 <awilfox> and now it seems to imply CLOCK_EVT_FEAT_PERCPU is 
->> enough to work around it
->> 17:24:13 <awilfox> maybe it isn't
->> 
->> Thanks!
+diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
+index 89cdf5e1d0a8..9e07a2c4d05b 100644
+--- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
++++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
+@@ -21,6 +21,14 @@ description: |
+   The description below applies to the qe of MPC8360 and
+   more nodes and properties would be extended in the future.
+ 
++select:
++  properties:
++    compatible:
++      contains:
++        const: fsl,qe
++  required:
++    - compatible
++
+ properties:
+   compatible:
+     items:
+-- 
+2.47.0.338.g60cca15819-goog
+
 
