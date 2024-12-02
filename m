@@ -1,284 +1,210 @@
-Return-Path: <linux-kernel+bounces-427750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7639E0717
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:30:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4180C9E0956
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:03:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5806CB833C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:45:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B349BB80B2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767F521859A;
-	Mon,  2 Dec 2024 14:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBACE207A11;
+	Mon,  2 Dec 2024 14:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eoMgZ1pc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="QsrFClBY"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11A91F8AE5
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F38720D511;
+	Mon,  2 Dec 2024 14:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733150003; cv=none; b=dZFMCUXmoornj3IbR2NKdOrudmURdqEUGBglNXBcN9V9GBZe6L2viltWI2S/tBOUdafO5jBZQF3hhEBeQcKYJLNzoygg3WkVGQHphaD5BEEKmktTAR3qcpebykBjjSnLjpE40b0vz/v7RHOPXUsdtrKGJ+DzMawgqj6A1azfP50=
+	t=1733149949; cv=none; b=ag/y+DV5+URchxo1ajDPs8BwPEFTq6K6KNHMft1CYIKMJg4uv/8KLjWwiEqXoxI3ga9s1XRdYrN4Ql+hx+kFkFZ9LtC1oYlkOfG483ROgkhzekiweyN1grJIz7ZxOR0hbKpP+KWB850Ns47/1OoJgxgilyNCvlM7n30b+pwPgk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733150003; c=relaxed/simple;
-	bh=K0jmgONch/JtvlBRUVTee9cT10rH4ssOPmjZ2uCu99E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qvpa56TlglJ/xEEpCX9iMgxbZO/Kb1NchFnUev1ltMJGdCYrfiojypQRAZswnyCi1sYud7iwZ+4wkmzVa45lmr4rrrLruYZJExGuOZx312IlUTcH4bm5xBm+ORL0NjeEEJCer8ksY3JMJzFClOmKaRvhyEHL2PLTrBnv23Tk/qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eoMgZ1pc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733150001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Jb0NXvnvifBNuU1Wwf53cwNnzrHW9wCxJ3SkWW4bGg=;
-	b=eoMgZ1pcZwj3c8qq4J8R0wuYGirHXYFN1g8logciAPJWqWtxIZuSMZBu5gGjHDiQgd66/L
-	CCZhL+fFa9f1V1BcDrMTnvxL579+lObgELFazkyRTDED2AqXOcVJ6pbUaPS5GorpVciJaj
-	fe5hvpMexu7zeWyb04bozJUUnVeyoUo=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-187-vvV0KRKmMCGG5ANo5sb7HQ-1; Mon,
- 02 Dec 2024 09:33:18 -0500
-X-MC-Unique: vvV0KRKmMCGG5ANo5sb7HQ-1
-X-Mimecast-MFC-AGG-ID: vvV0KRKmMCGG5ANo5sb7HQ
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7B153193724E;
-	Mon,  2 Dec 2024 14:33:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.48])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ED6A030000DF;
-	Mon,  2 Dec 2024 14:33:13 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 32/37] rxrpc: Tidy up the ACK parsing a bit
-Date: Mon,  2 Dec 2024 14:30:50 +0000
-Message-ID: <20241202143057.378147-33-dhowells@redhat.com>
-In-Reply-To: <20241202143057.378147-1-dhowells@redhat.com>
-References: <20241202143057.378147-1-dhowells@redhat.com>
+	s=arc-20240116; t=1733149949; c=relaxed/simple;
+	bh=2zFv1AtOrG66Agxpkqi+vBOS91JwpVr62yukq7E/GxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AKeqXd0uP8kIAWO26IrEZRsb/cP80PNqONT1vpJRF9MTfwI5jsPFU51zndOaDYiRzV5Svib/ZSLs1JnXReCO1knO7oJ+drW2RPWwcXZPzAW6j1LazTbUyq9edTax0jWdVOaqMZsLbwszTxwTnuWMlueER78VEVkAHx/LmbmKo3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=QsrFClBY; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1733149869; x=1733754669; i=w_armin@gmx.de;
+	bh=dff0OEGhYPTrkd11UE1HMB+sCm05D5j8m3PY3KktpLY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=QsrFClBYjV5plSIK2+YlpkAJuQuMi9HqfV5hDsskX7GySktJDusKoWT62KgrU41d
+	 wSR5516+uYOactq92I0zCqhQwtPRqKnAsS4VTYckzvRQAKjg0MrLoc/fr3wQPBcvg
+	 5CBZVLczgn9tIifODeq/ygz24w+PWPO85w1K41ad5p4Wth/45B7VT66M+3ssy/7fL
+	 wa9uFREwv1BstHpSe4sPgEjG9Vt+4e0AcRhT1FBWZr/YrEHDAe+NQ5tf7dZMZp2en
+	 tXND33LpkU8lojn30OJcoZRJEnFBaKu143lGXAwPDcjs67zbikAZOcW5Hg9pxRw+J
+	 EjzfM1Qb0pxRrwwk+A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MI5Q5-1tUXmM1Oad-001ZDQ; Mon, 02
+ Dec 2024 15:31:09 +0100
+Message-ID: <63590d1a-ea53-4cdb-b451-e83a7a3d9224@gmx.de>
+Date: Mon, 2 Dec 2024 15:31:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 00/22] Add support for binding ACPI platform profile to
+ multiple drivers
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241202055031.8038-1-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241202055031.8038-1-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:eHBOPBVM+ozXi7qQvpBCqWto44fLeja4GIMi+e5lWrFfndRsXCq
+ 4tHwZeYE8lkML/2kHdB+cqv+uaOiVwUn6DA67z8Wh/qqMKl92dVE0mU3TRLnKSPqRFfUyVZ
+ n0XiHzpWr4P9tZelasnUMN0mx54KPRzisa+dkARZvcdh6jIe4uYfZKbyRUwOTVf6XLx0klK
+ W2TjVXLlq+nmDmfUigGdw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:de05/H5W5HI=;Zgq16+20JqyrWwL8nwAn5SS32py
+ zBfg9xVBBjD1L0mo/qZyKTggO4QXFtWKClgOVxNdcLqRp5OE9dAgd/EWMHwZKWrh/jDMY6rBt
+ 7a0E4Pj1A14haKfOMLd3v5F1SrulRvVLdZD1vN7glsqS++pivTZtFyEG//E84pGFhTv3YGHd1
+ 8pUhtyic9z3c7rI8rKu+d2wfoK6WJB5ZID8C2Ia89zeuzKbK02E4HPrle3QlbOFQ7t95P+xRO
+ fQdSAtTsKy5sXcDIeNEp8KxLIC626vBXPoBktgxKWeTI16OnpKKKXPFgb6GWVO0wVPk/VSzRS
+ BNLkQLc3lren8IQz8BkOzE7PO6DeW0J+rJemZKo7niiR3bqzCgX41a3SU7/ezWAyrwBzQZkMn
+ 90wzeHD4jPdYYKL6bX1sl01x+cflWNlOueF1tqTcMqJ38ruG7q1/IpTMMvE+1kZ2S953WaolE
+ F761YMpW0knmyH9xbKvfXmyy4u+Yjxvp14mUhXHmx2r3qLT8qJ/L+Zx9zOrKew+UZPa3lDQ0v
+ tVnXEMVQ06/Bz8id3W8HhR3aRIgXUkd+GwLAwO3teVQcQC2bLCQH7j1fCvkrtuuaclNdPYWF+
+ 5z4+mRUxJ9G5GleDqspliMYspyNYMroWRTHrpeO5FbEKm63TRKg/9/CFHoQl+7a+URfUjsWsM
+ jlqKjoNFTe4SS8x5uMdOHViib6qYKOvcjI0JmojiLLjsK/J/VkxF1IneDNnCQYiXEfs6rCA8a
+ pGuhNHBAbmhTERr07HeaMJJUzCWuYedR/9bj/R7U4T2JKlCQLaSAvYld5BysBoNNiLfuGkECw
+ wR6rZvE/c1JLwnvqGXH44mEK+vjsl02oDk2DpAF2BnfmJvsdKRTwD4uhBmvopYCok8qN+TEo3
+ sDpastae1CNTN2BDeYt0o4zfzmsj4tVx8Zw28Se7N7LgFDfyaOxCAuzOYxp+znqBXvjeZAT1Y
+ bYth0pfy6FLVHzbIzDYilGXNwp6Rdrs4HDaRyOZlXW6proszH2XTJFKSN9DvWk0q1Kq5leW0v
+ 7bS+d2cCantwRLhfA8C7lVd/GN+NLMWkx/BRcHYwxLzJeoJ9unGde3oXeY4BH7vYJDaB2sLGL
+ RMcK/hicVeo/5vhEfffiCwY4jrY1Wv
 
-Tidy up the ACK parsing in the following ways:
+Am 02.12.24 um 06:50 schrieb Mario Limonciello:
 
- (1) Put the serial number of the ACK packet into the rxrpc_ack_summary
-     struct and access it from there whilst parsing an ACK.
+> Currently there are a number of ASUS products on the market that happen to
+> have ACPI objects for amd-pmf to bind to as well as an ACPI platform
+> profile provided by asus-wmi.
+>
+> The ACPI platform profile support created by amd-pmf on these ASUS
+> products is "Function 9" which is specifically for "BIOS or EC
+> notification" of power slider position. This feature is actively used
+> by some designs such as Framework 13 and Framework 16.
+>
+> On these ASUS designs we keep on quirking more and more of them to turn
+> off this notification so that asus-wmi can bind.
+>
+> This however isn't how Windows works.  "Multiple" things are notified for
+> the power slider position. This series adjusts Linux to behave similarly.
+>
+> Multiple drivers can now register an ACPI platform profile and will react
+> to set requests.
+>
+> To avoid chaos, only positions that are common to both drivers are
+> accepted when the legacy /sys/firmware/acpi/platform_profile interface
+> is used.
+>
+> This series also adds a new concept of a "custom" profile.  This allows
+> userspace to discover that there are multiple driver handlers that are
+> configured differently.
+>
+> This series also allows dropping all of the PMF quirks from amd-pmf.
+>
+> NOTE: Although this series changes code in acpi platform profile, I think
+>        it is better to go through the platform-x86 tree as more drivers can
+>        be introduced during the kernel cycle and should make the changes to
+>        support class interface when merging.
 
- (2) Be consistent about using "if (summary.acked_serial)" rather than "if
-     (summary.acked_serial != 0)".
+Thanks for all the good work, the whole series looks good to me.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
----
- net/rxrpc/ar-internal.h |  1 +
- net/rxrpc/input.c       | 55 +++++++++++++++++++----------------------
- 2 files changed, 27 insertions(+), 29 deletions(-)
+Thanks,
+Armin Wolf
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 4621247012f6..ec87f2e8b78c 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -772,6 +772,7 @@ struct rxrpc_call {
-  * Summary of a new ACK and the changes it made to the Tx buffer packet states.
-  */
- struct rxrpc_ack_summary {
-+	rxrpc_serial_t	ack_serial;		/* Serial number of ACK */
- 	rxrpc_serial_t	acked_serial;		/* Serial number ACK'd */
- 	u16		in_flight;		/* Number of unreceived transmissions */
- 	u16		nr_new_hacks;		/* Number of rotated new ACKs */
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 70831020372e..13d6b8e13ff4 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -198,11 +198,10 @@ void rxrpc_congestion_degrade(struct rxrpc_call *call)
- static void rxrpc_add_data_rtt_sample(struct rxrpc_call *call,
- 				      struct rxrpc_ack_summary *summary,
- 				      struct rxrpc_txqueue *tq,
--				      int ix,
--				      rxrpc_serial_t ack_serial)
-+				      int ix)
- {
- 	rxrpc_peer_add_rtt(call, rxrpc_rtt_rx_data_ack, -1,
--			   summary->acked_serial, ack_serial,
-+			   summary->acked_serial, summary->ack_serial,
- 			   ktime_add_us(tq->xmit_ts_base, tq->segment_xmit_ts[ix]),
- 			   call->acks_latest_ts);
- 	summary->rtt_sample_avail = false;
-@@ -213,8 +212,7 @@ static void rxrpc_add_data_rtt_sample(struct rxrpc_call *call,
-  * Apply a hard ACK by advancing the Tx window.
-  */
- static bool rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
--				   struct rxrpc_ack_summary *summary,
--				   rxrpc_serial_t ack_serial)
-+				   struct rxrpc_ack_summary *summary)
- {
- 	struct rxrpc_txqueue *tq = call->tx_queue;
- 	rxrpc_seq_t seq = call->tx_bottom + 1;
-@@ -255,7 +253,7 @@ static bool rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
- 		if (summary->rtt_sample_avail &&
- 		    summary->acked_serial == tq->segment_serial[ix] &&
- 		    test_bit(ix, &tq->rtt_samples))
--			rxrpc_add_data_rtt_sample(call, summary, tq, ix, ack_serial);
-+			rxrpc_add_data_rtt_sample(call, summary, tq, ix);
- 
- 		if (ix == tq->nr_reported_acks) {
- 			/* Packet directly hard ACK'd. */
-@@ -369,7 +367,7 @@ static bool rxrpc_receiving_reply(struct rxrpc_call *call)
- 	}
- 
- 	if (!test_bit(RXRPC_CALL_TX_LAST, &call->flags)) {
--		if (!rxrpc_rotate_tx_window(call, top, &summary, 0)) {
-+		if (!rxrpc_rotate_tx_window(call, top, &summary)) {
- 			rxrpc_proto_abort(call, top, rxrpc_eproto_early_reply);
- 			return false;
- 		}
-@@ -826,12 +824,11 @@ static void rxrpc_input_ack_trailer(struct rxrpc_call *call, struct sk_buff *skb
-  */
- static void rxrpc_input_soft_rtt(struct rxrpc_call *call,
- 				 struct rxrpc_ack_summary *summary,
--				 struct rxrpc_txqueue *tq,
--				 rxrpc_serial_t ack_serial)
-+				 struct rxrpc_txqueue *tq)
- {
- 	for (int ix = 0; ix < RXRPC_NR_TXQUEUE; ix++)
- 		if (summary->acked_serial == tq->segment_serial[ix])
--			return rxrpc_add_data_rtt_sample(call, summary, tq, ix, ack_serial);
-+			return rxrpc_add_data_rtt_sample(call, summary, tq, ix);
- }
- 
- /*
-@@ -944,7 +941,7 @@ static void rxrpc_input_soft_acks(struct rxrpc_call *call,
- 		_debug("bound %16lx %u", extracted, nr);
- 
- 		if (summary->rtt_sample_avail)
--			rxrpc_input_soft_rtt(call, summary, tq, sp->hdr.serial);
-+			rxrpc_input_soft_rtt(call, summary, tq);
- 		rxrpc_input_soft_ack_tq(call, summary, tq, extracted, RXRPC_NR_TXQUEUE,
- 					seq - RXRPC_NR_TXQUEUE, &lowest_nak);
- 		extracted = ~0UL;
-@@ -1016,7 +1013,6 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb)
- 	struct rxrpc_ack_summary summary = { 0 };
- 	struct rxrpc_acktrailer trailer;
- 	struct rxrpc_skb_priv *sp = rxrpc_skb(skb);
--	rxrpc_serial_t ack_serial;
- 	rxrpc_seq_t first_soft_ack, hard_ack, prev_pkt;
- 	int nr_acks, offset, ioffset;
- 
-@@ -1024,14 +1020,14 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb)
- 
- 	offset = sizeof(struct rxrpc_wire_header) + sizeof(struct rxrpc_ackpacket);
- 
--	ack_serial	= sp->hdr.serial;
--	first_soft_ack	= sp->ack.first_ack;
--	prev_pkt	= sp->ack.prev_ack;
--	nr_acks		= sp->ack.nr_acks;
--	hard_ack	= first_soft_ack - 1;
--	summary.acked_serial = sp->ack.acked_serial;
--	summary.ack_reason = (sp->ack.reason < RXRPC_ACK__INVALID ?
--			      sp->ack.reason : RXRPC_ACK__INVALID);
-+	summary.ack_serial	= sp->hdr.serial;
-+	first_soft_ack		= sp->ack.first_ack;
-+	prev_pkt		= sp->ack.prev_ack;
-+	nr_acks			= sp->ack.nr_acks;
-+	hard_ack		= first_soft_ack - 1;
-+	summary.acked_serial	= sp->ack.acked_serial;
-+	summary.ack_reason	= (sp->ack.reason < RXRPC_ACK__INVALID ?
-+				   sp->ack.reason : RXRPC_ACK__INVALID);
- 
- 	trace_rxrpc_rx_ack(call, sp);
- 	rxrpc_inc_stat(call->rxnet, stat_rx_acks[summary.ack_reason]);
-@@ -1066,7 +1062,7 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb)
- 
- 	/* Discard any out-of-order or duplicate ACKs (outside lock). */
- 	if (!rxrpc_is_ack_valid(call, hard_ack, prev_pkt)) {
--		trace_rxrpc_rx_discard_ack(call, ack_serial, hard_ack, prev_pkt);
-+		trace_rxrpc_rx_discard_ack(call, summary.ack_serial, hard_ack, prev_pkt);
- 		goto send_response;
- 	}
- 
-@@ -1100,10 +1096,10 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb)
- 	if (hard_ack + 1 == 0)
- 		return rxrpc_proto_abort(call, 0, rxrpc_eproto_ackr_zero);
- 
--	if (summary.acked_serial != 0) {
-+	if (summary.acked_serial) {
- 		if (summary.ack_reason == RXRPC_ACK_PING_RESPONSE)
- 			rxrpc_complete_rtt_probe(call, call->acks_latest_ts,
--						 summary.acked_serial, ack_serial,
-+						 summary.acked_serial, summary.ack_serial,
- 						 rxrpc_rtt_rx_ping_response);
- 		else
- 			summary.rtt_sample_avail = true;
-@@ -1127,7 +1123,7 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb)
- 		return rxrpc_proto_abort(call, 0, rxrpc_eproto_ackr_sack_overflow);
- 
- 	if (after(hard_ack, call->tx_bottom)) {
--		if (rxrpc_rotate_tx_window(call, hard_ack, &summary, ack_serial)) {
-+		if (rxrpc_rotate_tx_window(call, hard_ack, &summary)) {
- 			rxrpc_end_tx_phase(call, false, rxrpc_eproto_unexpected_ack);
- 			goto send_response;
- 		}
-@@ -1142,19 +1138,20 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb)
- 	if (test_bit(RXRPC_CALL_TX_LAST, &call->flags) &&
- 	    call->acks_nr_sacks == call->tx_top - hard_ack &&
- 	    rxrpc_is_client_call(call))
--		rxrpc_propose_ping(call, ack_serial,
-+		rxrpc_propose_ping(call, summary.ack_serial,
- 				   rxrpc_propose_ack_ping_for_lost_reply);
- 
- 	rxrpc_congestion_management(call, &summary);
- 	if (summary.need_retransmit)
--		rxrpc_resend(call, ack_serial, summary.ack_reason == RXRPC_ACK_PING_RESPONSE);
-+		rxrpc_resend(call, summary.ack_serial,
-+			     summary.ack_reason == RXRPC_ACK_PING_RESPONSE);
- 
- send_response:
- 	if (summary.ack_reason == RXRPC_ACK_PING)
--		rxrpc_send_ACK(call, RXRPC_ACK_PING_RESPONSE, ack_serial,
-+		rxrpc_send_ACK(call, RXRPC_ACK_PING_RESPONSE, summary.ack_serial,
- 			       rxrpc_propose_ack_respond_to_ping);
- 	else if (sp->hdr.flags & RXRPC_REQUEST_ACK)
--		rxrpc_send_ACK(call, RXRPC_ACK_REQUESTED, ack_serial,
-+		rxrpc_send_ACK(call, RXRPC_ACK_REQUESTED, summary.ack_serial,
- 			       rxrpc_propose_ack_respond_to_ack);
- }
- 
-@@ -1165,7 +1162,7 @@ static void rxrpc_input_ackall(struct rxrpc_call *call, struct sk_buff *skb)
- {
- 	struct rxrpc_ack_summary summary = { 0 };
- 
--	if (rxrpc_rotate_tx_window(call, call->tx_top, &summary, 0))
-+	if (rxrpc_rotate_tx_window(call, call->tx_top, &summary))
- 		rxrpc_end_tx_phase(call, false, rxrpc_eproto_unexpected_ackall);
- }
- 
-
+> ---
+> v9:
+> - Rebase on top of 6.13-rc1 tag
+> - Fix LKP reported issues on patch 2
+> - Use Markus' logic update suggestion
+>
+> Mario Limonciello (22):
+>    ACPI: platform-profile: Add a name member to handlers
+>    platform/x86/dell: dell-pc: Create platform device
+>    ACPI: platform_profile: Add device pointer into platform profile
+>      handler
+>    ACPI: platform_profile: Add platform handler argument to
+>      platform_profile_remove()
+>    ACPI: platform_profile: Pass the profile handler into
+>      platform_profile_notify()
+>    ACPI: platform_profile: Move sanity check out of the mutex
+>    ACPI: platform_profile: Move matching string for new profile out of
+>      mutex
+>    ACPI: platform_profile: Use guard(mutex) for register/unregister
+>    ACPI: platform_profile: Use `scoped_cond_guard`
+>    ACPI: platform_profile: Create class for ACPI platform profile
+>    ACPI: platform_profile: Add name attribute to class interface
+>    ACPI: platform_profile: Add choices attribute for class interface
+>    ACPI: platform_profile: Add profile attribute for class interface
+>    ACPI: platform_profile: Notify change events on register and
+>      unregister
+>    ACPI: platform_profile: Only show profiles common for all handlers
+>    ACPI: platform_profile: Add concept of a "custom" profile
+>    ACPI: platform_profile: Make sure all profile handlers agree on
+>      profile
+>    ACPI: platform_profile: Check all profile handler to calculate next
+>    ACPI: platform_profile: Notify class device from
+>      platform_profile_notify()
+>    ACPI: platform_profile: Allow multiple handlers
+>    platform/x86/amd: pmf: Drop all quirks
+>    Documentation: Add documentation about class interface for platform
+>      profiles
+>
+>   .../ABI/testing/sysfs-platform_profile        |   5 +
+>   .../userspace-api/sysfs-platform_profile.rst  |  31 ++
+>   drivers/acpi/platform_profile.c               | 523 ++++++++++++++----
+>   .../surface/surface_platform_profile.c        |   8 +-
+>   drivers/platform/x86/acer-wmi.c               |  12 +-
+>   drivers/platform/x86/amd/pmf/Makefile         |   2 +-
+>   drivers/platform/x86/amd/pmf/core.c           |   1 -
+>   drivers/platform/x86/amd/pmf/pmf-quirks.c     |  66 ---
+>   drivers/platform/x86/amd/pmf/pmf.h            |   3 -
+>   drivers/platform/x86/amd/pmf/sps.c            |   4 +-
+>   drivers/platform/x86/asus-wmi.c               |   8 +-
+>   drivers/platform/x86/dell/alienware-wmi.c     |   8 +-
+>   drivers/platform/x86/dell/dell-pc.c           |  38 +-
+>   drivers/platform/x86/hp/hp-wmi.c              |   8 +-
+>   drivers/platform/x86/ideapad-laptop.c         |   6 +-
+>   .../platform/x86/inspur_platform_profile.c    |   7 +-
+>   drivers/platform/x86/thinkpad_acpi.c          |  16 +-
+>   include/linux/platform_profile.h              |   9 +-
+>   18 files changed, 541 insertions(+), 214 deletions(-)
+>   delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+>
 
