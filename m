@@ -1,205 +1,163 @@
-Return-Path: <linux-kernel+bounces-427895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5E19E079F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:54:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6A99E0836
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:17:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21CEE16F5FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:34:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC1D1173B5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD1320899F;
-	Mon,  2 Dec 2024 15:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE5220899B;
+	Mon,  2 Dec 2024 15:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jkFmoR5A"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gZwElVFG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80619208986;
-	Mon,  2 Dec 2024 15:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB77208986;
+	Mon,  2 Dec 2024 15:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153659; cv=none; b=iyQ7iYVi5st4x3c7ovwS0CliYLp7Gete40+aRX3AWB/wSQ2NtGu6PZcjEdN+Y/CkFQXX0rXMLAWA9BET5FJvuUOmaSbiApDjPx2zhh7pNdxqLpsiol0HnhssD3DxiVVj7fCiae0mZBQgL1Na6g4lV+PIJ+ZrgwyM5NFKS1g2KKI=
+	t=1733153669; cv=none; b=I5IEIeddF+Tnh4Bp1iW6lxp+yJdO7Is0mkf/EjTFWANywEdGMnyZImPw6GfVAtjl51pfNZ8o/yr3E230dpfGNBJEi9sjGe8+q/5cA9qj0v4KiEKb17iT7vkThYJ2oTG+NS6lXgCIxpInz5N1EF2VPynoo5g7SmY1c8v57fnK3w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733153659; c=relaxed/simple;
-	bh=26VnanjFRCPQ64E+0QrEzr8k+WRBR1WeMvaZsB9GYfA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KoKGDcZ20CCHyPe6tj4AJwJQNWfv+LWZui0ppjIUs1MvuadzfRKJFrTHUQiZ0znqaZnYK1IoBow4/EvtR5rqf2GMvztJwDbz9tPAMiiuSA/QVETSM8HJJLGi/2vgYS7OYun+nIOAaOc1Rv1iEEUuTvn7zi0vpixyGWE/b1pS3Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jkFmoR5A; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2D531E000E;
-	Mon,  2 Dec 2024 15:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733153649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GH73Zxavz3tXadnXYMcGQBHsBqaFNZnzohIfStkLYAM=;
-	b=jkFmoR5AQNvVJ/5yuNA2ROvXY2LA2a8qcz2kU7gVCFdTUdoTQ68yJuYAVBoMVSgOoyXRYc
-	sGdkrJkO/HKRXS+4KRSEyxYiZRWpgHTPInijGeUskeKKxDVLP6qrAWN2e+HupM2t1V/Uhe
-	Xwj+oxMjqn4zFBuuVUi7Q9U2EZy0qR47YCw0+Bi6HKr5GnVnXQarej5Fihmm1LGEZViiGz
-	qUvkOlyUVDaIuSSgmiCnkAhRLHsJ05xYe04aUHbMOrre6XMx+XGplKXJHzQH02PNoUQRHf
-	ywdNA1hcDHf8HJyf9JPImarXCK2yYIQnJeEboraFpLzdCFA2OLVj/am04/cOJg==
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Michal Kubecek <mkubecek@suse.cz>,
-	"David S. Miller" <davem@davemloft.net>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	thomas.petazzoni@bootlin.com,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>
-Subject: [PATCH net v4] ethtool: Fix wrong mod state in case of verbose and no_mask bitset
-Date: Mon,  2 Dec 2024 16:33:57 +0100
-Message-Id: <20241202153358.1142095-1-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733153669; c=relaxed/simple;
+	bh=0aiCO6irx3KjpiEsB3bMtihBZzkRX+giqdpY7eyHggw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dH8cPD72siwkWZSj0bI74UQmJOsbubwpy3MuKlJEb8IPNr1ddso6bsajrUYCe3dtulcK64CqlCTQ4wc3x+ExVJXn84W1pxT5cKnNpBoCJ35uqAnaeld7wAD9sO03oKzBEKidjjnWanuIYblsacURHqZWuOkrrBXgnaZhXroogJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gZwElVFG; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733153667; x=1764689667;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0aiCO6irx3KjpiEsB3bMtihBZzkRX+giqdpY7eyHggw=;
+  b=gZwElVFG02QsRTkPuZaXi1Q6ASaCvY23AbHtTIWCiBZawU2oIAecVzZR
+   BOSUEYH/TyRsH3YFU07g+n514TCsK8VTvb52VGXBWI8opgB/3FvGKCGZv
+   ajWRs+fIGmucSLuJs3DuW84v4lRovPfz8oW2Qo/Sr80sR5aXxCCdtAZgA
+   tn77uq5ZO9n1THR3+x4gxj5iN5xZ8lIuIVxJ8mUIu7YxEqEF2/5bUz2tj
+   MaiE3SyT6I00byTpnp+P6ivrRDOIxaz/Jn8Bb1EjboZlyJWvv9KBI4zGL
+   zGbds0RpSt6NMQiIuSMpiPDkuF99LE16sja+8DJv6t4vMn0UYLB2Dr8m9
+   A==;
+X-CSE-ConnectionGUID: cFVne9mSRbyGtehbHOp+8A==
+X-CSE-MsgGUID: PQks5q8+RKmspFBSeATS/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="20918669"
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="20918669"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 07:34:26 -0800
+X-CSE-ConnectionGUID: BBV3fdIoRricTQUUZTjVMQ==
+X-CSE-MsgGUID: cyEI96nyQKK9gUkxcru1+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="93528245"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 07:34:22 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tI8RG-00000003BDo-0brw;
+	Mon, 02 Dec 2024 17:34:18 +0200
+Date: Mon, 2 Dec 2024 17:34:17 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raghavendra K T <raghavendra.kt@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	bharata@amd.com, Huang Ying <ying.huang@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
+	ilpo.jarvinen@linux.intel.com,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Fontenot Nathan <Nathan.Fontenot@amd.com>,
+	Wei Huang <wei.huang2@amd.com>
+Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
+Message-ID: <Z03TeSrlI_8y4j89@smile.fi.intel.com>
+References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202111941.2636613-1-raghavendra.kt@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-A bitset without mask in a _SET request means we want exactly the bits in
-the bitset to be set. This works correctly for compact format but when
-verbose format is parsed, ethnl_update_bitset32_verbose() only sets the
-bits present in the request bitset but does not clear the rest. The commit
-6699170376ab ("ethtool: fix application of verbose no_mask bitset") fixes
-this issue by clearing the whole target bitmap before we start iterating.
-The solution proposed brought an issue with the behavior of the mod
-variable. As the bitset is always cleared the old value will always
-differ to the new value.
+On Mon, Dec 02, 2024 at 11:19:41AM +0000, Raghavendra K T wrote:
+> Before:
+> ~]$ numastat -m
+> ...
+>                           Node 0          Node 1           Total
+>                  --------------- --------------- ---------------
+> MemTotal               128096.18       128838.48       256934.65
+> 
+> After:
+> $ numastat -m
+> .....
+>                           Node 0          Node 1          Node 2           Total
+>                  --------------- --------------- --------------- ---------------
+> MemTotal               128054.16       128880.51       129024.00       385958.67
+> 
+> Current patch reverts the effect of first commit where the issue is seen.
+> 
+> git bisect had led to below commit
 
-Fix it by adding a new function to compare bitmaps and a temporary variable
-which save the state of the old bitmap.
+Missed blank line here.
 
-Fixes: 6699170376ab ("ethtool: fix application of verbose no_mask bitset")
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
-Resend a fix that got merged and reverted because it was broken.
-https://lore.kernel.org/netdev/20231009133645.44503-1-kory.maincent@bootlin.com/
-https://lore.kernel.org/netdev/20231019070904.521718-1-o.rempel@pengutronix.de/
-https://lore.kernel.org/netdev/20231019-feature_ptp_bitset_fix-v1-1-70f3c429a221@bootlin.com/
+> Fixes: b4afe4183ec7 ("resource: fix region_intersects() vs add_memory_driver_managed()")
 
-Thanks Michal for the code proposal.
+> Cc: Huang Ying <ying.huang@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: <ilpo.jarvinen@linux.intel.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Fontenot Nathan <Nathan.Fontenot@amd.com>
+> Cc: Wei Huang <wei.huang2@amd.com>
 
-Changes in v4:
-- Add the function purposed by Michal for bitmap comparison.
+Isn't it too many to be included in the commit message? Note you may use the
+same list with --cc in the command line with almost the same effect (almost --
+no noise in the commit message).
 
-Changes in v3:
-- Add comment.
-- Updated variable naming.
-- Add orig_bitmap variable to avoid n_mask condition in the
-  nla_for_each_nested() loop.
+> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
+> ---
 
-Changes in v2:
-- Fix the allocated size.
----
- net/ethtool/bitset.c | 48 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 44 insertions(+), 4 deletions(-)
+...
 
-diff --git a/net/ethtool/bitset.c b/net/ethtool/bitset.c
-index 0515d6604b3b..f0883357d12e 100644
---- a/net/ethtool/bitset.c
-+++ b/net/ethtool/bitset.c
-@@ -425,12 +425,32 @@ static int ethnl_parse_bit(unsigned int *index, bool *val, unsigned int nbits,
- 	return 0;
- }
- 
-+/**
-+ * ethnl_bitmap32_equal() - Compare two bitmaps
-+ * @map1:  first bitmap
-+ * @map2:  second bitmap
-+ * @nbits: bit size to compare
-+ *
-+ * Return: true if first @nbits are equal, false if not
-+ */
-+static bool ethnl_bitmap32_equal(const u32 *map1, const u32 *map2,
-+				 unsigned int nbits)
-+{
-+	if (memcmp(map1, map2, nbits / 32 * sizeof(u32)))
-+		return false;
-+	if (nbits % 32 == 0)
-+		return true;
-+	return !((map1[nbits / 32] ^ map2[nbits / 32]) &
-+		 ethnl_lower_bits(nbits % 32));
-+}
-+
- static int
- ethnl_update_bitset32_verbose(u32 *bitmap, unsigned int nbits,
- 			      const struct nlattr *attr, struct nlattr **tb,
- 			      ethnl_string_array_t names,
- 			      struct netlink_ext_ack *extack, bool *mod)
- {
-+	u32 *saved_bitmap = NULL;
- 	struct nlattr *bit_attr;
- 	bool no_mask;
- 	int rem;
-@@ -448,8 +468,20 @@ ethnl_update_bitset32_verbose(u32 *bitmap, unsigned int nbits,
- 	}
- 
- 	no_mask = tb[ETHTOOL_A_BITSET_NOMASK];
--	if (no_mask)
--		ethnl_bitmap32_clear(bitmap, 0, nbits, mod);
-+	if (no_mask) {
-+		unsigned int nwords = DIV_ROUND_UP(nbits, 32);
-+		unsigned int nbytes = nwords * sizeof(u32);
-+		bool dummy;
-+
-+		/* The bitmap size is only the size of the map part without
-+		 * its mask part.
-+		 */
-+		saved_bitmap = kcalloc(nwords, sizeof(u32), GFP_KERNEL);
-+		if (!saved_bitmap)
-+			return -ENOMEM;
-+		memcpy(saved_bitmap, bitmap, nbytes);
-+		ethnl_bitmap32_clear(bitmap, 0, nbits, &dummy);
-+	}
- 
- 	nla_for_each_nested(bit_attr, tb[ETHTOOL_A_BITSET_BITS], rem) {
- 		bool old_val, new_val;
-@@ -458,22 +490,30 @@ ethnl_update_bitset32_verbose(u32 *bitmap, unsigned int nbits,
- 		if (nla_type(bit_attr) != ETHTOOL_A_BITSET_BITS_BIT) {
- 			NL_SET_ERR_MSG_ATTR(extack, bit_attr,
- 					    "only ETHTOOL_A_BITSET_BITS_BIT allowed in ETHTOOL_A_BITSET_BITS");
-+			kfree(saved_bitmap);
- 			return -EINVAL;
- 		}
- 		ret = ethnl_parse_bit(&idx, &new_val, nbits, bit_attr, no_mask,
- 				      names, extack);
--		if (ret < 0)
-+		if (ret < 0) {
-+			kfree(saved_bitmap);
- 			return ret;
-+		}
- 		old_val = bitmap[idx / 32] & ((u32)1 << (idx % 32));
- 		if (new_val != old_val) {
- 			if (new_val)
- 				bitmap[idx / 32] |= ((u32)1 << (idx % 32));
- 			else
- 				bitmap[idx / 32] &= ~((u32)1 << (idx % 32));
--			*mod = true;
-+			if (!no_mask)
-+				*mod = true;
- 		}
- 	}
- 
-+	if (no_mask && !ethnl_bitmap32_equal(saved_bitmap, bitmap, nbits))
-+		*mod = true;
-+
-+	kfree(saved_bitmap);
- 	return 0;
- }
- 
+> +		bool is_type = (((p->flags & flags) == flags) &&
+> +				((desc == IORES_DESC_NONE) ||
+> +				 (desc == p->desc)));
+> +
+> +		if (resource_overlaps(p, &res))
+> +			is_type ? type++ : other++;
+
+Instead (if you will end up with this approach) please still use is_type_match().
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
