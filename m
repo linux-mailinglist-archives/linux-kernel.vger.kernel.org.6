@@ -1,145 +1,139 @@
-Return-Path: <linux-kernel+bounces-427249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200669DFE96
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:16:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 364AF9DFE9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:16:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91B9280217
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD61280CFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA231FBC9B;
-	Mon,  2 Dec 2024 10:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DA21FC0E4;
+	Mon,  2 Dec 2024 10:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dpBtCa7R"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUzrRIhk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981A71D8E10
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1C21D8E10;
+	Mon,  2 Dec 2024 10:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733134573; cv=none; b=KTdOQobaCl0rC1Cg5EdUukDXV19mJFs6gPBAF9AG6Ac18+dC7aDFllWRz/dPq+6VKSClVdESyhvGsEByIZO7UwbXHbdEJgMcuwsPAE1HizgpPuYFR3SD3XTK+sqHW6JuJPLe9WPCO5G3oW7mlroEeoPLI9aUWdSGuy8SbG+DCfU=
+	t=1733134589; cv=none; b=aRVRc0mjQiWxhJBvdBl3XlwoP0UEb2oAjoU81B8gbveZxJFjDScl4fyRh00gaK53k+QZNVDPIG3gfmd5lDidWKniAPBvAFX3sFNfrKtWJq/PcxFMsr7V9NlsG63vrDUzRvgZs+MtkbJ+eyW6OQJRkSpfV68Uut9xqN5e4PSr1t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733134573; c=relaxed/simple;
-	bh=ReKNMlKfQn7XczdH7JHukU55OclGvk3mfG9gIQ8CmCk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YVaNa4yPJc0dqTzXw4q69ldldE6+h/vYFocm24zVVfPvTq4xW2/MtYkGLCdmiW1wJ4rDDQ+MOeVJ1XoaMoTTvxPI9RjSH7T27nzV0J8atoYoADpsGJ0mIvTSVV94pUhlrZK6gkjA014Dnaipz7aKBkCE+yWWVUr1Sc1TwsBmuxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dpBtCa7R; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21288402a26so28976095ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:16:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733134570; x=1733739370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AqdyYnh7L9JzbifPNftANkk0KPlnXsX4tMHkyCxaZPo=;
-        b=dpBtCa7RSdYiQk3oVMT5EaUOqWVV+igXZuiB+sKYOriwGSrH5LKJ9rMkViXaumNOwW
-         7IssmAwtOh2ZmULh3larjhqjwIdjNfYgNp10/gbv+VTKCDy0gqj93z0Flv8XEgesqP2M
-         c3AuJrEzGqJzhqoN4z34HjVpFjlxtI3CS6D5kTfJxB+EEw6rwm3j0X0u4ZisDT8kVbJY
-         YSKICkLdaCjbIVgDD7baUEuZa5UA8MhK7TYYHce91UEruKvCwZfHrf8cJxrUwwsabgSR
-         5oqQ6rI4Rb+a1QTOwoe7nVJn+eQazY44nTdSavbmHIXfBqfP+W/x2mhdhVkGH0kw6kzE
-         x+tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733134570; x=1733739370;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AqdyYnh7L9JzbifPNftANkk0KPlnXsX4tMHkyCxaZPo=;
-        b=kbjUcQzXT/ouXfF/pykBEDHvH3x718re9L6U17Rvv70fyla7yE9tSDRmqBq37cg0FD
-         IGPlpkfeOVgkrLBl8+OTLYekteN5fhvNdLDd3mfOYOKLy6piKt8+jursTX+dTy0SB31u
-         hWUS+JEUP7C41BUpU7sb17rkvKiJ8gvL15axcFWA+28DtApHSrBG7QdNCCtK5u8SnQMM
-         1fU/N1KrXMxfh9CZFxn2AttY0e7cZNWqJPKAhJrYxc0u+pWLqist32CnPyXXKF5ko7pE
-         p/iqtyaKnkRWP3IF9MEeVDwupRb/gJ50aibsAicwZOQYUUrqePDtrOI4mK+SIQ7rgfrh
-         w9Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbRw6R2wBjkqf92V78Xshy+DkmmTbXYzq/v41gGngQJAJcAT+3f69JZlo3pEEAQbwa913Zl3Wyd+YqCCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwiJtVgnR0r9QyRfdJmTopiDQtpVYASXDkUqf3zYNkBYYwQ8gd
-	ErM6cJyH4t9JKFSHYhO5okKAEQYKNXD/s/coQMT2vRNg1FMDaNr4jegVSvZIMfYPySb54hjJLU/
-	i
-X-Gm-Gg: ASbGncsJVKpfhGQ070rEHyZuZ4WE98HeUOawJFVyLsx5oIlhe5DMUeL18/uFIUcnjV1
-	lUcZc+aUJz1yD3DEVvnnzI0LzQenihMU42e8bj+YW5mrKmghgo+uIifCb4Lkt1Z4xX3gTkVzpoq
-	A2OTmiFO4XDbYVWYg7219kHOTiwXoZVaeWSzUyRZWYJl2cRRSysX7MLBRliQxm3dxsDVlzbJfq2
-	43ldp/beuFiL20jYdX+5JP9vMuyUe5atMgqvTdfROhZYOf0aa47DqQqtE78cc52+wSZuTS1Z94K
-	xWQMv3mgdTg45Jjeb5zoyFS//z4rxxDx
-X-Google-Smtp-Source: AGHT+IH1+6Y2xOPT53z5KOINjW/eib1XXOUom5+MdqN7SgnYZHlbvRTsSjFLdTYt0jzINpPmKZcGeA==
-X-Received: by 2002:a17:902:e541:b0:215:58f0:2606 with SMTP id d9443c01a7336-21558f02c9emr128817145ad.2.1733134569664;
-        Mon, 02 Dec 2024 02:16:09 -0800 (PST)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521969e59sm73097425ad.146.2024.12.02.02.16.06
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 02 Dec 2024 02:16:09 -0800 (PST)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Cc: lihangjing@bytedance.com,
-	xieyongji@bytedance.com,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH] riscv: mm: Fix alignment of phys_ram_base
-Date: Mon,  2 Dec 2024 18:16:01 +0800
-Message-Id: <20241202101601.48284-1-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1733134589; c=relaxed/simple;
+	bh=VeyGyrt8lzSc0gMCv+H0+uTSDCYGlOKoYE+GGCTCvkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tVDAxxs5oa5NSoLbbsvRjy9qHcOTSQVMupVcwc1ioNC9IdvULkU6CNF65Lo+QFwUAbhV5eHgJxg3l4GtWLLCKZcL5c0ThveyRWIjqm8/ViZ599ZeCgYM62zzvuVchswsj0iuIY0wZYVjL1zJCuAxIXcxSNM87D8K7i1JJckzSCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUzrRIhk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC6FC4CED2;
+	Mon,  2 Dec 2024 10:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733134588;
+	bh=VeyGyrt8lzSc0gMCv+H0+uTSDCYGlOKoYE+GGCTCvkU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mUzrRIhkQEz61XGkipCLG2mjUF92JUEAHCboc1hDJ2ddG/3hcE8TXaWyMnduTvom4
+	 8JDaxAtgOZNV+Zhq7ofNfwAkk0IQ8jdB4UE0jKBzFDyM3q/pAhT0CTc4Sh6P0yYuM9
+	 Dum4Y3n2Vyc/0y55EM4SIrCCJnNYAeoZyzaFtGZ2uk8FJxxGkcuQAzXAW0who/bRwP
+	 iRyR+KRNXajrhLN2zrxXErJUb651MxZ4a3G+8rIa6C9fNm56486rWciJ4/JiaAz7dB
+	 Dq7IXyzN337B875oMMcSPO/w6KAO13bpJa0WmjFc9II/5Y6RzSSL6bLlFLZJjNqLub
+	 NMR65y3GRkOqA==
+Message-ID: <666145e0-d8c8-47cc-92d4-08d6877786c0@kernel.org>
+Date: Mon, 2 Dec 2024 11:16:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/9] dt-bindings: power: supply: max17042: add max77705
+ support
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+ Purism Kernel Team <kernel@puri.sm>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org
+References: <20241202-starqltechn_integration_upstream-v9-0-a1adc3bae2b8@gmail.com>
+ <20241202-starqltechn_integration_upstream-v9-2-a1adc3bae2b8@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241202-starqltechn_integration_upstream-v9-2-a1adc3bae2b8@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This commit fixes the alignment of phys_ram_base in RISC-V.
+On 02/12/2024 10:47, Dzmitry Sankouski wrote:
+> Add max77705 fuel gauge support.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
+> index 085e2504d0dc..f929e7e2b82a 100644
+> --- a/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
+> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
+> @@ -20,6 +20,7 @@ properties:
+>        - maxim,max17050
+>        - maxim,max17055
+>        - maxim,max77849-battery
+> +      - maxim,max77705-battery
 
-In sparse vmemmap model, the virtual address of vmemmap is calculated as:
-'(struct page *)VMEMMAP_START - (phys_ram_base >> PAGE_SHIFT)'.
-And the struct page's va can be calculated with an offset:
-'vmemmap + (pfn)'.
+Keep alphabetical order.
 
-However, when initializing struct pages, kernel actually starts from the
-first page from the same section that phys_ram_base belongs to. If the
-first page's physical address is not 'phys_ram_base >> PAGE_SHIFT', then
-we get an va below VMEMMAP_START when calculating va for it's struct page.
-
-For example, if phys_ram_base starts from 0x82000000 with pfn 0x82000, the
-first page in the same section is actually pfn 0x80000. During
-init_unavailage_range, we will initialize struct page for pfn 0x80000
-with virtual address '(struct page *)VMEMMAP_START - 0x2000', which is
-below VMEMMAP_START as well as PCI_IO_END.
-
-This commit fixes this bug by aligning phys_ram_base with SECTION_SIZE.
-
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- arch/riscv/mm/init.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 0e8c20adcd98..9866de267b74 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -59,6 +59,8 @@ EXPORT_SYMBOL(pgtable_l4_enabled);
- EXPORT_SYMBOL(pgtable_l5_enabled);
- #endif
- 
-+#define RISCV_MEMSTART_ALIGN	(1UL << SECTION_SIZE_BITS)
-+
- phys_addr_t phys_ram_base __ro_after_init;
- EXPORT_SYMBOL(phys_ram_base);
- 
-@@ -241,7 +243,8 @@ static void __init setup_bootmem(void)
- 	 * at worst, we map the linear mapping with PMD mappings.
- 	 */
- 	if (!IS_ENABLED(CONFIG_XIP_KERNEL))
--		phys_ram_base = memblock_start_of_DRAM() & PMD_MASK;
-+		phys_ram_base = round_down(memblock_start_of_DRAM(),
-+					   RISCV_MEMSTART_ALIGN);
- 
- 	/*
- 	 * In 64-bit, any use of __va/__pa before this point is wrong as we
--- 
-2.20.1
-
+Best regards,
+Krzysztof
 
