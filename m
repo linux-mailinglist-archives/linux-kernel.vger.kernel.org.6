@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-428045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D939E0968
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:05:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBC13163911
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:03:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A1D1D9A5F;
-	Mon,  2 Dec 2024 17:03:27 +0000 (UTC)
-Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 141839E0963
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:05:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF461AC444
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.183.69.95
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D376F282472
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:05:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFD61D9A42;
+	Mon,  2 Dec 2024 17:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S57ahAV3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D2A1D6DB0;
+	Mon,  2 Dec 2024 17:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733159006; cv=none; b=FGKkNlho8GvKxDIfNWNx1cQW6ldZglk3BTU4yBRJE2VqAjhgfyquYD31Ir3s4XLarqTnQsmG5q3qvSNDoaJd10nvmUoOxyEHv1bH0OLKxsIN9rGp7O42hQD8PWkig7pUTt28iw7sRfv4Y1x+KVbyQZjpSuJzLHE9B5vLblyGEao=
+	t=1733159116; cv=none; b=TKBBSwE8I1gK03I06MDwzX8kuYwXsfFmdNEVGUNm1y2EDsna4q45YMTiGMdXo7Y5zipBILqHe8gB8bdetnDZxuJN17Ljaz1V2SQOy7AsSWImJe3geR3PhJegT33KTk6gf9ggO44h7OIgErAc40NQ0pSs6YX6enk7syTH/S9qq+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733159006; c=relaxed/simple;
-	bh=UraHYu3PVGdBa1G5kKPcqpScOE2DGLtNUyGJsKgIW1I=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=BqEJrgsPimcT4xunrloL8oT1HMJYknZZvlyWJRn6DV44mKEH8f6UVtg3VKxKzo7tOeGCm0rFNSB2FzFSDnaihQyr3s7PDPAgt8QbL6tXQy5l0HWmwjX/HNiT/FU7UZgctnnVYRpg5XgqaCfsvsunW9pDf56YRcrlTj1Ket+YZLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de; spf=pass smtp.mailfrom=vosn.de; arc=none smtp.client-ip=85.183.69.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vosn.de
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: from mail.steuer-voss.de (localhost [127.0.0.1])
-	by mail.steuer-voss.de (Postfix) with ESMTP id AA1BB2D2;
-	Mon,  2 Dec 2024 18:03:16 +0100 (CET)
+	s=arc-20240116; t=1733159116; c=relaxed/simple;
+	bh=ur/ypVaK5ksBUgYzHCV7S9+K8dj1MZtTztQiwluvImY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CrAfGCQACUBgWjLycNnkdVSBeRJg/QrPUOD/Mv0pNHFvT1rnlTE4lVg4QvVlhuZjqAKGdyIRK8+MEqZ34r/NLATVzaXH5LVkBdGUvR7EojreLbDD7kHDkfhno7tABwiMLcqjVgMhJPf7SJUIBl1/iqlw+crk08Qhh/3uhM0nAO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S57ahAV3; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733159115; x=1764695115;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=ur/ypVaK5ksBUgYzHCV7S9+K8dj1MZtTztQiwluvImY=;
+  b=S57ahAV3HLnO7/znzE2hM9D8FPsrZEB6qZtlSK5adHVm8gFmoUhNwu0N
+   UwTexBXwElvyfbjWo5SYPBoNkkB9EVijbilr2g6KRz1cJdT7yhMDsevOy
+   8iJUnhXWlYSy+JoqN6UBaxjiA1kSu179kuq9WVTRnxPz97YBRAFPQ7Y4M
+   FEYZt1xmixo5P9VbVBEspd7pL/O1I/RISmLAb54Aghm2j/AZJ4qyvekAS
+   ytIqq89osGZHjupqXaq1VE897J8V3RAyDAC2bFHDbPfpPrTjMzNsJo/Dp
+   qrK8xuSiadOIEb0TYf3BOw6I7DkBDTWaban7G4RMiChG6WnD4c2YtYMCG
+   w==;
+X-CSE-ConnectionGUID: MvprYvLdTG6pqNDXWCsMEQ==
+X-CSE-MsgGUID: rhFl621XS8CYM1DASciOfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44374778"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="44374778"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:05:14 -0800
+X-CSE-ConnectionGUID: iLKlw9UDRcuhEF6q0z915g==
+X-CSE-MsgGUID: yzGlkKIcR2yv5KcpASTCmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="98133225"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.61])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:05:12 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: auslands-kv@gmx.de, corentin.chary@gmail.com, luke@ljones.dev, Armin Wolf <W_Armin@gmx.de>
+Cc: hdegoede@redhat.com, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241124171941.29789-1-W_Armin@gmx.de>
+References: <20241124171941.29789-1-W_Armin@gmx.de>
+Subject: Re: [PATCH] platform/x86: asus-wmi: Ignore return value when writing thermal policy
+Message-Id: <173315902009.13686.3627393003888118989.b4-ty@linux.intel.com>
+Date: Mon, 02 Dec 2024 19:03:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 02 Dec 2024 18:03:16 +0100
-From: Nikolaus Voss <nv@vosn.de>
-To: Marek Vasut <marex@denx.de>
-Cc: Liu Ying <victor.liu@oss.nxp.com>, Alexander Stein
- <alexander.stein@ew.tq-group.com>, Liu Ying <victor.liu@nxp.com>, Luca
- Ceresoli <luca.ceresoli@bootlin.com>, Fabio Estevam <festevam@denx.de>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Miquel Raynal
- <miquel.raynal@bootlin.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, nikolaus.voss@haag-streit.com
-Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-In-Reply-To: <50ee0207-b37a-4a6a-83fe-32a7a43645ce@denx.de>
-References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
- <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
- <50ee0207-b37a-4a6a-83fe-32a7a43645ce@denx.de>
-User-Agent: Roundcube Webmail/1.5.0
-Message-ID: <9cc55af202690bad0616bee76430133d@vosn.de>
-X-Sender: nv@vosn.de
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 02.12.2024 13:56, Marek Vasut wrote:
-> On 12/2/24 7:32 AM, Liu Ying wrote:
->> On 11/27/2024, Nikolaus Voss wrote:
->>> LDB clock has to be a fixed multiple of the pixel clock.
->>> As LDB and pixel clock are derived from different clock sources
->>> (at least on imx8mp), this constraint cannot be satisfied for
->>> any pixel clock, which leads to flickering and incomplete
->>> lines on the attached display.
->>> 
->>> To overcome this, check this condition in mode_fixup() and
->>> adapt the pixel clock accordingly.
->>> 
->>> Cc: <stable@vger.kernel.org>
->> 
->> It looks like stable is not effectively Cc'ed.
->> Need a Fixes tag?
-> Isn't this fix effectively superseded by series
+On Sun, 24 Nov 2024 18:19:41 +0100, Armin Wolf wrote:
+
+> On some machines like the ASUS Vivobook S14 writing the thermal policy
+> returns the currently writen thermal policy instead of an error code.
 > 
-> [PATCH 0/5] clk: Fix simple video pipelines on i.MX8
+> Ignore the return code to avoid falsely returning an error when the
+> thermal policy was written successfully.
 > 
-> ?
+> 
+> [...]
 
-Maybe. I wasn't aware of the series. Looking at it, the change is
-rather complex and not suitable for the stable series.
 
-My intention was to get a simple fix which doesn't potentially
-break anything. It wouldn't even break the patch series you mentioned.
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
--- 
-Nikolaus Voss
+The list of commits applied:
+[1/1] platform/x86: asus-wmi: Ignore return value when writing thermal policy
+      commit: 25fb5f47f34d90aceda2c47a4230315536e97fa8
+
+--
+ i.
 
