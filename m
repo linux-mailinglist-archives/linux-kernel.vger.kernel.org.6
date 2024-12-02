@@ -1,146 +1,189 @@
-Return-Path: <linux-kernel+bounces-427971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643F39E085C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:23:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544E09E0824
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2994AB3BD1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:14:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2CD285646
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A3017D896;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC2F17B433;
 	Mon,  2 Dec 2024 16:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="adiNGlBC"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="foiYXTCb"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B4E172BB9
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA0B17332C
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733156070; cv=none; b=LQqnh6mm5hrq4be6Ce169a5R7nSJgJjLTXgnZyHaaIgewN0bQHirR2V95Vw8kyVAMJvr9Qqyyqq2EM3ZvEkKRp8DYtqOTk8uRrEBAO+7KNQxqEZDes2IZtcSxVZkLTFOCOQmtdgvl+zQsXeCfcVShhW60tR3yR3kU+oNbvBqPdQ=
+	t=1733156069; cv=none; b=kX9SIva0MSXXJHdYWxIDgSKuSqzoaVH9yS/IF8e0MqrbFBFGnRoQZW4ROEyXLPVCF+8thuHdl/SwxrRp8QdlRTntynjwszmu+0QekKv6YIYW/vd19M1XhsL/ecETnnhhlN88eF51EicgMtdDNFWSdLkLHHLbwriasSc3bF0XTqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733156070; c=relaxed/simple;
-	bh=U3sOB44bYAOnN3+ClQhKm7SVxe7PbDw+ZhV1KxGkl58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFUu2p1lggWzzjQerA8JfrJFklcJTa5VBvc/Wjhcp6ZO/INWfJJkMBO0+xukKgJA29AV9pSj5CR4w6lHc+zAwCLprwZUvE+isk130ZJyI1E4FnJvDwzLk/IUTK9l0qOhe3DLCXw5HSup5gyIg2yH+cv9QGgNH/ep52peXsoSoM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=adiNGlBC; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53de84e4005so5039702e87.0
+	s=arc-20240116; t=1733156069; c=relaxed/simple;
+	bh=OwIXuOkl98ecBMfXkAdimvKCgH93U2DB6vsnaTQrIw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SFv8UsgSSS7JImtaxAN86ukzXzLSx1Di3P6Y/LX4J9MxYPHich76fsdnU/5JAwSJBdd0HIn/c13cecqT1TTXIfN1Y47v3BWDkdpRmhVoFu0ijoTqDwGfL2WfoJN54aj5zpV6Omj8wyDbIglBk9PDmXkrGp9z8bzxdPqXqUpc35w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=foiYXTCb; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434aa472617so37806855e9.3
         for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 08:14:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733156066; x=1733760866; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F8VHlod5uJC4/6n5wVNLJGfi6u4uDM+LMK7JP0/rK8c=;
-        b=adiNGlBCRS8GLebZGscrLqlsdmxZ0xgwzdSWfZKcKqDY803xOhoUtyYBC81wy5l4FT
-         ONkscoQeehEGh+du4jAiVHGuzG9h+zxDCGBoFdvSBRIHpCqxKXQtZdfoaArcRoWRjqs8
-         JSdDeI/kUOxMhJftqIYZNIj705ZEwXvZYa9lpDcUSaSeUXsm+78uYZmbyWiRuGuDnevD
-         tu7ZfOdt6+jH7mSojb3WY0o1kUOCXcWIvg/abQrAR/+R3/CM5WYLBpVU6E1hdH4o5nF+
-         BRJjqiqa9sfTQjprRIwo09OhV8MKNiIfDCTPN1AmFpLZvUWp/waoCQ+l871YjR8Ps7U9
-         qmwg==
+        d=suse.com; s=google; t=1733156066; x=1733760866; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JkqtF7gf3rzskqYkgv0SBovnNKd2qwXos1/as7nPpuk=;
+        b=foiYXTCb5ubz5C1P3skEksMF9LdXPe0Kee+UfgBu7IEZBRzEiI53KnK1sXdqfSewho
+         E3PYpFf3M8sM0Mgjr5v3wSkDmb/n/qjqHmkb3WRNN0G2O8JZsNq//1xxu0xbXwvHYuaN
+         m3qQx7scKoI+DRZ5xcuxLTDfdLANkIgEfAloJE6WPnV30UAK0PA+aIYBtRd4kQZuKzIq
+         fe41ql8JZgefHy4jGp03muOGGtlMjRAqmKu5IxSE+XpW9Pw5VIs2UfNiAJCd5xXnTrl4
+         eJjUgH0Fclbx6zUUaXUvuAQ41g0hAxD9UomxC4vN3D5Ky6AIoExAm4tXFzI14vTqE54/
+         0yQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1733156066; x=1733760866;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F8VHlod5uJC4/6n5wVNLJGfi6u4uDM+LMK7JP0/rK8c=;
-        b=oEMGbXOq54DEblNRL2T+NgBevH8WwXrngGcnYyepWCpxp9yK6rc/Cax07U1J7H/uBE
-         UdRyDrK7Izy1lBPBGb2hUqf5nYkiVhAdutJntctVo/+MKrpQgnrQBWsuxFOyWdS8TYr2
-         Hc1in5Nbmk6wUeqFgGHwfX5x/nehttKqO2FXdkPwHrFvRd/ZhxbG6kB854V27vAOlYOG
-         ikQ9quM+kgfw9Ov/tRHuVYqGjAhdDeStSSPMogNAvBiExcxcGSM9/H+a5X04+xHP7++h
-         AkIP6o1tiqiCsfZocojjBmVQLvzuW5113F2rIDWdgPJmjqbL7KrxZFoc13pQrUHiuJ0b
-         AmlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9gMVYTvaBA18vbVMdlu8nq00wfTnGhjKUMynrEuo0jSAC/r2UGnJAw3VigvdtO6FwhwQLOxWHuhd4JQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxoo4GXx3yh2HPduLG6eJE/RzjTxyxmXcWUmt3dXVJT9KytwwYh
-	y2O1ckSGfGMlfxu9wfBHFl38f6tv9HErzyxGO2dylFWC7PIkqv0VV08tkZrHRR4=
-X-Gm-Gg: ASbGncsLYTzb0LHeDb2Qlu5rXoVAMtUf2HQQ8iYyWsA0qSQcTO/nGPLGfKsEaKq/14c
-	E7StIx3jEXEfY+kyNkMcok5DFSMh5k+Y/dpBREckgC66voBSAzh/vTr64TttjCXsNzsODrmnUH6
-	DLRJNzPULeUT9aDNRukHhp0cKP80jFnFHkHcxtNKIsEQ6gffvgSUMGAP0S5MUQbZtUQBTDWI3nb
-	LewWilTD0ndylXUTXnh3miomFijGMmbpZAVbQTNyi0N38RI/Cj2ShKogoj2GYvvNT/JpV2Fp2yN
-	nYFhhY/8IXT0XpTiRy3+iPkaICuBYw==
-X-Google-Smtp-Source: AGHT+IGljYe4BdTzBDXyCqgaBRdYgKurtEw8NIhKOjqu0TbXgCFVoYTwi8WuQ2J0dQRrYvQOHVQyLA==
-X-Received: by 2002:a05:6512:2356:b0:53d:a58c:c5a4 with SMTP id 2adb3069b0e04-53df0108fe6mr11691188e87.40.1733156063012;
-        Mon, 02 Dec 2024 08:14:23 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649633asm1510854e87.176.2024.12.02.08.14.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 08:14:21 -0800 (PST)
-Date: Mon, 2 Dec 2024 18:14:19 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
-	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
-	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 drm-dp 1/5] drm/hisilicon/hibmc: add dp aux in hibmc
-Message-ID: <anxttocvrziwstm3h2q4lles2zyeld4uuv2hwrs3vthldekz6w@bjn262y4efcc>
-References: <20241202131322.1847078-1-shiyongbang@huawei.com>
- <20241202131322.1847078-2-shiyongbang@huawei.com>
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JkqtF7gf3rzskqYkgv0SBovnNKd2qwXos1/as7nPpuk=;
+        b=M2fzxB+xzGN71bTmzHGgHYXvcKvVmuoXCzwWJH1QD5SI1v2rNRLOJChUHCcLs0wI/g
+         Pht7nIuNybRG2Y05DbhPt2vYwjysXWkUhi944ibxkJZKRgw7ATVNkFfp4NqiJ98GQcFG
+         eJfO14OSzgEuAfP1+47x4kX0+9yd2YXCRbtKknGzM3Ns3+KfEfAGI79POEWGvoju27Bv
+         Ks3LJmmlFOt9ROxOQ4S+shaG26eiZh5ld6unmQPUadBk3CciA644/1XzG1S8eQOmPX0I
+         a2t34frc9UlMHyY7bQRs52uXGJLs0ej47ohpJLBVfTKqTdX+NRuLR2abfEbs7UpnVzoN
+         6Gjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXvhG6DCoQFIkGfIs3/aDdsYeqAY3xtnjwxRPNWvgbsc7qtq865TBeU9F59UDwbKDULwfbrOrYzEUIPgks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPugVtEjN5ppoi23CYXgTeaG6nj9pEMdbo7JL1mCyNZ2HG3+3Z
+	iBguCc05B5ik8x/qOVtcvK8g8AlykS3fl7XfV4pYKa0odZCPGR3wx5Y9JL7qcpE=
+X-Gm-Gg: ASbGnctw4r0wXv6hlBwG1qDyFsAU8L0weqV7yoFqKwxvNS+KQ/1JBi80c3ToiYlllsp
+	ovV87xSRpY1KGeuQSwS6OWo4lNrVUdrRjdrzaMcWqMPMjw6wohByP5i8bgLgxCyUwcRrbw85Orl
+	p2p9tAj26/Ox/wLAOJxjJeEpFOYUuZw4un+UsAHcl2nFqQRrMNyh1Aq0jjtPS+qPgw3hU668xSK
+	lY1W64T2ovz8YLs/XK+nPV60vHtybdQV/DA47m047KCVCTgX9MFmg==
+X-Google-Smtp-Source: AGHT+IFYutETRRcXML+QIddm9XhVvanLL6JGdMr2H3NcnNfxeBujp0ZUmjFwG3N6uzej8qITOTWbNA==
+X-Received: by 2002:a05:600c:5253:b0:434:9e1d:7629 with SMTP id 5b1f17b1804b1-434a9e07911mr188863885e9.33.1733156065599;
+        Mon, 02 Dec 2024 08:14:25 -0800 (PST)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa781200sm187506945e9.25.2024.12.02.08.14.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 08:14:25 -0800 (PST)
+Message-ID: <409987f4-d124-48f7-b49c-dd61a4798bef@suse.com>
+Date: Mon, 2 Dec 2024 17:14:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202131322.1847078-2-shiyongbang@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 09/18] gendwarfksyms: Limit structure expansion
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+ Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
+ Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20241121204220.2378181-20-samitolvanen@google.com>
+ <20241121204220.2378181-29-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20241121204220.2378181-29-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 02, 2024 at 09:13:18PM +0800, Yongbang Shi wrote:
-> From: baihan li <libaihan@huawei.com>
+On 11/21/24 21:42, Sami Tolvanen wrote:
+> Expand each structure type only once per exported symbol. This
+> is necessary to support self-referential structures, which would
+> otherwise result in infinite recursion, and it's sufficient for
+> catching ABI changes.
 > 
-> Add dp aux read/write functions. They are basic functions
-> and will be used later.
-> 
-> Signed-off-by: Baihan Li <libaihan@huawei.com>
-> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-> ---
-> ChangeLog:
-> v5 -> v6:
->   - adding do{} while(0) in macro defination function, suggested by Dmitry Baryshkov.
-> v4 -> v5:
->   - fixing build errors reported by kernel test robot <lkp@intel.com>
->     Closes: https://lore.kernel.org/oe-kbuild-all/202411131438.RZWYrWTE-lkp@intel.com/
-> v3 -> v4:
->   - retun error codes in  result incorrect branch, suggested by Dmitry Baryshkov.
->   - replacing all ret= with returns, suggested by Dmitry Baryshkov.
->   - moving the comment below the judgment statement, suggested by Dmitry Baryshkov.
->   - moving definations to the source file and clearing headers, suggested by Dmitry Baryshkov.
->   - reanaming dp_prefix to hibmc_dp_prefix, suggested by Dmitry Baryshkov.
->   - changing hibmc_dp_reg_write_field to static inline and lock, suggested by Dmitry Baryshkov.
->   - moving some structs to later patch, suggested by Dmitry Baryshkov.
-> v2 -> v3:
->   - put the macro definations in latter patch where they are actually used, suggested by Dmitry Baryshkov.
->   - rename some macro definations to make them sensible, suggested by Dmitry Baryshkov.
->   - using FIELD_PREP and FIELD_GET, suggested by Dmitry Baryshkov.
->   - using DP_DPCD_REV_foo, suggested by Dmitry Baryshkov.
->   - fix build errors reported by kernel test robot <lkp@intel.com>
->     Closes: https://lore.kernel.org/oe-kbuild-all/202410250305.UHKDhtxy-lkp@intel.com/
-> v1 -> v2:
->   - using drm_dp_aux frame implement dp aux read and write functions, suggested by Jani Nikula.
->   - using drm dp header files' dp macros instead, suggested by Andy Yan.
->   v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
-> ---
->  drivers/gpu/drm/hisilicon/hibmc/Makefile     |   3 +-
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c  | 164 +++++++++++++++++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  42 +++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |  27 +++
->  4 files changed, 235 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-> 
+> Types defined in .c files are opaque to external users and thus
+> cannot affect the ABI. Consider type definitions in .c files to
+> be declarations to prevent opaque types from changing symbol
+> versions.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Thanks for adding support for skipping types defined in .c files. That
+is a useful feature that genksyms has.
+
+I was also recently thinking that it would be great if genksyms could
+skip definitions that are in internal header files, for example,
+kernel/events/internal.h. Perhaps something that could be added in the
+future..
+
+I've noted one nit below, but the patch looks sensible to me, feel free
+to use:
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+
+> @@ -79,6 +80,55 @@ static bool match_export_symbol(struct state *state, Dwarf_Die *die)
+>  	return !!state->sym;
+>  }
+>  
+> +/* DW_AT_decl_file -> struct srcfile */
+> +static struct cache srcfile_cache;
+> +
+> +static bool is_definition_private(Dwarf_Die *die)
+> +{
+> +	Dwarf_Word filenum;
+> +	Dwarf_Files *files;
+> +	Dwarf_Die cudie;
+> +	const char *s;
+> +	int res;
+> +
+> +	/*
+> +	 * Definitions in .c files cannot change the public ABI,
+> +	 * so consider them private.
+> +	 */
+> +	if (!get_udata_attr(die, DW_AT_decl_file, &filenum))
+> +		return false;
+> +
+> +	res = cache_get(&srcfile_cache, filenum);
+> +	if (res >= 0)
+> +		return !!res;
+> +
+> +	if (!dwarf_cu_die(die->cu, &cudie, NULL, NULL, NULL, NULL, NULL, NULL))
+> +		error("dwarf_cu_die failed: '%s'", dwarf_errmsg(-1));
+> +
+> +	if (dwarf_getsrcfiles(&cudie, &files, NULL))
+> +		error("dwarf_getsrcfiles failed: '%s'", dwarf_errmsg(-1));
+> +
+> +	s = dwarf_filesrc(files, filenum, NULL, NULL);
+> +	if (!s)
+> +		error("dwarf_filesrc failed: '%s'", dwarf_errmsg(-1));
+> +
+> +	s = strrchr(s, '.');
+> +	res = s && !strcmp(s, ".c");
+> +	cache_set(&srcfile_cache, filenum, res);
+> +
+> +	return !!res;
+> +}
+> +
+> +static bool is_declaration(Dwarf_Die *die)
+> +{
+> +	bool value;
+> +
+> +	if (get_flag_attr(die, DW_AT_declaration, &value) && value)
+> +		return true;
+> +
+> +	return is_definition_private(die);
+> +}
+
+Nit: When I read the is_declaration() function in isolation, it is not
+clear to me what determining if a definition is private has to do with
+the type being a declaration. I think this and related logic in
+__process_structure_type() would be easier to follow if the return value
+of is_declaration() was negated and the function renamed, for example,
+to is_kabi_definition().
 
 -- 
-With best wishes
-Dmitry
+Thanks,
+Petr
 
