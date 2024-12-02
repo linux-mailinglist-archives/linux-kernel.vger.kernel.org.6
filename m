@@ -1,178 +1,184 @@
-Return-Path: <linux-kernel+bounces-428168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40A29E0AE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:23:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 749AC164048
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:23:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04B51DDC26;
-	Mon,  2 Dec 2024 18:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="SXfbWijL"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1969E0AF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:26:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753BF17C7CE;
-	Mon,  2 Dec 2024 18:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733163792; cv=none; b=VNrw/hP26ECOSJrlVELM2+xmk+4hDp6Qag8w4c5pf93eWkSu0wTGgU9zEeD6Mmg0eRXSQpekgIWgTXNpvev5YIKq7xoXLieoSf/gwTozxaDb8puW0XONwh9ydIPM+gk0/MZ7GZlXy7CX5EjoBpRgg5L+QL9+wjD2SoFg3Ii2X7c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733163792; c=relaxed/simple;
-	bh=xhIIKTgEjgfgPJ7uZLN9bGnfJwQ9HDBQbB0AxH1lDxY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RGGrx4NUkviTFwHECSoXXBVcMaQ+60BbL9QbfVw0JJgqAQUY24b/a/PwDGktQml+UcgQj5ygqoO+P/DwmVyMWUUJAYAIUhgFWk+X/xWwx7mxz+Xcd6IbJu8z5z3HZgZPqe4qkRYm8a7ebvhxCpnXtfAPTy4lKCpBUY6U9fP3IYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=SXfbWijL; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2HdRtB026862;
-	Mon, 2 Dec 2024 13:22:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=Hg01MtYLSNkXslDYbN5/Uh6enJb
-	m4mOvCya7IpOQFkc=; b=SXfbWijLh6XiLoscTrptzRznEZOGg1BT/H99sPw9xtg
-	8Z6kudAOJrUuJJ+AibT5geO7Yjc5zyguvfWIoSBBkBVaxhuUxuEdcchjUM6sLFsJ
-	aK6gXgutNLmIccHbHhFAx7yPKQxMMj23WMObiF7jrJQmDU3f3U25ZORSN2JDeNy8
-	+kstgFBR05swKrL+XFvekCyByMxcJWI0Ovl/IoNpSyndTAj5GcOyYx3++JGrcYnY
-	sm/O1kX/fR6lMqDVRr5xMVwROvxGlfJ446YenLb3LFnr42TAuL6t0GnnknFdzhTc
-	g/xgxQArlQBBnqVo9XMLXK8GftGjgQGa1j8IhjJOAkA==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4380g6h6hw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 13:22:54 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4B2IMrXd037765
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 2 Dec 2024 13:22:53 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 2 Dec 2024
- 13:22:53 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 2 Dec 2024 13:22:53 -0500
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4B2IMfkQ007526;
-	Mon, 2 Dec 2024 13:22:44 -0500
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <lars@metafoo.de>, <marcelo.schmitt1@gmail.com>
-Subject: [PATCH 1/1] Documentation: ABI: IIO: Re-add filter_type/filter_mode
-Date: Mon, 2 Dec 2024 15:22:39 -0300
-Message-ID: <b2132bd3ca1d64cdd8d5afab1f1f33c574718b50.1732901318.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CF5281FF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:26:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6E51DE3AB;
+	Mon,  2 Dec 2024 18:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KPdiDbpw"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2051.outbound.protection.outlook.com [40.107.93.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5135F1DE3A7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 18:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733163966; cv=fail; b=FNX52c5vLOoDC2CAZ8wTsyksN81RIbTyVssLF5byJ1X9AUfDRPc+ZxpKmyofC+hyL07TyI5+FRDnY3kKhxV1irIIoyi/N2/091w2skLAvbGb3LAD23n8FAcKjummL9Cbq8FwDn/LVVioPIDpkWzrnpPmlLd5DuZuh0eGpMxH+b0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733163966; c=relaxed/simple;
+	bh=oT2CuFIPdot0ysO2wyqNrLYwgS0OsBD36ZmV03ytxds=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=l/6af/tYI6dOw6KAXWN6I9HXYUU5P5egFDqUxBbsRyFumlQjKM67izXSXTVp+CXQkzmqU7MmmubAjitU9wLGiy1SOb9utFG+kaxRXHxQh8zk6fIKFuyaC6oIiK8jAFhptzPPmBpA3z/wK4UtPE4gwZdN61Ek0E2ruEMpPFi7OqI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KPdiDbpw; arc=fail smtp.client-ip=40.107.93.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dv2jsl+vMZRT1kZj0HMMgH+s13yfsEhQuO+u9kRo8yqBA0Ca2FUutwwb9VYVHI+ll2+4FjmPO8WkJEAm+nIzu0uagVaX/KjYt+q20Lv8nFUOX+DMyc76aJruV+6+pYLIGLjMGsdSGiM8EZjC2/Sep5XKAZGIwIV6OeKAFyJOd5z+ZLB1gbPDjP3SGcpZ7DlClZeQHt3QI9ubN61YTTw9AIDP3djT8AgZ7iWuXKn6aTTvAPURfgNjcbdnyIR8v9PZxzsab9dVhKVSD+e7rZQKhXmnnw9ZgjdW7FTRJMXKdHJDhDrsen5JNajSeYdmRX3jU+KJddfai3BQAnKK1BHIvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XJwNF+jI0EN8g2OtGDrh7ERgWTFTrEf1l2dvL/4MWHY=;
+ b=jlY0DzqruJlQ2eKpyboqziC43zOz6SqS1p8mbu+7uBPFtpeJGNgbX3dYGlX5uRt98A50o+oNJO5PbeKxZG0670eFtbGCiXmJZF3SqQYq+zxxK/fUt9DCgwKT9I1eEAetfeW828VqajIpimIUhTfKZ7oW55+2LYgaj1Vgr+qS+mWeA/eukotgt5KcgFcaNoMIR0GIikvqaEaKq071tUwP3Szoc9uRdYFVJWGPCQqUVoi+rZnuDXuiwDWv5BoGShGfM/obbcpffbYbf7MeCoEUQz5hENd4oLv/CjO7pSLzeyB2iLmPoUiZz1VS3WGT4cCpH4vXEIJ6yOBoOolhxC1k+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XJwNF+jI0EN8g2OtGDrh7ERgWTFTrEf1l2dvL/4MWHY=;
+ b=KPdiDbpwra7OohL5e4c07/Ph0S8OsEZ9XuMHETn7QBga7kV4s6CPKr4lwRnYltwb1M8h+601zlitZr9TtjKN5P7u2tp5H/MUrCDMbhFAws6qG9ljZvoPFQU/j3MBwnEcYe2t94eDqiaXTNvjnZW2ePYI6Id/faIpKXcjjZRCZEiqb8F7ppnNIsYfPqiLgA9A51ujjZ9jI9AWwwJL50rDE7JA8yTzWoPLuTv7uHlZuMKwAqzVAjEIqt5gA4VpX0bMxn3Fa2kHGme4C82Zszv1ggb9jr2KCSCp4NA7zNQk20xN6aWJxd7vd3NGdCvKIfnQwJU+AY+cMX9yTNNRL8oMJg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ IA1PR12MB6481.namprd12.prod.outlook.com (2603:10b6:208:3aa::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
+ 2024 18:26:01 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%7]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 18:26:00 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linuxppc-dev@lists.ozlabs.org, Andrew Morton <akpm@linux-foundation.org>,
+ Oscar Salvador <osalvador@suse.de>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: Re: [PATCH v1 4/6] mm/page_alloc: sort out the alloc_contig_range()
+ gfp flags mess
+Date: Mon, 02 Dec 2024 13:25:57 -0500
+X-Mailer: MailMate (1.14r6065)
+Message-ID: <64714AE8-4B62-4863-99D9-55C78294E2B2@nvidia.com>
+In-Reply-To: <20241202125812.561028-5-david@redhat.com>
+References: <20241202125812.561028-1-david@redhat.com>
+ <20241202125812.561028-5-david@redhat.com>
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR22CA0024.namprd22.prod.outlook.com
+ (2603:10b6:208:238::29) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: N6f4ONGVqAyC_D2ulWzVRNIuUaDEnRX4
-X-Proofpoint-ORIG-GUID: N6f4ONGVqAyC_D2ulWzVRNIuUaDEnRX4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 clxscore=1015 mlxscore=0 adultscore=0
- priorityscore=1501 phishscore=0 suspectscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020156
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA1PR12MB6481:EE_
+X-MS-Office365-Filtering-Correlation-Id: c53d18e5-5525-4e76-1dc1-08dd12fec5ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GGdNOwRzcJSPTqle4cQKOKAMxq0KwLGVQW3UpeAu3rjXnyCGvEXeFcTTjRBE?=
+ =?us-ascii?Q?uD/AJLo3pzWvMrCHtoxbFjKUjLzO/DO7kX9PDCC5kERObMb62FbT3N+VIJuN?=
+ =?us-ascii?Q?aT9u7QnbAFNAA/b41KOsyYbFAsBq+dS2/p50GytvsxPI/vrg/Y1If3IJgfJ8?=
+ =?us-ascii?Q?nDjtOREabDa8ACs5s/NzsIeVf9jMysfMYl8CVCXeSvNuI38IkN+CatMzoAKk?=
+ =?us-ascii?Q?Uem5JT4sS/jaypqhvcKyIGSayUapZSjaBkoVeqqLkJDrhU6xQ2AsF2pDiMZw?=
+ =?us-ascii?Q?cT/cQUA4XLat7TgOIqUbjkuMae9yMIzxR/3+e6GIfqQ0M/y7OmhJpEIvzFa5?=
+ =?us-ascii?Q?T5tpq7C9qqUUaTiiV0NKXbj9BD6kt13QmWbf9oP0hBl1f/ybF4LF6q8ZKKCP?=
+ =?us-ascii?Q?lEO+E29mK3JC+w3q44bq5FNNjySKyl6JTyKONMZ9VG4yhko7/bYaDS2hRwXb?=
+ =?us-ascii?Q?1W3SJil9g93v/ZWzKlfZauM9904J3eslXUuLlQAHRBZ4B0YaFgNWINld6YwA?=
+ =?us-ascii?Q?FA44qh2BoGS1qdzBOPTSncFhx1MlPfnGZYVvEbdScpvvUKxSAwlN5DK/APWV?=
+ =?us-ascii?Q?DP/7pOC8EkrxNBsYvNhTYjfDcSR7Yie2B+zZ7DtoARqeJI+h6YOO6TVc/WyA?=
+ =?us-ascii?Q?NubBJr54uF7jTOry0nsJqAv6W3VrXl9745T/XjaDabqIy3iTmS9goVE83yYu?=
+ =?us-ascii?Q?ZYAKwOythwfts5uZNl+ABar3fZTf3WgvLNGsHOelHBLoUJ6Tsk1FwmRWWg5f?=
+ =?us-ascii?Q?f5dCAluM8MiPKWLrhQvmrotnP2CeC9kwzZye6k6ozc0a4DEP4z8uC7Fx8Urv?=
+ =?us-ascii?Q?T+Z79H7ncqUafqVnJCt1pOtmeWFRO25zABWUKTJTZcLjS64m7zOgl56I13cJ?=
+ =?us-ascii?Q?tZqy4O+50qKlOp9Et8ygry2rBY2/4YoFJRuQ3ppYmMqSGeBcFNmfMn7/Sfdm?=
+ =?us-ascii?Q?HRb2PnIwxODLmTUVsEwrZk0zWVs/w2HvGM9AN+DBq0XuONHL3UQrKHXcqnwh?=
+ =?us-ascii?Q?kM/Pe94SbAFKtMNhqG0bOm9QLoXe94BWP5yuDlgi1ForITaEzXHG4xdTuBIn?=
+ =?us-ascii?Q?L/c9N8oZqQzABX46sD9LYxvYAV6CdoHfvatHcFQWW5C/FJxSYzEwVGXxcuUz?=
+ =?us-ascii?Q?REonDOxTxqweajVHMfR8LzuLLbZQkwGSP8Cz3wQH785bShB6t8Itdm8d78dr?=
+ =?us-ascii?Q?DAH+PBUVuUsR381Fj/BMqpfG8xZK77YEvQkodsfVX2ozHbrGrgU3VBxOscV8?=
+ =?us-ascii?Q?eUyUBP/eWbfMa13H3Nqr3BLzY+C4PmQSFcQslayvwiFMA/sl8gj9zyhlVc2i?=
+ =?us-ascii?Q?lUml5UZSm43t1zKzNqFP1byu9p89NDFkRYZ4TAOTBmscHQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tk/r4x7rGFGh4AbRhNQf8eQD/GYc0Z3uYulQDPH8E+F6iEORUYhFDYC0Qva0?=
+ =?us-ascii?Q?nEyuBWf2LReGTdkyL0SUD5Mv0HY2ddh2tBDQLs3qkx1tUFTjmCdLbNaI4Z0J?=
+ =?us-ascii?Q?KUcxgcu9sHA1d7GUS846FsC5VMKw16UYg6/MM4odGl6UedEpIWhc6ly52tvG?=
+ =?us-ascii?Q?shEGJgWQzXam3wxakxvFygGIbfZtb82n6SCjJiNLxJkZIuGW6jWxbsRn7pgd?=
+ =?us-ascii?Q?7elVcEnRAV6YQe+3Utfx1IExUY7NYW9QcwWy0OwSorCvvJajdA+urFBWR64A?=
+ =?us-ascii?Q?VwANCjQjG8cgrj9mu9z2w15vKkqotfNPiE7x77f/zsgSGZEFKPacW9U/Anpw?=
+ =?us-ascii?Q?qDHIhA409LbkWIIBTCkRf6x+i9c50HzwbGPSOrKAY8gyTOkvR8vvvXaFQ1ai?=
+ =?us-ascii?Q?BUjuF3HtQzgPyAImvZ95vkN0BohMUwItIWQZ4l4YzF4E+/ACbQbIQq6rZwU4?=
+ =?us-ascii?Q?mpMwZqtKMfIxlkWIECxLgdtqB2jXpB6pnEJgkZYT0uPu0CWSAYChd21tJtmL?=
+ =?us-ascii?Q?Euj50qoe6+Bs657+jPTU30F1FQJWPehPs8ZXPkMNM03R1dmw0id2IIsG551x?=
+ =?us-ascii?Q?q0YAkniEvZIdkxBy5w/8FsyGitZ47iOr0/uHIqluVDZ3kPJSrHCKRk35ICF2?=
+ =?us-ascii?Q?FxjGFEMYKI7nHKu2p3QMIk+fYB2HDFGvCNLJVlnAnOGhhoAVkPWqBjowTG8h?=
+ =?us-ascii?Q?TTRKJcMb6uN8/+vwP774U+0Z2A/5Bmu8nupd2xUx0eqz427ovOxiqjT8m21B?=
+ =?us-ascii?Q?zE8835MkjGmoJmwmO9X+xDI3ACbGkayXRtDR3jN5888i8MZtvobE/W5lKIq6?=
+ =?us-ascii?Q?NxDR+/TvM6m68VWIoHCc7jmmNG7IzCqgK/DodH2hfbXc20No1HfQO+QVU8Ct?=
+ =?us-ascii?Q?r5erQRBBJ2Zr1XwJzoqluTxVwR/b2ZVSLfqZ1wO89AyhxQBLEF6iZW/3du3e?=
+ =?us-ascii?Q?YgnS8SXAAVPPaxU1XI0BhO7tqQMUdo7LY9k2k4K00fVf953r0BmjoZjp5nGc?=
+ =?us-ascii?Q?IWKjqbaa9Pe7Dy9cLfMBTZT2AXpiNIWW9hPp+WRt1leLh6R0nliZ8kghH4yn?=
+ =?us-ascii?Q?CJxGCJ5oFPBgqumBuh1bGFXBv8fCZu/pHzwYW/A7IQhH7NTdRSscfEp0TVqx?=
+ =?us-ascii?Q?bQ391JoQJDHH37uYkzHW0oSTsNR7UbnNjwd1anWzJ0t+kWiRGDqZbrMWZUiT?=
+ =?us-ascii?Q?lzA3uqeJ0bHsOT5dIihJD0Wunwr3mHlkluMkyparZyKzFX3rjfwVCw46q+aO?=
+ =?us-ascii?Q?jsP/1GXFhHtJpYWh+aYLD18N0jss9iL9O3hq4jKhivR6xztU32Kk9ARAtNbr?=
+ =?us-ascii?Q?XjXJtYeGvqY4PwxIf3nJxjuP8O6mXqcyD11Nv8wUE3bvCj2y+H1aZzT+NGwU?=
+ =?us-ascii?Q?jNLQtXKQCWrtigEts/6lDz8m6eGKIiyRvSJFXyCbGX+Ov5x0HAHk6JlkJGdW?=
+ =?us-ascii?Q?siCdu9ZB4fuEvTWUWLMI1NwPVnAvOswR25HyFZer01Gfe9s2OzL1XMLZ0ACz?=
+ =?us-ascii?Q?5P75iTnHsvzibkoer3/AnzTKcg12XzexcuFaglATT58NRWZ2vIQZRulLa0T5?=
+ =?us-ascii?Q?yhZoMwj1w1kZXKw30X18yddlDf5UJ6vpcHXRcklH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c53d18e5-5525-4e76-1dc1-08dd12fec5ec
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 18:26:00.8979
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kx1vVEkYhwhXGa/EdRRh5PS4QKbSlKuklCXuLIiG+PUGuAYEbSU0q09e+oYPaUtz
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6481
 
-The ad4130 driver exports in_voltageY-voltageZ_filter_mode and
-in_voltage-voltage_filter_mode_available attributes to user space.
-The ad7779 driver exports filter_type and filter_type_available.
-Add (back again) documentation for filter_type/filter_mode attributes.
+On 2 Dec 2024, at 7:58, David Hildenbrand wrote:
 
-Fixes: 01bb12922b60 ("Documentation: ABI: added filter mode doc in sysfs-bus-iio")
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
-Digressing a bit away from the specific ABI used by ad4130 and ad7779,
-the sinc3/4/5 filters are called `filter_mode` in ad4130 driver while other
-drivers (ad7779, ad7124, ad7768-1) call sinc3/4/5 filters a `filter_type`.
-Datasheets use the term `filter type`.
+> It's all a bit complicated for alloc_contig_range(). For example, we don't
+> support many flags, so let's start bailing out on unsupported
+> ones -- ignoring the placement hints, as we are already given the range
+> to allocate.
+>
+> While we currently set cc.gfp_mask, in __alloc_contig_migrate_range() we
+> simply create yet another GFP mask whereby we ignore the reclaim flags
+> specify by the caller. That looks very inconsistent.
+>
+> Let's clean it up, constructing the gfp flags used for
+> compaction/migration exactly once. Update the documentation of the
+> gfp_mask parameter for alloc_contig_range() and alloc_contig_pages().
+>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  mm/page_alloc.c | 48 ++++++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 44 insertions(+), 4 deletions(-)
+>
 
-Depending on the particular ADC chip/design, the sinc3/4/5 filter configuration
-may have an impact on the output data rate (ODR) (which is equivalent to the
-sampling frequency for SAR ADCs - `sampling_frequency` ABI), 3dB cutoff
-frequency of the filter (`_low_pass_3db_frequency` attributes), or settling
-time.
+Acked-by: Zi Yan <ziy@nvidia.com>
 
-ad7768-1 sets sinc3/4/5 according to the sampling_frequency attribute. No
-filter_type attribute.
-
-ad7173 sets the filter_type according to sampling_frequency too, though it
-looks like support for only one filter type is implemented.
-
-ad7124 sets sinc3/4/5 filters according to a filter_low_pass_3db_frequency
-attribute so it doesn't export filter type attributes to user space.
-Missing `in_voltageY-voltageZ_filter_low_pass_3db_frequency` documentation?
-follow up patch?
-
- Documentation/ABI/testing/sysfs-bus-iio | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index f83bd6829285..704c9033cb5b 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -2268,6 +2268,20 @@ Description:
- 		An example format is 16-bytes, 2-digits-per-byte, HEX-string
- 		representing the sensor unique ID number.
- 
-+What:		/sys/bus/iio/devices/iio:deviceX/filter_type
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_filter_mode
-+voltageY_filter_type_available
-+KernelVersion:	6.1
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Set the filter mode of the channel. When the filter mode
-+		changes, the in_voltageY-voltageZ_sampling_frequency and
-+		in_voltageY-voltageZ_sampling_frequency_available attributes
-+		might also change to accommodate the new filter mode.
-+		If the current sampling frequency is out of range for the new
-+		filter mode, the sampling frequency will be changed to the
-+		closest valid one.
-+
- What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
- What:		/sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filter_mode_available
- KernelVersion:	6.1
-
-base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
-prerequisite-patch-id: 3370db9ec1e67ba97b55607f445ff37c60929668
-prerequisite-patch-id: d686dd309e1d3d39d038613f514e58ff5893ae42
-prerequisite-patch-id: c832285d7bcc22433f2314a144566aa9437fd5da
-prerequisite-patch-id: 3f758a121e36edd43789e80379ff81beeb2d75ce
-prerequisite-patch-id: 0ef36ec4d6cf23f08bdb3bc4399ced2561a2a69b
-prerequisite-patch-id: c8e7f0e10a2630bd0029ee160f8dfc3f742378ba
-prerequisite-patch-id: 5e85d52a87f2a833893eeeac5d1651bda46d0931
-prerequisite-patch-id: cd75aba06cf77f8cd398dc7d0c33d94e1277d1f3
-prerequisite-patch-id: b813c25db823f1b02d0e9005188d41c0d89eb291
-prerequisite-patch-id: 024ac23a16e45e802b70afe9bc464d1caeb41fcc
-prerequisite-patch-id: bc084c859bfa93c5764e656bbcbfd4d14e031299
-prerequisite-patch-id: 51ebb591fbbb3535899332ce1b106a3f8d6497da
-prerequisite-patch-id: 2b396d1069227fee1c5a7bcf33bc63a56681441b
-prerequisite-patch-id: c00b841cea6e331e19fb1f31beae831572bce4f5
-prerequisite-patch-id: 4fe5fcebfeb745a83a7054390a304a1e250d74d1
-prerequisite-patch-id: 461cce4f81f88bbec71580c0743b8970a504899c
-prerequisite-patch-id: 59cf79cfa5f091815f578aad884ba0e3f9ae2175
-prerequisite-patch-id: d48f6e531e64ee7797890e9f36f849f881884f1a
-prerequisite-patch-id: 5f48c69023ecae6b3de595c9a209d1c4d65b5ba2
-prerequisite-patch-id: 73e2fc3be282880231105142342b47b00b23ab6d
-prerequisite-patch-id: d71deacf6bb4e90e8059a12a94ade36866729fa0
-prerequisite-patch-id: 6173a25ddf92a3d1446923d9e87b15642b761034
-prerequisite-patch-id: 5b248ee02cc148eeea4f01c435e701b74bc07c60
-prerequisite-patch-id: 9fa4f11d62ba0e1ef9f3ca08ef1ee5c1f0711038
-prerequisite-patch-id: 6cf99f094cfa8d984a1c1cab8813d1078ee48f05
-prerequisite-patch-id: b42c4bf1ce430dccca920f942c6040f641c8307e
--- 
-2.45.2
-
+Best Regards,
+Yan, Zi
 
