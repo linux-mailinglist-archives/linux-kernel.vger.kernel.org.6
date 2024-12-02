@@ -1,127 +1,211 @@
-Return-Path: <linux-kernel+bounces-427701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CC79E0519
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:34:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E977516A7E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:30:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A73B204F8D;
-	Mon,  2 Dec 2024 14:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VquWEe1R"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A599E050B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:32:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD312040B4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63467287BD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:32:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEEC207A0B;
+	Mon,  2 Dec 2024 14:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JOp3tLvw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014D5205E26
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149831; cv=none; b=mNMvUHH8r2lRvg4s3rdRytW/525U5hsPU/eBsD3jhUPqK6oep1guGFfa0136TtVKnXGGE4uHmwyqYq+oUSjPT26R+T7lF0uPSTGrpnHgDdudjyJnalHcG3nc8ZgsgoxAjWxXx40J2ZC0RrUiP7fSsoqklTefsFg7XkRm/OtFzrs=
+	t=1733149885; cv=none; b=b0UsM9NHs8KO/OW59aaqBlji2qXsgPeZVTq55smCTHTX3uFqi2PKZQhZmVvrCT5f8SZaY+mvxGILTn102g3M3xjrLUldltJFSBmtLG5EEK+exIa2sQ87MBPGap8ewrFxSb0RIXPB9ikm+Bfsqhf75ZUh/aGUzW6M5cuLKBH0/lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149831; c=relaxed/simple;
-	bh=JKudxHQZAMvenvuQlThpOxs+MgeFGbhhq/9B/KOCpcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rZyevMKDkSJA5x7ABEAnenwjiPI8Le8UgET9daHZr2wiOHDqKpQj6epsMEUlsfN1pn5s+VpWvDKmCLqNgN4MCI3e2kiGWJgkP+7GPEQd52wG/dj3c6RnkSBuDaMkSYt7iSKAu/zcIFV7UGKvoDqo5ooiW+PlU+jbYG12nLgKqWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VquWEe1R; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28GJtM015491
-	for <linux-kernel@vger.kernel.org>; Mon, 2 Dec 2024 14:30:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	opJ/u7aIb+6rMXmWGckJvu/bfCwMl33RWOEqNCV31vY=; b=VquWEe1RLGrvadi4
-	+COaUnJRyGGhjYHqZppe4bZ3jhOGa3g7ml2a8SJItS7czFte2OnVMCgqstXlugDQ
-	K8WV6oj9zg+8cnX6uEe8vYyd+v7XVpD0WeoM86U6l0z+KdpnLwE1PdwwRxyIpIWz
-	2lb4jTivnzC/L6WtEc0a0cnM4V4B92QHYZPnsPfwv1dk9Tm1P0CxLAGxT+LVsocC
-	43qFwMOpKUhuA46lS57Tk675247+Gwl778zVT+96U94uOpqV4wW5cdUvZZLzESf+
-	w3/ci0PcUmLJgijw5td2xAteFTUmsZQhTHTVhj2riitEMatjxOL3eNnho5rc7odE
-	Yu2jrA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437u36d38d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:30:28 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-46699075dd4so9588731cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:30:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733149827; x=1733754627;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=opJ/u7aIb+6rMXmWGckJvu/bfCwMl33RWOEqNCV31vY=;
-        b=Ac8XR7TQvGSX+KJ8b9y7EpscZiT6QJAHHOlfhouUqdsTEmo6UyGwadlW5czGNVTV8D
-         hDbPuuBbPE55eLJZwgAC4qiIEqnnfp0EDqqAT1cFbZcVzv2o79aAVIocmU3iRThERpmG
-         NvvD4fNcf9depwAKqEatRUsjcGs0t3diuFBA8SaBFrvrsCLDyCp8Dvy4Prb6N4egUuMQ
-         W5yJ9z8PXvO4g00C0bbdnyyAmb8ragTPuZ3pmXMfjYQbqJh90Q6saSutJH9Ut0fZQ16+
-         IhYbIM0OMNyCAsAbJr1FkQ76HGN+3D9/uOGclE77s2KirYWeawpLcgbMIc0sBY3vLqJC
-         Rj7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXvyvagrKpWafK6K6q3gqQbGNZLX/RRLU4IacCAiLm/ynJZRcwdLlwxAPJMYQ7r2kdtSa81Iyp4rKEHKJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe17AZZflM8IMj2O2gqy7jW636p9acDj/pZF6BIXy7flIw7XBh
-	AZhnVH5JcEFngm8CEaHB/SqrRhJu0HRz3peEOzZCGcnZAN92Q163L2goIQT2tw2xDVcKG2go23R
-	CKxZ+HpGegFNv+ZTMxZ0h3yBFEIwEas5MF7/WZ/w0DZi2rJsu8wEaTBvBKMvT/jQ=
-X-Gm-Gg: ASbGncusMQTFL3I4td9xFWg8/7y8kcSqeuq0+TNbRGxZDTyXgKzKa3hJwkzUzyaP9iw
-	rHjHdZMHLCXGIC5LAwvgqOatihEVVJBh7SMvN9JjJEmmdF7xlN4WwS1r0sKy+48GMhICX8e4SM5
-	TIEomhOe5dEWqB7TK1GOKWzpN3ovQwlD4xNDNHK1BZJYTYgpxLhew339sjMTtjQFw4W/oLJ7sKF
-	ss9iz9CbM0lnlOA7GmSsQxFLN3sXMFHQVl75MYpXpa1+n8g8JUCYyyvvvQz8Jt/YMeVVx0KtO0o
-	P7iB0enzOcsnbnNWN02FfHwxu6qkVAI=
-X-Received: by 2002:a05:622a:1a13:b0:460:62a1:70be with SMTP id d75a77b69052e-466b36737d2mr150946461cf.13.1733149827280;
-        Mon, 02 Dec 2024 06:30:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHyWUKeBXhhoq1965fOPrse19lfgFS9Hoi0RqhL/1OBQ3mXf5NYh73GoEjiIReak/2sYFLgpQ==
-X-Received: by 2002:a05:622a:1a13:b0:460:62a1:70be with SMTP id d75a77b69052e-466b36737d2mr150945211cf.13.1733149824157;
-        Mon, 02 Dec 2024 06:30:24 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0c04ac64dsm3519962a12.68.2024.12.02.06.30.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 06:30:23 -0800 (PST)
-Message-ID: <7ae4bed8-c170-411c-8ece-d685271aeeab@oss.qualcomm.com>
-Date: Mon, 2 Dec 2024 15:30:21 +0100
+	s=arc-20240116; t=1733149885; c=relaxed/simple;
+	bh=bg28pajEEjGjeO4pOGZmHHUzSUhOzQVpV2W5Uqp0eCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FJr6MKeeSF8rQZXsQfrDzq/sdvWnQeUBS+JyRyzHbDDK+jha0u3icqhWRJ1FUaojyof/hC87o6HGXBbiE7CVC9tNmgJeN1YViYT60O4Xh/Ic0e5wSizsaqLM5uT7Y9vYh3PCJIEgTppnZwRO8e1X95nYLcGhXabz8n4b9U3z9EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JOp3tLvw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733149882;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nQxHiYMs7bpD+fxOYblKM9SE945ZS3Tm4oRrQv3yLdM=;
+	b=JOp3tLvwbOLU5CC+nks0hHS8ZQdP4UmHGdvkUCrWjpgOMhrTG9zUqPDHr2e7+JT5BUPuBa
+	rsgUa3lMmO6y9y+DpGXCxtu4zdiNxEfLH2NMz6TKZwqdPos/zRWO7lW7FOcCOqj90L/V75
+	2YxIdlywVRVWfr4DIapKDBe7KUbDzoM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-414-6IsI-hoxNfCBI5bEAUkzWw-1; Mon,
+ 02 Dec 2024 09:31:19 -0500
+X-MC-Unique: 6IsI-hoxNfCBI5bEAUkzWw-1
+X-Mimecast-MFC-AGG-ID: 6IsI-hoxNfCBI5bEAUkzWw
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 681921953954;
+	Mon,  2 Dec 2024 14:31:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.48])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DA5CA30000DF;
+	Mon,  2 Dec 2024 14:31:13 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Yunsheng Lin <linyunsheng@huawei.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 03/37] rxrpc: Clean up Tx header flags generation handling
+Date: Mon,  2 Dec 2024 14:30:21 +0000
+Message-ID: <20241202143057.378147-4-dhowells@redhat.com>
+In-Reply-To: <20241202143057.378147-1-dhowells@redhat.com>
+References: <20241202143057.378147-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] arm64: dts: qcom: qcs615: add the APPS SMMU node
-To: Qingqing Zhou <quic_qqzhou@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, robimarko@gmail.com, will@kernel.org,
-        robin.murphy@arm.com, joro@8bytes.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20241105032107.9552-1-quic_qqzhou@quicinc.com>
- <20241105032107.9552-4-quic_qqzhou@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241105032107.9552-4-quic_qqzhou@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: kv1Ys1Qt8uYbl6e27nuZ3kIy92Zw9P42
-X-Proofpoint-ORIG-GUID: kv1Ys1Qt8uYbl6e27nuZ3kIy92Zw9P42
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- clxscore=1015 bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
- mlxlogscore=874 phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412020124
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 5.11.2024 4:21 AM, Qingqing Zhou wrote:
-> Add the APPS SMMU node for QCS615 platform. Add the dma-ranges
-> to limit DMA address range to 36bit width to align with system
-> architecture.
-> 
-> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
-> ---
+Clean up the generation of the header flags when building packet headers
+for transmission:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+ (1) Assemble the flags in a local variable rather than in the txb->flags.
 
-Konrad
+ (2) Do the flags masking and JUMBO-PACKET setting in one bit of code for
+     both the main header and the jumbo headers.
+
+ (3) Generate the REQUEST-ACK flag afresh each time.  There's a possibility
+     we might want to do jumbo retransmission packets in future.
+
+ (4) Pass the local flags variable to the rxrpc_tx_data tracepoint rather
+     than the combination of the txb flags and the wire header flags (the
+     latter belong only to the first subpacket).
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: linux-afs@lists.infradead.org
+cc: netdev@vger.kernel.org
+---
+ include/trace/events/rxrpc.h |  1 -
+ net/rxrpc/ar-internal.h      |  2 +-
+ net/rxrpc/output.c           | 18 ++++++++++++------
+ net/rxrpc/proc.c             |  3 +--
+ 4 files changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
+index 27c23873c881..62064f63d6eb 100644
+--- a/include/trace/events/rxrpc.h
++++ b/include/trace/events/rxrpc.h
+@@ -452,7 +452,6 @@
+ 
+ #define rxrpc_req_ack_traces \
+ 	EM(rxrpc_reqack_ack_lost,		"ACK-LOST  ")	\
+-	EM(rxrpc_reqack_already_on,		"ALREADY-ON")	\
+ 	EM(rxrpc_reqack_more_rtt,		"MORE-RTT  ")	\
+ 	EM(rxrpc_reqack_no_srv_last,		"NO-SRVLAST")	\
+ 	EM(rxrpc_reqack_old_rtt,		"OLD-RTT   ")	\
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index d0fd37bdcfe9..fcdfbc1d5aaf 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -110,7 +110,7 @@ struct rxrpc_net {
+ 	atomic_t		stat_tx_acks[256];
+ 	atomic_t		stat_rx_acks[256];
+ 
+-	atomic_t		stat_why_req_ack[8];
++	atomic_t		stat_why_req_ack[7];
+ 
+ 	atomic_t		stat_io_loop;
+ };
+diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
+index 85112ea31a39..50d5f2a02458 100644
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -330,6 +330,8 @@ static void rxrpc_prepare_data_subpacket(struct rxrpc_call *call, struct rxrpc_t
+ 	struct rxrpc_wire_header *whdr = txb->kvec[0].iov_base;
+ 	enum rxrpc_req_ack_trace why;
+ 	struct rxrpc_connection *conn = call->conn;
++	bool last;
++	u8 flags;
+ 
+ 	_enter("%x,{%d}", txb->seq, txb->len);
+ 
+@@ -339,6 +341,10 @@ static void rxrpc_prepare_data_subpacket(struct rxrpc_call *call, struct rxrpc_t
+ 	    txb->seq == 1)
+ 		whdr->userStatus = RXRPC_USERSTATUS_SERVICE_UPGRADE;
+ 
++	txb->flags &= ~RXRPC_REQUEST_ACK;
++	flags = txb->flags & RXRPC_TXBUF_WIRE_FLAGS;
++	last = txb->flags & RXRPC_LAST_PACKET;
++
+ 	/* If our RTT cache needs working on, request an ACK.  Also request
+ 	 * ACKs if a DATA packet appears to have been lost.
+ 	 *
+@@ -346,9 +352,7 @@ static void rxrpc_prepare_data_subpacket(struct rxrpc_call *call, struct rxrpc_t
+ 	 * service call, lest OpenAFS incorrectly send us an ACK with some
+ 	 * soft-ACKs in it and then never follow up with a proper hard ACK.
+ 	 */
+-	if (txb->flags & RXRPC_REQUEST_ACK)
+-		why = rxrpc_reqack_already_on;
+-	else if ((txb->flags & RXRPC_LAST_PACKET) && rxrpc_sending_to_client(txb))
++	if (last && rxrpc_sending_to_client(txb))
+ 		why = rxrpc_reqack_no_srv_last;
+ 	else if (test_and_clear_bit(RXRPC_CALL_EV_ACK_LOST, &call->events))
+ 		why = rxrpc_reqack_ack_lost;
+@@ -367,15 +371,17 @@ static void rxrpc_prepare_data_subpacket(struct rxrpc_call *call, struct rxrpc_t
+ 
+ 	rxrpc_inc_stat(call->rxnet, stat_why_req_ack[why]);
+ 	trace_rxrpc_req_ack(call->debug_id, txb->seq, why);
+-	if (why != rxrpc_reqack_no_srv_last)
++	if (why != rxrpc_reqack_no_srv_last) {
+ 		txb->flags |= RXRPC_REQUEST_ACK;
++		flags |= RXRPC_REQUEST_ACK;
++	}
+ dont_set_request_ack:
+ 
+-	whdr->flags = txb->flags & RXRPC_TXBUF_WIRE_FLAGS;
++	whdr->flags	= flags;
+ 	whdr->serial	= htonl(txb->serial);
+ 	whdr->cksum	= txb->cksum;
+ 
+-	trace_rxrpc_tx_data(call, txb->seq, txb->serial, txb->flags, false);
++	trace_rxrpc_tx_data(call, txb->seq, txb->serial, flags, false);
+ }
+ 
+ /*
+diff --git a/net/rxrpc/proc.c b/net/rxrpc/proc.c
+index 263a2251e3d2..3b7e34dd4385 100644
+--- a/net/rxrpc/proc.c
++++ b/net/rxrpc/proc.c
+@@ -519,9 +519,8 @@ int rxrpc_stats_show(struct seq_file *seq, void *v)
+ 		   atomic_read(&rxnet->stat_rx_acks[RXRPC_ACK_DELAY]),
+ 		   atomic_read(&rxnet->stat_rx_acks[RXRPC_ACK_IDLE]));
+ 	seq_printf(seq,
+-		   "Why-Req-A: acklost=%u already=%u mrtt=%u ortt=%u\n",
++		   "Why-Req-A: acklost=%u mrtt=%u ortt=%u\n",
+ 		   atomic_read(&rxnet->stat_why_req_ack[rxrpc_reqack_ack_lost]),
+-		   atomic_read(&rxnet->stat_why_req_ack[rxrpc_reqack_already_on]),
+ 		   atomic_read(&rxnet->stat_why_req_ack[rxrpc_reqack_more_rtt]),
+ 		   atomic_read(&rxnet->stat_why_req_ack[rxrpc_reqack_old_rtt]));
+ 	seq_printf(seq,
+
 
