@@ -1,105 +1,327 @@
-Return-Path: <linux-kernel+bounces-427278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F6E9DFF14
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:36:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910C79DFF03
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:32:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41615B2C7AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCB11632C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDA11FC7E0;
-	Mon,  2 Dec 2024 10:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C849D1FBEB3;
+	Mon,  2 Dec 2024 10:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZISxf7DL"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gPHIHzQA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA421FCFDC
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E151D5CC6;
+	Mon,  2 Dec 2024 10:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733135538; cv=none; b=LPkWTmVM9OPN5vv8WXIvAscyx6XbvNnpCjRAZgThr+X4sNZHUhJcIyKW6JtmfMap5Beh58ptR+wYN7ECf6/khC2C3FNjYgbYfEHjzZz6+fspZTl/AkKDi70wF1c54yMRJeqz10O/Mx/oMMa1DIPd60DmOquypDPTTpgdF2YFc8s=
+	t=1733135532; cv=none; b=eGj+444LIb/LtLKV/Aytb5DL3i+uwZlkiZm9jC5jEhGi9VBjJXcaJHZamR6DbYfiHp2IY400gjOpfFEvywvVXslDWLzCoCjSCxRuPePcqoCO5/xDorhqGGVg/UuH0Z+jKxxRTCdSFLoUwl6ldYhDMzE4c9bfQfvZLb58REK9fAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733135538; c=relaxed/simple;
-	bh=ko1lhsUdO/gxKjsyX+tvsyj4tOyMuctUUwwnT5Q9xIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rbguxMpBwEbL5rUuNt7N4HS/ZDy+7xvCkFJPXFGCKinobqaY9hFBl/1Ex7fS0ghi8Vsa+FYQ7ZCl8vzqYGJiYdWhsblm9bdXxJgPHmq25h8K67mE08ueJWtV0qaoxiIN5C9ROeJLEHwp0M8HjQhTLcLjUZCXxObvf9RkbrPdCq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZISxf7DL; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2710B40E01A2;
-	Mon,  2 Dec 2024 10:32:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id uxykHN0koisN; Mon,  2 Dec 2024 10:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733135524; bh=WiCxRKoBdkZGcvb2ic7UOpJ1UPYeFSnjI67Gz2y01dM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZISxf7DLSS4lMO5CXuNn+X2LkCjuHjHiTv24kBb8meth2KIGjCiWsBSgObuSPSdMG
-	 IoGTqWhcXEuNHM0YhahrOng2RRwgIHKmIPk3+7+9yOR8E+pEVwvB6tmWOwdL0Fv4cg
-	 WPj4B6GI2rMgdnUf33UjPa2txwuZbdio4XF9oA1t7QgKePSwP/oI0uGJi5l1rXCn9H
-	 Pb1Bj/OzGMBc5QP9vOyHJCsmchp1jNRgC/8FGzJaJ0fuU48QfOCXG47vJo7xC7Gpfy
-	 2B1fKJsLJpesJHS4YKVty0SA66hoGWDMs7fNvKislGBmf/SjvU373/4iujW5v1hsep
-	 TDJA6tM/chMBv+gmctFAzeXe7dyA+AEv9BbpAgbrRWHoHielrtXWePeR4D1W2kj8ct
-	 uGZmfx7QSSs+AbqZkPph/LB0Lbp6bNksttQaIk+xEEPg6eakpRJfkYQQMS7cUxDF6n
-	 xI8XrskuNRTQE/Mf7NCysCyO4Q9fr77JYGb/lsVzhPp4ENGwYnt0xQ9U5EEbN++3bY
-	 pVceWukEh2EKEsKLzwYQDljOqV61tMFPpG04okxWNVmGP5aUlOjpPnlCvum3V99N74
-	 zxUVZlMdMWIu3bm5E2oX4mnL0vGJr59GFsIlYBJLk/6roQSPF1+IjmuYX9ZQ8H4qia
-	 Qogl8mTP7YwGD1elYgxcGyUc=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AB04040E0274;
-	Mon,  2 Dec 2024 10:31:45 +0000 (UTC)
-Date: Mon, 2 Dec 2024 11:31:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/2] x86/cacheinfo: Set the number of leaves per CPU
-Message-ID: <20241202103139.GAZ02Mi53I6XNgSrxd@fat_crate.local>
-References: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
- <1C6C4601-9478-4020-B4A7-47017E9A57F2@alien8.de>
- <20241201224126.GB32487@ranerica-svr.sc.intel.com>
+	s=arc-20240116; t=1733135532; c=relaxed/simple;
+	bh=pBEqhwK9TP5I9OhQd/r6yDn+7IaVfkgbK9aPFk7bDi0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r0pS2PkLa+6IUR1rzSCBUV6Gy77xO7cdjsWfAaPmduwShOhgTbudAzW+Hwg1fmC3xsJ59mtp2vrnAOmcFaiE9v/1lJNsZZ1K3ArrDb+6LvLiip0vaPH1Ym1WZ3v80F4uDcyxJ6567F6I22Qmcsdd/Qnhyr9ybDP9xHHcx83DR5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gPHIHzQA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28PD8r030509;
+	Mon, 2 Dec 2024 10:31:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	V9JKIx72ZzU6OqC05+Y0cV4EzX/9xl6Xv4DQi1WQZEY=; b=gPHIHzQAq5b3PbBr
+	5zksYJJH7AjoF0Cyyx4OcUXfLi2YtKe126piVvjWtAqQTkkwGaWWoiG4ziEvSaY9
+	t7+xhLEOjKZyIldwADuzca1oFHHg7u6rEuqkdW6T9OjfWFzX35H01yfck7j6LTsD
+	58sGy1dVSAaSrbC1JTAw4HS6NhGKJhn+jvu6dhzbkqsracwkV2SCqN875hebPIEV
+	/U6HM5bawBWTrh4c9khrUgEWtnqmbcrztDA2i248cVi/gnLXZWWVG7CyG4fzNcCT
+	IacBlmyiTWeO+QPXTN0gkvVhln2k4dLXJ9AaTivY8AamMAgOM6Se+N9V5rNePG9C
+	/m9ujQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437sq64hfe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 10:31:54 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B2AVr7m000301
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Dec 2024 10:31:53 GMT
+Received: from [10.64.16.135] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 02:31:46 -0800
+Message-ID: <22600892-3b0d-4b0f-9c46-e74241960dda@quicinc.com>
+Date: Mon, 2 Dec 2024 18:31:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241201224126.GB32487@ranerica-svr.sc.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] phy: qcom: qmp-usbc: Add DP phy mode support on
+ QCS615
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Kuogee
+ Hsieh" <quic_khsieh@quicinc.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "Kishon
+ Vijay Abraham I" <kishon@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, <quic_lliu6@quicinc.com>,
+        <quic_fangez@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>
+References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
+ <20241129-add-displayport-support-for-qcs615-platform-v1-3-09a4338d93ef@quicinc.com>
+ <b310587f-c6c3-41dd-83bf-6affbcc65730@kernel.org>
+From: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+In-Reply-To: <b310587f-c6c3-41dd-83bf-6affbcc65730@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ouCZElGXG-cUky1JI7neTh2rj2duVt65
+X-Proofpoint-ORIG-GUID: ouCZElGXG-cUky1JI7neTh2rj2duVt65
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1011 lowpriorityscore=0
+ suspectscore=0 adultscore=0 spamscore=0 impostorscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412020093
 
-On Sun, Dec 01, 2024 at 02:41:26PM -0800, Ricardo Neri wrote:
-> OK. Should I post a v9 without the tags? Perhaps I could wait a few days
-> in case reviewers and testers want to chime in.
 
-Yap, and then I can collect them all so you don't need to repost.
 
-Thx.
+On 11/29/2024 4:18 PM, Krzysztof Kozlowski wrote:
+> On 29/11/2024 08:57, Xiangxu Yin wrote:
+>> Extended DP support for QCS615 USB or DP phy. Differentiated between
+>> USBC and DP PHY using the match table’s type, dynamically generating
+>> different types of cfg and layout attributes during initialization based
+>> on this type. Static variables are stored in cfg, while parsed values
+>> are organized into the layout structure.
+>>
+>> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+>> ---
+>>  drivers/phy/qualcomm/phy-qcom-qmp-dp-phy.h |    1 +
+>>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c   | 1453 ++++++++++++++++++++++++----
+>>  2 files changed, 1254 insertions(+), 200 deletions(-)
+> 
+> 
+> 
+> ...
+> 
+>> +	/* program default setting first */
+>> +	writel(0x2A, tx + QSERDES_V3_TX_TX_DRV_LVL);
+>> +	writel(0x20, tx + QSERDES_V3_TX_TX_EMP_POST1_LVL);
+>> +	writel(0x2A, tx2 + QSERDES_V3_TX_TX_DRV_LVL);
+>> +	writel(0x20, tx2 + QSERDES_V3_TX_TX_EMP_POST1_LVL);
+>> +
+>> +	writel(voltage_swing_cfg, tx + QSERDES_V3_TX_TX_DRV_LVL);
+>> +	writel(pre_emphasis_cfg, tx + QSERDES_V3_TX_TX_EMP_POST1_LVL);
+>> +	writel(voltage_swing_cfg, tx2 + QSERDES_V3_TX_TX_DRV_LVL);
+>> +	writel(pre_emphasis_cfg, tx2 + QSERDES_V3_TX_TX_EMP_POST1_LVL);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int qcs615_qmp_configure_dp_phy(struct qmp_usbc *qmp)
+>> +{
+>> +	struct qmp_phy_dp_layout *layout = to_dp_layout(qmp);
+>> +	u32 status;
+>> +
+>> +	writel(0x01, layout->dp_phy + QSERDES_DP_PHY_CFG);
+>> +	writel(0x05, layout->dp_phy + QSERDES_DP_PHY_CFG);
+>> +	writel(0x01, layout->dp_phy + QSERDES_DP_PHY_CFG);
+>> +	writel(0x09, layout->dp_phy + QSERDES_DP_PHY_CFG);
+>> +
+>> +	writel(0x20, layout->dp_serdes + QSERDES_COM_RESETSM_CNTRL);
+>> +
+>> +	// C_READY
+> 
+> Use Linux coding style.
+> 
+> Anyway, drop all useless comments. Say something useful or don't say
+> anything.
+> 
+Ok, will update in next seperated patches.
+>> +	if (readl_poll_timeout(layout->dp_serdes + QSERDES_COM_C_READY_STATUS,
+>> +			status,
+>> +			((status & BIT(0)) > 0),
+>> +			500,
+>> +			10000)) {
+>> +		dev_err(qmp->dev, "C_READY not ready\n");
+>> +		return -ETIMEDOUT;
+>> +	}
+>> +
+>> +	// FREQ_DONE
+>> +	if (readl_poll_timeout(layout->dp_serdes + QSERDES_COM_CMN_STATUS,
+>> +			status,
+>> +			((status & BIT(0)) > 0),
+>> +			500,
+>> +			10000)){
+>> +		dev_err(qmp->dev, "FREQ_DONE not ready\n");
+>> +		return -ETIMEDOUT;
+>> +	}
+>> +
+>> +	// PLL_LOCKED
+>> +	if (readl_poll_timeout(layout->dp_serdes + QSERDES_COM_CMN_STATUS,
+>> +			status,
+>> +			((status & BIT(1)) > 0),
+>> +			500,
+>> +			10000)){
+>> +		dev_err(qmp->dev, "PLL_LOCKED not ready\n");
+>> +		return -ETIMEDOUT;
+>> +	}
+>> +
+>> +	writel(0x19, layout->dp_phy + QSERDES_DP_PHY_CFG);
+>> +	udelay(10);
+>> +
+>> +	// TSYNC_DONE
+>> +	if (readl_poll_timeout(layout->dp_phy + QSERDES_V3_DP_PHY_STATUS,
+>> +			status,
+>> +			((status & BIT(0)) > 0),
+>> +			500,
+>> +			10000)){
+>> +		dev_err(qmp->dev, "TSYNC_DONE not ready\n");
+>> +		return -ETIMEDOUT;
+>> +	}
+>> +
+>> +	// PHY_READY
+>> +	if (readl_poll_timeout(layout->dp_phy + QSERDES_V3_DP_PHY_STATUS,
+>> +			status,
+>> +			((status & BIT(1)) > 0),
+>> +			500,
+>> +			10000)){
+>> +		dev_err(qmp->dev, "PHY_READY not ready\n");
+>> +		return -ETIMEDOUT;
+>> +	}
+>> +
+>> +	writel(0x3f, layout->dp_tx + QSERDES_V3_TX_TRANSCEIVER_BIAS_EN);
+>> +	writel(0x10, layout->dp_tx + QSERDES_V3_TX_HIGHZ_DRVR_EN);
+>> +	writel(0x0a, layout->dp_tx + QSERDES_V3_TX_TX_POL_INV);
+>> +	writel(0x3f, layout->dp_tx2 + QSERDES_V3_TX_TRANSCEIVER_BIAS_EN);
+>> +	writel(0x10, layout->dp_tx2 + QSERDES_V3_TX_HIGHZ_DRVR_EN);
+>> +	writel(0x0a, layout->dp_tx2 + QSERDES_V3_TX_TX_POL_INV);
+>> +
+>> +	writel(0x18, layout->dp_phy + QSERDES_DP_PHY_CFG);
+>> +	writel(0x19, layout->dp_phy + QSERDES_DP_PHY_CFG);
+>> +
+>> +	if (readl_poll_timeout(layout->dp_phy + QSERDES_V3_DP_PHY_STATUS,
+>> +			status,
+>> +			((status & BIT(1)) > 0),
+>> +			500,
+>> +			10000)){
+>> +		dev_err(qmp->dev, "PHY_READY not ready\n");
+>> +		return -ETIMEDOUT;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int qcs615_qmp_calibrate_dp_phy(struct qmp_usbc *qmp)
+>> +{
+>> +	static const u8 cfg1_settings[] = {0x13, 0x23, 0x1d};
+>> +	struct qmp_phy_dp_layout *layout = to_dp_layout(qmp);
+>> +	u8 val;
+>> +
+>> +	layout->dp_aux_cfg++;
+>> +	layout->dp_aux_cfg %= ARRAY_SIZE(cfg1_settings);
+>> +	val = cfg1_settings[layout->dp_aux_cfg];
+>> +
+>> +	writel(val, layout->dp_phy + QSERDES_DP_PHY_AUX_CFG1);
+>> +
+>> +	qmp_usbc_check_dp_phy(qmp, "pos_calibrate");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int qmp_usbc_com_init(struct phy *phy)
+>>  {
+>>  	struct qmp_usbc *qmp = phy_get_drvdata(phy);
+>> -	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> -	void __iomem *pcs = qmp->pcs;
+>> +	int num_vregs;
+>>  	u32 val = 0;
+>>  	int ret;
+>> +	unsigned int reg_pwr_dn;
+>>  
+>> -	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+>> +	if (qmp->type == QMP_PHY_USBC_USB) {
+> 
+> 
+> Sorry, all this code is unreviewable. Organize your changes in logical,
+> reviewable chunks.
+> 
+Will create new patch list and seperate patchsets.
+>> +		struct qmp_phy_usb_cfg *cfg = to_usb_cfg(qmp);
+>> +
+>> +		num_vregs = cfg->num_vregs;
+>> +		reg_pwr_dn = cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL];
+>> +	} else {
+> 
+> ...
+> 
+>> +		.compatible = "qcom,qcs615-qmp-dp-phy",
+>> +		.data =  &(struct dev_cfg) {
+>> +			.type = QMP_PHY_USBC_DP,
+>> +			.cfg = &qcs615_dpphy_cfg,
+>> +		},
+>>  	}, {
+>>  		.compatible = "qcom,sdm660-qmp-usb3-phy",
+>> -		.data = &sdm660_usb3phy_cfg,
+>> +		.data =  &(struct dev_cfg) {
+>> +			.type = QMP_PHY_USBC_USB,
+>> +			.cfg = &sdm660_usb3phy_cfg,
+>> +		},
+>>  	}, {
+>>  		.compatible = "qcom,sm6115-qmp-usb3-phy",
+>> -		.data = &qcm2290_usb3phy_cfg,
+>> +		.data =  &(struct dev_cfg) {
+>> +			.type = QMP_PHY_USBC_USB,
+>> +			.cfg = &qcm2290_usb3phy_cfg,
+>> +		},
+>>  	},
+>>  	{ },
+>>  };
+>> +
+> 
+> 
+> You make some random changes all over this file. No, clean it up.
+> 
+>>  MODULE_DEVICE_TABLE(of, qmp_usbc_of_match_table);
+>>  
+>>  static struct platform_driver qmp_usbc_driver = {
+>>
+> 
+> 
+> Best regards,
+> Krzysztof
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
