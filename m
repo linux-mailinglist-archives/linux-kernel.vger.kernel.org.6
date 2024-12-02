@@ -1,101 +1,124 @@
-Return-Path: <linux-kernel+bounces-427566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469BB9E036D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:30:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AC19E037F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:32:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA035B24514
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:05:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0995B3ED8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346401FC7FF;
-	Mon,  2 Dec 2024 13:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="h+yj/f3N"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE413204F72;
+	Mon,  2 Dec 2024 12:58:20 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1000C1D8A14
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 13:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C1F2040A9
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733144664; cv=none; b=OCZFoqOIJomTG23q2cqdVusChsyAMBCvuEwxsSK4tkuINgPDvPbiQ3TSXU9d8kB6M+n392tUBZNz9w8DNlMDPH64aWqweyfKuNYidggzV2B5nstI+H+MNYAZ13HsDnL8xjm/0TUR4Ewlx57go+0IErDEtx9znPB7Gf6uhNEkUt0=
+	t=1733144300; cv=none; b=OoIhQOqu1St0GX29OTg/doR423Za9FvSOb0HQixb2CSC/AuO14uXRDqQRtOEvdCaIEZ7lNc2nDVcPhBTYAX70uyAblGuXztDwhzKFNUf4535MSoStqvqP67NH87cwD3B38Rv9aLKkW4lPtdJX9Fk/wc8/EkUPMZLwd4v/OpH5uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733144664; c=relaxed/simple;
-	bh=kHD3uSGQR4ZrMMGCYsr0oSmkNdOmeVOEKfCdyFbc43o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h8iq5eD0KR9k+STOPrEOmORmREhN9gLYB+/wr+mBQ4p3ZmKYcLuUbIJx7UJSZKROwnQMwpotkaUBxTmNEzmIwWKE1C9ZbnykGQEg45WfYyU4IcAKUVl80HgiaOTJALlHFn0j+B+r5y3XIyOQW7qyYxRbZxrqbF3Kkin9B0S8QHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=h+yj/f3N; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 6DB6988A3C;
-	Mon,  2 Dec 2024 14:04:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1733144661;
-	bh=b09IRayHwKFz5QGfAbSRVqGIdYJP6UQsFIWjXyUo8oY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h+yj/f3NFDdx+V0dgz4eU4yQI74vVHUnS8pMIYyABCxKMdE9HLVtixAhSauNvfcgN
-	 AVxxTdXdwbK+kcJ5V7GAbZWMfJu/XaIDeZpx5fiNBp20ApLDNA/BxZQjKTaY7G2JzP
-	 uJv5+CtMqmavmHAa98O9KSzI96vmDbO03Kfa4Ep8kFKO2ESfbO7vaxX3nIAaKkaVQY
-	 Vo9Wtvi2dT7RP+OBlzmZem9+OUyrWtdIO0/XPSkeSJlJK1K23F7GX0nL3ON9oYahWM
-	 XKEWh8G9f+nQ6Uq5TCytf/VadexunrmWC93FifVLY/n4vBWIDZBFnJ7x13vo1MReKF
-	 FcaosijILgbUQ==
-Message-ID: <50ee0207-b37a-4a6a-83fe-32a7a43645ce@denx.de>
-Date: Mon, 2 Dec 2024 13:56:38 +0100
+	s=arc-20240116; t=1733144300; c=relaxed/simple;
+	bh=L7BvnIL4DXQmcjzasQtcRSJHZGaDYANoGBFLqeozp6s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YTZEk8FP/vjTnhrb/0f/oTTZOXSduvgaYK5Xk+heW3PkX7YcVG/B3UuIv4E+D0C0z5LEePAUKhSott4lHrBtw+gsiGmeU0cN0W+FacsKTY2qWIQQUNTLoMRr7mAqt+u738h2iEeIdJmIDZQHAaiqgpH/m/lFReh7o9yqoPQ//XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1tI608-0000ZT-NM; Mon, 02 Dec 2024 13:58:08 +0100
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1tI607-001IdK-0t;
+	Mon, 02 Dec 2024 13:58:08 +0100
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1tI607-00Boj9-37;
+	Mon, 02 Dec 2024 13:58:07 +0100
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Date: Mon, 02 Dec 2024 13:58:00 +0100
+Subject: [PATCH v3 01/12] wifi: mwifiex: add missing locking
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-To: Liu Ying <victor.liu@oss.nxp.com>, Nikolaus Voss <nv@vosn.de>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Fabio Estevam <festevam@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nikolaus.voss@haag-streit.com
-References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
- <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Message-Id: <20241202-mwifiex-cleanup-1-v3-1-317a6ce0dd5b@pengutronix.de>
+References: <20241202-mwifiex-cleanup-1-v3-0-317a6ce0dd5b@pengutronix.de>
+In-Reply-To: <20241202-mwifiex-cleanup-1-v3-0-317a6ce0dd5b@pengutronix.de>
+To: Brian Norris <briannorris@chromium.org>, 
+ Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lin <yu-hao.lin@nxp.com>, kernel@pengutronix.de, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733144287; l=1673;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=L7BvnIL4DXQmcjzasQtcRSJHZGaDYANoGBFLqeozp6s=;
+ b=MJ37ZEMQJZXKN25jKS3L6LC4zgrNxafRv+wvjcw1a5Ob4u9am8FfNl9CXJ/ciCKAY7KwA+3q2
+ UTZFcWyP8T6DpVJ0uUGe0wvkLzX2u4BdmiLDyjsyAVbGIT2SDha9ddp
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 12/2/24 7:32 AM, Liu Ying wrote:
-> On 11/27/2024, Nikolaus Voss wrote:
->> LDB clock has to be a fixed multiple of the pixel clock.
->> As LDB and pixel clock are derived from different clock sources
->> (at least on imx8mp), this constraint cannot be satisfied for
->> any pixel clock, which leads to flickering and incomplete
->> lines on the attached display.
->>
->> To overcome this, check this condition in mode_fixup() and
->> adapt the pixel clock accordingly.
->>
->> Cc: <stable@vger.kernel.org>
-> 
-> It looks like stable is not effectively Cc'ed.
-> Need a Fixes tag?
-Isn't this fix effectively superseded by series
+cfg80211_rx_assoc_resp() and cfg80211_rx_mlme_mgmt() need to be called
+with the wiphy locked, so lock it before calling these functions.
 
-[PATCH 0/5] clk: Fix simple video pipelines on i.MX8
+Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ drivers/net/wireless/marvell/mwifiex/cmdevt.c | 2 ++
+ drivers/net/wireless/marvell/mwifiex/util.c   | 2 ++
+ 2 files changed, 4 insertions(+)
 
-?
+diff --git a/drivers/net/wireless/marvell/mwifiex/cmdevt.c b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
+index 7894102f03eb0..cdfb307e75131 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cmdevt.c
++++ b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
+@@ -938,8 +938,10 @@ void mwifiex_process_assoc_resp(struct mwifiex_adapter *adapter)
+ 		assoc_resp.links[0].bss = priv->req_bss;
+ 		assoc_resp.buf = priv->assoc_rsp_buf;
+ 		assoc_resp.len = priv->assoc_rsp_size;
++		wiphy_lock(priv->wdev.wiphy);
+ 		cfg80211_rx_assoc_resp(priv->netdev,
+ 				       &assoc_resp);
++		wiphy_unlock(priv->wdev.wiphy);
+ 		priv->assoc_rsp_size = 0;
+ 	}
+ }
+diff --git a/drivers/net/wireless/marvell/mwifiex/util.c b/drivers/net/wireless/marvell/mwifiex/util.c
+index 42c04bf858da3..1f1f6280a0f25 100644
+--- a/drivers/net/wireless/marvell/mwifiex/util.c
++++ b/drivers/net/wireless/marvell/mwifiex/util.c
+@@ -494,7 +494,9 @@ mwifiex_process_mgmt_packet(struct mwifiex_private *priv,
+ 			}
+ 		}
+ 
++		wiphy_lock(priv->wdev.wiphy);
+ 		cfg80211_rx_mlme_mgmt(priv->netdev, skb->data, pkt_len);
++		wiphy_unlock(priv->wdev.wiphy);
+ 	}
+ 
+ 	if (priv->adapter->host_mlme_enabled &&
+
+-- 
+2.39.5
+
 
