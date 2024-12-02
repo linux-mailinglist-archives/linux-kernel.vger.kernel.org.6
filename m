@@ -1,92 +1,121 @@
-Return-Path: <linux-kernel+bounces-427469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 338099E03E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:43:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424C59E0355
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA744B3551C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:12:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ADE2B371B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7541B20C490;
-	Mon,  2 Dec 2024 12:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61432203717;
+	Mon,  2 Dec 2024 12:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MqwL1oN+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbHRhY2l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D78204087;
-	Mon,  2 Dec 2024 12:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B755B1FE46C;
+	Mon,  2 Dec 2024 12:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733141065; cv=none; b=SCRWlqSjZqTIJbFymmxEYZmUBZGaMwxdVr+gW8Ju7IcRtejPWzL+EosLavQgYNFKFRswFeN4dWRTB+Bi9qLQrtadNJ1VyVh2iokurYBg+4Yv83+UMx6gQz0T+ejd1qo4X7EPOGg29Fho3K0V72MmYLacRaybSe5sOre24sLhbyw=
+	t=1733141171; cv=none; b=F+vM0qEMuSGmIRD2HPAaXqB2UNxt5x1P3AKORCvnV/rtI5jSqS27LEwMFhZIM4ZLyIK6SwzFcibaUwa+sll3Ngz7unieEE6UeIOHdrTk4m+HaSF+nNahnc4JuHsfaasz/2JOkeUc8KLTkMDGVdW7en0uxX0gdkqDUfNCS/vsKeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733141065; c=relaxed/simple;
-	bh=iG+FWqfHcVRBreJM9nURrF5EK7KuHNIEuynzkO4KzW0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F8Vff4vCN3Kre90/K5AKTdZi7lM/8mJzOotVnb+shrFb9KjY8bJ34RnWYSBHtwALA4rM2fIMOXnDvmt6GmklqncYEFnD1xjVi6kQh6yGJ5m5GfKGL/mvdoaUcz5Vzr0jQKrzkOXoL9TMw1aGjkwjkWjLCV7WHlH4zIN6yqmHW/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MqwL1oN+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A97E8C4CED1;
-	Mon,  2 Dec 2024 12:04:23 +0000 (UTC)
+	s=arc-20240116; t=1733141171; c=relaxed/simple;
+	bh=gonlDT3L++kFgkgr8dwEbfsoVRovNYHWTLew/Kf9tDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V1brHfun6u31ii8qEV9NxxVz8CiCHs1a4ZEYjmMdQ1cQPuO+k0eiCN0TQvxVIj37WamGW2ZfNM5YmiBDjpDNy7n2hoIDFRTd4TiHhWNqpVidq6fyWx0zROQ+uH/LZH9jmUJGjloZUvO5ju0ilPom98Hi6VzCwGd8PUBEaGmeFhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbHRhY2l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC0A9C4CED1;
+	Mon,  2 Dec 2024 12:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733141065;
-	bh=iG+FWqfHcVRBreJM9nURrF5EK7KuHNIEuynzkO4KzW0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MqwL1oN+WwLYc0Dzmegjn47dyKTIs8ssi0Ib6fI0zcNYcutByMV/OBU/Vj88/VxRE
-	 AtIpPNRRaAh01VK1eJHT+PsDSYaKTcaB0Db0uE/SUmcP25hPRhrekgsug1GOAGcHaC
-	 rPd2Ec/+1Aghb7UgOjVfCI+YXdl+/VS7lAR9qZhgV9xSwkqzN+xJKWvdPu9sUf54Ji
-	 3qYbkxlEEJIbqZVmVxKOpHHpztVVg2l8Td/G91D28jw2MlKX0sp4AIJ8Y+2Va3gG1d
-	 v7I/ZSIx6p2gSIhzLwjNLpU+sZnJatKPy3uXrGR1XPMUi9JSt0KHWzuvyk7fcs/IaP
-	 qW/gSoenXOMQA==
-From: Borislav Petkov <bp@kernel.org>
-To: Sean Christopherson <seanjc@google.com>,
-	X86 ML <x86@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	KVM <kvm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH v2 2/4] KVM: x86: Advertise SRSO_USER_KERNEL_NO to userspace
-Date: Mon,  2 Dec 2024 13:04:14 +0100
-Message-ID: <20241202120416.6054-3-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241202120416.6054-1-bp@kernel.org>
-References: <20241202120416.6054-1-bp@kernel.org>
+	s=k20201202; t=1733141171;
+	bh=gonlDT3L++kFgkgr8dwEbfsoVRovNYHWTLew/Kf9tDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hbHRhY2lub2ExTdOJetcBFDhwu+3jfa+EiLOFKIZCj5FsnpxL5dkE4OSA/5YzfCiN
+	 BytwJIUKzld/skAfD1J8BjcoBn766ZcovPof/X2UuZ3ijUE+wkrD4YfKUheuGHuYiS
+	 tc+HuLijZQ9cTgJqM7EIAUrRszprQLw63h3LN7njOsUB4o24JXn/sjx1ulgtyy5Sh1
+	 jp7CXNyPFcIeh0ROCIoDm7k1QgaJd0UBSYQsythHssl+2kNqrCAdwlPDY+UWTOnm/9
+	 gzbkFc2ly+khQjDQORZIQaw4D+o72MclNW80EuUB3aFpsXy6+mcARrVDfYMdVQbMgy
+	 00ORvUoOAUqgQ==
+Date: Mon, 2 Dec 2024 13:06:09 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 2/9] ASoC: hdmi-codec: move no_capture_mute to struct
+ hdmi_codec_pdata
+Message-ID: <20241202-bald-just-guan-c5d41b@houat>
+References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-2-b5316e82f61a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="6bleloymsoph6swm"
+Content-Disposition: inline
+In-Reply-To: <20241201-drm-bridge-hdmi-connector-v5-2-b5316e82f61a@linaro.org>
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
-SRSO_USER_KERNEL_NO denotes whether the CPU is affected by SRSO across
-user/kernel boundaries. Advertise it to guest userspace.
+--6bleloymsoph6swm
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 2/9] ASoC: hdmi-codec: move no_capture_mute to struct
+ hdmi_codec_pdata
+MIME-Version: 1.0
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/kvm/cpuid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 097bdc022d0f..7cf5fa77e399 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -800,7 +800,7 @@ void kvm_set_cpu_caps(void)
- 	kvm_cpu_cap_mask(CPUID_8000_0021_EAX,
- 		F(NO_NESTED_DATA_BP) | F(LFENCE_RDTSC) | 0 /* SmmPgCfgLock */ |
- 		F(NULL_SEL_CLR_BASE) | F(AUTOIBRS) | 0 /* PrefetchCtlMsr */ |
--		F(WRMSR_XX_BASE_NS)
-+		F(WRMSR_XX_BASE_NS) | F(SRSO_USER_KERNEL_NO)
- 	);
- 
- 	kvm_cpu_cap_check_and_set(X86_FEATURE_SBPB);
--- 
-2.43.0
+On Sun, Dec 01, 2024 at 02:44:06AM +0200, Dmitry Baryshkov wrote:
+> The no_capture_mute flag might differ from platform to platform,
+> especially in the case of the wrapping implementations, like the
+> upcoming DRM HDMI Codec framework. Move the flag next to all other flags
+> in struct hdmi_codec_pdata.
+>=20
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
+I appreciate it might be a dumb question, but I never really understood
+what no_capture_mute was all about. And in that context, why some
+drivers would need / use it, and some won't.
+
+Maxime
+
+--6bleloymsoph6swm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ02isAAKCRAnX84Zoj2+
+dh7cAX0XHBjVLJpBJcVNDhUwsok/1i+5fU7IyNojyr9o2nI4uQUWrlieIDKy+bqP
+ioHa5RoBfjSfWzdwDB7Ep7QSE5U9JkH9uF5girAsucCKcCXGsKLVLM1wLOEDZrqo
+t4ux4qxeCw==
+=KL7e
+-----END PGP SIGNATURE-----
+
+--6bleloymsoph6swm--
 
