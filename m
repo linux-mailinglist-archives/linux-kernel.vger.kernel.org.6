@@ -1,86 +1,73 @@
-Return-Path: <linux-kernel+bounces-427162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D119DFD6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:41:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8949DFD74
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07FCBB24239
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:41:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A40B2136E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4201FBC86;
-	Mon,  2 Dec 2024 09:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Dzv2c3OA"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2042.outbound.protection.outlook.com [40.107.20.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C761FBC90;
+	Mon,  2 Dec 2024 09:44:05 +0000 (UTC)
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazon11020136.outbound.protection.outlook.com [52.101.225.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21831FA14B;
-	Mon,  2 Dec 2024 09:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934551F9EBB;
+	Mon,  2 Dec 2024 09:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.225.136
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733132483; cv=fail; b=Gs5FoYnDcrsiopVjj0tJieH3uVJHsVTYStnvMNp0U2KchovAx/fOMMkqp6ewZW79LpYu+oy8NSVTJWxtoiu/QLofQe1s19Afla53ZjfldE6Hdg0kD8PF50kw61s4vIIEKqJwxcGntRnFfrzbWxXlIv3mNOoI3AaAt2GXvn4BYFE=
+	t=1733132644; cv=fail; b=r7VHCjCMsNF7AlfnlkzbAMY+TfAJDZVV9aRnhn8zF7pjrCLko8jkJookd/NaI3w408B9kLYbulPMZtyT8dVsnlq3aNu8Gqycxwra+ITDnDUeDPhBAw1UEqqf2Fxc9+zlr5hJ8glYPGxtsidzpNyj5Es8FBQSsdR1LzUAL5RfbuY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733132483; c=relaxed/simple;
-	bh=GobSmilAY9+bOyGjGyiAVLRF4iNSdy13qEmvYfAddiY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=G8n28vLN4KZ+UfnyEH/hBz0vZXcbs+ZINC0NETpnG+XCoUQuWTU/c1QOmxyn9sCPAKdien+14oYkGbJjPLCNzJIK2mwamu3HRcj1HaeZXaVRYz06hj+vbGb1Zi07ugdmAxhodBAF9kFHLYaHBZbHxltn0sA7JyJc0AJS0sLFcNA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Dzv2c3OA; arc=fail smtp.client-ip=40.107.20.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1733132644; c=relaxed/simple;
+	bh=9EVMzfd6WqgI5oHzyZiBOI8g7zmpGbC/RTeLeaKkqoA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=sLNrTxvH95hLS6X9CBxzq3tWW0S/8i5jl9g0F1dhme5i0ZTmLjTLmStJGPM7uXg3c+DpjoWfLiCzOQNZYfhyhC8uUoDRIE8Q9ninysBfEngMOU4ct0fGEjgWqzhYf1fQQjQeF7nzy2q1guLa56m0pm203M0BuiwPI55yIG2crQk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.225.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=liQjnh8q1EaTv2ecF4rGJfPr5w0ZK5osSXs3AaY8n2Pe/Cdu+SKfWaty+ob9088SU9svZUJhxQBooIjZTPhN2HSZlnTiYHIEqjgdVWssn+5af408HpzjqOUYIdKEWIb51SYYjH3xrOF7NaamUSV1CVXu2+POQFVrwlsirWTgsVuufqxk/aeVcr03mhFjTkfx2wwGnV6tWNT4zhosK+lefDgfgfID6fETcKiGPaH9LsR8h5euM36iG9kUDvD1g7MHUnfvNJ/UQUA2ldrb2FQMzBpo/jZGUAEeiSN64LM0u8ezol3HMLrY5Ta9TY0PkoDf5eQY9mtwxTW1sl8IeO2FIw==
+ b=TS6gZJox4msg3NHr9b8aXk9LX3WNnaxvPX0BpBerZ1Qkn5j2k9GqVNsWyq6+5kgUpG0Z0SmvqwDgxx4mjyiOOaUht2H0vcwdwBIQnhAJhNOh4T865tRHLSaIjyqJtGtRb+bTYEosHybcRuVR96/me2ILsMLcQ4n6e5GEKTysadpnQ6ERF7PHpU/n89Kk2TGxi5lakhEJqjbxnP9HbuBge32Qnccf9mklp0MeLx6ckxRoHX4FuD3oCYBcWNLNhytD9tikD+TZOZWUTT5gxXVEkGiG1tt9Ag5G2+mfEDSvv8EMDeZHSoYsrndyvi1L3kr7o+55TjrS/ZSACY3J8gxgJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GCTD/Wu4vtAF96L3OwyHQEgfc87DLHotYJ9ibFgMN/o=;
- b=PFd/Qur5cxrMdTCeu5lgU2oLPGmSb2f+Fp142bBmUrH5zxmr1WLIt7KNyRj6zW82TDrPm6zA29d8NmvTXnlG6bwsH5NLMATj0bLOVCu6S6DEIt3FMt4mF+9d5px0wd+4aGMnmMD+PvpNCXDwtDCF/bhBZ3MWOXvpZRPILVsHskMnKanGwsQ5ydNUX+gTe/WPhhugsReXCHoMpg5hm3rs6PKr6a1iuaIsp86YBU5gGkmltXyeBpBPNy8jf3H1jHkzY5djkTZMF+6HEizUkHwNt55+kMfcg8hka283Bk4N+wWjtzZFpiQ7ZqvFlzbLCdFNy5FPKaubr+tcbi5IYakApQ==
+ bh=oCX2U/Z4CZwxFUSp1yv8VW7JEH51zWrQ8mptJW5dNcE=;
+ b=Dpli6EiSetWcDFVcLKQAopaTnRIXtDDO1j7O3Fe5TS97PuCick07mv1ICjRW7d+HUVV6ikVymnKuMcuURWaR1ER6BCX6hC7kg6qlq5Fw54q+mKxB+QgFfiHZF2I9MltO2IUOVcWbbBc8GCriY9DBV6CnjO0HLfU4NAARZCHX3Xu1Rl11cC+6+drMNIEZaeuv1Bl5sgCun9P6IEnet6enVfgjmfn7nc4c8Jk+6D27oEms7c7KvKxiGEoozYgCufKTtWe90+Iy5iMT8hUikWHSL97sj3FGiIPOBtHEng1QicuIr+b7/DwLcKpVq/UN9oAKJc8odqST6ZiWfDkVZIMOVA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GCTD/Wu4vtAF96L3OwyHQEgfc87DLHotYJ9ibFgMN/o=;
- b=Dzv2c3OAdBvBIifIbkqDtLM+CtBy82DojGwxErMoYsINg0hMMLUr+iEav/tbJ7tvfCC5lFH5ODTCxtc1IKeZp+VFJPOwwQjZtGl0ldTCWMPHijRZmGiUJ4UerrLZc4pjRue+Ci8JP80YVMrUROO9XdalhqINeEEPsln1iD3mu5LrY9vUFxZSyt3v2cbn8XObtnhL2XSrDE/NUjRyZPd6Bs2TCokd3XyEaoXqEWigYLkFKzJZVRhw95TTz+ecUmredRpcOwfNu2NkA28fM27vXQ8UYYRM62onit+uGfJmJScVPyIB2H1QUFlOcz7tb4dnZ7FRvdzR23jYpcn+hzhikA==
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DB9PR04MB9378.eurprd04.prod.outlook.com (2603:10a6:10:36a::6) with
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+Received: from PN2PPFF679F9759.INDP287.PROD.OUTLOOK.COM (2603:1096:c04:1::15d)
+ by PN2P287MB1028.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:134::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.17; Mon, 2 Dec
- 2024 09:41:16 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%6]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 09:41:15 +0000
-Message-ID: <bc08993d-3672-452a-a29e-3a85199a0dcb@nxp.com>
-Date: Mon, 2 Dec 2024 17:41:49 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/19] drm/imx: Add i.MX8qxp Display Controller pixel
- engine
-To: kernel test robot <lkp@intel.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, p.zabel@pengutronix.de,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, glx@linutronix.de,
- vkoul@kernel.org, kishon@kernel.org, aisheng.dong@nxp.com, agx@sigxcpu.org,
- francesco@dolcini.it, frank.li@nxp.com, dmitry.baryshkov@linaro.org,
- u.kleine-koenig@baylibre.com
-References: <20241202025635.1274467-11-victor.liu@nxp.com>
- <202412021617.HmlPGJLh-lkp@intel.com>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <202412021617.HmlPGJLh-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-X-ClientProxiedBy: SG2PR04CA0176.apcprd04.prod.outlook.com
- (2603:1096:4:14::14) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
+ 2024 09:43:57 +0000
+Received: from PN2PPFF679F9759.INDP287.PROD.OUTLOOK.COM
+ ([fe80::740f:ab98:2be1:538]) by PN2PPFF679F9759.INDP287.PROD.OUTLOOK.COM
+ ([fe80::740f:ab98:2be1:538%4]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 09:43:57 +0000
+From: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
+To: sre@kernel.org,
+	christophe.jaillet@wanadoo.fr
+Cc: Bhavin Sharma <bhavin.sharma@siliconsignals.io>,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/2] power: supply: Add STC3117 Fuel Gauge
+Date: Mon,  2 Dec 2024 15:11:51 +0530
+Message-ID: <20241202094328.14395-1-bhavin.sharma@siliconsignals.io>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PN2PR01CA0177.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:26::32) To PN2PPFF679F9759.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c04:1::15d)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,206 +75,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DB9PR04MB9378:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d27ffd4-a055-4beb-24d3-08dd12b57739
+X-MS-TrafficTypeDiagnostic: PN2PPFF679F9759:EE_|PN2P287MB1028:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a4f5060-f845-4edc-1c7a-08dd12b5d7cf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?elVlUU5TY0FESUZ2eE9NK0M0ZEhtWGc3ZmViNnp4SlJFQlAxTFlHbWdQblRG?=
- =?utf-8?B?RFpPNnkvS29wSnVVTFZ1dEc2Y28wU2FxaEdxd3kxZzhycDlTOWo1cUVKdGoz?=
- =?utf-8?B?SHlsZVJsL3VwQ0hzZ0h4cXNjdzdyeUxneXZwZzBPMVIxR0toVHgwYnBmR3Ju?=
- =?utf-8?B?N1hDSVVOOGkxd3hZSyt1K3cwKzV5MGk2RytpZy9FeVhPMlg2aW9jdGhsREQ2?=
- =?utf-8?B?KzZBWDFQeXRFc3VCQTdtOFNSTE8zOXFHZ2NqRzk4S0JIT1pndWNrMjdSNng4?=
- =?utf-8?B?OEVvNjJFdkNMLzllSkJqdkorQnhMMldINFR6NFNBYjNGV3NFMkx6Q0hmY09J?=
- =?utf-8?B?OE5jNno2WWVpaDJqcmtiRm1Cakk0QVA4VDFQTWRQTEdTUUJTaTZwbkJCMmxa?=
- =?utf-8?B?TndWYWF6ZmRXMm82RjZVRWxFUk9MUFJJd1JtNjI4YUxycms0UVJmQm51RWV2?=
- =?utf-8?B?djRnOFJ2OXNSaGpEcEo4Qk1zazJRendRSGJudlkwTW1kRHMzY05GbFNvd2JV?=
- =?utf-8?B?REQ1YlJvVmRYSWpWKzY1b1Z4c3FYcWZXeDBtVzBtTlpRM3RFYWd4dzlXKzJU?=
- =?utf-8?B?WEVXKzlyT1VlY0xpYnY0aHI2OUEwU0hBTTJac3BmWE5KZWo5Rjd1RmVONUV0?=
- =?utf-8?B?VkNUSCttcHRvOUxOS2pTekpGSFYyZWd4WnBxd0tLN2V5MEVtTC96TG5CYkJ6?=
- =?utf-8?B?YzRKbUNyOGtFNHZNYWJPZkkxTUFCcVNrTUNuMWpjRld5bGhIVXg4U243YlJR?=
- =?utf-8?B?N2JWYUpFZU5vRXdvS2drZUVHeGFlSUhFeWlWY1o1SGdCMUVUZ0ZvVGNZRXNx?=
- =?utf-8?B?WVlGU0xHRitLT0xJRDlpMTdYWWw1OTFNVzhkQXRhVDFOaGRGQ1JoMUpGYUpV?=
- =?utf-8?B?YitVc01UWmZRUDFKV1pLNzloRHZvcWsrS2RnOTkzdGNBWUd2YmZJMnVWMXMz?=
- =?utf-8?B?SEdrVWhaZ0ZmYUd6WmJ4cjRRcHpGMUZLbFJnUTlkOHl1OXVtU3FJK3BHWGRD?=
- =?utf-8?B?ZGFMRHcra2FFZXBrZlA0L1ZXOFYrNjJOZ1ZNWUtOdm9aWkxHZm1LU2QvbDNh?=
- =?utf-8?B?SGFqSVVYYVdMcnZUWkRwTERxSGNTMVF5Y3lQazRWRFRhNTR1aklROG9EN21C?=
- =?utf-8?B?OHZqdVJWNU5wZnJCWSt4Sk4rM1o5d2dTa25kcmdqSlhrSlpqUzhHWFAzS0lt?=
- =?utf-8?B?cHNGZHdBVHBzemlyVTZRVmtBSUJseGN6dFU5eW5pVW1ZLzlDVVpxcUhrQVh0?=
- =?utf-8?B?Z25GdzB4TkYydmdvNHF6UVcrNGtibndyK3ZSNnFRNVBVYVh3TnZpajNpbE1u?=
- =?utf-8?B?TmJNRXNhZEozSGlPMUZPNjltaDBvRDgyL2FPSEduaGFjQnE5TUdwMmV3WEJn?=
- =?utf-8?B?VVlGVHptcWNHeFArWktlbE9Cd2JZdG9oeWxFVE1Cak5iL0xSeHZQMG9rekpD?=
- =?utf-8?B?aEJDZVJQdWVHNVhzczE3UElQMW9tZUVTUktsZ1VFRzJwRnp6eU1rMkczYjlM?=
- =?utf-8?B?MWh0L2xnTFhVMUo4TEp2aHRDelJ5SXNDY1J4SEVYY2Uwb1h6MFNualp0THVH?=
- =?utf-8?B?ekgzdWJuU3QvQmhOUkwxNGZGM2N3ZmhNWjVKWGE5R2RYR3RpOE92aWE3aXRC?=
- =?utf-8?B?Zm9Xc0NoR21lZVd3bFQ1Y3VyR25pdFVBVmtoc1JUWXNhMFc1OVRRdjlSdXls?=
- =?utf-8?B?T1dtS3VVOXpEOUR2Vm01aG1wdEZoOGhDV25VZHRFREVKWGdPbUdDSmlxNkZS?=
- =?utf-8?Q?pGwbaWb8FM0j7ybW70=3D?=
+	=?us-ascii?Q?4MDB15Xzm7FEhIUrP018XIZ2UP5In9+i1LJO/tNGjQ7GMK4E7Cj0VjmhE/SX?=
+ =?us-ascii?Q?o2glZGt8MQPUO8GNR84/wgE0dP3FnEXisSarv7O7rSiJr5HZ9hXfz0YHrz7D?=
+ =?us-ascii?Q?/SZtIbI9XD2GKbGUz5P82v3uPzY2QgjzVoFp935TnvX4TpI5AKjtbAvg4lUG?=
+ =?us-ascii?Q?Y/wZ7YocKMyaclUMCgAvax9dqoITq0shJeG0PQKGG2lV9+B8ZVLPm0T+8FtU?=
+ =?us-ascii?Q?ZCCS4K25UinDJkJR2IWVs/LuN4ZRqTJPf4Ogq+m4LNKY5/l9QEZp8wwhK97O?=
+ =?us-ascii?Q?yH8rmXHLKhzKYxwoBTYHdw0nFR7k0REy3jzEqBy64smxwm2A3nAXOx9+v/Ib?=
+ =?us-ascii?Q?lmTF0m7myhyB2DoTrn1elpmR9AYtPtsPzfeNxYdsetExhlrvkOWqzdATF1rh?=
+ =?us-ascii?Q?BmIhrei5GAA17qoWne740Wd5XmvtlaaTpNavbLGSjVn1/gIfiHQD4S2Fu3lj?=
+ =?us-ascii?Q?i9CUk/9UCYNuIDpGOqdZD8bGhcKUwnzAFel94sOSL3S1ssIolGIetbKIh19+?=
+ =?us-ascii?Q?Dz5jpWIhI+I14YipS8o7eEn/mAU83Zk4QSrSmbUPs96e4xuVGrcKwuoDpE7F?=
+ =?us-ascii?Q?aW0PvdWYLnSQbae4DsPSIP6kwU/ZbQkpNrSIcjaJiF29u+sALkbZwrx4cNoc?=
+ =?us-ascii?Q?JaKrrBfF1yPNR+rkPvuw3JgJ1bVYbZRWnjuaCjbCjt/kV0e3EIVOQO8lvOf6?=
+ =?us-ascii?Q?1vq83bueuelqUgQx6iu6AkE8n9ddzey8PQjLZha08F1/1lwDtSwix8ZWAoor?=
+ =?us-ascii?Q?o9R6efwuC2PBwv6UXAHFw8tnDnTzx2RmhC60T4cGnGkss6ZirapBdd/qw6Jw?=
+ =?us-ascii?Q?uYdoisLjWon0T3kC4b4RngbIb/+Wps/ER6pC2WCA3zSeBnwdgcP0QVm0QOp1?=
+ =?us-ascii?Q?adtc+bP9/MjWSnAIi+QOXa2ZYVE/0/MlmSJvw2VwtaAcExpr3HcPcukO01Gj?=
+ =?us-ascii?Q?vIkK/5kyvW/O9HZEMrbBQ+YNuRWe34o258VUKhe2Qkc59WqYVTv7BWZqftHG?=
+ =?us-ascii?Q?tfPzakjpH16wsp68kvIu1wvR804yXULVV9vEpq1HHpRDKBGB6kQ/t+PPcxVM?=
+ =?us-ascii?Q?9k9do3u2eXm6PuOa4WQNlRS6quo2Yu5VjrvO55QFMz6EYE3xxBUrINsQM7Dt?=
+ =?us-ascii?Q?HuptBR74N++d4s51FyB9ReGS0YiImnsgimgx/euhldqJqyJGDAL8YqIlzUdB?=
+ =?us-ascii?Q?NQU71nqDxfcdiuj3HfNCZ5eliAGE43mpOenRcHG2IEbBrSI5TFbPijRyOjfh?=
+ =?us-ascii?Q?WzkpZwdXnOReISDMrSlnnLFE74sxUSD8MqCbew3U3mDdNb7vRNTaJ57hS0ar?=
+ =?us-ascii?Q?/nLlivB8+ke13n2YFW4UQ9XjVPLx7TllQoPoDM9y0zs9F5VvwlmIhLSN4OSr?=
+ =?us-ascii?Q?V1SJwK8=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN2PPFF679F9759.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YjhHZDl4dVA3TDVnZnV2ZmQ4b1BXVXRnRXB4QlpOQ0hCQk5VRldlV1JSd245?=
- =?utf-8?B?VDZKYzl1M3RDUGg1WEl5UFJRbk8yT04veFpPMlczZDlaWS8vSFNRWWJTRThO?=
- =?utf-8?B?bUpNZWpaRWVUbG9KMFpqVlBZUWNWSkdMWUtkUEFzVEd1VmdITmhYYjRibWU2?=
- =?utf-8?B?akp6eHM1eVYxT1dTay9OOWU0Q1VGMXhGc1BzSkhDQkp4VlVZeFVUdDJrNVI2?=
- =?utf-8?B?RlBSWXE4QnhHK3JoUm9JTEN1b1hmTTZmdHZRdmFDYXJsSE9BUWJTRmpDRlkz?=
- =?utf-8?B?eTVSTHlyblFpeklNSVNEVjEvcHkxWVRXMXJQWm94eTZ1czZpK0dsT3FKbUdk?=
- =?utf-8?B?NWxRN3RDWFVOcHZER3lIRGViZlg0RkgwZ3JVekVNblFqYnJYd3B1M3I0MUln?=
- =?utf-8?B?Y1pZMUJ6S2dTMWdHU1BUSWFPMzJPdWQwQmNIWHlzZFRhNitGTUI1UDBvK3Ju?=
- =?utf-8?B?ekVFTzBNQVg3ZUxCN1FEVDU4cmFhem5tOGNXMytmOUZTTE9zei9DL0crVHNU?=
- =?utf-8?B?N0ZwOXJETGs2dnM0bFZkOFdYNFRVMlF0MmhvQmxTZXNMQ0o1UEFCV2ZyaC9S?=
- =?utf-8?B?RVY5aEVyKzBBd1Z5MXBVQnhqUlVId0hNTWpSa3ZKcWovMjdUckdzcUo4Z3hz?=
- =?utf-8?B?NXBqRTVZZUkwUldWYlM0RTVqVHd0cU5VemtoSW1vZDhqMlUzckpHYXB2NW1M?=
- =?utf-8?B?d2JFMEhGTTk4SXBMcHh6ZTd5UUVaNm0xNHFsampHOXYyMkFObk4vSFptUlFi?=
- =?utf-8?B?bi9DUTZvMnRSS1ZBV0VDTUd4UHNFV2Z5cnE5bHpTOFRrOEFON0F0V3VMZml3?=
- =?utf-8?B?WmUrRjg2WFcrdWcraXY3cUhXL1JoVmtkY04xcHJ3ZWpWQmpQcktoRGhoMmJ0?=
- =?utf-8?B?eUx5MFk5Q2lNM0cyc3ZRTEVRcmM5c0hDZll1L2kxMzBPSDNZZDJ5cEJEdDdL?=
- =?utf-8?B?RHNpclNuWGRWRjhoOVpYVkpBU1FsakQ0d1hPWXpQQ0R0RFZ3R0xaM0pQZHho?=
- =?utf-8?B?Y1hxN1Q1V00vaTR5TUg1MDFVK1FMWjhibUI0RG1rVVR4MjJ6K2t4S055aXhn?=
- =?utf-8?B?bzVhbFdWNjNreFZ4aU14UWxGcWF4clkyN2pHVDkvQkU4VWkxYjUzMmNZUVQ2?=
- =?utf-8?B?aFZiTGR3RVgvMWk0enNlWmhiZ012WmxIQWp2b1FoUy9CNC9tVGU0cFlIb3pz?=
- =?utf-8?B?RWZBVzVqbmFMYzNSRkpaMWdnTTdPdmlGOUprbWFkL3NYbXRoWFU2RkVmMkNv?=
- =?utf-8?B?TnUwWHZFOS9TRFFzNS9QWUJEa0lGemtyeG1FcjJHUXQ3U0xKN2NuLy84ZnFL?=
- =?utf-8?B?RUk3MlNDMnR4V1E1R0FTYldEWHBiZVcwQmdkUCtzQUxHUm5EY0lyNkQxMFFB?=
- =?utf-8?B?OGNsUFVDNjVzOUUzb0NLR3pEandrUW1TOXhYMWxoNHJ6SUhlVXBDc04wR3F2?=
- =?utf-8?B?ZTMzeWN5TVdXZlBaUWlocDJxVjkrSlhyRnNtbEd6WnlVVHhUQTlNUUtIOXR1?=
- =?utf-8?B?d09wK1hyZGtFK1pXWHZ1Z0cwOE9SL2QraUtHdmNrazNnMFh6S01SWHlEZDlS?=
- =?utf-8?B?MzBRa1p0VjkvNzJlYjRjYTBneU5pWU56RE0xVUtSZmZoZngvTEhRdHIydm90?=
- =?utf-8?B?U1EvMUVPaDdqQzdRRUJBQUZDT1dhNnY2R1FUbW5kcUlZaFgydEFCekN5NXIz?=
- =?utf-8?B?Nms5Umd3cFplR2lNcDJrQmcraGtHNHVmNlBiVzZhMWdjSXlVSUZMa1FOZFFQ?=
- =?utf-8?B?MFlHb084MDlWVFp5MElFSlFOMlRjSGpPNDlwNVFXcjMxWmJnUWZ5eEJBRVl5?=
- =?utf-8?B?ZHhXQiswVHQrNFdEYzdBd2NkSTIxR0RMSDdua05yTzBtRzhmeWZ3K1JBY2Nz?=
- =?utf-8?B?ZEFzS1hRWDFhbWNJU3RsbFNaOUlTeXNDMW50TEVnaHFKMFVOMXFHT1g4NDNs?=
- =?utf-8?B?VTVLNGNVSHBhdmlGMkdPT2NCcitRaHQ5VFZCTDNpS3IrMDEweUFPVi9KOUdN?=
- =?utf-8?B?RXkwSnhyQ3l2ZXRQcDRta1FGQkc5NkVVOFJPb0NCTEk4SS9xK0I1aHVUdVBM?=
- =?utf-8?B?aHd6dnljbGUxc0FNNG1Pblc5THdWblpLOVkzaXBaZ2FHb3FpL2xucHJTS1Vy?=
- =?utf-8?Q?G0mJSURt8wojwhXWN7JwzyCvM?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d27ffd4-a055-4beb-24d3-08dd12b57739
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+	=?us-ascii?Q?5qRqUtbcsF8HOlCMlHxufbjWq8OgRmJIzSxQc663JX6eDqKiejhhcWU1+fUk?=
+ =?us-ascii?Q?inTu2wyf6ZBmpLcPmfeNDgVfE+Qm7Z+dJWnADIJl43Jf33PGNwlWKwO8ZxxR?=
+ =?us-ascii?Q?TNnwYMLDSpayu2Ei7O1+xBGkh8TAwg86NsA/DvR5HGpBkdo1z/nXZun6vne3?=
+ =?us-ascii?Q?vHIha1NhUTBgKg2VOP/j4zG+4EtTGTFYVu4/BeNKPO9Au9D+O5q1SOzM/j98?=
+ =?us-ascii?Q?gPiSwg34ApSAwcJliRQNETZ++Xbu7SFi/6iyoSHrYUJKRiW++byiwt1PcscD?=
+ =?us-ascii?Q?c5Pphi/Z+oI7dXZ6vUEzmgMczNnciTxSgOXoEgWOYlj/Z9WJHYdBQpJLSOQL?=
+ =?us-ascii?Q?roGOy7JzYq/qseHIADkrIvFICAtOtIAzYw2zHcJxLnbvxNFyeez/dTt2Gq45?=
+ =?us-ascii?Q?qRi20MawTP6Dp8aqPJRE5sob+v8+/JN0UPRObW//tjROUXBOSFEqhjdFx7UK?=
+ =?us-ascii?Q?tgBXOYhWQdWhhbpPTiXbevXrU/iNlFYJIqT1xsp6yiFuOZuAHPu9ZzFj56gl?=
+ =?us-ascii?Q?uSK0Sda6G4fhNPnM44h7WhOt99wqq8Ds+Y3IA8rwSx0iIuiPy1m8xKKJuxJB?=
+ =?us-ascii?Q?2GMmt7pCNfF//nCx0UwPJYOWDnk9Ukpv5BOSGunV5qvHbdWXP8EMv2LIHdNk?=
+ =?us-ascii?Q?ZqyG7atjjpnbcdCmfH+FUntwxDcwJkuEsxynGtTNGLRMt8EtkupHzqxMXwr+?=
+ =?us-ascii?Q?WqsEm7diwT3YnzZsjVxelB65fKlsciW/dVne2yxqpFio1awAnPQykVpdhoBg?=
+ =?us-ascii?Q?YJk4+zwuuxwtIO6yLyKS37IR9UW0T5Ly0eAb25Zg08rxkax8d3GbbmFnkpEF?=
+ =?us-ascii?Q?waG5mj4uZ/79FYiVNCYfmelB0vQUSuHszTLxcRq5AYWBBuYLyaNLvSq6ewaO?=
+ =?us-ascii?Q?FpTsUMpK1NQbNQPJR1SlhixPKECa4VuIoWEyE2D1i7prfysay4qatKEGYcJe?=
+ =?us-ascii?Q?e6jVC0mXCwdOmFseduW9Y3+c0Q2ey67WeG/jnTQr8v7NatgoWtQFtHSmDM1o?=
+ =?us-ascii?Q?LYiHn0oWQwMNj/9t7U3/6rttcD4749+jFpvPJSAnkir69nqmit1Aw8GUD1cS?=
+ =?us-ascii?Q?yyxHqzvxXObhi7AAY4cuab49aa8tvaQpe6I2YpYJb3uwaZQ6Cm9kfbvvKKNJ?=
+ =?us-ascii?Q?8z582h4o1L3nz86pi2aK/M5psG9qfhCevpJNrzhJdsWbI6lgPCYLt/rIXCEf?=
+ =?us-ascii?Q?veQGsROM+EJY8EKdcwXnOKyJxhVSY73v6OyBPGP0UkGw2GVeHINcK4DQtcz6?=
+ =?us-ascii?Q?a1PRB2Pwk6nvnZCtPBAJJggkhOFS85Eqnix6m6f4OGJmj0RHQOOTf8SN8sZy?=
+ =?us-ascii?Q?F/s1y0iVuBIJuGGsiZdUqkSlZQop9DgyhP2/5L1fFaERXmrXTkOPE1yb9MNT?=
+ =?us-ascii?Q?abGh/gb5XgPSNkMC796BDvJpwu8py0GIJiINKnaS4M/n7gTzMp+2+k8QBEeb?=
+ =?us-ascii?Q?bD0Q76N9etzZ8qBVHjpx6HS0JrXFHLMz1rpWAtc1ByLXEFfLHqbUyXWzMxzr?=
+ =?us-ascii?Q?GhQIslBK5IBmKKOPH7b2+DTPnJq1itAd4ET5Xa4bi6o0jIMejaPGQeyULqgc?=
+ =?us-ascii?Q?TYgzYH7wHgGImk4ImDcjXIR+hLi5H6sGLODJErH79iby6mIJUeWZdxih4/qz?=
+ =?us-ascii?Q?BuO+HoOV9YlHK3pHQXJ5LFs=3D?=
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a4f5060-f845-4edc-1c7a-08dd12b5d7cf
+X-MS-Exchange-CrossTenant-AuthSource: PN2PPFF679F9759.INDP287.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 09:41:15.8666
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 09:43:57.6872
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0d/2heo32+NNSn4LaSAbBXZ8X9SI0H02+sXkrKtIjQLVjBkOpuiAYI9c4wWggCVYcgaTmswY3woL2E2Xe/6srA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9378
+X-MS-Exchange-CrossTenant-UserPrincipalName: mUrWHC99alq3dcdcqphTkbwILBiYnuU5rTBWpNsEJCiYQP6e/C+1t5xTHOv1mj8NLNKspTzCxNUonclJzjiv55Hj5O3j8j8FeHc6OqufgBo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB1028
 
-On 12/02/2024, kernel test robot wrote:
-> Hi Liu,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on shawnguo/for-next]
-> [also build test WARNING on linus/master v6.13-rc1 next-20241128]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Liu-Ying/dt-bindings-display-imx-Add-i-MX8qxp-Display-Controller-processing-units/20241202-110331
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-> patch link:    https://lore.kernel.org/r/20241202025635.1274467-11-victor.liu%40nxp.com
-> patch subject: [PATCH v5 10/19] drm/imx: Add i.MX8qxp Display Controller pixel engine
-> config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241202/202412021617.HmlPGJLh-lkp@intel.com/config)
-> compiler: alpha-linux-gcc (GCC) 14.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241202/202412021617.HmlPGJLh-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202412021617.HmlPGJLh-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    drivers/gpu/drm/imx/dc/dc-fl.c: In function 'dc_fl_bind':
->>> drivers/gpu/drm/imx/dc/dc-fl.c:136:57: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size 3 [-Wformat-truncation=]
->      136 |         snprintf(fu->name, sizeof(fu->name), "FetchLayer%d", fl->id);
->          |                                                         ^~
->    drivers/gpu/drm/imx/dc/dc-fl.c:136:46: note: directive argument in the range [0, 2147483647]
->      136 |         snprintf(fu->name, sizeof(fu->name), "FetchLayer%d", fl->id);
->          |                                              ^~~~~~~~~~~~~~
->    drivers/gpu/drm/imx/dc/dc-fl.c:136:9: note: 'snprintf' output between 12 and 21 bytes into a destination of size 13
+Adds initial support for the STC3117 fuel gauge.                                
 
-Will expand sizeof(fu->name) from 13 to 21.
-Thanks for the report.
+v6 -> v7
 
->      136 |         snprintf(fu->name, sizeof(fu->name), "FetchLayer%d", fl->id);
->          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> --
->    drivers/gpu/drm/imx/dc/dc-fw.c: In function 'dc_fw_bind':
->>> drivers/gpu/drm/imx/dc/dc-fw.c:175:56: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size 4 [-Wformat-truncation=]
->      175 |         snprintf(fu->name, sizeof(fu->name), "FetchWarp%u", fw->id);
->          |                                                        ^~
->    drivers/gpu/drm/imx/dc/dc-fw.c:175:46: note: directive argument in the range [0, 2147483647]
->      175 |         snprintf(fu->name, sizeof(fu->name), "FetchWarp%u", fw->id);
->          |                                              ^~~~~~~~~~~~~
->    drivers/gpu/drm/imx/dc/dc-fw.c:175:9: note: 'snprintf' output between 11 and 20 bytes into a destination of size 13
->      175 |         snprintf(fu->name, sizeof(fu->name), "FetchWarp%u", fw->id);
->          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> 
-> vim +136 drivers/gpu/drm/imx/dc/dc-fl.c
-> 
->     92	
->     93	static int dc_fl_bind(struct device *dev, struct device *master, void *data)
->     94	{
->     95		struct platform_device *pdev = to_platform_device(dev);
->     96		struct dc_drm_device *dc_drm = data;
->     97		struct dc_pe *pe = dc_drm->pe;
->     98		void __iomem *base_cfg;
->     99		struct dc_fl *fl;
->    100		struct dc_fu *fu;
->    101		int i;
->    102	
->    103		fl = devm_kzalloc(dev, sizeof(*fl), GFP_KERNEL);
->    104		if (!fl)
->    105			return -ENOMEM;
->    106	
->    107		fu = &fl->fu;
->    108	
->    109		base_cfg = devm_platform_ioremap_resource_byname(pdev, "cfg");
->    110		if (IS_ERR(base_cfg))
->    111			return PTR_ERR(base_cfg);
->    112	
->    113		fu->reg_cfg = devm_regmap_init_mmio(dev, base_cfg,
->    114						    &dc_fl_cfg_regmap_config);
->    115		if (IS_ERR(fu->reg_cfg))
->    116			return PTR_ERR(fu->reg_cfg);
->    117	
->    118		fl->id = of_alias_get_id(dev->of_node, "dc0-fetchlayer");
->    119		if (fl->id < 0) {
->    120			dev_err(dev, "failed to get alias id: %d\n", fl->id);
->    121			return fl->id;
->    122		}
->    123	
->    124		fu->link_id = LINK_ID_FETCHLAYER0;
->    125		fu->id = DC_FETCHUNIT_FL0;
->    126		for (i = 0; i < DC_FETCHUNIT_FRAC_NUM; i++) {
->    127			fu->reg_baseaddr[i]		  = BASEADDRESS(i);
->    128			fu->reg_sourcebufferattributes[i] = SOURCEBUFFERATTRIBUTES(i);
->    129			fu->reg_sourcebufferdimension[i]  = SOURCEBUFFERDIMENSION(i);
->    130			fu->reg_layeroffset[i]		  = LAYEROFFSET(i);
->    131			fu->reg_clipwindowoffset[i]	  = CLIPWINDOWOFFSET(i);
->    132			fu->reg_clipwindowdimensions[i]	  = CLIPWINDOWDIMENSIONS(i);
->    133			fu->reg_constantcolor[i]	  = CONSTANTCOLOR(i);
->    134			fu->reg_layerproperty[i]	  = LAYERPROPERTY(i);
->    135		}
->  > 136		snprintf(fu->name, sizeof(fu->name), "FetchLayer%d", fl->id);
->    137	
->    138		dc_fl_set_ops(fu);
->    139	
->    140		pe->fu_disp[fu->id] = fu;
->    141	
->    142		return 0;
->    143	}
->    144	
-> 
+- Removes extra spaces.
+- Fixes error handling.
+- Fixes the logic for checking battery status.
+- Fixes typos.
+- Removes unnecessary commas.
+
+Link for v6: https://lore.kernel.org/linux-pm/20241130094531.14885-2-bhavin.sharma@siliconsignals.io/T/#t
+
+v5 -> v6
+
+- Use shunt-resistor-micro-ohms property instead of sense-resistor.
+- Remove the battery node from the binding examples.
+- Add interrupt bindings to the example.
+- Correct the Signed-off-by (SoB) order in the commit.
+
+Link for v5: https://lore.kernel.org/linux-pm/20241129114200.13351-1-bhavin.sharma@siliconsignals.io/T/#t 
+                                                                                
+v4 -> v5                                                                        
+                                                                                
+- Fix variable names                                                            
+- Limit code line length to 80 columns                                          
+- Add interrupt and monitor-battery properties to bindings                      
+- Correct error handling with return dev_err_probe()                            
+                                                                                
+Link for v4: https://lore.kernel.org/linux-pm/21c08a45-34f1-443c-97d4-6baf9fa01b67@kernel.org/T/#t
+                                                                                
+v3 -> v4                                                                        
+                                                                                
+- Added support for current, soc, temp, and status properties.                  
+- Addressed comments and feedback provided by Krzysztof and Sebastian.          
+                                                                                
+Link for v3: https://lore.kernel.org/linux-pm/20240205051321.4079933-1-bhavin.sharma@siliconsignals.io/T/#t
+                                                                                
+v2 -> v3                                                                        
+                                                                                
+- Resolved DTC warnings and errors                                              
+- Formatted the changelogs                                                      
+- Added monitored battery properties                                            
+- Replaced 'additionalProperties' with 'unevaluatedProperties'                  
+- Replaced '&i2c6' with 'i2c'                                                   
+                                                                                
+Link for v2: https://lore.kernel.org/linux-pm/202401080530.0hMWnrIg-lkp@intel.com/T/#t
+                                                                                
+v1 -> v2                                                                        
+                                                                                
+- String value is redundantly quoted with any quotes (quoted-strings)           
+- Found character '\t' that cannot start any token                              
+                                                                                
+Link for v1: https://lore.kernel.org/linux-pm/46bba29c-330d-417d-ad84-ceb5207fdb55@wanadoo.fr/T/#t
+                                                                                
+Hardevsinh Palaniya(1):                                                         
+  dt-bindings: power: supply: Add STC3117 Fuel Gauge                            
+
+Bhavin Sharma (2):
+  power: supply: Add STC3117 fuel gauge unit driver
+
+ .../bindings/power/supply/st,stc3117.yaml     |  74 ++
+ MAINTAINERS                                   |   8 +
+ drivers/power/supply/Kconfig                  |   7 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/stc3117_fuel_gauge.c     | 666 ++++++++++++++++++
+ 5 files changed, 756 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/st,stc3117.yaml
+ create mode 100644 drivers/power/supply/stc3117_fuel_gauge.c
 
 -- 
-Regards,
-Liu Ying
+2.43.0
 
 
