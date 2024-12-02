@@ -1,146 +1,104 @@
-Return-Path: <linux-kernel+bounces-427585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6265A9E0323
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:18:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3D4169637
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:17:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCB020371E;
-	Mon,  2 Dec 2024 13:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WgTv8Mtd"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875A29E031D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:17:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4880C201015;
-	Mon,  2 Dec 2024 13:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5A2288C0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:17:50 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8B51FF7A2;
+	Mon,  2 Dec 2024 13:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnxCSKis"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEE01FE469
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 13:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733145359; cv=none; b=dqZ2kgocMnaVY7DW55X3LNoqYbY+B6qfiyd3g+P5+pXTkTKXU6WO4u8x273xYsMs6iXgafzpWez6WM09x3woiMymZmmOxWwG8Y/XPnFlXPslpWjF99U2NoDGpq3EEDTt88x32x3xkP4WYF9eE5FWXlwkAv0DVTMRipjq+MLUuW8=
+	t=1733145405; cv=none; b=a2ImbZU0TISBGf+MsHBxKoB5gDhMSzfbN0XAxhA8CckbtVOXBKFCcfkeiMdmQL3GNm44nwHYbvbfqirXQAojF/5AtFFbGV1UqvAmPRDHl5ENjUX0nj7hoBu5JSVDHAaNy73AUfJfkmUYsvrDwqG3KG4qOiE3xfaYnlyOd6pBMIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733145359; c=relaxed/simple;
-	bh=TOW/EzyDbIvADmJ/cMQpnmtwR6NOgiVR9PmYtOf7bXI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TYwGzxO6NBw/yQJmzwqzZuCxLR03AZumD7tEwQJOj8MOKyOGpqN9VaG+4TdSuFBDZ7Sj76dhpcohDryjJUBmRjEDWLp7KfUbKEl7ZBMZte/xxCHjaw6/Sdl8ISnVZ85VIxBeaXGoKkuOmu48rEmS2tUs30+atQLT4/rSDxmM1po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WgTv8Mtd; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 2F446C000D;
-	Mon,  2 Dec 2024 13:15:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733145348;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hVpn7dEumaHVgEROgoe+qNLD7BNzHl5S0UXnNdPNwZ4=;
-	b=WgTv8MtdQGa1MyCqNQZZ2awfM8pOrl9Xx9hEjsIidxSFjhZq+uj48dDS3X0YLAwrpCXe8g
-	gPWJThY0m3D877rqBc5FVQfqAeX2zpyxqjUX5Fw7RwYXcAu7FVz8PiqfgYrm+GCaKGGr2J
-	2khUfjou6YphHNFRHAZhBQrGkMHlBvExA7OlSj+TV5nhPRr4YECCgmWaiaj+X+HVmtOVCh
-	+ZwhrPfiQgFm9ggssVhB7XDC9aKBJtI99TScF+bteDKIetV/SoVp20OhpEb4fCkBT8fbmn
-	KY/ZE6hp52DFG9TsJomztvaL0uDvwi96C+uqvPumKbBKuV9Pjuk/JL40MCN7ag==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lizhi Hou <lizhi.hou@amd.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH v4 5/6] of: Add #address-cells/#size-cells in the device-tree root empty node
-Date: Mon,  2 Dec 2024 14:15:17 +0100
-Message-ID: <20241202131522.142268-6-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241202131522.142268-1-herve.codina@bootlin.com>
-References: <20241202131522.142268-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1733145405; c=relaxed/simple;
+	bh=XV0a+VBht+qC20K/Mo99JjOsyArsLSLWWPEdZ3JXT4g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZJnKMDvIsj3W6Zkldd6rsj0d6dn8wdgqUls2kQpbCrpwD2tXiUTN7BlUhvACVyRrmfWOC3UFm8b3OOmVLJc5dVW9U9L6MecCvcxrErGf2yfy9SUYr9SEEhyjDTT8fCO1aPqpcCYrMFuuA9IjN/6iB4VQietK7YKtFOE6X06d630=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnxCSKis; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9515C4CED1;
+	Mon,  2 Dec 2024 13:16:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733145404;
+	bh=XV0a+VBht+qC20K/Mo99JjOsyArsLSLWWPEdZ3JXT4g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=dnxCSKisp3TPecTN/FiRc0K5gD8f/3h3X0IhkozaCBjaDlsXb2jRyjzS1FsspKC7k
+	 FIu3D8djzQ/P2x/IzrOHURax3skAWGmp48zGvcpwYIB1gJ0fXiS11e3iUn4dqTfDvm
+	 8ULdofpvlSfRiK9wifOndBr9mjYTQUB9aFzs2v0UV4Aj1E3fkRLFKKeyNxBfedCiJI
+	 PfFYCVX2+XOVhYPHBIqfC9JpBW+XLZPAYaQ6bgmbNIPgHVs3hDMUjOC9pYV1ADyxan
+	 4bgtaMm4Yo0l/R/dhEwvgzo88EncfQdiERMH9yuFZ7cBalYwSbLZmJU7kA8omB7aQV
+	 cAdUTU/U69jwA==
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee@kernel.org>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <ZzWkny4lKpY09SX5@mva-rohm>
+References: <ZzWkny4lKpY09SX5@mva-rohm>
+Subject: Re: [PATCH RESEND] regulator: bd96801: Add ERRB IRQ
+Message-Id: <173314540342.45537.922708057754057095.b4-ty@kernel.org>
+Date: Mon, 02 Dec 2024 13:16:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-On systems where ACPI is enabled or when a device-tree is not passed to
-the kernel by the bootloader, a device-tree root empty node is created.
-This device-tree root empty node does not have the #address-cells and
-the #size-cells properties
+On Thu, 14 Nov 2024 09:19:59 +0200, Matti Vaittinen wrote:
+> The ROHM BD96801 "scalable PMIC" provides two physical IRQs. The ERRB
+> handling can in many cases be omitted because it is used to inform fatal
+> IRQs, which usually kill the power from the SOC.
+> 
+> There may however be use-cases where the SOC has a 'back-up' emergency
+> power source which allows some very short time of operation to try to
+> gracefully shut down sensitive hardware. Furthermore, it is possible the
+> processor controlling the PMIC is not powered by the PMIC. In such cases
+> handling the ERRB IRQs may be beneficial.
+> 
+> [...]
 
-This leads to the use of the default address cells and size cells values
-which are defined in the code to 1 for the address cells value and 1 for
-the size cells value.
+Applied to
 
-According to the devicetree specification and the OpenFirmware standard
-(IEEE 1275-1994) the default value for #address-cells should be 2.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-Also, according to the devicetree specification, the #address-cells and
-the #size-cells are required properties in the root node.
+Thanks!
 
-The device tree compiler already uses 2 as default value for address
-cells and 1 for size cells. The powerpc PROM code also uses 2 as default
-value for address cells and 1 for size cells. Modern implementation
-should have the #address-cells and the #size-cells properties set and
-should not rely on default values.
+[1/1] regulator: bd96801: Add ERRB IRQ
+      commit: a8d77166fcfe1cd4be70c21d65ff2b27b4f54a26
 
-On x86, this root empty node is used and the code default values are
-used.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-In preparation of the support for device-tree overlay on PCI devices
-feature on x86 (i.e. the creation of the PCI root bus device-tree node),
-the default value for #address-cells needs to be updated. Indeed, on
-x86_64, addresses are on 64bits and the upper part of an address is
-needed for correct address translations. On x86_32 having the default
-value updated does not lead to issues while the upper part of a 64-bit
-value is zero.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Changing the default value for all architectures may break device-tree
-compatibility. Indeed, existing dts file without the #address-cells
-property set in the root node will not be compatible with this
-modification.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Instead of updating default values, add both required #address-cells
-and #size-cells properties in the device-tree empty node.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Use 2 for both properties value in order to fully support 64-bit
-addresses and sizes on systems using this empty root node.
-
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- drivers/of/empty_root.dts | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/of/empty_root.dts b/drivers/of/empty_root.dts
-index cf9e97a60f48..cbe169ba3db5 100644
---- a/drivers/of/empty_root.dts
-+++ b/drivers/of/empty_root.dts
-@@ -2,5 +2,12 @@
- /dts-v1/;
- 
- / {
--
-+	/*
-+	 * #address-cells/#size-cells are required properties at root node.
-+	 * Use 2 cells for both address cells and size cells in order to fully
-+	 * support 64-bit addresses and sizes on systems using this empty root
-+	 * node.
-+	 */
-+	#address-cells = <0x02>;
-+	#size-cells = <0x02>;
- };
--- 
-2.47.0
+Thanks,
+Mark
 
 
