@@ -1,158 +1,241 @@
-Return-Path: <linux-kernel+bounces-428076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AF79E0AFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:27:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305229E09E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:29:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A9CEB82888
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:29:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5CED282AD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F011DAC89;
-	Mon,  2 Dec 2024 17:29:32 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36D51DA60F;
+	Mon,  2 Dec 2024 17:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="an2Meycw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EFC1D9A78;
-	Mon,  2 Dec 2024 17:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160572; cv=none; b=OUMMhvmICqa2GMmBs8J7l+DkCe4A85qoiw26mp0KS0/ePSlSIhrkGMRAknB+Q7dDZitEMWC199qe3JAVP0eLrUBAWPgWRaLTL+EwiGDBXhbklkHhOcVy1Y9zBfCB6QQPAjsCgC+Z1COnM7Afx/Y3tgEQ/3zniU2cAp0m9nmEsEs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160572; c=relaxed/simple;
-	bh=QOQ+erHT4VXZq8nXOWd4czcnijmv3x7ttdi40L8gVbU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F2tW+hNgibcdnPij1LTmhoKotoHzma4hrYqljf6WvIs/hSngvJqwg3SU++c0a6HG7b4BdRS2hQX/XqMvGCAh1hMNeWBnE9pjiwqKp4dcvPFuHmFIACsMrQj87VtmWug00GbZRRuw0oeD4Sv2gNXwSKz9aZynJEy8ZvgPfmEPBrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a68480164so630901766b.3;
-        Mon, 02 Dec 2024 09:29:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733160568; x=1733765368;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CgvuKCN7J6YpKVI1K2eRbzWN5UKOCpkxDwdsMytbnaM=;
-        b=LovzK/8yfwLDQyw/Y37DFPd+EJsj6gZal/pHsQ90ylPZ3aD5yEF2LE41am99BUfPdr
-         ZRwss0r/chD1IkD5w/GNWmfpCRIp+fvp/hR/ykKS/wMuLRU7DY5aznAToIfNLF6bQsZx
-         QaSFl1+z8s4wiXRJ4omwV5yzW1ngFSdhnD2aJmwSMb9M0+9KTRbz3u/CNtPQQReGocMU
-         eTdf8G3Sk3cE5xwv3sXhM3gjniaBhJHODos5YtfvlSffhqj1NfeT8mmYnBLwIGBT9i4M
-         cHYUsm+ooFfyDx0yHpdrsGuNHj+BMWAXE00QsOaqhLg0outAQn7ebwu+XRSiKJhauNZI
-         zHDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjWLMMMcg4COFD0t64jCZfJcK/lzw4Ed8Orao4nVee0eWu2x08y6cejP4I5kR+JhNxz9OxPuIzZ1wrHQP5@vger.kernel.org, AJvYcCVjvPH/PS+e8Ow8Z28dIRnb6AlIu8GV7rGnmVEJUBa7W22oQffbqaDg9IVgoi3MJ0EcZcwEideCw6VX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz34Q/nyDL8PetC9TkKjp1vBC3FbNzbIyqxd/2L7tmpyR4TVClH
-	YRzTUL3jnAgWUGRxrs/t9bz6EPOoVl8PvdFApaGdgzyVYSpIaaz8q0na79yD
-X-Gm-Gg: ASbGncvzg4kl8HiLFgM6vqhK//H+i/Zjh5hXPmlv1SgO5rHUWzVK4l3rhJplNXV2lxK
-	qfCvQWUDFtSR1artpfhd4awpWoPQAB0W+gkxkBSBwX55I0sqI/YSIeBl+62RljPk6FiqylaIqbF
-	4Gm+jp5s52I8vH7jwq3PN4D5njeOFNj7t59Mds57nnLvvBNSHrDVmB/PlhTXWJq1I7slF1fGroi
-	XpMhLcN3XkTRSI9Hgn0Rdlm+dREme7/8NHLdqNj7Y1bC5gk8g4wp5iEpsfMeX+ttdS+mvGP7ARS
-	RWxW
-X-Google-Smtp-Source: AGHT+IEc1tDCotDx2/Yk1SYdAKvcozPAa2ZWBTRAmdp0lcsIUgUZXQM4zrZc5g2P04VdnqlZa+7HxA==
-X-Received: by 2002:a17:907:75d0:b0:aa5:3631:adcb with SMTP id a640c23a62f3a-aa58109066cmr1780274166b.53.1733160568118;
-        Mon, 02 Dec 2024 09:29:28 -0800 (PST)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e649csm525879966b.110.2024.12.02.09.29.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 09:29:27 -0800 (PST)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa5500f7a75so733200966b.0;
-        Mon, 02 Dec 2024 09:29:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXGL30TI2P2nKiTyzx6HbK5SkmnNJ0DKA6jFL39nbXFKAwHGQ3KBahia2G2kSsDx9cg6aNk5GKWUYmz87JZ@vger.kernel.org, AJvYcCXhHfIINBx/4/92FiPhGcyC1OZLrRHPLgpbUAgWN10LGArD9XRkzYmhZDAi6AyShKx05uNEi+BPbE3D@vger.kernel.org
-X-Received: by 2002:a17:906:c383:b0:aa5:451c:ce25 with SMTP id
- a640c23a62f3a-aa58105895amr1847466266b.43.1733160567637; Mon, 02 Dec 2024
- 09:29:27 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C7E18784A
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733160551; cv=fail; b=OTXRslBtdGcDHnmYQ5UpH4j0efenqN2hFXAHKjPrYW9UywBotQJvXwGw0AUdlCChLe/GjQ1HQVcEjcbtDLbQ9KwBdQhq0kGEL3vu66XwGDpDxbaVmo3yyG/NE7F57cmUaklNfJWZWzCJO1/VXInYdW2s/DZSLRk8mjt+8S7OJeU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733160551; c=relaxed/simple;
+	bh=VvlzCQLGYgx4d7F3X668BnkmEV1OfLXVlp/oswXea44=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=j2khov4DnvAm7JKnbUwAjZ1KNruVuikWoZunSMemp1hq5W1lGuJs6VnyBaXZX0Hu4J6y2QXq66ff+0cRVdBrI+b3D+y7SVLvBan9/GAsS6oa40q8tn4EE09J09ZoO0oEOCiGZMxvQ3yIj4jqm9XdiThYkjGGE7CD5jDDpIQSN7M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=an2Meycw; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733160549; x=1764696549;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=VvlzCQLGYgx4d7F3X668BnkmEV1OfLXVlp/oswXea44=;
+  b=an2MeycwrZ4NHriKPCyQP5US0WawJ1hnqr6rY+yOFI9QGozcjz4PEn6A
+   0Mtqqp3hxV3TgEy5sVl34jdpQXbvzlYP+XVZK/OG70U+x0qWhaqFBksM1
+   9z8FBklGo6TfRbFNOwt7TXHT5OjBg3YZG79/vE7rLu0bleO/+ucR2qS0D
+   3aiaYl3t+7cM3c4ouIa6cZED+ejceKMuX7rG01ibKZolmJkVqgPHJHui/
+   Lrac/shoWQwwFN4utz4MPMWhklY7AzRm3AnrCH7vFMcZFsmOZDBGCJase
+   Fh/9CSKkYn3NBMkKmv8B1O9sTCw3bwHkxc5XjqzRxNgUkr8m9jlxWJfXm
+   A==;
+X-CSE-ConnectionGUID: j1ePZYL7ST2cmWgpKUjtww==
+X-CSE-MsgGUID: yZEumiMeQdalKxh4vuUN0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33269442"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="33269442"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:29:05 -0800
+X-CSE-ConnectionGUID: lOd6LthURXiwaMDvBBgEjA==
+X-CSE-MsgGUID: O1N9nppORwqjsrcD1qSMaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="93342403"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Dec 2024 09:29:04 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 2 Dec 2024 09:29:04 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 2 Dec 2024 09:29:04 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.176)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 2 Dec 2024 09:29:04 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cDztWhiCT6WteU+4KLHWXKT7/HQDJMRuqLBu+ej6VSF8NrDI/pc7yi+e4WI/sYxabcfe5yO70GF9wiKUaPtLN9K2gtSvgvDqBd8k0PfK/T94+sIsEzEETdXND6KfBsa5ElVzLqHw2ZcATq8VSZacnIv4KO0EEzVM2eR8xgobpB6VVRAfyjIb316intRj/r2GEAGK04SSczmr209Mx/b76rjaE8VDeozj388w+Tt7yG/kgsfczRofzhbCQL+6j8x4nhy/PRCh4i/wkGfGQF+9eN34cEKiB7R/vz7RJOwn4iWPx7gG4Gs+cxOwDgiWWI7IMHLn49DQpjsx3W5iYFUyqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bKt1zclHhs3uyvsefavluoCCIjX3xJ9gbPBOerM4udQ=;
+ b=o8+4zVFwXzR/EKQk1QRKytvwUmDGTfN2TWXBVOxzKbIY1EPsBvWDjrsWV24Vm3Q2To9PJWlDBFhbRdEprvKCSOIoro+vbzfX5gyPS39o5EPpDUqtTcmD+/uKYiz9RHVZAxtwID7fGP2jWfUWB5HJPf7FGeI3XL4vnox4vjCPQeT+HQCd0X4rQUNrZC/izz9mGI51sUsDu0roNOOjWxcCddN3gRZpBXVM984g5QHwr7s0j3BAe3HyZzxVOJ8ndHikDM5KVhgbBg27zZ9tUps5aeFwqgrP2BP4ovC2aRulWFYjwzKG02UYGZOYAb5yhf3fFggS5F7uza1caZPJZSV4YA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CH3PR11MB7177.namprd11.prod.outlook.com (2603:10b6:610:153::8)
+ by IA0PR11MB7404.namprd11.prod.outlook.com (2603:10b6:208:430::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Mon, 2 Dec
+ 2024 17:29:01 +0000
+Received: from CH3PR11MB7177.namprd11.prod.outlook.com
+ ([fe80::271b:c621:d244:6105]) by CH3PR11MB7177.namprd11.prod.outlook.com
+ ([fe80::271b:c621:d244:6105%4]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 17:29:01 +0000
+From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>, David Airlie
+	<airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Gurchetan Singh
+	<gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, "Kim, Dongwon"
+	<dongwon.kim@intel.com>
+CC: Rob Clark <robdclark@gmail.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "virtualization@lists.linux.dev"
+	<virtualization@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kernel@collabora.com" <kernel@collabora.com>
+Subject: RE: [PATCH v1] drm/virtio: Set missing bo->attached flag
+Thread-Topic: [PATCH v1] drm/virtio: Set missing bo->attached flag
+Thread-Index: AQHbQndPYmuifTJ8Y0u9pOvK/gygD7LTOgTA
+Date: Mon, 2 Dec 2024 17:29:01 +0000
+Message-ID: <CH3PR11MB7177A6227543D9DE28564403F8352@CH3PR11MB7177.namprd11.prod.outlook.com>
+References: <20241129155357.2265357-1-dmitry.osipenko@collabora.com>
+In-Reply-To: <20241129155357.2265357-1-dmitry.osipenko@collabora.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR11MB7177:EE_|IA0PR11MB7404:EE_
+x-ms-office365-filtering-correlation-id: fc045a5c-ad44-4e2f-8d34-08dd12f6cfb8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?I+jvg7mrPCWzHKTS6AJVfUGyFcQs/olOqCf+qvqBqq0EWWa9wH2ZRGSaOqA0?=
+ =?us-ascii?Q?x7DXX8BJ3OYC3pToJ9vtyevPLn3NjzQR9ijqu5DCYD8aPj/IfRgMhVHFj47G?=
+ =?us-ascii?Q?r/YPS9AnuqEqooTfhDHPWyv5oDHepoTlsauybA9p4E7cRuGRrkk6FSeV03Lk?=
+ =?us-ascii?Q?pYznabU3+QVDWVcHokplsOmyUaxvgWLI+d98qDYbwqCOUXoZ3Blf+Lq1lKk/?=
+ =?us-ascii?Q?l2Xn251N/Rn0fGQHAXiMzKyEV+CnHn0jb1HlrI4YGUh11hXQ6mmBFz4kvZSI?=
+ =?us-ascii?Q?t7i1CWyG1XxPWbRZEDdvmUBBkvTlzANlwh5XZB9xMg4MpiZWLgiMsTDDaRyF?=
+ =?us-ascii?Q?0OmWAv6gCHcoYZjDy45m8zjeYs6CWtKXCNs11LZfrMupQMzVF5NHSoVwhv6s?=
+ =?us-ascii?Q?ju2sU7/ICMT1hSX5Ch85JKBqDnX3BKWYDYONZWjzSkKij3me1KZiw3a1X24y?=
+ =?us-ascii?Q?M3JMi0Iye1tuQhfliZ7rDpvSTuYYNPug2ke6La/ZnTLQWg5xQcwg04gnxmp+?=
+ =?us-ascii?Q?CB2m5p/qVR5Y9rrlffPT1NfdcchZLgIw92O567GQmoyk/7T2bq3B2Eps9hi8?=
+ =?us-ascii?Q?nSzgl/PCG1M2RrXcBS3fJCoNNkFcUGR017l5w7BRPyiIgCWaDnSEdgNbs4pO?=
+ =?us-ascii?Q?1zMD4bh98+5K5hYMQJli5Xw7AbdhLrXDMFh2E3+2h784roMoCtGHTqbZfpjp?=
+ =?us-ascii?Q?1jwLcR6mC+mRE+0gvlWFMaqsM8oiYkZFYQuRTPpSQuw6Zqpmn0aPLNCuxmha?=
+ =?us-ascii?Q?sXfsn36yshIB+eaf16VdDKawkTEI61yt/5OIhCd7AFs4dcuMNf/9BJfVT23d?=
+ =?us-ascii?Q?/C1V2NXwrCZrpH7ysB3WQ1yGpkM5lcpePkXxXTp4UQ/DPiiTsHH6rM4eGBZy?=
+ =?us-ascii?Q?u9Jp+3k1vI6OIc3/mTrCs12CO+DIce4V0kiXlPvx25iwz0kjp3f8S7l2qFV8?=
+ =?us-ascii?Q?QbEngFO/uinX/20m5Cm6FZEqK1jhXF1JSyhA29q41HowdZiSVQL2ZLBi5dK7?=
+ =?us-ascii?Q?5hE/J+XNOJzedYjgO9Cp9iYWl6d8l+jC8tVWsE4E3jhmVFCj4CdYR9SSEqGp?=
+ =?us-ascii?Q?Z/1ZF9NO6FZr57GrJaNDs2rHRgFqVGAJTx6+1b4o1C/dNUThdqgjajzH7fjl?=
+ =?us-ascii?Q?nFvAlYcGgnjMKXLBASUT3KT92Id77yhRuAJtBghiNpCUhIk+U6RiZ2XgaOmU?=
+ =?us-ascii?Q?uzRTgcVqcXbukhfoBXzgn+DXvYJjJG7AT+Y24trao9G85fuCGCgyQT+ttTIR?=
+ =?us-ascii?Q?QeZsV29H+bslWM4iSMmDkvVboMoxAKx3R0GKtk4YiMvMVB9pgFHLWnbobbKH?=
+ =?us-ascii?Q?EuJMo0StO+Bi4sWYQB1WK0qao+gCNB+GlbU+9XXxOH5s1UaG2alJKzjfHqzs?=
+ =?us-ascii?Q?KjWgM6ihxcDGqo56HLlmXtJpBiQjfmQ1Gbo4ZOw3wSatHm1P9Q=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB7177.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?nzh1a4+u7jCIxmT+ZnqX1EodCKitD19TKDuVNpEP42kv9pYeJRdRwh+fRVBp?=
+ =?us-ascii?Q?7STS8/ml0jYAg9tUpW3jWBXaW7szmHZ6mXQ3bUz8eRd2ibckC2RhifSGfdJS?=
+ =?us-ascii?Q?6sBnJY1y2yR3VfEsydHCShgz9jSDtqHUiwhm9hs3dz9UgpKO2SjM/4rwh++x?=
+ =?us-ascii?Q?vOADTTDCR3j3/l8S/yjSJb3jEF9ozzvAP2zkmlHrlCdp+Xa8HDLxRbPmcof+?=
+ =?us-ascii?Q?wcztDm3YOvBzu72hKVAduFvKnLkf/3sMwuzAIfN7kQidQJRr7IabcSOgsb5i?=
+ =?us-ascii?Q?Mwg10dAIMxkcwqgpeg1EVFn2exS502MfcDutP1wurmJgEmdOV5YjHxQp7Tyk?=
+ =?us-ascii?Q?edr5ooEYsnZE4GiDxVSlaUuvMcJI+FWCL3GZKtFX7schI+01RW4fjD0ifUUN?=
+ =?us-ascii?Q?tqDRUmnTxV0RDs0SJKwwZEcaBKGdOvl1fEcIakOlZRQL7z6D8F2LAzkJ7BnJ?=
+ =?us-ascii?Q?UK2LXNKjg6ULGcPMniTkwdWYWQ8ujjaz+fQTnbWqLqX5yl0SlIpWsZLlPdpZ?=
+ =?us-ascii?Q?OiVUr5FmpHzo/tlpP6+qRveiWLs8IvhHll9aAfLQo9qqIPURgdaCB+p0VjNo?=
+ =?us-ascii?Q?kGhKTrEgMLkpD4BVrd+6JPmE7qIZwc2MxNWAP/8tvHRgIq5kzwBWHXlRCzWH?=
+ =?us-ascii?Q?ggOcTHJiMYAcZUcOi5I2Kj4L9/KwkMMgmR0V7xDqFQz94D31AjllJRfTOCxl?=
+ =?us-ascii?Q?oRomf4KJM/y9wORJcrU3aHFgx/klyV3apMXgk5KiI/neAg+LjGNrPixgDiX8?=
+ =?us-ascii?Q?2axvPdC/0N85aTbJU+HNZ/MW7V45jfQtthu8Ygi/d2fJBEa/zzpR7JOz8xpB?=
+ =?us-ascii?Q?UC5iLV/n0Yq2RBErDe4/Wu7d8jrjkcrP0M1vAjyTG1sc/2tOxerrZH5dxGYm?=
+ =?us-ascii?Q?uXCHZ5FeQzea6Yj7s37tZuWRyoOC5ZadVmwgWEXoQ1n3JfvzZ0VBxxX5+CuE?=
+ =?us-ascii?Q?9/P2BwICSGpByx1RX1h0XIPcQfiBhTn4s2eRYq+kBUUMBSAPFn3tgLRmR0RO?=
+ =?us-ascii?Q?nkWYLBtVUiCzyrOhiRkDggbKp/c56l5gdjuIRaTHaQePgrecexWjMZr1pWw0?=
+ =?us-ascii?Q?e3KQtVyJjdVgWfnni5iHjRTms3DGUD1QjRGLfyVnvCjCjWfZNvN3N7CQZsDu?=
+ =?us-ascii?Q?ftvP7FlxI+PX/pp8RoyIl2s/UOUjRzmVu9n7G0d6TIHxU+NEO3XoD9BNxbKc?=
+ =?us-ascii?Q?1ThNCqR0P831efCG76R7pWoStwPVaD180jIGoezv++PQrYd+QlhJI+jLvO6Y?=
+ =?us-ascii?Q?83SNeetcaeKBzdBm904LzeM00T3u4bmeUQ8A5L8GGFMp6CMdyeYRDYBef/OX?=
+ =?us-ascii?Q?kp9ci4rhBy6wHvgBDzqTWB7hysDtVgutzaQn2OKUEO4/vMAWiBxdfZrXk5io?=
+ =?us-ascii?Q?cmE9+bfqGwsFR/JOBk9zu3k+YC6HbgShij9KL4P2LHo9axZw9P/UYPpSWCAz?=
+ =?us-ascii?Q?RvUqYDSbx6yvyQFGze3uxwNVcJKCl7gn5J4GuxFFT0/+7VBz0sLVDwBJqMe2?=
+ =?us-ascii?Q?PXCl7ABpwyhauJe0C9yC12fMgBd+5U/eSLIerQPFrnroJ1WOaSa9Du/MLefB?=
+ =?us-ascii?Q?7d//c3ijFaEOb/E2Ww2mFASaX4TJoOJDYwBOrqBE?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127-asahi-spi-dt-v1-0-907c9447f623@jannau.net>
-In-Reply-To: <20241127-asahi-spi-dt-v1-0-907c9447f623@jannau.net>
-From: Neal Gompa <neal@gompa.dev>
-Date: Mon, 2 Dec 2024 12:28:50 -0500
-X-Gmail-Original-Message-ID: <CAEg-Je-3w3koiqnAOMQO4RZ2DB+fRiSbZJSba-Z=L8OCF2B0Pg@mail.gmail.com>
-Message-ID: <CAEg-Je-3w3koiqnAOMQO4RZ2DB+fRiSbZJSba-Z=L8OCF2B0Pg@mail.gmail.com>
-Subject: Re: [PATCH RESEND 0/5] Add Apple SPI controller and spi-nor dt nodes
-To: j@jannau.net
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB7177.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc045a5c-ad44-4e2f-8d34-08dd12f6cfb8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2024 17:29:01.2335
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MXlgtcK4hNRFREnyjePNXaw4Ujx45C2kKB0dqQsxi0w5HRs1gVa+gjYWNc5/SSuiaCqLk8vX/fBGqBycqzVaK0PGH6lXJpuDk5jiPQ+yuHw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7404
+X-OriginatorOrg: intel.com
 
-On Wed, Nov 27, 2024 at 4:52=E2=80=AFAM Janne Grunau via B4 Relay
-<devnull+j.jannau.net@kernel.org> wrote:
->
-> This series adds SPI controller and SPI NOR flash device nodes to the
-> man Apple silicon SoC dts files. Only the subset of used SPI controllers
-> is added. Five SPI controllers exists according to pmgr ADT data but the
-> commits only add controllers found in use on any of the devices. The
-> parameters for the missing nodes are guessable but there's no point in
-> adding them since no further M1 or M2 devices are expected.
-> Together with controller nodes the first SPI device is added. All Apple
-> silicon devices connect a SPI NOR flash to spi1. This holds Apple's 1st
-> stage bootloader, firmwares, platform and machine specific config data
-> and a writeable key-value store (nvram). Expose only the nvram as mtd
-> partition since it has use beyond exploring the content. Tools from
-> asahi-nvram [1] can modify the (default) boot configuration
-> (asahi-bless), read Bluetooth sync keys (asahi-btsync) and read and
-> write arbitrary keys (asahi-nvram).
->
-> Devicetree bindings are included in the driver series. Last version at
-> https://lore.kernel.org/linux-devicetree/20241101-asahi-spi-v3-0-3b411c5f=
-b8e5@jannau.net/
->
-> This series passes `make CHECK_DTBS=3D1 dtbs` with the spi bindings excep=
-t
-> for "local-mac-address" for the Bluetooth device (I need get back to
-> this).
->
-> [1] https://github.com/WhatAmISupposedToPutHere/asahi-nvram/
->
-> Signed-off-by: Janne Grunau <j@jannau.net>
+> Subject: [PATCH v1] drm/virtio: Set missing bo->attached flag
+>=20
+> VirtIO-GPU driver now supports detachment of shmem BOs from host, but
+> doing it only for imported dma-bufs. Mark all shmem BOs as attached, not
+> just dma-bufs. This is a minor correction since detachment of a non-dmabu=
+f
+> BOs not supported today.
+>=20
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 > ---
-> Hector Martin (1):
->       arm64: dts: apple: t8103: Fix spi4 power domain sort order
->
-> Janne Grunau (4):
->       arm64: dts: apple: t8103: Add spi controller nodes
->       arm64: dts: apple: t8112: Add spi controller nodes
->       arm64: dts: apple: t600x: Add spi controller nodes
->       arm64: dts: apple: Add SPI NOR nvram partition to all devices
->
->  arch/arm64/boot/dts/apple/spi1-nvram.dtsi      | 39 +++++++++++++++
->  arch/arm64/boot/dts/apple/t600x-common.dtsi    |  7 +++
->  arch/arm64/boot/dts/apple/t600x-die0.dtsi      | 28 +++++++++++
->  arch/arm64/boot/dts/apple/t600x-gpio-pins.dtsi | 14 ++++++
->  arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi |  2 +
->  arch/arm64/boot/dts/apple/t600x-j375.dtsi      |  2 +
->  arch/arm64/boot/dts/apple/t8103-jxxx.dtsi      |  2 +
->  arch/arm64/boot/dts/apple/t8103-pmgr.dtsi      | 18 +++----
->  arch/arm64/boot/dts/apple/t8103.dtsi           | 68 ++++++++++++++++++++=
-++++++
->  arch/arm64/boot/dts/apple/t8112-jxxx.dtsi      |  2 +
->  arch/arm64/boot/dts/apple/t8112.dtsi           | 44 ++++++++++++++++-
->  11 files changed, 216 insertions(+), 10 deletions(-)
-> ---
-> base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
-> change-id: 20241101-asahi-spi-dt-58245bb1da3e
->
-> Best regards,
+>  drivers/gpu/drm/virtio/virtgpu_prime.c | 1 -
+>  drivers/gpu/drm/virtio/virtgpu_vq.c    | 3 +++
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c
+> b/drivers/gpu/drm/virtio/virtgpu_prime.c
+> index 688810d1b611..33084ce1d01d 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_prime.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
+> @@ -249,7 +249,6 @@ static int virtgpu_dma_buf_init_obj(struct
+> drm_device *dev,
+>  	virtio_gpu_cmd_resource_create_blob(vgdev, bo, &params,
+>  					    ents, nents);
+>  	bo->guest_blob =3D true;
+> -	bo->attached =3D true;
+>=20
+>  	dma_buf_unpin(attach);
+>  	dma_resv_unlock(resv);
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c
+> b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> index ad91624df42d..062639250a4e 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> @@ -1300,6 +1300,9 @@ virtio_gpu_cmd_resource_create_blob(struct
+> virtio_gpu_device *vgdev,
+>=20
+>  	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
+>  	bo->created =3D true;
+> +
+> +	if (nents)
+> +		bo->attached =3D true;
+Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+
+>  }
+>=20
+>  void virtio_gpu_cmd_set_scanout_blob(struct virtio_gpu_device *vgdev,
 > --
-> Janne Grunau <j@jannau.net>
->
+> 2.47.0
 
-Series LGTM.
-
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-
-
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
 
