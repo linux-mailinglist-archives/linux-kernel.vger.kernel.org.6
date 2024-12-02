@@ -1,141 +1,163 @@
-Return-Path: <linux-kernel+bounces-426881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6046D9DF9AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:41:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3F49DF9AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:49:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26ADB281737
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:41:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A56BCB210DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741FB2868B;
-	Mon,  2 Dec 2024 03:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="elbtE0eC"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC703D97A;
+	Mon,  2 Dec 2024 03:49:31 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EA81E22E8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 03:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B807317C2
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 03:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733110894; cv=none; b=H2mWvcDEZpr7ijU8dn5JR/2MXsCTQzT99wWmFm4UFNa53unDVM0NvKE8muvM3QfzhwO2zkyBJd1MrPLCfhtkhqSkZfo4ttNj75ypqY2PHMRCt6RRL4ODiSVNZHaPQMFef6dOeiYyoCsn57SyxDPAWj5UgFRwwcCCM13FOW9L+dU=
+	t=1733111371; cv=none; b=DH2UOWovSmM9R6+nT7Yww6TQ199IRH7OPVNbm7/0ZxHPjxY1qRpUodSSUCwGzp7SfAcAuqd2skHLqFIQEysNU3Gp4ZeL1sAM1St1m5Uw7BQXDT+SOaw4pt5nfODaSElaa86RCC++++9HB8p/x1yHN/N7o2j0OTM+o1wuUDKJxxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733110894; c=relaxed/simple;
-	bh=WL4yh0AElDBPFlk9xy3xVvMWfNNY0b2isFFOAhLsxUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jJG0he0Aovea2ZUO1eR9cxjz/CpjGq6qJ1ETsPxQEKMTeTh3tgiu9HetI0AxUZjh8MsB6upmPAWDGJKzIbyBpswzurH0D6o5UsutZ+bm7IazxkyLe4auEayh5bxL+U0Kd1+unIMM56oquh0qvdQUXhQ5sjcevR8qcUhzJmD8Lsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=elbtE0eC; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53df1d1b6e8so3973720e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 19:41:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733110891; x=1733715691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9bTlnjRzF2JRQH5FoLyAwJy6PscFmIMIE7nVuxtFSPk=;
-        b=elbtE0eC+XNjDXAm/xsnNNpXN0XQVW/t6GdTEn2eOwR5zDvKG1UOw3SrRyuLbrNt3p
-         Ejv0y7X1PwIggpiJ3zhuK4CjwRNyuDWjWuJzFIZMPHa7CxisO+xA0D2DDx5mnBQq9lYs
-         9SKTnMXsk1UfLdAYa/sSpDPXfbXGVLnuy5XDE=
+	s=arc-20240116; t=1733111371; c=relaxed/simple;
+	bh=ZuGUEwAXbNyAQs40cg3MSx9k5sLfFUvHw/F7c/SZR6o=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WfNqp7rQjaJZqyJ8SX/PsrtVulP3kQUB2U7OtZs2cs0reaS2XxRAqqN5EIamKrAhddfz2HHi9ZhcqCJIFqtyUTf0mK2y1bpn0JVrmb1lB3uIT+wxJ3AyZmIT+TS9QUqiO1diyGvIhBCrEHzltjTgZ++umAiogyuW2lnBK54AhS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a77a0ca771so25768585ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 19:49:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733110891; x=1733715691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9bTlnjRzF2JRQH5FoLyAwJy6PscFmIMIE7nVuxtFSPk=;
-        b=Xo/KBOkAv1hc5LvGlyvT7cpU+tDoV2kyfDkVU0ucDPW4Ixa6QW19SeqlvJAm4yygZl
-         dIN6BFwIbhFPlArfraxyurKYWU3v/cpDBILmZNeWC/UMs8NzvvHKJLatmGHasr9hOMPN
-         xbW3mTTg7uKHUBmZJkV/3gSRFh+s4DivWdoyN1IwuxJGpMxvs+igrD/5G2NLtRrFNryA
-         pjE0AlHAZOPGEzP6Tjo923EEcSUjDbAA23g1SEBEae6kwfJaimKEN3KGNG0mEXa7wMNv
-         gQyVsy8DF3PBABgiJSDIosQkAROJ+8V5Q8cAhA2Qv4LAwbxoaDDMKNXvPSOyvfU/Rj/M
-         Ba/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWc8TlWPUMMbtPvN5abtNNPL5nt8iuxw+awaYdYqk5KAV+KvjSrxmq6s9rMEi7q2Ltg5AEq9hPr8WlrSgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI/GVhJVnfZTfGj+iRQL/Aic+zMCvNX8QVuSyw/7yWGpurksl2
-	8iv0BJh3rc2kiS5bIwbdnPUBAZmjqVZeJYwMKlxMZemKKJBO1WZ0ekz5NJsotRhpqshTFLp9W9U
-	VSVeBFeQoTX80wLZilN8rnUdFBwaN1GEnV5BZ
-X-Gm-Gg: ASbGncsGkFYJVFeI/DsSYmysW2lY0GBm2KgcptuzMUQUipAVZ3amyWcWA0do8Gis3Tc
-	dKrZqPSu1+j0zOWzwg5pcPPIFR/4ym3nJd17Xy9GYu6b/eGCEC/0V/7+/McM=
-X-Google-Smtp-Source: AGHT+IFBGoFOaRz+qRuU+qOg6hWpwu/Z+nHG5cJ1fZ9YkpTnT8oQX9A4GdCR+xRN4nrprMU5eqtqFpCUbyCnVLzassA=
-X-Received: by 2002:a05:6512:2356:b0:53d:ab10:c273 with SMTP id
- 2adb3069b0e04-53df0104928mr6377365e87.40.1733110891515; Sun, 01 Dec 2024
- 19:41:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733111369; x=1733716169;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LhWUQjVNzI0Vfc+rBjjW0cYargSnL7fiTMluzIBuMOM=;
+        b=FLJX5iKc3q/XlX1xd8EF5ybvFrpp1LZDlbuF6ImrlF4M5CFnp5qK5OsavIp13j0fag
+         jGn46HZa8VDDDeOcK6MMfidUlAlo9jK1XkzvOmopDSVGMVs/TlInQIbCqKu3gtJWNJB/
+         ZmXHXjweqAi/mHCJZhch5uBbdGCbeNC1OdHJ05lFBk20qg9YoPW53gxtpmjj81fUSURQ
+         B309a59RX4i1bt6CZXaFdXSAgcyo9/A8gI26tgCCLgOdJ/JTvLamfX1ix9Lqi0t3D2TT
+         /otpro05NRaFJB3wUzfwsiRGSdBffZhIDyK35t4MuuXsifoKNZXjp4IdHXhjKs7EkEdx
+         LRFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVm6E6P1lwN4JLlojVNagneARYIXFEVzQXpLBCqobPzbjX7g1p3YofjaI6RQy233E8+5pI9JIj2VQmMLAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6AwGHENNZVYGEAUxeTaGp/i+JlRM5FvaLnpiCt6ESHIDaiNdn
+	qiR+u5e2lBkbZCOoGyq8LHjMBZ2vqSQMAmTtCcEMgoDxVWsdVIXS3UXk82aIjQTW2geWaUVJYBG
+	4PDYhp+2uaiTA+CmJwxqEiJ6isP7b55q9kgjH4WyGrUNxkh2RXLUeT0E=
+X-Google-Smtp-Source: AGHT+IGW4by/EpmZ1EZf2ORTOQeSqVofN65fj13N1kvHbmnbnilCqqSGfzRxFkk/lvV8Qzw+AIMwgS1JiAqr4ChfWCvTswxx1P3A
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112052211.3087348-1-nico@fluxnic.net> <20d3a0be-ba5f-439f-80ff-2e2bda3bb144@linaro.org>
-In-Reply-To: <20d3a0be-ba5f-439f-80ff-2e2bda3bb144@linaro.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Mon, 2 Dec 2024 11:41:20 +0800
-Message-ID: <CAGXv+5H0ocBWxGseoRXWyBo48+5-F-FRLZZcywcM-_vwu4=jVg@mail.gmail.com>
-Subject: Re: [PATCH 0/5] thermal: multi-sensor aggregation support
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Nicolas Pitre <nico@fluxnic.net>, "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nicolas Pitre <npitre@baylibre.com>, 
-	Alexandre Bailon <abailon@baylibre.com>
+X-Received: by 2002:a05:6e02:1526:b0:3a7:4e3e:d03a with SMTP id
+ e9e14a558f8ab-3a7c55f27d4mr161307995ab.22.1733111368872; Sun, 01 Dec 2024
+ 19:49:28 -0800 (PST)
+Date: Sun, 01 Dec 2024 19:49:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674d2e48.050a0220.ad585.0042.GAE@google.com>
+Subject: [syzbot] [bcachefs?] WARNING: locking bug in __timer_delete_sync (2)
+From: syzbot <syzbot+b92c7b8dc15336fd1e19@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 30, 2024 at 4:00=E2=80=AFAM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 12/11/2024 06:19, Nicolas Pitre wrote:
-> > This series provides support for thermal aggregation of multiple sensor=
-s.
-> > The "one sensor per zone" model is preserved for all its advantages.
-> > Aggregation is performed via the creation of a special zone whose purpo=
-se
-> > consists in aggregating its associated primary zones using a weighted
-> > average.
-> >
-> > Motivation for this work stems from use cases where multiple sensors ar=
-e
-> > contained within the same performance domain. In such case it is prefer=
-able
-> > to apply thermal mitigation while considering all such sensors as a who=
-le.
->
-> Do we have a real use case where we can compare the per sensor vs
-> aggregated sensors approach ?
+Hello,
 
-The MediaTek platforms have one sensor per CPU core, but the cores are
-grouped into two clusters, and DVFS is tied together for all the cores
-in each cluster, as is commonly seen on ARM systems.
+syzbot found the following issue on:
 
-Furthermore, there is a hardware block that does minute OPP voltage
-tweaking based on thermal readings, and AFAIK that block wants the
-per-cluster aggregate temperature.
+HEAD commit:    7d4050728c83 Merge tag 'vfs-6.13-rc1.fixes' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12ed7530580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=36a116bcb42870bb
+dashboard link: https://syzkaller.appspot.com/bug?extid=b92c7b8dc15336fd1e19
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-ChenYu
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> > Previous incarnation by Alexandre Bailon can be found here:
-> > https://patchwork.kernel.org/project/linux-pm/cover/20240613132410.1616=
-63-1-abailon@baylibre.com/
-> >
-> > diffstat:
-> >   .../bindings/thermal/thermal-zones.yaml       |   5 +-
-> >   arch/arm64/boot/dts/mediatek/mt8195.dtsi      | 210 +-----
-> >   drivers/thermal/Kconfig                       |  27 +
-> >   drivers/thermal/thermal_core.c                | 643 +++++++++++++++++=
-+
-> >   drivers/thermal/thermal_core.h                |  14 +
-> >   drivers/thermal/thermal_of.c                  |  86 ++-
-> >   6 files changed, 780 insertions(+), 205 deletions(-)
->
->
-> --
-> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
-M SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0402354de422/disk-7d405072.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/42baa2a574cb/vmlinux-7d405072.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bcf1d8381ffb/bzImage-7d405072.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b92c7b8dc15336fd1e19@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+Looking for class "sdp->delay_work)" with key init_srcu_struct_data.__key.29, but found a different class "(&sdp->delay_work)" with the same key
+WARNING: CPU: 0 PID: 5841 at kernel/locking/lockdep.c:939 look_up_lock_class+0xdc/0x170 kernel/locking/lockdep.c:936
+Modules linked in:
+CPU: 0 UID: 0 PID: 5841 Comm: syz-executor Not tainted 6.12.0-syzkaller-10313-g7d4050728c83 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:look_up_lock_class+0xdc/0x170 kernel/locking/lockdep.c:936
+Code: 01 0f 85 8a 00 00 00 c6 05 d3 21 3d 04 01 90 49 8b 16 49 8b 76 18 48 8b 8b b8 00 00 00 48 c7 c7 60 fa 0a 8c e8 e5 45 8c f5 90 <0f> 0b 90 90 eb 61 90 e8 78 83 ea f8 e8 83 a1 ab f5 48 c7 c7 a0 f9
+RSP: 0018:ffffc90003da7790 EFLAGS: 00010046
+RAX: 55568536ce262300 RBX: ffffffff93ce4d80 RCX: ffff88802f30bc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003da78a0 R08: ffffffff81568b42 R09: 1ffff110170c519a
+R10: dffffc0000000000 R11: ffffed10170c519b R12: ffffe8ffffc6a378
+R13: ffffe8ffffc6a378 R14: ffffe8ffffc6a378 R15: ffffffff9a439560
+FS:  000055556c511500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055de49281e48 CR3: 0000000033e94000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ register_lock_class+0x102/0x980 kernel/locking/lockdep.c:1290
+ __lock_acquire+0xf3/0x2100 kernel/locking/lockdep.c:5101
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ __timer_delete_sync+0x148/0x310 kernel/time/timer.c:1648
+ del_timer_sync include/linux/timer.h:185 [inline]
+ cleanup_srcu_struct+0x23e/0x4d0 kernel/rcu/srcutree.c:687
+ bch2_fs_btree_iter_exit+0x3f0/0x480 fs/bcachefs/btree_iter.c:3446
+ __bch2_fs_free fs/bcachefs/super.c:558 [inline]
+ bch2_fs_release+0x216/0x7d0 fs/bcachefs/super.c:611
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x22f/0x480 lib/kobject.c:737
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f94ef781b37
+Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffe9cd38668 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f94ef781b37
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffe9cd38720
+RBP: 00007ffe9cd38720 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffe9cd397a0
+R13: 00007f94ef7f37dc R14: 000000000002cc80 R15: 00007ffe9cd397e0
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
