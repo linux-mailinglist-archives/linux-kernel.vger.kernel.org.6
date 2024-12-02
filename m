@@ -1,77 +1,110 @@
-Return-Path: <linux-kernel+bounces-428503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A7A9E0F66
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:49:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2495D9E0F6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:53:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0177B21DD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:49:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE29E165509
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4255A1DFE2E;
-	Mon,  2 Dec 2024 23:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3968D1DFE1D;
+	Mon,  2 Dec 2024 23:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JADszn2g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0310zmzO"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DC61DFE08;
-	Mon,  2 Dec 2024 23:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A0D61FD7;
+	Mon,  2 Dec 2024 23:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733183364; cv=none; b=lR2G/INV8rn/LuFEXnxhCxZGw5l8T82aZW13BYUujzDTrxEZ/fVNwbbpjXW/epgHsFALLQqnNuu6b3hmKNcUQM8ijAKPEL4dxmC3XkKaRDEx6KV9BxDIqCkE+P1u2+4xTdTcF+6ZnX4oq3RG+8cGqCJ+X7d3O2V8iB7UC7NrKm8=
+	t=1733183579; cv=none; b=sgrZvgyldXs0YRcuNqVfN5yRhzfAmCaWihEkdN2hPSZ1Yjz+X+X8980GIZm8PU10QLOKR9/vCPuW2KxKEInOpYHPH1NeDHzRkVbF/97RdFmS3lQOHGfsmakV+L7KTNafitfof+C8WDQkRmY3nLpL4TzihNlSmx1EhS1Sk9K1bjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733183364; c=relaxed/simple;
-	bh=FCFwNBxV/SVvxKxgaD3PTa1CKJKgeRB7C0C5ytlAONA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=or/AIffGmo5yh7ZUFyMbq+skctWrtr9N2GXTAM8XJwfQ1iP4bhIKIIcQIC5KL0c3F6DLkB15f1rElNvwUEo7ItLxbvVjpEmA7tD5MkQTMoVoDfQoVFIpA/z0Pl+1x1pYp/kLhMDwOh3O4BvtyMBgLOXQObm2VuLP43FTRGs475g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JADszn2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2831C4CED9;
-	Mon,  2 Dec 2024 23:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733183364;
-	bh=FCFwNBxV/SVvxKxgaD3PTa1CKJKgeRB7C0C5ytlAONA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JADszn2gNDQe/7tvQhKve7P0gMYOG3ziNZGMoFbI7O149K8rHgdS13hhO/xkWvfwW
-	 IfsoxVWXKJj1hzpybp8eNCBhyF//ip51SMENhCH4eV7CiPBPxi3oKPtxNdInQfY1/h
-	 DxjSiD8RiJa9rmnkdFewaiduIIh9oBNaKfl+qpQh48bIPSSPAIU2qUmB24c+h9vdGu
-	 KqMJIKx1PYWgng7DLAsAdChg+Bixsvc/3jIi4vbTj8I0CJ1ZQvKIHAbXZaMi5tyt7g
-	 gZVWPm9WuJVTNIcsViJXUKWs0C2171M/dEmg18A7G34yX2TcgTbPYMzv8os5JVagGf
-	 nX+q9/KbWkvKg==
-Date: Mon, 2 Dec 2024 15:49:22 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Potin Lai <potin.lai.pt@gmail.com>
-Cc: Samuel Mendoza-Jonas <sam@mendozajonas.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Patrick Williams
- <patrick@stwcx.xyz>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Cosmo Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>
-Subject: Re: [PATCH] Revert "net/ncsi: change from ndo_set_mac_address to
- dev_set_mac_address"
-Message-ID: <20241202154922.0644c7a9@kernel.org>
-In-Reply-To: <20241129-potin-revert-ncsi-set-mac-addr-v1-1-94ea2cb596af@gmail.com>
-References: <20241129-potin-revert-ncsi-set-mac-addr-v1-1-94ea2cb596af@gmail.com>
+	s=arc-20240116; t=1733183579; c=relaxed/simple;
+	bh=xgFEQUmKXFmGUM1ahXnuTGHMGngiivX+kmcshsAXygU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Df6UjLbXVNtM8c9W98VPhkzAUueCOiyV9u4e5p0WXuLHtjMYYvIYuSgYdrUtmmT+sTkBiXpZfdlWDVRW2PtaKn240+b1hASrN0qDzPA6vYAp4sWOar5L/Kn9Bcw4+4gn88AmpMbmd4lHJMkfCNOfwiXGH6uyDYp42eGdW7YD0AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0310zmzO; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=i9hsELvHD2z5XWxhJW/OJyBNqoqTfdLs30fG0+5CDZg=; b=0310zmzOiZuEy4jzhgjjrZqhUo
+	uIqNoPYr5dZ47xNermYchKG+PyKyoYmq8WtH6irDeio3Oq+2w8UJuvgcASeYqm8EELuLYBexVb3zf
+	WT05IjkaoN/6ChopcRX9kFQr5So99ir7RRNDDw0zyLA9LZ6tjXk4yIkmKtVN15sQys9E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tIGDl-00F0ke-Kw; Tue, 03 Dec 2024 00:52:53 +0100
+Date: Tue, 3 Dec 2024 00:52:53 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Zhiyuan Wan <kmlinuxm@gmail.com>
+Cc: kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	willy.liu@realtek.com, Yuki Lee <febrieac@outlook.com>
+Subject: Re: [PATCH 1/2] net: phy: realtek: add combo mode support for
+ RTL8211FS
+Message-ID: <690e556f-a486-41e3-99ef-c29cb0a26d83@lunn.ch>
+References: <20241202195029.2045633-1-kmlinuxm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202195029.2045633-1-kmlinuxm@gmail.com>
 
-On Fri, 29 Nov 2024 17:12:56 +0800 Potin Lai wrote:
-> This reverts commit 790071347a0a1a89e618eedcd51c687ea783aeb3.
-> 
-> We are seeing kernel panic when enabling two NCSI interfaces at same
-> time. It looks like mutex lock is being used in softirq caused the
-> issue.
+> +static int rtl8211f_config_aneg(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +
+> +	struct rtl821x_priv *priv = phydev->priv;
+> +
+> +	ret = genphy_read_abilities(phydev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	linkmode_copy(phydev->advertising, phydev->supported);
 
-I agree with Andrew that revert makes sense. On top of his suggestions
-please add a correctly formatted Fixes tag and make sure you CC the
-authors of the buggy change, and post a v2.
--- 
+This is all very unusual for config_aneg(). genphy_read_abilities()
+will have been done very early on during phy_probe(). So why do it
+now? And why overwrite how the user might of configured what is to be
+advertised?
+
+> +static int rtl8211f_read_status(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +	struct rtl821x_priv *priv = phydev->priv;
+> +	bool changed = false;
+> +
+> +	if (rtl8211f_mode(phydev) != priv->lastmode) {
+> +		changed = true;
+> +		ret = rtl8211f_config_aneg(phydev);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		ret = genphy_restart_aneg(phydev);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return genphy_c37_read_status(phydev, &changed);
+> +}
+
+So you are assuming read_status() is called once per second? But what
+about when interrupts are used?
+
+You might want to look at how the marvell driver does this. It is not
+great, but better than this.
+
+    Andrew
+
+---
 pw-bot: cr
 
