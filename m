@@ -1,181 +1,153 @@
-Return-Path: <linux-kernel+bounces-428029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138499E090B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:51:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83AE59E0904
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28DBFB2C672
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:48:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B4B281EEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C861D935C;
-	Mon,  2 Dec 2024 16:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78B41D935C;
+	Mon,  2 Dec 2024 16:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bHORyuYb"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SK8m5Mq7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6962E3EE
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EA613C8E8
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733158131; cv=none; b=frgeKsiSRQ0sUb1UK8fnhVpmNcS9HwGz6R5dIbhoYjkcXQ7g+WxOWuzLt3shjeT3yinBIMAFh+a+l4nWcWMH2HgZ3Yly+wTMS1SdisvxAt/nKbLZWD0WlYHoZ7HdDG1rPbs96O2D+tmMSxNhDo6J2iS0yKpp6MOeoSh9X7CCbGA=
+	t=1733158206; cv=none; b=oWX2XX8Rw3tpEGWoNA7rWkd0134iQ6zrCoPKF18SUIjYXLW10GAPLzdH+yj9h2IwGMY4iS/iFZ5R8ZLi59tzux6/9+dirq3HvDQXYxilSFiIwy/BjDrFgYadOVy+IV9dY9bHWhIAM4RDNhN5QZSRcg0xUOVdokO44nkMKGC64Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733158131; c=relaxed/simple;
-	bh=bpVRli4h8Lo/f2lR7WVh6p9Lbd72h+5B4J53q13cFrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HWKKqDdvoV6odxo9s6zrs8Xz2GS12YesO+2WomcbpqaS92+MS17j2rkXI/ncntNZojCdnpT9QWhge2j6YlqfGfQxB1RNKcwA0Vu18SPJ8lKZE8FOxQD736O3I8g4pLX0iHgK7GKhhf7fPuOF+d+CroFACa50r87MDt1bl3BhAMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bHORyuYb; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fc1f1748a3so2801636a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 08:48:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733158129; x=1733762929; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Klyt3BeokDN44ugCW3DvcncSUZPVR3R8tgu53HoR6yc=;
-        b=bHORyuYbpd3nfHUGsiu3VwsL9SOom/aWXr3DJfCYL1i8g5/0DzFNsKb/mo8DJf0Yme
-         cYNN8DbKcYZ5KiaiekeJTbspSf8hoMtQEaQrpnc/f7cghgTqKvokUcPuAmCapEuCr/gy
-         wA3zXyZn/GYY5aNV8QFIrTxVa6QGCmIWYFYF3sNZbqggXQVRkXct2M7eRzjE4+GHZXkM
-         Z2bKNzlceK6hyR4AV+zOobZ6zaVtcqrs2SbMTUF6tnp9ljSkKKrCEBMRsY5CecRLfKLw
-         5sf+cFlmweWmhoH247AxOedsf35dhjpjtyWe/+/mkRyzQ63XjZ5RJJtGu4AqBMNXv6Ql
-         CVjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733158129; x=1733762929;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Klyt3BeokDN44ugCW3DvcncSUZPVR3R8tgu53HoR6yc=;
-        b=Vsf8pphPC6Kp0WX9pErF4Ki6IIcRwuE/gI6tOhpfiC8DufCoDOBh4IybYr36ZMQbwG
-         ErtMH9pMGXjFYK7SeT/yusOD+PrIcFa/QvPwh7m8xk5uY4JyAX2dwo0LFDNTgfCAYCNA
-         5yNrrJDVnBQDRknK5c1VJ3nn1p6m+5EZA/31n640EymxS7L1vmyDD73z2H7B1cM3FNKh
-         HOWkiCoimNJiqS5uuTF6w794S/DRDwi/huGB+inL6dB6lCkLaFilmtCdfAJ19drxXb3F
-         B4f1lnNSZlkbmdzvT/BqLtge7djfh+V2+Oqg2qt73xDKWSfkw18t5uukBnDi0gRcrg9Z
-         V2iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvA0B4mYPJW3onm9HjLEPFSPXtYGV0tvTLJDe1JxvCFpLR2W306c8qVHqDlFxGYKFTYhJqYfd+wrEzVZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI/ObchB23J24B/imimEO/xSsMMhvZq2lvvfZ3NhW4wg1AgfD0
-	cl8PWMQz82sVw388XpwJap/t+XAO0Uwa0mJQ4TCNRQ+D+Uq8bcObukDaLy20LmQsZuC423Sc3oH
-	n
-X-Gm-Gg: ASbGncsiF17jRHr5+aXnazgyIs7HfwUKA1MIjyJUgnvnk1gOEFbAAKiiwdPb0GT/YfE
-	LxKWoI6U6RK0huT4RHcxXVH9LBLnfVklzlUGVQ/0MoWLaOhmbX0zYC1xCtlohxgpGkxnClJ/Imb
-	rD5xix6fg+naj2ICvpTrzkR2vphdPrVLBNuboRkSg/P8M497HYsnknUQws5hKvaabYflAlu6nAz
-	3AFx1f4EVIYRcAS/IJ7KQsq/1/CeT5bv2wes2G6YRtQP1RbBjFYww==
-X-Google-Smtp-Source: AGHT+IH0BcQMvBTUCDM/IzMifwY/P/r9GOVp7WKhH22kmbfItDPKR+9O2x4fGXRN0aWb5E49FibgUA==
-X-Received: by 2002:a05:6a20:158a:b0:1cf:27bf:8e03 with SMTP id adf61e73a8af0-1e0e0b10997mr34022178637.26.1733158129360;
-        Mon, 02 Dec 2024 08:48:49 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:813b:da83:de65:fc6a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541849509sm8706120b3a.197.2024.12.02.08.48.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 08:48:48 -0800 (PST)
-Date: Mon, 2 Dec 2024 09:48:46 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH] remoteproc: core: Fix ida_free call while not allocated
-Message-ID: <Z03k7v6JuA2bCj9x@p14s>
-References: <20241122175127.2188037-1-arnaud.pouliquen@foss.st.com>
+	s=arc-20240116; t=1733158206; c=relaxed/simple;
+	bh=+N+KlsuE3y4rlowXIRv2QcH3OREyeoB6TLJ2ybHSkhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W+9hOfnwqFVnYnfb92GATydyo5u3kwrVfgPMH15C1SP8RFZc3PVzn5u2VrC5KltvgloP5Z+XlcnWTpKEMwlfMFikguJqNvDhGY+yb3oyLsAti+8gg9SXOFfKPjotRuODuh7twP0j8Idw37vWeW/IcNdBrElm5rpQUYq7q41nChw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SK8m5Mq7; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733158204; x=1764694204;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+N+KlsuE3y4rlowXIRv2QcH3OREyeoB6TLJ2ybHSkhE=;
+  b=SK8m5Mq7EvjGHLppJE7SL4b6zqsNQHvLUogaynp0rTQK29jiA8t6nk6Y
+   vh50EAHGqPqDDvhSdJivO0Cux4G1CW1cC1n+J3SwjppchoOXQRXmTdzSF
+   NxoQC2v3p+ugqeAXSEQgro3UPZfho2ICU1/PMSj/30Pvr72kbiTqWO7qg
+   Ri/vp0n/FqkIxn0PhinRwEC2MdmKcSblASy+wLZamGDWBixcD6ww66JTj
+   iPgea4P8v0PeV28oK5XLJv3d+fFtyH6u+wqywBQeBWTD71lUYLyJOrjNx
+   3ldFZq9asncq59aDri+VA5bjYlySk2BbFs4kTMPa+foz97eKKuc3E6eY/
+   A==;
+X-CSE-ConnectionGUID: 09IcPqIiT+aI/Qu18/FsWQ==
+X-CSE-MsgGUID: 2Q9tEp9wRV2z667CGghnug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33080597"
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="33080597"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 08:50:04 -0800
+X-CSE-ConnectionGUID: cLFqW7hmRoyF0YweZdrt4Q==
+X-CSE-MsgGUID: NCBAz5d8SdukCe5l/awmtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="98125931"
+Received: from sramkris-mobl1.amr.corp.intel.com (HELO [10.124.222.246]) ([10.124.222.246])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 08:50:03 -0800
+Message-ID: <8c6ace22-38d7-4178-ae55-9a9cdcd981d9@intel.com>
+Date: Mon, 2 Dec 2024 08:50:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122175127.2188037-1-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip:x86/mm] [x86/mm/tlb] 209954cbc7:
+ will-it-scale.per_thread_ops 13.2% regression
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@surriel.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+ Ingo Molnar <mingo@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Mel Gorman <mgorman@suse.de>
+References: <202411282207.6bd28eae-lkp@intel.com>
+ <Z0jIsYsuo_9w16tK@localhost.localdomain>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Z0jIsYsuo_9w16tK@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 22, 2024 at 06:51:27PM +0100, Arnaud Pouliquen wrote:
-> In the rproc_alloc() function, on error, put_device(&rproc->dev) is
-> called, leading to the call of the rproc_type_release() function.
-> An error can occurs before ida_alloc is called.
+On 11/28/24 11:46, Mathieu Desnoyers wrote:
+> AFAIU, this commit changes the way TLB flushes are inhibited when
+> context switching away from a mm. This means that one additional TLB
+> flush is performed to a given CPU even after it has context switched
+> away from the mm, and only then is the mm_cpumask cleared for that CPU.
 > 
-> In such case in rproc_type_release(), the condition (rproc->index >= 0) is
-> true as rproc->index has been  initialized to 0.
-> ida_free() is called reporting a warning:
-> [    4.181906] WARNING: CPU: 1 PID: 24 at lib/idr.c:525 ida_free+0x100/0x164
-> [    4.186378] stm32-display-dsi 5a000000.dsi: Fixed dependency cycle(s) with /soc/dsi@5a000000/panel@0
-> [    4.188854] ida_free called for id=0 which is not allocated.
-> [    4.198256] mipi-dsi 5a000000.dsi.0: Fixed dependency cycle(s) with /soc/dsi@5a000000
-> [    4.203556] Modules linked in: panel_orisetech_otm8009a dw_mipi_dsi_stm(+) gpu_sched dw_mipi_dsi stm32_rproc stm32_crc32 stm32_ipcc(+) optee(+)
-> [    4.224307] CPU: 1 UID: 0 PID: 24 Comm: kworker/u10:0 Not tainted 6.12.0 #442
-> [    4.231481] Hardware name: STM32 (Device Tree Support)
-> [    4.236627] Workqueue: events_unbound deferred_probe_work_func
-> [    4.242504] Call trace:
-> [    4.242522]  unwind_backtrace from show_stack+0x10/0x14
-> [    4.250218]  show_stack from dump_stack_lvl+0x50/0x64
-> [    4.255274]  dump_stack_lvl from __warn+0x80/0x12c
-> [    4.260134]  __warn from warn_slowpath_fmt+0x114/0x188
-> [    4.265199]  warn_slowpath_fmt from ida_free+0x100/0x164
-> [    4.270565]  ida_free from rproc_type_release+0x38/0x60
-> [    4.275832]  rproc_type_release from device_release+0x30/0xa0
-> [    4.281601]  device_release from kobject_put+0xc4/0x294
-> [    4.286762]  kobject_put from rproc_alloc.part.0+0x208/0x28c
-> [    4.292430]  rproc_alloc.part.0 from devm_rproc_alloc+0x80/0xc4
-> [    4.298393]  devm_rproc_alloc from stm32_rproc_probe+0xd0/0x844 [stm32_rproc]
-> [    4.305575]  stm32_rproc_probe [stm32_rproc] from platform_probe+0x5c/0xbc
-> 
-> 
-> Calling ida_alloc earlier in rproc_alloc ensures that the rproc->index is
-> properly set.
-> 
-> Fixes: 08333b911f01 ("remoteproc: Directly use ida_alloc()/free()")
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
-> Note for backporting to previous kernel versions: The SHA 08333b911f01
-> seems to correspond to the last commit that updated IDA allocation.
-> The issue existed before, but the fix could not be applied without some
-> rework.
-> ---
->  drivers/remoteproc/remoteproc_core.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index f276956f2c5c..ef6febe35633 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -2486,6 +2486,13 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  	rproc->dev.driver_data = rproc;
->  	idr_init(&rproc->notifyids);
->  
-> +	/* Assign a unique device index and name */
-> +	rproc->index = ida_alloc(&rproc_dev_index, GFP_KERNEL);
-> +	if (rproc->index < 0) {
-> +		dev_err(dev, "ida_alloc failed: %d\n", rproc->index);
-> +		goto put_device;
-> +	}
-> +
->  	rproc->name = kstrdup_const(name, GFP_KERNEL);
->  	if (!rproc->name)
->  		goto put_device;
-> @@ -2496,13 +2503,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  	if (rproc_alloc_ops(rproc, ops))
->  		goto put_device;
->  
-> -	/* Assign a unique device index and name */
-> -	rproc->index = ida_alloc(&rproc_dev_index, GFP_KERNEL);
-> -	if (rproc->index < 0) {
-> -		dev_err(dev, "ida_alloc failed: %d\n", rproc->index);
-> -		goto put_device;
-> -	}
-> -
+> This could result in additional TLB flush IPI overhead in specific
+> scenarios where the IPIs are typically triggered after a thread has
+> context-switched out.
 
-I have applied this patch.
+I can see how that might generally be a problem, but for this particular
+workload:
 
-Thanks,
-Mathieu
+> https://github.com/antonblanchard/will-it-scale/blob/master/tests/tlb_flush2.c
 
->  	dev_set_name(&rproc->dev, "remoteproc%d", rproc->index);
->  
->  	atomic_set(&rproc->power, 0);
-> 
-> base-commit: adc218676eef25575469234709c2d87185ca223a
-> -- 
-> 2.25.1
-> 
+I'm not sure how it would apply.
+
+will-it-scale should create one big process that runs for quite a long
+while and is bound to one CPU. The threads can get scheduled out as
+other things run, but they should pop right back on to the CPU.
+
+There shouldn't be a lot of context switching in this workload.
+
+It would be great if someone could reproduce this and double-check that
+the theory about what's making it regress is really holding in practice.
 
