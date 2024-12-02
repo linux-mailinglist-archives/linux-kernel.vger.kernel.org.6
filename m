@@ -1,107 +1,172 @@
-Return-Path: <linux-kernel+bounces-427888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74559E0831
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:16:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45FFF9E079E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:53:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EAC0168007
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:31:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D626F1677B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E27208961;
-	Mon,  2 Dec 2024 15:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8566420898D;
+	Mon,  2 Dec 2024 15:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ll+g4aD6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="D0jvy1c2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9Y23Ihkb";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FmMKpYdF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bxTR1NC/"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E40A205E03;
-	Mon,  2 Dec 2024 15:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438D6205E32;
+	Mon,  2 Dec 2024 15:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153488; cv=none; b=QJOyDTNqvERKDf8VqAY6NXvMx/DaiHQXee2hxxlmypdG5pVPgdRpru6LLFBBuHohWJcQ6yzg/TSBZyw9yj9YjHES4pMF9euYuSXXjjcM2RYTSAjTSYaStdnq6Ps9ucHuouri/DyN10iuiJ9qdM1W4GocQz6302a9O5FVzdr5pB4=
+	t=1733153488; cv=none; b=j2Xvt2v+GoWrZ5t2nnjPRLCnF/w6LH8BTmBxsizN7d56SOcchS+qExZrh4yO+AKFF80vajT4l5Pq7t+/skw4ECfK1uaXrPG2ql5wpeWCY9sjcFCqmyV+T6EGevjrFCpMftQM7M1FaY67BPR3ASYVKn6ov6tjOLhOocBnCqYuPNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733153488; c=relaxed/simple;
-	bh=LIC22lvcg0GEAsloGNR0vIWhLAC8DJjmvoKLwQeuxU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lnHfmG7qyippzJI45T6Aezt24QRq3Rmu+oytC3FJpAkDvEnb107k1oTXZOneULYfgitI7hmLwDECgImAYhu/RP6iUIPKk7a8Aa9V3RaTepmq5czz2YTJ09XRj5bIsPtVetKbK8sld6jBaZckJaLgwyQtn1eWDgwteXURkoK06+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ll+g4aD6; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733153486; x=1764689486;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LIC22lvcg0GEAsloGNR0vIWhLAC8DJjmvoKLwQeuxU8=;
-  b=ll+g4aD6SCxCfx9cTrf98+jU+uOrFWjAqhH1Er3lr9q936zAqnxmO1qU
-   L87428/D4D/oDJtvy43MmzqfB9RCfPZnWVibBzQqlkl+yGDhTEf1DOIs/
-   RMGuAe5TXxhdLp/QJGh13+krJlwzAa64BmxPCt8bm5MNXGAWo8M+ecMyS
-   v0FDhiyqFizdwdb88iiZ2Q9X/XvVFQ0r82oG2kRAUSeEq1myHt8b/m+hR
-   LBUozLLwv9aTz+lzREf2nHlnXZGvVuTI+WHtqLik67K2HAR8R3IZY5v54
-   9lY/ocgkMgOpxpgbuwXmdfdJ5LqthZ9Dpg2Q6Ik5o5OlJqWnMd42gej7B
-   Q==;
-X-CSE-ConnectionGUID: i1ddb5X9TO+y3Lxq25RuqQ==
-X-CSE-MsgGUID: ezRFIptKTe251l/tG6sNeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33204328"
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="33204328"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 07:31:09 -0800
-X-CSE-ConnectionGUID: joznqKyGSpyauln+woZzrA==
-X-CSE-MsgGUID: jhia9RVPQnacitl/6RWCdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="116396336"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 07:31:06 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tI8O7-00000003BAq-3FcZ;
-	Mon, 02 Dec 2024 17:31:03 +0200
-Date: Mon, 2 Dec 2024 17:31:03 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] mmc: sdhci-acpi: A few cleanups
-Message-ID: <Z03St5LVqoNWWqcv@smile.fi.intel.com>
-References: <20241101101441.3518612-1-andriy.shevchenko@linux.intel.com>
- <CAPDyKFqNKXRPT_QonnJ8frY_OvA6FkEMyj09Ywiqhtu0ZL34Xg@mail.gmail.com>
+	bh=NtP10/e5geCHRKEgdqJZgBe7TDm0YtMc3aT7kVcEZvw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jkoIxiXwNAP6yusYEYlEmyVf6zpSd/aIRmsNyrv/AphM8aHDiiwdCGnbIoU2YTgKo6Dhzxrh09B8p/e8+LZjukhyh6JqCecLSuVx4ueCLePVdBxb9tQUT7FNTh4iFlvAcsNhgqF1GFRo6aqj2sbNhGJf5C8sHMAug4lNvx/H3VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=D0jvy1c2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9Y23Ihkb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FmMKpYdF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bxTR1NC/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 63B2C1F396;
+	Mon,  2 Dec 2024 15:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733153485; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f5rPQTidteaJ5EWqLwUG18Q2x2ScbpqASwTGZ9DnuiA=;
+	b=D0jvy1c2PRFYWtbKz3tQHCgW3p/unGVU8a8bygB/yjAeM/VGA/R5VIlsQg584nurDbm9VD
+	JzN67YE6JAkmoGRUBwfc77d3IR6lXs+YI59jLOAJ3FHu3JadRq5daqXJzlvPBAmPWp0/d/
+	tRhNUwsSQhreZWxxMEySBPhw7xNdLTk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733153485;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f5rPQTidteaJ5EWqLwUG18Q2x2ScbpqASwTGZ9DnuiA=;
+	b=9Y23Ihkb54BWE5scAlIoIySZa+wstvsZbL2o/VAURbHht1AQnYESZ2aEyOUIH8G2Pl17xD
+	Om1rtZarT2ubrxDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733153484; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f5rPQTidteaJ5EWqLwUG18Q2x2ScbpqASwTGZ9DnuiA=;
+	b=FmMKpYdFY634sLCfvhg+ejJlEcPekRxjC+sITsM05POpwGZab577kwtUtOdSnEfTPxVaI6
+	l4aFDhSBvHtOzG+W5XbW78pxgHNx0T5wRmgUvtcsVzsaTUHLFBr25GCAYoDQRN0PgVx+T+
+	YAToLBZM34EITMc1xly0FAsY+jAHFCM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733153484;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f5rPQTidteaJ5EWqLwUG18Q2x2ScbpqASwTGZ9DnuiA=;
+	b=bxTR1NC/tk8U0FHJSVgGbmWXR2LCGVqklYJK5Trx9pr+YHxUHZlSEHItMhw/DuEAB8gKP4
+	25AZInupl3EJ/lBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0705B139C2;
+	Mon,  2 Dec 2024 15:31:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id g6SIAMzSTWfEMgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 02 Dec 2024 15:31:24 +0000
+Date: Mon, 02 Dec 2024 16:31:23 +0100
+Message-ID: <87frn6umno.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: =?ISO-8859-1?Q?Beno=EEt?= Sevens <bsevens@google.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	wangdicheng <wangdicheng@kylinos.cn>,
+	Manuel Barrio Linares <mbarriolinares@gmail.com>,
+	Lianqin Hu <hulianqin@vivo.com>,
+	Shen Lichuan <shenlichuan@vivo.com>,
+	Cyan Nyan <cyan.vtb@gmail.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: Fix a DMA to stack memory bug
+In-Reply-To: <CAGCho0Xe-jGcanAxehP+ENmrG0Otq5DzQO-yKHx7Ot_UzSRXWQ@mail.gmail.com>
+References: <60e3aa09-039d-46d2-934c-6f123026c2eb@stanley.mountain>
+	<CAGCho0Xe-jGcanAxehP+ENmrG0Otq5DzQO-yKHx7Ot_UzSRXWQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqNKXRPT_QonnJ8frY_OvA6FkEMyj09Ywiqhtu0ZL34Xg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linaro.org,perex.cz,suse.com,kylinos.cn,gmail.com,vivo.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Score: -1.80
+X-Spam-Flag: NO
 
-On Mon, Dec 02, 2024 at 04:24:00PM +0100, Ulf Hansson wrote:
-> On Fri, 1 Nov 2024 at 11:14, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
+On Mon, 02 Dec 2024 16:05:01 +0100,
+Benoît Sevens wrote:
+> 
+> Hi Dan,
+> 
+> On Mon, 2 Dec 2024 at 13:57, Dan Carpenter <dan.carpenter@linaro.org> wrote:
 > >
-> > A few almost independent cleanups for the driver because of
-> > new available APIs.
+> > The usb_get_descriptor() function does DMA so we're not allowed
+> > to use a stack buffer for that.  Doing DMA to the stack is not portable
+> > all architectures.  Move the "new_device_descriptor" from being stored
+> > on the stack and allocate it with kmalloc() instead.
 > >
-> > In v2:
-> > - added patch 1 to solve compilation error (LKP)
-> > - split patch 3 out of (previous version of) patch 4 (Christophe)
-> > - added patches 5 and 6
+> 
+> Thanks for fixing this. It looks good to me.
+> 
+> Note that the commit that is being fixed is already queued for
+> backporting, so I don't know how this usually goes then.
 
-> This looks good to me, but deferring to apply it a few more days to
-> allow Adrian to share his opinion.
+We just follow the same pattern as the Linus upstream, applying the
+fix on top of the previous fix.
 
-Sure, no hurry.
+In anyway, now I merged it.  Will be included in the next PR for rc2.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks!
 
 
+Takashi
 
