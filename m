@@ -1,110 +1,109 @@
-Return-Path: <linux-kernel+bounces-427472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76EF9E01C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:13:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 737709E01D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:16:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45229285303
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39BD82833CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13DE20370D;
-	Mon,  2 Dec 2024 12:05:01 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920D1205E28;
+	Mon,  2 Dec 2024 12:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chaosfield.at header.i=jakob+lkml@chaosfield.at header.b="DQnLpBQM"
+Received: from sender2-op-o11.zoho.eu (sender2-op-o11.zoho.eu [136.143.171.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E584F1FECCE;
-	Mon,  2 Dec 2024 12:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733141101; cv=none; b=PSVY/VpPX1zEplwZ2HSRtUyWUjFfZlWecQNQRG7Rfh+238zLm26w1Z+ybfkzlCSMegto5ci70caSxPdKCZRIwx8SDgYafRRZpiIjSVJ5ezPOk2fj6m9RYh33BVa7gpahzMvJKrH9PRn1B9YDAuVUU9RA8CR716wkCWJzZhMj1mw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733141101; c=relaxed/simple;
-	bh=3fgC2VCsjiFNi8y9u5JWWhnjpjAWSTZSe9/C8VYmkoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uYwZwzBgMoy/h4V6J37aug2YLD+8u/ffWOfUBDK1gGNg9yhYrkB56o/TVek7ACbp68WsODGJX2Jmp4bTw2mwGa/Id8LIAM36SVF+F3uRKbj/2kIO0dTmNSdCa7llau4La1lgaFwETS6qX8KrjxpoUWWQA4cznldI5oVgoYJBFWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 46D7A1C00C4; Mon,  2 Dec 2024 13:04:58 +0100 (CET)
-Date: Mon, 2 Dec 2024 13:04:57 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
-	shuah@kernel.org, mark.rutland@arm.com, thiago.bauermann@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.10 4/5] kselftest/arm64: Corrupt P0 in the
- irritator when testing SSVE
-Message-ID: <Z02iaXudPt42mby+@duo.ucw.cz>
-References: <20241124124210.3337020-1-sashal@kernel.org>
- <20241124124210.3337020-4-sashal@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A80205AD5;
+	Mon,  2 Dec 2024 12:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.171.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733141294; cv=pass; b=ObmTZlBatafvvP0F6IlXAXziIWD0xpw8ZwB/9FN2Cq29VSUb6mhnLEsCA3AGNpEOxNCNDPEJwzlhIMLwFTE7lqngb30Lc+0Ju9j83cAejUc4LQCXbuYeLUKAdU14zgx8MaVPdGXCQTWqnulGNjNoHu9nD5JcA/n/NuaDcwQ9bQk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733141294; c=relaxed/simple;
+	bh=hHFka5L2zVORZlNG1xvolgyFI+LGuuqcR6ENNyanQ+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ngcETZAFyPo551HkIAl7i2kYQpziHyWB7pOipFVGHww4/3sUBMG90nqyXEDhpyoBSu5ebL6Fa9Vxbv5BidEzIeZ3FQIsL0axKuF9bBwAgY5PxjA6YerQL1Qm4CHHIG/+w9Pr5kLFHWvSW7yFYMzWJn1pDzu3xRFvH3cfzUlexvg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chaosfield.at; spf=pass smtp.mailfrom=chaosfield.at; dkim=pass (1024-bit key) header.d=chaosfield.at header.i=jakob+lkml@chaosfield.at header.b=DQnLpBQM; arc=pass smtp.client-ip=136.143.171.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chaosfield.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chaosfield.at
+ARC-Seal: i=1; a=rsa-sha256; t=1733141276; cv=none; 
+	d=zohomail.eu; s=zohoarc; 
+	b=ic9ejCH1Wzo/gP2ZAjrCMCGRn0xNhXMo0F4THnYLAMn261HP6VtLBF4FKRao9MJu93Sqm1L5KstGMhZLZGNzDkSuSw0o2FR1Zg5crYfl2jCOCaQYzuBGlY/6anEsdhTBmLDEeb3Y3mBtp7yrEqic4gEgPitOakXKzuf4JXvG3wE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
+	t=1733141276; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BMV9SMnLebQrEW79GXBEprl8gCg+plSDoj9lVar/fxY=; 
+	b=kjTqduZ/huYbM3WO9LEaWjmS0NIGETJZXSon8p2YnWXZjYY9YWXKJ7eFGBKKsYb7sgeW9qC610Y9Zj2D31byXB6PavLiVWw1+yz2F+eY0+T75aKFa0r6QFw8SCeRNTK5mwy0EV/0aJEdXwtiqLYThnQgYSYemH7VDZ9YfLMzFlA=
+ARC-Authentication-Results: i=1; mx.zohomail.eu;
+	dkim=pass  header.i=chaosfield.at;
+	spf=pass  smtp.mailfrom=jakob+lkml@chaosfield.at;
+	dmarc=pass header.from=<jakob+lkml@chaosfield.at>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733141276;
+	s=zohoeu1; d=chaosfield.at; i=jakob+lkml@chaosfield.at;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=BMV9SMnLebQrEW79GXBEprl8gCg+plSDoj9lVar/fxY=;
+	b=DQnLpBQM/g2VhVYaqcmyN2NN6dhIywA3mLcS2u4yCZvApsby2dNriC8LWKorLnX/
+	eCvqon+ZtWmqMMgqJfJQXiVu74e5AHlGM/y5OUESJZsCCWxwWJrw3zr+tR09PgfE4zZ
+	PFOcFD7/keDQPOZiLmpAii671VXqwkuAn9fIfHiY=
+Received: by mx.zoho.eu with SMTPS id 1733141272255861.7005327403868;
+	Mon, 2 Dec 2024 13:07:52 +0100 (CET)
+Message-ID: <50bbd767-b0e0-4788-975b-f5d9598208e5@chaosfield.at>
+Date: Mon, 2 Dec 2024 13:07:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5C6mcP4K8z2tNCMR"
-Content-Disposition: inline
-In-Reply-To: <20241124124210.3337020-4-sashal@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] leds: pwm-multicolor: Disable PWM when going to suspend
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+References: <d7d930bc-4c82-4272-b2c6-88f7cac5a3e1@chaosfield.at>
+Content-Language: en-US
+From: Jakob Riepler <jakob+lkml@chaosfield.at>
+In-Reply-To: <d7d930bc-4c82-4272-b2c6-88f7cac5a3e1@chaosfield.at>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
+This fixes suspend on platforms like stm32mp1xx, where the PWM consumer
+has to be disabled for the PWM to enter suspend.
+Another positive side effect is that active-low LEDs now properly
+turn off instead of going back to full brightness when they are set to 0.
 
---5C6mcP4K8z2tNCMR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Link: https://lore.kernel.org/all/20240417153846.271751-2-u.kleine-koenig@pengutronix.de/
+Signed-off-by: Jakob Riepler <jakob+lkml@chaosfield.at>
+---
+Changes in v2:
+ - fix wrong line-breaks in patch
 
-Hi!
+ drivers/leds/rgb/leds-pwm-multicolor.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> From: Mark Brown <broonie@kernel.org>
->=20
-> [ Upstream commit 3e360ef0c0a1fb6ce9a302e40b8057c41ba8a9d2 ]
->=20
-> When building for streaming SVE the irritator for SVE skips updates of bo=
-th
-> P0 and FFR. While FFR is skipped since it might not be present there is no
-> reason to skip corrupting P0 so switch to an instruction valid in streami=
-ng
-> mode and move the ifdef.
-
-This is mismerged. Original patch moves #ifdef. How did AUTOSEL came
-up with this?
-
-Best regards,
-								Pavel
-
-> +++ b/tools/testing/selftests/arm64/fp/sve-test.S
-> @@ -459,7 +459,8 @@ function irritator_handler
->  	movi	v9.16b, #2
->  	movi	v31.8b, #3
->  	// And P0
-> -	rdffr	p0.b
-> +	ptrue	p0.d
-> +#ifndef SSVE
->  	// And FFR
->  	wrffr	p15.b
-> =20
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---5C6mcP4K8z2tNCMR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ02iaQAKCRAw5/Bqldv6
-8mzMAJ412V6JjbuxcrchCjkJtPf4IIGCNACfW7cPJx2m3ROlazM0FJ728S145fE=
-=cDPI
------END PGP SIGNATURE-----
-
---5C6mcP4K8z2tNCMR--
+diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/leds-pwm-multicolor.c
+index e1a81e0109e8..f80a06cc31f8 100644
+--- a/drivers/leds/rgb/leds-pwm-multicolor.c
++++ b/drivers/leds/rgb/leds-pwm-multicolor.c
+@@ -50,7 +50,13 @@ static int led_pwm_mc_set(struct led_classdev *cdev,
+             duty = priv->leds[i].state.period - duty;
+ 
+         priv->leds[i].state.duty_cycle = duty;
+-        priv->leds[i].state.enabled = duty > 0;
++        /*
++         * Disabling a PWM doesn't guarantee that it emits the inactive level.
++         * So keep it on. Only for suspending the PWM should be disabled because
++         * otherwise it refuses to suspend. The possible downside is that the
++         * LED might stay (or even go) on.
++         */
++        priv->leds[i].state.enabled = !(cdev->flags & LED_SUSPENDED);
+         ret = pwm_apply_might_sleep(priv->leds[i].pwm,
+                         &priv->leds[i].state);
+         if (ret)
+-- 
+2.47.0
 
