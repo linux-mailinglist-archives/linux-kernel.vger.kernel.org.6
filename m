@@ -1,157 +1,194 @@
-Return-Path: <linux-kernel+bounces-428065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0193F9E09B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:20:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0109E09C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:23:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3897161FC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF90B162E90
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195051DA60F;
-	Mon,  2 Dec 2024 17:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yrppKEqj"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765561D8DFE;
+	Mon,  2 Dec 2024 17:23:26 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00101D90B3;
-	Mon,  2 Dec 2024 17:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39F31DB375
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160010; cv=none; b=pO/cdT1/IUUTZJALKTH70mNdwy47DeCDlLFOEtWwPDSqsl5uTBtm3+dGqnc0IxfPwYAFNYegGj6O2uKpu2PLaC1shIl48tJqm0FQq42RzLKWRcKPvNoLspWh2diFrTziwssYXxeTug2p2N3FdGeFFlq/MNqqOa20m1OYAxtgNag=
+	t=1733160205; cv=none; b=BDgZ27G5htptIzS3zV6OKnMDijbRKzYR9FDeMpPJKh3Ai0ogHveTnw9zVmiUDlhtL2iY7YD3m75l3elUUTRayxN3LFkpx3HICnAa05vkC0K3MsZDdobozQLsd2GOlw33Y9MHRVsS6YDGGXLjcBKjSuDGGUgDbcEWZ16HUBzsNZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160010; c=relaxed/simple;
-	bh=v+f54fpLaQL8rTOv4FoBlBj13ULgxn3OJ8Sel2teQqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rcdGe9xlKHHkcQnFob2xiYuvMI8yYTWi3VI3NbYgbTJlR3LzXjBPsP4JW4+vtqBk2gT8D5B8N5LiiBDw6fGmdCRBcdwDQcFKjqbKvs7GvkAltC2YW8VvATMpZ5ddaUQz6XHrR6XyqZqD1NcP3UhxXNBjKm6zPZ9ZdlFe9lkW1/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yrppKEqj; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=EgOfwhcvCW9bcLzd0M9yQx5qoL3sNtqxGVsT84DfwBQ=; b=yrppKEqj1zeoN1nSXyY9dJfPXm
-	khMCf66sivKMa97z52e9Lamtv7I0O4AZddxKautnbZ2hOa1gQd3bTjBoxCFua4qafDpLXILK8esih
-	ca9FyM79NL/E2zS6RVqNeKJfPNi8xQzUxFrY+AOtP7V52UVfFUOmZbmB8aqJVlaPXSaoBRRNFGX2f
-	zxYg4LV1GuV9cexiMCz5W8OpRn5zTkjo+iqoDcSksfed/J1CORKZtO8sPubpyw1Vn8EGfJ9zu/aTM
-	aUV4MrKlyJ0cixxIe5DGPThLPrfAbMGT0RILaTv8+UgFJ68mgQLW7kn5BzN9L81sejCXJhtL85STw
-	tL1TKChw==;
-Received: from [50.53.2.24] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tIA5f-00000006zlD-0ijO;
-	Mon, 02 Dec 2024 17:20:07 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	dmaengine@vger.kernel.org
-Subject: [PATCH v2] linux/dmaengine.h: fix a few kernel-doc warnings
-Date: Mon,  2 Dec 2024 09:20:04 -0800
-Message-ID: <20241202172004.76020-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1733160205; c=relaxed/simple;
+	bh=niYey3A2BI1zHc9oE/V9wTEb2AngGjaDi9xTB6eXJp0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MFzVJKTGACbm/Hfs+2525nqLfotcZXVzMoRWd7Yj01Dx9O7rdNpSDJTeeZTrD/Hxq4omjxVy/FCWDFkGhReUkYqN4C8sUJGSQNMf4ZkswsDy8sgC8kwoN6PnTonb6Uzdo69/PGJ0dArNZ0g38L98np4Z5FbE+/BQ2ySVGrCV5FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7807feadfso39662475ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:23:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733160203; x=1733765003;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cWtCFCl9BH6B1/hrLDgMJbyasTsGi0yL5kBQrDwE6xQ=;
+        b=eqnsVQFmnIwNS1VitmeBUBTZ9QiHmfoLU1oZ8BEz+7BluKEQHp6MSs5dzQSNWjfaOP
+         LQAHLg3sGMsg6Qm0MQ8nCrF+Psk4DDxj0I6ZYQTDxVZJZ0DWCKt4CVbgNsTaKav1oZBU
+         7ljBaRdkcs8bI5aspja9F+S7pKxjSJbgWXivX72BE+8jA136LzV/jIvwXlUGniH2YG7p
+         6lbK0Rs9elivwikj7EWEQoISg2DJ8FZ1qhRIyOxC1VGmoINu6NrhdGAb4Syojn9TQogR
+         XmTd6C0MCuZ/EwSR4XjJe2j6GWAQH1qJ07LgA2LBgAjWLGyX6Jua4DqqHfSmaOLqmOZA
+         LcGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrRUPngMwaPwqm24UhowemKYIg9cl1RBNxD9wnp2s40uqxeYYAyoAPxiIM+tLOWFD4X3al4/GWP9+M8uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS6ePWywF4+CVHbGikikq6MS/fXcuJkdVflfRMSED+xShdJg1T
+	Ttl2n922q4cQN4YGndFmAh2BnvTnzmdDa8K1W/l2wRrn//uVHVNDLk3c4rEfxkxZXYgbwc3Eg2m
+	jzhrf9h8qwTRUNBhxaJuu7wPcm9+6bPxQZlDFatVRZjaKrYKPw5NMSxQ=
+X-Google-Smtp-Source: AGHT+IFGrYLgVMCkuWthz1BRGHleiw9U22O8SugwE5SIOQ51OAgdGsPOdMZVjiB1rIUZC23Pv25Kpzsr+8zM3B/WjzigFSvEFPLm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a02:b0:3a7:9347:5465 with SMTP id
+ e9e14a558f8ab-3a7c5523826mr268135525ab.3.1733160203172; Mon, 02 Dec 2024
+ 09:23:23 -0800 (PST)
+Date: Mon, 02 Dec 2024 09:23:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674ded0b.050a0220.48a03.0027.GAE@google.com>
+Subject: [syzbot] [netfs?] WARNING in netfs_retry_reads (2)
+From: syzbot <syzbot+5621e2baf492be382fa9@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, bharathsm@microsoft.com, brauner@kernel.org, 
+	dhowells@redhat.com, ericvh@kernel.org, jlayton@kernel.org, 
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
+	marc.dionne@auristor.com, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
+	netfs@lists.linux.dev, pc@manguebit.com, ronniesahlberg@gmail.com, 
+	rostedt@goodmis.org, samba-technical@lists.samba.org, sfrench@samba.org, 
+	sprasad@microsoft.com, syzkaller-bugs@googlegroups.com, tom@talpey.com, 
+	v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-The comment block for "Interleaved Transfer Request" should not begin
-with "/**" since it is not in kernel-doc format.
+Hello,
 
-Fix doc name for enum sum_check_flags.
+syzbot found the following issue on:
 
-Fix all (4) missing struct member warnings.
+HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1236a0df980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
+dashboard link: https://syzkaller.appspot.com/bug?extid=5621e2baf492be382fa9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17da7f78580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138f3d30580000
 
-Use "Warning:" for one "Note:" in enum dma_desc_metadata_mode since
-scripts/kernel-doc does not allow more than one Note:
-per function or identifier description.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
 
-This leaves around 49 kernel-doc warnings like:
-  include/linux/dmaengine.h:43: warning: Enum value 'DMA_OUT_OF_ORDER' not described in enum 'dma_status'
+The issue was bisected to:
 
-and another scripts/kernel-doc problem with it not being able to parse
-some typedefs.
+commit 1bd9011ee163e11f186b72705978fd6b21bdc07b
+Author: David Howells <dhowells@redhat.com>
+Date:   Fri Nov 8 17:32:29 2024 +0000
 
-Fixes: b14dab792dee ("DMAEngine: Define interleaved transfer request api")
-Fixes: ad283ea4a3ce ("async_tx: add sum check flags")
-Fixes: 272420214d26 ("dmaengine: Add DMA_CTRL_REUSE")
-Fixes: f067025bc676 ("dmaengine: add support to provide error result from a DMA transation")
-Fixes: d38a8c622a1b ("dmaengine: prepare for generic 'unmap' data")
-Fixes: 5878853fc938 ("dmaengine: Add API function dmaengine_prep_peripheral_dma_vec()")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Nuno Sa <nuno.sa@analog.com>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: dmaengine@vger.kernel.org
+    netfs: Change the read result collector to only use one work item
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=144ccfc0580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=164ccfc0580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=124ccfc0580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5621e2baf492be382fa9@syzkaller.appspotmail.com
+Fixes: 1bd9011ee163 ("netfs: Change the read result collector to only use one work item")
+
+------------[ cut here ]------------
+do not call blocking ops when !TASK_RUNNING; state=2 set at [<ffffffff8177c166>] prepare_to_wait+0x186/0x210 kernel/sched/wait.c:237
+WARNING: CPU: 0 PID: 5828 at kernel/sched/core.c:8685 __might_sleep+0xb9/0xe0 kernel/sched/core.c:8681
+Modules linked in:
+CPU: 0 UID: 0 PID: 5828 Comm: syz-executor222 Not tainted 6.12.0-next-20241128-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__might_sleep+0xb9/0xe0 kernel/sched/core.c:8681
+Code: 94 0e 01 90 42 80 3c 23 00 74 08 48 89 ef e8 ae 30 9b 00 48 8b 4d 00 48 c7 c7 e0 2d 0a 8c 44 89 ee 48 89 ca e8 08 e6 f0 ff 90 <0f> 0b 90 90 eb b5 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 70 ff ff ff
+RSP: 0018:ffffc900039765a8 EFLAGS: 00010246
+RAX: b7d7501871149800 RBX: 1ffff1100ff252ed RCX: ffff88807f928000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff88807f929768 R08: ffffffff81601ea2 R09: fffffbfff1cfa220
+R10: dffffc0000000000 R11: fffffbfff1cfa220 R12: dffffc0000000000
+R13: 0000000000000002 R14: 000000000000004a R15: ffffffff8c1ca1a0
+FS:  0000555593050480(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055bb6dfcc068 CR3: 000000002f04e000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ wait_on_bit include/linux/wait_bit.h:74 [inline]
+ netfs_retry_reads+0xde/0x1e10 fs/netfs/read_retry.c:263
+ netfs_collect_read_results fs/netfs/read_collect.c:333 [inline]
+ netfs_read_collection+0x334e/0x4020 fs/netfs/read_collect.c:414
+ netfs_wait_for_read+0x2ba/0x4e0 fs/netfs/read_collect.c:629
+ netfs_unbuffered_read fs/netfs/direct_read.c:156 [inline]
+ netfs_unbuffered_read_iter_locked+0x11fc/0x1540 fs/netfs/direct_read.c:231
+ netfs_unbuffered_read_iter+0xbf/0xe0 fs/netfs/direct_read.c:266
+ __kernel_read+0x513/0x9d0 fs/read_write.c:523
+ integrity_kernel_read+0xb0/0x100 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0xae6/0x1b30 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x520/0xb10 security/integrity/ima/ima_api.c:293
+ process_measurement+0x1351/0x1fb0 security/integrity/ima/ima_main.c:372
+ ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0xb9/0x280 security/security.c:3121
+ do_open fs/namei.c:3830 [inline]
+ path_openat+0x2ccd/0x3590 fs/namei.c:3987
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_open fs/open.c:1425 [inline]
+ __se_sys_open fs/open.c:1421 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1421
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdf86d213b9
+Code: d8 5b c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb23978f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007ffdb2397940 RCX: 00007fdf86d213b9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000340
+RBP: 00007ffdb2397948 R08: aaaaaaaaaaaa0102 R09: aaaaaaaaaaaa0102
+R10: aaaaaaaaaaaa0102 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 000000000000001d R15: 00007fdf86d983a0
+ </TASK>
+
+
 ---
-v2: Fix an improper Fixes: line.
-    Drop Jassi Brar from Cc: list (bounces).
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
- include/linux/dmaengine.h |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
---- linux-next-20241122.orig/include/linux/dmaengine.h
-+++ linux-next-20241122/include/linux/dmaengine.h
-@@ -84,7 +84,7 @@ enum dma_transfer_direction {
- 	DMA_TRANS_NONE,
- };
- 
--/**
-+/*
-  * Interleaved Transfer Request
-  * ----------------------------
-  * A chunk is collection of contiguous bytes to be transferred.
-@@ -223,7 +223,7 @@ enum sum_check_bits {
- };
- 
- /**
-- * enum pq_check_flags - result of async_{xor,pq}_zero_sum operations
-+ * enum sum_check_flags - result of async_{xor,pq}_zero_sum operations
-  * @SUM_CHECK_P_RESULT - 1 if xor zero sum error, 0 otherwise
-  * @SUM_CHECK_Q_RESULT - 1 if reed-solomon zero sum error, 0 otherwise
-  */
-@@ -286,7 +286,7 @@ typedef struct { DECLARE_BITMAP(bits, DM
-  *	pointer to the engine's metadata area
-  *   4. Read out the metadata from the pointer
-  *
-- * Note: the two mode is not compatible and clients must use one mode for a
-+ * Warning: the two modes are not compatible and clients must use one mode for a
-  * descriptor.
-  */
- enum dma_desc_metadata_mode {
-@@ -594,9 +594,13 @@ struct dma_descriptor_metadata_ops {
-  * @phys: physical address of the descriptor
-  * @chan: target channel for this operation
-  * @tx_submit: accept the descriptor, assign ordered cookie and mark the
-+ * @desc_free: driver's callback function to free a resusable descriptor
-+ *	after completion
-  * descriptor pending. To be pushed on .issue_pending() call
-  * @callback: routine to call after this operation is complete
-+ * @callback_result: error result from a DMA transaction
-  * @callback_param: general parameter to pass to the callback routine
-+ * @unmap: hook for generic DMA unmap data
-  * @desc_metadata_mode: core managed metadata mode to protect mixed use of
-  *	DESC_METADATA_CLIENT or DESC_METADATA_ENGINE. Otherwise
-  *	DESC_METADATA_NONE
-@@ -827,6 +831,9 @@ struct dma_filter {
-  * @device_prep_dma_memset: prepares a memset operation
-  * @device_prep_dma_memset_sg: prepares a memset operation over a scatter list
-  * @device_prep_dma_interrupt: prepares an end of chain interrupt operation
-+ * @device_prep_peripheral_dma_vec: prepares a scatter-gather DMA transfer,
-+ *	where the address and size of each segment is located in one entry of
-+ *	the dma_vec array.
-  * @device_prep_slave_sg: prepares a slave dma operation
-  * @device_prep_dma_cyclic: prepare a cyclic dma operation suitable for audio.
-  *	The function takes a buffer of size buf_len. The callback function will
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
