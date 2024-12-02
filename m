@@ -1,224 +1,128 @@
-Return-Path: <linux-kernel+bounces-427496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2729E021E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:26:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11EA8166631
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:24:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980751FE47A;
-	Mon,  2 Dec 2024 12:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PdK37V9W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39AC19E0218
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:25:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E701D86C4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E1328274B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:25:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D4B1FE474;
+	Mon,  2 Dec 2024 12:25:33 +0000 (UTC)
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4FF1FC7C5
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733142278; cv=none; b=XwFERE1wEauBReIz93/DzuTRurhPqdxRKoC/ut5iwezPjHy9+groCSBx7FZ+rXTN8LrLjnbKYpo2tgq7lTMr7LVfbvnDgHcoqyUT329vDgvPfuR9+6bvhdbXMRjI3XUXzyU7xd6+YH5XTQA9Llt9WAjrwsC0qBgKVCxnQJpAeZE=
+	t=1733142333; cv=none; b=qXrI/Jf0hgeVnMcmemZu2JaUVEDBoJtyGP12E4+lXl0GDhkJE2EkFczUIVOBhzf+guuHtKTzxDKRrCo7VQNemAYyx4Ntd62BUsFDMMjA6Xik1O/+dgwqga20kkcyxaYmpdy2D2OpY3Ra43L6NVJVOh6GFqlRlA5uxY/GmqSG530=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733142278; c=relaxed/simple;
-	bh=vypkcfmqQSQvNnGSzTrTPtN8sTgc1btYj2S2DQlsl3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F1IFkRilPG7IgpJZ4pjvoAZvvy9Xhpjy0tGGCGgIYTc8FZ/qmfjvTw3dozhieyg45viFPDjEirxfmgQ8pOwGo5kdqbKznIUfWnabSMIpYG5Djqv0KjISamrPfvb3OeaoXxSUlfBnwqx2TAj+HfDadYli6ENa+O+IFWftQ1cO7Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PdK37V9W; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733142276;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=//HEqIowSWTGQpyQRQeePRqHW275Z/0v15zKmzWbkGs=;
-	b=PdK37V9WQfwYU6TYDc3tzdB+fpAKX3Kc1tpCJt6w9UcYPTvyznwo6F1H1cb05p5T04Pq8R
-	GkIYlGTwcbMr0YFNMsIjCWB3OdO2QuZKjnCm0cUjVvt/jDz6avWjIwIVyJZBzOe8rb7rks
-	pW7GDiSsUEn5lFnbUO9+qkj8dcu+pRQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-323-xQsz85EwOKmTjmkLvC453Q-1; Mon, 02 Dec 2024 07:24:35 -0500
-X-MC-Unique: xQsz85EwOKmTjmkLvC453Q-1
-X-Mimecast-MFC-AGG-ID: xQsz85EwOKmTjmkLvC453Q
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385dc37cb3eso1708662f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 04:24:34 -0800 (PST)
+	s=arc-20240116; t=1733142333; c=relaxed/simple;
+	bh=MH3PpIEAJXYHjbdbUJifQIPoYamck30BgsO8TkxHof8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u0ATb7YhknPyA5GVMWAZK7lX39Cpyv0jBI5ls7A35F95173WpVvn8wqOsmgypQbopHUXJXr70H6PMUweKKmwhdfb4X4NCnwF4xbk2MDVUXYBjWTMVsKQ0CcPEUkQYOmTJWPrZMuJQ05dOT1L3NdbvVMipdHr4LJ9SFQSHrLMJdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3ea462a98b9so2118723b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 04:25:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733142274; x=1733747074;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=//HEqIowSWTGQpyQRQeePRqHW275Z/0v15zKmzWbkGs=;
-        b=Htijh+BTXkYmBl1s/3aSdljPP9xz9j4WBupSV4XW1IsLYuFSi4bxfvuGNcIhD5vVCf
-         Kwrjh2Mavj6xWC4L3/wAlDstYP370ze+/zMR6awCtVpPJtTBkvRu22kbDpXkmGuruYRC
-         nyiyDLFGObPJxrBGv5Lgp+Op/0jiNqR37VuWbFZ9jXQm7xVnmilh22rt+bGXsRafO1Un
-         PrGyrY38hQilsNsfInQVUNpsd0whOjOaHK1ENRjnMTXxhraHOY0LcvEcg+fSaRSU/GtW
-         mjmcTCgEZNs+55wLX1UWW2deF90VIT0/usNKiWLHA8NG+ijBuSK8CHcRwjO2Ln6w/vcJ
-         mWZA==
-X-Forwarded-Encrypted: i=1; AJvYcCX84Q6nbC/tAd+iqW5vj1zJaEBWE2ZeCgX+L0UCb+zn/65Mexf09C9e2UBIfPOiPFSZppjFuQ7Cl8+1sEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUvs54lu+hCl186ZwQKIvLc9JQPfW+jHdmoA8d9a77UNirWy+6
-	a+0M+9YnCMUORbsXCNfzE7LGewSkcaiND5hI3VWpZRC/VclGdscNloCEmypiX36EArmBL4dOAmd
-	bjefkdMtRVegyak/XKXSpbAZh8ohEkITtSPYXQTH6V0LAyn3PxdzJQTGO8pRL2g==
-X-Gm-Gg: ASbGncu9QCy/vQF14PFygRIna71rWEkjsjcNqfNuVOtwY38SUJ2r4erckehNZ4ucSlm
-	ismTc14cpSIjevKrDNN1QWmPB6olvBuOjjX9464OqeM/sAEgnSvyl7aIoKdi1clsNXv5XgusghH
-	/m5haM/Ef7xkx/EDXNzJ7W6gWJ0I6qggWJ/aQwPZABT5uK+8vMITDYwq8us+Lob9SG4Q1T+zzZg
-	7onpNdljP/6s5e5lNJLv5repHWlbgUHXkJu5jWbPWltvbemQFU0V1yiAYV6yNU=
-X-Received: by 2002:a05:6000:4918:b0:385:e2d5:cded with SMTP id ffacd0b85a97d-385e2d5cf22mr8062674f8f.20.1733142273825;
-        Mon, 02 Dec 2024 04:24:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEznjBSyloh5TVy1Rv4zaou6u8fNelvxW6jc6X0JnKSCA4c3wEpM0CSdoo/UUE4ySyQjSwJIA==
-X-Received: by 2002:a05:6000:4918:b0:385:e2d5:cded with SMTP id ffacd0b85a97d-385e2d5cf22mr8062648f8f.20.1733142273472;
-        Mon, 02 Dec 2024 04:24:33 -0800 (PST)
-Received: from eisenberg.fritz.box ([2001:16b8:3d41:300:52e4:1c77:9288:7c4c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0bb296379sm3744274a12.40.2024.12.02.04.24.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 04:24:33 -0800 (PST)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>
-Cc: virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] vdpa: solidrun: Replace deprecated PCI functions
-Date: Mon,  2 Dec 2024 13:23:54 +0100
-Message-ID: <20241202122353.9793-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1733142329; x=1733747129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cHVQETbyFyjqaJ8sBP7gubM1/yZ2n+R3JRCiOlETrzk=;
+        b=Rl1LDY25kcYNpWnrKcLV/gaQKy5afLqkVbMXeGwE4nxcTeFw/TQp06uEvebw3oxh/g
+         XMm9uqk1gPVNWQXzFShK8fqtd00nIiBEi4sblZ1B2Avo03LmySXqlJ8sFCgasDsO5+K5
+         S73lsq4xnQcaSw/y7u+UAU0iCgwEGqhmm/o/BEPoANvXC/TNx1CFi+a3h86+Bfoa4fw4
+         riEE9gCSe5zxqU6FYnij/006dQ9cUCcyyOeHtkT9hmMOCUIG7CUz++9JM2Q5z2tiSchD
+         Oy8QDHXbecP+7z0QQWPpPHnqvCeMNP+7hGKhb5IXyFqAMn9uwd0EszXiWII998QUJRis
+         5t6A==
+X-Forwarded-Encrypted: i=1; AJvYcCW2eAwO6WqOxuaY8Z+wzD/q+tFfxaroT1zEePpj6h6S4B3qu1oUsWl57eLZNr94VNXtsgVaRHeKM5XeZxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9HLcsYODl22vR4qjFv5D+mKi3d2P3shZpoDEO9+IWglgckWzG
+	ENLLIDlz8Y9G1V2wiwzuZ6kT0ZVOSMoIhwkwmMLXhvLro/ewRC3bACok6lP1
+X-Gm-Gg: ASbGncv6JgCH2QRLQbQIFQ+IcFVMfm8aFuF+ppi9AkDzqGxRvRIqJc4Yq73jxbCxOjZ
+	+m2G5HoIJByR3A9CdSOV2BtJ+9exd9jJ5QxKsDaddJI3Uva1k9vYHTuL+qGdVSVu6Kt+4ArDypM
+	77PYc1FqjFUvd1EKBzHOYuCvQU/spBiFJINtj7qX2oGwa+7AM9TETE6tnppiTeyl3apLzPRdCsu
+	8prVVztf1u9bUosFhKcIkzGvesmf/7eXDTBaLffUGxNnULFemEMo/3//8ypqGnBF7Fk75GzEGx7
+	eN1X/7gc9cLR3pwc
+X-Google-Smtp-Source: AGHT+IFOxGuH6TOT0G0rMBiAb7QJMe7dVdpcWva4k6wnP09Nb8XvxvsVomWOqc0nunedQODa+3cnlg==
+X-Received: by 2002:a05:6808:1443:b0:3ea:63e2:1aa9 with SMTP id 5614622812f47-3ea6db7d39cmr17990424b6e.7.1733142329510;
+        Mon, 02 Dec 2024 04:25:29 -0800 (PST)
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com. [209.85.167.170])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f21a311a29sm2261232eaf.7.2024.12.02.04.25.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 04:25:28 -0800 (PST)
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3ea696c4dcaso2243329b6e.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 04:25:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVyZyhLoCJmuk9qPqGV9w37fsl3hGLuHUfFVOJIkI2Auon/4HElgfMZ2KrgnWE++YmU1vzmuYDR795/HiA=@vger.kernel.org
+X-Received: by 2002:a05:6359:4584:b0:1ca:967a:3103 with SMTP id
+ e5c5f4694b2df-1cab16a8e20mr743731555d.23.1733142326680; Mon, 02 Dec 2024
+ 04:25:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241123-gpib-tnt4882-depends-on-has_ioport-v1-1-033c58b64751@kernel.org>
+In-Reply-To: <20241123-gpib-tnt4882-depends-on-has_ioport-v1-1-033c58b64751@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 2 Dec 2024 13:25:14 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXOib-1DGZ=1wtNkMXocK1vtTN=s41J+Vh3uD56_MSEEw@mail.gmail.com>
+Message-ID: <CAMuHMdXOib-1DGZ=1wtNkMXocK1vtTN=s41J+Vh3uD56_MSEEw@mail.gmail.com>
+Subject: Re: [PATCH] staging: gpib: Make GPIB_NI_PCI_ISA depend on HAS_IOPORT
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Dave Penkler <dpenkler@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The PCI functions
+On Sat, Nov 23, 2024 at 9:03=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+> After commit 78ecb0375685 ("staging: gpib: make port I/O code
+> conditional"), building tnt4882.ko on platforms without HAS_IOPORT (such
+> as hexagon and s390) fails with:
+>
+>   ERROR: modpost: "inb_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko]=
+ undefined!
+>   ERROR: modpost: "inw_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko]=
+ undefined!
+>   ERROR: modpost: "nec7210_locking_ioport_write_byte" [drivers/staging/gp=
+ib/tnt4882/tnt4882.ko] undefined!
+>   ERROR: modpost: "nec7210_locking_ioport_read_byte" [drivers/staging/gpi=
+b/tnt4882/tnt4882.ko] undefined!
+>   ERROR: modpost: "outb_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko=
+] undefined!
+>   ERROR: modpost: "outw_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko=
+] undefined!
+>
+> Only allow tnt4882.ko to be built when CONFIG_HAS_IOPORT is set to avoid
+> this build failure, as this driver unconditionally needs it.
+>
+> Fixes: 78ecb0375685 ("staging: gpib: make port I/O code conditional")
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-	pcim_iomap_regions()
-	pcim_iounmap_regions()
-	pcim_iomap_table()
+Thanks, this fixes my Sun3+allmodconfig build.
 
-have been deprecated by the PCI subsystem.
+Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Replace these functions with their successors pcim_iomap_region() and
-pcim_iounmap_region().
+Gr{oetje,eeting}s,
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- drivers/vdpa/solidrun/snet_main.c | 55 ++++++++++++++-----------------
- 1 file changed, 25 insertions(+), 30 deletions(-)
+                        Geert
 
-diff --git a/drivers/vdpa/solidrun/snet_main.c b/drivers/vdpa/solidrun/snet_main.c
-index c8b74980dbd1..679c1c7dabf5 100644
---- a/drivers/vdpa/solidrun/snet_main.c
-+++ b/drivers/vdpa/solidrun/snet_main.c
-@@ -556,59 +556,57 @@ static const struct vdpa_config_ops snet_config_ops = {
- static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
- {
- 	char *name;
--	int ret, i, mask = 0;
-+	int ret;
-+	unsigned short i, bars_found = 0;
-+	void __iomem *io;
-+
-+	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-bars", pci_name(pdev));
-+	if (!name)
-+		return -ENOMEM;
-+
- 	/* We don't know which BAR will be used to communicate..
- 	 * We will map every bar with len > 0.
- 	 *
- 	 * Later, we will discover the BAR and unmap all other BARs.
- 	 */
- 	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
--		if (pci_resource_len(pdev, i))
--			mask |= (1 << i);
-+		if (pci_resource_len(pdev, i) == 0)
-+			continue;
-+
-+		io = pcim_iomap_region(pdev, i, name);
-+		if (IS_ERR(io)) {
-+			SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
-+			return PTR_ERR(io);
-+		}
-+
-+		psnet->bars[i] = io;
-+		bars_found++;
- 	}
- 
- 	/* No BAR can be used.. */
--	if (!mask) {
-+	if (bars_found == 0) {
- 		SNET_ERR(pdev, "Failed to find a PCI BAR\n");
- 		return -ENODEV;
- 	}
- 
--	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-bars", pci_name(pdev));
--	if (!name)
--		return -ENOMEM;
--
--	ret = pcim_iomap_regions(pdev, mask, name);
--	if (ret) {
--		SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
--		return ret;
--	}
--
--	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
--		if (mask & (1 << i))
--			psnet->bars[i] = pcim_iomap_table(pdev)[i];
--	}
--
- 	return 0;
- }
- 
- static int snet_open_vf_bar(struct pci_dev *pdev, struct snet *snet)
- {
- 	char *name;
--	int ret;
- 
- 	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "snet[%s]-bars", pci_name(pdev));
- 	if (!name)
- 		return -ENOMEM;
- 
- 	/* Request and map BAR */
--	ret = pcim_iomap_regions(pdev, BIT(snet->psnet->cfg.vf_bar), name);
--	if (ret) {
-+	snet->bar = pcim_iomap_region(pdev, snet->psnet->cfg.vf_bar, name);
-+	if (IS_ERR(snet->bar)) {
- 		SNET_ERR(pdev, "Failed to request and map PCI BAR for a VF\n");
--		return ret;
-+		return PTR_ERR(snet->bar);
- 	}
- 
--	snet->bar = pcim_iomap_table(pdev)[snet->psnet->cfg.vf_bar];
--
- 	return 0;
- }
- 
-@@ -656,15 +654,12 @@ static int psnet_detect_bar(struct psnet *psnet, u32 off)
- 
- static void psnet_unmap_unused_bars(struct pci_dev *pdev, struct psnet *psnet)
- {
--	int i, mask = 0;
-+	unsigned short i;
- 
- 	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
- 		if (psnet->bars[i] && i != psnet->barno)
--			mask |= (1 << i);
-+			pcim_iounmap_region(pdev, i);
- 	}
--
--	if (mask)
--		pcim_iounmap_regions(pdev, mask);
- }
- 
- /* Read SNET config from PCI BAR */
--- 
-2.47.0
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
