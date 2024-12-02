@@ -1,139 +1,91 @@
-Return-Path: <linux-kernel+bounces-427914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3289E076B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:46:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DEC39E0773
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:47:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6ABF280C52
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1355F280D65
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E1042AAD;
-	Mon,  2 Dec 2024 15:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58B64B5C1;
+	Mon,  2 Dec 2024 15:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="MRPqzPUx"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NG6YzGtI"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85488BA53;
-	Mon,  2 Dec 2024 15:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8D94204D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154385; cv=none; b=lEZGGoUpPOrb7//IZrQZ6vy2/OXHS8KLg77gnz5Fhd+e7/qOO89vpwXfGRtwZa8ZerKW/qC1IWx1oJJUnrs/lih5JPQJpxsIcBZMVbYLnW/TTKrQnh7raErKUmFEkp31puXItzFmpjF3M/GBt7hasvg0P2xVa2/BM6HG4deGs6g=
+	t=1733154417; cv=none; b=RJGCnpPT6UjafTSBMDBN3dWHLkQNlcey1KFFbMhWEVGnfUghaLv3vl/lFQR+gUuIF2AaAReao9xRhEOU+1219oYFxwZfmo+9AznOE1abwzRIbjKeABRbMjgZTuFVcHoJQyeiZt7wVpS4cIL1Tyi/xyi25eEdVjEWCHsdCoyxVqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154385; c=relaxed/simple;
-	bh=j8bJcPAyXhajr6+nVYtUv3fihyXlaCItR0utCTFJF5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sCYpg4hTfrL7L+KLJiHpLTls99JpNVH/hCcYN1x1xsqR1UKmLnPTTBFcqVtzs1dTp2tTiefk4hklg/RGTwOxTEPcdvSpuoq/DkZBTbifspZgt9gXB5gWf8qJ1ruifiT7KjX48RLTgEOi3h1q1s209U/Qpx9YbWmPSbul7hz9N0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=MRPqzPUx; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1733154355; x=1733759155; i=wahrenst@gmx.net;
-	bh=S6AbZeNaZ6bTE249nttA7aUaHmMUAtPIQUa4jnYv9dg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=MRPqzPUxvHdhDzn6BrdRf9grvVpT8loh0TtvRFigS/N98YMO1eGNg2fMgFa1dSMq
-	 A6rbPAVQpkNh4opLucf/B62DtGd/jC7ZcbLP+KbiKZskMu2fA6wCez3Uw36yldNU6
-	 xqw432FV8UqXo21pJtc6yzUJYboQdW2gLJmFMOdTQ0GPqua7Bx6HAubqoWlA0Vrdl
-	 g4O/yXL5s/2BjEKL4dWmN+/2kyxxx+PH0S17cHZb2N48A3SZHfiNfmP1houYEQuEP
-	 yLo3hILr2K31IMW/wWJ6IRqSjJkbR51Z2IPUj5XS0qVbvRTUV3Ro2uwUWecOnMRR7
-	 e4CU2AzcVntMm0yiZA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.105] ([37.4.251.153]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MJVHU-1syHO72DwO-00LIU9; Mon, 02
- Dec 2024 16:45:55 +0100
-Message-ID: <31d19aae-e2d2-4219-abe1-10516c42befe@gmx.net>
-Date: Mon, 2 Dec 2024 16:45:53 +0100
+	s=arc-20240116; t=1733154417; c=relaxed/simple;
+	bh=Tx+ZLe2ZIJV/zaCLAnlNZO8r+QVu0lMIp/IrqxEUi/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X4HA0u9EWtwgOEHpXksM4b4aAoe/CRwhQpO/0IZJLAU+Y8eJOXtjHsvLq7dNKNGQjU8TCsv+P1dtmwirux2MazxImE3X3MpUTwkgTMNKiMY+VkiEqul9Q4JMILsTa3l+pV7C6/f8vHDVtu64/ihwKli2VMb7smDS3yIR6iExZOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NG6YzGtI; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733154413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VEgBfFikoD7MHQLGzfVrQiZrtnF9fKdquPoRWlqKtgM=;
+	b=NG6YzGtIjaATUX3/UDc+RJCuQrfzV4IAyw/+RCqCfcmjER1LJpGTGDU6gJ0WOInBCyMHOr
+	F/o+ghUL/VJfEPRoHIwxMaAxtttIhIW9UHRs1ekqFVvt5Jf5R+fd6PoGZhOt7cTsViPt/L
+	JMV5wcf+H3yNCecdy6jRQn+esQS9BLY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Erick Archer <erick.archer@outlook.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: joystick - use str_off_on() helper in sw_connect()
+Date: Mon,  2 Dec 2024 16:46:00 +0100
+Message-ID: <20241202154603.1193-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] dt-bindings: gpio: brcmstb: add gpio-line-name
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
- linux-gpio@vger.kernel.org
-References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
- <20241202-dt-bcm2712-fixes-v1-3-fac67cc2f98a@raspberrypi.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20241202-dt-bcm2712-fixes-v1-3-fac67cc2f98a@raspberrypi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:IOMHa3ZcSMqatNTk+ufT5/RmKhqFiwzBeWyjcIAIec/+E8wlQQC
- fdKZZK9TLuHh1jL1hDr4uBSd7nS/U5aDZZXZGyDz4LM1c9B7zrueEd8FSeezrohk31PE2Ao
- kKWLjdrAAAN6ZIjGLWWXIzaRkfq57UuXqprcF0rbPF9DTt7UrdPhwz4zmOiMbtqMFSEu5rx
- h1u1Qozkm5XfeKRDKaH+w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ArgobiVFoHY=;i5fh4paZoVkp5qjDIySZTSIapOP
- L7gJtxwiztdtk86rYcuduxH+osuuESVmiV89rg7PrCpE8vVfLgYAoj+htWE2bgwEJ7BkvNC9F
- xYhcb6QFIky4cTsN1RaAB3dexZ3fK/p/uo16OfnhqKMkFzu9Q1+0l8rT6jp4Id2XROEpRnyUY
- QQi+N28duCW9gzvHwldDlAlJvrElZRvGtqDZGYzHJrln0zeUfVP82t1UJTaRoODibhzE642O3
- wqX4ggf/+QVbcbtMSoryU1RAVXlenFa6paCaCkyylC1AljpyFkTsJ9Ue6qKyH1D26NqjoETOo
- RF0Ky2fsAcQKxmg9IyzC88/69hxUxO4PL+SDoMUSpcDak6lgngvdhoge9dQ4HHCBwOavx5mAM
- W4yUBiKYJqXv6sxnm1cmCyVEy2YtNRXoI0HT65XeXu7THGIdKqoQcPI9HjSKnQslf5faGyESj
- Q3kEDNYOZ9jmUlVDXrKfRJZ6uzFMjW2WDka3AyRWc9+yQ3krpHDdeGjnPI4at5yRUu/R/Lk+S
- Osv3zlNNwx1a7tRs4DiU6bPcP2RFk19+oEEPChPwPVc1UvCRnzBagB8PFReV9j20OaAgVG9NJ
- 187DPQdiomDkE/yjplISD8km/cI9WZixQ3+afgMscNuAjqKBsnV5+7gKDvZsvlS/lXOvLnBSD
- OwBUIgZfMp8whoIryacYaQiJLuIu4cAMcNxIo/pOrGzdZ5MgnJJPy05XChz4q2uiRBn6tFchE
- rHW0SQZxwl6JIXeSymrp6wHivbnco8pxhP9bRcVt2FhkRFvMNPxGcOMsb5fLzd0ZZLoFOg45/
- z/rSwz3UXEtDgcggdgYU40LxDztxQkpEdmt1rBItTNmSf0f94BB+7VVU21dzA03+jaekZyTGP
- YAknUnwpXcurCo9GJG5ST2pn3tzC2+RyXXsr3klzJyCVAlkwlZbnMug7HKXcfiPWaPkGPsDhG
- QiSLAEWPxysBdU8lRb/ARji75WJqVV4GdYR996jOYP34CgN5aXqgbZVMfpuoj9u6HkiBUEo2V
- Jn8JmYeHpoJ+QgzPR2uTk1UQ5ud66S7WQN0iQuHHoBlCvaCZ8skO0qzFTkdWGGxYcP/oO1A2z
- tEH+w4eM6q17dL9vVwB3u4yEtMGqP8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Dave,
+Remove hard-coded strings by using the str_off_on() helper.
 
-Am 02.12.24 um 15:31 schrieb Dave Stevenson:
-> Support comes from gpiolib, so permit it through the binding.
-Sorry for the nitpicking, but gpiolib is a software part of Linux and we
-should describe the hardware here.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/input/joystick/sidewinder.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Best regards
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->   Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.ya=
-ml b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
-> index f096f286da19..086d016df6ef 100644
-> --- a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
-> @@ -64,6 +64,8 @@ properties:
->
->     gpio-ranges: true
->
-> +  gpio-line-names: true
-> +
->     wakeup-source:
->       type: boolean
->       description: >
->
+diff --git a/drivers/input/joystick/sidewinder.c b/drivers/input/joystick/sidewinder.c
+index f6e92db4d789..3a5873e5fcb3 100644
+--- a/drivers/input/joystick/sidewinder.c
++++ b/drivers/input/joystick/sidewinder.c
+@@ -14,6 +14,7 @@
+ #include <linux/input.h>
+ #include <linux/gameport.h>
+ #include <linux/jiffies.h>
++#include <linux/string_choices.h>
+ 
+ #define DRIVER_DESC	"Microsoft SideWinder joystick family driver"
+ 
+@@ -677,7 +678,7 @@ static int sw_connect(struct gameport *gameport, struct gameport_driver *drv)
+ 				case 48:				/* Ambiguous */
+ 					if (j == 14) {			/* ID length 14*3 -> FFP */
+ 						sw->type = SW_ID_FFP;
+-						sprintf(comment, " [AC %s]", sw_get_bits(idbuf,38,1,3) ? "off" : "on");
++						sprintf(comment, " [AC %s]", str_off_on(sw_get_bits(idbuf,38,1,3)));
+ 					} else
+ 						sw->type = SW_ID_PP;
+ 					break;
+-- 
+2.47.0
 
 
