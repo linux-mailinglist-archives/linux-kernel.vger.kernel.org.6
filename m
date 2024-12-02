@@ -1,128 +1,227 @@
-Return-Path: <linux-kernel+bounces-427072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA2E9DFBED
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:29:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 817239DFBEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:29:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB62BB21F4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:29:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2064B224F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5531F9EAA;
-	Mon,  2 Dec 2024 08:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EE81F9ED6;
+	Mon,  2 Dec 2024 08:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Z8PVX9sA"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q35cDcMA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B841F9EBF
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160521F9EC0;
+	Mon,  2 Dec 2024 08:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733128145; cv=none; b=V1Gg+0Cs6HzuYwLpZ2iLfPWndcI1/mQxFBMtFhd8pTaeOJFTsrfmJWVpUiX5PgrG0U6fhDtEVLAPaFITdClNee8swy7Yo135wSaayvSmxZGrqZHBAsSqqGJcc2EL0zZpXaIN1wAU+XWbYNScsMK+FJigICck7vfxJihnaUqNcWY=
+	t=1733128143; cv=none; b=k6TtYq1hGembsfFhFwHyzpUV+/oDGzeZH2AqzgoaPVsrL8+1srDDSrEBMEinbU3m62rJOj4Apnu2uj6UVgJleAgQPio2pOok1g+fsUwx7V8WcUvA00jxPMhCJcUfAkXs6du6D3s/VqCGH/dxJERaWoYRn5OVFGCm7Mnor2xbWcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733128145; c=relaxed/simple;
-	bh=CZfqiePgiDIZwl9HmM49abMXtArFA7lzv36AWhpAvlU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PebUYV3xyz9rYILQW6kD6VA6HMbFgJnOKMoGGzVJKf33hnk+s/NoPIX/6DZJRMRTJlwKYCYKPNtTlZp1tGmmH4RFjAg4aLxMz3l3PR5Yy6bidlfqUDltqgGHI8CeZUyJYUlDzuy1Jab7nBZxg0UNgFZi+uG9HR4g8FXCe2LAAUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Z8PVX9sA; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EDB123F182
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733128140;
-	bh=ChVHc6ZPzJs71/6njj1CtrhVYKVQFtYsO0ttD5TcL0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=Z8PVX9sAU+S9g1Xa7ANtldwnDOaIZvzQqECFjjSCZr/A7Ad6dLCM6AxP2kAxL1N9e
-	 lSr+up5VyGlOp8kUSVmnRv6btMER/DCESi6cXOZha0uRFKQ7uNpZ/c0BTK/peAbF6n
-	 EALePqk4M7LkLwW7dVDZd6ALEM4xGTBAy7DtvXBAp/5Qu5Jpf2I9dIP1n8VFbpPbz1
-	 59nZaMidSL+KIharCbEJ6mlo9IYvuRHqC35kqVIOfxznD3dY//8DCXSOmivHhwlvBA
-	 GXWUrmkdN2UrZHRtu0cVd6wiNtV/FPFqPYJzopTUV82aVp18ULggMqSCRyCqfU0/Wk
-	 fNU/Y0vIHB5Zg==
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ee6b027a90so3312851a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:29:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733128139; x=1733732939;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ChVHc6ZPzJs71/6njj1CtrhVYKVQFtYsO0ttD5TcL0s=;
-        b=Q1r67Wx8GHyaElA2qYxdG2nKF+rdFc0qwtvTO9+V/AzvYN/rdOcRDDKTI+MVNt1GzO
-         vdAlPkkicsjhkqiUojbrRPz5M9t0dZRmtZzlTYwI5d3kO4y0FLGgf3NtiXB0n9U04eno
-         /MgaXZx3xm/L3TaJsDiVPKWahfZgu7QyE4JxqCBnIJO2uNR92shv3g7F8IN2Kfz8B2iL
-         wP//RGRc9QDipIqcHOLgbOBmgX0QvYBXQ/1dhNFCOLnLMUpT/R19/3oo8xR5rxkbyFom
-         DNRxpVI58DQ9LA+vpbIx4LWkD4NBVZ318T4YA7WypRKNQVH0/T5tEwSVMRvfEPtNpSy1
-         YtQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbjQPDpD7jv+NGYnY2PCiApkaJW6NvUw3MBPSOKX6k3SN+2BapZzTO8IIxdNr1M2q2Ixjpz1nIvGr4XFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWMnA1rlb0gscA6zwfVe32leclRHaV2QrCfiVB9j5J4rWsxxCj
-	+IhfHLEsb3N63qjgbNSnir+ZztgbLu+K95fSZVG5ZbgxvTgcLZSSXAmhn3XpaHZIpw95xczw/RF
-	0fQze4EFsuhys+mIAIK4/duY/AgzUi0wTyyCVXFBNHZDxPd3A3VlJFugL38GBIurpu+5s63eW3U
-	NzkA==
-X-Gm-Gg: ASbGnctD7ipg9zQBOcWGDeCdFeo/LYIHaNYH0ryIF1YCQcODuEKogozqwW5PW5NetOS
-	kfUMVwHEZWzz6Mhez9UHRPt6FIw8Lq56iIOTNECqWR35bXeFZOxuUu46I2q4MX2UzvrOVwF31Dp
-	fJIDmQgwAMEaI9cWCYFSgLff+WagvsXS28PyNdfwlDL8KnOv7l47i7L7qIjOB/yOArIlvB3pxRj
-	flo8kUw2cBbLFH+rLYBy2RL8X/Kc3ajyD1NoCCoLfVmUL0BTMiB27HdJD5fTddybYvRsfX/nhUP
-	1eSV7v8cQ3rOisB8
-X-Received: by 2002:a17:90b:2e51:b0:2ee:aed2:c14c with SMTP id 98e67ed59e1d1-2eeaed2c4famr6388960a91.27.1733128139363;
-        Mon, 02 Dec 2024 00:28:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEKCmCPGdz9irrCKnVgeNMkQmU0zRjkzr66ncRHGENIFb2clVskyQzoJDA98wJ4ubylxJg2Og==
-X-Received: by 2002:a17:90b:2e51:b0:2ee:aed2:c14c with SMTP id 98e67ed59e1d1-2eeaed2c4famr6388947a91.27.1733128139031;
-        Mon, 02 Dec 2024 00:28:59 -0800 (PST)
-Received: from chengendu.. (118-163-61-247.hinet-ip.hinet.net. [118.163.61.247])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eebc4501b5sm1770778a91.10.2024.12.02.00.28.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 00:28:58 -0800 (PST)
-From: Chengen Du <chengen.du@canonical.com>
-To: pjones@redhat.com
-Cc: konrad@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chengen Du <chengen.du@canonical.com>
-Subject: [PATCH] iscsi_ibft: Fix UBSAN shift-out-of-bounds warning in ibft_attr_show_nic()
-Date: Mon,  2 Dec 2024 16:28:42 +0800
-Message-ID: <20241202082842.403481-1-chengen.du@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733128143; c=relaxed/simple;
+	bh=o9JnUFIRDJbTJY1jC7r2fXEGsNi+iIpPh2OY1FMnb+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dve40J6eQjHmnrobN5t/9+h9qC7J3yWqEcTGUMUwAnM0QY8XOguF2g2r1X/F2Qt84RC6C8tXOEfPKgRCCrhgncpIgu55j6fmEdFtJZWK+6tWQz9Zgo+B7X+z8NdJOLTaCQzMbTJBgfEglzzX3CGYO7y9aQHqfdSK82UdYwHY5o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q35cDcMA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB073C4CED2;
+	Mon,  2 Dec 2024 08:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733128142;
+	bh=o9JnUFIRDJbTJY1jC7r2fXEGsNi+iIpPh2OY1FMnb+o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q35cDcMADnf+6229U2vpgK468Gp62BZWPG1ZhcGAAFGdaFfQ8iLwekqVLytfcRVSk
+	 k1jvBen8AaXRU4r+QfiSqQbWera8njvL+mpydAe0wFdzDR3QPjwOuuqysl01lupsS3
+	 rT92FuhJsk0C0tAn3KMRroUvBaYxEj0qrll/g8rCHhBUfsUGgnChQQezT6VkzXGW4n
+	 Nr58YF4Iy0swEXCoUV3QJ6soDVXECbRG29HkMrSSnRMOMjKggyRYBOMPX1rbIkAjdX
+	 9+OAVCOzDP+O6TqO+CPZioRo50p2Is4GWk5DAkqNRgLnHdSu7cJGD/a78IJmL6sBnU
+	 Gv/sFr1JfbE7A==
+Date: Mon, 2 Dec 2024 09:28:57 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Simona Vetter
+ <simona.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v3 DONOTMERGE] docs: clarify rules wrt tagging other
+ people
+Message-ID: <20241202092857.7d197995@foz.lan>
+In-Reply-To: <c29ef5fa12e37c3a289e46d4442b069af94e5b05.1733127212.git.linux@leemhuis.info>
+References: <c29ef5fa12e37c3a289e46d4442b069af94e5b05.1733127212.git.linux@leemhuis.info>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When performing an iSCSI boot using IPv6, iscsistart still reads the
-/sys/firmware/ibft/ethernetX/subnet-mask entry. Since the IPv6 prefix
-length is 64, this causes the shift exponent to become negative,
-triggering a UBSAN warning. As the concept of a subnet mask does not
-apply to IPv6, the value is set to ~0 to suppress the warning message.
+Em Mon,  2 Dec 2024 09:14:19 +0100
+Thorsten Leemhuis <linux@leemhuis.info> escreveu:
 
-Signed-off-by: Chengen Du <chengen.du@canonical.com>
----
- drivers/firmware/iscsi_ibft.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> Point out that explicit permission is usually needed to tag other people
+> in changes, but mention that implicit permission can be sufficient in
+> certain cases. This fixes slight inconsistencies between Reported-by:
+> and Suggested-by: and makes the usage more intuitive.
+> 
+> While at it, explicitly mention the dangers of our bugzilla instance, as
+> it makes it easy to forget that email addresses visible there are only
+> shown to logged-in users.
+> 
+> The latter is not a theoretical issue, as one maintainer mentioned that
+> his employer received a EU GDPR (general data protection regulation)
+> complaint after exposing a email address used in bugzilla through a tag
+> in a patch description.
+> 
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Simona Vetter <simona.vetter@ffwll.ch>
+> Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
 
-diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
-index 6e9788324fea..e2c0749f6afa 100644
---- a/drivers/firmware/iscsi_ibft.c
-+++ b/drivers/firmware/iscsi_ibft.c
-@@ -310,7 +310,10 @@ static ssize_t ibft_attr_show_nic(void *data, int type, char *buf)
- 		str += sprintf_ipaddr(str, nic->ip_addr);
- 		break;
- 	case ISCSI_BOOT_ETH_SUBNET_MASK:
--		val = cpu_to_be32(~((1 << (32-nic->subnet_mask_prefix))-1));
-+		if (nic->subnet_mask_prefix > 32)
-+			val = ~0;
-+		else
-+			val = cpu_to_be32(~((1 << (32-nic->subnet_mask_prefix))-1));
- 		str += sprintf(str, "%pI4", &val);
- 		break;
- 	case ISCSI_BOOT_ETH_PREFIX_LEN:
--- 
-2.43.0
+LGTM.
 
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+> ---
+> Note: this triggers a few checkpatch.pl complaints that are irrelevant
+> when when to comes to changes like this.
+> 
+> v3:
+> - try yet again from a slightly different angle which loosens the rules
+>   slightly. This from review feedback to earlier versions is apparently
+>   what other developers want and from their "no lawyer" perspective
+>   consider to be okay. As IANAL myself I don't feel totally comfortable
+>   with this and have no idea if this legally is sound, so tag patch with
+>   "DONOTMERGE" for now; will remove this for v4 if enough people add a
+>   "Reviewed-by". Otherwise the story of this patch might end here, unless
+>   someone else submits it for inclusion (you are free to do so!).
+> - remote patch adding Suggested-by: tag to 5.Posting and submit it
+>   separately
+> 
+> v2: https://lore.kernel.org/all/cover.1731749544.git.linux@leemhuis.info/
+> - Retry differently. This slightly hardens the rule for Reported-by:
+>   while slightly lessening it for Suggested-by:. Those in the end are
+>   quite similar, so it does not make much sense to apply different ones.
+>   I considered using an approach along the lines of "if you reported it
+>   in pubic by mail, implicit permission to use in a tag is granted"; but
+>   I abstained from it, as I assume there are good reasons for the
+>   existing approach regarding Suggested-by:.
+> - CC all the people that provided feedback on the text changes in v1
+> 
+> v1: https://lore.kernel.org/all/f5bc0639a20d6fac68062466d5e3dd0519588d08.1731486825.git.linux@leemhuis.info/
+> - initial version
+> ---
+>  Documentation/process/5.Posting.rst          | 13 +++++--
+>  Documentation/process/submitting-patches.rst | 39 ++++++++++++++------
+>  2 files changed, 36 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
+> index b3eff03ea2491c..73961565040ed8 100644
+> --- a/Documentation/process/5.Posting.rst
+> +++ b/Documentation/process/5.Posting.rst
+> @@ -264,10 +264,15 @@ The tags in common use are:
+>   - Cc: the named person received a copy of the patch and had the
+>     opportunity to comment on it.
+>  
+> -Be careful in the addition of tags to your patches, as only Cc: is appropriate
+> -for addition without the explicit permission of the person named; using
+> -Reported-by: is fine most of the time as well, but ask for permission if
+> -the bug was reported in private.
+> +Be careful in the addition of tags to your patches, as all except for Cc:,
+> +Reported-by:, and Suggested-by: need explicit permission of the person named.
+> +For the three aforementioned ones implicit permission is sufficient if the
+> +person contributed to the Linux kernel using that name and email address
+> +according to the lore archives or the commit history -- and in case of
+> +Reported-by: and Suggested-by: did the reporting or suggestion in public.
+> +Note, bugzilla.kernel.org is a public place in this sense, but email addresses
+> +used there are private; so do not expose them in tags, unless the person used
+> +them in earlier contributions.
+>  
+>  
+>  Sending the patch
+> diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
+> index 1518bd57adab50..9d26a4b7ca8ba3 100644
+> --- a/Documentation/process/submitting-patches.rst
+> +++ b/Documentation/process/submitting-patches.rst
+> @@ -481,10 +481,10 @@ list archives.
+>  
+>  If a person has had the opportunity to comment on a patch, but has not
+>  provided such comments, you may optionally add a ``Cc:`` tag to the patch.
+> -This is the only tag which might be added without an explicit action by the
+> -person it names - but it should indicate that this person was copied on the
+> -patch.  This tag documents that potentially interested parties
+> -have been included in the discussion.
+> +This tag documents that potentially interested parties have been included in
+> +the discussion. Note, this is one of only three tags you might be able to use
+> +without explicit permission of the person named (see 'Tagging people requires
+> +permission' below for details).
+>  
+>  Co-developed-by: states that the patch was co-created by multiple developers;
+>  it is used to give attribution to co-authors (in addition to the author
+> @@ -530,9 +530,9 @@ hopefully inspires them to help us again in the future. The tag is intended for
+>  bugs; please do not use it to credit feature requests. The tag should be
+>  followed by a Closes: tag pointing to the report, unless the report is not
+>  available on the web. The Link: tag can be used instead of Closes: if the patch
+> -fixes a part of the issue(s) being reported. Please note that if the bug was
+> -reported in private, then ask for permission first before using the Reported-by
+> -tag.
+> +fixes a part of the issue(s) being reported. Note, the Reported-by tag is one
+> +of only three tags you might be able to use without explicit permission of the
+> +person named (see 'Tagging people requires permission' below for details).
+>  
+>  A Tested-by: tag indicates that the patch has been successfully tested (in
+>  some environment) by the person named.  This tag informs maintainers that
+> @@ -582,11 +582,11 @@ Usually removal of someone's Tested-by or Reviewed-by tags should be mentioned
+>  in the patch changelog (after the '---' separator).
+>  
+>  A Suggested-by: tag indicates that the patch idea is suggested by the person
+> -named and ensures credit to the person for the idea. Please note that this
+> -tag should not be added without the reporter's permission, especially if the
+> -idea was not posted in a public forum. That said, if we diligently credit our
+> -idea reporters, they will, hopefully, be inspired to help us again in the
+> -future.
+> +named and ensures credit to the person for the idea: if we diligently credit
+> +our idea reporters, they will, hopefully, be inspired to help us again in the
+> +future. Note, this is one of only three tags you might be able to use without
+> +explicit permission of the person named (see 'Tagging people requires
+> +permission' below for details).
+>  
+>  A Fixes: tag indicates that the patch fixes an issue in a previous commit. It
+>  is used to make it easy to determine where a bug originated, which can help
+> @@ -600,6 +600,21 @@ process nor the requirement to Cc: stable@vger.kernel.org on all stable
+>  patch candidates. For more information, please read
+>  Documentation/process/stable-kernel-rules.rst.
+>  
+> +.. _tagging_people:
+> +
+> +Tagging people requires permission
+> +----------------------------------
+> +
+> +Be careful in the addition of tags to your patches, as all except for Cc:,
+> +Reported-by:, and Suggested-by: need explicit permission of the person named.
+> +For the three aforementioned ones implicit permission is sufficient if the
+> +person contributed to the Linux kernel using that name and email address
+> +according to the lore archives or the commit history -- and in case of
+> +Reported-by: and Suggested-by: did the reporting or suggestion in public.
+> +Note, bugzilla.kernel.org is a public place in this sense, but email addresses
+> +used there are private; so do not expose them in tags, unless the person used
+> +them in earlier contributions.
+> +
+>  .. _the_canonical_patch_format:
+>  
+>  The canonical patch format
+> 
+> base-commit: 83a474c11e8cb59e230a43365cb42fa00d3bddaa
+
+
+
+Thanks,
+Mauro
 
