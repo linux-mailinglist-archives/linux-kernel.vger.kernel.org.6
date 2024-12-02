@@ -1,121 +1,217 @@
-Return-Path: <linux-kernel+bounces-427087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3AD9DFC41
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:44:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A519DFC3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:44:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CD0BB21741
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14701282A3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2AD1F9F5C;
-	Mon,  2 Dec 2024 08:44:25 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C1E1F9F68;
+	Mon,  2 Dec 2024 08:44:15 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B371B2940F
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1988A2940F;
+	Mon,  2 Dec 2024 08:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733129064; cv=none; b=lac76k4LX94DWPvbAu3EOdJ9dPurR83UCK1Dhnw3rFFT2n7aAibUnagUkMbHQARw2/Yb7iCSnwRsYKaBeyCWF2jt/TetMAPXIqHxH0ytZeWbXQuWqOXDrq8bcpVZosdZ1g3hcl3db54PWF1LoQCt6yswL+r4fDIwdxb8CvJWY0Q=
+	t=1733129055; cv=none; b=mXoV7rSThGij1cZIni+qBu4RafMznzsbrjHetWTe1RQg2hwelstvp09nbUCbSUz87VdCUTo8oNZVE6BjbUrLKAtZpxd83f9l2TPGREgAY5UfrsH7EpeMUhuyX3oYCenC3bZWhNGRKlJ1Vn3A9sMNBd+WNVywBlLkrR4K0kRL9N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733129064; c=relaxed/simple;
-	bh=5ykKuNUwwbKPtOwOkSK81tnLQry+HlOhPKQ6jRaZkv4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=Lz+QL3eVtOSqpPpIqrPguqE8oxMlNm0T7Gcrqj5wYKZeH9GKc27Hh3zMPe6Ti0JZspcS/lNOA3uHiL70w5U55BkuJV3xFhzkZchgnyOFgazuTy4oroYyuCi5oxyVfmsseQ6TnYyw14nIHWnLoVbIKkGOXbAbQOWcvMnkf7zsv8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-202-4gPIbQP5MVu2_w65CfgrJA-1; Mon, 02 Dec 2024 08:44:20 +0000
-X-MC-Unique: 4gPIbQP5MVu2_w65CfgrJA-1
-X-Mimecast-MFC-AGG-ID: 4gPIbQP5MVu2_w65CfgrJA
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 2 Dec
- 2024 08:43:50 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 2 Dec 2024 08:43:50 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
-CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	"Andrew Cooper" <andrew.cooper3@citrix.com>, Josh Poimboeuf
-	<jpoimboe@kernel.org>, "bp@alien8.de" <bp@alien8.de>
-Subject: RE: [PATCH next] x86: mask_user_address() return base of guard page
- for kernel addresses
-Thread-Topic: [PATCH next] x86: mask_user_address() return base of guard page
- for kernel addresses
-Thread-Index: AdtEHKHDLvCr/TWKQ76WywrKdPgaxgAD2wgAABm24BA=
-Date: Mon, 2 Dec 2024 08:43:50 +0000
-Message-ID: <728cccd6a6d942d0b9249e7991fdce13@AcuMS.aculab.com>
-References: <e654a20c9045487eaacbd256f584ce45@AcuMS.aculab.com>
- <CAHk-=wiG7dGtE6UsynOP3FuvApkh=FYrv1Q42DEVZmosuOFXnQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wiG7dGtE6UsynOP3FuvApkh=FYrv1Q42DEVZmosuOFXnQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733129055; c=relaxed/simple;
+	bh=4PrqPe+wIxYE2I0/+m0l1rF5z05DESmictGqIXBqYBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JQ8jF+GxBsP/Q6cuZsHTXE62CQTWBU8fZ33oQOZHrYRbeg4VhfqI3aR52mWaBS6St9VTwCbA4g7HxOlxzniceT6XXVXiAt+geX7rG1ehJQUjQXx1XBnDiGFke8IuvrdDh22TTPV2VvwagDlVkktKGbY1oeUaqKVACt2Jurl6lzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F95EC4CED2;
+	Mon,  2 Dec 2024 08:44:12 +0000 (UTC)
+Message-ID: <445e551c-c527-443c-8913-6999455bd366@xs4all.nl>
+Date: Mon, 2 Dec 2024 09:44:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: OTFmxn6rPB3kbS2VO4irNynRPGPkBAQ48dzIjKQKR0o_1733129058
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
+ by other fh
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
+ <20241129110640.GB4108@pendragon.ideasonboard.com>
+ <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
+ <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl>
+ <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
+ <CANiDSCvwzY3DJ+U3EyzA7TCQu2qMUL6L1eTmZYbM+_Tk6DsPaA@mail.gmail.com>
+ <20241129220339.GD2652@pendragon.ideasonboard.com>
+ <CANiDSCsXi-WQLpbeXMat5FoM8AnYoJ0nVeCkTDMvEus8pXCC3w@mail.gmail.com>
+ <20241202001846.GD6105@pendragon.ideasonboard.com>
+ <fb321ade-40e7-4b1e-8fcd-c6475767239d@xs4all.nl>
+ <20241202081157.GB16635@pendragon.ideasonboard.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20241202081157.GB16635@pendragon.ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDEgRGVjZW1iZXIgMjAyNCAyMDowMw0KPiAN
-Cj4gT24gU3VuLCAxIERlYyAyMDI0IGF0IDEwOjEyLCBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdo
-dEBhY3VsYWIuY29tPiB3cm90ZToNCj4gPg0KPiA+IEkndmUgYnVpbHQgYW5kIHJ1biBhIGtlcm5l
-bCB3aXRoIGl0IC0gc28gbm90IGJyb2tlbiENCj4gDQo+IEkgd29ycnkgdGhhdCAnY21vdicgY291
-bGQgYmUgcHJlZGljdGVkIC0gbWFraW5nIHRoZSB3aG9sZSBzZXF1ZW5jZQ0KPiBwb2ludGxlc3Mu
-IEl0IHdvdWxkIGJlIGEgc3R1cGlkIHRoaW5nIGZvciBhIENQVSBjb3JlIHRvIGRvLCBidXQgaXQN
-Cj4gd291bGQgYmUgc2ltcGxlLg0KPiANCj4gT2YgY291cnNlLCAnc2JiJyBjb3VsZCBiZSBkb25l
-IHVzaW5nIHByZWRpY3RpbmcgdGhlIGNhcnJ5IGZsYWcgdG9vLg0KPiBUaGVyZSdzIGEgbG90IG9m
-IHdheXMgdG8gc2NyZXcgdGhpcyB1cC4NCg0KQWJvdXQgdGhlIG9ubHkgcmVnaXN0ZXIgdGhhdCBp
-dCB3b3VsZCBtYWtlIGFueSBzZW5zZSB0byAncHJlZGljdCcNCmlzIHRoZSBmbGFncyByZWdpc3Rl
-ci4NClRoYXQgaXMgZ29pbmcgdG8gYWZmZWN0IGNtb3YgYW5kIHNiYiB0aGUgc2FtZS4NCg0KPiBJ
-bnRlbCBhdCBzb21lIHBvaW50IGV4cGxpY2l0bHkgc2FpZA0KPiANCj4gICJPdGhlciBpbnN0cnVj
-dGlvbnMgc3VjaCBhcyBDTU9WY2MsIEFORCwgQURDLCBTQkIgYW5kIFNFVGNjIGNhbiBhbHNvDQo+
-IGJlIHVzZWQgdG8gcHJldmVudCBib3VuZHMNCj4gICBjaGVjayBieXBhc3MgYnkgY29uc3RyYWlu
-aW5nIHNwZWN1bGF0aXZlIGV4ZWN1dGlvbiBvbiBjdXJyZW50IGZhbWlseQ0KPiA2IHByb2Nlc3Nv
-cnMgKEludGVswq4gQ29yZeKEoiwNCj4gICBJbnRlbMKuIEF0b23ihKIsIEludGVswq4gWGVvbsKu
-IGFuZCBJbnRlbMKuIFhlb24gUGhp4oSiIHByb2Nlc3NvcnMpLg0KPiBIb3dldmVyLCB0aGVzZSBp
-bnN0cnVjdGlvbnMgbWF5IG5vdA0KPiAgIGJlIGd1YXJhbnRlZWQgdG8gZG8gc28gb24gZnV0dXJl
-IEludGVsIHByb2Nlc3NvcnMiDQo+IA0KPiBzbyBub25lIG9mIHRoZXNlIGFyZSBzYWZlIGFjY29y
-ZGluZyB0byB0aGF0Lg0KPiANCj4gTWF5YmUgdGhlcmUgd2VyZSBuZXdlciB1cGRhdGVzIG9uIHRo
-aXMsIGJ1dCBpbiB0aGUgbWVhbnRpbWUgSSdkIHJhdGhlcg0KPiBoYXZlIGp1c3QgKm9uZSogcGF0
-dGVybiwgbm90IHN3aXRjaCBiZXR3ZWVuIG11bHRpcGxlIHBvc3NpYmx5DQo+IHByb2JsZW1hdGlj
-IG9uZXMuIEFuZCBzYmIgaGFzIGJlZW4gdGhhdCB0cmFkaXRpb25hbCBvbmUuDQoNCkkgaGFkIHNv
-bWUgbW9yZSB0aG91Z2h0cyB3aGlsZSBmYWlsaW5nIHRvIHNsZWVwIDotKQ0KDQpUaGUgY3VycmVu
-dCBjb2RlIHJlbGllcyBvbiB0aGUgY21wLCBzYmIgYW5kIG9yL2FuZCBub3QgYmVpbmcgcHJlZGlj
-dGVkLg0KVGhpcyBiYXNpY2FsbHkgcmVxdWlyZXMgdGhhdCBhbGwgYWx1IGluc3RydWN0aW9ucyBu
-b3QgYmVpbmcgcHJlZGljdGVkLg0KSWYgdGhhdCBpc24ndCB0cnVlIHRoZW4gcHJldHR5IG11Y2gg
-YW55IG1lbW9yeSBhY2Nlc3MgY291bGQgc3BlY3VsYXRpdmVseQ0KYWNjZXNzIGFsbW9zdCBhbnkg
-bWVtb3J5IGFkZHJlc3MuDQoNClRoZSAnbWF5IG5vdCBiZSBndWFyYW50ZWVkJyBwYXJ0IG1pZ2h0
-IGJlIGJlY2F1c2Ugc29tZW9uZSBoYXMgbW9vdGVkDQp0aGUgKHByb2JhYmx5IGJyYWluLWRlYWQp
-IGlkZWEgb2Ygc3BlY3VsYXRpdmVseSBleGVjdXRpbmcgYWx1IGluc3RydWN0aW9ucw0KaW5zdGVh
-ZCBvZiBpbXBsZW1lbnRpbmcgcGlwZWxpbmUgc3RhbGxzLg0KTW9zdCBhbHUgZm9yd2FyZGluZyAo
-cmVzdWx0IHRvIG5leHQgaW5zdHJ1Y3Rpb24pIGFuZCBzdGFsbHMgY2FuIGJlDQpkZXRlcm1pbmVk
-IGR1cmluZyB0aGUgZGVjb2RlIGNsb2NrcyAodGhleSBhZmZlY3QgdGhlIGluc3RydWN0aW9uDQpz
-Y2hlZHVsaW5nIG9uIGN1cnJlbnQgeDg2IGNwdSkuDQpQZXJoYXBzIGl0IG1pZ2h0IGhlbHAgd2l0
-aCB2YXJpYWJsZSBsZW5ndGggaW5zdHJ1Y3Rpb25zIChsaWtlIG1lbW9yeSByZWFkcykNCmJ1dCB0
-aGV5IGFyZSB0aGUgdmVyeSBvbmVzIHdoZXJlIHlvdSBkb24ndCB3YW50IHRvIHVzZSB3cm9uZyB2
-YWx1ZXMgZnJvbS4NCg0KTWluZCB5b3UgdGhlIGhhcmR3YXJlIGVuZ2luZWVycyBoYXZlIGRvbmUg
-b3RoZXIgaG9ycmlkIHRoaW5ncyB0byBpbmNyZWFzZQ0KY3B1IGNsb2NrIHNwZWVkIHRvIGdldCBz
-b21lIGJlbmNobWFya3MgcnVuIGZhc3RlciB3aXRob3V0IGNvbnNpZGVyaW5nIHRoZQ0KZnVsbCBl
-ZmZlY3Qgb24gb3RoZXIgc29mdHdhcmUgLSB3aGljaCBpcyB3aHkgd2UgYXJlIGluIHRoaXMgbWVz
-cy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBS
-b2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9u
-IE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On 02/12/2024 09:11, Laurent Pinchart wrote:
+> On Mon, Dec 02, 2024 at 09:05:07AM +0100, Hans Verkuil wrote:
+>> On 02/12/2024 01:18, Laurent Pinchart wrote:
+>>> On Fri, Nov 29, 2024 at 11:18:54PM +0100, Ricardo Ribalda wrote:
+>>>> On Fri, 29 Nov 2024 at 23:03, Laurent Pinchart wrote:
+>>>>> On Fri, Nov 29, 2024 at 07:47:31PM +0100, Ricardo Ribalda wrote:
+>>>>>> Before we all go on a well deserved weekend, let me recap what we
+>>>>>> know. If I did not get something correctly, let me know.
+>>>>>>
+>>>>>> 1) Well behaved devices do not allow to set or get an incomplete async
+>>>>>> control. They will stall instead (ref: Figure 2-21 in UVC 1.5 )
+>>>>>> 2) Both Laurent and Ricardo consider that there is a big chance that
+>>>>>> some camera modules do not implement this properly. (ref: years of
+>>>>>> crying over broken module firmware :) )
+>>>>>>
+>>>>>> 3) ctrl->handle is designed to point to the fh that originated the
+>>>>>> control. So the logic can decide if the originator needs to be
+>>>>>> notified or not. (ref: uvc_ctrl_send_event() )
+>>>>>> 4) Right now we replace the originator in ctrl->handle for unfinished
+>>>>>> async controls.  (ref:
+>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_ctrl.c#n2050)
+>>>>>>
+>>>>>> My interpretation is that:
+>>>>>> A) We need to change 4). We shall not change the originator of
+>>>>>> unfinished ctrl->handle.
+>>>>>> B) Well behaved cameras do not need the patch "Do not set an async
+>>>>>> control owned by another fh"
+>>>>>> C) For badly behaved cameras, it is fine if we slightly break the
+>>>>>> v4l2-compliance in corner cases, if we do not break any internal data
+>>>>>> structure.
+>>>>>
+>>>>> The fact that some devices may not implement the documented behaviour
+>>>>> correctly may not be a problem. Well-behaved devices will stall, which
+>>>>> means we shouldn't query the device while as async update is in
+>>>>> progress. Badly-behaved devices, whatever they do when queried, should
+>>>>> not cause any issue if we don't query them.
+>>>>
+>>>> I thought we could detect the stall and return safely. Isn't that the case?
+>>>
+>>> We could, but if we know the device will stall anyway, is there a reason
+>>> not to avoid issuing the request in the first place ?
+>>>
+>>>> Why we have not seen issues with this?
+>>>
+>>> I haven't tested a PTZ device for a very long time, and you would need
+>>> to hit a small time window to see the issue.
+>>>
+>>>>> We should not send GET_CUR and SET_CUR requests to the device while an
+>>>>> async update is in progress, and use cached values instead. When we
+>>>>> receive the async update event, we should clear the cache. This will be
+>>>>> the same for both well-behaved and badly-behaved devices, so we can
+>>>>> expose the same behaviour towards userspace.
+>>>>
+>>>> seting ctrl->loaded = 0 when we get an event sounds like a good idea
+>>>> and something we can implement right away.
+>>>> If I have to resend the set I will add it to the end.
+>>>>
+>>>>> We possibly also need some kind of timeout mechanism to cope with the
+>>>>> async update event not being delivered by the device.
+>>>>
+>>>> This is the part that worries me the most:
+>>>> - timeouts make the code fragile
+>>>> - What is a good value for timeout? 1 second, 30, 300? I do not think
+>>>> that we can find a value.
+>>>
+>>> I've been thinking about the implementation of uvc_fh cleanup over the
+>>> weekend, and having a timeout would have the nice advantage that we
+>>> could reference-count uvc_fh instead of implementing a cleanup that
+>>> walks over all controls when closing a file handle. I think it would
+>>> make the code simpler, and possibly safer too.
+>>>
+>>>>> Regarding the userspace behaviour during an auto-update, we have
+>>>>> multiple options:
+>>>>>
+>>>>> For control get,
+>>>>>
+>>>>> - We can return -EBUSY
+>>>>> - We can return the old value from the cache
+>>
+>> This would match the control behavior best. Only when the operation is
+>> done is the control updated and the control event sent.
+>>
+>> Some questions: is any of this documented for UVC? Because this is non-standard
+> 
+> No this isn't documented.
+> 
+>> behavior. Are there applications that rely on this? Should we perhaps add
+> 
+> I don't know.
+> 
+>> proper support for this to the control framework? E.g. add an ASYNC flag and
+>> document this?
+> 
+> We could, but this is such a specific use case that I don't think is
+> worth adding complexity to the already complex control framework would
+> be worth it. What we could do is perhaps adding a flag for the userspace
+> API, but even there, I never like modelling an API with a single user.
+
+Well, it might be a single driver that uses this, but it is also the most
+used driver by far. I think the only change is to add a flag for this and
+describe how it should behave. And add v4l2-compliance tests for it.
+
+Otherwise no changes to the control framework are needed, I think.
+
+Controls with the ASYNC flag set would:
+
+- return the old value from the cache.
+- document that setting a new value while the operation is in progress
+  results in EBUSY. Document that if the new value is equal to the old value,
+  then return 0 and do nothing (alternative is to just immediately send
+  the control changed event, but that might require a control framework change).
+- when the operation finishes, update the cache to the new value and
+  send the control changed event.
+- document that userspace should specify V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK
+  when subscribing to the control if you calling fh wants to know when
+  the operation finishes.
+- document how timeouts should be handled: this is tricky, especially with
+  bad hardware. I.e. if the hw doesn't send the event, does that mean that
+  you are never able to set the control since it will stall?
+  In the end this will just reflect how UVC handles this.
+
+Regards,
+
+	Hans
+
+> 
+>>>>> - We can return the new value fromt he cache
+>>>>>
+>>>>> Returning -EBUSY would be simpler to implement.
+>>>>
+>>>> Not only easy, I think it is the most correct,
+>>>>
+>>>>> I don't think the behaviour should depend on whether the control is read
+>>>>> on the file handle that initiated the async operation or on a different
+>>>>> file handle.
+>>>>>
+>>>>> For control set, I don't think we can do much else than returning
+>>>>> -EBUSY, regardless of which file handle the control is set on.
+>>>>
+>>>> ACK.
+>>>>
+>>>>>> I will send a new version with my interpretation.
+>>>>>>
+>>>>>> Thanks for a great discussion
+>>>>
+>>>> Looking with some perspective... I believe that we should look into
+>>>> the "userspace behaviour for auto controls" in a different patchset.
+>>>> It is slightly unrelated to this discussion.
+> 
 
 
