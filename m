@@ -1,164 +1,176 @@
-Return-Path: <linux-kernel+bounces-427765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF5D69E05B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:58:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2549E0639
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB08916B1A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:50:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731CD16E1C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DE620B1E9;
-	Mon,  2 Dec 2024 14:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/DDNIYT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1948520ADEA;
+	Mon,  2 Dec 2024 14:40:50 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452C6207A1A;
-	Mon,  2 Dec 2024 14:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971B4204F82;
+	Mon,  2 Dec 2024 14:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733150454; cv=none; b=HpPUz1f8LVwtufGHza50I0k1/Alznr1RvDoRnhZLI/sLGN1fUX8E2kt8TEJdKatdEMrOIMlYOhwn6a/sdZIU8QZ+AccgQ+dQvKzQA5C5VInfs5B+jCI4M4Q6GoW77gh5x4AHwXSZeQIe1oHtsEPCX19pFEe8AL1wnKEed7UHJB4=
+	t=1733150449; cv=none; b=oWZ4LgWe/lSCpLimHcUX+7uMxd4ohxfH7NdodBdaJ40Cq0z59ZqI/vys8WCHFREdQA3/9umkY1QzF0tjiCKvpnmhBmCUWNf1fAnjVP8GNk4sqWXKOg+9cdFsA8sMtvQTIDZIR/NPCeHHjRjZxAykrs2DOPTAOt2GBUAfeNvH/qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733150454; c=relaxed/simple;
-	bh=PRG7lRHfCH/AOy2IzK0/HINWKGXyVXfdIOvVYneWVQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rPsAZLSwv8l53WexO+pECein/SDmYivXrpO1azyGgu/tGN5b9abAzZ6V+Ww60fceUL6SSyKcMfqg0XEEviw3hw0a6eQFTzjrMHKvMkCFYMQsGXubae0e3eoDBBgWttAJqHX7W7uHz0HJK91xp+mGbFWmHBam47ELna86rj7B94E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/DDNIYT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D32F2C4AF0B;
-	Mon,  2 Dec 2024 14:40:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733150453;
-	bh=PRG7lRHfCH/AOy2IzK0/HINWKGXyVXfdIOvVYneWVQQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=n/DDNIYTszX+kVw5x5jfdEM66C7A/6xQxM/R6bWLfGRZstI2nCEpJZjFoT3JWmEFZ
-	 RosYQYuW8/muDAZ/fnBL+NhbpCjuQJzkvtLEihWw/kgmT7Eq5sXzqWCiVEObtyauH5
-	 +AHvVNgeuNjbl+qL6QL22XBC9CqA/vy6IPoET5KOA0hgLln0vJpSplytPX2c9Xws2H
-	 VfomFhbKmf7Xkknc3OV5eehKrbkyQ/n6+QWgo4d3qiIFBAJV05oBDGR9I7bnoGAThW
-	 CsJ5CG34O13RLxRZP+dB7oFzq4Um5POkKVhao4XE8rvzHwtcPnaSxCvVrEyQ6yDGzy
-	 3Ix9JT6go51LA==
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa53ebdf3caso40197966b.2;
-        Mon, 02 Dec 2024 06:40:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVbo7kYlUwNiJmChnLV1+Lgtdkd+/qd+BAC11RTv61k7mVl/+zMh1ddXkR8Y50Cdz8BnfCTttTfDfym8Q==@vger.kernel.org, AJvYcCW/fZNU3GeXyfWvJjY24HmQe8KxDAw/JAw7dv40u2aovh0gPq5fX76+HKgR9X3ZaVi+d7gsBUpiLR/qsyAZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPRzWtrutn/h/IU5l/BK4g1XYUcVeK3vuqSI1Nr2Do26aNRDw7
-	uLuxRp1waAghKmNmxa9jKGZenCaBzAtGaq6PW0sdihf50p8pfbiEyKal446L2HEuP56VOaydZBV
-	HckO+OT+cjJCGaKuQFbHg9pswhYc=
-X-Google-Smtp-Source: AGHT+IHBBtEUIfc5B+pRpoul44iMfPE/gDMvt+J38VE2ReEGeWOFBRm/diUV9cNrMyqVGIH7gnPjYjJ9MYzAFXln1tc=
-X-Received: by 2002:a17:906:9d2:b0:a99:f605:7f1b with SMTP id
- a640c23a62f3a-aa581078a5fmr2321380466b.60.1733150452429; Mon, 02 Dec 2024
- 06:40:52 -0800 (PST)
+	s=arc-20240116; t=1733150449; c=relaxed/simple;
+	bh=qoa8Wlbe30wBWKW2u/A4POCPxPo/Ht7F25tjQuo4e1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=enF/VqoScmwodFmWLpimCy7yLflRMT5tB0oobIYO4WYGOntJZOBwqPhdfFQNOL5YSDprZtecVXZBx9zgzJWMod3wdouWLymmbKTUaPiwm1ohQl8viKcdVWBTopumpXsZM4NkVWAJ6tSxomIsEt0pYBlJm62fEJH9hnRtbHNhe1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C20EC4CED2;
+	Mon,  2 Dec 2024 14:40:48 +0000 (UTC)
+Message-ID: <0d1391fa-135a-4c14-8a07-f9efb795e75c@xs4all.nl>
+Date: Mon, 2 Dec 2024 15:40:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAL3q7H5U_88NA2PmyMvtwv1aZ7k+V6v=eetp7Hs2HqDdfVjokw@mail.gmail.com>
- <20241202133515.92286-1-zhenghaoran154@gmail.com>
-In-Reply-To: <20241202133515.92286-1-zhenghaoran154@gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Mon, 2 Dec 2024 14:40:15 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H7dxA+Y30XbB1nng1duaoT8c9Pf4ZG6+iwikTGvb4cAXA@mail.gmail.com>
-Message-ID: <CAL3q7H7dxA+Y30XbB1nng1duaoT8c9Pf4ZG6+iwikTGvb4cAXA@mail.gmail.com>
-Subject: Re: [PATCH v2] btrfs: fix data race when accessing the inode's
- disk_i_size at btrfs_drop_extents()
-To: Hao-ran Zheng <zhenghaoran154@gmail.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] docs: media: profile: make it clearer about
+ maintainership duties
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <cover.1733131405.git.mchehab+huawei@kernel.org>
+ <f47082a84e0c799dd047525d4bc351eb3a759e83.1733131405.git.mchehab+huawei@kernel.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <f47082a84e0c799dd047525d4bc351eb3a759e83.1733131405.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 2, 2024 at 1:35=E2=80=AFPM Hao-ran Zheng <zhenghaoran154@gmail.=
-com> wrote:
->
-> A data race occurs when the function `insert_ordered_extent_file_extent()=
-`
-> and the function `btrfs_inode_safe_disk_i_size_write()` are executed
-> concurrently. The function `insert_ordered_extent_file_extent()` is not
-> locked when reading inode->disk_i_size, causing
-> `btrfs_inode_safe_disk_i_size_write()` to cause data competition when
-> writing inode->disk_i_size, thus affecting the value of `modify_tree`.
->
-> Since the impact of data race is limited, it is recommended to use the
-> `data_race` mark judgment.
-
-This should explain why it's a harmless race.
-Also it's better to explicitly say harmless race rather than say it
-has limited impact, because the latter gives the idea of rare problems
-when we don't have any.
-
->
-> The specific call stack that appears during testing is as follows:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DDATA_RACE=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
->  btrfs_drop_extents+0x89a/0xa060 [btrfs]
->  insert_reserved_file_extent+0xb54/0x2960 [btrfs]
->  insert_ordered_extent_file_extent+0xff5/0x1760 [btrfs]
->  btrfs_finish_one_ordered+0x1b85/0x36a0 [btrfs]
->  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
->  finish_ordered_fn+0x3e/0x50 [btrfs]
->  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
->  process_scheduled_works+0x716/0xf10
->  worker_thread+0xb6a/0x1190
->  kthread+0x292/0x330
->  ret_from_fork+0x4d/0x80
->  ret_from_fork_asm+0x1a/0x30
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DOTHER_INFO=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
->  btrfs_inode_safe_disk_i_size_write+0x4ec/0x600 [btrfs]
->  btrfs_finish_one_ordered+0x24c7/0x36a0 [btrfs]
->  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
->  finish_ordered_fn+0x3e/0x50 [btrfs]
->  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
->  process_scheduled_works+0x716/0xf10
->  worker_thread+0xb6a/0x1190
->  kthread+0x292/0x330
->  ret_from_fork+0x4d/0x80
->  ret_from_fork_asm+0x1a/0x30
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Signed-off-by: Hao-ran Zheng <zhenghaoran154@gmail.com>
+On 02/12/2024 10:26, Mauro Carvalho Chehab wrote:
+> During the review of the media committes profile, it was noticed
+> that the responsibility for timely review patches was not clear:
+> such review is expected that all developers listed at MAINTAINERS
+> with the "M:" tag (e.g. "maintainers" on its broad sense).
+> 
+> This is orthogonal of being a media committer or not. Such duty
+> is implied at:
+> 
+> 	Documentation/admin-guide/reporting-issues.rst
+> 
+> and at the MAINTAINERS header, when it says that even when the
+> status is "odd fixes", the patches will flow in.
+> 
+> So, let make it explicit at the maintainer-entry-profile that
+> maintainers need to do timely reviews.
+> 
+> Also, while right now our focus is on granting committer rights to
+> maintainers, the media-committer model may evolve in the future to
+> accept other committers that don't have such duties.
+> 
+> So, make it clear at the media-committer.rst that the duties
+> related to reviewing patches from others are for the drivers
+> they are maintainers as well.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 > ---
-> V1->V2: Modify patch description and format
-> ---
->  fs/btrfs/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index 4fb521d91b06..f9631713f67d 100644
-> --- a/fs/btrfs/file.c
-> +++ b/fs/btrfs/file.c
-> @@ -242,7 +242,7 @@ int btrfs_drop_extents(struct btrfs_trans_handle *tra=
-ns,
->         if (args->drop_cache)
->                 btrfs_drop_extent_map_range(inode, args->start, args->end=
- - 1, false);
->
-> -       if (args->start >=3D inode->disk_i_size && !args->replace_extent)
-> +       if (data_race(args->start >=3D inode->disk_i_size && !args->repla=
-ce_extent))
+>  Documentation/driver-api/media/maintainer-entry-profile.rst | 5 +++++
+>  Documentation/driver-api/media/media-committer.rst          | 6 +++---
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> index 705209eacf58..50568c744129 100644
+> --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
+> +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> @@ -153,6 +153,11 @@ b. Committers' workflow: patches are handled by media committers::
+>  On both workflows, all patches shall be properly reviewed at
+>  linux-media@vger.kernel.org before being merged at media-committers.git.
+>  
+> +Such patches will be timely-reviewed by developers listed as maintainers at
 
-Don't surround the whole condition with data_race().
-Just put it around the disk_i_size check:
+at -> in
 
-if (data_race(args->start >=3D inode->disk_i_size) && !args->replace_extent=
-))
+> +the MAINTAINERS file. Such maintainers will follow one of the above
+> +workflows, e. g. they will either send a pull request or merge patches
 
-This makes it more clear it's about disk_i_size and nothing else.
+e. g. -> e.g.
 
-Thanks.
+> +directly at the media-committers tree.
+> +
+>  When patches are picked by patchwork and when merged at media-committers,
+>  CI bots will check for errors and may provide e-mail feedback about
+>  patch problems. When this happens, the patch submitter must fix them, or
+> diff --git a/Documentation/driver-api/media/media-committer.rst b/Documentation/driver-api/media/media-committer.rst
+> index 3c2f8f413307..ec81f01db126 100644
+> --- a/Documentation/driver-api/media/media-committer.rst
+> +++ b/Documentation/driver-api/media/media-committer.rst
+> @@ -87,9 +87,9 @@ be delegating part of their maintenance tasks.
+>  Due to that, to become a committer or a core committer, a consensus between
+>  all subsystem maintainers is required, as they all need to trust a developer
+>  well enough to be delegated the responsibility to maintain part of the code
+> -and to properly review patches from third parties, in a timely manner and
+> -keeping the status of the reviewed code at https://patchwork.linuxtv.org
+> -updated.
+> +and to properly review patches from third parties for the drivers they are
 
->                 modify_tree =3D 0;
->
->         update_refs =3D (btrfs_root_id(root) !=3D BTRFS_TREE_LOG_OBJECTID=
-);
-> --
-> 2.34.1
->
->
+they are maintainers -> that they maintain
+
+> +maintainers in a timely manner and keeping the status of the reviewed code
+
+reviewed code -> patches
+
+> +at https://patchwork.linuxtv.org updated.
+>  
+>  .. Note::
+>  
+
+Regards,
+
+	Hans
 
