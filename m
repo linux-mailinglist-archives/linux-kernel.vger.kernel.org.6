@@ -1,162 +1,248 @@
-Return-Path: <linux-kernel+bounces-428481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E6D9E0F0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:51:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC649E0F10
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:53:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CDF16432C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:51:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8262817AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099C11DF96B;
-	Mon,  2 Dec 2024 22:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC5A1DF981;
+	Mon,  2 Dec 2024 22:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FbMhRmb1"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cMqdO3vd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J6lXaYpf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89541DB940
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92F91DB940;
+	Mon,  2 Dec 2024 22:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733179864; cv=none; b=udf5TYwcucal0EHsbVJWBrKnLJLK0z+oTbl1qCUBzgTs6xKLH/p62lCABcKolB9Eop07cN8GBqBbq7RvM4VNzMyvKErQAq8BjtRtegbJfBV98GSPlmdxCQqifq5LQ8qqTCWAoAKh+/VPS3yJTDFboD8KLnhyyGMKq/NuTpuqMZ4=
+	t=1733180028; cv=none; b=tjw28cjk0yS7xMLjCYepYWY6LU5Ing2EIO1R9f1kfZ8hqXHHX7HGIpU24fvh8vU7dkpbtTz1qTXhJAzK9MenHuzsV1Z7hCUe1JzzVcfsvNjVPDzKji8YpJMUJiXdvubu5K2sFTqIHsqymZHenmTVeCz2IPNAAqtdkxvDiZ+lzfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733179864; c=relaxed/simple;
-	bh=xD++Pu2Owlwdz/HJYnfDKrfCE8Tqkbg/Wk+AX/Qx0C8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S2fWk2AQVppJEbWaSF10p2DkJ9iElaKDjpYUChIwup5TzWoXfpEEW8FsH7TtaBifFcKRXm+VBPYo4HgQRJYQGE+3DT92KtrAxYUUvLqbwla0Znma1Za0qjpPdIyLQRKmUMnXW329/YkKCR5oJrihHUmcj3ggj0uzqXD1gjBaLxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FbMhRmb1; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53ddad86f4dso1311e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:51:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733179861; x=1733784661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xD++Pu2Owlwdz/HJYnfDKrfCE8Tqkbg/Wk+AX/Qx0C8=;
-        b=FbMhRmb1rTDpBqhWr0YrcmyCN+70hBf+RnJLWRgTD8Wc7QjhL6cO+6RgiIe6btYxVr
-         BFEXUsk+CwMyM4d31XhG5rNVbBUJs6biyodsKAYhDcwrf96xIcYHSsi2CxCUuiFMh4cp
-         x1VZpimnYobCK0CqlytwQUj7PHnjWJWKXgKe3dAcY4iRQw+1RWNfwatgtx9Qq3TbBvJ8
-         XN8CGBHF6s0frnQGxTSu7B5VzwI6WRwV97bMo87gp0yHnBeYXrECc5rYknLlHbx1y6mF
-         q9QCKGRLmiZrqgjYrLn/bNYRHeawWCD8+6wJkxe9Qzb0NtRvLuyisnojXQX9LTSpDLGy
-         SYFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733179861; x=1733784661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xD++Pu2Owlwdz/HJYnfDKrfCE8Tqkbg/Wk+AX/Qx0C8=;
-        b=oM3CHTXK9RoYKaUs4wi0Z9xx1kOt/HsSFvrDtOLKDHtlsIVP09OJUv+LA4BYITT/aS
-         s9gbuVt7wdJNFCRTr7IaGBxYl4AIcY71Kn1R2ORzAB8nM8Vskp9RMchn97xCjYh3MYM3
-         1GBB4/xf5RYQpt8KW/Gs+Yel99F4wDpf6pgRysr34ZVJ6vCwF48lZpp3I68vXX5VeWOy
-         B3v9FqZxlGER5Bdy8966PkzjYrNZI8llyqSfeMyvXqZhEC2rElUnptfa4QgQ4k+6KYZg
-         aCc3XUu5LEURJr7t0LcUXkBWfdbB6SoIv/UfPjXwtL0aZeTYmBZ4x9tcZB0yvjb54GIx
-         gp0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXTQ5nKnUwS/TK2r3qa6bptFFLPgbJVvKtbZ67gRnBhP9Y7zq1n4jNPUcoX6eQzPPuAmnGaR+WxuM5xoCY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaG9b3df6xKQ1MBWw2S9IfgAFjuIURHEjglRxd80RbRyzLimqn
-	ziUaV+CFDguzCJwu8Lhilo8e4VUjKAcD9vHoMPlai1mOYAocuT+cBe+irJW491P9MCK3y4MHU4h
-	fKLSmijGqmnW2hofC7qy8pYSjQuw/tfUUfO1O
-X-Gm-Gg: ASbGncth4JnjE/F97ohqY25khsGtxY1IjZ3kXAV90vhIvdF4hGVVAnxn+nQZyYBSBic
-	ZySHkIDDdJzYBgH/JMBU8IesOYGEv
-X-Google-Smtp-Source: AGHT+IHtcvBhHAx9qITe3ZXRX+vuVeVnkREr9poKckp6W8ETlL79sRXQdbH7chQZER3ONqKDyN8Ihk+RnC1IMlKztN4=
-X-Received: by 2002:a05:6512:2c97:b0:53d:b15d:1348 with SMTP id
- 2adb3069b0e04-53e12938ccfmr41765e87.4.1733179860582; Mon, 02 Dec 2024
- 14:51:00 -0800 (PST)
+	s=arc-20240116; t=1733180028; c=relaxed/simple;
+	bh=umAtyiEdVDSEwuVpr46VQyUei4fpNCUW6qDeIBUuwB8=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=R5QNIwUiStQEJAsS5Hree+nrNL5PAwE1n2bYiXVmohO3pqOJEr8Aan8Y/zX70wI/Mij9Z7ee+IfrRx83cZjEmp3t81E4R4GgG2zXnfAXPnwekfy91A9IQnUhOwzL4X6E5AJmtopTNkbgyAwnDGnENysc/mKGo77Bz4CpINhL0Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cMqdO3vd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J6lXaYpf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733180024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=Z/7ozj1F9DWdKtUweFnvIkBOQ9IWOLmUOfgEfHrhgB0=;
+	b=cMqdO3vdgSDQRkyM7PWYleXsyFt9/dosXGlh1HhKOWs08QdyNqSt4v+x0/X93u/AEqMCWK
+	8COFJMnMuAVntfoBYAlFoad+6zvUx357b7LwU+HwxRuYC1uK0pxmrlKKRnl09DyFCKyOhz
+	uyeIFypI3UIENid4RhqVQzNHvJuQXUIlpLbHLDwwwJZtZBFNXIfMSl1YmZhXIM/tJx8B5L
+	j48Oe/sswjf4yPm8YE8hQTE+09yJHOApJFw8BdgYxeGYUVWTmeq3+w9cORQy/s+ebEhml+
+	dyr+IfQ+2nRH6e0RgpkEFdM8VpNkt9LyR+BwxOVhlAN/LXh2ta9fxVgDv2HpmA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733180024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=Z/7ozj1F9DWdKtUweFnvIkBOQ9IWOLmUOfgEfHrhgB0=;
+	b=J6lXaYpf8lPziFD4PIC5ZIT1rO4RsdQ0VUpN6X+mg49S/o0Fp9+pVH7JUyEv52NLzToQlU
+	sdJGEHgwdEuQcuDg==
+To: Leonardo Bras <leobras@redhat.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>
+Cc: Leonardo Bras <leobras@redhat.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Tony
+ Lindgren <tony@atomide.com>, John Ogness <john.ogness@linutronix.de>, Ilpo
+ =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, Uwe
+ =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Shanker Donthineni
+ <sdonthineni@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+Subject: Re: [RFC PATCH v2 3/4] irq: Introduce IRQ_HANDLED_MANY
+In-Reply-To: <ZzvmvBdqJpAyUicm@LeoBras>
+Date: Mon, 02 Dec 2024 23:53:43 +0100
+Message-ID: <87ed2pvgqw.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202202058.3249628-1-fvdl@google.com> <3tqmyo3qqaykszxmrmkaa3fo5hndc4ok6xrxozjvlmq5qjv4cs@2geqqedyfzcf>
-In-Reply-To: <3tqmyo3qqaykszxmrmkaa3fo5hndc4ok6xrxozjvlmq5qjv4cs@2geqqedyfzcf>
-From: Frank van der Linden <fvdl@google.com>
-Date: Mon, 2 Dec 2024 14:50:49 -0800
-Message-ID: <CAPTztWbmkFisL7qnmAnre5hv=UD1E60P0hr_kXNyLoQFy9OoTA@mail.gmail.com>
-Subject: Re: [PATCH] mm/hugetlb: optionally pre-zero hugetlb pages
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, 
-	Muchun Song <muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Dec 2, 2024 at 1:58=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
-ote:
+On Mon, Nov 18 2024 at 22:15, Leonardo Bras wrote:
+> On Thu, Nov 14, 2024 at 09:50:36AM +0200, Andy Shevchenko wrote:
+>> - the IRQ core disables IRQ while handling an IRQ number in question;
 >
-> On Mon, Dec 02, 2024 at 08:20:58PM +0000, Frank van der Linden wrote:
-> > Fresh hugetlb pages are zeroed out when they are faulted in,
-> > just like with all other page types. This can take up a good
-> > amount of time for larger page sizes (e.g. around 40
-> > milliseconds for a 1G page on a recent AMD-based system).
-> >
-> > This normally isn't a problem, since hugetlb pages are typically
-> > mapped by the application for a long time, and the initial
-> > delay when touching them isn't much of an issue.
-> >
-> > However, there are some use cases where a large number of hugetlb
-> > pages are touched when an application (such as a VM backed by these
-> > pages) starts. For 256 1G pages and 40ms per page, this would take
-> > 10 seconds, a noticeable delay.
+> Not necessarily:
+> When on irqs are force-threaded, only a quick handler is called, returning 
+> IRQ_WAKE_THREAD, which is supposed to wake up the handler thread.
 >
-> The current huge page zeroing code is not that great to begin with.
+>   * @IRQ_WAKE_THREAD:   handler requests to wake the handler thread
 >
-> There was a patchset posted some time ago to remedy at least some of it:
-> https://lore.kernel.org/all/20230830184958.2333078-1-ankur.a.arora@oracle=
-.com/
->
-> but it apparently fell through the cracks.
+> In this case (which is what I am dealing with), the actual handler will run 
+> in thread context (which I suppose don't disable IRQ for sched-out 
+> purposes).
 
-Hi Mateusz, thanks for your reply.
+Let's talk about the disable irq concepts here. There are 3 distinct variants:
 
-I am aware of that patch set, yes. The discussion around it evolved in
-to one about kernel preemption and the evilness of cond_resched().
+  1) Disable interrupts on the local CPU: local_irq_disable/save().
 
-You can certainly improve the time it takes to zero out a 1G page by
-optimizing the code that does it. See also, for example,
-https://lore.kernel.org/all/20180725023728.44630-1-cannonmatthews@google.co=
-m/
+     This only prevents the CPU from handling a pending interrupt,
+     but does not prevent new interrupts from being marked pending
+     in the interrupt controller.
 
-However, while, say, a 50% improvement in zero out time, at the max,
-is nice, this still leaves the faulting process spending considerable
-time doing it. Like you say, that's cost that needs to be paid - but
-it would be good to avoid paying it inline. This patch avoids doing
-that altogether, leading to a basically 100% improvement under
-reasonably good circumstances.
+  2) Disable interrupts in the interrupt controller
 
->
-> Any games with "background zeroing" are notoriously crappy and I would
-> argue one should exhaust other avenues before going there -- at the end
-> of the day the cost of zeroing will have to get paid.
+     disable_irq*() variants handle that. They come with two
+     flavors: LAZY and UNLAZY
 
-I understand that the concept of background prezeroing has been, and
-will be, met with some resistance. But, do you have any specific
-concerns with the patch I posted? It's pretty well isolated from the
-rest of the code, and optional.
+     LAZY does not mask the interrupt line right away. It only is masked
+     when an interrupt arrives while the line is marked "disabled". This
+     then sets the PENDING bit, which in turn causes a replay of the
+     interrupt once enable_irq() is bringing the disabled count down to
+     zero. LAZY has two purposes:
 
->
-> To that end I would suggest picking up the patchset and experimenting
-> with more variants of the zeroing code (for example for 1G it may be it
-> is faster to employ SIMD usage in the routine).
+       A) Prevent losing edge type interrupts
 
-See above - happy to pick up older patch(es) as a separate effort, but
-they won't fully solve the issue for the scenario I'm describing.
+       B) Optimization to avoid the maybe costly hardware access
 
->
-> If this is really such a problem I wonder if this could start as a
-> series of 2MB pages instead faulted as needed, eventually promoted to
-> 1G after passing some threshold?
+     UNLAZY masks the interrupt right away.
 
-This idea sounds similar to HGM (high granularity mapping), an idea
-which was originally posted for the purpose of live migration of VMs
-(but never made it in). It's not trivial, and seems like overkill.
-Again, my patch is non-invasive and optional, so I think it's better
-in that regard.
+  3) Disable interrupts at the device level
 
-- Frank
+     This prevents the device from raising interrupts.
+
+Now there is another twist with force threaded interrupts.
+
+If the interrupt is level triggered the interrupt line is masked in the
+hard interrupt handler and unmasked when the thread returns.
+         
+For edge type interrupts that's handled differently in order to not lose
+an edge. The line is not masked, so that if the device raises an
+interrupt before the threaded handler returns, the threaded handler is
+marked runnable again. That again comes in two flavors:
+
+  1) Non-RT kernel
+
+     That cannot result in a scenario where the force threaded handler
+     loops and interrupts keep arriving at the CPU because the CPU has
+     interrupts disabled across the force threaded handler and at least
+     on x86 and arm64 that's the CPU which is target of the hardware
+     interrupt.
+
+     So at max there can come a few interrupts between the first
+     interrupt and the threaded handler being scheduled in, but I doubt
+     it can be more than three.
+
+  2) RT kernel
+
+     The forced threaded handler runs with CPU interrupts enabled, so
+     when the threaded handler deals with the device, new interrupts can
+     come in at the hardware level and are accounted for, which is what
+     you are trying to address, right?
+
+     So the total amount of TX bytes, i.e. PASS_LIMIT * tx_loadsz,
+     becomes large enough to trigger the irq storm detector, right?
+
+That obviously begs two questions:
+
+  1) Why do you want to deal with this interrupt flood at the storm
+     detector and not at the root cause of the whole thing?
+
+     It does not make any sense to take a gazillion of interrupts for
+     nothing and then work around the resulting detector fallout.
+
+     The obvious adhoc cure is to add this to serial8250_interrupt():
+
+        if (IS_ENABLED(CONFIG_PREEMPT_RT))
+        	disable_irq_nosync(irq);
+                
+        magic_loop();
+
+        if (IS_ENABLED(CONFIG_PREEMPT_RT))
+        	enable_irq(irq);
+
+     Ideally we'd disable interrupt generation in the IER register
+     around the loop, but that's another can of worms as this can't be
+     done easily without holding port lock across the IER disabled
+     section. Also see below.
+
+
+  2) Is the 512 iterations loop (PASS_LIMIT) still appropriate?
+
+     That loop in serial8250_interrupt() looks pretty horrible even on a
+     non-RT kernel with an emulated UART.
+
+     The issue is mostly irrelevant on real hardware as the FIFO writes
+     are faster than the UART can empty the FIFO. So unless there are
+     two FIFO UARTs sharing the same interrupt line _and_ writing
+     large amount of data at the same time the loop will terminate after
+     one write cycle. There won't be an interrupt per TX byte either.
+
+     On emulated hardware this is very different because the write
+     causes a VMEXIT with a full round trip to user space, which
+     consumes the character and immediately raises the TX empty
+     interrupt again because there is no "slow" hardware involved.
+
+     With the default qemu FIFO depth of 16 bytes, this results in up to
+     512 * 16 = 8192 bytes written out with interrupts disabled for one
+     invocation of the interrupt handler (threaded or not)...
+
+     I just traced interrupt entry/exit in a VM and for a file with 256k
+     bytes written to /dev/ttyS0 this results in:
+
+     Interrupts:          35
+     Bytes/Interrupt:  ~7490
+     Tmax:            104725 us
+     Tavg:             96778 us
+
+     So one interrupt handler invocation which writes up to 8k takes
+     roughly 100ms with interrupts disabled...
+
+     Now looking at the host side. For every write to the TX FIFO there
+     are _four_ invocations of kvm_set_irq() originating from kvm_vm_ioctl_irq_line():
+
+      CPU 36/KVM-2063    [097] ..... 1466862.728737: kvm_pio: pio_write at 0x3f8 size 1 count 1 val 0xd 
+      CPU 36/KVM-2063    [097] ..... 1466862.728742: kvm_set_irq: gsi 4 level 0 source 0
+      CPU 36/KVM-2063    [097] ..... 1466862.728749: kvm_set_irq: gsi 4 level 0 source 0
+      CPU 36/KVM-2063    [097] ..... 1466862.728754: kvm_set_irq: gsi 4 level 1 source 0
+      CPU 36/KVM-2063    [097] ..... 1466862.728762: kvm_set_irq: gsi 4 level 1 source 0
+      CPU 36/KVM-2063    [097] ..... 1466862.728783: kvm_pio: pio_write at 0x3f8 size 1 count 1 val 0xa 
+      CPU 36/KVM-2063    [097] ..... 1466862.728787: kvm_set_irq: gsi 4 level 0 source 0
+      CPU 36/KVM-2063    [097] ..... 1466862.728792: kvm_set_irq: gsi 4 level 0 source 0
+      CPU 36/KVM-2063    [097] ..... 1466862.728797: kvm_set_irq: gsi 4 level 1 source 0
+      CPU 36/KVM-2063    [097] ..... 1466862.728809: kvm_set_irq: gsi 4 level 1 source 0
+
+     No idea why this needs four ioctls and not only two, but this
+     clearly demonstrates that each byte written creates an edge
+     interrupt. No surprise that the storm detector triggers on RT. But
+     this also makes it clear why it's a patently bad idea to work
+     around this in the detector...
+
+     Now being "smart" and disabling THRI in the IER before the write
+     loop in serial8250_tx_chars() changes the picture to:
+     
+      CPU 18/KVM-2045    [092] ..... 1466230.357478: kvm_pio: pio_write at 0x3f9 size 1 count 1 val 0x5
+
+      IER.THRI is cleared now so it's expected that nothing fiddles with
+      the interrupt line anymore, right? But ....
+
+      CPU 18/KVM-2045    [092] ..... 1466230.357479: kvm_set_irq: gsi 4 level 0 source 0
+      CPU 18/KVM-2045    [092] ..... 1466230.357481: kvm_set_irq: gsi 4 level 0 source 0
+      CPU 18/KVM-2045    [092] ..... 1466230.357484: kvm_pio: pio_write at 0x3f8 size 1 count 1 val 0x73 
+      CPU 18/KVM-2045    [092] ..... 1466230.357485: kvm_set_irq: gsi 4 level 0 source 0
+      CPU 18/KVM-2045    [092] ..... 1466230.357487: kvm_set_irq: gsi 4 level 0 source 0
+      CPU 18/KVM-2045    [092] ..... 1466230.357489: kvm_set_irq: gsi 4 level 0 source 0
+      CPU 18/KVM-2045    [092] ..... 1466230.357491: kvm_set_irq: gsi 4 level 0 source 0
+      ....
+
+     So every write to the TX FIFO sets the level to 0 four times in a
+     row to not create an edge. That's truly impressive!
+
+Thanks,
+
+        tglx
 
