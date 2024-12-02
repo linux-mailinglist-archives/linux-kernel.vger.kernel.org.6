@@ -1,62 +1,80 @@
-Return-Path: <linux-kernel+bounces-427286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E8B9DFF4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:49:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DBD79DFF49
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:48:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0039FB27FDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:39:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1A74B28803
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F001FCCF4;
-	Mon,  2 Dec 2024 10:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635AD1FCFE6;
+	Mon,  2 Dec 2024 10:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oBszyV/y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="CLkHwLFE"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B451FC10B;
-	Mon,  2 Dec 2024 10:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A721FCCF0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733135948; cv=none; b=jW2cmEilyR9lAPa3papcWe/8/mtq9BY0+g3XsqGI6LEzSFiI7sMeWQPIlF2LqPK0kVz7LWZrIly7430R9v7TcVIbvz9L4CIdFgbrkie0ifiBIeLBm7gk6PYa/llTLfEtIXei0tK6kBNq3Scu6gzDA8omh12mA2ycYaq+z5MqdZo=
+	t=1733135998; cv=none; b=jrO1uehxLqKP984ASsntJK4SWZquUSY73zimLzuAndSfTQpetSXnHwB6nIEzqGdJBWXskkamaoQrWyAN7xFGKpqzYPj+qqrIdoStsb2aJx+/Q1lLD2y4sz0ga0pdTz/zorq0sUpU5mYgopBKOaLolHIWb8Foj6wxbTiRAlw/MCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733135948; c=relaxed/simple;
-	bh=+7ETQDg75FDaMN2tHLOFJJXpPrKr72sq+AlAwmom8eY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IV0vWRwRD0S/qHqfDscX6uNiqkCvlcOvvty/xLktMKBnAKR0311FYAiKbEnVgXx8q1hneaxlBqW6k9Q0VU+fD9uuBdZPauQ/z50W+6FT16TcxrWYLLibScPQKd6UXuC5UQ3iiMdDAMa+YOfAqMsDixNkcaXAb6ibjnsRFA3/puw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oBszyV/y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28GJUK015491;
-	Mon, 2 Dec 2024 10:38:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ArYsUuvWFhKBEn+eNtXUtY8w1E0udYJZnwMLOWNYJ30=; b=oBszyV/yZ3lWSc2t
-	IRYXnQDjq8tZyt/CDbljZlzWiFodWbQcWQM4/SpcY230yyZZf1FhDhR+sIHLzZbZ
-	GRylVUI64ICyOKgB3nKBTXlMIu6Lep9jrJkTJPlx2gG13w5Az0Pmh1Vw+n02elVm
-	tcFJWWhPfnSvsgGVWy65KjNBI9T7xUw4rVWQqWC/HVXl9m5qVn4PPiLeZ3ByfJ2g
-	c1v1xbBz+7Y+4ZsPOIC1eXb6pwPjul0RXIxh7dMWQfQ+22Zu3FikU5xm/+qgf07T
-	kqcq9YYagrYKfbiD+botCSX+eeXfhcqtFT6l5Dr4T2sl9N7tgVtkJAfGOiKwwnvK
-	jLvyXQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437u36cgna-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 10:38:59 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B2AcwFI014811
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Dec 2024 10:38:58 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
- 02:38:52 -0800
-Message-ID: <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
-Date: Mon, 2 Dec 2024 16:08:49 +0530
+	s=arc-20240116; t=1733135998; c=relaxed/simple;
+	bh=DYNaZn6TdVJSB3HrT1+ewVokf5PU3016tstmnTWQa0s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GyC8ga5kjkXFD+kvP+aIatmNx4N3TMkBV5G6DAZvUcsu6yfEIpntAQhmh50LJcDv8CqS8SQG1QNXFItF0Dvz9ZbVmgwmXLBoqnaJl8TAdOmROlaMOXcwuLUDx+m+KsYHq/Gb1jZQ9XvNJHEnJiVqIpc9gWP5WyIOqxdwATuu3r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=CLkHwLFE; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385e1fcb0e1so1075388f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:39:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1733135995; x=1733740795; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8RX2YCHdx4g9Z1WhkvOgdHooa/D9EB/cVjTLy89IFDI=;
+        b=CLkHwLFEx4JePpoHo205LaMuj2M1OPXxOTdVZwskT2OnVmW6nj8dG/mzWFEx4j7YtM
+         pDxzbuiJgktSXA4sAsWoAt9ZWB6nxERXYt7BnHWwHAIDYnar3MJVgJhxWq++0Pzzi6FS
+         V8ab/TEgyMQSdQqGXgBed8fZ96aQrDmLQEgO8UK+vSLLeCiXgMGYgSHlNNZr24TCW3+p
+         VdAb7wfdugyjLc8evVZ8px3c+fIoBlLCzJHtieYsbiQH+J+Elxwcgw1l6/+D6XXySkEb
+         kmNhZhPURua2omfq0XIkp/p64P7j7tkIHRL2e2tQ78oS+60+TCpI6wqVqvST852pxOkg
+         dNgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733135995; x=1733740795;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8RX2YCHdx4g9Z1WhkvOgdHooa/D9EB/cVjTLy89IFDI=;
+        b=wid2EHc5kRISlFdH1CcGCk1nx9XUmC9WPgMc6O66Z7DGexcHu1sZIUZRSZgN4XlXs3
+         Nrd3Z5jyCrPkvlVD1LiHewLEk4FIgGx1F6tNFL6vr3mzO3s2GiAevC5Lycgo0E1iH0rH
+         m+O3GNiRG9VmBrKTuGwvDOBVcovhKu3Sdd7nRN6n2o8BGdevdWGh1cMTvLgENYCDTKHL
+         s9Tn6lXT0BfGmB3FZ8/E36UDGmYwqw7MiI4hCksu3B6LDI8DdPldQEHC8yrzmnxVg3ZT
+         QGz0df8WJh1P0WXZhtmLvpa3vDXriHa3qE7e7IW8yXUm6akS3EZYwIKtfIhzcF25U0xo
+         rVfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrtirio3gfTZk7nwN+I1iyM7o0BYIXbqPv+cBO9c4se0Y/Py4PIwyj5mrG/G3C/vj3bAOaIH/bSpHPmpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEKnj2c1KpwpoNEi1McVxnNQJvMY4+7LsBoWp3uPMOPjvi9Mel
+	LrZ5hkLl/N7Afmh8ghAKw3z4+ZoKieYxm1Y0GCULCmtEuQZnRvnJdNqz/mfd8Ok=
+X-Gm-Gg: ASbGnctbGtGgTJqgJs+a68zZZ3zG+v5eZ12slIA7nzb5nuoI5FScLhLzsbl8zO2h5UR
+	ipdBVfqEB13zHWLosUjJ8l1hjFNtpJfG48xSXYjuHiThSurG4jO8Lnox7oY7SyvTuL7C7P6z7as
+	hcQKw/NgGtDBcUmlbNQZlpjoAgiJdHRHdQ22QkFEw+1aha2lTCJM36eAQ/Ot6o2t/xzxjBPXb9O
+	UG20160KSV/ZeHBagX13DJq8uXOJal/EuWvVlB3jPbGNlkIx7Kj7e6w4ko3jlfgS9PLDRU/x1mK
+	nsBpT6rMMA==
+X-Google-Smtp-Source: AGHT+IEuOgKQVrRqq3CFTMvxvB3bWglZA0FJeYVZhwfg4uT/D5QQjHJ2BfYLevyx6w+QF7nwwpfgBw==
+X-Received: by 2002:a05:6000:178d:b0:385:dfab:1643 with SMTP id ffacd0b85a97d-385dfab180cmr10298039f8f.27.1733135994887;
+        Mon, 02 Dec 2024 02:39:54 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:5d0b:f507:fa8:3b2e? ([2001:67c:2fbc:1:5d0b:f507:fa8:3b2e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bc91sm151245135e9.9.2024.12.02.02.39.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 02:39:54 -0800 (PST)
+Message-ID: <b868dcf1-7c0d-4511-8016-89302e7cb9c4@openvpn.net>
+Date: Mon, 2 Dec 2024 11:40:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,139 +82,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Krzysztof Kozlowski <krzk@kernel.org>, <konrad.dybcio@linaro.org>,
-        <andersson@kernel.org>, <andi.shyti@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <conor+dt@kernel.org>, <agross@kernel.org>,
-        <devicetree@vger.kernel.org>, <vkoul@kernel.org>, <linux@treblig.org>,
-        <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
-        <konradybcio@kernel.org>, <bryan.odonoghue@linaro.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>
-CC: <quic_vdadhani@quicinc.com>
-References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
- <20241129144357.2008465-2-quic_msavaliy@quicinc.com>
- <db428697-a9dc-46e1-abbe-73341306403f@kernel.org>
- <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
- <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
+Subject: Re: [PATCH net-next v11 05/23] ovpn: keep carrier always on
+From: Antonio Quartulli <antonio@openvpn.net>
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ sd@queasysnail.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-5-de4698c73a25@openvpn.net>
+ <6a171cc9-a052-452e-8b3d-273e5b46dae5@gmail.com>
+ <89ae26a2-0a09-4758-989e-8f45a707a41b@openvpn.net>
+ <e2caab8a-343e-4728-b5a7-b167f05c9bb9@gmail.com>
+ <c933e2bf-b19c-4f8b-b2c0-44de50eb4141@openvpn.net>
+ <1cf97615-a38d-48c3-9e23-4ba82012b32d@gmail.com>
+ <c9185b5b-942d-4927-8171-f3460619aed1@openvpn.net>
+ <c62208a4-5396-4116-add1-4ffbc254a09d@gmail.com>
+ <cdbeecb8-e468-4925-9ab4-c77accf806b9@openvpn.net>
+ <debdfbda-36f8-4c83-bb54-3b48af77e7bd@gmail.com>
+ <55d91682-762e-411e-8abc-0790a9d81102@openvpn.net>
 Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <55d91682-762e-411e-8abc-0790a9d81102@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: O_3Mh964Wb-YTHdPZ2yEppkbXviRDQFh
-X-Proofpoint-ORIG-GUID: O_3Mh964Wb-YTHdPZ2yEppkbXviRDQFh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- clxscore=1015 bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412020094
 
-Thanks Krzysztof for giving clarity on ask and reviewing this change.
-
-On 12/2/2024 12:49 PM, Krzysztof Kozlowski wrote:
-> On 02/12/2024 05:00, Mukesh Kumar Savaliya wrote:
->> Hi Krzysztof,
+On 26/11/2024 09:17, Antonio Quartulli wrote:
+[...]
+>> It wasn't suggested to destroy the interface in case of interface 
+>> becoming non-operational. I apologize if something I wrote earlier 
+>> sounded like that. The interface existence stays unquestionable. It's 
+>> going to be solid persistent.
 >>
->> On 11/29/2024 8:44 PM, Krzysztof Kozlowski wrote:
->>> On 29/11/2024 15:43, Mukesh Kumar Savaliya wrote:
->>>> Adds qcom,shared-se flag usage. Use this flag when I2C serial controller
->>>> needs to be shared in multiprocessor system(APPS,Modem,ADSP) environment.
->>>>
->>>> SE(Serial Engine HW controller acting as protocol master controller) is an
->>>> I2C controller. Basically a programmable SERDES(serializer/deserializer)
->>>> coupled with data DMA entity, capable in handling a bus protocol, and data
->>>> moves to/from system memory.
->>>>
->>>> Two clients from different processors can share an I2C controller for same
->>>> slave device OR their owned slave devices. Assume I2C Slave EEPROM device
->>>> connected with I2C controller. Each client from ADSP SS and APPS Linux SS
->>>> can perform i2c transactions.
->>>>
->>>> Transfer gets serialized by Lock TRE + DMA xfer + Unlock TRE at HW level.
->>>>
->>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->>>> ---
->>>>    .../devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml       | 8 ++++++++
->>>>    1 file changed, 8 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>>> index 9f66a3bb1f80..88682a333399 100644
->>>> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>>> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>>> @@ -60,6 +60,14 @@ properties:
->>>>      power-domains:
->>>>        maxItems: 1
->>>>    
->>>> +  qcom,shared-se:
->>>> +    description: True if I2C controller is shared between two or more system processors.
->>>> +        SE(Serial Engine HW controller working as protocol master controller) is an
->>>> +        I2C controller. Basically, a programmable SERDES(serializer/deserializer)
->>>> +        coupled with data DMA entity, capable in handling a bus protocol, and data
->>>> +        moves to/from system memory.
->>> I replied why I NAK it. You did not really address my concerns, but
->>> replied with some generic statement. After that generic statement you
->>> gave me exactly 0 seconds to react and you sent v5.
->>>
->> Sorry for 0 seconds, i thought of addressing comment and uploading it
->> new patch as i wanted to explain SE. whatever i have added for SE
->> explanation is in qualcomm hardware programming guide document.
->>> Really 0 seconds to respond to your comment, while you give yourself
->>> days to respond to my comments.
->>>
->>> This is not how it works.
->>>
->> Sure, let me first conclude here what exactly should be done.
->>> NAK
->>>
->>> Implement previous feedback. Don't send any new versions before you
->>> understand what you have to do and get some agreement with reviewers.
->>>
->> Sure, this is definitely a good way. what did i do for previous comment ?
->> I have opened SE and expanded, explained.
+>> Back to the proposed rephrasing. If the 'full picture' means forcing 
+>> the running state indication even when the netdev is not capable to 
+>> deliver packets, then it looks like an attempt to hide the control 
+>> knob of the misguiding feature somewhere else.
 >>
->> which statement or explanation should i rephrase ? Is it description
->> statement from this yaml file ? Could you please suggested better word
->> instead of shared-se if this flag name is not suitable ?
->>
->> I could not get this ask -
->> "There are few of such flags already and there are some patches adding
->> it in different flavors."
+>> And since the concept of on-purpose false indication is still here, 
+>> many words regarding the control plane and a full picture do not sound 
+>> good either.
 > 
-> Come with one flag or enum, if needed, covering all your cases like this.
-> 
-Let me explain, this feature is one of the additional software case 
-adding on base protocol support. if we dont have more than one usecase 
-or repurposing this feature, why do we need to add enums ? I see one 
-flag gpi_mode but it's internal to driver not exposed to user or expose 
-any usecase/feature.
 
-Below was our earlier context, just wanted to add for clarity.
---
- > Is sharing of IP blocks going to be also for other devices? If yes, then
- > this should be one property for all Qualcomm devices. If not, then be
- > sure that this is the case because I will bring it up if you come with
- > one more solution for something else.
- >
-IP blocks like SE can be shared. Here we are talking about I2C sharing.
-In future it can be SPI sharing. But design wise it fits better to add
-flag per SE node. Same we shall be adding for SPI too in future.
+Sergey,
 
-Please let me know your further suggestions.
---
+I have played a bit with this and, if I understood your idea correctly, 
+the following should be an acceptable design for a P2P interface:
 
-As we want to finalize agreement on this dt-bindings patch, will wait 
-for agreement and confirmation before V6.
+* iface created -> netif_carrier_off
+* peer added -> netif_carrier_on
+* peer deleted -> netif_carrier_off
+* iface goes down -> peer deleted -> netif_carrier_off
+* iface goes up -> carrier stays down until peer is added
 
-> Best regards,
-> Krzysztof
+
+P2MP interface behaviour is not changed: when interface is brought up 
+carrier goes on and it is never turned off.
+
+How does it sound?
+
+My main concern was about bringing the interface down, but this is 
+actually not happening. Correct me if I am wrong.
+
+Thanks.
+
+Regards,
+
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
