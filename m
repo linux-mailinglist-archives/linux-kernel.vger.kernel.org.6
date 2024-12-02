@@ -1,356 +1,119 @@
-Return-Path: <linux-kernel+bounces-428267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F919E0C35
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:34:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481569E0C34
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:34:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A43282A9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137C9164F35
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C801DE884;
-	Mon,  2 Dec 2024 19:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E247D1DE88C;
+	Mon,  2 Dec 2024 19:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0QS8MVaz"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WB/6Uvsw"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED261DBB36
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735251DE3BC
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733168071; cv=none; b=TDpea2feeA2u1qyLRmqT7KaPLkLw0b8MV28VptNX4aPf+yKaHK/zxtXxpbK+w6m+0GMxJSNlMqWLK0LXf9C6ur6EaOzxigWGplRfbJWljWQu25+vt7oAw1BEDUNngvhpJUpUchuZzuB7ILVsvr7nGcK2zznv5IKhQSHA9XcQ2Wc=
+	t=1733168061; cv=none; b=mL0w8qBemvNA48NOd/ZsQTeiTXkITvIBNpclk07KrwSZ58DV7rEnRbj01RFNPHthniRqf+AfAnWZu/pryPOLW74YQrU+Ge5tOhvW16lh0FcjKhYxxFK6Xh5Y1TTrsXZX5JZ7WHy7w2DvYt/vgHXIDd0dvdILJuEvJpzkByUGGAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733168071; c=relaxed/simple;
-	bh=GcrVcFtup5Chadx9wlqf6FeK+RbHrvlrnkI6ai0m6T0=;
+	s=arc-20240116; t=1733168061; c=relaxed/simple;
+	bh=R1wjqLCnK/jl668F/7xiZbuQwwYunoRzMSm3GVh/kRk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sUT34tttHSY5iysx3faimGEto5Nkiz6imCOC00avGdojGAwxMZvnEsge0emPZIWpTSVfjM0gsiYVnbDYHb+as+9eG6BYNJxLJu+L9m4yKoBRxsl9YR7QdUipkMktSLPI5mGnAGgqShHjlBXQQlo0oX4XvvanNShLVA3ROxQG9g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0QS8MVaz; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3ea5a7a5e48so2158842b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 11:34:29 -0800 (PST)
+	 To:Cc:Content-Type; b=S1vA2wvKG2mov0vbfuTbcl17LYqhPaTRCI8ZXOwzi0j6XFKSAmpShoC8PXIeCe1Ze98s7o1xy2lUxP23GOmsyjtksVM8HTwJwT1Upj1/cfiIgffFBDF76zRiT8QjRyg2fq0jF9ZMPM3P2Hd93IgOiLLL3Ag3oB4v6AuL2sAZua0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WB/6Uvsw; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53de579f775so6493262e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 11:34:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733168068; x=1733772868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uiyiz80ESC4vZ8IK2v5FDLx2PlcNaf/VwX618n4FUPE=;
-        b=0QS8MVazjKh0LCUkwshdX6oMoQQZNGvlwQ/CEfSFDZ7Ew1AkrsEUzbcq2oExKowzty
-         zThoZIHJn7fxTWY2PbCuSUvaSh3ULWHkwawgXW5RlNes2YQLAdbg1Nywef57+mkWydjA
-         9/Bze94oTBl0EGaxpQyoDZBrZXvvU9ZGo8rovTDgLtWV/inVcyKtwwtlOg+k75M3Zsri
-         bGlq5mMYKDYYNLdFwGjRK+z9DgBrZtiRzMLnlro7xcDOrkhybg/WakmLX812Ma0p5D5d
-         CvF1Axuas45S4BE0KoX1o1KXBMViaWYrT+fXomPAdtX5ekTblMSsdapPEcDNSa5/SW9v
-         IENA==
+        d=linux-foundation.org; s=google; t=1733168057; x=1733772857; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NKeXocoBU43F0p08iiIssomLE42KNiU+OuyoZjKEnbw=;
+        b=WB/6Uvswi0iKRnuA6adQ/zmwnSM34eErILizMXXPwnhxM+B4xw6oa6N1Xd+WmtsAbj
+         aS7AbrxNcu/m3MigHk94PawZE3AkF62cfwJfoXTcocF00rTq5cNITFa6vVoBScMeYtlu
+         CsCM6OgLzItnUcOoMEfZ2mv2cLlm/jCLI+GRk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733168068; x=1733772868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uiyiz80ESC4vZ8IK2v5FDLx2PlcNaf/VwX618n4FUPE=;
-        b=WWa1kd7L3lKTHuQdfBxav7H3r1SNFS42kHZsV9lUWhjvgrrrk8mQvgkrchZSVT/cs6
-         VB51KC+magSogBgSZ9jZ4pk0jSxb+DBA3bUmqGEZg1nPmspyYSqD2J73xTrwhCBHi2JV
-         i1BWySoaoFeDRr1DZuKblurRpoTmG8ndSkhL49C5McMqGwwM0U/Z0NWwvQj62fcZN5bw
-         kPSc1qNOqtG1CD6DZno14tRmrbXgnR5hSs6IkltKh6CvFThVXZe9IOnNdvTiLZHqOjel
-         F90PzmqGe2Mze2Jf0d4KhDE1jd2B6/SUSJZditi8O05SNA1XcYYI9peFB8bQC/4kdN92
-         YYrw==
-X-Gm-Message-State: AOJu0Yy3px2PGilgPpaSe0COMF3ZQ7KOmj7xE3BT2ZYviPMWBc0lgLSk
-	w/9PW60ZRzudX5p4cgYeRBsMA48DgGLLR02xoF/ma2AActSshIbxvYYX46Z9q1TcfaKQizXLRdS
-	h3Lzb+l/yVev+lPs9qNe60A7T/8WclWcrZzqb
-X-Gm-Gg: ASbGnct2MjZCwD+TiJS7ToFTPFhbpPsZjrqyNT7IIhz1KFyYl/ur+TwscjUxGZhi/nn
-	7Kb5UOiq3Zb4X/DCweXkZQ4yDqESu
-X-Google-Smtp-Source: AGHT+IGGI8g8ewmbrMxXErj4uwLi6IbwzhzBJpnlRWbhdc+GYm9qHmPPswp49Euo4v1tqdwQHREP3F054TW2GM7Cmv4=
-X-Received: by 2002:a05:6808:1a28:b0:3ea:5413:1a24 with SMTP id
- 5614622812f47-3ea6dbcea00mr20710021b6e.13.1733168068046; Mon, 02 Dec 2024
- 11:34:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733168057; x=1733772857;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NKeXocoBU43F0p08iiIssomLE42KNiU+OuyoZjKEnbw=;
+        b=As7pyiLP0YVG6PCnILzXRwflIUrWwkP3Q4W6MgoupTX2D0qY4mNNVLRKLMP/UmpIyY
+         kRhaxBB4o++meRZdvQEL9BTUDlCGx388xI9dhTki0jp19ZTck0voc3pSFThpNm1fApN1
+         noobm6hM/o1rsn+7BHyKuP5yC5XbobkvQ5ZdJ4AGw2bBN1sJ6QegMif5O4RzGxnu6fBh
+         NufV+7HrHsvj4/ThV18YmYd/ET2Y+g5nTKLFw9Us2IOJjQaa50i8A0O/i7uW95tqXApn
+         fZBNTyBHusFBRDUU4o7etp8a7SVfYXzvHP2XWQD2ACCEGrzMhJqtSeeVIJpdaEwTWftN
+         DikQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXT6NVv/CceY/TnQCS8GQZhskUdWnFke/+Vgs8a/DzpNd2XyAuLRbvFHNHqAewOCYWodH7BXbe5rCObmis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHX82tLvnjpE05n7cpCadwTxhizdJlsnB4iuyDwavmH3572JUE
+	qilvmUTPI7j3Y3LAWvG50yOMMLyCij83u9L5OQ0a9fZebF9W1MLb+6GLZhqhp+oID2QolxLR+Bt
+	Ifgm7gQ==
+X-Gm-Gg: ASbGnct0+PZQooPws4OIAnLcOmSAO7AXqIdpG3H65+OHL2vStbiowEwV4wp0OJE1mrw
+	mz98eHMHCA9t/IOKIfoYecQy1vx0oGDXkEvEqn5nVK0MLa3qUZa+Tiu7e07xVRojn2KY8nkRTgS
+	2amXTnDyDVnx/SZSls1gWPqAVdQRVZJvu9lTqsWPEEksDydYrRLWML4Kj91+VuuwWpY1Cka2rSa
+	eil76Z/ESbPH/+euTWbMLysyLQtL46YVtdrQrlPiPd5ekOPZoXuyLR6pG+8ZSRSQ5/64tz2PSXc
+	hAwwKDmnYkQfcDnVvYI7DMCJOau8
+X-Google-Smtp-Source: AGHT+IGboFL+Oj6aq9L6pFMCOx0Ib6KBzzWXBZ94Pna/BmejdrVm3/8HASUwcxf2RhULB+ZU2WgwIA==
+X-Received: by 2002:ac2:51c6:0:b0:53d:a132:14f5 with SMTP id 2adb3069b0e04-53df01172f5mr19533690e87.57.1733168057158;
+        Mon, 02 Dec 2024 11:34:17 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6430e7fsm1564651e87.57.2024.12.02.11.34.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 11:34:15 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so69756891fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 11:34:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWSBsQaGaKwyRlHxQUpNn7HuHTgI6SoQbjXL2nK8sMEZEmMARkznIBRcyfojOUJEHIWla0YZ5HyMJ8re7Q=@vger.kernel.org
+X-Received: by 2002:a05:651c:508:b0:2ff:cb81:c016 with SMTP id
+ 38308e7fff4ca-2ffd6028d77mr201405821fa.19.1733168054547; Mon, 02 Dec 2024
+ 11:34:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127225324.6770-1-kanchana.p.sridhar@intel.com> <20241127225324.6770-2-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20241127225324.6770-2-kanchana.p.sridhar@intel.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 2 Dec 2024 11:33:51 -0800
-Message-ID: <CAJD7tkYZSWL9WQ9X9UMLNTbDcF0hX=t90Ouf22WWHrcUvXyPRg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] mm: zswap: Modified zswap_store_page() to process
- multiple pages in a folio.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	ryan.roberts@arm.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+References: <20241202145946.108093528@infradead.org> <20241202150810.048548103@infradead.org>
+ <20241202151533.GF8562@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241202151533.GF8562@noisy.programming.kicks-ass.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 2 Dec 2024 11:33:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh7KugYO+R-1DMmkLz4fD_-A9BMyrWTVsH_K0a86Ojn4A@mail.gmail.com>
+Message-ID: <CAHk-=wh7KugYO+R-1DMmkLz4fD_-A9BMyrWTVsH_K0a86Ojn4A@mail.gmail.com>
+Subject: Re: [PATCH -v2 1/7] module: Convert symbol namespace to string literal
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com, 
+	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org, 
+	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	hch@infradead.org, gregkh@linuxfoundation.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 27, 2024 at 2:53=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
+On Mon, 2 Dec 2024 at 07:15, Peter Zijlstra <peterz@infradead.org> wrote:
 >
-> Modified zswap_store() to store the folio in batches of
-> SWAP_CRYPTO_BATCH_SIZE pages. Accordingly, refactored zswap_store_page()
-> into zswap_store_pages() that processes a range of pages in the folio.
-> zswap_store_pages() is a vectorized version of zswap_store_page().
->
-> For now, zswap_store_pages() will sequentially compress these pages with
-> zswap_compress().
->
-> These changes are follow-up to code review comments received for [1], and
-> are intended to set up zswap_store() for batching with Intel IAA.
->
-> [1]: https://patchwork.kernel.org/project/linux-mm/patch/20241123070127.3=
-32773-11-kanchana.p.sridhar@intel.com/
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> ---
->  include/linux/zswap.h |   1 +
->  mm/zswap.c            | 154 ++++++++++++++++++++++++------------------
->  2 files changed, 88 insertions(+), 67 deletions(-)
->
-> diff --git a/include/linux/zswap.h b/include/linux/zswap.h
-> index d961ead91bf1..05a81e750744 100644
-> --- a/include/linux/zswap.h
-> +++ b/include/linux/zswap.h
-> @@ -7,6 +7,7 @@
->
->  struct lruvec;
->
-> +#define SWAP_CRYPTO_BATCH_SIZE 8UL
->  extern atomic_long_t zswap_stored_pages;
->
->  #ifdef CONFIG_ZSWAP
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index f6316b66fb23..b09d1023e775 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1409,78 +1409,96 @@ static void shrink_worker(struct work_struct *w)
->  * main API
->  **********************************/
->
-> -static ssize_t zswap_store_page(struct page *page,
-> -                               struct obj_cgroup *objcg,
-> -                               struct zswap_pool *pool)
-> +/*
-> + * Store multiple pages in @folio, starting from the page at index @si u=
-p to
-> + * and including the page at index @ei.
-> + */
-> +static ssize_t zswap_store_pages(struct folio *folio,
-> +                                long si,
-> +                                long ei,
-> +                                struct obj_cgroup *objcg,
-> +                                struct zswap_pool *pool)
->  {
-> -       swp_entry_t page_swpentry =3D page_swap_entry(page);
-> +       struct page *page;
-> +       swp_entry_t page_swpentry;
->         struct zswap_entry *entry, *old;
-> +       size_t compressed_bytes =3D 0;
-> +       u8 nr_pages =3D ei - si + 1;
-> +       u8 i;
-> +
-> +       for (i =3D 0; i < nr_pages; ++i) {
-> +               page =3D folio_page(folio, si + i);
-> +               page_swpentry =3D page_swap_entry(page);
-> +
-> +               /* allocate entry */
-> +               entry =3D zswap_entry_cache_alloc(GFP_KERNEL, page_to_nid=
-(page));
-> +               if (!entry) {
-> +                       zswap_reject_kmemcache_fail++;
-> +                       return -EINVAL;
-> +               }
+> Perhaps we can ask Linus to run this now, before -next fills up again ?
 
-I think this patch is wrong on its own, for example if an allocation
-fails in the above loop we exit without cleaning up previous
-allocations. I think it's fixed in patch 2 but we cannot introduce
-bugs in-between patches. I think the helpers in patch 2 don't really
-help as I mentioned. Please combine the changes and keep them in the
-main series (unless you have a reason not to).
+Sure. I did an unasked-for scripted 'remove_new' removal right after
+rc1 for the same reason.
 
->
-> -       /* allocate entry */
-> -       entry =3D zswap_entry_cache_alloc(GFP_KERNEL, page_to_nid(page));
-> -       if (!entry) {
-> -               zswap_reject_kmemcache_fail++;
-> -               return -EINVAL;
-> -       }
-> -
-> -       if (!zswap_compress(page, entry, pool))
-> -               goto compress_failed;
-> +               if (!zswap_compress(page, entry, pool))
-> +                       goto compress_failed;
->
-> -       old =3D xa_store(swap_zswap_tree(page_swpentry),
-> -                      swp_offset(page_swpentry),
-> -                      entry, GFP_KERNEL);
-> -       if (xa_is_err(old)) {
-> -               int err =3D xa_err(old);
-> +               old =3D xa_store(swap_zswap_tree(page_swpentry),
-> +                              swp_offset(page_swpentry),
-> +                              entry, GFP_KERNEL);
-> +               if (xa_is_err(old)) {
-> +                       int err =3D xa_err(old);
->
-> -               WARN_ONCE(err !=3D -ENOMEM, "unexpected xarray error: %d\=
-n", err);
-> -               zswap_reject_alloc_fail++;
-> -               goto store_failed;
-> -       }
-> +                       WARN_ONCE(err !=3D -ENOMEM, "unexpected xarray er=
-ror: %d\n", err);
-> +                       zswap_reject_alloc_fail++;
-> +                       goto store_failed;
-> +               }
->
-> -       /*
-> -        * We may have had an existing entry that became stale when
-> -        * the folio was redirtied and now the new version is being
-> -        * swapped out. Get rid of the old.
-> -        */
-> -       if (old)
-> -               zswap_entry_free(old);
-> +               /*
-> +                * We may have had an existing entry that became stale wh=
-en
-> +                * the folio was redirtied and now the new version is bei=
-ng
-> +                * swapped out. Get rid of the old.
-> +                */
-> +               if (old)
-> +                       zswap_entry_free(old);
->
-> -       /*
-> -        * The entry is successfully compressed and stored in the tree, t=
-here is
-> -        * no further possibility of failure. Grab refs to the pool and o=
-bjcg.
-> -        * These refs will be dropped by zswap_entry_free() when the entr=
-y is
-> -        * removed from the tree.
-> -        */
-> -       zswap_pool_get(pool);
-> -       if (objcg)
-> -               obj_cgroup_get(objcg);
-> +               /*
-> +                * The entry is successfully compressed and stored in the=
- tree, there is
-> +                * no further possibility of failure. Grab refs to the po=
-ol and objcg.
-> +                * These refs will be dropped by zswap_entry_free() when =
-the entry is
-> +                * removed from the tree.
-> +                */
-> +               zswap_pool_get(pool);
-> +               if (objcg)
-> +                       obj_cgroup_get(objcg);
->
-> -       /*
-> -        * We finish initializing the entry while it's already in xarray.
-> -        * This is safe because:
-> -        *
-> -        * 1. Concurrent stores and invalidations are excluded by folio l=
-ock.
-> -        *
-> -        * 2. Writeback is excluded by the entry not being on the LRU yet=
-.
-> -        *    The publishing order matters to prevent writeback from seei=
-ng
-> -        *    an incoherent entry.
-> -        */
-> -       entry->pool =3D pool;
-> -       entry->swpentry =3D page_swpentry;
-> -       entry->objcg =3D objcg;
-> -       entry->referenced =3D true;
-> -       if (entry->length) {
-> -               INIT_LIST_HEAD(&entry->lru);
-> -               zswap_lru_add(&zswap_list_lru, entry);
-> -       }
-> +               /*
-> +                * We finish initializing the entry while it's already in=
- xarray.
-> +                * This is safe because:
-> +                *
-> +                * 1. Concurrent stores and invalidations are excluded by=
- folio lock.
-> +                *
-> +                * 2. Writeback is excluded by the entry not being on the=
- LRU yet.
-> +                *    The publishing order matters to prevent writeback f=
-rom seeing
-> +                *    an incoherent entry.
-> +                */
-> +               entry->pool =3D pool;
-> +               entry->swpentry =3D page_swpentry;
-> +               entry->objcg =3D objcg;
-> +               entry->referenced =3D true;
-> +               if (entry->length) {
-> +                       INIT_LIST_HEAD(&entry->lru);
-> +                       zswap_lru_add(&zswap_list_lru, entry);
-> +               }
->
-> -       return entry->length;
-> +               compressed_bytes +=3D entry->length;
-> +               continue;
->
->  store_failed:
-> -       zpool_free(pool->zpool, entry->handle);
-> +               zpool_free(pool->zpool, entry->handle);
->  compress_failed:
-> -       zswap_entry_cache_free(entry);
-> -       return -EINVAL;
-> +               zswap_entry_cache_free(entry);
-> +               return -EINVAL;
-> +       }
-> +
-> +       return compressed_bytes;
->  }
->
->  bool zswap_store(struct folio *folio)
-> @@ -1492,7 +1510,7 @@ bool zswap_store(struct folio *folio)
->         struct zswap_pool *pool;
->         size_t compressed_bytes =3D 0;
->         bool ret =3D false;
-> -       long index;
-> +       long si, ei, incr =3D SWAP_CRYPTO_BATCH_SIZE;
->
->         VM_WARN_ON_ONCE(!folio_test_locked(folio));
->         VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
-> @@ -1526,11 +1544,13 @@ bool zswap_store(struct folio *folio)
->                 mem_cgroup_put(memcg);
->         }
->
-> -       for (index =3D 0; index < nr_pages; ++index) {
-> -               struct page *page =3D folio_page(folio, index);
-> +       /* Store the folio in batches of SWAP_CRYPTO_BATCH_SIZE pages. */
-> +       for (si =3D 0, ei =3D min(si + incr - 1, nr_pages - 1);
-> +            ((si < nr_pages) && (ei < nr_pages));
-> +            si =3D ei + 1, ei =3D min(si + incr - 1, nr_pages - 1)) {
->                 ssize_t bytes;
->
-> -               bytes =3D zswap_store_page(page, objcg, pool);
-> +               bytes =3D zswap_store_pages(folio, si, ei, objcg, pool);
->                 if (bytes < 0)
->                         goto put_pool;
->                 compressed_bytes +=3D bytes;
-> @@ -1565,9 +1585,9 @@ bool zswap_store(struct folio *folio)
->                 struct zswap_entry *entry;
->                 struct xarray *tree;
->
-> -               for (index =3D 0; index < nr_pages; ++index) {
-> -                       tree =3D swap_zswap_tree(swp_entry(type, offset +=
- index));
-> -                       entry =3D xa_erase(tree, offset + index);
-> +               for (si =3D 0; si < nr_pages; ++si) {
-> +                       tree =3D swap_zswap_tree(swp_entry(type, offset +=
- si));
-> +                       entry =3D xa_erase(tree, offset + si);
->                         if (entry)
->                                 zswap_entry_free(entry);
->                 }
-> --
-> 2.27.0
->
+If we have these kinds of big scripted things, right after the merge
+window tends to be the best time to do them. The conflict potential of
+leaving it hanging in linux-next can be somewhat annoying. They may be
+fairly unlikely, and easy to resolve individually, but it's one of
+those "one is trivial to deal with, but even just a handful is
+annoying".
+
+So I'll run your script and take your commit message, and we'll have
+this part over and done with.
+
+Thanks,
+            Linus
 
