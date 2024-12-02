@@ -1,198 +1,211 @@
-Return-Path: <linux-kernel+bounces-426878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 128519DF9A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:36:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFEF9DF9A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFD371621E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 907AE162505
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C861F8AD7;
-	Mon,  2 Dec 2024 03:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8611B1F8AEE;
+	Mon,  2 Dec 2024 03:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b="EmUx3CaB"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021090.outbound.protection.outlook.com [52.101.129.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8iycQmx"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175F71E22E8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 03:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733110584; cv=fail; b=hNBv8bsND9XYphnuOv2VLDWSfr6rXJ6UbebwBSfFI4zlMBWnZfOuE/YOFPJHpQCFxghqLCNUfHf++7YiE7q7oPg+O1238Ze9Uz+uaz9GAb4YZYcKRLV2Y5XFUwSWwe/A7NRtoXxxv4lj3KVZYMUqzUms5rXKqsApPFYtgQRirDI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733110584; c=relaxed/simple;
-	bh=stYkUNE/uWNx9ucNJOZYJlTq2jYAXLSlmFeCO0jsMnE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=P+GfImjNk8cxj6m1WKFzQvEQv3BNOUsjEhpPqgBo/DmRd0n2FStqDio02MgP1oyEiVl+yY9qCxVeY4KExVR9qdm7MdSq3FAaYPgmyCVL/ec4NJExpPIItWR+BC0dSc+qfnLDYG6dk4UBi2wd1zu3uMsIlpdoB1B145nzs197waU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com; spf=pass smtp.mailfrom=jaguarmicro.com; dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b=EmUx3CaB; arc=fail smtp.client-ip=52.101.129.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaguarmicro.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u4GVM3TNtD251mBpDMocQ4DfAiGS41KwlhU3Uc08JxYw27sDN46JOEBsI0nm5V/UCLWoc2clw+d9Vz+MeiI1Ybiv5vwpUQPBOX45AMc827AECc6DuLAAnr40IksKw2NujuBmCUvgDqeltXACWOfoJr3Sde1IsSTEdIjrcBOI4qXvIiYgEoV+YCdnJjm1cPsgiTmF4KcnSuE0eiSZof3Ru02eqSTfgCRNxgh+sxMeqhmNgwzLhQPf5j9tR+HpOW+5eqUECuVm4R18DKE5iuhsVZ325sGQQz+q7t4uFB46C5pg1hVWCiannoB2Wkk9H2g9IxpGA1++v4UAOq9JteimAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CTbGhTzA9PIqumDiOOsZt+VgovZgw7gJtT9M0R4Z2Fo=;
- b=aWhbK7NfYCgJjropI7r6OmZ3SfWgO88GpjRWOiFZuUW7fMnJW1GJT8M6mwjGTGaRqCe63X4wavyZnpfJG0wzyne6Tb+sIwMa5kRFeAOodOBQQgd6gSmQblT7TZb8IDXidV65KdsSoirAW9Qz0dh5hLp/0KzcSjetZTP+VIXDo8uXno4/R7EW7iiCaO3lB3SjnBuT7R0uXhGlsfzbox5Miz1L69cFiMOgxThgF863a+I9HRVhvGqzsToWAvny+7+WO680OTIBJHk9/qiEMMeH/tOb/GFL0F7esRK17lRT76PIe+JobWfc4XtUbKBuRiC9lnBTfHF7cij4IHVbq1X5jQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
- header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CTbGhTzA9PIqumDiOOsZt+VgovZgw7gJtT9M0R4Z2Fo=;
- b=EmUx3CaBwn9hBUp82HkUfA3/0BlnzAI7ote5JuwFq5TVXirSmp1N0VBwiP6KF5dKQKd9PUrzFl6MDDcry4sNJf+zkg8hrGymHAalrMDYak04PD0QNwbjv/efriF1PvAf6vXXGhng7BocN9stF2xx6H8Ru3XdfML54AYOXXFVy69nNTeKW2myPhusv7sR9maENeB6qEKGB/cGL3Sdy5crxm6z71unZsguU4qHC3O+Su+LiOmUf7zoZVSO2fN21VIzvDRaAqwZPlNtKDWF8Z4hrYlwoG5QGgWlOFROWi/+qeSdrYlW7DhqLaydvIllRqb77uIrHiknmgiPiDlPx/TcRg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
-Received: from SEYPR06MB6756.apcprd06.prod.outlook.com (2603:1096:101:165::11)
- by SEYPR06MB6681.apcprd06.prod.outlook.com (2603:1096:101:16e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.8; Mon, 2 Dec
- 2024 03:36:10 +0000
-Received: from SEYPR06MB6756.apcprd06.prod.outlook.com
- ([fe80::922f:a649:adbf:6634]) by SEYPR06MB6756.apcprd06.prod.outlook.com
- ([fe80::922f:a649:adbf:6634%5]) with mapi id 15.20.8230.008; Mon, 2 Dec 2024
- 03:36:10 +0000
-From: "Yuxue Liu yuxue.liu@jaguarmicro.com" <yuxue.liu@jaguarmicro.com>
-To: jasowang@redhat.com,
-	mst@redhat.com
-Cc: xuanzhuo@linux.alibaba.com,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	yuxue.liu@jaguarmicro.com,
-	angus.chen@jaguarmicro.com
-Subject: [PATCH] vdpa/vp_vdpa: implement kick_vq_with_data callback
-Date: Mon,  2 Dec 2024 11:36:11 +0800
-Message-Id: <20241202033611.1374-1-yuxue.liu@jaguarmicro.com>
-X-Mailer: git-send-email 2.33.0.windows.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0021.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::14) To SEYPR06MB6756.apcprd06.prod.outlook.com
- (2603:1096:101:165::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F3726AE4;
+	Mon,  2 Dec 2024 03:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733110592; cv=none; b=PW8Sy1Et+iyBu/VRCzfLBVgz8h8nCCopDs/aMHlwXnrx8tMZ+fCeEDxwg92FWhecCWNQ4V/WIV4tvekM3j9lvB0yPeesVUmQZZ3XockTF7QgxtXH0upv559nomuhL9crY9LaFS41sY+o/txa+8Om9qEU9zTWPUMwp1EeLE1OuAE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733110592; c=relaxed/simple;
+	bh=v5nSndO/4ZT5+voHPl/5rulmF50bumWwUnVkUlfXcpg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WxZu3LWfngWj3pf0mmyw6B/1083xq75IZGCbMoa2etpLdk5m3SeSc1WCEv6ZYxWpX9sMvsuAicGvVFWBrHxlridM3nDhJARxXqZFH2vEYyQR0YapIQaJF1VrO2vekvyNIHfS1X77gUfAvDtHYdHPgBqSM7zIHbHa4ts8kEev1TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8iycQmx; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2eec9b3a1bbso321866a91.3;
+        Sun, 01 Dec 2024 19:36:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733110590; x=1733715390; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5kFHM/3yCu0aAVH5q7RWPOzshWMRnBnfX8Dn0iOsBNk=;
+        b=W8iycQmxzx3Q4DoPT/bD/+LbWl7lltUr+CjcpV1ziwrz7do7lR1H6GB5robOTN265D
+         CtZheZNT3NBURIz31VzH/N3c5zpi7G3hijMFr+MEuEOkkTJIUW7S6eA/LNu8To9rxIyt
+         qyaHhLSAEy4SjPkjL2OEkN+ZP2sUhfA/433z4ubLMEytmaXkrUSEzJ8CrAAkQJL/xhY+
+         VkauxFHXU0aqIwT/EYKgfWjOLpGO6oFbqSVHl2pNu8QTSSG47/ukfMr5zUHY5LhLWl7m
+         opz7FahTLa+1Db5i5eeDQv09ZQGQjLUIpmPNnOTqDUgz95QHbYs9B4KRqS/j7JhRxxGf
+         KnKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733110590; x=1733715390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5kFHM/3yCu0aAVH5q7RWPOzshWMRnBnfX8Dn0iOsBNk=;
+        b=Hppqu3eLDhLoiilKz4BRCHVz3IRyqpvSrWRP7PM9lk+pG3F575zF7Wok3cWrq//1Wh
+         VKn4VxBglYV/LtLcf9wM7LuaZpzOI1PmI+O3S3Cx04ti/iYFLIO9uigM3wLltc5J/GJz
+         CrPgjH/LdMb2peOJRd1t8o9V6nfXXm53g9folfkvbBSHSke4UyrxSOX1Vy1q8jesnG6t
+         4bA/OUSTHH06D0fE7+RVel83gjT/f0IR+/CrwkK8Hlf+ftpMYR5zKErQg99BLDOiY8hU
+         6a4kWtQCqPZQY7WehV9dwdiROnEFjbHp2MG+3zYXLX7PB66QA2K8ElahHarPy2WGjk9q
+         s9Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYi94irIwI8WuP0oqOYi3h0Q9EU2V+DtjQBr8GzXKOOz9QYC14bRtTwddMFXJkawaO3xx58OuaSYjQRrJi@vger.kernel.org, AJvYcCWKatxoEX5DTQaJWLDGfL33Mw5axCHmroW/U80CsNAj08rJ0ckpttcqHGMT5OdKaK4Kzzc9Wd4FfwMCDg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUeVWbDbbgu3j8kYTtchCWpklEhg2jl8pPi9jAijcABVZA5S6Z
+	eDFok3LbEalWE2eotEB31GCoda3MF0B+b09zzo7jp/IuactHzGaGD5EmDtFk1/xxjpeWEFvZNsk
+	MUBfk0t2b2zdQKx9yg3gAEoyVC/o=
+X-Gm-Gg: ASbGnctnlb0gB5GcOz5jxnIi854GKdpMdlTprM0eienIXP2I64r1kHvkW09G/D+EwYy
+	l7iaxM+0AHrvEvBBHp4l1HxEuEraMEOAL
+X-Google-Smtp-Source: AGHT+IFNYgbr+M7uilMzhsyRj1w6CrBheFEiKqIdb/5PvSDfBtq4U3UQI6Am3DoxbHNKqwO3IL1GdUe9UHTWZELa8J4=
+X-Received: by 2002:a17:90b:4fd0:b0:2ea:bb3a:8f11 with SMTP id
+ 98e67ed59e1d1-2ee097dd62bmr24080635a91.32.1733110590418; Sun, 01 Dec 2024
+ 19:36:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR06MB6756:EE_|SEYPR06MB6681:EE_
-X-MS-Office365-Filtering-Correlation-Id: 965a7b23-570a-4f89-08b8-08dd128276c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?P950BQMev3HK0hEoZX8XhSzERIVjk4DE0s9LMhhSpQT9aimNTwePi+xsHiUW?=
- =?us-ascii?Q?Ths3ULYQxdsCFlS0MNAWvxUhYDwQ9g4RGh21DmsPIWNN/XXnCpyuBl8ih3Um?=
- =?us-ascii?Q?vgiRxHEQKxxe/4/SU6rom1DUiVUpZZ/tkZPRzyv4RuvXV6Vt6gxVQg/YTIUS?=
- =?us-ascii?Q?sKALfW5Twq/E+j2QkWHVqF6VZWWZmZbrVDxV2SEdocUj8TuNj/j2WR352iG+?=
- =?us-ascii?Q?fXjkvq9MURCokJY1NdCEBE+HkoOdsIizHUQT7JICb/I2nkmLaDQEv6CKuBwN?=
- =?us-ascii?Q?ltK/kpMmyDd0F8Gv6CJtpHbyqICestXMRvmuZvf9U7voSipISFZ+epyDNA33?=
- =?us-ascii?Q?Ogb14iCM2F1rscb6OzvBc6RQ22ZO91ekWzRFMHZNeJYJgBomUJBYV16tDpDU?=
- =?us-ascii?Q?0LMDBcQA9xzk8HXF189uVuBxU9uy+TMLW+g5GqptCvMLj7oAydgmT7Puz5YP?=
- =?us-ascii?Q?snW2vry9jJlEC4fUc0R9zxprw/juzCCYDUIB9J9pZ5SdIYIs9HSnSotP/AYH?=
- =?us-ascii?Q?xHNvOmDbW1gPdkCPnA3ZanAUt8tsHkjUZ3203bEpyd9Jz35R4mMdaAVN7BUQ?=
- =?us-ascii?Q?c4DuQcIeiblN+RL4ozn+Xl4QbXoSjTTknE8sI0MORh9OiQooZ1DNUQZReHhv?=
- =?us-ascii?Q?VBoKHMM9cW86Zbn+xbtEuJWxDu7AfcshAw2P5PeQmhFMuZwPTCNZKzSIhq9n?=
- =?us-ascii?Q?FiPYlZYxK7RSMSbHWJVbNAt6TL3XLYmpBh85mv5TKPp8onJi8sQ2SdqrIRPS?=
- =?us-ascii?Q?vtoclL1nTedntu8mRyltfdcin78RBdGrkAVYyAM8zoS95jVbVHjH3tYhMq1z?=
- =?us-ascii?Q?AhTBJLXBas9QGrFCnIkipNNd5tvDADrqzcHR2d6MCykKWSeAhvQFaHoVipNM?=
- =?us-ascii?Q?SKC0PTDuaudMwBqXFfpSxGk6CAh1wHNkN5ppNF5ns0JwAqjQcXEMo9f6EbNE?=
- =?us-ascii?Q?UNOAfEbgdp4r3iyURpWLPnSnREnZ8BEqQnDcWS1v6ylGXs8t+TmdGgPFTSAH?=
- =?us-ascii?Q?rxVBnFpqidIND3KIgGVBer4432PWqZ6FGVW0ETkVgAwzTWGmjC2TRSRBJiYN?=
- =?us-ascii?Q?8h+68UZINOA5RvbT3Hpe1QiKV+iZ/OSsbywsaCyBD4ct57XWdOQ4z1Sd2DXH?=
- =?us-ascii?Q?Oo4FpK9vXKm9ND/ws3WkSh8jH84mlvjkVqMBfVBZRQMAb4dM7w30DV6xLhqn?=
- =?us-ascii?Q?YZJxUd/AvCsw+owrhXRwXAIfKlAC8JTp+Kkg8+OP+PO39HIfOyWk3Z8UxEo5?=
- =?us-ascii?Q?/F5URflWfiWP6nGRWK38Y01FdfGpcSxdCAcxI3PrXoHJZshGTG8EjXMf2z/F?=
- =?us-ascii?Q?A1IcmJysDIFUSU9UNQY4K9twb2FO2IYVPHCpnYNqYi5lsD96VXodKeG70yix?=
- =?us-ascii?Q?ujAwujO0tox2wUeLuVJci+g+p8pOuq0WviJHG3FlTZIwjXOIXQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6756.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5JbmZ44DNV/wdYYtpG0tYlmieeQVmFPsK/H9u0yn0+LUxUwx4Py2ln8HzMDS?=
- =?us-ascii?Q?QHhc68zTT8kTT3p+5k42a31Odlqg5wEXYiGS2tjbgC38yiHipLSQm2PqmwRa?=
- =?us-ascii?Q?xQY+YDZw5p4L848JFG8NVvkLo8OXGQg/SQOPdmJO3WOpuOdLqzbmmEEf7F1K?=
- =?us-ascii?Q?NG+Zh1EibtFpJi2wmREcQ7k15ADh1D/yvOFTmNzrOHFP+5q0XE5v6uHirF9h?=
- =?us-ascii?Q?HTx8Is2kWUh+LuVmYK2c6soJHsvaGNrYVPCtqOvkENP6U/fRt2ioBfxV1ZB7?=
- =?us-ascii?Q?YHmYXPJ6ghQGhIEJy/6sIH1fyCWaiYYzb2g25QGlxRo7zsiqLnX8jz2VOpB7?=
- =?us-ascii?Q?K26khaskmX8T61Sog77whCD7MyQR2pJg1VPM63SbfsdK3UF9yr3p0WW7ZdM1?=
- =?us-ascii?Q?i+Z8AKUfoXDgU/BtfM0fHb8B5FsysbX3nZjkYNXssaCU5YlFl0bFFSZBbHDI?=
- =?us-ascii?Q?jUCNIJqwWjXxzzTQk3GoYQlnD6Su1VI+LwFDfr421t5FbbT51GV7jEsQhq8b?=
- =?us-ascii?Q?tYA41qZ5PUhhUP62cOpXo9E+VFPcf3K59TngDFy0QSTVd99OrzKQT+cGawfN?=
- =?us-ascii?Q?CoaUminv0bb0L1JUIIGSyOhgo/Bwl4vwpH/vfH5iCJYJAR5VQ/3zKCiamzB4?=
- =?us-ascii?Q?+J0FSb0rabHfwJ0oqFDG2fgW7Bzgee7twHLeZrre9WAGNl782IMBuC/8v4IA?=
- =?us-ascii?Q?ZoipY2a+J9T3Z0w5qEjLlCK0pr12yhWCgVr7dn1Yptw9ENkm0ZWnoIa2Tw9i?=
- =?us-ascii?Q?GU8ogm61kHvNUOaEExgJEZ2OZxH/4uKBN6vXTlSc05ont2wm0uPrdB0mOz6T?=
- =?us-ascii?Q?ER0XPiLVtyX8ODw5ABlw0he0530+MwGSOXo7OG/DoghX0bdXjVRQRz0JQaok?=
- =?us-ascii?Q?ykMZ3b4o7lwDsYWXsUD1lx+t6qAdw4vfRrXw+FBu7/A2hT8uRFw8cZdYhYe/?=
- =?us-ascii?Q?h7yv1cJAw8ii02PdmR1pBOMSl68N2aJifm/6wxxGWHvUQ+yzaQYSqq7vpPHi?=
- =?us-ascii?Q?48rbqc60tG2hciPf9F3dLlAhnVCHXi2q/3coerE/JJpbS2LFmCVMVYvET7Ka?=
- =?us-ascii?Q?YJvW+WraTRcKXZMiBWOmsjpP89jqyVU7TpTIlMJ/liMj+aanX5D6qk4IocWe?=
- =?us-ascii?Q?vYvZBgrbF5LZKQ1zrORwVnCmkwsi3LzfV1xj7BoFxfxacAIIKjgLLi2g5Ulk?=
- =?us-ascii?Q?TDD1ltzojZ78TiCMYKL66k+AcBDXud8o/cLb87PqfY0Bt0XThx5Cu0+a/l3t?=
- =?us-ascii?Q?4inmfil7/cSs0OEj2hV7z7k56REEkMJ+yYw4xpkPnYvHBjzB9bmVTymgtKg9?=
- =?us-ascii?Q?NqHlaoAevo9w53ES7F6srung8kpPBU+65Zj4ys2MmZ83Ic2FU+xGS7EVt0hT?=
- =?us-ascii?Q?d9NQ7CuJnKddGWsURYGpKnmyhtNSKPDJ3PV4L4w44fO4kIzobgS/P7DCw3rX?=
- =?us-ascii?Q?QcQkKUSYl5FZ2nxvcPnetub15KoX3Q71IxAqv6hf5X39wtrHeMxdVaGSzEfS?=
- =?us-ascii?Q?p4SB7C55q7LqpURvSCy2FEtd/Kxcm1AEpQpKA4g/vgLmaNdgkIPWjgQSNhHR?=
- =?us-ascii?Q?nWkeWOFXwmCmCp/ndUOoPMcBcdMwWjfIC9EndILi/EAozCY+TR/yoacMyjJx?=
- =?us-ascii?Q?WQ=3D=3D?=
-X-OriginatorOrg: jaguarmicro.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 965a7b23-570a-4f89-08b8-08dd128276c5
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB6756.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 03:36:10.6142
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: upCJCPUDPFQZSelF8u+JSx28NxD03qKoEk6qOSMDj3LZwxW2Ahqjg1OrUeWcgcynMgyIiKu+6Q7bjai1ECfowYTKjiWHXraXhoG3sgzifR0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6681
+References: <20241201112550.107383-1-zhenghaoran154@gmail.com>
+ <CAL3q7H4P9O-6jay6cPYLrrX85y1t52QRQ=_feifY_A0D7p_gLQ@mail.gmail.com> <CAKa5YKiedRVhJoORSa3t7cENo8sZ_Nxq4bHfiMvbDrh_ccvcTg@mail.gmail.com>
+In-Reply-To: <CAKa5YKiedRVhJoORSa3t7cENo8sZ_Nxq4bHfiMvbDrh_ccvcTg@mail.gmail.com>
+From: haoran zheng <zhenghaoran154@gmail.com>
+Date: Mon, 2 Dec 2024 11:36:19 +0800
+Message-ID: <CAKa5YKjmKA8hGJgp_Px1-EGifLY_N9gR13=i54PoDcb=dMjMeA@mail.gmail.com>
+Subject: Re: [PATCH] fs: Fix data race in btrfs_drop_extents
+To: Filipe Manana <fdmanana@kernel.org>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yuxue Liu <yuxue.liu@jaguarmicro.com>
+I read the relevant code again and found that modify_tree is also used for
+judgment at line 331, but the judgment here may lead to the release of the
+path. Will this cause other problems such as unexpected path release?
+331: if (recow || !modify_tree) {
+332:     modify_tree =3D -1;
+333:     btrfs_release_path(path);
+334:     continue;
+335: }
 
-Implement the kick_vq_with_data vDPA callback.
-On kick, we pass the next available data to the hardware by writing it in
-the kick offset.
-
-Signed-off-by: Yuxue Liu <yuxue.liu@jaguarmicro.com>
----
- drivers/vdpa/virtio_pci/vp_vdpa.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/vdpa/virtio_pci/vp_vdpa.c b/drivers/vdpa/virtio_pci/vp_vdpa.c
-index 16380764275e..a9034c59b020 100644
---- a/drivers/vdpa/virtio_pci/vp_vdpa.c
-+++ b/drivers/vdpa/virtio_pci/vp_vdpa.c
-@@ -367,6 +367,14 @@ static void vp_vdpa_kick_vq(struct vdpa_device *vdpa, u16 qid)
- 	vp_iowrite16(qid, vp_vdpa->vring[qid].notify);
- }
- 
-+static void vp_vdpa_kick_vq_with_data(struct vdpa_device *vdpa_dev, u32 data)
-+{
-+	struct vp_vdpa *vp_vdpa = vdpa_to_vp(vdpa);
-+	u16 qid = data & 0xFFFF;
-+
-+	vp_iowrite32(data, vp_vdpa->vring[qid].notify);
-+}
-+
- static u32 vp_vdpa_get_generation(struct vdpa_device *vdpa)
- {
- 	struct virtio_pci_modern_device *mdev = vdpa_to_mdev(vdpa);
-@@ -472,6 +480,7 @@ static const struct vdpa_config_ops vp_vdpa_ops = {
- 	.get_vq_size	= vp_vdpa_get_vq_size,
- 	.set_vq_address	= vp_vdpa_set_vq_address,
- 	.kick_vq	= vp_vdpa_kick_vq,
-+	.kick_vq_with_data      = vp_vdpa_kick_vq_with_data,
- 	.get_generation	= vp_vdpa_get_generation,
- 	.get_device_id	= vp_vdpa_get_device_id,
- 	.get_vendor_id	= vp_vdpa_get_vendor_id,
--- 
-2.34.1
-
+On Mon, Dec 2, 2024 at 11:13=E2=80=AFAM haoran zheng <zhenghaoran154@gmail.=
+com> wrote:
+>
+> Thanks for the explanation. I will fix the description and resubmit the p=
+atch.
+>
+> On Mon, Dec 2, 2024 at 1:39=E2=80=AFAM Filipe Manana <fdmanana@kernel.org=
+> wrote:
+>>
+>> On Sun, Dec 1, 2024 at 11:26=E2=80=AFAM Hao-ran Zheng <zhenghaoran154@gm=
+ail.com> wrote:
+>> >
+>> > A data race occurs when the function `insert_ordered_extent_file_exten=
+t()`
+>> > and the function `btrfs_inode_safe_disk_i_size_write()` are executed
+>> > concurrently. The function `insert_ordered_extent_file_extent()` is no=
+t
+>> > locked when reading inode->disk_i_size, causing
+>> > `btrfs_inode_safe_disk_i_size_write()`to cause data competition when
+>> > writing inode->disk_i_size, thus affecting the value of `modify_tree`,
+>> > leading to some unexpected results such as disk data being overwritten=
+.
+>>
+>> How can that cause "disk data being overwritten"?
+>> And the results are not unexpected at all.
+>>
+>> The value of modify_tree is irrelevant from a correctness point of view.
+>> It's used for an optimization to avoid taking write locks on the btree
+>> in case we're doing a write at or beyond eof.
+>>
+>> If we end up taking a write lock when it's not needed, everything's
+>> fine - we just may unnecessarily block concurrent readers that need to
+>> access the same btree path (leaf and parent node).
+>>
+>> If we don't take a write lock and we need it, we will later figure
+>> that out and switch to a write lock.
+>>
+>> > The specific call stack that appears during testing is as follows:
+>> >
+>> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DDATA_RACE=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>> >  btrfs_drop_extents+0x89a/0xa060 [btrfs]
+>> >  insert_reserved_file_extent+0xb54/0x2960 [btrfs]
+>> >  insert_ordered_extent_file_extent+0xff5/0x1760 [btrfs]
+>> >  btrfs_finish_one_ordered+0x1b85/0x36a0 [btrfs]
+>> >  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
+>> >  finish_ordered_fn+0x3e/0x50 [btrfs]
+>> >  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
+>> >  process_scheduled_works+0x716/0xf10
+>> >  worker_thread+0xb6a/0x1190
+>> >  kthread+0x292/0x330
+>> >  ret_from_fork+0x4d/0x80
+>> >  ret_from_fork_asm+0x1a/0x30
+>> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3DOTHER_INFO=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>> >  btrfs_inode_safe_disk_i_size_write+0x4ec/0x600 [btrfs]
+>> >  btrfs_finish_one_ordered+0x24c7/0x36a0 [btrfs]
+>> >  btrfs_finish_ordered_io+0x37/0x60 [btrfs]
+>> >  finish_ordered_fn+0x3e/0x50 [btrfs]
+>> >  btrfs_work_helper+0x9c9/0x27a0 [btrfs]
+>> >  process_scheduled_works+0x716/0xf10
+>> >  worker_thread+0xb6a/0x1190
+>> >  kthread+0x292/0x330
+>> >  ret_from_fork+0x4d/0x80
+>> >  ret_from_fork_asm+0x1a/0x30
+>> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> >
+>> > To address this issue, it is recommended to add locks when reading
+>> > inode->disk_i_size and setting the value of modify_tree to prevent
+>> > data inconsistency.
+>>
+>> Can also use data_race() here, as it's a harmless race.
+>>
+>> Also, please use a proper subject like for example:
+>>
+>> btrfs: fix data race when accessing the inode's disk_i_size at
+>> btrfs_drop_extents()
+>>
+>> Also please update the changelog with a proper analysis - saying it's
+>> a harmless race and why.
+>>
+>> Thanks.
+>>
+>> >
+>> > Signed-off-by: Hao-ran Zheng <zhenghaoran154@gmail.com>
+>> > ---
+>> >  fs/btrfs/file.c | 2 ++
+>> >  1 file changed, 2 insertions(+)
+>> >
+>> > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+>> > index 4fb521d91b06..189708e6e91a 100644
+>> > --- a/fs/btrfs/file.c
+>> > +++ b/fs/btrfs/file.c
+>> > @@ -242,8 +242,10 @@ int btrfs_drop_extents(struct btrfs_trans_handle =
+*trans,
+>> >         if (args->drop_cache)
+>> >                 btrfs_drop_extent_map_range(inode, args->start, args->=
+end - 1, false);
+>> >
+>> > +       spin_lock(&inode->lock);
+>> >         if (args->start >=3D inode->disk_i_size && !args->replace_exte=
+nt)
+>> >                 modify_tree =3D 0;
+>> > +       spin_unlock(&inode->lock);
+>> >
+>> >         update_refs =3D (btrfs_root_id(root) !=3D BTRFS_TREE_LOG_OBJEC=
+TID);
+>> >         while (1) {
+>> > --
+>> > 2.34.1
+>> >
+>> >
 
