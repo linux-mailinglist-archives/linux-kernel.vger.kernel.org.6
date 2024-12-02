@@ -1,153 +1,180 @@
-Return-Path: <linux-kernel+bounces-427558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AB79E02C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:04:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84C54169CB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:02:47 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314DF20899E;
-	Mon,  2 Dec 2024 12:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i8JuK9t+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A7A9E02BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:03:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128B31FF7AD
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733144334; cv=none; b=s+mheSs75UpJCI7eaRiR2Be3/5ZEL6ZC6KS0nRi1HpoCBWMH/PqHFTZdVu7nk83GkdKDRv0OB8qcugaLfsaKRaXOmtUdazf7jhcNjfG7mT3PAT2jf3tL7p6oXfdZzx6fsz0XR1Mja/Arm6ZDiT9g1hZTZGee/HtLPH5OK+IlsTc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733144334; c=relaxed/simple;
-	bh=mY0uQvqj3w6aRHfh17h6ieQ/XBDaLu0Zxfk6AWTaqvU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gw8bH17uGCPxMgnk6qQ7OkG0X/y3RBRDHYmMWVzeTTr+vhMHQ0Hf7gHWCYsciBgr0upgelJK/FAgrz6uMVqIkU5jFyB4dUYUMRJxHv8Gu/ttVaAECKes9eFM7eFAbAnFf2RpoYIuKVr5dmyIpcExuYFBBrYoDG9ptPkQhvmj5QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i8JuK9t+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733144332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8HP8ABYEm75mn1BmFryMatwFYZ4LLrOWgOCnAtcF7Tc=;
-	b=i8JuK9t+VnWmMdKPCdtDlD0jANIjnbTSuJvn1tQNmbFJYVLVnO0VOyIbUjSfrrgf/rj+yd
-	wm4VsI0PinYv9iS7tDeRIoKNyELHUpLC6WYiNJJl8vO73F9my7QYBj0bE21s0d/3MMu5+x
-	UZTHPSb4IhRgdMteWMrgycS0il3CWJ0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-542-2zDHXoRjPpyrImBN_4zy5g-1; Mon,
- 02 Dec 2024 07:58:47 -0500
-X-MC-Unique: 2zDHXoRjPpyrImBN_4zy5g-1
-X-Mimecast-MFC-AGG-ID: 2zDHXoRjPpyrImBN_4zy5g
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23159284173
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:03:16 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6334020968C;
+	Mon,  2 Dec 2024 12:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DKyK0hww"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3121D1964CCE;
-	Mon,  2 Dec 2024 12:58:45 +0000 (UTC)
-Received: from t14s.cit.tum.de (unknown [10.39.194.150])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EFAD6195605A;
-	Mon,  2 Dec 2024 12:58:40 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Zi Yan <ziy@nvidia.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: [PATCH v1 5/6] mm/page_alloc: forward the gfp flags from alloc_contig_range() to post_alloc_hook()
-Date: Mon,  2 Dec 2024 13:58:11 +0100
-Message-ID: <20241202125812.561028-6-david@redhat.com>
-In-Reply-To: <20241202125812.561028-1-david@redhat.com>
-References: <20241202125812.561028-1-david@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062A7209687
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733144343; cv=none; b=rfixsBHj4NLdls1dCIZocEphKiW1ENJZMXKT1b8uQIJ7PWrrH3cpliPfh4+NUF2bWri6LlaomrdfPrE4GYa7bzc5jtAloeAuMrTnpH2XA2Haud08XgzkOSDeS5x6Y0+39UGpVtmAgkJ2NI0ZxcZPkYQSCEsvFahd6PXXFJmjmqg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733144343; c=relaxed/simple;
+	bh=84F50RDLSxwvaiL/Ut5/RJLgaAhNDidEJM6Aelx6NOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ElQ6jhjutwCbvMlRzx6jdJkAJZyBcOmk1r+Ya2cdjgdxVRjylJ8LyxaNEvb1Xo16iXyhOxq2WPwBZfiyewyoYGwTtSFk+nRpw3O+x+KWCpLogwGapDt21dkcshj1kQNbT7NUZRwgOdyuzRbmNgHq3WCRE6XLu7AhWbEalFPTag4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DKyK0hww; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21583cf5748so9462225ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 04:59:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733144341; x=1733749141; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6CCvtQVXQrLvAOM+4VRXFfpLmG3wrstufKddBuVhAJQ=;
+        b=DKyK0hwwQNncIv2W+kktnDsm+uwGi61NVsPGfzI7wRLdfQ3Ka06Bz5srnrjKpCnLN5
+         2vBDGzgB4LEll0nb7jnCWNlmaUxAEPbSBgTDoGA7A316P+8f9B3GuYx+WfJ2oH8bi51z
+         JUdDipAhSc/o+zOrFYarR7G3a/EkeY3zFAyIG9pHwDE2SoefVa107fA1iheDoY6FOGM6
+         p6ek52PQAGAnJySRRmfaBdQQQktJV4gtRdlcIUmqY6JG5BS1+1B/DwtoXBJtsTiSJW6V
+         HDDYwwwFxkTVUFck4r8P4zxAW5DJDOqJ/xH6D/g33C0zG8Q4VXCOv0iRf8Gy7G3Folys
+         yJow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733144341; x=1733749141;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6CCvtQVXQrLvAOM+4VRXFfpLmG3wrstufKddBuVhAJQ=;
+        b=pEKOz7WNjwp/EpAI5FDbqb1z9YSyomcPtir0D5T0vnjqpM98QXktaYrNTAjTFHLUMx
+         KDRRXu8LXlNLImSupMY0s/hag6quBnCC0FZ9/+jIIDPdpFwnSHVD2BMp2LNfjoP+aT2t
+         Y3idsx4+FAAvdffzBnsrYMgND4IZkV9ZqAJmbO0IAwIKRtE7qjQS7JN02hlGW0ONXdg5
+         //JDIpzIf5A3GKnOfpCheE/vgroIGbl+KJp5p8NXP/buShCmbx5rtVlWv9QVOrjDj69L
+         JcwbX7ZJE/6hne0U/9NY3CclhgC+HbYpdtxTV8LYMhtDg4IKkYMAlhLNwrt8wJMNBK28
+         SuQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRADNKdHTnyun/K6Zcw1a4+k8vV++kV+/pfXBEnsvD+btYwtZBXCmAUjdoNFHF2xWKMXPJsYGvPUai88Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA3dfrsdm8YgXaXYCOe91nMePeXt6PxJT8yiuqW2etLmKR+Waa
+	jkTXftTPlkIM2E5mBL7V2usSP15F/Vh6lBG/t7bhWdf9X+N6j4PEY3xU1vPoZg==
+X-Gm-Gg: ASbGncuzNEu/UhSr9X5oIFPw0F71aN4MBme45VrrbQtRA6sbNaUUGRIWHZhMwCLOygC
+	Ybc8ZRGRAd9GLbTB9E9KvyYWTD1QhrSWG6itBDw7+L9dEhxTJwxeCzTCPjYOJd5JA6EbDF2ik1W
+	zr8rV0sF/RfAWJ9o71oYoytgw6Tv1apEM1Qwk3Vs+RTf+33vdzWUG1pAyQ3b/lTn7zW14Bd4Xft
+	ip+Y5by09OfYTpcMmBLgu9ySMvRRVbjFklkpi3sBwGa8im5qO+q5uSks+QPyA==
+X-Google-Smtp-Source: AGHT+IGb8lymZBMlKvEv3D6XKmMObg2pfnQBEi8/oeAOIIzR3QMSbRXUP7cxeVvRLLDRh2EmtlIy1g==
+X-Received: by 2002:a17:902:e5c5:b0:215:6cb2:787e with SMTP id d9443c01a7336-2156cb27b96mr105778365ad.9.1733144341390;
+        Mon, 02 Dec 2024 04:59:01 -0800 (PST)
+Received: from thinkpad ([120.60.140.110])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2156c99a827sm34935945ad.166.2024.12.02.04.58.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 04:59:00 -0800 (PST)
+Date: Mon, 2 Dec 2024 18:28:45 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: kw@linux.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+	lpieralisi@kernel.org, shuah@kernel.org, kishon@kernel.org,
+	aman1.gupta@samsung.com, p.rajanbabu@samsung.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org, robh@kernel.org,
+	linux-kselftest@vger.kernel.org, stable+noautosel@kernel.org
+Subject: Re: [PATCH v2 1/4] PCI: qcom-ep: Mark BAR0/BAR2 as 64bit BARs and
+ BAR1/BAR3 as RESERVED
+Message-ID: <20241202125845.rp4vc7ape52v4bwd@thinkpad>
+References: <20241129092415.29437-2-manivannan.sadhasivam@linaro.org>
+ <20241129195537.GA2770926@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+In-Reply-To: <20241129195537.GA2770926@bhelgaas>
 
-In the __GFP_CONT case, we already pass the gfp_flags to
-prep_new_page()->post_alloc_hook(). However, in the !__GFP_CONT case, we
-essentially pass only hardcoded __GFP_MOVABLE to post_alloc_hook(),
-preventing some action modifiers from being effective..
+On Fri, Nov 29, 2024 at 01:55:37PM -0600, Bjorn Helgaas wrote:
+> On Fri, Nov 29, 2024 at 02:54:12PM +0530, Manivannan Sadhasivam wrote:
+> > On all Qcom endpoint SoCs, BAR0/BAR2 are 64bit BARs by default and software
+> > cannot change the type. So mark the those BARs as 64bit BARs and also mark
+> > the successive BAR1/BAR3 as RESERVED BARs so that the EPF drivers cannot
+> > use them.
+> 
+> "Default" implies an initial setting that can be changed, but you say
+> "by default" and also "software cannot change the type."  Can they be
+> anything *other* than 64-bit BARs?
+> 
+> If they're hardwired to be 64-bit BARs, I would just say that.
+> 
+> > Cc: stable+noautosel@kernel.org # depends on patch introducing only_64bit flag
+> 
+> If stable maintainers need to act on this, do they need to search for
+> the patch introducing only_64bit flag?  That seems onerous; is there a
+> SHA1 that would make it easier?
+> 
 
-Let's pass our now properly adjusted gfp flags there as well.
+But that's not the point of having noautosel tag, AFAIK.
 
-This way, we can now support __GFP_ZERO for alloc_contig_*().
+Documentation/process/stable-kernel-rules.rst clearly says that this tag is to
+be used when we do not want the stable team to backport the commit due to a
+missing dependency.
 
-As a side effect, we now also support __GFP_SKIP_ZERO and__GFP_ZEROTAGS;
-but we'll keep the more special stuff (KASAN, NOLOCKDEP) disabled for
-now.
+If we really want stable team to backport the change with dependencies, then the
+dependencies should be mentioned using the SHAs:
 
-It's worth nothing that with __GFP_ZERO, we might unnecessarily zero pages
-when we have to release part of our range using free_contig_range() again.
-This can be optimized in the future, if ever required; the caller we'll
-be converting (powernv/memtrace) next won't trigger this.
+From Documentation/process/stable-kernel-rules.rst:
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/page_alloc.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+```
+* Specify any additional patch prerequisites for cherry picking::
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 54594cc4f650..71d70bc0ad79 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6364,7 +6364,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
- 	return (ret < 0) ? ret : 0;
- }
- 
--static void split_free_pages(struct list_head *list)
-+static void split_free_pages(struct list_head *list, gfp_t gfp_mask)
- {
- 	int order;
- 
-@@ -6375,7 +6375,7 @@ static void split_free_pages(struct list_head *list)
- 		list_for_each_entry_safe(page, next, &list[order], lru) {
- 			int i;
- 
--			post_alloc_hook(page, order, __GFP_MOVABLE);
-+			post_alloc_hook(page, order, gfp_mask);
- 			set_page_refcounted(page);
- 			if (!order)
- 				continue;
-@@ -6393,7 +6393,8 @@ static void split_free_pages(struct list_head *list)
- static int __alloc_contig_verify_gfp_mask(gfp_t gfp_mask, gfp_t *gfp_cc_mask)
- {
- 	const gfp_t reclaim_mask = __GFP_IO | __GFP_FS | __GFP_RECLAIM;
--	const gfp_t action_mask = __GFP_COMP | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
-+	const gfp_t action_mask = __GFP_COMP | __GFP_RETRY_MAYFAIL | __GFP_NOWARN |
-+				  __GFP_ZERO | __GFP_ZEROTAGS | __GFP_SKIP_ZERO;
- 	const gfp_t cc_action_mask = __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
- 
- 	/*
-@@ -6541,7 +6542,7 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 	}
- 
- 	if (!(gfp_mask & __GFP_COMP)) {
--		split_free_pages(cc.freepages);
-+		split_free_pages(cc.freepages, gfp_mask);
- 
- 		/* Free head and tail (if any) */
- 		if (start != outer_start)
+    Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
+    Cc: <stable@vger.kernel.org> # 3.3.x: 1b9508f: sched: Rate-limit newidle
+    Cc: <stable@vger.kernel.org> # 3.3.x: fd21073: sched: Fix affinity logic
+    Cc: <stable@vger.kernel.org> # 3.3.x
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+  The tag sequence has the meaning of::
+
+    git cherry-pick a1f84a3
+    git cherry-pick 1b9508f
+    git cherry-pick fd21073
+    git cherry-pick <this commit>
+```
+
+Here I did not intend to backport this change with commit adding only_64bit flag
+because, I'm not sure if that dependency alone would be sufficient. If someone
+really cares about backporting this change, then they should figure out the
+dependencies, test the functionality and then ask the stable team.
+
+- Mani
+
+> > Fixes: f55fee56a631 ("PCI: qcom-ep: Add Qualcomm PCIe Endpoint controller driver")
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-qcom-ep.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > index e588fcc54589..f925c4ad4294 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > @@ -823,6 +823,10 @@ static const struct pci_epc_features qcom_pcie_epc_features = {
+> >  	.msi_capable = true,
+> >  	.msix_capable = false,
+> >  	.align = SZ_4K,
+> > +	.bar[BAR_0] = { .only_64bit = true, },
+> > +	.bar[BAR_1] = { .type = BAR_RESERVED, },
+> > +	.bar[BAR_2] = { .only_64bit = true, },
+> > +	.bar[BAR_3] = { .type = BAR_RESERVED, },
+> >  };
+> >  
+> >  static const struct pci_epc_features *
+> > -- 
+> > 2.25.1
+> > 
+
 -- 
-2.47.1
-
+மணிவண்ணன் சதாசிவம்
 
