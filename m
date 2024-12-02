@@ -1,198 +1,297 @@
-Return-Path: <linux-kernel+bounces-428369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89DA9E0E36
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:51:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5569E0E0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:43:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F3E1B2D3F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:55:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D637B2A8F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67D61DF242;
-	Mon,  2 Dec 2024 20:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AEC1DF247;
+	Mon,  2 Dec 2024 20:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IkGgz8VU"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="m7QFMEMU"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2061.outbound.protection.outlook.com [40.107.237.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D331DE3C1;
-	Mon,  2 Dec 2024 20:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733172931; cv=none; b=omx0P132r/5N9RBeEUYXAayxZ89WjlOqkYeJ8E2lrnCslw0I/f5vwv6BmM27RsVLvtNb8aqeZZrni9Kc9Zr4ubDkCYjCrjhd6wbloKq+VA6v4Lv5xsjttF643wA4PSGpoghKheqFGmptcGXp+3JN2dLwcLr7txc9S33Z11ptt1Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733172931; c=relaxed/simple;
-	bh=I6UFKe8dkyc5kPGgizqXsmvegeO2C7hOpnig+uuVm4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVqAN8L0l24hJTnVfMvQZh0m35HEn3CBTdC1JFgZzzrM9XjVgmMU40p3qztI3Ei3dGyHlF9Pu331JNFx14jvCcgFdwLgylnGCgrXMf2nxZQftgK6S6HXaITG0gtR01GO+cD0+RwW3MYWo5HyCKa4jSHTJtXbHe2QmTl2ySj3Fk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IkGgz8VU; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21578cfad81so14994695ad.3;
-        Mon, 02 Dec 2024 12:55:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733172929; x=1733777729; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZosFDZP4vQYcO/8JOiXFBV0OyJNAbeoH1oN1YWzR81s=;
-        b=IkGgz8VUjcCN+EDrCUlMxFR2KtF5ULadyzRk8ifpFUKh+iiUQ5qFBFdrjA3pxhc8L6
-         RVMzY4L2FQpjlkJXrX0oHL+nM0CQhvfQNWXI5SsoeLIM99Y89nKEmR6TEK+Adlxoqbze
-         80hEUlJkar5EpsFrglK98MTXGXgsr/YS7mGEK7N16T6cCMYvFbWJd/+Q6otY/E6fJ7WX
-         ktHq5rPr8ZH3V9XSBc7sLK1qN5d8iqGdG/KipJ2rfZpt4A5AkpsNv/tyn1i9mT9ovjtn
-         3+HZd6xkS3s/JkKOyN59WpvrTxDyKG5JqPK8WbR8y0OYkGGkHyu90ooM3mUfRPplPseO
-         muvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733172929; x=1733777729;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZosFDZP4vQYcO/8JOiXFBV0OyJNAbeoH1oN1YWzR81s=;
-        b=qNFL4eydeVoVLbMYiMRYscdyy4mEoKJZGFM2JDD9tb9cRMiNXoomfTb6LksT/sw2zb
-         Xbre2SKSfymg44Xr2gXsO0qWDe8XeMvqNlFIflT5kNbUDdPtKRYMgQGL4PFVlnTKRjpQ
-         NGb2QQX3+YVbBazySHn2z4wvPUiCx0Ue/IXh1Mx0VTSJ7dxS4TS7E0LTlLpoijmZ+zDw
-         Qi1btbJ2Lttp6BcKmL3ItyD912EFKIRVaow5YVblH/Z6RjIrs3rLHSnBhzGnk3uI2Vvk
-         XGL5wf6D9YJHI7v9EvCElNz0LLE0O71S1pLYN4AHU+jMOsy5sUG2GxFBOped1vpZl3tF
-         X3Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYcsRo96Wms2bLLIirJqg6wuA+pPliUO3LsGpFrYaIu+vafVnujttJiobNErj+N6ROtdENS9ofZs5P/EI=@vger.kernel.org, AJvYcCXKMxrTJ4hy7Bvgp3S11STDXJ9o5ngoqA+uztoOv31FovgWzfHkOKom3peAqzt1Uv+PI4xDz0pK@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHub6Jr3P27d0gZhE1iFpD8wRp6Fq/DxTai6d5JLGJiTzlSqHV
-	MZM5QtYV+JvSe1bhYeQu+c0JdKNsnko9qflchukVSz20XQUpMy8b
-X-Gm-Gg: ASbGncv0VHHuyNnU3WtXNg4+axAtVQ61x4MgGgJMUDaPF1MHMWBt1+9FzwSu8lcLhhU
-	WxzphLNq/3BJ3xIhiH5BM8y/YpWXMdm2B0zjSMhQQupmygPHyBvyy99uzz/gWlix6fwO/hon7GY
-	oQE2e6PBOUrRXHbH2jSqmZndyPBzs/CgN0AdB5Twx+e/AioByzoip7xF5594WhywwPzYVC+gVcu
-	+WqPzWwrIHTirKB8NRXd6AKwohuQ42DZNBigHb7TVJdEuThVSjgtkpogMNPBJQ=
-X-Google-Smtp-Source: AGHT+IElGGe59u//tXIW1SDvRdMG0YvH5t0Jv776Opki8hoQ0vLT2C5tixdBFyywAdKgliaQYUenXA==
-X-Received: by 2002:a17:903:2442:b0:215:9a73:6c45 with SMTP id d9443c01a7336-2159a7376e6mr69749205ad.22.1733172928757;
-        Mon, 02 Dec 2024 12:55:28 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21589aa5478sm27696925ad.59.2024.12.02.12.55.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 12:55:28 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 2 Dec 2024 12:55:27 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, pabeni@redhat.com, edumazet@google.com,
-	kuba@kernel.org, mkarsten@uwaterloo.ca, stable@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [net] net: Make napi_hash_lock irq safe
-Message-ID: <ddeca293-5938-42f3-9722-748050ab0aa0@roeck-us.net>
-References: <20241202182103.363038-1-jdamato@fastly.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2738619BBA;
+	Mon,  2 Dec 2024 20:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733173046; cv=fail; b=KC/WZEB+3YXwq0A4pfxRPKaWZdTvncxNKDhk3g7dCNJY5BruVQgw6xtgc1gPAkaTo4P42xuW15zmYWuPMRt+9Cdu2CLKRh6JS9XWVCyGenFe0I82inELhRWxduB9ZPic9EuXRac0xzgEQFYR7YZlo13u7xWGnCVh8flKJHU5iNY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733173046; c=relaxed/simple;
+	bh=UAi2hgLlEDUQGo3oXiSuqyWx11liyb30FKtp70wGXFg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UO1DDygjRC43NaPJIlcnJ6loKV0GNOvwT95dwT7yVGXl6NMQ1D6/Nte0mAAvV2ZqY+Mx8P0JolvU8iFV1Jt6WSTs8rnhkOFAAde1TikKHIv52CvV7XYMcF5J2NBAPyOgu6Dvm2E1aNF5+PPfj5GIAQINtlHU7e1Jn4uee/FTWdY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=m7QFMEMU; arc=fail smtp.client-ip=40.107.237.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l/ULhJoUK3qu8Gbv7GV5su9AaDVM/NolNHJTMJ8PCuooWXgLGCkp8FfhViRQc0H/oTyrmYe5P7WQw5PvuX4YixfcEK+xri2ofm0lgy0/KeH0qGS8Xo793XuIkRmCftGREoXCs665mSHEwXAG9sJ5zr2+b+3QjmoI/u9RWBd+KRIvol2zUWn6WmJ7EozMM7JyLyJ5+UC2qMVh1qEtvx+fyQ/gYwHSZte2a72LjpuISGj/LYxowVDYlZ4508WiWZpoe+DbnxG2mnW7JcdHtpvhSxqJRdMN6KwXCqDXojEl19HS/VAUTUYufaJ4gZgt5rlHaa05QuYjv1t7dV5Y/lSfZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HR6U/LGgELyvgRoAYaZPBzzCcHOXKVqE3k19mTTHQqU=;
+ b=tX8cnFSVU2xsfU+oa/2FNr+GO5agRo820Cr7/bFo+OSvpJq86NpUHi3EC2JHibjMAgKkDxVru7lWs5LbeDv2mmGaUpvzqaE0QYMHLpOH7d9UUfiHKEZrqRyqjyuTyRQN4PwfV5eC5fQKAAVT7CoAhPkr2q7kqvJa03iuFmTS9tn310Uh3qjyw9YEZL2xDwChqwBhgh6Tied6q5wURYlfRtrU3UHgm0NB0gqctYgpYzIJFppd8Jp71yVy8QX9rgKQRjLdrg95gFLBarLBrEfEk3F8odylChwilpwmc0BmpcVK2vp6bH3mLqkcvrxxMzWO78rt8LfiVQ47DwHKSLBtKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HR6U/LGgELyvgRoAYaZPBzzCcHOXKVqE3k19mTTHQqU=;
+ b=m7QFMEMUQqDEjLfc46SuMKfgRfnqH/jWJwpV5p5uoYQAbNFi0jzFOQVId/dXgftVDvdCPKDdWTlYiU/3V2HkWDMivUM5CLYSD6bOFUH3ErNo3VtWRHlTWk0DxMR3PB2yyCjCp4bE1vXY8CXhyKjmXO2i5+5aEW/MgPEjYMNs1p8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by DS7PR12MB6213.namprd12.prod.outlook.com (2603:10b6:8:97::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
+ 2024 20:57:15 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 20:57:15 +0000
+Message-ID: <6f4aabdb-5971-1d07-c581-0cd9471eff88@amd.com>
+Date: Mon, 2 Dec 2024 14:57:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 5/6] KVM: x86: Always complete hypercall via function
+ callback
+Content-Language: en-US
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Binbin Wu <binbin.wu@linux.intel.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>, Kai Huang <kai.huang@intel.com>,
+ Xiaoyao Li <xiaoyao.li@intel.com>
+References: <20241128004344.4072099-1-seanjc@google.com>
+ <20241128004344.4072099-6-seanjc@google.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20241128004344.4072099-6-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0032.namprd04.prod.outlook.com
+ (2603:10b6:806:120::7) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202182103.363038-1-jdamato@fastly.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|DS7PR12MB6213:EE_
+X-MS-Office365-Filtering-Correlation-Id: dfbfb791-e2f8-43b3-2f0b-08dd1313e673
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MDZmSDBHQnc3dHgrK0hDaWRUNTd5TXR1UmxhaDB3bzAzMTFRaXZ5anVBcXgv?=
+ =?utf-8?B?T2FnRXFITC9MTjZHMG8vM3FWVXRZc0xZYkt4TmtLT1RSVWswWURrbUFCUmRU?=
+ =?utf-8?B?WGwzdFdsMUpvTkNvMEw3Y0xQSGo4QU9rUGRJNWNTTUpXN01TYjcwTEROMGxr?=
+ =?utf-8?B?NXZUSzVqUk80di9NYnlWV3pyOTZxRkw4RFQrZnl3bEJPSXhiRS9OT1BDSzlS?=
+ =?utf-8?B?clpROGNjLy9OQ2ZFaTdtSHZRZEhxVDlEc2cxM2tnSU5OWlRnWFA3cmtWSFpD?=
+ =?utf-8?B?dGVUcFM1TU4wYW1qblRvL3VEaTByemdEdlJpUXJDeU1QdW1tV29mcXpuMTB5?=
+ =?utf-8?B?WEV1L3VkZE5PZ3pzR01LMWVYQ2dTaWxrQXhaeldZRXFpMHkzbU9WTEpQRlgr?=
+ =?utf-8?B?VWNHVEZOTXlmb1FXbUZYcTltcVNvL2RVNldlWFhZTHIydzVDelVCMUp4Zkdn?=
+ =?utf-8?B?Mk1VNVBzOXpUZVpZTVV0V0xmWlFlQ0JLSGhzbFZNeWFtT2wyeFdENkw4TTJK?=
+ =?utf-8?B?QTAzWi8zWFVpOFVRN1hkQ1NYYmFyRFc4Mml3NFUxZm40RVBvek56YTZUL2dr?=
+ =?utf-8?B?YlIvd2Ezd2xnVkJ3U2JrK3c5Y2lLRVRTY2ZZbks0aFpZQUNwWE0zYlNMVDgx?=
+ =?utf-8?B?SlNiQlIzcFZDMEVqakhqNVY0SG1xZDUwT3JXdVVQd2E3SDlnOEtIcjRYZDNp?=
+ =?utf-8?B?aXpsaDVmcms2d3dDdU5Bb0RsS3VORnhTNWFndE92ellPMU0yOWFQalpOM3lR?=
+ =?utf-8?B?d0tLUS9Ua1A5a0NrcFI2a1QxazdKMVI2T3ozNjBBcDNsdEN4NUlncVU1bUhq?=
+ =?utf-8?B?UklLVjlodjV2M00vdHF2QWk3VXhYV0VkU1RVdnpwWkxtZ2JUMWZ2N0ZvbjRs?=
+ =?utf-8?B?bmFVT0h3bG5QaGE2UmpoM05iSzQwc3Zld0Mrc0xTVzQ5MHpvdm16WFVLNzB1?=
+ =?utf-8?B?YUZqeitoMlhhZkVHZ2ZDaUtJaXgxU3pmV21MQWdPOXFqYTN6U0xZWlA5Qjdi?=
+ =?utf-8?B?SVdySmRKbjB5ZEtZbXdxVjBNYWViYmtEcXJuUC9xNEpVS3FJR0Iwa1psNHlY?=
+ =?utf-8?B?WE5QYnJCdGlOMWdkdndRL1lSZEM0T0pCNERrWGtPUnlHRWRrMUc4cm9HVHAw?=
+ =?utf-8?B?emdqbW1pdEd3TUZnOTF6bkpOWXpIR1lWRTJvM0NML1RkamE4Z1M0dlhkTHpw?=
+ =?utf-8?B?RUNkcTdkRXdkWlNDVkJGWUg1Rm4zSUdIS3ZZZTBBYVNTQUVMTjBwanVYUi9w?=
+ =?utf-8?B?cWhoUXVTSk01SllVNVRlQjdsakQ4eERXUVNsNGZUM3NQbEZFTkNzVXM4VWtM?=
+ =?utf-8?B?by9pSmpFK2loVW85QnVnaGxQRG1LWnBLOGdzdVFyOEtiUS93K0kxRzZLWGZk?=
+ =?utf-8?B?cXVnVWxiQ3J5UW95WXF0cWpjdkcyTFFUaElEQ21lTGVNK3NYSGNmd3kva25y?=
+ =?utf-8?B?cjh2QVNoWEtBWGdYNkJHMkVzcWdYRDZKOTNtdHhpTFo3cHN3eHFCdDVwMHFo?=
+ =?utf-8?B?dmh0b1FXWmxPelNJYysvV3BWQjQ2WDZlNUNGbGpkWTc2UEJqS0w3dWxaMlJO?=
+ =?utf-8?B?dGdLa21yL3BNMTd4RnRPQzV4Y0FaN0RlQVMxUlNVZWhLZklwd0ZmL1JPZFV2?=
+ =?utf-8?B?SWhib1JFR05jRko5YXYvZWJlSEFOL3RIejJDY0NLYXFuajVJOFh3TkV6Szla?=
+ =?utf-8?B?NWJjVkhZYjFyMkswRVAvblNpRmI3cnBGRVZPb3dpbFFnQ2FsY1B5bVNZb2Rp?=
+ =?utf-8?B?LzVDNUpaQzEvdHYwbG8yaDZRVS9uT0d4OWlWaG1BdHFHSFc3ZWR3MVZVNjJq?=
+ =?utf-8?B?cEJ0eVFUYnBFV0xsV3JKdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZWZVWEZwUE41aUNmaDVhSlhHRFFpR2ViVU54T3BKZjB1L2prMmFuSWovVW1T?=
+ =?utf-8?B?NFZPWDBXMkhwL3JkenpHNHF0N2U5RXdkbUZwSlJzTWlyWDd0cTIrWFUzdTh3?=
+ =?utf-8?B?VlEwTlNNbk9MeVFpSjZ1OVpNdjZyTnhVZStLME8waCsvQUltTWEzRGVzb0VI?=
+ =?utf-8?B?N2ViZWZIMnh4ekk4c3hTWnFZVlhUY2UxUHZMdllkOFlxOTRDTDVyNHZOQjQ2?=
+ =?utf-8?B?c1psM21kMnR3M3crcUdxMjE0YW9CampWRllZV05jTUs4b0lSOHNNS1VFRFlU?=
+ =?utf-8?B?aFdNaUdNWEpFbll2a0puTExsWDBjd2JDTEdkL1QwbFR4Lzg5WGtTdUx5ZWFI?=
+ =?utf-8?B?VDdpZHVqbmY0blJoL0w2OXpGdUxWRHljcEoybkFiaStHMEpqYWNHOEx1bWU1?=
+ =?utf-8?B?RVNycTVURE51S0hEWUF2QXQvTyt1alBkcWJzN3Y5bVRBYWtRb1NXUDhFREdw?=
+ =?utf-8?B?R0xPd2ErMW9QT2ZZbk82NlY0bFZSdU13SUxLZTY5KzdVQ1EvQzZnRTNZenBD?=
+ =?utf-8?B?RmVrMk1yWXNBZFdlVGhZZ1lsTnJTemVYdE5ubnY4eElKK0tvNFExT2hpZEFR?=
+ =?utf-8?B?Z2RyMnJMNVltS24xb3k4TFVyeXV5aWlWZlJvWFlkYlZpTVlSb2gvMzZkeTR6?=
+ =?utf-8?B?OThHbFpjaTV1dGE2TzlSaEFtbm9TWjhZeTRZT3U2R2RtMHkveDlQVTcySWMy?=
+ =?utf-8?B?bTdQaW5Vc2xlV0JweTF1NDBFRWMrU1BEemI4TFJ4UU11bktUSkRrR3dFay9z?=
+ =?utf-8?B?cXExTFlFTDFCKy9qY2o1WEIzOHVLSHNNUjQvZ0VJc2piWEh1Wkl3OGR2VjB4?=
+ =?utf-8?B?QXVjelhWY2Jwa2JWaTI1V3JVdzB3Z1dwdkhVQkRnWWtNalQ5akxvZUdqa3F3?=
+ =?utf-8?B?Q0V3K1hpU2JqTUlDLzBhckFHbXRTVFNHd2xjcTVsL2V0WUdJQkZqYzhkVUdQ?=
+ =?utf-8?B?bXZoZnVLZUYwbXhxR0VHUkVua2JkR1N3RGZzSmNobmRicUcvd1V6RHdiNFlS?=
+ =?utf-8?B?WnN3ZjBEdWNKM2lDMHpHak1BbVZBdGJ1M2tZckcwRFlUS0hoc0ZCcnhKVjcy?=
+ =?utf-8?B?ZzBzKy9aeHBETEo0OERYTFZFTnhyZmtFMllmUUQwaUttcGtzRHdXSS8wNUlh?=
+ =?utf-8?B?RFNzaFFHaUliRU5tOXlBcDJUT29uR2VkN3Z6WTZMSi96a2xvUFlzcnhmSjN1?=
+ =?utf-8?B?c0VTQXFRTFZDaDg0SFNkYW1FZ1I5VHNicEd6NE1TM0lDRlNyeFoxUzIvYzdK?=
+ =?utf-8?B?WTR1alppZjdoaFRINEhSYjI5Mms4dkd0ZmlJTUptV1VtMHdOdXZsdDczQWJT?=
+ =?utf-8?B?L0tuUXdsMnp0NnFkUkc5MEpDK252L04vQlRoRjMzT0d3QlIwdXVudnl3Tllq?=
+ =?utf-8?B?dDQ4QnFaTUZSNDZtbnlaVjF5MkNsUS9xaGRNRlQrL3Yrcko3b2pEUU4wemQx?=
+ =?utf-8?B?OVo5bkJXTkV3N3gxUm1zSndodUNvUTgwQi9LU2pnNys5a0xkVXZGdlo3Tk5i?=
+ =?utf-8?B?WEt6NGdkRG8xa2NPTHpQOFhCbWovbTl5Qnc0elFXOG9LbmpQL1ZmRDd4VkQr?=
+ =?utf-8?B?NC8vUU55YXVaaTM1aDBwRGdoa2Y5YzVpbzhvUXRjSjVsTDJyUUlHMDZJbHFP?=
+ =?utf-8?B?KzlnNmRXb0pPd2xCM2VWeHZZQmdJeERSSkZubXB3WUNWWWlBSndWbXJHdy8y?=
+ =?utf-8?B?OTd4V0gxVHBYN3h3OXZ3OTBuSmNEMXFmRllsUWFFYUROdHV5WXFla2ZJaURo?=
+ =?utf-8?B?NTJVQ05ONnA5YWQrakFZenVhMzR4OHlsT1ZrcCswQnUweHM5MnlOb1lEbFNX?=
+ =?utf-8?B?K211R1UzWW9mY0ZIU2VKL2pxcXpycE91Vk0zQ1JsNFV6YzVHUStJWk5Tb1pk?=
+ =?utf-8?B?RnY1dWVDS3pHT2RCUkZ5a1ViZ1RqZjEvcmNYbUJjUWlsbnd4WTJXbEhUVTJh?=
+ =?utf-8?B?N2xReS94aGZLTWVrWmFNVUZkWk83QWdiOXJuNDgrOFNxU3kxVVdMMU4rUDhV?=
+ =?utf-8?B?bXZ3UUN2aHBlM28zM0ZRM1JBYUxGZWE2Q25pWUJsVS90Ym1qMzZCaCtWTTZM?=
+ =?utf-8?B?SU9POGVsTXFNMmE2a3o5QlNXMHV4OEtURENxWjErVXBRcWRMc21aTnY1cUV0?=
+ =?utf-8?Q?cmZd2Jl+pIukR3XARkdqnFSgd?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dfbfb791-e2f8-43b3-2f0b-08dd1313e673
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 20:57:15.1277
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k4+lutXCxCugvK4PJW2Daf6R2zbNEILI8v2kxi79xYpRnRPtf1s1l3VQ3mba1QhpQIlMCzsySB8n0PM3VIRRqQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6213
 
-On Mon, Dec 02, 2024 at 06:21:02PM +0000, Joe Damato wrote:
-> Make napi_hash_lock IRQ safe. It is used during the control path, and is
-> taken and released in napi_hash_add and napi_hash_del, which will
-> typically be called by calls to napi_enable and napi_disable.
+On 11/27/24 18:43, Sean Christopherson wrote:
+> Finish "emulation" of KVM hypercalls by function callback, even when the
+> hypercall is handled entirely within KVM, i.e. doesn't require an exit to
+> userspace, and refactor __kvm_emulate_hypercall()'s return value to *only*
+> communicate whether or not KVM should exit to userspace or resume the
+> guest.
 > 
-> This change avoids a deadlock in pcnet32 (and other any other drivers
-> which follow the same pattern):
+> (Ab)Use vcpu->run->hypercall.ret to propagate the return value to the
+> callback, purely to avoid having to add a trampoline for every completion
+> callback.
 > 
->  CPU 0:
->  pcnet32_open
->     spin_lock_irqsave(&lp->lock, ...)
->       napi_enable
->         napi_hash_add <- before this executes, CPU 1 proceeds
->           spin_lock(napi_hash_lock)
->        [...]
->     spin_unlock_irqrestore(&lp->lock, flags);
+> Using the function return value for KVM's control flow eliminates the
+> multiplexed return value, where '0' for KVM_HC_MAP_GPA_RANGE (and only
+> that hypercall) means "exit to userspace".
 > 
->  CPU 1:
->    pcnet32_close
->      napi_disable
->        napi_hash_del
->          spin_lock(napi_hash_lock)
->           < INTERRUPT >
->             pcnet32_interrupt
->               spin_lock(lp->lock) <- DEADLOCK
+> Note, the unnecessary extra indirect call and thus potential retpoline
+> will be eliminated in the near future by converting the intermediate layer
+> to a macro.
 > 
-> Changing the napi_hash_lock to be IRQ safe prevents the IRQ from firing
-> on CPU 1 until napi_hash_lock is released, preventing the deadlock.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 86e25f40aa1e ("net: napi: Add napi_config")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/netdev/85dd4590-ea6b-427d-876a-1d8559c7ad82@roeck-us.net/
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-
+> Suggested-by: Binbin Wu <binbin.wu@linux.intel.com>
+> Suggested-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  net/core/dev.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
+>  arch/x86/kvm/x86.c | 29 ++++++++++++-----------------
+>  arch/x86/kvm/x86.h | 10 ++++++----
+>  2 files changed, 18 insertions(+), 21 deletions(-)
 > 
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 13d00fc10f55..45a8c3dd4a64 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -6557,18 +6557,22 @@ static void __napi_hash_add_with_id(struct napi_struct *napi,
->  static void napi_hash_add_with_id(struct napi_struct *napi,
->  				  unsigned int napi_id)
->  {
-> -	spin_lock(&napi_hash_lock);
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&napi_hash_lock, flags);
->  	WARN_ON_ONCE(napi_by_id(napi_id));
->  	__napi_hash_add_with_id(napi, napi_id);
-> -	spin_unlock(&napi_hash_lock);
-> +	spin_unlock_irqrestore(&napi_hash_lock, flags);
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 11434752b467..39be2a891ab4 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -9982,10 +9982,11 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
+>  	return kvm_skip_emulated_instruction(vcpu);
 >  }
 >  
->  static void napi_hash_add(struct napi_struct *napi)
+> -unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+> -				      unsigned long a0, unsigned long a1,
+> -				      unsigned long a2, unsigned long a3,
+> -				      int op_64_bit, int cpl)
+> +int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+> +			    unsigned long a0, unsigned long a1,
+> +			    unsigned long a2, unsigned long a3,
+> +			    int op_64_bit, int cpl,
+> +			    int (*complete_hypercall)(struct kvm_vcpu *))
 >  {
-> +	unsigned long flags;
-> +
->  	if (test_bit(NAPI_STATE_NO_BUSY_POLL, &napi->state))
->  		return;
+>  	unsigned long ret;
 >  
-> -	spin_lock(&napi_hash_lock);
-> +	spin_lock_irqsave(&napi_hash_lock, flags);
+> @@ -10061,7 +10062,7 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+>  			vcpu->run->hypercall.flags |= KVM_EXIT_HYPERCALL_LONG_MODE;
 >  
->  	/* 0..NR_CPUS range is reserved for sender_cpu use */
->  	do {
-> @@ -6578,7 +6582,7 @@ static void napi_hash_add(struct napi_struct *napi)
+>  		WARN_ON_ONCE(vcpu->run->hypercall.flags & KVM_EXIT_HYPERCALL_MBZ);
+> -		vcpu->arch.complete_userspace_io = complete_hypercall_exit;
+> +		vcpu->arch.complete_userspace_io = complete_hypercall;
+>  		/* stat is incremented on completion. */
+>  		return 0;
+>  	}
+> @@ -10071,13 +10072,15 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+>  	}
 >  
->  	__napi_hash_add_with_id(napi, napi_gen_id);
+>  out:
+> -	return ret;
+> +	vcpu->run->hypercall.ret = ret;
+> +	complete_hypercall(vcpu);
+> +	return 1;
+
+Should this do return complete_hypercall(vcpu) so that you get the
+return code from kvm_skip_emulated_instruction()?
+
+Thanks,
+Tom
+
+>  }
+>  EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
 >  
-> -	spin_unlock(&napi_hash_lock);
-> +	spin_unlock_irqrestore(&napi_hash_lock, flags);
+>  int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
+>  {
+> -	unsigned long nr, a0, a1, a2, a3, ret;
+> +	unsigned long nr, a0, a1, a2, a3;
+>  	int op_64_bit;
+>  	int cpl;
+>  
+> @@ -10095,16 +10098,8 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
+>  	op_64_bit = is_64_bit_hypercall(vcpu);
+>  	cpl = kvm_x86_call(get_cpl)(vcpu);
+>  
+> -	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
+> -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
+> -		/* MAP_GPA tosses the request to the user space. */
+> -		return 0;
+> -
+> -	if (!op_64_bit)
+> -		ret = (u32)ret;
+> -	kvm_rax_write(vcpu, ret);
+> -
+> -	return kvm_skip_emulated_instruction(vcpu);
+> +	return __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl,
+> +				       complete_hypercall_exit);
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
+>  
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index 6db13b696468..28adc8ea04bf 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -617,10 +617,12 @@ static inline bool user_exit_on_hypercall(struct kvm *kvm, unsigned long hc_nr)
+>  	return kvm->arch.hypercall_exit_enabled & BIT(hc_nr);
 >  }
 >  
->  /* Warning : caller is responsible to make sure rcu grace period
-> @@ -6586,11 +6590,13 @@ static void napi_hash_add(struct napi_struct *napi)
->   */
->  static void napi_hash_del(struct napi_struct *napi)
->  {
-> -	spin_lock(&napi_hash_lock);
-> +	unsigned long flags;
+> -unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+> -				      unsigned long a0, unsigned long a1,
+> -				      unsigned long a2, unsigned long a3,
+> -				      int op_64_bit, int cpl);
+> +int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+> +			    unsigned long a0, unsigned long a1,
+> +			    unsigned long a2, unsigned long a3,
+> +			    int op_64_bit, int cpl,
+> +			    int (*complete_hypercall)(struct kvm_vcpu *));
 > +
-> +	spin_lock_irqsave(&napi_hash_lock, flags);
+>  int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
 >  
->  	hlist_del_init_rcu(&napi->napi_hash_node);
->  
-> -	spin_unlock(&napi_hash_lock);
-> +	spin_unlock_irqrestore(&napi_hash_lock, flags);
->  }
->  
->  static enum hrtimer_restart napi_watchdog(struct hrtimer *timer)
-> -- 
-> 2.25.1
-> 
+>  #endif
 
