@@ -1,124 +1,90 @@
-Return-Path: <linux-kernel+bounces-428379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC3C9E0D83
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:03:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CDF016555E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:03:54 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42C21DF269;
-	Mon,  2 Dec 2024 21:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IH3XR5Oq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VLKUAJA/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C279E0DB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:23:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17AFA94A;
-	Mon,  2 Dec 2024 21:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D79BB35F55
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:40:16 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D271DED67;
+	Mon,  2 Dec 2024 19:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="sHiO1QK6"
+Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36911DE8A7;
+	Mon,  2 Dec 2024 19:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733173430; cv=none; b=QM22D1TL65B0rzxhN7dM4SIyQP5EZoG5a8OGXFGxuMF848DQTXd3EuYkkqWBw1uqPz49T3TInGMXxBCMIe0dFSPmHDuPBSWavVA5OV5E/Cok/SFIrwzJz3/61NBF0zKa6rMmOEaMfJH5jOh40vKKFx/QBWg809ixoIEfbjnr0m4=
+	t=1733168380; cv=none; b=d2nE5BzPzFDdJAsqu3pTPiTwMnZ+REUV4iljaGKQrs2lYrqGEm0UQFb5pdmHATVM04dckO+MwqiAR7d8xm0jgsPsvrewLSbzSlVCLNU9r9HwqXvNMZt4Op6ZdptoG/Rcnrq7Od/svLmkobE4qP6j7TUHIJBic2V4pecoNWbpMC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733173430; c=relaxed/simple;
-	bh=vLUZ5k+c0qQj50mqVkJ/qwvhEf2wa3vsjB0XW38D4rE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rvXKMKalHu+k+oPes+NZCB6khQx6dKyzshh7oVeU78K4rmwLVzVg6+cdNiMmlb3hTulQvDi5/EIwcNxtpvLHBNG30yzvXd4LlSs3P7RTviz7iw/UXqx5CZ/enTX8PH76ZgA22irCJmR7TElK4y7UmkCDMXlth+ZVjmX6ZTDFa68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IH3XR5Oq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VLKUAJA/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733173426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JAbKsbnsziIXiGhjcBxtSdueB/xYO7LsnWwodvNhQE0=;
-	b=IH3XR5Oq5J30CrhyMejMAMCWFzEMywOB8oA1KABYd32vlyPtoy2Wr5NyRAGLe/w6yyfoWn
-	4cwBFUby+yeCKl1vigIvvmwQypIksVnJPBv0c2j+GzBv+wpimOO98YMmizuZBJhb63RItn
-	AGnPEzDBYCx4kLXUStcGjApJA8KzUXlfTyhqMEH6oUyjdIFv7d4uUfn5kGSubMGyVQ9pRm
-	gcyvX/u0PD1pNp3PqaFrr4P1yya5j/kdaxkwkaNwHl5Bbewrdo2ccaOnzjYoO81uz6IcRl
-	NdB4qToq7Dr7InMmMztyQ1Qs0VLXe3uvZB0sunVPPIkeF0xhP/cWOt7aJXEsSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733173426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JAbKsbnsziIXiGhjcBxtSdueB/xYO7LsnWwodvNhQE0=;
-	b=VLKUAJA/sfuoNOZCdIc4gMvY9VsnZnsNqbDpRSVJhOcNAgsSb+eAmhoYkfwO/BWpXThDzL
-	a9JCwCaNBqbQdTBw==
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
- 20241015061522.25288-1-rui.zhang@intel.com, Zhang Rui
- <rui.zhang@intel.com>, hpa@zytor.com, peterz@infradead.org,
- thorsten.blum@toblux.com, yuntao.wang@linux.dev, tony.luck@intel.com,
- len.brown@intel.com, srinivas.pandruvada@intel.com,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com,
- x86@kernel.org, linux-pm@vger.kernel.org, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] modpost: Add .irqentry.text to OTHER_SECTIONS
-In-Reply-To: <CAK7LNARWpcbVsJFYCDN28vuuLfEibZmT+m5=qMEJcKD9Abzv4Q@mail.gmail.com>
-References: <20241128111844.GE10431@google.com> <87o71xvuf3.ffs@tglx>
- <20241130114549.GI10431@google.com> <87iks3wt2t.ffs@tglx>
- <CAK7LNARWpcbVsJFYCDN28vuuLfEibZmT+m5=qMEJcKD9Abzv4Q@mail.gmail.com>
-Date: Mon, 02 Dec 2024 22:03:46 +0100
-Message-ID: <87iks1vlu5.ffs@tglx>
+	s=arc-20240116; t=1733168380; c=relaxed/simple;
+	bh=sN+BusGiAXrcqhWl1VTOqKR/W6+1lgZS845M6w7upCw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Subject; b=RaZjTDmfHw6aWAjhLmoo/8zcDN2uljkmn+80KDfGcFPjxyaZ/9rRbVGLDByq0GSQndEuJQ5bRT8sqfq9iZMDxb+o8KdykTxu4giP+wPvkGEGCOs22ID78RRtyD8F9XyFswzrRoQl4hCexkmrRD2MpCt4G0lN0a/c1sV70QVucj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=sHiO1QK6; arc=none smtp.client-ip=204.191.154.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
+	MIME-Version:Date:Message-ID:content-disposition;
+	bh=tckQN36YPgB8u8XCuGTMiAPwciU1S6zlefvWMXkUjgs=; b=sHiO1QK6zN9pjOhhlylsZYFDkU
+	EE+a8JKnuXu8gVlewZy35dnckWr61e3jScDXWwGbHAtwg4VP7MrsaRvoiw6FDxhsaQZNxQOZYoYap
+	HY6k2gaYGwwHTRenjkeOqtSmWp8z67Kn79G8fDxaJbdzjIiuWb/Lx+sN8qjnhkz3K3AB5Dmj8laC4
+	6itUtLoOZ8l62AM+BuhzdfJWfzgqC7Ni42WtAr9EjRHLHtq6O80B5RF9hF+gvPbhtX6JRVrPKbn5/
+	NqUnjJbCEIi4o7YpZyqA2k2sbyWz9bK9zj/7sK8NdUIZjcuGXaM/t3MnD3wsUonSFv7rndhPWuGQ8
+	scznTSag==;
+Received: from d104-157-31-28.abhsia.telus.net ([104.157.31.28] helo=[192.168.1.250])
+	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <logang@deltatee.com>)
+	id 1tIBlh-005alK-0z;
+	Mon, 02 Dec 2024 12:07:36 -0700
+Message-ID: <003d2d13-13be-4f05-80f8-61e14ddb9c83@deltatee.com>
+Date: Mon, 2 Dec 2024 12:07:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org
+References: <20241202-sysfs-const-bin_attr-pci-v1-0-c32360f495a7@weissschuh.net>
+ <20241202-sysfs-const-bin_attr-pci-v1-3-c32360f495a7@weissschuh.net>
+Content-Language: en-CA
+From: Logan Gunthorpe <logang@deltatee.com>
+In-Reply-To: <20241202-sysfs-const-bin_attr-pci-v1-3-c32360f495a7@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 104.157.31.28
+X-SA-Exim-Rcpt-To: linux@weissschuh.net, bhelgaas@google.com, rafael@kernel.org, lenb@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Level: 
+Subject: Re: [PATCH 3/4] PCI/P2PDMA: Constify 'struct bin_attribute'
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
-On Mon, Dec 02 2024 at 11:02, Masahiro Yamada wrote:
-> On Sun, Dec 1, 2024 at 8:17=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->>
->> The compiler can fully inline the actual handler function of an interrupt
->> entry into the .irqentry.text entry point. If such a function contains an
->> access which has an exception table entry, modpost complains about a
->> section mismatch:
->>
->>   WARNING: vmlinux.o(__ex_table+0x447c): Section mismatch in reference .=
-..
->>
->>   The relocation at __ex_table+0x447c references section ".irqentry.text"
->>   which is not in the list of authorized sections.
->>
->> Add .irqentry.text to OTHER_SECTIONS to cure the issue.
->>
->> Reported-by: Sergey Senozhatsky <senozhatsky@chromium.org>
->
-> I found the context in LKML.
-> Closes: https://lore.kernel.org/all/20241128111844.GE10431@google.com/
->
-> However, is this still relevant to the mainline kernel?
->
-> In Linux 5.4.y, I agree this because smp_apic_timer_interrupt()
-> is annotated as __irq_entry:
 
-Correct.
 
-> In this mainline kernel, DEFINE_IDTENTRY_SYSVEC()
-> expands to a normal .text function which is explicitly
-> annotated 'noinline'.
+On 2024-12-02 12:02, Thomas Weißschuh wrote:
+> The sysfs core now allows instances of 'struct bin_attribute' to be
+> moved into read-only memory. Make use of that to protect them against
+> accidental or malicious modifications.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 
-It's not annotated noinline, it's annotated 'noinstr', which puts the
-code into the .noinstr.text section. That one is indeed covered.
+Looks good to me, thanks!
 
-So yes, the fix is only required for pre 5.8 kernels.
+Logan Gunthorpe <logang@deltatee.com>
 
-Thanks,
-
-        tglx
 
