@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-427143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF6A9DFD31
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:32:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29399DFD34
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:32:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B20CB22CED
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2E85281D03
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64ED1FA857;
-	Mon,  2 Dec 2024 09:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322F21FAC25;
+	Mon,  2 Dec 2024 09:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+0uG3sL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hXquKaNd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A7B3398B;
-	Mon,  2 Dec 2024 09:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186AA1F9EAC;
+	Mon,  2 Dec 2024 09:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733131928; cv=none; b=pooAYccYldv88NNKNFNnlBhQt+bGGZfeZKqgC5DTL13PlZBd3k5uKFYVaq3GRPDOJ5geX78c8tuMKTyCLA5a287HpaOAfmN4giZ7v992ugVpDPAsjuOQy/wBj6xwtebzOd+W2zduxBuhAH0wP487eVLpgdpL4WVIh9vb6ysrfXA=
+	t=1733131963; cv=none; b=pDiF4jKqmhVmh3KzY43GYvmYkZHO33IDrcrY0gygGLLa/W5Sie3cPvNrq1XJphAMWYBFgVXrGQGtnf0PR48kZgGiJT4ODmdg2BIG+UVC5MDOpSgBvZuymMH53z4IwRSfK7/VzNo0vd7YNNMU23FqDOynGX0nD8/upwPs0VDSDjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733131928; c=relaxed/simple;
-	bh=8UsYqMOxJ0arN9+vXhANKE5wwESYoXE0U11JMMjiERM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B60wKYNHtsbpAvOfnobc3de5q+9BaV/eJf1Njutg3u4qXDUF1m/O+tmGMEuBKBtGFJUFwdKp8KWy30b1CD0OIuy2aeZh7GampVP2IzcTFjI2MAOBd1xj5/VEPrhJ7WCYePSdyCWHJCzcl15UHDVzDlZdB6iMMqf6ZEBJV4kLFkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+0uG3sL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B4FAC4CED2;
-	Mon,  2 Dec 2024 09:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733131927;
-	bh=8UsYqMOxJ0arN9+vXhANKE5wwESYoXE0U11JMMjiERM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e+0uG3sLR7ut5srAlCuR9U9VUVN4TCK5y1b/j4DL31uGRsJ60KrnRUJGt0FSb1BPS
-	 a1Q0QAv6LI5Wjw/x0WQ0c+ZrGvprGM520DCYmnJ3lND2OTeLu90HSLM/qxaE5m7SVm
-	 ucA4daeWxiovZiBqiozUXljcTQCeQYtKMOCDjv/i2hn8O9E4qaFHuQqeWm4Zlastrl
-	 EuAUdwPkpvtjtlf/mCGfUpOKpk/TIxDbn27tGoTFm1v0WwIY3sbEBhX9ONHKZ8bUyQ
-	 wyGUYvTG3PRFqORsSmKRju3mcOU9HdZw7Q3vITIEWSgGpJZvJuBbo7XxilzQPock6H
-	 eEyr7Axdfg66g==
-Message-ID: <c3c5155b-fd0e-4790-bbd5-3874077e8159@kernel.org>
-Date: Mon, 2 Dec 2024 10:32:01 +0100
+	s=arc-20240116; t=1733131963; c=relaxed/simple;
+	bh=oHkAOh/IHXX64tT0YCgNja1f7VUTBdxdzMLog2og7P8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QPBNa+ZrkkJxOjzFB1F5rQ73gZHIuFEIbQO/J5WCZOlK0L/gHtXrWGn6Os05nddXXzttKLlKN8BgHT4LyGaZKLlzlkKbIGKEsT30G18qUmh8AchUlmZhwnJ46a83JsZ9aPlPW779PK4NR9vGljrJ4iC5Bkqdq3GVhNUifh6mW0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hXquKaNd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28aPvS003922;
+	Mon, 2 Dec 2024 09:32:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QVEM9kkXSwem9zYGgZ/+gGqeroLKiB9YExxMWql40e8=; b=hXquKaNdo0vVMcgY
+	blo8DTX2fU3aKTC5PwuSztNLhO1fUQLq4oBVEBkV7cE1uEtTpJf5U538Yss58h8Z
+	VJtMBh9LKw9NT6c+9iZzIKZNgfdvlUxDQzYSz7ZJ43KJ55BO1FaHYXXaGsnHRFuP
+	xcnef5W4yUohejOQHf5uZV85l+tP2XgQ9B9fBM/GX7zZ5Oj3cfOscPJJqQsresTB
+	s0LFEQaNjNCWtffqGdUn5+682SppERuZdPrkBghmBNRnFmdyEY7IlbXLLiA87Dz2
+	sf/AWZJqFHQ/YecqqDkgKXvCYHcFcPbc88CdpcpP2swMAQF3RPhHxAwsQbItt4p+
+	Ms3Qsg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ta2va48-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 09:32:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B29WM24022262
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Dec 2024 09:32:22 GMT
+Received: from [10.219.1.29] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 01:32:18 -0800
+Message-ID: <75dc7814-a55e-4a6f-9df9-39b7c875dee9@quicinc.com>
+Date: Mon, 2 Dec 2024 15:02:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,91 +64,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] arm64: dts: agilex5: add gmac nodes
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-clk@vger.kernel.org, kernel@pengutronix.de
-References: <20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de>
- <20241125-v6-12-topic-socfpga-agilex5-v2-2-864256ecc7b2@pengutronix.de>
- <14110c3d-4aee-49a9-8cc2-fbeac298f1ff@kernel.org>
- <87o71u8odo.fsf@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3] arm64: dts: qcom: qcs6490-rb3gen2: enable Bluetooth
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_msavaliy@quicinc.com>
+References: <20241022104600.3228-1-quic_janathot@quicinc.com>
+ <dd008ff5-ee2a-47be-8a5b-d4f3a1e2bac3@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <87o71u8odo.fsf@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+In-Reply-To: <dd008ff5-ee2a-47be-8a5b-d4f3a1e2bac3@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: m-SV-lSlNH7HcIfgO18bRiKd6Gwa4nnJ
+X-Proofpoint-GUID: m-SV-lSlNH7HcIfgO18bRiKd6Gwa4nnJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
+ phishscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412020084
 
-On 02/12/2024 09:45, Steffen Trumtrar wrote:
->>> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
->>> index b1debf0317d0576f7b00200e9593481671183faa..647ccd0b5a66b68fab745d443b975c12d6ce63df 100644
->>> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
->>> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
->>> @@ -141,6 +141,93 @@ soc: soc@0 {
->>>  		device_type = "soc";
->>>  		interrupt-parent = <&intc>;
->>>
->>> +		gmac0: ethernet@10810000 {
->>> +			compatible = "altr,socfpga-stmmac-a10-s10",
+
+Hi Krzysztof,
+Thanks for the valuable review comments.
+
+On 10/22/2024 5:57 PM, Krzysztof Kozlowski wrote:
+> On 22/10/2024 12:46, Janaki Ramaiah Thota wrote:
+>> Add Bluetooth and UART7 support for qcs6490-rb3gen2.
 >>
+>> Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 122 ++++++++++++++++++-
+>>   1 file changed, 121 insertions(+), 1 deletion(-)
 >>
->> That's odd compatible, this is not Arria10 SoC, neither Stratix 10.
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> index 0d45662b8028..b774d89172ea 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>> @@ -1,6 +1,6 @@
+>>   // SPDX-License-Identifier: BSD-3-Clause
+>>   /*
+>> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>    */
+>>   
+>>   /dts-v1/;
+>> @@ -31,7 +31,9 @@
+>>   	chassis-type = "embedded";
+>>   
+>>   	aliases {
+>> +		bluetooth0 = &bluetooth;
 > 
-> Yes, it is. The socfpga-dwmac.txt says "Arria10/Agilex/Stratix10 SoCs" should use "altr,socfpga-stmmac-a10-s10".
+> Which driver uses this alias?
 > 
-> So, how to proceed? Adding a "altr,socfpga-stmmac-agilex5" to the binding doc and driver?
-> And converting the txt to yaml, because touched it last?
+>>   		serial0 = &uart5;
+>> +		serial1 = &uart7;
+>>   	};
+> 
+> ...
+> 
+> 
+>>   };
+>>   
+>>   &uart5 {
+>>   	status = "okay";
+>>   };
+>>   
+>> +&uart7 {
+>> +	status = "okay";
+>> +	/delete-property/interrupts;
+>> +	interrupts-extended = <&intc GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>,
+>> +				<&tlmm 31 IRQ_TYPE_EDGE_FALLING>;
+> 
+> 
+>> +	pinctrl-names = "default", "sleep";
+>> +	pinctrl-1 = <&qup_uart7_sleep_cts>, <&qup_uart7_sleep_rts>,
+>> +			<&qup_uart7_sleep_tx>, <&qup_uart7_sleep_rx>;
+> 
+> This could be just one phandle to state node with multiple pins subnode.
+> 
 
-You need dedicated front compatible.
+Since we have different configuration for 3 GPIOs, it’s not good to 
+combine all 4 GPIOs into one common sleep configuration. Each GPIO 
+configuration is having separate requirements based on the Bluetooth SOC.
+This is as per hardware recommendations.
 
 
-Best regards,
-Krzysztof
+>> +
+>> +	bluetooth: bluetooth {
+>> +		compatible = "qcom,wcn6750-bt";
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&bt_en>, <&sw_ctrl>;
+>> +		enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
+>> +		swctrl-gpios = <&tlmm 86 GPIO_ACTIVE_HIGH>;
+>> +		vddaon-supply = <&vreg_s7b_0p972>;
+>> +		vddbtcxmx-supply = <&vreg_s7b_0p972>;
+>> +		vddrfacmn-supply = <&vreg_s7b_0p972>;
+>> +		vddrfa0p8-supply = <&vreg_s7b_0p972>;
+>> +		vddrfa1p7-supply = <&vreg_s1b_1p872>;
+>> +		vddrfa1p2-supply = <&vreg_s8b_1p272>;
+>> +		vddrfa2p2-supply = <&vreg_s1c_2p19>;
+>> +		vddasd-supply = <&vreg_l11c_2p8>;
+>> +		max-speed = <3200000>;
+> 
+> There were warnings in the past. Please confirm that you addressed them
+> and this is warning free.
+> 
+
+Sure.
+
+> Best regards,
+> Krzysztof
+> 
+
+Thanks,
+Janakiram
+
 
