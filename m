@@ -1,100 +1,130 @@
-Return-Path: <linux-kernel+bounces-428449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1799E0EA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:09:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D184B16564D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:09:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0287D1DFE2F;
-	Mon,  2 Dec 2024 22:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHqIlLpj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594119E0ECA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:18:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588F61DFE11;
-	Mon,  2 Dec 2024 22:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40731B315BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:10:28 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A661E0B82;
+	Mon,  2 Dec 2024 22:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="P/y1nxVs"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D4B1E04AE;
+	Mon,  2 Dec 2024 22:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733177086; cv=none; b=PYVT9RL26GlMvhVPqngXVrJPbjJYPLYabJk9SEflilhuCLzOiJdR4LbV75rlErtOxyNr7UQ7oNlio52ZmlKAbOJQ4uGxJKyJxOUL1f6aym6QBT8SMtEdbGJ1hEDVStxb6KFF/DM2rnHH6FG6l6g2NLq5RHV2oImHUh2a79hIBsM=
+	t=1733177256; cv=none; b=LPXSGZff3MXn85zF8Xi3+bMYGgGQfrKR3L8xIjDGKCGXnYrCIzcHICqtYxOkEjXBCNwukCkwOrrS4n7Lqx3hTHXd7DqSEJJbUXEelEhsspWqGiwOjeXNK1jeD03iubn14AEildmFyiFTIUG3KzHZhZtLAkrUkPlGPdmVmvwpZqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733177086; c=relaxed/simple;
-	bh=I4mDpvUHwUmd72iS1kvSMbaCuapN/zGwKCKu6Zsp15Y=;
+	s=arc-20240116; t=1733177256; c=relaxed/simple;
+	bh=aMgTNU2yQUgiORpUOLaG95XWh8lcGtVhKx2wlzXx0UI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9ACbUTNuWmt2dzkCEGy6YzhOZPxjseyBfbN/kaC/NTaYq0wWAGuCikNygnGfV+0OuGkoIo9bQkRzy3MiW1FcP72BkCbVnLfN7NNvVuJh3khnLTQ4IVu29ypOJOrg3ulEZ7h6gR4idSMu5jzHM+Aq+fpxVQsUs23robdccgtxbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHqIlLpj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18FB9C4CED1;
-	Mon,  2 Dec 2024 22:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733177085;
-	bh=I4mDpvUHwUmd72iS1kvSMbaCuapN/zGwKCKu6Zsp15Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nHqIlLpjh/4o3Pq4qsFW6NSkc4kjQc9j1VaYkye7vMPm80m1DXqQFonOAcrqfqIEk
-	 3yhRyP05SKkeq2PUqYvPGyLuoDfn2r1Z7vmAe81ydiRhQjIb/D4yOZMiTGP7wQqmNi
-	 HtJ9z+zeodwWwh3xkISHSmCSKw9I+/bDlhMeE5cJ9FBGrS2bX4dLpMwC1akTHQVx4E
-	 BwXaAPkk53hFKMfJdHcCuk/LhA+MmgFjW7N96xp3UoU/sgDvdbjiFYNFQwcmcGTC2d
-	 0JDAE7YbnHEeKDO7antm8msTD+O5ouvsWoCzowL5MqJ4GKV/fozwOfo1x/1A1sNSLM
-	 hyC/wRvLcC3Tg==
-Date: Mon, 2 Dec 2024 14:04:43 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, james.clark@linaro.org,
-	yangyicong@hisilicon.com, song@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH 0/3] perf tool: Fix multiple memory leakages
-Message-ID: <Z04u-7DQr5w9daS5@google.com>
-References: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nGvfXH4tebQOXldDHGzcRhcNtBJNgSpESqh36Gt6SHm+cUJeR/pZAKgencbg7okAMiu7lyQ7G0pkSDuKvDZ6baj7JZBSgCN1l3F+89rq1WoAqbA1oBtrVV5MqaDJDX71sy6qWEn679lpiv/HbAfjhoxihNjy3G0xf/ufINkFhgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=P/y1nxVs; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=DNZbvfSssXQBAkiV5QTgDDOLM6EYzMUfUsQTp9Qh59c=; b=P/y1nxVsQCqb6BHriX1MZF8U9a
+	818SykCwB5uibSFiEL2BRG36HPz12PcI7MYGuwd/WD+uUtYnw443MuvK2vKIOZT97kvCoMrE1v9PL
+	yTkjZ56zl9bgaudh/WxpsLHQb7tBabUB5cHL4cIunL1cujspL9Kczr+Xdw0eBro0HIwyB9ByTMmaj
+	/HB/Q5We/yeyjL/HSatP3N1cCgi3nLQQhIw4V3g3/jsHCEv5DRjZGodJJE4nGVUh8eXBPsmxouuRe
+	8JFq9jvxvY2KR+8SQ5teVspEdynY49lB8kVje7mRfh0MdAb+1gsYorFY99HwfFYNmAPaRhvpnznIH
+	CA9whG8w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34274)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tIEZF-0000rO-2S;
+	Mon, 02 Dec 2024 22:06:58 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tIEZ6-0003v0-1J;
+	Mon, 02 Dec 2024 22:06:48 +0000
+Date: Mon, 2 Dec 2024 22:06:48 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: jan.petrous@oss.nxp.com
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>, 0x1207@gmail.com,
+	fancer.lancer@gmail.com, Jacob Keller <jacob.e.keller@intel.com>
+Subject: Re: [PATCH net-next v7 01/15] net: driver: stmmac: Fix CSR divider
+ comment
+Message-ID: <Z04veAM7wBJCLkhu@shell.armlinux.org.uk>
+References: <20241202-upstream_s32cc_gmac-v7-0-bc3e1f9f656e@oss.nxp.com>
+ <20241202-upstream_s32cc_gmac-v7-1-bc3e1f9f656e@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
+In-Reply-To: <20241202-upstream_s32cc_gmac-v7-1-bc3e1f9f656e@oss.nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Nov 28, 2024 at 08:54:29PM +0800, Zhongqiu Han wrote:
-> Fix memory leakages when btf_node or bpf_prog_info_node is duplicated
-> during insertion into perf_env.
+Hi,
+
+No need for "driver:" in the subject line.
+
+On Mon, Dec 02, 2024 at 11:03:40PM +0100, Jan Petrous via B4 Relay wrote:
+> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
 > 
-> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
-> ---
-> Zhongqiu Han (3):
->   perf header: Fix one memory leakage in process_bpf_btf()
->   perf header: Fix one memory leakage in process_bpf_prog_info()
->   perf bpf: Fix two memory leakages when calling
->     perf_env__insert_bpf_prog_info()
-
-Although I have a nitpick in the patch 3, it looks good otherwise.
-
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
-
-And I don't think the Fixes tags are correct, but it won't apply before
-the change it points to.  So for practical reason, I'm ok with that.
-
-Thanks,
-Namhyung
-
+> The comment in declaration of STMMAC_CSR_250_300M
+> incorrectly describes the constant as '/* MDC = clk_scr_i/122 */'
+> but the DWC Ether QOS Handbook version 5.20a says it is
+> CSR clock/124.
 > 
->  tools/perf/util/bpf-event.c | 10 ++++++++--
->  tools/perf/util/env.c       | 12 ++++++++----
->  tools/perf/util/env.h       |  4 ++--
->  tools/perf/util/header.c    |  8 ++++++--
->  4 files changed, 24 insertions(+), 10 deletions(-)
-> 
-> 
-> base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
-> -- 
-> 2.25.1
-> 
+> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+
+With that fixed,
+
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
