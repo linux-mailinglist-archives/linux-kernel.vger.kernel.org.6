@@ -1,46 +1,45 @@
-Return-Path: <linux-kernel+bounces-428209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124C99E0B75
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:01:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036049E0B88
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:03:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB149282D66
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:01:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5C52165D73
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A261DE897;
-	Mon,  2 Dec 2024 19:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBAC1DE4D5;
+	Mon,  2 Dec 2024 19:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ThF6iULN"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="e0C+EX9+"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9C21DE3D8;
-	Mon,  2 Dec 2024 19:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8805961FD7;
+	Mon,  2 Dec 2024 19:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733166042; cv=none; b=jKg8bjI6VkpJantYcXMNkVh2YobrClX5rKzVmiJkv2oY8lXa4hWRhRAC4WRqI12KC7jDWhyvGI5BDRh2WSmCygxitL4Fm92OHBnqycy3X57w6plSZGbKkfZ9YvKjCCXNeLpziCxdphzaxdK4RcT0voISThZLa01vCcTSpWkluWA=
+	t=1733166101; cv=none; b=bGAk6A6yXhO6iAgSuZJg599mjHwMTT6FiT9P/G2+fhY0uthfwt0PDm5+VIrKMhbaoj9Ux/91jfRJFGdh8ofvy2vt+uysf1qSg0djS30JQ41bE+iq36vKZwIBXq9qVxuDPDzDjxG8qVwO294L3tzu6aWJhFZVisPerrMBz/0xeAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733166042; c=relaxed/simple;
-	bh=+arb4UAMXaf51SIDs7YdZ7RZB12zGnsK5LernLVB4+0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=juEUEtmw0UpHZj9QFC54ahdIaJA2IpEO4XQqu38CqCWFVZKhqIA/n5VF318AZli0wUbjA8ZdzAzxB4RcRAPDvR3noPwmNHvDc5UH1CyvRLwCUQER2y3g0LTjCAH7ohIbKcEEY+WvwCOmdhkdJlQSoE9riWa3BQnqMOGJV6YsjVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ThF6iULN; arc=none smtp.client-ip=159.69.126.157
+	s=arc-20240116; t=1733166101; c=relaxed/simple;
+	bh=zfxEranPfl00GWlGO/QXt0N31OcDIy9hu3D6j1hm3To=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PfBy1GmZN1jJPGRQL0k19WveMGx9g8fSAmAsRff5NhZLjsbE/Wi75mYxKtWEQzkSrSgP4J0u1QZKDfae6OrWiE7UGSMJH7sHVnhNfvFk+X0/2tqlrAlwNVcmLKaHeQplx4Mw2dvBR4BFKRtUYitr1ULLkuvvpXCMXln8jkYHGEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=e0C+EX9+; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733166037;
-	bh=+arb4UAMXaf51SIDs7YdZ7RZB12zGnsK5LernLVB4+0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ThF6iULNZ7DQJIv5R4Hc+nABWuz2CXsroKR2IL96Lww5yAzqcqyOFzP2KUPsddAzL
-	 6VPpbB9bQcdgMtx9kcgoMZO6ezbbY8jljpLWK+GEHv5+4v3OD9ZFn/Ho5WSfPUmpqx
-	 UwDl45hT0Cmsv5u/Vj5Ui4aPXAfVpX/KxBsIVbgE=
+	s=mail; t=1733166097;
+	bh=zfxEranPfl00GWlGO/QXt0N31OcDIy9hu3D6j1hm3To=;
+	h=From:Subject:Date:To:Cc:From;
+	b=e0C+EX9+c7HKOQSdFZDKygVpHJFl35yR9OzgbgPeWkBsnZP7jJQ503wL1qcYt3vX+
+	 QoX86a9B57akuOZOP771eFze728JrHXS1DTUgq3TlkmVCxoolOTHNJmJUAdj1YjIRN
+	 w6bcDhep1/TBiKcY9In7crr+fBkv1hwk7c8HezBs=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 02 Dec 2024 20:00:39 +0100
-Subject: [PATCH 4/5] firmware: google: gsmi: Use BIN_ATTR_ADMIN_WO() for
- bin_attribute definition
+Subject: [PATCH 00/10] HID: constify 'struct bin_attribute'
+Date: Mon, 02 Dec 2024 20:01:31 +0100
+Message-Id: <20241202-sysfs-const-bin_attr-hid-v1-0-16369423a48a@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,101 +48,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241202-sysfs-const-bin_attr-admin_wo-v1-4-f489116210bf@weissschuh.net>
-References: <20241202-sysfs-const-bin_attr-admin_wo-v1-0-f489116210bf@weissschuh.net>
-In-Reply-To: <20241202-sysfs-const-bin_attr-admin_wo-v1-0-f489116210bf@weissschuh.net>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
- Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Tzung-Bi Shih <tzungbi@kernel.org>, Brian Norris <briannorris@chromium.org>, 
- Julius Werner <jwerner@chromium.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, chrome-platform@lists.linux.dev, 
- linux-scsi@vger.kernel.org, 
+X-B4-Tracking: v=1; b=H4sIAAsETmcC/x3MTQqAIBBA4avErBtI6Ye6SkSUjjUbC0eikO6et
+ PwW7yUQCkwCQ5Eg0MXCh89QZQFmX/xGyDYbdKVrpSuF8ogTNIeXiCv7eYkx4M4Wja57sk3TmbW
+ FnJ+BHN//epze9wPZrFLtagAAAA==
+X-Change-ID: 20241201-sysfs-const-bin_attr-hid-c249ed557cb6
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Stefan Achatz <erazor_de@users.sourceforge.net>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166036; l=2521;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166097; l=1968;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=+arb4UAMXaf51SIDs7YdZ7RZB12zGnsK5LernLVB4+0=;
- b=vs/2qmzMQ2i0kyAzZ0xLNPY2RWbz1iPcaFTdxlz5AdVN+D//QkatZ10EMOrH1vwujAOmcl20z
- TfIbn4l+sK0Cyv5rUwyZivbShgztDbnhu1XZhF5TMYQdLbZA2Ek09Ca
+ bh=zfxEranPfl00GWlGO/QXt0N31OcDIy9hu3D6j1hm3To=;
+ b=1oyTLgKCkVjsm4s3uFujVV96j4jTA/hsCOArr5y59kl/9IeXwxR2as0guPoSbWYcvETAjThzY
+ JxJXn/T+wYtARycK+YsIYAdX/Cv75RnAEue6SnIYhXCboT8Yq5GFSLq
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Using the macro saves some lines of code and prepares the attribute for
-the general constifications of struct bin_attributes.
+The sysfs core now allows instances of 'struct bin_attribute' to be
+moved into read-only memory. Make use of that to protect them against
+accidental or malicious modifications.
 
-While at it also constify the callback parameter.
+The usage of read_new/write_new/bin_attrs_new is a transition mechanism
+and will be reverted again after the transition is complete.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- drivers/firmware/google/gsmi.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+Thomas Weißschuh (10):
+      HID: core: use utility macros to define sysfs attributes
+      HID: core: constify 'struct bin_attribute'
+      HID: roccat: common, konepure, ryos, savu: constify 'struct bin_attribute'
+      HID: roccat: arvo: constify 'struct bin_attribute'
+      HID: roccat: isku: constify 'struct bin_attribute'
+      HID: roccat: kone: constify 'struct bin_attribute'
+      HID: roccat: koneplus: constify 'struct bin_attribute'
+      HID: roccat: kovaplus: constify 'struct bin_attribute'
+      HID: roccat: lua: constify 'struct bin_attribute'
+      HID: roccat: pyro: constify 'struct bin_attribute'
 
-diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
-index 24e666d5c3d1a231d611ad3c20816c1d223a0dc5..cd946633ef727e826449a7b307a15a2c9f07d655 100644
---- a/drivers/firmware/google/gsmi.c
-+++ b/drivers/firmware/google/gsmi.c
-@@ -487,9 +487,9 @@ static const struct efivar_operations efivar_ops = {
- 
- #endif /* CONFIG_EFI */
- 
--static ssize_t eventlog_write(struct file *filp, struct kobject *kobj,
--			       struct bin_attribute *bin_attr,
--			       char *buf, loff_t pos, size_t count)
-+static ssize_t append_to_eventlog_write(struct file *filp, struct kobject *kobj,
-+					const struct bin_attribute *bin_attr,
-+					char *buf, loff_t pos, size_t count)
- {
- 	struct gsmi_set_eventlog_param param = {
- 		.data_ptr = gsmi_dev.data_buf->address,
-@@ -528,10 +528,7 @@ static ssize_t eventlog_write(struct file *filp, struct kobject *kobj,
- 
- }
- 
--static struct bin_attribute eventlog_bin_attr = {
--	.attr = {.name = "append_to_eventlog", .mode = 0200},
--	.write = eventlog_write,
--};
-+static const BIN_ATTR_ADMIN_WO(append_to_eventlog, 0);
- 
- static ssize_t gsmi_clear_eventlog_store(struct kobject *kobj,
- 					 struct kobj_attribute *attr,
-@@ -1017,7 +1014,7 @@ static __init int gsmi_init(void)
- 	}
- 
- 	/* Setup eventlog access */
--	ret = sysfs_create_bin_file(gsmi_kobj, &eventlog_bin_attr);
-+	ret = sysfs_create_bin_file(gsmi_kobj, &bin_attr_append_to_eventlog);
- 	if (ret) {
- 		printk(KERN_INFO "gsmi: Failed to setup eventlog");
- 		goto out_err;
-@@ -1049,7 +1046,7 @@ static __init int gsmi_init(void)
- 	return 0;
- 
- out_remove_bin_file:
--	sysfs_remove_bin_file(gsmi_kobj, &eventlog_bin_attr);
-+	sysfs_remove_bin_file(gsmi_kobj, &bin_attr_append_to_eventlog);
- out_err:
- 	kobject_put(gsmi_kobj);
- 	gsmi_buf_free(gsmi_dev.param_buf);
-@@ -1076,7 +1073,7 @@ static void __exit gsmi_exit(void)
- #endif
- 
- 	sysfs_remove_files(gsmi_kobj, gsmi_attrs);
--	sysfs_remove_bin_file(gsmi_kobj, &eventlog_bin_attr);
-+	sysfs_remove_bin_file(gsmi_kobj, &bin_attr_append_to_eventlog);
- 	kobject_put(gsmi_kobj);
- 	gsmi_buf_free(gsmi_dev.param_buf);
- 	gsmi_buf_free(gsmi_dev.data_buf);
+ drivers/hid/hid-core.c            | 27 ++++++++-------------
+ drivers/hid/hid-roccat-arvo.c     | 20 ++++++++--------
+ drivers/hid/hid-roccat-common.h   | 22 ++++++++---------
+ drivers/hid/hid-roccat-isku.c     | 22 ++++++++---------
+ drivers/hid/hid-roccat-kone.c     | 22 ++++++++---------
+ drivers/hid/hid-roccat-koneplus.c | 42 ++++++++++++++++----------------
+ drivers/hid/hid-roccat-konepure.c |  4 ++--
+ drivers/hid/hid-roccat-kovaplus.c | 38 ++++++++++++++---------------
+ drivers/hid/hid-roccat-lua.c      | 10 ++++----
+ drivers/hid/hid-roccat-pyra.c     | 50 +++++++++++++++++++--------------------
+ drivers/hid/hid-roccat-ryos.c     |  4 ++--
+ drivers/hid/hid-roccat-savu.c     |  4 ++--
+ 12 files changed, 129 insertions(+), 136 deletions(-)
+---
+base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+change-id: 20241201-sysfs-const-bin_attr-hid-c249ed557cb6
 
+Best regards,
 -- 
-2.47.1
+Thomas Weißschuh <linux@weissschuh.net>
 
 
