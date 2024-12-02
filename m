@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-428218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DF19E0BE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:17:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6789E0CD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:11:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7576B631DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:03:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B22D3B67194
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF8F1DF729;
-	Mon,  2 Dec 2024 19:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1CE1DED78;
+	Mon,  2 Dec 2024 19:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Dc5vbZ2V"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tSf73ptz"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4911DE8A3;
-	Mon,  2 Dec 2024 19:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F070A1DE3CE;
+	Mon,  2 Dec 2024 19:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733166104; cv=none; b=Br35lCqMR3rHAMTJnBAOA4bqxU+09MQycwtuBaBDfncRI67c8kef6FzjsSYKeGckp5t5gAXtiJjqutXmzeepw3NOE2jTo2dxXmAR/VIk+C7a2p20AK778MuuWnRyyANv+4pGZet+52Fd5TK+M/lL+LIIRQQuie3i3mrMaykNqow=
+	t=1733166142; cv=none; b=iMbpnkOd+HeS379n4+Eq6piROQ38DQt3JwqqBzbIa/rIDf5qk/EyByHo5caDxTi95HLxKGFzW0u3f1KL5id4SmTLntPz43E3CrYt3K5E6s/Wit+b0nZDiDTP/MkqTJqGbjKP/XiEmrnPagY9ZGYpq5oF5snDZmfk0DZVq7XTanE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733166104; c=relaxed/simple;
-	bh=i28gZ+MaLrLyAd1o1KmiI7vQ0VQgC299+3qpAa4eFbk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O9Ec47cX8xwJaR1aSUUNAx5v/YSMYqohRrxnqZ1Qu9Nz6atvgKJgjY/DhqmUsQ930fdePDbrFZGvSRs5vfjA8D+bcXhYOG/DLFlfwzGMLk42YShjZqlZult4W4LEBC6tbq7GI4PdKSVKyeXPKypMbJ6W1bBRJqplscUsOSg2BE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Dc5vbZ2V; arc=none smtp.client-ip=159.69.126.157
+	s=arc-20240116; t=1733166142; c=relaxed/simple;
+	bh=Lw0cF1apHEYbyMDv0FlJULjHdocoRdy1EJZCufUNKiM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HBw0U9ncPgKT+Vlc/4b9Fk2OdtXb1uiJUItxiOEARt6nZ7xVsGO2WPkYPLi9G/DJOkiur3TCw0pchn8f1XaG6SleooT++WSAttxQCd8F2n6mmjm+URNJH2DBNbTJCkH24fxdt63bzHUBYECnwJOk2dDLDSQnP7x7A9m442z9PJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tSf73ptz; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733166098;
-	bh=i28gZ+MaLrLyAd1o1KmiI7vQ0VQgC299+3qpAa4eFbk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Dc5vbZ2VR4rNJLRf5Z1YhmepxJcm6fVSkHfQS5HcPKJqG7Z944Bl3pfR5EWgk8nIH
-	 IH1cfcUO/bhJhE1CHJblG3wsaXH/UAbxKSjQGMJrN1SthTZPSQstt6hcznxaRGJIrF
-	 mhS8LWrS3+q1fs2sI+wZi3P5k/WclB3olG9Gzj/w=
+	s=mail; t=1733166139;
+	bh=Lw0cF1apHEYbyMDv0FlJULjHdocoRdy1EJZCufUNKiM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=tSf73ptzoiI/IyAaxbLzcmgZum8vSUnezgdS9pFdaPTjEvG5wB0xn4zhpCXVFV63W
+	 JTXmhVQHJR298xHoX0BoP/tfZDScN3FIrsNtxSTXOEwwtYQuj8slPd3CwxqB8cHkrc
+	 70WbhdyG3xY5Q5Azye4A/nQLsTEAEmawXjqYHMq0=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 02 Dec 2024 20:01:36 +0100
-Subject: [PATCH 05/10] HID: roccat: isku: constify 'struct bin_attribute'
+Subject: [PATCH 0/4] power: supply: constify 'struct bin_attribute'
+Date: Mon, 02 Dec 2024 20:02:18 +0100
+Message-Id: <20241202-sysfs-const-bin_attr-psy-v1-0-f846430b8b66@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,19 +48,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241202-sysfs-const-bin_attr-hid-v1-5-16369423a48a@weissschuh.net>
-References: <20241202-sysfs-const-bin_attr-hid-v1-0-16369423a48a@weissschuh.net>
-In-Reply-To: <20241202-sysfs-const-bin_attr-hid-v1-0-16369423a48a@weissschuh.net>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
- Stefan Achatz <erazor_de@users.sourceforge.net>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+X-B4-Tracking: v=1; b=H4sIADoETmcC/x3MQQqAIBBA0avErBtQqaiuEhFpU83GwpFIorsnL
+ d/i/weEApNAXzwQ6GLhw2fosgC3z34j5CUbjDKVNkqjJFkF3eElomU/zTEGPCWhbWxXV51yrbG
+ Q8zPQyve/Hsb3/QA2VixTagAAAA==
+X-Change-ID: 20241201-sysfs-const-bin_attr-psy-b6b95490c82b
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166097; l=3361;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166139; l=1142;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=i28gZ+MaLrLyAd1o1KmiI7vQ0VQgC299+3qpAa4eFbk=;
- b=kyoVV0cTcsDwf9XyQ3pWN1wFhgPALtDXk1wEV240bKYJZz5CFxPFlGRXaXI6Xn7UJR52tEZy1
- sZ/q0DNKrlvCa+QB7sQ32ValxTcDmPeNA00VgdHAnX6WcAflwLXxzTF
+ bh=Lw0cF1apHEYbyMDv0FlJULjHdocoRdy1EJZCufUNKiM=;
+ b=QjMIX/yWXf5++PynwpYtLyfcxFXlxY16K8Of46voEWBlIgmI8ZT6HF5a6Jm9UbfBepdetKvrF
+ UQwDnYuUGNPCVPihSTlLbNjtdQM4tMYr6OZLJzHElGhyEbx7h8Ibybh
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
@@ -68,88 +68,28 @@ The sysfs core now allows instances of 'struct bin_attribute' to be
 moved into read-only memory. Make use of that to protect them against
 accidental or malicious modifications.
 
+The usage of read_new/write_new/bin_attrs_new is a transition mechanism
+and will be reverted after the transition is complete.
+
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- drivers/hid/hid-roccat-isku.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+Thomas Weißschuh (4):
+      power: supply: ds2760: constify 'struct bin_attribute'
+      power: supply: ds2780: constify 'struct bin_attribute'
+      power: supply: ds2781: constify 'struct bin_attribute'
+      power: supply: olpc_battery: constify 'struct bin_attribute'
 
-diff --git a/drivers/hid/hid-roccat-isku.c b/drivers/hid/hid-roccat-isku.c
-index 0cd6208fb371eddd10f6d47d6a70036f6b7d4796..65a84bfcc2f86432753c148dbb78d77de70bafb9 100644
---- a/drivers/hid/hid-roccat-isku.c
-+++ b/drivers/hid/hid-roccat-isku.c
-@@ -156,7 +156,7 @@ static ssize_t isku_sysfs_write(struct file *fp, struct kobject *kobj,
- 
- #define ISKU_SYSFS_W(thingy, THINGY) \
- static ssize_t isku_sysfs_write_ ## thingy(struct file *fp, struct kobject *kobj, \
--		struct bin_attribute *attr, char *buf, \
-+		const struct bin_attribute *attr, char *buf, \
- 		loff_t off, size_t count) \
- { \
- 	return isku_sysfs_write(fp, kobj, buf, off, count, \
-@@ -165,7 +165,7 @@ static ssize_t isku_sysfs_write_ ## thingy(struct file *fp, struct kobject *kobj
- 
- #define ISKU_SYSFS_R(thingy, THINGY) \
- static ssize_t isku_sysfs_read_ ## thingy(struct file *fp, struct kobject *kobj, \
--		struct bin_attribute *attr, char *buf, \
-+		const struct bin_attribute *attr, char *buf, \
- 		loff_t off, size_t count) \
- { \
- 	return isku_sysfs_read(fp, kobj, buf, off, count, \
-@@ -178,27 +178,27 @@ ISKU_SYSFS_W(thingy, THINGY)
- 
- #define ISKU_BIN_ATTR_RW(thingy, THINGY) \
- ISKU_SYSFS_RW(thingy, THINGY); \
--static struct bin_attribute bin_attr_##thingy = { \
-+static const struct bin_attribute bin_attr_##thingy = { \
- 	.attr = { .name = #thingy, .mode = 0660 }, \
- 	.size = ISKU_SIZE_ ## THINGY, \
--	.read = isku_sysfs_read_ ## thingy, \
--	.write = isku_sysfs_write_ ## thingy \
-+	.read_new = isku_sysfs_read_ ## thingy, \
-+	.write_new = isku_sysfs_write_ ## thingy \
- }
- 
- #define ISKU_BIN_ATTR_R(thingy, THINGY) \
- ISKU_SYSFS_R(thingy, THINGY); \
--static struct bin_attribute bin_attr_##thingy = { \
-+static const struct bin_attribute bin_attr_##thingy = { \
- 	.attr = { .name = #thingy, .mode = 0440 }, \
- 	.size = ISKU_SIZE_ ## THINGY, \
--	.read = isku_sysfs_read_ ## thingy, \
-+	.read_new = isku_sysfs_read_ ## thingy, \
- }
- 
- #define ISKU_BIN_ATTR_W(thingy, THINGY) \
- ISKU_SYSFS_W(thingy, THINGY); \
--static struct bin_attribute bin_attr_##thingy = { \
-+static const struct bin_attribute bin_attr_##thingy = { \
- 	.attr = { .name = #thingy, .mode = 0220 }, \
- 	.size = ISKU_SIZE_ ## THINGY, \
--	.write = isku_sysfs_write_ ## thingy \
-+	.write_new = isku_sysfs_write_ ## thingy \
- }
- 
- ISKU_BIN_ATTR_RW(macro, MACRO);
-@@ -217,7 +217,7 @@ ISKU_BIN_ATTR_W(control, CONTROL);
- ISKU_BIN_ATTR_W(reset, RESET);
- ISKU_BIN_ATTR_R(info, INFO);
- 
--static struct bin_attribute *isku_bin_attributes[] = {
-+static const struct bin_attribute *const isku_bin_attributes[] = {
- 	&bin_attr_macro,
- 	&bin_attr_keys_function,
- 	&bin_attr_keys_easyzone,
-@@ -238,7 +238,7 @@ static struct bin_attribute *isku_bin_attributes[] = {
- 
- static const struct attribute_group isku_group = {
- 	.attrs = isku_attrs,
--	.bin_attrs = isku_bin_attributes,
-+	.bin_attrs_new = isku_bin_attributes,
- };
- 
- static const struct attribute_group *isku_groups[] = {
+ drivers/power/supply/ds2760_battery.c |  8 ++++----
+ drivers/power/supply/ds2780_battery.c | 24 ++++++++++++------------
+ drivers/power/supply/ds2781_battery.c | 24 ++++++++++++------------
+ drivers/power/supply/olpc_battery.c   | 11 +++++------
+ 4 files changed, 33 insertions(+), 34 deletions(-)
+---
+base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+change-id: 20241201-sysfs-const-bin_attr-psy-b6b95490c82b
 
+Best regards,
 -- 
-2.47.1
+Thomas Weißschuh <linux@weissschuh.net>
 
 
