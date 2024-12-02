@@ -1,109 +1,143 @@
-Return-Path: <linux-kernel+bounces-427871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67A89E06E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:25:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9289E08CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:38:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D6332810E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:24:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD257B42B1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AB5205ACE;
-	Mon,  2 Dec 2024 15:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42485207A12;
+	Mon,  2 Dec 2024 15:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cbQ0pgMp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUUx7lHf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FF8205E07;
-	Mon,  2 Dec 2024 15:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CFB204F8F;
+	Mon,  2 Dec 2024 15:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152925; cv=none; b=fsTlqY5RNfkp6YgTiUtscwPiEblTgcJc1O6e1mDVMgjuZcj2u617NqpP1lC6qDtaEIbeh0kovEzo97lqcuxJ6I43GXT5F4Q9MElXhfsQd90voolNELXPUtuEblWfBaP2lekhHB0Pom2MDdXVlypEClJUxoCTQfbofA1TU/X8o6c=
+	t=1733152936; cv=none; b=m4wKKeaxGk9cfOjyrgvb8mAMkNEPNHl1suQrTNT3atf8thIZ9gDjvFiA1u0qC+Pc3gKIoLtOnKbtwsnQ6q/uJRTXGHCLZhUaTEcpF6ZkhrsPu/BZGXKQfBhzbwnGe0rkAvDGZbvcja7dQlp6ZvI1hFpmfXt0Bc7F/koOYtx6pSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152925; c=relaxed/simple;
-	bh=ajcpJpyti0aQL0v1/bGQWQU0qdNR2xB+eWbhmxF711g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TBtUDwGnj0pXkNxMFwPqdQgr1ge3fO4VlJMfJM+jVkKXkwLVmXQDE/abdMA0Ngh5jyoQQVg/P5jqqc85Am3Phklr2aa5nc/S5ShY+r5X+grpFbJjqVldbVLzn2yBcSWoHOCOy8X1rdhNLJTaxOd9eQn3Lk0EPA2XhWSTztUONk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cbQ0pgMp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BDF8C4CED1;
-	Mon,  2 Dec 2024 15:22:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733152924;
-	bh=ajcpJpyti0aQL0v1/bGQWQU0qdNR2xB+eWbhmxF711g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cbQ0pgMpMtp8/RzZB1DhDD/TbZODAQHOcbsw3CNgs6oV97bqgPsS/yfwRWJ+9qjGS
-	 dDpONl3AO1gj2pu1giW5X4caS3efncUHgVBnpnCNAxbDcb7F19fMmymV15DjZxdU0Z
-	 XgnJfX4lGC7oDvgMk3ZLnbUXwTmMNB8d/gQ8jsl0=
-Date: Mon, 2 Dec 2024 16:22:01 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mcgrof@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
-	x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
-	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	hch@infradead.org
-Subject: Re: [PATCH -v2 1/7] module: Convert symbol namespace to string
- literal
-Message-ID: <2024120249-octane-whenever-ee1f@gregkh>
-References: <20241202145946.108093528@infradead.org>
- <20241202150810.048548103@infradead.org>
- <20241202151533.GF8562@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1733152936; c=relaxed/simple;
+	bh=fMgv+yuJZSY3uaaQETMbs+RJU+yPn08IqtayuTbK6/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fjSSBzw3wFCVi0SmlgZJ6Ws49Es8mvPatqR4ZssdOYOwgLf7iZNvt+O2ui9kaw9k1YBLVz26u7hD8aN7ur+M4F/Jn0mXwrdPx2mybHkjqJx3fCD+++fnhj86rfMAS1/T8SboGf/DmOntkMicKmCpvItfQSOjcDdo1/RvP7HZZj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UUUx7lHf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F95FC4CED6;
+	Mon,  2 Dec 2024 15:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733152936;
+	bh=fMgv+yuJZSY3uaaQETMbs+RJU+yPn08IqtayuTbK6/c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UUUx7lHfUhva2ZxmhoIl2hQOl9DNlES3J4+BPvQ3+8OyGWmTKMFVE6zaT2pat5Nst
+	 ljE0gu0tVuCZUZDudHcX1odlZv9w2KqP42fLvARo42f1jTo8HT9twAjq92tCldRLJR
+	 gWkPziQX1V98Ksi6rxZSXqvtrEujuK7/DS7c3n3FFrh84TuL4oOj99Hj7VAZpbVx4k
+	 1B/7bCop+HaUKysizSj/hE2xc5Q1a/Dhg6kKnqF5tnpFHkJx5axVYDrp/1rWkhDp5w
+	 pReLyOtZJRoZWsBdPU5q2F5XrqTYsDr93gUcCJVwv4ozBMuC0o39apjlJmMRaFcHdi
+	 ZiT873HdU4BwA==
+Message-ID: <8b2863e7-d504-49dc-a2ad-d34bfbeb6de8@kernel.org>
+Date: Mon, 2 Dec 2024 16:22:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202151533.GF8562@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] arm64: dts: broadcom: Add interrupt-controller flag
+ for intc on BCM2712
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Eric Anholt <eric@anholt.net>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+ linux-gpio@vger.kernel.org
+References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
+ <20241202-dt-bcm2712-fixes-v1-5-fac67cc2f98a@raspberrypi.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241202-dt-bcm2712-fixes-v1-5-fac67cc2f98a@raspberrypi.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 02, 2024 at 04:15:33PM +0100, Peter Zijlstra wrote:
-> On Mon, Dec 02, 2024 at 03:59:47PM +0100, Peter Zijlstra wrote:
-> > Clean up the existing export namespace code along the same lines of
-> > 33def8498fdd ("treewide: Convert macro and uses of __section(foo) to
-> > __section("foo")") and for the same reason, it is not desired for the
-> > namespace argument to be a macro expansion itself.
-> > 
-> > git grep -l -e MODULE_IMPORT_NS -e EXPORT_SYMBOL_NS | while read file;
-> > do
-> >   awk -i inplace '
-> >     /^#define EXPORT_SYMBOL_NS/ {
-> >       gsub(/__stringify\(ns\)/, "ns");
-> >       print;
-> >       next;
-> >     }
-> >     /^#define MODULE_IMPORT_NS/ {
-> >       gsub(/__stringify\(ns\)/, "ns");
-> >       print;
-> >       next;
-> >     }
-> >     /MODULE_IMPORT_NS/ {
-> >       $0 = gensub(/MODULE_IMPORT_NS\(([^)]*)\)/, "MODULE_IMPORT_NS(\"\\1\")", "g");
-> >     }
-> >     /EXPORT_SYMBOL_NS/ {
-> >       if ($0 ~ /(EXPORT_SYMBOL_NS[^(]*)\(([^,]+),/) {
-> > 	if ($0 !~ /(EXPORT_SYMBOL_NS[^(]*)\(([^,]+), ([^)]+)\)/ &&
-> > 	    $0 !~ /(EXPORT_SYMBOL_NS[^(]*)\(\)/ &&
-> > 	    $0 !~ /^my/) {
-> > 	  getline line;
-> > 	  gsub(/[[:space:]]*\\$/, "");
-> > 	  gsub(/[[:space:]]/, "", line);
-> > 	  $0 = $0 " " line;
-> > 	}
-> > 
-> > 	$0 = gensub(/(EXPORT_SYMBOL_NS[^(]*)\(([^,]+), ([^)]+)\)/,
-> > 		    "\\1(\\2, \"\\3\")", "g");
-> >       }
-> >     }
-> >     { print }' $file;
-> > done
+On 02/12/2024 15:31, Dave Stevenson wrote:
+> BCM2712 DT was producing dtbinding validation errors of
+
+s/DT/DTS/
+No one uses term like "dtbinding". Use full make target name or DT schema.
+
+
 > 
-> Perhaps we can ask Linus to run this now, before -next fills up again ?
+> interrupt-controller@7cd00000: 'interrupt-controller' is a required
+> property
+> interrupt-controller@7cd00000: '#interrupt-cells' is a required property
+> 
+> Fix them by adding the required flags.
 
-Yes please!
+But are these valid? Why do you think that binding is correct? Or you
+just silence the warning regardless whether this matches the hardware?
+
+
+Best regards,
+Krzysztof
 
