@@ -1,274 +1,302 @@
-Return-Path: <linux-kernel+bounces-427299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E0A9DFF65
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:54:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD5E9DFF6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A639B23B41
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:52:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DB8D2818D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219DC1FCFD3;
-	Mon,  2 Dec 2024 10:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="P3JefoIp";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ryxBraHB"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA2D1FCFC2;
+	Mon,  2 Dec 2024 10:55:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE9B1FC0E5;
-	Mon,  2 Dec 2024 10:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733136764; cv=fail; b=eGYQMLuqS3tQsxyYbaiYJyiboFv+0GKt6yjK9D6Zo9+emi/0mqWYE9VcufdS9mphllvI0kq8ABgU1twsWZTDjVMH3Vtiz6xpVaqKdERUiJ9/a54K587zjUDLP2DwOCHZ5ejbSnPfbSTrAY1+A7UztM5xm5qennb59YG80wdPuC0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733136764; c=relaxed/simple;
-	bh=RRWYOB0/QwEOL4piObNiH8Pjc5ETGUWyhYRppMzLPts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=h3JaMc9s0+D8o5IlhWFslDHtyMf07cVTuWVFNAijVoTL2u9G88ev7jGbb318/ThiQJT5nWJiSn8/ll8upPZBoT4uJcetzmQfRSRbvaX1g/7c1CsFbf8n78XOzOQAF12HCJHeU8tgh77sMAnAXLUfbsrJz/BkefvQ/yCIaPpsNWI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=P3JefoIp; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ryxBraHB; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B26WvlH006615;
-	Mon, 2 Dec 2024 10:52:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=T7nXkd9sgPhJovRioW
-	TDvtM5c2sTKGrDWlpZP12lDfQ=; b=P3JefoIpFH0h4L4oAP+6w2kyQmJmPEggIY
-	Sq2g8I4M+rN8QBuPiVdtHN5ai7avVD8p0LW+ZzvfQlfdoKH9+4ZjSNvgPiu4j7yF
-	RB5KtYk1rJwjra40eWibNBmTKW6aiNS48tSFWKR0xhrL2rOqkbRiT8wnjAuHdDL5
-	KXbYSMILXUW98XRnGUJJemhvuNVl1vCzhfufKs9YtMvv5iwdLB5ADvaN+r3G0boF
-	TNqCXDbVxftccuUOFOj2od/RRmcLv+iC+iDSuBkpfhKgBDNF3XqHbIQadEI01qL7
-	DMTZXfGqcBujqV9wehOI6psJwfPRKhvx7KQnpTd3clXZSjr350Hg==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437tas2m99-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Dec 2024 10:52:24 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B29jvrU031053;
-	Mon, 2 Dec 2024 10:52:24 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2047.outbound.protection.outlook.com [104.47.51.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437wjaufdg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Dec 2024 10:52:24 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qlh4Lu0GE8Xzf0N9S+j/1GoUdjYIpWXjaVup3brWj0JI/MBjOsIPP5MDf2ES7XDnnw+JViclC+IsGkMi8GrzOi72kgcBDPQoxMxVSrJdtNXYvzLwjCduqnBfK0lXT/dHjx+fvrkWCHAKkT5oIWY/qMr5qX3Y9OflQCVVEQ+TbYF4X4+5JxEzE/6z2JPA4GxMDs20XLFJjIpw3T/b9SRaVl+S5j7Y9aQL1Q518AC2c20R+Ls2QppKmhYBRHxeUPSIz52JwCm2NQIuEfvXpnSZbZfFlLE0E6OkTVDzDx6E9Fz7/pcXWNgl5hdxfeU2tSMR/fk0SO8FZ+OVKXnaOzCG0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T7nXkd9sgPhJovRioWTDvtM5c2sTKGrDWlpZP12lDfQ=;
- b=B8Yb2gEr0YdrVDB3v0mmNuX7VRLpd8vN7HiwhW5Q4PieflG+dYW2uTJi5wo1bDS1ZCJU7IbkK/JhvNZcEG/BECmtFeDhThW2QIrrC/9Hjs9ab3MlXp61KAu07v0bPPIss5OspC1BX4GbK6HxWoyb0gUkdtr3pDoQJvX/2eQ2aGFpslFB323J2Gurreat0WF8QgqD4YzFjeLc2ycdEFfTxpvIItDPZJUxBQ0Cc7JRXTBuSM2lMLpH6sYj8NL2KbM3lv2TbSDiwHm0akWMgBR4fFSDFi6OcVGQKBMH5W9lMk9uScKDT9aKzqOMsAwfOQvqDNcL2cy4riOWa7zaC3GV2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T7nXkd9sgPhJovRioWTDvtM5c2sTKGrDWlpZP12lDfQ=;
- b=ryxBraHBqIyT2TAw5iC/awKmkJEr2WSQCpKwlPkCal6Y1e80K6kV09dNcHkYs3p7miqH8PclmwThOHmfaUI08rn68ey/nsmTUhAy3gRkUt+A8UUscv7jXKy6IqfGVjQvedz8jZZWRlCzoJ4jNRiIOhpuZSVSdV6EdVw4SGrOFFg=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by SA2PR10MB4812.namprd10.prod.outlook.com (2603:10b6:806:115::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
- 2024 10:52:21 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 10:52:20 +0000
-Date: Mon, 2 Dec 2024 10:52:13 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Christian Brauner <christian@brauner.io>,
-        Shuah Khan <shuah@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v6 2/5] pidfd: add PIDFD_SELF_* sentinels to refer to own
- thread/process
-Message-ID: <fbcea328-9545-4f3e-9f99-2e2057ce32df@lucifer.local>
-References: <cover.1729926229.git.lorenzo.stoakes@oracle.com>
- <8eceec08eb64b744b24bf2aa09d4535e77e1ba47.1729926229.git.lorenzo.stoakes@oracle.com>
- <20241028-gesoffen-drehmoment-5314faba9731@brauner>
- <c96df57a-fa1b-4301-9556-94a6b8c93a31@lucifer.local>
- <b8f4664c-b8f0-46ca-b9a3-8d73e398b5ca@lucifer.local>
- <55764300-1b53-4d14-99cc-e735d3704713@lucifer.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55764300-1b53-4d14-99cc-e735d3704713@lucifer.local>
-X-ClientProxiedBy: LO2P265CA0388.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:f::16) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0651FC0E5;
+	Mon,  2 Dec 2024 10:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733136924; cv=none; b=tSIUOCE3VJqAMJ8mYa9UTqCEL/2Eyrdxq7kZ+9Vwf4dl6866UAP7Ag0nh2KLBx+94uaQVRvNIX0dLMLbtZrjIjF9Hlbid/7b4Yaft0jykR9L7vdtVNzGznCphFUV7ZChoIBY3TBseVsBJ6Bm10z1OZLgnK3xdx63NTjXabnKuUU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733136924; c=relaxed/simple;
+	bh=1F+Jgvpur1Al+c419K9Fz4Cu6d1N57eJ9R1P8ujMP2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n9KvUYrDVSBL+eTUPX5q4VZycJqXYK1vonptdXOJBm4gGponB5Vg4y7L+koUnB+pfUOg7dV4F2QSgYEXDWcA93E6T2rugXL0bqhR6/4nN118uoxJahVd50w1soFEqF+ubopi8P0h9Sw9ekPaH3n6WVx03nBmiAAp5+E5zj0ICBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 705E7C4CED1;
+	Mon,  2 Dec 2024 10:55:22 +0000 (UTC)
+Message-ID: <9b3e21b7-1b15-4c27-9df0-0b9f31858721@xs4all.nl>
+Date: Mon, 2 Dec 2024 11:55:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|SA2PR10MB4812:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c1bdf84-80cf-4312-e588-08dd12bf6566
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?p8A3j89/8cxWUrFpHVQp1A/Z+vlBjbYzyG7hJWH/fPRWlGMQiEzl16bqujcv?=
- =?us-ascii?Q?hZpvPvDgi3q1ClhG8hB6VGYcFUiTlbyysxFdcVaAJfofEHlXW8BxEUrExfmI?=
- =?us-ascii?Q?RIM1lZ34xv26/fh0n7kGmvEqL8GkYdaRf26HF3uAVVaQQ4JsNpToTsqKxGeQ?=
- =?us-ascii?Q?HuytUK0olQr/k1i/oxGrfl3gPXkNM78Aa1V+lSjDQ+B5FfvdjL9M7d7h2nK0?=
- =?us-ascii?Q?o6QLDdzVWya9Mj+7b/unOBYTlMmNtOoSOFKVtG/abGcOnBLcG+IXhEz2z9F/?=
- =?us-ascii?Q?M4SSOT/y+xi2l6V3Srqw7/VAREop+wPv3E3+hxWxqUB5m24qEHcGUJZLSGnE?=
- =?us-ascii?Q?GJn3EhK/PpjrdJxJpWgEuiwifQniuz9ohwpmQWqg/ZBO7mEu0wbPMvPaFsKS?=
- =?us-ascii?Q?H77Y9B2odgGoAoJiayeuws4VUDCmdZtGSTUnIKZ0kTHOHWNVoKjleShzyosK?=
- =?us-ascii?Q?uUXR+/yjvW0lqZBiEYqUQP/VzihIX8urY9fQFPCZWO1KqR0oH8arE3DlPHLK?=
- =?us-ascii?Q?25iNVyv4tLZ34yKBpktDdYlXbGI7mOp3++gPNn6v/+w/chSRjGBCuX6fSaA1?=
- =?us-ascii?Q?HoiEwlrv9jjbrOHp2ch+ucImmqrvF0DP4X7xAhPef8rURAaj/+AN9F7/WX+K?=
- =?us-ascii?Q?GQS9Q/HVUNmEXLSM6HTky9+x0phl+Xvr1ZwVD3kd3HvLGHOPqvYVg+DaIb3L?=
- =?us-ascii?Q?1GPgUroHWXf5dVLVynItwxL/50qkZfd0Do9Cxj64XQeA2D0QRiTvmydu7c02?=
- =?us-ascii?Q?KgqICCf49rOmMgbxbVU+hsvuqnH9oNQMfsvwhVzzdaDuxypDnYZ/+qICmZE5?=
- =?us-ascii?Q?gRBaHxAGVv3rBK8vJsc4LmNHG4O53KcbPPxUp7ZCMGE9pmKq/PG5lyzIdqIy?=
- =?us-ascii?Q?7VANkf5CGGV6qbm9SOunJ04AakIjPTvwx/QGYdfG96ZM3Gj9fm6SIfLk9PHz?=
- =?us-ascii?Q?EswkfQsnQDsQ9Jt/h0VIVe4R4Mq/FTUEGhqpfctUwCAEZJH6v2VaCCU2f5gc?=
- =?us-ascii?Q?oeXEZoo/Yu4UfcNaK67rURyrR8oUiSKUcRzWa8Ya9K+qBnxOhzP2N0IMORKz?=
- =?us-ascii?Q?7fRRxCzSO6mGRxMZK49n/OGrEJfbIbZyHhrLcsbUjgQMknrCJI3FIIbtdcQ1?=
- =?us-ascii?Q?21zyehf41QdM/bfp0xybUI5BZuukomNpbzAm5RD5ZptQUElXlW3FToxpDGe7?=
- =?us-ascii?Q?nJaMZTvetJZqVSBj/88gdekAP0ouBKoVUmsmK2SwdeVhfG9GTNbB2N211xDf?=
- =?us-ascii?Q?933L75GZ8YZq2lEvBM3DU7kdveqpe72v30LX59U+xOfXNF1AvNsLg66rny9l?=
- =?us-ascii?Q?Ve4RRtG5AFNoAPNZ9NK+WFSYUJ/fXyWKWXFbGlOb/fFMXw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ENw5bcA8cajfqnL4J+dV45oD8iKDt9wfKXheOkzFE8DWqJpBJtafTPRaiZXa?=
- =?us-ascii?Q?gH+TRcPKCT/qUdX/vwLdZN8xhZz6aUWytLlqNp3m3MWVNP7QNK2iH/piwone?=
- =?us-ascii?Q?S6gwb+njgoGZPJrC0IK10/zspqGn6C65JrdFMAU2JznLyxMN0RPBdC02pOMt?=
- =?us-ascii?Q?793S9niBOCyTb8C5gz0ZcM9GtEDaAgejVnM7V9nUxLvfrNnzWnWQ0NIqu1nH?=
- =?us-ascii?Q?Oxp2thmvjIneCc1bggM2rKTDopOhW2BB9fHH01jVXvI8D62r3Py4iiNOPOL+?=
- =?us-ascii?Q?41B4E1DCaeacV2Hy20TaqMpO2utWXbS0Dp3b3EfPKMG1zmi46p+SAbwNwPGu?=
- =?us-ascii?Q?7fK3iKlmKihneTlzg130Yo/9T5DLANmaoDjX0KGV9bYr75TAMmlXxnnupszl?=
- =?us-ascii?Q?DG13meGtne/YycQPkkCoSAShcK/dWQ6YXZGmCvKFhQcAsqtKxogTFtNSznZO?=
- =?us-ascii?Q?olF8gIZoOuD2sqhM//ycaHg81FQBlIwsM9xEjPyyU5SqgVgC7W+R32hKQFXE?=
- =?us-ascii?Q?soBThsVX49ZDJ0moZNO9lXR+Rm8WmTWNKBWjPgSWFdnmy3FbF4MfJ8zYzlFY?=
- =?us-ascii?Q?LqBrtc2B4x6AdJ75y1RMbEcebbTsmF9LiWEC7TApj67IGkWHbA+4TndqUeiX?=
- =?us-ascii?Q?vAKZgMo3IXkKAq2PMxAmhmAB2Xp3VnhURjc1ppDi/TJBOdLM9jr/mzP0wTib?=
- =?us-ascii?Q?RDsQWo29/O1qvzRygNceY2XQhLnSPEdgrAF5wjrn0ur7Te+MHPgVPYoOVoVZ?=
- =?us-ascii?Q?uW+fg9JxPFbz90Saed4hVDTWBnQBwzzRtPsXLi4N8QyC035CPj0ZLp67BArn?=
- =?us-ascii?Q?uIGgoPABepDidQNVbbZLzos2qHKH/sn+yIp6VNjUb4iRcJhbRB5iwLOIXKX7?=
- =?us-ascii?Q?IG+JZ1+focEkbFEn6uTo2I7G1GaZI/sIomBJuVZIf8UeXP5uTDVFcvCd7HE8?=
- =?us-ascii?Q?sGGKFAER4WOXVcRX4g/8eetn/CuNTSureHVZwwzihe1f9yN/rO5Vf265KjZa?=
- =?us-ascii?Q?EAogh3yUKAFmKzRYBCH1SRsHUK4kW9IPsf/Z4a93gmtjFiR4jMpGDm6wn7mT?=
- =?us-ascii?Q?WwK2dt29i442JFjb9SupAM60VlcB/5QaI99g4nQAbp1EablE38WZfg4K6UtT?=
- =?us-ascii?Q?bPZDaEDRDGAkoyyYMpmCy4lYXmZDVw3cJHueSjk7Y6o0+YnwGKskLy0xDzhk?=
- =?us-ascii?Q?0wvsEJ/cZipVsNtqugzCKTWoiNKeeDXazP82O2/hMc3Cq52xx/IK0FvhHOkz?=
- =?us-ascii?Q?xGHaWXMMi7tUiA9PTgrSxs10/KEcz3YRzimvMcu1qF+3sZHylpfxN58eD/x/?=
- =?us-ascii?Q?GrKU/SvZah6ory0bY8+3HSEjA1NJd2kIETWHbbAcRCvEiFcGlynWqCu8w9rN?=
- =?us-ascii?Q?+SX/N+6CFMRlMEKE3VUqjJXkvDWSnuTYfAiDL5a6nKnBKNqc2j9DNRarOFO1?=
- =?us-ascii?Q?k9DPxnFuwYsk8Fqum7dCfvn8cPJB8WQ4j/sz4Fjd8o3n1oWnTl7UCLmqzNK8?=
- =?us-ascii?Q?I+0pfGfLld/iSr2GGqL/3osL3PjHPQWjWAxa3C4livNqf3nmmgO9ZGHSfX9O?=
- =?us-ascii?Q?rWT1T8nCEEExYrC1lagkDiBmGB6gII5iAi0CwuIeH6jFSiGZZFwIBQhyeZwx?=
- =?us-ascii?Q?dw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	YXD1J0S3vaUaI8ri7S12aQ8+y/e1vqNjvF6Sjpc7KFyRXgGeGSsp/enLEszwEsCpl1gWz2iV/EqmcC3bPI3pbKbbVFWKEu7L06gxMiUnwPfSnwe12jjYRDsqlnzH9Gs+DNB9YC+wDcEpMu4G5z7DfagFnET3cd4Uf2xUW5++fe8lyYNXMxhwzS9cnOsM3s27U7/WzFlEOBshV9BNCwFsPLnOhIFLkv4vIwABJL/9mEhofn2cQ9sy3OvkRgxJyfZyXljwG8w885EciVrHkpv9myDkp6F1BgKulbPD8yhAOi4xFXdIsSDbiScCn1YmIISKq+shy5nfXBz32W6F1IAbargoBJn8y2vLeZFIwXSzs29E5IT7G6zL+ed5cQquYw58dgHMS7Aoef9vSt/FIF5htaKjjUP170N2xLeR9G6eLV55Bw/ETJNU3Q8NWEKpFO7KF8tqHAG0NVJR6FxzCufy+fRI/+vtilJt1TTIbx/VeOdc0PSvWhyHFlvcnNV8clstyI+V3RY1mLnVFU03pvf5QW7ZUpFCF9z6qB2ZynVL5e7LSSm93xtgi7AMQCy293tXvWz3NTkKaSKdD+fxttJsRl33C18yVB7TjYucW0RnX9o=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c1bdf84-80cf-4312-e588-08dd12bf6566
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 10:52:20.8559
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1tTTqjVFBsCBjuuFnbJaqwf0OCvXBxQX9hmjK24AS9xKSWndNLS8Jk7yDCumOTyVyTW2TQCV4qAnIsiDZQkNO3LhBQlUGGkR2VUzkPT3fYw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4812
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-02_06,2024-12-02_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 adultscore=0
- malwarescore=0 bulkscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412020095
-X-Proofpoint-GUID: nGZMd7VC42b5mTJfAnZh0WD5sQ-URIe2
-X-Proofpoint-ORIG-GUID: nGZMd7VC42b5mTJfAnZh0WD5sQ-URIe2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
+ by other fh
+To: Hans de Goede <hdegoede@redhat.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
+ <20241129110640.GB4108@pendragon.ideasonboard.com>
+ <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
+ <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl>
+ <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
+ <CANiDSCvwzY3DJ+U3EyzA7TCQu2qMUL6L1eTmZYbM+_Tk6DsPaA@mail.gmail.com>
+ <20241129220339.GD2652@pendragon.ideasonboard.com>
+ <CANiDSCsXi-WQLpbeXMat5FoM8AnYoJ0nVeCkTDMvEus8pXCC3w@mail.gmail.com>
+ <20241202001846.GD6105@pendragon.ideasonboard.com>
+ <fb321ade-40e7-4b1e-8fcd-c6475767239d@xs4all.nl>
+ <20241202081157.GB16635@pendragon.ideasonboard.com>
+ <445e551c-c527-443c-8913-6999455bd366@xs4all.nl>
+ <633ca07b-6795-429f-874d-474a68396f45@redhat.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <633ca07b-6795-429f-874d-474a68396f45@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 02:28:14PM +0000, Lorenzo Stoakes wrote:
-> On Wed, Oct 30, 2024 at 04:37:37PM +0000, Lorenzo Stoakes wrote:
-> > On Mon, Oct 28, 2024 at 04:06:07PM +0000, Lorenzo Stoakes wrote:
-> > > I guess I'll try to adapt that and respin a v7 when I get a chance.
-> >
-> > Hm looking at this draft patch, it seems like a total rework of pidfd's
-> > across the board right (now all pidfd's will need to be converted to
-> > pid_fd)? Correct me if I'm wrong.
-> >
-> > If only for the signal case, it seems like overkill to define a whole
-> > pid_fd and to use this CLASS() wrapper just for this one instance.
-> >
-> > If the intent is to convert _all_ pidfd's to use this type, it feels really
-> > out of scope for this series and I think we'd probably instead want to go
-> > off and do that as a separate series and put this on hold until that is
-> > done.
-> >
-> > If instead you mean that we ought to do something like this just for the
-> > signal case, it feels like it'd be quite a bit of extra abstraction just
-> > used in this one case but nowhere else, I think if you did an abstraction
-> > like this it would _have_ to be across the board right?
-> >
-> > I agree that the issue is with this one signal case that pins only the fd
-> > (rather than this pid) where this 'pinning' doesn't _necessary_ mess around
-> > with reference counts.
-> >
-> > So we definitely must address this, but the issue you had with the first
-> > approach was that I think (correct me if I'm wrong) I was passing a pointer
-> > to a struct fd which is not permitted right?
-> >
-> > Could we pass the struct fd by value to avoid this? I think we'd have to
-> > unfortunately special-case this and probably duplicate some code which is a
-> > pity as I liked the idea of abstracting everything to one place, but we can
-> > obviously do that.
-> >
-> > So I guess to TL;DR it, the options are:
-> >
-> > 1. Implement pid_fd everywhere, in which case I will leave off on
-> >    this series and I guess, if I have time I could look at trying to
-> >    implement that or perhaps you'd prefer to?
-> >
-> > 2. We are good for the sake of this series to special-case a pidfd_to_pid()
-> >    implementation (used only by the pidfd_send_signal() syscall)
-> >
-> > 3. Something else, or I am misunderstanding your point :)
-> >
-> > Let me know how you want me to proceed on this as we're at v6 already and I
-> > want to be _really_ sure I'm doing what you want here.
-> >
-> > Thanks!
->
-> Hi Christian,
->
-> Just a gentle nudge on this - as I need some guidance in order to know how
-> to move the series forwards.
->
-> Obviously no rush if your workload is high at the moment as this is pretty
-> low priority, but just in case you missed it :)
->
-> Thanks, Lorenzo
+On 02/12/2024 11:26, Hans de Goede wrote:
+> Hi,
+> 
+> On 2-Dec-24 9:44 AM, Hans Verkuil wrote:
+>> On 02/12/2024 09:11, Laurent Pinchart wrote:
+>>> On Mon, Dec 02, 2024 at 09:05:07AM +0100, Hans Verkuil wrote:
+>>>> On 02/12/2024 01:18, Laurent Pinchart wrote:
+>>>>> On Fri, Nov 29, 2024 at 11:18:54PM +0100, Ricardo Ribalda wrote:
+>>>>>> On Fri, 29 Nov 2024 at 23:03, Laurent Pinchart wrote:
+>>>>>>> On Fri, Nov 29, 2024 at 07:47:31PM +0100, Ricardo Ribalda wrote:
+>>>>>>>> Before we all go on a well deserved weekend, let me recap what we
+>>>>>>>> know. If I did not get something correctly, let me know.
+>>>>>>>>
+>>>>>>>> 1) Well behaved devices do not allow to set or get an incomplete async
+>>>>>>>> control. They will stall instead (ref: Figure 2-21 in UVC 1.5 )
+>>>>>>>> 2) Both Laurent and Ricardo consider that there is a big chance that
+>>>>>>>> some camera modules do not implement this properly. (ref: years of
+>>>>>>>> crying over broken module firmware :) )
+>>>>>>>>
+>>>>>>>> 3) ctrl->handle is designed to point to the fh that originated the
+>>>>>>>> control. So the logic can decide if the originator needs to be
+>>>>>>>> notified or not. (ref: uvc_ctrl_send_event() )
+>>>>>>>> 4) Right now we replace the originator in ctrl->handle for unfinished
+>>>>>>>> async controls.  (ref:
+>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_ctrl.c#n2050)
+>>>>>>>>
+>>>>>>>> My interpretation is that:
+>>>>>>>> A) We need to change 4). We shall not change the originator of
+>>>>>>>> unfinished ctrl->handle.
+>>>>>>>> B) Well behaved cameras do not need the patch "Do not set an async
+>>>>>>>> control owned by another fh"
+>>>>>>>> C) For badly behaved cameras, it is fine if we slightly break the
+>>>>>>>> v4l2-compliance in corner cases, if we do not break any internal data
+>>>>>>>> structure.
+>>>>>>>
+>>>>>>> The fact that some devices may not implement the documented behaviour
+>>>>>>> correctly may not be a problem. Well-behaved devices will stall, which
+>>>>>>> means we shouldn't query the device while as async update is in
+>>>>>>> progress. Badly-behaved devices, whatever they do when queried, should
+>>>>>>> not cause any issue if we don't query them.
+>>>>>>
+>>>>>> I thought we could detect the stall and return safely. Isn't that the case?
+>>>>>
+>>>>> We could, but if we know the device will stall anyway, is there a reason
+>>>>> not to avoid issuing the request in the first place ?
+>>>>>
+>>>>>> Why we have not seen issues with this?
+>>>>>
+>>>>> I haven't tested a PTZ device for a very long time, and you would need
+>>>>> to hit a small time window to see the issue.
+>>>>>
+>>>>>>> We should not send GET_CUR and SET_CUR requests to the device while an
+>>>>>>> async update is in progress, and use cached values instead. When we
+>>>>>>> receive the async update event, we should clear the cache. This will be
+>>>>>>> the same for both well-behaved and badly-behaved devices, so we can
+>>>>>>> expose the same behaviour towards userspace.
+>>>>>>
+>>>>>> seting ctrl->loaded = 0 when we get an event sounds like a good idea
+>>>>>> and something we can implement right away.
+>>>>>> If I have to resend the set I will add it to the end.
+>>>>>>
+>>>>>>> We possibly also need some kind of timeout mechanism to cope with the
+>>>>>>> async update event not being delivered by the device.
+>>>>>>
+>>>>>> This is the part that worries me the most:
+>>>>>> - timeouts make the code fragile
+>>>>>> - What is a good value for timeout? 1 second, 30, 300? I do not think
+>>>>>> that we can find a value.
+>>>>>
+>>>>> I've been thinking about the implementation of uvc_fh cleanup over the
+>>>>> weekend, and having a timeout would have the nice advantage that we
+>>>>> could reference-count uvc_fh instead of implementing a cleanup that
+>>>>> walks over all controls when closing a file handle. I think it would
+>>>>> make the code simpler, and possibly safer too.
+>>>>>
+>>>>>>> Regarding the userspace behaviour during an auto-update, we have
+>>>>>>> multiple options:
+>>>>>>>
+>>>>>>> For control get,
+>>>>>>>
+>>>>>>> - We can return -EBUSY
+>>>>>>> - We can return the old value from the cache
+>>>>
+>>>> This would match the control behavior best. Only when the operation is
+>>>> done is the control updated and the control event sent.
+>>>>
+>>>> Some questions: is any of this documented for UVC? Because this is non-standard
+>>>
+>>> No this isn't documented.
+>>>
+>>>> behavior. Are there applications that rely on this? Should we perhaps add
+>>>
+>>> I don't know.
+>>>
+>>>> proper support for this to the control framework? E.g. add an ASYNC flag and
+>>>> document this?
+>>>
+>>> We could, but this is such a specific use case that I don't think is
+>>> worth adding complexity to the already complex control framework would
+>>> be worth it. What we could do is perhaps adding a flag for the userspace
+>>> API, but even there, I never like modelling an API with a single user.
+>>
+>> Well, it might be a single driver that uses this, but it is also the most
+>> used driver by far. I think the only change is to add a flag for this and
+>> describe how it should behave. And add v4l2-compliance tests for it.
+>>
+>> Otherwise no changes to the control framework are needed, I think.
+>>
+>> Controls with the ASYNC flag set would:
+>>
+>> - return the old value from the cache.
+>> - document that setting a new value while the operation is in progress
+>>   results in EBUSY. Document that if the new value is equal to the old value,
+>>   then return 0 and do nothing (alternative is to just immediately send
+>>   the control changed event, but that might require a control framework change).
+>> - when the operation finishes, update the cache to the new value and
+>>   send the control changed event.
+>> - document that userspace should specify V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK
+>>   when subscribing to the control if you calling fh wants to know when
+>>   the operation finishes.
+>> - document how timeouts should be handled: this is tricky, especially with
+>>   bad hardware. I.e. if the hw doesn't send the event, does that mean that
+>>   you are never able to set the control since it will stall?
+>>   In the end this will just reflect how UVC handles this.
+> 
+> I have been catching up on this thread (I have not read the v3 and v4
+> threads yet).
+> 
+> This all started with Ricardo noticing that ctrl->handle may get
+> overwritten when another app sets the ctrl, causing the first app
+> to set the ctrl to get a V4L2_EVENT for the ctrl (if subscribed)
+> even though it set the ctrl itself.
+> 
+> My observations so far:
+> 
+> 1. This is only hit when another app changes the ctrl after the first app,
+> in this case, if there is no stall issued by the hw for the second app's
+> request, arguably the first app getting the event for the ctrl is correct
+> since it was changed by the second app. IOW I think the current behavior
+> is not only fine, but even desirable. Assuming we only override ctrl->handle
+> after successfully sending the set-ctrl request to the hardware.
+> 
+> 2. This adds a lot of complexity for not sending an event to the app
+> which made the change. Hans V. suggested maybe adding some sort of flag
+> for async ctrls to the userspace API. I wonder if we should not just
+> get rid of this complexity and document that these controls will always
+> generate events independent of V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK ?
+> That would certainly simplify things, but it raises the questions if
+> this will cause issues for existing applications.
 
-Hi Christian,
+I'm not that keen on this. That's why a new flag can come in handy since
+if present, then that indicates that it makes sense to specify
+V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK when subscribing to the control events.
 
-Just a ping on this now we're past the merge window and it's been over a
-month.
+This ensures that uvc follows the current v4l2 spec. It's also why I
+prefer that g_ctrl will just return the old value until the new value
+has been reached: that way the control event corresponds with the actual
+updating of the control value.
 
-It'd be good to at least get a polite ack to indicate you're aware even if
-you don't have the time to respond right now.
+That said, it's just my opinion and I am OK with UVC doing things a bit
+differently. Just be aware that I have no objection to adding an ASYNC flag,
+given how widely UVC is used.
 
-If you'd prefer this series not to go ahead just let me know, but
-unfortunately I really require your input to know how to move forward
-otherwise I risk doing work that you might then reject.
+Regards,
 
-Thanks, Lorenzo
+	Hans
+
+> 
+> Note that if we simply return -EBUSY on set until acked by a status
+> event we also avoid the issue of ctrl->handle getting overwritten,
+> but that relies on reliable status events; or requires timeout handling.
+> 
+> 3. I agree with Ricardo that a timeout based approach for cameras which
+> to not properly send status events for async ctrls is going to be
+> problematic. Things like pan/tilt homing can take multiple seconds which
+> is really long to use as a timeout if we plan to return -EBUSY until
+> the timeout triggers. I think it would be better to just rely on
+> the hardware sending a stall, or it accepting and correctly handling
+> a new CUR_SET command while the previous one is still being processed.
+> 
+> I guess we can track if the hw does send status events when async ctrls
+> complete and then do the -EBUSY thing without going out to the hw after
+> the first time an async ctrl has been acked by a status event.
+> 
+> And then combine that with the current behavior of overwriting ctrl->handle
+> until the ctrl has been marked as having working status events. So:
+> 
+> a) In case we do not know yet if a ctrl gets status-event acks; and
+> on devices without reliable status events keep current behavior.
+> 
+> b) As soon as we know a ctrl has reliable status events, switch to
+> returning -EBUSY if a set is pending (as indicated by ctrl->handle
+> being set).
+> 
+> I don't like the fact that this changes the behavior after the first
+> status event acking an async ctrl, but I don't really see another way.
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> 
+> 
+>>>
+>>>>>>> - We can return the new value fromt he cache
+>>>>>>>
+>>>>>>> Returning -EBUSY would be simpler to implement.
+>>>>>>
+>>>>>> Not only easy, I think it is the most correct,
+>>>>>>
+>>>>>>> I don't think the behaviour should depend on whether the control is read
+>>>>>>> on the file handle that initiated the async operation or on a different
+>>>>>>> file handle.
+>>>>>>>
+>>>>>>> For control set, I don't think we can do much else than returning
+>>>>>>> -EBUSY, regardless of which file handle the control is set on.
+>>>>>>
+>>>>>> ACK.
+>>>>>>
+>>>>>>>> I will send a new version with my interpretation.
+>>>>>>>>
+>>>>>>>> Thanks for a great discussion
+>>>>>>
+>>>>>> Looking with some perspective... I believe that we should look into
+>>>>>> the "userspace behaviour for auto controls" in a different patchset.
+>>>>>> It is slightly unrelated to this discussion.
+>>>
+>>
+>>
+> 
+> 
+
 
