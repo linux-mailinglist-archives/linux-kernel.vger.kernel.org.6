@@ -1,196 +1,82 @@
-Return-Path: <linux-kernel+bounces-427288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DBD79DFF49
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:48:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D62C9DFF29
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:41:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC52C163D43
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:41:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699301FC7EB;
+	Mon,  2 Dec 2024 10:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A5Mg05+B"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1A74B28803
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:40:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635AD1FCFE6;
-	Mon,  2 Dec 2024 10:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="CLkHwLFE"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A721FCCF0
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387A21FC10B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733135998; cv=none; b=jrO1uehxLqKP984ASsntJK4SWZquUSY73zimLzuAndSfTQpetSXnHwB6nIEzqGdJBWXskkamaoQrWyAN7xFGKpqzYPj+qqrIdoStsb2aJx+/Q1lLD2y4sz0ga0pdTz/zorq0sUpU5mYgopBKOaLolHIWb8Foj6wxbTiRAlw/MCo=
+	t=1733136073; cv=none; b=CieJdxriwSqbZ/siQG0ymHSH7FrhfYyskoa/zYNTi95BPw3BTH1OqdMWi0qkBonAu1aDOMe5yI0vdymT4v+YDPm+s2aUKZ/fE8ZruefGjv6e5gXMsIZrILvcqDyeDR9/unI5dBU+D6CK29KsYh2btRG/HI8oNws9isnEwupJpOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733135998; c=relaxed/simple;
-	bh=DYNaZn6TdVJSB3HrT1+ewVokf5PU3016tstmnTWQa0s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GyC8ga5kjkXFD+kvP+aIatmNx4N3TMkBV5G6DAZvUcsu6yfEIpntAQhmh50LJcDv8CqS8SQG1QNXFItF0Dvz9ZbVmgwmXLBoqnaJl8TAdOmROlaMOXcwuLUDx+m+KsYHq/Gb1jZQ9XvNJHEnJiVqIpc9gWP5WyIOqxdwATuu3r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=CLkHwLFE; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385e1fcb0e1so1075388f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:39:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1733135995; x=1733740795; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8RX2YCHdx4g9Z1WhkvOgdHooa/D9EB/cVjTLy89IFDI=;
-        b=CLkHwLFEx4JePpoHo205LaMuj2M1OPXxOTdVZwskT2OnVmW6nj8dG/mzWFEx4j7YtM
-         pDxzbuiJgktSXA4sAsWoAt9ZWB6nxERXYt7BnHWwHAIDYnar3MJVgJhxWq++0Pzzi6FS
-         V8ab/TEgyMQSdQqGXgBed8fZ96aQrDmLQEgO8UK+vSLLeCiXgMGYgSHlNNZr24TCW3+p
-         VdAb7wfdugyjLc8evVZ8px3c+fIoBlLCzJHtieYsbiQH+J+Elxwcgw1l6/+D6XXySkEb
-         kmNhZhPURua2omfq0XIkp/p64P7j7tkIHRL2e2tQ78oS+60+TCpI6wqVqvST852pxOkg
-         dNgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733135995; x=1733740795;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8RX2YCHdx4g9Z1WhkvOgdHooa/D9EB/cVjTLy89IFDI=;
-        b=wid2EHc5kRISlFdH1CcGCk1nx9XUmC9WPgMc6O66Z7DGexcHu1sZIUZRSZgN4XlXs3
-         Nrd3Z5jyCrPkvlVD1LiHewLEk4FIgGx1F6tNFL6vr3mzO3s2GiAevC5Lycgo0E1iH0rH
-         m+O3GNiRG9VmBrKTuGwvDOBVcovhKu3Sdd7nRN6n2o8BGdevdWGh1cMTvLgENYCDTKHL
-         s9Tn6lXT0BfGmB3FZ8/E36UDGmYwqw7MiI4hCksu3B6LDI8DdPldQEHC8yrzmnxVg3ZT
-         QGz0df8WJh1P0WXZhtmLvpa3vDXriHa3qE7e7IW8yXUm6akS3EZYwIKtfIhzcF25U0xo
-         rVfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrtirio3gfTZk7nwN+I1iyM7o0BYIXbqPv+cBO9c4se0Y/Py4PIwyj5mrG/G3C/vj3bAOaIH/bSpHPmpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEKnj2c1KpwpoNEi1McVxnNQJvMY4+7LsBoWp3uPMOPjvi9Mel
-	LrZ5hkLl/N7Afmh8ghAKw3z4+ZoKieYxm1Y0GCULCmtEuQZnRvnJdNqz/mfd8Ok=
-X-Gm-Gg: ASbGnctbGtGgTJqgJs+a68zZZ3zG+v5eZ12slIA7nzb5nuoI5FScLhLzsbl8zO2h5UR
-	ipdBVfqEB13zHWLosUjJ8l1hjFNtpJfG48xSXYjuHiThSurG4jO8Lnox7oY7SyvTuL7C7P6z7as
-	hcQKw/NgGtDBcUmlbNQZlpjoAgiJdHRHdQ22QkFEw+1aha2lTCJM36eAQ/Ot6o2t/xzxjBPXb9O
-	UG20160KSV/ZeHBagX13DJq8uXOJal/EuWvVlB3jPbGNlkIx7Kj7e6w4ko3jlfgS9PLDRU/x1mK
-	nsBpT6rMMA==
-X-Google-Smtp-Source: AGHT+IEuOgKQVrRqq3CFTMvxvB3bWglZA0FJeYVZhwfg4uT/D5QQjHJ2BfYLevyx6w+QF7nwwpfgBw==
-X-Received: by 2002:a05:6000:178d:b0:385:dfab:1643 with SMTP id ffacd0b85a97d-385dfab180cmr10298039f8f.27.1733135994887;
-        Mon, 02 Dec 2024 02:39:54 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:5d0b:f507:fa8:3b2e? ([2001:67c:2fbc:1:5d0b:f507:fa8:3b2e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bc91sm151245135e9.9.2024.12.02.02.39.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 02:39:54 -0800 (PST)
-Message-ID: <b868dcf1-7c0d-4511-8016-89302e7cb9c4@openvpn.net>
-Date: Mon, 2 Dec 2024 11:40:31 +0100
+	s=arc-20240116; t=1733136073; c=relaxed/simple;
+	bh=Lw9Xn/1SaXcPFKlc6YFdOSgthDnfhMSJkkx9BnXjW6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ErRVmW+IreRQ+7mTHBx1WQklIWN10X1bbfnxas+PM9+tfcQpT0Q8QIA1gBXHbF0UGV9wxpZRru+GZYfxKqVBrTTGbIivkP8rMDezUnQFD1kn8vMSRtctrp1CxH9HvwC33QmyG/AA7hq3hJ+4MgI9cCvuDXP+bG47JlbhoL6aeZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A5Mg05+B; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QYPY8BessWoJaaQeFxMazrHm0J9/jmuGmCGbmcw0+1w=; b=A5Mg05+BZD0VyG9uwusQLvf05x
+	jVN70N0+Xu2PdK4o1mGxUBPwhn2uU20KEWBaRCcGVxcQQwBK56Qld1p1fN38wCc1t83k4LTwzRgRo
+	+I1j5YpqklhrKXsoAVTPnCQUx31+/GhCl9sCZJ1OvonJ9NSQjxyxmAWN5a4R0SsgMU8yy1g/m7aSH
+	JkWpoFr1S/QiBFMKviY93wxrJLF6GJzBwnv+DTsWbF+Eos8KB1LUPz24FhktgRNGKApZDMUiNNUzw
+	+YY8o8LcCB76k8xXktpmuGH9crC49PwmA+eq9m4eqZj/JfoTJA2NqTRaMbkjFciN0xVFPcdDM5m0V
+	KXVY8dMg==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tI3rU-000000029cp-0U0U;
+	Mon, 02 Dec 2024 10:41:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AB48B300402; Mon,  2 Dec 2024 11:41:03 +0100 (CET)
+Date: Mon, 2 Dec 2024 11:41:03 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: I Hsin Cheng <richard120310@gmail.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	jserv@ccns.ncku.edu.tw
+Subject: Re: [RFC PATCH] sched: Fix integer overflow issue of cpu weight delta
+Message-ID: <20241202104103.GN24400@noisy.programming.kicks-ass.net>
+References: <20241202101344.97081-1-richard120310@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 05/23] ovpn: keep carrier always on
-From: Antonio Quartulli <antonio@openvpn.net>
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- sd@queasysnail.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-5-de4698c73a25@openvpn.net>
- <6a171cc9-a052-452e-8b3d-273e5b46dae5@gmail.com>
- <89ae26a2-0a09-4758-989e-8f45a707a41b@openvpn.net>
- <e2caab8a-343e-4728-b5a7-b167f05c9bb9@gmail.com>
- <c933e2bf-b19c-4f8b-b2c0-44de50eb4141@openvpn.net>
- <1cf97615-a38d-48c3-9e23-4ba82012b32d@gmail.com>
- <c9185b5b-942d-4927-8171-f3460619aed1@openvpn.net>
- <c62208a4-5396-4116-add1-4ffbc254a09d@gmail.com>
- <cdbeecb8-e468-4925-9ab4-c77accf806b9@openvpn.net>
- <debdfbda-36f8-4c83-bb54-3b48af77e7bd@gmail.com>
- <55d91682-762e-411e-8abc-0790a9d81102@openvpn.net>
-Content-Language: en-US
-Autocrypt: addr=antonio@openvpn.net; keydata=
- xsFNBFN3k+ABEADEvXdJZVUfqxGOKByfkExNpKzFzAwHYjhOb3MTlzSLlVKLRIHxe/Etj13I
- X6tcViNYiIiJxmeHAH7FUj/yAISW56lynAEt7OdkGpZf3HGXRQz1Xi0PWuUINa4QW+ipaKmv
- voR4b1wZQ9cZ787KLmu10VF1duHW/IewDx9GUQIzChqQVI3lSHRCo90Z/NQ75ZL/rbR3UHB+
- EWLIh8Lz1cdE47VaVyX6f0yr3Itx0ZuyIWPrctlHwV5bUdA4JnyY3QvJh4yJPYh9I69HZWsj
- qplU2WxEfM6+OlaM9iKOUhVxjpkFXheD57EGdVkuG0YhizVF4p9MKGB42D70pfS3EiYdTaKf
- WzbiFUunOHLJ4hyAi75d4ugxU02DsUjw/0t0kfHtj2V0x1169Hp/NTW1jkqgPWtIsjn+dkde
- dG9mXk5QrvbpihgpcmNbtloSdkRZ02lsxkUzpG8U64X8WK6LuRz7BZ7p5t/WzaR/hCdOiQCG
- RNup2UTNDrZpWxpwadXMnJsyJcVX4BAKaWGsm5IQyXXBUdguHVa7To/JIBlhjlKackKWoBnI
- Ojl8VQhVLcD551iJ61w4aQH6bHxdTjz65MT2OrW/mFZbtIwWSeif6axrYpVCyERIDEKrX5AV
- rOmGEaUGsCd16FueoaM2Hf96BH3SI3/q2w+g058RedLOZVZtyQARAQABzSdBbnRvbmlvIFF1
- YXJ0dWxsaSA8YW50b25pb0BvcGVudnBuLm5ldD7Cwa0EEwEIAFcCGwMFCwkIBwMFFQoJCAsF
- FgIDAQACHgECF4AFCRWQ2TIWIQTKvaEoIBfCZyGYhcdI8My2j1nRTAUCYRUquBgYaGtwczov
- L2tleXMub3BlbnBncC5vcmcACgkQSPDMto9Z0UzmcxAAjzLeD47We0R4A/14oDKlZxXO0mKL
- fCzaWFsdhQCDhZkgxoHkYRektK2cEOh4Vd+CnfDcPs/iZ1i2+Zl+va79s4fcUhRReuwi7VCg
- 7nHiYSNC7qZo84Wzjz3RoGYyJ6MKLRn3zqAxUtFECoS074/JX1sLG0Z3hi19MBmJ/teM84GY
- IbSvRwZu+VkJgIvZonFZjbwF7XyoSIiEJWQC+AKvwtEBNoVOMuH0tZsgqcgMqGs6lLn66RK4
- tMV1aNeX6R+dGSiu11i+9pm7sw8tAmsfu3kQpyk4SB3AJ0jtXrQRESFa1+iemJtt+RaSE5LK
- 5sGLAO+oN+DlE0mRNDQowS6q/GBhPCjjbTMcMfRoWPCpHZZfKpv5iefXnZ/xVj7ugYdV2T7z
- r6VL2BRPNvvkgbLZgIlkWyfxRnGh683h4vTqRqTb1wka5pmyBNAv7vCgqrwfvaV1m7J9O4B5
- PuRjYRelmCygQBTXFeJAVJvuh2efFknMh41R01PP2ulXAQuVYEztq3t3Ycw6+HeqjbeqTF8C
- DboqYeIM18HgkOqRrn3VuwnKFNdzyBmgYh/zZx/dJ3yWQi/kfhR6TawAwz6GdbQGiu5fsx5t
- u14WBxmzNf9tXK7hnXcI24Z1z6e5jG6U2Swtmi8sGSh6fqV4dBKmhobEoS7Xl496JN2NKuaX
- jeWsF2rOwE0EZmhJFwEIAOAWiIj1EYkbikxXSSP3AazkI+Y/ICzdFDmiXXrYnf/mYEzORB0K
- vqNRQOdLyjbLKPQwSjYEt1uqwKaD1LRLbA7FpktAShDK4yIljkxhvDI8semfQ5WE/1Jj/I/Q
- U+4VXhkd6UvvpyQt/LiWvyAfvExPEvhiMnsg2zkQbBQ/M4Ns7ck0zQ4BTAVzW/GqoT2z03mg
- p1FhxkfzHMKPQ6ImEpuY5cZTQwrBUgWif6HzCtQJL7Ipa2fFnDaIHQeiJG0RXl/g9x3YlwWG
- sxOFrpWWsh6GI0Mo2W2nkinEIts48+wNDBCMcMlOaMYpyAI7fT5ziDuG2CBA060ZT7qqdl6b
- aXUAEQEAAcLBfAQYAQgAJhYhBMq9oSggF8JnIZiFx0jwzLaPWdFMBQJmaEkXAhsMBQkB4TOA
- AAoJEEjwzLaPWdFMbRUP/0t5FrjF8KY6uCU4Tx029NYKDN9zJr0CVwSGsNfC8WWonKs66QE1
- pd6xBVoBzu5InFRWa2ed6d6vBw2BaJHC0aMg3iwwBbEgPn4Jx89QfczFMJvFm+MNc2DLDrqN
- zaQSqBzQ5SvUjxh8lQ+iqAhi0MPv4e2YbXD0ROyO+ITRgQVZBVXoPm4IJGYWgmVmxP34oUQh
- BM7ipfCVbcOFU5OPhd9/jn1BCHzir+/i0fY2Z/aexMYHwXUMha/itvsBHGcIEYKk7PL9FEfs
- wlbq+vWoCtUTUc0AjDgB76AcUVxxJtxxpyvES9aFxWD7Qc+dnGJnfxVJI0zbN2b37fX138Bf
- 27NuKpokv0sBnNEtsD7TY4gBz4QhvRNSBli0E5bGUbkM31rh4Iz21Qk0cCwR9D/vwQVsgPvG
- ioRqhvFWtLsEt/xKolOmUWA/jP0p8wnQ+3jY6a/DJ+o5LnVFzFqbK3fSojKbfr3bY33iZTSj
- DX9A4BcohRyqhnpNYyHL36gaOnNnOc+uXFCdoQkI531hXjzIsVs2OlfRufuDrWwAv+em2uOT
- BnRX9nFx9kPSO42TkFK55Dr5EDeBO3v33recscuB8VVN5xvh0GV57Qre+9sJrEq7Es9W609a
- +M0yRJWJEjFnMa/jsGZ+QyLD5QTL6SGuZ9gKI3W1SfFZOzV7hHsxPTZ6
-Organization: OpenVPN Inc.
-In-Reply-To: <55d91682-762e-411e-8abc-0790a9d81102@openvpn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202101344.97081-1-richard120310@gmail.com>
 
-On 26/11/2024 09:17, Antonio Quartulli wrote:
-[...]
->> It wasn't suggested to destroy the interface in case of interface 
->> becoming non-operational. I apologize if something I wrote earlier 
->> sounded like that. The interface existence stays unquestionable. It's 
->> going to be solid persistent.
->>
->> Back to the proposed rephrasing. If the 'full picture' means forcing 
->> the running state indication even when the netdev is not capable to 
->> deliver packets, then it looks like an attempt to hide the control 
->> knob of the misguiding feature somewhere else.
->>
->> And since the concept of on-purpose false indication is still here, 
->> many words regarding the control plane and a full picture do not sound 
->> good either.
-> 
+On Mon, Dec 02, 2024 at 06:13:44PM +0800, I Hsin Cheng wrote:
 
-Sergey,
+> I think there's one point to concern, do we have a fixed range of
+> "tg_weight()" ? 
 
-I have played a bit with this and, if I understood your idea correctly, 
-the following should be an acceptable design for a P2P interface:
+kernel/sched/fair.c:__sched_group_set_shares()
 
-* iface created -> netif_carrier_off
-* peer added -> netif_carrier_on
-* peer deleted -> netif_carrier_off
-* iface goes down -> peer deleted -> netif_carrier_off
-* iface goes up -> carrier stays down until peer is added
+  shares = clamp(shares, scale_load(MIN_SHARES), scale_load(MAX_SHARES));
 
+  if (tg->shares == shares)
+  	return 0;
 
-P2MP interface behaviour is not changed: when interface is brought up 
-carrier goes on and it is never turned off.
-
-How does it sound?
-
-My main concern was about bringing the interface down, but this is 
-actually not happening. Correct me if I am wrong.
-
-Thanks.
-
-Regards,
-
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+  tg->shares = shares;
 
