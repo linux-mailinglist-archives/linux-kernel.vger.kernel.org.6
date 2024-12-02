@@ -1,220 +1,141 @@
-Return-Path: <linux-kernel+bounces-427962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FBD9E07ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 481579E0827
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:15:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3C4F282706
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 088AF2855DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4894F1428E0;
-	Mon,  2 Dec 2024 16:06:46 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0E617A583;
+	Mon,  2 Dec 2024 16:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aYKwJeVx"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED0B13AA2D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3424172BB9
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733155605; cv=none; b=lKd8YodUCkow2iZjM9apF9pcDIQbEBcFMfXviNUAtLwdmred1iCkOvdVqfYzm8w7dXrBdVGLaHePfqFp3tv1F9T+5WMiyZIaYz2xFz2P8ct44RzIUCppvKI3gHRQEQO0gx8DBkZIV582OXAnEFUY4edzMPYxwv2znO64skfh8s8=
+	t=1733156076; cv=none; b=fhsbIL7KWREmuWujCNvz4Z1WJscQ2GEflOcSlbOv6r0vwLAsUsk5agrVYhCe+O9GgigAWYC0R1VTIrtmnH4umqYU4cCj1Ior/KFZAin7Awwfx3k95eDH50vYRD1/3WPvqLk4WyJWDIduo7hDdNESgUJOxW+XtiBJDuVGA5hXVHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733155605; c=relaxed/simple;
-	bh=E9owDj6+giysqB/b7f41pIP0/v5uDUsVQddcYiYD/0w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mjIcw7w7BpY3OzGUY1mMoCTOeihm4rr1bPLGw6qWVhP4KafvVKNsq3BKuKGOVOZVl+qsiGddOx8X5bndCMw0J1/CSIyHFbpPPRvVKg3Xv2jCMg+0KMfN5r9BeaRXbszA3UHFLu9FaSPjBHDpdKmKwXNkHCDWkg9njL4i3PULLyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y27tZ62vwz6LDPJ;
-	Tue,  3 Dec 2024 00:05:58 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id F278514038F;
-	Tue,  3 Dec 2024 00:06:39 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml500005.china.huawei.com (7.182.85.13) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 2 Dec 2024 17:06:39 +0100
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Mon, 2 Dec 2024 17:06:39 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Will Deacon <will@kernel.org>, Vitaly Chikunov <vt@altlinux.org>,
-	"james.morse@arm.com" <james.morse@arm.com>, "joey.gouly@arm.com"
-	<joey.gouly@arm.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
-	<catalin.marinas@arm.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "maz@kernel.org" <maz@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>
-Subject: RE: v6.13-rc1: Internal error: Oops - Undefined instruction:
- 0000000002000000 [#1] SMP
-Thread-Topic: v6.13-rc1: Internal error: Oops - Undefined instruction:
- 0000000002000000 [#1] SMP
-Thread-Index: AQHbRHc1pIGPV7SGf0u8eV81r8P21rLTBiuAgAAYNlA=
-Date: Mon, 2 Dec 2024 16:06:39 +0000
-Message-ID: <98c9bd5ba3704eb190773ace350592bd@huawei.com>
-References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
- <20241202153618.GA6834@willie-the-truck>
-In-Reply-To: <20241202153618.GA6834@willie-the-truck>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1733156076; c=relaxed/simple;
+	bh=7jZTOSAwZM687/4IxljIJ+4sBELVFnFczjjMTXnd6MI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MLvPjobCnRBrKvCA7JJ4ANoSSxmmDealsDaJsXdx1Fsxp2Ws0HXnuUdCRT55t3dfIDsjcEKzhcp3lUW6RNOq8c0AWa/Iy1L8P13viZfscUyVmcrqkE6O3VPKzm+Frh79nZFXMSymf7BqYzs9URli0P3Hg+YvlHiYKUZz53gyEnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aYKwJeVx; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53df6322ea7so7530736e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 08:14:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733156073; x=1733760873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QZViN9u7WEeef4ck6iMwRDaJEybzCZmgvmXDAyqUy/E=;
+        b=aYKwJeVx9+vLfq3X5codTQF5nUmclO2Q/rU9C2pdAp64AnSG7lfFdK1jkvURGKWhAZ
+         kebBDvciphjx0r4ILsDLXlD615kKOrHYh5r94TjtW5ptnxFMTxUN7VjXa+ozKOZomGq7
+         OR6WnPphLnxlyTx1ibEmwmFtV2IeVPBej38Zg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733156073; x=1733760873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QZViN9u7WEeef4ck6iMwRDaJEybzCZmgvmXDAyqUy/E=;
+        b=Eyx7qbJY52Qud7bQ3Wsa2/1D8vBL0ZydwTiW8JdCs8fWoHdeb3qxeOpR16o3lHyT1/
+         RBJmORTLNl0umaVVPq0o27tvtQGBgwXlLJsPgPgw3l8GuEgMYTsCKyXaYuMtJ6RN7ojj
+         7iralY9x/71fVsZFsavImAxYT8js1VUDpZJceBL0+Gx+2OqKEoRqN1nxjRMH+M8fN582
+         FEpwoLWAnAHSW3UcaS3DfYuPT/qNM3OHnydlz19vvBBUA4nBkIcHbeTzCsLm/lprRKLa
+         I9BYVzdkorwVmMiJbDvLn+/oCeQgV3NBaC+UywIgUPybkj7sFgkE9zlaFy68vugxAdpo
+         1Sdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVILkLi9bsh/uW8pL9cyE0oNjdqbICnyvizSRz1iGkqjIIN+LZMp0jLNWd1jjyNxQBs5+W9QDnOexM7QJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzptgLleRWxmr3Ks8GsCCsZLw4+GpkAmpm3pzhV4uF6oobCbyyi
+	kYE8fHZxeu/jwfNPUTd+y6IPKnsraHTdTO0wRm6EibB874mvH+3ZYyR/iUFBAfyt+VaEjxAgCXy
+	hNg==
+X-Gm-Gg: ASbGncvMnkEVqlnCcEctqq4MWOAdM5/zT8Za02bscsOSH/wBIA9cMKdvhbcNx8azX+b
+	7dh62/N2Evs8agO9wnsRsbOX16gjjPg0IcPK5bKb4kyahvQ9dok9eU8ZthCu8v/E3/xGK/15Qty
+	Ry6BCGdjlAE1LkfkY2w1+yhv7tYIhy8HJmhawv8B3d2r7bFi9ffRsc5BsBAGdZCGXNa3P1REPh5
+	iYX+amPEIVNrwmTnb059be/pxyaTA3sCu48z/J3W6wqqlI36nbk5Zbo89oDDIwGGh0+EAi+9S1N
+	4Cn6EBlVPAVSig==
+X-Google-Smtp-Source: AGHT+IHjhWB6hrWqBybzIo08Liq4lohpdV4kC2MITh5Hy6IZYX/0pbUoOct40J1AnRatZ/Pxq7LoMQ==
+X-Received: by 2002:a05:6512:2f9:b0:53d:f091:652c with SMTP id 2adb3069b0e04-53df0916593mr12493182e87.23.1733156072280;
+        Mon, 02 Dec 2024 08:14:32 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df643110asm1516900e87.32.2024.12.02.08.14.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 08:14:31 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53df6322ea7so7530637e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 08:14:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX3awDxzhboK/LrZX7fcpFsGAovFbQDBkvEV7cBFJZKKXD6TpGkaqzFuKRvOhqeMyGCsDFfvvY1h8ghPsA=@vger.kernel.org
+X-Received: by 2002:a05:6512:2396:b0:53d:ed0a:8113 with SMTP id
+ 2adb3069b0e04-53df00d01b2mr15721785e87.14.1733155628493; Mon, 02 Dec 2024
+ 08:07:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241130-hp-omnibook-x14-v2-0-72227bc6bbf4@oldschoolsolutions.biz>
+ <20241130-hp-omnibook-x14-v2-3-72227bc6bbf4@oldschoolsolutions.biz>
+In-Reply-To: <20241130-hp-omnibook-x14-v2-3-72227bc6bbf4@oldschoolsolutions.biz>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 2 Dec 2024 08:06:57 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=VJR3O=8xHtdPapwtDS2ShL3SVTyvzNgOTNjp4U7OGO4A@mail.gmail.com>
+Message-ID: <CAD=FV=VJR3O=8xHtdPapwtDS2ShL3SVTyvzNgOTNjp4U7OGO4A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] drm/panel-edp: Add unknown BOE panel for HP
+ Omnibook X14
+To: jens.glathe@oldschoolsolutions.biz
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Kalle Valo <kvalo@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
+On Sat, Nov 30, 2024 at 11:09=E2=80=AFAM Jens Glathe via B4 Relay
+<devnull+jens.glathe.oldschoolsolutions.biz@kernel.org> wrote:
+>
+> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>
+> Seems to be like NV140DRM-N61 but with touch. Haven't disassembled
+> the lid to look.
+>
+> Due to lack of information, use the delay_200_500_e200 timings like
+> many other BOE panels do for now.
+>
+> The raw EDID of the panel is:
+>
+> 00 ff ff ff ff ff ff 00 09 e5 93 0c 00 00 00 00
+> 25 21 01 04 a5 1e 13 78 03 ee 95 a3 54 4c 99 26
+> 0f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 a4 57 c0 dc 80 78 78 50 30 20
+> f6 0c 2e bc 10 00 00 1a 6d 3a c0 dc 80 78 78 50
+> 30 20 f6 0c 2e bc 10 00 00 1a 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02
+> 00 0d 36 ff 0a 3c 96 0f 09 15 96 00 00 00 01 8b
+>
+> There are no timings in it, sadly.
+>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> ---
+>  drivers/gpu/drm/panel/panel-edp.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-> -----Original Message-----
-> From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On
-> Behalf Of Will Deacon
-> Sent: Monday, December 2, 2024 3:36 PM
-> To: Vitaly Chikunov <vt@altlinux.org>; james.morse@arm.com
-> Cc: linux-arm-kernel@lists.infradead.org; Catalin Marinas
-> <catalin.marinas@arm.com>; linux-kernel@vger.kernel.org;
-> maz@kernel.org; oliver.upton@linux.dev; mark.rutland@arm.com
-> Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
-> 0000000002000000 [#1] SMP
->=20
-> [+ usual suspects]
->=20
-> On Mon, Dec 02, 2024 at 07:58:30AM +0300, Vitaly Chikunov wrote:
-> > v6.13-rc1 exhibits a boot failure on aarch64 under KVM. (QEMU 9.1.1,
-> > CPU Kunpeng-920). Boot log:
->=20
-> I've not tried to repro this locally, but from the log:
->=20
-> > + time qemu-system-aarch64 -M accel=3Dkvm:tcg -smp cores=3D8 -m 4096 -
-> serial mon:stdio -nodefaults -nographic -no-reboot -fsdev
-> local,id=3Droot,path=3D/,security_model=3Dnone,multidevs=3Dremap -device =
-virtio-
-> 9p-pci,fsdev=3Droot,mount_tag=3Dvirtio-9p:/ -device virtio-rng-pci -kerne=
-l
-> /usr/src/tmp/kernel-image-6.13-buildroot/boot/vmlinuz-6.13.0-6.13-alt0.rc=
-1
-> -initrd /usr/src/tmp/initramfs-6.13.0-6.13-alt0.rc1.img -sandbox
-> on,spawn=3Ddeny -M virt,gic-version=3D3 -cpu max -append 'console=3DttyAM=
-A0
-> mitigations=3Doff nokaslr  panic=3D-1 SCRIPT=3D/usr/src/tmp/vm.SchsIm2FjB
-> earlycon earlyprintk=3Dserial ignore_loglevel debug rddebug'
-> > [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x481fd010]
-> > [    0.000000] Linux version 6.13.0-6.13-alt0.rc1
-> (builder@localhost.localdomain) (gcc-14 (GCC) 14.2.1 20241028 (ALT
-> Sisyphus 14.2.1-alt1), GNU ld (GNU Binutils) 2.43.1.20241025) #1 SMP
-> PREEMPT_DYNAMIC Mon Dec  2 03:33:29 UTC 2024
-> > [    0.000000] KASLR disabled on command line
-> > [    0.000000] random: crng init done
-> > [    0.000000] Machine model: linux,dummy-virt
-> > [    0.000000] printk: debug: ignoring loglevel setting.
-> > [    0.000000] efi: UEFI not found.
-> > [    0.000000] earlycon: pl11 at MMIO 0x0000000009000000 (options '')
-> > [    0.000000] printk: legacy bootconsole [pl11] enabled
-> > [    0.000000] OF: reserved mem: Reserved memory: No reserved-memory
-> node in the DT
-> > [    0.000000] NUMA: Faking a node at [mem 0x0000000040000000-
-> 0x000000013fffffff]
-> > [    0.000000] NODE_DATA(0) allocated [mem 0x13f7f3540-0x13f7f947f]
-> > [    0.000000] Zone ranges:
-> > [    0.000000]   DMA      [mem 0x0000000040000000-0x00000000ffffffff]
-> > [    0.000000]   DMA32    empty
-> > [    0.000000]   Normal   [mem 0x0000000100000000-0x000000013fffffff]
-> > [    0.000000] Movable zone start for each node
-> > [    0.000000] Early memory node ranges
-> > [    0.000000]   node   0: [mem 0x0000000040000000-0x000000013fffffff]
-> > [    0.000000] Initmem setup node 0 [mem 0x0000000040000000-
-> 0x000000013fffffff]
-> > [    0.000000] cma: Reserved 256 MiB at 0x00000000f0000000 on node -1
-> > [    0.000000] psci: probing for conduit method from DT.
-> > [    0.000000] psci: PSCIv1.1 detected in firmware.
-> > [    0.000000] psci: Using standard PSCI v0.2 function IDs
-> > [    0.000000] psci: Trusted OS migration not required
-> > [    0.000000] psci: SMC Calling Convention v1.1
-> > [    0.000000] smccc: KVM: hypervisor services detected (0x00000000
-> 0x00000000 0x00000000 0x00000003)
-> > [    0.000000] percpu: Embedded 34 pages/cpu s100632 r8192 d30440
-> u139264
-> > [    0.000000] pcpu-alloc: s100632 r8192 d30440 u139264 alloc=3D34*4096
-> > [    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0=
-] 7
-> > [    0.000000] Internal error: Oops - Undefined instruction:
-> 0000000002000000 [#1] SMP
->=20
-> We take an undefined instruction exception in the kernel early during
-> boot...
->=20
-> > [    0.000000] Modules linked in:
-> > [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.13.0-6.=
-13-
-> alt0.rc1 #1
-> > [    0.000000] Hardware name: linux,dummy-virt (DT)
-> > [    0.000000] pstate: 004000c5 (nzcv daIF +PAN -UAO -TCO -DIT -SSBS
-> BTYPE=3D--)
-> > [    0.000000] pc : __cpuinfo_store_cpu+0xe8/0x240
-> > [    0.000000] lr : cpuinfo_store_boot_cpu+0x34/0x88
-> > [    0.000000] sp : ffff800082013df0
-> > [    0.000000] x29: ffff800082013df0 x28: 000000000000008e x27:
-> ffff800081e38128
-> > [    0.000000] x26: ffff800081702190 x25: ffff80008201f040 x24:
-> ffff0000ff7d1d00
-> > [    0.000000] x23: ffff80008201ec00 x22: ffff800081e39100 x21:
-> ffff8000816f9750
-> > [    0.000000] x20: ffff800081f55280 x19: ffff0000ff6be2e0 x18:
-> 0000000000000000
-> > [    0.000000] x17: 0000000000000000 x16: 0000000000000000 x15:
-> 0000000000000000
-> > [    0.000000] x14: 000000000000002f x13: 000000013f7f9490 x12:
-> 0000008000000000
-> > [    0.000000] x11: 0000000000000000 x10: 00000000007f8000 x9 :
-> 000000013f808000
-> > [    0.000000] x8 : 0000000000000000 x7 : 0000000000000000 x6 :
-> 000000013f7f94c0
-> > [    0.000000] x5 : 0000000000000000 x4 : 0000000000000000 x3 :
-> 1100010011111111
-> > [    0.000000] x2 : 0000000000000001 x1 : 0000000084448004 x0 :
-> ffff0000ff6be2e0
-> > [    0.000000] Call trace:
-> > [    0.000000]  __cpuinfo_store_cpu+0xe8/0x240 (P)
-> > [    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88 (L)
-> > [    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88
-> > [    0.000000]  smp_prepare_boot_cpu+0x30/0x58
-> > [    0.000000]  start_kernel+0x514/0x9d0
-> > [    0.000000]  __primary_switched+0x88/0x98
-> > [    0.000000] Code: f100085f 54000600 f2580c7f 54000060 (d538a482)
->=20
-> ... and that's:
->=20
->    0:	f100085f 	cmp	x2, #0x2
->    4:	54000600 	b.eq	0xc4  // b.none
->    8:	f2580c7f 	tst	x3, #0xf0000000000
->    c:	54000060 	b.eq	0x18  // b.none
->   10:*	d538a482 	mrs	x2, s3_0_c10_c4_4		<-- trapping
-> instruction
->=20
-> Which I think corresponds to a read of MPAMIDR_EL1.
->=20
-> It looks like James routed accesses to this register to undef_access() in
-> 31ff96c38ea3 ("KVM: arm64: Fix missing traps of guest accesses to the
-> MPAM register") so I'm not really sure how this is supposed to work given
-> that it's an ID register.
+You should drop this patch from your series since I already landed v1:
 
-It probably requires a firmware update as noted here,
-https://lore.kernel.org/all/20241030160317.2528209-4-joey.gouly@arm.com/
-
-I just tried it on a similar system with MPAM enabled and was not able to r=
-eplicate the
-above error.
-
-Thanks,
-Shameer
+c1bae6802ee9 drm/panel-edp: Add unknown BOE panel for HP Omnibook X14
 
