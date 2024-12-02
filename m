@@ -1,108 +1,141 @@
-Return-Path: <linux-kernel+bounces-428246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA999E0BCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:15:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BD79E0CE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FE2282806
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:15:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FEEFB3F8EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F101442F2;
-	Mon,  2 Dec 2024 19:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F841DE3BD;
+	Mon,  2 Dec 2024 19:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f0G2U0LX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIrhwWSU"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12A51B6D0A
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1692AE90;
+	Mon,  2 Dec 2024 19:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733166918; cv=none; b=QOhqB9VobyW08iAhBSyT2iXgLyX+zRY/N1nu9d6bpJA4+e6drmyp4PCA2SWxQEu6ILSGf0QZ2Vmu/Mb7zkx7G/S8wkPXJ8T9inSyCvA0Ma1dR30aP24kHrGAezvuKN3/9wPjkW1vTPvVmqqp9IPg9Yqa7U6svVg1wdozZAinhN8=
+	t=1733166946; cv=none; b=r1tNL88F5GSzNxuyMdVtIZbyks1vspzwehbJ5gJdFFhcpTDUpJMJhrRGj1RWnsz5P40XCxO4iE0GJi0ZS/bNy1WMPAnmUjO/yCkxMzU/icX/vFqOtdtMoUsrZXOk1+1UEhdp7yF/wAN/z+E67BNAjti28lvZckVrilNrJ7UccPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733166918; c=relaxed/simple;
-	bh=LlmE5PXoP/0Bt/erTcqsahpLLO4fx4OjZBvyBHojLT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgc3Np1ZeXFVVTGoBpJ5cdSTZlJNgeSNDGJi1jwQYck2/q4YtKV5oZ7chLOexya/luYyjjoZREvqyqMatXgwsOUXsxP4euTDO2RoYYuhDuZoAB3gpAuOnWFCREFxLX9zaqKPZGrxXgemHuaPbjUqAUoA6G6KslcNarfE4uHtysM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f0G2U0LX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733166915;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5+i5+Pq0qTjDLhCIho7XynUnhfkt+n7Xq+muRky07sE=;
-	b=f0G2U0LXfuDoESSG/TZU6fH+xYtd678W/MzYJUytlKFmTGMvHUztyaSs0xmNjjBARi24zq
-	tWHFP9Z7CTC65AV6X6PFBiHMIhtC/upWw/8V7Y7wOgmvzXPShaQHBS++2xVdFfEJeb9I+N
-	c1Grdln44QWzv88Pw0Bh4fmFBgHmoPI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-XAx4NxeWO2K56SMfzvlH8w-1; Mon,
- 02 Dec 2024 14:15:12 -0500
-X-MC-Unique: XAx4NxeWO2K56SMfzvlH8w-1
-X-Mimecast-MFC-AGG-ID: XAx4NxeWO2K56SMfzvlH8w
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 542AC1955E8C;
-	Mon,  2 Dec 2024 19:15:10 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.65.61])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8774530001A7;
-	Mon,  2 Dec 2024 19:15:06 +0000 (UTC)
-Date: Mon, 2 Dec 2024 14:15:03 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org,
-	tglx@linutronix.de
-Subject: Re: [PATCH V2] sched/fair: Dequeue sched_delayed tasks when waking
- to a busy CPU
-Message-ID: <20241202191503.GB1233297@pauld.westford.csb>
-References: <95ff75cacab4720bbbecd54e881bb94d97087b45.camel@gmx.de>
- <20241114112854.GA471026@pauld.westford.csb>
- <20241119113016.GB66918@pauld.westford.csb>
- <bede25619ef6767bcd38546e236d35b7dadd8bd4.camel@gmx.de>
- <915eab00325f2bf608bcb2bd43665ccf663d4084.camel@gmx.de>
- <20241121115628.GB394828@pauld.westford.csb>
- <bf4f50886c462ee1f33cc404843944fea4817616.camel@gmx.de>
- <8df808ca-186d-41f8-845c-c42fd2fd4d45@amd.com>
- <924b853c01a5466c0bebe3bd324c46e9980dba1c.camel@gmx.de>
- <a6147977d5542c1e8b6a8025f6cf35af164cb06a.camel@gmx.de>
+	s=arc-20240116; t=1733166946; c=relaxed/simple;
+	bh=GfvbK2H5Ei/tZvSuw88s+DwAkP+/ww4Mo/JKZ7Qqi+A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JnfyPNnOiSq+s8t7OuLpMdBc+OoT4yCFa1tVuq+riz8yz9WkDxEMOPSLK9XuJI6ZvJXfVaPYfUtx7P2aDaS2ijVcg7NVLGakU2GX6cL3ugqRReSwKugFwgGJTOmavN0cHDvImtHhuGKdJHjnv0xx3fHTJVHAGF0SzG29wbh1d7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dIrhwWSU; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6d87f00f786so42039946d6.1;
+        Mon, 02 Dec 2024 11:15:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733166944; x=1733771744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8OMOD2rDakyh80oc7mNHohE/CVBfukWJ+S3JCKqTN3Y=;
+        b=dIrhwWSUfY21NUBMuR9qU6Ffv3cyXsclY7rPyw247FH12kzUXW0JJftrx2jH0h2mod
+         Eezgocc+Sxyb4ZtiKQ+RnGDzFhlw4Ke32lssa8XH01YIpZ/pxpu8C3mmSISbCUzdG8v8
+         T0xiu2cnj7iLOTP0N1WRw1XCG5AijtQHgy7eGGl8SjmtvmwCBc52Lax+rhfNFx+tXfuy
+         z9K3eUWyFCuZFTZda+INkv9HSZyLSqCKNHP4pwT3NHqcYJPCf7GWgytQs+T6SxYKx9b5
+         TiEwVo5pBSPIp7iKpz749mEZXV4uUNT2AttPS/vFxvwxFaUTg5s+P7Pv8J/Kqreoayoh
+         Ntrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733166944; x=1733771744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8OMOD2rDakyh80oc7mNHohE/CVBfukWJ+S3JCKqTN3Y=;
+        b=wu5Wydt269I4KilgVb0lZmwuRBBpcLkRpEIItMwikcna7nlUexHKeT7P61A2ZVOIla
+         fDgp3ZPK7gqTgcSn2qSt546POT30zIxArn22c28FRVuTNbZ6c2kCQ/SooYWYvecn7hBq
+         kNQHc7fmLHR1FWgGD8VQKvWnl4JGIayietdXdr6rt7gXKJdRbMU9yDp3bz97aBYxLXS6
+         5Z55DZ7mNiLXXTOeaSaPbzz9BKsWub9oKH7TWyPkqO1kTTAo+7lSUjlUpXhTd+hGt1Hj
+         fLLBXJO/mu2qqRzCWmPDW6q+jTMngAZrZ3GELyoH8v7DP1nFQDQOJFqJUGJCF/iQvTmM
+         J+NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU7kgkqSm1aRWxBVw06DmZQvPYN8Y3Np/hk8/eCpyqpQ5tE0s+xor58DrOY9KtA4uojt3/eDeyC/eRejg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdm0dlfQIRkQ5OSaS9mZAyFj8jEu0fQjqNb6N0/8D052goEROe
+	P5mqj7QTnyASUsuZ8ZJ84/M18E7ea0rrtnt7CPMJQFH7ObicoYF9IDb6p5066EdL8lnVwyzZohx
+	9eslG/3YAwpV3YO28K6x2Nk9askLpaQpb
+X-Gm-Gg: ASbGncuUMT6MWA2PFQCVmUKMnfH56Ro494WhfDxs5MeTSOo2ZpprG99GXWWlOMYsbw5
+	IPCTEqLxZZu51xKC1ypH39zwL2pbqmWg63zlPem2/8kuVZ3U=
+X-Google-Smtp-Source: AGHT+IFtCNuf3VmVRwyPv6TRhZiJS92nc7GwpzeaIJ2TJEySVzQWw8rpn1quJVR+oU4wqwEGjyTvvHZ+Sss8mbPfUDg=
+X-Received: by 2002:a05:6214:2aac:b0:6d8:a967:8387 with SMTP id
+ 6a1803df08f44-6d8a967859amr52741866d6.1.1733166943785; Mon, 02 Dec 2024
+ 11:15:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6147977d5542c1e8b6a8025f6cf35af164cb06a.camel@gmx.de>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com> <20241123070127.332773-10-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20241123070127.332773-10-kanchana.p.sridhar@intel.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Mon, 2 Dec 2024 11:15:33 -0800
+Message-ID: <CAKEwX=PmKWH4Z4Py9Jti9fcD6qCYJBBRrDF48qdmo8-i+LzzfA@mail.gmail.com>
+Subject: Re: [PATCH v4 09/10] mm: zswap: Allocate pool batching resources if
+ the crypto_alg supports batching.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	yosryahmed@google.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, clabbe@baylibre.com, 
+	ardb@kernel.org, ebiggers@google.com, surenb@google.com, 
+	kristen.c.accardi@intel.com, wajdi.k.feghali@intel.com, 
+	vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 10:42:37AM +0100 Mike Galbraith wrote:
-> On Tue, 2024-11-26 at 07:30 +0100, Mike Galbraith wrote:
-> >
-> > The intent is to blunt the instrument a bit. Paul should have
-> 
-> Yeah I did... ahem, I meant of course Phil.
+On Fri, Nov 22, 2024 at 11:01=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
 >
+> This patch does the following:
+>
+> 1) Modifies the definition of "struct crypto_acomp_ctx" to represent a
+>    configurable number of acomp_reqs and buffers. Adds a "nr_reqs" to
+>    "struct crypto_acomp_ctx" to contain the nr of resources that will be
+>    allocated in the cpu onlining code.
+>
+> 2) The zswap_cpu_comp_prepare() cpu onlining code will detect if the
+>    crypto_acomp created for the pool (in other words, the zswap compressi=
+on
+>    algorithm) has registered an implementation for batch_compress() and
+>    batch_decompress(). If so, it will set "nr_reqs" to
+>    SWAP_CRYPTO_BATCH_SIZE and allocate these many reqs/buffers, and set
+>    the acomp_ctx->nr_reqs accordingly. If the crypto_acomp does not suppo=
+rt
+>    batching, "nr_reqs" defaults to 1.
+>
+> 3) Adds a "bool can_batch" to "struct zswap_pool" that step (2) will set =
+to
+>    true if the batching API are present for the crypto_acomp.
 
-Heh, you are not alone, Mike  :)
+Why do we need this "can_batch" field? IIUC, this can be determined
+from the compressor internal fields itself, no?
 
+acomp_has_async_batching(acomp);
 
-> 	-Mike
-> 
+Is this just for convenience, or is this actually an expensive thing to com=
+pute?
 
--- 
+>
+> SWAP_CRYPTO_BATCH_SIZE is set to 8, which will be the IAA compress batchi=
+ng
 
+I like a sane default value as much as the next guy, but this seems a
+bit odd to me:
+
+1. The placement of this constant/default value seems strange to me.
+This is a compressor-specific value no? Why are we enforcing this
+batching size at the zswap level, and uniformly at that? What if we
+introduce a new batch compression algorithm...? Or am I missing
+something, and this is a sane default for other compressors too?
+
+2. Why is this value set to 8? Experimentation? Could you add some
+justification in documentation?
 
