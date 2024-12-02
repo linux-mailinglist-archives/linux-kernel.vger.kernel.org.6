@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-427412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358A19E009F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:34:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1308164750
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:33:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F5D1FECA8;
-	Mon,  2 Dec 2024 11:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QJY4JO46"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 682429E009A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:33:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AB420ADD2
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138613; cv=none; b=P96rjG7V1DITfKMAac/+ZmatJV5wYYfVtT5hx7IV1YcFfjl/9vuy7j86t4NnTr9fjjsT6dVJCPOWR+m2XiQBw8G33rmto218+q/PGEB1F60G4OnjVY/wtBmFpu/CGfwE0DfZ+jfWbXPX1L5G8QWUJz/3PS8VKZKuaM00HHfh5VY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138613; c=relaxed/simple;
-	bh=3CwUiYzQSS9zQX15Z8WynaPmt4FF3csoPX1C+MgznUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ipvpe0OzLdmBw4TKYNYlajVylsnrHVW0RoQprSSj8iea213KkbSfVnFvgRC8x+L0MmLb8rgp5Em881NHGPFSkzyFLGG7vwJ7LfSJ1yDNlGOyUSK1AjRHWer3juHQrNIinR4QwPvHInwpGBSUMbpfTNdKZwXt04v0WSTjYkO75VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QJY4JO46; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733138609;
-	bh=3CwUiYzQSS9zQX15Z8WynaPmt4FF3csoPX1C+MgznUY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QJY4JO46MD8RaA3KdmhUPZ9xQ7YVc6mQkbjYEfAhYkhi2SGFwHcGVpbNZ26OKO9VN
-	 ycW3Kc52HxivZNn0QoFo144355/t7+3FLJie14iQsyArF+GT8RMCAZ0nejyRuKvOg8
-	 FNm68HWcUd7wjcbaEKMWFExOeRzJlcOcKSun21hm1GceDWKPC8jPUWqH3LwdG1DQ0w
-	 CpIbH0PogSJ7DPZRmP8lB4rzh9n8mDeZdf1MrRK/CP2fl5gDDpGfR1we9Ahm6bdo0y
-	 w9Om0UC/tOOQHl/P+epf+64HIdfkzrOTnfHuunwJQ+4So4uBdb1vuDdua51i1zYGmM
-	 w6u75MoQnLjmQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF1C286C1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:33:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7003A20ADFB;
+	Mon,  2 Dec 2024 11:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RGf59SWm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LFKN+2Nx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DD4B717E3624;
-	Mon,  2 Dec 2024 12:23:28 +0100 (CET)
-Date: Mon, 2 Dec 2024 12:23:09 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Philipp Zabel
- <p.zabel@pengutronix.de>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] drm/panfrost: Remove unused device property
-Message-ID: <20241202122309.12cf8e25@collabora.com>
-In-Reply-To: <20241128211223.1805830-9-adrian.larumbe@collabora.com>
-References: <20241128211223.1805830-1-adrian.larumbe@collabora.com>
-	<20241128211223.1805830-9-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFE720ADD2;
+	Mon,  2 Dec 2024 11:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733138623; cv=none; b=BL8Qe30FqF4Tg6wmibItbXUddBjUAEPrK9+WonzG/nJy/DfLnNEE9ZAc7sD2wf8fGZb8Mex/8VYuNPhO+dGfYxc3txIg4+51FDbOJwQBMktVPioUVmu/M9G3Ht+Wx6EbeVAN8Igw69HWd7xDdpv1ift5vvuGfNZs8biv3h8oGGo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733138623; c=relaxed/simple;
+	bh=RhEWroN15efPRkhwf6k19OTy265Ehw+OEHGDDSy5jOA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=OQeT9AazuRlXqmXAWm1FELqi3TPXlq2vdOJi7FBdcj8Qvl4F5o5sgKwb6G8V5r0LrgMQNMuiy4DNDzrHIPuHiwphmp8Nz1Wdu7Q9SbRwln58TjIIzb1tmaFPn11LrrgiR7nzTadl3rcpT+uJqPEZmoEj8EUTJWdRWhIpaReMER0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RGf59SWm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LFKN+2Nx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 02 Dec 2024 11:23:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733138614;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fP3f98ARfzf022tqcgTyQ6nE0SvBrAZnzI/mJ53nejw=;
+	b=RGf59SWm/QRSyNlU/wISv9e+zHrCKlgK0hgf6eBOQQ50TmgxCRFJI1f7YyJaSfVg3a0OG7
+	hGDrIEE7zQzw+V54iSWKj+W4K1lr2KDH1N7+WThpXxlh3Yi6BdrK00B1BhSc1NMefB5kyF
+	TO/H0YNWl5S/CNZZBJHxZ0ARDcaXZR+6zCpAuK7XfQ66paDBeMVhytWb0fTSOQeuJQtPPN
+	zBJ1dmwrckEQfscBbWY4F5CY2mtNJFAdtHycZmLq6uZJdm78aBz8JtklkQRZuXKCF6AWjx
+	biw3Sj0YAG6ARzBxxdt7ou+HXHeoZcXslRnWqdSl6rMB9UUsZIaYaE73TqWBig==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733138614;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fP3f98ARfzf022tqcgTyQ6nE0SvBrAZnzI/mJ53nejw=;
+	b=LFKN+2NxTeFEc/msmuD4sa1/0lh6/3+VFuJ7qB2E8GQsl7ZGxxNDOdG7O3WYXprFQNFePg
+	VYvqfhYID7wrVBAw==
+From: "tip-bot2 for Waiman Long" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] locking/lockdep: Enforce PROVE_RAW_LOCK_NESTING
+ only if ARCH_SUPPORTS_RT
+Cc: Guenter Roeck <linux@roeck-us.net>, Waiman Long <longman@redhat.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241128020009.83347-1-longman@redhat.com>
+References: <20241128020009.83347-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <173313861411.412.6467281091993873078.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, 28 Nov 2024 21:06:23 +0000
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+The following commit has been merged into the locking/core branch of tip:
 
-> The as_in_use_mask device state variable is no longer in use.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+Commit-ID:     d387ceb17149fed4d85a1ec01b3d65ae0204060d
+Gitweb:        https://git.kernel.org/tip/d387ceb17149fed4d85a1ec01b3d65ae0204060d
+Author:        Waiman Long <longman@redhat.com>
+AuthorDate:    Wed, 27 Nov 2024 21:00:09 -05:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 02 Dec 2024 12:16:58 +01:00
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+locking/lockdep: Enforce PROVE_RAW_LOCK_NESTING only if ARCH_SUPPORTS_RT
 
-> ---
->  drivers/gpu/drm/panfrost/panfrost_device.h | 1 -
->  drivers/gpu/drm/panfrost/panfrost_mmu.c    | 1 -
->  2 files changed, 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm=
-/panfrost/panfrost_device.h
-> index fc83d5e104a3..b91957f886ea 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
-> @@ -117,7 +117,6 @@ struct panfrost_device {
->  	DECLARE_BITMAP(is_suspended, PANFROST_COMP_BIT_MAX);
-> =20
->  	spinlock_t as_lock;
-> -	unsigned long as_in_use_mask;
->  	unsigned long as_alloc_mask;
->  	unsigned long as_faulty_mask;
->  	struct list_head as_lru_list;
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/pa=
-nfrost/panfrost_mmu.c
-> index 5e30888bea0e..95df39b463d8 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> @@ -604,7 +604,6 @@ static void panfrost_mmu_release_ctx(struct kref *kre=
-f)
->  		pm_runtime_put_autosuspend(pfdev->base.dev);
-> =20
->  		clear_bit(mmu->as, &pfdev->as_alloc_mask);
-> -		clear_bit(mmu->as, &pfdev->as_in_use_mask);
->  		list_del(&mmu->list);
->  	}
->  	spin_unlock(&pfdev->as_lock);
+Relax the rule to set PROVE_RAW_LOCK_NESTING by default only for arches
+that supports PREEMPT_RT.  For arches that do not support PREEMPT_RT,
+they will not be forced to address unimportant raw lock nesting issues
+when they want to enable PROVE_LOCKING.  They do have the option
+to enable it to look for these raw locking nesting problems if they
+choose to.
 
+Suggested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20241128020009.83347-1-longman@redhat.com
+---
+ lib/Kconfig.debug | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index f3d7237..49a3819 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1397,9 +1397,9 @@ config PROVE_LOCKING
+ 	 For more details, see Documentation/locking/lockdep-design.rst.
+ 
+ config PROVE_RAW_LOCK_NESTING
+-	bool
++	bool "Enable raw_spinlock - spinlock nesting checks" if !ARCH_SUPPORTS_RT
+ 	depends on PROVE_LOCKING
+-	default y
++	default y if ARCH_SUPPORTS_RT
+ 	help
+ 	 Enable the raw_spinlock vs. spinlock nesting checks which ensure
+ 	 that the lock nesting rules for PREEMPT_RT enabled kernels are
 
