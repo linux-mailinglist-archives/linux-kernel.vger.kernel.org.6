@@ -1,195 +1,417 @@
-Return-Path: <linux-kernel+bounces-428138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33BC9E0A98
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:02:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636769E0AA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:06:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D23C163C00
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:02:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E3D2814E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C091DC734;
-	Mon,  2 Dec 2024 18:02:48 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2ABF1DDA2F;
+	Mon,  2 Dec 2024 18:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IAd9D1Xi"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997EF70818;
-	Mon,  2 Dec 2024 18:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2FC70818;
+	Mon,  2 Dec 2024 18:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733162567; cv=none; b=dxmfQR3TNgpuZTIqp7DN1743evI+eLp2/a6Rwq/K1aE7I2r+/iBb5oaL4ZuHuS/Q1W7FUlqdxr2vhp0WleXqLjJYBxEJDJBuH5iaQzDerQC8Q+yb/rch1+0cHB9HJl13xUuSSjW95OsTVqygbeNXdi9WnZ+r4zM7W//182FS+f0=
+	t=1733162766; cv=none; b=Eg6r7+y0mYtxie2GpVTXVYuBcF/UAqfD4qYSDmftlye3fbFhjmLfvxpbOG9RPh0MwI6f/OCAgStksu0fRzplpycbnppkakh4GdsAdYRBXeNz+CBghzQOD/koq3srCSCp6yzym0Aav9zPzEGuhyFXhDdouqpFNM837NESHE8K2Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733162567; c=relaxed/simple;
-	bh=LVuZUa24WaOmzfyvxHMhny2Hxp6afc/nbtxIS6Y1I/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VfODmEwsfMqewcMHrFrqKxcpiM873CuwL3wmgw976VZhs2kj+e2yw3yCVZJ+DlcZuKrrk1ZVy4QDeaRWL1mCkgJA7GBXFaQive1nB1sJ8eOMyfI6kcJ2KeUt/Wp2tF22rDdXlAiPPklEQce++RVI/aKniZr9NaUektrJBFhbNl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa55171d73cso1003190766b.0;
-        Mon, 02 Dec 2024 10:02:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733162564; x=1733767364;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X5gHcQ4FCTGNFnaCtGHvpnPCQcPDHMQwxknwgQhKcio=;
-        b=Erhgivk49lpHA2GJTjVcQGOi736PgKLzvBbhpEJnfpvRAmmRyCfjg66oZe+AqG/e9i
-         q4nPG7ypQ5V5umMvLqMQjExssTKfiNZpM39v0PUtMao3iKcKEiOyDHgABqB9EP5gRuLk
-         NqaBOk6kuKZ4T3xxKYzPbyLZgoFHJzs7VOgZza3JX/kZnlawjQzOChw/T95GFYtgRCpY
-         n6NMeKh4N8IanC73FuWD4VgenT8yBlMh6l0O2qLa3XCk6GDAiVaavkS4MvayaBx9CcHs
-         FFmHGtN7AFTMeej3c5RSiLVrrNf9otQ+s4BFlWpqgErQVywKx/eSwZDtfM3zAIcOH2LS
-         Uu2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVTd1JH21VWQ+4JvX8PY4Hg/m67mOQLKu1KyTL2IdexHMv71q5q3TCq/P8pOruCuFu2X4Pp0BMbPMZU@vger.kernel.org, AJvYcCVVbxe0iE7vZuKQm8IPaErEctzrUZhR/h+I4ZHFU7EDplgYVVDs+iRPGaraBylshV4A4RqWqCA9h+hAdLTn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5CEBrn9JVz8UajkWgCEC0OeNWvN/QCwxsTdCWlCQCM5shIe36
-	dA2ot4Hq9jFgAAusr6wD/lNW55aAiATLVj/dC6HUTWudxV3Z2OVfktposJRTIC0=
-X-Gm-Gg: ASbGncsNDWRHE0xxs8aj8dNtXlfoubJu10PqAzvXcmTJyyEYsYQy1DeCEnWK5392nXc
-	VX3aq+SDIHLDSbcvFZ2e3Nw9SG8vb1BHeA+lgcehe4JX+P/ztC0qc6SHLBLpnH1JnqQaOYuQHdU
-	Mu5I57dHIEXj0LmbDni7yDcOYfk2UbMYEBPjI69EL//+kV1F8HhX+eLq4wtCfcRu+e4b/Cd8KBl
-	MQ7Ya18Wf9ZAgPQMQU3hMED9eF8Mxkw6Y23ZuClLcttjj2mMPbBZrAu6tTcXuEGoQRyst3pOi1z
-	MCox
-X-Google-Smtp-Source: AGHT+IHqH+RXpiHj2HSPOSUU3Knk7DPh8DqmSqIhMb4UKXSYS6ukJYTT9fNPjk+TZ9PpbJflCx6yeA==
-X-Received: by 2002:a17:907:7ea6:b0:a9e:82f3:d4ab with SMTP id a640c23a62f3a-aa594535329mr2319592666b.9.1733162562169;
-        Mon, 02 Dec 2024 10:02:42 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5999058fbsm530281566b.143.2024.12.02.10.02.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 10:02:42 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa539d2b4b2so826505766b.1;
-        Mon, 02 Dec 2024 10:02:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUwjbl9bkYmc+hcM/hiHY8/wSVd+WGKr3FnlKUpylSxRB7zLpai6Rroh+QXsBTtrIijBxGWe8KPpgrF@vger.kernel.org, AJvYcCVNTnhQ+TGtIHfaBaTv5FgNduAtTIwCKYwB4iXcul4C9skf5J7R3K2U+Ubx948vn9fhY6LpRpcoJGl8ukrr@vger.kernel.org
-X-Received: by 2002:a17:906:2181:b0:a9a:616c:459e with SMTP id
- a640c23a62f3a-aa59467032cmr2043918466b.27.1733162560648; Mon, 02 Dec 2024
- 10:02:40 -0800 (PST)
+	s=arc-20240116; t=1733162766; c=relaxed/simple;
+	bh=SohDtRB2amvWbKYSjyiIAT7+gtkuiaHkuHOOcBzknVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rm+rzeUAlsg44EcTTBJ5X2B09CI0moe1kF/cJygP6mgQVnK6WQgoExX4MtxR6EcraGTOr3KAoBl3e7av0cOoeHN/JHJQXvlT0Hj4LQrui+UaHIS4Wo5ZxjbxJtWnNqkv32A+ZT6nK9tysNVb+llVnyZC7EAVRaUn1PUY0YVPG5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IAd9D1Xi; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2Hfe3K014348;
+	Mon, 2 Dec 2024 18:05:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=vZpce4mcEz8PyoN6JDO85pkM1Kepr
+	SPv/e3K+egDxO8=; b=IAd9D1Xiaecpt9eWvvzznsaxiU9U8zhVU0mrPtP1jW21V
+	XH6Y+WVCJu4L4eOD1LqYvNGAGFK+gfGiYa8KPg9qw1Nd0oMmQYb3CJUGEryEgJc3
+	EbIZL6zwy1Eo0XB2lU0HHas7l1IwIvsmLFq+esoMft6oOiEcYvbrrnGyHZREQj4F
+	OCKIpW+fYPWAZ1RNfX2Zge0JlDsy1l6ArzUFtf4YyGinI4SK+c8UFMPegpK2C3+a
+	JtT/upfLPeuQtPj5ZPxHZBGGig8+96UjlDxKvaY29DO3h+vqtEf3i0Ihn1rw24jU
+	OeFzdvdts6SHSdVnQs25Vk5RC+jvKTxt0KbGvW2Ag==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437s4c491n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Dec 2024 18:05:10 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2I30p9001973;
+	Mon, 2 Dec 2024 18:05:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437s56sea7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Dec 2024 18:05:09 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4B2HxeaY005058;
+	Mon, 2 Dec 2024 18:05:09 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 437s56se83-1;
+	Mon, 02 Dec 2024 18:05:09 +0000
+From: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+To: 
+Cc: saeed.mirzamohammadi@oracle.com, Florian Westphal <fw@strlen.de>,
+        Eric Dumazet <edumazet@google.com>,
+        xingwei lee <xrivendell7@gmail.com>, yue sun <samsun1006219@gmail.com>,
+        syzbot+e5167d7144a62715044c@syzkaller.appspotmail.com,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: [PATCH 4.19.y 1/1] inet: inet_defrag: prevent sk release while still in use
+Date: Mon,  2 Dec 2024 10:04:58 -0800
+Message-ID: <20241202180503.1099928-1-saeed.mirzamohammadi@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241201155820.29259-1-towinchenmi@gmail.com>
-In-Reply-To: <20241201155820.29259-1-towinchenmi@gmail.com>
-From: Neal Gompa <neal@gompa.dev>
-Date: Mon, 2 Dec 2024 13:02:04 -0500
-X-Gmail-Original-Message-ID: <CAEg-Je97QmLUrOV+dvg2zbV56R44Ouj4gLwV36z-RdvG-H+hGw@mail.gmail.com>
-Message-ID: <CAEg-Je97QmLUrOV+dvg2zbV56R44Ouj4gLwV36z-RdvG-H+hGw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] Add PMGR nodes for Apple A7-A11 SoCs
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-02_13,2024-12-02_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
+ adultscore=0 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2411120000 definitions=main-2412020153
+X-Proofpoint-ORIG-GUID: ioy_Iu373wvvx6Q5kAErRhXCIl2pAOLL
+X-Proofpoint-GUID: ioy_Iu373wvvx6Q5kAErRhXCIl2pAOLL
 
-On Sun, Dec 1, 2024 at 11:00=E2=80=AFAM Nick Chan <towinchenmi@gmail.com> w=
-rote:
->
-> This series adds the PMGR nodes and all known power state subnodes for
-> Apple A7-A11 SoCs, along with the associated dt-bindings.
->
-> Changes since v3:
-> - Add "apple,always-on" property to "ps_spmi" in t8015 power domains.
-> This is required for cpufreq to function correctly which will be added
-> in a later series.
->
-> Changes since v2:
-> - Removed "apple,always-on" property from "ps_pmp" from s8001, t8011,
-> t8015 power domains. It is not on at boot. (Mixed up with ps_pms which
-> is required to be on)
-> - Add asahi-soc/dt back into the subject prefix, missing from v2.
->
-> Link to v2: https://lore.kernel.org/asahi/20241102011004.59339-1-towinche=
-nmi@gmail.com
->
-> Changes since v1:
-> - Removed "framebuffer0" dt aliases. It is not standard and not needed.
->
-> Link to v1: https://lore.kernel.org/asahi/20241029010526.42052-1-towinche=
-nmi@gmail.com
->
-> Nick Chan
-> ---
->
-> Nick Chan (10):
->   dt-bindings: arm: apple: apple,pmgr: Add A7-A11 compatibles
->   dt-bindings: arm: apple: apple,pmgr-pwrstate: Add A7-A11 compatibles
->   arm64: dts: apple: s5l8960x: Add PMGR node
->   arm64: dts: apple: t7000: Add PMGR node
->   arm64: dts: apple: t7001: Add PMGR node
->   arm64: dts: apple: s8000: Add PMGR nodes
->   arm64: dts: apple: s8001: Add PMGR nodes
->   arm64: dts: apple: t8010: Add PMGR nodes
->   arm64: dts: apple: t8011: Add PMGR nodes
->   arm64: dts: apple: t8015: Add PMGR nodes
->
->  .../bindings/arm/apple/apple,pmgr.yaml        |   5 +
->  .../bindings/power/apple,pmgr-pwrstate.yaml   |   5 +
->  arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi    |   4 +
->  arch/arm64/boot/dts/apple/s5l8960x-air1.dtsi  |   4 +
->  arch/arm64/boot/dts/apple/s5l8960x-mini2.dtsi |   4 +
->  arch/arm64/boot/dts/apple/s5l8960x-pmgr.dtsi  | 610 ++++++++++++
->  arch/arm64/boot/dts/apple/s5l8960x.dtsi       |  13 +
->  arch/arm64/boot/dts/apple/s8000-pmgr.dtsi     | 757 ++++++++++++++
->  arch/arm64/boot/dts/apple/s8000.dtsi          |  22 +
->  arch/arm64/boot/dts/apple/s8001-common.dtsi   |   1 +
->  .../arm64/boot/dts/apple/s8001-j98a-j99a.dtsi |  26 +
->  arch/arm64/boot/dts/apple/s8001-j98a.dts      |   1 +
->  arch/arm64/boot/dts/apple/s8001-j99a.dts      |   1 +
->  arch/arm64/boot/dts/apple/s8001-pmgr.dtsi     | 822 ++++++++++++++++
->  arch/arm64/boot/dts/apple/s8001.dtsi          |  22 +
->  arch/arm64/boot/dts/apple/s800x-6s.dtsi       |   4 +
->  arch/arm64/boot/dts/apple/s800x-ipad5.dtsi    |   4 +
->  arch/arm64/boot/dts/apple/s800x-se.dtsi       |   4 +
->  arch/arm64/boot/dts/apple/t7000-6.dtsi        |   4 +
->  arch/arm64/boot/dts/apple/t7000-j42d.dts      |   1 +
->  arch/arm64/boot/dts/apple/t7000-mini4.dtsi    |   4 +
->  arch/arm64/boot/dts/apple/t7000-n102.dts      |   4 +
->  arch/arm64/boot/dts/apple/t7000-pmgr.dtsi     | 641 ++++++++++++
->  arch/arm64/boot/dts/apple/t7000.dtsi          |  14 +
->  arch/arm64/boot/dts/apple/t7001-air2.dtsi     |   1 +
->  arch/arm64/boot/dts/apple/t7001-pmgr.dtsi     | 650 ++++++++++++
->  arch/arm64/boot/dts/apple/t7001.dtsi          |  13 +
->  arch/arm64/boot/dts/apple/t8010-7.dtsi        |   4 +
->  arch/arm64/boot/dts/apple/t8010-ipad6.dtsi    |   4 +
->  arch/arm64/boot/dts/apple/t8010-n112.dts      |   4 +
->  arch/arm64/boot/dts/apple/t8010-pmgr.dtsi     | 772 +++++++++++++++
->  arch/arm64/boot/dts/apple/t8010.dtsi          |  22 +
->  arch/arm64/boot/dts/apple/t8011-common.dtsi   |   1 +
->  arch/arm64/boot/dts/apple/t8011-pmgr.dtsi     | 806 +++++++++++++++
->  arch/arm64/boot/dts/apple/t8011-pro2.dtsi     |   8 +
->  arch/arm64/boot/dts/apple/t8011.dtsi          |  22 +
->  arch/arm64/boot/dts/apple/t8015-common.dtsi   |   1 +
->  arch/arm64/boot/dts/apple/t8015-pmgr.dtsi     | 931 ++++++++++++++++++
->  arch/arm64/boot/dts/apple/t8015.dtsi          |  21 +
->  39 files changed, 6237 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/apple/s5l8960x-pmgr.dtsi
->  create mode 100644 arch/arm64/boot/dts/apple/s8000-pmgr.dtsi
->  create mode 100644 arch/arm64/boot/dts/apple/s8001-j98a-j99a.dtsi
->  create mode 100644 arch/arm64/boot/dts/apple/s8001-pmgr.dtsi
->  create mode 100644 arch/arm64/boot/dts/apple/t7000-pmgr.dtsi
->  create mode 100644 arch/arm64/boot/dts/apple/t7001-pmgr.dtsi
->  create mode 100644 arch/arm64/boot/dts/apple/t8010-pmgr.dtsi
->  create mode 100644 arch/arm64/boot/dts/apple/t8011-pmgr.dtsi
->  create mode 100644 arch/arm64/boot/dts/apple/t8015-pmgr.dtsi
->
->
-> base-commit: 9ad55a67a788c0806b0fe23be36fae6dbfbc3fc5
-> --
-> 2.47.1
->
->
+From: Florian Westphal <fw@strlen.de>
 
-These seem reasonable.
+commit 18685451fc4e546fc0e718580d32df3c0e5c8272 upstream.
 
-Acked-by: Neal Gompa <neal@gompa.dev>
+ip_local_out() and other functions can pass skb->sk as function argument.
 
+If the skb is a fragment and reassembly happens before such function call
+returns, the sk must not be released.
 
+This affects skb fragments reassembled via netfilter or similar
+modules, e.g. openvswitch or ct_act.c, when run as part of tx pipeline.
 
---
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
+Eric Dumazet made an initial analysis of this bug.  Quoting Eric:
+  Calling ip_defrag() in output path is also implying skb_orphan(),
+  which is buggy because output path relies on sk not disappearing.
+
+  A relevant old patch about the issue was :
+  8282f27449bf ("inet: frag: Always orphan skbs inside ip_defrag()")
+
+  [..]
+
+  net/ipv4/ip_output.c depends on skb->sk being set, and probably to an
+  inet socket, not an arbitrary one.
+
+  If we orphan the packet in ipvlan, then downstream things like FQ
+  packet scheduler will not work properly.
+
+  We need to change ip_defrag() to only use skb_orphan() when really
+  needed, ie whenever frag_list is going to be used.
+
+Eric suggested to stash sk in fragment queue and made an initial patch.
+However there is a problem with this:
+
+If skb is refragmented again right after, ip_do_fragment() will copy
+head->sk to the new fragments, and sets up destructor to sock_wfree.
+IOW, we have no choice but to fix up sk_wmem accouting to reflect the
+fully reassembled skb, else wmem will underflow.
+
+This change moves the orphan down into the core, to last possible moment.
+As ip_defrag_offset is aliased with sk_buff->sk member, we must move the
+offset into the FRAG_CB, else skb->sk gets clobbered.
+
+This allows to delay the orphaning long enough to learn if the skb has
+to be queued or if the skb is completing the reasm queue.
+
+In the former case, things work as before, skb is orphaned.  This is
+safe because skb gets queued/stolen and won't continue past reasm engine.
+
+In the latter case, we will steal the skb->sk reference, reattach it to
+the head skb, and fix up wmem accouting when inet_frag inflates truesize.
+
+Fixes: 7026b1ddb6b8 ("netfilter: Pass socket pointer down through okfn().")
+Diagnosed-by: Eric Dumazet <edumazet@google.com>
+Reported-by: xingwei lee <xrivendell7@gmail.com>
+Reported-by: yue sun <samsun1006219@gmail.com>
+Reported-by: syzbot+e5167d7144a62715044c@syzkaller.appspotmail.com
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Link: https://lore.kernel.org/r/20240326101845.30836-1-fw@strlen.de
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+---
+ include/linux/skbuff.h                  |  5 +-
+ net/core/sock_destructor.h              | 12 +++++
+ net/ipv4/inet_fragment.c                | 70 ++++++++++++++++++++-----
+ net/ipv4/ip_fragment.c                  |  2 +-
+ net/ipv6/netfilter/nf_conntrack_reasm.c |  2 +-
+ 5 files changed, 72 insertions(+), 19 deletions(-)
+ create mode 100644 net/core/sock_destructor.h
+
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index f97734f34746..f5f76a04fdac 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -682,10 +682,7 @@ struct sk_buff {
+ 		struct list_head	list;
+ 	};
+ 
+-	union {
+-		struct sock		*sk;
+-		int			ip_defrag_offset;
+-	};
++	struct sock		*sk;
+ 
+ 	union {
+ 		ktime_t		tstamp;
+diff --git a/net/core/sock_destructor.h b/net/core/sock_destructor.h
+new file mode 100644
+index 000000000000..2f396e6bfba5
+--- /dev/null
++++ b/net/core/sock_destructor.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#ifndef _NET_CORE_SOCK_DESTRUCTOR_H
++#define _NET_CORE_SOCK_DESTRUCTOR_H
++#include <net/tcp.h>
++
++static inline bool is_skb_wmem(const struct sk_buff *skb)
++{
++	return skb->destructor == sock_wfree ||
++	       skb->destructor == __sock_wfree ||
++	       (IS_ENABLED(CONFIG_INET) && skb->destructor == tcp_wfree);
++}
++#endif
+diff --git a/net/ipv4/inet_fragment.c b/net/ipv4/inet_fragment.c
+index 9f69411251d0..9144c3cf984c 100644
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -28,6 +28,8 @@
+ #include <net/ip.h>
+ #include <net/ipv6.h>
+ 
++#include "../core/sock_destructor.h"
++
+ /* Use skb->cb to track consecutive/adjacent fragments coming at
+  * the end of the queue. Nodes in the rb-tree queue will
+  * contain "runs" of one or more adjacent fragments.
+@@ -43,6 +45,7 @@ struct ipfrag_skb_cb {
+ 	};
+ 	struct sk_buff		*next_frag;
+ 	int			frag_run_len;
++	int			ip_defrag_offset;
+ };
+ 
+ #define FRAG_CB(skb)		((struct ipfrag_skb_cb *)((skb)->cb))
+@@ -319,12 +322,12 @@ int inet_frag_queue_insert(struct inet_frag_queue *q, struct sk_buff *skb,
+ 	 */
+ 	if (!last)
+ 		fragrun_create(q, skb);  /* First fragment. */
+-	else if (last->ip_defrag_offset + last->len < end) {
++	else if (FRAG_CB(last)->ip_defrag_offset + last->len < end) {
+ 		/* This is the common case: skb goes to the end. */
+ 		/* Detect and discard overlaps. */
+-		if (offset < last->ip_defrag_offset + last->len)
++		if (offset < FRAG_CB(last)->ip_defrag_offset + last->len)
+ 			return IPFRAG_OVERLAP;
+-		if (offset == last->ip_defrag_offset + last->len)
++		if (offset == FRAG_CB(last)->ip_defrag_offset + last->len)
+ 			fragrun_append_to_last(q, skb);
+ 		else
+ 			fragrun_create(q, skb);
+@@ -341,13 +344,13 @@ int inet_frag_queue_insert(struct inet_frag_queue *q, struct sk_buff *skb,
+ 
+ 			parent = *rbn;
+ 			curr = rb_to_skb(parent);
+-			curr_run_end = curr->ip_defrag_offset +
++			curr_run_end = FRAG_CB(curr)->ip_defrag_offset +
+ 					FRAG_CB(curr)->frag_run_len;
+-			if (end <= curr->ip_defrag_offset)
++			if (end <= FRAG_CB(curr)->ip_defrag_offset)
+ 				rbn = &parent->rb_left;
+ 			else if (offset >= curr_run_end)
+ 				rbn = &parent->rb_right;
+-			else if (offset >= curr->ip_defrag_offset &&
++			else if (offset >= FRAG_CB(curr)->ip_defrag_offset &&
+ 				 end <= curr_run_end)
+ 				return IPFRAG_DUP;
+ 			else
+@@ -361,7 +364,7 @@ int inet_frag_queue_insert(struct inet_frag_queue *q, struct sk_buff *skb,
+ 		rb_insert_color(&skb->rbnode, &q->rb_fragments);
+ 	}
+ 
+-	skb->ip_defrag_offset = offset;
++	FRAG_CB(skb)->ip_defrag_offset = offset;
+ 
+ 	return IPFRAG_OK;
+ }
+@@ -371,13 +374,28 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 			      struct sk_buff *parent)
+ {
+ 	struct sk_buff *fp, *head = skb_rb_first(&q->rb_fragments);
+-	struct sk_buff **nextp;
++	void (*destructor)(struct sk_buff *);
++	unsigned int orig_truesize = 0;
++	struct sk_buff **nextp = NULL;
++	struct sock *sk = skb->sk;
+ 	int delta;
+ 
++	if (sk && is_skb_wmem(skb)) {
++		/* TX: skb->sk might have been passed as argument to
++		 * dst->output and must remain valid until tx completes.
++		 *
++		 * Move sk to reassembled skb and fix up wmem accounting.
++		 */
++		orig_truesize = skb->truesize;
++		destructor = skb->destructor;
++	}
++
+ 	if (head != skb) {
+ 		fp = skb_clone(skb, GFP_ATOMIC);
+-		if (!fp)
+-			return NULL;
++		if (!fp) {
++			head = skb;
++			goto out_restore_sk;
++		}
+ 		FRAG_CB(fp)->next_frag = FRAG_CB(skb)->next_frag;
+ 		if (RB_EMPTY_NODE(&skb->rbnode))
+ 			FRAG_CB(parent)->next_frag = fp;
+@@ -386,6 +404,12 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 					&q->rb_fragments);
+ 		if (q->fragments_tail == skb)
+ 			q->fragments_tail = fp;
++
++		if (orig_truesize) {
++			/* prevent skb_morph from releasing sk */
++			skb->sk = NULL;
++			skb->destructor = NULL;
++		}
+ 		skb_morph(skb, head);
+ 		FRAG_CB(skb)->next_frag = FRAG_CB(head)->next_frag;
+ 		rb_replace_node(&head->rbnode, &skb->rbnode,
+@@ -393,13 +417,13 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 		consume_skb(head);
+ 		head = skb;
+ 	}
+-	WARN_ON(head->ip_defrag_offset != 0);
++	WARN_ON(FRAG_CB(head)->ip_defrag_offset != 0);
+ 
+ 	delta = -head->truesize;
+ 
+ 	/* Head of list must not be cloned. */
+ 	if (skb_unclone(head, GFP_ATOMIC))
+-		return NULL;
++		goto out_restore_sk;
+ 
+ 	delta += head->truesize;
+ 	if (delta)
+@@ -415,7 +439,7 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 
+ 		clone = alloc_skb(0, GFP_ATOMIC);
+ 		if (!clone)
+-			return NULL;
++			goto out_restore_sk;
+ 		skb_shinfo(clone)->frag_list = skb_shinfo(head)->frag_list;
+ 		skb_frag_list_init(head);
+ 		for (i = 0; i < skb_shinfo(head)->nr_frags; i++)
+@@ -432,6 +456,21 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 		nextp = &skb_shinfo(head)->frag_list;
+ 	}
+ 
++out_restore_sk:
++	if (orig_truesize) {
++		int ts_delta = head->truesize - orig_truesize;
++
++		/* if this reassembled skb is fragmented later,
++		 * fraglist skbs will get skb->sk assigned from head->sk,
++		 * and each frag skb will be released via sock_wfree.
++		 *
++		 * Update sk_wmem_alloc.
++		 */
++		head->sk = sk;
++		head->destructor = destructor;
++		refcount_add(ts_delta, &sk->sk_wmem_alloc);
++	}
++
+ 	return nextp;
+ }
+ EXPORT_SYMBOL(inet_frag_reasm_prepare);
+@@ -439,6 +478,8 @@ EXPORT_SYMBOL(inet_frag_reasm_prepare);
+ void inet_frag_reasm_finish(struct inet_frag_queue *q, struct sk_buff *head,
+ 			    void *reasm_data)
+ {
++	struct sock *sk = is_skb_wmem(head) ? head->sk : NULL;
++	const unsigned int head_truesize = head->truesize;
+ 	struct sk_buff **nextp = (struct sk_buff **)reasm_data;
+ 	struct rb_node *rbn;
+ 	struct sk_buff *fp;
+@@ -484,6 +525,9 @@ void inet_frag_reasm_finish(struct inet_frag_queue *q, struct sk_buff *head,
+ 	skb_mark_not_on_list(head);
+ 	head->prev = NULL;
+ 	head->tstamp = q->stamp;
++
++	if (sk)
++		refcount_add(sum_truesize - head_truesize, &sk->sk_wmem_alloc);
+ }
+ EXPORT_SYMBOL(inet_frag_reasm_finish);
+ 
+diff --git a/net/ipv4/ip_fragment.c b/net/ipv4/ip_fragment.c
+index 5a1d39e32196..84544e5df7fc 100644
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -380,6 +380,7 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
+ 	}
+ 
+ 	skb_dst_drop(skb);
++	skb_orphan(skb);
+ 	return -EINPROGRESS;
+ 
+ insert_error:
+@@ -477,7 +478,6 @@ int ip_defrag(struct net *net, struct sk_buff *skb, u32 user)
+ 	struct ipq *qp;
+ 
+ 	__IP_INC_STATS(net, IPSTATS_MIB_REASMREQDS);
+-	skb_orphan(skb);
+ 
+ 	/* Lookup (or create) queue header */
+ 	qp = ip_find(net, ip_hdr(skb), user, vif);
+diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
+index 35d5a76867d0..8aab62c330ef 100644
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -307,6 +307,7 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
+ 	}
+ 
+ 	skb_dst_drop(skb);
++	skb_orphan(skb);
+ 	return -EINPROGRESS;
+ 
+ insert_error:
+@@ -473,7 +474,6 @@ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
+ 	hdr = ipv6_hdr(skb);
+ 	fhdr = (struct frag_hdr *)skb_transport_header(skb);
+ 
+-	skb_orphan(skb);
+ 	fq = fq_find(net, fhdr->identification, user, hdr,
+ 		     skb->dev ? skb->dev->ifindex : 0);
+ 	if (fq == NULL) {
+-- 
+2.46.0
+
 
