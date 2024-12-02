@@ -1,113 +1,161 @@
-Return-Path: <linux-kernel+bounces-427431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C329E00DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:45:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5369E00E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:48:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1FFE280052
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:45:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C2C1622AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27421FDE3E;
-	Mon,  2 Dec 2024 11:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8645B1FDE36;
+	Mon,  2 Dec 2024 11:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ssxj7YIm"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XeyJ4STY"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDB31F9AA3;
-	Mon,  2 Dec 2024 11:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B3B1F9AA3;
+	Mon,  2 Dec 2024 11:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733139925; cv=none; b=AnDfwho6IMM4nYXATlX+R490LibCMNZ11Vdz6G/3p7Ev2vhOR1S7Q22cEYCMw2Mxoaobzdx4VmANP5sCN7iAMbTEX0fFz6Yq5DrkFsqJj19vSNm+7zKoOSJ8I3XRunAg6+CYbnBznBjIirB0h6T94B+yJOIgQXn28m9USp0HDss=
+	t=1733140075; cv=none; b=d/416/XCRQWtqsMFtCLS2vFD6OIA2I5cC79OYgIBpk16x1KCXa2KE5JPGCGFdhVeiSH+Mgdkk94peI5ldC96T4Pbn1SSvGo7lm6He2i07MwyMQhNB3WN82huKT3KJcUN+e+QCgBEzEhpgryAITv/4NAusQ8v4eckfpFDkCcCRRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733139925; c=relaxed/simple;
-	bh=N+sClg3ilSLnEtoUkH25HtnlbLoe1AkL59NyPFckCsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FxLZqFxO0YbCtFz2tRE3t2EiNKE9L/qZrzyQ1AvMOc0mw6GjQy7FkclDxyefgDElTV9mRd0YxFA6qeWcKt/BmTrr/xw+xg4H7iB3BvhFHsKiILxD3vRM7jbhc4ZUzRkSmVrOqnPYuczGqYzNBZK0zAd5uYn+GMGCKwDm1TkV9XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ssxj7YIm; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sMZNZfSNhg0JQ1t8EgkyjvljKSryh5az9Gw54oU2VPY=; b=Ssxj7YImM6kWpuepXpygDSWQGp
-	Z9vY56MTiELdqujAQ3MARSNtZRabZvY4ADxoLMXXo7M1beZAjxSRiZBkZzxXxfln4GDvJRLKtBon5
-	jkYbrtynnLTklndknWk69hgh45pgEOSooWlVzLNsVFS3VFz6FvbYAopNy7d5/F/AGIMXRgQib2zda
-	1F8GuU2BrJtQrxGOihmuo//eg4AePaZRKcJG8vUVI5JPKZRNPYMi4LHZ+/bNqzYOm65JiPUb6Ojo7
-	ihZlnJZyzqyktgLhUIHVxP03uC3X+y4XJwXUiCGF3fty3CpDQ6/8Db8x4uJEDG1ojhzvzmr7V+vRG
-	a1JbRvKw==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tI4ra-00000002AI0-25S3;
-	Mon, 02 Dec 2024 11:45:14 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 17622300402; Mon,  2 Dec 2024 12:45:14 +0100 (CET)
-Date: Mon, 2 Dec 2024 12:45:13 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Re: [PATCH v7 01/12] Documentation: x86: Add AMD Hardware Feedback
- Interface documentation
-Message-ID: <20241202114513.GD8562@noisy.programming.kicks-ass.net>
-References: <20241130140703.557-1-mario.limonciello@amd.com>
- <20241130140703.557-2-mario.limonciello@amd.com>
+	s=arc-20240116; t=1733140075; c=relaxed/simple;
+	bh=7b+5QBkw+sfaYLBUUpWCAzOQ6XFXSoqIasPZQOnv31s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=o+i984XVJCiGaBVD2IbySDexHocddZRgbilMCkk6r0zO84viZ6H9nk4d/Sm5uX3ZGgzNx2m+GI20oPeDrD070kkevRNY99/FDzVPp8f5K3Mb7OHWgVJ7nnj4OGIvQpMiN1Xtb88bW3dugnFfcBmCj/Sn285mZVkrXruDmzYr91A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XeyJ4STY; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53de556ecdaso4079003e87.1;
+        Mon, 02 Dec 2024 03:47:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733140072; x=1733744872; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xzUJUTzbvGPKwa+PxhmndHawfIFfq48oDBcRmcx5a4o=;
+        b=XeyJ4STY6wQQVLbVa3idElKKOes0sPWc6pEbxwsdA7BdX2o8Mladj+ZC6DTfNk2K9w
+         J48VTbNZmIGN6h+WyZLsSFnWzf7MMd0Fpf/IR/m25e2kiqCRUBDVLV6g2L/5tgDq6WZv
+         0FdcgT6ihK4//wVvZThhlp7zlcf7r7dMvbp8XdZeeXmJ14z38K1oosz5XivX7UGmzcUl
+         Jay8dNEjYE17dGRLvpC9yaStjRUcNqMKeNybmFUh3uFUJGIPy4kAabHvyU77cpC/6n2S
+         PVAJeCdncei3mG4AXqCPtXNYbPvEr14ZDO6W86H7ZcJ/DUZ9CnqmM32TNlE9V11O4snj
+         pJBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733140072; x=1733744872;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xzUJUTzbvGPKwa+PxhmndHawfIFfq48oDBcRmcx5a4o=;
+        b=GgiBxD28t9KVnLVcyxNMCpaJVhgtL8Y/Ibk6nE0Wf72YNpEB2iIEc440EbKoXFt6pH
+         JQeepGUsQzLLq3ROBIOipTsykQMfjzYhhCyr2ioxDnBvc6HVkkIwAeSsyBpLrAQRCtDc
+         KCHB3EG3Si7O5k1pujSuOBVsFQe2vMZKwqfcl/6H3Arr+uqnDpNXkEPSaKr6hUmZle/H
+         aSlzJnrQqbUynqZDqiwKQ82t1dJ9X4JpmRPbBQ6gGBu2tvspiSlZVErPvwWoXi2IK8LM
+         0Syhf7/GoOJr/yjRXpHLHpbVjZuzwMUionxcg6SYuQb81cual3V74B53zxmDeALPIgv7
+         smLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8r29MhBTU8OOmZNHVxF5B3mH3WR1quJ/HLrgVlLoBIKkXgw6wGADmKa2di6V+rCsrESjILdGeGKk69EFA@vger.kernel.org, AJvYcCW/DBKZuBtJYtkJ4loo2UmOsWfR7vQ12bRtmQeK+fRJpYDrAEiiZ/vVCO0VtyIJhMGVwmrmmy9UKIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNetsvr5Xgsn6Qr0RJktMhKEJRqAGxJQglnGsul6TtpmcjCh3Z
+	iXMOp3jE+nZeYs6G65OVTyYN2hzh9KjdgRGXpAPqQUjK/5FdvBVv
+X-Gm-Gg: ASbGncsqiDs/Qiu2W9A5ntZaLCVOVegggxNhoeP46J+CbkBon6V3LxYsXIxLuAnHDJ5
+	0j2Y8vWuEsHjliD8ImgUL76nlM8844gNx1N7kPg4TfT9oYVThrSUM4mtYa99+/GF5evZSvu30li
+	3QFzlE6B4cbStLtIP3+RkwRGYuGRAf7Q9jDBwWnXuxChqxgE1Y+2zHd+rnRzCZbbGS5Hhvou6UU
+	yJFHtdGXvECawOwFlxRKfWfDn8zxtD3hmNRoiN6dw50Eyjmg1RdqerI
+X-Google-Smtp-Source: AGHT+IFIz62MfwBuZME7MVogwfKQcWcn+994S5k0u0UnacF62zbdlzDiLo5U62H63uF5RYoA83f8fw==
+X-Received: by 2002:a05:6512:398c:b0:53d:ea3c:2ba0 with SMTP id 2adb3069b0e04-53df00d12afmr12838986e87.16.1733140072128;
+        Mon, 02 Dec 2024 03:47:52 -0800 (PST)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6495ba0sm1426130e87.172.2024.12.02.03.47.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 03:47:50 -0800 (PST)
+Date: Mon, 2 Dec 2024 13:47:42 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: kx022a: document new chip_info structure members
+Message-ID: <Z02eXtrrO8U5-ffo@mva-rohm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="KFfhg9dvQCPxm6jq"
+Content-Disposition: inline
+
+
+--KFfhg9dvQCPxm6jq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241130140703.557-2-mario.limonciello@amd.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 30, 2024 at 08:06:52AM -0600, Mario Limonciello wrote:
+The kx022a driver supports a few different HW variants. A chip-info
+structure is used to describe sensor specific details. Support for
+sensors with different measurement g-ranges was added recently,
+introducing sensor specific scale arrays.
 
-> +Thread Classification and Ranking Table Interaction
-> +----------------------------------------------------
-> +
-> +The thread classification is used to select into a ranking table that describes
-> +an efficiency and performance ranking for each classification.
-> +
-> +Threads are classified during runtime into enumerated classes. The classes represent
-> +thread performance/power characteristics that may benefit from special scheduling behaviors.
-> +The below table depicts an example of thread classification and a preference where a given thread
-> +should be scheduled based on its thread class. The real time thread classification is consumed
-> +by the operating system and is used to inform the scheduler of where the thread should be placed.
-> +
-> +Thread Classification Example Table
-> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> ++----------+----------------+-------------------------------+---------------------+---------+
-> +| class ID | Classification | Preferred scheduling behavior | Preemption priority | Counter |
-> ++----------+----------------+-------------------------------+---------------------+---------+
-> +| 0        | Default        | Performant                    | Highest             |         |
-> ++----------+----------------+-------------------------------+---------------------+---------+
-> +| 1        | Non-scalable   | Efficient                     | Lowest              | PMCx1A1 |
-> ++----------+----------------+-------------------------------+---------------------+---------+
-> +| 2        | I/O bound      | Efficient                     | Lowest              | PMCx044 |
-> ++----------+----------------+-------------------------------+---------------------+---------+
-> +
-> +Thread classification is performed by the hardware each time that the thread is switched out.
-> +Threads that don't meet any hardware specified criteria will be classified as "default".
+The members of the chip-info structure have been documented using
+kerneldoc. The newly added members omitted the documentation. It is nice
+to have all the entries documented for the sake of the consistency.
+Furthermore, the scale table format may not be self explatonary, nor how
+the amount of scales is informed.
 
-I'm not seeing this part in the patches, am I needing to read more
-careful?
+Add documentation to scale table entries to maintain consistency and to
+make it more obvious how the scales should be represented.
+
+Suggested-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+---
+Wording is difficult. Especially when not working on ones native
+language. So, I am glad is someone evaluates whether using the 'NANO'
+to describe 0.000 000 001 is correct - or if term like 'ppb' would make
+more sense...
+---
+ drivers/iio/accel/kionix-kx022a.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-k=
+x022a.h
+index 142652ff4b22..82c4ced7426d 100644
+--- a/drivers/iio/accel/kionix-kx022a.h
++++ b/drivers/iio/accel/kionix-kx022a.h
+@@ -137,6 +137,11 @@ struct kx022a_data;
+  *
+  * @name:			name of the device
+  * @regmap_config:		pointer to register map configuration
++ * scale_table:			Array of two integer tables containing
++ *				supported scales. Each scale is represented
++ *				a 2 value array. First value being full
++ *				integers, second being NANOs.
++ * scale_table_size:		Amount of values in tables.
+  * @channels:			pointer to iio_chan_spec array
+  * @num_channels:		number of iio_chan_spec channels
+  * @fifo_length:		number of 16-bit samples in a full buffer
+--=20
+2.47.0
+
+
+--KFfhg9dvQCPxm6jq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdNnloACgkQeFA3/03a
+ocX//ggAxZpa9WgDEFp2qhfc9aaWTV8LOS3OmYPbO15WvGemNjfa42GC7yrsUh7r
+9P8dTom4eaI6XMnLsZ8U9S/qLwgQkXn2EmjE8vPh2XC3Iqs5zAD50XYv8yqgyefv
+kD4epENf1hXmmV92OuFq1EEJvdOvfwlan1ASuf0tkpWPVHD8t9mTbx7p35zijfzT
+p8XlPTs7hynQUkTYGTJnli0vqJx1kS3hr9IfB/+FqMuVnGw/ssUIr1E2RNVrVR0e
+SvX7m+6bobwF3mexGRK9aSb6VR90DSU7mKL1c5KO4id9XYGXbLPcsWWXzRLi+/AD
+SkWusjh0uDDR14jLWs06+7Wfu+viNw==
+=2akq
+-----END PGP SIGNATURE-----
+
+--KFfhg9dvQCPxm6jq--
 
