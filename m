@@ -1,154 +1,192 @@
-Return-Path: <linux-kernel+bounces-427292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A541B9DFF35
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:44:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF6C9DFF50
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:50:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66487281009
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26C42810E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB8C1FCCF7;
-	Mon,  2 Dec 2024 10:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5E41FCF57;
+	Mon,  2 Dec 2024 10:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AON0inJV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="E5uGDr9f"
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8BC156C40;
-	Mon,  2 Dec 2024 10:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C81FC0EB;
+	Mon,  2 Dec 2024 10:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733136259; cv=none; b=LBRxwWXafkiJ5SB3l9qJQupf9M9Q65rfjecRwEngaseNaid+84PNDm/RPDMCkhRvnGiOK4ujqSR8TB2BIKCanNTm4K2PZzdrmTdZzufLcm1SPlKij+/+EbVLnkc+H5cUAvQETFeK39CNX7Ysz5C/HytEl9M9y8Tus2mfs35ZJj8=
+	t=1733136614; cv=none; b=AeowuT7iCIIJhYE/9LjKTxQDLPk8kwJhiOW2tKbcy2zXEbTWwKo+GrZfbGN87jjUlWebqV3//xTVGj610UrtSlt2dnr0emYq3ZIoqSZgOTUYc2rOhNg8UdzZPgK6y8HLiMM6LfjVqFZ103pnjQYfhtPH4qwU38+qPIU3r6yJzE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733136259; c=relaxed/simple;
-	bh=4sKLhRnj/x4uCu5ixovaErdTt5e8IYVY2IDX1QxJYno=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UWIC8LmFDMBELYcE5DwNR4GL/+12FnLiIqb/IFCJy8XslD7huUBpgMDdGT5JnbSvGeRJotaO2d3aXcejIk1JiLOV6PIR+Xd0KTdO3HStdwcQfekjhK5CqFWziCVJ21YpKe54DdSeExz6nJGH8HTDO049Rs9eNV+gnjcoq5AgHr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AON0inJV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B29J3M4008791;
-	Mon, 2 Dec 2024 10:44:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zIbZQqiUOZa7NHCTcnjS7+zXYV4ycmI9J9tUWIBbXIU=; b=AON0inJV67hC1Ysi
-	ixGeDsa5ca3rSZbYcpe8ZXOLAm/SG4OPcTYfvz+ufoGdUHvsh6AgO3dQHSV6+Yr4
-	YQq8KCwKjyP1m9SqiNkLv+vxaxGKNObfKwBqhG+8OshCTu4oZxaClrp8exi+1V3s
-	EQV2/tVX/m9TUN8MXJtsOKE74xs4Smw+ULGf1hSc6QMaSg64xUUSFCbh4HfQ6bu7
-	dviPI1McbTieb4rGx/SLwjLMy2sJSu4u6VT70CVo/JjQBN6oNk485XbvPxlXH9gf
-	Zt75JpfVrm4rNA5gLvyTaVFIt3sx9hJV6LqRD3RLU+Nkrm1wSm9jQbABsNhwwG2S
-	GjWG7g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437snqvjtf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 10:44:08 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B2Ai7i9002724
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Dec 2024 10:44:07 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
- 02:44:02 -0800
-Message-ID: <d49b16b2-95e5-42b4-9bc1-40cb0bfa15b1@quicinc.com>
-Date: Mon, 2 Dec 2024 16:13:59 +0530
+	s=arc-20240116; t=1733136614; c=relaxed/simple;
+	bh=nWj9kVjFkA/uzz5o+psqx7pHEdWGVkcXfYTvTuBT39A=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=rthC+TutTRxIMJHm32ThbmjWfk/e1Tk6ycR/aVgGnruJb2zi4h6aXXLSI/czKig+f257hY03av3ic++30Hz5JyKegyjXq0RVB2cexYP4/4sFWO8bD9ANylj+FSTTbYa/xgkhcdCBsVH32Dhmx3KeHavetjzVtHxdUdoFzVe8WAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=E5uGDr9f; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1733136274;
+	bh=yq8INn4zbqzqDhdWCGdL8z+1i1zAqXBLUq6KmP1JVYM=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=E5uGDr9fYjfHo3lHmuz4fFFchfOz5KOxDw6oDLr7hssldy12vEJyZFgxGPbEZbkPr
+	 rboK6KdiyWavWJFdNZUq5qKRp3TXNLjF1TyCLrRw3Kj0FM6HwjXYvmoNJnqNjUIgnu
+	 huitjDunqC3Gf6IedTFVl+G2Z1QugCGmMdfHh7z8=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] dmaengine: gpi: Add Lock and Unlock TRE support to
- access I2C exclusively
-To: Vinod Koul <vkoul@kernel.org>
-CC: <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <conor+dt@kernel.org>,
-        <agross@kernel.org>, <devicetree@vger.kernel.org>, <linux@treblig.org>,
-        <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
-        <konradybcio@kernel.org>, <bryan.odonoghue@linaro.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>, <quic_vdadhani@quicinc.com>
-References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
- <20241129144357.2008465-3-quic_msavaliy@quicinc.com> <Z01YBLcxDXI2UwXR@vaman>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <Z01YBLcxDXI2UwXR@vaman>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hzEH8zAEJZMpnmkmAE55X43yklyT2SVy
-X-Proofpoint-GUID: hzEH8zAEJZMpnmkmAE55X43yklyT2SVy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- phishscore=0 adultscore=0 impostorscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412020095
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
+Date: Mon, 2 Dec 2024 11:44:11 +0100
+Cc: Chris Mason <clm@meta.com>,
+ Dave Chinner <david@fromorbit.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <48D7686C-6BD4-4439-B7FD-411530802161@flyingcircus.io>
+References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
+ <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+ <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
+ <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
+ <f8232f8b-06e0-4d1a-bee4-cfc2ac23194e@meta.com>
+ <E07B71C9-A22A-4C0C-B4AD-247CECC74DFA@flyingcircus.io>
+ <381863DE-17A7-4D4E-8F28-0F18A4CEFC31@flyingcircus.io>
+ <0A480EBE-9B4D-49CC-9A32-3526F32426E6@flyingcircus.io>
+ <c6d723ca-457a-4f97-9813-a75349225e85@meta.com>
+ <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 
-Thanks for the review comments Vinod !
+Hi,
 
-On 12/2/2024 12:17 PM, Vinod Koul wrote:
-> On 29-11-24, 20:13, Mukesh Kumar Savaliya wrote:
->> GSI DMA provides specific TREs(Transfer ring element) namely Lock and
->> Unlock TRE. It provides mutually exclusive access to I2C controller from
->> any of the processor(Apps,ADSP). Lock prevents other subsystems from
->> concurrently performing DMA transfers and avoids disturbance to data path.
->> Basically for shared I2C usecase, lock the SE(Serial Engine) for one of
->> the processor, complete the transfer, unlock the SE.
->>
->> Apply Lock TRE for the first transfer of shared SE and Apply Unlock
->> TRE for the last transfer.
->>
->> Also change MAX_TRE macro to 5 from 3 because of the two additional TREs.
->>
-> 
-> ...
-> 
->> @@ -65,6 +65,9 @@ enum i2c_op {
->>    * @rx_len: receive length for buffer
->>    * @op: i2c cmd
->>    * @muli-msg: is part of multi i2c r-w msgs
->> + * @shared_se: bus is shared between subsystems
->> + * @bool first_msg: use it for tracking multimessage xfer
->> + * @bool last_msg: use it for tracking multimessage xfer
->>    */
->>   struct gpi_i2c_config {
->>   	u8 set_config;
->> @@ -78,6 +81,9 @@ struct gpi_i2c_config {
->>   	u32 rx_len;
->>   	enum i2c_op op;
->>   	bool multi_msg;
->> +	bool shared_se;
-> 
-> Looking at this why do you need this field? It can be internal to your
-> i2c driver... Why not just set an enum for lock and use the values as
-> lock/unlock/dont care and make the interface simpler. I see no reason to
-> use three variables to communicate the info which can be handled in
-> simpler way..?
-> 
-Below was earlier reply to [PATCH V3, 2/4], please let me know if you 
-have any additional comment and need further clarifications.
---
- > Looking at the usage in following patches, why cant this be handled
- > internally as part of prep call?
- >
-As per design, i2c driver iterates over each message and submits to GPI 
-where it creates TRE. Since it's per transfer, we need to create Lock 
-and Unlock TRE based on first or last message.
---
->> +	bool first_msg;
->> +	bool last_msg;
-> 
+waking this thread up again: we=E2=80=99ve been running the original fix =
+on top of 6.11 for roughly 8 weeks now and have not had a single =
+occurence of this. I=E2=80=99d be willing to call this as fixed.=20
+
+@Linus: we didn=E2=80=99t specify an actual deadline, but I guess 8 week =
+without any hit is good enough?
+
+My plan would be to migrate our fleet to 6.6 now. AFAICT the relevant =
+patch series is the one in
+https://lore.kernel.org/all/20240415171857.19244-4-ryncsn@gmail.com/T/#u =
+and was released in 6.6.54.
+
+I=E2=80=99d like to revive the discussion on the second issue, though, =
+as it ended with Linus=E2=80=99 last post
+and I couldn=E2=80=99t find whether this may have been followed up =
+elsewhere or still needs to be worked on?
+
+Christian
+
+> On 12. Oct 2024, at 19:01, Linus Torvalds =
+<torvalds@linux-foundation.org> wrote:
+>=20
+> On Fri, 11 Oct 2024 at 06:06, Chris Mason <clm@meta.com> wrote:
+>>=20
+>> - Linus's starvation observation.  It doesn't feel like there's =
+enough
+>> load to cause this, especially given us sitting in truncate, where it
+>> should be pretty unlikely to have multiple procs banging on the page =
+in
+>> question.
+>=20
+> Yeah, I think the starvation can only possibly happen in
+> fdatasync-like paths where it's waiting for existing writeback without
+> holding the page lock. And while Christian has had those backtraces
+> too, the truncate path is not one of them.
+>=20
+> That said, just because I wanted to see how nasty it is, I looked into
+> changing the rules for folio_wake_bit().
+>=20
+> Christian, just to clarify, this is not for  you to test - this is
+> very experimental - but maybe Willy has comments on it.
+>=20
+> Because it *might* be possible to do something like the attached,
+> where we do the page flags changes atomically but without any locks if
+> there are no waiters, but if there is a waiter on the page, we always
+> clear the page flag bit atomically under the waitqueue lock as we wake
+> up the waiter.
+>=20
+> I changed the name (and the return value) of the
+> folio_xor_flags_has_waiters() function to just not have any
+> possibility of semantic mixup, but basically instead of doing the xor
+> atomically and unconditionally (and returning whether we had waiters),
+> it now does it conditionally only if we do *not* have waiters, and
+> returns true if successful.
+>=20
+> And if there were waiters, it moves the flag clearing into the wakeup =
+function.
+>=20
+> That in turn means that the "while whiteback" loop can go back to be
+> just a non-looping "if writeback", and folio_wait_writeback() can't
+> get into any starvation with new writebacks always showing up.
+>=20
+> The reason I say it *might* be possible to do something like this is
+> that it changes __folio_end_writeback() to no longer necessarily clear
+> the writeback bit under the XA lock. If there are waiters, we'll clear
+> it later (after releasing the lock) in the caller.
+>=20
+> Willy? What do you think? Clearly this now makes PG_writeback not
+> synchronized with the PAGECACHE_TAG_WRITEBACK tag, but the reason I
+> think it might be ok is that the code that *sets* the PG_writeback bit
+> in __folio_start_writeback() only ever starts with a page that isn't
+> under writeback, and has a
+>=20
+>        VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
+>=20
+> at the top of the function even outside the XA lock. So I don't think
+> these *need* to be synchronized under the XA lock, and I think the
+> folio flag wakeup atomicity might be more important than the XA
+> writeback tag vs folio writeback bit.
+>=20
+> But I'm not going to really argue for this patch at all - I wanted to
+> look at how bad it was, I wrote it, I'm actually running it on my
+> machine now and it didn't *immediately* blow up in my face, so it
+> *may* work just fine.
+>=20
+> The patch is fairly simple, and apart from the XA tagging issue is
+> seems very straightforward. I'm just not sure it's worth synchronizing
+> one part just to at the same time de-synchronize another..
+>=20
+>                   Linus
+> <0001-Test-atomic-folio-bit-waiting.patch>
+
+Liebe Gr=C3=BC=C3=9Fe,
+Christian Theune
+
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
+
 
