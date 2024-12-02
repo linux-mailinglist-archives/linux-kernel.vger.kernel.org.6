@@ -1,328 +1,115 @@
-Return-Path: <linux-kernel+bounces-428181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FBC9E0B1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:34:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7EA19E0B1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:35:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A899516432E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:34:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B675C1644E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C0D1DE2BC;
-	Mon,  2 Dec 2024 18:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C061DDC39;
+	Mon,  2 Dec 2024 18:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjrBh33F"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="kWF95OT6"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C336270805;
-	Mon,  2 Dec 2024 18:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781862E3EE
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 18:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733164483; cv=none; b=qjsReaRB9IhQNwTwJ00z5XNlW35jkKodaReVe/FqD/sVgGQq3vJpzI507MBLucddt/D03A10QqneAgno5tx/NGdViTsypQimCL+az197YbSroI1ClRG3iIZ9hsG1q8+fuAb5tFI8xZWqptTSlgOYdr7PGNXy075tzf/Ne2dZBlc=
+	t=1733164513; cv=none; b=FtZ6/DJjTJoy/V7Mm348AH40zJxSM/KG3yr/QY/OAFnp3dc6U2x096xkYuNum/zE67QNzslBhPK30eJdGR7jvXamVnHyOkbmcBTjBTh52oJCq3OuyEnopg4OksT29fT8oux/Tvyd+xNG6bPePL5Yk9+dze1kvE8fBxgIVdiXcYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733164483; c=relaxed/simple;
-	bh=w7+TjjMa4hcPmMEI/iUbF42Sq9G4esf/zUXgYlaYYQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M0zFmTOMbqTrflL7kdmVASFYiFxHPG+mzZ7lni6X9ABznDpvCwHTplfW6BlA1de887cllhaJVPAKUPADH39NUqmj1pNDZ+F47QLSGunTIxLn4icuMOX/H+mForp/g1m93YQ+soSSvtcT7x3oAkectf12UcQ5FE44a4Ne9rE4qxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjrBh33F; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385d6e36de7so4023942f8f.0;
-        Mon, 02 Dec 2024 10:34:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733164479; x=1733769279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XdNngqGjPgL3P4DeiY0oFYOBDi1lPXH2hvH4Y2w5NdU=;
-        b=hjrBh33FU3EWh5qHHe0crcBLobRGwFCApBNy8N5quWwJ4dA6zHBH56dZ0icTRtLaHt
-         9B0/ol8UN1nPJclTvc9OPqcdSU2qpxyB4SnBGnJeIpYIDLVnUEa49Bw5MqGdmd3VPcaQ
-         1a9UuH5deA1ldOPoQwRpBViGAEEXgwlVtExmRJKe6+1KdDKqE0d6l4p5Ypus5qkRMeO5
-         JyeQ3CQFWMrPSbCnHfvvGFTPGxLr8gmhFG3oMd/Ag9cER5uK37c+l1/jbaeHjd8T7Kzn
-         by2N5eEuWFHC6FHVrNIcaMsVO1LbwkwgZ++P9B7pJ4hDhEwxEjnZpQBZUEYgxrfJZZ8E
-         +zWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733164479; x=1733769279;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XdNngqGjPgL3P4DeiY0oFYOBDi1lPXH2hvH4Y2w5NdU=;
-        b=pe5YgFGkULWuqLCDxmuUz1+Uwo7vHcLbIEHwmLvjDEpUIAv8HTlkxE5a0ILN/t1sqx
-         jo0AUs2UF4RFF+zal+caUelsDv5dSC/5xrEhr6BtpwQjzegru9qgxBwPyCZcA3tnzRGe
-         cOQGmDSFhjA5UoSWeD/GI3g0GHjeTj6f5geJXZbGhAVPOwfmMHuP9b2T2YauU3FBGBTC
-         s4+sA3RU2gFy95Wya3Vv2ursnNtsIrzcikwEsueNCi3LpDjNZtB/o7a0CR2yNMqQQYC6
-         lXWL+HQKPU8W79k0XI6B6oPUm4Bs7cUJBODG4xMSpJjlWIaTg07tLdd49wzjdi9GFeLN
-         9New==
-X-Forwarded-Encrypted: i=1; AJvYcCU2bnjNmnRUKKZtZT5Kwp3ZXSUOuKaBh7t33ZAaXtgVI8jI5R23UoMrTQa5ZSEeaelGk23jQEFNrYl3IxA7@vger.kernel.org, AJvYcCV71skKavwBkRNUNvGONoAZz5TOxfPJ75VC4yCGuzuf438lDefflL5/Aio9PDtbkxsLeUcFl43BCuuf+M8=@vger.kernel.org, AJvYcCVnD52etRDOQ5Tkl+ghw+PX8Tb4oY9jBtLUQhfNhT0/jqG+j4Q9OyBNNTWD8MWD4I02CKhKm7USBGHu@vger.kernel.org, AJvYcCXF+IFYdyFIkSC8rr4vcVEO6ipSGvHwPa0LzoWT8NkLSS6dCgDnubXnrjri+kEKXmXppbWoMSLWvZMtSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKGh8fjC8ME0gdsKEfQGQ5UkzKXXelMfgcX4l2kMLirnyy+A00
-	V8R/vE2nyZ1rPOysQvMAHx8IxcXBIEGDdwlaxAECWZ89fOJ5s6fC
-X-Gm-Gg: ASbGnctgABe2oEYyttMKMdDfyivdG3e9e6aWSi7YLoi8R/T4A11n2mRJaaAY5sNQ4WF
-	h6OUCIaB4hnnN18bHPBEVKHF8qEQTa/j6pLrgf/QjMa93PFXYX4BAYPbNVYUc/Nw5vmJS0gqa+v
-	ZTLZoolX8vbYJiSGXBkA41GoB7pUECwXD0jXKltV4ExgYA1vcFlyz48cvsx7rOLchZipTvqVrk0
-	v+LXu3VaGkoCrGmv0YgE+AEb2wKATMnBTtefoU+B0D5D95AORvJ7eOmCU6vLrQ=
-X-Google-Smtp-Source: AGHT+IFTs9nQsYKTa8mf+UgRlTGVkJvOJrefe9/gekWw/ONQ/23aZWmDIeD6FYulsuhRtZb/LhW6/w==
-X-Received: by 2002:a05:6000:1a8f:b0:385:e3c2:a47d with SMTP id ffacd0b85a97d-385e3c2a4ebmr10128976f8f.23.1733164478708;
-        Mon, 02 Dec 2024 10:34:38 -0800 (PST)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0c93e5d37sm3203030a12.35.2024.12.02.10.34.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 10:34:37 -0800 (PST)
-Message-ID: <dd08d546-b4a0-c3e0-685d-6b742bf73fb2@gmail.com>
-Date: Mon, 2 Dec 2024 19:34:34 +0100
+	s=arc-20240116; t=1733164513; c=relaxed/simple;
+	bh=d4hDGzmFGatNBWraJ/U0QmM8vdW/sZK362Mqm1iAioA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c4SLO/QJmDg+f3UpsSYOuEBRkFSi3+g9XVnhRZlhADCzfPW9IwUyR9Iwbgvm65lNRiwlq+ELybZ36mex4bXxJgohG8vvc47cnvEuzySqQ8koJLjMlw2arwPzAVCIVTcgJ2LGlrQe7n3nvAA0HC516RQ7Ma5tpyQAzZbzc7e2C3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=kWF95OT6; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1733164493; x=1733769293; i=efault@gmx.de;
+	bh=WQi65IK2mkZk7w3jmwVOV5eRAcg5a5EmOprRCA3q+Dk=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kWF95OT6gleWaAP00XrR48tf1gc6yrdfn4cnVriADpbJRDmWNBDdILNwy2RjalYS
+	 IiXt6+0Pf2eylH8ZlnqywF0wjZmbkKKgBTUXzPZ8220b1zFg6Q+PFNivqimgodHvA
+	 nj33pGQF4tBsiUKJMXEbpjS94gNIFifVuefs42w35vQEdMX0DweFquZ6fIP+f447j
+	 40ZjtU7cXiVWQR5zDHysJJfpNW66PkwEQrHjcjWscXEvd1948OFEW4fp11h1Pswf2
+	 p0+N5/PX4ctGuUsaOSWOPaJxtXIfhwSNDeJ3C0PVLXh5afrV64a+iioO3UV/uWt5R
+	 gj0nycWld/MCCfWflg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.84]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M72oB-1tJWhn38nv-007Bko; Mon, 02
+ Dec 2024 19:34:52 +0100
+Message-ID: <e824a692ab22423a07ca2ab91713c8340d949c99.camel@gmx.de>
+Subject: Re: [PATCH 0/10 v2] sched/fair: Fix statistics with delayed dequeue
+From: Mike Galbraith <efault@gmx.de>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de,  vschneid@redhat.com, linux-kernel@vger.kernel.org,
+ kprateek.nayak@amd.com,  pauld@redhat.com, luis.machado@arm.com
+Date: Mon, 02 Dec 2024 19:34:51 +0100
+In-Reply-To: <CAKfTPtDwS4+t0Fnacre6dtxKdxtrgua_2v=s7pZHqDsYoMMxFA@mail.gmail.com>
+References: <20241129161756.3081386-1-vincent.guittot@linaro.org>
+	 <227863d758551e75cd0807a5f1f31916d695205b.camel@gmx.de>
+	 <CAKfTPtDwS4+t0Fnacre6dtxKdxtrgua_2v=s7pZHqDsYoMMxFA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v9 4/9] dt-bindings: mfd: add maxim,max77705
-Content-Language: en-US
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
- Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Hans de Goede <hdegoede@redhat.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
- Purism Kernel Team <kernel@puri.sm>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org
-References: <20241202-starqltechn_integration_upstream-v9-0-a1adc3bae2b8@gmail.com>
- <20241202-starqltechn_integration_upstream-v9-4-a1adc3bae2b8@gmail.com>
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <20241202-starqltechn_integration_upstream-v9-4-a1adc3bae2b8@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zuTnBchwSEfKkCXayxttZLer4pWxcsqvyCEC1Pfsd0nEoiUzNYE
+ Wsayz4AtLQlUXU4u9EjPRwgFMBMiTj6hOod7NtMnAoFRzm1DgsddgX5YUzqsqrkKvgJKCTX
+ asGsqtzAy6wBD1SV//FD7CMfPW65SYq0Yj9kuB4Tpt518OgQm+Ez01eCaGcyax9mWVor1pu
+ /XusE9k0ziumCwhayC/sA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0sdlT/CidCk=;eriYKFHh5E8i3ejL+lyzPqnKF7E
+ oQl4m2s6WGhkHrzMm6PRRiAWDSDL6OwVFH72DVD/p5K+inNwJb5X4PQh+YNLivQa+kKrikjk6
+ KtnfyZBGYC/TWAlSCdz5qMNSM5Chdgg/M/XWPVMZBhEWd15YzmLkG44nEUMpAW/YaR6nXJM2L
+ HyxfK/rPVyMivsYa1/K3n+mt3DheRHjIlYx8d6C8SmV8y0dT79XYJeAs8uTkpXKFxrK6WpRzP
+ Jyo9is7Naf8GwgsRlXn24MQvaZv2I3IuwgJkqw/AHCVboHvks+eqoo0+qm+ZyMF0wbtasooO1
+ Vxo4Bdqgy+i7Im9DBwxATUG+oawpedZPLscMjNDuY6CS2/ymaAdeff51S4oGFR8x8/mPtwSod
+ GYI+PQinv5R8mlkKQmfB7c6c3QywKdlJD/9i1r/IbE1TSLG0YIF8iis93tE6E2MwrwHicPW3o
+ RX81JU5WgrsB9YxmkG/krc7U91aYhkcN6YFbZYNllH6an8sD1OOmKadYbZu+cRyQdVZQkPaDy
+ ZtZ1hUPSTHS4xul6Ilo3Q0GOR5AUWD7FZdhakoSeI497CsztaQZ9xLAs4/B1eeh0b5rOS/bh5
+ AaxCiF/yojD7w6BKL4Fz9b8Zj5MAzVYszFS+/5/E9Ppl3HJtIa8PYJwSX7MDGXSXGbSmDrfng
+ UZsGF0YrSkLZqXxacKVpd22iiU99WcSU5fRKZWq0VJT2AHFPP6otEPNTqQZ7B7dF0rsdCMiXQ
+ +8Z2jkztcAIFrWr3ZNbFg6gvggqtBFjQSz9m6hwxGdp4mSGUJU1a0lnK4nj11Tm/P+pYoy/pp
+ sKvQdWGM+0nE3Yz/CxDU9tZqFTmiViB9PuhgUync7VCvhUqnO3T9WN/FxmL9anzcLKgcfn0YA
+ JoPOJWpztJOZ7REJhUfTOgesq5E9fzT6a1xyaWCHoSZU0b4HZBbCYhiW6EG0D/vh9TUjomgpV
+ KcdHyMGQgPyxIej0PdktyuaWAC4WhWJm70d/1K2+FeTBq9ioFIbQkn1RdlUo54lKukMu8kNC/
+ TcH+q8fCfO1kCb9bBIdt9d8xmt2dxpxifURA3ZkUjVl/7YTjcu6czMfGlDskxusyKNIgPMCgm
+ hKyGEi+Wc=
 
-Hi Dzmitry,
+On Mon, 2024-12-02 at 10:17 +0100, Vincent Guittot wrote:
+> On Sun, 1 Dec 2024 at 14:30, Mike Galbraith <efault@gmx.de> wrote:
+> >
+> > I took the series for a spin in tip v6.12-10334-gb1b238fba309, but
+> > runnable seems to have an off-by-one issue, causing it to wander ever
+> > further south.
+> >
+> > patches 1-3 applied.
+> > =C2=A0 .h_nr_runnable=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : -3046
+> > =C2=A0 .runnable_avg=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : 450189777126
+>
+> Yeah, I messed up something around finish_delayed_dequeue_entity().
+> I'm' going to prepare a v3
 
-On 12/2/24 10:47, Dzmitry Sankouski wrote:
-> Add maxim,max77705 binding.
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
-> Changes in v9:
-> - replace max77705 fuel gauge with max17042
-> - remove monitored battery because not supported by max17042
-> 
-> Changes in v8:
-> - fix leds compatible
-> 
-> Changes in v6:
-> - unevaluatedProperties must be false
-> - drop excessive sentence from description,
->    just describe the device
-> - change leds compatible to maxim,max77705-rgb
-> 
-> Changes in v5:
-> - formatting changes
-> - add unevaluatedProperties: false for nodes referencing
->    common schemas
-> - remove additionalProperties on nodes with
->    unevaluatedProperties: false
-> - add min and max to led index
-> Changes in v4:
-> - change dts example intendation from tabs
->   to spaces
-> - remove interrupt-names property
-> - remove obvious reg description
-> - split long(>80) lines
-> ---
->   Documentation/devicetree/bindings/mfd/maxim,max77705.yaml | 155 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->   MAINTAINERS                                               |   1 +
->   2 files changed, 156 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
-> new file mode 100644
-> index 000000000000..fbc264cfc609
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
-> @@ -0,0 +1,155 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/maxim,max77705.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim MAX77705 Companion Power Management IC and USB Type-C interface IC
-> +
-> +maintainers:
-> +  - Dzmitry Sankouski <dsankouski@gmail.com>
-> +
-> +description: |
-> +  The Maxim MAX77705 is a Companion Power Management and Type-C
-> +  interface IC which includes charger, fuelgauge, LED, haptic motor driver and
-> +  Type-C management IC.
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max77705
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  charger:
-> +    $ref: /schemas/power/supply/power-supply.yaml
-> +    unevaluatedProperties: false
-> +    properties:
-> +      compatible:
-> +        const: maxim,max77705-charger
-> +
-> +    required:
-> +      - compatible
-> +      - monitored-battery
-> +
-> +  fuel-gauge:
-> +    $ref: /schemas/power/supply/maxim,max17042.yaml#
-> +
-> +  haptic:
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      compatible:
-> +        const: maxim,max77705-haptic
-> +
-> +      haptic-supply: true
-> +
-> +      pwms:
-> +        maxItems: 1
-> +
-> +    required:
-> +      - compatible
-> +      - haptic-supply
-> +      - pwms
-> +
-> +  leds:
-> +    type: object
-> +    additionalProperties: false
-> +    description:
-> +      Up to 4 LEDs supported. One LED is represented by one child node.
-> +
-> +    properties:
-> +      compatible:
-> +        const: maxim,max77705-rgb
-> +
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^led@[0-3]$":
-> +        $ref: /schemas/leds/common.yaml#
-> +        type: object
-> +        unevaluatedProperties: false
-> +
-> +        properties:
-> +          reg:
-> +            description: LED index.
-> +            minimum: 0
-> +            maximum: 3
-> +
-> +        required:
-> +          - reg
-> +
-> +    required:
-> +      - compatible
-> +      - "#address-cells"
-> +      - "#size-cells"
-> +
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/leds/common.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        pmic@66 {
-> +            compatible = "maxim,max77705";
-> +            reg = <0x66>;
-> +            interrupt-parent = <&pm8998_gpios>;
-> +            interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-> +            pinctrl-0 = <&chg_int_default>;
-> +            pinctrl-names = "default";
-> +
-> +            leds {
-> +                compatible = "maxim,max77705-rgb";
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                led@1 {
-> +                    reg = <1>;
-> +                    label = "red:usr1";
+v3 is all better with my light config.  I'll plug it into an rt tree
+with an enterprise config and give it some exercise.
 
-In the driver you're using devm_led_classdev_register_ext(), but in DT
-example you're proposing to use legacy 'label' property, instead of
-'color' and 'function' devm_led_classdev_register_ext() is able to
-parse. Either use devm_led_classdev_register() (discouraged), or modify
-this example to use modern LED DT properties.
-
-> +                };
-> +
-> +                led@2 {
-> +                    reg = <2>;
-> +                    label = "green:usr2";
-> +                };
-> +
-> +                led@3 {
-> +                    reg = <3>;
-> +                    label = "blue:usr3";
-> +                };
-> +            };
-> +
-> +            max77705_charger: charger {
-> +                compatible = "maxim,max77705-charger";
-> +                monitored-battery = <&battery>;
-> +            };
-> +
-> +            fuel-gauge {
-> +                compatible = "maxim,max77705-battery";
-> +                power-supplies = <&max77705_charger>;
-> +                maxim,rsns-microohm = <5000>;
-> +            };
-> +
-> +            haptic {
-> +                compatible = "maxim,max77705-haptic";
-> +                haptic-supply = <&vib_regulator>;
-> +                pwms = <&vib_pwm 0 50000>;
-> +            };
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 1240e75ecf4b..c3f66093edd1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14185,6 +14185,7 @@ B:	mailto:linux-samsung-soc@vger.kernel.org
->   F:	Documentation/devicetree/bindings/*/maxim,max14577.yaml
->   F:	Documentation/devicetree/bindings/*/maxim,max77686.yaml
->   F:	Documentation/devicetree/bindings/*/maxim,max77693.yaml
-> +F:	Documentation/devicetree/bindings/*/maxim,max77705*.yaml
->   F:	Documentation/devicetree/bindings/*/maxim,max77843.yaml
->   F:	Documentation/devicetree/bindings/clock/maxim,max77686.txt
->   F:	drivers/*/*max77843.c
-> 
-
--- 
-Best regards,
-Jacek Anaszewski
+	-Mike
 
