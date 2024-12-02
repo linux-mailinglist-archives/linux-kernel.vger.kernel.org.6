@@ -1,121 +1,153 @@
-Return-Path: <linux-kernel+bounces-427473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424C59E0355
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:27:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E16A9E0334
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:20:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ADE2B371B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:15:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C369B2F975
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61432203717;
-	Mon,  2 Dec 2024 12:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbHRhY2l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346301FECD9;
+	Mon,  2 Dec 2024 12:06:57 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B755B1FE46C;
-	Mon,  2 Dec 2024 12:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20C21FE46C;
+	Mon,  2 Dec 2024 12:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733141171; cv=none; b=F+vM0qEMuSGmIRD2HPAaXqB2UNxt5x1P3AKORCvnV/rtI5jSqS27LEwMFhZIM4ZLyIK6SwzFcibaUwa+sll3Ngz7unieEE6UeIOHdrTk4m+HaSF+nNahnc4JuHsfaasz/2JOkeUc8KLTkMDGVdW7en0uxX0gdkqDUfNCS/vsKeE=
+	t=1733141216; cv=none; b=Mq4lBB6LjnM4ZPCbGVVyMbd+n6xlmavrVS8ok9Wur2/TlDilPPgE3UsNAXBigcFeAfNNY1B/mvYP7bTOUY4jTp4YG7qFelp78YrdKDSxoH5PW4lssJQ1udKOmVE/Wm2N1KzwVhK+jN8h9P8YlpU0DlA2Nz46CcTzV4z7K/HTPG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733141171; c=relaxed/simple;
-	bh=gonlDT3L++kFgkgr8dwEbfsoVRovNYHWTLew/Kf9tDA=;
+	s=arc-20240116; t=1733141216; c=relaxed/simple;
+	bh=/NJEki+b5/NQQfsKxs1+I4KchZ8MKAhP9Vdvy1eej6w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V1brHfun6u31ii8qEV9NxxVz8CiCHs1a4ZEYjmMdQ1cQPuO+k0eiCN0TQvxVIj37WamGW2ZfNM5YmiBDjpDNy7n2hoIDFRTd4TiHhWNqpVidq6fyWx0zROQ+uH/LZH9jmUJGjloZUvO5ju0ilPom98Hi6VzCwGd8PUBEaGmeFhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbHRhY2l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC0A9C4CED1;
-	Mon,  2 Dec 2024 12:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733141171;
-	bh=gonlDT3L++kFgkgr8dwEbfsoVRovNYHWTLew/Kf9tDA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hbHRhY2lub2ExTdOJetcBFDhwu+3jfa+EiLOFKIZCj5FsnpxL5dkE4OSA/5YzfCiN
-	 BytwJIUKzld/skAfD1J8BjcoBn766ZcovPof/X2UuZ3ijUE+wkrD4YfKUheuGHuYiS
-	 tc+HuLijZQ9cTgJqM7EIAUrRszprQLw63h3LN7njOsUB4o24JXn/sjx1ulgtyy5Sh1
-	 jp7CXNyPFcIeh0ROCIoDm7k1QgaJd0UBSYQsythHssl+2kNqrCAdwlPDY+UWTOnm/9
-	 gzbkFc2ly+khQjDQORZIQaw4D+o72MclNW80EuUB3aFpsXy6+mcARrVDfYMdVQbMgy
-	 00ORvUoOAUqgQ==
-Date: Mon, 2 Dec 2024 13:06:09 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 2/9] ASoC: hdmi-codec: move no_capture_mute to struct
- hdmi_codec_pdata
-Message-ID: <20241202-bald-just-guan-c5d41b@houat>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-2-b5316e82f61a@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H18wdb4EeyAeNd4Ic0AZzEv1fFAuAn/bXL/MLCqChrXr+m2RG60qTE18SSlaENRv222AXlIEDIyK53eOkqfNWTU+COZGO2EG5yqE6H0vQC6cnLN4I+a/G7FX99+LizlkdMu6tMUUtj+IRRRvKym6Gl+Qv2oDiLloffJlqLqBGVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 14BD51C00CD; Mon,  2 Dec 2024 13:06:53 +0100 (CET)
+Date: Mon, 2 Dec 2024 13:06:52 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	John Stultz <jstultz@google.com>, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, rdunlap@infradead.org,
+	paulmck@kernel.org
+Subject: Re: [PATCH AUTOSEL 5.10 2/2] timekeeping: Always check for negative
+ motion
+Message-ID: <Z02i3MxY7JEJfgQ4@duo.ucw.cz>
+References: <20241124124733.3338551-1-sashal@kernel.org>
+ <20241124124733.3338551-2-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="6bleloymsoph6swm"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mu3/zcq+hBBdqq0s"
 Content-Disposition: inline
-In-Reply-To: <20241201-drm-bridge-hdmi-connector-v5-2-b5316e82f61a@linaro.org>
+In-Reply-To: <20241124124733.3338551-2-sashal@kernel.org>
 
 
---6bleloymsoph6swm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--mu3/zcq+hBBdqq0s
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 2/9] ASoC: hdmi-codec: move no_capture_mute to struct
- hdmi_codec_pdata
-MIME-Version: 1.0
 
-Hi,
+Hi!
 
-On Sun, Dec 01, 2024 at 02:44:06AM +0200, Dmitry Baryshkov wrote:
-> The no_capture_mute flag might differ from platform to platform,
-> especially in the case of the wrapping implementations, like the
-> upcoming DRM HDMI Codec framework. Move the flag next to all other flags
-> in struct hdmi_codec_pdata.
+> [ Upstream commit c163e40af9b2331b2c629fd4ec8b703ed4d4ae39 ]
 >=20
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> clocksource_delta() has two variants. One with a check for negative motio=
+n,
+> which is only selected by x86. This is a historic leftover as this functi=
+on
+> was previously used in the time getter hot paths.
+>=20
+> Since 135225a363ae timekeeping_cycles_to_ns() has unconditional protection
+> against this as a by-product of the protection against 64bit math
+> overflow.
+> timekeeping_advance(). The extra conditional there is not hurting anyone.
 
-I appreciate it might be a dumb question, but I never really understood
-what no_capture_mute was all about. And in that context, why some
-drivers would need / use it, and some won't.
+We don't have 135225a363ae in 5.10. So we probably should not have
+this?
 
-Maxime
+Best regards,
+								Pavel
 
---6bleloymsoph6swm
+> +++ b/arch/x86/Kconfig
+> @@ -107,7 +107,6 @@ config X86
+>  	select ARCH_WANTS_THP_SWAP		if X86_64
+>  	select BUILDTIME_TABLE_SORT
+>  	select CLKEVT_I8253
+> -	select CLOCKSOURCE_VALIDATE_LAST_CYCLE
+>  	select CLOCKSOURCE_WATCHDOG
+>  	select DCACHE_WORD_ACCESS
+>  	select EDAC_ATOMIC_SCRUB
+> diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
+> index a09b1d61df6a5..5cbedc0a06efc 100644
+> --- a/kernel/time/Kconfig
+> +++ b/kernel/time/Kconfig
+> @@ -17,11 +17,6 @@ config ARCH_CLOCKSOURCE_DATA
+>  config ARCH_CLOCKSOURCE_INIT
+>  	bool
+> =20
+> -# Clocksources require validation of the clocksource against the last
+> -# cycle update - x86/TSC misfeature
+> -config CLOCKSOURCE_VALIDATE_LAST_CYCLE
+> -	bool
+> -
+>  # Timekeeping vsyscall support
+>  config GENERIC_TIME_VSYSCALL
+>  	bool
+> diff --git a/kernel/time/timekeeping_internal.h b/kernel/time/timekeeping=
+_internal.h
+> index 4ca2787d1642e..1d4854d5c386e 100644
+> --- a/kernel/time/timekeeping_internal.h
+> +++ b/kernel/time/timekeeping_internal.h
+> @@ -15,7 +15,6 @@ extern void tk_debug_account_sleep_time(const struct ti=
+mespec64 *t);
+>  #define tk_debug_account_sleep_time(x)
+>  #endif
+> =20
+> -#ifdef CONFIG_CLOCKSOURCE_VALIDATE_LAST_CYCLE
+>  static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
+>  {
+>  	u64 ret =3D (now - last) & mask;
+> @@ -26,12 +25,6 @@ static inline u64 clocksource_delta(u64 now, u64 last,=
+ u64 mask)
+>  	 */
+>  	return ret & ~(mask >> 1) ? 0 : ret;
+>  }
+> -#else
+> -static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
+> -{
+> -	return (now - last) & mask;
+> -}
+> -#endif
+> =20
+>  /* Semi public for serialization of non timekeeper VDSO updates. */
+>  extern raw_spinlock_t timekeeper_lock;
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--mu3/zcq+hBBdqq0s
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ02isAAKCRAnX84Zoj2+
-dh7cAX0XHBjVLJpBJcVNDhUwsok/1i+5fU7IyNojyr9o2nI4uQUWrlieIDKy+bqP
-ioHa5RoBfjSfWzdwDB7Ep7QSE5U9JkH9uF5girAsucCKcCXGsKLVLM1wLOEDZrqo
-t4ux4qxeCw==
-=KL7e
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ02i3AAKCRAw5/Bqldv6
+8vHwAJ9b5+dkxAbMdcnFOJ+/sy9vrHaySQCeNf2QVkHmWLNyMN2g+x0P1HoleCY=
+=TzYU
 -----END PGP SIGNATURE-----
 
---6bleloymsoph6swm--
+--mu3/zcq+hBBdqq0s--
 
