@@ -1,83 +1,124 @@
-Return-Path: <linux-kernel+bounces-427884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897F29E08ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:45:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360EC9E07D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:01:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 729B0BC3E7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:28:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AF8EB43033
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C7E208977;
-	Mon,  2 Dec 2024 15:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF854208988;
+	Mon,  2 Dec 2024 15:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqFrSiK/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="QJrAvFU9"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02F0207A32;
-	Mon,  2 Dec 2024 15:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F0D207A12
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153197; cv=none; b=Z1mpy8Em+yF+HmQi4cFHjlVfB4LJ6qhcgma1jgOm+EsF2fSnRHqbuRR5+Tfek2tTpw2aAxpeHrJ894AyHGwMpBt7yNlZS82/kmiJ3cjHPjNa6tFibDIHDMu01VIrlN+W/iDmypLJlwAdYDzQgxeaXVsuep7CSiEkAyHa5L2fpH8=
+	t=1733153409; cv=none; b=WTLWVN+wkf92Vw+5uK2y7z0cnEJptwm4KEbY/C006+LyEJtOUJoZWwK3hEl7/Y2Mjmjc863x6J5Ds+xW6beDDlUJXIL9xmx6Ea5aAZdLIDsxK8euW1k+FP13LNjGMze9PI/ZJ+Lsdf3UkNYHt/G32O7gke9b7eBmD+Xfq6FsHAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733153197; c=relaxed/simple;
-	bh=NwxnFREJr8HV5KAuytk/qazMVDop3UzcP3X/Va9naog=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=GSPx2azUbWHp/RvvSI9t4FNpLknidp8pHmCUJW19gsIb9E64OuIxFtPAjujc5zUbRxkDm2JZ8sc5HAorVciiupC3iVTdq6xF32XsGd3AbFjVcK1mhwvr2I96QkaHmoTuC5mQYxfPqdnxwqj74s2HSrekFw+caZ3bCFYsy2fjTKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqFrSiK/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 978E7C4CED1;
-	Mon,  2 Dec 2024 15:26:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733153197;
-	bh=NwxnFREJr8HV5KAuytk/qazMVDop3UzcP3X/Va9naog=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=QqFrSiK/8/3tb1df3S8HfoV8rTQD9R8mw/8TltDQLSVWNM7PhGLK8DLBDakQt/aSD
-	 jD18kxqkoUO2Z3TCunPjN6qDYRqI50zJoOESRcob/VpdzSEvRWt7NNHNd2y0WJA9u1
-	 IvFCo2Nc75+o0XxrA11LBElX+ln2TCi1XOX1yWFzMbp+kaJz3ZUiQ9hNUMwsGoNGzh
-	 lX2F0ZSMfzbFlTOiCzkPyh1Z5sLD7y62VIcPEj6EGUgIJuL1kzG7LoWDYG1NJCwQ70
-	 CsuREKEdZ+l/g8Zeto7QQ6/n0BxA1G9bK9k9QM+rEwNPp1LSATNVpSGdOaMynV1uDJ
-	 Zu5n/fThMbMJA==
-From: Kalle Valo <kvalo@kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,  Francesco Dolcini
- <francesco@dolcini.it>,  linux-wireless@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  David Lin <yu-hao.lin@nxp.com>,
-  kernel@pengutronix.de,  Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v3 00/12] mwifiex: two fixes and cleanup
-References: <20241202-mwifiex-cleanup-1-v3-0-317a6ce0dd5b@pengutronix.de>
-Date: Mon, 02 Dec 2024 17:26:33 +0200
-In-Reply-To: <20241202-mwifiex-cleanup-1-v3-0-317a6ce0dd5b@pengutronix.de>
-	(Sascha Hauer's message of "Mon, 02 Dec 2024 13:57:59 +0100")
-Message-ID: <87ldwyumvq.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1733153409; c=relaxed/simple;
+	bh=4xxCGmBo7FQG0p5BmYqe1NOagdrpfXWw9XcSG+Ugioo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D38r7MVfHww8Ys4RO+SahUaJklf6Ovps6KFYYhgAdMsp68BC5zHew1QRKt3bxqo3YOMo1Ifpc8vu50+KdGzAV+buwLlclJSksZqHnLH3MDz2ei+A7jFJlMIJYXo5W2kYNRwD9gSEu0SwGhPtZQQLd3MjrJKJBnWM4/l/P7DtM7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=QJrAvFU9; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so35731575e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:30:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1733153406; x=1733758206; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P8jtIniQHqaGnIfrwCj5iJuQZ/gWHR/Lk4yIJETbzAw=;
+        b=QJrAvFU9PGw4ecwNa9iwbiRcvMsM81tKQr2eYUFLVZkF/qYnhOf9N0FQ58Lnx1mJJH
+         I9lbBL/yQxGzCV1CDfuodaYjDdma6kNDxwlHlnxatZbCKFY07MumOpCV5KAhH5850Ppu
+         grS+FyUAuQTeel53Bn9q1qvvzWyW/d48rXzKaaaBTjCOQ/dukEtLS3VXBC3L/pLelLIm
+         QJmhZ5SCQMp79/q2hgKF0fdvvIZPFEm01BWAQBfwXUz6+rgoOniIXUd/BDdz1s7hW/Vn
+         f5hPDXSFT1XD3rxMAgQwTPkuqfHlOOzCxOXfLgvogec9bUjNWh1tPkzVZQSpnsZSWcCr
+         pE7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733153406; x=1733758206;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P8jtIniQHqaGnIfrwCj5iJuQZ/gWHR/Lk4yIJETbzAw=;
+        b=nqtrXIjTYW7I+RSB3DHTInCcVqT0qFnU0PvLF3m6N4uOCvprrPlaKOFWOrJcbKr92c
+         HKPoWC6SwldeKlNbvj53wnVxgHP0TBPMAHLgK6OWyfWVizz2oGlJB0k1+IHjZLxwDICk
+         pBw/ikDeAR8D6bTUAWAUZ57R9gL8gi+7YiGFwPPllAI/8ohpzBHFgyhpAtVTDwn9RIsQ
+         OEU65JDS+klb1EDa+d0epEzDgmnazPuO6Np74Yb/+ICgSxAInFUvCzKT6oJdVFYi4h2C
+         fOvVezeOGuKYAImpbI5jGdBXT9rC+h7dffmRYjTTXBzcfXdJ4M9cIlWlcndgpCiw6bXp
+         +FxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2v3JKEnae6nQAX7cX6RqmaHKXELGaDJ+6JEEEOlVt3z65JGBAZsXuL5Uj+2wA6BNmzZ4v++XaTv7X6mI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJvBQr0siwu7hdGM8EY4iHgbYb/1R8hflrl1qp9apsceiynnUX
+	SACQHh97o/tJ9rcpnJY5t176wgKeG18va8OsPLuHiPmErxHE9WdwIYqZmBOqO04gx8BCOI2yCkf
+	/
+X-Gm-Gg: ASbGncsujPMmHsLUL9JsutyXojnZ1MwA1/p32g1CSh5l1VXqA2IBALQ/VIT7S/uivsQ
+	ctmALKoiocBkFBOaKFgEXZXvAocawwuFKCeiXYaJW42V4jq1WOWyPt5j9K+OT+k4a72h82GeKmV
+	yKKCBUL4yYf0vxFJcelSCitBf0us/RNf6pR7sQQ82U/YiXNJpkwWGG++XMEgwVcrKFeKZcuczFF
+	+XXCAn61cLAnZtkIYYv6U7GpCE9K8bPuU3YwAuYr/F4c4wYML54laxGltC2fNw98g==
+X-Google-Smtp-Source: AGHT+IH1hTljFKEA9DHhDP/Bl2T9X3iPXf4B7h5kmrrQdKTb7FK5jK4sFt7iXegFoa1F8JVAtQP1Kw==
+X-Received: by 2002:a05:600c:4447:b0:434:a5bc:70fc with SMTP id 5b1f17b1804b1-434a9dc3c8emr211879435e9.8.1733153405821;
+        Mon, 02 Dec 2024 07:30:05 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e230b283sm8019425f8f.106.2024.12.02.07.30.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 07:30:05 -0800 (PST)
+Message-ID: <90fc1097-d353-4b6a-bcbf-81f8a8e24390@nexus-software.ie>
+Date: Mon, 2 Dec 2024 15:30:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] arm64: dts: qcom: x1e80100: Add CAMCC block
+ definition
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+ <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-4-54075d75f654@linaro.org>
+ <02dd5593-38ba-4344-aa64-0913eca45808@oss.qualcomm.com>
+ <2chygbm3yjozhkhps64oae5gwirdk5b3orsybss7jgutu5g7ke@4jskpnermxfm>
+Content-Language: en-US
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+In-Reply-To: <2chygbm3yjozhkhps64oae5gwirdk5b3orsybss7jgutu5g7ke@4jskpnermxfm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Sascha Hauer <s.hauer@pengutronix.de> writes:
+On 02/12/2024 15:02, Dmitry Baryshkov wrote:
+>>> +			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+>> This clock is not registered with the CCF
+> Isn't that be going to be handled by the CCF on its own (like orphans,
+> etc)?
 
-> These are a few patches broken out from [1]. Kalle requested to limit
-> the number of patches per series to approximately 12 and Francesco to
-> move the fixes to the front of the series, so here we go.
->
-> First two patches are fixes. First one is for host mlme support which
-> currently is in wireless-next, so no stable tag needed, second one has a
-> stable tag.
+For refence this is always-on ATM.
 
-Are you sure? Apparently we didn't take any patches to wireless-next
-during this merge window (ie. last two weeks), so everything which is in
-wireless-next should be in v6.13-rc1, unless I'm missing something of
-course. Not a problem for me but wanted to point out anyway.
+drivers/clk/qcom/gcc-x1e80100.c:	qcom_branch_set_clk_en(regmap, 
+0x26004); /* GCC_CAMERA_AHB_CLK */
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+---
+bod
 
