@@ -1,161 +1,190 @@
-Return-Path: <linux-kernel+bounces-427946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26389E07C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:59:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893FE9E082B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:16:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98201280A8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DCED171E95
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A557146588;
-	Mon,  2 Dec 2024 15:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C79013C914;
+	Mon,  2 Dec 2024 15:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="ERjEn8hM"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z4OapPUA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IyuBfQ5l";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z4OapPUA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IyuBfQ5l"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C32136352;
-	Mon,  2 Dec 2024 15:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEAC7DA7F;
+	Mon,  2 Dec 2024 15:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733155160; cv=none; b=QiwF1FSc0LpCV8Do+rdggRU2YtyYSEi0PQFq6fTKlKdBbVNQnb27UspvbppoQpalPlj047xa5pca4aHTnOz8xglRt299KpnsMMyd7OxzuGBhIQpSX6RmxiCnyqzr7Q82s2WDcEtRvZgrvjaRQX+PLleV81Fj+fNgYVnfoT474e0=
+	t=1733155152; cv=none; b=mf1tJg1m1xO04PAmbeR51OKdQsVwryudLivqVypmgerhtSa26iDWN5j2dR5QDr4A4BBDIRconPOQ0cU/n2P1OD7slkclUXQR5ri5wNrpbBCBGrq5n0/FmAFuBPcV6h2WyxK/0gW/I5zI7v329Nw3eUVCnJeVM0aeeAueHLkw0Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733155160; c=relaxed/simple;
-	bh=WaaoFsJl5CaUoadN0kBxGfgIoSYisHkAnX818rLnxho=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T4b9VUa1f9WChc4qqt1/ITLWLUm3TVk5ek0bzz+vR9oFLMyuUrD7Nzgw613+2fUFfTo/cHRJLJc2V/5WcVueEGjjDkFCY3T7i4vHf+TlIHTem3gBzyuRJcT7ITJNWbvlkB0RzrXOFZTcymaOpn9iEsPixAPG10DRhDzgjxif2vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=ERjEn8hM; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1733155144; x=1733759944; i=wahrenst@gmx.net;
-	bh=H4JLr3SrVxTDzBPpr7Wwo9dixYFhN95i0//rZi7egss=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ERjEn8hMLOoYVrmsOv3gmExeyNc9LrgN8ALCC4uD5ITaaZNhw9A3A8EnP3Kn1mbC
-	 gF/PL2PKYyV19Ck5+GIejlC9DBdg13nqWSRH6GBjIm2hACOWaJFbxHCdxCmyzP+CK
-	 cYgXUW95ZDO7LILLuIaZ4Aiq43yYQ5ex++NclVRGeb/aVFB7j8EvkoH4tF+k6l+Lk
-	 X0kEU61549x6KggiWEBVQEQNO6zVidYk8hCmLiLwlsdrvWH7G2vNhy+n3kBTR0npf
-	 8nFgK0xucsDmM83eO3uuymKj6q33jIE/7lt85DKQJIIm/M94Yra5WqAg1W9SFxArA
-	 MLcVoayWl++0I0e0oA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from stefanw-SCHENKER ([37.4.251.153]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MvK4f-1tZG4P33uz-013UdK; Mon, 02
- Dec 2024 16:59:04 +0100
-From: Stefan Wahren <wahrenst@gmx.net>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH net] qca_spi: Fix clock speed for multiple QCA7000
-Date: Mon,  2 Dec 2024 16:58:53 +0100
-Message-Id: <20241202155853.5813-1-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733155152; c=relaxed/simple;
+	bh=u0aaYgGhF/pf7rNy0ZOCVe9AStHX2mdW8sJWa2/i8xc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIuwTOW0dg9mu/7v2YZhIlqw7JOuhmaajAXNQfxsXgDEOU9nqokx+B5PRGsozOjD1eu6oYN/xJTYcQUbSHcuomoahP1raA5KRhjKRKVpNIt9vfOBbVYligj1jrxgYUTFmcSie0nlpoq1mgzf93B+ec6KLpQ0gslvtnNScOioc4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z4OapPUA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IyuBfQ5l; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z4OapPUA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IyuBfQ5l; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 78AD11F396;
+	Mon,  2 Dec 2024 15:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733155147; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pCe+Df6SQWIMK4AJZ2dKw/kIeq0uZKoG15fCSs7t3qo=;
+	b=Z4OapPUAe7/bNo7aoMeyhU2KfiynYkCy1ImKXeT3h+eNIO18DaivAY/tw8oV4sjp9AJ3Pe
+	l036qEN0g+PiVN67NhSS/3bKELFhsOlnF7hz0bgJisUKXJ4I+AWJGjZB8fqRMTGLEqi53l
+	R50vHy8uaKeWtASwZ4l4BOiaFTiK1Qc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733155147;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pCe+Df6SQWIMK4AJZ2dKw/kIeq0uZKoG15fCSs7t3qo=;
+	b=IyuBfQ5lGvPxYAVzl/8Vy2WMwkHx6h2qZdQXri5SJDU8zA/G4Akm/lm0TtloXfOTYXm2ZB
+	w+Rpkelm9goDnRDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733155147; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pCe+Df6SQWIMK4AJZ2dKw/kIeq0uZKoG15fCSs7t3qo=;
+	b=Z4OapPUAe7/bNo7aoMeyhU2KfiynYkCy1ImKXeT3h+eNIO18DaivAY/tw8oV4sjp9AJ3Pe
+	l036qEN0g+PiVN67NhSS/3bKELFhsOlnF7hz0bgJisUKXJ4I+AWJGjZB8fqRMTGLEqi53l
+	R50vHy8uaKeWtASwZ4l4BOiaFTiK1Qc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733155147;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pCe+Df6SQWIMK4AJZ2dKw/kIeq0uZKoG15fCSs7t3qo=;
+	b=IyuBfQ5lGvPxYAVzl/8Vy2WMwkHx6h2qZdQXri5SJDU8zA/G4Akm/lm0TtloXfOTYXm2ZB
+	w+Rpkelm9goDnRDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6277313A31;
+	Mon,  2 Dec 2024 15:59:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EUQHGEvZTWcOPAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 02 Dec 2024 15:59:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1515AA07B4; Mon,  2 Dec 2024 16:59:07 +0100 (CET)
+Date: Mon, 2 Dec 2024 16:59:07 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Erin Shepherd <erin.shepherd@e43.eu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH RFC 1/6] pseudofs: add support for export_ops
+Message-ID: <20241202155907.v6kd2dtm7bqu7vu4@quack3>
+References: <20241129-work-pidfs-file_handle-v1-0-87d803a42495@kernel.org>
+ <20241129-work-pidfs-file_handle-v1-1-87d803a42495@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:MWFUgtkNVvcJnJL76qJz6ZjTP7OH7g3wsA62/sTYamIZIH887KH
- N9HSrBa3ylT5tlUkM/Fe3dlHUldYVMi7qjBPftTughaJCU743DA6AwOsez7gvZaa04jXpjM
- gLhagrcWTRfICnCsYUtz2ft2IFd+arUu4zejiWB3VST1wML7n6pJy383kbf/JH1WFi57aOU
- c5fkR9kbCh0ivRfEnMVBA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129-work-pidfs-file_handle-v1-1-87d803a42495@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[e43.eu,gmail.com,kernel.org,zeniv.linux.org.uk,suse.cz,oracle.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
+X-Spam-Score: -3.80
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DbTM6zPP5Fk=;HD//Hop1KWSsq09EpLvleG51+i+
- /kns981u1a9kpzPNPsRU2vKBVNnGS5BxhZ6N8fRRNnGEn7N/B4AgmgWWqZ+e7wH2O59TV0uZx
- 3BewKX6ue1EfRCNlC5XzoC3oExuDq2cQHfzchMYe/JVH04LkLMu/ckqegAWPr3ZmmXwwOl92x
- z1HEd4WRrN+8XePZFKsbp5jo7Crl/J2toGAoLU/Teoiw/VrStyaRZSCnM1ezYZzQ9cEK+c3KZ
- r9j4vtDm9FZHKwbPfltTqOL0vmcWYgnbG7HBz22cdCuFqVkiYlqRFkcVDdkwl6JA7IYq4ntv9
- +OQKDDTILvPUlg0iPThUc9bym3amTUXVL37DnZ4dsU18bQWxmFg0l20KIwTB04eAGUUo7DTF5
- DBvWdErlK3RKNyd5PKM/S41UwzPUC7btSM3oBscjk0IwtghrpBkMZa0P8ZtguHHO7JcB+o+Wy
- cQZp7YcD2LuYTk5Hd52gqMAMOugvf/btzbUNN7JSVASRcp1Dgjtsz2l7osatGeny37Qu3exec
- JGK0cOe68FJ3jb0yYGolppiwRJITmP+LJ8YbExzJSBVqaM0MLzYmUU5hKM8SXir0AGk2Mvx9W
- aEXo7PF4laRl0T2scNK/MGSYrnR+6G2ZdqOS1QzCJRYXUT+vZ8lEGB0MWTTIopJ9b5kii26Ai
- eZZvyriHqBnRYMboK2AdjXVzYFF9srkjhNfzsZzGddR+LH1cE11Kjvt3NQzz/BXUuiVm3pG83
- aTTPOaRiE7lacFJRp/NWgYA/WLa3g0egcSGQJ70HmhlkpTQGr86VFz5bh1MGlPl5yoLblIXS7
- TEbgRicPYc4Zs2UhLGiPUfrGIqUGfDLVXOzZ6NF1ExYKeQl575B7W8Ddgxehsf8pf89GcPEaN
- PtgNw2oHu4SoYRcAg5RUzNCxTSLRt8exyW9FBi+4e8d7pZoiXTgYxIv31vOyq1rKYTxTdFpX0
- GFc7sumZ6TZq268U/Q7FVOuRc09zuNKnSYSlLyiGMDLYZK9o9R04g9N4YkaQwTWeoYctXj0eP
- UnM6npVz2YVjbRfSCYd9Y4DQlO+buRg0sY/CCK/FhlIGxKzjruOM86mhs8I4Sn8tJXUMaC8Ez
- nMnAqGX15Dc1xKFDPvy+qog03GmGFA
 
-Storing the maximum clock speed in module parameter qcaspi_clkspeed
-has the unintended side effect that the first probed instance
-defines the value for all other instances. Fix this issue by storing
-it in max_speed_hz of the relevant SPI device.
+On Fri 29-11-24 14:38:00, Christian Brauner wrote:
+> From: Erin Shepherd <erin.shepherd@e43.eu>
+> 
+> Pseudo-filesystems might reasonably wish to implement the export ops
+> (particularly for name_to_handle_at/open_by_handle_at); plumb this
+> through pseudo_fs_context
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
+> Link: https://lore.kernel.org/r/20241113-pidfs_fh-v2-1-9a4d28155a37@e43.eu
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-This fix keeps the priority of the speed parameter (module parameter,
-device tree property, driver default).
+OK, feel free to add:
 
-Fixes: 291ab06ecf67 ("net: qualcomm: new Ethernet over SPI driver for QCA7=
-000")
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-=2D--
- drivers/net/ethernet/qualcomm/qca_spi.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/etherne=
-t/qualcomm/qca_spi.c
-index ef9c02b000e4..a79fd2d66534 100644
-=2D-- a/drivers/net/ethernet/qualcomm/qca_spi.c
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.c
-@@ -909,17 +909,15 @@ qca_spi_probe(struct spi_device *spi)
- 	legacy_mode =3D of_property_read_bool(spi->dev.of_node,
- 					    "qca,legacy-mode");
+								Honza
 
--	if (qcaspi_clkspeed =3D=3D 0) {
--		if (spi->max_speed_hz)
--			qcaspi_clkspeed =3D spi->max_speed_hz;
--		else
--			qcaspi_clkspeed =3D QCASPI_CLK_SPEED;
--	}
--
--	if ((qcaspi_clkspeed < QCASPI_CLK_SPEED_MIN) ||
--	    (qcaspi_clkspeed > QCASPI_CLK_SPEED_MAX)) {
--		dev_err(&spi->dev, "Invalid clkspeed: %d\n",
--			qcaspi_clkspeed);
-+	if (qcaspi_clkspeed)
-+		spi->max_speed_hz =3D qcaspi_clkspeed;
-+	else if (!spi->max_speed_hz)
-+		spi->max_speed_hz =3D QCASPI_CLK_SPEED;
-+
-+	if (spi->max_speed_hz < QCASPI_CLK_SPEED_MIN ||
-+	    spi->max_speed_hz > QCASPI_CLK_SPEED_MAX) {
-+		dev_err(&spi->dev, "Invalid clkspeed: %u\n",
-+			spi->max_speed_hz);
- 		return -EINVAL;
- 	}
-
-@@ -944,14 +942,13 @@ qca_spi_probe(struct spi_device *spi)
- 		return -EINVAL;
- 	}
-
--	dev_info(&spi->dev, "ver=3D%s, clkspeed=3D%d, burst_len=3D%d, pluggable=
-=3D%d\n",
-+	dev_info(&spi->dev, "ver=3D%s, clkspeed=3D%u, burst_len=3D%d, pluggable=
-=3D%d\n",
- 		 QCASPI_DRV_VERSION,
--		 qcaspi_clkspeed,
-+		 spi->max_speed_hz,
- 		 qcaspi_burst_len,
- 		 qcaspi_pluggable);
-
- 	spi->mode =3D SPI_MODE_3;
--	spi->max_speed_hz =3D qcaspi_clkspeed;
- 	if (spi_setup(spi) < 0) {
- 		dev_err(&spi->dev, "Unable to setup SPI device\n");
- 		return -EFAULT;
-=2D-
-2.34.1
-
+> ---
+>  fs/libfs.c                | 1 +
+>  include/linux/pseudo_fs.h | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 748ac59231547c29abcbade3fa025e3b00533d8b..2890a9c4a414b7e2be5c337e238db84743f0a30b 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -673,6 +673,7 @@ static int pseudo_fs_fill_super(struct super_block *s, struct fs_context *fc)
+>  	s->s_blocksize_bits = PAGE_SHIFT;
+>  	s->s_magic = ctx->magic;
+>  	s->s_op = ctx->ops ?: &simple_super_operations;
+> +	s->s_export_op = ctx->eops;
+>  	s->s_xattr = ctx->xattr;
+>  	s->s_time_gran = 1;
+>  	root = new_inode(s);
+> diff --git a/include/linux/pseudo_fs.h b/include/linux/pseudo_fs.h
+> index 730f77381d55f1816ef14adf7dd2cf1d62bb912c..2503f7625d65e7b1fbe9e64d5abf06cd8f017b5f 100644
+> --- a/include/linux/pseudo_fs.h
+> +++ b/include/linux/pseudo_fs.h
+> @@ -5,6 +5,7 @@
+>  
+>  struct pseudo_fs_context {
+>  	const struct super_operations *ops;
+> +	const struct export_operations *eops;
+>  	const struct xattr_handler * const *xattr;
+>  	const struct dentry_operations *dops;
+>  	unsigned long magic;
+> 
+> -- 
+> 2.45.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
