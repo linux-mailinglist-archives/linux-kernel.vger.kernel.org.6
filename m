@@ -1,157 +1,260 @@
-Return-Path: <linux-kernel+bounces-427625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C599E03D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:42:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27019E03E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF03628193F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727AD281BB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF412036E1;
-	Mon,  2 Dec 2024 13:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gvGY5e0m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E6E201266;
+	Mon,  2 Dec 2024 13:43:33 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CF020101A;
-	Mon,  2 Dec 2024 13:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223C01FF7A2
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 13:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733146902; cv=none; b=PdKSFJJ/lDljjM25cR08SrsQyU1FlSZtAB82nRWImaYKGkB0kezFY0zAReUZeukivW25fDqqf00PFqUxcgF5MllcWetCyDOYbN5STAwDp0miMuZtNnUqrW6QLVm/sgMaR7Qup2mnGfeSC0OfU1muLjNmPfEt1lEIGyAP0ez9Ghk=
+	t=1733147012; cv=none; b=X8lvMRgiO6/UP33a8ivJMonKyyqyBR4JDN+9ksxESUrVUmlDfs9Bvd/6fW5C+E7bbQvj4Q2kXcfhXd20WSQ51DTpypBV+zejaP6OD1U8NwJd/mEt9W39FqwqMTVATERZQ95ak44HBhWVNasFSK/1ReubxJSCuUE9doFngTSfRxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733146902; c=relaxed/simple;
-	bh=aHbNT8/7s93kv5HKX8tdKETN3m1n4K+2pSzalI1wkBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fSBXuvQSRh14paoog0gMRi0ApNAUQT316T4Qkp9UhoflLyemZrFCZt51+QuwtVXPG189oT7w7m1yngyWBr6zrcWZlrZ1J1CwH4VGIJ/4B4H+YUDixPkTN+nBnbhTfiAriEszQJO9tcNlYDtCH0pGOfGzxjMEkDwtJKAhzTHatr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gvGY5e0m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED9ABC4CEE0;
-	Mon,  2 Dec 2024 13:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733146902;
-	bh=aHbNT8/7s93kv5HKX8tdKETN3m1n4K+2pSzalI1wkBw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gvGY5e0mRTR1JDu8827hApyq9ya3WkD973VUrcZAAOnSe+PEdDnHZ3EDlyI7CmPFr
-	 aDugMn6ECPHzREpNrD9jJ+NbtGTI90MmaPSOILiVXZ6QXnaf2IX8P34wp9tMajCGp7
-	 SMHU0REinpjeLGlGYbYPHdmagKYnFs1ERSFeHuY2bvycV/EsM1vQdN4r/JwGdn/Z9L
-	 c19VWhm7Xs/YKo5H0KZB5/kPS5IcR4Lc+sZ43Q/jT9qRpS+2mXgyZ/9sY/RQQtInv9
-	 bDvJxJ8hKF9gFNQkDoMRgRp6dQ2izAF5Mj9+D6eXqGvwSYA/WRwit0Qc3CRUU9BVl4
-	 plKbU4kszGcDA==
-Message-ID: <68b897f0-5583-4d09-87d5-4ff4d3080ef7@kernel.org>
-Date: Mon, 2 Dec 2024 14:41:34 +0100
+	s=arc-20240116; t=1733147012; c=relaxed/simple;
+	bh=7JrQRCwu0TfXe2NU9Tm3ibc6+iH+3XKuFgZVRE80KEs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=p6VmEuc5xL1/nB6/ibRQX8Gqjyi0xm0HKtNeYFieTOsncf0YQvCanMGsv/RNRQXSI0ed0u9j/GDJSHEjKZVBlk+UPfDqzufja8WVx6HunBPhCwlVTfNQpG+b/UxNvx/r2sqFuer5SuCkYCOJshgjy/LtGS8yywA/618OAuO+O1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7e0d7b804so25513505ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 05:43:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733147010; x=1733751810;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tRYzxUngfBUrmKR51U+FrTtZyKLbXqN+47VzUVT+Msk=;
+        b=Z0UJEYMq0xhpMqqu/UBbeH6wAbL+VZ/TUYSdwX452U/33sJ7Gl3OH677i8/5lhMRgT
+         lazwquB/QWyNYD25ZIXdEExqajlqgiJ/QaN+mxnXJiQbqrKtGlw7cmc0YeFZZTKd5oX5
+         SCz1ePl5oHtuSlCeyXj//chFRcnQYybENH+mkGdYtSikY02vw5LiT1YkEmtXjfQ9aYWM
+         pPZ9vXg9FL1tQm1dqELAYE++xZzWQVKCuImLXyAZBoww8UFakGUL4jTdQabH3AQodIce
+         GbZWLvZ81Ek2K4Rlt4WrQl7Vba1zakwsUpKtYyTe9Exc4aWvXYd2/sZuMUf3uVQP3St7
+         hA3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUkP594K7LK8K9zzQ+e8Nfz7L4QxGcY/318z8b5lkjfRgDIuTg7C/fuedFBxqeT/0pJL+CZgmpfTLLispY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznYctlOyTV00cUI0UbyTy0NeXC8ztqBUB1eoGY1D0AK+Vugwkh
+	omXsrB8m+jEqqbjXsfFIZYFW9qeQ2P5nsfh9twDud2Y+a5CEsVmli54bdLZUpZUGbLPlSyIU2aX
+	aWaFcOoawCREYad+XGmjqxQaabTwcfZOn2/D/Vd784rHSgq0E5qb3vXQ=
+X-Google-Smtp-Source: AGHT+IEVr0WyBDt4asdo1+oOdociiGtfM/z0mxH3IqYnP6ckedBuZFLETyXdYzb3dmiI9804a4NbnKTquAHa9zUHN1b1NMdG8s2x
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: exynos: gs101-oriole: enable Maxim
- max77759 fuel gauge
-To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
- <20241202-b4-gs101_max77759_fg-v1-4-98d2fa7bfe30@uclouvain.be>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241202-b4-gs101_max77759_fg-v1-4-98d2fa7bfe30@uclouvain.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:b27:b0:3a7:e732:4713 with SMTP id
+ e9e14a558f8ab-3a7e7324a67mr81296485ab.15.1733147008923; Mon, 02 Dec 2024
+ 05:43:28 -0800 (PST)
+Date: Mon, 02 Dec 2024 05:43:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674db980.050a0220.ad585.0053.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_rename2
+From: syzbot <syzbot+71d64eb53ffbb023de3b@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/12/2024 14:07, Thomas Antoine via B4 Relay wrote:
-> From: Thomas Antoine <t.antoine@uclouvain.be>
-> 
-> Add the node for the max77759 fuel gauge as a slave of the i2c.
-> 
-> The fuel gauge has been tested and seems to give coherent results.
-> Manual activation of the charger via i2cset shows that the sign of
-> the current does indicate charging/discharging status.
-> 
-> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> index 387fb779bd29ea3812331a7951f03b181c5fe659..4c45dd6fd0173889234b7b04d7abb4b382c7706c 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> @@ -90,6 +90,13 @@ eeprom: eeprom@50 {
->  &hsi2c_12 {
->  	status = "okay";
->  	/* TODO: add the devices once drivers exist */
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    f788b5ef1ca9 Merge tag 'timers_urgent_for_v6.13_rc1' of gi.=
+.
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D110d55e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D2b3a18edb5017fc=
+8
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D71d64eb53ffbb023d=
+e3b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7fe=
+b34a89c2a/non_bootable_disk-f788b5ef.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/40a792cdbfb9/vmlinux-=
+f788b5ef.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8b3ae7a81a9a/bzI=
+mage-f788b5ef.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+71d64eb53ffbb023de3b@syzkaller.appspotmail.com
+
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 7589ab5e0c11cc7a writ=
+ten 24 min_key POS_MIN durability: 1 ptr: 0:38:0 gen 0 =20
+  node offset 0/24 bset u64s 0: incorrect max key 18446462598732840960:1487=
+2293344460931071:U32_MAX
+bcachefs (loop0): flagging btree inodes lost data
+error reading btree root inodes l=3D0: btree_node_read_error, fixing
+bcachefs (loop0): will run btree node scan
+invalid bkey u64s 7 type xattr 536870912:3798421620223919902:U32_MAX len 0 =
+ver 0: user.=06:
+  xattr name has invalid characters: delete?, fixing
+bcachefs (loop0): error validating btree node on loop0 at btree snapshots l=
+evel 0/0
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ebb8d5a9e3463bdb writ=
+ten 16 min_key POS_MIN durability: 1 ptr: 0:32:0 gen 0 =20
+  node offset 0/16 bset u64s 0: unknown checksum type 9, fixing
+bcachefs (loop0): error validating btree node on loop0 at btree snapshots l=
+evel 0/0
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ebb8d5a9e3463bdb writ=
+ten 16 min_key POS_MIN durability: 1 ptr: 0:32:0 gen 0 =20
+  node offset 8/16: btree node data missing: expected 16 sectors, found 8, =
+fixing
+bcachefs (loop0): btree_node_read_work: rewriting btree node at btree=3Dsna=
+pshots level=3D0 SPOS_MAX due to error
+bcachefs (loop0): scan_for_btree_nodes...
+bch2_scan_for_btree_nodes: nodes found after overwrites:
+  extents l=3D0 seq=3D1 journal_seq=3D5 cookie=3Dc6c25c03258c59c5 POS_MIN-S=
+POS_MAX ptr: 0:27:0 gen 0
+  inodes l=3D0 seq=3D1 journal_seq=3D5 cookie=3D7589ab5e0c11cc7a POS_MIN-18=
+446462598732840960:14872293344460931071:U32_MAX ptr: 0:38:0 gen 0
+  dirents l=3D0 seq=3D1 journal_seq=3D3458764513820540929 cookie=3D9aa2895a=
+efce4bdf POS_MIN-SPOS_MAX ptr: 0:41:0 gen 0
+  xattrs l=3D0 seq=3D1 journal_seq=3D4 cookie=3D2285c34bed0abe32 POS_MIN-SP=
+OS_MAX ptr: 0:31:0 gen 0
+  subvolumes l=3D0 seq=3D1 journal_seq=3D1 cookie=3Dc0bef60d07ceb940 POS_MI=
+N-SPOS_MAX ptr: 0:35:0 gen 0
+  snapshots l=3D0 seq=3D1 journal_seq=3D0 cookie=3Debb8d5a9e3463bdb POS_MIN=
+-SPOS_MAX ptr: 0:32:0 gen 0
+  lru l=3D0 seq=3D1 journal_seq=3D5 cookie=3D28f61e078e70b95c POS_MIN-SPOS_=
+MAX ptr: 0:28:0 gen 0
+  deleted_inodes l=3D0 seq=3D1 journal_seq=3D0 cookie=3D1db8f60c84bb244c PO=
+S_MIN-SPOS_MAX ptr: 0:42:0 gen 0
+ done
+bcachefs (loop0): check_topology...
+bcachefs (loop0): btree root inodes unreadable, must recover from scan
+bcachefs (loop0): bch2_get_scanned_nodes(): recovering inodes l=3D0 POS_MIN=
+ - SPOS_MAX
+bcachefs (loop0): bch2_get_scanned_nodes(): recovering u64s 11 type btree_p=
+tr_v2 18446462598732840960:14872293344460931071:U32_MAX len 0 ver 0: seq 75=
+89ab5e0c11cc7a written 24 min_key POS_MIN durability: 1 ptr: 0:38:0 gen 0
+btree node with incorrect max_keyat btree inodes level 1:
+  parent: u64s 5 type btree_ptr SPOS_MAX len 0 ver 0
+  child: u64s 11 type btree_ptr_v2 18446462598732840960:1487229334446093107=
+1:U32_MAX len 0 ver 0: seq 7589ab5e0c11cc7a written 24 min_key POS_MIN dura=
+bility: 1 ptr: 0:38:0 gen 0, fixing
+bcachefs (loop0): bch2_get_scanned_nodes(): recovering inodes l=3D0 1844646=
+2598732840960:14872293344460931072:0 - SPOS_MAX
+btree node with incorrect max_keyat btree inodes level 1:
+  parent: u64s 5 type btree_ptr SPOS_MAX len 0 ver 0
+  child: u64s 11 type btree_ptr_v2 18446462598732840960:1487229334446093107=
+1:U32_MAX len 0 ver 0: seq 7589ab5e0c11cc7a written 24 min_key POS_MIN dura=
+bility: 1 ptr: 0:38:0 gen 0, fixing
+bcachefs (loop0): set_node_max(): u64s 11 type btree_ptr_v2 184464625987328=
+40960:14872293344460931071:U32_MAX len 0 ver 0: seq 7589ab5e0c11cc7a writte=
+n 24 min_key POS_MIN durability: 1 ptr: 0:38:0 gen 0 -> SPOS_MAX
+ done
+bcachefs (loop0): accounting_read... done
+bcachefs (loop0): alloc_read... done
+bcachefs (loop0): stripes_read... done
+bcachefs (loop0): snapshots_read... done
+bcachefs (loop0): check_allocations... done
+bcachefs (loop0): going read-write
+bcachefs (loop0): done starting filesystem
+bcachefs (loop0): dirent to missing inode:
+  u64s 7 type dirent 4096:189491840996961599:U32_MAX len 0 ver 0: file0 -> =
+4098 type dir
+bcachefs (loop0): dirent to missing inode:
+  u64s 7 type dirent 4096:4330382808765833931:U32_MAX len 0 ver 0: file1 ->=
+ 536870912 type reg
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/fs.c:935!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5320 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-12128-gf=
+788b5ef1ca9 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16=
+.3-2~bpo12+1 04/01/2014
+RIP: 0010:bch2_rename2+0x2117/0x2130 fs/bcachefs/fs.c:935
+Code: ff 44 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 0f f2 ff ff 4c 89 ff e8 f9 =
+ca cc fd e9 02 f2 ff ff e8 2f bf 92 07 e8 4a e3 61 fd 90 <0f> 0b e8 42 e3 6=
+1 fd 90 0f 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f
+RSP: 0018:ffffc9000d2cf4e0 EFLAGS: 00010287
+RAX: ffffffff843d8ed6 RBX: 0000000000001002 RCX: 0000000000100000
+RDX: ffffc9000e772000 RSI: 0000000000002734 RDI: 0000000000002735
+RBP: ffffc9000d2cfa90 R08: ffffffff843d81bd R09: 1ffff110088ba037
+R10: dffffc0000000000 R11: ffffed10088ba038 R12: dffffc0000000000
+R13: ffff8880545a0000 R14: 0000000000001003 R15: 0000000000000000
+FS:  00007ff4ba7cf6c0(0000) GS:ffff88801fc00000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200002c0 CR3: 0000000040446000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ vfs_rename+0xbdb/0xf00 fs/namei.c:5067
+ do_renameat2+0xd94/0x13f0 fs/namei.c:5224
+ __do_sys_renameat2 fs/namei.c:5258 [inline]
+ __se_sys_renameat2 fs/namei.c:5255 [inline]
+ __x64_sys_renameat2+0xce/0xe0 fs/namei.c:5255
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff4b9980849
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 =
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff f=
+f 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff4ba7cf058 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
+RAX: ffffffffffffffda RBX: 00007ff4b9b45fa0 RCX: 00007ff4b9980849
+RDX: ffffffffffffff9c RSI: 0000000020000440 RDI: ffffffffffffff9c
+RBP: 00007ff4b99f3986 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000020000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ff4b9b45fa0 R15: 00007fff1bc1c7f8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_rename2+0x2117/0x2130 fs/bcachefs/fs.c:935
+Code: ff 44 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 0f f2 ff ff 4c 89 ff e8 f9 =
+ca cc fd e9 02 f2 ff ff e8 2f bf 92 07 e8 4a e3 61 fd 90 <0f> 0b e8 42 e3 6=
+1 fd 90 0f 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f
+RSP: 0018:ffffc9000d2cf4e0 EFLAGS: 00010287
+RAX: ffffffff843d8ed6 RBX: 0000000000001002 RCX: 0000000000100000
+RDX: ffffc9000e772000 RSI: 0000000000002734 RDI: 0000000000002735
+RBP: ffffc9000d2cfa90 R08: ffffffff843d81bd R09: 1ffff110088ba037
+R10: dffffc0000000000 R11: ffffed10088ba038 R12: dffffc0000000000
+R13: ffff8880545a0000 R14: 0000000000001003 R15: 0000000000000000
+FS:  00007ff4ba7cf6c0(0000) GS:ffff88801fc00000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff4ba7adfe0 CR3: 0000000040446000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-Is this still applicable?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> +
-> +	fuel-gauge@36 {
-> +		compatible = "maxim,max77759-fg";
-> +		reg = <0x36>;
-> +		reg-names = "m5";
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-No interrupts?
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-> +	};
-> +
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-
-Do not add stray blank lines.
-
-Best regards,
-Krzysztof
+If you want to undo deduplication, reply with:
+#syz undup
 
