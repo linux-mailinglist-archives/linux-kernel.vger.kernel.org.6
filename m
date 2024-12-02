@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-427984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C2E9E0850
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 539E49E0852
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:22:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A612868CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:22:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E28972869AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217AE18C013;
-	Mon,  2 Dec 2024 16:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80CC178383;
+	Mon,  2 Dec 2024 16:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbbY+fN9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="GKqXwvXs"
+Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F5817DFE1;
-	Mon,  2 Dec 2024 16:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0C218873A;
+	Mon,  2 Dec 2024 16:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733156513; cv=none; b=D0GjvxHzhGI6i1xoD1RvWhXhaVvlos+57/zZ//Yk7x3UoxmI4kuYc32h3u2UuDq4jC9XKOgK6SdLvgshRqDfjkDqmUEFsZNdyaOZh9Omhkcxik4rohkvmLmKeHx85Z3vi2k138pa2z0r2in/ldKtcvg+aJhTF6juQtZ0rG2EYG4=
+	t=1733156546; cv=none; b=U50Q01phTIq6JIcEqIMMoHawcAa/mj43C3qt1PNzMWamgv92NVf4Iqva4aS+yCo1ygEXyLPSW43IiGQDuapA1333puQUCq0V0z2j4Z9IPrftL4lq2NkI+ABz5zP5mwbebrTa6RlVPtmo0b2JSgVPqce2cHkhhEzSX99s+2N7P+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733156513; c=relaxed/simple;
-	bh=M8G40HlAqKSLTPrhmiBGiAiaHsou848ROOonuY5/5nU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CRhnD2q3Oi2nhCDmLY32mjUdHxT12eEUDSIGCjBQkFKdzeVC0257obxAA2akaYp+qylUyKZQNgxN1GDjEMo+5gVzgepTreRMT4Hs6zFYx/7SSK/mKPR4cXYj5A+lVWF6AebYe0bs0fwq13jeq2xm8pNMwLN73qLU4R55S7sGhAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbbY+fN9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 653EBC4CED2;
-	Mon,  2 Dec 2024 16:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733156513;
-	bh=M8G40HlAqKSLTPrhmiBGiAiaHsou848ROOonuY5/5nU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UbbY+fN9ZiJcMZQiFp71hUeY1hRNb1GaGHbKL3cQIQv0DQHsvaP05oB6ME1aUAQxc
-	 66OqCG4Uc+204F0ecBk78hYkY4ho4pO0qH5pqLnWHqdQYJsREc4kPCnz2BvEDSpzC5
-	 M8LRpBj6bbZwV+ZNZn+NOPeekUitp+jfcHt79/k3/extQmg1tlR0PRod1vM2d2EUnN
-	 zKoE3/d5q8t5H+K0Uut/gTFjwSaKBctZukM/POAYtb9mc7h+xtGljfj2baAMfQthWf
-	 YYe1vLveIWbFaVPj4sT3Fnl9F7ptEGWujI2ObxJ4p49tb4eTGgzYXdeTjYxjG2HYFO
-	 chlJpSIVYvNEQ==
-Date: Mon, 2 Dec 2024 21:51:48 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Paul Cercueil <paul@crapouillou.net>, Nuno Sa <nuno.sa@analog.com>,
-	dmaengine@vger.kernel.org
-Subject: Re: [PATCH] linux/dmaengine.h: fix a few kernel-doc warnings
-Message-ID: <Z03enImvI+c7cZYw@vaman>
-References: <20241125061508.165099-1-rdunlap@infradead.org>
- <1dcee6d5-761b-4fa2-a336-c23d3aaadcb9@infradead.org>
+	s=arc-20240116; t=1733156546; c=relaxed/simple;
+	bh=3w6h8OGAMVa5Fzirqv8ni0hUpNILhJLCE0izk9850T4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O90OmugEt9LtSEC/bDFOyxuAwZ6GYyb+ctC2po7bcQBjIHVqVyEuUr6XiWzRvaErCb9ktdFZS8wNZfClzUM/cnigbiBHNrHmUY1skdD7AODDZG6sNuylOAFp4h/AJkm86OHLA5FM4Ua7GQinUqHOWJE1KUYUynP2uGnJzqd++g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=GKqXwvXs; arc=none smtp.client-ip=63.250.43.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y28FW22myz4wDF;
+	Mon, 02 Dec 2024 16:22:23 +0000 (UTC)
+Received: from umer-b550pro4.lan (host-213-78-252-153.as13285.net [213.78.252.153])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y28FM2ZJlz6tkK;
+	Mon,  2 Dec 2024 16:22:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=mentallysanemainliners.org; s=spacemail; t=1733156538;
+	bh=3w6h8OGAMVa5Fzirqv8ni0hUpNILhJLCE0izk9850T4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GKqXwvXs8OEPrp5pgITViH2WJezVnJzxcMQ1WnzmPG5qtQYkDSqTp20KHkbrOwwNh
+	 OfndSn9lvOj0mTRXHN05TkIqBbLrR/U3YH3GJZxO4fPiexL/dwcUkHkitu8X2PZz2I
+	 184+5LZIia+gB0ObM2LnWrc6vSIZ4UMv2B520WPr8N9OO8hFWjL/B5ujULMY17IBDl
+	 JncLeGEY1hrlj0hyT9tGr6oGHgdYkC+CXSsD5Xr+yTPkkP2hzH60AhfCReQ9KHZ7O8
+	 x/2GmyaPcbh+Ktr1zqlzv2zyQJpBYcfntxvE82tKaY+wK8u9oBNoEcSP1XpTsWxvrH
+	 K1Nn80Zq+ua9A==
+From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	igor.belwon@mentallysanemainliners.org
+Subject: [RESEND,v3 0/4] Add minimal Samsung Galaxy S20 Series board, SM-G981B and SM-G980F support
+Date: Mon,  2 Dec 2024 16:21:54 +0000
+Message-ID: <20241202162158.5208-1-umer.uddin@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1dcee6d5-761b-4fa2-a336-c23d3aaadcb9@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On 24-11-24, 22:20, Randy Dunlap wrote:
-> 
-> 
-> On 11/24/24 10:15 PM, Randy Dunlap wrote:
-> > The comment block for "Interleaved Transfer Request" should not begin
-> > with "/**" since it is not in kernel-doc format.
-> > 
-> > Fix doc name for enum sum_check_flags.
-> > 
-> > Fix all (4) missing struct member warnings.
-> > 
-> > Use "Warning:" for one "Note:" in enum dma_desc_metadata_mode since
-> > scripts/kernel-doc does not allow more than one Note:
-> > per function or identifier description.
-> > 
-> > This leaves around 49 kernel-doc warnings like:
-> >   include/linux/dmaengine.h:43: warning: Enum value 'DMA_OUT_OF_ORDER' not described in enum 'dma_status'
-> > 
-> > and another scripts/kernel-doc problem with it not being able to parse
-> > some typedefs.
-> > 
-> > Fixes: b14dab792dee ("DMAEngine: Define interleaved transfer request api"), Jassi Brar
-> 
-> Oops, I left a note in the line above. I'll fix it for v2 after comments.
+Hi folks,
 
-lgt,, I guess we can do a v2 now
+This series adds initial support for the Samsung Galaxy S20 Series and also
+initial board support for the Samsung Galaxy S20 5G (SM-G981B)
+codenamed x1s.
 
-> 
-> > Fixes: ad283ea4a3ce ("async_tx: add sum check flags")
-> > Fixes: 272420214d26 ("dmaengine: Add DMA_CTRL_REUSE")
-> > Fixes: f067025bc676 ("dmaengine: add support to provide error result from a DMA transation")
-> > Fixes: d38a8c622a1b ("dmaengine: prepare for generic 'unmap' data")
-> > Fixes: 5878853fc938 ("dmaengine: Add API function dmaengine_prep_peripheral_dma_vec()")
-> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > Cc: Jassi Brar <jaswinder.singh@linaro.org>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Dave Jiang <dave.jiang@intel.com>
-> > Cc: Paul Cercueil <paul@crapouillou.net>
-> > Cc: Nuno Sa <nuno.sa@analog.com>
-> > Cc: Vinod Koul <vkoul@kernel.org>
-> > Cc: dmaengine@vger.kernel.org
-> > ---
-> >  include/linux/dmaengine.h |   13 ++++++++++---
-> >  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> 
-> -- 
-> ~Randy
-> 
+The S20 Series feature a lot of similarities in their configuration
+and internally Samsung named the common devicetrees in their
+downstream kernel 'hubble', please note hubble excludes the
+S20 FE series and Note20 series.
+The device trees have been tested with dtbs_check W=1
+and results in no warnings.
+
+This initial bringup consists of:
+ * pinctrl
+ * gpio-keys
+ * simple-framebuffer
+
+This is enough to reach a shell in an initramfs. More platform support
+will be added in the future.
+
+Just like SM-N981B, the preferred way to boot the upstream kernel is
+by using a shim bootloader, called uniLoader [1], which works around
+some issues with the stock, non-replacable Samsung S-LK bootloader.
+For example, the stock bootloader leaves the decon trigger control
+unset, which causes the framebuffer not to refresh.
+
+Device functionality depends on the patch series from Igor Belwon:
+"Add minimal Exynos990 SoC and SM-N981B support"
+
+[1] https://github.com/ivoszbg/uniLoader
+
+Changes in v3:
+ - Fix oversight in yaml
+ - Decommonise memory map
+
+Changes in v2:
+ - Add Samsung Galaxy S20 into device tree bindings
+ - Add support for Samsung Galaxy S20 as well as the 5G variant now
+ - Fix typo in Samsung Galaxy S20 5G commit message
+
+Kind regards,
+Umer
+
+Umer Uddin (4):
+  dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B
+    and SM-G980F board
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S20 Series
+    boards (hubble)
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G
+    (x1s)
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S20
+    (x1slte)
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |  2 +
+ arch/arm64/boot/dts/exynos/Makefile           |  2 +
+ .../dts/exynos/exynos990-hubble-common.dtsi   | 98 +++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos990-x1s.dts  | 28 ++++++
+ .../boot/dts/exynos/exynos990-x1slte.dts      | 28 ++++++
+ 5 files changed, 158 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-hubble-common.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
 
 -- 
-~Vinod
+2.47.1
+
 
