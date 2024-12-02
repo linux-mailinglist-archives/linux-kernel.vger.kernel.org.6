@@ -1,161 +1,199 @@
-Return-Path: <linux-kernel+bounces-427722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBB49E09B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 992B69E0A47
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:41:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DC0EB3A7A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:36:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E83B4B3579D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F0620B80C;
-	Mon,  2 Dec 2024 14:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C7520B7E0;
+	Mon,  2 Dec 2024 14:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="JnAOaWtj"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y00ewntH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E502120B212
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49170205E11
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149938; cv=none; b=DhMw2+Bfikz9Yz44v04S7GV0M03aYwP9SeH90yaEiLVRqqxIQHtFBuU5V4xvmb+KDS2FD1Ydss0uhSCW2EH2RI/dSKn6DCbpRQeAbU6Tk++ufTnflJjAaMbSZkOpjEKcPD/3H8rq9fsdBhNFzf2lW9LBajm4uOyJPlpvIQ9nSeQ=
+	t=1733150496; cv=none; b=hc/oknMpwLASWUdAULBcue/Jzp69Wo4LOx0VgMvw1Fs/tSGIEzyvIToLUpkpqOtSRvcLvb5pSToD616uBvqposLnvy3c31HXxQ8DiiGJQp19v5r/Dh3M8hvZoPPfykddaI1DLCMUSoXKoIC3fTUadeq9dkPsw+9SfLqCxdjoCmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149938; c=relaxed/simple;
-	bh=5zXjITbgA5FSFSmYOEMfbg84vfuGIoappc2/TOnidqA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S0IQmjf0DSWulhi2iE1kjKaJSZtCwRZGAfXa665FetRSlImC92hjcSkncKme/2yH6mL17N0yFbNmxrcPXb3zP0DUWhiSi2MrfumSykSxwmaED4XPvymQ+Kx/UcoFYoVV05O7zNY9d/o/aW9WryMO3uCxnOfjaUuogFPFSer0gGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=JnAOaWtj; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434aa472617so36574045e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:32:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1733149935; x=1733754735; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=66NaRjYo+TdRIjIUtk+A/zrTfjyMbW0NLvNCk3ACUHQ=;
-        b=JnAOaWtjEutUVX5FoLqjgsgCyMTJhtRjF8G8nLY1Ee/5lsmHIlR/1f9MYOSTlUBx4m
-         CYrSa9AN3gxy5Dltk8AIPUBcjFzVe71gdav0nzROfvW0QJebT0PptUfUigBsq9bR5KEK
-         Pz2bwvZJTVR+RWQrVLMFj3/y06LAzKPR6UBuHQsWPjrbubZ+7mQDP2FnnFCyMPHsimCK
-         tR7TfOaqq89NhpIM19SotIYGUmKYCNTRj5xUU5ByGd+WufZn9ALY8ks8EefHL1g1cPzf
-         f5dOo6SKcXMKqGjjndhktzDjM3oKm9GoLAx2QzKC6PvxhNCQiDJSPZn5GqgN1ptzNkxe
-         CJ3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733149935; x=1733754735;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=66NaRjYo+TdRIjIUtk+A/zrTfjyMbW0NLvNCk3ACUHQ=;
-        b=Ed3Vrxzm9BxWxXBXs3UoodTwLVjCSOC9nfBcKDJNH/Gy2wOUA5RW1+T9r9Yb5xyajj
-         Wptk/sDT2Gh5NMGm4Xk7dyeuHMs/7+EA+NuF4IlwuIk/bL+TPrSxSaJB5l1aJ98A5TuR
-         dq0MzfUpYZxk3Da7GxM/Qr/la92PaU3Y0AaPxprNrcDZENphcXghu6y74vS6ghW4LSaB
-         biIWJdKzuBM9kGZ3zU9PNtX6AQzydKokG0M/eg1pKi+x5sM9NzFJtzOQjh2A3i5x7TA8
-         OzWc5+GzT8Dvd13UTNm3nKgRqVpm6Av6kTwJv9LIWqBC5+oSfCBTp/C0yfivmgjLDFQc
-         gsjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXb+XSkUgrNNBXShNEGhPWDI6awgDdNhBJKntz8jqV8+RDxBqWGEqdC5FSJQmTQOL4KqD6ekJW84ZWj+7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTWoAiC3N1cAbbciOkJ9MwRofK2sXo3jVPv8am9cQEtq7DLvEL
-	gwGCBDbTxzn7ulYphq4JNVC50d1DC61tO5CBLKfnRHbHbNx/9ROkMffXeWkj8E0=
-X-Gm-Gg: ASbGncurreCe7d1dIf7/wqOJSzt3mpg/pJ8FthSeJcZAdNmtK9fjzf6N91DKNhszMN9
-	e7EBsYN0mlp76xH0au73YvDbtX2/VrnETDBR4V4l1/qwoMLDmfZxIs3J+H3wP32WW89sIBo7teq
-	IrXvtQRclH6J4kVwWHS/IwhQ+hXdFBpqA/h1YaIMIf6JtHibUk5Zu6+v1LHE8lArtR+k3H3Wqzl
-	huDhQTytU/8i56RIis3pkU2yJxyTAHb+UKvJMdvCA==
-X-Google-Smtp-Source: AGHT+IFjvnTvxoYoYzXeiS+rT48r6tDHyIvnEQ/xQrP8Q+YrgHiGsItI6q35+4octUNLW9uQ5Wq4wQ==
-X-Received: by 2002:a05:600c:1e09:b0:434:a8d8:760e with SMTP id 5b1f17b1804b1-434a9dc6774mr200107125e9.19.1733149935182;
-        Mon, 02 Dec 2024 06:32:15 -0800 (PST)
-Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa74f1e6sm188429555e9.9.2024.12.02.06.32.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 06:32:14 -0800 (PST)
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: [PATCH 0/7] drm/vc4: Fixup DT and DT binding issues from recent
- patchset
-Date: Mon, 02 Dec 2024 14:31:53 +0000
-Message-Id: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
+	s=arc-20240116; t=1733150496; c=relaxed/simple;
+	bh=LC7a4IadXDSBG+FPlnSGhFh+gxKKCByBUescMabMaOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ws2We8fxoAHVc3fDCgdHJ3MNrb8mHNrJPN2mjJNYnPuJI4u8hxhIMkaNvh8hwhSEwcJy4SUyumNgXS1MGcx1tB+gIMlnVeZfz2wPopsVpketVv8XGyi14zd4FeAu866sdrq5NCI3Dq2ubHPdSLD4ohdMnEUDOW2644eymgq43rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y00ewntH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733150493;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lUvIdNYn/fqF9K6BoxsffOp47UHQFllLU+FnZQWOnJs=;
+	b=Y00ewntH7s4S5QP+PIEV3jrsF/fWwRrkL79yeMlzsx5MWfQlM/hSjLHLWfvlnCwTUMbcY3
+	LtFIJ0PTnSCCu+4uA94FGu2NKO2CdLh3XoIKNsuLf488nCcV54Zmzkv1JDcg1swLsJbark
+	2Zeeifzc+xu5LxuiKbj228Uaxkt7FxE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-dGxSDJsqNb6Lbe3LF1xgNQ-1; Mon,
+ 02 Dec 2024 09:41:30 -0500
+X-MC-Unique: dGxSDJsqNb6Lbe3LF1xgNQ-1
+X-Mimecast-MFC-AGG-ID: dGxSDJsqNb6Lbe3LF1xgNQ
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 746FC1954197;
+	Mon,  2 Dec 2024 14:41:28 +0000 (UTC)
+Received: from bfoster (unknown [10.22.65.140])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C601E30000DF;
+	Mon,  2 Dec 2024 14:41:26 +0000 (UTC)
+Date: Mon, 2 Dec 2024 09:43:13 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: syzbot <syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, gfs2@lists.linux.dev
+Subject: Re: [syzbot] [iomap?] WARNING in iomap_zero_iter
+Message-ID: <Z03HgRGByNi1spE0@bfoster>
+References: <674d11ec.050a0220.48a03.001c.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANnETWcC/x3LQQqAIBBA0avErBvQQVK6SrTQmmoWWWhEEN49a
- fn4/BcyJ+EMffNC4luyHLFCtw1Mm48ro8zVQIqM1uRwvjBMO1lNuMjDGf0SFDuvvLEd1O1M/Id
- 6DWMpHxlHVi9iAAAA
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Eric Anholt <eric@anholt.net>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, 
- linux-gpio@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <674d11ec.050a0220.48a03.001c.GAE@google.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-I missed the DT errors from the recent patchset[1] (DT patches
-in linux-next via Florian, DRM bindings patches on dri-misc-next)
-as Rob's bot report got spam filtered, so this is a fixup set.
+CC'd gfs2@lists.linux.dev.
 
-Largely it was changes to number of interrupts or clocks in the
-bindings, so those are now covered.
+On Sun, Dec 01, 2024 at 05:48:28PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=107623c0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0b9d4913852126
+> dashboard link: https://syzkaller.appspot.com/bug?extid=af7e25f0384dc888e1bf
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b86545e0.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/00ec87aaa7ee/vmlinux-b86545e0.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/fcc70e20d51b/bzImage-b86545e0.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com
+> 
+> loop0: detected capacity change from 0 to 32768
+> gfs2: fsid=syz:syz: Trying to join cluster "lock_nolock", "syz:syz"
+> gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
+> gfs2: fsid=syz:syz.0: journal 0 mapped with 1 extents in 0ms
+> gfs2: fsid=syz:syz.0: first mount done, others may mount
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 5341 at fs/iomap/buffered-io.c:1373 iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
 
-I've fixed up the missing "interrupt-controller" flags for 2711
-and 2712 whilst here.
+This is the recently added warning for zeroing folios that start beyond
+i_size:
 
-I can't get my head around what is meant to happen with ranges:
-"soc@107c000000: firmware: 'ranges' is a required property"
-The meaning seems obvious.
+	WARN_ON_ONCE(folio_pos(folio) > iter->inode->i_size);
 
-However if I add it then I get:
-"firmware: '#address-cells', '#size-cells', 'dma-ranges', 'ranges' do
-not match any of the regexes: 'pinctrl-[0-9]+'
-from schema $id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
+This was added because iomap zero range was somewhat recently changed to
+no longer update i_size, which means such writes are at risk of being
+thrown away. A quick look at the gfs2_fallocate() -> __gfs2_punch_hole()
+path below shows we make a couple zero range calls around block
+unaligned boundaries and immediately follow that with a flush of the
+entire range. If a portion of this starts beyond i_size then writeback
+will simply throw those folios away.
 
-There's obviously some other flag I need to set in the bindings,
-but I can't work it out. We have similar errors for all the Pi
-platforms for one or more nodes.
-Please advise and I'll happily fix them all.
+I think the main question here is whether there is some known/legitimate
+use case for post-eof zeroing in GFS2 that requires behavior to be
+revisited on one side or the other, or otherwise if there is an issue
+with the warning check being racy and thus causing a false positive.
 
-Thanks
-  Dave
+GFS2 folks,
 
-[1] https://lore.kernel.org/linux-arm-kernel/20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com/
+Could you comment on the above wrt GFS2 and post-eof zeroing?
 
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
----
-Dave Stevenson (7):
-      dtbindings: display: bcm2711-hdmi: Correct bindings for 2712
-      dtbindings: display: Fix BCM2835 HVS bindings for BCM2712
-      dt-bindings: gpio: brcmstb: add gpio-line-name
-      arm64: dts: broadcom: Fix device tree warnings for BCM2712 display pipeline
-      arm64: dts: broadcom: Add interrupt-controller flag for intc on BCM2712
-      arm: dts: broadcom: Add interrupt-controller flag for intc on BCM2711
-      arm64: dts: broadcom: Fix device tree errors on BCM2712.
+If this isn't some obvious case, hopefully syzbot can spit out a
+reproducer soon to help get to the bottom of it. Thanks.
 
- .../bindings/display/brcm,bcm2711-hdmi.yaml        | 44 +++++++++----
- .../bindings/display/brcm,bcm2835-hvs.yaml         | 77 +++++++++++++++++-----
- .../bindings/gpio/brcm,brcmstb-gpio.yaml           |  2 +
- arch/arm/boot/dts/broadcom/bcm2711.dtsi            |  2 +
- arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts   |  9 +--
- arch/arm64/boot/dts/broadcom/bcm2712.dtsi          | 10 +--
- 6 files changed, 106 insertions(+), 38 deletions(-)
----
-base-commit: 8c3f4a248f35817d2f604c0e3df1bccf27590228
-change-id: 20241128-dt-bcm2712-fixes-afb0e8a0a476
+Brian
 
-Best regards,
--- 
-Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5341 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
+> Code: 85 ff 49 bc 00 00 00 00 00 fc ff df 7e 56 49 01 dd e8 21 66 60 ff 48 8b 1c 24 48 8d 4c 24 60 e9 0b fe ff ff e8 0e 66 60 ff 90 <0f> 0b 90 e9 1b ff ff ff 48 8b 4c 24 10 80 e1 07 fe c1 38 c1 0f 8c
+> RSP: 0018:ffffc9000d27f3e0 EFLAGS: 00010283
+> RAX: ffffffff82357e72 RBX: 0000000000000000 RCX: 0000000000100000
+> RDX: ffffc9000e2fa000 RSI: 000000000000053d RDI: 000000000000053e
+> RBP: ffffc9000d27f4b0 R08: ffffffff82357d88 R09: 1ffffd40002a07d8
+> R10: dffffc0000000000 R11: fffff940002a07d9 R12: 0000000000008000
+> R13: 0000000000008000 R14: ffffea0001503ec0 R15: 0000000000000001
+> FS:  00007efeb79fe6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007efeb81360e8 CR3: 00000000442d8000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  iomap_zero_range+0x69b/0x970 fs/iomap/buffered-io.c:1456
+>  gfs2_block_zero_range fs/gfs2/bmap.c:1303 [inline]
+>  __gfs2_punch_hole+0x311/0xb30 fs/gfs2/bmap.c:2420
+>  gfs2_fallocate+0x3a1/0x490 fs/gfs2/file.c:1399
+>  vfs_fallocate+0x569/0x6e0 fs/open.c:327
+>  do_vfs_ioctl+0x258c/0x2e40 fs/ioctl.c:885
+>  __do_sys_ioctl fs/ioctl.c:904 [inline]
+>  __se_sys_ioctl+0x80/0x170 fs/ioctl.c:892
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7efeb7f80809
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007efeb79fe058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007efeb8145fa0 RCX: 00007efeb7f80809
+> RDX: 0000000020000000 RSI: 0000000040305829 RDI: 0000000000000005
+> RBP: 00007efeb7ff393e R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007efeb8145fa0 R15: 00007ffd994f7a38
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
 
