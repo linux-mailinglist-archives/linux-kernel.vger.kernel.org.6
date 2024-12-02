@@ -1,80 +1,99 @@
-Return-Path: <linux-kernel+bounces-427518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219FF9E0237
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:30:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473F49E0245
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:33:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F7E283D3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BD6D283856
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FDF1FE475;
-	Mon,  2 Dec 2024 12:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361511FECAE;
+	Mon,  2 Dec 2024 12:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KKcWoxi2"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SIrplq34";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rl3GeRAh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SIrplq34";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rl3GeRAh"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775E41FF7DA;
-	Mon,  2 Dec 2024 12:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE42D1FC7FB;
+	Mon,  2 Dec 2024 12:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733142621; cv=none; b=SahPonBdUXKDX8you3yWEAhdBSq+0vOL2+dD/8TuPyLS6FgECtSpmMtQIIIgp2ICNL0t0ROaOKhbH1VfbInBIZHfUKPMq1c+qXIvMzKsuh3sKp8QXpgcpIb8mvwNVnc4fygPMw2mFIqndcmWT9qCi78UOWVuq9VqspFDFSgPXcg=
+	t=1733142811; cv=none; b=haVX8+HL8l9Zch+l3/CvQlVztXuayO4wxBSt6si1qQ+QwjrD1oU0JIJMRgOq0zOuX8nZDwUhiHfnhDxI/za4XgR5TRex/1SDLrxbHKIM1Q5mWhrpshC6NecjvVtw4bKGcuwD377M/iHKFKuV78u7uVEgPa/bjKKzk0RoeHaHyXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733142621; c=relaxed/simple;
-	bh=5Xyo5nOCg2fTOq8pqNwjMvooTE/vU0oUcIk6nzyVG9k=;
+	s=arc-20240116; t=1733142811; c=relaxed/simple;
+	bh=tralFyhyUdpTJrYzmhqjcZ45WyYATGZKu1XnV247IyE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QeFM9Xm6G3kfduETqz5ceVp47Xhq8+/JBWAHn5L3qCt+GBzN5rRjORPDKLKnp443XkE2cbOX54bneMtVtdOryUxPSYaPFB6ref1tSvfKQQGvBNhNBitYu4DRBEh3EIVJN4KzsfUmpgr4mHS6w5Ap4XKnvR/5jgBNMx3RDEXWq5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KKcWoxi2; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dTC+gMCuGXrpbpNTlTZ4pflG6PEuf6LHsnKKAyen5K8=; b=KKcWoxi2AbRVpK8zPFzXiq8QCV
-	z1sRNU8u450aRzrUmVvBM10qTHQAmc8K3xSQNlfeftHuaqOTEnkupBOX3W/6xIKVYD4v+iOZoB6XH
-	uzZsyYlLPTaOUGIC+dPnDUHpnfhCIiH2VyT1BDoTkJ6jA96h+fWrAgUBmM/3qbpWlpnu5ITi9RaCX
-	4HDh4PigH5+uX7XhcJkZ96Cfvw3BG/+1W1gk7htuy2hVQEX2XeDyNY+3Td3xY9LpWXVzNslvu0sQy
-	H6swbRB+pKISoq015I0DeToC1AyLyWFnkLSbKtd6akeoto2YhfA3mjIM/7+46ueFVVqOkwxELXUx5
-	po+DpBxg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36580)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tI5Z2-0008O9-39;
-	Mon, 02 Dec 2024 12:30:09 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tI5Yy-0003ZG-1n;
-	Mon, 02 Dec 2024 12:30:04 +0000
-Date: Mon, 2 Dec 2024 12:30:04 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>
-Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
- speed
-Message-ID: <Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
-References: <20241202083352.3865373-1-nikita.yoush@cogentembedded.com>
- <20241202100334.454599a7@fedora.home>
- <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
- <Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
- <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
- <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
- <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NzmPKd1jB9NlZzZ5b2vayLHE0bFU4ioGyh7sEogVSFMUwDkEsQGYIOk/PiijoRFoJ57rmgeYpJqadpceWJp4VclfR7XTQI1A3vxmeaKtRQ3AsVYHCT2fbC55Id7ytrGq54ivbOVsMM2jLKjidPZiCzvmmRanz/xYgcxWGpsb8MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SIrplq34; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rl3GeRAh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SIrplq34; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rl3GeRAh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1E3651F444;
+	Mon,  2 Dec 2024 12:33:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733142808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcFiL8b3DxnsZOU7aC58mndpthSUJ03sDwAvbRdp/o0=;
+	b=SIrplq34S659YsZ7eOcMt5pTFOirMk7mgbspmlTxmGbtlhPqjhunhO6J1wykImFKa7xQ9R
+	QCk8h5Rb9WnagtfZZCqml8p+k/a9saqDvvB5EGH4C5BsfiGf/f7p/U006dnau79qItltH4
+	rgphbIyQXxfmvDmcVUg0fWmvviaV+Ik=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733142808;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcFiL8b3DxnsZOU7aC58mndpthSUJ03sDwAvbRdp/o0=;
+	b=rl3GeRAhkMWC2LmL1ix2bDu2Xc5PZcxe8SAxPJZIN7kQ8KcCGkLxkOqJEfG5XxfjgB+SlA
+	8qNfPV9JN3YPG2AQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733142808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcFiL8b3DxnsZOU7aC58mndpthSUJ03sDwAvbRdp/o0=;
+	b=SIrplq34S659YsZ7eOcMt5pTFOirMk7mgbspmlTxmGbtlhPqjhunhO6J1wykImFKa7xQ9R
+	QCk8h5Rb9WnagtfZZCqml8p+k/a9saqDvvB5EGH4C5BsfiGf/f7p/U006dnau79qItltH4
+	rgphbIyQXxfmvDmcVUg0fWmvviaV+Ik=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733142808;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcFiL8b3DxnsZOU7aC58mndpthSUJ03sDwAvbRdp/o0=;
+	b=rl3GeRAhkMWC2LmL1ix2bDu2Xc5PZcxe8SAxPJZIN7kQ8KcCGkLxkOqJEfG5XxfjgB+SlA
+	8qNfPV9JN3YPG2AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0FB9713A31;
+	Mon,  2 Dec 2024 12:33:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PqXLAxipTWeIdwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 02 Dec 2024 12:33:28 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B9F92A07B4; Mon,  2 Dec 2024 13:33:27 +0100 (CET)
+Date: Mon, 2 Dec 2024 13:33:27 +0100
+From: Jan Kara <jack@suse.cz>
+To: Guo Weikang <guoweikang.kernel@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs:fc_log replace magic number 7 with ARRAY_SIZE()
+Message-ID: <20241202123327.3cpmzegjaoh3rgrd@quack3>
+References: <20241202081146.1031780-1-guoweikang.kernel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,64 +102,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20241202081146.1031780-1-guoweikang.kernel@gmail.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Dec 02, 2024 at 04:09:43PM +0500, Nikita Yushchenko wrote:
-> > > Right now, 'ethtool -s tsn0 master-slave forced-slave' causes a call to
-> > > driver's ethtool set_link_ksettings method. Which does error out for me
-> > > because at the call time, speed field is 2500.
-> > 
-> > Are you saying that the PHY starts in fixed-speed 2.5G mode?
-> > 
-> > What does ethtool tsn0 say after boot and the link has come up but
-> > before any ethtool settings are changed?
+On Mon 02-12-24 16:11:45, Guo Weikang wrote:
+> Replace the hardcoded value `7` in `put_fc_log()` with `ARRAY_SIZE`.
+> This improves maintainability by ensuring the loop adapts to changes
+> in the buffer size.
 > 
-> On a freshly booted board, with /etc/systemd/network temporary moved away.
+> Signed-off-by: Guo Weikang <guoweikang.kernel@gmail.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/fs_context.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> (there are two identical boards, connected to each other)
+> diff --git a/fs/fs_context.c b/fs/fs_context.c
+> index 98589aae5208..582d33e81117 100644
+> --- a/fs/fs_context.c
+> +++ b/fs/fs_context.c
+> @@ -493,7 +493,7 @@ static void put_fc_log(struct fs_context *fc)
+>  	if (log) {
+>  		if (refcount_dec_and_test(&log->usage)) {
+>  			fc->log.log = NULL;
+> -			for (i = 0; i <= 7; i++)
+> +			for (i = 0; i < ARRAY_SIZE(log->buffer) ; i++)
+>  				if (log->need_free & (1 << i))
+>  					kfree(log->buffer[i]);
+>  			kfree(log);
+> -- 
+> 2.25.1
 > 
-> root@vc4-033:~# ip l show dev tsn0
-> 19: tsn0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
->     link/ether 3a:e3:5c:56:ba:bd brd ff:ff:ff:ff:ff:ff
-> 
-> root@vc4-033:~# ethtool tsn0
-> Settings for tsn0:
->         Supported ports: [ MII ]
->         Supported link modes:   2500baseT/Full
->         Supported pause frame use: Symmetric Receive-only
->         Supports auto-negotiation: No
-
-Okay, the PHY can apparently only operate in fixed mode, although I
-would suggest checking that is actually the case. I suspect that may
-be a driver bug, especially as...
-
->         Supported FEC modes: Not reported
->         Advertised link modes:  2500baseT/Full
->         Advertised pause frame use: No
->         Advertised auto-negotiation: No
->         Advertised FEC modes: Not reported
->         Speed: 2500Mb/s
->         Duplex: Unknown! (255)
-
-... after link up:
-
->         Speed: 2500Mb/s
->         Duplex: Full
-
-it changes phydev->duplex, which is _not_ supposed to happen if
-negotiation has been disabled.
-
-When negitation is disabled, phydev->speed and phydev->duplex are
-supposed to set the link parameters, and the PHY driver is not
-supposed to alter them from what was set, possibly by the user.
-
-So there is something weird going on in the driver, and without
-seeing it, I'm not sure whether (a) it's just a badly coded driver
-that the PHY does support AN but the driver has decided to tell the
-kernel it doesn't, (b) whether it truly is not using AN.
-
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
