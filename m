@@ -1,240 +1,103 @@
-Return-Path: <linux-kernel+bounces-427199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673709DFDFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:00:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49A816399A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:00:46 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6687E1FBEA4;
-	Mon,  2 Dec 2024 10:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m8NKRSXk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E179DFDFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:00:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF3915A8;
-	Mon,  2 Dec 2024 10:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C21281B9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:00:55 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0131FC0F8;
+	Mon,  2 Dec 2024 10:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PvLIBcMK"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E02A1F949
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733133641; cv=none; b=r1dORd/54cIIUIxaG4qAxurBnMCJV0Dr3mRzlhBwN29f6sBNW30bppvyiC0sCiSDtNf3GZakAgq059FPLTuROR4Qbdmf+8m/bi3CcEch9Aj5y1mYaQ99AcB0iGO0SZgxT2pX2XymBVqNwHmPreM6mLrbcksYg1/3fOC1eg2NbxI=
+	t=1733133643; cv=none; b=lZMI1d7QEB+97qAWqBYzTimzKAxrKdZL1kQ1GGqGp6vJLCYyfRwdRWgKM2E2a6mpGaLLU7UJQrhHT5zfl3wVFD4Nyy4OOYRxGbbHFr5Rq7rYvpRwo+x45f1KJcSiluKUshpmpcKRdIwDxqD+ABdvGj6XZJnUApTiuAC2Jeze+70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733133641; c=relaxed/simple;
-	bh=icZCGmtk1DzL9HBbjQGZeFbvR7o/kKnLVv3vWsSW6Oo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NTZFMzmngGWfEF0N+UsE54ofKlgksvP3FXs746X3EeHxLUfOzoCTkllAPvMpq2HNjez8oTMSw2zKAETtLdzwvuRpiEexy40HhaXT/N5X4z6bw3oXFERem/fv/h+jS+f/uAOSrAPMhXQjP96/fW6BFAUDzSES6YLybr+rmNs5JAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m8NKRSXk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B29KcSo028211;
-	Mon, 2 Dec 2024 10:00:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6PW9fOxBZRxPpo7YtTCol7KQG5Qyjq+kU1ABzjHmWuQ=; b=m8NKRSXkUqcs+Ryr
-	dZqTr1BEhva2kvMDJ1Bu7988TVLvzYxsbwPSaqXbpHwSyLEfuvp6zIDkyTZBcUO6
-	+L27esdZq5c1Z+AcufjQP0by//jZzGWzlxIBXE1cWS7Ksxncq58CF+LnwItiUcXf
-	H3R7MhvEwYfcCKvOzz1NOzBShUelDiS/HZOWJclBe5m0vstGkWaStjK2dY1WLdc1
-	IPpIwHvv+ojW+5jR6+jy1IsgTZDS0x22qTU4JsI5LSdbYTLfUHqc9MTvlODvz9kD
-	6yX3VTV7bE6Y282OzmuCD0VEyJ3tNW1CCQPKFUb/trf20XqxT1DySgUCvS+G0fsw
-	Ug+iVQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ufe4a69-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 10:00:31 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B2A0VFs031561
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Dec 2024 10:00:31 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
- 02:00:28 -0800
-Message-ID: <80b1a205-422f-4e6d-97e9-69ee335a31f8@quicinc.com>
-Date: Mon, 2 Dec 2024 18:00:25 +0800
+	s=arc-20240116; t=1733133643; c=relaxed/simple;
+	bh=lFLsD/0Xqp/INe2Ls7r3LQ0h9Nqmzwf/lICtIE8q4wA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msJirwu9767W23AvbYM3uhgNJ0P4ThUdGM5F4Y9ZdIZWmKJYRS73qkry1QeemS9xtjAEABblKWliyGBSVxrDHjKmh7potA7Sq6kMfOoxS9Keva502wb0s77N4vP3qyp+RrvmPuG6xZtdq6jZTD2LIOLv4oTYInksDUgjxD/TuNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PvLIBcMK; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=g3ETWtwH/Dl5K3O6c4I5zJIpk+A5IFQ+FwIqIH9QWkU=; b=PvLIBcMKs+ktvol/GHtdgK60x7
+	r80F7DPfqO1Es1gYlB+7InO256ibTWKT4vN7+oeB1cipiDuUPSR/h/tdoxDGUN9AF1SD/nwyO/yhV
+	LsSR+XCdQ9ApKNZ3H1v/qTPsf9hNgaCSQQU8o6e6N1aeOCm7zyoPL6USymv03ji+8F3S5oUZgWh7d
+	3OjeAhUTkIk45dFKQou6s3peAArtEOhRqi7e8kPQeGmoM45pCwJA9zyBP5zQd+3A1dLviY/Ss3HF2
+	wptR180gCuNy88YzfiZhx5K+AxmUmP85uGKGqWZ3i6NDGeTPgP0JaQdyDqeGP+3ioeTqPCOcNIYbt
+	C8Fvd76A==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tI3EK-00000007oWS-0zei;
+	Mon, 02 Dec 2024 10:00:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 17343300402; Mon,  2 Dec 2024 11:00:37 +0100 (CET)
+Date: Mon, 2 Dec 2024 11:00:36 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: jpoimboe@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: Fix the wrong format specifier
+Message-ID: <20241202100036.GL24400@noisy.programming.kicks-ass.net>
+References: <20241202041126.3563-1-zhangjiao2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: add QCS8300 platform
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20241128-qcs8300_initial_dtsi-v3-0-26aa8a164914@quicinc.com>
- <20241128-qcs8300_initial_dtsi-v3-3-26aa8a164914@quicinc.com>
- <2a2a780d-5e3e-4582-b75d-211732a9b727@oss.qualcomm.com>
-Content-Language: en-US
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-In-Reply-To: <2a2a780d-5e3e-4582-b75d-211732a9b727@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: HEOdVLP-gKj__kJ1q_HwxYOSaysqhkX_
-X-Proofpoint-GUID: HEOdVLP-gKj__kJ1q_HwxYOSaysqhkX_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=999 clxscore=1015 adultscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020088
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202041126.3563-1-zhangjiao2@cmss.chinamobile.com>
 
+On Mon, Dec 02, 2024 at 12:11:26PM +0800, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> The format specifier of "unsigned long" in printf()
+> should be "%lu", not "%ld".
 
+Your subject is wrong, also, who cares? Why did you write this patch?
 
-On 11/29/2024 4:14 AM, Konrad Dybcio wrote:
-> On 28.11.2024 9:44 AM, Jingyi Wang wrote:
->> Add initial DTSI for QCS8300 SoC.
->>
->> Features added in this revision:
->> - CPUs with PSCI idle states
->> - Interrupt-controller with PDC wakeup support
->> - Timers, TCSR Clock Controllers
->> - Reserved Shared memory
->> - GCC and RPMHCC
->> - TLMM
->> - Interconnect
->> - QuP with uart
->> - SMMU
->> - QFPROM
->> - Rpmhpd power controller
->> - UFS
->> - Inter-Processor Communication Controller
->> - SRAM
->> - Remoteprocs including ADSP,CDSP and GPDSP
->> - BWMONs
->>
->> Written with help from Zhenhua Huang(added the smmu node), Xin Liu(added
->> ufs, adsp and gpdsp nodes), Tingguo Cheng(added the rpmhpd node), Kyle
->> Deng(added the aoss_qmp node), Raviteja Laggyshetty(added interconnect
->> nodes) and Cong Zhang(added the INTID of EL2 non-secure physical timer).
->>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
+>  tools/objtool/check.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> [...]
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 4ce176ad411f..9c36bb519cf3 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -4934,10 +4934,10 @@ int check(struct objtool_file *file)
+>  		disas_warned_funcs(file);
+>  
+>  	if (opts.stats) {
+> -		printf("nr_insns_visited: %ld\n", nr_insns_visited);
+> -		printf("nr_cfi: %ld\n", nr_cfi);
+> -		printf("nr_cfi_reused: %ld\n", nr_cfi_reused);
+> -		printf("nr_cfi_cache: %ld\n", nr_cfi_cache);
+> +		printf("nr_insns_visited: %lu\n", nr_insns_visited);
+> +		printf("nr_cfi: %lu\n", nr_cfi);
+> +		printf("nr_cfi_reused: %lu\n", nr_cfi_reused);
+> +		printf("nr_cfi_cache: %lu\n", nr_cfi_cache);
+>  	}
+>  
+>  out:
+> -- 
+> 2.33.0
 > 
->> +		cpu-map {
->> +			cluster0 {
->> +				core0 {
->> +					cpu = <&cpu0>;
->> +				};
->> +
->> +				core1 {
->> +					cpu = <&cpu1>;
->> +				};
->> +
->> +				core2 {
->> +					cpu = <&cpu2>;
->> +				};
->> +
->> +				core3 {
->> +					cpu = <&cpu3>;
->> +				};
->> +
->> +				core4 {
->> +					cpu = <&cpu4>;
->> +				};
 > 
-> The MPIDR_EL1 register value (CPU node reg) suggests they are not
-> part of the same cluster (as you confirmed in the psci idle domains
-> description)
 > 
-will separate into 2 clusters.
-> [...]
-> 
->> +
->> +		ufs_mem_hc: ufs@1d84000 {
->> +			compatible = "qcom,qcs8300-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
->> +			reg = <0x0 0x01d84000 0x0 0x3000>;
->> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
->> +			phys = <&ufs_mem_phy>;
->> +			phy-names = "ufsphy";
->> +			lanes-per-direction = <2>;
->> +			#reset-cells = <1>;
->> +			resets = <&gcc GCC_UFS_PHY_BCR>;
->> +			reset-names = "rst";
->> +
->> +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
->> +			required-opps = <&rpmhpd_opp_nom>;
->> +
->> +			iommus = <&apps_smmu 0x100 0x0>;
->> +			dma-coherent;
->> +
->> +			interconnects = <&aggre1_noc MASTER_UFS_MEM 0
-> 
-> QCOM_ICC_TAG_ALWAYS, file-wide
-> 
-well noted.
-> [...]
-> 
->> +		ufs_mem_phy: phy@1d87000 {
->> +			compatible = "qcom,qcs8300-qmp-ufs-phy", "qcom,sa8775p-qmp-ufs-phy";
->> +			reg = <0x0 0x01d87000 0x0 0xe10>;
->> +			/*
->> +			 * Yes, GCC_EDP_REF_CLKREF_EN is correct in qref. It
->> +			 * enables the CXO clock to eDP *and* UFS PHY.
->> +			 */
->> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
->> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
->> +				 <&gcc GCC_EDP_REF_CLKREF_EN>;
-> 
-> Are you sure about this, or is this just copypasted from sa8775p?
-> 
-> [...]
-> 
->> +
->> +		intc: interrupt-controller@17a00000 {
->> +			compatible = "arm,gic-v3";
->> +			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
->> +			      <0x0 0x17a60000 0x0 0x100000>;    /* GICR * 8 */
-> 
-> Drop these comments
-> 
-well noted.
->> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->> +			#interrupt-cells = <3>;
->> +			interrupt-controller;
->> +			#redistributor-regions = <1>;
->> +			redistributor-stride = <0x0 0x20000>;
->> +		};
->> +
->> +		memtimer: timer@17c20000 {
-> 
-> Unused label
-> 
-well noted.
-> [...]
-> 
->> +	arch_timer: timer {
-> 
-> Ditto
-> 
-well noted.
-> Konrad
-
-Thanks,
-Jingyi
 
