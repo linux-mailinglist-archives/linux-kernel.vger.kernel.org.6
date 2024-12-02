@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-428343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73F79E0D24
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:40:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 482309E0D3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:43:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CCED281E81
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:40:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CED1281CF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCB41DEFD7;
-	Mon,  2 Dec 2024 20:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFAD1DF244;
+	Mon,  2 Dec 2024 20:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mr3WGCxi"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ma9Ethht"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508651DED4E;
-	Mon,  2 Dec 2024 20:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156681DEFC2;
+	Mon,  2 Dec 2024 20:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733172003; cv=none; b=ikcEnk3s+uzJWawjtz8+5eLIWo2ZRgQvha+Vg7ksT24oDJpRsR19ZaI1RMxgEgtUO60jdMgFCmxRFP0dQePRooZF4j4JThKlYsSFWAHPAQrpeQoCRb0oEHJmMOOVvoiaskgER3jgdwGPwR5G48f8yZs54h2YVqrSE9czxmepXTY=
+	t=1733172166; cv=none; b=FbVknLGcvLjUFXm5rG2mZ7Hfj/U0RTKSOE5F/Mwpw+tWCsKAg06SRldKQYrWr8qH+qILqwS+xJ8khGS4KKRN+9q2+kbNp/VHmB9fG4u8A8jyizGvzvbMee+af/m5zNRBydmzBXAdbypNv4gQKkK9yW8F/nyRdXHBDEeQd2wdHRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733172003; c=relaxed/simple;
-	bh=cyxcPd52gACP8SxGjZ4luSPaose5u0/LNbMFAm5Cf7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Md2AMMajTU93qI06RBfy/ItT4ByijZyi7ydGm/RjfXCm5ACBuQGGLpChPDzoh89J78DAZ6cy8Ymp/WyiXsiqSMr8it/gknqbkM1ZOsoU59CtyJeh1OuOOT29PvFdMz9Seh+qFXIzKSBCW4cG4OOtp26nMle/VM0hykBH+71XXO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mr3WGCxi; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ee6abf124aso2606397a91.3;
-        Mon, 02 Dec 2024 12:40:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733172001; x=1733776801; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bLRpz1Zk+hfN1AHa7tmG/5rj2S8mobqC+RuZhy+4X2I=;
-        b=mr3WGCxiPWlALVF/GglKzjFGx8BTRMlH28HIsD3AWb+pcmVadn1IN9o0ohPziHNncx
-         qsIkmWveC73wnJBWdcUbd6LO1KFy+PoHhgTtl8IGSv8hLqpq5Xfj9uktTqbpvPKiiK7m
-         3X0eWHvfNB2TxwahYMouVUWlTvAJqtpQG0BvVTy1UdfvcYE1/EfD2IiLENNpWICIs7Gq
-         QvlIxJ5SivFBlgbFjloqY4FHMwM+1MN5e90/iNlMrrWDdPzLveiORGTa7EVynMyovewn
-         O4UX71uNciN0Uf2yi30eoZaJPvoo7ddnORxAxERtf1JGawkslxKteMMoXf3iMsr8wnxQ
-         dfhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733172001; x=1733776801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bLRpz1Zk+hfN1AHa7tmG/5rj2S8mobqC+RuZhy+4X2I=;
-        b=O86qA9fSdeWnRYBnBQo/D2jqDGnerMheZwkdwjvpnmtmyWEyifkSMmjhR5aGBlOnrC
-         Hw7DVPQWnoCnIbw9e222egubkPKEp9c4GaCs3EWm41mMcL2gu3g9nyEEQ1RXRQOwjaZ6
-         zMlJ+rWx2Q5jDRCYcyIQENT80Vb4OEkjJp1PF9j12ogWQeDIW51LWKRed01VJMCHhdYM
-         2AvwuMQQ57H+evGNLbmIxPE/etCv5GrKIwi1DnGPI/+qsdwcS1oClBPP+a0aTrDETuin
-         CBsStSU0A1POG4p7nDPJy2g6hlQnayMyj5osP+PAA+DHhK1B0M7SQ/crRDIYY7kNR0ff
-         RV1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU4rKc15/8n42sFg9EPvSwNRHunzj9VmRQLD7FL9FM8xHYzh6XKm94YTPqMr4pDzhU6zVg=@vger.kernel.org, AJvYcCUGP2XQ4TutWJzeNTOu26lix4hIvV7JW+A2HEiFoKlTGhGXAwM9K/YvK69woluQ3inGrqTVIYSdBMcwLR+3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLfe579LaaS4BbrMDVXmJOkES62Aa9jYaoIQUAA2JUCf+l3Rbm
-	JkdrdsEJYDZFcf6B+mIBa9ZOJdh29t4z/sowQgnih7fMBZKZT0KJF7B/xk+w4q4vMgnGZyzlxLN
-	0uRQsECe9h6BflzDISmyzEq3LFm4=
-X-Gm-Gg: ASbGncsCif1PlAPXTUwWKjG5l1V7/dPfsB9r4lDtez+R09BNtgawyYKbOeJOFfwOdfn
-	3/uixOqQCjgH445OMJNfzMzQCAE3k
-X-Google-Smtp-Source: AGHT+IHmtqRzaVmAlDgjKyNEPsGkR13thUm6uPwrECK1jcapO0NEnL6jvuXlh2uXpxWOxWfIFYP5kAQjGVrojGvK4z0=
-X-Received: by 2002:a17:90b:1d0f:b0:2ee:d433:7c54 with SMTP id
- 98e67ed59e1d1-2eed4337dbfmr6055343a91.19.1733172001590; Mon, 02 Dec 2024
- 12:40:01 -0800 (PST)
+	s=arc-20240116; t=1733172166; c=relaxed/simple;
+	bh=+zwkQ2xiEGesgq3ksOB6NlbLoLnhqA8QQLYFAakVol0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=AXKy1dvSSpZ8Ol84+8mjPQStlo9J3T9SRYxa6XFXX2IUU8JkvTvRt4q3BcU67AlSq7J2a2f6R/Wg4+TC1CXT1kfyyYlvy212ntUFv9ELmUZgjRQ1v5U1FabQGyFTO+kgUhJKTnNIQrUGbp4rflYWuwXL4hN0P2NLHhSBv+EG3QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ma9Ethht; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2I7ORU025063;
+	Mon, 2 Dec 2024 20:42:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=xMjbrLpqiHzo2gjywHAVJE
+	b4mFrRLFpVJWVaBh8N47o=; b=Ma9Ethhtm7peN7b3/HoInHXRHnD3KT6JXzJE+z
+	kz+7+xCCBR6D0o8KbfHYXf3+ulvZhB5L7MJrgPFcDcAdHb9R/4SF0vUp2lJ6e6YH
+	Bc88sKdreH499hBrRMDX+WuLybM5WN190guuHY2UoMSl3inm/694+Ic9pAwIxWOF
+	i0Ocvkyhkj54JXgZq3mPuWyuXG2fvOeAKA6d921xziA95EqgvI2K1slA+g+HQEDn
+	8JSfj4LMuus8lcHJpzspt4E7/9o5G5263ii2QoWTT/RQiiGFbAG+OVmdR74ZJTQM
+	nx9Hlnx6GcI5k4pO+Ffc+aLJJVKO+/vbbqHeHXuoor19+xkA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437sq65ypq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 20:42:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B2KgZl8019538
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Dec 2024 20:42:35 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 2 Dec 2024 12:42:34 -0800
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Subject: [PATCH 0/3] drm/msm/dp: Fix and utilize TPG with a debugfs
+Date: Mon, 2 Dec 2024 12:41:57 -0800
+Message-ID: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241129091003.87716-1-jameshongleiwang@126.com>
-In-Reply-To: <20241129091003.87716-1-jameshongleiwang@126.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 2 Dec 2024 12:39:49 -0800
-Message-ID: <CAEf4BzYAG320uwJrtehe-7j1vsta1JwHT9JJs_DcmX892W736A@mail.gmail.com>
-Subject: Re: [PATCH] sched_ext: Add __weak to fix the build errors
-To: Honglei Wang <jameshongleiwang@126.com>
-Cc: tj@kernel.org, void@manifault.com, nathan@kernel.org, 
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com, 
-	haoluo@google.com, brho@google.com, joshdon@google.com, vishalc@linux.ibm.com, 
-	hongyan.xia2@arm.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJUbTmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDIKFbUpCua5xmbmpinGxgbJaYrARUWVCUmpZZATYlOra2FgAcDRJtVQA
+ AAA==
+To: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kuogee Hsieh
+	<quic_khsieh@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Jessica
+ Zhang" <quic_jesszhan@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733172154; l=1740;
+ i=quic_abhinavk@quicinc.com; s=20240509; h=from:subject:message-id;
+ bh=+zwkQ2xiEGesgq3ksOB6NlbLoLnhqA8QQLYFAakVol0=;
+ b=TKzMLnDkUr6YRlX0lEd3aSBNgxptty1rvGIsue6pwNTv79OZrnUW8Y9ifADNVgOKsKxvxKfZA
+ U3XUtgIu8r1A3ZK9lD58BwwspLgw9UC5vAtMGwyKopjCP5KF2cmVWAL
+X-Developer-Key: i=quic_abhinavk@quicinc.com; a=ed25519;
+ pk=SD3D8dOKDDh6BoX3jEYjsHrTFwuIK8+o0cLPgQok9ys=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -F_0jUNmRv_5nDoA0m4_DIHe5Ys7w-CC
+X-Proofpoint-ORIG-GUID: -F_0jUNmRv_5nDoA0m4_DIHe5Ys7w-CC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 lowpriorityscore=0
+ suspectscore=0 adultscore=0 spamscore=0 impostorscore=0 mlxlogscore=720
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412020174
 
-On Fri, Nov 29, 2024 at 1:36=E2=80=AFAM Honglei Wang <jameshongleiwang@126.=
-com> wrote:
->
-> commit 5cbb302880f5 ("sched_ext: Rename
-> scx_bpf_dispatch[_vtime]_from_dsq*() -> scx_bpf_dsq_move[_vtime]*()")
-> introduced several new functions which caused compilation errors when
-> compiled with clang.
->
-> Let's fix this by adding __weak markers.
->
-> Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
-> ---
->  tools/sched_ext/include/scx/common.bpf.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/i=
-nclude/scx/common.bpf.h
-> index 2f36b7b6418d..625f5b046776 100644
-> --- a/tools/sched_ext/include/scx/common.bpf.h
-> +++ b/tools/sched_ext/include/scx/common.bpf.h
-> @@ -40,9 +40,9 @@ void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_=
-id, u64 slice, u64 enq_fl
->  void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 sli=
-ce, u64 vtime, u64 enq_flags) __ksym __weak;
->  u32 scx_bpf_dispatch_nr_slots(void) __ksym;
->  void scx_bpf_dispatch_cancel(void) __ksym;
-> -bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym;
-> -void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter, u64 s=
-lice) __ksym;
-> -void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter, u64 v=
-time) __ksym;
-> +bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym __weak;
-> +void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter, u64 s=
-lice) __ksym __weak;
-> +void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter, u64 v=
-time) __ksym __weak;
+DP Test Patten Generator is a very useful tool to debug issues such
+as blank screen or corruption seen on the DP monitor by isolating it
+to whether the corruption is coming from further upstream such as DPU
+OR from the DP controller and below. It was noted in [1] that this API
+is unused. Rather than dropping the API, it should be fixed and used.
 
-Ack, this is the way!
+Hence, this series fixes the DP Test Patten Generator API and also utilizes
+it by adding a debugfs for it.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+[1] : https://patchwork.freedesktop.org/patch/623508/?series=141074&rev=1
 
->  bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter, struct task_str=
-uct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
->  bool scx_bpf_dsq_move_vtime(struct bpf_iter_scx_dsq *it__iter, struct ta=
-sk_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
->  u32 scx_bpf_reenqueue_local(void) __ksym;
-> --
-> 2.45.2
->
->
+To: Rob Clark <robdclark@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sean Paul <sean@poorly.run>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+To: David Airlie <airlied@gmail.com>
+To: Simona Vetter <simona@ffwll.ch>
+To: Stephen Boyd <swboyd@chromium.org>
+To: Kuogee Hsieh <quic_khsieh@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>
+
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+---
+Abhinav Kumar (3):
+      drm/msm/dp: account for widebus in msm_dp_catalog_panel_tpg_enable()
+      drm/msm/dp: do not touch the MMSS_DP_INTF_CONFIG for tpg
+      drm/msm/dp: add a debugfs node for using tpg
+
+ drivers/gpu/drm/msm/dp/dp_catalog.c | 15 +++++++--
+ drivers/gpu/drm/msm/dp/dp_debug.c   | 61 +++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/msm/dp/dp_panel.h   |  2 ++
+ 3 files changed, 76 insertions(+), 2 deletions(-)
+---
+base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
+change-id: 20241202-tpg-3f7543c036ac
+
+Best regards,
+-- 
+Abhinav Kumar <quic_abhinavk@quicinc.com>
+
 
