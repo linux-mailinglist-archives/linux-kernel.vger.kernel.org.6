@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-427370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C20A9E00CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:41:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284DF9E0034
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:23:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98ACFB250AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:22:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5732F1633B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF0120B1EC;
-	Mon,  2 Dec 2024 11:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255301FECC4;
+	Mon,  2 Dec 2024 11:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bomp437w";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f73jJtHM"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IE/Rm+Cj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="97pBe4MP"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730691FE47E;
-	Mon,  2 Dec 2024 11:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65501FECBB;
+	Mon,  2 Dec 2024 11:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138125; cv=none; b=lJaLtrkmAUxuPvUubuhduziETdvPahG11TEnoEe+4x4SU6sIibkTVYwC1hxXSneeB9Ptx7auON2UJVlvRm3H1FXE9aUFXRFJD0nfYLr6N+IjGr1Tzfb4RZqUGCThimemEGE10HNP2s0z1+DCcV8U8ThbKGmMLHBg3nx+xwht8LY=
+	t=1733138126; cv=none; b=iQD+huEiA57uxCF2snVblIlMWgXcsEZNGahrRgENbODK8Atpeqdb79WtQdLGLe57nTUIB4Nzsn1oxaUcsa/fLjnohYOGa4Pti4szv6jFQug+sk7NuVIuMMcYEX0zlVI1T82KbL+OvQHF3mPwCMB4Dh0tadNL7CFYHPtDZh50ASU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138125; c=relaxed/simple;
-	bh=uiXJKsc+8GlxfzKFQY+ksMPTqB1Y+aAQ8NMPnRMk9ew=;
+	s=arc-20240116; t=1733138126; c=relaxed/simple;
+	bh=aA7UllYsUJecHTGrAebIh0ZXjyM8mVjEDqHRSiXU/ao=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=mOaFBRqcDyaobWMPU/6X3IJs8QT5x0dc2BHguq/Z7d3BH+l3OcIjRmC659kFPdx7o9v+gMeByvQiizYtC1SMeICMFgQAvxKRo4KLaViBqYtJ5ZIJK/IbgHHF906OuSsQTcGPIvIzGhuvO51z+Nn6Lb9LvhCDSECH1hjupVSP8gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bomp437w; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f73jJtHM; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=iVqy4vAxVAu65B0kgfWDU1mrSYfOt3WPM7ktOzJJ16x5etUOi45qVkya6njb1sU4tQKTpDo+yGU+fLxxnLaVq4k4asO5ZOoBc8KOU1GNsJiYfyVUNw4npKUxCFi7KgBdztmszwunwac6470043OvokRGP0emamtUcpRpLJfYFWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IE/Rm+Cj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=97pBe4MP; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 02 Dec 2024 11:15:21 -0000
+Date: Mon, 02 Dec 2024 11:15:22 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733138122;
+	s=2020; t=1733138123;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3JE0M1113ulAjR0N6Z9/lLgvvkL8xra19PieaH6j+sg=;
-	b=bomp437whVLv9cEwG2WMIon75WQ14BAuVTpS1oYSeWOtbNEa0BfMBYyc1xudeQg5RedlgL
-	D9imrXvmKQEal6bn1900A/qAtOLvBvFcbLTXMUVtbeSF0A2MPwVHbftBKsRUpDUAWU94AX
-	nLp1WBuT0Q1MmTy3McF6SliWigZdA7fCc1FlXwuA1y9rwMVC+tWfgOFoyfbH5xDsf9zd+C
-	TzZn1O60MVAolbk2RcwEIHWu4BLCHA/IK+wzgWIKDyk4XRbOhiXP9NyRSi6jgfZKh3p2gH
-	ZOOHvjIi8VEvlcNe5noh31zm7fv/ThebFQwu6lcEnnnCTBPxn9BbKYMzuFTTsA==
+	bh=MVFuvUCzgYqWSclEZWBWFyhUnjUNIzMgiN5u+3ggtio=;
+	b=IE/Rm+CjReb6Vo72w/lA/AdT8ZqTTo+3hUekRukG8kgV69UwaKkeVMZo/i9YpThkjeWE73
+	nxC1zib515S/ZJYAqvdqEo8djyq+IB63mX3WyRq27UMJFwALXvCY/5wkvE1p6Q4EGLtHN4
+	ZaUE7sEndnk1mEOutuZss7a+4zHawvsZiKykNj/5zb4SurIu+xB+tCgKs25j66XOXiaimA
+	gQKGRWZSrpdeXBRYR71FcdQNNRGioUT7NPLsiuV7QfB2eAXzFSIEmkLIy/SPYSUQjY/DU4
+	bPDqqYYYxWg6201aMYfqtq9Ud98wCIFv8vKsG/yc6pfgBBgvpK9gQgRmopVDuA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733138122;
+	s=2020e; t=1733138123;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3JE0M1113ulAjR0N6Z9/lLgvvkL8xra19PieaH6j+sg=;
-	b=f73jJtHMD4Ap0b9TFaiSUdq4vEV0tqFtFbWaV3LH/08ZRXgz/fe+p1Q+56fj1A0WayPdtf
-	oDP5gUpeXK9s7lAA==
+	bh=MVFuvUCzgYqWSclEZWBWFyhUnjUNIzMgiN5u+3ggtio=;
+	b=97pBe4MP9PvxBizV6815CKntF239uZTDzfau8ILsfsvxKkwFYXnyRbQuYJFwTCGt8qJrrq
+	AemNiZVCPa2SVyAQ==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] loongarch: Use ASM_REACHABLE
+Subject: [tip: objtool/core] unreachable: Unify
 Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241128094312.133437051@infradead.org>
-References: <20241128094312.133437051@infradead.org>
+In-Reply-To: <20241128094311.924381359@infradead.org>
+References: <20241128094311.924381359@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173313812117.412.9274396373032434527.tip-bot2@tip-bot2>
+Message-ID: <173313812253.412.16467163513447060969.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,69 +81,71 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     624bde3465f660e54a7cd4c1efc3e536349fead5
-Gitweb:        https://git.kernel.org/tip/624bde3465f660e54a7cd4c1efc3e536349fead5
+Commit-ID:     c837de3810982cd41cd70e5170da1931439f025c
+Gitweb:        https://git.kernel.org/tip/c837de3810982cd41cd70e5170da1931439f025c
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 28 Nov 2024 10:39:03 +01:00
+AuthorDate:    Thu, 28 Nov 2024 10:39:01 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 02 Dec 2024 12:01:44 +01:00
+CommitterDate: Mon, 02 Dec 2024 12:01:43 +01:00
 
-loongarch: Use ASM_REACHABLE
+unreachable: Unify
 
-annotate_reachable() is unreliable since the compiler is free to place
-random code inbetween two consecutive asm() statements.
-
-This removes the last and only annotate_reachable() user.
+Since barrier_before_unreachable() is empty for !GCC it is trivial to
+unify the two definitions. Less is more.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Link: https://lore.kernel.org/r/20241128094312.133437051@infradead.org
+Link: https://lore.kernel.org/r/20241128094311.924381359@infradead.org
 ---
- arch/loongarch/include/asm/bug.h | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ include/linux/compiler-gcc.h | 12 ------------
+ include/linux/compiler.h     | 10 +++++++---
+ 2 files changed, 7 insertions(+), 15 deletions(-)
 
-diff --git a/arch/loongarch/include/asm/bug.h b/arch/loongarch/include/asm/bug.h
-index 0838887..561ac1b 100644
---- a/arch/loongarch/include/asm/bug.h
-+++ b/arch/loongarch/include/asm/bug.h
-@@ -4,6 +4,7 @@
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index d0ed958..c9b5818 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -52,18 +52,6 @@
+  */
+ #define barrier_before_unreachable() asm volatile("")
  
- #include <asm/break.h>
- #include <linux/stringify.h>
-+#include <linux/objtool.h>
+-/*
+- * Mark a position in code as unreachable.  This can be used to
+- * suppress control flow warnings after asm blocks that transfer
+- * control elsewhere.
+- */
+-#define unreachable() \
+-	do {					\
+-		annotate_unreachable();		\
+-		barrier_before_unreachable();	\
+-		__builtin_unreachable();	\
+-	} while (0)
+-
+ #if defined(CONFIG_ARCH_USE_BUILTIN_BSWAP)
+ #define __HAVE_BUILTIN_BSWAP32__
+ #define __HAVE_BUILTIN_BSWAP64__
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 469a64d..7be8089 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -141,12 +141,16 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ #define __annotate_jump_table
+ #endif /* CONFIG_OBJTOOL */
  
- #ifndef CONFIG_DEBUG_BUGVERBOSE
- #define _BUGVERBOSE_LOCATION(file, line)
-@@ -33,25 +34,25 @@
- 
- #define ASM_BUG_FLAGS(flags)					\
- 	__BUG_ENTRY(flags)					\
--	break		BRK_BUG
-+	break		BRK_BUG;
- 
- #define ASM_BUG()	ASM_BUG_FLAGS(0)
- 
--#define __BUG_FLAGS(flags)					\
--	asm_inline volatile (__stringify(ASM_BUG_FLAGS(flags)));
-+#define __BUG_FLAGS(flags, extra)					\
-+	asm_inline volatile (__stringify(ASM_BUG_FLAGS(flags))		\
-+			     extra);
- 
- #define __WARN_FLAGS(flags)					\
- do {								\
- 	instrumentation_begin();				\
--	__BUG_FLAGS(BUGFLAG_WARNING|(flags));			\
--	annotate_reachable();					\
-+	__BUG_FLAGS(BUGFLAG_WARNING|(flags), ASM_REACHABLE);	\
- 	instrumentation_end();					\
+-#ifndef unreachable
+-# define unreachable() do {		\
++/*
++ * Mark a position in code as unreachable.  This can be used to
++ * suppress control flow warnings after asm blocks that transfer
++ * control elsewhere.
++ */
++#define unreachable() do {		\
+ 	annotate_unreachable();		\
++	barrier_before_unreachable();	\
+ 	__builtin_unreachable();	\
  } while (0)
+-#endif
  
- #define BUG()							\
- do {								\
- 	instrumentation_begin();				\
--	__BUG_FLAGS(0);						\
-+	__BUG_FLAGS(0, "");					\
- 	unreachable();						\
- } while (0)
- 
+ /*
+  * KENTRY - kernel entry point
 
