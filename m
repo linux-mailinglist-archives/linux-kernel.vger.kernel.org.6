@@ -1,137 +1,93 @@
-Return-Path: <linux-kernel+bounces-427100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AD49DFC7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:56:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538109DFCBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:05:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176AC281D2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19449281CA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A071A1F9F79;
-	Mon,  2 Dec 2024 08:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A77A1FA141;
+	Mon,  2 Dec 2024 09:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiPKi8cR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lony.xyz header.i=@lony.xyz header.b="MWYA0Tiv"
+Received: from mail.lony.xyz (lony.xyz [172.105.251.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BBE1F9EA6;
-	Mon,  2 Dec 2024 08:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BA01F9ECD
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.251.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733129802; cv=none; b=HrvMXPznOL3Qvasm/OYVrLTFGZtiUOvQV7aJhkdOoboQlxz+NSKeIp98KQgL6UyFYt3MdYuVUSQdZj2+Kx1NoQKb7rgA0/+xn4lxYGJDwUl47b0qIWohaiLMGeJfPkpecUNjnlV/C0A9JAu2h54EXcOFpnYGhIq5oLBkoKdAPps=
+	t=1733130347; cv=none; b=LyYilklFyfwKmY0mn4l1ErteoEtoCvMeWLVtC8dE3prVqbkw2dsP95ZpvMlh5qJ5ciHP0/iNDdFFdcfz83FykIWdBysHUPqacZqvq4FcaP16mMlL5H02SIA97X/Vd4riv+Dxqhfit0pUNgdcFIXPy2AyTDbenEfgQb1id/DZAf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733129802; c=relaxed/simple;
-	bh=zzisNuofM7YwJjmpHELvkKbkXLghLeJPRjZg9agpgHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=roYj417FOCd3LHADrSN8m9l7eWPASdTt6YgqMMlD9rvQJev9H7eHSSBhJMIeHTgmIlx3szA1arO2t045JrssqA0g2AMAdugO34noJVYKXDL7Ms0uwUKgpyJfExp/29XW+DAOGd5Sha4U396FbGspq5s24Yz3QQ52HxhV3VQgv7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiPKi8cR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E047C4CED2;
-	Mon,  2 Dec 2024 08:56:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733129801;
-	bh=zzisNuofM7YwJjmpHELvkKbkXLghLeJPRjZg9agpgHE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PiPKi8cRBvWfNHpQtHAgZMslZYCS1u6zWMWAUH+tQqG/Rk7klnz7KDuA78K73LC/4
-	 D5ZloaGdObuFgJhJH1/CckMxA1owtcF6hK+6Z20Vjf1yszLUub0RJhKWUVEmYW2EXe
-	 6YkGygLXg9s5EQGJ4vTpRd9Nj8lMfjF4AbFc96t9ODjVEtSF9LsWADK8G+xVd8NDFz
-	 M4UqDGAHQWT4Knq0tZ90nOWac+OA1rEbJiPB1SYYwSmRR8vnszxp2jm67rBz/ie7Az
-	 bWudOmZMgz8a8EemVeGXD7I1w0SGJhb7h7vEDsvvOF7lKWQ8qSMH2wiTfv4zrk2ftR
-	 iBXJBt8Cmykeg==
-Message-ID: <f8780a3a-793a-4067-8108-18a293eb1fd0@kernel.org>
-Date: Mon, 2 Dec 2024 09:56:37 +0100
+	s=arc-20240116; t=1733130347; c=relaxed/simple;
+	bh=kIELQPf0ilImOOICBrG5igCu85Wt8+2BqJaPkbUMfgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ukfV++ceE1qDjxEQccUbgDMoRd9voWDdZOTXCyCZajMj/E9GNruKIrAsbA8BCH/tcO7tfjjceFpHVoxfRyMyYiNOchruVmIAN8IfAFOaoI6SwC9VIBW80ApQtkWTwVMXgrX3UQYNgMyWQRLh4BvCyXTAfys0pn5B+tBdHOmBI9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lony.xyz; spf=pass smtp.mailfrom=lony.xyz; dkim=fail (2048-bit key) header.d=lony.xyz header.i=@lony.xyz header.b=MWYA0Tiv reason="signature verification failed"; arc=none smtp.client-ip=172.105.251.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lony.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lony.xyz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lony.xyz; s=mail;
+	t=1733129959; bh=kIELQPf0ilImOOICBrG5igCu85Wt8+2BqJaPkbUMfgU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MWYA0TivS7lrWrXGSYlFyLtvwX6tD1PVUiv+AbTNWo3WlN4cXp47guGwYuXmS7NBd
+	 sU7cMXkE1nAZyZWNnd1RztXEh5cJtxVkgUOcT0Msj5mNpiaBieYZOkBcVe69jL9B5n
+	 TNmAnuDbpzdEvnULC0c1exTe0GOqAobKD2Wa1Na9b/3qov7lpHb5Q8FjqX9W5mr/F+
+	 NS4vrYDiHp4DlsChKAVaX6mh+TkY6P3P4AEGFrpygT8MOmfPr7d/CooJp4CXLpnF4M
+	 KCpF7G9EEWMRqrM7qAJ+a4yaia5bvfUzRGOO/IsVAVljypkfJwHQUt0Y2xP4Oi04Lb
+	 QRm70mTHrVuwg==
+From: =?UTF-8?q?Sergio=20Migu=C3=A9ns=20Iglesias?= <sergio@lony.xyz>
+To: archjgross@suse.com
+Cc: sstabellini@kernel.org,
+	oleksandr_tyshchenko@epam.com,
+	xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Sergio=20Migu=C3=A9ns=20Iglesias?= <sergio@lony.xyz>,
+	Juergen Gross <jgross@suse.com>
+Subject: [PATCH] xen: pcpu: remove unnecessary __ref annotation
+Date: Mon,  2 Dec 2024 09:59:05 +0100
+Message-ID: <20241202085910.5539-1-sergio@lony.xyz>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: Add initial support for Samsung Galaxy
- S20 FE (r8s)
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Denzeel Oliva <wachiturroxd150@gmail.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241112193149.1262-1-wachiturroxd150@gmail.com>
- <20241112193149.1262-3-wachiturroxd150@gmail.com>
- <746e218b-a00c-49ac-a998-511696bc9525@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <746e218b-a00c-49ac-a998-511696bc9525@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 14/11/2024 09:26, Ivaylo Ivanov wrote:
-> 
-> 
-> 
-> On 11/12/24 21:31, Denzeel Oliva wrote:
->> Add initial support for the Samsung Galaxy S20 FE (r8s/SM-G780F) device.
->> Its launch was in 2020 and also based on the Exynos 990 SoC.
->> It is only configured with 6GB of RAM, although storage options may differ.
-> 
-> As far as I can tell, there are models with more than 6gb's of ram.
-> How would the memory node differ for them?
-> 
-Denzeel,
+The __ref annotation has been there since the beginning of time, but no
+calls to __init functions exist inside it, and the compilation of the
+Xen driver does not output any warnings when removed.
 
-This comment was not addressed.
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Cc: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: xen-devel@lists.xenproject.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sergio Miguéns Iglesias <sergio@lony.xyz>
 
-Be sure you respond to reviewers in timely manner (and if you give
-yourself more than two weeks to respond it also means other have more
-than two weeks...).
+---
+ drivers/xen/pcpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Nevertheless, this is not really stopping from merging this device.  New
-variants can be always later added with different memory map.
+diff --git a/drivers/xen/pcpu.c b/drivers/xen/pcpu.c
+index c63f317e3df3..093ad4a08672 100644
+--- a/drivers/xen/pcpu.c
++++ b/drivers/xen/pcpu.c
+@@ -105,7 +105,7 @@ static ssize_t online_show(struct device *dev,
+ 	return sprintf(buf, "%u\n", !!(cpu->flags & XEN_PCPU_FLAGS_ONLINE));
+ }
+ 
+-static ssize_t __ref online_store(struct device *dev,
++static ssize_t online_store(struct device *dev,
+ 				  struct device_attribute *attr,
+ 				  const char *buf, size_t count)
+ {
+-- 
+2.47.0
 
-Best regards,
-Krzysztof
 
