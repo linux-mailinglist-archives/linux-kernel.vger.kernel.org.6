@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-427931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC1D9E086F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:27:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560FB9E0862
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:24:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE7781778D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6ACDBC47F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF05E154BFB;
-	Mon,  2 Dec 2024 15:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8312165F1A;
+	Mon,  2 Dec 2024 15:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsYghMuC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzCj7D4I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C85814375A;
-	Mon,  2 Dec 2024 15:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4515B15C14F;
+	Mon,  2 Dec 2024 15:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154675; cv=none; b=kKHhH2tSZUCjYj3DjJ3y4VPUr9Sa5pV/2BARwcw99MMPx2d+iG9OhAV8zC7XUfqHVeQEH3v1RAo8BZp4hdmbpZqXaIplRUAmoPt9SGS/vSguulTE7IHTgiOi9txwQZ1AQWl7BJKbBZCYenFo/Ygvni2MsM9+4g8QRszagYMUeqk=
+	t=1733154676; cv=none; b=W5jC/s3s6JJFWLbOlYR3CNpGqI1oP2oHev0fpIs/WzenaCuvgCun9y27HbwJVchjKW5Go4YmBOjrdIsSMrqLTklh0ws6XvGA9qw1naK3KgIxVGOxvnn79lyGedK0Wr7DAmSxG1SNMwSQAI8xAEpkZN76Gb+fmpycukS4RdsNh5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154675; c=relaxed/simple;
-	bh=chSBd4V7M6R7ccMjFEIBv1djGqXeyU/hBrRINQab+uA=;
+	s=arc-20240116; t=1733154676; c=relaxed/simple;
+	bh=AcITv8v7xwO3OcPABb6z0A8v9LpEl+qK/t+N2ODkNrY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aW9EQJBbn8nCfrq0YfQ7fPRfDbXfjlFOs6r/UzTBgH8h/t5MWCvDtAbjyRI6FEjjoz+hB4/eOb8AnESOe9UkIyZA1dyxX1ypZObLEMbXLM7BPylMvVazDN3ReEUPYG8X4fRc6VaB4+On5s97oz0OFjZbPOYkmuBpLAMEsygVbOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsYghMuC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C103FC4CED2;
-	Mon,  2 Dec 2024 15:51:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=jd/CyIkBOdSa0rLtDtq72apmmVNR69Ohe6QBGiE006dMSmgURjZW4Y2LfMpVXdpV7feC2PbOidTmbxTH5Ka1y0PmIePpXHq7KSTiXmUUOooRqnzZQpFZi10V6pOWq2XQBzZS5C47ILyv/9EJi0NhCeO5svUh0YrW29Py9N55ok4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzCj7D4I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02FABC4CED9;
+	Mon,  2 Dec 2024 15:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733154674;
-	bh=chSBd4V7M6R7ccMjFEIBv1djGqXeyU/hBrRINQab+uA=;
+	s=k20201202; t=1733154676;
+	bh=AcITv8v7xwO3OcPABb6z0A8v9LpEl+qK/t+N2ODkNrY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NsYghMuCAkEm7F4RW0jShEj3i42wPbcqxZyMq56GJBJo+F5uFd1jwD1xvKF7UKk1A
-	 m5/qHAw8zSLnpFeqPk1NdjLn6HUn9WisN3bLy/ZlAMir2Tj/JqhKa7n5lZpPtO1Q8Z
-	 n7HalIY5inz+Xxjba7SSIWkw082wGQc8d+ORjg0Iw5s1iZV9++9k1VwfVeZXhxXJ/F
-	 8Zuv1aAh4RgcXai4VhM4XEYJHSJj1ADLwLmZla1CFI+9ILiRRxMSAGtL3VVNwxuxCT
-	 LFsqtvm9RGnSoXtTqdWlR30PqjPMhY+viqxCgLYaZAqnJKEb0vniJTQhAFTCIFfVxS
-	 9RNbPW/6BKg/w==
+	b=fzCj7D4Iv0UmlDFLVKF4TSbNp9g7i8UYQjML9it1xvog2TWHy/3P+OkyjrigfyV1q
+	 AlmT54s5sdmZU2Yt5cQpDTAKDKgAZT4JB1QoJTot2qqjrSCNK+um/EGQkyGA6WP6rY
+	 iYEqdYk1ww8D6TTTaYVNyVk205RImiaG9s3J4Ko+lYqES3JrN7g6nXuFM2CjazzWWH
+	 FbatlltOpHAT/1Lxqt01DXghJOzXf1ES0b5ezzROO/hOy87qdQi/6fMOZVz6poSkxl
+	 4oegBzcpha5WOzGrYW/sJ6aFQcpoaWxqIWnUJfzi7ZZTC5k01BrlhX7ticcFVVjLop
+	 pv91zCgpNTb1w==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jie Gan <quic_jiegan@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Tingwei Zhang <quic_tingweiz@quicinc.com>,
-	Jinlong Mao <quic_jinlmao@quicinc.com>,
-	Tao Zhang <quic_taozha@quicinc.com>
-Subject: Re: [PATCH v3] arm64: dts: qcom: Add coresight nodes for QCS615
-Date: Mon,  2 Dec 2024 09:51:01 -0600
-Message-ID: <173315466531.263019.7584568403904604417.b4-ty@kernel.org>
+	linux-arm-msm@vger.kernel.org,
+	quic_ppratap@quicinc.com,
+	quic_jackp@quicinc.com
+Subject: Re: [PATCH v2 0/2] Add DT Support for primary USB on QCS615
+Date: Mon,  2 Dec 2024 09:51:02 -0600
+Message-ID: <173315466532.263019.3718496755521104621.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241106094510.2654998-1-quic_jiegan@quicinc.com>
-References: <20241106094510.2654998-1-quic_jiegan@quicinc.com>
+In-Reply-To: <20241121063007.2737908-1-quic_kriskura@quicinc.com>
+References: <20241121063007.2737908-1-quic_kriskura@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,16 +67,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 06 Nov 2024 17:45:09 +0800, Jie Gan wrote:
-> Add following coresight components on QCS615, EUD, TMC/ETF, TPDM, dynamic
-> Funnel, TPDA, Replicator and ETM.
+On Thu, 21 Nov 2024 12:00:05 +0530, Krishna Kurapati wrote:
+> QCS615 has two USB controllers. Adding primary USB controller support
+> in this series. Both the HS Phys are QUSB2 ones. Although the HS PHY
+> is a QUSB2, it still uses DP/DM interrupts for wakeup instead of QUSB2.
 > 
+> The primary port has been enabled in peripheral mode as it is intended
+> for debugging purposes.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] arm64: dts: qcom: Add coresight nodes for QCS615
-      commit: bf469630552a3950d0370dd5fd1f9bf0145d09d5
+[1/2] arm64: dts: qcom: Add support for usb node on QCS615
+      commit: 4b2769c7d7ce47a64f874eac92b324f3561339ab
+[2/2] arm64: dts: qcom: Enable Primary USB controller on QCS615 Ride
+      commit: 5c66811c9251303b2806caa04b278b4826e7a408
 
 Best regards,
 -- 
