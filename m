@@ -1,177 +1,145 @@
-Return-Path: <linux-kernel+bounces-428387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5949E0DF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:36:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 057519E0DA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:17:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAFBB16143A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:17:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CBD1DF735;
+	Mon,  2 Dec 2024 21:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="FS3Koocm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YG6TDZSN"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69374B3339D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:17:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D741DF75C;
-	Mon,  2 Dec 2024 21:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMEYBPPm"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FC61DE4E6;
-	Mon,  2 Dec 2024 21:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480611DEFE5;
+	Mon,  2 Dec 2024 21:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733174227; cv=none; b=SCnsruMCvLhcpoOl8GsnrS3oX18H653uuB8h2URo3IiRK+ADow3hMAmBhWZCHqiReJSfW7kdW88Fr37CmvOVZ8qkozmJAn0u28KRXrxgl+QHzJXL4/HNIqJF9PrLHLH5xZWU7QiUizAn0blZVksB48HRaqtes4y7CMjOT1BR9mA=
+	t=1733174244; cv=none; b=j6p8X3Oyq2SvjpmN1capXba9YGKXymDKmoNRwn4TsIxd+UT+7m9c/nKMjmty9U3EposQJhE+NBsCbEeYSBOS8fb6QaJk741zzxR2KM/RRnuATn9RRl/zqND7d9U9pEyTmprfF/RUWg2QF7Ff2NdDG4mKLBiPY8UH/1jAHwVMVps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733174227; c=relaxed/simple;
-	bh=c/OpwCh+/t+1IaSytHBg7Vl7CNyrcqGFhU7wyEfSfVM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m+wccwUEQ76V5ZFR+JICaxhnujZ2uVj3snLQ5Pu+CJlT1pUTH6oMrEiRmY8sFcwrudFFjSG0oS0X4j5X+zTuv6vMO8xMd/x69XF2sQ+dmPZ2wuYjWYPJc6xq1amKGhzldwEZf3XXzhDc1Tr3fpxDiTE1u0ikYWBzHPYZ1nPDDHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMEYBPPm; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2eeb64f3588so1309034a91.2;
-        Mon, 02 Dec 2024 13:17:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733174225; x=1733779025; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZHtDSci4mxW9uObrOpyGXF4tVtVRk+OAevn+2+RUUc=;
-        b=bMEYBPPmUSzzFVLj9dAXVxkG7SkFjX0RJ9DXF00gd9JPnqb1y0BE+QqO/OfCo8+9zL
-         E3xw4ZetVenH0ISfG7FI2kNitWbxPHzm8dRWOXJSU2qLIVxHvx0kolgC107d7xGUSKq4
-         v+arcQYsDBBPzxLpFgDjZ4cV53opsDDu4cpOG6tKzRm+4Q/CWr/fdHZXvTkjaO4z6FJw
-         JW8/wFLTPFs3dOcmd/W/XioTSaLtHwLHZCSrBeBu+nFViATugRRwMiabDMaNTfZghJUW
-         CVR3flE3Qzl3NNECSuD/bCnXOPEt9BkqzBXNzEYNH4IhHbD943pFZQ7TEzBlhqCD34uC
-         qGgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733174225; x=1733779025;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FZHtDSci4mxW9uObrOpyGXF4tVtVRk+OAevn+2+RUUc=;
-        b=Qg0iUV6aEDbtErdlOiEJmfERDIcKe8k2PVZ3igqRozFzURvnF0s1nRbZooAVUrqjjv
-         PjL3OurKaWDHgW5dWk3w32O2O1vRkX4VNWMD4VR1vbCBdD50x957FphDQVLtAWHSEHJC
-         8Jmj8XRugz57Z3dFCUS3NBYRFtxQHabiROVSBJZvnhaqI2fACd1+UNU/QRTd1Db6Jy8h
-         1qalxz/uWXYDdP2PY8XSaGm1m1IRHFmXunMqEakwnCOYbtl290Op2ONG/+c6e7OgB43/
-         j/qtMXCu6293zaroFJDzRbslqWPVuxukroppKnnZmyz18ZFUS5qK/7DYlihKyDh/Nm9R
-         CFsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeSIiWgPUlGzcXhpqF+ZYvjGe8r9nCQiU98EF9WQkhUwaDe787END7bB3EefnJNPBVha00zoKrSL/2vw==@vger.kernel.org, AJvYcCUlpgLldE4AOaELzYpHoJPsJFAn96PIHCf6cTJeZXWuhNQJ0XdxwLT63hfHClcEL3WeJW7w3bgI8HlCx+Q=@vger.kernel.org, AJvYcCUtEu9iWdDWJZ4MBf6HFEqynzaSVPmozu/fuu3UR76i4CDMdx1kQgPTbEsio1IYE1ie96P7g7aoCMOgf+l2zRVk@vger.kernel.org, AJvYcCVAeqE6Gt/HWXKSQKP7UhAfX/XbmFmsUC0RlikhylITWMPqPi85dRGlXy5LCg2h3G/l0LDq2R1CSg8EofRCS/0=@vger.kernel.org, AJvYcCVL6m0HvMGF0gtdcrsLqDJehgFgLSBP9V3FeBkH3OmZpoDcdcMu75wVhqI/lWk57oAPu73znVpWijBI80Y=@vger.kernel.org, AJvYcCVnrIsuMGZoTtv0geGluA8WVEOK9++V3LPUKJ4Yje0r/Hk0UMPQSNoLqAFUudCZQrZ4IH9ejLEJcJULxw==@vger.kernel.org, AJvYcCWoruJmMJHeDyBieTZFO4wD2lEwGBgXFeooR5pIEobKQwWwDsfK9XjihvNHNkj+VnOeEkOu1F7Iyr2yLEf/@vger.kernel.org, AJvYcCX+Iug9e9L896KXYAYQRKzZCZSqwleuIk7bxg5uF+CBDny5kBemu2X64YRRFjzJHiINN/XCg3x1zRKG@vger.kernel.org, AJvYcCX4Sq30BqUje9a7bonyx9qAeEqz1qSmp1THIo5EYauvCRou4qJosyeppNow53OMHujNED1lTa3vgPnR4HDN7uuF@vger.kernel.org, AJvYcCXD
- tcmbbuEq3ICDfUBDDMq7FI8mIIjTJ/0Om7J36RjzfnSFn+cTmTxOD8cJlIxIjhXD00YRrvAL@vger.kernel.org, AJvYcCXPt1F0JHF7LsQCvlLAkF7VxP9xmVVCcuK3cB7WKUqXEW4mwgy+aOqbehvcadMFvnH6MGwwJ1Yyaq+Xf8IonQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPJZlwK7dPN9pLNRIuHOE2/WA78m3phmhIEdcEjOQuLbKW98ha
-	21Yu3kncqtWbUEXzy1b/gBOqCqPI6BiAIuywOoF/NpMGngvqxj5RlnguoW5005nZffctAs+7cVM
-	hSLN4opAynq3uTZBaJRE1U5tY7kU=
-X-Gm-Gg: ASbGncvWyXY1AAzpsWgNREUsofaF0rtF3wK0vcBy8Kqr37RHZdpEkJwDX1Tgou+u58J
-	clh7aXq3m+4xvqW6reB++a/iQUsDvfA==
-X-Google-Smtp-Source: AGHT+IFDh1yb6d6zM40EzPJelJu2iVMH0WClLwmjysRWgfnYNSB8awfS5UuhO/EqqMc0eH1dffTLKgwFM99xaAmy4L8=
-X-Received: by 2002:a17:90b:1c09:b0:2ee:3cc1:793a with SMTP id
- 98e67ed59e1d1-2ef0124c720mr32029a91.29.1733174224966; Mon, 02 Dec 2024
- 13:17:04 -0800 (PST)
+	s=arc-20240116; t=1733174244; c=relaxed/simple;
+	bh=V8E3CAoZ+eoyH5qb5Q7b9xEpiN/FXQZ/mmLitihRQiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JGZTIAwjbUc/B5FqiETIbcyKkYQk6xSJANkiMooqDt5H2TqfH1VlBj7ksi4oWAhJNBqUpCuw5oqHeWh5AbJFMojteYZFHhNYaQq8PyJwReOywwDbu8sqvEXTiUgidFzdaiAHBODsJU1Bp9h79RC2g8GuUj5Fi1sO4p/JhFwqqdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=FS3Koocm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YG6TDZSN; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5034113801CD;
+	Mon,  2 Dec 2024 16:17:21 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Mon, 02 Dec 2024 16:17:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1733174241;
+	 x=1733260641; bh=koGFzRxfP6P2j6KWMMaHEsaD9wq7yXqj55bBgEKSlhg=; b=
+	FS3Koocm4A6dr1QP03hTwazvp2asg4xHUTLpFqWzcgYS97a5SM8BH3uBWjwa/rDL
+	+uQpYB8K7nByoKWY5cahvznLbuvNUHSKBWZpKibsK6o/PaL3u4OEoZHS5sJtJYGy
+	zbawQZDZpjZ/vOeMwqfh5F69Omqjgm3R0wcRWQ0NmJI2wOcBM+ZF8p3ld0LS1Adv
+	wIWbxOwQ0T6ZLRGL9pwteIosavXtlqcv5GvjRHzNtrqEVrIqGGB6+CYVM30I6fP3
+	3Mw8fkjOTc72I+/r/81hn4vmKgbMIVIBGJpmOuOGauJXGqlUG+KvxHhEGeq7nDk4
+	BYGtItPvRz3aRuJ+7xz0xA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733174241; x=
+	1733260641; bh=koGFzRxfP6P2j6KWMMaHEsaD9wq7yXqj55bBgEKSlhg=; b=Y
+	G6TDZSNTjZldQHX/8CHbBKeu+5Huxyjy5qnl9wl0qcsahZ/EeTGuXm1fcePBbI7F
+	kl5UkUzUDWRwk4ccV/OrI4xd3rc0Egf29av9Jd26l5R8fk/HQWo3brMf9koPy6by
+	5jLDaG4gfF0LQHPA4sfdRM7PgtBpjuGw1VLbh8VVgUwwcrteP3KCe/GrPtIHat9U
+	TZx3qDw3GZkAbKdAaJlDZprfyv4BQi8X7tvCN85rda3dVbs+xunE/lCkzR9NHhBH
+	3XsIWx57A3ebPXWuB0psEROIfcGUDu0ELiLGuhaonzGzH+nTiX/eF//2BerfwDYL
+	eWtVVDUtLDjxHV13CcHUw==
+X-ME-Sender: <xms:4SNOZ4j-d4qZdRaHC1GrfSAogLKhVy1YQ8gi2ILu-IUXNd6GUmvABg>
+    <xme:4SNOZxCsG6FUikksopcKuF2C-jQbzl2Us9tg-PQ1uuUh9jmxbCA6V-Z5_LrzxWxab
+    DJrU8qw6NeEDCL_>
+X-ME-Received: <xmr:4SNOZwH7fuuBoCfqwNK3o6ZAol6JM_Hvh5CvjnjlPT0hdw3U_OE9PrOKQW46gvC7J-GPihqh5hVclHfZv_UbcdvB7XuNTGutPmaSZzKYCCVvP_mMn-pz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheelgddugeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfg
+    tdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
+    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
+    phhtthhopehnihhhrghrtghhrghithhhrghnhigrsehgmhgrihhlrdgtohhmpdhrtghpth
+    htohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhf
+    shguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
+    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhkhhgr
+    nheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehshiiisghoth
+    dokeejsgekvgeivgguvdehuggstgegudejheelfhejsehshiiikhgrlhhlvghrrdgrphhp
+    shhpohhtmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:4SNOZ5QxY-JLqdoWmCsOzLTKsIaJiHQJ5dBf-k0ujg_EuIL8tHCjyA>
+    <xmx:4SNOZ1zYesvkHww5E3mf5BiU0-S2UAAK09gFPxK_GCVlZcCl-JxlUg>
+    <xmx:4SNOZ35jZ7_asUgI-badqLi3BeJsv6Emtk6bzvT2_zZ9hzJf2avylw>
+    <xmx:4SNOZywiLtEmoQ9kOz6qslOgKS0ErNrRQ9nIs23Bi-ap10tAziLpNA>
+    <xmx:4SNOZ0xaCAkiJNoQvPeI90ChJO0mFIE4Iz9uvbX5lOovWzWINMXtwPNX>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 2 Dec 2024 16:17:20 -0500 (EST)
+Message-ID: <364da8c4-7559-4c6e-afc4-d1b59a297d51@fastmail.fm>
+Date: Mon, 2 Dec 2024 22:17:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
- <20241115-converge-secs-to-jiffies-v2-9-911fb7595e79@linux.microsoft.com>
-In-Reply-To: <20241115-converge-secs-to-jiffies-v2-9-911fb7595e79@linux.microsoft.com>
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Mon, 2 Dec 2024 22:16:53 +0100
-Message-ID: <CAH9NwWdjXKH-AcKa-prwdqj2JqWLYVp1qM+0kxtQYSwo1J1c7g@mail.gmail.com>
-Subject: Re: [PATCH v2 09/21] drm/etnaviv: Convert timeouts to secs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
-	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Russell King <linux@armlinux.org.uk>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>, 
-	Oded Gabbay <ogabbay@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
-	Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-	Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
-	Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
-	Louis Peens <louis.peens@corigine.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, netfilter-devel@vger.kernel.org, 
-	coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	cocci@inria.fr, linux-arm-kernel@lists.infradead.org, 
-	linux-s390@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, linux-scsi@vger.kernel.org, 
-	xen-devel@lists.xenproject.org, linux-block@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
-	linux-mm@kvack.org, linux-bluetooth@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-rpi-kernel@lists.infradead.org, 
-	ceph-devel@vger.kernel.org, live-patching@vger.kernel.org, 
-	linux-sound@vger.kernel.org, etnaviv@lists.freedesktop.org, 
-	oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: add a null-ptr check
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Nihar Chaithanya <niharchaithanya@gmail.com>, miklos@szeredi.hu,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org,
+ syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
+References: <20241130065118.539620-1-niharchaithanya@gmail.com>
+ <8806fcd7-8db3-4f9e-ae58-d9a2c7c55702@fastmail.fm>
+ <CAJnrk1b1zM=Zyn+LiV2bLbShQoCj4z5b++W2H4h7zR0QbTdZjg@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1b1zM=Zyn+LiV2bLbShQoCj4z5b++W2H4h7zR0QbTdZjg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
->
-> Changes made with the following Coccinelle rules:
->
-> @@ constant C; @@
->
-> - msecs_to_jiffies(C * 1000)
-> + secs_to_jiffies(C)
->
-> @@ constant C; @@
->
-> - msecs_to_jiffies(C * MSEC_PER_SEC)
-> + secs_to_jiffies(C)
->
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+Btw, totally unrelated to the report, but related to what the C 
+reproducer does, killing it sometimes results in
 
-Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com>
-
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c b/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c
-> index 721d633aece9d4c81f0019e4c55884f26ee61c60..0f5a2c885d0ab7029c7248e15d6ea3c31823b782 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c
-> @@ -100,7 +100,7 @@ int etnaviv_cmdbuf_init(struct etnaviv_cmdbuf_suballoc *suballoc,
->                 mutex_unlock(&suballoc->lock);
->                 ret = wait_event_interruptible_timeout(suballoc->free_event,
->                                                        suballoc->free_space,
-> -                                                      msecs_to_jiffies(10 * 1000));
-> +                                                      secs_to_jiffies(10));
->                 if (!ret) {
->                         dev_err(suballoc->dev,
->                                 "Timeout waiting for cmdbuf space\n");
->
-> --
-> 2.34.1
->
+  12563 pts/1    Zl     0:00 [syzkaller] <defunct>
 
 
--- 
-greets
---
-Christian Gmeiner, MSc
+[   46.018014] mount.nfs (1163) used greatest stack depth: 23944 bytes left
+[ 9929.865478] syzkaller (12313) used greatest stack depth: 23216 bytes left
+[10159.658915] INFO: task syzkaller:12312 blocked for more than 120 seconds.
+[10159.663075]       Not tainted 6.13.0-rc1+ #92
+[10159.665618] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[10159.673650] task:syzkaller       state:D stack:28944 pid:12312 tgid:12307 ppid:1      flags:0x00004006
+[10159.681276] Call Trace:
+[10159.683004]  <TASK>
+[10159.685636]  __schedule+0x1b42/0x25b0
+[10159.688521]  schedule+0xb5/0x260
+[10159.690415]  __fuse_simple_request+0xc49/0x1350 [fuse]
+[10159.694677]  ? wake_bit_function+0x210/0x210
+[10159.697145]  fuse_do_getattr+0x2cb/0x600 [fuse]
 
-https://christian-gmeiner.info/privacypolicy
+
+
+Aborting the connection(s) 'fixes' that, but looks like it triggers
+another issue. Timeouts would certainly help, but it still should
+work automatically.
+
+
+Thanks,
+Bernd
 
