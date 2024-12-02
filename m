@@ -1,293 +1,253 @@
-Return-Path: <linux-kernel+bounces-427771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1EE9E058B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:52:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 974BC9E0592
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0718284026
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB4528A8DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052B920C463;
-	Mon,  2 Dec 2024 14:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BA320CCEB;
+	Mon,  2 Dec 2024 14:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FVIwaenU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iFUMtdVP"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706EE20896F
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FF920D4E5
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733150648; cv=none; b=qWzf35ZRiYPDFfXDgsMRv8qr8xai7kmuI/oJHTWNcZu8QLuFPi51w8hB1lHYy7iCKy9IbQtdaWrUYVw/omvhJ4c2ah5DMsmNBrb5LDUq35xcKrq/inl2Jj34YbaHs2CjiEqGgd/tE0fQ2zliJwoHIrlZsKzwpluc0UGqhfVbQJ4=
+	t=1733150710; cv=none; b=nGzsjgoZaogHrJSb8SYTq32cQrONib7inzrz7MDyZZqB2F+0wdDGxcfwzkZdUhf7v8hJnPJKdhNrwE8yhmOropKUakXgVcOAXlgE3OzRKnbVRcMNvNXfzmphuwUBJSF7TpAWrCv1C67F0qmPGA6qJKAu+GE/vMSlfBSumkYa8GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733150648; c=relaxed/simple;
-	bh=ghw5/sgatauhigZGW+cYbjW0WgYXPCUoRtwmKDdykUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iwayAJ/EqU+83RP0U5c5fvEPpZ6ZsMTtSrapgvb8yLyrETVZgvZugjo16hmkqc4rVsODNtFm5u3ZuKtzRulE0ZBolk10qrzzRCyYQKiN1Q+ZIvUjZIshPc4yrMtsQ/WWb55wCNJTaQGot4MZqCoucN1cujibaMd8zqhiflcVeQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FVIwaenU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733150644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0u1AtSIvoAjAdUuJPZtCWpWUtVV5/8tB5/FsGjDgVTg=;
-	b=FVIwaenUHD0IdTwUmSb/G+LekTHE8HtWXgpc2LO9jnAy3hZo32EEHceVarNRDD1otfReWQ
-	GgmEAkvQVAKddAyiNALO87p645xrbJzXj0zi63Z4WjYFlEdT11Wnq/kmFAgdctI+f867gZ
-	U9w4niGgUOSFLnSN57CfYS9j5/m+d10=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-191-XVp-ENsdO3GvdzZ6YxTYOA-1; Mon, 02 Dec 2024 09:44:03 -0500
-X-MC-Unique: XVp-ENsdO3GvdzZ6YxTYOA-1
-X-Mimecast-MFC-AGG-ID: XVp-ENsdO3GvdzZ6YxTYOA
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5d035c8f3afso2836712a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:44:03 -0800 (PST)
+	s=arc-20240116; t=1733150710; c=relaxed/simple;
+	bh=LAR2OPaTHuw75CmRdL3urd56d1GQCR1zzyVJwcom4AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CcfQyDpBkCJywwtGvgQGbH9Iy//MI1eml844vcMk7AyCL/UbQ2iLivbf7kxYZJr8XwuApOxKyOEd9p2pQK3GiI0zEKuV9tPiyZSxgSyOoimHqzNwrot9+OtkH9IzQb49XFadrlvyhcAndpsk9aF6o4pHUv/ii8mtUEU0HJz5ASo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iFUMtdVP; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cf3e36a76so39958895ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:45:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733150706; x=1733755506; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZPr+rqxrsBrYoMzAPXWAODr8cERzCFOtYTMVsGmGlwM=;
+        b=iFUMtdVPq/0ShCe8ovuiiuE3sHpvs2rnG6x3FfQe7fY08poq5MUtbyAGkjl2qgHMbu
+         Ot2q7Brkvo4zMpMnhaItm+Yah7lae+WWrwTI7/29+vIcEHRA6S+5LdUaYOEs2FhepSV5
+         KQ5DqvKt4IAw/EXnIcY7IA1DuksthfwLyFNqcWWH57vxu4/E9Q0KuP85TW5vQTpxXhVm
+         kSRbFGcNBwFtSTQQ0WsAJbWDAekWWJqnOW94cbe7z6gBHSqloNUr736Iuc87CDXZ3ISN
+         XQd6AEGjx22BF8b56p0ioE9VpFMit8ggibYqlZpjXlTOGJUWp12y2Cc/dpfc3xGUdrlu
+         MJDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733150642; x=1733755442;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1733150706; x=1733755506;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0u1AtSIvoAjAdUuJPZtCWpWUtVV5/8tB5/FsGjDgVTg=;
-        b=jk2WLr7usysWhkRB1JwHblW7wuIcdlYfquIPWp72HU+pg+KRbFZTo6rWIAE0oZgL8p
-         mA1C4WPV+lBJQVhkOY6Gszul3yDgG3idEH9GZA1iGHvN10GEwF058nBZg46Byc+q1i9m
-         168aSiIT03kIkDryspE38VXK4acr0SvqPptilnJStLrga3mN90ZqTUCBHS3NpjQvnThD
-         iLCTE42Js0tZ1Oeb1kfIgHSp5Kn4YAqtIwwWF1Zcaw2ZjWjhRh7jMG4kbUepsoUm6twb
-         VCOoGyNy8i8PmwY5cuzrdpGmAZWF5qLmFTUnag9DYlJZAB6xiwrcNuTZXdSGAgVZhUrY
-         GAoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU24aYV+9HxXyxLWjhb4RG1WauPHm5GucUkiuncnpl4kNmmcle/SIXw/XQROH/t0DR+iyMBM8eeuLuNfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPDocU0mz6EK5FpSH1xZDdyUFq5USZp9ktF33KoZjaGi4N/QdE
-	dJQZBjk3LI2lrLGenSvPDaETJxqHfabFRCSEfpjNBwVkPpTswd8TgazGZ43+ElpxexjUzRlWslI
-	7S0zQveUt2+ccHSfN6cGPvNSYBLjKifvT4S8Qv5bh6B3zsJAIwrtdUbnsgPJ0qQ==
-X-Gm-Gg: ASbGncsZ40NaA14SRtQFFB+GKf1iJ7xIY19X3Oh1webvlzjKIYCoFNlt9iGs70pZzSf
-	7A5nGQ9BkJTZlel9spmuwFeOU4lh7yYEaL0h1iBffJrXMr94KBLP/IFIpVUwj/pw0ID4MiddGpR
-	hiegH4sdiviFWU1A9DwmcVqOLLndGNJlYFe9QgWFosrIi/r2y+F60lxIP5jAkGDrvnps04GQr2z
-	dq0wAMt8lsaqDhkPFTZm6R4xgvLYlWIZBDL7qaCpOdePr65r8MUfw==
-X-Received: by 2002:a05:6402:2743:b0:5d0:e568:7ba1 with SMTP id 4fb4d7f45d1cf-5d0e5688804mr6843006a12.30.1733150641691;
-        Mon, 02 Dec 2024 06:44:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEWF4PANTV7QM9gmc9vOIQsZ+o2QQHXMvTVA4aaxxEJKtLVDAOhFJn+aQIj3fgeQcZdoiUR2A==
-X-Received: by 2002:a05:6402:2743:b0:5d0:e568:7ba1 with SMTP id 4fb4d7f45d1cf-5d0e5688804mr6842979a12.30.1733150641274;
-        Mon, 02 Dec 2024 06:44:01 -0800 (PST)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0c6999e45sm3391302a12.52.2024.12.02.06.44.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 06:44:00 -0800 (PST)
-Message-ID: <79da5e62-acb0-4bf5-a1c0-f2000fae0167@redhat.com>
-Date: Mon, 2 Dec 2024 15:44:00 +0100
+        bh=ZPr+rqxrsBrYoMzAPXWAODr8cERzCFOtYTMVsGmGlwM=;
+        b=vecpWjmXX1rDeglCukFdCn9TlraI0jtjJH3mNlon9I6/npsHhEZ3WSN1ABh3osG/+G
+         Y81ORWKeWUM8Mskyibd1Sm0u1A4JCxA9uJsR5dilMOLMCtV+AMypUUakb0JCdyjgng41
+         FJ9AV7PaqBsmM2gV9vTkcHo8h7jNL5dTeIbvz2qGZfKOvH96RKdbKqiUH1lXTlaFlWN6
+         QW7FpVKoqYM532giGuSqfKztrb4/3erbCgHVXHtPuWukOOJ5/XoAXWmgneugEkOTB60J
+         DOb4EDn5DiTUEbqLNNyMy6LSHzXc0wIIx2yzNzgPWPc69bLB/+1Z0J+sL1s3tyj7maKP
+         YBzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsyxF9dhTJIMTIk2kBrK2oDEgL43dLu/cG7f6TLcg+ZoBLuIJfa23Tjur0mipqYQrqfo2QzT6tmkv1rPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYPaNe7wV0jM6zfEgjFErTkppryJnKA/sh2fadoHSwHu1hWLdN
+	LrdVYdkDVQy0y7ITuB+Zb39Xf53J+m+7dIl9/58gqjZtD57sD7fB9KP2Pp8ZYg==
+X-Gm-Gg: ASbGnct0s7Jit6L6FSXytsf8Gjhabhq2IYQf4dvOItc0enIWhvVH/OgP6TOAHlWtpbO
+	ojWi4My+ZAo7LxgAH2YPlYoJx3FSaDNn9y3uEtMBaYgu63g6VsKuUltkMeYMBTYIU4lmvK+yoUq
+	rKs0TFsa/IUfLUjPtfahXgYNWC5T0B9M92Y0jKT/XbiVn7XnjjGaqdiBVTJlgw0/0wg5FTGABAH
+	3XkUfrbtqQ1da5heQsPhcnsSG+Mr4ikbZDAPd9kRxl6y+k4MOXWrnA9HDFZ1w==
+X-Google-Smtp-Source: AGHT+IFVCODuAccsYt/2/80+IXDxhd60+2Yn4zsceONDv9zG3hdrKNerpQeL5Z00zmSVyrmEYMEANw==
+X-Received: by 2002:a17:902:ce92:b0:215:7ce8:1363 with SMTP id d9443c01a7336-2157ce815f5mr100011155ad.19.1733150706219;
+        Mon, 02 Dec 2024 06:45:06 -0800 (PST)
+Received: from thinkpad ([120.60.140.110])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21530f1d769sm71106335ad.81.2024.12.02.06.45.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 06:45:05 -0800 (PST)
+Date: Mon, 2 Dec 2024 20:14:56 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Xin Liu <quic_liuxin@quicinc.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	quic_jiegan@quicinc.com, quic_aiquny@quicinc.com,
+	quic_tingweiz@quicinc.com, quic_sayalil@quicinc.com
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: qcs615: add UFS node
+Message-ID: <20241202144456.scq5d2orw4d3dbxg@thinkpad>
+References: <20241122064428.278752-1-quic_liuxin@quicinc.com>
+ <20241122064428.278752-3-quic_liuxin@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] media: uvcvideo: Remove dangling pointers
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241202-uvc-fix-async-v5-0-6658c1fe312b@chromium.org>
- <20241202-uvc-fix-async-v5-2-6658c1fe312b@chromium.org>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241202-uvc-fix-async-v5-2-6658c1fe312b@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241122064428.278752-3-quic_liuxin@quicinc.com>
 
-Hi,
+On Fri, Nov 22, 2024 at 02:44:27PM +0800, Xin Liu wrote:
+> From: Sayali Lokhande <quic_sayalil@quicinc.com>
+> 
+> Add the UFS Host Controller node and its PHY for QCS615 SoC.
+> 
+> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
 
-On 2-Dec-24 3:24 PM, Ricardo Ribalda wrote:
-> When an async control is written, we copy a pointer to the file handle
-> that started the operation. That pointer will be used when the device is
-> done. Which could be anytime in the future.
-> 
-> If the user closes that file descriptor, its structure will be freed,
-> and there will be one dangling pointer per pending async control, that
-> the driver will try to use.
-> 
-> Clean all the dangling pointers during release().
-> 
-> To avoid adding a performance penalty in the most common case (no async
-> operation), a counter has been introduced with some logic to make sure
-> that it is properly handled.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
 > ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 52 ++++++++++++++++++++++++++++++++++++++--
->  drivers/media/usb/uvc/uvc_v4l2.c |  2 ++
->  drivers/media/usb/uvc/uvcvideo.h |  9 ++++++-
->  3 files changed, 60 insertions(+), 3 deletions(-)
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 114 +++++++++++++++++++++++++++
+>  1 file changed, 114 insertions(+)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 9a80a7d8e73a..af1e38f5c6e9 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1579,6 +1579,37 @@ static void uvc_ctrl_send_slave_event(struct uvc_video_chain *chain,
->  	uvc_ctrl_send_event(chain, handle, ctrl, mapping, val, changes);
->  }
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index 590beb37f441..5e501511e6db 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -458,6 +458,120 @@ mmss_noc: interconnect@1740000 {
+>  			qcom,bcm-voters = <&apps_bcm_voter>;
+>  		};
 >  
-> +static void uvc_ctrl_get_handle(struct uvc_fh *handle, struct uvc_control *ctrl)
-> +{
-> +	lockdep_assert_held(&handle->chain->ctrl_mutex);
+> +		ufs_mem_hc: ufshc@1d84000 {
+> +			compatible = "qcom,qcs615-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
+> +			reg = <0x0 0x01d84000 0x0 0x3000>,
+> +			      <0x0 0x01d90000 0x0 0x8000>;
+> +			reg-names = "std",
+> +				    "ice";
 > +
-> +	if (ctrl->handle)
-> +		dev_warn_ratelimited(&handle->stream->dev->udev->dev,
-> +				     "UVC non compliance: Setting an async control with a pending operation.");
+> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
 > +
-> +	if (handle == ctrl->handle)
-> +		return;
+> +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
+> +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
+> +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
+> +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
+> +				 <&gcc GCC_UFS_PHY_ICE_CORE_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
+> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
+> +			clock-names = "core_clk",
+> +				      "bus_aggr_clk",
+> +				      "iface_clk",
+> +				      "core_clk_unipro",
+> +				      "core_clk_ice",
+> +				      "ref_clk",
+> +				      "tx_lane0_sync_clk",
+> +				      "rx_lane0_sync_clk";
 > +
-> +	if (ctrl->handle)
-> +		ctrl->handle->pending_async_ctrls--;
+> +			resets = <&gcc GCC_UFS_PHY_BCR>;
+> +			reset-names = "rst";
 > +
-> +	ctrl->handle = handle;
-> +	handle->pending_async_ctrls++;
-> +}
-
-Maybe simplify this to:
-
-static void uvc_ctrl_get_handle(struct uvc_fh *handle, struct uvc_control *ctrl)
-{
-	lockdep_assert_held(&handle->chain->ctrl_mutex);
-
-	if (!ctrl->handle)
-		handle->pending_async_ctrls++;
-	else
-		dev_warn_ratelimited(&handle->stream->dev->udev->dev,
-				     "UVC non compliance: Setting an async control with a pending operation.");
-
-	ctrl->handle = handle;
-}
-
-?
-
-Otherwise the patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-
-> +static void uvc_ctrl_put_handle(struct uvc_fh *handle, struct uvc_control *ctrl)
-> +{
-> +	lockdep_assert_held(&handle->chain->ctrl_mutex);
+> +			operating-points-v2 = <&ufs_opp_table>;
+> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
+> +			interconnect-names = "ufs-ddr",
+> +					     "cpu-ufs";
 > +
-> +	if (ctrl->handle != handle) /* Nothing to do here.*/
-> +		return;
+> +			power-domains = <&gcc UFS_PHY_GDSC>;
+> +			required-opps = <&rpmhpd_opp_nom>;
 > +
-> +	ctrl->handle = NULL;
-> +	if (WARN_ON(!handle->pending_async_ctrls))
-> +		return;
-> +	handle->pending_async_ctrls--;
-> +}
+> +			iommus = <&apps_smmu 0x300 0x0>;
+> +			dma-coherent;
 > +
->  void uvc_ctrl_status_event(struct uvc_video_chain *chain,
->  			   struct uvc_control *ctrl, const u8 *data)
->  {
-> @@ -1589,7 +1620,8 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
->  	mutex_lock(&chain->ctrl_mutex);
->  
->  	handle = ctrl->handle;
-> -	ctrl->handle = NULL;
-> +	if (handle)
-> +		uvc_ctrl_put_handle(handle, ctrl);
->  
->  	list_for_each_entry(mapping, &ctrl->info.mappings, list) {
->  		s32 value = __uvc_ctrl_get_value(mapping, data);
-> @@ -1865,7 +1897,7 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
->  
->  		if (!rollback && handle &&
->  		    ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
-> -			ctrl->handle = handle;
-> +			uvc_ctrl_get_handle(handle, ctrl);
->  	}
->  
->  	return 0;
-> @@ -2774,6 +2806,22 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
->  	return 0;
->  }
->  
-> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
-> +{
-> +	struct uvc_entity *entity;
+> +			lanes-per-direction = <1>;
 > +
-> +	guard(mutex)(&handle->chain->ctrl_mutex);
+> +			phys = <&ufs_mem_phy>;
+> +			phy-names = "ufsphy";
 > +
-> +	if (!handle->pending_async_ctrls)
-> +		return;
+> +			#reset-cells = <1>;
 > +
-> +	list_for_each_entry(entity, &handle->chain->dev->entities, list)
-> +		for (unsigned int i = 0; i < entity->ncontrols; ++i)
-> +			uvc_ctrl_put_handle(handle, &entity->controls[i]);
+> +			status = "disabled";
 > +
-> +	WARN_ON(handle->pending_async_ctrls);
-> +}
+> +			ufs_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
 > +
->  /*
->   * Cleanup device controls.
->   */
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index 97c5407f6603..b425306a3b8c 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -652,6 +652,8 @@ static int uvc_v4l2_release(struct file *file)
->  
->  	uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
->  
-> +	uvc_ctrl_cleanup_fh(handle);
+> +				opp-50000000 {
+> +					opp-hz = /bits/ 64 <50000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <37500000>,
+> +						 /bits/ 64 <75000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +				};
 > +
->  	/* Only free resources if this is a privileged handle. */
->  	if (uvc_has_privileges(handle))
->  		uvc_queue_release(&stream->queue);
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 07f9921d83f2..92ecdd188587 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -337,7 +337,11 @@ struct uvc_video_chain {
->  	struct uvc_entity *processing;		/* Processing unit */
->  	struct uvc_entity *selector;		/* Selector unit */
->  
-> -	struct mutex ctrl_mutex;		/* Protects ctrl.info */
-> +	struct mutex ctrl_mutex;		/*
-> +						 * Protects ctrl.info,
-> +						 * ctrl.handle and
-> +						 * uvc_fh.pending_async_ctrls
-> +						 */
->  
->  	struct v4l2_prio_state prio;		/* V4L2 priority state */
->  	u32 caps;				/* V4L2 chain-wide caps */
-> @@ -612,6 +616,7 @@ struct uvc_fh {
->  	struct uvc_video_chain *chain;
->  	struct uvc_streaming *stream;
->  	enum uvc_handle_state state;
-> +	unsigned int pending_async_ctrls;
->  };
->  
->  struct uvc_driver {
-> @@ -797,6 +802,8 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
->  int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
->  		      struct uvc_xu_control_query *xqry);
->  
-> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle);
+> +				opp-100000000 {
+> +					opp-hz = /bits/ 64 <100000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <75000000>,
+> +						 /bits/ 64 <150000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>;
+> +					required-opps = <&rpmhpd_opp_svs>;
+> +				};
 > +
->  /* Utility functions */
->  struct usb_host_endpoint *uvc_find_endpoint(struct usb_host_interface *alts,
->  					    u8 epaddr);
+> +				opp-200000000 {
+> +					opp-hz = /bits/ 64 <200000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <150000000>,
+> +						 /bits/ 64 <300000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>;
+> +					required-opps = <&rpmhpd_opp_nom>;
+> +				};
+> +			};
+> +		};
+> +
+> +		ufs_mem_phy: phy@1d87000 {
+> +			compatible = "qcom,qcs615-qmp-ufs-phy", "qcom,sm6115-qmp-ufs-phy";
+> +			reg = <0x0 0x01d87000 0x0 0xe00>;
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
+> +				 <&gcc GCC_UFS_MEM_CLKREF_CLK>;
+> +			clock-names = "ref",
+> +				      "ref_aux",
+> +				      "qref";
+> +
+> +			power-domains = <&gcc UFS_PHY_GDSC>;
+> +
+> +			resets = <&ufs_mem_hc 0>;
+> +			reset-names = "ufsphy";
+> +
+> +			#clock-cells = <1>;
+> +			#phy-cells = <0>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+>  		tcsr_mutex: hwlock@1f40000 {
+>  			compatible = "qcom,tcsr-mutex";
+>  			reg = <0x0 0x01f40000 0x0 0x20000>;
+> -- 
+> 2.34.1
 > 
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
