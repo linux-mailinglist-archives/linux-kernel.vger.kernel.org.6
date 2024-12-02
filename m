@@ -1,102 +1,113 @@
-Return-Path: <linux-kernel+bounces-426972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70AA69DFAC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:33:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6247E9DFAC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:36:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD2416272E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:33:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D145CB21316
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01381F8F0A;
-	Mon,  2 Dec 2024 06:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93141F8F11;
+	Mon,  2 Dec 2024 06:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N4LdHVlH"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QSWcNgEo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C841D79A6
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 06:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800D533F6;
+	Mon,  2 Dec 2024 06:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733121196; cv=none; b=CrOdxb8yCfeFi41YJrqQb3UNs9KMjewOUbYm7JF+Kq/RhF3Eu/IN+TDUGqJ51nWqWbEiqgdoKtGxnPXJZb1TfKG504nPgp5HJG5+VQDasmHbJTJ+thooSWwXU5CzR3OCPyUjaEhw7HHIVItAUVhhTkuhYmFkJlPixK1RjqkjWYE=
+	t=1733121376; cv=none; b=VAj+VEpJcI/z0sC0ZlsBsLcBTySuJooyu2yq8gaks4/mUx1a7gZiWELA/T/iDh+QOV3Wg1HpcwaYHvIvs493potQTNwtJmoQX8UvQwSBP1GQf6fm9WltBtiYCYGtwpH2OsKLdtVbYudfFJij0Q+tn2sVUUrSFitsMnLtrYkHq3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733121196; c=relaxed/simple;
-	bh=5a0S2upxKeJHX5ca/O2fBI/NQyJIHNd673SOJDKYZtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QD1TNwr7TNbT8NYkhxOZKg1j6aDDzgnMMH1Ny5hdB1ZUat8JpLacKgqkoRTDAVgq8qkhsWetku3uyJtfxSrbx1nnLh+bXfZrZiMUQ+mXt9PT1J/kHZR6zavQY0OdO3obV/bWhUwcupTitAzp9DeV9KekEYemiqydG8M1WhR3naI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N4LdHVlH; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7fc2b80c845so1663114a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 22:33:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733121194; x=1733725994; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CISoFXqsKABybYb3NAOx5HlkcJ7x+PNKD4DJwNr0UAg=;
-        b=N4LdHVlHQieEf+hMcAAU5rjxAWpU4dJR5qD7RQJMAqvOEBimAfs6t7rKTj64zqtvfi
-         FPy0q7cZW8BdM61m+lYtj20mbnirMxYOEHXZ5ZtOff1AN6+ppQgYEmBM7SzI2MbIwWDK
-         qi8K2rwTkqjVLYVksiwcXqIYOlkNgbRSWYxH68f65YSP1mH1I/HsQ9XbgldctAx7G5Vf
-         zNrGS50d+G5CQx53QF3c892i3abmeMiHEx3ReGqNjmCAdGMR1uScLx/ZSIHqJp7OHm82
-         UVg2rXO0aKWmhy4WPlT7YSgESlWM2oHHWrS4z0XM8HaabSw2Wtz134UugQAcLYjvL6kc
-         fpug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733121194; x=1733725994;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CISoFXqsKABybYb3NAOx5HlkcJ7x+PNKD4DJwNr0UAg=;
-        b=jB4bC2bwK81Pu7418Zv6L97ueZJ9nmUdmxP1X/+4XDdm49exI3fg+EZv/qgFfnbQwe
-         AnAzmEKe9mhmw0FEDhOH+56/mkAGa/wIBfo+d7o13ABnl6JkoGXymco5K3LSnNNOFQtk
-         UQndd0oMo0bxSCA0c8D2yf1WRMRvrdkWdgjL8qiD2Oii50nVWqmvGS5qovhHJJHgI8Yj
-         aD5BcVGJaQ42Kq74N2MaFjx62JeeQg8MsHkxdVuVUPmMlgHizDKusHBb5lELCkxvxK1A
-         8VN+a4E5MaKOmzGKI2fAIAez+zNL94o+tlx4G1ZmOZoNH6HAcrVjeEZRaZwGqQnZdRyb
-         Oddg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAb3TQYmTCZwT8WDSuV7mOyrEWEuKxJToMbgv8XnMJj2hDwlcci9xM3Kwc8m/DnL+u1jOwvP+FB+R6rEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx+c6I//6rjPbgPXY7W+zL7lAQXdbPZsh6yl9Wt/CE5iBpfBDm
-	ngUy/ETrJeqEz9v/FAhZTDq0km+rIY+dORyy5E8ngKKSA2PsFBcJdKyVwz/qlHY=
-X-Gm-Gg: ASbGncvyR40NhQJf2drITIR8jEBf6MHuzbhr7bb8LtO1CLSDzhm+SOlGuj8jcMwVegZ
-	tppG2oL8iiX/hWxHB0psKDrBqDbqwHBUVEMErw00oYTtbUR2tfUqkRBazbzimBDxlG6Ovc5TR9K
-	nWSnVKH2UaVaP3NfAkFRIDYR+RACP9UynL9/Bf8+S+PlJY/WB7HG1jq/KZQYA51bFNv4JgONGcJ
-	MHYUBI6Xcw1KKGUGlKYPJ7807pzka5ZNuhNhcPniqb/yKemv4+N
-X-Google-Smtp-Source: AGHT+IFBrdbTTxdw4pY2MNjQE6aYwaMoUjfwBbdWHnsYcntsEY5IUKvNqcvwdTm9QrHO2jax6Cxsgw==
-X-Received: by 2002:a05:6a20:3944:b0:1e0:d632:b9e0 with SMTP id adf61e73a8af0-1e0e0b0f127mr33630997637.13.1733121194026;
-        Sun, 01 Dec 2024 22:33:14 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254e7685desm5806896b3a.90.2024.12.01.22.33.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 22:33:13 -0800 (PST)
-Date: Mon, 2 Dec 2024 12:03:11 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] OPP: add index check to assert to avoid buffer
- overflow in _read_freq()
-Message-ID: <20241202063311.g3333gi7ztblx2hr@vireshk-i7>
-References: <20241129-topic-opp-fix-assert-index-check-v2-0-386b2dcbb9a6@linaro.org>
- <20241129-topic-opp-fix-assert-index-check-v2-1-386b2dcbb9a6@linaro.org>
+	s=arc-20240116; t=1733121376; c=relaxed/simple;
+	bh=LC+fJ3vbEI+NdPBc84Eyj0Lc0zpeooAJNH+G8lVbmEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=It4SYar7UUztewKpy2NPUut+5CViRrE8gOCNZIXUWj2Mqzl3ic0sLhF1BeWF901lsz2t1CWtzY4MuXRxkm9Lsnj3vI0wngm5rqBshmk4jFZFBJ2JB6EMN3GYR66Unzq5ZAsLP2uYd4F6Oi0oqvzTCwutKl2+1ElNhKwPyoXop44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QSWcNgEo; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733121374; x=1764657374;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=LC+fJ3vbEI+NdPBc84Eyj0Lc0zpeooAJNH+G8lVbmEE=;
+  b=QSWcNgEo5VhIEji86+GHMp+Wwa2tPHtBQyaxprcuyI3FvEZuDSrd0u3K
+   DQmns5ey0qNsuoYYZYnvORfE0jRr29Z7s6bVtMtXh/AvGRYKCB0P8Kasl
+   ULOLgK6YQzdIbNWLHWGIad/+XxILfX145v9h22Wu+SPcMTKPaaewlnSq1
+   d7N7HCY1+jmrVVnnW7eyLIX5h/105oIidkf7yR+mQITNSKA2a/OKlXxH8
+   FFapH1rz7PN6Oee5UAVprI6iGcbaqBuzmYVwcK+CZoLjQtSJFoZSQ/nxu
+   6pPTDWcqvltcHmvPN24c2XOvMUyv+/J6UnuYHAeRwck5fzCdYP3J2Xy65
+   w==;
+X-CSE-ConnectionGUID: NyymhBlzT22jVf8a1014XQ==
+X-CSE-MsgGUID: 8KWK9pMKQHydjtdeIIkbNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="43887698"
+X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
+   d="scan'208";a="43887698"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 22:36:14 -0800
+X-CSE-ConnectionGUID: 3I52U4gTS1C7+L02jgpFnw==
+X-CSE-MsgGUID: 1OVXtrIITAKSHD2ZJdlZgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
+   d="scan'208";a="123954282"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 22:36:08 -0800
+Message-ID: <08b373ac-01b2-4afe-81bd-85e3fe13615d@intel.com>
+Date: Mon, 2 Dec 2024 08:36:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241129-topic-opp-fix-assert-index-check-v2-1-386b2dcbb9a6@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] KVM: TDX: restore host xsave state when exit from the
+ guest TD
+To: Chao Gao <chao.gao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+ dave.hansen@linux.intel.com, rick.p.edgecombe@intel.com,
+ kai.huang@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+ dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
+ weijiang.yang@intel.com
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <20241121201448.36170-5-adrian.hunter@intel.com> <Z0AbZWd/avwcMoyX@intel.com>
+ <a42183ab-a25a-423e-9ef3-947abec20561@intel.com> <Z0UwWT9bvmdOZiiq@intel.com>
+ <5f4e8e8d-81e8-4cf3-bda1-4858fa1f2fff@intel.com> <Z00hAGYg1BQsiHJ5@intel.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <Z00hAGYg1BQsiHJ5@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 29-11-24, 16:06, Neil Armstrong wrote:
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> +static bool assert_single_clk(struct opp_table *opp_table, int __always_unused index)
+On 2/12/24 04:52, Chao Gao wrote:
+>>>> /* 
+>>>> * Before returning from TDH.VP.ENTER, the TDX Module assigns:
+>>>> *   XCR0 to the TD’s user-mode feature bits of XFAM (bits 7:0, 9)
+>>>> *   IA32_XSS to the TD's supervisor-mode feature bits of XFAM (bits 8, 16:10)
+> 
+> TILECFG state (bit 17) and TILEDATA state (bit 18) are also user state. Are they
+> cleared unconditionally?
 
-Shouldn't the index be unsigned int here ?
+Bit 17 and 18 should also be in TDX_XFAM_XCR0_MASK
+TDX Module does define them, from TDX Module sources:
 
--- 
-viresh
+	#define XCR0_USER_BIT_MASK                  0x000602FF
+
+Thanks for spotting that!
+
+> 
+>>>> */
+>>>> #define TDX_XFAM_XCR0_MASK	(GENMASK(7, 0) | BIT(9))
+>>>> #define TDX_XFAM_XSS_MASK	(GENMASK(16, 10) | BIT(8))
+>>>> #define TDX_XFAM_MASK		(TDX_XFAM_XCR0_MASK | TDX_XFAM_XSS_MASK)
+
 
