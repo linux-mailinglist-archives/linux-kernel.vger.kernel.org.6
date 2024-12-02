@@ -1,199 +1,100 @@
-Return-Path: <linux-kernel+bounces-427767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992B69E0A47
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:41:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 240649E097C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:10:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E83B4B3579D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:50:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D923B3757C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C7520B7E0;
-	Mon,  2 Dec 2024 14:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D957320C47C;
+	Mon,  2 Dec 2024 14:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y00ewntH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="PUkoZ0sI"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49170205E11
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA9920896F;
+	Mon,  2 Dec 2024 14:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733150496; cv=none; b=hc/oknMpwLASWUdAULBcue/Jzp69Wo4LOx0VgMvw1Fs/tSGIEzyvIToLUpkpqOtSRvcLvb5pSToD616uBvqposLnvy3c31HXxQ8DiiGJQp19v5r/Dh3M8hvZoPPfykddaI1DLCMUSoXKoIC3fTUadeq9dkPsw+9SfLqCxdjoCmU=
+	t=1733150659; cv=none; b=HgycZRBdh2rjIumAcqE+PlSpfhajjVcZnT9kuf9sebslIrogPUHHEKksZGlrgQwGYh46WE0dtgcwXRkKWHsFqO5E4OUlv0k8XZIH7SEJmatrLVE5UjSBOraBqblU6xxVQ4gSaQ67nUriFwe9LxlYCbj6sdB/utEHhxUDFc0SMQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733150496; c=relaxed/simple;
-	bh=LC7a4IadXDSBG+FPlnSGhFh+gxKKCByBUescMabMaOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ws2We8fxoAHVc3fDCgdHJ3MNrb8mHNrJPN2mjJNYnPuJI4u8hxhIMkaNvh8hwhSEwcJy4SUyumNgXS1MGcx1tB+gIMlnVeZfz2wPopsVpketVv8XGyi14zd4FeAu866sdrq5NCI3Dq2ubHPdSLD4ohdMnEUDOW2644eymgq43rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y00ewntH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733150493;
+	s=arc-20240116; t=1733150659; c=relaxed/simple;
+	bh=RhmgU2LQevOuNgGHPl7VYwtenvcTXhvRn2Ebadd1Sxs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CwoTUroiHTqk94xE529g2EHF59SayaGCtBWNiVeKnonPJH+n1zoNesLkxPc0HT0NUfF1nWhBZKDb2dJMc6Sj7tNOPi0OIhME1sE4hjgu7LrTQ1W8TCHLZwU+1UBU/HTPA30zcZpDk9yhLVwkP8B3Aoaa/6ecqIHtjjqrZ9ONWBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=PUkoZ0sI; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1733150655;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lUvIdNYn/fqF9K6BoxsffOp47UHQFllLU+FnZQWOnJs=;
-	b=Y00ewntH7s4S5QP+PIEV3jrsF/fWwRrkL79yeMlzsx5MWfQlM/hSjLHLWfvlnCwTUMbcY3
-	LtFIJ0PTnSCCu+4uA94FGu2NKO2CdLh3XoIKNsuLf488nCcV54Zmzkv1JDcg1swLsJbark
-	2Zeeifzc+xu5LxuiKbj228Uaxkt7FxE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-dGxSDJsqNb6Lbe3LF1xgNQ-1; Mon,
- 02 Dec 2024 09:41:30 -0500
-X-MC-Unique: dGxSDJsqNb6Lbe3LF1xgNQ-1
-X-Mimecast-MFC-AGG-ID: dGxSDJsqNb6Lbe3LF1xgNQ
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 746FC1954197;
-	Mon,  2 Dec 2024 14:41:28 +0000 (UTC)
-Received: from bfoster (unknown [10.22.65.140])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C601E30000DF;
-	Mon,  2 Dec 2024 14:41:26 +0000 (UTC)
-Date: Mon, 2 Dec 2024 09:43:13 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: syzbot <syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, gfs2@lists.linux.dev
-Subject: Re: [syzbot] [iomap?] WARNING in iomap_zero_iter
-Message-ID: <Z03HgRGByNi1spE0@bfoster>
-References: <674d11ec.050a0220.48a03.001c.GAE@google.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yRJZlOcms6c9rbeZYvsX5MTDNXpRGMuOjccJ3gJk83o=;
+	b=PUkoZ0sICV8QIm+TzgZgwT/vqL+UjIf3NGBGb4D6j6pG4v29Wgv3b4n0uv1BsxglBCNmIH
+	uODreYlZFOZvBu6Bla55ay6k7a88JO2vegl7w/C1uKNt6atCe4rGTesKRxdMw1lf3ErBdZ
+	SwZY/UPtaJtvmqUt0kSNhPAXX+KO5XvfrbS2EyKPYjw4IOKqcOtGR8FRvKqNT/X9F45v9z
+	pCf63WuI1kut/xi52Pq4ZAZ/L8upFLkVLyChu8t/Es9LeaBkIPoioS66Z/PzSHaGNuSBbd
+	UHXh4KwW+ec1Yq/jgzU8Pfrs1HSxEykI6tlI7PtH2l4+kKPJo3e497eV4UfaWQ==
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	didi.debian@cknow.org,
+	marcin.juszkiewicz@linaro.org
+Subject: [PATCH] arm64: dts: rockchip: Describe why is HWRNG disabled in RK356x base dtsi
+Date: Mon,  2 Dec 2024 15:44:06 +0100
+Message-Id: <6b272e2f8f916c04b05db50df621659a5a7f29ab.1733149874.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <674d11ec.050a0220.48a03.001c.GAE@google.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-CC'd gfs2@lists.linux.dev.
+Despite the presence of the hardware random number generator (HWRNG) in the
+different Rockchip RK356x SoC variants, it remains disabled for the RK3566
+SoC because testing showed [1] that it produces unacceptably low quality of
+random data, for some yet unknown reason.  The HWRNG is enabled for the RK3568
+SoC, on which the testing showed good quality of the generated random data.
 
-On Sun, Dec 01, 2024 at 05:48:28PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=107623c0580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0b9d4913852126
-> dashboard link: https://syzkaller.appspot.com/bug?extid=af7e25f0384dc888e1bf
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b86545e0.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/00ec87aaa7ee/vmlinux-b86545e0.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/fcc70e20d51b/bzImage-b86545e0.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com
-> 
-> loop0: detected capacity change from 0 to 32768
-> gfs2: fsid=syz:syz: Trying to join cluster "lock_nolock", "syz:syz"
-> gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
-> gfs2: fsid=syz:syz.0: journal 0 mapped with 1 extents in 0ms
-> gfs2: fsid=syz:syz.0: first mount done, others may mount
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 5341 at fs/iomap/buffered-io.c:1373 iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
+To avoid possible confusion in the future, [2] let's have this described
+briefly in the RK356x base SoC dtsi.
 
-This is the recently added warning for zeroing folios that start beyond
-i_size:
+[1] https://lore.kernel.org/linux-rockchip/cover.1720969799.git.daniel@makrotopia.org/T/#u
+[2] https://lore.kernel.org/linux-rockchip/20241201234613.52322-1-pbrobinson@gmail.com/T/#u
 
-	WARN_ON_ONCE(folio_pos(folio) > iter->inode->i_size);
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
+ arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-This was added because iomap zero range was somewhat recently changed to
-no longer update i_size, which means such writes are at risk of being
-thrown away. A quick look at the gfs2_fallocate() -> __gfs2_punch_hole()
-path below shows we make a couple zero range calls around block
-unaligned boundaries and immediately follow that with a flush of the
-entire range. If a portion of this starts beyond i_size then writeback
-will simply throw those folios away.
-
-I think the main question here is whether there is some known/legitimate
-use case for post-eof zeroing in GFS2 that requires behavior to be
-revisited on one side or the other, or otherwise if there is an issue
-with the warning check being racy and thus causing a false positive.
-
-GFS2 folks,
-
-Could you comment on the above wrt GFS2 and post-eof zeroing?
-
-If this isn't some obvious case, hopefully syzbot can spit out a
-reproducer soon to help get to the bottom of it. Thanks.
-
-Brian
-
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5341 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
-> Code: 85 ff 49 bc 00 00 00 00 00 fc ff df 7e 56 49 01 dd e8 21 66 60 ff 48 8b 1c 24 48 8d 4c 24 60 e9 0b fe ff ff e8 0e 66 60 ff 90 <0f> 0b 90 e9 1b ff ff ff 48 8b 4c 24 10 80 e1 07 fe c1 38 c1 0f 8c
-> RSP: 0018:ffffc9000d27f3e0 EFLAGS: 00010283
-> RAX: ffffffff82357e72 RBX: 0000000000000000 RCX: 0000000000100000
-> RDX: ffffc9000e2fa000 RSI: 000000000000053d RDI: 000000000000053e
-> RBP: ffffc9000d27f4b0 R08: ffffffff82357d88 R09: 1ffffd40002a07d8
-> R10: dffffc0000000000 R11: fffff940002a07d9 R12: 0000000000008000
-> R13: 0000000000008000 R14: ffffea0001503ec0 R15: 0000000000000001
-> FS:  00007efeb79fe6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007efeb81360e8 CR3: 00000000442d8000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  iomap_zero_range+0x69b/0x970 fs/iomap/buffered-io.c:1456
->  gfs2_block_zero_range fs/gfs2/bmap.c:1303 [inline]
->  __gfs2_punch_hole+0x311/0xb30 fs/gfs2/bmap.c:2420
->  gfs2_fallocate+0x3a1/0x490 fs/gfs2/file.c:1399
->  vfs_fallocate+0x569/0x6e0 fs/open.c:327
->  do_vfs_ioctl+0x258c/0x2e40 fs/ioctl.c:885
->  __do_sys_ioctl fs/ioctl.c:904 [inline]
->  __se_sys_ioctl+0x80/0x170 fs/ioctl.c:892
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7efeb7f80809
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007efeb79fe058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007efeb8145fa0 RCX: 00007efeb7f80809
-> RDX: 0000000020000000 RSI: 0000000040305829 RDI: 0000000000000005
-> RBP: 00007efeb7ff393e R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007efeb8145fa0 R15: 00007ffd994f7a38
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+index 62be06f3b863..ab8f42c0a843 100644
+--- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+@@ -1032,6 +1032,11 @@ sdhci: mmc@fe310000 {
+ 		status = "disabled";
+ 	};
+ 
++	/*
++	 * Testing showed that the HWRNG found in RK3566 produces unacceptably
++	 * low quality of random data, so the HWRNG isn't enabled for all RK356x
++	 * SoC variants despite its presence.
++	 */
+ 	rng: rng@fe388000 {
+ 		compatible = "rockchip,rk3568-rng";
+ 		reg = <0x0 0xfe388000 0x0 0x4000>;
 
