@@ -1,133 +1,99 @@
-Return-Path: <linux-kernel+bounces-427152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373189DFD4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:36:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C7E162435
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:36:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8245F1FA856;
-	Mon,  2 Dec 2024 09:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S713EtCE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EBA29DFD4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:37:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D656A3398B;
-	Mon,  2 Dec 2024 09:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D92262817EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:37:12 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1911FA257;
+	Mon,  2 Dec 2024 09:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="glLFVMua"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F8C22331;
+	Mon,  2 Dec 2024 09:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733132173; cv=none; b=jIYiUDTSBZL0a5/4dKJf79Gt7z1wL1qfopuAQogd8By+4w7qp7M6dTD/NqXtno/0UR/JtNn/fdwImIq4zR6hUOOM8TSxRMeIyQi27d+ZIGmaWhZQ0YkA0hmDpR/3tlUGbfJ3oxkxbtjVWv1numxIx+U+ue1tjwlU6icw0+lfBUw=
+	t=1733132227; cv=none; b=Dr/b75IbNaCO80ar7fx8HhJ1heG6lw73xrXK8pR6r+AEglxm0egViFeMcPGnXQ8siZuOHd1Ee4J9yWxuDm7atq7ARv4MvC20NAQgdt4f5y6Ss1AAnrnD4IVLoIG98UZLBQn0Tm1DqUw4nprztTnWul+tvwB5N01ktTcrkz0X16A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733132173; c=relaxed/simple;
-	bh=OSjkTNvlz8a8IJ83PzugYwP1xnJsGUf4wsg6IqX8AKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hFns+x7FKsgyO7qyKwonLzEXeS2DFVeDLc3qwq3fMl7Ci/Vu2GjD/geBU0InwwAMAnt8tHFgkgy2TqBwoB5L0vXBPQgpkzipV+jUpJmcr3VM7rAZEZwv9x8byiATUc0wuVoEgXElX4yeIG0P1pS5LipMGCytlWdhaFRrlBumRQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S713EtCE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85734C4CED2;
-	Mon,  2 Dec 2024 09:36:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733132172;
-	bh=OSjkTNvlz8a8IJ83PzugYwP1xnJsGUf4wsg6IqX8AKg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S713EtCEu4xfIzIMrX0Hz30WmVlbCeeUUz2GcWK1jvTfOR+SvM5FSpTfhHbnobKpH
-	 TTHHYqcZYrAOrbJpztJKMwCX/0VnhnC9RgYg9SxFX37ttHTEGd1RNVp7IBptjblgfF
-	 P796cc+XbUhNfzES7DsCRhS9VEO0YyqbMzXD4Vo6I0EYpfKh/9SiDtHMkGSMvS01jc
-	 oQhs+mWhycPwa6KZQGPqZpEsxXO8njLaY40nd+KqKkQeuZg7VfrtFlm1317zQqxhIv
-	 VtXnQOmPwvH/rmUq/jYgAo2nu5FUEFAlVr1ZelOlFgyBvbXxwCBiyr271R5L5MgI8g
-	 DUszQTPBC0rdw==
-Message-ID: <6a40b442-6c4e-4abb-aeba-54ff9e86dfde@kernel.org>
-Date: Mon, 2 Dec 2024 10:36:06 +0100
+	s=arc-20240116; t=1733132227; c=relaxed/simple;
+	bh=lOayRBayZGSlXgUrI9KvTQ7rdb+QafjbTeNRnQUzG6M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LtLU9Fk3zpdEzixLFDoB/A+s6saRbsfz61aoTLM5UgT9ihgGI8tkjgOWuNO3nriqSWhieVVgQiArR1gpzT3xZtkEet8YFJZ8S4F0Vidzndob8G+kZL0NSZt5C0wC0MliK/ZoERGTIunGnkEGQNiiM3KDKLaQdIGaoLwbX7oN7Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=glLFVMua; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+From: Denis Arefev <arefev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1733132212;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vsUdwmzHEUtFp4dw0uNgWDj5eMaa/8lI8CftTMle4BI=;
+	b=glLFVMuaIeiD46Uyv90P/ajVMXJ/VOaRvcswdnYRFuhN0y+EZu27Of8BxNORqwI+3Kb49t
+	4DzqNEhsZlr0UJrt25WT6+tj2M9CiYWAzNPvnXVGWCywPDUPpOrZFiS2mPxCKpvWTBP9BG
+	hLTueajQ7kTDQsFVEe/0pcMPspNYTh8=
+To: Richard Weinberger <richard@nod.at>
+Cc: Zhihao Cheng <chengzhihao1@huawei.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Artem Bityutskiy <Artem.Bityutskiy@nokia.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] mtd: ubi: Added a check for ubi_num
+Date: Mon,  2 Dec 2024 12:36:52 +0300
+Message-Id: <20241202093652.5911-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm64: dts: qcom: qcs6490-rb3gen2: enable Bluetooth
-To: Janaki Ramaiah Thota <quic_janathot@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: quic_mohamull@quicinc.com, quic_hbandi@quicinc.com,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_msavaliy@quicinc.com
-References: <20241022104600.3228-1-quic_janathot@quicinc.com>
- <dd008ff5-ee2a-47be-8a5b-d4f3a1e2bac3@kernel.org>
- <75dc7814-a55e-4a6f-9df9-39b7c875dee9@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <75dc7814-a55e-4a6f-9df9-39b7c875dee9@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 02/12/2024 10:32, Janaki Ramaiah Thota wrote:
->>
->>> +	pinctrl-names = "default", "sleep";
->>> +	pinctrl-1 = <&qup_uart7_sleep_cts>, <&qup_uart7_sleep_rts>,
->>> +			<&qup_uart7_sleep_tx>, <&qup_uart7_sleep_rx>;
->>
->> This could be just one phandle to state node with multiple pins subnode.
->>
-> 
-> Since we have different configuration for 3 GPIOs, it’s not good to 
-> combine all 4 GPIOs into one common sleep configuration. Each GPIO 
-> configuration is having separate requirements based on the Bluetooth SOC.
+Added a check for ubi_num for negative numbers
+If the variable ubi_num takes negative values then we get:
 
-I did not propose that. Please read bindings and other existing DTS sources.
+qemu-system-arm ... -append "ubi.mtd=0,0,0,-22222345" ...
+[    0.745065]  ubi_attach_mtd_dev from ubi_init+0x178/0x218
+[    0.745230]  ubi_init from do_one_initcall+0x70/0x1ac
+[    0.745344]  do_one_initcall from kernel_init_freeable+0x198/0x224
+[    0.745474]  kernel_init_freeable from kernel_init+0x18/0x134
+[    0.745600]  kernel_init from ret_from_fork+0x14/0x28
+[    0.745727] Exception stack(0x90015fb0 to 0x90015ff8)
 
-> This is as per hardware recommendations.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
+Fixes: 83ff59a06663 ("UBI: support ubi_num on mtd.ubi command line")
+Cc: stable@vger.kernel.org
+Signed-off-by: Denis Arefev <arefev@swemel.ru>
+---
+V1 -> V2: changed the tag Fixes and moved the check to ubi_mtd_param_parse()
+ drivers/mtd/ubi/build.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
+index 30be4ed68fad..ef6a22f372f9 100644
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -1537,7 +1537,7 @@ static int ubi_mtd_param_parse(const char *val, const struct kernel_param *kp)
+ 	if (token) {
+ 		int err = kstrtoint(token, 10, &p->ubi_num);
+ 
+-		if (err) {
++		if (err || p->ubi_num < UBI_DEV_NUM_AUTO) {
+ 			pr_err("UBI error: bad value for ubi_num parameter: %s\n",
+ 			       token);
+ 			return -EINVAL;
+-- 
+2.25.1
 
-Best regards,
-Krzysztof
 
