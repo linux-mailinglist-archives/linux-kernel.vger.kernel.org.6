@@ -1,157 +1,117 @@
-Return-Path: <linux-kernel+bounces-427118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637F59DFCE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:19:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB099DFCEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:20:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A91A281D32
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:19:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 079DAB22206
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEF41FA15C;
-	Mon,  2 Dec 2024 09:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EBD1FA179;
+	Mon,  2 Dec 2024 09:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cuJESCSe"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="OS0gP45S"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89BB1FA15D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAB81D6DB5
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733131192; cv=none; b=WANVr0XTPULbEjsKkEkxtz7X6W0Viji5KZx6nF/cr/10dXUkKhtk72tCK2ZeUxxIniouroqUGNW50rKtRGklIzz+jjBJFUMOsf8D3kcaKYrwvIt6tsS1P1i35rFgzBtJ3m5Lz8x5CTAdbMFKTO8oCrTWK9nAJOujGDUlPKapyEA=
+	t=1733131224; cv=none; b=niFcGjwqlsY+Mlp9etJaMxN7X7N7r104dFdr+LgCVZmTZyTHazqK9RUldKfrlkS0P48g52GwuNQPAg2BHtLkT/EP3JkLS36x9au2Ufx+ogu/QjTmYCeJCIfjr3QMKYJz7cfHuFpAb0LXZOgtlGWCEPwQwylnU7TkS6hLh8gDTks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733131192; c=relaxed/simple;
-	bh=LAI201etXczxUYj/ymY5QLCuCow+OZ4zyYGLfqeYH78=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oIWXLnYuVy2JqyVG3bfgLub8rgBC7BsCF+HQxG3eMPIxBID9GxfXwu3Fa/RuzIjP+mDFm4Pav+kORvMMZd0DR4PRuMT9LPChqKVLjYlmy32glAl6Z3kBveZY1mRJJW2XPjOF01E7xSNCDa6ayqyOT40pS3vaweTiJcebuGsivD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cuJESCSe; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-724d23df764so3327355b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:19:50 -0800 (PST)
+	s=arc-20240116; t=1733131224; c=relaxed/simple;
+	bh=SWUOtEZ62ullshonhP4jKBf2d9W2S/E8dA2lk4biI3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jo60AY4tfIiH3SHTQTAWQRTGp/nY5uZD5ZbI0I3ChQwxGxC/puqT4kSzTiKMlEXWXmHE8wDkdaH5ALwMhHTUmjhibAHv/7i3f2ZL7afwvrMVKG6eratqmfjLWWJYtrc41Q7dUFyjN6Vn9wJcyYsTH7BrOWjgNlDJpAoM5wHsRxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=OS0gP45S; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53df1d1b6f8so4392080e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:20:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733131190; x=1733735990; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=I97ci8gfBo1WSs82yFcU7Nf/YQ1nSlUC/sgrBd9LgCw=;
-        b=cuJESCSe4gtFkpN0z1QKvrMPOhlxqjizPzZfNgPaHnp1+rP5hSA3WpIWSPhj5RHXG+
-         moGvd4E6M+E5AD8LRSctN63hEtLhE6ti2Or1qsSPi2u7GX0/G3Bm0Yw/EmwUQ/FJDp6S
-         xCV2crG/0td0MkCHft74bstTa6XQ1BSIMindKFbWY4dl7cKnLfPM7G7gM5MZf2DcJuXi
-         e0Ksdg4VYvD+gXAgdDiGPLn6a+r5QNvSGoKm6icwLV/42KPoHk/L/RclikS5d76hqCxt
-         Ll7HGB1shhWe3W1+4xynnUNja6OWi0GW3oTathPa5ZZiNQeF0zmYACoYSqg2decKIA/c
-         ojvg==
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733131220; x=1733736020; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s1RPkwPp5r2Vbz80qntZnCN8Y+Eqnbh1zwzq5b7urfU=;
+        b=OS0gP45SHpGIie39DH8Z/gOCe7mxiUA0tXy7JPmQ5Jty89gAoyKefrK58Cqvl6gK6f
+         nOSgS1nDFUDxp1HDkoUBC+rKFcxl59Nioo94fAOiDzGzutP7IW5fRvriOfGm0GD/HJTq
+         3kPgkmqywyHHis3JeCMZrDc4AzsysuJLxaNbfh1IYEmDhCc88LaL5V6d5vc1z4SYxAWq
+         Olgmo9WZRZCxy25pmVbC4uF/GkIc3eihls2QApWdTu2PNoiQ4qhIBT8gvQxZUzqDXJNb
+         TglN8C/iIKj4rj/2l3F0lTTN0GbHRUxHMSTzpLCnc2V0VgA+HP0fBj2N0JOHbegUU03o
+         qO3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733131190; x=1733735990;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I97ci8gfBo1WSs82yFcU7Nf/YQ1nSlUC/sgrBd9LgCw=;
-        b=ELYhUGBQv/Tt9zx7FEefmpHIRoyry35Im0QlRAsO/cmKYlBC36rq5PB4P26zIQMhJ/
-         XplZ56e1qe8HgXNOOTiImVFD8NWfmuTz3WzfgOj34rLCdsayjpCo2d12U7WkDGhYJXiR
-         b9HjhABJ7CHTrpXvhrQMNKEuozRn3+WW3rJt/Nf+AjwZhJZLbVmeq3fPInEIFOlWkoCP
-         a8fZztPeKDKnfmL5B9WwFVRIujzIifdGQnUpEM1olSqjt2uR5inuU+YyKYYHkb4AC3dV
-         H26tHAXEsCu7KDVBDtcYnDCivozLysoij0ggo/Pr4VkGalp+Ca+kLDWQqziJqAHG/RgQ
-         KnyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWEer//897tv6o/t8cVnYxmV3qT4go5aGKilV/Qx7mRdVA5qWvOrXC6PaS0/7ICptqcU2jaZhSpT0sN9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+n36zlg9tuiqXo0/CRSqw6SZpcLVk+uIrLF36BU6BZ3pEkyaI
-	Th4OMrIkCqp0b7nByl1q5M+kwkAMoAA4o5J+pOSILKWDDrLBvTJa9YDtT+MwnsWtSxoqub0UGcH
-	5QUU3M00AMzel3RQlDOb8RmM0Ub1FkIc14q+AOw==
-X-Gm-Gg: ASbGncs6JiMLN64BwGFdzt/5BGdrZGP7gvMG6l5LdhvUHAQgLHPmXF499BXSaSBDW6e
-	HVwJYtd58vp7lPjX+fjt795R3+A1GRX3YU73OJ27L6VY3E7M9PycDlrVhuM8n
-X-Google-Smtp-Source: AGHT+IEoJkQyjo3Ar3EJ4UpVVt/jtsfNxtjUYrY7d5c7BaG0lnT0VKhpLyPT+xBLHUclAEJSvTsH2ZkTOO/tBnKz7E4=
-X-Received: by 2002:a17:90b:1646:b0:2ee:bc1d:f98b with SMTP id
- 98e67ed59e1d1-2eebc1dfb17mr4817762a91.31.1733131189957; Mon, 02 Dec 2024
- 01:19:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733131220; x=1733736020;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s1RPkwPp5r2Vbz80qntZnCN8Y+Eqnbh1zwzq5b7urfU=;
+        b=Kc5sO7MUL3Yd17pymrEfzIyHb/yjK0FqcBxXumqqA9xXSpwRu84nRruLxQZRrq4ZpA
+         Q3vCQRsbuS3zELVHlPpXrfY2LjU1yWnH+1bpw+/WMuUxPYn1ulvyrCJXk7EgJt3SVKPT
+         do+xPywjW2CkAXl7j1hFvJAjZrat4flrcS/IkXMU0b3x2j9F2ZeRVsYnW3OiI5ubVhlR
+         TX8dtHbwbhJSTW+UqWzNUM9+q5coUg9Ru+IpiM3phGFNBpyF5Lg7ZNwIzTOHKBsz18zK
+         FBLgFLDHS0U/8RgB2ffKfsP7BE8FkV/SHLTvg1gr03/LCPoJwZvadA9SsgMKG1rxagTs
+         YIKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYDCElYdfJ9K7mFiZEAhyRWxNFqyjXkb/d57mCvIKqntXQyK+GY/uL2hIz+d99jDxf9gYvjoapB8SpF9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8Qx4K4WmZ6Eb/Qjpr8Uv9WLzwOk+twjVi6o50ibtZJb0b1fpf
+	22u8sskZu2HiRSrIcFGDihWYsl2f7DN1MVxwH3PQn6CV/2a+llhm2fSh/lqVStQ=
+X-Gm-Gg: ASbGncsmYjtYfNwj3M1TDsyLrrSbEjJYMsdIGPgDk7IuDjh64P3vFLOq+y9lVRuzw3a
+	yEC39byx4pjzXNZc2W6LuzVXhEy7cIMJDcLlbJkNX9GaCrEKTbsfV8CY5IDoAfmPjdXlH7ZMEKy
+	9iFQvdSVoc3LSS1DC3NldMf7/iEOImCiiVzd0k/VMRPP7Azja0wbtaDz6OAzycheylmhCQxYy7M
+	F8cxRlQEWsDULynAFE8IyEzA+576ymBXtCTQRvwoT91J5dy5XtXk9QY1kIUDLf+E5g3Hw==
+X-Google-Smtp-Source: AGHT+IE/Ktyy05BNhEHz3SvhbLMz83N6niVppt6d9zUKChiGb2UC5yIq74p4radwagwY843evl9L+g==
+X-Received: by 2002:a05:6512:39d2:b0:53d:a6c8:fb94 with SMTP id 2adb3069b0e04-53df00d9d9dmr9199616e87.28.1733131220488;
+        Mon, 02 Dec 2024 01:20:20 -0800 (PST)
+Received: from [192.168.0.104] ([91.198.101.25])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6496a43sm1386017e87.213.2024.12.02.01.20.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 01:20:20 -0800 (PST)
+Message-ID: <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
+Date: Mon, 2 Dec 2024 14:20:17 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241129161756.3081386-1-vincent.guittot@linaro.org>
- <20241129161756.3081386-11-vincent.guittot@linaro.org> <38a2431d-4c5a-4273-8f1e-7e2f65748501@amd.com>
-In-Reply-To: <38a2431d-4c5a-4273-8f1e-7e2f65748501@amd.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 2 Dec 2024 10:19:39 +0100
-Message-ID: <CAKfTPtA6=OjK=fzKhp7DKmQgho+wSE9OKa-rvVBpkMt-E+R6HQ@mail.gmail.com>
-Subject: Re: [PATCH 10/10 v2] sched/fair: Fix variable declaration position
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
-	pauld@redhat.com, efault@gmx.de, luis.machado@arm.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
+ speed
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michael Dege <michael.dege@renesas.com>,
+ Christian Mardmoeller <christian.mardmoeller@renesas.com>,
+ Dennis Ostermann <dennis.ostermann@renesas.com>
+References: <20241202083352.3865373-1-nikita.yoush@cogentembedded.com>
+ <20241202100334.454599a7@fedora.home>
+Content-Language: en-US, ru-RU
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+In-Reply-To: <20241202100334.454599a7@fedora.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 29 Nov 2024 at 19:30, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
->
-> Hello Vincent,
->
-> On 11/29/2024 9:47 PM, Vincent Guittot wrote:
-> > Move variable declaration at the beginning of the function
-> >
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >   kernel/sched/fair.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index c34874203da2..87552870958c 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5632,6 +5632,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags);
-> >   static struct sched_entity *
-> >   pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
-> >   {
-> > +     struct sched_entity *se;
-> >       /*
-> >        * Enabling NEXT_BUDDY will affect latency but not fairness.
-> >        */
-> > @@ -5642,7 +5643,7 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
-> >               return cfs_rq->next;
-> >       }
-> >
-> > -     struct sched_entity *se = pick_eevdf(cfs_rq);
-> > +     se = pick_eevdf(cfs_rq);
-> >       if (se->sched_delayed) {
-> >               dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
-> >               SCHED_WARN_ON(se->sched_delayed);
->
-> Perhaps also squash in:
+Hello.
 
-Yes, I add it in v3
+> What's your use-case to need >1G fixed-settings link ?
 
-Thanks
+My hardware is Renesas VC4 board (based on Renesas S4 SoC), network driver is rswitch, PHY in question 
+is Marvell 88Q3344 (2.5G Base-T1).
 
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 3356315d7e64..321e3f9e2ac4 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5476,6 +5476,7 @@ static bool
->   dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->   {
->         bool sleep = flags & DEQUEUE_SLEEP;
-> +       int action = UPDATE_TG;
->
->         update_curr(cfs_rq);
->
-> @@ -5502,7 +5503,6 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->                 }
->         }
->
-> -       int action = UPDATE_TG;
->         if (entity_is_task(se) && task_on_rq_migrating(task_of(se)))
->                 action |= DO_DETACH;
->
-> --
->
-> while at it :)
->
-> --
-> Thanks and Regards,
-> Prateek
->
+To get two such PHYs talk to each other, one of the two has to be manually configured as slave.
+(e.g. ethtool -s tsn0 master-slave forced-slave).
+
+This gets handled via driver's ethtool set_link_ksettings method, which is currently set to
+phy_ethtool_ksettings_set().
+
+Writing a custom set_link_ksettings method just to not error out when speed is 2500 looks ugly.
+
+Nikita
 
