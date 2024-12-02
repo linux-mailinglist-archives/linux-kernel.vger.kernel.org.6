@@ -1,273 +1,120 @@
-Return-Path: <linux-kernel+bounces-427301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A229DFF6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:56:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FFBA9DFF7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:58:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53830B2375F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050CA280D5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D37E1FCCF9;
-	Mon,  2 Dec 2024 10:55:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6349F1FCFD2;
+	Mon,  2 Dec 2024 10:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPL5fPpI"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172231FCCEA
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6526E1FC0E5;
+	Mon,  2 Dec 2024 10:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733136958; cv=none; b=AAeF7l/Gp1GreTatnwCJA6AuW4wj7OfpC2WROZtBHaAoV8NIMtiCgiMYNzSs2CisxCszZX0HL0JsTSGP0Q1Br11gs/UO1Z7D3Cg0TwN4gY5kiTgC21F5crrwcU3lJFPhjHE3dEe2idzOc8q9LiSNwTgp9UIX8X6g6QjxqdHEeiE=
+	t=1733137124; cv=none; b=bQHPU7Xr0YWs5iNFH91a488iomkuZMsy9r000zt3A4EQrrxQVfRGVwGdM4/3vMo0b5VCqaA3YCfAMKVy8pZf9QTGkvrG26jMPVX1ceRmGk6x2Q7/p/od0cYxrg1FeL0i5ix8Eo7BIubOslcGLzUawewQjFkekOEpZJK+ZASEKIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733136958; c=relaxed/simple;
-	bh=hAR+n/8cs+W+i7P6+1pqkF9b5k3C0Ytpe70VnugbH5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eRhtPFvxTccl9H8CqThWAyrS3izWpkzJGcSjfAsZv/2+Jjya/s4sx3GRVSHbG1yRTIBbuTQ3aUTN/2yjcgSG8ftH9sDBd5hr4tl4rayxx8d7FD/Nb9O6S0wCdJ9ZcEM25aSSypPkg3yr2ZBPL/IcMHTupE1F2DJ9hVL7ISkZuZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1tI45f-0003F5-Up; Mon, 02 Dec 2024 11:55:43 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1tI45b-001HYt-2S;
-	Mon, 02 Dec 2024 11:55:40 +0100
-Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mtr@pengutronix.de>)
-	id 1tI45c-00AYgo-1M;
-	Mon, 02 Dec 2024 11:55:40 +0100
-Date: Mon, 2 Dec 2024 11:55:40 +0100
-From: Michael Tretter <m.tretter@pengutronix.de>
-To: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Gaosheng Cui <cuigaosheng1@huawei.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" <linux-media@vger.kernel.org>,
-	"moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] media: allegro-dvt: Moving the current driver to
- subdirectory
-Message-ID: <Z02SLI05JhNDtXFn@pengutronix.de>
-Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
-	Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Gaosheng Cui <cuigaosheng1@huawei.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" <linux-media@vger.kernel.org>,
-	"moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-References: <20241202102654.40472-1-yassine.ouaissa@allegrodvt.com>
+	s=arc-20240116; t=1733137124; c=relaxed/simple;
+	bh=+nxRREVnR5y0I112w/Jah180rKSxFhlYFjfn7aw/klk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fkm537L7/2VyCHpXkrHMURQokyz0txh+GQsW+ckuGInK2vecy4YZm1xAGrqXL1Hwz71Lp9cCObD/Zw8/P65tduSvehqIp4MMkzfCMein5TqNODgg3KNEXPO0HLfuAw/gJYPvsu21xc65i5iduKL3r4Xpga5g2ltdgRRtn74fnzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QPL5fPpI; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4af09420293so1304401137.1;
+        Mon, 02 Dec 2024 02:58:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733137122; x=1733741922; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gfoa7bD2f01l4BmRlAhSCsAqRh96RlqgXzfDjBF8Dfk=;
+        b=QPL5fPpIJiquzpBrUucQcQ7OAAKHQEs3Aj7TRZuxwBIrRVdFkia7+8Z8SrFOi+SCju
+         n0g6KLQH4ncn4U001Y1RpoW2QGxmmNOk0s6dic4ODFhsvDvZsj2J4vxbf8HfeQIy9PvG
+         wgEr6bRnha7Qjy+fvAa5ITCjp66YlFaYtNmfoiza3YR2Dxat73TI6z2aPsJ95mFRYTJg
+         s8+XlinQd2C9dNCZzy7J+ENOzPQUbCePEr/sceoMd9gW3p9BpxwOGve+dQr+zrua7CM6
+         jYae8fgfIm21FmR1ok0HNOav6z7TRQTuYb5FppT7Yzp1SN74B4Jnla1axJZhLP23Sbr9
+         eeng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733137122; x=1733741922;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gfoa7bD2f01l4BmRlAhSCsAqRh96RlqgXzfDjBF8Dfk=;
+        b=fKRAMGJjk89zUQbbbLrTWt4kZGElSzdkIjzMf0nC790vXk9zXab8saLdg1WFBl/4du
+         22qek+JWKRa7CtGSEWHYC9UVjA/yTgc4ChCfrnjXYMYkyNZXJU+Fjr+rzcxpagcdGZUu
+         KT+UPoAeMSYnxN35oO0l5P5qp1w+hR2Pmz4rbBF8qnsMS2ihxRLlIn81lcqnNj5UQDnY
+         xnw2lvXzq7xEbnFdx9GcrSLYqtgWPkCU82mJWCJYQHg36m8YYm/Oc1hvFmkr6a5N8Afa
+         6SY/HliazBJEhMCVVOngaYsxfjc+JcmuTniMIWKFC2fQyqo7geZ42HsGqrK837XIAGCH
+         rxFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9GJmp15QkoE6nkrgPMC3BC3SbaM/+ELjV8ybr5MyhWcPhTT/HqGhL9mzTvuW/j2fjTqkVa1DQHbCn3AatMQ==@vger.kernel.org, AJvYcCUAzFOf561QTAep+elvlzk2db108hCc76l+AzjhCQWSQGun17yVQO6Gp0X7Nue01a1exVcoGBD4i7VU@vger.kernel.org, AJvYcCVx28qH10R+4SsE2XmW0iaWSHSo6wTAqyJJb0MP/gPfvp2Dp+LOb+B862hcKdyCIg0dKkv1l7RXsMcmX6rm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB6xUgyLTAjpeWHe/0ECTESSUeTygLsBdGAkXjnkyJ5vbY1DgM
+	/BFImWBfA5gfsl54XZaGDD7j24jhniH16rap32PgdJZf80GSj7B0IN41QV2jdnXtGVELZlBcdrl
+	YpcKJlHTZMD4aXtroJZRT0SclzCg=
+X-Gm-Gg: ASbGncvu9u3odfqdFzEGmRYmFavWUPMs7n1z62A0Jp07GouP0HHiU6rRT6EGdrA5DOO
+	ztxM6s6dlWD2NMUNDyR2npo2aLvN6EA==
+X-Google-Smtp-Source: AGHT+IFlB8c06w2axw6TQWoIQCxm3r13lXyNDj8VZnMYRZPeMarHkdmhyheKxlRQAhwFATF1p/9Mtr8ic9XojWNVB4Q=
+X-Received: by 2002:a05:6102:c4c:b0:4ad:a437:c41a with SMTP id
+ ada2fe7eead31-4af44a0ab7bmr25948208137.19.1733137122399; Mon, 02 Dec 2024
+ 02:58:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241202102654.40472-1-yassine.ouaissa@allegrodvt.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com>
+ <20241008-starqltechn_integration_upstream-v6-6-5445365d3052@gmail.com> <9ac43c69-b3db-4f0f-a562-b8ef7d30530c@oss.qualcomm.com>
+In-Reply-To: <9ac43c69-b3db-4f0f-a562-b8ef7d30530c@oss.qualcomm.com>
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Mon, 2 Dec 2024 13:58:31 +0300
+Message-ID: <CABTCjFDV1Afz8YmpkPVvpC_Y77qLexCBueMt5vk98L=VRmUz-g@mail.gmail.com>
+Subject: Re: [PATCH v6 06/12] arm64: dts: qcom: sdm845-starqltechn: add gpio keys
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: cros-qcom-dts-watchers@chromium.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yassine,
+=D1=81=D0=B1, 26 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 13:38, Kon=
+rad Dybcio <konrad.dybcio@oss.qualcomm.com>:
+>
+> On 8.10.2024 6:51 PM, Dzmitry Sankouski wrote:
+> > Add support for phone buttons.
+> >
+> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> >
+> > ---
+(...)
+> > +                     gpios =3D <&pm8998_gpios 6 GPIO_ACTIVE_LOW>;
+> > +                     linux,code =3D <KEY_VOLUMEUP>;
+> > +                     debounce-interval =3D <15>;
+> > +             };
+> > +
+> > +             key-wink {
+> > +                     label =3D "key_wink";
+>
+> What's this key? Bixby?
 
-On Mon, 02 Dec 2024 11:26:38 +0100, Yassine Ouaissa wrote:
-> In preparation for the upcoming driver update, we need to realocate the
-> current driver that is not maintained by us ( allegro-dvt ).
-> This will help ensure a clean transition and avoid any potential
-> conflicts with the new driver.
+Yes, I'll rename to 'Bixby'
 
-What kind of conflicts do you encounter or expect? It's kind of
-surprising that your driver would conflict with anything in the existing
-driver.
+>
+> Konrad
 
-> 
-> This patch is crucial for keeping our directory organized and
-> facilitating a smooth integration of the new driver
+--=20
 
-I'd like to see how you plan to integrate your driver, what it looks
-like and what conflicts with the existing driver actually occur. Without
-that information I don't see the point in moving the driver to a
-sub-directory.
-
-Michael
-
-> 
-> Signed-off-by: Yassine Ouaissa <yassine.ouaissa@allegrodvt.com>
-> ---
->  MAINTAINERS                                               | 2 +-
->  drivers/media/platform/allegro-dvt/Kconfig                | 4 ++--
->  drivers/media/platform/allegro-dvt/Makefile               | 8 ++------
->  drivers/media/platform/allegro-dvt/zynqmp/Makefile        | 6 ++++++
->  .../media/platform/allegro-dvt/{ => zynqmp}/nal-h264.c    | 0
->  .../media/platform/allegro-dvt/{ => zynqmp}/nal-h264.h    | 0
->  .../media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.c    | 0
->  .../media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.h    | 0
->  .../media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.c    | 0
->  .../media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.h    | 0
->  .../{allegro-core.c => zynqmp/zynqmp-allegro-core.c}      | 2 +-
->  .../{allegro-mail.c => zynqmp/zynqmp-allegro-mail.c}      | 2 +-
->  .../{allegro-mail.h => zynqmp/zynqmp-allegro-mail.h}      | 0
->  13 files changed, 13 insertions(+), 11 deletions(-)
->  create mode 100644 drivers/media/platform/allegro-dvt/zynqmp/Makefile
->  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-h264.c (100%)
->  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-h264.h (100%)
->  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.c (100%)
->  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-hevc.h (100%)
->  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.c (100%)
->  rename drivers/media/platform/allegro-dvt/{ => zynqmp}/nal-rbsp.h (100%)
->  rename drivers/media/platform/allegro-dvt/{allegro-core.c => zynqmp/zynqmp-allegro-core.c} (99%)
->  rename drivers/media/platform/allegro-dvt/{allegro-mail.c => zynqmp/zynqmp-allegro-mail.c} (99%)
->  rename drivers/media/platform/allegro-dvt/{allegro-mail.h => zynqmp/zynqmp-allegro-mail.h} (100%)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7292e4a1ddb8..d79efe6f8992 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -795,7 +795,7 @@ R:	Pengutronix Kernel Team <kernel@pengutronix.de>
->  L:	linux-media@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/media/allegro,al5e.yaml
-> -F:	drivers/media/platform/allegro-dvt/
-> +F:	drivers/media/platform/allegro-dvt/zynqmp
->  
->  ALLIED VISION ALVIUM CAMERA DRIVER
->  M:	Tommaso Merciai <tomm.merciai@gmail.com>
-> diff --git a/drivers/media/platform/allegro-dvt/Kconfig b/drivers/media/platform/allegro-dvt/Kconfig
-> index 2182e1277568..9bc7e99788b8 100644
-> --- a/drivers/media/platform/allegro-dvt/Kconfig
-> +++ b/drivers/media/platform/allegro-dvt/Kconfig
-> @@ -2,8 +2,8 @@
->  
->  comment "Allegro DVT media platform drivers"
->  
-> -config VIDEO_ALLEGRO_DVT
-> -	tristate "Allegro DVT Video IP Core"
-> +config VIDEO_ZYNQMP_ALLEGRO_DVT
-> +	tristate "Allegro DVT Video IP Core for ZynqMP"
->  	depends on V4L_MEM2MEM_DRIVERS
->  	depends on VIDEO_DEV
->  	depends on ARCH_ZYNQMP || COMPILE_TEST
-> diff --git a/drivers/media/platform/allegro-dvt/Makefile b/drivers/media/platform/allegro-dvt/Makefile
-> index 66108a303774..04727c5f7ef4 100644
-> --- a/drivers/media/platform/allegro-dvt/Makefile
-> +++ b/drivers/media/platform/allegro-dvt/Makefile
-> @@ -1,6 +1,2 @@
-> -# SPDX-License-Identifier: GPL-2.0
-> -
-> -allegro-objs := allegro-core.o allegro-mail.o
-> -allegro-objs += nal-rbsp.o nal-h264.o nal-hevc.o
-> -
-> -obj-$(CONFIG_VIDEO_ALLEGRO_DVT) += allegro.o
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-y += zynqmp/
-> diff --git a/drivers/media/platform/allegro-dvt/zynqmp/Makefile b/drivers/media/platform/allegro-dvt/zynqmp/Makefile
-> new file mode 100644
-> index 000000000000..a8ddb9cf93a8
-> --- /dev/null
-> +++ b/drivers/media/platform/allegro-dvt/zynqmp/Makefile
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +zynqmp-allegro-objs := zynqmp-allegro-core.o zynqmp-allegro-mail.o
-> +zynqmp-allegro-objs += nal-rbsp.o nal-h264.o nal-hevc.o
-> +
-> +obj-$(CONFIG_VIDEO_ZYNQMP_ALLEGRO_DVT) += zynqmp-allegro.o
-> diff --git a/drivers/media/platform/allegro-dvt/nal-h264.c b/drivers/media/platform/allegro-dvt/zynqmp/nal-h264.c
-> similarity index 100%
-> rename from drivers/media/platform/allegro-dvt/nal-h264.c
-> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-h264.c
-> diff --git a/drivers/media/platform/allegro-dvt/nal-h264.h b/drivers/media/platform/allegro-dvt/zynqmp/nal-h264.h
-> similarity index 100%
-> rename from drivers/media/platform/allegro-dvt/nal-h264.h
-> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-h264.h
-> diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.c b/drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.c
-> similarity index 100%
-> rename from drivers/media/platform/allegro-dvt/nal-hevc.c
-> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.c
-> diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.h b/drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.h
-> similarity index 100%
-> rename from drivers/media/platform/allegro-dvt/nal-hevc.h
-> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-hevc.h
-> diff --git a/drivers/media/platform/allegro-dvt/nal-rbsp.c b/drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.c
-> similarity index 100%
-> rename from drivers/media/platform/allegro-dvt/nal-rbsp.c
-> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.c
-> diff --git a/drivers/media/platform/allegro-dvt/nal-rbsp.h b/drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.h
-> similarity index 100%
-> rename from drivers/media/platform/allegro-dvt/nal-rbsp.h
-> rename to drivers/media/platform/allegro-dvt/zynqmp/nal-rbsp.h
-> diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
-> similarity index 99%
-> rename from drivers/media/platform/allegro-dvt/allegro-core.c
-> rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
-> index e491399afcc9..8895d7755987 100644
-> --- a/drivers/media/platform/allegro-dvt/allegro-core.c
-> +++ b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-core.c
-> @@ -31,7 +31,7 @@
->  #include <media/videobuf2-dma-contig.h>
->  #include <media/videobuf2-v4l2.h>
->  
-> -#include "allegro-mail.h"
-> +#include "zynqmp-allegro-mail.h"
->  #include "nal-h264.h"
->  #include "nal-hevc.h"
->  
-> diff --git a/drivers/media/platform/allegro-dvt/allegro-mail.c b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
-> similarity index 99%
-> rename from drivers/media/platform/allegro-dvt/allegro-mail.c
-> rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
-> index aadc947a77ae..88a98f9e5d00 100644
-> --- a/drivers/media/platform/allegro-dvt/allegro-mail.c
-> +++ b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.c
-> @@ -12,7 +12,7 @@
->  #include <linux/string.h>
->  #include <linux/videodev2.h>
->  
-> -#include "allegro-mail.h"
-> +#include "zynqmp-allegro-mail.h"
->  
->  const char *msg_type_name(enum mcu_msg_type type)
->  {
-> diff --git a/drivers/media/platform/allegro-dvt/allegro-mail.h b/drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.h
-> similarity index 100%
-> rename from drivers/media/platform/allegro-dvt/allegro-mail.h
-> rename to drivers/media/platform/allegro-dvt/zynqmp/zynqmp-allegro-mail.h
-> -- 
-> 2.30.2
-> 
-> 
-
--- 
-Pengutronix e.K.                           | Michael Tretter             |
-Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Best regards and thanks for review,
+Dzmitry
 
