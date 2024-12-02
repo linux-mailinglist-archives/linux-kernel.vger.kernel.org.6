@@ -1,161 +1,76 @@
-Return-Path: <linux-kernel+bounces-427909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21A79E082C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:16:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F639E075A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:45:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED0F16CD2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C75E285AF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF29209F59;
-	Mon,  2 Dec 2024 15:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B492F209F55;
+	Mon,  2 Dec 2024 15:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOUNGcF+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBLmPfEu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13921200B9B;
-	Mon,  2 Dec 2024 15:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1902B200B9B;
+	Mon,  2 Dec 2024 15:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154265; cv=none; b=JkhxF9kGhT4C6rxHv/QDkjxku+U5n4/swl+4RsKY2uKNDp1M+JOSL0MYNZ8Qy4EV2qBqj04fjX1cW7KKgURcZkutZGLAPGpUr2oBC8YdttDC0uZWK5igJVE114ZqtPsZwyNwieV59NyjJ2rDjeo0hUwb8njnxu3a6aRumsDBVag=
+	t=1733154296; cv=none; b=tjbEzNaTk81+Nt4kW3/NFtO+nV5LbnNLQRHzZCEos0xvKtZ/16JJuAZ6O8mQ+ONFamF8IKZQjnCCG1lQDyNUQs0Q3hkZMOQrMb1lGSx95ZaNBSvjcVQ0QdZQNvr8G9euI7aA62pboYltk7OYZgRtiVzYkaXWO5qebLYnZiMiqy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154265; c=relaxed/simple;
-	bh=DyHkmcoK/rPOrpLfO3N9/3ZQGexPIlejeLIDNVhReJo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mCRD3m+Y/uAF3rju39owNUjvOezfmSZo2oKfbNG6uR0syrY1NmB/nHQMW+uC76LbetYZSNekGUJN6MwdQjV6c1+C/iq6qDscUu6y4XRlla8tz9SojhIe1HVbuewQ34OUS2a00TAxZ4hy6mVF5o1YRggRpNcYC0S6MNLEC+lol50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOUNGcF+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0547AC4CED1;
-	Mon,  2 Dec 2024 15:44:23 +0000 (UTC)
+	s=arc-20240116; t=1733154296; c=relaxed/simple;
+	bh=J/q1xWj4DxCp6IzU7uPb7iTssY8YnrBnsl5MtdaRI/Q=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=oRA+QjgwBtcCnQuejNojb+JTzB4Sb23uiv+vwPaykbn92FDKMs7DoVJ1OXVcz8C6ycVuNf4n+EkMHuHtndLBwzdEViqsuYkwKhLk96C+4bM9UWoy8K8aHr6zXdzLn2mRyq7ulaOUhVgQSfxlbMeWcZX8OVlhEfX0QoX4I5Omhyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBLmPfEu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29BF5C4CED1;
+	Mon,  2 Dec 2024 15:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733154264;
-	bh=DyHkmcoK/rPOrpLfO3N9/3ZQGexPIlejeLIDNVhReJo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=dOUNGcF+mdb56CEPrlHyw39sLJ6Cpw3nwWs37XYq/5PCKaYPjmRFAKpj3U6FKB9qL
-	 ZDraECnj/6CO8AT1hvqhljlFzcSXwo+/r2HbYd3en7lr5Lrcs8vwB2jgVLcBaNGH+W
-	 3sIwJ6ex6jiS97vYpH3a+BLXNZjMncZACtVsgaI/uKjzAkuH9GzrBSiGp6zofqafe7
-	 yzC3rep21BA4jxNecS1y4iug1WbwCSwjoUGkjCQPhtOV/vi8PXhp0REkXSdFToGYm3
-	 MgBjhLvwIAq7I9xcIh0TUkDGhodZMeTojoiqnpM4+ieY+9Az+7a6Pv9s9tzAqVi4BL
-	 8d1jUMElH1/IQ==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Celeste Liu <uwu@coelacanthus.name>, Oleg Nesterov <oleg@redhat.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Eric Biederman
- <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, "Dmitry V. Levin" <ldv@strace.io>,
- Andrea Bolognani <abologna@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ron Economos <re@w6rz.net>, Felix Yan
- <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>, Shiqi Zhang
- <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, Yao Zi
- <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, stable@vger.kernel.org, Celeste Liu
- <uwu@coelacanthus.name>
-Subject: Re: [PATCH] riscv/ptrace: add new regset to get original a0 register
-In-Reply-To: <20241201-riscv-new-regset-v1-1-c83c58abcc7b@coelacanthus.name>
-References: <20241201-riscv-new-regset-v1-1-c83c58abcc7b@coelacanthus.name>
-Date: Mon, 02 Dec 2024 16:44:21 +0100
-Message-ID: <87v7w22ip6.fsf@all.your.base.are.belong.to.us>
+	s=k20201202; t=1733154295;
+	bh=J/q1xWj4DxCp6IzU7uPb7iTssY8YnrBnsl5MtdaRI/Q=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=bBLmPfEuiTfRJnp+ZnwgaRqb9cxXz0K6fMMlUyvDEsusKLVmzaRUkMK6epO8opKEs
+	 PwmmSAPf9vdTpehrIfen0th26tLjWFetjQq2vFJs315alQa0XFABW5BAVfcJy5vH3D
+	 qCnqbb0sbSC8lSZB9WwLsOaDr4ykQgEM6fQUspxdClGm1c1NZI0O9ThDWxAH9A4id7
+	 hIwTG55au1gkzWkIt3zOPFTeeNy8K6nea7RTJUvG/AkLDeFtDbKtDjcZq8Tq7a1zQ5
+	 jOfEqNrBFhY8oDlt835VUwvXntb8rAhmkDL0P1EWn8PrpBBLQVNpG3mQzMwHuhfP1x
+	 DYAxZ855ED4dg==
+Message-ID: <f7d5a7e084f01661572b2608c9a73db2@kernel.org>
+Date: Mon, 02 Dec 2024 15:44:53 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v5 04/10] drm/display: hdmi: add generic mode_valid
+ helper
+In-Reply-To: <20241130-hdmi-mode-valid-v5-4-742644ec3b1f@linaro.org>
+References: <20241130-hdmi-mode-valid-v5-4-742644ec3b1f@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, "Chen-Yu Tsai" <wens@csie.org>, "Dave
+ Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime
+ Ripard" <mripard@kernel.org>, =?utf-8?b?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Raspberry Pi Kernel Maintenance" <kernel-list@raspberrypi.com>, "Robert
+ Foss" <rfoss@kernel.org>, "Samuel Holland" <samuel@sholland.org>, "Simona
+ Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-Thanks for working on this!
+On Sat, 30 Nov 2024 03:52:29 +0200, Dmitry Baryshkov wrote:
+> Add drm_hdmi_connector_mode_valid(), generic helper for HDMI connectors.
+> It can be either used directly or as a part of the .mode_valid callback.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Celeste Liu <uwu@coelacanthus.name> writes:
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-> The orig_a0 is missing in struct user_regs_struct of riscv, and there is
-> no way to add it without breaking UAPI. (See Link tag below)
->
-> Like NT_ARM_SYSTEM_CALL do, we add a new regset name NT_RISCV_ORIG_A0 to
-> access original a0 register from userspace via ptrace API.
->
-> Link: https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gm=
-ail.com/
-> Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
-> ---
->  arch/riscv/kernel/ptrace.c | 33 +++++++++++++++++++++++++++++++++
->  include/uapi/linux/elf.h   |  1 +
->  2 files changed, 34 insertions(+)
->
-> diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
-> index ea67e9fb7a583683b922fe2c017ea61f3bc848db..faa46de9000376eb445a32d43=
-a40210d7b846844 100644
-> --- a/arch/riscv/kernel/ptrace.c
-> +++ b/arch/riscv/kernel/ptrace.c
-> @@ -31,6 +31,7 @@ enum riscv_regset {
->  #ifdef CONFIG_RISCV_ISA_SUPM
->  	REGSET_TAGGED_ADDR_CTRL,
->  #endif
-> +	REGSET_ORIG_A0,
->  };
->=20=20
->  static int riscv_gpr_get(struct task_struct *target,
-> @@ -184,6 +185,30 @@ static int tagged_addr_ctrl_set(struct task_struct *=
-target,
->  }
->  #endif
->=20=20
-> +static int riscv_orig_a0_get(struct task_struct *target,
-> +			     const struct user_regset *regset,
-> +			     struct membuf to)
-
-Use full 100 chars!
-
-> +{
-> +	return membuf_store(&to, task_pt_regs(target)->orig_a0);
-> +}
-> +
-> +static int riscv_orig_a0_set(struct task_struct *target,
-> +			     const struct user_regset *regset,
-> +			     unsigned int pos, unsigned int count,
-> +			     const void *kbuf, const void __user *ubuf)
-
-Dito!
-
-> +{
-> +	int orig_a0 =3D task_pt_regs(target)->orig_a0;
-
-64b regs on RV64.
-
-> +	int ret;
-> +
-> +	ret =3D user_regset_copyin(&pos, &count, &kbuf, &ubuf, &orig_a0, 0, -1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	task_pt_regs(target)->orig_a0 =3D orig_a0;
-> +	return ret;
-> +}
-> +
-> +
-
-Multiple blanks.
-
->  static const struct user_regset riscv_user_regset[] =3D {
->  	[REGSET_X] =3D {
->  		.core_note_type =3D NT_PRSTATUS,
-> @@ -224,6 +249,14 @@ static const struct user_regset riscv_user_regset[] =
-=3D {
->  		.set =3D tagged_addr_ctrl_set,
->  	},
->  #endif
-> +	[REGSET_ORIG_A0] =3D {
-> +		.core_note_type =3D NT_RISCV_ORIG_A0,
-> +		.n =3D 1,
-> +		.size =3D sizeof(elf_greg_t),
-> +		.align =3D sizeof(elf_greg_t),
-
-...and sizeof(elf_greg_t) is 64b in RV64 -- mismatch above.
-
-
-Bj=C3=B6rn
+Thanks!
+Maxime
 
