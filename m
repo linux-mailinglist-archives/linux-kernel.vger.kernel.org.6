@@ -1,63 +1,97 @@
-Return-Path: <linux-kernel+bounces-427922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 172659E08F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:46:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FB69E0809
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:10:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38D6DB27AAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900051749A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7707A7C0BE;
-	Mon,  2 Dec 2024 15:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C3A13B2A8;
+	Mon,  2 Dec 2024 15:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioCIHjXV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F6vuUL/d"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F2F42AAD;
-	Mon,  2 Dec 2024 15:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3701E42AAD
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154482; cv=none; b=apgIg1A2OoRHgAOA+Dw3M+CnGRac2D985RnOHxsObE+dPKSM309GfCnZOAdrojo68AxAZ3wRXbCiO10TNf6zAFMl7RyUKljdC+BI4Y3K7IffrpRNmyz1Acps4sqT07kG92dYTdXNYvdJV0hWX/Ccnx9AyK9K5vKFYdkREnPD/K8=
+	t=1733154499; cv=none; b=sqkab/S3gtf+yMjefbuZETjxerTwxymh1ndLaIbOsooDA1z3PBG4S6vndnWBWEbA8yJi4CjmhyIQ0eQkhfiPaiRoWNlfsX4jaPyX394hpmPkmtQ/Q3++OSNasuT7MqHL1o/aOjcwzidcZQWGORN7Vg/rc3KscN7BwSrrRrqJkyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154482; c=relaxed/simple;
-	bh=tUIUYos7HfM9zp290BdrLXtD0sN1aHS92XAApgYZMBk=;
+	s=arc-20240116; t=1733154499; c=relaxed/simple;
+	bh=uHjedfVRrZ+e3sFGTNQ46N0aIuL9DX4TX/57voliHDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LuP4DNTuvyHF8NBeOoMvksqjcNmVGI5K3huSG5Xn9AU+saXrWIv0aKIOeKk3jgp8/aWloLWpHBigzVXXAC3yfbKFFnejIWzV/JD0yObN1trFsBOgUacizM1Bqf83koNdyYkqjIuQnuoH/Ey4AttcS11DXKD52h5h6271XwJtxUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioCIHjXV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F31C6C4CEDD;
-	Mon,  2 Dec 2024 15:48:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733154482;
-	bh=tUIUYos7HfM9zp290BdrLXtD0sN1aHS92XAApgYZMBk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ioCIHjXVuT/MldTsu21M7/2/vGwSGBcdP9+5GJAHnU0Y4BT4VQr7yPOWGNAjTcScY
-	 Vxb1JlB6qY1HPYy9ZkPJN1UUqMZz4hPlLoFZiFQKHUG30UbWIhK9nhzIg8OVF0MPTb
-	 R5Ti1zMcRH/YL3LnS1DO05aGdN1+OWvWWIWH/TIwfOhr6Ll29jvpja36E+7O+2jONx
-	 IoRimoYA0BpeNRFX+A2PtCKCnhUjI1wICHzKv0Al4isIXhPTij/dhljOm5++R+pfsO
-	 jZb1N8ZXJibwa1PseqjjbPJsYGjtDMUEoxCmlx14hqTPvxt4fIsEf6lAU8BgrQ0ewY
-	 w6quEcbYKeXCw==
-Date: Mon, 2 Dec 2024 09:48:00 -0600
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 5/6] of: Add #address-cells/#size-cells in the
- device-tree root empty node
-Message-ID: <20241202154800.GA2617722-robh@kernel.org>
-References: <20241202131522.142268-1-herve.codina@bootlin.com>
- <20241202131522.142268-6-herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFQYWBxOYskzcL0uDU1e90g+4mo28CV+DFjd5DPGVXUAymrr21suhDVJJqNZeFxaDWI898LLBxUgVm/rOR0hkYGOc+EtMuM21RLErWsFANLoWor//ypxDT/eTid3t9Ry37h83ZAWa+aiGReyhYxQVVmtpie8eqP4M6lC1PicxNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F6vuUL/d; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53df67d6659so6621877e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:48:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733154496; x=1733759296; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xfHRG0ckbabpB5WkAOGLFC/tsNXMkX3A9rmcYDbuN4Y=;
+        b=F6vuUL/dRzR82uF/XRVcmZTG8/Y4/wgxNwdZHxTWoxaPrEB/JZ5NMlnZqUdAjguM5F
+         ohGJYa+nj0V6bBpWDRK8oCNmQvNxbMO0E83UPzy8W3jIm07MSd2Y2GHjjyGcrRSwmVLz
+         d/GiO/N99sVuezwZ1NUljKwtaBCu+dB/SRoQyULOSEtSS4nh8JTtA6HLkZ4b6fjj3yJi
+         P5qPiFNiHi22Jijmjhh7FKABnHUdk9AxF0+pSAJAbYJFv4HO3Q5/jcpssYErye59ipuK
+         j5GWsnEJa9aqAy/r+N1BQ3y3Zakk2JqzN5NPScJyF/LPrwvoP1sFLYq16g9f1jIGMDFL
+         xKtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733154496; x=1733759296;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xfHRG0ckbabpB5WkAOGLFC/tsNXMkX3A9rmcYDbuN4Y=;
+        b=fxn9Cs8Fm0kjX8sMBVG4OpDMsvexq7W6eByAyhByI7O7hLzGEOzHPPKaWJpclA70Cb
+         HeI0Da0kYgoooZsZYp263G14Rf1covMah4iEShXhBmZQxpbtKGHlFkzzwqGKah9czF3J
+         xWB8qybjyxweZFour+Kjij791YqgqB9k8vT1hs46njlEsN6xLOkTRTl2Yq/ruMxQu94o
+         P9HClA3kLUm6Pc2bvENdUvVbi7q8dfznyufXGfMNOhO7gc95JZHRqH4lfo8TpXwdRfUJ
+         M6OvkLd9UYkr9pAAapMk//MprNCDXu2jnD+daNKN0amQ62WQO+Lu1ejuO+dTXKGONLF+
+         woaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwvXt5y2iUOaut/xnkWAW6QAT4CC+7Oe/APTHMG7c37MTdQUY61pgClUdi6d1u9laNXK8f99pmPT41Bb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylP9mYllNOaGgpPQI3y0/NZgZDHgJgoW1gvvXO/eZe6ouU8KEu
+	u4vvub73312Km3DSaAq9bqfuXQN8InuFxw8JDR2zFeHbro8UEZSJZgmQrL1CEGU=
+X-Gm-Gg: ASbGncsbmrQ+iMH4b2H8kaC7Ml4lPPv+RkmAjcjGnqmiANJhs/ZSPnbN1xg/i7hfDOC
+	JLQZQq0pJhlGVZI5a59YsQ1+zkxS1xneudboHzLEGq3ph1vLSDGAwSuVxVFIvrOl2FqnK2oTczv
+	WlDENGDNgicu+58UWNQaCiZEwYzfewyNoA8dAeV4YjbwlWjsSch3YppsCkuQiUzBJIttHc3mDpy
+	cukJtCT26V1sArxs6xwNUw+wrBUAqPGKU52LnW6IsZEGNLt9WMkdpIZpUeZrzhFdqA4HmZslyPm
+	eX3mTnGoyDMRyPwqN9osx2JS1zdtfg==
+X-Google-Smtp-Source: AGHT+IG0Q5k/W3ed0OQwMlkM6qlSogEM4cPmSjYiJhbwpudSDr/7EC5mlTOxyGWNLuXKmiBWsxS+wQ==
+X-Received: by 2002:a05:6512:3b0d:b0:53d:ed95:9bfa with SMTP id 2adb3069b0e04-53df00a96d2mr17148818e87.7.1733154496365;
+        Mon, 02 Dec 2024 07:48:16 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649f638sm1511742e87.239.2024.12.02.07.48.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 07:48:15 -0800 (PST)
+Date: Mon, 2 Dec 2024 17:48:13 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_lliu6@quicinc.com, quic_fangez@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 3/8] phy: qcom: qmp-usbc: Add DP phy mode support on
+ QCS615
+Message-ID: <gnrdym5o345fsbtxmfis6ykep7mzvhkxxnizlj5xplrsaaijjq@5465y2oamqoh>
+References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
+ <20241129-add-displayport-support-for-qcs615-platform-v1-3-09a4338d93ef@quicinc.com>
+ <b310587f-c6c3-41dd-83bf-6affbcc65730@kernel.org>
+ <22600892-3b0d-4b0f-9c46-e74241960dda@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,59 +100,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241202131522.142268-6-herve.codina@bootlin.com>
+In-Reply-To: <22600892-3b0d-4b0f-9c46-e74241960dda@quicinc.com>
 
-On Mon, Dec 02, 2024 at 02:15:17PM +0100, Herve Codina wrote:
-> On systems where ACPI is enabled or when a device-tree is not passed to
-> the kernel by the bootloader, a device-tree root empty node is created.
-> This device-tree root empty node does not have the #address-cells and
-> the #size-cells properties
+On Mon, Dec 02, 2024 at 06:31:44PM +0800, Xiangxu Yin wrote:
 > 
-> This leads to the use of the default address cells and size cells values
-> which are defined in the code to 1 for the address cells value and 1 for
-> the size cells value.
 > 
-> According to the devicetree specification and the OpenFirmware standard
-> (IEEE 1275-1994) the default value for #address-cells should be 2.
-> 
-> Also, according to the devicetree specification, the #address-cells and
-> the #size-cells are required properties in the root node.
-> 
-> The device tree compiler already uses 2 as default value for address
-> cells and 1 for size cells. The powerpc PROM code also uses 2 as default
-> value for address cells and 1 for size cells. Modern implementation
-> should have the #address-cells and the #size-cells properties set and
-> should not rely on default values.
-> 
-> On x86, this root empty node is used and the code default values are
-> used.
-> 
-> In preparation of the support for device-tree overlay on PCI devices
-> feature on x86 (i.e. the creation of the PCI root bus device-tree node),
-> the default value for #address-cells needs to be updated. Indeed, on
-> x86_64, addresses are on 64bits and the upper part of an address is
-> needed for correct address translations. On x86_32 having the default
-> value updated does not lead to issues while the upper part of a 64-bit
-> value is zero.
-> 
-> Changing the default value for all architectures may break device-tree
-> compatibility. Indeed, existing dts file without the #address-cells
-> property set in the root node will not be compatible with this
-> modification.
-> 
-> Instead of updating default values, add both required #address-cells
-> and #size-cells properties in the device-tree empty node.
-> 
-> Use 2 for both properties value in order to fully support 64-bit
-> addresses and sizes on systems using this empty root node.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  drivers/of/empty_root.dts | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
+> On 11/29/2024 4:18 PM, Krzysztof Kozlowski wrote:
+> > On 29/11/2024 08:57, Xiangxu Yin wrote:
+> >> +static int qmp_usbc_com_init(struct phy *phy)
+> >>  {
+> >>  	struct qmp_usbc *qmp = phy_get_drvdata(phy);
+> >> -	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> >> -	void __iomem *pcs = qmp->pcs;
+> >> +	int num_vregs;
+> >>  	u32 val = 0;
+> >>  	int ret;
+> >> +	unsigned int reg_pwr_dn;
+> >>  
+> >> -	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+> >> +	if (qmp->type == QMP_PHY_USBC_USB) {
+> > 
+> > 
+> > Sorry, all this code is unreviewable. Organize your changes in logical,
+> > reviewable chunks.
+> > 
+> Will create new patch list and seperate patchsets.
 
-This also fixes unittest hitting a warning added for 6.13. So 
-I've applied this patch as a fix.
+Please respond to the comment regarding the single PHY vs multiple PHYs
+first.
 
-Rob
+> >> +		struct qmp_phy_usb_cfg *cfg = to_usb_cfg(qmp);
+> >> +
+> >> +		num_vregs = cfg->num_vregs;
+> >> +		reg_pwr_dn = cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL];
+> >> +	} else {
+> > 
+
+-- 
+With best wishes
+Dmitry
 
