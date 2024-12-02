@@ -1,79 +1,83 @@
-Return-Path: <linux-kernel+bounces-427666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9929E0499
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:15:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A77311685A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:08:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AB02036EB;
-	Mon,  2 Dec 2024 14:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LerfOYuo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF889E0464
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:08:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F9F202F8C
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733148491; cv=none; b=mkUzB4bWpNNL/DrG/Ga5491LTCllW8guz1Vyc/brhmZhsNlfthcA+KX1hK4imeZjSWCfrJSEygU1SVf8QAjPl7fqRCyVY6hfoXEUUTjq5O8G8E52l+hgeQU5AhJUNmcCt91pdZiSqEy25tLZodI2CEbAFBBeFGsbqgpl8GNloSQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733148491; c=relaxed/simple;
-	bh=urZqL0IIQs/nJCpHZzmmxLsMB/82JCR8IGuqKHfiajw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nib57kfPzg007Sx5agm8u6xtrPFyEst7QbAJtj1TKS5SxStTAkSofODxT0M8jnW2iriOPpSu9+2p7DMMvpJDfDTMs87z+7zdhPGhopfy9P9HfJBp9zObLaMDr/dIUWTsR4Z5/4TQz7zzMs0PlfNXhMiSOHDSlS3bdiWm5iOhJYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LerfOYuo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733148488;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PMoX0G1hSDcZUUvjrY2vZSqmFJo+w98zvmlvJICE4UA=;
-	b=LerfOYuoSbhHIA55ulcNfVoZuGcB7iUVQ2012BVE1dFbIjtN+Yq7P7qU61miITzXvcHnKY
-	bPgoeY3MUFp6GxsnwPvDQt6ewsIcUcI1uce9RdCmaIZzUMSEpaT5GdR/D2E7ag90v9YLZG
-	Z4SIQVCJILGv7T43a9B3pso8bQY+nu4=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-631-ZB-tYn4CNi-KkxKCLO3hIQ-1; Mon,
- 02 Dec 2024 09:08:05 -0500
-X-MC-Unique: ZB-tYn4CNi-KkxKCLO3hIQ-1
-X-Mimecast-MFC-AGG-ID: ZB-tYn4CNi-KkxKCLO3hIQ
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C15F282395
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:08:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A75920370B;
+	Mon,  2 Dec 2024 14:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="hLRFzTPK"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0991B1955D91;
-	Mon,  2 Dec 2024 14:08:04 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.192.39])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B4874195605A;
-	Mon,  2 Dec 2024 14:07:59 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH 1/2] sched: Optimise task_mm_cid_work duration
-Date: Mon,  2 Dec 2024 15:07:34 +0100
-Message-ID: <20241202140735.56368-2-gmonaco@redhat.com>
-In-Reply-To: <20241202140735.56368-1-gmonaco@redhat.com>
-References: <20241202140735.56368-1-gmonaco@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3CC203703;
+	Mon,  2 Dec 2024 14:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733148494; cv=none; b=Wjo3fWaE9aZ/fOahomSwnA84/oQkTmTtNJZpOmovbl56HGeNwU6w3ZQWsAnMEE1gNRrEIm/oGWyxetGq+lDDm5raIaGIioy1ne5RYzUassBWrtcx6D9bpMc7gPV1d8rrpc3P6g6NbQAZQUfiiaYq3fF9E8In1BgIPHZkJPnBFPo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733148494; c=relaxed/simple;
+	bh=hn1CdasRQoZxfhC3DYTvsSo/nR9ZWyuxJv9kThx+yRs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LCABmtDQf/NMES5yTs3IPLzeRmI89M6LGFe5flfDB9I06L2oUP39zdsaRcE3ZgCYzVmXCHzFYXEGWCPY4u9nkN0wnQEVObAGcTLPGzijEm7qJRdxz/LRDfbKHsn6t7NZl3hA6IAKR8jWCztq4B8ZJYCG94jC/qG0T93Z1MMSV0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=hLRFzTPK; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2D7VSB004470;
+	Mon, 2 Dec 2024 09:07:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=zMrGq
+	gp6IykLTPXE3ArCzuNFXRX2GYAMtr+B663PBIQ=; b=hLRFzTPKTnJtVUflOayfI
+	RvIfv4wL+xg85MO/ARYC7FLQnx2981gWXi7LNmQSFPZIt2777tYdrAbzBl0l5fPQ
+	BL+SUGVQillyQ31M405k57nmaVhFljgOycsqPmQdGIyozmbjyyy/S1oB2POsAO+Z
+	0aVJAdhK8qqWQhrmyXzDgnbb+vKBknVlRvL0tunon3RMIOAVOt4M/91vx29m8jBU
+	sZtzxGq5Pci3T8IPa4yXW+og9d5/2EL2yfRocrZgYsm7LZMIiigrkwcjY3GwckBH
+	YxyOwJmg7/xngCPPJNK8qiYOeM154xb+lRk5eqfkipgz6VQIqn+jginznvIzxLHc
+	A==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 437we78jp6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 09:07:54 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4B2E7rgh006706
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Dec 2024 09:07:53 -0500
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Mon, 2 Dec 2024 09:07:53 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Mon, 2 Dec 2024 09:07:53 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 2 Dec 2024 09:07:53 -0500
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4B2E7dKK027768;
+	Mon, 2 Dec 2024 09:07:42 -0500
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v6 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
+Date: Mon, 2 Dec 2024 11:07:38 -0300
+Message-ID: <cc05f1471c409ab38722cd0e80fd5857ff9ce5db.1733147444.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1733147443.git.marcelo.schmitt@analog.com>
+References: <cover.1733147443.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,48 +85,180 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: MTmdBRaSULaETUeNqOiaUOejSjoe8de2
+X-Proofpoint-GUID: MTmdBRaSULaETUeNqOiaUOejSjoe8de2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 impostorscore=0 spamscore=0
+ malwarescore=0 mlxlogscore=999 mlxscore=0 phishscore=0 adultscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412020122
 
-The current behaviour of task_mm_cid_work is to loop through all
-possible CPUs twice to clean up old mm_cid remotely, this can be a waste
-of resources especially on tasks with a CPU affinity.
+Extend the AD4000 series device tree documentation to also describe
+PulSAR devices.
 
-This patch reduces the CPUs involved in the remote CID cleanup carried
-on by task_mm_cid_work.
+The single-channel series of PulSAR devices is similar to the AD4000 series
+except PulSAR devices sample at slower rates and don't have a
+configuration register. Because PulSAR devices don't have a configuration
+register, they don't support all features of AD4000 devices and thus fewer
+interfaces are provided to user space. Also, while AD4000 may have their
+SDI pin connected to SPI host MOSI line, PulSAR SDI pin is never connected
+to MOSI.
 
-Using the mm_cidmask for the remote cleanup can considerably reduce the
-function runtime in highly isolated environments, where each process has
-affinity to a single core.  Likewise, in the worst case, the mask is
-equivalent to all possible CPUs and we don't see any difference with the
-current behaviour.
+Some devices within the PulSAR series are just faster versions of others.
+From fastest to slowest, AD7980, AD7988-5, AD7686, AD7685, and AD7988-1 are
+all 16-bit pseudo-differential pin-for-pin compatible ADCs. Devices that
+only vary on the sample rate are documented with a common fallback
+compatible.
 
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 ---
- kernel/sched/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Change log v5 -> v6
+- Made compatible property doc similar to other ADC dt-bindings.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 95e40895a519..57b50b5952fa 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10553,14 +10553,14 @@ static void task_mm_cid_work(struct callback_head *work)
- 		return;
- 	cidmask = mm_cidmask(mm);
- 	/* Clear cids that were not recently used. */
--	for_each_possible_cpu(cpu)
-+	for_each_cpu_from(cpu, cidmask)
- 		sched_mm_cid_remote_clear_old(mm, cpu);
- 	weight = cpumask_weight(cidmask);
- 	/*
- 	 * Clear cids that are greater or equal to the cidmask weight to
- 	 * recompact it.
- 	 */
--	for_each_possible_cpu(cpu)
-+	for_each_cpu_from(cpu, cidmask)
- 		sched_mm_cid_remote_clear_weight(mm, cpu, weight);
- }
+This version has the documentation for the compatible property similar to
+other ADC bindings under iio such as:
+- adi,ad7923.yaml
+- allwinner,sun20i-d1-gpadc.yaml
+- mediatek,mt2701-auxadc.yaml
+- samsung,exynos-adc.yaml
+- ti,am3359-adc.yaml
+
+If this still doesn't follow the preferred dt-binding style then please provide
+an example that does. Documentation under Documentation/devicetree/bindings/
+does not tell how to document fallback compatibles nor points to any example.
+
+ .../bindings/iio/adc/adi,ad4000.yaml          | 75 +++++++++++++++----
+ 1 file changed, 62 insertions(+), 13 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+index e413a9d8d2a2..96e01a97dd95 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+@@ -19,49 +19,82 @@ description: |
+     https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
+     https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
+     https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
++    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf
  
+ $ref: /schemas/spi/spi-peripheral-props.yaml#
+ 
+ properties:
+   compatible:
+     oneOf:
+-      - const: adi,ad4000
++      - enum:
++          - adi,ad4000
++          - adi,ad4001
++          - adi,ad4002
++          - adi,ad4003
++          - adi,ad4020
++          - adi,adaq4001
++          - adi,adaq4003
++          - adi,ad7687
++          - adi,ad7691
++          - adi,ad7942
++          - adi,ad7946
++          - adi,ad7983
+       - items:
+           - enum:
+               - adi,ad4004
+               - adi,ad4008
+           - const: adi,ad4000
+-
+-      - const: adi,ad4001
+       - items:
+           - enum:
+               - adi,ad4005
+           - const: adi,ad4001
+-
+-      - const: adi,ad4002
+       - items:
+           - enum:
+               - adi,ad4006
+               - adi,ad4010
+           - const: adi,ad4002
+-
+-      - const: adi,ad4003
+       - items:
+           - enum:
+               - adi,ad4007
+               - adi,ad4011
+           - const: adi,ad4003
+-
+-      - const: adi,ad4020
+       - items:
+           - enum:
+               - adi,ad4021
+               - adi,ad4022
+           - const: adi,ad4020
+-
+-      - const: adi,adaq4001
+-
+-      - const: adi,adaq4003
++      - items:
++          - enum:
++              - adi,ad7685
++              - adi,ad7686
++              - adi,ad7980
++              - adi,ad7988-1
++              - adi,ad7988-5
++          - const: adi,ad7983
++      - items:
++          - enum:
++              - adi,ad7688
++              - adi,ad7693
++          - const: adi,ad7687
++      - items:
++          - enum:
++              - adi,ad7690
++              - adi,ad7982
++              - adi,ad7984
++          - const: adi,ad7691
+ 
+   reg:
+     maxItems: 1
+@@ -133,6 +166,22 @@ required:
+   - ref-supply
+ 
+ allOf:
++  # Single-channel PulSAR devices have SDI either tied to VIO, GND, or host CS.
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - adi,ad7687
++              - adi,ad7691
++              - adi,ad7942
++              - adi,ad7946
++              - adi,ad7983
++    then:
++      properties:
++        adi,sdi-pin:
++          enum: [ high, low, cs ]
++          default: cs
+   # The configuration register can only be accessed if SDI is connected to MOSI
+   - if:
+       required:
 -- 
-2.47.0
+2.45.2
 
 
