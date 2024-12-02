@@ -1,79 +1,100 @@
-Return-Path: <linux-kernel+bounces-426914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47699DFA02
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:40:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B219DFA03
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBADA162CAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:40:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2ED8163599
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081BB1F8AED;
-	Mon,  2 Dec 2024 04:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF101D63FE;
+	Mon,  2 Dec 2024 04:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="W7XOb6hX"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b="fN2mxUAh"
+Received: from thales.epochal.quest (thales.epochal.quest [51.222.15.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999741D63CA;
-	Mon,  2 Dec 2024 04:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795CA1D5CF9;
+	Mon,  2 Dec 2024 04:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.222.15.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733114395; cv=none; b=F1EA1KbRjTu/EBmHgK/YGp8r7VflmXSrScF4PnDD8r6R45j8IIx+tqZqrPG7gryJSWq0kpMehBIhA2UD/qVm3pwGVtR2mLnkmVCXS45Ht4rsAQrFedWHkZ682VlJkV6QOzqX7Gl/Y4D1AiwDKRFqwG3XO98abi/YEJvpJnU/H5U=
+	t=1733114992; cv=none; b=Sgt1E1ENMOKMVV3CUEhAwKm1fOsbrh6CfgXteqmLEKOpBRWfiTGSdqpcLQsPG2CYY5gEJTYGJ652TDRNTCZd/UzAlFZ+9Dx82+MybG/p4Jn6PAvcwQaAZqszAgQKFm8YeGdFksqY9E3Zpf4l5jLY/zQP3g/nSHvn8GrU2m6DTyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733114395; c=relaxed/simple;
-	bh=EeXd3pdBfyAIdV/scjMjR1fHCqoj5o006OLksD7RJeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SYnPdaJQ05XBVE2Ze7xGzCiQSxrah5rz0ft/fPpcWX68bQ+QureQ4GVzKA7ZmFmIaCxq+ruzmcvD+tTdPCuqQHjd1vI25b36JpAfZpMGy155ifefwCCcrdrEJ8EAWnUoAcSkagj1R3AEEB15MZXtt8uzPj97lR5Qkt+t/3uW9h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=W7XOb6hX; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eEss/czmG5x64ONZAYiAhE8zkz3AWGDgZGMZf60+daU=; b=W7XOb6hXPMUJEHB03+0WXc1VkB
-	rS9wz+DDWHh24wmuHE+BgPkLs5Cw5OUDNI1E2HXVzSSFRB5tAClCj8xy45+K26YKBhyFE5FkvF7hZ
-	M7BWaFUEoS5XgqnRJykwR3IrEoM9JC2Smp169/DHnq0EKo/DxdKTyM8IDUFAmrdUt8zUxz+ahzvm5
-	0WVbrGbtUat2PJm1JA3yGr9i7ToDgUKS1t1eHR6knasEUnM7pzMhF9ZwKuPif5vFtio/7xFr/pGpm
-	rw13GyKAV/EXp3z8b9jH5D2UU+WZ50b8k2++u/K4Rs6hL+CFqodYjxsJktEOZa0W0rKA/6cdr+iNJ
-	M0se4+4g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tHyDw-00000003vEu-0y5C;
-	Mon, 02 Dec 2024 04:39:52 +0000
-Date: Mon, 2 Dec 2024 04:39:52 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: cheung wall <zzqq0103.hey@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: =?utf-8?B?4oCcQlVHOiB1bmFibGUgdG8gaGFu?=
- =?utf-8?Q?dle_kernel_paging_request_in_anon=5Finode=5Fgetfile?=
- =?utf-8?B?4oCd?= in Linux Kenrel Version 2.6.32
-Message-ID: <20241202043952.GP3387508@ZenIV>
-References: <CAKHoSAtp6Eu3HoUvdGuaHxt21zoHkVWmmGrRK9mw2T+-r-fEYw@mail.gmail.com>
+	s=arc-20240116; t=1733114992; c=relaxed/simple;
+	bh=fUm+qqsoUhyhoDF7UbcYwPSaynQbVoMDU8DxEViQStw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZOoPEPYg5qSQgSiqM8TtwQpAu279+/FozFG0l3dh92vSL/MdcXRFdRVwkHcnOVZRVj0TIEFXAwsKcCK484ibg1Nq7J69uicwMNoNJFg5a7T4326YfFoU85xgoXWAxcNfC7+WGMVBh+8x+qw3QzA2Yxe9qn2N9oWfs+rKWfrp8Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest; spf=pass smtp.mailfrom=epochal.quest; dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b=fN2mxUAh; arc=none smtp.client-ip=51.222.15.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epochal.quest
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epochal.quest;
+	s=default; t=1733114627;
+	bh=fUm+qqsoUhyhoDF7UbcYwPSaynQbVoMDU8DxEViQStw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=fN2mxUAhLt1SoQCU84xHuJ01DSgbo0GssCksMuhBrUanU5LsrmyQlRU76FTmK0yyl
+	 kuSPOaDOkvXCjfKgb9GbsG4ufhH3IrfVz3raBH8Ku8ucvXLSV/OjCETvWNiT0XntoF
+	 Tb/NfaV/9xClQYg3F2qA4Pokz5WzxvA2VCVglLR0bVuSH74hj8GC++y8SzarYGTXC5
+	 L9hUfDRH6TGp5Tp4p/PtYOMZ3Fw6TPLh/Ekj88H8REyAiZ0hpqb2frIIGuQjcadcsy
+	 JYc4TlWAPoxYHZKpcMFpDKAqTueGL9iM+F6zY/OwfnG5P7Kcl4K+q9EYiOADTaTnWr
+	 G2ayd31BQqZkA==
+X-Virus-Scanned: by epochal.quest
+From: Cody Eksal <masterr3c0rd@epochal.quest>
+Subject: [PATCH 0/2] sunxi: Add A100 syscon nodes
+Date: Mon, 02 Dec 2024 00:43:25 -0400
+Message-Id: <20241202-a100-syscon-v1-0-86c6524f24d7@epochal.quest>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKHoSAtp6Eu3HoUvdGuaHxt21zoHkVWmmGrRK9mw2T+-r-fEYw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO46TWcC/x3MMQqAMAxA0atIZgtNLBW8ijhUjZqllQZEKd7d4
+ viG/wsoZ2GFoSmQ+RKVFCuwbWA5QtzZyFoNZMkhkjcBrTX66JKi6Tv0MwdP7AhqcWbe5P5v4/S
+ +H73Q4LVdAAAA
+X-Change-ID: 20241126-a100-syscon-7316bea62e42
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Parthiban Nallathambi <parthiban@linumiz.com>, 
+ Andre Przywara <andre.przywara@arm.com>, 
+ Cody Eksal <masterr3c0rd@epochal.quest>
+X-Mailer: b4 0.14.2
 
-On Mon, Dec 02, 2024 at 12:31:22PM +0800, cheung wall wrote:
-> Hello,
-> 
-> I am writing to report a potential vulnerability identified in the
-> Linux Kernel version 2.6.32, specifically on the PowerPC architecture.
-> This issue was discovered using our custom vulnerability discovery
-> tool.
+Hello again! Happy December!
 
-Sorry, I'd need to rebuild the memories of the state of kernel 15 years
-ago to do anything useful with it (such as, say, check if it's something
-covered by subsequent changes).  As it is, you are rapidly training
-everybody to ignore your postings; presumably that is not the desired
-effect...
+Here are some very small patches to add syscon nodes to the A100's
+device tree. These had not been added yet, as they hadn't been needed up
+to this point. However, Parthiban and I have been working on patch
+series in parallel that require either the syscon or the SRAM nodes it
+is responsible for; specifically my patches add support for the A100's
+ethernet controller, while Parthiban has been working hard on bringing
+up the Display Engine.
+
+Thanks as always!
+- Cody
+
+Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+---
+Cody Eksal (2):
+      dt-bindings: sram: sunxi-sram: Add A100 compatible
+      arm64: dts: allwinner: a100: Add syscon nodes
+
+ .../sram/allwinner,sun4i-a10-system-control.yaml   |  4 ++-
+ arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi     | 31 ++++++++++++++++++++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+---
+base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+change-id: 20241126-a100-syscon-7316bea62e42
+
+Best regards,
+-- 
+Cody Eksal <masterr3c0rd@epochal.quest>
+
 
