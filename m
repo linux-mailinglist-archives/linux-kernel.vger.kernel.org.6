@@ -1,245 +1,351 @@
-Return-Path: <linux-kernel+bounces-427651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57A29E04FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:31:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDB39E0463
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:08:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05AA9B630EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4D8D16A796
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C907720898E;
-	Mon,  2 Dec 2024 14:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F036C202F9E;
+	Mon,  2 Dec 2024 14:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJFxR3ey"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="um1UhMsK"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08458208974;
-	Mon,  2 Dec 2024 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221F71E50B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733148047; cv=none; b=mQ9hTsvRluI5H/S9pBILLogXlAMdWboY1UVdsBSF+HmGKXI/n80TbdR3ZDUl3KupO5vRRbhp+D9AyFXgr5MPUUXtaZ5rJtPuTxRmivY90rF2WshldgQIZxth81PwP1yFZRSOjyZi0C1fUou+c/pNaRCFb6hngzZInYRZpMUgSpc=
+	t=1733148119; cv=none; b=he9k62at7htx2idhgyVJZqC9PnJMUmd4d3yH7j2HwV9gqN5hTUkGKoP7o0Hny5SAklu8mmIXLxOwdNsYFbFLAELXPV+iop2pwWNrqdJr46mI5rtEc5KPPOfyQePhxGtXo7OyxrJ4xmAE897rwhpgNR1WhjEQVtKKq0kDMhcpyp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733148047; c=relaxed/simple;
-	bh=GgBXOt/yTNJCKGurhv9gWr0yQvLzy+TZ2LlXcvom+9s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h/0ysymXHharu7IlyvNVdfZVV4G1bBJz2CwQfvLvklofE1b7qaAm17lM6Ik/I7CBkeZcbeNi/URwjLJ7l4hZncAC0qAQpfVFG03Wxv2hcfGJeg/HivuMonYhsfxUgxSxh2Y6DDtZ3GvQPqno3pBsQL3n4FM7DSWRQt0TG79jNg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJFxR3ey; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EC0AC4CED1;
-	Mon,  2 Dec 2024 14:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733148046;
-	bh=GgBXOt/yTNJCKGurhv9gWr0yQvLzy+TZ2LlXcvom+9s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=lJFxR3eyMIUSBNjOr5Qk7RXrDNutHXUb+GQd/pL/xAmrg1N81vj+j00HXpvQo75e4
-	 JIOzDPoourZKz87zKFPXBhx3M8zr8sCYR3x+T0kAMfU8AQlDXT/GuQN4STpjfWtYZT
-	 0g+LjsLTU9ooOXXxhNd6+TybvftS8ENh1Nz9wzhCqDwVOSiCxsWsc/gowY7Giap9uE
-	 gYrKHLuf4EAxCLuDKdWESxy7T5n/+jQ2JhLWrnrsQIqtxVwGE4uOtukXkyYrM2uafA
-	 T15kogr+0BSU5l54et6cfwy3HhkcoyJZol699sGMqsfQszXkOkEH4jdRfcKb1nRRrv
-	 N5dihk7Je5h3A==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Mon, 02 Dec 2024 15:00:16 +0100
-Subject: [PATCH v6 8/8] blk-mq: remove unused queue mapping helpers
+	s=arc-20240116; t=1733148119; c=relaxed/simple;
+	bh=13mSg9tOGrPIB2+LxxC03JHB2cnD6fwmVHPeURULjrM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b5tnrXdbhnKzoUvMOf67zbceCIpFiNpDsqGUxggPuJL0fsIa9NKFKzlPftUWIyJ3Z07BrNQx3CtPxuWqNBpoXOTTtcL8QDZSIsCHSkaBwaLLjAIqpBAs0tXmL6UR7vlR1O4BdvsE2fRjCMIZU1mndThrazzvPyEQJ+4aXcCbTLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=um1UhMsK; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fcc00285a9so1334612a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:01:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733148116; x=1733752916; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dw66bujCKtT9mP3fH0eE4DZbrDe++mnHZ5hUnmQ/IMI=;
+        b=um1UhMsKf92boUrOKJB3yknlseEaeqqRZXKtWI6bdpjHswz/z/a6hurY7JYLmOfpgt
+         R3bVoXYrZFhJ2QYN41NyKQiSdBo5qQJy2A8WCXRHKJir/+eZDAFi03gtsBaWt8eGtwLy
+         fJSbb/wpb0s9wl90RKhOSW5P3A8bHvdLjPJccpgPcNQ1t0GRplLyAj0n3AHKONhn/d/D
+         exGuEpf8nyXV0HyHAq0fR5ehCTj20TLYIG4GpSCJGH8bKcXcZazifDiQtBvd+tsFU33Y
+         dcTeHuDgIagBmP4Ky1Kq0djwHuv6OU6O0dXZ2ng7yeiA2M12WHIu40AeeLivg8hQQ6A9
+         wpRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733148116; x=1733752916;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dw66bujCKtT9mP3fH0eE4DZbrDe++mnHZ5hUnmQ/IMI=;
+        b=lg84UTgLHzcB7261b9FpQrZUsGlCVuRZjWYny67EAoBJaprpKlR2oUYUdt9ff3NFwI
+         /O3MwsekDkhlsIsNoMotkqXuSxu33M3aRtf/XDMiiyJuI+EYApykBhhUW4xpW9A+Rt92
+         Q3m7tiKAODt7Vyekbsa3DbAWb8RnweDozgpZxCRNOCS/khCIxCLVFskJmsXnXCIS31XQ
+         YSBju3ZmcFL/g9/8Z0+sAPMjHQOolnYnCmJuvUdL/MwjGJfpjJqL5jwC8giOQ4iQcuK1
+         YRzDQGUxK/++cAxJej6E7tTHNqrr2reoCniXleU3NmDqPXKAzkLZ9ynD1OS4LRYRrmD+
+         wusA==
+X-Forwarded-Encrypted: i=1; AJvYcCWP744AopnZXk1mlTlnUAFGLmH3XqhrjF1eEzfffepiDpqE8Ehwu9uBsG8xcuZV/RcHZ6ZT9RTqOqBvlqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY//VckLsoDo9AeCXf210djpX2cDJGAtI5f1obnlNBMhku0i42
+	3/LmyX+X5zzMrzi+B3LSeTLlPMb8zX3qCYGFKlyf6f8oSUkhLJRvzBvKf7jGktUVQIB5kHaSObZ
+	rjH9RRqTAIXNaiI5+gdtY8Ka9tvswmP6R8ZAR
+X-Gm-Gg: ASbGnctPHpN2rvrXPL++cHLBcniCggwZgwDJQLqLBhul32zSnE4Q+ru4PE8+kRhN1eh
+	UKrmNJ5m5zIU+/zVCNuq7fXgerigz/9D0STwplYAVR88sGKsphglzaNH8KUf0ug==
+X-Google-Smtp-Source: AGHT+IEyQ2IiXM5aKSsRFSR8emoZ8XEH5BjdTyRqhWbZzj83GfPllLjqCgWgjQKss5LD+8MERsnDVFi6RHZiA1QCfbA=
+X-Received: by 2002:a05:6a20:4393:b0:1e0:de01:4407 with SMTP id
+ adf61e73a8af0-1e0e0b7d90emr37551625637.37.1733148114419; Mon, 02 Dec 2024
+ 06:01:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-refactor-blk-affinity-helpers-v6-8-27211e9c2cd5@kernel.org>
-References: <20241202-refactor-blk-affinity-helpers-v6-0-27211e9c2cd5@kernel.org>
-In-Reply-To: <20241202-refactor-blk-affinity-helpers-v6-0-27211e9c2cd5@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>, 
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>, John Garry <john.g.garry@oracle.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, virtualization@lists.linux.dev, 
- linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
- mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
- storagedev@microchip.com, linux-nvme@lists.infradead.org, 
- Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.2
+References: <6749f54c.050a0220.253251.00bc.GAE@google.com> <vkwc4py3f5crc5byn4h24u3bcbsyke2hzeuzd752ncra7iptdz@5hibgcwmd3go>
+ <CANp29Y65AipY2cNPV3opLjUdPxJ8tWGesBm6mkkN4HZ2K+gcxQ@mail.gmail.com> <rykdmzcn6v34ss36cpff6i7cssityfmvipu7evxoklhsagb4py@7lwtulreg5o5>
+In-Reply-To: <rykdmzcn6v34ss36cpff6i7cssityfmvipu7evxoklhsagb4py@7lwtulreg5o5>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Mon, 2 Dec 2024 15:01:42 +0100
+Message-ID: <CANp29Y4aEEHP79xwq0TXmtdXU-pYMRJ0ikOamxjSg0rv_EkZ-g@mail.gmail.com>
+Subject: Re: [syzbot] [bcachefs?] possible deadlock in trans_set_locked
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: syzbot <syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com>, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are no users left of the pci and virtio queue mapping helpers.
-Thus remove them.
+On Fri, Nov 29, 2024 at 11:57=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> On Fri, Nov 29, 2024 at 11:02:16PM +0100, Aleksandr Nogikh wrote:
+> > Hi Kent,
+> >
+> > For reopened bugs, syzbot appends (2), (3), etc. at the end of the
+> > title. In this case, there are no numbers, so it has never reported
+> > anything with such a title before.
+> >
+> > But it can well be the case that the underlying problem here is the
+> > same as in some other syzbot report (you could then "#syz dup" the new
+> > to the older one). If you happen to see patterns in such duplicate
+> > reports, please let us know and we'll try to improve the crash report
+> > parsing logic.
+>
+> It looks identical to this one which I closed last night
+>
+> https://syzkaller.appspot.com/bug?extid=3De088be3c2d5c05aaac35
+>
+> Is that a parsing issue? The lockdep splats don't just look similar to
+> me, they look identical.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: John Garry <john.g.garry@oracle.com>
-Signed-off-by: Daniel Wagner <wagi@kernel.org>
----
- block/Makefile                |  2 --
- block/blk-mq-pci.c            | 46 -------------------------------------------
- block/blk-mq-virtio.c         | 46 -------------------------------------------
- include/linux/blk-mq-pci.h    | 11 -----------
- include/linux/blk-mq-virtio.h | 11 -----------
- 5 files changed, 116 deletions(-)
+Yes, that's exactly a report parsing issue. In this case it's even one
+that's a bit more involved than usually, so I've filed an issue to
+discuss it in more detail:
+https://github.com/google/syzkaller/issues/5558
 
-diff --git a/block/Makefile b/block/Makefile
-index ddfd21c1a9ffc9c4f49efca9875bd8a1cbf81e4d..33748123710b368a1a3a7b099bbd90d27b24c69b 100644
---- a/block/Makefile
-+++ b/block/Makefile
-@@ -27,8 +27,6 @@ bfq-y				:= bfq-iosched.o bfq-wf2q.o bfq-cgroup.o
- obj-$(CONFIG_IOSCHED_BFQ)	+= bfq.o
- 
- obj-$(CONFIG_BLK_DEV_INTEGRITY) += bio-integrity.o blk-integrity.o t10-pi.o
--obj-$(CONFIG_BLK_MQ_PCI)	+= blk-mq-pci.o
--obj-$(CONFIG_BLK_MQ_VIRTIO)	+= blk-mq-virtio.o
- obj-$(CONFIG_BLK_DEV_ZONED)	+= blk-zoned.o
- obj-$(CONFIG_BLK_WBT)		+= blk-wbt.o
- obj-$(CONFIG_BLK_DEBUG_FS)	+= blk-mq-debugfs.o
-diff --git a/block/blk-mq-pci.c b/block/blk-mq-pci.c
-deleted file mode 100644
-index d47b5c73c9eb715be7627a2952ad0ef921dd5bc6..0000000000000000000000000000000000000000
---- a/block/blk-mq-pci.c
-+++ /dev/null
-@@ -1,46 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (c) 2016 Christoph Hellwig.
-- */
--#include <linux/kobject.h>
--#include <linux/blkdev.h>
--#include <linux/blk-mq-pci.h>
--#include <linux/pci.h>
--#include <linux/module.h>
--
--#include "blk-mq.h"
--
--/**
-- * blk_mq_pci_map_queues - provide a default queue mapping for PCI device
-- * @qmap:	CPU to hardware queue map.
-- * @pdev:	PCI device associated with @set.
-- * @offset:	Offset to use for the pci irq vector
-- *
-- * This function assumes the PCI device @pdev has at least as many available
-- * interrupt vectors as @set has queues.  It will then query the vector
-- * corresponding to each queue for it's affinity mask and built queue mapping
-- * that maps a queue to the CPUs that have irq affinity for the corresponding
-- * vector.
-- */
--void blk_mq_pci_map_queues(struct blk_mq_queue_map *qmap, struct pci_dev *pdev,
--			   int offset)
--{
--	const struct cpumask *mask;
--	unsigned int queue, cpu;
--
--	for (queue = 0; queue < qmap->nr_queues; queue++) {
--		mask = pci_irq_get_affinity(pdev, queue + offset);
--		if (!mask)
--			goto fallback;
--
--		for_each_cpu(cpu, mask)
--			qmap->mq_map[cpu] = qmap->queue_offset + queue;
--	}
--
--	return;
--
--fallback:
--	WARN_ON_ONCE(qmap->nr_queues > 1);
--	blk_mq_clear_mq_map(qmap);
--}
--EXPORT_SYMBOL_GPL(blk_mq_pci_map_queues);
-diff --git a/block/blk-mq-virtio.c b/block/blk-mq-virtio.c
-deleted file mode 100644
-index 68d0945c0b08a2be116125f46c3a56fcdb02aea8..0000000000000000000000000000000000000000
---- a/block/blk-mq-virtio.c
-+++ /dev/null
-@@ -1,46 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (c) 2016 Christoph Hellwig.
-- */
--#include <linux/device.h>
--#include <linux/blk-mq-virtio.h>
--#include <linux/virtio_config.h>
--#include <linux/module.h>
--#include "blk-mq.h"
--
--/**
-- * blk_mq_virtio_map_queues - provide a default queue mapping for virtio device
-- * @qmap:	CPU to hardware queue map.
-- * @vdev:	virtio device to provide a mapping for.
-- * @first_vec:	first interrupt vectors to use for queues (usually 0)
-- *
-- * This function assumes the virtio device @vdev has at least as many available
-- * interrupt vectors as @set has queues.  It will then query the vector
-- * corresponding to each queue for it's affinity mask and built queue mapping
-- * that maps a queue to the CPUs that have irq affinity for the corresponding
-- * vector.
-- */
--void blk_mq_virtio_map_queues(struct blk_mq_queue_map *qmap,
--		struct virtio_device *vdev, int first_vec)
--{
--	const struct cpumask *mask;
--	unsigned int queue, cpu;
--
--	if (!vdev->config->get_vq_affinity)
--		goto fallback;
--
--	for (queue = 0; queue < qmap->nr_queues; queue++) {
--		mask = vdev->config->get_vq_affinity(vdev, first_vec + queue);
--		if (!mask)
--			goto fallback;
--
--		for_each_cpu(cpu, mask)
--			qmap->mq_map[cpu] = qmap->queue_offset + queue;
--	}
--
--	return;
--
--fallback:
--	blk_mq_map_queues(qmap);
--}
--EXPORT_SYMBOL_GPL(blk_mq_virtio_map_queues);
-diff --git a/include/linux/blk-mq-pci.h b/include/linux/blk-mq-pci.h
-deleted file mode 100644
-index ca544e1d3508f34ab6e198b0bb17efe88de4d14d..0000000000000000000000000000000000000000
---- a/include/linux/blk-mq-pci.h
-+++ /dev/null
-@@ -1,11 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _LINUX_BLK_MQ_PCI_H
--#define _LINUX_BLK_MQ_PCI_H
--
--struct blk_mq_queue_map;
--struct pci_dev;
--
--void blk_mq_pci_map_queues(struct blk_mq_queue_map *qmap, struct pci_dev *pdev,
--			   int offset);
--
--#endif /* _LINUX_BLK_MQ_PCI_H */
-diff --git a/include/linux/blk-mq-virtio.h b/include/linux/blk-mq-virtio.h
-deleted file mode 100644
-index 13226e9b22dd53e4289d506d49c52671de036ee8..0000000000000000000000000000000000000000
---- a/include/linux/blk-mq-virtio.h
-+++ /dev/null
-@@ -1,11 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _LINUX_BLK_MQ_VIRTIO_H
--#define _LINUX_BLK_MQ_VIRTIO_H
--
--struct blk_mq_queue_map;
--struct virtio_device;
--
--void blk_mq_virtio_map_queues(struct blk_mq_queue_map *qmap,
--		struct virtio_device *vdev, int first_vec);
--
--#endif /* _LINUX_BLK_MQ_VIRTIO_H */
+>
+> I've got another one that I closed last night that it seems might be
+> confusing for syzbot:
+> https://syzkaller.appspot.com/bug?extid=3D64e6509c7f777aec3a24
+>
+> I fixed the patch that introduced the bug (it was only in -next), but I
+> don't seem to have a way to tell syzbot not to reopen it unless it sees
+> the updated patch.
 
--- 
-2.47.0
+That's actually the default behavior of syzbot: if you set the fix
+commit title via `#syz fix` or via a `Reported-by` tag, syzbot will
+first wait until the fix commit has reached all the trees that are
+fuzzed and will reopen the issue with a " (2)" suffix only if the
+failure occurred on some patched tree.
 
+However, syzbot parsed these two bug reports differently. It identified the=
+m as:
+* possible deadlock in __bch2_trans_relock
+* possible deadlock in trans_set_locked
+
+So, from its viewpoint, these are totally "different".
+
+If you know the exact duplicate issue, please send a #syz dup
+command(s) to remove them from the web dashboard (and Cc
+syzkaller@googlegroups.com so that we know that there was a parsing
+problem).
+
+--=20
+Aleksandr
+
+>
+> Probably not a real issue with this particular bug - this exact situation
+> is pretty rare, but I do have bugs accumulating in my dashboard that
+> seem to have been fixed but I don't have a good way to close since I
+> don't know the patch that fixed them (not going to bisect 20+ fixes...)
+
+>
+> >
+> > --
+> > Aleksandr
+> >
+> > On Fri, Nov 29, 2024 at 9:25=E2=80=AFPM Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > >
+> > > On Fri, Nov 29, 2024 at 09:09:32AM -0800, syzbot wrote:
+> > > > Hello,
+> > > >
+> > > > syzbot found the following issue on:
+> > > >
+> > > > HEAD commit:    7b1d1d4cfac0 Merge remote-tracking branch 'iommu/ar=
+m/smmu'..
+> > > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64=
+/linux.git for-kernelci
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D17d6af7=
+8580000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9bc44a6=
+de1ceb5d6
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D78f4eb354=
+f5ca6c1e6eb
+> > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils f=
+or Debian) 2.40
+> > > > userspace arch: arm64
+> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D107bd=
+f5f980000
+> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13ae49e=
+8580000
+> > > >
+> > > > Downloadable assets:
+> > > > disk image: https://storage.googleapis.com/syzbot-assets/4d4a0162c7=
+c3/disk-7b1d1d4c.raw.xz
+> > > > vmlinux: https://storage.googleapis.com/syzbot-assets/a8c47a4be472/=
+vmlinux-7b1d1d4c.xz
+> > > > kernel image: https://storage.googleapis.com/syzbot-assets/0e173b91=
+f83e/Image-7b1d1d4c.gz.xz
+> > > > mounted in repro #1: https://storage.googleapis.com/syzbot-assets/5=
+ab7b24d2900/mount_0.gz
+> > > > mounted in repro #2: https://storage.googleapis.com/syzbot-assets/f=
+bfbb60588c1/mount_2.gz
+> > > >
+> > > > IMPORTANT: if you fix the issue, please add the following tag to th=
+e commit:
+> > > > Reported-by: syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com
+> > > >
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> > > > WARNING: possible circular locking dependency detected
+> > > > 6.12.0-syzkaller-g7b1d1d4cfac0 #0 Not tainted
+> > > > ------------------------------------------------------
+> > > > syz-executor203/6432 is trying to acquire lock:
+> > > > ffff0000da100128 (bcachefs_btree){+.+.}-{0:0}, at: trans_set_locked=
++0x5c/0x21c fs/bcachefs/btree_locking.h:193
+> > > >
+> > > > but task is already holding lock:
+> > > > ffff0000dc661548 (&c->fsck_error_msgs_lock){+.+.}-{3:3}, at: __bch2=
+_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
+> > > >
+> > > > which lock already depends on the new lock.
+> > > >
+> > > >
+> > > > the existing dependency chain (in reverse order) is:
+> > > >
+> > > > -> #1 (&c->fsck_error_msgs_lock){+.+.}-{3:3}:
+> > > >        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+> > > >        __mutex_lock kernel/locking/mutex.c:752 [inline]
+> > > >        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+> > > >        __bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
+> > > >        bch2_check_alloc_hole_freespace+0x5fc/0xd74 fs/bcachefs/allo=
+c_background.c:1278
+> > > >        bch2_check_alloc_info+0x1174/0x26f8 fs/bcachefs/alloc_backgr=
+ound.c:1547
+> > > >        bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passe=
+s.c:191
+> > > >        bch2_run_online_recovery_passes+0xa4/0x174 fs/bcachefs/recov=
+ery_passes.c:212
+> > > >        bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c=
+:799
+> > > >        thread_with_stdio_fn+0x64/0x134 fs/bcachefs/thread_with_file=
+.c:298
+> > > >        kthread+0x288/0x310 kernel/kthread.c:389
+> > > >        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+> > > >
+> > > > -> #0 (bcachefs_btree){+.+.}-{0:0}:
+> > > >        check_prev_add kernel/locking/lockdep.c:3161 [inline]
+> > > >        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+> > > >        validate_chain kernel/locking/lockdep.c:3904 [inline]
+> > > >        __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
+> > > >        lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
+> > > >        trans_set_locked+0x88/0x21c fs/bcachefs/btree_locking.h:194
+> > > >        __bch2_trans_relock+0x2a0/0x394 fs/bcachefs/btree_locking.c:=
+785
+> > > >        bch2_trans_relock+0x24/0x34 fs/bcachefs/btree_locking.c:793
+> > > >        __bch2_fsck_err+0x1664/0x2544 fs/bcachefs/error.c:363
+> > > >        bch2_check_alloc_hole_freespace+0x5fc/0xd74 fs/bcachefs/allo=
+c_background.c:1278
+> > > >        bch2_check_alloc_info+0x1174/0x26f8 fs/bcachefs/alloc_backgr=
+ound.c:1547
+> > > >        bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passe=
+s.c:191
+> > > >        bch2_run_online_recovery_passes+0xa4/0x174 fs/bcachefs/recov=
+ery_passes.c:212
+> > > >        bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c=
+:799
+> > > >        thread_with_stdio_fn+0x64/0x134 fs/bcachefs/thread_with_file=
+.c:298
+> > > >        kthread+0x288/0x310 kernel/kthread.c:389
+> > > >        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+> > > >
+> > > > other info that might help us debug this:
+> > > >
+> > > >  Possible unsafe locking scenario:
+> > > >
+> > > >        CPU0                    CPU1
+> > > >        ----                    ----
+> > > >   lock(&c->fsck_error_msgs_lock);
+> > > >                                lock(bcachefs_btree);
+> > > >                                lock(&c->fsck_error_msgs_lock);
+> > > >   lock(bcachefs_btree);
+> > > >
+> > > >  *** DEADLOCK ***
+> > > >
+> > > > 3 locks held by syz-executor203/6432:
+> > > >  #0: ffff0000dc600278 (&c->state_lock){++++}-{3:3}, at: bch2_run_on=
+line_recovery_passes+0x3c/0x174 fs/bcachefs/recovery_passes.c:204
+> > > >  #1: ffff0000dc604398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: sr=
+cu_lock_acquire+0x18/0x54 include/linux/srcu.h:150
+> > > >  #2: ffff0000dc661548 (&c->fsck_error_msgs_lock){+.+.}-{3:3}, at: _=
+_bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
+> > > >
+> > > > stack backtrace:
+> > > > CPU: 1 UID: 0 PID: 6432 Comm: syz-executor203 Not tainted 6.12.0-sy=
+zkaller-g7b1d1d4cfac0 #0
+> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, =
+BIOS Google 09/13/2024
+> > > > Call trace:
+> > > >  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:484 (C)
+> > > >  __dump_stack lib/dump_stack.c:94 [inline]
+> > > >  dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+> > > >  dump_stack+0x1c/0x28 lib/dump_stack.c:129
+> > > >  print_circular_bug+0x154/0x1c0 kernel/locking/lockdep.c:2074
+> > > >  check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2206
+> > > >  check_prev_add kernel/locking/lockdep.c:3161 [inline]
+> > > >  check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+> > > >  validate_chain kernel/locking/lockdep.c:3904 [inline]
+> > > >  __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
+> > > >  lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
+> > > >  trans_set_locked+0x88/0x21c fs/bcachefs/btree_locking.h:194
+> > > >  __bch2_trans_relock+0x2a0/0x394 fs/bcachefs/btree_locking.c:785
+> > > >  bch2_trans_relock+0x24/0x34 fs/bcachefs/btree_locking.c:793
+> > > >  __bch2_fsck_err+0x1664/0x2544 fs/bcachefs/error.c:363
+> > > >  bch2_check_alloc_hole_freespace+0x5fc/0xd74 fs/bcachefs/alloc_back=
+ground.c:1278
+> > > >  bch2_check_alloc_info+0x1174/0x26f8 fs/bcachefs/alloc_background.c=
+:1547
+> > > >  bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:19=
+1
+> > > >  bch2_run_online_recovery_passes+0xa4/0x174 fs/bcachefs/recovery_pa=
+sses.c:212
+> > > >  bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
+> > > >  thread_with_stdio_fn+0x64/0x134 fs/bcachefs/thread_with_file.c:298
+> > > >  kthread+0x288/0x310 kernel/kthread.c:389
+> > > >  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+> > > >
+> > > >
+> > > > ---
+> > > > This report is generated by a bot. It may contain errors.
+> > > > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > > > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > > >
+> > > > syzbot will keep track of this issue. See:
+> > > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> > > >
+> > > > If the report is already addressed, let syzbot know by replying wit=
+h:
+> > > > #syz fix: exact-commit-title
+> > > >
+> > > > If you want syzbot to run the reproducer, reply with:
+> > > > #syz test: git://repo/address.git branch-or-commit-hash
+> > > > If you attach or paste a git patch, syzbot will apply it before tes=
+ting.
+> > > >
+> > > > If you want to overwrite report's subsystems, reply with:
+> > > > #syz set subsystems: new-subsystem
+> > > > (See the list of subsystem names on the web dashboard)
+> > > >
+> > > > If the report is a duplicate of another one, reply with:
+> > > > #syz dup: exact-subject-of-another-report
+> > > >
+> > > > If you want to undo deduplication, reply with:
+> > > > #syz undup
+> > >
+> > > syzbot seems to now be re-opening bugs just because the patch hasn't
+> > > been merged into the branch it's testing?
+> > >
 
