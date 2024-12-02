@@ -1,84 +1,61 @@
-Return-Path: <linux-kernel+bounces-428041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D39D9E095D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:03:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7139E0933
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:58:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA18D1625EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526B628229B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661781DA62E;
-	Mon,  2 Dec 2024 16:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880941D9A54;
+	Mon,  2 Dec 2024 16:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MhZ/Ckf3"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OGm7CBJd"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C2D13C8E8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5577513C8E8;
+	Mon,  2 Dec 2024 16:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733158651; cv=none; b=ItDfa/Mre7842fkQYntKZabLctDrWTAgdnT7IYnKUU81aXHwL0FZ8h0rJ1ZUDOkGh5JM+qIijsg3IZkYmy7NC92WLPqMXZ9kiWhxSdbnAINcmq7LhUzOcbQrxiAMnu3zhMXTNr5OV/RetaIY9I8SWfOJFq8A7phsi2f60Pm2Lj4=
+	t=1733158713; cv=none; b=f69gYvNsUpECvrM66Lm448lgmnfucUHW43/OUgBdQrFiPcy5W3aw4Vwkg3zyaO8YbzNINDBR/rWQIC/HDGLYK1hNCYy6yY262eUjIiRPpA1mHF/wRuoClYTLkFsZTRjCA3YcEwXD22aENEHRX1VOlFQ8t9kWmTYfXFCooLxCFPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733158651; c=relaxed/simple;
-	bh=hZmHmXhaPxYapkmazSBTQYJSOtR6grcSKudIxSa5uys=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FTVwqv7draskgdHTHfnbZCwbjkDbvoQANghYSaHeUq0QJmUicE2tl1xBA0Pon7ObL/qyRfDR6S2iCB2LGxx43Khf0D0VmOq10c/0PMVbtGTV0vmGs97T7Eh7R8oPuzQZlj7nWLkmVl36UvnJ9rmgenTIezmgbPn6SaAI9Le1l0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MhZ/Ckf3; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385e06af753so1723956f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 08:57:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733158647; x=1733763447; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ItGaUx4mMjWP305q8FK6zTYZIbWY/yA/nNMSXXpCvDA=;
-        b=MhZ/Ckf3wygfCFAb2aIoeL0RQQpcfH78/4o7b9xf7DEpAxOj0k9p58m7boAPz7lWcL
-         QsnIsSwHqEeQgmrTm/3uxDGf7A7RF+dq7/kuS0ieHqnOMRizTVZV62QCf38BXTNm+LoP
-         V3lmDO2oSkIhlQZlI4t+zHDY+62kj8KtUvI9p2ko4z8r2PVSt70PLcgPIKZhYQc9Dfww
-         X0LJKkDn0LlV9Uusb4QrSEvy4pcq7L7gm/pZalGn3LsLJhmevFVq5/hEZhffBGNxRHG4
-         Xets/dKUjNnqivUYxYbc7Ra5zUcjEl66KQZ/DJ0wta1lhSvZQUqkdXnXhlmmUhcl5NI6
-         tdew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733158647; x=1733763447;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ItGaUx4mMjWP305q8FK6zTYZIbWY/yA/nNMSXXpCvDA=;
-        b=LbZ6bvdVRTtR+wOaq+3P1OnS5Ywo3g5RSo07y+9P43jR99SeGi1f5h8Jx1mTqMoy5U
-         wSdc3xK3DWNh3YJowR57CutL1aUZ942AN/Io9gCDcwbZCc9zzVmhuEmS7F0TU4ZAgqR6
-         9G9s7r9qndws6/BGLzejTT0VzgwDOIuzLhTbkLle3YixuYLUDd6ZL8Yofj8S1FasfX0p
-         zNpCKtC5uS29rR0daK8HqMUhx/xmii/qb0ckiXlbbVup8vIGFQ19S2QTSpYv9L1sRAQt
-         3nXvzfc61ialjfofnVZCdqIO9Dn5JIEdhNcuJB0KqzdRMKf/HP8GTJGvJ+NFuC5Ejz5x
-         5s2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUhfasQnJX33E6+6xJlK6p8+uH4FQzHMY/T2ig/qRT5RaWfg2BovJdFWjPJdUzJyfsxy/XSpEtLxgGGWTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuL8nldD1kaS4vXKP96L56NTOnqhsbVzbsdh+PmnjYwtQRQvGg
-	95Wc+gZi6+g+aBRUHjep8Oeh8MgM9Gxxigl6EWcOWq3DUGjNilXlSKyQIarsJmMbvdgJ/5VZ4/M
-	x
-X-Gm-Gg: ASbGncuGd1wMxjDnqFbpdYOBRoQvHja4CdE9dP9maRTU4dsUY+r4vXLTuUlZEV8eHI0
-	JeWXy2CT2BINgxhtLU4L0YuR4R1jS3nPisY/Y472O4LehWWuGGH5gSHsepsxhn0ZBeQIuTzeFFp
-	iCQw2N4UGc1aRiCygAjDMa/CyrWCvWgdb9ugXmWFFtv5QEdKEazp+YZewjZoQCGS4KtW2iKh/Ne
-	N2F3/ovmkRCdZW15cxHmsG0py9mnUj8Fh0hu5sTvCfXYLezMV+w8xiOC5Qki+2vdmJS
-X-Google-Smtp-Source: AGHT+IFkc0FoA8n/kEZkWOw5oBoZq+a4ojllKECjH/Lm6zucKJGPEHanSq+59uPtKp/9i2UQfGBW4w==
-X-Received: by 2002:a05:6000:2d12:b0:385:e013:b852 with SMTP id ffacd0b85a97d-385e013b918mr9226081f8f.35.1733158647431;
-        Mon, 02 Dec 2024 08:57:27 -0800 (PST)
-Received: from brgl-uxlite.. (150.46.205.77.rev.sfr.net. [77.205.46.150])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385df69feaasm10111106f8f.5.2024.12.02.08.57.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 08:57:27 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Georgi Djakov <djakov@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-pm@vger.kernel.org,
+	s=arc-20240116; t=1733158713; c=relaxed/simple;
+	bh=+/aze2XdCAbp3s1wCqprW1SADqz2t0OMsYVnR+C5QD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r25C9x4a26zUxHb9VGjBx+9G7m99bo3zttvG3OmcNT9KFTtTNGeAZuG1LLBUlPQDyKudysQkRGJ+oQVPTowGRvqZhYwj800GZnWomHLy+kg7su+JJcv0vAZuT6aE4aDUGFMuezK7/zaEWnhW0eyHXe04Utrb2rhSxG8qtDKPpZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OGm7CBJd; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 236B2E0003;
+	Mon,  2 Dec 2024 16:58:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733158709;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=crHXj6kSMxBwiHS4OFprzVGLLYPQotmxut5qDRHbC9A=;
+	b=OGm7CBJdwa/YOzj/A+yWhzEDKMSlz4FKa+GbTgVCyqjDEmP20x1pXABhO0rP2HKdX2UPUs
+	OfsxFl1WVvv4q7n4OT2/Ne3MtYcmxHpJ/RUDI+QaXypAZfPYdWlTOkYf2y7m3G4KQDYx94
+	bS/x2idB9+NXlDCAd7zQy+ixQP9vdCaXPrO9tzFijLXKN29OU1rh0vEp+WwZN0i+u3BwMm
+	PzgPC1wUKGW6DTNfNcHNTKYefvgc0khHOYcmF36L3s63aIS10UWlYTeGubjPGu/ER7sqKE
+	iFE7LGuXU55yNc4D5FwdF4QbeE58rSmbYn9Yc45LvcOIun//70kzgF4pMHLoag==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stephen Boyd <stephen.boyd@linaro.org>
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] interconnect: icc-clk: check return values of devm_kasprintf()
-Date: Mon,  2 Dec 2024 17:57:23 +0100
-Message-ID: <20241202165723.17292-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] of: Fix error path in of_parse_phandle_with_args_map()
+Date: Mon,  2 Dec 2024 17:58:19 +0100
+Message-ID: <20241202165819.158681-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,47 +63,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The current code uses some 'goto put;' to cancel the parsing operation
+and can lead to a return code value of 0 even on error cases.
 
-devm_kasprintf() can fail and return NULL, add missing return value
-checks.
+Indeed, some goto calls are done from a loop without setting the ret
+value explicitly before the goto call and so the ret value can be set to
+0 due to operation done in previous loop iteration. For instance match
+can be set to 0 in the previous loop iteration (leading to a new
+iteration) but ret can also be set to 0 it the of_property_read_u32()
+call succeed. In that case if no match are found or if an error is
+detected the new iteration, the return value can be wrongly 0.
 
-Fixes: 0ac2a08f42ce ("interconnect: add clk-based icc provider support")
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Avoid those cases setting the ret value explicitly before the goto
+calls.
+
+Fixes: bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a nexus node")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/interconnect/icc-clk.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/of/base.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
-index b956e4050f381..88f311c110207 100644
---- a/drivers/interconnect/icc-clk.c
-+++ b/drivers/interconnect/icc-clk.c
-@@ -116,6 +116,11 @@ struct icc_provider *icc_clk_register(struct device *dev,
- 		}
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 7dc394255a0a..809324607a5c 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -1507,8 +1507,10 @@ int of_parse_phandle_with_args_map(const struct device_node *np,
+ 			map_len--;
  
- 		node->name = devm_kasprintf(dev, GFP_KERNEL, "%s_master", data[i].name);
-+		if (!node->name) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+
- 		node->data = &qp->clocks[i];
- 		icc_node_add(node, provider);
- 		/* link to the next node, slave */
-@@ -129,6 +134,11 @@ struct icc_provider *icc_clk_register(struct device *dev,
- 		}
+ 			/* Check if not found */
+-			if (!new)
++			if (!new) {
++				ret = -EINVAL;
+ 				goto put;
++			}
  
- 		node->name = devm_kasprintf(dev, GFP_KERNEL, "%s_slave", data[i].name);
-+		if (!node->name) {
-+			ret = -ENOMEM;
-+			goto err;
+ 			if (!of_device_is_available(new))
+ 				match = 0;
+@@ -1518,17 +1520,20 @@ int of_parse_phandle_with_args_map(const struct device_node *np,
+ 				goto put;
+ 
+ 			/* Check for malformed properties */
+-			if (WARN_ON(new_size > MAX_PHANDLE_ARGS))
+-				goto put;
+-			if (map_len < new_size)
++			if (WARN_ON(new_size > MAX_PHANDLE_ARGS) ||
++			    map_len < new_size) {
++				ret = -EINVAL;
+ 				goto put;
++			}
+ 
+ 			/* Move forward by new node's #<list>-cells amount */
+ 			map += new_size;
+ 			map_len -= new_size;
+ 		}
+-		if (!match)
++		if (!match) {
++			ret = -ENOENT;
+ 			goto put;
 +		}
-+
- 		/* no data for slave node */
- 		icc_node_add(node, provider);
- 		onecell->nodes[j++] = node;
+ 
+ 		/* Get the <list>-map-pass-thru property (optional) */
+ 		pass = of_get_property(cur, pass_name, NULL);
 -- 
-2.45.2
+2.47.0
 
 
