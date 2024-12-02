@@ -1,205 +1,190 @@
-Return-Path: <linux-kernel+bounces-428072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A019C9E09D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:28:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473EB9E0AE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F849282AC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:28:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EF9AB36A8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769D51DA112;
-	Mon,  2 Dec 2024 17:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294841DA2F6;
+	Mon,  2 Dec 2024 17:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hsGo05y3"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MgLiaC1W"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CAD1662E7
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6932A1B8
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160484; cv=none; b=WYYjGS+u+Na3bBCqRUf4eaO4yQp9svdEFgecPs2nuihDDCTmrWtmKy3+Onjr+bhBOPcezMJJSYxctjBYvuzFkUIQeWPX9uv9Boe5EUa37A7tfvjDZkCDK5dY06kka/FMloclltETkmbGE2lUDVB8ylAxiRC9We+YuaUx/AkwCEw=
+	t=1733160524; cv=none; b=HNsnM6mEKVL+GYVQgBQDhX5OWM0E/zLKeS7+bdxG8SztboStZCnCx+vfaLNqAkD5eIkxgbnPuweYBCInzdO/iZ/Kx1UWNU00TPQtFGyj8mz3QhahZ5HkVoGS7z3H1kmRph5cYCGK/fKTVVNMvY5Tu7szCQ+zia1xfI4UiFpNlAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160484; c=relaxed/simple;
-	bh=r/3/WvrUYpNr+tcjXSjzxvxpguA79BHRy4L5fPvtBqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=skFwNY/YL+JRg7oxQ9Y5quyBDQKhd1foW9dcXHAEWrQOE7cQgS4XZb3alB1IPG3XQWSYHlPaugq0cPp/GjrIok4U58LThL4p7rN8VWYiwLK31RYon+GzQ+5I4Ya3d9E9zwmXxl53Amp3OtMpkIHMJFWaWcyxx+QLvHkWcgMbNx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hsGo05y3; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7fbce800ee5so4477861a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:28:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733160482; x=1733765282; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zV7VHVGHL7Rl9Gp4X03jHFgxr0pgqWsD/7qzPnBvxDs=;
-        b=hsGo05y30KMtq7vsXmOKIxshtEYFOzclZQwXkq3yF4q6XuT+Bc45EdtX2sQRPVAhS2
-         nK2hNzbAcPLOKjYj0TSwEIO1ksNviCCqDfx6cfsQFF+NrRrEsHebcirt0NbZS4OSj8F6
-         675WkxqfZCn1tHFrPwvW6y5zvFz1MAWUBD9kk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733160482; x=1733765282;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zV7VHVGHL7Rl9Gp4X03jHFgxr0pgqWsD/7qzPnBvxDs=;
-        b=E7osVQ8YUgjDZHR8za5WaRNmvzx70KwBS7kc+vGlRWnaGF2LkIxyED/Nq5nuLeqsa3
-         UbIIzgwrcKys//CKxXJFKLnFGzRK8H72XHwDTaFf045XM2BKcfs5kVa5KM2af701T0G3
-         glVJP4T0B2tcOPVYUbppQmC6syaeOzZQeLU/k8pXrgT9e9MJpvoZjSJWn1XhO++2i4eQ
-         dhDutKasTBEZf7qG5abg3Q8s5u1XSWBldN8a4MKlCTcd5Y6bUGFzbTGf5tK2fvavUDcp
-         a/y8lnVwhhoPgEnBgc8QJHTWmHjpnIWV5yqSWvXF0da8ckFsGSktCf9+umoM+meEA6X2
-         lf+A==
-X-Forwarded-Encrypted: i=1; AJvYcCX+LicReTWSDgScX4RvzTnCUExasw77om9F5A4ffT+Wo6tmEQBQbWnwgGeRnO7ySj9X0p+8q8TghJuH2GY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSRKHVEAih7nKbY/dATV43sGYaK9IGr3KW5mvjDupHdxtESGhI
-	bYIGZWB33SKO35PTfhsTnrhRPBJuTspAkwiMmdPSj+N88DsrGrphrPqtP+euzbLrE2tXoNUwUUg
-	=
-X-Gm-Gg: ASbGncs8HlYVwy9dXSVog/mBRHyxPlzP57AJ+PNRDrYZafLA/9x6zjfEmYSQOOwygXh
-	KADyxnECxJuADJj1HBwkqsGD3ykcY9Pcxky8nvHy6ybgQU04Dm80eimINt0T8D9rL4BEhq3M5XP
-	C+E+3b3UOQ6TkYBzPUF3FbdoxMXjhQlYzBG2DyPWOhg+Bm2tqMZiBhUBdQnon2wt3juml1ddias
-	3dR4zf1mHnKd77cEZCPldBwOPH3PsoFAbGjD0Nvd5pKSyH8s6DavCIbJbwHyuUdjqnUQoXhNk6b
-	1jVl+qQVK/6iXjXk
-X-Google-Smtp-Source: AGHT+IH93gMLvcI/DFYVTq/a6n4IhYzARjiJ1JNS+Gsh6qhc7rGpDMT9CehzMvDfjJs3TgJiP82//w==
-X-Received: by 2002:a05:6a20:430f:b0:1e0:cadd:f655 with SMTP id adf61e73a8af0-1e0e0ade41emr34502820637.14.1733160482407;
-        Mon, 02 Dec 2024 09:28:02 -0800 (PST)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com. [209.85.210.170])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417614basm8786867b3a.11.2024.12.02.09.28.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 09:28:00 -0800 (PST)
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7251d20e7f2so4518574b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:28:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVfqs5mtp105bCjLDB55SA1pmldivfEAXO7W51SiMDfNFCVYEixsc85ct1S+bZjTIuajgua+PhHgu00GGU=@vger.kernel.org
-X-Received: by 2002:a05:6a00:1390:b0:71e:5a1d:ecdc with SMTP id
- d2e1a72fcca58-7253012f56dmr32940878b3a.17.1733160480025; Mon, 02 Dec 2024
- 09:28:00 -0800 (PST)
+	s=arc-20240116; t=1733160524; c=relaxed/simple;
+	bh=yYkNA5yCQcdde4t36VrFC80CKA1lrGzV1+ifVHWOYxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwP5GS5Ky4pNRn2J92Zys+1xmt2vgRM76CeZrK33jY+1EKM7+VftG5AF01+WyEWyPWPOe4Ts71p9oMuz4I3R75ZFRr7Cm6ljEZVIKlmwKpIj1UFkk/2bOeD9tXCzcmkk/5INeUUQrUuNCWEe7kz3X2iamu4lmRt3B6RZRdfE7rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MgLiaC1W; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733160521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oxfp1abLy7kOsuhY8PeGfZ76sqjzx7AkHSAlPBpNEag=;
+	b=MgLiaC1WPRhL4vEnnQvMBvKoKz4Hfjp44gD5IyQN2I3rGxBpCy5pPLGgeOOg4yR3o+zqZV
+	1rSGmYDLAHbddxCiUlSgfgQYi95CKuLjREXpb0AFDfjcLDy8kDeNf2SGIWbdcIr30IjdHV
+	pU18MR2V9ivfMjKxiDu7D1W6cqVUt3U=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-619-OMPu84ACM5OVvCgs4CKPdA-1; Mon,
+ 02 Dec 2024 12:28:36 -0500
+X-MC-Unique: OMPu84ACM5OVvCgs4CKPdA-1
+X-Mimecast-MFC-AGG-ID: OMPu84ACM5OVvCgs4CKPdA
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1FF541956088;
+	Mon,  2 Dec 2024 17:28:35 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.6])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 242A530001A0;
+	Mon,  2 Dec 2024 17:28:31 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon,  2 Dec 2024 18:28:13 +0100 (CET)
+Date: Mon, 2 Dec 2024 18:28:08 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Richard Henderson <richard.henderson@linaro.org>
+Subject: Re: [PATCH] posix-timers: Fix a race with __exit_signal()
+Message-ID: <20241202172808.GA9551@redhat.com>
+References: <20241202155547.8214-1-iii@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202-fix-vmstat-v1-1-c995585b7df5@chromium.org> <20241202161811.GA2843691@thelio-3990X>
-In-Reply-To: <20241202161811.GA2843691@thelio-3990X>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 2 Dec 2024 18:27:48 +0100
-X-Gmail-Original-Message-ID: <CANiDSCt_RALHi4O313bzi=Grr=sCV+Y8WmHmOF8JpttHw6nFpA@mail.gmail.com>
-Message-ID: <CANiDSCt_RALHi4O313bzi=Grr=sCV+Y8WmHmOF8JpttHw6nFpA@mail.gmail.com>
-Subject: Re: [PATCH] mm: vmstat.h: Annotate operations between enums
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202155547.8214-1-iii@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, 2 Dec 2024 at 17:18, Nathan Chancellor <nathan@kernel.org> wrote:
+Ilya,
+
+I hope this was already fixed by Frederic, please see
+https://lore.kernel.org/all/20241122234811.60455-1-frederic@kernel.org/
+
+Oleg.
+
+On 12/02, Ilya Leoshkevich wrote:
 >
-> Hi Ricardo,
+> If a thread exit happens simultaneously with a POSIX timer signal, this
+> POSIX timer may end up being erroneously stopped. This problem may be
+> reproduced with a small C program that creates a POSIX timer and
+> constantly respawns threads, e.g. [1].
 >
-> On Mon, Dec 02, 2024 at 04:02:19PM +0000, Ricardo Ribalda wrote:
-> > Compiler is confused when we do arithmetic operations between two
-> > different enum types.
-> > In this case NR_VM_STAT_ITEMS and NR_LRU_BASE are not actual
-> > enumerators, they are used to find the first and the count of the
-> > enumerator.
-> >
-> > Add a casting to int, to avoid the following llvm 9 warning:
-> > ./include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-> >   504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-> >       |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-> >   505 |                            item];
-> >       |                            ~~~~
-> > ./include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-> >   511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-> >       |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-> >   512 |                            NR_VM_NUMA_EVENT_ITEMS +
-> >       |                            ~~~~~~~~~~~~~~~~~~~~~~
-> > ./include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-> >   518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-> >       |                               ~~~~~~~~~~~ ^ ~~~
-> > ./include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-> >   524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-> >       |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-> >   525 |                            NR_VM_NUMA_EVENT_ITEMS +
-> >       |                            ~~~~~~~~~~~~~~~~~~~~~~
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> When posixtimer_send_sigqueue() races against __exit_signal(), the
+> latter may clear the selected task's sighand, causing
+> lock_task_sighand() to fail. This is possible because __exit_signal()
+> clears the task's sighand under the sighand lock, but
+> lock_task_sighand() needs to first load it without taking this lock.
 >
-> I think it is just better to disable this specific warning for normal
-> and W=1 builds so that it is not visible for people, as this objectively
-> makes the code uglier:
+> The it_sigqueue_seq update needs to happen under the sighand lock;
+> failure to take this lock means that it is not possible to make that
+> update. And if it_sigqueue_seq is not updated, then
+> __posixtimer_deliver_signal() does not rearm the timer, effectively
+> stopping it.
 >
-> https://lore.kernel.org/20241008005136.GA241099@thelio-3990X/
+> Fix by choosing another thread if the one chosen by
+> posixtimer_get_target() is exiting. This requires taking tasklist_lock,
+> which is ordered before the sighand lock, as can be seen in, e.g.,
+> release_task(). tasklist_lock may be released immediately after the
+> sighand lock is successfully taken, which will look nicer, but will
+> create uncertainty w.r.t. restoring the irq flags, so release it
+> at the end of posixtimer_send_sigqueue().
 >
-> https://lore.kernel.org/20241017-disable-two-clang-enum-warnings-v2-1-163ac04346ae@kernel.org/
-
-Thanks for the heads-up.
-
-Either disabling the config or this patch will work for my usecase (media-ci).
-
-FWIW, we only need 3 patches (plus this) to build media with W=1 and llvm19....
-
-I do not think that this patch is very ugly :P
-
+> There is another user of posixtimer_get_target(), which may potentially
+> be affected as well: posixtimer_sig_unignore(). But it is called with
+> the sighand lock taken, so the race with __exit_signal() is fortunately
+> not possible there.
 >
-> I have just pinged that patch for acceptance.
+> [1] https://gitlab.com/qemu-project/qemu/-/blob/v9.1.1/tests/tcg/multiarch/signals.c?ref_type=tags
 >
-> Cheers,
-> Nathan
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+> ---
+>  kernel/signal.c | 27 ++++++++++++++++++++++++---
+>  1 file changed, 24 insertions(+), 3 deletions(-)
 >
-> > ---
-> >  include/linux/vmstat.h | 9 ++++-----
-> >  1 file changed, 4 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-> > index d2761bf8ff32..32c641d25bea 100644
-> > --- a/include/linux/vmstat.h
-> > +++ b/include/linux/vmstat.h
-> > @@ -501,27 +501,26 @@ static inline const char *zone_stat_name(enum zone_stat_item item)
-> >  #ifdef CONFIG_NUMA
-> >  static inline const char *numa_stat_name(enum numa_stat_item item)
-> >  {
-> > -     return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-> > -                        item];
-> > +     return vmstat_text[(int)NR_VM_ZONE_STAT_ITEMS + item];
-> >  }
-> >  #endif /* CONFIG_NUMA */
-> >
-> >  static inline const char *node_stat_name(enum node_stat_item item)
-> >  {
-> > -     return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-> > +     return vmstat_text[(int)NR_VM_ZONE_STAT_ITEMS +
-> >                          NR_VM_NUMA_EVENT_ITEMS +
-> >                          item];
-> >  }
-> >
-> >  static inline const char *lru_list_name(enum lru_list lru)
-> >  {
-> > -     return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-> > +     return node_stat_name((int)NR_LRU_BASE + lru) + 3; // skip "nr_"
-> >  }
-> >
-> >  #if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
-> >  static inline const char *vm_event_name(enum vm_event_item item)
-> >  {
-> > -     return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-> > +     return vmstat_text[(int)NR_VM_ZONE_STAT_ITEMS +
-> >                          NR_VM_NUMA_EVENT_ITEMS +
-> >                          NR_VM_NODE_STAT_ITEMS +
-> >                          NR_VM_STAT_ITEMS +
-> >
-> > ---
-> > base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-> > change-id: 20241202-fix-vmstat-88968bcaa955
-> >
-> > Best regards,
-> > --
-> > Ricardo Ribalda <ribalda@chromium.org>
-> >
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 989b1cc9116a..ff1608997301 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -1974,10 +1974,11 @@ static inline struct task_struct *posixtimer_get_target(struct k_itimer *tmr)
+>
+>  void posixtimer_send_sigqueue(struct k_itimer *tmr)
+>  {
+> +	unsigned long flags, tasklist_flags;
+>  	struct sigqueue *q = &tmr->sigq;
+> +	bool tasklist_locked = false;
+>  	int sig = q->info.si_signo;
+>  	struct task_struct *t;
+> -	unsigned long flags;
+>  	int result;
+>
+>  	guard(rcu)();
+> @@ -1986,8 +1987,25 @@ void posixtimer_send_sigqueue(struct k_itimer *tmr)
+>  	if (!t)
+>  		return;
+>
+> -	if (!likely(lock_task_sighand(t, &flags)))
+> -		return;
+> +	if (!likely(lock_task_sighand(t, &flags))) {
+> +		/*
+> +		 * The target is exiting, pick another one. This ensures that
+> +		 * it_sigqueue_seq is updated, otherwise
+> +		 * posixtimer_deliver_signal() will not rearm the timer.
+> +		 */
+> +		bool found = false;
+> +
+> +		read_lock_irqsave(&tasklist_lock, tasklist_flags);
+> +		tasklist_locked = true;
+> +		do_each_pid_task(tmr->it_pid, tmr->it_pid_type, t) {
+> +			if (likely(lock_task_sighand(t, &flags))) {
+> +				found = true;
+> +				break;
+> +			}
+> +		} while_each_pid_task(tmr->it_pid, tmr->it_pid_type, t);
+> +		if (!likely(found))
+> +			goto out_tasklist;
+> +	}
+>
+>  	/*
+>  	 * Update @tmr::sigqueue_seq for posix timer signals with sighand
+> @@ -2062,6 +2080,9 @@ void posixtimer_send_sigqueue(struct k_itimer *tmr)
+>  out:
+>  	trace_signal_generate(sig, &q->info, t, tmr->it_pid_type != PIDTYPE_PID, result);
+>  	unlock_task_sighand(t, &flags);
+> +out_tasklist:
+> +	if (tasklist_locked)
+> +		read_unlock_irqrestore(&tasklist_lock, tasklist_flags);
+>  }
+>
+>  static inline void posixtimer_sig_ignore(struct task_struct *tsk, struct sigqueue *q)
+> --
+> 2.47.0
+>
 
-
-
--- 
-Ricardo Ribalda
 
