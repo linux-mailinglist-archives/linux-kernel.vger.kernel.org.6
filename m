@@ -1,313 +1,1005 @@
-Return-Path: <linux-kernel+bounces-428107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EDB9E0A3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:39:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC649164077
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:39:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863E21DCB09;
-	Mon,  2 Dec 2024 17:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="K+bs8LdK"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CE49E0A87
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:58:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E4E1DAC97;
-	Mon,  2 Dec 2024 17:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733161124; cv=fail; b=ngaM3i+LKzt7XVKGJVgPJHXHYm4PzWVLFNI+3ccWCASLfnJy1KJWiY+LnrPUIlIU+CFG0ybQhY4cJFDn/wwdx3DIqdPu786/0qMKfU1igaOzFRkHrP4mwhaGSn2Ec1BWNurKNzmCYkkatKYYAZkLLiRS4BNoM3ww2XtiSPR3hzw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733161124; c=relaxed/simple;
-	bh=xBmYlKRhY+AvqDYj/ObnKuYOJHjRQUqKHXtzU/ffiLY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=roR/UvSaVLrnH3LBEG5PzW2AMF+6JL00yvl9MdvYSMR2mpfCFMGf1Rl+OKZKy9PktNySvf6NkQpcxoltaaFuk1v61nNSrK7fFVobr5Bz2qj3abz5G9ukHrXS6Epm2yv8dKOS+nA3VebHhBujmSUd6fNcG4niQro5STLoNCJ038c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=K+bs8LdK; arc=fail smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2Gwi7V020269;
-	Mon, 2 Dec 2024 09:38:39 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	s2048-2021-q4; bh=xBmYlKRhY+AvqDYj/ObnKuYOJHjRQUqKHXtzU/ffiLY=; b=
-	K+bs8LdK5IBIheuH7YTIA2ptzhL548NHCSTsbj/L6GxKuBydxIzn830So06QHnqX
-	BMVAOWCzdxhMWHNtBf5XIGciwLxtrE9OAI2jpWuE9cOrj34k5o95COqpafa797CM
-	7h8Uz+rvlwxP7B2+342HhT28/WCHDGoRQhwRsMvToTuGk/VcDwHpI3MyM9IiDPJV
-	Qmj9vXl6IM4z0RBCE6AFKf7m8tseMgmNjTa0Xhza6S0a33JmZi2uiNXsvHJhshbw
-	2qSxFcZX+8dWb0hB0BenndYdM6QVn1GosTkE3LC72Tn6Z6ZR6oiYgjIdfnM+xCkX
-	AFqap3dbFbAx9x/6wF2b1g==
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 439962uc93-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 09:38:38 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SwMTpS6ltLfhjZsspSmf8oMtrKQVdJMFeRtqb1gUE0yzy3HGqIpXhDG/xWFxvjhfIybte/nW4NpdX3DI+7XvevZ7PCkusqVH2MQrcC+iXLSdlEJp//uYsT9UZGpnnPhBHouPAe5do7fTNBod8a37mEUYL9+t1bGe1Wj6VMfGwdwXK9aPNgXep9pl7CknfOO0RSqDtkvJWAHK/R1JzzvRfaaDjSa5tTNroIJWe6aNBDUjWPZtI0HrphF/mwmazpJuN+fHJd8qWc9DwXnzpRSmmukZAZTh/g7qWmqVAUGXKW4j5OPoQBRa9r5y/asGKmOxpnI5fIIB+Hx/xig91xZI+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xBmYlKRhY+AvqDYj/ObnKuYOJHjRQUqKHXtzU/ffiLY=;
- b=lzXqamrxvm3MKpblv7KqXptCZc0dygWxQ6r4mCDU7lnhGPDIP3rZpSTNeOzHjGZ/QMzSyb51YmeOj86HEm32+yB0wbGeVcZiD5G2hGKYrZlUk2m3LGM/LVipwpEiva+IS+c+rNb5fkuqvL+8FJVVgg0YUWlOt4+sQ91a+LTpwcKfLKp2ixr5x0/gsYfPNnCCZSACuruBj0hI87nibR0yHGuY7WIeYOIelGST5zs7366H1hQtmZXrT/zGUIOuZ8adIvom1C2/x+ixEyGXxUyAVtPKhyFwijxtzEYILaFjRUKNkS5llZhlz9hGUzpeTy2+3DWGPGc9kFZYeg/ERYpu+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from SA1PR15MB5109.namprd15.prod.outlook.com (2603:10b6:806:1dc::10)
- by BLAPR15MB4019.namprd15.prod.outlook.com (2603:10b6:208:274::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
- 2024 17:38:35 +0000
-Received: from SA1PR15MB5109.namprd15.prod.outlook.com
- ([fe80::662b:d7bd:ab1b:2610]) by SA1PR15MB5109.namprd15.prod.outlook.com
- ([fe80::662b:d7bd:ab1b:2610%7]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 17:38:35 +0000
-From: Song Liu <songliubraving@meta.com>
-To: Jan Kara <jack@suse.cz>
-CC: Song Liu <songliubraving@meta.com>,
-        Alexei Starovoitov
-	<alexei.starovoitov@gmail.com>,
-        Amir Goldstein <amir73il@gmail.com>, Song Liu
-	<song@kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux-Fsdevel
-	<linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM
- List <linux-security-module@vger.kernel.org>,
-        Kernel Team
-	<kernel-team@meta.com>,
-        Andrii Nakryiko <andrii@kernel.org>, Eddy Z
-	<eddyz87@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann
-	<daniel@iogearbox.net>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Alexander
- Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, KP
- Singh <kpsingh@kernel.org>,
-        Matt Bobrowski <mattbobrowski@google.com>,
-        "repnop@google.com" <repnop@google.com>,
-        Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-        =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?=
-	<mic@digikod.net>,
-        "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify
- fiter
-Thread-Topic: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify
- fiter
-Thread-Index: AQHbPTJZqeNX/hCyTk2z4ZUDy/y7a7LF4v0AgARvTICAABfpAIACjCGAgAZRRAA=
-Date: Mon, 2 Dec 2024 17:38:34 +0000
-Message-ID: <50444DD4-34E5-4F75-AE02-5DF1D28EF12E@fb.com>
-References: <20241122225958.1775625-1-song@kernel.org>
- <20241122225958.1775625-3-song@kernel.org>
- <CAOQ4uxhfd8ryQ6ua5u60yN5sh06fyiieS3XgfR9jvkAOeDSZUg@mail.gmail.com>
- <CAADnVQK-6MFdwD_0j-3x2-t8VUjbNJUuGrTXEWJ0ttdpHvtLOA@mail.gmail.com>
- <21A94434-5519-4659-83FA-3AB782F064E2@fb.com>
- <20241128171001.xamzdpqlumqdqdkl@quack3>
-In-Reply-To: <20241128171001.xamzdpqlumqdqdkl@quack3>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3826.200.121)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5109:EE_|BLAPR15MB4019:EE_
-x-ms-office365-filtering-correlation-id: 080c84d0-fa9c-49a6-8c98-08dd12f825b8
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|10070799003|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NkZEL2Y3QzlibEo2eWp6Ym1zNE91dWxrbmUyT0lramY2S1pnREo5OWtWam1P?=
- =?utf-8?B?NG1FelpvL2h1eGZhSk5WTWl6RnVsSW92ekIzSEcrWDVFK2sxS1MrcXBKYkwr?=
- =?utf-8?B?TzhTb3VTMHdtMnJTME5qMHNqSG5HRUF6VzlOQWo3bkFOMFFrL3V0OXNuMXN5?=
- =?utf-8?B?WWlIRUlKZ29IazltN1VodWdvQVdzMEwzN1ViRzlOZlQrSjl2a3NPK1BTUWgv?=
- =?utf-8?B?QitKdytZN1dXZWlnODhyVTJuSFBreGZnRy8zekVFY3cxcGpGOVFhcUttTGxL?=
- =?utf-8?B?MlNuZlJOd1Nqbi9vWVUvZ2FGdHFEUGZlRElDTmdCdVFhOUFONUN1TVRuVTR2?=
- =?utf-8?B?RUdZY2lzY1FVVS9ObDh6OW5HSmFkMDArd09pdEc3S2UyZVZMelNDdjdXSGw3?=
- =?utf-8?B?ZHJFNmkxSFNaRWI4elF5WWY3T1czYzZIMFRGZjQ3ay9LWitxMGwxc1VaWm85?=
- =?utf-8?B?UW1Jb3Z1RnU1QjB1d2czbXFwWlN5K0RoRXB1Z1NCVHZmcTlaZlFOcjdVNCtJ?=
- =?utf-8?B?VGJEek8xbkJVY1JtR0YrZ28rU1ZjS2twc2NDZDNhbHVKdHhFSjFLV20vTXZ5?=
- =?utf-8?B?d1BndWdSMitHQ1E4R0ppSkh4WUlnQVdHaTZ0cXoyNy9mTnpYRUxRUHRYMUhN?=
- =?utf-8?B?dk1LTW5rK1VjbFJjVXZ5eDM4ejJLbzRmb3k4bENzQXhhbFloTFpSQWRYVVdu?=
- =?utf-8?B?b2MvUjdpQWd6Vi82QW1JcWhic21DMEVXeFNDUU9VVktiV3ZYait6QVZUZk9V?=
- =?utf-8?B?ZW12eHhIeVFuWTZaeHdwNmo4K3hLaFR2MS9xQTk4UXRRbFkvcm5EeklDWnhr?=
- =?utf-8?B?Z0Y4MDUrSWFTaXh0SU9Jem1QanNsQ3RYN1ppMmQrbGM1OVRmS1ZCSXdPZEdz?=
- =?utf-8?B?QjIwNitjNGdUSDBkYmUwbTU4eCtZZDVjZmd5TGxHMlJXWEVVNmEvN0tUbnBX?=
- =?utf-8?B?SnpMSW5VZWJwdVNRZXM5MFh3TnRJZ09VYVlDd2lxZGEwNDVBSVd5T2x2d2RZ?=
- =?utf-8?B?VG94alpNeU1JSU5SS3RVVjh3TTZQaEJYZjVNd2lUaXhIWnlhT1JtYjVxRWM2?=
- =?utf-8?B?UXZEa1BlQmZJblVhb01KTlo1ZVhpQ0hGcUExUFJSNURoV3FPakJUWDU0Mk5u?=
- =?utf-8?B?K0tlaGhLQUdoVTNZaDh5YUVibU9JQ2NZNCs0SnJ4Sk9DeEthMHJvUDN6N0pa?=
- =?utf-8?B?M1JLMmtiQnB5aExncjBmUGZwcHFsNkRFQ3QvbTMrdjdIRzN3NHlrcFN4MVVN?=
- =?utf-8?B?SEZhUmxaeUpUcUNJZWFQTEpCdWpneUlvSS9mRFVyMENHM3FKY1BaSjdmS2o2?=
- =?utf-8?B?SkcvaVNCb0dCTi9MeWZtRnhpL2tEOFd2S0VaRmQyRGpNRXBVekw4b3dNeFVr?=
- =?utf-8?B?cmpzVk5rVnc1LytQaldZVndxVm5VTGEybTJna3Z3WWVUQXArUzBvcnllNHkv?=
- =?utf-8?B?anloRkNCdjNFUWV3bC95aVhPLytZREF3MmlBaml3WmpWYi9OMXJLQW1RRHZZ?=
- =?utf-8?B?TlI5Uy9JdHorMXZ4cm9GakZoajFaZUhEdUVIaURBL3BHNDVsb2szUnVsdUdj?=
- =?utf-8?B?Y25MY0gzRDF2NTJuOTlvb3BNM2dFcWlwblFZM2V5NzFvKzJmM2pXcVpSQXRH?=
- =?utf-8?B?MHRiZ0R6QmN2S2d1UUJOSEZ1aUl6WjFxa1VOUmcrakNjZGcrSm9JdXNDa2JT?=
- =?utf-8?B?dU1HalFOenVwMUNmQy9uZENaWTR4U3NkOHhCQ0tHOUNsbWMrMXc5cDkzcWdh?=
- =?utf-8?B?SGpETnF1RVNhV082UFpYa3luKzFPWFQ0bHpNVWVQOGYrMmVFNWlJS2tzSGh4?=
- =?utf-8?B?TGtQdzl6SkhGSDBSTXVOejdWR0tZb05HMjBRL1ZtL0d1Uk00bzFMck9GZENS?=
- =?utf-8?B?ZVY3WFMybE1nQ3IwYnRtSGhEUlZpTE01UTdpK3ZGZlBvcnc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5109.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(10070799003)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SEMxN2xZZzFyUlFOQy9VYUM5Mm83YStyYkJFYmQrU1lzUVRBTjlWQmxGcnBT?=
- =?utf-8?B?VVg1QTdGVUZSQWV4dkpSSVRDcXVqRjEwSnZBOVpuaHQ1N3FJcHZvd3BxZ0lR?=
- =?utf-8?B?NDdsYnRZVTNBUlhCcmsrMnFxT2t1ZWdlZkplenhrTWJlbnkrejU1S2RUak5w?=
- =?utf-8?B?eXY1V1pZaW9xcmZwS0lOWjV1L3VnRFpjK1dPaXNWQjFNNld5a01XbnNXb0ox?=
- =?utf-8?B?eStXcnVrT3ZETldoWVJGdWNjakhOODRiUGxkLzhOTGxOcEphbm90bks4Ri9a?=
- =?utf-8?B?YkR3QjZWWkpqZGhUdnNqcngwc1dQQ2dIU2QyOXhuUHlFd055bjBTSXZGQVFX?=
- =?utf-8?B?cWJZUmZKOTAzQWdRTTF1TkZEbWtlejVDUWE3ZjRnbDNGTUFXVlVseWZENVIw?=
- =?utf-8?B?aTA5b1V2QXpaNVd3V1NMTDJNUzU4Z1lpbzhtaW11SkhkbE11bWlQMW1oa0pz?=
- =?utf-8?B?Ump1ZU85bUg0NnFJcGprVTNOOHFTOE93ekJON3pjS2M3bmJIWExyeGNGNTAr?=
- =?utf-8?B?R0R2TjZwZGZ6eXVsamhmQUtjNU5GbUdMcjFhNFhYTExWUWNWUjhuZG5OL1lW?=
- =?utf-8?B?RVVsNS9zWTYrM25QZHRpRENkRGVUU0kxRFo3NHRaZnFTM2tyRkw1YkJJQzJY?=
- =?utf-8?B?YUxVdEdNNjlvQWVDMjlXYUJBaG1Kd3dHc24ySGFIZWJuYzFvQTlVSEk5ZWth?=
- =?utf-8?B?T3BqY2h4SWNPUjkrZFV1d1JPM2ZjQnFoTHRXdlYraGsvaFIxRnJLVEpHSllu?=
- =?utf-8?B?Wjk3ZmtjTUlzZGlOcGxlYnB3QnlXOCszSi84NkxubytlNHhzc0dXeks0RGZx?=
- =?utf-8?B?K1Z4ZkRaNktCQlBzVm5oeWNmQ0E0WEphRlRsZTg3QkNURnZ6SG5Fd09UcC9v?=
- =?utf-8?B?OWtpeFZVVnJUc1YvK3dqR00xSE51L29nTUVSRVFYOWF4em01eFkwNFRJQ0lo?=
- =?utf-8?B?NTAwL2tXWGNLQkhCbXljbGZOTGtOMGdRUlMyY2FsalRoUDhKek8wTlFvcjVv?=
- =?utf-8?B?UXJ2eCtCaGttRVBmVWg2cUV5dFBGMVp5NGszbmsxU1hPRjZqWEtMZW1qazRi?=
- =?utf-8?B?NXdzZHQ0MjM0WHZ0NGpMTHJsOGxnV2gxYXdsTjlaTVFqNjVVZDBzMmEwa0JB?=
- =?utf-8?B?R0p1c3ZJcnNlMk9VQ3Y2d3dTYnV4eGlSUmRZenQ1a2tSWllCeVlGK3pSNEl3?=
- =?utf-8?B?d1c4WGNMbnVLZ3FUVzRpc1BJTjJxZHJ3bDVqbTB1b2lpT0hwUklIVFU3bkpQ?=
- =?utf-8?B?WHZvRFNZS2RRQmlFaWo2amozM1c0V1BOcGE0a0loVDkwa0czNnovZ05rUVMv?=
- =?utf-8?B?Y0k1VU9abDVRaUxJKytQc0JZcTVxUEpLcUVDNlFmY09SMHluZ2hyRWtOS1FI?=
- =?utf-8?B?RzVpL25STU9tVlRkWE0xZlh2MkZqUW54TEdlREFFOUpUZk02SmE1SVpZM1la?=
- =?utf-8?B?OVZ4ZjlMbTZ5M3pWTmkwVHhmTElhTlpuUlovZ04zYzU5ckQwSCtnQ3hyTUh5?=
- =?utf-8?B?c2lyMWU0THVsb2ZlN3Z0Q2RxUWVTOGJFYy9UZlgzUkR6SjkwYkc3bkkxeGVl?=
- =?utf-8?B?Z2dIY1NweVc4N3dxTWNuNGdoSmpGOGR5elVORysxSytPcjk3RS85YjF1WEFV?=
- =?utf-8?B?d3NMQU52ZmIvWExFdytGUW04UUlhOE9BVWJYSmc5R1dNMEp3dkRWMkkybzNv?=
- =?utf-8?B?MUpZQUp4dUtZVnNqTGJVY3J4UG1sTmhIOUdKR28vdUdEb3pqUFlVVGo5Y2FH?=
- =?utf-8?B?Z2dpR2hTT3NwS1FhTWY3ajBQRXhYaGR1aFJKLzJMN3liUHVFd053Q09zazZo?=
- =?utf-8?B?NStGMnBKenhvbnpLTjZDQk9uMDJsY3Robzl3RnRoQ2krNURpQlB0Tmk3eGZS?=
- =?utf-8?B?cXJDSXdYT1ZTc1p2SkgyWFV6MDRucXJ5cXJWTllsQ01mUUFvNit0dm04a2ZR?=
- =?utf-8?B?eVk5RGFualNrU1lYK2NFVWdKdnlxMzNjWjNROHBsVHJTNUJWUjIrZjR1am9s?=
- =?utf-8?B?R2VTS0tBQ2FhZHY4NGlFK1dqRk00YXRyS1ZlTTJnUkZ6OEwyZTZvSHBoYkkr?=
- =?utf-8?B?c1lKWmFZNmgrVjBvU2dNblBMdkcyV0oybTRlbmpBNy9CekxWdmpKTzRLdmJn?=
- =?utf-8?B?dUV5UThVNWtKdFdnUUJaMEJCWUorMjNUbDdaVFBpM2RWZTVlK3ZDTXFoZWpR?=
- =?utf-8?Q?AQ//c5Q2lLVA/C1lIp7agEM=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <403260747599E54985EC3BBCD5DA9098@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3826CB31645
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:43:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872811DBB36;
+	Mon,  2 Dec 2024 17:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k9rQ4W6Y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CBE13E40F;
+	Mon,  2 Dec 2024 17:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733161385; cv=none; b=qXksGtjU5T6ywAkGr5burg5T+PwpKkIboLyqP0shF6AlNY9BLc/FIr/mLy9Zz/TVFcm7Zhxr0Y5Iq/XGcNVftAkgwKPbcCWHjV6GMJxJhrMbo+xA6MqLNLo1FI+jQFqk0+ZywPkVz+N677LL3qUebQfk0ghbzEbJglPzvBGePqE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733161385; c=relaxed/simple;
+	bh=blkdHAB9C3V6PM7YTKMVO0drAO+iOtI29Q5i7RNFyZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qqR5lskFqJdIl44SsuQiXf15s1j1t0UcHqAKsz6vmv1/N3ZrGiTUx/A3XX1tcH9KFyHPh2BuOhO1xt2GK5xh+yulR49PqOl3CzjcSeyUBoL/cYxAQomJ71/rvhQpkZTbeb1PzAR0442d4UYA+riPaSus8T4C6O/13+C/jm9HA80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k9rQ4W6Y; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733161383; x=1764697383;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=blkdHAB9C3V6PM7YTKMVO0drAO+iOtI29Q5i7RNFyZA=;
+  b=k9rQ4W6YvGkQ9D6jEhMAhozp/TEt76BJsuko+KgGcy8qKE+Tph9AG6pD
+   OmX4iPkk4Zh2nGVOhoAIv7AUlJz0A2RtWZUBT2CzWdnwTjfH+0THgJ/SA
+   oDMdBEmdVYF2QpEUEUuapmHbASr9/T52CNpaHLMMlBmSyGktdSJSd+0VG
+   Cnr9wCO88F4Uq1pP/oEFc4lBHnqRT/pl4ufFNuFE5FIxvlJZ7L3TnLZsJ
+   y2hOqShJDzyIENLztbdM1tgqOdN1omGwIeTXRqiJtWw0pAV3yNjb32tL9
+   elLzT3a2E5asOkrA9rELVuSLnF/VNBxeKSFDoOFcnIz/Xlrbs/kV8xb8F
+   w==;
+X-CSE-ConnectionGUID: CdpAR+pFS++AO38myk4DCA==
+X-CSE-MsgGUID: qMbnt1hPT3i47ExkMKl5oQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33264839"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="33264839"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:43:02 -0800
+X-CSE-ConnectionGUID: GNLl/TD7QpGP6Yvrsom0aQ==
+X-CSE-MsgGUID: vGnripItS6KZVuH6cBZ+2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="124109164"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:42:58 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tIARi-00000003Cw1-2V2z;
+	Mon, 02 Dec 2024 19:42:54 +0200
+Date: Mon, 2 Dec 2024 19:42:54 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Alisa-Dariana Roman <alisa.roman@analog.com>,
+	Christian Eggers <ceggers@arri.de>, Peter Rosin <peda@axentia.se>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Sebastian Reichel <sre@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] iio: consumers: copy/release available info from
+ producer to fix race
+Message-ID: <Z03xngKjNQYrKvgw@smile.fi.intel.com>
+References: <b56ba6a0db195ad44158509f3adb157b@gmail.com>
+ <ZzsVOGvzgNTvuEtD@smile.fi.intel.com>
+ <e56a8f3c81429c465e87a3abcccec1b4@gmail.com>
+ <Zztlz08Wm-mGdy7p@smile.fi.intel.com>
+ <65e16f628245a78da5c9d870d6c5c5a9@gmail.com>
+ <Zzx_C60W48ujpis9@smile.fi.intel.com>
+ <20241123141320.326b3340@jic23-huawei>
+ <9b2f3557dc93c4b75752f812e2645262@gmail.com>
+ <20241126174147.23fed403@jic23-huawei>
+ <9db64d227f70f016b614a9cff5469f2d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5109.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 080c84d0-fa9c-49a6-8c98-08dd12f825b8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2024 17:38:34.9950
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Scw+E+evJJBIMuwd2bXnWWVDIAhsNyEJbPfxgmNaXXUWGi6r5pZ1eeK5R2FGaTFJFPKibw8jK6wSCB9As8VH6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR15MB4019
-X-Proofpoint-GUID: -RZphlj_lpa_9tGFv5lMCD7x9HpS8RcW
-X-Proofpoint-ORIG-GUID: -RZphlj_lpa_9tGFv5lMCD7x9HpS8RcW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9db64d227f70f016b614a9cff5469f2d@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-DQoNCj4gT24gTm92IDI4LCAyMDI0LCBhdCA5OjEw4oCvQU0sIEphbiBLYXJhIDxqYWNrQHN1c2Uu
-Y3o+IHdyb3RlOg0KPiANCj4gT24gV2VkIDI3LTExLTI0IDAyOjE2OjA5LCBTb25nIExpdSB3cm90
-ZToNCj4+PiBPbiBOb3YgMjYsIDIwMjQsIGF0IDQ6NTDigK9QTSwgQWxleGVpIFN0YXJvdm9pdG92
-IDxhbGV4ZWkuc3Rhcm92b2l0b3ZAZ21haWwuY29tPiB3cm90ZToNCj4+PiANCj4+IA0KPj4gWy4u
-Ll0NCj4+IA0KPj4+Pj4gKw0KPj4+Pj4gK3N0YXRpYyB2b2lkIHNhbXBsZV9maWx0ZXJfZnJlZShz
-dHJ1Y3QgZmFub3RpZnlfZmlsdGVyX2hvb2sgKmZpbHRlcl9ob29rKQ0KPj4+Pj4gK3sNCj4+Pj4+
-ICsgICAgICAgc3RydWN0IGZhbl9maWx0ZXJfc2FtcGxlX2RhdGEgKmRhdGEgPSBmaWx0ZXJfaG9v
-ay0+ZGF0YTsNCj4+Pj4+ICsNCj4+Pj4+ICsgICAgICAgcGF0aF9wdXQoJmRhdGEtPnN1YnRyZWVf
-cGF0aCk7DQo+Pj4+PiArICAgICAgIGtmcmVlKGRhdGEpOw0KPj4+Pj4gK30NCj4+Pj4+ICsNCj4+
-Pj4gDQo+Pj4+IEhpIFNvbmcsDQo+Pj4+IA0KPj4+PiBUaGlzIGV4YW1wbGUgbG9va3MgZmluZSBi
-dXQgaXQgcmFpc2VzIGEgcXVlc3Rpb24uDQo+Pj4+IFRoaXMgZmlsdGVyIHdpbGwga2VlcCB0aGUg
-bW91bnQgb2Ygc3VidHJlZV9wYXRoIGJ1c3kgdW50aWwgdGhlIGdyb3VwIGlzIGNsb3NlZA0KPj4+
-PiBvciB0aGUgZmlsdGVyIGlzIGRldGFjaGVkLg0KPj4+PiBUaGlzIGlzIHByb2JhYmx5IGZpbmUg
-Zm9yIG1hbnkgc2VydmljZXMgdGhhdCBrZWVwIHRoZSBtb3VudCBidXN5IGFueXdheS4NCj4+Pj4g
-DQo+Pj4+IEJ1dCB3aGF0IGlmIHRoaXMgd2Fzbid0IHRoZSBpbnRlbnRpb24/DQo+Pj4+IFdoYXQg
-aWYgYW4gQW50aS1tYWx3YXJlIGVuZ2luZSB0aGF0IHdhdGNoZXMgYWxsIG1vdW50cyB3YW50ZWQg
-dG8gdXNlIHRoYXQNCj4+Pj4gZm9yIGNvbmZpZ3VyaW5nIHNvbWUgaWdub3JlL2Jsb2NrIHN1YnRy
-ZWUgZmlsdGVycz8NCj4+Pj4gDQo+Pj4+IE9uZSB3YXkgd291bGQgYmUgdG8gdXNlIGEgaXNfc3Vi
-dHJlZSgpIHZhcmlhbnQgdGhhdCBsb29rcyBmb3IgYQ0KPj4+PiBzdWJ0cmVlIHJvb3QgaW5vZGUN
-Cj4+Pj4gbnVtYmVyIGFuZCB0aGVuIHZlcmlmaWVzIGl0IHdpdGggYSBzdWJ0cmVlIHJvb3QgZmlk
-Lg0KPj4+PiBBIHByb2R1Y3Rpb24gc3VidHJlZSBmaWx0ZXIgd2lsbCBuZWVkIHRvIHVzZSBhIHZh
-cmlhbnQgb2YgaXNfc3VidHJlZSgpDQo+Pj4+IGFueXdheSB0aGF0DQo+Pj4+IGxvb2tzIGZvciBh
-IHNldCBvZiBzdWJ0cmVlIHJvb3QgaW5vZGVzLCBiZWNhdXNlIGRvaW5nIGEgbG9vcCBvZiBpc19z
-dWJ0cmVlKCkgZm9yDQo+Pj4+IG11bHRpcGxlIHBhdGhzIGlzIGEgbm8gZ28uDQo+Pj4+IA0KPj4+
-PiBEb24ndCBuZWVkIHRvIGNoYW5nZSBhbnl0aGluZyBpbiB0aGUgZXhhbXBsZSwgdW5sZXNzIG90
-aGVyIHBlb3BsZQ0KPj4+PiB0aGluayB0aGF0IHdlIGRvIG5lZWQgdG8gc2V0IGEgYmV0dGVyIGV4
-YW1wbGUgdG8gYmVnaW4gd2l0aC4uLg0KPj4+IA0KPj4+IEkgdGhpbmsgd2UgaGF2ZSB0byB0cmVh
-dCB0aGlzIHBhdGNoIGFzIGEgcmVhbCBmaWx0ZXIgYW5kIG5vdCBhcyBhbiBleGFtcGxlDQo+Pj4g
-dG8gbWFrZSBzdXJlIHRoYXQgdGhlIHdob2xlIGFwcHJvYWNoIGlzIHdvcmthYmxlIGVuZCB0byBl
-bmQuDQo+Pj4gVGhlIHBvaW50IGFib3V0IG5vdCBob2xkaW5nIHBhdGgvZGVudHJ5IGlzIHZlcnkg
-dmFsaWQuDQo+Pj4gVGhlIGFsZ29yaXRobSBuZWVkcyB0byBzdXBwb3J0IHRoYXQuDQo+PiANCj4+
-IEhtbS4uIEkgYW0gbm90IHN1cmUgd2hldGhlciB3ZSBjYW5ub3QgaG9sZCBhIHJlZmNvdW50LiBJ
-ZiB0aGF0IGlzIGEgDQo+PiByZXF1aXJlbWVudCwgdGhlIGFsZ29yaXRobSB3aWxsIGJlIG1vcmUg
-Y29tcGxleC4NCj4gDQo+IFdlbGwsIGZvciBwcm9kdWN0aW9uIHVzZSB0aGF0IHdvdWxkIGNlcnRh
-aW5seSBiZSBhIHJlcXVpcmVtZW50LiBNYW55IHllYXJzDQo+IGFnbyBkbm90aWZ5ICh0aGUgZmly
-c3QgZnMgbm90aWZpY2F0aW9uIHN1YnN5c3RlbSkgd2FzIHByZXZlbnRpbmcNCj4gZmlsZXN5c3Rl
-bXMgZnJvbSBiZWluZyB1bm1vdW50ZWQgYmVjYXVzZSBpdCByZXF1aXJlZCBvcGVuIGZpbGUgYW5k
-IGl0IHdhcyBhDQo+IHBhaW4uDQo+IA0KPj4gSUlVQywgZnNub3RpZnlfbWFyayBvbiBhIGlub2Rl
-IGRvZXMgbm90IGhvbGQgYSByZWZjb3VudCB0byBpbm9kZS4NCj4gDQo+IFRoZSBjb25uZWN0b3Ig
-KGhlYWQgb2YgdGhlIG1hcmsgbGlzdCkgZG9lcyBob2xkIGlub2RlIHJlZmVyZW5jZS4gQnV0IHdl
-DQo+IGhhdmUgYSBob29rIGluIHRoZSB1bm1vdW50IHBhdGggKGZzbm90aWZ5X3VubW91bnRfaW5v
-ZGVzKCkpIHdoaWNoIGRyb3BzIGFsbA0KPiB0aGUgbWFya3MgYW5kIGNvbm5lY3RvcnMgZm9yIHRo
-ZSBmaWxlc3lzdGVtLg0KPiANCj4+IEFuZCB3aGVuIHRoZSBpbm9kZSBpcyBldmljdGVkLCB0aGUg
-bWFyayBpcyBmcmVlZC4gSSBndWVzcyB0aGlzIA0KPj4gcmVxdWlyZXMgdGhlIHVzZXIgc3BhY2Us
-IHRoZSBBbnRpVmlydXMgc2Nhbm5lciBmb3IgZXhhbXBsZSwgdG8gDQo+PiBob2xkIGEgcmVmZXJl
-bmNlIHRvIHRoZSBpbm9kZT8gSWYgdGhpcyBpcyB0aGUgY2FzZSwgSSB0aGluayBpdCANCj4+IGlz
-IE9LIGZvciB0aGUgZmlsdGVyLCBlaXRoZXIgYnBmIG9yIGtlcm5lbCBtb2R1bGUsIHRvIGhvbGQg
-YSANCj4+IHJlZmVyZW5jZSB0byB0aGUgc3VidHJlZSByb290Lg0KPiANCj4gTm8sIGZzbm90aWZ5
-IHBpbnMgdGhlIGlub2RlcyBpbiBtZW1vcnkgKHdoaWNoIGlmIGZpbmUpIGJ1dCByZWxlYXNlcyB0
-aGVtDQo+IHdoZW4gdW5tb3VudCBzaG91bGQgaGFwcGVuLiBVc2Vyc3BhY2UgZG9lc24ndCBuZWVk
-IHRvIHBpbiBhbnl0aGluZy4NCg0KVG8gZ2V0IHNpbWlsYXIgbG9naWMgZm9yIHRoZSBmaWx0ZXIg
-KG1vZHVsZSBvciBCUEYpLCB3ZSB3aWxsIG5lZWQgDQphbm90aGVyIGNhbGwgYmFjay4gV2Ugc2hv
-dWxkIGFkZCB0aGlzLCB0aG91Z2ggd2UgbWF5IG5vdCB1c2UgaXQgDQppbiB0aGUgc3VidHJlZSBt
-b25pdG9yaW5nIGNhc2UuIA0KDQo+IA0KPj4+IEl0IG1heSB2ZXJ5IHdlbGwgdHVybiBvdXQgdGhh
-dCB0aGUgbG9naWMgb2YgaGFuZGxpbmcgbWFueSBmaWx0ZXJzDQo+Pj4gd2l0aG91dCBhIGxvb3Ag
-YW5kIG5vdCBncmFiYmluZyBhIHBhdGggcmVmY250IGlzIHRvbyBjb21wbGV4IGZvciBicGYuDQo+
-Pj4gVGhlbiB0aGlzIHN1YnRyZWUgZmlsdGVyaW5nIHdvdWxkIGhhdmUgdG8gc3RheSBhcyBhIGtl
-cm5lbCBtb2R1bGUNCj4+PiBvciBleHRyYSBmbGFnL2ZlYXR1cmUgZm9yIGZhbm90aWZ5Lg0KPj4g
-DQo+PiBIYW5kbGluZyBtdWx0aXBsZSBzdWJ0cmVlcyBpcyBpbmRlZWQgYW4gaXNzdWUuIFNpbmNl
-IHdlIHJlbHkgb24gDQo+PiB0aGUgbWFyayBpbiB0aGUgU0IsIG11bHRpcGxlIHN1YnRyZWVzIHVu
-ZGVyIHRoZSBzYW1lIFNCIHdpbGwgc2hhcmUNCj4+IHRoYXQgbWFyay4gVW5sZXNzIHdlIHVzZSBz
-b21lIGNhY2hlLCBhY2Nlc3NpbmcgYSBmaWxlIHdpbGwgDQo+PiB0cmlnZ2VyIG11bHRpcGxlIGlz
-X3N1YmRpcigpIGNhbGxzLiANCj4+IA0KPj4gT25lIHBvc3NpYmxlIHNvbHV0aW9uIGlzIHRoYXQg
-aGF2ZSBhIG5ldyBoZWxwZXIgdGhhdCBjaGVja3MNCj4+IGlzX3N1YmRpcigpIGZvciBhIGxpc3Qg
-b2YgcGFyZW50IHN1YnRyZWVzIHdpdGggYSBzaW5nbGUgc2VyaWVzDQo+PiBvZiBkZW50cnkgd2Fs
-ay4gSU9XLCBzb21ldGhpbmcgbGlrZToNCj4+IA0KPj4gYm9vbCBpc19zdWJkaXJfb2ZfYW55KHN0
-cnVjdCBkZW50cnkgKm5ld19kZW50cnksIA0KPj4gICAgICAgICAgICAgICAgICAgICAgc3RydWN0
-IGxpc3RfaGVhZCAqbGlzdF9vZl9kZW50cnkpLg0KPj4gDQo+PiBGb3IgQlBGLCBvbmUgcG9zc2li
-bGUgc29sdXRpb24gaXMgdG8gd2FsayB0aGUgZGVudHJ5IHRyZWUgDQo+PiB1cCB0byB0aGUgcm9v
-dCwgdW5kZXIgYnBmX3JjdV9yZWFkX2xvY2soKS4NCj4gDQo+IEkgY2FuIHNlZSB0d28gcG9zc2li
-bGUgaXNzdWVzIHdpdGggdGhpcy4gRmlyc3RseSwgeW91IGRvbid0IGhhdmUgbGlzdF9oZWFkDQo+
-IGluIGEgZGVudHJ5IHlvdSBjb3VsZCBlYXNpbHkgdXNlIHRvIHBhc3MgZGVudHJpZXMgdG8gYSBm
-dW5jdGlvbiBsaWtlIHRoaXMuDQo+IFByb2JhYmx5IHlvdSdsbCBuZWVkIGFuIGV4dGVybmFsIGFy
-cmF5IHdpdGggZGVudHJ5IHBvaW50ZXJzIG9yIHNvbWV0aGluZw0KPiBsaWtlIHRoYXQuDQo+IA0K
-PiBTZWNvbmQgaXNzdWUgaXMgbW9yZSBpbmhlcmVudCBpbiB0aGUgQlBGIGZpbHRlciBhcHByb2Fj
-aCAtIGlmIHRoZXJlIHdvdWxkDQo+IGJlIG1vcmUgbm90aWZpY2F0aW9uIGdyb3VwcyBlYWNoIHdh
-dGNoaW5nIGZvciBzb21lIHN1YnRyZWUgKGxpa2UgdXNlcnMNCj4gd2F0Y2hpbmcgdGhlaXIgaG9t
-ZSBkaXJzLCBhcHBzIHdhdGNoaW5nIHRoZWlyIHN1YnRyZWVzIHdpdGggZGF0YSBldGMuKSwgdGhl
-bg0KPiB3ZSdkIHN0aWxsIGVuZCB1cCB0cmF2ZXJzaW5nIHRoZSBkaXJlY3RvcnkgdHJlZSBmb3Ig
-ZWFjaCBzdWNoIG5vdGlmaWNhdGlvbg0KPiBncm91cC4gVGhhdCBzZWVtcyBzdWJvcHRpbWFsIGJ1
-dCBJIGhhdmUgdG8gdGhpbmsgaG93IG11Y2ggd2UgY2FyZSBob3cgd2UNCj4gY291bGQgcG9zc2li
-bHkgYXZvaWQgdGhhdC4NCg0KRm9yIHRoZSBzdWJ0cmVlIG1vbml0b3JpbmcgZXhhbXBsZSwgbWF5
-YmUgIm1vbml0b3IgdGhlIHdob2xlIHNiIA0KYW5kIGZpbHRlciB0aGUgZXZlbnRzIiBpcyBub3Qg
-dGhlIHJpZ2h0IGFwcHJvYWNoLiBNYWludGFpbmluZyBhIA0KbWFyayBvbiBlYWNoIGRpcmVjdG9y
-eSB1bmRlciB0aGUgc3VidHJlZSBtaWdodCBiZSBhIGJldHRlciBhcHByb2FjaC4gDQpBbnkgY29t
-bWVudHMgb3Igc3VnZ2VzdGlvbnMgb24gdGhpcz8NCg0KVGhhbmtzLA0KU29uZw0KDQo=
+On Fri, Nov 29, 2024 at 05:04:54PM +0100, Matteo Martelli wrote:
+> On Tue, 26 Nov 2024 17:41:47 +0000, Jonathan Cameron <jic23@kernel.org> wrote:
+> > On Tue, 26 Nov 2024 17:31:16 +0100
+> > Matteo Martelli <matteomartelli3@gmail.com> wrote:
+> > > On Sat, 23 Nov 2024 14:13:20 +0000, Jonathan Cameron <jic23@kernel.org> wrote:
+> > > > On Tue, 19 Nov 2024 14:05:31 +0200
+> > > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > > > > On Tue, Nov 19, 2024 at 12:25:18PM +0100, Matteo Martelli wrote:  
+> > > > > > On Mon, 18 Nov 2024 18:05:35 +0200, Andy Shevchenko <andriy.shevchenko@intel.com> wrote:    
+> > > > > > > On Mon, Nov 18, 2024 at 03:45:25PM +0100, Matteo Martelli wrote:    
+> > > > > > > > On Mon, 18 Nov 2024 12:21:44 +0200, Andy Shevchenko <andriy.shevchenko@intel.com> wrote:    
+> > > > > > > > > On Fri, Nov 15, 2024 at 03:25:06PM +0100, Matteo Martelli wrote:    
+> > > > > > > > > > On Thu, 31 Oct 2024 19:06:32 +0100, Matteo Martelli <matteomartelli3@gmail.com> wrote:    
+> > > > > > > > > > > Quoting Jonathan Cameron (2024-10-31 15:31:29)    
+> > > > > > > > > > > > On Thu, 31 Oct 2024 12:26:24 +0100
+> > > > > > > > > > > > Matteo Martelli <matteomartelli3@gmail.com> wrote:    
+> > > > > > > > > > > > > Quoting Jonathan Cameron (2024-10-30 21:30:50)    
+> > > > > > > > > > > > > > On Wed, 30 Oct 2024 19:23:21 +0100
+> > > > > > > > > > > > > > Matteo Martelli <matteomartelli3@gmail.com> wrote:    
+> > > > > > > > > > > > > > > Quoting Andy Shevchenko (2024-10-30 15:47:50)      
+> > > > > > > > > > > > > > > > On Mon, Oct 21, 2024 at 02:54:15PM +0200, Matteo Martelli wrote:        
+> > > > >   
+> > > > > > > > > > > > > > > > > Consumers need to call the producer's read_avail_release_resource()
+> > > > > > > > > > > > > > > > > callback after reading producer's available info. To avoid a race
+> > > > > > > > > > > > > > > > > condition with the producer unregistration, change inkern
+> > > > > > > > > > > > > > > > > iio_channel_read_avail() so that it copies the available info from the
+> > > > > > > > > > > > > > > > > producer and immediately calls its release callback with info_exists
+> > > > > > > > > > > > > > > > > locked.
+> > > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > > Also, modify the users of iio_read_avail_channel_raw() and
+> > > > > > > > > > > > > > > > > iio_read_avail_channel_attribute() to free the copied available buffers
+> > > > > > > > > > > > > > > > > after calling these functions. To let users free the copied buffer with
+> > > > > > > > > > > > > > > > > a cleanup pattern, also add a iio_read_avail_channel_attr_retvals()
+> > > > > > > > > > > > > > > > > consumer helper that is equivalent to iio_read_avail_channel_attribute()
+> > > > > > > > > > > > > > > > > but stores the available values in the returned variable.        
+> > > > > 
+> > > > > ...
+> > > > >   
+> > > > > > > > > > > > > > > > > +static void dpot_dac_read_avail_release_res(struct iio_dev *indio_dev,
+> > > > > > > > > > > > > > > > > +                                         struct iio_chan_spec const *chan,
+> > > > > > > > > > > > > > > > > +                                         const int *vals, long mask)
+> > > > > > > > > > > > > > > > > +{
+> > > > > > > > > > > > > > > > > +     kfree(vals);
+> > > > > > > > > > > > > > > > > +}
+> > > > > > > > > > > > > > > > > +
+> > > > > > > > > > > > > > > > >  static int dpot_dac_write_raw(struct iio_dev *indio_dev,
+> > > > > > > > > > > > > > > > >                             struct iio_chan_spec const *chan,
+> > > > > > > > > > > > > > > > >                             int val, int val2, long mask)
+> > > > > > > > > > > > > > > > > @@ -125,6 +132,7 @@ static int dpot_dac_write_raw(struct iio_dev *indio_dev,
+> > > > > > > > > > > > > > > > >  static const struct iio_info dpot_dac_info = {
+> > > > > > > > > > > > > > > > >       .read_raw = dpot_dac_read_raw,
+> > > > > > > > > > > > > > > > >       .read_avail = dpot_dac_read_avail,
+> > > > > > > > > > > > > > > > > +     .read_avail_release_resource = dpot_dac_read_avail_release_res,
+> > > > > > > > > > > > > > > > >       .write_raw = dpot_dac_write_raw,
+> > > > > > > > > > > > > > > > >  };        
+> > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > I have a problem with this approach. The issue is that we allocate
+> > > > > > > > > > > > > > > > memory in one place and must clear it in another. This is not well
+> > > > > > > > > > > > > > > > designed thingy in my opinion. I was thinking a bit of the solution and
+> > > > > > > > > > > > > > > > at least these two comes to my mind:
+> > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > 1) having a special callback for .read_avail_with_copy (choose better
+> > > > > > > > > > > > > > > > name) that will dump the data to the intermediate buffer and clean it
+> > > > > > > > > > > > > > > > after all;
+> > > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > > 2) introduce a new type (or bit there), like IIO_AVAIL_LIST_ALLOC.        
+> > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > Could you elaborate more about these potential solutions? Maybe with some
+> > > > > > > > > > > > > > > usage examples?
+> > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > If I get it correctly, in both cases you are suggesting to pass ownership
+> > > > > > > > > > > > > > > of the vals buffer to the caller, iio_read_channel_info_avail() in this
+> > > > > > > > > > > > > > > case, so that it would take care of freeing the buffer after calling
+> > > > > > > > > > > > > > > iio_format_after_*(). We considered this approach during an initial
+> > > > > > > > > > > > > > > discussion with Jonathan (see read_avail_ext() in [1]), where he suggested
+> > > > > > > > > > > > > > > to let the driver keep the release control through a callback for two
+> > > > > > > > > > > > > > > reasons:
+> > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > 1) Apparently it's a bad pattern to pass the buffer ownership to the core,
+> > > > > > > > > > > > > > >    maybe Jonathan can elaborate why? The risk I can think of is that the driver
+> > > > > > > > > > > > > > >    could still keep the buffer copy in its private data after giving it away,
+> > > > > > > > > > > > > > >    resulting in fact in a double ownership. However I think it would be clear
+> > > > > > > > > > > > > > >    enough in this case that the copy should be handled by the caller, or maybe
+> > > > > > > > > > > > > > >    not?      
+> > > > > > > > > > > > > > Mostly the lack of desire to have to copy for the 95% of cases where it's
+> > > > > > > > > > > > > > not needed and that it prevents any optimization like you mention.      
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > > I think the suggestion here is to add an additional .read_avail_with_copy()
+> > > > > > > > > > > > > without replacing the original .read_avail(), so all the current drivers that
+> > > > > > > > > > > > > use a constant avail list would not be affected.    
+> > > > >   
+> > > > > > > > > Yes.    
+> > > > >   
+> > > > > > > > > > > > > And I think this was the same
+> > > > > > > > > > > > > idea for the additional read_avail_ext() or the additional argument for the
+> > > > > > > > > > > > > read_avail() we were considering in [1]. So I would think that
+> > > > > > > > > > > > > iio_read_channel_info_avail() would do something like the following:
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > >     if (indio_dev->info->read_avail_with_copy)
+> > > > > > > > > > > > >         indio_dev->info->read_avail_with_copy(vals);
+> > > > > > > > > > > > >     else
+> > > > > > > > > > > > >         indio_dev->info->read_avail(vals);
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > >     ...
+> > > > > > > > > > > > >     iio_format_avail_list(vals);
+> > > > > > > > > > > > >     ...
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > >     if (indio_dev->info->read_avail_with_copy)
+> > > > > > > > > > > > >         kfree(vals);    
+> > > > > > > > > 
+> > > > > > > > > Right. At least that's what I see can be done with the existing users.
+> > > > > > > > >     
+> > > > > > > > > > > > Ok, sure that would work, but...
+> > > > > > > > > > > > 
+> > > > > > > > > > > > I don't really see this as being much less fragile than
+> > > > > > > > > > > > the existing solution + in cases that we do have where
+> > > > > > > > > > > > only some available are not const we will have to copy them
+> > > > > > > > > > > > all.
+> > > > > > > > > > > > 
+> > > > > > > > > > > > If anything it's more complex than making it a driver problem
+> > > > > > > > > > > > to provide the release call however it wants to do it.    
+> > > > > > > > > 
+> > > > > > > > > ...but make a driver to allocate what's needed as well then.
+> > > > > > > > >     
+> > > > > > > > > > > > > And the drivers would choose whether to define the read_avail or the
+> > > > > > > > > > > > > read_avail_with_copy.    
+> > > > > > > > > 
+> > > > > > > > > Either way drivers should know what to do with a data supplied to read_aval().
+> > > > > > > > > In one case we assume the [simple] workflow in the core, in the other we all
+> > > > > > > > > rely on the driver. Current approach makes a mix of these two. And that's what
+> > > > > > > > > I don't like.    
+> > > > > > > > 
+> > > > > > > > If I understand your concern correctly, you are referring to the inkern
+> > > > > > > > iio_channel_read_avail() that makes the allocation for the consumer's
+> > > > > > > > buffer copy and you are suggesting that such copy should be done by the
+> > > > > > > > consumer driver code itself, this to be consistent with the producer
+> > > > > > > > drivers which directly handle the allocation of the copy.    
+> > > > > > > 
+> > > > > > > One of the options, yes.
+> > > > > > >     
+> > > > > > > > One thing to notice is that the inkern iio_channel_read_avail() does
+> > > > > > > > together producer->read_avail() + copy + producer->read_avail_release()
+> > > > > > > > with info_exists locked. Also, the consumer driver would need to know
+> > > > > > > > the avail buffer size to allocate the buffer copy prior the
+> > > > > > > > iio_channel_read_avail() call, but such size is unknown before calling
+> > > > > > > > the actual producer's read_avail(). This would mean calling the
+> > > > > > > > producer's read_avail() and read_avail_release() callbacks separately
+> > > > > > > > without the lock held, with the risk of a memleak if the producer is
+> > > > > > > > unregistered between those calls.    
+> > > > > > > 
+> > > > > > > Thanks for explaining this, but it even more makes me think that the design
+> > > > > > > is broken and your approach is rather a hack. So, what's the problem to
+> > > > > > > make IIO core to take care of the allocating and cleaning then without driver
+> > > > > > > being involved? Yes, this might require a hint from the driver on what to copy
+> > > > > > > if we want to avoid copying everything.    
+> > > > > > 
+> > > > > > I am not particularly against it, other than the concerns that have
+> > > > > > emerged during this (and previous) discussion. Let me summarize them:    
+> > > > > 
+> > > > > Thank you for a very good summary and fix-N proposals. I think I have nothing
+> > > > > to add and we should wait for Jonathan to finally choose (or propose a fix-N+1)
+> > > > > here.  
+> > > > Agreed. This is very useful enumeration of various options with plenty
+> > > > of details!
+> > > > 
+> > > > One absolute key thing to note here is we should not care at all what
+> > > > inkern does for it's handling internally of the available lists.  The big
+> > > > ABI question is all about consumers drivers directly using the resulting list of
+> > > > available values.  The use in the IIO core and the inkern helpers should
+> > > > naturally follow.
+> > > > 
+> > > > > > fix-1) the current one. Your concerns are:
+> > > > > >     * for consumers the copy allocation is taken care by the inkern API
+> > > > > >       but the release is handled by the consumer driver code, making it
+> > > > > >       a fragile design.  
+> > > > 
+> > > > So this was something I'm not sure I agree with.  There are plenty
+> > > > of get / release patterns out there. This is just another one of those
+> > > > but perhaps it doesn't 'smell' enough like that.
+> > > > 
+> > > > Perhaps think of it as
+> > > > 
+> > > > int *iio_channel_avail_get()
+> > > > void iio_channel_avail_release()
+> > > > 
+> > > > We could perhaps make it look more standard using a cookie rather than
+> > > > reconstructing the equivalent data at the release call.  
+> > > 
+> > > Would this imply that also the read_info callback provided by the
+> > > iio_info struct should be replaced? Something like info->get_avail()
+> > > returning a iio_avail_cookie instead of info->read_avail(const int **vals)?
+> > > * If yes, that would be a big impact in the current code as all
+> > > iio drivers defining read_avail would need to be changed (I am not
+> > > against it but better consider it).
+> > > * If no, then I find odd that iio_info->avail_release(cookie) gets a
+> > > cookie that has been allocated outside the provider driver: the read
+> > > functions gives something to the user and its corresponing release
+> > > handle another type of object (even it's just a wrapper). Is this the
+> > > usual pattern for cookies?
+> > 
+> > I think the trick here is that the provider drivers wouldn't be involved
+> > in the cookie handling. We might have done it differently if we
+> > were starting from scratch, but the legacy is a pain as normal!
+> > Consumers can stay the same as you have here as all the information in
+> > the cookie would be gathered from existing read_avail plus the parameters.
+> > Tricky bit is the provider_priv, but we may not even need that.  If that
+> > becomes a useful thing we'd need a new optional get_avail_with_priv()
+> > or something like that.  Might need to stash the channel info in the
+> > cookie as well.
+> > 
+> > Provider wouldn't see the cookie at release either as we'd just
+> > pass parameters from the cookie into the release callback then free
+> > the cookie in the core code.  Technically ownership of the cookie
+> > would lie with the consumer not the provider but we'd hide all that
+> > away from the consumer.
+> 
+> I see now that your suggestion to use the cookie would only affect
+> consumers. What confused me is your example below where the producer's
+> release would use the cookie as well:
+> 
+>             iio_dev->info->avail_release(cookie);
+> 
+> Anyway, if iio_info->read_avail and
+> iio_info->read_avail_release_resource are not going to be changed, how
+> could we address the case where the consumers simply forwards their
+> providers avail data back to the core for sysfs print, like as follows?
+> 
+> static int dpot_dac_read_avail(struct iio_dev *indio_dev,
+> 			       struct iio_chan_spec const *chan,
+> 			       const int **vals, int *type, int *length,
+> 			       long mask)
+> {
+> 	struct dpot_dac *dac = iio_priv(indio_dev);
+> 
+> 	switch (mask) {
+> 	case IIO_CHAN_INFO_RAW:
+> 		*type = IIO_VAL_INT;
+> 		return iio_read_avail_channel_raw(dac->dpot, vals, length);
+> 
+> 		/* NOTE: Here we could call the cookie = iio_channel_avail_get() and
+> 		  fill the return arguments with the content of the
+> 		  cookie, but wouldn't the cookie be lost? How to return
+> 		  it to caller? */
+> 	}
+> 
+> 	return -EINVAL;
+> }
+> 
+> static void dpot_dac_read_avail_release_res(struct iio_dev *indio_dev,
+> 					    struct iio_chan_spec const *chan,
+> 					    const int *vals, long mask)
+> {
+> 	kfree(vals);
+> 	/* NOTE: Here the consumer should access the cookie to call
+> 	 * iio_channel_avail_release(cookie), but how can it? */
+> }
+> ...
+> static const struct iio_info dpot_dac_info = {
+> 	.read_avail = dpot_dac_read_avail,
+> 	.read_avail_release_resource = dpot_dac_read_avail_release_res,
+> };
+> 
+> 
+> > 
+> > Whether we would use the cookie magic in the inkern code other
+> > than the getter itself would depend a bit on what it looks like
+> > 
+> > We might need to do a global rename of read_avail to get_avail
+> > though to make the relationship to release_avail obvious.
+> > 
+> > 
+> > > 
+> > > > 
+> > > > struct iio_avail_cookie {
+> > > > 	const int *avail;
+> > > > 	void *provider_priv;
+> > > > // see later for a maybe...
+> > > > 	struct iio_dev *indio_dev;
+> > > > };
+> > > > 
+> > > > const int *iio_avail_from_cookie(struct iio_avail_cookie *cookie)
+> > > > {
+> > > > 	return cookie->avail;
+> > > > }
+> > > >  
+> > > 
+> > > I suppose that struct iio_avail_cookie and their access functions like
+> > > iio_avail_from_cookie would be define in iio.h as they are required for
+> > > producer drivers too. Correct?
+> > 
+> > Initially at least I'd try just making them visible to the consumer.
+> > 
+> > > 
+> > > > 
+> > > > struct iio_avail_cookie *iio_channel_avail_get(struct iio_dev, struct iio_chan_spec)
+> > > > {
+> > > > 	allocate a cookie and fill it in.
+> > > > }
+> > > > 
+> > > > and code would always explicitly release after it is done with the cookie.
+> > > > 
+> > > > Something like
+> > > > 
+> > > > void iio_channel_avail_release(struct iio_dev *iio_dev, struct iio_avail_cookie *cookie)
+> > > > // could even move the iio_dev pointer into the cookie, so it becomes
+> > > > // iio_channel_avail_release(struct iio_avail_cookie *cookie) and suitable for __free magic.
+> > > > {
+> > > > 	if (iio_dev->info->avail_release)
+> > > > 		iio_dev->info->avail_release(cookie);
+> > > > 	kfree(cookie);
+> > > > 	/*
+> > > > 	 * Could add optimizations around cookie handling to avoid alloc + free in most cases
+> > > > 	 * or use an object pool.
+> > > > 	 */
+> > > > }  
+> > > 
+> > > Do these two functions refer to inkern consumer APIs? Would
+> > > iio_channel_avail_get() replace the current inkern
+> > > iio_read_avail_channel_attribute()? 
+> > 
+> > Yes.
+> > 
+> > >In that case I think
+> > > iio_channel_avail_get() would copy the cookie (and its inner avail
+> > > buffer) from the provider driver, or allocate a new cookie with the
+> > > copied avail buffer if info->read_avail() is kept unchanged, and
+> > > immediately call the provider info->avail_release(cookie) to do
+> > > copy+release with info_exist_lock locked.
+> > 
+> > I don't think the provider ever explicitly deals with the cookie,
+> > just data read from it in the inkern code.
+> > 
+> > > At that point
+> > > iio_channel_avail_release() would only need to call
+> > > kfree(iio_avail_from_cookie(cookie)) and kfree(cookie).
+> > 
+> > 
+> > Ah. I'm forgetting the issue with the provider device instance
+> > going away. In that case it may well have to copy the avail data
+> > to fill the cookie returned to the consumer driver much like we
+> > copy it now.+ free it.  We could do something smarter with that
+> > cookie though to avoid a free if it's static const stuff as the
+> > provider module should be locked in place I think.
+> > 
+> > > 
+> > > > 
+> > > > The current proposal just avoid the need for a cookie as for all known cases so far
+> > > > provider_priv could == the channel requested.
+> > > > 
+> > > >   
+> > > > > >     * consumers and producers manage the allocation differently, the
+> > > > > >       first handles it via the inkern API, the second one in the
+> > > > > >       producer driver code, making it inconsistent.  
+> > > > 
+> > > > The inkern API changes are mostly an attempt to reduce boiler plate. The only
+> > > > case we really should be worrying about to my mind is the consumer wanting
+> > > > to access the full available list. 
+> > > >   
+> > > > > > 
+> > > > > > fix-2) adding a read_avail_with_copy(): a driver with both const avail
+> > > > > > lists and mutable avail lists would always return a copy for all of
+> > > > > > them, including the const ones. Example above.  
+> > > > 
+> > > > Hmm. So this could work but with the firm rule that a provider must never
+> > > > provide both options and a core check on drivers to enforce that probe.
+> > > > Any existing consumers must be modified to try both paths
+> > > > (read_avail_with_copy then read_avail) to avoid regressions.
+> > > > 
+> > > > For future code, if we miss a case that doesn't do this then the upshot
+> > > > is that the call will fail and the consumer needs fixing but at least
+> > > > it is not a regression because it will never have worked for that
+> > > > particular consumer + producer pair.  Not too horrible, but I'm not
+> > > > really seeing it as better than option 1.
+> > > >   
+> > > > > > 
+> > > > > > fix-3) adding a release_avail return param to read_avail(): this would
+> > > > > > require a change to all the drivers using it. Also it
+> > > > > > looks to me an unusual pattern, are there other similar patterns around
+> > > > > > the codebase? Example below.  
+> > > > 
+> > > > No advantage that I can see vs an explicit get / release where the
+> > > > release may do nothing if there was no allocation.
+> > > >   
+> > > > > > 
+> > > > > > fix-4) adding a new enum variant to the avail type like
+> > > > > > IIO_AVAIL_LIST_ALLOC: to me this looks hacky as it mixes the logic type
+> > > > > > of the data structure and how it is handled in memory. I think the
+> > > > > > latter should better fit in a different field, however this modification
+> > > > > > would have little impact in the current code. Example below.  
+> > > > 
+> > > > This one I really don't like. Needs non obvious / subtle handling in the
+> > > > consumer drivers.
+> > > >   
+> > > > > > 
+> > > > > > So far these alternatives only consider moving the release of the copy
+> > > > > > buffer in the IIO core but not its allocation.  
+> > > > 
+> > > > I'm confused.  Moving it in, or out of the core?  What does this mean
+> > > > for a consumer driver after the avail list?
+> > > >   
+> > > > > You also suggest to make  
+> > > > > > the IIO core take care of the copy allocation. The problem I see with
+> > > > > > this is that if the copy is handled outside the driver it could take
+> > > > > > place concurrently with the modification of the original buffer since it
+> > > > > > would not be locked by driver private mutex, thus making the copy
+> > > > > > useless. This might be worked around by adding an additional optional
+> > > > > > callback (e.g. read_avail_will_copy/read_avail_is_mutable) to just take
+> > > > > > the size and check if a copy will be provided, so maybe something like:
+> > > > > > 
+> > > > > > fix-5) iio_read_channel_info_avail():  
+> > > > 
+> > > > This is picking on the wrong code for this discussion.  Use
+> > > > iio_read_avail_channel_attribute() for example because that's the one
+> > > > where ABI matters.  Anything within the IIO core is just a question of
+> > > > 'niceness' it isn't important like a function called by a consumer driver.
+> > > > 
+> > > > Code of a consumer driver will be similar to this however.  A few things
+> > > > would be needed to make this pattern work.
+> > > >    
+> > > > > > {
+> > > > > >     ...
+> > > > > >     int *vals;
+> > > > > >     bool copy = false;
+> > > > > >     if (indio_dev->info->read_avail_will_copy) {
+> > > > > >         copy = indio_dev->info->read_avail_will_copy(..., &length, ...);  
+> > > > 
+> > > > return length as 0 can reasonably mean we don't need to allocate.
+> > > > That value must be the maximum possible size that can ever be needed, not the
+> > > > current one.
+> > > >   
+> > > > > >         if (copy) {
+> > > > > >             vals = kcalloc(length, sizeof(int), GFP_KERNEL);
+> > > > > >         }
+> > > > > >     }
+> > > > > > 
+> > > > > >     indio_dev->info->read_avail(&vals, ...);  
+> > > > 
+> > > > For iio_read_avail_channel_attribute it will a little fiddlier but end result
+> > > > is the same but done under the exist lock. If the device went away before this
+> > > > call then we will get an error, otherwise this will fill vals and provide
+> > > > the right length. 
+> > > >   
+> > > > > > 
+> > > > > >     if (ret < 0)
+> > > > > >             return ret;
+> > > > > >     switch (ret) {
+> > > > > >     case IIO_AVAIL_LIST:
+> > > > > >             ret = iio_format_avail_list(buf, vals, type, length);
+> > > > > >     case IIO_AVAIL_RANGE:
+> > > > > >             ret = iio_format_avail_range(buf, vals, type);
+> > > > > >     default:
+> > > > > >             ret = -EINVAL;
+> > > > > >     }
+> > > > > > 
+> > > > > >     if (copy)
+> > > > > >         kfree(vals);
+> > > > > > }
+> > > > > > 
+> > > > > > If I am not missing anything this could work and maybe it could also
+> > > > > > avoid the double copy on the consumers but would require all of them to
+> > > > > > wrap the read_avail_will_copy(). Also, I find it quite a weird pattern
+> > > > > > that in some cases vals would be an input buffer to be filled and in
+> > > > > > other cases it would be a return argument pointing to the const buffer
+> > > > > > stored inside the driver. At least I wouldn't say it's more robust than
+> > > > > > the current fix-1.  
+> > > > Agreed. It works, but I'm not seeing the advantage and the multiple use
+> > > > of the vals parameter is too subtle to be maintainable.
+> > > >   
+> > > > > > 
+> > > > > > All these alternatives also prevents some potential optimization already
+> > > > > > mentioned before. Reporting it again as it is now lost in the mess below:
+> > > > > >     Some driver might want to avoid allocating a new copy of a big table if
+> > > > > >     the race does not occur (e.g. with additional checks on buffer access
+> > > > > >     code) and thus wouldn't call a free() in the release callback.
+> > > > > > 
+> > > > > > In the end I don't find any of the above alternatives to provide an
+> > > > > > obvious better solution.  
+> > > > 
+> > > > Agreed.  My only question vs just taking the existing solution is whether
+> > > > it makes sense to use a more explicit struct iio_avail_cookie
+> > > > to hold all the info that we pass to release.  I don't particularly like
+> > > > that we'll end up allocating that cookie structure but it would make it more
+> > > > like a typical get / release and perhaps closer to what readers would
+> > > > expect to see?
+> > > > 
+> > > > What do you think?  
+> > > 
+> > > I cannot answer about what readers would expect since I am quite new to
+> > > kernel internals and I was not aware about the cookie pattern myself.
+> > > However, I agree that it seems more clear than the current solution but
+> > > only if it's going to replace the iio_info read_avail() callback,
+> > > otherwise I think that only using the cookie on the release callback
+> > > would make it even more confusing. It is worth noting that in that case
+> > > all current provider drivers defining the read_avail callback should be
+> > > changed.
+> > Key I think is we really don't need to be careful with what happens in inkern.c
+> > (though obviously good to use infrastructure we invent for other things),
+> > only what is presented by consumer.h interfaces to consumer drivers.
+> > Those get and release the cookie.
+> > 
+> > That's a much smaller set of drivers to modify.
+> > 
+> > Or as Andy suggested, maybe it's just a question of naming and we need
+> > a get and release but otherwise don't bother with the complexity of the cookie.
+> > Maybe just rename read_avail to make it obvious.
+> > 
+> > Right now I'm thinking the cookie wrappers around get_avail / release_avail
+> > to wrap up basically the parameters passed to get_avail + the output so
+> > that we have a neat package to pass to release_avail will end up the neatest
+> > solution but I may be wrong :(
+> 
+> If there is a way to address my issue above I can see some benefits in
+> terms of clarity. In general I think it's more clear to return a struct
+> instead of using return arguments, it would also simplify the __free()
+> cleanup as we wouldn't need the additional *_retvals wrapper for that
+> purpose. Also, I think using an inkern helper for the release adds more
+> clarity to the consumer drivers even if it's just a wrapper to kfree(),
+> but that could be achieved without the cookie too.
+
+IIUC we need also new read_avail_alloc() which returns cookie structure,
+in this case the read_aval_release() will take it as a parameter. It means
+it will be the driver's responsibility to carry on the cookie.
+
+> What I am not sure about is what is the specific semantic of the cookie
+> pattern. I mean that to me it's just a structure collecting all the
+> avail info related fields. Is the _cookie suffix just to make it clear
+> it's something that must be later released, or are there other
+> implications? Also I see you are considering it as an opaque structure.
+> To me it makes sense for the consumer driver to use getters (like
+> iio_avail_from_cookie()) to access the fields, but maybe we could just
+> access them directly from the inkern functions?
+> 
+> I am trying to put this together, for now I am stuck with the issue
+> mentioned above about the case when the consumer driver forwards the
+> provider avail data to the core. However, for the sake of example, let
+> me share my current draft (hoping not to make this conversation even
+> more messy). Please take a look to the NOTE comments.
+> 
+> fix-6) the cookie pattern for consumers
+> 
+> /* inkern.c */
+> ...
+> struct iio_avail_cookie { //NOTE: cookie suffix needed?
+> 	const int *avail;
+> 	int val_type; //NOTE: renamed from type to avoid confusion with former return type (SCALE|RANGE)
+> 	int length;
+> 	int type; //NOTE: former provider's return.
+> 	void *provider_priv; //NOTE: necessary? can't it be retrieved from indio_dev directly?
+> 	struct iio_dev *indio_dev; //NOTE: currently not used. Necessary?
+> };
+> 
+> inline const int *iio_avail_from_cookie(struct iio_avail_cookie *cookie)
+> {
+> 	return cookie->avail;
+> }
+> EXPORT_SYMBOL_GPL(iio_avail_from_cookie);
+> 
+> inline int iio_avail_val_type_from_cookie(struct iio_avail_cookie *cookie)
+> {
+> 	return cookie->val_type;
+> }
+> EXPORT_SYMBOL_GPL(iio_avail_val_type_from_cookie);
+> 
+> ...
+> 
+> // NOTE: this is the former iio_channel_read_avail(), suggesting __ prefix as
+> // it is only used locally in inkern.c
+> static struct iio_avail_cookie *
+> __iio_channel_avail_get(struct iio_channel *chan, enum iio_chan_info_enum info)
+> {
+> 	const struct iio_info *iio_info = chan->indio_dev->info;
+> 
+> 	if (!iio_channel_has_available(chan->channel, info))
+> 		return ERR_PTR(-EINVAL);
+> 
+> 	if (iio_info->read_avail) {
+> 		const int *vals_tmp;
+> 		const int *vals_copy;
+> 		int type;
+> 		int length;
+> 		int ret;
+> 
+> 		ret = iio_info->read_avail(chan->indio_dev, chan->channel,
+> 					   &vals_tmp, &type, &length, info);
+> 		if (ret < 0)
+> 			return ERR_PTR(ret);
+> 
+> 		/*
+> 		 * Copy the producer's avail buffer with lock_exists locked to
+> 		 * avoid possible race with producer unregistration.
+> 		 */
+> 		vals_copy = kmemdup_array(vals_tmp, length, sizeof(int),
+> 					  GFP_KERNEL);
+> 		if (!vals_copy)
+> 			return ERR_PTR(-ENOMEM);
+> 
+> 		if (iio_info->read_avail_release_resource)
+> 			iio_info->read_avail_release_resource(
+> 				chan->indio_dev, chan->channel, vals_tmp, info);
+> 
+> 		struct iio_avail_cookie *cookie =
+> 			kzalloc(sizeof(struct iio_avail_cookie), GFP_KERNEL);
+> 
+> 		cookie->avail = vals_copy;
+> 		cookie->val_type = type;
+> 		cookie->length = length;
+> 		cookie->type = ret;
+> 		cookie->provider_priv = chan->indio_dev->priv;
+> 		cookie->indio_dev = chan->indio_dev;
+> 
+> 		return cookie;
+> 	}
+> 	return ERR_PTR(-EINVAL);
+> }
+> 
+> // NOTE: this is the former iio_read_avail_channel_attribute()
+> struct iio_avail_cookie *iio_channel_avail_get(struct iio_channel *chan,
+> 					       enum iio_chan_info_enum info)
+> {
+> 	struct iio_dev_opaque *iio_dev_opaque =
+> 		to_iio_dev_opaque(chan->indio_dev);
+> 
+> 	guard(mutex)(&iio_dev_opaque->info_exist_lock);
+> 	if (!chan->indio_dev->info)
+> 		return ERR_PTR(-ENODEV);
+> 
+> 	return __iio_channel_avail_get(chan, info);
+> }
+> EXPORT_SYMBOL_GPL(iio_channel_avail_get);
+> 
+> void iio_channel_avail_release(struct iio_avail_cookie *cookie)
+> {
+> 	kfree(cookie->avail);
+> 	kfree(cookie);
+> }
+> EXPORT_SYMBOL_GPL(iio_channel_avail_release);
+> 
+> //NOTE: this is the former iio_read_avail_channel_raw()
+> struct iio_avail_cookie *iio_channel_avail_get_raw(struct iio_channel *chan)
+> {
+> 	struct iio_avail_cookie *cookie;
+> 
+> 	cookie = iio_channel_avail_get(chan, IIO_CHAN_INFO_RAW);
+> 
+> 	if (cookie && cookie->val_type != IIO_VAL_INT) {
+> 		/* raw values are assumed to be IIO_VAL_INT */
+> 		iio_channel_avail_release(cookie);
+> 		return ERR_PTR(-EINVAL);
+> 	}
+> 
+> 	return cookie;
+> }
+> EXPORT_SYMBOL_GPL(iio_channel_avail_get_raw);
+> 
+> //NOTE: a usage example inside inkern.c
+> static int iio_channel_read_max(struct iio_channel *chan,
+> 				int *val, int *val2, int *type,
+> 				enum iio_chan_info_enum info)
+> {
+> 	struct iio_avail_cookie *cookie __free(iio_avail_cookie) =
+> 		iio_channel_avail_get(chan, info);
+> 
+> 	if (IS_ERR(cookie))
+> 		return PTR_ERR(cookie);
+> 
+> 	*type = cookie->val_type;
+> 
+> 	switch (cookie->type) {
+> 	case IIO_AVAIL_RANGE:
+> 		switch (*type) {
+> 		case IIO_VAL_INT:
+> 			*val = cookie->avail[2];
+> 			break;
+> 		default:
+> 			*val = cookie->avail[4];
+> 			if (val2)
+> 				*val2 = cookie->avail[5];
+> 		}
+> 		return 0;
+> 	...
+> }
+> 
+> /* consumers.h */
+> 
+> struct iio_avail_cookie;
+> 
+> //TODO: docs
+> 
+> struct iio_avail_cookie *iio_channel_avail_get(struct iio_channel *chan,
+> 					       enum iio_chan_info_enum info);
+> struct iio_avail_cookie *iio_channel_avail_get_raw(struct iio_channel *chan);
+> inline const int *iio_avail_from_cookie(struct iio_avail_cookie *cookie);
+> inline int iio_avail_val_type_from_cookie(struct iio_avail_cookie *cookie);
+> inline int iio_avail_length_from_cookie(struct iio_avail_cookie *cookie);
+> inline int iio_avail_type_from_cookie(struct iio_avail_cookie *cookie);
+> 
+> void iio_channel_avail_release(struct iio_avail_cookie *cookie);
+> 
+> DEFINE_FREE(iio_avail_cookie, struct iio_avail_cookie *, iio_channel_avail_release(_T))
+> 
+> /* ingenic-battery.c: a usage example for consumer drivers */
+> 
+> static int ingenic_battery_set_scale(struct ingenic_battery *bat)
+> {
+> 	const int *scale_vals;
+> 	...
+> 
+> 	struct iio_avail_cookie *scale __free(iio_avail_cookie) =
+> 		iio_channel_avail_get(bat->channel, IIO_CHAN_INFO_SCALE);
+> 
+> 	if (IS_ERR(scale)) {
+> 		dev_err(bat->dev, "Unable to read channel avail scale\n");
+> 		return PTR_ERR(scale);
+> 	}
+> 	if (iio_avail_type_from_cookie(scale) != IIO_AVAIL_LIST ||
+> 	    iio_avail_type_from_cookie(scale) != IIO_VAL_FRACTIONAL_LOG2)
+> 		return -EINVAL;
+> 
+> 	scale_vals = iio_avail_from_cookie(scale);
+> 	//NOTE: can later access scale_vals[i]
+> 	...
+> 	return 0;
+> }
+> 
+> /* dpto-dac.c: a problematic usage example for consumers forwarding
+>  * providers data directly back to the core for sysfs exposure */
+> 
+> static int dpot_dac_read_avail(struct iio_dev *indio_dev,
+> 			       struct iio_chan_spec const *chan,
+> 			       const int **vals, int *type, int *length,
+> 			       long mask)
+> {
+> 	struct dpot_dac *dac = iio_priv(indio_dev);
+> 
+> 	switch (mask) {
+> 	case IIO_CHAN_INFO_RAW: {
+> 		struct iio_avail_cookie *avail;
+> 
+> 		avail = iio_channel_avail_get_raw(dac->dpot);
+> 		if (IS_ERR(avail))
+> 			return PTR_ERR(avail);
+> 
+> 		*vals = iio_avail_from_cookie(avail);
+> 		*type = iio_avail_val_type_from_cookie(avail);
+> 		*length = iio_avail_length_from_cookie(avail);
+> 		return iio_avail_type_from_cookie(avail);
+> 		//NOTE: cookie gets lost.
+> 	}
+> 	}
+> 
+> 	return -EINVAL;
+> }
+> 
+> static void dpot_dac_read_avail_release_res(struct iio_dev *indio_dev,
+> 					    struct iio_chan_spec const *chan,
+> 					    const int *vals, long mask)
+> {
+> 	kfree(vals);
+> 	//NOTE: we can't call iio_channel_avail_release() without the cookie
+> }
+> 
+> ...
+> 
+> static const struct iio_info dpot_dac_info = {
+> 	.read_avail = dpot_dac_read_avail,
+> 	.read_avail_release_resource = dpot_dac_read_avail_release_res,
+> };
+> 
+> What do you think?
+
+> > > > > > > > > > > > > What I was referring to is that, back then, you mentioned you would have
+> > > > > > > > > > > > > preferred to avoid passing ownership of the buffer around:
+> > > > > > > > > > > > >     
+> > > > > > > > > > > > > > That's a corner case we should think about closing. Would require an indicator
+> > > > > > > > > > > > > > to read_avail that the buffer it has been passed is a snapshot that it should
+> > > > > > > > > > > > > > free on completion of the string building.  I don't like passing ownership
+> > > > > > > > > > > > > > of data around like that, but it is fiddly to do anything else given
+> > > > > > > > > > > > > > any simple double buffering is subject to race conditions.      
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > > I guess there is some other reason other than avoiding the copy when not
+> > > > > > > > > > > > > necessary, since by introducing an additional function or argument or return
+> > > > > > > > > > > > > type, most of the unnecessary copies would already be avoided right?    
+> > > > > > > > > > > > 
+> > > > > > > > > > > > It's not a strong reason beyond limiting scope of clever design +
+> > > > > > > > > > > > the key bit my mind is that the above is not substantially simpler and
+> > > > > > > > > > > > reduces our flexibility.
+> > > > > > > > > > > >     
+> > > > > > > > > > > > > Anyway any of this solutions would still prevent the potential optimizations of
+> > > > > > > > > > > > > point 2). It's worth mentioning that those kind of optimizations are currently
+> > > > > > > > > > > > > not adopted by any driver.    
+> > > > > > > > > > > > 
+> > > > > > > > > > > > That one indeed not, but mixing dynamic and non dynamic is something
+> > > > > > > > > > > > you do in your pac1921 patch.    
+> > > > > > > > > > > 
+> > > > > > > > > > > Good point! I didn't think about it, or more likely I forgot, that with an
+> > > > > > > > > > > additional read_avail_with_copy() used as in the example you cannot mix dynamic
+> > > > > > > > > > > and non dynamic available lists, thus those drivers that need at least one
+> > > > > > > > > > > dynamic available list would always copy all of them as they need to rely to
+> > > > > > > > > > > the read_avail_with_copy(). I guess this could be worked around with an
+> > > > > > > > > > > additional return argument for the read_avail() or an additional type like the
+> > > > > > > > > > > IIO_AVAIL_LIST_ALLOC suggested by Andy to signal the caller it needs to free
+> > > > > > > > > > > the list after use. However, I think they would introduce a more invasive
+> > > > > > > > > > > change in the current API compared to an additional optional callback,    
+> > > > > > > > > 
+> > > > > > > > > It even sounds originally that it should be more invasive, so I don't think it's
+> > > > > > > > > a problem here.    
+> > > > > > > > 
+> > > > > > > > In the hope it helps the discussion let me provide examples for the
+> > > > > > > > additional two options we have other than the current
+> > > > > > > > read_avail_release_resource() (fix-1) and the read_avail_with_copy()
+> > > > > > > > (fix-2) already shown above:    
+> > > > > > > 
+> > > > > > > Thanks!
+> > > > > > >     
+> > > > > > > > fix-3) iio_read_channel_info_avail():
+> > > > > > > > {
+> > > > > > > >     ...
+> > > > > > > >     bool release_avail = false;
+> > > > > > > > 
+> > > > > > > >     ret = indio_dev->info->read_avail(vals, ..., &release_avail);
+> > > > > > > > 
+> > > > > > > >     ...
+> > > > > > > >     ret = iio_format_avail_list(vals, ...);
+> > > > > > > >     ...
+> > > > > > > > 
+> > > > > > > >     if (release_avail)
+> > > > > > > >         kfree(vals);
+> > > > > > > > 
+> > > > > > > >     return ret;
+> > > > > > > > }
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > fix-4) iio_read_channel_info_avail():
+> > > > > > > > {
+> > > > > > > >     ...
+> > > > > > > >     indio_dev->info->read_avail(vals, ...);
+> > > > > > > > 
+> > > > > > > >     if (ret < 0)
+> > > > > > > >             return ret;
+> > > > > > > >     switch (ret) {
+> > > > > > > >     case IIO_AVAIL_LIST_ALLOC:
+> > > > > > > >             ret = iio_format_avail_list(buf, vals, type, length);
+> > > > > > > >             kfree(vals);
+> > > > > > > >             return ret;
+> > > > > > > >     case IIO_AVAIL_LIST:
+> > > > > > > >             return iio_format_avail_list(buf, vals, type, length);
+> > > > > > > >     case IIO_AVAIL_RANGE:
+> > > > > > > >             return iio_format_avail_range(buf, vals, type);
+> > > > > > > >     default:
+> > > > > > > >             return -EINVAL;
+> > > > > > > >     }
+> > > > > > > > }
+> > > > > > > >     
+> > > > > > > > > > > so I agree that the current release callback is still a better option.    
+> > > > > > > > > 
+> > > > > > > > > I disagree on this as I pointed above why.
+> > > > > > > > >     
+> > > > > > > > > > > > > > > 2) Some driver might want to avoid allocating a new copy of a big table if
+> > > > > > > > > > > > > > >    the race does not occur (e.g. with additional checks on buffer access
+> > > > > > > > > > > > > > >    code) and thus wouldn't call a free() in the release callback.
+> > > > > > > > > > > > > > >       
+> > > > > > > > > > > > > > > > In any case it looks fragile and not scalable. I propose to drop this
+> > > > > > > > > > > > > > > > and think again.        
+> > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > I see your concerns, I am open to reconsider this in case we come up with
+> > > > > > > > > > > > > > > better solution after addressing the points above.
+> > > > > > > > > > > > > > >       
+> > > > > > > > > > > > > > > > Yes, yes, I'm fully aware about the problem you are trying to solve and
+> > > > > > > > > > > > > > > > agree on the report, I think this solution is not good enough.    
+> > > > > > > > > > > > > > > 
+> > > > > > > > > > > > > > > [1]: https://lore.kernel.org/linux-iio/20240729211100.0d602d6e@jic23-huawei/    
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > > I hope I've brought a little more clarity to the discussion by providing some
+> > > > > > > > > > > > > history instead of making it more confusing.    
+> > > > > > > > > > > > 
+> > > > > > > > > > > > Sure, the code example in particular is useful.    
+> > > > > > > > > > 
+> > > > > > > > > > Just a friendly reminder this has been sitting for a while, any news or
+> > > > > > > > > > additional considerations?    
+> > > > > > > > > 
+> > > > > > > > > Moving the allocation control to the drivers will satisfy me as well, however
+> > > > > > > > > it makes even more duplication of the code, but at least it will be cleaner
+> > > > > > > > > design-wise in my opinion.    
+> > > > > > > > 
+> > > > > > > > Would it work with the constraints on the info_exists lock mentioned
+> > > > > > > > above?    
+> > > > > > > 
+> > > > > > > None of the given examples (fix-N) provides a lock, so I have no clue how it's
+> > > > > > > involved here. May be you can elaborate more?    
+> > > > > > 
+> > > > > > I thought that with "Moving the allocation control to the drivers" you
+> > > > > > were referring to the option (not included among fix-N) to move the
+> > > > > > allocation of the consumer copy from the inkern iio_channel_read_avail()
+> > > > > > to the consumer drivers themselves. You elaborated this point above
+> > > > > > where I answered with the concerns about the info_exists lock that
+> > > > > > should be addressed.
+> > > > > >     
+> > > > > > > > > In any case the last word is on Jonathan.    
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
