@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-427409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF54E9E0098
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:33:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9269E00ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:51:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 902FE16475B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:33:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D013B202EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B15209F59;
-	Mon,  2 Dec 2024 11:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B916B1FDE04;
+	Mon,  2 Dec 2024 11:22:45 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBEE1FECCC
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F911FDE0B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138574; cv=none; b=X0xZgeYOmRIALCf2H88bOgS2vVn+MSrDxVq4KsRGkwuOTxyeyhl0/xwHkJlhdtWnzqh2zJEuSKu9fHz91oSMBaOT9Pie7ozz7B50CkDLQrvSJPN1qQevBa0lcmPSqljSk2RLbLS48R8BSrxhW7Wp73IIVRy/wBGMZ1DVlsP8eSM=
+	t=1733138565; cv=none; b=f7dyCvT24f6hiRFxpRY1Rz5oPzP6TCNEX9sJll7zAXwB/B6HAxpjUIuDwMEc8pYhq8it5ajsrMYM3WjcDm403FJDE9gsT4tauAkYFbxIYomECaNlHyHyAh5VG09O3kFJZzFXwbpAbvnctJ3f8MYLUMMqUFkYpCFc1sMxirBmS9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138574; c=relaxed/simple;
-	bh=yYY6UVZGGPjEaxvwgj6lfAOYs8yXP5MAIF40HOIAKuM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hRf95UNQ3cgwEOmgzqbdp1FzQNPNizaViCuAbpR3/DL06Ue4+BrVHkdcRMI3YIykEN5v0aS8CBpqJlZcMBrXkWJsZFwOA7arOX2fFweeVGizGAKswblJzmhl85WtAa5piLsZ/hPm+l6QiMIfdsER3kfpRFK+taWTvdTAAfmUyR8=
+	s=arc-20240116; t=1733138565; c=relaxed/simple;
+	bh=P8t38gZgVtQGfHlRwL+12Evj7x6PEBaDv2Q4YuWoIQI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nqZUVomlg12/up/uLteLDsHBS39RusAiS5Hdsns6PzTB3dCcUjC5md4Hlp2PtlpXg/+mv3Zk2Y1i52LwcePW2/4jSTDBRq0fgjmqLOgJR9fCMjNB3XpLEwMmzKVMHU/1+tQ2YeaVsi+9o32JOlcRqYi89vwlHKrDsXTNrU56nsM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -31,22 +32,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tI4Ve-0000UG-EC; Mon, 02 Dec 2024 12:22:34 +0100
+	id 1tI4Ve-0000UH-EB; Mon, 02 Dec 2024 12:22:34 +0100
 Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tI4Vc-001Hsy-3A;
+	id 1tI4Vc-001Hsx-3A;
 	Mon, 02 Dec 2024 12:22:33 +0100
 Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
 	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tI4Vd-003R1L-28;
+	id 1tI4Vd-003R1L-2A;
 	Mon, 02 Dec 2024 12:22:33 +0100
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH v2 0/4] nvmem: imx-ocotp-ele: fix reading from ELE OCOTP
-Date: Mon, 02 Dec 2024 12:22:28 +0100
-Message-Id: <20241202-imx-ele-ocotp-fixes-v2-0-3c021a97eb5d@pengutronix.de>
+Date: Mon, 02 Dec 2024 12:22:29 +0100
+Subject: [PATCH v2 1/4] nvmem: imx-ocotp-ele: simplify read beyond device
+ check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,10 +56,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHSYTWcC/32NQQ6CMBREr2L+2m/6KxHiynsYFlgG+Im2pEWCI
- dzdygFcvpm8mZUSoiLR9bBSxKxJg89gjwdyQ+N7sLaZyRpbiLFn1tfCeIKDC9PInS5I3JUPKxc
- pBQLK5hixF1m815kHTVOIn/1kll/6f28WNlw0rTPGwVZVdxvh+/cUg9fl1ILqbdu+R3+sJrsAA
- AA=
+Message-Id: <20241202-imx-ele-ocotp-fixes-v2-1-3c021a97eb5d@pengutronix.de>
+References: <20241202-imx-ele-ocotp-fixes-v2-0-3c021a97eb5d@pengutronix.de>
+In-Reply-To: <20241202-imx-ele-ocotp-fixes-v2-0-3c021a97eb5d@pengutronix.de>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
  Shawn Guo <shawnguo@kernel.org>, 
  Pengutronix Kernel Team <kernel@pengutronix.de>, 
@@ -69,11 +69,11 @@ Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, 
  stable <stable@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733138553; l=1708;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733138553; l=1029;
  i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=yYY6UVZGGPjEaxvwgj6lfAOYs8yXP5MAIF40HOIAKuM=;
- b=IyiH7dNwx3TDJaMvyHgiKlUx4MOxAGSizpDngcE1QG9+Y7eDNVWmGSzsJy4o627rYktQUOpos
- aptGTe3jxdoBtjiJqyE9wwyq7tAcvxBx+40ttjKsT7ATUXSxtfEx14J
+ bh=P8t38gZgVtQGfHlRwL+12Evj7x6PEBaDv2Q4YuWoIQI=;
+ b=DasEWzoF6ivaUdopeZSea2AgkEgyHZjhfiWd2ODse1tTTQJ7TQrl90n+TxlMZQthwA7kUTQ61
+ U/nxZmnN4mTAxLnoI8gz77cuGsFHOvvn+MW/dYwxfs+4R52WGpO/4Ca
 X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
  pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -81,48 +81,39 @@ X-SA-Exim-Mail-From: s.hauer@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Commits b2ab0edaf484 ("arm64: dts: imx93: add nvmem property for fec1")
-and 0d4fbaffbdca ("arm64: dts: imx93: add nvmem property for eqos")
-introduced NVMEM cell bindings for reading MAC addresses from the ELE
-OCOTP. This doesn't work as expected due to bugs in the driver:
+Do the read beyond device check on function entry in bytes instead of
+32bit words which is easier to follow.
 
-- imx_ocotp_reg_read() interprets the incoming offset as 32bit word
-  offset, but it really is in bytes which means the driver reads bogus
-  values whenever the offset is non zero
-- imx_ocotp_reg_read() reads wrong results when the offset is not 32bit
-  word aligned
-- MAC addresses are stored in reverse byte order in the ELE OCOTP, we
-  have to swap the order before passing them to the upper layer
-
-This likely went through unnoticed because the bootloader normally adds
-the MAC addresses to the ethernet nodes and in this case they are
-preferred over the NVMEM addresses.
-
-This series fixes these issues.
-
-Sascha
-
+Fixes: 22e9e6fcfb504 ("nvmem: imx: support i.MX93 OCOTP")
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: stable <stable@kernel.org>
 ---
-Changes in v2:
-- Add Fixes: and Cc: stable tag as requested by Fabio
-- Link to v1: https://lore.kernel.org/r/20241023-imx-ele-ocotp-fixes-v1-0-4adc00ce288f@pengutronix.de
+ drivers/nvmem/imx-ocotp-ele.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
----
-Sascha Hauer (4):
-      nvmem: imx-ocotp-ele: simplify read beyond device check
-      nvmem: imx-ocotp-ele: fix reading from non zero offset
-      nvmem: imx-ocotp-ele: fix MAC address byte order
-      nvmem: imx-ocotp-ele: set word length to 1
+diff --git a/drivers/nvmem/imx-ocotp-ele.c b/drivers/nvmem/imx-ocotp-ele.c
+index 1ba4944976987..2e186b7d3b040 100644
+--- a/drivers/nvmem/imx-ocotp-ele.c
++++ b/drivers/nvmem/imx-ocotp-ele.c
+@@ -72,13 +72,13 @@ static int imx_ocotp_reg_read(void *context, unsigned int offset, void *val, siz
+ 	void *p;
+ 	int i;
+ 
++	if (offset + bytes > priv->data->size)
++		bytes = priv->data->size - offset;
++
+ 	index = offset;
+ 	num_bytes = round_up(bytes, 4);
+ 	count = num_bytes >> 2;
+ 
+-	if (count > ((priv->data->size >> 2) - index))
+-		count = (priv->data->size >> 2) - index;
+-
+ 	p = kzalloc(num_bytes, GFP_KERNEL);
+ 	if (!p)
+ 		return -ENOMEM;
 
- drivers/nvmem/imx-ocotp-ele.c | 38 +++++++++++++++++++++++++++++++-------
- 1 file changed, 31 insertions(+), 7 deletions(-)
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241023-imx-ele-ocotp-fixes-f7b216171e1e
-
-Best regards,
 -- 
-Sascha Hauer <s.hauer@pengutronix.de>
+2.39.5
 
 
