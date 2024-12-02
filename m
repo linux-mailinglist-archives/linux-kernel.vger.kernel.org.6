@@ -1,199 +1,126 @@
-Return-Path: <linux-kernel+bounces-427420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332FD9E00B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:37:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8C99E00AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:36:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 611A0164F27
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:36:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FDB92829C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154081F8F16;
-	Mon,  2 Dec 2024 11:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBF21FDE24;
+	Mon,  2 Dec 2024 11:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Gr8tzw4F"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OgLH+sLN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1FB1FE478
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E1C1FA245;
+	Mon,  2 Dec 2024 11:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733139243; cv=none; b=Z2mnsanJqTNHNBVMf7iQr8pCuKlYoMKu6bPAkB82LFthQyMfbFKBZbC+cphQzKQ8Zk+k7/ZnsqDDxYTVbjV7jEADmAAU3RFUBUm6JMWWRg7dXeHNjqcyYYJZ96d+8nbF+JnA/tfYMcbHIQWHEfz9aBjQzKtRSa8AbzLm8KY20l4=
+	t=1733139330; cv=none; b=k/Ia2yC2+//nMp+phcot/fO/PkzegFN5SK90M5Jp0hnBX+dmMXV6MIZ3RNsJ96obvqiUdsoDhahil3buP9aNIG9Bv9jo+khTuzPRzGBjnTSo0xpmhOFWIj+10cQaDp61cY3QAJ4d7r7IXRx6uFymJKr9wQYcKEmpmrLWyXIQ8DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733139243; c=relaxed/simple;
-	bh=Es3IiYWZzTXVfJsOZtRpCVAT8FwilKQh7ALxYlW0bWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CX9FOPA93wxVgW8lsE0ELz1sJojCG7zTFsF9mch689vV5Di+AnHT8HINpU4delmApV19G23QApKlXL8ZR9MvDacrpOzYPsX0x60YyzigF1g2Aa3C7vqF95QtwYUNbdzRcWOjRsw4tnEPek39+B40IFGivDxMoS0Jdw/UMkuR7eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Gr8tzw4F; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa5438c6ba7so93605866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 03:33:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1733139238; x=1733744038; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sgOsW78zI7AQFOhUrQQ6vOCCpnka8ukylLDi+hJyFSs=;
-        b=Gr8tzw4F+O5kk8VCfVnBB4UZ9KbGwMlVcrx+mbDGiHYC06BSn66w+Lf75pQu5BkLmt
-         V7w2vSB5i7fY3iO8qToiwW1HN53MWUphU8c0P+KqMRYXfR1nTxUjMbFMGPF1vX5oXIFr
-         ygRetrtG/oCQEa/SdfG7KFbZLTQhNdOL3ILvhcwFmPKxi/O8xRcpQs1vplZg3IvLxdqy
-         2cQltngY6cN0hmg+Fkqf0BN9lcgqieDX91QCAkLTJQcJqJIa1CN7iu3UAk/T/WMyoinC
-         CesAftDKCEJBpN7tIjg+JOd16n3GFb9GcJQxDA2UTAxDSOcIUJBhwx1tDrkqVYTwcnY6
-         rG5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733139238; x=1733744038;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sgOsW78zI7AQFOhUrQQ6vOCCpnka8ukylLDi+hJyFSs=;
-        b=Vcll171eKyigdFZ/ffg+RBwXQx9ZTqc1FXDUGYCCqNxguPnaOor1AsDvT03cDOpJGy
-         u1kLVqafspqbxkZhYaL9yYLTpyh7VPb7+Fi8a6gJhlqnJcboglV7oHh10kukKZAfELEC
-         SDxA7p440xaTtVbDzmKE7+rfGKTUyaBOXKeTtUc0I+80yk8kUZUz+14/17ADRytsijjr
-         2VLhPnFlPEXHAERt8RVyZEHsIJr2mLtYI3en5ZLAE6dqntCDtBzmNN1BMWg5hxJmbVqs
-         F+JkzkkbQG3UJzit2Xc1Qiuc9zml3s1S9TOYQjwdhIvOQYv1Em2BdodP78OhAHxCVotI
-         vPqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMlJ8o46J04QKg67Q890Ge9NO6UoBpMKQ/pnNOb0Wm3YUGAZY3ev72/exb/lAvxDRoYsn9VvU7y4fiyOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww33J9QqWPCyGgzqXvEC1/zDfChRIvni+YwHExPWJOzKvrWzKU
-	OB7TyD0JcDFEbHEvFr69bnSIvpKTzQVzKhGUQIkalV356OFowQJ+XfTR6hYhuKs9W6uDQ3f5AuZ
-	Lwy49JsTKhzsM+ZWsV8IZLTeKEu/6KWX19mRHWA==
-X-Gm-Gg: ASbGnctu1Qt+1C2glhoVf4+wgz+Pg81m8JH1i66W8cEmAN1Z/oUd5OWJ9xbvq3eqqny
-	0aC8hYCgIYbBJ4IiSQ0q1CcKfS3hvjzk=
-X-Google-Smtp-Source: AGHT+IEwIB6XH1kGWMBcCu7HJACwhVV+8n2RyYVFYxHT/UodC2Nz3Ehl0lbyhxmEO5pPfuJb2pn6FdJt3yEbIp4ucnI=
-X-Received: by 2002:a17:906:6a24:b0:aa5:163c:69f6 with SMTP id
- a640c23a62f3a-aa581097801mr1084938966b.14.1733139238297; Mon, 02 Dec 2024
- 03:33:58 -0800 (PST)
+	s=arc-20240116; t=1733139330; c=relaxed/simple;
+	bh=9tNZcpjj1t7vWcFXyssqY/2Oi977Kh2rWYxRFEsh0YA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cCsY9gKUzcpQ60wCSWbMxDdxQOL5xxpMG5FfEsVUfme6jk6jzLSjE5sEki4tUH8QAHTxaFaSgPW3T4YLlXnJkdTqoJmBhGdIuS3ScPozoEGrgCWkQNu8zl4JzHQnClcYwTa08g3ig2KMhe0WX/+uKnxThViIaCYpC79h2svOYw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OgLH+sLN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wF2I4tT7MqbewWmtnwf7ZhQdUn1g7F7H02RXRJD34KA=; b=OgLH+sLN9eaY85gIL0HAmTyE7Z
+	05Ait8dHXa/J9L7QzeZ9v1JpmM42U8OjeXXLSiYVFPIP2j7ShKg7SD+jwg2YgJ7d5gW4XELOtU1w4
+	fYp1pD5ipdI3tQZqEPzedlWZzf+p21seOKT1q4oEUZgnK5S1Gc88H848vxvsdWTAeLsYWsl4/XqBk
+	jMVdUyxWR0qxCNuBxcdh1TLn1A9/hvsATdE2q2bAMGEwWr1z/WSFCGkRxJWissjxsHqmrnjHrW4O4
+	cljl36zNa7AoC73ChOkdG+rRWFZas3ZFDUyS+Q0MrN9E3U7o99UO2TJwpaLHTOJ1HcqymByy5GU48
+	qFaKl6PQ==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tI4hs-00000007uc1-3AzO;
+	Mon, 02 Dec 2024 11:35:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 07A4330050D; Mon,  2 Dec 2024 12:35:13 +0100 (CET)
+Date: Mon, 2 Dec 2024 12:35:12 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v7 04/12] platform/x86: hfi: Introduce AMD Hardware
+ Feedback Interface Driver
+Message-ID: <20241202113512.GA8562@noisy.programming.kicks-ass.net>
+References: <20241130140703.557-1-mario.limonciello@amd.com>
+ <20241130140703.557-5-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202111957.2311683-1-john.g.garry@oracle.com> <20241202111957.2311683-3-john.g.garry@oracle.com>
-In-Reply-To: <20241202111957.2311683-3-john.g.garry@oracle.com>
-From: Jinpu Wang <jinpu.wang@ionos.com>
-Date: Mon, 2 Dec 2024 12:33:47 +0100
-Message-ID: <CAMGffE=1ywvm-B6_GB+UqtQohdgYo5h9DCWQ0_QLoh6XK9G=ZQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] block: Delete bio_set_prio()
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, haris.iqbal@ionos.com, colyli@suse.de, 
-	kent.overstreet@linux.dev, agk@redhat.com, snitzer@kernel.org, 
-	mpatocka@redhat.com, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org, 
-	dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org, hch@lst.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241130140703.557-5-mario.limonciello@amd.com>
 
-On Mon, Dec 2, 2024 at 12:20=E2=80=AFPM John Garry <john.g.garry@oracle.com=
-> wrote:
->
-> Since commit 43b62ce3ff0a ("block: move bio io prio to a new field"), mac=
-ro
-> bio_set_prio() does nothing but set bio->bi_ioprio. All other places just
-> set bio->bi_ioprio directly, so replace bio_set_prio() remaining
-> callsites with setting bio->bi_ioprio directly and delete that macro.
->
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-lgtm, thx!
-Acked-by: Jack Wang <jinpu.wang@ionos.com>
-> ---
->  drivers/block/rnbd/rnbd-srv.c | 2 +-
->  drivers/md/bcache/movinggc.c  | 2 +-
->  drivers/md/bcache/writeback.c | 2 +-
->  fs/bcachefs/move.c            | 6 +++---
->  include/linux/bio.h           | 2 --
->  5 files changed, 6 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.=
-c
-> index 08ce6d96d04c..2ee6e9bd4e28 100644
-> --- a/drivers/block/rnbd/rnbd-srv.c
-> +++ b/drivers/block/rnbd/rnbd-srv.c
-> @@ -167,7 +167,7 @@ static int process_rdma(struct rnbd_srv_session *srv_=
-sess,
->         bio->bi_iter.bi_sector =3D le64_to_cpu(msg->sector);
->         prio =3D srv_sess->ver < RNBD_PROTO_VER_MAJOR ||
->                usrlen < sizeof(*msg) ? 0 : le16_to_cpu(msg->prio);
-> -       bio_set_prio(bio, prio);
-> +       bio->bi_ioprio =3D prio;
->
->         submit_bio(bio);
->
-> diff --git a/drivers/md/bcache/movinggc.c b/drivers/md/bcache/movinggc.c
-> index ef6abf33f926..45ca134cbf02 100644
-> --- a/drivers/md/bcache/movinggc.c
-> +++ b/drivers/md/bcache/movinggc.c
-> @@ -82,7 +82,7 @@ static void moving_init(struct moving_io *io)
->         bio_init(bio, NULL, bio->bi_inline_vecs,
->                  DIV_ROUND_UP(KEY_SIZE(&io->w->key), PAGE_SECTORS), 0);
->         bio_get(bio);
-> -       bio_set_prio(bio, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0));
-> +       bio->bi_ioprio =3D IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0);
->
->         bio->bi_iter.bi_size    =3D KEY_SIZE(&io->w->key) << 9;
->         bio->bi_private         =3D &io->cl;
-> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.=
-c
-> index c1d28e365910..453efbbdc8ee 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -334,7 +334,7 @@ static void dirty_init(struct keybuf_key *w)
->         bio_init(bio, NULL, bio->bi_inline_vecs,
->                  DIV_ROUND_UP(KEY_SIZE(&w->key), PAGE_SECTORS), 0);
->         if (!io->dc->writeback_percent)
-> -               bio_set_prio(bio, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0)=
-);
-> +               bio->bi_ioprio =3D IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0=
-);
->
->         bio->bi_iter.bi_size    =3D KEY_SIZE(&w->key) << 9;
->         bio->bi_private         =3D w;
-> diff --git a/fs/bcachefs/move.c b/fs/bcachefs/move.c
-> index 0ef4a86850bb..67fb651f4af4 100644
-> --- a/fs/bcachefs/move.c
-> +++ b/fs/bcachefs/move.c
-> @@ -292,8 +292,8 @@ int bch2_move_extent(struct moving_context *ctxt,
->         io->write_sectors       =3D k.k->size;
->
->         bio_init(&io->write.op.wbio.bio, NULL, io->bi_inline_vecs, pages,=
- 0);
-> -       bio_set_prio(&io->write.op.wbio.bio,
-> -                    IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0));
-> +       io->write.op.wbio.bio.bi_ioprio =3D
-> +                    IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0);
->
->         if (bch2_bio_alloc_pages(&io->write.op.wbio.bio, sectors << 9,
->                                  GFP_KERNEL))
-> @@ -303,7 +303,7 @@ int bch2_move_extent(struct moving_context *ctxt,
->         io->rbio.opts           =3D io_opts;
->         bio_init(&io->rbio.bio, NULL, io->bi_inline_vecs, pages, 0);
->         io->rbio.bio.bi_vcnt =3D pages;
-> -       bio_set_prio(&io->rbio.bio, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, =
-0));
-> +       io->rbio.bio.bi_ioprio =3D IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0=
-);
->         io->rbio.bio.bi_iter.bi_size =3D sectors << 9;
->
->         io->rbio.bio.bi_opf             =3D REQ_OP_READ;
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 61e6db44d464..2e7bd5d66ef4 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -19,8 +19,6 @@ static inline unsigned int bio_max_segs(unsigned int nr=
-_segs)
->         return min(nr_segs, BIO_MAX_VECS);
->  }
->
-> -#define bio_set_prio(bio, prio)                ((bio)->bi_ioprio =3D pri=
-o)
-> -
->  #define bio_iter_iovec(bio, iter)                              \
->         bvec_iter_bvec((bio)->bi_io_vec, (iter))
->
-> --
-> 2.31.1
->
+On Sat, Nov 30, 2024 at 08:06:55AM -0600, Mario Limonciello wrote:
+
+> +/**
+> + * struct amd_hfi_cpuinfo - HFI workload class info per CPU
+> + * @cpu:		cpu index
+> + * @cpus:		mask of cpus associated with amd_hfi_cpuinfo
+> + * @class_index:	workload class ID index
+> + * @nr_class:		max number of workload class supported
+> + * @amd_hfi_classes:	current cpu workload class ranking data
+> + *
+> + * Parameters of a logical processor linked with hardware feedback class
+> + */
+> +struct amd_hfi_cpuinfo {
+> +	int		cpu;
+> +	cpumask_var_t	cpus;
+
+This appears unused.
+
+> +	s16		class_index;
+> +	u8		nr_class;
+> +	struct amd_hfi_classes	*amd_hfi_classes;
+> +};
+> +
+> +static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index = -1};
+> +
+> +static int amd_hfi_alloc_class_data(struct platform_device *pdev)
+> +{
+> +	struct amd_hfi_cpuinfo *hfi_cpuinfo;
+> +	struct device *dev = &pdev->dev;
+> +	int idx;
+> +	int nr_class_id;
+> +
+> +	nr_class_id = cpuid_eax(AMD_HETERO_CPUID_27);
+> +	if (nr_class_id < 0 || nr_class_id > 255) {
+> +		dev_err(dev, "failed to get number of supported classes: %d\n",
+> +			nr_class_id);
+> +		return -EINVAL;
+> +	}
+> +
+> +	for_each_present_cpu(idx) {
+
+This uses present, but does not have means of handling changes to
+present. Does this want to be possible?
+
 
