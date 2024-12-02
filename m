@@ -1,197 +1,359 @@
-Return-Path: <linux-kernel+bounces-427046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778519DFB93
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:02:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F979DFB95
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0721B22341
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:02:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AD66B21E88
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F351F9428;
-	Mon,  2 Dec 2024 08:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93221F9ABD;
+	Mon,  2 Dec 2024 08:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ljfnyQ99";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BGuhvRSx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="N7fKio/+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cqJ2eX7F"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MVHiqNBw"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BF4F9E6
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C471F9406
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733126528; cv=none; b=TBOdzcn9c1YZLqLETKRdPWYYbAH367m6qdWdtjHr2gV3NiF56c9QpTxlNofA7BncAXSW2wvjPzZkEHsX/MjyIVnuWhwnDexNBgm8ZSNmruPNngrWdFBO1Jp65mIPQ8OAjLsUtsBtjw5n1/MiiCFdImEjGFC91jAj1PJqNI22jM4=
+	t=1733126567; cv=none; b=VCMlQfqYI/zYewPTi27E9CvhQueCVl6Ox//phuM1yXRs44E15HyZNGfkNLKTYVN3IPVXG7V/xKvUrA9yAnJZgwoxHLSGaHa4mVzXlAvRyJcvwDhEZ9x9IY5Myu2rdFAfQ5WqzuLr6jybDg40hmZ+QBYt6OvKHrVp/zoTWn8QIy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733126528; c=relaxed/simple;
-	bh=tt55vKZrPIjW1uGB05s8FrB5U6jLs1HUEP6ESjaB2Gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DlNqHLPT4vcTB2ZgzjBdFOK92u8I+vpXuwhOOgaflSsw0EyJMtbLnMviudkHLNA+p2xwppyLwhItTinl5LXVPM6XjX5okyhSgXiRyrmP1uYqxUqjrR9CJ+TytV69CubErEb9egLKrHwYUwcNiiui/ztbjI3x7jjIA8Qiqyr6mPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ljfnyQ99; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BGuhvRSx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=N7fKio/+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cqJ2eX7F; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E794B1F442;
-	Mon,  2 Dec 2024 08:02:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733126525; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TYi9YaPM8g/SjpzvzeWea/rBiqknKC5DNrxlBy+QMZs=;
-	b=ljfnyQ99u76o7QAompCtuBwJkqvT3xIi8b25xHpltGejjGbebz/04YB/3fb8eVNSrNOAgm
-	IS4dRdm37tWCE3w4zXhy96Fla9mVcy9477IpsPKc79AvFMNV7wdWVxoPynldyEpgAl57Va
-	yq6sB4FAbeqB25iI97S3RrdnDWVBg1o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733126525;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TYi9YaPM8g/SjpzvzeWea/rBiqknKC5DNrxlBy+QMZs=;
-	b=BGuhvRSxVY8oFlsGVQee6JA3bvwr/I89R4o/P0hQRCkVqOEil30CGlz6BbeTUXwaA9+PC3
-	2/0vENWYSEd6ovBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="N7fKio/+";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cqJ2eX7F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733126524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TYi9YaPM8g/SjpzvzeWea/rBiqknKC5DNrxlBy+QMZs=;
-	b=N7fKio/+GEszpOyV3K13LAGcTGFmcbb8iUPqOlkkAtbRUAnmKzs9WIQ5CqpFgMv94Ej9PZ
-	7K96wUPglRjBmpTI/9cn8sirQ7rqwiuTNYW/gbIX5V1FL896p1PQ656BUthp6RKh3CHTeC
-	DjSFjLlrT2BNRFf/4p2GtbNh3Mwyd7c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733126524;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TYi9YaPM8g/SjpzvzeWea/rBiqknKC5DNrxlBy+QMZs=;
-	b=cqJ2eX7FegPs8a8k3ZfVdYfBw+r/TFhtRp9pMNrijfI8HIkrvFvRpTKdgvmjtPRdBIdJFr
-	HkREUNKrOAR8KPDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 63EC713A31;
-	Mon,  2 Dec 2024 08:02:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Nu7LFnxpTWd5IAAAD6G6ig
-	(envelope-from <aherrmann@suse.de>); Mon, 02 Dec 2024 08:02:04 +0000
-Date: Mon, 2 Dec 2024 09:02:03 +0100
-From: Andreas Herrmann <aherrmann@suse.de>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] cacheinfo: Allocate memory during CPU hotplug if
- not done from the primary CPU
-Message-ID: <20241202080203.GC4089@alberich>
-References: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
- <20241128002247.26726-2-ricardo.neri-calderon@linux.intel.com>
+	s=arc-20240116; t=1733126567; c=relaxed/simple;
+	bh=XjcvYaPoaOaCkRsJ12nahVkfFRNwZzKr66uvXv1Q13w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JOzsGb1ed3s2VuU6up/7wPEh+cE/izeTvgH/IjL8uR9VYHZ0DzyFMRbriNtIyb85kLYAnsh8WbIFMvWsvkcdkMeXTAggfJXzS5qTkxY78gFAzO5teH/8YlMUP5cPJWXy2Z2sEozUeH/pupKWnWNp8pEle62q7ynVfhA5qITHd+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MVHiqNBw; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ee51f8c47dso1904980a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:02:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733126565; x=1733731365; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UOdbML7s9AFwet9bXLxQXjVFT93zyYyd3bhw4v95B0Y=;
+        b=MVHiqNBw7gm8FTDaevwGbVANpYRZO2oJTlTM0CbblDVSJJLZrX4Q0quw+V2c011+ED
+         swURd2v/Qtx8P7FPti+1ftdrtXdM2JFutTwqOTnxszMxAhbuQ0Hzn22Ap0tfSUve7jCw
+         Ero+bcu19kQOsdkSVzy9+20iJIYO7qRyFU9avS/Rk87FEzs7GZX7+ym9rJ9DGilzbA1S
+         gYcO/t1YIl0iUofUAiZNw6qCeXoHpfuD0pr+jz46TNpffralY58fZxdmJ+B4lx4SvrjW
+         CZJjJPHjUre0kwQX9q9Ec3pgJisMdHjHlwWJ4b0lc5qPvDAekaOhvoetMUfb89z3p86T
+         UTTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733126565; x=1733731365;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UOdbML7s9AFwet9bXLxQXjVFT93zyYyd3bhw4v95B0Y=;
+        b=ndjdhFJqmNrS7GGXgdxC1nzbGh9Yiuw/S8E/Ec8Ha4yfWF9oiQTDvqIvYOiLObX+16
+         MU/6bo3j2mhHwka1XgCpXX336YOJReDNRiQfN93xdDfz8tsRTyma/dRxpQ8Aku9Zg/Dp
+         lfkSBFRq0mGgjJxT15ysGniFPxh3HinoE1EDUtarO2GKrwyfnTPFylfqW+ZEvV4Jqyef
+         HiTlPAQs4a5Al6gGftlsUW8bZVxXd/5d9xncKPLHTA1riIk/6E6KWMDGYRND/T2Dsu4O
+         /EFTmoYPlKtjqZrZ6FHO+Xe8hCYU1OpUACrU/7k0TMG90NWA8s75VZMtoiGKT7oy4y0I
+         N15g==
+X-Forwarded-Encrypted: i=1; AJvYcCWm2RtW4RIqdgSODh7Q73jbwycx0sKbKXRvQmEIBI8ss+1t653dDfNjs/HziSlCi83oMXXry+L3k1m8s/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKNVMgqoRPk/7AeYwqiqQKFNKjQUsqJk+d2C7ONJwttCypvxDv
+	Fpfc/nbdcS6Qq3ZhgTnf0sH0YiB2EE/LQfDZcQ0XT6cE0mWZEkjJ6XW5YSr3wAhnqPAVKZhNjCz
+	M1KDVuddbLdNO4IRZGApO/ZD/RvKUH22XzHGE
+X-Gm-Gg: ASbGncuwWRRf0NMJXLeZXjQt8LzcggX32rfnIqwnosvEPseeUsFUG+b4wVlAhXz+CTh
+	eqEqJ1oLGouHIzVb8FauikEz5nFqvvPVQb2AJPD40m/j6T2DizAhy10Cdq3TC7A==
+X-Google-Smtp-Source: AGHT+IFtZK4LQyh15m+SRdyxq/e4iFm7HY886U3LyaGafwOLzFKkIITl23yDQvCWlo3RWnFj0oAqbxWEFAptWtptC4M=
+X-Received: by 2002:a17:90b:380c:b0:2ea:c096:b738 with SMTP id
+ 98e67ed59e1d1-2ee097bafaemr25286739a91.28.1733126564517; Mon, 02 Dec 2024
+ 00:02:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241128002247.26726-2-ricardo.neri-calderon@linux.intel.com>
-X-Rspamd-Queue-Id: E794B1F442
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.de:email,suse.de:dkim,intel.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org> <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org>
+In-Reply-To: <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org>
+From: Yunke Cao <yunkec@google.com>
+Date: Mon, 2 Dec 2024 17:02:32 +0900
+Message-ID: <CANqU6Fdu2dg+1RADfOFG=3M6sLDgMuQZJMv1Vb46pnhLbR1ttA@mail.gmail.com>
+Subject: Re: [PATCH v15 18/19] media: uvcvideo: implement UVC v1.5 ROI
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Ricardo Ribalda <ribalda@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 27, 2024 at 04:22:46PM -0800, Ricardo Neri wrote:
-> Commit 5944ce092b97 ("arch_topology: Build cacheinfo from primary CPU")
-> adds functionality that architectures can use to optionally allocate and
-> build cacheinfo early during boot. Commit 6539cffa9495 ("cacheinfo: Add
-> arch specific early level initializer") lets secondary CPUs correct (and
-> reallocate memory) cacheinfo data if needed.
-> 
-> If the early build functionality is not used and cacheinfo does not need
-> correction, memory for cacheinfo is never allocated. x86 does not use the
-> early build functionality. Consequently, during the cacheinfo CPU hotplug
-> callback, last_level_cache_is_valid() attempts to dereference a NULL
-> pointer:
-> 
->      BUG: kernel NULL pointer dereference, address: 0000000000000100
->      #PF: supervisor read access in kernel mode
->      #PF: error_code(0x0000) - not present page
->      PGD 0 P4D 0
->      Oops: 0000 [#1] PREEPMT SMP NOPTI
->      CPU: 0 PID 19 Comm: cpuhp/0 Not tainted 6.4.0-rc2 #1
->      RIP: 0010: last_level_cache_is_valid+0x95/0xe0a
-> 
-> Allocate memory for cacheinfo during the cacheinfo CPU hotplug callback if
-> not done earlier.
-> 
-> Moreover, before determining the validity of the last-level cache info,
-> ensure that it has been allocated. Simply checking for non-zero
-> cache_leaves() is not sufficient, as some architectures (e.g., Intel
-> processors) have non-zero cache_leaves() before allocation.
-> 
-> Dereferencing NULL cacheinfo can occur in update_per_cpu_data_slice_size().
-> This function iterates over all online CPUs. However, a CPU may have come
-> online recently, but its cacheinfo may not have been allocated yet.
-> 
-> While here, remove an unnecessary indentation in allocate_cache_info().
-> 
-> Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
-> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-> Reviewed-by: Radu Rendec <rrendec@redhat.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Tested-by: Andreas Herrmann <aherrmann@suse.de>
-> Fixes: 6539cffa9495 ("cacheinfo: Add arch specific early level initializer")
-> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Hi Ricardo,
+
+Thanks for the new version!!
+
+On Fri, Nov 15, 2024 at 4:11=E2=80=AFAM Ricardo Ribalda <ribalda@chromium.o=
+rg> wrote:
+>
+> From: Yunke Cao <yunkec@google.com>
+>
+> Implement support for ROI as described in UVC 1.5:
+> 4.2.2.1.20 Digital Region of Interest (ROI) Control
+>
+> ROI control is implemented using V4L2 control API as
+> two UVC-specific controls:
+> V4L2_CID_UVC_REGION_OF_INTEREST_RECT and
+> V4L2_CID_UVC_REGION_OF_INTEREST_AUTO.
+>
+> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Yunke Cao <yunkec@google.com>
 > ---
+>  drivers/media/usb/uvc/uvc_ctrl.c   | 81 ++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/media/usb/uvc/uvcvideo.h   |  7 ++++
+>  include/uapi/linux/usb/video.h     |  1 +
+>  include/uapi/linux/uvcvideo.h      | 13 ++++++
+>  include/uapi/linux/v4l2-controls.h |  9 +++++
+>  5 files changed, 111 insertions(+)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc=
+_ctrl.c
+> index f262e05ad3a8..5b619ef40dd3 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -358,6 +358,24 @@ static const struct uvc_control_info uvc_ctrls[] =3D=
+ {
+>                 .flags          =3D UVC_CTRL_FLAG_GET_CUR
+>                                 | UVC_CTRL_FLAG_AUTO_UPDATE,
+>         },
+> +       /*
+> +        * UVC_CTRL_FLAG_AUTO_UPDATE is needed because the RoI may get up=
+dated
+> +        * by sensors.
+> +        * "This RoI should be the same as specified in most recent SET_C=
+UR
+> +        * except in the case where the =E2=80=98Auto Detect and Track=E2=
+=80=99 and/or
+> +        * =E2=80=98Image Stabilization=E2=80=99 bit have been set."
+> +        * 4.2.2.1.20 Digital Region of Interest (ROI) Control
+> +        */
+> +       {
+> +               .entity         =3D UVC_GUID_UVC_CAMERA,
+> +               .selector       =3D UVC_CT_REGION_OF_INTEREST_CONTROL,
+> +               .index          =3D 21,
+> +               .size           =3D 10,
+> +               .flags          =3D UVC_CTRL_FLAG_SET_CUR | UVC_CTRL_FLAG=
+_GET_CUR
+> +                               | UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_G=
+ET_MAX
+> +                               | UVC_CTRL_FLAG_GET_DEF
+> +                               | UVC_CTRL_FLAG_AUTO_UPDATE,
+> +       },
+>  };
+>
+>  static const u32 uvc_control_classes[] =3D {
+> @@ -603,6 +621,44 @@ static const struct uvc_control_mapping *uvc_ctrl_fi=
+lter_plf_mapping(
+>         return out_mapping;
+>  }
+>
+> +static int uvc_get_rect(struct uvc_control_mapping *mapping, u8 query,
+> +                       const void *uvc_in, size_t v4l2_size, void *v4l2_=
+out)
+> +{
+> +       const struct uvc_rect *uvc_rect =3D uvc_in;
+> +       struct v4l2_rect *v4l2_rect =3D v4l2_out;
+> +
+> +       if (WARN_ON(v4l2_size !=3D sizeof(struct v4l2_rect)))
+> +               return -EINVAL;
+> +
+> +       if (uvc_rect->left > uvc_rect->right ||
+> +           uvc_rect->top > uvc_rect->bottom)
+> +               return -EIO;
+> +
+> +       v4l2_rect->top =3D uvc_rect->top;
+> +       v4l2_rect->left =3D uvc_rect->left;
+> +       v4l2_rect->height =3D uvc_rect->bottom - uvc_rect->top + 1;
+> +       v4l2_rect->width =3D uvc_rect->right - uvc_rect->left + 1;
+> +
+> +       return 0;
+> +}
+> +
+> +static int uvc_set_rect(struct uvc_control_mapping *mapping, size_t v4l2=
+_size,
+> +                       const void *v4l2_in, void *uvc_out)
+> +{
+> +       struct uvc_rect *uvc_rect =3D uvc_out;
+> +       const struct v4l2_rect *v4l2_rect =3D v4l2_in;
+> +
+> +       if (WARN_ON(v4l2_size !=3D sizeof(struct v4l2_rect)))
+> +               return -EINVAL;
+> +
+> +       uvc_rect->top =3D max(0xffff, v4l2_rect->top);
+> +       uvc_rect->left =3D max(0xffff, v4l2_rect->left);
+> +       uvc_rect->bottom =3D max(0xffff, v4l2_rect->height + v4l2_rect->t=
+op - 1);
+> +       uvc_rect->right =3D max(0xffff, v4l2_rect->width + v4l2_rect->lef=
+t - 1);
 
-Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
+Should these be min()?
 
--- 
-Regards,
-Andreas
+>
+> +
+> +       return 0;
+> +}
+> +
+>  static const struct uvc_control_mapping uvc_ctrl_mappings[] =3D {
+>         {
+>                 .id             =3D V4L2_CID_BRIGHTNESS,
+> @@ -897,6 +953,28 @@ static const struct uvc_control_mapping uvc_ctrl_map=
+pings[] =3D {
+>                 .selector       =3D UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
+>                 .filter_mapping =3D uvc_ctrl_filter_plf_mapping,
+>         },
+> +       {
+> +               .id             =3D V4L2_CID_UVC_REGION_OF_INTEREST_RECT,
+> +               .entity         =3D UVC_GUID_UVC_CAMERA,
+> +               .selector       =3D UVC_CT_REGION_OF_INTEREST_CONTROL,
+> +               .size           =3D sizeof(struct uvc_rect) * 8,
+> +               .offset         =3D 0,
+> +               .v4l2_type      =3D V4L2_CTRL_TYPE_RECT,
+> +               .data_type      =3D UVC_CTRL_DATA_TYPE_RECT,
+> +               .get            =3D uvc_get_rect,
+> +               .set            =3D uvc_set_rect,
+> +               .name           =3D "Region Of Interest Rectangle",
+> +       },
+> +       {
+> +               .id             =3D V4L2_CID_UVC_REGION_OF_INTEREST_AUTO,
+> +               .entity         =3D UVC_GUID_UVC_CAMERA,
+> +               .selector       =3D UVC_CT_REGION_OF_INTEREST_CONTROL,
+> +               .size           =3D 16,
+> +               .offset         =3D 64,
+> +               .v4l2_type      =3D V4L2_CTRL_TYPE_BITMASK,
+> +               .data_type      =3D UVC_CTRL_DATA_TYPE_BITMASK,
+> +               .name           =3D "Region Of Interest Auto Controls",
+> +       },
+>  };
+>
+>  /* ---------------------------------------------------------------------=
+---
+> @@ -1465,6 +1543,9 @@ static int __uvc_queryctrl_boundaries(struct uvc_vi=
+deo_chain *chain,
+>
+>  static size_t uvc_mapping_v4l2_size(struct uvc_control_mapping *mapping)
+>  {
+> +       if (mapping->v4l2_type =3D=3D V4L2_CTRL_TYPE_RECT)
+> +               return sizeof(struct v4l2_rect);
+> +
+>         if (uvc_ctrl_mapping_is_compound(mapping))
+>                 return DIV_ROUND_UP(mapping->size, 8);
+>
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvc=
+video.h
+> index 8aca1a2fe587..d910a5e5b514 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -294,6 +294,13 @@ struct uvc_streaming_header {
+>         u8 bTriggerUsage;
+>  };
+>
+> +struct uvc_rect {
+> +       u16 top;
+> +       u16 left;
+> +       u16 bottom;
+> +       u16 right;
+> +} __packed;
+> +
+>  enum uvc_buffer_state {
+>         UVC_BUF_STATE_IDLE      =3D 0,
+>         UVC_BUF_STATE_QUEUED    =3D 1,
+> diff --git a/include/uapi/linux/usb/video.h b/include/uapi/linux/usb/vide=
+o.h
+> index 2ff0e8a3a683..2afb4420e6c4 100644
+> --- a/include/uapi/linux/usb/video.h
+> +++ b/include/uapi/linux/usb/video.h
+> @@ -104,6 +104,7 @@
+>  #define UVC_CT_ROLL_ABSOLUTE_CONTROL                   0x0f
+>  #define UVC_CT_ROLL_RELATIVE_CONTROL                   0x10
+>  #define UVC_CT_PRIVACY_CONTROL                         0x11
+> +#define UVC_CT_REGION_OF_INTEREST_CONTROL              0x14
+>
+>  /* A.9.5. Processing Unit Control Selectors */
+>  #define UVC_PU_CONTROL_UNDEFINED                       0x00
+> diff --git a/include/uapi/linux/uvcvideo.h b/include/uapi/linux/uvcvideo.=
+h
+> index f86185456dc5..cbe15bca9569 100644
+> --- a/include/uapi/linux/uvcvideo.h
+> +++ b/include/uapi/linux/uvcvideo.h
+> @@ -16,6 +16,7 @@
+>  #define UVC_CTRL_DATA_TYPE_BOOLEAN     3
+>  #define UVC_CTRL_DATA_TYPE_ENUM                4
+>  #define UVC_CTRL_DATA_TYPE_BITMASK     5
+> +#define UVC_CTRL_DATA_TYPE_RECT                6
+>
+>  /* Control flags */
+>  #define UVC_CTRL_FLAG_SET_CUR          (1 << 0)
+> @@ -38,6 +39,18 @@
+>
+>  #define UVC_MENU_NAME_LEN 32
+>
+> +/* V4L2 driver-specific controls */
+> +#define V4L2_CID_UVC_REGION_OF_INTEREST_RECT   (V4L2_CID_USER_UVC_BASE +=
+ 1)
+> +#define V4L2_CID_UVC_REGION_OF_INTEREST_AUTO   (V4L2_CID_USER_UVC_BASE +=
+ 2)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_EXPOSURE              (1 << 0)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IRIS                  (1 << 1)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_WHITE_BALANCE         (1 << 2)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FOCUS                 (1 << 3)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FACE_DETECT           (1 << 4)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_DETECT_AND_TRACK      (1 << 5)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IMAGE_STABILIZATION   (1 << 6)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_HIGHER_QUALITY                (=
+1 << 7)
+> +
+>  struct uvc_menu_info {
+>         __u32 value;
+>         __u8 name[UVC_MENU_NAME_LEN];
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2=
+-controls.h
+> index 974fd254e573..6c91d6fa4708 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -215,6 +215,13 @@ enum v4l2_colorfx {
+>   */
+>  #define V4L2_CID_USER_THP7312_BASE             (V4L2_CID_USER_BASE + 0x1=
+1c0)
+>
+> +/*
+> + * The base for the uvc driver controls.
+> + * See linux/uvcvideo.h for the list of controls.
+> + * We reserve 64 controls for this driver.
+> + */
+> +#define V4L2_CID_USER_UVC_BASE                 (V4L2_CID_USER_BASE + 0x1=
+1e0)
+> +
+>  /* MPEG-class control IDs */
+>  /* The MPEG controls are applicable to all codec controls
+>   * and the 'MPEG' part of the define is historical */
+> @@ -1089,6 +1096,8 @@ enum v4l2_auto_focus_range {
+>
+>  #define V4L2_CID_HDR_SENSOR_MODE               (V4L2_CID_CAMERA_CLASS_BA=
+SE+36)
+>
+> +/* CAMERA-class private control IDs */
+> +
+
+Do we still need this comment?
+
+Best,
+Yunke
+
+>  /* FM Modulator class control IDs */
+>
+>  #define V4L2_CID_FM_TX_CLASS_BASE              (V4L2_CTRL_CLASS_FM_TX | =
+0x900)
+>
+> --
+> 2.47.0.338.g60cca15819-goog
+>
 
