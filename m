@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-427930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E819E0814
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:12:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC1D9E086F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 418B117750D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE7781778D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AA613D531;
-	Mon,  2 Dec 2024 15:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF05E154BFB;
+	Mon,  2 Dec 2024 15:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGDVJ2sp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsYghMuC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05EA133987;
-	Mon,  2 Dec 2024 15:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C85814375A;
+	Mon,  2 Dec 2024 15:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154674; cv=none; b=WWb8HyrF/Humyz6o2TYj+UaeH/UdY5wkuZxxxEaFYCsKDgm7t1aMVRAxTZSgAoUB7Ka6WZiDx8NzLEDATDdieoAfW4DAtqppOymzw/CIWQYWpgGi64p2//1FJYLVBWxKWyxEFNBRdyPxIy/OkWDzzkpooUmDMW//ZPKBTw4087E=
+	t=1733154675; cv=none; b=kKHhH2tSZUCjYj3DjJ3y4VPUr9Sa5pV/2BARwcw99MMPx2d+iG9OhAV8zC7XUfqHVeQEH3v1RAo8BZp4hdmbpZqXaIplRUAmoPt9SGS/vSguulTE7IHTgiOi9txwQZ1AQWl7BJKbBZCYenFo/Ygvni2MsM9+4g8QRszagYMUeqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154674; c=relaxed/simple;
-	bh=gbHV1EoEzQJJvxuJn73SsUNo9/m3Oy47dqOO9nLPSwI=;
+	s=arc-20240116; t=1733154675; c=relaxed/simple;
+	bh=chSBd4V7M6R7ccMjFEIBv1djGqXeyU/hBrRINQab+uA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tkJX1K0bXbHY7RkCfTzewKy5i8m2cklxt87yQEyPnB3Wl4oI4C7JuyDtcmMH8TjwhlzCZIdZWLfla+/hnXVOtfgta25FTRjvb4i39GGEotZKdwRTRySbhhqdzvFTc48IFyFBOreOnTeQFeNDpOsFIInP15lTHOEPnsj7ro4+fTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGDVJ2sp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8584EC4CEDD;
-	Mon,  2 Dec 2024 15:51:12 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aW9EQJBbn8nCfrq0YfQ7fPRfDbXfjlFOs6r/UzTBgH8h/t5MWCvDtAbjyRI6FEjjoz+hB4/eOb8AnESOe9UkIyZA1dyxX1ypZObLEMbXLM7BPylMvVazDN3ReEUPYG8X4fRc6VaB4+On5s97oz0OFjZbPOYkmuBpLAMEsygVbOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsYghMuC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C103FC4CED2;
+	Mon,  2 Dec 2024 15:51:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733154673;
-	bh=gbHV1EoEzQJJvxuJn73SsUNo9/m3Oy47dqOO9nLPSwI=;
+	s=k20201202; t=1733154674;
+	bh=chSBd4V7M6R7ccMjFEIBv1djGqXeyU/hBrRINQab+uA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iGDVJ2spEKU4wxtLTNH2qF/RBG49INUAljtd7/xGFefUVYTjq58yQUuiCr2Qq7yTt
-	 NpIS1GMzDxVlWhib6D4W7JoPkblNqhaRPHtW77EFupVIsqmA7VeR0WxTzwZQ87sXV1
-	 Df8Ezzf/Gh2W/qpQ8o5kTo6kQiINIL1dbNitynuHtij8CaWkXQUucSNWmnYOn4Qm0M
-	 9uM0tR8cL9O6nuBDr4I9YiRXRZU7mUED2hJWZeHFDwVkmYA7oeNOq8nDZMk8qUGth0
-	 J36gRGow4N8Jjp2X2Q692o1dHCVX1x52+wINx0SEPLUMiDL2zHAU8AkdqG3VPc8qgc
-	 75Vh9fAT5Z4RA==
+	b=NsYghMuCAkEm7F4RW0jShEj3i42wPbcqxZyMq56GJBJo+F5uFd1jwD1xvKF7UKk1A
+	 m5/qHAw8zSLnpFeqPk1NdjLn6HUn9WisN3bLy/ZlAMir2Tj/JqhKa7n5lZpPtO1Q8Z
+	 n7HalIY5inz+Xxjba7SSIWkw082wGQc8d+ORjg0Iw5s1iZV9++9k1VwfVeZXhxXJ/F
+	 8Zuv1aAh4RgcXai4VhM4XEYJHSJj1ADLwLmZla1CFI+9ILiRRxMSAGtL3VVNwxuxCT
+	 LFsqtvm9RGnSoXtTqdWlR30PqjPMhY+viqxCgLYaZAqnJKEb0vniJTQhAFTCIFfVxS
+	 9RNbPW/6BKg/w==
 From: Bjorn Andersson <andersson@kernel.org>
-To: konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	Kyle Deng <quic_chunkaid@quicinc.com>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jie Gan <quic_jiegan@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	quic_tingweiz@quicinc.com,
-	quic_aiquny@quicinc.com,
-	quic_sudeepgo@quicinc.com,
-	quic_taozhan@quicinc.com
-Subject: Re: (subset) [PATCH v2 0/3] Add aoss_qmp nodes for qcs615
-Date: Mon,  2 Dec 2024 09:51:00 -0600
-Message-ID: <173315466528.263019.18336873215209666544.b4-ty@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	Tingwei Zhang <quic_tingweiz@quicinc.com>,
+	Jinlong Mao <quic_jinlmao@quicinc.com>,
+	Tao Zhang <quic_taozha@quicinc.com>
+Subject: Re: [PATCH v3] arm64: dts: qcom: Add coresight nodes for QCS615
+Date: Mon,  2 Dec 2024 09:51:01 -0600
+Message-ID: <173315466531.263019.7584568403904604417.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241018073417.2338864-1-quic_chunkaid@quicinc.com>
-References: <20241018073417.2338864-1-quic_chunkaid@quicinc.com>
+In-Reply-To: <20241106094510.2654998-1-quic_jiegan@quicinc.com>
+References: <20241106094510.2654998-1-quic_jiegan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,16 +69,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 18 Oct 2024 15:34:14 +0800, Kyle Deng wrote:
-> Add dts nodes and to enable AOSS_QMP on QCS615. These nodes provide basic
-> AOSS side-channel message RAM information and mailbox capacity.
+On Wed, 06 Nov 2024 17:45:09 +0800, Jie Gan wrote:
+> Add following coresight components on QCS615, EUD, TMC/ETF, TPDM, dynamic
+> Funnel, TPDA, Replicator and ETM.
 > 
 > 
 
 Applied, thanks!
 
-[3/3] arm64: dts: qcom: qcs615: add AOSS_QMP node
-      commit: 0775021783b5536e390d1602d054542a29875593
+[1/1] arm64: dts: qcom: Add coresight nodes for QCS615
+      commit: bf469630552a3950d0370dd5fd1f9bf0145d09d5
 
 Best regards,
 -- 
