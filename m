@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-428077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A1D9E09EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:30:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AFED9E09F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:31:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7FE5281A39
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:30:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601AD2827B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B839D1DAC97;
-	Mon,  2 Dec 2024 17:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FE41DCB09;
+	Mon,  2 Dec 2024 17:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDeJOblT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Abvbe3+T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DCC15FD01;
-	Mon,  2 Dec 2024 17:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD381DB548;
+	Mon,  2 Dec 2024 17:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160645; cv=none; b=jnHSM6hxZxn+Ff1PV4oVC9jIuKxVWfvtaDqx4Conpd97MwXdx1dJCUonpEyOhM1XNpmA+zxlOfx9DRi1M77wJOCgqUzaOYTAFs7WLIkqP7IUnQCg2GLbKekXve885p9qLJwkVzVigbo6TjT7K0ERgHuVZ33KP/vKeQClmhJFdiM=
+	t=1733160667; cv=none; b=YJiGo/S9o3dJKx5knm+u0NQ7OPQTYQdO907gzGm2dSancHXhBN/+uTlFYIn5D7srusbaHR0rZtkY2bAIgdVArSzEvjAmsv4+2atBywWiRugGuuZjAL7Guxmprg+bDWYZe7IUnh+SP6pjtgjV83vgXZKYYG9YZ9qrQQ3961GKUOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160645; c=relaxed/simple;
-	bh=2sI4NWDo1unfh0oSPY9l/XTTvoBr8ZTZvHDGO1dZdUk=;
+	s=arc-20240116; t=1733160667; c=relaxed/simple;
+	bh=27hbzCnEIwzOJ0IGzzylVzuWfUp7oqVpT0YFWxcLVsg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WQgmfI+Zf0VUjZ1J5szttTPLIaTpHBdiwIh7J5tC9D1FJXlqwbODn/K8geAHo4v4Z8G8XPtXlOGeXX06pLG+T1Dgq2Ar1bHsEkBa3R72jV4yDfrJ+a9Fh/wgRZ4dcAB6WIwVWB51nLPTKhmrLsDyYh2PHNgkyMkQBOX9rvcQRg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDeJOblT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93BC0C4CED1;
-	Mon,  2 Dec 2024 17:30:42 +0000 (UTC)
+	 MIME-Version:Content-Type; b=eEimQnOQnJGnRuv/w0BOIMWdJzcW7rCgJ3nM3772tKUKgEFShx/iPQu1Kdy5iufofhi/lCpUjvxdphTsKrfH1zeCMd61lUrl6hl7Z5eJmbtIH6mW6mDo7sxovHvvkN8j+qAOMrW23ZOYZkeeNIncU41NpJ4KKWX9UczdZP9ZQlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Abvbe3+T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DC0C4CED1;
+	Mon,  2 Dec 2024 17:31:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733160644;
-	bh=2sI4NWDo1unfh0oSPY9l/XTTvoBr8ZTZvHDGO1dZdUk=;
+	s=k20201202; t=1733160666;
+	bh=27hbzCnEIwzOJ0IGzzylVzuWfUp7oqVpT0YFWxcLVsg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=BDeJOblT2iNfZWfGnG8gMJuTMWmxtRXSH71lDjfic5AZACJMeHvodlAKDIOOhLuMN
-	 hvtXrWTB+itzKdnTV4pe6oAYv8+med5Jp7O2gCQ/IrJPLB/teqPYUEHnq6zv6Dit9q
-	 nWI9cD9OfOnEns2uJ/HXjnH2NtwHzsBzJNgE3YIGa1rg4CadIOrtC1QYVJDXgzKL7i
-	 ZrVO1oGM+Qib7Q2h9Y92MAgxKkC+5zrhWCWRFzUKyHiZo3itRF7IcQwH3Aqds4cySF
-	 wxEaijkTU2JLsg/heyLtFaxC6ibP/SnONtxILhavTzD+9PckKjcCS+k8puxs2KOQaY
-	 WqQRMe7kJOc3A==
+	b=Abvbe3+T9OICU0YToDA+15POVSCNlTQPhv0L/gb1zWq9gMrmMkDwedpIvo0yo4jg3
+	 XnctuyOpcU3YiHFViBXg4iNG8msrmEpjW5outJn5uC1QguV72RkJuInPE5gmj71fQa
+	 q9uo5YteQyX7kpZtbWnYT3ZmQsGkOFLnkhgGG8s7IyrNUNDFliMSMAoJxpWuqyBbeh
+	 sA7mMQ6N9gOi45nF+eqo3oaQMffhsoxa8kRhBHZ9FKcOVA+5laQ2+/kGGt9phy7wC8
+	 ianbSwBs0hy4b52nDYO4mlpZ02/aA/ubP5+UOth9wrj+Ifx2/6MRnE6AGOtX1NfAXg
+	 E9sLIfNPvnRqQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, stable@vger.kernel.org, 
- Ferry Toth <fntoth@gmail.com>
-In-Reply-To: <20241104095142.157925-1-andriy.shevchenko@linux.intel.com>
-References: <20241104095142.157925-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v5 1/1] dmaengine: dw: Select only supported masters
- for ACPI devices
-Message-Id: <173316064213.537992.6375063758006475146.b4-ty@kernel.org>
-Date: Mon, 02 Dec 2024 23:00:42 +0530
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20241115092854.1877369-1-quic_vdadhani@quicinc.com>
+References: <20241115092854.1877369-1-quic_vdadhani@quicinc.com>
+Subject: Re: [PATCH v2] dt-bindings: dma: qcom,gpi: Add QCS615 compatible
+Message-Id: <173316066288.538095.7308879081334615310.b4-ty@kernel.org>
+Date: Mon, 02 Dec 2024 23:01:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,23 +63,15 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 04 Nov 2024 11:50:50 +0200, Andy Shevchenko wrote:
-> The recently submitted fix-commit revealed a problem in the iDMA 32-bit
-> platform code. Even though the controller supported only a single master
-> the dw_dma_acpi_filter() method hard-coded two master interfaces with IDs
-> 0 and 1. As a result the sanity check implemented in the commit
-> b336268dde75 ("dmaengine: dw: Add peripheral bus width verification")
-> got incorrect interface data width and thus prevented the client drivers
-> from configuring the DMA-channel with the EINVAL error returned. E.g.,
-> the next error was printed for the PXA2xx SPI controller driver trying
-> to configure the requested channels:
+On Fri, 15 Nov 2024 14:58:54 +0530, Viken Dadhaniya wrote:
+> Document compatible for GPI DMA controller on QCS615 platform.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/1] dmaengine: dw: Select only supported masters for ACPI devices
-      commit: f0e870a0e9c5521f2952ea9f3ea9d3d122631a89
+[1/1] dt-bindings: dma: qcom,gpi: Add QCS615 compatible
+      commit: c841f9909b0d947ae7593040cc59646dc9f14455
 
 Best regards,
 -- 
