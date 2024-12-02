@@ -1,154 +1,167 @@
-Return-Path: <linux-kernel+bounces-428385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DF39E0D98
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:15:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9F19E0DAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:18:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1DF228334C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:15:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6071F1656F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391911DF960;
-	Mon,  2 Dec 2024 21:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662A71DF73D;
+	Mon,  2 Dec 2024 21:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VaaKdBD0"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EXCTsxmQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24F31DF254;
-	Mon,  2 Dec 2024 21:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D321DF248
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 21:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733174127; cv=none; b=hEsJrQ5loqBUvqf9iyJTmlzGnHW9Jm2ziZQvK5Pm3qpGWFTdPM9ZY6gkt0Von+yoPKp7v7DF6JeiKoBZCgl7gTQHTyGm+U/djf2IIGOTo5/gVqDFtvCyKAv4x/c/25FTh1v6p8/HPbgXcFtpffzm1euEYD5NZDebh9jhOhpsNV4=
+	t=1733174245; cv=none; b=NX8Akn6/oN1RxGPDJ44vQ1Jgax5tZAQHXHaX/HiIfoAlx9YAcRMwSjA+Ewk2e+PzKDDSDclVzoZW9Up0AfELc9YCoIfnfX/FYD37EJuW8yYuW5t2YilmN2G5OhXLIzT4j3/E2NmqLKfs2qdADiXkJ2HzZZYYYJc/MdPdpvsyRLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733174127; c=relaxed/simple;
-	bh=5xBRl6LYJX84sBYDQoMlNHxrwFZvRBjU54HJ4TDu9v0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iY2xEib41ddbV7FcH7KC8WnH5cmnGNcj3PGXrmCtynES1bomN8Q4TVoMRYZVJ6gVXCYW+EjKVSt9+yID3pHqK3pgQ8lqPboZdrvntDrRay1Q9G0poV4AsVBzSNYzhRSc+DNx0PB73EJL5MHkLeLBhW101rY2EOJKn2JbhuO67dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VaaKdBD0; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2LFL7T1522484
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 2 Dec 2024 15:15:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733174121;
-	bh=n22cYySdwX9dZAn+uyVPdwYnc8ISC4OTsUIj22ELFlU=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=VaaKdBD0Gw8VJmuXm2GzC4PF/mqKsqQzG+W1pK+j21Q5A4t0aAV/JyjciEm4W92j1
-	 aMH5uGT95NsNdw2tAo//DqRGoPP/EQj1cnh1ozROcygDOuKp/HKX2I36n1j4jtrCE3
-	 NPO96LbWZP+2Fv5Ne2QBwRvP7uofBfm+SqOgqHG0=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2LFLhe121625;
-	Mon, 2 Dec 2024 15:15:21 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
- Dec 2024 15:15:21 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 2 Dec 2024 15:15:21 -0600
-Received: from fllvsmtp7.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2LFKgs099805;
-	Mon, 2 Dec 2024 15:15:21 -0600
-From: Andrew Davis <afd@ti.com>
-To: Sebastian Reichel <sre@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew Davis
-	<afd@ti.com>
-Subject: [PATCH 5/5] power: supply: ds2782: Use devm_delayed_work_autocancel() helper
-Date: Mon, 2 Dec 2024 15:15:19 -0600
-Message-ID: <20241202211519.199635-5-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241202211519.199635-1-afd@ti.com>
-References: <20241202211519.199635-1-afd@ti.com>
+	s=arc-20240116; t=1733174245; c=relaxed/simple;
+	bh=t4XaBmyGmRhYl/xnoSDjLRV77s4p43RLFz184sAzJvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Iy/oafcsLt7HFNdF/RlzkaKWCJAq5fZSPYL/YvRwtIPpgQbQd9iicl+49/++sSTgM3QVmMYkv+BitSlLts4WRCKMmxaGoOmDvW5VPKHOBxjt9SPvifwbGSoupA+rtA/m3Ha59l1LGx2GQGwuOt8qqXF0zncfQbkMr6haP/pTkao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EXCTsxmQ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733174244; x=1764710244;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=t4XaBmyGmRhYl/xnoSDjLRV77s4p43RLFz184sAzJvM=;
+  b=EXCTsxmQdknlkoHNvBxYTe8nEJzO1EiYTHWw3l9INNmX3VFTV6h/FxfM
+   c7qaD3GMzngrWFhdaP949SnR+S8sD7mT5tEnEwiRas//qEWJv1rS/lZcV
+   YRJkGKaiMqeGL0qYxo+wiHsXyWAm3rL6YfdURmY5bHw1vQGvlwxjcxIOu
+   Z+nqHnMReutRmtD0MO3Bg9gbyQTC53/0+eR54FwlbGhyQqTjFVuKysHTU
+   f53nhUNRSVUjRrDKSjoYVrPFtUQ5suFIUPsQZ0tClOuskTokPM5okpxyU
+   nUZEJxtfNgWNDC0lI+pMhIU8ftUgn1CJNb9NpL7hpFHFaXkR7aLZ1eQsc
+   w==;
+X-CSE-ConnectionGUID: vDKnJvVyTs6FvMlEdUO97A==
+X-CSE-MsgGUID: pCj5DCouQG+PpkFUpZ+F6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44750834"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="44750834"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 13:17:24 -0800
+X-CSE-ConnectionGUID: fi7hbOz0T0SABfqTXPMYSw==
+X-CSE-MsgGUID: dupDHQJOSCyQTm7P3ptBpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="98246410"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 02 Dec 2024 13:17:23 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIDmn-0002uP-3D;
+	Mon, 02 Dec 2024 21:17:04 +0000
+Date: Tue, 3 Dec 2024 05:16:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yonghong Song <yhs@fb.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>
+Subject: versioncheck:
+ ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4
+ linux/version.h not needed.
+Message-ID: <202412030521.F6WsljUl-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Use the device lifecycle managed work init function. This helps prevent
-mistakes like canceling out of order in cleanup functions and
-forgetting to canceling on error paths.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+commit: 16f0efc3b46352018c297bbdb2c405e7d8a63095 tools/bpf: add selftest in test_progs for bpf_send_signal() helper
+date:   6 years ago
+reproduce: (https://download.01.org/0day-ci/archive/20241203/202412030521.F6WsljUl-lkp@intel.com/reproduce)
 
-Note we move this to after the registering the power supply so that
-the cancel is called before unregistering.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412030521.F6WsljUl-lkp@intel.com/
 
-This was the last thing the .remove() function did, so remove that too.
+versioncheck warnings: (new ones prefixed by >>)
+   INFO PATH=/opt/cross/clang/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -Wformat-overflow -Wformat-truncation -Wrestrict -Wenum-conversion W=1 --keep-going HOSTCC=gcc-12 CC=gcc-12 -j32 ARCH=x86_64 versioncheck
+   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
+   	-name '*.[hcS]' -type f -print | sort \
+   	| xargs perl -w ./scripts/checkversion.pl
+   ./arch/arm64/kernel/hibernate.c: 25 linux/version.h not needed.
+   ./arch/csky/include/asm/atomic.h: 6 linux/version.h not needed.
+   ./arch/csky/include/asm/io.h: 9 linux/version.h not needed.
+   ./arch/csky/include/asm/thread_info.h: 9 linux/version.h not needed.
+   ./arch/csky/include/asm/uaccess.h: 16 linux/version.h not needed.
+   ./arch/csky/kernel/process.c: 5 linux/version.h not needed.
+   ./arch/csky/mm/dma-mapping.c: 14 linux/version.h not needed.
+   ./arch/csky/mm/fault.c: 16 linux/version.h not needed.
+   ./arch/um/drivers/vector_kern.c: 11 linux/version.h not needed.
+   ./drivers/block/rsxx/rsxx_priv.h: 28 linux/version.h not needed.
+   ./drivers/block/skd_main.c: 30 linux/version.h not needed.
+   ./drivers/crypto/cavium/cpt/cptpf_main.c: 16 linux/version.h not needed.
+   ./drivers/crypto/cavium/zip/common.h: 59 linux/version.h not needed.
+   ./drivers/crypto/ccree/cc_driver.h: 25 linux/version.h not needed.
+   ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c: 53 linux/version.h not needed.
+   ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c: 28 linux/version.h not needed.
+   ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c: 26 linux/version.h not needed.
+   ./drivers/gpu/drm/pl111/pl111_display.c: 19 linux/version.h not needed.
+   ./drivers/gpu/drm/pl111/pl111_drv.c: 56 linux/version.h not needed.
+   ./drivers/gpu/drm/tve200/tve200_display.c: 17 linux/version.h not needed.
+   ./drivers/gpu/drm/tve200/tve200_drv.c: 42 linux/version.h not needed.
+   ./drivers/hv/hv.c: 29 linux/version.h not needed.
+   ./drivers/i2c/busses/i2c-brcmstb.c: 25 linux/version.h not needed.
+   ./drivers/i2c/busses/i2c-xgene-slimpro.c: 22 linux/version.h not needed.
+   ./drivers/media/dvb-frontends/mxl5xx.c: 30 linux/version.h not needed.
+   ./drivers/media/pci/cx25821/cx25821.h: 41 linux/version.h not needed.
+   ./drivers/media/platform/s3c-camif/camif-core.c: 30 linux/version.h not needed.
+   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.h: 16 linux/version.h not needed.
+   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c: 31 linux/version.h not needed.
+   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c: 14 linux/version.h not needed.
+   ./drivers/media/usb/uvc/uvc_driver.c: 23 linux/version.h not needed.
+   ./drivers/mtd/nand/raw/brcmnand/brcmnand.c: 15 linux/version.h not needed.
+   ./drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c: 24 linux/version.h not needed.
+   ./drivers/net/ethernet/qlogic/qede/qede.h: 35 linux/version.h not needed.
+   ./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 32 linux/version.h not needed.
+   ./drivers/net/ethernet/qlogic/qede/qede_main.c: 34 linux/version.h not needed.
+   ./drivers/net/usb/lan78xx.c: 5 linux/version.h not needed.
+   ./drivers/net/wireless/rsi/rsi_91x_ps.c: 19 linux/version.h not needed.
+   ./drivers/scsi/cxgbi/libcxgbi.h: 27 linux/version.h not needed.
+   ./drivers/scsi/qedf/qedf.h: 18 linux/version.h not needed.
+   ./drivers/scsi/qedf/qedf_dbg.h: 16 linux/version.h not needed.
+   ./drivers/scsi/qedi/qedi_dbg.h: 17 linux/version.h not needed.
+   ./drivers/soc/tegra/powergate-bpmp.c: 18 linux/version.h not needed.
+   ./drivers/staging/media/bcm2048/radio-bcm2048.c: 36 linux/version.h not needed.
+   ./drivers/staging/rtl8723bs/include/drv_types.h: 17 linux/version.h not needed.
+   ./drivers/staging/rtl8723bs/include/ioctl_cfg80211.h: 10 linux/version.h not needed.
+   ./drivers/usb/early/xhci-dbc.c: 21 linux/version.h not needed.
+   ./drivers/watchdog/ziirave_wdt.c: 30 linux/version.h not needed.
+   ./fs/ext4/ext4.h: 30 linux/version.h not needed.
+   ./include/linux/qed/qed_ll2_if.h: 41 linux/version.h not needed.
+   ./kernel/bpf/syscall.c: 27 linux/version.h not needed.
+   ./samples/bpf/sampleip_kern.c: 7 linux/version.h not needed.
+   ./samples/bpf/trace_event_kern.c: 8 linux/version.h not needed.
+   ./samples/mic/mpssd/mpssd.c: 40 linux/version.h not needed.
+   ./sound/soc/codecs/cs35l35.c: 16 linux/version.h not needed.
+   ./sound/soc/codecs/cs42l42.c: 18 linux/version.h not needed.
+   ./tools/perf/include/bpf/bpf.h: 68: need linux/version.h
+   ./tools/perf/tests/bpf-script-example.c: 48: need linux/version.h
+   ./tools/perf/tests/bpf-script-test-kbuild.c: 20: need linux/version.h
+   ./tools/perf/tests/bpf-script-test-prologue.c: 46: need linux/version.h
+   ./tools/perf/tests/bpf-script-test-relocation.c: 50: need linux/version.h
+   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
+>> ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- drivers/power/supply/ds2782_battery.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/power/supply/ds2782_battery.c b/drivers/power/supply/ds2782_battery.c
-index ea687b9703314..cae95d35d3980 100644
---- a/drivers/power/supply/ds2782_battery.c
-+++ b/drivers/power/supply/ds2782_battery.c
-@@ -11,6 +11,7 @@
-  * UEvent sending added by Evgeny Romanov <romanov@neurosoft.ru>
-  */
- 
-+#include <linux/devm-helpers.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/types.h>
-@@ -310,13 +311,6 @@ static void ds278x_power_supply_init(struct power_supply_desc *battery)
- 	battery->external_power_changed	= NULL;
- }
- 
--static void ds278x_battery_remove(struct i2c_client *client)
--{
--	struct ds278x_info *info = i2c_get_clientdata(client);
--
--	cancel_delayed_work_sync(&info->bat_work);
--}
--
- #ifdef CONFIG_PM_SLEEP
- 
- static int ds278x_suspend(struct device *dev)
-@@ -412,18 +406,19 @@ static int ds278x_battery_probe(struct i2c_client *client)
- 	info->capacity = 100;
- 	info->status = POWER_SUPPLY_STATUS_FULL;
- 
--	INIT_DELAYED_WORK(&info->bat_work, ds278x_bat_work);
--
- 	info->battery = devm_power_supply_register(&client->dev,
- 						   &info->battery_desc,
- 						   &psy_cfg);
- 	if (IS_ERR(info->battery)) {
- 		dev_err(&client->dev, "failed to register battery\n");
- 		return PTR_ERR(info->battery);
--	} else {
--		schedule_delayed_work(&info->bat_work, DS278x_DELAY);
- 	}
- 
-+	ret = devm_delayed_work_autocancel(&client->dev, &info->bat_work, ds278x_bat_work);
-+	if (ret)
-+		return ret;
-+	schedule_delayed_work(&info->bat_work, DS278x_DELAY);
-+
- 	return 0;
- }
- 
-@@ -440,7 +435,6 @@ static struct i2c_driver ds278x_battery_driver = {
- 		.pm	= &ds278x_battery_pm_ops,
- 	},
- 	.probe		= ds278x_battery_probe,
--	.remove		= ds278x_battery_remove,
- 	.id_table	= ds278x_id,
- };
- module_i2c_driver(ds278x_battery_driver);
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
