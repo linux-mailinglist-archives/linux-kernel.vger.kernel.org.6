@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-428350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0280B9E0D3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:43:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC339E0D31
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:42:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0DD280A92
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:43:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108EA165302
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F191DF268;
-	Mon,  2 Dec 2024 20:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A421DEFC7;
+	Mon,  2 Dec 2024 20:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XEuFWHkS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DnmVeGT8"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A59A1DEFC5;
-	Mon,  2 Dec 2024 20:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F131DB375
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 20:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733172166; cv=none; b=rmPQJJCKzkF2uETQ5OsVJUDlATtI1xsN9RCkvoCrE+HrhwgVDjYvAeVbWIOYXdmjmJleIUl6cxPq1eg4ehAmVQeZ+X7EKd5LYu7uQCKU8Pkh3DRuEHTZoi7UwdIzQ+LnZBmktvNp1HvEf8xZQBYUzo/VipNFm5TpsebWDKosabo=
+	t=1733172150; cv=none; b=QNZjxwhKWYJCy8KrrPEO4VUlQFn6Pxx5bTYfYz9hiwweCfmn0QO0tyfJVAQS1c+xeoHuqX9uAGHgzFOcwGiL0okcZi61Yh/zFaGiTC1U8EvPuoxdyzP+Hl6WjEkzz+UVxHTRj6KQO0bUlu68O3JP0N+xxtVQmiR1F/xKAvr7pa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733172166; c=relaxed/simple;
-	bh=dIijZwoRaA6rxyvoqR4huEu7nEMw44IUyghyh0WYPc8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=XfudkMFzPN4K+NdlJLkyl4TbD9jRP+qWQdj8N1mZJ2phX29adJLUPwXu0XoLPKhV1XqBjPwvvBhX2eOYkvA3nMWpE8MSe96hqFWHxc2vQ7YLKtQ+7BD5BXTF5+eZvqAGThREKIr5eD5Q1U/k9NU8HFQCv12oIpB+ylHuUACbcYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XEuFWHkS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B29XNBl026469;
-	Mon, 2 Dec 2024 20:42:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6BGp4ismpDEOyFPSZ2otVrrI661Oz81+8eHZ9x8VmKU=; b=XEuFWHkSWZXVTfCZ
-	nSAkCYK+NgIwhzP87sLRyuhisuEHNDO2YWp9i70stx2J/lyp0lZ8jHpJUtpz7jK6
-	56Tsm+Kr2KdYRYvbXybY6m5Idr+KixnGMDsEP/bumBBErjsDnEd8DCZRMqb35TWH
-	vviP9NyCPhkv51fSeLvhr2e8V+c3tkgUutd3god7n1lPyXRXBDEeI83W7NNmx1q8
-	NbOFyzo672ZMNf0bOmEcYKerWdLtSmXsFjFXJVTw4FN9ibp95iwo8vMB2wy7PtrZ
-	FGglAmcn//qfvGZz8GfjDTMGltwAgWXfaZJdSj/aOUn3VETV239Y5dcvppHTPvCK
-	EvNvnQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ufe5u6q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 20:42:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B2KgZhk028654
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Dec 2024 20:42:35 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 2 Dec 2024 12:42:35 -0800
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Date: Mon, 2 Dec 2024 12:41:59 -0800
-Subject: [PATCH 2/3] drm/msm/dp: do not touch the MMSS_DP_INTF_CONFIG for
- tpg
+	s=arc-20240116; t=1733172150; c=relaxed/simple;
+	bh=So58BXuncYIboiWaENrBOfZ+bpn/0USfmTRKvrJYBx4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ak6ABbbeCSo508rgSQz0Gtr5DdM0Smp6ns6ZetwZips523sGbJfypN4gEnN7MdaL43ZHGXFauxGJ1QfrMtP2rvsoFtSP29OzAqDz8TIjecR9UOSwp1Pmt7g5dr4jX2HSMfVCEegmF+Nw3yjJjx++G44pxaJhiPeqAtqq019rs5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DnmVeGT8; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d842280932so47392166d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 12:42:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733172147; x=1733776947; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7WWNnGM1SseVvgF623+8aFk1sTvlHCnrRssC64Qo0+w=;
+        b=DnmVeGT8Wyh47dHy46LOXoInSwa3dr249MoP77kWNBSqGI3MxsxQefqJ7iW83dosvB
+         zTFFzKGo2wyK5m+RM/lo2MjlLe+bqqAlAwQG2qG2Zz+/KIR8pGKneRMIri/B0Sb6oZif
+         dltSS5RdrEBy6BgdUIAaPbJyEWi8wnP1a+4xI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733172147; x=1733776947;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7WWNnGM1SseVvgF623+8aFk1sTvlHCnrRssC64Qo0+w=;
+        b=uTHn1IbjR3dLeCM4K0fRH/cl5YTQvgovWIKFfDrncZTGYcaOrdZwZWRnadY9pAkZx5
+         EY7SrKrFqiH2h1kYpMWekhC5WWXMhA8v9ccfqT5P9nQWy5xheR6mmUydiOgxj8zxKyvR
+         X+LzvBVEJPYS5+NOFm0lomL0tY0Igc6EydAT5FddzU1q4bP9FoOCCi5NVlY6bdcqo4A/
+         4ut2w6ttCOWCMac9aDaes+a6Vfo0ZICS0eDMFzOl2NOS9BHJCuv1HxzcKZEoz3hhMgbn
+         STM3szZri8Jtwb3YkjpXp2MHzxWXOhZ34v0imruH+pFGsu2SOIVmUizJdSdA/6oFXhbF
+         sROw==
+X-Gm-Message-State: AOJu0YzxSaG+uMOZUmlGPs9dOZg3V56Jh3xWR0ZFKMdp+CiPNbkuV2dY
+	FRZmTKGu+t6VZdRIG8O4XIZ4R5AsUsqgy0PO7KwneD8O8My9heEtPSzLvwQcXQ==
+X-Gm-Gg: ASbGnctxa2R+3Zu98NHebSVH1o7T+FzIxDzZNlINXA7+np3hrkX7gA7/FRI1TtMZcXo
+	8KBNS56R6u536ZmlXowjn3ROXHhuXcbKdQaPa2dyIDnYfBJ9TsXGH4FzqYV6lfodZLKlhEhvs3S
+	UsEhrsYB7u6Mh4M5rdQbsZx26uP7VLoEorDdXHo0YDhOyDJ2f9cM80I7Iqh1xAZrmhRWsp2N7Rq
+	anSKZBDz4zT9qZ2xD3rnvmbEuGEoxexdLfOYbN7+OXBIkQVUqH6w3Gzy2F8Sl1MUJ6MKuGnQq5j
+	L+5MYdBoMn81xRhEPZCUaIoi
+X-Google-Smtp-Source: AGHT+IEe8uxCWTfFC27oIC5bckcBwtRIg7jGfYnts+IYz5lQueVIl0W6RVCDU2McJuD8C7Tq4aPVjg==
+X-Received: by 2002:a05:6214:2501:b0:6d8:9062:6616 with SMTP id 6a1803df08f44-6d8b72e17b8mr792916d6.7.1733172147490;
+        Mon, 02 Dec 2024 12:42:27 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d89c2f3d02sm25681276d6.52.2024.12.02.12.42.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 12:42:26 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 02 Dec 2024 20:42:24 +0000
+Subject: [PATCH] checkpatch: allow multiple Reported-by tags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,78 +76,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241202-tpg-v1-2-0fd6b518b914@quicinc.com>
-References: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
-In-Reply-To: <20241202-tpg-v1-0-0fd6b518b914@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kuogee Hsieh
-	<quic_khsieh@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        "Jessica
- Zhang" <quic_jesszhan@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>
+Message-Id: <20241202-multi-close-v1-1-a68240379db1@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAK8bTmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDIKGbW5pTkqmbnJNfnKprnGpkbGBilGJqaGGqBNRRUJSallkBNi06trY
+ WAJzF2MFdAAAA
+To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
+ Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, 
+ Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733172154; l=1252;
- i=quic_abhinavk@quicinc.com; s=20240509; h=from:subject:message-id;
- bh=dIijZwoRaA6rxyvoqR4huEu7nEMw44IUyghyh0WYPc8=;
- b=4B7z7IF5pWVXkf23L/XprZeUT8sv4/9yuOhEZynQnUI085ig+bwm74lAgavAJnFmEgph/dlIx
- DYCsqg6D+cYClY+HIPBjOXcnTPdLsOe2tNjaBoqxZn8xRBlumWecxga
-X-Developer-Key: i=quic_abhinavk@quicinc.com; a=ed25519;
- pk=SD3D8dOKDDh6BoX3jEYjsHrTFwuIK8+o0cLPgQok9ys=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rkYBwRkElpsSTBXFBLVK7fUpvzg3hGDH
-X-Proofpoint-GUID: rkYBwRkElpsSTBXFBLVK7fUpvzg3hGDH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=962 clxscore=1015 adultscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020174
 
-MMSS_DP_INTF_CONFIG has already been setup by the main datapath
-for DP to account for widebus to be used/unused etc.
+If a patch has been reported by multiple individuals, allow a single
+Closes tag.
 
-In current implementation, TPG only switches the DP controller
-to use the main datapath stream OR use the test pattern but expects
-the rest of the controller to be already setup.
+Given this patch:
 
-Keeping the same behavior intact, drop the clearing of MMSS_DP_INTF_CONFIG
-from the msm_dp_catalog_panel_tpg_enable() API.
+: Reported-by: kernel test robot <lkp@intel.com>
+: Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+: Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+: Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
 
-Fixes: 757a2f36ab09 ("drm/msm/dp: enable widebus feature for display port")
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Allow also this:
+
+: Reported-by: kernel test robot <lkp@intel.com>
+: Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+: Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/gpu/drm/msm/dp/dp_catalog.c | 1 -
- 1 file changed, 1 deletion(-)
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
-index 05c8e1996f60..36d3f3d248ca 100644
---- a/drivers/gpu/drm/msm/dp/dp_catalog.c
-+++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
-@@ -1048,7 +1048,6 @@ void msm_dp_catalog_panel_tpg_enable(struct msm_dp_catalog *msm_dp_catalog,
- 	display_hctl = (hsync_end_x << 16) | hsync_start_x;
- 
- 
--	msm_dp_write_p0(catalog, MMSS_DP_INTF_CONFIG, 0x0);
- 	msm_dp_write_p0(catalog, MMSS_DP_INTF_HSYNC_CTL, hsync_ctl);
- 	msm_dp_write_p0(catalog, MMSS_DP_INTF_VSYNC_PERIOD_F0, vsync_period *
- 			hsync_period);
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 9eed3683ad76..d6a79993fdf1 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3189,7 +3189,7 @@ sub process {
+ 				if (!defined $lines[$linenr]) {
+ 					WARN("BAD_REPORTED_BY_LINK",
+ 					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . "\n");
+-				} elsif ($rawlines[$linenr] !~ /^closes:\s*/i) {
++				} elsif ($rawlines[$linenr] !~ /^closes:\s*/i && $rawlines[$linenr] !~ /^reported(?:|-and-tested)-by:\s*/i) {
+ 					WARN("BAD_REPORTED_BY_LINK",
+ 					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . $rawlines[$linenr] . "\n");
+ 				}
 
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241202-multi-close-3e23042d5185
+
+Best regards,
 -- 
-2.34.1
+Ricardo Ribalda <ribalda@chromium.org>
 
 
