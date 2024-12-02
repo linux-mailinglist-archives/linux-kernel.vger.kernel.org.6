@@ -1,161 +1,218 @@
-Return-Path: <linux-kernel+bounces-427432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5369E00E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:48:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681EA9E00F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:51:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C2C1622AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:47:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28ACF28245B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8645B1FDE36;
-	Mon,  2 Dec 2024 11:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE7F1FE46A;
+	Mon,  2 Dec 2024 11:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XeyJ4STY"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mBftX+RP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B3B1F9AA3;
-	Mon,  2 Dec 2024 11:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108061FDE0B;
+	Mon,  2 Dec 2024 11:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733140075; cv=none; b=d/416/XCRQWtqsMFtCLS2vFD6OIA2I5cC79OYgIBpk16x1KCXa2KE5JPGCGFdhVeiSH+Mgdkk94peI5ldC96T4Pbn1SSvGo7lm6He2i07MwyMQhNB3WN82huKT3KJcUN+e+QCgBEzEhpgryAITv/4NAusQ8v4eckfpFDkCcCRRI=
+	t=1733140263; cv=none; b=PWWrmYBYo6tgkyE4cyYzqN7UH7MO7+PdRHnWwzbMVnUYiJgZtfeOVY2T7DMYw2SmNTCY6bH8NWfhYZXYxLyiV1VMSzdd3DQ68lkbV7aTWuKnl9DyHJW1Q1o7UBoQTpzW3pOjjgOfdCHBgQwJTHu1M/QML6TCXe+KmxzRp9GSxdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733140075; c=relaxed/simple;
-	bh=7b+5QBkw+sfaYLBUUpWCAzOQ6XFXSoqIasPZQOnv31s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=o+i984XVJCiGaBVD2IbySDexHocddZRgbilMCkk6r0zO84viZ6H9nk4d/Sm5uX3ZGgzNx2m+GI20oPeDrD070kkevRNY99/FDzVPp8f5K3Mb7OHWgVJ7nnj4OGIvQpMiN1Xtb88bW3dugnFfcBmCj/Sn285mZVkrXruDmzYr91A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XeyJ4STY; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53de556ecdaso4079003e87.1;
-        Mon, 02 Dec 2024 03:47:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733140072; x=1733744872; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xzUJUTzbvGPKwa+PxhmndHawfIFfq48oDBcRmcx5a4o=;
-        b=XeyJ4STY6wQQVLbVa3idElKKOes0sPWc6pEbxwsdA7BdX2o8Mladj+ZC6DTfNk2K9w
-         J48VTbNZmIGN6h+WyZLsSFnWzf7MMd0Fpf/IR/m25e2kiqCRUBDVLV6g2L/5tgDq6WZv
-         0FdcgT6ihK4//wVvZThhlp7zlcf7r7dMvbp8XdZeeXmJ14z38K1oosz5XivX7UGmzcUl
-         Jay8dNEjYE17dGRLvpC9yaStjRUcNqMKeNybmFUh3uFUJGIPy4kAabHvyU77cpC/6n2S
-         PVAJeCdncei3mG4AXqCPtXNYbPvEr14ZDO6W86H7ZcJ/DUZ9CnqmM32TNlE9V11O4snj
-         pJBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733140072; x=1733744872;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xzUJUTzbvGPKwa+PxhmndHawfIFfq48oDBcRmcx5a4o=;
-        b=GgiBxD28t9KVnLVcyxNMCpaJVhgtL8Y/Ibk6nE0Wf72YNpEB2iIEc440EbKoXFt6pH
-         JQeepGUsQzLLq3ROBIOipTsykQMfjzYhhCyr2ioxDnBvc6HVkkIwAeSsyBpLrAQRCtDc
-         KCHB3EG3Si7O5k1pujSuOBVsFQe2vMZKwqfcl/6H3Arr+uqnDpNXkEPSaKr6hUmZle/H
-         aSlzJnrQqbUynqZDqiwKQ82t1dJ9X4JpmRPbBQ6gGBu2tvspiSlZVErPvwWoXi2IK8LM
-         0Syhf7/GoOJr/yjRXpHLHpbVjZuzwMUionxcg6SYuQb81cual3V74B53zxmDeALPIgv7
-         smLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8r29MhBTU8OOmZNHVxF5B3mH3WR1quJ/HLrgVlLoBIKkXgw6wGADmKa2di6V+rCsrESjILdGeGKk69EFA@vger.kernel.org, AJvYcCW/DBKZuBtJYtkJ4loo2UmOsWfR7vQ12bRtmQeK+fRJpYDrAEiiZ/vVCO0VtyIJhMGVwmrmmy9UKIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNetsvr5Xgsn6Qr0RJktMhKEJRqAGxJQglnGsul6TtpmcjCh3Z
-	iXMOp3jE+nZeYs6G65OVTyYN2hzh9KjdgRGXpAPqQUjK/5FdvBVv
-X-Gm-Gg: ASbGncsqiDs/Qiu2W9A5ntZaLCVOVegggxNhoeP46J+CbkBon6V3LxYsXIxLuAnHDJ5
-	0j2Y8vWuEsHjliD8ImgUL76nlM8844gNx1N7kPg4TfT9oYVThrSUM4mtYa99+/GF5evZSvu30li
-	3QFzlE6B4cbStLtIP3+RkwRGYuGRAf7Q9jDBwWnXuxChqxgE1Y+2zHd+rnRzCZbbGS5Hhvou6UU
-	yJFHtdGXvECawOwFlxRKfWfDn8zxtD3hmNRoiN6dw50Eyjmg1RdqerI
-X-Google-Smtp-Source: AGHT+IFIz62MfwBuZME7MVogwfKQcWcn+994S5k0u0UnacF62zbdlzDiLo5U62H63uF5RYoA83f8fw==
-X-Received: by 2002:a05:6512:398c:b0:53d:ea3c:2ba0 with SMTP id 2adb3069b0e04-53df00d12afmr12838986e87.16.1733140072128;
-        Mon, 02 Dec 2024 03:47:52 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6495ba0sm1426130e87.172.2024.12.02.03.47.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 03:47:50 -0800 (PST)
-Date: Mon, 2 Dec 2024 13:47:42 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: kx022a: document new chip_info structure members
-Message-ID: <Z02eXtrrO8U5-ffo@mva-rohm>
+	s=arc-20240116; t=1733140263; c=relaxed/simple;
+	bh=6s+NoKimPKemUsivQ2UQfp09dpUvkW+1d2SOJ8lE8Ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o1R/LAkKz+HX7kVE6SjtqAHn2fm4r9sv/9bw0URwZ+KF9qbyqvMpId/F0k0d7g76W7fgdHZl/NtnvrWJ2Xhd2FohvdrAS2ty9v0wHgN8fb9DJpJ2vH3DyQKheCLfJNdgJqcYE98iPG+1zMj+2x+TPMn3OCqhyFOkWRJsDEPROso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mBftX+RP; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733140261; x=1764676261;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6s+NoKimPKemUsivQ2UQfp09dpUvkW+1d2SOJ8lE8Ts=;
+  b=mBftX+RPASQON6ykWFjqdbeeRraYXXkOuC4Wg/cpFcX2yKddo1JDwbS4
+   ilFwVZmHvgd/O3R6H7PgPX9Z/pm3KDoyg9zfbqbn/FZoNTQAAX3gaWIDq
+   UUkzOZUb4SS1ddjNrCmUlSQIC567vafr/KGOySHReac4qZHCrIsSWTwzU
+   UTPoKzGHgZnQ1OQfzW4rcPNT4fny7hxHT2pVdqVrgEdOzktATb68G+E43
+   M+Kxav5Oaa9qCRIH/H9KySEAoQIgRXWqWmELmnyhgz3T1onhw7Jse5ofm
+   32sEVaYSKxCdTaKDBr038Iz2Y/SBVtXAbvvCcTeM2kBiTtrJgiWa6B2v3
+   Q==;
+X-CSE-ConnectionGUID: KA6uCkhtRPG07d0meB7+qg==
+X-CSE-MsgGUID: B7PmB1v0Sy+IkRe/FN5iJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="43915758"
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="43915758"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 03:51:00 -0800
+X-CSE-ConnectionGUID: twTOEWXkQZG/Kp2jTLzKIg==
+X-CSE-MsgGUID: D07UsJe3T1OBrjeWggGlWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="98117906"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 02 Dec 2024 03:50:58 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tI4x5-0002NM-2S;
+	Mon, 02 Dec 2024 11:50:55 +0000
+Date: Mon, 2 Dec 2024 19:50:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ben Zong-You Xie <ben717@andestech.com>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, ukleinek@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	Ben Zong-You Xie <ben717@andestech.com>
+Subject: Re: [PATCH v2 2/2] pwm: atcpit100: add Andes PWM driver support
+Message-ID: <202412021900.oCRrT3PV-lkp@intel.com>
+References: <20241202060147.1271264-3-ben717@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KFfhg9dvQCPxm6jq"
-Content-Disposition: inline
-
-
---KFfhg9dvQCPxm6jq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241202060147.1271264-3-ben717@andestech.com>
 
-The kx022a driver supports a few different HW variants. A chip-info
-structure is used to describe sensor specific details. Support for
-sensors with different measurement g-ranges was added recently,
-introducing sensor specific scale arrays.
+Hi Ben,
 
-The members of the chip-info structure have been documented using
-kerneldoc. The newly added members omitted the documentation. It is nice
-to have all the entries documented for the sake of the consistency.
-Furthermore, the scale table format may not be self explatonary, nor how
-the amount of scales is informed.
+kernel test robot noticed the following build warnings:
 
-Add documentation to scale table entries to maintain consistency and to
-make it more obvious how the scales should be represented.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master thierry-reding-pwm/for-next v6.13-rc1 next-20241128]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Suggested-by: Mehdi Djait <mehdi.djait@linux.intel.com>
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Ben-Zong-You-Xie/dt-bindings-pwm-add-atcpit100-pwm/20241202-140437
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241202060147.1271264-3-ben717%40andestech.com
+patch subject: [PATCH v2 2/2] pwm: atcpit100: add Andes PWM driver support
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20241202/202412021900.oCRrT3PV-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241202/202412021900.oCRrT3PV-lkp@intel.com/reproduce)
 
----
-Wording is difficult. Especially when not working on ones native
-language. So, I am glad is someone evaluates whether using the 'NANO'
-to describe 0.000 000 001 is correct - or if term like 'ppb' would make
-more sense...
----
- drivers/iio/accel/kionix-kx022a.h | 5 +++++
- 1 file changed, 5 insertions(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412021900.oCRrT3PV-lkp@intel.com/
 
-diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-k=
-x022a.h
-index 142652ff4b22..82c4ced7426d 100644
---- a/drivers/iio/accel/kionix-kx022a.h
-+++ b/drivers/iio/accel/kionix-kx022a.h
-@@ -137,6 +137,11 @@ struct kx022a_data;
-  *
-  * @name:			name of the device
-  * @regmap_config:		pointer to register map configuration
-+ * scale_table:			Array of two integer tables containing
-+ *				supported scales. Each scale is represented
-+ *				a 2 value array. First value being full
-+ *				integers, second being NANOs.
-+ * scale_table_size:		Amount of values in tables.
-  * @channels:			pointer to iio_chan_spec array
-  * @num_channels:		number of iio_chan_spec channels
-  * @fifo_length:		number of 16-bit samples in a full buffer
---=20
-2.47.0
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/jiffies.h:7,
+                    from include/linux/ktime.h:25,
+                    from include/linux/timer.h:6,
+                    from include/linux/workqueue.h:9,
+                    from include/linux/srcu.h:21,
+                    from include/linux/notifier.h:16,
+                    from include/linux/clk.h:14,
+                    from drivers/pwm/pwm-atcpit100.c:18:
+   drivers/pwm/pwm-atcpit100.c: In function 'atcpit100_pwm_config':
+>> drivers/pwm/pwm-atcpit100.c:123:59: warning: integer overflow in expression of type 'long int' results in '94030336' [-Woverflow]
+     123 |                                 (ATCPIT100_CYCLE_MAX + 1) * NSEC_PER_SEC,
+         |                                                           ^
+   include/linux/math64.h:298:39: note: in definition of macro 'DIV64_U64_ROUND_UP'
+     298 |         ({ u64 _tmp = (d); div64_u64((ll) + _tmp - 1, _tmp); })
+         |                                       ^~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [y]:
+   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
 
 
---KFfhg9dvQCPxm6jq
-Content-Type: application/pgp-signature; name="signature.asc"
+vim +123 drivers/pwm/pwm-atcpit100.c
 
------BEGIN PGP SIGNATURE-----
+    76	
+    77	static int atcpit100_pwm_config(struct pwm_chip *chip, unsigned int channel,
+    78					const struct pwm_state *state)
+    79	{
+    80		int clk;
+    81		int ret;
+    82		unsigned int reload_val;
+    83		unsigned long rate[NUM_ATCPIT100_CLK];
+    84		u64 max_period;
+    85		u64 min_period;
+    86		u64 high_cycle;
+    87		u64 low_cycle;
+    88		struct atcpit100_pwm *ap = to_atcpit100_pwm(chip);
+    89		unsigned int ctrl_val = ATCPIT100_CHANNEL_CTRL_MODE_PWM;
+    90		u64 high_period = state->duty_cycle;
+    91		u64 low_period = state->period - high_period;
+    92	
+    93		rate[ATCPIT100_CLK_EXT] = clk_get_rate(ap->ext_clk);
+    94		rate[ATCPIT100_CLK_APB] = clk_get_rate(ap->apb_clk);
+    95	
+    96		/*
+    97		 * Reload register for PWM mode:
+    98		 *
+    99		 *		31 : 16    15 : 0
+   100		 *		PWM16_Hi | PWM16_Lo
+   101		 *
+   102		 * In the PWM mode, the high period is (PWM16_Hi + 1) cycles, and the
+   103		 * low period is (PWM16_Lo + 1) cycles. Since we need to write
+   104		 * "numcycles - 1" to the register, the valid range of numcycles will
+   105		 * be between 1 to 0x10000. Calculate the possible periods that satisfy
+   106		 * the above restriction:
+   107		 *
+   108		 *	Let m = 1, M = 0x10000,
+   109		 *	m <= floor(cycle) <= M
+   110		 * <=>	m <= floor(rate * period / NSEC_PER_SEC) <= M
+   111		 * <=>	m <= rate * period / NSEC_PER_SEC < M + 1
+   112		 * <=>	m * NSEC_PER_SEC / rate <= period < (M + 1) * NSEC_PER_SEC / rate
+   113		 * <=>	ceil(m * NSEC_PER_SEC / rate) <= period <= ceil((M + 1) * NSEC_PER_SEC / rate) - 1
+   114		 *
+   115		 * Since there are two clock sources for ATCPIT100, if the period is not
+   116		 * valid for the first clock source, then the second clock source will
+   117		 * be checked. Reject the request when both clock sources are not valid
+   118		 * for the settings.
+   119		 */
+   120		for (clk = ATCPIT100_CLK_EXT; clk < NUM_ATCPIT100_CLK; clk++) {
+   121			max_period =
+   122				DIV64_U64_ROUND_UP(
+ > 123					(ATCPIT100_CYCLE_MAX + 1) * NSEC_PER_SEC,
+   124					rate[clk]) - 1;
+   125			min_period =
+   126				DIV64_U64_ROUND_UP(ATCPIT100_CYCLE_MIN * NSEC_PER_SEC,
+   127						   rate[clk]);
+   128	
+   129			if (ATCPIT100_IS_VALID_PERIOD(high_period) &&
+   130			    ATCPIT100_IS_VALID_PERIOD(low_period))
+   131				break;
+   132		}
+   133	
+   134		if (clk == NUM_ATCPIT100_CLK)
+   135			return -EINVAL;
+   136	
+   137		/*
+   138		 * Once changing the clock source here, the output will be neither the
+   139		 * old one nor the new one until writing to the reload register.
+   140		 */
+   141		ctrl_val |= clk ? ATCPIT100_CHANNEL_CTRL_CLK : 0;
+   142		ret = regmap_update_bits(ap->regmap, ATCPIT100_CHANNEL_CTRL(channel),
+   143					 ATCPIT100_CHANNEL_CTRL_MASK, ctrl_val);
+   144		if (ret)
+   145			return ret;
+   146	
+   147		high_cycle = mul_u64_u64_div_u64(rate[clk], high_period, NSEC_PER_SEC);
+   148		low_cycle = mul_u64_u64_div_u64(rate[clk], low_period, NSEC_PER_SEC);
+   149		reload_val = FIELD_PREP(ATCPIT100_CHANNEL_RELOAD_HIGH, high_cycle - 1) |
+   150			     FIELD_PREP(ATCPIT100_CHANNEL_RELOAD_LOW, low_cycle - 1);
+   151	
+   152		return regmap_write(ap->regmap, ATCPIT100_CHANNEL_RELOAD(channel),
+   153				    reload_val);
+   154	}
+   155	
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdNnloACgkQeFA3/03a
-ocX//ggAxZpa9WgDEFp2qhfc9aaWTV8LOS3OmYPbO15WvGemNjfa42GC7yrsUh7r
-9P8dTom4eaI6XMnLsZ8U9S/qLwgQkXn2EmjE8vPh2XC3Iqs5zAD50XYv8yqgyefv
-kD4epENf1hXmmV92OuFq1EEJvdOvfwlan1ASuf0tkpWPVHD8t9mTbx7p35zijfzT
-p8XlPTs7hynQUkTYGTJnli0vqJx1kS3hr9IfB/+FqMuVnGw/ssUIr1E2RNVrVR0e
-SvX7m+6bobwF3mexGRK9aSb6VR90DSU7mKL1c5KO4id9XYGXbLPcsWWXzRLi+/AD
-SkWusjh0uDDR14jLWs06+7Wfu+viNw==
-=2akq
------END PGP SIGNATURE-----
-
---KFfhg9dvQCPxm6jq--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
