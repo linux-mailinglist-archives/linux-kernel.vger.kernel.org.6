@@ -1,144 +1,171 @@
-Return-Path: <linux-kernel+bounces-428317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39229E0CC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:06:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A80F9E0CCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:08:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71CAF1655B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:06:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1CB31656C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC94D1DE893;
-	Mon,  2 Dec 2024 20:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2iH3h+D"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B041DED53;
+	Mon,  2 Dec 2024 20:08:39 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B651DE4C3
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 20:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB1F1DE4C3
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 20:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733169959; cv=none; b=VWIIy13gV3DRqgk4WGCHZWM+EjEr0wWEn+EVKXFYMSgnUj9jn7q7kr5TuCmQvQUFgMeN2OrGLbLs5UYvLV0bAtZ/kQ/a+nDDhJ8RllWHlZZqbWZ9f/actL3uv4WcnzhtQVyZviiFgKdLgZNRcGGlDr8NSHuKpGWehkSbzq2u12s=
+	t=1733170118; cv=none; b=TF30Hqj6ivYVZYJ6DFbxRehjnW6zREecJvHSZNrQ7I98o756rF7VvcPV8Awm07zDUzT6Xo427wG2lUdE4vYB/wwWZQKrbM1YG05TX3N98RM8Ige07Ob5TEheyHLM0lBMs+N8bR0gKWKjGd77nkTeZFKSo+gQ90U0/FwsAKmw9Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733169959; c=relaxed/simple;
-	bh=tvI0fMppZP5TdDg3FrEaG3Djn2HFR3FR3ICXDxVWJXA=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B1iU3p6tsCGU/Mr8tyPMJZkUFDgSv5ugvRReFwNEQk0PSGyHWsfRx+NVDksCHZaCNgLg4qgmf6sNzH1A/jDEdambgByzbYYNam0ljn/Mq+cSZberu770J2lE1KFNqTtZ+WEokVwCI1oBGsz+I7qFS7YLFVvYHJR7KZmRXfkHrok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2iH3h+D; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2156e078563so15605045ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 12:05:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733169957; x=1733774757; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=lKx+wsSbW4y7aQytDu/WL7bD2GcTIJk5vN6zES4YuJo=;
-        b=a2iH3h+D8M58nzxkQD0y4zRabFuainynChjVBNNrSy6WulfjpnT3aKfoOtAXsDrwdN
-         Jmj1GpcZeE/l4mr60WosvQf69Es83wxuNMXwDalbeCgp6/zSDbkguJ5ULIxPRJERr5QO
-         ZVczHHVVax29ytJOxbtOXvr0YgV6DZTldd0o87pbWs/wbdFA7NEGnjaIDxfTjIvl7tOn
-         3pAGFYPB2X3780aLSCmhV1Jm/Jf8K4zSciEgqdVFny1UpEuIenoiHnBqwKMTEEI7khWv
-         AME8c4WLBRdSJ4WA3Wkkj/y5k4bYXOwuEgoK6UlGHdY+JaW6faVX4FD2Tf0ionmjohmF
-         x0hw==
+	s=arc-20240116; t=1733170118; c=relaxed/simple;
+	bh=qSiP/DGVB9480yaDs2l5qreFVEdTl016XfrHtwqi0RI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NjJ+A+XKlaiKe04/tV48ogxAahVn+ZS1ykQY+OOvlMrEfdeA6Bwx43EmHaNusRFReCnVYlCK4aQcoVQB3jVwstzEfOF+qlw56KL64gqWrJMQxFuE3jVdOHe/MyfAmikSs/cIbmLgQn6w/Jz1GV+R8BcgI5J/VIHlYSNAC07C7Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-83e5dd390bfso426183239f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 12:08:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733169957; x=1733774757;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lKx+wsSbW4y7aQytDu/WL7bD2GcTIJk5vN6zES4YuJo=;
-        b=RAD/kxTJpZqzO4U/+bOOT9XjJ8Ve97T4KHVlWlfi57QZIV5KFqogsDtzSKMUSShuB9
-         8gD/Vy3GBtXij8EftlOANwnErAKbjQQszqouQV0axCrBTF4+41b9/m6ejFqGSdWm07y9
-         dk9T/6/3eKJ6ieWnbulrquzkOKIXus1TmwdenXMp8uLZlE8v2xOkqUYae1cKYdTdMItY
-         dvzZjtDkJmb/mBoiIDLYsUoRyq8QZLgCK2ki1wCuf7dyVllMCESEGQHlPK84Z3faP3lS
-         R3D5UBRkKPrnSka2WIh6rodzmUGDnf/NBUwampn77/xOEPHpeUa04Eauw8wunXFfRqLt
-         kD9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVMe2lTLXybAMV4GIhgHQLS2/WedA8kAKt1HybZlLggYzZwAzFvkwiOER9tK8b46C61dlwleq9OFRHPpGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXOzswuN3AJ4iMX+mRxVDmkfvzTCOflv1/51O1VY+tuzE1Z5fk
-	nBFlXNLabkwLIPQLX8U660k6AeHbzCtuhdZiKGGibXKoZKL7iL+5
-X-Gm-Gg: ASbGncuN3VMkAHMXjsTgW8O1xQsrBNAexbleGHHnRg0sMr2qNwhuzE7FRh0o58/ulIJ
-	J2p3k98OvQgDEteKRGg6GgHcosVuUkZt9LHB2ZjVgC57Sylstmp0saWH1oiaKjXaWoZ4v2Se6BB
-	j6M301EWejXbYWBGc1LLwsuZEGTWzB4WHbWwGtHZM/ueFMem5fCKHwFK71YQxZXK0YYiPKaq4S0
-	SBR5zjj0//H363WgCAVB9hVvaivz0ufxFAwIzUYrDFDX03q/ZWLWUYO9axqZJo5FiHyxVXAs/Og
-	4jeHyFaVuKbd13LflqQ=
-X-Google-Smtp-Source: AGHT+IHgaAEKCXY5HI8a0IxqQxM5vzXaBrFUcDO6dGPdmTBNiQThrPNt4i4vMbWEm24Og5PKbD/Hyg==
-X-Received: by 2002:a17:903:32cc:b0:215:7ce8:1364 with SMTP id d9443c01a7336-2157ce8163fmr93345985ad.13.1733169956992;
-        Mon, 02 Dec 2024 12:05:56 -0800 (PST)
-Received: from DESKTOP-DUKSS9G. (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2154be15034sm56304035ad.205.2024.12.02.12.05.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 12:05:56 -0800 (PST)
-Message-ID: <674e1324.170a0220.377d6f.b6ed@mx.google.com>
-X-Google-Original-Message-ID: <Z04TIUPJQe3Vdu_L@DESKTOP-DUKSS9G.>
-Date: Mon, 2 Dec 2024 12:05:53 -0800
-From: Vishal Moola <vishal.moola@gmail.com>
-To: Alex Shi <seakeel@gmail.com>
-Cc: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	minchan@kernel.org, willy@infradead.org, senozhatsky@chromium.org,
-	david@redhat.com, 42.hyeyoo@gmail.com,
-	Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
-Subject: Re: [PATCH v7 00/21] mm/zsmalloc: add zpdesc memory descriptor for
- zswap.zpool
-References: <20240902072136.578720-1-alexs@kernel.org>
- <0a10e61b-f0e6-4423-996c-7884c93af65f@gmail.com>
- <66d8bd3e.170a0220.18832.0206@mx.google.com>
+        d=1e100.net; s=20230601; t=1733170112; x=1733774912;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T2DuQQt4YAp0ub8FM1kAcoO6DJSYOWK+rmFmkB4i84Q=;
+        b=ueqb/dXGYES+kk+llhBXXFF8PghkRnqaTZzMhKBJANgi0etvg2WuYZHccmLIH2fBru
+         i815fb4mmpEwYtW3kxuIdX/myvhFwpFjsnhblG/1PhzPWHHmLOiNiwblbX0l42VIPmDu
+         qwIKYsB9LlXp+2xtCcdobiY7sRunNqggdWVmlNweyCN9emexG40ioVZxxP1jaYbIsegB
+         BrSscqtuB3ifvjdsCGTR+w917ucEwtj7xh2hnbhWAZ8xData5bqO8zEojOtxv6hM/9m3
+         deLiLIGnUHrKvUOzmE0wx13ooWOWpgoQndoSpaRdZkQGpsfgbAy0WopzJ0RC/pRex8JN
+         YE5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX18f4rUL/BMZ6dD3zRrxjtS19u5yt5/u21pQAmJNXBubGkd3Xu+j57Uogcuw4PHpPoE6w24ImuA9amGK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4rCzZUhcxE1/l0/y19Q2QXvEx1auvM7njp/LBgLjnlUhg2go3
+	NQfuf0mdLl9AY+5CFee5PTHZTvPs5oBnYdEdGOPjiCL/dk0mvizHY1UNrxuxpdhchYCrgmUQsdV
+	IaMDqKauyRZXcm8AkI7e2MCx2mVnx0HX1FXa1XsXVGSQPiUsIM1NCU/s=
+X-Google-Smtp-Source: AGHT+IFtyxEKBueGdGuMZU4vkQXU0qGEE/smJwJ2rK2FlcJ1e00B+Re17MWU94EgOYeMl7MJ2XuSH9YWJa64AvGK9MUVptgMiJHp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66d8bd3e.170a0220.18832.0206@mx.google.com>
+X-Received: by 2002:a92:c54a:0:b0:3a7:d02b:f653 with SMTP id
+ e9e14a558f8ab-3a7d02bf7ccmr184513945ab.0.1733170112491; Mon, 02 Dec 2024
+ 12:08:32 -0800 (PST)
+Date: Mon, 02 Dec 2024 12:08:32 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674e13c0.050a0220.48a03.0029.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in ip6mr_free_table
+From: syzbot <syzbot+6e8cb445d4b43d006e0c@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 04, 2024 at 01:04:11PM -0700, Vishal Moola wrote:
-> On Wed, Sep 04, 2024 at 02:54:14PM +0800, Alex Shi wrote:
-> > 
-> > 
-> > On 9/2/24 3:21 PM, alexs@kernel.org wrote:
-> > > From: Alex Shi <alexs@kernel.org>
-> > > 
-> > ...
-> > 
-> > > 
-> > > This patchset abstracts the memory descriptor used in zsmalloc by zswap/zram.
-> > > The descriptor still overlays the struct page; nothing has changed
-> > > in that regard. What this patchset accomplishes is the use of folios in
-> > > to save some code size, and the introduction of a new concept, zpdesc. 
-> > > This patchset is just an initial step; it does not bias the potential 
-> > > changes to kmem_alloc or larger zspage modifications.
-> > > 
-> > ...
-> > > 
-> > > Thanks a lot for comments and suggestion from Yosry, Yoo, Sergey, Willy
-> > > and Vishal!
-> > > 
-> > 
-> > This patchset could save 6.3% code size, and it's a nice abstract of zsmalloc
-> > memory usage.
-> > Is there any more comments, or mind to give a reviewed-by?
-> 
-> Please CC me on future versions. Most of the zsmalloc conversions seem
-> ok, but I'd hold off on further iterations of the descriptor patches until
-> the maintainers decide on what/how this descriptor will be used
-> (i.e. our end goals).
+Hello,
 
-I apologize for leaving this in limbo for this long. This patchset is a
-prerequisite to shrinking struct page, so we should get this memdesc in.
+syzbot found the following issue on:
 
-I think it's safe to assume (since we've heard no definitive goal from
-the maintainers) that in our memdesc world we want zsmalloc + zspage to be
-similar to how it currently looks today.
+HEAD commit:    7af08b57bcb9 Merge tag 'trace-v6.13-2' of git://git.kernel..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=105733c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ae452ddde099ccb1
+dashboard link: https://syzkaller.appspot.com/bug?extid=6e8cb445d4b43d006e0c
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d04d30580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142fcf78580000
 
-Would you like to rebase this on the current mm-unstable? I'll re-review
-it in case anything changed (and can then give you my reviewed-by).
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/dc5dc75196ac/disk-7af08b57.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/63b4670d0126/vmlinux-7af08b57.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f9d6e3a842d9/bzImage-7af08b57.xz
 
-> > Thanks
-> > Alex
+The issue was bisected to:
+
+commit 11b6e701bce96f98474084f26821157cb0dccf69
+Author: Paolo Abeni <pabeni@redhat.com>
+Date:   Sun Nov 24 15:40:56 2024 +0000
+
+    ipmr: add debug check for mr table cleanup
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1443e9e8580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1643e9e8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1243e9e8580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6e8cb445d4b43d006e0c@syzkaller.appspotmail.com
+Fixes: 11b6e701bce9 ("ipmr: add debug check for mr table cleanup")
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 7478 at net/ipv6/ip6mr.c:419 ip6mr_free_table+0xbd/0x120 net/ipv6/ip6mr.c:419
+Modules linked in:
+CPU: 0 UID: 0 PID: 7478 Comm: syz-executor212 Not tainted 6.12.0-syzkaller-10689-g7af08b57bcb9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:ip6mr_free_table+0xbd/0x120 net/ipv6/ip6mr.c:419
+Code: 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 58 49 83 bc 24 c0 0e 00 00 00 74 09 e8 94 fe a9 f7 90 <0f> 0b 90 e8 8b fe a9 f7 48 8d 7b 38 e8 f2 be 96 f7 48 89 df be 0f
+RSP: 0018:ffffc9000ca37820 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888071720000 RCX: ffffffff89e4c674
+RDX: ffff888030d1a440 RSI: ffffffff89e4c6ac RDI: ffff88802b0ccb40
+RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: ffff88802b0cbc80
+R13: ffff888071720000 R14: ffff888071720008 R15: dead000000000100
+FS:  00007f8e0d5626c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc0ae64c68 CR3: 000000007c576000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ip6mr_rules_exit+0x176/0x2d0 net/ipv6/ip6mr.c:283
+ ip6mr_net_exit_batch+0x53/0xa0 net/ipv6/ip6mr.c:1388
+ ops_exit_list+0x128/0x180 net/core/net_namespace.c:177
+ setup_net+0x4fe/0x860 net/core/net_namespace.c:394
+ copy_net_ns+0x2b4/0x6b0 net/core/net_namespace.c:500
+ create_new_namespaces+0x3ea/0xad0 kernel/nsproxy.c:110
+ copy_namespaces+0x468/0x560 kernel/nsproxy.c:179
+ copy_process+0x2a11/0x8df0 kernel/fork.c:2398
+ kernel_clone+0xfd/0x960 kernel/fork.c:2807
+ __do_sys_clone+0xba/0x100 kernel/fork.c:2950
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8e0d5a7419
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8e0d562238 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007f8e0d631328 RCX: 00007f8e0d5a7419
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040020000
+RBP: 00007f8e0d631320 R08: 0000000000000000 R09: 00007f8e0d5626c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f8e0d5fe074
+R13: 0000000000000000 R14: 00007ffc0ae64ba0 R15: 00007ffc0ae64c88
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
