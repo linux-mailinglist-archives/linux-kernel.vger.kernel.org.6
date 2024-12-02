@@ -1,125 +1,116 @@
-Return-Path: <linux-kernel+bounces-427983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFEB9E08BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:36:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C3CB16D7CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:21:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3D318B464;
-	Mon,  2 Dec 2024 16:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RGLLq2CG"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C2E9E0850
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:22:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF954204D;
-	Mon,  2 Dec 2024 16:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A612868CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:22:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217AE18C013;
+	Mon,  2 Dec 2024 16:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbbY+fN9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F5817DFE1;
+	Mon,  2 Dec 2024 16:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733156513; cv=none; b=Sv5po+pT/k3SIWx3Hg/GT+9w3csgr+NznmeOQ/F6rtQNqc1JtQoyJwj7+yMGI/3eDlg/0v8y1Pk3lJ4nZv5Gy9ppH3iCOMH8J1YQTyXd2Jw0V2digUB+Vd+JfVVVI4spA8Q2jGxaktdqv2HtatfBied5nE3AYOrxI8UWzEDqhT4=
+	t=1733156513; cv=none; b=D0GjvxHzhGI6i1xoD1RvWhXhaVvlos+57/zZ//Yk7x3UoxmI4kuYc32h3u2UuDq4jC9XKOgK6SdLvgshRqDfjkDqmUEFsZNdyaOZh9Omhkcxik4rohkvmLmKeHx85Z3vi2k138pa2z0r2in/ldKtcvg+aJhTF6juQtZ0rG2EYG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733156513; c=relaxed/simple;
-	bh=FuuewJd0xgy6SswgETCkr24Q/CXWixc+DK17YLD4yHE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mFdqJ0XAUb2X3xdqCwQv1cI71F0bZ6EwpweGT3v2QYITUdI23nmtIoTpkue5LChXlfp0BLRmFVwNCHYQylliDr1OvpAuEWzP733BEhDL95YeJqyYPeMAd0M60wtGIpd5rqT/o7D5AzLSSVe+J0QhflHQgN61TpIySN4hcnnWk1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RGLLq2CG; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6B1202000B;
-	Mon,  2 Dec 2024 16:21:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733156503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DWuQP6dS8+NmZBcntvso++MRt6a15SWWGT2AIb959RI=;
-	b=RGLLq2CGoEjcqd+gKN/ktqXtcE8p1p5n8+b28cqBMhsW/NEVNEAkFoELeO4IgCvXkdkr2/
-	hlaVtg7P3s9OTtE89/4hRw300qW6UZg60Oj62JgNOuSOVtlNcU6AR0dx5XJ3c1yQG7ARRC
-	f6X5XPp2QrpCXVpFT8/MLk2h1WjSnsY+jR7+jI5FEIXx+TUXf37c+r/Zf1QEQbEW0StumV
-	w44ypUVkND2+h0asZXYHzSUfBZo1trPLPih2D7tRe1o2LqCXClu2+XTssFxA3aWaNQe08l
-	zZ2xqytw1NsJBTWpM/CPqxjgJ2SghL+v8Zwilmme+h+r7BELz9It2SxONPvDPg==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- Wolfram Sang <wsa@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Cosmin Tanislav <demonsingur@gmail.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] i2c: atr: Fix client detach
-Date: Mon, 02 Dec 2024 17:21:42 +0100
-Message-ID: <12772983.O9o76ZdvQC@fw-rgant>
-In-Reply-To: <20241122-i2c-atr-fixes-v2-1-0acd325b6916@ideasonboard.com>
-References:
- <20241122-i2c-atr-fixes-v2-0-0acd325b6916@ideasonboard.com>
- <20241122-i2c-atr-fixes-v2-1-0acd325b6916@ideasonboard.com>
+	bh=M8G40HlAqKSLTPrhmiBGiAiaHsou848ROOonuY5/5nU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CRhnD2q3Oi2nhCDmLY32mjUdHxT12eEUDSIGCjBQkFKdzeVC0257obxAA2akaYp+qylUyKZQNgxN1GDjEMo+5gVzgepTreRMT4Hs6zFYx/7SSK/mKPR4cXYj5A+lVWF6AebYe0bs0fwq13jeq2xm8pNMwLN73qLU4R55S7sGhAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbbY+fN9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 653EBC4CED2;
+	Mon,  2 Dec 2024 16:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733156513;
+	bh=M8G40HlAqKSLTPrhmiBGiAiaHsou848ROOonuY5/5nU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UbbY+fN9ZiJcMZQiFp71hUeY1hRNb1GaGHbKL3cQIQv0DQHsvaP05oB6ME1aUAQxc
+	 66OqCG4Uc+204F0ecBk78hYkY4ho4pO0qH5pqLnWHqdQYJsREc4kPCnz2BvEDSpzC5
+	 M8LRpBj6bbZwV+ZNZn+NOPeekUitp+jfcHt79/k3/extQmg1tlR0PRod1vM2d2EUnN
+	 zKoE3/d5q8t5H+K0Uut/gTFjwSaKBctZukM/POAYtb9mc7h+xtGljfj2baAMfQthWf
+	 YYe1vLveIWbFaVPj4sT3Fnl9F7ptEGWujI2ObxJ4p49tb4eTGgzYXdeTjYxjG2HYFO
+	 chlJpSIVYvNEQ==
+Date: Mon, 2 Dec 2024 21:51:48 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Paul Cercueil <paul@crapouillou.net>, Nuno Sa <nuno.sa@analog.com>,
+	dmaengine@vger.kernel.org
+Subject: Re: [PATCH] linux/dmaengine.h: fix a few kernel-doc warnings
+Message-ID: <Z03enImvI+c7cZYw@vaman>
+References: <20241125061508.165099-1-rdunlap@infradead.org>
+ <1dcee6d5-761b-4fa2-a336-c23d3aaadcb9@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1dcee6d5-761b-4fa2-a336-c23d3aaadcb9@infradead.org>
 
-On vendredi 22 novembre 2024 13:26:18 heure normale d=E2=80=99Europe centra=
-le Tomi=20
-Valkeinen wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->=20
-> i2c-atr catches the BUS_NOTIFY_DEL_DEVICE event on the bus and removes
-> the translation by calling i2c_atr_detach_client().
->=20
-> However, BUS_NOTIFY_DEL_DEVICE happens when the device is about to be
-> removed from this bus, i.e. before removal, and thus before calling
-> .remove() on the driver. If the driver happens to do any i2c
-> transactions in its remove(), they will fail.
->=20
-> Fix this by catching BUS_NOTIFY_REMOVED_DEVICE instead, thus removing
-> the translation only after the device is actually removed.
->=20
-> Fixes: a076a860acae ("media: i2c: add I2C Address Translator (ATR) suppor=
-t")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  drivers/i2c/i2c-atr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
-> index f21475ae5921..0d54d0b5e327 100644
-> --- a/drivers/i2c/i2c-atr.c
-> +++ b/drivers/i2c/i2c-atr.c
-> @@ -412,7 +412,7 @@ static int i2c_atr_bus_notifier_call(struct
-> notifier_block *nb, dev_name(dev), ret);
->  		break;
->=20
-> -	case BUS_NOTIFY_DEL_DEVICE:
-> +	case BUS_NOTIFY_REMOVED_DEVICE:
->  		i2c_atr_detach_client(client->adapter, client);
->  		break;
+On 24-11-24, 22:20, Randy Dunlap wrote:
+> 
+> 
+> On 11/24/24 10:15 PM, Randy Dunlap wrote:
+> > The comment block for "Interleaved Transfer Request" should not begin
+> > with "/**" since it is not in kernel-doc format.
+> > 
+> > Fix doc name for enum sum_check_flags.
+> > 
+> > Fix all (4) missing struct member warnings.
+> > 
+> > Use "Warning:" for one "Note:" in enum dma_desc_metadata_mode since
+> > scripts/kernel-doc does not allow more than one Note:
+> > per function or identifier description.
+> > 
+> > This leaves around 49 kernel-doc warnings like:
+> >   include/linux/dmaengine.h:43: warning: Enum value 'DMA_OUT_OF_ORDER' not described in enum 'dma_status'
+> > 
+> > and another scripts/kernel-doc problem with it not being able to parse
+> > some typedefs.
+> > 
+> > Fixes: b14dab792dee ("DMAEngine: Define interleaved transfer request api"), Jassi Brar
+> 
+> Oops, I left a note in the line above. I'll fix it for v2 after comments.
 
-LGTM, tested on a TI FPC202 ATR.
+lgt,, I guess we can do a v2 now
 
-Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
-Tested-by: Romain Gantois <romain.gantois@bootlin.com>
+> 
+> > Fixes: ad283ea4a3ce ("async_tx: add sum check flags")
+> > Fixes: 272420214d26 ("dmaengine: Add DMA_CTRL_REUSE")
+> > Fixes: f067025bc676 ("dmaengine: add support to provide error result from a DMA transation")
+> > Fixes: d38a8c622a1b ("dmaengine: prepare for generic 'unmap' data")
+> > Fixes: 5878853fc938 ("dmaengine: Add API function dmaengine_prep_peripheral_dma_vec()")
+> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Jassi Brar <jaswinder.singh@linaro.org>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Cc: Dave Jiang <dave.jiang@intel.com>
+> > Cc: Paul Cercueil <paul@crapouillou.net>
+> > Cc: Nuno Sa <nuno.sa@analog.com>
+> > Cc: Vinod Koul <vkoul@kernel.org>
+> > Cc: dmaengine@vger.kernel.org
+> > ---
+> >  include/linux/dmaengine.h |   13 ++++++++++---
+> >  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> 
+> -- 
+> ~Randy
+> 
 
-=2D-=20
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-
-
+-- 
+~Vinod
 
