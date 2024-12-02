@@ -1,105 +1,135 @@
-Return-Path: <linux-kernel+bounces-428085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222DA9E0C26
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:30:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAEB59E0C7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:46:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EF23B86F6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:32:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8210BA15AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E651DC19A;
-	Mon,  2 Dec 2024 17:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15921DE890;
+	Mon,  2 Dec 2024 17:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rn1qsH8V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Np6Vb9OH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9A61DB37B;
-	Mon,  2 Dec 2024 17:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D870F1DD9A6;
+	Mon,  2 Dec 2024 17:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160752; cv=none; b=FvzUX3EfxxmgaZZBW/eo7qlJKlnaJSygcwXR+A3w1S96mxx4Y818m7ursJfQH86paqMJ+o+vk/54kngm5LkIfbev1Jqb1KUG3ZDoTD7v/SROlMXXZVNysGS0cL/g94cI1/JTnyK2IQCdoCqF8n4iUGJ5eGXTFxH3zh86r8fdF9I=
+	t=1733160905; cv=none; b=aC46UuUqnc8+Z1Fl4X5nwgG7lYehxz08NMb34slQswfjfoquaE7Iuzsje3+xIQjYJguaEbCatHcQKMmaXCWDtCxtcgXuNbA1FgcDWq1a2U31Av5Hveg/emFodf3NN3IPI/cCH4UjUMtoo0vkK6jyLihvNd9W92wYCKS0HaL1hWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160752; c=relaxed/simple;
-	bh=w6qO0Ed/ublU69cCli1C54Cmd72s6/ejpFNGotr9uzI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Q03l5fuPQqcLrE4CzIgNALXOwsT2sbYVqtVK5bBeA/4B6MPvXR8J8Q/qQrGlKunz3rQQThpjI4O2VgvC4hM1w1nfD6xXNz1P2hhfTb3dQmkw6qbXEHkyeTLzG8GhcieWJR9Brz14y9S5XKAqSMrkNX8qT5oOlGsvFSgyi+9E9rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rn1qsH8V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B186C4CED1;
-	Mon,  2 Dec 2024 17:32:31 +0000 (UTC)
+	s=arc-20240116; t=1733160905; c=relaxed/simple;
+	bh=FZmPlNwEP0dLH9uzEAPVjoA2IENASDBcbOxyxt6OpgQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qrJJWTK9rBQgUTSp5pr+8bOnsLL+YPgDcwFRS/FHeYgGaGjt9I2S171xiu9EXLwHTvGBMvPtuaiN6LBPZokKjpKtrYZF5QBSxIR8d2G4BSyhF3IFX8zX6pECbyL5Z7dztH0ExggQwo4YIhpR/E9Wt6hFg/ngowJ6zgdOgUBh9R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Np6Vb9OH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 637F2C4CEE3;
+	Mon,  2 Dec 2024 17:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733160751;
-	bh=w6qO0Ed/ublU69cCli1C54Cmd72s6/ejpFNGotr9uzI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Rn1qsH8VMjXlRnQHHa9Dv++TvuG6MSvi1tGugzebcjkhjuluwxukyhCupbFV3tNGs
-	 HiJXBOa2SA9qR24iA06crMO49iD1hjRj6xOrgv+KM+hAXv5H4KqKCwuQXsek6+ZB5Z
-	 5mD8+l/gJywwdqKjA6MlYbOGTaNrnv9UytiEwNGtyBgMFTu9zUz4kHsNs3BJ4/yilz
-	 eui4ZFhp27082Kjc4dl1tu+BzDq1HMxknSaa+wXulCEl7FoMhZKX2w9puG2tAJH80/
-	 9bKhZL4ih+nN2yEb7em2KP/SjlLMc5WYGWIyZG/+G+B46RzbSvaiG7TTO9YlgPLwOW
-	 tuwHh3GKVUGSA==
-Date: Mon, 02 Dec 2024 11:32:29 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1733160904;
+	bh=FZmPlNwEP0dLH9uzEAPVjoA2IENASDBcbOxyxt6OpgQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Np6Vb9OHybQfNzDBImwNMJVhDJu/8UXyGodvRv29g6p6oSEeNdnBODBy7/6sK8Mt+
+	 zlRyO0cedmOcRUNaIFPlX4cc9ErbeCj7+h5RT4pjxrGC77hKjrDMpHgNvCTqz/nTsN
+	 w2i9wWcIiPMIwKxE9P4tpnswci6LoL102L0oXYpKajA8DGNgirvUJuwLmrOme0joUv
+	 au2yD/+s5HolY3ATZHEuyWQNYlk57qFV5d0V2FGBKiMgUjnTAD8aFWym1eWRfJlkBL
+	 pu0rc2snu+Ik9dYybACLnKehUFwBD96canGBtO+Btp8w/PUQyUWT4dLC5UwFytqCqY
+	 7y0i7z89Sln0A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D2FD7833D;
+	Mon,  2 Dec 2024 17:35:04 +0000 (UTC)
+From: Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org>
+Date: Tue, 03 Dec 2024 02:33:27 +0900
+Subject: [PATCH 05/10] minmax: simplify __clamp_once() by using
+ is_const_false()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org, 
- devicetree@vger.kernel.org, David Jander <david@protonic.nl>, 
- Richard Weinberger <richard@nod.at>, kernel@pengutronix.de, 
- Vignesh Raghavendra <vigneshr@ti.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Heiko Schocher <hs@denx.de>, 
- linux-kernel@vger.kernel.org
-To: Jonas Rebmann <jre@pengutronix.de>
-In-Reply-To: <20241202-mb85rs128ty-v1-2-a660b6490dc8@pengutronix.de>
-References: <20241202-mb85rs128ty-v1-0-a660b6490dc8@pengutronix.de>
- <20241202-mb85rs128ty-v1-2-a660b6490dc8@pengutronix.de>
-Message-Id: <173316074958.3037004.1498863519585640694.robh@kernel.org>
-Subject: Re: [PATCH 2/3] dt-bindings: mtd: mchp48l640 add mb85rs128ty
- compatible
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241203-is_constexpr-refactor-v1-5-4e4cbaecc216@wanadoo.fr>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+In-Reply-To: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+To: Linus Torvalds <torvalds@linux-foundation.org>, 
+ David Laight <David.Laight@aculab.com>, 
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Yury Norov <yury.norov@gmail.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
+ Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
+Cc: linux-sparse@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1058;
+ i=mailhol.vincent@wanadoo.fr; h=from:subject:message-id;
+ bh=ktV9jrZU0giaHV9vBo3GiXQr/Qxl6VWxrueXUQe+OfY=;
+ b=owGbwMvMwCV2McXO4Xp97WbG02pJDOm+74+eev1x37SU7/s4fOZsfexXwSuwUZXlqNClRp+XD
+ 71fb+e91lHKwiDGxSArpsiyrJyTW6Gj0Dvs0F9LmDmsTCBDGLg4BWAit84y/BX7aL9/YU3XnR7j
+ ixp8Oy/Oeb/9EFPOXNM1rhuKog5yzH/PyPD2dPyivxyLOtx7gqSDZL8HtSqF7j576ccC5tVXdN5
+ +EmADAA==
+X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp;
+ fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+X-Endpoint-Received: by B4 Relay for mailhol.vincent@wanadoo.fr/default
+ with auth_id=291
+X-Original-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Reply-To: mailhol.vincent@wanadoo.fr
 
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-On Mon, 02 Dec 2024 17:35:21 +0100, Jonas Rebmann wrote:
-> Add a compatible string to support Fujitsu MB85RS128TY.
-> 
-> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
-> ---
->  Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+In __clamp_once(),
 
-My bot found errors running 'make dt_binding_check' on your patch:
+  __builtin_choose_expr(__is_constexpr((lo) > (hi)), (lo) <= (hi), true)
 
-yamllint warnings/errors:
+is equivalent to:
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.example.dtb: eeram@0: compatible: ['microchip,48l640'] is too short
-	from schema $id: http://devicetree.org/schemas/mtd/microchip,mchp48l640.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.example.dtb: eeram@0: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/mtd/microchip,mchp48l640.yaml#
+  !is_const_false((lo) <= (hi))
 
-doc reference errors (make refcheckdocs):
+Apply is_const_false() to simplify __clamp_once().
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241202-mb85rs128ty-v1-2-a660b6490dc8@pengutronix.de
+Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+---
+ include/linux/minmax.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+index 98008dd92153db10c672155bca93201ffabee994..431bf76ac460a11a2e4af23acd90c0d26e99c862 100644
+--- a/include/linux/minmax.h
++++ b/include/linux/minmax.h
+@@ -111,8 +111,7 @@
+ 	__auto_type uval = (val);						\
+ 	__auto_type ulo = (lo);							\
+ 	__auto_type uhi = (hi);							\
+-	static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)), 	\
+-			(lo) <= (hi), true),					\
++	static_assert(!is_const_false((lo) <= (hi)),				\
+ 		"clamp() low limit " #lo " greater than high limit " #hi);	\
+ 	BUILD_BUG_ON_MSG(!__types_ok3(val,lo,hi,uval,ulo,uhi),			\
+ 		"clamp("#val", "#lo", "#hi") signedness error");		\
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+-- 
+2.45.2
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
 
