@@ -1,80 +1,78 @@
-Return-Path: <linux-kernel+bounces-427345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F16A9DFFFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:17:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E90699E0001
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:17:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1546280FE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:17:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6BA7160FA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247D2204F61;
-	Mon,  2 Dec 2024 11:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579CB205AA1;
+	Mon,  2 Dec 2024 11:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jBHdmTb9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3GAEboGN"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gxhDuiRy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="scRQ5waw"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE26202F89;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31D02036EB;
 	Mon,  2 Dec 2024 11:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138064; cv=none; b=ole5d1Cbt00DSXilFdNkyNVUd/3xnA+sMrbnIDlSQOOJ9V7+BttuKYvmfDsUaUsw6p++1n98GdnJu0VxfY0TUnTZbBGMbEbQYNrezySRW7OytItr2+RI6cWATS2cnm9tYdY4APhTHnm4KID3KXWmj+6ZlBDY+ylZzbNZKQ33vlE=
+	t=1733138065; cv=none; b=NzHMJySshKtVTkFF9S8lURndsJEHNMTNA0VOacS/adfn2HiI5MIJ+XHddOj+DVZb77RIqp8aqTS3S/KCbqNSZDaoS5aoIrxuEQMtAqdQESeGQ1aQwZuskEFjPFKYcXuiVgEqYMqJ0nYbYWU5it4KzIWWxpBNnVYNRNgypk4aOn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138064; c=relaxed/simple;
-	bh=z3UHv6gCQLM1chxHYnq222GAr+iYbtDDHQriEvRCViQ=;
+	s=arc-20240116; t=1733138065; c=relaxed/simple;
+	bh=JDdS03JRFkVVeb2CaCexhWUqX59VCJVYhjm87U9EA38=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=TOdW6qVSkl+HBdaK08we8bKxZj6YhsxZcXI+H43pXek/A6PcKqqsbHgpxBZbckTctoym2Kc/cJgOOj5e5wrCrIbtGIhObnBIY3MSsvM+zEuOjFHhx6wBAq5ypeJPXVNl17D89r2S/mveiWIj+4Nug+YcRVW/XRIxHdaouAk2L10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jBHdmTb9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3GAEboGN; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=rJvDJ+9oeHMWRsmoZtPDY+r2masjxTUnDX4uImVqAVCORvcGrhfvkzwI+uwzE/YVi+MimpFCjV3N/AA6HGQLN5zQFde9SFVswlHqM/NTYgBhHakgikSud+znwaKaOkScTJQXLAbsnGOu8V02WLGJ+VJor0mEPeT44/qyAABQX+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gxhDuiRy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=scRQ5waw; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 02 Dec 2024 11:14:19 -0000
+Date: Mon, 02 Dec 2024 11:14:20 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733138060;
+	s=2020; t=1733138061;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R24HSpESnriYx1By+lEkQ7gAtELrPZksmqZEnQ/ha/k=;
-	b=jBHdmTb96iTzDv0jWTSbiaJZB0SoYgzNJO1tkQSjDwUzd2elOk9hhbrvkKtKn6A+5EJehU
-	OqF09amRzwxfeHneJtz9Kjn8fiSEbIDz5uBNecj6A7KGdQyB8oqxX3+cUSe1CdY0C5kLHk
-	21hFKq9/JTae3TvMSHwGxfXf73hDwsKsO0Z42m94z8LkQYF9NG9DxksPAPMAB2CYKrXTZh
-	6HWhPZFqV5MG4CGD+vMHRT7qyhr1CN4Upikoa9qXFu6/UbSuhnmeQ/3wBUuUmCq2L+0eT/
-	AaNGasvRPMNEf0RUZ6t4xWLctC8iayxdcC5FD5Tlzg8CtEapsPJx+3uqWwXGiw==
+	bh=mWU220V+xC/KKN4NjzwIy/bSUExRrUP6aJguL2f6rNQ=;
+	b=gxhDuiRyOr9TMNJ12sIdthDdxRKMN1dQ106o1fUtqF9dS5nWgM6QX8BX0FnBymNSYbz4hk
+	yAIIAMQOHSxIUV9lwU3ID3Zbqc190xiiDqziusNVjgT0JZ70vVCfC8VHiO4OMk+I1Yrbhf
+	P/ZfaQIkKoAuGpzqXBi85K+1olc/U/PkZyFX7XsH3Zpq5hT08PdUJs2KZ2Ds75rRDAsZ/R
+	kXht06RYwBfwi2o/eqQGv1+wC61t+4+Vy70gB0ItRG/356QyKQRvcADhkhOOudK8qGBLil
+	lr4V9zjUcQQD0tB2PnExiTUQMFyfIQ5AxHJTHwS6oahGHfKX3CqqCdfhzlatZQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733138060;
+	s=2020e; t=1733138061;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R24HSpESnriYx1By+lEkQ7gAtELrPZksmqZEnQ/ha/k=;
-	b=3GAEboGNclYAHDzQw3nVDJJ4BoN2AsD7iHURbU3nZ8wNBTq+KjP/ygTgke7MixJvaTNsEw
-	BYlkzad7F68jXsBQ==
+	bh=mWU220V+xC/KKN4NjzwIy/bSUExRrUP6aJguL2f6rNQ=;
+	b=scRQ5waw//X6JTfD4QcD7wHH+oyek76vscAv0zje5phNjALc4VUG9Cj9f0x99/4Q343mPo
+	dNNA99femFXLZ2DA==
 From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/x86/intel/ds: Simplify the PEBS records
- processing for adaptive PEBS
-Cc: Stephane Eranian <eranian@google.com>,
- Kan Liang <kan.liang@linux.intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>, x86@kernel.org,
+Subject: [tip: perf/core] perf/x86/intel/ds: Factor out functions for PEBS
+ records processing
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Kan Liang <kan.liang@linux.intel.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241119135504.1463839-5-kan.liang@linux.intel.com>
-References: <20241119135504.1463839-5-kan.liang@linux.intel.com>
+In-Reply-To: <20241119135504.1463839-4-kan.liang@linux.intel.com>
+References: <20241119135504.1463839-4-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173313805993.412.3435947024790206212.tip-bot2@tip-bot2>
+Message-ID: <173313806064.412.14020298805156028448.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,129 +82,194 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     ae55e308bde2267df79c4475daa85e174b7ab4c8
-Gitweb:        https://git.kernel.org/tip/ae55e308bde2267df79c4475daa85e174b7ab4c8
+Commit-ID:     3c00ed344cef4dbb57d8769b961af414132a173a
+Gitweb:        https://git.kernel.org/tip/3c00ed344cef4dbb57d8769b961af414132a173a
 Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Tue, 19 Nov 2024 05:55:04 -08:00
+AuthorDate:    Tue, 19 Nov 2024 05:55:03 -08:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 02 Dec 2024 12:01:34 +01:00
 
-perf/x86/intel/ds: Simplify the PEBS records processing for adaptive PEBS
+perf/x86/intel/ds: Factor out functions for PEBS records processing
 
-The current code may iterate all the PEBS records in the DS area several
-times. The first loop is to find all active events and calculate the
-available records for each event. Then iterate the whole buffer again
-and again to process available records until all active events are
-processed.
+Factor out functions to process normal and the last PEBS records, which
+can be shared with the later patch.
 
-The algorithm is inherited from the old generations. The old PEBS
-hardware does not deal well with the situation when events happen near
-each other. SW has to drop the error records. Multiple iterations are
-required.
+Move the event updating related codes (intel_pmu_save_and_restart())
+to the end, where all samples have been processed.
+For the current usage, it doesn't matter when perf updates event counts
+and reset the counter. Because all counters are stopped when the PEBS
+buffer is drained.
+Drop the return of the !intel_pmu_save_and_restart(event) check. Because
+it never happen. The intel_pmu_save_and_restart(event) only returns 0,
+when !hwc->event_base or the period_left > 0.
+- The !hwc->event_base is impossible for the PEBS event, since the PEBS
+  event is only available on GP and fixed counters, which always have
+  a valid hwc->event_base.
+- The check only happens for the case of non-AUTO_RELOAD and single
+  PEBS, which implies that the event must be overflowed. The period_left
+  must be always <= 0 for an overflowed event after the
+  x86_pmu_update().
 
-The hardware limit has been addressed on newer platforms with adaptive
-PEBS. A simple one-iteration algorithm is introduced.
-
-The samples are output by record order with the patch, rather than the
-event order. It doesn't impact the post-processing. The perf tool always
-sorts the records by time before presenting them to the end user.
-
-In an NMI, the last record has to be specially handled. Add a last[]
-variable to track the last unprocessed record of each event.
-
-Test:
-
-11 PEBS events are used in the perf test. Only the basic information is
-collected.
-perf record -e instructions:up,...,instructions:up -c 2000003 benchmark
-
-The ftrace is used to record the duration of the
-intel_pmu_drain_pebs_icl().
-
-The average duration reduced from 62.04us to 57.94us.
-
-A small improvement can be observed with the new algorithm.
-Also, the implementation becomes simpler and more straightforward.
-
-Suggested-by: Stephane Eranian <eranian@google.com>
+Co-developed-by: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Signed-off-by: "Peter Zijlstra (Intel)" <peterz@infradead.org>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Link: https://lore.kernel.org/r/20241119135504.1463839-5-kan.liang@linux.intel.com
+Link: https://lore.kernel.org/r/20241119135504.1463839-4-kan.liang@linux.intel.com
 ---
- arch/x86/events/intel/ds.c | 43 ++++++++++++++++++++++++-------------
- 1 file changed, 29 insertions(+), 14 deletions(-)
+ arch/x86/events/intel/ds.c | 109 ++++++++++++++++++++++--------------
+ 1 file changed, 67 insertions(+), 42 deletions(-)
 
 diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 79a3467..8dcf90f 100644
+index 450f318..79a3467 100644
 --- a/arch/x86/events/intel/ds.c
 +++ b/arch/x86/events/intel/ds.c
-@@ -2425,8 +2425,12 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
- static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_data *data)
+@@ -2164,46 +2164,33 @@ intel_pmu_save_and_restart_reload(struct perf_event *event, int count)
+ 	return 0;
+ }
+ 
++typedef void (*setup_fn)(struct perf_event *, struct pt_regs *, void *,
++			 struct perf_sample_data *, struct pt_regs *);
++
++static struct pt_regs dummy_iregs;
++
+ static __always_inline void
+ __intel_pmu_pebs_event(struct perf_event *event,
+ 		       struct pt_regs *iregs,
++		       struct pt_regs *regs,
+ 		       struct perf_sample_data *data,
+-		       void *base, void *top,
+-		       int bit, int count,
+-		       void (*setup_sample)(struct perf_event *,
+-					    struct pt_regs *,
+-					    void *,
+-					    struct perf_sample_data *,
+-					    struct pt_regs *))
++		       void *at,
++		       setup_fn setup_sample)
  {
- 	short counts[INTEL_PMC_IDX_FIXED + MAX_FIXED_PEBS_EVENTS] = {};
-+	void *last[INTEL_PMC_IDX_FIXED + MAX_FIXED_PEBS_EVENTS];
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	struct debug_store *ds = cpuc->ds;
+-	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+-	struct hw_perf_event *hwc = &event->hw;
+-	struct x86_perf_regs perf_regs;
+-	struct pt_regs *regs = &perf_regs.regs;
+-	void *at = get_next_pebs_record_by_bit(base, top, bit);
+-	static struct pt_regs dummy_iregs;
+-
+-	if (hwc->flags & PERF_X86_EVENT_AUTO_RELOAD) {
+-		/*
+-		 * Now, auto-reload is only enabled in fixed period mode.
+-		 * The reload value is always hwc->sample_period.
+-		 * May need to change it, if auto-reload is enabled in
+-		 * freq mode later.
+-		 */
+-		intel_pmu_save_and_restart_reload(event, count);
+-	} else if (!intel_pmu_save_and_restart(event))
+-		return;
+-
+-	if (!iregs)
+-		iregs = &dummy_iregs;
++	setup_sample(event, iregs, at, data, regs);
++	perf_event_output(event, data, regs);
++}
+ 
+-	while (count > 1) {
+-		setup_sample(event, iregs, at, data, regs);
+-		perf_event_output(event, data, regs);
+-		at += cpuc->pebs_record_size;
+-		at = get_next_pebs_record_by_bit(at, top, bit);
+-		count--;
+-	}
++static __always_inline void
++__intel_pmu_pebs_last_event(struct perf_event *event,
++			    struct pt_regs *iregs,
++			    struct pt_regs *regs,
++			    struct perf_sample_data *data,
++			    void *at,
++			    int count,
++			    setup_fn setup_sample)
++{
++	struct hw_perf_event *hwc = &event->hw;
+ 
+ 	setup_sample(event, iregs, at, data, regs);
+ 	if (iregs == &dummy_iregs) {
+@@ -2222,6 +2209,44 @@ __intel_pmu_pebs_event(struct perf_event *event,
+ 		if (perf_event_overflow(event, data, regs))
+ 			x86_pmu_stop(event, 0);
+ 	}
++
++	if (hwc->flags & PERF_X86_EVENT_AUTO_RELOAD) {
++		/*
++		 * Now, auto-reload is only enabled in fixed period mode.
++		 * The reload value is always hwc->sample_period.
++		 * May need to change it, if auto-reload is enabled in
++		 * freq mode later.
++		 */
++		intel_pmu_save_and_restart_reload(event, count);
++	} else
++		intel_pmu_save_and_restart(event);
++}
++
++static __always_inline void
++__intel_pmu_pebs_events(struct perf_event *event,
++			struct pt_regs *iregs,
++			struct perf_sample_data *data,
++			void *base, void *top,
++			int bit, int count,
++			setup_fn setup_sample)
++{
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
 +	struct x86_perf_regs perf_regs;
 +	struct pt_regs *regs = &perf_regs.regs;
-+	struct pebs_basic *basic;
- 	struct perf_event *event;
- 	void *base, *at, *top;
- 	int bit;
-@@ -2448,30 +2452,41 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
- 		return;
- 	}
- 
--	for (at = base; at < top; at += cpuc->pebs_record_size) {
++	void *at = get_next_pebs_record_by_bit(base, top, bit);
++	int cnt = count;
++
 +	if (!iregs)
 +		iregs = &dummy_iregs;
 +
-+	/* Process all but the last event for each counter. */
-+	for (at = base; at < top; at += basic->format_size) {
- 		u64 pebs_status;
- 
--		pebs_status = get_pebs_status(at) & cpuc->pebs_enabled;
--		pebs_status &= mask;
-+		basic = at;
-+		if (basic->format_size != cpuc->pebs_record_size)
-+			continue;
++	while (cnt > 1) {
++		__intel_pmu_pebs_event(event, iregs, regs, data, at, setup_sample);
++		at += cpuc->pebs_record_size;
++		at = get_next_pebs_record_by_bit(at, top, bit);
++		cnt--;
++	}
 +
-+		pebs_status = basic->applicable_counters & cpuc->pebs_enabled & mask;
-+		for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX) {
-+			event = cpuc->events[bit];
++	__intel_pmu_pebs_last_event(event, iregs, regs, data, at, count, setup_sample);
+ }
  
--		for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX)
--			counts[bit]++;
-+			if (WARN_ON_ONCE(!event) ||
-+			    WARN_ON_ONCE(!event->attr.precise_ip))
-+				continue;
-+
-+			if (counts[bit]++) {
-+				__intel_pmu_pebs_event(event, iregs, regs, data, last[bit],
-+						       setup_pebs_adaptive_sample_data);
-+			}
-+			last[bit] = at;
-+		}
+ static void intel_pmu_drain_pebs_core(struct pt_regs *iregs, struct perf_sample_data *data)
+@@ -2258,8 +2283,8 @@ static void intel_pmu_drain_pebs_core(struct pt_regs *iregs, struct perf_sample_
+ 		return;
  	}
  
- 	for_each_set_bit(bit, (unsigned long *)&mask, X86_PMC_IDX_MAX) {
--		if (counts[bit] == 0)
-+		if (!counts[bit])
+-	__intel_pmu_pebs_event(event, iregs, data, at, top, 0, n,
+-			       setup_pebs_fixed_sample_data);
++	__intel_pmu_pebs_events(event, iregs, data, at, top, 0, n,
++				setup_pebs_fixed_sample_data);
+ }
+ 
+ static void intel_pmu_pebs_event_update_no_drain(struct cpu_hw_events *cpuc, int size)
+@@ -2390,9 +2415,9 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+ 		}
+ 
+ 		if (counts[bit]) {
+-			__intel_pmu_pebs_event(event, iregs, data, base,
+-					       top, bit, counts[bit],
+-					       setup_pebs_fixed_sample_data);
++			__intel_pmu_pebs_events(event, iregs, data, base,
++						top, bit, counts[bit],
++						setup_pebs_fixed_sample_data);
+ 		}
+ 	}
+ }
+@@ -2444,9 +2469,9 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+ 		if (WARN_ON_ONCE(!event->attr.precise_ip))
  			continue;
  
- 		event = cpuc->events[bit];
--		if (WARN_ON_ONCE(!event))
--			continue;
--
--		if (WARN_ON_ONCE(!event->attr.precise_ip))
--			continue;
- 
--		__intel_pmu_pebs_events(event, iregs, data, base,
--					top, bit, counts[bit],
--					setup_pebs_adaptive_sample_data);
-+		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
-+					    counts[bit], setup_pebs_adaptive_sample_data);
+-		__intel_pmu_pebs_event(event, iregs, data, base,
+-				       top, bit, counts[bit],
+-				       setup_pebs_adaptive_sample_data);
++		__intel_pmu_pebs_events(event, iregs, data, base,
++					top, bit, counts[bit],
++					setup_pebs_adaptive_sample_data);
  	}
  }
  
