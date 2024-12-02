@@ -1,125 +1,109 @@
-Return-Path: <linux-kernel+bounces-427607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AD29E036B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:30:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1919E036C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:30:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569F81659A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:30:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563CE164385
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B121FF5E6;
-	Mon,  2 Dec 2024 13:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BCE1FF611;
+	Mon,  2 Dec 2024 13:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHgcUypC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/DI1lsX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398A66AAD;
-	Mon,  2 Dec 2024 13:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92681FC0E5;
+	Mon,  2 Dec 2024 13:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733146198; cv=none; b=SVF3i5HfC5+YxijTIUeBlCl8qQohvSJ5qqg9SALZUOKVvEK2Nji07hk0j4EgP2u2kYgJtLDcA8aHZSMsM/8U38+z9J0fesedok2BRxFPbCJXMcpyoqNZtGt5gZ0ZIiSURDmCGglfXt0krHrd1PMcwl2qBs557sCuLMVwvVvypHE=
+	t=1733146219; cv=none; b=Y49HahDsLbkM7qhvFg6upo7Jb5A3qbb1VD7uRFTa+F/27AkMCqYiPmC/Q0smT9RoinRaj6ty4YV0W+x4soR7q98V/+ogPUPGWhZ6nfR2U9VzpkAMl2Ia0onLwIKi7Ww2494TJlXGykaoSAuxmR0hMI72fZpx1pOCmREULDOMakM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733146198; c=relaxed/simple;
-	bh=IFuzJvH4PIMX+deaMZ+guaAibbzaO5zIO5oFh6tcLBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPIECVFVuF7oTdADYMd+rZOqLrSiN55ZOqNPCfRbYjjTyf60DUnnre2kmA6Om1TZ8+Eint5ouLU6z9qkVCawzUSBUVj8n+5VoxU9YSrMaJiJFhVDOitPgNkY11CweEBAloMoaZuQLnC7egZSYP2a1UYKH2CY/PgPEs27/C/yRyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHgcUypC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F02C4CED1;
-	Mon,  2 Dec 2024 13:29:57 +0000 (UTC)
+	s=arc-20240116; t=1733146219; c=relaxed/simple;
+	bh=prWlyL7+S1iaFRc2HgQ/xlg4WwK3MVaxar+O2eGaNec=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=a8NXmDiPUY1MP6D49aMwmbikOY1i/yeuLKOnzzj632SpfDTyveUIl1rRTzCBDRbZcFaA8Kksm+iqhmbDClehR+EBJm775M26GuqYFmhH/orBwG+mqFjKTEAmd3Qkp9G6QRVPeLR3U4hHnSMEZ0EGGBE4FbsxShyPyEkYx8XJCXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/DI1lsX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9506C4CED2;
+	Mon,  2 Dec 2024 13:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733146197;
-	bh=IFuzJvH4PIMX+deaMZ+guaAibbzaO5zIO5oFh6tcLBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bHgcUypCfrdNLakH2bqYiW0ildDMpheWqzKCa+y62SAz4AghZVigt18hhtFsQ4rR2
-	 dLHI7FjFrIohgxcVHpVpkwFHVEvr6CIZUG+Qj/ECiB5UA7vh4EMWRLdZwoyZ3PRQZF
-	 RLv2DUenJd6vBudiuowwN2jD+rK0uQX/vei8CE430FvFyPVtnqBQd4mKDlp0MdwRw5
-	 o4IBdH3iDdrPdMg/3VGnYmxUxvTnii8HUwfTX6IkiQ8QGAm2vGrnbVTCE98pSSXp94
-	 WM3XTFca56jw5Ji5mKYDEApBEBGSVNLhYPf7dj0ynfoMMI80Twh9Sxc9J+uNl+nieP
-	 hdPQIWBZESVZQ==
-Date: Mon, 2 Dec 2024 14:29:55 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Russell King <linux@armlinux.org.uk>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 2/9] ASoC: hdmi-codec: move no_capture_mute to struct
- hdmi_codec_pdata
-Message-ID: <20241202-daft-fervent-grouse-2c0cf7@houat>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-2-b5316e82f61a@linaro.org>
- <20241202-bald-just-guan-c5d41b@houat>
- <0d4dfb60-e2e6-484a-993a-41d1229c62fb@sirena.org.uk>
+	s=k20201202; t=1733146219;
+	bh=prWlyL7+S1iaFRc2HgQ/xlg4WwK3MVaxar+O2eGaNec=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=r/DI1lsXNjNz0WMRskDOyKfwAL5dRHhvqCscdErYbmgD5A0eLhFLbb6U9YUY9Nfmm
+	 xjlxmtxtfuSQTHCch8WHmQmAQcLdRWSYMttoa+FVQlNO/3zsgO1abTDd8FX5BL8KaC
+	 Z+/kvlqN69uIUTfzEWNJfjIIVV1flE61J0JHyJd+GyNjfoaYxraHgtCeebMueCfxcG
+	 nRSQg2f8W2uxe8sJuQK96/GGNBmnyYnxIOxAPbIhlIiLTnUsXvd823wcFTx9NJPlnS
+	 hWOIrLB5YxCepA05+nzz+Fq5dhTkoTz7309A4Fa7MRaJA1GHgr4+SEZhqsi5pFc4Io
+	 BSYWfwObPUYAw==
+From: Mark Brown <broonie@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>, 
+ Marek Maslanka <mmaslanka@google.com>
+Cc: Cezary Rojewski <cezary.rojewski@intel.com>, 
+ Liam Girdwood <liam.r.girdwood@linux.intel.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ =?utf-8?q?Amadeusz_S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>, 
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
+In-Reply-To: <20241128151239.1666582-1-mmaslanka@google.com>
+References: <10062d09-34c8-4e53-b5d7-f96a5b19f6f8@intel.com>
+ <20241128151239.1666582-1-mmaslanka@google.com>
+Subject: Re: [PATCH v2] ASoC: Intel: avs: da7219: Remove suspend_pre() and
+ resume_post()
+Message-Id: <173314621641.54037.6152466859833367470.b4-ty@kernel.org>
+Date: Mon, 02 Dec 2024 13:30:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="it6ftflrlpkoff2s"
-Content-Disposition: inline
-In-Reply-To: <0d4dfb60-e2e6-484a-993a-41d1229c62fb@sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
+On Thu, 28 Nov 2024 15:12:32 +0000, Marek Maslanka wrote:
+> The presence of a plugged jack is not detected after resuming the device if the jack was plugged
+> before the device was suspended. This problem is caused by calling the
+> sound/soc/codecs/da7219-aad.c:da7219_aad_jack_det() function on resume, which forces the jack
+> insertion state to be unplugged.
+> 
+> 
 
---it6ftflrlpkoff2s
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 2/9] ASoC: hdmi-codec: move no_capture_mute to struct
- hdmi_codec_pdata
-MIME-Version: 1.0
+Applied to
 
-On Mon, Dec 02, 2024 at 12:59:22PM +0000, Mark Brown wrote:
-> On Mon, Dec 02, 2024 at 01:06:09PM +0100, Maxime Ripard wrote:
-> > On Sun, Dec 01, 2024 at 02:44:06AM +0200, Dmitry Baryshkov wrote:
->=20
-> > > The no_capture_mute flag might differ from platform to platform,
-> > > especially in the case of the wrapping implementations, like the
->=20
-> > I appreciate it might be a dumb question, but I never really understood
-> > what no_capture_mute was all about. And in that context, why some
-> > drivers would need / use it, and some won't.
->=20
-> It's just what it says, it's a flag saying the device doesn't support
-> muting the capture side.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Right, but then HDMI is output only, so it still doesn't really make
-sense to me why we'd want to mute the capture side?
+Thanks!
 
-Maxime
+[1/1] ASoC: Intel: avs: da7219: Remove suspend_pre() and resume_post()
+      commit: 04c319e05d0b08cc789db7abccce0fcb13dbab16
 
---it6ftflrlpkoff2s
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ022UgAKCRAnX84Zoj2+
-dqo4AYD2N8isoa7QGodj2IWhhurOmFyzUFECqoeZtskkYpcwNSXcD3Ao0MXvyu7A
-r4DsjfcBf3I/z2HcpsZ3eAjHa8zXr+DoWRZcMXUqApl0GPwHPDRNUD7vsFt6ewd3
-Szeh1zbX8Q==
-=Nd/9
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---it6ftflrlpkoff2s--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
