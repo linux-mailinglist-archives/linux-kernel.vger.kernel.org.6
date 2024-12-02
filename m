@@ -1,248 +1,178 @@
-Return-Path: <linux-kernel+bounces-428482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC649E0F10
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:53:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3609E0F11
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:56:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8262817AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55DC6281D72
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC5A1DF981;
-	Mon,  2 Dec 2024 22:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCA71DB940;
+	Mon,  2 Dec 2024 22:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cMqdO3vd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J6lXaYpf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/5rJHri"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92F91DB940;
-	Mon,  2 Dec 2024 22:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88581D79B4;
+	Mon,  2 Dec 2024 22:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733180028; cv=none; b=tjw28cjk0yS7xMLjCYepYWY6LU5Ing2EIO1R9f1kfZ8hqXHHX7HGIpU24fvh8vU7dkpbtTz1qTXhJAzK9MenHuzsV1Z7hCUe1JzzVcfsvNjVPDzKji8YpJMUJiXdvubu5K2sFTqIHsqymZHenmTVeCz2IPNAAqtdkxvDiZ+lzfg=
+	t=1733180170; cv=none; b=uvr7tDU4wW2WOXeiZAem7RIlLJTOX4nKtn6seNssGH1iYjibEMycsRi1/6rC/yBCzVSsWYBeXuMWKRkcyUkPrgHjcAN298yxpOumi22FjVEhjnc3GwMUjftZ6FWqGc69DgN+ogtqloGRDkuZLEip4vVQ00RMM5RSc82iPNa2BEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733180028; c=relaxed/simple;
-	bh=umAtyiEdVDSEwuVpr46VQyUei4fpNCUW6qDeIBUuwB8=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=R5QNIwUiStQEJAsS5Hree+nrNL5PAwE1n2bYiXVmohO3pqOJEr8Aan8Y/zX70wI/Mij9Z7ee+IfrRx83cZjEmp3t81E4R4GgG2zXnfAXPnwekfy91A9IQnUhOwzL4X6E5AJmtopTNkbgyAwnDGnENysc/mKGo77Bz4CpINhL0Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cMqdO3vd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J6lXaYpf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733180024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=Z/7ozj1F9DWdKtUweFnvIkBOQ9IWOLmUOfgEfHrhgB0=;
-	b=cMqdO3vdgSDQRkyM7PWYleXsyFt9/dosXGlh1HhKOWs08QdyNqSt4v+x0/X93u/AEqMCWK
-	8COFJMnMuAVntfoBYAlFoad+6zvUx357b7LwU+HwxRuYC1uK0pxmrlKKRnl09DyFCKyOhz
-	uyeIFypI3UIENid4RhqVQzNHvJuQXUIlpLbHLDwwwJZtZBFNXIfMSl1YmZhXIM/tJx8B5L
-	j48Oe/sswjf4yPm8YE8hQTE+09yJHOApJFw8BdgYxeGYUVWTmeq3+w9cORQy/s+ebEhml+
-	dyr+IfQ+2nRH6e0RgpkEFdM8VpNkt9LyR+BwxOVhlAN/LXh2ta9fxVgDv2HpmA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733180024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=Z/7ozj1F9DWdKtUweFnvIkBOQ9IWOLmUOfgEfHrhgB0=;
-	b=J6lXaYpf8lPziFD4PIC5ZIT1rO4RsdQ0VUpN6X+mg49S/o0Fp9+pVH7JUyEv52NLzToQlU
-	sdJGEHgwdEuQcuDg==
-To: Leonardo Bras <leobras@redhat.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Cc: Leonardo Bras <leobras@redhat.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Tony
- Lindgren <tony@atomide.com>, John Ogness <john.ogness@linutronix.de>, Ilpo
- =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, Uwe
- =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Shanker Donthineni
- <sdonthineni@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Subject: Re: [RFC PATCH v2 3/4] irq: Introduce IRQ_HANDLED_MANY
-In-Reply-To: <ZzvmvBdqJpAyUicm@LeoBras>
-Date: Mon, 02 Dec 2024 23:53:43 +0100
-Message-ID: <87ed2pvgqw.ffs@tglx>
+	s=arc-20240116; t=1733180170; c=relaxed/simple;
+	bh=C390/U3lQIPd9DTFWuMmUpP8GWQW0gL7hXO3NhmNEoc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IwaudG1S4GziGQEYANorknlS799UECa1qLouhiRi0/kN9sMY90aLzvPqRTrhvCRcePj7NR5O0KP+Ne+Juo+A95QjMldScN/b5cbqtqKFTlSCzrAQGW3p3rEH/I3e/0qMsRPA1TySZocoyqYlggQhmNC5tAr3D7muUp9Mc/43R4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/5rJHri; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67929C4CEDD;
+	Mon,  2 Dec 2024 22:56:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733180170;
+	bh=C390/U3lQIPd9DTFWuMmUpP8GWQW0gL7hXO3NhmNEoc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=r/5rJHriXWguekh0f3N3wpCM6DHd8Febo2Z89o3XFa+sqg6Sc5mw1sdkIpBVPJIjP
+	 fPeVZSKVqzt8dAJTyzb+SX4+90hzsWu5mhWINAOB7Qu/gjF6dTj1FBtYmHFqsGZ3S6
+	 AyiMKR39vdB31rXhQwNq1ASmb3nY4MhLv2Lz/PFYZZqHHJDMs0wokItOiSEAzEAvXC
+	 EFZVQno86P0pHvhArboKTcZ+OKZjLD2/4WKaJoDGr2xcNQWEwGz3AlsD7OQFRnBdno
+	 kiT2j7Ry5pt86rVvFb/nf/4U52g+DMvRRZw3KKkjDdW6XADxUaKHN2ie/TmOqwAXXF
+	 vln9XWzgVCAZQ==
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e399f8bb391so1926760276.2;
+        Mon, 02 Dec 2024 14:56:10 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUKNL1K0GCsJdaMR34sJOqxC7TsGaxt8kI/qbkoVfA9lW0RrZ3vWl+CTtYHpXRhmz6b98sf40HmJWCO@vger.kernel.org, AJvYcCW0zFZPKKidHKU9wb0+BYX7snx9mRRY/saOejYNoZP5zzOMBgH7b23FrCNALTRjooso7Kch1Ie2jQayohOX@vger.kernel.org
+X-Gm-Message-State: AOJu0YytdOk3o1HIlxv4mAcvQ1/YylGy5+C4Suv/Sg5yq8S+t66+srnW
+	OAIqOammYcSv8m1XI8mYxEOd5bbR3BYLi76TaRpc4JsMnOUyvdwiPUqASgzt57/PlfKy5TLw79T
+	Hyd2LQqET0lepFO20j5ky5WHQqA==
+X-Google-Smtp-Source: AGHT+IEqo9P4Zr3/vlhz9V+X1UM634ot9hRB2b4JJ5/kLZJov8aEvuWuPHXqi5ULgy6Qx9wsrwTqWQ6sVwGERMSPO/I=
+X-Received: by 2002:a05:6902:338a:b0:e38:87bf:8e65 with SMTP id
+ 3f1490d57ef6-e39d35a8631mr282616276.0.1733180169551; Mon, 02 Dec 2024
+ 14:56:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241106171028.3830266-1-robh@kernel.org> <87jzdfcm3l.fsf@mpe.ellerman.id.au>
+ <87plmi7jjz.fsf@mpe.ellerman.id.au> <20241127214232.GQ29862@gate.crashing.org>
+ <CAL_JsqKhp8bW66koP8JPSkXmrCjA+oQh6NZte_uphiLTC_=7Rw@mail.gmail.com> <20241202220434.GU29862@gate.crashing.org>
+In-Reply-To: <20241202220434.GU29862@gate.crashing.org>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 2 Dec 2024 16:55:58 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL5FHPNQWGdBEz9UpD7cq3We-czPV8OmwD=0w5Eu10=kA@mail.gmail.com>
+Message-ID: <CAL_JsqL5FHPNQWGdBEz9UpD7cq3We-czPV8OmwD=0w5Eu10=kA@mail.gmail.com>
+Subject: Re: [PATCH v2] of: WARN on deprecated #address-cells/#size-cells handling
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Saravana Kannan <saravanak@google.com>, 
+	linuxppc-dev@lists.ozlabs.org, Conor Dooley <conor@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 18 2024 at 22:15, Leonardo Bras wrote:
-> On Thu, Nov 14, 2024 at 09:50:36AM +0200, Andy Shevchenko wrote:
->> - the IRQ core disables IRQ while handling an IRQ number in question;
+On Mon, Dec 2, 2024 at 4:09=E2=80=AFPM Segher Boessenkool
+<segher@kernel.crashing.org> wrote:
 >
-> Not necessarily:
-> When on irqs are force-threaded, only a quick handler is called, returning 
-> IRQ_WAKE_THREAD, which is supposed to wake up the handler thread.
+> On Mon, Dec 02, 2024 at 08:18:22AM -0600, Rob Herring wrote:
+> > On Wed, Nov 27, 2024 at 3:47=E2=80=AFPM Segher Boessenkool
+> > <segher@kernel.crashing.org> wrote:
+> > > On Tue, Nov 26, 2024 at 02:36:32PM +1100, Michael Ellerman wrote:
+> > > > Michael Ellerman <mpe@ellerman.id.au> writes:
+> > > > > "Rob Herring (Arm)" <robh@kernel.org> writes:
+> > > > >> While OpenFirmware originally allowed walking parent nodes and d=
+efault
+> > > > >> root values for #address-cells and #size-cells, FDT has long req=
+uired
+> > > > >> explicit values. It's been a warning in dtc for the root node si=
+nce the
+> > > > >> beginning (2005) and for any parent node since 2007. Of course, =
+not all
+> > > > >> FDT uses dtc, but that should be the majority by far. The variou=
+s
+> > > > >> extracted OF devicetrees I have dating back to the 1990s (variou=
+s
+> > > > >> PowerMac, OLPC, PASemi Nemo) all have explicit root node propert=
+ies.
+> > > > >
+> > > > > I have various old device trees that have been given to me over t=
+he
+> > > > > years, and as far as I can tell they all have these properties (s=
+ome of
+> > > > > them are partial trees so it's hard to be 100% sure).
+> > > > >
+> > > > > So LGTM.
+> > > >
+> > > > Turns out I was wrong.
+> > > >
+> > > > The warning about #size-cells hits on some powermacs, possible fixu=
+p
+> > > > patch here:
+> > > >
+> > > >   https://lore.kernel.org/linuxppc-dev/20241126025710.591683-1-mpe@=
+ellerman.id.au/
+> > >
+> > > The Open Firmware specification is extremely clear that a "missing"
+> > > "#size-cells" property means this bus has the default value of 1.
+> >
+> > And the default for #address-cells is 2, but yet every architecture
+> > except Sparc has that wrong.
 >
->   * @IRQ_WAKE_THREAD:   handler requests to wake the handler thread
+> ?
 >
-> In this case (which is what I am dealing with), the actual handler will run 
-> in thread context (which I suppose don't disable IRQ for sched-out 
-> purposes).
+> Almost all architectures (that run Linux) use 64-bit addressing, both
+> 32-bit and 64-bit architectures.
 
-Let's talk about the disable irq concepts here. There are 3 distinct variants:
+I'm just telling you what Linux uses for defaults for at least 20 years.
 
-  1) Disable interrupts on the local CPU: local_irq_disable/save().
+> > If I have a node without #size-cells, is the default of 1 used or do
+> > we check parent nodes? My read of the spec would be the former, but
+> > the kernel does the latter.
+>
+> The former is correct.  The latter makes no sense at all!  The whole
+> point of the "bus" abstraction is that you get a new addressing domain
+> there.
 
-     This only prevents the CPU from handling a pending interrupt,
-     but does not prevent new interrupts from being marked pending
-     in the interrupt controller.
+I agree, but that's what the kernel does (again, for 20+ years).
+Walking the parents is really what I want to get rid of here. My
+choices were drop that behavior and see who I break, or add a warning
+and see who notices. I went the nicer route of a warning.
 
-  2) Disable interrupts in the interrupt controller
+> Yes, these days you numerically find it most often with PCI sub-domains,
+> but those are boring.  In most cases you *do* have different adressing
+> on your child busses, and even if the addressing is the same, addresses
+> on the child bus are not normally a subset of those on the parent bus.
+>
+> > > https://www.openfirmware.info/data/docs/of1275.pdf (page 186).
+> > >
+> > > DTC or FDT might want to do things differently, but expecting decades
+> > > older stuff to conform to its ill-conceived unnecessarily super wordy
+> > > stuff is, well, not a plan that is likely to work very well :-)
+> >
+> > That is not the intention. The intention is to identify what doesn't
+> > conform and exclude those systems from this check (or apply a fixup if
+> > that works).
+>
+> So *always* use the OF definition, at least on OF systems?  Where
+> everything is meant to conform, but conform to OF, not conform to this
+> "OF-like-but-very-different-in-crucial-spots" thing :-)
 
-     disable_irq*() variants handle that. They come with two
-     flavors: LAZY and UNLAZY
+I'm pretty sure there are OF systems that don't conform, so it is not
+that simple. There's this comment in of_irq_parse_raw() for example:
 
-     LAZY does not mask the interrupt line right away. It only is masked
-     when an interrupt arrives while the line is marked "disabled". This
-     then sets the PENDING bit, which in turn causes a replay of the
-     interrupt once enable_irq() is bringing the disabled count down to
-     zero. LAZY has two purposes:
+        /* Look for this #address-cells. We have to implement the old linux
+         * trick of looking for the parent here as some device-trees rely o=
+n it
+         */
 
-       A) Prevent losing edge type interrupts
+Maybe that's from some system long dropped and we don't need it
+anymore. I have no idea. That's what I'm trying to find out with this
+patch.
 
-       B) Optimization to avoid the maybe costly hardware access
+We also don't really have a way to distinguish OF from FDT (where we'd
+need to). It is somewhat just by arch, but PPC always passes an FDT to
+the kernel for both FDT and OF systems.
 
-     UNLAZY masks the interrupt right away.
-
-  3) Disable interrupts at the device level
-
-     This prevents the device from raising interrupts.
-
-Now there is another twist with force threaded interrupts.
-
-If the interrupt is level triggered the interrupt line is masked in the
-hard interrupt handler and unmasked when the thread returns.
-         
-For edge type interrupts that's handled differently in order to not lose
-an edge. The line is not masked, so that if the device raises an
-interrupt before the threaded handler returns, the threaded handler is
-marked runnable again. That again comes in two flavors:
-
-  1) Non-RT kernel
-
-     That cannot result in a scenario where the force threaded handler
-     loops and interrupts keep arriving at the CPU because the CPU has
-     interrupts disabled across the force threaded handler and at least
-     on x86 and arm64 that's the CPU which is target of the hardware
-     interrupt.
-
-     So at max there can come a few interrupts between the first
-     interrupt and the threaded handler being scheduled in, but I doubt
-     it can be more than three.
-
-  2) RT kernel
-
-     The forced threaded handler runs with CPU interrupts enabled, so
-     when the threaded handler deals with the device, new interrupts can
-     come in at the hardware level and are accounted for, which is what
-     you are trying to address, right?
-
-     So the total amount of TX bytes, i.e. PASS_LIMIT * tx_loadsz,
-     becomes large enough to trigger the irq storm detector, right?
-
-That obviously begs two questions:
-
-  1) Why do you want to deal with this interrupt flood at the storm
-     detector and not at the root cause of the whole thing?
-
-     It does not make any sense to take a gazillion of interrupts for
-     nothing and then work around the resulting detector fallout.
-
-     The obvious adhoc cure is to add this to serial8250_interrupt():
-
-        if (IS_ENABLED(CONFIG_PREEMPT_RT))
-        	disable_irq_nosync(irq);
-                
-        magic_loop();
-
-        if (IS_ENABLED(CONFIG_PREEMPT_RT))
-        	enable_irq(irq);
-
-     Ideally we'd disable interrupt generation in the IER register
-     around the loop, but that's another can of worms as this can't be
-     done easily without holding port lock across the IER disabled
-     section. Also see below.
-
-
-  2) Is the 512 iterations loop (PASS_LIMIT) still appropriate?
-
-     That loop in serial8250_interrupt() looks pretty horrible even on a
-     non-RT kernel with an emulated UART.
-
-     The issue is mostly irrelevant on real hardware as the FIFO writes
-     are faster than the UART can empty the FIFO. So unless there are
-     two FIFO UARTs sharing the same interrupt line _and_ writing
-     large amount of data at the same time the loop will terminate after
-     one write cycle. There won't be an interrupt per TX byte either.
-
-     On emulated hardware this is very different because the write
-     causes a VMEXIT with a full round trip to user space, which
-     consumes the character and immediately raises the TX empty
-     interrupt again because there is no "slow" hardware involved.
-
-     With the default qemu FIFO depth of 16 bytes, this results in up to
-     512 * 16 = 8192 bytes written out with interrupts disabled for one
-     invocation of the interrupt handler (threaded or not)...
-
-     I just traced interrupt entry/exit in a VM and for a file with 256k
-     bytes written to /dev/ttyS0 this results in:
-
-     Interrupts:          35
-     Bytes/Interrupt:  ~7490
-     Tmax:            104725 us
-     Tavg:             96778 us
-
-     So one interrupt handler invocation which writes up to 8k takes
-     roughly 100ms with interrupts disabled...
-
-     Now looking at the host side. For every write to the TX FIFO there
-     are _four_ invocations of kvm_set_irq() originating from kvm_vm_ioctl_irq_line():
-
-      CPU 36/KVM-2063    [097] ..... 1466862.728737: kvm_pio: pio_write at 0x3f8 size 1 count 1 val 0xd 
-      CPU 36/KVM-2063    [097] ..... 1466862.728742: kvm_set_irq: gsi 4 level 0 source 0
-      CPU 36/KVM-2063    [097] ..... 1466862.728749: kvm_set_irq: gsi 4 level 0 source 0
-      CPU 36/KVM-2063    [097] ..... 1466862.728754: kvm_set_irq: gsi 4 level 1 source 0
-      CPU 36/KVM-2063    [097] ..... 1466862.728762: kvm_set_irq: gsi 4 level 1 source 0
-      CPU 36/KVM-2063    [097] ..... 1466862.728783: kvm_pio: pio_write at 0x3f8 size 1 count 1 val 0xa 
-      CPU 36/KVM-2063    [097] ..... 1466862.728787: kvm_set_irq: gsi 4 level 0 source 0
-      CPU 36/KVM-2063    [097] ..... 1466862.728792: kvm_set_irq: gsi 4 level 0 source 0
-      CPU 36/KVM-2063    [097] ..... 1466862.728797: kvm_set_irq: gsi 4 level 1 source 0
-      CPU 36/KVM-2063    [097] ..... 1466862.728809: kvm_set_irq: gsi 4 level 1 source 0
-
-     No idea why this needs four ioctls and not only two, but this
-     clearly demonstrates that each byte written creates an edge
-     interrupt. No surprise that the storm detector triggers on RT. But
-     this also makes it clear why it's a patently bad idea to work
-     around this in the detector...
-
-     Now being "smart" and disabling THRI in the IER before the write
-     loop in serial8250_tx_chars() changes the picture to:
-     
-      CPU 18/KVM-2045    [092] ..... 1466230.357478: kvm_pio: pio_write at 0x3f9 size 1 count 1 val 0x5
-
-      IER.THRI is cleared now so it's expected that nothing fiddles with
-      the interrupt line anymore, right? But ....
-
-      CPU 18/KVM-2045    [092] ..... 1466230.357479: kvm_set_irq: gsi 4 level 0 source 0
-      CPU 18/KVM-2045    [092] ..... 1466230.357481: kvm_set_irq: gsi 4 level 0 source 0
-      CPU 18/KVM-2045    [092] ..... 1466230.357484: kvm_pio: pio_write at 0x3f8 size 1 count 1 val 0x73 
-      CPU 18/KVM-2045    [092] ..... 1466230.357485: kvm_set_irq: gsi 4 level 0 source 0
-      CPU 18/KVM-2045    [092] ..... 1466230.357487: kvm_set_irq: gsi 4 level 0 source 0
-      CPU 18/KVM-2045    [092] ..... 1466230.357489: kvm_set_irq: gsi 4 level 0 source 0
-      CPU 18/KVM-2045    [092] ..... 1466230.357491: kvm_set_irq: gsi 4 level 0 source 0
-      ....
-
-     So every write to the TX FIFO sets the level to 0 four times in a
-     row to not create an edge. That's truly impressive!
-
-Thanks,
-
-        tglx
+Rob
 
