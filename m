@@ -1,91 +1,110 @@
-Return-Path: <linux-kernel+bounces-427471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367F59E01D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:15:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76EF9E01C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A33EB35D7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45229285303
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2AA20CCF4;
-	Mon,  2 Dec 2024 12:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fX6bjgMM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13DE20370D;
+	Mon,  2 Dec 2024 12:05:01 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3448120CCE9;
-	Mon,  2 Dec 2024 12:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E584F1FECCE;
+	Mon,  2 Dec 2024 12:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733141070; cv=none; b=nqU6z2bk2abLSdlwIP2po97Q0TWFB10Tz/4HKqwVFPEPVF3SfWixK4Lgzm5Jc08Kl/3p6h+rq8CIfmQyXVwkgLwxKQyOreEdzUPjqqzXT8IlNjSZmAu8uAXKoIpQGXVM0Y+AiIDcyO2QIQ2kZyHPbjphehwRPXQ0HES/zXohaoY=
+	t=1733141101; cv=none; b=PSVY/VpPX1zEplwZ2HSRtUyWUjFfZlWecQNQRG7Rfh+238zLm26w1Z+ybfkzlCSMegto5ci70caSxPdKCZRIwx8SDgYafRRZpiIjSVJ5ezPOk2fj6m9RYh33BVa7gpahzMvJKrH9PRn1B9YDAuVUU9RA8CR716wkCWJzZhMj1mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733141070; c=relaxed/simple;
-	bh=ntyjtRQBzDCZOIUj0LJQ6UP3yD/2RxIZEvoUeHfG6AU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AV4c1Vt4NKyiY8MIVPHiB8Ayg/LwCKLYzrXRhPpzWe6M+qQbCZ9iwFmo3E0f3+78HEsqae2SWEqG3ZGjCt1nJQXMxPEr43so6Zniwul5fAYQrb1/P5/7qR2UoF+VUbVxVykUlcSx7iUGmFAIGZj2uyfqOe3GB5eVK8R6vd2Eolg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fX6bjgMM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05E4FC4CED9;
-	Mon,  2 Dec 2024 12:04:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733141069;
-	bh=ntyjtRQBzDCZOIUj0LJQ6UP3yD/2RxIZEvoUeHfG6AU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fX6bjgMMjsXlPDLo1IEsaQKWmPR4SblrZXCbeg37u/bq3D+InFtE7D4RJMLwq0AAu
-	 wXmCZ4216vCdb+bKZam+RE6uemLAd52Fs+VBtnwNLaqI+lhw2OPtsczG835M5ym8q+
-	 aXYWHX4y7rGURQCaldGPr0CnHYLOpoudCLB+7oVZBu2jGqXM1JgBZOr0p1hNpbZZ4M
-	 SIPN+ua7mu/0m4u9L7qL8gHaubpuGcCWLVu25fCGsfkaUJsV3aGmy2Mf+ewNPyuz3F
-	 QzHH33FaB3Sgxsj3uIojxEzQSy+8uN+qPCvmsW0r5QYhxEPm59rXxc83Ca8KShPCNN
-	 WpkFxgFcxc9zw==
-From: Borislav Petkov <bp@kernel.org>
-To: Sean Christopherson <seanjc@google.com>,
-	X86 ML <x86@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	KVM <kvm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH v2 4/4] Documentation/kernel-parameters: Fix a typo in kvm.enable_virt_at_load text
-Date: Mon,  2 Dec 2024 13:04:16 +0100
-Message-ID: <20241202120416.6054-5-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241202120416.6054-1-bp@kernel.org>
-References: <20241202120416.6054-1-bp@kernel.org>
+	s=arc-20240116; t=1733141101; c=relaxed/simple;
+	bh=3fgC2VCsjiFNi8y9u5JWWhnjpjAWSTZSe9/C8VYmkoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uYwZwzBgMoy/h4V6J37aug2YLD+8u/ffWOfUBDK1gGNg9yhYrkB56o/TVek7ACbp68WsODGJX2Jmp4bTw2mwGa/Id8LIAM36SVF+F3uRKbj/2kIO0dTmNSdCa7llau4La1lgaFwETS6qX8KrjxpoUWWQA4cznldI5oVgoYJBFWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 46D7A1C00C4; Mon,  2 Dec 2024 13:04:58 +0100 (CET)
+Date: Mon, 2 Dec 2024 13:04:57 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
+	shuah@kernel.org, mark.rutland@arm.com, thiago.bauermann@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.10 4/5] kselftest/arm64: Corrupt P0 in the
+ irritator when testing SSVE
+Message-ID: <Z02iaXudPt42mby+@duo.ucw.cz>
+References: <20241124124210.3337020-1-sashal@kernel.org>
+ <20241124124210.3337020-4-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5C6mcP4K8z2tNCMR"
+Content-Disposition: inline
+In-Reply-To: <20241124124210.3337020-4-sashal@kernel.org>
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
-s/lode/load/
+--5C6mcP4K8z2tNCMR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- Documentation/admin-guide/kernel-parameters.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi!
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index dc663c0ca670..e623e2b53be2 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2695,7 +2695,7 @@
- 			VMs, i.e. on the 0=>1 and 1=>0 transitions of the
- 			number of VMs.
- 
--			Enabling virtualization at module lode avoids potential
-+			Enabling virtualization at module load avoids potential
- 			latency for creation of the 0=>1 VM, as KVM serializes
- 			virtualization enabling across all online CPUs.  The
- 			"cost" of enabling virtualization when KVM is loaded,
--- 
-2.43.0
+> From: Mark Brown <broonie@kernel.org>
+>=20
+> [ Upstream commit 3e360ef0c0a1fb6ce9a302e40b8057c41ba8a9d2 ]
+>=20
+> When building for streaming SVE the irritator for SVE skips updates of bo=
+th
+> P0 and FFR. While FFR is skipped since it might not be present there is no
+> reason to skip corrupting P0 so switch to an instruction valid in streami=
+ng
+> mode and move the ifdef.
 
+This is mismerged. Original patch moves #ifdef. How did AUTOSEL came
+up with this?
+
+Best regards,
+								Pavel
+
+> +++ b/tools/testing/selftests/arm64/fp/sve-test.S
+> @@ -459,7 +459,8 @@ function irritator_handler
+>  	movi	v9.16b, #2
+>  	movi	v31.8b, #3
+>  	// And P0
+> -	rdffr	p0.b
+> +	ptrue	p0.d
+> +#ifndef SSVE
+>  	// And FFR
+>  	wrffr	p15.b
+> =20
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--5C6mcP4K8z2tNCMR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ02iaQAKCRAw5/Bqldv6
+8mzMAJ412V6JjbuxcrchCjkJtPf4IIGCNACfW7cPJx2m3ROlazM0FJ728S145fE=
+=cDPI
+-----END PGP SIGNATURE-----
+
+--5C6mcP4K8z2tNCMR--
 
