@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-427049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C739DFB9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:05:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197069DFBA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAF3FB225DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:05:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48AA5B22AE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988451F9A91;
-	Mon,  2 Dec 2024 08:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225591F9ABC;
+	Mon,  2 Dec 2024 08:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="i/N1I/nT"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VgBbCzp5"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EF6F9E6
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACBF1F9428
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733126720; cv=none; b=EhMDRZHZJPyskSf8Hrpa8tXkXy+2P0OTdBLe/rfqvo1VB7QyM8Nf+9S7v01UuYpGlL6WPc2rwFBeNW8ubQM9RMwGozF5atZvthRZSVp+chYGoqO8WKAffD1TtF6KuNR22k4tgZTjq10ceaNfPkt4JVCcLX8wIVytNUhaSR5KjXA=
+	t=1733126912; cv=none; b=rT6bwlQcDRnE5VuXD3V7gwG2uxOqWSKk4BPXg3k9nekOvNYuMYCZ4l8We8Gae/F4mWEA0brmZvzBKqAwQGPr2oy5mcvuSSwa9SKwArqSGaKMaHXrpdaoI/TOMRO7+TlKVXrcde4GSSKN+yTmBABKk92xvmnzkZBBCD6w/eg0hnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733126720; c=relaxed/simple;
-	bh=HKnyssjRU3BrgFikDQPjora2tKd4rTt41GufQ8z8wyE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mkUEyP/D7XvPD+tUOAtiSGKXPzwkM6fRqCCJ7NY4NYEegHxb+a+9e2QeaDWzxVwF0GfMWk4X+N6UMTD7dvZcS5WWlrf5Igypq5yyTOrH5Jq9sJlUTcAPh5fSU6YxjGwAvg/cRZ8LtRjj9756xV6nmafi2TwsIf13s0MztSJlwiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=i/N1I/nT; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1733126912; c=relaxed/simple;
+	bh=iS5P/TmdSvSmouyGv1HDCNHfayN4+P7ZVBi4hwvFtak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sEpkU5ET0KZF+OMGzVq6ya9Pqg4l3bmxTH0vo+YWI8EGyXVSRzNTNVwcmCXWRxfAIS+hqplHEqRjhKGrjVO30x1BULRdDnKmRLu17zAO5dBJTsR21bMiObEH9jrAmrFCrdG9EdNK1NOcUcBusPOoE5qaZUq5We05Me9ydtKELCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VgBbCzp5; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffc1009a06so54770751fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:05:17 -0800 (PST)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385e96a285eso676183f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:08:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733126716; x=1733731516; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=tuxon.dev; s=google; t=1733126909; x=1733731709; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nt9G7KmSxpaO4MDaESLiYEAxzFatOQtvUL6niYdnua4=;
-        b=i/N1I/nT4U7EImYRw6fzT7jKfS5sfgfbnyHIjEix59rAs6HdNaVwyABrMxvjM8S7bc
-         wT22RptllCJVy+d/6FJL9NvwRpo5Q9g/Qco5jjATz31PXz3yKSlDO68YBtzId8zvgtY8
-         XrNJVOr2ovUY1xVCiLwLXeH1LQflLJzYuVItxXoY1j2vcPE0Eci4QHBZc283vShKHQ5Y
-         0I0eJ4F0OS1BoR7NnyX6xO3ZBAxFJOkxWGwwWAST5C7o95xRiizLSKvjy3fnIFKFFRtK
-         SiIsZDirf7AJrBVrHK1yVWHkJaXcCL3FFVckYnE3Y63VF8pklp/Gt2UfX5kwyfHvpY6k
-         /Asg==
+        bh=biIoGOQqyq3N6XA0zNtfB70JTNOwYolG4EVywUtJAns=;
+        b=VgBbCzp5ANLq93+U0LSqcq7eAwKg60YI4/c1qSQNNGLPFS0d+GuC9ht4/9loQuJWlZ
+         V2ELxvKgWMt+C0wMUyDn1PYpMkauWJJNoXG94S+SRofE3XnS3/OXA2dP4IoHJTKlVDTC
+         HODhjGAALzETzo8mbewXvakb/qqgZRJVu57S7MA2bzyQnQ30l43YF9VxQMAyCSqfk3HZ
+         Vpu5nhEh4kRdKUeIlESNV0fjUy6ZlDrZjDnmFE2c/IXnG6d+mhDvqlDuHZwtiTJde4Yr
+         TpRUCZeqXqgQR81hOZkz/17E5wbW0dYphgQ81NN9KgiGodW9/HUYQCw/FqEnq7/dFlG1
+         XoeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733126716; x=1733731516;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=1e100.net; s=20230601; t=1733126909; x=1733731709;
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nt9G7KmSxpaO4MDaESLiYEAxzFatOQtvUL6niYdnua4=;
-        b=ePWBOCuH5C0EmshUGDIQs0h89wCXTlZ0Krqa8wYY7XLU0oWp1cQVztPOJ787Tuu3mA
-         Nbfst/HKv4My6G4Nxf5uBZsOvEDx28OeHrVQYGCiC2kGmX/GWB3dApGPuNcQtZcUrGSX
-         Rkk0Yx+sRHXlqu1FG9BiJvPtPsMqUATspm+l9Sj566lLSFtSyeuONjOLmHKgO/B4DuRE
-         5CQFW487UWQAE03nEVO9KB50L13RoUrCO0IEJVSOq7j3k9VhFUeCVTMXMK4LQTQcvfEg
-         mmCQStDnsFUTjpEORJQOUonX3/AitrMfmnVeS+QLnQcPJVQsxXd+gVk+Cvlo0FcV4Xwg
-         UroA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjr0zbTR7q3G2WhzjGSrvTOs/LWm2LZyA2N0u8aT1iG7Nd3Iqony1NPvA4+Sli2DpHhsUHn84DmiweYzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXnhYmaBRVqK/grDkryTh33lIAwEs3vVt/dztSLR5f+ThEzkL3
-	d5j2hSskvFadQTC8VtpUcNBn7BzXqGlOrNlF6l4//dJOJJts44kCfOe54BfFu/E=
-X-Gm-Gg: ASbGnct/gxZfo/0fyyV5k6Bidax1ObLd73EjkUZ7cLednT3H4qibtuMcLuC9NfzVnwt
-	SwG/nafQ/Pgx4/NY+U65V6AxUHf+/5ajj+pxYzrec/RrR7DkpSCePbw9EYHU3VZmNN3jmKXNLsO
-	F1zKOfJw00Efp/xVgML13/H91gzmxoKpe4KJzVOkX92pQHIMFI+f2rtKrVI19Sw6keVefOMNxGz
-	XePT3+74TC6kzHsPfrbqOBZ5+wN1l2ib4Fpne3Gp0M+re9NnsN73Tsytg==
-X-Google-Smtp-Source: AGHT+IFUfZ5e2F1fAB4ao3/fokEu8MgM9xJJBXI2ftiU7+MWrxZpJdyaH0ok5YzBfo7DCvJTbQZ7iA==
-X-Received: by 2002:a2e:be25:0:b0:2ff:96dc:af29 with SMTP id 38308e7fff4ca-2ffd5ffe050mr116068701fa.10.1733126715444;
-        Mon, 02 Dec 2024 00:05:15 -0800 (PST)
+        bh=biIoGOQqyq3N6XA0zNtfB70JTNOwYolG4EVywUtJAns=;
+        b=tFvqrgmHyj422N57YnRjMFU4BrGruEswy8ftqJTWkaSBYzPjeZ+sPfV8sOUZLYVB+Q
+         5egkAns96hvjK60tyNQflWgyMXc10QGPTntBYeg50vexhEUCTaVgqmGvLVbsRYOVH3ks
+         6l/Zv9Bq0upxBd80eyHmP2+2KEho3N2he0DMQHYf13XoMpcmOLOQ1ZtMX/uMMUxs22WZ
+         cih1SNL6s1MDKp9i8fEbns04jrDvypLEAK1J9qJpwkI4AtOYTOJ0HDYZN1hUxm12jPJ0
+         GUTdLs1kh8V03J1Nbg8lFCxR3t23UxdU+mxhyLXrvT92oudKToQHibosvxTy2dhn0Thx
+         OX0g==
+X-Forwarded-Encrypted: i=1; AJvYcCViG92LbkQ1v4lCRjHlWZGKz90U+tMo1n2ir8aZQK5AAHCH+Xt/z9PWHZQc6pXncyH0Ja0aK9DyeLtc3mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMrE6TlVEXaMUGUy287Tn2Vx/6PPdxdvl/3Y8h+XjzE9KP7gZv
+	sAqaZinBCz5qDW5ClBi81ajmopGlphjirP22C5wzEmtezeRC0VoP6MrEBszhrgU=
+X-Gm-Gg: ASbGncsPZp3pZ5dh2gBizJtjAO473gnAHp0AsnW6OhhelBmbWAUfZIolo472Ec4mEqo
+	LTJ8pBoIeC8VoNvTMy/+3+UR+Ad3Bia1K6d5jPFzwgN23Yqa8IoFlgoZO9fbqkcFbtfVbwQb18U
+	EEV3Uyh865lw19QFp/m1ZXYvGWIundSzY72iV+jGhwHX1peUHEE+GzAopO60SVY/sDoCkAFy/mz
+	596QvaFNPcATOL/q2HVf+tK6G9qsynylI+hg91A6ox3TCjS+KaPN+Nb0A==
+X-Google-Smtp-Source: AGHT+IE/FN2ZItFsru5z5bnmJFaCMjGBYDDtPToGAA6DQa0WbEd1yHKPiHr3G9UCYQzQErXFFCJrCA==
+X-Received: by 2002:a5d:6dac:0:b0:382:32ec:f5b4 with SMTP id ffacd0b85a97d-385c6edd38emr19115560f8f.47.1733126908581;
+        Mon, 02 Dec 2024 00:08:28 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f327casm144987935e9.27.2024.12.02.00.05.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e8783843sm5908426f8f.4.2024.12.02.00.08.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 00:05:14 -0800 (PST)
-Message-ID: <34a5b77b-e732-4393-a469-d9c719afa879@tuxon.dev>
-Date: Mon, 2 Dec 2024 10:05:11 +0200
+        Mon, 02 Dec 2024 00:08:28 -0800 (PST)
+Message-ID: <db8187d8-5ec6-4aaa-bd61-21cd3a806c66@tuxon.dev>
+Date: Mon, 2 Dec 2024 10:08:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,114 +79,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: at91: pm: change BU Power Switch to automatic mode
+Subject: Re: [PATCH 1/2] ARM: dts: microchip: sam9x7: Move i2c address/size to
+ dtsi
 Content-Language: en-US
-To: nicolas.ferre@microchip.com,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Cristian Birsan <cristian.birsan@microchip.com>
-References: <20241125165648.509162-1-nicolas.ferre@microchip.com>
+To: Mihai Sain <mihai.sain@microchip.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241122080523.3941-1-mihai.sain@microchip.com>
+ <20241122080523.3941-2-mihai.sain@microchip.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20241125165648.509162-1-nicolas.ferre@microchip.com>
+In-Reply-To: <20241122080523.3941-2-mihai.sain@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Nicolas,
+Hi, Mihai,
 
-On 25.11.2024 18:56, nicolas.ferre@microchip.com wrote:
-> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+On 22.11.2024 10:05, Mihai Sain wrote:
+> Since these properties are common for all i2c subnodes,
+> move them to SoC dtsi from board dts.
 > 
-> Change how the Backup Unit Power is configured and force the
-> automatic/hardware mode.
-> This change eliminates the need for software management of the power
-> switch, ensuring it transitions to the backup power source before
-> entering low power modes.
-> 
-> This is done in the only locaton where this swich was configured. It's
+> Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
 
-s/locaton/location
+Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
-> usually done in the bootloader.
-> 
-> Previously, the loss of the VDDANA (or VDDIN33) power source was not
-> automatically compensated by an alternative power source. This resulted
-> in the loss of Backup Unit content, including Backup Self-refresh low
-> power mode information, OTP emulation configuration, and boot
-> configuration, for instance.
-
-Should we add a fixes for this?
-
-> 
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 > ---
->  arch/arm/mach-at91/pm.c | 31 ++++++++++++++++++++-----------
->  1 file changed, 20 insertions(+), 11 deletions(-)
+>  .../dts/microchip/at91-sam9x75_curiosity.dts  |  2 --
+>  arch/arm/boot/dts/microchip/sam9x7.dtsi       | 26 +++++++++++++++++++
+>  2 files changed, 26 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-> index b9b995f8a36e..05a1547642b6 100644
-> --- a/arch/arm/mach-at91/pm.c
-> +++ b/arch/arm/mach-at91/pm.c
-> @@ -598,7 +598,21 @@ static int at91_suspend_finish(unsigned long val)
->  	return 0;
->  }
+> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
+> index 87b6ea97590b..d453800f8e35 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
+> @@ -88,8 +88,6 @@ &flx6 {
+>  };
 >  
-> -static void at91_pm_switch_ba_to_vbat(void)
-> +/**
-> + * at91_pm_switch_ba_to_auto() - Configure Backup Unit Power Switch
-> + * to automatic/hardware mode.
-> + *
-> + * The Backup Unit Power Switch can be managed either by software or hardware.
-> + * Enabling hardware mode allows the automatic transition of power between
-> + * VDDANA (or VDDIN33) and VDDBU (or VBAT, respectively), based on the
-> + * availability of these power sources.
-> + *
-> + * If the Backup Unit Power Switch is already in automatic mode, no action is
-> + * required. If it is in software-controlled mode, it is switched to automatic
-> + * mode to enhance safety and eliminate the need for toggling between power
-> + * sources.
-> + */
-> +static void at91_pm_switch_ba_to_auto(void)
->  {
->  	unsigned int offset = offsetof(struct at91_pm_sfrbu_regs, pswbu);
->  	unsigned int val;
-> @@ -609,24 +623,19 @@ static void at91_pm_switch_ba_to_vbat(void)
->  
->  	val = readl(soc_pm.data.sfrbu + offset);
->  
-> -	/* Already on VBAT. */
-> -	if (!(val & soc_pm.sfrbu_regs.pswbu.state))
-> +	/* Already on auto/hardware. */
-> +	if (!(val & soc_pm.sfrbu_regs.pswbu.ctrl))
->  		return;
->  
-> -	val &= ~soc_pm.sfrbu_regs.pswbu.softsw;
-
-It seems that softsw and state members of at91_pm_sfrbu_regs.pswbu along
-with their initialization could be dropped. What do you think?
-
-I can do it while applying, if any.
-
-Thank you,
-Claudiu
-
-
-> -	val |= soc_pm.sfrbu_regs.pswbu.key | soc_pm.sfrbu_regs.pswbu.ctrl;
-> +	val &= ~soc_pm.sfrbu_regs.pswbu.ctrl;
-> +	val |= soc_pm.sfrbu_regs.pswbu.key;
->  	writel(val, soc_pm.data.sfrbu + offset);
-> -
-> -	/* Wait for update. */
-> -	val = readl(soc_pm.data.sfrbu + offset);
-> -	while (val & soc_pm.sfrbu_regs.pswbu.state)
-> -		val = readl(soc_pm.data.sfrbu + offset);
->  }
->  
->  static void at91_pm_suspend(suspend_state_t state)
->  {
->  	if (soc_pm.data.mode == AT91_PM_BACKUP) {
-> -		at91_pm_switch_ba_to_vbat();
-> +		at91_pm_switch_ba_to_auto();
->  
->  		cpu_suspend(0, at91_suspend_finish);
->  
+>  &i2c6 {
+> -	#address-cells = <1>;
+> -	#size-cells = <0>;
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_flx6_default>;
+>  	i2c-analog-filter;
+> diff --git a/arch/arm/boot/dts/microchip/sam9x7.dtsi b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+> index beb1f34b38d3..aedba0a8318f 100644
+> --- a/arch/arm/boot/dts/microchip/sam9x7.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+> @@ -151,6 +151,8 @@ i2c4: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <13 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -220,6 +222,8 @@ i2c5: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <14 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -312,6 +316,8 @@ i2c11: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <32 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 32>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -362,6 +368,8 @@ i2c12: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <33 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 33>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -533,6 +541,8 @@ i2c6: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <9 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 9>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -583,6 +593,8 @@ i2c7: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <10 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -633,6 +645,8 @@ i2c8: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <11 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 11>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -702,6 +716,8 @@ i2c0: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <5 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -771,6 +787,8 @@ i2c1: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <6 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -840,6 +858,8 @@ i2c2: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <7 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -909,6 +929,8 @@ i2c3: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <8 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -984,6 +1006,8 @@ i2c9: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <15 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
+> @@ -1034,6 +1058,8 @@ i2c10: i2c@600 {
+>  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
+>  				reg = <0x600 0x200>;
+>  				interrupts = <16 IRQ_TYPE_LEVEL_HIGH 7>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+>  				clocks = <&pmc PMC_TYPE_PERIPHERAL 16>;
+>  				dmas = <&dma0
+>  					(AT91_XDMAC_DT_MEM_IF(0) |
 
