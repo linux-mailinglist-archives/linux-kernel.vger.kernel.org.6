@@ -1,183 +1,195 @@
-Return-Path: <linux-kernel+bounces-427939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93BF9E08E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:44:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5139E088D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:30:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF69CBC58B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B420216CC1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B1C3D96D;
-	Mon,  2 Dec 2024 15:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D03136352;
+	Mon,  2 Dec 2024 15:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leTVkebe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cLRCj81Y"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF374779D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CB3757EA
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154842; cv=none; b=eG9MmRcZfDijs1r3v8xtQV7G9Ouoz89ojjyw1GkfC6SioLZmcWYizhnMtHZjM4ftPO5mjpvFI5n92Uww+32eayuRSprB7G3ck89RjaTQwEZxtXSAPxM1naOeZNQUIKB3o2gMz+9pRpzFjT/D5jsroMFbyP1Fc7b0yl2EnuiihoM=
+	t=1733154965; cv=none; b=fSUJR7NoBBCb8DgftSameCsZODY63dSfvt+0YPzlJjIbDtkUt6ggIDRQUVy7DiS6ayy2hBAe1w/BZBzX9PT9UJz9cKFijZnsoHPi+9OfcJDAYIMuGK7Kegv1HohvngmO4M6VK6gJSYsTe64s5ds7oxneWM7EnNH1L51RIjtk2ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154842; c=relaxed/simple;
-	bh=zPhfELWnkxEKDby/vhp45DNDycw9pe+yrqewrU1oPkQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T8wyjGQRLFwNzEfhMNdUQhy6vvsDN/bqPcE4+27K60vEKbKkHZMoZ8MqSuttC61r2AKOcxP0L3HL46Qor8srHWHyd8R19pjYGyHfIaiFMlrU6LQhUL8WJfT7ZtS9y25Y7Jf4tVHHf3JgNBqVwl60IYCeU85qLv1THGnbYo9OBYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leTVkebe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02DB6C4CED1;
-	Mon,  2 Dec 2024 15:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733154842;
-	bh=zPhfELWnkxEKDby/vhp45DNDycw9pe+yrqewrU1oPkQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=leTVkebeBbdP1Vtmm8SknFqJpAcOXTa61Tyup4+OBdXWwyt1TOjxCXx6puayi+khP
-	 LA7BXxTn+frrtAr6NXJME355ZhZN1WIDt23EDy1YczR03EHyxAoO2/tWsPJiFt2LBH
-	 Qf4LAPCoGr/ZEUEDzspspujdSFLkgvYhcLK2BsOl+DHqVjN9OpiPZIXFBgpLhiQNiv
-	 Gbs5yYFxSf+X6ykSssxIbCtTHSL4FIs9kVb7K9y6HQR8PO5YFn8Y8Aq5/3hFhYvwn+
-	 122g17AIw8KZo3BRWadv2Kq43agq3Hs8qJsD4Bx6pbwUZNJyikuBvsPRKWyhU+yTSv
-	 SlMAluy+ihaPA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tI8kJ-00HOsH-Nr;
-	Mon, 02 Dec 2024 15:53:59 +0000
-Date: Mon, 02 Dec 2024 15:53:59 +0000
-Message-ID: <86ttbmt71k.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Vitaly Chikunov <vt@altlinux.org>,
-	james.morse@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	mark.rutland@arm.com
-Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction: 0000000002000000 [#1] SMP
-In-Reply-To: <20241202153618.GA6834@willie-the-truck>
-References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
-	<20241202153618.GA6834@willie-the-truck>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733154965; c=relaxed/simple;
+	bh=vO/zP/Hg6dRPICelNAVB8r2vgxb3Z2D6cS4un5APP+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DjkCwQVPnsmMkCsuVhFexTWS6Df6/i2NopkXH3NY37tw82FCC5Uc2PJZLX0zEjmcsLeZCeqj7t9DuNtmrFqZUnQaADtTLqkdDOO8AeWxvq8TuHIacOAvVLtmFN9Gc6N35874RqSfasrpgSsw4CPjcCthkgcBcVw5aGMidY+IGg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cLRCj81Y; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2A6f4B030483;
+	Mon, 2 Dec 2024 15:55:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=Hk+RngvHGZxzy28PlgmvX+7b46pqIZH4JnqUukvzW
+	vI=; b=cLRCj81YZIfbZSKrK+Txjc0cq/rF4Yx+l0e+aTgr4xfHhiYqOQeJvRo7f
+	aCauv71ukoeIeNrxHYxhuLuIpRT+GPLV74EPL9FsrGxZOE8Bu/jDW5XmUWJ9Gtyp
+	KdHhmFlM63Eu1Sy++Mklov8K//LjoikoURDHuc37S3UkEvNFDeILdcaJ1qF1KS5e
+	+LPkwMGWP83FioXBQw1sGyOEf5669JZ2IXNmhQYpYdE/k0IRzikcf6aB7Sikmz3T
+	HYJN7VDLS2xjDiNnubx0G8rk87seQ6k7vaqTJDeh8FY7LSNJPYdUJYmemt87jOf/
+	5kw3sLTn/BvddBOsfeFXZ42wYpFFg==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tcva63h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 15:55:56 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2FfQ3t029494;
+	Mon, 2 Dec 2024 15:55:55 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438ddy750b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 15:55:54 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B2Ftou335390086
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 2 Dec 2024 15:55:51 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2E3A520040;
+	Mon,  2 Dec 2024 15:55:50 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A9C422004E;
+	Mon,  2 Dec 2024 15:55:49 +0000 (GMT)
+Received: from heavy.ibm.com (unknown [9.171.28.94])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  2 Dec 2024 15:55:49 +0000 (GMT)
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ilya Leoshkevich <iii@linux.ibm.com>
+Subject: [PATCH] posix-timers: Fix a race with __exit_signal()
+Date: Mon,  2 Dec 2024 16:54:32 +0100
+Message-ID: <20241202155547.8214-1-iii@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: will@kernel.org, vt@altlinux.org, james.morse@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, mark.rutland@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: PPgu_SFAKJlyiiPiePXbWWZ7W4NOip54
+X-Proofpoint-GUID: PPgu_SFAKJlyiiPiePXbWWZ7W4NOip54
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412020133
 
-On Mon, 02 Dec 2024 15:36:19 +0000,
-Will Deacon <will@kernel.org> wrote:
-> 
-> [+ usual suspects]
-> 
-> On Mon, Dec 02, 2024 at 07:58:30AM +0300, Vitaly Chikunov wrote:
-> > v6.13-rc1 exhibits a boot failure on aarch64 under KVM. (QEMU 9.1.1, CPU
-> > Kunpeng-920). Boot log:
-> 
-> I've not tried to repro this locally, but from the log:
-> 
-> > + time qemu-system-aarch64 -M accel=kvm:tcg -smp cores=8 -m 4096 -serial mon:stdio -nodefaults -nographic -no-reboot -fsdev local,id=root,path=/,security_model=none,multidevs=remap -device virtio-9p-pci,fsdev=root,mount_tag=virtio-9p:/ -device virtio-rng-pci -kernel /usr/src/tmp/kernel-image-6.13-buildroot/boot/vmlinuz-6.13.0-6.13-alt0.rc1 -initrd /usr/src/tmp/initramfs-6.13.0-6.13-alt0.rc1.img -sandbox on,spawn=deny -M virt,gic-version=3 -cpu max -append 'console=ttyAMA0 mitigations=off nokaslr  panic=-1 SCRIPT=/usr/src/tmp/vm.SchsIm2FjB earlycon earlyprintk=serial ignore_loglevel debug rddebug'
-> > [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x481fd010]
-> > [    0.000000] Linux version 6.13.0-6.13-alt0.rc1 (builder@localhost.localdomain) (gcc-14 (GCC) 14.2.1 20241028 (ALT Sisyphus 14.2.1-alt1), GNU ld (GNU Binutils) 2.43.1.20241025) #1 SMP PREEMPT_DYNAMIC Mon Dec  2 03:33:29 UTC 2024
-> > [    0.000000] KASLR disabled on command line
-> > [    0.000000] random: crng init done
-> > [    0.000000] Machine model: linux,dummy-virt
-> > [    0.000000] printk: debug: ignoring loglevel setting.
-> > [    0.000000] efi: UEFI not found.
-> > [    0.000000] earlycon: pl11 at MMIO 0x0000000009000000 (options '')
-> > [    0.000000] printk: legacy bootconsole [pl11] enabled
-> > [    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
-> > [    0.000000] NUMA: Faking a node at [mem 0x0000000040000000-0x000000013fffffff]
-> > [    0.000000] NODE_DATA(0) allocated [mem 0x13f7f3540-0x13f7f947f]
-> > [    0.000000] Zone ranges:
-> > [    0.000000]   DMA      [mem 0x0000000040000000-0x00000000ffffffff]
-> > [    0.000000]   DMA32    empty
-> > [    0.000000]   Normal   [mem 0x0000000100000000-0x000000013fffffff]
-> > [    0.000000] Movable zone start for each node
-> > [    0.000000] Early memory node ranges
-> > [    0.000000]   node   0: [mem 0x0000000040000000-0x000000013fffffff]
-> > [    0.000000] Initmem setup node 0 [mem 0x0000000040000000-0x000000013fffffff]
-> > [    0.000000] cma: Reserved 256 MiB at 0x00000000f0000000 on node -1
-> > [    0.000000] psci: probing for conduit method from DT.
-> > [    0.000000] psci: PSCIv1.1 detected in firmware.
-> > [    0.000000] psci: Using standard PSCI v0.2 function IDs
-> > [    0.000000] psci: Trusted OS migration not required
-> > [    0.000000] psci: SMC Calling Convention v1.1
-> > [    0.000000] smccc: KVM: hypervisor services detected (0x00000000 0x00000000 0x00000000 0x00000003)
-> > [    0.000000] percpu: Embedded 34 pages/cpu s100632 r8192 d30440 u139264
-> > [    0.000000] pcpu-alloc: s100632 r8192 d30440 u139264 alloc=34*4096
-> > [    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7
-> > [    0.000000] Internal error: Oops - Undefined instruction: 0000000002000000 [#1] SMP
-> 
-> We take an undefined instruction exception in the kernel early during
-> boot...
-> 
-> > [    0.000000] Modules linked in:
-> > [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.13.0-6.13-alt0.rc1 #1
-> > [    0.000000] Hardware name: linux,dummy-virt (DT)
-> > [    0.000000] pstate: 004000c5 (nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > [    0.000000] pc : __cpuinfo_store_cpu+0xe8/0x240
-> > [    0.000000] lr : cpuinfo_store_boot_cpu+0x34/0x88
-> > [    0.000000] sp : ffff800082013df0
-> > [    0.000000] x29: ffff800082013df0 x28: 000000000000008e x27: ffff800081e38128
-> > [    0.000000] x26: ffff800081702190 x25: ffff80008201f040 x24: ffff0000ff7d1d00
-> > [    0.000000] x23: ffff80008201ec00 x22: ffff800081e39100 x21: ffff8000816f9750
-> > [    0.000000] x20: ffff800081f55280 x19: ffff0000ff6be2e0 x18: 0000000000000000
-> > [    0.000000] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> > [    0.000000] x14: 000000000000002f x13: 000000013f7f9490 x12: 0000008000000000
-> > [    0.000000] x11: 0000000000000000 x10: 00000000007f8000 x9 : 000000013f808000
-> > [    0.000000] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000013f7f94c0
-> > [    0.000000] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 1100010011111111
-> > [    0.000000] x2 : 0000000000000001 x1 : 0000000084448004 x0 : ffff0000ff6be2e0
-> > [    0.000000] Call trace:
-> > [    0.000000]  __cpuinfo_store_cpu+0xe8/0x240 (P)
-> > [    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88 (L)
-> > [    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88
-> > [    0.000000]  smp_prepare_boot_cpu+0x30/0x58
-> > [    0.000000]  start_kernel+0x514/0x9d0
-> > [    0.000000]  __primary_switched+0x88/0x98
-> > [    0.000000] Code: f100085f 54000600 f2580c7f 54000060 (d538a482)
-> 
-> ... and that's:
-> 
->    0:	f100085f 	cmp	x2, #0x2
->    4:	54000600 	b.eq	0xc4  // b.none
->    8:	f2580c7f 	tst	x3, #0xf0000000000
->    c:	54000060 	b.eq	0x18  // b.none
->   10:*	d538a482 	mrs	x2, s3_0_c10_c4_4		<-- trapping instruction
-> 
-> Which I think corresponds to a read of MPAMIDR_EL1.
-> 
-> It looks like James routed accesses to this register to undef_access()
-> in 31ff96c38ea3 ("KVM: arm64: Fix missing traps of guest accesses to the
-> MPAM register") so I'm not really sure how this is supposed to work
-> given that it's an ID register.
+If a thread exit happens simultaneously with a POSIX timer signal, this
+POSIX timer may end up being erroneously stopped. This problem may be
+reproduced with a small C program that creates a POSIX timer and
+constantly respawns threads, e.g. [1].
 
-It's not. Or rather, it is an IDREG that is only valid when MPAM is
-advertised and implemented. From the spec:
+When posixtimer_send_sigqueue() races against __exit_signal(), the
+latter may clear the selected task's sighand, causing
+lock_task_sighand() to fail. This is possible because __exit_signal()
+clears the task's sighand under the sighand lock, but
+lock_task_sighand() needs to first load it without taking this lock.
 
-"This register is present only when FEAT_MPAM is implemented.
-Otherwise, direct accesses to MPAMIDR_EL1 are UNDEFINED."
+The it_sigqueue_seq update needs to happen under the sighand lock;
+failure to take this lock means that it is not possible to make that
+update. And if it_sigqueue_seq is not updated, then
+__posixtimer_deliver_signal() does not rearm the timer, effectively
+stopping it.
 
-So from a KVM perspective, I think this is doing the right thing.
+Fix by choosing another thread if the one chosen by
+posixtimer_get_target() is exiting. This requires taking tasklist_lock,
+which is ordered before the sighand lock, as can be seen in, e.g.,
+release_task(). tasklist_lock may be released immediately after the
+sighand lock is successfully taken, which will look nicer, but will
+create uncertainty w.r.t. restoring the irq flags, so release it
+at the end of posixtimer_send_sigqueue().
 
-What the log doesn't say is what the host is. Is it 6.13-rc1 as well?
+There is another user of posixtimer_get_target(), which may potentially
+be affected as well: posixtimer_sig_unignore(). But it is called with
+the sighand lock taken, so the race with __exit_signal() is fortunately
+not possible there.
 
-Thanks,
+[1] https://gitlab.com/qemu-project/qemu/-/blob/v9.1.1/tests/tcg/multiarch/signals.c?ref_type=tags
 
-	M.
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+---
+ kernel/signal.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 989b1cc9116a..ff1608997301 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1974,10 +1974,11 @@ static inline struct task_struct *posixtimer_get_target(struct k_itimer *tmr)
+ 
+ void posixtimer_send_sigqueue(struct k_itimer *tmr)
+ {
++	unsigned long flags, tasklist_flags;
+ 	struct sigqueue *q = &tmr->sigq;
++	bool tasklist_locked = false;
+ 	int sig = q->info.si_signo;
+ 	struct task_struct *t;
+-	unsigned long flags;
+ 	int result;
+ 
+ 	guard(rcu)();
+@@ -1986,8 +1987,25 @@ void posixtimer_send_sigqueue(struct k_itimer *tmr)
+ 	if (!t)
+ 		return;
+ 
+-	if (!likely(lock_task_sighand(t, &flags)))
+-		return;
++	if (!likely(lock_task_sighand(t, &flags))) {
++		/*
++		 * The target is exiting, pick another one. This ensures that
++		 * it_sigqueue_seq is updated, otherwise
++		 * posixtimer_deliver_signal() will not rearm the timer.
++		 */
++		bool found = false;
++
++		read_lock_irqsave(&tasklist_lock, tasklist_flags);
++		tasklist_locked = true;
++		do_each_pid_task(tmr->it_pid, tmr->it_pid_type, t) {
++			if (likely(lock_task_sighand(t, &flags))) {
++				found = true;
++				break;
++			}
++		} while_each_pid_task(tmr->it_pid, tmr->it_pid_type, t);
++		if (!likely(found))
++			goto out_tasklist;
++	}
+ 
+ 	/*
+ 	 * Update @tmr::sigqueue_seq for posix timer signals with sighand
+@@ -2062,6 +2080,9 @@ void posixtimer_send_sigqueue(struct k_itimer *tmr)
+ out:
+ 	trace_signal_generate(sig, &q->info, t, tmr->it_pid_type != PIDTYPE_PID, result);
+ 	unlock_task_sighand(t, &flags);
++out_tasklist:
++	if (tasklist_locked)
++		read_unlock_irqrestore(&tasklist_lock, tasklist_flags);
+ }
+ 
+ static inline void posixtimer_sig_ignore(struct task_struct *tsk, struct sigqueue *q)
 -- 
-Without deviation from the norm, progress is not possible.
+2.47.0
+
 
