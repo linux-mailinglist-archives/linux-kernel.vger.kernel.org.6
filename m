@@ -1,127 +1,167 @@
-Return-Path: <linux-kernel+bounces-428084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0659E0A00
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:32:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E3B9E0A05
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:33:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7CBC281D95
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:32:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EDBC1632CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAE41DA60B;
-	Mon,  2 Dec 2024 17:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA9D1D9694;
+	Mon,  2 Dec 2024 17:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dnCRxrkp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YdtO8Nbo"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2893270818
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF251DA112
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160727; cv=none; b=gEhzViAx9ONN6PodYY2RMaLti8zJksLzf7YRuwA0d0jCn5Nbx+p5V550fq29FifMFDmKjzrhkF2Kpm5pRO8+pjfq1+mCr4KPAhduwqeJvyc7P7SNFPB5iJygAMA84F+37vt9HqA7lY/CwHf8qX/Pyg9kTxeLzo9Q647ZiBgttmk=
+	t=1733160771; cv=none; b=CVto/SLQa9n5VzAJeROQymz6TMxo+cY+EAo77cgqlrFIWDU8GdAg5BcNE0PtC+mY/cysYbq9jbnKbu1cCMZXbnpYIpDq5phZ1Rem0tzpMyKTqmqdg3DKHdw9H/TgAp+eJ8FgNHXLF1zfNS6kPL2lYDgTLKWmuigKD2hj7Nkc7m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160727; c=relaxed/simple;
-	bh=ge4vmChn7JDIw1vDsNN9rhilNtcMOBZuMkdztL/nxyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4JEbILng4OhR4E+Zbdy9DdXFPshJvx0QG2eNYJ9b5jvZa+RtQINzrYxOLQoVGPd+YnTu9KTyEzm1R0bRKQDhLRt1kWW9ZVx0MwSnsI+F0dn+36C3M48K+B596NG2iQ64KvTxOdYgwpygqsdMXfOrryCRzjQ/Yuy2zC0RNoIOSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dnCRxrkp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733160724;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=miJn4Jjmfo+oLh/QgzQ2o8vQrAcU6wdSdPVjC8R5cv0=;
-	b=dnCRxrkp0RCsTrhGROb4bIjsZk6FIHnDOYdjGBmeDtz769i9ZdTgB7iVDDoxv3OjBNfQ2V
-	sn1rUHikoYp9Aaip5SSxqAcdHoofALQl7TRdIiJECOtRf1hwmi2wEXRrulJhL3NUfL7EOg
-	zvx0uauCVyAmWoMXrzoizImBHgt1Ng8=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-92-2WKFHmjqPzOgj0Hh1ax4Xw-1; Mon,
- 02 Dec 2024 12:32:01 -0500
-X-MC-Unique: 2WKFHmjqPzOgj0Hh1ax4Xw-1
-X-Mimecast-MFC-AGG-ID: 2WKFHmjqPzOgj0Hh1ax4Xw
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1733160771; c=relaxed/simple;
+	bh=yw+iNGGUwDa0/UmWNpxi/ueecAQMEr0e7vBRD2y045I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IotsP1yezVws8m73Tstcf6PDg5HHDlZk0t+RakTnq9qfRo9IsugEsucB/UcFP19LuizX7v5rgI0c/NR53Af0T3jDaa1rakY2DXUD/3ZR5e2zfXevhNISqMvZjf7smeVsmqgOOoek7kayXxMLB/J/KrTbcjsx2quipdR/KY65LlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YdtO8Nbo; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733160767;
+	bh=yw+iNGGUwDa0/UmWNpxi/ueecAQMEr0e7vBRD2y045I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YdtO8Nbomdme2pM8vkYAOPanqVsOinis40tIGPpOaC3a8gr7nmClKvdBaksshoXsD
+	 WaW90kGGYVJ0UtLAjQjlsK+HexVIJet4TSVRK2Gx7CYo3dvWA45vTXv0yDNNYBv++R
+	 hMy+UZtkFeK2SHzfbnrn59ZBIb4GU2m4TCKzkp98p72B+bPfJjabotdW2VzYFWDJjU
+	 /Z6rdwFyY6qoCn+Gh+0eheoDew1JOiaUo+Vz07qIjLWCEOEmi0anIyxhy5Ywl7NIJR
+	 wos2UXpd+y4ZaKBX+SWyQhfhaR/6MueTzXJj9ouH5eX5NwzG4Hx0CItZFkBeNUv92c
+	 RZTLVsJoRlsFQ==
+Received: from [192.168.1.90] (unknown [86.120.21.57])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE4B31955F3F;
-	Mon,  2 Dec 2024 17:31:58 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.6])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7E7551956052;
-	Mon,  2 Dec 2024 17:31:54 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  2 Dec 2024 18:31:36 +0100 (CET)
-Date: Mon, 2 Dec 2024 18:31:32 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Zhen Ni <zhen.ni@easystack.cn>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, tglx@linutronix.de,
-	frederic@kernel.org, richard.weiyang@gmail.com,
-	zhangpeng.00@bytedance.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/fork: Optimize by avoiding unnecessary locking
- for kernel threads
-Message-ID: <20241202173131.GB9551@redhat.com>
-References: <20241202091055.49551-1-zhen.ni@easystack.cn>
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C76E317E37A9;
+	Mon,  2 Dec 2024 18:32:46 +0100 (CET)
+Message-ID: <9c890d1d-b25d-4b88-8560-1c3081e79eff@collabora.com>
+Date: Mon, 2 Dec 2024 19:32:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202091055.49551-1-zhen.ni@easystack.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: dw-hdmi: Sync comments with actual bus
+ formats order
+To: neil.armstrong@linaro.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241130-dw-hdmi-bus-fmt-order-v1-1-510b5fb6b990@collabora.com>
+ <5bbd44dc-cbe8-4906-afa2-6866f5d39341@linaro.org>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <5bbd44dc-cbe8-4906-afa2-6866f5d39341@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Already in -mm tree, please see
-https://lore.kernel.org/all/20241119143526.704986-1-mjguzik@gmail.com/
+On 12/2/24 5:45 PM, Neil Armstrong wrote:
+> Hi,
+> 
+> On 30/11/2024 00:04, Cristian Ciocaltea wrote:
+>> Commit d3d6b1bf85ae ("drm: bridge: dw_hdmi: fix preference of RGB modes
+>> over YUV420") changed the order of the output bus formats, but missed to
+>> update accordingly the affected comment blocks related to
+>> dw_hdmi_bridge_atomic_get_output_bus_fmts().
+>>
+>> Fix the misleading comments and a context related typo.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 12 ++++++------
+>>   1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/
+>> drm/bridge/synopsys/dw-hdmi.c
+>> index
+>> 996733ed2c004c83a989cb8da54d8b630d9f2c02..d76aede757175d7ad5873c5d7623abf2d12da73c 100644
+>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> @@ -2621,6 +2621,7 @@ static int dw_hdmi_connector_create(struct
+>> dw_hdmi *hdmi)
+>>    * - MEDIA_BUS_FMT_UYYVYY12_0_5X36,
+>>    * - MEDIA_BUS_FMT_UYYVYY10_0_5X30,
+>>    * - MEDIA_BUS_FMT_UYYVYY8_0_5X24,
+>> + * - MEDIA_BUS_FMT_RGB888_1X24,
+>>    * - MEDIA_BUS_FMT_YUV16_1X48,
+>>    * - MEDIA_BUS_FMT_RGB161616_1X48,
+>>    * - MEDIA_BUS_FMT_UYVY12_1X24,
+>> @@ -2631,7 +2632,6 @@ static int dw_hdmi_connector_create(struct
+>> dw_hdmi *hdmi)
+>>    * - MEDIA_BUS_FMT_RGB101010_1X30,
+>>    * - MEDIA_BUS_FMT_UYVY8_1X16,
+>>    * - MEDIA_BUS_FMT_YUV8_1X24,
+>> - * - MEDIA_BUS_FMT_RGB888_1X24,
+>>    */
+>>     /* Can return a maximum of 11 possible output formats for a mode/
+>> connector */
+>> @@ -2669,7 +2669,7 @@ static u32
+>> *dw_hdmi_bridge_atomic_get_output_bus_fmts(struct drm_bridge *bridge,
+>>       }
+>>         /*
+>> -     * If the current mode enforces 4:2:0, force the output but format
+>> +     * If the current mode enforces 4:2:0, force the output bus format
+>>        * to 4:2:0 and do not add the YUV422/444/RGB formats
+>>        */
+>>       if (conn->ycbcr_420_allowed &&
+>> @@ -2698,14 +2698,14 @@ static u32
+>> *dw_hdmi_bridge_atomic_get_output_bus_fmts(struct drm_bridge *bridge,
+>>           }
+>>       }
+>>   +    /* Default 8bit RGB fallback */
+>> +    output_fmts[i++] = MEDIA_BUS_FMT_RGB888_1X24;
+> 
+> Why did you move this ? the following comment mentions it
 
-Oleg.
+Before d3d6b1bf85ae ("drm: bridge: dw_hdmi: fix preference of RGB modes
+over YUV420"), this was the last format added to the list.  Hence I
+interpreted the comment below as referring to this particular last entry
+as a fallback, which is not the case anymore.
 
-On 12/02, Zhen Ni wrote:
->
-> Improves the function by checking if the task is a kernel thread
-> (PF_KTHREAD) before acquiring the task lock. Kernel threads do not
-> have an associated executable file, so the function now returns NULL
-> immediately in such cases. This change reduces unnecessary locking
-> overhead and simplifies the code logic, while maintaining consistent
-> behavior for regular tasks.
->
-> Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
-> ---
->  kernel/fork.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index e58d27c05788..9fadde6c7c98 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1500,12 +1500,13 @@ struct file *get_task_exe_file(struct task_struct *task)
->  	struct file *exe_file = NULL;
->  	struct mm_struct *mm;
->
-> +	if (task->flags & PF_KTHREAD)
-> +		return NULL;
-> +
->  	task_lock(task);
->  	mm = task->mm;
-> -	if (mm) {
-> -		if (!(task->flags & PF_KTHREAD))
-> -			exe_file = get_mm_exe_file(mm);
-> -	}
-> +	if (mm)
-> +		exe_file = get_mm_exe_file(mm);
->  	task_unlock(task);
->  	return exe_file;
->  }
-> --
-> 2.20.1
->
+If you still prefer to keep the original comment, then maybe we should
+simply drop the "Default 8bit RGB fallback" one, as it's pretty
+redundant now.
+
+Thanks,
+Cristian
+
+>> +
+>>       /*
+>>        * Order bus formats from 16bit to 8bit and from YUV422 to RGB
+>> -     * if supported. In any case the default RGB888 format is added
+>> +     * if supported.
+>>        */
+>>   -    /* Default 8bit RGB fallback */
+>> -    output_fmts[i++] = MEDIA_BUS_FMT_RGB888_1X24;
+>> -
+>>       if (max_bpc >= 16 && info->bpc == 16) {
+>>           if (info->color_formats & DRM_COLOR_FORMAT_YCBCR444)
+>>               output_fmts[i++] = MEDIA_BUS_FMT_YUV16_1X48;
+>>
+>> ---
+>> base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+>> change-id: 20241130-dw-hdmi-bus-fmt-order-7f6db5db2f0a
+>>
+> 
 
 
