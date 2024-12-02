@@ -1,186 +1,144 @@
-Return-Path: <linux-kernel+bounces-428344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E459E0E0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:45:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428C99E0DC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 696B7B3B11E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:40:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A611BB39C84
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F6B1DF24D;
-	Mon,  2 Dec 2024 20:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2264B1DEFCF;
+	Mon,  2 Dec 2024 20:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDLOnpsM"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jjJ9xplC"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707581DEFC7;
-	Mon,  2 Dec 2024 20:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71611DE4C3;
+	Mon,  2 Dec 2024 20:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733172030; cv=none; b=ZO1z0nvwtrrV+B/lARN3bznn7TNBljvxkm4yNATf3YuzIVK3/wT6LemEjJozuZPGF7vwGM4pJJBXFiD5PKe6H91nLFgVKjdk0dngyJDpDvJfRsX4LfdQFYBcPsLzh/1XTekgNeGmmHwvChv5kcrwKK2p3irgrjgSyQsBjjnvDfk=
+	t=1733172104; cv=none; b=JfS5kxq/jVwiaqDww3Clf/Ps5kgfKA0On0VpVl2nUwv7xjhYMB/gI/SlHOuCSq+XYbWvWmVDxqVuAxaBU2HvMpLYGfCQiBcTTWsfTVjj4BDv8HrggGt0X26DfMGRZykZqfh0+GmYOOmECN2XQfC0cRG+0Ygb7AiCUW/yuKQhjz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733172030; c=relaxed/simple;
-	bh=acPLnXf1i8ia07iNsomd5ZYgV7y8bgpJHhsKhg/amdI=;
+	s=arc-20240116; t=1733172104; c=relaxed/simple;
+	bh=DDL5YUo82kmcLn4DeO7PW3cTvO4gulip68MP6Ah4Z5M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DgX8noWsCAxMmhDGjow97IT2Fpk3EgH6A/nnzbHs0hdxPwZ8dAU+r5kGiCyWOQA2I+zMtfVbiTns/gCEwKmvDD3Y2vq8Xu5Jxao/f2vsbt6RB0kLzD4DZdWGSZlzDnzVobre/ghSJk1jjzVF1822uHl6mRlUYRx2ZLz+L9o+7p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TDLOnpsM; arc=none smtp.client-ip=209.85.160.175
+	 To:Cc:Content-Type; b=osbMkxQZFD3UbascArJfWNNYEOrcQ9gQ4VvWPjm3s+9Af2L6d8E2U9k7gSUM+szdYel7TOg6T8B1JUjv+Z93xRfWqvzdOEPEO4eKGsErsZnsOw7lDOoN5b5x5+xHcwjH4wDtFPxn1XXS/1bCB4cP8rSKQM2g/ZWz8uqvJxnJB1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jjJ9xplC; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46686a258f7so45438581cf.1;
-        Mon, 02 Dec 2024 12:40:28 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffa8092e34so52169501fa.1;
+        Mon, 02 Dec 2024 12:41:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733172027; x=1733776827; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733172101; x=1733776901; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pJzYRHGrM4fQi49Zqib0i2zY9is9beuUhOSrZpSJwNk=;
-        b=TDLOnpsMnNmZTM1WmHvJdU/t3/38elCxshfEMuAFYabRa8aGNrTB6aJRLtzj5bc1R9
-         ZVp9lXN2LezJ61I9M53W96x1/ui3ZnQtLu9kF8GwHSIG0jj9EeXkT56J3ZIeh/jJ+zIi
-         JfFIh0ZBT5BxK6+qfycD7GGi8cSXHiD8IZT6uUA4n7JZ7Xn84huAC0yKoBFoorLGX1pR
-         jDgAE6kYDB5qoAxLLxVcMDzfONNUs3RVozSbyDApz5rS1VLJEYMGOQvTSZHvZvj/i66U
-         e+wh/6ECbqiLXWK+qqLQh+yIv62skGKXGAnbornpaotKGFG2XnKvL4TnH0fcjdODneIb
-         cdKQ==
+        bh=UIrqk8hJrxjce170C6Tbv4S3+IHsSfOaMw1wDpVIl6s=;
+        b=jjJ9xplC1SXaXEKS2JvxpkfoOUsX5vJGOOyipdLvv3nVv/Ej+e2sPZAf1p67Le0jo9
+         g+aYdqW4d64R817vsxjy/r/inXNOgb/2EkWoopuAV5uMox0HO7ayz4Ek+B2yz+TVLh03
+         yWnswQyQuqBvh7m8a6I8Pw8qg6HkCfsdeP0EeKFULWs/Zl/6c4tzG9ks1mvCc8b5N2ux
+         udY/t4OjRX+smM9NiijmxjG5UK3k/Nt9LmdQhMB+RCIHAV6vQPzA+htnsOcCxAoGDBIP
+         snPQtyAasp+qWh/2lCm/Mlfxmp6O37PqGvYVETW5P7PnRq944UuNWe6OKa/8vDLS2mAv
+         RPIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733172027; x=1733776827;
+        d=1e100.net; s=20230601; t=1733172101; x=1733776901;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pJzYRHGrM4fQi49Zqib0i2zY9is9beuUhOSrZpSJwNk=;
-        b=Em7zszsBnRZqsgtTFn3QKEQIPCz06TTrqLeMQJVzOxU4AWPXR9SUSWS5ZUoS88Nlvw
-         T9QwMX1rZ8iQ3nkY6xTDtk2wRTTKCV7O7l9V6h3J/UmtMAu5mxfXbFetFLr0wtKKRpCc
-         Iig/5ec8LUguSFVSjSN0AYAbniOyen1a1R5JgHk3UQE9rgxMD9jgKmuqwWtdvfoOeuLC
-         BaKA/5sTijToZtzs4G0ZKQyGKCu/EI00eofvL3ev2/mxIzX0d1el64i1PGpV+ofeXvpv
-         5h7T14l4EgZ9kN01eh3QmDREFHmUB/ICid66JITh+6yTBeqW0JEU4kVhqWCRAKrcZ7xd
-         Mb0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUqO+JwFgmQWm2bzCObfK9UusllG4mQvqf/0J67m498cpamPoobuPtM2UWKdarO/msD8yS8ZW7r/vCGGZe/@vger.kernel.org, AJvYcCV4B//P8LchMafS8jRo7zjjX17l/sz2wjK236kWJ9QpXY+hvkfl70WD+q1+OBCSyAFOayDI6zf8N3b7Ikly@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAAjkHUMAzk4vkJapwwGoFwD8G/we8maX6bV7Or175ztpQHOLV
-	Ie0xguelD+JplkPw3aPmHA6XNSudywpXzOJD0WVGZENwty41wMDMPx5y6gj48WYcgTMfeqjDTMO
-	UqloEtZ/Fzau5MPv7XWsj2mdE2Z8=
-X-Gm-Gg: ASbGnctI0bUzmKLU2i36KZfauENIpVGl4ZKUtqRTJGWLflBvxuX+iohlGn2fUw4d89u
-	nm3TLoDw0dxPJu+mIPI6WUwaX289WP4Om/TLkb4jGOa0PmTQ=
-X-Google-Smtp-Source: AGHT+IHx9pQSSUrRr6swBEQGXWXCJIgjyyV8BmKZStLy0exVB684kUT2ZdY3mPLc0d1H2HJTe+VrZ0RZEa9nP2l+PN8=
-X-Received: by 2002:a05:622a:181c:b0:460:f34c:12b6 with SMTP id
- d75a77b69052e-466b366ef55mr382212701cf.44.1733172027102; Mon, 02 Dec 2024
- 12:40:27 -0800 (PST)
+        bh=UIrqk8hJrxjce170C6Tbv4S3+IHsSfOaMw1wDpVIl6s=;
+        b=l+mOBiPVGnLyTGxrKlgRXRBk8OSU4sbIsjKQ+ge4nRVwcMuUGc/cehvFDyWD4vHS66
+         HKia8ktbcGdHeSExcK0u17D9K1o+aVSJEF5ife0qLqL/UaBUYlzpc++Qqo2mzhPLxMro
+         +oF6y41sSujGDjODME6Aq0+/VEGNrtktxrN3v9HDuJNR0yT383VHjOkPuDJAijRZ/20E
+         3OzCgOqlSM5kDszBnh+ZJbHf+jtbxR8OKNNBbOPmcF/nPEGNpzR8+plRI+VzrYr9FxMy
+         sYyLSwzNKWZ6IjCrYi3HGYTIigRzru/FmxtN5rOj5pT4rYSw9APM5seNg2zta6k1SOJ6
+         XXcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGoI/UuifgAW/sfro1jh31cKJoMfDzlRvvlDq5VTVIX2YCuidVASsntWYs8QgZcz1RTlkSU637fVNlSHL2btU=@vger.kernel.org, AJvYcCWQzBMwWpUfA03BzLOuQwCxQpzMPnDw+nSwPkIBnT2SKU6OnFIXLb16a25K5EDPJnypQR6tz5TyLNi9um4Q@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0mIDxMMWCWh7BXMtI9xt8kYX3ra5cFKDtxNsFZzb8pcfndn/o
+	MENPXdsQnA4mMjulCEzytXeasxgqhxz5dF7AnCWEwt3KC5+xwcxNZ5zhIL9u/Fa1Zura4Ljc+gi
+	idVoWWWVz4PeWDws6Yt4DLPQDRkI=
+X-Gm-Gg: ASbGnctRyEiJ97EtmI0GxXw2+HmscffV3za1sxzT1Y+SouBJs8R+16fQWxiEmv97+Q2
+	YMnlcZW7e4iDlv5hG8oG5Qcr9ux4ymg==
+X-Google-Smtp-Source: AGHT+IH+rq1aCdl9MJTyHCx58zHveb9qZgxb4C+eMCSGv/wFgSUv7VSSbeaJevGXD7vBs46qtn7gnkR9tGZTW4zV1jU=
+X-Received: by 2002:a05:651c:503:b0:2ff:d410:6974 with SMTP id
+ 38308e7fff4ca-30009c2e272mr246741fa.15.1733172100685; Mon, 02 Dec 2024
+ 12:41:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241130065118.539620-1-niharchaithanya@gmail.com> <8806fcd7-8db3-4f9e-ae58-d9a2c7c55702@fastmail.fm>
-In-Reply-To: <8806fcd7-8db3-4f9e-ae58-d9a2c7c55702@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 2 Dec 2024 12:40:16 -0800
-Message-ID: <CAJnrk1b1zM=Zyn+LiV2bLbShQoCj4z5b++W2H4h7zR0QbTdZjg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: add a null-ptr check
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Nihar Chaithanya <niharchaithanya@gmail.com>, miklos@szeredi.hu, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, 
-	syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
+References: <20241125175111.8598-1-quic_jiaymao@quicinc.com>
+In-Reply-To: <20241125175111.8598-1-quic_jiaymao@quicinc.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 2 Dec 2024 15:41:28 -0500
+Message-ID: <CABBYNZLY_PAA0jPiHwGKUmdd3SKqwViLSHAkNHH0=trdqrDRnQ@mail.gmail.com>
+Subject: Re: [PATCH v1] Bluetooth: hci_sync: clear cmd_sync_work_list when
+ power off
+To: Jiayang Mao <quic_jiaymao@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_chejiang@quicinc.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 30, 2024 at 12:22=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
+Hi Jiayang,
+
+On Mon, Nov 25, 2024 at 12:51=E2=80=AFPM Jiayang Mao <quic_jiaymao@quicinc.=
+com> wrote:
 >
-> On 11/30/24 07:51, Nihar Chaithanya wrote:
+> Clear the remaining command in cmd_sync_work_list when BT is
+> performing power off. In some cases, this list is not empty after
+> power off. BT host will try to send more HCI commands.
+> This can cause unexpected results.
 
-Hi Nihar and Bernd,
+What commands are in the queue?
 
-> > The bug KASAN: null-ptr-deref is triggered due to *val being
-> > dereferenced when it is null in fuse_copy_do() when performing
-> > memcpy().
-
-It's not clear to me that syzbot's "null-ptr-deref" complaint is about
-*val being dereferenced when val is NULL.
-
-The stack trace [1] points to the 2nd memcpy in fuse_copy_do():
-
-/* Do as much copy to/from userspace buffer as we can */
-static int fuse_copy_do(struct fuse_copy_state *cs, void **val, unsigned *s=
-ize)
-{
-        unsigned ncpy =3D min(*size, cs->len);
-        if (val) {
-                void *pgaddr =3D kmap_local_page(cs->pg);
-                void *buf =3D pgaddr + cs->offset;
-
-                if (cs->write)
-                        memcpy(buf, *val, ncpy);
-                else
-                        memcpy(*val, buf, ncpy);
-
-                kunmap_local(pgaddr);
-                *val +=3D ncpy;
-        }
-...
-}
-
-but AFAICT, if val is NULL then we never try to deref val since it's
-guarded by the "if (val)" check.
-
-It seems like syzbot is either complaining about buf being NULL / *val
-being NULL and then trying to deference those inside the memcpy call,
-or maybe it actually is (mistakenly) complaining about val being NULL.
-
-It's not clear to me either how the "fuse: convert direct io to use
-folios" patch (on the fuse tree, it's commit 3b97c36) [2] directly
-causes this.
-
-If I'm remembering correctly, it's possible to add debug printks to a
-patch and syzbot will print out the debug messages as it triggers the
-issue? It'd be interesting to see which request opcode triggers this,
-and what exactly is being deref-ed here that is NULL. I need to look
-at this more deeply but so far, nothing stands out as to what could be
-the culprit.
-
-
-Thanks,
-Joanne
-
-[1] https://lore.kernel.org/linux-fsdevel/67475f25.050a0220.253251.005b.GAE=
-@google.com/
-[2] https://lore.kernel.org/linux-fsdevel/20241024171809.3142801-13-joannel=
-koong@gmail.com/
-
-> > Add a check in fuse_copy_one() to prevent this.
-> >
-> > Reported-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D87b8e6ed25dbc41759f7
-> > Fixes: 3b97c3652d91 ("fuse: convert direct io to use folios")
-> > Tested-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
-> > Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
-> > ---
-> >  fs/fuse/dev.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > index 563a0bfa0e95..9c93759ac14b 100644
-> > --- a/fs/fuse/dev.c
-> > +++ b/fs/fuse/dev.c
-> > @@ -1070,6 +1070,9 @@ static int fuse_copy_pages(struct fuse_copy_state=
- *cs, unsigned nbytes,
-> >  /* Copy a single argument in the request to/from userspace buffer */
-> >  static int fuse_copy_one(struct fuse_copy_state *cs, void *val, unsign=
-ed size)
-> >  {
-> > +     if (!val)
-> > +             return -EINVAL;
-> > +
-> >       while (size) {
-> >               if (!cs->len) {
-> >                       int err =3D fuse_copy_fill(cs);
+> Signed-off-by: Jiayang Mao <quic_jiaymao@quicinc.com>
+> ---
+>  net/bluetooth/hci_sync.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 >
-> I'm going to read through Joannes patches in the evening. Without
-> further explanation I find it unusual to have size, but no value.
+> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+> index c86f4e42e..bc622d074 100644
+> --- a/net/bluetooth/hci_sync.c
+> +++ b/net/bluetooth/hci_sync.c
+> @@ -5139,6 +5139,7 @@ int hci_dev_close_sync(struct hci_dev *hdev)
+>  {
+>         bool auto_off;
+>         int err =3D 0;
+> +       struct hci_cmd_sync_work_entry *entry, *tmp;
 >
+>         bt_dev_dbg(hdev, "");
 >
-> Thanks,
-> Bernd
+> @@ -5258,6 +5259,11 @@ int hci_dev_close_sync(struct hci_dev *hdev)
+>         clear_bit(HCI_RUNNING, &hdev->flags);
+>         hci_sock_dev_event(hdev, HCI_DEV_CLOSE);
+>
+> +       mutex_lock(&hdev->cmd_sync_work_lock);
+> +       list_for_each_entry_safe(entry, tmp, &hdev->cmd_sync_work_list, l=
+ist)
+> +               _hci_cmd_sync_cancel_entry(hdev, entry, -ECANCELED);
+> +       mutex_unlock(&hdev->cmd_sync_work_lock);
+
+Seems equivalent to hci_cmd_sync_clear, that said we should have been
+running with that lock already, also if there is a sequence like
+close/open the close may cancel the subsequent open, so I don't think
+we should be canceling every subsequent callback like this.
+
+>         /* After this point our queues are empty and no tasks are schedul=
+ed. */
+>         hdev->close(hdev);
+>
+> --
+> 2.25.1
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
