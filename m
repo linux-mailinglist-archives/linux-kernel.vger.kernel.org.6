@@ -1,132 +1,136 @@
-Return-Path: <linux-kernel+bounces-428371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDE09E0E0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:45:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5549E0DAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:20:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2535B362A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:57:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F12B3FA16
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8DB1DF250;
-	Mon,  2 Dec 2024 20:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14B31DF245;
+	Mon,  2 Dec 2024 20:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLdvUXL0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WiSZQH47"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4B619BBA;
-	Mon,  2 Dec 2024 20:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EB51DEFF4
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 20:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733173062; cv=none; b=qw1JxMoqGQzIm/Mpn4ImrcStWwmHokyif47P4Age/AehTHupR+IbC0bXJty8srio6+RrXr0vV1CbDV40Z1llTbAGR32tyKa0vEtqMpoUiMSPjdv+SP6Y1ijRO8MuxmhaiQn3UeRM+ON6LooKXzrztcXphA0CBkz/3472dO+zpVI=
+	t=1733173182; cv=none; b=FgligBB3mRCIQj7sgSYs89zdahFUYK9VHDPk87y279+Y+U1pcGpYHqbQCG+UIwI5oOMIj8thJns9R/UOOPVgcwt/s1VDqqY7R53TRfRVm0Xfju0NoIBI4GVtts3o7zekR9pCawKcIcrasj1jBXeiQw+55ynCd3H1OUkmgUb1C8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733173062; c=relaxed/simple;
-	bh=y8VzxnsyxdZ299ksar2rMfEnBfUOR8Om3RcJKlRKg8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UUKdtso5qrhFLwXgP4xsh1iA3F2gp9LxUfmZ3K1KGO3Nagyqwt2Pa3N2hLrxi4rveXZXLH91+I1ocVNE7u2oLA9cvwMn6OdVjlpIlq1Ett+VrBFvS+R7xje5r05MAspLURXf0bYDM+Hqf0x300OWu86dcxUXbPCNZixOQHudsBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLdvUXL0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555E6C4CED1;
-	Mon,  2 Dec 2024 20:57:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733173061;
-	bh=y8VzxnsyxdZ299ksar2rMfEnBfUOR8Om3RcJKlRKg8Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BLdvUXL0NmalifhfD7a9PThBw2rUv5zYnuaYUEM8G9ffDYemWzgSOpLhQtw1rx0Q9
-	 xFcv6FIpo0VLKdU2ROAGpRhQg3kqMuo9HqhxQQ3LglT/9sYWKt+MQgrCjRQ+MajkpZ
-	 QvungpfEPoysMEZpJUauAih5kMLy7VGkv5XU6X70215SN6BGJ8OgAnFpWHo47exZtj
-	 956t2OmsZJ4ZWj1u6aZEF8Q0XK9sFrMv4UH05P9nbFgL6q7J9AvEvvyykdtzrCW3q0
-	 lFmDZCw5dPS9PpyXaX9j9XNUToEZ/vSjrrJi5ivFjxNwGeQxXCFeM8+j7wjk/HgpN1
-	 bx6z6sEmYdXkg==
-Date: Mon, 2 Dec 2024 14:57:38 -0600
-From: Rob Herring <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Document support for Airoha
- EN7581 CPUFreq
-Message-ID: <20241202205738.GA3149730-robh@kernel.org>
-References: <20241202151228.32609-1-ansuelsmth@gmail.com>
- <CAPDyKFqrY7uLD8ATqH0LghmkHgApQSsGtvGkOTd8UVazGu0_uA@mail.gmail.com>
- <674dd60f.7b0a0220.2ba255.7b7a@mx.google.com>
+	s=arc-20240116; t=1733173182; c=relaxed/simple;
+	bh=bWUbsbYzAXpNGIx3FEeO/he6o43ml139S4/Re94zVhM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J//5kCAFlo4dpaBiAOcDSlD2CbPvb25vGiY+lhI79GyWMK9q0LdkIJrWOBPKnRva4+e2LgREO/nnFazkoOEeiz9Z/Vp4oK44wew7V5iXKlkdFQ/jNk0pmVlPOmBBmZXqwrRQvSZrIVzoRCzxFLdTxmAo+O/9VNXrMg6a8V4bn1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WiSZQH47; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-46687f60b73so17201cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 12:59:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733173179; x=1733777979; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3oVEWy2iyizmNbl2ITO+8ooVXprBB5JT3rcAZ9azxCo=;
+        b=WiSZQH47AC9Nu2HsTtwxhUFddzssiZ8uNg7TUB1BQmN2BocA2zeR0CAm69YVPuQ9k2
+         WNvB0KquFga8UKMDZ6CpRcPa5O+3StK/t41r/kW6WgQ6gXa80q0Hd1KryyCKc9CVLAM8
+         i2KIQ5cvUSV3TCU+bVSTk8n88tv8KSrS5LlWN4YhxLDpYdvNZR90SdigUmfDWtZbZAGq
+         5Bbwo8LHlBwTEiJaqXOrY4eshLc+gVU+qESfaayoswZnNytNpFXcwxplDiUkdLaVK5lI
+         tw73BdP4Twgd7NZL+Kyn3IHn31s3PwNs3mLnNhU9H2zsEGwQDsNT0I038Fg0BBGz9Mqj
+         eXSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733173179; x=1733777979;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3oVEWy2iyizmNbl2ITO+8ooVXprBB5JT3rcAZ9azxCo=;
+        b=L86Eb9+cu1GFzBbuzA45zJm8TtzNZamdUAbJHUMf6JgTpsiEkAvMn6vSTRdeAVUbqR
+         pTK6D1szf6Infx0BuUF0AkOnPu10uXlDmKs55YnrFPRcbBIYQaA6iClzATHvsFs9s/9x
+         +K9FqqGKfSJyK8X1HVvYbkZYTCmVtds2Pe16WxmP418R/MCGjvCH9+VgKd/wKvdz+++E
+         pcn/SJThzaetMKlWQ8wn5gzc3F4VmeXu+XO69Kifvrk2y1SWIlKgmlFNgbHprphX4NPu
+         TclwXnwhXqrwrqaH892IyFqvhu9+TYwpEG88R2sI/nqvI60VTEPmGIT7IYnJrODsM6uG
+         INXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ9MEaKp/X58Mxj4fKk0dfPciFQrOX9ismlYQKpwhJqwFG5IAH9PHXzP1kRCynXEfmSOJHmRIWlaK28Vc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxv/w6JA6yjf0Ur15AkFsVgvmvfoPaZwRSyiZxbmULdj1ro0fN
+	FuN4AtODzZEUv87E48T8bUB19X7a+9yQslrCydqmB0HdMa6GZDBDRgx/loh9+0/VFKTiEKicKAi
+	W3LR81ucjsTVIf51268Z8SiDrL70YOkOkOaf8
+X-Gm-Gg: ASbGncu/wngiUm5zPRW6iKCmwYSpNymV/BDbfzmFaeobo+isRKVb+x4Pw+1e3R0Guud
+	gk1amMfSzeNzHMxxU+fk58xmMS1Kdl4vXkzfyZPweDslxh87YZvUV6nKIwkCRGw==
+X-Google-Smtp-Source: AGHT+IHXajz9FjvZ5+7EyyCzVsXQCy9Z4GCJO1PItlq2H+4of7VPChdd4GL3fxrK7I1fkXmoDaG7ouG2iPSNtCOsmZw=
+X-Received: by 2002:a05:622a:2516:b0:460:463d:78dd with SMTP id
+ d75a77b69052e-4670abded03mr34641cf.4.1733173179359; Mon, 02 Dec 2024 12:59:39
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <674dd60f.7b0a0220.2ba255.7b7a@mx.google.com>
+References: <20241202062909.2194341-1-masahiroy@kernel.org> <07dcb646-d806-4767-b29d-77092f6819e4@roeck-us.net>
+In-Reply-To: <07dcb646-d806-4767-b29d-77092f6819e4@roeck-us.net>
+From: Rong Xu <xur@google.com>
+Date: Mon, 2 Dec 2024 12:59:27 -0800
+Message-ID: <CAF1bQ=R_VUDR9rGAWhjPa4jHuauftLg=A9Mp=thJaK8PdjM0Wg@mail.gmail.com>
+Subject: Re: [PATCH] openrisc: place exception table at the head of vmlinux
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
+	linux-openrisc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Han Shen <shenhan@google.com>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 02, 2024 at 04:45:17PM +0100, Christian Marangi wrote:
-> On Mon, Dec 02, 2024 at 04:42:33PM +0100, Ulf Hansson wrote:
-> > On Mon, 2 Dec 2024 at 16:20, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> > >
-> > > Document required property for Airoha EN7581 CPUFreq .
-> > >
-> > > On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
-> > > to ATF and no clocks are exposed to the OS.
-> > >
-> > > The SoC have performance state described by ID for each OPP, for this a
-> > > Power Domain is used that sets the performance state ID according to the
-> > > required OPPs defined in the CPU OPP tables.
-> > >
-> > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > ---
-> > > Changes v4:
-> > > - Add this patch
-> > >
-> > >  .../cpufreq/airoha,en7581-cpufreq.yaml        | 259 ++++++++++++++++++
-> > >  1 file changed, 259 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > > new file mode 100644
-> > > index 000000000000..a5bdea7f34b5
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
-> > 
-> > [...]
-> > 
-> > > +examples:
-> > > +  - |
-> > > +    / {
-> > > +        #address-cells = <2>;
-> > > +       #size-cells = <2>;
-> > > +
-> > > +        cpus {
-> > > +            #address-cells = <1>;
-> > > +            #size-cells = <0>;
-> > > +
-> > > +            cpu0: cpu@0 {
-> > > +                device_type = "cpu";
-> > > +                compatible = "arm,cortex-a53";
-> > > +                reg = <0x0>;
-> > > +                operating-points-v2 = <&cpu_opp_table>;
-> > > +                enable-method = "psci";
-> > > +                clocks = <&cpufreq>;
-> > > +                clock-names = "cpu";
-> > > +                power-domains = <&cpufreq>;
-> > > +                power-domain-names = "cpu_pd";
-> > 
-> > Nitpick: Perhaps clarify the name to be "perf" or "cpu_perf", to
-> > indicate it's a power-domain with performance scaling support.
-> > 
-> 
-> Will change to cpu_perf. Thanks a lot for the review!
+This looks good to me.
 
-Is that defined in arm/cpus.yaml? No.
+Reviewed-by: Rong Xu <xur@google.com>
 
-The current choices are perf or psci though those aren't enforced (yet). 
-Or nothing which is my preference if there is only 1 power domain.
- 
-Rob
+-Rong
+
+On Mon, Dec 2, 2024 at 12:33=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
+wrote:
+>
+> On Mon, Dec 02, 2024 at 03:28:22PM +0900, Masahiro Yamada wrote:
+> > Since commit 0043ecea2399 ("vmlinux.lds.h: Adjust symbol ordering in
+> > text output section"), the exception table in arch/openrisc/kernel/head=
+.S
+> > is no longer positioned at the very beginning of the kernel image, whic=
+h
+> > causes a boot failure.
+> >
+> > Currently, the exception table resides in the regular .text section.
+> > Previously, it was placed at the head by relying on the linker receivin=
+g
+> > arch/openrisc/kernel/head.o as the first object. However, this behavior
+> > has changed because sections like .text.{asan,unknown,unlikely,hot} now
+> > precede the regular .text section.
+> >
+> > The .head.text section is intended for entry points requiring special
+> > placement. However, in OpenRISC, this section has been misused: instead
+> > of the entry points, it contains boot code meant to be discarded after
+> > booting. This feature is typically handled by the .init.text section.
+> >
+> > This commit addresses the issue by replacing the current __HEAD marker
+> > with __INIT and re-annotating the entry points with __HEAD. Additionall=
+y,
+> > it adds __REF to entry.S to suppress the following modpost warning:
+> >
+> >   WARNING: modpost: vmlinux: section mismatch in reference: _tng_kernel=
+_start+0x70 (section: .text) -> _start (section: .init.text)
+> >
+> > Fixes: 0043ecea2399 ("vmlinux.lds.h: Adjust symbol ordering in text out=
+put section")
+> > Reported-by: Guenter Roeck <linux@roeck-us.net>
+> > Closes: https://lore.kernel.org/all/5e032233-5b65-4ad5-ac50-d2eb6c00171=
+c@roeck-us.net/#t
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>
+> Tested-by: Guenter Roeck <linux@roeck-us.net>
+>
+> Guenter
 
