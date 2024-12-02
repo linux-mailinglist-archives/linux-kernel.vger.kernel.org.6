@@ -1,131 +1,302 @@
-Return-Path: <linux-kernel+bounces-427077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA049DFBFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:34:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE339DFC13
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:38:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF076162D4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:38:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065911F9F5C;
+	Mon,  2 Dec 2024 08:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="epHYRemz"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC42281CF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:34:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F351F9ECD;
-	Mon,  2 Dec 2024 08:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="qKTfOB7j"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA65D1F9A92
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43151F943F;
+	Mon,  2 Dec 2024 08:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733128447; cv=none; b=l6emoXHMvXVrge0h+4ii7xXzEvHVKAzKyk4oTNumii4vWZofd0C2Xpj4MlDHsKPTYxszK8EYgKIk54dXxALUMDo+jaKVphLXikjxcdHBqXA6seV25/1a6JcWNy72WgSFo7XBZ/j8yyGdXk45+EozhTl2tL1ZtfiR8Rn916YA25c=
+	t=1733128728; cv=none; b=KQ1kigTUfRBQ9Karv1XtKHunQ6sdADLgNHI5jtk+u8DEutG/NsUmzj1Rlz558KHpH24weSsDcHLb3u2xU65Q+wkRyvYo76F9EUljDaP5m61b3iuLe3o/sAA1FxVOqxlSwD0si2xP9tOJhUqb0R38Dd8Ppy3Tr+TXpr/Cd3a9sIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733128447; c=relaxed/simple;
-	bh=GhRp7JAn6rcOImHrJCrFQPMHal2W8dEKI12mch1qSdI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hvJ6WxgvQgzRviGaNke5LEpwaw4Tv8gh1QkK9sWRWASQdzohL6xhHo3As6jRAoHPx6M9mkjZSf/6cxx7Bb7pVRcmjqOs4RCDvmI39ocnxKSurGn4N8D6DzpDiP9D+7pc5Rj6W90Zy+50YEZPS/l7h6RKZP4NVJ8SnAtBoQgAoIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=qKTfOB7j; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de579f775so5285446e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:34:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733128444; x=1733733244; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QzUuqdFRJBTOc5WUYdPFncGjQZclBe0xdjO8DYZWI9w=;
-        b=qKTfOB7jYgFomvnPYrrdm2w1osEZOKYa/AHR9WhFRHb/BlK+XJu/Il5JIpCNj5RLw8
-         e+dJm4tVS0b7XS0yp3kW/raaGnTeBjDpLv+Pm86iOeIMkfnC44kQ6VwcYxRyFyKHRYgp
-         8E0hNObtOREQt8U42s0K3ZIRsyvi+ClI2V9rMbX97K/2CvdtQTf0oyBLK7wemGIQXBVg
-         4oID0gBV6/ofIxntzH6KpX/Fn9w/qe3Id0J4QDempWWiyzZbVbO0zfZ6f7urpOvbKfNL
-         r07YxD16YHaVQh4wD+xZhWfXlkCzyYVqflPsmijqXdEmx+bMVbxHgeCifNHk7ymuAxqF
-         CeVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733128444; x=1733733244;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QzUuqdFRJBTOc5WUYdPFncGjQZclBe0xdjO8DYZWI9w=;
-        b=oDdRWbTgCYkHz+jg5dkZoNXz2PU3vOPUUwygX35GxlEMEPDk9qFwXlcBo3epZNXul2
-         UVFCeiWXgKeo6aI1QaQ+1ONpHgPPpiZl2Blb/s6NHcRZqwO3unI7R8UZsRuwlXyrhWGP
-         urKP/dtE/LPUGIijcAvhkj050NvSuA/xUNbOkMD6IgrRodgLB9WXL1MSsq8gIBNmLTXQ
-         BNP/h/Kmfkp3nWu2pD7OLg6IXDMuQhckV9n2ExInvb/eq808wmAqGHhllS34JfDjQlQK
-         CVdYohikd96Mi71YyDOiPH+Wusdwev8+WBgLaRunExM9YeNbAHPiHZVsvZ/eYgFqYEAA
-         1NPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPoVyyUlP9gwU7iK6iiY7BD83a1KzsM6b04wAMWiOeumXRoXP+RFjsTwL8RnyVphTksFfTr/fzJ5pt4q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8+emv/+Rvk6IYpzUaT2By6mR5csFQW3gEyZBUNflna67Mf7av
-	vSetiEW4DcqSrTD049o5+g1AYJgRnn6CcIxCAZw/dQidgLAGILE6H/lCHvVpQfo=
-X-Gm-Gg: ASbGncuRrF37mVKrsso30vkIzYfsfrOQ14y2IqBLuXbW6sPoy6Mbzw4U/JQ8KnH/9po
-	Q65pBFzbJPiFg/Ixxe7B1Mz+iYGemHQcn2eBH78ZKP5iCg9i8WHHuOyKDAJnVlB/J4bWZLwhjFE
-	2PEMVdBOzoZ2Ag23ddayuns9Rj+XkQ4WHbRN0JDv7K8G28hXzUzj8UPkly/eKY89fSap1w6IiA8
-	wZmRfffHTnh/kRwLXKLvVIHz0MDoRqTF+gaWE6ZEPbAduwSoCxUw+SYnknuVf6G
-X-Google-Smtp-Source: AGHT+IF93Cj6VrT2AYZC5DEqo9FH75ITtrTeuuLtaax9mwkC+oOsEvZlaiWYlMoQiQwe7SW7NGiL3A==
-X-Received: by 2002:a05:6512:3e1a:b0:53d:dbc7:981 with SMTP id 2adb3069b0e04-53df00d030dmr15664997e87.16.1733128443606;
-        Mon, 02 Dec 2024 00:34:03 -0800 (PST)
-Received: from cobook.home ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649f5a5sm1409712e87.236.2024.12.02.00.34.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 00:34:03 -0800 (PST)
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported speed
-Date: Mon,  2 Dec 2024 13:33:52 +0500
-Message-Id: <20241202083352.3865373-1-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1733128728; c=relaxed/simple;
+	bh=exnzvOOzv9zTqHKHJbD28IhJgvuw44iIDxMzsn69HaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mk3QT6yrC56Fhk+GBSvGx+dYiJx5R7RC5cKLm9ONimAJnZVIzToucgFUAmeoSMXsrfY6QanyMva6OGwFy4z+ByB+eghHcH9g06v+9MZocWtfif/rsn/9NRr6JaAQsuiU9TXxe1Mj6W+HZLwKxP+3bUOamU4W2pIMVPBM/yA3rLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=epHYRemz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 801D0514;
+	Mon,  2 Dec 2024 09:38:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733128697;
+	bh=exnzvOOzv9zTqHKHJbD28IhJgvuw44iIDxMzsn69HaU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=epHYRemzfOh+bh1297w8d5dgPjHQFxof7wDG8fEXpQUqmMTF5nWo8nYruQh7nWq0B
+	 fPrY+wOWXu7hF6cQp78JXMIWtHBRyk/Gqg/EJsgCQ40zrDwW4ohQph2F9pIltLtFMN
+	 5QfQD30BSqNAk5BnHmzIAs+fqXZPPcBHOF+U2qSY=
+Date: Mon, 2 Dec 2024 10:38:33 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control
+ owned by other fh
+Message-ID: <20241202083833.GC16635@pendragon.ideasonboard.com>
+References: <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
+ <20241129110640.GB4108@pendragon.ideasonboard.com>
+ <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
+ <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl>
+ <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
+ <CANiDSCvwzY3DJ+U3EyzA7TCQu2qMUL6L1eTmZYbM+_Tk6DsPaA@mail.gmail.com>
+ <20241129220339.GD2652@pendragon.ideasonboard.com>
+ <CANiDSCsXi-WQLpbeXMat5FoM8AnYoJ0nVeCkTDMvEus8pXCC3w@mail.gmail.com>
+ <20241202001846.GD6105@pendragon.ideasonboard.com>
+ <CANiDSCuf=YN0=Q+ariHRPUAhacd=s5SFRHsySXWDowaiJxMa3A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCuf=YN0=Q+ariHRPUAhacd=s5SFRHsySXWDowaiJxMa3A@mail.gmail.com>
 
-When auto-negotiation is not used, allow any speed/duplex pair
-supported by the PHY, not only 10/100/1000 half/full.
+On Mon, Dec 02, 2024 at 08:28:48AM +0100, Ricardo Ribalda wrote:
+> On Mon, 2 Dec 2024 at 01:19, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > On Fri, Nov 29, 2024 at 11:18:54PM +0100, Ricardo Ribalda wrote:
+> > > On Fri, 29 Nov 2024 at 23:03, Laurent Pinchart wrote:
+> > > > On Fri, Nov 29, 2024 at 07:47:31PM +0100, Ricardo Ribalda wrote:
+> > > > > Before we all go on a well deserved weekend, let me recap what we
+> > > > > know. If I did not get something correctly, let me know.
+> > > > >
+> > > > > 1) Well behaved devices do not allow to set or get an incomplete async
+> > > > > control. They will stall instead (ref: Figure 2-21 in UVC 1.5 )
+> > > > > 2) Both Laurent and Ricardo consider that there is a big chance that
+> > > > > some camera modules do not implement this properly. (ref: years of
+> > > > > crying over broken module firmware :) )
+> > > > >
+> > > > > 3) ctrl->handle is designed to point to the fh that originated the
+> > > > > control. So the logic can decide if the originator needs to be
+> > > > > notified or not. (ref: uvc_ctrl_send_event() )
+> > > > > 4) Right now we replace the originator in ctrl->handle for unfinished
+> > > > > async controls.  (ref:
+> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_ctrl.c#n2050)
+> > > > >
+> > > > > My interpretation is that:
+> > > > > A) We need to change 4). We shall not change the originator of
+> > > > > unfinished ctrl->handle.
+> > > > > B) Well behaved cameras do not need the patch "Do not set an async
+> > > > > control owned by another fh"
+> > > > > C) For badly behaved cameras, it is fine if we slightly break the
+> > > > > v4l2-compliance in corner cases, if we do not break any internal data
+> > > > > structure.
+> > > >
+> > > > The fact that some devices may not implement the documented behaviour
+> > > > correctly may not be a problem. Well-behaved devices will stall, which
+> > > > means we shouldn't query the device while as async update is in
+> > > > progress. Badly-behaved devices, whatever they do when queried, should
+> > > > not cause any issue if we don't query them.
+> > >
+> > > I thought we could detect the stall and return safely. Isn't that the case?
+> >
+> > We could, but if we know the device will stall anyway, is there a reason
+> > not to avoid issuing the request in the first place ?
+> 
+> Because there are always going to be devices that do not send the
+> event when the control has finished.
+> 
+> It is impossible to know the state of the device: Is the zoom still
+> moving or the device is not compliant?
 
-This enables drivers to use phy_ethtool_set_link_ksettings() in their
-ethtool_ops and still support configuring PHYs for speeds above 1 GBps.
+Another type of broken behaviour would be devices that don't correctly
+handle UVC_GET and UVC_CUR requests while an async update is in
+progress. If you issue those requests, those devices will break. Are
+they more or less important than devices that don't send an event ?
 
-Also this will cause an error return on attempt to manually set
-speed/duplex pair that is not supported by the PHY.
+All of those are partly theoretical problems. I'd rather keep it simple
+for now until we get feedback about broken devices.
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/net/phy/phy.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+> > > Why we have not seen issues with this?
+> >
+> > I haven't tested a PTZ device for a very long time, and you would need
+> > to hit a small time window to see the issue.
+> 
+> Not that small, some devices take up to 10 seconds to go from the
+> smallest zoom to the biggest zoom.
+> I'd say that v4l2-ctl has a very big chance to hit any error.
+> 
+> BTW, homing can take an even longer time.
+> 
+> > > > We should not send GET_CUR and SET_CUR requests to the device while an
+> > > > async update is in progress, and use cached values instead. When we
+> > > > receive the async update event, we should clear the cache. This will be
+> > > > the same for both well-behaved and badly-behaved devices, so we can
+> > > > expose the same behaviour towards userspace.
+> > >
+> > > seting ctrl->loaded = 0 when we get an event sounds like a good idea
+> > > and something we can implement right away.
+> > > If I have to resend the set I will add it to the end.
+> > >
+> > > > We possibly also need some kind of timeout mechanism to cope with the
+> > > > async update event not being delivered by the device.
+> > >
+> > > This is the part that worries me the most:
+> > > - timeouts make the code fragile
+> > > - What is a good value for timeout? 1 second, 30, 300? I do not think
+> > > that we can find a value.
+> >
+> > I've been thinking about the implementation of uvc_fh cleanup over the
+> > weekend, and having a timeout would have the nice advantage that we
+> > could reference-count uvc_fh instead of implementing a cleanup that
+> > walks over all controls when closing a file handle. I think it would
+> > make the code simpler, and possibly safer too.
+> 
+> The problem with a timeout is:
+> - We do not know what is the right value for the timeout.
+> - We need to have one timeout per control, or implement a timeout
+> dispatcher mechanism, and that is racy by nature
+> - It will require introducing a new locking mechanism to avoid races
+> between the timeout handler and the event completion
 
-diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-index 4f3e742907cb..1f85a90cb3fc 100644
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -1101,11 +1101,7 @@ int phy_ethtool_ksettings_set(struct phy_device *phydev,
- 		return -EINVAL;
- 
- 	if (autoneg == AUTONEG_DISABLE &&
--	    ((speed != SPEED_1000 &&
--	      speed != SPEED_100 &&
--	      speed != SPEED_10) ||
--	     (duplex != DUPLEX_HALF &&
--	      duplex != DUPLEX_FULL)))
-+	    !phy_check_valid(speed, duplex, phydev->supported))
- 		return -EINVAL;
- 
- 	mutex_lock(&phydev->lock);
+Timeouts don't come for free, that's for sure.
+
+> - It introduces a new lifetime in the driver... I'd argue that it is
+> best to have less, not more.
+
+That I disagree with, my experience with V4L2 (as well as with DRM, or
+actually the kernel in general) is that we would be in a much better
+place today if object lifetimes were handled with reference counting
+more widely.
+
+> I do not see many benefits....
+
+The main benefit is simplifying the close() implementation and
+complexity, as well as lowering lock contention (whether the latter
+brings a real advantage in practice, I haven't checked)..
+
+> What we can introduce on top of my set is something like this (just
+> pseudocode, do not scream at me :P)  That code can prevent stalls and
+> will work with misbehaving hardware.... (But I still do not know a
+> good value for timeout) and solve some of the issues that I mention.
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index f0e8a436a306..a55bd4b3ac07 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1132,6 +1132,9 @@ static int __uvc_ctrl_get(struct uvc_video_chain *chain,
+>         if ((ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR) == 0)
+>                 return -EACCES;
+> 
+> +       if (ctrl->handle && ( NOW - ctrl->async_start_time ) < TIMEOUT)
+> +               return -EBUSY;
+> +
+>         ret = __uvc_ctrl_load_cur(chain, ctrl);
+>         if (ret < 0)
+>                 return ret;
+> @@ -1591,6 +1594,7 @@ static int uvc_ctrl_get_handle(struct uvc_fh
+> *handle, struct uvc_control *ctrl)
+>                 return -EBUSY;
+> 
+>         ctrl->handle = handle;
+> +       ctrl->async_start_time = NOW;
+>         handle->pending_async_ctrls++;
+>         return 0;
+>  }
+> @@ -1982,6 +1986,9 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>         if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
+>                 return -EACCES;
+> 
+> +       if (ctrl->handle && ( NOW - ctrl->async_start_time ) < TIMEOUT)
+> +               return -EBUSY;
+
+If I understand you correctly, this is meant to prevent accessing the
+device for an initial TIMEOUT period, based on the knowledge it will
+very likely STALL. After the TIMEOUT, if the async set is still not
+complete, SET_CUR will be issued, and a STALL will likely occur.
+
+If we device to standardize on -EBUSY while the async set is in
+progress, we need to do so before and after the timeout.
+uvc_query_ctrl() will return -EBUSY in case of a STALL if the device
+reports the "Not ready" error. This is what I expect a device to report
+in this case. Of course the UVC specification, in section 2.4.4,
+documents that the device will update the request error code control,
+but doesn't tell which value should be used :-S I suppose we'll handle
+broken devices if the need arise.
+
+> +
+>         /* Clamp out of range values. */
+>         switch (mapping->v4l2_type) {
+>         case V4L2_CTRL_TYPE_INTEGER:
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index e0e4f099a210..5c82fae94dff 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -154,6 +154,8 @@ struct uvc_control {
+>                                  * File handle that initially changed the
+>                                  * async control.
+>                                  */
+> +
+> +       TIME async_start_time;
+>  };
+> 
+> 
+> In any case. Can we solve this in incremental steps? I think the
+> current patch seems simple and correct. We can introduce the timeout
+> later.
+
+The main reason for a timeout was to replace walking over all controls
+at close() time with reference counting of uvc_fh, which is an
+alternative approach to the current patch. Given that picking a good
+timeout value is difficult, and that the current implementation already
+skips the walk in the most common case when no async set is pending, I
+suppose we could start with that.
+
+> > > > Regarding the userspace behaviour during an auto-update, we have
+> > > > multiple options:
+> > > >
+> > > > For control get,
+> > > >
+> > > > - We can return -EBUSY
+> > > > - We can return the old value from the cache
+> > > > - We can return the new value fromt he cache
+> > > >
+> > > > Returning -EBUSY would be simpler to implement.
+> > >
+> > > Not only easy, I think it is the most correct,
+> > >
+> > > > I don't think the behaviour should depend on whether the control is read
+> > > > on the file handle that initiated the async operation or on a different
+> > > > file handle.
+> > > >
+> > > > For control set, I don't think we can do much else than returning
+> > > > -EBUSY, regardless of which file handle the control is set on.
+> > >
+> > > ACK.
+> > >
+> > > > > I will send a new version with my interpretation.
+> > > > >
+> > > > > Thanks for a great discussion
+> > >
+> > > Looking with some perspective... I believe that we should look into
+> > > the "userspace behaviour for auto controls" in a different patchset.
+> > > It is slightly unrelated to this discussion.
+
 -- 
-2.39.5
+Regards,
 
+Laurent Pinchart
 
