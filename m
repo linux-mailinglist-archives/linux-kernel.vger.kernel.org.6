@@ -1,166 +1,239 @@
-Return-Path: <linux-kernel+bounces-428250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0859E0BE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:19:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD5A9E0BF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:24:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D180D282840
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:19:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1EAC1650A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E2B1DE2A7;
-	Mon,  2 Dec 2024 19:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9F01DE4EC;
+	Mon,  2 Dec 2024 19:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="d2yi4+bu"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020139.outbound.protection.outlook.com [52.101.61.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gsJhKomj"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822981DACA7;
-	Mon,  2 Dec 2024 19:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.139
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733167156; cv=fail; b=X02pwEiWCF8Iz5/DDEnRx0JrpdxY507L0yPApDf5egRUO1GFhhiHjxT/SddyoVIS0d96EdB4LwbagzFBsBCokkUZLVy/YYzZUYGbG24JoYi9qLZU/oNmdIGHTQPSSdA/eoA+oPCedwUpnfxyRuA7R+WPhBp+Wbjbo0Z/oc481+w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733167156; c=relaxed/simple;
-	bh=fzVd99fXnW97rfEAWMEmxI9irxBFWFj9aqhhBBnH68g=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 Content-Type:MIME-Version; b=gXPPqU98VQaBbPPvH9oKswmfAiKRAYih9B0xOYJEGQqSWa70jYW0vQvRjmGaILzyip624gC2OzXzLEC0TmWVWzlHW+YbVnQOk8/ChBWwKkpoVvOUoS0IF4Pu6cIQhA1uCpDEoRSMCmy76sYQCfJEPASDHvTYd09PqpB6L5UAAe4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=d2yi4+bu; arc=fail smtp.client-ip=52.101.61.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HUpejHgsGE0woUKyU00eOvYs2sQhabK3WIFt4RiLoQb8HSOVJHPX90nf9xIebKclrbovah4rnkiJiBOF7T5HlG0rvtybPvLqiu9t5mFWlMYntX3+c7pY1FutoKaG89t+Gt5Ef9MggGTH550rnGoaJZ+mT947jCGpIkInjNPJxrdDiOC/i8YWXR/Xr1EsWQZwi62HRdF4eE3BWn95/P1bdlyhicpwv/lpY2s2SoYnsJIoskd4mMYPgafhnJSp0PgkrlW23F73GzHuemaOQxZ/Niq1Xfp90GwKgThPrhaPybffCgIgLOqeIeCHQE9FpGKRqUcURXzsYBJ9oBfWBDSc7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FCLeAjc9kcfLfgiCJUXgKY2ZQbR4SKx01n1j/m/fb5M=;
- b=GWszI1gLGwvCtRrlm8oWyaD2NCOXKnNRuv/vEhEVnQjzR8NAML1CgSBdDeqaFksQlXalKOrw4/fDnGBCNq89yyp6wtO8LA65KXSEZqiuDGd+jRBYHszz94m+fRjKVogqrsD9GGiIc3F7AI29YfyYiLCgRPq3s+4+S5gYhgIw5FGCk+dGOtCWOC7+7cqyaB5lzCudqVuHKwHVIExPjDzAgDpZ3lyseBAVkqsWeeGL09pixhckEqaETXHoMaHh07/GHHLM3rVrwjn6tmG7LBaUMFQbYOcyrJnKWFROpskWcS8Iv7aHz1kMaFwmFopuxXvMGpbQPZYuS8BGNlIgrpurRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79E61DE3BF;
+	Mon,  2 Dec 2024 19:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733167427; cv=none; b=dboRTdo+7iTyoP+/97wEQmvJjlPkPeiHfgWdqpFYIDJxXBbMcAafu6llgHb36QMWKDcNNIign1+KQ61FUoWws7bDUdJVMRubvEFbeQ3HEgH+udADnwVIKoMRYmYdymwLolHKPGXyON/DLYGrrXhEGydBc784uxcSE3OgxImwDvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733167427; c=relaxed/simple;
+	bh=4Oa4VegWAegyaTKr1OmCwheDlziE8RsG2Fn2v1W8GQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WISFganB+4XSUxcOscT+lNhD6cr0DCDQ5OiF55R3wQHxJPRUm+0Iagw2obCUgesQ8VlX0S0Rjl+o8nfFyBAplFwWFWw1jzGFxd0QULgffFICqL7u1hqHX2OeelexrLIkEHy3s7++mXhmWh4+LO4jJqbF6GmO+kfmD48EEVEMuOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gsJhKomj; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a83c6b01so40753165e9.0;
+        Mon, 02 Dec 2024 11:23:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FCLeAjc9kcfLfgiCJUXgKY2ZQbR4SKx01n1j/m/fb5M=;
- b=d2yi4+butkYqGR3Do8bRlwthRi3B857RkAO2MkjE6GxjW5j/iN9oQh1/pZBPgY2lCYvfUXFt65/IDz+Q/xMPT3f9W8rg1Ji4WVDyXnj4y1yCQ6w0aOmr2bh4McEzFoN/w/zN4Zl+bXf0ChqZ9nLCxfr2lQnLkuohgNliWWbpXcY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from DM6PR01MB5259.prod.exchangelabs.com (2603:10b6:5:68::27) by
- SA1PR01MB7341.prod.exchangelabs.com (2603:10b6:806:1f4::23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8230.8; Mon, 2 Dec 2024 19:19:11 +0000
-Received: from DM6PR01MB5259.prod.exchangelabs.com
- ([fe80::bb78:4472:8d3e:5e91]) by DM6PR01MB5259.prod.exchangelabs.com
- ([fe80::bb78:4472:8d3e:5e91%4]) with mapi id 15.20.8230.000; Mon, 2 Dec 2024
- 19:19:10 +0000
-Date: Mon, 2 Dec 2024 11:19:07 -0800 (PST)
-From: Christoph Lameter <cl@os.amperecomputing.com>
-To: Huang Shijie <shijie@os.amperecomputing.com>
-cc: catalin.marinas@arm.com, will@kernel.org, patches@amperecomputing.com, 
-    paulmck@kernel.org, akpm@linux-foundation.org, thuth@redhat.com, 
-    rostedt@goodmis.org, xiongwei.song@windriver.com, ardb@kernel.org, 
-    steven.price@arm.com, suzuki.poulose@arm.com, mark.rutland@arm.com, 
-    linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/4] arm64: add a new document for the fine-tuning
- tips
-In-Reply-To: <20241126085647.4993-5-shijie@os.amperecomputing.com>
-Message-ID: <76013b75-dce9-b37c-f2af-9556f14f6301@os.amperecomputing.com>
-References: <20241126085647.4993-1-shijie@os.amperecomputing.com> <20241126085647.4993-5-shijie@os.amperecomputing.com>
-Content-Type: text/plain; format=flowed; charset=US-ASCII
-X-ClientProxiedBy: SJ0PR13CA0074.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::19) To DM6PR01MB5259.prod.exchangelabs.com
- (2603:10b6:5:68::27)
+        d=gmail.com; s=20230601; t=1733167424; x=1733772224; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T2xlagNSs/n68wjChaazhkpy5KeZi0HFp84+ebzxe0A=;
+        b=gsJhKomj+ap4JHaBw9aky2rkkHQ1GKbRg5FwzfrN+6O6IbI0lLhJpS4tRBAxmT6nB0
+         TLKyIdqH+0ZobeLyRnKXrKK02rd7Amw+0iHMu9TRx2Liq68wMbs1EQPxzyaXLwqkyDhX
+         EHOIcnUThz/wxG1W1Umy0RLF/LltlA+2AtmaFychP2WB2l8xcnPiibt0vkTVQIFAVqsk
+         SMdQyL9GSLZVVSSBt1DSdKpPzwGvyu9GJJt4MFi5DiLgQFw3t1cvwEUiQHKdCys1ohyB
+         j536N9OLGDChhpfBwtxuYYtZY6YsBdqYdJ6YdWvxk1Y14M+HvbpuTUaE7CvSvSyWIPGM
+         VTHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733167424; x=1733772224;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T2xlagNSs/n68wjChaazhkpy5KeZi0HFp84+ebzxe0A=;
+        b=J1X60iF85dKavBWE5V/dMiVGr7kzRwFEfae/qwp+Z1mI9Y/lpwKUN9ExekCzJUjhgT
+         iD88aJCOBEI4YjMUK09OQlI/NyPssa79sbFicZzq0NmeXZJzQQlcxnqm6/z6a9wTa0eO
+         oEdZGI2GJaxTbLpXQ7dowR1jJjj6zDO2TaEhI3bVBgRJBxwflu83eLdqfGmyWAwV7XwC
+         gTyafIwHS1db1259+bZ5mxW56LR7bMlzhhyEAUm0nfLzyXSm7DyqhfnKG2pOxPD6LLXt
+         AE+hII7p4rWcKQfZToxblQGF3PrTL4lC9GSJj+M3HqwYXrn/ARBIxyxDPKBwBwmtjIkY
+         CvMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVC5bZuWr9q10dxv43Bh+BCFhJP3nAVZflNWl9UPfJASZ015k0u2spdTorOcKnbSpEpu248t8BKu24z@vger.kernel.org, AJvYcCW6SggawIe9i59hrW8VwceFXwRe/I6CaLpvZDV2dgTD+eEH0E/AJriRnBnKCW6uoR54hu2jYIM0+574K7hF@vger.kernel.org, AJvYcCXL1LtZq7EJq/ib9a8X/P4ynhNPZj9LKPHpvGAK4GiGs8+4R6eDkyKzwOvGJWX6rsoW+NMFdFGxMDZg@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKwvp4jQjyIfqkqfBhdBlo5D4IE1DfrUGHh4ZDR/aY52rL7zMl
+	ryGYRZK52L7+gYj1iL0X57vfsqvCUwbuBAGrPmlOWRRQf+JmIanlytParLaJ
+X-Gm-Gg: ASbGncvX2XDCP0Ru6fqzQPQfmRXUmFgf/4obythbJp5TV0uf3dg/ibURdti0BwgTdGE
+	5eSZcbfRNk3xUNxY7Nt5pHjYHmS7Y3tFGNFzIhpLfMi84fJOssDkl8bcYo7hNs+xMlhZgXPdZMR
+	SrPqrSLTQr3g5kfN99H3SDkHPxmW9W4cGeSumEb0l9/pt4vyR5tMpBD2fCA6K0NVnVJQctdiYL9
+	S32MeDkIq8rJIbaV1J9tjeEHLLZt4Itpm8fRxOM6sMjDDl0SqkuOQqNEf36lCA=
+X-Google-Smtp-Source: AGHT+IGBVdsLfOi1dW35VMunQiekF7LRMOLyuLk+WDGtBa7P4UJpuKtREyeGcNvCDp+YzUFUD6VHEg==
+X-Received: by 2002:a5d:5e8a:0:b0:385:e22e:288f with SMTP id ffacd0b85a97d-385e22e2925mr10589587f8f.31.1733167423779;
+        Mon, 02 Dec 2024 11:23:43 -0800 (PST)
+Received: from vamoirid-laptop.. ([2a04:ee41:82:7577:ea8a:93ec:a066:eb25])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-385faec0c9dsm832609f8f.20.2024.12.02.11.23.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 11:23:43 -0800 (PST)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com
+Cc: vassilisamir@gmail.com,
+	u.kleine-koenig@pengutronix.de,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/3] iio: chemical bme680: 2nd round of cleanup
+Date: Mon,  2 Dec 2024 20:23:38 +0100
+Message-ID: <20241202192341.33187-1-vassilisamir@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR01MB5259:EE_|SA1PR01MB7341:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40616153-7bd2-46ac-6539-08dd130632e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Lgnn+uB4BAx3NSv/CFYU59mEakiFP2n8AxIfmmbFl8Z3U+FlmAbe1F/7X/mh?=
- =?us-ascii?Q?eL3z5JHSqHp4bdA53rVVJHoz+wbzWv6BM24dmtWtupsjTJv/4yD5r5Iy0WKn?=
- =?us-ascii?Q?+GssyEDHm1ncM+80hayWi6W0CjTlwkS9gB2/yaJB47EbyOG6C2Hi5Lw/vcwM?=
- =?us-ascii?Q?3bw/IRmxTb3N6huW/hXprrA9wyX/aRuECcduQq8AyM1sz6em7k4NvtpKNKrS?=
- =?us-ascii?Q?Akz4eh4GLsiU4OyKkVHAK0hBbZHIPQpQuTfwiVgMkv/CAdqNGfeSyojxcuyu?=
- =?us-ascii?Q?yoS1cvIEq7+To6JSeuR+BxcYPdUOHO2ST+aTT8ETsOxpOp3V1Lelo8H8oYCY?=
- =?us-ascii?Q?RRvjkB1nogfK3nqe6JlQTKbBys4OAbqu2IGNDRnBY7m0twmoOJ3sfwKx10bu?=
- =?us-ascii?Q?75OPxccjiOKHaJvKgYGgD2Y/PUr5fCnLTTwBqRicumxVYRddVW/5uvb0Q+Nl?=
- =?us-ascii?Q?04SaISxh3whZEEBZuvSRPa3E4C3cWJvQ70MPsV/OWMoDdWa/eSTr+X8Uychk?=
- =?us-ascii?Q?Rzw0ODflloW6ZlIx3/aub0Osc2xd6gc/8RwhRXQWEN/5Gmk12d/TR4hiOSRT?=
- =?us-ascii?Q?ePIva9DS7RglfOcTrmOefMdIgH3gNKSvS8l8Av+lrqvuBu6jvayb6EGj3NQx?=
- =?us-ascii?Q?mQ6m9sUiwFaM35fzgZY14XOYbQObVRYI+dPfhWugj4koPzXXUGSmSjmhcbGu?=
- =?us-ascii?Q?FmkLSlmt4lAW7/mdi8r4gKszQOewQH1Vrdm7XGgILdT5I382cCF1D5onw5jX?=
- =?us-ascii?Q?kBWva4632ep8vjRBXJ3KFS7rJ1QrnpSkvmdVRz0eMz26uUNEveO2NdzrQpu2?=
- =?us-ascii?Q?AdD+Aogw5i6Lv2E0p7T+O2N4wyZYH0b40Bb2AzntaT9zk0yjY3Ibz2vJPAKf?=
- =?us-ascii?Q?3q5m2NKPKuQXwGrz2VcZ6vXDfhpfAlbKnJnrox4e7KxIVtRHkQQXZxu8ZdUv?=
- =?us-ascii?Q?tzO8Kb3EanaZly9GEB1ozggT7ojEfpNcFt/hSboUvqa2Uyt9hUKkklyQWWnM?=
- =?us-ascii?Q?unAoS0AfazE8jldZl/DF2AL2xMi5A7/Y/6nSjXbWZ963yjERoxSwz49bvHc6?=
- =?us-ascii?Q?PMUa5YgHI+Qv/DR5Bd5RhUfZd2/5ha8pByk4vmBMCPeMHP2ja23hl2OUIGYp?=
- =?us-ascii?Q?7RBlolrmIonyqVkZ7gOCo07jx9MWNAcHqosgihqOtFgSd0C3vBZaZW68rVYE?=
- =?us-ascii?Q?510YSBJaIaeRj+Anuf5Uxwt0NsBwozcvRJeb9s4N4xrhBW4BCZvyu7OvMqIv?=
- =?us-ascii?Q?MWXnd3QBzvTiEO2cCQ9y/rks3JWT4c1YqPNmM+6Tn8mOO7lsDA8i3PxE7MGe?=
- =?us-ascii?Q?5Re93tSQT2pFNKLri+AhGpCC7l3kxwszT0gpA5cslZeMQQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR01MB5259.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FvpVCLTqgVeqSX+I2/qsvE7+VKkncpKR/E1M5IaOfaNJ+zzagLvYj4FsU2FC?=
- =?us-ascii?Q?xbeqmQ9P9RMcWLGh2LuXNc5+XCiZTEYdYukp0k2uA8b2hQLc79CtaVFNwghb?=
- =?us-ascii?Q?BN43g8G65Xc6bVN3JiPtTsnBPhvRVITkv6AX6EYwfLr3yO//80hRt65LDK/a?=
- =?us-ascii?Q?UyduleKSZHXwFTni2gbkVPBb546GsnJnQ7qNsxP7cZDYNLbPTerMcmtfS2Bz?=
- =?us-ascii?Q?/zzJc0DFy7AtaypPngm2Xqr5pcgdsN+8my2G7hbn0A1U4mCyWzU2LiUsAeca?=
- =?us-ascii?Q?sag+ekt05dITzYZV+L10VEt8RstZ0VgCA5nOE78VyJr3/eb8Ce1mkfb6nUww?=
- =?us-ascii?Q?vKthX06sAwMIbK3JJEITnNhTqU5e7D7SgoxNCUzncvBuz2lSTu7Qz4/vTzug?=
- =?us-ascii?Q?sJA+W0V9ym/aKfIhPNICcI0L/vDQHne8CuMOus121dckwbTq7C8mLbYlT/bD?=
- =?us-ascii?Q?mZlzFrGFQOinKKmA996rCBJo1L1zXKnxl7G81estqr3criIlIadr+nYToXwV?=
- =?us-ascii?Q?sviZSOGwGFB6I2559p5W/FA3Zf24tLXNM2QpcahncoZj8JtKciNgLJg7IiV6?=
- =?us-ascii?Q?1brDBXwWRaZUbDgMBNic6/i8jqofZMDje8Beo7uDNyHSYSjVy3boUHLausG3?=
- =?us-ascii?Q?jMGxRl+NzGzjIv8EeTt+Z3Zw6d54F82clEhHQtadkk5TVmOwSC2KZ8I1wMd7?=
- =?us-ascii?Q?iIL7IcLmlRfYTwfvmmSy/O85iOm8lz4iIkXFZBR3vWW4RVh+qmiDafIwclRS?=
- =?us-ascii?Q?43RepeF/NBM5XelsFo46Hs4mwlQVreN5khRUBo1FBOSe7ekiTom9sh+RYhZc?=
- =?us-ascii?Q?1GYTWmOToNkoPNpW7F3tOA029sPV1D+BdjdzwXS28OmGPMFAUn8x0h2e+LA/?=
- =?us-ascii?Q?sdRKaHggmSJ1j2AAlqUFtHOB9VgjTJcFrYql7X9ABH2pzyKb8KJERhDuVBJr?=
- =?us-ascii?Q?2T7BoJKulx9XxVnDE6GJbqhMNQbXHrr0Jhf2YllOPiHXoSwaoZH1DpHHn3up?=
- =?us-ascii?Q?yGmxS9i4d6NhtgMABJikg+lb6VpnlYsx6bQD1+Awc3aiDYJimD3kvaMc0C99?=
- =?us-ascii?Q?4/g7xNuCyJwhNzRSh6xfE8dNFQXKJtva/43mfSDylmRzEK5sd0uOSqh5M/Uf?=
- =?us-ascii?Q?dxJU3CiGJHuzU2tB8BwWoguJh6ccB5yPxMuKY9zSdAj6Q1yvlF2Xu5LF8Azu?=
- =?us-ascii?Q?vAPVv32V1+6Et4l3+aEmUqRWbzRHUk9cJLD/wEfHigXbCZnv239F3Luuykwf?=
- =?us-ascii?Q?dk1OZozyxVfCCcyfF1gT2I0qzhxzzPyTiMSMLiXolZbhGwRP5IXKWbaaKIi3?=
- =?us-ascii?Q?EIFpT1yhp/z93L6rG9aZcZNPlvOcsiygcBl8qGQ5gNkG2r4uFQhCOwt3ssYO?=
- =?us-ascii?Q?CnMPKFZe2DrlwZbM+jDp47lyP9hrTyrm7fOnegSwGmMYRxiY3vFcrcjXPaG6?=
- =?us-ascii?Q?MFNulSefgw3zJGi78Tb6safP0O2j4fApCYHn8v0/NjqTTFG/ocNCUvx+dxFO?=
- =?us-ascii?Q?0fi+6rsQgYrzfaw/LHq0lrxNnXwwq6HkTSroAPTRfSjmMYwbufgHmrv3lTYP?=
- =?us-ascii?Q?voqUAmjDVUbDAQwKapi48l7ktNYdWf6s2niEk8apMvKmMGbxnF1kgUWcqlB3?=
- =?us-ascii?Q?lA=3D=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40616153-7bd2-46ac-6539-08dd130632e8
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR01MB5259.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 19:19:10.5183
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Rj+VO8PDUL1Ftop138qQdV4Fr5+15+TxBnzzoK0S0VNIv3OSn3JYSwmMfDHkHx5qfRwVAn6ap0Z1eq3i4NP1iVUD4Nq0WEqx6zTtQaVE0u4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR01MB7341
+Content-Transfer-Encoding: 8bit
 
-On Tue, 26 Nov 2024, Huang Shijie wrote:
+Changes in v5:
 
-> +slab_strict_numa
-> +----------------
-> +In NUMA, it will provide the local memory allocation by SLUB.
+[PATCH v5 1/3]:
+	- Changed name of sensor to "co2-sensor" as it is already used
+	  by other chemical sensors.
+	- Added reviewer tag.
 
-"Slab objects will be placed individually according to memory policies. 
-Increases object locality which is useful for NUMA systems using SLC 
-caches"
+[PATCH v5 2/3]:
+	- Removed unnecessary macro
+	- Added reviewer tag
+
+[PATCH v5 3/3]:
+	- Replaced pm_runtime_get_sync() with
+	  pm_runtime_resume_and_get()
+
+---
+v4: https://lore.kernel.org/linux-iio/20241128193246.24572-1-vassilisamir@gmail.com/
+Changes in v4:
+
+[PATCH v4 1/3]:
+	- Changed description to include the move out of trivial
+	  devices.
+
+---
+v3: https://lore.kernel.org/linux-iio/20241102131311.36210-1-vassilisamir@gmail.com/
+Changes in v3:
+
+Removed applied patches 1,2,3,5,6,7,8
+
+[PATCH v3 1/7]:
+	- v2 4/13
+	- Set mode of sensor with enum variable and remove macros
+
+[PATCH v3 5/7]:
+	- v2 11/13
+	- removed regulators from being required, adjusted commit
+	  message
+
+[PATCH v3 7/7]:
+	- v2 13/13
+	- removed unecessary usage of runtime PM functions
+
+---
+v2: https://lore.kernel.org/linux-iio/20241021195316.58911-1-vassilisamir@gmail.com/
+Changes in v2:
+
+Generally, the patches were rearranged according to comments from Andy
+in previous version in order to be more consistent. The refactoring of
+the ambient temperature was dropped for now because it was a bit more
+complicated than I thought and this series is already heavy enough.
+
+[PATCH v2 01/13]:
+	- New patch
+
+[PATCH v2 02/13]:
+	- v1 1/13
+	- used "optimized" in commit message to not prompt for a fix.
+	- added documentation of where this sleep comes from
+
+[PATCH v2 03/13]:
+	- v1 2/13
+	- Fix indentation of array and removed extra whitespace.
+
+[PATCH v2 04/13]:
+	- v1 5/13
+	- removed extra check inside the set_mode() function.
+
+[PATCH v2 06/13]:
+	- v1 1/13
+	- removed indentation fixes which are fixed later since code is
+	  changed in those lines in later commits.
+
+[PATCH v2 09/13]:
+	- v1 12/13
+	- removed unnecessary debug messages
+	- Used struture instead of buffer to push data to userspace
+
+[PATCH v2 10/13]:
+	- v1 13/13
+	- used better naming
+	- made channel index to -1
+
+[PATCH v2 11/13]:
+	- v1 06/13
+	- removed device from trivial-devices
+
+[PATCH v2 12/13]:
+	- v1 07/13
+	- use devm_regulator_bulk_get_enable()
+
+[PATCH v2 13/13]:
+	- v1 08/13
+	- removed internal usage of dev structure
+	- added missing header in both bme680_core.c and bme680.h
+	- used devm_pm_runtime_enable
+
+---
+v1: https://lore.kernel.org/linux-iio/20241010210030.33309-1-vassilisamir@gmail.com
+
+This patch series is continuing the work that started on [1] by
+improving some small issues of the driver in the commits 1,2,3.
+
+Commits 4,5 are refactorizing existing code.
+
+Commits 6,7,8 are adding DT, regulator and PM support.
+
+Commit 9 is refactorizing one macro to attribute.
+
+Commit 10,11,12 are refactorizing the read/compensate functions
+to become generic and add triggered buffer support.
+
+Finally, commit 13 adds support for an *output* channel of type
+IIO_CURRENT in order to preheat the plate that is used to measure the
+quality of the air.
+
+This and the previous series [1] started with the idea to add support
+for the new bme688 device but due to the structure of the driver I
+decided that it is better to restructure and improve some things before
+adding extra funcitonalities.
+
+[1]: https://lore.kernel.org/linux-iio/20240609233826.330516-1-vassilisamir@gmail.com
+
+Vasileios Amoiridis (3):
+
+Vasileios Amoiridis (3):
+  dt-bindings: iio: bosch,bme680: Move from trivial-devices and add
+    supplies
+  iio: chemical: bme680: add regulators
+  iio: chemical: bme680: add power management
+
+ .../bindings/iio/chemical/bosch,bme680.yaml   |  62 +++++++++
+ .../devicetree/bindings/trivial-devices.yaml  |   2 -
+ drivers/iio/chemical/bme680.h                 |   2 +
+ drivers/iio/chemical/bme680_core.c            | 125 +++++++++++++++++-
+ drivers/iio/chemical/bme680_i2c.c             |   1 +
+ drivers/iio/chemical/bme680_spi.c             |   1 +
+ 6 files changed, 184 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/chemical/bosch,bme680.yaml
+
+
+base-commit: a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
+-- 
+2.43.0
+
 
