@@ -1,120 +1,287 @@
-Return-Path: <linux-kernel+bounces-427302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFBA9DFF7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:58:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB749DFF8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050CA280D5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:58:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 992EAB238F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6349F1FCFD2;
-	Mon,  2 Dec 2024 10:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793151FC7EC;
+	Mon,  2 Dec 2024 11:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPL5fPpI"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="jWnQmxgk"
+Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6526E1FC0E5;
-	Mon,  2 Dec 2024 10:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243381FBCAF;
+	Mon,  2 Dec 2024 11:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733137124; cv=none; b=bQHPU7Xr0YWs5iNFH91a488iomkuZMsy9r000zt3A4EQrrxQVfRGVwGdM4/3vMo0b5VCqaA3YCfAMKVy8pZf9QTGkvrG26jMPVX1ceRmGk6x2Q7/p/od0cYxrg1FeL0i5ix8Eo7BIubOslcGLzUawewQjFkekOEpZJK+ZASEKIM=
+	t=1733137270; cv=none; b=VD3ZKaqx5el3O88RmDa80Hm9v30ihTVxOkrr2y3u0IQKpLfl/eiMXFNneIqml3netn6/H01j7CyegfWsSnih/kn/WTOQ4iZcWdg04ndaZh7D8Ln8uJ4A4Y3k6lGI/BErWTYKLUApNL+3Zzaxym1MIdr4JXTANUwYlnukkgOpl7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733137124; c=relaxed/simple;
-	bh=+nxRREVnR5y0I112w/Jah180rKSxFhlYFjfn7aw/klk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fkm537L7/2VyCHpXkrHMURQokyz0txh+GQsW+ckuGInK2vecy4YZm1xAGrqXL1Hwz71Lp9cCObD/Zw8/P65tduSvehqIp4MMkzfCMein5TqNODgg3KNEXPO0HLfuAw/gJYPvsu21xc65i5iduKL3r4Xpga5g2ltdgRRtn74fnzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QPL5fPpI; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4af09420293so1304401137.1;
-        Mon, 02 Dec 2024 02:58:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733137122; x=1733741922; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gfoa7bD2f01l4BmRlAhSCsAqRh96RlqgXzfDjBF8Dfk=;
-        b=QPL5fPpIJiquzpBrUucQcQ7OAAKHQEs3Aj7TRZuxwBIrRVdFkia7+8Z8SrFOi+SCju
-         n0g6KLQH4ncn4U001Y1RpoW2QGxmmNOk0s6dic4ODFhsvDvZsj2J4vxbf8HfeQIy9PvG
-         wgEr6bRnha7Qjy+fvAa5ITCjp66YlFaYtNmfoiza3YR2Dxat73TI6z2aPsJ95mFRYTJg
-         s8+XlinQd2C9dNCZzy7J+ENOzPQUbCePEr/sceoMd9gW3p9BpxwOGve+dQr+zrua7CM6
-         jYae8fgfIm21FmR1ok0HNOav6z7TRQTuYb5FppT7Yzp1SN74B4Jnla1axJZhLP23Sbr9
-         eeng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733137122; x=1733741922;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gfoa7bD2f01l4BmRlAhSCsAqRh96RlqgXzfDjBF8Dfk=;
-        b=fKRAMGJjk89zUQbbbLrTWt4kZGElSzdkIjzMf0nC790vXk9zXab8saLdg1WFBl/4du
-         22qek+JWKRa7CtGSEWHYC9UVjA/yTgc4ChCfrnjXYMYkyNZXJU+Fjr+rzcxpagcdGZUu
-         KT+UPoAeMSYnxN35oO0l5P5qp1w+hR2Pmz4rbBF8qnsMS2ihxRLlIn81lcqnNj5UQDnY
-         xnw2lvXzq7xEbnFdx9GcrSLYqtgWPkCU82mJWCJYQHg36m8YYm/Oc1hvFmkr6a5N8Afa
-         6SY/HliazBJEhMCVVOngaYsxfjc+JcmuTniMIWKFC2fQyqo7geZ42HsGqrK837XIAGCH
-         rxFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9GJmp15QkoE6nkrgPMC3BC3SbaM/+ELjV8ybr5MyhWcPhTT/HqGhL9mzTvuW/j2fjTqkVa1DQHbCn3AatMQ==@vger.kernel.org, AJvYcCUAzFOf561QTAep+elvlzk2db108hCc76l+AzjhCQWSQGun17yVQO6Gp0X7Nue01a1exVcoGBD4i7VU@vger.kernel.org, AJvYcCVx28qH10R+4SsE2XmW0iaWSHSo6wTAqyJJb0MP/gPfvp2Dp+LOb+B862hcKdyCIg0dKkv1l7RXsMcmX6rm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB6xUgyLTAjpeWHe/0ECTESSUeTygLsBdGAkXjnkyJ5vbY1DgM
-	/BFImWBfA5gfsl54XZaGDD7j24jhniH16rap32PgdJZf80GSj7B0IN41QV2jdnXtGVELZlBcdrl
-	YpcKJlHTZMD4aXtroJZRT0SclzCg=
-X-Gm-Gg: ASbGncvu9u3odfqdFzEGmRYmFavWUPMs7n1z62A0Jp07GouP0HHiU6rRT6EGdrA5DOO
-	ztxM6s6dlWD2NMUNDyR2npo2aLvN6EA==
-X-Google-Smtp-Source: AGHT+IFlB8c06w2axw6TQWoIQCxm3r13lXyNDj8VZnMYRZPeMarHkdmhyheKxlRQAhwFATF1p/9Mtr8ic9XojWNVB4Q=
-X-Received: by 2002:a05:6102:c4c:b0:4ad:a437:c41a with SMTP id
- ada2fe7eead31-4af44a0ab7bmr25948208137.19.1733137122399; Mon, 02 Dec 2024
- 02:58:42 -0800 (PST)
+	s=arc-20240116; t=1733137270; c=relaxed/simple;
+	bh=IvpqhaV/xulVv5zlmJNnCYugVm2DCsNChR4uZU0CDlk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PUaszpeln95dsmoLi79+axXop5uMc3UudPbDW3aj71wwv8qzO+UW/RLnlRfcTaTHFKjT1oZhxdizEUkzA2/oNrpz64pVhKXbOkF6fzJWJyzGeqVLNqPUx2qLJz6oMEFHeZf5IIoV9ziskX0qp/a6g1+H9JL0cTJA/1r9cSPt5Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=jWnQmxgk; arc=none smtp.client-ip=134.0.28.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
+	by mxout3.routing.net (Postfix) with ESMTP id 4B8D860FA4;
+	Mon,  2 Dec 2024 11:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1733137261;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wyqoNi8b0e4G/mNuoNqWCCyWIXNgFap4NSrKlakizDk=;
+	b=jWnQmxgku532SImzVOvuu35tPoZrB/MDuyEJomKh6H1lDaNVZ+xwvX/O6+lYX5iX3P+t7c
+	tPX/tWNT24o3cMsOhIIdd3StsGWECMmAP4KjPz1lo25GVXZgNaW8gl33kUrJha3pCI5XHp
+	mumQciykHwsn04y3CqEYGBaJT6/SfZ0=
+Received: from frank-u24.. (fttx-pool-217.61.149.104.bambit.de [217.61.149.104])
+	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 818A4100475;
+	Mon,  2 Dec 2024 11:01:00 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v5 5/5] arm64: dts: mediatek: mt7988: add pinctrl subnodes for bpi-r4
+Date: Mon,  2 Dec 2024 12:00:39 +0100
+Message-ID: <20241202110045.22084-6-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241202110045.22084-1-linux@fw-web.de>
+References: <20241202110045.22084-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com>
- <20241008-starqltechn_integration_upstream-v6-6-5445365d3052@gmail.com> <9ac43c69-b3db-4f0f-a562-b8ef7d30530c@oss.qualcomm.com>
-In-Reply-To: <9ac43c69-b3db-4f0f-a562-b8ef7d30530c@oss.qualcomm.com>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 2 Dec 2024 13:58:31 +0300
-Message-ID: <CABTCjFDV1Afz8YmpkPVvpC_Y77qLexCBueMt5vk98L=VRmUz-g@mail.gmail.com>
-Subject: Re: [PATCH v6 06/12] arm64: dts: qcom: sdm845-starqltechn: add gpio keys
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: c495ca34-053a-4cad-a31c-eb515f8c7e92
 
-=D1=81=D0=B1, 26 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 13:38, Kon=
-rad Dybcio <konrad.dybcio@oss.qualcomm.com>:
->
-> On 8.10.2024 6:51 PM, Dzmitry Sankouski wrote:
-> > Add support for phone buttons.
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> >
-> > ---
-(...)
-> > +                     gpios =3D <&pm8998_gpios 6 GPIO_ACTIVE_LOW>;
-> > +                     linux,code =3D <KEY_VOLUMEUP>;
-> > +                     debounce-interval =3D <15>;
-> > +             };
-> > +
-> > +             key-wink {
-> > +                     label =3D "key_wink";
->
-> What's this key? Bixby?
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Yes, I'll rename to 'Bixby'
+Add board specidic pinctrl configurations on Bananapi R4.
 
->
-> Konrad
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  | 189 ++++++++++++++++++
+ 1 file changed, 189 insertions(+)
 
---=20
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
+index efc4ad0b08b8..aa2dabc041fd 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
+@@ -9,3 +9,192 @@ / {
+ 	model = "Banana Pi BPI-R4";
+ 	chassis-type = "embedded";
+ };
++
++&pio {
++	mdio0_pins: mdio0-pins {
++		mux {
++			function = "eth";
++			groups = "mdc_mdio0";
++		};
++
++		conf {
++			pins = "SMI_0_MDC", "SMI_0_MDIO";
++			drive-strength = <8>;
++		};
++	};
++
++	i2c0_pins: i2c0-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c0_1";
++		};
++	};
++
++	i2c1_pins: i2c1-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c1_0";
++		};
++	};
++
++	i2c1_sfp_pins: i2c1-sfp-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c1_sfp";
++		};
++	};
++
++	i2c2_0_pins: i2c2-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c2_0";
++		};
++	};
++
++	i2c2_1_pins: i2c2-g1-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c2_1";
++		};
++	};
++
++	gbe0_led0_pins: gbe0-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe0_led0";
++		};
++	};
++
++	gbe1_led0_pins: gbe1-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe1_led0";
++		};
++	};
++
++	gbe2_led0_pins: gbe2-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe2_led0";
++		};
++	};
++
++	gbe3_led0_pins: gbe3-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe3_led0";
++		};
++	};
++
++	gbe0_led1_pins: gbe0-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe0_led1";
++		};
++	};
++
++	gbe1_led1_pins: gbe1-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe1_led1";
++		};
++	};
++
++	gbe2_led1_pins: gbe2-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe2_led1";
++		};
++	};
++
++	gbe3_led1_pins: gbe3-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe3_led1";
++		};
++	};
++
++	i2p5gbe_led0_pins: 2p5gbe-led0-pins {
++		mux {
++			function = "led";
++			groups = "2p5gbe_led0";
++		};
++	};
++
++	i2p5gbe_led1_pins: 2p5gbe-led1-pins {
++		mux {
++			function = "led";
++			groups = "2p5gbe_led1";
++		};
++	};
++
++	mmc0_pins_emmc_45: mmc0-emmc-45-pins {
++		mux {
++			function = "flash";
++			groups = "emmc_45";
++		};
++	};
++
++	mmc0_pins_emmc_51: mmc0-emmc-51-pins {
++		mux {
++			function = "flash";
++			groups = "emmc_51";
++		};
++	};
++
++	mmc0_pins_sdcard: mmc0-sdcard-pins {
++		mux {
++			function = "flash";
++			groups = "sdcard";
++		};
++	};
++
++	uart0_pins: uart0-pins {
++		mux {
++			function = "uart";
++			groups =  "uart0";
++		};
++	};
++
++	snfi_pins: snfi-pins {
++		mux {
++			function = "flash";
++			groups = "snfi";
++		};
++	};
++
++	spi0_pins: spi0-pins {
++		mux {
++			function = "spi";
++			groups = "spi0";
++		};
++	};
++
++	spi0_flash_pins: spi0-flash-pins {
++		mux {
++			function = "spi";
++			groups = "spi0", "spi0_wp_hold";
++		};
++	};
++
++	spi1_pins: spi1-pins {
++		mux {
++			function = "spi";
++			groups = "spi1";
++		};
++	};
++
++	spi2_pins: spi2-pins {
++		mux {
++			function = "spi";
++			groups = "spi2";
++		};
++	};
++
++	spi2_flash_pins: spi2-flash-pins {
++		mux {
++			function = "spi";
++			groups = "spi2", "spi2_wp_hold";
++		};
++	};
++};
+-- 
+2.43.0
 
-Best regards and thanks for review,
-Dzmitry
 
