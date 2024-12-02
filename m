@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-427508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E299E04C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:25:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B909E03BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7ECAB2D2B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:28:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD1A6B3B095
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB52C204F62;
-	Mon,  2 Dec 2024 12:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE83204F9E;
+	Mon,  2 Dec 2024 12:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="ve43uN6Z"
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="miO23gm/"
+Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D75B2036E2;
-	Mon,  2 Dec 2024 12:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC5E1FECA2;
+	Mon,  2 Dec 2024 12:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733142383; cv=none; b=ogvXTW2t4FVvuX6+58FOx3M0lrNnXvmdh0cLeShcogDTUBZ47tSBC+HSILsNWEDeNzfeVQhwIq4IM0grCXiOpYfvmRd5MEJBaxFPX9/3I5bO6Ir17Em14rXRZVHnbkGuHLb/PKASHKIBooqMrSD0a7BcN/jQpJjPiPSCdkucaok=
+	t=1733142383; cv=none; b=TnJo9z1+PNqgPxev9wXZoWXLdE/fLqeqFGJzNzAKQXYZQnj3bBFc1o8t9Jwtqistco6pzMNmjzGcJyyq37HTZOx45Njo/X2SwnwuWu8m66ZYcsh+mhW0pDAPPSsuSSX2fmkaU/Bwyy/C9cexRF2q11kH4fL8sVawGop1Gd/XXuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733142383; c=relaxed/simple;
-	bh=v/lvT40iQkeFihnGl29We4f/Ljx2oLq5cwc5zGdZYVc=;
+	bh=tXmGE50YOIz5SzcYHsKev2mYhOC/YO1vLvPg1XfuhQo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CyJfxUOKK5h818X7AOvcXVAyMdf11vyp7ZveDHOQKGrj+Mpj4uKoMwpt7DLZ2fVSi1NAVHPdZw1Bef4mu4IK98E4rCXcJkjav/6v6wnqlFX/5pM6q+Zms2CTfbemOyG776HpKLbeA5Zad043/LroiFrT6QhMs355oWMun0XvBQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=ve43uN6Z; arc=none smtp.client-ip=134.0.28.12
+	 MIME-Version; b=U/AgMvGxDLiTA2Z8xWI1W5DDkNGsFeg8BTo5v4s/dhuijTllApa4AAJeFoe4/hVL/ZpO8AkLmPDcb4fPqxwJqJ08OYQ+fNYP6AzLOech9FVg0vmJgrDEaMLBndmR9F6xwvBv+Paa1SuNQQy+2UgJSKSgbNxDhBmPTEuxQtjaL6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=miO23gm/; arc=none smtp.client-ip=134.0.28.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout2.routing.net (Postfix) with ESMTP id 9FE8B6046B;
-	Mon,  2 Dec 2024 12:26:19 +0000 (UTC)
+	by mxout3.routing.net (Postfix) with ESMTP id DB71A613E1;
+	Mon,  2 Dec 2024 12:26:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1733142379;
+	s=20200217; t=1733142380;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=F+NbD+wZQ6ShmiTE1VBzMI+WZ0I6gWWrVj/25CLxM5M=;
-	b=ve43uN6ZvLOqxl2lmQMnJ2uQBQ+GcRMqa7bX86qX3Rj4PskemQh4N+1kxThe4XiUI/niXd
-	Pgi9K8zr/j6hiFg/Tr7qFLYke3t8Jl5TsGndIEMtlCYkIJ6KhbZx4s7xJzMZ17543iOYGd
-	uWXgm58HtaO5BTDeREfkSZVidlC8rpY=
+	bh=RLz82rdcKDrgd4xoVhfZ0YMlDvGMQtoiJXXkans2pP0=;
+	b=miO23gm/nSsZ0oaYi8oGEcKaTVbGDLIaibifAiQnTfcQ+/HVeFzS8Ecbj7B/tmd76ZdQVh
+	g/gCLu2HYWBaWGbGtAs/NRBB2pO9bf/JZ0kpF6UzKZm2+fS2iMyc+qtRedSdHP3bJ+RUkp
+	4shDPCZ6jPdOMXcWZWOud8ReGk1yb/8=
 Received: from frank-u24.. (fttx-pool-217.61.149.104.bambit.de [217.61.149.104])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 23765360552;
-	Mon,  2 Dec 2024 12:26:19 +0000 (UTC)
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 28516360552;
+	Mon,  2 Dec 2024 12:26:20 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 16/18] arm64: dts: mediatek: mt7988: add i2c-mux on bpi-r4
-Date: Mon,  2 Dec 2024 13:25:57 +0100
-Message-ID: <20241202122602.30734-17-linux@fw-web.de>
+Subject: [PATCH v2 18/18] arm64: dts: mediatek: mt7988: enable pwm on bpi-r4
+Date: Mon,  2 Dec 2024 13:25:59 +0100
+Message-ID: <20241202122602.30734-19-linux@fw-web.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241202122602.30734-1-linux@fw-web.de>
 References: <20241202122602.30734-1-linux@fw-web.de>
@@ -70,77 +70,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: e9fef51d-d790-4f4a-a033-1e5bd1d942c1
+X-Mail-ID: 4134b58f-ee95-4f76-aa1e-472263d0e3cf
 
 From: Frank Wunderlich <frank-w@public-files.de>
 
-Bananapi R4 uses an i2c multiplexer for SFP slots, rtc and eeprom.
-Add its node to the right i2c controller.
+Enable pwm on Bananapi R4 board.
 
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
----
- .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  | 40 +++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts | 4 ++++
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi                | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
-index 550c373b3d70..9ceefc990000 100644
+index 12b45b18955b..181bb997cd8d 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
-@@ -2,6 +2,7 @@
- 
- /dts-v1/;
- 
-+#include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/regulator/richtek,rt5190a-regulator.h>
- 
- #include "mt7988a.dtsi"
-@@ -138,6 +139,45 @@ &i2c2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c2_1_pins>;
- 	status = "okay";
-+
-+	pca9545: i2c-mux@70 {
-+		reg = <0x70>;
-+		compatible = "nxp,pca9545";
-+		reset-gpios = <&pio 5 GPIO_ACTIVE_LOW>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			pcf8563: rtc@51 {
-+				compatible = "nxp,pcf8563";
-+				reg = <0x51>;
-+				#clock-cells = <0>;
-+			};
-+
-+			eeprom@57 {
-+				compatible = "atmel,24c02";
-+				reg = <0x57>;
-+				size = <256>;
-+			};
-+
-+		};
-+
-+		i2c_sfp1: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+		};
-+
-+		i2c_sfp2: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+		};
-+	};
+@@ -369,6 +369,10 @@ mux {
+ 	};
  };
  
- &pio {
++&pwm {
++	status = "okay";
++};
++
+ &serial0 {
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+index 2be84acac06a..11651f5e167d 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+@@ -211,7 +211,7 @@ mux {
+ 			};
+ 		};
+ 
+-		pwm@10048000 {
++		pwm: pwm@10048000 {
+ 			compatible = "mediatek,mt7988-pwm";
+ 			reg = <0 0x10048000 0 0x1000>;
+ 			clocks = <&infracfg CLK_INFRA_66M_PWM_BCK>,
 -- 
 2.43.0
 
