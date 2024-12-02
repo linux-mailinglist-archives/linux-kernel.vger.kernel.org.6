@@ -1,140 +1,117 @@
-Return-Path: <linux-kernel+bounces-427975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE439E082D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:16:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DAD9E0835
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:17:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31FD2822DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:16:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FAEC282970
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC3417BB25;
-	Mon,  2 Dec 2024 16:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C50B17D346;
+	Mon,  2 Dec 2024 16:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AM3jWJZp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLhb4XZr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F75AD51;
-	Mon,  2 Dec 2024 16:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37FC13B797;
+	Mon,  2 Dec 2024 16:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733156173; cv=none; b=NDfjiCF4ZU8yKKzFqGVDr17zKpR/85FWTRhh6nZVvAiTBa0BMqCJCc6bbXVbyv5Sy+bkb891qxpOB9+zxi8zVejiHguNFVG0wUD/aRtoUzjbL6fIPnr/+FtCtlCa7tiuCDpmqzGGmh+v/CK2+M8f7/BZqYioBFhcaaTDCdzpc9Y=
+	t=1733156212; cv=none; b=Kap1nYpNS2gXSkSb/6KHRUtAYe8A0n+JFW3cHGS8PpLAojDYlJfr4jTzZaNsUMn83KrvbnbU0xP/3aI9AlXyetjp8djGpss7Dk+jTLkwhHvu7RThdL9OypiSKrmXUI1dzJE0nDDgo8+Ykn5Jb6kBOuZ7VJf2Tw1D0nCCyO3Q3lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733156173; c=relaxed/simple;
-	bh=xlQywIlZNQT5qCo7G3nLeY962rjjbO5Mq7s9hOqzSTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ot4eBzmD8mZ+3Q8KbdXoVR0Cifc3qHC4N6G4FBjzE7GGelK1JMlwCLrZrlN1VuNUpGGMC+a7y7S/DQbu8eyOoCbHkahMfHIb/0ewlDQO8ksg/oA1FLOxAv8zcCj5hldnrjeItdxgAWEvf4Cr90ZVjTnptN/OXhwjWe9pTAnTjuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AM3jWJZp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41270C4CED1;
-	Mon,  2 Dec 2024 16:16:12 +0000 (UTC)
+	s=arc-20240116; t=1733156212; c=relaxed/simple;
+	bh=DWFL09z1J64BfAXn8YMn9UGDThioP/LSRTugwMav8u4=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=uaiiMHGXREB9BinavV9q1mAzDzDrRTJGcFn8Hy70I7/o6W5FojtxLevJTbamfmhllRadJB0yIqbreTWa8WtQ8H9H0PxIJnaW86zNiHBPKQKYzBMs1Jz7X/Hz0ifBuUIA20K3JHgTlstBTmKGHI4B/c2lnNcT35rC822DOEVoRxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLhb4XZr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10764C4CED1;
+	Mon,  2 Dec 2024 16:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733156172;
-	bh=xlQywIlZNQT5qCo7G3nLeY962rjjbO5Mq7s9hOqzSTg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AM3jWJZp/CgkhVFK3t4ZwOl6h+mOxDJCQGTmx11N/Hf/ImgkXc1kb1eUP5yFTTFkj
-	 C542BBLgdoRljc3cFThdDsZ72G6r/Wt+ZH1IQ0idZd/D9REB3bX7SWEpc9Sd/kIzHD
-	 9LAH3oMX8fddnzb7a9+AAFjcVrMUX2A3zUUUo4ec8CCiOjAH/qlsIEPn+5yPXSFXDH
-	 ub4vRhdTZyhfDZGdmUIwXyWBgmFF1qIMNm2zk0nzZkXpRvLQyz13Re+7H5HqORoTMg
-	 wTfKHqx+3iafT5IrwnauhRgnYebgSmavAeFUPCkVaOr1VCOuP/iXxvcwW4NGGRMm6H
-	 inpEPVj9t2ItQ==
-Date: Mon, 2 Dec 2024 09:16:10 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nicolas Schier <nicolas@fjasle.eu>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Aleksei Vetrov <vvvvvv@google.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, patches@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: Move -Wenum-enum-conversion to W=2
-Message-ID: <20241202161610.GA2845796@thelio-3990X>
-References: <20241017-disable-two-clang-enum-warnings-v2-1-163ac04346ae@kernel.org>
+	s=k20201202; t=1733156212;
+	bh=DWFL09z1J64BfAXn8YMn9UGDThioP/LSRTugwMav8u4=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=kLhb4XZrjUxlPTywimQb+87Ep9XgUAE0Z1Tf4DEVrvQSAw8h6++heu3sCe5o6AuJS
+	 absKvHrsSrhHdH3f7/JPheaMEx0PFtdGHkDzgHVJCV9u/eoPFh3g5Q3shdUFON68J9
+	 p4okSY4oT1iBsAQN1ZhcoV6l/XjmhLwlr1nmnkJMq43722MzUWVvFHbPto7xGZoBz1
+	 pp6TYJiZMg9lTZsKVcsu1LSxlFUCnvnx/8jNc3/Ugz8iab5ObNmfzVkAmTXasUvN3+
+	 NknDj4tPA/fpobA1w68yAUnM/vVaN9U7LwVQO3iLPxc3bBRvB+qWHr96t8PCM1ZOxv
+	 Y+yxFsf8M/jiA==
+Date: Mon, 02 Dec 2024 10:16:50 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017-disable-two-clang-enum-warnings-v2-1-163ac04346ae@kernel.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, 
+ upstream@airoha.com, linux-pm@vger.kernel.org, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+In-Reply-To: <20241202151228.32609-1-ansuelsmth@gmail.com>
+References: <20241202151228.32609-1-ansuelsmth@gmail.com>
+Message-Id: <173315621067.2847395.10872023371219236097.robh@kernel.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Document support for
+ Airoha EN7581 CPUFreq
 
-Masahiro, could you please pick this up? The lore link is below in case
-it is no longer in your inbox (or I can resend).
 
-https://lore.kernel.org/20241017-disable-two-clang-enum-warnings-v2-1-163ac04346ae@kernel.org/
+On Mon, 02 Dec 2024 16:12:03 +0100, Christian Marangi wrote:
+> Document required property for Airoha EN7581 CPUFreq .
+> 
+> On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
+> to ATF and no clocks are exposed to the OS.
+> 
+> The SoC have performance state described by ID for each OPP, for this a
+> Power Domain is used that sets the performance state ID according to the
+> required OPPs defined in the CPU OPP tables.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+> Changes v4:
+> - Add this patch
+> 
+>  .../cpufreq/airoha,en7581-cpufreq.yaml        | 259 ++++++++++++++++++
+>  1 file changed, 259 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> 
 
-On Thu, Oct 17, 2024 at 10:09:22AM -0700, Nathan Chancellor wrote:
-> -Wenum-enum-conversion was strengthened in clang-19 to warn for C, which
-> caused the kernel to move it to W=1 in commit 75b5ab134bb5 ("kbuild:
-> Move -Wenum-{compare-conditional,enum-conversion} into W=1") because
-> there were numerous instances that would break builds with -Werror.
-> Unfortunately, this is not a full solution, as more and more developers,
-> subsystems, and distributors are building with W=1 as well, so they
-> continue to see the numerous instances of this warning.
-> 
-> Since the move to W=1, there have not been many new instances that have
-> appeared through various build reports and the ones that have appeared
-> seem to be following similar existing patterns, suggesting that most
-> instances of this warning will not be real issues. The only alternatives
-> for silencing this warning are adding casts (which is generally seen as
-> an ugly practice) or refactoring the enums to macro defines or a unified
-> enum (which may be undesirable because of type safety in other parts of
-> the code).
-> 
-> Move the warning to W=2, where warnings that occur frequently but may be
-> relevant should reside.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 75b5ab134bb5 ("kbuild: Move -Wenum-{compare-conditional,enum-conversion} into W=1")
-> Link: https://lore.kernel.org/ZwRA9SOcOjjLJcpi@google.com/
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
-> Changes in v2:
-> - Move -Wenum-enum-conversion to W=2, instead of disabling it
->   outright (Arnd)
-> - Leave -Wenum-compare-conditional in W=1, as there are not that
->   many instances, so it can be turned on fully at some point (Arnd)
-> - Link to v1: https://lore.kernel.org/r/20241016-disable-two-clang-enum-warnings-v1-1-ae886d7a0269@kernel.org
-> ---
->  scripts/Makefile.extrawarn | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-> index 1d13cecc7cc7808610e635ddc03476cf92b3a8c1..04faf15ed316a9c291dc952b6cc40fb6c8c330cf 100644
-> --- a/scripts/Makefile.extrawarn
-> +++ b/scripts/Makefile.extrawarn
-> @@ -130,7 +130,6 @@ KBUILD_CFLAGS += $(call cc-disable-warning, pointer-to-enum-cast)
->  KBUILD_CFLAGS += -Wno-tautological-constant-out-of-range-compare
->  KBUILD_CFLAGS += $(call cc-disable-warning, unaligned-access)
->  KBUILD_CFLAGS += -Wno-enum-compare-conditional
-> -KBUILD_CFLAGS += -Wno-enum-enum-conversion
->  endif
->  
->  endif
-> @@ -154,6 +153,10 @@ KBUILD_CFLAGS += -Wno-missing-field-initializers
->  KBUILD_CFLAGS += -Wno-type-limits
->  KBUILD_CFLAGS += -Wno-shift-negative-value
->  
-> +ifdef CONFIG_CC_IS_CLANG
-> +KBUILD_CFLAGS += -Wno-enum-enum-conversion
-> +endif
-> +
->  ifdef CONFIG_CC_IS_GCC
->  KBUILD_CFLAGS += -Wno-maybe-uninitialized
->  endif
-> 
-> ---
-> base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-> change-id: 20241016-disable-two-clang-enum-warnings-e7994d44f948
-> 
-> Best regards,
-> -- 
-> Nathan Chancellor <nathan@kernel.org>
-> 
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.example.dtb: /: 'compatible' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.example.dtb: /: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.example.dtb: opp-table-cpu-smcc: $nodename:0: 'opp-table-cpu-smcc' does not match '^opp-table(-[a-z0-9]+)?$'
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.example.dtb: opp-table-cpu-smcc: Unevaluated properties are not allowed ('opp0', 'opp1', 'opp10', 'opp11', 'opp12', 'opp13', 'opp14', 'opp2', 'opp3', 'opp4', 'opp5', 'opp6', 'opp7', 'opp8', 'opp9' were unexpected)
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241202151228.32609-1-ansuelsmth@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
