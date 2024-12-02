@@ -1,187 +1,167 @@
-Return-Path: <linux-kernel+bounces-428475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45E09E0EF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FFC9E0EF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:39:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968A21657AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:37:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376021657F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6499B1DEFD2;
-	Mon,  2 Dec 2024 22:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA471DF75C;
+	Mon,  2 Dec 2024 22:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="J4LbFVo+"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EbnKHyN7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6BD6F30C
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185551DDC29
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733179061; cv=none; b=gAhlRrZRplXiThTpmNFvgc7pNmDMYh/dI6Z7uuPwflqFEsyliYzeiSR/kXG8MnDXQ+pFfpbtK37voCnut7jNY5YIxep+Zs3s+y/dZ7ZZPzGHyae9Xh87pSmZpsaLL/Hj9/Hc6SeXD3qWgB7JuF7UuBduS6Qm5/NeOp3aqxaHO2k=
+	t=1733179172; cv=none; b=pPjrROv/vaJ2+zgDbgexSWwTJomFATXw7yq+7+hU9raU35sZ87zmyetYCfInsUkGWNbkxQTgJKsIzzbcTmiIuVbZbUB6mVnrzsXdfUEqWchDXJh9p/Z2SqmjsgvARpn9mYGipdIinMbvguNaQEYk77M04477Ahh5exjlx04fhB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733179061; c=relaxed/simple;
-	bh=/hF7KILTyziyFP++Iik8VVjKhXLy5rq4mvxg4BbxrxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=URHvmfdgLSgJiFHLBnEhqj8wiQXe0Jy7NUp/Xi1wOc4z3M2A1p+OrCt2Z3kcNVazwRnhr9o1QZyY4W9CsnDsJYUVufcDuJHozgGlkQZ4cDdJb7u9HvrGOX5nU6O8CsyxQ25HnPvE9Powk1JT0B3a2C6wJZW3tmD81wLWKkFnPoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=J4LbFVo+; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a78c242d50so17241885ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:37:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1733179059; x=1733783859; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PMzTzllEKVWPpxhY4qjTST2+tDlHfK8mSjvLBCDTSBA=;
-        b=J4LbFVo+wTDIZFR23o/sUdKsspX80Uz2ajjn3WD0XwKMM93edIiHoxNjUV1KnUaSlK
-         ivjTUtYk+iEG5M83+79KGxaj/lZKixdLZDTPXV91WISishJuFMXcd1/lsZLD+6Ps8ydt
-         N1t2V/+C1mdhz2/X4ziPKD0YeIuyt+Tg+uh7hL9BXwoFcdHxFgjeXnTXjSv7PFC3IZKf
-         /ufNRAL0PxKpP891+0Nq4nLfWnl2n8B8L1fZvstu31tXZHg/cQaYnfxTkP+UbXD8Pa07
-         HuzYmE6V5r/LgUEzygAVwzRsef/R8Gp+fIIOYsLzkl1GWeRZVvN/jddd+bMK/1dU7Qc3
-         uvvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733179059; x=1733783859;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PMzTzllEKVWPpxhY4qjTST2+tDlHfK8mSjvLBCDTSBA=;
-        b=HqVSfryFF77MiXqF/J/PVHHdSli1ztECgJUJdtuHmkrQFkaiNp3gavIydTCgF4iXa9
-         xTuYmkdcaisD/UYlapbcQO8KOEoDr0W2x29Suqm2Dw4tdzK8thvYxf+fl3y3W4862XuI
-         8H0nXGlgTSqJmaGsgBpS3IvtWPkZ9RqARrAnxVb+0p3YGBf2JdPWlpW4h6AreejB6/1c
-         9xyW7Slh75er/ncBetbi+ABS69MIZEnP5TNJkWkHSDn0JCdJyg4+ylj5xinOdlgXcark
-         /MW88dtFl1+9Sl/PmhvyWrnZAUHuPyW4si+YdVOIqIgqxOah/b7cmN3aNvaAoneQzyIC
-         uWDw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9HhnBZyl6vl0h3HfzMarFRCzgOfBLsmJnkcMjoaJT8eV8gLqFlqttT/n3GNB+85pNPwPY6IloohfoLE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydLArBEoBbgoHUG51H2EEuQ0M2zzkb7Zi1VTLriEcz/GUZkt5m
-	axMunNVbfBuqqWb9+BfLYcEpEyyKg2i8UR/Qe6PWK4Ob2W4KcPn5AVwaKAXy0Y8=
-X-Gm-Gg: ASbGncuisjxteS9Y/mgwG3ODBBegYmvkfMF/TEayA1GS5D+zACBugHjCDzSmfh1mRot
-	J7/5BoZ2UCsldW2uKDtNrDkKsHdkt76Qz8rLC8zPyIfS6sdBqz7E1ykDo9vmA45j52mxbl8fpMf
-	8VYU1X5yFlfU02qmEUTGUEOgqmEsIP9B/YoMhl3GjLI8CgAsP9QPY6L/VnI9ooKjTy8uAhXhHDF
-	nr4qeJIi68yab5wPkKnccJuAXDHos4BREcQIsp8cAAYqt2M8a9jaCzPqyZiIh4ETkRdyvcB7gw=
-X-Google-Smtp-Source: AGHT+IHn6Lx4GjIuR+MSzoOaterYaBTQwRP1DNSP58qngN6mgKfAI1QR+jafEOWkEaXAab45plCQgQ==
-X-Received: by 2002:a05:6e02:1a03:b0:3a7:e286:a56b with SMTP id e9e14a558f8ab-3a7f9a2fad6mr2575485ab.5.1733179059220;
-        Mon, 02 Dec 2024 14:37:39 -0800 (PST)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a7ccc0dde5sm24963835ab.43.2024.12.02.14.37.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 14:37:38 -0800 (PST)
-Message-ID: <e124c532-7a08-4788-843d-345827e35f5f@sifive.com>
-Date: Mon, 2 Dec 2024 16:37:36 -0600
+	s=arc-20240116; t=1733179172; c=relaxed/simple;
+	bh=/ckbTFw9GakD0lJ+ltVHzrrFz4vWph0xnYwiEnumYlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=exCLUzQHHA61GEn/5ZG1CsBUy/G9f+rXK15aSMC+P7wlbz2qxXr6MYpel7vRqKUmQUwit1acSZuxHuffber+al1CgaF+EyUeYWJDyR+Rqm2RQb53GYbUmZPf4Y6khhHJc4g1Xs1eexHFeZfy+ud/ug0Rhsu2JuGSYWZQv+RgTMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EbnKHyN7; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733179170; x=1764715170;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=/ckbTFw9GakD0lJ+ltVHzrrFz4vWph0xnYwiEnumYlI=;
+  b=EbnKHyN7uI52RhsOMSF0NATr5yphyfH5LQOHSeCTbJRJmFH0YxEIomKf
+   DPITQXLzLQl4fw/PRwi/+4CCSB7fBghjXlt9O3pNn1EEp1YGZ/ZHKeG5Z
+   vBe3sZlZwJVq0xucixDoEyUG7MX8B1v/1XiNzfioTSEKnUxHXyl/b9Vs4
+   aTQhbf94fkKNJwf+ZjIBBglZJIg7bmez7EL/iZHXKK3R5g8FxGvyLTBJR
+   lUnDVf7EEfyXNfz3ymvGdFgwlzrHdT1Y+ArhHo6DkS4dX0iFvsrGctr2l
+   qzILp1IsgJJ8oYmVnnz9I743m0UuN/9qnD7Py5Ic6X0kacQd649nl+EVY
+   g==;
+X-CSE-ConnectionGUID: cjz4EGomRTif1OeTewPZaw==
+X-CSE-MsgGUID: LsoPdhM7QlOYHMKieMgdQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="36225464"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="36225464"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 14:39:29 -0800
+X-CSE-ConnectionGUID: VfiorGHYRHOtF/ZNKGyA9g==
+X-CSE-MsgGUID: EBBw4c6OSPSrwnO9qrhS8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="124173279"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 02 Dec 2024 14:39:28 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tIF4g-0002yh-0W;
+	Mon, 02 Dec 2024 22:39:26 +0000
+Date: Tue, 3 Dec 2024 06:38:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Jason A. Donenfeld" <zx2c4@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: versioncheck: ./tools/testing/selftests/wireguard/qemu/init.c: 25
+ linux/version.h not needed.
+Message-ID: <202412030626.yh70bvXt-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] drivers/perf: riscv: Add raw event v2 support
-To: Atish Patra <atishp@rivosinc.com>, Anup Patel <anup@brainfault.org>,
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Mayuresh Chitale <mchitale@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-References: <20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com>
- <20241119-pmu_event_info-v1-3-a4f9691421f8@rivosinc.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <20241119-pmu_event_info-v1-3-a4f9691421f8@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Atish,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   cdd30ebb1b9f36159d66f088b61aee264e649d7a
+commit: 65d88d04114bca7d85faebd5fed61069cb2b632c wireguard: selftests: import harness makefile for test suite
+date:   5 years ago
+reproduce: (https://download.01.org/0day-ci/archive/20241203/202412030626.yh70bvXt-lkp@intel.com/reproduce)
 
-On 2024-11-19 2:29 PM, Atish Patra wrote:
-> SBI v3.0 introduced a new raw event type that allows wider
-> mhpmeventX width to be programmed via CFG_MATCH.
-> 
-> Use the raw event v2 if SBI v3.0 is available.
-> 
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> ---
->  arch/riscv/include/asm/sbi.h |  4 ++++
->  drivers/perf/riscv_pmu_sbi.c | 18 ++++++++++++------
->  2 files changed, 16 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index 9be38b05f4ad..3ee9bfa5e77c 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -159,7 +159,10 @@ struct riscv_pmu_snapshot_data {
->  
->  #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
->  #define RISCV_PMU_PLAT_FW_EVENT_MASK GENMASK_ULL(61, 0)
-> +/* SBI v3.0 allows extended hpmeventX width value */
-> +#define RISCV_PMU_RAW_EVENT_V2_MASK GENMASK_ULL(55, 0)
->  #define RISCV_PMU_RAW_EVENT_IDX 0x20000
-> +#define RISCV_PMU_RAW_EVENT_V2_IDX 0x30000
->  #define RISCV_PLAT_FW_EVENT	0xFFFF
->  
->  /** General pmu event codes specified in SBI PMU extension */
-> @@ -217,6 +220,7 @@ enum sbi_pmu_event_type {
->  	SBI_PMU_EVENT_TYPE_HW = 0x0,
->  	SBI_PMU_EVENT_TYPE_CACHE = 0x1,
->  	SBI_PMU_EVENT_TYPE_RAW = 0x2,
-> +	SBI_PMU_EVENT_TYPE_RAW_V2 = 0x3,
->  	SBI_PMU_EVENT_TYPE_FW = 0xf,
->  };
->  
-> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-> index 50cbdbf66bb7..f0e845ff6b79 100644
-> --- a/drivers/perf/riscv_pmu_sbi.c
-> +++ b/drivers/perf/riscv_pmu_sbi.c
-> @@ -59,7 +59,7 @@ asm volatile(ALTERNATIVE(						\
->  #define PERF_EVENT_FLAG_USER_ACCESS	BIT(SYSCTL_USER_ACCESS)
->  #define PERF_EVENT_FLAG_LEGACY		BIT(SYSCTL_LEGACY)
->  
-> -PMU_FORMAT_ATTR(event, "config:0-47");
-> +PMU_FORMAT_ATTR(event, "config:0-55");
->  PMU_FORMAT_ATTR(firmware, "config:62-63");
->  
->  static bool sbi_v2_available;
-> @@ -527,18 +527,24 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
->  		break;
->  	case PERF_TYPE_RAW:
->  		/*
-> -		 * As per SBI specification, the upper 16 bits must be unused
-> -		 * for a hardware raw event.
-> +		 * As per SBI v0.3 specification,
-> +		 *  -- the upper 16 bits must be unused for a hardware raw event.
-> +		 * As per SBI v3.0 specification,
-> +		 *  -- the upper 8 bits must be unused for a hardware raw event.
->  		 * Bits 63:62 are used to distinguish between raw events
->  		 * 00 - Hardware raw event
->  		 * 10 - SBI firmware events
->  		 * 11 - Risc-V platform specific firmware event
->  		 */
-> -
->  		switch (config >> 62) {
->  		case 0:
-> -			ret = RISCV_PMU_RAW_EVENT_IDX;
-> -			*econfig = config & RISCV_PMU_RAW_EVENT_MASK;
-> +			if (sbi_v3_available) {
-> +				*econfig = config & RISCV_PMU_RAW_EVENT_V2_MASK;
-> +				ret = RISCV_PMU_RAW_EVENT_V2_IDX;
-> +			} else {
-> +				*econfig = config & RISCV_PMU_RAW_EVENT_MASK;
-> +				ret = RISCV_PMU_RAW_EVENT_IDX;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412030626.yh70bvXt-lkp@intel.com/
 
-Shouldn't we check to see if any of bits 48-55 are set and return an error,
-instead of silently requesting the wrong event?
+versioncheck warnings: (new ones prefixed by >>)
+   INFO PATH=/opt/cross/clang/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -Wformat-overflow -Wformat-truncation -Wrestrict -Wenum-conversion W=1 --keep-going HOSTCC=gcc-12 CC=gcc-12 -j32 ARCH=x86_64 versioncheck
+   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
+   	-name '*.[hcS]' -type f -print | sort \
+   	| xargs perl -w ./scripts/checkversion.pl
+   ./arch/arm64/kernel/hibernate.c: 24 linux/version.h not needed.
+   ./arch/csky/include/asm/atomic.h: 6 linux/version.h not needed.
+   ./arch/csky/include/asm/io.h: 9 linux/version.h not needed.
+   ./arch/csky/include/asm/thread_info.h: 9 linux/version.h not needed.
+   ./arch/csky/include/asm/uaccess.h: 16 linux/version.h not needed.
+   ./arch/csky/kernel/process.c: 5 linux/version.h not needed.
+   ./arch/csky/mm/dma-mapping.c: 14 linux/version.h not needed.
+   ./arch/csky/mm/fault.c: 16 linux/version.h not needed.
+   ./arch/s390/include/asm/setup.h: 170: need linux/version.h
+   ./arch/um/drivers/vector_kern.c: 11 linux/version.h not needed.
+   ./drivers/block/rsxx/rsxx_priv.h: 14 linux/version.h not needed.
+   ./drivers/block/skd_main.c: 28 linux/version.h not needed.
+   ./drivers/crypto/cavium/cpt/cptpf_main.c: 13 linux/version.h not needed.
+   ./drivers/crypto/cavium/zip/common.h: 59 linux/version.h not needed.
+   ./drivers/crypto/ccree/cc_driver.h: 25 linux/version.h not needed.
+   ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c: 57 linux/version.h not needed.
+   ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c: 28 linux/version.h not needed.
+   ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c: 26 linux/version.h not needed.
+   ./drivers/gpu/drm/pl111/pl111_display.c: 15 linux/version.h not needed.
+   ./drivers/gpu/drm/pl111/pl111_drv.c: 58 linux/version.h not needed.
+   ./drivers/gpu/drm/tve200/tve200_display.c: 14 linux/version.h not needed.
+   ./drivers/gpu/drm/tve200/tve200_drv.c: 38 linux/version.h not needed.
+   ./drivers/hv/hv.c: 16 linux/version.h not needed.
+   ./drivers/i2c/busses/i2c-brcmstb.c: 25 linux/version.h not needed.
+   ./drivers/i2c/busses/i2c-xgene-slimpro.c: 22 linux/version.h not needed.
+   ./drivers/media/dvb-frontends/mxl5xx.c: 30 linux/version.h not needed.
+   ./drivers/media/pci/cx25821/cx25821.h: 31 linux/version.h not needed.
+   ./drivers/media/platform/s3c-camif/camif-core.c: 26 linux/version.h not needed.
+   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.h: 16 linux/version.h not needed.
+   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c: 31 linux/version.h not needed.
+   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c: 14 linux/version.h not needed.
+   ./drivers/media/usb/uvc/uvc_driver.c: 18 linux/version.h not needed.
+   ./drivers/mtd/nand/raw/brcmnand/brcmnand.c: 7 linux/version.h not needed.
+   ./drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c: 21 linux/version.h not needed.
+   ./drivers/net/ethernet/qlogic/qede/qede.h: 35 linux/version.h not needed.
+   ./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 32 linux/version.h not needed.
+   ./drivers/net/ethernet/qlogic/qede/qede_main.c: 34 linux/version.h not needed.
+   ./drivers/net/usb/lan78xx.c: 5 linux/version.h not needed.
+   ./drivers/net/wireguard/main.c: 15 linux/version.h not needed.
+   ./drivers/net/wireless/rsi/rsi_91x_ps.c: 19 linux/version.h not needed.
+   ./drivers/scsi/cxgbi/libcxgbi.h: 27 linux/version.h not needed.
+   ./drivers/scsi/qedf/qedf.h: 15 linux/version.h not needed.
+   ./drivers/scsi/qedf/qedf_dbg.h: 13 linux/version.h not needed.
+   ./drivers/scsi/qedi/qedi_dbg.h: 14 linux/version.h not needed.
+   ./drivers/soc/tegra/powergate-bpmp.c: 10 linux/version.h not needed.
+   ./drivers/staging/rtl8723bs/include/drv_types.h: 17 linux/version.h not needed.
+   ./drivers/staging/rtl8723bs/include/ioctl_cfg80211.h: 10 linux/version.h not needed.
+   ./drivers/usb/early/xhci-dbc.c: 21 linux/version.h not needed.
+   ./drivers/watchdog/ziirave_wdt.c: 21 linux/version.h not needed.
+   ./fs/ext4/ext4.h: 30 linux/version.h not needed.
+   ./include/linux/qed/qed_ll2_if.h: 41 linux/version.h not needed.
+   ./kernel/bpf/syscall.c: 19 linux/version.h not needed.
+   ./samples/bpf/sampleip_kern.c: 7 linux/version.h not needed.
+   ./samples/bpf/trace_event_kern.c: 8 linux/version.h not needed.
+   ./samples/mic/mpssd/mpssd.c: 29 linux/version.h not needed.
+   ./sound/soc/codecs/cs35l35.c: 12 linux/version.h not needed.
+   ./sound/soc/codecs/cs42l42.c: 14 linux/version.h not needed.
+   ./tools/perf/include/bpf/bpf.h: 70: need linux/version.h
+   ./tools/perf/tests/bpf-script-example.c: 49: need linux/version.h
+   ./tools/perf/tests/bpf-script-test-kbuild.c: 21: need linux/version.h
+   ./tools/perf/tests/bpf-script-test-prologue.c: 47: need linux/version.h
+   ./tools/perf/tests/bpf-script-test-relocation.c: 51: need linux/version.h
+   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
+   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
+>> ./tools/testing/selftests/wireguard/qemu/init.c: 25 linux/version.h not needed.
 
-Regards,
-Samuel
-
-> +			}
->  			break;
->  		case 2:
->  			ret = (config & 0xFFFF) | (SBI_PMU_EVENT_TYPE_FW << 16);
-> 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
