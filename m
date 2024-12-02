@@ -1,282 +1,335 @@
-Return-Path: <linux-kernel+bounces-427859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3BC9E073A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:39:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5BB9E06C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:21:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F115177E4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:21:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC3E281C3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25A3205ADE;
-	Mon,  2 Dec 2024 15:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80EA1D5CF5;
+	Mon,  2 Dec 2024 15:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PLJE1dPj"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Xa4/XXp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v9yCcvbV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Xa4/XXp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v9yCcvbV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D59205AD5
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7241D540;
+	Mon,  2 Dec 2024 15:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152497; cv=none; b=hbxnclZ4b77fiFm4U0SGXuCEa2GoFVVFGxui9dxzyvhVtc03V0jncTsLrN7WRocREPWLwf4ufUOgmdZmF6SX7lM/rd8FVcwWdKUhbKP3npjYOvDekx8C3bpTtRra71OOYKlMoka//4akycG1WcS1/fe1xJ3EuVHPPvja0SdhvNY=
+	t=1733152518; cv=none; b=IUpzbioWhvtr0bATmanhxouDk3f+f1DqncCpJqNBR62QWN8p9iENTakTbYuLrqWxF4SEEjpBB0k0Kp/mB+4hNWd+LFGi0hRMTMHH04+kDmxUcqBESgcyRQdqJDNooykKWajWvsfa7ezCvJQboUV9sW+3qp3ehNBAH29CbqAluSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152497; c=relaxed/simple;
-	bh=KpbBb9LzkFtJK58lCHF0v1Z3JHq622hksZSIbRBCl0g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jVrTOu5PsmFlLa6lrTQYx33Gzz8jT7sYw1itbELA/D9FeIq3YxTS6qYBYWjPkDCU23Jyd1PeFZdzk3CJf8SBF2g7V1OSX2estkpQoJ5OiITnSXkhqqIM/XBSAcEyAOV70RmCaNnBRtDt+XdZu7LcEiWjRJObaL/GGN+FKxj6VNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PLJE1dPj; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3983426f80so2913514276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:14:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733152494; x=1733757294; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qgQqAmUH/5qaUZ/FJ2uuZznRVamzcHOkuY3OD4Ps5BA=;
-        b=PLJE1dPjXIVznliCdSp+UlhxtKkxfSt2y+ydkpuZl8kdtHVygA2D50m+sjil2p47sW
-         /bCeI1ZiaWy8RemxSNzqjqptCm3N9/+yQNQEBPbi8++DCjgW0vDntMzlS/j8oZ2m5SkB
-         BnOQRjQl+4E5OGqK/KrKkhNKcMntsLmuZuJploYYJhWlQOTVH5yYM02mamDRY/vCT4JZ
-         CBDel8IP1vIkk7/MyJDSY7nH4fd+Fezs1sg3izI2H/FZi3zQa3SqkYtFQoooiyQ7/jFn
-         RCs6m/htUzUWQyIMCY1hX/RPitke7pPo3NAZsGmNnAM6iTeF4yq20SiVmzWyXS8LZvkU
-         O9qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733152494; x=1733757294;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qgQqAmUH/5qaUZ/FJ2uuZznRVamzcHOkuY3OD4Ps5BA=;
-        b=t0T3z6Jj8Yns/R7j1dZP+MFSel945FV35eO/2qJdzP/0V5HFgyZeM3aB81GDyYuQBO
-         8GJeXv2p88u4hTVRxhHtTc3aQ7VqXr1IrsrPYkf/YRiIXY7AVVej/4kfzxvC1X/DgNF2
-         po7iWAZJkniqfhU/FRPFN//OJx9jccafJn4swUg/Xe9fr45qCHe0whdO2ANd3kAoJi+i
-         +WxY+YbQ2U0Ty0NNEDfHnDuXL0JuOSbKclQKSUFwQwNZTsVFod18t4PNcDEIgAd3bhBD
-         4Ikq2mmaoYdBflfZ+m7R9ktIlm/rGrzUeJZBKseGaMQcVV/Fp3Lw7Qn0PT01/aocK+1v
-         s4VA==
-X-Forwarded-Encrypted: i=1; AJvYcCU921AU9zY823UMxKnA4Ennq1XbenM4A/52VP/wSp6HwLJgWb8r4l4pKrV6jMAOMUEmrj1WezIEw1GHq1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUqCvuEbFkuE6a3bzNkx6786m+N0oKenF4K9P4s1f10/gnen/2
-	aXuY3tP+10mx8xftIc0/2sN0EBAI3bHz/fBJ+93wqAIW3LHeEEOsb2ab7538/z+ByEZZ4LwPhMA
-	/OXkqW6SbKMi0eJ7+2TAbUpHJR4lyg39nvr8dPw==
-X-Gm-Gg: ASbGncspmpvcJ1mDLiStjW5RIzSnvh/fX89+96aC/aw9Ywda1uNtKThTLQc5tcoQjMA
-	c5adGZLkMNkhF9Q1qfamBqAt/FM+UlA==
-X-Google-Smtp-Source: AGHT+IG0eZmZdCpjszUFPQKzsE1pjfh6dUFyWF3HVs2HVQq6iY1PVz+uppjKox4aaeidt2hxIDY0FGQr5/t0c8vw8OQ=
-X-Received: by 2002:a05:6902:1242:b0:e39:826a:c746 with SMTP id
- 3f1490d57ef6-e39826aca1emr13293016276.40.1733152494114; Mon, 02 Dec 2024
- 07:14:54 -0800 (PST)
+	s=arc-20240116; t=1733152518; c=relaxed/simple;
+	bh=cR6WbO2evMztc0uRTuu5FT2oo7QhN0rDknR9ZXjR/ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vdj+NdlvuC7eJ0TXpqNunHaopU8krDJrijMu3Mtl3S6j429nKhVk3p9wSbg/xCd6cLu0N1qepeP0wItsx9BFnnbQZbHVrcN8FBb6iWRZtiUcnq6H0RCvnoDXAyXieRYpP8YCUi03JYffIwy/8wUipSgU2C5jnLrrQKCIJhdOrJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Xa4/XXp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v9yCcvbV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Xa4/XXp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v9yCcvbV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8D6971F396;
+	Mon,  2 Dec 2024 15:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733152513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t46+INLEnxS/57LH5/qlM9GnVJom2dSX//F+vn7CqBo=;
+	b=1Xa4/XXp2pkOdqT0okobzClvxS9qRiJiI5+db3OzCFT+H+vsolvwpaYkbq4KkUi27vTYxB
+	D1SaRi5+tL8AyEDGm36aJTN2mBVqtcady7wG0e1paPpJw3X2Xss8kUD41dF1m5ibNbJQUO
+	WX3nIYnpEzhiLj/4fpReww4H+nbpJoA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733152513;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t46+INLEnxS/57LH5/qlM9GnVJom2dSX//F+vn7CqBo=;
+	b=v9yCcvbVZv1cCZdCItufM7MZFQwnUaYIgWt7OsuTFA3rZJide0uJnxrWuDPZgZKOj5VQy+
+	ycho3pKX7RdiOfDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="1Xa4/XXp";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=v9yCcvbV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733152513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t46+INLEnxS/57LH5/qlM9GnVJom2dSX//F+vn7CqBo=;
+	b=1Xa4/XXp2pkOdqT0okobzClvxS9qRiJiI5+db3OzCFT+H+vsolvwpaYkbq4KkUi27vTYxB
+	D1SaRi5+tL8AyEDGm36aJTN2mBVqtcady7wG0e1paPpJw3X2Xss8kUD41dF1m5ibNbJQUO
+	WX3nIYnpEzhiLj/4fpReww4H+nbpJoA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733152513;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t46+INLEnxS/57LH5/qlM9GnVJom2dSX//F+vn7CqBo=;
+	b=v9yCcvbVZv1cCZdCItufM7MZFQwnUaYIgWt7OsuTFA3rZJide0uJnxrWuDPZgZKOj5VQy+
+	ycho3pKX7RdiOfDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 24FE5139C2;
+	Mon,  2 Dec 2024 15:15:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9j3ECAHPTWeHLQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 02 Dec 2024 15:15:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9A778A075D; Mon,  2 Dec 2024 16:15:12 +0100 (CET)
+Date: Mon, 2 Dec 2024 16:15:12 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Erin Shepherd <erin.shepherd@e43.eu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH RFC v2 1/3] pidfs: rework inode number allocation
+Message-ID: <20241202151512.cfen5rebpzrhi5ru@quack3>
+References: <20241129-work-pidfs-v2-0-61043d66fbce@kernel.org>
+ <20241129-work-pidfs-v2-1-61043d66fbce@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
- <20241120095428.1122935-2-quic_chejiang@quicinc.com> <454tdpuglu23nmxfqqesv42h5rk3vqiji7spo3naf2djqwojqt@6x3ram3lnlkq>
- <fb5bc38b-83b3-4924-b1d0-39219a2927b4@quicinc.com> <CAA8EJpqAOD_+SLG2LbiodWOs28_rquvMefmSH5CY1yB_rkiZPg@mail.gmail.com>
- <a7ec9426-8c8a-49b3-9916-4c2660c38e49@quicinc.com> <CAA8EJpqpzwGL38F_MYUJVuAT8q96QZO7CSh00ZpNBU5cGWUqqA@mail.gmail.com>
- <944fdc7f-313e-48b9-8917-370942d4f073@quicinc.com> <qsaiic4jvhf6nqe7efchxvja6tjvsiquem6ofsgq52iygfflya@huv6x7kz6emd>
- <c3394a08-edab-45a4-9ed8-db2a06598a0a@quicinc.com>
-In-Reply-To: <c3394a08-edab-45a4-9ed8-db2a06598a0a@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 2 Dec 2024 17:14:42 +0200
-Message-ID: <CAA8EJprgYM1zqzoJvvUAFbauMLQR0zpvQ93eVY6wzxU5YGvhiw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
-To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
-	quic_zijuhu@quicinc.com, linux-bluetooth@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, quic_mohamull@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129-work-pidfs-v2-1-61043d66fbce@kernel.org>
+X-Rspamd-Queue-Id: 8D6971F396
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[e43.eu,gmail.com,kernel.org,zeniv.linux.org.uk,suse.cz,oracle.com,vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On Mon, 2 Dec 2024 at 16:25, Cheng Jiang (IOE)
-<quic_chejiang@quicinc.com> wrote:
->
->
->
-> On 12/2/2024 7:38 PM, Dmitry Baryshkov wrote:
-> > On Mon, Dec 02, 2024 at 10:22:52AM +0800, Cheng Jiang (IOE) wrote:
-> >> Hi Dmitry,
-> >>
-> >> On 11/30/2024 4:24 PM, Dmitry Baryshkov wrote:
-> >>> On Sat, 30 Nov 2024 at 05:48, Cheng Jiang (IOE)
-> >>> <quic_chejiang@quicinc.com> wrote:
-> >>>>
-> >>>> Hi Dmitry,
-> >>>>
-> >>>> On 11/21/2024 12:38 PM, Dmitry Baryshkov wrote:
-> >>>>> On Thu, 21 Nov 2024 at 06:02, Cheng Jiang <quic_chejiang@quicinc.com> wrote:
-> >>>>>>
-> >>>>>> Hi Dmitry,
-> >>>>>>
-> >>>>>> On 11/20/2024 6:43 PM, Dmitry Baryshkov wrote:
-> >>>>>>> On Wed, Nov 20, 2024 at 05:54:25PM +0800, Cheng Jiang wrote:
-> >>>>>>>> Several Qualcomm projects will use the same Bluetooth chip, each
-> >>>>>>>> focusing on different features. For instance, consumer projects
-> >>>>>>>> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
-> >>>>>>>> SINK feature, which may have more optimizations for coexistence when
-> >>>>>>>> acting as a SINK. Due to the patch size, it is not feasible to include
-> >>>>>>>> all features in a single firmware.
-> >>>>>>>>
-> >>>>>>>> Therefore, the 'product-variant' devicetree property is used to provide
-> >>>>>>>> product information for the Bluetooth driver to load the appropriate
-> >>>>>>>> firmware.
-> >>>>>>>>
-> >>>>>>>> If this property is not defined, the default firmware will be loaded,
-> >>>>>>>> ensuring there are no backward compatibility issues with older
-> >>>>>>>> devicetrees.
-> >>>>>>>>
-> >>>>>>>> The product-variant defines like this:
-> >>>>>>>>   0 - 15 (16 bits) are product line specific definitions
-> >>>>>>>>   16 - 23 (8 bits) are for the product line.
-> >>>>>>>>   24 - 31 (8 bits) are reserved for future use, 0 currently
-> >>>>>>>
-> >>>>>>> Please use text strings instead of encoding this information into random
-> >>>>>>> integers and then using just 3 bits out of 32.
-> >>>>>> Ack. Originally intended to make it more flexible for future use. It can be
-> >>>>>> text strings for current requirement.
-> >>>>>
-> >>>>> No, fixed-format data isn't flexible. Fine-grained properties are.
-> >>>>> Please define exactly what is necessary rather than leaving empty
-> >>>>> holes "for future expansion".=
-> >>>>>
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> |---------------------------------------------------------------------|
-> >>>>>>>> |                       32 Bits                                       |
-> >>>>>>>> |---------------------------------------------------------------------|
-> >>>>>>>> |  31 - 24 (bits)   |    23 - 16 (bits)   | 15 - 0 (16 bits)          |
-> >>>>>>>> |---------------------------------------------------------------------|
-> >>>>>>>> |   Reserved        |    0: default       | 0: default                |
-> >>>>>>>> |                   |    1: CE            |                           |
-> >>>>>>>> |                   |    2: IoT           |                           |
-> >>>>>>>> |                   |    3: Auto          |                           |
-> >>>>>>>> |                   |    4: Reserved      |                           |
-> >>>>>>>> |---------------------------------------------------------------------|
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
-> >>>>>>>> ---
-> >>>>>>>>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml          | 6 ++++++
-> >>>>>>>>  1 file changed, 6 insertions(+)
-> >>>>>>>>
-> >>>>>>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> >>>>>>>> index 7bb68311c609..9019fe7bcdc6 100644
-> >>>>>>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> >>>>>>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> >>>>>>>> @@ -110,6 +110,12 @@ properties:
-> >>>>>>>>      description:
-> >>>>>>>>        boot firmware is incorrectly passing the address in big-endian order
-> >>>>>>>>
-> >>>>>>>> +  qcom,product-variant:
-> >>>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >>>>>>>> +    description:
-> >>>>>>>> +      specify the product information for driver to load the appropriate firmware
-> >>>>>>>
-> >>>>>>> DT describes hardware. Is this a hardware property?
-> >>>>>>
-> >>>>>> It has been added to identify the firmware image for the platform. The driver
-> >>>>>> parses it, and then the rampatch is selected from a specify directory. Currently,
-> >>>>>> there is a 'firmware-name' parameter, but it is only used to specify the NVM
-> >>>>>> (config) file. We also need to specify the rampatch (TLV file).
-> >>>>>>
-> >>>>>>
-> >>>>>> Can we re-use the "firmware-name"? add two segments like the following?
-> >>>>>> firmware-name = "rampatch_xx.tlv",  "nvm_xx.bin";
-> >>>>>
-> >>>>> I think this is the better solution
-> >>>>>
-> >>>> How about the following logic for handling 'firmware-name' property:
-> >>>> 1. If there is only one string in firmware-name, it must be the NVM file, which is used
-> >>>>    for backward compatibility.
-> >>>>
-> >>>> 2. If there are two strings in firmware-name, the first string is for the rampatch, and
-> >>>>    the second string is for the NVM.
-> >>>
-> >>> I'd say, other way around: the first one is always NVM, the second one
-> >>> is rampatch and it is optional.
-> >>>
-> >> OK, Got it.
-> >>>>
-> >>>> 3. Due to variations in RF performance of chips from different foundries, different NVM
-> >>>>    configurations are used based on the board ID. If the second string ends with boardid,
-> >>>>    the NVM file will be selected according to the board ID.
-> >>>
-> >>> Is there a reason why you can not use the exact firmware name? The
-> >>> firmware name is a part of the board DT file. I assume you know the
-> >>> board ID that has been used for the board.
-> >>>
-> >> The boardid is the connectivity board's id. NVM is a board specific configuration file,
-> >> it's related to the connectivity board. We may attach different connectivity board on the
-> >> same platform. For example, we have connectivity boards based on the QCA6698 chipset that
-> >> can support either a two-antenna or three-antenna solution. Both boards work fine on the
-> >> sa8775p-ride platform.
-> >
-> > Please add such an info to the commit messages (plural for it being a
-> > generic feedback: please describe the reasons for your design
-> > decisions),
-> >
-> Ack.
-> > I really don't like the .boardid template. What if we change property
-> > behaviour in the following way: if there is no file extension then .bNN
-> > will be probed, falling back to .bin. This will require reading board ID
-> > for all the platforms that support it (do wcn3990 have board ID?)
-> >
-> Ack, this proposal is great.
-> Yes, We have board ID for each connectivity card. An NVM file maps to it
-> if necessary.
+On Fri 29-11-24 14:02:23, Christian Brauner wrote:
+> Recently we received a patchset that aims to enable file handle encoding
+> and decoding via name_to_handle_at(2) and open_by_handle_at(2).
+> 
+> A crucical step in the patch series is how to go from inode number to
+> struct pid without leaking information into unprivileged contexts. The
+> issue is that in order to find a struct pid the pid number in the
+> initial pid namespace must be encoded into the file handle via
+> name_to_handle_at(2). This can be used by containers using a separate
+> pid namespace to learn what the pid number of a given process in the
+> initial pid namespace is. While this is a weak information leak it could
+> be used in various exploits and in general is an ugly wart in the design.
+> 
+> To solve this problem a new way is needed to lookup a struct pid based
+> on the inode number allocated for that struct pid. The other part is to
+> remove the custom inode number allocation on 32bit systems that is also
+> an ugly wart that should go away.
+> 
+> So, a new scheme is used that I was discusssing with Tejun some time
+> back. A cyclic ida is used for the lower 32 bits and a the high 32 bits
+> are used for the generation number. This gives a 64 bit inode number
+> that is unique on both 32 bit and 64 bit. The lower 32 bit number is
+> recycled slowly and can be used to lookup struct pids.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-The question was about the WiFI generations, not about the NVM cards.
-Do wcn3990 also support reading board ID?
+Looks good to me. Feel free to add:
 
->
-> Let me provide a new patchset based on this solution. Thank you very much for
-> the valuable comments.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-:-)
+								Honza
 
-> >>>>
-> >>>>
-> >>>> Here are two examples:
-> >>>>
-> >>>>  firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.bin";
-> >>>> In this configuration, the driver will use the two files directly.
-> >>>>
-> >>>>
-> >>>>  firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.boardid";
-> >>>> In this configuration, the driver will replace boardid with the actual board information.
-> >>>> If the board id is 0x0206, the nvm file name will be qca/QCA6698/hpnv21.b0206
-> >>>>
-> >>>>>>
-> >>>>>> Or add a new property to specify the rampatch file?
-> >>>>>> rampatch-name = "rampatch_xx.tlv";
-> >>>>>>
-> >>>>>>>
-> >>>>>>>> +
-> >>>>>>>> +
-> >>>>>>>>  required:
-> >>>>>>>>    - compatible
-> >>>>>>>>
-> >>>>>>>> --
-> >>>>>>>> 2.25.1
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>
-> >>>>>
-> >>>>>
-> >>>>
-> >>>
-> >>> --
-> >>> With best wishes
-> >>> Dmitry
-> >>
-> >
->
-
-
+> ---
+>  fs/pidfs.c            | 63 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pidfs.h |  2 ++
+>  kernel/pid.c          | 14 ++++++------
+>  3 files changed, 72 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index 618abb1fa1b84cf31282c922374e28d60cd49d00..0bdd9c525b80895d33f2eae5e8e375788580072f 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -23,6 +23,59 @@
+>  #include "internal.h"
+>  #include "mount.h"
+>  
+> +static u32 pidfs_ino_highbits;
+> +static u32 pidfs_ino_last_ino_lowbits;
+> +
+> +static DEFINE_IDR(pidfs_ino_idr);
+> +
+> +static inline ino_t pidfs_ino(u64 ino)
+> +{
+> +	/* On 32 bit low 32 bits are the inode. */
+> +	if (sizeof(ino_t) < sizeof(u64))
+> +		return (u32)ino;
+> +
+> +	/* On 64 bit simply return ino. */
+> +	return ino;
+> +}
+> +
+> +static inline u32 pidfs_gen(u64 ino)
+> +{
+> +	/* On 32 bit the generation number are the upper 32 bits. */
+> +	if (sizeof(ino_t) < sizeof(u64))
+> +		return ino >> 32;
+> +
+> +	/* On 64 bit the generation number is 1. */
+> +	return 1;
+> +}
+> +
+> +/*
+> + * Construct an inode number for struct pid in a way that we can use the
+> + * lower 32bit to lookup struct pid independent of any pid numbers that
+> + * could be leaked into userspace (e.g., via file handle encoding).
+> + */
+> +int pidfs_add_pid(struct pid *pid)
+> +{
+> +	u32 ino_highbits;
+> +	int ret;
+> +
+> +	ret = idr_alloc_cyclic(&pidfs_ino_idr, pid, 1, 0, GFP_ATOMIC);
+> +	if (ret >= 0 && ret < pidfs_ino_last_ino_lowbits)
+> +		pidfs_ino_highbits++;
+> +	ino_highbits = pidfs_ino_highbits;
+> +	pidfs_ino_last_ino_lowbits = ret;
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	pid->ino = (u64)ino_highbits << 32 | ret;
+> +	pid->stashed = NULL;
+> +	return 0;
+> +}
+> +
+> +void pidfs_remove_pid(struct pid *pid)
+> +{
+> +	idr_remove(&pidfs_ino_idr, (u32)pidfs_ino(pid->ino));
+> +}
+> +
+>  #ifdef CONFIG_PROC_FS
+>  /**
+>   * pidfd_show_fdinfo - print information about a pidfd
+> @@ -491,6 +544,16 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
+>  
+>  void __init pidfs_init(void)
+>  {
+> +	/*
+> +	 * On 32 bit systems the lower 32 bits are the inode number and
+> +	 * the higher 32 bits are the generation number. The starting
+> +	 * value for the inode number and the generation number is one.
+> +	 */
+> +	if (sizeof(ino_t) < sizeof(u64))
+> +		pidfs_ino_highbits = 1;
+> +	else
+> +		pidfs_ino_highbits = 0;
+> +
+>  	pidfs_mnt = kern_mount(&pidfs_type);
+>  	if (IS_ERR(pidfs_mnt))
+>  		panic("Failed to mount pidfs pseudo filesystem");
+> diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
+> index 75bdf9807802a5d1a9699c99aa42648c2bd34170..2958652bb108b8a2e02128e17317be4545b40a01 100644
+> --- a/include/linux/pidfs.h
+> +++ b/include/linux/pidfs.h
+> @@ -4,5 +4,7 @@
+>  
+>  struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
+>  void __init pidfs_init(void);
+> +int pidfs_add_pid(struct pid *pid);
+> +void pidfs_remove_pid(struct pid *pid);
+>  
+>  #endif /* _LINUX_PID_FS_H */
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 115448e89c3e9e664d0d51c8d853e8167ba0540c..6131543e7c090c164a2bac014f8eeee61926b13d 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -64,11 +64,6 @@ int pid_max = PID_MAX_DEFAULT;
+>  
+>  int pid_max_min = RESERVED_PIDS + 1;
+>  int pid_max_max = PID_MAX_LIMIT;
+> -/*
+> - * Pseudo filesystems start inode numbering after one. We use Reserved
+> - * PIDs as a natural offset.
+> - */
+> -static u64 pidfs_ino = RESERVED_PIDS;
+>  
+>  /*
+>   * PID-map pages start out as NULL, they get allocated upon
+> @@ -157,6 +152,7 @@ void free_pid(struct pid *pid)
+>  		}
+>  
+>  		idr_remove(&ns->idr, upid->nr);
+> +		pidfs_remove_pid(pid);
+>  	}
+>  	spin_unlock_irqrestore(&pidmap_lock, flags);
+>  
+> @@ -273,22 +269,26 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+>  	INIT_HLIST_HEAD(&pid->inodes);
+>  
+>  	upid = pid->numbers + ns->level;
+> +	idr_preload(GFP_KERNEL);
+>  	spin_lock_irq(&pidmap_lock);
+>  	if (!(ns->pid_allocated & PIDNS_ADDING))
+>  		goto out_unlock;
+> -	pid->stashed = NULL;
+> -	pid->ino = ++pidfs_ino;
+> +	retval = pidfs_add_pid(pid);
+> +	if (retval)
+> +		goto out_unlock;
+>  	for ( ; upid >= pid->numbers; --upid) {
+>  		/* Make the PID visible to find_pid_ns. */
+>  		idr_replace(&upid->ns->idr, pid, upid->nr);
+>  		upid->ns->pid_allocated++;
+>  	}
+>  	spin_unlock_irq(&pidmap_lock);
+> +	idr_preload_end();
+>  
+>  	return pid;
+>  
+>  out_unlock:
+>  	spin_unlock_irq(&pidmap_lock);
+> +	idr_preload_end();
+>  	put_pid_ns(ns);
+>  
+>  out_free:
+> 
+> -- 
+> 2.45.2
+> 
 -- 
-With best wishes
-Dmitry
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
