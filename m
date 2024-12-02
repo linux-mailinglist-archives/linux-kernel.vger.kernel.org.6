@@ -1,82 +1,90 @@
-Return-Path: <linux-kernel+bounces-427899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD75F9E0723
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:35:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B834F9E0798
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:53:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38EE92810B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:35:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9492AB455A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEBF20899B;
-	Mon,  2 Dec 2024 15:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B75620966D;
+	Mon,  2 Dec 2024 15:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tams7/dP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ED0belKg"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DAD208991
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADA720899D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153743; cv=none; b=MIGMCRIuN+7bqvX4/4PQfQ7jzJlz4SZ6H9LOBgnnwCt0l7E4zgIPUsOUHjRJcNgf1GguMwFzeU7p5bIQYksihh6kr4k4gBZnEP95Hgf2XLsdzqqrt4aGh+RjWviyoJ8XfD/B8vtG05jGrUqwyCAW92NgYj/Ru9Lb0LwYjqtSYo0=
+	t=1733153712; cv=none; b=QmvxvRC86KwZhzHpkCTXIN4jhjGJhlPe3q8CPOzc9QS+MqwaZBN9B0XkveiXvnRMK1GinyWxvxPuknbju2tFJkC1IROuyvwiAYP16ZQp4AXL6GxswOIhR22tHBZXSrPE2gBp/tzNGVhYqEANNd7jvI+mcB5JtYBZ9+jVHEFTcCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733153743; c=relaxed/simple;
-	bh=Jutse4gfVPzCl0ycY/CTBU2Kpvtp039+8k5v0EcasQk=;
+	s=arc-20240116; t=1733153712; c=relaxed/simple;
+	bh=Gh0oZs8+YzMS7aG0V1l/FJUBvC8sDDhkH8XK9OIML+A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhcWDe1Y5jIls0XrM20z0UMSa/AQVmSm4fDnwsz/GTpZF0JUdzDMi0zv/H5dfGZULOxVk2SgFN5MaBO3Pj8WcFpDQCdeJDzp+ZqpHiqncIb4RMYdTL52VwGk9K3A9GxTal4a1EFxaHqNV5LUL6B/2JDXJPfwQUWAvUrF+1m/aIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tams7/dP; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733153740; x=1764689740;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Jutse4gfVPzCl0ycY/CTBU2Kpvtp039+8k5v0EcasQk=;
-  b=Tams7/dPcYJqcLNuHJQ6JoAMnaCetalvrnq4oIR/HIHyxzBPojsGrr/8
-   4I2YyzTlvt2ON4Y0JNbJje5YDhnb0EFMeh0QZgrBgwncKojcgvJzvnL9M
-   Xy7/GZ6RZuR0645uHPUXl5zoTJkK7DQOzJDKPoGcuJo2WvKIwbcmmJcbv
-   vULHPdMIty0Vb3HNBZKPNOenICBWYNNeuIKxZYbz9JQlqQ/GO5DcQmvxH
-   1gBhjzDOn9+XpRggmPFyEN6aX6QiHvW9UHXgq3J5S2tVNRpjlNLefJ4Gh
-   ysZUs8NVcS31H7+ynNWZp+pFLkR9Thf/FTIgV+dwl6nkV9BKtqbmo+Xd/
-   A==;
-X-CSE-ConnectionGUID: 6HszHtXxQ6eFiP+E977FNA==
-X-CSE-MsgGUID: b5nawmwQTjaYJ0Zxgnmqfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="58722906"
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="58722906"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 07:35:39 -0800
-X-CSE-ConnectionGUID: kv74GcruQc6PmJ+CoNNxgA==
-X-CSE-MsgGUID: Ybb0niWZQOWDsM6Rq4AJUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="93607621"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 02 Dec 2024 07:35:37 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tI8SU-0002Wr-2W;
-	Mon, 02 Dec 2024 15:35:34 +0000
-Date: Mon, 2 Dec 2024 23:34:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mario Limonciello <superm1@kernel.org>, Borislav Petkov <bp@alien8.de>
-Cc: oe-kbuild-all@lists.linux.dev, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"(maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	"(open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))" <linux-kernel@vger.kernel.org>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>
-Subject: Re: [PATCH] x86/cpu: Enable SD_ASYM_PACKING for PKG domain on
- systems with AMD preferred cores
-Message-ID: <202412022352.jwqoAZXs-lkp@intel.com>
-References: <20241202043724.3929062-1-superm1@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uY4U7bjHrkLcH9/QKvjMIcFPpRF92UajllU64Yv0Es8juSQLP2g3wnJ3Acj9rjGCX/+Yu2/t4eetNhCXd2oHF/BOEr+TfIU1ApnnC6fGUspMEBqbpSijhTi0hmjUehZwzmIlJadHkyx70H2rxG7K/pl3HKzGEmZLGKdg1CoR56U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ED0belKg; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434aafd68e9so37536055e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:35:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733153709; x=1733758509; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwQoSlg/CRXta7tinu4nzK9A8fmWpb1sD/ndqJQH9ZI=;
+        b=ED0belKgtJQW7PyhRcReH1aS72/fZgr52qn4dRWo0n30owcwEoAW/R0a5UnSNUbkFi
+         FsttFpXhwDDuZfAccFZW3GAdJ4LSTfsnpuimroHDyInFUZ3QHCvlcVajCuZGGoDuOHY5
+         GbBa/bOzgO1UsRJlliK/6TuknbbWOaY+80GX3kTS8BP/aojSCiqvPnhzEu+MkA9Nac+9
+         B8dDbCRSot3wLDBuSjsiFwiGIijsj9Q8EW0xrXkQUQHQq+2L1xNjxXJs6HopaYhreXiE
+         ocpeBwYVJzj0cZlZkYAWZYATfMV7ae7a4RrmF2sXHW37RvPaTWslkz7V7rc07dmYkQHt
+         LMIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733153709; x=1733758509;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KwQoSlg/CRXta7tinu4nzK9A8fmWpb1sD/ndqJQH9ZI=;
+        b=Kwhi1oHhDSvkQpr5alsQbeuMKE7uJUJD3xcS1VmLyBdLKJptT7Fw/ZFJ2qrF/4H1sL
+         utdiUlBaxDBd7g7xY4uj8ZSFlGrp5PjnUfYO8RbfbvwnG3ecTn8WTxNmoOWGKXqEFARz
+         8MyNeBAPKXOSb8bHhctxY4jh+UgXezd/IGPpq5UrhTOiyNO3cbKMf9k8O8rLuVOfQ96i
+         PyRGHpCWxHUhDE2/R/NgdbN5Fgn3BxyEvFbFjmQbneRZC+pANFE5UYaPy3AxB1iiVvLM
+         ZlaEXvXjwVxCHcbqg1c4pZh+5GPpKYN///OFASmDK4GhY6RLNLisHEVQtG2Cpm489exC
+         eX7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWppxj1TlLF+76UAIg9SgAv8WeB6pDTLtDaufbPE4CbfAqFoDuvLHNCPe6W+rnD1wpgkvudz/4qNawxM4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnczry5MObipBpmruzbUDw8Vn/4Of7Y106LNR+jbITclf/+AyP
+	oekJZS0Ba2i3IdgXSzg2r2cJni5qDxC1HXA4ZI7B+ROxL56Tw5uADnDajQLF
+X-Gm-Gg: ASbGncsV2PMvtgXaOO1wPxqXJRADh3iRwj2HPjLaghtwfgf+Nv3Zxu8eIshC/ZgJGYC
+	T7y2SgQg9RqJ7TFE03kqhLQNCp7GKJ70sljopbyZKyTBamlMQ/RLOh5HJt7kwPLucuyyHbjgIST
+	jUgD+UUKpYcZVK4G6sMJcZUoaUFdvMDesgfr77MDcILmD4wKZEK1M51sllaCnKfZ9oZaIlf10FY
+	sL8OqWZlXtXISxI2Gc/Bcw4sLkP20aZd4yVtAq9dny6ENSG3Nl+KxGWujjO4/6N9w==
+X-Google-Smtp-Source: AGHT+IGBTrglvrKp5qU2mZgN2kGd2HuOxElLlSuOyMKA1D6iXB7TZwlqKAUTda4yKuSfgAlf2BaINg==
+X-Received: by 2002:a05:600c:3585:b0:434:a4a6:51f8 with SMTP id 5b1f17b1804b1-434a9d328f1mr229926915e9.0.1733153708961;
+        Mon, 02 Dec 2024 07:35:08 -0800 (PST)
+Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e5e59sm190838035e9.44.2024.12.02.07.35.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 07:35:08 -0800 (PST)
+Date: Mon, 2 Dec 2024 16:35:05 +0100
+From: Dave Penkler <dpenkler@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [GIT PULL] Staging driver changes for 6.13-rc1
+Message-ID: <Z03TqThAOa29MEjD@egonzo>
+References: <Z0lCyXBV06VyH96s@kroah.com>
+ <f10e976e-7a04-4454-b38d-39cd18f142da@roeck-us.net>
+ <2024113025-sly-footer-3462@gregkh>
+ <7d7e65af-b818-45de-a92c-ee59a864dbdb@roeck-us.net>
+ <Z02Cz6GbdtGNPywE@egonzo>
+ <f4ded99e-35c7-4651-8c73-376390ceb130@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,52 +93,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241202043724.3929062-1-superm1@kernel.org>
+In-Reply-To: <f4ded99e-35c7-4651-8c73-376390ceb130@roeck-us.net>
 
-Hi Mario,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 40384c840ea1944d7c5a392e8975ed088ecf0b37]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/x86-cpu-Enable-SD_ASYM_PACKING-for-PKG-domain-on-systems-with-AMD-preferred-cores/20241202-124012
-base:   40384c840ea1944d7c5a392e8975ed088ecf0b37
-patch link:    https://lore.kernel.org/r/20241202043724.3929062-1-superm1%40kernel.org
-patch subject: [PATCH] x86/cpu: Enable SD_ASYM_PACKING for PKG domain on systems with AMD preferred cores
-config: x86_64-randconfig-r061-20241202 (https://download.01.org/0day-ci/archive/20241202/202412022352.jwqoAZXs-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412022352.jwqoAZXs-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> arch/x86/kernel/smpboot.c:513:2-3: Unneeded semicolon
-
-vim +513 arch/x86/kernel/smpboot.c
-
-   499	
-   500	static int x86_die_flags(void)
-   501	{
-   502		if (cpu_feature_enabled(X86_FEATURE_HYBRID_CPU))
-   503			return x86_sched_itmt_flags();
-   504	
-   505		switch (boot_cpu_data.x86_vendor) {
-   506		case X86_VENDOR_AMD:
-   507		case X86_VENDOR_HYGON:
-   508			bool prefcore = false;
-   509	
-   510			amd_detect_prefcore(&prefcore);
-   511			if (prefcore || cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES))
-   512				return x86_sched_itmt_flags();
- > 513		};
-   514	
-   515		return 0;
-   516	}
-   517	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Mon, Dec 02, 2024 at 06:52:28AM -0800, Guenter Roeck wrote:
+> On Mon, Dec 02, 2024 at 10:50:07AM +0100, Dave Penkler wrote:
+> [ ... ]
+> > That is weird: the type of resource.start is resource_size_t which resolves to u32 via phys_addr_t on i386 which should be the same size as void *
+> > For compile check purposes simply changing iobase type to phys_addr_t the following error message appears:
+> > 
+> > drivers/staging/gpib/ines/ines_gpib.c: In function 'ines_common_pci_attach':
+> > drivers/staging/gpib/ines/ines_gpib.c:783:28: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+> >   783 |         nec_priv->iobase = (void *)(pci_resource_start(ines_priv->pci_device,
+> >       |                            ^
+> > drivers/staging/gpib/ines/ines_gpib.c:783:26: error: assignment to 'phys_addr_t' {aka 'long long unsigned int'} from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+> >   783 |         nec_priv->iobase = (void *)(pci_resource_start(ines_priv->pci_device,
+> >       |                          ^
+> > 
+> > It would seem that for some reason phys_addr_t resolves to long long unsigned int
+> 
+> Check out CONFIG_X86_PAE, which adds 64-bit physical address support to
+> 32-bit x86 images. Pointers are still 32 bit in that mode, though.
+> 
+> Guenter
+OK thanks. I will submit a patch to use ioremap.
+-Dave
 
