@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-427074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0D29DFBF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:33:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA049DFBFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:34:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0532D162C7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:33:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC42281CF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBB91F9ED1;
-	Mon,  2 Dec 2024 08:33:36 +0000 (UTC)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F351F9ECD;
+	Mon,  2 Dec 2024 08:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="qKTfOB7j"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A912513635B;
-	Mon,  2 Dec 2024 08:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA65D1F9A92
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733128416; cv=none; b=ta5kqXKZeA1yxXGaYCGxa9Nn4dMQjws6umHKbgnKGu3qOA93a/qni0T5/xxhTFZbSIRX1gJ6Dc+2lyAMyzFiRmCqz7zyy8hzMnpeFL3VLULjJdPlOl3zoHwKu96m8yk7liE/XBK8qyPnTpAjCcTFzc0eTpi3WpXu1D8RujfeDr4=
+	t=1733128447; cv=none; b=l6emoXHMvXVrge0h+4ii7xXzEvHVKAzKyk4oTNumii4vWZofd0C2Xpj4MlDHsKPTYxszK8EYgKIk54dXxALUMDo+jaKVphLXikjxcdHBqXA6seV25/1a6JcWNy72WgSFo7XBZ/j8yyGdXk45+EozhTl2tL1ZtfiR8Rn916YA25c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733128416; c=relaxed/simple;
-	bh=C/1t7RAVxcu8cEx5/wcDw0LInPkx6rt1MttP1kJMsi0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ooFaCjOg3SHCW8Ym1yKbgp3ikRx6Bh7C2Drydqm0pzX20IqotFL79d324M0RuMnxIsGNyDvyOBPSN1bK1uaVqVl2UInSlhJLBh1i2dKgvNPkvzdbjoF4rpYX3OA9BAcDCLyH1UR4vqu2wRBWj7y+IKwsgiPpeZg4o74e3Wi6284=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-51511a1bd53so867951e0c.1;
-        Mon, 02 Dec 2024 00:33:33 -0800 (PST)
+	s=arc-20240116; t=1733128447; c=relaxed/simple;
+	bh=GhRp7JAn6rcOImHrJCrFQPMHal2W8dEKI12mch1qSdI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hvJ6WxgvQgzRviGaNke5LEpwaw4Tv8gh1QkK9sWRWASQdzohL6xhHo3As6jRAoHPx6M9mkjZSf/6cxx7Bb7pVRcmjqOs4RCDvmI39ocnxKSurGn4N8D6DzpDiP9D+7pc5Rj6W90Zy+50YEZPS/l7h6RKZP4NVJ8SnAtBoQgAoIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=qKTfOB7j; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de579f775so5285446e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:34:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733128444; x=1733733244; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QzUuqdFRJBTOc5WUYdPFncGjQZclBe0xdjO8DYZWI9w=;
+        b=qKTfOB7jYgFomvnPYrrdm2w1osEZOKYa/AHR9WhFRHb/BlK+XJu/Il5JIpCNj5RLw8
+         e+dJm4tVS0b7XS0yp3kW/raaGnTeBjDpLv+Pm86iOeIMkfnC44kQ6VwcYxRyFyKHRYgp
+         8E0hNObtOREQt8U42s0K3ZIRsyvi+ClI2V9rMbX97K/2CvdtQTf0oyBLK7wemGIQXBVg
+         4oID0gBV6/ofIxntzH6KpX/Fn9w/qe3Id0J4QDempWWiyzZbVbO0zfZ6f7urpOvbKfNL
+         r07YxD16YHaVQh4wD+xZhWfXlkCzyYVqflPsmijqXdEmx+bMVbxHgeCifNHk7ymuAxqF
+         CeVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733128412; x=1733733212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u56ZXLj3zoJcwhJCVeWsy3FmczwJw23Uyl3fWwY/H5U=;
-        b=AxJ/glDUlfm0uTaBSuBtLLD4DdYRbzJOQC6plPp5s/UPn87PazKgWOJ/xV7nvSJVI2
-         r6eu1KRsz2O2khU4pig+XO/g/XLxbIjprTBrtS6Nmiq31Yo9coTcOVHo6jDn+r/JhsFf
-         2tTtlI1u8wkK2UZV0wrZNSQBFtzcCocui0XHbg+H54aE4CICKzy/vnv7u1HTa+M247Lq
-         7Ut2X/j/1TIjiZOIWEUP4/mrBOAfkdEpFnbwK2a4ToVRXSV8v/BZhF+2kfl6M5lJV2em
-         NOl2PwOnFli5fpjSmp79ePo8yprumLB6LEHTq41OvcmhKY/YpNKE6ivB/depS+dQT4xV
-         6CtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwNi83qnoZw2j66srwZ62UPfGc4i3j/o+K5aAj3HLMhV4d4ah8+um9kLI+Seezia911KCZ1FijT3IJmvak@vger.kernel.org, AJvYcCWCijRn6faq/p9X/cbM2xfU2fr3W+qta8AKoqF9YfsEY5Pzo1Ci3voSszdq5IPFZB1p005mFKLMJYoE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSI66Ig5SyY2POrh+sbh/81i4HqBJNihxHqaeYwDsTNCTz/yoa
-	IF4LDOkECyDPmKCbPPZXd/LIgnX2bISrddiGBEUrSk3uO7ijfNpXh9ci4f9K
-X-Gm-Gg: ASbGnctBpwYAzQ4BnBUgoT9ByW/VOYmwAkCulZ7bZHPxvcoEn71haabl64Mrr+TJTAy
-	EJW9L/p1V6dkdflaCcqzGpHcUlYiARtzkiArfQF0fxBR+U2QOGZMPeP1pcbiqaItBb6XlNz9p7f
-	9nWTTP4MCfAHCQmxMkf/CRwUM34B8op7023TYYCalYv2cnVa8y6fy2glKcXceHTM6nyKjNXIgZf
-	PCwUF3gq0iGShmlYkr7rUrOm/vl9DNV+L+e/Cww3D3+L+I5mSBdAjXSpnaBx3T7lhG/neKx6f6T
-	N4bQYyUuCZp1
-X-Google-Smtp-Source: AGHT+IG63Qbab/vg2aOfnfSvWOOBYi+Yu5tWITzEQ4bH4MB0xCs8UWR1H6DBzlHoeHvGdys5PiauLg==
-X-Received: by 2002:a05:6122:82a4:b0:50d:4cb8:5aef with SMTP id 71dfb90a1353d-515569cc723mr21531570e0c.6.1733128412070;
-        Mon, 02 Dec 2024 00:33:32 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5156d0f6ad8sm1077681e0c.51.2024.12.02.00.33.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 00:33:31 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4af638e3e66so700426137.0;
-        Mon, 02 Dec 2024 00:33:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVadXCQImLwKV3R64uxXDtF2wh2X5KDjG+Bb1WhxHPVUvOzod3b0DJgvTQORpz5AEzXVlG0I3wo32d9@vger.kernel.org, AJvYcCXMlwcLlRUSTnIxeG3LvW8x9i+WYWWqrU01JupOLIQJ0EH9V+DUWqe3YGGs9GN2qAFCxcweoawB+sNk3KF3@vger.kernel.org
-X-Received: by 2002:a05:6102:954:b0:4a9:5d98:6c5f with SMTP id
- ada2fe7eead31-4af448f6d7dmr26891641137.5.1733128410739; Mon, 02 Dec 2024
- 00:33:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733128444; x=1733733244;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QzUuqdFRJBTOc5WUYdPFncGjQZclBe0xdjO8DYZWI9w=;
+        b=oDdRWbTgCYkHz+jg5dkZoNXz2PU3vOPUUwygX35GxlEMEPDk9qFwXlcBo3epZNXul2
+         UVFCeiWXgKeo6aI1QaQ+1ONpHgPPpiZl2Blb/s6NHcRZqwO3unI7R8UZsRuwlXyrhWGP
+         urKP/dtE/LPUGIijcAvhkj050NvSuA/xUNbOkMD6IgrRodgLB9WXL1MSsq8gIBNmLTXQ
+         BNP/h/Kmfkp3nWu2pD7OLg6IXDMuQhckV9n2ExInvb/eq808wmAqGHhllS34JfDjQlQK
+         CVdYohikd96Mi71YyDOiPH+Wusdwev8+WBgLaRunExM9YeNbAHPiHZVsvZ/eYgFqYEAA
+         1NPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPoVyyUlP9gwU7iK6iiY7BD83a1KzsM6b04wAMWiOeumXRoXP+RFjsTwL8RnyVphTksFfTr/fzJ5pt4q4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8+emv/+Rvk6IYpzUaT2By6mR5csFQW3gEyZBUNflna67Mf7av
+	vSetiEW4DcqSrTD049o5+g1AYJgRnn6CcIxCAZw/dQidgLAGILE6H/lCHvVpQfo=
+X-Gm-Gg: ASbGncuRrF37mVKrsso30vkIzYfsfrOQ14y2IqBLuXbW6sPoy6Mbzw4U/JQ8KnH/9po
+	Q65pBFzbJPiFg/Ixxe7B1Mz+iYGemHQcn2eBH78ZKP5iCg9i8WHHuOyKDAJnVlB/J4bWZLwhjFE
+	2PEMVdBOzoZ2Ag23ddayuns9Rj+XkQ4WHbRN0JDv7K8G28hXzUzj8UPkly/eKY89fSap1w6IiA8
+	wZmRfffHTnh/kRwLXKLvVIHz0MDoRqTF+gaWE6ZEPbAduwSoCxUw+SYnknuVf6G
+X-Google-Smtp-Source: AGHT+IF93Cj6VrT2AYZC5DEqo9FH75ITtrTeuuLtaax9mwkC+oOsEvZlaiWYlMoQiQwe7SW7NGiL3A==
+X-Received: by 2002:a05:6512:3e1a:b0:53d:dbc7:981 with SMTP id 2adb3069b0e04-53df00d030dmr15664997e87.16.1733128443606;
+        Mon, 02 Dec 2024 00:34:03 -0800 (PST)
+Received: from cobook.home ([91.198.101.25])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649f5a5sm1409712e87.236.2024.12.02.00.34.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 00:34:03 -0800 (PST)
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Dege <michael.dege@renesas.com>,
+	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
+	Dennis Ostermann <dennis.ostermann@renesas.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported speed
+Date: Mon,  2 Dec 2024 13:33:52 +0500
+Message-Id: <20241202083352.3865373-1-nikita.yoush@cogentembedded.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202012056.209768-1-ebiggers@kernel.org> <20241202012056.209768-11-ebiggers@kernel.org>
-In-Reply-To: <20241202012056.209768-11-ebiggers@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Dec 2024 09:33:18 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV5rQggS9YHMJfU0gdhg6oFENTnPKp9Tbp3sJKgQdnMTA@mail.gmail.com>
-Message-ID: <CAMuHMdV5rQggS9YHMJfU0gdhg6oFENTnPKp9Tbp3sJKgQdnMTA@mail.gmail.com>
-Subject: Re: [PATCH v2 10/12] lib/crc32test: delete obsolete crc32test.c
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, x86@kernel.org, 
-	Zhihang Shao <zhihang.shao.iscas@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Vinicius Peixoto <vpeixoto@lkcamp.dev>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 2, 2024 at 2:24=E2=80=AFAM Eric Biggers <ebiggers@kernel.org> w=
-rote:
-> From: Eric Biggers <ebiggers@google.com>
->
-> Delete crc32test.c, since it has been superseded by crc_kunit.c.
->
-> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Cc: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  arch/m68k/configs/amiga_defconfig    |   1 -
->  arch/m68k/configs/apollo_defconfig   |   1 -
->  arch/m68k/configs/atari_defconfig    |   1 -
->  arch/m68k/configs/bvme6000_defconfig |   1 -
->  arch/m68k/configs/hp300_defconfig    |   1 -
->  arch/m68k/configs/mac_defconfig      |   1 -
->  arch/m68k/configs/multi_defconfig    |   1 -
->  arch/m68k/configs/mvme147_defconfig  |   1 -
->  arch/m68k/configs/mvme16x_defconfig  |   1 -
->  arch/m68k/configs/q40_defconfig      |   1 -
->  arch/m68k/configs/sun3_defconfig     |   1 -
->  arch/m68k/configs/sun3x_defconfig    |   1 -
+When auto-negotiation is not used, allow any speed/duplex pair
+supported by the PHY, not only 10/100/1000 half/full.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> # m68k
+This enables drivers to use phy_ethtool_set_link_ksettings() in their
+ethtool_ops and still support configuring PHYs for speeds above 1 GBps.
 
-Gr{oetje,eeting}s,
+Also this will cause an error return on attempt to manually set
+speed/duplex pair that is not supported by the PHY.
 
-                        Geert
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+ drivers/net/phy/phy.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 4f3e742907cb..1f85a90cb3fc 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -1101,11 +1101,7 @@ int phy_ethtool_ksettings_set(struct phy_device *phydev,
+ 		return -EINVAL;
+ 
+ 	if (autoneg == AUTONEG_DISABLE &&
+-	    ((speed != SPEED_1000 &&
+-	      speed != SPEED_100 &&
+-	      speed != SPEED_10) ||
+-	     (duplex != DUPLEX_HALF &&
+-	      duplex != DUPLEX_FULL)))
++	    !phy_check_valid(speed, duplex, phydev->supported))
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&phydev->lock);
+-- 
+2.39.5
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
