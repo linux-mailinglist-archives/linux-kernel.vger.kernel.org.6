@@ -1,149 +1,187 @@
-Return-Path: <linux-kernel+bounces-428269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA429E0C3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:37:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B92D69E0C43
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:38:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D3C2829EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:37:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A7841652BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972E71DE4F0;
-	Mon,  2 Dec 2024 19:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA341DE4FB;
+	Mon,  2 Dec 2024 19:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="RRYBhxz/"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CHUeUUMR"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0018F1DE3BF
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4491DE3BC
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733168217; cv=none; b=mkj3MpRTJ63e651gr3KV7qDISgnnWTaMCMgT6IUCGOXhQOVx7uavAZ8nuoDJFIfY+i3VX+wZ/ob81FRG6F/GvCB3Y7zOn6z8p76zQ3rtoWDgfOfB7q6eONa2MvDGueTTSKDcTwsuNNMfQ7qShMYIr/zgnSm+8yKJRGmWM4ShAkM=
+	t=1733168292; cv=none; b=Jxwg6MIu80E8468vkKTwRBZL+ryw1E75Nl1zL6AxwvSGHj+nIGTFSPmErwRPiUyJJkDxK3mZWQuHK9A79GNnsNdPrxvzP8MRk2yFNAMB6Nqec91HVKcz84HaRRtc2JYwHs+Byp5/1hHh2hlzPbqrpYAXymzwAWvqBcD8l0PyvJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733168217; c=relaxed/simple;
-	bh=PMsUv+q/+JfREQxpfuAbt3/PvDuUR3+8vgcngJw4L0E=;
+	s=arc-20240116; t=1733168292; c=relaxed/simple;
+	bh=azL3ggP5+v/afEqoQjf1Wv9DZ/T0hzvBjzmZeNazDFs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n1TtUND3qyGz6YDmCHhjjmkyXhawL0VrSr8qVZxzvKPWtXAiTDgUjkuOYWB7rcBhSEr4DVlZ3rhpz/mLvtG49zHjox8QAQaMgS38VAWKAnviWWsEiZCIWLMFLg/suTvHSVkFs3ja9r4qIFYGdm9ulB+o0/0Ou25eN2hBOwJQLPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=RRYBhxz/; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 11F5E3F233
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733168197;
-	bh=W6aZlMtP8KSsoitzGDR7wpyoQGNVRJRxSI2L2J9zakA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=RRYBhxz/VzaVyvozlEwzseCiVrxQKH8vMklgaItHTO30W8MIQ1et1tgHZ1ZFyIci5
-	 26dExfxtYqwdeLMzfGxGWTNqG1cN3S0Z/KdO72eNKZLypOltU7Qk2IcUQNh6/pKPOy
-	 xGQhdS0yEi1BwGJcganCGg5ooGvKNpn6ts+v/HHQjCBn+tvdphLAyDzM7oNDxCk6V3
-	 tZ98GmaoSBdQ0VEzrZqCLxH0aTjiPzVdprolCMNOkPMm/A4yudpCpJo9YP5+G17iKS
-	 7cOaGWN7zS36PKXdPhjfoNMeA+6AnQon1IO4LlBefrNpN7yw2q78NeQexBmkhb62No
-	 +e9FqWD89/P/w==
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ffccfce0e7so37599411fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 11:36:37 -0800 (PST)
+	 To:Cc:Content-Type; b=GabJS8Qt8OaMR5SmS05qTeeBJVePOMyI5ueWrJbbk4Epq+Lvjkvq0moQPWD3pEw3o91JaJCNS9EJSxLAv0esXAfn1sdJJsyHTqVdW/ocH07qabk8b7N7drROqZt+oTBVFv3K40n6S2amQqZTIMnhNOxwnA4fONc7yHAs4SyqwxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CHUeUUMR; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d87ceb58a0so27315026d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 11:38:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733168290; x=1733773090; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IxzZa/FeaHenizjIU+OA48psYXufFL/hW5pMalhLMKg=;
+        b=CHUeUUMRVs5S3gdM25tydr+GOD16mA9/O2IW13fA4i2V1Z9ZHoRkU7/1yl/OTip6vW
+         kW6sRINnFuStSjY4t52307hFjImDocY9A12q3xFNRRxy/A2r/bXFiOQyfsmWYH9yW65E
+         xT5X/EmwpRfiZtcB/49MZvoY2DuO4aguHTYBAPk1ptsBY2XSPxAJjE/8FwojU1lNxAgL
+         rvAY1HqXAl68CaRj3dmoeZAEXFE7iF/rc7u2BhqySavtb9b68gN5CQfdoRlDM6nunWL3
+         1Xmwuk5h9/Q2pyswVSjJ23mhxC2W2Dh413YGVRvxsfl7PGwIyNP8MlaT39tU82drpJDN
+         Y1kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733168196; x=1733772996;
+        d=1e100.net; s=20230601; t=1733168290; x=1733773090;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W6aZlMtP8KSsoitzGDR7wpyoQGNVRJRxSI2L2J9zakA=;
-        b=Q0BrFGUAlGjJ3kkAlksOHGgNQ+xwG6fRpDtDDJozkfBzmwiDA05hgvrXzfvPYZLG6c
-         GfJL3sbrqpdxC+/g+ONVIP7CUSciplBcYTIVJf15gXFKpl5auSYcgA2ovkY8nyltmu88
-         3s87r1x4OWLTpjyW6gm2sTLfjf4dcEIITo250FlitoOpFNs9HskK5TOTChq8U++BO8vd
-         nsl9IS/106sDCxY0hIglcHzd0ZeARre3rBzZ2CyfFnE5mrcluhnUl7trrICN1+fo2PHq
-         8fF30+a44JtADvGEyY0wrdVlNS8xsI7tYfxlHwhZcEmpKQ4LhjqTflc0T2PFCCJ9q/yD
-         PQZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWM+hqHmGxysUxS8qpyWNKZX404Xwa80IjaK/AfR9e/Ik1KQ5HtcGxtmNP2JZ4wrRNfDWp3SVO5P+fARkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp48+xSIw/o3wlGo4t89Rnr61PU6bGQyNRrlhcFOwSFiTDbGhS
-	8POkqU4gHz7veO0tiD+vDDI1RHJHIQHxcesniMnxVL984HG2R+1g3tpDLn/fD70MTnZO9iD/wfL
-	sPBMosp75XLDrSiUBO4opfNDJ9v1Slk35xhTSemJn7Zo4zHpObc7GFLF5EoJNZhY8ocJ31LOAUy
-	Rc1xqWh6ypetEhnfsByNd+rhSk+nqDsWPKHG+REnOA7U6m1X9vAPdT
-X-Gm-Gg: ASbGncvTG36cyQluDNOBGf5s5w3s6kJ9avr9O6tJl6TOMfQFgzgrj287x4/fBC7jMiD
-	TZmbri++WqC9byF1DCrnC8FbDyJ8suA==
-X-Received: by 2002:a05:6512:1249:b0:53d:b4ab:13ba with SMTP id 2adb3069b0e04-53df00d953cmr13276678e87.27.1733168196283;
-        Mon, 02 Dec 2024 11:36:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGNSC28E6FM3qQ6WZTcAg556PxdrO7zI2Cs8OXWZhXXHB0JJrG1uq2dPIWuLVrFidClqbG+uIzIJVnnP73V5RM=
-X-Received: by 2002:a05:6512:1249:b0:53d:b4ab:13ba with SMTP id
- 2adb3069b0e04-53df00d953cmr13276668e87.27.1733168195915; Mon, 02 Dec 2024
- 11:36:35 -0800 (PST)
+        bh=IxzZa/FeaHenizjIU+OA48psYXufFL/hW5pMalhLMKg=;
+        b=PwPBXhaa2sVJD22n7auSP82C9IEk/XtKesR6NLhvgn/dSF6W7nXhjdKceZNAM+paE+
+         9atPxLVRYCItf1Mlrvn7WoM5S5oeYb7OyGve7H+i/Kyo8z9BOMo6FobGJWtOCQWulLoI
+         SRdib0/l1pjxvbQeyzyz2bLA9hiXxyiRmPwazYHRJhYMN63OPYaXgoSOEfnCjCojLeNu
+         VsJRUwClo05JLt2pv4vzD9HppEFHrVONFzyQsx833AhaXBRTlaA9DfRiYPAmGcQtEbJa
+         8aMMKfjmE3azhCpdoYWE+gpiVRJv8shQ1Iv0YvGb0B3fl5Bkc8348zqEekWdTmry9WJe
+         SJ1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWq+JTW58tiJkQme24lRIwsPoM3Dmb+D9gzLBsLY7zAgU/VEgkYtCNrQ06Hh0LIwHj3czD7zkIe9NqZixU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5jewEqUtv1dhkNLbmihis4wzP2Ctc2y29kTcomXVFwGqwIijT
+	ugEcHzPVtrGzWZSsYin0eluQvU3YuNJByQvuEMpY2BsSXC/Y9NhSm8KsZMe4lz6zb5hvK+V0MZ6
+	gGc21rUdCConjRMMf9q2HkajaG6HZacNsihHT
+X-Gm-Gg: ASbGncvwdLtpQpf5LxSfnmJ0I93/vZMTPk7HxNzuXjkQGDxC+XcxLrULrNQ05prmY+B
+	e/9zOZWFi5aigIA0Jt5WQACa2LDxV
+X-Google-Smtp-Source: AGHT+IHxJdu5xIM6BIgrsiHPcVu7o/uvaOAXgt3dUjkQOdUQsKeM/9i7bc65ZyYHF2Tld/jcYUd4DpRB8Av3RKj6IhU=
+X-Received: by 2002:a05:6214:c6a:b0:6d8:b371:6a0f with SMTP id
+ 6a1803df08f44-6d8b3716e20mr18594046d6.31.1733168289587; Mon, 02 Dec 2024
+ 11:38:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHTA-uYp07FgM6T1OZQKqAdSA5JrZo0ReNEyZgQZub4mDRrV5w@mail.gmail.com>
- <20241126103427.42d21193.alex.williamson@redhat.com> <CAHTA-ubXiDePmfgTdPbg144tHmRZR8=2cNshcL5tMkoMXdyn_Q@mail.gmail.com>
- <20241126154145.638dba46.alex.williamson@redhat.com> <CAHTA-uZp-bk5HeE7uhsR1frtj9dU+HrXxFZTAVeAwFhPen87wA@mail.gmail.com>
- <20241126170214.5717003f.alex.williamson@redhat.com> <CAHTA-uY3pyDLH9-hy1RjOqrRR+OU=Ko6hJ4xWmMTyoLwHhgTOQ@mail.gmail.com>
- <20241127102243.57cddb78.alex.williamson@redhat.com>
-In-Reply-To: <20241127102243.57cddb78.alex.williamson@redhat.com>
-From: Mitchell Augustin <mitchell.augustin@canonical.com>
-Date: Mon, 2 Dec 2024 13:36:25 -0600
-Message-ID: <CAHTA-uaGZkQ6rEMcRq6JiZn8v9nZPn80NyucuSTEXuPfy+0ccw@mail.gmail.com>
-Subject: Re: drivers/pci: (and/or KVM): Slow PCI initialization during VM boot
- with passthrough of large BAR Nvidia GPUs on DGX H100
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: linux-pci@vger.kernel.org, kvm@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org
+References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-5-ryncsn@gmail.com>
+In-Reply-To: <20241202184154.19321-5-ryncsn@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 2 Dec 2024 11:37:32 -0800
+Message-ID: <CAJD7tka9L-4VZVi1QkC_DuKCLyA71LbLd2chSPNK66yQRS2K+w@mail.gmail.com>
+Subject: Re: [PATCH 4/4] mm, swap_cgroup: remove global swap cgroup lock
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks!
-
-This approach makes sense to me - the only concern I have is that I
-see this restriction in a comment in __pci_read_base():
-
-`/* No printks while decoding is disabled! */`
-
-At the end of __pci_read_base(), we do have several pci_info() and
-pci_err() calls - so I think we would need to also print that info one
-level up after the new decode enable if we do decide to move decode
-disable/enable one level up. Let me know if you agree, or if there is
-a more straightforward alternative that I am missing.
-
-- Mitchell Augustin
-
-
-On Wed, Nov 27, 2024 at 11:22=E2=80=AFAM Alex Williamson
-<alex.williamson@redhat.com> wrote:
+On Mon, Dec 2, 2024 at 10:42=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
+e:
 >
-> On Tue, 26 Nov 2024 19:12:35 -0600
-> Mitchell Augustin <mitchell.augustin@canonical.com> wrote:
+> From: Kairui Song <kasong@tencent.com>
 >
-> > Thanks for the breakdown!
-> >
-> > > That alone calls __pci_read_base() three separate times, each time
-> > > disabling and re-enabling decode on the bridge. [...] So we're
-> > > really being bitten that we toggle decode-enable/memory enable
-> > > around reading each BAR size
-> >
-> > That makes sense to me. Is this something that could theoretically be
-> > done in a less redundant way, or is there some functional limitation
-> > that would prevent that or make it inadvisable? (I'm still new to pci
-> > subsystem debugging, so apologies if that's a bit vague.)
+> commit e9e58a4ec3b1 ("memcg: avoid use cmpxchg in swap cgroup maintainanc=
+e")
+> replaced the cmpxchg/xchg with a global irq spinlock because some archs
+> doesn't support 2 bytes cmpxchg/xchg. Clearly this won't scale well.
 >
-> The only requirement is that decode should be disabled while sizing
-> BARs, the fact that we repeat it around each BAR is, I think, just the
-> way the code is structured.  It doesn't take into account that toggling
-> the command register bit is not a trivial operation in a virtualized
-> environment.  IMO we should push the command register manipulation up a
-> layer so that we only toggle it once per device rather than once per
-> BAR.  Thanks,
+> And as commented in swap_cgroup.c, this lock is not needed for map
+> synchronization.
 >
-> Alex
+> Emulation of 2 bytes cmpxchg/xchg with atomic isn't hard, so implement
+> it to get rid of this lock.
 >
+> Testing using 64G brd and build with build kernel with make -j96 in 1.5G
+> memory cgroup using 4k folios showed below improvement (10 test run):
+>
+> Before this series:
+> Sys time: 10730.08 (stdev 49.030728)
+> Real time: 171.03 (stdev 0.850355)
+>
+> After this commit:
+> Sys time: 9612.24 (stdev 66.310789), -10.42%
+> Real time: 159.78 (stdev 0.577193), -6.57%
+>
+> With 64k folios and 2G memcg:
+> Before this series:
+> Sys time: 7626.77 (stdev 43.545517)
+> Real time: 136.22 (stdev 1.265544)
+>
+> After this commit:
+> Sys time: 6936.03 (stdev 39.996280), -9.06%
+> Real time: 129.65 (stdev 0.880039), -4.82%
+>
+> Sequential swapout of 8G 4k zero folios (24 test run):
+> Before this series:
+> 5461409.12 us (stdev 183957.827084)
+>
+> After this commit:
+> 5420447.26 us (stdev 196419.240317)
+>
+> Sequential swapin of 8G 4k zero folios (24 test run):
+> Before this series:
+> 19736958.916667 us (stdev 189027.246676)
+>
+> After this commit:
+> 19662182.629630 us (stdev 172717.640614)
+>
+> Performance is better or at least not worse for all tests above.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>  mm/swap_cgroup.c | 56 +++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 41 insertions(+), 15 deletions(-)
+>
+> diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
+> index a76afdc3666a..028f5e6be3f0 100644
+> --- a/mm/swap_cgroup.c
+> +++ b/mm/swap_cgroup.c
+> @@ -5,6 +5,15 @@
+>
+>  #include <linux/swapops.h> /* depends on mm.h include */
+>
+> +#define ID_PER_UNIT (sizeof(atomic_t) / sizeof(unsigned short))
+> +struct swap_cgroup_unit {
+> +       union {
+> +               int raw;
+> +               atomic_t val;
+> +               unsigned short __id[ID_PER_UNIT];
+> +       };
+> +};
+> +
+>  static DEFINE_MUTEX(swap_cgroup_mutex);
+>
+>  struct swap_cgroup {
+> @@ -12,8 +21,10 @@ struct swap_cgroup {
+>  };
+>
+>  struct swap_cgroup_ctrl {
+> -       unsigned short  *map;
+> -       spinlock_t      lock;
+> +       union {
+> +               struct swap_cgroup_unit *units;
+> +               unsigned short *map;
+> +       };
+>  };
+>
+>  static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_SWAPFILES];
+> @@ -31,6 +42,24 @@ static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_SW=
+APFILES];
+>   *
+>   * TODO: we can push these buffers out to HIGHMEM.
+>   */
 
-
---=20
-Mitchell Augustin
-Software Engineer - Ubuntu Partner Engineering
+While you're at it, I think the comment above is quite outdated :)
 
