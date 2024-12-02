@@ -1,165 +1,71 @@
-Return-Path: <linux-kernel+bounces-427123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925829DFCF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:23:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6735E9DFCEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B49BB21F38
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:22:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CF59281CAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481361FA262;
-	Mon,  2 Dec 2024 09:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED021FA179;
+	Mon,  2 Dec 2024 09:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P+/p7Rq3"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzZZ6ghj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9219E1FA857
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9BF1F943E;
+	Mon,  2 Dec 2024 09:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733131361; cv=none; b=CycWS7q2mRCYCE0QsurX7zYBkyVzfkcIm/I75UeXyUVUI+WFzbtf+wu+sN/Xdjo/dM4lFPD6New5wDM4Ze2+uyNv8SJcFbGshfEx10lC3ScxMZcYtRXzDAYU1HOOYyrNd//BDE9McTwPu4KM9/cNJviM4wIUR9cmr8eo4F04A+Q=
+	t=1733131352; cv=none; b=OrQOEKseoAbcySU2lMztroHH5Z2wDwzXFY+G4PpLxtLlnWA5XieH4Z6PnTL9GBu56r8Wn5t2SArpWdZVXcr0E2m8AFTjvC5hGHG0XGHTsKMnR/UgL1kwcbjccdllKxycSGh91Qh7MWwZgNhq8sMRc3QtBlsUfeHAC6LtXJKHS/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733131361; c=relaxed/simple;
-	bh=YDSKzOOX2ioPbI+g4xmEkyWIV44JCFQKlGuOTGFtBbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YbAQg1JLGKJz6vrCYFdXxi0O2Vp9AjvRuSg3ZLPbgJUX37zt6uhewsFlIxUBPf6iNPTTUo4gIG9R3ecopU586yXKGgNgPYML9IW9PrhKWhunQOYrwNSNYDWBODEI24DttKkKk0Z+eB39irbPEwU18B/7dR2ZFs9/wNOaEz+IcvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P+/p7Rq3; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733131352;
-	bh=YDSKzOOX2ioPbI+g4xmEkyWIV44JCFQKlGuOTGFtBbc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=P+/p7Rq3Be2zY1Nk7hrHoRdVqDeGSomvgG9BKXr2maNACkaZuKihbJrXfKi6LR4yf
-	 XDjH5o0cL1Z3JDmdGIa+EaQwEuDuFC8A1Ekhk4FJuib0qS3G3SvZ7KETP9tKAHXE5w
-	 ZDuZWoNL1VHPmugQHJY6iQsS2YMO5destxUUTCNt3bBh/EBxTtnAZ9cnQrdRfR4ucZ
-	 iXCnk+Ait8+CUixMRpY4KgWEDbfiHhhdcyNx0PutdZAhz0Ja3sxcyP6sN6LA/LVH84
-	 LGohZC2d2Ez7j8Aidz3OnHRFXJnFbOneE/bYa6zjnb6QA0cbPgInVqJIiwWLMKP81o
-	 qYuH86axLntNQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DF7AF17E14EA;
-	Mon,  2 Dec 2024 10:22:31 +0100 (CET)
-Date: Mon, 2 Dec 2024 10:21:51 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Philipp Zabel
- <p.zabel@pengutronix.de>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/8] drm/panfrost: Handle job HW submit errors
-Message-ID: <20241202102151.41cc3d4f@collabora.com>
-In-Reply-To: <20241128211223.1805830-4-adrian.larumbe@collabora.com>
-References: <20241128211223.1805830-1-adrian.larumbe@collabora.com>
-	<20241128211223.1805830-4-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733131352; c=relaxed/simple;
+	bh=pXnYP2WqJw2efuIKrS4+y0ufhlCT/VEXuCTQAD5naC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMN92CjUBFkReFjLXuvWef5Uq1g/bTg2p5anEBSxjz4usWGxWONXkcZD11LkGeKBXnpV9qdQDSyxbOTkBtzp0w0YRH1NbaXH4GHFGulcqLpqTSxGXb/yTA+T2IEZWEBPkuHXmfmQyPuB6FghlIpFj2bB0nSQKTbYa0SVvjPpMjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzZZ6ghj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D20C4CED2;
+	Mon,  2 Dec 2024 09:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733131351;
+	bh=pXnYP2WqJw2efuIKrS4+y0ufhlCT/VEXuCTQAD5naC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EzZZ6ghjO8g/Rd8tLoNbO8d1hlGgxOoamr0IEwy+45m7HPZ9RTczRoaEaYRqa1Lqa
+	 t8M/rW+AnqNvKubfZH0jnE9WMGRlMj2R25yKuoQFE3d+DUGBIqg3vlIXgj4eb8fn2Y
+	 1nmc+6w3wQr+UNkZnFrwcN8gYjcx0OCDKbt2LBPayo0w8/0/Tned+dtzrLk7LHolDn
+	 AEX0DgM+XRfYaRSfPDESlw/XCzMHrP9avs255aiCFHtX6+fkugZylNdRazGI5eAsJG
+	 k1ZB+zbxOM0z9sDAlxTXwYfv2/EK9YDRXo8OaA4EdNTulKLLtwYKs26tDg1Xxr1ULW
+	 nYsxHL4rOjflA==
+Date: Mon, 2 Dec 2024 10:22:27 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: cheung wall <zzqq0103.hey@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: "KASAN: slab-out-of-bounds Read in load_misc_binary" in Linux
+ Kernel Version 4.9
+Message-ID: <20241202-wahlkabine-posten-34e01c2443f9@brauner>
+References: <CAKHoSAv+gLUmYioCQjKU46pEba6udNOLgTFxQ0MDVTKy_ehd=g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAKHoSAv+gLUmYioCQjKU46pEba6udNOLgTFxQ0MDVTKy_ehd=g@mail.gmail.com>
 
-On Thu, 28 Nov 2024 21:06:18 +0000
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On Mon, Dec 02, 2024 at 12:31:13PM +0800, cheung wall wrote:
+> Hello,
+> 
+> I am writing to report a potential vulnerability identified in the
+> Linux Kernel version 4.9
+> This issue was discovered using our custom vulnerability discovery
+> tool.
 
-> Avoid waiting for the DRM scheduler job timedout handler, and instead, let
-> the DRM scheduler core signal the error fence immediately when HW job
-> submission fails.
->=20
-> That means we must also decrement the runtime-PM refcnt for the device,
-> because the job will never be enqueued or inflight.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_job.c | 20 ++++++++++++++++----
->  1 file changed, 16 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/pa=
-nfrost/panfrost_job.c
-> index f640d211cc3a..3f4f0682d69d 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> @@ -195,7 +195,7 @@ panfrost_enqueue_job(struct panfrost_device *pfdev, i=
-nt slot,
->  	return 1;
->  }
-> =20
-> -static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
-> +static int panfrost_job_hw_submit(struct panfrost_job *job, int js)
->  {
->  	struct panfrost_device *pfdev =3D job->pfdev;
->  	unsigned int subslot;
-> @@ -207,10 +207,11 @@ static void panfrost_job_hw_submit(struct panfrost_=
-job *job, int js)
-> =20
->  	ret =3D pm_runtime_get_sync(pfdev->base.dev);
->  	if (ret < 0)
-> -		return;
-> +		goto err_hwsubmit;
-> =20
->  	if (WARN_ON(job_read(pfdev, JS_COMMAND_NEXT(js)))) {
-> -		return;
-> +		ret =3D -EINVAL;
-> +		goto err_hwsubmit;
->  	}
-> =20
->  	cfg =3D panfrost_mmu_as_get(pfdev, job->mmu);
-> @@ -261,6 +262,12 @@ static void panfrost_job_hw_submit(struct panfrost_j=
-ob *job, int js)
->  			job, js, subslot, jc_head, cfg & 0xf);
->  	}
->  	spin_unlock(&pfdev->js->job_lock);
-> +
-> +	return 0;
-> +
-> +err_hwsubmit:
-> +	pm_runtime_put_autosuspend(pfdev->base.dev);
-> +	return ret;
->  }
-> =20
->  static int panfrost_acquire_object_fences(struct drm_gem_object **bos,
-> @@ -382,6 +389,7 @@ static struct dma_fence *panfrost_job_run(struct drm_=
-sched_job *sched_job)
->  	struct panfrost_device *pfdev =3D job->pfdev;
->  	int slot =3D panfrost_job_get_slot(job);
->  	struct dma_fence *fence =3D NULL;
-> +	int ret;
-> =20
->  	if (unlikely(job->base.s_fence->finished.error))
->  		return NULL;
-> @@ -400,7 +408,11 @@ static struct dma_fence *panfrost_job_run(struct drm=
-_sched_job *sched_job)
->  		dma_fence_put(job->done_fence);
->  	job->done_fence =3D dma_fence_get(fence);
-> =20
-> -	panfrost_job_hw_submit(job, slot);
-> +	ret =3D panfrost_job_hw_submit(job, slot);
-> +	if (ret) {
-> +		dma_fence_put(job->done_fence);
-
-If you call dma_fence_put() here, you need to set job->done_fence to
-NULL, otherwise dma_fence_put() will be called again on an already
-freed fence in panfrost_job_cleanup(). Question is, do we really need
-to call dma_fence_put(job->done_fence) here? Can't we let the job
-destructor take care of that?
-
-> +		return ERR_PTR(ret);
-> +	}
-> =20
->  	return fence;
->  }
-
+Unless it is reproducible on mainline please stop posting such reports.
 
