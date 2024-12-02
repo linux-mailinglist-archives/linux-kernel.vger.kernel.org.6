@@ -1,86 +1,84 @@
-Return-Path: <linux-kernel+bounces-426921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91579DFA11
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 463439DFA1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 685C2281BB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:58:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06B3C281B76
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDBF1F8ADE;
-	Mon,  2 Dec 2024 04:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC561F8AE5;
+	Mon,  2 Dec 2024 05:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z8Ki21Qy"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6supe+h"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A801D6DDF
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 04:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964EE2F46;
+	Mon,  2 Dec 2024 05:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733115487; cv=none; b=kxQRcGw4iIohCnuVjJvnysWRv19pvIDpSza680gXL2wZtCTriJWWLf/6Bdo5Uq3Orzt9lqDeDzwgE0SDCPuYsoeSiELpXZUCBRgH7s9grjXOjyz8sS5NSsPy+XbZV8Q4yJ4bszxSC5QvJ2XS+45ohsPe8vCKeRa6sRD/0+2stZo=
+	t=1733115762; cv=none; b=XyNeAZiddLa/uwTaISGY4AphniR+FqqoGRlIhzeXQytZFByShyS8c0c81zZK0Ln+ZHfGSo0eF4W5QyHU9liXyLHjLMgmCNYO1eX43KUGZ5X7XbQs2qqeBV6Dr20Tlx5WCqh35cwWHIDRIETGGvsXzdaX1/BYjjhjnha4m1j0p9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733115487; c=relaxed/simple;
-	bh=nwOnFLjkl/AZuun/GsZ/MT/Esupxc6jZTrkx7WlRFtw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SxKQtuqA0icAAkf8TqfS2v2VrLxNFiMuh+gkoKdD6prXAO+ykMUk5UEagkkJyBwjcZa/hQUzv+IYfaLqRsVzgrRU3RtpfbfHu/nelzITdA9DR/PpPJy8iQ3GVl20Pd5Hs44j7O5F++fcs4zYM+/JzY7Ub5ax/EbpabSgf4V6hEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Z8Ki21Qy; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-29e45280bcfso1369090fac.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 20:58:05 -0800 (PST)
+	s=arc-20240116; t=1733115762; c=relaxed/simple;
+	bh=4ikIEsU+W+e2hoO7liGbdu/DYueAPavkn1wiJrMa2XI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mHBUzVaqx6cYv3NxJxGDc1Bqr+RGTGm2ZCMtTct4Mo+vDiV2gP5apoG44GEP0RHgN6xMuXeI1ErHAj8F2J/KFaUG0TzbVViCh04720545Fmqo8CCwTeneJq0Gp52FUO/ft6NhTcKnu87cxwIfgUJsUE5OGf7jPmqpfxLnMuMR/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C6supe+h; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so3091717a12.0;
+        Sun, 01 Dec 2024 21:02:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733115484; x=1733720284; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733115760; x=1733720560; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vDhO31tk1fZx5nO1D34ac67vgcEF+XlfAfCpGqdW5mI=;
-        b=Z8Ki21QyBsU+eNA1HqdAEMXlqb8i6Lqzc+ho+oawDBf6rqhZLn6l2zV8SvyIL+6Ov8
-         k2yo2xowBhYTJqQK0YVyFVncFpUBCSzwAwiIcaREDtTifvsh7tp5Ku4aAHWKi7DQQgHZ
-         zuF5ez44A8VthW+XNgkVDBN8Kqn43nhqIDYtc=
+        bh=+j9IC5yOXv1JTRyF5XSayRukRHAqen5dl9p7+tZk9ho=;
+        b=C6supe+h6ePoU8YOWc52SxjCyBSZALTB5ixociVF2kDNMxnL4BMCb3vFmlgjRT0UuJ
+         QhSCnhE1XQzmG+LF60OEOpT85z4vg+FsDwUnXteNZgFnar+H+SgueVj9fNIXRD6QRdId
+         XtoBHWac8suCgUenRJnnAKpQdeZQQj2duoYX8WRGSg+JV6P7WZjzeFT5TL1bwk0tPKwg
+         Ra42XefQ70SRyyPTY5xXtrMDkTevf1MmjTmySBjS7OqKPJuLANFs80FxVJnMubFU1sDH
+         MDvhl1HOiDpsx/ez8WWOBl35suOpEedDPoT1u1TNDaBOl9Oxtz0lY9k9X9XxOB+0T7Fe
+         0/tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733115484; x=1733720284;
+        d=1e100.net; s=20230601; t=1733115760; x=1733720560;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vDhO31tk1fZx5nO1D34ac67vgcEF+XlfAfCpGqdW5mI=;
-        b=JlIWIrBVsSgRYRt8BWVJCTqG2n/UVFZLUUM4zCpN+pdCgO5wrrAggxdHb7bPZn6FXz
-         OLACLJ8RSlNMVoOVUs0zOIPB32XuqfKgCAHK6TRxUGK9pE0aQjRE8sKNH6D+LpAz3l41
-         V4HSCB4AS/IMvcUoxKSx4e+n1T6RK6JUsS38X9xMD5dhjPOqCKZ2UfVMMWokv0cWjBD0
-         3HNDi4s1GHhE0TCFOXk66dlnKFzygHL5Aig2mJ/1xmGvWBqezUGJYlmVNs/N0Rd98ir2
-         3GVnKhr4WCc/ImbmATil8iu4dwhusv3ATE2PY/XLd7QJx3fpUIGzJbksKTqiDrSG7sid
-         NovQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUZhmQqlKAFjRyikZqaPafkNusqVlbGauRhTR2EGyep79NzowtgmGgmRtMDbV2sFz8i7XyyAywJ7oePXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxclUAYuHlkTTqJQ7iCgR6Y6yMIsyv5iTmIJ2nKZIO3wRIYua4H
-	eQ5Fqxdq0IsgdeQyfl3+Q5PQbjBD2pMg/rvM8KPsnkEAVNTg/TMjBvwrLYRUKg==
-X-Gm-Gg: ASbGncvCj82aXlAMjYdutYXrDvNLmXRwzD5ShnbcHvbyyglYu4p7NV7Z972avJiOmy5
-	9p24nSylMjBp2xmB7ODvs4/oa3Ce0RjXN6fxnb6KXOM+TWDXvcLq5Ond90hkwGqwfXQqQsyL4CX
-	9W6pVgfoeIco0TdoM7BM2xT2k1IPHe1g18QymxUjQx7fS+7BVjVgnSPXvfTlx4Gb5oDOTgSPfgz
-	Ll3xIKMhNZBbVZKdSlA4X5kVR2KEvaK4N/UfETmx7+lWSvPXu2YZfGkBU9GL81Z2eXl
-X-Google-Smtp-Source: AGHT+IFb+ZRLH+3t3GZ+Wqs0KteaVy0F6ImlvlAlGAnh/Pchain6QOhSaXFDzaByBXFgCM7QNb8V/Q==
-X-Received: by 2002:a05:6808:2018:b0:3e6:3860:596b with SMTP id 5614622812f47-3ea6db6410dmr21148963b6e.8.1733115484363;
-        Sun, 01 Dec 2024 20:58:04 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:94c8:21f5:4a03:8964])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c2d5be4sm6970599a12.3.2024.12.01.20.58.01
+        bh=+j9IC5yOXv1JTRyF5XSayRukRHAqen5dl9p7+tZk9ho=;
+        b=vdMugEodfEBGMBvlKlqChJh/YPoWaMLFUFzUKjyXHR6guO6Bh2PpJW1FAjIyb9Jour
+         TzJlceAjTRwAVKOBY8tP5nyNbCXfnCK3PU1jzzkHx5KxnjKKy0QRNcfD8W8UYLlSdd0y
+         SYT1PYXGksiHIVelmatEEhslOy4TaUnMmSfjwqr5YYae9O31Y3VNUSr5bv+wIFMWWmrp
+         rpozIxYtIGO3HwYi6zP3upYV0mfJeSe9nrxUZ2n0rz+StkjhmlbLpBQwUB4WA10kI0sW
+         O1qzyXf3NnAulbRnccRh0tM/rQ6o+Ta9IoulEF7m191FGEuurznSaVUI+gsb5TyGJzbj
+         POpw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2EQ6Q/w5WaJPKQhFnrpkHxjMyVZZbUNpgcbCsMwnYgUgt8j21PzUzy7vOVof5bTrmgFXwukCT9MGvsuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg5xAbF7LRSxn4zCf6YCaUm97wJsJpGEG9vy0kBkpO7bfHsMLw
+	w5Wg9XHqf71bL0St9F/AZZYVCvsHzo8FXEhKfe0BwkXusTiEdxv5YRpJ+A==
+X-Gm-Gg: ASbGncv9Yp3ZVkIQzP9Ebvd98hAcROaxViyRi2ZhdChLdLqyQBQ7CdX7ES0bn8GqevI
+	JWA9c3pp6slpu/KWWrOwrzulZ8Ok4X1oXJap+RmcTRazWq1VImir3m2GlfuTTZ//O5X2eLRGvmz
+	Xhc70GABzoiNwVaG4rHmu6OhIjnoQfov2nrsksnOmb8jIhh3pyX27JgNYJmgk8DfVaCKj8Mkwc8
+	50XJglWyY+G/hJl97oGIVISjYjxaoXhystucHBkeU4Dwc/8Nx1goDqZL4j5cXJjC37KHXTVj38k
+	K9Lrq+TW4IZ+sfhwnO5zzh2quDvI4SRqUWBa6XaGLQ==
+X-Google-Smtp-Source: AGHT+IH3vryCaeBX4bRAztqst6zuSkFgqnrZnOJcXfAGJYfBjOBQKYZ2G16BZgOarv2Y6NbHFRUv5A==
+X-Received: by 2002:a05:6a20:6a28:b0:1db:f01a:cf12 with SMTP id adf61e73a8af0-1e0e0b5cc80mr32083457637.34.1733115760456;
+        Sun, 01 Dec 2024 21:02:40 -0800 (PST)
+Received: from kic-machine.localdomain (122-117-151-175.hinet-ip.hinet.net. [122.117.151.175])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c3034c8sm6844302a12.31.2024.12.01.21.02.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 20:58:03 -0800 (PST)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+        Sun, 01 Dec 2024 21:02:39 -0800 (PST)
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Frank Li <Frank.Li@nxp.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] dt-bindings: soc: fsl: cpm_qe: Limit matching to nodes with "fsl,qe"
-Date: Mon,  2 Dec 2024 12:57:55 +0800
-Message-ID: <20241202045757.39244-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+	ki.chiang65@gmail.com
+Subject: [PATCH v3 0/1] xhci: Some improvement for Etron xHCI host
+Date: Mon,  2 Dec 2024 13:01:34 +0800
+Message-Id: <20241202050135.13504-1-ki.chiang65@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,59 +87,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Otherwise the binding matches against random nodes with "simple-bus"
-giving out all kinds of invalid warnings:
+To prevent the xHCI driver from printing a "Transfer event TRB DMA
+ptr not part of current TD" error message when an error is detected
+while processing the last TRB of an isoc TD:
+  xhci: Correctly handle last TRB of isoc TD on Etron xHCI host
 
-    $ make CHECK_DTBS=y mediatek/mt8188-evb.dtb
-      SYNC    include/config/auto.conf.cmd
-      UPD     include/config/kernel.release
-      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-      DTC [C] arch/arm64/boot/dts/mediatek/mt8188-evb.dtb
-    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: compatible:0: 'fsl,qe' was expected
-	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
-    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: compatible: ['simple-bus'] is too short
-	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
-    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000:compatible:0: 'fsl,qe-ic' was expected
-	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
-    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000:reg: [[0, 201326592, 0, 262144], [0, 201588736, 0, 2097152]] is too long
-	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
-    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000:#interrupt-cells:0:0: 1 was expected
-	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
-    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: interrupt-controller@c000000: '#redistributor-regions', 'ppi-partitions' do not match any of the regexes: 'pinctrl-[0-9]+'
-	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
-    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: 'reg' is a required property
-	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
-    arch/arm64/boot/dts/mediatek/mt8188-evb.dtb: soc: 'bus-frequency' is a required property
-	    from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe.yaml#
-
-Fixes: ecbfc6ff94a2 ("dt-bindings: soc: fsl: cpm_qe: convert to yaml format")
-Cc: Frank Li <Frank.Li@nxp.com>
-Cc: <stable@vger.kernel.org> # v6.11+
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- .../devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml        | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes in v3:
+- Update subject and commit message
+- Use error_mid_td instead of last_td_was_short to solve the problem, as suggested by Michal
+- Link to v2: https://lore.kernel.org/all/20241028025337.6372-1-ki.chiang65@gmail.com
 
-diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
-index 89cdf5e1d0a8..9e07a2c4d05b 100644
---- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
-+++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe.yaml
-@@ -21,6 +21,14 @@ description: |
-   The description below applies to the qe of MPC8360 and
-   more nodes and properties would be extended in the future.
- 
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        const: fsl,qe
-+  required:
-+    - compatible
-+
- properties:
-   compatible:
-     items:
+Changes in v2:
+- Modify commit message
+- Remove XHCI_NO_RESET_DEVICE/XHCI_NO_BREAK_CTRL_TD quirk flag
+- Add XHCI_ETRON_HOST quirk flag, thanks for the suggestion by Michal
+- Check device speed before invoking the workaround
+- Add (xhci: Combine two if statements for Etron xHCI host)
+- Add (xhci: Correct handling of one-TRB isoc TD on Etron xHCI host)
+- Link to v1: https://lore.kernel.org/all/20240911051716.6572-4-ki.chiang65@gmail.com
+
+Kuangyi Chiang (1):
+  xhci: Correctly handle last TRB of isoc TD on Etron xHCI host
+
+ drivers/usb/host/xhci-ring.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
+
 -- 
-2.47.0.338.g60cca15819-goog
+2.25.1
 
 
