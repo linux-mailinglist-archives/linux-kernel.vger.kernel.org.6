@@ -1,150 +1,95 @@
-Return-Path: <linux-kernel+bounces-426904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2935C9DF9F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:35:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 497BF9DF9F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0342281B77
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:35:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1F54B218DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7902A1E22EF;
-	Mon,  2 Dec 2024 04:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M+68QYjG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24E528399;
-	Mon,  2 Dec 2024 04:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8C11F8AE1;
+	Mon,  2 Dec 2024 04:36:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7A828399
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 04:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733114141; cv=none; b=RQGPprGjc4YDabEhXBQnWJdinALRhbNrNYQSSAB05Txzwen1tWVMdGvHtgCqVe9pOFsMdqgs8rYSlP7SKcQHUZH11AAUZ0FYPhHfmF71DhGBHeXEXUIzxSoKwOL5lMw/9AA86czDLQf3eL4ggWqEu0YPUD6EQMXVsG5O3lzAy3c=
+	t=1733114170; cv=none; b=jvgilXaprAYjzLATfLuEHef2WKwVhjmRPw/Y1KNFfl2TysPrk+jhmQ6V1pOP6K4vw14a0024TsauSgy4zqiadXgnPhMZF1xkejeVxNBzl4O0ebRzXChb17Y6obLd54ZL/J9MgB2MBZYhNmbEbSvd4qWAfD8FhXIoToYXmHHKefE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733114141; c=relaxed/simple;
-	bh=4LW9gvNkk5SwLprkBeVa9iGAFVHl1x72N5pvfESSSHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxrXxCdkQ/fQ+cNJDTcwyyMVVGVxA0ZbDqbkeirbkAkrT3Urp0zcu3XJpKjmPfoSTUB/44HVgegnzSBL+4iu9Yyvh5r1wukXBfcOxdBVsOuHJNltZ4e9IehI12prP7kC5CYndXdiBybSbBoI0g3fZ06/jlpO8f0OLddLmAoqB1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M+68QYjG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA72EC4CED2;
-	Mon,  2 Dec 2024 04:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733114141;
-	bh=4LW9gvNkk5SwLprkBeVa9iGAFVHl1x72N5pvfESSSHc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M+68QYjGmnax3kgcnHDpRkL+mhMBscvfvH3YnchGyKBqXTdzi3JqyXCVp//q+lUBu
-	 wYTcr/di4ak+Fe7w+1rEIZJ10jXaJ6WvCv9xvljy/IP2l8VvVsPPrWqCgPfXtr2yjU
-	 zRMFUzo0/1OnIZq8PKUnGV7V3UJYb8vtCQfDMZSzofIclLRMvsB9gVF4+AuEE1y6R7
-	 d1BZRqfOEb91tle0+xjbD18CrHSnwFsQpaDy5vO7kNdrPSU05fwvxuknfIoJ0jwWNt
-	 cvdUIkGX069oV51w3fB4ZsOXND/emmtlYSxBEmVCVIwGTADEuN6Kfsg6TXUT0AjOPj
-	 nwXr9B4vWqUaw==
-Date: Sun, 1 Dec 2024 22:35:37 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
-	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
-	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
-	konradybcio@kernel.org, quic_tsoni@quicinc.com, quic_shashim@quicinc.com, 
-	quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, quic_tingweiz@quicinc.com, 
-	quic_aiquny@quicinc.com, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: Re: [PATCH v2 6/6] arm64: dts: qcom: qcs615: enable pcie for qcs615
- platform dts
-Message-ID: <ewjkbs2vtilbpbokt25tfypru6atpookv3iecl4465l64hgzym@f5d2bkbkpoae>
-References: <20241122023314.1616353-1-quic_ziyuzhan@quicinc.com>
- <20241122023314.1616353-7-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1733114170; c=relaxed/simple;
+	bh=D6YHoRrs9tfBhGdYJuAY3VpagmGWywUIPYux8LI90rM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dPv1zyAp8ddFKuCaguo1hVFKKuE5UD83CNsAEsW4Ge6mn39ZJig3n+AfOC8NzYsc3xEF699ojFvhd0Y/IRhNj8RXw9HMY5aDnr4hH+x1WRcDaAcsg0lecRfpDZwJlusTCwqremK7GxxmdzavodbdALXBRDrwXSQQG8anXUkakKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E32E106F;
+	Sun,  1 Dec 2024 20:36:30 -0800 (PST)
+Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 222283F58B;
+	Sun,  1 Dec 2024 20:35:58 -0800 (PST)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64/mm: Drop INIT_MM_CONTEXT()
+Date: Mon,  2 Dec 2024 10:05:53 +0530
+Message-Id: <20241202043553.29592-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122023314.1616353-7-quic_ziyuzhan@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024 at 10:33:14AM +0800, Ziyue Zhang wrote:
+Platform override for INIT_MM_CONTEXT() is redundant because swapper_pg_dir
+always gets assigned as the pgd during init_mm initialization. So just drop
+this override on arm64.
 
-"arm64: dts: qcom: qcs615-ride: Enable PCIe interface"
+Originally this override was added via the 'commit 2b5548b68199 ("arm64/mm:
+Separate boot-time page tables from swapper_pg_dir")' because non standard
+init_pg_dir was assigned as the pgd. Subsequently it was changed as default
+swapper_pg_dir by the 'commit ba5b0333a847 ("arm64: mm: omit redundant
+remap of kernel image")', which might have also just dropped this override.
 
-Regards,
-Bjorn
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+This patch applies on v6.13-rc1
 
-> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> 
-> Add platform configurations in devicetree for PCIe, board related
-> gpios, PMIC regulators, etc.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 42 ++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> index ee6cab3924a6..18f131ae9e07 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> @@ -202,6 +202,23 @@ &gcc {
->  		 <&sleep_clk>;
->  };
->  
-> +&pcie {
-> +	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
-> +	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
-> +
-> +	pinctrl-0 = <&pcie_default_state>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie_phy {
-> +	vdda-phy-supply = <&vreg_l5a>;
-> +	vdda-pll-supply = <&vreg_l12a>;
-> +
-> +	status = "okay";
-> +};
-> +
->  &qupv3_id_0 {
->  	status = "okay";
->  };
-> @@ -210,6 +227,31 @@ &rpmhcc {
->  	clocks = <&xo_board_clk>;
->  };
->  
-> +&tlmm {
-> +	pcie_default_state: pcie-default-state {
-> +		clkreq-pins {
-> +			pins = "gpio90";
-> +			function = "pcie_clk_req";
-> +			drive-strength = <2>;
-> +			bias-pull-up;
-> +		};
-> +
-> +		perst-pins {
-> +			pins = "gpio101";
-> +			function = "gpio";
-> +			drive-strength = <2>;
-> +			bias-pull-down;
-> +		};
-> +
-> +		wake-pins {
-> +			pins = "gpio100";
-> +			function = "gpio";
-> +			drive-strength = <2>;
-> +			bias-pull-up;
-> +		};
-> +	};
-> +};
-> +
->  &uart0 {
->  	status = "okay";
->  };
-> -- 
-> 2.34.1
-> 
+ arch/arm64/include/asm/mmu.h | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+index 2ec96d91acc6..662471cfc536 100644
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -109,8 +109,5 @@ static inline bool kaslr_requires_kpti(void)
+ 	return true;
+ }
+ 
+-#define INIT_MM_CONTEXT(name)	\
+-	.pgd = swapper_pg_dir,
+-
+ #endif	/* !__ASSEMBLY__ */
+ #endif
+-- 
+2.30.2
+
 
