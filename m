@@ -1,59 +1,87 @@
-Return-Path: <linux-kernel+bounces-426907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322AC9DF9FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:37:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A199DF9FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0E6281AE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:37:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6191B21B29
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D341D63FA;
-	Mon,  2 Dec 2024 04:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864A31D6DBE;
+	Mon,  2 Dec 2024 04:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCqwI7h+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frncWXKZ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D64E28399
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 04:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8858928399
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 04:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733114250; cv=none; b=Z1j0kjezhCJ0OBTgHjE77JN6+ckuj1D4w4XRkowvXSqw/WZcDiAoPQSDNcP6sEG2eHVmUQ1Dt8cbHS9fYsiBYfQHQouw6VQMACpNhBianRxzQp6F/XEtaMl3QUYjRO3zPi0NgPgtMY4iTKI/E92FZAasYB6gSOZDQkV4F0V/JzM=
+	t=1733114340; cv=none; b=hzeu5IcQn61+26NWJEL++AZEkg/Lgc/gqgpF3K85GInoaeScS/8qkPcRSZiRafW6NjdqcBVvv7kmfggdTQxTFzVq7WnC9i4DB+G15RXAdMsfZF8IJDNyjHQDFmwn/1wubwG+Rch/OLUzo+TGw8hIEIakizSPmy5q7HIVI0SZ1OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733114250; c=relaxed/simple;
-	bh=+IHqiU68nSaL7ZK/oJSrSXnG+TpPlvwPV40O8Iua4xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S+2M86ZGyHZE5Uq/oOomzJAt+tKvZBl6vuSkXzHWKH4cSkKpBbwEzgIFWy8yQ5vS8nstaUTPd/vrw63g6fn4Rlr/fPwH9bJrs6mAwkBGeWe6F7cYsn6D7hXRMZShodxCAhL3e0RO3XT7Qy5g27VPEsd6iXdQa4+eJt5dxzSibeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCqwI7h+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B84C5C4CED2;
-	Mon,  2 Dec 2024 04:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733114249;
-	bh=+IHqiU68nSaL7ZK/oJSrSXnG+TpPlvwPV40O8Iua4xk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pCqwI7h+ftZtdU79pIV9TfmOEWD9BsedW/+LXHsCspLgUPttTHYWUTi5o8G/+q6BP
-	 pLTXakpqyvokkiI768mjq1AFxyf9bOlF9RaXqI707IHn7EoSJzAbD6bfxE6Gwvqlga
-	 ub4bfx1s6vwF+5UylWrFzpTahdxhRcp94kJYz2Rb81H7OGWX5wFJmwS17ZLY62oJL9
-	 B/wLRw/CcDo8N5w3brdeDemS75a5hyfgQfMUz30V9rJ4gccBcUrtsEXVDYjBaagDhm
-	 cnqYpqLxyb8l2tvvMdKDTJrVX4Luf70NH2SzWQZ3FebeHfdO2dZ/BJ5GFEOKEtcitL
-	 V1j01QWYTYr4g==
-From: Mario Limonciello <superm1@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>
-Subject: [PATCH] x86/cpu: Enable SD_ASYM_PACKING for PKG domain on systems with AMD preferred cores
-Date: Sun,  1 Dec 2024 22:37:24 -0600
-Message-ID: <20241202043724.3929062-1-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733114340; c=relaxed/simple;
+	bh=F95rKXoNzAKa5cmUUSr5KAbv7rE56BLDSZ8GGmi0brw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2hRPA3Ik++PX9QruWGu0mzMy0dbPr5pjv04omiN9MTB6zbMqzI2JARBp0CQvYqDbgXWvCl15F1Gu6X2keM5zBBpotHF7Q4VdbX/bY69pymsp5NEfFGp8sFyZwH2T1d1T+GrVyQN9cQ69hAPzJsXvCSWANveC6/+OoahPqI7QrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frncWXKZ; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-215936688aeso3601755ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 20:38:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733114339; x=1733719139; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p7k1BZ3LkaLj8m6wKaz8x/LaePHGLoUdOuQY1P9Ye/I=;
+        b=frncWXKZIkaj67x2wQfGilllL2byr/vFilXB9YHjZSypMSQVYC6A6uWvT8Vp213D2M
+         Kr4um8tqxVCYGucjSPBVM4XEbYxrYIERu6VGMkYgSVeiRMtDDjhwPFpCWU1Pffe3hjTv
+         kUo/4rbIt/hLumVQhhPmgKPf2k37SED9qII16a5ikUXrlGxUZXmA7JfUWTn1MkXH+PDN
+         xVEjSGadEt2AK2g1Ylpcpi68eF4yAz5I/Xzn9MFVYYYvYqTStyJ0AHdBJY8LsImSWGr7
+         tYYq0MjSUSDxcxXqpr5yOyllortRwmZSBRwwWBQ+qyQQ6bylwinvoj0gFnoxSU2DM0dG
+         /qew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733114339; x=1733719139;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p7k1BZ3LkaLj8m6wKaz8x/LaePHGLoUdOuQY1P9Ye/I=;
+        b=av0kkR5NuD1tMgg8ZXksmpemWnxrdZl3eUkecRsM3em9zqT2eVSu2GYBUjxLJTq4Vn
+         QU9mPHa4+jPxoljBgWWQlQRh7Z4XYtxNvvzQI2sjZBy+oWIYYXa8J4AbjZNbARsyd1W+
+         gMoTDm4y3izn2Kn5xh5yvyeA3fM7cTradyGRz+9o8szz9XShIjTYOe9iO7xmCfjTpDbL
+         A6cRbhapXRjQW8uXn7PnbbDS4KZqCkoVxlC9qE3pyWrswYc6/Y/k8hiifh9fwRCug7xA
+         3zUyS02WXNeU+86OK5gw1yxWBkjb80yIki6yiRZVWStCcJvTXr2ATVhukzTrT+e28/+N
+         G2ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcklK4C+Ag7ew18FU4TWKLXrjqnS3rrP5HrmE819HwnkWpv0O5E94FAOtmchLQ0eQTNgF/UV1lY+EeEPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdodQuzPLK9sg0ip7dmjTncGl+dplhwHsLb+gWsoADQGHWhaat
+	7FP938M0sZ5t8YnEeABE5iQBgxiAW+Oz5MQkn24E2WEx+czksdIm
+X-Gm-Gg: ASbGncuVquAJ7I90UuD6dHZUiPNszfe/EzcFIIjlQGjkOCiilMyuqafpyepelu/Krl9
+	HVwxDebFM1B6zmSh1gejaKM2irxX4Wo9mYUKs21v7lMZWLs+44MNXBhPr+zG7XnNwbezfafJOJW
+	pxKTgIYBfhUO6FwdjS4Io/Aoo4aUcHpGx6KvTBYQzvu7EKCaDJwTJeRGOQbXi9FQaM5D8TYbqhB
+	0A2n4EZGoad6XJhMBboS6Jbym5sFOUzYvAzwzKNxwbTo9e/m270iWuhYWZAvhHzGcpIuiruhf2x
+	wUa0TQ==
+X-Google-Smtp-Source: AGHT+IHXVfyT1BdSnTTF70SCBQjwOxaCMvZ/ncrM6RiH8cjECeF5BT7bBRexJRpx3COL1r7b0HbH5A==
+X-Received: by 2002:a17:902:ccc4:b0:215:9bce:2c98 with SMTP id d9443c01a7336-2159bce2dc6mr21531515ad.51.1733114337337;
+        Sun, 01 Dec 2024 20:38:57 -0800 (PST)
+Received: from localhost ([58.29.143.236])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215219c9657sm67161845ad.261.2024.12.01.20.38.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Dec 2024 20:38:56 -0800 (PST)
+From: Changwoo Min <multics69@gmail.com>
+X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
+To: tj@kernel.org,
+	void@manifault.com,
+	mingo@redhat.com,
+	peterz@infradead.org
+Cc: changwoo@igalia.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] sched_ext: Support high-performance monotonically non-decreasing clock
+Date: Mon,  2 Dec 2024 13:38:44 +0900
+Message-ID: <20241202043849.1465664-1-changwoo@igalia.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,54 +90,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+Many BPF schedulers (such as scx_central, scx_lavd, scx_rusty, scx_bpfland,
+scx_flash) frequently call bpf_ktime_get_ns() for tracking tasks' runtime
+properties. If supported, bpf_ktime_get_ns() eventually reads a hardware
+timestamp counter (TSC). However, reading a hardware TSC is not
+performant in some hardware platforms, degrading IPC.
 
-For the scheduler to use and prefer AMD preferred core rankings set
-SD_ASYM_PACKING for x86_die_flags().
+This patchset addresses the performance problem of reading hardware TSC
+by leveraging the rq clock in the scheduler core, introducing a
+scx_bpf_clock_get_ns() function for BPF schedulers. Whenever the rq clock
+is fresh and valid, scx_bpf_clock_get_ns() provides the rq clock, which is
+already updated by the scheduler core (update_rq_clock), so it can reduce
+reading the hardware TSC.
 
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- arch/x86/kernel/smpboot.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+When the rq lock is released (rq_unpin_lock) or a long-running
+operations are done by the BPF scheduler (ops.running, ops.update_idle),
+the rq clock is invalidated, so a subsequent scx_bpf_clock_get_ns() call
+gets the fresh sched_clock for the caller.
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index b5a8f0891135b..419e7ae096395 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -62,6 +62,8 @@
- #include <linux/mc146818rtc.h>
- #include <linux/acpi.h>
- 
-+#include <acpi/cppc_acpi.h>
-+
- #include <asm/acpi.h>
- #include <asm/cacheinfo.h>
- #include <asm/desc.h>
-@@ -497,10 +499,19 @@ static int x86_cluster_flags(void)
- 
- static int x86_die_flags(void)
- {
--	if (cpu_feature_enabled(X86_FEATURE_HYBRID_CPU) ||
--	    cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES))
-+	if (cpu_feature_enabled(X86_FEATURE_HYBRID_CPU))
- 		return x86_sched_itmt_flags();
- 
-+	switch (boot_cpu_data.x86_vendor) {
-+	case X86_VENDOR_AMD:
-+	case X86_VENDOR_HYGON:
-+		bool prefcore = false;
-+
-+		amd_detect_prefcore(&prefcore);
-+		if (prefcore || cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES))
-+			return x86_sched_itmt_flags();
-+	};
-+
- 	return 0;
- }
- 
+In addition, scx_bpf_clock_get_ns() guarantees the clock is
+monotonically non-decreasing for the same CPU, so the clock cannot go
+backward in the same CPU.
 
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+Using scx_bpf_clock_get_ns() reduces the number of reading hardware TSC
+by 40-70% (65% for scx_lavd, 58% for scx_bpfland, and 43% for scx_rusty)
+for the following benchmark.
+
+    perf bench -f simple sched messaging -t -g 20 -l 6000
+
+The patchset begins by managing the status of rq clock in the scheduler
+core, then implementing scx_bpf_clock_get_ns(), and finally applying it
+to the BPF schedulers.
+
+ChangeLog v1 -> v2:
+  - Rename SCX_RQ_CLK_UPDATED to SCX_RQ_CLK_VALID to denote the validity
+    of an rq clock clearly.
+  - Rearrange the clock and flags fields in struct scx_rq to make sure
+    they are in the same cacheline to minimize the cache misses 
+  - Add an additional explanation to the commit message in the 2/5 patch
+    describing when the rq clock will be reused with an example.
+  - Fix typos
+  - Rebase the code to the tip of Tejun's sched_ext repo
+
+Changwoo Min (5):
+  sched_ext: Implement scx_rq_clock_update/stale()
+  sched_ext: Manage the validity of scx_rq_clock
+  sched_ext: Implement scx_bpf_clock_get_ns()
+  sched_ext: Add scx_bpf_clock_get_ns() for BPF scheduler
+  sched_ext: Replace bpf_ktime_get_ns() to scx_bpf_clock_get_ns()
+
+ kernel/sched/core.c                      |  6 +-
+ kernel/sched/ext.c                       | 74 ++++++++++++++++++++++++
+ kernel/sched/sched.h                     | 24 +++++++-
+ tools/sched_ext/include/scx/common.bpf.h |  1 +
+ tools/sched_ext/include/scx/compat.bpf.h |  5 ++
+ tools/sched_ext/scx_central.bpf.c        |  4 +-
+ tools/sched_ext/scx_flatcg.bpf.c         |  2 +-
+ 7 files changed, 110 insertions(+), 6 deletions(-)
+
 -- 
-2.43.0
+2.47.1
 
 
