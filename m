@@ -1,72 +1,78 @@
-Return-Path: <linux-kernel+bounces-427524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483F29E0255
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:42:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 753C99E0273
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0661F282A2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:42:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FA95B28E61
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA701FECD0;
-	Mon,  2 Dec 2024 12:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7E71FECC2;
+	Mon,  2 Dec 2024 12:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FGIssFhV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DtT4PH+/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804C11FE471
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848311FECA2;
+	Mon,  2 Dec 2024 12:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733143314; cv=none; b=VXsG5eX8O4bwSX2AAEmHrsCqpG5gIhdg7PMJodANUfgX7KuXfQhcFgGPOW5iDsguIN8YDfVyw4uB7TZQMBLyxQuBtgscGLdqtknF2UCBycAO0LjInT6RVtMQR4lliJKh8s24CxZBcDeytXJ8gSAyFgT9qw0hGCLU30Y09pL5YJk=
+	t=1733143314; cv=none; b=i5MimTkyARPZUa1qiseZd5T+JHNxM41PFf3m4QWTXRBWqxF6JWVj7TXr+IbAzrqt1wJLOAGNfxoKVr8ORV8wLNhmluxiELGMY/I1aaOLaRrLZB8DNaTIRhBRlauSZERByYU/UnF/tY6otM5rTL4fUKlK2C8/pwMTjDvLw3uKpbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733143314; c=relaxed/simple;
-	bh=UFPmX/+DDmzyUu0vzNMW0+U6GR8eBogJyEd182nTk2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WqJY+HGN4h0/ihuaxfzYAemJDGJGfjpzcaPQGsahemLrT6FBn3nXm0eFjuPG1g7CHwLDuQ0tEcy+flLJMuaZTijORAFNaQwSG62YB/R8t/mYtV56atG/EcRacjnmcsZouG7Lxm+0QtUctHaCvN3gp2vOssWAKGWrQOJ8MBhKmcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FGIssFhV; arc=none smtp.client-ip=192.198.163.11
+	bh=/6bKU0R/dnuGLOITYR0+vZxxFxDTHlhCvq2y8NVrENE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NK2toZEhSIeWP1h7ezw3jkYYvfMBMCKqAbHKZ6erQNJF39qeXaPjVMn7Mwt8nrmj5AZ0ptbuRem2qA9K8yNvasYUnIKvY16jU2eB/MSGDVE+f2bBzamK1q6FsDbVsKxZRUuEKwjLiJnKiGF78KvjRcJNTQXMZitFNxH8+t88xcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DtT4PH+/; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1733143312; x=1764679312;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=UFPmX/+DDmzyUu0vzNMW0+U6GR8eBogJyEd182nTk2U=;
-  b=FGIssFhVty18o4KFmB+zO0FTcz5qRZkb0FtH7cX1s0sIvD2MDHlBuskv
-   j6y0hJpuuuC9xK+WDQOCcHQ9mgvynfGkxnZWmNLSYi4t0clpF4hNoOotg
-   kMI2nVQQkmUyJX3MSFlpo3UDgU4CKDAsOJ6EUPyAs7wHsXbSJ1AwClImj
-   ButR6JciCXXVZjuuIUmTGqrMvLGJ15OUPIxkHIvvqR4DsP0SuwksZqHue
-   ZDvEji98GE3tukMqdegUxnEk+5EZXo4L6kZA54YCWGwWxgoX68TwWCDXC
-   Odv1YIbK9StiGd6eQWZgZMSHeCh2PLCwQzQHIkbU1Yhvfx1iXa+Vyrk1v
-   w==;
-X-CSE-ConnectionGUID: g4AVD0blSWO1FwOQ/xm8xQ==
-X-CSE-MsgGUID: vMQ6i2BlSIe7k6tFTxL5eA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="43919568"
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/6bKU0R/dnuGLOITYR0+vZxxFxDTHlhCvq2y8NVrENE=;
+  b=DtT4PH+/8VXQLqCpXVMu1xIQNdarDAqvxxdB052lNUVT4KZDnjR12LeK
+   psH1iSHjKspfD+ldCKvxglbkXDH4D7IMPov7bII6dFB+s0f82UQkKLqEk
+   Gx8QKmqRcVCH+B2UANS1zXxR0MyhGnrJZm+JPy3FOfCCYV5rPmGrHD3lr
+   fpuwRSt1jWsMzlYidW4aKEMX15cCjKEOuNBkvWhSlAt95FYrLEdGMGzhw
+   WF2FZSJA/fg6M2tU/ehZA9UNe0s20gRhF/ABuOV2hNJOxTnmqIeyvaFmQ
+   9MRNrX1yTVbgRfnjCHYqg856e7n1GQEFK9frfjUHhXGm5BU2whHlDuelV
+   g==;
+X-CSE-ConnectionGUID: 1+oW0eAyTOmDyDkD87iNBA==
+X-CSE-MsgGUID: 5NTI6/4MSzKQYN0GpQbgyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="20899669"
 X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="43919568"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 04:41:51 -0800
-X-CSE-ConnectionGUID: VfW20/V2TLq7nO8Swdkg6Q==
-X-CSE-MsgGUID: RMPrlQ4qTxih5ttKsDJH2A==
+   d="scan'208";a="20899669"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 04:41:51 -0800
+X-CSE-ConnectionGUID: mcGNoGCeS0urFo3Yqu+tLA==
+X-CSE-MsgGUID: s3MeUe3iTtmJsdAwONITmA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="116355050"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="98125338"
 Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 02 Dec 2024 04:41:49 -0800
+  by orviesa003.jf.intel.com with ESMTP; 02 Dec 2024 04:41:49 -0800
 Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tI5kJ-0002QM-0U;
-	Mon, 02 Dec 2024 12:41:47 +0000
-Date: Mon, 2 Dec 2024 20:41:17 +0800
+	id 1tI5kI-0002QD-2j;
+	Mon, 02 Dec 2024 12:41:46 +0000
+Date: Mon, 2 Dec 2024 20:41:18 +0800
 From: kernel test robot <lkp@intel.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dave Airlie <airlied@redhat.com>
-Subject: drivers/gpu/drm/mediatek/mtk_drm_drv.c:1092:2-3: Unneeded semicolon
-Message-ID: <202412022048.kY2ZhxZ4-lkp@intel.com>
+To: chang hao <ot_chhao.chang@mediatek.com>, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, sean.wang@kernel.org,
+	linus.walleij@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Chhao Chang <ot_chhao.chang@mediatek.com>
+Subject: Re: [PATCH] pinctrl: mediatek: add eint new design for mt8196
+Message-ID: <202412022033.G153neOU-lkp@intel.com>
+References: <20241202085024.25375-1-ot_chhao.chang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,195 +81,224 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241202085024.25375-1-ot_chhao.chang@mediatek.com>
 
-Hi Dave,
+Hi chang,
 
-First bad commit (maybe != root cause):
+kernel test robot noticed the following build errors:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e70140ba0d2b1a30467d4af6bcfe761327b9ec95
-commit: 9bed494cd627cecab1114ce0416c9ddb3ad66064 Merge tag 'mediatek-drm-next-6.13' of https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux into drm-next
-date:   4 weeks ago
-config: nios2-randconfig-r061-20241202 (https://download.01.org/0day-ci/archive/20241202/202412022048.kY2ZhxZ4-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 14.2.0
+[auto build test ERROR on linusw-pinctrl/devel]
+[also build test ERROR on linusw-pinctrl/for-next linus/master v6.13-rc1 next-20241128]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/chang-hao/pinctrl-mediatek-add-eint-new-design-for-mt8196/20241202-165544
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20241202085024.25375-1-ot_chhao.chang%40mediatek.com
+patch subject: [PATCH] pinctrl: mediatek: add eint new design for mt8196
+config: arc-randconfig-001-20241202 (https://download.01.org/0day-ci/archive/20241202/202412022033.G153neOU-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241202/202412022033.G153neOU-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412022048.kY2ZhxZ4-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412022033.G153neOU-lkp@intel.com/
 
-cocci warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/mediatek/mtk_drm_drv.c:1092:2-3: Unneeded semicolon
+All error/warnings (new ones prefixed by >>):
 
-vim +1092 drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> drivers/pinctrl/mediatek/mtk-eint.c:246:6: warning: no previous prototype for 'mt6983_eint_ack' [-Wmissing-prototypes]
+     246 | void mt6983_eint_ack(struct irq_data *d)
+         |      ^~~~~~~~~~~~~~~
+   drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_do_suspend':
+>> drivers/pinctrl/mediatek/mtk-eint.c:605:9: error: implicit declaration of function 'dsb' [-Werror=implicit-function-declaration]
+     605 |         dsb(sy);
+         |         ^~~
+>> drivers/pinctrl/mediatek/mtk-eint.c:605:13: error: 'sy' undeclared (first use in this function); did you mean 's8'?
+     605 |         dsb(sy);
+         |             ^~
+         |             s8
+   drivers/pinctrl/mediatek/mtk-eint.c:605:13: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_do_resume':
+   drivers/pinctrl/mediatek/mtk-eint.c:626:13: error: 'sy' undeclared (first use in this function); did you mean 's8'?
+     626 |         dsb(sy);
+         |             ^~
+         |             s8
+   drivers/pinctrl/mediatek/mtk-eint.c: At top level:
+>> drivers/pinctrl/mediatek/mtk-eint.c:704:14: warning: no previous prototype for 'mtk_eint_get_debounce_en' [-Wmissing-prototypes]
+     704 | unsigned int mtk_eint_get_debounce_en(struct mtk_eint *eint,
+         |              ^~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/pinctrl/mediatek/mtk-eint.c:727:14: warning: no previous prototype for 'mtk_eint_get_debounce_value' [-Wmissing-prototypes]
+     727 | unsigned int mtk_eint_get_debounce_value(struct mtk_eint *eint,
+         |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1044  
-119f5173628aa7 CK Hu                      2016-01-04  1045  static int mtk_drm_probe(struct platform_device *pdev)
-119f5173628aa7 CK Hu                      2016-01-04  1046  {
-119f5173628aa7 CK Hu                      2016-01-04  1047  	struct device *dev = &pdev->dev;
-667c769246b01c Enric Balletbo i Serra     2020-03-25  1048  	struct device_node *phandle = dev->parent->of_node;
-667c769246b01c Enric Balletbo i Serra     2020-03-25  1049  	const struct of_device_id *of_id;
-119f5173628aa7 CK Hu                      2016-01-04  1050  	struct mtk_drm_private *private;
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1051  	struct mtk_mmsys_driver_data *mtk_drm_data;
-119f5173628aa7 CK Hu                      2016-01-04  1052  	struct device_node *node;
-119f5173628aa7 CK Hu                      2016-01-04  1053  	struct component_match *match = NULL;
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1054  	struct platform_device *ovl_adaptor;
-119f5173628aa7 CK Hu                      2016-01-04  1055  	int ret;
-119f5173628aa7 CK Hu                      2016-01-04  1056  	int i;
-119f5173628aa7 CK Hu                      2016-01-04  1057  
-119f5173628aa7 CK Hu                      2016-01-04  1058  	private = devm_kzalloc(dev, sizeof(*private), GFP_KERNEL);
-119f5173628aa7 CK Hu                      2016-01-04  1059  	if (!private)
-119f5173628aa7 CK Hu                      2016-01-04  1060  		return -ENOMEM;
-119f5173628aa7 CK Hu                      2016-01-04  1061  
-2c758e301ed95a Enric Balletbo i Serra     2020-03-25  1062  	private->mmsys_dev = dev->parent;
-2c758e301ed95a Enric Balletbo i Serra     2020-03-25  1063  	if (!private->mmsys_dev) {
-2c758e301ed95a Enric Balletbo i Serra     2020-03-25  1064  		dev_err(dev, "Failed to get MMSYS device\n");
-2c758e301ed95a Enric Balletbo i Serra     2020-03-25  1065  		return -ENODEV;
-119f5173628aa7 CK Hu                      2016-01-04  1066  	}
-119f5173628aa7 CK Hu                      2016-01-04  1067  
-667c769246b01c Enric Balletbo i Serra     2020-03-25  1068  	of_id = of_match_node(mtk_drm_of_ids, phandle);
-667c769246b01c Enric Balletbo i Serra     2020-03-25  1069  	if (!of_id)
-667c769246b01c Enric Balletbo i Serra     2020-03-25  1070  		return -ENODEV;
-667c769246b01c Enric Balletbo i Serra     2020-03-25  1071  
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1072  	mtk_drm_data = (struct mtk_mmsys_driver_data *)of_id->data;
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1073  	if (!mtk_drm_data)
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1074  		return -EINVAL;
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1075  
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1076  	/* Try to build the display pipeline from devicetree graphs */
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1077  	if (of_graph_is_present(phandle)) {
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1078  		dev_dbg(dev, "Building display pipeline for MMSYS %u\n",
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1079  			mtk_drm_data->mmsys_id);
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1080  		private->data = devm_kmemdup(dev, mtk_drm_data,
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1081  					     sizeof(*mtk_drm_data), GFP_KERNEL);
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1082  		if (!private->data)
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1083  			return -ENOMEM;
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1084  
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1085  		ret = mtk_drm_of_ddp_path_build(dev, phandle, private->data);
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1086  		if (ret)
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1087  			return ret;
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1088  	} else {
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1089  		/* No devicetree graphs support: go with hardcoded paths if present */
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1090  		dev_dbg(dev, "Using hardcoded paths for MMSYS %u\n", mtk_drm_data->mmsys_id);
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1091  		private->data = mtk_drm_data;
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17 @1092  	};
-667c769246b01c Enric Balletbo i Serra     2020-03-25  1093  
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1094  	private->all_drm_private = devm_kmalloc_array(dev, private->data->mmsys_dev_num,
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1095  						      sizeof(*private->all_drm_private),
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1096  						      GFP_KERNEL);
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1097  	if (!private->all_drm_private)
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1098  		return -ENOMEM;
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1099  
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1100  	/* Bringup ovl_adaptor */
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1101  	if (mtk_drm_find_mmsys_comp(private, DDP_COMPONENT_DRM_OVL_ADAPTOR)) {
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1102  		ovl_adaptor = platform_device_register_data(dev, "mediatek-disp-ovl-adaptor",
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1103  							    PLATFORM_DEVID_AUTO,
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1104  							    (void *)private->mmsys_dev,
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1105  							    sizeof(*private->mmsys_dev));
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1106  		private->ddp_comp[DDP_COMPONENT_DRM_OVL_ADAPTOR].dev = &ovl_adaptor->dev;
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1107  		mtk_ddp_comp_init(NULL, &private->ddp_comp[DDP_COMPONENT_DRM_OVL_ADAPTOR],
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1108  				  DDP_COMPONENT_DRM_OVL_ADAPTOR);
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1109  		component_match_add(dev, &match, compare_dev, &ovl_adaptor->dev);
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1110  	}
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1111  
-119f5173628aa7 CK Hu                      2016-01-04  1112  	/* Iterate over sibling DISP function blocks */
-667c769246b01c Enric Balletbo i Serra     2020-03-25  1113  	for_each_child_of_node(phandle->parent, node) {
-119f5173628aa7 CK Hu                      2016-01-04  1114  		enum mtk_ddp_comp_type comp_type;
-119f5173628aa7 CK Hu                      2016-01-04  1115  		int comp_id;
-119f5173628aa7 CK Hu                      2016-01-04  1116  
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1117  		ret = mtk_drm_of_get_ddp_comp_type(node, &comp_type);
-4c932840db1de4 AngeloGioacchino Del Regno 2024-10-17  1118  		if (ret)
-119f5173628aa7 CK Hu                      2016-01-04  1119  			continue;
-119f5173628aa7 CK Hu                      2016-01-04  1120  
-119f5173628aa7 CK Hu                      2016-01-04  1121  		if (!of_device_is_available(node)) {
-4bf99144d2b407 Rob Herring                2017-07-18  1122  			dev_dbg(dev, "Skipping disabled component %pOF\n",
-4bf99144d2b407 Rob Herring                2017-07-18  1123  				node);
-119f5173628aa7 CK Hu                      2016-01-04  1124  			continue;
-119f5173628aa7 CK Hu                      2016-01-04  1125  		}
-119f5173628aa7 CK Hu                      2016-01-04  1126  
-119f5173628aa7 CK Hu                      2016-01-04  1127  		if (comp_type == MTK_DISP_MUTEX) {
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1128  			int id;
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1129  
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1130  			id = of_alias_get_id(node, "mutex");
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1131  			if (id < 0 || id == private->data->mmsys_id) {
-119f5173628aa7 CK Hu                      2016-01-04  1132  				private->mutex_node = of_node_get(node);
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1133  				dev_dbg(dev, "get mutex for mmsys %d", private->data->mmsys_id);
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1134  			}
-119f5173628aa7 CK Hu                      2016-01-04  1135  			continue;
-119f5173628aa7 CK Hu                      2016-01-04  1136  		}
-119f5173628aa7 CK Hu                      2016-01-04  1137  
-119f5173628aa7 CK Hu                      2016-01-04  1138  		comp_id = mtk_ddp_comp_get_id(node, comp_type);
-119f5173628aa7 CK Hu                      2016-01-04  1139  		if (comp_id < 0) {
-4bf99144d2b407 Rob Herring                2017-07-18  1140  			dev_warn(dev, "Skipping unknown component %pOF\n",
-4bf99144d2b407 Rob Herring                2017-07-18  1141  				 node);
-119f5173628aa7 CK Hu                      2016-01-04  1142  			continue;
-119f5173628aa7 CK Hu                      2016-01-04  1143  		}
-119f5173628aa7 CK Hu                      2016-01-04  1144  
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1145  		if (!mtk_drm_find_mmsys_comp(private, comp_id))
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1146  			continue;
-1ef7ed48356cd5 Nancy.Lin                  2023-03-21  1147  
-119f5173628aa7 CK Hu                      2016-01-04  1148  		private->comp_node[comp_id] = of_node_get(node);
-119f5173628aa7 CK Hu                      2016-01-04  1149  
-119f5173628aa7 CK Hu                      2016-01-04  1150  		/*
-bd448b8867b7e0 jason-jh.lin               2022-05-26  1151  		 * Currently only the AAL, CCORR, COLOR, GAMMA, MERGE, OVL, RDMA, DSI, and DPI
-072a4cb512e71c Yongqiang Niu              2021-02-02  1152  		 * blocks have separate component platform drivers and initialize their own
-119f5173628aa7 CK Hu                      2016-01-04  1153  		 * DDP component structure. The others are initialized here.
-119f5173628aa7 CK Hu                      2016-01-04  1154  		 */
-78d1783c324345 Yongqiang Niu              2021-07-16  1155  		if (comp_type == MTK_DISP_AAL ||
-78d1783c324345 Yongqiang Niu              2021-07-16  1156  		    comp_type == MTK_DISP_CCORR ||
-072a4cb512e71c Yongqiang Niu              2021-02-02  1157  		    comp_type == MTK_DISP_COLOR ||
-69a4237ab1d13a Yongqiang Niu              2021-01-29  1158  		    comp_type == MTK_DISP_GAMMA ||
-bd448b8867b7e0 jason-jh.lin               2022-05-26  1159  		    comp_type == MTK_DISP_MERGE ||
-5ac5895a84d92b yt.shen@mediatek.com       2017-06-16  1160  		    comp_type == MTK_DISP_OVL ||
-b17bdd0d7a733c Yongqiang Niu              2019-08-29  1161  		    comp_type == MTK_DISP_OVL_2L ||
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1162  		    comp_type == MTK_DISP_OVL_ADAPTOR ||
-119f5173628aa7 CK Hu                      2016-01-04  1163  		    comp_type == MTK_DISP_RDMA ||
-d86c1568910e70 Guillaume Ranquet          2022-07-05  1164  		    comp_type == MTK_DP_INTF ||
-73d3724745db79 jason-jh.lin               2021-11-30  1165  		    comp_type == MTK_DPI ||
-73d3724745db79 jason-jh.lin               2021-11-30  1166  		    comp_type == MTK_DSI) {
-4bf99144d2b407 Rob Herring                2017-07-18  1167  			dev_info(dev, "Adding component match for %pOF\n",
-4bf99144d2b407 Rob Herring                2017-07-18  1168  				 node);
-05399aa063b19a Yong Wu                    2022-02-14  1169  			drm_of_component_match_add(dev, &match, component_compare_of,
-97ac0e47aed5f6 Russell King               2016-10-19  1170  						   node);
-119f5173628aa7 CK Hu                      2016-01-04  1171  		}
-119f5173628aa7 CK Hu                      2016-01-04  1172  
-ff1395609e20c1 CK Hu                      2020-10-13  1173  		ret = mtk_ddp_comp_init(node, &private->ddp_comp[comp_id], comp_id);
-165d42c012be69 Nishka Dasgupta            2019-07-06  1174  		if (ret) {
-165d42c012be69 Nishka Dasgupta            2019-07-06  1175  			of_node_put(node);
-119f5173628aa7 CK Hu                      2016-01-04  1176  			goto err_node;
-165d42c012be69 Nishka Dasgupta            2019-07-06  1177  		}
-119f5173628aa7 CK Hu                      2016-01-04  1178  	}
-119f5173628aa7 CK Hu                      2016-01-04  1179  
-119f5173628aa7 CK Hu                      2016-01-04  1180  	if (!private->mutex_node) {
-119f5173628aa7 CK Hu                      2016-01-04  1181  		dev_err(dev, "Failed to find disp-mutex node\n");
-119f5173628aa7 CK Hu                      2016-01-04  1182  		ret = -ENODEV;
-119f5173628aa7 CK Hu                      2016-01-04  1183  		goto err_node;
-119f5173628aa7 CK Hu                      2016-01-04  1184  	}
-119f5173628aa7 CK Hu                      2016-01-04  1185  
-119f5173628aa7 CK Hu                      2016-01-04  1186  	pm_runtime_enable(dev);
-119f5173628aa7 CK Hu                      2016-01-04  1187  
-119f5173628aa7 CK Hu                      2016-01-04  1188  	platform_set_drvdata(pdev, private);
-119f5173628aa7 CK Hu                      2016-01-04  1189  
-119f5173628aa7 CK Hu                      2016-01-04  1190  	ret = component_master_add_with_match(dev, &mtk_drm_ops, match);
-119f5173628aa7 CK Hu                      2016-01-04  1191  	if (ret)
-119f5173628aa7 CK Hu                      2016-01-04  1192  		goto err_pm;
-119f5173628aa7 CK Hu                      2016-01-04  1193  
-119f5173628aa7 CK Hu                      2016-01-04  1194  	return 0;
-119f5173628aa7 CK Hu                      2016-01-04  1195  
-119f5173628aa7 CK Hu                      2016-01-04  1196  err_pm:
-119f5173628aa7 CK Hu                      2016-01-04  1197  	pm_runtime_disable(dev);
-119f5173628aa7 CK Hu                      2016-01-04  1198  err_node:
-119f5173628aa7 CK Hu                      2016-01-04  1199  	of_node_put(private->mutex_node);
-0d9eee9118b77e Nancy.Lin                  2023-03-21  1200  	for (i = 0; i < DDP_COMPONENT_DRM_ID_MAX; i++)
-119f5173628aa7 CK Hu                      2016-01-04  1201  		of_node_put(private->comp_node[i]);
-119f5173628aa7 CK Hu                      2016-01-04  1202  	return ret;
-119f5173628aa7 CK Hu                      2016-01-04  1203  }
-119f5173628aa7 CK Hu                      2016-01-04  1204  
 
-:::::: The code at line 1092 was first introduced by commit
-:::::: 4c932840db1de4ea9639eceaaf6d59415b8a7d59 drm/mediatek: Implement OF graphs support for display paths
+vim +/dsb +605 drivers/pinctrl/mediatek/mtk-eint.c
 
-:::::: TO: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-:::::: CC: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+   589	
+   590	int mtk_eint_do_suspend(struct mtk_eint *eint)
+   591	{
+   592		unsigned int i, j, port;
+   593	
+   594		for (i = 0; i < eint->instance_number; i++) {
+   595			struct mtk_eint_instance inst = eint->instances[i];
+   596	
+   597			for (j = 0; j < inst.number; j += 32) {
+   598				port = j >> 5;
+   599				writel_relaxed(~inst.wake_mask[port],
+   600					       inst.base + port * 4 + eint->comp->regs->mask_set);
+   601				writel_relaxed(inst.wake_mask[port],
+   602					       inst.base + port * 4 + eint->comp->regs->mask_clr);
+   603			}
+   604		}
+ > 605		dsb(sy);
+   606	
+   607		return 0;
+   608	}
+   609	EXPORT_SYMBOL_GPL(mtk_eint_do_suspend);
+   610	
+   611	int mtk_eint_do_resume(struct mtk_eint *eint)
+   612	{
+   613		unsigned int i, j, port;
+   614	
+   615		for (i = 0; i < eint->instance_number; i++) {
+   616			struct mtk_eint_instance inst = eint->instances[i];
+   617	
+   618			for (j = 0; j < inst.number; j += 32) {
+   619				port = j >> 5;
+   620				writel_relaxed(~inst.cur_mask[port],
+   621					       inst.base + port * 4 + eint->comp->regs->mask_set);
+   622				writel_relaxed(inst.cur_mask[port],
+   623					       inst.base + port * 4 + eint->comp->regs->mask_clr);
+   624			}
+   625		}
+   626		dsb(sy);
+   627	
+   628		return 0;
+   629	}
+   630	EXPORT_SYMBOL_GPL(mtk_eint_do_resume);
+   631	
+   632	int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_num,
+   633				  unsigned int debounce)
+   634	{
+   635		int virq, eint_offset;
+   636		unsigned int set_offset, bit, clr_bit, clr_offset, rst, i, unmask,
+   637			     dbnc;
+   638		static const unsigned int debounce_time[] = { 156, 313, 625, 1250,
+   639			20000, 40000, 80000, 160000, 320000, 640000 };
+   640		struct irq_data *d;
+   641		unsigned int instance, index;
+   642		void __iomem *reg;
+   643	
+   644		/*
+   645		 * Due to different number of bit field, we only decode
+   646		 * the coordinate here, instead of get the VA.
+   647		 */
+   648		reg = mtk_eint_get_offset(eint, eint_num, MTK_EINT_NO_OFFSET,
+   649					  &instance, &index);
+   650	
+   651		if (!reg) {
+   652			dev_err(eint->dev, "%s invalid eint_num %lu\n",
+   653				__func__, eint_num);
+   654			return 0;
+   655		}
+   656	
+   657		virq = irq_find_mapping(eint->domain, eint_num);
+   658		eint_offset = (index % 4) * 8;
+   659		d = irq_get_irq_data(virq);
+   660	
+   661		reg = eint->instances[instance].base;
+   662		set_offset = (index / 4) * 4 + eint->comp->regs->dbnc_set;
+   663		clr_offset = (index / 4) * 4 + eint->comp->regs->dbnc_clr;
+   664	
+   665		if (!mtk_eint_can_en_debounce(eint, eint_num))
+   666			return -EINVAL;
+   667	
+   668		/*
+   669		 * Check eint number to avoid access out-of-range
+   670		 */
+   671		dbnc = ARRAY_SIZE(debounce_time) - 1;
+   672		for (i = 0; i < ARRAY_SIZE(debounce_time); i++) {
+   673			if (debounce <= debounce_time[i]) {
+   674				dbnc = i;
+   675				break;
+   676			}
+   677		}
+   678	
+   679		if (!mtk_eint_get_mask(eint, eint_num)) {
+   680			mtk_eint_mask(d);
+   681			unmask = 1;
+   682		} else {
+   683			unmask = 0;
+   684		}
+   685	
+   686		clr_bit = 0xff << eint_offset;
+   687		writel(clr_bit, reg + clr_offset);
+   688	
+   689		bit = ((dbnc << MTK_EINT_DBNC_SET_DBNC_BITS)
+   690			| MTK_EINT_DBNC_SET_EN) << eint_offset;
+   691		rst = MTK_EINT_DBNC_RST_BIT << eint_offset;
+   692		writel(rst | bit, reg + set_offset);
+   693	
+   694		/* Delay should be (8T @ 32k) from dbc rst to work correctly. */
+   695		udelay(250);
+   696	
+   697		if (unmask == 1)
+   698			mtk_eint_unmask(d);
+   699	
+   700		return 0;
+   701	}
+   702	EXPORT_SYMBOL_GPL(mtk_eint_set_debounce);
+   703	
+ > 704	unsigned int mtk_eint_get_debounce_en(struct mtk_eint *eint,
+   705					      unsigned int eint_num)
+   706	{
+   707		unsigned int instance, index, bit;
+   708		void __iomem *reg;
+   709	
+   710		reg = mtk_eint_get_offset(eint, eint_num, MTK_EINT_NO_OFFSET,
+   711					  &instance, &index);
+   712	
+   713		if (!reg) {
+   714			dev_err(eint->dev, "%s invalid eint_num %d\n",
+   715				__func__, eint_num);
+   716			return 0;
+   717		}
+   718	
+   719		reg = eint->instances[instance].base +
+   720			(index / 4) * 4 + eint->comp->regs->dbnc_ctrl;
+   721	
+   722		bit = MTK_EINT_DBNC_SET_EN << ((index % 4) * 8);
+   723	
+   724		return (readl(reg) & bit) ? 1 : 0;
+   725	}
+   726	
+ > 727	unsigned int mtk_eint_get_debounce_value(struct mtk_eint *eint,
+   728						 unsigned int eint_num)
+   729	{
+   730		unsigned int instance, index, mask, offset;
+   731		void __iomem *reg;
+   732	
+   733		reg = mtk_eint_get_offset(eint, eint_num, MTK_EINT_NO_OFFSET,
+   734					  &instance, &index);
+   735	
+   736		if (!reg) {
+   737			dev_err(eint->dev, "%s invalid eint_num %d\n",
+   738				__func__, eint_num);
+   739			return 0;
+   740		}
+   741	
+   742		reg = eint->instances[instance].base +
+   743			(index / 4) * 4 + eint->comp->regs->dbnc_ctrl;
+   744	
+   745		offset = MTK_EINT_DBNC_SET_DBNC_BITS + ((index % 4) * 8);
+   746		mask = 0xf << offset;
+   747	
+   748		return ((readl(reg) & mask) >> offset);
+   749	}
+   750	
 
 -- 
 0-DAY CI Kernel Test Service
