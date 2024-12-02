@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-427326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE6D9E0021
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:21:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3A99DFFE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:14:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A4BB2474B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:13:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA77160EBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47F61FDE14;
-	Mon,  2 Dec 2024 11:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m34HbNQo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C571FCFFD;
+	Mon,  2 Dec 2024 11:14:10 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86261FA167;
-	Mon,  2 Dec 2024 11:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFB41FCFE7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138019; cv=none; b=p9HU53wk+UlKsv7Uc/iXmQzALEkadtNyTQHUAdmOBJooLeLa5WTLXAM9uv3Swzs5VTEUwgiKRSpmZW1eRBNQhcJOdWzXd7IxQp2ShwIiuU4NS4tDIib9Mw19+AP0lnFUnIkHRtatBC6M3wf6qJ6+jpyq89ruXkZdV+1LvESu4mU=
+	t=1733138049; cv=none; b=hlYNnqNzn7yK94aILZNP/eqZHT27cIqFx435KEL5WeFBwb7KkTYpuWUvcQwXIK/139WcBVdBxTdARQpwiRslc88nb6k8vHhNkv6n4QjiiMiFMVW/0gCbgzQWnZluQuDgBxN9V+4WMpD9Z4SE2UfS4AgsQthunibmSzkTzXZEW0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138019; c=relaxed/simple;
-	bh=RNC+kkS0e2Xbu+AuY957Pz/SQYrDMXQ+AGut6URecdw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KAan+Ad4JSd65je9stZS6MOu2FLmhx8FuXxvhEiQyO1CMRjc/a1fyTrvmhEXtzPAkSLoNomhQ3iqjU2Lq+ZxkTErhvGkHcEOQdHha9956gf0PbZDO8uHhog49GZYYf4zl8UQfVkOy8BQbn/54h7ESatrqUQC8gb9ilIqBTQ5qz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m34HbNQo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC63C4CED1;
-	Mon,  2 Dec 2024 11:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733138018;
-	bh=RNC+kkS0e2Xbu+AuY957Pz/SQYrDMXQ+AGut6URecdw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=m34HbNQoLpYYY+m6HnBuwB74SsFteM2zAyvSHojwuscWxDzyWd6npdcdkWyK/VBPo
-	 +e8K5A/NBI8xDheoFF+2dO5fD2m/IHuQI2D8Jemvt6YV1VhZqAehAHyoQG/3Ix+5nU
-	 IfcGK9YKV6sZUL9yBRINaR4yu9oVv05c7XCbLYgO8HtRk/QLUt1P7DS/tLl9wfJ1Ey
-	 kjGlve/mq4nFY73IFj5P/Sz7DTXkT7dfv/mMriT2fZvoxBU5748qPkqCj0Eut70rku
-	 Eg8vmPNuwKyRNrf9smKH+XAZEdrq22zOAJA/Rhk3tMvi3QbIUAKsM/IFZpFOlYkK9A
-	 Q5KhDY9Hh13AQ==
-Message-ID: <fa3ee895-5353-44f5-b816-9d17b6a7d199@kernel.org>
-Date: Mon, 2 Dec 2024 12:13:29 +0100
+	s=arc-20240116; t=1733138049; c=relaxed/simple;
+	bh=/x9JeNifXoxbdAweEfQu4IEi5Jh/IFckW8ZgEWTgTd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bFxhh334lDkc190w4BDRexMy2WPIHmi+1IeMGaoykKCbLhaW4FjT83uMa0YesnbVPIvocD5Uyevoa+EALl0joI5z8yxtyQlQEN3KxOtYXKMx2DgKnq1tuuGaBQZXPhXAqD83DY7UXTbFPZBrK3tauGYbARa3rkBu4Qqt9VyD7zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Y21LM4zCXzPpxH;
+	Mon,  2 Dec 2024 19:11:07 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9BFFF1800A2;
+	Mon,  2 Dec 2024 19:13:56 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 2 Dec 2024 19:13:55 +0800
+Message-ID: <a69fa510-3729-4526-8b74-9c03bdd48369@huawei.com>
+Date: Mon, 2 Dec 2024 19:13:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,124 +47,253 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
- konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
- linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
- vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
- Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
- krzk+dt@kernel.org, robh@kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
- <20241129144357.2008465-2-quic_msavaliy@quicinc.com>
- <db428697-a9dc-46e1-abbe-73341306403f@kernel.org>
- <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
- <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
- <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
- <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v5 drm-dp 5/5] drm/hisilicon/hibmc: add dp module in hibmc
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20241118142805.3326443-1-shiyongbang@huawei.com>
+ <20241118142805.3326443-6-shiyongbang@huawei.com>
+ <mdz2qe2lksowfzwxd5wfdynrsdsyzwjyism6qb5zozk2yb5tx5@zqghgeogothb>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <mdz2qe2lksowfzwxd5wfdynrsdsyzwjyism6qb5zozk2yb5tx5@zqghgeogothb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-On 02/12/2024 12:04, Krzysztof Kozlowski wrote:
-> On 02/12/2024 11:38, Mukesh Kumar Savaliya wrote:
->>>
->>> Come with one flag or enum, if needed, covering all your cases like this.
->>>
->> Let me explain, this feature is one of the additional software case 
->> adding on base protocol support. if we dont have more than one usecase 
->> or repurposing this feature, why do we need to add enums ? I see one 
->> flag gpi_mode but it's internal to driver not exposed to user or expose 
->> any usecase/feature.
+> On Mon, Nov 18, 2024 at 10:28:05PM +0800, Yongbang Shi wrote:
+>> From: baihan li <libaihan@huawei.com>
 >>
->> Below was our earlier context, just wanted to add for clarity.
->> --
->>  > Is sharing of IP blocks going to be also for other devices? If yes, then
->>  > this should be one property for all Qualcomm devices. If not, then be
->>  > sure that this is the case because I will bring it up if you come with
->>  > one more solution for something else.
-> 
-> 
-> You keep repeating the same. You won't receive any other answer.
-> 
->>  >
->> IP blocks like SE can be shared. Here we are talking about I2C sharing.
->> In future it can be SPI sharing. But design wise it fits better to add
->> flag per SE node. Same we shall be adding for SPI too in future.
-> 
-> 
-> How flag per SE node is relevant? I did not ask to move the property.
-> 
+>> To support DP interface displaying in hibmc driver. Add
+>> a encoder and connector for DP modual.
 >>
->> Please let me know your further suggestions.
-> We do not talk about I2C or SPI here only. We talk about entire SoC.
-> Since beginning. Find other patch proposals and align with rest of
-> Qualcomm developers so that you come with only one definition for this
-> feature/characteristic. Or do you want to say that I am free to NAK all
-> further properties duplicating this one?
-> 
-> Please confirm that you Qualcomm engineers understand the last statement
-> and that every block will use se-shared, even if we speak about UFS for
-> example.
-> 
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>> ---
+>> ChangeLog:
+>> v3 -> v4:
+>>    - static inline hibmc_dp_prepare(), suggested by Dmitry Baryshkov.
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 118 ++++++++++++++++++
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  12 ++
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   5 +
+>>   4 files changed, 136 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> index 214228052ccf..95a4ed599d98 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> @@ -1,5 +1,5 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+>> -	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o
+>> +	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o hibmc_drm_dp.o
+>>   
+>>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> new file mode 100644
+>> index 000000000000..603d6b198a54
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> @@ -0,0 +1,118 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +// Copyright (c) 2024 Hisilicon Limited.
+>> +
+>> +#include <linux/io.h>
+>> +
+>> +#include <drm/drm_probe_helper.h>
+>> +#include <drm/drm_simple_kms_helper.h>
+>> +#include <drm/drm_atomic_helper.h>
+>> +#include <drm/drm_modes.h>
+>> +#include <drm/drm_drv.h>
+>> +#include <drm/drm_edid.h>
+>> +
+>> +#include "hibmc_drm_drv.h"
+>> +#include "dp/dp_hw.h"
+>> +
+>> +static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>> +{
+>> +	int count;
+>> +
+>> +	count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
+>> +				     connector->dev->mode_config.max_height);
+>> +	drm_set_preferred_mode(connector, 1024, 768); // temporary implementation
+> Ideally this should be mentioned in the commit message.
+>
+>> +
+>> +	return count;
+>> +}
+>> +
+>> +static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+>> +	.get_modes = hibmc_dp_connector_get_modes,
+>> +};
+>> +
+>> +static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
+>> +	.reset = drm_atomic_helper_connector_reset,
+>> +	.fill_modes = drm_helper_probe_single_connector_modes,
+>> +	.destroy = drm_connector_cleanup,
+>> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+>> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> No .detect / .detect_ctx ? No HPD support? Is it being targeted the DP
+> or eDP cases?
 
-I think I was pretty clear also 2 months ago what do I expect from this:
+Hi Dmitry,
+Thanks for your asking. Yes, I will add hpd and get edid functions in next patch,
+and I will mention these in the commit message in v6.
 
-https://lore.kernel.org/all/52f83419-cc5e-49f3-90a7-26a5b4ddd5a0@kernel.org/
+Sincerely,
+Baihan Li
 
 
-I do not see this addressing qcom-wide way at all. Four new versions of
-patch and you still did not address first fedback you got.
-
-
-Best regards,
-Krzysztof
+>> +};
+>> +
+>> +static inline int hibmc_dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
+>> +{
+>> +	int ret;
+>> +
+>> +	hibmc_dp_display_en(dp, false);
+>> +
+>> +	ret = hibmc_dp_mode_set(dp, mode);
+>> +	if (ret)
+>> +		drm_err(dp->drm_dev, "hibmc dp mode set failed: %d\n", ret);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void hibmc_dp_encoder_enable(struct drm_encoder *drm_encoder,
+>> +				    struct drm_atomic_state *state)
+>> +{
+>> +	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
+>> +	struct drm_display_mode *mode = &drm_encoder->crtc->state->mode;
+>> +
+>> +	if (hibmc_dp_prepare(dp, mode))
+>> +		return;
+>> +
+>> +	hibmc_dp_display_en(dp, true);
+>> +}
+>> +
+>> +static void hibmc_dp_encoder_disable(struct drm_encoder *drm_encoder,
+>> +				     struct drm_atomic_state *state)
+>> +{
+>> +	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
+>> +
+>> +	hibmc_dp_display_en(dp, false);
+>> +}
+>> +
+>> +static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
+>> +	.atomic_enable = hibmc_dp_encoder_enable,
+>> +	.atomic_disable = hibmc_dp_encoder_disable,
+>> +};
+>> +
+>> +int hibmc_dp_init(struct hibmc_drm_private *priv)
+>> +{
+>> +	struct drm_device *dev = &priv->dev;
+>> +	struct drm_crtc *crtc = &priv->crtc;
+>> +	struct hibmc_dp *dp = &priv->dp;
+>> +	struct drm_connector *connector = &dp->connector;
+>> +	struct drm_encoder *encoder = &dp->encoder;
+>> +	int ret;
+>> +
+>> +	dp->mmio = priv->mmio;
+>> +	dp->drm_dev = dev;
+>> +
+>> +	ret = hibmc_dp_hw_init(&priv->dp);
+>> +	if (ret) {
+>> +		drm_err(dev, "hibmc dp hw init failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	hibmc_dp_display_en(&priv->dp, false);
+>> +
+>> +	encoder->possible_crtcs = drm_crtc_mask(crtc);
+>> +	ret = drmm_encoder_init(dev, encoder, NULL, DRM_MODE_ENCODER_TMDS, NULL);
+>> +	if (ret) {
+>> +		drm_err(dev, "init dp encoder failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
+>> +
+>> +	ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
+>> +				 DRM_MODE_CONNECTOR_DisplayPort);
+>> +	if (ret) {
+>> +		drm_err(dev, "init dp connector failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	drm_connector_helper_add(connector, &hibmc_dp_conn_helper_funcs);
+>> +
+>> +	drm_connector_attach_encoder(connector, encoder);
+>> +
+>> +	return 0;
+>> +}
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> index 9f9b19ea0587..39fd8c5c8227 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> @@ -27,6 +27,10 @@
+>>   #include "hibmc_drm_drv.h"
+>>   #include "hibmc_drm_regs.h"
+>>   
+>> +#define HIBMC_DP_HOST_SERDES_CTRL		0x1f001c
+>> +#define HIBMC_DP_HOST_SERDES_CTRL_VAL		0x8A00
+>> +#define HIBMC_DP_HOST_SERDES_CTRL_MASK		0x7FFFF
+>> +
+>>   DEFINE_DRM_GEM_FOPS(hibmc_fops);
+>>   
+>>   static irqreturn_t hibmc_interrupt(int irq, void *arg)
+>> @@ -116,6 +120,14 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+>>   		return ret;
+>>   	}
+>>   
+>> +	/* if DP existed, init DP */
+>> +	if ((readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL) &
+>> +	     HIBMC_DP_HOST_SERDES_CTRL_MASK) == HIBMC_DP_HOST_SERDES_CTRL_VAL) {
+>> +		ret = hibmc_dp_init(priv);
+>> +		if (ret)
+>> +			drm_err(dev, "failed to init dp: %d\n", ret);
+>> +	}
+>> +
+>>   	ret = hibmc_vdac_init(priv);
+>>   	if (ret) {
+>>   		drm_err(dev, "failed to init vdac: %d\n", ret);
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> index 42f0ab8f9b5a..d982f1e4b958 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+>> @@ -20,6 +20,8 @@
+>>   
+>>   #include <drm/drm_framebuffer.h>
+>>   
+>> +#include "dp/dp_hw.h"
+>> +
+>>   struct hibmc_vdac {
+>>   	struct drm_device *dev;
+>>   	struct drm_encoder encoder;
+>> @@ -37,6 +39,7 @@ struct hibmc_drm_private {
+>>   	struct drm_plane primary_plane;
+>>   	struct drm_crtc crtc;
+>>   	struct hibmc_vdac vdac;
+>> +	struct hibmc_dp dp;
+>>   };
+>>   
+>>   static inline struct hibmc_vdac *to_hibmc_vdac(struct drm_connector *connector)
+>> @@ -59,4 +62,6 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv);
+>>   
+>>   int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_vdac *connector);
+>>   
+>> +int hibmc_dp_init(struct hibmc_drm_private *priv);
+>> +
+>>   #endif
+>> -- 
+>> 2.33.0
+>>
 
