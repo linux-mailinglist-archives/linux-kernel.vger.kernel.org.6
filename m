@@ -1,129 +1,91 @@
-Return-Path: <linux-kernel+bounces-428423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4DE89E0E35
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:51:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9128164F4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:51:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879791DF977;
-	Mon,  2 Dec 2024 21:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Dev+6yLn"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9F89E0E3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:52:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4883F1DF73E;
-	Mon,  2 Dec 2024 21:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A1C28254B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:52:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362EE1DF744;
+	Mon,  2 Dec 2024 21:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r+sUAtuQ"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC6C4C85
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 21:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733176303; cv=none; b=uipE4BgKCZFxwez7sc6cLomxhfGYQs6mF69jwIHp2GRgFkl9Hq848m5LntqLBde4KTyCXywDxzHK88X940KgAS1GK8pxc21Jgg6t6IVgB9MIxMTnSXdS7Lo0lqQPASCgRClGslMxG+AuPY/5EW0QXKC9XVpvR/PAvOf5ZaZ2+qc=
+	t=1733176354; cv=none; b=Rqn3tNI+QvTlMC+zfLh4r79bXayQN3QerTYDuAhl90NRYnFC2de+inkSrvudioXVp1LbyjerUXVObppB3lejjXvaPbfbDSioL5bd+E0CH2Nlbil6DJK1AQhQK1cMLFDwTfO5+p2s6+YrVbMosoDoB8KTvQyxDLllMTKKExLSzNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733176303; c=relaxed/simple;
-	bh=T8gDPgRvXev88smqK596aKWPbh7ok3k9ca4wUYJMpAQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XUloUV7YPxwsqvl3EB/0d46Kh+ZABO7o8scjwf2Hbe1UFRpeDaCMgjBhk36tPCfSFcykOmF5jdk8skbf5hfOBVlTOne706w2+WEFb4DLU34dSX3DlhRGifCNaDl9ges739kzyVhDXQv0cRF99qpdb94EgTCfmj/u0S0f8YxcG5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Dev+6yLn; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B2LpcIB049644;
-	Mon, 2 Dec 2024 15:51:38 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733176298;
-	bh=chRiwMOx7nnLlPqbr26Pq7aSEJPGC/3CHVPgNrjndM0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Dev+6yLnxFaDxdct5g1YwVsxZ6KlzWs6bJm0qObpYrx+pVdlVZ4k4cBoxEB9C/y2A
-	 1VJ3NW/tqIj/e2flZtOE0fI2xASpTDn4ZpmvXGiRVGrt+eqFm6xa6KKn6D3leaBmdP
-	 KexcAs1pspIyMcMkWhetSkrbqimQyFCDIn8VusBg=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2LpcJp038477
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 2 Dec 2024 15:51:38 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
- Dec 2024 15:51:37 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 2 Dec 2024 15:51:37 -0600
-Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2LparN039277;
-	Mon, 2 Dec 2024 15:51:37 -0600
-From: Andrew Davis <afd@ti.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew
- Davis <afd@ti.com>
-Subject: [PATCH v2 5/5] remoteproc: keystone: Use devm_rproc_add() helper
-Date: Mon, 2 Dec 2024 15:51:35 -0600
-Message-ID: <20241202215135.294829-5-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241202215135.294829-1-afd@ti.com>
-References: <20241202215135.294829-1-afd@ti.com>
+	s=arc-20240116; t=1733176354; c=relaxed/simple;
+	bh=IaZNJdNiqTC9Fp2cbi3B0hJ+CyjA6utopNG5kl7MHhM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lVUpGRFqd730x5BEFQDp0adctNIgJy69aI2cfnkAmYYL1w48ioXteChfv0CmKhpydzPKmTydmjbWik1rNPLl1XUFxb2oKQ5PWjEPznTWgd53FM4+4A+4YeztbXWcyc6FtPxsCilxGr20NXKnZTOb8zMD6FzGL3h5JElWAqRkkz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r+sUAtuQ; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7252f48acf2so3380323b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 13:52:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733176352; x=1733781152; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IaZNJdNiqTC9Fp2cbi3B0hJ+CyjA6utopNG5kl7MHhM=;
+        b=r+sUAtuQYV5zN+QqxjespOM8DDqvz+hT75qiH7Y7Mmuo8RREbC1+0CbykzBfVXoRGE
+         aCAU4rKYw0ycfM0EOpYQ774PHpGdsiw4/LTXoGWGff6DcQY3Z78e7VLphlaGEGtL9kMF
+         rdg7oo9R1IvPjIPW9lKIOWbqROBIVuDYvJngLsCuGj7mHp1RqKayHgnnDgC4jpniq1bw
+         HpYwDYHB5+XK3RGqvBfdEjlJJLOCVVmo1ZqYYpZ+Yh59ATEBdaVa+AV9tVUbcVVQ0UbQ
+         6nzjp7QqiavlfGiwy6JoIIljyXCJff0rY6/yv/R2g6wbuQPCcpMyfRW4IQ2AFk8f74gu
+         ENtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733176352; x=1733781152;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IaZNJdNiqTC9Fp2cbi3B0hJ+CyjA6utopNG5kl7MHhM=;
+        b=tR3TiVwpovxo91GB6jLf07AISZX8mQsshAt8p1K62oP6VlSCbYV1yKK610HV43DIIx
+         +H2XTNOtONJhaVUGsCsVKjhvDaUnl46OZqkuXo94zG9HzyTlgOLhNhI/64Ig7e7lSWv3
+         J9ypU/+jUXNj5eZ/DtjOIhnT2tUF1iyakIffks4ZZkBuCunH3KpRzdacF778JQGUl9LM
+         bNgKw2Q4f9ue/89941E96PdqhM+bwg/s981m3sIrW6TDPFLMKM87CsorSBRcVBZVre2d
+         QBpjwdMSzAIwRajuTU2fvt6tmBvqWwZX2egdNQwPMkKXNE11Fu7WfhGHtx3lAG6RTEcE
+         F65Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXplSLREmzpWTt5EBuV8PD5d3rW1lmG1rdTcYbvP9Nc93l+ZVn4lySUbXEhQH7pg4kKly3fc7xVL4hjIxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7LZwXBOSZgmK/Ub6Rq76CqeVsqStVqtOjEArhOBppGE2vdhmK
+	G+yxV8ROJt/z9L93wLRig8rR0gbihU1/TYrFbPsZe9hzWcyQXwd1tOiBWY4MZG7ILAnLnxPPB9m
+	3+4WR7ckSKWS+HtbPlPEW5TEn+xa9BO8g+Ihd
+X-Gm-Gg: ASbGncv+i4IwRQNJRzxa3Zyl/4oHuIs2r4p0ntgkNCCDwrw6aiV1+K6awhOp8BV5VsD
+	/tKAspX1yPT5JhaNmF0+w2O7Fgqf4r2BbLX+fasOFR7NrA3aOLqNBAoPeGtgErw==
+X-Google-Smtp-Source: AGHT+IEWdhwsi+m1PH3AOfYF20b8Lk0d26QGk7Pos7WAG90X7d6QuROnvVXcRr2YlbgnPFHO7qose19PfbdhIFKIzT8=
+X-Received: by 2002:a05:6a00:9289:b0:71e:44f6:6900 with SMTP id
+ d2e1a72fcca58-72530133295mr31797470b3a.16.1733176352355; Mon, 02 Dec 2024
+ 13:52:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241127085236.3538334-1-hsiangkao@linux.alibaba.com>
+In-Reply-To: <20241127085236.3538334-1-hsiangkao@linux.alibaba.com>
+From: Sandeep Dhavale <dhavale@google.com>
+Date: Mon, 2 Dec 2024 13:52:20 -0800
+Message-ID: <CAB=BE-RVudjkHsuff5Tmg2sumjDkPKpQ9Y0XN2gZzPFxUGa+hg@mail.gmail.com>
+Subject: Re: [PATCH] erofs: fix PSI memstall accounting
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, Max Kellermann <max.kellermann@ionos.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Use the device lifecycle managed add function. This helps prevent mistakes
-like deleting out of order in cleanup functions and forgetting to delete
-on error paths.
+Looks good,
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- drivers/remoteproc/keystone_remoteproc.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+Reviewed-by: Sandeep Dhavale <dhavale@google.com>
 
-diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-index ec8413ea78cf7..27ebe6661b0b7 100644
---- a/drivers/remoteproc/keystone_remoteproc.c
-+++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -463,22 +463,13 @@ static int keystone_rproc_probe(struct platform_device *pdev)
- 		keystone_rproc_dsp_reset(ksproc);
- 	}
- 
--	ret = rproc_add(rproc);
-+	ret = devm_rproc_add(dev, rproc);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to register device with remoteproc core\n");
- 
--	platform_set_drvdata(pdev, ksproc);
--
- 	return 0;
- }
- 
--static void keystone_rproc_remove(struct platform_device *pdev)
--{
--	struct keystone_rproc *ksproc = platform_get_drvdata(pdev);
--
--	rproc_del(ksproc->rproc);
--}
--
- static const struct of_device_id keystone_rproc_of_match[] = {
- 	{ .compatible = "ti,k2hk-dsp", },
- 	{ .compatible = "ti,k2l-dsp", },
-@@ -490,7 +481,6 @@ MODULE_DEVICE_TABLE(of, keystone_rproc_of_match);
- 
- static struct platform_driver keystone_rproc_driver = {
- 	.probe	= keystone_rproc_probe,
--	.remove = keystone_rproc_remove,
- 	.driver	= {
- 		.name = "keystone-rproc",
- 		.of_match_table = keystone_rproc_of_match,
--- 
-2.39.2
-
+Thanks,
+Sandeep.
 
