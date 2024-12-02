@@ -1,167 +1,196 @@
-Return-Path: <linux-kernel+bounces-427033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E40D9DFB73
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:52:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B70E1633D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:52:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F07F1F9436;
-	Mon,  2 Dec 2024 07:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKVpUTV3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF7B9DFB76
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:56:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D97A94A;
-	Mon,  2 Dec 2024 07:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E07281CBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:56:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C59D1F9A8D;
+	Mon,  2 Dec 2024 07:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="11577U3J"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15081F8AEA
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 07:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733125958; cv=none; b=ayzoPtDH3LaecxS9BUpZnSbDbStVH3E1k4vuQJILs+e1lNqTQOCup7q80PNp/Q0KhuAbWx41LNA2771eECQxpdQtWMaGLXvsq0KCR/IX7SjT9m+/+qqe7um8GcmioujLWPcH2RRDSDIorj/LV1RRrypPRyYM3gxRIqf8o/BjYJc=
+	t=1733126155; cv=none; b=BVqvgO3ZjNszSbb1Ub6/LYOdijTAIFEJuV4nT6keMcYscT1xHxdEoRkCfHnnZ+iNVQ5s8/BfT/YTHP9LD8gXbXZ5o0VHMASoo8X0z9FETqdqW8kLst96OW+5kH42KcGjBTJpojOhotdG5nHkf76bu3my/w1RP9HibhdYL9ySQPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733125958; c=relaxed/simple;
-	bh=jtwxVxx1nqFej0FNvp1jM/jX+1uGavCLsw17TkpcWTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jCuTBO+dQ4VZ43afZK+zy7VHDdf2eo6qVgckQ6Wysl27EhjHnLKRX2UYoYlt8TxQRJptX5ZF0Ec9I4tX/Mb6aP+7SZf/hS6gVieWmk2LE5Nj97u3j6SnJ9udY4Zj9MMQZAvf4s+05xSihu9zXg37vmqdCpXqzX1qoaRQnZV1m88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKVpUTV3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 854F7C4CED2;
-	Mon,  2 Dec 2024 07:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733125958;
-	bh=jtwxVxx1nqFej0FNvp1jM/jX+1uGavCLsw17TkpcWTM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MKVpUTV39GeFFXNTzPTBtWWBRi9aTQFk87ENFLHLH9FFKabRaRjyqHnvrxzr7y9ly
-	 eJCSmnuUhTPhDUb7wcUguq0bmWdso28xjx4pllsTJ++lO3dIC1jlimk2H8FwDnkAiu
-	 FkI5xm7ye/07zJHZZeR2Uas2N75fyrGdPHXgblVB5K6hT+y4pDXnZRXo5UMTZl/pUR
-	 ye8XZDeNI3U2kzR8yeBqWjgCPUXgMtFzZ1f6FgYwOI95fNlFoERTITusKOoL9ED5UV
-	 3m/uJjXh3jWfPpJ8iBbXyUvZc+xLD2jT0RPegtVOZdzHubOnnxJAr75F8/9TRWjZ1U
-	 vYoTwxm7uCUpg==
-Message-ID: <39f16df2-9f4b-49e9-b004-b0e702d08dad@kernel.org>
-Date: Mon, 2 Dec 2024 08:52:34 +0100
+	s=arc-20240116; t=1733126155; c=relaxed/simple;
+	bh=aTiHyTGNRnn9fKQksjqazR5FDe9KhkQaj8DcU2ZtoQA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LgD3CuNFBiZknFsRXkXXdIthsc3Aqa2L5393g9wk2BFoj+DDbxyun67tWCilbIN6RTyVyQJZMcIoQZaBKFbCeg4+F4rzbAD5OjQCad2RdmmQYN/B1b4XxqJE2lOXwq7Y1QV4s/mvg4IyUIXHN+fNvcXj3M/L066uIulAtX05fk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=11577U3J; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21547722a22so32373565ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 23:55:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733126153; x=1733730953; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X5I1xtc0fgXB6XkdcM9boYYvRZD6i0JLsMvJN9yMsjQ=;
+        b=11577U3JNLuD9OSrZ96SW6cxCs0+seqNRKdG3w6BGRSjt7C+tkBCPb8e9C1dYanOAc
+         iAKJPe3t6GBnuRcfGakPaB+2S0eoyobavz8z0+KkmL9SM2leyxbcC9sACHA5eeYQzG7s
+         7tWE/3uAB3Y7iIOjTqVlKwck1+RM5Jg3y1FcEOpF1/hElPQfHLnwfM2EWkcDj5890VpJ
+         2NNBhT4/3bk7lTL2rfLvvHHoPupXubWHoDj3XEmiA+PSAqEQmIgL+qCZ3GZfkJCIDWX9
+         3/0lWQrO5ejcXp82rJHESt/7q0HeClsTAFBFf21Gu+73GlB8EO9cyOBYkdKVbYvHgWxW
+         mrQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733126153; x=1733730953;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X5I1xtc0fgXB6XkdcM9boYYvRZD6i0JLsMvJN9yMsjQ=;
+        b=fwcWXs74/I9fRcaYtw2D4cvKLEorymZks+Hp+dlKi1PZgsxfdyhHdQTQTYYV/ddhta
+         j0T5bnDnUsiPbLztTWH7rnLY2jvq2cWXkd8QhcrCVc9/1dVBBVz76EVauSf2Jh7vbUkB
+         hK66iuXvdjJd93g+Pu+5VS5YpX1JDTsUmMLE++THNriKendnjr693bATpU9q9PgTdCKy
+         A1gZ34zyX/rQmOxkY6hxb8K2yi0rBLsTflnh9zlhJDM8L3rMaZFTEnOB3Bt+U+i1Ihax
+         y5QCAgDQLOAIhuj36FZzZGw0ROGZJHe+FpAifKzMxasZ7t9CaaU8lDmAVcVMk88PHmaM
+         jVPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGFRZBBi+3pEtX/yrDSUUdM4GpnkxbNMWBoXg7eKmgmXkrgiLyJPPb0+g4eSk0lgYnpEk9ZX+gttiuYpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzVH6K1XKMZQkVtrgbDDf0XRRrQrtnemfwJNhI5L98JmqIgTTr
+	fUtLWi5NuOBxFRtoINo7WIlT57zA0m9Q06hcH3XmAYRM6y+MTRiHD0ASJjdhjD7vEjfA4/H0ISF
+	DtOs6IwBXWQ==
+X-Google-Smtp-Source: AGHT+IGmDgW5uv9K7xfh8ZOARl6qX/eyD5maBkO485zr6D3D0+8rjVENNz5dhdZZ6GSTGc+LBUpkbW0z8hTk6A==
+X-Received: from pldt6.prod.google.com ([2002:a17:903:40c6:b0:215:7433:45b1])
+ (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:e843:b0:215:5f17:42b2 with SMTP id d9443c01a7336-2155f1743bfmr123356895ad.43.1733126153305;
+ Sun, 01 Dec 2024 23:55:53 -0800 (PST)
+Date: Mon,  2 Dec 2024 15:55:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: TPM/EFI issue [Was: Linux 6.12]
-To: Jarkko Sakkinen <jarkko@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?Q?Peter_H=C3=BCwe?= <PeterHuewe@gmx.de>,
- Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
- Ard Biesheuvel <ardb@kernel.org>,
- "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>
-References: <CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com>
- <9c893c52-e960-4f30-98ce-ba7d873145bb@kernel.org>
- <D5Z66HQJNNNL.1CPU2KF13269F@kernel.org>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <D5Z66HQJNNNL.1CPU2KF13269F@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241202075545.3648096-1-davidgow@google.com>
+Subject: [PATCH v2 0/6] [PATCH 0/6] KUnit test moves / renames
+From: David Gow <davidgow@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Rae Moar <rmoar@google.com>, Kees Cook <kees@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: David Gow <davidgow@google.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Andy Shevchenko <andy@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30. 11. 24, 3:49, Jarkko Sakkinen wrote:
-> On Wed Nov 27, 2024 at 8:46 AM EET, Jiri Slaby wrote:
->> Cc TPM + EFI guys.
->>
->> On 17. 11. 24, 23:26, Linus Torvalds wrote:
->>> But before the merge window opens, please give this a quick test to
->>> make sure we didn't mess anything up. The shortlog below gives you the
->>> summary for the last week, and nothing really jumps out at me. A
->>> number of last-minute reverts, and some random fairly small fixes
->>> fairly spread out in the tree.
->>
->> Hi,
->>
->> there is a subtle bug in 6.12 wrt TPM (in TPM, EFI, or perhaps in
->> something else):
->> https://bugzilla.suse.com/show_bug.cgi?id=1233752
->>
->> Our testing (openQA) fails with 6.12:
->> https://openqa.opensuse.org/tests/4657304#step/trup_smoke/26
->>
->> The last good is with 6.11.7:
->> https://openqa.opensuse.org/tests/4648526
->>
->> In sum:
->> TPM is supposed to provide a key for decrypting the root partitition,
->> but fails for some reason.
->>
->> It's extremely hard (so far) to reproduce outside of openQA (esp. when
->> trying custom kernels).
+As discussed in [1], the KUnit test naming scheme has changed to avoid
+name conflicts (and tab-completion woes) with the files being tested.
+These renames and moves have caused a nasty set of merge conflicts, so
+this series collates and rebases them all on top of v6.13-rc1, to be
+applied minimising any further conflicts. [2,3]
 
-Mark "X".
+Thanks to everyone whose patches appear here, and everyone who reviewed
+on the original series. I hope I didn't break them too much during the
+rebase!
 
->> Most of the 6.12 TPM stuff already ended in (good) 6.11.7. I tried to
->> revert:
->>     423893fcbe7e tpm: Disable TPM on tpm2_create_primary() failure
->> from 6.12 but that still fails.
->>
->> We are debugging this further, this is just so you know.
->>
->> Or maybe you have some immediate ideas?
-> 
-> Nothing immediate but I've had to tweak quite a lot of TPM bus
-> integrity protection feature so it is a possibility that I've
-> made a mistake in a point or another.
-> 
-> Can you bisect the issue possibly?
+Link: https://lore.kernel.org/lkml/20240720165441.it.320-kees@kernel.org/ [=
+1]
+Link: https://lore.kernel.org/lkml/CABVgOSmbSzcGUi=3DE4piSojh3A4_0GjE0fAYbq=
+KjtYGbE9beYRQ@mail.gmail.com/ [2]
+Link: https://lore.kernel.org/linux-kselftest/CABVgOSkhD6=3D5K72oL_n35CUeMh=
+bsiQjZ6ds+EuQmJggBtVTFVg@mail.gmail.com/ [3]
 
-No, see mark "X" :).
+Bruno Sobreira Fran=C3=A7a (1):
+  lib/math: Add int_log test suite
 
-But follow the downstream bug for progress:
-https://bugzilla.suse.com/show_bug.cgi?id=1233752
+Diego Vieira (1):
+  lib/tests/kfifo_kunit.c: add tests for the kfifo structure
 
-thanks,
--- 
-js
-suse labs
+Gabriela Bittencourt (2):
+  unicode: kunit: refactor selftest to kunit tests
+  unicode: kunit: change tests filename and path
+
+Kees Cook (1):
+  lib: Move KUnit tests into tests/ subdirectory
+
+Luis Felipe Hernandez (1):
+  lib: math: Move kunit tests into tests/ subdir
+
+ MAINTAINERS                                   |  19 +-
+ fs/unicode/Kconfig                            |   5 +-
+ fs/unicode/Makefile                           |   2 +-
+ fs/unicode/tests/.kunitconfig                 |   3 +
+ .../{utf8-selftest.c =3D> tests/utf8_kunit.c}   | 149 ++++++------
+ fs/unicode/utf8-norm.c                        |   2 +-
+ lib/Kconfig.debug                             |  27 ++-
+ lib/Makefile                                  |  39 +--
+ lib/math/Makefile                             |   4 +-
+ lib/math/tests/Makefile                       |   4 +-
+ lib/math/tests/int_log_kunit.c                |  75 ++++++
+ .../rational_kunit.c}                         |   0
+ lib/tests/Makefile                            |  41 ++++
+ lib/{ =3D> tests}/bitfield_kunit.c              |   0
+ lib/{ =3D> tests}/checksum_kunit.c              |   0
+ lib/{ =3D> tests}/cmdline_kunit.c               |   0
+ lib/{ =3D> tests}/cpumask_kunit.c               |   0
+ lib/{ =3D> tests}/crc16_kunit.c                 |   0
+ lib/{ =3D> tests}/fortify_kunit.c               |   0
+ lib/{ =3D> tests}/hashtable_test.c              |   0
+ lib/{ =3D> tests}/is_signed_type_kunit.c        |   0
+ lib/tests/kfifo_kunit.c                       | 224 ++++++++++++++++++
+ lib/{ =3D> tests}/kunit_iov_iter.c              |   0
+ lib/{ =3D> tests}/list-test.c                   |   0
+ lib/{ =3D> tests}/memcpy_kunit.c                |   0
+ lib/{ =3D> tests}/overflow_kunit.c              |   0
+ lib/{ =3D> tests}/siphash_kunit.c               |   0
+ lib/{ =3D> tests}/slub_kunit.c                  |   0
+ lib/{ =3D> tests}/stackinit_kunit.c             |   0
+ lib/{ =3D> tests}/string_helpers_kunit.c        |   0
+ lib/{ =3D> tests}/string_kunit.c                |   0
+ lib/{ =3D> tests}/test_bits.c                   |   0
+ lib/{ =3D> tests}/test_fprobe.c                 |   0
+ lib/{ =3D> tests}/test_hash.c                   |   0
+ lib/{ =3D> tests}/test_kprobes.c                |   0
+ lib/{ =3D> tests}/test_linear_ranges.c          |   0
+ lib/{ =3D> tests}/test_list_sort.c              |   0
+ lib/{ =3D> tests}/test_sort.c                   |   0
+ lib/{ =3D> tests}/usercopy_kunit.c              |   0
+ lib/{ =3D> tests}/util_macros_kunit.c           |   0
+ 40 files changed, 459 insertions(+), 135 deletions(-)
+ create mode 100644 fs/unicode/tests/.kunitconfig
+ rename fs/unicode/{utf8-selftest.c =3D> tests/utf8_kunit.c} (64%)
+ create mode 100644 lib/math/tests/int_log_kunit.c
+ rename lib/math/{rational-test.c =3D> tests/rational_kunit.c} (100%)
+ rename lib/{ =3D> tests}/bitfield_kunit.c (100%)
+ rename lib/{ =3D> tests}/checksum_kunit.c (100%)
+ rename lib/{ =3D> tests}/cmdline_kunit.c (100%)
+ rename lib/{ =3D> tests}/cpumask_kunit.c (100%)
+ rename lib/{ =3D> tests}/crc16_kunit.c (100%)
+ rename lib/{ =3D> tests}/fortify_kunit.c (100%)
+ rename lib/{ =3D> tests}/hashtable_test.c (100%)
+ rename lib/{ =3D> tests}/is_signed_type_kunit.c (100%)
+ create mode 100644 lib/tests/kfifo_kunit.c
+ rename lib/{ =3D> tests}/kunit_iov_iter.c (100%)
+ rename lib/{ =3D> tests}/list-test.c (100%)
+ rename lib/{ =3D> tests}/memcpy_kunit.c (100%)
+ rename lib/{ =3D> tests}/overflow_kunit.c (100%)
+ rename lib/{ =3D> tests}/siphash_kunit.c (100%)
+ rename lib/{ =3D> tests}/slub_kunit.c (100%)
+ rename lib/{ =3D> tests}/stackinit_kunit.c (100%)
+ rename lib/{ =3D> tests}/string_helpers_kunit.c (100%)
+ rename lib/{ =3D> tests}/string_kunit.c (100%)
+ rename lib/{ =3D> tests}/test_bits.c (100%)
+ rename lib/{ =3D> tests}/test_fprobe.c (100%)
+ rename lib/{ =3D> tests}/test_hash.c (100%)
+ rename lib/{ =3D> tests}/test_kprobes.c (100%)
+ rename lib/{ =3D> tests}/test_linear_ranges.c (100%)
+ rename lib/{ =3D> tests}/test_list_sort.c (100%)
+ rename lib/{ =3D> tests}/test_sort.c (100%)
+ rename lib/{ =3D> tests}/usercopy_kunit.c (100%)
+ rename lib/{ =3D> tests}/util_macros_kunit.c (100%)
+
+--=20
+2.47.0.338.g60cca15819-goog
+
 
