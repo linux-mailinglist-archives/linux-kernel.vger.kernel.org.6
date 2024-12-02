@@ -1,221 +1,160 @@
-Return-Path: <linux-kernel+bounces-427813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625D49E0732
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:37:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED45916C019
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:04:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37784205AD4;
-	Mon,  2 Dec 2024 15:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="tFftLeIz"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2105.outbound.protection.outlook.com [40.107.21.105])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411989E0804
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:10:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E152320013D;
-	Mon,  2 Dec 2024 15:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733151883; cv=fail; b=QJI6XJoYB+dwf0DkUwseh4amfQhNx7ALzfF82GB/NSxCO5k6OHl/6qTSmCZ44N+Q5gKfVdEJKEXs/KTWno8n5HdXfu2GhiWOZkRTGPv3wgJU4cUcAOvRdMRbAuxfMNTooz79kE+ANOOgUGy+5ZO5gIzf6BnySsxGRdopFerPS74=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733151883; c=relaxed/simple;
-	bh=NyKepsKCFtgE8SRZWLPkyh2kdW+QIbsUSpFvG1uq+e8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GRt3wghCNH+DX5QxW/ALifq65x+jFLYOhlwZRLHnO29agr5WOxWZcV0QnzsHQkA7ZgZpa4GjCXUE+tb5FpULK2g5rLZN5ftMeQCiPlhqlT+M9bG4GbyldfsXyBy46hy4cv9q0aHQdoAhgjHVbqQU3bv2HOjV7UjOFRs2WWeLP4Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=tFftLeIz; arc=fail smtp.client-ip=40.107.21.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qIMwphPDGq4Xi80mgJcJWS8pPN9CIfkQrRwqs27R6dxaChtz0UlB/6RbaJXykDK3U6ImcrWZF4ZWICqCp8BN6YScx/X9QMFpIzmZ3CjNMU6GddZCmhJ1jqjIpUS5mXH72fu+V4vFo3NrjvsUryrPbTKPJHU2S9AOrHRfJRopsvR01Ttd7RK/AaZ3HUQOWsDA24cdpf6eL8lY8vji0jDZxNziY30CKLSAbgkK9Rv3WO+6sucJtEyl2gNj8xlSqAl4pf++lBFH2gIqAof2mstdBUVlGzBLm9/dReQy8gClDREdDLaNHTWw05hu5Y5ZtF4UZUaFCkHvjNVuo5EDYFBIyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZzkH3SE3Dp5CsyW0LSRpN9sNaj8fS0mAwf3s8stGXT4=;
- b=rLlTQthjQAG1PkZuw0k9Wmm6l8QzyY3dV7JLPK77uXC3f877M3JBj5JoBFHmoEjmcol8oxQinbPGZ9XD6+yjYSLJ8on8M6J6p6YWXEhe2q94DvlnEs+e+IeilsjQEwiMBT8itFwkZ001aVnJLVYL9WZ972VQh95jkPxKygiH161lExSmjpjvirwzwSOP5zMpULBkJiIpVMBxjtUX8xdmRIdTZA+OKXtVd0axvTJfg6B4jKpHpyj8fWkM0/SKGXmIJS+WUscObqococtdlS0qJp+wc82uKxDTMFCpkQ+XV8vMSB/E1ltr17la8TqaCk5RlExMEYr1jWBrtWQwxCGrxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
- dkim=pass header.d=uclouvain.be; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZzkH3SE3Dp5CsyW0LSRpN9sNaj8fS0mAwf3s8stGXT4=;
- b=tFftLeIziofoAOuq5NKtBqWBb0TTnKZpTakxT351mIHcdZnStDoJTn+B82P62cBqzN5UNu1isZbNlxD9z+ridZY8ND/kI5vbdYuvmawemGm/YDkbcliTaUzJ6Tnyb/wH/mWlZO7nPA4ZL/c9kQpjEY0C08/OBynuuu75BXV2vpqLMJGClqMwdOkdq6/c4swyt/vOzztyQP2B114Y3x2Xd3KN/bBLN17fyCX8C/v3PKH+CFqtBJy4y/fxTMSYPWXGEZHOSy9tTTp6yATRilIWucKW9Kc5Sxp+Z47n1ki6tGhLsaX4V9zSt6XT+JYKiZRaRtWhI2BIHu68EdfTZ62YuA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=uclouvain.be;
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
- by AM7PR03MB6499.eurprd03.prod.outlook.com (2603:10a6:20b:1bd::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
- 2024 15:04:31 +0000
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c%6]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 15:04:30 +0000
-Message-ID: <b8b72bde-31f3-4148-bd01-49826f9f9bd7@uclouvain.be>
-Date: Mon, 2 Dec 2024 16:03:49 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: exynos: gs101-oriole: enable Maxim
- max77759 fuel gauge
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sebastian Reichel
- <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
- <20241202-b4-gs101_max77759_fg-v1-4-98d2fa7bfe30@uclouvain.be>
- <68b897f0-5583-4d09-87d5-4ff4d3080ef7@kernel.org>
-Content-Language: en-US
-From: Thomas Antoine <t.antoine@uclouvain.be>
-In-Reply-To: <68b897f0-5583-4d09-87d5-4ff4d3080ef7@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR06CA0078.eurprd06.prod.outlook.com
- (2603:10a6:208:fa::19) To AS8PR03MB9047.eurprd03.prod.outlook.com
- (2603:10a6:20b:5b6::13)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF33FB3B321
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:07:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA41D205ABF;
+	Mon,  2 Dec 2024 15:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b5TRXOqL"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F082040B0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733152019; cv=none; b=lvstFBoUse1HA2qNMxY+xuqbZZxiJ68jgRqi0hzttJuXX1y7lZ2aQ4CHKP2jaaZsAZ2yLwUTdmxBGne8P+7w2nJGaKobHmERaJsVG9gxZoRV1aLxavvIYrMMCkBBuvN+tSvSWfCO1+CelxRq8IQmPwqk3miJZAXwaNGxyOJmItI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733152019; c=relaxed/simple;
+	bh=1EX3Q/6V7Sjs15HKyRfyVFj2pNMzzOFk0u9V9vlZJYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fOC7qznW/DytZ7dPxGNMiLke59g+jNC43Yqc3/cQXRnirgUF0SyBQEffl8ueRJLj3dCI+rPuaTR6roxx6QQr1kZfqS4Sw7+VCgXkDHH6GrMCkx5Ym7RYex1IK3e6WOat+n+x/6GPbmbTub2EbdCobDO9r7f9Uy+KWPZEENelBR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b5TRXOqL; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-723f37dd76cso3793051b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:06:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733152017; x=1733756817; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rhh1F0FNt93OWks/1WTeBIrSdzXMhFaYNcAsFDXPT8E=;
+        b=b5TRXOqLyMkneZu+DnXQuUD7bvlUpwIFiiElKNUbUXI2zD2FTD3mWl7fS2ag5V/t+o
+         FJHjHFgesW3oAMZe72MTtaO+XvkTFuRU2Fbzs4MymAx/MNtQuqkm1mbNFo6DFOzQJTty
+         USzIFP8M0JvhiX2KDktHWxKvnHMGmwnvyjq1jVSRZneTfOozRTGD0tzrDG392HedUPbV
+         oo0eobFCOi7FPveFrG9MxQLU0U+rUDOE5owNMRU/ZwxrhFqq0JzgwPiIBrVcMvXtY4L+
+         UTesjtq0C/6A0H7riYvz9a8SBWzsKITTcM+c/hhkNQoyTwewPgMC/yukgoV5iU5yqaBy
+         hFKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733152017; x=1733756817;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rhh1F0FNt93OWks/1WTeBIrSdzXMhFaYNcAsFDXPT8E=;
+        b=sEHppKa2a0aaXq2aQRE8ng1WvU6pGYUJ5rCcuw520w1dzlOnTnVkRUwqOSd61ny+o0
+         wd3N3StH5lXeP7PmVD+5FE0prsNajtaZWKfGEdz/jlycBv6U/QKJfmJFIH7uo2MhvH35
+         nL+G2SO5PK9kxszXiuEuGYthebQDEvBC5xjt06+sY5sBxHHF8O34Noy6cDSSBhDX8Tua
+         trXudC+SuaCEUmUuEFLOqT9VTBk9gw9y19kviIUMBitpfmmxXU8dNDyHTKVXZHX1FFsP
+         T+yCnfvWk7VKMbSdXZiw0PXUnzKqjF0tJ6MUG1h47OdmP0SBFul5YG8C4JjTaWO7194v
+         DZrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeqUVPh1BZlrU0XRxeP3aq1fXapDFfJ6D2ZtPd6SDTiTSf12nEj+oq0JLg+GXAgeTQdTXU8fX20liBaS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFpS2tAWuleALZVsHRIbz7HJu12WEXOe6JhblqGzakzZhxyyte
+	Owc0jBJDqWRZA8uxJTnudY20bWRDb0JnH0uxYUG9zg7dfEicIN2ZqJpn2b8uQw==
+X-Gm-Gg: ASbGncvN7ERdMnTaM2WFOs9fIqy9JbwqVTBg/pMcBk2arIVrkqxC5v3R8xnmlua4+Hf
+	StAs6NDJP3NQBbpAu7sax9ybhzw/kfZI5lo9niXnUdDDeAMeFGWYx0t5bRge73iPpXuPZQ1jeNZ
+	h8U954Uf8eg+OO8JzS/Kk8jpa802m7ITJ+S23o4EnhFeEAxl1RgsFCXim0Yg6dOQZZ4ZIcpQz8Z
+	Ngqq36JK5ZxzrHmwIWK1doq0l81DHR2L67IGqefnYODcOcHdnFlBwQ+aeQ6Gg==
+X-Google-Smtp-Source: AGHT+IHc2nR+uOEZidcr15cshfEn4P+vpBs4f+sVjGhFr5D8hxW5/7LO0D+hvIuBPYBe1VGyJsW1Rw==
+X-Received: by 2002:a17:903:2347:b0:215:6c9a:15 with SMTP id d9443c01a7336-2156c9a0365mr117358825ad.42.1733152016720;
+        Mon, 02 Dec 2024 07:06:56 -0800 (PST)
+Received: from thinkpad ([120.60.140.110])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2158103ba15sm26841555ad.280.2024.12.02.07.06.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 07:06:55 -0800 (PST)
+Date: Mon, 2 Dec 2024 20:36:48 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: cros-qcom-dts-watchers@chromium.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, quic_vbadigan@quicinc.com,
+	quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com,
+	quic_skananth@quicinc.com, quic_vpernami@quicinc.com,
+	quic_mrana@quicinc.com, mmareddy@quicinc.com,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/3] arm64: dts: qcom: sc7280: Increase config size to
+ 256MB for ECAM feature
+Message-ID: <20241202150648.fwi2wzbdyyedueby@thinkpad>
+References: <20241117-ecam-v1-0-6059faf38d07@quicinc.com>
+ <20241117-ecam-v1-1-6059faf38d07@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|AM7PR03MB6499:EE_
-X-MS-Office365-Filtering-Correlation-Id: 181adfcd-8fdf-42ee-ece0-08dd12e29f97
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UlB3Mm54dDJjM3RZVmp2L2dHU0FvdHRGei8xeWs2OHEwcUZrc1JnMXMwR3hS?=
- =?utf-8?B?NWpoQ3REV0FlZUVvN1JCdFA5K1Q3TUtkdTRQaDhnZzNTREU3UWxtUGQzQlFo?=
- =?utf-8?B?ZUJnYnlScDY1NkpKWVBDV1ZRVHB4RHQrQWtSVjhmci81ZS9Eei9WVWJUQmpJ?=
- =?utf-8?B?c0NhNE9BR0pPYzRKRXJ4V3ZlS2JJdGtrQVNtSi9HRDA3K3FjNUdoNEcxYnI1?=
- =?utf-8?B?YTg1TEt4dVBiZEhkMFpzWnV5c1BiS21iMEhxckZOMjMra3VtczRqSUsraGZt?=
- =?utf-8?B?aHBmc0JBUFNGd3F1VGdVZ290aXB4WTlSRENKT0lwQmY4bno1QW5SYWsrSUND?=
- =?utf-8?B?cjk1dTZESnU1bVZKNVFObjN0V1BkVTlnSkdkbHBzTEdKRlFwd2E1Rk9YTjRP?=
- =?utf-8?B?dlJSRXg4K0dYcFcySkljN1o5TFRRNFBWdGNwTVgzelc0VEUwNFNScitDemtI?=
- =?utf-8?B?dFpSN2F0R1lQQTRyTmdwS094amppOXpSemtEUzAwKzlzVm9KZStzZ3Btb0Qv?=
- =?utf-8?B?d09HYXR1N3NxT1pjYkROL09WaGNTYkJtZzlqWm53bnB4S0JKMkRkWkg4R3Jn?=
- =?utf-8?B?TDI5VC8rSHJlMjI3VEF0K0J5RzkrTmE1VnVCTXpZekVIUGV1QVRmdURpaVds?=
- =?utf-8?B?c3RmbmlLR2tQTjZXdnFLdUpyQ2tQcWFWU0U1RWtGc2lRS1RQaWpaYmtETHJG?=
- =?utf-8?B?L1ZUWkhyc1hHRVdIQ1N4VktqUURjbklFM3AxM2JoUjh6L2VEcGRzSVdMeVo5?=
- =?utf-8?B?Z1V2N09wcEwrZEhBdHVETE1qMVNoWUJLYWRGSlBGRVQ5cDM4dlBqamtzWG5H?=
- =?utf-8?B?QTV6S1RhbHN4SkxBd1JUbHNSMkJsL1ppelBMWE5SQWkzSm14dXVnZzIzb2hH?=
- =?utf-8?B?eHp2cFRFbEdqMURwVEx6a3cvVHpTd0NCY1VHQTUrOVBhRHhPaWdjU3oxUjZr?=
- =?utf-8?B?L0tpdDFpVTJXZjdMa3JrYXR4Nlc4d2wxUDJzSHBTWUpUeDFzdFhoMGl0TVp4?=
- =?utf-8?B?aC9lSCs1MEVPZGo1dDNlZDhnckhHUXNmRkt2cWhwQkQrbWFRRVBGWm1HNXVT?=
- =?utf-8?B?VGNaMWhENGVnSUFKaXNXbWlLeEVDZGZKc3R2NDBSTEtRZUpMUlVzREVyZWNa?=
- =?utf-8?B?K0dzUlBlODUwZS8xbzRaTllpUHR1MzByZUg4RGxraDk5RTJ5T2RjWVF0MkVs?=
- =?utf-8?B?aTRqUmdvMjg5S3NFbnNodnBBMllYQUlWcEZGQzU1LzAwb0hidXIxa0dmK2g4?=
- =?utf-8?B?elgrV3ZIc3o3c2ZjZHZYbU1TZXUxZmY5ZDZvUkdDS0pzRFVmc2dqVWQ3OEZa?=
- =?utf-8?B?M2FQYUk2emFnb0IraDZVNXA3c1pTV2tRdkNOZ29JR3lLa0YzUEhpeG0yczRF?=
- =?utf-8?B?eURCbzNWazcwb2hvWWlOR3JUVU9GRUJ3MjQ3SjY4d3NwNHo3dERlSW5YbmRY?=
- =?utf-8?B?WkU2VVJPMUtjTTFQM0kzcy9OT3lkejJLdDFXb1U1aWI1Z094Qm05QVRYeFpC?=
- =?utf-8?B?cnZ3dDBpaWN2WDh6MzRTSTFEeTczRnpaSXpCdEFZZndiOEt5Mlk4ZjRZOTZK?=
- =?utf-8?B?bUJlQytYV0pWRHFIU1I0aWNNeWFreWRQcXQrRit0c056VUVXRmc4aTdrb2Fm?=
- =?utf-8?B?TzIvK1VDYnhpR2lWQWN5MWlFaUNUempyWGZyc3BkUmNSTmRSWXhtZExWWjlD?=
- =?utf-8?B?VXBYRjJBdWh2QTdjVHpIT21SRktaUktDYUtSSHlzbFFiSGMyL1ByTkJRdEM1?=
- =?utf-8?B?S0I4Y05kWTY3RzJmZFRxMEFUdlZzWFZUdHMzNVBGSmN1ajh3WEF6YTZnb24z?=
- =?utf-8?B?bmVjYVhMWUtqUENFNTZWczk1cmpKc1lDZ0RKN0FGTm13SW0rWHl2MzJBV09Q?=
- =?utf-8?Q?bMiNRKr5qG+am?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZjZTZ3grYVVqbGZOcGNORFZMUjQ4bit2U3VreE1wYWVOQVd3cGF6T2dPWjRy?=
- =?utf-8?B?Q29uYmc0QXdQZXE3S25ydld1bGtPNmhmU2JZSzhsbS9Tb2s0UTNUQ1VZZUpU?=
- =?utf-8?B?Z1VYZnNpNXNXMXZJeGdtZFljYVF0QURYL2xBNGhDN3pNbkx6azNKYTFRRWgv?=
- =?utf-8?B?MUtSMlJxVnZ2dHBNSVVRQ0JDTHBwcWYzMUNZT1NDU014Z3NLVWY1TUxJVnR4?=
- =?utf-8?B?ektWbXhOZDI4Y09NQ3BnMTFnMG1DOVhNbzhKVlA1T2QzNlA1ZDNWQWlEL3po?=
- =?utf-8?B?NUY0VjRSMGZSck5kK2huUmdoN0JVeWRlOFJhOUZNVTQwNy9md1orc2o3QVl3?=
- =?utf-8?B?d3VHVGJldDhkTkhNLzFwclFNQUR5OFBlK3ZZbXltVjdNV3NBYVczblhzSzFw?=
- =?utf-8?B?UEJyWkpRdHZsMGlwTzNOMDVqbnl5S1ZDSEZSTk9JZUNYRk9zUU9idzJuR0Q2?=
- =?utf-8?B?N2QzT2hOMTE1YzRPSVVhR3FUVU44a2RpMHg0RzY0U3lBVGRXRUlJVWNxR3lO?=
- =?utf-8?B?QnpyWDI3T3Ezdy9paGY3YXRSQlB4Sk1QaHpKVy9CUFhmNUNUeFZYQkRManVO?=
- =?utf-8?B?NzlMUlRwTkpKbnNDYXY0Q01QSEZvYllPWmpadTM3ZWZqMzlBbzlCSEwzZjJD?=
- =?utf-8?B?aDcrNWRaUjVKekxmVlIyODREeXF5ZlRxWWVKVkNHdkdzdUx5eHovRTYxRTZV?=
- =?utf-8?B?WDFvcVBGbTZWaW5rS0pkVXk3MHdiV1pCOGp0bmF1cXM1am9HMmtrZUV6RG9C?=
- =?utf-8?B?bkxhUGpoTnZtYW1mVE9reU5IckFyUVlsdGlxWEQ4UDhDZ0xnNnk0VXRsT3Yv?=
- =?utf-8?B?MXM4aEJHeUJ4a0tMVmt6VzYwUTBIeDNId1BIVm15ZlRXa0hmZHgvNitJTmpo?=
- =?utf-8?B?R01TYm5UekNSbDhRNW1ZNlI1WGRXc0ViVk5zczFOMCt4NEhnbGVXckpMelJx?=
- =?utf-8?B?Wmp2V2kzNVpqVnlUemQrL3BWRnRyNElXdnRoUmpJdkxtdFIzQ0JHZDNIRTN2?=
- =?utf-8?B?UGNyVUFqdDltRng5OHFaWWxVZmRpYncxalRFdURlS25HeCs0ODVZRE94S1pV?=
- =?utf-8?B?MnFId2JRL2F3V1EwaWlBcnI3Z3FPeXZ1WUhiR3BQR1pPdlFpYkc3bmRwQnpO?=
- =?utf-8?B?NlRHVzR4ZlNNRWJGUXVYNnpnMGhOT2FoQTcrRG5TNkVvMzhjYXNMNlUxN2p1?=
- =?utf-8?B?R202Zk56SlR1WE5RR1RFL1BLMmV0VlBEclc0YjE2ZVJWa1FyZGEwTCtvV3Y4?=
- =?utf-8?B?YmJPZ2EvRjhLQk1MMXUyemlpV1ZidFVscFhDNnRSMzM2aFMyeEp5WGc0Qjda?=
- =?utf-8?B?blBtVHFGSFpZTWVXRy83cUJpQk9XYVkwS3k2VXNGcm80M3BQQy8za1FOeW1z?=
- =?utf-8?B?ckI5NzZyR1JtOHpRR2MxNmt4WHQrTUwrcU9LNDN0UHg4VGo0ZUtJMmhacnlw?=
- =?utf-8?B?M05tSGFjQVpkektyQk1ZenBKcHFrS3gwZXBFRWxvQ20yVTR0Rjc3bkdpZk82?=
- =?utf-8?B?TkFuUHQ4MW9jVkFwRlkvMU9RR0toaElWaWlaRVBFK1BRZ3YxWHJZTllNOFF4?=
- =?utf-8?B?aWN6RVYzcHFpcThlamNKMkw0Q28wQjJnS2ZxKzMxZjJ2aWI0a3N5V25PWlNL?=
- =?utf-8?B?VGdYeldCRDhZcjJZZHdyQmltKzBHTmg5Uk1vVXREK2NnaWpxbzNoMUFiTGN3?=
- =?utf-8?B?NjFPeWZVUnRLWjdlWGhoVEdwdituZ1d0STBwalI3a0Zxa1pDMU1mMEI3TkI0?=
- =?utf-8?B?TFBRYnFIQ1dSRXBwY3lIc0pVbTFqN25SRVFvTGJPS2Z0OFRoOTFZZlNraFQ0?=
- =?utf-8?B?KzJCeFFvWUxuVXhkanhaSlRDZm9JamdpRFQ1bENJeXcxdXI0RzhiTW9aenhk?=
- =?utf-8?B?ays0dHdMUk01SWdZQjRkT2crMjJsSmV2ckg5SFFYVCtIUCtmY3dWajZxeE1x?=
- =?utf-8?B?bVJaRzFMbUhWQlNiaFQ3UlJEaHhta0ZIS2ZTOFUyci9Ia0o0dDJQdkc2WlIv?=
- =?utf-8?B?bTYrL01FNi9EeTFjeTJQY05sTkQxeXA2bTM2WkhVdWcxWlRjOVBwSFhnbk5x?=
- =?utf-8?B?emJEMmduREd6WDNwV3BLbWVYU1hiMmQ3S2dLemE2c281bVU2MGRXRlBLaHN5?=
- =?utf-8?B?bFBkNm1HRkR5d0hVcUVWaERyaTUwc2Jkcjd5TExZY2lyTnRnSy9VNFJxNmVz?=
- =?utf-8?Q?9A+U/HZGlDmc9cChZue4hiU75aISTp2osDhrg1qjTsic?=
-X-OriginatorOrg: uclouvain.be
-X-MS-Exchange-CrossTenant-Network-Message-Id: 181adfcd-8fdf-42ee-ece0-08dd12e29f97
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 15:04:30.7134
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 47PSEcO+PLorUhB42E9eXDqUCVEBG4zIV8c3TibAdWMe4kuA4f+Aakr/kWN6Pfrj66Vy+7SCy6/NbGSYEfbGlw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR03MB6499
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241117-ecam-v1-1-6059faf38d07@quicinc.com>
 
-On 12/2/24 14:41, Krzysztof Kozlowski wrote:
-> On 02/12/2024 14:07, Thomas Antoine via B4 Relay wrote:
->> From: Thomas Antoine <t.antoine@uclouvain.be>
->>  &hsi2c_12 {
->>       status = "okay";
->>       /* TODO: add the devices once drivers exist */
+On Sun, Nov 17, 2024 at 03:30:18AM +0530, Krishna chaitanya chundru wrote:
+> Increase the configuration size to 256MB as required by the ECAM feature.
+> And also move config space, DBI, ELBI, IATU to upper PCIe region and use
+> lower PCIe region entierly for BAR region.
 > 
+
+Is this change compatible with old kernels before commit '10ba0854c5e6 ("PCI:
+qcom: Disable mirroring of DBI and iATU register space in BAR region")'?
+
+- Mani
+
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> Is this still applicable?
-
-Yes, there are other devices on the bus (the Maxim max77759 pmic, charger
-and TPCI, the Maxim max20339 OVP and the NXP PCA9468).
-
->> +
->> +     fuel-gauge@36 {
->> +             compatible = "maxim,max77759-fg";
->> +             reg = <0x36>;
->> +             reg-names = "m5";
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index 3d8410683402..a7e3d3e9d034 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -2196,10 +2196,10 @@ wifi: wifi@17a10040 {
+>  		pcie1: pcie@1c08000 {
+>  			compatible = "qcom,pcie-sc7280";
+>  			reg = <0 0x01c08000 0 0x3000>,
+> -			      <0 0x40000000 0 0xf1d>,
+> -			      <0 0x40000f20 0 0xa8>,
+> -			      <0 0x40001000 0 0x1000>,
+> -			      <0 0x40100000 0 0x100000>;
+> +			      <4 0x00000000 0 0xf1d>,
+> +			      <4 0x00000f20 0 0xa8>,
+> +			      <4 0x10000000 0 0x1000>,
+> +			      <4 0x00000000 0 0x10000000>;
+>  
+>  			reg-names = "parf", "dbi", "elbi", "atu", "config";
+>  			device_type = "pci";
+> @@ -2210,8 +2210,8 @@ pcie1: pcie@1c08000 {
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+>  
+> -			ranges = <0x01000000 0x0 0x00000000 0x0 0x40200000 0x0 0x100000>,
+> -				 <0x02000000 0x0 0x40300000 0x0 0x40300000 0x0 0x1fd00000>;
+> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x40000000 0x0 0x100000>,
+> +				 <0x02000000 0x0 0x40100000 0x0 0x40100000 0x0 0x1ff00000>;
+>  
+>  			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
 > 
+> -- 
+> 2.34.1
 > 
-> No interrupts?
 
-There are interrupts in the stock devicetree but they didn't compile out
-of the box when adding them to the node without any other modification and
-I didn't try further given the device worked without them. I can try to
-get them to work for v2.
-
->> +     };
->> +
-> 
-> 
-> Do not add stray blank lines.
-
-Will remove in v2.
-
-Best regards,
-Thomas Antoine
+-- 
+மணிவண்ணன் சதாசிவம்
 
