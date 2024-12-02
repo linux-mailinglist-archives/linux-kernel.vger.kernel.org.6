@@ -1,145 +1,145 @@
-Return-Path: <linux-kernel+bounces-427248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA279DFE93
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:16:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15192162E9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:15:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5D31FE44C;
-	Mon,  2 Dec 2024 10:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="eR7L0Bwo"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200669DFE96
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:16:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA751FDE24;
-	Mon,  2 Dec 2024 10:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91B9280217
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:16:15 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA231FBC9B;
+	Mon,  2 Dec 2024 10:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dpBtCa7R"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981A71D8E10
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733134477; cv=none; b=GSk38bufZ2tyuCrhmXSZ2xqEecny+23ne42+j7Oxxi6GiQra/RRD61hNdGchJAsMy/HXgWA3qaGQ+r485Xe6bunuyBU5nth1ECjLBQyVVpuhPpsK98o+IIElj4Xi06PUxpS0yZy62OF1d8NfwcNDA3KWlNIxGtIh9ppn2Jb2SrU=
+	t=1733134573; cv=none; b=KTdOQobaCl0rC1Cg5EdUukDXV19mJFs6gPBAF9AG6Ac18+dC7aDFllWRz/dPq+6VKSClVdESyhvGsEByIZO7UwbXHbdEJgMcuwsPAE1HizgpPuYFR3SD3XTK+sqHW6JuJPLe9WPCO5G3oW7mlroEeoPLI9aUWdSGuy8SbG+DCfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733134477; c=relaxed/simple;
-	bh=hzca0Vd/8ffGWVMELyMaSjK5OkJnubC9vL/FhBJgcMg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RQO8hMQGz+F2oJOjPvZFFw1KBK/CPDidhWgP2WlfSmB9Zq5lLUw29KM+ZaCfOXk2w8wI09Lfa1uLZ0shobQCYNb1kxV0WDt5xKth3Eiie9Gkp70tCHLq6Q47HgzblXriIbXjR+1xYUc2HbNM/D3ougC1m2aYtM6WcZk4j+Eolzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=eR7L0Bwo; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 13131240003;
-	Mon,  2 Dec 2024 10:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1733134473;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=No/NWeHkarpWPPlisVqL/gSD6YvfOp1acQ+zd9+j7Wc=;
-	b=eR7L0BwogaZWS7Hk8Zh9PMxYCxlvqynfJIOSBrYqBVx2rb+gPoFtvjQ7PKZi/2+Qy0pBjJ
-	6+jB6SP+sUar5PBUuE/8tiKt9HUmR3+CukMrMHKLv4vToN7zzzPsvwIIK+OTyLd2XiLTT/
-	GFSUOq7BJvr3/zQ3ltj6EU6zEK1xZqWIJdCCTU/15pPg8cWZsTSWspOLOS/XnE0YgqtQNO
-	TBaOgiOy4ALLs7mDrpfUyz4vQsd1JeLWP76XQuXW3Gg19INLREN/ovkBM6AFmBToyULu+H
-	bQYfkuCAjSFx0bkqqhyLLtss6hIdLB8+Ulu5DaWkgaQWBPeWxGev5pNjmuPDEA==
-Message-ID: <2aefbd79-17c8-4190-bf4b-4e6b7d667065@yoseli.org>
-Date: Mon, 2 Dec 2024 11:14:32 +0100
+	s=arc-20240116; t=1733134573; c=relaxed/simple;
+	bh=ReKNMlKfQn7XczdH7JHukU55OclGvk3mfG9gIQ8CmCk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YVaNa4yPJc0dqTzXw4q69ldldE6+h/vYFocm24zVVfPvTq4xW2/MtYkGLCdmiW1wJ4rDDQ+MOeVJ1XoaMoTTvxPI9RjSH7T27nzV0J8atoYoADpsGJ0mIvTSVV94pUhlrZK6gkjA014Dnaipz7aKBkCE+yWWVUr1Sc1TwsBmuxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dpBtCa7R; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21288402a26so28976095ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:16:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1733134570; x=1733739370; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AqdyYnh7L9JzbifPNftANkk0KPlnXsX4tMHkyCxaZPo=;
+        b=dpBtCa7RSdYiQk3oVMT5EaUOqWVV+igXZuiB+sKYOriwGSrH5LKJ9rMkViXaumNOwW
+         7IssmAwtOh2ZmULh3larjhqjwIdjNfYgNp10/gbv+VTKCDy0gqj93z0Flv8XEgesqP2M
+         c3AuJrEzGqJzhqoN4z34HjVpFjlxtI3CS6D5kTfJxB+EEw6rwm3j0X0u4ZisDT8kVbJY
+         YSKICkLdaCjbIVgDD7baUEuZa5UA8MhK7TYYHce91UEruKvCwZfHrf8cJxrUwwsabgSR
+         5oqQ6rI4Rb+a1QTOwoe7nVJn+eQazY44nTdSavbmHIXfBqfP+W/x2mhdhVkGH0kw6kzE
+         x+tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733134570; x=1733739370;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AqdyYnh7L9JzbifPNftANkk0KPlnXsX4tMHkyCxaZPo=;
+        b=kbjUcQzXT/ouXfF/pykBEDHvH3x718re9L6U17Rvv70fyla7yE9tSDRmqBq37cg0FD
+         IGPlpkfeOVgkrLBl8+OTLYekteN5fhvNdLDd3mfOYOKLy6piKt8+jursTX+dTy0SB31u
+         hWUS+JEUP7C41BUpU7sb17rkvKiJ8gvL15axcFWA+28DtApHSrBG7QdNCCtK5u8SnQMM
+         1fU/N1KrXMxfh9CZFxn2AttY0e7cZNWqJPKAhJrYxc0u+pWLqist32CnPyXXKF5ko7pE
+         p/iqtyaKnkRWP3IF9MEeVDwupRb/gJ50aibsAicwZOQYUUrqePDtrOI4mK+SIQ7rgfrh
+         w9Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbRw6R2wBjkqf92V78Xshy+DkmmTbXYzq/v41gGngQJAJcAT+3f69JZlo3pEEAQbwa913Zl3Wyd+YqCCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwiJtVgnR0r9QyRfdJmTopiDQtpVYASXDkUqf3zYNkBYYwQ8gd
+	ErM6cJyH4t9JKFSHYhO5okKAEQYKNXD/s/coQMT2vRNg1FMDaNr4jegVSvZIMfYPySb54hjJLU/
+	i
+X-Gm-Gg: ASbGncsJVKpfhGQ070rEHyZuZ4WE98HeUOawJFVyLsx5oIlhe5DMUeL18/uFIUcnjV1
+	lUcZc+aUJz1yD3DEVvnnzI0LzQenihMU42e8bj+YW5mrKmghgo+uIifCb4Lkt1Z4xX3gTkVzpoq
+	A2OTmiFO4XDbYVWYg7219kHOTiwXoZVaeWSzUyRZWYJl2cRRSysX7MLBRliQxm3dxsDVlzbJfq2
+	43ldp/beuFiL20jYdX+5JP9vMuyUe5atMgqvTdfROhZYOf0aa47DqQqtE78cc52+wSZuTS1Z94K
+	xWQMv3mgdTg45Jjeb5zoyFS//z4rxxDx
+X-Google-Smtp-Source: AGHT+IH1+6Y2xOPT53z5KOINjW/eib1XXOUom5+MdqN7SgnYZHlbvRTsSjFLdTYt0jzINpPmKZcGeA==
+X-Received: by 2002:a17:902:e541:b0:215:58f0:2606 with SMTP id d9443c01a7336-21558f02c9emr128817145ad.2.1733134569664;
+        Mon, 02 Dec 2024 02:16:09 -0800 (PST)
+Received: from J9GPGXL7NT.bytedance.net ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521969e59sm73097425ad.146.2024.12.02.02.16.06
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 02 Dec 2024 02:16:09 -0800 (PST)
+From: Xu Lu <luxu.kernel@bytedance.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu
+Cc: lihangjing@bytedance.com,
+	xieyongji@bytedance.com,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Xu Lu <luxu.kernel@bytedance.com>
+Subject: [PATCH] riscv: mm: Fix alignment of phys_ram_base
+Date: Mon,  2 Dec 2024 18:16:01 +0800
+Message-Id: <20241202101601.48284-1-luxu.kernel@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] m68k: Add DMA timers support for M5441x
-To: Greg Ungerer <gerg@linux-m68k.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-m68k@vger.kernel.org
-References: <20241202-m5441x_dma_tmr-v1-0-94087efe4243@yoseli.org>
-Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <20241202-m5441x_dma_tmr-v1-0-94087efe4243@yoseli.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Transfer-Encoding: 8bit
 
-On 02/12/2024 10:29, Jean-Michel Hautbois wrote:
-> This patch series adds support for DMA timers for the M5441x coldfire
-> family. The aim is to provide finer scheduler resolution and support for
-> high-resolution timers.
-> 
-> The first patch fixes the clocks and a typo. The second one is the
-> timers support addition. As there is no device tree, I did not use
-> TIMER_OF_DECLARE().
+This commit fixes the alignment of phys_ram_base in RISC-V.
 
-I forgot to mention the result on a real M544118 board !
-With PIT timer:
-bash-5.2# cyclictest -p 80 -m -q -l 10000
-WARN: stat /dev/cpu_dma_latency failed: No such file or directory
-WARN: High resolution timers not available
-T: 0 (  231) P:80 I:1000 C:  10000 Min:    277 Act: 1965 Avg: 1437 Max: 
-   2023
+In sparse vmemmap model, the virtual address of vmemmap is calculated as:
+'(struct page *)VMEMMAP_START - (phys_ram_base >> PAGE_SHIFT)'.
+And the struct page's va can be calculated with an offset:
+'vmemmap + (pfn)'.
 
-With this driver and the following declaration in m5441x.c:
-static struct resource mcf_dmatmr2_resource[] = {
-	[0] = {
-		.start = MCFDMATIMER_BASE2,
-		.end   = MCFDMATIMER_BASE2 + 0xf,
-		.flags = IORESOURCE_MEM,
-	},
-	[1] = {
-		.start = MCFDMATIMER_IRQ_DTIM2,
-		.end   = MCFDMATIMER_IRQ_DTIM2,
-		.flags = IORESOURCE_IRQ,
-	},
-	[2] = {
-		.start = MCFDMATIMER_IRQ_PRIO2,
-		.end   = MCFDMATIMER_IRQ_PRIO2,
-		.flags = IORESOURCE_REG,
-		.name = "prio_reg",
-	}
-};
+However, when initializing struct pages, kernel actually starts from the
+first page from the same section that phys_ram_base belongs to. If the
+first page's physical address is not 'phys_ram_base >> PAGE_SHIFT', then
+we get an va below VMEMMAP_START when calculating va for it's struct page.
 
-static struct platform_device mcf_dmatmr2 = {
-	.name			= "mcftmr",
-	.id			= 2,
-	.num_resources = ARRAY_SIZE(mcf_dmatmr2_resource),
-	.resource = mcf_dmatmr2_resource,
-};
+For example, if phys_ram_base starts from 0x82000000 with pfn 0x82000, the
+first page in the same section is actually pfn 0x80000. During
+init_unavailage_range, we will initialize struct page for pfn 0x80000
+with virtual address '(struct page *)VMEMMAP_START - 0x2000', which is
+below VMEMMAP_START as well as PCI_IO_END.
 
-bash-5.2# cyclictest -p 80 -m -q -l 10000 -R
-WARN: stat /dev/cpu_dma_latency failed: No such file or directory
-WARN: reported clock resolution: 1 nsec
-WARN: measured clock resolution approximately: 2376 nsec
-T: 0 (  243) P:80 I:1000 C:  10000 Min:    104 Act:  125 Avg:  129 Max: 
-    239
+This commit fixes this bug by aligning phys_ram_base with SECTION_SIZE.
 
-I don't know why the reported resolution is 1ns and not 8ns but it is 
-not a big issue I suppose :-) ?
+Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+---
+ arch/riscv/mm/init.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> ---
-> Jean-Michel Hautbois (2):
->        m68k: coldfire: Use proper clock rate for timers
->        m68k: m5441x: Add DMA timer support
-> 
->   MAINTAINERS                         |   6 +
->   arch/m68k/coldfire/m5441x.c         |  20 +--
->   arch/m68k/include/asm/m5441xsim.h   |  18 +++
->   drivers/clocksource/Kconfig         |   9 ++
->   drivers/clocksource/Makefile        |   1 +
->   drivers/clocksource/mcf_dma_timer.c | 240 ++++++++++++++++++++++++++++++++++++
->   6 files changed, 284 insertions(+), 10 deletions(-)
-> ---
-> base-commit: e3f432391d55ec21274bd16a04659b4a24678535
-> change-id: 20241202-m5441x_dma_tmr-d969f4cc30a8
-> 
-> Best regards,
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 0e8c20adcd98..9866de267b74 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -59,6 +59,8 @@ EXPORT_SYMBOL(pgtable_l4_enabled);
+ EXPORT_SYMBOL(pgtable_l5_enabled);
+ #endif
+ 
++#define RISCV_MEMSTART_ALIGN	(1UL << SECTION_SIZE_BITS)
++
+ phys_addr_t phys_ram_base __ro_after_init;
+ EXPORT_SYMBOL(phys_ram_base);
+ 
+@@ -241,7 +243,8 @@ static void __init setup_bootmem(void)
+ 	 * at worst, we map the linear mapping with PMD mappings.
+ 	 */
+ 	if (!IS_ENABLED(CONFIG_XIP_KERNEL))
+-		phys_ram_base = memblock_start_of_DRAM() & PMD_MASK;
++		phys_ram_base = round_down(memblock_start_of_DRAM(),
++					   RISCV_MEMSTART_ALIGN);
+ 
+ 	/*
+ 	 * In 64-bit, any use of __va/__pa before this point is wrong as we
+-- 
+2.20.1
 
 
