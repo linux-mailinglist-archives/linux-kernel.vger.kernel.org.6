@@ -1,119 +1,157 @@
-Return-Path: <linux-kernel+bounces-427116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779739DFCE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 637F59DFCE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:19:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A08281D54
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A91A281D32
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15AD1FA27F;
-	Mon,  2 Dec 2024 09:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEF41FA15C;
+	Mon,  2 Dec 2024 09:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4BtJDz9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cuJESCSe"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102E41F9F63;
-	Mon,  2 Dec 2024 09:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89BB1FA15D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733131155; cv=none; b=KuTCTqY+VY3NuttHvyScYRT6FOSxDmb+vwghXJ/PLg1qj/XxEUhKDizjKkSo3mmR+nOpyATWkYlKOMtpU3skBTqURuvJctUzlD7tQDNyKfM7/2ghSavKfqN7TrLU2lT85XTdti569ZQWAXCOCp9/oZjJqcVPGDhtWhDORygC9aE=
+	t=1733131192; cv=none; b=WANVr0XTPULbEjsKkEkxtz7X6W0Viji5KZx6nF/cr/10dXUkKhtk72tCK2ZeUxxIniouroqUGNW50rKtRGklIzz+jjBJFUMOsf8D3kcaKYrwvIt6tsS1P1i35rFgzBtJ3m5Lz8x5CTAdbMFKTO8oCrTWK9nAJOujGDUlPKapyEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733131155; c=relaxed/simple;
-	bh=MK5G0zxP8zA/OoPHL7AWEIh4OCB2UGd/11e3UiMV2cQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ekOkfSQGVtfuC3kdcMXNUAzwrIKYbIvfHi2V0pRcYNT0aX7VxiUnA8oyAz+Czymx9OTtm9yDcxd36SdWhTL93Qz8yqRScQA0ch0SLw92rzGi+0CbuV7UWVamnSRTQhfb6dTyZdRqgfnBQcbuWsSj7DYWGau5LnXrvxYDqMb1UJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4BtJDz9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59DEFC4CED2;
-	Mon,  2 Dec 2024 09:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733131154;
-	bh=MK5G0zxP8zA/OoPHL7AWEIh4OCB2UGd/11e3UiMV2cQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c4BtJDz9IEZ25s9kQROzHxcBLzxX42qxUjw55etrmFvE92WkYzG3OM4GfWYucznta
-	 HqeINYdJeQEQWn75c/wXme2XyUOLpbEAVo5lKYthKFurg2r2GNiNOVn9sjAwywx+KM
-	 SbhfveOjpECQGJDVnj+F1fBGdXZH0z5M1XYXeFOaEvYLy/Eyh6xXuZE5gY2JgMBciw
-	 VQd2QVLHJIql6B3/ZkTsU0ZIHgvEpbhL99kpLvxr/X+PilYILM0X7rwZVHbQwaljP7
-	 5AYl7h2LMdKncP9ILeX/wy4/FAgZUN7IXlYrNXp+Ie32z5M7SsiW40SU4e7B9rZfMp
-	 ZUYqgUDZ3z2Dg==
-Date: Mon, 2 Dec 2024 10:19:09 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
-	Erin Shepherd <erin.shepherd@e43.eu>, Chuck Lever <chuck.lever@oracle.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	stable <stable@kernel.org>
-Subject: Re: [PATCH 1/4] exportfs: add flag to indicate local file handles
-Message-ID: <20241202-aufpeppen-parolen-a17bf56086e2@brauner>
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
- <20241201-work-exportfs-v1-1-b850dda4502a@kernel.org>
- <Z0ztcToKjCY05xq9@dread.disaster.area>
+	s=arc-20240116; t=1733131192; c=relaxed/simple;
+	bh=LAI201etXczxUYj/ymY5QLCuCow+OZ4zyYGLfqeYH78=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oIWXLnYuVy2JqyVG3bfgLub8rgBC7BsCF+HQxG3eMPIxBID9GxfXwu3Fa/RuzIjP+mDFm4Pav+kORvMMZd0DR4PRuMT9LPChqKVLjYlmy32glAl6Z3kBveZY1mRJJW2XPjOF01E7xSNCDa6ayqyOT40pS3vaweTiJcebuGsivD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cuJESCSe; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-724d23df764so3327355b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:19:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733131190; x=1733735990; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=I97ci8gfBo1WSs82yFcU7Nf/YQ1nSlUC/sgrBd9LgCw=;
+        b=cuJESCSe4gtFkpN0z1QKvrMPOhlxqjizPzZfNgPaHnp1+rP5hSA3WpIWSPhj5RHXG+
+         moGvd4E6M+E5AD8LRSctN63hEtLhE6ti2Or1qsSPi2u7GX0/G3Bm0Yw/EmwUQ/FJDp6S
+         xCV2crG/0td0MkCHft74bstTa6XQ1BSIMindKFbWY4dl7cKnLfPM7G7gM5MZf2DcJuXi
+         e0Ksdg4VYvD+gXAgdDiGPLn6a+r5QNvSGoKm6icwLV/42KPoHk/L/RclikS5d76hqCxt
+         Ll7HGB1shhWe3W1+4xynnUNja6OWi0GW3oTathPa5ZZiNQeF0zmYACoYSqg2decKIA/c
+         ojvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733131190; x=1733735990;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I97ci8gfBo1WSs82yFcU7Nf/YQ1nSlUC/sgrBd9LgCw=;
+        b=ELYhUGBQv/Tt9zx7FEefmpHIRoyry35Im0QlRAsO/cmKYlBC36rq5PB4P26zIQMhJ/
+         XplZ56e1qe8HgXNOOTiImVFD8NWfmuTz3WzfgOj34rLCdsayjpCo2d12U7WkDGhYJXiR
+         b9HjhABJ7CHTrpXvhrQMNKEuozRn3+WW3rJt/Nf+AjwZhJZLbVmeq3fPInEIFOlWkoCP
+         a8fZztPeKDKnfmL5B9WwFVRIujzIifdGQnUpEM1olSqjt2uR5inuU+YyKYYHkb4AC3dV
+         H26tHAXEsCu7KDVBDtcYnDCivozLysoij0ggo/Pr4VkGalp+Ca+kLDWQqziJqAHG/RgQ
+         KnyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWEer//897tv6o/t8cVnYxmV3qT4go5aGKilV/Qx7mRdVA5qWvOrXC6PaS0/7ICptqcU2jaZhSpT0sN9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+n36zlg9tuiqXo0/CRSqw6SZpcLVk+uIrLF36BU6BZ3pEkyaI
+	Th4OMrIkCqp0b7nByl1q5M+kwkAMoAA4o5J+pOSILKWDDrLBvTJa9YDtT+MwnsWtSxoqub0UGcH
+	5QUU3M00AMzel3RQlDOb8RmM0Ub1FkIc14q+AOw==
+X-Gm-Gg: ASbGncs6JiMLN64BwGFdzt/5BGdrZGP7gvMG6l5LdhvUHAQgLHPmXF499BXSaSBDW6e
+	HVwJYtd58vp7lPjX+fjt795R3+A1GRX3YU73OJ27L6VY3E7M9PycDlrVhuM8n
+X-Google-Smtp-Source: AGHT+IEoJkQyjo3Ar3EJ4UpVVt/jtsfNxtjUYrY7d5c7BaG0lnT0VKhpLyPT+xBLHUclAEJSvTsH2ZkTOO/tBnKz7E4=
+X-Received: by 2002:a17:90b:1646:b0:2ee:bc1d:f98b with SMTP id
+ 98e67ed59e1d1-2eebc1dfb17mr4817762a91.31.1733131189957; Mon, 02 Dec 2024
+ 01:19:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z0ztcToKjCY05xq9@dread.disaster.area>
+References: <20241129161756.3081386-1-vincent.guittot@linaro.org>
+ <20241129161756.3081386-11-vincent.guittot@linaro.org> <38a2431d-4c5a-4273-8f1e-7e2f65748501@amd.com>
+In-Reply-To: <38a2431d-4c5a-4273-8f1e-7e2f65748501@amd.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 2 Dec 2024 10:19:39 +0100
+Message-ID: <CAKfTPtA6=OjK=fzKhp7DKmQgho+wSE9OKa-rvVBpkMt-E+R6HQ@mail.gmail.com>
+Subject: Re: [PATCH 10/10 v2] sched/fair: Fix variable declaration position
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
+	pauld@redhat.com, efault@gmx.de, luis.machado@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Dec 02, 2024 at 10:12:49AM +1100, Dave Chinner wrote:
-> On Sun, Dec 01, 2024 at 02:12:25PM +0100, Christian Brauner wrote:
-> > Some filesystems like kernfs and pidfs support file handles as a
-> > convenience to use name_to_handle_at(2) and open_by_handle_at(2) but
-> > don't want to and cannot be reliably exported. Add a flag that allows
-> > them to mark their export operations accordingly.
-> > 
-> > Fixes: aa8188253474 ("kernfs: add exportfs operations")
-> > Cc: stable <stable@kernel.org> # >= 4.14
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Fri, 29 Nov 2024 at 19:30, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
+>
+> Hello Vincent,
+>
+> On 11/29/2024 9:47 PM, Vincent Guittot wrote:
+> > Move variable declaration at the beginning of the function
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 > > ---
-> >  fs/nfsd/export.c         | 8 +++++++-
-> >  include/linux/exportfs.h | 1 +
-> >  2 files changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-> > index eacafe46e3b673cb306bd3c7caabd3283a1e54b1..786551595cc1c2043e8c195c00ca72ef93c769d6 100644
-> > --- a/fs/nfsd/export.c
-> > +++ b/fs/nfsd/export.c
-> > @@ -417,6 +417,7 @@ static struct svc_export *svc_export_lookup(struct svc_export *);
-> >  static int check_export(struct path *path, int *flags, unsigned char *uuid)
-> >  {
-> >  	struct inode *inode = d_inode(path->dentry);
-> > +	const struct export_operations *nop;
-> >  
-> >  	/*
-> >  	 * We currently export only dirs, regular files, and (for v4
-> > @@ -449,11 +450,16 @@ static int check_export(struct path *path, int *flags, unsigned char *uuid)
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > -	if (!exportfs_can_decode_fh(inode->i_sb->s_export_op)) {
-> > +	if (!exportfs_can_decode_fh(nop)) {
-> 
-> Where is nop initialised?
+> >   kernel/sched/fair.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index c34874203da2..87552870958c 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -5632,6 +5632,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags);
+> >   static struct sched_entity *
+> >   pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+> >   {
+> > +     struct sched_entity *se;
+> >       /*
+> >        * Enabling NEXT_BUDDY will affect latency but not fairness.
+> >        */
+> > @@ -5642,7 +5643,7 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+> >               return cfs_rq->next;
+> >       }
+> >
+> > -     struct sched_entity *se = pick_eevdf(cfs_rq);
+> > +     se = pick_eevdf(cfs_rq);
+> >       if (se->sched_delayed) {
+> >               dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+> >               SCHED_WARN_ON(se->sched_delayed);
+>
+> Perhaps also squash in:
 
-Yep, already fixed in tree yesterday. Thanks for catching this though!
+Yes, I add it in v3
 
-> 
-> >  		dprintk("exp_export: export of invalid fs type.\n");
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > +	if (nop && nop->flags & EXPORT_OP_LOCAL_FILE_HANDLE) {
-> 
-> Also, please use () around & operations so we can understand that
-> this is not an accidental typo. i.e:
-> 
-> 	if (nop && (nop->flags & EXPORT_OP_LOCAL_FILE_HANDLE)) {
-> 
-> clearly expresses the intent of the code, and now it is obviously
-> correct at a glance.
+Thanks
 
-Done.
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 3356315d7e64..321e3f9e2ac4 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5476,6 +5476,7 @@ static bool
+>   dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>   {
+>         bool sleep = flags & DEQUEUE_SLEEP;
+> +       int action = UPDATE_TG;
+>
+>         update_curr(cfs_rq);
+>
+> @@ -5502,7 +5503,6 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>                 }
+>         }
+>
+> -       int action = UPDATE_TG;
+>         if (entity_is_task(se) && task_on_rq_migrating(task_of(se)))
+>                 action |= DO_DETACH;
+>
+> --
+>
+> while at it :)
+>
+> --
+> Thanks and Regards,
+> Prateek
+>
 
