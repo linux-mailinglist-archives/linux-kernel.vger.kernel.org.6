@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-428271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD1969E0CC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:08:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B4D9E0CE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F51BB3C8E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:38:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14D0FB3D7F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846681DE8AE;
-	Mon,  2 Dec 2024 19:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A251DED4B;
+	Mon,  2 Dec 2024 19:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="DuZ6F0XQ"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="boOmRcJJ"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49B51DE3C1;
-	Mon,  2 Dec 2024 19:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE2C1DE4F0;
+	Mon,  2 Dec 2024 19:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733168320; cv=none; b=r+yTAbWi1HMHSV+UbIDMcE0ePxr/Qy7iDg3P4FvHExMOIbMU/EXPci29WOue8I9R470bTDD2lU0I9l9zpOhMghUVSBonvkvdzgtLpuE8XvNhNzlrVGGRZLN1MLsU3s+5naBnfXYEzOGtsBpClQcD/dLoN/hHLYo9eL/65XOC7Q4=
+	t=1733168321; cv=none; b=l7WE8vHzNZpF1oZ2m6dh0HQTGVtK7C3k/geFoniZ2G4iO3Qm7be+MuWCwlw6x8w1MieNDuI07y9Zi/Y/PtqZiiduUynHe40jME3uHGrRp2rIKSHluJSleFv4fi8lJiwWgXp1bqEiIG/VDYhh7Si+VXPorJPGIWdqqyUno4VpEfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733168320; c=relaxed/simple;
-	bh=9BROW2GIlm3pIefGAozPxLR1ebj2V3j4iYVTr6HjxPg=;
+	s=arc-20240116; t=1733168321; c=relaxed/simple;
+	bh=dEUF5TC8DT2o+cQgIrRqLsxV/N2WvbGPEHszONyH3nU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k4HGgYdIO41Pyuj0bhvCkPxTeiCNd3o80CxDxBP7SDg7JAdRVt9oM9AXx5JPf6ObSOGqSHj6+S+ZmMQSFkLf+k37av+z0WkN/PZoDmeC1hAooPyJOuZmPFTFZ2x7H4ssOyZcDyZuiyxiBnab6I82Kl+c2wi29AHVUvRfD/YBB6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=DuZ6F0XQ; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=kvYqYj2tmSa5xW+yZU4ZLsbxyS0zzkeWlqNgSZWkIoXH1ztVL+yvCwsNxbNJBjYeFYUn8+DIJ06st0A+7HvRwrIJ+Vh2uWuIOYGy2VnoPTSknNsDaXWvTUB4lmITUtvAUiUdAvT8E4cKXj9MIaf964VOoFZhIuQLusfZWPgiUTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=boOmRcJJ; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1733168316;
-	bh=9BROW2GIlm3pIefGAozPxLR1ebj2V3j4iYVTr6HjxPg=;
+	bh=dEUF5TC8DT2o+cQgIrRqLsxV/N2WvbGPEHszONyH3nU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DuZ6F0XQnTj4nCyp6QYk7tEm+WMEQVK1J4WxfEJAPwPk/ZDmZLaLqhgA+FLbit0nI
-	 Ivr+wjrWnUeAfTHMXE3rQycgRhdso0g1CJNwyzXUKBgO0fITZFtkxCtGbEExWWh1fw
-	 FlXdQfBzSCv43e+9CMpkm4+KWAztPrKizi1C4CG8=
+	b=boOmRcJJNsSPppwl0cLoImXEfMsaUbNdaBPo+Kv12OxLmrtIYTfr2miYsPmdH7qYZ
+	 ZVk/tZdjWrL6s46+sgX10nZUzL6HnlOjtr7zfLyEw9pMmsv//MK0qavMg9QBWoZ8oE
+	 UCFGrwvQd2/dDB67ddxVfeKJ1dKkBBnSJs7baHoE=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 02 Dec 2024 20:38:34 +0100
-Subject: [PATCH 3/5] platform/x86/intel/sdsi: Constify 'struct
+Date: Mon, 02 Dec 2024 20:38:35 +0100
+Subject: [PATCH 4/5] platform/x86/intel/pmt: Constify 'struct
  bin_attribute'
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,7 +49,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241202-sysfs-const-bin_attr-pdx86-v1-3-9ab204c2a814@weissschuh.net>
+Message-Id: <20241202-sysfs-const-bin_attr-pdx86-v1-4-9ab204c2a814@weissschuh.net>
 References: <20241202-sysfs-const-bin_attr-pdx86-v1-0-9ab204c2a814@weissschuh.net>
 In-Reply-To: <20241202-sysfs-const-bin_attr-pdx86-v1-0-9ab204c2a814@weissschuh.net>
 To: Stuart Hayes <stuart.w.hayes@gmail.com>, 
@@ -61,11 +61,11 @@ To: Stuart Hayes <stuart.w.hayes@gmail.com>,
 Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733168316; l=5102;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733168316; l=1434;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=9BROW2GIlm3pIefGAozPxLR1ebj2V3j4iYVTr6HjxPg=;
- b=LR3P52TCXRc1e6dFbve1Qi3MwTQzBmJ1YS3VaXvsR6vIig1lGRDMaOwdhOyDVz2VJAj6Lm/oQ
- PHijPHrojXNAxuMSgp2lYaafaLdy9v/v6ZD46utdAJMlMqDGepzwBTS
+ bh=dEUF5TC8DT2o+cQgIrRqLsxV/N2WvbGPEHszONyH3nU=;
+ b=Ne4kYuRK7C3shiK6WjdCksksuRbZxHLWk2odkJkpBxlmn0ISdTSZY7frOFiqw34ebdLXj8Y7q
+ 7zm7twrW957CMj+4sMfCl4308tRucp4Ubz1/lOctHbgylxooO8N73TU
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
@@ -75,121 +75,31 @@ accidental or malicious modifications.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- drivers/platform/x86/intel/sdsi.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ drivers/platform/x86/intel/pmt/class.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/intel/sdsi.c b/drivers/platform/x86/intel/sdsi.c
-index 33f33b1070fdc949c1373251c3bca4234d9da119..30d1c2caf9842dbc355e7dea19f6446c56421228 100644
---- a/drivers/platform/x86/intel/sdsi.c
-+++ b/drivers/platform/x86/intel/sdsi.c
-@@ -398,8 +398,8 @@ static ssize_t sdsi_provision(struct sdsi_priv *priv, char *buf, size_t count,
- }
- 
- static ssize_t provision_akc_write(struct file *filp, struct kobject *kobj,
--				   struct bin_attribute *attr, char *buf, loff_t off,
--				   size_t count)
-+				   const struct bin_attribute *attr, char *buf,
-+				   loff_t off, size_t count)
- {
- 	struct device *dev = kobj_to_dev(kobj);
- 	struct sdsi_priv *priv = dev_get_drvdata(dev);
-@@ -409,11 +409,11 @@ static ssize_t provision_akc_write(struct file *filp, struct kobject *kobj,
- 
- 	return sdsi_provision(priv, buf, count, SDSI_CMD_PROVISION_AKC);
- }
--static BIN_ATTR_WO(provision_akc, SDSI_SIZE_WRITE_MSG);
-+static const BIN_ATTR_WO(provision_akc, SDSI_SIZE_WRITE_MSG);
- 
- static ssize_t provision_cap_write(struct file *filp, struct kobject *kobj,
--				   struct bin_attribute *attr, char *buf, loff_t off,
--				   size_t count)
-+				   const struct bin_attribute *attr, char *buf,
-+				   loff_t off, size_t count)
- {
- 	struct device *dev = kobj_to_dev(kobj);
- 	struct sdsi_priv *priv = dev_get_drvdata(dev);
-@@ -423,7 +423,7 @@ static ssize_t provision_cap_write(struct file *filp, struct kobject *kobj,
- 
- 	return sdsi_provision(priv, buf, count, SDSI_CMD_PROVISION_CAP);
- }
--static BIN_ATTR_WO(provision_cap, SDSI_SIZE_WRITE_MSG);
-+static const BIN_ATTR_WO(provision_cap, SDSI_SIZE_WRITE_MSG);
- 
+diff --git a/drivers/platform/x86/intel/pmt/class.c b/drivers/platform/x86/intel/pmt/class.c
+index 3c53cab033277bccc981310389f7dc47737825f4..65f26267ff49c39e3e143fa7eedb8df23d3ddc1d 100644
+--- a/drivers/platform/x86/intel/pmt/class.c
++++ b/drivers/platform/x86/intel/pmt/class.c
+@@ -81,7 +81,7 @@ EXPORT_SYMBOL_NS_GPL(pmt_telem_read_mmio, INTEL_PMT);
+  */
  static ssize_t
- certificate_read(u64 command, u64 control_flags, struct sdsi_priv *priv,
-@@ -469,7 +469,7 @@ certificate_read(u64 command, u64 control_flags, struct sdsi_priv *priv,
- 
- static ssize_t
- state_certificate_read(struct file *filp, struct kobject *kobj,
--		       struct bin_attribute *attr, char *buf, loff_t off,
-+		       const struct bin_attribute *attr, char *buf, loff_t off,
- 		       size_t count)
+ intel_pmt_read(struct file *filp, struct kobject *kobj,
+-	       struct bin_attribute *attr, char *buf, loff_t off,
++	       const struct bin_attribute *attr, char *buf, loff_t off,
+ 	       size_t count)
  {
- 	struct device *dev = kobj_to_dev(kobj);
-@@ -477,11 +477,11 @@ state_certificate_read(struct file *filp, struct kobject *kobj,
+ 	struct intel_pmt_entry *entry = container_of(attr,
+@@ -308,7 +308,7 @@ static int intel_pmt_dev_register(struct intel_pmt_entry *entry,
+ 	entry->pmt_bin_attr.attr.name = ns->name;
+ 	entry->pmt_bin_attr.attr.mode = 0440;
+ 	entry->pmt_bin_attr.mmap = intel_pmt_mmap;
+-	entry->pmt_bin_attr.read = intel_pmt_read;
++	entry->pmt_bin_attr.read_new = intel_pmt_read;
+ 	entry->pmt_bin_attr.size = entry->size;
  
- 	return certificate_read(SDSI_CMD_READ_STATE, 0, priv, buf, off, count);
- }
--static BIN_ATTR_ADMIN_RO(state_certificate, SDSI_SIZE_READ_MSG);
-+static const BIN_ATTR_ADMIN_RO(state_certificate, SDSI_SIZE_READ_MSG);
- 
- static ssize_t
- meter_certificate_read(struct file *filp, struct kobject *kobj,
--		       struct bin_attribute *attr, char *buf, loff_t off,
-+		       const struct bin_attribute *attr, char *buf, loff_t off,
- 		       size_t count)
- {
- 	struct device *dev = kobj_to_dev(kobj);
-@@ -489,11 +489,11 @@ meter_certificate_read(struct file *filp, struct kobject *kobj,
- 
- 	return certificate_read(SDSI_CMD_READ_METER, 0, priv, buf, off, count);
- }
--static BIN_ATTR_ADMIN_RO(meter_certificate, SDSI_SIZE_READ_MSG);
-+static const BIN_ATTR_ADMIN_RO(meter_certificate, SDSI_SIZE_READ_MSG);
- 
- static ssize_t
- meter_current_read(struct file *filp, struct kobject *kobj,
--		   struct bin_attribute *attr, char *buf, loff_t off,
-+		   const struct bin_attribute *attr, char *buf, loff_t off,
- 		   size_t count)
- {
- 	struct device *dev = kobj_to_dev(kobj);
-@@ -502,11 +502,11 @@ meter_current_read(struct file *filp, struct kobject *kobj,
- 	return certificate_read(SDSI_CMD_READ_METER, CTRL_METER_ENABLE_DRAM,
- 				priv, buf, off, count);
- }
--static BIN_ATTR_ADMIN_RO(meter_current, SDSI_SIZE_READ_MSG);
-+static const BIN_ATTR_ADMIN_RO(meter_current, SDSI_SIZE_READ_MSG);
- 
- static ssize_t registers_read(struct file *filp, struct kobject *kobj,
--			      struct bin_attribute *attr, char *buf, loff_t off,
--			      size_t count)
-+			      const struct bin_attribute *attr, char *buf,
-+			      loff_t off, size_t count)
- {
- 	struct device *dev = kobj_to_dev(kobj);
- 	struct sdsi_priv *priv = dev_get_drvdata(dev);
-@@ -528,9 +528,9 @@ static ssize_t registers_read(struct file *filp, struct kobject *kobj,
- 
- 	return count;
- }
--static BIN_ATTR_ADMIN_RO(registers, SDSI_SIZE_REGS);
-+static const BIN_ATTR_ADMIN_RO(registers, SDSI_SIZE_REGS);
- 
--static struct bin_attribute *sdsi_bin_attrs[] = {
-+static const struct bin_attribute *const sdsi_bin_attrs[] = {
- 	&bin_attr_registers,
- 	&bin_attr_state_certificate,
- 	&bin_attr_meter_certificate,
-@@ -576,7 +576,7 @@ static struct attribute *sdsi_attrs[] = {
- 
- static const struct attribute_group sdsi_group = {
- 	.attrs = sdsi_attrs,
--	.bin_attrs = sdsi_bin_attrs,
-+	.bin_attrs_new = sdsi_bin_attrs,
- 	.is_bin_visible = sdsi_battr_is_visible,
- };
- __ATTRIBUTE_GROUPS(sdsi);
+ 	ret = sysfs_create_bin_file(&dev->kobj, &entry->pmt_bin_attr);
 
 -- 
 2.47.1
