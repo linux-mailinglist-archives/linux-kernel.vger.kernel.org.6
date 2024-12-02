@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-428042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7139E0933
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:58:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680E79E0960
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:04:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526B628229B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5495168ADA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880941D9A54;
-	Mon,  2 Dec 2024 16:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F62C1D9A42;
+	Mon,  2 Dec 2024 16:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OGm7CBJd"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rRDSUmFv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RhP/2Tyh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5577513C8E8;
-	Mon,  2 Dec 2024 16:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6248C163A97;
+	Mon,  2 Dec 2024 16:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733158713; cv=none; b=f69gYvNsUpECvrM66Lm448lgmnfucUHW43/OUgBdQrFiPcy5W3aw4Vwkg3zyaO8YbzNINDBR/rWQIC/HDGLYK1hNCYy6yY262eUjIiRPpA1mHF/wRuoClYTLkFsZTRjCA3YcEwXD22aENEHRX1VOlFQ8t9kWmTYfXFCooLxCFPQ=
+	t=1733158733; cv=none; b=gyQCcyfoH4nzywkl/wmQjjHyyYimoT3MiU2aK/6xvTWItwI59NnSTA7M6PyMtyubnSXsObVw03QwMDGL8f1HA+wnYsQpK7nf4nnwI01cSjbUSNxbXdl0sU5X/3HfRc7YPziviGE3vDOnVbTQRG2K+6hht8ICS+ZopOwG0ax+V8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733158713; c=relaxed/simple;
-	bh=+/aze2XdCAbp3s1wCqprW1SADqz2t0OMsYVnR+C5QD4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r25C9x4a26zUxHb9VGjBx+9G7m99bo3zttvG3OmcNT9KFTtTNGeAZuG1LLBUlPQDyKudysQkRGJ+oQVPTowGRvqZhYwj800GZnWomHLy+kg7su+JJcv0vAZuT6aE4aDUGFMuezK7/zaEWnhW0eyHXe04Utrb2rhSxG8qtDKPpZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OGm7CBJd; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 236B2E0003;
-	Mon,  2 Dec 2024 16:58:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733158709;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=crHXj6kSMxBwiHS4OFprzVGLLYPQotmxut5qDRHbC9A=;
-	b=OGm7CBJdwa/YOzj/A+yWhzEDKMSlz4FKa+GbTgVCyqjDEmP20x1pXABhO0rP2HKdX2UPUs
-	OfsxFl1WVvv4q7n4OT2/Ne3MtYcmxHpJ/RUDI+QaXypAZfPYdWlTOkYf2y7m3G4KQDYx94
-	bS/x2idB9+NXlDCAd7zQy+ixQP9vdCaXPrO9tzFijLXKN29OU1rh0vEp+WwZN0i+u3BwMm
-	PzgPC1wUKGW6DTNfNcHNTKYefvgc0khHOYcmF36L3s63aIS10UWlYTeGubjPGu/ER7sqKE
-	iFE7LGuXU55yNc4D5FwdF4QbeE58rSmbYn9Yc45LvcOIun//70kzgF4pMHLoag==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stephen Boyd <stephen.boyd@linaro.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] of: Fix error path in of_parse_phandle_with_args_map()
-Date: Mon,  2 Dec 2024 17:58:19 +0100
-Message-ID: <20241202165819.158681-1-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1733158733; c=relaxed/simple;
+	bh=j82Q2BpRDRjR8Mr43FOGqTiz4APZast1Y44gJMKdLCU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=tm0vk7mADv9j3Y5yV818VTMeqeZM7jQn0A+ACPvN85uG0cVvBw0sO9jMXEs8RYOEJXshCKw+NBWxfAj4Kk7U7LJAawYIPNh/2lS5xqaG/bxpmFAU06rXS/Kq97Z3NW+/qcYO287tC7GcE30PLgY8JW43eYzFgIJMDsjmXUlonqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rRDSUmFv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RhP/2Tyh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 02 Dec 2024 16:58:48 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733158729;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pU9rqQjAqQucV6UwACL9r+lzkOd+Legaz5XwYhQu+PY=;
+	b=rRDSUmFvpJG4LcjS+xUZBIRb5DrCwdbt+Oh7C3/4A0f2TgkLUtve047mYfy8zf8YE2vuIM
+	JKKJuTVxvRePTULkfg5vNwIpHzekfiBqDwLvmOD6/QrSSt2xlAd5alCwlvr8q4WnRtwoZt
+	Dy6SlLnonzxCrMpT+onvNRigxcTRqdmIhcFI4/khcW9snW4KdcvsC7ULLwhTmPI/qwfnW/
+	FJTNeuGPiNiwkA18DoyTh9Nxobh0yGFJN/pV3m72d7lpzkw+BIO3m3auyuZBnWb8QDf+E6
+	et8fwEdeEyc0G6FkPGqweD1ZzU+Fixc7FrHqP7+KoxoEYy7KmFdfJvqiv/vZDg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733158729;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pU9rqQjAqQucV6UwACL9r+lzkOd+Legaz5XwYhQu+PY=;
+	b=RhP/2TyhwQxze0axMpDsXNR27p8Zhsp+BrLsBC2gqdqKn22oLStkY9RSly9xld/JlvKMmb
+	uB+ZhopGRLbM96Bw==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86/boot/compressed: Remove unused header
+ includes from kaslr.c
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241130122644.GAZ0sEhD3Bm_9ZAIuc@fat_crate.local>
+References: <20241130122644.GAZ0sEhD3Bm_9ZAIuc@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Message-ID: <173315872837.412.17151374223149814307.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-The current code uses some 'goto put;' to cancel the parsing operation
-and can lead to a return code value of 0 even on error cases.
+The following commit has been merged into the x86/cleanups branch of tip:
 
-Indeed, some goto calls are done from a loop without setting the ret
-value explicitly before the goto call and so the ret value can be set to
-0 due to operation done in previous loop iteration. For instance match
-can be set to 0 in the previous loop iteration (leading to a new
-iteration) but ret can also be set to 0 it the of_property_read_u32()
-call succeed. In that case if no match are found or if an error is
-detected the new iteration, the return value can be wrongly 0.
+Commit-ID:     5daececd4ff533ab316ab360aba0bda1bf01961d
+Gitweb:        https://git.kernel.org/tip/5daececd4ff533ab316ab360aba0bda1bf01961d
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Sat, 30 Nov 2024 13:26:44 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 02 Dec 2024 16:44:32 +01:00
 
-Avoid those cases setting the ret value explicitly before the goto
-calls.
+x86/boot/compressed: Remove unused header includes from kaslr.c
 
-Fixes: bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a nexus node")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Nothing is using the linux/ namespace headers anymore. Remove them.
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20241130122644.GAZ0sEhD3Bm_9ZAIuc@fat_crate.local
 ---
- drivers/of/base.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/x86/boot/compressed/kaslr.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 7dc394255a0a..809324607a5c 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1507,8 +1507,10 @@ int of_parse_phandle_with_args_map(const struct device_node *np,
- 			map_len--;
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index f4d8237..f03d59e 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -25,10 +25,6 @@
+ #include "efi.h"
  
- 			/* Check if not found */
--			if (!new)
-+			if (!new) {
-+				ret = -EINVAL;
- 				goto put;
-+			}
+ #include <generated/compile.h>
+-#include <linux/module.h>
+-#include <linux/uts.h>
+-#include <linux/utsname.h>
+-#include <linux/ctype.h>
+ #include <generated/utsversion.h>
+ #include <generated/utsrelease.h>
  
- 			if (!of_device_is_available(new))
- 				match = 0;
-@@ -1518,17 +1520,20 @@ int of_parse_phandle_with_args_map(const struct device_node *np,
- 				goto put;
- 
- 			/* Check for malformed properties */
--			if (WARN_ON(new_size > MAX_PHANDLE_ARGS))
--				goto put;
--			if (map_len < new_size)
-+			if (WARN_ON(new_size > MAX_PHANDLE_ARGS) ||
-+			    map_len < new_size) {
-+				ret = -EINVAL;
- 				goto put;
-+			}
- 
- 			/* Move forward by new node's #<list>-cells amount */
- 			map += new_size;
- 			map_len -= new_size;
- 		}
--		if (!match)
-+		if (!match) {
-+			ret = -ENOENT;
- 			goto put;
-+		}
- 
- 		/* Get the <list>-map-pass-thru property (optional) */
- 		pass = of_get_property(cur, pass_name, NULL);
--- 
-2.47.0
-
 
