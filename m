@@ -1,215 +1,158 @@
-Return-Path: <linux-kernel+bounces-428073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E0C9E09DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:28:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AF79E0AFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:27:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821111632F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:28:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A9CEB82888
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00AA2A1B8;
-	Mon,  2 Dec 2024 17:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bEcBcu5Z"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F011DAC89;
+	Mon,  2 Dec 2024 17:29:32 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B661D9694
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EFC1D9A78;
+	Mon,  2 Dec 2024 17:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160512; cv=none; b=W3nh57E4JvWlYF3uB/aezeC/Inz3OGRuMEu78pENy4ZSQGBxMCKD0xICkJ5AseorehXY09Dwd8eBve0hfpSobLv3owUfEqznjOhTpR5Lp0imFH14w9Gest8bRPL79ys8OzONjvC04NY/yKpBC0W8rxYsoreu87sHfLIUXHzldM0=
+	t=1733160572; cv=none; b=OUMMhvmICqa2GMmBs8J7l+DkCe4A85qoiw26mp0KS0/ePSlSIhrkGMRAknB+Q7dDZitEMWC199qe3JAVP0eLrUBAWPgWRaLTL+EwiGDBXhbklkHhOcVy1Y9zBfCB6QQPAjsCgC+Z1COnM7Afx/Y3tgEQ/3zniU2cAp0m9nmEsEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160512; c=relaxed/simple;
-	bh=wJFBfBmHYj+r40PWkie06frhHQy8OBlRzQJ5xiTFB6o=;
+	s=arc-20240116; t=1733160572; c=relaxed/simple;
+	bh=QOQ+erHT4VXZq8nXOWd4czcnijmv3x7ttdi40L8gVbU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qsGfbNSZHgKTOYRBxjPZ+6vzlhG1waPWllRIk27qzct9mE0r7NC9+Dln2XESTJ3hs82Chmn3KbJ1Z/tpza9kT6nk50RJBuJuz/sefJz1XjU4s5RayO9r3VgCOW3790Q5vmXP63/tSKVu3yd5wB1r43D6y8OKE6rJ0t0Wj25O0fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bEcBcu5Z; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-295e9f795dbso242188fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:28:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733160509; x=1733765309; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I4g52UpJ3PmxcvI/j7zwPPdBS0T11At54rD3c1xjjOY=;
-        b=bEcBcu5Z0ChiZ1asgoL75MV59zPDCw5NSd4R7E8tKyueEqxJWZhOi37VMhZz3roBOV
-         ONLSvp3soSHLCZldgVKot+cyICXa1oWZrpMErNdP9/4H3LFohRay7CaJ8gh5E5rNg2Zd
-         hQkrYNRifEjbTN3GXB5Senz6I2CgHSP+T31oM=
+	 To:Cc:Content-Type; b=F2tW+hNgibcdnPij1LTmhoKotoHzma4hrYqljf6WvIs/hSngvJqwg3SU++c0a6HG7b4BdRS2hQX/XqMvGCAh1hMNeWBnE9pjiwqKp4dcvPFuHmFIACsMrQj87VtmWug00GbZRRuw0oeD4Sv2gNXwSKz9aZynJEy8ZvgPfmEPBrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a68480164so630901766b.3;
+        Mon, 02 Dec 2024 09:29:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733160509; x=1733765309;
+        d=1e100.net; s=20230601; t=1733160568; x=1733765368;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I4g52UpJ3PmxcvI/j7zwPPdBS0T11At54rD3c1xjjOY=;
-        b=f28alaZvG1RWd00T7moRMp8g98JsZsRsSaG4mngBWMTy9ozU2MT3MHN+mle4Bc7E91
-         TZERSEktSWPpJBS3bP5+oykKF441YbvvSZHo+epyt0IfeMYhce2QeTla75EFzNduUtvc
-         SlKVlIc5MM0hsL2yyvE0hampepUOc1s0UKRFcvikNGZKww3FngtXK9LAuhLBGLOXoiWG
-         dG0rwZ2zdPTL19Yf8V0VYuxqGlDMp5hG/oD1wygY+r5bpzmw9wd9ks4E3GNaC6UvR9AS
-         v8D/weigq4r13Jkkm/DGyMF/j/GhJy6U8DMHCprPfgljJw2F+WWrVZ2L59ItSmjcQ0W+
-         Rgzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTDJNGzBqv/n+6dhtgcQAwqaZU+jjr2SbULv91y2hkj8hzA7IJlPGFob+/YDW06eE7Kf9RjNbzd//1B/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUgL66lDYxXPmDogQAAkzcnZwEGuBlcPYkyWcMaTcjT7lYHTcb
-	NqHE+4mM0gRTICV/39SQC7MSTFtMYchHKcpWRhr2FLxC0Fg6PF2mT+0OwA9NZ1M5HFaAi0XsmX+
-	SJ4dfEotmk4mijcehkCKx0XrAX8V6rgco2IJM
-X-Gm-Gg: ASbGncsU9HyPCdpzNzU9X6H4G7NfkvknhsCwMc8FzQ1fnESgOd5lYBdqGRDBT6jd6Hi
-	GiGwNLjvm6AdslZvcVjIjnR4/Kgh1I7fd4yUj4z9yPfk8iPeD5otg3jvEGJ+/
-X-Google-Smtp-Source: AGHT+IF0l7ckRLP+aVl+IekfkudYe/vLczB8xykS3zl9D27IHSlG37LSEt2alDzPQKCTxcNozOrr3kQuCvLEOD1SXnI=
-X-Received: by 2002:a05:6870:170d:b0:295:c1ca:b99a with SMTP id
- 586e51a60fabf-29dc3fbe9f0mr4690677fac.1.1733160508981; Mon, 02 Dec 2024
- 09:28:28 -0800 (PST)
+        bh=CgvuKCN7J6YpKVI1K2eRbzWN5UKOCpkxDwdsMytbnaM=;
+        b=LovzK/8yfwLDQyw/Y37DFPd+EJsj6gZal/pHsQ90ylPZ3aD5yEF2LE41am99BUfPdr
+         ZRwss0r/chD1IkD5w/GNWmfpCRIp+fvp/hR/ykKS/wMuLRU7DY5aznAToIfNLF6bQsZx
+         QaSFl1+z8s4wiXRJ4omwV5yzW1ngFSdhnD2aJmwSMb9M0+9KTRbz3u/CNtPQQReGocMU
+         eTdf8G3Sk3cE5xwv3sXhM3gjniaBhJHODos5YtfvlSffhqj1NfeT8mmYnBLwIGBT9i4M
+         cHYUsm+ooFfyDx0yHpdrsGuNHj+BMWAXE00QsOaqhLg0outAQn7ebwu+XRSiKJhauNZI
+         zHDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjWLMMMcg4COFD0t64jCZfJcK/lzw4Ed8Orao4nVee0eWu2x08y6cejP4I5kR+JhNxz9OxPuIzZ1wrHQP5@vger.kernel.org, AJvYcCVjvPH/PS+e8Ow8Z28dIRnb6AlIu8GV7rGnmVEJUBa7W22oQffbqaDg9IVgoi3MJ0EcZcwEideCw6VX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz34Q/nyDL8PetC9TkKjp1vBC3FbNzbIyqxd/2L7tmpyR4TVClH
+	YRzTUL3jnAgWUGRxrs/t9bz6EPOoVl8PvdFApaGdgzyVYSpIaaz8q0na79yD
+X-Gm-Gg: ASbGncvzg4kl8HiLFgM6vqhK//H+i/Zjh5hXPmlv1SgO5rHUWzVK4l3rhJplNXV2lxK
+	qfCvQWUDFtSR1artpfhd4awpWoPQAB0W+gkxkBSBwX55I0sqI/YSIeBl+62RljPk6FiqylaIqbF
+	4Gm+jp5s52I8vH7jwq3PN4D5njeOFNj7t59Mds57nnLvvBNSHrDVmB/PlhTXWJq1I7slF1fGroi
+	XpMhLcN3XkTRSI9Hgn0Rdlm+dREme7/8NHLdqNj7Y1bC5gk8g4wp5iEpsfMeX+ttdS+mvGP7ARS
+	RWxW
+X-Google-Smtp-Source: AGHT+IEc1tDCotDx2/Yk1SYdAKvcozPAa2ZWBTRAmdp0lcsIUgUZXQM4zrZc5g2P04VdnqlZa+7HxA==
+X-Received: by 2002:a17:907:75d0:b0:aa5:3631:adcb with SMTP id a640c23a62f3a-aa58109066cmr1780274166b.53.1733160568118;
+        Mon, 02 Dec 2024 09:29:28 -0800 (PST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e649csm525879966b.110.2024.12.02.09.29.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 09:29:27 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa5500f7a75so733200966b.0;
+        Mon, 02 Dec 2024 09:29:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXGL30TI2P2nKiTyzx6HbK5SkmnNJ0DKA6jFL39nbXFKAwHGQ3KBahia2G2kSsDx9cg6aNk5GKWUYmz87JZ@vger.kernel.org, AJvYcCXhHfIINBx/4/92FiPhGcyC1OZLrRHPLgpbUAgWN10LGArD9XRkzYmhZDAi6AyShKx05uNEi+BPbE3D@vger.kernel.org
+X-Received: by 2002:a17:906:c383:b0:aa5:451c:ce25 with SMTP id
+ a640c23a62f3a-aa58105895amr1847466266b.43.1733160567637; Mon, 02 Dec 2024
+ 09:29:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125202021.3684919-1-jeffxu@google.com> <7494c3aa-378f-4bb6-bc44-59ea49ccc5e6@lucifer.local>
-In-Reply-To: <7494c3aa-378f-4bb6-bc44-59ea49ccc5e6@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Mon, 2 Dec 2024 09:28:17 -0800
-Message-ID: <CABi2SkV1kSgUpXTfiGOLy2CazzQrJd75=Uwa40CvuE-JRqQfnA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/1] Seal system mappings
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, adhemerval.zanella@linaro.org, oleg@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, 
-	ojeda@kernel.org, adobriyan@gmail.com, anna-maria@linutronix.de, 
-	mark.rutland@arm.com, linus.walleij@linaro.org, Jason@zx2c4.com, 
-	deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, hch@lst.de, 
-	peterx@redhat.com, hca@linux.ibm.com, f.fainelli@gmail.com, gerg@kernel.org, 
-	dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
-	Liam.Howlett@oracle.com, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, Vlastimil Babka <vbabka@suse.cz>
+References: <20241127-asahi-spi-dt-v1-0-907c9447f623@jannau.net>
+In-Reply-To: <20241127-asahi-spi-dt-v1-0-907c9447f623@jannau.net>
+From: Neal Gompa <neal@gompa.dev>
+Date: Mon, 2 Dec 2024 12:28:50 -0500
+X-Gmail-Original-Message-ID: <CAEg-Je-3w3koiqnAOMQO4RZ2DB+fRiSbZJSba-Z=L8OCF2B0Pg@mail.gmail.com>
+Message-ID: <CAEg-Je-3w3koiqnAOMQO4RZ2DB+fRiSbZJSba-Z=L8OCF2B0Pg@mail.gmail.com>
+Subject: Re: [PATCH RESEND 0/5] Add Apple SPI controller and spi-nor dt nodes
+To: j@jannau.net
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 8:40=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Wed, Nov 27, 2024 at 4:52=E2=80=AFAM Janne Grunau via B4 Relay
+<devnull+j.jannau.net@kernel.org> wrote:
 >
-> +Vlastimil
+> This series adds SPI controller and SPI NOR flash device nodes to the
+> man Apple silicon SoC dts files. Only the subset of used SPI controllers
+> is added. Five SPI controllers exists according to pmgr ADT data but the
+> commits only add controllers found in use on any of the devices. The
+> parameters for the missing nodes are guessable but there's no point in
+> adding them since no further M1 or M2 devices are expected.
+> Together with controller nodes the first SPI device is added. All Apple
+> silicon devices connect a SPI NOR flash to spi1. This holds Apple's 1st
+> stage bootloader, firmwares, platform and machine specific config data
+> and a writeable key-value store (nvram). Expose only the nvram as mtd
+> partition since it has use beyond exploring the content. Tools from
+> asahi-nvram [1] can modify the (default) boot configuration
+> (asahi-bless), read Bluetooth sync keys (asahi-btsync) and read and
+> write arbitrary keys (asahi-nvram).
 >
-> Jeff... :)
+> Devicetree bindings are included in the driver series. Last version at
+> https://lore.kernel.org/linux-devicetree/20241101-asahi-spi-v3-0-3b411c5f=
+b8e5@jannau.net/
 >
-> Please review
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+> This series passes `make CHECK_DTBS=3D1 dtbs` with the spi bindings excep=
+t
+> for "local-mac-address" for the Bluetooth device (I need get back to
+> this).
 >
-> You didn't cc- mantainers of code you are changing. And you reference my
-> name without cc'ing me here. I'm sure there's some relevant Taylor Swift
-> lyric...
+> [1] https://github.com/WhatAmISupposedToPutHere/asahi-nvram/
 >
-I apologize,  this shouldn't happen again.
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+> Hector Martin (1):
+>       arm64: dts: apple: t8103: Fix spi4 power domain sort order
+>
+> Janne Grunau (4):
+>       arm64: dts: apple: t8103: Add spi controller nodes
+>       arm64: dts: apple: t8112: Add spi controller nodes
+>       arm64: dts: apple: t600x: Add spi controller nodes
+>       arm64: dts: apple: Add SPI NOR nvram partition to all devices
+>
+>  arch/arm64/boot/dts/apple/spi1-nvram.dtsi      | 39 +++++++++++++++
+>  arch/arm64/boot/dts/apple/t600x-common.dtsi    |  7 +++
+>  arch/arm64/boot/dts/apple/t600x-die0.dtsi      | 28 +++++++++++
+>  arch/arm64/boot/dts/apple/t600x-gpio-pins.dtsi | 14 ++++++
+>  arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi |  2 +
+>  arch/arm64/boot/dts/apple/t600x-j375.dtsi      |  2 +
+>  arch/arm64/boot/dts/apple/t8103-jxxx.dtsi      |  2 +
+>  arch/arm64/boot/dts/apple/t8103-pmgr.dtsi      | 18 +++----
+>  arch/arm64/boot/dts/apple/t8103.dtsi           | 68 ++++++++++++++++++++=
+++++++
+>  arch/arm64/boot/dts/apple/t8112-jxxx.dtsi      |  2 +
+>  arch/arm64/boot/dts/apple/t8112.dtsi           | 44 ++++++++++++++++-
+>  11 files changed, 216 insertions(+), 10 deletions(-)
+> ---
+> base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+> change-id: 20241101-asahi-spi-dt-58245bb1da3e
+>
+> Best regards,
+> --
+> Janne Grunau <j@jannau.net>
+>
 
-Thanks for reminding me
--Jeff
+Series LGTM.
+
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
 
->
-> On Mon, Nov 25, 2024 at 08:20:20PM +0000, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > Seal vdso, vvar, sigpage, uprobes and vsyscall.
-> >
-> > Those mappings are readonly or executable only, sealing can protect
-> > them from ever changing or unmapped during the life time of the process=
-.
-> > For complete descriptions of memory sealing, please see mseal.rst [1].
-> >
-> > System mappings such as vdso, vvar, and sigpage (for arm) are
-> > generated by the kernel during program initialization, and are
-> > sealed after creation.
-> >
-> > Unlike the aforementioned mappings, the uprobe mapping is not
-> > established during program startup. However, its lifetime is the same
-> > as the process's lifetime [2]. It is sealed from creation.
-> >
-> > The vdso, vvar, sigpage, and uprobe mappings all invoke the
-> > _install_special_mapping() function. As no other mappings utilize this
-> > function, it is logical to incorporate sealing logic within
-> > _install_special_mapping(). This approach avoids the necessity of
-> > modifying code across various architecture-specific implementations.
-> >
-> > The vsyscall mapping, which has its own initialization function, is
-> > sealed in the XONLY case, it seems to be the most common and secure
-> > case of using vsyscall.
-> >
-> > It is important to note that the CHECKPOINT_RESTORE feature (CRIU) may
-> > alter the mapping of vdso, vvar, and sigpage during restore
-> > operations. Consequently, this feature cannot be universally enabled
-> > across all systems.
-> >
-> > Currently, memory sealing is only functional in a 64-bit kernel
-> > configuration.
-> >
-> > To enable this feature, the architecture needs to be tested to
-> > confirm that it doesn't unmap/remap system mappings during the
-> > the life time of the process. After the architecture enables
-> > ARCH_HAS_SEAL_SYSTEM_MAPPINGS, a distribution can set
-> > CONFIG_SEAL_SYSTEM_MAPPING to manage access to the feature.
-> > Alternatively, kernel command line (exec.seal_system_mappings)
-> > enables this feature also.
-> >
-> > This feature is tested using ChromeOS and Android on X86_64 and ARM64,
-> > therefore ARCH_HAS_SEAL_SYSTEM_MAPPINGS is set for X86_64 and ARM64.
-> > Other architectures can enable this after testing. No specific hardware
-> > features from the CPU are needed.
-> >
-> > This feature's security enhancements will benefit ChromeOS, Android,
-> > and other secure-by-default systems.
-> >
-> > [1] Documentation/userspace-api/mseal.rst
-> > [2] https://lore.kernel.org/all/CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkR=
-kL-NrCZxYAyg@mail.gmail.com/
-> >
-> > History:
-> > V4:
-> >   ARCH_HAS_SEAL_SYSTEM_MAPPINGS (Lorenzo Stoakes)
-> >   test info (Lorenzo Stoakes)
-> >   Update  mseal.rst (Liam R. Howlett)
-> >   Update test_mremap_vdso.c (Liam R. Howlett)
-> >   Misc. style, comments, doc update (Liam R. Howlett)
-> >
-> > V3:
-> >   https://lore.kernel.org/all/20241113191602.3541870-1-jeffxu@google.co=
-m/
-> >   Revert uprobe to v1 logic (Oleg Nesterov)
-> >   use CONFIG_SEAL_SYSTEM_MAPPINGS instead of _ALWAYS/_NEVER (Kees Cook)
-> >   Move kernel cmd line from fs/exec.c to mm/mseal.c and misc. refactor =
-(Liam R. Howlett)
-> >
-> > V2:
-> >   https://lore.kernel.org/all/20241014215022.68530-1-jeffxu@google.com/
-> >   Seal uprobe always (Oleg Nesterov)
-> >   Update comments and description (Randy Dunlap, Liam R.Howlett, Oleg N=
-esterov)
-> >   Rebase to linux_main
-> >
-> > V1:
-> > https://lore.kernel.org/all/20241004163155.3493183-1-jeffxu@google.com/
-> >
-> > Jeff Xu (1):
-> >   exec: seal system mappings
-> >
-> >  .../admin-guide/kernel-parameters.txt         | 11 ++++++
-> >  Documentation/userspace-api/mseal.rst         |  4 ++
-> >  arch/arm64/Kconfig                            |  1 +
-> >  arch/x86/Kconfig                              |  1 +
-> >  arch/x86/entry/vsyscall/vsyscall_64.c         |  8 +++-
-> >  include/linux/mm.h                            | 12 ++++++
-> >  init/Kconfig                                  | 25 ++++++++++++
-> >  mm/mmap.c                                     | 10 +++++
-> >  mm/mseal.c                                    | 39 +++++++++++++++++++
-> >  security/Kconfig                              | 24 ++++++++++++
-> >  10 files changed, 133 insertions(+), 2 deletions(-)
-> >
-> > --
-> > 2.47.0.338.g60cca15819-goog
-> >
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
