@@ -1,113 +1,160 @@
-Return-Path: <linux-kernel+bounces-427307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D149DFFA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF149DFFA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA689B24DFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:04:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D30D2B24F41
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CED11FC7E8;
-	Mon,  2 Dec 2024 11:03:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329F31F9407
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14671FCFE2;
+	Mon,  2 Dec 2024 11:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQRUFp0d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE751F9EA4;
+	Mon,  2 Dec 2024 11:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733137437; cv=none; b=IyU4c3HzXZwLTKPw8CfLg+1psruNyp13ZOokf9P49Cx7wlEyhcS1v2EfMqp3MOsz9clIe2Rxzm4qvw4fSHJHStg0xcE/b65sCPG/tqPW/0zECtt1rSO5+QifK8im2xABzBzlZCf1pBKG0j9d1v4q3sBjMqzF4Fagyqu1YRDPkTY=
+	t=1733137467; cv=none; b=SkwfkzROJWtZuVUYQRW0+sPXwnQe5SRww4fnuUdSuQuc8lXsJmjHvka5yow50oMcqw3QslJjJ1HhYZVjXzRFIn0v+OgVjH0qXXabrSaym95yimkLrRNQWTHqD2BeAYCsZwORyFzUpqzoNbafQsDynYuBbzqK7II1srhTcSBxGFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733137437; c=relaxed/simple;
-	bh=At2+zhwX3ZTTQuxrsKtv3I9n9xEVkSviOAFMHbjmVJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQ9qbiONuGIVKSHEBRGqY4CQrwJ7WlTP9ZEAooVkD8ctzjj0XZv4xAXQQPfD3nNR+Wu9O5OMSa/vq92JYe3+JgP7wmjHpe5U9ilBLmd3s6B8FjmdAV09UaTzixhyFmWQsuRQIxRupxugdUx38SJiR1CpFfJOQm1l3nH2SLVP/2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3B761063;
-	Mon,  2 Dec 2024 03:04:22 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C05443F71E;
-	Mon,  2 Dec 2024 03:03:51 -0800 (PST)
-Date: Mon, 2 Dec 2024 11:03:49 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] cacheinfo: Allocate memory during CPU hotplug if
- not done from the primary CPU
-Message-ID: <Z02UFUQCwEVAnY7C@bogus>
-References: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
- <20241128002247.26726-2-ricardo.neri-calderon@linux.intel.com>
+	s=arc-20240116; t=1733137467; c=relaxed/simple;
+	bh=K+6tmtYJZ7Kg4i/cQ0Vn10V8zjtm4KpfKvX1Vv0EL4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gkMK6HroxG4Io6ChCBTl75B6uWVsNJvG2Tc/g+HH86qVKccMafwJMBvLDSKsC5g84IQl/bPL0ye+vFhaDhAdo99UkZn7otBWAcAYvr8Th7k5LFeC/o9ZbVP52opCzUOR/7W57lovJaGD03XFEU62tHjeBOc4g9qc2prDLOvk+oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQRUFp0d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01034C4CED1;
+	Mon,  2 Dec 2024 11:04:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733137466;
+	bh=K+6tmtYJZ7Kg4i/cQ0Vn10V8zjtm4KpfKvX1Vv0EL4o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bQRUFp0dMZI38BtGhZK5sEiz+Xpf7PygpwaT9eU6oxRUfMBqijv6lSVfMMl/scKBq
+	 lu4ktokDgCEC8ozstz1JvZY68qHbuSlKXNJocD6vUkIo+u02qJnJcUw8pyGYxLB8na
+	 sNb3TdRyvcVZjFJ1v3SNgQowD1sRqmPWTXmtTDmLWhwccunC86ONkfSSjJ+8ROMrGh
+	 PC0RtLjZRyX5+oUraB3e5ph431mLHXCNi5BAVLi+/pVxVaMRqBrzsA/+gGl5nonBfO
+	 SPL3FGxmIefMKdtx4UjBxE8+UPMMZDDy5O6hCHVSCcLkKhV0BBGNiu+T+lTFbitO8N
+	 5M0fX1BAiHhjg==
+Message-ID: <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
+Date: Mon, 2 Dec 2024 12:04:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241128002247.26726-2-ricardo.neri-calderon@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
+ flag
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
+ vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
+ Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
+ krzk+dt@kernel.org, robh@kernel.org
+Cc: quic_vdadhani@quicinc.com
+References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
+ <20241129144357.2008465-2-quic_msavaliy@quicinc.com>
+ <db428697-a9dc-46e1-abbe-73341306403f@kernel.org>
+ <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
+ <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
+ <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 04:22:46PM -0800, Ricardo Neri wrote:
-> Commit 5944ce092b97 ("arch_topology: Build cacheinfo from primary CPU")
-> adds functionality that architectures can use to optionally allocate and
-> build cacheinfo early during boot. Commit 6539cffa9495 ("cacheinfo: Add
-> arch specific early level initializer") lets secondary CPUs correct (and
-> reallocate memory) cacheinfo data if needed.
+On 02/12/2024 11:38, Mukesh Kumar Savaliya wrote:
+>>
+>> Come with one flag or enum, if needed, covering all your cases like this.
+>>
+> Let me explain, this feature is one of the additional software case 
+> adding on base protocol support. if we dont have more than one usecase 
+> or repurposing this feature, why do we need to add enums ? I see one 
+> flag gpi_mode but it's internal to driver not exposed to user or expose 
+> any usecase/feature.
 > 
-> If the early build functionality is not used and cacheinfo does not need
-> correction, memory for cacheinfo is never allocated. x86 does not use the
-> early build functionality. Consequently, during the cacheinfo CPU hotplug
-> callback, last_level_cache_is_valid() attempts to dereference a NULL
-> pointer:
-> 
->      BUG: kernel NULL pointer dereference, address: 0000000000000100
->      #PF: supervisor read access in kernel mode
->      #PF: error_code(0x0000) - not present page
->      PGD 0 P4D 0
->      Oops: 0000 [#1] PREEPMT SMP NOPTI
->      CPU: 0 PID 19 Comm: cpuhp/0 Not tainted 6.4.0-rc2 #1
->      RIP: 0010: last_level_cache_is_valid+0x95/0xe0a
-> 
-> Allocate memory for cacheinfo during the cacheinfo CPU hotplug callback if
-> not done earlier.
-> 
-> Moreover, before determining the validity of the last-level cache info,
-> ensure that it has been allocated. Simply checking for non-zero
-> cache_leaves() is not sufficient, as some architectures (e.g., Intel
-> processors) have non-zero cache_leaves() before allocation.
-> 
-> Dereferencing NULL cacheinfo can occur in update_per_cpu_data_slice_size().
-> This function iterates over all online CPUs. However, a CPU may have come
-> online recently, but its cacheinfo may not have been allocated yet.
-> 
-> While here, remove an unnecessary indentation in allocate_cache_info().
-> 
-> Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
-> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-> Reviewed-by: Radu Rendec <rrendec@redhat.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Below was our earlier context, just wanted to add for clarity.
+> --
+>  > Is sharing of IP blocks going to be also for other devices? If yes, then
+>  > this should be one property for all Qualcomm devices. If not, then be
+>  > sure that this is the case because I will bring it up if you come with
+>  > one more solution for something else.
 
-In case old tags are deemed null 😄,
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+You keep repeating the same. You won't receive any other answer.
 
--- 
-Regards,
-Sudeep
+>  >
+> IP blocks like SE can be shared. Here we are talking about I2C sharing.
+> In future it can be SPI sharing. But design wise it fits better to add
+> flag per SE node. Same we shall be adding for SPI too in future.
+
+
+How flag per SE node is relevant? I did not ask to move the property.
+
+> 
+> Please let me know your further suggestions.
+We do not talk about I2C or SPI here only. We talk about entire SoC.
+Since beginning. Find other patch proposals and align with rest of
+Qualcomm developers so that you come with only one definition for this
+feature/characteristic. Or do you want to say that I am free to NAK all
+further properties duplicating this one?
+
+Please confirm that you Qualcomm engineers understand the last statement
+and that every block will use se-shared, even if we speak about UFS for
+example.
+
+Best regards,
+Krzysztof
 
