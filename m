@@ -1,210 +1,95 @@
-Return-Path: <linux-kernel+bounces-427959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2892C9E0BC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:14:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E37E99E0BC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:11:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F8EAB2B8F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:05:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82294B22F84
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885AE14E2D6;
-	Mon,  2 Dec 2024 16:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RTVTybDS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678351DB365;
+	Mon,  2 Dec 2024 16:35:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCCF13AA2D;
-	Mon,  2 Dec 2024 16:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A6A1DA2F1
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733155534; cv=none; b=MJr//gGo0Ze6XnJRAa6XyHVa/dJQFVjBpi9FJXV/tinTxQk0jed8utIzEEaEsAfw8P77Kcv36NpG4w9dfrXNF+1wBnCFjcRs9j3Jv1XpXD16ouyLFFXQHGG5RjbI0wF2BaCZ6Nee6Mlv0Lkf6cRhO+rnSOvrN3FkjlpzJPS/LLA=
+	t=1733157344; cv=none; b=tHLuDaawUyFWxPSEilPJecwjkGBsv0BK0ZuVyWzClSXHooXy1m92QVxVXdazyhIT0EU69S8ma+7OIWyGUsTzLCGtZ1B1gHgvFcYcSXZF8wYF3LTjiuKjnjs/kOz/mTdlGWXJxS+pq6oi3J0E+uUO30bl1V5zsAzV2J9x3K9zPJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733155534; c=relaxed/simple;
-	bh=N4GVqKG6ryMn/YmqdxQQG9If52olhBnmsr3/7FW/idk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AKnHKyPdrVdkqUKbEJAzixQP41AcHDszWrxdE7BWXwJ8kHzaoKqUhRMDqxopZLzRRWYr+ZFJvodbgJuNO+QQxmnkw90jO8gxAFLS4p2156Tn+1WdYxHxUrMn2Jq55jyc3HoNfh0EruLdQJ56+eBUeIaY6BvrUXEAD5X+fldQcP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RTVTybDS; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733155533; x=1764691533;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N4GVqKG6ryMn/YmqdxQQG9If52olhBnmsr3/7FW/idk=;
-  b=RTVTybDSp30UETBzhodxYOJXHx0/HhvgRuh/NUNjWhHKREMdHaDDtN5I
-   WIB4bjBxByFb9fclYWx4YJjrwVRgeBmOWmT0pBL05EedFL2IQziaOyald
-   i70jYySytZMWhe8yYjLjj9eTut08NSsWhy4Sj7OaEPdrH9zzweUqyB2Ju
-   vDVUI0Jav1HOondcrrD2Jy/SNCmJz+tSrSBKhVaIY6ohWifr2U0LJEsZ0
-   mXmZ7TdW3JWBWMKkSO4NCpSSM14o1vuqDafvw2AonkA3DDFV6SUJjO5q3
-   3Iu9Nlq96+jioI+DFSzqa0DUMdrrvqhY53aeKLYqwo3Wdb0XdTKeO7Fgl
-   Q==;
-X-CSE-ConnectionGUID: F2eu/gq6SJ6PYy/sCqzDJw==
-X-CSE-MsgGUID: DddrlT5IQAKNOMbqw1mIpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="37271852"
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="37271852"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 08:05:28 -0800
-X-CSE-ConnectionGUID: pyzhsdC4QD+rv1Nvv4YSHw==
-X-CSE-MsgGUID: ynSyih34TG299Jjh7wmYOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="93241795"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 02 Dec 2024 08:05:24 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tI8vJ-0002Yz-0R;
-	Mon, 02 Dec 2024 16:05:21 +0000
-Date: Tue, 3 Dec 2024 00:05:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sachin Gupta <quic_sachgupt@quicinc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
-	quic_nguyenb@quicinc.com, quic_bhaskarv@quicinc.com,
-	quic_mapa@quicinc.com, quic_narepall@quicinc.com,
-	quic_nitirawa@quicinc.com, quic_rampraka@quicinc.com,
-	quic_sachgupt@quicinc.com, quic_sartgarg@quicinc.com
-Subject: Re: [PATCH] mmc: sdhci-msm: Command Queue (CQ) Register changes for
- v5.0
-Message-ID: <202412022356.OfhUSoyq-lkp@intel.com>
-References: <20241202085631.13468-1-quic_sachgupt@quicinc.com>
+	s=arc-20240116; t=1733157344; c=relaxed/simple;
+	bh=N/KblnNkQgu8OfZGvboZSwnR5GTetQaJWrhDYvUvQ14=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oXIRHGxpKANwSl0wLi4aoSES7Rh8SmhRL1olTTd42VD0RWkmvLm4E+vSVEJRLlLcYmoa5V/dJOenMpASobiLP5RNN95LKXygf14f1ZVpX7dtwUk3Cfb9OHiWsviM4FwzGh+FRxlqCLx3W0Fynq0S9e/uaQ5b5uj2+UaWlg8l4H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1tI9Od-0004Mi-4G; Mon, 02 Dec 2024 17:35:39 +0100
+From: Jonas Rebmann <jre@pengutronix.de>
+Subject: [PATCH 0/3] Add support for Fujitsu MB85RS128TY
+Date: Mon, 02 Dec 2024 17:35:19 +0100
+Message-Id: <20241202-mb85rs128ty-v1-0-a660b6490dc8@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202085631.13468-1-quic_sachgupt@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMfhTWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyNL3dwkC9OiYkMji5JKXTNTy1QLQ0sDA0tTcyWgjoKi1LTMCrBp0bG
+ 1tQByA2NzXQAAAA==
+X-Change-ID: 20241129-mb85rs128ty-659e81900957
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Schocher <hs@denx.de>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, David Jander <david@protonic.nl>, 
+ kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=788; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=N/KblnNkQgu8OfZGvboZSwnR5GTetQaJWrhDYvUvQ14=;
+ b=owGbwMvMwCF2ZcYT3onnbjcwnlZLYkj3fXjJctWKp7lTm6aq8XF9t7eTWVQU7X1rafvu0mPb/
+ mz7Lcf+t6OUhUGMg0FWTJElVk1OQcjY/7pZpV0szBxWJpAhDFycAjCRUEdGhjNSR16f39Pyptdn
+ +pL9Ew2dn0tGyvDm5de3TdFe+m3H+UuMDO1/HnTnqqj+sGDwkGU4wabG2Hdfck+dwMMTVWt71h5
+ +yA8A
+X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
+ fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Sachin,
+The Fujitsu MB85RS128TY FRAM chips behave almost identically to the
+Microchip 48L640. This series adds their support to the mchp48l640
+driver.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+---
+David Jander (2):
+      mtd: mchp48l640: make WEL behaviour configurable
+      mtd: mchp48l640: add support for Fujitsu MB85RS128TY FRAM
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on ulf-hansson-mmc-mirror/next v6.13-rc1 next-20241128]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Jonas Rebmann (1):
+      dt-bindings: mtd: mchp48l640 add mb85rs128ty compatible
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sachin-Gupta/mmc-sdhci-msm-Command-Queue-CQ-Register-changes-for-v5-0/20241202-170044
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241202085631.13468-1-quic_sachgupt%40quicinc.com
-patch subject: [PATCH] mmc: sdhci-msm: Command Queue (CQ) Register changes for v5.0
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241202/202412022356.OfhUSoyq-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241202/202412022356.OfhUSoyq-lkp@intel.com/reproduce)
+ .../bindings/mtd/microchip,mchp48l640.yaml         |  1 +
+ drivers/mtd/devices/mchp48l640.c                   | 28 +++++++++++++++++++---
+ 2 files changed, 26 insertions(+), 3 deletions(-)
+---
+base-commit: 7af08b57bcb9ebf78675c50069c54125c0a8b795
+change-id: 20241129-mb85rs128ty-659e81900957
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412022356.OfhUSoyq-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/mmc/host/sdhci-msm.c:8:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:181:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/mmc/host/sdhci-msm.c:2289:17: warning: variable 'cq_host' is uninitialized when used here [-Wuninitialized]
-    2289 |                 readl_relaxed(cq_host->mmio + CQHCI_VENDOR_CFG + offset));
-         |                               ^~~~~~~
-   drivers/mmc/host/sdhci-msm.c:2257:61: note: expanded from macro 'CQHCI_DUMP'
-    2257 |         pr_err("%s: " DRV_NAME ": " f, mmc_hostname(host->mmc), ## x)
-         |                                                                    ^
-   include/linux/printk.h:544:33: note: expanded from macro 'pr_err'
-     544 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                        ^~~~~~~~~~~
-   include/linux/printk.h:501:60: note: expanded from macro 'printk'
-     501 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                            ^~~~~~~~~~~
-   include/linux/printk.h:473:19: note: expanded from macro 'printk_index_wrap'
-     473 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                                 ^~~~~~~~~~~
-   drivers/mmc/host/sdhci-msm.c:2264:28: note: initialize the variable 'cq_host' to silence this warning
-    2264 |         struct cqhci_host *cq_host;
-         |                                   ^
-         |                                    = NULL
-   5 warnings generated.
-
-
-vim +/cq_host +2289 drivers/mmc/host/sdhci-msm.c
-
-  2250	
-  2251	#define DRIVER_NAME "sdhci_msm"
-  2252	#define SDHCI_MSM_DUMP(f, x...) \
-  2253		pr_err("%s: " DRIVER_NAME ": " f, mmc_hostname(host->mmc), ## x)
-  2254	
-  2255	#define DRV_NAME "cqhci"
-  2256	#define CQHCI_DUMP(f, x...) \
-  2257		pr_err("%s: " DRV_NAME ": " f, mmc_hostname(host->mmc), ## x)
-  2258	
-  2259	static void sdhci_msm_dump_vendor_regs(struct sdhci_host *host)
-  2260	{
-  2261		struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-  2262		struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-  2263		const struct sdhci_msm_offset *msm_offset = msm_host->offset;
-  2264		struct cqhci_host *cq_host;
-  2265		int offset = 0;
-  2266	
-  2267		if (msm_host->cqhci_offset_changed)
-  2268			offset = CQE_V5_VENDOR_CFG;
-  2269	
-  2270		SDHCI_MSM_DUMP("----------- VENDOR REGISTER DUMP -----------\n");
-  2271	
-  2272		SDHCI_MSM_DUMP(
-  2273				"DLL sts: 0x%08x | DLL cfg:  0x%08x | DLL cfg2: 0x%08x\n",
-  2274			readl_relaxed(host->ioaddr + msm_offset->core_dll_status),
-  2275			readl_relaxed(host->ioaddr + msm_offset->core_dll_config),
-  2276			readl_relaxed(host->ioaddr + msm_offset->core_dll_config_2));
-  2277		SDHCI_MSM_DUMP(
-  2278				"DLL cfg3: 0x%08x | DLL usr ctl:  0x%08x | DDR cfg: 0x%08x\n",
-  2279			readl_relaxed(host->ioaddr + msm_offset->core_dll_config_3),
-  2280			readl_relaxed(host->ioaddr + msm_offset->core_dll_usr_ctl),
-  2281			readl_relaxed(host->ioaddr + msm_offset->core_ddr_config));
-  2282		SDHCI_MSM_DUMP(
-  2283				"Vndr func: 0x%08x | Vndr func2 : 0x%08x Vndr func3: 0x%08x\n",
-  2284			readl_relaxed(host->ioaddr + msm_offset->core_vendor_spec),
-  2285			readl_relaxed(host->ioaddr +
-  2286				msm_offset->core_vendor_spec_func2),
-  2287			readl_relaxed(host->ioaddr + msm_offset->core_vendor_spec3));
-  2288		CQHCI_DUMP("Vendor cfg 0x%08x\n",
-> 2289			readl_relaxed(cq_host->mmio + CQHCI_VENDOR_CFG + offset));
-  2290	}
-  2291	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jonas Rebmann <jre@pengutronix.de>
+
 
