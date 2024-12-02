@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-427339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6EB19E0012
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:19:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7029E003B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:24:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E681B21211
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:16:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91F1BB2A8E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7E3201266;
-	Mon,  2 Dec 2024 11:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B877C204085;
+	Mon,  2 Dec 2024 11:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fP0h6/sV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0nSgEP2Y"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aryY3eeE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="86FS4UFg"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2211FF5F1;
-	Mon,  2 Dec 2024 11:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456CA200BA9;
+	Mon,  2 Dec 2024 11:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138060; cv=none; b=izsjWle1js2bDUrLzw7Awo20Zjc4IL2YHmICbGUYGCbntXr+vKG0lnbyK5JMvA2d6QrPPiv9e/kjgfvj+wO7xIxI4IpiuOvhlHvWAHjdNe3bXaOYr2o/19MAxukY2slz9Otymn+OCHwgvajpfj/Y2po/rjJzZNuGOJM84OA/3FA=
+	t=1733138062; cv=none; b=rc0AYNRs1jRFnPX5ZaNZDEWwt740l7NTx9P05s3O/b7lU13s1I7C01BJPJXiou3dPd5gIq5bri8zbuCHFS+cQNkvVBb5OJJa0WPAgy+pnVYcqmBTo/DRICluwLoNWVcjBxqmukXigFtASKr/PqyoMl4fQqgDddE2NpNfcaC/W4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138060; c=relaxed/simple;
-	bh=JM3f5fv8/8kAUPT5MHW6VBaAmL+yFL3Bho4rqJSGECM=;
+	s=arc-20240116; t=1733138062; c=relaxed/simple;
+	bh=wULnhvIlVk6jasiLq/4/fKlSCePEcLRwDykgAn7X150=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=HtCBDyUrk1UI60keatJBdH918NCGzdFrIEwLXXrC20c9qNI0dXDQpL4hDIW7JblARo3fe8/q7+ZxyqmwFNRGLQZDPs81Dz7aKqoLo8IYN/gt3QkCNXoMOkeNbeS6mgKlVaucVxQ9TCn1Y3OKdd7uTd6GxYwVuCM5+wXgcKYG4sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fP0h6/sV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0nSgEP2Y; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=t90HssmplqKt8RBqr1lmBUCEx9WUY7rEeuXVt8ak3WYCEP1BTUbf4X7lPAoIUSqEV9/Rnj2mNxOrLTCGTqyBQh8wnE4r92TfhRq0uIxJUTvAI2S/ZngoDjPLZZeBPr5nuy4ToqwcDE42rauOTV6828ZUWuYx9Ml/jWr441CDKME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aryY3eeE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=86FS4UFg; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 02 Dec 2024 11:14:16 -0000
+Date: Mon, 02 Dec 2024 11:14:17 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733138057;
+	s=2020; t=1733138058;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fO6t7XzQ9BzVcSg/YB/frKi3jjrn+FTP2chRHzxmoYA=;
-	b=fP0h6/sV+CUEGA57dzBeANBe207IHum+sFFie6WjlkT8Yy2rYpOdATn1qOgRo4nImtQzEc
-	mnPwnHej1S1UgZkiqO91kUvFQhrINs2WovO4JzBWTSA+GtqFhX5U0tM8FYVmTbaPOn51Kz
-	VFZwrnakLXtsnuawfQp+QK703eQQOZRGR5dBF84P3wFLKQiaTzidx2ma0DlwBPXGCMs+71
-	/ItkeHpSvb1iHUFzjsh73Rj2tqds9353wo8SS1HeGRMhRkcp0HSMQNvMvLgZl1E3foUf+9
-	iYudopkV4HnIn7qoSWpWoMEU7STtBwWnQibHaGn+wDOYTUdKE+jOy/pdxWiZ+A==
+	bh=hHExVCewHogB9drld7Pdw1Bt/bDGrt3y7WE4rpmN7lA=;
+	b=aryY3eeE0Vxe4ASUiESr0j+YlnfPfa3FrqhuV65APWNE5GOjGYX9mfZcW2Mf+88U4uKTA/
+	81B1/dThzHgJx3bkKJBtZv1JO/oUgdxPtfWV06elNJ4qoulg/WU24UL6oSazCvecnKyDM0
+	3P3QeOg5TteuiHc8p9MWX9C39W0X9adg+3Tddqun5nXHywFBZrPjPyR9UkIDCqowak3ptI
+	drVYCpDbblqUpfzDxLE3xam7xCk9bA13L2gTjAOM+7T5JkKWIQgXwk1UeCqNyu+4aVkJiY
+	Owy4353jQuVEAD3+Yo07bApYFMKffEeffimAUU+eMyZzNy5Fa5nmXA+7GrwhKg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733138057;
+	s=2020e; t=1733138058;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fO6t7XzQ9BzVcSg/YB/frKi3jjrn+FTP2chRHzxmoYA=;
-	b=0nSgEP2YH2rsppoENylQDY920Uc5x4g6nrB6tLzwGCCCFXpvPcB0nusiMHnwyeDfmnU/J3
-	0Sn6OgpKBhYtR2BQ==
+	bh=hHExVCewHogB9drld7Pdw1Bt/bDGrt3y7WE4rpmN7lA=;
+	b=86FS4UFgjP2cRdH9xOhC1m6b0dAvV0Z92RYsiP+PahWqjaOdm45CO7Jxjm1vMbUhcrgfFC
+	35eQ21sWx7bapxAw==
 From: "tip-bot2 for Dhananjay Ugwekar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/x86/rapl: Make rapl_model struct global
+Subject: [tip: perf/core] perf/x86/rapl: Rename rapl_pmu variables
 Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Zhang Rui <rui.zhang@intel.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Zhang Rui <rui.zhang@intel.com>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241115060805.447565-6-Dhananjay.Ugwekar@amd.com>
-References: <20241115060805.447565-6-Dhananjay.Ugwekar@amd.com>
+In-Reply-To: <20241115060805.447565-5-Dhananjay.Ugwekar@amd.com>
+References: <20241115060805.447565-5-Dhananjay.Ugwekar@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173313805654.412.13726606937220934630.tip-bot2@tip-bot2>
+Message-ID: <173313805723.412.9968826976353075696.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,90 +82,254 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     cd29d83a6d815bf8472c9aa3cdd1dcb89cc4c419
-Gitweb:        https://git.kernel.org/tip/cd29d83a6d815bf8472c9aa3cdd1dcb89cc4c419
+Commit-ID:     8bf1c86e5ac828d7e8b44fe007bf3b14ac7f2b2d
+Gitweb:        https://git.kernel.org/tip/8bf1c86e5ac828d7e8b44fe007bf3b14ac7f2b2d
 Author:        Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-AuthorDate:    Fri, 15 Nov 2024 06:08:01 
+AuthorDate:    Fri, 15 Nov 2024 06:08:00 
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 02 Dec 2024 12:01:36 +01:00
+CommitterDate: Mon, 02 Dec 2024 12:01:35 +01:00
 
-perf/x86/rapl: Make rapl_model struct global
+perf/x86/rapl: Rename rapl_pmu variables
 
-Prepare for the addition of RAPL core energy counter support.
+Rename struct rapl_pmu variables from "pmu" to "rapl_pmu", to
+avoid any confusion between the variables of two different
+structs pmu and rapl_pmu. As rapl_pmu also contains a pointer to
+struct pmu, which leads to situations in code like pmu->pmu,
+which is needlessly confusing. Above scenario is replaced with
+much more readable rapl_pmu->pmu with this change.
 
-As there will always be just one rapl_model variable on a system, make it
-global, to make it easier to access it from any function.
+Also rename "pmus" member in rapl_pmus struct, for same reason.
 
 No functional change.
 
 Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Zhang Rui <rui.zhang@intel.com>
 Reviewed-by: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Reviewed-by: Zhang Rui <rui.zhang@intel.com>
 Tested-by: Zhang Rui <rui.zhang@intel.com>
-Link: https://lore.kernel.org/r/20241115060805.447565-6-Dhananjay.Ugwekar@amd.com
+Link: https://lore.kernel.org/r/20241115060805.447565-5-Dhananjay.Ugwekar@amd.com
 ---
- arch/x86/events/rapl.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/x86/events/rapl.c | 91 ++++++++++++++++++++---------------------
+ 1 file changed, 46 insertions(+), 45 deletions(-)
 
 diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-index 9b1ec8a..1049686 100644
+index bf260f4..9b1ec8a 100644
 --- a/arch/x86/events/rapl.c
 +++ b/arch/x86/events/rapl.c
-@@ -151,6 +151,7 @@ static struct rapl_pmus *rapl_pmus;
- static unsigned int rapl_cntr_mask;
- static u64 rapl_timer_ms;
- static struct perf_msr *rapl_msrs;
-+static struct rapl_model *rapl_model;
- 
- /*
-  * Helper function to get the correct topology id according to the
-@@ -542,18 +543,18 @@ static struct perf_msr amd_rapl_msrs[] = {
- 	[PERF_RAPL_PSYS] = { 0, &rapl_events_psys_group,  NULL, false, 0 },
+@@ -129,7 +129,7 @@ struct rapl_pmu {
+ struct rapl_pmus {
+ 	struct pmu		pmu;
+ 	unsigned int		nr_rapl_pmu;
+-	struct rapl_pmu		*pmus[] __counted_by(nr_rapl_pmu);
++	struct rapl_pmu		*rapl_pmu[] __counted_by(nr_rapl_pmu);
  };
  
--static int rapl_check_hw_unit(struct rapl_model *rm)
-+static int rapl_check_hw_unit(void)
+ enum rapl_unit_quirk {
+@@ -228,34 +228,34 @@ static void rapl_start_hrtimer(struct rapl_pmu *pmu)
+ 
+ static enum hrtimer_restart rapl_hrtimer_handle(struct hrtimer *hrtimer)
  {
- 	u64 msr_rapl_power_unit_bits;
+-	struct rapl_pmu *pmu = container_of(hrtimer, struct rapl_pmu, hrtimer);
++	struct rapl_pmu *rapl_pmu = container_of(hrtimer, struct rapl_pmu, hrtimer);
+ 	struct perf_event *event;
+ 	unsigned long flags;
+ 
+-	if (!pmu->n_active)
++	if (!rapl_pmu->n_active)
+ 		return HRTIMER_NORESTART;
+ 
+-	raw_spin_lock_irqsave(&pmu->lock, flags);
++	raw_spin_lock_irqsave(&rapl_pmu->lock, flags);
+ 
+-	list_for_each_entry(event, &pmu->active_list, active_entry)
++	list_for_each_entry(event, &rapl_pmu->active_list, active_entry)
+ 		rapl_event_update(event);
+ 
+-	raw_spin_unlock_irqrestore(&pmu->lock, flags);
++	raw_spin_unlock_irqrestore(&rapl_pmu->lock, flags);
+ 
+-	hrtimer_forward_now(hrtimer, pmu->timer_interval);
++	hrtimer_forward_now(hrtimer, rapl_pmu->timer_interval);
+ 
+ 	return HRTIMER_RESTART;
+ }
+ 
+-static void rapl_hrtimer_init(struct rapl_pmu *pmu)
++static void rapl_hrtimer_init(struct rapl_pmu *rapl_pmu)
+ {
+-	struct hrtimer *hr = &pmu->hrtimer;
++	struct hrtimer *hr = &rapl_pmu->hrtimer;
+ 
+ 	hrtimer_init(hr, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ 	hr->function = rapl_hrtimer_handle;
+ }
+ 
+-static void __rapl_pmu_event_start(struct rapl_pmu *pmu,
++static void __rapl_pmu_event_start(struct rapl_pmu *rapl_pmu,
+ 				   struct perf_event *event)
+ {
+ 	if (WARN_ON_ONCE(!(event->hw.state & PERF_HES_STOPPED)))
+@@ -263,39 +263,39 @@ static void __rapl_pmu_event_start(struct rapl_pmu *pmu,
+ 
+ 	event->hw.state = 0;
+ 
+-	list_add_tail(&event->active_entry, &pmu->active_list);
++	list_add_tail(&event->active_entry, &rapl_pmu->active_list);
+ 
+ 	local64_set(&event->hw.prev_count, rapl_read_counter(event));
+ 
+-	pmu->n_active++;
+-	if (pmu->n_active == 1)
+-		rapl_start_hrtimer(pmu);
++	rapl_pmu->n_active++;
++	if (rapl_pmu->n_active == 1)
++		rapl_start_hrtimer(rapl_pmu);
+ }
+ 
+ static void rapl_pmu_event_start(struct perf_event *event, int mode)
+ {
+-	struct rapl_pmu *pmu = event->pmu_private;
++	struct rapl_pmu *rapl_pmu = event->pmu_private;
+ 	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&pmu->lock, flags);
+-	__rapl_pmu_event_start(pmu, event);
+-	raw_spin_unlock_irqrestore(&pmu->lock, flags);
++	raw_spin_lock_irqsave(&rapl_pmu->lock, flags);
++	__rapl_pmu_event_start(rapl_pmu, event);
++	raw_spin_unlock_irqrestore(&rapl_pmu->lock, flags);
+ }
+ 
+ static void rapl_pmu_event_stop(struct perf_event *event, int mode)
+ {
+-	struct rapl_pmu *pmu = event->pmu_private;
++	struct rapl_pmu *rapl_pmu = event->pmu_private;
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&pmu->lock, flags);
++	raw_spin_lock_irqsave(&rapl_pmu->lock, flags);
+ 
+ 	/* mark event as deactivated and stopped */
+ 	if (!(hwc->state & PERF_HES_STOPPED)) {
+-		WARN_ON_ONCE(pmu->n_active <= 0);
+-		pmu->n_active--;
+-		if (pmu->n_active == 0)
+-			hrtimer_cancel(&pmu->hrtimer);
++		WARN_ON_ONCE(rapl_pmu->n_active <= 0);
++		rapl_pmu->n_active--;
++		if (rapl_pmu->n_active == 0)
++			hrtimer_cancel(&rapl_pmu->hrtimer);
+ 
+ 		list_del(&event->active_entry);
+ 
+@@ -313,23 +313,23 @@ static void rapl_pmu_event_stop(struct perf_event *event, int mode)
+ 		hwc->state |= PERF_HES_UPTODATE;
+ 	}
+ 
+-	raw_spin_unlock_irqrestore(&pmu->lock, flags);
++	raw_spin_unlock_irqrestore(&rapl_pmu->lock, flags);
+ }
+ 
+ static int rapl_pmu_event_add(struct perf_event *event, int mode)
+ {
+-	struct rapl_pmu *pmu = event->pmu_private;
++	struct rapl_pmu *rapl_pmu = event->pmu_private;
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&pmu->lock, flags);
++	raw_spin_lock_irqsave(&rapl_pmu->lock, flags);
+ 
+ 	hwc->state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
+ 
+ 	if (mode & PERF_EF_START)
+-		__rapl_pmu_event_start(pmu, event);
++		__rapl_pmu_event_start(rapl_pmu, event);
+ 
+-	raw_spin_unlock_irqrestore(&pmu->lock, flags);
++	raw_spin_unlock_irqrestore(&rapl_pmu->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -343,7 +343,7 @@ static int rapl_pmu_event_init(struct perf_event *event)
+ {
+ 	u64 cfg = event->attr.config & RAPL_EVENT_MASK;
+ 	int bit, ret = 0;
+-	struct rapl_pmu *pmu;
++	struct rapl_pmu *rapl_pmu;
+ 	unsigned int rapl_pmu_idx;
+ 
+ 	/* only look at RAPL events */
+@@ -376,10 +376,11 @@ static int rapl_pmu_event_init(struct perf_event *event)
+ 		return -EINVAL;
+ 
+ 	/* must be done before validate_group */
+-	pmu = rapl_pmus->pmus[rapl_pmu_idx];
+-	if (!pmu)
++	rapl_pmu = rapl_pmus->rapl_pmu[rapl_pmu_idx];
++	if (!rapl_pmu)
+ 		return -EINVAL;
+-	event->pmu_private = pmu;
++
++	event->pmu_private = rapl_pmu;
+ 	event->hw.event_base = rapl_msrs[bit].msr;
+ 	event->hw.config = cfg;
+ 	event->hw.idx = bit;
+@@ -606,7 +607,7 @@ static void cleanup_rapl_pmus(void)
  	int i;
  
- 	/* protect rdmsrl() to handle virtualization */
--	if (rdmsrl_safe(rm->msr_power_unit, &msr_rapl_power_unit_bits))
-+	if (rdmsrl_safe(rapl_model->msr_power_unit, &msr_rapl_power_unit_bits))
- 		return -1;
- 	for (i = 0; i < NR_RAPL_DOMAINS; i++)
- 		rapl_hw_unit[i] = (msr_rapl_power_unit_bits >> 8) & 0x1FULL;
+ 	for (i = 0; i < rapl_pmus->nr_rapl_pmu; i++)
+-		kfree(rapl_pmus->pmus[i]);
++		kfree(rapl_pmus->rapl_pmu[i]);
+ 	kfree(rapl_pmus);
+ }
  
--	switch (rm->unit_quirk) {
-+	switch (rapl_model->unit_quirk) {
- 	/*
- 	 * DRAM domain on HSW server and KNL has fixed energy unit which can be
- 	 * different than the unit from power unit MSR. See
-@@ -798,21 +799,20 @@ MODULE_DEVICE_TABLE(x86cpu, rapl_model_match);
- static int __init rapl_pmu_init(void)
+@@ -621,27 +622,27 @@ static const struct attribute_group *rapl_attr_update[] = {
+ 
+ static int __init init_rapl_pmu(void)
  {
- 	const struct x86_cpu_id *id;
--	struct rapl_model *rm;
- 	int ret;
+-	struct rapl_pmu *pmu;
++	struct rapl_pmu *rapl_pmu;
+ 	int idx;
  
- 	id = x86_match_cpu(rapl_model_match);
- 	if (!id)
- 		return -ENODEV;
+ 	for (idx = 0; idx < rapl_pmus->nr_rapl_pmu; idx++) {
+-		pmu = kzalloc(sizeof(*pmu), GFP_KERNEL);
+-		if (!pmu)
++		rapl_pmu = kzalloc(sizeof(*rapl_pmu), GFP_KERNEL);
++		if (!rapl_pmu)
+ 			goto free;
  
--	rm = (struct rapl_model *) id->driver_data;
-+	rapl_model = (struct rapl_model *) id->driver_data;
+-		raw_spin_lock_init(&pmu->lock);
+-		INIT_LIST_HEAD(&pmu->active_list);
+-		pmu->pmu = &rapl_pmus->pmu;
+-		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
+-		rapl_hrtimer_init(pmu);
++		raw_spin_lock_init(&rapl_pmu->lock);
++		INIT_LIST_HEAD(&rapl_pmu->active_list);
++		rapl_pmu->pmu = &rapl_pmus->pmu;
++		rapl_pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
++		rapl_hrtimer_init(rapl_pmu);
  
--	rapl_msrs = rm->rapl_msrs;
-+	rapl_msrs = rapl_model->rapl_msrs;
+-		rapl_pmus->pmus[idx] = pmu;
++		rapl_pmus->rapl_pmu[idx] = rapl_pmu;
+ 	}
  
- 	rapl_cntr_mask = perf_msr_probe(rapl_msrs, PERF_RAPL_MAX,
--					false, (void *) &rm->events);
-+					false, (void *) &rapl_model->events);
+ 	return 0;
+ free:
+ 	for (; idx > 0; idx--)
+-		kfree(rapl_pmus->pmus[idx - 1]);
++		kfree(rapl_pmus->rapl_pmu[idx - 1]);
+ 	return -ENOMEM;
+ }
  
--	ret = rapl_check_hw_unit(rm);
-+	ret = rapl_check_hw_unit();
- 	if (ret)
- 		return ret;
+@@ -655,7 +656,7 @@ static int __init init_rapl_pmus(void)
+ 		rapl_pmu_scope = PERF_PMU_SCOPE_DIE;
+ 	}
+ 
+-	rapl_pmus = kzalloc(struct_size(rapl_pmus, pmus, nr_rapl_pmu), GFP_KERNEL);
++	rapl_pmus = kzalloc(struct_size(rapl_pmus, rapl_pmu, nr_rapl_pmu), GFP_KERNEL);
+ 	if (!rapl_pmus)
+ 		return -ENOMEM;
  
 
