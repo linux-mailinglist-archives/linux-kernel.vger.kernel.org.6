@@ -1,57 +1,62 @@
-Return-Path: <linux-kernel+bounces-427027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484DC9DFB5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:39:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D61D29DFB62
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:40:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 757B8B22944
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:39:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E95D161C66
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982D01F9A88;
-	Mon,  2 Dec 2024 07:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344A51F9AA6;
+	Mon,  2 Dec 2024 07:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="buje1gWk"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gNcy4KTS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AB0481A3;
-	Mon,  2 Dec 2024 07:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733125162; cv=pass; b=h22mw5Kr8kzJJZACnXmi45R00r5C5N10CZ0NAGGRzkl+l/vHmGG9bS6+KjnhLgNWJly7M0++akzrdZ+ycx+YP78c3JgQtZojdRi3CWeSrzNRrWSDUfY0LveP4r4rGMaZnT7YfRgNAsiLQZPhFjmM14B5BztmgH4xVNIB6l1tZ0c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733125162; c=relaxed/simple;
-	bh=61BP2GUzASsh4S4+wep4TJiD8LUfV+EiTco9XZG6hIk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lNEpOPvxv3LaCvElGIkMSxsf4Y5ms2SL5mv+koDgCLs1HiccoAC2e2zK2xfu6v4h5sKSD+5R9KJ2bzG+yEoW86oWBTB7AqAaNf1ViTHdPebmXmN41TTqATMu+W62jwnmuAQCOQFFOvGAylCYV1JKcK+3ZaktwOE1GDBUIUFcgjE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=buje1gWk; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733125140; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RgKn6VI5uA9ACVsRIzs7TP61Fp7wLVqmT1BfWRLWy5YOPAqtEj4X5cBMz3adZduxZizkCViJqdFIdZdMH9W5XB/SOBGvHcfGwisN0oMq25lEuzClvDwH4sL+kWeqUoNrNS+pRAShVpTKUvyXjxbN5aDNgPZ4mzAmIi6e0Jigwtk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733125140; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pn0em6wd6SAisHSdrQcweophVQpONURlNTUNeW89LEI=; 
-	b=ABKQXrQl5tfQ3Z8i6OFNuBPXfDUQkc713WqPe8f4glpEc6gSmIdaPMCkvELtrtRYYxykx9+xjfxFD95RfmohJe7YPzfouxRqrf1zB8lfPDR+6QAgwxfm/PNn0XnUuOVeBQPZvU5OLj7A73R8O9xde/I3ZDKDUjabM1xJGJZO0e0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733125140;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=pn0em6wd6SAisHSdrQcweophVQpONURlNTUNeW89LEI=;
-	b=buje1gWkCBucZ6XMpbPx0KedTIoSLb12BrIpSlAs3w2PXtIBY70+fL5zBgXrCSW7
-	rHvhFJIOJcPJq4fs6N5JMHfP77xqNNOTrC3KdjUzYHTJeBtX0Y+nn/Znve488iXm6Id
-	v7tEix/ECp6uxRh4lVfTJN19XD375pz6OTf68e7s=
-Received: by mx.zohomail.com with SMTPS id 1733125139493491.50264494103646;
-	Sun, 1 Dec 2024 23:38:59 -0800 (PST)
-Message-ID: <124fb122-f5c9-4857-a4ea-5a632ec3c448@collabora.com>
-Date: Mon, 2 Dec 2024 12:39:01 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C05481A3;
+	Mon,  2 Dec 2024 07:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733125197; cv=none; b=qcpD/KWVza3F57M5atfwQiOW+krUrF5JeYdLfczD34rAhkW8PqaYOA+bs1l1mflFq6QxJ0147EaoH0n8mlJyDJlD8t0bw1/1R87KxHhfU9cGj3DmsqrWX26Nko0hndD+X08NgXv6SYBhxrI0DkBLFQ+ZZ0CESDfuQ2HlI+eSpao=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733125197; c=relaxed/simple;
+	bh=5T4sTb3Uzdwg2h+7xoieqIm7C7OFPeMH+pp1kAWhgvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KmnjI59Ze05dMUDC/SatF03h7pr6MZ2TcySNa4AmIWV+LPf0EMvwAQJlL7D+1xFZVcJ1dQC3nlXrliQBdtAyDoPZhV0BbTuXaqxieKtz1faQ/3NhRPpgvleiOrsNWtrigLV/y/5VIny1SX3MCr1zvdY1tHJmZiwiO8079AkTB+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gNcy4KTS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B20NjS7029512;
+	Mon, 2 Dec 2024 07:39:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qmbBkIJWPy50S1o4OXr/O+AXL0d5Da8umTyIkAYQzj4=; b=gNcy4KTSMw/o/IH3
+	3piD1VWdfuzSKlZ1yZyo7J7uK+w2uOBznZkiTtIR7brlShGe4hN0v8Flpmr2mAah
+	k3HrFiSXV+SVQ3y3QiTu8WMkCsiMjnCbqw6PwDQvxMca39kn1oRV1GBXTbzLIui4
+	Q9O7SLpsMv1fke9RoLRSjvKWivBgIMXeBuxEQ0D0yn8LRXyqK6c9lnaWTFbjPtij
+	hINRWdTqgmd4N9ZjY6J1GT5uapmVP7cHQXUt1jQYe20nZIaFqM8JpRTPAaIJTXjv
+	Ef12fb/VnTJNXSW6x27sEt5uBrtAFp3TDaf6jeb12wB/iWsBA2myTyFoZnP/XVPB
+	a4+V0w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437r2mv1am-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 07:39:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B27dLR2002211
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Dec 2024 07:39:21 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 1 Dec 2024
+ 23:39:15 -0800
+Message-ID: <bfabfba2-6688-4461-83d6-b6f4c86b08ab@quicinc.com>
+Date: Mon, 2 Dec 2024 13:09:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,46 +64,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, nathan@kernel.org, tglx@linutronix.de
-Subject: Re: [PATCH] selftests/ipc: Remove unused variables
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, shuah@kernel.org
-References: <20241202045827.4704-1-zhangjiao2@cmss.chinamobile.com>
+Subject: Re: [PATCH v3 00/11] Add support for videocc, camcc, dispcc and gpucc
+ on Qualcomm QCS615 platform
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>,
+        Abhishek Sahu <absahu@codeaurora.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Gabor Juhos <j4g8y7@gmail.com>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
+References: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
+ <a4f6ojknv3hats4rwmdg5mw2rxhx7kq4u6axybdawak54crn5s@xnjbl7zno42s>
 Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241202045827.4704-1-zhangjiao2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <a4f6ojknv3hats4rwmdg5mw2rxhx7kq4u6axybdawak54crn5s@xnjbl7zno42s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: StFv4zGKPyc7TKqPu2MnXiqvnyBgmOCN
+X-Proofpoint-GUID: StFv4zGKPyc7TKqPu2MnXiqvnyBgmOCN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ bulkscore=0 priorityscore=1501 suspectscore=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=922 clxscore=1015 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412020066
 
-On 12/2/24 9:58 AM, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> 
-> Delete variables "msg" and "pid" that have never been used.
-> 
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-> ---
->  tools/testing/selftests/ipc/msgque.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/ipc/msgque.c b/tools/testing/selftests/ipc/msgque.c
-> index c75ea4094870..e9dbb84c100a 100644
-> --- a/tools/testing/selftests/ipc/msgque.c
-> +++ b/tools/testing/selftests/ipc/msgque.c
-> @@ -194,7 +194,7 @@ int fill_msgque(struct msgque_data *msgque)
->  
->  int main(int argc, char **argv)
->  {
-> -	int msg, pid, err;
-> +	int err;
->  	struct msgque_data msgque;
->  
->  	if (getuid() != 0)
 
+On 12/2/2024 9:55 AM, Bjorn Andersson wrote:
+> On Fri, Nov 08, 2024 at 09:39:17AM +0530, Taniya Das wrote:
+>> Add support for multimedia clock controllers on Qualcomm QCS615 platform.
+>> Update the defconfig to enable these clock controllers.
+>>
+>> Global clock controller support
+>> https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com/
+>>
+>> Signed-off-by: Taniya Das<quic_tdas@quicinc.com>
+> Dropping this series from my queue, due to lack of response from author.
+> 
+> Taniya, please answer questions/feedback from Dmitry, Vladimir and
+> Bryan, and repose as necessary.
+
+Sure, Bjorn, I had a dependency on the GCC patch.
+ 
+https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com/
+
+I will fix the comments once the Global clock controller patch is picked.
 
 -- 
-BR,
-Muhammad Usama Anjum
+Thanks & Regards,
+Taniya Das.
 
