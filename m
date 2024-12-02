@@ -1,365 +1,159 @@
-Return-Path: <linux-kernel+bounces-427141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBCA9DFD2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:31:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0B19DFD2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03040B226E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:31:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C59C0281D1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95861FA82B;
-	Mon,  2 Dec 2024 09:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABC41F9F60;
+	Mon,  2 Dec 2024 09:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhNZNBGP"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bP9QtALF"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BB63398B;
-	Mon,  2 Dec 2024 09:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B327F3398B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733131870; cv=none; b=iww92jJJpSu3eieJZaj7f7hxSJMr6O/mMOyfwfva+az1ndPDjNxohCmIB/ZpQr+/DnyZKzKu3n3g3aH0RHi69FzHYBbB0ClfCUiylsW0aGVA8f/vLo66kFPF9lMf5/++hBtxB410QACen+BTrK+mNq5omg066jZ3jUixBlf0jpg=
+	t=1733131889; cv=none; b=I6pkNUsnMDEK603IW2jKYFU9LkQJeFfsoWY6CBl4765KRmC85/jOXjbaB6N51R9PEWGgdKpsGAZbQshagn5BmLmr2HxnCsWYhWjcDlG+Db01IebQ8nved3Q4wQh5DAmjsdyN2ABrm03E0AwhnKdiR/1dYuoSRKG6D92gKR0kuF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733131870; c=relaxed/simple;
-	bh=tF7gEWm2Zx5VzHOPv9iUoY44HiA9fpxBXMaVhvsyQtE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FWuacAWJAoqtGHtJCbF2J7Ofl6MS7SaEy57zGtEY2MNZbj+iKhZoEwr5Z0jLjkpfgapk3a6X9gxxSsHuHZqFe5dHQHFcLYn11s++N70GFa4ILp2dvBmA8MII0eDJQLr/NaYAcJbZwIgeH03AsqMT6OFVUPHcC9FZ8GQRe8nsq1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhNZNBGP; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6ef7f8acc33so9792837b3.1;
-        Mon, 02 Dec 2024 01:31:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733131866; x=1733736666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Aoss/XkVgxtLxmwM1bSt0KorgawUhi01yNafo9R0a4=;
-        b=AhNZNBGPdwvoFU08FbHOaMLRviH3Z5ae94Wha/YznMXxjN8RutrFcsVqhGNqtq4jYD
-         xOhdmQhZlOCb4Ljt3tt7FezP2oHdzA1DWpjrePEktxqD9NGaBLefbuWB61Y8MHKRorqQ
-         MSxucyOe3PMJQ0VykzNU0Cu8joNmRCvmv/tDNzNa6Qw+ZLdySjFG9R7VbQOMsqAVo2vG
-         f5P/wTazIgZPUK8Df2Lu1md2meSDSxuL9fSasPW6nfeh/t+ZqXSCPKnk/5HG44LZxNPs
-         HKYG1QXJICnKEuFK1RbrMWg68gqU2793boSiSFQJ5Jx4LHdgk+IH9Br6Ahi5RbElCVi9
-         eLyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733131866; x=1733736666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Aoss/XkVgxtLxmwM1bSt0KorgawUhi01yNafo9R0a4=;
-        b=ZjKidWQ0WMjWRhtWTREUC3Md92haj08ddLjjxb7/28erqUz9AeVB/WrH2rgUgGmbER
-         D2gzrO9ePxl8RHXfbPsCdv9477DejoDtQFm5MFE0tlady7m2oxDsinbihRo4YDrrB0r0
-         laYCJfaZBml4vpbdSp2D/hi0sI+TSArUzwk+b89t5qUv6YFUFAORBEWguuzFED8rfCf0
-         kxVTUo5eHgqC8mMfG9tRv4xqvdww261UFeI0TJESX87GaXpahG04wzCYxAZeoMUBLxhT
-         rQvfbESC60oAFVy50NMmJb+6RiskWgy1RKcgYl7/QlCWtaC19DZzV936EN060HUbAKkI
-         shOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfA9VV/JWAoputlLLL5rDARQfPZQmObRzUkJfHNAFjAPpOskJzw5aXMkaXppw1uPrHbjt9uT0n7fnVpBoo@vger.kernel.org, AJvYcCX1cmNFlL2mu02LoRIoUouwzL4HHr6GdMsigTd4rcVNKGptG+9XifzpkFrRsWILwUq2utEiJYk5LzLL@vger.kernel.org, AJvYcCXmxATsocoj8iUjfcPc5dg37qqvwGfKhJ+3iMP8EEK51V7R7W5UptcKVf3mTpcoDBBd4E1Bn7d4rFrB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI8wkwd9bPPxpHmZcad5rO9wYeTd1vBt0RWRsW2I61awKPmszj
-	wWn1qsdsILZZd/IXzEcFyXCc19edN9Zf+X3Z01+1e+BybkSeU8MI2Bhs0C7cbDrovMIGwzP5znt
-	xjyQe6s3XgIrwooNmcvUCgjeWM7g=
-X-Gm-Gg: ASbGncul6SzUJLqMf/ZOyv217GZe2fj/ho6Xdtt44r5NJYMxijwE6Gli5VJNlxYoXW1
-	C1aNrwG9rUmsIAXDKHXn5fG9o0+wHBtnPU635d3vYlTzK3x/Be/aFyxg9K9pdBxbc
-X-Google-Smtp-Source: AGHT+IEjdWzZ+SSQO7ixCc/QMQkkM2B0OurRLofzWsNFboTM/kVCFJcwpVVHxgN7WNTCiDhrzr35t06Qy+V8xjswDcU=
-X-Received: by 2002:a05:6902:2784:b0:e39:96af:53b7 with SMTP id
- 3f1490d57ef6-e3996af85e1mr7134013276.52.1733131866096; Mon, 02 Dec 2024
- 01:31:06 -0800 (PST)
+	s=arc-20240116; t=1733131889; c=relaxed/simple;
+	bh=JD7IQN6zHNlBZQ6W5cpyN+b7BjBP6VxBGWe5dvbYbZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=k335wB9JduVlZQdCEEOc1ZHA4JPxDNtphCsT6NVfKb2UU3FpBiq2FIw/H1WjKBlUA5JDvuSJ+2KANUgDm2PCN+aRC+Bpx3epRlVdjj5oHZXapxqbJMMXOwGe8FhODz/BbVIRST1mRUchdJYRKqRD4vaV/Mdq22/+i76He8u1eLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bP9QtALF; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241202093119euoutp028cbc59317ebd246b6100b81aac750846~NUkMO4pv31506215062euoutp02Y
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:31:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241202093119euoutp028cbc59317ebd246b6100b81aac750846~NUkMO4pv31506215062euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733131879;
+	bh=bNLCIvm+oM39D/4v5xSquqtfCBDIka5GUXMW3ab8YE8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=bP9QtALFsYvKT8G2e0oTRFB+f6QQNkuKUwQIMox3RhDDbbs4GW8TPMvjzCsZOuCRF
+	 ILAqAaOk46YRrCoHuvMqCyiI4ffilK84J2rELA7gQv2VCGO/YO+9vNeuP8UV1Ws5fp
+	 4tLUMpXjcc94BZKeEwBdJ/afqizssuIkhW8G0fN0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241202093119eucas1p2ff26482687ca1648e9faf9e0327d0c87~NUkMCbzCQ2770627706eucas1p2P;
+	Mon,  2 Dec 2024 09:31:19 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 43.20.20397.76E7D476; Mon,  2
+	Dec 2024 09:31:19 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241202093119eucas1p1b14d09e2f688812cafb71c1fba5ebaa0~NUkLuHU2W2786627866eucas1p1k;
+	Mon,  2 Dec 2024 09:31:19 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241202093119eusmtrp1449739753e480deb07af0e5ec7592f07~NUkLthy512968429684eusmtrp1u;
+	Mon,  2 Dec 2024 09:31:19 +0000 (GMT)
+X-AuditID: cbfec7f5-e59c770000004fad-40-674d7e67ac12
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 8B.DB.19920.66E7D476; Mon,  2
+	Dec 2024 09:31:18 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241202093118eusmtip1c9c3819652fa5a9227c7491196233cb9~NUkLOnZ0v1680416804eusmtip1g;
+	Mon,  2 Dec 2024 09:31:18 +0000 (GMT)
+Message-ID: <90d4515c-835f-4aaa-8c9f-263f23bdfdb2@samsung.com>
+Date: Mon, 2 Dec 2024 10:31:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126074005.546447-1-tmyu0@nuvoton.com> <20241126074005.546447-3-tmyu0@nuvoton.com>
- <20241130203929.67c6c7f6@jic23-huawei>
-In-Reply-To: <20241130203929.67c6c7f6@jic23-huawei>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Mon, 2 Dec 2024 17:30:54 +0800
-Message-ID: <CAOoeyxVXWAFC4ZL5Hr7H4+Vk8b86Qf2FBY0vGWa7NWPWHo6MWg@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] iio: temperature: Add Nuvoton NCT7718W support
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: tmyu0@nuvoton.com, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, cmo@melexis.com, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox: th1520: Fix a NULL vs IS_ERR() bug
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei
+	<wefu@redhat.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <bda05d7b-5a6e-4f57-a124-ba56f51da031@stanley.mountain>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djPc7rpdb7pBh0PBC0+zGtlt7h3aQuT
+	xYu9jSwW11bMZbfYekva4vKuOWwW2z63sFm07J/C4sDhsXPWXXaPTas62TzuXNvD5rF5Sb1H
+	y9pjTB7v911l8/i8SS6APYrLJiU1J7MstUjfLoEr487h+ewFJzgqjtx/wN7A2M7excjJISFg
+	IrH//kEgm4tDSGAFo8S/o7NZIZwvjBJTdx9mgXA+M0ps2PeOGabl24rZTBCJ5YwSz54fg3Le
+	Mko0/N7PBlLFK2An8W9dAwuIzSKgInHmyxMWiLigxMmZELaogLzE/VszgJZzcAgLOEisWFIK
+	EhYR0JH493cy2GZmgSeMEp23joJtZhYQl7j1ZD4TiM0mYCTxYPl8VhCbU8BF4mnfTDaIGnmJ
+	7W/nQF36hUNixvEQkPkSQDWrvrpBhIUlXh3fAvW/jMTpyT0sEHa+xIOtn6BaayR29hyHsq0l
+	7pz7xQYyhllAU2L9Ln2IsKPEkvczWSCm80nceCsIcQCfxKRt05khwrwSHW1CENVqElN7euGW
+	nluxjWkCo9IspCCZheTFWUhemYWwdwEjyypG8dTS4tz01GLjvNRyveLE3OLSvHS95PzcTYzA
+	xHT63/GvOxhXvPqod4iRiYPxEKMEB7OSCO/y9d7pQrwpiZVVqUX58UWlOanFhxilOViUxHlV
+	U+RThQTSE0tSs1NTC1KLYLJMHJxSDUx5b2akvQgr0+zUsapbu+bX2XN7AkN1BTwXSdwrUYqc
+	Krvho9VVdz77O7dVKyNn/HyZ98Y48oK5XjbfofoJiS8blryZlbI/64mmdFVXzTSmLasVRA6s
+	YN00dV+J/subD864+BcI9O3/aRF9dO6Bipab57PvMm123X+n4ZuM1sckSZE+hjqbCsHjX35L
+	ND8pku5hizxfcnbt1V9Z13O7fB/d2r/vq/RNwa+7pmxOFV2dJmByt9xX+GVZp1wXX4/G8b3r
+	mR015q6c88Y7XtVOX0pb70X2562OzYe8d696z1i6d2voKb1YpomR2mrPIlZoJCQZt6vv2OcX
+	eP2R4JQfdXZX52+O9uU7HmXzfEmlUYMSS3FGoqEWc1FxIgAwr73WuwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsVy+t/xu7ppdb7pBt3HLS0+zGtlt7h3aQuT
+	xYu9jSwW11bMZbfYekva4vKuOWwW2z63sFm07J/C4sDhsXPWXXaPTas62TzuXNvD5rF5Sb1H
+	y9pjTB7v911l8/i8SS6APUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/O
+	JiU1J7MstUjfLkEv487h+ewFJzgqjtx/wN7A2M7excjJISFgIvFtxWwmEFtIYCmjxNTL+hBx
+	GYlr3S9ZIGxhiT/Xuti6GLmAal4zSnzYMAcswStgJ/FvXQOYzSKgInHmyxOouKDEyZkQtqiA
+	vMT9WzOAlnFwCAs4SKxYUgoSFhHQkfj3dzILyExmgSeMEg+bmlggFkxnlLg87ykzSBWzgLjE
+	rSfzwa5jEzCSeLB8PiuIzSngIvG0byYbyFBmAXWJ9fOEIMrlJba/ncM8gVFoFpIzZiGZNAuh
+	YxaSjgWMLKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzECY3HbsZ+bdzDOe/VR7xAjEwfjIUYJ
+	DmYlEd7l673ThXhTEiurUovy44tKc1KLDzGaAoNiIrOUaHI+MBnklcQbmhmYGpqYWRqYWpoZ
+	K4nzul0+nyYkkJ5YkpqdmlqQWgTTx8TBKdXANHe/7T/HiP1uLzcWnQhpXBYkoXT2SviTdie2
+	aSv+OH8VSryitfLKrDkX4057vC+qTnd+tMWJt8Q38+1how+KX8/lFvZeyJaSmJ5yQczRZFL3
+	47zlKyUKPbJK2cw8gvQn3ru3c/5RzXOFh/4ITjqov+LHsn/i67/phi8ymLs/3PDVl4JpKzon
+	fy+cL9tjZ5Mv457z5m7wzAsJq5llFJkFY7zjpzr96mz5tfDFz79f0j3/5nxokHP9UK23Menn
+	KbE92r+UhfezmTUmbJr5omzdQ50D2VJV26vXzhSbs/pL4dYrQWnWZocY1pycs3k+j6BG9smg
+	kJMlhifSAjfsTFkq8kSrWuVCt/d2h2UbLN4buiqxFGckGmoxFxUnAgDocfa9TgMAAA==
+X-CMS-MailID: 20241202093119eucas1p1b14d09e2f688812cafb71c1fba5ebaa0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20241130100751eucas1p25283ed89679b086be2863092149236b8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241130100751eucas1p25283ed89679b086be2863092149236b8
+References: <CGME20241130100751eucas1p25283ed89679b086be2863092149236b8@eucas1p2.samsung.com>
+	<bda05d7b-5a6e-4f57-a124-ba56f51da031@stanley.mountain>
 
-Dear Jonathan,
 
-Thank you for your comments,
-I will move the driver to HWMON.
 
-Best regards,
-Ming
+On 11/30/24 11:07, Dan Carpenter wrote:
+> The devm_ioremap() function doesn't return error pointers, it returns
+> NULL.  Update the error checking to match.
+> 
+> Fixes: 5d4d263e1c6b ("mailbox: Introduce support for T-head TH1520 Mailbox driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/mailbox/mailbox-th1520.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mailbox/mailbox-th1520.c b/drivers/mailbox/mailbox-th1520.c
+> index 4e84640ac3b8..e16e7c85ee3c 100644
+> --- a/drivers/mailbox/mailbox-th1520.c
+> +++ b/drivers/mailbox/mailbox-th1520.c
+> @@ -387,8 +387,10 @@ static void __iomem *th1520_map_mmio(struct platform_device *pdev,
+>  
+>  	mapped = devm_ioremap(&pdev->dev, res->start + offset,
+>  			      resource_size(res) - offset);
+> -	if (IS_ERR(mapped))
+> +	if (!mapped) {
+>  		dev_err(&pdev->dev, "Failed to map resource: %s\n", res_name);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+>  
+>  	return mapped;
+>  }
 
-Jonathan Cameron <jic23@kernel.org> =E6=96=BC 2024=E5=B9=B412=E6=9C=881=E6=
-=97=A5 =E9=80=B1=E6=97=A5 =E4=B8=8A=E5=8D=884:39=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Tue, 26 Nov 2024 15:40:05 +0800
-> Ming Yu <a0282524688@gmail.com> wrote:
->
-> > This patch adds support for the Nuvoton NCT7718W temperature sensor.
-> >
-> Hi Ming, I'll give this a quick look only as I suspect you will end
-> up moving over to hwmon.
->
-> Thanks,
->
-> Jonathan
->
-> > Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
-> ...
->
-> > diff --git a/drivers/iio/temperature/nct7718.c b/drivers/iio/temperatur=
-e/nct7718.c
-> > new file mode 100644
-> > index 000000000000..60624b3de629
-> > --- /dev/null
-> > +++ b/drivers/iio/temperature/nct7718.c
-> > @@ -0,0 +1,505 @@
->
-> > +struct nct7718_data {
-> > +     struct i2c_client *client;
-> > +     struct mutex lock;
-> Locks need a comment to say what data they are protecting.
->
-> > +     u16 status_mask;
-> > +};
->
-> > +static int nct7718_write_event_config(struct iio_dev *indio_dev,
-> > +                                   const struct iio_chan_spec *chan,
-> > +                                   enum iio_event_type type,
-> > +                                   enum iio_event_direction dir,
-> > +                                   int state)
-> > +{
-> > +     struct nct7718_data *data =3D iio_priv(indio_dev);
-> > +     unsigned int status_mask;
-> > +     int ret;
-> > +
-> > +     switch (chan->channel2) {
-> > +     case IIO_MOD_TEMP_AMBIENT:
-> > +             if (dir =3D=3D IIO_EV_DIR_RISING)
-> > +                     status_mask =3D NCT7718_MSK_LTH;
-> > +             break;
-> > +     case IIO_MOD_TEMP_OBJECT:
-> > +             if (dir =3D=3D IIO_EV_DIR_RISING)
-> > +                     status_mask =3D NCT7718_MSK_RT1H;
-> > +             else
-> > +                     status_mask =3D NCT7718_MSK_RT1L;
-> > +             break;
-> > +     default:
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     mutex_lock(&data->lock);
-> > +     ret =3D i2c_smbus_read_byte_data(data->client, NCT7718_ALERTMASK_=
-REG);
-> > +     mutex_unlock(&data->lock);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     if (state)
-> > +             ret &=3D ~status_mask;
-> > +     else
-> > +             ret |=3D  status_mask;
-> I would not bother with this sort of alignment. It tends to be fragile lo=
-nger
-> term as code gets modified and doesn't make much difference to readablili=
-ty.
->
-> > +
-> > +     return i2c_smbus_write_byte_data(data->client, NCT7718_ALERTMASK_=
-REG,
-> > +                                      data->status_mask =3D ret);
-> > +}
->
-> > +
-> > +static int nct7718_write_thresh(struct iio_dev *indio_dev,
-> > +                             const struct iio_chan_spec *chan,
-> > +                             enum iio_event_type type,
-> > +                             enum iio_event_direction dir,
-> > +                             enum iio_event_info info,
-> > +                             int val, int val2)
-> > +{
-> > +     struct nct7718_data *data =3D iio_priv(indio_dev);
-> > +     struct i2c_client *client =3D data->client;
-> > +     u8 msb_reg, lsb_reg;
-> > +     s16 thresh;
-> > +     int ret, s_val;
-> > +
-> > +     switch (chan->channel2) {
-> > +     case IIO_MOD_TEMP_AMBIENT:
-> > +             val =3D clamp_val(val, NCT7718_LOCAL_TEMP_MIN,
-> > +                             NCT7718_LOCAL_TEMP_MAX);
-> > +
-> > +             if (dir =3D=3D IIO_EV_DIR_RISING) {
-> > +                     return i2c_smbus_write_byte_data(client,
-> > +                                                      NCT7718_LT_HALER=
-T_REG,
-> > +                                                      val);
-> > +             }
-> > +             break;
-> > +     case IIO_MOD_TEMP_OBJECT:
-> > +             s_val =3D (val < 0) ? ((val * 1000000) - val2) :
-> > +                                 ((val * 1000000) + val2);
-> > +
-> > +             s_val =3D clamp_val(s_val, NCT7718_REMOTE_TEMP_MIN_MICRO,
-> > +                               NCT7718_REMOTE_TEMP_MAX_MICRO);
-> > +
-> > +             if (dir =3D=3D IIO_EV_DIR_RISING) {
-> > +                     msb_reg =3D NCT7718_RT1_HALERT_MSB_REG;
-> > +                     lsb_reg =3D NCT7718_RT1_HALERT_LSB_REG;
-> > +             } else {
-> > +                     msb_reg =3D NCT7718_RT1_LALERT_MSB_REG;
-> > +                     lsb_reg =3D NCT7718_RT1_LALERT_LSB_REG;
-> > +             }
-> > +
-> > +             thresh =3D (s16)(s_val / (1000000 >> 3));
-> > +             ret =3D i2c_smbus_write_byte_data(client,
-> > +                                             msb_reg, thresh >> 3);
-> > +             if (ret < 0)
-> > +                     return ret;
-> > +             return i2c_smbus_write_byte_data(client,
-> > +                                              lsb_reg, thresh << 5);
-> > +     default:
-> > +             break;
-> return -EINVAL; and drop return below.
->
-> > +     }
-> > +
-> > +     return -EINVAL;
-> > +}
-> >
-> > +
-> > +static bool nct7718_check_id(struct i2c_client *client)
-> > +{
-> > +     int chip_id, vendor_id, device_id;
-> > +
-> > +     chip_id =3D i2c_smbus_read_byte_data(client, NCT7718_VID_REG);
-> > +     if (chip_id < 0)
-> > +             return false;
-> > +
-> > +     vendor_id =3D i2c_smbus_read_byte_data(client, NCT7718_VID_REG);
-> > +     if (vendor_id < 0)
-> > +             return false;
-> > +
-> > +     device_id =3D i2c_smbus_read_byte_data(client, NCT7718_DID_REG);
-> > +     if (device_id < 0)
-> > +             return false;
-> > +
-> > +     return (chip_id =3D=3D NCT7718_CHIP_ID &&
-> > +             vendor_id =3D=3D NCT7718_VENDOR_ID &&
-> > +             device_id =3D=3D NCT7718_DEVICE_ID);
-> As below. Don't treat this failing as an error.   It is an error if
-> you can't read anything however.
->
-> > +}
-> > +
-> > +static int nct7718_chip_config(struct nct7718_data *data)
-> > +{
-> > +     int ret;
-> > +
-> > +     /* Enable MSK_LTH, MSK_RT1H, and MSK_RT1L to monitor alarm */
-> Code makes this fairly obvoius.
->
-> > +     ret =3D i2c_smbus_read_byte_data(data->client,
-> > +                                    NCT7718_ALERTMASK_REG);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +     data->status_mask =3D ret;
-> > +     data->status_mask &=3D ~(NCT7718_MSK_LTH  |
-> > +                            NCT7718_MSK_RT1H |
-> > +                            NCT7718_MSK_RT1L);
-> > +
-> > +     ret =3D i2c_smbus_write_byte_data(data->client,
-> > +                                     NCT7718_ALERTMASK_REG,
-> > +                                     data->status_mask);
->
-> Perhaps consider regmap for it's richer set of functionality.
->
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     /* Config ALERT Mode Setting to comparator mode */
->
-> Ideally (like here) the code should be self explanatory so you don't
-> need comments.  When that is the case the comment is both unnecessary
-> and a source of possible future confusion if the code changes and we
-> fail to keep the comment in sync.
->
-> > +     return i2c_smbus_write_byte_data(data->client,
-> > +                                      NCT7718_ALERTMODE_REG,
-> > +                                      NCT7718_MOD_COMP);
-> > +}
-> > +
-> > +static int nct7718_probe(struct i2c_client *client)
-> > +{
-> > +     struct nct7718_data *data;
-> > +     struct iio_dev *indio_dev;
-> > +     int ret;
-> > +
-> > +     if (!nct7718_check_id(client)) {
-> > +             dev_err(&client->dev, "No NCT7718 device\n");
->
-> If you get an ID missmatch, it is fine to print a message, but carry on a=
-nyway.
-> This is necessary because DT has fallback compatibles to allow for newer =
-devices
-> working with older drivers.  That only works if we believe the firmware a=
-nd
-> ignore a mismatched ID.
->
-> > +             return -ENODEV;
-> > +     }
-> > +
-> > +     indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*data));
-> > +     if (!indio_dev)
-> > +             return -ENOMEM;
-> > +
-> > +     data =3D iio_priv(indio_dev);
-> > +     data->client =3D client;
-> > +     mutex_init(&data->lock);
->
-> For new code prefer
->         ret =3D devm_mutex_init()
->         if (ret)
->                 return ret;
->
-> > +
-> > +     indio_dev->name =3D client->name;
->
-> client->name doesn't always end up as the part number which is what
-> we need here.  Just put "nct7718" in here directly.
->
-> Some drivers do this wrong and we can't fix them without breaking
-> userspace, but we don't want to introduce more.
->
-> > +     indio_dev->channels =3D nct7718_channels;
-> > +     indio_dev->num_channels =3D ARRAY_SIZE(nct7718_channels);
-> > +     indio_dev->info =3D &nct7718_info;
-> > +     indio_dev->modes =3D INDIO_DIRECT_MODE;
-> > +
-> > +     ret =3D nct7718_chip_config(data);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     if (client->irq) {
-> > +             ret =3D devm_request_threaded_irq(&client->dev,
-> > +                                             client->irq,
-> > +                                             NULL,
-> > +                                             nct7718_alert_handler,
-> > +                                             IRQF_TRIGGER_FALLING |
-> > +                                             IRQF_ONESHOT,
-> > +                                             "nct7718", indio_dev);
-> > +             if (ret) {
-> > +                     dev_err(&client->dev, "Failed to request irq!\n")=
-;
-> > +                     return ret;
-> > +             }
-> > +     }
-> > +
-> > +     return devm_iio_device_register(&client->dev, indio_dev);
-> > +}
+
+Looks good, thanks !
+Reviewed-by: Michal Wilczynski <m.wilczynski@samsung.com>
 
