@@ -1,169 +1,139 @@
-Return-Path: <linux-kernel+bounces-426919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1140B9DFA0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:51:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509789DFA0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66E4281BD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DBA8281BBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258321D6DDF;
-	Mon,  2 Dec 2024 04:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF021D6DDA;
+	Mon,  2 Dec 2024 04:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="UzLNJVZl"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (4096-bit key) header.d=matoro.tk header.i=@matoro.tk header.b="m+c6nVX4"
+Received: from matoro.tk (matoro.tk [104.188.251.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A2A1D63E5
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 04:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46CE1D5CF9;
+	Mon,  2 Dec 2024 04:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.188.251.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733115107; cv=none; b=ohDZUunP2HRpOEOPRhq9X1U5OT0e3ULJbHL1fBmbizPV1eFf9w1CscZk7wG9GNPZsp4GAQ9jVdTymoa6TyfNTwBIpS7TufCCm4b8dvbcDqE3NAgukRfN24U4qZ22NJUHBU1YpUySZ4DnzZf1UHu5DuhpECJdU3l6CMMx0DO8eEM=
+	t=1733115342; cv=none; b=VqGsJaeVe1OOLuu9nY2u4CDYeBy/7INMoXKtvnMPHmxxI2fnMadsWUaXpdGfAsBsFLIwtnaI+bAsOcU7ahNXwDnUhR0GSiX9tJW9kMdHaod59WK4Ruckq8fNjazYA752Avzjk8SHdbPLmKV2uyKYYURxwSOjn7sSDsUIXpaVE9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733115107; c=relaxed/simple;
-	bh=Yg/g/FB7e3yYLY33+7JIH0ON2BIK6goaqEflMQan/wk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AQTOujpf9iOiHtLaoPqd34OpJNbF/i7RVl0pAmecWRUf3ohciLOeMXJoOqT9PaWqEEgjhlPW4kp1XtazNapoVxUnZlM+l9BalIcAONljhAvk59mELy7LNC2AlYFi6U+k5T93U8t43aWoxoNEHC32P1tdsZck8/8dV7hErs9bAxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=UzLNJVZl; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
-	by cmsmtp with ESMTPS
-	id HrABtPb4JiA19HyPLtWJMg; Mon, 02 Dec 2024 04:51:39 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id HyPHtvqUWvRBzHyPJtDEhd; Mon, 02 Dec 2024 04:51:37 +0000
-X-Authority-Analysis: v=2.4 cv=dubdCUg4 c=1 sm=1 tr=0 ts=674d3cd9
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
- a=c-Ag78a_ZS1VCw5oD-gA:9 a=QEXdDO2ut3YA:10 a=rsP06fVo5MYu2ilr0aT5:22
- a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=cDVRJapTTKIEkPi1buTVc3tXS1QEJK+G0n5EUf611IE=; b=UzLNJVZlQFq1k7ehsk6kZJSGU3
-	g1M3vCrp39TdiFyZFZwRkb8mrYzKfKewwfS9EGRRpM+tp4XT6RVFVW7yB9BYRQQfMDGIiqcI+dQLw
-	zpwXbwbb6uwGmwrf04kyQZSmQ4aBfA6p0bBEDETL8KToM0R1w2KbMqCAUWjiDIqiT7IGXr9JY/SwZ
-	uZ4gwg41I1yXsSjr+QmOlUKiLfEGHBVtiMvcDO2+bg1HLp6TMoqGs/Jfhjh4tAHg5KSwGlVcHWDR1
-	vK2SCletrX0aSkmYz32ZmqdAMF9+VIDGdcUltIMRWG2jzOjO1TQ7My+7vdhYQfnuFF9RN+Bq0q2HC
-	B7AJq2Sw==;
-Received: from [122.165.245.213] (port=48956 helo=[192.168.1.5])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1tHyPB-003JlN-2w;
-	Mon, 02 Dec 2024 10:21:30 +0530
-Message-ID: <d394f125-f301-4cc6-a477-36d1267b614a@linumiz.com>
-Date: Mon, 2 Dec 2024 10:21:26 +0530
+	s=arc-20240116; t=1733115342; c=relaxed/simple;
+	bh=zPcXBBW8c+KQ0U+3drAZctmojlTnoxK6RX0o3bY3E3o=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=caG3wmjY6xofrD+hFk3JgTROFazNZBxX0CO+hg5QoyuSNSDTDtVDDKDEC8cidHr2jh+yYZ5qTLegkO9KISBkpvpqDyNGg3GkRS00sW/yGr5shAiiXEd3Zxof/FbiqAzzZ7PSl+HPyzjBmuCQxg8908S3F/O3hi0Os3je4QH4J7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=matoro.tk; spf=pass smtp.mailfrom=matoro.tk; dkim=pass (4096-bit key) header.d=matoro.tk header.i=@matoro.tk header.b=m+c6nVX4; arc=none smtp.client-ip=104.188.251.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=matoro.tk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matoro.tk
+DKIM-Signature: a=rsa-sha256; bh=/JshKyUPq3mOf+snPX4NT7ZNngHLlkIdkeTc+mS3z7k=;
+ c=relaxed/relaxed; d=matoro.tk;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@matoro.tk; s=20241120; t=1733115330; v=1; x=1733547330;
+ b=m+c6nVX4ZA1uzWFCzyhLYwwfw3amfDifJeY4jjB+0TAY26VK0EcR6ee+P7mMmAs4W5bJDe9M
+ Jj7pd9PsmR2RidppeOUo3BL05qLDAI7tTuDna3wXOTJL/TJeVQryE+98ZGeahoBM/jJskz7+XXN
+ 3qQuPdwNl4l2CFzWcCBbaCaoUEqezGxPue9ggHg2/joqJZt9pJeekKWt7bdXFvno6Ej+F1v0fap
+ wJ1Et4rnkEO/shG/3U4fXGogTWfCdTmPdQwHb7cVDfkZynWqoxmfeYljoCWaAQDyDppPC0SmxHb
+ b7q4nKTdq/XIkNZV1dir9/vwzkSyWJ7kTKf/URd9JBHEUkOFQ2t8X6Wfg3Y8Dbnhkrk+cVMwuuF
+ f2heq4w6DFoQEvBeD9wp3qpN0CxQz/hE8NMjNhGMqq5X01ou1wbxNWo0JgGTF/XEC/L5zCRow6Y
+ 1I4lxej43DnAcw0RRdJDzzZIpOC33AKDkeP1/10jXT37GTieDSDjc6sOOsCnfea4yLGRqH92si0
+ Yj+bZCgC0HgwS+H5hwfnaeNkk1yYXEd7h1EyS0gxpmZeqY7CrmU5yw71vT73BTMjHGKfg6rGWNi
+ Bi5W7L+Xm1MtXfrP/1PIAdJhNUizDsOHno+O578T4CITZLxhfkj2sImfVsSUR57Xg2+eZqbU7rV
+ vqq8V1Ovtvw=
+Received: by matoro.tk (envelope-sender
+ <matoro_mailinglist_kernel@matoro.tk>) with ESMTPS id e2fca5e6; Sun, 01 Dec
+ 2024 23:55:30 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH 2/2] arm64: dts: allwinner: a100: Add syscon nodes
-To: Cody Eksal <masterr3c0rd@epochal.quest>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>
-References: <20241202-a100-syscon-v1-0-86c6524f24d7@epochal.quest>
- <20241202-a100-syscon-v1-2-86c6524f24d7@epochal.quest>
-Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <20241202-a100-syscon-v1-2-86c6524f24d7@epochal.quest>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1tHyPB-003JlN-2w
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:48956
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 2
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfP40W/y4SBRkatUV4D2yar1D9V2ei2pxBJVlMb+BEi4qBNzQyIMSORJmRhKHhgAQSDHLwoCRocXC/2nPoddBHCFYdEY9kyMJ0NV/ErxXXOCdNelv0Cj+
- OlX8WexwKT845QwGu8u9q6r+0Ec+yzvqYT587hmEkx9xSyuBvvjyDhfnQApqbVQOlWWpIZPWX/uUT9D+4zEEepZj5ja2V99Z4Jo=
+Date: Sun, 01 Dec 2024 23:55:29 -0500
+From: matoro <matoro_mailinglist_kernel@matoro.tk>
+To: John David Anglin <dave.anglin@bell.net>
+Cc: Linux Parisc <linux-parisc@vger.kernel.org>, deller@kernel.org, Deller
+ <deller@gmx.de>, linmag7@gmail.com, Sam James <sam@gentoo.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [bisected] ext4 corruption on parisc since 6.12
+In-Reply-To: <31c884b9-77c8-48dc-b84c-20e52cdc4d44@bell.net>
+References: <84d7b3e1053b2a8397bcc7fc8eee8106@matoro.tk>
+ <31c884b9-77c8-48dc-b84c-20e52cdc4d44@bell.net>
+Message-ID: <71fae3d3a9bd816ea268eb73c152b564@matoro.tk>
+X-Sender: matoro_mailinglist_kernel@matoro.tk
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 12/2/24 10:13 AM, Cody Eksal wrote:
-> The Allwinner A100 has a system configuration block, denoted as SYS_CFG
-> in the user manual's memory map. It is undocumented in the manual, but
-> a glance at the vendor tree shows this block is similar to its
-> predecessors in the A64 and H6. The A100 also has 3 SRAM blocks: A1, A2,
-> and C. Add all of these to the SoC's device tree.
-> 
-> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
-Reviewed-by: Parthiban Nallathambi <parthiban@linumiz.com>
+Hmm, this is my config, also on an rp3440:
 
-Thanks,
-Parthiban
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi | 31 ++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> index 29ac7716c7a5284ccf8af675db9c7d016785f0ff..31540a7ca1f01c6c2e69e329054aca16ffd112c4 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> @@ -101,6 +101,37 @@ soc {
->  		#size-cells = <1>;
->  		ranges = <0 0 0 0x3fffffff>;
->  
-> +		syscon: syscon@3000000 {
-> +			compatible = "allwinner,sun50i-a100-system-control",
-> +				     "allwinner,sun50i-a64-system-control";
-> +			reg = <0x03000000 0x1000>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +
-> +			sram_a1: sram@20000 {
-> +				compatible = "mmio-sram";
-> +				reg = <0x00020000 0x4000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <1>;
-> +				ranges = <0 0x00020000 0x4000>;
-> +			};
-> +			sram_c: sram@24000 {
-> +				compatible = "mmio-sram";
-> +				reg = <0x024000 0x21000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <1>;
-> +				ranges = <0 0x024000 0x21000>;
-> +			};
-> +			sram_a2: sram@100000 {
-> +				compatible = "mmio-sram";
-> +				reg = <0x0100000 0x14000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <1>;
-> +				ranges = <0 0x0100000 0x14000>;
-> +			};
-> +		};
-> +
->  		ccu: clock@3001000 {
->  			compatible = "allwinner,sun50i-a100-ccu";
->  			reg = <0x03001000 0x1000>;
-> 
+#
+# Timers subsystem
+#
+CONFIG_HZ_PERIODIC=y
+# CONFIG_NO_HZ_IDLE is not set
+# CONFIG_NO_HZ is not set
+# CONFIG_HIGH_RES_TIMERS is not set
+# end of Timers subsystem
 
+lindholm can confirm on their hardware/config.  Maybe you can try that and 
+see if you can reproduce?  I will try your config as well.
+
+On 2024-12-01 20:47, John David Anglin wrote:
+> I haven't seen any file system corruption on rp3440 with several weeks of 
+> running with clock events.  I just
+> started running 6.12.1 today though.
+> 
+> I have the following timer config:
+> 
+> # Timers subsystem
+> #
+> CONFIG_TICK_ONESHOT=y
+> CONFIG_NO_HZ_COMMON=y
+> # CONFIG_HZ_PERIODIC is not set
+> CONFIG_NO_HZ_IDLE=y
+> # CONFIG_NO_HZ is not set
+> CONFIG_HIGH_RES_TIMERS=y
+> # end of Timers subsystem
+> 
+> There was some concern about this change on systems where the CPU timers 
+> aren't synchronized.  what
+> systems do you see this on?
+> 
+> Dave
+> 
+> On 2024-12-01 7:26 p.m., matoro wrote:
+>> Hi Helge, when booting 6.12 here myself and another user (CC'd) both 
+>> observed our ext4 filesystems to be immediately corrupted in the same 
+>> manner.
+>> 
+>> Every file that is read or written will have its access/modify times set to 
+>> 2446-05-10 18:38:55.0000, which is the maximum ext4 timestamp.  The 32-bit 
+>> userspace doesn't seem to be able to handle this at all, as every further 
+>> stat() call will error with "Value too large for defined data type".  
+>> Unfortunately, simply rolling back to kernel 6.11 is insufficient to 
+>> recover, as the filesystem corruption is persistent, and the errors come 
+>> from userspace attempting to read the modified files.  I was able to 
+>> recover with a command like:  find / -newermt 2446-01-01 -o -newerct 
+>> 2446-01-01 -o -newerat 2446-01-01 | xargs touch -h
+>> 
+>> Luckily, lindholm was able to bisect and identified as the culprit commit:  
+>> b5ff52be891347f8847872c49d7a5c2fa29400a7 ("parisc: Convert to generic 
+>> clockevents").  Some other comments from the discussion:
+>> 
+>> 17:20:37 <awilfox> would be curious if keeping that patch + CONFIG_SMP=n 
+>> fixes it
+>> 17:20:44 <awilfox> this doesn't look necessarily correct on MP machines
+>> 17:23:56 <awilfox> time_keeper_id is now unused; the old code specifically 
+>> marked the clocksource as unstable on MP machines despite having per_cpu 
+>> before
+>> 17:24:11 <awilfox> and now it seems to imply CLOCK_EVT_FEAT_PERCPU is 
+>> enough to work around it
+>> 17:24:13 <awilfox> maybe it isn't
+>> 
+>> Thanks!
 
