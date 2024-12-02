@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-428447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99249E0E9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:09:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0AE09E0EB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B455165687
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:09:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9146165817
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973891DF987;
-	Mon,  2 Dec 2024 22:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SnCVeJrO"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BDF1DF976;
-	Mon,  2 Dec 2024 22:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8354B1DF979;
+	Mon,  2 Dec 2024 22:11:12 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5551DED42;
+	Mon,  2 Dec 2024 22:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733177081; cv=none; b=GL07qPIb2COKIgsKlxAvkj/PqY/9k4ghKQ7nLs0YbGdnh3INhgrWVAdTg8zJb71duy7ot8UOrE6cSFV+ilyIOd5t+gEO04yoD4iEikepo86u8kpvmr0AB8vFnkZ+fIhedj6oa5myW3CI7k6Zdi4JjwoekjGnUKWvzhaSBpIbDNc=
+	t=1733177472; cv=none; b=GRLeu5ovPOi5EI9SKofFH+9IcG6RjVCM+nlMMJTUt3sA5RvzLGbG+hJuUv8xQAO++6OCUsRXViqItR8qSQTCYQVAL6fFbdc8mHq7epiZaLCo/qOfGJgAhrsFVnKQIg03Ie25ysibzS2kSwKmu+qKeAw12d1UIo9KUUj5Nhtps2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733177081; c=relaxed/simple;
-	bh=IQYtcZimnewUA/3iIw3dNG6GT6kosQnHidtn2o5SOKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qb1sAorn/gC8Qdv55ASNy+bqtNe+e/+w+2VqGkOIeILLNTwOz7suw639FTJ137+jgkhYwzhrBDYDIYK8Apk8HGtbNtoNgTEAAmaDuf/nnoQ/EJ0x61QztOLu97/qFm2xolIX2WkRWOwgFHemDlouKnleIPYtjUHlsy7UwXU8rb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SnCVeJrO; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a95095efso34135245e9.0;
-        Mon, 02 Dec 2024 14:04:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733177077; x=1733781877; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fxkoI8JehpmApWy8LfGoHEoX//j2ioIUeFccLSzzy3k=;
-        b=SnCVeJrOmtQY37pdxfP+I9CqF+koxDeAEr3f70uU3IxLFRTdWJOR5Ghy0DWz7Fm2tB
-         wilrciiwBBW/hipfg9U/tN+YIpulay/krSn9UrklT8xLjL620pQBbCx5gVrBYPGJmpFy
-         ZbeK3Ek5R5H4U6AvEqQBTBVskLtGELfC/Od7P0fp10feGVgRBhGWpKgWwOk24z7e81gT
-         pv2jlRqKx9gZpRZ14vQmFoLtR9sMNQksfOcwLOKWiC+jE4UfrxRw8un594WNywHR5757
-         VH36ScvMJIYtIUj/mw38Jh/w3CzpUgnYTUPQb7ISvDrS3YzXhFw7jWzJBayITjoh1ZjM
-         tyxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733177077; x=1733781877;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fxkoI8JehpmApWy8LfGoHEoX//j2ioIUeFccLSzzy3k=;
-        b=tRwkxaedAoFJEeBnVl4j3j3pmg8eyyuiKHOTROpYqRmSEC8w1t3yOTiNQ78COvMKSy
-         UyJAEBZNz0kdrZ/rEertM0YSQwdz9jalCwg5panEoxcJCiq4W6xyMABeCLk45m4OCPh4
-         zawgYUUoiCki9Qq5yf1h79hNrugtVOF+Nd9kHes1gR7XWT8pmkYz4JEvMQhscX8OJ2Yf
-         P5qDi4ZaI0qyw861fK+c7BP8BguRy9BRskvc11WzDiu33x8h7XFRTedGYwpNZwxo2bkN
-         eRAJoqBw7QctkTPvynWfrsU5FKDwxTkWg/TwmNdkmS9DG5fA68LEKcCKHPCP3Rxd4zRT
-         cNFA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+2+vmBdUIoUmC/OJ7db5jqyi9icVucLzL3ehyAt+eXeOTDPK9lmUJGaMhnNBAzJyWXjUdZjzuJzSdoKKU@vger.kernel.org, AJvYcCUP8YBboB3RE3nRxPBLmJZWF355w8/z9QagS4f3JfiifvsH5+sPtBF9BBsML01rlw57valmpg2pWiOZ@vger.kernel.org, AJvYcCXU3X29dobkmc5dnQICn5aCxCudF0L9hPoIA+2C8UshelrhdkctvXlmWI6eyJaMyCDhXzJBEUcGsXzB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ66LzC+Wv4lqkRMaiuT++75QbGu8Hj9gvZEszWyDDHXTe5BNK
-	JSczx0KNDYGJ+dPBvWK1XbbaxP0vWkVs5vpiqpfJbl2IP0VUBLkF
-X-Gm-Gg: ASbGnctnxdwVjxVKD3X6P7qsOtzODrdqiuhYQDaW+bFvtoURduhMP6RwtbrywzyJ1C1
-	utDe9AriA77S+RVs5lYWOoOL4etIcYPwY8JFLBv73HLVemBLs2cX8pe82B0WyFX9lqtoKLkrg4m
-	VeUpOtXzb/pHF8dzRv2mMlCoPfiOWzo0tAxGlCDzISsrBdLttFBVJSfKFAjXYfJ7sRXpQ5Z4AM+
-	WX5Frkh7yfIQqo6PG7RMtXckqu0+Q4A0sYXXMaZNc07ulay+0vf87KPsXth
-X-Google-Smtp-Source: AGHT+IHNvLdUacd8s8rO3mW7SGcWQEHo7MyreUAMqNwXFASE1/YWIbyCM3RRrZY6nsWHAlTdSVWFWw==
-X-Received: by 2002:a05:6000:154e:b0:385:f349:ffe5 with SMTP id ffacd0b85a97d-385f34a030fmr4467145f8f.29.1733177076950;
-        Mon, 02 Dec 2024 14:04:36 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:ea8a:93ec:a066:eb25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b9a9679bsm132704705e9.13.2024.12.02.14.04.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 14:04:35 -0800 (PST)
-Date: Mon, 2 Dec 2024 23:04:33 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: ak@it-klinger.de, jic23@kernel.org, conor+dt@kernel.org,
-	linux-iio@vger.kernel.org, lars@metafoo.de,
-	linux-kernel@vger.kernel.org, krzk+dt@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	devicetree@vger.kernel.org, ajarizzo@gmail.com
-Subject: Re: [PATCH v1 1/3] dt-bindings: iio: pressure: bmp085: Add SPI
- interface
-Message-ID: <Z04u8eAvytu-y8LH@vamoirid-laptop>
-References: <20241202181907.21471-1-vassilisamir@gmail.com>
- <20241202181907.21471-2-vassilisamir@gmail.com>
- <173317237354.3142409.6212368803030680874.robh@kernel.org>
+	s=arc-20240116; t=1733177472; c=relaxed/simple;
+	bh=NSi7TuoPYDA86OB0yX+c1buguqPzahAs/u3jPIT5Ouw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mh8E+K82AUUNWBGKOiyVmljFrKyODPR63JbO/vzmdFRflH1s3RRdkn+i1COfLd7bCTzC9Z5I/cLh0CzuAIzj4fzL4Llx/y54eb5HRQwJ6tTUh3krn1lo87A/OpslLr3BF+C3cs6E3durm9ihvlQxRtsUcAfSMBz+s3D5c4tBsZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4B2M4aRF010385;
+	Mon, 2 Dec 2024 16:04:36 -0600
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4B2M4YP4010381;
+	Mon, 2 Dec 2024 16:04:34 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Mon, 2 Dec 2024 16:04:34 -0600
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        Saravana Kannan <saravanak@google.com>, linuxppc-dev@lists.ozlabs.org,
+        Conor Dooley <conor@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] of: WARN on deprecated #address-cells/#size-cells handling
+Message-ID: <20241202220434.GU29862@gate.crashing.org>
+References: <20241106171028.3830266-1-robh@kernel.org> <87jzdfcm3l.fsf@mpe.ellerman.id.au> <87plmi7jjz.fsf@mpe.ellerman.id.au> <20241127214232.GQ29862@gate.crashing.org> <CAL_JsqKhp8bW66koP8JPSkXmrCjA+oQh6NZte_uphiLTC_=7Rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <173317237354.3142409.6212368803030680874.robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqKhp8bW66koP8JPSkXmrCjA+oQh6NZte_uphiLTC_=7Rw@mail.gmail.com>
+User-Agent: Mutt/1.4.2.3i
 
-On Mon, Dec 02, 2024 at 02:46:13PM -0600, Rob Herring (Arm) wrote:
+On Mon, Dec 02, 2024 at 08:18:22AM -0600, Rob Herring wrote:
+> On Wed, Nov 27, 2024 at 3:47 PM Segher Boessenkool
+> <segher@kernel.crashing.org> wrote:
+> > On Tue, Nov 26, 2024 at 02:36:32PM +1100, Michael Ellerman wrote:
+> > > Michael Ellerman <mpe@ellerman.id.au> writes:
+> > > > "Rob Herring (Arm)" <robh@kernel.org> writes:
+> > > >> While OpenFirmware originally allowed walking parent nodes and default
+> > > >> root values for #address-cells and #size-cells, FDT has long required
+> > > >> explicit values. It's been a warning in dtc for the root node since the
+> > > >> beginning (2005) and for any parent node since 2007. Of course, not all
+> > > >> FDT uses dtc, but that should be the majority by far. The various
+> > > >> extracted OF devicetrees I have dating back to the 1990s (various
+> > > >> PowerMac, OLPC, PASemi Nemo) all have explicit root node properties.
+> > > >
+> > > > I have various old device trees that have been given to me over the
+> > > > years, and as far as I can tell they all have these properties (some of
+> > > > them are partial trees so it's hard to be 100% sure).
+> > > >
+> > > > So LGTM.
+> > >
+> > > Turns out I was wrong.
+> > >
+> > > The warning about #size-cells hits on some powermacs, possible fixup
+> > > patch here:
+> > >
+> > >   https://lore.kernel.org/linuxppc-dev/20241126025710.591683-1-mpe@ellerman.id.au/
+> >
+> > The Open Firmware specification is extremely clear that a "missing"
+> > "#size-cells" property means this bus has the default value of 1.
 > 
-> On Mon, 02 Dec 2024 19:19:05 +0100, Vasileios Amoiridis wrote:
-> > The BMP{2,3,5}80 and BME280 devices have an SPI interface, so include it
-> > in the device-tree.
-> > 
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > ---
-> >  .../bindings/iio/pressure/bmp085.yaml         | 32 +++++++++++++++++++
-> >  1 file changed, 32 insertions(+)
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/pressure/bmp085.example.dtb: pressure@0: interrupts: False schema does not allow [[25, 1]]
+> And the default for #address-cells is 2, but yet every architecture
+> except Sparc has that wrong.
 
-Hi Rob, Krzysztof,
+?
 
-The error is in the example, I put the tree from the I2C example to SPI
-but I used bmp280 which is not supporting interrupts. Will be fixed.
+Almost all architectures (that run Linux) use 64-bit addressing, both
+32-bit and 64-bit architectures.
 
-Cheers,
-Vasilis
+> If I have a node without #size-cells, is the default of 1 used or do
+> we check parent nodes? My read of the spec would be the former, but
+> the kernel does the latter.
 
-> 	from schema $id: http://devicetree.org/schemas/iio/pressure/bmp085.yaml#
+The former is correct.  The latter makes no sense at all!  The whole
+point of the "bus" abstraction is that you get a new addressing domain
+there.
+
+Yes, these days you numerically find it most often with PCI sub-domains,
+but those are boring.  In most cases you *do* have different adressing
+on your child busses, and even if the addressing is the same, addresses
+on the child bus are not normally a subset of those on the parent bus.
+
+> > https://www.openfirmware.info/data/docs/of1275.pdf (page 186).
+> >
+> > DTC or FDT might want to do things differently, but expecting decades
+> > older stuff to conform to its ill-conceived unnecessarily super wordy
+> > stuff is, well, not a plan that is likely to work very well :-)
 > 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241202181907.21471-2-vassilisamir@gmail.com
-> 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
-> 
+> That is not the intention. The intention is to identify what doesn't
+> conform and exclude those systems from this check (or apply a fixup if
+> that works).
+
+So *always* use the OF definition, at least on OF systems?  Where
+everything is meant to conform, but conform to OF, not conform to this
+"OF-like-but-very-different-in-crucial-spots" thing :-)
+
+
+Segher
 
