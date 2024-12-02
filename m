@@ -1,147 +1,104 @@
-Return-Path: <linux-kernel+bounces-428007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFDCD9E0926
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:55:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97CBD9E090C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:51:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EBAFBC6758
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:32:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F80C163BE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB5E1632E6;
-	Mon,  2 Dec 2024 16:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD8D19D074;
+	Mon,  2 Dec 2024 16:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LZHtSpiI"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VZ2Pbyda"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526C13C6BA
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E2112E7F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733157011; cv=none; b=mQqYP96movtOSCjfQM9ULdTBn6QcTJ30jDfGNW52C/OUe4JcJUn//lY0984jKLuBC5nKcNt58FSyDfTK6S6yb06H+FTvUdr/gD4McNfwYOSxBhPr2gVwIxmbxn2YRxWxuyJ2z1FQ33iWILUmPL0i/DnsAuQv+pINos+7XF3oICk=
+	t=1733157317; cv=none; b=HfdSJ09s1yoSrFHgO08KC8AH3fL4lRVheYs2g4dzoqCIq1lrqXhDcwedqvLAflrXmseIDV4HRfMdF8C0UK8u+wim2GR7ftKRYeq/BZV1ulsyKdUjrykajzlpRgkACMciejNhEQhnC/+P/5IUlr1FF6di56EO9WtiChgJsvwty6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733157011; c=relaxed/simple;
-	bh=Sz226XoxQNqwv6a0DZ9qgFudn74WRpAQ06Xjcrc8X00=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rhyKdFbSSXi89EDrScrxI6IetKCX4piA9FICmN86J25IYwe2RU76s6YOWqFurHneCyNxgZAQiqqFXwdlyuOmzzgjMGtQ/xiMAW6d9dsSB4JC/bO17PIZPhykScuBv0y3/SIkUnAkYLGjz7M8XECHtodowhnoQyU92yC2OQqRYNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=LZHtSpiI; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1733157008;
-	bh=Sz226XoxQNqwv6a0DZ9qgFudn74WRpAQ06Xjcrc8X00=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LZHtSpiIPK3//ZnACZjKmoHt5rspMUb2P35fsRJK5bL7ZL9JwNqo5Y3VqoLxFVdyh
-	 rLONdHf3DKqxz9hAsO5J5kgkAapGAD9gAp8NhWZuCI/QXIZ/7kJlNMyu9fzhjobP7s
-	 QyOgWvwHK0SOcVJ4eGDV4TpxCzFaBkHBBPI7+r+sVCaC1Ge0Xu/PsIFqPXxB4bZp3m
-	 zchRLo6rDxdSn0PGQOEdJo7E1KoM5xIU44RmBufni3CjrqkmpZkkGLJ5kbTKHhTUIQ
-	 bu21p16bZtMEVgLOPDKKl0cZGVXubgjoBhg/mdw6OqjMEPvCA62j81JFVDUyQdDXM4
-	 E32oRNjsNfEsw==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Y28QS0PKnzVDB;
-	Mon,  2 Dec 2024 11:30:08 -0500 (EST)
-Message-ID: <9b3bd9b0-fd5b-4239-8ee4-ebabd0667b4b@efficios.com>
-Date: Mon, 2 Dec 2024 11:30:07 -0500
+	s=arc-20240116; t=1733157317; c=relaxed/simple;
+	bh=wjXi75OxEmvLMJLvr7CocnJs5U5qMSHOUA25s+kPxCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jag8oqG10h8NlZxivLWChjoyBNAnanbdFK47rtEZoJkXW18s3RQ/rz0ERHmDGxFlwWkgQza5iRX51A24/m6BrsQKcFVwKWfTxRFlcfuROa8OaIZ2lTgfBdUFLZfr+vrXa56XDkb8Hg94HRlPzW7mYEf2563Av8hBsVmV6OvOzYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VZ2Pbyda; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733157314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=reQGB9t8Ky0+GI+05SdFmqZ6ltGzM+n1dXPGKq6qH0s=;
+	b=VZ2Pbydai6PC020zd24vJM4WJm0WvqaCxPRnJMe/rJPfi8t912uQ/4o0W9tIpZz7P9sOrO
+	/TE/xoJyP8gJmdJ/XK2NtqaCCmOv42R+IJN8J3Z9Zl6RVcDhld1CfeqVbXh1LkGz49K0LG
+	HdVsx44yeTjjP2u9OJaZRb48XjCWj3A=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-571-F06N2UHdPoia8NreZXNtzg-1; Mon,
+ 02 Dec 2024 11:35:07 -0500
+X-MC-Unique: F06N2UHdPoia8NreZXNtzg-1
+X-Mimecast-MFC-AGG-ID: F06N2UHdPoia8NreZXNtzg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D0911964CC6;
+	Mon,  2 Dec 2024 16:35:05 +0000 (UTC)
+Received: from rhel-developer-toolbox-2.redhat.com (unknown [10.45.225.22])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5529F1956089;
+	Mon,  2 Dec 2024 16:35:00 +0000 (UTC)
+From: Michal Schmidt <mschmidt@redhat.com>
+To: Rodolfo Giometti <giometti@enneenne.com>
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Ma Ke <make24@iscas.ac.cn>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	George Spelvin <linux@horizon.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] pps: fix a UAF and clean up code
+Date: Mon,  2 Dec 2024 17:34:45 +0100
+Message-ID: <20241202163451.1442566-1-mschmidt@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip:x86/mm] [x86/mm/tlb] 209954cbc7:
- will-it-scale.per_thread_ops 13.2% regression
-To: Rik van Riel <riel@surriel.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
- Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Mel Gorman <mgorman@suse.de>
-References: <202411282207.6bd28eae-lkp@intel.com>
- <Z0jIsYsuo_9w16tK@localhost.localdomain>
- <8bf303a222ba27f3a86b357db58ee3df3fa7f82e.camel@surriel.com>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <8bf303a222ba27f3a86b357db58ee3df3fa7f82e.camel@surriel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 2024-11-28 21:52, Rik van Riel wrote:
-> On Thu, 2024-11-28 at 14:46 -0500, Mathieu Desnoyers wrote:
->>
->> I suspect you could use a similar per-cpu data structure per-mm
->> to keep track of the pending TLB flush mask, and update it simply
->> with
->> load/store to per-CPU data rather than have to cacheline-bounce all
->> over
->> the place due to frequent mm_cpumask atomic updates.
->>
->> Then you get all the benefits without introducing a window where
->> useless
->> TLB flush IPIs get triggered.
->>
->> Of course it's slightly less compact in terms of memory footprint
->> than a
->> cpumask, but you gain a lot by removing cache line bouncing on this
->> frequent context switch code path.
->>
->> Thoughts ?
-> 
-> The first thought that comes to mind is that we already
-> have a per-CPU variable indicating which is the currently
-> loaded mm on that CPU.
+The 1st patch fixes a UAF bug. The fix is quite minimal, although a bit
+ugly. The rest of the series are cleanups in the area.
 
-Only on x86 though.
+Michal Schmidt (6):
+  pps: fix cdev use-after-free
+  pps: simplify pps_idr_lock locking
+  pps: use scoped_guard for pps_idr_lock
+  pps: print error in both cdev and dev error paths in
+    pps_register_cdev()
+  pps: embed "dev" in the pps_device
+  pps: use cdev_device_add()
 
-> 
-> We could probably just skip sending IPIs to CPUs that do
-> not have the mm_struct currently loaded.
-> 
-> This can race against switch_mm_irqs_off() on a CPU
-> switching to that mm simultaneously with the TLB flush,
-> which should be fine because that CPU cannot load TLB
-> entries from previously cleared page tables.
-> 
-> However, it does mean we cannot safely clear bits
-> out of the mm_cpumask, because a race between clearing
-> the bit on one CPU, and setting it on another would not
-> be something we could easily catch at all, unless we
-> can figure out some clever memory ordering thing there.
-> 
+ drivers/pps/clients/pps-gpio.c    |  2 +-
+ drivers/pps/clients/pps-ldisc.c   |  6 +-
+ drivers/pps/clients/pps_parport.c |  4 +-
+ drivers/pps/kapi.c                | 10 ++--
+ drivers/pps/pps.c                 | 94 +++++++++++++------------------
+ include/linux/pps_kernel.h        |  2 +-
+ 6 files changed, 50 insertions(+), 68 deletions(-)
 
-Or we just build a per-cpu mm_cpumask from per-CPU state
-every time we want to use the mm_cpumask. But AFAIU this
-is going to be a tradeoff between:
 
-- Overhead of context switch at scale
-
-(e.g. will-it-scale:)
-for a in $(seq 1 2); do (./context_switch1_threads -t 192 -s 20 &); done
-
-For reference, my POC reaches 50% performance improvement with this.
-
-   vs
-
-- Overhead of TLB flush
-
-(e.g. will-it-scale:)
-./tlb_flush2_threads -t 192 -s 20
-
-For reference, my POC has about 33% regression on that test case due
-to extra work when using mm_cpumask.
-
-So I guess what we end up doing really depends which scenario we consider
-most frequent.
-
-Thanks,
-
-Mathieu
-
+base-commit: 7af08b57bcb9ebf78675c50069c54125c0a8b795
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.47.0
 
 
