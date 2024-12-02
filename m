@@ -1,414 +1,148 @@
-Return-Path: <linux-kernel+bounces-427839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9CA9E0727
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:36:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CB09E071C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:31:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 205F31712AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93618172CF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE46C20899B;
-	Mon,  2 Dec 2024 15:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6C320E335;
+	Mon,  2 Dec 2024 15:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YKwoUu1K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWmLskC+"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD5D205E38
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103FD20E316;
+	Mon,  2 Dec 2024 15:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152169; cv=none; b=XHXVYVU1tLWqg0GBHbZI3RUNgVozpIKSDpM/R9uiGKC4td5MdogNl8Q6ihB2Yl1q3oTHAl9pCFKEZu/QcKuCHU/pwfpD0Gc+OAhIvv1RoJgn7E4ReaHZ/E+LZPoPUBCIiW/ggwSd2Lg2KuWPJXS9QkezDAsJEjh+Cmrgs41lMoo=
+	t=1733152303; cv=none; b=dQlU9sSICJuZv7ev3sdGguFI9tb2DQiX5zhUUT3Rc+Mj0EMTUH7iosaNOfE9Ay+mPXus9MVRktffa+1jd0PNkDX1CA0TfBbTeNp92hm6NOU1l5wOQAPlIAU4ICRFa66J5/jNrc3DCwr/m3TmHI6WdxVPhfwsV5OXW/5Y3mZJv9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152169; c=relaxed/simple;
-	bh=Cpo1GLhQZtLE6Ei3Gd0MgTCc26yTI2b2sBq8PVNxAbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWS0VmQIAvswXVwRfQ4/Lnv61tQcTFGU9aUwRcy8QH8OQbAvgvKBCf10wvY81/SO0Cz/ZuyfA7+lXgOmKfjvoDa6Gf+WaqkEXtzkXwaRG6LyDYKgv95HnL2Qw7LLJ8gWSJNwTchfZrUpImZ53zQ5WNx6wYTVH9AjH8x+u0fg+O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YKwoUu1K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733152166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w3JoDr8j8H/mDWqJfxj8rt4kckCv7HnvmSqtlB1v6QE=;
-	b=YKwoUu1KMGj5LzGZDbG/Us50y4LYYdIioWrHvlXU9AH9rQY2/IvM5aEpKVV2zz3jEhMcv6
-	Ix/6ULuR69fPyZwyka5XLqX9rhDSQJU7bn4QMAwsz14hLx6v9cdp5/Tmc5dRkNsx//GDN7
-	CCQcMHeWIATJIDxQWAmL7cmA0/W035k=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-281-r0hEsBSIP0GFM2A-5pEvbw-1; Mon, 02 Dec 2024 10:09:24 -0500
-X-MC-Unique: r0hEsBSIP0GFM2A-5pEvbw-1
-X-Mimecast-MFC-AGG-ID: r0hEsBSIP0GFM2A-5pEvbw
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa5379ad03cso491701966b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:09:24 -0800 (PST)
+	s=arc-20240116; t=1733152303; c=relaxed/simple;
+	bh=YxMgzNRRz3wVdrUzCGMfJ+jt/0auNaIGlNq72sywoXU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=koHfe+XbRLkqjxN8rgoyL7zkEV+hgbiUStg2Y1Wkl3ArF1R3X6o6bukFWwMFwABXTCMafKb1eClkvOuzOgdr8LLJ1Ny0PHNNOPBNiBo3HJEQbUCUOmjDYt8PfoCt528hEKK7BC6muyYO+32rLFYQeB5Kx1RYf/Mnx2khOQi20YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWmLskC+; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43494a20379so35644775e9.0;
+        Mon, 02 Dec 2024 07:11:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733152299; x=1733757099; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nV4l2lLVkQn7AKJu1TpC/+VW5wMnOQmxpRS243GTK9g=;
+        b=iWmLskC+oQl8GahOPvKc6e4v6AvLTJCQuRUmbBoBqrp/4/uR1uwfXy2aKSCgWz52A+
+         65m8fBO9Bw1BBfDJ/5lcOJxy9pLSq2ml2rrvwSyAzKkzJud3NNccYFfBl0wfP0T0cL4S
+         SbyeNvx7EGSRfkFm8coEEKrYH0b6bO2joWSMy0WrtbNfyD4lkEBSkNFLyal0IL2YeNWT
+         gn8Pi3boZDV8ZdMNlKvVqaBTd2hc+KN+uinx88TMAg1lYePsWS34jyV0h4gvlXXal9Xp
+         /BE56piiBkvRZAMK2iBKCHBVhE9bWtrSVfbj9h8q9ubQyoJ0n9Jpm6gYpZly1oMjaQtR
+         QZyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733152163; x=1733756963;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w3JoDr8j8H/mDWqJfxj8rt4kckCv7HnvmSqtlB1v6QE=;
-        b=V21LY+fXaw3N4nhBy5qcsn7RjbS7p12Q72s0b0f51Vd+5w1nwthsOLS7WEngSpQrRk
-         6Hd8sjn1DK678bGr6bIBNa7yrQvp6yFn33MPcnLbTbM/Fs/5WxE9YWhMPVgv4pvGrwpS
-         i0GhatlhUQtVe/7JsDdweAUQjkkfeySaTNJmvnVAFgNwIHUwdco3bSm0HWodsKnwUoQ7
-         dH0AxqeWOeUAEjFf5rpqANM3uJna57oICSZdJgRY+xY9fscDTctNEONbv4NUYIvJcUdq
-         2hdsdJ9Eq3pk/ahKkm8pQKZb+PKihSrv0qOBVJr4zwdj0xdEK7Sy/tx5IL5+AT2cptAW
-         phBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXW5bpBsnVqQ5DIbzAgBp1hmsG4A1WHaPQrLauzN5JuRFuiylGWhdmLazxVVt0Pu6nw8UgsVxNtQ6EN7l8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfApFpAzfsoWvuRcjIZ9nnZpfbzr6393XCqHQyggVcrBqtQUBd
-	DL33bnZyYlf23K8o1b8Jp2a/2UPhWPqV3/dCyZ74NHn2AJAeyNW36JcbnQM7+l8AdSL7iOK0NaT
-	P80pgVgt+QusO25GunzkuONpm/tN2TFdQNlAz/cIqXKJfshW844XC0WYsiUpfNBF94o/ybw==
-X-Gm-Gg: ASbGncuy/ewxJxLG6B2r/YDAYopy/nbFeYkYS5AAf5wd9WgOY9LbmYUENkwiT2HaGlM
-	y0jCumWwd+tkU/XROX3zh/iQ2GXf8rLg9OWsgTOGiK2PFVWBYMRkhsjPbsCiq09X14SlgUm4eYo
-	SHwu0PwViNua+9W3aZkQar3T5wbwPPSlce3AqIp44UtovR3GjBldUE24Iqt/pg3M4zsuDAY74ca
-	pzzRal7z2zuFdjFIbOgQ06CcaFSBn1zmJY0s6ROS4LpGpO+gChblA==
-X-Received: by 2002:a17:906:2932:b0:a9a:238a:381d with SMTP id a640c23a62f3a-aa581073eadmr2150698366b.52.1733152161143;
-        Mon, 02 Dec 2024 07:09:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGsz+K25a3h1GCaZTkkz1+xGWIAIQSlRxjT04Wug8E0C4OQc+Pgpsa357Gz2PqrzT8O6k9T+A==
-X-Received: by 2002:a17:906:2932:b0:a9a:238a:381d with SMTP id a640c23a62f3a-aa581073eadmr2150679366b.52.1733152158937;
-        Mon, 02 Dec 2024 07:09:18 -0800 (PST)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996ddbf0sm518848566b.57.2024.12.02.07.09.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 07:09:18 -0800 (PST)
-Message-ID: <8d16fca9-c824-4c0e-a5d3-a7fa0fade3c7@redhat.com>
-Date: Mon, 2 Dec 2024 16:09:17 +0100
+        d=1e100.net; s=20230601; t=1733152299; x=1733757099;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nV4l2lLVkQn7AKJu1TpC/+VW5wMnOQmxpRS243GTK9g=;
+        b=pkOCI5cgjj0lAxJQBVYKTUnVO580QOuDnbM7/N35q2652nldFWYShz1kkUn8rDFqCA
+         D1PfmhVgkoRGfpCG0haT7HfDUh9lrTOyFGpvR217Wwkp7fJp0FefLapfaSZ8D3gToW99
+         7cq4C1wyxYeZIVtc+JB5kVw2tIbAFEGSocSg9nEqdjXJ9bLSZ+xd1usnf/J6QOVazkXz
+         Qdl6zyJoGNq0o6T2kDxrIdD49kJGdpcIRoqXY3PJDWXgdkV16qBb+0CuX/3dFCbhZcF4
+         2mg+IBq7lvJNRYZg7XCkH9ekognBGxjdtycZ1WKGwZSS1cK93twoBc5QSKa5cFaOBlO5
+         DgpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzAxS1dZWzRVk1zO19/Vjp/mc3n2iDX0mjGxCr70wfNqSTegG7/v1gQg9Fm+TIW8DSOBp5d21+rVWX8eM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9W9CT+JL+sV5ztSwWu4Dj5lK9KVgQ6tGYdo/pSfsxYc8pNx4S
+	iVJFI4/9x5ySbqUayOYKEDcH6n3Avcebmrk5THjB5ZfJLtl4+hut
+X-Gm-Gg: ASbGncu3QnJ7xvpBWJwSOGSSmZXTLVNzOnXmmvoh06XjkHHjeOg3RW+6kFu1TK028Dv
+	redO0Tp/FRi4PatKWW0xRvF1ghKmz/fXOiMKduEoXEbBHHyvtQkKyPguAJtqozCm77YQp7vMzYg
+	JlkEJR1xUDW7/Vno7DoXaFMleec13ZS0ps85t8nCoHqdUvq5dSnUG0dWOYp0pXbpxMDvPYhMGhX
+	RVMGeX8HSgvaxxMXOkgl6BXGUymL/rQZPj5fgTcANYEAU5sKUGGj/MavJE9CjOEJTRimGFn6c9p
+	anrPs7P9WCAAA796vaxM
+X-Google-Smtp-Source: AGHT+IFqsTbKUWf24PW7pFizyUZDs2575ldIjokvTIMOJTyNmWAWMxhDYbFZ+pC936i08xukQkI3wQ==
+X-Received: by 2002:a05:600c:5022:b0:434:a6af:d322 with SMTP id 5b1f17b1804b1-434a9e10ff0mr189046995e9.33.1733152298396;
+        Mon, 02 Dec 2024 07:11:38 -0800 (PST)
+Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d264dsm186082535e9.33.2024.12.02.07.11.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 07:11:37 -0800 (PST)
+From: Matteo Martelli <matteomartelli3@gmail.com>
+Subject: [PATCH 0/2] iio: consumers: ensure read buffers for labels and
+ ext_info are page aligned
+Date: Mon, 02 Dec 2024 16:11:06 +0100
+Message-Id: <20241202-iio-kmalloc-align-v1-0-aa9568c03937@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] media: uvcvideo: Remove duplicated cap/out code
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241202-uvc-dup-cap-out-v3-1-d40b11bb74b7@chromium.org>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241202-uvc-dup-cap-out-v3-1-d40b11bb74b7@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAArOTWcC/x3MQQqAIBBA0avIrBtIKYKuEi1sGmvINBQiCO+et
+ HyL/1/InIQzjOqFxLdkiaFCNwpot2FjlLUaTGs6rc2AIhGP03ofCa2XLaClYXHkuGdqoXZXYif
+ P/5zmUj5ilUSlYwAAAA==
+X-Change-ID: 20241127-iio-kmalloc-align-ac7bfcfe5ec0
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Peter Rosin <peda@axentia.se>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Matteo Martelli <matteomartelli3@gmail.com>
+X-Mailer: b4 0.14.2
 
-Hi,
+This patch series is a follow up of [1], where I described an issue
+related to the fact that devm_k*alloc() functions do not provide
+alignment to the requested power of two size, leading to potential
+errors when used together with sysfs_emit* helpers which expect
+page-aligned buffers.
 
-On 2-Dec-24 2:37 PM, Ricardo Ribalda wrote:
-> The *_vid_cap and *_vid_out helpers seem to be identical:
-> - Remove all the cap/out duplicated code.
-> - Remove s/g_parm helpers
-> - Reorder uvc_ioctl_ops
-> 
-> And now that we are at it, fix a comment for uvc_acquire_privileges()
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
-> Unless I miss something, cap and out helpers are identical. So there is
-> no need to duplicate code
+From that discussion, it became clear that this issue currently only
+affects iio consumer drivers, as they can directly access providers
+attribute formatted using sysfs_emit* helpers. For instance, the iio-mux
+driver allocates a buffer with devm_kzalloc(PAGE_SIZE) to read provider
+ext_info attributes, which could be handled via sysfs_emit* helpers.
+This leads to an error in the provider ext_info read callback since the
+allocated buffer is not page-aligned.
 
-Thank you for your patch.
+Summary:
+- Patch 1: harden the consumers APIs to ensure read buffers are page
+  aligned for attributes which could be formatted with sysfs_emit*
+  helpers by the providers. Currently labels and ext_info attributes.
 
-I have merged this into:
+- Patch 2: fix iio-mux consumer by switching from devm_kzalloc to
+  kzalloc for the ext_info buffer.
 
-https://gitlab.freedesktop.org/linux-media/users/uvc/-/commits/next/
+Tested with the iio-mux consumer driver alongside the pac1921 driver,
+which provides an ext_info attribute (the shunt resistor in this case).
+After applying patch-1, the error was detected during the iio-mux probe
+rather than in the pac1921 ext_info read callback. After applying
+patch-2, the error condition no longer occurred. Additionally, the extra
+check in iio_read_channel_label() was tested with the iio_hwmon consumer
+driver temporarily modified to allocate the buffer for retrieving
+provider labels using devm_kzalloc(PAGE_SIZE) instead of
+devm_get_free_pages(). The error was correctly detected during the
+iio_hwmon probe when attempting to retrieve pac1921 channel labels.
 
-Regards,
+[1]: https://lore.kernel.org/all/c486a1cf98a8b9ad093270543e8d2007@gmail.com
 
-Hans
+Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+---
+Matteo Martelli (2):
+      iio: consumers: ensure read buffers for labels and ext_info are page aligned
+      iio: iio-mux: kzalloc instead of devm_kzalloc to ensure page alignment
 
+ drivers/iio/inkern.c              | 11 +++++
+ drivers/iio/multiplexer/iio-mux.c | 84 +++++++++++++++++++++------------------
+ include/linux/iio/consumer.h      |  4 +-
+ 3 files changed, 59 insertions(+), 40 deletions(-)
+---
+base-commit: 20fd1383cd616d61b2a79967da1221dc6cfb8430
+change-id: 20241127-iio-kmalloc-align-ac7bfcfe5ec0
 
-
-> ---
-> Changes in v3:
-> - if (ret < 0)
-> - Link to v2: https://lore.kernel.org/r/20241129-uvc-dup-cap-out-v2-1-596cb9bdd5e8@chromium.org
-> 
-> Changes in v2:
-> - Add missing acquire_privileges.
-> - Also remove helper for s/g_parm.
-> - Reorder callbacks.
-> - Link to v1: https://lore.kernel.org/r/20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org
-> ---
->  drivers/media/usb/uvc/uvc_v4l2.c | 162 +++++++++++----------------------------
->  1 file changed, 43 insertions(+), 119 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index 97c5407f6603..dee6feeba274 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -26,6 +26,8 @@
->  
->  #include "uvcvideo.h"
->  
-> +static int uvc_acquire_privileges(struct uvc_fh *handle);
-> +
->  static int uvc_control_add_xu_mapping(struct uvc_video_chain *chain,
->  				      struct uvc_control_mapping *map,
->  				      const struct uvc_xu_control_mapping *xmap)
-> @@ -361,9 +363,11 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
->  	return ret;
->  }
->  
-> -static int uvc_v4l2_get_format(struct uvc_streaming *stream,
-> -	struct v4l2_format *fmt)
-> +static int uvc_ioctl_g_fmt(struct file *file, void *fh,
-> +			   struct v4l2_format *fmt)
->  {
-> +	struct uvc_fh *handle = fh;
-> +	struct uvc_streaming *stream = handle->stream;
->  	const struct uvc_format *format;
->  	const struct uvc_frame *frame;
->  	int ret = 0;
-> @@ -395,14 +399,20 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
->  	return ret;
->  }
->  
-> -static int uvc_v4l2_set_format(struct uvc_streaming *stream,
-> -	struct v4l2_format *fmt)
-> +static int uvc_ioctl_s_fmt(struct file *file, void *fh,
-> +			   struct v4l2_format *fmt)
->  {
-> +	struct uvc_fh *handle = fh;
-> +	struct uvc_streaming *stream = handle->stream;
->  	struct uvc_streaming_control probe;
->  	const struct uvc_format *format;
->  	const struct uvc_frame *frame;
->  	int ret;
->  
-> +	ret = uvc_acquire_privileges(handle);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	if (fmt->type != stream->type)
->  		return -EINVAL;
->  
-> @@ -426,10 +436,12 @@ static int uvc_v4l2_set_format(struct uvc_streaming *stream,
->  	return ret;
->  }
->  
-> -static int uvc_v4l2_get_streamparm(struct uvc_streaming *stream,
-> -		struct v4l2_streamparm *parm)
-> +static int uvc_ioctl_g_parm(struct file *file, void *fh,
-> +			    struct v4l2_streamparm *parm)
->  {
->  	u32 numerator, denominator;
-> +	struct uvc_fh *handle = fh;
-> +	struct uvc_streaming *stream = handle->stream;
->  
->  	if (parm->type != stream->type)
->  		return -EINVAL;
-> @@ -461,9 +473,11 @@ static int uvc_v4l2_get_streamparm(struct uvc_streaming *stream,
->  	return 0;
->  }
->  
-> -static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
-> -		struct v4l2_streamparm *parm)
-> +static int uvc_ioctl_s_parm(struct file *file, void *fh,
-> +			    struct v4l2_streamparm *parm)
->  {
-> +	struct uvc_fh *handle = fh;
-> +	struct uvc_streaming *stream = handle->stream;
->  	struct uvc_streaming_control probe;
->  	struct v4l2_fract timeperframe;
->  	const struct uvc_format *format;
-> @@ -472,6 +486,10 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
->  	unsigned int i;
->  	int ret;
->  
-> +	ret = uvc_acquire_privileges(handle);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	if (parm->type != stream->type)
->  		return -EINVAL;
->  
-> @@ -573,6 +591,7 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
->   * - VIDIOC_S_INPUT
->   * - VIDIOC_S_PARM
->   * - VIDIOC_S_FMT
-> + * - VIDIOC_CREATE_BUFS
->   * - VIDIOC_REQBUFS
->   */
->  static int uvc_acquire_privileges(struct uvc_fh *handle)
-> @@ -685,11 +704,13 @@ static int uvc_ioctl_querycap(struct file *file, void *fh,
->  	return 0;
->  }
->  
-> -static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
-> +static int uvc_ioctl_enum_fmt(struct file *file, void *fh,
->  			      struct v4l2_fmtdesc *fmt)
->  {
-> -	const struct uvc_format *format;
-> +	struct uvc_fh *handle = fh;
-> +	struct uvc_streaming *stream = handle->stream;
->  	enum v4l2_buf_type type = fmt->type;
-> +	const struct uvc_format *format;
->  	u32 index = fmt->index;
->  
->  	if (fmt->type != stream->type || fmt->index >= stream->nformats)
-> @@ -707,82 +728,8 @@ static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
->  	return 0;
->  }
->  
-> -static int uvc_ioctl_enum_fmt_vid_cap(struct file *file, void *fh,
-> -				      struct v4l2_fmtdesc *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -
-> -	return uvc_ioctl_enum_fmt(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_enum_fmt_vid_out(struct file *file, void *fh,
-> -				      struct v4l2_fmtdesc *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -
-> -	return uvc_ioctl_enum_fmt(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_g_fmt_vid_cap(struct file *file, void *fh,
-> -				   struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -
-> -	return uvc_v4l2_get_format(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_g_fmt_vid_out(struct file *file, void *fh,
-> -				   struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -
-> -	return uvc_v4l2_get_format(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_s_fmt_vid_cap(struct file *file, void *fh,
-> -				   struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -	int ret;
-> -
-> -	ret = uvc_acquire_privileges(handle);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return uvc_v4l2_set_format(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_s_fmt_vid_out(struct file *file, void *fh,
-> -				   struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -	int ret;
-> -
-> -	ret = uvc_acquire_privileges(handle);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return uvc_v4l2_set_format(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_try_fmt_vid_cap(struct file *file, void *fh,
-> -				     struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -	struct uvc_streaming_control probe;
-> -
-> -	return uvc_v4l2_try_format(stream, fmt, &probe, NULL, NULL);
-> -}
-> -
-> -static int uvc_ioctl_try_fmt_vid_out(struct file *file, void *fh,
-> -				     struct v4l2_format *fmt)
-> +static int uvc_ioctl_try_fmt(struct file *file, void *fh,
-> +			     struct v4l2_format *fmt)
->  {
->  	struct uvc_fh *handle = fh;
->  	struct uvc_streaming *stream = handle->stream;
-> @@ -1212,29 +1159,6 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
->  	return 0;
->  }
->  
-> -static int uvc_ioctl_g_parm(struct file *file, void *fh,
-> -			    struct v4l2_streamparm *parm)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -
-> -	return uvc_v4l2_get_streamparm(stream, parm);
-> -}
-> -
-> -static int uvc_ioctl_s_parm(struct file *file, void *fh,
-> -			    struct v4l2_streamparm *parm)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -	int ret;
-> -
-> -	ret = uvc_acquire_privileges(handle);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return uvc_v4l2_set_streamparm(stream, parm);
-> -}
-> -
->  static int uvc_ioctl_enum_framesizes(struct file *file, void *fh,
->  				     struct v4l2_frmsizeenum *fsize)
->  {
-> @@ -1543,15 +1467,17 @@ static unsigned long uvc_v4l2_get_unmapped_area(struct file *file,
->  #endif
->  
->  const struct v4l2_ioctl_ops uvc_ioctl_ops = {
-> +	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt,
-> +	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt,
-> +	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt,
-> +	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt,
-> +	.vidioc_g_parm = uvc_ioctl_g_parm,
-> +	.vidioc_s_parm = uvc_ioctl_s_parm,
->  	.vidioc_querycap = uvc_ioctl_querycap,
-> -	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt_vid_cap,
-> -	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt_vid_out,
-> -	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt_vid_cap,
-> -	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt_vid_out,
-> -	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt_vid_cap,
-> -	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt_vid_out,
-> -	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt_vid_cap,
-> -	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt_vid_out,
-> +	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt,
-> +	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt,
-> +	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt,
-> +	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt,
->  	.vidioc_reqbufs = uvc_ioctl_reqbufs,
->  	.vidioc_querybuf = uvc_ioctl_querybuf,
->  	.vidioc_qbuf = uvc_ioctl_qbuf,
-> @@ -1570,8 +1496,6 @@ const struct v4l2_ioctl_ops uvc_ioctl_ops = {
->  	.vidioc_try_ext_ctrls = uvc_ioctl_try_ext_ctrls,
->  	.vidioc_querymenu = uvc_ioctl_querymenu,
->  	.vidioc_g_selection = uvc_ioctl_g_selection,
-> -	.vidioc_g_parm = uvc_ioctl_g_parm,
-> -	.vidioc_s_parm = uvc_ioctl_s_parm,
->  	.vidioc_enum_framesizes = uvc_ioctl_enum_framesizes,
->  	.vidioc_enum_frameintervals = uvc_ioctl_enum_frameintervals,
->  	.vidioc_subscribe_event = uvc_ioctl_subscribe_event,
-> 
-> ---
-> base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
-> change-id: 20241127-uvc-dup-cap-out-6a03c01e30a3
-> 
-> Best regards,
+Best regards,
+-- 
+Matteo Martelli <matteomartelli3@gmail.com>
 
 
