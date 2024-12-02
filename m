@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-427050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD939DFBA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:08:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ADC69DFB92
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEE14B228D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE40281D1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F021F9AAB;
-	Mon,  2 Dec 2024 08:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40E61F9AB9;
+	Mon,  2 Dec 2024 08:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b="YZCkkwv0"
-Received: from forward203b.mail.yandex.net (forward203b.mail.yandex.net [178.154.239.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aiY8l3p7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C101F9E6;
-	Mon,  2 Dec 2024 08:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C80FF9E6;
+	Mon,  2 Dec 2024 08:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733126884; cv=none; b=BrbAp8poBxqmBo+ZRTLdEj7UORQP1xF/qnJ9lRhq/Wx+Y/FrwLatojAmw1/1kt8Rh552O38svA0y0W8zLiDKO6MNBzKzks5/6d0YjPTZA/V2eybrcSbnxD7w9ZRnGu+Cxa46HK9t3ovF96Aiw6MlEqlYreNygapN0ux/7hs5vrA=
+	t=1733126459; cv=none; b=UvSOm9trZJG0mggzvHL523OYSGTN3ERITrZHJKgEiaW50brf4cCCQWxRyiaZUftAp4enUB9oPqCKGivrhnoqQdpNFduYSqbOILjt7XudVhP23J36kgUBx10nM1u4A5StWAyWGoJEZ5upsnl4yNI0D+lVB+GPOVY47P+XGb5iAD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733126884; c=relaxed/simple;
-	bh=MSW5BTDyePFiKoa+mbURS90jRDsWlUIgeZx3jybnPRI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rGrBEG47MqqSWswZlEbZy0MiCJM8e/12vAHXD0AS8rFZJwTNAgpxnGQV+AxueHjiZLbosVRJcDdBDtMoSWnxkexZ7VSL9YpkyaVGNECcqGGj/C2YdXFMIKBM7XR8ReZqi2v5LUdgtRoj0Lw3XtqseFBHeC974q4K6a5GlBtSfuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru; spf=pass smtp.mailfrom=itb.spb.ru; dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b=YZCkkwv0; arc=none smtp.client-ip=178.154.239.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=itb.spb.ru
-Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d101])
-	by forward203b.mail.yandex.net (Yandex) with ESMTPS id D4E786486C;
-	Mon,  2 Dec 2024 11:02:12 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:2720:0:640:5aee:0])
-	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 803B560F03;
-	Mon,  2 Dec 2024 11:02:04 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id f1ZvNeGOfiE0-wjjuYp10;
-	Mon, 02 Dec 2024 11:02:03 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=itb.spb.ru; s=mail;
-	t=1733126523; bh=fAvlWEkjGOo1q72idjWA0Eucb8ySH4M7IRqqfWdyYRE=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=YZCkkwv0CsBqEe9B3jleawzwSzgsrdVWTohT8pxpvgP4vnYIybRWF2MoGiOFsWpJQ
-	 t0u4obNc4EDN19bYamRefun5j7kg56DW7YghxnRW/uriBhWV6+C1yP0KyoU19KYt1S
-	 1oQXmUZu5CD2fgaGtmHWiO4v5D1Gf56aQFBvbB0w=
-Authentication-Results: mail-nwsmtp-smtp-production-main-42.myt.yp-c.yandex.net; dkim=pass header.i=@itb.spb.ru
-From: Ivan Stepchenko <sid@itb.spb.ru>
-To: Kenneth Feng <kenneth.feng@amd.com>
-Cc: Ivan Stepchenko <sid@itb.spb.ru>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tim Huang <Tim.Huang@amd.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Alexander Richards <electrodeyt@gmail.com>,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Jesse Zhang <jesse.zhang@amd.com>,
-	Rex Zhu <Rex.Zhu@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	lvc-project@linuxtesting.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] drm: amd: Fix potential NULL pointer dereference in atomctrl_get_smc_sclk_range_table
-Date: Mon,  2 Dec 2024 11:00:43 +0300
-Message-Id: <20241202080043.5343-1-sid@itb.spb.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733126459; c=relaxed/simple;
+	bh=cKBxlD9oIvW3qwky/x/hjrqOR1DuqNbxWT7KDNIlPqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qj7FO3SJvTecTZyMB/zTbIlN9j1heSKZFPxA4zDoVKV0MOAVOgvZRyIroSXAVyEMXMH44ASiadAf04tmsvj2A1aT8LpUf0WkPYQIpcd2uUu1O7HRhoEHecRY05MN/g9ac37+LY3wjYn4wBf5DL57oVSrrFA6TST3JQti30fI+Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aiY8l3p7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1EE0C4CED2;
+	Mon,  2 Dec 2024 08:00:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733126458;
+	bh=cKBxlD9oIvW3qwky/x/hjrqOR1DuqNbxWT7KDNIlPqM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aiY8l3p7SZwggHaDbYmUcdWfR2qpRzyaCyA2smpmjaSJOaJzSbz52hFbcDkUJLPRr
+	 jRVOif4iR8t7lwZyFUhY2wEK78dx5LfjR/rktxJYWzcFQBFNRXnYZllTIBgdCisXNp
+	 sBufH6nBla0vn/kL3m2C7El9KqxCWyXYCFT0n97nXS4QEyj2jqETc8fZiGJHreLKHB
+	 W/V2aU6CPj6QFXEc+2KOdF4lV6C4MuI1Qx9921BN63gp01hA/ZhWAFzrXOZqkwWicW
+	 xtlGcqfCqohFw1sy69tGNuJcmzSCvBhZ7HiCEzthaAqrcMSdJ8a9BTIbsrsaduF261
+	 LlM20nHY4faPg==
+Date: Mon, 2 Dec 2024 09:00:55 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: power: domain-idle-state: Allow
+ idle-state-name
+Message-ID: <ci253udczwm4ovo2prpbyuqd5d2x73t52auf7adyhlyzvuzkaf@v4krfcgcvrpu>
+References: <20241130-topic-idle_state_name-v1-0-d0ff67b0c8e9@oss.qualcomm.com>
+ <20241130-topic-idle_state_name-v1-1-d0ff67b0c8e9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241130-topic-idle_state_name-v1-1-d0ff67b0c8e9@oss.qualcomm.com>
 
-The function atomctrl_get_smc_sclk_range_table() does not check the return
-value of smu_atom_get_data_table(). If smu_atom_get_data_table() fails to
-retrieve SMU_Info table, it returns NULL which is later dereferenced.
+On Sat, Nov 30, 2024 at 05:39:36PM +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Allow specifying a name for idle states, similar to CPU idle states
+> in cpu/idle-states.yaml
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/power/domain-idle-state.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/power/domain-idle-state.yaml b/Documentation/devicetree/bindings/power/domain-idle-state.yaml
+> index ec1f6f669e50b2e7b0756cb6a737c685ad81045b..4dd4f59bbbec3058cf20f064aeec4c9602a99eb7 100644
+> --- a/Documentation/devicetree/bindings/power/domain-idle-state.yaml
+> +++ b/Documentation/devicetree/bindings/power/domain-idle-state.yaml
+> @@ -54,6 +54,11 @@ patternProperties:
+>            (i.e. idle states node with entry-method property is set to "psci")
+>            must specify this property.
+>  
+> +      idle-state-name:
+> +        $ref: /schemas/types.yaml#/definitions/string
+> +        description:
+> +          A string used as a descriptive name for the idle state.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+For user-visible strings we have 'label' property, but I see cpu idle
+states already use this one, so I guess it is fine.
 
-Fixes: a23eefa2f461 ("drm/amd/powerplay: enable dpm for baffin.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ivan Stepchenko <sid@itb.spb.ru>
----
- drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomctrl.c | 2 ++
- 1 file changed, 2 insertions(+)
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomctrl.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomctrl.c
-index fe24219c3bf4..4bd92fd782be 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomctrl.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/ppatomctrl.c
-@@ -992,6 +992,8 @@ int atomctrl_get_smc_sclk_range_table(struct pp_hwmgr *hwmgr, struct pp_atom_ctr
- 			GetIndexIntoMasterTable(DATA, SMU_Info),
- 			&size, &frev, &crev);
- 
-+	if (!psmu_info)
-+		return -EINVAL;
- 
- 	for (i = 0; i < psmu_info->ucSclkEntryNum; i++) {
- 		table->entry[i].ucVco_setting = psmu_info->asSclkFcwRangeEntry[i].ucVco_setting;
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
