@@ -1,308 +1,180 @@
-Return-Path: <linux-kernel+bounces-427090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D6B9DFC54
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:46:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7E69DFC65
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 524CD2838E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:46:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21758B21147
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888151F9F6A;
-	Mon,  2 Dec 2024 08:46:29 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE961F9AA7;
+	Mon,  2 Dec 2024 08:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zb2yPi8A"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0656A1F9AA6
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91C41F941B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733129188; cv=none; b=mvnV9h/YaTq4triH72xSXMnulDaxcj6jMT/8//2I7vQiXXD/Zyu75aIEwDyrMGxpbrz8mvnc6qOv3mpDsG6MFW1Vg9GtuQowFsITTnIVlVCmDNbnqY/W1g70iQ+OlekaPrPj2CaRiJYGwKKgfGOy5wx55o9T9bpOmkWs2w9B328=
+	t=1733129270; cv=none; b=bY7ORiV5q7OYizZaH//UoS36vlHZ+/L7h5ApfxFWhiTY8akkqGgbUUsEsR2rN7QKb23bojglR/3rzDDDUtNr7XmGvK+MEdwrvG9sr8h5WyHcqrgzxvx/K1213Zqhh1ycAI81QF2xzXzeTxDYCDvMwWjqAJuzoVileIPb1dxj6RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733129188; c=relaxed/simple;
-	bh=Wt3g3yhJk5zszp8JolPw2ERJelas8ryBqkz8gvB2R+Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=q8ddsQ0bGaxBo177CGw+asHJFarGBwdsf9U0eUCKNZYUxnOuNN78k02OpROQt+s/pBoManA+VhYOZtNToXHF//DbWxRBFKvPjTnQRRYs+dI96+F0uG8KAHxASNoVD8pG9p99dfndJfkbGqH/UbcnCCFwfo2IgPepQK1GUeoeGik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-8419f8859f7so318348639f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:46:26 -0800 (PST)
+	s=arc-20240116; t=1733129270; c=relaxed/simple;
+	bh=iQswkUcZqkc3rR4ZXaPjtScTrAFdnuNfZ8doDQQU5jU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eC3pcXqV2OojGWRsLUWglNlvZDQyaodaPweA0IxajKpqevynPEps2LWoIcdMwV4zLf9FfSD8tOyDAw8TgYHd3Mxjrl3Iei0ckRHCuqJER8DPPzOmtAA1jSMqaBnQDxevK1zvoAj+dVtY8oFvP8Uh8+arxmpeOXtEeDG8jk2ZMhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zb2yPi8A; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a9f2da82so33838485e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:47:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733129267; x=1733734067; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=868g4RybWVTONYV+5WNJ4Psz8+PDv8VmyMXOni0Et/E=;
+        b=Zb2yPi8ACqP9AgTihZD7sit1rkGQU9Eq/kkTAv/aXe0KDMv/pZg955arVNi0ALiUp/
+         tqXlUomr6UC4R8A7cByVcB/D4Qj//hWa/HWLsg5mly5f+sSyg6C++AxcwhbfWQX5YLD5
+         tJ1PThhKpXAtYDi/tl/QMArnSEqMjpkKQeaX/47DlXcdo8CMuU8Ri3P34H3LqA36jjwJ
+         yasCGSV9psfWgd3//YzNCHpGDo3MUGNCbH6bhoQRaiafko/gxXo9n0R7QLvn+Jlmd6Px
+         1BY2dG5b9cV7NktVqOW6Av15WW5ofkYy2H4UCGEIJkgNOAw9UVyPT8oJ+YZygKlic3/4
+         ckfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733129186; x=1733733986;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j30paMaeYrEZgwIHUVxtLA1XEyfwj5mCn4KavAoXhHo=;
-        b=QlnKs9lAfRqy7qxO1HrEfTzMgUNlZCVHp7+RAAP3+Z92UWMfvP+yEBVQhM+2TAKT5F
-         8fsUv9sB6xrTbskA1f3Tv90weIill2kJ5hK+OKMli9/BW942x9h9VECAA6wZAbBB9yka
-         KRDmUA0BsawJrmSDWYCW5/bBLp10S7nP/+txE/LBrAgOG5TKplN2AS1fnt9aUCLqNMI7
-         4VkF2I3X/biVL5WG9El+RIA6TUOv2qxH5eX3zeEblfZR47N6HmpII7mw13sGkNkX+W1y
-         AzJqP2V/IBG/8Sllaz1jPktD8UtoxcqAzNgvB78PM3/AVPeeoKE0i4vcsHWFm+t3iXL3
-         otRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdvf7+6Wtchv7JJOwMO3wpJJ+9wrC+dZh2GzNgKJerq28TWzc2e/DFpOB65U6jpe2dKRewmY6qjU3vy3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjB6scq0nMDYUsmDrZaPwiFTZ1TP0Yl3vc3XcIukBm+Nl2swZ8
-	S6BlQLzuGiR3bnQup5gH2usoI+Dgnd0P7FVd1VjyJlrZN9p4qA6nMa5LJ2sCesITKISxlNGhcio
-	bkmjGN02+1tzBQjBTmNpjOWcgeY6HrFvUoH/hSBxmJSyb8GJJUCvw1aY=
-X-Google-Smtp-Source: AGHT+IEQn//dFu2dOy+XTC4cS3gkVKwh2Fp8K7X0hSIp+gfOEtyPMEUa3Yi9KTNVZRL/f0ZOBBPVSj9AdqfxiGasScqwW22Wv9ld
+        d=1e100.net; s=20230601; t=1733129267; x=1733734067;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=868g4RybWVTONYV+5WNJ4Psz8+PDv8VmyMXOni0Et/E=;
+        b=b+/RTGuqp2f/kK4hj4qTvxXAnYr+AUgRTAjcyrI4AHnBOch4TeDnUnVgjc+gDN6/K9
+         xIfVl4Dgpym0YhWoqtE21tpYrBZ4z97lYxHFF/sazZRQ3O21ht8oIUO5vOi+2ts3Ud5w
+         o3OtjnvZvF9+eD6YBHua9JolA9rIHHupEVCv9abvFGhMgI9x765JvvADKQrcTeO6fFq1
+         OGHg+9XxJhKxXVE0Q5UK6lHBsWw5dJvnmtfdTYqRmaN31jrD3qW6daYMSKbEFrFVWO2H
+         fqR5s+ZAn3u/XjzG4YLnwt+RMHwsE8bi2D3rdxs+dbBgz9WgBvsZzyBthrkSkZ+hVQAf
+         8bwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMQdKbcUkNeuG7vr1sVyihYqL4iUr7k81Gvc59/oBPTGMQyDX0b7ql+wKEQG4woOaF5ZKKgpT3mm6R5cE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZPTJL1/xCjU+lRMFZvef6paZ3Yjb8Uu6P9CNLkHwc3uxFvqdo
+	2t969m7VblC3M4fY6iATq57aCZ5XFTVw3vOtqNYepohdk44uaMf2iwHjlQ8VDh4=
+X-Gm-Gg: ASbGncuAwFx69C+f9TArVj08rUnSWVQXS9f+gajM7fq8qxQJ5gguhSijCauLFkq3lVP
+	q2h3oCZUN1myOrM62QMqAl7zAh4bfLozH1lbZ8MK73V09GaziVHs/XUoI8cPSNFcPyTADm9iDQb
+	vJLL5zKgLSZJ4mLmKT+RdSB9l54zB9NY+IK2DzokyQ9AVUGpXVyGQ+2z1zFCrYtRBCP3ncl8lzE
+	e/bO6aAaV4N9lbKxuLz++1glFUzNqdvjco4jnkZCWJ5eCA1WDqF5FmPegA3SPPg+BUNgtXgiRSB
+	q+kzM1ILXHyKh3HIz0raxZ2M92I=
+X-Google-Smtp-Source: AGHT+IGJHbzNJoBprBMkButUw4pIj5gIiLHg+0YoFuF1r/DNY4OA1vmPgg66dYl398uyPtEYyLRRXg==
+X-Received: by 2002:a05:600c:1d9c:b0:434:9ef2:f6e3 with SMTP id 5b1f17b1804b1-434a9dbf66bmr188026545e9.8.1733129267215;
+        Mon, 02 Dec 2024 00:47:47 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:1485:2a78:787c:c669? ([2a01:e0a:982:cbb0:1485:2a78:787c:c669])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385f0056637sm3156494f8f.15.2024.12.02.00.47.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 00:47:46 -0800 (PST)
+Message-ID: <9add2288-36eb-43cd-a591-68f1819fb911@linaro.org>
+Date: Mon, 2 Dec 2024 09:47:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a6:b0:3a7:6d14:cc29 with SMTP id
- e9e14a558f8ab-3a7c5525871mr242480475ab.1.1733129186080; Mon, 02 Dec 2024
- 00:46:26 -0800 (PST)
-Date: Mon, 02 Dec 2024 00:46:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674d73e2.050a0220.ad585.0046.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in memscan
-From: syzbot <syzbot+68492be514245d0e5091@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 5/7] drm/msm: adreno: enable GMU bandwidth for A740 and
+ A750
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241128-topic-sm8x50-gpu-bw-vote-v3-0-81d60c10fb73@linaro.org>
+ <20241128-topic-sm8x50-gpu-bw-vote-v3-5-81d60c10fb73@linaro.org>
+ <5fc71011-7a67-47b9-b372-b5e52ffea757@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <5fc71011-7a67-47b9-b372-b5e52ffea757@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 29/11/2024 16:25, Konrad Dybcio wrote:
+> On 28.11.2024 11:25 AM, Neil Armstrong wrote:
+>> Now all the DDR bandwidth voting via the GPU Management Unit (GMU)
+>> is in place, declare the Bus Control Modules (BCMs) and the
+>> corresponding parameters in the GPU info struct and add the
+>> GMU_BW_VOTE feature bit to enable it.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 22 ++++++++++++++++++++++
+>>   1 file changed, 22 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> index 0c560e84ad5a53bb4e8a49ba4e153ce9cf33f7ae..edffb7737a97b268bb2986d557969e651988a344 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> @@ -1388,6 +1388,17 @@ static const struct adreno_info a7xx_gpus[] = {
+>>   			.pwrup_reglist = &a7xx_pwrup_reglist,
+>>   			.gmu_chipid = 0x7020100,
+>>   			.gmu_cgc_mode = 0x00020202,
+>> +			.bcms = (const struct a6xx_bcm[]) {
+>> +				{ .name = "SH0", .buswidth = 16 },
+>> +				{ .name = "MC0", .buswidth = 4 },
+>> +				{
+>> +					.name = "ACV",
+>> +					.fixed = true,
+>> +					.perfmode = BIT(3),
+>> +					.perfmode_bw = 16500000,
+>> +				},
+>> +				{ /* sentinel */ },
+>> +			},
+> 
+> This is not going to fly the second there's two SoCs implementing the
+> same GPU with a difference in bus topology. I think we could add
+> something like drvdata to ICC nodes and use it for BCMs on icc-rpmh.
+> Then, we could retrieve it from the interconnect path we get from the
+> dt node. It would also reduce duplication.
 
-syzbot found the following issue on:
+I don't want to go into that, we can optimize this when adding topologies
+for other GPUs later, as-is this is a pointer so we can already share the
+same table between GPUs.
 
-HEAD commit:    2c22dc1ee3a1 Merge tag 'mailbox-v6.13' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=175715c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=472032c4f88b28ab
-dashboard link: https://syzkaller.appspot.com/bug?extid=68492be514245d0e5091
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Konrad
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2c22dc1e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/edc4991391e8/vmlinux-2c22dc1e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3ddbf30097ad/bzImage-2c22dc1e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+68492be514245d0e5091@syzkaller.appspotmail.com
-
-bcachefs (loop0): resume_logged_ops... done
-bcachefs (loop0): delete_dead_inodes... done
-bcachefs (loop0): set_fs_needs_rebalance... done
-bcachefs (loop0): done starting filesystem
-FAULT_INJECTION: forcing a failure.
-name failslab, interval 1, probability 0, space 0, times 1
-CPU: 0 UID: 0 PID: 5335 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-09435-g2c22dc1ee3a1 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- fail_dump lib/fault-inject.c:53 [inline]
- should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:154
- should_failslab+0xac/0x100 mm/failslab.c:46
- slab_pre_alloc_hook mm/slub.c:4057 [inline]
- slab_alloc_node mm/slub.c:4133 [inline]
- __do_kmalloc_node mm/slub.c:4282 [inline]
- __kmalloc_node_track_caller_noprof+0xdc/0x4c0 mm/slub.c:4302
- __do_krealloc mm/slub.c:4809 [inline]
- krealloc_noprof+0x10f/0x2f0 mm/slub.c:4862
- bch2_printbuf_make_room+0x1f1/0x350 fs/bcachefs/printbuf.c:59
- printbuf_insert_spaces+0x56/0x530 fs/bcachefs/printbuf.c:81
- __printbuf_do_indent fs/bcachefs/printbuf.c:138 [inline]
- printbuf_do_indent+0x4c1/0x9d0 fs/bcachefs/printbuf.c:155
- bch2_prt_printf+0x559/0x6d0 fs/bcachefs/printbuf.c:190
- trace_bucket_alloc2+0x119/0xba0 fs/bcachefs/alloc_foreground.c:564
- bch2_bucket_alloc_trans+0x3a43/0x3a50 fs/bcachefs/alloc_foreground.c:678
- bch2_bucket_alloc_set_trans+0x517/0xd30 fs/bcachefs/alloc_foreground.c:808
- __open_bucket_add_buckets+0x13d0/0x1ec0 fs/bcachefs/alloc_foreground.c:1057
- open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1101
- bch2_alloc_sectors_start_trans+0xce9/0x2030
- __bch2_write+0x72b/0x5dd0 fs/bcachefs/io_write.c:1437
- bch2_write+0x9b5/0x1760 fs/bcachefs/io_write.c:1631
- closure_queue include/linux/closure.h:270 [inline]
- closure_call include/linux/closure.h:432 [inline]
- bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:449 [inline]
- bch2_writepages+0x284/0x390 fs/bcachefs/fs-io-buffered.c:641
- do_writepages+0x35f/0x880 mm/page-writeback.c:2702
- filemap_fdatawrite_wbc mm/filemap.c:397 [inline]
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- file_write_and_wait_range+0x2a3/0x3c0 mm/filemap.c:787
- bch2_fsync+0x13a/0x360 fs/bcachefs/fs-io.c:199
- generic_write_sync include/linux/fs.h:2904 [inline]
- bch2_write_iter+0x222f/0x2440 fs/bcachefs/fs-io-buffered.c:1061
- iter_file_splice_write+0xbfa/0x1510 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x11b/0x220 fs/splice.c:1164
- splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x289/0x3e0 fs/splice.c:1233
- vfs_copy_file_range+0xd1f/0x1510 fs/read_write.c:1620
- __do_sys_copy_file_range fs/read_write.c:1670 [inline]
- __se_sys_copy_file_range+0x3fa/0x600 fs/read_write.c:1637
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7d0837e819
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7d091d8038 EFLAGS: 00000246 ORIG_RAX: 0000000000000146
-RAX: ffffffffffffffda RBX: 00007f7d08535fa0 RCX: 00007f7d0837e819
-RDX: 0000000000000005 RSI: 0000000000000000 RDI: 0000000000000006
-RBP: 00007f7d091d8090 R08: fffffbffa003e45c R09: 0700000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f7d08535fa0 R15: 00007ffcfb862a38
- </TASK>
-==================================================================
-BUG: KASAN: slab-out-of-bounds in memscan+0x62/0x80 lib/string.c:717
-Read of size 1 at addr ffff8880526eaa77 by task syz.0.0/5335
-
-CPU: 0 UID: 0 PID: 5335 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-09435-g2c22dc1ee3a1 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:489
- kasan_report+0x143/0x180 mm/kasan/report.c:602
- memscan+0x62/0x80 lib/string.c:717
- __printbuf_do_indent fs/bcachefs/printbuf.c:101 [inline]
- printbuf_do_indent+0x10d/0x9d0 fs/bcachefs/printbuf.c:155
- bch2_prt_printf+0x559/0x6d0 fs/bcachefs/printbuf.c:190
- trace_bucket_alloc2+0x119/0xba0 fs/bcachefs/alloc_foreground.c:564
- bch2_bucket_alloc_trans+0x3a43/0x3a50 fs/bcachefs/alloc_foreground.c:678
- bch2_bucket_alloc_set_trans+0x517/0xd30 fs/bcachefs/alloc_foreground.c:808
- __open_bucket_add_buckets+0x13d0/0x1ec0 fs/bcachefs/alloc_foreground.c:1057
- open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1101
- bch2_alloc_sectors_start_trans+0xce9/0x2030
- __bch2_write+0x72b/0x5dd0 fs/bcachefs/io_write.c:1437
- bch2_write+0x9b5/0x1760 fs/bcachefs/io_write.c:1631
- closure_queue include/linux/closure.h:270 [inline]
- closure_call include/linux/closure.h:432 [inline]
- bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:449 [inline]
- bch2_writepages+0x284/0x390 fs/bcachefs/fs-io-buffered.c:641
- do_writepages+0x35f/0x880 mm/page-writeback.c:2702
- filemap_fdatawrite_wbc mm/filemap.c:397 [inline]
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- file_write_and_wait_range+0x2a3/0x3c0 mm/filemap.c:787
- bch2_fsync+0x13a/0x360 fs/bcachefs/fs-io.c:199
- generic_write_sync include/linux/fs.h:2904 [inline]
- bch2_write_iter+0x222f/0x2440 fs/bcachefs/fs-io-buffered.c:1061
- iter_file_splice_write+0xbfa/0x1510 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x11b/0x220 fs/splice.c:1164
- splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x289/0x3e0 fs/splice.c:1233
- vfs_copy_file_range+0xd1f/0x1510 fs/read_write.c:1620
- __do_sys_copy_file_range fs/read_write.c:1670 [inline]
- __se_sys_copy_file_range+0x3fa/0x600 fs/read_write.c:1637
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7d0837e819
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7d091d8038 EFLAGS: 00000246 ORIG_RAX: 0000000000000146
-RAX: ffffffffffffffda RBX: 00007f7d08535fa0 RCX: 00007f7d0837e819
-RDX: 0000000000000005 RSI: 0000000000000000 RDI: 0000000000000006
-RBP: 00007f7d091d8090 R08: fffffbffa003e45c R09: 0700000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f7d08535fa0 R15: 00007ffcfb862a38
- </TASK>
-
-Allocated by task 5335:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4283 [inline]
- __kmalloc_node_track_caller_noprof+0x28b/0x4c0 mm/slub.c:4302
- __do_krealloc mm/slub.c:4809 [inline]
- krealloc_noprof+0x10f/0x2f0 mm/slub.c:4862
- bch2_printbuf_make_room+0x1f1/0x350 fs/bcachefs/printbuf.c:59
- bch2_prt_printf+0x267/0x6d0 fs/bcachefs/printbuf.c:186
- trace_bucket_alloc2+0x119/0xba0 fs/bcachefs/alloc_foreground.c:564
- bch2_bucket_alloc_trans+0x3a43/0x3a50 fs/bcachefs/alloc_foreground.c:678
- bch2_bucket_alloc_set_trans+0x517/0xd30 fs/bcachefs/alloc_foreground.c:808
- __open_bucket_add_buckets+0x13d0/0x1ec0 fs/bcachefs/alloc_foreground.c:1057
- open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1101
- bch2_alloc_sectors_start_trans+0xce9/0x2030
- __bch2_write+0x72b/0x5dd0 fs/bcachefs/io_write.c:1437
- bch2_write+0x9b5/0x1760 fs/bcachefs/io_write.c:1631
- closure_queue include/linux/closure.h:270 [inline]
- closure_call include/linux/closure.h:432 [inline]
- bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:449 [inline]
- bch2_writepages+0x284/0x390 fs/bcachefs/fs-io-buffered.c:641
- do_writepages+0x35f/0x880 mm/page-writeback.c:2702
- filemap_fdatawrite_wbc mm/filemap.c:397 [inline]
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- file_write_and_wait_range+0x2a3/0x3c0 mm/filemap.c:787
- bch2_fsync+0x13a/0x360 fs/bcachefs/fs-io.c:199
- generic_write_sync include/linux/fs.h:2904 [inline]
- bch2_write_iter+0x222f/0x2440 fs/bcachefs/fs-io-buffered.c:1061
- iter_file_splice_write+0xbfa/0x1510 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x11b/0x220 fs/splice.c:1164
- splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x289/0x3e0 fs/splice.c:1233
- vfs_copy_file_range+0xd1f/0x1510 fs/read_write.c:1620
- __do_sys_copy_file_range fs/read_write.c:1670 [inline]
- __se_sys_copy_file_range+0x3fa/0x600 fs/read_write.c:1637
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880526eaa60
- which belongs to the cache kmalloc-16 of size 16
-The buggy address is located 7 bytes to the right of
- allocated 16-byte region [ffff8880526eaa60, ffff8880526eaa70)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x526ea
-flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 04fff00000000000 ffff88801ac41640 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000080800080 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0xd2cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5319, tgid 5319 (syz-executor), ts 66442865822, free_ts 0
- create_dummy_stack mm/page_owner.c:94 [inline]
- register_dummy_stack+0x8a/0xe0 mm/page_owner.c:100
- init_page_owner+0x3e/0x970 mm/page_owner.c:118
- invoke_init_callbacks mm/page_ext.c:148 [inline]
- page_ext_init+0x731/0x790 mm/page_ext.c:497
- mm_core_init+0x4c/0x60 mm/mm_init.c:2666
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff8880526ea900: 00 00 fc fc 00 00 fc fc 00 00 fc fc fa fb fc fc
- ffff8880526ea980: 00 00 fc fc fa fb fc fc fa fb fc fc 00 00 fc fc
->ffff8880526eaa00: 00 00 fc fc 00 00 fc fc 00 00 fc fc 00 00 fc fc
-                                                             ^
- ffff8880526eaa80: 00 00 fc fc fa fb fc fc fc fc fc fc fc fc fc fc
- ffff8880526eab00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
