@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-427609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9D69E036E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:30:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC819E0370
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:30:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6477165359
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F542824CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43BD1FF7A2;
-	Mon,  2 Dec 2024 13:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE25201273;
+	Mon,  2 Dec 2024 13:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VjSexpOZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DA1MMO97"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBA71FC0E5;
-	Mon,  2 Dec 2024 13:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3421FF61D;
+	Mon,  2 Dec 2024 13:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733146224; cv=none; b=eWbq/mj1ndUe+jtFIisEVCLdOBH53uLkRT4I5HvbIE74lO8YsXRteGpv0xQQthX2rS/5vx7BW4veq4RtJy48FDuiStmVhyjGKHEaNZC2ItFDaqqkhSvGXp8aC2SYFmITf3x/haPQUT9Y9/nYTZhE+r44uW+3Ny1faxtppNe4/G0=
+	t=1733146229; cv=none; b=CnfIZpI4i16NerNKJWMfjg1ZfavefiKeG2Q7ujrlIKZU+lc9v8RKJsYHW/tEKeSsIT7J3x7VFlByuwvGa6eGhBxxi4rPSkqxfcNoAIZbOVt40GUmefv7rkqFvtSIyeNMWvpVFP0Xt2PkorYZMCe8s3BIkG8CHQYYPyPo1kS7n7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733146224; c=relaxed/simple;
-	bh=H1LUXNWRosTJkWP3diqezDJ6tU1GRDyrtF9wY1v026I=;
+	s=arc-20240116; t=1733146229; c=relaxed/simple;
+	bh=S0mkapFbGnsfajKZm8QKkmSAc2boXpDst+yWh+urgno=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EZVZ8SujaszO8lTgHqQFL+VwOmx4h2/BlsP/NXFtAsNEpfoiZoBzyXC2tJBNmpV/ijjCTQC+PipPbruM7KYDbFPzFtk08XZzrU8xrCrqqVhFlwEt9u96uVOyymHlNbCkn6IRgRqVCcR2oH9jphTHsQFpk/plEtGE9aSgIbJ09es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VjSexpOZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB14BC4CED1;
-	Mon,  2 Dec 2024 13:30:19 +0000 (UTC)
+	 MIME-Version:Content-Type; b=V90ZjKc2Mfn+iRaedwTKZHvPyYZu//XgL5FR63vmrJRjSew3IPfz61vUJGu527up2RyyAvtlv3kZNPOI7Be6bCXyxaVWsBZhU8b6Fj1Csf2bk7WSjxzCNphqSetY1TH34Hotju8TxpyXv6Dz69LR8odXxq/xy4FBxjLO6jwIaMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DA1MMO97; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55CF9C4CED2;
+	Mon,  2 Dec 2024 13:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733146223;
-	bh=H1LUXNWRosTJkWP3diqezDJ6tU1GRDyrtF9wY1v026I=;
+	s=k20201202; t=1733146227;
+	bh=S0mkapFbGnsfajKZm8QKkmSAc2boXpDst+yWh+urgno=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=VjSexpOZzDEQA9coL4TLuOlB7IkGVBJYBGfWZDl2LLZdr1QMn/brioIujOXTzmy0L
-	 22fGMCAO/x6aB4t7ik2rqUBT8RqayGR22SEvIQh0BpB07jhNWsWy6qMFabcLfyfgCK
-	 uU7qNgf9sR/9f3YpsNEAB+VvX0TfmMbWF3rustoscPtXEmVJZYFRrEo/d++IIShR81
-	 JnonoMni+24YmKi959BweGyVGte61CtV3d4wwJWKC33a5pqgbOv4S4fIqlJvEDkClU
-	 +6e/tQ5cPaMQ0EaMPWx6rK/OYAiHHTvx2KWz8H5aZMWsHv//Py4Cz9yFmSRvkLXLJh
-	 KXxtXy23A1NHA==
+	b=DA1MMO97ZAW0TqB2X765/8qDDZyXL+7zSRTijCgc9gGli1V3IPoDY32ItaSi38hI7
+	 Gkx9FNvX+Tw6QOHwYOhwTJijT1svCZnle1MyHt7wUfTvYtkUE+JQqbEPQSlE3kTBjZ
+	 CylXbVWznRurYEaWs2I9bTYvuAw/mXXGF4yougyIb+pt9dAAEwwt8ysnLPhDLdWmYX
+	 HDipFhf3dHNNvAJBCBnIM4OBeWy1YLeH7R5ahN6BzpLZD6WBHMIzOslhyqAyZoBGcT
+	 RXZERaIAsPMhVocohn0yQuksRfeLClE3rqAxxa6LBX8OwJcMDrWeHztm+sgeEb+/B8
+	 6bAdaRt0J6rJQ==
 From: Mark Brown <broonie@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>, 
  Marek Maslanka <mmaslanka@google.com>
@@ -53,12 +53,12 @@ Cc: Cezary Rojewski <cezary.rojewski@intel.com>,
  Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
  =?utf-8?q?Amadeusz_S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>, 
  alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-In-Reply-To: <20241128155926.1774625-1-mmaslanka@google.com>
-References: <20241128155926.1774625-1-mmaslanka@google.com>
-Subject: Re: [PATCH v3] ASoC: Intel: avs: da7219: Remove suspend_pre() and
+In-Reply-To: <20241128205215.2435485-1-mmaslanka@google.com>
+References: <20241128205215.2435485-1-mmaslanka@google.com>
+Subject: Re: [PATCH v4] ASoC: Intel: avs: da7219: Remove suspend_pre() and
  resume_post()
-Message-Id: <173314621946.54037.15998444871365504630.b4-ty@kernel.org>
-Date: Mon, 02 Dec 2024 13:30:19 +0000
+Message-Id: <173314622395.54037.14685523533292835181.b4-ty@kernel.org>
+Date: Mon, 02 Dec 2024 13:30:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,12 +69,12 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Thu, 28 Nov 2024 15:59:20 +0000, Marek Maslanka wrote:
+On Thu, 28 Nov 2024 20:52:09 +0000, Marek Maslanka wrote:
 > The presence of a plugged jack is not detected after resuming the device
 > if the jack was plugged before the device was suspended. This problem is
->  caused by calling the
->  sound/soc/codecs/da7219-aad.c:da7219_aad_jack_det() function on resume,
->  which forces the jack insertion state to be unplugged.
+> caused by calling the
+> sound/soc/codecs/da7219-aad.c:da7219_aad_jack_det() function on resume,
+> which forces the jack insertion state to be unplugged.
 > 
 > 
 > [...]
