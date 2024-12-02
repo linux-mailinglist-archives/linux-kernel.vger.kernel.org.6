@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-428232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54379E0CD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:14:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FAB9E0BB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:08:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46C49B8229C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:06:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26789166B16
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437861E04A9;
-	Mon,  2 Dec 2024 19:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C561DF254;
+	Mon,  2 Dec 2024 19:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="DgzcbOGY"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="DIjPzdRL"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FABC1DE3CB;
-	Mon,  2 Dec 2024 19:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FBB1DE3B2;
+	Mon,  2 Dec 2024 19:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733166182; cv=none; b=h0z+tSTOdzjPq5IPVsoETFhC6Th89ewnQVYpXNi1VdwsIa2anWnr5tq1IUCZ/w5ZeQeh/2zQUPA0O58ENp4oxNHhvAAJ5SJNE2dRTavOMJqbC1K4YN6Pfbe7ERJ9aKe3+cZwsyv+2BsFEyupV3wgQAQqy/HZ9cSY8hZue+QJEv8=
+	t=1733166253; cv=none; b=C57Mr66gAsKEG2YyQLUHn7ayoDtgUrfWla85/aydRjTCUertVKGCSD88Ys+1dLzvMy7tflvXwJ17gNkwkA9IxPTKIwXmkVZ2+g1zgV3kHNqd43FlDC7kiIVdyRj5/XeDANK8tG6oqpI2IYCacQcvsj/fZRPqQT+Ad12ZLmLLeM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733166182; c=relaxed/simple;
-	bh=/zUCCLJT+qzhWuG/S9fH2N3Yr9GcYUwQq30QxYs/QkA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JuaNKai3I4dQt9YMeYa34sFJ6GWKphoNXnMiuqLyAkj3kOoZFAFXayyNcKmYihickkqGezdCJb52B9vcypHkywk+Emyt3xHrWVu6D0mp98THsSzNcvBdIofFbGIoYT1thHlricO5AHCKafZ+y5c7PCKb8Jb6pjQz1AA14BiMELs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=DgzcbOGY; arc=none smtp.client-ip=159.69.126.157
+	s=arc-20240116; t=1733166253; c=relaxed/simple;
+	bh=n1oVtaxO6zoj5Nfd+PLAsf4IlOLtQpIGsAupGPgoIEg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YG4LfGpOXki/AJ2C/aWu75JKZRdFf/OysyvzldNQX1CBJ0TKCwElHbzTsljevWxJ8hqS+/73fD0J1yuKAQdD0RVPGn6ryfsYvtaQN7IMYdUgjShtYMofGkWBMo0D1QJnM62X9qAhKCaXLIPXjlpGetX7BSpZEjp5Pn5LuRsfpVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=DIjPzdRL; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733166178;
-	bh=/zUCCLJT+qzhWuG/S9fH2N3Yr9GcYUwQq30QxYs/QkA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DgzcbOGYIYs48GGw3TeYqtrOgq9orNXQrKpwgZUpg4v+tEFsX2KVHmQY9RftQtHns
-	 UuegqSLBCTbIdITlKdYDw4PPmoIkszogJvf59mpXzH8h9/sAaxFYBV7TdoHKE3vCZj
-	 UjfmktUwULH0SmLUIUYx0BrrA6zFh7Uc3H2j/onE=
+	s=mail; t=1733166250;
+	bh=n1oVtaxO6zoj5Nfd+PLAsf4IlOLtQpIGsAupGPgoIEg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DIjPzdRLNYBUf/i1CJVI+8N/iHEKC5JNSJRYxIlY6TSF3QvSiyCyvpbz5vWiV5iey
+	 8KhR7OoocAd03xENRbLlzpkwk45hX8+L5aDzpH3mu9UsJTCdBhkKPOU1gVai8Tnziy
+	 B6Nj6A1FYSan2EAIElw76vfBTKfIofIdB09OgcWQ=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 02 Dec 2024 20:03:00 +0100
-Subject: [PATCH 4/4] PCI/ACPI: Constify 'struct bin_attribute'
+Subject: [PATCH 0/3] ACPI: Constify 'struct bin_attribute'
+Date: Mon, 02 Dec 2024 20:04:08 +0100
+Message-Id: <20241202-sysfs-const-bin_attr-acpi-v1-0-78f3b38d350d@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,21 +48,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241202-sysfs-const-bin_attr-pci-v1-4-c32360f495a7@weissschuh.net>
-References: <20241202-sysfs-const-bin_attr-pci-v1-0-c32360f495a7@weissschuh.net>
-In-Reply-To: <20241202-sysfs-const-bin_attr-pci-v1-0-c32360f495a7@weissschuh.net>
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Logan Gunthorpe <logang@deltatee.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-acpi@vger.kernel.org, 
+X-B4-Tracking: v=1; b=H4sIAKgETmcC/x3MQQqEMAxA0atI1gZsGMrgVUQkrXHMpkpTRBHvb
+ pnlW/x/g0lWMeibG7IcarqlCtc2EFdOP0Gdq4E6+jjqHNpli2HckhUMmiYuJSPHXTEIfcXP3jM
+ x1H7Psuj5fw/j87xA/dNUawAAAA==
+X-Change-ID: 20241201-sysfs-const-bin_attr-acpi-be28e6d66a2a
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166177; l=1876;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166249; l=866;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=/zUCCLJT+qzhWuG/S9fH2N3Yr9GcYUwQq30QxYs/QkA=;
- b=rvaOTiPyVFS3UuHHIwx589VnE0dkfpixf3lqZdJwjhdkx/MsuDm9Eg4IJLowts0oEic0As9sH
- KdbJ+4q2hM4BpAyuJLQbtgiTk89yswyTMEzxogIGtU0kQKu3pQzbbFw
+ bh=n1oVtaxO6zoj5Nfd+PLAsf4IlOLtQpIGsAupGPgoIEg=;
+ b=dwu83tM9Akmh12pE0eqjoa2Fo03j95/KHBqRkxEDuPRCnGFGOWaHpNoPwG4v8Jir0rcF2CBus
+ /EoubLSwsxPAIeE9lIso4y93TAlkMCX7Eb4yYEVxAMENfGcYpr0MUwG
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
@@ -70,44 +68,25 @@ The sysfs core now allows instances of 'struct bin_attribute' to be
 moved into read-only memory. Make use of that to protect them against
 accidental or malicious modifications.
 
+The usage of read_new/write_new/bin_attrs_new is a transition mechanism
+and will be reverted after the transition is complete.
+
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- drivers/pci/hotplug/acpiphp_ibm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thomas Weißschuh (3):
+      ACPI: BGRT: Mark bin_attribute as __ro_after_init
+      ACPI: BGRT: Constify 'struct bin_attribute'
+      ACPI: sysfs: Constify 'struct bin_attribute'
 
-diff --git a/drivers/pci/hotplug/acpiphp_ibm.c b/drivers/pci/hotplug/acpiphp_ibm.c
-index 8f3a0a33f362bc60ba012419b865b8821c075531..b3aa34e3a4a29417bd694273779dc356be284f1d 100644
---- a/drivers/pci/hotplug/acpiphp_ibm.c
-+++ b/drivers/pci/hotplug/acpiphp_ibm.c
-@@ -84,7 +84,7 @@ static int ibm_get_attention_status(struct hotplug_slot *slot, u8 *status);
- static void ibm_handle_events(acpi_handle handle, u32 event, void *context);
- static int ibm_get_table_from_acpi(char **bufp);
- static ssize_t ibm_read_apci_table(struct file *filp, struct kobject *kobj,
--				   struct bin_attribute *bin_attr,
-+				   const struct bin_attribute *bin_attr,
- 				   char *buffer, loff_t pos, size_t size);
- static acpi_status __init ibm_find_acpi_device(acpi_handle handle,
- 		u32 lvl, void *context, void **rv);
-@@ -98,7 +98,7 @@ static struct bin_attribute ibm_apci_table_attr __ro_after_init = {
- 		    .name = "apci_table",
- 		    .mode = S_IRUGO,
- 	    },
--	    .read = ibm_read_apci_table,
-+	    .read_new = ibm_read_apci_table,
- 	    .write = NULL,
- };
- static struct acpiphp_attention_info ibm_attention_info =
-@@ -353,7 +353,7 @@ static int ibm_get_table_from_acpi(char **bufp)
-  * our solution is to only allow reading the table in all at once.
-  */
- static ssize_t ibm_read_apci_table(struct file *filp, struct kobject *kobj,
--				   struct bin_attribute *bin_attr,
-+				   const struct bin_attribute *bin_attr,
- 				   char *buffer, loff_t pos, size_t size)
- {
- 	int bytes_read = -EINVAL;
+ drivers/acpi/bgrt.c  | 6 +++---
+ drivers/acpi/sysfs.c | 8 ++++----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+---
+base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+change-id: 20241201-sysfs-const-bin_attr-acpi-be28e6d66a2a
 
+Best regards,
 -- 
-2.47.1
+Thomas Weißschuh <linux@weissschuh.net>
 
 
