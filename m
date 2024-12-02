@@ -1,140 +1,183 @@
-Return-Path: <linux-kernel+bounces-427938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72A159E085A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:23:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93BF9E08E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:44:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390BF16188B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:53:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF69CBC58B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE4D80604;
-	Mon,  2 Dec 2024 15:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B1C3D96D;
+	Mon,  2 Dec 2024 15:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="PCIWgvSh"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leTVkebe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06C93FB3B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF374779D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154715; cv=none; b=V8XayVWtOH3UywnCdMNEZlmgLamh75pcOjXcg9scfpp1IkTOPG8SeAuYmcAjRJoccCVDgZ98+Cl3+cmD2dkXsux7IB4ttwe3tNUtetoUZA7t8+UHUjlZjpZjnrNXt/RfFGKrtPsY3SuJCluAoqEBRV1VoaZVwmmqlNNzz7rlTkM=
+	t=1733154842; cv=none; b=eG9MmRcZfDijs1r3v8xtQV7G9Ouoz89ojjyw1GkfC6SioLZmcWYizhnMtHZjM4ftPO5mjpvFI5n92Uww+32eayuRSprB7G3ck89RjaTQwEZxtXSAPxM1naOeZNQUIKB3o2gMz+9pRpzFjT/D5jsroMFbyP1Fc7b0yl2EnuiihoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154715; c=relaxed/simple;
-	bh=bL3/xzhTDbzbGTJgjVxoz7qT0Bj5FKuFqnagataC9Bs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MPl1+0Zt3Re9fOIfqsE4uEtN4odb9vKELMEbr9UXaVVpeJKrCx4b5jB+yNqXT1BvDuAjb0qw/+jEr9OJcxZs1wz2n3M61+5bhKpFTtgGQq5bCFr+Dgpl4XnkPbcjJVyF1hMynTLb/hy9EN6wgoJcJ80QvtnYZ7TJzA0nMMvhrXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=PCIWgvSh; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53de771c5ebso5040048e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:51:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733154712; x=1733759512; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pPftgg43bq9aqu/m+EeNtGmhyyKJMhRNkMNK3b+tQes=;
-        b=PCIWgvShtXlV7oMfezCNXJfVLunDJ7WaTfheu4p3Bz7RE5lCgh/DW3Pqibw3fRCZsJ
-         +nZmCf6vDXL+LHUJfMOoYvhNqKicsmFu18dd7W+Ac+9TSELrfoPsG0bNJca5lVr/UtLm
-         WXLizMpwWAecikmfVjFWOH9nTTgkxsUwovzDRy0QZZoCCIq+dmW3I+BYoAFB7nnF9Jom
-         P7J0fu0za5EtB+2+nE6byPDSqLCFDFveIAG+G9CidfSVaVDtbt9Rsf9RTJ0iM4fsBv5d
-         t6SzFexAElLvtl8cFyyUeiW5eTM4jNEMYHoppwV384MEE3S/bq/CIcsZ+yLi5VvB7kKA
-         SnBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733154712; x=1733759512;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pPftgg43bq9aqu/m+EeNtGmhyyKJMhRNkMNK3b+tQes=;
-        b=VqNedFF/dCgHea48t4L9tQsSAu1huFndHoJ0H627LokjswgJonN3hB88FPqOjhx6JH
-         COuER3R65Sk7BVzoglLXMa4eVzRO44jD1BdLMZCt3D5KL9P2Ag8DpU1QMpTcYeRwNom+
-         dI3a9UsMYTT4WpZgXjNu/QlcfBCvhA/9qNAQwiDhemZpZuMW7OnaaZl/QJDDBFt2F5Dp
-         9vLZJxKmi3efHvJamMzUq/bEyU3BmrfjVfuTneYLM6PUWzPXJlaJA613bXfwxMB4BmtA
-         Aeie52Hp9mIKrX32LZtmjyh4SX68koDZ4BN4Fn6nC9WmA98X8RLdBFK5xYG/ScPtdX1j
-         tKpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVq1SCD8zd1VKcnhxQYa7FrFiV6Ezj5kO/tMLAiJbEf9pDLLPPjzYz2OTOwg1pNyYqz8+NJ40+luTUksns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjQ7l4ww+pfHutvIFQfKXhcYxky/KfxOZ3Nk/iQyrAfNn6ZsWi
-	VU9VzPJAVO18U6AaSyDEeCXzbRFo0YOVcyFi+tFmVvDeaNwXW1R0tA/Enc2uC6w=
-X-Gm-Gg: ASbGncv1STQACEyENg7HC638rUp4CRO10+BSvu4g/U0tk+NsxkPRB6kC08vUEVGlvLE
-	OnpkLNSAQCN3gr9b4yK8uZQ3O/fVK2jh0qtlXlhA1CbrB8wPxl2mJV79sxWFSkf60Pt9KbDNxgV
-	biPtZccsH992IgjKnZ/Qqos4uYMNnoK0ht7iQRrPl1WbmFoWaygXG2kDkdGuE6oWn794XYORmZl
-	CLfkWxJUfxuitirKaYK1azSjPh84lWSHCCFrQHEjOGaWYAahYG77UAMbOtf1ItUa9Hs5g==
-X-Google-Smtp-Source: AGHT+IFwu/0m7FiwxwnmhV7gn9N4KqSQds8K2MDB//YnOhqAjuo10Y4Tx57ncNF0LbVlOwX5NtHLsw==
-X-Received: by 2002:a05:6512:3d1d:b0:53d:a99e:b768 with SMTP id 2adb3069b0e04-53df00d9666mr11899727e87.25.1733154711811;
-        Mon, 02 Dec 2024 07:51:51 -0800 (PST)
-Received: from [192.168.0.104] ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64311c0sm1502693e87.21.2024.12.02.07.51.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 07:51:51 -0800 (PST)
-Message-ID: <5cef26d0-b24f-48c6-a5e0-f7c9bd0cefec@cogentembedded.com>
-Date: Mon, 2 Dec 2024 20:51:44 +0500
+	s=arc-20240116; t=1733154842; c=relaxed/simple;
+	bh=zPhfELWnkxEKDby/vhp45DNDycw9pe+yrqewrU1oPkQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T8wyjGQRLFwNzEfhMNdUQhy6vvsDN/bqPcE4+27K60vEKbKkHZMoZ8MqSuttC61r2AKOcxP0L3HL46Qor8srHWHyd8R19pjYGyHfIaiFMlrU6LQhUL8WJfT7ZtS9y25Y7Jf4tVHHf3JgNBqVwl60IYCeU85qLv1THGnbYo9OBYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leTVkebe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02DB6C4CED1;
+	Mon,  2 Dec 2024 15:54:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733154842;
+	bh=zPhfELWnkxEKDby/vhp45DNDycw9pe+yrqewrU1oPkQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=leTVkebeBbdP1Vtmm8SknFqJpAcOXTa61Tyup4+OBdXWwyt1TOjxCXx6puayi+khP
+	 LA7BXxTn+frrtAr6NXJME355ZhZN1WIDt23EDy1YczR03EHyxAoO2/tWsPJiFt2LBH
+	 Qf4LAPCoGr/ZEUEDzspspujdSFLkgvYhcLK2BsOl+DHqVjN9OpiPZIXFBgpLhiQNiv
+	 Gbs5yYFxSf+X6ykSssxIbCtTHSL4FIs9kVb7K9y6HQR8PO5YFn8Y8Aq5/3hFhYvwn+
+	 122g17AIw8KZo3BRWadv2Kq43agq3Hs8qJsD4Bx6pbwUZNJyikuBvsPRKWyhU+yTSv
+	 SlMAluy+ihaPA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tI8kJ-00HOsH-Nr;
+	Mon, 02 Dec 2024 15:53:59 +0000
+Date: Mon, 02 Dec 2024 15:53:59 +0000
+Message-ID: <86ttbmt71k.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Vitaly Chikunov <vt@altlinux.org>,
+	james.morse@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-kernel@vger.kernel.org,
+	oliver.upton@linux.dev,
+	mark.rutland@arm.com
+Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction: 0000000002000000 [#1] SMP
+In-Reply-To: <20241202153618.GA6834@willie-the-truck>
+References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
+	<20241202153618.GA6834@willie-the-truck>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
- speed
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michael Dege <michael.dege@renesas.com>,
- Christian Mardmoeller <christian.mardmoeller@renesas.com>,
- Dennis Ostermann <dennis.ostermann@renesas.com>
-References: <20241202083352.3865373-1-nikita.yoush@cogentembedded.com>
- <20241202100334.454599a7@fedora.home>
- <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
- <Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
- <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
- <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
- <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
- <Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
-Content-Language: en-US, ru-RU
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-In-Reply-To: <Z02oTJgl1Ldw8J6X@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: will@kernel.org, vt@altlinux.org, james.morse@arm.com, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
->> root@vc4-033:~# ethtool tsn0
->> Settings for tsn0:
->>          Supported ports: [ MII ]
->>          Supported link modes:   2500baseT/Full
->>          Supported pause frame use: Symmetric Receive-only
->>          Supports auto-negotiation: No
+On Mon, 02 Dec 2024 15:36:19 +0000,
+Will Deacon <will@kernel.org> wrote:
 > 
-> Okay, the PHY can apparently only operate in fixed mode, although I
-> would suggest checking that is actually the case. I suspect that may
-> be a driver bug, especially as...
+> [+ usual suspects]
+> 
+> On Mon, Dec 02, 2024 at 07:58:30AM +0300, Vitaly Chikunov wrote:
+> > v6.13-rc1 exhibits a boot failure on aarch64 under KVM. (QEMU 9.1.1, CPU
+> > Kunpeng-920). Boot log:
+> 
+> I've not tried to repro this locally, but from the log:
+> 
+> > + time qemu-system-aarch64 -M accel=kvm:tcg -smp cores=8 -m 4096 -serial mon:stdio -nodefaults -nographic -no-reboot -fsdev local,id=root,path=/,security_model=none,multidevs=remap -device virtio-9p-pci,fsdev=root,mount_tag=virtio-9p:/ -device virtio-rng-pci -kernel /usr/src/tmp/kernel-image-6.13-buildroot/boot/vmlinuz-6.13.0-6.13-alt0.rc1 -initrd /usr/src/tmp/initramfs-6.13.0-6.13-alt0.rc1.img -sandbox on,spawn=deny -M virt,gic-version=3 -cpu max -append 'console=ttyAMA0 mitigations=off nokaslr  panic=-1 SCRIPT=/usr/src/tmp/vm.SchsIm2FjB earlycon earlyprintk=serial ignore_loglevel debug rddebug'
+> > [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x481fd010]
+> > [    0.000000] Linux version 6.13.0-6.13-alt0.rc1 (builder@localhost.localdomain) (gcc-14 (GCC) 14.2.1 20241028 (ALT Sisyphus 14.2.1-alt1), GNU ld (GNU Binutils) 2.43.1.20241025) #1 SMP PREEMPT_DYNAMIC Mon Dec  2 03:33:29 UTC 2024
+> > [    0.000000] KASLR disabled on command line
+> > [    0.000000] random: crng init done
+> > [    0.000000] Machine model: linux,dummy-virt
+> > [    0.000000] printk: debug: ignoring loglevel setting.
+> > [    0.000000] efi: UEFI not found.
+> > [    0.000000] earlycon: pl11 at MMIO 0x0000000009000000 (options '')
+> > [    0.000000] printk: legacy bootconsole [pl11] enabled
+> > [    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+> > [    0.000000] NUMA: Faking a node at [mem 0x0000000040000000-0x000000013fffffff]
+> > [    0.000000] NODE_DATA(0) allocated [mem 0x13f7f3540-0x13f7f947f]
+> > [    0.000000] Zone ranges:
+> > [    0.000000]   DMA      [mem 0x0000000040000000-0x00000000ffffffff]
+> > [    0.000000]   DMA32    empty
+> > [    0.000000]   Normal   [mem 0x0000000100000000-0x000000013fffffff]
+> > [    0.000000] Movable zone start for each node
+> > [    0.000000] Early memory node ranges
+> > [    0.000000]   node   0: [mem 0x0000000040000000-0x000000013fffffff]
+> > [    0.000000] Initmem setup node 0 [mem 0x0000000040000000-0x000000013fffffff]
+> > [    0.000000] cma: Reserved 256 MiB at 0x00000000f0000000 on node -1
+> > [    0.000000] psci: probing for conduit method from DT.
+> > [    0.000000] psci: PSCIv1.1 detected in firmware.
+> > [    0.000000] psci: Using standard PSCI v0.2 function IDs
+> > [    0.000000] psci: Trusted OS migration not required
+> > [    0.000000] psci: SMC Calling Convention v1.1
+> > [    0.000000] smccc: KVM: hypervisor services detected (0x00000000 0x00000000 0x00000000 0x00000003)
+> > [    0.000000] percpu: Embedded 34 pages/cpu s100632 r8192 d30440 u139264
+> > [    0.000000] pcpu-alloc: s100632 r8192 d30440 u139264 alloc=34*4096
+> > [    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7
+> > [    0.000000] Internal error: Oops - Undefined instruction: 0000000002000000 [#1] SMP
+> 
+> We take an undefined instruction exception in the kernel early during
+> boot...
+> 
+> > [    0.000000] Modules linked in:
+> > [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.13.0-6.13-alt0.rc1 #1
+> > [    0.000000] Hardware name: linux,dummy-virt (DT)
+> > [    0.000000] pstate: 004000c5 (nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > [    0.000000] pc : __cpuinfo_store_cpu+0xe8/0x240
+> > [    0.000000] lr : cpuinfo_store_boot_cpu+0x34/0x88
+> > [    0.000000] sp : ffff800082013df0
+> > [    0.000000] x29: ffff800082013df0 x28: 000000000000008e x27: ffff800081e38128
+> > [    0.000000] x26: ffff800081702190 x25: ffff80008201f040 x24: ffff0000ff7d1d00
+> > [    0.000000] x23: ffff80008201ec00 x22: ffff800081e39100 x21: ffff8000816f9750
+> > [    0.000000] x20: ffff800081f55280 x19: ffff0000ff6be2e0 x18: 0000000000000000
+> > [    0.000000] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > [    0.000000] x14: 000000000000002f x13: 000000013f7f9490 x12: 0000008000000000
+> > [    0.000000] x11: 0000000000000000 x10: 00000000007f8000 x9 : 000000013f808000
+> > [    0.000000] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000013f7f94c0
+> > [    0.000000] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 1100010011111111
+> > [    0.000000] x2 : 0000000000000001 x1 : 0000000084448004 x0 : ffff0000ff6be2e0
+> > [    0.000000] Call trace:
+> > [    0.000000]  __cpuinfo_store_cpu+0xe8/0x240 (P)
+> > [    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88 (L)
+> > [    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88
+> > [    0.000000]  smp_prepare_boot_cpu+0x30/0x58
+> > [    0.000000]  start_kernel+0x514/0x9d0
+> > [    0.000000]  __primary_switched+0x88/0x98
+> > [    0.000000] Code: f100085f 54000600 f2580c7f 54000060 (d538a482)
+> 
+> ... and that's:
+> 
+>    0:	f100085f 	cmp	x2, #0x2
+>    4:	54000600 	b.eq	0xc4  // b.none
+>    8:	f2580c7f 	tst	x3, #0xf0000000000
+>    c:	54000060 	b.eq	0x18  // b.none
+>   10:*	d538a482 	mrs	x2, s3_0_c10_c4_4		<-- trapping instruction
+> 
+> Which I think corresponds to a read of MPAMIDR_EL1.
+> 
+> It looks like James routed accesses to this register to undef_access()
+> in 31ff96c38ea3 ("KVM: arm64: Fix missing traps of guest accesses to the
+> MPAM register") so I'm not really sure how this is supposed to work
+> given that it's an ID register.
 
-My contacts from Renesas say that this PHY chip is an engineering sample.
+It's not. Or rather, it is an IDREG that is only valid when MPAM is
+advertised and implemented. From the spec:
 
-I'm not sure about the origin of "driver" for this. I did not look inside before, but now I did, and it 
-is almost completely a stub. Even no init sequence. The only hw operations that this stub does are
-(1) reading bit 0 of register 1.0901 and returning it as link status (phydev->link),
-(2) reading bit 0 of register 1.0000 and returning it as master/slave setting (phydev->master_slave_get 
-/ phydev->master_slave_state)
-(3) applying phydev->master_slave_set via writing to bit 0 of register 1.0000 and then writing 0x200 to 
-register 7.0200
+"This register is present only when FEAT_MPAM is implemented.
+Otherwise, direct accesses to MPAMIDR_EL1 are UNDEFINED."
 
-Per standard, writing 0x200 to 7.0200 is autoneg restart, however bit 0 of 1.0000 has nothing to do with 
-master/slave. So what device actually does is unclear. Just a black box that provides 2.5G Base-T1 
-signalling, and software-wise can only report link and accept master-slave configuration.
+So from a KVM perspective, I think this is doing the right thing.
 
-Not sure if supporting this sort of black box worths kernel changes.
+What the log doesn't say is what the host is. Is it 6.13-rc1 as well?
 
+Thanks,
 
-> it changes phydev->duplex, which is _not_ supposed to happen if
-> negotiation has been disabled.
+	M.
 
-There are no writes to phydev->duplex inside the "driver".
-Something in the phy core is changing it.
+-- 
+Without deviation from the norm, progress is not possible.
 
