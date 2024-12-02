@@ -1,121 +1,98 @@
-Return-Path: <linux-kernel+bounces-427739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0813B9E08AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:35:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A319E07B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF32CB3FC0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:41:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4C23B82129
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D9D21018D;
-	Mon,  2 Dec 2024 14:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2DE2144C3;
+	Mon,  2 Dec 2024 14:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rzjSVrTq"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwjKLL26"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BF420FAA4;
-	Mon,  2 Dec 2024 14:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F43208961;
+	Mon,  2 Dec 2024 14:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149963; cv=none; b=PiGF3Rpo/ZThUtaPWdkwI5TWwX+zdbCX6sz6W+dYgdXtVogxAI948/KFKRI5tcoLi3E6U3dX7KRWpQiypm2ZSeqmZMn6i9YAwIxmYiKbxMO+Xg7Gbtdb8M+z5bqHl41pxnuLqFUMO1SYWDCnPxE66Bc2qCnFjAAMcg09PrVQhgo=
+	t=1733149974; cv=none; b=On2CVXErK7H60wE/vnW5ep1mHZrIHhy9ocFw1TC9MIO4BYTztba7U4W+LdBimtZLN1teLjCpbCepP0Xmi0+8E2YgUkmym2qpdJrzDT2ISJ5FG4k5mKxTZGVJD0zAurhogFGlu9r8n4izzebnurFNd/o03NK8oiZLzpuduOoGHwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149963; c=relaxed/simple;
-	bh=IJ1Rrc7KpT8C107R71TYZs9A0BxxfhfJImHlo+06Fxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQoLlbmIZYz9Dj1DeWqWq55+2Umax8YT68T5HSatNc0JpZT3RgCnr3Wi/c2LEese3apP+GHvCZhp9GDAdqjLgsaIAdxUE2Z8wBCoTX1rVGAG/GOGzRD2/za96olldAGTn/F+OcZ1KkOUTU9OQB/tF4Umm6a1XMj1AIVpti/Wea4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rzjSVrTq; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QywnUlO+90s8saZdPpnrP4d9TT5pCFNVTXS7DZDgsoU=; b=rzjSVrTqpXXd2IrWGOplMAgOgI
-	UMaFfeD1n5bCrmJ4CxYG7RRwAQ9BUjKNNP35naVgqIVwIsPGOszt7AASAxlEuTSRotK6PYSf+cA9C
-	to4xkuSiUr751CRr5txHzafN/rW2ey4isMsZvjixo4Q039JXDCv8PVLsYwAOn5ZmDJ/g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tI7TH-00Exjr-G3; Mon, 02 Dec 2024 15:32:19 +0100
-Date: Mon, 2 Dec 2024 15:32:19 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>
-Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
- speed
-Message-ID: <3b98a7c5-b8bf-4e96-b969-da1800813251@lunn.ch>
-References: <20241202083352.3865373-1-nikita.yoush@cogentembedded.com>
- <20241202100334.454599a7@fedora.home>
- <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
- <Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
- <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
- <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
- <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
+	s=arc-20240116; t=1733149974; c=relaxed/simple;
+	bh=PFDcKh2Yc1TSoI97ey1UuU8Gn+EMMcBK8Q8pgOy+Huk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=os1s8mB0z6hriT32di6nbW7AdkiK+s974KZdzsezUVmMcRmEX+SINy3uYQxkjscK7ejI6SQ5QhqnckutVNBmGeOOhpaVzpDt3KOtg2fygzikZe5Vs4OYxgc+A+fQE3WQpPbsbqeTXAWG+yRPR3ZwUB1ciVbQpoiPCRP5fTX+Nyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwjKLL26; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1C97C4CED1;
+	Mon,  2 Dec 2024 14:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733149974;
+	bh=PFDcKh2Yc1TSoI97ey1UuU8Gn+EMMcBK8Q8pgOy+Huk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bwjKLL26SMa06STEA8hjFNBvkpC1GJ83S5cMQg0pRehM63S5dziGCiJNQ4kPC/zQG
+	 8fEUKF4v3bLUv3Jsx7CW5g/u6KB/AUqWWdaScasEFRJIBNjMG58C2akDOXgJA+FREi
+	 ycFYa9hDIj4io2B7S+gJJ7s6hvktKHplSmKnfoy6PnAeLhm9OLWVoyLrnSN3KqI5gU
+	 SO7CPyWdVm5KWMHV28eLAlh7Ql5C12sbYUsIC96jMDS8Ngu8IM0wCYT/8jX2Fu1GbU
+	 AfWmCAZiiGYQ1V5Ii+hMq/TreTrmxNLeyjYGvnasPzHVDwSv4cPhSS6bCCko4d2EO5
+	 /Gmy0ZCrtqv4g==
+From: Christian Brauner <brauner@kernel.org>
+To: Leo Stone <leocstone@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com,
+	sandeen@redhat.com,
+	jack@suse.cz,
+	viro@zeniv.linux.org.uk,
+	quic_jjohnson@quicinc.com
+Subject: Re: [PATCH v2] hfs: Sanity check the root record
+Date: Mon,  2 Dec 2024 15:32:39 +0100
+Message-ID: <20241202-enthalten-elternabend-073d14f9889b@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241201051420.77858-1-leocstone@gmail.com>
+References: <20241201051420.77858-1-leocstone@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1337; i=brauner@kernel.org; h=from:subject:message-id; bh=PFDcKh2Yc1TSoI97ey1UuU8Gn+EMMcBK8Q8pgOy+Huk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT7HuU/+vPIPI+Tu96najpeU/f5YPVHooAxessaJ8WnC xj22HvkdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEdy7DXzHNmpJzH69usq43 2LPqkEPeZZeq+euum/25frblGu/xrVmMDFtcJcx5nZSSLQyjbiS17/C2MVj3XfqGe4rJz93rtDp KmAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 02, 2024 at 04:09:43PM +0500, Nikita Yushchenko wrote:
-> > > Right now, 'ethtool -s tsn0 master-slave forced-slave' causes a call to
-> > > driver's ethtool set_link_ksettings method. Which does error out for me
-> > > because at the call time, speed field is 2500.
-> > 
-> > Are you saying that the PHY starts in fixed-speed 2.5G mode?
-> > 
-> > What does ethtool tsn0 say after boot and the link has come up but
-> > before any ethtool settings are changed?
+On Sat, 30 Nov 2024 21:14:19 -0800, Leo Stone wrote:
+> In the syzbot reproducer, the hfs_cat_rec for the root dir has type
+> HFS_CDR_FIL after being read with hfs_bnode_read() in hfs_super_fill().
+> This indicates it should be used as an hfs_cat_file, which is 102 bytes.
+> Only the first 70 bytes of that struct are initialized, however,
+> because the entrylength passed into hfs_bnode_read() is still the length of
+> a directory record. This causes uninitialized values to be used later on,
+> when the hfs_cat_rec union is treated as the larger hfs_cat_file struct.
 > 
-> On a freshly booted board, with /etc/systemd/network temporary moved away.
-> 
-> (there are two identical boards, connected to each other)
-> 
-> root@vc4-033:~# ip l show dev tsn0
-> 19: tsn0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
->     link/ether 3a:e3:5c:56:ba:bd brd ff:ff:ff:ff:ff:ff
-> 
-> root@vc4-033:~# ethtool tsn0
-> Settings for tsn0:
->         Supported ports: [ MII ]
->         Supported link modes:   2500baseT/Full
+> [...]
 
-If it is a T1 PHY, we want it reporting 25000BaseT1/Full here.  Having
-T1 then probably allows us to unlock forced master/slave without
-autoneg, and setting speeds above 1G without autoneg.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Given this is an out of tree driver, i can understand why it does not,
-it means patching a number of in tree files.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-https://www.marvell.com/products/automotive/88q4364.html
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-says it can actually do 2.5G/5G/10GBASE-T1 as defined by the IEEE
-802.3ch standard.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-I would be reluctant to make changes to phylib without a kernel
-quality PHY driver queued for merging. So you might want to spend some
-time cleaning up the code. FYI: I've not looked at 802.3ch, but if
-that defines registers, i would expect the driver patches to actually
-be split into helpers for standard defined registers any 3ch driver
-can use, and a PHY driver gluing those together and accessing marvell
-specific registers.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-	 Andrew
+[1/1] hfs: Sanity check the root record
+      https://git.kernel.org/vfs/vfs/c/b905bafdea21
 
