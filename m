@@ -1,90 +1,57 @@
-Return-Path: <linux-kernel+bounces-426788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F74E9DF85D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 02:21:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334FE9DF862
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 02:21:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1D60161CE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 01:21:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA42E1C695;
+	Mon,  2 Dec 2024 01:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nh+Asw+Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B57E3B212A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 01:21:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495B1179BD;
-	Mon,  2 Dec 2024 01:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FaNnFlde"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CB2134AB
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 01:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF77117578;
+	Mon,  2 Dec 2024 01:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733102473; cv=none; b=WwH7olOtusTTaeYxpMOZCQaHimVQX3MFfdBuJtjPW+1J/Z4Ac+FugpxNBa7PgyFhxp8Q+240eNdr1nZUMEyBoCh/L/StxJA18B1pri5NTVlGVjLf8aeu0nBDZuu+0wjYW+EmSV9whf4XdWe7RoMu8iVFfGNf3P+oxgDoY5X59kk=
+	t=1733102489; cv=none; b=dS08toUMtemQtg6cL/33nF9URJpxO3iKe7lbwL8lXL+WdKiSqEK8CTNO2VqwqnBYEHI+ZQxvkqMfo7cbuVMpdJ6oB3s0Toi4lsuTopX0Dco3U6djLc/dN2AMEQVZzwP3U8lt10EGv2+Mm+2xd+RWB8PkHWbE5GFNz/4tl0gMVc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733102473; c=relaxed/simple;
-	bh=/wZTI3UiahNixfklRx/WvDzLUzuChm2QRLE3nAmDEhw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=goD04ApVO9vgCKjRGW043Rlzx8f9Kk4f+YJ3hFODxHD2nq94m1ZsU+f99WxcM+aS9gU9sZa6JgMsancdJd5WiK1SBvDHMN7R86W2wR9Bc9sUApxUEq2D1SB+TeqsahyETLLkxZgRXJGp8Z+yvB7+sRhG0hqUO/Msc/mWbM6VqDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FaNnFlde; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7fbc29b3145so3275585a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 17:21:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733102471; x=1733707271; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lypOr0RHny0xPV7z1/09rSMaYkYRgv7f2VuEbcmtql4=;
-        b=FaNnFlde0ibaO/keFRaZzNYGZ10QISCx/xTHNUAIDQt12SAFEKNHHmxeLuqi2jBRR1
-         KHHg7GeO6UOz0GO4MKUKF0ZKIeBubXvTKnuBdW/zxDFh3gS/QoH7jliZVnpCwZx0qoqI
-         yF/XuxwLVI1Zgp//FVrSgnrklBSQptp7A+LcDqlYWZdiwcQbzzrOKA0vx94CU5GYUNyN
-         kNSNTUFvyE9paCx9a/7qXG4cZWHzvIgv64rCW1xUsZ43oe1+OQdPYlSIdHgRd9Z6xDpA
-         6ANG9lca7gDY4bTJlm21KsMFJc3JOhlWV9TDFquKeUvOt4kznj1f11wb527PNtAhAfBB
-         8WyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733102471; x=1733707271;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lypOr0RHny0xPV7z1/09rSMaYkYRgv7f2VuEbcmtql4=;
-        b=nuE/mhMveiFr6SkEvagO+bbbd44NbZacC9RHdp2AThKMqLaDmXtN1MbL+A9L7HOJgo
-         24EXq2G32MkS9cgzcm7yOHq5bP+pfcIgd7Rn+hROy7pr40BslLIdZ8QrlAaazQ30OAw+
-         fRwSO4nooEU+yzxWDwnt67VX/km3KHanrlJiSTE1tKdt30e7Qlc08hD0a4x5/5u9vkM6
-         C8g8tPW+5qHepRmJL8/hWvOI5WQbFr5VyO2MytpNxvYpYe9oqo8IvxhFQ4Sih3snM0YZ
-         f1CPE/bzkgvnUbc/Z0M59feylaX8dHDaan2KNz561uh9GwF7+Kva8JFJMwLJarq0O1XG
-         JXWw==
-X-Gm-Message-State: AOJu0Yw/C2QNYpQNmIM+R0G+gyG101K0b+mgE7+N7OZjaqeVm3kJQKhl
-	0JKWO++3U8jmtsgPOcGF07f0YdSukXwlBP0jU+d0znO2K946nJl+
-X-Gm-Gg: ASbGncvkQ3SPLTLQpGWdy+D/+2DhPkFN4LBTj1S413eZWxWI1NwNpER9k7Zi3Rpv/ZI
-	SXce3loPMOS4trm1VxT8wUA7MKwMopHd0WZhl3Ir7E8CQDfSGZDrNq4fOs4dujrheZ2wGfpWsNi
-	jkQtAydsm5DP2OlXdNogrsJDzf50kM3phfwV1QOQQE6/H2lr1PtMNNipEhulUT3bih85c9AQGpq
-	FtS0rTeJiT68JO0L1lsGnrheSvb6AWKIKbdC43Nlhnc7suagwNQT8309uSV0eiPWUx4cPk1D/MJ
-	XzcQTMAx0k5fES5BZsPk
-X-Google-Smtp-Source: AGHT+IEi0VPrm1wGAXpYwSHtca8YBzh0DEi/Zh1m3Q7ntEwm+BoWtWGwA9rCV5n5tIdW1z/j+dV1QQ==
-X-Received: by 2002:a05:6a20:734b:b0:1e0:c713:9a92 with SMTP id adf61e73a8af0-1e0ec7fcc77mr29014881637.6.1733102471341;
-        Sun, 01 Dec 2024 17:21:11 -0800 (PST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp. [210.128.90.14])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c305637sm6632872a12.32.2024.12.01.17.21.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 17:21:11 -0800 (PST)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	will@kernel.org,
-	longman@redhat.com,
-	boqun.feng@gmail.com,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org,
-	rostedt@goodmis.org,
-	tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	Ryo Takakura <ryotkkr98@gmail.com>
-Subject: [PATCH] lockdep: Fix wait context check on softirq for PREEMPT_RT
-Date: Mon,  2 Dec 2024 10:20:17 +0900
-Message-Id: <20241202012017.14910-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733102489; c=relaxed/simple;
+	bh=/7wxVzZwNcofbQOcXCfiHDj5ZWUNwfZ+aktniqfssqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IE81uzepiINFnTn7n9dJXYYjU17DyRHWuSRe1r5acqiRy4PaFHubGb3fAeH87l+bmGNPJu4nFIgyJQEFUGqrDG/4OiQXfc/tgQHBnAytOGpIeGlQRGhH7qHeJaK+slikvMl/lY/W82vnr6NtzlwFoJZsB8DEdlCtvJSSoKTJoNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nh+Asw+Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC63C4CECF;
+	Mon,  2 Dec 2024 01:21:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733102488;
+	bh=/7wxVzZwNcofbQOcXCfiHDj5ZWUNwfZ+aktniqfssqM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nh+Asw+ZZIteP03MdjDFm7cHrGNz+KxSlP178lnD9ZkMBRp6xMjw0ipr1Pou8AZMW
+	 TvF2uuyV5O04PS/6BFann3nVTw7pZ7Qnr0FnOUtMT5kKlW3/WO5GPEm9vrKzluPVyS
+	 jY5UuixHlURAjORTl39jgQ35uwmYOAdefS0uwcKYI40i9oxfmJL6VKw0dFF50ZwNQO
+	 IjEg5EFbuqqen4fqa597LxXrFCmxL7o2429IKxQsmnBRrpHuV9r+VUryFkuq7TOcob
+	 fdlTe0gH+XDl8RO0LfEwNQcRLNbilF8fGRwnPXWYn2ng8yi6yJJaImrzdqaQwH0MZM
+	 OlfXx067f7ezQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-crypto@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	x86@kernel.org,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: [PATCH v2 00/12] Wire up CRC-T10DIF library functions to arch-optimized code
+Date: Sun,  1 Dec 2024 17:20:44 -0800
+Message-ID: <20241202012056.209768-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,104 +60,145 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit 0c1d7a2c2d32 ("lockdep: Remove softirq accounting on
-PREEMPT_RT.") stopped updating @softirq_context on PREEMPT_RT
-to ignore "inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage"
-as the report accounts softirq context which PREEMPT_RT doesn't
-have to.
+This patchset is also available in git via:
 
-However, wait context check still needs to report mutex usage
-within softirq, even when its threaded on PREEMPT_RT. The check
-is failing to report the usage as task_wait_context() checks if
-its in softirq by referencing @softirq_context, ending up not 
-assigning the correct wait type of LD_WAIT_CONFIG for PREEMPT_RT's
-softirq.
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git crc-t10dif-lib-v2
 
-[    0.184549]   | wait context tests |
-[    0.184549]   --------------------------------------------------------------------------
-[    0.184549]                                  | rcu  | raw  | spin |mutex |
-[    0.184549]   --------------------------------------------------------------------------
-[    0.184550]                in hardirq context:  ok  |  ok  |  ok  |  ok  |
-[    0.185083] in hardirq context (not threaded):  ok  |  ok  |  ok  |  ok  |
-[    0.185606]                in softirq context:  ok  |  ok  |  ok  |FAILED|
+This patchset updates the kernel's CRC-T10DIF library functions to be
+directly optimized for x86, arm, arm64, and powerpc without taking an
+unnecessary and inefficient detour through the crypto API.  It follows
+the same approach that I'm taking for CRC32 in the patchset
+https://lore.kernel.org/lkml/20241202010844.144356-1-ebiggers@kernel.org/
 
-Account softirq context but only when !PREEMPT_RT so that
-task_wait_context() returns LD_WAIT_CONFIG as intended.
+This patchset also adds a CRC KUnit test suite that covers multiple CRC
+variants, and deletes some older ad-hoc tests that are obsoleted by it.
 
-Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+This patchset applies to v6.13-rc1 plus my CRC32 patchset.  It can be
+retrieved from git using above command.  This is targeting 6.14.
+
+Changed in v2:
+  - Rebased onto v6.13-rc1.
+  - Tweaked crc_t10dif_arch() for arm32 and arm64 to not call
+    crypto_simd_usable() more times than is necessary.
+  - Added patch removing redundant crc16_kunit.c which got added in v6.13-rc1.
+  - Made some small tweaks to crc_kunit.c.
+  - Listed Ard as a reviewer in the MAINTAINERS entry.
+  - Dropped scripts/crc from MAINTAINERS entry, as it hasn't been added yet.
+  - Clarified a commit message.
+  - Added Reviewed-by and Acked-by's.
+
+Eric Biggers (12):
+  lib/crc-t10dif: stop wrapping the crypto API
+  lib/crc-t10dif: add support for arch overrides
+  crypto: crct10dif - expose arch-optimized lib function
+  x86/crc-t10dif: expose CRC-T10DIF function through lib
+  arm/crc-t10dif: expose CRC-T10DIF function through lib
+  arm64/crc-t10dif: expose CRC-T10DIF function through lib
+  powerpc/crc-t10dif: expose CRC-T10DIF function through lib
+  lib/crc_kunit.c: add KUnit test suite for CRC library functions
+  lib/crc16_kunit: delete obsolete crc16_kunit.c
+  lib/crc32test: delete obsolete crc32test.c
+  powerpc/crc: delete obsolete crc-vpmsum_test.c
+  MAINTAINERS: add entry for CRC library
+
+ MAINTAINERS                                   |  11 +
+ arch/arm/Kconfig                              |   1 +
+ arch/arm/crypto/Kconfig                       |  11 -
+ arch/arm/crypto/Makefile                      |   2 -
+ arch/arm/crypto/crct10dif-ce-glue.c           | 124 ---
+ arch/arm/lib/Makefile                         |   3 +
+ .../crc-t10dif-core.S}                        |   0
+ arch/arm/lib/crc-t10dif-glue.c                |  80 ++
+ arch/arm64/Kconfig                            |   1 +
+ arch/arm64/configs/defconfig                  |   1 -
+ arch/arm64/crypto/Kconfig                     |  10 -
+ arch/arm64/crypto/Makefile                    |   3 -
+ arch/arm64/crypto/crct10dif-ce-glue.c         | 132 ---
+ arch/arm64/lib/Makefile                       |   3 +
+ .../crc-t10dif-core.S}                        |   0
+ arch/arm64/lib/crc-t10dif-glue.c              |  81 ++
+ arch/m68k/configs/amiga_defconfig             |   1 -
+ arch/m68k/configs/apollo_defconfig            |   1 -
+ arch/m68k/configs/atari_defconfig             |   1 -
+ arch/m68k/configs/bvme6000_defconfig          |   1 -
+ arch/m68k/configs/hp300_defconfig             |   1 -
+ arch/m68k/configs/mac_defconfig               |   1 -
+ arch/m68k/configs/multi_defconfig             |   1 -
+ arch/m68k/configs/mvme147_defconfig           |   1 -
+ arch/m68k/configs/mvme16x_defconfig           |   1 -
+ arch/m68k/configs/q40_defconfig               |   1 -
+ arch/m68k/configs/sun3_defconfig              |   1 -
+ arch/m68k/configs/sun3x_defconfig             |   1 -
+ arch/powerpc/Kconfig                          |   1 +
+ arch/powerpc/configs/powernv_defconfig        |   1 -
+ arch/powerpc/configs/ppc64_defconfig          |   2 -
+ arch/powerpc/crypto/Kconfig                   |  20 -
+ arch/powerpc/crypto/Makefile                  |   3 -
+ arch/powerpc/crypto/crc-vpmsum_test.c         | 133 ---
+ arch/powerpc/lib/Makefile                     |   3 +
+ .../crc-t10dif-glue.c}                        |  69 +-
+ .../{crypto => lib}/crct10dif-vpmsum_asm.S    |   2 +-
+ arch/s390/configs/debug_defconfig             |   1 -
+ arch/x86/Kconfig                              |   1 +
+ arch/x86/crypto/Kconfig                       |  10 -
+ arch/x86/crypto/Makefile                      |   3 -
+ arch/x86/crypto/crct10dif-pclmul_glue.c       | 143 ---
+ arch/x86/lib/Makefile                         |   3 +
+ arch/x86/lib/crc-t10dif-glue.c                |  51 ++
+ .../{crypto => lib}/crct10dif-pcl-asm_64.S    |   0
+ crypto/Kconfig                                |   1 +
+ crypto/Makefile                               |   3 +-
+ crypto/crct10dif_common.c                     |  82 --
+ crypto/crct10dif_generic.c                    |  82 +-
+ include/linux/crc-t10dif.h                    |  28 +-
+ lib/Kconfig                                   |  43 +-
+ lib/Kconfig.debug                             |  29 +-
+ lib/Makefile                                  |   3 +-
+ lib/crc-t10dif.c                              | 156 +---
+ lib/crc16_kunit.c                             | 155 ----
+ lib/crc32test.c                               | 852 ------------------
+ lib/crc_kunit.c                               | 435 +++++++++
+ .../testing/selftests/arm64/fp/kernel-test.c  |   3 +-
+ 58 files changed, 880 insertions(+), 1913 deletions(-)
+ delete mode 100644 arch/arm/crypto/crct10dif-ce-glue.c
+ rename arch/arm/{crypto/crct10dif-ce-core.S => lib/crc-t10dif-core.S} (100%)
+ create mode 100644 arch/arm/lib/crc-t10dif-glue.c
+ delete mode 100644 arch/arm64/crypto/crct10dif-ce-glue.c
+ rename arch/arm64/{crypto/crct10dif-ce-core.S => lib/crc-t10dif-core.S} (100%)
+ create mode 100644 arch/arm64/lib/crc-t10dif-glue.c
+ delete mode 100644 arch/powerpc/crypto/crc-vpmsum_test.c
+ rename arch/powerpc/{crypto/crct10dif-vpmsum_glue.c => lib/crc-t10dif-glue.c} (50%)
+ rename arch/powerpc/{crypto => lib}/crct10dif-vpmsum_asm.S (99%)
+ delete mode 100644 arch/x86/crypto/crct10dif-pclmul_glue.c
+ create mode 100644 arch/x86/lib/crc-t10dif-glue.c
+ rename arch/x86/{crypto => lib}/crct10dif-pcl-asm_64.S (100%)
+ delete mode 100644 crypto/crct10dif_common.c
+ delete mode 100644 lib/crc16_kunit.c
+ delete mode 100644 lib/crc32test.c
+ create mode 100644 lib/crc_kunit.c
 
 
----
-
-Hi! 
-
-I wasn't able come up with a way to fix the wait context test while 
-keeping the commit 0c1d7a2c2d32 ("lockdep: Remove softirq accounting 
-on PREEMPT_RT.") without referencing @softirq_context...
-Hoping to get a feedback on it!
-
-Also I wonder if the test can be skipped as I believe its taken care 
-by spinlock wait context test since the PREEMPT_RT's softirq context is 
-protected by local_lock which is mapped to rt_spinlock.
-
-Thanks!
-Ryo Takakura
-
----
- include/linux/irqflags.h |  2 +-
- kernel/locking/lockdep.c | 11 +++++++----
- 2 files changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/irqflags.h b/include/linux/irqflags.h
-index 3f003d5fd..c33c3bbd8 100644
---- a/include/linux/irqflags.h
-+++ b/include/linux/irqflags.h
-@@ -121,7 +121,7 @@ do {						\
- # define lockdep_irq_work_exit(__work)		do { } while (0)
- #endif
- 
--#if defined(CONFIG_TRACE_IRQFLAGS) && !defined(CONFIG_PREEMPT_RT)
-+#if defined(CONFIG_TRACE_IRQFLAGS)
- # define lockdep_softirq_enter()		\
- do {						\
- 	current->softirq_context++;		\
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 536bd4715..2a508d6a6 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -4602,7 +4602,7 @@ mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
- 				if (!mark_lock(curr, hlock,
- 						LOCK_USED_IN_HARDIRQ_READ))
- 					return 0;
--			if (curr->softirq_context)
-+			if (!IS_ENABLED(CONFIG_PREEMPT_RT) && curr->softirq_context)
- 				if (!mark_lock(curr, hlock,
- 						LOCK_USED_IN_SOFTIRQ_READ))
- 					return 0;
-@@ -4610,7 +4610,7 @@ mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
- 			if (lockdep_hardirq_context())
- 				if (!mark_lock(curr, hlock, LOCK_USED_IN_HARDIRQ))
- 					return 0;
--			if (curr->softirq_context)
-+			if (!IS_ENABLED(CONFIG_PREEMPT_RT) && curr->softirq_context)
- 				if (!mark_lock(curr, hlock, LOCK_USED_IN_SOFTIRQ))
- 					return 0;
- 		}
-@@ -4651,8 +4651,11 @@ mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
- 
- static inline unsigned int task_irq_context(struct task_struct *task)
- {
--	return LOCK_CHAIN_HARDIRQ_CONTEXT * !!lockdep_hardirq_context() +
--	       LOCK_CHAIN_SOFTIRQ_CONTEXT * !!task->softirq_context;
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT))
-+		return LOCK_CHAIN_HARDIRQ_CONTEXT * !!lockdep_hardirq_context();
-+	else
-+		return LOCK_CHAIN_HARDIRQ_CONTEXT * !!lockdep_hardirq_context() +
-+		       LOCK_CHAIN_SOFTIRQ_CONTEXT * !!task->softirq_context;
- }
- 
- static int separate_irq_context(struct task_struct *curr,
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+prerequisite-patch-id: f8b995a05288ddc7f06f93d5eb7ffc71f53232d4
+prerequisite-patch-id: cda9f22081116d690534a921473af93d06ab7539
+prerequisite-patch-id: 12e0b107ed65a4d61fe3c9aa29451b082276f84f
+prerequisite-patch-id: 292ec37c4a28e33cce4c13ad75a3ad2104799352
+prerequisite-patch-id: b1cf6138d2a225dcda1adedc89d20d36a54bb309
+prerequisite-patch-id: 1a7519c0d1fc64926480c8be838a98b5095534ec
+prerequisite-patch-id: 0f22f1d50b6c17c93825e4a0651d51f4de9efe47
+prerequisite-patch-id: 285ac22e7e2bad4920c3872992aa45e7f04d3702
+prerequisite-patch-id: 9b085b26ff8fe55cf7cd343e9123e742f82a1fbb
+prerequisite-patch-id: a4e94f9bb7c2c1d4d5486877b660ca6d606a46ef
+prerequisite-patch-id: 5d541cd572220aa5c1885a639693fc78210c6112
+prerequisite-patch-id: 95195b4e2e9d9e0e7b1cafa37d0cf2b3373f007f
+prerequisite-patch-id: da2e5649997b6265ef0e6ad90b8be6a7a1509705
+prerequisite-patch-id: e4b967a2d11e31bb8ee1402313bc0c70b34af26b
+prerequisite-patch-id: d535ea87c7ac3b194abc358567b97b5fd524c144
+prerequisite-patch-id: 1b919d5298106e9014f09f6e9ca5c75cbb157399
+prerequisite-patch-id: 19f12966c5081d27bc64bced052814b15f16b087
+prerequisite-patch-id: a4251f6e980b8ac54aeb6cfb09f0ffe92396331d
+prerequisite-patch-id: 6fad2aeaf54145934d2dfd52bed0464b18445fb5
 -- 
-2.34.1
+2.47.1
 
 
