@@ -1,238 +1,138 @@
-Return-Path: <linux-kernel+bounces-427464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FE59E0344
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:23:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA5F9E03EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:47:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15ED4B33EF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:11:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B60D1B3516A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8147A20C479;
-	Mon,  2 Dec 2024 12:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD512036F9;
+	Mon,  2 Dec 2024 12:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="msVinX0e"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JarQvoen"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1717020B801
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67F6202F95;
+	Mon,  2 Dec 2024 12:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733140996; cv=none; b=OCgN4ysHDlN3+U/gAii4wLGwUKKWErW1yVsVwuarkQLAsnGuKBlpjwKuVcS4BBSvc6fU8HDY6sopygZEBZ8M1g9vfeIfZ1Md9eD0Zysm9ew2hAOYXaxDEuWHfXxkCEIeq/V/QJPu+bdjCjDiUjoXJhP/THYlBmBQ92fm9MrxfAk=
+	t=1733141063; cv=none; b=M0l7eF56b/gzIz4t+acz3FdfTm/b5n1ItGqsUpSm/9S/b2BiYIOHlc7rIAvdqvYJd141r8iv4PKHtnTDgovoEsNfQdrl5ayxDDKYT+zqC/4lXNn9Feovk+22PLrjmvLtdQ1ff7oSA1danOL4puaE19d4at+eby/pbvL8SPcTKik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733140996; c=relaxed/simple;
-	bh=SXqWmFdKruhDvAdboiSEhg1Z6NA3pG4WBm4XMylxPB0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q2QEm3C5VBfRBTP03X2xYGT/meqY+ulbBUrPBT5DhyaOc208oTyy3dUMX6COB1/Kb6oqHnDMrWKjZeZnSaUDyE/UxhWlG72Qn0A5LlTisA4hKl4CkJI5A8++mNpwm8GZhQUYQDW1Px6cudi6AHDB4xN1SwfNxVr/n6n19Hu5dow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=msVinX0e; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a9f2da82so35792065e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 04:03:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733140992; x=1733745792; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/OaNa1GU6C5pLmKUM+e3Rmrgncx6u+ty/51M3vyn6vY=;
-        b=msVinX0eg+SNG8oz+pxuhyjeiP5GOVaZUsp3jJ0l/ItLchuUOLk2+DV0ZXpasNK7km
-         3R+rlq3JXY08OivHB2mkZmaSHxY/Q7ynXbAWl7uc9uHMmfBMTghPQ3HOE77JDypt5LUT
-         C70gS2HAqrSqzfIOIQQ+0mI61tYuuRej3sAeqHh6smvBj2D3IDsSE8yDh7b2i4zSBFTV
-         qMsTqpQpJq+X0tNngsSvlQQhtpIh6mp9jVqSRWvVfQhY+6/RgX6rLmu0nvU8xzMxw76c
-         37TwYgK7MwRU/ja75g/4bJNuG5ELF9VBVpcNK0HSMJTbnY93YTwqmZUCs5GEBbrO4qCr
-         +dSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733140992; x=1733745792;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/OaNa1GU6C5pLmKUM+e3Rmrgncx6u+ty/51M3vyn6vY=;
-        b=qn4Mh3RMjjGlWpztVepPuWgSWuL+SIepLkzNLem4JH0kb6g+KpwK0dtrSmiBjkpIJn
-         UQ1111R+xH3IRbDzimYMZaPoKpId3usAg29rdCjwzPNbma1PBoePeKWKnlbs3KYO5Uxy
-         A2jgCxcbX8agZ13oDdVShMgbc4r3HbeJEphdcU9F3cEo+gl3Buuugf3RDnl9TNvvOkFh
-         Ew+jO3ZmEqnRpxfgj+OKJjXu5R9YpoDtkhxGrWI/m1isYCy4+hCMXUZ+0DUogTIlCBsJ
-         SIy34mZBu7j1ICDP9O6EoXbZNBzrBsW+3moGIBAahO9TI+h/e1z4gixP6NZDR+3jZrva
-         ZsTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvIGHMfml8XoMCftqEngYwgZqCLt5aq9tL3sZTsO3BtTg13ibQM8csWqujPN1mOAV4n4RZWN+GC0OZQzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyygGH4slfYlDZmADGW394hd19oGJ8xqIeAQ4pEzf9cD213sve+
-	9cxHlBsBdPUPIB9feFQr565lWGTjbJ24ThZTw95/ihPXY5bbTfp3uKDFf+76PEE=
-X-Gm-Gg: ASbGnctUe/GVw8A1e4ulnlLTRigmwcdq579QVKxTpmoYtGvJthLnMAiEhwgw9szukSQ
-	vrOOIduHt5OGpx7ZUy62CLWj07yUVNy6tZsP3/3b4HR3fQNk9+d6wjdF5g5R/Ekbkxpo+PxIRVL
-	w11cB3mqaPBolinrbbp3UHcQWX/JbOFpicV58ZCDGj9DymyaX8HofuuAeXCOocbD0vk3++vvla6
-	9nUJ8t7zZsLWbVT52odImXqIIjaGOH9RC1cs5IB
-X-Google-Smtp-Source: AGHT+IGWc47EwqH71rhHjv/KfoAe6eeXRpWu/7Snf36bMmrQREw14b0jX49/ol9dK3YY1FcYfUD0BA==
-X-Received: by 2002:a05:600c:3aca:b0:434:a7f1:6545 with SMTP id 5b1f17b1804b1-434a9dfbe52mr188320625e9.27.1733140992113;
-        Mon, 02 Dec 2024 04:03:12 -0800 (PST)
-Received: from [127.0.1.1] ([193.57.185.11])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bed7sm152396095e9.8.2024.12.02.04.03.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 04:03:11 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 02 Dec 2024 13:02:33 +0100
-Subject: [PATCH RESEND v7 17/17] ufs: host: add support for generating,
- importing and preparing wrapped keys
+	s=arc-20240116; t=1733141063; c=relaxed/simple;
+	bh=+81R2yhEI3xCcGHia9rOeaSyJc2c3Vsh3iF1V5uCdXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kRaNVPAunLYNWJtNcbAGn0Kxm42fTAmGd55ujA9NNXki+TTviSi3KOQEHNz1O/UH8Td5TFEnZhqANd60yOLOdCp5E4mJ0YL9J47ZkCQO+Yw0oCLWy6Sna91Ep7gJM3wr/jT4gRBpb/K5qPJHXYDTgQl3zS0isH1g6vdYTaZ+jZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JarQvoen; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86061C4CED2;
+	Mon,  2 Dec 2024 12:04:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733141063;
+	bh=+81R2yhEI3xCcGHia9rOeaSyJc2c3Vsh3iF1V5uCdXg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JarQvoen9Ub9hp5ehA5M+u2t8upPDtHrdR+Fj8HYtKuiUJizrG0pg4tqcV/D2yaCV
+	 StgtnjWJGdV7Zwsu2hQGFgZhQQLlkUfliIi8wa9IPAbOYquOqQK7Ajn6yQBhmMV4Mc
+	 K+dOespHYS5qtPZdYynjvR2u4cj9eLjj0bV1xgM/pvzO8nff8ZvwUI9niI17QI6bXw
+	 ccssd689TW9BfufbIMCkprXolbbYPbL1NSdyv6rU1pSN46Sdz9qky4p4xeZOnnDmqY
+	 PS+bULIroogjiuXrgGHYprzaymivuhInveUPBqSnzunNLhTQFZNl1NjPnF+RbelJFk
+	 m/NzZYUIh5fbw==
+From: Borislav Petkov <bp@kernel.org>
+To: Sean Christopherson <seanjc@google.com>,
+	X86 ML <x86@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	KVM <kvm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>
+Subject: [PATCH v2 1/4] x86/bugs: Add SRSO_USER_KERNEL_NO support
+Date: Mon,  2 Dec 2024 13:04:13 +0100
+Message-ID: <20241202120416.6054-2-bp@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241202120416.6054-1-bp@kernel.org>
+References: <20241202120416.6054-1-bp@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-wrapped-keys-v7-17-67c3ca3f3282@linaro.org>
-References: <20241202-wrapped-keys-v7-0-67c3ca3f3282@linaro.org>
-In-Reply-To: <20241202-wrapped-keys-v7-0-67c3ca3f3282@linaro.org>
-To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, 
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
- Mikulas Patocka <mpatocka@redhat.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- Asutosh Das <quic_asutoshd@quicinc.com>, 
- Ritesh Harjani <ritesh.list@gmail.com>, 
- Ulf Hansson <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- Gaurav Kashyap <quic_gaurkash@quicinc.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
- Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev, 
- linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Om Prakash Singh <quic_omprsing@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4284;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=3S2Zj/hLbrM4DjwdvlxVSy1kmPJ99K5Qvwb4G0BsQ0U=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnTaHXzRXDCRoQFXnAuSVzn467NjNF+9zLmE0aj
- 0uunEU1gB2JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ02h1wAKCRARpy6gFHHX
- cuOpD/47sYsAvMcTPt3gWFt5Ys+R87FxssehI6pHubn+78bsn3A96WfHX3VZdjGFkUwzq7viptr
- RlKwm+AjcRkZCIAp+ugg5N9+8vPcTORKyP9xbzi7EASkZpDo+IU4OlmiCU4v2zTgcGAcyyrfoZZ
- 5Mqwy0vmUjKyZIpos5R7Vo7shS5vI07xLGO+HJdM1HDJKzWrKAvLgFlfxMI3mifhdVSnObs7sIz
- PZ0CGeMWoJohiueJpkAyQXRZfbSFlm74sgWDPkoi6v9jF9xQfmm0fDXDP3mtTwiZ9rmwRUDILhm
- 80/0JruiNWEcI6DgtbnR9LCRn9NVRiEcj/CFI6fUpD/g0u1FlzFrOIsV+3vyMqwTigQfduAHnaf
- sKpjFNq+0F+G6zwx+qfv6+m6l0/FqibL/QD368m/6UWEOuA5QdztggCXz/CeAUKS8LnrO1qFpRm
- 3NMlOEksrfrnKJDsL5h7Brl5U9AHsY2VotvmZOOv7oBITkFrqej9++l0E1DEoLLnSev9qv0SQ53
- JG5CKq3vK049drq4KYMkWXs/rp3EA3Sa2NOQHBpKztdYLU7AvN67AK6kkGthMVGHTmiamfx7I5V
- SZKIg7FYbj/sALZWC0cI58VEgRQI/d2RllME12D+mExb4lYIMiN+FEzToGsTZKmVFXGfyQzL+jF
- 9XB34b80/dF528w==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
 
-From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
-Extend the UFS core ops to include callbacks for generating, importing
-and prepating HW wrapped keys using the lower-level block crypto
-operations and implement them for QCom UFS.
+If the machine has:
 
-Reviewed-by: Om Prakash Singh <quic_omprsing@quicinc.com>
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+  CPUID Fn8000_0021_EAX[30] (SRSO_USER_KERNEL_NO) -- If this bit is 1,
+  it indicates the CPU is not subject to the SRSO vulnerability across
+  user/kernel boundaries.
+
+have it fall back to IBPB on VMEXIT only, in the case it is going to run
+VMs:
+
+  Speculative Return Stack Overflow: CPU user/kernel transitions protected, falling back to IBPB-on-VMEXIT
+  Speculative Return Stack Overflow: Mitigation: IBPB on VMEXIT only
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 ---
- drivers/ufs/host/ufs-qcom.c | 34 ++++++++++++++++++++++++++++++++++
- include/ufs/ufshcd.h        | 11 +++++++++++
- 2 files changed, 45 insertions(+)
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ arch/x86/kernel/cpu/bugs.c         | 6 ++++++
+ arch/x86/kernel/cpu/common.c       | 1 +
+ 3 files changed, 8 insertions(+)
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 0da2674777d2c..58a310e2571b2 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -195,10 +195,41 @@ static int ufs_qcom_ice_derive_sw_secret(struct ufs_hba *hba, const u8 wkey[],
- 	return qcom_ice_derive_sw_secret(host->ice, wkey, wkey_size, sw_secret);
- }
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 17b6590748c0..2787227a8b42 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -464,6 +464,7 @@
+ #define X86_FEATURE_SBPB		(20*32+27) /* Selective Branch Prediction Barrier */
+ #define X86_FEATURE_IBPB_BRTYPE		(20*32+28) /* MSR_PRED_CMD[IBPB] flushes all branch type predictions */
+ #define X86_FEATURE_SRSO_NO		(20*32+29) /* CPU is not affected by SRSO */
++#define X86_FEATURE_SRSO_USER_KERNEL_NO	(20*32+30) /* CPU is not affected by SRSO across user/kernel boundaries */
  
-+static int ufs_qcom_ice_generate_key(struct ufs_hba *hba,
-+				     u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+
-+	return qcom_ice_generate_key(host->ice, lt_key);
-+}
-+
-+static int ufs_qcom_ice_prepare_key(struct ufs_hba *hba,
-+				    const u8 *lt_key, size_t lt_key_size,
-+				    u8 eph_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+
-+	return qcom_ice_prepare_key(host->ice, lt_key, lt_key_size,
-+				    eph_key);
-+}
-+
-+static int ufs_qcom_ice_import_key(struct ufs_hba *hba,
-+				   const u8 *imp_key, size_t imp_key_size,
-+				   u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+
-+	return qcom_ice_import_key(host->ice, imp_key, imp_key_size,
-+				   lt_key);
-+}
-+
- #else
+ /*
+  * Extended auxiliary flags: Linux defined - for features scattered in various
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 47a01d4028f6..8854d9bce2a5 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -2615,6 +2615,11 @@ static void __init srso_select_mitigation(void)
+ 		break;
  
- #define ufs_qcom_ice_program_key NULL
- #define ufs_qcom_ice_derive_sw_secret NULL
-+#define ufs_qcom_ice_generate_key NULL
-+#define ufs_qcom_ice_prepare_key NULL
-+#define ufs_qcom_ice_import_key NULL
+ 	case SRSO_CMD_SAFE_RET:
++		if (boot_cpu_has(X86_FEATURE_SRSO_USER_KERNEL_NO)) {
++			pr_notice("CPU user/kernel transitions protected, falling back to IBPB-on-VMEXIT\n");
++			goto ibpb_on_vmexit;
++		}
++
+ 		if (IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
+ 			/*
+ 			 * Enable the return thunk for generated code
+@@ -2658,6 +2663,7 @@ static void __init srso_select_mitigation(void)
+ 		}
+ 		break;
  
- static inline void ufs_qcom_ice_enable(struct ufs_qcom_host *host)
- {
-@@ -1848,6 +1879,9 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
- 	.config_scaling_param = ufs_qcom_config_scaling_param,
- 	.program_key		= ufs_qcom_ice_program_key,
- 	.derive_sw_secret	= ufs_qcom_ice_derive_sw_secret,
-+	.generate_key		= ufs_qcom_ice_generate_key,
-+	.prepare_key		= ufs_qcom_ice_prepare_key,
-+	.import_key		= ufs_qcom_ice_import_key,
- 	.reinit_notify		= ufs_qcom_reinit_notify,
- 	.mcq_config_resource	= ufs_qcom_mcq_config_resource,
- 	.get_hba_mac		= ufs_qcom_get_hba_mac,
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index dc8c055eae79a..df51c0a96c675 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -326,6 +326,9 @@ struct ufs_pwr_mode_info {
-  * @config_scaling_param: called to configure clock scaling parameters
-  * @program_key: program or evict an inline encryption key
-  * @derive_sw_secret: derive sw secret from a wrapped key
-+ * @generate_key: generate a storage key and return longterm wrapped key
-+ * @prepare_key: unwrap longterm key and return ephemeral wrapped key
-+ * @import_key: import sw storage key and return longterm wrapped key
-  * @fill_crypto_prdt: initialize crypto-related fields in the PRDT
-  * @event_notify: called to notify important events
-  * @reinit_notify: called to notify reinit of UFSHCD during max gear switch
-@@ -379,6 +382,14 @@ struct ufs_hba_variant_ops {
- 	int	(*derive_sw_secret)(struct ufs_hba *hba, const u8 wkey[],
- 				    unsigned int wkey_size,
- 				    u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE]);
-+	int	(*generate_key)(struct ufs_hba *hba,
-+				u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE]);
-+	int	(*prepare_key)(struct ufs_hba *hba,
-+			       const u8 *lt_key, size_t lt_key_size,
-+			       u8 eph_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE]);
-+	int	(*import_key)(struct ufs_hba *hba,
-+			      const u8 *imp_key, size_t imp_key_size,
-+			      u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE]);
- 	int	(*fill_crypto_prdt)(struct ufs_hba *hba,
- 				    const struct bio_crypt_ctx *crypt_ctx,
- 				    void *prdt, unsigned int num_segments);
-
++ibpb_on_vmexit:
+ 	case SRSO_CMD_IBPB_ON_VMEXIT:
+ 		if (IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
+ 			if (!boot_cpu_has(X86_FEATURE_ENTRY_IBPB) && has_microcode) {
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index a5c28975c608..954f9c727f11 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1270,6 +1270,7 @@ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
+ 	VULNBL_AMD(0x17, RETBLEED | SMT_RSB | SRSO),
+ 	VULNBL_HYGON(0x18, RETBLEED | SMT_RSB | SRSO),
+ 	VULNBL_AMD(0x19, SRSO),
++	VULNBL_AMD(0x1a, SRSO),
+ 	{}
+ };
+ 
 -- 
-2.45.2
+2.43.0
 
 
