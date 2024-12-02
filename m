@@ -1,275 +1,214 @@
-Return-Path: <linux-kernel+bounces-427238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946669DFE90
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:15:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE319DFE6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:13:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1DB6B2A8C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:13:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65E6163C09
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23EB1FE477;
-	Mon,  2 Dec 2024 10:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929921FCF43;
+	Mon,  2 Dec 2024 10:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NkaMZmBh";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="WRjQoUzq"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="itzXzNIS"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60A31FC11A;
-	Mon,  2 Dec 2024 10:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733134311; cv=fail; b=F0OhwBtwoGnlPAXz2RsiD/ZQJ0hxXtXu98p0qJ+T2MP8IwtjIMgrwdROhhJ1CahfKuo0/MOjimJ9VsfiS+pty6hJYzkbx3tqfIbxDJlU+0b5G78zGmTKyANoVxZOxlgwh5inUbOPg73SUc4gM3aYJVAXcPt9Cmz9DYxhWQVTc2I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733134311; c=relaxed/simple;
-	bh=pWst/jLMtyhw9CdmPy3wj54LbzJk6km7V4YscnRTJP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Arls8YjpOCjPNR66QBDK6WvPo6Y3tDILxJFFjIEH7IFVaxJj2Fr/ChW2R4ZiYQFVOsCYs9aYc7FqiBErfE5zDaJfWLwthxQtU/QH+V2hm9PbzKdam4A1h+BJr4PE7Tj5eLDYCPt+0hqPA/IiJ200NFmKn7CBbsqkgu/8kgxDLY0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NkaMZmBh; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=WRjQoUzq; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B26Wxvr008605;
-	Mon, 2 Dec 2024 10:11:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=yXuVMfHi41Y1jRfz2LyGiYKxl/pGfVN9pcpVpZk7JNk=; b=
-	NkaMZmBhnLQCVMEv8Jf94z0bdTgXANmwO37kZQb2xmNiNIqoqqQcUSCWKZg07979
-	TD9TrfzM4c8VCkWZn5wrDlUSDa0rtT0MupJh5k5926BfM9auPaDZ+7L9TRdR85UG
-	dt85dLAw8E1FplWtaMqLCeCnMo60JwSzUApkQUxJlQSAN4tPZ+m8x37DuMl7AupA
-	jplGAbEJGmHb9lJacQFFAwdGt5q6LnKbCjFiHPORUuo+xhIhET5V0z1yIbbH5ML1
-	652X++yY9hhiBBxNjxlT7GOYBODQeQv377uRdpKFD1Zfb5AH/HDI2GI4KE4jXefC
-	opd13+oHtoRb7kyRWjbmsg==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437s9ytgcn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Dec 2024 10:11:45 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28kpa1032206;
-	Mon, 2 Dec 2024 10:11:44 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43836sabw2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Dec 2024 10:11:44 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FmtOfaSmUL6E/jkQl6P/5lyegdXJUcTD460nkpakNuh66YuLsen/CJj2fl5cXBh3ZQlEz2PW53lrUlUofkU+U0AfuWvI5LgxqiqkNg53hIp+8MKfEwaA2ZQYpBI7+48J3t8zwfeJF17C61KPAVAkj09rVFjzjzFQRILlgp/qBFvQ4wMYhrjfTp/94YQ/cuLaR17j/BOuDkPQEf9EuPMayHXj/pgMr332hQ5HvML6UjhuTuA2vZpwXjlLNWwKoS7nXCRGqPhjcfyL3ETBqVDBmOOExvH7GT8Fc4Gju+7FXtNJqmqSNXGOxikFl4Nazkx8v7bY78lTvLpZ6rrsLN/T1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yXuVMfHi41Y1jRfz2LyGiYKxl/pGfVN9pcpVpZk7JNk=;
- b=ci9XQ8auQYgucPGBETjZlidlvK7qJzX8H17eKxq2xsFnsCqA+BDY2ZIsDU040RcMsNUlvmNNh2K5kayJQuhB7t+qSTFaa0oT4rMQrBSneA6ltVgMF2lhfpcQJ/NVE+MTx50edqzHFIk5UkbBLj2pCdxDuJ01SwEZxgWGuHl4kSB04xQKz2gArw1v68dBqvTFTgs721asI3tMrtHvLETfDR8Ta1OWExC2842A/uOe4B4ZLthQ9jk+oKl1yy9Tn72W54p5Fimvqnp0N7QGhxFl5jS8bI/EbbAb4u0U6lU/1QJpg01aSmnrjWwlpWQFsjsRjIQ1fVwiHOEy9IsnFqovpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166FC1FC11A
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733134271; cv=none; b=ltGErrCn2nBnjfpmXnOYPLR7E6K8WyVl51eu3aWMR8iXhd6v5iVR0Xa0ct2z01YyWCFdkrQKdjG/m9Jgnq6pnJELFZNMzNJ+n7wgywqqvE5SEZhJH5VlLD1PbGnnK7axjf4lj2DPNa1jEgOsFDvUBarkBqVPSh9HiiEpSfSX8UM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733134271; c=relaxed/simple;
+	bh=VhG3rq+iTy9Ea+5rk5iSMoBYCrjEGHdVkuGWSFpQ38w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZiQLnm7zKmm+2Tc1j0MU5vh6uHZNAoRSzFbAXDsQl9kw5RO4t7UaaXduTFj4VWVVUtOphIOyJxsfcIAFaB9Py0GolwSEqKT7dmEgQq4wNz1DYq5yYsc3uNv5wl2f2Nw+vIHbu1OXHq+scgf1n8Hor/0n9N2pRj1ib9P6tAisWy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=itzXzNIS; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434ab938e37so24916035e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:11:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yXuVMfHi41Y1jRfz2LyGiYKxl/pGfVN9pcpVpZk7JNk=;
- b=WRjQoUzqTlNZuWrh7TmPdq2VP0okwPTdHviqGGsfuiDtstcMvTXwVvcI73VGnye76VVMaI+RuAx5lZJv3faGuDy4dCL8mwV4MVI7tFFnUQCBjJiPWChdzx8dNxg2eSjQhcxVUySfhWKo8qqo4L6soy2oIDdTuMBbAOERb3h6Ad4=
-Received: from PH0PR10MB5563.namprd10.prod.outlook.com (2603:10b6:510:f2::13)
- by CH3PR10MB6788.namprd10.prod.outlook.com (2603:10b6:610:14b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
- 2024 10:11:41 +0000
-Received: from PH0PR10MB5563.namprd10.prod.outlook.com
- ([fe80::1917:9c45:4a41:240]) by PH0PR10MB5563.namprd10.prod.outlook.com
- ([fe80::1917:9c45:4a41:240%6]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 10:11:41 +0000
-From: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sasha Levin <sashal@kernel.org>, stable <stable@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, cgroups@vger.kernel.org,
-        Shivani Agarwal <shivani.agarwal@broadcom.com>
-Subject: [PATCH 2/2] cgroup: Move rcu_head up near the top of cgroup_root
-Date: Mon,  2 Dec 2024 15:41:02 +0530
-Message-ID: <20241202101102.91106-2-siddh.raman.pant@oracle.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241202101102.91106-1-siddh.raman.pant@oracle.com>
-References: <2024120235-path-hangover-4717@gregkh>
- <20241202101102.91106-1-siddh.raman.pant@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN2PR01CA0254.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:21a::20) To PH0PR10MB5563.namprd10.prod.outlook.com
- (2603:10b6:510:f2::13)
+        d=tuxon.dev; s=google; t=1733134268; x=1733739068; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uALrewd2bf6VCEyNjbilrOuFF8ofT7dZTVrBfsuxsiI=;
+        b=itzXzNISgbYOjPSzFg0Gt8afHHqlFeLge8D3lBCW8mtp7QpPJGtRN4DbeAHRutZzsj
+         IGn/9hcfed0uKvIYLEH0xwfahU/PCCXyAhSMJtwXJI9D9QiML6YDplME0h0pH2ybChrI
+         nkni2avrsu5WtzD+05Tw23tUZgpJWXgqR7PrmeD/M7H1XyZMzCvVTOV0tSrb0PDUmfqq
+         wRhIVOl5qIyzJPVssqvPZl+DYnOwG6J3X/xMwYlG1w2b4iQU9WEDMedgtwEQHotb+dhx
+         6B/xCyLuPibLxC4073IsOBao6LVMV75zOgI8/S+ACq/9dl4JDsUTb3pCObRf1hMGlYPO
+         vs+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733134268; x=1733739068;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uALrewd2bf6VCEyNjbilrOuFF8ofT7dZTVrBfsuxsiI=;
+        b=iGiCvVdctKXguZHaaMFhy0kD/TYEpC9geiVaKfi2oEEXIS3QKoxj5MzL+IpwsH2Ulq
+         uBQNdjk/yoTIG4KCfVoS6TF90IX1Ie+SJDYo+uUsmIahaIkES2fV4k6hih7ebiH8V6Vy
+         eRuBkjcBF9Nq24N5qpsBGCk6FMrzj8A4A13If1co6smgv06qU87UbQDKYBTICjfWs+T9
+         e0L8Ztv9+4cU4gHNxl5yds30XFvqDtn/D5rTkfjb01efmKgX1IYr9ZGS0KmGBo14o3NE
+         89zFBUQ05X1fSmESsVTQNfDwxjG8NZEZeoDbBJiH/0NoSs6xLRumaTrldNQITpzt2yuJ
+         OYHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQXzMJxWRcjrYWyFAtsTR1VvN+jCEABQdB56Sv5pixZgnmzO6H9maCbFdcahiLvuKj5DkSgCaAGnIy8jA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypregMgkPCBFQMB3HqRh3WYEKPajqEZ2+MtYogAJF3LjtaOgK+
+	359JNjNFhrb/7DA/ZTs7b7ReDCEVIZO0N+C/DARR9k+/RdTZPubTwTwTMpon2shJlL58yDoAEex
+	i
+X-Gm-Gg: ASbGncvF5dC1d5BwVyaAvzmMtbtaPQUXwvye6yS2I1eWTkTxp8FzuWlKnm7aZOJF2f4
+	Z7gkN0V3oy89r2IH9CP0TBPFiBf/1xRpQxh46QZRfxvMpa5jvTMxIZ1RUYPESDbK7EXqfBZxCuV
+	tTqysqcdVXduEozF1MhdPCe4HgEuOiuz3QlVovsND+V0uVNOlyb+F+PnKRJFzPeq+c+qh8t9UG4
+	2ju1fNdx8Sd0pr/Sq425iOTy/Lf1oj5ma83HZZ7x3Fkto07Gobmu5CDbw==
+X-Google-Smtp-Source: AGHT+IErBHQMNcCywMPgGeLil++jgNC3MB2USHxqD4fnoD5fhsRnNjP8lRK2LV8oHmVsxpRvL8auCQ==
+X-Received: by 2002:a05:600c:314a:b0:434:9e63:fb15 with SMTP id 5b1f17b1804b1-434a9dbb864mr173023505e9.1.1733134268229;
+        Mon, 02 Dec 2024 02:11:08 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa78c202sm177567155e9.26.2024.12.02.02.11.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 02:11:07 -0800 (PST)
+Message-ID: <014a8db6-adcc-4755-8ab5-a15afa1d3f44@tuxon.dev>
+Date: Mon, 2 Dec 2024 12:11:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5563:EE_|CH3PR10MB6788:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08377f49-9c9d-4909-c9fd-08dd12b9b7c4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|10070799003|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ajRKT0JYNVlFekxHeVZCK0VFYlJBUHFUWDlrNVNsYkJsRnhEcFNWR2d3czdQ?=
- =?utf-8?B?dXUxcGVpTW1kL1hvZ0Rya2VBU1hzZGhickZVQW9SRnR2SWQ2Z3lhZFRYcU9I?=
- =?utf-8?B?V25IOVFNYis1RVUyQlhVcXBvS21CSWVWRzNmNmpCZXg1OWhTMnoxeHBodnBZ?=
- =?utf-8?B?elF4VEVIOThZZ3hUZFRRQ3JEakkvUHBXRm5zdCtzcDNoMVd6NHhWN3pqaUly?=
- =?utf-8?B?OVpRaU5JL2hhTEZOOXZjQXZvNnVxWHYvUmVZYkVHQXJ5c29zZHdOY1crTm8w?=
- =?utf-8?B?czJIMmdETXFmL05YRVVnWkx1UlBvRmpZdmJnalE3QXBvQy9YTGp1d0JIbUJE?=
- =?utf-8?B?enpzK0QvVWFLQVk4bjFpK254YXBlSUtBeVZJVE83ZDErakhIZlI0OWZ1ZXhM?=
- =?utf-8?B?V2dhVGhqSmN1MlJmUkxwUGUrVWFNQlRoK0J4Zk1Fdnk2azE0YkgwM2tVN2FP?=
- =?utf-8?B?SGNSOUszb2JoeThhMDNrNXlleHpBN244MmJoL0NlNk9RVEx1ZDRkV0I3WWxh?=
- =?utf-8?B?NE0yWkRscVJsS056QWNPMU1DSUU3YUM4Z1JYRHlnTE8xQU5TeW9UNmpsOXNU?=
- =?utf-8?B?RWZGZDh6U1R0akJzZVZCVjJaTHN0aEpaODVhbERycHk3QkRYUTlUWmxTMmc0?=
- =?utf-8?B?ZEtTTkFqTEE4Qy9WZnh5UDQzTEVObGRDRzJUVTJpY2RvOVE5N01zb0tXZExP?=
- =?utf-8?B?blRtK3JaZUViSGVWRmIrQU9YN1BaVkEyVnhmTmNYUy9GVVdIYkZUTzc2dDRn?=
- =?utf-8?B?RUtPUlNYWHZlUm9NblJEMjdYL0ZMK3lwa244TEloK01MWS9GRDZGdWw2NE1h?=
- =?utf-8?B?Y1FraEhtQW4xc1dRazNEVUcrRmh3S0RWYXpqVUE3aHpsUFNRRmZRT3pZU053?=
- =?utf-8?B?VWtJN0lLSzV0OWVHSjE0L3ZXZGZxaGRrWVBYR1J5RndVYm1mZjQvdG9kSC9Z?=
- =?utf-8?B?OElTVksyOVB1NXFvVDFtUzkycnZBY01xdDVHU2c3MVNhc1pWNGZ5b3h3a3No?=
- =?utf-8?B?OUZiQ0tCd21xR1I4UzlyT0QzYmFhdkJZV2FqTWRhZW4yeExBd3NuNzdXVlAr?=
- =?utf-8?B?M2lpZDJ5ZWdOTDhzRjlIT09HNmxMQmdjRlloQWErWW9FT21FSi93YVFFeFQv?=
- =?utf-8?B?dzlkNmJJYUh0cVZiYU5PaWwwOWdsTjdqZmh1Vk9TMDBid2xqbDdHM0VOT0tE?=
- =?utf-8?B?V1MvaC9IcnB6ZXRObjFMZGNPWUtQMVo4a1ZRRHJyOUlGcm1aMjVxQk5MT1hU?=
- =?utf-8?B?VHkySDBFWGExdDdQMy8vam15NEovb041bUtZMnNvaTJmbGxRRnlaL1NSK29W?=
- =?utf-8?B?enhOQStMcjA4TVZkVVlDRC9jUC82TUlHN245aFQ1TjBDbDJTa1l0RmovVWJN?=
- =?utf-8?B?NGNJM0Z5TkFteEZTSmptM3Vibitra3J3YlZuMDBJZitibUg0YmxOU2w3MFYz?=
- =?utf-8?B?WnBDSHVzVzMwUFVxMGJVcGlzNmt0VXhJY2tDc2dwVTNjcGhMenNQWDJzK3Rr?=
- =?utf-8?B?eGl3YVg0bkJZSnRTMnNpYmJaaGJ6bkplN2ZvTC9icG8zYW4wNTJ6TklpL1d6?=
- =?utf-8?B?dkV5OWRFRjFJRDVyaU1DRGxNQ3NFUTJBRkNybDM1VG9NaEt4MFd3blVCV1d2?=
- =?utf-8?B?dk1hYitBS2dUVCtueVV3cWMwQ0lUckFUOUwzcVN3c1lZRFpudTVkcVNaeWlh?=
- =?utf-8?B?eW9laXl3QkNHZzlPeUVvSFJ0UlpXR25IaFlxZm11eWVFZjAyTTNjbXJoQzhN?=
- =?utf-8?B?cWpsdy8xekFoZytCMHIrVTNLNlo2ZWMzZmlDZW9lYzd3akdZaEVyMHdyZWtx?=
- =?utf-8?Q?3qeeLMOUVVczC7z3dInYpFWuud5YH9KLzPlU8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5563.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?alJrbFJKNk9lZGZ2UGdVellqZkVZM3hld3ZJZHhPeE9qWEw1QWJycDY2ZWM3?=
- =?utf-8?B?Y0NjekZJWFk4Zi9tbEdBeXdHbXZ4YS9YWmxXeXBoem1ENEQvWkNSS01oL0Rv?=
- =?utf-8?B?dVBWang1c285YU4vWDhLajRWcGhpczdKSzI2UStiUjNMeVk4SzZyaU5seVFD?=
- =?utf-8?B?WTRVdUpVZXJFMlh4V3VUVWtJeU03RkJEWGk3Z1A0L1MvMDNxTy82bEhuMHRQ?=
- =?utf-8?B?TDdKZjNoVVBCSXQwWUlZdEVhamxzRkVIa0xxamJEL3FsYVJxc1RrdmhJRmhu?=
- =?utf-8?B?UkJ4eVZ1UnpBOHFxdyt0V0RxallGNzJ6cFQycXdDTXJIMmQzTForMjhPVEtl?=
- =?utf-8?B?azA4KzlxVTIzMW1DNnNDTkh5R3hBWFRTMzlJU3JKbVlCRnVoZDF2a3lkK0Zh?=
- =?utf-8?B?SVVQZlFVdEh1VTl2UThNZVVUbkNJYW1nUWhnRWNScUk3SmltL041WkdPSVRY?=
- =?utf-8?B?Y3g3SWsyM0Q2bHBnUExHbW1zQ0x1ZU5rREQ3QytoYThubURpQUxqNy8zTHRz?=
- =?utf-8?B?Wm1LRXpqcGo4cVFhZ2M0WVUyMVhNL1d6UFR6anVKVld1L1RaOHJoa2VjSk8x?=
- =?utf-8?B?V2FTcUZDOUc0ZkpWaGE3NWg5NjZLYy9jTUk1T29HR0pyQ1BJU2hpZkJWRjBx?=
- =?utf-8?B?czlYWjBrMHp2MjJjaWdqL3Vac2NiUkZoWDJEY2JrbWdMQ25SZ1NEZWFValEx?=
- =?utf-8?B?emhaNGtJdVVKaGNidzFCV0lxeE02ZytzT09kb2dIQUpPUFBpZFU4SXloRTU4?=
- =?utf-8?B?Q2tYZllaMmhBK3kzejFhNXh1REVET1krVHhIR0ZQeXl0RXRPL1ZxQXpEbnR1?=
- =?utf-8?B?UlJvNngzQWxpQXVDbGlRSk05dzRtenNmNVZNQVEvNUprdlh2bHF6YXNSeTla?=
- =?utf-8?B?UUNQbUVIOHlnV2FObjRKczc0eVZZeWFNVmNROFRsK0UwY1dhNEgxZG8zTmx3?=
- =?utf-8?B?RG9Oem9XeXNRM1dRV2xGM3h2WVVuWTltNDcrWE5LSS9CeWlTSk1TckdhWHJQ?=
- =?utf-8?B?VWJLbWd0Nnh6VnJrbGtqaGdrV2tRcGwyclZoOWxjQVJvZUZ5ZzFTWmxmRkpN?=
- =?utf-8?B?dnJZYzNSczNWR3FFZVllWU0zNGNjNVFrWTJzcURvRW5nZG9UQkZrRzFRT3ZE?=
- =?utf-8?B?bUFqTDl1UTIzTTZmZ1RCa1BLMFcvMWVBWmdqQWdTb29Kdko5c2NxcTBnaXpO?=
- =?utf-8?B?Tjc1YWdoTzlqRWl1R0haL01KaVNld1ZJUnVYSjdKcmlQajI5K0JKSVBpZUQv?=
- =?utf-8?B?a0NUTzBLRWJBRFdoQkhkaks3a3BveXpTMDB6cTJOTEhDR2hhUlp2bnRjUU9m?=
- =?utf-8?B?cnI5THMyUzllZzBIUCszcFBCa2lSb2EwWkZyTVN2aHNqaTFSM0pwaGIxZjM2?=
- =?utf-8?B?UFhOY2U5d0E2T01hL1llNWtzSkltMzVZRlk4R2FQUGduYjA1cEd3TlkzaUZn?=
- =?utf-8?B?MHNhSHlJSnByMjJhY1FjYnowbWtGY0MvRE1LMnY4VEJUT0wxdnU2ajB5dXVz?=
- =?utf-8?B?K2Y3RmdPOThuWTMzNWNFcWltTk9GaFR0Zi9TWVFLVDlyRXpSSEJyUk9FQVZm?=
- =?utf-8?B?cisyNlA4Z2w3b3dnaHp2K0QzRkdaTVBWc0dVUm5WWU5hUSs2N2NqczFvblRx?=
- =?utf-8?B?cUtyRFpMbkxQdTZSWDJJQUNiU0Zva09zVFlJbzdVdHhRQkxlNXZuYTBHekN1?=
- =?utf-8?B?clhCRUgxRjgxZnZNTDdQR1JGc05zNlRLUitmRWpxL1dtWjM5UU1nanBISXp1?=
- =?utf-8?B?WCtOVWlIRlc3cENoSHNsMFVySTlNNFJ0OVM2MjlVYmxmenhrVUgrQXh3Nzdj?=
- =?utf-8?B?a2NJR21TcTRJY1p0MzRFcVNtMmdualJ4UnYzcG5mN3ptNU1GMnBWaUlGd0Zp?=
- =?utf-8?B?Q1NHT2dtT2JIYkkrUmJ5TlE0U0pqeW5XenlLcGlMbnBleXpyM29zZXhBZjhN?=
- =?utf-8?B?M1hCVHhiSGZLaWgvSEdsR1A5allnNERjZUtoMHgzMjhWUVlmZzJRNm8weDlU?=
- =?utf-8?B?cnNBZDhmQ0ppWWZVb2IvaTRLOFQrdjk3YUdGTGJ2NHBrS3ZrQUlhbWFaeXBP?=
- =?utf-8?B?N1NXU21FcWRjRElIQ01TeVE0ZUQ0S0lvMG1sVmMrbTF6MzA5U0VrM0xBVU13?=
- =?utf-8?B?aDJPZHgrUTVPYUtiSGNsQUgwOTJsVVNrdXVvdVlMbHd4UXl3Z21NdW9GQ3lx?=
- =?utf-8?B?c3IyV01lbktFMm9jMXdaaXZpOWdFZnd1MnJjU3I5ekNCbXBybmQxT3hVcno5?=
- =?utf-8?B?bnVCYm9nTnh3UTZLSHJEUktFMW1nPT0=?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	T5dSbOwBh8ZUrSUoUjiGEo1NbSMxr6NNNyPDOWt8RBnzBrYTkLL+HdyZv7otj/yUhJigXvF7CL+MXIVX9WKjQHqFCzSthl2xQxzaBeKkEx1iFkLTdmTfE0knCmdCJpXqf+cPz9F0SjttmS+3Jjx0GecDu1QC6ehtj2At5ngLlAe7Kjz0MF5DgY4avPwqBHROWQY8k/jNnN8/je2yWuB1Pu5KC9J0IYJYluvGp8DIy3doSfI0lQrR3aPWHaWJZTiDSmb7QJTsuPBuhFfDWuHrece4UB7BiheCEkdEBPfy3JROd89AzgrL+baILst5RmHt0ZqeTfdc464x4Ac10jcF3MHY6oyUQDGZxqE3aFqXgCBZMdlkEhpenM/2DTar+LmQgI1Tk2QJiXOommMYBNDpDx2nK3OVei4NOZR5iRhg8OFkJBLhW3RPhOteksL0WbzlmSasUpgijs3wddkYkUgbFt1yiRUL0kyljwRqoNNapZyxjpnaEwHLMnV9AZitVi1+zpHP8aPCIMdP+6EZju7mmGlyxuyDuZlDo8i3fTpOhrCWy9sJwM6ReCcJg2zWUE7k+Pd1rtmQBF1TbY2HFaLbFaa7eb/UGWjM914YOckNx+g=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08377f49-9c9d-4909-c9fd-08dd12b9b7c4
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5563.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 10:11:41.8842
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: APoNSpml/ZJsxOdJEb7ZcEHcj3vOIsybPHuTIm0E2TioKdFKO4vk6dBiP1b7YNAqwPreAjxerYnU//VrrujJvqbu5DPBxo75BrqfQoU9rAs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6788
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-02_06,2024-11-28_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412020090
-X-Proofpoint-GUID: B9vU1FfTSc1owvzUI4iFfFOJXpYlrQQN
-X-Proofpoint-ORIG-GUID: B9vU1FfTSc1owvzUI4iFfFOJXpYlrQQN
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/15] dt-bindings: soc: renesas: renesas,rzg2l-sysc:
+ Add #renesas,sysc-signal-cells
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
+ gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com,
+ christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWjzR6vgbr_CfR7r-h1FqWxs1nY0hm274kxFmoHjCtRAA@mail.gmail.com>
+ <0bb9f461-c7a2-4db0-9492-c04cc298504d@tuxon.dev>
+ <CAMuHMdUuRSJu1c2zJvOc8EGrZy1uYcN0aiUG6T7WShawPmCNJg@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdUuRSJu1c2zJvOc8EGrZy1uYcN0aiUG6T7WShawPmCNJg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Waiman Long <longman@redhat.com>
+Hi, Geert,
 
-commit a7fb0423c201ba12815877a0b5a68a6a1710b23a upstream.
+On 29.11.2024 10:38, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Fri, Nov 29, 2024 at 9:21 AM Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+>> On 28.11.2024 17:46, Geert Uytterhoeven wrote:
+>>> On Tue, Nov 26, 2024 at 10:21 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> The RZ/G3S system controller (SYSC) has registers to control signals that
+>>>> are routed to various IPs. These signals must be controlled during
+>>>> configuration of the respective IPs. One such signal is the USB PWRRDY,
+>>>> which connects the SYSC and the USB PHY. This signal must to be controlled
+>>>> before and after the power to the USB PHY is turned off/on.
+>>>>
+>>>> Other similar signals include the following (according to the RZ/G3S
+>>>> hardware manual):
+>>>>
+>>>> * PCIe:
+>>>> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+>>>> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+>>>>   register
+>>>> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+>>>>
+>>>> * SPI:
+>>>> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+>>>>   register
+>>>>
+>>>> * I2C/I3C:
+>>>> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+>>>>   (x=0..3)
+>>>> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+>>>>
+>>>> * Ethernet:
+>>>> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+>>>>   registers (x=0..1)
+>>>>
+>>>> Add #renesas,sysc-signal-cells DT property to allow different SYSC signals
+>>>> consumers to manage these signals.
+>>>>
+>>>> The goal is to enable consumers to specify the required access data for
+>>>> these signals (through device tree) and let their respective drivers
+>>>> control these signals via the syscon regmap provided by the system
+>>>> controller driver. For example, the USB PHY will describe this relation
+>>>> using the following DT property:
+>>>>
+>>>> usb2_phy1: usb-phy@11e30200 {
+>>>>         // ...
+>>>>         renesas,sysc-signal = <&sysc 0xd70 0x1>;
+>>>>         // ...
+>>>> };
+>>>
+>>> IIUIC, the consumer driver will  appear to control the SYSC bits
+>>> directly, but due to the use of custom validating regmap accessors
+>>> and reference counting in the SYSC driver, this is safe?
+>>
+>> I'm not sure I fully understand the safety concern.
+> 
+> Sorry for my bad expression, this was more like a rhetorical question.
+> I meant that it is safe because:
+>   1. Consumers cannot perform arbitrary register accesses,
+>   2. The reference counting guarantees correct operation, despite
+>       both usb-phy nodes using the same renesas,sysc-signal.
+> 
+> So everything is fine.
+> 
+>>> The extra safety requires duplicating the register bits in both DT
+>>> and the SYSC driver.
+>>
+>> One other option I saw was to have common defines for registers that could
+>> have been shared b/w driver and DTSes. But it looked better to me the way
+>> it has been presented in this series.
+>>
+>>> Both usb-phy nodes on RZG3S use the same renesas,sysc-signal, so the
+>>> reference counting is indeed needed.  They are in different power
+>>> domains, could that be an issue w.r.t. ordering?
+>>
+>> In chapter "32.4.2.1 USB/PHY related pins", section "When either Port1 or
+>> Port2 is unused" of the RZ/G3S HW manual it is mentioned "Since USB_VDD18 /
+>> USB_VDD33 are common to 2 Port PHY, it is necessary to supply power even
+>> when one of the
+>>  ports is not in use".
+> 
+> Does that mean you have to power the other PHY on through the
+> CPG_BUS_PERI_COM_MSTOP register, too?
 
-Commit d23b5c577715 ("cgroup: Make operations on the cgroup root_list RCU
-safe") adds a new rcu_head to the cgroup_root structure and kvfree_rcu()
-for freeing the cgroup_root.
+I don't know at the moment if there is hard requirement b/w USB PWRRDY and
+the USB PHY CPG MSTOP bit. I'll have to ask further internally.
 
-The current implementation of kvfree_rcu(), however, has the limitation
-that the offset of the rcu_head structure within the larger data
-structure must be less than 4096 or the compilation will fail. See the
-macro definition of __is_kvfree_rcu_offset() in include/linux/rcupdate.h
-for more information.
+Thank you,
+Claudiu
 
-By putting rcu_head below the large cgroup structure, any change to the
-cgroup structure that makes it larger run the risk of causing build
-failure under certain configurations. Commit 77070eeb8821 ("cgroup:
-Avoid false cacheline sharing of read mostly rstat_cpu") happens to be
-the last straw that breaks it. Fix this problem by moving the rcu_head
-structure up before the cgroup structure.
-
-Fixes: d23b5c577715 ("cgroup: Make operations on the cgroup root_list RCU safe")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/lkml/20231207143806.114e0a74@canb.auug.org.au/
-Signed-off-by: Waiman Long <longman@redhat.com>
-Acked-by: Yafang Shao <laoar.shao@gmail.com>
-Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
-Reviewed-by: Michal Koutný <mkoutny@suse.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-[Shivani: Modified to apply on v5.4.y]
-Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
-Reviewed-by: Siddh Raman Pant <siddh.raman.pant@oracle.com>
----
- include/linux/cgroup-defs.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index c64f11674850..f0798d98be8e 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -506,6 +506,10 @@ struct cgroup_root {
- 	/* Unique id for this hierarchy. */
- 	int hierarchy_id;
- 
-+	/* A list running through the active hierarchies */
-+	struct list_head root_list;
-+	struct rcu_head rcu;
-+
- 	/* The root cgroup.  Root is destroyed on its release. */
- 	struct cgroup cgrp;
- 
-@@ -515,10 +519,6 @@ struct cgroup_root {
- 	/* Number of cgroups in the hierarchy, used only for /proc/cgroups */
- 	atomic_t nr_cgrps;
- 
--	/* A list running through the active hierarchies */
--	struct list_head root_list;
--	struct rcu_head rcu;
--
- 	/* Hierarchy-specific flags */
- 	unsigned int flags;
- 
--- 
-2.45.2
-
+> (I know you haven't added R9A08G045_PD_USBx to the USB nodes yet,
+>  as #power-domain-cells is still 0).
+> 
+>> (From the discussions w/ the internal HW team) The PWRRDY is an (software
+>> controlled) indicator to the USB PHY that power supply is ready.
+>>
+>> From that and [1] I get that both PHYs are powered by the same regulators
+>> (USB_VDD18/USB_VDD33) and the USB PWRRDY signal need to be set before/after
+>> the USB PHY power off/on. Because of this I consider the order doesn't matter.
+>>
+>> [1] https://gcdnb.pbrd.co/images/0a1zYBFZXZVb.png
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
