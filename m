@@ -1,54 +1,60 @@
-Return-Path: <linux-kernel+bounces-427075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181059DFBF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:33:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B8E9DFBDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:28:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2BDC281A8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:33:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CEACB20F4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4171F9A90;
-	Mon,  2 Dec 2024 08:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126221F9EC0;
+	Mon,  2 Dec 2024 08:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IKGE5XsA"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DIs+Woqq"
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166321F9A92
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C151F9AAB
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733128426; cv=none; b=Rm+NEsEz8mD7wPYroWlO3If3ulPqLcA6BHQSkHjGqaEme9BG+kK52eC+UUFSEZ3UZ8JDg5zmMuEb6HJ4IpeumgJclDPjCbbNV9st5yJV3JfarmrAXRrGiSvl7gBpm7U73W6jSoK6VgxMUn7xMIH4LbnpIJJNw8BbAF5m6Q3XvXk=
+	t=1733128076; cv=none; b=LS4m+z/py2thrtVju4zPLmsVeX2zjMhmuBTU9JtFerbcm9m8G1snJ0tp+1s/reRkDiBBusar/4RK07DFDNkkTmHx+tlAPSAsdaw3CzcYByO7UMUXYzVVZwtxWbMUVC9qgVisJobbSY+Ja1Pz/BTU9Ubi3T0YxJdtejeSHheIVAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733128426; c=relaxed/simple;
-	bh=bfLBtlmbc2Pn2pQZpnvTNRR67h7skReTe3s4tW7NDME=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ib8BFRBn1631xeWUOaj0BsDaYRakkeKCLIM+o9XMF+5bViBYxdvgbvG/j1m4jcbr5axqtv45H09zKjulm5nsnzNLut6x5+IryUxEifaoI7U0UYVF6jTZ+thzIdOXUDgv+ahbVjmH+8YHq8+7wwuTs6jkLzU1f+4CKJQHXtO3+JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IKGE5XsA; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1733128076; c=relaxed/simple;
+	bh=fviCnmdIUFTOMUOJ5oaDsl0vCRpjRkdfvT2zH4mYEOc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t0lGBE3t/Eqd9bUjcr8rx8F88hKichV8FCUTR5NnYAjYDB+9MdoYALkVe4cdq8d/9kRqxxxzN9pHmXPtuB+rFVQ7afoda8wMBaZAG+41nqLa/HFGjEKJ93Mi81iz62LVjLRCTlaGGKANgoxENq7KsrbbJshb+kK0dXmcBYAg86c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DIs+Woqq; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=8ijJAaQZJUatxI
-	R/coQwKygqN3dUxNOLIrfB5ZX6Hy0=; b=IKGE5XsAbNOrj1CDhf7VH4vxHo6w8I
-	f0fHbL5iZmBd4L0OK+op7ktcbzMO8q/scicngO2KwohiYouw/SyFSDIKyWsMH187
-	RwRwuWdSz3EMCSBTKEIjkjVB3qKs51KkkDryC7B/VC1ZJTLRFnTq+IXJUJaMyhy3
-	O542z5fdTKQ020xT+oM+ueHWxg6U0VVCJS90Me/BHdUY85XvRup9AIxl2f1cbmVJ
-	Ltb6YlglHRLdL078EMYZczaAxdzY5BXna0PJNVdb0sSYL56q/q2rJ6s+Dyd9UVaz
-	rIveXfzB58/P6HOWONdWvw4fv0JgnTYfGGiMMfsmL0ogZeEoUeWY0RPA==
-Received: (qmail 2439680 invoked from network); 2 Dec 2024 09:27:00 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Dec 2024 09:27:00 +0100
-X-UD-Smtp-Session: l3s3148p1@00T/T0UoYusujnum
+	:mime-version:content-transfer-encoding; s=k1; bh=tPgzHOjQWrK1Ou
+	Ac0tNb88us1ab3NJWe2Xbq9uzEE50=; b=DIs+Woqq1OoGm///fdUWwDjZwh4AzS
+	xxksGIi107pvOiUH9O64udy+UKvsDDjUv7OogGQ7idkr3R1rx6RgCRw+6FdYgqu1
+	sWM8SKabX9iG7oBNK3aoLxMjkTTU58zBhu2sWNfreQTfHrdqHZb3gQ4h7D6O7Pm2
+	FuKhLPw7NZSaTlbbdxeDbHBafVo4VGw6PWlA7Q+8P1lkhRL0FSjBWmxdanL1CbQN
+	K07sSZvTyK9sbRhge9uzhpg30+gbSexvWvLDTbBAUrq51/DJOzJ6E1DihYs7oM1/
+	M3ZnBz/5D8+X91kx5Lj0uB3xNhjLn717ZPAE5gjepQJismb1FKh3fSmA==
+Received: (qmail 2440099 invoked from network); 2 Dec 2024 09:27:48 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Dec 2024 09:27:48 +0100
+X-UD-Smtp-Session: l3s3148p1@YL7fUkUofuYujnum
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH] i2c: keba: drop check because i2c_unregister_device() is NULL safe
-Date: Mon,  2 Dec 2024 09:26:58 +0100
-Message-Id: <20241202082658.9673-1-wsa+renesas@sang-engineering.com>
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Subject: [PATCH] mctp i2c: drop check because i2c_unregister_device() is NULL safe
+Date: Mon,  2 Dec 2024 09:27:13 +0100
+Message-Id: <20241202082713.9719-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,28 +71,23 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 Build tested only. Please apply to your tree.
 
- drivers/i2c/busses/i2c-keba.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/net/mctp/mctp-i2c.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-keba.c b/drivers/i2c/busses/i2c-keba.c
-index 759732a07ef0..7b9ed2592f5b 100644
---- a/drivers/i2c/busses/i2c-keba.c
-+++ b/drivers/i2c/busses/i2c-keba.c
-@@ -464,12 +464,8 @@ static void ki2c_unregister_devices(struct ki2c *ki2c)
- {
- 	int i;
- 
--	for (i = 0; i < ki2c->client_size; i++) {
--		struct i2c_client *client = ki2c->client[i];
--
--		if (client)
--			i2c_unregister_device(client);
--	}
-+	for (i = 0; i < ki2c->client_size; i++)
-+		i2c_unregister_device(ki2c->client[i]);
- }
- 
- static int ki2c_register_devices(struct ki2c *ki2c)
+diff --git a/drivers/net/mctp/mctp-i2c.c b/drivers/net/mctp/mctp-i2c.c
+index d2b3f5a59141..e3dcdeacc12c 100644
+--- a/drivers/net/mctp/mctp-i2c.c
++++ b/drivers/net/mctp/mctp-i2c.c
+@@ -177,8 +177,7 @@ static struct mctp_i2c_client *mctp_i2c_new_client(struct i2c_client *client)
+ 	return mcli;
+ err:
+ 	if (mcli) {
+-		if (mcli->client)
+-			i2c_unregister_device(mcli->client);
++		i2c_unregister_device(mcli->client);
+ 		kfree(mcli);
+ 	}
+ 	return ERR_PTR(rc);
 -- 
 2.39.2
 
