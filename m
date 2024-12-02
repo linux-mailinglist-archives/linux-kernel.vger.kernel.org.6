@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-428189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA789E0B3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:42:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0278E9E0B3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:43:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF26282692
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C558F164115
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1E21DE4CC;
-	Mon,  2 Dec 2024 18:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39DB1DE886;
+	Mon,  2 Dec 2024 18:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hn6DZHe3"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAJ7DNVH"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1EF1DE3AE
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 18:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23A51DE2B9
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 18:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733164934; cv=none; b=o1msoLf5NgPxbISg0uhlBe0QDd+NBMHH4ApxzZJvy6PBdJHRf+0RYqqAeMt7vg6pB2agxAsX2x8sNxPtt/jxjLGhwMPONdeCk0Inw9XGeqwqcvuq9Uep1HFST3B5KhQxoFo90ksSsO1hBs2RwaQFMIIUo/o98V4Ga3/HlUYzFvc=
+	t=1733164938; cv=none; b=UmP27MkjBiiHPorpqkcrym96b9I8C+GAh2c7Fr16laVlXOoBoHLTv8YbsiLfvhyoYvamx8zAtlsQK/zJJvF/SkdhqgzCYkU+phq5MoZ+qjo07/JFwo8SHvzJbA+bYGD6QevPiQ3xIapq8JGtq7Yob6Xr+xybC4ZQUfhCp3bdasM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733164934; c=relaxed/simple;
-	bh=c8ZDldLXg0Q+M0U0cvWmOKA0bxBuSKo/xc83hM0pd2k=;
+	s=arc-20240116; t=1733164938; c=relaxed/simple;
+	bh=7xMcIoyfw2WhDIAFKEZLat3eNgZVj3iRjhG+H08KVv4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ohf21h1hC+EYATNSZSUyYZQlAo/ghOGeI4OWyOe35Tmjb+QbMYsCeMieV3QdBuj7CRm3KYeIvxmCZEFheS4oAsGUi7UyTJKbr+1RBEX/I5RewJzpePnMdpZ9zIE+j9v598JEEgDwC5/WaKIr9TzYSYKdRNwyjiChzPVTXauc1Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hn6DZHe3; arc=none smtp.client-ip=209.85.215.170
+	 MIME-Version; b=DYcHoJBKGah5U+RJRUe+SaJvvy+/2oN8OfcXbKddS5aRhWPSuZmMIrqV0Mr9HaXBFdmZ7ajGsWlDcVEFh97r36Bs0gHKjVNp4dNyUtuI2jb2rfvK0jo3u5ychSPjABngMDmehAx23UfwPzGaqTPgF/rwOCj8O76+25AVl8Qrlr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JAJ7DNVH; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7fbbe0fb0b8so3390779a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 10:42:12 -0800 (PST)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-724fc1aaa91so4186490b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 10:42:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733164932; x=1733769732; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733164936; x=1733769736; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=zPi/40j9fg7YjPYY/QjOr+/MPbDnr/kKPaDCNQF5gDU=;
-        b=hn6DZHe3bXWyhjZBsB9Un6UIXx2rVpx58rlKiSRyz1kB2cD2BT1RwTSKvz3X5KjXzH
-         +5JtxtXjrawMNGPpFsshLEUzIfC/pli3bCTquRfKsbwk/SBPTL8/dOHrLqGgy2ib3xI0
-         e8n2nVTe8KZ2jzHiFpazhwu8JXW/+t3ZwC0+Ztg3OgpwIDJd4671vmQUOaYEdKpGxuNi
-         jRuRFSDQubAP4rrtzl2p5NBkxHKBozImkMGsAyt+K/MJQ3TTGxcC5rQxf6chKBQCokE2
-         BHQWXmv+U87NUft72EUgdW5aEEkGbEWccbbPTVhlRXrQoLl3ikFANCBPhGG6VT3sGOEY
-         jIdA==
+        bh=bgfYlxq8M7pj/EQVq83uOmq930B/5yWrzKvSMuqYhjs=;
+        b=JAJ7DNVHcSGWICQsHg/KNKBfta+N95ILEholS4MSG+W92ato4WjQAuun24cIGSTy7I
+         teMozxFj7kieQMeE88RdUEBUBwymXfo+Gja2hTDJiwsIZLQGMWA6hKALMtOZJghuHqHe
+         7bwRve59z8ZsHiVC7XXItswo3MpoEhmE6R5CiTp/FH0f9Gf4IHp3RF/oZL3JHh8GpcCc
+         E/PVjmsB8IWF7Be+jonbhkQxxdNxu3mpmKW96wn2IOTtNCEWHgTKAWhivtdQIuLZ02/f
+         0jXiLVnmwaNduMMokdNqIUGw3I/+ZZhPxsWAS3ruHCfaVsnHzE0aEjSLJWWXRvevrKJr
+         iG2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733164932; x=1733769732;
+        d=1e100.net; s=20230601; t=1733164936; x=1733769736;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zPi/40j9fg7YjPYY/QjOr+/MPbDnr/kKPaDCNQF5gDU=;
-        b=vTlGm2a6CHqGoYYY4leaFScqguX4PGym5DPni2w9U9xGu5R/h/mkbZq8+iTHfVp8C+
-         cRlC1nXz/gISR6wx1gEazuCOhy/WQS7LHcaqMJmGyqN42KPxaYKsVn7l8WM1rZuYv2Qj
-         xFbMlB/alyVkN9v7UBb7wTw5P2VC4VwsgX9WRWpWodPiIQL/VelXSRzM8aqoNVpNZbru
-         AsN1zF2jZ6g9KV2UBoHPbM7ckNN8+mDxHRPYnpLHlT9SuzsAwafxd0+mEZ+Jbn1Tcjvd
-         4UPxLYOn0imoIB/5dC4cbGcZKokmnove4ZoQqYlDFHRLFlp2RkywXTbUU03KfR9pLfey
-         uX0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWptr7/s/1nuWhpqho1ziXwFKOpyKcIwpqDqZNRyCfSQxHQpxxfTF2kk+wOvwzbAfjd4iXCDzPPps9RT1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOPvY5NPcHXB2nOm4A8vx7CRQwthEE9r+mDJYLoTntOoQCz20L
-	zqsrZLw9WLWTMNFe1n8/zSSdMawyiiSQuYgNq77w1A6QEzEcrWoE
-X-Gm-Gg: ASbGncvakUCyd18eARIVqSU3pmLZaPIZevxbma/SY7cGfKdTmmmeAUJIzI11GkaHpXe
-	b7TGsWtz2ulSaV/plRdK3TZU1lDjOt626LqH3ZtKE+4AhVmNsaruXvUhSl5+H2oX7IkA/STEnma
-	A6bD4gJHJH1Efv+jk1pvDlEQrde1PyLg2/F79xrdkseWdWlErYXI7VW604DpCL6ylSvXLO9Qyx9
-	6oBJe2/3QCaZUXj42fCxhUK0tVrNnGWL/J0YbBHjxSEl+wiI4YYN7pDLGYoa2Wohc6N9UY=
-X-Google-Smtp-Source: AGHT+IE35vF16FjRydL5iBcJInocVBicSo1ZjyULb2W4jf/KJQsy63zCROjVa8zaUbfc3UsLb+zrGQ==
-X-Received: by 2002:a05:6a20:7350:b0:1e0:c378:6f5b with SMTP id adf61e73a8af0-1e0e0b71f30mr31209157637.38.1733164931986;
-        Mon, 02 Dec 2024 10:42:11 -0800 (PST)
+        bh=bgfYlxq8M7pj/EQVq83uOmq930B/5yWrzKvSMuqYhjs=;
+        b=KAT/U15iJ9CGf50YGXJVzFsTHUrOUyZKRDHYRBD006rzB/36XRvQbjYaDK3lVuBX51
+         gjBCaQ1jS/0QKuWRZH7yExD9dVQYAv2OqAmaWEeDnYVRva34dJMuE0N9QHd/CWcIV78d
+         9K7ADMeVmjNbhXj+NrATv5f2/gizYsb2Yk8FTtx2vtGLkpEuT2dVYso+m4v4NkJPz4Cy
+         UvR1LTsZJrz33q/q4KZ4IcKxrhQRkJkGMf8dL381dfln0hNkA6SVtVA31ozhjU0idjYT
+         LYdWu/gGZjw255K1uqqOe7rmj8BS48ufEjCQdQoVt2WZ0rQboBmlbAmpJVjKcBRwcO+8
+         0PCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcya69si12NAi4wKdyEv1+Fp6BNfNWraZhk0QKmt8pZ33bjHNrAqBuu2C1Fitw1uyzWJeH8H2HrE6CjOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+wHHvltjX4p1pKdQSg37i0vvZPslM+8x0MlcA+X5w3Gc402x8
+	Kab6dhWl1G5v/LaLlJgrjlvz6BzTjz8c8q/t2L8pREKmHcwC112l
+X-Gm-Gg: ASbGnctcAJuV1SSYfdmd/IDNvFHrUtAizXHbKFNvKl0D0k3q207TTnW/6zD5nmIOmrW
+	GcScMitnx7f8wwpw7uNvYjstvigpHJRxbcraWAD8d3n4JeeMNAKf/LiCSM1tSiEVrWrHjAX1RzN
+	VA9zFGFnA9ljyJPI1cZRXzluo7zdI9mCx4LGjHeyjJEYZllm+qkkbx6WO7iVel2sdmWz8c2iBsf
+	zKs6qFuN4mvZguUpVDHfbbG2BYcG7smPT8sLXwGiob6xUgUdEXcmJG/6JERnoWZ5P7AXtA=
+X-Google-Smtp-Source: AGHT+IEeppgHPbYXo/4IKwmclLHEdajSYeynVAjocWeV2X5vj8HNw3SKD3ti5afx7GbXPWkD1M5KNQ==
+X-Received: by 2002:a05:6a00:1c8d:b0:725:3bd4:9b56 with SMTP id d2e1a72fcca58-7253bd49c85mr31675949b3a.5.1733164936073;
+        Mon, 02 Dec 2024 10:42:16 -0800 (PST)
 Received: from KASONG-MC4.tencent.com ([106.37.120.120])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fb7d5sm8849781b3a.94.2024.12.02.10.42.08
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fb7d5sm8849781b3a.94.2024.12.02.10.42.12
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 02 Dec 2024 10:42:11 -0800 (PST)
+        Mon, 02 Dec 2024 10:42:15 -0800 (PST)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -84,9 +84,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Michal Hocko <mhocko@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [PATCH 1/4] mm, memcontrol: avoid duplicated memcg enable check
-Date: Tue,  3 Dec 2024 02:41:51 +0800
-Message-ID: <20241202184154.19321-2-ryncsn@gmail.com>
+Subject: [PATCH 2/4] mm/swap_cgroup: remove swap_cgroup_cmpxchg
+Date: Tue,  3 Dec 2024 02:41:52 +0800
+Message-ID: <20241202184154.19321-3-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241202184154.19321-1-ryncsn@gmail.com>
 References: <20241202184154.19321-1-ryncsn@gmail.com>
@@ -101,28 +101,68 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-mem_cgroup_uncharge_swap() implies a mem_cgroup_disabled() check,
-which is already checked by the caller here. Skip it by calling
-__mem_cgroup_uncharge_swap() directly.
+This function is never used after commit 6b611388b626
+("memcg-v1: remove charge move code").
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
 ---
- mm/memcontrol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/swap_cgroup.h |  2 --
+ mm/swap_cgroup.c            | 29 -----------------------------
+ 2 files changed, 31 deletions(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 7b3503d12aaf..d3d1eb506eee 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4615,7 +4615,7 @@ void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, unsigned int nr_pages)
- 		 * let's not wait for it.  The page already received a
- 		 * memory+swap charge, drop the swap entry duplicate.
- 		 */
--		mem_cgroup_uncharge_swap(entry, nr_pages);
-+		__mem_cgroup_uncharge_swap(entry, nr_pages);
- 	}
+diff --git a/include/linux/swap_cgroup.h b/include/linux/swap_cgroup.h
+index ae73a87775b3..d521ad1c4164 100644
+--- a/include/linux/swap_cgroup.h
++++ b/include/linux/swap_cgroup.h
+@@ -6,8 +6,6 @@
+ 
+ #if defined(CONFIG_MEMCG) && defined(CONFIG_SWAP)
+ 
+-extern unsigned short swap_cgroup_cmpxchg(swp_entry_t ent,
+-					unsigned short old, unsigned short new);
+ extern unsigned short swap_cgroup_record(swp_entry_t ent, unsigned short id,
+ 					 unsigned int nr_ents);
+ extern unsigned short lookup_swap_cgroup_id(swp_entry_t ent);
+diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
+index f63d1aa072a1..1770b076f6b7 100644
+--- a/mm/swap_cgroup.c
++++ b/mm/swap_cgroup.c
+@@ -45,35 +45,6 @@ static struct swap_cgroup *lookup_swap_cgroup(swp_entry_t ent,
+ 	return &ctrl->map[offset];
  }
  
+-/**
+- * swap_cgroup_cmpxchg - cmpxchg mem_cgroup's id for this swp_entry.
+- * @ent: swap entry to be cmpxchged
+- * @old: old id
+- * @new: new id
+- *
+- * Returns old id at success, 0 at failure.
+- * (There is no mem_cgroup using 0 as its id)
+- */
+-unsigned short swap_cgroup_cmpxchg(swp_entry_t ent,
+-					unsigned short old, unsigned short new)
+-{
+-	struct swap_cgroup_ctrl *ctrl;
+-	struct swap_cgroup *sc;
+-	unsigned long flags;
+-	unsigned short retval;
+-
+-	sc = lookup_swap_cgroup(ent, &ctrl);
+-
+-	spin_lock_irqsave(&ctrl->lock, flags);
+-	retval = sc->id;
+-	if (retval == old)
+-		sc->id = new;
+-	else
+-		retval = 0;
+-	spin_unlock_irqrestore(&ctrl->lock, flags);
+-	return retval;
+-}
+-
+ /**
+  * swap_cgroup_record - record mem_cgroup for a set of swap entries
+  * @ent: the first swap entry to be recorded into
 -- 
 2.47.0
 
