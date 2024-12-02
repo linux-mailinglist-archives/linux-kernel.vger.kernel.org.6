@@ -1,136 +1,183 @@
-Return-Path: <linux-kernel+bounces-427642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F269E0428
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:57:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D59A167693
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:57:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC05202F96;
-	Mon,  2 Dec 2024 13:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TN/+P2xt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393549E0433
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:00:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AA1201266;
-	Mon,  2 Dec 2024 13:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6FF8282839
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:00:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459112036FC;
+	Mon,  2 Dec 2024 14:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAp0ZNOx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1381D90DB;
+	Mon,  2 Dec 2024 14:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733147841; cv=none; b=pQ96Gc+ii+sehxncXTCNapJkAfUiFAzCsOuktN2MnUbps6/bWIVk5oDpasnfdgBlzWfnW64P6WjMui4aRe25XI4JdM6t+4y9l5DgVuCwvY9gyzeUItXerfyUx6ilsIwJef16CCpAxj/N9ouMDxBiiQL3qsH47b5A5NQvhB5bGtU=
+	t=1733148028; cv=none; b=TS3O/kMGBIQaqztXpH+Wh9H8oBuHUf0bbg6rffRxm83K+l6pEbTByiWxbrSyBW93w3XtKTSFY1tZgHnia32kBZImXJ8ycXv8snseM5qd07DFB7qRD49MnVuhClPm7xgPuu0UB/nZscnM5LL86tNnldrWa2XQCbox9qZo8stuT2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733147841; c=relaxed/simple;
-	bh=az3ST4yKQO1us9La4XNRz5pm1652UmW7o5mq2zeYkKQ=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=hb5cZE3uNDUarlLxqHAiq2Zp+7N8Wro1K5HeDPHs7wjUZ5b335B/Am2Ook7ZJ0ZJjTY8PYn3PP+Fte4R/7i9ef1M3Pr0XwKSl8BwGlfRexI9jyYGFo+WB4ZRjInF9nSySNnBTHT7sHUE6QX9QtgE06Vr7Lhy1phf1Yfcj0HSSjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TN/+P2xt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28O112030853;
-	Mon, 2 Dec 2024 13:57:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=ryzM+UHBU4Bb
-	aXP1dpvs3Okdt/gwCxSKTmxPF2TiCEs=; b=TN/+P2xtwgd8+hB5c9RDyii87SuI
-	4dYw31An+ay7YiO6XG/I3AkvQ7wm4lIfYdfrUgX0JGhEPru2E/mil3X+zQeTYF0i
-	U18HrboMoKtGoqnp0RLx4OnFIixaZdPrf7Hv06T8jx0NSkgC3la5KWBstYfX+N1p
-	oW4WKu176sf1VXhY1AzHH+T5EOPtufG1vVL/Xl7ks+ziirs7LE9sk2aOpqoMhjcl
-	UR9RkTDh3zZfhVZ0s5G1rWcOn3cBK2m4+lywBhGwuUA/++qJLVmpw9cuJc1InQhZ
-	Kr+Tuh2vZt59pmJuIeV7oDQIc9GhXPjpyPadW7MIkIg70W+rMJtbnZF2rw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437t1gd22b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 13:57:16 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2DrBFq027303;
-	Mon, 2 Dec 2024 13:57:15 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTP id 437usm05u0-1;
-	Mon, 02 Dec 2024 13:57:15 +0000
-Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4B2DqVrF025688;
-	Mon, 2 Dec 2024 13:57:15 GMT
-Received: from hu-devc-lv-u18-c.qualcomm.com (hu-vtanuku-lv.qualcomm.com [10.47.206.121])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTP id 4B2DvEP4000607;
-	Mon, 02 Dec 2024 13:57:15 +0000
-Received: by hu-devc-lv-u18-c.qualcomm.com (Postfix, from userid 410733)
-	id DB3065005B3; Mon,  2 Dec 2024 05:57:14 -0800 (PST)
-From: Visweswara Tanuku <quic_vtanuku@quicinc.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_vtanuku@quicinc.com
-Subject: [PATCH v1 RESEND] slimbus: messaging: Free transaction ID in delayed interrupt scenario
-Date: Mon,  2 Dec 2024 05:57:08 -0800
-Message-Id: <20241202135708.26219-1-quic_vtanuku@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qpoGXw126fHd_fJVeM4DByAYtL9gNSR9
-X-Proofpoint-ORIG-GUID: qpoGXw126fHd_fJVeM4DByAYtL9gNSR9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 mlxscore=0 malwarescore=0
- spamscore=0 priorityscore=1501 clxscore=1015 suspectscore=0
- mlxlogscore=876 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020121
+	s=arc-20240116; t=1733148028; c=relaxed/simple;
+	bh=CI1Glq9VI/L3LuNkj/dEEMHH9MDZKbIsGpsW/ROzcn4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=owZGwDS8IFrLTW8+mu1QOsL0GVdRcApz8DbaQXEi5XG0LHyu17buHQeoyYt6nsEiOAwAPNbfgZDQPjt7hctyDmr7U7MJ1Jl33NM0GE6iXv+ZLCoCb5yG9RPhkyOtnSMbvM3bTHWCihwpwpweDssCt0rbgxjPyEEgAGX0XxUtIgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAp0ZNOx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6850BC4CED1;
+	Mon,  2 Dec 2024 14:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733148026;
+	bh=CI1Glq9VI/L3LuNkj/dEEMHH9MDZKbIsGpsW/ROzcn4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=gAp0ZNOxz5p8NWTE57a98FY5SHQyiYCmcVXKMMExsmA4we/6A/l30r06G2gdXAwgQ
+	 2IGl1+8dHV8tqkvJOvExBSS4+Wq0xEbbJscpwwEllMlbUXWw+pvmK7j4hiqW1DhJ5P
+	 IjlgKQvW7OJAa3FOKh9Hua0/Uof6H8sR1+1ZuXVSVPR+uO2FY1qphQkr8KUlEdlauk
+	 mNEE7QkRC55WLejYZOri9uUi0L+CqI+7kiKDYAmZeojDqc7V0IRXW86RwyHMqTfpGU
+	 8RJNLTmRuqAOqBwXSi0WXe04QR7u17FmdmuPIheAUt2Rfrpy6O2aQgJfW+8uhzao4y
+	 24lARYzq0EELw==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH v6 0/8] blk: refactor queue affinity helpers
+Date: Mon, 02 Dec 2024 15:00:08 +0100
+Message-Id: <20241202-refactor-blk-affinity-helpers-v6-0-27211e9c2cd5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGi9TWcC/4XQzY7CIBQF4FcxrAfDb2ld+R4TF1Aulti0DlSiM
+ X33uWpmphMXZXduyHe43EmGFCGT3eZOEpSY4zhgqD42pO3scAQaPWYimFCs4YImCLadxkRdf6I
+ 2hDjE6UY76M+QMjWsblyjnXKcETTOeD1en/7n4ZUTfF2wZvobdjEjeHu+ofDH9KdOrtQVThmtg
+ ek6GGMDF/t8ybD1QB5uEb8Wx7NmCbSCrJj31gvJ7f4EaYB+O6bji5NLbu0nikROG+lCa1nrfP3
+ GqSW3uqlCznvprOUgKhPeOL3k9BqnkWuVETb4WvnmPzfP8zf1SNe4GQIAAA==
+X-Change-ID: 20240912-refactor-blk-affinity-helpers-7089b95b4b10
+To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, John Garry <john.g.garry@oracle.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, virtualization@lists.linux.dev, 
+ linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
+ mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
+ storagedev@microchip.com, linux-nvme@lists.infradead.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-In case of interrupt delay for any reason, slim_do_transfer()
-returns timeout error but the transaction ID (TID) is not freed.
-This results into invalid memory access inside
-qcom_slim_ngd_rx_msgq_cb() due to invalid TID.
+I've rebased and retested the series on top of for-6.14/block and updated
+the docummentation as requested by John.
 
-Fix the issue by freeing the TID in slim_do_transfer() before
-returning timeout error to avoid invalid memory access.
+Original cover letter:
 
-Call trace:
-__memcpy_fromio+0x20/0x190
-qcom_slim_ngd_rx_msgq_cb+0x130/0x290 [slim_qcom_ngd_ctrl]
-vchan_complete+0x2a0/0x4a0
-tasklet_action_common+0x274/0x700
-tasklet_action+0x28/0x3c
-_stext+0x188/0x620
-run_ksoftirqd+0x34/0x74
-smpboot_thread_fn+0x1d8/0x464
-kthread+0x178/0x238
-ret_from_fork+0x10/0x20
-Code: aa0003e8 91000429 f100044a 3940002b (3800150b)
----[ end trace 0fe00bec2b975c99 ]---
-Kernel panic - not syncing: Oops: Fatal exception in interrupt.
+These patches were part of 'honor isolcpus configuration' [1] series. To
+simplify the review process I decided to send this as separate series
+because I think it's a nice cleanup independent of the isolcpus feature.
 
-Signed-off-by: Visweswara Tanuku <quic_vtanuku@quicinc.com>
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
 ---
- drivers/slimbus/messaging.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Changes in v6:
+- collected tags
+- Updated documented
+- rebased to for-6.14/block
+- Link to v5: https://lore.kernel.org/r/20241115-refactor-blk-affinity-helpers-v5-0-c472afd84d9f@kernel.org
 
-diff --git a/drivers/slimbus/messaging.c b/drivers/slimbus/messaging.c
-index 242570a5e565..455c1fd1490f 100644
---- a/drivers/slimbus/messaging.c
-+++ b/drivers/slimbus/messaging.c
-@@ -148,8 +148,9 @@ int slim_do_transfer(struct slim_controller *ctrl, struct slim_msg_txn *txn)
- 	}
- 
- 	ret = ctrl->xfer_msg(ctrl, txn);
--
--	if (!ret && need_tid && !txn->msg->comp) {
-+	if (ret == -ETIMEDOUT) {
-+		slim_free_txn_tid(ctrl, txn);
-+	} else if (!ret && need_tid && !txn->msg->comp) {
- 		unsigned long ms = txn->rl + HZ;
- 
- 		time_left = wait_for_completion_timeout(txn->comp,
+Changes in v5:
+- dropped the irq_get_affinity callback from struct device_driver
+  again.
+- s/blk_mq_hctx_map_queues/blk_mq_map_hw_queues/
+- collected tags
+- Link to v4: https://lore.kernel.org/r/20241113-refactor-blk-affinity-helpers-v4-0-dd3baa1e267f@kernel.org
+
+Changes in v4:
+- added irq_get_affinity callback to struct device_driver
+- hisi_sas use dev pointer directly from hisi_hba.
+- blk_mq_hctx_map_queues: ty irq_get_affinity callback
+  from device_driver first then from bus_type
+- collected tags
+- fixed typos
+- Link to v3: https://lore.kernel.org/r/20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org
+
+Changes in v3:
+- dropped the additinal argument in blk_mq_hctx_map_queues.
+  leave open coded version in hisi_sas_v2.
+- splitted "blk-mp: introduce blk_mq_hctx_map_queues" patch into
+  three patches.
+- dropped local variable in pci_device_irq_get_affinity
+- Link to v2: https://lore.kernel.org/r/20241111-refactor-blk-affinity-helpers-v2-0-f360ddad231a@kernel.org
+
+Changes in v2:
+- added new callback to struct bus_type and call directly the affinity
+  helpers from there.
+- Link to v1: https://lore.kernel.org/r/20240913-refactor-blk-affinity-helpers-v1-0-8e058f77af12@suse.de
+
+Changes in v1:
+- renamed blk_mq_dev_map_queues to blk_mq_hctx_map_queues
+- squased 'virito: add APIs for retrieving vq affinity' into
+  'blk-mq: introduce blk_mq_hctx_map_queues'
+- moved hisi_sas changed into a new patch
+- hisi_sas use define instead of hard coded value
+- moved helpers into their matching subsystem, removed
+  blk-mq-pci and blk-mq-virtio files
+- fix spelling/typos
+- fixed long lines in docu (yep new lines in brief descriptions are
+  supported, tested ti)
+- based on the first part of
+  [1] https://lore.kernel.org/all/20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de
+
+---
+Daniel Wagner (8):
+      driver core: bus: add irq_get_affinity callback to bus_type
+      PCI: hookup irq_get_affinity callback
+      virtio: hookup irq_get_affinity callback
+      blk-mq: introduce blk_mq_map_hw_queues
+      scsi: replace blk_mq_pci_map_queues with blk_mq_map_hw_queues
+      nvme: replace blk_mq_pci_map_queues with blk_mq_map_hw_queues
+      virtio: blk/scsi: replace blk_mq_virtio_map_queues with blk_mq_map_hw_queues
+      blk-mq: remove unused queue mapping helpers
+
+ block/Makefile                            |  2 --
+ block/blk-mq-cpumap.c                     | 37 +++++++++++++++++++++++++
+ block/blk-mq-pci.c                        | 46 -------------------------------
+ block/blk-mq-virtio.c                     | 46 -------------------------------
+ drivers/block/virtio_blk.c                |  4 +--
+ drivers/nvme/host/fc.c                    |  1 -
+ drivers/nvme/host/pci.c                   |  3 +-
+ drivers/pci/pci-driver.c                  | 14 ++++++++++
+ drivers/scsi/fnic/fnic_main.c             |  3 +-
+ drivers/scsi/hisi_sas/hisi_sas.h          |  1 -
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    |  4 +--
+ drivers/scsi/megaraid/megaraid_sas_base.c |  3 +-
+ drivers/scsi/mpi3mr/mpi3mr.h              |  1 -
+ drivers/scsi/mpi3mr/mpi3mr_os.c           |  2 +-
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c      |  3 +-
+ drivers/scsi/pm8001/pm8001_init.c         |  2 +-
+ drivers/scsi/pm8001/pm8001_sas.h          |  1 -
+ drivers/scsi/qla2xxx/qla_nvme.c           |  3 +-
+ drivers/scsi/qla2xxx/qla_os.c             |  4 +--
+ drivers/scsi/smartpqi/smartpqi_init.c     |  7 ++---
+ drivers/scsi/virtio_scsi.c                |  3 +-
+ drivers/virtio/virtio.c                   | 19 +++++++++++++
+ include/linux/blk-mq-pci.h                | 11 --------
+ include/linux/blk-mq-virtio.h             | 11 --------
+ include/linux/blk-mq.h                    |  2 ++
+ include/linux/device/bus.h                |  3 ++
+ 26 files changed, 92 insertions(+), 144 deletions(-)
+---
+base-commit: 22db180127a901ce41aa14d74da2e2eb452540b1
+change-id: 20240912-refactor-blk-affinity-helpers-7089b95b4b10
+
+Best regards,
 -- 
-2.17.1
+Daniel Wagner <wagi@kernel.org>
 
 
