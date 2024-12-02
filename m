@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-427114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 735EB9DFCDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:18:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB2B9DFCE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE5CB21378
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B0B281DE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B37E1FA15D;
-	Mon,  2 Dec 2024 09:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D1B1FA17E;
+	Mon,  2 Dec 2024 09:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KLVCsCZy"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XN0mihKq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6948F1D6DB5
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCFB1FA168
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733131087; cv=none; b=JlSCYgqIkVY52P1NF+uruofjG4233IoYOM7CcUW0uOYT/jX+1f2E+F/DE/SnI0GfVUtuFp0YaMm0IBUiUix/t11+3MH7R7J/aK+fxcJzaTXC9CiKJHTuczB3ADZ2NbAAo8Q2Fc5bCb+W03PfCgm95ZfQfXWdpenaItHSzzSGsEQ=
+	t=1733131165; cv=none; b=bAFAE+PBIhXlI/FvjZX4HMqNrSGWwvo647NvHhfwk/+ZzTTqbo7vMYLgVPMWJQFyga2DgQrMXzclpnYZ9Q3aMj1LNQUTK8D2lKCjvXePbqm/WhSmJwHngJAKOwOlK8Az9IAWVYUpH+DhR0lyIT7WMpl4FHNKwUHqoFGjr/aWb+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733131087; c=relaxed/simple;
-	bh=S/nzLrLq8GsDZK1jqvO0PeYLnDGOtFpRQ8POvEjJxL4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BEPUNb+rdwc8n9x79EaI5XDMBkLeRdBKZC7zne4SnHrJxtnliijmnrhH3s3qVX8MJ7iFM11M68VSJV9MHrY7CGZ7R8piHQu6VJJXaH9r8/7AyQpA3pyfWfZbWqimLY+GVlnSQSyiBuSsI7Z3QNkwu138efswGezUsNXNR6XqWZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KLVCsCZy; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2eeb64f3588so654132a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:18:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733131085; x=1733735885; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ccSIPqCm+FoEQbw662vqcdHVO6YT4cgJWGVzikvkskk=;
-        b=KLVCsCZy4n6SqUo86itGydA+S3q7Tw98OPqqdmBFeDBdv8z3cCz1fubEhcrNWneoEO
-         Xn3dr0R0eKpxvvDwuHQalPpNEDlXTa8NkdYJAWlYfh9tdxbO2oNIEcHm7eThQqW3mGC2
-         AL/KJIslMQsANlrgjrrHqGWZq0uytYDXSCupEWRFR0JPzwvWnWhX3Cgng0lopGVKLRPJ
-         K+/5aPpR3SaeB65Xxd+wqgzVIDp5fx9o1kGJLw0G3vJYQCKiEGJijWcmrYKRWY6O+XBf
-         iLa+cx1l5nJ5jCIf62PQ7tBKfdCLh7VKGZN/NLSfOyXgclTBaGGreMqLz7UFIg5S0Y3v
-         TbYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733131085; x=1733735885;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ccSIPqCm+FoEQbw662vqcdHVO6YT4cgJWGVzikvkskk=;
-        b=odp/sjyb9ljupZ5c5fjZZuOk1Oy/xAa8N6fCCsYS6S+t7CGJEj/p/DVSigdi4CZhRi
-         BTS0ZcTRR2mC1aFUERSkgkAT4llSnotSdWwuORnVF+TvO7EwM56VxuU0h7x1n3pEkSQn
-         OgT/vYn10m+HBa8YSnELgpHHMf3HHHUOaweygmQBPHyoy6k9UDqgtBBjFUhKVnd5xavZ
-         546Z0rLNmRTNfckFR+e3G997CthZ+tgMCGzq2HB41gFisVQpPrGZz2V9HfKajzuZzAwZ
-         pIfGjLgCIHNQ+NE6hQSctcGw2vIO0/gYs+5fjoHz9vLbyH6r0IXV5GzorJDYFcc0w+aT
-         FCYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUg9c+hnsrIOWGeSvMoA6HMHzOU+6wpXcBzRMjDiPBaDSJiR8AqFe6gWAY/inuQM7isC3wEYTPAk8X2fS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvVXfPO0HuOoFAwXvStsD3r7D1yA02T0b1SAyM4WWTr7aXIFgV
-	qSXZGGrz/XqvK7KhztPXHy6Zyk0ditsm2rFgOMTlkJn66btCTyUCInFYT3WNywealT+Ylg8TStc
-	kM4vuQ5S94xwtUapZ67s+gekYPFSwBDahSdADhA==
-X-Gm-Gg: ASbGncv3b8pw3x7DF05hX/SRS4tF6bzh3ZyvkZAAjkbN/uwi8R6h7NIWTgpcuWvXKNw
-	nqqTQ8SYGyRZAWnvJQicxHXZIEYCbx6coHq6R+DCyBoHlgf7NxCGKpf6puHvu
-X-Google-Smtp-Source: AGHT+IGJEK1PPkajams4wbaAVGv4vMdkj0aENq1aK/vjQY+GnCQTfm/KAkOxJsACki2zF8flFWzVkJXCNdl09xVHlKs=
-X-Received: by 2002:a17:90b:2883:b0:2ee:c04a:4276 with SMTP id
- 98e67ed59e1d1-2eec04a44e6mr5121422a91.5.1733131084587; Mon, 02 Dec 2024
- 01:18:04 -0800 (PST)
+	s=arc-20240116; t=1733131165; c=relaxed/simple;
+	bh=cgmZMlBMXzhIUq6OF7CNNMXyvUa8aucr3LtehGena20=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CPHDsiRn0W0JLQujg0eBzC0UH2YTnwVGzBTK16o7OwZC0xSo1PXWProyUZ6nhonvCMlVp3ojLTNgG281gYgbFvd123/zJfzwgImnIKHZIXNNlJUkz7OmtZqtRylRFSU0+1KuKIblZJc1KPVBibOnfqNFZPTsRLgMI9h2QkDSJnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XN0mihKq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733131162;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pJLX/DjPT3GcTzak124rApB1YA2PHiuhhYQM4Pn37+U=;
+	b=XN0mihKq7bSxHWLwQeprd3DEsxxXrRwjAdEnYiskbiya7iyCwLHQl4bN8UX8fsyZ5xXfa0
+	PF74lu5JBWQxf9FtNdihvgvETr/u7ktWYbOToYyZAqEeNhJzjDhT1bYHbqmt6Ggpi+oikx
+	DxRN50oz6S+YJ7xV2GGMnSfEeGT9VLc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-424-rQ6mmeXWP1Wn6wQRCo4ZFQ-1; Mon,
+ 02 Dec 2024 04:19:17 -0500
+X-MC-Unique: rQ6mmeXWP1Wn6wQRCo4ZFQ-1
+X-Mimecast-MFC-AGG-ID: rQ6mmeXWP1Wn6wQRCo4ZFQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ADA5A1955D8D;
+	Mon,  2 Dec 2024 09:19:13 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.188])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7F3151956089;
+	Mon,  2 Dec 2024 09:19:10 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: kvalo@kernel.org,
+	jjohnson@kernel.org,
+	linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: quic_cjhuang@quicinc.com,
+	jtornosm@redhat.com,
+	Vladimir Benes <vbenes@redhat.com>
+Subject: [PATCH] wifi: ath11k: allow APs combination when dual stations are supported
+Date: Mon,  2 Dec 2024 10:18:30 +0100
+Message-ID: <20241202091858.200773-1-jtornosm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241129161756.3081386-1-vincent.guittot@linaro.org> <227863d758551e75cd0807a5f1f31916d695205b.camel@gmx.de>
-In-Reply-To: <227863d758551e75cd0807a5f1f31916d695205b.camel@gmx.de>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 2 Dec 2024 10:17:53 +0100
-Message-ID: <CAKfTPtDwS4+t0Fnacre6dtxKdxtrgua_2v=s7pZHqDsYoMMxFA@mail.gmail.com>
-Subject: Re: [PATCH 0/10 v2] sched/fair: Fix statistics with delayed dequeue
-To: Mike Galbraith <efault@gmx.de>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
-	kprateek.nayak@amd.com, pauld@redhat.com, luis.machado@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Sun, 1 Dec 2024 at 14:30, Mike Galbraith <efault@gmx.de> wrote:
->
-> Greetings,
->
-> On Fri, 2024-11-29 at 17:17 +0100, Vincent Guittot wrote:
-> > Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until its
-> > lag has elapsed. As a result, it stays also visible in the statistics that
-> > are used to balance the system and in particular the field h_nr_running.
-> >
-> > This serie fixes those metrics by creating a new h_nr_queued that tracks
-> > all queued tasks. It renames h_nr_running into h_nr_runnable and restores
-> > the behavior of h_nr_running i.e. tracking the number of fair tasks that
-> >  want to run.
-> >
-> > h_nr_runnable is used in several places to make decision on load balance:
-> >   - PELT runnable_avg
-> >   - deciding if a group is overloaded or has spare capacity
-> >   - numa stats
-> >   - reduced capacity management
-> >   - load balance between groups
->
-> I took the series for a spin in tip v6.12-10334-gb1b238fba309, but
-> runnable seems to have an off-by-one issue, causing it to wander ever
-> further south.
->
-> patches 1-3 applied.
->   .h_nr_runnable                 : -3046
->   .runnable_avg                  : 450189777126
+Since commit f019f4dff2e4 ("wifi: ath11k: support 2 station interfaces"),
+if dual stations are supported for a device, we can not configure more that
+one AP and/or DFS cannot be enabled.
 
-Yeah, I messed up something around finish_delayed_dequeue_entity().
-I'm' going to prepare a v3
+Enable this by creating a new parameter (ignore_support_dual_stations) to
+ignore this feature if it is convenient. Default behavior is to support
+dual stations if possible.
 
->
-> full set applied.
->   .h_nr_runnable                 : -5707
->   .runnable_avg                  : 4391793519526
->
->         -Mike
+Reported-by: Vladimir Benes <vbenes@redhat.com>
+Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+---
+ drivers/net/wireless/ath/ath11k/core.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+index be67382c00f6..55c7a55d85ff 100644
+--- a/drivers/net/wireless/ath/ath11k/core.c
++++ b/drivers/net/wireless/ath/ath11k/core.c
+@@ -37,6 +37,12 @@ bool ath11k_ftm_mode;
+ module_param_named(ftm_mode, ath11k_ftm_mode, bool, 0444);
+ MODULE_PARM_DESC(ftm_mode, "Boots up in factory test mode");
+ 
++static bool ath11k_ignore_support_dual_stations;
++module_param_named(ignore_support_dual_stations,
++		   ath11k_ignore_support_dual_stations, bool, 0644);
++MODULE_PARM_DESC(ignore_support_dual_stations,
++		 "Ignore the support for dual stations to support other combinations");
++
+ static const struct ath11k_hw_params ath11k_hw_params[] = {
+ 	{
+ 		.hw_rev = ATH11K_HW_IPQ8074,
+@@ -2162,6 +2168,9 @@ static int ath11k_init_hw_params(struct ath11k_base *ab)
+ 	}
+ 
+ 	ab->hw_params = *hw_params;
++	if (ab->hw_params.support_dual_stations &&
++	    ath11k_ignore_support_dual_stations)
++		ab->hw_params.support_dual_stations  = false;
+ 
+ 	ath11k_info(ab, "%s\n", ab->hw_params.name);
+ 
+-- 
+2.47.0
+
 
