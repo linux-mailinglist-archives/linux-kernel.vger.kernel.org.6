@@ -1,114 +1,102 @@
-Return-Path: <linux-kernel+bounces-427427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335D29E00C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:40:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6F09E01D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED38E281835
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:40:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 630B8B23D45
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777CF1FDE04;
-	Mon,  2 Dec 2024 11:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dF0vqT0I"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF421D932F;
-	Mon,  2 Dec 2024 11:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FE41FC0E8;
+	Mon,  2 Dec 2024 11:42:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1E61D932F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733139618; cv=none; b=W3aXfFvYLoOkyZ3fK2P9RgIygr/OQNLnpvlAAJyx76QBwP1Yr7WpzT6xtR2NZSEBZzYx31ICsDqEIw67leGE25miiAlQ/VNTkxIffKF8sK9bzSerrRlLtbPDhtS5rO23UYgN3G6JGwEW/0mWK9GcnE2P/6ZSZOwQ3bidvMlqXEg=
+	t=1733139731; cv=none; b=odZE9NfSte602lJmyLbEs25NBZJ5dvz7dbUgk0tbrce9tPNy3B2mYbZr85h6PQyuo/pUr5XrDBMfNr2+1/E5BasSJMPBvd6mQu6kcvr0GopD1E6AZtAaDznr+6LCtPi7aDLNLhjqNDkk30OCO4GjMUbG8/1DPnsS3vNYia2+9RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733139618; c=relaxed/simple;
-	bh=sVjfGzbM8GkA7FgUwyXuWWLlTiQo1APuR3f5at2NHJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUMRFSYEttfGTOuixPiOO76+TB4GEsvzpNzvo4bX83k/91s93ywuk0wpGYDOhWdS7ZYVNcoqZDKjny6rV56iYGIQJADT0JRYAgKDHulVRBov2g/HEpmOtR6ciunE4mGJBB7FcHZIUZYpqGJDGm8t/LEnxotPwqVsOBlfwMUAj94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dF0vqT0I; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dqsBUO2AtrBbl+piXnLKZ7wdM4LFuVUZ403tmHUrMW0=; b=dF0vqT0I7NWiSXHruEeDOFETCh
-	Dipy63vWKGBwNCNvUpfNBxrOjm5OJDdiBL1tG+cPSbgInDAX6Y75JnwPfJahzAXn1Cx1ZJn6US0nV
-	ocVY54wF+1aVkBTw8YQNBbNhV8O/Nd894BNLQwSGM4GfcWD82yEsCHn0YzQijzUuOHuKJ4LuiFcxM
-	9fe5sfqshiQCKNvFQ5crhsW+BsPw2RF7CZX00jDvXs3sce+s3WPMmPjZ40lG4yTz5NEiSmoAlID8S
-	NmuQbrXo+fS/mZ0/6ie0AlM7yHyn15huP5pNvRoqUwKv7NXp6xvhPzr1Uo0OTHDa0+9CKjxxs0ng/
-	Nc556o8g==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tI4ma-00000002AFx-0hTS;
-	Mon, 02 Dec 2024 11:40:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7F211300402; Mon,  2 Dec 2024 12:40:03 +0100 (CET)
-Date: Mon, 2 Dec 2024 12:40:03 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Subject: Re: [PATCH v7 09/12] x86/process: Clear hardware feedback history
- for AMD processors
-Message-ID: <20241202114003.GC8562@noisy.programming.kicks-ass.net>
-References: <20241130140703.557-1-mario.limonciello@amd.com>
- <20241130140703.557-10-mario.limonciello@amd.com>
+	s=arc-20240116; t=1733139731; c=relaxed/simple;
+	bh=c7B08i3UF6WW1RRqTTznDaUtOQmZzu4+ezyL94SiidM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qfELlgKP7cBXI0NBdJXJhtBmKVFZXV3UxY0F5JYJHVSheNP/FIZa7Iri7rXmesY8lOd8XDoR2ElFCeULCws2RIg9A5lDUlkTs7X8UZFlukyTj8ffsgAK/1EzMtQ74O8ja5Ny3hvu6cPKSiLlgmKob+qAcBDKJHfEYYHT1g0Byuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 972BE1063;
+	Mon,  2 Dec 2024 03:42:37 -0800 (PST)
+Received: from [10.57.93.76] (unknown [10.57.93.76])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2A873F71E;
+	Mon,  2 Dec 2024 03:42:07 -0800 (PST)
+Message-ID: <85b1bf12-54cc-4d17-9aa1-ab496cb04d36@arm.com>
+Date: Mon, 2 Dec 2024 11:42:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241130140703.557-10-mario.limonciello@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Replace open encodings with PXD_TABLE_BIT
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ linux-kernel@vger.kernel.org
+References: <20241202083850.73207-1-anshuman.khandual@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20241202083850.73207-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 30, 2024 at 08:07:00AM -0600, Mario Limonciello wrote:
-> From: Perry Yuan <perry.yuan@amd.com>
+On 02/12/2024 08:38, Anshuman Khandual wrote:
+> [pgd|p4d]_bad() helpers have open encodings for their respective table bits
+> which can be replaced with corresponding macros. This makes things clearer,
+> thus improving their readability as well.
 > 
-> Incorporate a mechanism within the context switching code to reset
-> the hardware history for AMD processors. Specifically, when a task
-> is switched in, the class ID was read and reset the hardware workload
-> classification history of CPU firmware and then it start to trigger
-> workload classification for the next running thread.
-> 
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+
 > ---
->  arch/x86/kernel/process_32.c | 4 ++++
->  arch/x86/kernel/process_64.c | 4 ++++
->  2 files changed, 8 insertions(+)
+> This patch applies on v6.13-rc1
 > 
-> diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-> index 0917c7f25720b..0bb6391b9089b 100644
-> --- a/arch/x86/kernel/process_32.c
-> +++ b/arch/x86/kernel/process_32.c
-> @@ -213,6 +213,10 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
->  	/* Load the Intel cache allocation PQR MSR. */
->  	resctrl_sched_in(next_p);
+>  arch/arm64/include/asm/pgtable.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 6986345b537a..e20b80229910 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -896,7 +896,7 @@ static inline bool mm_pud_folded(const struct mm_struct *mm)
+>  	pr_err("%s:%d: bad pud %016llx.\n", __FILE__, __LINE__, pud_val(e))
 >  
-> +	/* Reset hw history on AMD CPUs */
-> +	if (cpu_feature_enabled(X86_FEATURE_AMD_WORKLOAD_CLASS))
-> +		wrmsrl(AMD_WORKLOAD_HRST, 0x1);
-> +
->  	return prev_p;
->  }
+>  #define p4d_none(p4d)		(pgtable_l4_enabled() && !p4d_val(p4d))
+> -#define p4d_bad(p4d)		(pgtable_l4_enabled() && !(p4d_val(p4d) & 2))
+> +#define p4d_bad(p4d)		(pgtable_l4_enabled() && !(p4d_val(p4d) & P4D_TABLE_BIT))
+>  #define p4d_present(p4d)	(!p4d_none(p4d))
+>  
+>  static inline void set_p4d(p4d_t *p4dp, p4d_t p4d)
+> @@ -1023,7 +1023,7 @@ static inline bool mm_p4d_folded(const struct mm_struct *mm)
+>  	pr_err("%s:%d: bad p4d %016llx.\n", __FILE__, __LINE__, p4d_val(e))
+>  
+>  #define pgd_none(pgd)		(pgtable_l5_enabled() && !pgd_val(pgd))
+> -#define pgd_bad(pgd)		(pgtable_l5_enabled() && !(pgd_val(pgd) & 2))
+> +#define pgd_bad(pgd)		(pgtable_l5_enabled() && !(pgd_val(pgd) & PGD_TABLE_BIT))
+>  #define pgd_present(pgd)	(!pgd_none(pgd))
+>  
+>  static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
 
-Are you really going to support all this jazz on 32bit builds?
 
