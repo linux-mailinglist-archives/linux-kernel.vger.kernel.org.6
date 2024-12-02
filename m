@@ -1,81 +1,64 @@
-Return-Path: <linux-kernel+bounces-428457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404709E0EC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:15:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878C59E0EEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B3D28799B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:15:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B94EB25F6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D921DF997;
-	Mon,  2 Dec 2024 22:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0926E1DF748;
+	Mon,  2 Dec 2024 22:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EKSXT6ZV"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nkrBMTB3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B631DE3AF;
-	Mon,  2 Dec 2024 22:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9991DE3AF;
+	Mon,  2 Dec 2024 22:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733177726; cv=none; b=IlP5CrUNI1tyklIhX4iwV1tDCY6LA1xU4J+ICPXY/LWMBbxT70FsDd7SC69M3OxTGvsB/5CWBrNHeZe4mGxHzfXQgcmnq2SKe0ZMq75eo2Vbly4Dksk6orhMMc5XBk6isgUjzezk/BzLL3L0bBvQlBnJeMJx93MP3pBtOQncTE0=
+	t=1733177721; cv=none; b=WEe+HsvokW63xuODx3hkQoZu74MbXZ2FV0NDbWsfS8BN/59I8Jt841Vb6S6zhFrupD2ApVD8sjYgY3TkI/j4AFGSpoblVp3fZjt6aW0uS+7KeKOyoBIYlXA9UPItz3dVobS6JdtEInpteBfDBM3TtGPBaTHDIMf2YxYC+xC/qqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733177726; c=relaxed/simple;
-	bh=q4HkAbO72lqAvSiyEaGYKu2Cqm5ciWIcD4uxttho7bY=;
+	s=arc-20240116; t=1733177721; c=relaxed/simple;
+	bh=KrjLs/JSvL6Ff2dE1q85dhEmEBCfXHRQ38VSfHrJDjs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jquGyTp/qguvuTXdyA+evI7j4puukPUVegmFA3CwUqnE6a0CX/IhvJWCaOeQ3Jz7CI+ePfKhCXFmKCYdSh80O/4/gJnFiWYPC70fIdpb7jyHquw8oZFU3JkCzsaRAPnR2jqVGfLaV93WGcDCl42awRz+RDuj/pwdYS6juZ9rWaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EKSXT6ZV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2JIhgd020289;
-	Mon, 2 Dec 2024 22:15:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=EtSWkH
-	2KGCBHcN+5Th++bxlhJSseoSqJAsaXifznjBE=; b=EKSXT6ZVjmMK1FJFVgLruJ
-	kZ6W3dnSpUE06Bp70swE/QiGblnCOU09ApCMFQNcMPC6dJ1iDdcBI6s3jYLUzSwd
-	DK0bVc4KGjhm3oxG0nGgbNuyQeoEHqFgFajSTzZ4aKpJN79NkqsTZmgfo5LHUi3q
-	QZQ6a4r9H8otV+x4c7plnY0uVpB2LAQbMYH+Q+KQpsfSUqNgFgKdqJX/U4gVPGdU
-	qFhc3oq/wRkdVwazecTAb+Hb/qamIrIF0HWTLUB9MS8nZktlg0ltc29KJ6dHTCPY
-	xnlz9vluvQnjOK+Oqwwbh53HPryX+SNCxKFem2hm3MIxPuGBfCMwKURajDkZVGuA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437s4hu4x2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 22:15:19 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B2MEQDo014322;
-	Mon, 2 Dec 2024 22:15:18 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437s4hu4x0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 22:15:18 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2L8PTq029494;
-	Mon, 2 Dec 2024 22:15:18 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438ddya5e0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 22:15:18 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B2MFHuJ6095486
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 2 Dec 2024 22:15:17 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A080058059;
-	Mon,  2 Dec 2024 22:15:17 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BD08D5805B;
-	Mon,  2 Dec 2024 22:15:16 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  2 Dec 2024 22:15:16 +0000 (GMT)
-Message-ID: <ce7fa562-7cb7-4adc-934a-560b94ce44f0@linux.ibm.com>
-Date: Mon, 2 Dec 2024 17:15:16 -0500
+	 In-Reply-To:Content-Type; b=Mv4t7cFJlruThfLYN6+U+uoS8bc1jSQrEXFUrv0HgTrv3bK4PoKo2+lGT1oRZEvvpid31hJKgmopfuI6EyXJJC+hDtPygnranw9KSHUItwksek9E1qTGnucGYkF2fDhUaL3RLCzpqFbodIOjii8HbPMzBnQzIpXSBxKrz9qb+9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nkrBMTB3; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733177720; x=1764713720;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=KrjLs/JSvL6Ff2dE1q85dhEmEBCfXHRQ38VSfHrJDjs=;
+  b=nkrBMTB3SVCqVfzO1nsOKjjFXNB9o6TvvRTaw0rB0UQqlbQtXr5K0mE3
+   x3fhTv11aRf52qorDCt0E742vFgU2b2PaQFpOfWhoPw8YjR2gk2eAiR5v
+   O3FXANlSf+/7I6PN3yBjNWiM4QiL0KyguYWPU4Sc5cdG68VAbCExgshOr
+   Gb8jPD1gLkk2Yt9gaUJmOP2QGryTIJhtJYLr+k9Ly9Zzw29hsCbR2q9g3
+   nfUggRpbAqGMGCamOOcAPt5H15voQbM7NNg8dyby9UBqxJyOCo+bz0rja
+   i4IZEbK4Ep+iqT8vq2GvJkReABgVhWJ469mjoEdLFmmDm/rKH+1Dd8ky9
+   g==;
+X-CSE-ConnectionGUID: 3AxtQ4GGQWalszruG4V1bg==
+X-CSE-MsgGUID: 8kvvlxUUQFij8gP4ni2wrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44037764"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="44037764"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 14:15:19 -0800
+X-CSE-ConnectionGUID: us5R2suqSZC0HC1KcViJXA==
+X-CSE-MsgGUID: 77FODGr6S9Wew4bFAyCgaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="93703727"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.111.153]) ([10.125.111.153])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 14:15:18 -0800
+Message-ID: <0dd14adb-4dfb-462e-8e35-81982c519a61@intel.com>
+Date: Mon, 2 Dec 2024 15:15:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,83 +66,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION][BISECTED] tpm: Popping noise in USB headphones since
- 1b6d7f9eb150
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-        Christian Heusel <christian@heusel.eu>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        regressions@lists.linux.dev
-References: <7d052744-4bfa-40bc-ba06-1b4c47a5eb87@heusel.eu>
- <D54YWMOV7KOO.2X0N035UHEFBD@kernel.org>
- <b3a01060-f59b-430d-afcc-48c5ec628bcb@heusel.eu>
- <D5Z62H0XCOQM.J4V5ZDH9E7C7@kernel.org>
+Subject: Re: [PATCH v2 0/5] Enable FLR for IDXD halt
+To: Fenghua Yu <fenghua.yu@intel.com>, Vinod Koul <vkoul@kernel.org>
+Cc: dmaengine@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+References: <20241122233028.2762809-1-fenghua.yu@intel.com>
 Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <D5Z62H0XCOQM.J4V5ZDH9E7C7@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: N2wjq-mLeF-yaiI6ysA8v9C6bzw8fhuV
-X-Proofpoint-ORIG-GUID: sISoTb_AfN8h-K6JsVaQLAGKHUBp3fl3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- adultscore=0 mlxscore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
- impostorscore=0 phishscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412020183
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20241122233028.2762809-1-fenghua.yu@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-On 11/29/24 9:44 PM, Jarkko Sakkinen wrote:
-> On Tue Nov 26, 2024 at 1:42 PM EET, Christian Heusel wrote:
->> On 24/10/25 05:47PM, Jarkko Sakkinen wrote:
->>> Yeah, this is on the list.
->>>
->>> See: https://bugzilla.kernel.org/show_bug.cgi?id=219383#c5
->>>
->>> I had a fix for the AMD boot-time issue already over a month ago
->>> but unfortunately took time to get enough feedback.
->>>
->>> BR, Jarkko
->>
->> I'm not sure if this is supposed to be fixed, but AFAIK we hoped that
->> the patchset that was mentioned in bugzilla also helped this issue.
->>
->> The reporter said that the bug is still present in 6.12.1, so this might
->> need further poking 🤔
+On 11/22/24 4:30 PM, Fenghua Yu wrote:
+> When IDXD device hits hardware errors, it enters halt state and triggers
+> an interrupt to IDXD driver. Currently IDXD driver just prints an error
+> message in the interrupt handler.
 > 
-> I'd suggest a workaround for the time being.
+> A better way to handle the interrupt is to do Function Level Reset (FLR)
+> and recover the device's hardware and software configurations to its
+> previous working state. The device and software can continue to run after
+> the interrupt.
 > 
-> In 6.12 we added this for (heavy) IMA use:
-> 
-> tpm.disable_pcr_integrity= [HW,TPM]
->                          Do not protect PCR registers from unintended physical
->                          access, or interposers in the bus by the means of
->                          having an integrity protected session wrapped around
->                          TPM2_PCR_Extend command. Consider this in a situation
->                          where TPM is heavily utilized by IMA, thus protection
->                          causing a major performance hit, and the space where
->                          machines are deployed is by other means guarded.
-> 
-> Similarly it might make sense to have "tpm.disable_random_integrity"
-> that disables the feature introduced by the failing commit.
-> 
+> This series enables this FLR handling for IDXD device whose WQs are all
+> user type. FLR handling for IDXD device whose WQs are kernel type
+> will be implemented in a future series.
 
-I am wondering what could be the not-so-obvious root cause for this? 
-Could it be due to a (TPM or RNG-related) lock? I guess the audio 
-popping could occur if an application cannot meet timing requirements 
-when it runs into some sort of blocking lock...
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-> What do you think?
- > >>
->> Cheers,
->> Chris
+For the series.
+
 > 
-> BR, Jarkko
+> Change log:
+> v2:
+> - Patch 3: Call a free helper to free all saved configs (Dave Jiang).
+> - Patch 3: Replace defined bitmap free function with existing
+>   bitmpa_free().
+> 
+> v1:
+> https://lore.kernel.org/lkml/20240705181519.4067507-1-fenghua.yu@intel.com/
+> 
+> Fenghua Yu (5):
+>   dmaengine: idxd: Add idxd_pci_probe_alloc() helper
+>   dmaengine: idxd: Binding and unbinding IDXD device and driver
+>   dmaengine: idxd: Add idxd_device_config_save() and
+>     idxd_device_config_restore() helpers
+>   dmaengine: idxd: Refactor halt handler
+>   dmaengine: idxd: Enable Function Level Reset (FLR) for halt
+> 
+>  drivers/dma/idxd/idxd.h |  13 ++
+>  drivers/dma/idxd/init.c | 479 ++++++++++++++++++++++++++++++++++++----
+>  drivers/dma/idxd/irq.c  |  85 ++++---
+>  3 files changed, 507 insertions(+), 70 deletions(-)
 > 
 
 
