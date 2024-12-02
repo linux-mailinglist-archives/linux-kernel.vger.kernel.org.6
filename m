@@ -1,98 +1,98 @@
-Return-Path: <linux-kernel+bounces-428103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291ED9E0BDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:16:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9ED9E0C7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:45:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 245E3BA3652
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:38:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AD78B3659C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D201DDC32;
-	Mon,  2 Dec 2024 17:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5866C1DC074;
+	Mon,  2 Dec 2024 17:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A6AAG4GU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwzL9nrR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F091DDC25;
-	Mon,  2 Dec 2024 17:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD031D61A2;
+	Mon,  2 Dec 2024 17:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160997; cv=none; b=RO/RDXl3N/I4QKfkzXOiajYWyoOevzaQxNA8inAQBMImqKiU9tM1l8OsW8iYowgRiklCgkdC3fqUk/iiczo4g/NRhtRxAwps236H0MnNrFDpioItRoO/MYr/1zkHaFBhk5rxrokLLKMtRKR0NDg2bdRvDLsXZPPjUr5DzCW9Y8o=
+	t=1733161209; cv=none; b=Ut5ScEp+iwRFIP1+tFposbgFWoPen+cryQl84XwkBTWl/BicqqDf02MW5jGE562LSshjDi8/7qR0rkbfPmgYXQ+gD7gZ38yk3sEUIB4am+eKNTzlRqq+bz4EOs5F23SG1aA0SdprhoCgIqF5BsBs1YrGsFGBgjqdK5qqQDVoB9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160997; c=relaxed/simple;
-	bh=zHI4obpWdbu09MOJBanUKMpjJiwHqJ8gWb3psfdQkCE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=V0i5M0mQBYWUCb6F5LJj/ilA9l1l9kD5vnhxJ9FiVM+2jjYP0vwwZ3BQytZg+QNIvbtx+/Mc/VadPqer2exjdSgUay8kgWOFmeumkerQ9pPqw+YnVX+Bl59XQIyAB+nKff/HsdJN/PTfSDUKbergdF52PkqwUbG+4FKC7YE4zVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A6AAG4GU; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733160996; x=1764696996;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=zHI4obpWdbu09MOJBanUKMpjJiwHqJ8gWb3psfdQkCE=;
-  b=A6AAG4GUoW1huZywYaC0seJtpkW0pI9TWP7BQdBQibZiB9m+Qh68Vws1
-   o3KosR6O8PGMiTFsjGv4ZaKZtR4QO1R1NBHYaGYS53KQLoH7tjQYQXkNJ
-   DHO9sKHDCIAM3CBx/+u+3TdN5KyWvhRnJFMIJcN4zzjtkLIVN8FQ/8RHN
-   y6/GfUQ0dYh+t0SBLZorF6Y6dgQ8E1oNTOel6xJ2US3kFQToalEuLKzS+
-   F1rEkTrQVFSgMAw6jq1i+OlO+PklG6NVFsfmOWYp3RqXFDR0b/OOitm73
-   YRPAKx4G3Ddmsr11rd/02FbKaziKl/xtO1BiwHj52pQMVw9RZtqUBnpQV
-   A==;
-X-CSE-ConnectionGUID: wMWf0tplSSiwp2KmZ3+9ng==
-X-CSE-MsgGUID: h5DlZ5JPShKZZ5pLV3GGrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="58746407"
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="58746407"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:36:35 -0800
-X-CSE-ConnectionGUID: xyK3a6dhRcasZFQgn3I+lw==
-X-CSE-MsgGUID: Rdwxi7MMRJuME0JfD1ktRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="116439327"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
-  by fmviesa002.fm.intel.com with ESMTP; 02 Dec 2024 09:36:35 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-	id 18D17301AA5; Mon, 02 Dec 2024 09:36:35 -0800 (PST)
-From: Andi Kleen <ak@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mcgrof@kernel.org,  x86@kernel.org,  hpa@zytor.com,
-  petr.pavlu@suse.com,  samitolvanen@google.com,  da.gomez@samsung.com,
-  masahiroy@kernel.org,  nathan@kernel.org,  nicolas@fjasle.eu,
-  linux-kernel@vger.kernel.org,  linux-modules@vger.kernel.org,
-  linux-kbuild@vger.kernel.org,  hch@infradead.org,
-  gregkh@linuxfoundation.org
-Subject: Re: [PATCH -v2 0/7] module: Strict per-modname namespaces
-In-Reply-To: <20241202145946.108093528@infradead.org> (Peter Zijlstra's
-	message of "Mon, 02 Dec 2024 15:59:46 +0100")
-References: <20241202145946.108093528@infradead.org>
-Date: Mon, 02 Dec 2024 09:36:35 -0800
-Message-ID: <878qsy7zrw.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1733161209; c=relaxed/simple;
+	bh=eaL8cC21xnf23Ecwe2rInbBhfl0hfiNSoyNwp9NMFTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TMceABs4umpaqp3yM2a55HCLLh/qwzLlgvqqbg00mI9hkNuTccomuW8wyxA457rtUNE324znY+SOsrGnfZ7BIWBOk63cYxamAfvQj9Py7EikQ9AmcwM3iK/qCalqxFgypxosxQRPki0tagCcN2i2EwViwx0lbNo5R1OcdXbELXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwzL9nrR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BA7C4CED1;
+	Mon,  2 Dec 2024 17:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733161209;
+	bh=eaL8cC21xnf23Ecwe2rInbBhfl0hfiNSoyNwp9NMFTI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=XwzL9nrR46ZUQQBF/Cfqgfs1w85invh8HKkiybCnyLrEAtVqNB1p68veHs8gpbJ2A
+	 /hq1NkFqHuPqePepEotMIWmvb0CUvsez4rFylJtAuXgRW+lUMwYMxJp/ggkvrc04IO
+	 O7ZHYiWVvUfb2uxuewRaeY3txjgR9NxWbVj3I/aLJPus3ZRwAeV7y58XSBgx4e2G0W
+	 NSIMcaUOqF8bISHy7KoAjYmboKzhD7SjH6a1e4r/5B+Yncjp0auvf7p29ztozgTzmU
+	 ibMvf6dcSOaeByzIu8DgAVoeigO3Oo8ZO0Vfs7yza43w4TtijMK+7ZNc0kid2/gy1F
+	 74sTjn3Ni7ZcA==
+Date: Mon, 2 Dec 2024 11:40:07 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: kw@linux.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+	lpieralisi@kernel.org, shuah@kernel.org, kishon@kernel.org,
+	aman1.gupta@samsung.com, p.rajanbabu@samsung.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org, robh@kernel.org,
+	linux-kselftest@vger.kernel.org, stable+noautosel@kernel.org
+Subject: Re: [PATCH v2 1/4] PCI: qcom-ep: Mark BAR0/BAR2 as 64bit BARs and
+ BAR1/BAR3 as RESERVED
+Message-ID: <20241202174007.GA2902663@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202125845.rp4vc7ape52v4bwd@thinkpad>
 
-Peter Zijlstra <peterz@infradead.org> writes:
+On Mon, Dec 02, 2024 at 06:28:45PM +0530, Manivannan Sadhasivam wrote:
+> On Fri, Nov 29, 2024 at 01:55:37PM -0600, Bjorn Helgaas wrote:
+> > On Fri, Nov 29, 2024 at 02:54:12PM +0530, Manivannan Sadhasivam wrote:
+> > > On all Qcom endpoint SoCs, BAR0/BAR2 are 64bit BARs by default
+> > > and software cannot change the type. So mark the those BARs as
+> > > 64bit BARs and also mark the successive BAR1/BAR3 as RESERVED
+> > > BARs so that the EPF drivers cannot use them.
+> ...
 
-> Hi!
->
-> Implement a means for exports to be available only to an explicit list of named
-> modules. By explicitly limiting the usage of certain exports, the abuse
-> potential/risk is greatly reduced.
+> > > Cc: stable+noautosel@kernel.org # depends on patch introducing only_64bit flag
+> > 
+> > If stable maintainers need to act on this, do they need to search for
+> > the patch introducing only_64bit flag?  That seems onerous; is there a
+> > SHA1 that would make it easier?
+> 
+> But that's not the point of having noautosel tag, AFAIK.
+> 
+> Documentation/process/stable-kernel-rules.rst clearly says that this
+> tag is to be used when we do not want the stable team to backport
+> the commit due to a missing dependency.
+> ...
 
-Blast from the past: https://lists.linuxcoding.com/kernel/2007-q4/msg19926.html
+> Here I did not intend to backport this change with commit adding
+> only_64bit flag because, I'm not sure if that dependency alone would
+> be sufficient. If someone really cares about backporting this
+> change, then they should figure out the dependencies, test the
+> functionality and then ask the stable team.
 
-Yes it makes sense.
+Oh, sorry, I was assuming "stable+noautosel@kernel.org" was a hint for
+stable maintainers to pick this up, not a hint to ignore it.
+Eventually this meaning will sink in.
 
--Andi
+Bjorn
 
