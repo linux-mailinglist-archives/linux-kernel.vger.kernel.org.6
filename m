@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-427921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1659E086C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:26:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172659E08F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:46:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2992B86F5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:48:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38D6DB27AAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585C9145B3F;
-	Mon,  2 Dec 2024 15:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7707A7C0BE;
+	Mon,  2 Dec 2024 15:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L7Gmv2zv"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioCIHjXV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA59136352
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F2F42AAD;
+	Mon,  2 Dec 2024 15:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154448; cv=none; b=IkrZUBuIE+sGwCAlmz+W5/aZuxJjwn2B7l395MYRKxQjSuan4WKLKX9RnyTzOBwn9WWeQYJr6zyXWYiPtEFhp33R1C7LoKGPC0/UfwCapH8SPTYaIJwe0f5e74qMpkMzG4nXEvm2uX98fIchu2lR/dAnyJjeG3PqUvVBrRYKKRc=
+	t=1733154482; cv=none; b=apgIg1A2OoRHgAOA+Dw3M+CnGRac2D985RnOHxsObE+dPKSM309GfCnZOAdrojo68AxAZ3wRXbCiO10TNf6zAFMl7RyUKljdC+BI4Y3K7IffrpRNmyz1Acps4sqT07kG92dYTdXNYvdJV0hWX/Ccnx9AyK9K5vKFYdkREnPD/K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154448; c=relaxed/simple;
-	bh=NQt98Z0M5QNA/TsO8gh1YDS9GMK76KynhZ9aabRaUlg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YI4zS8Fc+NHwbT5HB2RoT8eRWpu0mecqlRrWlkRL4XgQQgOk3m9mNYM0gevTKAWXoZPacrJPwIFuKrqI14Feux6f7K8b3hSEQcyJ5EwhEsQQmcdkhfl16vuYjouZnXN4Q/B4sZtHGOT/FddOA7UpbTWMO05Fdx+2Vg+PpsfTdJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L7Gmv2zv; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d3e9e854b8so48399406d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:47:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733154445; x=1733759245; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l2F2lVT/48t59mZz2zC2oH5sxyMbSECeGcR5hkq1C/k=;
-        b=L7Gmv2zvrBkVAJTmF5xBrM9r0j/frnToHTvotHEjxhCbFDhji/SvvD+8eNb2A5NCoN
-         CgGDzV9PuCJ2uw0j+L3rT3rDawUrPBOJvUKbVNYwStlfEWluY7vYbtFBR+eVJ+5/0JeX
-         JITPQD0mClFdKEgs2jmct8LMMnXjJ9WWBRWcY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733154445; x=1733759245;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l2F2lVT/48t59mZz2zC2oH5sxyMbSECeGcR5hkq1C/k=;
-        b=t0WQtb5rbqEupA1HVwp2z4EV/F701ol8IhcJAPDtQaEaQQuAY8ajBpsJ9uS5+NfLx2
-         J/oS6nnppf3/yYso6XlyGe7W0r0Qbz3bUvmXLnxiJXxs3x30H3KE6ymUAg87BYiV/klG
-         WCarRTJT4XyH8Inrmg2n3XxQFptZFhoNigB1+ac80EnWChssfZwPsCAke6n8xCsoq4qv
-         krom38UeNUIFR/8D81Yh5xj5z80oqPp0WnWUUx7FwzPkyFG1wfNNxESdHGy0dB8YlsJ2
-         /Twzknno/YjG7qIPY9rT1cUUTudFuyH2WUUoahqZY1Z9L7I2AplQaLYnv+NewMQS6BiW
-         C/1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXFD6BKAO4WyFuT2S817UIGXAQxzVOnJUsGQzFrNMSCG0byyE1//IjjwmwtaJaJa4eBQfCTC9MjV7OSn1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRujwXDueWPlFfdXN/BB6NZZdh4IKTKOQdMfpvvxuFOoSC7QMP
-	O+D/8KZNGpaumBs2oNh+xPGJeTUGkOMutc+BimNBXhIRaiuggx/hRXftWhOyug==
-X-Gm-Gg: ASbGncthrCaMExsDSS0UB5I5VcuA1aY6ekx/f8U3v1euTd6cbTIltSx5BZKhB/ZLUWs
-	jlROTp/2XzEpFx7QUfGY1SFAP3Sq95eG9iNvKurzV7jw0QSPW8HJM1cCI9GQQtxgWWOzvHwTeUZ
-	Pa2gx7+DSrTekYQLpr/s2R7UQP1jHHFBhxgXPq7qDD5L7yzNcc4C4A9H7H7UpI0IOqnsLvh+L87
-	E5rw1tbVkMwe+PP9tHtD1vmcdFfnKaak/1mfMERXmTYbA9wtEjNSUf+I3bdFCPK1m/p2WMckA5z
-	rVnKS81Ve4gYD5Rl028OYY3s
-X-Google-Smtp-Source: AGHT+IGi/PMi7HKxN0drYRNoeMrQehkEDZgCgHDgtdOzyjj8HEWJDMxx4Dj3/iwSYHFuTdJy9nQktg==
-X-Received: by 2002:a05:6214:626:b0:6d8:a1b4:b58f with SMTP id 6a1803df08f44-6d8a1b4bb2amr99633466d6.11.1733154445272;
-        Mon, 02 Dec 2024 07:47:25 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5156d0f8ad6sm1159729e0c.49.2024.12.02.07.47.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 07:47:24 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 02 Dec 2024 15:47:17 +0000
-Subject: [PATCH 3/3] media: mediatek: vcodec: Workaround a compiler warning
+	s=arc-20240116; t=1733154482; c=relaxed/simple;
+	bh=tUIUYos7HfM9zp290BdrLXtD0sN1aHS92XAApgYZMBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LuP4DNTuvyHF8NBeOoMvksqjcNmVGI5K3huSG5Xn9AU+saXrWIv0aKIOeKk3jgp8/aWloLWpHBigzVXXAC3yfbKFFnejIWzV/JD0yObN1trFsBOgUacizM1Bqf83koNdyYkqjIuQnuoH/Ey4AttcS11DXKD52h5h6271XwJtxUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioCIHjXV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F31C6C4CEDD;
+	Mon,  2 Dec 2024 15:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733154482;
+	bh=tUIUYos7HfM9zp290BdrLXtD0sN1aHS92XAApgYZMBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ioCIHjXVuT/MldTsu21M7/2/vGwSGBcdP9+5GJAHnU0Y4BT4VQr7yPOWGNAjTcScY
+	 Vxb1JlB6qY1HPYy9ZkPJN1UUqMZz4hPlLoFZiFQKHUG30UbWIhK9nhzIg8OVF0MPTb
+	 R5Ti1zMcRH/YL3LnS1DO05aGdN1+OWvWWIWH/TIwfOhr6Ll29jvpja36E+7O+2jONx
+	 IoRimoYA0BpeNRFX+A2PtCKCnhUjI1wICHzKv0Al4isIXhPTij/dhljOm5++R+pfsO
+	 jZb1N8ZXJibwa1PseqjjbPJsYGjtDMUEoxCmlx14hqTPvxt4fIsEf6lAU8BgrQ0ewY
+	 w6quEcbYKeXCw==
+Date: Mon, 2 Dec 2024 09:48:00 -0600
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 5/6] of: Add #address-cells/#size-cells in the
+ device-tree root empty node
+Message-ID: <20241202154800.GA2617722-robh@kernel.org>
+References: <20241202131522.142268-1-herve.codina@bootlin.com>
+ <20241202131522.142268-6-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-fix-llvm9-v1-3-2a50f5acfd0b@chromium.org>
-References: <20241202-fix-llvm9-v1-0-2a50f5acfd0b@chromium.org>
-In-Reply-To: <20241202-fix-llvm9-v1-0-2a50f5acfd0b@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Andy Shevchenko <andy@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Tiffany Lin <tiffany.lin@mediatek.com>, 
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
- Yunfei Dong <yunfei.dong@mediatek.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, linux-staging@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202131522.142268-6-herve.codina@bootlin.com>
 
-llvm identifies that the SCP_IPI_VENC_H264 and IPI_VENC_H264 are from
-the same enum type, but their are part of the same ternary operator.
+On Mon, Dec 02, 2024 at 02:15:17PM +0100, Herve Codina wrote:
+> On systems where ACPI is enabled or when a device-tree is not passed to
+> the kernel by the bootloader, a device-tree root empty node is created.
+> This device-tree root empty node does not have the #address-cells and
+> the #size-cells properties
+> 
+> This leads to the use of the default address cells and size cells values
+> which are defined in the code to 1 for the address cells value and 1 for
+> the size cells value.
+> 
+> According to the devicetree specification and the OpenFirmware standard
+> (IEEE 1275-1994) the default value for #address-cells should be 2.
+> 
+> Also, according to the devicetree specification, the #address-cells and
+> the #size-cells are required properties in the root node.
+> 
+> The device tree compiler already uses 2 as default value for address
+> cells and 1 for size cells. The powerpc PROM code also uses 2 as default
+> value for address cells and 1 for size cells. Modern implementation
+> should have the #address-cells and the #size-cells properties set and
+> should not rely on default values.
+> 
+> On x86, this root empty node is used and the code default values are
+> used.
+> 
+> In preparation of the support for device-tree overlay on PCI devices
+> feature on x86 (i.e. the creation of the PCI root bus device-tree node),
+> the default value for #address-cells needs to be updated. Indeed, on
+> x86_64, addresses are on 64bits and the upper part of an address is
+> needed for correct address translations. On x86_32 having the default
+> value updated does not lead to issues while the upper part of a 64-bit
+> value is zero.
+> 
+> Changing the default value for all architectures may break device-tree
+> compatibility. Indeed, existing dts file without the #address-cells
+> property set in the root node will not be compatible with this
+> modification.
+> 
+> Instead of updating default values, add both required #address-cells
+> and #size-cells properties in the device-tree empty node.
+> 
+> Use 2 for both properties value in order to fully support 64-bit
+> addresses and sizes on systems using this empty root node.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  drivers/of/empty_root.dts | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 
-vpu_inst.id is of type int, so we can just rewrite a bit the code and
-avoid the following llvm9 warning:
-drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c:597:29: warning: conditional expression between different enumeration types ('enum scp_ipi_id' and 'enum ipi_id') [-Wenum-compare-conditional]
+This also fixes unittest hitting a warning added for 6.13. So 
+I've applied this patch as a fix.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c b/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
-index f8145998fcaf..4786062e879a 100644
---- a/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
-+++ b/drivers/media/platform/mediatek/vcodec/encoder/venc/venc_h264_if.c
-@@ -584,7 +584,6 @@ static void h264_encode_filler(struct venc_h264_inst *inst, void *buf,
- 
- static int h264_enc_init(struct mtk_vcodec_enc_ctx *ctx)
- {
--	const bool is_ext = MTK_ENC_CTX_IS_EXT(ctx);
- 	int ret = 0;
- 	struct venc_h264_inst *inst;
- 
-@@ -594,7 +593,10 @@ static int h264_enc_init(struct mtk_vcodec_enc_ctx *ctx)
- 
- 	inst->ctx = ctx;
- 	inst->vpu_inst.ctx = ctx;
--	inst->vpu_inst.id = is_ext ? SCP_IPI_VENC_H264 : IPI_VENC_H264;
-+	if (MTK_ENC_CTX_IS_EXT(ctx))
-+		inst->vpu_inst.id = SCP_IPI_VENC_H264;
-+	else
-+		inst->vpu_inst.id = IPI_VENC_H264;
- 	inst->hw_base = mtk_vcodec_get_reg_addr(inst->ctx->dev->reg_base, VENC_SYS);
- 
- 	ret = vpu_enc_init(&inst->vpu_inst);
-
--- 
-2.47.0.338.g60cca15819-goog
-
+Rob
 
