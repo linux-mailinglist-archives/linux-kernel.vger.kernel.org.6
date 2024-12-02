@@ -1,96 +1,131 @@
-Return-Path: <linux-kernel+bounces-426764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D67A9DF787
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 01:43:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CF59DF785
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 01:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5DF4B211B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 00:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EFD928178A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 00:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FCD79EA;
-	Mon,  2 Dec 2024 00:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FF16AAD;
+	Mon,  2 Dec 2024 00:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=matoro.tk header.i=@matoro.tk header.b="pHA+hciu"
-Received: from matoro.tk (matoro.tk [104.188.251.153])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7NPPAIr"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B8120E3;
-	Mon,  2 Dec 2024 00:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.188.251.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA78D4A03
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 00:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733100193; cv=none; b=oid5rLMKG5lhAoQa6jfydw6qKCM7m6aP3XwL9adq/v7302azMchkCkPFaCX/Cyn+0PuuDyGsQyN3H9anDhC/ktKw04wUJxQC/9dtNIaodrtGVJ9TeVp+JIFUqC8dcz78e2OuwaBQJld3Md1b5/a0D1/bsuK/jCPjjx91z8YovUs=
+	t=1733100092; cv=none; b=VMWEbR74BcbZyIOpiWxDD2QwaPeNBWh57ZSWaKGo3dfKkNJT7XDBbUD65ipsQIy8+DxplTdpnnI1nWy0ENznu+kG9SAugxugJ6egYONQluh5lYGTtB9tNf4Fj1UrOnfbtXal6prdBdh08OlhRBEedSGuvd9ybx6vx1l5GEHip3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733100193; c=relaxed/simple;
-	bh=qa2qM3/pr0kGdqxBQXftZwsZwmiIu5a1oqL5E7xMYjw=;
-	h=MIME-Version:Date:From:To:Subject:Message-ID:Content-Type; b=isQVhWSu3moyIXGsnOQY34FrnnIXyLtsk+NrMm1tM6HZujz077izzcYZTQc4N3ggPPJYqbvNp9vYSD2nJ6QErttTN5XYsJg1Tc9JerfSTUUoKhorcyHbpYcDBsy4SACxdu1uoV2Qxnd6xfmicOxPCvcW8tgSDSW/byqeFJedcVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=matoro.tk; spf=pass smtp.mailfrom=matoro.tk; dkim=pass (4096-bit key) header.d=matoro.tk header.i=@matoro.tk header.b=pHA+hciu; arc=none smtp.client-ip=104.188.251.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=matoro.tk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matoro.tk
-DKIM-Signature: a=rsa-sha256; bh=wPZJZ7zNgiasBzmRMvgKOmrp84OE3S31jgc4LVeCnoE=;
- c=relaxed/relaxed; d=matoro.tk;
- h=Subject:Subject:Sender:To:To:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
- i=@matoro.tk; s=20241120; t=1733099212; v=1; x=1733531212;
- b=pHA+hciuyeJ0GwzoHahR+KTjkC6iRoM7tG9D+5iCA/GESsNFHEDbtsQ2/5xYiDUO2/7Jzn3F
- ZQgF3WJNTXlgUSXuPicQgWzJLlXL9RNDhHButlwrt34vVJqCf+FeunuuM6GecCispOohyb7gnob
- NHJZemGmsyNrN/CYOiwAz01JgYYqLvft40kBGdVpVylEh9WF0zHxfUbX1J1s58JHbzUaO2GAE3b
- qgJMvy/mWvKMTL9KpFDPcpWtR3p8Ny5H960yHOykwUAswenpKieo96rEztuCnVJzwwq8MjfwNSr
- 4kzxfsKwl9SiBJOHBpnHQ9M8bQjfF5Pd/kDQsvVoigHEtxfWwmz4g3f5v00k/QAMKHRA3hkerIh
- xCDtVzABM58cqXvhAzfiTAzDjV2r+WrrGOWeZO9QXmcbYUBzmYjGgIijpBq46twcLySn6Y9IF9Q
- ukzgQQp98kp9DRXqVMCpw0d/New6q+Rfgz7/fXcLUfk5yIQuk8xhfyCpqGh99ZS7uA7PReKd5jw
- HQinjVBkg7vARGVxLBgzJDevi1xaoZrvmxNcvo/IAuu3LFDM0I1ITZZhuvudoMY/IvvUL8Jq3B5
- Xh7E9JJTA+hwC5QjAtEY1sqv4vsuxtr4VLcVDfHoleZw5xUVgbkFbWRLTQXdEfzbrQLULc4IFWs
- xvCpTYEKYTo=
-Received: by matoro.tk (envelope-sender
- <matoro_mailinglist_kernel@matoro.tk>) with ESMTPS id af952462; Sun, 01 Dec
- 2024 19:26:52 -0500
+	s=arc-20240116; t=1733100092; c=relaxed/simple;
+	bh=ir7/tla0b+ZabwROvkW7Dxgoa1c/qQ0Ece7wmhooPAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BnhRM1b0NMvViiMhTi9XIC90zNu34VXdbyBUIpiCWLzm2iDd/ujLM2a4oKopSI9XwiUqgV9ly1zK0c/+s9eZ6ahPlbBK9oHfPLB+fujQBJhYMkH56HZwlTp6bENyuqrg+2IVUTMBk9VCell9W0RO2ELvERY3+RKaKPGeFErvR0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7NPPAIr; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-211fb27cc6bso27219465ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 16:41:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733100090; x=1733704890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gOrfUj30PkfpFffW4QyGj+KbVwTGG9LbuH2bLnyjq+U=;
+        b=T7NPPAIrjySWzEEZzvybnWQY/zGezJaEQYmHU4VuPNKQ90wcsZajRhN2+L8PMNORAk
+         QOsoiAPtgpWOdcFX1ZOZG+sJ/eiWgXKLP7GBKeYblM4lJxa2SZQr3u69Yb8w7XBqcOzh
+         rpqubJG7BocURY69yAWYO9n+pBqyPVticdjb5mPluQ75auKOQ42oh3IOaY9iOmPbs6bz
+         IvdZjG/Bj1sDW6SfMVqswKhL8idqjmQPQnuZm7jHtIcnqTrNrePnf/rN72mXrJzp0jCY
+         D6no3TrDBVvTt+ApPXhl9BI42Ff3RFEJG6XGpn20hK8Kz1+qI9lxy0k+wm50+ipJ2CDQ
+         VALg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733100090; x=1733704890;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gOrfUj30PkfpFffW4QyGj+KbVwTGG9LbuH2bLnyjq+U=;
+        b=oIkzhI8vKUkRpIcIvjTXAjP6+RAl/vBw06AWgyO/Waw4LKE4r9fTq3Z/MJlks+7syU
+         YiNZFyFHw+NJxd74BEqpx+MkPy0IvMkFoKa20hVnL349/Fv4WJNy12MlpTX+2qlSoeiu
+         vvnYU0SkIHvZ+ADreh/k9OCSS5h2f59SWiBcqx441dkKXuRg/ioXnMDO/PWEEIsm6W28
+         P+J8jvgPzOSutmoePbPdzvBTbLdI5pHL3CLaloVwh2ghVvSqA4Q5dvQ+OYUNvJsvEhri
+         MpJFi/0arjowdseByLkQ1Dsez4oYg85d4JdxuEdhMD/lmwPcF5jgaSjLqbJ+1MqLf8t5
+         xE1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUL2lSVWk8JouVCUZGEYm2xZc0MKKdot+PmNnYWaYVQZVDTgFuhK3EKd6gOOx/6VfAD3M/ZsS9hlaafE68=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxexox3bgazd3AYMZcdfPuRI612rvGfOf2FdSte5APu+YtlhOk0
+	bNnGII87IfnVY4b+altb0waqTbNXNfLfe8ysE3zhkw33lTP2WpRm
+X-Gm-Gg: ASbGncvipP40Vu6IppoV+CHjZiLG8U/GEPvfyh1OgTapF2w1qLGh3wxdw+xUPuQMyV8
+	5GD3NuRuHgih0QFikntr7Mi5oOeNoI3jwkW3hTe7fbz+YIXgzcuENY3tDO4naBL51Enggi/iMmd
+	BVd5IY7zCPm3DgL+tlUtM1AB7Fqt3jtiSaPHHX+mMvNHJdO+wRsgeDAKZjhnyfA6KdWJy23tbn5
+	828KiLxWJMwzOJBBelkkQy3r4fEqEvmn5PBIf3py8+evMK1/kXs10yFfARlwo5e/w==
+X-Google-Smtp-Source: AGHT+IGMMCn+7DBumH12tP3g4kg2QXBoDhN2tKhD/uf6CchdckcRLSIZWYGuylJCq1FNcWX7Gruy5g==
+X-Received: by 2002:a17:902:e841:b0:20b:6624:70b2 with SMTP id d9443c01a7336-2150109dca5mr259927325ad.19.1733100089982;
+        Sun, 01 Dec 2024 16:41:29 -0800 (PST)
+Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:43d8:5d67:da98:78f9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215218f47aasm64703295ad.20.2024.12.01.16.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Dec 2024 16:41:29 -0800 (PST)
+From: Leo Stone <leocstone@gmail.com>
+To: syzbot+5df2d3fa14f2d3e49305@syzkaller.appspotmail.com,
+	jack@suse.com
+Cc: Leo Stone <leocstone@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] udf: Prevent rmdir of deleted directories
+Date: Sun,  1 Dec 2024 16:41:02 -0800
+Message-ID: <20241202004104.20604-2-leocstone@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <6747ce03.050a0220.253251.0066.GAE@google.com>
+References: <6747ce03.050a0220.253251.0066.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 01 Dec 2024 19:26:52 -0500
-From: matoro <matoro_mailinglist_kernel@matoro.tk>
-To: Linux Parisc <linux-parisc@vger.kernel.org>, John David Anglin
- <dave@parisc-linux.org>, John David Anglin <dave.anglin@bell.net>,
- deller@kernel.org, Deller <deller@gmx.de>, linmag7@gmail.com, Sam James
- <sam@gentoo.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [bisected] ext4 corruption on parisc since 6.12
-Message-ID: <84d7b3e1053b2a8397bcc7fc8eee8106@matoro.tk>
-X-Sender: matoro_mailinglist_kernel@matoro.tk
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Helge, when booting 6.12 here myself and another user (CC'd) both observed 
-our ext4 filesystems to be immediately corrupted in the same manner.
+The syzbot reproducer mounts a UDF image with the undelete option
+enabled. It then creates a directory, and eventually attempts to call
+rmdir on it 65 times. Because the undelete option is set, the
+directory still gets found in udf_fiiter_find_entry(), and the link
+count of its parent directory is decremented until it triggers the
+warning in drop_nlink().
 
-Every file that is read or written will have its access/modify times set to 
-2446-05-10 18:38:55.0000, which is the maximum ext4 timestamp.  The 32-bit 
-userspace doesn't seem to be able to handle this at all, as every further 
-stat() call will error with "Value too large for defined data type".  
-Unfortunately, simply rolling back to kernel 6.11 is insufficient to recover, 
-as the filesystem corruption is persistent, and the errors come from 
-userspace attempting to read the modified files.  I was able to recover with 
-a command like:  find / -newermt 2446-01-01 -o -newerct 2446-01-01 -o 
--newerat 2446-01-01 | xargs touch -h
+Prevent directories with the FID_FILE_CHAR_DELETED flag set from being
+deleted again.
 
-Luckily, lindholm was able to bisect and identified as the culprit commit:  
-b5ff52be891347f8847872c49d7a5c2fa29400a7 ("parisc: Convert to generic 
-clockevents").  Some other comments from the discussion:
+#syz test
 
-17:20:37 <awilfox> would be curious if keeping that patch + CONFIG_SMP=n 
-fixes it
-17:20:44 <awilfox> this doesn't look necessarily correct on MP machines
-17:23:56 <awilfox> time_keeper_id is now unused; the old code specifically 
-marked the clocksource as unstable on MP machines despite having per_cpu 
-before
-17:24:11 <awilfox> and now it seems to imply CLOCK_EVT_FEAT_PERCPU is enough 
-to work around it
-17:24:13 <awilfox> maybe it isn't
+Reported-by: syzbot+5df2d3fa14f2d3e49305@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=5df2d3fa14f2d3e49305
+Signed-off-by: Leo Stone <leocstone@gmail.com>
+---
+ fs/udf/namei.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Thanks!
+diff --git a/fs/udf/namei.c b/fs/udf/namei.c
+index 78a603129dd5..0a577b7459de 100644
+--- a/fs/udf/namei.c
++++ b/fs/udf/namei.c
+@@ -504,6 +504,12 @@ static int udf_rmdir(struct inode *dir, struct dentry *dentry)
+ 	if (ret)
+ 		goto out;
+ 
++	if (iter.fi.fileCharacteristics & FID_FILE_CHAR_DELETED) {
++		udf_warn(inode->i_sb,
++			 "tried to rmdir a directory that was already deleted\n");
++		ret = -ENOENT;
++		goto end_rmdir;
++	}
+ 	ret = -EFSCORRUPTED;
+ 	tloc = lelb_to_cpu(iter.fi.icb.extLocation);
+ 	if (udf_get_lb_pblock(dir->i_sb, &tloc, 0) != inode->i_ino)
+-- 
+2.43.0
+
 
