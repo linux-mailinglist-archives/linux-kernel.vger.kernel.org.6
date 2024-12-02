@@ -1,236 +1,249 @@
-Return-Path: <linux-kernel+bounces-427187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B3069DFDD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:55:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4004016324E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:55:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570981FBE97;
-	Mon,  2 Dec 2024 09:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DX+ETSJy"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421D19DFDDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:55:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067641FBC84;
-	Mon,  2 Dec 2024 09:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF0BFB220A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:55:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937EC1FBCB8;
+	Mon,  2 Dec 2024 09:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N1oa8YSU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6A41FBCA2
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733133302; cv=none; b=LbYp2rsI/flmZuvrTDWPNWueAziM4HK43sEinasvSIvU2on0yzLLHy7OQiuhsoCMHUBHkS0Ujoak4+MHnBkpLN0tbFjiOTDSeMFQq7jwHbIVGwZO3gh2w4jXjhopIp1jKJj46KbAviHtU+ZmGOey5MnAPYzGvdxDTcnJzFTFYmA=
+	t=1733133324; cv=none; b=pliXXBZzB/uDgd10j82/KHWg4MGA3T2GazCIm7ffjOrfmvHAKDRHzXYuxu8pAX53H8T/Faw3zU4uFRFJeQTl6SxemeoHrVAhAo0hExmzIEQiG1dw8wY19IdustvGZnTZLQ/Q+BSmfGjGq8Eplc5/Nq1lbwUyKhpRElNEmv0eXHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733133302; c=relaxed/simple;
-	bh=Nh03FhQFoZ1oQdBWoCjviICu57cYNqNKfHcnJ+0m7UQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T9TOC/zlUFqgJJRI0ET/eOKbd3ye8i1sgmKsEYSUOmlnqIB1fNDrSfn9QltxEfwC2jgNth7RcDdoE8seoWzZeDsA8jNr407VH8K+0kqx8jHrB3Z0cUQ1LFZ+G/oKAVu3JoPdc8DVrOCKWeotMd78XD04XUsxHQn7/yWpEXshjhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DX+ETSJy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28RKcM008726;
-	Mon, 2 Dec 2024 09:54:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Qc054gM7Bv2R/3/jFzj28NNSZl9oumKdCqduypG+yy4=; b=DX+ETSJy3vxKk52I
-	fZSs2VwQ1mOluu2ygvYkpaatLNBNIdpRAzSlzWE++q/DFb7KtU4pYrkUzH09xN78
-	8s21Cv+zBe4CcNqdC9/vrgrBEm6nODqWnIii+Mvtr4or3tQUHAyChYrqYb1v2ntQ
-	6kLfW8eZls5L3m8r5a/AfvnaUWlFU2zM2TapS70UGxCTkFIsGTfSneg38ll9h+4v
-	AZYgVOrXHU8MVEkggmpnYn5MjZijMPtwNiofIUZLuttpdhB5hcAvWryIc/BY8vLT
-	ab55v2PTtCbHRFBfW6DTmqfxbA6D7drRbH2qgMOsdZrqZpFVyMR2uoFcIGYCDLBN
-	hsbn0A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437u36ccp7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 09:54:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B29soul023039
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Dec 2024 09:54:50 GMT
-Received: from [10.64.68.72] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
- 01:54:46 -0800
-Message-ID: <4c39e6f8-22d2-4568-9116-01294f85a283@quicinc.com>
-Date: Mon, 2 Dec 2024 17:54:44 +0800
+	s=arc-20240116; t=1733133324; c=relaxed/simple;
+	bh=giKLGGK03twsti8r6koMTfcd/cXGRA56MS0yGykpzlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n8JXjJuqdpsZVNcl2XyYDE35TJC+atfsVxCGfmXtBKa6bCO1Hh2kpLH5LVUoA21fVfO4paGZvRmgB0Y+DGiR4iV9TXVchcuyMlnTXc9woZCKKQkqSRqBTAaP6+uo4pz2AtiknDaIQNeOkd6mItzn/JL0lAjIKmvOnX5JVJLa2fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N1oa8YSU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733133321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=09MvrDFOXfmr7yZyk+mt+cZonVT5Z8HMfNE6DtwKO3c=;
+	b=N1oa8YSUu+L64Qv5Asym44Y/0LcmySll4INfx6ooxSVGd0JKKUSr0pMnBpnjjrbyMMQ6GR
+	YW3oLIrIFeda5LsPcTyJiYYwp2Pq+GxERDlFtVI4S9ZllDlQhbF0jExzJwe4SwUZbdsUZG
+	iRRqlAxBkqbVeBbC5e5qUyVjWmplnsU=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-134-UxR2ePxvMvqPIy3gyOX7JA-1; Mon, 02 Dec 2024 04:55:20 -0500
+X-MC-Unique: UxR2ePxvMvqPIy3gyOX7JA-1
+X-Mimecast-MFC-AGG-ID: UxR2ePxvMvqPIy3gyOX7JA
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434a90fecfeso29904395e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:55:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733133319; x=1733738119;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=09MvrDFOXfmr7yZyk+mt+cZonVT5Z8HMfNE6DtwKO3c=;
+        b=WjZ0qX8YEJ8bUtSnP08jdrxbtlRVwoE2INxnHUkKhjMKrMuHqNXeWaxsLmWi7M32ZX
+         oGiXXoMVEYuCKw+bTQAVLJQvJ7IQeFdS4Ah4iZlhibJtWztQsOzqv78t0q0V1TEa1Knn
+         wPvRkQbnc3kxPm9nO2Z2zx4ZCPvHw2t7G7GC7BDXQZ/OWb369b0ZM4in5zXcndPFbsgz
+         bRDQltcDj3Q7255EcHKRZ0XpqJdAIXfatdwySYQhv+yq780oLWAwGn0fHKWcr3Nro9/b
+         JZMP0VQ+8MDYbJzrJiQobXhCjIJqE+4NMB0FjkneppZmiUYCRdP+AEaaxTFcxKxbGGwc
+         yR5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV+2IH5GuKPHJ3mhIAGDFsQWK5SBgcJiizK63agRTBjRPQeFuLTy5EyHEuN4lAqOeZq4QoXcWOhgm4euNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPXPvNk25Njxm+ea6smqwY5sxZKAY0Gaj6KTj+G7QX/TV94hHW
+	A+RkGOAu8xowFI+zkmuOHApKuc2fgKm1yMqbHHI/Vn5Zsm03D3h7Dg2WkhwSugjXsGfz3NTz4I8
+	JGtgmANGGbduigoAsPZEUVndcLZzd4FtaZ745B5JoZ2y7Nkg554kY1+UGB3nzJg==
+X-Gm-Gg: ASbGncuhdJRvWPw0rRVJSpv/iF0DIilDt8fl9IAuVFDa8XppHOkeINBbTt6XvLd4W9/
+	WHxIjjuAKHrCEGjNs67YoJHF3SlqWGjW2dfVVNqC2B8Md84W9DeTm1dWS24H1mk5pskNfP05D5p
+	B+QwKjXN5izL+PojoVQJDEEqsYUioeC1h6VoIrodkk5fQX0r08J/xwXAbydCfur5KRDaT9Fh3Lj
+	AH/x+izwFBTx+RpXZH0ijyHQJEwcE0r2Y6fpT3OCQhk7QPFI7umVOHTby3UESbh6y4qbsbzBvPQ
+	SH8=
+X-Received: by 2002:a05:600c:1c09:b0:431:44fe:fd9f with SMTP id 5b1f17b1804b1-434a9de8cc2mr172537465e9.23.1733133319110;
+        Mon, 02 Dec 2024 01:55:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFdrZW7CnHqIPba+h3rdUQEPKdX49BX6A51BtPfyAqpRIpHzFbEJP1x+SVenKFW+la85OBsJA==
+X-Received: by 2002:a05:600c:1c09:b0:431:44fe:fd9f with SMTP id 5b1f17b1804b1-434a9de8cc2mr172537265e9.23.1733133318732;
+        Mon, 02 Dec 2024 01:55:18 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.75.19])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dbf95fsm144865155e9.15.2024.12.02.01.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 01:55:17 -0800 (PST)
+Date: Mon, 2 Dec 2024 10:55:16 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-rt-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+	Frauke =?iso-8859-1?Q?J=E4ger?= <frauke@linutronix.de>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@linaro.org>
+Subject: Re: [ANNOUNCE][CFP] Power Management and Scheduling in the Linux
+ Kernel VII edition (OSPM-summit 2025)
+Message-ID: <Z02EBA_0SwWPhTAi@jlelli-thinkpadt14gen4.remote.csb>
+References: <ZytlAkTiuZApK23Y@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: add QCS8300 platform
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Jingyi Wang
-	<quic_jingyw@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Catalin
- Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20241128-qcs8300_initial_dtsi-v3-0-26aa8a164914@quicinc.com>
- <20241128-qcs8300_initial_dtsi-v3-3-26aa8a164914@quicinc.com>
- <2a2a780d-5e3e-4582-b75d-211732a9b727@oss.qualcomm.com>
-From: Xin Liu <quic_liuxin@quicinc.com>
-In-Reply-To: <2a2a780d-5e3e-4582-b75d-211732a9b727@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sG6BpQ02kSGQrQNSp8cy4NXRDen06MUL
-X-Proofpoint-ORIG-GUID: sG6BpQ02kSGQrQNSp8cy4NXRDen06MUL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- clxscore=1011 bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412020087
+In-Reply-To: <ZytlAkTiuZApK23Y@jlelli-thinkpadt14gen4.remote.csb>
 
+Hello Everybody,
 
+Quick reminder that deadline for topics submission is approaching
+(December 9, 2024 - next Monday).
 
-在 2024/11/29 4:14, Konrad Dybcio 写道:
-> On 28.11.2024 9:44 AM, Jingyi Wang wrote:
->> Add initial DTSI for QCS8300 SoC.
->>
->> Features added in this revision:
->> - CPUs with PSCI idle states
->> - Interrupt-controller with PDC wakeup support
->> - Timers, TCSR Clock Controllers
->> - Reserved Shared memory
->> - GCC and RPMHCC
->> - TLMM
->> - Interconnect
->> - QuP with uart
->> - SMMU
->> - QFPROM
->> - Rpmhpd power controller
->> - UFS
->> - Inter-Processor Communication Controller
->> - SRAM
->> - Remoteprocs including ADSP,CDSP and GPDSP
->> - BWMONs
->>
->> Written with help from Zhenhua Huang(added the smmu node), Xin Liu(added
->> ufs, adsp and gpdsp nodes), Tingguo Cheng(added the rpmhpd node), Kyle
->> Deng(added the aoss_qmp node), Raviteja Laggyshetty(added interconnect
->> nodes) and Cong Zhang(added the INTID of EL2 non-secure physical timer).
->>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
+Please use the form to submit your topic(s) or reply to me privately
+with topic's details.
+
+https://forms.gle/Vbvpxsh8pqBffx8b6
+
+Don't wait until last minute or Santa will add you to the naughty list!
+
+Best,
+Juri
+
+On 06/11/24 13:45, Juri Lelli wrote:
+> Power Management and Scheduling in the Linux Kernel (OSPM-summit) VII edition
 > 
-> [...]
+> March 18-20, 2025
+> Alte Fabrik
+> Uhldingen-Mühlhofen, Germany
 > 
->> +		cpu-map {
->> +			cluster0 {
->> +				core0 {
->> +					cpu = <&cpu0>;
->> +				};
->> +
->> +				core1 {
->> +					cpu = <&cpu1>;
->> +				};
->> +
->> +				core2 {
->> +					cpu = <&cpu2>;
->> +				};
->> +
->> +				core3 {
->> +					cpu = <&cpu3>;
->> +				};
->> +
->> +				core4 {
->> +					cpu = <&cpu4>;
->> +				};
+> ---
 > 
-> The MPIDR_EL1 register value (CPU node reg) suggests they are not
-> part of the same cluster (as you confirmed in the psci idle domains
-> description)
+> .:: FOCUS
 > 
-> [...]
+> OSPM is moving to Germany!
 > 
->> +
->> +		ufs_mem_hc: ufs@1d84000 {
->> +			compatible = "qcom,qcs8300-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
->> +			reg = <0x0 0x01d84000 0x0 0x3000>;
->> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
->> +			phys = <&ufs_mem_phy>;
->> +			phy-names = "ufsphy";
->> +			lanes-per-direction = <2>;
->> +			#reset-cells = <1>;
->> +			resets = <&gcc GCC_UFS_PHY_BCR>;
->> +			reset-names = "rst";
->> +
->> +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
->> +			required-opps = <&rpmhpd_opp_nom>;
->> +
->> +			iommus = <&apps_smmu 0x100 0x0>;
->> +			dma-coherent;
->> +
->> +			interconnects = <&aggre1_noc MASTER_UFS_MEM 0
+> The VII edition of the Power Management and Scheduling in the Linux
+> Kernel (OSPM) summit aims at fostering discussions on power management
+> and (real-time) scheduling techniques. Summit will be held in Uhldingen
+> (Germany) on March 18-20, 2025.
 > 
-> QCOM_ICC_TAG_ALWAYS, file-wide
+> We welcome anybody interested in having discussions on the broad scope
+> of scheduler techniques for reducing energy consumption while meeting
+> performance and latency requirements, real-time systems, real-time and
+> non-real-time scheduling, tooling, debugging and tracing.
 > 
-> [...]
+> Feel free to take a look at what happened previous years:
 > 
->> +		ufs_mem_phy: phy@1d87000 {
->> +			compatible = "qcom,qcs8300-qmp-ufs-phy", "qcom,sa8775p-qmp-ufs-phy";
->> +			reg = <0x0 0x01d87000 0x0 0xe10>;
->> +			/*
->> +			 * Yes, GCC_EDP_REF_CLKREF_EN is correct in qref. It
->> +			 * enables the CXO clock to eDP *and* UFS PHY.
->> +			 */
->> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
->> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
->> +				 <&gcc GCC_EDP_REF_CLKREF_EN>;
+>  I   edition - https://lwn.net/Articles/721573/
+>  II  edition - https://lwn.net/Articles/754923/
+>  III edition - https://lwn.net/Articles/793281/
+>  IV  edition - https://lwn.net/Articles/820337/ (online)
+>  V   edition - https://lwn.net/Articles/934142/
+>                https://lwn.net/Articles/934459/
+>                https://lwn.net/Articles/935180/
+>  VI  edition - https://lwn.net/Articles/981371/
 > 
-> Are you sure about this, or is this just copypasted from sa8775p?
-Thank you for your comments. I confirm with the colleague responsible 
-for this area, and configuring the clock this way is correct.
+> .:: FORMAT
 > 
-> [...]
+> The summit is organized to cover three days of discussions and talks.
 > 
->> +
->> +		intc: interrupt-controller@17a00000 {
->> +			compatible = "arm,gic-v3";
->> +			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
->> +			      <0x0 0x17a60000 0x0 0x100000>;    /* GICR * 8 */
+> The list of topics of interest includes (but it is not limited to):
 > 
-> Drop these comments
+>  * Power management techniques
+>  * Scheduling techniques (real-time and non real-time)
+>  * Energy consumption and CPU capacity aware scheduling
+>  * Real-time virtualization
+>  * Mobile/Server power management real-world use cases (successes and
+>    failures)
+>  * Power management and scheduling tooling (configuration, integration,
+>    testing, etc.)
+>  * Tracing
+>  * Recap/lightning talks
 > 
->> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->> +			#interrupt-cells = <3>;
->> +			interrupt-controller;
->> +			#redistributor-regions = <1>;
->> +			redistributor-stride = <0x0 0x20000>;
->> +		};
->> +
->> +		memtimer: timer@17c20000 {
+> Presentations (50 min) can cover recently developed technologies,
+> ongoing work and new ideas. Please understand that this workshop is not
+> intended for presenting sales and marketing pitches.
 > 
-> Unused label
+> .:: SUBMIT A TOPIC/PRESENTATION
 > 
-> [...]
+> To submit a topic/presentation use the form available at
+> https://forms.gle/Vbvpxsh8pqBffx8b6.
 > 
->> +	arch_timer: timer {
+> Or, if you prefer, simply reply (only to me, please :) to this email
+> specifying:
 > 
-> Ditto
+> - name/surname
+> - affiliation
+> - short bio
+> - email address
+> - title
+> - abstract
 > 
-> Konrad
+> Deadline for submitting topics/presentations is December 9, 2024.
+> Notifications for accepted topics/presentations will be sent out
+> December 16, 2024.
+> 
+> .:: ATTENDING
+> 
+> Attending the OSPM-summit is free of charge, but registration to the
+> event is mandatory. The event can allow a maximum of 50 people (so, be
+> sure to register early!).
+> 
+> Registrations open on December 16, 2024.
+> To register fill in the registration form available at
+> https://forms.gle/Yvk7aS79pvNR6hbv8.
+> 
+> While it is not strictly required to submit a topic/presentation,
+> registrations with a topic/presentation proposal will take precedence.
+> 
+> .:: VENUE
+> 
+> The conference will take place at Alte Fabrik [1], Daisendorfer Str. 4,
+> 88689 Uhldingen-Mühlhofen, Germany
+> 
+> The conference venue is located in a 2 minute walking distance [2] to
+> the Hotel Sternen [3] that has been pre-reserved for the participants.
+> Since it is a very rural area, we recommend booking this hotel as it is
+> close to the conference room. The price ranges per night incl. breakfast
+> between 85€ (Standard Single Room) up to 149€ (Junior Suite). There is
+> an availability of 37 rooms in the hotel. Another 13 rooms are
+> pre-reserved in the Hotel Kreuz which is also a 5min walking distance to
+> the conference location [4]. Cost is 75€ inkl. breakfast. Please choose
+> your hotel (and room) and arrange booking yourself. We recommend arrival
+> on March 17 and departure on March 21 due to the length of the trip.
+> 
+> Please use the code ‘LINUTRONIX’ when booking your hotel room. 
+> Deadline for hotel booking in Hotel Sternen is February 28, 2025.
+> Deadline for hotel booking in Hotel Kreuz is January 17, 2025.  
+> After these dates, cancellations are not free of charge anymore.
+> 
+> You can reach Uhldingen-Mühlhofen best from Zürich Airport [5] or
+> Friedrichshafen Airport [6]. From both airports there are train and/or
+> bus connections to Uhldingen-Mühlhofen which you can check here [7]. The
+> rides are quite long, so another possibility is to organize yourself in
+> groups and share a taxi/shuttle [8].
+> 
+> [1] https://www.fabrik-muehlhofen.de/
+> [2] https://maps.app.goo.gl/S6cnTgx1KJAGRkMr7
+> [3] https://www.steAlte Fabrik Mühlhofenrnen-muehlhofen.de/
+> [4] https://www.bodensee-hotel-kreuz.de/
+> [5] https://www.flughafen-zuerich.ch/de/passagiere/praktisches/parking-und-transport/zug-tram-und-bus
+> [6] https://www.bodensee-airport.eu/passagiere-besucher/anreise-parken-uebernachten/
+> [7] https://www.bahn.de/
+> [8] https://airporttaxi24.ch/?gad_source=1&gclid=EAIaIQobChMIo_y9l56iiQMVfp6DBx16NxPtEAAYAiAAEgJOO_D_BwE
+> 
+> .:: ORGANIZERS
+> 
+> Juri Lelli (Red Hat)
+> Frauke Jäger (Linutronix)
+> Tommaso Cucinotta (SSSA)
+> Lorenzo Pieralisi (Linaro)
 
 
