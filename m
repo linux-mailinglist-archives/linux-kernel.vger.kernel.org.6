@@ -1,147 +1,135 @@
-Return-Path: <linux-kernel+bounces-427730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4069E0573
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:48:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 723A49E0528
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:36:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47FC616D90C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA77284474
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72AD20DD42;
-	Mon,  2 Dec 2024 14:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281F720B217;
+	Mon,  2 Dec 2024 14:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="FU3oBlUp"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q+ptKS+K"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F13120CCEC
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FC720B207
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149947; cv=none; b=LhGM7zt15BDAhW9LqZ/M5havQAZCUohuh7LheIvIePpCD02c+EBXlP+djqohFcdeiiTFzzbPginoeN7rFXEc7YLyCXLGejyGO+4fibW5tcvTh4cE8ghgTnZhss7vx4jGvi20bZVJdcvBZOie/n/KxS0SqTzHVUrUw6STtxe7vPI=
+	t=1733149936; cv=none; b=QT3M13ebswD/auSGfWVihyN1m2zr73pLVcZ9x+73H+Y+r0601Z9/DaOcTgh3pU07gVk4H6hhpvwRiSd21KlA6dItp6N2j4WoC84pfjsq0wZz2zbZnJVdJI7yQYTMEDJ4kaP+in1xwlRnlDhcbE7Y4GKMismxHJXGCavpNFfS0KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149947; c=relaxed/simple;
-	bh=0oZ971I0wmrs4nr2rUYR0k2yCq01uDEq0P6ftRI3PNE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JFstE1JEJnYghzxyDOdxI6lvCgjKVhBkXgX//lc2xZWaKo3xZ3pnEfvenZXF0NZbRy7V6w2niuXwO8SDzeRf8Zw6DOBTX4CtLwTbmc6agOBHrNSlSPwgsFT6rOGBBFmdPmGUjtto/FqzpobPVMahJbWBEJ5eARFsClEn7HhQUWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=FU3oBlUp; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434a044dce2so54635375e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:32:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1733149944; x=1733754744; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pli6SsFvDcPYaCKSCtuylkfG7oHLkLI1T7gsEQivs80=;
-        b=FU3oBlUpxVravc1Nj/VlpDsUlZiMM80dWlzXJq465hCTejwJHscMBaJCIea7BBKeRN
-         yopyw+OTOjWrtx3gxBtiWz0/wkDv4RWEy25DDFHc68ZaDpV/ut1FIBoO1HTFVTiZIB6a
-         uTfPe1kVaw88NedHiXXsSFlaFz7uSHlC163RRgLb98hKnKtkDxi1QeAXwAZ9dPCC30+y
-         ION1qa1AqrmuHslsdmSNID41P/qqG/7LoGginMQD4AUFLPO7AT8uidC9puuXcoSFDBjH
-         H+WGcIM9UR13Mx794JCyMTdRdks52MSv4IRPqpRtlu4n2pQtdDh4UNPnDFta3wEJq49G
-         jdlw==
+	s=arc-20240116; t=1733149936; c=relaxed/simple;
+	bh=kyHyGkq2nIbI1shfR+jeId84Q2d1KomTPYY5XTrnovI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hUmIeBmcHD8MlnPVwPjW0wIsrmtzjWvbKnyiSKtR24B/MWDkoAf4LM/nKbjzrkSEna21OmjoxILvy+jhZZyocJeWWaJ+opWarmDD9znObu5qqBalmvsOOzKR/XEKoJlfQYgmFcQw+hTTyTxNRtViI8uUlNGMVdwf7AAARoWB3+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q+ptKS+K; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B294Z5Y031078
+	for <linux-kernel@vger.kernel.org>; Mon, 2 Dec 2024 14:32:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4jbIOMJhwzZujSBJo3/F7e/CHOV5fOnXM/PrRzCOyTU=; b=Q+ptKS+KNn69T76+
+	UTx7JyZYQsLwwtc/Y86rh0ScKOXyyFXvPlZnep4FtAQxnkFrKrnTppAawPIbUdHD
+	rR2LSV8QG0rtGrOVvsyXJkgEE1q3hNNbNR8rhXejcQ+nHQf7dUbWVqugNmqsc3Fj
+	tBpGB8K57UxUNZkTBr3grUSl9+dGdgFQAkgHIKx7b5AA7wIdUn8Z3RWz3TQKYsod
+	793vWz74ooHLnRYmDs4jmrNDQTmks7TYyGBTk6VOjNehRk9BICZESrfLPtdoJDdT
+	BkfTr0GJZJjk9sf7uDuY/WHvzTLcllopmaLL8gdLUcYQwSVs/EI8ptgA5cpfEVeX
+	TWRDlg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437uvjvwu3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:32:14 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-46699075dd4so9593131cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:32:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733149944; x=1733754744;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pli6SsFvDcPYaCKSCtuylkfG7oHLkLI1T7gsEQivs80=;
-        b=G45l+d0h/h4+QVli/KfQoABqaCLyVzu7C/A4e7lT8KTxCJE9b86aQ2+APVZUnGcEaQ
-         7exQv2PC5hcnXwVakT0aCLDnkcca6fW9SHQQ0fG59oooUpHw1FTCf0RaBwAD8R7jbxPI
-         UKvidvvGOnFgmqVyEDVLXbU99r0+m78vNjybc/5xz1x8y1MYz183FnBcAmbzm1htuiKg
-         679sdlI/Xv+MTZycYAHLljONSGMEAD/iXrYRVr5QsPPKTPGKw8lZSd/swjxUGLWQpK+M
-         zrnFTPRrLrLFV+h+e1dpoWIfLA0v7RYqN3pmCrtX0RYKr8+SDNdy03oxmxVih/EPwy5+
-         rR0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUNImAUFPlvVmMPGAScN8LttM7cAd+oOXyz8SuzT0UEoJDTVtBH+pcXR3CXomyqg1onlqrrwcDJEOKxl28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5CXsjHBVI+nmQPB2Oi2orhnQR0KgPf1+qYeNeAjYKJH+iJ3Fz
-	7ZMs+v8ZGiPcLYYvB+prOpivHixIlISlgAwfn0YDfAIuZ6JIsF9a6LUD67ZfjhM=
-X-Gm-Gg: ASbGncvjSyvc5MxJzyflWhjQD1GPxWR77Q0c4NrHDcIhR5Ramm+AYaMowaBwUU4SKsK
-	5P5vMu49SJmq2NXya/b5QAA4sxOPlfaLsa2PeQqxi7z3yh/CNBa8AzyHyyEx65V1LQ4IyouQh6r
-	0WkRIjQM5b0bi3XYitxeeSon4py63TmiS5Unqb+KKxzZaHaLst8FiVzl3byL+9wJMTpJw6CnvH6
-	YQ30XZ0zOUQ0dIW++SyFtVhnJIF9yiRNy5Bh9TYPw==
-X-Google-Smtp-Source: AGHT+IFok6tkFCPxh9TckNxxVOqWD00WXYrj3eZIwv/5rIdvTJ6mEyRfzTjnuA5/i326onD32S2G0w==
-X-Received: by 2002:a05:600c:4686:b0:434:a986:11cf with SMTP id 5b1f17b1804b1-434a9dc3030mr246706275e9.8.1733149943483;
-        Mon, 02 Dec 2024 06:32:23 -0800 (PST)
-Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa74f1e6sm188429555e9.9.2024.12.02.06.32.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 06:32:23 -0800 (PST)
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 02 Dec 2024 14:32:00 +0000
-Subject: [PATCH 7/7] arm64: dts: broadcom: Fix device tree errors on
- BCM2712.
+        d=1e100.net; s=20230601; t=1733149933; x=1733754733;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4jbIOMJhwzZujSBJo3/F7e/CHOV5fOnXM/PrRzCOyTU=;
+        b=TUMMBjdhOGIrZBfsCzyLc7rKfb2DdfI3dgKx43GmmUC8duaz254PbmRUpjPJluyDIo
+         BWUM1affx6TjsCRzb4YyHmDKwkrY0RVdfaqvLh5kuGHxR8weCcM5p3ZY7rz1mdbjPXRn
+         acG68z1e7A0v/IvBZiruWJM8w56TdYDenIn57wju3+UamQLPxAlICof2aGKmxvlmtFQG
+         IRwUxAnDJWglbsATLUo590BUGuoQ+L5BB/I2gXI/wnySI9BcGOJ5h3aUsUPWYu61Mv/J
+         knj784xu+l8MCGTO80rObgZYKKwACYgwg3yF29KEILnNz72ZniwKiKwSAByYIi4n8CtB
+         pq3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWvcZFX/N6YGMoET6fExUfrMDzf941enGeFTS5itHAIkq9oFoZSvOmtX753TBa3CgQUeVSOYXwfTztPdI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhx0uDeM5KR/cq265kuE0mOnwC2OZgQJekWiQClAihMzKq9WOB
+	TShi6Jsn6XSnIAFyO24SStFtJgbci9K+iupL/0Pc3QHebTyOcJyi51KbnEeOOP40u4wjV9PycQ4
+	dK1mIYae9iVeya5Zvsi66fL5+Vb7MiEa3Uut0ABNtdvLV+Y9tZeP3StwvBLTAvdo=
+X-Gm-Gg: ASbGncs+U71sdLU7Ym39KGC7KZEqZE7tJaNECWpGL9btXA3hXQspdQ8rhTKp8S87sxZ
+	0Lyi/HZrAbeIIqEBSlMhz3OxG2Z1FfKwTHUKrSYVwNC6Hya1dlww1cWLXNJxMfFpmgrKDEoI2Vf
+	cccmdSQh5qeZ8lfsC17XWHOZILpGBaCY/FFIl8ijKztDTS5u0YKOjWAt27+aBay23vQgruPtC9H
+	WrajvDXVyeDIKj3PpZFP3PyCjTVU7DeY5M99u+x/oxqkeue2F5Z2aorqC1lUsVHfrMRNfjsDE6a
+	NTOC7abv3O/K4cp2s3mN8yHVZDgfImU=
+X-Received: by 2002:ac8:5ac5:0:b0:460:9026:6861 with SMTP id d75a77b69052e-466b35709cfmr140702231cf.9.1733149932670;
+        Mon, 02 Dec 2024 06:32:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGf1cpJzrtskSGjo4fG1SF33+hbIJADVXKdZwRVrExj/yH5XpQNftzyNj1gO9ADrRCLD3i4rA==
+X-Received: by 2002:ac8:5ac5:0:b0:460:9026:6861 with SMTP id d75a77b69052e-466b35709cfmr140702001cf.9.1733149932112;
+        Mon, 02 Dec 2024 06:32:12 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996d8b7asm514983366b.48.2024.12.02.06.32.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 06:32:11 -0800 (PST)
+Message-ID: <30985d44-a460-437d-8423-615c198e02a2@oss.qualcomm.com>
+Date: Mon, 2 Dec 2024 15:32:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Add USB multiport
+ fingerprint reader
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+ <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@linaro.org>,
+        Johan Hovold <johan@kernel.org>
+References: <20241118-x1e80100-crd-fp-v1-0-ec6b553a2e53@linaro.org>
+ <20241118-x1e80100-crd-fp-v1-1-ec6b553a2e53@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241118-x1e80100-crd-fp-v1-1-ec6b553a2e53@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-dt-bcm2712-fixes-v1-7-fac67cc2f98a@raspberrypi.com>
-References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
-In-Reply-To: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Eric Anholt <eric@anholt.net>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, 
- linux-gpio@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
-X-Mailer: b4 0.14.1
+X-Proofpoint-GUID: zprJ_oKXz57SHAWj8aVamQxauU3OzuEC
+X-Proofpoint-ORIG-GUID: zprJ_oKXz57SHAWj8aVamQxauU3OzuEC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 mlxlogscore=555 impostorscore=0 adultscore=0 phishscore=0
+ bulkscore=0 priorityscore=1501 clxscore=1015 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412020125
 
-Resolves the issues on clocks and power nodes
+On 18.11.2024 11:34 AM, Stephan Gerhold wrote:
+> The X1E80100 CRD has a Goodix fingerprint reader connected to the USB
+> multiport controller on eUSB6. All other ports (including USB super-speed
+> pins) are unused.
+> 
+> Set it up in the device tree together with the NXP PTN3222 repeater.
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
 
-Fixes: 4254a647b6c9 ("arm64: dts: broadcom: Add firmware clocks and power nodes to Pi5 DT")
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
----
- arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-index fbc56309660f..26e05601416f 100644
---- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-@@ -66,11 +66,7 @@ &sdio1 {
- &soc {
- 	firmware: firmware {
- 		compatible = "raspberrypi,bcm2835-firmware", "simple-mfd";
--		#address-cells = <1>;
--		#size-cells = <1>;
--
- 		mboxes = <&mailbox>;
--		dma-ranges;
- 
- 		firmware_clocks: clocks {
- 			compatible = "raspberrypi,firmware-clocks";
-@@ -85,6 +81,11 @@ reset: reset {
- 
- 	power: power {
- 		compatible = "raspberrypi,bcm2835-power";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+		dma-ranges;
-+
- 		firmware = <&firmware>;
- 		#power-domain-cells = <1>;
- 	};
-
--- 
-2.34.1
-
+Konrad
 
