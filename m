@@ -1,205 +1,161 @@
-Return-Path: <linux-kernel+bounces-427735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2D79E09B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:20:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBB49E09B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E2CB80E50
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:40:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DC0EB3A7A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A7D207A14;
-	Mon,  2 Dec 2024 14:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N/fXmL7W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105AD20DD67
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149951; cv=none; b=qKvI2y0OFOfs1tAj5f1ATDbrsEF+l9rHBJ2dUVMYZry9+wAH9KkZanzpP1Uu4Rvt5BgkfvHICasdXYh9WyJVtiAUAWwjeyyTFA1uvDd3/w6Gh5b8v5ha/O9Ff+ymxfWC6/PADQfq2gWxW+B5uWo9S6bYPzvYXOfIN5IgHiXVOG0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149951; c=relaxed/simple;
-	bh=YKTxFVVuOPcD96kKG+W3DinvLQM41+0w/fE1JP30J58=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WgAbV/GP/jylAbViS02b9k7OEEElQKFJUM3Mnz48xbrD2Wbf7uR3WzylBAkkSPvDeX8tWT0OtT6ooAmPiZ/juyqikZ9wQeAKjWTVdO2CztgTvk5bChIhk8+5bAheZMdht2QpW2zl3RpoiX4PsOoUWXGE5ote9Q0QQ0rVm3ZpZlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N/fXmL7W; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733149949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YSzodCLi8lHVHDHFOACKNah3Rx590SNadOxvvVMC/Oo=;
-	b=N/fXmL7WsykHFIYw24vD109ZJPBqt2OUYRbRnm/v5F6DaY8XpwCXa4EKQ8mdwCTw/c0YgV
-	jLD7r1CFSk6OkByEqFB5JPaG6H/0sxbFSyKpERR8EAHP1HmURazlHYatMzJvE0imuBxbPj
-	dA8y4joRknhAl8axgl2YZr567fTwXHs=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-523-9_0K13mEOpWCSGEBozX_2Q-1; Mon,
- 02 Dec 2024 09:32:23 -0500
-X-MC-Unique: 9_0K13mEOpWCSGEBozX_2Q-1
-X-Mimecast-MFC-AGG-ID: 9_0K13mEOpWCSGEBozX_2Q
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E1241944D05;
-	Mon,  2 Dec 2024 14:32:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.48])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A578B1956052;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F0620B80C;
 	Mon,  2 Dec 2024 14:32:19 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 19/37] rxrpc: Display stats about jumbo packets transmitted and received
-Date: Mon,  2 Dec 2024 14:30:37 +0000
-Message-ID: <20241202143057.378147-20-dhowells@redhat.com>
-In-Reply-To: <20241202143057.378147-1-dhowells@redhat.com>
-References: <20241202143057.378147-1-dhowells@redhat.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="JnAOaWtj"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E502120B212
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733149938; cv=none; b=DhMw2+Bfikz9Yz44v04S7GV0M03aYwP9SeH90yaEiLVRqqxIQHtFBuU5V4xvmb+KDS2FD1Ydss0uhSCW2EH2RI/dSKn6DCbpRQeAbU6Tk++ufTnflJjAaMbSZkOpjEKcPD/3H8rq9fsdBhNFzf2lW9LBajm4uOyJPlpvIQ9nSeQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733149938; c=relaxed/simple;
+	bh=5zXjITbgA5FSFSmYOEMfbg84vfuGIoappc2/TOnidqA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S0IQmjf0DSWulhi2iE1kjKaJSZtCwRZGAfXa665FetRSlImC92hjcSkncKme/2yH6mL17N0yFbNmxrcPXb3zP0DUWhiSi2MrfumSykSxwmaED4XPvymQ+Kx/UcoFYoVV05O7zNY9d/o/aW9WryMO3uCxnOfjaUuogFPFSer0gGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=JnAOaWtj; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434aa472617so36574045e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:32:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1733149935; x=1733754735; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=66NaRjYo+TdRIjIUtk+A/zrTfjyMbW0NLvNCk3ACUHQ=;
+        b=JnAOaWtjEutUVX5FoLqjgsgCyMTJhtRjF8G8nLY1Ee/5lsmHIlR/1f9MYOSTlUBx4m
+         CYrSa9AN3gxy5Dltk8AIPUBcjFzVe71gdav0nzROfvW0QJebT0PptUfUigBsq9bR5KEK
+         Pz2bwvZJTVR+RWQrVLMFj3/y06LAzKPR6UBuHQsWPjrbubZ+7mQDP2FnnFCyMPHsimCK
+         tR7TfOaqq89NhpIM19SotIYGUmKYCNTRj5xUU5ByGd+WufZn9ALY8ks8EefHL1g1cPzf
+         f5dOo6SKcXMKqGjjndhktzDjM3oKm9GoLAx2QzKC6PvxhNCQiDJSPZn5GqgN1ptzNkxe
+         CJ3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733149935; x=1733754735;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=66NaRjYo+TdRIjIUtk+A/zrTfjyMbW0NLvNCk3ACUHQ=;
+        b=Ed3Vrxzm9BxWxXBXs3UoodTwLVjCSOC9nfBcKDJNH/Gy2wOUA5RW1+T9r9Yb5xyajj
+         Wptk/sDT2Gh5NMGm4Xk7dyeuHMs/7+EA+NuF4IlwuIk/bL+TPrSxSaJB5l1aJ98A5TuR
+         dq0MzfUpYZxk3Da7GxM/Qr/la92PaU3Y0AaPxprNrcDZENphcXghu6y74vS6ghW4LSaB
+         biIWJdKzuBM9kGZ3zU9PNtX6AQzydKokG0M/eg1pKi+x5sM9NzFJtzOQjh2A3i5x7TA8
+         OzWc5+GzT8Dvd13UTNm3nKgRqVpm6Av6kTwJv9LIWqBC5+oSfCBTp/C0yfivmgjLDFQc
+         gsjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXb+XSkUgrNNBXShNEGhPWDI6awgDdNhBJKntz8jqV8+RDxBqWGEqdC5FSJQmTQOL4KqD6ekJW84ZWj+7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTWoAiC3N1cAbbciOkJ9MwRofK2sXo3jVPv8am9cQEtq7DLvEL
+	gwGCBDbTxzn7ulYphq4JNVC50d1DC61tO5CBLKfnRHbHbNx/9ROkMffXeWkj8E0=
+X-Gm-Gg: ASbGncurreCe7d1dIf7/wqOJSzt3mpg/pJ8FthSeJcZAdNmtK9fjzf6N91DKNhszMN9
+	e7EBsYN0mlp76xH0au73YvDbtX2/VrnETDBR4V4l1/qwoMLDmfZxIs3J+H3wP32WW89sIBo7teq
+	IrXvtQRclH6J4kVwWHS/IwhQ+hXdFBpqA/h1YaIMIf6JtHibUk5Zu6+v1LHE8lArtR+k3H3Wqzl
+	huDhQTytU/8i56RIis3pkU2yJxyTAHb+UKvJMdvCA==
+X-Google-Smtp-Source: AGHT+IFjvnTvxoYoYzXeiS+rT48r6tDHyIvnEQ/xQrP8Q+YrgHiGsItI6q35+4octUNLW9uQ5Wq4wQ==
+X-Received: by 2002:a05:600c:1e09:b0:434:a8d8:760e with SMTP id 5b1f17b1804b1-434a9dc6774mr200107125e9.19.1733149935182;
+        Mon, 02 Dec 2024 06:32:15 -0800 (PST)
+Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa74f1e6sm188429555e9.9.2024.12.02.06.32.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 06:32:14 -0800 (PST)
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: [PATCH 0/7] drm/vc4: Fixup DT and DT binding issues from recent
+ patchset
+Date: Mon, 02 Dec 2024 14:31:53 +0000
+Message-Id: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANnETWcC/x3LQQqAIBBA0avErBvQQVK6SrTQmmoWWWhEEN49a
+ fn4/BcyJ+EMffNC4luyHLFCtw1Mm48ro8zVQIqM1uRwvjBMO1lNuMjDGf0SFDuvvLEd1O1M/Id
+ 6DWMpHxlHVi9iAAAA
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Eric Anholt <eric@anholt.net>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, 
+ linux-gpio@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
+X-Mailer: b4 0.14.1
 
-In /proc/net/rxrpc/stats, display statistics about the numbers of different
-sizes of jumbo packets transmitted and received, showing counts for 1
-subpacket (ie. a non-jumbo packet), 2 subpackets, 3, ... to 8 and then 9+.
+I missed the DT errors from the recent patchset[1] (DT patches
+in linux-next via Florian, DRM bindings patches on dri-misc-next)
+as Rob's bot report got spam filtered, so this is a fixup set.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
+Largely it was changes to number of interrupts or clocks in the
+bindings, so those are now covered.
+
+I've fixed up the missing "interrupt-controller" flags for 2711
+and 2712 whilst here.
+
+I can't get my head around what is meant to happen with ranges:
+"soc@107c000000: firmware: 'ranges' is a required property"
+The meaning seems obvious.
+
+However if I add it then I get:
+"firmware: '#address-cells', '#size-cells', 'dma-ranges', 'ranges' do
+not match any of the regexes: 'pinctrl-[0-9]+'
+from schema $id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
+
+There's obviously some other flag I need to set in the bindings,
+but I can't work it out. We have similar errors for all the Pi
+platforms for one or more nodes.
+Please advise and I'll happily fix them all.
+
+Thanks
+  Dave
+
+[1] https://lore.kernel.org/linux-arm-kernel/20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com/
+
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- net/rxrpc/ar-internal.h |  2 ++
- net/rxrpc/input.c       |  6 +++++-
- net/rxrpc/output.c      |  3 +++
- net/rxrpc/proc.c        | 26 ++++++++++++++++++++++++++
- 4 files changed, 36 insertions(+), 1 deletion(-)
+Dave Stevenson (7):
+      dtbindings: display: bcm2711-hdmi: Correct bindings for 2712
+      dtbindings: display: Fix BCM2835 HVS bindings for BCM2712
+      dt-bindings: gpio: brcmstb: add gpio-line-name
+      arm64: dts: broadcom: Fix device tree warnings for BCM2712 display pipeline
+      arm64: dts: broadcom: Add interrupt-controller flag for intc on BCM2712
+      arm: dts: broadcom: Add interrupt-controller flag for intc on BCM2711
+      arm64: dts: broadcom: Fix device tree errors on BCM2712.
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 3e57cef7385f..840293f913a3 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -111,6 +111,8 @@ struct rxrpc_net {
- 	atomic_t		stat_tx_ack_skip;
- 	atomic_t		stat_tx_acks[256];
- 	atomic_t		stat_rx_acks[256];
-+	atomic_t		stat_tx_jumbo[10];
-+	atomic_t		stat_rx_jumbo[10];
- 
- 	atomic_t		stat_why_req_ack[8];
- 
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 4684c2c127b5..87e2e983b161 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -568,7 +568,7 @@ static bool rxrpc_input_split_jumbo(struct rxrpc_call *call, struct sk_buff *skb
- 	unsigned int offset = sizeof(struct rxrpc_wire_header);
- 	unsigned int len = skb->len - offset;
- 	bool notify = false;
--	int ack_reason = 0;
-+	int ack_reason = 0, count = 1;
- 
- 	while (sp->hdr.flags & RXRPC_JUMBO_PACKET) {
- 		if (len < RXRPC_JUMBO_SUBPKTLEN)
-@@ -597,12 +597,16 @@ static bool rxrpc_input_split_jumbo(struct rxrpc_call *call, struct sk_buff *skb
- 		sp->hdr.serial++;
- 		offset += RXRPC_JUMBO_SUBPKTLEN;
- 		len -= RXRPC_JUMBO_SUBPKTLEN;
-+		count++;
- 	}
- 
- 	sp->offset = offset;
- 	sp->len    = len;
- 	rxrpc_input_data_one(call, skb, &notify, &ack_serial, &ack_reason);
- 
-+	atomic_inc(&call->rxnet->stat_rx_jumbo[
-+			   umin(count, ARRAY_SIZE(call->rxnet->stat_rx_jumbo)) - 1]);
-+
- 	if (ack_reason > 0) {
- 		rxrpc_send_ACK(call, ack_reason, ack_serial,
- 			       rxrpc_propose_ack_input_data);
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index f785ea0ade43..6b5eac7fcfaf 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -555,6 +555,9 @@ void rxrpc_send_data_packet(struct rxrpc_call *call, struct rxrpc_send_data_req
- 
- 	_enter("%x,%x-%x", tq->qbase, seq, seq + req->n - 1);
- 
-+	atomic_inc(&call->rxnet->stat_tx_jumbo[
-+			   umin(req->n, ARRAY_SIZE(call->rxnet->stat_tx_jumbo)) - 1]);
-+
- 	len = rxrpc_prepare_data_packet(call, req);
- 	txb = tq->bufs[seq & RXRPC_TXQ_MASK];
- 
-diff --git a/net/rxrpc/proc.c b/net/rxrpc/proc.c
-index fb16fff102fc..79fd472dbcfc 100644
---- a/net/rxrpc/proc.c
-+++ b/net/rxrpc/proc.c
-@@ -532,6 +532,30 @@ int rxrpc_stats_show(struct seq_file *seq, void *v)
- 		   atomic_read(&rxnet->stat_why_req_ack[rxrpc_reqack_retrans]),
- 		   atomic_read(&rxnet->stat_why_req_ack[rxrpc_reqack_slow_start]),
- 		   atomic_read(&rxnet->stat_why_req_ack[rxrpc_reqack_small_txwin]));
-+	seq_printf(seq,
-+		   "Jumbo-Tx : %u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
-+		   atomic_read(&rxnet->stat_tx_jumbo[0]),
-+		   atomic_read(&rxnet->stat_tx_jumbo[1]),
-+		   atomic_read(&rxnet->stat_tx_jumbo[2]),
-+		   atomic_read(&rxnet->stat_tx_jumbo[3]),
-+		   atomic_read(&rxnet->stat_tx_jumbo[4]),
-+		   atomic_read(&rxnet->stat_tx_jumbo[5]),
-+		   atomic_read(&rxnet->stat_tx_jumbo[6]),
-+		   atomic_read(&rxnet->stat_tx_jumbo[7]),
-+		   atomic_read(&rxnet->stat_tx_jumbo[8]),
-+		   atomic_read(&rxnet->stat_tx_jumbo[9]));
-+	seq_printf(seq,
-+		   "Jumbo-Rx : %u,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",
-+		   atomic_read(&rxnet->stat_rx_jumbo[0]),
-+		   atomic_read(&rxnet->stat_rx_jumbo[1]),
-+		   atomic_read(&rxnet->stat_rx_jumbo[2]),
-+		   atomic_read(&rxnet->stat_rx_jumbo[3]),
-+		   atomic_read(&rxnet->stat_rx_jumbo[4]),
-+		   atomic_read(&rxnet->stat_rx_jumbo[5]),
-+		   atomic_read(&rxnet->stat_rx_jumbo[6]),
-+		   atomic_read(&rxnet->stat_rx_jumbo[7]),
-+		   atomic_read(&rxnet->stat_rx_jumbo[8]),
-+		   atomic_read(&rxnet->stat_rx_jumbo[9]));
- 	seq_printf(seq,
- 		   "Buffers  : txb=%u rxb=%u\n",
- 		   atomic_read(&rxrpc_nr_txbuf),
-@@ -569,6 +593,8 @@ int rxrpc_stats_clear(struct file *file, char *buf, size_t size)
- 	atomic_set(&rxnet->stat_tx_ack_skip, 0);
- 	memset(&rxnet->stat_tx_acks, 0, sizeof(rxnet->stat_tx_acks));
- 	memset(&rxnet->stat_rx_acks, 0, sizeof(rxnet->stat_rx_acks));
-+	memset(&rxnet->stat_tx_jumbo, 0, sizeof(rxnet->stat_tx_jumbo));
-+	memset(&rxnet->stat_rx_jumbo, 0, sizeof(rxnet->stat_rx_jumbo));
- 
- 	memset(&rxnet->stat_why_req_ack, 0, sizeof(rxnet->stat_why_req_ack));
- 
+ .../bindings/display/brcm,bcm2711-hdmi.yaml        | 44 +++++++++----
+ .../bindings/display/brcm,bcm2835-hvs.yaml         | 77 +++++++++++++++++-----
+ .../bindings/gpio/brcm,brcmstb-gpio.yaml           |  2 +
+ arch/arm/boot/dts/broadcom/bcm2711.dtsi            |  2 +
+ arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts   |  9 +--
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi          | 10 +--
+ 6 files changed, 106 insertions(+), 38 deletions(-)
+---
+base-commit: 8c3f4a248f35817d2f604c0e3df1bccf27590228
+change-id: 20241128-dt-bcm2712-fixes-afb0e8a0a476
+
+Best regards,
+-- 
+Dave Stevenson <dave.stevenson@raspberrypi.com>
 
 
