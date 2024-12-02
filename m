@@ -1,113 +1,112 @@
-Return-Path: <linux-kernel+bounces-426973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6247E9DFAC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:36:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056D39DFAC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:37:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D145CB21316
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:36:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2BB416101B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93141F8F11;
-	Mon,  2 Dec 2024 06:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2821F8F01;
+	Mon,  2 Dec 2024 06:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QSWcNgEo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3C22hto"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800D533F6;
-	Mon,  2 Dec 2024 06:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CF333F6;
+	Mon,  2 Dec 2024 06:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733121376; cv=none; b=VAj+VEpJcI/z0sC0ZlsBsLcBTySuJooyu2yq8gaks4/mUx1a7gZiWELA/T/iDh+QOV3Wg1HpcwaYHvIvs493potQTNwtJmoQX8UvQwSBP1GQf6fm9WltBtiYCYGtwpH2OsKLdtVbYudfFJij0Q+tn2sVUUrSFitsMnLtrYkHq3s=
+	t=1733121453; cv=none; b=PcfM/rYyGkZ3LqZXrht3s09ST335RITlwTouNYiCj0eJLw1cRdLwHMtp1vmZz0KxejZWFAHIPduT8Db3iRI5K+ckeSoKtxOpc+t03JuFsl3hoAT8NjjTWpTTcqY44A+JWinDFOsZSz9Vc9baZFh/RU1txlPzwecThFxS2a5iEP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733121376; c=relaxed/simple;
-	bh=LC+fJ3vbEI+NdPBc84Eyj0Lc0zpeooAJNH+G8lVbmEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=It4SYar7UUztewKpy2NPUut+5CViRrE8gOCNZIXUWj2Mqzl3ic0sLhF1BeWF901lsz2t1CWtzY4MuXRxkm9Lsnj3vI0wngm5rqBshmk4jFZFBJ2JB6EMN3GYR66Unzq5ZAsLP2uYd4F6Oi0oqvzTCwutKl2+1ElNhKwPyoXop44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QSWcNgEo; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733121374; x=1764657374;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LC+fJ3vbEI+NdPBc84Eyj0Lc0zpeooAJNH+G8lVbmEE=;
-  b=QSWcNgEo5VhIEji86+GHMp+Wwa2tPHtBQyaxprcuyI3FvEZuDSrd0u3K
-   DQmns5ey0qNsuoYYZYnvORfE0jRr29Z7s6bVtMtXh/AvGRYKCB0P8Kasl
-   ULOLgK6YQzdIbNWLHWGIad/+XxILfX145v9h22Wu+SPcMTKPaaewlnSq1
-   d7N7HCY1+jmrVVnnW7eyLIX5h/105oIidkf7yR+mQITNSKA2a/OKlXxH8
-   FFapH1rz7PN6Oee5UAVprI6iGcbaqBuzmYVwcK+CZoLjQtSJFoZSQ/nxu
-   6pPTDWcqvltcHmvPN24c2XOvMUyv+/J6UnuYHAeRwck5fzCdYP3J2Xy65
-   w==;
-X-CSE-ConnectionGUID: NyymhBlzT22jVf8a1014XQ==
-X-CSE-MsgGUID: 8KWK9pMKQHydjtdeIIkbNg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="43887698"
-X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
-   d="scan'208";a="43887698"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 22:36:14 -0800
-X-CSE-ConnectionGUID: 3I52U4gTS1C7+L02jgpFnw==
-X-CSE-MsgGUID: 1OVXtrIITAKSHD2ZJdlZgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
-   d="scan'208";a="123954282"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 22:36:08 -0800
-Message-ID: <08b373ac-01b2-4afe-81bd-85e3fe13615d@intel.com>
-Date: Mon, 2 Dec 2024 08:36:03 +0200
+	s=arc-20240116; t=1733121453; c=relaxed/simple;
+	bh=WBdRcDTx9N7fnkE1blCMm0RztpWS84bc7bxZjpdrF74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MNOWx/c/1Z7dTvTi9fL7U/9MwnaRB9Xms1vTH6V8UZSXMv7JvKuCeB/QjNukpU5CinTvHXpIJtAFh+N8Vm3BzLr75Mfto9NODRi7Bg/y+g6Dd2+yrVTzBYXIIlAR9nx9meoyXM9OfGfH8Peg2X+zdqpV0Kt+K1mQO0lwnQATzQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3C22hto; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4914C4CED2;
+	Mon,  2 Dec 2024 06:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733121452;
+	bh=WBdRcDTx9N7fnkE1blCMm0RztpWS84bc7bxZjpdrF74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p3C22htoBqNAKys2dY9UdSRMNm+7VGZINvI176HEm7h5HM4DkhVTs0YyJ9vulQMiW
+	 Rp4t0ewagmeI34wzXcr3nlwL1b+Hhu/pbG6I8drw0ekgdX0mw2t0hAtlU8eY+0sPRI
+	 k+CtYxtF1l/2nqPXndKrOPdpGn6/mq9MnN95Mti5IPV8oAx52KyT2yYW42sWRCa7iO
+	 LyyOBLDjKIfjHgjfazW8Ebs/JO055WY7YUZt63VRBN2ksHXkdpCotOqZVsTbVtXTpj
+	 jFfdgWJ5yUwQgrXlGrPV21VQRA+fz/teiVtmNdBzjM8OXMNB8R8fKnig7E8wyYltN3
+	 Uohdt3CMVjRBQ==
+Date: Mon, 2 Dec 2024 08:37:19 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ftrace: Show timings of how long nop patching took
+Message-ID: <Z01Vn8yZv-AlB-Z4@kernel.org>
+References: <20241017113105.1edfa943@gandalf.local.home>
+ <6fb1e232-3bc3-4d5d-bff9-9f1a8c784782@csgroup.eu>
+ <20241201150406.17f10247@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] KVM: TDX: restore host xsave state when exit from the
- guest TD
-To: Chao Gao <chao.gao@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- dave.hansen@linux.intel.com, rick.p.edgecombe@intel.com,
- kai.huang@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com,
- tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
- dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
- linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
- weijiang.yang@intel.com
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-5-adrian.hunter@intel.com> <Z0AbZWd/avwcMoyX@intel.com>
- <a42183ab-a25a-423e-9ef3-947abec20561@intel.com> <Z0UwWT9bvmdOZiiq@intel.com>
- <5f4e8e8d-81e8-4cf3-bda1-4858fa1f2fff@intel.com> <Z00hAGYg1BQsiHJ5@intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <Z00hAGYg1BQsiHJ5@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241201150406.17f10247@rorschach.local.home>
 
-On 2/12/24 04:52, Chao Gao wrote:
->>>> /* 
->>>> * Before returning from TDH.VP.ENTER, the TDX Module assigns:
->>>> *   XCR0 to the TDâ€™s user-mode feature bits of XFAM (bits 7:0, 9)
->>>> *   IA32_XSS to the TD's supervisor-mode feature bits of XFAM (bits 8, 16:10)
+On Sun, Dec 01, 2024 at 03:04:06PM -0500, Steven Rostedt wrote:
+> On Sun, 1 Dec 2024 20:37:42 +0100
+> Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
 > 
-> TILECFG state (bit 17) and TILEDATA state (bit 18) are also user state. Are they
-> cleared unconditionally?
-
-Bit 17 and 18 should also be in TDX_XFAM_XCR0_MASK
-TDX Module does define them, from TDX Module sources:
-
-	#define XCR0_USER_BIT_MASK                  0x000602FF
-
-Thanks for spotting that!
-
+> > Hi Steven,
+> > 
+> > Le 17/10/2024 à 17:31, Steven Rostedt a écrit :
+> > > From: Steven Rostedt <rostedt@goodmis.org>
+> > > 
+> > > Since the beginning of ftrace, the code that did the patching had its
+> > > timings saved on how long it took to complete. But this information was
+> > > never exposed. It was used for debugging and exposing it was always
+> > > something that was on the TODO list. Now it's time to expose it. There's
+> > > even a file that is where it should go!
+> > > 
+> > > Also include how long patching modules took as a separate value.
+> > > 
+> > >   # cat /sys/kernel/tracing/dyn_ftrace_total_info
+> > >   57680 pages:231 groups: 9
+> > >   ftrace boot update time = 14024666 (ns)
+> > >   ftrace module total update time = 126070 (ns)  
+> > 
+> > What is this supposed to report / measure ?
+> > 
+> > On powerpc I get:
+> > 
+> > 25850 pages:14 groups: 3
+> > ftrace boot update time = 0 (ns)
+> > ftrace module total update time = 0 (ns)
 > 
->>>> */
->>>> #define TDX_XFAM_XCR0_MASK	(GENMASK(7, 0) | BIT(9))
->>>> #define TDX_XFAM_XSS_MASK	(GENMASK(16, 10) | BIT(8))
->>>> #define TDX_XFAM_MASK		(TDX_XFAM_XCR0_MASK | TDX_XFAM_XSS_MASK)
+> Hmm, does powerpc support "trace_clock_local()" at early boot? I
+> probably can just switch from using "ftrace_now()" to using
+> ktime_get_real_ts64(). Hmm.
 
+The calls to timekeeping_init() and time_init() are after ftrace_init() so
+unless an architecture sets up some clock in setup_arch() like x86 does
+there won't be a clock to use.
+ 
+> -- Steve
+
+-- 
+Sincerely yours,
+Mike.
 
