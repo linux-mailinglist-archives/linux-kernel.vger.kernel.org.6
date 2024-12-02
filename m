@@ -1,124 +1,266 @@
-Return-Path: <linux-kernel+bounces-426902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0EDF9DF9F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:32:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2657E9DF9F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:34:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F302819D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89CD32818F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18AC1F9426;
-	Mon,  2 Dec 2024 04:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C6E1E105B;
+	Mon,  2 Dec 2024 04:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Krnr484r"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFyHAcD+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F021F9410
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 04:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B485B28399;
+	Mon,  2 Dec 2024 04:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733113902; cv=none; b=tKjSUUNiWUQTCd8at8F3EOjTqKW2K5upIL229AxyllbSthoiMkOdPLHroLpx8+hdKdX4995HS8dU9f/yyNcnB+pjTyTun1kODYVEn5IhAQOKmy31A7oYoG4oJB+fVYWhSAynKj6V14Vh0bsaf71fPsUGl6CuTxkjx8Pb3tNqQxw=
+	t=1733114086; cv=none; b=ScYWC/liWNncxzfE544ogcH9bhPQZJMvuaSuX5Mfj5bWbHfH3AaSUAuswZ/mpYX9O55qlHmdn22Znn5z87SGoudZARvE+1OrDCYscoHdevd+ixtMk8EDkV9f063Fx2WGlQIb6h/4PoB0z9Z8f2Zp32PuiM8Be42LCHrmYSfjjvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733113902; c=relaxed/simple;
-	bh=56Z7vtClXZDAVTMPZo+ONi+IO+6Hj8anC/vgwElyZfA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Ou4wep5Veu43Eq8+K9+/DTlZEp/z0Of/+jt6n+crNTb0bTBzCg9MRHptRpGe3tl/VT+oc5prSNuD8ciFbVSeJbPpCakgdOTBl1o6eJBhWIz4ucWM1cvxSrDjg0MhDE6i9/da0VXpenJBaEz5hgYhCGai6la8DPDlGj7kQS5XDGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Krnr484r; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa520699becso639010966b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 20:31:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733113898; x=1733718698; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=56Z7vtClXZDAVTMPZo+ONi+IO+6Hj8anC/vgwElyZfA=;
-        b=Krnr484rDhLZGuUjMOzL5zw4AWz0EMgwRva5Y9Dr2NEoYMkH4zofbOJaAXKxhkCVDV
-         giL93joj/64Bzkew++RB+WIQdzfOPtrUivDyW0RJakCMwsUIojDMDyNpKuKM/iYGFwP/
-         aFf5FWdmYGRAwzJQ4UXL0t/1At3ay151LYAS19D/Tg0mwFNbMURUYJlglGuWORRfNSBq
-         6uMWEKPIXaHFnkZPQJp6TEKW8zjVChYtCkBxaLk8V3mrQzPmQxXEGz1rWuxhAg27YyI0
-         R99P/hdkjdt6nuWkMQ+PKs674ySOHB6fIXy0EdjTXKnRHTtQOhuwUF2yIZGyvGlxTMi3
-         M7fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733113898; x=1733718698;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=56Z7vtClXZDAVTMPZo+ONi+IO+6Hj8anC/vgwElyZfA=;
-        b=NKqY5Ubjb1I2Sk1ph30YqTN4UZNF9KQq3TocU4acsjhjZ8g8SjJWeL8d01fuFIIPkA
-         rNEEKpjxxC4Kya7cMf4WgInPxDV1rtuH7L89sgU8g6fdkUBzDOTKCq4FCOgmJNHdBaVD
-         ZxF62Zyd/3nhgFw5UKLERFcdcmYe/obv7NZPqn0KJFQcEeYcGmT1sMrU3E4K/WK95KOu
-         whTgbuLuO+3LnSrB/ywL3iuJjrwKm/d+sA7B532+xc8h47xtpIlpzrPSiypnqemad8/g
-         2JjQolbQf/pbIQQ0gVksFPyjqO0/on33HPRjTJiZP8UutBoSRU7yDtsPNFp08v7KrxdJ
-         EiRA==
-X-Gm-Message-State: AOJu0YwkFQ3xmnVWq4jf3ZdTPF1C9r+UADPwSRLpTdL+Sq2xqVuafgTG
-	MyQmoeRboeAERSUldwS2U35y3x2kKUeVlzWR0dpPhPipS3cLiiqrqAE6vviUoAV4XKPzd9dxiU7
-	Ii7XWmfqtObOpDRlG8ZdaWKA7m2ZnYN7m
-X-Gm-Gg: ASbGnct1FBNJkdfuuUsMgwM1pC2mnap2CCFi4ZaMeZqBNlRbg6kD/YIP8e/TiB9tQj1
-	PO9WtC1cB1aO3GfuAtV9pXa5kyAqSTiJG
-X-Google-Smtp-Source: AGHT+IHQZwzyzfTMVm94uYHjMUn1pLJiEpCjg+qw4iBMedOO5aROvVEi5ipSZGl9VfBmQgt6fjG4sgMZWg9X0PInSLQ=
-X-Received: by 2002:a17:907:7703:b0:aa5:39d0:845a with SMTP id
- a640c23a62f3a-aa580f01be6mr2075209466b.15.1733113897965; Sun, 01 Dec 2024
- 20:31:37 -0800 (PST)
+	s=arc-20240116; t=1733114086; c=relaxed/simple;
+	bh=oCme0MOKqzQQxi7TmLZDxECaBpW0/t9Pl6cMKvqD3hc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AgQscvXoRrJqHDZGda4TxLC32ozMBaWdNDM+yGefF9jlPpj1wkdgdnXFpp9toK2HMSu9bjapaDxO9O9hetJtIkjY0f1lJ7oN9D1G01zHGUekVzIp8noPP/wIBIMLKcestnn+IiAMdwPAejADgcCMnBYH6myiXunGZasGsVGV40s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFyHAcD+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64415C4CED2;
+	Mon,  2 Dec 2024 04:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733114086;
+	bh=oCme0MOKqzQQxi7TmLZDxECaBpW0/t9Pl6cMKvqD3hc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FFyHAcD+W1K+9b2zX+8KO1lJ/fnkAkuojJ9RJoJoJ0nBANBaFBFNT6pWvPfPeop0t
+	 LD9FsUqhN7Fn5j9Wn11RJf7f7IEcAQtZFBiomWxi0vKSaP4VFbTfjaFeR3N50rIaLb
+	 sB+XOyHfwxExrenWo4BQQbxVRgQYpIKlc4z9RPkrPFp6SPyoWC1xVGdlK4726gPgyp
+	 EHkKj8pVgMVhjkZz1JgdcDJFUoBkX4tioB8kPKbUISysWhzDpngmVCXnra/GWTn+bP
+	 vFE6ESo7ycEDtdlTPMHtgjTzU31SXzm6XMMEePkUStaRU7v0ksrtzHaRuGfmKp5zwL
+	 LbclEbGLDCibA==
+Date: Sun, 1 Dec 2024 22:34:42 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
+	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
+	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
+	konradybcio@kernel.org, quic_tsoni@quicinc.com, quic_shashim@quicinc.com, 
+	quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, quic_tingweiz@quicinc.com, 
+	quic_aiquny@quicinc.com, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: Re: [PATCH v2 5/6] arm64: dts: qcom: qcs615: enable pcie for qcs615
+ soc
+Message-ID: <jwfqxrfbnbijp7s54e44mzqxlmbq32bs4imnjcyjvvvs7deeza@pkylehjbxqib>
+References: <20241122023314.1616353-1-quic_ziyuzhan@quicinc.com>
+ <20241122023314.1616353-6-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: cheung wall <zzqq0103.hey@gmail.com>
-Date: Mon, 2 Dec 2024 12:31:26 +0800
-Message-ID: <CAKHoSAsjBpfS5REyfRWJz3GA8PSLnXEE3wi2Dq9oJb-jYLjkUg@mail.gmail.com>
-Subject: "BUG: unable to handle kernel paging request in DataTLBError" in
- Linux Kernel Version 2.6.32
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122023314.1616353-6-quic_ziyuzhan@quicinc.com>
 
-Hello,
+On Fri, Nov 22, 2024 at 10:33:13AM +0800, Ziyue Zhang wrote:
 
-I am writing to report a potential vulnerability identified in the
-Linux Kernel version 2.6.32, specifically on the PowerPC architecture.
-This issue was discovered using our custom vulnerability discovery
-tool.
+The way we say "this is a DT patch for qcs615" is by prefixing the
+subject "arm64: dts: qcom: qcs615: ", there's therefor no reason to
+include "for qcs615" in the tail of the subject. You can further drop
+the "soc" tail, as you said "qcs615" and not e.g. "qcs615-ride".
 
-Detailed Report:
+> Add configurations in devicetree for PCIe0, including registers, clocks,
+> interrupts and phy setting sequence.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
-fsetxattr$security_ima(r10, &(0x7f0000006f00),
-&(0x7f0000006f40)=@ng={0x3, 0x1, "508395"}, 0x5, 0x2)
-close(r1)
-ioctl$FIONCLEX(0xffffffffffffffff, 0x20006602)
-#executor: Prog has number of calls = 30
-#invalid syscall number call_num=18446744073709551614
-Unable to handle kernel paging request for data at address 0xd64c6b9b
-MSR: 00001000 <ME> CR: 82000822 XER: 20000000
-TASK = c0591330[-1065942759] '
-GPR00: fffedb15 c05cbe10 c0591330 c05935f0 c0591330 00000000 00000000 00000000
-GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-NIP [c0000ed8] DataTLBError+0x58/0xa0
-Call Trace:
-3d60c058 616bd000 7d919aa6 558c0402 7d919ba6 4800000c 7d7342a6 816b0010
-Kernel panic - not syncing: Fatal exception in interrupt
+Patch has wrong Author.
 
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 158 +++++++++++++++++++++++++++
+>  1 file changed, 158 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index 868808918fd2..c56cc30a59f3 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -678,6 +678,164 @@ rpmhpd_opp_turbo_l1: opp-9 {
+>  		};
+>  	};
+>  
+> +	pcie: pcie@1c08000 {
 
-Root Cause:
+This node looks to be in the wrong place.
 
-The root cause of this issue lies in an invalid memory access
-triggered during the handling of a kernel page fault in the
-DataTLBError function, which is responsible for addressing data TLB
-misses. The paging request failure occurs at an invalid address
-(0xd64c6b9b), likely due to an invalid or corrupted pointer passed to
-a system call such as fsetxattr or ioctl. The lack of proper
-validation for inputs or kernel state during these operations results
-in a fatal exception, causing the kernel to panic while attempting to
-handle the interrupt. This indicates a vulnerability in the kernel's
-error handling and input sanitization mechanisms for system calls
-interacting with low-level memory or TLB management.
+Regards,
+Bjorn
 
-Thank you for your time and attention.
-
-Best regards
-
-Wall
+> +		compatible = "qcom,pcie-qcs615";
+> +		reg = <0x0 0x01c08000 0x0 0x3000>,
+> +		      <0x0 0x40000000 0x0 0xf1d>,
+> +		      <0x0 0x40000f20 0x0 0xa8>,
+> +		      <0x0 0x40001000 0x0 0x1000>,
+> +		      <0x0 0x40100000 0x0 0x100000>,
+> +		      <0x0 0x01c0b000 0x0 0x1000>;
+> +
+> +		reg-names = "parf",
+> +			    "dbi",
+> +			    "elbi",
+> +			    "atu",
+> +			    "config",
+> +			    "mhi";
+> +
+> +		device_type = "pci";
+> +		linux,pci-domain = <0>;
+> +		bus-range = <0x00 0xff>;
+> +		num-lanes = <1>;
+> +
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +
+> +		ranges = <0x01000000 0x0 0x00000000 0x0 0x40200000 0x0 0x100000>,
+> +			 <0x02000000 0x0 0x40300000 0x0 0x40300000 0x0 0x1fd00000>;
+> +
+> +		interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "msi0",
+> +				  "msi1",
+> +				  "msi2",
+> +				  "msi3",
+> +				  "msi4",
+> +				  "msi5",
+> +				  "msi6",
+> +				  "msi7",
+> +				  "global";
+> +
+> +		interrupt-map = <0 0 0 0 &intc 0 0 0 140 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0 0 0 1 &intc 0 0 0 149 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0 0 0 2 &intc 0 0 0 150 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0 0 0 3 &intc 0 0 0 151 IRQ_TYPE_LEVEL_HIGH>,
+> +				<0 0 0 4 &intc 0 0 0 152 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +		#interrupt-cells = <1>;
+> +		interrupt-map-mask = <0 0 0 0x7>;
+> +
+> +		interconnects = <&aggre1_noc MASTER_PCIE QCOM_ICC_TAG_ALWAYS
+> +				 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> +				<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> +				 &config_noc SLAVE_PCIE_0 QCOM_ICC_TAG_ALWAYS>;
+> +		interconnect-names = "pcie-mem", "cpu-pcie";
+> +
+> +		clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
+> +			 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
+> +			 <&gcc GCC_PCIE_0_MSTR_AXI_CLK>,
+> +			 <&gcc GCC_PCIE_0_SLV_AXI_CLK>,
+> +			 <&gcc GCC_PCIE_0_SLV_Q2A_AXI_CLK>,
+> +			 <&rpmhcc RPMH_CXO_CLK>;
+> +
+> +		clock-names = "aux",
+> +			      "cfg",
+> +			      "bus_master",
+> +			      "bus_slave",
+> +			      "slave_q2a",
+> +			      "ref";
+> +
+> +		assigned-clocks = <&gcc GCC_PCIE_0_AUX_CLK>;
+> +		assigned-clock-rates = <19200000>;
+> +
+> +		operating-points-v2 = <&pcie_opp_table>;
+> +
+> +		resets = <&gcc GCC_PCIE_0_BCR>;
+> +		reset-names = "pci";
+> +
+> +		phys = <&pcie_phy>;
+> +		phy-names = "pciephy";
+> +
+> +		power-domains = <&gcc PCIE_0_GDSC>;
+> +
+> +		dma-coherent;
+> +
+> +		iommu-map = <0x0 &apps_smmu 0x400 0x1>,
+> +			    <0x100 &apps_smmu 0x401 0x1>;
+> +
+> +		status = "disabled";
+> +		pcie_opp_table: opp-table {
+> +			compatible = "operating-points-v2";
+> +
+> +			/* GEN 1 x1 */
+> +			opp-2500000 {
+> +				opp-hz = /bits/ 64 <2500000>;
+> +				required-opps = <&rpmhpd_opp_low_svs>;
+> +				opp-peak-kBps = <250000 1>;
+> +			};
+> +
+> +			/* GEN 2 x1 */
+> +			opp-5000000 {
+> +				opp-hz = /bits/ 64 <5000000>;
+> +				required-opps = <&rpmhpd_opp_low_svs>;
+> +				opp-peak-kBps = <500000 1>;
+> +			};
+> +
+> +			/* GEN 3 x1 */
+> +			opp-8000000 {
+> +				opp-hz = /bits/ 64 <8000000>;
+> +				required-opps = <&rpmhpd_opp_svs_l1>;
+> +				opp-peak-kBps = <984500 1>;
+> +			};
+> +		};
+> +
+> +		pcie@0 {
+> +			device_type = "pci";
+> +			reg = <0x0 0x0 0x0 0x0 0x0>;
+> +			bus-range = <0x01 0xff>;
+> +
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +			ranges;
+> +		};
+> +	};
+> +
+> +	pcie_phy: phy@1c0e000 {
+> +		compatible = "qcom,qcs615-qmp-gen3x1-pcie-phy";
+> +		reg = <0x0 0x01c0e000 0x0 0x1000>;
+> +
+> +		clocks = <&gcc GCC_PCIE_PHY_AUX_CLK>,
+> +			 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
+> +			 <&gcc GCC_PCIE_0_CLKREF_CLK>,
+> +			 <&gcc GCC_PCIE0_PHY_REFGEN_CLK>,
+> +			 <&gcc GCC_PCIE_0_PIPE_CLK>;
+> +		clock-names = "aux",
+> +			      "cfg_ahb",
+> +			      "ref",
+> +			      "refgen",
+> +			      "pipe";
+> +
+> +		clock-output-names = "pcie_0_pipe_clk";
+> +		#clock-cells = <0>;
+> +
+> +		#phy-cells = <0>;
+> +
+> +		resets = <&gcc GCC_PCIE_0_PHY_BCR>;
+> +		reset-names = "phy";
+> +
+> +		assigned-clocks = <&gcc GCC_PCIE0_PHY_REFGEN_CLK>;
+> +		assigned-clock-rates = <100000000>;
+> +
+> +		status = "disabled";
+> +	};
+> +
+>  	arch_timer: timer {
+>  		compatible = "arm,armv8-timer";
+>  		interrupts = <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> -- 
+> 2.34.1
+> 
 
