@@ -1,159 +1,217 @@
-Return-Path: <linux-kernel+bounces-428430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949F59E0EB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:11:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC7E9E0EBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:12:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B98DB286EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:02:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50A69B2C857
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590091DF962;
-	Mon,  2 Dec 2024 22:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C4C1DFE2C;
+	Mon,  2 Dec 2024 22:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXcBzXPX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="suBtcrMh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA641DA103;
-	Mon,  2 Dec 2024 22:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBC51DF73B;
+	Mon,  2 Dec 2024 22:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733176939; cv=none; b=Nddd7B5pNR5ddRJyyx+C82aP4/P2QOgs4HKCLsWhL6m/ZKe4lefRd2zza4bHtbVPIAbEVsR1gVWl7Cka3IcCi6f23yzGrf7esxzeeBanMBQwNqZyzyebinzotPyGl8ceqgKaZng33miIFdQfYM9VKpF2WUs0uN6gfxMWOcAxCwk=
+	t=1733177024; cv=none; b=BanQjJ20hT5UoH006iwnuZ48mZc6hQma9m3tfPBUXGXWQyCosV8cSBt7reGCqvDzhmFdajmJMZIvQXb36HNFhsWD2L1owo83Al6HHPpYE3tEDkWp1WanxePpXl3J62TbttQH9a6E4hV64xBnJi0v7R/L/CyxXipCoSsqlbpKUm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733176939; c=relaxed/simple;
-	bh=BgRpjY7BC7q4xN3V+4faL6OopzCSu02L2UVZ++G5pL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQiLdyYCY469BOCKSpe7JMdZzIpC6lHAuu4tqZXfYZhsKrP7nEKBSWCWf6VUoU3rYjuXgcjUwLPqhmI8qXVuVgIVgt+4rUmTpsRgav6iKGsQKXPxTD1y077c89PoJkqgem55GiYPTUB1QoxQr0WOCHV/LurYHMWruMZUnstBI+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXcBzXPX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BF0DC4CED1;
-	Mon,  2 Dec 2024 22:02:18 +0000 (UTC)
+	s=arc-20240116; t=1733177024; c=relaxed/simple;
+	bh=m97YtqZ0nOeP7DlKMU96/zqeCgvOSU2UBu4HI+SXTrE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Xy+joI22EImmLDiEoyUSR8j8jx/YrP2vy0cA/qBwRvNGATPJLJkLBvk3/+JuQJ8htwhWnFp0P9iQpyEVAQzH+goISzQDhwhYB3prB7gZOyzU4fIO5PZev35yWvDJTkYofV6FTugYX1Yqr40fprhISzyYjBtaxw9rPVnDf1BCJGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=suBtcrMh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 21DA7C4CED2;
+	Mon,  2 Dec 2024 22:03:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733176939;
-	bh=BgRpjY7BC7q4xN3V+4faL6OopzCSu02L2UVZ++G5pL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mXcBzXPXkMrEi7/qxQ92iL8uL9zfW4Zul0hYwlTceeWq6SmcioR0UbW7QlQgpYk0o
-	 /ChsC72XdqUxD7IUNgApSmwsm3S4HEcZ3bqyZ8woSSjQzRy/PaG06Tp3xcqfiWl/gb
-	 yEmG4zybtiuzhZRGbpQTNglK1Idm9BLJOIEDisiM32eoYnXiedADIqvLjYQ+PiEo1L
-	 go4MLjuMgQwXtwu5ghoThHe0K4k3VKCYaB979TQrf5I50mlcXs8kbvcz/xfHHCDM8/
-	 CdI6Jrreh3tQXZRG5Av0OM7x45MC1jC60h6d1A6WS+6zP/CGIUWGf+hdDW7Y/mLWGr
-	 NzubDmrw7mIcA==
-Date: Mon, 2 Dec 2024 14:02:17 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, james.clark@linaro.org,
-	yangyicong@hisilicon.com, song@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH 3/3] perf bpf: Fix two memory leakages when calling
- perf_env__insert_bpf_prog_info()
-Message-ID: <Z04uaWQxI3LXfAtg@google.com>
-References: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
- <20241128125432.2748981-4-quic_zhonhan@quicinc.com>
+	s=k20201202; t=1733177024;
+	bh=m97YtqZ0nOeP7DlKMU96/zqeCgvOSU2UBu4HI+SXTrE=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=suBtcrMhV2fSZlAboW4SMzYp4uycjSteA321rOR2y3MQy6nRZyGCykqAWRyeOZnL1
+	 Hgwz8cAQkkeUYr3JRXYvW2p7pbjiXUiHiPTi0VyTHKNEoJWl1qsHQXg/PVhly0oGJm
+	 3ZnPS4imCA/chjMTa/5ZncC7XB7w0mXydoewcK8EfZSbVCQ5GGmiuXRbgbbw0szYfz
+	 w31uCh1NtP2HpTmp99XXbh6T2MlK60DyvN2GMlGdtrPehDhyHpPGbKSHxVRQTall0B
+	 p7TI2DzApXS1JGCZ8EbYcEqnmXs2qABO7x/RSagzTmKnTaE0+ZYijv/F+oo7Pkg+nz
+	 0JKYADbX0K1Lw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CD2E69E92;
+	Mon,  2 Dec 2024 22:03:44 +0000 (UTC)
+From: Jan Petrous via B4 Relay <devnull+jan.petrous.oss.nxp.com@kernel.org>
+Subject: [PATCH net-next v7 00/15] Add support for Synopsis DWMAC IP on NXP
+ Automotive SoCs S32G2xx/S32G3xx/S32R45
+Date: Mon, 02 Dec 2024 23:03:39 +0100
+Message-Id: <20241202-upstream_s32cc_gmac-v7-0-bc3e1f9f656e@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241128125432.2748981-4-quic_zhonhan@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALsuTmcC/23PTW6DMBAF4KtEXtfR2MZ/XfUeVRXBME68wCCbI
+ qqIu9dh01Rh+fQ039PcWaEcqbD3051lWmKJY6rBvp0Y3tp0JR77mpkE2YCXin9PZc7UDpeiJOL
+ lOrTIjfOCOqs7IQ2rl1OmENdd/WSJZp5ondlXbW6xzGP+2ecWtfcPWYA4lhfFgfeu6XRrbOcVf
+ IylnNM6nXEcdnFpnhTpjpWmKqCMcEEAKZKviv5ThPDHiq6K7RE9BAyBwqtinhTZHCvm8RFqKxx
+ iABD/lW3bfgH71upxlAEAAA==
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Emil Renner Berthing <kernel@esmil.dk>, 
+ Minda Chen <minda.chen@starfivetech.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Iyappan Subramanian <iyappan@os.amperecomputing.com>, 
+ Keyur Chudgar <keyur@os.amperecomputing.com>, 
+ Quan Nguyen <quan@os.amperecomputing.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, imx@lists.linux.dev, 
+ devicetree@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>, 
+ 0x1207@gmail.com, fancer.lancer@gmail.com, 
+ "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>, 
+ Jacob Keller <jacob.e.keller@intel.com>, 
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733177021; l=4944;
+ i=jan.petrous@oss.nxp.com; s=20240922; h=from:subject:message-id;
+ bh=m97YtqZ0nOeP7DlKMU96/zqeCgvOSU2UBu4HI+SXTrE=;
+ b=LRmGIZz1oyy/VKtHAoJ/DaPlHu7EU9479mUEusQCDeEqkwrULahRx/1/l+G9AxGE+is73m0Su
+ mLi9xojFVa1CiygfStQophpuhjf6feJFlQKOt3U21G5ch+PknJ1KOFu
+X-Developer-Key: i=jan.petrous@oss.nxp.com; a=ed25519;
+ pk=Ke3wwK7rb2Me9UQRf6vR8AsfJZfhTyoDaxkUCqmSWYY=
+X-Endpoint-Received: by B4 Relay for jan.petrous@oss.nxp.com/20240922 with
+ auth_id=217
+X-Original-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+Reply-To: jan.petrous@oss.nxp.com
 
-Hello,
+The SoC series S32G2xx and S32G3xx feature one DWMAC instance,
+the SoC S32R45 has two instances. The devices can use RGMII/RMII/MII
+interface over Pinctrl device or the output can be routed
+to the embedded SerDes for SGMII connectivity.
 
-On Thu, Nov 28, 2024 at 08:54:32PM +0800, Zhongqiu Han wrote:
-> If perf_env__insert_bpf_prog_info() returns false due to a duplicate bpf
-> prog info node insertion, the temporary info_node and info_linear memory
-> will leak. Add a check to ensure the memory is freed if the function
-> returns false.
-> 
-> Fixes: 9c51f8788b5d ("perf env: Avoid recursively taking env->bpf_progs.lock")
-> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
-> ---
->  tools/perf/util/bpf-event.c | 10 ++++++++--
->  tools/perf/util/env.c       |  7 +++++--
->  tools/perf/util/env.h       |  2 +-
->  3 files changed, 14 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-> index 13608237c50e..c81444059ad0 100644
-> --- a/tools/perf/util/bpf-event.c
-> +++ b/tools/perf/util/bpf-event.c
-> @@ -289,7 +289,10 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_session *session,
->  		}
->  
->  		info_node->info_linear = info_linear;
-> -		perf_env__insert_bpf_prog_info(env, info_node);
-> +		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
-> +			free(info_linear);
-> +			free(info_node);
-> +		}
->  		info_linear = NULL;
->  
->  		/*
-> @@ -480,7 +483,10 @@ static void perf_env__add_bpf_info(struct perf_env *env, u32 id)
->  	info_node = malloc(sizeof(struct bpf_prog_info_node));
->  	if (info_node) {
->  		info_node->info_linear = info_linear;
-> -		perf_env__insert_bpf_prog_info(env, info_node);
-> +		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
-> +			free(info_linear);
-> +			free(info_node);
-> +		}
->  	} else
->  		free(info_linear);
->  
-> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-> index d7865ae5f8f5..38401a289c24 100644
-> --- a/tools/perf/util/env.c
-> +++ b/tools/perf/util/env.c
-> @@ -24,12 +24,15 @@ struct perf_env perf_env;
->  #include "bpf-utils.h"
->  #include <bpf/libbpf.h>
->  
-> -void perf_env__insert_bpf_prog_info(struct perf_env *env,
-> +bool perf_env__insert_bpf_prog_info(struct perf_env *env,
->  				    struct bpf_prog_info_node *info_node)
->  {
-> +	bool ret = true;
+The provided stmmac glue code implements only basic functionality,
+interface support is restricted to RGMII only. More, including
+SGMII/SerDes support will come later.
 
-Please add a blank line between declaration and the other statements.
-Also I think you can just use the return value of the internal function
-instead of initializaing it to true.
+This patchset adds stmmac glue driver based on downstream NXP git [0].
 
-Thanks,
-Namhyung
+[0] https://github.com/nxp-auto-linux/linux
+
+v7:
+- rebased on v6.13-rc1 and removed RFC prefix
+- Link to v6: https://lore.kernel.org/r/20241124-upstream_s32cc_gmac-v6-0-dc5718ccf001@oss.nxp.com
+
+v6:
+- removed dead code in dwmac-intel-plat.c
+- yaml: fix indention
+- validate interface mode in probe
+- dropped patch#16 to fit in max 15 patches in series
+- Link to v5: https://lore.kernel.org/r/20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com
+
+v5:
+- yaml: refactored compatible string to use fallback
+- yaml: fix indention in example
+- fix xmas tree formating in local variable declarations
+- removed lazy rx clk setup
+- drop PTP clock reading patch and replace it with stmmac_platform fix
+- Link to v4: https://lore.kernel.org/r/20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com
+
+v4:
+- fixed empty commit messages for rgmi_clock() helper patches
+- fixed yaml path in MAINTAINERS
+- switched to platform_driver::remove() as suggested Uwe
+- yaml: returned back all compatibility sting values
+- added better commit description for rgmii_clock() helper
+- Link to v3: https://lore.kernel.org/r/20241013-upstream_s32cc_gmac-v3-0-d84b5a67b930@oss.nxp.com
+
+v3:
+- switched to b4 WoW to overcome threading issue with b4
+- extracted the hunk with the typo fix from v2 patch#1 to separate patch
+  as Jacob suggested
+- removed dead code for RMII/MII support, which will be added alter
+- used new rgmii_clock() helper in other stmmac:dwmac glue drivers
+- yaml: compatible strings compressed to simple one "nxp,s32-dwmac",
+  removed duplicated required properties, already defined in snps,dwmac,
+  fixed example
+
+v2:
+- send to wider audience as first version missed many maintainers
+- created rgmi_clk() helper as Russell suggested (see patch#4)
+- address Andrew's, Russell's, Serge's and Simon's comments
+
+Message-ID: <AM9PR04MB85066576AD6848E2402DA354E2832@AM9PR04MB8506.eurprd04.prod.outlook.com>
+
+Cc: 
+
+Cc: 
+
+Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+---
+---
+Jan Petrous (OSS) (15):
+      net: driver: stmmac: Fix CSR divider comment
+      net: driver: stmmac: Extend CSR calc support
+      net: stmmac: Fix clock rate variables size
+      net: phy: Add helper for mapping RGMII link speed to clock rate
+      net: dwmac-dwc-qos-eth: Use helper rgmii_clock
+      net: dwmac-imx: Use helper rgmii_clock
+      net: dwmac-intel-plat: Use helper rgmii_clock
+      net: dwmac-rk: Use helper rgmii_clock
+      net: dwmac-starfive: Use helper rgmii_clock
+      net: macb: Use helper rgmii_clock
+      net: xgene_enet: Use helper rgmii_clock
+      net: dwmac-sti: Use helper rgmii_clock
+      dt-bindings: net: Add DT bindings for DWMAC on NXP S32G/R SoCs
+      net: stmmac: dwmac-s32: add basic NXP S32G/S32R glue driver
+      MAINTAINERS: Add Jan Petrous as the NXP S32G/R DWMAC driver maintainer
+
+ .../devicetree/bindings/net/nxp,s32-dwmac.yaml     | 105 ++++++++++++
+ .../devicetree/bindings/net/snps,dwmac.yaml        |   1 +
+ MAINTAINERS                                        |   7 +
+ drivers/net/ethernet/apm/xgene/xgene_enet_hw.c     |  16 +-
+ drivers/net/ethernet/cadence/macb_main.c           |  14 +-
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |  12 ++
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   2 +
+ .../ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c    |  11 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c    |  15 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-intel-plat.c |  22 +--
+ .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     |  30 +---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c    | 189 +++++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/dwmac-starfive.c   |  19 +--
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sti.c    |  18 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   6 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |   2 +-
+ include/linux/phy.h                                |  23 +++
+ include/linux/stmmac.h                             |  10 +-
+ 21 files changed, 386 insertions(+), 121 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20240923-upstream_s32cc_gmac-6891eb75b126
+
+Best regards,
+-- 
+Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
 
 
->  	down_write(&env->bpf_progs.lock);
-> -	__perf_env__insert_bpf_prog_info(env, info_node);
-> +	if (!__perf_env__insert_bpf_prog_info(env, info_node))
-> +		ret = false;
->  	up_write(&env->bpf_progs.lock);
-> +	return ret;
->  }
->  
->  bool __perf_env__insert_bpf_prog_info(struct perf_env *env, struct bpf_prog_info_node *info_node)
-> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-> index 9db2e5a625ed..da11add761d0 100644
-> --- a/tools/perf/util/env.h
-> +++ b/tools/perf/util/env.h
-> @@ -178,7 +178,7 @@ int perf_env__nr_cpus_avail(struct perf_env *env);
->  void perf_env__init(struct perf_env *env);
->  bool __perf_env__insert_bpf_prog_info(struct perf_env *env,
->  				      struct bpf_prog_info_node *info_node);
-> -void perf_env__insert_bpf_prog_info(struct perf_env *env,
-> +bool perf_env__insert_bpf_prog_info(struct perf_env *env,
->  				    struct bpf_prog_info_node *info_node);
->  struct bpf_prog_info_node *perf_env__find_bpf_prog_info(struct perf_env *env,
->  							__u32 prog_id);
-> -- 
-> 2.25.1
-> 
 
