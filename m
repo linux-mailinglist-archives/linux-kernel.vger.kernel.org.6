@@ -1,194 +1,156 @@
-Return-Path: <linux-kernel+bounces-428068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0109E09C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:23:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FAA99E09D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:26:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF90B162E90
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F755163325
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765561D8DFE;
-	Mon,  2 Dec 2024 17:23:26 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E401DAC89;
+	Mon,  2 Dec 2024 17:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LjPuhyV3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39F31DB375
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF1F1662E7;
+	Mon,  2 Dec 2024 17:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160205; cv=none; b=BDgZ27G5htptIzS3zV6OKnMDijbRKzYR9FDeMpPJKh3Ai0ogHveTnw9zVmiUDlhtL2iY7YD3m75l3elUUTRayxN3LFkpx3HICnAa05vkC0K3MsZDdobozQLsd2GOlw33Y9MHRVsS6YDGGXLjcBKjSuDGGUgDbcEWZ16HUBzsNZ0=
+	t=1733160382; cv=none; b=qpULl9H19c5m3Q8kRWmmSew4VIuqNns941vQXbHitSxSaOZpscmcGQkMMwGGoxC44CUY+uqx0BexC8xJOwloiB8s6Mqr1QeTcr9rCHke2odDbtrSY0Xu7xWnEwMqK1Mb52tCjiTAHMxOtQpM52YkHYLP54XcCzj8f3vVTMvcBwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160205; c=relaxed/simple;
-	bh=niYey3A2BI1zHc9oE/V9wTEb2AngGjaDi9xTB6eXJp0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MFzVJKTGACbm/Hfs+2525nqLfotcZXVzMoRWd7Yj01Dx9O7rdNpSDJTeeZTrD/Hxq4omjxVy/FCWDFkGhReUkYqN4C8sUJGSQNMf4ZkswsDy8sgC8kwoN6PnTonb6Uzdo69/PGJ0dArNZ0g38L98np4Z5FbE+/BQ2ySVGrCV5FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7807feadfso39662475ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:23:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733160203; x=1733765003;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cWtCFCl9BH6B1/hrLDgMJbyasTsGi0yL5kBQrDwE6xQ=;
-        b=eqnsVQFmnIwNS1VitmeBUBTZ9QiHmfoLU1oZ8BEz+7BluKEQHp6MSs5dzQSNWjfaOP
-         LQAHLg3sGMsg6Qm0MQ8nCrF+Psk4DDxj0I6ZYQTDxVZJZ0DWCKt4CVbgNsTaKav1oZBU
-         7ljBaRdkcs8bI5aspja9F+S7pKxjSJbgWXivX72BE+8jA136LzV/jIvwXlUGniH2YG7p
-         6lbK0Rs9elivwikj7EWEQoISg2DJ8FZ1qhRIyOxC1VGmoINu6NrhdGAb4Syojn9TQogR
-         XmTd6C0MCuZ/EwSR4XjJe2j6GWAQH1qJ07LgA2LBgAjWLGyX6Jua4DqqHfSmaOLqmOZA
-         LcGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrRUPngMwaPwqm24UhowemKYIg9cl1RBNxD9wnp2s40uqxeYYAyoAPxiIM+tLOWFD4X3al4/GWP9+M8uo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS6ePWywF4+CVHbGikikq6MS/fXcuJkdVflfRMSED+xShdJg1T
-	Ttl2n922q4cQN4YGndFmAh2BnvTnzmdDa8K1W/l2wRrn//uVHVNDLk3c4rEfxkxZXYgbwc3Eg2m
-	jzhrf9h8qwTRUNBhxaJuu7wPcm9+6bPxQZlDFatVRZjaKrYKPw5NMSxQ=
-X-Google-Smtp-Source: AGHT+IFGrYLgVMCkuWthz1BRGHleiw9U22O8SugwE5SIOQ51OAgdGsPOdMZVjiB1rIUZC23Pv25Kpzsr+8zM3B/WjzigFSvEFPLm
+	s=arc-20240116; t=1733160382; c=relaxed/simple;
+	bh=BsEHNjcP0yoRdiQY8UO4KVSJoS6Aba+uZoD/T0TC2EA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g1qL9BxjOIw79ujo228YOvOZbLT9BNBresJU42RoOuiJDz1v3uha7TIXIM5itOGSkaDjyFUZKDk9zh+JhThHG7HOUOqbnNIgLLrhLB39ZeqQ8ag2v5IC2t38yXKPlINOaiUqLqCEMcCtqLtDRgrgt38u8n4dJ7vKqlp3szQtn5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LjPuhyV3; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733160380; x=1764696380;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BsEHNjcP0yoRdiQY8UO4KVSJoS6Aba+uZoD/T0TC2EA=;
+  b=LjPuhyV3uvetnO/24BAYLzUkfjXPMnlUN0rZAWep89fJsRbDUD+sfJ7B
+   P2nYyHBzwF5VPOZtMCTjV1CC6/wWZX5iHYgp+eI3ni7syP9EfHkw+k0Tg
+   op0TOEhDQ5vsTpeyQ+Aq0p3Gis+GY8eVQQdpWm4UZulc8kDUMGQWqxeSM
+   YxFCR/hs4QAzkvag8yATR1JjfUso7SeTweGHeWFP5aye7exGM+PZVKgre
+   8h4CDaQwWwz8oPUtQvLEs/TwtPXJsOvCPlSNww5fNLuALNsPRQ+kFKkeB
+   wmlTmoYO+b+biEC2ReyhWh5+lgJkgZ+nx2opAMNxJh7u8mlbHNH6aReGH
+   A==;
+X-CSE-ConnectionGUID: icCyv0IkSx+1htiA5cVBNg==
+X-CSE-MsgGUID: IM9glH9dSNWu1e6BvyihxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="55833040"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="55833040"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:26:19 -0800
+X-CSE-ConnectionGUID: bxI9jJ1zQqeonRA7mmffsA==
+X-CSE-MsgGUID: dRWQFCk7QlGCSxdVrLqoOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="130638664"
+Received: from sramkris-mobl1.amr.corp.intel.com (HELO [10.124.222.246]) ([10.124.222.246])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:26:18 -0800
+Message-ID: <7222b969-30a8-42de-b2ca-601f6d1b03cd@intel.com>
+Date: Mon, 2 Dec 2024 09:26:16 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a02:b0:3a7:9347:5465 with SMTP id
- e9e14a558f8ab-3a7c5523826mr268135525ab.3.1733160203172; Mon, 02 Dec 2024
- 09:23:23 -0800 (PST)
-Date: Mon, 02 Dec 2024 09:23:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674ded0b.050a0220.48a03.0027.GAE@google.com>
-Subject: [syzbot] [netfs?] WARNING in netfs_retry_reads (2)
-From: syzbot <syzbot+5621e2baf492be382fa9@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, bharathsm@microsoft.com, brauner@kernel.org, 
-	dhowells@redhat.com, ericvh@kernel.org, jlayton@kernel.org, 
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	marc.dionne@auristor.com, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
-	netfs@lists.linux.dev, pc@manguebit.com, ronniesahlberg@gmail.com, 
-	rostedt@goodmis.org, samba-technical@lists.samba.org, sfrench@samba.org, 
-	sprasad@microsoft.com, syzkaller-bugs@googlegroups.com, tom@talpey.com, 
-	v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 1/2] x86: cpu/bugs: add AMD ERAPS support; hardware
+ flushes RSB
+To: Amit Shah <amit@kernel.org>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, x86@kernel.org, linux-doc@vger.kernel.org
+Cc: amit.shah@amd.com, thomas.lendacky@amd.com, bp@alien8.de,
+ tglx@linutronix.de, peterz@infradead.org, jpoimboe@kernel.org,
+ pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com,
+ dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
+ pbonzini@redhat.com, daniel.sneddon@linux.intel.com, kai.huang@intel.com,
+ sandipan.das@amd.com, boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
+ david.kaplan@amd.com, dwmw@amazon.co.uk, andrew.cooper3@citrix.com
+References: <cover.1732219175.git.jpoimboe@kernel.org>
+ <20241128132834.15126-1-amit@kernel.org>
+ <20241128132834.15126-2-amit@kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241128132834.15126-2-amit@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 11/28/24 05:28, Amit Shah wrote:
+> From: Amit Shah <amit.shah@amd.com>
+> 
+> When Automatic IBRS is disabled, Linux flushed the RSB on every context
+> switch.  This RSB flush is not necessary in software with the ERAPS
+> feature on Zen5+ CPUs that flushes the RSB in hardware on a context
+> switch (triggered by mov-to-CR3).
+> 
+> Additionally, the ERAPS feature also tags host and guest addresses in
+> the RSB - eliminating the need for software flushing of the RSB on
+> VMEXIT.
+> 
+> Disable all RSB flushing by Linux when the CPU has ERAPS.
+> 
+> Feature mentioned in AMD PPR 57238.  Will be resubmitted once APM is
+> public - which I'm told is imminent.
 
-syzbot found the following issue on:
+There was a _lot_ of discussion about this. But all of that discussion
+seems to have been trimmed out and it seems like we're basically back
+to: "this is new hardware supposed to mitigate SpectreRSB, thus it
+mitigates SpectreRSB."
 
-HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1236a0df980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
-dashboard link: https://syzkaller.appspot.com/bug?extid=5621e2baf492be382fa9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17da7f78580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138f3d30580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
-
-The issue was bisected to:
-
-commit 1bd9011ee163e11f186b72705978fd6b21bdc07b
-Author: David Howells <dhowells@redhat.com>
-Date:   Fri Nov 8 17:32:29 2024 +0000
-
-    netfs: Change the read result collector to only use one work item
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=144ccfc0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=164ccfc0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=124ccfc0580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5621e2baf492be382fa9@syzkaller.appspotmail.com
-Fixes: 1bd9011ee163 ("netfs: Change the read result collector to only use one work item")
-
-------------[ cut here ]------------
-do not call blocking ops when !TASK_RUNNING; state=2 set at [<ffffffff8177c166>] prepare_to_wait+0x186/0x210 kernel/sched/wait.c:237
-WARNING: CPU: 0 PID: 5828 at kernel/sched/core.c:8685 __might_sleep+0xb9/0xe0 kernel/sched/core.c:8681
-Modules linked in:
-CPU: 0 UID: 0 PID: 5828 Comm: syz-executor222 Not tainted 6.12.0-next-20241128-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:__might_sleep+0xb9/0xe0 kernel/sched/core.c:8681
-Code: 94 0e 01 90 42 80 3c 23 00 74 08 48 89 ef e8 ae 30 9b 00 48 8b 4d 00 48 c7 c7 e0 2d 0a 8c 44 89 ee 48 89 ca e8 08 e6 f0 ff 90 <0f> 0b 90 90 eb b5 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 70 ff ff ff
-RSP: 0018:ffffc900039765a8 EFLAGS: 00010246
-RAX: b7d7501871149800 RBX: 1ffff1100ff252ed RCX: ffff88807f928000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff88807f929768 R08: ffffffff81601ea2 R09: fffffbfff1cfa220
-R10: dffffc0000000000 R11: fffffbfff1cfa220 R12: dffffc0000000000
-R13: 0000000000000002 R14: 000000000000004a R15: ffffffff8c1ca1a0
-FS:  0000555593050480(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055bb6dfcc068 CR3: 000000002f04e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- wait_on_bit include/linux/wait_bit.h:74 [inline]
- netfs_retry_reads+0xde/0x1e10 fs/netfs/read_retry.c:263
- netfs_collect_read_results fs/netfs/read_collect.c:333 [inline]
- netfs_read_collection+0x334e/0x4020 fs/netfs/read_collect.c:414
- netfs_wait_for_read+0x2ba/0x4e0 fs/netfs/read_collect.c:629
- netfs_unbuffered_read fs/netfs/direct_read.c:156 [inline]
- netfs_unbuffered_read_iter_locked+0x11fc/0x1540 fs/netfs/direct_read.c:231
- netfs_unbuffered_read_iter+0xbf/0xe0 fs/netfs/direct_read.c:266
- __kernel_read+0x513/0x9d0 fs/read_write.c:523
- integrity_kernel_read+0xb0/0x100 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
- ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
- ima_calc_file_hash+0xae6/0x1b30 security/integrity/ima/ima_crypto.c:568
- ima_collect_measurement+0x520/0xb10 security/integrity/ima/ima_api.c:293
- process_measurement+0x1351/0x1fb0 security/integrity/ima/ima_main.c:372
- ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
- security_file_post_open+0xb9/0x280 security/security.c:3121
- do_open fs/namei.c:3830 [inline]
- path_openat+0x2ccd/0x3590 fs/namei.c:3987
- do_filp_open+0x27f/0x4e0 fs/namei.c:4014
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_open fs/open.c:1425 [inline]
- __se_sys_open fs/open.c:1421 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1421
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdf86d213b9
-Code: d8 5b c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdb23978f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007ffdb2397940 RCX: 00007fdf86d213b9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000340
-RBP: 00007ffdb2397948 R08: aaaaaaaaaaaa0102 R09: aaaaaaaaaaaa0102
-R10: aaaaaaaaaaaa0102 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 000000000000001d R15: 00007fdf86d983a0
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Could we please summarize the previous discussions in the changelog?
+Otherwise, I fear it will be lost.
 
