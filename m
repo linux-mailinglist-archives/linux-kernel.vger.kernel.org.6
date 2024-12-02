@@ -1,77 +1,115 @@
-Return-Path: <linux-kernel+bounces-426905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7F79DF9F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:36:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322AC9DF9FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7276C281A9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0E6281AE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482A91F8AE4;
-	Mon,  2 Dec 2024 04:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D341D63FA;
+	Mon,  2 Dec 2024 04:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NvU717v4"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCqwI7h+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0FB1D63FA;
-	Mon,  2 Dec 2024 04:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D64E28399
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 04:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733114170; cv=none; b=Onx5scKb8Hk2oJoHJC6kffe5caZiYTAgnof4kH5wUn01/MkQHa7uNlfm/wbXAgukAt80WPZHnpRmvo6hVofTmMK47c0Ma4Hq3YaOHJUHk4wbz/8a5cnUQdCPUDDYKt+oT7VvYN+rhC/IMh6Xae5dntHIm3hU1ION8m3lDCVG1mY=
+	t=1733114250; cv=none; b=Z1j0kjezhCJ0OBTgHjE77JN6+ckuj1D4w4XRkowvXSqw/WZcDiAoPQSDNcP6sEG2eHVmUQ1Dt8cbHS9fYsiBYfQHQouw6VQMACpNhBianRxzQp6F/XEtaMl3QUYjRO3zPi0NgPgtMY4iTKI/E92FZAasYB6gSOZDQkV4F0V/JzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733114170; c=relaxed/simple;
-	bh=10DMLOjX2nq4S0ZhNXUmQlg8iX0lcjhdmK7OUaAd5LM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MHHy2ekZIdx/QJmoHtcCGKxleIsYM2cXVSyH1w5VBxt4ZVJzn8fOll2l2lxuITR7rXLHUshlsg7O9i6PAuDsJdx4AaVtlKmrei9lyhq5MAELAn3LwMhgU7yBpq+KM2VLAcnCeiDt/XzJqb/LR3el3XydqDQOebTyUQKAa4fSU68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NvU717v4; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Zc+Zip5FmC+oWN9tuKZ79CoXXMAGCNMABkkM9qSjAsw=; b=NvU717v469oHylJ0EetdHjBNxq
-	uxZmbnZ5oCL7GfJV0l6EkkGQbczZWIfY0liLp4AvAICxY9Px9pjDCL5p7iZOlfUMfVav20OaCkObJ
-	gQ0PFr24J8zYxja+ZK5ujNwx+yuJpqNAAWeIQLXqk70HamY6TlDjfug/YijICPI+ZyHNKo7hrhO3G
-	v33RGFWamv6MHW0+vuFmb5FTrLs+w8K5zNLHWElJPhZ9vYPcXKFzgch0+ghrpNJRsBbhTQT7JUsjn
-	YoY4C8Pvmti3Qlj9aLo3AXi/aFSOuhlNVdcLhaSTkMKH4vuZaLMdLI3VKacN50WcxJgj5YANqh85+
-	8j40IIKg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tHyAI-00000003vBc-0Wq0;
-	Mon, 02 Dec 2024 04:36:06 +0000
-Date: Mon, 2 Dec 2024 04:36:06 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: cheung wall <zzqq0103.hey@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: "bug description: kernel warn in p9_trans_create_unix" in Linux
- Kernel Version 2.6.26
-Message-ID: <20241202043606.GO3387508@ZenIV>
-References: <CAKHoSAuCLyh5JWVkYbEzwphX_fyKNP5PyBWsyq+V9jP7Vy4=kA@mail.gmail.com>
+	s=arc-20240116; t=1733114250; c=relaxed/simple;
+	bh=+IHqiU68nSaL7ZK/oJSrSXnG+TpPlvwPV40O8Iua4xk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S+2M86ZGyHZE5Uq/oOomzJAt+tKvZBl6vuSkXzHWKH4cSkKpBbwEzgIFWy8yQ5vS8nstaUTPd/vrw63g6fn4Rlr/fPwH9bJrs6mAwkBGeWe6F7cYsn6D7hXRMZShodxCAhL3e0RO3XT7Qy5g27VPEsd6iXdQa4+eJt5dxzSibeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCqwI7h+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B84C5C4CED2;
+	Mon,  2 Dec 2024 04:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733114249;
+	bh=+IHqiU68nSaL7ZK/oJSrSXnG+TpPlvwPV40O8Iua4xk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pCqwI7h+ftZtdU79pIV9TfmOEWD9BsedW/+LXHsCspLgUPttTHYWUTi5o8G/+q6BP
+	 pLTXakpqyvokkiI768mjq1AFxyf9bOlF9RaXqI707IHn7EoSJzAbD6bfxE6Gwvqlga
+	 ub4bfx1s6vwF+5UylWrFzpTahdxhRcp94kJYz2Rb81H7OGWX5wFJmwS17ZLY62oJL9
+	 B/wLRw/CcDo8N5w3brdeDemS75a5hyfgQfMUz30V9rJ4gccBcUrtsEXVDYjBaagDhm
+	 cnqYpqLxyb8l2tvvMdKDTJrVX4Luf70NH2SzWQZ3FebeHfdO2dZ/BJ5GFEOKEtcitL
+	 V1j01QWYTYr4g==
+From: Mario Limonciello <superm1@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>
+Subject: [PATCH] x86/cpu: Enable SD_ASYM_PACKING for PKG domain on systems with AMD preferred cores
+Date: Sun,  1 Dec 2024 22:37:24 -0600
+Message-ID: <20241202043724.3929062-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKHoSAuCLyh5JWVkYbEzwphX_fyKNP5PyBWsyq+V9jP7Vy4=kA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 02, 2024 at 12:30:37PM +0800, cheung wall wrote:
-> Hello,
-> 
-> I am writing to report a potential vulnerability identified in the
-> Linux Kernel version 2.6.26.
-> This issue was discovered using our custom vulnerability discovery
-> tool.
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-You are doing a massive disservice to your project; the version in
-question is 16 years old.  Please, use something reasonably recent
-(ideally - current mainline) for testing aforementioned tool.
+For the scheduler to use and prefer AMD preferred core rankings set
+SD_ASYM_PACKING for x86_die_flags().
+
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ arch/x86/kernel/smpboot.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index b5a8f0891135b..419e7ae096395 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -62,6 +62,8 @@
+ #include <linux/mc146818rtc.h>
+ #include <linux/acpi.h>
+ 
++#include <acpi/cppc_acpi.h>
++
+ #include <asm/acpi.h>
+ #include <asm/cacheinfo.h>
+ #include <asm/desc.h>
+@@ -497,10 +499,19 @@ static int x86_cluster_flags(void)
+ 
+ static int x86_die_flags(void)
+ {
+-	if (cpu_feature_enabled(X86_FEATURE_HYBRID_CPU) ||
+-	    cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES))
++	if (cpu_feature_enabled(X86_FEATURE_HYBRID_CPU))
+ 		return x86_sched_itmt_flags();
+ 
++	switch (boot_cpu_data.x86_vendor) {
++	case X86_VENDOR_AMD:
++	case X86_VENDOR_HYGON:
++		bool prefcore = false;
++
++		amd_detect_prefcore(&prefcore);
++		if (prefcore || cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES))
++			return x86_sched_itmt_flags();
++	};
++
+ 	return 0;
+ }
+ 
+
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+-- 
+2.43.0
+
 
