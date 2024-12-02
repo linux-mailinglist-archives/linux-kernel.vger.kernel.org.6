@@ -1,200 +1,158 @@
-Return-Path: <linux-kernel+bounces-427796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6B69E065E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:09:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B669E0679
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E52316D3E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882C216BDDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A93209686;
-	Mon,  2 Dec 2024 14:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21E820B208;
+	Mon,  2 Dec 2024 14:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="HKfsbOEx"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2117.outbound.protection.outlook.com [40.107.103.117])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A1vvMkVv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531952040BE;
-	Mon,  2 Dec 2024 14:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.117
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733151297; cv=fail; b=qqVC/VmL4kVNqDUEPnVMXuVaV+7v9vwFw6gt+LiV2uRN0WBxBywn5NC7x2ykqXBSLVQ6I8bSs3yf8AL+C+Q+f7UqpcBQWchbDdFSDlPRLir8+75qVrZ7QQ2st3WSdQPg+UE5wscvtOoKMi98qBa+2r7aeAwkqG6nYhhh8buyX0Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733151297; c=relaxed/simple;
-	bh=WZzj707enoeLcHMzugoAvx1Skp1KP4hSzoCWGhZwFkA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gQb3Yao2qnLF9QSbVlTE5IvdBG9Ocg4AkMbNZJyES3HBteBysgAWXQqp+cmZvGfXPVtmQECKFa0kR73KFu0qNFOCF4ElRlHxE8cXlF5nLxK8GJVLSu4WTfFPPIObVmP7HSeJCrdBoMf77IKQTrOEFeC+ooFhrNC9D3tVDRXL/0c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=HKfsbOEx; arc=fail smtp.client-ip=40.107.103.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=szRL17UNNWAPR+cPoBzno3QfzugY90LZ+0Bc/SiTmtwwiT0dNRS959NY45QrNlIpnUd5dybRuaqtMTS4xiqfZcHQJDC5wRk7KvlGHlP2Mg8rLZMxjRDNFZMpQg9am4bh+jpZ6PTv3vq2Hj6udsPpM8YcjC8x8EiT663r29gMX4mOBMBjxcZe1fKQip5yxdkRGUldIanZAie3bbTQ9wNtGWRarSlHg0BaUoVAaMzw2ijQ0h4L2waK9dbFwc7bcctUBEP4YTDXVf6bQUDEhiMBZDXwqqzuRKXr+2DLJVW6YEEJpy/u9Fh8XEvJhn0x11A2N6+n4h/AV7x3YsBE+T8/dQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=phSJLAQUpSIc4MH9f3YnY+ht5TF7ZwxBzwVlV7H0iFs=;
- b=AnRRrAhZE1znSSYAxlfECr1jqMMggn2Y4eD0wt5kgUAgawaH7u8nksAo4XpSsOzscGs1cQ6HuJb/CuvjMajhue2ugA9ywP0ox92dowaRtjy/T8jq090WJ3zj0zNW0t+6vWDVVSgjBv+qMIJStQvtk5Eoqj8U8YwQWq9+O0NjuAnpQMHsHyD62+8llvlci+R9Kchjn8yy6ea7AyyuR9BrYR6Yzk+7JgwX6JUBPjTBF0g8h12+HTBNTRe3eWC/DjmhasMR0nrm0CelQ4dxJXzitmtjy07zOCa7Ku6HjnArz1cT0f6PHYApY+itH2WhUPwM9+nbvJin5dw7sLWmCQgB1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
- dkim=pass header.d=uclouvain.be; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=phSJLAQUpSIc4MH9f3YnY+ht5TF7ZwxBzwVlV7H0iFs=;
- b=HKfsbOExx+ZUuEW3MNt5E6tH+TCIHucM5d6jHIBFX4oH5HOx7KEGhIOXMB8u7ORGakbqLPI/kvdCSuMrzcYp1TCSVW/h2pReq3rvT3U62fmnzNXcCN4OtGAtuJG0HKKrZJhV1zmzpZuMSVYZY2+Vy8mL1XO4hpunaq8I7pkBe5b/9ArMMjb0Zi7z7/6L1Z7l2snWzjXFc38pKYJMYM0fZIQm3Z6R5wnksiEVzPo00nuxOZ6UNHt7ccrK9FwAa3rxYdzcbm7mc+MMAvnN7BYlB0LQ83SmFzmstxfK4JjlHuVQuiz/aCwrQGXxVt7KSCDN2D0umswQXMivdpMzHUEW0g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=uclouvain.be;
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
- by PA4PR03MB7182.eurprd03.prod.outlook.com (2603:10a6:102:104::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
- 2024 14:54:52 +0000
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c%6]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 14:54:52 +0000
-Message-ID: <08558b39-bf69-43a7-8f55-064995221099@uclouvain.be>
-Date: Mon, 2 Dec 2024 15:54:10 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: defconfig: enable Maxim max1720x driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sebastian Reichel
- <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
- <20241202-b4-gs101_max77759_fg-v1-3-98d2fa7bfe30@uclouvain.be>
- <a917cb0b-68de-4916-9a4d-021a8da37289@kernel.org>
-Content-Language: en-US
-From: Thomas Antoine <t.antoine@uclouvain.be>
-In-Reply-To: <a917cb0b-68de-4916-9a4d-021a8da37289@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PAZP264CA0111.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:1ef::13) To AS8PR03MB9047.eurprd03.prod.outlook.com
- (2603:10a6:20b:5b6::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD81120966B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733151286; cv=none; b=pZ2QU7rDqUNICJTu+zG1XV6wzEYVpDK+GP35cIBA8GUZahibkJBbR2Khulk7Nj8yxKj5tkXPqlFa/OsmvcvJ0tahtfj1K7O77VRnlGDTBEXNgt2e9l46GuhgX4fdrB1nfM65LhiZ8+trKuBY/GW8uWXQDAUBI8G0Qu/rGxL8v0g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733151286; c=relaxed/simple;
+	bh=YkotplpWgvyOXrU9knIdvnssVPPUv+zNS5lUYYpij08=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tPgKW98ajrQugK1ljsPpUE3lXHAAGGe8P1RNEcw28Fuao0cORe5qGkUTH1SNCiIKM+mDwJM0Y6pG7CS7byOykF14h4amzJDSv9HVXiHIYbG6SJ7WS6Zk61aTLvlORhktQmTz3UYGXwOvPHnmdwZiz86VbGkKCYk5QQBlC6eQHEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A1vvMkVv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733151283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MetsKcKHKPlrQ9kSF4BsZc6nqtrjJYVyYpKo+i2OZqc=;
+	b=A1vvMkVvnG+9/vuW5KUEUG28mNGjoRyxzRiBJZqxpH7Oz6YlKhyEeQLchePe2c+qx+L8Zn
+	B9Os6mJiuKLqvkIpQzlxGrF1q2p1v2VMc00iAGBF4VDjswaSIUGRfmGSKzFHrhAuSE6qCt
+	2x4zPGV2MrYOqQwV/gXfF5KFhKaQVsc=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-220-ejroUkUhPQ-UjLMU8u4vNg-1; Mon, 02 Dec 2024 09:54:42 -0500
+X-MC-Unique: ejroUkUhPQ-UjLMU8u4vNg-1
+X-Mimecast-MFC-AGG-ID: ejroUkUhPQ-UjLMU8u4vNg
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5d0d322ce63so1480296a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:54:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733151279; x=1733756079;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MetsKcKHKPlrQ9kSF4BsZc6nqtrjJYVyYpKo+i2OZqc=;
+        b=LXedtYbOa4ApnC4CAnOSaM72BifO0MU3DfUDrUHLJbFzDuoI1UErhouH/Fimh8AHaM
+         uod4HvUky9Z60x65Srlu4raAs7287UNiguCacshuoHkEFnLPFnUgRSjkE9OVPw2R1OlM
+         +T2QatXXN3DKrfIjadAz3NB7773o4sWUXVBtbHn2xx4mWrk0f+zr4KzD4pxxrXpFFphz
+         zH3Ffqn/wKz2XnK8Zbc/k672Tms4eMomoupzgzo3zzipA9IKw3RNnulp/F8T/GoI9+pB
+         +uMl+7yrOR20/3S1dM2/RJV5Wt1A9I2aRpBJMSasqBEcscwlm/AuU6x0fJgMPtPVzmyG
+         9hCw==
+X-Forwarded-Encrypted: i=1; AJvYcCULNenwJ/YtwWl/8nB5Bj8AEAvIuli+dlIMb2M16s2wVHjJoIj151Jjoxn11rTA769k0uXi2WUTv65ThKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1CeQe0FQ7sSnZPWoVlmNpoOUMK5lKKnbVdPD6LnDd15hPJm7U
+	FobwnAcsPwe6vAn48p1EtldAJgEoWI+T+uVTGZCP6U73cVV8h/UKZMnF8TAkA+DA9WP8EMlaA+z
+	hQMZGmhjZ8s67XqefQilWlhPUb3iA8q9Rpwp5skShFKqR+1KbWqkKRqDv9SryvgE/cdl+DQ==
+X-Gm-Gg: ASbGncs3UoOpc2fO+PD9sDWQDw9TncNm6EV0l7jHop2/8K8Y8Sagtl/wA8+Rgha4fDj
+	u+762qCcRMkdU57xrZ3bvEu5KUeBwS7nc5Zcr27WsEefo/ik589PJ30FKYzoSCKZoBJLuPpGAwY
+	qsrvQtGq17kSgyVdg2nrt/yv8DpHEbDTwlYv57JWBcuOhOv63jFjrbYa4cISvEMFPheVrdVXsU3
+	M+rV4tOlfiTK0M0ii6nZEEzUSSIxYORyysLDc81jm7rS5uBRJ/QJg==
+X-Received: by 2002:a17:906:3143:b0:aa5:11fa:626d with SMTP id a640c23a62f3a-aa580ee013dmr2564964966b.3.1733151279429;
+        Mon, 02 Dec 2024 06:54:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IErVqjQc7dxU3TLbgy9NhmIynnHt4bXAbwnBykBPSLMWV+p8ar+3Kk4B/qStLwDd3H5TbcjSg==
+X-Received: by 2002:a17:906:3143:b0:aa5:11fa:626d with SMTP id a640c23a62f3a-aa580ee013dmr2564960266b.3.1733151279019;
+        Mon, 02 Dec 2024 06:54:39 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996dc902sm514802966b.50.2024.12.02.06.54.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 06:54:38 -0800 (PST)
+Message-ID: <f6045267-6398-494e-8058-0d451b84c7c9@redhat.com>
+Date: Mon, 2 Dec 2024 15:54:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|PA4PR03MB7182:EE_
-X-MS-Office365-Filtering-Correlation-Id: 999d3f69-c977-4412-629c-08dd12e146e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Tm9qTWxJWVNPK1NWcHFVbndCSEU1aWxhT0xxcWFmK2I4QmR4VjhRUEE0TktC?=
- =?utf-8?B?K2preUFMNDR0Q3BWbER2WG45ODJBZlNoZjYySnU4M3BEVWZ5ZXlyb0VpQmk3?=
- =?utf-8?B?WmRycE1iWldIZGNzN3huZ2wxeklJOTVGMmNndHlvYVpIcnhoSVc0NnB2Mll2?=
- =?utf-8?B?R1pTTmhGeGc5QTM3ZE1zdVJnTmduT0dZMW9XK2FTMytRNEhUUXJwN1ovNDlW?=
- =?utf-8?B?YnJtS0ExTHMyZkNSMko3NkZNSnRjOEF0ajdhYUJLbS9sbmZKYTNtbkRiR1R6?=
- =?utf-8?B?OTgvKzdONlRxWjRzdnE4OWNTVVZGUVFHaEZWQm1DRzRJbWJvT3R2VWFZUDRj?=
- =?utf-8?B?L3UxYlBsdmFYYm9HVEpNMGtnOUY0Q1BWeHRMbWJKS0ZVdmdxWVgwWHh2ZGY1?=
- =?utf-8?B?RndNajR2Ym1VVE9CQ3dqNUpYcUlWRHhTcTh3MlI1L1NBMVlNZE40Z0RaWFRq?=
- =?utf-8?B?M1hTekNWUitRRW5yL0JQRDhMRUhRQVBrYWVzalFLT2NJRjZ4MmVGZEFMUTNh?=
- =?utf-8?B?bGpWZ3ppaStJVW1vaHhBTkpjZ21lb2VWVGc2RHg1a1ErYXlKaDF5ZjhJUXpV?=
- =?utf-8?B?SGpaN241NTF4aFhFb0pKT2VEbmoxa3hSSE1aWlgrZzVnaXM0YmJoN0lqclV5?=
- =?utf-8?B?Nmx3WFQwTmY2QTFQN3BXdmJBWWZiN3FITXN4WG5MMGVwenN2UWZWVEZUSjJI?=
- =?utf-8?B?ZHV5di9IQWlDS2tOTVNlR1hOSWk2TzJneUdHNWpDbVZydjdqV3dRV25Bbjgx?=
- =?utf-8?B?ZnVMNGJ0b0RFU2FGWDdtNW1JVVFnbUUreUdjK3NINmszUWdudm5VaGdrZFEz?=
- =?utf-8?B?V2NlSlh1ZWQ1ek1mNy9rbjdzVGc0aEs1WjNBYTE0ZVNtNEFpU3ZpbXZSWmV3?=
- =?utf-8?B?KzhVbi9WOGs3TUkwbTJJZzk4aXJzSWhLV0tUSXpXdE92ZlF6Y0c3VVhxaFJB?=
- =?utf-8?B?bmFJQXk0YVI4eGQ5K1NpUlJwakIwUjlmKzdrck9nV1BpUTlEZTNkVzZuYjFG?=
- =?utf-8?B?Smx4NEVqR1RIM3JtSzA1K1Z2MnY5MmpPeXExU3ZnMVVvR1RCRzFWNFFsSUMy?=
- =?utf-8?B?MWJCZk50Q3hkLyt1MXBOQWErMzQzbFA3S0QzYi94aUpNU3FsZ0kvdlpqYUMy?=
- =?utf-8?B?Z3FsMzhlemJzaWovWHlHeUcyRmlyZ1NYZW8ra0x5aTNsNWRhb1dHbXhibG4x?=
- =?utf-8?B?TzJzaGFNa0x5dWZsUDdMSmMyWEtSQlhVYWJsRis1aFFMM3IvazRXWUFzVWxi?=
- =?utf-8?B?OHJzVEVEZXRxKzNzMmY0VEkzL20yS2tFZU9UYUlsMHcrYWliRDJnaHNLNWNM?=
- =?utf-8?B?endEK013ZnMvbnJ6U3lDWHpVcjlSZ0tqWmpmWjBNQU9VYjJzNStYUXp5YjFu?=
- =?utf-8?B?K1ozT2ZsTFhDWkZBTzNrY1d0NS81QTJKMzhxOGxpek9pWXFzcGN6dlZZcWQ4?=
- =?utf-8?B?dFlQdmdCK0RaL09xVkxWWkVOVG1jbVNLd2hsa1lQM20wMUJXQlVCMmpUSGpD?=
- =?utf-8?B?OEovRngybm9xM0pTejE1QUtRTTdaRDkwVzB5WXlJMW8zaUNZRDF3T2xydHZ2?=
- =?utf-8?B?S1pHVnRnT3RBOTdMd1FzaytQMXlwV3BUU3laSXE3T3FtWlZVZkxOTzhRaGFr?=
- =?utf-8?B?enIvTTJnelloR1FvMU9EeTJOQnpCRjJFdHNPVXZib04wd1gzR2Q5TzFyZmxQ?=
- =?utf-8?B?b0dKTS9zSURXazR1NXRrMjJvcjN4aHNYUk1FR2tOVmFEeENZNVpCSkduMVNN?=
- =?utf-8?B?RFp4WUdLdDFBZkNBcVd1UkZEZ1NPZTJlY1NPV2Y2RG5oTG1rQy9iWlplUFdU?=
- =?utf-8?B?TlNhZ2F5RS9lQTBXVmNzZ1I1Z2JjbzdrT0s4WDFoS004cms2K3FEdW4rZytl?=
- =?utf-8?Q?/Jcr3EhvUbZnG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WFFCbE1qZWZHZ05XUlJMR1E5b3FKNDVGcGl2aWFTalRCL1oxNmd3K0kwL0hY?=
- =?utf-8?B?bzhQRXJkY0JDaDlKY0txR25YVGNxZjJGNFJIcVlVbDlIQWlCdkt5QlJVYU5M?=
- =?utf-8?B?bjcyN3hLVkFCVFR6USs3M09xMEg0NWtndmNMclgxazE0cXkzVldMUkVHTDBN?=
- =?utf-8?B?TzRIN2NWcUpvbFRDOE5KTWFkU1JKaU56TUVLWkorK1Z1OHJoNk9SVm5Icllq?=
- =?utf-8?B?Z0I0Y2lIclBFVWVIOWViYzlncjc0TDkzakJJbStyNEtyM1d0T2VuanZkSWZK?=
- =?utf-8?B?S2FGdFRKREwxaGwzSFVDYkQyM1F6YTI4ZUU5S0lYdnFMUkE0UDYzblM3bWRu?=
- =?utf-8?B?MnJVZnpuckN5TDYxd2xpK2hFWWlDQnRTaDRlemw5S25BNTI3dWRpL05kVXMy?=
- =?utf-8?B?OWR5VnJQangwaS9kZDVMaTBtSU5Ba2tzdXNtRjFvdXcweXk1aGlkVHJLRW5D?=
- =?utf-8?B?M3hFYUQvTFFiTXZGWS8yWEgxM0tJaXQ5ZEZ0OFdPRWo2U0pobVpQSzNzUTcz?=
- =?utf-8?B?UTZVWTdFUVRXOWFaVkNBQ1ZLVHkwNTdEcG9FUTRhbjBBUTRKV2JIMG9RMUZz?=
- =?utf-8?B?NmNIUnY2bmdvV3VBYlNVUjErYjgrbzB1ZXJmWDBMczVMVkVPWTNvUFlybGRy?=
- =?utf-8?B?TFU0VmROdGZBbXRYQVlYWmpZZ1FPcWtyZmZqWVREWGx4UUxCQVZoR1Vrc0VF?=
- =?utf-8?B?d2FudFFqeUNvMjlRUzU1empEZnlwSFZNU0RjTGk2OEY3NThUZDhXMVdGRCtN?=
- =?utf-8?B?Tk8zVWtmSHZEOTNOclMyKzRERUliS0szdmdsbWJQMXFtWTh5QzI1K3p3MC9B?=
- =?utf-8?B?MC80ZWdTVVdoYzRkUW5xSHNiMlF0aHJIYk1qYWpRQU1Ndm9aU2xuK3lycldy?=
- =?utf-8?B?L0Q2Q2pkeWY0SXBWQlZOaWJzSHBPdzFZRE5mYktjWEZpZHI4SVgzbDBEY2NK?=
- =?utf-8?B?UnBHdFRCT2cycjV4UXlTY3RQU2YzV054U3psam5lUy9ReVEyMXlQZW5FNkIy?=
- =?utf-8?B?SmdMV2ZyMFg0c0VlNUdsT2tBT3ZNdnBVSDFWTDBVMlAwNXllTTVwSFN3OGVQ?=
- =?utf-8?B?SFpTZlg0aVdxNStGTytoM0hzQ2c2bDFrbTFSUnlrOWxUbXpIa3pZbHhlUUNI?=
- =?utf-8?B?TjFad3VkWnVaTGNBSFRweUFGc1h2eGxxTlVuUnFiNXZDVWVZbW1FREVPeXpW?=
- =?utf-8?B?eFVrSUZKaVFFVklKQ25ET3FlL1NCaWFhTGlIdEpZZXcxK0lkYXArRkU0a25K?=
- =?utf-8?B?Zll0b2lCbnVTNXhzL056eGhnS1Q1aUNSdWtFQzFJcnlwRXFyL29rZE45d3N4?=
- =?utf-8?B?bFl2K1BhelhxQ3kyNkNleGZCVnNNUGE5WWpRbmFZOWtjaGRxSTl3VkN2bFhk?=
- =?utf-8?B?cnlMQmdlMTIwVktyelhBenQwVFdGMXdWcTJBK0pYajBJWW1Jc2YyOUVrWmVq?=
- =?utf-8?B?Zzd2MXd1UytZY3p0VVhqbnBDTnNTWHovWTczcTM0Tm9jOEpMZklIdUErYVlo?=
- =?utf-8?B?MGFqQXBCNHhTclhtTW9XZkhZSGFpTmpaUDlVTmR3bkdHWkdvVDlpb2ZJbTMx?=
- =?utf-8?B?UGpWMEY2Rkx6ZHk5K0JBR0J0L1NhK05TdlhZb1lvRGhSbzhlVTNRR21FVTlO?=
- =?utf-8?B?SFZTK09mUC9KRG1iSkYxdVJHNDd4M3BpSGVZL0VPZmUzclcrZ1lUMHZXdkVm?=
- =?utf-8?B?eUR0WUJmZmZHRytDTU9pRnBQYjgycEgza0t1REt4QVpaTCszK1BUUkw1dUFS?=
- =?utf-8?B?NHNRdGd3YUx5eGo4MnVWbk5KY2liOUIrQnFWbGxENmlGQXJtMXRQM1Z3cVk1?=
- =?utf-8?B?dkxPVDVmQytlV2ZzRlQ1TE1rRWtDLzU5V2hxM2hwZlRzc0xkQ0JUVEZ4QnJV?=
- =?utf-8?B?cDIyaHlQVG94VzdKMHFOaDFJWjhzRXQ0UjJFU3pHeVNOSjZTTThRR1J5dnha?=
- =?utf-8?B?dEU0R2xHdkswdFJld0pzNHRZZFg5TUdmeGY5Y01ZTmxkOVZ3Q3RlTjVPVDUv?=
- =?utf-8?B?eEh5UVB1d2QzRkpORDhrMnk0bnF1SlJLb0dWMEdQV09zSEI0UzdiNGYrRlpD?=
- =?utf-8?B?anFrekJsMjJqTFduYU9udUFyYW44NUthbVB6MjJZNHlyQVFib3MwUXZYZ3ZU?=
- =?utf-8?B?VnM3a1Y1eG14eG9OWkswZFF2S2RSQXhFNXBpSk0veUFlUXJiS3ZHWUFiUkwy?=
- =?utf-8?Q?nHu2DMfT7NvjLPAxkWotSi/qA89xRVUIjLFO/WY/dk19?=
-X-OriginatorOrg: uclouvain.be
-X-MS-Exchange-CrossTenant-Network-Message-Id: 999d3f69-c977-4412-629c-08dd12e146e0
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 14:54:52.4056
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pXiTRwWYE6dmoLDO0nyrVdY7YXrfQp5QRmrti+yITVhi0anWmYVU9txqiviLN26WJ9YXMP5bbsZwalWN02x3qg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR03MB7182
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/2] media: uvcvideo: Support partial control reads and
+ minor changes
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org
+References: <20241128-uvc-readless-v5-0-cf16ed282af8@chromium.org>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241128-uvc-readless-v5-0-cf16ed282af8@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 12/2/24 14:40, Krzysztof Kozlowski wrote:
-> On 02/12/2024 14:07, Thomas Antoine via B4 Relay wrote:
->> From: Thomas Antoine <t.antoine@uclouvain.be>
->>  CONFIG_BATTERY_QCOM_BATTMGR=m
->>  CONFIG_BATTERY_SBS=m
->>  CONFIG_BATTERY_BQ27XXX=y
->> +CONFIG_BATTERY_MAX1720X=m
->>  CONFIG_BATTERY_MAX17042=m
+Hi,
+
+On 28-Nov-24 9:53 PM, Ricardo Ribalda wrote:
+> Some cameras do not return all the bytes requested from a control
+> if it can fit in less bytes. Eg: returning 0xab instead of 0x00ab.
+> Support these devices.
 > 
-> Are you sure this is placed according to savedefconfig order?
+> Also, now that we are at it, improve uvc_query_ctrl() logging.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-I ran menuconfig and it put CONFIG_BATTERY_MAX1720X below
-CONFIG_BATTERY_MAX17042 so I think it is an error on my part.
-Will fix in v2.
+Thank you for the new version, I've replaced the 2 patches in:
+https://gitlab.freedesktop.org/linux-media/users/uvc/-/commits/next/
 
-Best regards,
-Thomas Antoine
+with this new version.
+
+Regards,
+
+Hans
+
+ 
+> ---
+> Changes in v5:
+> - Improve comment.
+> - Link to v4: https://lore.kernel.org/r/20241120-uvc-readless-v4-0-4672dbef3d46@chromium.org
+> 
+> Changes in v4:
+> - Improve comment.
+> - Keep old likely(ret == size)
+> - Link to v3: https://lore.kernel.org/r/20241118-uvc-readless-v3-0-d97c1a3084d0@chromium.org
+> 
+> Changes in v3:
+> - Improve documentation.
+> - Do not change return sequence.
+> - Use dev_ratelimit and dev_warn_once
+> - Link to v2: https://lore.kernel.org/r/20241008-uvc-readless-v2-0-04d9d51aee56@chromium.org
+> 
+> Changes in v2:
+> - Rewrite error handling (Thanks Sakari)
+> - Discard 2/3. It is not needed after rewriting the error handling.
+> - Link to v1: https://lore.kernel.org/r/20241008-uvc-readless-v1-0-042ac4581f44@chromium.org
+> 
+> ---
+> Ricardo Ribalda (2):
+>       media: uvcvideo: Support partial control reads
+>       media: uvcvideo: Add more logging to uvc_query_ctrl()
+> 
+>  drivers/media/usb/uvc/uvc_video.c | 27 ++++++++++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> change-id: 20241008-uvc-readless-23f9b8cad0b3
+> 
+> Best regards,
+
 
