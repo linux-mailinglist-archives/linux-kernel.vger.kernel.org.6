@@ -1,133 +1,227 @@
-Return-Path: <linux-kernel+bounces-426884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B639DF9BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:58:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3389DF9BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:58:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151281627F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:58:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980A81F8EED;
+	Mon,  2 Dec 2024 03:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHyN+gAj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B864281758
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:58:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFF01F8AEE;
-	Mon,  2 Dec 2024 03:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMu4JM5p"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C962A1D1;
-	Mon,  2 Dec 2024 03:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F701F8AF9;
+	Mon,  2 Dec 2024 03:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733111893; cv=none; b=a9VT/EUhszf54g9yv2LKHxSeyTGdmIL3plJ/mDYPBO3UGvw74gD9ZFLskab0udkMhmStVDUpc5ylGAwYypL5tpgutuT5EATldchb93yRn8aHeQ0cybioAGHPB5hjJ21Hd5aZGwEKL2CkgZrrhCk03twEUWtZ6umLFWi+6iNVYiU=
+	t=1733111894; cv=none; b=aMR9ruhhn45xE+2lBP+CMnZSJlcNa1/cSC6gVwO7G62Pweeo1O+sOB0fSVJ+jQf4/V614e8he6jL7KQPKZHs5WTQ4wEorf6YEX+zInu8FhB5uuz5AM37Pti5ZcmFo/NWESCjFN/rJsb60XE8vzdC70rb1c8rhG0U9Hy5PyOT76k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733111893; c=relaxed/simple;
-	bh=1WuQ9zhPdvb7aTUSsoeBXQfnvNcWDdKLXzd31oeSilY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fv1RX5zLp8jrxBLhretVdXx/pHZicI22pSzvIw8kit0+ZYlxVU9PHPYrsHAAcwg4gTC/D9AMumiWK89XwnFAt1XiWecDW6NGWmo1WkUVxUFk4ZJVSVsUBXgvN4tfgIwA9w1X8jAE2JguxA3nb9Pm/BcrKCTpoG5xsMkP9ZAlWac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DMu4JM5p; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d0cd8a0e91so2272762a12.3;
-        Sun, 01 Dec 2024 19:58:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733111890; x=1733716690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1WuQ9zhPdvb7aTUSsoeBXQfnvNcWDdKLXzd31oeSilY=;
-        b=DMu4JM5paNbtOuxcNdTEa2HL7Br1nEwt2KPW5K3iB6O3qAxai6Gdr7LjW0qPYSVW4h
-         qo3plqC5n3i6pKK72XVi9FFcfGL4Avv8XPOdu6r0DuBc5uoDQNfxsbQS3NJ1dOcuBnqs
-         vFvKcyeHJyEeAzOtp6JszHV34bUoISXMzdOA1+gk00wTx5cyWa9marpm8Ivnntpo6K3r
-         UY3vhKSgDDtzHcDABbbcRTGq82gGtg1M5yWTpSjJtPdVe9CFnS7OsJ3i5S0EDDLlDIHO
-         YAoBFnSgGZNolNWgJJOEr/AlY0tzW+4RJK7/rxSiXdRQAIVNnB1uQ4NYbl5DbvAIKeTl
-         8UpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733111890; x=1733716690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1WuQ9zhPdvb7aTUSsoeBXQfnvNcWDdKLXzd31oeSilY=;
-        b=VQg6QcuRMWhZKpAGJtxzE0oHXgEd0uAjz8iEs0BIjoQEBSanLCLosOcKvxe0PIdKeE
-         fcze+619ZXQpET1L54bi1sBMdKyPH8F6yqBkh0Gu0W6aKCw5TJbDew4+cbZGNgQWhcdm
-         GdhEuE+3fgdHwULctLcnOCTaZdBx41gygDuXrvLpH7i4aP9VTedPHg9w54HysIUu5Toi
-         Q3wK/LqNWtQKFd504OiKf3qtoTi7UBVCwpdYAnfRAS9AvqEhtVGDzDcgRITlGpHBHzVY
-         Pf2qSbY+QsNnzToiekHp8bh8E4H0/HTXTH/cbqmDst32H+RThCagMja21t60xYsLqAQa
-         +QPw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4qdB3SbFYMh93d2ZHmU16jeU4m95Eu5T4VkE6U9gi6IkZTSewFbzbWm1c3LLwFgEa65/PidXm/m8EsFUk@vger.kernel.org, AJvYcCVQ+LC47uC2SBToBlUabruoIoKZlq9iTSOD7CxH/V+iYshJC+pzBkrS0ousyJNzoNmSEFtdcsO2S2Yu@vger.kernel.org, AJvYcCW2BMTnNbRPpm3VBuZH5t/prhnWSSV4o2OaAzggMmJlRxmeQTrFmnHbWN0fO5p7t1nZJ77Dmahup2fN@vger.kernel.org
-X-Gm-Message-State: AOJu0YytUkVJnIk4sJzoeNs13uGzDvAyMjn3TM3u4BZ+oJq6RIN0eNeS
-	ugVNc9fcWNpnDnCEEd5JCOajrKW4e1N8dByTJWR9hl+1qLiXPQ0EJS+pJZbpgXXXoTZCdcZUlJY
-	LDxY9HimisFQ2dPFEkaNyDc3UZfI=
-X-Gm-Gg: ASbGncuXWcRCwbhsUzlYGLOPZMTHPfA5mxrXQYimFScbwoP56/F4FS924+LGlpeH1Yo
-	zcEdtuNBjDIgeJXWfPt30/+znWFW+7gg=
-X-Google-Smtp-Source: AGHT+IGwzEMbiiJ13Ofd5itDTOGLOFeo7dgalvpfbhUuXY2tP9DPIIZUXyvTnCRrUzAM/6rxs2ljWo1mX+WoQmAepyI=
-X-Received: by 2002:a05:6402:280a:b0:5d0:cea1:931e with SMTP id
- 4fb4d7f45d1cf-5d0cea19806mr7075150a12.23.1733111889614; Sun, 01 Dec 2024
- 19:58:09 -0800 (PST)
+	s=arc-20240116; t=1733111894; c=relaxed/simple;
+	bh=aVDfCKtaigEChhc1oQn3uCiGBKz3heH4xaoXSvXbnVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WtwqY0kLPXCoJjs1OzXi0Tt4QYQEbbOEpFbRaGBt1IIwTO12gAmuVK50wJoUtlat5diKU+f8eev810+EUX8cVaWtZcXHDWiiR2L1owtfIjCYthe/d64boJkXj7GiYIDe7Co5q9zR5Lk8bR48LEp6RWfvm7xh3/IMn1zvyTWEA10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UHyN+gAj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF1A0C4CEDA;
+	Mon,  2 Dec 2024 03:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733111894;
+	bh=aVDfCKtaigEChhc1oQn3uCiGBKz3heH4xaoXSvXbnVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UHyN+gAjUPjPpk4IwqXqSjgCRl+8JBT1ZK/NC7timCLkg/TD8Yrd790ZNsXPuTmQD
+	 I3vpWMNvnl/bFV1z66o2/owSG0ASJRvOPtlCon/4dngHpn/IVrc6r2rZW37vxtUl0j
+	 HiWjEwc2Ph2qq7nWd1h/J7pkAOVpJqnRdmH/XF10xmT+a9RZDlqk4NG6mF+dwWUzWI
+	 qMyRgx1BIT948tsx2FzF08LitEX6LfqQGhXuXFcckHul0wpmXGFUjdgl3FJ8Acfb/7
+	 pZ12wllDQpMlLW2P6O8RZoz/erzR7yekME8HYgEuucIS/Whg/y9ciyEvToJVgdeZVq
+	 vbtYNhxWfZa/Q==
+Date: Sun, 1 Dec 2024 21:58:11 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] clk: qcom: Support attaching GDSCs to multiple
+ parents
+Message-ID: <7slvjokv5xcwdpoa77vtg5ihkmgsok5arz2aw2f3wfh4hffkzu@rep6qmkqy2ro>
+References: <20241129-b4-linux-next-24-11-18-clock-multiple-power-domains-v6-0-24486a608b86@linaro.org>
+ <20241129-b4-linux-next-24-11-18-clock-multiple-power-domains-v6-3-24486a608b86@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106023916.440767-1-j2anfernee@gmail.com> <20241106023916.440767-2-j2anfernee@gmail.com>
- <6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
- <CA+4VgcJD74ar9zQCj38M2w8FzGWpq+u5Z7ip9M7a1Lu7u8rojw@mail.gmail.com>
- <20241109134228.4359d803@jic23-huawei> <20241109142943.3d960742@jic23-huawei>
- <CA+4VgcJ=8wDWWnmgEt-UkEUfnfD8kGtHe44G5+dcRYt=KdwNfw@mail.gmail.com>
- <20241123144750.43eaa1c5@jic23-huawei> <CA+4Vgc+rqnxne6saUgUO_kR6chX9+HZcb40_9dpO6p6KuskSAg@mail.gmail.com>
- <6d8e9512-2be8-4337-9791-0d956b0968c5@baylibre.com>
-In-Reply-To: <6d8e9512-2be8-4337-9791-0d956b0968c5@baylibre.com>
-From: Yu-Hsian Yang <j2anfernee@gmail.com>
-Date: Mon, 2 Dec 2024 11:57:33 +0800
-Message-ID: <CA+4Vgc+vXQYQubVs4eFJj+WuMKEJziZh44J_pXDxrmo_DXiWpg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
- NCT720x ADCs
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Chanh Nguyen <chanh@amperemail.onmicrosoft.com>, 
-	avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nuno.sa@analog.com, javier.carrasco.cruz@gmail.com, andy@kernel.org, 
-	marcelo.schmitt@analog.com, olivier.moysan@foss.st.com, 
-	mitrutzceclan@gmail.com, matteomartelli3@gmail.com, alisadariana@gmail.com, 
-	joao.goncalves@toradex.com, marius.cristea@microchip.com, 
-	mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com, 
-	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241129-b4-linux-next-24-11-18-clock-multiple-power-domains-v6-3-24486a608b86@linaro.org>
 
-Dear David Lechner,
+On Fri, Nov 29, 2024 at 01:06:49PM +0000, Bryan O'Donoghue wrote:
+> When a clock-controller has multiple power-domains we need to attach
+> parent GDSCs in that clock-controller as subdomains of each of the
+> power-domains.
 
-Thank you your comment.
+I envision a fair number of current and future readers will wonder why
+this is... Why do we _need_ to perform this attachment?
 
-David Lechner <dlechner@baylibre.com> =E6=96=BC 2024=E5=B9=B411=E6=9C=8829=
-=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8810:50=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> On 11/27/24 8:14 PM, Yu-Hsian Yang wrote:
-> > Dear Jonathan Cameron,
-> >
-> > Thank you for your advice.
-> >
-> > I would remove the "nvuoton,read-vin-data-size" property.
-> >
-> > Read VIN info can use word read or byte read, and other registers
-> > should use byte read.
-> > If I use word read for VIN info and byte read for other registers,
-> > I encounter an issue when I use regmap instead of i2c smbus API.
-> >
-> > I need two regmap configs with val_bits 8/16.
-> > After I call devm_regmap_init_i2c these two configs,
-> > the error message:
-> > "debugfs: Directory '5-001d' with parent 'regmap' already present!"
-> >
-> > Do you have any suggestions?
-> >
-> Give each regmap a unique name, like "5-001d-8bit" and "5-001d-16bit".
+> 
+> Testing on the x1e80100 reference shows that both power-domains need to be
+> switched on for the GDSCs in the clock-controller to work.
 
-It worked fine to add each regmap a unique name.
+You're making a completely generic change, but are referring here to
+some specific (probably camera) case.
+
+> Some open
+> questions remain.
+> 
+> 1. Should there be a hirearchy of power-domains in the clock-controller.
+
+Your TITAN_TOP patches is already an example of such hierarchy, so I
+don't think that's an open question.
+
+> 2. If there should be no hirearchy should the parent GDSC inside the
+>    clock-controller attach to each power-domain in the clock-controller.
+
+I suspect that the TITAN_TOP gives you this impression that there is a
+"parent GDSC"; that's generally not the case - but the mechanism
+introduced by the patch is still needed.
+
+> 3. If there are multiple parent GDSCs in a clock-controller do we attach
+>    those top-level GDSCs to each controller power-domain.
+> 4. Finally should performance-states be applied equally across those
+>    power-domains.
+> 
+> It may be if we see more clock-controllers with multiple power-domains that
+> some mixture of these questions will need to be implemented for specific
+> hardware.
+
+GPUCC has always been an example of this and there are several other
+examples in multimedia, which we've just ignored. And even for GCC you
+have a mix of voltage requirements cast across CX and MX.
+
+> Right now the approach taken here is to attach the
+> clock-controller GDSC parent to each clock-controller power-domain.
+> 
+
+What is "the clock-controller GDSC parent"? Perhaps I'm just parsing
+this incorrectly?
+
+Perhaps we can use the naming from the API and say "each GDSC is put in
+the subdomain of all power-domains of the clock-controller"?
+
+
+I'm not convinced that the propagation of set_performance_state has been
+adequately been understood.
+
+But, in general, I'm not against the idea of starting off by voting on
+all rails, mentioning that it's likely that in some cases more effective
+propagation of votes can be made and then leave this as a future
+exercise.
+
+I would like to see 1-2 use cases beyond camcc being exposed to this
+though.
+
+Regards,
+Bjorn
+
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  drivers/clk/qcom/common.c |  1 +
+>  drivers/clk/qcom/gdsc.c   | 35 +++++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/gdsc.h   |  1 +
+>  3 files changed, 37 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index b79e6a73b53a4113ca324d102d7be5504a9fe85e..9e3380fd718198c9fe63d7361615a91c3ecb3d60 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -323,6 +323,7 @@ int qcom_cc_really_probe(struct device *dev,
+>  		scd->dev = dev;
+>  		scd->scs = desc->gdscs;
+>  		scd->num = desc->num_gdscs;
+> +		scd->pd_list = cc->pd_list;
+>  		ret = gdsc_register(scd, &reset->rcdev, regmap);
+>  		if (ret)
+>  			return ret;
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 4fc6f957d0b846cc90e50ef243f23a7a27e66899..cb4afa6d584899f3dafa380d5e01be6de9711737 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -506,6 +506,36 @@ static int gdsc_init(struct gdsc *sc)
+>  	return ret;
+>  }
+>  
+> +static int gdsc_add_subdomain_list(struct dev_pm_domain_list *pd_list,
+> +				   struct generic_pm_domain *subdomain)
+> +{
+> +	int i, ret;
+> +
+> +	for (i = 0; i < pd_list->num_pds; i++) {
+> +		struct device *dev = pd_list->pd_devs[i];
+> +		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> +
+> +		ret = pm_genpd_add_subdomain(genpd, subdomain);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void gdsc_remove_subdomain_list(struct dev_pm_domain_list *pd_list,
+> +				       struct generic_pm_domain *subdomain)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < pd_list->num_pds; i++) {
+> +		struct device *dev = pd_list->pd_devs[i];
+> +		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> +
+> +		pm_genpd_remove_subdomain(genpd, subdomain);
+> +	}
+> +}
+> +
+>  int gdsc_register(struct gdsc_desc *desc,
+>  		  struct reset_controller_dev *rcdev, struct regmap *regmap)
+>  {
+> @@ -558,6 +588,9 @@ int gdsc_register(struct gdsc_desc *desc,
+>  			ret = pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
+>  		else if (!IS_ERR_OR_NULL(dev->pm_domain))
+>  			ret = pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+> +		else if (desc->pd_list)
+> +			ret = gdsc_add_subdomain_list(desc->pd_list, &scs[i]->pd);
+> +
+>  		if (ret)
+>  			return ret;
+>  	}
+> @@ -580,6 +613,8 @@ void gdsc_unregister(struct gdsc_desc *desc)
+>  			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
+>  		else if (!IS_ERR_OR_NULL(dev->pm_domain))
+>  			pm_genpd_remove_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+> +		else if (desc->pd_list)
+> +			gdsc_remove_subdomain_list(desc->pd_list, &scs[i]->pd);
+>  	}
+>  	of_genpd_del_provider(dev->of_node);
+>  }
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 1e2779b823d1c8ca077c9b4cd0a0dbdf5f9457ef..dd843e86c05b2f30e6d9e978681580016333839d 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -80,6 +80,7 @@ struct gdsc_desc {
+>  	struct device *dev;
+>  	struct gdsc **scs;
+>  	size_t num;
+> +	struct dev_pm_domain_list *pd_list;
+>  };
+>  
+>  #ifdef CONFIG_QCOM_GDSC
+> 
+> -- 
+> 2.45.2
+> 
 
