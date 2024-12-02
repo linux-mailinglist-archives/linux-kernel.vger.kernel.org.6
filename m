@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-428102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542399E0A9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:05:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805BA9E0A31
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64F62B8268F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D96282A78
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDDB1DD889;
-	Mon,  2 Dec 2024 17:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67461DE2DC;
+	Mon,  2 Dec 2024 17:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q447Qxob"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b19kVneh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3881D9694;
-	Mon,  2 Dec 2024 17:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C91A1DE2A6;
+	Mon,  2 Dec 2024 17:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160993; cv=none; b=dRlepnoW+AFCbMyevbLTdplQ6dF8GqOFm43VH5MFTDUk1JlAK0MiU+iT/MFMLu6ZdD+kmx+ZFWGaZZKy7QUjNnqRfvCcP7KMB6WKllZt0tQubJk/UX+26GQoctkn2/Rg4HLtX3+1ENlG36UCwIFxueFNGSDLxuDHN8XcsxMmQR0=
+	t=1733161002; cv=none; b=KRi9LBCy8t7qX075KD8McZNjKvfCRZZjmsa9wL3dTwHs8LWh6Jpp+WMzRkUn0low6GuXZfVC8EZ8J+PS36xqnFpGplUXl1/yuVoBd5DjFp5xsQaLlhHWWZBcBIql10cbX4m0GdaS/8/xse/OcckhwtKkvm2sTMLFbCIcMrMrGGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160993; c=relaxed/simple;
-	bh=5am5/7HJ+XN0E+xl7eqOs1PXl2QfSg12UUxGtMd6/sY=;
+	s=arc-20240116; t=1733161002; c=relaxed/simple;
+	bh=omTd30O7il1d2T+mDSNJwSln23SjccFOcva3lTl0BNM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=A8d27dhnssjvZZwGCtTT6ATsCXM8hfWAR4DOtt+rpSObZ+rDifTFrEKCht10BDYdVpHVBXFyQ6e+/ZVKLhaDY8ky8z6k/RmAsDJHxi41ITnSFQlK/77yYorgItFDKLT4+jyh8kS/avpp8T2LovOW+MS9gK7S5yxaYNqB4ohBnpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q447Qxob; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7473C4CED2;
-	Mon,  2 Dec 2024 17:36:30 +0000 (UTC)
+	 MIME-Version:Content-Type; b=D6sOXGBCS5RnMaW6Ej9Wj3krG/fm82c7W+FAyMgqh+5qViHZ2IUx96wL7TxR7wV5k4vQzSAB09pmZsLJLaNG0AUDHGkzS/r+c1ZPFDsuXjErSVpTJg1cHpdPF5IvZY49Ooc7O7saXshYcoJQxHyDomTP/JLkH7SxynTfvpuL/Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b19kVneh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 304DFC4CED1;
+	Mon,  2 Dec 2024 17:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733160992;
-	bh=5am5/7HJ+XN0E+xl7eqOs1PXl2QfSg12UUxGtMd6/sY=;
+	s=k20201202; t=1733161001;
+	bh=omTd30O7il1d2T+mDSNJwSln23SjccFOcva3lTl0BNM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Q447Qxobt+kLUELjmEYyYmFYb9cDkUE6mYIsva27z+lKcQiAA9BipaOn1u+lFN0Dy
-	 bbiCrHphqjQzaSiVmjTLE7VkVB3F9s9d8fVV2P5CReg/cJJ4aeeWg92i2JgIIz9bOl
-	 C3NpPShaRTqAZwtT9RSIN7FOH1dGNhbXzyy0hhZM4FBIF1Rd9OqcuLXVu4H/n21NOP
-	 rEkKQm8pLKpyPSgHHcIwi3XWH5InB4jL7Yl3iDxQRvuhBIGy6Jz69f8jQoAuHmIZ1G
-	 475Cq+NwjEThlCrta81YSi4NjhfQtdwBzpxu7sXoNhTwSLX21gUi1e2Sx41uR5Ry8r
-	 66r5fhucqsYyA==
+	b=b19kVnehK87/IHsaAlnext5C0DLQu+oMKO/RGC3yE1KO7I4S7YiSqBP4ixcBu7T7V
+	 pslBw3IDuEShQYa+q7Hc59fYzDmjm+kdKmCv/vmAOy3KR2tXLJqetTbpGuKY14PMte
+	 FWckDfSmTUhObsvxRgQc90zg/WAG5ffooD3PuW32t/w4W89r3inzfCTvJ0EbUI5s5b
+	 u1LRi5G42x1MN8Dss5s8NnkAbor0+O4GYcbwuYBk16D58T5S9JenhHmDti4kOrb3jb
+	 FZCS0sRSEvo2GUs2cMjOMK9Z45Tx7l50x6swtErPlK6Kc1uZpKqDPYiwCRPWXMhChQ
+	 B/Mj/LxzFO0Ew==
 From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-In-Reply-To: <20241121105838.4073659-1-andriy.shevchenko@linux.intel.com>
-References: <20241121105838.4073659-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 0/3] regmap: Cleanup and microoptimization
-Message-Id: <173316099054.156347.17424661167771006214.b4-ty@kernel.org>
-Date: Mon, 02 Dec 2024 17:36:30 +0000
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ vaishnav.a@ti.com, Srikanth Boyapally <srikanth.boyapally@amd.com>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, git@amd.com, srinivas.goud@amd.com, 
+ radhey.shyam.pandey@amd.com, srikanthboyapally2016@gmail.com, 
+ sai.krishna.potthuri@amd.com
+In-Reply-To: <20241120120951.56327-1-srikanth.boyapally@amd.com>
+References: <20241120120951.56327-1-srikanth.boyapally@amd.com>
+Subject: Re: [PATCH 0/3] spi: cadence-quadspi: Add support for device reset
+Message-Id: <173316099889.156452.1327566549326122960.b4-ty@kernel.org>
+Date: Mon, 02 Dec 2024 17:36:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,30 +62,30 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Thu, 21 Nov 2024 12:57:20 +0200, Andy Shevchenko wrote:
-> Two patches move the code to use BITS_TO_BYTES(), while the last
-> one otpimizes the code generation on x86 (32- and 64-bit on different
-> compilers).
+On Wed, 20 Nov 2024 17:39:48 +0530, Srikanth Boyapally wrote:
+> Add support for device reset via OSPI on Versal Gen 2 platform.
 > 
-> Andy Shevchenko (3):
->   regmap: cache: Use BITS_TO_BYTES()
->   regmap: Use BITS_TO_BYTES()
->   regmap: place foo / 8 and foo % 8 closer to each other
+> Srikanth Boyapally (3):
+>   dt-bindings: qspi: cdns,qspi-nor: Add compatible string to support
+>     OSPI controller on Versal Gen2 platform
+>   spi: cadence-quadspi: Use quirks to set dma_set_mask instead of
+>     compatible string for 64-bit DMA support
+>   spi: cadence-quadspi: Support for device reset via OSPI controller
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/3] regmap: cache: Use BITS_TO_BYTES()
-      commit: 4a3aafe01f6c628932a402c21e58101173c8dab3
-[2/3] regmap: Use BITS_TO_BYTES()
-      commit: a4a7d86bc1a59839ad0dffbefa473135b342dd0b
-[3/3] regmap: place foo / 8 and foo % 8 closer to each other
-      commit: 9b3cd5c7099fe7710356dd76ecf9910dc8c32548
+[1/3] dt-bindings: qspi: cdns,qspi-nor: Add compatible string to support OSPI controller on Versal Gen2 platform
+      commit: 707080d4fea8f6b8319ceead569f34c2be5bf1d5
+[2/3] spi: cadence-quadspi: Use quirks to set dma_set_mask instead of compatible string for 64-bit DMA support
+      commit: 2e4d9f5111a3b3c24550e34710efa690c03b3ea1
+[3/3] spi: cadence-quadspi: Support for device reset via OSPI controller
+      commit: 27cf57f65bea55d985f0ad0dc1737ce1d01f05dc
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
