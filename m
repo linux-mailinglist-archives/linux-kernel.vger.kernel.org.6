@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-427310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2C09DFFAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:05:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF3B9DFFCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:09:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF97C16239E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:09:40 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66AF1FDE21;
+	Mon,  2 Dec 2024 11:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="ArHi1nWC"
+Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC9228061E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:05:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389AD1FCFDC;
-	Mon,  2 Dec 2024 11:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OxVQmLsE"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C171FBC9E;
-	Mon,  2 Dec 2024 11:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761F31FCFE7;
+	Mon,  2 Dec 2024 11:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733137531; cv=none; b=bYzs5qO/cE1j9eRK5m6YJ1wn4UnRcrSUomwj0Sa4gh5+3hMhX60FiDlavGfnQSFPuumzbTjmGJQZCi+XwQVT04FLxnR8TwzDInE2w9Vhwu1P7Y/KsdDjwfWhNRmIyDVIZYJhdzWIXconuADMpBUxRCLMbg4VE9aIgXJ30gxnjLk=
+	t=1733137766; cv=none; b=eY0XrR7BtLH84+xdCFcJURQ7aGkIK8ZBWN8hJPs0tSgOnZkPMx8zyWj/rLiBvfHqY0digpzlgXkSR5l+Su+Omc9jNk5X7+Rz7lwGxnzUk2PVh+E3AYrDRYvSaW3T5mIHYhsn9NRGn5eN2YKoB999wxvOTRKqiyiShxa4xKXkqEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733137531; c=relaxed/simple;
-	bh=1sYak3cuRCq5GY57CnsyhYDpYhlm2E5QeWuWN5eGYys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZMcQx2+R+3vXRAsXPkO+OukgTUt6zXapKipUGqCemjBChERPV3f/X3qWgq6O3XgAtaJJU9/Dg+sotNl3EmDShqLEXpnd0efjiMsAEXfbot4d6jK1+4kaMBU3hi9bSV+L1jBAi4SVXMOytBzEwG2StvSoY6cUAsg376O67xqnJoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OxVQmLsE; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53de852a287so4607534e87.2;
-        Mon, 02 Dec 2024 03:05:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733137528; x=1733742328; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Uu0zS28pDaBagRkiedQBFXcTK0YW989CQebdf4iD8HE=;
-        b=OxVQmLsEGBWsg1YtMXcnmYRsxdoL1hGZnu49HQWP5wPasjKoQzbFu5VJ3KEGhuxZuX
-         kWMgvQINilaTknsDnJmLWj7O7kj01w8oT5GzbRxNvnp5PpmUMJEwnIuXiT6RiNVr5LAY
-         bFSkILipYCal/cafzBnm/y51002rnvGeoS1LANAjbjLKuxSIL4foWbk0b281gCtovUms
-         w4D2Q043n94q0diCmspmIT7yUGEK9c5NtvgSJk4DEy0Z0hSkAufF7Cz0ZHNgYDcMgOP/
-         sEB7POqTPIMVr34v7/Qhto7qEQAVHgSA1ea9jMQaDdZTDCeLWDxrBudr9znfuiGfuKoB
-         hNDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733137528; x=1733742328;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uu0zS28pDaBagRkiedQBFXcTK0YW989CQebdf4iD8HE=;
-        b=RUuoP4k1CUUgDk7CUREYC+rKBNA9u+15tn1goSnYa3scdxZJ+ialCyXLj4pJ7Hk0JN
-         WrJEhZztuPqXOynM2vjVdWR+GHcgiY4T4abFSr5OvuMd22/xLKc+Z+aDTXMqij0atDjp
-         ktTlzcCAJhkbci5prcXVrrfJZbtomLtWwP55ADQpFSrTl+mdaJv1nXdbaj8+MaNc86d2
-         9CFdLHS94c1PNQL0l63Mg77Oo802nf6WOBw6dYkgtRJAkJjqruO/jXq4rzcWEPpKj9mY
-         S9kbXE4IJ39WpfBIQW8bdO9kEduX6dar4hrxV06ksyQNmvyn/YdqJsrlOUHvwChbcLCc
-         /hHg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Gr0N+XcPOca9TGuawNJF9juuQaR47chrSYb4GqctutooIRvz0C1jaYQeoiNiXXUanlqvRzl0PkQw@vger.kernel.org, AJvYcCXJCTLKMqGCXGHhIgTfMyeKOG8r8E+s6XGK3/uQQN9PDJi1u2QuhK6KdtCPB/ydhbMH9TnmxvScbYTY@vger.kernel.org, AJvYcCXUp0YjvQc0bYRrhIA+Yl3kJmVVxcGCBwAmZh+7y8G2cftSlDutLMfg5vHCqgNJAeMLfOaolNIcLTP4rS6Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl1fnxAedkPKPOmUDSnMH83WX3Pz9R06efbN1FI6yZCSPeSxPu
-	Cy2i6lHSBECpjuMjtwwJcgHlVx5M3kG7PA1p3qUWylLYKIn+Pmxv
-X-Gm-Gg: ASbGncuTFWoUKRWw7fOwsSkJz5PcvEeapnLhj6IUteIM5FxOS5tKwPQpNymAp4r5vhr
-	GAY+T/RSNDFMwA7DPivRxtBjhuNaQWD4T+2K9LJk7iOWmTF27A9tgxAUkzvh8wivzkd4HDTeJqW
-	bk06ZXeRHybwehg1UK3dIueRypx0mrbemtfqp4TpISuQxWxYV1f0txMkSdadXnuRiClwNJiePJV
-	3C42qPz6TOFSuGp090qF5vDeVA9l5v3FNuqOn7ZHcH9VKhqnZ300FQj0AzkEk0oOnfRCv+aQ1dM
-	VjxkCOGAFRa1x2dulaXo7P4Zo/CPenI=
-X-Google-Smtp-Source: AGHT+IHJ/ldxxdVE8q6UHKkJydQA5phLfWvYSU924t20aswrS8s0hNVnWrCwGluXgOaN/mFoO+Kq4g==
-X-Received: by 2002:a05:6512:3e08:b0:53d:a5c8:aaa6 with SMTP id 2adb3069b0e04-53df00d2c5amr6461246e87.13.1733137527730;
-        Mon, 02 Dec 2024 03:05:27 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64a07d8sm1440953e87.275.2024.12.02.03.05.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 03:05:27 -0800 (PST)
-Message-ID: <108cb61d-df0c-4224-9e81-c642de81e147@gmail.com>
-Date: Mon, 2 Dec 2024 13:05:24 +0200
+	s=arc-20240116; t=1733137766; c=relaxed/simple;
+	bh=ehSSEoWvXlF4UI9qtPYGUyBaauQysGmoOhwaF7jtG7c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MQlqPiQZYpfRiczjj+vVgzWkHoBFdkWK31IHnB30quf6XNdzXG0tEWgpFA8uGyAQ4R59o5TyBG4o81MidqampnRoF6F9m4Ennag+IgyhVc9K17XHuYL2V3aaV18FT+BxUbO6rtVdxKAd3fXDU2MeezIHFbj3aRghZw3VPNPsrH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=ArHi1nWC; arc=none smtp.client-ip=134.0.28.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
+	by mxout3.routing.net (Postfix) with ESMTP id 7B32260FA5;
+	Mon,  2 Dec 2024 11:00:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1733137257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=86EvgCO6od0cvtHnJ8468kzI29+oaxRmTIup/RkDzcA=;
+	b=ArHi1nWCoN+5NaD7YWdy0JFjjfVTHhXym47DOdaM+9fX04Be/GCvXii40N+5naHPKrsi7A
+	GTM0rjkWw2UUR4srnK7+Cj9D6qBEYuBM4DN7JQQwUBOCMvKlN20Td4sTvCwBU+gltwcqFW
+	sfp2TS1TYXcllwKLAYMI0RoqVfrvQV8=
+Received: from frank-u24.. (fttx-pool-217.61.149.104.bambit.de [217.61.149.104])
+	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 83B971002C7;
+	Mon,  2 Dec 2024 11:00:56 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v5 0/5] Add pinctrl support for mt7988
+Date: Mon,  2 Dec 2024 12:00:34 +0100
+Message-ID: <20241202110045.22084-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/7] iio: accel: kx022a: Support ICs with different
- G-ranges
-To: Mehdi Djait <mehdi.djait@linux.intel.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1732783834.git.mazziesaccount@gmail.com>
- <fc667b1495adf4e3f29ecbb336495c1f18b47e61.1732783834.git.mazziesaccount@gmail.com>
- <4waoywlqb63yav6q3rdvqnwbihxccgl6p5y7f72yzdadnlzezz@g4fz63owgguj>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <4waoywlqb63yav6q3rdvqnwbihxccgl6p5y7f72yzdadnlzezz@g4fz63owgguj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 55088614-6dd8-4657-af48-c5c86a14cb8f
 
-On 02/12/2024 12:25, Mehdi Djait wrote:
-> Hi Matti,
-> 
-> Sorry for the late answer. I know that this was already applied so maybe
-> you can post a really small follow-up patch ?
-> 
->> diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-kx022a.h
->> index 7060438ad88c..36e9d9de8c13 100644
->> --- a/drivers/iio/accel/kionix-kx022a.h
->> +++ b/drivers/iio/accel/kionix-kx022a.h
->> @@ -161,6 +161,8 @@ struct kx022a_data;
->>   struct kx022a_chip_info {
->>   	const char *name;
->>   	const struct regmap_config *regmap_config;
->> +	const int (*scale_table)[2];
->> +	const int scale_table_size;
-> 
-> Could you please add kernel-doc for these two new elements like the others already
-> have ?
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Thanks Mehdi. I think this makes sense :)
+This series adds pinctrl driver, dt-bindings and dts node for pinctrl
+on mediatek mt7988 SoC.
 
-Yours,
-	-- Matti
+changes in v5:
+- rebased to 6.13-rc1
+- moved dt nodes with mutliple options to BPI-R4 board
+- changes suggested by angelo in v4
+- changed example in binding and dt node to not using const MTK_DRIVE_8mA
+
+changes in v4:
+- fixed fixed string binding error
+
+changes in v3:
+- rebase on rafals dts patches
+- update binding to have mux subnode as fixed string and conf with optional suffix
+
+changes in v2:
+  binding:
+  - drop gpio-cells description
+  - move ref in mux subnode up
+  - order uart-functions alphanumeric and fix typo
+  dts:
+  - fix indentation of reg-values
+
+Daniel Golle (2):
+  pinctrl: mediatek: add support for MTK_PULL_PD_TYPE
+  pinctrl: mediatek: add MT7988 pinctrl driver
+
+Frank Wunderlich (3):
+  dt-bindings: pinctrl: add binding for MT7988 SoC
+  arm64: dts: mediatek: mt7988: add pinctrl support
+  arm64: dts: mediatek: mt7988: add pinctrl subnodes for bpi-r4
+
+ .../pinctrl/mediatek,mt7988-pinctrl.yaml      |  578 ++++++
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  |  189 ++
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     |   54 +
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt7988.c     | 1556 +++++++++++++++++
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |   73 +-
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |    1 +
+ 8 files changed, 2448 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7988.c
+
+-- 
+2.43.0
+
 
