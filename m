@@ -1,489 +1,430 @@
-Return-Path: <linux-kernel+bounces-427588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26399E0324
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:18:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34229E0331
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:19:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21B7288D09
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:18:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC3A164CA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5141FECAC;
-	Mon,  2 Dec 2024 13:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="iP2692B7"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C426AAD;
+	Mon,  2 Dec 2024 13:17:53 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC37213AA35;
-	Mon,  2 Dec 2024 13:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274391FF5E9;
+	Mon,  2 Dec 2024 13:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733145456; cv=none; b=O+AfJAyEl66i7d4AaAjE2B4EA0K6VuTWyo6+rzymaDZJDkuKv3tLTpqK9afi0tFMnzwOZcYTMESeOxCxDK0tfylWv1bd1FpiAcDf/psg1keQ+OblgEZ0iyfvWckwjlvpqIbCfEtuhiUv0BJTO9FyXaKnXG1fDGb/Y55iYCu2jm8=
+	t=1733145472; cv=none; b=ihQlJjtHItX+PBV9PjIgbmhanKuok0uPPfPcYMLDi24cUXyRDyFGjbZ/o3WBXnBnuO+baL+xqkmG+TAGqf7yCPo9sWwiRt3Gksyo1GbFjOPpqMoecN1YWpJziWAF4McuzWA8ZIOyGGBG/2kHbOHLBoszxYLc0a7m9l/3dz4aa1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733145456; c=relaxed/simple;
-	bh=OLJpSX3LNj136Ba0KdFNNezKUJSqfSOM2lpI+TIC/FU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=geXQ2ERecR1Sux7K/isMAJHbzQjPKsjJgdsbz3tcTUenSJjxOPQgVNzJ4Yz6l/EyiW7NH3drcguoDw82ojtNchn8Qu74CN3LmAlkfZYQlQF7SzMedRzureV6mNYijFkYcDlykeQpRtERcOjluT70ybmpm7ZUKFTfw9IEDZ4WwTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=iP2692B7; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sendonly@marcansoft.com)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 2F90241F5F;
-	Mon,  2 Dec 2024 13:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1733145447;
-	bh=OLJpSX3LNj136Ba0KdFNNezKUJSqfSOM2lpI+TIC/FU=;
-	h=From:Date:Subject:To:Cc;
-	b=iP2692B7NwQbgSq+Id0GvlWW2ejP9DL62dburowzPz/pTRjFeRnmb7W54ufkRJciu
-	 154HyNgxUKfidUwlylK7NlsEWb+zJvjoM/JR3ERCXjRMdnef8Sc1DrIOPHRUSg/u02
-	 JA4d83v4VVSLaBCi5/jASTmd7OwBE/23WdsCWizxvU+88msk5Nc+oA9iFAfmFwwLNN
-	 P6yBGxSPpgLc/8nhaOMnUAh31cn5zjZkeNwq5TmNCXNTzs1shUbAvnr4/gaxwHI/dP
-	 JJGCNHlF3H1GW/U8C34HKy/RPuyjdIy9NVJPZNlgwgsvfYchRKfo3Ux8siBCaCqD4i
-	 fimp1RVp4jInA==
-From: Asahi Lina <lina@asahilina.net>
-Date: Mon, 02 Dec 2024 22:17:15 +0900
-Subject: [PATCH] ALSA: usb-audio: Add extra PID for RME Digiface USB
+	s=arc-20240116; t=1733145472; c=relaxed/simple;
+	bh=gdweabM+w7ANnttd/KDCi3KsBPIg+HSsgohy/vbThac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pL9jv9gE9Ki848EbYoV7ZVQ7ItFc6EPxJQXx2tClHKpvJ7tydF7dPmd1RrJFGlxHh1WOUEf7Ti+4HIOejWLThyslJ63J9IUJWuLY7VCOt1tWw9yFKQhGvzVDgBlr+Wvyr5lXWp/gEtOblTGJNJuBN7xGVv1/aptHdzxT2eEEQ1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B0C0C4CED2;
+	Mon,  2 Dec 2024 13:17:50 +0000 (UTC)
+Message-ID: <b3837cf3-8d32-41ad-82f8-855d48256f09@xs4all.nl>
+Date: Mon, 2 Dec 2024 14:17:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] docs: media: update maintainer-entry-profile for
+ multi-committers
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4ll.nl>,
+ Ricardo Ribalda <ribalda@chromium.org>
+References: <cover.1733131405.git.mchehab+huawei@kernel.org>
+ <e9a5f9f49b185c694d38ea620bd68252eb52e9d3.1733131405.git.mchehab+huawei@kernel.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <e9a5f9f49b185c694d38ea620bd68252eb52e9d3.1733131405.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-rme-digiface-usb-id-v1-1-50f730d7a46e@asahilina.net>
-X-B4-Tracking: v=1; b=H4sIAFqzTWcC/x2MQQqAIBBFrxKzbiArQ7pKtDAdaxZZKEUg3b2hz
- YPH4/8CmRJThrEqkOjmzEcUUXUFbrNxJWQvDm3T9kqAaSf0vHKwjvDKi3T0odEuGGUG3YEsz0S
- Bn/91mt/3A3llORxlAAAA
-X-Change-ID: 20241202-rme-digiface-usb-id-df05cf818653
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: Heiko Engemann <heikoengemann@gmail.com>, 
- Cyan Nyan <cyan.vtb@gmail.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Asahi Lina <lina@asahilina.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733145447; l=11996;
- i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
- bh=OLJpSX3LNj136Ba0KdFNNezKUJSqfSOM2lpI+TIC/FU=;
- b=IdNg5bli6ojMRL2JqkteKYnIe5jtU1uXf0bBYSbhBiAlQhQxud/BGoJZQwoJCHTvUG81ef6Vo
- Wbwg1tnmvaeBWjS3A9oHgKoZ7PJTHNAV1xSAFmfKPVx5TkOEJVatDOd
-X-Developer-Key: i=lina@asahilina.net; a=ed25519;
- pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
 
-It seems there is an alternate version of the hardware with a different
-PID. User testing reveals this still works with the same interface as far
-as the kernel is concerned, so just add the extra PID. Thanks to Heiko
-Engemann for testing with this version.
+Hi Mauro,
 
-Due to the way quirks-table.h is structured, that means we have to turn
-the entire quirk struct into a macro to avoid duplicating it...
+On 02/12/2024 10:26, Mauro Carvalho Chehab wrote:
+> As the media subsystem will experiment with a multi-committers model,
+> update the Maintainer's entry profile to the new rules.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Signed-off-by: Hans Verkuil <hverkuil@xs4ll.nl>
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Asahi Lina <lina@asahilina.net>
----
- sound/usb/mixer_quirks.c |   1 +
- sound/usb/quirks-table.h | 341 ++++++++++++++++++++++++-----------------------
- sound/usb/quirks.c       |   2 +
- 3 files changed, 176 insertions(+), 168 deletions(-)
+xs4ll.nl -> xs4all.nl
 
-diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
-index 6456e87e2f397478aa1d767bc27f15d7b09acb86..a95ebcf4e46e76b19ec439c4ec02f18e650f96a3 100644
---- a/sound/usb/mixer_quirks.c
-+++ b/sound/usb/mixer_quirks.c
-@@ -4059,6 +4059,7 @@ int snd_usb_mixer_apply_create_quirk(struct usb_mixer_interface *mixer)
- 		err = snd_bbfpro_controls_create(mixer);
- 		break;
- 	case USB_ID(0x2a39, 0x3f8c): /* RME Digiface USB */
-+	case USB_ID(0x2a39, 0x3fa0): /* RME Digiface USB (alternate) */
- 		err = snd_rme_digiface_controls_create(mixer);
- 		break;
- 	case USB_ID(0x2b73, 0x0017): /* Pioneer DJ DJM-250MK2 */
-diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-index 199d0603cf8e592930199097a9fa009a7b5308d8..3f8beacca27a1787987ee7eba08456eb3598231c 100644
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3616,176 +3616,181 @@ YAMAHA_DEVICE(0x7010, "UB99"),
- 		}
- 	}
- },
--{
--	/* Only claim interface 0 */
--	.match_flags = USB_DEVICE_ID_MATCH_VENDOR |
--		       USB_DEVICE_ID_MATCH_PRODUCT |
--		       USB_DEVICE_ID_MATCH_INT_CLASS |
--		       USB_DEVICE_ID_MATCH_INT_NUMBER,
--	.idVendor = 0x2a39,
--	.idProduct = 0x3f8c,
--	.bInterfaceClass = USB_CLASS_VENDOR_SPEC,
--	.bInterfaceNumber = 0,
--	QUIRK_DRIVER_INFO {
--		QUIRK_DATA_COMPOSITE {
-+#define QUIRK_RME_DIGIFACE(pid) \
-+{ \
-+	/* Only claim interface 0 */ \
-+	.match_flags = USB_DEVICE_ID_MATCH_VENDOR | \
-+		       USB_DEVICE_ID_MATCH_PRODUCT | \
-+		       USB_DEVICE_ID_MATCH_INT_CLASS | \
-+		       USB_DEVICE_ID_MATCH_INT_NUMBER, \
-+	.idVendor = 0x2a39, \
-+	.idProduct = pid, \
-+	.bInterfaceClass = USB_CLASS_VENDOR_SPEC, \
-+	.bInterfaceNumber = 0, \
-+	QUIRK_DRIVER_INFO { \
-+		QUIRK_DATA_COMPOSITE { \
- 			/*
- 			 * Three modes depending on sample rate band,
- 			 * with different channel counts for in/out
--			 */
--			{ QUIRK_DATA_STANDARD_MIXER(0) },
--			{
--				QUIRK_DATA_AUDIOFORMAT(0) {
--					.formats = SNDRV_PCM_FMTBIT_S32_LE,
--					.channels = 34, // outputs
--					.fmt_bits = 24,
--					.iface = 0,
--					.altsetting = 1,
--					.altset_idx = 1,
--					.endpoint = 0x02,
--					.ep_idx = 1,
--					.ep_attr = USB_ENDPOINT_XFER_ISOC |
--						USB_ENDPOINT_SYNC_ASYNC,
--					.rates = SNDRV_PCM_RATE_32000 |
--						SNDRV_PCM_RATE_44100 |
--						SNDRV_PCM_RATE_48000,
--					.rate_min = 32000,
--					.rate_max = 48000,
--					.nr_rates = 3,
--					.rate_table = (unsigned int[]) {
--						32000, 44100, 48000,
--					},
--					.sync_ep = 0x81,
--					.sync_iface = 0,
--					.sync_altsetting = 1,
--					.sync_ep_idx = 0,
--					.implicit_fb = 1,
--				},
--			},
--			{
--				QUIRK_DATA_AUDIOFORMAT(0) {
--					.formats = SNDRV_PCM_FMTBIT_S32_LE,
--					.channels = 18, // outputs
--					.fmt_bits = 24,
--					.iface = 0,
--					.altsetting = 1,
--					.altset_idx = 1,
--					.endpoint = 0x02,
--					.ep_idx = 1,
--					.ep_attr = USB_ENDPOINT_XFER_ISOC |
--						USB_ENDPOINT_SYNC_ASYNC,
--					.rates = SNDRV_PCM_RATE_64000 |
--						SNDRV_PCM_RATE_88200 |
--						SNDRV_PCM_RATE_96000,
--					.rate_min = 64000,
--					.rate_max = 96000,
--					.nr_rates = 3,
--					.rate_table = (unsigned int[]) {
--						64000, 88200, 96000,
--					},
--					.sync_ep = 0x81,
--					.sync_iface = 0,
--					.sync_altsetting = 1,
--					.sync_ep_idx = 0,
--					.implicit_fb = 1,
--				},
--			},
--			{
--				QUIRK_DATA_AUDIOFORMAT(0) {
--					.formats = SNDRV_PCM_FMTBIT_S32_LE,
--					.channels = 10, // outputs
--					.fmt_bits = 24,
--					.iface = 0,
--					.altsetting = 1,
--					.altset_idx = 1,
--					.endpoint = 0x02,
--					.ep_idx = 1,
--					.ep_attr = USB_ENDPOINT_XFER_ISOC |
--						USB_ENDPOINT_SYNC_ASYNC,
--					.rates = SNDRV_PCM_RATE_KNOT |
--						SNDRV_PCM_RATE_176400 |
--						SNDRV_PCM_RATE_192000,
--					.rate_min = 128000,
--					.rate_max = 192000,
--					.nr_rates = 3,
--					.rate_table = (unsigned int[]) {
--						128000, 176400, 192000,
--					},
--					.sync_ep = 0x81,
--					.sync_iface = 0,
--					.sync_altsetting = 1,
--					.sync_ep_idx = 0,
--					.implicit_fb = 1,
--				},
--			},
--			{
--				QUIRK_DATA_AUDIOFORMAT(0) {
--					.formats = SNDRV_PCM_FMTBIT_S32_LE,
--					.channels = 32, // inputs
--					.fmt_bits = 24,
--					.iface = 0,
--					.altsetting = 1,
--					.altset_idx = 1,
--					.endpoint = 0x81,
--					.ep_attr = USB_ENDPOINT_XFER_ISOC |
--						USB_ENDPOINT_SYNC_ASYNC,
--					.rates = SNDRV_PCM_RATE_32000 |
--						SNDRV_PCM_RATE_44100 |
--						SNDRV_PCM_RATE_48000,
--					.rate_min = 32000,
--					.rate_max = 48000,
--					.nr_rates = 3,
--					.rate_table = (unsigned int[]) {
--						32000, 44100, 48000,
--					}
--				}
--			},
--			{
--				QUIRK_DATA_AUDIOFORMAT(0) {
--					.formats = SNDRV_PCM_FMTBIT_S32_LE,
--					.channels = 16, // inputs
--					.fmt_bits = 24,
--					.iface = 0,
--					.altsetting = 1,
--					.altset_idx = 1,
--					.endpoint = 0x81,
--					.ep_attr = USB_ENDPOINT_XFER_ISOC |
--						USB_ENDPOINT_SYNC_ASYNC,
--					.rates = SNDRV_PCM_RATE_64000 |
--						SNDRV_PCM_RATE_88200 |
--						SNDRV_PCM_RATE_96000,
--					.rate_min = 64000,
--					.rate_max = 96000,
--					.nr_rates = 3,
--					.rate_table = (unsigned int[]) {
--						64000, 88200, 96000,
--					}
--				}
--			},
--			{
--				QUIRK_DATA_AUDIOFORMAT(0) {
--					.formats = SNDRV_PCM_FMTBIT_S32_LE,
--					.channels = 8, // inputs
--					.fmt_bits = 24,
--					.iface = 0,
--					.altsetting = 1,
--					.altset_idx = 1,
--					.endpoint = 0x81,
--					.ep_attr = USB_ENDPOINT_XFER_ISOC |
--						USB_ENDPOINT_SYNC_ASYNC,
--					.rates = SNDRV_PCM_RATE_KNOT |
--						SNDRV_PCM_RATE_176400 |
--						SNDRV_PCM_RATE_192000,
--					.rate_min = 128000,
--					.rate_max = 192000,
--					.nr_rates = 3,
--					.rate_table = (unsigned int[]) {
--						128000, 176400, 192000,
--					}
--				}
--			},
--			QUIRK_COMPOSITE_END
--		}
--	}
--},
-+			 */ \
-+			{ QUIRK_DATA_STANDARD_MIXER(0) }, \
-+			{ \
-+				QUIRK_DATA_AUDIOFORMAT(0) { \
-+					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
-+					.channels = 34, /* outputs */ \
-+					.fmt_bits = 24, \
-+					.iface = 0, \
-+					.altsetting = 1, \
-+					.altset_idx = 1, \
-+					.endpoint = 0x02, \
-+					.ep_idx = 1, \
-+					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
-+						USB_ENDPOINT_SYNC_ASYNC, \
-+					.rates = SNDRV_PCM_RATE_32000 | \
-+						SNDRV_PCM_RATE_44100 | \
-+						SNDRV_PCM_RATE_48000, \
-+					.rate_min = 32000, \
-+					.rate_max = 48000, \
-+					.nr_rates = 3, \
-+					.rate_table = (unsigned int[]) { \
-+						32000, 44100, 48000, \
-+					}, \
-+					.sync_ep = 0x81, \
-+					.sync_iface = 0, \
-+					.sync_altsetting = 1, \
-+					.sync_ep_idx = 0, \
-+					.implicit_fb = 1, \
-+				}, \
-+			}, \
-+			{ \
-+				QUIRK_DATA_AUDIOFORMAT(0) { \
-+					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
-+					.channels = 18, /* outputs */ \
-+					.fmt_bits = 24, \
-+					.iface = 0, \
-+					.altsetting = 1, \
-+					.altset_idx = 1, \
-+					.endpoint = 0x02, \
-+					.ep_idx = 1, \
-+					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
-+						USB_ENDPOINT_SYNC_ASYNC, \
-+					.rates = SNDRV_PCM_RATE_64000 | \
-+						SNDRV_PCM_RATE_88200 | \
-+						SNDRV_PCM_RATE_96000, \
-+					.rate_min = 64000, \
-+					.rate_max = 96000, \
-+					.nr_rates = 3, \
-+					.rate_table = (unsigned int[]) { \
-+						64000, 88200, 96000, \
-+					}, \
-+					.sync_ep = 0x81, \
-+					.sync_iface = 0, \
-+					.sync_altsetting = 1, \
-+					.sync_ep_idx = 0, \
-+					.implicit_fb = 1, \
-+				}, \
-+			}, \
-+			{ \
-+				QUIRK_DATA_AUDIOFORMAT(0) { \
-+					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
-+					.channels = 10, /* outputs */ \
-+					.fmt_bits = 24, \
-+					.iface = 0, \
-+					.altsetting = 1, \
-+					.altset_idx = 1, \
-+					.endpoint = 0x02, \
-+					.ep_idx = 1, \
-+					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
-+						USB_ENDPOINT_SYNC_ASYNC, \
-+					.rates = SNDRV_PCM_RATE_KNOT | \
-+						SNDRV_PCM_RATE_176400 | \
-+						SNDRV_PCM_RATE_192000, \
-+					.rate_min = 128000, \
-+					.rate_max = 192000, \
-+					.nr_rates = 3, \
-+					.rate_table = (unsigned int[]) { \
-+						128000, 176400, 192000, \
-+					}, \
-+					.sync_ep = 0x81, \
-+					.sync_iface = 0, \
-+					.sync_altsetting = 1, \
-+					.sync_ep_idx = 0, \
-+					.implicit_fb = 1, \
-+				}, \
-+			}, \
-+			{ \
-+				QUIRK_DATA_AUDIOFORMAT(0) { \
-+					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
-+					.channels = 32, /* inputs */ \
-+					.fmt_bits = 24, \
-+					.iface = 0, \
-+					.altsetting = 1, \
-+					.altset_idx = 1, \
-+					.endpoint = 0x81, \
-+					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
-+						USB_ENDPOINT_SYNC_ASYNC, \
-+					.rates = SNDRV_PCM_RATE_32000 | \
-+						SNDRV_PCM_RATE_44100 | \
-+						SNDRV_PCM_RATE_48000, \
-+					.rate_min = 32000, \
-+					.rate_max = 48000, \
-+					.nr_rates = 3, \
-+					.rate_table = (unsigned int[]) { \
-+						32000, 44100, 48000, \
-+					} \
-+				} \
-+			}, \
-+			{ \
-+				QUIRK_DATA_AUDIOFORMAT(0) { \
-+					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
-+					.channels = 16, /* inputs */ \
-+					.fmt_bits = 24, \
-+					.iface = 0, \
-+					.altsetting = 1, \
-+					.altset_idx = 1, \
-+					.endpoint = 0x81, \
-+					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
-+						USB_ENDPOINT_SYNC_ASYNC, \
-+					.rates = SNDRV_PCM_RATE_64000 | \
-+						SNDRV_PCM_RATE_88200 | \
-+						SNDRV_PCM_RATE_96000, \
-+					.rate_min = 64000, \
-+					.rate_max = 96000, \
-+					.nr_rates = 3, \
-+					.rate_table = (unsigned int[]) { \
-+						64000, 88200, 96000, \
-+					} \
-+				} \
-+			}, \
-+			{ \
-+				QUIRK_DATA_AUDIOFORMAT(0) { \
-+					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
-+					.channels = 8, /* inputs */ \
-+					.fmt_bits = 24, \
-+					.iface = 0, \
-+					.altsetting = 1, \
-+					.altset_idx = 1, \
-+					.endpoint = 0x81, \
-+					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
-+						USB_ENDPOINT_SYNC_ASYNC, \
-+					.rates = SNDRV_PCM_RATE_KNOT | \
-+						SNDRV_PCM_RATE_176400 | \
-+						SNDRV_PCM_RATE_192000, \
-+					.rate_min = 128000, \
-+					.rate_max = 192000, \
-+					.nr_rates = 3, \
-+					.rate_table = (unsigned int[]) { \
-+						128000, 176400, 192000, \
-+					} \
-+				} \
-+			}, \
-+			QUIRK_COMPOSITE_END \
-+		} \
-+	} \
-+}
-+
-+QUIRK_RME_DIGIFACE(0x3f8c),
-+QUIRK_RME_DIGIFACE(0x3fa0),
-+
- #undef USB_DEVICE_VENDOR_SPEC
- #undef USB_AUDIO_DEVICE
-diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
-index c5fd180357d1e8cc4560bf03ae1ab3c12e6ee9d1..9f38288a1bede8a360abbd0296f571cdf9a72c7d 100644
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1638,6 +1638,7 @@ int snd_usb_apply_boot_quirk(struct usb_device *dev,
- 			return snd_usb_motu_microbookii_boot_quirk(dev);
- 		break;
- 	case USB_ID(0x2a39, 0x3f8c): /* RME Digiface USB */
-+	case USB_ID(0x2a39, 0x3fa0): /* RME Digiface USB (alternate) */
- 		return snd_usb_rme_digiface_boot_quirk(dev);
- 	}
- 
-@@ -1851,6 +1852,7 @@ void snd_usb_set_format_quirk(struct snd_usb_substream *subs,
- 		mbox3_set_format_quirk(subs, fmt); /* Digidesign Mbox 3 */
- 		break;
- 	case USB_ID(0x2a39, 0x3f8c): /* RME Digiface USB */
-+	case USB_ID(0x2a39, 0x3fa0): /* RME Digiface USB (alternate) */
- 		rme_digiface_set_format_quirk(subs);
- 		break;
- 	}
+(it's probably my typo, but please fix this in the final version)
 
----
-base-commit: adc218676eef25575469234709c2d87185ca223a
-change-id: 20241202-rme-digiface-usb-id-df05cf818653
+> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  .../media/maintainer-entry-profile.rst        | 208 ++++++++++++++----
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 163 insertions(+), 46 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> index ffc712a5f632..dc764163cf1c 100644
+> --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
+> +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
+> @@ -27,19 +27,139 @@ It covers, mainly, the contents of those directories:
+>  Both media userspace and Kernel APIs are documented and the documentation
+>  must be kept in sync with the API changes. It means that all patches that
+>  add new features to the subsystem must also bring changes to the
+> -corresponding API files.
+> +corresponding API documentation files.
+>  
+> -Due to the size and wide scope of the media subsystem, media's
+> -maintainership model is to have sub-maintainers that have a broad
+> -knowledge of a specific aspect of the subsystem. It is the sub-maintainers'
+> -task to review the patches, providing feedback to users if the patches are
+> +Due to the size and wide scope of the media subsystem, the media's
+> +maintainership model is to have committers that have a broad knowledge of
+> +a specific aspect of the subsystem. It is the committers' task to
+> +review the patches, providing feedback to users if the patches are
+>  following the subsystem rules and are properly using the media kernel and
+>  userspace APIs.
+>  
+> -Patches for the media subsystem must be sent to the media mailing list
+> -at linux-media@vger.kernel.org as plain text only e-mail. Emails with
+> -HTML will be automatically rejected by the mail server. It could be wise
+> -to also copy the sub-maintainer(s).
+> +Media committers
+> +----------------
+> +
+> +In the media subsystem, there are experienced developers who can push
+> +patches directly to the development tree. These developers are called
+> +Media committers and are divided into the following categories:
+> +
+> +- Committers:
+> +    contributors for one or more drivers within the media subsystem.
+> +    They can push changes to the tree that do not affect the core or ABI.
+> +
+> +- Core committers:
+> +    responsible for part of the media core. They are typically
+> +    responsible for one or more drivers within the media subsystem, but, besides
+> +    that, they can also merge patches that change the code common to multiple
+> +    drivers, including the kernel internal API.
+> +
+> +- Subsystem maintainers:
+> +    responsible for the subsystem as a whole, with access to the
+> +    entire subsystem.
+> +
+> +    Only subsystem maintainers can push changes that affect the userspace
+> +    API/ABI.
+> +
+> +All media committers shall explicitly agree with the Kernel development process
+> +as described at Documentation/process/index.rst and to the Kernel
+> +development rules inside the Kernel documentation, including its code of
+> +conduct.
+> +
+> +Media development tree
+> +----------------------
+> +
+> +The main development tree used by the media subsystem is hosted at LinuxTV.org,
+> +where we also maintain news about the subsystem, wiki pages and a patchwork
+> +instance where we track patches though their lifetime.
+> +
+> +The main tree used by media developers is at:
+> +
+> +https://git.linuxtv.org/media.git/
+> +
+> +.. _Media development workflow:
+> +
+> +Media development workflow
+> +++++++++++++++++++++++++++
+> +
+> +All changes for the media subsystem must be sent first as e-mails to the
+> +media mailing list, following the process documented at
+> +Documentation/process/index.rst.
+> +
+> +It means that patches shall be submitted as plain text only via e-mail to
+> +linux-media@vger.kernel.org. While subscription is not mandatory, you
+> +can find details about how to subscribe to it and to see its archives at:
+> +
+> +  https://subspace.kernel.org/vger.kernel.org.html
+> +
+> +Emails with HTML will be automatically rejected by the mail server.
+> +
+> +It could be wise to also copy the media committer(s). You should use
+> +``scripts/get_maintainers.pl`` to identify whom else needs to be copied.
+> +Please always copy driver's authors and maintainers.
+> +
+> +Such patches need to be based against a public branch or tag as follows:
+> +
+> +1. Patches for new features need to be based at the ``next`` branch of
+> +   media.git tree;
+> +
+> +2. Fixes against an already released kernel should preferably be against
+> +   the latest released Kernel. If they require a previously-applied
+> +   change at media.git tree, they need to be against its ``fixes`` branch.
 
-Cheers,
-~~ Lina
+What is an "released kernel"? Does an -rcX kernel qualify?
 
+> +
+> +3. Fixes for issues not present at the latest released kernel shall
+> +   be either against a -rc kernel for an upcoming release or
+> +   against the ``fixes`` branch of the media.git tree.
+
+2 and 3 remain vague, IMO. Not a blocker, but I think this needs more work
+at some point.
+
+> +
+> +Patches with fixes shall have:
+> +
+> +- a ``Fixes:`` tag pointing to the first commit that introduced the bug;
+> +- when applicable, a ``Cc: stable@vger.kernel.org``.
+> +
+> +Patches that were fixing bugs publicly reported by someone at the
+> +linux-media@vger.kernel.org mailing list shall have:
+> +
+> +- a ``Reported-by:`` tag immediately followed by a ``Closes:`` tag.
+> +
+> +Patches that change API shall update documentation accordingly at the
+> +same patch series.
+> +
+> +See Documentation/process/index.rst for more details about e-mail submission.
+> +
+> +Once a patch is submitted, it may follow either one of the following
+> +workflows:
+> +
+> +a. Pull request workflow: patches are handled by subsystem maintainers::
+> +
+> +     +------+   +---------+   +-------+   +-----------------------+   +---------+
+> +     |e-mail|-->|patchwork|-->|pull   |-->|maintainers merge      |-->|media.git|
+> +     +------+   |picks it |   |request|   |in media-committers.git|   +---------+
+> +                +---------+   +-------+   +-----------------------+
+> +
+> +   For this workflow, pull requests can be generated by a committer,
+> +   a previous committer, subsystem maintainers or by a trusted long-time
+> +   contributor. If you are not in such group, please don't submit
+> +   pull requests, as they will not be processed.
+> +
+> +b. Committers' workflow: patches are handled by media committers::
+> +
+> +     +------+   +---------+   +--------------------+   +-----------+   +---------+
+> +     |e-mail|-->|patchwork|-->|committers merge at |-->|maintainers|-->|media.git|
+> +     +------+   |picks it |   |media-committers.git|   |approval   |   +---------+
+> +                +---------+   +--------------------+   +-----------+
+> +
+> +On both workflows, all patches shall be properly reviewed at
+> +linux-media@vger.kernel.org before being merged at media-committers.git.
+> +
+> +When patches are picked by patchwork and when merged at media-committers,
+> +CI bots will check for errors and may provide e-mail feedback about
+> +patch problems. When this happens, the patch submitter must fix them, or
+> +explain why the errors are false positives.
+> +
+> +Patches will only be moved to the next stage in those two workflows if they
+> +don't fail on CI or if there are false-positives in the CI reports.
+> +
+> +Failures during e-mail submission
+> ++++++++++++++++++++++++++++++++++
+>  
+>  Media's workflow is heavily based on Patchwork, meaning that, once a patch
+>  is submitted, the e-mail will first be accepted by the mailing list
+> @@ -47,51 +167,48 @@ server, and, after a while, it should appear at:
+>  
+>     - https://patchwork.linuxtv.org/project/linux-media/list/
+>  
+> -If it doesn't automatically appear there after a few minutes, then
+> +If it doesn't automatically appear there after some time [2]_, then
+>  probably something went wrong on your submission. Please check if the
+> -email is in plain text\ [2]_ only and if your emailer is not mangling
+> +email is in plain text\ [3]_ only and if your emailer is not mangling
+>  whitespaces before complaining or submitting them again.
+>  
+> -You can check if the mailing list server accepted your patch, by looking at:
+> +To troubleshoot problems, you should first check if the mailing list
+> +server has accepted your patch, by looking at:
+>  
+>     - https://lore.kernel.org/linux-media/
+>  
+> -.. [2] If your email contains HTML, the mailing list server will simply
+> +If the patch is there and not at patchwork, it is likely that your e-mailer
+> +mangled the patch. Patchwork internally has a logic that checks if the
+
+a logic -> logic
+
+> +received e-mail contain a valid patch. Any whitespace and new line
+
+contain -> contains
+
+> +breakages mangling the patch won't be recognized by patchwork, thus such
+> +patch will be rejected.
+> +
+> +.. [2] It usually takes a few minutes for the patch to arrive, but
+> +       the e-mail server may be busy, so it may take up to a few hours
+> +       for a patch to be picked by patchwork.
+> +
+> +.. [3] If your email contains HTML, the mailing list server will simply
+>         drop it, without any further notice.
+>  
+> +.. _media-developers-gpg:
+>  
+> -Media maintainers
+> -+++++++++++++++++
+> +Authentication for pull and merge requests
+> +++++++++++++++++++++++++++++++++++++++++++
+>  
+> -At the media subsystem, we have a group of senior developers that
+> -are responsible for doing the code reviews at the drivers (also known as
+> -sub-maintainers), and another senior developer responsible for the
+> -subsystem as a whole. For core changes, whenever possible, multiple
+> -media maintainers do the review.
+> +The authenticity of developers submitting pull requests and merge requests
+> +shall be validated by using PGP sign. See: :ref:`kernel_org_trust_repository`.
+
+sign -> signing
+
+Hmm, merge requests through gitlab are not signed. So this isn't correct, I
+think.
+
+>  
+> -The media maintainers that work on specific areas of the subsystem are:
+> +With the pull request workflow, pull requests shall use a PGP-signed tag.
+>  
+> -- Remote Controllers (infrared):
+> -    Sean Young <sean@mess.org>
+> +For more details about PGP sign, please read
+> +Documentation/process/maintainer-pgp-guide.rst.
+>  
+> -- HDMI CEC:
+> -    Hans Verkuil <hverkuil@xs4all.nl>
+> +Subsystem maintainers
+> +---------------------
+>  
+> -- Media controller drivers:
+> -    Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> -
+> -- ISP, v4l2-async, v4l2-fwnode, v4l2-flash-led-class and Sensor drivers:
+> -    Sakari Ailus <sakari.ailus@linux.intel.com>
+> -
+> -- V4L2 drivers and core V4L2 frameworks:
+> -    Hans Verkuil <hverkuil@xs4all.nl>
+> -
+> -The subsystem maintainer is:
+> -  Mauro Carvalho Chehab <mchehab@kernel.org>
+> -
+> -Media maintainers may delegate a patch to other media maintainers as needed.
+> -On such case, checkpatch's ``delegate`` field indicates who's currently
+> -responsible for reviewing a patch.
+> +The subsystem maintainers are:
+> +  - Mauro Carvalho Chehab <mchehab@kernel.org> and
+> +  - Hans Verkuil <hverkuil@xs4all.nl>
+>  
+>  Submit Checklist Addendum
+>  -------------------------
+> @@ -108,17 +225,14 @@ implementing the media APIs:
+>  ====================	=======================================================
+>  Type			Tool
+>  ====================	=======================================================
+> -V4L2 drivers\ [3]_	``v4l2-compliance``
+> +V4L2 drivers\ [4]_	``v4l2-compliance``
+>  V4L2 virtual drivers	``contrib/test/test-media``
+>  CEC drivers		``cec-compliance``
+>  ====================	=======================================================
+>  
+> -.. [3] The ``v4l2-compliance`` also covers the media controller usage inside
+> +.. [4] The ``v4l2-compliance`` also covers the media controller usage inside
+
+The ``v4l2-compliance`` utility
+
+(add 'utility')
+
+>         V4L2 drivers.
+>  
+> -Other compilance tools are under development to check other parts of the
+> -subsystem.
+> -
+>  Those tests need to pass before the patches go upstream.
+>  
+>  Also, please notice that we build the Kernel with::
+> @@ -134,6 +248,8 @@ Where the check script is::
+>  Be sure to not introduce new warnings on your patches without a
+>  very good reason.
+>  
+> +Please see `Media development workflow`_ for e-mail submission rules.
+> +
+>  Style Cleanup Patches
+>  +++++++++++++++++++++
+>  
+> @@ -199,7 +315,7 @@ tree between -rc6 and the next -rc1.
+>  Please notice that the media subsystem is a high traffic one, so it
+>  could take a while for us to be able to review your patches. Feel free
+>  to ping if you don't get a feedback in a couple of weeks or to ask
+> -other developers to publicly add Reviewed-by and, more importantly,
+> +other developers to publicly add ``Reviewed-by:`` and, more importantly,
+>  ``Tested-by:`` tags.
+>  
+>  Please note that we expect a detailed description for ``Tested-by:``,
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1e930c7a58b1..c77f56a2e695 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14510,6 +14510,7 @@ MEDIA INPUT INFRASTRUCTURE (V4L/DVB)
+>  M:	Mauro Carvalho Chehab <mchehab@kernel.org>
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+> +P:	Documentation/driver-api/media/maintainer-entry-profile.rst
+>  W:	https://linuxtv.org
+>  Q:	http://patchwork.kernel.org/project/linux-media/list/
+
+Shouldn't this point to our patchwork instance instead?
+
+>  T:	git git://linuxtv.org/media.git
+
+Regards,
+
+	Hans
 
