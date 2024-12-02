@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-427405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E1E9E0109
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:58:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD6F9E0095
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40514B33C60
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:32:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A165C286583
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE528209F47;
-	Mon,  2 Dec 2024 11:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24E9209F54;
+	Mon,  2 Dec 2024 11:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBEJonka"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c87NugaE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C541FE46C;
-	Mon,  2 Dec 2024 11:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5ED1FE46C
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138507; cv=none; b=ppsFfVy3H44ochvllr5aIrPVK8p3rfkiBeyQAtPMBX3/t+aGP5HEtypf/IAnMQ/LjYuUzuEz5bLuRIa2hje9rZO2bbaW9Qpzsru/H13ff/Tm8UsvMTJGG/p7+2HeNTLG4QY1jKt2wIHtQrezBPq3odIE5wgAfEsvWEqpU6y4k2Y=
+	t=1733138528; cv=none; b=B+stOaeQY2cEc274BvO5vGPmvl9kPOpm4XrFRiCW2KrFdEn5mr3kEca094bx90P4DM81CxVkfFrB4TcdjEfYzrChXVb0QJ71W8+diRZeOGixUpo1pgRQ1Imzjp1rUMo/FwvzYySkhfK6fQTosqGmeGOYfmjIla5jnbXpkisQB/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138507; c=relaxed/simple;
-	bh=h7V4itdehktHD46fUWst5KRH50mJvVyk8uOc8fyCBYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ViAK23oSEr8QqpGXZxvQ8msqORZO1LI4BbzNNA+Z3K2/iRXvBYEs25WpAHo9c0ECtXGN+H9OKnQjSXIeMSlhbUlNdqlV0yUi+pi2nHkFrTTcUygW5uti++P+yOxnrGR+ipBv1MJ/+Rr8R59Rh1iVyzjgWrk6S8qnFxsj26bXd9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBEJonka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C4F6C4CED1;
-	Mon,  2 Dec 2024 11:21:40 +0000 (UTC)
+	s=arc-20240116; t=1733138528; c=relaxed/simple;
+	bh=aKC5m8Te3KxTEdZNz2E/rO1mlGWhjourLbO6QpI5uH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XIsHdWU2rd59WOOzAAneq+qxlTBjoMU6zZ7B0/3o+CJDR9R5/ldXrXHd+TPymHgck6v4e1VPE3fzn7pRgWTEef4jwFfMZDlw0VpFSmkD49XDZBZUgAQoIwdQkRhcSuRKPDU10QApgropHtEgIVpHLIpkFPcg6FC833RqfHr6WjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c87NugaE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4627C4CED1;
+	Mon,  2 Dec 2024 11:22:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733138506;
-	bh=h7V4itdehktHD46fUWst5KRH50mJvVyk8uOc8fyCBYU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EBEJonkaN9geDc0To2Gn+Ouok3l2wdE3vEUJ3JIVdHiWTVH53AFYQuCTaU71KnEpU
-	 j5VhwoHz0ii1egGK5s61E/CFRt7BObCgshJjrfAo4MXC6IlEa27kw70Id4R53LZsRl
-	 Dadveks3d5vxFajLtV//6kjiEWEZ8/myIwEotZqDJfWwl0rIYMVwH12UKqGtjMI1p3
-	 17Joa3GIplMAi8nBIsICac+g1bUoj0QaCM1VRw5GaogyyIHS0w2FErX+YVQSJQUZnX
-	 dhNf6X7exoY4S35fdvPhBJ90dnyJmKyu0KQAwVmAh7hYYqQL4hlXHjTzymTmpVUxWA
-	 ZbKOdeK6sxadQ==
-Message-ID: <1df39be7-ed70-4b65-8640-c1d20c9feadf@kernel.org>
-Date: Mon, 2 Dec 2024 12:21:39 +0100
+	s=k20201202; t=1733138527;
+	bh=aKC5m8Te3KxTEdZNz2E/rO1mlGWhjourLbO6QpI5uH0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c87NugaEjNKKTPM/z0lz9VdoOrDqtpqOTBEC8jUCWTMoK0S2qJsJP3NzuKbW5TJsC
+	 D1Glbqrc0nYR1ID+fmI1ciPx7PUfvYtOzPiTytdAE/fBqYv7Qr2VGTxfbzEWnsVChY
+	 HxrwOPGLYFP1wmPJx/JyYAFewQbBX63RfFltsEWNT8gNe4w7bqfsv8RiVi1iQwMgw+
+	 CrLk7qGQTP+ujusSnnzVEL6tisVVYR/g7TzMsWGhPoNWNK2uqgWPlEpQJwdxhjHcUc
+	 b2ZLoQj5Y+aOG2kxU+t9jNZDHV42G2fSaswlIs7ImaMGxwKV+NB0l8PMwKA+ChL2Y/
+	 RqTMYKQuWq54A==
+Date: Mon, 2 Dec 2024 11:22:02 +0000
+From: Conor Dooley <conor@kernel.org>
+To: guoren@kernel.org
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, bjorn@rivosinc.com,
+	leobras@redhat.com, peterz@infradead.org, parri.andrea@gmail.com,
+	will@kernel.org, longman@redhat.com, boqun.feng@gmail.com,
+	arnd@arndb.de, alexghiti@rivosinc.com,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Guo Ren <guoren@linux.alibaba.com>
+Subject: Re: [RESEND PATCH] riscv: Fixup boot failure when
+ CONFIG_DEBUG_RT_MUTEXES=y
+Message-ID: <20241202-vertigo-dreamboat-4bf6b61a4ef6@spud>
+References: <20241130153310.3349484-1-guoren@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: display/msm: qcom, sa8775p-mdss: fix the
- example
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mahadevan <quic_mahap@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241112-fd-dp-fux-warning-v2-1-8cc4960094bd@linaro.org>
- <643d2935-65ce-4d86-9be6-c2faa1956365@quicinc.com>
- <CAA8EJpqBouv-f-QMpZ+hrA-vF4ojhUWBn5yMqYYB9LpW0TACdg@mail.gmail.com>
- <ba5d51f4-edfc-4bc5-a3d2-1a2d24ae4403@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ba5d51f4-edfc-4bc5-a3d2-1a2d24ae4403@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="PNVedD9oKqNR10oc"
+Content-Disposition: inline
+In-Reply-To: <20241130153310.3349484-1-guoren@kernel.org>
 
-On 12/11/2024 20:16, Abhinav Kumar wrote:
-> 
-> 
-> On 11/12/2024 5:15 AM, Dmitry Baryshkov wrote:
->> On Tue, 12 Nov 2024 at 05:40, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
->>>
->>>
->>>
->>> On 11/11/2024 7:21 PM, Dmitry Baryshkov wrote:
->>>> Add p1 region to the list of DP registers in the SA8775p example. This
->>>> fixes the following warning:
->>>>
->>>> Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.example.dtb: displayport-controller@af54000: reg: [[183844864, 260], [183845376, 192], [183848960, 1904], [183853056, 156]] is too short
->>>>
->>>> Fixes: 409685915f00 ("dt-bindings: display/msm: Document MDSS on SA8775P")
->>>> Reported-by: Rob Herring <robh@kernel.org>
->>>> Closes: https://lore.kernel.org/dri-devel/CAL_JsqJ0zoyaZAgZtyJ8xMsPY+YzrbF-YG1vPN6tFoFXQaW09w@mail.gmail.com/c
->>>
->>> Thanks for the patch.
->>>
->>> I think this link has an extra 'c' at the end.
->>
->> Oh.. Can you fix that when picking it up for -fixes or would you
->> prefer to have a clean version in patchwork?
->>
-> 
-> Yes, I can fix it up while applying.
 
-This was supposed to be send still for v6.13-rc1... I don't understand
-why not, but it happened so now v6.13-rc1 has a regression - binding
-warning (binding, not DTS!). All people testing on v6.13-rc1, all
-maintainer trees etc. now have this warning.
+--PNVedD9oKqNR10oc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please send the fix soon, so maintainers can for example rebase their trees.
+On Sat, Nov 30, 2024 at 10:33:10AM -0500, guoren@kernel.org wrote:
+> From: Guo Ren <guoren@linux.alibaba.com>
+>=20
+> When CONFIG_DEBUG_RT_MUTEXES=3Dy, mutex_lock->rt_mutex_try_acquire
+> would change from rt_mutex_cmpxchg_acquire to
+> rt_mutex_slowtrylock():
+> 	raw_spin_lock_irqsave(&lock->wait_lock, flags);
+> 	ret =3D __rt_mutex_slowtrylock(lock);
+> 	raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
+>=20
+> Because queued_spin_#ops to ticket_#ops is changed one by one by
+> jump_label, raw_spin_lock/unlock would cause a deadlock during the
+> changing.
+>=20
+> That means in arch/riscv/kernel/jump_label.c:
+> 1.
+> arch_jump_label_transform_queue() ->
+> mutex_lock(&text_mutex); +-> raw_spin_lock  -> queued_spin_lock
+> 			 |-> raw_spin_unlock -> queued_spin_unlock
+> patch_insn_write -> change the raw_spin_lock to ticket_lock
+> mutex_unlock(&text_mutex);
+> ...
+>=20
+> 2. /* Dirty the lock value */
+> arch_jump_label_transform_queue() ->
+> mutex_lock(&text_mutex); +-> raw_spin_lock -> *ticket_lock*
+>                          |-> raw_spin_unlock -> *queued_spin_unlock*
+> 			  /* BUG: ticket_lock with queued_spin_unlock */
+> patch_insn_write  ->  change the raw_spin_unlock to ticket_unlock
+> mutex_unlock(&text_mutex);
+> ...
+>=20
+> 3. /* Dead lock */
+> arch_jump_label_transform_queue() ->
+> mutex_lock(&text_mutex); +-> raw_spin_lock -> ticket_lock /* deadlock! */
+>                          |-> raw_spin_unlock -> ticket_unlock
+> patch_insn_write -> change other raw_spin_#op -> ticket_#op
+> mutex_unlock(&text_mutex);
+>=20
+> So, the solution is to disable mutex usage of
+> arch_jump_label_transform_queue() during early_boot_irqs_disabled, just
+> like we have done for stop_machine.
+>=20
+> Reported-by: Conor Dooley <conor@kernel.org>
 
-Best regards,
-Krzysztof
+Tested-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+--PNVedD9oKqNR10oc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ02YOAAKCRB4tDGHoIJi
+0u4tAQD6SZZZiL32ZYOosf6OYXIcB58LwhhQx8q9rpkdOJ83MwEAz5fGQp47QqnL
+p4h17qAfQMMQncnXded5i6hV9r39kQo=
+=MpJM
+-----END PGP SIGNATURE-----
+
+--PNVedD9oKqNR10oc--
 
