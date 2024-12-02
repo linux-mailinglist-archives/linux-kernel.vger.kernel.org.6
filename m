@@ -1,87 +1,100 @@
-Return-Path: <linux-kernel+bounces-428032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A419E0938
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:59:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6403F9E0935
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E618616445E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:51:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FFC31621A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44F31D9A70;
-	Mon,  2 Dec 2024 16:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A1C1D9592;
+	Mon,  2 Dec 2024 16:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iqetGy2w"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrYJk03x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731001D86FB;
-	Mon,  2 Dec 2024 16:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3951D9320;
+	Mon,  2 Dec 2024 16:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733158266; cv=none; b=EbJ6oEKhwZtlv1o4Ioda8lQ4FhlsM6crkYmXmui6n4+K436fM+ptZCwZ4fSHgNfKM7hZO98dtI35Coi5gb3F3ZqWONOQwtmLIG6xZ0kiRRH9/rZsWTxAKJVIKWVJmYl+yrY7oACIe26jWnsU544yK7yb6ZAFcf06rOWgG0DcHeg=
+	t=1733158265; cv=none; b=fJAN6NHT5D6sJJeJg8qcbjYNmoG7XndLOuImpzg+WJM0l7PPozy8kJd3hk2Aa/60q/j9we1axKvcUV/gqes7Leo7+gUMH4FnjX4K12KgFWCKVlqEQ91JLCZ7mtOdTpMq6u7hftVEieUthSaZFwLcZekJeyRVnYYlHKi8uTmQnz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733158266; c=relaxed/simple;
-	bh=7SOQpcERUpWNCO6DfB8JnkTi1uPdgkPFL0MjAUUnaKc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=B1Icd6vg5qLRkMh07Vjp/sLIs7M0i2beiFwejcEr4gW+gauaCP1XhNWkPGkK6czpH0o1/9ykOmSwl9Ge7qxneXRH33pbPgsl5JNozA1LLa6tJlUKD6EZw2cjR9JK9fCeDwDnqKAQweup/TKENo+zfNFMYFXBx+VPhxTE4nlfB5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iqetGy2w; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2A50740005;
-	Mon,  2 Dec 2024 16:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733158259;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7SOQpcERUpWNCO6DfB8JnkTi1uPdgkPFL0MjAUUnaKc=;
-	b=iqetGy2wlWIUvFBZdDt0uwmyZlhxoPXhMpKYn9pyAq2hC3uhUGeWaD5Rld2MDnCnqWeysw
-	4qxpoG9cFfAoiuOHvUTSPfsi7tLtMgM+k3CkQ/nXw0NotmOLaPP7/0j/56IpTG/w1T5lGY
-	Y00O7BE9e5BEAWqc2t3ouhisBQW8kNY3z1Y4IKb4UxqyUYBlCeKh9OSUPqPJn0E+TQNCWb
-	aO+EXdNYnRPgZsZ0UmOEuiopFha27qVeUU1poqelkSqnQW1+VM9zL6q4UvDp+NnD7gfDIV
-	YbEtZHBprLTWjWxh0QV8Vxwrd8xF4gcWzzwZNM1WEsfLMLgulxQZHb4Qcx4UfA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: <manivannan.sadhasivam@linaro.org>,  <richard@nod.at>,
-  <vigneshr@ti.com>,  <linux-mtd@lists.infradead.org>,
-  <linux-arm-msm@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <quic_srichara@quicinc.com>,  <quic_nainmeht@quicinc.com>,
-  <quic_laksd@quicinc.com>,  <quic_varada@quicinc.com>
-Subject: Re: [PATCH 0/2] QPIC v2 fixes for SDX75
-In-Reply-To: <20241119092058.480363-1-quic_mdalam@quicinc.com> (Md Sadre
-	Alam's message of "Tue, 19 Nov 2024 14:50:56 +0530")
-References: <20241119092058.480363-1-quic_mdalam@quicinc.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 02 Dec 2024 17:50:57 +0100
-Message-ID: <877c8i6nbi.fsf@bootlin.com>
+	s=arc-20240116; t=1733158265; c=relaxed/simple;
+	bh=QKJkgD+6MJkJNvfAvqe3m9p1Tobg8vhFPDwp90WmMSI=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Q3wxia61C7SqAqNikHD3vbA/cm5NTvwRaTYiUfDtEgufEKzIrnYbhP6EAlc6CZITY+sOYuz101TDwjMgGOde5nmLlErOKbVkSodj2iLbwQmyC2UkLKJyvYWj80sSpGwJZbVTWig0HRCop2nuDVpoXr9f7+h5qfb1J0cYdBOGL6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrYJk03x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A414DC4CED1;
+	Mon,  2 Dec 2024 16:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733158264;
+	bh=QKJkgD+6MJkJNvfAvqe3m9p1Tobg8vhFPDwp90WmMSI=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=QrYJk03xrx9E8lndYRR0dlMYZ5oE9cjloxzF9jOjuinQDagu6Ih6Blv1Rcg649XtX
+	 BEL7caMGzo7MMpMGo/tWWvwJ5NHuKoeTUIo2LUxA95gYWA3URdci/WvjhUO6YtARPs
+	 1AIper14TUkSD/v/kaU4ejMbZKag0SWiUbKeL+bh5amPhhF5QFE4/YjR07rmVt/D7K
+	 O7p24KzAF0AP7qo5H4I5t4HM54h0A9/FiF2vSik3lgMZG6/xTErzjkhG3o2Nsi7rpT
+	 DZ0Ddnzz7t0toikSM5M8fmH6Lw7hEtkFV24XpDlQmNhm14O24owoNymHShEE9sIOms
+	 ZkC9gDMlTEG5g==
+From: Mark Brown <broonie@kernel.org>
+To: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20241114205051.3747458-1-andriy.shevchenko@linux.intel.com>
+References: <20241114205051.3747458-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] spi: sc18is602: Switch to generic firmware
+ properties and drop of_match_ptr()
+Message-Id: <173315826335.126887.7469821187723092456.b4-ty@kernel.org>
+Date: Mon, 02 Dec 2024 16:51:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
+On Thu, 14 Nov 2024 22:50:51 +0200, Andy Shevchenko wrote:
+> This enables using the driver with other firmware types such as ACPI
+> via PRP0001.
+> 
+> Also part of a general attempt to move drivers over to generic properties
+> to avoid opportunities for cut and paste.
+> 
+> 
+> [...]
 
-Hello,
+Applied to
 
-On 19/11/2024 at 14:50:56 +0530, Md Sadre Alam <quic_mdalam@quicinc.com> wr=
-ote:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-> These patches will fix the following:
->=20=20
-> 1) onfi param page read which was broken by exec_op() patch.
->
-> 2) Fixed offset passed to BAM from QPIC base
+Thanks!
 
-Would you mind adding Fixes and Cc: stable tags to each patch?
+[1/1] spi: sc18is602: Switch to generic firmware properties and drop of_match_ptr()
+      commit: 2c55f67c3a71cf57665294a02f258625c1da9385
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Miqu=C3=A8l
+Mark
+
 
