@@ -1,200 +1,114 @@
-Return-Path: <linux-kernel+bounces-427098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899419DFC79
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:54:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5C99DFC73
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09608B21EA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:54:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF5A281DD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B551FA15C;
-	Mon,  2 Dec 2024 08:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KeeZQaeu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688421F9F6D;
-	Mon,  2 Dec 2024 08:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6271F9F6F;
+	Mon,  2 Dec 2024 08:54:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2BF1D6DD8;
+	Mon,  2 Dec 2024 08:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733129677; cv=none; b=SQnw6vXvqdfgivM4tFwTmbQODzIFr3kg0VhR/RP6xc/4Gl7GQ9fsIT5ObNnlJiEaiSKHVac1kHP8JWJlVYCtUIAt8nVzml+DUREk43AID8Pl8IWjihUWwhfKGGUJ9cIIW5V6vX7GlqNAlH3TcwNiHM+FOdQPa3kYNhY5T13Qo9k=
+	t=1733129662; cv=none; b=jwi/syPBeoANXohLcv1OiX22h2ehDwDKUplx1PqXmKULfGpTq9pIandw9mjdo6KV1etmmpa2nDvmtHjc/8IfXPatpBwcJG8rvJbE7e0/iNaLE5GKLQ11YWzjK8qM8KS+H2PkRWCf7eDQtHEnE72gEoiIP3H+3MC1LvcxeXyPQ2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733129677; c=relaxed/simple;
-	bh=PONq1d8jm/n+OrIxFNgIUfhJojAh81OCYaZRqCUvHDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z1eC324++wWLRBBU6GdikS6+yQOI/0KDsn5294Q31iXycQZTsSVS89Se5Yc+Q+XkwhJnrf+cVEb/lzPKeG3ihzJYlbXSVX+Hf3VNty3+T9e13NSOKJi3jGA2gOrpHKW1UEvUu1dXCovqsx5oYnc9UfWLC9rN0uXXuVBs9ccfCwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KeeZQaeu; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733129675; x=1764665675;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PONq1d8jm/n+OrIxFNgIUfhJojAh81OCYaZRqCUvHDM=;
-  b=KeeZQaeuu/PygcdmvJL4smmB1hzEIlgbk4oF+DJH8Mb+0ON9/8DlT17D
-   8ts32Mv9uFubPTZIg+1E3XIFZh+J12bbwwA/0rYbUxI39oY3wUYglpdhH
-   6CTwqiEEhQCcWBc3HHfg2VJbYYRA5f8XQJcj5Zo0oxt/Xgxlh+0wUCIi4
-   NEA7HSYw9oXsH0v2V6nzOHFl5pI/37qvXjigdhagHBHHAQZPnKqYVf7V4
-   OqkDeA2sexQfwGk/++srWPKTWe7iGU6KOg84pur66z+04iGXoxmcjPSUz
-   W6gyuVAEgvSn23fAm0LBB/9AGxVSGOZKJHoopZ2clqrcWrmhs4gDKNT1K
-   Q==;
-X-CSE-ConnectionGUID: 7bVTjTvMSneGpM9FwyuOUw==
-X-CSE-MsgGUID: rg58JZyYRDm09aH0hEUBKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="50700514"
-X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
-   d="scan'208";a="50700514"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 00:54:35 -0800
-X-CSE-ConnectionGUID: qbAJGnRwRRCsBXcsRguvnA==
-X-CSE-MsgGUID: WaVyTQKOSeCg2uYFMgFRUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
-   d="scan'208";a="123902060"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 02 Dec 2024 00:54:29 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tI2CI-0002Dj-12;
-	Mon, 02 Dec 2024 08:54:26 +0000
-Date: Mon, 2 Dec 2024 16:54:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, p.zabel@pengutronix.de,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, glx@linutronix.de, vkoul@kernel.org,
-	kishon@kernel.org, aisheng.dong@nxp.com, agx@sigxcpu.org,
-	francesco@dolcini.it, frank.li@nxp.com, dmitry.baryshkov@linaro.org,
-	u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH v5 10/19] drm/imx: Add i.MX8qxp Display Controller pixel
- engine
-Message-ID: <202412021617.HmlPGJLh-lkp@intel.com>
-References: <20241202025635.1274467-11-victor.liu@nxp.com>
+	s=arc-20240116; t=1733129662; c=relaxed/simple;
+	bh=R6Fv08YSF9tjEaXOB/g1hNUtf8CGUiQoNMyz9uhE03s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VKhJqsdMyGpePeHBzqVr2GVADkfpXj2snkLpHYC79gar+X5uS/HQ3/ivywNjIl3TVVjA/eAooJtmoB0CSdN0nvbawiu9KKP9gsogcgTPbRZemZ/oYa8++qjj0e2zBbkNJrNhzFU+T+N0qESDTkqn9bvnz0aSV5uZewO6dSRz4/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABE041063;
+	Mon,  2 Dec 2024 00:54:46 -0800 (PST)
+Received: from [10.57.90.186] (unknown [10.57.90.186])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A3BA3F71E;
+	Mon,  2 Dec 2024 00:54:13 -0800 (PST)
+Message-ID: <01205247-ffcd-439f-b00f-d8e70720d049@arm.com>
+Date: Mon, 2 Dec 2024 08:54:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202025635.1274467-11-victor.liu@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/43] arm64: Support for Arm CCA in KVM
+To: Itaru Kitayama <itaru.kitayama@linux.dev>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>, Jean-Philippe Brucker <jean-philippe@linaro.org>
+References: <20241004152804.72508-1-steven.price@arm.com>
+ <Z01BYOgsLXV5yULk@vm3>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <Z01BYOgsLXV5yULk@vm3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Liu,
+Hi Itaru,
 
-kernel test robot noticed the following build warnings:
+On 02/12/2024 05:10, Itaru Kitayama wrote:
+> On Fri, Oct 04, 2024 at 04:27:21PM +0100, Steven Price wrote:
+>> This series adds support for running protected VMs using KVM under the
+>> Arm Confidential Compute Architecture (CCA).
+...
+> 
+> On FVP, the v5+v7 kernel is unable to execute virt-manager:
+> 
+> Starting install...
+> Allocating 'test9.qcow2'                                    |    0 B  00:00 ...
+> Removing disk 'test9.qcow2'                                 |    0 B  00:00
+> ERROR    internal error: process exited while connecting to monitor: 2024-12-04T18:56:11.646168Z qemu-system-aarch64: -accel kvm: ioctl(KVM_CREATE_VM) failed: Invalid argument
+> 2024-12-04T18:56:11.646520Z qemu-system-aarch64: -accel kvm: failed to initialize kvm: Invalid argument
+> Domain installation does not appear to have been successful.
 
-[auto build test WARNING on shawnguo/for-next]
-[also build test WARNING on linus/master v6.13-rc1 next-20241128]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Can you check that the kernel has detected the RMM being available, you
+should have a message like below when the host kernel is booting:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Liu-Ying/dt-bindings-display-imx-Add-i-MX8qxp-Display-Controller-processing-units/20241202-110331
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241202025635.1274467-11-victor.liu%40nxp.com
-patch subject: [PATCH v5 10/19] drm/imx: Add i.MX8qxp Display Controller pixel engine
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241202/202412021617.HmlPGJLh-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241202/202412021617.HmlPGJLh-lkp@intel.com/reproduce)
+kvm [1]: RMI ABI version 1.0
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412021617.HmlPGJLh-lkp@intel.com/
+My guess is that you've got mismatched versions of the RMM and TF-A. The
+interface between those two components isn't stable and there were
+breaking changes fairly recently. And obviously if the RMM hasn't
+initialised successfully then confidential VMs won't be available.
 
-All warnings (new ones prefixed by >>):
+> Below is my virt-manager options:
+> 
+> virt-install --machine=virt --arch=aarch64 --name=test9 --memory=2048 --vcpu=1 --nographic --check all=off --features acpi=off --virt-type kvm --boot kernel=Image-cca,initrd=rootfs.cpio,kernel_args='earlycon console=ttyAMA0 rdinit=/sbin/init rw root=/dev/vda acpi=off' --qemu-commandline='-M virt,confidential-guest-support=rme0,gic-version=3 -cpu host -object rme-guest,id=rme0 -nodefaults' --disk size=4 --import --osinfo detect=on,require=off
+> 
+> Userland is Ubuntu 24.10, the VMM is Linaro's cca/2024-11-20:
+> 
+> https://git.codelinaro.org/linaro/dcap/qemu/-/tree/cca/2024-11-20?ref_type=heads
 
-   drivers/gpu/drm/imx/dc/dc-fl.c: In function 'dc_fl_bind':
->> drivers/gpu/drm/imx/dc/dc-fl.c:136:57: warning: '%d' directive output may be truncated writing between 1 and 10 bytes into a region of size 3 [-Wformat-truncation=]
-     136 |         snprintf(fu->name, sizeof(fu->name), "FetchLayer%d", fl->id);
-         |                                                         ^~
-   drivers/gpu/drm/imx/dc/dc-fl.c:136:46: note: directive argument in the range [0, 2147483647]
-     136 |         snprintf(fu->name, sizeof(fu->name), "FetchLayer%d", fl->id);
-         |                                              ^~~~~~~~~~~~~~
-   drivers/gpu/drm/imx/dc/dc-fl.c:136:9: note: 'snprintf' output between 12 and 21 bytes into a destination of size 13
-     136 |         snprintf(fu->name, sizeof(fu->name), "FetchLayer%d", fl->id);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   drivers/gpu/drm/imx/dc/dc-fw.c: In function 'dc_fw_bind':
->> drivers/gpu/drm/imx/dc/dc-fw.c:175:56: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size 4 [-Wformat-truncation=]
-     175 |         snprintf(fu->name, sizeof(fu->name), "FetchWarp%u", fw->id);
-         |                                                        ^~
-   drivers/gpu/drm/imx/dc/dc-fw.c:175:46: note: directive argument in the range [0, 2147483647]
-     175 |         snprintf(fu->name, sizeof(fu->name), "FetchWarp%u", fw->id);
-         |                                              ^~~~~~~~~~~~~
-   drivers/gpu/drm/imx/dc/dc-fw.c:175:9: note: 'snprintf' output between 11 and 20 bytes into a destination of size 13
-     175 |         snprintf(fu->name, sizeof(fu->name), "FetchWarp%u", fw->id);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I don't think this is the latest QEMU tree, Jean-Philippe posted an
+update last week:
 
+https://lore.kernel.org/qemu-devel/20241125195626.856992-2-jean-philippe@linaro.org/
 
-vim +136 drivers/gpu/drm/imx/dc/dc-fl.c
+I'm not sure if there were any important updates there, but there are
+detailed instructions that might help.
 
-    92	
-    93	static int dc_fl_bind(struct device *dev, struct device *master, void *data)
-    94	{
-    95		struct platform_device *pdev = to_platform_device(dev);
-    96		struct dc_drm_device *dc_drm = data;
-    97		struct dc_pe *pe = dc_drm->pe;
-    98		void __iomem *base_cfg;
-    99		struct dc_fl *fl;
-   100		struct dc_fu *fu;
-   101		int i;
-   102	
-   103		fl = devm_kzalloc(dev, sizeof(*fl), GFP_KERNEL);
-   104		if (!fl)
-   105			return -ENOMEM;
-   106	
-   107		fu = &fl->fu;
-   108	
-   109		base_cfg = devm_platform_ioremap_resource_byname(pdev, "cfg");
-   110		if (IS_ERR(base_cfg))
-   111			return PTR_ERR(base_cfg);
-   112	
-   113		fu->reg_cfg = devm_regmap_init_mmio(dev, base_cfg,
-   114						    &dc_fl_cfg_regmap_config);
-   115		if (IS_ERR(fu->reg_cfg))
-   116			return PTR_ERR(fu->reg_cfg);
-   117	
-   118		fl->id = of_alias_get_id(dev->of_node, "dc0-fetchlayer");
-   119		if (fl->id < 0) {
-   120			dev_err(dev, "failed to get alias id: %d\n", fl->id);
-   121			return fl->id;
-   122		}
-   123	
-   124		fu->link_id = LINK_ID_FETCHLAYER0;
-   125		fu->id = DC_FETCHUNIT_FL0;
-   126		for (i = 0; i < DC_FETCHUNIT_FRAC_NUM; i++) {
-   127			fu->reg_baseaddr[i]		  = BASEADDRESS(i);
-   128			fu->reg_sourcebufferattributes[i] = SOURCEBUFFERATTRIBUTES(i);
-   129			fu->reg_sourcebufferdimension[i]  = SOURCEBUFFERDIMENSION(i);
-   130			fu->reg_layeroffset[i]		  = LAYEROFFSET(i);
-   131			fu->reg_clipwindowoffset[i]	  = CLIPWINDOWOFFSET(i);
-   132			fu->reg_clipwindowdimensions[i]	  = CLIPWINDOWDIMENSIONS(i);
-   133			fu->reg_constantcolor[i]	  = CONSTANTCOLOR(i);
-   134			fu->reg_layerproperty[i]	  = LAYERPROPERTY(i);
-   135		}
- > 136		snprintf(fu->name, sizeof(fu->name), "FetchLayer%d", fl->id);
-   137	
-   138		dc_fl_set_ops(fu);
-   139	
-   140		pe->fu_disp[fu->id] = fu;
-   141	
-   142		return 0;
-   143	}
-   144	
+Regards,
+Steve
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
