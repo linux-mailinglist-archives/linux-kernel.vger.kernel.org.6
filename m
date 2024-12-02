@@ -1,240 +1,148 @@
-Return-Path: <linux-kernel+bounces-428323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334489E0CDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:16:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE7C9E0CE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:16:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E88D62834DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8589328102B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205481DED6A;
-	Mon,  2 Dec 2024 20:16:09 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA7A1DED68;
+	Mon,  2 Dec 2024 20:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8dBTadz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26ED1D5CF1;
-	Mon,  2 Dec 2024 20:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC4C1D88C7;
+	Mon,  2 Dec 2024 20:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733170568; cv=none; b=WYhlD7P6WNrMvpOdHcVZmOKRJxhVTd/vTESx5sL8B75RxvILJkNMd+KQo4gm6YLL29pdLPa2gqlbzIPEvj3xC5vwrXU9LgzrnlNNGSZAfrkyA3JhD1km2FHq/VZ6PEgXUSOvFnO8xr+yP2qNHlwEk5GLqpxKoorAg78IfQDdS0U=
+	t=1733170607; cv=none; b=E5DGuc8/FpcYmvkfPlH4nDgqvpx/+l3g5c1mw/E5Um8USPwgnMrHJL/fh8hbFUykB4DvIwt15k1/daKDjqheM0wUtzw7Le4SuOnt5aiyo3ZCp92s2pMG/JlNWQiF1zCbKJTNaZ3NHspUWJCBmCZccOagON0O4KZ+9T+rie8Ic3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733170568; c=relaxed/simple;
-	bh=TMV/+O0cAwDA04iphALHpPhxO/Itj+IVgAoLRHKWHiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WM7S7ongM8g1uCn9NNnZoN2j4o+Pb9wxV/Wh0ReehNL1YfFazSRvxef7z5KqzFyH2U4vwPBtqfC9vErjz/LaMS3q+y9h1OMaH/HNP0dNhBaXUX1VIWCnqROHutYpHAQfHlH4/2M64Ww43savH8/sfjwmt9/BuuqeklQ/eusGQ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa52bb7beceso544929266b.3;
-        Mon, 02 Dec 2024 12:16:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733170565; x=1733775365;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CCyLf6bfx3k0JHZbRShg5cX+IhMCY4TrfzkoI8zng30=;
-        b=FfoZPxH5sKoqtuiuzSz+Wiu9pj7t5c3wZq5vjwkCGupDFBORle/JBNFI53KzkwN2lr
-         oPZlkx9+XkStMMLMX6zk8K04+kM+qKIeRX6nZN0VoW4HV4yntyfqsO6pfoxondMWSZLs
-         ngHgdMZA+o57Ou47T7t4LTUoHbitslcM/y9NRfehBFbufmtIzemLdTck9zpdbngK0KzQ
-         Bv7yYlrQK6uAIDbh2vuW5zmpKi2SOCZ4mPzOsCQJWR6uQE8El9t5MdXIzCYSdLNt9JC9
-         jmq6E6p0RLhV1P5+XWrTSk4umoKjWD0riQUdFRmLPQxgtTWye+rMCA4bYlfqVzJOlgYi
-         f0dA==
-X-Forwarded-Encrypted: i=1; AJvYcCUi/M/h+pKGj9lQxXqjqsXMu2sSQtfPdiqhUwlDwNcTwAiF0DGrcqq/M4vxEZOTIGgNxj+uLgfb@vger.kernel.org, AJvYcCVH+P9DIrcgwEXzlJFjnJMnUulI+c0p9mZwzod5k5nYZeHenwY1BwBEWoojU7W+C8nqj7iNMEUAN4aaSOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyspmOvvS0TdpMDsEUKipliiPNDFYmGlfOIMKzdBNFZeSI4g5xG
-	ALiX4njzcGKO5kdpSgXVIy1loPK74pYhMXzFfJAy+K5z+PE8T0nptlsJog==
-X-Gm-Gg: ASbGncuuaqnTtfTzqkP3sFCtJ54XS+7Bw3mdIII26heTlQHvmrDrJrEk/NruxrEcxGD
-	85QWQynaY+c4sqsYwrHC35jHaL49Jm5LX0uARpnptcAO67vUT3oNm52TDc2f/olQaqg6Kzrutjm
-	6eApoP5uOxa/O6mAbEciVaiBFEUnxrKyE3BQX4qdYDjS13I6dg1YbHTNBaLX3KAV/LiJfJ9o3+V
-	pu8PDRlk5d762I21I/K7+LIWwioPG2Z1QNulUaBQfYw1884ydCkkWvWE+hKZiY5aw1T7ZyB73Pf
-	dQ==
-X-Google-Smtp-Source: AGHT+IEFaS9kN3DfjwPQXg2byiuEjMe+eb5z9xgNjg+c/qP6MXFk7z/7iNDd3aIhoD4JlEwzGFrhlA==
-X-Received: by 2002:a17:906:32c2:b0:aa5:1d68:1ed4 with SMTP id a640c23a62f3a-aa580ecf6b4mr2318908166b.3.1733170564694;
-        Mon, 02 Dec 2024 12:16:04 -0800 (PST)
-Received: from gmail.com (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996dbf54sm543085766b.44.2024.12.02.12.16.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 12:16:03 -0800 (PST)
-Date: Mon, 2 Dec 2024 12:16:01 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
-	Tejun Heo <tj@kernel.org>, Hao Luo <haoluo@google.com>,
-	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rhashtable: Fix potential deadlock by moving
- schedule_work outside lock
-Message-ID: <20241202-solemn-beneficial-dinosaur-7e3e4e@leitao>
-References: <20241128-scx_lockdep-v1-1-2315b813b36b@debian.org>
- <Z0lVftsFRSSkPkld@gondor.apana.org.au>
+	s=arc-20240116; t=1733170607; c=relaxed/simple;
+	bh=M/8545t/m7bhJOBqSsnUSnGyaxzOspC9YimXSPviZ30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s1V6hHZJb06lBNxADzfw5G1okt9Cxo0PY/eN6wttxuL+SGuCvnWI4lHwOWxu4h7iFUjEfqhKFSlO2qSIV4s2IjekGLGEiYcfAE/srYVsiOd/M247Vs8obiGDSU+qozdpIvgasBRk0MbvxncgIaxAvNjbi4rCbgE8y35Yverm/Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8dBTadz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F263DC4CEE1;
+	Mon,  2 Dec 2024 20:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733170607;
+	bh=M/8545t/m7bhJOBqSsnUSnGyaxzOspC9YimXSPviZ30=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=n8dBTadzy6bgeapI+amB6M2AIC+mYzmdsvv8p15lktNEQNWfa6+xSyLubtwjK+TD0
+	 Zopq6TbTpNRZYJRqGRziUplWpba59E2VLLGTVrNhZcDH5SolmX8cpZdfj21y+Jkd+u
+	 vfKQY0Dm4WUQMO5GAjNjitUHfDzyaQjNivYW5Q6r94dOa9/BrLPQ6+TK5wj3bZgHr4
+	 vNdET4WPEjSWxve49hfuKGXaigzWh0rfJRFo0618hSruxMdSbXgn9S/OswJsnvyr70
+	 eKLe+WA1BlhSArYOsTTqhD408nviGB2Kk2c1W+hY7Zt9MCr3H4HSya3vIyFruH7zc+
+	 S1bymSUiKWeCw==
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5f1e573e65dso1370244eaf.0;
+        Mon, 02 Dec 2024 12:16:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUsrS1M6d6OLJ5LcYt3aOtU9rcB94XVA9drYHl/vRY0vaMclVcjM+sjSAUI/ZytEOE6XXYVTijmTu6N5lo=@vger.kernel.org, AJvYcCXXNTWqP3yBT2BVlT926/NmIw2P5jXTSKqkiYgrkdo27Y0b1nF3l/Za8+4vE/rGgCSQGHGMIyDy1qI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX79yT4sFuCmHcvKVOLD50MvF4baER8tvbgj9L/9VSFXHRfoe+
+	8JRQyKWoNY4vwV6vnzfn3P+ZDBbRRmQY7eT4p/IGPhdM2VYmdQfFQi2ZMxUPWd4I38oiFDMmwa1
+	gViKAuSZOEbvVmNbggR4nROFy3nQ=
+X-Google-Smtp-Source: AGHT+IHlHeE2R9BrV0PMMpZDdBocUrKf5KOeyTQLT02mpMtN7GzHFvJBEsOzZrlEdyPl9l38RgV8lYGV6Qrr8gvq5zc=
+X-Received: by 2002:a05:6870:988a:b0:29d:c832:840d with SMTP id
+ 586e51a60fabf-29dc832e5dfmr15308297fac.35.1733170606144; Mon, 02 Dec 2024
+ 12:16:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0lVftsFRSSkPkld@gondor.apana.org.au>
+References: <20241114220921.2529905-1-saravanak@google.com>
+ <20241114220921.2529905-3-saravanak@google.com> <CAJZ5v0jPO24JR5um0gv5U5AwiR_RHx37x6DisG-nUxaZt9gfGA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jPO24JR5um0gv5U5AwiR_RHx37x6DisG-nUxaZt9gfGA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 2 Dec 2024 21:16:34 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iLq9L5nMp13BrBmbWavFs1ZEAtJ-WeyRzv3D2GXPNuag@mail.gmail.com>
+Message-ID: <CAJZ5v0iLq9L5nMp13BrBmbWavFs1ZEAtJ-WeyRzv3D2GXPNuag@mail.gmail.com>
+Subject: Re: [PATCH v1 2/5] PM: sleep: Remove unnecessary mutex lock when
+ waiting on parent
+To: Saravana Kannan <saravanak@google.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Marek Vasut <marex@denx.de>, 
+	Bird@google.com, Tim <Tim.Bird@sony.com>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Herbert,
+On Mon, Dec 2, 2024 at 9:11=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>
+> Sorry for the delay.
+>
+> On Thu, Nov 14, 2024 at 11:09=E2=80=AFPM Saravana Kannan <saravanak@googl=
+e.com> wrote:
+> >
+> > Locking is not needed to do get_device(dev->parent). We either get a NU=
+LL
+> > (if the parent was cleared) or the actual parent. Also, when a device i=
+s
+> > deleted (device_del()) and removed from the dpm_list, its completion
+> > variable is also complete_all()-ed. So, we don't have to worry about
+> > waiting indefinitely on a deleted parent device.
+>
+> The device_pm_initialized(dev) check before get_device(dev->parent)
+> doesn't make sense without the locking and that's the whole point of
+> it.
 
-On Fri, Nov 29, 2024 at 01:47:42PM +0800, Herbert Xu wrote:
-> On Thu, Nov 28, 2024 at 04:16:25AM -0800, Breno Leitao wrote:
-> > Move the hash table growth check and work scheduling outside the
-> > rht lock to prevent a possible circular locking dependency.
-> > 
-> > The original implementation could trigger a lockdep warning due to
-> > a potential deadlock scenario involving nested locks between
-> > rhashtable bucket, rq lock, and dsq lock. By relocating the
-> > growth check and work scheduling after releasing the rth lock, we break
-> > this potential deadlock chain.
-> > 
-> > This change expands the flexibility of rhashtable by removing
-> > restrictive locking that previously limited its use in scheduler
-> > and workqueue contexts.
-> 
-> Could you please explain the deadlock?
+Hmm, not really.
 
-I understand that there is a locking order inversion here:
+How is the parent prevented from going away in get_device() right
+after the initial dev check without the locking?
 
-A possible code flow can hold the rhashtable_bucket, and then can get
-the dqs->lock, as shown int eh following snippet:
-
-         Chain exists of:
-           rhashtable_bucket --> &rq->__lock --> &dsq->lock
-
-The same is true, when sched_ext holds rthe dsq->lock and try to get
-hold of rhashtable lock.
-
-This could be seen in the following snippers:
-
-                rht_lock+0x69/0xd0
-                destroy_dsq+0x22d/0x790
-                scx_ops_disable_workfn+0x9d2/0xaf0
-
-> Is the workqueue system actually using rhashtable?
-
-It seems so when using sched_ext scheduler class. For instance, lockdep
-got it in scx_ops_disable_workfn().
-
-                rht_lock+0x69/0xd0
-                destroy_dsq+0x22d/0x790
-                scx_ops_disable_workfn+0x9d2/0xaf0
-                kthread_worker_fn+0x137/0x350
-
-
-This is the full lockdep splat, if it helps. Sorry it is not decoded,
-but this can give you the code-flow.
-
-	 ======================================================
-	 WARNING: possible circular locking dependency detected
-
-	 hardirqs last  enabled at (2088145): [<ffffffff822ab674>] _raw_spin_unlock_irq+0x24/0x50
-	 hardirqs last disabled at (2088144): [<ffffffff822ab4bf>] _raw_spin_lock_irq+0x2f/0x80
-	 ------------------------------------------------------
-	 softirqs last  enabled at (2088116): [<ffffffff810f7294>] __irq_exit_rcu+0x74/0x100
-	 sched_ext_ops_h/10451 is trying to acquire lock:
-	 softirqs last disabled at (2088111): [<ffffffff810f7294>] __irq_exit_rcu+0x74/0x100
-	 ffff888288059038 (rhashtable_bucket){....}-{0:0}, at: rht_lock+0x51/0xd0
-
-	 but task is already holding lock:
-	 ffff888470645698 (&dsq->lock){-.-.}-{2:2}, at: destroy_dsq+0xaf/0x790
-
-	 which lock already depends on the new lock.
-
-
-	 the existing dependency chain (in reverse order) is:
-
-	 -> #4 (&dsq->lock){-.-.}-{2:2}:
-		_raw_spin_lock+0x2f/0x40
-		dispatch_enqueue+0x7c/0x3e0
-		enqueue_task_scx.llvm.3416789782249720787+0x1ae/0x250
-		sched_enq_and_set_task+0x5f/0xb0
-		bpf_scx_reg+0xf21/0x11b0
-		bpf_struct_ops_link_create+0xec/0x160
-		__sys_bpf+0x34d/0x3b0
-		__x64_sys_bpf+0x18/0x20
-		do_syscall_64+0x7e/0x150
-		entry_SYSCALL_64_after_hwframe+0x4b/0x53
-
-	 -> #3 (&rq->__lock){-.-.}-{2:2}:
-		_raw_spin_lock_nested+0x32/0x40
-		raw_spin_rq_lock_nested+0x20/0x30
-		task_fork_fair.llvm.5382994275699419189+0x3b/0x110
-		sched_cgroup_fork+0xe3/0x100
-		copy_process+0xc3c/0x14a0
-		kernel_clone+0x90/0x360
-		user_mode_thread+0xbc/0xe0
-		rest_init+0x1f/0x1f0
-		start_kernel+0x41b/0x470
-		x86_64_start_reservations+0x26/0x30
-		x86_64_start_kernel+0x9b/0xa0
-		common_startup_64+0x13e/0x140
-
-	 -> #2 (&p->pi_lock){-.-.}-{2:2}:
-		_raw_spin_lock_irqsave+0x5a/0x90
-		try_to_wake_up+0x58/0x730
-		create_worker+0x1d6/0x240
-
-		workqueue_init+0x2c0/0x390
-		kernel_init_freeable+0x147/0x200
-		kernel_init+0x16/0x1c0
-		ret_from_fork+0x2f/0x40
-		ret_from_fork_asm+0x11/0x20
-
-	 -> #1 (&pool->lock){-.-.}-{2:2}:
-		_raw_spin_lock+0x2f/0x40
-		__queue_work+0x24b/0x610
-		queue_work_on+0xa5/0xf0
-		rhashtable_insert_slow+0x524/0x970
-		__xdp_reg_mem_model+0x181/0x240
-		xdp_rxq_info_reg_mem_model+0x19/0xf0
-		bnxt_alloc_mem+0x1178/0x1c80
-		__bnxt_open_nic+0x1bb/0xe20
-		bnxt_open_nic+0x26/0x60
-		ethtool_set_channels+0x1b7/0x1f0
-		dev_ethtool+0x555/0x740
-		dev_ioctl+0x2ac/0x3f0
-		sock_do_ioctl+0x111/0x180
-		sock_ioctl+0x1fb/0x2e0
-		__se_sys_ioctl+0x72/0xc0
-		do_syscall_64+0x7e/0x150
-		entry_SYSCALL_64_after_hwframe+0x4b/0x53
-
-	 -> #0 (rhashtable_bucket){....}-{0:0}:
-		__lock_acquire+0x1742/0x3470
-		lock_acquire+0xf0/0x290
-		rht_lock+0x69/0xd0
-		destroy_dsq+0x22d/0x790
-		scx_ops_disable_workfn+0x9d2/0xaf0
-		kthread_worker_fn+0x137/0x350
-		kthread+0x102/0x120
-		ret_from_fork+0x2f/0x40
-		ret_from_fork_asm+0x11/0x20
-
-	 other info that might help us debug this:
-
-	 Chain exists of:
-	   rhashtable_bucket --> &rq->__lock --> &dsq->lock
-
-	  Possible unsafe locking scenario:
-
-		CPU0                    CPU1
-		----                    ----
-	   lock(&dsq->lock);
-					lock(&rq->__lock);
-					lock(&dsq->lock);
-	   lock(rhashtable_bucket);
-
-	  *** DEADLOCK ***
-
-	 5 locks held by sched_ext_ops_h/10451:
-	  #0: ffffffff83695ad0 (scx_ops_enable_mutex){+.+.}-{3:3}, at: scx_ops_disable_workfn+0x111/0xaf0
-	  #1: ffffffff83da13d8 (rcu_read_lock){....}-{1:2}, at: rhashtable_walk_start_check+0x1f/0x3e0
-	  #2: ffffffff83da13d8 (rcu_read_lock){....}-{1:2}, at: destroy_dsq+0x30/0x790
-	  #3: ffff888470645698 (&dsq->lock){-.-.}-{2:2}, at: destroy_dsq+0xaf/0x790
-	  #4: ffffffff83da13d8 (rcu_read_lock){....}-{1:2}, at: destroy_dsq+0x30/0x790
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > ---
+> >  drivers/base/power/main.c | 13 ++-----------
+> >  1 file changed, 2 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> > index 86e51b9fefab..9b9b6088e56a 100644
+> > --- a/drivers/base/power/main.c
+> > +++ b/drivers/base/power/main.c
+> > @@ -284,18 +284,9 @@ static bool dpm_wait_for_superior(struct device *d=
+ev, bool async)
+> >          * counting the parent once more unless the device has been del=
+eted
+> >          * already (in which case return right away).
+> >          */
+> > -       mutex_lock(&dpm_list_mtx);
+> > -
+> > -       if (!device_pm_initialized(dev)) {
+> > -               mutex_unlock(&dpm_list_mtx);
+> > -               return false;
+> > -       }
+> > -
+> >         parent =3D get_device(dev->parent);
+> > -
+> > -       mutex_unlock(&dpm_list_mtx);
+> > -
+> > -       dpm_wait(parent, async);
+> > +       if (device_pm_initialized(dev))
+> > +               dpm_wait(parent, async);
+>
+> This is racy, so what's the point?
+>
+> You can just do
+>
+> parent =3D get_device(dev->parent);
+> dpm_wait(parent, async);
+>
+> and please update the comment above this.
+>
+> >         put_device(parent);
+> >
+> >         dpm_wait_for_suppliers(dev, async);
+> > --
 
