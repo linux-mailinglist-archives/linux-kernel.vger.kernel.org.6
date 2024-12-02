@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-427743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9269E059D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:55:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159179E0594
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:53:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62BF416BF9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:43:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CB8CB2D84D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3D32144D8;
-	Mon,  2 Dec 2024 14:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70EF215F67;
+	Mon,  2 Dec 2024 14:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gUVu9TKx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aDMJORCW"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B60E2144B0
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A198920896F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149975; cv=none; b=EesJLgfieku1hSm7zkwcqUEg3Kfm8nNUzVX9+QmUPzcPws/MJPWfqGdGl6RbgrmbbhCbCcRHzPDZcR348teEw8W+QRpftvsu4cQsk4hkc7dus/24vbONEQXohTdT6qyJUEMaK7NabmemHTbSfyCkeL+yRkLqsGMgP5Sz265S9Qk=
+	t=1733149980; cv=none; b=UBDKsW1g8B6EIbNTyX33Q7BeH7iVhaiC5XQTPV/Bc7feAtewGLnh3Rk5H1dFXeqf3LYRb2ZMWcClMoWHEqqL2jfg6P6tIE3RzCN1vepYYwvMQv5QNhqVYciSpYQHpodi9+d597PPrmfpkr8YHVJJ9pJKY0E+k1zKl2vlFFMyEEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149975; c=relaxed/simple;
-	bh=Mvn0JXv++avOlIY0IIQ+hCK2ymy43mWJlQe109HoEK8=;
+	s=arc-20240116; t=1733149980; c=relaxed/simple;
+	bh=3btpIzUrc/ggkCKYwyGitI0UwmXR12kkUzIboNem7/4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aJL1+GCmpwlnc/S9uIgjVO8GIg1Jzi+7qQVDwnIPQ9vBSicB8Wn0msNUzBgbIpg5F8wNbAk8G/b1iH6nDGZ5nUNmNPrjDb2/CWFOeItVu0dIYiSAq3Hb0vAn9EaiFXh+aO2yhnsjGmjg+/ZF0S2i4YvsgV66nQxezL2j/rky5JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gUVu9TKx; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=r2JkXJwFJTMuTQuVrd0q2gCTECNyS1D8SqtoNBlgRccz22MLZCVQBzzmsPSncVcr6D3Rwu7T49aSaCCduZDWgrR+3kVBLpteTnKlKYpoSInU7KTmPnqQvpHcVgdibzeAGswQ1VUQ+DaDItd49WrfDfn5GswaslvnRuxBALNVY8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aDMJORCW; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733149972;
+	s=mimecast20190719; t=1733149977;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Y55T7HoQEza48UwwqzlNDQyRFxdL8sX9c/2gYlUdy9I=;
-	b=gUVu9TKxPBKVJws5WeXMg6OWfB9DcWb7LRpJp45228wuGsx/7qTkvcMG3mhg0KpdUl+Kmg
-	asQUvu96ATM3pKZ7cxh/8OsupddV8KjHlFm2LZS4OgcQX85MmMhYRlAlQFEh97HtvwEp10
-	WkM55dNNaq/ai1IPt1paKB+CYetJdzE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+	bh=4k7JdZ9wo1FEl+k5fitGAIvj93CLuEOezWNS09/9ews=;
+	b=aDMJORCWUcUrSdyiE5VNhmc6l22+gx9XKjP/l+trnl7mdyWMD6p7RkeElwWw/ZNmpKE/tO
+	pIO0cPEH1YhTmu7tuoBVod7NSDi5TAmnTUaeeYzetlErzMWhZVowz0FgqbxXX2QGgDgaqp
+	YkhkSQoKbN81ZC5f1rNq5P2ZKxUYjlk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-480-Nwmwsh-JNCOThw0SowqiIw-1; Mon,
- 02 Dec 2024 09:32:49 -0500
-X-MC-Unique: Nwmwsh-JNCOThw0SowqiIw-1
-X-Mimecast-MFC-AGG-ID: Nwmwsh-JNCOThw0SowqiIw
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-570-REAI8_-GNzyR5n7VW78SMg-1; Mon,
+ 02 Dec 2024 09:32:52 -0500
+X-MC-Unique: REAI8_-GNzyR5n7VW78SMg-1
+X-Mimecast-MFC-AGG-ID: REAI8_-GNzyR5n7VW78SMg
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AAD131944D24;
-	Mon,  2 Dec 2024 14:32:46 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C5665195D005;
+	Mon,  2 Dec 2024 14:32:50 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.48])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 28A68195605A;
-	Mon,  2 Dec 2024 14:32:43 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 29D30195605A;
+	Mon,  2 Dec 2024 14:32:47 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: netdev@vger.kernel.org
 Cc: David Howells <dhowells@redhat.com>,
@@ -67,9 +67,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	Paolo Abeni <pabeni@redhat.com>,
 	linux-afs@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 25/37] rxrpc: Adjust the rxrpc_rtt_rx tracepoint
-Date: Mon,  2 Dec 2024 14:30:43 +0000
-Message-ID: <20241202143057.378147-26-dhowells@redhat.com>
+Subject: [PATCH net-next 26/37] rxrpc: Display userStatus in rxrpc_rx_ack trace
+Date: Mon,  2 Dec 2024 14:30:44 +0000
+Message-ID: <20241202143057.378147-27-dhowells@redhat.com>
 In-Reply-To: <20241202143057.378147-1-dhowells@redhat.com>
 References: <20241202143057.378147-1-dhowells@redhat.com>
 Precedence: bulk
@@ -81,14 +81,9 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Adjust the rxrpc_rtt_rx tracepoint in the following ways:
-
- (1) Display the collected RTT sample in the rxrpc_rtt_rx trace.
-
- (2) Move the division of srtt by 8 to the TP_printk() rather doing it
-     before invoking the trace point.
-
- (3) Display the min_rtt value.
+Display the userStatus field from the Rx packet header in the rxrpc_rx_ack
+trace line.  This is used for flow control purposes by FS.StoreData-type
+kafs RPC calls.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Marc Dionne <marc.dionne@auristor.com>
@@ -99,95 +94,40 @@ cc: Paolo Abeni <pabeni@redhat.com>
 cc: linux-afs@lists.infradead.org
 cc: netdev@vger.kernel.org
 ---
- include/trace/events/rxrpc.h | 14 ++++++++++----
- net/rxrpc/input.c            |  4 ++--
- net/rxrpc/rtt.c              |  2 +-
- 3 files changed, 13 insertions(+), 7 deletions(-)
+ include/trace/events/rxrpc.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 798bea0853c4..6e929f4448ac 100644
+index 6e929f4448ac..7681c67f7d65 100644
 --- a/include/trace/events/rxrpc.h
 +++ b/include/trace/events/rxrpc.h
-@@ -1415,9 +1415,9 @@ TRACE_EVENT(rxrpc_rtt_rx,
- 	    TP_PROTO(struct rxrpc_call *call, enum rxrpc_rtt_rx_trace why,
- 		     int slot,
- 		     rxrpc_serial_t send_serial, rxrpc_serial_t resp_serial,
--		     u32 rtt, u32 rto),
-+		     u32 rtt, u32 srtt, u32 rto),
- 
--	    TP_ARGS(call, why, slot, send_serial, resp_serial, rtt, rto),
-+	    TP_ARGS(call, why, slot, send_serial, resp_serial, rtt, srtt, rto),
- 
- 	    TP_STRUCT__entry(
- 		    __field(unsigned int,		call)
-@@ -1426,7 +1426,9 @@ TRACE_EVENT(rxrpc_rtt_rx,
- 		    __field(rxrpc_serial_t,		send_serial)
- 		    __field(rxrpc_serial_t,		resp_serial)
- 		    __field(u32,			rtt)
-+		    __field(u32,			srtt)
- 		    __field(u32,			rto)
-+		    __field(u32,			min_rtt)
+@@ -1031,11 +1031,13 @@ TRACE_EVENT(rxrpc_rx_ack,
+ 		    __field(rxrpc_seq_t,	prev)
+ 		    __field(u8,			reason)
+ 		    __field(u8,			n_acks)
++		    __field(u8,			user_status)
  			     ),
  
  	    TP_fast_assign(
-@@ -1436,17 +1438,21 @@ TRACE_EVENT(rxrpc_rtt_rx,
- 		    __entry->send_serial = send_serial;
- 		    __entry->resp_serial = resp_serial;
- 		    __entry->rtt = rtt;
-+		    __entry->srtt = srtt;
- 		    __entry->rto = rto;
-+		    __entry->min_rtt = minmax_get(&call->peer->min_rtt)
+ 		    __entry->call	= call->debug_id;
+ 		    __entry->serial	= sp->hdr.serial;
++		    __entry->user_status = sp->hdr.userStatus;
+ 		    __entry->ack_serial = sp->ack.acked_serial;
+ 		    __entry->first	= sp->ack.first_ack;
+ 		    __entry->prev	= sp->ack.prev_ack;
+@@ -1043,11 +1045,12 @@ TRACE_EVENT(rxrpc_rx_ack,
+ 		    __entry->n_acks	= sp->ack.nr_acks;
  			   ),
  
--	    TP_printk("c=%08x [%d] %s sr=%08x rr=%08x rtt=%u rto=%u",
-+	    TP_printk("c=%08x [%d] %s sr=%08x rr=%08x rtt=%u srtt=%u rto=%u min=%u",
+-	    TP_printk("c=%08x %08x %s r=%08x f=%08x p=%08x n=%u",
++	    TP_printk("c=%08x %08x %s r=%08x us=%02x f=%08x p=%08x n=%u",
  		      __entry->call,
- 		      __entry->slot,
- 		      __print_symbolic(__entry->why, rxrpc_rtt_rx_traces),
- 		      __entry->send_serial,
- 		      __entry->resp_serial,
- 		      __entry->rtt,
--		      __entry->rto)
-+		      __entry->srtt / 8,
-+		      __entry->rto,
-+		      __entry->min_rtt)
- 	    );
- 
- TRACE_EVENT(rxrpc_timer_set,
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index eb467c3f06da..849c49a8229a 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -740,7 +740,7 @@ static void rxrpc_complete_rtt_probe(struct rxrpc_call *call,
- 		 */
- 		if (after(acked_serial, orig_serial)) {
- 			trace_rxrpc_rtt_rx(call, rxrpc_rtt_rx_obsolete, i,
--					   orig_serial, acked_serial, 0, 0);
-+					   orig_serial, acked_serial, 0, 0, 0);
- 			clear_bit(i + RXRPC_CALL_RTT_PEND_SHIFT, &call->rtt_avail);
- 			smp_wmb();
- 			set_bit(i, &call->rtt_avail);
-@@ -748,7 +748,7 @@ static void rxrpc_complete_rtt_probe(struct rxrpc_call *call,
- 	}
- 
- 	if (!matched)
--		trace_rxrpc_rtt_rx(call, rxrpc_rtt_rx_lost, 9, 0, acked_serial, 0, 0);
-+		trace_rxrpc_rtt_rx(call, rxrpc_rtt_rx_lost, 9, 0, acked_serial, 0, 0, 0);
- }
- 
- /*
-diff --git a/net/rxrpc/rtt.c b/net/rxrpc/rtt.c
-index 8048467f4bee..e0b7d99854b4 100644
---- a/net/rxrpc/rtt.c
-+++ b/net/rxrpc/rtt.c
-@@ -175,7 +175,7 @@ void rxrpc_peer_add_rtt(struct rxrpc_call *call, enum rxrpc_rtt_rx_trace why,
- 	spin_unlock(&peer->rtt_input_lock);
- 
- 	trace_rxrpc_rtt_rx(call, why, rtt_slot, send_serial, resp_serial,
--			   peer->srtt_us >> 3, peer->rto_us);
-+			   rtt_us, peer->srtt_us, peer->rto_us);
- }
- 
- /*
+ 		      __entry->serial,
+ 		      __print_symbolic(__entry->reason, rxrpc_ack_names),
+ 		      __entry->ack_serial,
++		      __entry->user_status,
+ 		      __entry->first,
+ 		      __entry->prev,
+ 		      __entry->n_acks)
 
 
