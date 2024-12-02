@@ -1,94 +1,99 @@
-Return-Path: <linux-kernel+bounces-428017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9010B9E08FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:48:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3194E9E0919
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:53:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A69C416E4DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 092E3164BE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5411DAC89;
-	Mon,  2 Dec 2024 16:35:43 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C451B21B0;
+	Mon,  2 Dec 2024 16:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XkUZn/kB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uoWNt32n"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029C51DA11A
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C341AF0B3;
+	Mon,  2 Dec 2024 16:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733157343; cv=none; b=NEYrF3ZvWvHOr0yqACG3UMOdH+XixiH9n0kAkMbsbRRFFrieNQcjSB34itot7DzvRAGLxXYRE7KLKcA6UMAzVX88ebbuO7o4+Hgc8yZWXKxBH7OBmXPLHxaRojDnErDjK2Y9+V2eZoPzqIeQgvwgMDvkbOMBCGRz1uu15UTOPBw=
+	t=1733157669; cv=none; b=ZdjzbRCCg1oUnvgSbIlJRH/DfqRsGmQHu4nCnb0nx7BsJs7p0n1BON8hd917KzrNqzt4xkaSUrtBf0qV1m+Oc87Og0Bo4UXneyxfi/2JerWmT3u5T7ZO80TglhjM07VJpzemYSeO+nnbSftPnMAxrLm75GV6r4Tj3dffKiS+doE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733157343; c=relaxed/simple;
-	bh=lTe9FWRo2ZCa3rPujY1of3rChZ8Z3D7OPHWZ5cq3rFA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QCJ98eTsdd++6+TexGc7bdmyauidnborj/n4GD17UmRYX7yILz+4Eq5ggkBc7uz24ovS+EmuuzKvg3UHx9KUOUrGKszCWEpvig19pCZTphgwh9u4x4xmw1Oy6ExVqUnP1ZODyyWZXAFqU/Or9aznIUmFvi1Oi7JTNJE/T2XNc2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <jre@pengutronix.de>)
-	id 1tI9Od-0004Mi-7e; Mon, 02 Dec 2024 17:35:39 +0100
-From: Jonas Rebmann <jre@pengutronix.de>
-Date: Mon, 02 Dec 2024 17:35:21 +0100
-Subject: [PATCH 2/3] dt-bindings: mtd: mchp48l640 add mb85rs128ty
- compatible
+	s=arc-20240116; t=1733157669; c=relaxed/simple;
+	bh=leCKbxXrI8wOLZxFyRTuo9pW3OvHH7MOuarDkdbV/4U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nHhXOrfPwwH+wnYtpOquybM168uTfyxXS4VhwlpDQ3EwNznAnmq4UUA+DH88wXufQJSwP2bYviThMLAAIxfzniyn65R3Ka9fvoj4QQu+3+p4yA54IWuivIpzh5jgZO2wLvwJ/9kf+mp/wQifdO45f8yRBdo5/vUlTKoxQ+yWG6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XkUZn/kB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uoWNt32n; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733157664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=leCKbxXrI8wOLZxFyRTuo9pW3OvHH7MOuarDkdbV/4U=;
+	b=XkUZn/kByETtNzQabzyrF/RDaWznNj2eeuVVCN13PO5XhhZHnDaeUPkjrsRz6HbNKEeN3u
+	M5dyzHYUfMh8Dgu+GweshmtUmGs0MdD8sbzIOWsYC6VD7qhOjv8hILe4Q/BchK9y5wdD6/
+	bAoa9EQFX+O3s3W2KEVxaEav3jfPrIShQfoOuyyQIbTGZGR0I7eHECd/0rRg0lNLYiYcFQ
+	Ks527QjS5c1VJj+N0WJAtmW3TqJ0/TA9h59uAwaY1XYHM/3FnWbFFZmbyyklujJDE/a3t4
+	IkPXJBMdRxc4eLlPfiXNosBlVlhTDEtRNvVYqKznZNj8boFr5NC3gz6MvViGMg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733157664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=leCKbxXrI8wOLZxFyRTuo9pW3OvHH7MOuarDkdbV/4U=;
+	b=uoWNt32n96u7wwzMS/SKGXY8QsrRXaB5EMsFdLAxfmeA0yzQmXNMYWhVQ5eeF6wmV9CY+I
+	11GaNejeX65xpaDg==
+To: Jiri Slaby <jirislaby@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Petr Mladek
+ <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, Esben
+ Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Rengarajan S
+ <rengarajan.s@microchip.com>, Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Serge Semin <fancer.lancer@gmail.com>, Lino Sanfilippo
+ <l.sanfilippo@kunbus.com>, Wander Lairson Costa <wander@redhat.com>
+Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for
+ FIFO mode
+In-Reply-To: <848cbe1c-d84d-4377-8709-bb98d1d83146@kernel.org>
+References: <20241025105728.602310-1-john.ogness@linutronix.de>
+ <20241025105728.602310-2-john.ogness@linutronix.de>
+ <837a7ecd-be29-4865-9543-cb6f7e7e46e7@kernel.org>
+ <alpine.DEB.2.21.2410310349450.40463@angie.orcam.me.uk>
+ <2fab2ef8-d0d6-4b94-90b6-7c16641a2f68@kernel.org>
+ <84ldxzccjl.fsf@jogness.linutronix.de>
+ <848cbe1c-d84d-4377-8709-bb98d1d83146@kernel.org>
+Date: Mon, 02 Dec 2024 17:47:03 +0106
+Message-ID: <841pyqavhc.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-mb85rs128ty-v1-2-a660b6490dc8@pengutronix.de>
-References: <20241202-mb85rs128ty-v1-0-a660b6490dc8@pengutronix.de>
-In-Reply-To: <20241202-mb85rs128ty-v1-0-a660b6490dc8@pengutronix.de>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Schocher <hs@denx.de>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, David Jander <david@protonic.nl>, 
- kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=781; i=jre@pengutronix.de;
- h=from:subject:message-id; bh=lTe9FWRo2ZCa3rPujY1of3rChZ8Z3D7OPHWZ5cq3rFA=;
- b=owGbwMvMwCF2ZcYT3onnbjcwnlZLYkj3fXgzSD2bc0Le6u+xjdkL6qItJ8mGnmTa9Kr7kHBmy
- +WzW3OsOkpZGMQ4GGTFFFli1eQUhIz9r5tV2sXCzGFlAhnCwMUpABOZI8/wm2VW8rpy7rNWX88X
- /58hLXvK47ZymHpleFZbdnv1o68dhxn+e9UfYOjxjdh68vaBU69fX2btl95QcUFa6cdD5WXCCpx
- 1fAA=
-X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
- fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
-X-SA-Exim-Mail-From: jre@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
-Add a compatible string to support Fujitsu MB85RS128TY.
+On 2024-12-02, Jiri Slaby <jirislaby@kernel.org> wrote:
+> I am still asking why do you want to wait for the TX machinery at the
+> *end* (for the last 64 B of the 640 B line) of transmission at all? It
+> occurs to me as wasted cycles.
 
-Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
----
- Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml | 1 +
- 1 file changed, 1 insertion(+)
+The printk-framework has always expected that when console->write()
+returns, the data has been flushed out of the hardware. I am guessing
+because it is easiest to avoid possible data loss, for example, due to
+suspending hardware.
 
-diff --git a/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml b/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml
-index 0ff32bd00bf6aee279fa78c624d8d47c6162f7f1..973f06b665dbbcb9ea1090418eb18fbe2285acef 100644
---- a/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml
-+++ b/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml
-@@ -18,6 +18,7 @@ properties:
-   compatible:
-     items:
-       - const: microchip,48l640
-+      - const: fujitsu,mb85rs128ty
- 
-   reg:
-     maxItems: 1
+If you want me to change the current behavior, I can do that in a
+separate patch. I would like this patch to only be about fixing the FIFO
+timeout issue.
 
--- 
-2.39.5
-
+John
 
