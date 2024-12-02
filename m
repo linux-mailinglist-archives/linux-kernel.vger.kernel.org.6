@@ -1,166 +1,247 @@
-Return-Path: <linux-kernel+bounces-427903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4795E9E0737
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:39:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391769E073F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 092EB281B93
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37CE281B1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F62209F4D;
-	Mon,  2 Dec 2024 15:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wf275xrI"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F725209F4C;
+	Mon,  2 Dec 2024 15:40:05 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4B1209F33;
-	Mon,  2 Dec 2024 15:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A87208978;
+	Mon,  2 Dec 2024 15:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153937; cv=none; b=LRYGVBgglettKfITolFTRIcBvvVL+rUnOFLXZidO1nfi0Bu/zs+wpqBfJBdcZNJTZ0rjk3uQ+6TNzEpbiuZyE+BH3jV4/gr4a0f2NixB44+byOoWkDriO2Szc4MCVQ+v2M7SKWfU/4esdZ2Uu8j6sEBJbkqlmGEoHvKjsYhrsNg=
+	t=1733154005; cv=none; b=aDkUOncqBvOsSyLJPNmBc3VwvgqaspYznOoH1/7H0A/Qy1dWg2k/77OyKf8r4EtX3WbWpcBTX42L9YUkEi3p+oY5ziOVlM00GegG1zhnKwU1Qdf6SsKdzkZcAT/dKZJmraL7iEPysJ12GwfbCI/3cUE4k/F0QE8K0LMbqtAkfOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733153937; c=relaxed/simple;
-	bh=6FMVUMuVmiKoknMUpwq7h0V6bMG4QeWN9obr8VkzD5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W9VramS0B3HIH8nQPh/wg1U0dV9Hcl1U0xAUvaLbF34f2XhBhDA7F9aWh5rcENy1tVqj+HoLQ4a0Nzn5Z4jPF5lxLRMXuGgBDUdUJKJmkiQJubH7iYXr6pnmK08OXwjxX5xpon0w1qZTMeW4zYeLNXEeUu561iRedlMIAVTqcB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wf275xrI; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-382610c7116so2941915f8f.0;
-        Mon, 02 Dec 2024 07:38:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733153934; x=1733758734; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BgMG9j17VIY/+uN0vXhoiOG0maPDfpV2MZAeVxSTQP8=;
-        b=Wf275xrIqEt3FSSFceo9CILdLZiXcCZH/GyrrfPdoFfdlSntN1O/HF9YoBFMCfY+xA
-         OBA5XRsQbbD+VHjE6OU6UN3Zga+xQcbvxTKPsGbe0ha8W9eaHWx8NI2ZJLZPZwyljzFm
-         TAjIOg3aL/46/akzL6YX+naL+g69RnzjKREpEz+2mLtW+gIxa+jB4vYzTQHhqXRzJxQK
-         4755AeeJ3ohKks4hdgqsUsmSLoL/XDK5BDYW0QnMabwoJmmZpann2aMKqO0ullQwzR/S
-         qIdM/WbszeV/VnkZxi4tsjAYlogy56T3TWlPqS5GDffSDOT/9sPOrD4XBwjcow0Ae4Md
-         hcWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733153934; x=1733758734;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BgMG9j17VIY/+uN0vXhoiOG0maPDfpV2MZAeVxSTQP8=;
-        b=hZNq9LRpF6My/iIDI6R4H9dKhAtxQey+V8wtwEGEGq37yq9CRwnZDDqC+TWzkND3ln
-         FlI0mEPVRQbb1J90l9vVzCqtEIxZ8qHYLjsjpJ/+NttzgcGi9If9HWESzXnV6cdIAktO
-         HH59aANNSzhlitnuy6AfIY3CF7vjDzqA7b4wOnBG5BU/XQM3Yaer6BaXNilpFcoofvP8
-         egD5daMUYufjs47uTM2yrqPc8OTVouv71nRablqwHXij5eo1MsUUppMyQeMi68dKixwG
-         vz69LgOsz4zHzzirSg7hXfJSE69MZmWks6Sl1QRyDOYS1NcQlmUxmuUFRwC1Wh5zS0zH
-         OMrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFGp8BXE81YCAgf3bw0GAQ2VavXpcXVdXK7r8ygrP5TdDOYHXY8Bcd7/iVBvHH2QlRtgUP1tD/@vger.kernel.org, AJvYcCWxSqPjwTGNI5T5HNazfsTrPXZtEXVeeXPhqYUSiCLqmyJ0yEP1Mpj3RFHVa4PwVOdVK5tgMC+gd00=@vger.kernel.org, AJvYcCXYW6IzdhQkjf2kOOHfHZviPl+XZqjze9BS+HfEW6DwfrCwcNRLb94hhLUt3+0wzGvr/AedjbkdpVnLw0HS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB4LE4USHhl94tYZhu+i/AcPqHQQOftCAoj7uSgTEiuVtEfAUV
-	/cu3oIhuQKoGa22LMAy8B6WOQldKOCKM4d9vynwAZmR4AgkIaJIkddByeA==
-X-Gm-Gg: ASbGncuKYwZmJqnQhmD5y5iwGUyoyrDLZdepyQBVsp7Lxpiy6YXIRGCLT+EJN5NDQmz
-	CddtSyWde8KhSpdlYqjXWqGHQMcVYIURwL/oTSVFtSUAe/qNIWOsGcJ54//rl3iw/8yi9PmCtLI
-	PSu4drC7T2zM6ua112ll9HW8mQsEZzF7vOLLqZ3fuYlWaWBuGMIHpqVDPwp3XRvxOOpMqyigBMA
-	EIBwIGfG7rpWiDMQiCqnx3Ry6XwPmXC8aNyooxWajZYcX9XvwnvTDs9oYvIRCJ0gcpW/CXsD0+w
-	ayPYEJ2IUyIV68N2UdYwup/CtRBihN0iI3MAugcZxDaOog4gteiIzLD9ofLOQYp3vGm9Dcil5n7
-	hA67qV131AUltFnGFdqis4B9wGK2qceG4xoNQX5XJ
-X-Google-Smtp-Source: AGHT+IHhYi7myBSgKxUDvKABHp7+6thL5rVSy5IQiw2xBG1LGFtHDCgslmsCFo7yTW1tKtZUpIBt1g==
-X-Received: by 2002:a5d:64e2:0:b0:385:f092:e1a with SMTP id ffacd0b85a97d-385f0a152e1mr4081697f8f.11.1733153933559;
-        Mon, 02 Dec 2024 07:38:53 -0800 (PST)
-Received: from ?IPV6:2a02:8389:41cf:e200:f58:c447:145b:2b51? (2a02-8389-41cf-e200-0f58-c447-145b-2b51.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:f58:c447:145b:2b51])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385f0056637sm4071203f8f.15.2024.12.02.07.38.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 07:38:52 -0800 (PST)
-Message-ID: <9e1310d8-bcd9-40f9-8d44-abddc595ae9b@gmail.com>
-Date: Mon, 2 Dec 2024 16:38:50 +0100
+	s=arc-20240116; t=1733154005; c=relaxed/simple;
+	bh=CLMPfAtaiDr2I8PTcXssVMWT0ETo3B7jRCFUqi5vW/Q=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=c/ln5saUxw+67uoOQ9cGDTE2vePk23SHLy9RF1YjB3hdnGlvAPYjbCrrpQlMKHAqUlGRW5EgBygmu3RQjYOXAfAwQ4i7DlubIY3KoPdqONQ5TsHi1owXciO+w4Nx8vQStJCMdwRYR6Mff70XGjvjcvvcz/3W3QWBdWFyvCSfSBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=fail smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=alpha.franken.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D5F411F442;
+	Mon,  2 Dec 2024 15:39:57 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C1B1D139C2;
+	Mon,  2 Dec 2024 15:39:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5YkpL83UTWc9NQAAD6G6ig
+	(envelope-from <tsbogend@alpha.franken.de>); Mon, 02 Dec 2024 15:39:57 +0000
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] MIPS: kernel: Rename read/write_c0_ecc to read/writec0_errctl
+Date: Mon,  2 Dec 2024 16:39:36 +0100
+Message-Id: <20241202153937.27640-1-tsbogend@alpha.franken.de>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/11] iio: light: as73211: fix information leak in
- triggered buffer
-To: Jonathan Cameron <jic23@kernel.org>, Christian Eggers <ceggers@arri.de>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Antoni Pokusinski <apokusinski01@gmail.com>,
- Francesco Dolcini <francesco@dolcini.it>,
- =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?=
- <jpaulo.silvagoncalves@gmail.com>, Gregor Boirie <gregor.boirie@parrot.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
- Francesco Dolcini <francesco.dolcini@toradex.com>, stable@vger.kernel.org
-References: <20241125-iio_memset_scan_holes-v1-0-0cb6e98d895c@gmail.com>
- <20241125-iio_memset_scan_holes-v1-10-0cb6e98d895c@gmail.com>
- <20241130204923.45d71fa4@jic23-huawei>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20241130204923.45d71fa4@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.995];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On 30/11/2024 21:49, Jonathan Cameron wrote:
-> On Mon, 25 Nov 2024 22:16:18 +0100
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> 
->> The 'scan' local struct is used to push data to userspace from a
->> triggered buffer, but it leaves the first channel uninitialized if
->> AS73211_SCAN_MASK_ALL is not set. That is used to optimize color channel
->> readings.
->>
->> Set the temperature channel to zero if only color channels are
->> relevant to avoid pushing uninitialized information to userspace.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 403e5586b52e ("iio: light: as73211: New driver")
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> Huh.
-> 
-> If the temperature channel is turned off the data should shift. So should be read
-> into scan.chan[0] and [1] and [2], but not [3].
-> 
-> Not skipping [0] as here.
-> 
-> So this code path currently doesn't work as far as I can tell.
-> 
-> Jonathan
-> 
->> ---
->>  drivers/iio/light/as73211.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/iio/light/as73211.c b/drivers/iio/light/as73211.c
->> index be0068081ebb..99679b686146 100644
->> --- a/drivers/iio/light/as73211.c
->> +++ b/drivers/iio/light/as73211.c
->> @@ -675,6 +675,9 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
->>  				(char *)&scan.chan[1], 3 * sizeof(scan.chan[1]));
->>  		if (ret < 0)
->>  			goto done;
->> +
->> +		/* Avoid leaking uninitialized data */
->> +		scan.chan[0] = 0;
->>  	}
->>  
->>  	if (data_result) {
->>
-> 
+CP0 register 26 is used as ECC register for legacy cores, but newer
+cores (MIPS32/MIPS64) use it as an ErrCtl register. Since the kernel only
+uses CP0 26 as ErrCtl register rename the access functions to the more
+fitting name.
 
-Adding the driver maintainer (should have been added from the beginning)
-to the conversation.
+Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+---
+ arch/mips/include/asm/mipsregs.h |  4 ++--
+ arch/mips/kernel/mips-mt.c       |  7 +++----
+ arch/mips/kernel/spram.c         |  4 ----
+ arch/mips/kernel/traps.c         | 32 ++++++++++++++++----------------
+ 4 files changed, 21 insertions(+), 26 deletions(-)
 
-@Christian, could you please confirm this?
-
-Apparently, the optimization to read the color channels without
-temperature is not right. I don't have access to the AS7331 at the
-moment, but I remember that you could test my patches on your hardware
-with an AS73211, so maybe you can confirm whether wrong data is
-delivered or not in that case.
-
-Thanks and best regards,
-Javier Carrasco
+diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
+index 3c6ddc0c2c7a..c025558754d5 100644
+--- a/arch/mips/include/asm/mipsregs.h
++++ b/arch/mips/include/asm/mipsregs.h
+@@ -2039,8 +2039,8 @@ do {									\
+ #define read_c0_perfcntr3_64()	__read_64bit_c0_register($25, 7)
+ #define write_c0_perfcntr3_64(val) __write_64bit_c0_register($25, 7, val)
+ 
+-#define read_c0_ecc()		__read_32bit_c0_register($26, 0)
+-#define write_c0_ecc(val)	__write_32bit_c0_register($26, 0, val)
++#define read_c0_errctl()	__read_32bit_c0_register($26, 0)
++#define write_c0_errctl(val)	__write_32bit_c0_register($26, 0, val)
+ 
+ #define read_c0_derraddr0()	__read_ulong_c0_register($26, 1)
+ #define write_c0_derraddr0(val) __write_ulong_c0_register($26, 1, val)
+diff --git a/arch/mips/kernel/mips-mt.c b/arch/mips/kernel/mips-mt.c
+index 37676a44fefb..2ef610650a9e 100644
+--- a/arch/mips/kernel/mips-mt.c
++++ b/arch/mips/kernel/mips-mt.c
+@@ -122,9 +122,8 @@ void mips_mt_set_cpuoptions(void)
+ 		unsigned long ectlval;
+ 		unsigned long itcblkgrn;
+ 
+-		/* ErrCtl register is known as "ecc" to Linux */
+-		ectlval = read_c0_ecc();
+-		write_c0_ecc(ectlval | (0x1 << 26));
++		ectlval = read_c0_errctl();
++		write_c0_errctl(ectlval | (0x1 << 26));
+ 		ehb();
+ #define INDEX_0 (0x80000000)
+ #define INDEX_8 (0x80000008)
+@@ -145,7 +144,7 @@ void mips_mt_set_cpuoptions(void)
+ 		ehb();
+ 		/* Write out to ITU with CACHE op */
+ 		cache_op(Index_Store_Tag_D, INDEX_0);
+-		write_c0_ecc(ectlval);
++		write_c0_errctl(ectlval);
+ 		ehb();
+ 		printk("Mapped %ld ITC cells starting at 0x%08x\n",
+ 			((itcblkgrn & 0x7fe00000) >> 20), itc_base);
+diff --git a/arch/mips/kernel/spram.c b/arch/mips/kernel/spram.c
+index 71c7e5e27567..dd31e3fffd24 100644
+--- a/arch/mips/kernel/spram.c
++++ b/arch/mips/kernel/spram.c
+@@ -26,10 +26,6 @@
+ 
+ #define ERRCTL_SPRAM		(1 << 28)
+ 
+-/* errctl access */
+-#define read_c0_errctl(x) read_c0_ecc(x)
+-#define write_c0_errctl(x) write_c0_ecc(x)
+-
+ /*
+  * Different semantics to the set_c0_* function built by __BUILD_SET_C0
+  */
+diff --git a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
+index dc29bd9656b0..4515125a93f1 100644
+--- a/arch/mips/kernel/traps.c
++++ b/arch/mips/kernel/traps.c
+@@ -1705,10 +1705,10 @@ static inline __init void parity_protection_init(void)
+ 		l2parity &= l1parity;
+ 
+ 		/* Probe L1 ECC support */
+-		cp0_ectl = read_c0_ecc();
+-		write_c0_ecc(cp0_ectl | ERRCTL_PE);
++		cp0_ectl = read_c0_errctl();
++		write_c0_errctl(cp0_ectl | ERRCTL_PE);
+ 		back_to_back_c0_hazard();
+-		cp0_ectl = read_c0_ecc();
++		cp0_ectl = read_c0_errctl();
+ 
+ 		/* Probe L2 ECC support */
+ 		gcr_ectl = read_gcr_err_control();
+@@ -1727,9 +1727,9 @@ static inline __init void parity_protection_init(void)
+ 			cp0_ectl |= ERRCTL_PE;
+ 		else
+ 			cp0_ectl &= ~ERRCTL_PE;
+-		write_c0_ecc(cp0_ectl);
++		write_c0_errctl(cp0_ectl);
+ 		back_to_back_c0_hazard();
+-		WARN_ON(!!(read_c0_ecc() & ERRCTL_PE) != l1parity);
++		WARN_ON(!!(read_c0_errctl() & ERRCTL_PE) != l1parity);
+ 
+ 		/* Configure L2 ECC checking */
+ 		if (l2parity)
+@@ -1761,18 +1761,18 @@ static inline __init void parity_protection_init(void)
+ 			unsigned long errctl;
+ 			unsigned int l1parity_present, l2parity_present;
+ 
+-			errctl = read_c0_ecc();
++			errctl = read_c0_errctl();
+ 			errctl &= ~(ERRCTL_PE|ERRCTL_L2P);
+ 
+ 			/* probe L1 parity support */
+-			write_c0_ecc(errctl | ERRCTL_PE);
++			write_c0_errctl(errctl | ERRCTL_PE);
+ 			back_to_back_c0_hazard();
+-			l1parity_present = (read_c0_ecc() & ERRCTL_PE);
++			l1parity_present = (read_c0_errctl() & ERRCTL_PE);
+ 
+ 			/* probe L2 parity support */
+-			write_c0_ecc(errctl|ERRCTL_L2P);
++			write_c0_errctl(errctl|ERRCTL_L2P);
+ 			back_to_back_c0_hazard();
+-			l2parity_present = (read_c0_ecc() & ERRCTL_L2P);
++			l2parity_present = (read_c0_errctl() & ERRCTL_L2P);
+ 
+ 			if (l1parity_present && l2parity_present) {
+ 				if (l1parity)
+@@ -1791,9 +1791,9 @@ static inline __init void parity_protection_init(void)
+ 
+ 			printk(KERN_INFO "Writing ErrCtl register=%08lx\n", errctl);
+ 
+-			write_c0_ecc(errctl);
++			write_c0_errctl(errctl);
+ 			back_to_back_c0_hazard();
+-			errctl = read_c0_ecc();
++			errctl = read_c0_errctl();
+ 			printk(KERN_INFO "Readback ErrCtl register=%08lx\n", errctl);
+ 
+ 			if (l1parity_present)
+@@ -1812,11 +1812,11 @@ static inline __init void parity_protection_init(void)
+ 	case CPU_5KC:
+ 	case CPU_5KE:
+ 	case CPU_LOONGSON32:
+-		write_c0_ecc(0x80000000);
++		write_c0_errctl(0x80000000);
+ 		back_to_back_c0_hazard();
+ 		/* Set the PE bit (bit 31) in the c0_errctl register. */
+ 		printk(KERN_INFO "Cache parity protection %sabled\n",
+-		       (read_c0_ecc() & 0x80000000) ? "en" : "dis");
++		       (read_c0_errctl() & 0x80000000) ? "en" : "dis");
+ 		break;
+ 	case CPU_20KC:
+ 	case CPU_25KF:
+@@ -1887,8 +1887,8 @@ asmlinkage void do_ftlb(void)
+ 	if ((cpu_has_mips_r2_r6) &&
+ 	    (((current_cpu_data.processor_id & 0xff0000) == PRID_COMP_MIPS) ||
+ 	    ((current_cpu_data.processor_id & 0xff0000) == PRID_COMP_LOONGSON))) {
+-		pr_err("FTLB error exception, cp0_ecc=0x%08x:\n",
+-		       read_c0_ecc());
++		pr_err("FTLB error exception, cp0_errctl=0x%08x:\n",
++		       read_c0_errctl());
+ 		pr_err("cp0_errorepc == %0*lx\n", field, read_c0_errorepc());
+ 		reg_val = read_c0_cacheerr();
+ 		pr_err("c0_cacheerr == %08x\n", reg_val);
+-- 
+2.35.3
 
 
