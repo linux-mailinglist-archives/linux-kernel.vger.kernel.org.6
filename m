@@ -1,150 +1,104 @@
-Return-Path: <linux-kernel+bounces-427905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0359E0791
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:52:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6280F16DB6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:40:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DC4209F53;
-	Mon,  2 Dec 2024 15:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="D169VzNP"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2563C9E0748
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:41:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0D4208978;
-	Mon,  2 Dec 2024 15:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6100284839
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:41:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E7E209F58;
+	Mon,  2 Dec 2024 15:41:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEB8208978
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154039; cv=none; b=D80CXp1CfmSt8EqMkfok9S9TlVXligzaQsmTH72p7QBBTiYdKKuqDAkc5id+uKgO5WIQJYfI8nHwpegLN9QFOkO2vMPtFCs+Ov/TSwgWTu1z5HKTknRps1YdAAt2sy9lPGuF0XlS4Np7PuSd54dXTAlCG4VM/DJNPjKFwGeQGqU=
+	t=1733154072; cv=none; b=MUk2s88jTSuOQFNgtC11g2KER6cBXV7R0Viiy2johTQbpmSkh1O1N3d9+2B39eIxp0tIBW/iuT2GLgnk7UsknedaZLuCpMIaCRA2LUQXM4tw9ANWEgVTWMdo2eQaCfKLlEq46HvAzlcd4r60OG4WBp5Aw3tbxUQWpR2cevupahg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154039; c=relaxed/simple;
-	bh=YBy3s9fNCR8iPUJjr2BKvztJ9a50NhpU8H/uASU98Ho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZpuWUsbK1T89Qt3wfigOGdLU8hib+MB2AC1h2Y9BBNGHl3PYhHj8KhK7nOIexfZTDKOX3cXcpZcmSNzUHU+hKuh5emsHu4RRO/Ocajib8rkAivMFyUA4Hc9r9Bqp/bcAyWtgt8CnJwVuEwTOJDObcLoAKXxOs/XKahCiO9vOEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=D169VzNP; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1733154008; x=1733758808; i=wahrenst@gmx.net;
-	bh=ie04BQKrraW4QBO6vajJjoLi/zc/N6fbE/aXMCjogQI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=D169VzNPq7SZOZg+lDoCe8Qf9x4Ncfat6lSA8IyAbuNBnfUL/Q9MDGWnJUJCA0DW
-	 dLNnlNOjomMt4+Q6od04JHoYRtsywJQIu7SBcLHR2m31KbjMmE9kmITXY4H+6TMc0
-	 fx1vgPrZAZK6y0ZyocL24gTmDW53yv/yWXxVIX9vKqvGfGOR7jA4YON64tNOksEop
-	 +UQgz2Tg7rRUvWxOCrnd87YkIm2cfRgR/NZNAXsiP7XiwyEMyQXepO8xk+lII0oyb
-	 EbJaEEM+lJrfIhHaB/tspcParFHb/+W+79JIQSf37b4GbdiN+6SKoJQPDCHkeCmtH
-	 0frRuODZCyztIYRkFQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.105] ([37.4.251.153]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M8ykg-1tLy0s1Jig-005GpS; Mon, 02
- Dec 2024 16:40:08 +0100
-Message-ID: <b80097a1-4c8b-43f1-920f-b31489619111@gmx.net>
-Date: Mon, 2 Dec 2024 16:40:04 +0100
+	s=arc-20240116; t=1733154072; c=relaxed/simple;
+	bh=NfX2Pis5zW8FIY0ASt6R4GF+eolhjYGoOTlMuW0kmpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SUxyOMY3AJy3JY6i21UzFF8octDQSW3TgdtvroKQNAEhxzr75bNrrDo3XosELSG5npRArpDSwnj7btaOxSIEUkNKWX5EOtIilB4BcdDTiViAM0eJr8Vx19XNtsLLKOykurdQ/1vNSXoX3Cu1qRDgY1iDP6wPQ4ocsX6MJgESg2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1tI8Xm-0001eK-EZ; Mon, 02 Dec 2024 16:41:02 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1tI8Xl-001JzE-0g;
+	Mon, 02 Dec 2024 16:41:01 +0100
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1tI8Xl-00Acqz-2p;
+	Mon, 02 Dec 2024 16:41:01 +0100
+Date: Mon, 2 Dec 2024 16:41:01 +0100
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Lin <yu-hao.lin@nxp.com>, kernel@pengutronix.de,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v3 00/12] mwifiex: two fixes and cleanup
+Message-ID: <Z03VDfTImax7lu_p@pengutronix.de>
+References: <20241202-mwifiex-cleanup-1-v3-0-317a6ce0dd5b@pengutronix.de>
+ <87ldwyumvq.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] arm: dts: broadcom: Add interrupt-controller flag for
- intc on BCM2711
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
- linux-gpio@vger.kernel.org
-References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
- <20241202-dt-bcm2712-fixes-v1-6-fac67cc2f98a@raspberrypi.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20241202-dt-bcm2712-fixes-v1-6-fac67cc2f98a@raspberrypi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Ua8NGna7H1m0vTQYmzbtvKSsnWt7yxjKDiRlZ6y6icjnDgqA/Rw
- /0PsbSmLeFBFOxkLDl9tr9eOyUv8wyP+8jY6Pp8QjoFFW8CIWEZpR+8ViC//uhoPH/8/0BG
- KRCx039CoaP1f1Vshra/aY7f3pxy5O6QWuXNpROz5+0avGCJ/KP9rqlPSQ6Zc9o9Truei2B
- dJa4Xg0fqCw+MNTU/dPVg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vuiMuJHOccw=;E9PY0fNnCVNiEPWlmRO41i52zgF
- rFS2qSJ+pK5e633kWJlXJlpMb39Y2KmLH5x0LfVzs+RS7FvzHzMVYSorFuF9szTvf6LuzVoj+
- 4gpR04bpsPfPXVqXMxsQSZWNY1JNV0d2qc4qMoyZ7l5RQpjD0oeemojGh8OOZ0xpyY1w0DT/T
- EouR1ODjvHLmYQKSNAfYXayUSVXFXp5WbLgcRQFnHDOIeiARhDGbahlxLc1UXBmCJeUNb9rvb
- tVg+MLbdtp8fw4q951b7aW/Q3CbnTUZIHUO0ogQWrg8ObpeTnTsLGAQRsppMJSHR2LF+z53tT
- hsCDz4jICvqTwuHMAsz6uw3yEgTjY0dbWSUoGpFTK+9YOu8HdprHYdomGc0MRz4DtFu9WeCyt
- lZYonEKUFDCCMn9QqDos2j9J7SEKytpy5Q/DHqbGCc/Mtx2v8ZY/RTAlxtLot0GYqimaeweiP
- a5YkzNRhquVIKZgKoxrU38AcKvjcnNHCtyBCaVqqKAgGmE0mDrdjsRliHxxWH1xG3B7LvlZCs
- VtpDBUghMkk9INyS4yXEdPuHQuAv2qzxLD3ilDXwJhFIDJE/2iZrJtwVrqNYDnfM6x8IgcRQF
- glqGd80UnGdT0nQmef1FzwedB364zKgdcrGKeAgm7bkI6ElhzSES/IMdMwH0KtCh+c5a1E6mC
- qdrREvnsecRJxZ4xqA9CK2mOouV0y1bKIq2HfRptRNngv4T3CQlUDllDTAYaai6573bB0v47H
- y2XoYu39+Rx/zvuvC+9vbmcAY0XtNEv7+wA4ApG/Nd18TDDDZEN7zqvMzxPdDHq7vFBznnrD/
- 89LN0H6qo38sQlJYGgG8Zy0E1NZO0CdlwmN2y1eMSJJruq+HTUUkkBDNzaz0VpPXlQJzLB0x1
- d5n95BQeSzxCzDNLMAkJZAkM8NxuvmGDTKqT82DMsFbsYouaulpG9JW/rrTM4O41t51zUZoJ1
- pnRDLI8wanLLFCnsgleMvJHJ655BpE8SYPv2OPfswSUZWsTrZXJhTfS7YqSAI4Qf8wrVVjsEu
- W5S1irsSQqfpipXhthvT/VdfrjIKCdkUUA8JB/lCrGEtFACr40tRhajeQcxV4FujgbZgVsuAr
- VHWXetzRWXT4gpU2KKzZOM2iBLyr9b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ldwyumvq.fsf@kernel.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Dave,
+On Mon, Dec 02, 2024 at 05:26:33PM +0200, Kalle Valo wrote:
+> Sascha Hauer <s.hauer@pengutronix.de> writes:
+> 
+> > These are a few patches broken out from [1]. Kalle requested to limit
+> > the number of patches per series to approximately 12 and Francesco to
+> > move the fixes to the front of the series, so here we go.
+> >
+> > First two patches are fixes. First one is for host mlme support which
+> > currently is in wireless-next, so no stable tag needed, second one has a
+> > stable tag.
+> 
+> Are you sure? Apparently we didn't take any patches to wireless-next
+> during this merge window (ie. last two weeks), so everything which is in
+> wireless-next should be in v6.13-rc1, unless I'm missing something of
+> course. Not a problem for me but wanted to point out anyway.
 
-Am 02.12.24 um 15:31 schrieb Dave Stevenson:
-> BCM2711 DT was producing dtbinding validation errors of
->
-> interrupt-controller@40000000: 'interrupt-controller' is a required
-> property
-> interrupt-controller@40000000: '#interrupt-cells' is a required property
->
-> Fix them by adding the required flags.
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Did you actually test these changes, because the last time [1] it broke
-the boot of RPi 4 and likely for RPi 5, too?
+Forget this last sentence, I should have removed it. It was true for v1
+of this series. 01/12 is already applied as 0d7c2194f17c7 ("wifi: mwifiex:
+add missing locking for cfg80211 calls") and I should have dropped that
+patch from this series.
 
-Best regards
+Sascha
 
-[1] -
-https://lore.kernel.org/linux-arm-kernel/07154679-42bc-43ba-8b72-62083ed78=
-a4d@gmx.net/
-> ---
->   arch/arm/boot/dts/broadcom/bcm2711.dtsi | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/broadcom/bcm2711.dtsi b/arch/arm/boot/dts=
-/broadcom/bcm2711.dtsi
-> index e4e42af21ef3..313b1046d74f 100644
-> --- a/arch/arm/boot/dts/broadcom/bcm2711.dtsi
-> +++ b/arch/arm/boot/dts/broadcom/bcm2711.dtsi
-> @@ -51,6 +51,8 @@ soc {
->   		local_intc: interrupt-controller@40000000 {
->   			compatible =3D "brcm,bcm2836-l1-intc";
->   			reg =3D <0x40000000 0x100>;
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <2>;
->   		};
->
->   		gicv2: interrupt-controller@40041000 {
->
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
