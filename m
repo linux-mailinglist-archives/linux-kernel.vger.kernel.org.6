@@ -1,117 +1,90 @@
-Return-Path: <linux-kernel+bounces-427396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EF59E007C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:28:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E619E00CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:40:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBE322831DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:28:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C69BB261B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EC8205E03;
-	Mon,  2 Dec 2024 11:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D52220898B;
+	Mon,  2 Dec 2024 11:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TRUClMXb"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="O5fmgkSi"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2060.outbound.protection.outlook.com [40.107.244.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C90D1FDE11
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138361; cv=none; b=p8lbCGmkBQkl07xoxZO/ZRsVk8EgvODuSgCGFU+ejpVsPwYV7Ga5TVpu0OplFsXWeO2/LwlgQtep+/cqzly+vefpU5ySMnswCX/purBagopQY2vn1pQCjAZ1r/+qWS1j/es58Fejd5rbAsQ6BUJ5hOuoDshcUKwb5c5suMGOA2k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138361; c=relaxed/simple;
-	bh=QMBFXNqBpFgYP2yitTOgzdsfZItshvzAST6FqjQRjNM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dq1Mgqg/g5T520U0vrUXygfHHsYEURkNcvDpaMNqgHhs0Ndpj/tl+YNTueSYMazSr/m0hZVU513lMBB+1k6vFv3fMiSt145swaayg70XDd1GBveVBOMZ5iSmfc+02W/vKyY3E+gFLdEYm9aEgQX8Kdw/jwpos4cBW5QYddCuIKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TRUClMXb; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5ced377447bso6610222a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 03:19:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733138355; x=1733743155; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+dNlxUlq/zQec54ENuov38IuayLoY+NtEDaFnmM1inQ=;
-        b=TRUClMXbT/BkEMucbnwqj8OcamE/lxRppa4P432szv42fzZY4uemRAU6iOZ7lsvAc/
-         fwPFwx1PMfCtYKXQ8kfySDfXiki98a6L7hP2mDvg6NYBTSK92eHCHTkM5/dxnsxhnDVh
-         9czhw0Zfjc9gR7ITOO3D8PJRVXyqkCwRu6VBq3gKr4fkkTBa4pc7n1W7bWHGio2Gco/l
-         4cnH37V3kw8znEEAlmF3wv2i8gTG06ijbVp8lk3WHkawjM7ibZTM3dLei6KNr/FlPGx5
-         jlA7CO0nA7UDUIr87WQu1nuM5wSUEZQ828yYv958AZPjqFj8pdzljNItiO9x4OfVCUgK
-         fHAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733138355; x=1733743155;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+dNlxUlq/zQec54ENuov38IuayLoY+NtEDaFnmM1inQ=;
-        b=HEh+f4fpTA0DWK/hyApcYM935UdYO56OgkAvnDhOhHgkpdQt7r8eVlwW4bQKiVLl3E
-         jz4gm9dD75AJeCDBFPYOpE3pzTHkN/kDnGFfPuh48dgLWd5RTiaojCY2LJR6hnvnLs1J
-         RMiwB1S+OOsH6gE6gDBbvkiowhXxLgO5eQPDwiXUrTTWcCtCEA/vC86HL0bDwTecxHPt
-         PP/wxut9gzFahEUdaM5Rbc+FhOGobVbtzFzywpbgeLkYHJqCF9jOmgJQf8J5mvLnXdHX
-         drW9y0cWarhpp2M2GUpwZJ8ERAXtw1RiNofOseWOolOqRj/qDl7ApbC11GCkbdG5MRmP
-         WBBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfBrWT0v7lg4bNI2UeowTdXJkSHLz3ZASlt8mI1qZbxw9ek28bt6pJHfvCqEcNUsoZOXJE2srPFbQI5w4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP7Tqszw0x8JFPvcubSFl2DYuXhlykXJAkQfghniuAOPOZN7YE
-	8+zqweCVv53q2E6Y223utNW2GPVU1Gsj6nnZvuM2cH1wB/VopME2yM9tr0oXB9g=
-X-Gm-Gg: ASbGncusboRJx6gKeRO8gOt4s9huX8jSRihuKrQ3RGv3ZnzTGvIdLrT1AwuH+QdnkAb
-	k0si59LgcB9Eh77ktbBjBzK6ij1wHv3/xN2tY1/A+yUA2eVaSre6YOo9Tn6nrMyEfaELGdssOBS
-	soNf+gtDy0faR2tmUcqDMevkMPk4QCYXwVD0zOUAMeo1O03FtLlzqwAuVzj7PPVqZ9QCQXOws22
-	LJZfb6+QkGpk9K8A/mrBugRZDFBKgQl3lzfZ9PsiEOUOIqWWbDRqCQLEeDNySer+x6HvnM966Df
-	rQ5agfomLhdE4tKmdBDC
-X-Google-Smtp-Source: AGHT+IEh8VAXDJC3bTBBrwDpqq8+bh66QBF8HuQqB3DA5Y6Ne4IKysOOgMjNIKrVqzCRG1epx5t5JQ==
-X-Received: by 2002:a05:6402:3484:b0:5d0:904f:710b with SMTP id 4fb4d7f45d1cf-5d0904f726amr20592659a12.34.1733138354832;
-        Mon, 02 Dec 2024 03:19:14 -0800 (PST)
-Received: from localhost (host-87-20-211-251.retail.telecomitalia.it. [87.20.211.251])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0d2f0652bsm2371980a12.25.2024.12.02.03.19.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 03:19:14 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v5 10/10] arm64: defconfig: Enable RP1 misc/clock/gpio drivers
-Date: Mon,  2 Dec 2024 12:19:34 +0100
-Message-ID: <2dc27b08d82e5257a831026c963ac148d11cb6e8.1733136811.git.andrea.porta@suse.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1733136811.git.andrea.porta@suse.com>
-References: <cover.1733136811.git.andrea.porta@suse.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26481FCFE7;
+	Mon,  2 Dec 2024 11:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733138430; cv=fail; b=nNI2jbok/jXLmvow7swSTAadjWpLMO593R9IQlXMXOGa7FD/wsdl1AUHm9VWJa0tR4sk2whUNpolAcoAdns7HbkaiSz39YO8b2poJngIcPvOJfMZkf2Ra0E3fYPoA/rXuA0fRFG1N2XAe7a72hAkI/ypg6E2p1xhRgze/IzrDFk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733138430; c=relaxed/simple;
+	bh=E6EBfQdrK1XZ0xdOhp/6lsFSuH8DwEoIZin/WkOLGKs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Za93mzGh5EbeAxM7Oaj/t2dpFc70AdIK/IEROjx77kVYjbuY42n9BcbQPoM2OC59EJTXO3qVGxXUKSD9Sro/W3UKnTRhzS6gfzdvzm3SR8XVACvQSLLUlyw5fumplFEgGybufMsHp9IYyeGXvKrR54WkNbWT26lF8dgT7q3Unqk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=O5fmgkSi; arc=fail smtp.client-ip=40.107.244.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sIKyarUQsUOvEc9s1pJ0+KSaoNleYfJXckoLD7Za7DK3SuHHBD2elmJSboSSaIQsmoaNM3bQxv6Wzrm5rjqrm4FbeMX7xAWceQjZgGerho/vtIdaqnUh/A+/G1anO1A43A8TpJlqDm9N9T9VqqEpLMPrrhNvBUXuJP+30Eju0BOZhf3ZW0yen8IdpEg3NA2zhNcITd018+Y20UGKLbor49lq+HF6+OdWvIVjjvF1k4NKFAG31+rzk1cGV8BsnvT+dQCh5Stiwg+NOnicxUJi/hrEYy+FFnY/TN6pUyumvF5rfycMPoPL+TWLsn3NaWieA5nRxOHbIC9sKnazCc4f7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8sojNcxyvxsk3EFC9RaVbNXsT3rDL+nmY8hG0PQC9gw=;
+ b=B6XoFmgSUqlh31GfO8QhrgoiND5pzmRFt94IOSy9qNLsp/kQR1A9CXL7hyanBLHuRYHhEcnVOOg1/UjJ6SONHPQOmf/3BT26HN1tPMs6n8rcepmdvHNKi3RJpl61joT2CJhAJgS75Imr+dWGJEHdJhqL01LOBVDMG9W4uzr4PGtrNqxduQ6U3cLlkImqsFmoEknF1yj0iR9fMcqp/m3wlgqwgtNyZ9f4cQVopJ9RZxyW2saafBmVFaLEgjNF4+P0v+g9lDdNFzoGLjG2d8UbpGk+mWoWC5nlZa28B+pAaIAxmIUZsOiAcuJLJXmYRqVkjpkNCcpABPHUSmeys3UA1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8sojNcxyvxsk3EFC9RaVbNXsT3rDL+nmY8hG0PQC9gw=;
+ b=O5fmgkSivZLkDhQKl74/FnICfgSFEwzpHdmECS0JBMSv0kBSa7nsRipYuLZBAhYr3t8WacHEHz1Xy7SD1uN2I0MAWLRO/AeETu9tztsAZITeZ02I3wwtwofqb7knbF4vkDSrOMWudMT9Zwfi48MnFZ+mDnmotcH49yAo+fVWwvE=
+Received: from MW4PR04CA0228.namprd04.prod.outlook.com (2603:10b6:303:87::23)
+ by DM4PR12MB6400.namprd12.prod.outlook.com (2603:10b6:8:b9::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8207.19; Mon, 2 Dec 2024 11:20:21 +0000
+Received: from CO1PEPF000044EE.namprd05.prod.outlook.com
+ (2603:10b6:303:87:cafe::b3) by MW4PR04CA0228.outlook.office365.com
+ (2603:10b6:303:87::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.16 via Frontend Transport; Mon,
+ 2 Dec 2024 11:20:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044EE.mail.protection.outlook.com (10.167.241.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Mon, 2 Dec 2024 11:20:20 +0000
+Received: from tunga.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 2 Dec
+ 2024 05:20:13 -0600
+From: Raghavendra K T <raghavendra.kt@amd.com>
+To: <linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>
+CC: <bharata@amd.com>, Raghavendra K T <raghavendra.kt@amd.com>, Huang Ying
+	<ying.huang@intel.com>, Andrew Morton <akpm@linux-foundation.org>, "Dan
+ Williams" <dan.j.williams@intel.com>, David Hildenbrand <david@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Alistair Popple
+	<apopple@nvidia.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
+	<ilpo.jarvinen@linux.intel.com>, Mika Westerberg
+	<mika.westerberg@linux.intel.com>, Fontenot Nathan <Nathan.Fontenot@amd.com>,
+	Wei Huang <wei.huang2@amd.com>
+Subject: [RFC PATCH] resource: Fix CXL node not populated issue
+Date: Mon, 2 Dec 2024 11:19:41 +0000
+Message-ID: <20241202111941.2636613-1-raghavendra.kt@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,46 +92,218 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044EE:EE_|DM4PR12MB6400:EE_
+X-MS-Office365-Filtering-Correlation-Id: ecd98a2f-b34d-483c-132c-08dd12c34f0b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZbJqA8zFLvGT/lkee+Tkn3Sx5uD/f9zz37SdybkJREvTvReaFBLK5aJQAj+b?=
+ =?us-ascii?Q?zk0L4lLUi4KkJQ6GyJIu9zh1p+CSusm8Tz/xVK1TxfCTCrz+3Fxjcb5DBNR7?=
+ =?us-ascii?Q?9UVqLeOfIijby1E5o5Vo2AwDxmyoiQnD6zc1l4MtlhqY/QBn5Rb9TzmaT8Kc?=
+ =?us-ascii?Q?dfcZ5kEA9ERK6n9cgFeq6f2JWQFx83d/zFsasZuA45x0Nzhe/F6gis0RMGfG?=
+ =?us-ascii?Q?T9EAtvid9oX/OYxDKush8WEENOap8U2fndhyOe2sqQcSzJBVBjlSZN5FxIS9?=
+ =?us-ascii?Q?VV+29rDNTFs8yNnMyk/uDc8e27nEFtfjtTZS6yirdgmcr04BLbyWCJ0iOhgL?=
+ =?us-ascii?Q?+EM65fFg34V8geYlgNU2F9+NdVh43Z+52ICx5rLlIkW4fhaHGrDZxibZeCZJ?=
+ =?us-ascii?Q?f2YtSudpp2cDYzH+HKm9DuJeImVWX+GA56tvelwSSpi7gwrNvh2VQiKv/Fw7?=
+ =?us-ascii?Q?UPXJ9OdUuVerOLcUuZ1KYIoJHR+9kyxey4cfoVNpGrney1NL+FiTyz/uLL7z?=
+ =?us-ascii?Q?pbVTIni+NAdwUu494VUiUxJ7YlhcqwTDlsn3Tqv8BpHjzO3YrdAyg+YqgK0r?=
+ =?us-ascii?Q?btiEqsr1dmJpz7JVxkAPIqGKZ8qReqk2trTCEOWe/NIQRWKY0ssSoXNhZBeT?=
+ =?us-ascii?Q?2xqQdALWk1mCO3oPmt+wYrOUru5oyZK2sDbADymtjKAchSw9hBZs+WjGYoku?=
+ =?us-ascii?Q?gxTeKiiImvK5lt/1zIVB3VP1uIG3rXr+aOyk+VTqpPKYl8+rccDrJWuRdDM0?=
+ =?us-ascii?Q?kZNbjEYzt5IgXF0pJf20bBSm15iDnzEc8T78kBwPNgFOu8GSpUa1s16PTyCk?=
+ =?us-ascii?Q?Ktp1Mp3V4UYm/Kfpvc2uLH0pWXB51qExbRObpZfTdVg7cujcuNr4WpY4s/Wb?=
+ =?us-ascii?Q?XgQFv52EWPAmmijH8BdODOxWMa51IeKo8J35abvbZzaHAJZi/rax7RCDAmBu?=
+ =?us-ascii?Q?a22PUJl+NglCat/e0iACD80F8kecgtfsIiYPVt0W+82H4hXz/btWEob+mHYS?=
+ =?us-ascii?Q?tOQbB9tkLDr6U8vgsQMkK+z9ssvlcbbyFj2VL88W+oJZm4pGBUA1o57VyAi8?=
+ =?us-ascii?Q?DYg8G31n25oGYw1EqJuUzfeHfR+EkWNzkp0R/hB1SoWP2jg6gk4gMFXLtLxi?=
+ =?us-ascii?Q?QvVnFyL61xlbTqVM19d+BnmwKrtUgaMbXghOk9l/hDeHaZ3A3UvlXIwZ/2mK?=
+ =?us-ascii?Q?sPC6DKMl1GvqMF39x/KeT9EBwM29c0FK/tJyOb2tdkTLW7JkzxG5ou0zJk21?=
+ =?us-ascii?Q?awOwSXwLgrj8yZIhqt3nWA/x/bznS/cSJ5M7nBa9EoSExNWav2q+5tb9I2SQ?=
+ =?us-ascii?Q?EbmpQn6rTkl+ISZnSeNupqBgK4XRpUYrNWdeHdV86KtqP8Qlx23nddH4h6Hv?=
+ =?us-ascii?Q?fR1ww4BLBZT5u8CcXu1F7h9K/X6ivqS3NyP1togi+uFlg0kK8w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 11:20:20.8651
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecd98a2f-b34d-483c-132c-08dd12c34f0b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044EE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6400
 
-Select the RP1 drivers needed to operate the PCI endpoint containing
-several peripherals such as Ethernet and USB Controller. This chip is
-present on RaspberryPi 5.
+Before:
+~]$ numastat -m
+...
+                          Node 0          Node 1           Total
+                 --------------- --------------- ---------------
+MemTotal               128096.18       128838.48       256934.65
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+After:
+$ numastat -m
+.....
+                          Node 0          Node 1          Node 2           Total
+                 --------------- --------------- --------------- ---------------
+MemTotal               128054.16       128880.51       129024.00       385958.67
+
+Current patch reverts the effect of first commit where the issue is seen.
+
+git bisect had led to below commit
+Fixes: b4afe4183ec7 ("resource: fix region_intersects() vs add_memory_driver_managed()")
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Alison Schofield <alison.schofield@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: <ilpo.jarvinen@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Fontenot Nathan <Nathan.Fontenot@amd.com>
+Cc: Wei Huang <wei.huang2@amd.com>
+Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
 ---
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/resource.c | 51 ++++++++---------------------------------------
+ 1 file changed, 8 insertions(+), 43 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c62831e61586..91b39026dc56 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -609,6 +609,7 @@ CONFIG_PINCTRL_QCM2290=y
- CONFIG_PINCTRL_QCS404=y
- CONFIG_PINCTRL_QDF2XXX=y
- CONFIG_PINCTRL_QDU1000=y
-+CONFIG_PINCTRL_RP1=m
- CONFIG_PINCTRL_SA8775P=y
- CONFIG_PINCTRL_SC7180=y
- CONFIG_PINCTRL_SC7280=y
-@@ -690,6 +691,7 @@ CONFIG_SENSORS_RASPBERRYPI_HWMON=m
- CONFIG_SENSORS_SL28CPLD=m
- CONFIG_SENSORS_INA2XX=m
- CONFIG_SENSORS_INA3221=m
-+CONFIG_MISC_RP1=m
- CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
- CONFIG_CPU_THERMAL=y
- CONFIG_DEVFREQ_THERMAL=y
-@@ -1272,6 +1274,7 @@ CONFIG_COMMON_CLK_CS2000_CP=y
- CONFIG_COMMON_CLK_FSL_SAI=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_COMMON_CLK_PWM=y
-+CONFIG_COMMON_CLK_RP1=m
- CONFIG_COMMON_CLK_RS9_PCIE=y
- CONFIG_COMMON_CLK_VC3=y
- CONFIG_COMMON_CLK_VC5=y
+Note: Posting the fix that works for me. But looks like an exact fix
+might be different. Since I am not much familiar with the below code,
+I will have to go back and look into more details.
+
+Please let me know if more detail is needed. sorry if I had missed something
+obvious.
+
+Git bisec log looked like this:
+
+# good: [f7feea289f9ae3a8fb56e9daa3832949bf742c53] mm: numa_memblks: use memblock_{start,end}_of_DRAM() when sanitizing meminfo
+git bisect good f7feea289f9ae3a8fb56e9daa3832949bf742c53
+# bad: [9852d85ec9d492ebef56dc5f229416c925758edc] Linux 6.12-rc1
+git bisect bad 9852d85ec9d492ebef56dc5f229416c925758edc
+# good: [a65b3c3ed49a3b8068c002e98c90f8594927ff25] Merge tag 'hid-for-linus-2024091602' of git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid
+git bisect good a65b3c3ed49a3b8068c002e98c90f8594927ff25
+# bad: [486fd58af7ac1098b68370b1d4d9f94a2a1c7124] zram: don't free statically defined names
+git bisect bad 486fd58af7ac1098b68370b1d4d9f94a2a1c7124
+# bad: [7856a565416e0cf091f825b0e25c7a1b7abb650e] Merge tag 'mm-nonmm-stable-2024-09-21-07-52' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+git bisect bad 7856a565416e0cf091f825b0e25c7a1b7abb650e
+# bad: [1868f9d0260e9afaf7c6436d14923ae12eaea465] Merge tag 'for-linux-6.12-ofs1' of git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux
+git bisect bad 1868f9d0260e9afaf7c6436d14923ae12eaea465
+# good: [e55ef65510a401862b902dc979441ea10ae25c61] Merge tag 'amd-drm-next-6.12-2024-08-26' of https://gitlab.freedesktop.org/agd5f/linux into drm-next
+git bisect good e55ef65510a401862b902dc979441ea10ae25c61
+# good: [f1a4dceeb2bd4b4478e4f0c77dac55569d153fb3] drm/xe: Fix missing conversion to xe_display_pm_runtime_resume
+git bisect good f1a4dceeb2bd4b4478e4f0c77dac55569d153fb3
+# bad: [839c4f596f898edc424070dc8b517381572f8502] Merge tag 'mm-hotfixes-stable-2024-09-19-00-31' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+git bisect bad 839c4f596f898edc424070dc8b517381572f8502
+# good: [726e2d0cf2bbc14e3bf38491cddda1a56fe18663] Merge tag 'dma-mapping-6.12-2024-09-19' of git://git.infradead.org/users/hch/dma-mapping
+git bisect good 726e2d0cf2bbc14e3bf38491cddda1a56fe18663
+# good: [992f9884626a0e6ab73a98ca4eb166d17675cae6] Merge patch series "NCR5380: Bug fixes and other improvements"
+git bisect good 992f9884626a0e6ab73a98ca4eb166d17675cae6
+# good: [adedd0f46c923f8d63aeb42d504c82431febed31] scsi: bnx2i: Remove unused declarations
+git bisect good adedd0f46c923f8d63aeb42d504c82431febed31
+# good: [a1d1eb2f57501b2e7e2076ce89b3f3a666ddbfdd] Merge tag 'scsi-misc' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
+git bisect good a1d1eb2f57501b2e7e2076ce89b3f3a666ddbfdd
+# good: [fb497d6db7c19c797cbd694b52d1af87c4eebcc6] mm/damon/vaddr: protect vma traversal in __damon_va_thre_regions() with rcu read lock
+git bisect good fb497d6db7c19c797cbd694b52d1af87c4eebcc6
+# bad: [2a058ab3286d6475b2082b90c2d2182d2fea4b39] mm: change vmf_anon_prepare() to __vmf_anon_prepare()
+git bisect bad 2a058ab3286d6475b2082b90c2d2182d2fea4b39
+# bad: [b4afe4183ec77f230851ea139d91e5cf2644c68b] resource: fix region_intersects() vs add_memory_driver_managed()
+git bisect bad b4afe4183ec77f230851ea139d91e5cf2644c68b
+# good: [6040f650c56862a4ac40b00c37ef6ab1ddfcebb5] zsmalloc: use unique zsmalloc caches names
+git bisect good 6040f650c56862a4ac40b00c37ef6ab1ddfcebb5
+# first bad commit: [b4afe4183ec77f230851ea139d91e5cf2644c68b] resource: fix region_intersects() vs add_memory_driver_managed()
+#
+#
+#  git bisect good
+b4afe4183ec77f230851ea139d91e5cf2644c68b is the first bad commit
+commit b4afe4183ec77f230851ea139d91e5cf2644c68b
+
+diff --git a/kernel/resource.c b/kernel/resource.c
+index c9fd26c06345..d4dcaa1831cd 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -556,55 +556,20 @@ static int __region_intersects(struct resource *parent, resource_size_t start,
+ 			       size_t size, unsigned long flags,
+ 			       unsigned long desc)
+ {
++	struct resource res;
+ 	int type = 0; int other = 0;
+-	struct resource *p, *dp;
+-	struct resource res, o;
+-	bool covered;
++	struct resource *p;
+ 
+ 	res.start = start;
+ 	res.end = start + size - 1;
+ 
+ 	for (p = parent->child; p ; p = p->sibling) {
+-		if (!resource_intersection(p, &res, &o))
+-			continue;
+-		if (is_type_match(p, flags, desc)) {
+-			type++;
+-			continue;
+-		}
+-		/*
+-		 * Continue to search in descendant resources as if the
+-		 * matched descendant resources cover some ranges of 'p'.
+-		 *
+-		 * |------------- "CXL Window 0" ------------|
+-		 * |-- "System RAM" --|
+-		 *
+-		 * will behave similar as the following fake resource
+-		 * tree when searching "System RAM".
+-		 *
+-		 * |-- "System RAM" --||-- "CXL Window 0a" --|
+-		 */
+-		covered = false;
+-		for_each_resource(p, dp, false) {
+-			if (!resource_overlaps(dp, &res))
+-				continue;
+-			if (is_type_match(dp, flags, desc)) {
+-				type++;
+-				/*
+-				 * Range from 'o.start' to 'dp->start'
+-				 * isn't covered by matched resource.
+-				 */
+-				if (dp->start > o.start)
+-					break;
+-				if (dp->end >= o.end) {
+-					covered = true;
+-					break;
+-				}
+-				/* Remove covered range */
+-				o.start = max(o.start, dp->end + 1);
+-			}
+-		}
+-		if (!covered)
+-			other++;
++		bool is_type = (((p->flags & flags) == flags) &&
++				((desc == IORES_DESC_NONE) ||
++				 (desc == p->desc)));
++
++		if (resource_overlaps(p, &res))
++			is_type ? type++ : other++;
+ 	}
+ 
+ 	if (type == 0)
+
+base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
 -- 
-2.35.3
+2.39.3
 
 
