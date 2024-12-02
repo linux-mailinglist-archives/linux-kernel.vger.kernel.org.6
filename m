@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-427989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28929E0A7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF46C9E0B6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F7C9BA60CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:23:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24023B61493
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A814C1D6DC8;
-	Mon,  2 Dec 2024 16:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B9119CC3A;
+	Mon,  2 Dec 2024 16:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="YY1zYL6t"
-Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqDFWYx7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EC9193061;
-	Mon,  2 Dec 2024 16:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052A5AD51;
+	Mon,  2 Dec 2024 16:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733156563; cv=none; b=fspANP3oJJZN7CW3aWtAfBaVVjOtCbGI32/FxRC94wRCgS8f0PLJ0PhF3ICGzbgswt9WVWNIRy7JeRbfCKGKutjaANpOrCLCjcqFi2t5XUMP3Vf3m72hpFtNUO7JF1gzciOzBSymyOBCLA1SPOJ2coi8B9NsXm4ug6A4rLMEZSo=
+	t=1733156824; cv=none; b=RVtYv/cIKvSql9Dhgb9bT9Gsxqhq5xYyUVbJXQNsDwjPhO5eZVzxoNmV9fCdBKXSavN3QEVYgtZdhP2hPhqupn1k7y8T5a0A0rIE6aJ1zAlvj0i8KFnW/F45XX5QVlEeINbR7NqXiOW++fkX/uXqNmbqXyTpj4OQi2pIvQYQooA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733156563; c=relaxed/simple;
-	bh=p4/oDNeAcM8YTvV1ZrRQzkUmZ2zyB7c9FNreyRr5PDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MjiNtODkNnH+y8IR5M2FVMVEaC6s6opNbPHG4xLwjZbjOOx7HcepNwBGf0KwKTBMaatJ+1WwfnDJ8h7eswOVeduXTZE7u7Za2A8jsJxfzeLLYsxmIzIdvyodggVbA/Aq+WPpnXcdfWLLAgiHC8CJZJyswB/Y2F0l8CPm1Vj4ibo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=YY1zYL6t; arc=none smtp.client-ip=63.250.43.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y28Fm52K3z4wDW;
-	Mon, 02 Dec 2024 16:22:36 +0000 (UTC)
-Received: from umer-b550pro4.lan (host-213-78-252-153.as13285.net [213.78.252.153])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y28Fd03HKz6tkS;
-	Mon,  2 Dec 2024 16:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1733156551;
-	bh=p4/oDNeAcM8YTvV1ZrRQzkUmZ2zyB7c9FNreyRr5PDM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YY1zYL6th/bpswcCWvwIy+CaPdpxssCiXSF9TbzoXeRzNQ9xM8b66K0ZszcB3McXA
-	 JcWkt+5s6k95wDMVfV1agP1llI7YxWZ7fHewwCAjJUKCNDVtb4dZa8z1VM/zC0LdJk
-	 nOw2f+A+UbIs/xWyfEQl4RdCSkms2ks8/gmx+tPKVqLJxxV3Nwf9wjFZqWPkWD2CUp
-	 vtRzMtGSfPd155kxoBrLkBj7KY8oxg6d3YOyAYA93C2zZEDeyO0fJGfGXtG1PxPlme
-	 2TGYRm4e85ZHA46Yaz5S/NJNFXtxkl2h0SKWnzVAvd0z93SNXWCIJg2LPdoZblHVkO
-	 lGVOYUL3JHdlg==
-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	igor.belwon@mentallysanemainliners.org
-Subject: [PATCH v3 4/4] arm64: dts: exynos: Add initial support for Samsung Galaxy S20 (x1slte)
-Date: Mon,  2 Dec 2024 16:21:58 +0000
-Message-ID: <20241202162158.5208-5-umer.uddin@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241202162158.5208-1-umer.uddin@mentallysanemainliners.org>
-References: <20241202162158.5208-1-umer.uddin@mentallysanemainliners.org>
+	s=arc-20240116; t=1733156824; c=relaxed/simple;
+	bh=nPtb1zSByJeaDM0DUV8mbGmOuC3IvCO7oLz660454R8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JnEVsCFSlU2D/h/xY+hNFFCENKNOJW/T/qrS5VSWUhOeT4XCfQu01k6TCKQO3PaPzY4vC+DG8Dbj2R+gnKIgR9/ZO5PFhH+Hp/X3oc9U4LBT6e7ZP+iKBERKg7m/cWw3SrepFJ3c8/2n4EGIDkD0wAlok5JFycqBMXlQyt60xiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqDFWYx7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3500C4CED6;
+	Mon,  2 Dec 2024 16:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733156823;
+	bh=nPtb1zSByJeaDM0DUV8mbGmOuC3IvCO7oLz660454R8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tqDFWYx7tpuPs3199TfcyJNFHIKuE9dIV29mA/Za4FBuKVG04CgyqNFfqVNTXOkGE
+	 j5u+kEm6H5NIy4FvI/Jo5lXhzQcMhvrPpRtT8TWqTy7jrTDrJcy08aqMoaDKDlnm04
+	 7uEsw71bbPEAa8jiTRrjUn58w39Tc5IKSbLrELF05NTtzs5FfsAOG2S8Dna5J0Adcl
+	 UVmAVfjsJy/+ZFFf2p7UB0mixrpNIiVPGsC88kxq88WslnlWxI22tRcX6Sxnw1wEle
+	 v9Y2UOyFEOOcY/Xs9QtBR/R3fae/o17hjvAfF/yhxhjKHJkbkQhJ54Fa9/2nhy8cgN
+	 pr9+jf6ygE3zQ==
+Date: Mon, 2 Dec 2024 21:56:59 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: fnkl.kernel@gmail.com
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: apple-admac: Avoid accessing registers in
+ probe
+Message-ID: <Z03f08Os/csGbMap@vaman>
+References: <20241124-admac-power-v1-1-58f2165a4d55@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241124-admac-power-v1-1-58f2165a4d55@gmail.com>
 
-Add initial support for the Samsung Galaxy S20 (x1slte/SM-G980F)
-phone. It was launched in 2020, and it's based on the Exynos 990 SoC. It
-has only one configuration with 8GB of RAM and 128GB of UFS 3.0 storage.
+On 24-11-24, 16:48, Sasha Finkelstein via B4 Relay wrote:
+> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> 
+> The ADMAC attached to the AOP has complex power sequencing, and is
+> power gated when the probe callback runs. Move the register reads
+> to other functions, where we can guarantee that the hardware is
+> switched on.
 
-This device tree adds support for the following:
+So looking at the driver, there is code to turn power, so what ensures
+that power is up while we are in alloc callback
 
-- SimpleFB
-- 8GB RAM
-- Buttons
+> 
+> Fixes: 568aa6dd641f ("dmaengine: apple-admac: Allocate cache SRAM to channels")
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> ---
+>  drivers/dma/apple-admac.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/dma/apple-admac.c b/drivers/dma/apple-admac.c
+> index 9588773dd2eb670a2f6115fdaef39a0e88248015..037ec38730cf980eee11ebb8ec17be7623879cf8 100644
+> --- a/drivers/dma/apple-admac.c
+> +++ b/drivers/dma/apple-admac.c
+> @@ -153,6 +153,8 @@ static int admac_alloc_sram_carveout(struct admac_data *ad,
+>  {
+>  	struct admac_sram *sram;
+>  	int i, ret = 0, nblocks;
 
-Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
----
- arch/arm64/boot/dts/exynos/Makefile           |  1 +
- .../boot/dts/exynos/exynos990-x1slte.dts      | 28 +++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
+Empty line before this please
 
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index deb8dc509..783807249 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -10,5 +10,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos8895-dreamlte.dtb		\
- 	exynos990-c1s.dtb		\
- 	exynos990-x1s.dtb		\
-+	exynos990-x1slte.dtb		\
- 	exynosautov9-sadk.dtb		\
- 	exynosautov920-sadk.dtb
-diff --git a/arch/arm64/boot/dts/exynos/exynos990-x1slte.dts b/arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
-new file mode 100644
-index 000000000..7bca641e5
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung Galaxy S20 (x1slte/SM-G980F) device tree source
-+ *
-+ * Copyright (c) 2024, Umer Uddin <umer.uddin@mentallysanemainliners.org>
-+ */
-+
-+/dts-v1/;
-+#include "exynos990-hubble-common.dtsi"
-+
-+/ {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	model = "Samsung Galaxy S20";
-+	compatible = "samsung,x1slte", "samsung,exynos990";
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x0 0x3ab00000>,
-+		      /* Memory hole */
-+		      <0x0 0xc1200000 0x0 0x1ee00000>,
-+		      /* Memory hole */
-+		      <0x0 0xe1900000 0x0 0x1e700000>,
-+		      /* Memory hole */
-+		      <0x8 0x80000000 0x1 0x7ec00000>;
-+	};
-+};
+> +	ad->txcache.size = readl_relaxed(ad->base + REG_TX_SRAM_SIZE);
+> +	ad->rxcache.size = readl_relaxed(ad->base + REG_RX_SRAM_SIZE);
+>  
+>  	if (dir == DMA_MEM_TO_DEV)
+>  		sram = &ad->txcache;
+> @@ -912,12 +914,7 @@ static int admac_probe(struct platform_device *pdev)
+>  		goto free_irq;
+>  	}
+>  
+> -	ad->txcache.size = readl_relaxed(ad->base + REG_TX_SRAM_SIZE);
+> -	ad->rxcache.size = readl_relaxed(ad->base + REG_RX_SRAM_SIZE);
+> -
+>  	dev_info(&pdev->dev, "Audio DMA Controller\n");
+> -	dev_info(&pdev->dev, "imprint %x TX cache %u RX cache %u\n",
+> -		 readl_relaxed(ad->base + REG_IMPRINT), ad->txcache.size, ad->rxcache.size);
+>  
+>  	return 0;
+>  
+> 
+> ---
+> base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
+> change-id: 20241124-admac-power-7f32c2a1850a
+> 
+
 -- 
-2.47.1
-
+~Vinod
 
