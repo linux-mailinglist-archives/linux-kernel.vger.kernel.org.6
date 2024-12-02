@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-428275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A5AC9E0C49
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:39:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C2D9E0C45
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:38:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF61282BBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642EA163FB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F3C1DED6F;
-	Mon,  2 Dec 2024 19:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAE41DE8A8;
+	Mon,  2 Dec 2024 19:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="hmfy9Old"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="G/r5c3PZ"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDCF1DE4D0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3C81DE3C0;
 	Mon,  2 Dec 2024 19:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733168322; cv=none; b=cA574YaWq0Dkchc+R1ZWFunURadMpDsyhUOCJxiVvcH5XxY/TcPqrLLIpkTeN+5G/W77nJ0RkE7Lr8vhw8fpizH7Mimu9eRelU07vlx8yNYTjT3jOBHp2ooMfPb1MlZAC2RyVUmlJOskvQMQXLESpeCeEogydbgXjbJTf6um5z8=
+	t=1733168320; cv=none; b=uBmKpDAUEqtzWxTVFe7t0dzXiHM5sFclXWEYcY78/ytg+MWJrOtwoe0s+WcYMc67mWBSDmkVv3oYcUBEm8EPuNbBydg2+RazZfFx/DEa3kYIBj55IJr80H0vaU3D3gunHr0SWEE5AMROy3fbhqDuVnikxxM8eBXPQrNMA0svIis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733168322; c=relaxed/simple;
-	bh=CCLjKz4p9ifDEuTD7i7Xx+E3HYG987FaG9aqLLF5Qvc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hvyDtkQHULuJ+/xqD6jus6tc96/m93rsqAXLl3Aa4og+uqVeEvJtuP3MUD3cLWdsu1EziYtET+dLRT4bKg4B1ZuiQAPfkOYJQgq0GYjPG+gF0t6FH+24XF7FyxcarAjWvYUU8+rJk6BYj5+z2E+wUX5bdzO0PAxgYQQ7wgAK5OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=hmfy9Old; arc=none smtp.client-ip=159.69.126.157
+	s=arc-20240116; t=1733168320; c=relaxed/simple;
+	bh=bXwjaMZPKYJqfzSnqgQCkzKi6u0bdbqGe9sH10KIhs4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=mWx7IQOjc10Q6MT1OSIctgSpkPAZYCNbvMUc0ZuSjlNdaMpQNC1C8bp8+dlyGHwXRO9u0Dqv92xj2980QZ8FhpOjiUqwMvoqMASLSptn/EvdWihO2iBipu1nmCNIGFoPZ2NT74ddGLTbUK60Yr84q/FoPmXMi1wJ291tgpIfjEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=G/r5c3PZ; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1733168316;
-	bh=CCLjKz4p9ifDEuTD7i7Xx+E3HYG987FaG9aqLLF5Qvc=;
-	h=From:Subject:Date:To:Cc:From;
-	b=hmfy9OldGu2MUnjh5a14kl54b3yqaLMbRVsQPuZUZ/2I3aAXMrmwSV0R6fWOpBiwj
-	 88wUxK5DYFYBr6xhyxGfZiGO6oouImn2Tn9vjuLChL7iG1xw2Ni0jEU1gLpWwyHXHL
-	 2Xb4DcpHl1+2nFF4K7K9E0fSi+ZmXhBT/oue2l50=
+	bh=bXwjaMZPKYJqfzSnqgQCkzKi6u0bdbqGe9sH10KIhs4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=G/r5c3PZzuWfqzRo/c4UjVPrCv2Hc6wx/90Vf14fIwdZi1mnAVo+znnXrOMyEkmPu
+	 LVYLqXjVKlg/LwK9IPwQ82u4AVpwKxa61AHceic6iFHI8jS38yrxPYDpNjxqyWtluW
+	 13LmY3bKxLxct7MeeosLShQTiri85+iwSwZu9hjs=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: [PATCH 0/5] platform/x86: Constify 'struct bin_attribute'
-Date: Mon, 02 Dec 2024 20:38:31 +0100
-Message-Id: <20241202-sysfs-const-bin_attr-pdx86-v1-0-9ab204c2a814@weissschuh.net>
+Date: Mon, 02 Dec 2024 20:38:32 +0100
+Subject: [PATCH 1/5] platform/x86: dell: dcdbas: Constify 'struct
+ bin_attribute'
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,11 +48,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIALcMTmcC/x2MQQrCMBAAvxL27IKJNYpfEZF0s9G9pCUbpKX07
- 128zDCX2UC5CSs83AaNf6IyVQt/ckDfVD+Mkq0hnMPgDairFkWaqnYcpb5T7w3nvNwjko+Urvl
- yM4EN5sZFlv/8+dr3A3HrrWtsAAAA
-X-Change-ID: 20241202-sysfs-const-bin_attr-pdx86-c16ca5d376ca
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-sysfs-const-bin_attr-pdx86-v1-1-9ab204c2a814@weissschuh.net>
+References: <20241202-sysfs-const-bin_attr-pdx86-v1-0-9ab204c2a814@weissschuh.net>
+In-Reply-To: <20241202-sysfs-const-bin_attr-pdx86-v1-0-9ab204c2a814@weissschuh.net>
 To: Stuart Hayes <stuart.w.hayes@gmail.com>, 
  Hans de Goede <hdegoede@redhat.com>, 
  =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
@@ -61,11 +61,11 @@ To: Stuart Hayes <stuart.w.hayes@gmail.com>,
 Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733168316; l=1415;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733168316; l=2655;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=CCLjKz4p9ifDEuTD7i7Xx+E3HYG987FaG9aqLLF5Qvc=;
- b=fbCmy4KqhmkC8aA8an75i/z6sDXnvm83lqZlF47zBtLi7BS02dQNo8YLruAaMzKuv7lKXfnj1
- c5h2qz5EZHVBid1+d+RZT3wn4EMhn14MgU5hA0cmPj5ECHi5EZE62re
+ bh=bXwjaMZPKYJqfzSnqgQCkzKi6u0bdbqGe9sH10KIhs4=;
+ b=qlK8gtGb9pNa8t3MtuntUov7EtP4pBk8jm4vpiVItgItUx2t+rUIlBuPse0+uSH+r4aLhON5n
+ HLV3OxZHlGcBWC6ZLnz9xGyxMuWwtl16/VfQiz5EP06mNibuRFiCeIE
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
@@ -73,33 +73,77 @@ The sysfs core now allows instances of 'struct bin_attribute' to be
 moved into read-only memory. Make use of that to protect them against
 accidental or malicious modifications.
 
-The usage of read_new/write_new/bin_attrs_new is a transition mechanism
-and will be removed after the tree-wide transition to
-const struct bin_attribute.
-
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+While at it switch from the custom DCDBAS_BIN_ATTR_RW() to the identical
+BIN_ATTR_RW() macro.
 ---
-Thomas Weißschuh (5):
-      platform/x86: dell: dcdbas: Constify 'struct bin_attribute'
-      platform/x86: dell_rbu: Constify 'struct bin_attribute'
-      platform/x86/intel/sdsi: Constify 'struct bin_attribute'
-      platform/x86/intel/pmt: Constify 'struct bin_attribute'
-      platform/x86/amd/hsmp: Constify 'struct bin_attribute'
+ drivers/platform/x86/dell/dcdbas.c | 10 +++++-----
+ drivers/platform/x86/dell/dcdbas.h |  8 --------
+ 2 files changed, 5 insertions(+), 13 deletions(-)
 
- drivers/platform/x86/amd/hsmp/acpi.c   | 12 ++++++------
- drivers/platform/x86/amd/hsmp/plat.c   | 12 ++++++------
- drivers/platform/x86/dell/dcdbas.c     | 10 +++++-----
- drivers/platform/x86/dell/dcdbas.h     |  8 --------
- drivers/platform/x86/dell/dell_rbu.c   | 20 ++++++++++----------
- drivers/platform/x86/intel/pmt/class.c |  4 ++--
- drivers/platform/x86/intel/sdsi.c      | 34 +++++++++++++++++-----------------
- 7 files changed, 46 insertions(+), 54 deletions(-)
----
-base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
-change-id: 20241202-sysfs-const-bin_attr-pdx86-c16ca5d376ca
+diff --git a/drivers/platform/x86/dell/dcdbas.c b/drivers/platform/x86/dell/dcdbas.c
+index 0aeb8149c16bfcb5df3cad77b69d7e5978ce6536..8149be25fa267ca027d809c45fe1c3f47fcfd453 100644
+--- a/drivers/platform/x86/dell/dcdbas.c
++++ b/drivers/platform/x86/dell/dcdbas.c
+@@ -163,7 +163,7 @@ static ssize_t smi_data_buf_size_store(struct device *dev,
+ }
+ 
+ static ssize_t smi_data_read(struct file *filp, struct kobject *kobj,
+-			     struct bin_attribute *bin_attr,
++			     const struct bin_attribute *bin_attr,
+ 			     char *buf, loff_t pos, size_t count)
+ {
+ 	ssize_t ret;
+@@ -176,7 +176,7 @@ static ssize_t smi_data_read(struct file *filp, struct kobject *kobj,
+ }
+ 
+ static ssize_t smi_data_write(struct file *filp, struct kobject *kobj,
+-			      struct bin_attribute *bin_attr,
++			      const struct bin_attribute *bin_attr,
+ 			      char *buf, loff_t pos, size_t count)
+ {
+ 	ssize_t ret;
+@@ -636,9 +636,9 @@ static struct notifier_block dcdbas_reboot_nb = {
+ 	.priority = INT_MIN
+ };
+ 
+-static DCDBAS_BIN_ATTR_RW(smi_data);
++static const BIN_ATTR_ADMIN_RW(smi_data, 0);
+ 
+-static struct bin_attribute *dcdbas_bin_attrs[] = {
++static const struct bin_attribute *const dcdbas_bin_attrs[] = {
+ 	&bin_attr_smi_data,
+ 	NULL
+ };
+@@ -662,7 +662,7 @@ static struct attribute *dcdbas_dev_attrs[] = {
+ 
+ static const struct attribute_group dcdbas_attr_group = {
+ 	.attrs = dcdbas_dev_attrs,
+-	.bin_attrs = dcdbas_bin_attrs,
++	.bin_attrs_new = dcdbas_bin_attrs,
+ };
+ 
+ static int dcdbas_probe(struct platform_device *dev)
+diff --git a/drivers/platform/x86/dell/dcdbas.h b/drivers/platform/x86/dell/dcdbas.h
+index 942a23ddded0592d2279da2dfee05113e8f4dbff..a05d7f667586310e379e38601309acdfad25645a 100644
+--- a/drivers/platform/x86/dell/dcdbas.h
++++ b/drivers/platform/x86/dell/dcdbas.h
+@@ -56,14 +56,6 @@
+ #define DCDBAS_DEV_ATTR_WO(_name) \
+ 	DEVICE_ATTR(_name,0200,NULL,_name##_store);
+ 
+-#define DCDBAS_BIN_ATTR_RW(_name) \
+-struct bin_attribute bin_attr_##_name = { \
+-	.attr =  { .name = __stringify(_name), \
+-		   .mode = 0600 }, \
+-	.read =  _name##_read, \
+-	.write = _name##_write, \
+-}
+-
+ struct smi_cmd {
+ 	__u32 magic;
+ 	__u32 ebx;
 
-Best regards,
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+2.47.1
 
 
