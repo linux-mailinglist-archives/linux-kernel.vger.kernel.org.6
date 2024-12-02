@@ -1,132 +1,276 @@
-Return-Path: <linux-kernel+bounces-428112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575989E0C2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:31:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCD19E0C87
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE411B3888A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:46:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16938B2FB34
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DB31DD0F6;
-	Mon,  2 Dec 2024 17:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF0D1DC197;
+	Mon,  2 Dec 2024 17:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DxGdxrTg"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="VCeTD+rZ"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C437E0E8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523FC1DB940;
+	Mon,  2 Dec 2024 17:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733161576; cv=none; b=D3SDtFr9rJ7EPWXFdHN2Or5zkYQTJl1lG3qYT8T4dzNTBGZHXNMt66qibq/kmfdwzz80LHIEuzc4hVtbaTF6FSMrPquXnheYfr+5n1CmhvUHAaHoNhZG7YS7WjbakDBHsrfPDXqZhq0Qh59bOdzAHdeJ5zLdz05FhhfuAygimvc=
+	t=1733162011; cv=none; b=qigAh9rpHpNnhDUCrmr6oDogcLCXkVFNfqhVYbNcl0aBpIq991NjdRUtVztSIoqUt3vdhVh3fdbX4Ja5dw/spPKV4O6mWYfGZllCA0nrcobUfV0HjLg/YWMSqmBwEzjLvUhOUkWTaw9b9pTFGw/1rjY92pIiwfzSUpHWc8Xu4ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733161576; c=relaxed/simple;
-	bh=b5il2Z2utd0lmXYJr0mtWGX8EWfbvnZlY+vNR6xuPY8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IFKADCsDCxIKoBF+pPBOP6PbD7BJX3lCDvStVEkYW2Ni/CX85Nvj0tvocYFoH5zfpihWne+n+NX6K13e6A8m9dI+0Z8oCm8Isb/Nr4N8A/7Dd++gv2XeDoVnXn4uLDN9neccQJ2MxE0uzD7f2OTHzBAKRA3NhD+lTaDpf4wF9aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DxGdxrTg; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffd6af012eso55332751fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:46:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733161573; x=1733766373; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ZxEcd0jfIdJ43B0I6BAc7C6qxciSXMBMwXPC6dEEfQ=;
-        b=DxGdxrTgCYcF4khuL9G36U0vsiJy18ndsKr43Fqljgdg+mkVVyCQsdTZtYmo45suEf
-         hBaIrQpQtie9uZ6cGjXB97txfgJD8jUnBxwKeVnwMIofVttViOXFQObEK1PbqQfOZI7Q
-         W8UCCORxhlsWPigBz+pbeT5UwsVJ4ON3HsdnXer+i3d7LEvB9z/RzB3fqHdnU9AFcoE5
-         Zaz0OydHadBOnxkQ8BPqFJxF9vEN31lo5Z6N+EoXONg1JHKMIZm4ixtTdEXHEqOZOW8/
-         2rVV82At9JxgudmJcokEQfg1Dt3DvNou+Xd25NIyOjX6O0R37CHw538dVEXM+q8tpzI0
-         inOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733161573; x=1733766373;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7ZxEcd0jfIdJ43B0I6BAc7C6qxciSXMBMwXPC6dEEfQ=;
-        b=LDXIlInyEeJQOruKgm96y2381FtEtDVG0Ff101OSIg5Vzq8aXoXjsTPgNaCpozmS+E
-         42Ohw0X06fJ+SeHAJyEJit558qrHhUScBoVAHJfG14mwRs5qS7T8SrMUCx8mZ7Ze3fXo
-         tKIrk8XVAlURbImzoNIJEhVnp2os8BAM+2/dMBt/wFKL+clpB0LwMyneRQxsfqFaIpB3
-         exPx2P0C0YUU1J3N+EnX44BW+S5vh8c3dz3rqf1CM5NfzyKzerjhJBc1b4ghXF6cXrEX
-         +Q12KqeBR2zO8ilU/q94Mgu4UrqPpACCW5J865hDA4KOaBNbalVIe6d/KfSMc1C2DNyG
-         utkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUh+YlM61xfCPDnzM3sedwN8bBE0RIzQSkvO948flFS5IR6w5bUpYlEx7yUdlOj19z0V9rwcj/+qfz6+Ko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm+X1lFsQUje8CrHCCI6wckOL+PjdR/VMRpdrUA+vgiM7pctBQ
-	JyatxSnqI31u64aOK7Mri+rDDpyyM+jAqNi7bh9aCKvoivC1oUzBUENcfG+XAH0=
-X-Gm-Gg: ASbGncvj97d3xJDidcSad8xkqZ5LKKC2HSmtCxkh2hN9SpxoVabfZS8NFEmFQ+Wr3Ti
-	tl+s5aGwekMVcg6/q22Iy/5rUEfiWxI9IPGrHmgMEqUs1Wx4Otv2rtQZwBnzY+n3WBedkdOxnCO
-	kA9ax4vddzK9QXGE6iA83bRqrm4FLcrXSYFTMH0fCnSdPVvNx1sQirq0PeARIc+0p3vtX1r85mJ
-	3hmyo+6dDA3geUnrE0bYlaYpy5UxQWntmhRqESUWcx6KPCsUEk760NUnkE=
-X-Google-Smtp-Source: AGHT+IGVUcNjfQ8+ZCeiCAJe+K4XXiQaOih19B14NrRnmqvuw2IAQ6AvgtCEfynTHH8cun3GlPJZVQ==
-X-Received: by 2002:ac2:5695:0:b0:53d:eec1:a04e with SMTP id 2adb3069b0e04-53df00cf72dmr12684739e87.23.1733161573044;
-        Mon, 02 Dec 2024 09:46:13 -0800 (PST)
-Received: from vingu-cube.. ([2a01:e0a:f:6020:f271:ff3b:369e:33b6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d29fbsm193275855e9.29.2024.12.02.09.46.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 09:46:11 -0800 (PST)
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org
-Cc: kprateek.nayak@amd.com,
-	pauld@redhat.com,
-	efault@gmx.de,
-	luis.machado@arm.com,
-	tj@kernel.org,
-	void@manifault.com,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 01/11 v3] sched/fair: Fix sched_can_stop_tick() for fair tasks
-Date: Mon,  2 Dec 2024 18:45:56 +0100
-Message-ID: <20241202174606.4074512-2-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241202174606.4074512-1-vincent.guittot@linaro.org>
-References: <20241202174606.4074512-1-vincent.guittot@linaro.org>
+	s=arc-20240116; t=1733162011; c=relaxed/simple;
+	bh=lc6WgeExQ+hWB9ZfwfnAcabToLH2FzedHtL2FERcLRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UVbOxrtrDHtM+rhb85dK4ZCdFh5A/YhrQAaRgTHzQ9xnjTzSslbV362rXi+jovJqwbSjMcpt1Dkmm7LC1rBXmX2Jaclh8GHmT7f1dLSkU2uHn1dbKgR3c9g09qOvXnoyrRv2jK9Yg9E/IZyVnZuZnxDi+WtOFUf/dLMn89FO4no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=VCeTD+rZ; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9EC65C0009;
+	Mon,  2 Dec 2024 17:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1733162006;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SOG1NlpvLRlcxi8vGnjnlAA8v4MMzXA9kbAwPiLSGD4=;
+	b=VCeTD+rZ2aeUuLZ6X32xzZE9GFd+kn19pWlOzX4NBEKnWEAFGIz0Qipvrigs+lb8/QbNKD
+	C7X1nogQWqF8GDZL6Is7S+zwD9C6A0XkZFIMOAjC1HOoysr6fVeYNg3NK3mmLluI7Gh6SV
+	nVZSXJE3Yv9sL5B1Ty+AzaEVt+ddNy0BG1A94VMSfhWFQc8SvICjuVAIg+l7FKTdv6701J
+	Zm8k5McyXj+EbWeSH95Ub9O05QLihd9RNKPXHiGP7MitK5RBRv8dBNPFPXN6mMoR0IRHR/
+	IgTJO5hs55wO+DnR7LRZY3yo6yX0F2wUox7mkSyJAHeqZ1V6B1O12+a4/W/ifA==
+Message-ID: <1d0e141c-1afe-4646-8e6f-584e2a0706e2@yoseli.org>
+Date: Mon, 2 Dec 2024 18:53:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] arch: m68k: Add STACKTRACE support
+To: Greg Ungerer <gerg@linux-m68k.org>, linux-m68k@lists.linux-m68k.org
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ rostedt@goodmis.org, Michael Schmitz <schmitzmic@gmail.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <20241021-add-m68k-tracing-support-v1-2-0883d704525b@yoseli.org>
+ <501c04d7-1a7d-4000-a948-e9effb281a05@yoseli.org>
+ <a2efe6f7-4bfe-468b-9512-c60f646281b1@linux-m68k.org>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <a2efe6f7-4bfe-468b-9512-c60f646281b1@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-We can't stop the tick of a rq if there are at least 2 tasks enqueued in
-the whole hierarchy and not only at the root cfs rq.
+Hi Greg,
 
-rq->cfs.nr_running tracks the number of sched_entity at one level
-whereas rq->cfs.h_nr_running tracks all queued tasks in the
-hierarchy.
+On 02/12/2024 15:41, Greg Ungerer wrote:
+> Hi JM,
+> 
+> On 27/11/24 21:26, Jean-Michel Hautbois wrote:
+>> Hi there,
+>>
+>> On 21/10/2024 11:44, Jean-Michel Hautbois wrote:
+>>> In order to use tracing, implement a basic arch_stack_walk() based on
+>>> the one in PowerPC.
+>>> Tested on a M54418 coldfire.
+>>
+>> Well, I said it was tested, but it was only compile tested basically.
+>> AFAICT now, I think it is not working as when I use wakeup_rt as a 
+>> tracer, I don't have the stack trace:
+>>
+>> # wakeup_rt latency trace v1.1.5 on 6.12.0-10380-gb66f06337b66-dirty
+>> # --------------------------------------------------------------------
+>> # latency: 2000 us, #18/18, CPU#0 | (M:preempt VP:0, KP:0, SP:0 HP:0)
+>> #    -----------------
+>> #    | task: irq/100-enet-fe-118 (uid:0 nice:0 policy:1 rt_prio:50)
+>> #    -----------------
+>> #
+>> #                    _------=> CPU#
+>> #                   / _-----=> irqs-off/BH-disabled
+>> #                  | / _----=> need-resched
+>> #                  || / _---=> hardirq/softirq
+>> #                  ||| / _--=> preempt-depth
+>> #                  |||| / _-=> migrate-disable
+>> #                  ||||| /     delay
+>> #  cmd     pid     |||||| time  |   caller
+>> #     \   /        ||||||  \    |    /
+>> kworker/-11        0dnh5.    0us :       11:120:R   + [000]      22: 
+>> 98:R irq_work/0
+>> kworker/-11        0dnh5.    0us : <stack trace>
+>> kworker/-11        0dnh5.    0us : 0
+>> kworker/-11        0d..3.    0us : __schedule
+>> kworker/-11        0d..3.    0us :       11:120:R ==> [000]      22: 
+>> 98:R irq_work/0
+>> kworker/-11        0d..3.    0us : <stack trace>
+>>   telnetd-229       0Dnh4.    0us :      229:120:R   + [000]     118: 
+>> 49:R irq/100-enet-fe
+>>   telnetd-229       0Dnh4.    0us : <stack trace>
+>>   telnetd-229       0Dnh4.    0us : 0
+>>   telnetd-229       0D..3.    0us : __schedule
+>>   telnetd-229       0D..3.    0us :      229:120:R ==> [000]     118: 
+>> 49:R irq/100-enet-fe
+>>   telnetd-229       0D..3.    0us : <stack trace>
+>>   telnetd-229       0dn.5.    0us :      229:120:R   + [000]     118: 
+>> 49:R irq/100-enet-fe
+>>   telnetd-229       0dn.5.    0us : <stack trace>
+>>   telnetd-229       0dn.5.    0us#: 0
+>>   telnetd-229       0d..3. 2000us : __schedule
+>>   telnetd-229       0d..3. 2000us :      229:120:R ==> [000]     118: 
+>> 49:R irq/100-enet-fe
+>>   telnetd-229       0d..3. 2000us : <stack trace>
+>>
+>> Geert, Greg, and maybe other highly skilled m68k people, could you 
+>> please help me with this particular function :-) ?
+>>
+>> Thanks !
+>> JM
+>>
+>>>
+>>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+>>> ---
+>>>   arch/m68k/Kconfig             |  5 ++++
+>>>   arch/m68k/kernel/Makefile     |  1 +
+>>>   arch/m68k/kernel/stacktrace.c | 70 ++++++++++++++++++++++++++++++++ 
+>>> +++++++++++
+>>>   3 files changed, 76 insertions(+)
+>>>
+>>> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+>>> index 
+>>> ab3375475721fa63418c40d4ba6ac76679ebc77d..7142f9759181a90269ae1ba9e682d331ee2ddbf6 100644
+>>> --- a/arch/m68k/Kconfig
+>>> +++ b/arch/m68k/Kconfig
+>>> @@ -40,6 +40,7 @@ config M68K
+>>>       select UACCESS_MEMCPY if !MMU
+>>>       select ZONE_DMA
+>>>       select TRACE_IRQFLAGS_SUPPORT
+>>> +    select ARCH_STACKWALK
+>>>   config CPU_BIG_ENDIAN
+>>>       def_bool y
+>>> @@ -107,6 +108,10 @@ config BOOTINFO_PROC
+>>>         Say Y to export the bootinfo used to boot the kernel in a
+>>>         "bootinfo" file in procfs.  This is useful with kexec.
+>>> +config STACKTRACE_SUPPORT
+>>> +    bool
+>>> +    default y
+>>> +
+>>>   menu "Platform setup"
+>>>   source "arch/m68k/Kconfig.cpu"
+>>> diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
+>>> index 
+>>> f335bf3268a108a45bab079fbf0a1c8ead9beb71..4efe92af0b711b19cb1d5129f74e67a739e289b1 100644
+>>> --- a/arch/m68k/kernel/Makefile
+>>> +++ b/arch/m68k/kernel/Makefile
+>>> @@ -31,3 +31,4 @@ obj-$(CONFIG_UBOOT)        += uboot.o
+>>>   obj-$(CONFIG_EARLY_PRINTK)    += early_printk.o
+>>> +obj-y    += stacktrace.o
+>>> diff --git a/arch/m68k/kernel/stacktrace.c b/arch/m68k/kernel/ 
+>>> stacktrace.c
+>>> new file mode 100644
+>>> index 
+>>> 0000000000000000000000000000000000000000..06c7459373bd25b3bb3540cfe2a909259c1db3ce
+>>> --- /dev/null
+>>> +++ b/arch/m68k/kernel/stacktrace.c
+>>> @@ -0,0 +1,70 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +/*
+>>> + * Stack trace utility functions etc.
+>>> + *
+>>> + * Copyright 2024 Jean-Michel Hautbois, Yoseli SAS.
+>>> + */
+>>> +
+>>> +#include <asm/current.h>
+>>> +#include <asm/ptrace.h>
+>>> +#include <linux/sched.h>
+>>> +#include <linux/sched/task_stack.h>
+>>> +#include <linux/stacktrace.h>
+>>> +
+>>> +static inline unsigned long current_stack_frame(void)
+>>> +{
+>>> +    unsigned long sp;
+>>> +
+>>> +    asm volatile("movl %%sp, %0" : "=r"(sp));
+>>> +    return sp;
+>>> +}
+> 
+> If I am understanding what this is intended to do then this is probably 
+> not right.
+> This will be returning the current stack pointer, which will almost 
+> certainly not
+> be the current stack frame pointer. This will be the top of stack at the 
+> call site,
+> which will be after the pushed locals and saved registers at the very 
+> least for m68k.
+> 
+> Does your kernel config have CONFIG_FRAME_POINTER enabled?
+> The default for m68k is usually disabled. Without this there won't be a
+> chain of frame pointers to follow like the code is trying to do below in
+> arch_stack_walk().
+> 
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It gives me a few things when I use wakeup_rt but timerlat is not giving 
+me any stack:
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 1dee3f5ef940..ed95861e9887 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1343,7 +1343,7 @@ bool sched_can_stop_tick(struct rq *rq)
- 	if (scx_enabled() && !scx_can_stop_tick(rq))
- 		return false;
- 
--	if (rq->cfs.nr_running > 1)
-+	if (rq->cfs.h_nr_running > 1)
- 		return false;
- 
- 	/*
--- 
-2.43.0
+# cd /sys/kernel/debug/tracing/
+# echo 500 > osnoise/stop_tracing_total_us
+# echo 500 > osnoise/print_stack
+# echo timerlat > current_tracer
+# echo 1 > tracing_on
+# tail -21 trace
+# tail -21 trace
+       timerlat/0-299     [000] .....   635.167643: #59035 context 
+thread timer_latency    202352 ns
+     kworker/u5:1-242     [000] d.h1.   635.168494: #59036 context 
+irq timer_latency     51504 ns
+       timerlat/0-299     [000] .....   635.168714: #59036 context 
+thread timer_latency    272032 ns
+             bash-230     [000] d.h..   635.169496: #59037 context 
+irq timer_latency     54592 ns
+       timerlat/0-299     [000] .....   635.169693: #59037 context 
+thread timer_latency    250448 ns
+             bash-230     [000] d.h..   635.170491: #59038 context 
+irq timer_latency     48784 ns
+       timerlat/0-299     [000] .....   635.170717: #59038 context 
+thread timer_latency    275960 ns
+             bash-230     [000] d.h..   635.171497: #59039 context 
+irq timer_latency     54472 ns
+       timerlat/0-299     [000] .....   635.171695: #59039 context 
+thread timer_latency    252936 ns
+             bash-230     [000] d.h1.   635.172495: #59040 context 
+irq timer_latency     53064 ns
+       timerlat/0-299     [000] .....   635.172696: #59040 context 
+thread timer_latency    253144 ns
+             bash-230     [000] d.h1.   635.173491: #59041 context 
+irq timer_latency     49864 ns
+       timerlat/0-299     [000] .....   635.173683: #59041 context 
+thread timer_latency    241248 ns
+             bash-230     [000] d.h1.   635.174495: #59042 context 
+irq timer_latency     52648 ns
+       timerlat/0-299     [000] .....   635.174691: #59042 context 
+thread timer_latency    249216 ns
+             bash-230     [000] d.h..   635.175536: #59043 context 
+irq timer_latency     94496 ns
+       timerlat/0-299     [000] .....   635.175762: #59043 context 
+thread timer_latency    321592 ns
+             bash-324     [000] d.h..   635.176825: #59044 context 
+irq timer_latency    383560 ns
+       timerlat/0-299     [000] .....   635.177044: #59044 context 
+thread timer_latency    603280 ns
+       timerlat/0-299     [000] ...1.   635.177091: <stack trace>
+       timerlat/0-299     [000] .....   635.177141: timerlat_main: stop 
+tracing hit on cpu 0
 
+As you can see, stack_trace appears, but nothing is displayed so I 
+suppose it does not walk at all...
+
+Thanks,
+JM
 
