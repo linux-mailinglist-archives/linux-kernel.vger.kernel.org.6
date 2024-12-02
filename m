@@ -1,300 +1,126 @@
-Return-Path: <linux-kernel+bounces-428161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A85A9E0AD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:18:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D819E0AD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BC1163D1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:18:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182C7163EB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A238E1DE3AF;
-	Mon,  2 Dec 2024 18:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544421DDC39;
+	Mon,  2 Dec 2024 18:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcimmVec"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbnSE288"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73ED1DDC02;
-	Mon,  2 Dec 2024 18:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264FD1DDA2F;
+	Mon,  2 Dec 2024 18:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733163504; cv=none; b=VjcsiMETGKNmDD5/asc4glNOQ34d8ZUdjOY6Wc2vIkG5cQQecx8DWmgBfrJnq5Xz2buviqG5g/+3bfjhpkq50rFuN2amcwu8uud7JEEt4Y2Wx6urtxfqK16TXNZ34cYptnkHMeHObus+weVrPwyOmZIfxmEdNNxdiPRt0CAUnaM=
+	t=1733163561; cv=none; b=M55q1Jau87tNIejxPg/xnCNzMJdlTVinyKIRohyfgCebWTunwn+sz6wg0LfKt6iiAxsN0rsbpaZ5TDalaNsIOa0ta93YnYyPVarAoRhBaNlVEd3KNlD/LVmTFviGCcBMBHpNbBbwKK9Gse6fQ3LfsPYcjzXo0ZBRRoMEuF8JTeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733163504; c=relaxed/simple;
-	bh=AhKIYAtC0w7cG+lrn93SvuanyHwnSNcPfymNq2kR5Pk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c9hyB0gnP4D057p1tfYIZ4KzZ7gjKA0wycJFletHzpKjQpcNSTwq+5KQiDnpUt2QMEpiyTnTX8JrIlLMkI7U168Ux4s86Uap6dOhF02U7IZrYNGAoIiXCdj41Fh+vjyqxU0QxvAd2YRNWsZhWAkPqskGikKoRnkueOjl/to24o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcimmVec; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 72187C4CEE0;
-	Mon,  2 Dec 2024 18:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733163503;
-	bh=AhKIYAtC0w7cG+lrn93SvuanyHwnSNcPfymNq2kR5Pk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bcimmVecXgpOSR9k3PS2j8eto5Fv/8C+mtqoxs82eko5JQiKQd4AyxMBXr/NZgzKF
-	 ks8XnUgMNSBLCE16vVRHjuLHpucAfKzI/Fyc99aqvSNaoroez9fzGvJ7r4Yf3yDse6
-	 YVB3ItSPLQXistTW6DDrpndsPgotEhrDVK/0jhcou5yrhcIgwN6jEBPJLddRBWQAAN
-	 zKBon0TFmY5Lo4tppMHt3a888ibkZaOCLaEWONYsnUL4GgXkdLuRkn8un3WORiXukU
-	 CY961F2njG4ugXgYMr7ugKpg6ow8YgsLdRurZzDnZjEZZuPwvJxxgv3GNy+qY9hU+i
-	 48vcA8EyDY85Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61751E69E82;
-	Mon,  2 Dec 2024 18:18:23 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
-Date: Mon, 02 Dec 2024 19:18:13 +0100
-Subject: [PATCH v5 3/3] arm64: dts: qcom: x1e80100-vivobook-s15: Add
- bluetooth
+	s=arc-20240116; t=1733163561; c=relaxed/simple;
+	bh=LrBoWxijJ1bBBEyhd5ZBFe5NE59y98eFG+bauKn86ks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UIXfjRNK398MEtLNCmpvL3cj02HiQKUH3diuokaHc+nKASrFDtGlhwpeRmW2q4vJQCdIineIMdmSXrDsZmTSSlnDb045iU5ns2D++aMLW9EYR9r4ZPugjOpvG4f22tWsCJqlBTAMQPhxia+CZe8wpPOu41zytk/KP2XRmrBlR1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbnSE288; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-385eb7ee7e2so948301f8f.3;
+        Mon, 02 Dec 2024 10:19:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733163558; x=1733768358; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eS4xW5bYpSQfreZMUtLuqFHdZm+D+xD9TMB5vunZyGg=;
+        b=VbnSE288zbQkvVFjWimhbCGuTyleijirwdTD8sFv4Io2Osqu68xJSu8UnDe+FRk5pm
+         5VInLTrdftgqMC3p/iZBst5Oz4PBfPXfaWNV25XpVcB5hIxeIx3ad2GWqjyDa/QJLdHu
+         coELpARLKZILbRNUyH6lWNmpRag3Z6V7iFdLdjYAgZWPj4MNVvTAdDL3dUoggAgZRc0A
+         7vx3MIFBv5Ezrxo0FK9ZKLV3U0nQyjouhLFE+lI0ekJP1I8oEHXsLtTzh2YzWfRo1WLR
+         EhFCaXgMWaQ+MWkw0vZW3Ew+zHvOR0mBss9qzYCvRas6ZHJGwmCQH6HWGCofOiwAfAli
+         h9IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733163558; x=1733768358;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eS4xW5bYpSQfreZMUtLuqFHdZm+D+xD9TMB5vunZyGg=;
+        b=ekRxZqbcVaclauWu9okgs/YtzIfUa2f08t/QYJaflia9hew62813fB7ISl9J0XaOZa
+         cGpXrUwJG9itD/qzek5YF10pOW/vFaNxo0EHPcOTCPIHbWbcnMIPtQQDAWOU1gFu5mnB
+         t8XyI3tqFu14vS2ohnnRT8+yQgb578c7MTAh/HgGEtk8tS2At675ipaEp+pa/C+Ba4WL
+         qv40+HUPAtjXmpqXJd24XlXMltmfNaLkzq5nmjK11E/Xut/XWer2qxK+daKIbrI8C28i
+         bA6x+UjQ3nxLsSwZOvghkCbfBY9iCdjWEqRw0HNmicNdLLaBOv6SbHskkspc009rJROC
+         Dg7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU6NiTQznG68mwFxrl2xZ8nIgzIAYd9ksJYM0omoEviuHK3hiJnNyB0zE98hg8k5RE9rKSRu5KLRkfp@vger.kernel.org, AJvYcCWXqhTR01PYz0p389+k7ony0GWZzyLAB3cVmfYu7H5GSdkaCz0KnqW3LVLhEFpQHtpWcXYFOT85f8S9Wroo@vger.kernel.org, AJvYcCXQwFHs7S3DHlX9b8kGEAgQkgZmTCi1uiT0IeWbGWgy1EIihP4A6vXzf5XsjlW/l+0L+SCpOX62OvYu@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT9iD96LJjMG/hYrYBz2A2J/D5CTRyTNhLcPFOKfFWtwVvmi8W
+	LJR57MJQUgTbI54kuPEEF78mTZb2WoayFOwuEWGnl2L2EUFcLcnV
+X-Gm-Gg: ASbGncvVO5Xx3RKQ9cliLzoDEjDjuoAbuFoVqjfTYdWU0d/7cUjAy6TeW3BueRqYaLh
+	8JJJe6IiIiJ5T5wquESaZoSjGNyiEDhJci5sCsL5OW7b2wdFLg+U4mTlc/IVITHhci/oRttOaNw
+	y61tc7gcTCb7csO3rkhzD4cc3Zq1P5Wmde4dv3lGP3e/lhPGtwvW6ph4C2yErouBDt7LX4ApYzc
+	zhbanYvkU5pBMWFmzg0952wb+ksNoSgdx4GWz1hs+Jmx2D3yQ+9bJrDG891eKA=
+X-Google-Smtp-Source: AGHT+IF73v4p+/LAaohAtnVHMGc9wjHGQfWa5Frpwp1w/97vS2OPCYBNoiBZhfuKnRgrICJKEUs33w==
+X-Received: by 2002:a05:6000:683:b0:385:f1ac:3abf with SMTP id ffacd0b85a97d-385f1ac3c5fmr4866855f8f.23.1733163558116;
+        Mon, 02 Dec 2024 10:19:18 -0800 (PST)
+Received: from vamoirid-laptop.. ([2a04:ee41:82:7577:ea8a:93ec:a066:eb25])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-385d7d4d9b0sm11659108f8f.65.2024.12.02.10.19.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 10:19:17 -0800 (PST)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com
+Cc: ajarizzo@gmail.com,
+	ak@it-klinger.de,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vassilisamir@gmail.com
+Subject: [PATCH v2 0/3] iio: pressure: bmp280: Minor cleanup
+Date: Mon,  2 Dec 2024 19:19:04 +0100
+Message-ID: <20241202181907.21471-1-vassilisamir@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-asus_qcom_display-v5-3-e0d3752ff71f@hotmail.com>
-References: <20241202-asus_qcom_display-v5-0-e0d3752ff71f@hotmail.com>
-In-Reply-To: <20241202-asus_qcom_display-v5-0-e0d3752ff71f@hotmail.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Maud Spierings <maud_spierings@hotmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733163500; l=5331;
- i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
- bh=R7SddrtNscYTiSFlO59UXfIspqmMFfrUbX7RUwGj7PM=;
- b=vIYMbfcG+kyAVEpsuEY1uFlHGTR/MzWqD83kGbDC1kxL8X/MbCczlQlB1oUv5kLSR8QG7b8DA
- zvfTTOvComkAoraR8KhHKFcnXzgcMqYSA+3IEAoOdG2YtAgeP9yRAj+
-X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
- pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
-X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
- with auth_id=273
-X-Original-From: Maud Spierings <maud_spierings@hotmail.com>
-Reply-To: maud_spierings@hotmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Maud Spierings <maud_spierings@hotmail.com>
+Changes in v2:
 
-Add bluetooth for the asus vivobook s15
-Describe wlan configuration
+Patch 1/3:
+	- Switch if case for better readability
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+Patch 2/3:
+	- Reword commit message
+
 ---
- .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 163 +++++++++++++++++++++
- 1 file changed, 163 insertions(+)
+v1: https://lore.kernel.org/linux-iio/20241128232450.313862-1-vassilisamir@gmail.com/
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-index 7269f8e7709988657b363004875163a69142f16c..0774bd65ae8cddab81b98e27a116fd5adbe1363c 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-@@ -18,6 +18,11 @@ / {
- 	compatible = "asus,vivobook-s15", "qcom,x1e80100";
- 	chassis-type = "laptop";
- 
-+	aliases {
-+		serial0 = &uart21;
-+		serial1 = &uart14;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-0 = <&hall_int_n_default>;
-@@ -152,6 +157,101 @@ vph_pwr: regulator-vph-pwr {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+
-+	vreg_wcn_0p95: regulator-wcn-0p95 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_0P95";
-+		regulator-min-microvolt = <950000>;
-+		regulator-max-microvolt = <950000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_1p9: regulator-wcn-1p9 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_1P9";
-+		regulator-min-microvolt = <1900000>;
-+		regulator-max-microvolt = <1900000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_3p3: regulator-wcn-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&wcn_sw_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	wcn7850-pmu {
-+		compatible = "qcom,wcn7850-pmu";
-+
-+		vdd-supply = <&vreg_wcn_0p95>;
-+		vddio-supply = <&vreg_l15b_1p8>;
-+		vddaon-supply = <&vreg_wcn_0p95>;
-+		vdddig-supply = <&vreg_wcn_0p95>;
-+		vddrfa1p2-supply = <&vreg_wcn_1p9>;
-+		vddrfa1p8-supply = <&vreg_wcn_1p9>;
-+
-+		wlan-enable-gpios = <&tlmm 117 GPIO_ACTIVE_HIGH>;
-+		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-0 = <&wcn_wlan_en>, <&wcn_bt_en>;
-+		pinctrl-names = "default";
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p8: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p8";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -197,6 +297,13 @@ vreg_l14b_3p0: ldo14 {
- 			regulator-max-microvolt = <3072000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
-+
-+		vreg_l15b_1p8: ldo15 {
-+			regulator-name = "vreg_l15b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
- 	};
- 
- 	regulators-1 {
-@@ -475,6 +582,23 @@ &pcie4_phy {
- 	status = "okay";
- };
- 
-+&pcie4_port0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1107";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &pcie6a {
- 	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
-@@ -624,6 +748,45 @@ tpad_default: tpad-default-state {
- 		function = "gpio";
- 		bias-disable;
- 	};
-+
-+	wcn_bt_en: bt-en-state {
-+		pins = "gpio116";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		output-low;
-+		bias-pull-down;
-+	};
-+
-+	wcn_sw_en: wcn-sw-en-state {
-+		pins = "gpio214";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+
-+	wcn_wlan_en: wlan-en-state {
-+		pins = "gpio117";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+};
-+
-+&uart14 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn7850-bt";
-+		max-speed = <3200000>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+	};
- };
- 
- &usb_1_ss0_hsphy {
+This series adds the SPI interface description on the device-tree file
+of the sensor, adds proper self-described sized variables and performs
+a minor optimization in time variable names.
 
+Vasileios Amoiridis (3):
+  dt-bindings: iio: pressure: bmp085: Add SPI interface
+  iio: pressure: bmp280: Use sizeof() for denominator
+  iio: pressure: bmp280: Make time vars intuitive and move to fsleep
+
+ .../bindings/iio/pressure/bmp085.yaml         | 32 +++++++++++++++
+ drivers/iio/pressure/bmp280-core.c            | 39 ++++++++++---------
+ drivers/iio/pressure/bmp280.h                 |  8 ++--
+ 3 files changed, 56 insertions(+), 23 deletions(-)
+
+
+base-commit: a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
 -- 
-2.47.1
-
+2.43.0
 
 
