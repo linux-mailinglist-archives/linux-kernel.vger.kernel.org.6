@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-427612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585C79E0373
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:31:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294FE9E04FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:31:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9908165B9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:31:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49F57B465D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B9F2036E5;
-	Mon,  2 Dec 2024 13:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C591FF5E9;
+	Mon,  2 Dec 2024 13:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5Cz5vTz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F06a8CGE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F08202F8C
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 13:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3B51FECD2;
+	Mon,  2 Dec 2024 13:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733146234; cv=none; b=MMx+Kc3KUL1VSOI6j5RsuKaHYMD1MltdrFbgwOjhqQwUpYwUExw3jcssBIklR4L1VaEQBNb453qbNT2x708Nt/B7EAyI0ToKUqb+y1zmD6xeBtKVPao0QemsJ7Kb1chmsqjiCt+1lxJT+TTHMwGQ8x0cCQI8HqetElt6j0fU9HE=
+	t=1733146241; cv=none; b=LBfnRpor84pvPLkdNuwkvarTOMTQV4Fl92h4WT+1D8w7z/QTDBrrKDBdeSxi9xvlqZXDZhZoqc7VbmVd/5z7C3jn1oIIyx5nwif5hrWEPns1ZKwpklZ5lwBzhfuzEii61FcEO8JPuh5gKD1/cCpgWErALlxr/6mtaDrn0mJblTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733146234; c=relaxed/simple;
-	bh=3vR5uHFvq4qDWCOyJoIpnnMrm6TL3f2lZVu3BzoBUrY=;
+	s=arc-20240116; t=1733146241; c=relaxed/simple;
+	bh=0L7xq5I8jnvsqyo1vi4o9DWhUq92QRZxs0rdJPkIi1c=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sob7M33RLxpjP3E4hGkGAJeAusMrLbA5WXcKZiCUXotBb/kvifMlKHA4eoT0c/HqC4J+P8MONR/lmmuV9f9rFWUfQcOM55k2ODz0HN0q7MGKBOMNHWDwSd+LwDYTlHP76Zb9foeNJO0XrAEzy4/cocjWDdCjO2yaiLeYaBgWTek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5Cz5vTz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 130C2C4CED1;
-	Mon,  2 Dec 2024 13:30:32 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qXxbwUsoOpyE6uP7o/ZM7CvNSp0i7wpLWKpATppVkQm42zNbOfXiPNz4w6jtplkTN9cSSa2QdBVdlFBD2cjsNePcoler11kTRnxk7vfobpJsXAoqySxJuwKDyn1oyVFhGxAUkasImtmN6RubgEZal7jWNITmeADtyaEhaoAv1Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F06a8CGE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C260C4CED1;
+	Mon,  2 Dec 2024 13:30:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733146234;
-	bh=3vR5uHFvq4qDWCOyJoIpnnMrm6TL3f2lZVu3BzoBUrY=;
+	s=k20201202; t=1733146241;
+	bh=0L7xq5I8jnvsqyo1vi4o9DWhUq92QRZxs0rdJPkIi1c=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Q5Cz5vTzO1YYtpBshA0UK+uEzBl4mmFbH8Ya0FSNxo8Bh0Hzbg5XRgOBx7WaTCQ2m
-	 STaFU+mwJiNscb6Xw162smzS+6Ym7tp/jcJjZks5M2akoEWiaeJb6Rk6Y6xzg+/g68
-	 8raP63ub4zbBRvprViZLRtuFtXBA8Q6Nhiykc3jLf+YRfc44gShBch7Ajx5eIJhn8f
-	 +JE32JQ/hQ4CmxdHzhYS0wy6G79E1dOZnFeAcyuX3DRoJ1Q8D75MRr7P8hniTqlfEp
-	 SZgfbarLw5Xvr+Qan0D1qJNKRhBrIRGJLxTwGLhlhfWvFAMLBNZRY9B3rV/g8B/Ug8
-	 c91NVIprv+AXA==
+	b=F06a8CGEPJXGp7CvHDbG56l65xOMToVFzR2rMDHnlq05tBoMAcIGLtlJpZI1LFvaw
+	 21ez31VRp0RXzpXdcHDaibB/Yd3WBCvuxO3Whziwe6VpAF3EABuwgEeehrpFYgdCMR
+	 bEdV+FPoRUet8aW9tXrY0IMlFK4ibkFN4oyhMpJKatIAy7UVECxn1p7NexTXVqok6w
+	 wmohYG5Qd7EL8DeWb0syIPxhf9v2jn6BLNI03Gh7P6ZbpFFoWyH9bS38xmeh2vh+j/
+	 Sq4Ld1q1ca5GLC45O63Cni1NiUsNTnw6DqfBR87dcT4j0BvjXS9npVALuS2YBuS6ab
+	 c0QmARCUP8j7g==
 From: Mark Brown <broonie@kernel.org>
-To: linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-In-Reply-To: <20241121123439.4180167-1-andriy.shevchenko@linux.intel.com>
-References: <20241121123439.4180167-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] regmap: cache: rbtree: use krealloc_array() to
- replace krealloc()
-Message-Id: <173314623280.54131.8956355770929647705.b4-ty@kernel.org>
-Date: Mon, 02 Dec 2024 13:30:32 +0000
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: linux-spi@vger.kernel.org, asahi@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241127-gpio-descs-v1-1-c586b518a7d5@gmail.com>
+References: <20241127-gpio-descs-v1-1-c586b518a7d5@gmail.com>
+Subject: Re: [PATCH] spi: apple: Set use_gpio_descriptors to true
+Message-Id: <173314623984.54221.9478516701597362964.b4-ty@kernel.org>
+Date: Mon, 02 Dec 2024 13:30:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,20 +61,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Thu, 21 Nov 2024 14:34:39 +0200, Andy Shevchenko wrote:
-> Use krealloc_array() to replace krealloc() with multiplication.
-> krealloc_array() has multiply overflow check, which will be safer.
+On Wed, 27 Nov 2024 23:18:29 +0100, Sasha Finkelstein wrote:
+> There is at least one peripheral that is attached to this
+> controller and can not use native CS. Make it possible to use
+> a GPIO instead.
 > 
 > 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] regmap: cache: rbtree: use krealloc_array() to replace krealloc()
-      commit: b95cacd8d708bce5839db2767d425e20ae548fd8
+[1/1] spi: apple: Set use_gpio_descriptors to true
+      commit: 1b299bd0c22887543b276bcc5b4ed26f5bd83ae4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
