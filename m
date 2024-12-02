@@ -1,108 +1,101 @@
-Return-Path: <linux-kernel+bounces-428136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B96309E0A8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:59:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9C1163AE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:59:54 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDD01DD9A6;
-	Mon,  2 Dec 2024 17:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dWOD/Smp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA729E0A83
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:58:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508AA1DD0F8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2304A282DE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:58:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054CC1DD0DC;
+	Mon,  2 Dec 2024 17:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dxz/NeTU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC761DA62E;
+	Mon,  2 Dec 2024 17:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733162349; cv=none; b=h0pdNIE84EuU1dSTGeaHKEdg2+3S3mH6ZLkdIuqKCZmhdYcQgS72+lLswPTHlV88aerlSEZj7PLRSewat7hG1feQLtwDdQrqdWu5TLm3gAmPgwbbkalKia0CR2SvNtu4cjEQett0KP9SeDjeHVV3U0fEBhsqJBzOe02/+WWWc34=
+	t=1733162299; cv=none; b=k2VZtI7xFdxNovuS57OviK+Z3kijLIB1LMOmfpEOPBFkwjiyXLg/U5E2WSKE41xcBxaWm+pI2+hQlG5WIPShlQH7v87E+agy3lZJnIfv1LclIt8LAD4FowGg7SsQ1q6x+IEt+KRIpwShvdnh+Sse+QnM6Oi2sB1cMjYrs9XT/Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733162349; c=relaxed/simple;
-	bh=pmnArA//bkpdhkHU/fQej/A6gmLmA9azQ3MuefzXl5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZZEXkaR/ul4n33TdmrhDwb6jqzIByK5QTTqZDGt54E4WpsiGVxlKQm8YYwPVwh84aUMIIIQOu7YyAlWrBRqjOUKdOEgvo3LYvoKLAHF4OF2ANCYwoLekf3pl1uJ5HKXEiUa/lXmi2EU4fZI3cP6eZB73Jk34fZShHMRIIaz2zNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dWOD/Smp; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733162347; x=1764698347;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=pmnArA//bkpdhkHU/fQej/A6gmLmA9azQ3MuefzXl5U=;
-  b=dWOD/SmpXG8Lf3swCPcmUTQaVR8wGCUB6WAttmp1A/BBLfJgtl30wfRj
-   UwSPecQz3Xqu79+WhrV4+NYzeRDYYW906qsCX3kZigujoPbW3qmdA49yv
-   04mDOytCxeYFSvkM8m89HDn/f8uC8qW6lM9I5/XQNggpe8wSxjh8fg6Ri
-   NN8z2IgSrUQPB54iSjEvN/suGJUSFJubk0kFz8fGdyfNw4TlBJ/ehAugU
-   8P3xYk8eKwo85aOIiIRovNP7evV9M0l6NDLMTA5fyzNGyXb8DERYcpGCf
-   KfMuJYtn2IuMdyEdEZ2tmwa4IZB2FfZ4vinhMc5+6uMEjRkAaRX3FhHQy
-   A==;
-X-CSE-ConnectionGUID: MA7jdpwXRySRL+sbMpgFsw==
-X-CSE-MsgGUID: lkvkg4h0Qem1vnxd0sxH3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="50868448"
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="50868448"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:59:06 -0800
-X-CSE-ConnectionGUID: LMwZfNzTRnegJqXWq83g+A==
-X-CSE-MsgGUID: p6cFK7QMRsq7FR0lwHnivg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="97612437"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 02 Dec 2024 09:59:05 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tIAhL-0002hR-0V;
-	Mon, 02 Dec 2024 17:59:03 +0000
-Date: Tue, 3 Dec 2024 01:58:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	Vineet Gupta <vgupta@synopsys.com>
-Subject: arch/arc/plat-hsdk/platform.c:16:5: sparse: sparse: symbol
- 'arc_hsdk_axi_dmac_coherent' was not declared. Should it be static?
-Message-ID: <202412030106.M5RMPcBO-lkp@intel.com>
+	s=arc-20240116; t=1733162299; c=relaxed/simple;
+	bh=bJXHhv1125KrcH8q0sNs+ESdxa4r7njPfil1NuS7//A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=th6tIkLH1Pa+xn5GRPs+TPOalqx8zVNsCEffBfYlwIWGKvq4WYtyuXkJFo1QusDIEMfc4tGVuphH6eb0TXwbi9enJbfyQyX9whoXkX9d4hrdH0jqNAdlDHPQ0EEuE1Ffjh22I+9VBfUqAxNtgOomllIQ762Mqpf7hPyd0RdR8SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dxz/NeTU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD91C4CED1;
+	Mon,  2 Dec 2024 17:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733162299;
+	bh=bJXHhv1125KrcH8q0sNs+ESdxa4r7njPfil1NuS7//A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Dxz/NeTUoIAnlz4vAj6C9KKzvQtSbUU6WtoHAu8iLkZlmOnxVaXaFYG1rhiMeqzDz
+	 rZDgv5XsmDpZZRowHBN1zLxUYkeddWh7TNZXK+PlceuAXTWSo7X1gOawVhIFOn1RKP
+	 X1gVSeEK/YgT/+3I6O65NQcMq+vtnsEPiSEjN/sUbXgT+sRxK+lBHFt2mGsRwkxEdO
+	 J6F8P+i4Kt7YpEKQsbdHAbcF2fT7ID+Lq2TrxINt5Aq9OaMC5AhQgGIaUQD90q3stV
+	 Y4qu7OYXEOBr9Se06hMfLiLdyhQ0+/5m/Wkf4UCLiRsNdAjHLRssmh5PXDELgRl2DQ
+	 Ea3QEzsPTnsIw==
+From: Mark Brown <broonie@kernel.org>
+To: frattaroli.nicolas@gmail.com, linux-rockchip@lists.infradead.org, 
+ Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, heiko@sntech.de, 
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241118045605.48440-1-dheeraj.linuxdev@gmail.com>
+References: <20241118045605.48440-1-dheeraj.linuxdev@gmail.com>
+Subject: Re: [PATCHv2,sound-next] ASoC: rockchip: i2s-tdm: Fix a useless
+ call issue
+Message-Id: <173316229709.189181.1009410834028591581.b4-ty@kernel.org>
+Date: Mon, 02 Dec 2024 17:58:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e70140ba0d2b1a30467d4af6bcfe761327b9ec95
-commit: ce0eff0d9b4d37702df48a39e3fddb5e39b2c25b ARC: [plat-hsdk]: allow to switch between AXI DMAC port configurations
-date:   5 years ago
-config: arc-randconfig-r123-20241118 (https://download.01.org/0day-ci/archive/20241203/202412030106.M5RMPcBO-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241203/202412030106.M5RMPcBO-lkp@intel.com/reproduce)
+On Mon, 18 Nov 2024 10:26:05 +0530, Dheeraj Reddy Jonnalagadda wrote:
+> This commit fixes a useless call issue detected by Coverity
+> (CID 1507978). The call to rockchip_i2s_ch_to_io is unnecessary as its
+> return value is never checked or used. As a result, the function
+> definition and call is removed.
+> 
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412030106.M5RMPcBO-lkp@intel.com/
+Applied to
 
-sparse warnings: (new ones prefixed by >>)
->> arch/arc/plat-hsdk/platform.c:16:5: sparse: sparse: symbol 'arc_hsdk_axi_dmac_coherent' was not declared. Should it be static?
-   arch/arc/plat-hsdk/platform.c:27:17: sparse: sparse: undefined identifier '__builtin_arc_sr'
-   arch/arc/plat-hsdk/platform.c:34:17: sparse: sparse: undefined identifier '__builtin_arc_sr'
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-vim +/arc_hsdk_axi_dmac_coherent +16 arch/arc/plat-hsdk/platform.c
+Thanks!
 
-    15	
-  > 16	int arc_hsdk_axi_dmac_coherent __section(.data) = 0;
-    17	
+[1/1] ASoC: rockchip: i2s-tdm: Fix a useless call issue
+      commit: 42c7af046aaf35c42ef864cbd96df025c48ce50f
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
