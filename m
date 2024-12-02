@@ -1,95 +1,77 @@
-Return-Path: <linux-kernel+bounces-426906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497BF9DF9F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:36:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD7F79DF9F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:36:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1F54B218DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:36:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7276C281A9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8C11F8AE1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482A91F8AE4;
 	Mon,  2 Dec 2024 04:36:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7A828399
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 04:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NvU717v4"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0FB1D63FA;
+	Mon,  2 Dec 2024 04:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733114170; cv=none; b=jvgilXaprAYjzLATfLuEHef2WKwVhjmRPw/Y1KNFfl2TysPrk+jhmQ6V1pOP6K4vw14a0024TsauSgy4zqiadXgnPhMZF1xkejeVxNBzl4O0ebRzXChb17Y6obLd54ZL/J9MgB2MBZYhNmbEbSvd4qWAfD8FhXIoToYXmHHKefE=
+	t=1733114170; cv=none; b=Onx5scKb8Hk2oJoHJC6kffe5caZiYTAgnof4kH5wUn01/MkQHa7uNlfm/wbXAgukAt80WPZHnpRmvo6hVofTmMK47c0Ma4Hq3YaOHJUHk4wbz/8a5cnUQdCPUDDYKt+oT7VvYN+rhC/IMh6Xae5dntHIm3hU1ION8m3lDCVG1mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733114170; c=relaxed/simple;
-	bh=D6YHoRrs9tfBhGdYJuAY3VpagmGWywUIPYux8LI90rM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dPv1zyAp8ddFKuCaguo1hVFKKuE5UD83CNsAEsW4Ge6mn39ZJig3n+AfOC8NzYsc3xEF699ojFvhd0Y/IRhNj8RXw9HMY5aDnr4hH+x1WRcDaAcsg0lecRfpDZwJlusTCwqremK7GxxmdzavodbdALXBRDrwXSQQG8anXUkakKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E32E106F;
-	Sun,  1 Dec 2024 20:36:30 -0800 (PST)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 222283F58B;
-	Sun,  1 Dec 2024 20:35:58 -0800 (PST)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
+	bh=10DMLOjX2nq4S0ZhNXUmQlg8iX0lcjhdmK7OUaAd5LM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MHHy2ekZIdx/QJmoHtcCGKxleIsYM2cXVSyH1w5VBxt4ZVJzn8fOll2l2lxuITR7rXLHUshlsg7O9i6PAuDsJdx4AaVtlKmrei9lyhq5MAELAn3LwMhgU7yBpq+KM2VLAcnCeiDt/XzJqb/LR3el3XydqDQOebTyUQKAa4fSU68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NvU717v4; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Zc+Zip5FmC+oWN9tuKZ79CoXXMAGCNMABkkM9qSjAsw=; b=NvU717v469oHylJ0EetdHjBNxq
+	uxZmbnZ5oCL7GfJV0l6EkkGQbczZWIfY0liLp4AvAICxY9Px9pjDCL5p7iZOlfUMfVav20OaCkObJ
+	gQ0PFr24J8zYxja+ZK5ujNwx+yuJpqNAAWeIQLXqk70HamY6TlDjfug/YijICPI+ZyHNKo7hrhO3G
+	v33RGFWamv6MHW0+vuFmb5FTrLs+w8K5zNLHWElJPhZ9vYPcXKFzgch0+ghrpNJRsBbhTQT7JUsjn
+	YoY4C8Pvmti3Qlj9aLo3AXi/aFSOuhlNVdcLhaSTkMKH4vuZaLMdLI3VKacN50WcxJgj5YANqh85+
+	8j40IIKg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tHyAI-00000003vBc-0Wq0;
+	Mon, 02 Dec 2024 04:36:06 +0000
+Date: Mon, 2 Dec 2024 04:36:06 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: cheung wall <zzqq0103.hey@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64/mm: Drop INIT_MM_CONTEXT()
-Date: Mon,  2 Dec 2024 10:05:53 +0530
-Message-Id: <20241202043553.29592-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+Subject: Re: "bug description: kernel warn in p9_trans_create_unix" in Linux
+ Kernel Version 2.6.26
+Message-ID: <20241202043606.GO3387508@ZenIV>
+References: <CAKHoSAuCLyh5JWVkYbEzwphX_fyKNP5PyBWsyq+V9jP7Vy4=kA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKHoSAuCLyh5JWVkYbEzwphX_fyKNP5PyBWsyq+V9jP7Vy4=kA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Platform override for INIT_MM_CONTEXT() is redundant because swapper_pg_dir
-always gets assigned as the pgd during init_mm initialization. So just drop
-this override on arm64.
+On Mon, Dec 02, 2024 at 12:30:37PM +0800, cheung wall wrote:
+> Hello,
+> 
+> I am writing to report a potential vulnerability identified in the
+> Linux Kernel version 2.6.26.
+> This issue was discovered using our custom vulnerability discovery
+> tool.
 
-Originally this override was added via the 'commit 2b5548b68199 ("arm64/mm:
-Separate boot-time page tables from swapper_pg_dir")' because non standard
-init_pg_dir was assigned as the pgd. Subsequently it was changed as default
-swapper_pg_dir by the 'commit ba5b0333a847 ("arm64: mm: omit redundant
-remap of kernel image")', which might have also just dropped this override.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-This patch applies on v6.13-rc1
-
- arch/arm64/include/asm/mmu.h | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
-index 2ec96d91acc6..662471cfc536 100644
---- a/arch/arm64/include/asm/mmu.h
-+++ b/arch/arm64/include/asm/mmu.h
-@@ -109,8 +109,5 @@ static inline bool kaslr_requires_kpti(void)
- 	return true;
- }
- 
--#define INIT_MM_CONTEXT(name)	\
--	.pgd = swapper_pg_dir,
--
- #endif	/* !__ASSEMBLY__ */
- #endif
--- 
-2.30.2
-
+You are doing a massive disservice to your project; the version in
+question is 16 years old.  Please, use something reasonably recent
+(ideally - current mainline) for testing aforementioned tool.
 
