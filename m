@@ -1,167 +1,186 @@
-Return-Path: <linux-kernel+bounces-426847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE4F9DF964
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:10:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034529DF967
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:11:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBB4160471
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:10:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61E9DB21339
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259312AEF1;
-	Mon,  2 Dec 2024 03:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB91A3B784;
+	Mon,  2 Dec 2024 03:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1WIp2GF"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKex6dYq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75D13BBC5;
-	Mon,  2 Dec 2024 03:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2F22AEF1;
+	Mon,  2 Dec 2024 03:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733109030; cv=none; b=S2HsfbrrY6x2chDBu9gKYDIRrs5m/iwL6+wESRrUsAp/UfcAGEpfNqb9mrwcUIrA7fd8hPQaQ41fwS8Pq6+ofSViXqYdPjCfhun/Aa7jxjsVaIUDiTIfKY7NWCf1d4mGiIO3l7MfKYY6GTqPrkEU2Mw0xp1qyRr+n4/C0maVSNQ=
+	t=1733109051; cv=none; b=K2OQgHq+UmenrOORvlNrKXSnHF+2PE+72MAysJe5uEl6k3C22qVMdxr1Jo/r3oZ0459CSnAuk9ukftokENdklg7ivpe7wSOjkiGQtiWdsoXUvzdOJLIm8Noz+0Mni93UrOx1xlWj1Ef+diWflgxc9uh+vP6Ctw5wXL53JqlVFyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733109030; c=relaxed/simple;
-	bh=WuABBIyxWxGIuUEf7tH0nMpTsOTuudUyomaRKdl+1gE=;
+	s=arc-20240116; t=1733109051; c=relaxed/simple;
+	bh=4XyFDRbVvmJSF1QRYsOt/gpEGnbXB3GeEqqGoMOpJOA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iwumKmbdrzzBgE0xlPgIVtt611cSR8hrenTTCN3v6hZW3u9CX2J8E5zuu4TjQ7BI0XIUmKBV8Z12sdPYfl+HJ1xQX6mpan9t86vErBC7eepSidRjXR6E8+EfsyP5jqbPG9eBjo+9QtHOuhcAv4vgQ4iou5XsleOiTk0dZ/yHzl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G1WIp2GF; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso632648366b.1;
-        Sun, 01 Dec 2024 19:10:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733109026; x=1733713826; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vvNts54nLaDXzoCuC3uPZxLQcEjNcHmmH7slyQInUPc=;
-        b=G1WIp2GFxR/6i9gaDbUhljSgBumE9xXsDt9TpVplmPSVTiUhB7G2bQDt2+DtTpqHEP
-         6MxgbDhGCDjU3en4NJKVKdsZ6ytiPYkEpM0agnunQ02MFKzRXjKxQo/OvyPTgffrqNEa
-         agnbP8imXj9AfgeBXLhJeRjnfWPShajoFHMBOrZdz4j9uLnhiKOiDAWo7zYGxE6JZbws
-         roOrAM1OrCNmABN9sfPlttRMdIiFd6jfhaDcttwbSSVGb/DGUsUlSiUM6+6K9WqjQxO/
-         ZiPtseWSz0HMzKMNyPC9uccE9UXHII02Nak3e6Nk6qDrmzUF4SWxj63q3W/kDk76AInU
-         zRUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733109026; x=1733713826;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vvNts54nLaDXzoCuC3uPZxLQcEjNcHmmH7slyQInUPc=;
-        b=LQS/kgQYoRfGP+aSNtglUKA1yV3uhtg2MLPNU8BNSlz5F0rm60E8zrFOSZB2pkITY7
-         kXcAtN9LSd6X4s4u6BO8R2A8Owvhow/t1Bo/QAoi99xRRM8J3Jt8F85TZoswKR2+TSxO
-         ZgHP2hz0l8rQYKKqZMAJCE2k1Thrq0Y5Zj67oYb2aOZAQaxy8e0U/zrpluy+oJMzEv98
-         fTNkP9/jm5wkRVtHinz6rfTH2mYkDxHCLTkVw2uBabpTt7FwZH3zPGKqdhITPcrbvPwt
-         Tfes6k3Zoanf4VwFGstHXEENaB+nAEMylVD4OHQUCKD3tQ4WWbvMJvfriF9pGX9bTWiX
-         yMPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv1NJbpYcbK4qw/PW7GEIYgp/l5n2lRSnNdWS1L1d9lP0lMa+DWB4uWXySExyObXTieaLQjdvmtl4h@vger.kernel.org, AJvYcCW2rSHQGodh49wq5lAvCy1HueZKFHN+tkdam8PpBy3yK8uxM4vx7cp1+JxGB8zt6VtiGyYM/6k414gxcLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysEfgrf17bc3uZD0wse6pnwf78Y1FLzxpvDmqxUh69q95rngEM
-	KtL1SuPTHDe++/FjZofs6Lx9trVcVTK8fZcmwb3gL9SEuL+tUhplktsJrugqnD1IqOX8DE7aWzA
-	kSNVMBSZ1JWsgyrWL/vzVJJHEfrM=
-X-Gm-Gg: ASbGncvRIfC9tAMFFhMQSkjSaS3CSHP0m2a/FUIAMCm8lLy1aYegNk0A/sO41Ht0im7
-	2w9m+PVWCseRGmgsOQdeHp6xiRu+lVr0=
-X-Google-Smtp-Source: AGHT+IFokNj0CJ0WKzOxvAtyNcOJBhZbXE20GUIOYjMchjecdIHpvcirTRT1ZnbDUrAGgwd0EJuKmLUH5klgrSXVfrs=
-X-Received: by 2002:a17:906:18b2:b0:aa4:f520:41b6 with SMTP id
- a640c23a62f3a-aa580f4c8a6mr1903686366b.30.1733109025811; Sun, 01 Dec 2024
- 19:10:25 -0800 (PST)
+	 To:Cc:Content-Type; b=hNLyi+2sKwxvd418D+0UcrDOgtJxz2gbCIztqsUukOZGcpDd7oxlw3BcdPL4IynWAX1ab6SAc9U8ayp1H7oUSnfK5PvV/80PJcqyi+RE0EVruPTb90c6/JxSm7gXv6igPx+n3GAPAL7auI1diDhnwfrRLYSXAAWx69he8NBN0Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKex6dYq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B0B3C4CEDB;
+	Mon,  2 Dec 2024 03:10:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733109050;
+	bh=4XyFDRbVvmJSF1QRYsOt/gpEGnbXB3GeEqqGoMOpJOA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IKex6dYqkpBN7x9zdYhIRTBYJVw24opx92utxZufd5rAfg38vCRx2ZxNVv9LETOet
+	 k3DHNfkp7neNILLdHg0ussVzwQ/xYo8nVWHq43N1jo+QlyIQfA0aKiAY5rF5weBvaK
+	 9nU5DNpdL5kjQn7d7hMzW8q805ko/iTKbLFFc+aoGvwSMzTe7FEL5eYlGZWrc1W6ZK
+	 H7pN9+oKN80ALsGVlWZQburnkG7B9XGiTZkDhu++FSlyJREUk5aeKY7sl9zehLuFYH
+	 EjrsxMAAkyg7p1RIaj8ETddLoto1/xJ3QufCoPQJrTub/v/lUUaKPqZGVjCea21Ngl
+	 t+yYvL4IvEPDA==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa549d9dffdso615327866b.2;
+        Sun, 01 Dec 2024 19:10:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUsm7w0TL0DmsWHmtoSZH6Frm0dccsVjL4dLYesLdGy7qPSM42mJ3JUv2d9EcIi/b7kZww=@vger.kernel.org, AJvYcCWjSNxy59P3QtwRY8UdxR7RbeJrpyChvqmaEILbyzUUhzdWJ/k6J3uO8TKtemtHy3+O6446c67XPy4CAGio@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF8HHE/C470r263JOiqTgvCoZvuhLGBv2XzhToOGa9Cbqq6ybB
+	6/VshuzozIdzvd5IkWA/HIwkrmCDcdjOs4Z+acNqohjRxqfjDkUcN4JvXFg/6bN9TFQRu4Bpntf
+	ywbXpt5AQKAt5VVsYzYHBVLrOw5M=
+X-Google-Smtp-Source: AGHT+IFjInjkFGajQNtWr0S9onhEuE+lYbF17ih6fnW6hmwyEAtvN4I4W+umi88/W37zb1UVxumfo89hliQ6/ptrW/8=
+X-Received: by 2002:a17:906:2192:b0:aa5:2855:7817 with SMTP id
+ a640c23a62f3a-aa580f72e6fmr1525197466b.35.1733109049111; Sun, 01 Dec 2024
+ 19:10:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011043153.3788112-1-leonylgao@gmail.com> <173136306889.3322178.5149197946199507685.b4-ty@bootlin.com>
- <CAJxhyqC9hYo3E=J--EYN9uYQc6_q67X4F5DSgpMFzsWrFcbw4Q@mail.gmail.com> <20241129232038ad3be3ae@mail.local>
-In-Reply-To: <20241129232038ad3be3ae@mail.local>
-From: Yongliang Gao <leonylgao@gmail.com>
-Date: Mon, 2 Dec 2024 11:10:14 +0800
-Message-ID: <CAJxhyqCGYeYQZfBSD41xFHDE2uqFsn0-9vUcYsa=1zGcSyPAzQ@mail.gmail.com>
-Subject: Re: [PATCH] rtc: check if __rtc_read_time was successful in rtc_timer_do_work()
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: john.stultz@linaro.org, linux-rtc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yongliang Gao <leonylgao@tencent.com>, 
-	Jingqun Li <jingqunli@tencent.com>
+References: <20241128061110.5204-1-yangtiezhu@loongson.cn>
+In-Reply-To: <20241128061110.5204-1-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 2 Dec 2024 11:10:37 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5TZ0n5JKFvisFXwvYRkdTSDzHi=jhvD0fxnn+XKtvG+A@mail.gmail.com>
+Message-ID: <CAAhV-H5TZ0n5JKFvisFXwvYRkdTSDzHi=jhvD0fxnn+XKtvG+A@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: BPF: Adjust the parameter of emit_jirl()
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 30, 2024 at 7:20=E2=80=AFAM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
->
-> On 20/11/2024 22:17:34+0800, =E9=AB=98=E6=B0=B8=E8=89=AF wrote:
-> > Hi Alexandre Belloni,
-> >
-> > I've noticed that the post-failure process for __rtc_read_time requires
-> > careful handling.
-> > 1. Need to call pm_relax.
->
-> I had a look when taking your patch and I'm not convinced calling
-> pm_relax is necessary.
+Applied, thanks.
 
-Before all the code of schedule_work(&rtc->irqwork),
-pm_stay_awake(rtc->dev.parent) is called. There are the following 4
-functions:
- - rtc_set_time
- - rtc_update_irq
- - rtc_timer_enqueue
- - rtc_timer_remove
-At the end of the normal processing flow of the rtc_timer_do_work
-function, pm_relax(rtc->dev.parent) is called.
-So, if it fails here, pm_relax(rtc->dev.parent) should be called, right?
+Huacai
 
+On Thu, Nov 28, 2024 at 2:11=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
 >
-> > 2. Potentially need to set the alarm to ensure subsequent interrupts ca=
-n
-> > process the
-> >     expired timer? Could you give me some advice?
+> The branch instructions beq, bne, blt, bge, bltu, bgeu and jirl belong
+> to the format reg2i16, but the sequence of oprand is different for the
+> instruction jirl, adjust the parameter of emit_jirl() to make it more
+> readable correspond with the Instruction Set Architecture manual.
 >
-> Same thing, if you are not able to read the current time, setting the
-> next alarm is going to fail anyway.
-
-OK, I won't set the next alarm if it fails here. Thanks.
-
+> Here are the instruction formats:
 >
-> > Should I continue to submit a fix patch or create a v2 version of the p=
-atch?
-> >
-> > Best Regards,
-> > Yongliang Gao
-> >
-> > Alexandre Belloni <alexandre.belloni@bootlin.com> =E4=BA=8E2024=E5=B9=
-=B411=E6=9C=8812=E6=97=A5=E5=91=A8=E4=BA=8C 06:11=E5=86=99=E9=81=93=EF=BC=
-=9A
-> >
-> > > On Fri, 11 Oct 2024 12:31:53 +0800, Yongliang Gao wrote:
-> > > > If the __rtc_read_time call fails,, the struct rtc_time tm; may con=
-tain
-> > > > uninitialized data, or an illegal date/time read from the RTC hardw=
-are.
-> > > >
-> > > > When calling rtc_tm_to_ktime later, the result may be a very large =
-value
-> > > > (possibly KTIME_MAX). If there are periodic timers in rtc->timerque=
-ue,
-> > > > they will continually expire, may causing kernel softlockup.
-> > > >
-> > > > [...]
-> > >
-> > > Applied, thanks!
-> > >
-> > > [1/1] rtc: check if __rtc_read_time was successful in rtc_timer_do_wo=
-rk()
-> > >       https://git.kernel.org/abelloni/c/e8ba8a2bc4f6
-> > >
-> > > Best regards,
-> > >
-> > > --
-> > > Alexandre Belloni, co-owner and COO, Bootlin
-> > > Embedded Linux and Kernel engineering
-> > > https://bootlin.com
-> > >
+>   beq     rj, rd, offs16
+>   bne     rj, rd, offs16
+>   blt     rj, rd, offs16
+>   bge     rj, rd, offs16
+>   bltu    rj, rd, offs16
+>   bgeu    rj, rd, offs16
+>   jirl    rd, rj, offs16
+>
+> Link: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-E=
+N.html#branch-instructions
+> Suggested-by: Huacai Chen <chenhuacai@loongson.cn>
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+>
+> This patch is based on the following commit:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D73c359d1d356
+>
+>  arch/loongarch/include/asm/inst.h | 12 +++++++++++-
+>  arch/loongarch/kernel/inst.c      |  2 +-
+>  arch/loongarch/net/bpf_jit.c      |  6 +++---
+>  3 files changed, 15 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/a=
+sm/inst.h
+> index 944482063f14..3089785ca97e 100644
+> --- a/arch/loongarch/include/asm/inst.h
+> +++ b/arch/loongarch/include/asm/inst.h
+> @@ -683,7 +683,17 @@ DEF_EMIT_REG2I16_FORMAT(blt, blt_op)
+>  DEF_EMIT_REG2I16_FORMAT(bge, bge_op)
+>  DEF_EMIT_REG2I16_FORMAT(bltu, bltu_op)
+>  DEF_EMIT_REG2I16_FORMAT(bgeu, bgeu_op)
+> -DEF_EMIT_REG2I16_FORMAT(jirl, jirl_op)
+> +
+> +static inline void emit_jirl(union loongarch_instruction *insn,
+> +                            enum loongarch_gpr rd,
+> +                            enum loongarch_gpr rj,
+> +                            int offset)
+> +{
+> +       insn->reg2i16_format.opcode =3D jirl_op;
+> +       insn->reg2i16_format.immediate =3D offset;
+> +       insn->reg2i16_format.rd =3D rd;
+> +       insn->reg2i16_format.rj =3D rj;
+> +}
+>
+>  #define DEF_EMIT_REG2BSTRD_FORMAT(NAME, OP)                            \
+>  static inline void emit_##NAME(union loongarch_instruction *insn,      \
+> diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
+> index 3050329556d1..14d7d700bcb9 100644
+> --- a/arch/loongarch/kernel/inst.c
+> +++ b/arch/loongarch/kernel/inst.c
+> @@ -332,7 +332,7 @@ u32 larch_insn_gen_jirl(enum loongarch_gpr rd, enum l=
+oongarch_gpr rj, int imm)
+>                 return INSN_BREAK;
+>         }
+>
+> -       emit_jirl(&insn, rj, rd, imm >> 2);
+> +       emit_jirl(&insn, rd, rj, imm >> 2);
+>
+>         return insn.word;
+>  }
+> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> index dd350cba1252..ea357a3edc09 100644
+> --- a/arch/loongarch/net/bpf_jit.c
+> +++ b/arch/loongarch/net/bpf_jit.c
+> @@ -181,13 +181,13 @@ static void __build_epilogue(struct jit_ctx *ctx, b=
+ool is_tail_call)
+>                 /* Set return value */
+>                 emit_insn(ctx, addiw, LOONGARCH_GPR_A0, regmap[BPF_REG_0]=
+, 0);
+>                 /* Return to the caller */
+> -               emit_insn(ctx, jirl, LOONGARCH_GPR_RA, LOONGARCH_GPR_ZERO=
+, 0);
+> +               emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA=
+, 0);
+>         } else {
+>                 /*
+>                  * Call the next bpf prog and skip the first instruction
+>                  * of TCC initialization.
+>                  */
+> -               emit_insn(ctx, jirl, LOONGARCH_GPR_T3, LOONGARCH_GPR_ZERO=
+, 1);
+> +               emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T3=
+, 1);
+>         }
+>  }
+>
+> @@ -904,7 +904,7 @@ static int build_insn(const struct bpf_insn *insn, st=
+ruct jit_ctx *ctx, bool ext
+>                         return ret;
+>
+>                 move_addr(ctx, t1, func_addr);
+> -               emit_insn(ctx, jirl, t1, LOONGARCH_GPR_RA, 0);
+> +               emit_insn(ctx, jirl, LOONGARCH_GPR_RA, t1, 0);
+>                 move_reg(ctx, regmap[BPF_REG_0], LOONGARCH_GPR_A0);
+>                 break;
 >
 > --
-> Alexandre Belloni, co-owner and COO, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+> 2.42.0
+>
 
