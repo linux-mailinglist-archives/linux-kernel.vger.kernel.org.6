@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-427462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2ED9E01A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:09:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360C59E01BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:12:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70095283D86
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:09:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F066F169CE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FA020B7F3;
-	Mon,  2 Dec 2024 12:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6CA20C00A;
+	Mon,  2 Dec 2024 12:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mAJmYwsC"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Y3UoEebG"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815F320ADC5
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A70E20A5C8
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733140992; cv=none; b=lmspwRjjXIe1N6/phF21xPmSsSce3P7yhlg4aotOrs+UxQ/1+IOz4asjL7/WbNOxgSYPOmGQJi7ob+U1O41O78iNNPhxGif9MyVgjrZVl+5V1A7J1SMO8f9ookx2X37EDOLCEx1+2yaLVXD3IPCU+y/1U6KF3BUBfuv/7ln4Ny8=
+	t=1733140993; cv=none; b=tU6mXsZVtSb7ZCuY9a8GcSt3atgWdbYs2g+AoVJE7oah/EMkqWxb7Yt0BRfBy7BClxN+56nptMSI+WgYr9vMlCwaEDPD5vkEoULt8sXHsPr6pDVmMIsFUJURdwg5QhPWwhdgJAo+Cja20Epvqu1f55PTHOh8f1yvif3d6qNwGWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733140992; c=relaxed/simple;
-	bh=tLil8meoc4gv8jDi+YbsmsnrrlmnezAGx9Zmm7GaWVo=;
+	s=arc-20240116; t=1733140993; c=relaxed/simple;
+	bh=gdr3l+RFSHrWyEruQBFmEvtHoeWmaRMEJf4HRZMyXWA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NGRAZdnzt9i/mjNW7Uh/JASE18wMJ6HeTYWiSiJANzL4PpIC9dG5w4a5BYEMDlJ2/D49LV7wM/Cxd0P3pdikxo5g7WXrr8Bn8YKaFRWTJ7paN7K36rDy+dQEUXqI6+XC4vw76lr4jmmcAc9ssQwNFJae/H7nRYS2s1jb35QJLMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mAJmYwsC; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:To:Cc; b=Ibi1f2mu0zVF1BVBJOXu4shJC76R92UMq4HgVk193+mNUa71g2wL1yLkDKyNxw+zSZOLa35jPsrS4LXE7pE6RgxtNOaDTw57gXYExBg1qqfsuo75UIbZT1yx9Ll3mASxjLwHu7DBKbhEmAj5ApE+q4tGNzfi3ZUMp1ekElON9JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Y3UoEebG; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434a044dce2so52460455e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 04:03:09 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434aa222d96so52635475e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 04:03:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733140988; x=1733745788; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733140989; x=1733745789; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sappCm7n6rv8bu1mrPLrVjny9xNCVnDXbUHbfHv3TVM=;
-        b=mAJmYwsCFISYRNzpOBkL0EHECMrr2BZS2RT+1QTOrxyC1gFopIc9rzIGuAltNLJZ2i
-         pzHhiaE33Ips1b5ooXRw0D7tuYJSPCe4kHz5WcW0+at1gkWvblTUu35pSvH1z+DbxM83
-         /2KyBq8vVb+8bCROZ9KWAleL3o37oNksqKuQV3vEeKWCFf/xgoumMlMbGLUJuJg6K7Z4
-         5q5YNFRcNGRSyyc54e10darWK9CPl0Z3xN0EdYvk8Dry1RSluq94YKFaS4nGv27bUrPb
-         XnVKbeOY61bmAwmLIR0FrnFmyeaeZGwpdF8iGzAS/IczCNqZerbCJz7trMlSAp7zpMGt
-         zgeA==
+        bh=b+PmcWdMJm7CbMMHOaGOj0ZiJf4zVkJvWt/4CpfiDHk=;
+        b=Y3UoEebGOmru323MkwO4gAcx3jC39EeStRWNNWDOz97E/uEDDwdzAYF66Eo512m4ZY
+         XZYBZxiyudCcTrgwzQH08ne7goS8zhRJ1fkyAYgO50N+0wruokv68Nss4CB8sKF26R6V
+         0U6DNlaJyVs2g+D9WCA+hYKU7WHGP9r4h3kPVEKl1CayUN2WmunzQ/+c66pKn+xqeM4S
+         mMhlLy8sMRgxFjC1TWdFzXkUUKsEL4/dX4n2hpG3b2nExDQCbTOEJhFQOqWAmgNoseuP
+         cazffC7WSOZmVAxcJfqCogBBLwAaxvFIiMPOQCMXWzFYAjdNKjzVSTD1yyOeoIFbNWMF
+         X54g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733140988; x=1733745788;
+        d=1e100.net; s=20230601; t=1733140989; x=1733745789;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sappCm7n6rv8bu1mrPLrVjny9xNCVnDXbUHbfHv3TVM=;
-        b=oMGLlSp8O69whMwYhlVKo0Jgs7svroXbe1jBU+z4wG9LjD3YJ5IQv1Ohnoy2xM8bjQ
-         nSYZcaIyLbI7CiopK+3PL6wk38w7wt472+b2zJ7ka5ymX4QUaFtMSTBS+rRE8Q1i9YZG
-         7FxqimRrJLXbHiho2C3VkFb04yUpDTtQMNxPbJuG4GLW6J/CDfZI0+PZkvkUdFeBrEgH
-         mmBVZ2vIv+DE7NJe8/TwfPCXflciG0ZTl+cbvrqUZVJNGVSf6ShozKFT+pJw2Mgh0OU+
-         FexOk37lz/H9vvCal48k2ONHnG2hZKHEmpNaoOCJiN+kogYlpJ+XeDNzL9Wyf8yIzVRj
-         Mr4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUnF/Yv6f/FbeO6iZUF/47CRjmiJ0EdYIGvM4Uifre9aGHTKeULob9AFRWO21hhK2WGwkto9hpYheeoyBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFikCYaEif6ucVSz1H9FfM16hL8iP2+pD8FtUE9oelmTJg0g6j
-	RWppAWOARl+uHpr9b1yPSvxVCTQ44ouF47iXhRjsYf+E9/RU9IGaVdPj+HPUadQ=
-X-Gm-Gg: ASbGncuapW5geKcMeYQ5XORfeJTRdG4PpSUQ+W431Zdws9gkuYwLhvujCQqTb/1OMh4
-	7rcq9zvgPhmIE8zLpRsusR+rHyGRaUfj/SFxEGtXWZ3SsO04Z1SfdiyNKGltjxaCzvFhQBsKcUi
-	aH6VsNriDKnCn0ePnCLwR9qP9Vwamn0Yk555qaOQMRh3YLUy7sIk+QntSublPYKnZ4mdlLrOF1S
-	sMDwhf5TXtz9tyuv7PYLR6fFZGlRP10fI41ogim
-X-Google-Smtp-Source: AGHT+IEnvVRRAOJVEjWRQWTGwHp22oveK1WwEh+juBK0mIY5I5V6RUTWWmdVE0kkT1ZZUSSqgRYdrg==
-X-Received: by 2002:a05:600c:5254:b0:434:a30b:5445 with SMTP id 5b1f17b1804b1-434a9dcf2b6mr228982825e9.19.1733140987582;
-        Mon, 02 Dec 2024 04:03:07 -0800 (PST)
+        bh=b+PmcWdMJm7CbMMHOaGOj0ZiJf4zVkJvWt/4CpfiDHk=;
+        b=NlnWFAT9RPAnCvxT8J153frNfRLPuR/pZyBUlDbFwbAJEnnemcbf5O6pgI8kxTChUq
+         jmSzI7x4i5/+m/5QL2BYP7u//6sZEDtPO8csKHTsqju4LloCHYl/hcLoisJWJt0UvOoN
+         HcNAWZtMFcaj9UiEaOP63XQus1k/sopXfmqxJDzi65jozl7jEzS+4ulc8HNAgGRaa8+y
+         i/G5tkVhJKOm5WLuvnA0FPMfIBweTwA0fmcN6W56F7TwqnNTn66x+k0HNyldSJJ5F5c8
+         z+d2NazrOJji/JdYXi+wx9E8nlQ0qHXNYIcND+fVC6/doaeHYLfv9mupF+nSKhcy7vW6
+         oN+A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0A8KKKVFAWsT6xXIjvQj4htO+vucL1Hlj/mhEYZemRinv9XiQ/7GgZgQbB0qiR8ffAhhorxgn488nlJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHUfnwZjIE0coYpH+35rSgaiKPR7g/NTwZZPyXIOi31hMQd+AZ
+	SbY9uDM4OPpKjCt8r6gvDyUHfxqYd29dAzaA2I1ABzyQ59ODMe+4sw7GVjWDmN4=
+X-Gm-Gg: ASbGncvzGVXz1QkfR0ydhFclK37So/99+GLLFA6eslhGk5LfqMcyhlSiAsXtUt/uDNc
+	K0eMAm4Fwp0IBaxhyaOe9eDUGSt7Iz+6fB1OlfvRi6rcoDmI1uODUC3/0b9c2ohNT0mSkdO0dle
+	F4U80ko8kENa3kUAwKKGTtO5j5m0M0qd1oPL8/blcCT/9VqxmvzE+X12AKhigCSjn4F0kTOTDj8
+	wQ4hyn7MF/4GYzmUrPRK+nt51KbH3fqFD0v61Qj
+X-Google-Smtp-Source: AGHT+IEe2U0hKMLkW/kvwI9IdOuJTARvAn++dsfGezCEbCgsSOocEJZ25SQAJNm8raH54gf64cUe+w==
+X-Received: by 2002:a05:600c:45cd:b0:431:6083:cd30 with SMTP id 5b1f17b1804b1-434a9dbb631mr238682775e9.6.1733140989459;
+        Mon, 02 Dec 2024 04:03:09 -0800 (PST)
 Received: from [127.0.1.1] ([193.57.185.11])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bed7sm152396095e9.8.2024.12.02.04.03.05
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bed7sm152396095e9.8.2024.12.02.04.03.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 04:03:07 -0800 (PST)
+        Mon, 02 Dec 2024 04:03:09 -0800 (PST)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 02 Dec 2024 13:02:31 +0100
-Subject: [PATCH RESEND v7 15/17] ufs: host: add support for wrapped keys in
- QCom UFS
+Date: Mon, 02 Dec 2024 13:02:32 +0100
+Subject: [PATCH RESEND v7 16/17] ufs: host: add a callback for deriving
+ software secrets and use it
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-wrapped-keys-v7-15-67c3ca3f3282@linaro.org>
+Message-Id: <20241202-wrapped-keys-v7-16-67c3ca3f3282@linaro.org>
 References: <20241202-wrapped-keys-v7-0-67c3ca3f3282@linaro.org>
 In-Reply-To: <20241202-wrapped-keys-v7-0-67c3ca3f3282@linaro.org>
 To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, 
@@ -109,70 +109,88 @@ Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
  linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org, 
  linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-arm-msm@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Om Prakash Singh <quic_omprsing@quicinc.com>
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1568;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2570;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=gi1rUYia1K9GFiqOdv+A9A7WV4lUw8MkRuPETlXFN6A=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnTaHWPhF96W8ta0sCsu5xIcmZfLZdnO+UJtTSV
- wzlGPTq5gmJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ02h1gAKCRARpy6gFHHX
- co/FEACxG2K3W52mA5oFbkrWPJHbaBrdjs6ZZ6SOuehliuBdNm+Wz2Oy8crOCOYPqWebYcc26eb
- yPbA8sjRYDkffqLtV/s9YOqk6gpEXdWN9ajsb40qdBMhQrYutHku2TP5/VKW9jaqfNfdcjZ8AaO
- 8nwx/ItU7yfm4ZayW+ipCJVMqBrRnq5uYZK2GVWbYZ+ze16foZqM+e2rvspmK4PCdg5v9daW11n
- sDy39z3Wop5EmNv8pHEcZl75vgIdi491tNZez659SdK4PL9HTxtnUYcUQp6P+5/TvBQjxb1KnZm
- uoykfHHiVTy/NMiSOXhcdScRPj8oX5w5nKsvm8Pa1mtyCkOaAgq44uKYg7tLLGLY2nZO3eXftca
- cYRJ03ax17LjdQK3JKgLXm0O6wZG1OyFsTfNYyLMm/sKTXXNTymFevZcLU5npYV8hole5/g6Rmu
- qkriHdAQWNi0ijA3MuvyGJWherx1iRu9nD4MBoyy9HUiUe5yc99cTb6f3r1v5lyZMvm2u5Hcv5o
- E4lng/VeJ3F/jFbopzAX0kcv39GpsNs9bKVW3t6lQG/aBBj8Hz9XnSftigxj8EVXt+Lp64M61TA
- Uvp78T+A5eqi5vt1WMGgtCdKqRiamJ7EdRat88mL8ZGVEHOkgsDKOobNebSsLDJP2Pp81sSm242
- HSMB1FMpcMha/CQ==
+ bh=MdNk2H0tGYbBpgVzTRjqUx6qkSuTV/Qf3E5ZrGPzFBA=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnTaHWQd1yXC+tq8uQ59eAQtfHl/6mdb5ozK09+
+ cHD49JahjaJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ02h1gAKCRARpy6gFHHX
+ cscOD/4uo18/YSJusBFEPhCAOQrXkTC5my/rO09DdLTqE1XGp8d5iJ4c6VBgl5c4j875tDft90Z
+ LDoSqYOoSOkIXdQq2w+e+CPuuVWHB0sljyAE4Hd5qhEPsan4OX2pG8PxGOQJQvO1RtZLbbW8RMt
+ DjKvBxiA+g1hSmn0OvDw3NE9s/QFHLejldEX7SZ9kj8PhPlX+TensgJVR54kv24sOuq6eLhJN3R
+ KxYmUnBAp7YNxsO3e1FaWBqE48qiRGhH8EXRXPgDjMUx0SPMefYjyw0rLA2rOp7BztoBqnT9Njc
+ DsB/bpdeQFAH+GyMeBQ712WeIP4uTR6sler/piAQ+hqKa4h8HH4QK45eL8IUdz4U9PwMZzKfNzC
+ p+C8F+zSJsQJQ/h0Z6YW6cNhaqBbsKJBZ5KmFiSgDUTt5h0CKDv8geQrxc4xleoqgrEulbqyLs9
+ uH/1uBh+s86e5O4zxOiTp8EJUi/w7QHGy1Jx12c7Ua/cpw3HcuxV1J1vPndRA/+e4ew07AzVkBi
+ mFeYHiSVYHHGT7YWuJK4PZCc9K9RJd/6QL37q+pT21CKuNGaqgaakybuaRo1IRReUDShiyqx9Sv
+ td2iQmTzE5dNeT/nt5pMvJ6iX5JubFvUwokCEdED5zxLe9X2C/g79WCXNWZrh7/u6aYfu6OfQLJ
+ ukpOFb4JFzQ/yPw==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
 
-Use the wrapped keys capability when HWKM is supported. Whether to use
-HWKM or not would be decided during an ICE probe, and based on this
-information, UFS can decide to use wrapped or raw keys.
-
-Also, propagate the appropriate key size to the ICE driver when wrapped
-keys are used.
+Add a new UFS core callback for deriving software secrets from hardware
+wrapped keys and implement it in QCom UFS.
 
 Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-Reviewed-by: Om Prakash Singh <quic_omprsing@quicinc.com>
 Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/ufs/host/ufs-qcom.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/ufs/host/ufs-qcom.c | 15 +++++++++++++++
+ include/ufs/ufshcd.h        |  1 +
+ 2 files changed, 16 insertions(+)
 
 diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 44fb4a4c0f2d7..fd774531cbbf3 100644
+index fd774531cbbf3..0da2674777d2c 100644
 --- a/drivers/ufs/host/ufs-qcom.c
 +++ b/drivers/ufs/host/ufs-qcom.c
-@@ -129,6 +129,8 @@ static int ufs_qcom_ice_init(struct ufs_qcom_host *host)
- 
- 	host->ice = ice;
- 	hba->caps |= UFSHCD_CAP_CRYPTO;
-+	if (qcom_ice_hwkm_supported(host->ice))
-+		hba->caps |= UFSHCD_CAP_WRAPPED_CRYPTO_KEYS;
- 
- 	return 0;
+@@ -182,9 +182,23 @@ static int ufs_qcom_ice_program_key(struct ufs_hba *hba,
+ 		return qcom_ice_evict_key(host->ice, slot);
  }
-@@ -166,7 +168,11 @@ static int ufs_qcom_ice_program_key(struct ufs_hba *hba,
- 	    cap.key_size != UFS_CRYPTO_KEY_SIZE_256)
- 		return -EOPNOTSUPP;
  
--	ice_key_size = QCOM_ICE_CRYPTO_KEY_SIZE_256;
-+	if (bkey->crypto_cfg.key_type == BLK_CRYPTO_KEY_TYPE_HW_WRAPPED)
-+		ice_key_size = QCOM_ICE_CRYPTO_KEY_SIZE_WRAPPED;
-+	else
-+		ice_key_size = QCOM_ICE_CRYPTO_KEY_SIZE_256;
++/*
++ * Derive a software secret from a hardware wrapped key. The key is unwrapped in
++ * hardware from trustzone and a software key/secret is then derived from it.
++ */
++static int ufs_qcom_ice_derive_sw_secret(struct ufs_hba *hba, const u8 wkey[],
++					 unsigned int wkey_size,
++					 u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE])
++{
++	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
 +
- 	if (config_enable)
- 		return qcom_ice_program_key(host->ice,
- 					    QCOM_ICE_CRYPTO_ALG_AES_XTS,
++	return qcom_ice_derive_sw_secret(host->ice, wkey, wkey_size, sw_secret);
++}
++
+ #else
+ 
+ #define ufs_qcom_ice_program_key NULL
++#define ufs_qcom_ice_derive_sw_secret NULL
+ 
+ static inline void ufs_qcom_ice_enable(struct ufs_qcom_host *host)
+ {
+@@ -1833,6 +1847,7 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
+ 	.device_reset		= ufs_qcom_device_reset,
+ 	.config_scaling_param = ufs_qcom_config_scaling_param,
+ 	.program_key		= ufs_qcom_ice_program_key,
++	.derive_sw_secret	= ufs_qcom_ice_derive_sw_secret,
+ 	.reinit_notify		= ufs_qcom_reinit_notify,
+ 	.mcq_config_resource	= ufs_qcom_mcq_config_resource,
+ 	.get_hba_mac		= ufs_qcom_get_hba_mac,
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index 1b7c36e5347b2..dc8c055eae79a 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -325,6 +325,7 @@ struct ufs_pwr_mode_info {
+  * @device_reset: called to issue a reset pulse on the UFS device
+  * @config_scaling_param: called to configure clock scaling parameters
+  * @program_key: program or evict an inline encryption key
++ * @derive_sw_secret: derive sw secret from a wrapped key
+  * @fill_crypto_prdt: initialize crypto-related fields in the PRDT
+  * @event_notify: called to notify important events
+  * @reinit_notify: called to notify reinit of UFSHCD during max gear switch
 
 -- 
 2.45.2
