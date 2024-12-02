@@ -1,200 +1,102 @@
-Return-Path: <linux-kernel+bounces-427053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CDD9DFBAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:12:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2619DFBFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:34:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A58922815BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:12:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED3BC163006
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AC01F9ED9;
-	Mon,  2 Dec 2024 08:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6599B1F9A90;
+	Mon,  2 Dec 2024 08:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NGdgn/l/"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="CjKJEw3o"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD6C1F9427;
-	Mon,  2 Dec 2024 08:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87F81F9F5A;
+	Mon,  2 Dec 2024 08:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733127132; cv=none; b=sFch/WQ/9B2uuzyuId/fTVG1V+HMQz0WySpW+aYV1hiHGAc8f54O/MB3RmYTSbXJmBAUS4RX/i+ah+3Xg7uOCHojkQpsYTLobZW42KtNNm98mqV+nWsXF99rTO4YKMch6Nhclw2em1wAVpn9ylCQ705ttlak9UvM4RjP1/NBKrA=
+	t=1733128432; cv=none; b=Q1yvkv3BLhAFQoYzNJarsCCRDE1PXqwhbvOrxA5IuYiAzyNyiqYkXFG5ddNw/dgo1eEANP2IBHPlfhowlzuk/wjsrEtB+SKagMGZph1cZhxePJl9ZMBi0SCkx4Q/qAvSQ8FrRlKe4SBccqPX87uuK+z3ULZO9iCr3t3xvdP23FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733127132; c=relaxed/simple;
-	bh=rj+8sbTYBj+7WA6p08GKc/WgM+OR2fWhskdSrcSDwNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V5fKrHCAEh/yuDRGLAtyhFDeKsQx1o/BYgB6dQ4W4jeDiOOMf4WQYWSekgJ1WXD68dhRtHucnZYXMTZf24p04CUjE0xVfdlbqPu6I+YDhtOoQ88lSmCX51yQUHCK9EHzIGnu2DRRXECseKab8+pQjpgJAUmN6UYIPirlkT7ELig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NGdgn/l/; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 31659514;
-	Mon,  2 Dec 2024 09:11:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733127102;
-	bh=rj+8sbTYBj+7WA6p08GKc/WgM+OR2fWhskdSrcSDwNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NGdgn/l/U9tP1TrPaCQILAILi4tPaen6CwEYmoi3GtN0tbJlvUWbDfmk1vGzy0/EQ
-	 /Vh0ZlWqZMNJPavH2HZrVN4KRBsIkhdH3krTPzFUYIsmqUcQR0+YgZ/Kv227I9Q0T5
-	 huGw0giVaO87P7i0jJPBvuBIjwX2wWESvUMIEDo8=
-Date: Mon, 2 Dec 2024 10:11:57 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control
- owned by other fh
-Message-ID: <20241202081157.GB16635@pendragon.ideasonboard.com>
-References: <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
- <20241129110640.GB4108@pendragon.ideasonboard.com>
- <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
- <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl>
- <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
- <CANiDSCvwzY3DJ+U3EyzA7TCQu2qMUL6L1eTmZYbM+_Tk6DsPaA@mail.gmail.com>
- <20241129220339.GD2652@pendragon.ideasonboard.com>
- <CANiDSCsXi-WQLpbeXMat5FoM8AnYoJ0nVeCkTDMvEus8pXCC3w@mail.gmail.com>
- <20241202001846.GD6105@pendragon.ideasonboard.com>
- <fb321ade-40e7-4b1e-8fcd-c6475767239d@xs4all.nl>
+	s=arc-20240116; t=1733128432; c=relaxed/simple;
+	bh=99ArZTK7tcVLa5SaIkfWUlEPEOmChHqnidmycbO9cNc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UDbjy0IJcv4NzS6X1aKnucN2nCYoaWYgns5vpZkFW/toKtL32Ifi8RANzSCvrrqHRV2lCo5H6xtLPb+6h2OtTWr3ZyCR6cEAU8kVRfdmhIpMPvgXpjEr+CGeAcR+cQ6IiFXazJRqgqba55qKTdjDjJhRdZXXVtiywzRWTOxxzso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=CjKJEw3o; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=FqKUmUiCl6s+B2b8EynyhbWkz9daCCSNfiIR5rKfjYk=; t=1733128431; x=1733560431; 
+	b=CjKJEw3orbW5IZP52d8us2iK8i3wJuS3I7HoFo7zBmpZ5uOvI/nse8qgP3rUxt5CfGBtfsKietd
+	w+laIbaAsuHfMrpj4Jaw10EMMrrd+LghUkeQ7vDJyj/p53egT5LRdidDuXHkFUmVyGLbT1jrZN+uy
+	HBVN6e+Q4tIGI6bki/5xQtPpA3bApbPBffy2BdGumHLhzCx5ZAehzEivn8RWsoRnpFZAv74Z7HSjh
+	SkOq3t3GWquA1WNl7vemyTvq8tDruF5GRNenciJigqjjev7FtFBe2OGNlbbUGyDOdp2yCnP+wtVA3
+	4xE1Un/a0bH07+0Pt+Dej2EJGQJa8c6BpixA==;
+Received: from ip4d148da6.dynamic.kabel-deutschland.de ([77.20.141.166] helo=truhe.fritz.box); authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	id 1tI1XY-0019mO-0J;
+	Mon, 02 Dec 2024 09:12:20 +0100
+From: Thorsten Leemhuis <linux@leemhuis.info>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v3] docs: 5.Posting: mentioned Suggested-by: tag
+Date: Mon,  2 Dec 2024 09:12:19 +0100
+Message-ID: <fbebad6605b02e372b24c2cfa1e05f789fed43d1.1733127086.git.linux@leemhuis.info>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fb321ade-40e7-4b1e-8fcd-c6475767239d@xs4all.nl>
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1733128431;68c22e5a;
+X-HE-SMSGID: 1tI1XY-0019mO-0J
 
-On Mon, Dec 02, 2024 at 09:05:07AM +0100, Hans Verkuil wrote:
-> On 02/12/2024 01:18, Laurent Pinchart wrote:
-> > On Fri, Nov 29, 2024 at 11:18:54PM +0100, Ricardo Ribalda wrote:
-> >> On Fri, 29 Nov 2024 at 23:03, Laurent Pinchart wrote:
-> >>> On Fri, Nov 29, 2024 at 07:47:31PM +0100, Ricardo Ribalda wrote:
-> >>>> Before we all go on a well deserved weekend, let me recap what we
-> >>>> know. If I did not get something correctly, let me know.
-> >>>>
-> >>>> 1) Well behaved devices do not allow to set or get an incomplete async
-> >>>> control. They will stall instead (ref: Figure 2-21 in UVC 1.5 )
-> >>>> 2) Both Laurent and Ricardo consider that there is a big chance that
-> >>>> some camera modules do not implement this properly. (ref: years of
-> >>>> crying over broken module firmware :) )
-> >>>>
-> >>>> 3) ctrl->handle is designed to point to the fh that originated the
-> >>>> control. So the logic can decide if the originator needs to be
-> >>>> notified or not. (ref: uvc_ctrl_send_event() )
-> >>>> 4) Right now we replace the originator in ctrl->handle for unfinished
-> >>>> async controls.  (ref:
-> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_ctrl.c#n2050)
-> >>>>
-> >>>> My interpretation is that:
-> >>>> A) We need to change 4). We shall not change the originator of
-> >>>> unfinished ctrl->handle.
-> >>>> B) Well behaved cameras do not need the patch "Do not set an async
-> >>>> control owned by another fh"
-> >>>> C) For badly behaved cameras, it is fine if we slightly break the
-> >>>> v4l2-compliance in corner cases, if we do not break any internal data
-> >>>> structure.
-> >>>
-> >>> The fact that some devices may not implement the documented behaviour
-> >>> correctly may not be a problem. Well-behaved devices will stall, which
-> >>> means we shouldn't query the device while as async update is in
-> >>> progress. Badly-behaved devices, whatever they do when queried, should
-> >>> not cause any issue if we don't query them.
-> >>
-> >> I thought we could detect the stall and return safely. Isn't that the case?
-> > 
-> > We could, but if we know the device will stall anyway, is there a reason
-> > not to avoid issuing the request in the first place ?
-> > 
-> >> Why we have not seen issues with this?
-> > 
-> > I haven't tested a PTZ device for a very long time, and you would need
-> > to hit a small time window to see the issue.
-> > 
-> >>> We should not send GET_CUR and SET_CUR requests to the device while an
-> >>> async update is in progress, and use cached values instead. When we
-> >>> receive the async update event, we should clear the cache. This will be
-> >>> the same for both well-behaved and badly-behaved devices, so we can
-> >>> expose the same behaviour towards userspace.
-> >>
-> >> seting ctrl->loaded = 0 when we get an event sounds like a good idea
-> >> and something we can implement right away.
-> >> If I have to resend the set I will add it to the end.
-> >>
-> >>> We possibly also need some kind of timeout mechanism to cope with the
-> >>> async update event not being delivered by the device.
-> >>
-> >> This is the part that worries me the most:
-> >> - timeouts make the code fragile
-> >> - What is a good value for timeout? 1 second, 30, 300? I do not think
-> >> that we can find a value.
-> > 
-> > I've been thinking about the implementation of uvc_fh cleanup over the
-> > weekend, and having a timeout would have the nice advantage that we
-> > could reference-count uvc_fh instead of implementing a cleanup that
-> > walks over all controls when closing a file handle. I think it would
-> > make the code simpler, and possibly safer too.
-> > 
-> >>> Regarding the userspace behaviour during an auto-update, we have
-> >>> multiple options:
-> >>>
-> >>> For control get,
-> >>>
-> >>> - We can return -EBUSY
-> >>> - We can return the old value from the cache
-> 
-> This would match the control behavior best. Only when the operation is
-> done is the control updated and the control event sent.
-> 
-> Some questions: is any of this documented for UVC? Because this is non-standard
+Mention the Suggested-by: tag in 5.Posting.rst in a way similar to
+submitting-patches.rst, which according to the header of the latter is
+the less detailed document of the two.
 
-No this isn't documented.
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+---
+v3:
+- first version, split out from another patch-set that was at v2:
+  https://lore.kernel.org/all/1609d461030094b294f08d0b4e208d32993ac799.1731749544.git.linux@leemhuis.info/
+- add Reviewed-by: from Greg
+---
+ Documentation/process/5.Posting.rst | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> behavior. Are there applications that rely on this? Should we perhaps add
+diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
+index b3eff03ea2491c..dbb763a8de901d 100644
+--- a/Documentation/process/5.Posting.rst
++++ b/Documentation/process/5.Posting.rst
+@@ -261,6 +261,10 @@ The tags in common use are:
+    can be used instead of Closes: if the patch fixes a part of the issue(s)
+    being reported.
+ 
++ - A Suggested-by: tag indicates that the patch idea is suggested by the person
++   named and ensures credit to the person for the idea. This will, hopefully,
++   inspire them to help us again in the future.
++
+  - Cc: the named person received a copy of the patch and had the
+    opportunity to comment on it.
+ 
 
-I don't know.
-
-> proper support for this to the control framework? E.g. add an ASYNC flag and
-> document this?
-
-We could, but this is such a specific use case that I don't think is
-worth adding complexity to the already complex control framework would
-be worth it. What we could do is perhaps adding a flag for the userspace
-API, but even there, I never like modelling an API with a single user.
-
-> >>> - We can return the new value fromt he cache
-> >>>
-> >>> Returning -EBUSY would be simpler to implement.
-> >>
-> >> Not only easy, I think it is the most correct,
-> >>
-> >>> I don't think the behaviour should depend on whether the control is read
-> >>> on the file handle that initiated the async operation or on a different
-> >>> file handle.
-> >>>
-> >>> For control set, I don't think we can do much else than returning
-> >>> -EBUSY, regardless of which file handle the control is set on.
-> >>
-> >> ACK.
-> >>
-> >>>> I will send a new version with my interpretation.
-> >>>>
-> >>>> Thanks for a great discussion
-> >>
-> >> Looking with some perspective... I believe that we should look into
-> >> the "userspace behaviour for auto controls" in a different patchset.
-> >> It is slightly unrelated to this discussion.
-
+base-commit: 83a474c11e8cb59e230a43365cb42fa00d3bddaa
 -- 
-Regards,
+2.45.0
 
-Laurent Pinchart
 
