@@ -1,96 +1,102 @@
-Return-Path: <linux-kernel+bounces-426814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC669DF8E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:31:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A75A162927
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 02:31:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B7022098;
-	Mon,  2 Dec 2024 02:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="TgFfQ18p"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BA19DF8F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:37:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1BE134A8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 02:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733106660; cv=none; b=CY2Gg4UpF/yHhyL4o64m0jlBJp+AbFb1tOEJzwVl6vNqQXur2+yBMH8Yj0Xc/W/hNiw5hGSXVFME+qe2IxyM0UzqWTgNy8wWAptjR8ctBZ4ZczsO6un0k+gTYMGCM8t5UkZbUMN2bXjOZc1lrCEgpjr+1bA+1NxggBMIKK9dgIM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733106660; c=relaxed/simple;
-	bh=Zdq1ZwogLgVqgL+z9O7uP9pI89UJVYGAX8lIGuQkfMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B2aNvwMzP6+E5J3Z2kKIRjOgdJzyfY9X+yjr/qADgu1uZXOS2PNniO1yqnqSnU2prwdubJmejgKqJ3KTK2eyA0KsPDOXf366iU1kOfumn1ks52NJL3PdHiTCuqn253dIgZ50pltD7J0/VrykWL5RxOhI8fhmYyzTq4jDTEuygdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=TgFfQ18p; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C98A9280EFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 02:37:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6962A1CA;
+	Mon,  2 Dec 2024 02:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJQxfXYh"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id ACC233F288
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 02:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733106648;
-	bh=+jndlWKS4Xdsna9rr9EhkPhfFpnli2KtOvGE3QLRJWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=TgFfQ18pjSkaU67AOUn8XHIgvIgQ7fzxh2DmS/qZXOV1jhNVAVaeUTD0yPJ+/RkPL
-	 J7ZlZBy4G3xAZL/NiM9NYPmQDIekWypfIMV6uRzk7JUtrRJlRYp5cq7Ao3MuFovfUp
-	 Su5zIFNV5J9SUPkEagEkBrYmv6YGW9iF5vFZjxKb8MdToC0YZXiCDMTMjuQRP1DQ/4
-	 PMdBufM0gQfbs/mcpqXVdVihaU13ZmiEBcxujW5R+2ri4qxOOtGPtJmuumWIPTqbrb
-	 CqX6bwpvDl7Tx0ltzyjkZ5L8PMgATHUUTQvzmq7G2spPFLZIvKq+yQ+xvIL1J+1B2g
-	 RJO6ySIwTtFBA==
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7251d77ddb7so5058869b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 18:30:48 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48C81804A;
+	Mon,  2 Dec 2024 02:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733107023; cv=none; b=CNU60f2ZEBOS5R2RXqInaoi1OLtSH0SAjE88NcqpHSrb1ZxGUf4e7WwWkaxv6ZHgXdUCoN94DSdwUqDtFksKEWRxJ3nnl9XgkJVyC8vwfdpirUWvzKr7eEbbZeUUtmEZSEhWDGFRiyv5+4EfEwREWLgpsIr72A6xZtWePkHF0i0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733107023; c=relaxed/simple;
+	bh=pir5yKyEtGvMf5i/5wpsq70+zVsXts+joZq/b77jr/k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b8A9GgbiJYOtLDGbceWS+XGSmY+ThGwlUwFD3Xrg4p8jv7gfrX5amepYbO9YRWtycmnv71UUn4K+QLrmKP/opiqwN3UM2OnxUk+6FZ1uE6V0f+dv9DKVNjj8FxA68Qo77czf+8D3p0cX1maQBzVmUO5ygpByT+xfOicQFAn600Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJQxfXYh; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-215909152c5so4022025ad.3;
+        Sun, 01 Dec 2024 18:37:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733107021; x=1733711821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDFs4/7sYxUQAdmK+DmPfpiIkb/3lOGS37ALBYfbAeQ=;
+        b=QJQxfXYh6GZY4sRrdwaIggjr7nRU6gtar1RQOscER7MTYzyRvGayPXZmT3TBzKA4Xs
+         HQG3v1/qRxvlaMBBZmFez2d0VmyTolqeWHuDQjR3hIcZFwW6iDwDfgC2U3rKFToWVPc2
+         /WUBRL6yhf/FjLNp5rFwDCO4xsTtYk+79Xvb0D6rjbbks0WAPKAGxO6N0S+j1wwNjZr7
+         qNPb7KxDkn0TzjmUUO4tS5Vqcpzo/PjTkvZfUwHxiOT39IqqLtU/U5cIt0i7mmxAXLPA
+         oHZJbhKynqpPK0x8KqqU5VOetgUKt+l+vZIngT+6WnapmK/5xuB3tVxkGzTc8lKY/c4Y
+         w3sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733106647; x=1733711447;
+        d=1e100.net; s=20230601; t=1733107021; x=1733711821;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+jndlWKS4Xdsna9rr9EhkPhfFpnli2KtOvGE3QLRJWI=;
-        b=FFLYJcysOJklyxA45Mf7soug5Y4ccdU343ulntai727PawIlGC3H2B5em/WMywDer3
-         oTEZt0Sw22guBIhBLtgrCYV56o+ymT+BCEthVjQQOK4NUfgTcfepn2SjQZoNe3+PtfuW
-         f4C3D3MtA6WRYYFd5xfzXEBagjO9jwZRfmx6sOmbZm/30SC369eN/ADu5rJGUo3HAHth
-         WunSGDt9nR7FPaABwrUCFL7zVw8i2rZnt+GOdAhb4uAxs+evpew5uOkPK+i/8ZIHAelI
-         B0O9ZmBDeAI2hbODzWB0RthV/uUerkynmnQt3y674UPVLfklltEMCWoFYxwGrvL5UIFY
-         a07g==
-X-Forwarded-Encrypted: i=1; AJvYcCVuWlka7fSrJflq+C2TYDL8UGn8KCne3XXhUXxjJOwSNkb0KPymmZOjXYwnRsIlqiaAfi4wijPu0vSvR0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws9+nnkzJ0O/briNaPOlVOxkxJQeM8voR0k6zaub61DIRQcCOC
-	mQgL7/jr3AOcnOT8yKErW+1B0Uw8iNJmk1IYN9jLv7p+8AV9JhL5PZlJYMlhgAJCniqBEFYUkof
-	u4cZJ4B6vaGIZ7z5LSgvPIlO2KufPE5tLzgRWSu0Qc5h7bHU9KmskOkk7ZR/Cx24CpLExcus98b
-	snqw==
-X-Gm-Gg: ASbGncuPEq+zVOdmH//a0qGu7oBivpXDnqLRqe+t475efOsqQzn6VEtgjrxqMWNix/p
-	PTCkNP9l3WYrEPBspy8w3qjHb3HxYUQmquLAlycBXAGZWtQVLh4bhsevPr1Ct7GSFjGE7403Msy
-	SA7u58qJ66nCufwzwmX70qT3BCWQY6p/xPUjGf3HruOW+qwfQD6U/eHieTX/NtgcI114iEoTj56
-	Ozy6rt8cdjCCFwcl1qvfEfEdBGGwdQdZA23OGRfx2DQDQyO+shvS7TmR+Sk/bXUVqds0D9IvH3B
-	ICQJccV+r+/5zu4SPx00LcAUpeycRwUyp69Vi7Z7l7U6SVWglrNS
-X-Received: by 2002:a17:90b:3901:b0:2ee:cddd:2454 with SMTP id 98e67ed59e1d1-2eecddd2aa9mr3115186a91.15.1733106647176;
-        Sun, 01 Dec 2024 18:30:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGxhGl95AGvKcN10Yj/5OchnG6inZsxo8Gn1gyPKjD3kWjbNF/yMuICL635d2N3oZktOyD4Cg==
-X-Received: by 2002:a17:90b:3901:b0:2ee:cddd:2454 with SMTP id 98e67ed59e1d1-2eecddd2aa9mr3115157a91.15.1733106646862;
-        Sun, 01 Dec 2024 18:30:46 -0800 (PST)
-Received: from rickywu0421-ThinkPad-X1-Carbon-Gen-11.. (211-75-139-220.hinet-ip.hinet.net. [211.75.139.220])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee05324801sm6081821a91.1.2024.12.01.18.30.44
+        bh=bDFs4/7sYxUQAdmK+DmPfpiIkb/3lOGS37ALBYfbAeQ=;
+        b=MPy0NlfkRR5rQih/hm26mtEsAAR0yqkU+3rzrJUyBIniMXESsV1qZ9bdg6YPbT2+z7
+         YZddSOnBA9dzbsC/vYeqNZcQuOiMhfDXPxDRkOuSWULUK3Zhjd8VJ5+9fcpEZvN45Xc3
+         dHmubEXuwd3qjDgsXpVYRzosGrsXmfgrozJT5jjJgJV7Q4olZE2NfM3tzHNMdLGllrAW
+         iQMwL7x0wZfvy4dUy4ykR7YEt2Tfj5tqUdRViHUx/fClK8MNKiDD7mBV1GTtoruNRV5U
+         sugzvXuaB43ZuQvsfV5dMU+UZnhQHOZGGLtjhO8sr+RpBqRRWgpcgSpUNAKhEuXXrRNj
+         H4nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXUKiYoT4DNBT4fNUiaRU6PkaobZz9I+Fp0d/GZ+N9er3py0y1Z53iaFf79Pdt0O0ALpr5hF1U@vger.kernel.org, AJvYcCUgpwCem0aRrL1T3alUIO5S/kDHyM5FxC8Mdcao0wyWDyWo+vpbJinwsos88huvSqNaIbbKWdgy3BGrGHmr@vger.kernel.org, AJvYcCVzfy5M8BRSmu4y5LmYppXovvoKMSYwCQgODNOJ9hJZ3Mo5jHiLxjysDfmKwLmsnGUJpU/tgojc2iP+@vger.kernel.org
+X-Gm-Message-State: AOJu0YywjKtwEeEtKOPd3w4RJ2iGTz2s6+9AkvXbPddIU0Dnrb5uLxw5
+	d8eEWzymvyohhiXkLD6QBsBNyNe5sdDETUG5MdikoV2//iBfqDVF
+X-Gm-Gg: ASbGnctV4lzzw7p5YPc6L150E0eIt+eAi2/zc/vzxDvOCZsk4do4s9b+ivQ4Z/A81X1
+	mwl8VPe2SThcTJvMB/dSqurCYA52DDP2myU7TyqEiukuojlAQIiw/mjOJbMzN6rysRBVJ8LZRQw
+	0gVkkHC3IUZdoQHuxTYUvElbfrwHZN35bcoIiDCPb/rOzSg66BnQNM9t7UTBcQvj2S+YjMkInJH
+	mheKEA7ZNY8RQC5SVXrgxwLlTwhBh6atbA6yhdyRKTPB1WUJYVwUPDmFxY9EdHDAfAPOexwXpHs
+	OpSIxrvHQSkJsmw=
+X-Google-Smtp-Source: AGHT+IGLWJOBt6A4ZzleNpaTexfFquv9ndvXCA2owoRgs9f4h1shTttjNxjyQrv9s0g8p/Xs1tMZ1A==
+X-Received: by 2002:a17:902:d491:b0:215:4e40:e4b0 with SMTP id d9443c01a7336-2154e40e808mr142897375ad.9.1733107021039;
+        Sun, 01 Dec 2024 18:37:01 -0800 (PST)
+Received: from yclu-ubuntu.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2159ebee334sm2306375ad.67.2024.12.01.18.36.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 18:30:46 -0800 (PST)
-From: En-Wei Wu <en-wei.wu@canonical.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org,
+        Sun, 01 Dec 2024 18:37:00 -0800 (PST)
+From: Joey Lu <a0987203069@gmail.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	richardcochran@gmail.com
+Cc: alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com,
+	ychuang3@nuvoton.com,
+	schung@nuvoton.com,
+	yclu4@nuvoton.com,
+	peppe.cavallaro@st.com,
+	linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	pmenzel@molgen.mpg.de
-Cc: quic_tjiang@quicinc.com,
-	kuan-ying.lee@canonical.com,
-	anthony.wong@canonical.com
-Subject: [PATCH v2] Bluetooth: btusb: avoid NULL pointer dereference in skb_dequeue()
-Date: Mon,  2 Dec 2024 10:30:41 +0800
-Message-ID: <20241202023041.492547-1-en-wei.wu@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	openbmc@lists.ozlabs.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Joey Lu <a0987203069@gmail.com>
+Subject: [PATCH v4 0/3] Add support for Nuvoton MA35D1 GMAC
+Date: Mon,  2 Dec 2024 10:36:40 +0800
+Message-Id: <20241202023643.75010-1-a0987203069@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,171 +105,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The WCN7851 (0489:e0f3) Bluetooth controller supports firmware crash dump
-collection through devcoredump. During this process, the crash dump data
-is queued to a dump queue as skb for further processing.
+This patch series is submitted to add GMAC support for Nuvoton MA35D1
+SoC platform. This work involves implementing a GMAC driver glue layer
+based on Synopsys DWMAC driver framework to leverage MA35D1's dual GMAC
+interface capabilities.
 
-A NULL pointer dereference occurs in skb_dequeue() when processing the
-dump queue due to improper return value handling:
+Overview:
+  1. Added a GMAC driver glue layer for MA35D1 SoC, providing support for
+  the platform's two GMAC interfaces.
+  2. Added device tree settings, with specific configurations for our
+  development boards:
+    a. SOM board: Configured for two RGMII interfaces.
+    b. IoT board: Configured with one RGMII and one RMII interface.
+  3. Added dt-bindings for the GMAC interfaces.
 
-[ 93.672166] Bluetooth: hci0: ACL memdump size(589824)
+v4:
+  - Update nuvoton,ma35d1-dwmac.yaml
+    - Remove unnecessary property 'select'.
+    - Remove unnecessary compatible entries and fix items.
+    - Specify number of entries for 'reg'.
+    - Remove already defined property 'phy-handle'.
+    - Update example.
+    - Modify the property internal path delay to match the driver.
+  - Update dtsi
+    - Move 'status' to be the last property.
+  - Update dwmac-nuvoton driver
+    - Use .remove instead of .remove_new.
+    - Use dev_err_probe instead.
 
-[ 93.672475] BUG: kernel NULL pointer dereference, address: 0000000000000008
-[ 93.672517] Workqueue: hci0 hci_devcd_rx [bluetooth]
-[ 93.672598] RIP: 0010:skb_dequeue+0x50/0x80
+v3:
+  - Update nuvoton,ma35d1-dwmac.yaml
+    - Fix for dt_binding_check warnings/errors.
+    - Add compatible in snps,dwmac.yaml.
+  - Update dtsi
+    - Update dtsi to follow examples in yaml.
+  - Update dwmac-nuvoton driver
+    - Fix for auto build test warnings.
+    - Invalid path delay arguments will be returned.
 
-The issue stems from handle_dump_pkt_qca() returning the wrong value on
-success. It currently returns the value from hci_devcd_init() (0 on 
-success), but callers expect > 0 to indicate successful dump handling. 
-This causes hci_recv_frame() to free the skb while it's still queued for 
-dump processing, leading to the NULL pointer dereference when 
-hci_devcd_rx() tries to dequeue it.
+v2:
+  - Update nuvoton,ma35d1-dwmac.yaml
+    - Rename file to align with the compatible property.
+    - Add an argument to syscon to replace mac-id,
+      with corresponding descriptions.
+    - Use tx-internal-delay-ps and rx-internal-delay-ps properties for
+      configurable path delay with corresponding descriptions,
+      allowing selection between GMAC internal and PHY.
+    - Add all supported phy-mode options.
+    - Remove unused properties.
+  - Update dtsi
+    - Modify syscon configuration to include an argument for
+      GMAC interface selection.
+  - Update dwmac-nuvoton driver
+    - Remove redundant device information print statements.
+    - Remove non-global parameters.
+    - Retrieve GMAC interface selection from the syscon argument.
+    - Parse Tx and Rx path delays by correct properties.
+    - Update configurations to support Wake-on-LAN.
 
-Fix this by:
+Joey Lu (3):
+  dt-bindings: net: nuvoton: Add schema for Nuvoton MA35 family GMAC
+  arm64: dts: nuvoton: Add Ethernet nodes
+  net: stmmac: dwmac-nuvoton: Add dwmac glue for Nuvoton MA35 family
 
-1. Extracting dump packet detection into new is_dump_pkt_qca() function
-2. Making handle_dump_pkt_qca() return 0 on success and negative errno
-   on failure, consistent with other kernel interfaces
+ .../bindings/net/nuvoton,ma35d1-dwmac.yaml    | 134 +++++++++++++
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
+ .../boot/dts/nuvoton/ma35d1-iot-512m.dts      |  12 ++
+ .../boot/dts/nuvoton/ma35d1-som-256m.dts      |  10 +
+ arch/arm64/boot/dts/nuvoton/ma35d1.dtsi       |  54 ++++++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-nuvoton.c   | 179 ++++++++++++++++++
+ 8 files changed, 402 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-nuvoton.c
 
-This prevents premature skb freeing by ensuring proper handling of
-dump packets.
-
-Fixes: 20981ce2d5a5 ("Bluetooth: btusb: Add WCN6855 devcoredump support")
-Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
----
-changes in v2: 
-- Fix typo in the title
-- Re-flow a line in the commit message to fit 72 characters
-- Add a blank line before btusb_recv_acl_qca()
-
-drivers/bluetooth/btusb.c | 76 ++++++++++++++++++++++++---------------
- 1 file changed, 48 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 279fe6c115fa..741be218610e 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2930,22 +2930,16 @@ static void btusb_coredump_qca(struct hci_dev *hdev)
- 		bt_dev_err(hdev, "%s: triggle crash failed (%d)", __func__, err);
- }
- 
--/*
-- * ==0: not a dump pkt.
-- * < 0: fails to handle a dump pkt
-- * > 0: otherwise.
-- */
-+/* Return: 0 on success, negative errno on failure. */
- static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
- {
--	int ret = 1;
-+	int ret = 0;
- 	u8 pkt_type;
- 	u8 *sk_ptr;
- 	unsigned int sk_len;
- 	u16 seqno;
- 	u32 dump_size;
- 
--	struct hci_event_hdr *event_hdr;
--	struct hci_acl_hdr *acl_hdr;
- 	struct qca_dump_hdr *dump_hdr;
- 	struct btusb_data *btdata = hci_get_drvdata(hdev);
- 	struct usb_device *udev = btdata->udev;
-@@ -2955,30 +2949,14 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
- 	sk_len = skb->len;
- 
- 	if (pkt_type == HCI_ACLDATA_PKT) {
--		acl_hdr = hci_acl_hdr(skb);
--		if (le16_to_cpu(acl_hdr->handle) != QCA_MEMDUMP_ACL_HANDLE)
--			return 0;
- 		sk_ptr += HCI_ACL_HDR_SIZE;
- 		sk_len -= HCI_ACL_HDR_SIZE;
--		event_hdr = (struct hci_event_hdr *)sk_ptr;
--	} else {
--		event_hdr = hci_event_hdr(skb);
- 	}
- 
--	if ((event_hdr->evt != HCI_VENDOR_PKT)
--		|| (event_hdr->plen != (sk_len - HCI_EVENT_HDR_SIZE)))
--		return 0;
--
- 	sk_ptr += HCI_EVENT_HDR_SIZE;
- 	sk_len -= HCI_EVENT_HDR_SIZE;
- 
- 	dump_hdr = (struct qca_dump_hdr *)sk_ptr;
--	if ((sk_len < offsetof(struct qca_dump_hdr, data))
--		|| (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS)
--	    || (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
--		return 0;
--
--	/*it is dump pkt now*/
- 	seqno = le16_to_cpu(dump_hdr->seqno);
- 	if (seqno == 0) {
- 		set_bit(BTUSB_HW_SSR_ACTIVE, &btdata->flags);
-@@ -3052,17 +3030,59 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
- 	return ret;
- }
- 
-+/* Return: true if packet is a dump packet, false otherwise. */
-+static bool is_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
-+{
-+	u8 pkt_type;
-+	u8 *sk_ptr;
-+	unsigned int sk_len;
-+
-+	struct hci_event_hdr *event_hdr;
-+	struct hci_acl_hdr *acl_hdr;
-+	struct qca_dump_hdr *dump_hdr;
-+
-+	pkt_type = hci_skb_pkt_type(skb);
-+	sk_ptr = skb->data;
-+	sk_len = skb->len;
-+
-+	if (pkt_type == HCI_ACLDATA_PKT) {
-+		acl_hdr = hci_acl_hdr(skb);
-+		if (le16_to_cpu(acl_hdr->handle) != QCA_MEMDUMP_ACL_HANDLE)
-+			return false;
-+		sk_ptr += HCI_ACL_HDR_SIZE;
-+		sk_len -= HCI_ACL_HDR_SIZE;
-+		event_hdr = (struct hci_event_hdr *)sk_ptr;
-+	} else {
-+		event_hdr = hci_event_hdr(skb);
-+	}
-+
-+	if ((event_hdr->evt != HCI_VENDOR_PKT)
-+		|| (event_hdr->plen != (sk_len - HCI_EVENT_HDR_SIZE)))
-+		return false;
-+
-+	sk_ptr += HCI_EVENT_HDR_SIZE;
-+	sk_len -= HCI_EVENT_HDR_SIZE;
-+
-+	dump_hdr = (struct qca_dump_hdr *)sk_ptr;
-+	if ((sk_len < offsetof(struct qca_dump_hdr, data))
-+		|| (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS)
-+	    || (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
-+		return false;
-+
-+	return true;
-+}
-+
- static int btusb_recv_acl_qca(struct hci_dev *hdev, struct sk_buff *skb)
- {
--	if (handle_dump_pkt_qca(hdev, skb))
--		return 0;
-+	if (is_dump_pkt_qca(hdev, skb))
-+		return handle_dump_pkt_qca(hdev, skb);
- 	return hci_recv_frame(hdev, skb);
- }
- 
- static int btusb_recv_evt_qca(struct hci_dev *hdev, struct sk_buff *skb)
- {
--	if (handle_dump_pkt_qca(hdev, skb))
--		return 0;
-+	if (is_dump_pkt_qca(hdev, skb))
-+		return handle_dump_pkt_qca(hdev, skb);
- 	return hci_recv_frame(hdev, skb);
- }
- 
 -- 
-2.43.0
+2.34.1
 
 
