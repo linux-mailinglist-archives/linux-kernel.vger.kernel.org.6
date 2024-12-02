@@ -1,129 +1,98 @@
-Return-Path: <linux-kernel+bounces-428095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C989E0C68
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:42:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291ED9E0BDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:16:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29DB0B81631
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:36:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 245E3BA3652
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDA31DE4F3;
-	Mon,  2 Dec 2024 17:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D201DDC32;
+	Mon,  2 Dec 2024 17:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mbv/N+QL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A6AAG4GU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EED1AB51F;
-	Mon,  2 Dec 2024 17:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F091DDC25;
+	Mon,  2 Dec 2024 17:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160904; cv=none; b=PGotV4JpsZzbyrbdVf7WcachkGMWWk80fSn8PAgulj9PiZVKguE1pE9WtUaYf+hSVO/orsgdGNdLX2J7EeepDjf1EPlAyc8waFAEl6KXfO7HjEm26Ri0KcQ+P7N3Te1p1Wa/KPhhWC6JYyn0nXT9Cgxuc09g7L6sNV/L3ey4MVE=
+	t=1733160997; cv=none; b=RO/RDXl3N/I4QKfkzXOiajYWyoOevzaQxNA8inAQBMImqKiU9tM1l8OsW8iYowgRiklCgkdC3fqUk/iiczo4g/NRhtRxAwps236H0MnNrFDpioItRoO/MYr/1zkHaFBhk5rxrokLLKMtRKR0NDg2bdRvDLsXZPPjUr5DzCW9Y8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160904; c=relaxed/simple;
-	bh=otRfIIpR9ke8jKx0T5rYqZgdrJ75ZS57/Fik5wYJ77g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ST88QKS52jUDpnO6NNf62uBPndyJ3su4trElWQ/eqCvR7W4N7zZLxQdZ1eXIFIsiINit528lvO/Dunc7iPxJOnLNJL/c4n3JvjZo6cfPaHRjzK23UoOI7GWyuaW5zzsxTzSeBsy9gss9Qy5DuoJmPsPsgUo3GIkh1itwo+k+msM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mbv/N+QL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7D9C2C4CED1;
-	Mon,  2 Dec 2024 17:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733160904;
-	bh=otRfIIpR9ke8jKx0T5rYqZgdrJ75ZS57/Fik5wYJ77g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=mbv/N+QLcgtpQR8QD3+Ebo0ZkA7L0mv7KOGi59I1rnrkhoHvWWt1ejgoGG0hn3cQH
-	 7vY0bEpghsh4bdGKfDPWkJgjgE9H1kbPj3okgFTgy7GsQ5nHdE7+BlS4CfYCtp+olK
-	 IxHhytNs+RjNxOecYykd2M4jLLUkudPct9tMAWZ31vqh51ucXMeaL2xLFjw4duIFDw
-	 maNwAvLXVHp5++7gPZAAkp9asgFSy/lVIQgrV/RYVoGKbVqtKt/DGnAwPQJVU+dLvv
-	 OQNeCRsZUu9f3KQ7My3boRoQ7P4tB3aYMYuiHyP2HChG+NdQkCk0tLHRZQHijwMmM6
-	 fzSDVM2CqMrSQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAD4D7833C;
-	Mon,  2 Dec 2024 17:35:04 +0000 (UTC)
-From: Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org>
-Date: Tue, 03 Dec 2024 02:33:28 +0900
-Subject: [PATCH 06/10] fortify: replace __is_constexpr() by is_const() in
- strlen()
+	s=arc-20240116; t=1733160997; c=relaxed/simple;
+	bh=zHI4obpWdbu09MOJBanUKMpjJiwHqJ8gWb3psfdQkCE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V0i5M0mQBYWUCb6F5LJj/ilA9l1l9kD5vnhxJ9FiVM+2jjYP0vwwZ3BQytZg+QNIvbtx+/Mc/VadPqer2exjdSgUay8kgWOFmeumkerQ9pPqw+YnVX+Bl59XQIyAB+nKff/HsdJN/PTfSDUKbergdF52PkqwUbG+4FKC7YE4zVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A6AAG4GU; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733160996; x=1764696996;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=zHI4obpWdbu09MOJBanUKMpjJiwHqJ8gWb3psfdQkCE=;
+  b=A6AAG4GUoW1huZywYaC0seJtpkW0pI9TWP7BQdBQibZiB9m+Qh68Vws1
+   o3KosR6O8PGMiTFsjGv4ZaKZtR4QO1R1NBHYaGYS53KQLoH7tjQYQXkNJ
+   DHO9sKHDCIAM3CBx/+u+3TdN5KyWvhRnJFMIJcN4zzjtkLIVN8FQ/8RHN
+   y6/GfUQ0dYh+t0SBLZorF6Y6dgQ8E1oNTOel6xJ2US3kFQToalEuLKzS+
+   F1rEkTrQVFSgMAw6jq1i+OlO+PklG6NVFsfmOWYp3RqXFDR0b/OOitm73
+   YRPAKx4G3Ddmsr11rd/02FbKaziKl/xtO1BiwHj52pQMVw9RZtqUBnpQV
+   A==;
+X-CSE-ConnectionGUID: wMWf0tplSSiwp2KmZ3+9ng==
+X-CSE-MsgGUID: h5DlZ5JPShKZZ5pLV3GGrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="58746407"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="58746407"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 09:36:35 -0800
+X-CSE-ConnectionGUID: xyK3a6dhRcasZFQgn3I+lw==
+X-CSE-MsgGUID: Rdwxi7MMRJuME0JfD1ktRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="116439327"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
+  by fmviesa002.fm.intel.com with ESMTP; 02 Dec 2024 09:36:35 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+	id 18D17301AA5; Mon, 02 Dec 2024 09:36:35 -0800 (PST)
+From: Andi Kleen <ak@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mcgrof@kernel.org,  x86@kernel.org,  hpa@zytor.com,
+  petr.pavlu@suse.com,  samitolvanen@google.com,  da.gomez@samsung.com,
+  masahiroy@kernel.org,  nathan@kernel.org,  nicolas@fjasle.eu,
+  linux-kernel@vger.kernel.org,  linux-modules@vger.kernel.org,
+  linux-kbuild@vger.kernel.org,  hch@infradead.org,
+  gregkh@linuxfoundation.org
+Subject: Re: [PATCH -v2 0/7] module: Strict per-modname namespaces
+In-Reply-To: <20241202145946.108093528@infradead.org> (Peter Zijlstra's
+	message of "Mon, 02 Dec 2024 15:59:46 +0100")
+References: <20241202145946.108093528@infradead.org>
+Date: Mon, 02 Dec 2024 09:36:35 -0800
+Message-ID: <878qsy7zrw.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-is_constexpr-refactor-v1-6-4e4cbaecc216@wanadoo.fr>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
-In-Reply-To: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
- David Laight <David.Laight@aculab.com>, 
- Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Yury Norov <yury.norov@gmail.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
- Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
-Cc: linux-sparse@vger.kernel.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1072;
- i=mailhol.vincent@wanadoo.fr; h=from:subject:message-id;
- bh=jMI6GLWGOq2qwprnzsUGV4xG+9C9iHAQ1IPi4ZG8B0k=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDOm+749+/rqPW6pvpu+W2UzTPlgk/hDbmVItMcnU/8kTl
- hNartOudJSyMIhxMciKKbIsK+fkVugo9A479NcSZg4rE8gQBi5OAZiIaBsjw/wOdQfrmY9Kw6X+
- neVT9cwNVGdRL0772611cXrWBz25mQx/RT0nvEo4NlP8lov1Q74UufJwLg3WJUzZSUkaeZNe+69
- lBQA=
-X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
-X-Endpoint-Received: by B4 Relay for mailhol.vincent@wanadoo.fr/default
- with auth_id=291
-X-Original-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Reply-To: mailhol.vincent@wanadoo.fr
+Content-Type: text/plain
 
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Peter Zijlstra <peterz@infradead.org> writes:
 
-is_const() is a one to one replacement of __is_constexpr(). Do the
-replacement so that __is_constexpr() can be removed.
+> Hi!
+>
+> Implement a means for exports to be available only to an explicit list of named
+> modules. By explicitly limiting the usage of certain exports, the abuse
+> potential/risk is greatly reduced.
 
-Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
----
- include/linux/fortify-string.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Blast from the past: https://lists.linuxcoding.com/kernel/2007-q4/msg19926.html
 
-diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
-index 0d99bf11d260a3482bbe46e35c7553c0ccfb8b94..e3f2f772c5439ef71eb4a904b4ce27956bc69743 100644
---- a/include/linux/fortify-string.h
-+++ b/include/linux/fortify-string.h
-@@ -254,8 +254,8 @@ __FORTIFY_INLINE __kernel_size_t strnlen(const char * const POS p, __kernel_size
-  * Returns number of characters in @p (NOT including the final NUL).
-  *
-  */
--#define strlen(p)							\
--	__builtin_choose_expr(__is_constexpr(__builtin_strlen(p)),	\
-+#define strlen(p)						\
-+	__builtin_choose_expr(is_const(__builtin_strlen(p)),	\
- 		__builtin_strlen(p), __fortify_strlen(p))
- __FORTIFY_INLINE __diagnose_as(__builtin_strlen, 1)
- __kernel_size_t __fortify_strlen(const char * const POS p)
+Yes it makes sense.
 
--- 
-2.45.2
-
-
+-Andi
 
