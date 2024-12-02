@@ -1,311 +1,121 @@
-Return-Path: <linux-kernel+bounces-428165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE3A9E0ADD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:20:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D2A9E0AE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:21:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F28163D49
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:20:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10491164051
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F7F1DE4D2;
-	Mon,  2 Dec 2024 18:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAC31DDC19;
+	Mon,  2 Dec 2024 18:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5d19WzV"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sh/Gsxzo"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438941DE2B9;
-	Mon,  2 Dec 2024 18:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F39D70814
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 18:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733163565; cv=none; b=VQfO7SBSyduAUTBnTOgrY0WKh3PFbQLr+yT5aCr8SkPfOe24YKpDElPbfl6z435mndbwl6AzAS3y5uqxdut0tszckykJkN1eBqzTc37wIvhOxKmzJ31Z+PtR5/UfluOEmV+5iPSgJvy09Ms3kIEShaw4l6dY2IJ0xMu1LM7Kpwo=
+	t=1733163656; cv=none; b=oVs6TdxfZWAICypeUzvDeMwR23ahmToNWpbtOkDzVjZ7lbbSLGEbDRcO6SB2xMXZckUso2ozSoPm7Vcm9BP6sVL1QjuSkR76yV7YdiHe9xGUZcO0B8MW1axZrieuystlcKhECQyB6LJVqHoADxczfZ0yCX1BrHCP/1tBbGKiqHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733163565; c=relaxed/simple;
-	bh=LEz00guzn4qhDaTRkau3I6J2YUsYaVQ4/yPuVJabF3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q7r18T79bbk5yQXZ8/NBAwjRnysFdw7CCO6ifN5At/jaHBBUMvLvrRcXfoK6UTDgx2sOTvOfJmyntNdEia5Rn2+Ylfphl5QU62oFAb7XfHCLZwqn5lfaH7fcUJ0oH/6NYbyVa4qDnrsVrunRqJbLniuvROHCkUxBJUwg+4TZEsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5d19WzV; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-385e2880606so2813809f8f.3;
-        Mon, 02 Dec 2024 10:19:23 -0800 (PST)
+	s=arc-20240116; t=1733163656; c=relaxed/simple;
+	bh=uFwq90+lMU8mVw6V54IrcusVTE8Aqkyi9aFWaNmbwsE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UBkDtroFVDo3SolTq8nlLdkF5FVDEERK9NVvnd/Ex6gL0TfgEjOdlHTcZJZr5/5Y8DrJfrBGvxH1wH2oY9So3ZzdRScag7XobBrwUTL32zt0I+owKg1Xf/7+afhLpoPIjze30EEAk75OWLee6+gswPluSBhY1Ac5KO/xQ+ms5xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sh/Gsxzo; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4668194603cso1007091cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 10:20:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733163561; x=1733768361; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1733163654; x=1733768454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EJHG5zlnZJREAPBRYLvXNSMO/bhsEbMFRfOYHRsgKio=;
-        b=h5d19WzVbICgxNI+cXBwNqs6yiR652qKlBnjs9nCcC/ddqvoBuRrXDSfM2DdUEgXH+
-         JQIv/uszUTd+tuRedM//PMzf1hIcgXuF/oT1LymV1WUXLltAqbcGp5OwfllLu4vU1Waa
-         8Qa08rwE0thsPYAOqyqQut/6twd9xabQNhCUm5nPI1AtS+/BFqhwKVZ0SBM/ubvcg9FF
-         yBZiXqWz2OyaZKjdSrYKwOhfXXQLcoDsnvGRkPvUD8eM4acOSIZ4pYZXbiva62CPZBBw
-         nyKZumJHkU+T7GrKYo3yzjhz0XGV8mcWJJuDXMctZZVMKG4ufpKNLAyCpYgb57w7OKzl
-         BHzA==
+        bh=28XI+BDfImJSG+QVCqY4OmNHFKGjBLOdzMFLQlLfjWY=;
+        b=sh/Gsxzo6G172sDSSj4oP7PeobZ3Z8erTkhB6nYsRCBQwVcQ9BxV6y8mP1u0Ox8RDb
+         ZC8EHZ5zVwt5Xbok/E2rSYPOt4vB47cmeEV0yliezW2DEC7wZd2dtqFZcMyGFBUwXb+T
+         3An4pryNg9oqfA9r79h4Epg0lQQ+pFx2i1k1SAE15Z300031y6pJdQAxFMhvP+qWK5+A
+         BAu2zlBqC1be8iJqj8pSwXjJuti5/OMDoazCjlvKA060fC8txKI5vtQs55hyPX5Vurq9
+         qh0JdNPi9oO2Ez2tsRm1b/jhvSUakDLijIXGzFwTtuCJ2KTsNr5sXEYPti0Tlk357sh7
+         BcEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733163561; x=1733768361;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733163654; x=1733768454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EJHG5zlnZJREAPBRYLvXNSMO/bhsEbMFRfOYHRsgKio=;
-        b=brprlJGLzxA1nNJxKEp4h+aUhop7gx6eTXzMwbya7z+7oBuvWXn0da0SxbJpCqCC1T
-         aHzVnEsGh/8LNdgS/vSNcccZOqlRpIow0j/GeeqKcPEhvoLId4i3Q8QFQrUtUv2sKdxA
-         Ckta8pGn010PUJM456CGQaAhVoVdS+wWnWFBFnq0xNPrilp4kX7gIkz8jyuATmCSP+jq
-         8qYBatMNibH+xUANXI9yj9+oE5/+nmQF4h9fRVuKEv/5IjT/xilJOx53VPXUobsDsikZ
-         lSDvB/ZUxwobGTsC5tvP6FyFSyxnvGe+4jTMJmisiuUGBPg/pva97VxSWGCa7skUoUK2
-         I6cg==
-X-Forwarded-Encrypted: i=1; AJvYcCUigZwftEep7U8UD9bxEbFMh7THwS2tMLFm3fCpoC2/DSmIfuEtG1+ESdgL7lKRjidhXbErUQWi5Yda48AH@vger.kernel.org, AJvYcCVuADgzA9VhtzLbz6N38wt74GnjrNVcb3QMDGiFS+sAHzSbgE5B7gIjdlAwUIz6bsiMGn2dunTLWnrN@vger.kernel.org, AJvYcCW+pRGm2hJHmwkhd5ijkerzZ+quocn7LRAkulxskcL4/5f+dQ7DYOeRtK9Q2MIYaBPeFNdxbtBZ6DS8@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjt1sE7L4n1d/XamYFEtFX1imVQ2NG08H2nYA4vZRjLTixL31F
-	hRf60O2xQ4jNyeJ4632aNm21ErNUNDoPJt/Uc/nWrkWcIdFZhOTq
-X-Gm-Gg: ASbGncsIAMFWmDUuXYH+ri2x92JW6oInx4xQsYL7lyszjp8JqsRM8tv2q7Pzf8F1l1F
-	R7NwhsEHgPWTeojHg5/0CYEuUjvXWeU97+nWC+bdjr6GipNRq4w2li2YW31LL8dks3muQhP32K6
-	8MuzGRaPOcUkgClhFTzJjus/eEFFw194swWjWL0V4pvVKCBnpORfpKvaGbgHmzp/I3eQN2WBTbJ
-	kx0pUycrNbjXr2tngaqNf1gCSrhtMFF06cXJR5GSo/hjMlGd9Ho9J12V/DsUFM=
-X-Google-Smtp-Source: AGHT+IHdUWWloiPXzF8xdcj4H3ESL9UrWjJZlQq0Z2MrJ9KvIQZGpdTjb+XnCqw3qQIW1vUc+qOYJw==
-X-Received: by 2002:a05:6000:2a2:b0:385:e877:c037 with SMTP id ffacd0b85a97d-385e877c2abmr10956444f8f.42.1733163561425;
-        Mon, 02 Dec 2024 10:19:21 -0800 (PST)
-Received: from vamoirid-laptop.. ([2a04:ee41:82:7577:ea8a:93ec:a066:eb25])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-385d7d4d9b0sm11659108f8f.65.2024.12.02.10.19.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 10:19:20 -0800 (PST)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: jic23@kernel.org,
-	lars@metafoo.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andriy.shevchenko@linux.intel.com
-Cc: ajarizzo@gmail.com,
-	ak@it-klinger.de,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vassilisamir@gmail.com
-Subject: [PATCH v1 3/3] iio: pressure: bmp280: Make time vars intuitive and move to fsleep
-Date: Mon,  2 Dec 2024 19:19:07 +0100
-Message-ID: <20241202181907.21471-4-vassilisamir@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241202181907.21471-1-vassilisamir@gmail.com>
-References: <20241202181907.21471-1-vassilisamir@gmail.com>
+        bh=28XI+BDfImJSG+QVCqY4OmNHFKGjBLOdzMFLQlLfjWY=;
+        b=JJrbNCv2LYEm9oA76ifNz5fqGGnf9qLLaWOzQknKBi+D8mOsk1XO7iPrHjkxniuwNS
+         EKBf0F6CVRRMd6tgcDtbch9gWnKBKkmSE3eK0l0XUbL16HpKbECNQMGW8F05DrMapq7O
+         KimSSPd7Psn0TM8Yi7dUGDJ4kmr2jhui0WjgtnZcTyTvogBqoI9jMF2JwCeCKe2iNJak
+         j7zzz9i7tyJwIxYMul5fQIrXHQxdvVuuJxC/4oCMr7UZXlLOPYBAuikD0IOjY22JbQ8R
+         vZbBT7TaUpQ1O89itRpTs3mmhCj0ySZISx4bzn4exXStu4HRyEi/8ygf4WVxnkHTNnql
+         1xVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDGE7fiBsrmTHwtJKmFDMZjjhV61jGXwcR0dEoG4Fsas9ORK05MgSXmfjzLxuYz9FQBRu4DwAkugF1KWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywoq5bIQws3actWvINdARCiJHjLzXSVFdXOk+X6nhhTYL9EQatC
+	8zx6UgGVUcbrbM/mCK1gpW75ZZOkY3c1ykSFW4xLdvYIp0i3TsgypxK/dSa6H130LVETFABjEtP
+	bHSjy1p4aIHkdsnD7F4REeR7NBM5UcVq8iuRJ
+X-Gm-Gg: ASbGncuavb2ZIDx3n8utOf6tFZmHJ4UiDCVwWO5xjPw4Xdx1NcuxKDJ0dDUCNZAkj7H
+	BKmKZzta17Cvh5F9IIEyaHfy7c5odoG95cd+QmF4p6fJfxhBwJmGpRsVeTi+/Xw==
+X-Google-Smtp-Source: AGHT+IHtm40jpUNDpfP1EU60JeetrmcNu1qiT/IXO8OWuLgPNpRNyllv6KKV2oasp8tc27sL22WShZ7+/gLs61Hcu40=
+X-Received: by 2002:a05:622a:5b0e:b0:466:8f39:fc93 with SMTP id
+ d75a77b69052e-466c3ead405mr11680921cf.3.1733163653973; Mon, 02 Dec 2024
+ 10:20:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241126173409.3728585-1-xur@google.com> <alpine.DEB.2.21.2412021751110.30050@angie.orcam.me.uk>
+In-Reply-To: <alpine.DEB.2.21.2412021751110.30050@angie.orcam.me.uk>
+From: Rong Xu <xur@google.com>
+Date: Mon, 2 Dec 2024 10:20:42 -0800
+Message-ID: <CAF1bQ=QRYu5-CY_r7wUcku9WT8sXmD47VW42eHWGNE3bZfr4Dw@mail.gmail.com>
+Subject: Re: [PATCH v2] [MIPS] Place __kernel_entry at the beginning of text section
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Klara Modin <klarasmodin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Chris Packham <chris.packham@alliedtelesis.co.nz>, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Move sleep functions to the new fsleep() implementation. While at it,
-add time unit abbreviation as a suffix of time describing variables to
-make them more intuitive.
+Sure. I'll send a separate patch for this format change (not v3 as
+this patch was already submitted).
 
-Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
----
- drivers/iio/pressure/bmp280-core.c | 39 +++++++++++++++---------------
- drivers/iio/pressure/bmp280.h      |  4 +--
- 2 files changed, 22 insertions(+), 21 deletions(-)
+Thanks!
 
-diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-index e5ec8137961f..b39ef30f8eda 100644
---- a/drivers/iio/pressure/bmp280-core.c
-+++ b/drivers/iio/pressure/bmp280-core.c
-@@ -1002,7 +1002,7 @@ static int bmp280_preinit(struct bmp280_data *data)
- 	 * after resetting, the device uses the complete power-on sequence so
- 	 * it needs to wait for the defined start-up time.
- 	 */
--	fsleep(data->start_up_time);
-+	fsleep(data->start_up_time_us);
- 
- 	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
- 	if (ret)
-@@ -1161,7 +1161,7 @@ const struct bmp280_chip_info bmp280_chip_info = {
- 	.chip_id = bmp280_chip_ids,
- 	.num_chip_id = ARRAY_SIZE(bmp280_chip_ids),
- 	.regmap_config = &bmp280_regmap_config,
--	.start_up_time = 2000,
-+	.start_up_time_us = 2000,
- 	.channels = bmp280_channels,
- 	.num_channels = ARRAY_SIZE(bmp280_channels),
- 	.avail_scan_masks = bmp280_avail_scan_masks,
-@@ -1347,7 +1347,7 @@ const struct bmp280_chip_info bme280_chip_info = {
- 	.chip_id = bme280_chip_ids,
- 	.num_chip_id = ARRAY_SIZE(bme280_chip_ids),
- 	.regmap_config = &bme280_regmap_config,
--	.start_up_time = 2000,
-+	.start_up_time_us = 2000,
- 	.channels = bme280_channels,
- 	.num_channels = ARRAY_SIZE(bme280_channels),
- 	.avail_scan_masks = bme280_avail_scan_masks,
-@@ -1414,7 +1414,7 @@ static int bmp380_cmd(struct bmp280_data *data, u8 cmd)
- 		return ret;
- 	}
- 	/* Wait for 2ms for command to be processed */
--	usleep_range(data->start_up_time, data->start_up_time + 100);
-+	fsleep(data->start_up_time_us);
- 	/* Check for command processing error */
- 	ret = regmap_read(data->regmap, BMP380_REG_ERROR, &reg);
- 	if (ret) {
-@@ -1806,7 +1806,7 @@ static int bmp380_chip_config(struct bmp280_data *data)
- 		 * formula in datasheet section 3.9.2 with an offset of ~+15%
- 		 * as it seen as well in table 3.9.1.
- 		 */
--		msleep(150);
-+		fsleep(150 * USEC_PER_MSEC);
- 
- 		/* Check config error flag */
- 		ret = regmap_read(data->regmap, BMP380_REG_ERROR, &tmp);
-@@ -1957,7 +1957,7 @@ const struct bmp280_chip_info bmp380_chip_info = {
- 	.num_chip_id = ARRAY_SIZE(bmp380_chip_ids),
- 	.regmap_config = &bmp380_regmap_config,
- 	.spi_read_extra_byte = true,
--	.start_up_time = 2000,
-+	.start_up_time_us = 2000,
- 	.channels = bmp380_channels,
- 	.num_channels = ARRAY_SIZE(bmp380_channels),
- 	.avail_scan_masks = bmp280_avail_scan_masks,
-@@ -2006,7 +2006,8 @@ static int bmp580_soft_reset(struct bmp280_data *data)
- 		dev_err(data->dev, "failed to send reset command to device\n");
- 		return ret;
- 	}
--	usleep_range(2000, 2500);
-+	/* From datasheet's table 4: electrical characteristics */
-+	fsleep(2000);
- 
- 	/* Dummy read of chip_id */
- 	ret = regmap_read(data->regmap, BMP580_REG_CHIP_ID, &reg);
-@@ -2208,7 +2209,7 @@ static int bmp580_nvmem_read_impl(void *priv, unsigned int offset, void *val,
- 		goto exit;
- 	}
- 	/* Wait standby transition time */
--	usleep_range(2500, 3000);
-+	fsleep(2500);
- 
- 	while (bytes >= sizeof(*dst)) {
- 		addr = bmp580_nvmem_addrs[offset / sizeof(*dst)];
-@@ -2274,7 +2275,7 @@ static int bmp580_nvmem_write_impl(void *priv, unsigned int offset, void *val,
- 		goto exit;
- 	}
- 	/* Wait standby transition time */
--	usleep_range(2500, 3000);
-+	fsleep(2500);
- 
- 	while (bytes >= sizeof(*buf)) {
- 		addr = bmp580_nvmem_addrs[offset / sizeof(*buf)];
-@@ -2458,7 +2459,7 @@ static int bmp580_chip_config(struct bmp280_data *data)
- 		return ret;
- 	}
- 	/* From datasheet's table 4: electrical characteristics */
--	usleep_range(2500, 3000);
-+	fsleep(2500);
- 
- 	/* Set default DSP mode settings */
- 	reg_val = FIELD_PREP(BMP580_DSP_COMP_MASK, BMP580_DSP_PRESS_TEMP_COMP_EN) |
-@@ -2649,7 +2650,7 @@ const struct bmp280_chip_info bmp580_chip_info = {
- 	.chip_id = bmp580_chip_ids,
- 	.num_chip_id = ARRAY_SIZE(bmp580_chip_ids),
- 	.regmap_config = &bmp580_regmap_config,
--	.start_up_time = 2000,
-+	.start_up_time_us = 2000,
- 	.channels = bmp580_channels,
- 	.num_channels = ARRAY_SIZE(bmp580_channels),
- 	.avail_scan_masks = bmp280_avail_scan_masks,
-@@ -2720,7 +2721,7 @@ static int bmp180_wait_for_eoc(struct bmp280_data *data, u8 ctrl_meas)
- 			delay_us =
- 				conversion_time_max[data->oversampling_press];
- 
--		usleep_range(delay_us, delay_us + 1000);
-+		fsleep(delay_us);
- 	}
- 
- 	ret = regmap_read(data->regmap, BMP280_REG_CTRL_MEAS, &ctrl);
-@@ -2988,7 +2989,7 @@ const struct bmp280_chip_info bmp180_chip_info = {
- 	.chip_id = bmp180_chip_ids,
- 	.num_chip_id = ARRAY_SIZE(bmp180_chip_ids),
- 	.regmap_config = &bmp180_regmap_config,
--	.start_up_time = 2000,
-+	.start_up_time_us = 2000,
- 	.channels = bmp280_channels,
- 	.num_channels = ARRAY_SIZE(bmp280_channels),
- 	.avail_scan_masks = bmp280_avail_scan_masks,
-@@ -3066,7 +3067,7 @@ const struct bmp280_chip_info bmp085_chip_info = {
- 	.chip_id = bmp180_chip_ids,
- 	.num_chip_id = ARRAY_SIZE(bmp180_chip_ids),
- 	.regmap_config = &bmp180_regmap_config,
--	.start_up_time = 2000,
-+	.start_up_time_us = 2000,
- 	.channels = bmp280_channels,
- 	.num_channels = ARRAY_SIZE(bmp280_channels),
- 	.avail_scan_masks = bmp280_avail_scan_masks,
-@@ -3175,7 +3176,7 @@ int bmp280_common_probe(struct device *dev,
- 	data->oversampling_temp = chip_info->oversampling_temp_default;
- 	data->iir_filter_coeff = chip_info->iir_filter_coeff_default;
- 	data->sampling_freq = chip_info->sampling_freq_default;
--	data->start_up_time = chip_info->start_up_time;
-+	data->start_up_time_us = chip_info->start_up_time_us;
- 
- 	/* Bring up regulators */
- 	regulator_bulk_set_supply_names(data->supplies,
-@@ -3201,7 +3202,7 @@ int bmp280_common_probe(struct device *dev,
- 		return ret;
- 
- 	/* Wait to make sure we started up properly */
--	usleep_range(data->start_up_time, data->start_up_time + 100);
-+	fsleep(data->start_up_time_us);
- 
- 	/* Bring chip out of reset if there is an assigned GPIO line */
- 	gpiod = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-@@ -3287,7 +3288,7 @@ int bmp280_common_probe(struct device *dev,
- 	 * Set autosuspend to two orders of magnitude larger than the
- 	 * start-up time.
- 	 */
--	pm_runtime_set_autosuspend_delay(dev, data->start_up_time / 10);
-+	pm_runtime_set_autosuspend_delay(dev, data->start_up_time_us / 10);
- 	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_put(dev);
- 
-@@ -3306,7 +3307,7 @@ static int bmp280_runtime_suspend(struct device *dev)
- 
- 	data->chip_info->set_mode(data, BMP280_SLEEP);
- 
--	fsleep(data->start_up_time);
-+	fsleep(data->start_up_time_us);
- 	return regulator_bulk_disable(BMP280_NUM_SUPPLIES, data->supplies);
- }
- 
-@@ -3320,7 +3321,7 @@ static int bmp280_runtime_resume(struct device *dev)
- 	if (ret)
- 		return ret;
- 
--	usleep_range(data->start_up_time, data->start_up_time + 100);
-+	fsleep(data->start_up_time_us);
- 
- 	ret = data->chip_info->chip_config(data);
- 	if (ret)
-diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
-index a3631bc0e188..5b2ee1d0ee46 100644
---- a/drivers/iio/pressure/bmp280.h
-+++ b/drivers/iio/pressure/bmp280.h
-@@ -434,7 +434,7 @@ struct bmp280_data {
- 		struct bmp380_calib bmp380;
- 	} calib;
- 	struct regulator_bulk_data supplies[BMP280_NUM_SUPPLIES];
--	unsigned int start_up_time; /* in microseconds */
-+	unsigned int start_up_time_us;
- 
- 	/* log of base 2 of oversampling rate */
- 	u8 oversampling_press;
-@@ -490,7 +490,7 @@ struct bmp280_chip_info {
- 
- 	const struct iio_chan_spec *channels;
- 	int num_channels;
--	unsigned int start_up_time;
-+	unsigned int start_up_time_us;
- 	const unsigned long *avail_scan_masks;
- 
- 	const int *oversampling_temp_avail;
--- 
-2.43.0
+-Rong
 
+On Mon, Dec 2, 2024 at 9:58=E2=80=AFAM Maciej W. Rozycki <macro@orcam.me.uk=
+> wrote:
+>
+> On Tue, 26 Nov 2024, Rong Xu wrote:
+>
+> > diff --git a/arch/mips/kernel/head.S b/arch/mips/kernel/head.S
+> > index e90695b2b60e..c7528d96dd1a 100644
+> > --- a/arch/mips/kernel/head.S
+> > +++ b/arch/mips/kernel/head.S
+> > @@ -59,6 +59,7 @@
+> >  #endif
+> >       .endm
+> >
+> > +     __HEAD
+> >  #ifndef CONFIG_NO_EXCEPT_FILL
+> >       /*
+> >        * Reserved space for exception handlers.
+>
+>  A new line would be preferable afterwards so as to visually separate the
+> directive from the conditional part that follows.  It looks messy as it
+> stands (and we have prior art further down the file with __REF).  Please
+> send a fix.
+>
+>   Maciej
 
