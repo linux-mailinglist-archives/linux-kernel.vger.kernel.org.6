@@ -1,158 +1,156 @@
-Return-Path: <linux-kernel+bounces-426804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 849E49DF89A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 02:48:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2F49DF89C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 02:48:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB021B2123A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 01:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E35F1628EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 01:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F52E17BD3;
-	Mon,  2 Dec 2024 01:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b="QT3hI5kK"
-Received: from cmx-torrgo001.bell.net (mta-tor-001.bell.net [209.71.212.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89C41CF96;
+	Mon,  2 Dec 2024 01:48:31 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074541FC3;
-	Mon,  2 Dec 2024 01:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.71.212.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D0F17BD3
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 01:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733104084; cv=none; b=PL0c35NjFlQiOrDn916RJ9WxPW14r2wAY2QnyyOI1zaKXdCuJHGUyUzZTNVNKXxLtkgSOFnTJzOsa0HLv+ymFfcMMt9ZcWkgnN70ZbxMFN9a65StAuvc9eJibYBEmdBIPnnZpuzJdRD/560xwtAitU4ieK0md+4QQCjpxd9kKTY=
+	t=1733104111; cv=none; b=lxEtQ/WwhLHrY0EP8Ik/N+HIhll92jrkZJbNwHO0f4wWeyttNpm+5tlvCxRt+LH/pyJgrU4GVXuvHSrQvtkcgNBN/EW+OpmDDp3qTJdhtHTObu2kT8KXF2+1jnvL6Qs2E+XQ13bV8N1bZCDgXkMzKRR12vtIKnkdyX3YwDU2bY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733104084; c=relaxed/simple;
-	bh=UKHHYzjIu6EepSzBRjubZ+tIy9GSs52DHZ8GB2wY60Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YoBhtiayG3Txl5ZHk8DYD07z4SdboWccVwfWUMPqkwIg8rVhD48Eymzcg0V+aMZ+qmDBvOgw6iHfYBvre+W7yuOY+ux8pzGvwXU7YIOaq9BwdcKu3alrWgp7yVO7POG/NAuubTSWMB3bb6Y6ul5XhAjfTzW0DmHWvQFcxQ80sZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net; spf=pass smtp.mailfrom=bell.net; dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b=QT3hI5kK; arc=none smtp.client-ip=209.71.212.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bell.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bell.net; s=selector1; t=1733104082; 
-        bh=mr5oJsCg5wa/wcA+TbDl/1v8CMV/BXUGTGNKsUE8LQ4=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type;
-        b=QT3hI5kKNyetbun8QDF1ktNPWG8Mwqd8mF8O8oUKIxsoSgtmOdfyg5mGIK1rpDC76fF8vmo2X/xlrKAsBI1knqF8ucDUCXvGELdWSdaLaIxAKi5Y+DWMXjNdbMpJA6CWhc5So6koyOc7/bOIydxdF66dPov8PPPOi/2x8cltC/KLTVwm5k3XqNX/9/dpyqiPKpCUZ8NpdqfWiPVM4+yyoW+aigRqiiT3b4Ja8KeOaYXFpZhJH7wE71lhV6YwRUVl1cXeiRgOibJ9flZzdGlaw2i59NO2VKYDuVi0t/Xftz3bs3XfWcm16Dpi8CpsbFWwqomWa89Qqnzkm/Qp0mMiXw==
-X-RG-SOPHOS: Clean
-X-RG-VADE-SC: 0
-X-RG-VADE: Clean
-X-RG-Env-Sender: dave.anglin@bell.net
-X-RG-Rigid: 674075B801894CB3
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgeefuddrheekgdefkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceugffnnfdpqfgfvfenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthekredttddvjeenucfhrhhomheplfhohhhnucffrghvihguucetnhhglhhinhcuoegurghvvgdrrghnghhlihhnsegsvghllhdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffffduieetteeiiedvveehheefkeeugeeigeelteeuffdvgfdtveeuleeftedunecukfhppedugedvrdduvdeirdduvdelrdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehhvghloheplgduledvrdduieekrddvrdeglegnpdhinhgvthepudegvddruddviedruddvledriedpmhgrihhlfhhrohhmpegurghvvgdrrghnghhlihhnsegsvghllhdrnhgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopegurghvvgdrrghnghhlihhnsegsvghllhdrnhgvthdprhgtphhtthhopeguvghllhgvrhesghhmgidruggvpdhrtghpthhtohepuggvlhhlvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnmhgrghejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgrrhhishgtsehvghgvrhdrkhgvrhhn
-	vghlrdhorhhgpdhrtghpthhtohepmhgrthhorhhopghmrghilhhinhhglhhishhtpghkvghrnhgvlhesmhgrthhorhhordhtkhdprhgtphhtthhopehsrghmsehgvghnthhoohdrohhrgh
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-Received: from [192.168.2.49] (142.126.129.6) by cmx-torrgo001.bell.net (authenticated as dave.anglin@bell.net)
-        id 674075B801894CB3; Sun, 1 Dec 2024 20:47:50 -0500
-Message-ID: <31c884b9-77c8-48dc-b84c-20e52cdc4d44@bell.net>
-Date: Sun, 1 Dec 2024 20:47:50 -0500
+	s=arc-20240116; t=1733104111; c=relaxed/simple;
+	bh=9PjllhJm7+CnRDBO7Wnq4qwf6c89AiFMHLsT4Gquj6w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UWNgba2/H1oGwHnVWrF7fQJDtsS5k0x7N9cvzQ8JZEVsMVbchO0IS3UBTq+vWFVVEQ7jXP5/zeXl/YKfPrtMhL3wkIJwVXmIiguHZ9jrBgCZ7KaPK3fOaZ74weoVcSnGmoXw0TIe8SCCIwvdvNlHHRjr8pw/4wOJvCOQzpFpeUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7c729bfbaso36173565ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 17:48:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733104108; x=1733708908;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pdw3pLOY/4L13DYwYHkr5SY7BMmdZN4rlTp/ll+Zuhg=;
+        b=F9EiGBZ2aNc3nN2CQ/NuDbwXTyEoMaxS70QJm4ZxAvouGDgQyoWtLCTKKkMDUTauIN
+         dxsXJKRNO68AYyG0GXKN05FEXe+w7irGFOUTmtXu+wLTbd/uLd5Hz/0nQsfAhPiRmxjw
+         E8KqI8WGBq7t9OUQRIFhhS8Qqim8X4VB2mKQsRjR77DsUEgi1thxY8JISRlcFZFfqvME
+         cftAf7HW8srixb/b2jYWr8wp61AHxTbkzDL2izq423mkdvTF6zI7XBTEANufUhtYYFZr
+         OqBZhuKfLJQc8Pmg5UmqUwTkq5tMwRP8vW8pmFW6k8/F6oBsivkL5PF0cq6jkKRo3hkA
+         fR8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWYD0t/rT9fv8PPVN9sDA71W2Iqy1B1wa8PTwXNKq4cYi5/UbZ/oMt/0i+0HgQYSEcyKmtly2j3Rk/9MZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ4UG5d6L8lhYc9TBcmIuI4KQIliUSJ1UqPqLZUUB88eVHqOaz
+	q3LMbQu1MjGPHW//8VXeXlwY3tN30Jxz37CRvXfynGi1P/vHDhu25MhwEv54XKkMCUJHJzfulNr
+	lgQx1ZHWOqecDCF150kH2a/KhPK77NMjb4ooGNVO8b2gaG4nKjMdul3c=
+X-Google-Smtp-Source: AGHT+IHlK5e6az1KCVW1n7qcXsi4eC/QWGZwwqJfJHtAzIjEiFTIAYNNKxDBollBwVyEwxzO9lR8azPmx8EkPhIIy5hJEgwFIGmq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bisected] ext4 corruption on parisc since 6.12
-To: matoro <matoro_mailinglist_kernel@matoro.tk>,
- Linux Parisc <linux-parisc@vger.kernel.org>, deller@kernel.org,
- Deller <deller@gmx.de>, linmag7@gmail.com, Sam James <sam@gentoo.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <84d7b3e1053b2a8397bcc7fc8eee8106@matoro.tk>
-Content-Language: en-US
-From: John David Anglin <dave.anglin@bell.net>
-Autocrypt: addr=dave.anglin@bell.net; keydata=
- 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
- T70V9SSrl2hiw38vRzsl
-In-Reply-To: <84d7b3e1053b2a8397bcc7fc8eee8106@matoro.tk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a26:b0:3a0:9c99:32d6 with SMTP id
+ e9e14a558f8ab-3a7c55e297bmr217700045ab.24.1733104108727; Sun, 01 Dec 2024
+ 17:48:28 -0800 (PST)
+Date: Sun, 01 Dec 2024 17:48:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674d11ec.050a0220.48a03.001c.GAE@google.com>
+Subject: [syzbot] [iomap?] WARNING in iomap_zero_iter
+From: syzbot <syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com>
+To: brauner@kernel.org, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-I haven't seen any file system corruption on rp3440 with several weeks of running with clock events.  I just
-started running 6.12.1 today though.
+Hello,
 
-I have the following timer config:
+syzbot found the following issue on:
 
-# Timers subsystem
-#
-CONFIG_TICK_ONESHOT=y
-CONFIG_NO_HZ_COMMON=y
-# CONFIG_HZ_PERIODIC is not set
-CONFIG_NO_HZ_IDLE=y
-# CONFIG_NO_HZ is not set
-CONFIG_HIGH_RES_TIMERS=y
-# end of Timers subsystem
+HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=107623c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5f0b9d4913852126
+dashboard link: https://syzkaller.appspot.com/bug?extid=af7e25f0384dc888e1bf
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-There was some concern about this change on systems where the CPU timers aren't synchronized.  what
-systems do you see this on?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Dave
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b86545e0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/00ec87aaa7ee/vmlinux-b86545e0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fcc70e20d51b/bzImage-b86545e0.xz
 
-On 2024-12-01 7:26 p.m., matoro wrote:
-> Hi Helge, when booting 6.12 here myself and another user (CC'd) both observed our ext4 filesystems to be immediately corrupted in the same 
-> manner.
->
-> Every file that is read or written will have its access/modify times set to 2446-05-10 18:38:55.0000, which is the maximum ext4 timestamp.  
-> The 32-bit userspace doesn't seem to be able to handle this at all, as every further stat() call will error with "Value too large for defined 
-> data type".  Unfortunately, simply rolling back to kernel 6.11 is insufficient to recover, as the filesystem corruption is persistent, and the 
-> errors come from userspace attempting to read the modified files.  I was able to recover with a command like:  find / -newermt 2446-01-01 -o 
-> -newerct 2446-01-01 -o -newerat 2446-01-01 | xargs touch -h
->
-> Luckily, lindholm was able to bisect and identified as the culprit commit:  b5ff52be891347f8847872c49d7a5c2fa29400a7 ("parisc: Convert to 
-> generic clockevents").  Some other comments from the discussion:
->
-> 17:20:37 <awilfox> would be curious if keeping that patch + CONFIG_SMP=n fixes it
-> 17:20:44 <awilfox> this doesn't look necessarily correct on MP machines
-> 17:23:56 <awilfox> time_keeper_id is now unused; the old code specifically marked the clocksource as unstable on MP machines despite having 
-> per_cpu before
-> 17:24:11 <awilfox> and now it seems to imply CLOCK_EVT_FEAT_PERCPU is enough to work around it
-> 17:24:13 <awilfox> maybe it isn't
->
-> Thanks!
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+af7e25f0384dc888e1bf@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+gfs2: fsid=syz:syz: Trying to join cluster "lock_nolock", "syz:syz"
+gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
+gfs2: fsid=syz:syz.0: journal 0 mapped with 1 extents in 0ms
+gfs2: fsid=syz:syz.0: first mount done, others may mount
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5341 at fs/iomap/buffered-io.c:1373 iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
+Modules linked in:
+CPU: 0 UID: 0 PID: 5341 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:iomap_zero_iter+0x3b3/0x4c0 fs/iomap/buffered-io.c:1373
+Code: 85 ff 49 bc 00 00 00 00 00 fc ff df 7e 56 49 01 dd e8 21 66 60 ff 48 8b 1c 24 48 8d 4c 24 60 e9 0b fe ff ff e8 0e 66 60 ff 90 <0f> 0b 90 e9 1b ff ff ff 48 8b 4c 24 10 80 e1 07 fe c1 38 c1 0f 8c
+RSP: 0018:ffffc9000d27f3e0 EFLAGS: 00010283
+RAX: ffffffff82357e72 RBX: 0000000000000000 RCX: 0000000000100000
+RDX: ffffc9000e2fa000 RSI: 000000000000053d RDI: 000000000000053e
+RBP: ffffc9000d27f4b0 R08: ffffffff82357d88 R09: 1ffffd40002a07d8
+R10: dffffc0000000000 R11: fffff940002a07d9 R12: 0000000000008000
+R13: 0000000000008000 R14: ffffea0001503ec0 R15: 0000000000000001
+FS:  00007efeb79fe6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007efeb81360e8 CR3: 00000000442d8000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ iomap_zero_range+0x69b/0x970 fs/iomap/buffered-io.c:1456
+ gfs2_block_zero_range fs/gfs2/bmap.c:1303 [inline]
+ __gfs2_punch_hole+0x311/0xb30 fs/gfs2/bmap.c:2420
+ gfs2_fallocate+0x3a1/0x490 fs/gfs2/file.c:1399
+ vfs_fallocate+0x569/0x6e0 fs/open.c:327
+ do_vfs_ioctl+0x258c/0x2e40 fs/ioctl.c:885
+ __do_sys_ioctl fs/ioctl.c:904 [inline]
+ __se_sys_ioctl+0x80/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7efeb7f80809
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007efeb79fe058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007efeb8145fa0 RCX: 00007efeb7f80809
+RDX: 0000000020000000 RSI: 0000000040305829 RDI: 0000000000000005
+RBP: 00007efeb7ff393e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007efeb8145fa0 R15: 00007ffd994f7a38
+ </TASK>
 
 
--- 
-John David Anglin  dave.anglin@bell.net
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
