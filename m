@@ -1,117 +1,113 @@
-Return-Path: <linux-kernel+bounces-427430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39C79E00D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:44:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C329E00DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:45:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894D3162131
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1FFE280052
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ACD1FDE00;
-	Mon,  2 Dec 2024 11:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27421FDE3E;
+	Mon,  2 Dec 2024 11:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBqcCjy+"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ssxj7YIm"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C0A1D8DFB;
-	Mon,  2 Dec 2024 11:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDB31F9AA3;
+	Mon,  2 Dec 2024 11:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733139852; cv=none; b=SrX7B0nWd/OGoyIrWWDKMxWUlC7VYOV2vhvlAcjp2XROr/TF1U87eQkTrqztz4aIs9fgAObINPpPW301L/bo1hQ0KBKmJF9msg8+PVomN7x6kA4h2kcp7Pg71bDM674g71JnM4GwA4O+T1z6MqDo9qyAyKbAVhU8G5QQP1bDTvo=
+	t=1733139925; cv=none; b=AnDfwho6IMM4nYXATlX+R490LibCMNZ11Vdz6G/3p7Ev2vhOR1S7Q22cEYCMw2Mxoaobzdx4VmANP5sCN7iAMbTEX0fFz6Yq5DrkFsqJj19vSNm+7zKoOSJ8I3XRunAg6+CYbnBznBjIirB0h6T94B+yJOIgQXn28m9USp0HDss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733139852; c=relaxed/simple;
-	bh=GZsoeQW5hdstO/v+cThYbQR7nprHNq50b7WyQzu5d9M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZTur6QRqsigFR3LJ0r8GxMHH7PHHb1nyzAyzYfPLWzo/Y3KxXA6EFcanQTEhPkB91IEUqZMR0/g0gwftpd/HfgRM47vUw28GZqMgyQgEkKgcqyDhy7mpUtDt2IiCQC2vEkFBGDeb1XdTn0Wfa8HePUVyjU+v5/jc6DcuyNv76H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dBqcCjy+; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4aef7d0cc2dso868879137.1;
-        Mon, 02 Dec 2024 03:44:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733139850; x=1733744650; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JKw95k+5UoWoDfh+G04oOPe4eVhSYepVo1cu+W92jK8=;
-        b=dBqcCjy+WDtrC18zopz4vRG1g0OCoNx3b8JEo//BWU+jmb1BRvTXZZEHrfCtkVV7aP
-         ePNUo8b3pQa7k5QWvF2iASE5X1rW/Z2vy9yfMsTJvKVVmbZ/y3l00ZrHPItnrmK5JPy6
-         RY+svnpnC2DMi8jRohENFNnU1ZXuFHRIs9852IqIz9VXpObxKFEMGFcUcJlYs2hEDaa6
-         Y/3KMG0XvlnUD8d1txhOPDCNMfrYiFUU062+KgG9NGrEAM85gTrQHS7zDp+Y24gUIEeE
-         tZdwtZgvq+//lGnR2v/cmFblPFr1PhQZOW9Pd5JXABkfKBMYa5rravGxNf38k30kIeL7
-         B8Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733139850; x=1733744650;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JKw95k+5UoWoDfh+G04oOPe4eVhSYepVo1cu+W92jK8=;
-        b=LbxO59a0UAD+LOCvo76IIgvLZd7uOYBNqFINoFV/dWpRtB9PYnhp6NXzEpazlryDGi
-         fApgtIpH1Xle0S+OqpEowtVtLaVwV5gHPfAARldGhaOKDR33t4W9xB51IblCXrjAOJxh
-         IQ+ofqKyWr2eUT9Yz0WRBQMyPNCJnxecJ2mRiYph2G13j3OOIDaUviKQI82MHs7dCAcz
-         b5l5wvBWudoMehGFr2zoczbj7IuE3jfhQs94Y5J0jpSXBPU/JXuipz26YeYC3z2UQbfF
-         6jS+uZ2kx5kSRg+N1JEHrNiZQ7ZuAPn8SrnqyM9vhCI/1d3ID2KRwRvd3cSBSkgUbkXR
-         2xvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8tq9/kjs7EHzyslnr3AlrgUBWxfDKDOtLpr1x+ZPWamcWpTmV1VOyqr2PUFoZUrzMvCFEPGJ6881+POPY3A==@vger.kernel.org, AJvYcCX4c+upDoBZ8gAg8CzeSfc72+L+6kiM2XGAc28OAhNF/GgWidsHXJjmenhptslm6QiP34jL0+DOinamjc9w@vger.kernel.org, AJvYcCXKsX/ANem1MyJdti589H5kXoO1j8zwyRKdM+ZHepMW/3YX09H1Kl2BWISdgLkHIioexzWCk+NJcaA9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvAgZJ8suTC1CAhZhI5MxK9M6+d08oybMmTtYuefS/EVvZ3F9d
-	rt+vrxv2MawwbO3J8g3iAr0AVyN4bMZW/BmOG9KUyiD1tE1tvdVI4sFCbrOjZIpQ3oY4kxUeXlG
-	tx0tVW1adH300NAHbfRjDFvoTM/2tFg==
-X-Gm-Gg: ASbGncsiQ3Y+nnKF65vN1v6QQKYM7Ytn8bl/X4i7J1Ko0F/9o3+1QIw1k+0QupeGOlm
-	KslcQRyrTJZaH2lprDWw1R6cnZUXNow==
-X-Google-Smtp-Source: AGHT+IFQK9mVZMREASLpV6lvotlW3aXUn/QES//1LdyM8DiaRquQ1A0m9N6f1DElbFsTRnQNKQ1EC88tDCGg+NIaJlQ=
-X-Received: by 2002:a05:6102:c8f:b0:4af:57c8:5b2a with SMTP id
- ada2fe7eead31-4af57c85bfcmr19692567137.20.1733139849959; Mon, 02 Dec 2024
- 03:44:09 -0800 (PST)
+	s=arc-20240116; t=1733139925; c=relaxed/simple;
+	bh=N+sClg3ilSLnEtoUkH25HtnlbLoe1AkL59NyPFckCsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FxLZqFxO0YbCtFz2tRE3t2EiNKE9L/qZrzyQ1AvMOc0mw6GjQy7FkclDxyefgDElTV9mRd0YxFA6qeWcKt/BmTrr/xw+xg4H7iB3BvhFHsKiILxD3vRM7jbhc4ZUzRkSmVrOqnPYuczGqYzNBZK0zAd5uYn+GMGCKwDm1TkV9XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ssxj7YIm; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sMZNZfSNhg0JQ1t8EgkyjvljKSryh5az9Gw54oU2VPY=; b=Ssxj7YImM6kWpuepXpygDSWQGp
+	Z9vY56MTiELdqujAQ3MARSNtZRabZvY4ADxoLMXXo7M1beZAjxSRiZBkZzxXxfln4GDvJRLKtBon5
+	jkYbrtynnLTklndknWk69hgh45pgEOSooWlVzLNsVFS3VFz6FvbYAopNy7d5/F/AGIMXRgQib2zda
+	1F8GuU2BrJtQrxGOihmuo//eg4AePaZRKcJG8vUVI5JPKZRNPYMi4LHZ+/bNqzYOm65JiPUb6Ojo7
+	ihZlnJZyzqyktgLhUIHVxP03uC3X+y4XJwXUiCGF3fty3CpDQ6/8Db8x4uJEDG1ojhzvzmr7V+vRG
+	a1JbRvKw==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tI4ra-00000002AI0-25S3;
+	Mon, 02 Dec 2024 11:45:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 17622300402; Mon,  2 Dec 2024 12:45:14 +0100 (CET)
+Date: Mon, 2 Dec 2024 12:45:13 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: [PATCH v7 01/12] Documentation: x86: Add AMD Hardware Feedback
+ Interface documentation
+Message-ID: <20241202114513.GD8562@noisy.programming.kicks-ass.net>
+References: <20241130140703.557-1-mario.limonciello@amd.com>
+ <20241130140703.557-2-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com>
- <20241008-starqltechn_integration_upstream-v6-10-5445365d3052@gmail.com> <0cdd22af-150a-4dbc-8436-13211d93d417@oss.qualcomm.com>
-In-Reply-To: <0cdd22af-150a-4dbc-8436-13211d93d417@oss.qualcomm.com>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 2 Dec 2024 14:43:59 +0300
-Message-ID: <CABTCjFB1oG8TwZcQQzBMhuXUHjQdjE987RdZ9QgG_oi1R8WYoA@mail.gmail.com>
-Subject: Re: [PATCH v6 10/12] arm64: dts: qcom: sdm845-starqltechn: add
- initial sound support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241130140703.557-2-mario.limonciello@amd.com>
 
-=D1=81=D0=B1, 26 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 13:32, Kon=
-rad Dybcio <konrad.dybcio@oss.qualcomm.com>:
->
-> On 8.10.2024 6:51 PM, Dzmitry Sankouski wrote:
-> > Add support for sound (headphones and mics only)
-> > Also redefine slpi reserved memory, because adsp_mem overlaps with
-> > slpi_mem inherited from sdm845.dtsi.
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> >
-> > ---
->
-> [...]
->
-> > +&sound {
-> > +     compatible =3D "qcom,sdm845-sndcard";
-> > +     model =3D "Samsung Galaxy S9";
->
-> Are spaces cool with userspace?
+On Sat, Nov 30, 2024 at 08:06:52AM -0600, Mario Limonciello wrote:
 
-Yes. Oneplus enchilada is the same.
+> +Thread Classification and Ranking Table Interaction
+> +----------------------------------------------------
+> +
+> +The thread classification is used to select into a ranking table that describes
+> +an efficiency and performance ranking for each classification.
+> +
+> +Threads are classified during runtime into enumerated classes. The classes represent
+> +thread performance/power characteristics that may benefit from special scheduling behaviors.
+> +The below table depicts an example of thread classification and a preference where a given thread
+> +should be scheduled based on its thread class. The real time thread classification is consumed
+> +by the operating system and is used to inform the scheduler of where the thread should be placed.
+> +
+> +Thread Classification Example Table
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| class ID | Classification | Preferred scheduling behavior | Preemption priority | Counter |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| 0        | Default        | Performant                    | Highest             |         |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| 1        | Non-scalable   | Efficient                     | Lowest              | PMCx1A1 |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +| 2        | I/O bound      | Efficient                     | Lowest              | PMCx044 |
+> ++----------+----------------+-------------------------------+---------------------+---------+
+> +
+> +Thread classification is performed by the hardware each time that the thread is switched out.
+> +Threads that don't meet any hardware specified criteria will be classified as "default".
 
---=20
-Best regards and thanks for review,
-Dzmitry
+I'm not seeing this part in the patches, am I needing to read more
+careful?
 
