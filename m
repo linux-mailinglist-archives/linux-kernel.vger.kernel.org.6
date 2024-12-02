@@ -1,304 +1,166 @@
-Return-Path: <linux-kernel+bounces-426989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E42279DFAF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:00:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD589DFAF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:12:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCAC162F1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:12:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDFC1F8F1E;
+	Mon,  2 Dec 2024 07:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cl9vPmC3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DEA8B21558
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:00:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF221D61A1;
-	Mon,  2 Dec 2024 07:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OmG2M/5v"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3131DE555
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 07:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5771F8EE7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 07:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733122823; cv=none; b=J5ZXrn8Meahze1PgaS/tSULIpE25OQr+caPfljDsOT27GlhR3bvm+GgRZCKfgGWHMkPBSrRLXOmaX5oiYKYi2bK0H4Bf9f9TOifaRKEy7BWeKXAidOeDKuFBPekFLT/a45SvaLKk4LXNl5N5s5uqQeKG7O+qKb/XJM189YXTqYg=
+	t=1733123520; cv=none; b=WoUhe8T8+SDDtsDaTYaZnpUXXLcEGJli1eJz5Hvab2rpJxecJQbM+zm+6O5Z17GOq1WaOfO7WN3QBgsfEA/DpmO19zoorzLEsYBYo2qcpGpNQmOp9fF3KLPyvySWLAEhfYDKxnE+Y+muwwP7sD3rlPU8g6qp9GvQHK0yy5NGpCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733122823; c=relaxed/simple;
-	bh=EHCUmf0qJaAlby6tJU5NpdEa/LtO8PvcZpiFhQ8K0jU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JFJ/2luH8bYOHII+dfYT4vZLoaZlrixIrbdhFa8aq7oQjRf3O4K4BE59fzf+aDO86HoY6/Rh8L+ilLmAl9NfSLys3qM75X2QO6NxwTRIt5KI81BQh+FyU7R1rVKTHd+7yvNQOfoqgzhzr2nMOHjHsSrsG7yksNy1A5bDodmFURE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OmG2M/5v; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ee989553c1so1030804a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 23:00:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1733122820; x=1733727620; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DxqV79DLWbBPlc1AOT/bhEg571D5lJNxZueYNVSG/vA=;
-        b=OmG2M/5vMdwV77vE9EOPNGIktFAEQS9t58bTB8IiyttCIjxXBNmTw9jYeuJOuXHSfR
-         R430IGxZWnOhXMO1bYZ9wwPZ75AM+9j64K0IF/SWoTXqTg1vXwcniuwhflCKx61Sc7kj
-         snxFRwqfS8cRORv04BuXDCSqe43CO9NbAyVAU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733122820; x=1733727620;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DxqV79DLWbBPlc1AOT/bhEg571D5lJNxZueYNVSG/vA=;
-        b=PYZfFE7iHf3P5RmvIid73cMMzrusmbPUpdQ4BkOC+c5fIZ0X4zQfzcpRJkMHPUPImP
-         OBWuymZUsETGjzDAXMFa/+lBbuI6mnoKpD934G9s7B/UmjaCuMllobSmWhNdsyxNyOSD
-         pP4YQfovLYnpBtGYHa5uQIiMk9fUqzPSTRFW7oBASrATc5U45MUkVHIAB8gxhWaEUrCR
-         SQM+5gMCPlsttjmlyVzqXJiAj5zYKXlLUmuv5V45k3YH0B0SBBzJgqAOxXXdh7BNdeux
-         uWXeJJpiJ9fJPiWCItgtHzTYMLJrZ3xQAdnET15Ny1oWpttOpvmFnulMPgExHUATDCB6
-         WTmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQFvqghgZ5T0fJoIJTukMfPn5O7Cw3T38FGDnCXf6Kdq1vhQn3HVk4O1RiK4BwkDY26GIucoqB+qPL4mg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHe8QPRXDxjUYJXeU4f30kzI6X0SlcITFghMlF4x7sHGelDxMH
-	XuUjWXyUpzDFp7chC31L8Ky7SlEEZPgi9+6GRR/bVL4wlw/XxSA3zZfkOzahQfwDCfFM1GI27/Q
-	J2ddFLJctPBRc1D6re0GUGK/RSEqPXMVaBKFp
-X-Gm-Gg: ASbGnctGm8T5anOo3gGJt4t1b5nizvBctvrAtWAPCWFY9/7RBA7foRmqaL8Peg7jT0p
-	YB4EWDQFUf5NUv2scQjumbeWxkWBqG04=
-X-Google-Smtp-Source: AGHT+IGvmYoDrdIzwnrn7AxfIo5VP7V4JZAIUJ5mIySK7wnf3MYZziqR2sFggpey94MYsTnSUqnk2ZOa0vtjaR0BmU4=
-X-Received: by 2002:a17:90b:4b4f:b0:2ea:3d2e:a0d7 with SMTP id
- 98e67ed59e1d1-2ee08eb2f04mr30022157a91.15.1733122820263; Sun, 01 Dec 2024
- 23:00:20 -0800 (PST)
+	s=arc-20240116; t=1733123520; c=relaxed/simple;
+	bh=apAPBvnlOUu9jB7BXUQK785uKvrqpJoGfXp840wWtAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=N/HxnsZRscvZin1XZXBaENofhRoTWm3FW+xDgKsR8s3ztrlU6c5FMx7Kspdm2eDIE92hfgIP9DdeU1tbOxsAZMTnjSl8HqV0aF2pXYQGmSGRGIzQCgL4N94hZTGzgzqOZypiOZ4WRg/pojEgaI/o/3mENoNnQjvSw4s8HnEqs9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cl9vPmC3; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733123519; x=1764659519;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=apAPBvnlOUu9jB7BXUQK785uKvrqpJoGfXp840wWtAI=;
+  b=Cl9vPmC3Ip2fBay+x78DVm1tI1ve9dAidThciLxlfAJEVqKe6aIi878t
+   xlBEkX8XAmQgbDkYq44epYI28OWdWLYEf2SNazel0o8o3qXRhFmdVbBEL
+   6+vhSZMhNkLddHWKrNQLfbGyW9aRrnLrJIESm/O08Ktu9TPKm8q3HeMDw
+   w7yK8nqjW4ThzRky/vWmIroxHCU8ZJMK1oXCzKiK2ZFHhtkZPubN3W2gF
+   EByRciq0oR6tIufZvSkLzE/qUwGhAMBc67EUixJYJXsXGFH/rVUa//BFO
+   LpYEAZZrwxpNbP7LFMLFClvQ2D4EFg8Fm3l5PZ9YF0LyBkVbFfdFY6KY6
+   w==;
+X-CSE-ConnectionGUID: k9QtZRGJSBSTAtzO780ZAA==
+X-CSE-MsgGUID: rpHDEocYQ4yzf16Q6YQP1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="33197277"
+X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
+   d="scan'208";a="33197277"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2024 23:11:58 -0800
+X-CSE-ConnectionGUID: HKs8UtPFRBOAl1P7eB0/SA==
+X-CSE-MsgGUID: nFDOjCpiQjGZASCys1pQYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,201,1728975600"; 
+   d="scan'208";a="93199542"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 01 Dec 2024 23:11:56 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tI0b3-0002AK-2a;
+	Mon, 02 Dec 2024 07:11:53 +0000
+Date: Mon, 2 Dec 2024 15:11:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: drivers/net/ethernet/mediatek/mtk_eth_soc.c:1846:40: sparse: sparse:
+ incorrect type in argument 1 (different base types)
+Message-ID: <202412021536.QdX5fFb7-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241129203640.54492-1-lszubowi@redhat.com>
-In-Reply-To: <20241129203640.54492-1-lszubowi@redhat.com>
-From: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Date: Mon, 2 Dec 2024 12:30:07 +0530
-Message-ID: <CALs4sv0HUQjFEv_mZn0jabSDuxfuu4K6f9vFmUuzMtjZLVKc8A@mail.gmail.com>
-Subject: Re: [patch v2] tg3: Disable tg3 PCIe AER on system reboot
-To: Lenny Szubowicz <lszubowi@redhat.com>
-Cc: mchan@broadcom.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	george.shuklin@gmail.com, andrea.fois@eventsense.it, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000016a3fc0628441af7"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---00000000000016a3fc0628441af7
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Lorenzo,
 
-On Sat, Nov 30, 2024 at 2:06=E2=80=AFAM Lenny Szubowicz <lszubowi@redhat.co=
-m> wrote:
->
-> Disable PCIe AER on the tg3 device on system reboot on a limited
-> list of Dell PowerEdge systems. This prevents a fatal PCIe AER event
-> on the tg3 device during the ACPI _PTS (prepare to sleep) method for
-> S5 on those systems. The _PTS is invoked by acpi_enter_sleep_state_prep()
-> as part of the kernel's reboot sequence as a result of commit
-> 38f34dba806a ("PM: ACPI: reboot: Reinstate S5 for reboot").
->
-> There was an earlier fix for this problem by commit 2ca1c94ce0b6
-> ("tg3: Disable tg3 device on system reboot to avoid triggering AER").
+First bad commit (maybe != root cause):
 
-Are you saying that if we have tg3_power_down() done then the current
-new issue won't be seen?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+commit: a3c62a042237d1adeb0290dcb768e17edd6dcd25 net: mtk_eth: add COMPILE_TEST support
+date:   3 years ago
+config: nios2-randconfig-r121-20241116 (https://download.01.org/0day-ci/archive/20241202/202412021536.QdX5fFb7-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241202/202412021536.QdX5fFb7-lkp@intel.com/reproduce)
 
-> But it was discovered that this earlier fix caused a reboot hang
-> when some Dell PowerEdge servers were booted via ipxe. To address
-> this reboot hang, the earlier fix was essentially reverted by commit
-> 9fc3bc764334 ("tg3: power down device only on SYSTEM_POWER_OFF").
-> This re-exposed the tg3 PCIe AER on reboot problem.
->
-> This fix is not an ideal solution because the root cause of the AER
-> is in system firmware. Instead, it's a targeted work-around in the
-> tg3 driver.
->
-> Note also that the PCIe AER must be disabled on the tg3 device even
-> if the system is configured to use "firmware first" error handling.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412021536.QdX5fFb7-lkp@intel.com/
 
-Not too sure about this. The list has some widely used latest Dell
-servers. The first fix only did pci_disable_device()
-But looks like this fix should be the right one for the first ever
-reported issue in commit 2ca1c94ce0b6 ?
+sparse warnings: (new ones prefixed by >>)
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1113:45: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __sum16 [usertype] check @@     got restricted __be16 [usertype] @@
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1113:45: sparse:     expected restricted __sum16 [usertype] check
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1113:45: sparse:     got restricted __be16 [usertype]
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1801:22: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected unsigned int [usertype] val @@     got restricted __be32 [usertype] ip @@
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1801:22: sparse:     expected unsigned int [usertype] val
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1801:22: sparse:     got restricted __be32 [usertype] ip
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1846:40: sparse: sparse: cast from restricted __be32
+>> drivers/net/ethernet/mediatek/mtk_eth_soc.c:1846:40: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] val @@     got restricted __be32 [usertype] ip4dst @@
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1846:40: sparse:     expected unsigned int [usertype] val
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1846:40: sparse:     got restricted __be32 [usertype] ip4dst
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1846:40: sparse: sparse: cast from restricted __be32
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1846:40: sparse: sparse: cast from restricted __be32
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1846:40: sparse: sparse: cast from restricted __be32
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1846:40: sparse: sparse: cast from restricted __be32
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1903:38: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be32 [usertype] ip4dst @@     got unsigned int @@
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1903:38: sparse:     expected restricted __be32 [usertype] ip4dst
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1903:38: sparse:     got unsigned int
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1907:38: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be32 [usertype] ip4src @@     got unsigned int @@
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1907:38: sparse:     expected restricted __be32 [usertype] ip4src
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1907:38: sparse:     got unsigned int
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1909:36: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] psrc @@     got int @@
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1909:36: sparse:     expected restricted __be16 [usertype] psrc
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1909:36: sparse:     got int
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1911:36: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] pdst @@     got int @@
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1911:36: sparse:     expected restricted __be16 [usertype] pdst
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1911:36: sparse:     got int
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:652:9: sparse: sparse: context imbalance in 'mtk_stats_update' - different lock contexts for basic block
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:677:50: sparse: sparse: context imbalance in 'mtk_get_stats64' - wrong count at exit
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c: note: in included file (through include/uapi/linux/swab.h, include/linux/swab.h, include/uapi/linux/byteorder/little_endian.h, ...):
+   arch/nios2/include/uapi/asm/swab.h:31:24: sparse: sparse: too many arguments for function __builtin_custom_ini
+   arch/nios2/include/uapi/asm/swab.h:31:24: sparse: sparse: too many arguments for function __builtin_custom_ini
 
-Also you may want to address the warnings generated. Also note that
-netdev requires you to wait 24hours before posting a new revision of
-the patch.
+vim +1846 drivers/net/ethernet/mediatek/mtk_eth_soc.c
 
->
-> Fixes: 9fc3bc764334 ("tg3: power down device only on SYSTEM_POWER_OFF")
-> Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
-> ---
->  drivers/net/ethernet/broadcom/tg3.c | 59 +++++++++++++++++++++++++++++
->  1 file changed, 59 insertions(+)
->
-> diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/b=
-roadcom/tg3.c
-> index 9cc8db10a8d6..12ae5a976ca7 100644
-> --- a/drivers/net/ethernet/broadcom/tg3.c
-> +++ b/drivers/net/ethernet/broadcom/tg3.c
-> @@ -55,6 +55,7 @@
->  #include <linux/hwmon.h>
->  #include <linux/hwmon-sysfs.h>
->  #include <linux/crc32poly.h>
-> +#include <linux/dmi.h>
->
->  #include <net/checksum.h>
->  #include <net/gso.h>
-> @@ -18192,6 +18193,51 @@ static int tg3_resume(struct device *device)
->
->  static SIMPLE_DEV_PM_OPS(tg3_pm_ops, tg3_suspend, tg3_resume);
->
-> +/*
-> + * Systems where ACPI _PTS (Prepare To Sleep) S5 will result in a fatal
-> + * PCIe AER event on the tg3 device if the tg3 device is not, or cannot
-> + * be, powered down.
-> + */
-> +static const struct dmi_system_id tg3_restart_aer_quirk_table[] =3D {
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +                       DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R440"),
-> +               },
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +                       DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R540"),
-> +               },
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +                       DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R640"),
-> +               },
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +                       DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R650"),
-> +               },
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +                       DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R740"),
-> +               },
-> +       },
-> +       {
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +                       DMI_MATCH(DMI_PRODUCT_NAME, "PowerEdge R750"),
-> +               },
-> +       },
-> +       {}
-> +};
-> +
->  static void tg3_shutdown(struct pci_dev *pdev)
->  {
->         struct net_device *dev =3D pci_get_drvdata(pdev);
-> @@ -18208,6 +18254,19 @@ static void tg3_shutdown(struct pci_dev *pdev)
->
->         if (system_state =3D=3D SYSTEM_POWER_OFF)
->                 tg3_power_down(tp);
-> +       else if (system_state =3D=3D SYSTEM_RESTART &&
-> +                dmi_first_match(tg3_restart_aer_quirk_table) &&
-> +                pdev->current_state <=3D PCI_D3hot) {
-> +               /*
-> +                * Disable PCIe AER on the tg3 to avoid a fatal
-> +                * error during this system restart.
-> +                */
-> +               pcie_capability_clear_word(pdev, PCI_EXP_DEVCTL,
-> +                                          PCI_EXP_DEVCTL_CERE |
-> +                                          PCI_EXP_DEVCTL_NFERE |
-> +                                          PCI_EXP_DEVCTL_FERE |
-> +                                          PCI_EXP_DEVCTL_URRE);
-> +       }
->
->         rtnl_unlock();
->
-> --
-> 2.45.2
->
+7aab747e5563ec Nelson Chang 2016-09-17  1831  
+7aab747e5563ec Nelson Chang 2016-09-17  1832  static int mtk_hwlro_add_ipaddr(struct net_device *dev,
+7aab747e5563ec Nelson Chang 2016-09-17  1833  				struct ethtool_rxnfc *cmd)
+7aab747e5563ec Nelson Chang 2016-09-17  1834  {
+7aab747e5563ec Nelson Chang 2016-09-17  1835  	struct ethtool_rx_flow_spec *fsp =
+7aab747e5563ec Nelson Chang 2016-09-17  1836  		(struct ethtool_rx_flow_spec *)&cmd->fs;
+7aab747e5563ec Nelson Chang 2016-09-17  1837  	struct mtk_mac *mac = netdev_priv(dev);
+7aab747e5563ec Nelson Chang 2016-09-17  1838  	struct mtk_eth *eth = mac->hw;
+7aab747e5563ec Nelson Chang 2016-09-17  1839  	int hwlro_idx;
+7aab747e5563ec Nelson Chang 2016-09-17  1840  
+7aab747e5563ec Nelson Chang 2016-09-17  1841  	if ((fsp->flow_type != TCP_V4_FLOW) ||
+7aab747e5563ec Nelson Chang 2016-09-17  1842  	    (!fsp->h_u.tcp_ip4_spec.ip4dst) ||
+7aab747e5563ec Nelson Chang 2016-09-17  1843  	    (fsp->location > 1))
+7aab747e5563ec Nelson Chang 2016-09-17  1844  		return -EINVAL;
+7aab747e5563ec Nelson Chang 2016-09-17  1845  
+7aab747e5563ec Nelson Chang 2016-09-17 @1846  	mac->hwlro_ip[fsp->location] = htonl(fsp->h_u.tcp_ip4_spec.ip4dst);
+7aab747e5563ec Nelson Chang 2016-09-17  1847  	hwlro_idx = (mac->id * MTK_MAX_LRO_IP_CNT) + fsp->location;
+7aab747e5563ec Nelson Chang 2016-09-17  1848  
+7aab747e5563ec Nelson Chang 2016-09-17  1849  	mac->hwlro_ip_cnt = mtk_hwlro_get_ip_cnt(mac);
+7aab747e5563ec Nelson Chang 2016-09-17  1850  
+7aab747e5563ec Nelson Chang 2016-09-17  1851  	mtk_hwlro_val_ipaddr(eth, hwlro_idx, mac->hwlro_ip[fsp->location]);
+7aab747e5563ec Nelson Chang 2016-09-17  1852  
+7aab747e5563ec Nelson Chang 2016-09-17  1853  	return 0;
+7aab747e5563ec Nelson Chang 2016-09-17  1854  }
+7aab747e5563ec Nelson Chang 2016-09-17  1855  
 
---00000000000016a3fc0628441af7
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+:::::: The code at line 1846 was first introduced by commit
+:::::: 7aab747e5563ecbc9f3cb64ddea13fe7b9fee2bd net: ethernet: mediatek: add ethtool functions to configure RX flows of HW LRO
 
-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
-OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
-dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
-fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
-9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
-pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
-25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
-Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIA0v3rC4wGVTSyOCBnK/dc4F8K9vvFsF
-Gi3ux7dOK5SOMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTIw
-MjA3MDAyMFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQAL4UDyntSuwxw8ckhSXIZgA6bCPxxRDydc4a0Ypxus81QiFr1e
-nMBxOgu70yd2Wq9p/hZwYpWkUL0Vd33l3zCEc50xsPQMZh6f+HJXWi3IkJFX7zFrCktCxXue/FhL
-EoCzffEnHmn2SExAoQDrRN/OQzQK1166+3gbwmFnpTT5gmghGWSRZ6lXD0R4I0gkrX4Tv8Z+/Na7
-kUmEw2EmFXkKws8J7Q+JhgD9riD0AAb55dfdMZiFDl2eE9fA87C7eWz0CyJBbpgsA2eFhSpkCdH9
-/ufVp5wfC2kP1uWlfZ/+JjD6SepbcxnEpgxCgefDfzXRB5jWJE1nDKGAO6f6bJoM
---00000000000016a3fc0628441af7--
+:::::: TO: Nelson Chang <nelson.chang@mediatek.com>
+:::::: CC: David S. Miller <davem@davemloft.net>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
