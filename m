@@ -1,218 +1,162 @@
-Return-Path: <linux-kernel+bounces-427382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E1439E004A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:25:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C9C59E004C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:26:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089812802A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:25:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3B0B163581
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA00320D4E5;
-	Mon,  2 Dec 2024 11:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8451D1FF5F3;
+	Mon,  2 Dec 2024 11:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3An67asQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y9u+QouX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DWN/MTY4"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085A820C466;
-	Mon,  2 Dec 2024 11:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E6220D4EE
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138134; cv=none; b=K14lka3hT+FG+qQET248M0vwa0HsjiwmnPc4uPEFjz95WHnyj+0HzZdOCaM4E4+omTqTX2FYj9I0PWnJbc0UIEOfdk5/jkFR0SK3v6i77wmwNyJ0s/pHAbR473oGaEM9cI+b5WIsjA98xii9BwN/vXRadp7PKKYedNS5ZR+t1xE=
+	t=1733138140; cv=none; b=rKEjEglQTFeOUbMxfmw61nd7IfnS/BVHxFhLnKRobPB5/N0ebmN+FodKwAQg2vAgvH6rrSsOIglmo1P/I9YmfKj0HG4jCXK6ZAXfGTO5x59Cl1FO9nOcXWx1aWO1ypfp3ABawzvHV97NRG2T16YhuNVPh03zhul1hETyWIEtQmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138134; c=relaxed/simple;
-	bh=mhtSY1tEtuR80uEENsYKNyrBvkIErfBq88lHAd8u+jM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=cN6bthWN/lKETa6+UwEwsqrBwUIN6Y2ikFvVYZ6sBRRL6W6ifYFHz2OL76H1cBoy2jC11eJoYHBIKVVCCDvg10A+TuH3gBfPAcYaRvRy9FKxM1xUSwIlxLHVhm8H/AhZLTzJEjS7sgd8kKFGSTT80Zr1oriA2aYCUvbc+d8tOK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3An67asQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y9u+QouX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 02 Dec 2024 11:15:29 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733138130;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a143BQDIDiNZGBcnUATd4Hufct/QKN9Q4u6lSsjuZY8=;
-	b=3An67asQbkjIqwQmfrwiyDE2vfgoaLd6xpZU3GBWoPRW1vKRiL0ENX+qf/tM7poyxSKes7
-	imUm5aGs8Qdxgd4zdTrVWJ6q1HCkaCAqyqum5+SE4zffQT9QNwAyz/Sg6gxYw0OXSVQar0
-	ffx7HI6D8Kpd8iKomN6nd1tDDqGqbtZASisMI/zpcvYOHHbJoyzMjsTCNf47xMx2UPYJog
-	v21ttwk8lTjUGEkxrg7p8FxfN7HvmaQsy9xZIdcyzS7I8/RfYqexx6ah0TO33QT+RUAgVo
-	0d2VtafOnJ2P8ov7SESnFwQR1MR9r76D9FMROvW+zaBKn+xtDKEHORdQoximSg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733138130;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a143BQDIDiNZGBcnUATd4Hufct/QKN9Q4u6lSsjuZY8=;
-	b=Y9u+QouXmmZ9fPwFmbtf228ybfeOVm1+Xy49JJZukBkHyUQ2lqLrRzqF3X9HqMGg+GKEQF
-	/Uh1FsHOokCV5OCQ==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Generic annotation infrastructure
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241128094310.932794537@infradead.org>
-References: <20241128094310.932794537@infradead.org>
+	s=arc-20240116; t=1733138140; c=relaxed/simple;
+	bh=/QeHhfhilziC+tKs5rk2sxAmK+nX+OWMSeuDckThBhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=buoHt3bFYZZu9WxfsZQNUBqNy+6rX9u9rFYIAug2TgiHfyjMQISV6c/8J68eNcS3jok4T9H9+U0uf7bkuHeSvLWNPLkgz66ur32fifMbI9NzoUTNfKFk012s3zU64CxhJVBbL9byZu/Dl6GUJJDZbQvtsdZJ0UA9hDRzqrN2aVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DWN/MTY4; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733138137;
+	bh=/QeHhfhilziC+tKs5rk2sxAmK+nX+OWMSeuDckThBhI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DWN/MTY457C/SwCmI3CGTfyzltOykli6cVAIUNYldKE9L9olYgYM07rclEyVrvdNE
+	 WIQoaiD5+8H11j+1iMhNpv26xj06jFYYSGXXlJ5WsXdToJ35axlkSMTo89gAHhyvLS
+	 hj9V6QXX3EMDW16UdFhAALx7ofCa07TlrD6fpe7Eb4SaQcF0t5ltvGKw7RYE/KFvhF
+	 nSdI+pAICBHOu9g32u3i73Cd+/0VgV09IOzXa+vL6NJz/YtKmCYx+9AmaPGEp3IG4l
+	 1A+Ux416DdLc87F6NtaF+3Ey+HXsc6jsBhG3Lz+lZUbULswGF33Qj8sgAxK2l0HQto
+	 81k1WeN6O57dw==
+Received: from [192.168.1.90] (unknown [86.120.21.57])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F04CE17E3613;
+	Mon,  2 Dec 2024 12:15:36 +0100 (CET)
+Message-ID: <a00ba6bb-aa91-4ecf-a4e7-88d80e29dedc@collabora.com>
+Date: Mon, 2 Dec 2024 13:15:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173313812953.412.13184515011509006903.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] drm/connector: hdmi: Add support for YUV420 format
+ verification
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241130-hdmi-conn-yuv-v1-0-254279a08671@collabora.com>
+ <20241130-hdmi-conn-yuv-v1-2-254279a08671@collabora.com>
+ <20241202-determined-sloppy-impala-2ca0f1@houat>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20241202-determined-sloppy-impala-2ca0f1@houat>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the objtool/core branch of tip:
+Hi Maxime,
 
-Commit-ID:     2116b349e29a2e9ba17ea2e45b31234e4b350793
-Gitweb:        https://git.kernel.org/tip/2116b349e29a2e9ba17ea2e45b31234e4b350793
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 28 Nov 2024 10:38:52 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 02 Dec 2024 12:01:41 +01:00
+On 12/2/24 12:50 PM, Maxime Ripard wrote:
+> On Sat, Nov 30, 2024 at 01:56:33AM +0200, Cristian Ciocaltea wrote:
+>> Provide the necessary constraints verification in
+>> sink_supports_format_bpc() in order to support handling of YUV420
+>> output format.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 40 +++++++++++++++++++++++--
+>>  1 file changed, 37 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+>> index 0cbcee7e77cd8dff387044487ce28ee5748f5587..3a55881a544a519bb1254968db891c814f831a0f 100644
+>> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+>> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+>> @@ -3,6 +3,7 @@
+>>  #include <drm/drm_atomic.h>
+>>  #include <drm/drm_connector.h>
+>>  #include <drm/drm_edid.h>
+>> +#include <drm/drm_modes.h>
+>>  #include <drm/drm_print.h>
+>>  
+>>  #include <drm/display/drm_hdmi_helper.h>
+>> @@ -114,6 +115,12 @@ sink_supports_format_bpc(const struct drm_connector *connector,
+>>  		return false;
+>>  	}
+>>  
+>> +	if (drm_mode_is_420_only(info, mode) && format != HDMI_COLORSPACE_YUV420) {
+>> +		drm_dbg_kms(dev, "%s format unsupported by the sink for VIC%u.\n",
+>> +			    drm_hdmi_connector_get_output_format_name(format), vic);
+>> +		return false;
+>> +	}
+>> +
+>>  	switch (format) {
+>>  	case HDMI_COLORSPACE_RGB:
+>>  		drm_dbg_kms(dev, "RGB Format, checking the constraints.\n");
+>> @@ -144,9 +151,36 @@ sink_supports_format_bpc(const struct drm_connector *connector,
+>>  		return true;
+>>  
+>>  	case HDMI_COLORSPACE_YUV420:
+>> -		/* TODO: YUV420 is unsupported at the moment. */
+>> -		drm_dbg_kms(dev, "YUV420 format isn't supported yet.\n");
+>> -		return false;
+>> +		drm_dbg_kms(dev, "YUV420 format, checking the constraints.\n");
+>> +
+>> +		if (!(info->color_formats & DRM_COLOR_FORMAT_YCBCR420)) {
+>> +			drm_dbg_kms(dev, "Sink doesn't support YUV420.\n");
+>> +			return false;
+>> +		}
+>> +
+>> +		if (!drm_mode_is_420(info, mode)) {
+>> +			drm_dbg_kms(dev, "Sink doesn't support YUV420 for VIC%u.\n", vic);
+>> +			return false;
+>> +		}
+>> +
+>> +		if (bpc == 10 && !(info->hdmi.y420_dc_modes & DRM_EDID_YCBCR420_DC_30)) {
+>> +			drm_dbg_kms(dev, "10 BPC but sink doesn't support Deep Color 30.\n");
+>> +			return false;
+>> +		}
+>> +
+>> +		if (bpc == 12 && !(info->hdmi.y420_dc_modes & DRM_EDID_YCBCR420_DC_36)) {
+>> +			drm_dbg_kms(dev, "12 BPC but sink doesn't support Deep Color 36.\n");
+>> +			return false;
+>> +		}
+>> +
+>> +		if (bpc == 16 && !(info->hdmi.y420_dc_modes & DRM_EDID_YCBCR420_DC_48)) {
+>> +			drm_dbg_kms(dev, "16 BPC but sink doesn't support Deep Color 48.\n");
+>> +			return false;
+>> +		}
+>> +
+>> +		drm_dbg_kms(dev, "YUV420 format supported in that configuration.\n");
+>> +
+>> +		return true;
+> 
+> We also need to check whether the source supports it or not.
 
-objtool: Generic annotation infrastructure
+I assumed the following check does already handle that:
 
-Avoid endless .discard.foo sections for each annotation, create a
-single .discard.annotate_insn section that takes an annotation type along
-with the instruction.
+	if (!(connector->hdmi.supported_formats & BIT(format))) {
+		drm_dbg_kms(dev, "%s format unsupported by the connector.\n",
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Link: https://lore.kernel.org/r/20241128094310.932794537@infradead.org
----
- include/linux/objtool.h | 18 ++++++++++++++++-
- tools/objtool/check.c   | 45 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 63 insertions(+)
+Is there anything else missing?
 
-diff --git a/include/linux/objtool.h b/include/linux/objtool.h
-index b3b8d3d..d98531e 100644
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -57,6 +57,13 @@
- 	".long 998b\n\t"						\
- 	".popsection\n\t"
- 
-+#define ASM_ANNOTATE(type)						\
-+	"911:\n\t"							\
-+	".pushsection .discard.annotate_insn,\"M\",@progbits,8\n\t"	\
-+	".long 911b - .\n\t"						\
-+	".long " __stringify(type) "\n\t"				\
-+	".popsection\n\t"
-+
- #else /* __ASSEMBLY__ */
- 
- /*
-@@ -146,6 +153,14 @@
- 	.popsection
- .endm
- 
-+.macro ANNOTATE type:req
-+.Lhere_\@:
-+	.pushsection .discard.annotate_insn,"M",@progbits,8
-+	.long	.Lhere_\@ - .
-+	.long	\type
-+	.popsection
-+.endm
-+
- #endif /* __ASSEMBLY__ */
- 
- #else /* !CONFIG_OBJTOOL */
-@@ -155,6 +170,7 @@
- #define UNWIND_HINT(type, sp_reg, sp_offset, signal) "\n\t"
- #define STACK_FRAME_NON_STANDARD(func)
- #define STACK_FRAME_NON_STANDARD_FP(func)
-+#define ASM_ANNOTATE(type)
- #define ANNOTATE_NOENDBR
- #define ASM_REACHABLE
- #else
-@@ -167,6 +183,8 @@
- .endm
- .macro REACHABLE
- .endm
-+.macro ANNOTATE type:req
-+.endm
- #endif
- 
- #endif /* CONFIG_OBJTOOL */
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 4ce176a..b0efc8e 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2373,6 +2373,49 @@ static int read_unwind_hints(struct objtool_file *file)
- 	return 0;
- }
- 
-+static int read_annotate(struct objtool_file *file, void (*func)(int type, struct instruction *insn))
-+{
-+	struct section *sec;
-+	struct instruction *insn;
-+	struct reloc *reloc;
-+	int type;
-+
-+	sec = find_section_by_name(file->elf, ".discard.annotate_insn");
-+	if (!sec)
-+		return 0;
-+
-+	if (!sec->rsec)
-+		return 0;
-+
-+	if (sec->sh.sh_entsize != 8) {
-+		static bool warned = false;
-+		if (!warned) {
-+			WARN("%s: dodgy linker, sh_entsize != 8", sec->name);
-+			warned = true;
-+		}
-+		sec->sh.sh_entsize = 8;
-+	}
-+
-+	for_each_reloc(sec->rsec, reloc) {
-+		type = *(u32 *)(sec->data->d_buf + (reloc_idx(reloc) * sec->sh.sh_entsize) + 4);
-+
-+		insn = find_insn(file, reloc->sym->sec,
-+				 reloc->sym->offset + reloc_addend(reloc));
-+		if (!insn) {
-+			WARN("bad .discard.annotate_insn entry: %d of type %d", reloc_idx(reloc), type);
-+			return -1;
-+		}
-+
-+		func(type, insn);
-+	}
-+
-+	return 0;
-+}
-+
-+static void __annotate_nop(int type, struct instruction *insn)
-+{
-+}
-+
- static int read_noendbr_hints(struct objtool_file *file)
- {
- 	struct instruction *insn;
-@@ -2670,6 +2713,8 @@ static int decode_sections(struct objtool_file *file)
- 	if (ret)
- 		return ret;
- 
-+	read_annotate(file, __annotate_nop);
-+
- 	/*
- 	 * Must be before read_unwind_hints() since that needs insn->noendbr.
- 	 */
+Thanks,
+Cristian
 
