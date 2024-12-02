@@ -1,117 +1,179 @@
-Return-Path: <linux-kernel+bounces-428194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE5D9E0B49
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:48:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FDED9E0B4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78F0164594
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:47:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C9A9164750
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A1D1DE3A2;
-	Mon,  2 Dec 2024 18:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4368A1DE3A7;
+	Mon,  2 Dec 2024 18:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u+QG/vEX"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Mig94dba"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2065.outbound.protection.outlook.com [40.107.94.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36DF1DE2A0
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 18:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733165272; cv=none; b=CIdXZJMlvdgM14ASMPdhPm5K8afNJYsJ8vrHdXIgTSLlQQzKrAq9g3UF//65nrPz+rxWpKLpTpigxPri60qqJlVAjQe9zOTeBTdPU/Iu1hAPBvLQUEtCzrgxtmRqhmcFvITe5yBYyMm14HUY+I+LA1VsspaPDQucxqSF3TZKGcs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733165272; c=relaxed/simple;
-	bh=/WDv/GV0NhSrxZ0Vl7TJjeNE20slEbisRuFwg3yb7uM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Rf64tPZFimgWM4IhgSb4/VQ3ZqTKNaF7eCLniIU4LGXSBu6Q9ErFrxFXPC4eXs5mzfkDDM1C8fLwNlIh819msiI3WxQQ56RakdEC9QGYGDL/E4FW5mDfwhEakZjscgj5GOMimLX5v+AxwyfSwD9vfqPeKp//kVwS1XDNW9ZZamM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u+QG/vEX; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ee9f66cb12so1997535a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 10:47:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733165270; x=1733770070; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u34wPynLWdSa99IQ6xhu/7M3+TIv2HNu87ct2rQpiWw=;
-        b=u+QG/vEXVdcYmU1ZqkBfIft9cg+2lVxs+neqt5vpV7PHtS9+G5SXfE/cpwojVCWYFp
-         UebaKy6nWMg8laltRAKN9KMC4spU5A+Z5oOnyFL2aQy7IvA3gZdnmvU/k+8/r8zTifW0
-         fVFJnWKvOX9FUqbL89OgD2cgI6P9vrP/Fnk1XkTSYd/VGKrvQNT1ID1jj54ney46cX2u
-         NISzS8OXdrgJsaqfiPyBD+T9n3PFN04UtWSwEdfVi4YV2LAi02tkLzL7y7SNzi/p/iQ1
-         zrspoUC2Hh8a25sdgZQA0hLLOxE849ZWJbelGQlwteS7pRW9vaU4XCmXaGONvle4uuXn
-         2I+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733165270; x=1733770070;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u34wPynLWdSa99IQ6xhu/7M3+TIv2HNu87ct2rQpiWw=;
-        b=BZtcNJw1X/qgnlnAVxdHdRCSq5G47jfmdfhN8iRugdNdFlTWpmJL/QPueAx9zKXG6D
-         vPmqR0dXhuEh0y6DRLR7l9qybimeGEUejs3DmmRvp7avQI8+qcP1qBZWkZtnb3Dcosoa
-         mupv03wOF6q0YS9rxRSlQby/9mqy2QgtnBefUn8GUhujEe6pE+9ugErBy2zWYVPmCgza
-         LwQMdpMBw15KfaA5+1jnDbj3JNNt/o/AzXkxr6V9xhXjM1NFQSD3hGXTPikM6yD4ZZJu
-         4IMgVecM9PfaAFU8eAf6GFs3mC17iShpN4xU3If97MndlwNfvRP6q1p5/RNbiWIbFgUn
-         3MLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKeQijYkJeX9N7uNRTptXzH0xGd3TTooF/HCI5os/ExqAyz/ucfVtTHLFr6MXUQdM8RT2HeQSjMumJgZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeX0alU+W7/vdkm2RWgdmMcceshtTK6z43O6CMiWGTpkCgy16f
-	P43r/tn/zU/xj8b794PwZ8T57NckCfUo6xben112CAZKAsp0SSywHdRWH72TmEqf4+cCW6/B1U4
-	3UA==
-X-Google-Smtp-Source: AGHT+IH1lOkxtOKe5VZ1YQsUZ2R4iUJCkzIbDFJGQzaxTbOPx9DRSSWOWSynHC4tj/4TdwIvmt3yGcRJFdA=
-X-Received: from pjbsv8.prod.google.com ([2002:a17:90b:5388:b0:2ea:6aa8:c4ad])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dd2:b0:2ee:c5ea:bd91
- with SMTP id 98e67ed59e1d1-2eec5eabed1mr7923335a91.29.1733165269950; Mon, 02
- Dec 2024 10:47:49 -0800 (PST)
-Date: Mon, 2 Dec 2024 10:47:48 -0800
-In-Reply-To: <20241128092546.7a5b3f30@p-imbrenda>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36A61DDC39;
+	Mon,  2 Dec 2024 18:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733165317; cv=fail; b=c8wx57IosEp2zdwyxHuIeBvHht6eTczcOsBJ1udEChCAcZ9m7TNkuSICXla+AzqcpX1KmapRu2Q/t/45k1xkBHjIAPosBb4E85OwXzf/PEVQCog3pvaQ+asEHGgXuRvunJeFG78lsl3+Dj4wvPei0PbDbz0bSL9em3VkaWjH4t8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733165317; c=relaxed/simple;
+	bh=WRmDbxkj4Z+2iUoQvvnymrb1wyhBXuyUEUoRMv9Oecs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VJunaZwMSw302G543bXNKKtReChRRdzRJET5C0SVrxff5ze5kafJ24QtmRWqLLhQNGeeVQi7NuorHpvqXUuqaKddfJE42UTUhTkltcwGnZ8yE4TlfIT1YU/GeV9lwhZY1ukfvuJbs5MtfK9uSstBKJ6q9L9oXcINyvyqb2ecRVk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Mig94dba; arc=fail smtp.client-ip=40.107.94.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DbN3SIvspCOSUr5TbzDlKGvkb7xk7OSJU1uBTvUR/2e3xv1KQIOb3GpvRZlYgnf/ugR0N20m1MF7h1Q7XR0sQM2XSULvWIKDWQJI+95jZvhwYthEcG+36LQ+s/uo24uOPtBF+DSQeBysTUSSyy2yZiy3ezV8eHbJQq3gDkxk3psYBQu5DnNPkgybVfw8znRE4N6ISlBpeB/xTlObEgGgX9D9hJBwk3WOGJ3hJjwlOxF7YmjnlzLgzGn5ZlzbD2w/981kdsi1ydjlc9ImbPR6z21/KXeW90gGOTds9taraltIUv9vMVCXt7LyDnMcAWDsEp2lSYLtmtLKMCOtYZJmUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cOtZgqwXCqtwubgP4KpRV2iFdeEXYQWSTpfB/sz/1sU=;
+ b=wz7RqcjHct18YlOTSNLAkogwy3rLovPBYqdSa91f29WtEppThQa0WZirXAO3T8miDetfmUKtxRR+R2tVWpzdsu8pAk8jOcTAWssxR/VkUsLkfVS3RIof4RB4YeYF9HfNIxdHSoDqf1I7CWA3kqrLOQNVXNQCMQ7Dt90N2srPCUbXWjoO6Ir+yOkebzsaKRnpQHdUB0ELXZg2w2i5LIsBcqzaupr/zWhbFAwrEHnCusl7EbKy36NFH2QM8k0UYbfVK5n/gBf26zsQhf4WwXHpFO+m4FnVfLo2oP0KgKiB6SjEKof6uzLgI8xQQhomSQluW5DqIHxUajphIt+RpknAXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=chromium.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cOtZgqwXCqtwubgP4KpRV2iFdeEXYQWSTpfB/sz/1sU=;
+ b=Mig94dbaRfwmZ0y+YgwQDcxD7xoQcJRieXXGKAlLkJX19e9XmkLpl3Xqe2uLVg2VdH2gX2zK9t8b4xqF8p5CBV4ES8uPiSnkKl8unWuMqEdR02blu9Dwd2HX474IP5pHlCTM+1EtMPQeZA7ZTzBrZu+tFSCI8c6cZtVaVnsrl8g=
+Received: from CH2PR10CA0013.namprd10.prod.outlook.com (2603:10b6:610:4c::23)
+ by CH3PR12MB8710.namprd12.prod.outlook.com (2603:10b6:610:173::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.17; Mon, 2 Dec
+ 2024 18:48:31 +0000
+Received: from CH2PEPF00000144.namprd02.prod.outlook.com
+ (2603:10b6:610:4c:cafe::28) by CH2PR10CA0013.outlook.office365.com
+ (2603:10b6:610:4c::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.18 via Frontend Transport; Mon,
+ 2 Dec 2024 18:48:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CH2PEPF00000144.mail.protection.outlook.com (10.167.244.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Mon, 2 Dec 2024 18:48:31 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 2 Dec
+ 2024 12:48:30 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 2 Dec
+ 2024 12:48:29 -0600
+Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 2 Dec 2024 12:48:27 -0600
+From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+To: <mka@chromium.org>, <gregkh@linuxfoundation.org>,
+	<radhey.shyam.pandey@amd.com>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<git@amd.com>, <stable@vger.kernel.org>
+Subject: [PATCH] usb: misc: onboard_usb_dev: skip suspend/resume sequence for USB5744 SMBus support
+Date: Tue, 3 Dec 2024 00:18:22 +0530
+Message-ID: <1733165302-1694891-1-git-send-email-radhey.shyam.pandey@amd.com>
+X-Mailer: git-send-email 2.1.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241128005547.4077116-1-seanjc@google.com> <20241128005547.4077116-16-seanjc@google.com>
- <20241128092546.7a5b3f30@p-imbrenda>
-Message-ID: <Z04A1Oh0LCKtCN4p@google.com>
-Subject: Re: [PATCH v4 15/16] KVM: selftests: Use canonical $(ARCH) paths for
- KVM selftests directories
-From: Sean Christopherson <seanjc@google.com>
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Andrew Jones <ajones@ventanamicro.com>, James Houghton <jthoughton@google.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: radhey.shyam.pandey@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000144:EE_|CH3PR12MB8710:EE_
+X-MS-Office365-Filtering-Correlation-Id: b27f5a3c-a324-4253-d73f-08dd1301ead6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qZWyHM7vC2K0Q2IEC9iPHBYOK0XLY6Frz/C/1gaZwbEkk84MnrJD195b7YQA?=
+ =?us-ascii?Q?9OMAgWLFHpXy/wIrOxJe2rB2SnjGa2CUv9MFKnYCcj098yZKhf/hIAPrgDsg?=
+ =?us-ascii?Q?IafCrPXxDYwL2XzS3FxkYdURAeef0RW8Ct5khSMOVXJPJ8rnCypLl+jTSY2Z?=
+ =?us-ascii?Q?fZ8LY6OMdfjayzFsN7t5j1TkhZgdZRQkvekokJ++HHt74C0DS3E22Qo9m+8w?=
+ =?us-ascii?Q?GgcjsRoKW0SjF7lPwfZ/CQFQArrDBw8xJsIC9C5kk8n8izNuy/jn7RCg8da5?=
+ =?us-ascii?Q?nl881VAso8HxLJ1pR+Obc7APkFxXg/RwFmE/J7Dr+1/Vc7BAhj1uo4mFRpyA?=
+ =?us-ascii?Q?OogrtjygRwiqKrY+7PAAZ0Grd5lOp0tCc2Eds+EVBmrCGqgoUeRwbmB3Nuba?=
+ =?us-ascii?Q?Ton1xS9GOjtW9HKxFz4pQk2dPJmFSVSDBZ5/ka+ZnCERJszyW4jfD2K12ZW1?=
+ =?us-ascii?Q?LMp/U7w5sdqIz5ea7gWULIndMVD9y0udeXj3neTSyom8uerE502DhUrciq9B?=
+ =?us-ascii?Q?7w5ZtU/N1D+P3IqCYSyg551NaU60hftCZ9a9qJxjhCzvKdZnMeCx2GS4I1Q6?=
+ =?us-ascii?Q?293Psvb2iuO6IE/w/v7xqwNem/oJPPQSmkMmpwHSNGF5X/Nf58xAeWmrZfUj?=
+ =?us-ascii?Q?MJxokhKJrl4AM0chAQjTEA+KzVKG1XZCAOFoYd0WJfC+9pacuDNOF1yk1Cml?=
+ =?us-ascii?Q?sm2xhMICXxTxWOHQX+YBspbyV46QOKU2lJ03lREkwv4nyPhasuSERO1x4qCi?=
+ =?us-ascii?Q?fJhKsVvXOdlmLVCVVgTTdADTeVESPJENmF1znESuP3YNrQMIOdGDQkGU9duW?=
+ =?us-ascii?Q?ziWMtPfjKNlQWaSHdL1eyhoD5O1FHFILLiH2PcHMztywu2IffxIuBtfV81oN?=
+ =?us-ascii?Q?vN1Ll8Tmj/8Luw33+crygWQx0vWb2nbpRxVz7NFvRaW3Rrq3qokhCDipNSiC?=
+ =?us-ascii?Q?eRcgnjshlrRKfb4jRR8Bjbf+kzlDHO21l2R/lkluACH9m8TaMBdl2Sm0mj2t?=
+ =?us-ascii?Q?VkbttpG++9WlZKTA6SxcMdmuipWcjNP3qouYHXG42A/O/f6E6IL+Q5jeLYTC?=
+ =?us-ascii?Q?mdyA8na87qw2qnmulSnOWumbNpYH0mfJ2QygvaTpmnUcdX8zxQG3bCOp3PVz?=
+ =?us-ascii?Q?sy1TwJV2Zm2W7nUo+tVCQGMIe1v51mmxBweYloGmd23/g0FzUOTBaln/4C2g?=
+ =?us-ascii?Q?j31bfzNvnvZBDcEQCmeejUa0qwzVJBZpF4A5hrdL4jnYCw9ZAalz/eo8xPwY?=
+ =?us-ascii?Q?4IxSxFUknen2RIxu0KAA/gAnDOFevKWF8FrzeyZvy5QTt4EKiDwpTCLiCdYy?=
+ =?us-ascii?Q?9wuBl+xgg0kbYWpJVHPgVHce3wzEpLGLSSdcu1ljvsyVIyJMvSEoaeDtDcg4?=
+ =?us-ascii?Q?8dtd5x9vJoVl+PtrJg4x6vfslh1g6TryGnZM4OE0ZJL5DNSH4TTtrDtxLk2R?=
+ =?us-ascii?Q?ueUDgoofFZoMbTulbH+Sept7YM+SbCbV?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 18:48:31.1540
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b27f5a3c-a324-4253-d73f-08dd1301ead6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000144.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8710
 
-On Thu, Nov 28, 2024, Claudio Imbrenda wrote:
-> On Wed, 27 Nov 2024 16:55:46 -0800
-> > diff --git a/tools/testing/selftests/kvm/include/x86_64/svm_util.h b/tools/testing/selftests/kvm/include/x86/svm_util.h
-> > similarity index 94%
-> > rename from tools/testing/selftests/kvm/include/x86_64/svm_util.h
-> > rename to tools/testing/selftests/kvm/include/x86/svm_util.h
-> > index 044f0f872ba9..b74c6dcddcbd 100644
-> > --- a/tools/testing/selftests/kvm/include/x86_64/svm_util.h
-> > +++ b/tools/testing/selftests/kvm/include/x86/svm_util.h
-> > @@ -1,8 +1,5 @@
-> >  /* SPDX-License-Identifier: GPL-2.0-only */
-> >  /*
-> > - * tools/testing/selftests/kvm/include/x86_64/svm_utils.h
-> 
-> this line clearly has to go ^
-> 
-> > - * Header for nested SVM testing
-> 
-> but I think this one can stay? ^
+USB5744 SMBus initialization is done once in probe() and doing it in resume
+is not supported so avoid going into suspend and reset the HUB.
 
-It should go too, the header contains declarations for helpers that having nothing
-to do with nested SVM.
+There is a sysfs property 'always_powered_in_suspend' to implement this
+feature but since default state should be set to a working configuration
+so override this property value.
 
-On a somewhat related topic, the file should probably be "svm.h", but that's a
-future cleanup.
+It fixes the suspend/resume testcase on Kria KR260 Robotics Starter Kit.
+
+Fixes: 6782311d04df ("usb: misc: onboard_usb_dev: add Microchip usb5744 SMBus programming support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+---
+ drivers/usb/misc/onboard_usb_dev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
+index 36b11127280f..75ac3c6aa92d 100644
+--- a/drivers/usb/misc/onboard_usb_dev.c
++++ b/drivers/usb/misc/onboard_usb_dev.c
+@@ -407,8 +407,10 @@ static int onboard_dev_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		if (of_device_is_compatible(pdev->dev.of_node, "usb424,2744") ||
+-		    of_device_is_compatible(pdev->dev.of_node, "usb424,5744"))
++		    of_device_is_compatible(pdev->dev.of_node, "usb424,5744")) {
+ 			err = onboard_dev_5744_i2c_init(client);
++			onboard_dev->always_powered_in_suspend = true;
++		}
+ 
+ 		put_device(&client->dev);
+ 		if (err < 0)
+-- 
+2.34.1
+
 
