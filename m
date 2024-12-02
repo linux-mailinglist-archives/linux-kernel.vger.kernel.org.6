@@ -1,315 +1,193 @@
-Return-Path: <linux-kernel+bounces-427434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A6889E01CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:13:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3759E0169
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:05:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 627CCB24541
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D44B0B25CEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821471FE471;
-	Mon,  2 Dec 2024 11:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A29A1FE46C;
+	Mon,  2 Dec 2024 11:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b3L4KZ4g"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HJ2xGDX5"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2045.outbound.protection.outlook.com [40.107.22.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF871FE44D;
-	Mon,  2 Dec 2024 11:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733140263; cv=none; b=PAND/TFcyO7r8ijZ57b0iJQeaYTkFa2BTXVItV5Vv36G6eU6uzhzOH6NwyRGXTlZCG+5jfwkP0mIYrAYsxDtgepUXX9BGwIyx1uvL7ve/jUx2sJg87HSbc/SxNqc3N/ZejsIkYT+jqMcPN4s88pOPO4jSqNOKsplpqogRtwbtvA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733140263; c=relaxed/simple;
-	bh=2srtZCdeol2V5qtsK1VBin+zesE397D8m0Y3SqsxCEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECp5o94T7jCnoeJdA3GvCKuyW+rZ6oNLcS7tnfOPxTsvaFSZIMvRAPTNPIaDRR67PpHfAhgrRWQpLQJMtN2+yhTvpzddBKbA4C0NbcMm9kNPDG4dA0GcgnyCf8BBsz+wvXUVqs9PybKYF/lPXqmirq9xnmRDCb+2w556J2jgnJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b3L4KZ4g; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733140262; x=1764676262;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2srtZCdeol2V5qtsK1VBin+zesE397D8m0Y3SqsxCEc=;
-  b=b3L4KZ4gPuV+MTjUB5gc0ychNwwR3Pn3H5Wx4OWskDK36O7s829MCL+p
-   kcnudcmvzPKJlGD8w1fh6/Oths4SZ5Z1MuHe4QDDCCdxfvT4kAGbGKZSE
-   kSwbs0bJlqg63TJrpR0Odfrhp33PsFFTSE0WfWEJebGkqM5WWbIDG3ft9
-   3YIK+VxfHTpydxfSZREn6oJ0QWG8WNlmI0j1CWex5jwkVSYEqfTG/or1N
-   5mW0oG/HUh8b2C1/VPnnca+rzk6TIi36hwEQnrY6CB0+0vnyoNfDpaFKo
-   4jxW2D8aMNPzwYT4Rvs9mKJ359H3Adk4B3PNaDznmwlMvpv2HHN4mrEs6
-   w==;
-X-CSE-ConnectionGUID: LFAI0KDmQcaByf6ss59XMg==
-X-CSE-MsgGUID: JsN0WRngQd+aoVQmllSHJA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33456091"
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="33456091"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 03:51:01 -0800
-X-CSE-ConnectionGUID: Kwt5vPnVTBOsVmupP3iQlQ==
-X-CSE-MsgGUID: J/aqEOXBSD6Orwo9sEIQmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="97855401"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 02 Dec 2024 03:50:57 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tI4x5-0002NJ-2G;
-	Mon, 02 Dec 2024 11:50:55 +0000
-Date: Mon, 2 Dec 2024 19:50:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: chang hao <ot_chhao.chang@mediatek.com>, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, sean.wang@kernel.org,
-	linus.walleij@linaro.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Chhao Chang <ot_chhao.chang@mediatek.com>
-Subject: Re: [PATCH] pinctrl: mediatek: add eint new design for mt8196
-Message-ID: <202412021959.txWIlGI0-lkp@intel.com>
-References: <20241202085024.25375-1-ot_chhao.chang@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B731FE44D;
+	Mon,  2 Dec 2024 11:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733140361; cv=fail; b=hB/kApt2Oyxjw9JFmAFoSlNiDWtFdUv6iWeKxUEViLIqfpfadK34BebW8ZxWRzXu8Pbh/gdWiVGYqIgPrl8ldgWTY6EE3jMt8c8JlPHmf28LiA/ljWqP/9e10k6/TxlYQG83jRaPcKHfhqKRTTHXVsFW+SfCS9sKarAIX6Mgcxg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733140361; c=relaxed/simple;
+	bh=aTdGSf/0h0+qenmPR+C2rfrL4m25Lnql2eZkh3EcEdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qNzU+g4OFFlL5TlN2CUypy19LCYpyDpRI1dEfyBzpXsLjPW2vq1pThxGmX86q+wSQsQK4HGUcNBpqCbrmQeJcfYd1skhacwRfrp75nIsZO6ikYvUZ7AwTyGS9JySjh14XjytUHc6NP+6oWgdAtO0PKLRQXdl2UZXy8yMnZiBVAQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HJ2xGDX5; arc=fail smtp.client-ip=40.107.22.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=voFIewuP5Yr3wzYNZB0PeWNZx3ofcy0RB9XMKqfmwcX1XMgACfn63ckNp8jqgLMayIowZmcHfgS8MrZgTm2ifONR8ZcwI936SZD2+LMP7Pwd5AnagODtJI5S9CQCvXpY0rxoaQPuhA3QQzhfku/3FONMF//JkQvOIIrxsd4686ixy0MY0Hf6ksBmhnQ8zcLXnmxKHZgg7U3NxqIjk4RM1MF0xrd59G0zub8zv2k32nKpI36FqZy4rxW3KSAhCbJdYjesepxMIDbi2q8yV3H+pD7uQ6YVPs/u+L7VraAY7wIbJRz5fWTJncLkXhSVSpWSB0eLr9g5Y2uHHdg4FKAJ9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uU/r13TB6cBCa3BJ+JLp8oM4REbQvqe6mlsotDZwEDc=;
+ b=xO3Z+l5d3i6F+EBw8T0Hkgy43EUMF/1jF1qRYUUU3nxyAO3Kq4a/Hl4KVcCxltrtTi+wOIwjQtFC4vQ7Ru09ybLIBGclT1d0l7zd+/n5Fjnlato0LLb8T5u8tKSmklp1MhrgRlugEA9JFgHzvwJeAI61JU4JXDXBltIpw1LjA22F61LonfpW7tSqghiGH7Np10qXHmRFTGvdC+VYr/8WQNuk6mW29bawexuYgw/l89Ax6j8s2vksta0uWq0hm7hVQFrkJw1xtAo24k0IUCwgMj4qgc7n/ng0UujRtJgD2BfJ9qQIcWJ6j6kHcFsxoaTO1nUExjR8wd8631VNC87Ukg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uU/r13TB6cBCa3BJ+JLp8oM4REbQvqe6mlsotDZwEDc=;
+ b=HJ2xGDX5cjJyvpYcSOdzpmCUqZ0dkaq98107SqSjZDtwS4hCCdmxJrtiQeRNQYClKt9/tTTafx1cr7zrskMnOWUEfBVjtJ+xbMkVZ9oGRMiBpU8xRB9UTG+Kwu3VcEMid1a1O0ThTmXgcDKSTRU746t1C1knN3+oytfftKdeiQ1LDHQAzNMz2YqX5g7x39TN4utB1BYgRs/43eOaehqsLJTwN6+XvSHc80oVn3YCdtc2g3V/TJUec0G3yGIs6EAC21JDGR24rfBN6zZ1nAw0lVt7zxV6EfqZVEorYhMV5RLKN0SkDJ1Q47Z65C3UKF1pdn5QvAcrmbD0KNoWc/jF5Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AM0PR04MB7027.eurprd04.prod.outlook.com (2603:10a6:208:191::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
+ 2024 11:52:36 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 11:52:36 +0000
+Date: Mon, 2 Dec 2024 13:52:33 +0200
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, Petr Machata <petrm@nvidia.com>,
+	Benjamin Poirier <bpoirier@nvidia.com>,
+	Hangbin Liu <liuhangbin@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+	Ido Schimmel <idosch@nvidia.com>, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [net PATCH 2/2] selftests: forwarding: local_termination: sleep
+ before starting tests
+Message-ID: <20241202115233.quxeapcw6g3uyj2x@skbuf>
+References: <20241130113314.6488-1-ansuelsmth@gmail.com>
+ <20241130113314.6488-2-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241130113314.6488-2-ansuelsmth@gmail.com>
+X-ClientProxiedBy: VI1PR10CA0110.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:803:28::39) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202085024.25375-1-ot_chhao.chang@mediatek.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM0PR04MB7027:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41cf4673-a371-4489-b7af-08dd12c7d098
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BglYl7rpzkQfQ3IIfnuvYWOdo6MWTeNT17xzIILAW7ruqpok1tWd+5KF0tES?=
+ =?us-ascii?Q?aXDQg6pDnKisxT5jmqKZYjbmIikBa2kG8OvySBRrHEaqSnG8yqlnVjmQj27R?=
+ =?us-ascii?Q?6W9boSiMNOVJcfFh1dWR9DTYeNLAm6OWPNIVXOZHOM6rhM/hyPKO4Avfe56p?=
+ =?us-ascii?Q?kUtQ6nY9uv6fk4cTh2KqW+WrAo+S5+iL5PZSfZScoWz+3PQFWG9HyzlKghVB?=
+ =?us-ascii?Q?LiMPop2BzmLNEijjiryfQOASxdqjl2R4LPHmBa1QftbRbU0aVv54nLpxFr4/?=
+ =?us-ascii?Q?JW1H3Ezn9XBCjKE21H2JRHVsPCFcEpUcMXuh1MK1yftq4Z6pKnUtjvodO+NT?=
+ =?us-ascii?Q?p610g+MGhi9h8r6FguXRtWKJgq0AzuGPjkB0v06dGBkI+wSvUPXDrIAjrB+4?=
+ =?us-ascii?Q?S9H6DWxMGCcywyBTSrkJ68OuklFFP0O7uWXyk8JMWmjAWNosoG7623Fd2UxA?=
+ =?us-ascii?Q?XgXYTcKsMgFwpleaXA0czccxC1mdjzg5cT4JdJN/n9jeAQj2r1lI5SlamnxM?=
+ =?us-ascii?Q?5J/u0uTownq3DTnICJtkKJW9R9pJUuFCZ89SPb9wwqMF4pkvhfUhSTIVKJhJ?=
+ =?us-ascii?Q?WNN1nUcDBBhI0krq+TUBL/GfV2KrYJoHty8k3P8xF2Uz4znXMBi75qPQbNAQ?=
+ =?us-ascii?Q?KELQIeS4Bb8y5fDnoImfrvSYky6NjypbxNVW7eFpee8ATPryD/AreD7A+QpU?=
+ =?us-ascii?Q?EH7CdCBCyHooDoLs4MzVsClGcVIgf2hShkvR+bi54uyQdHOSKoRFsnzEo8z6?=
+ =?us-ascii?Q?jrpTMjMmyvtsL/a13M+gw+WGqiACAECYm2nIPqC8a8jL1U8qL8NeDDUEFkr6?=
+ =?us-ascii?Q?U/SxGqRoh6YfS9T3Zcj+CmOO6wjocfJpdltaseMuqqiMvr3mx/tWmc5etMY7?=
+ =?us-ascii?Q?4/hYanPR7eUy9wy7AmheeptVE11XimyH2k2ycTj+6d8ectQzzCgFBuB1hnh4?=
+ =?us-ascii?Q?o5BL2qAQyI/8Pwh3o0vF7I0e3EBuKQO8OYHcfuZRakMQ2HhLqhuNtimsr+Yy?=
+ =?us-ascii?Q?VOWNz5eVugLxrSaaXznF6rFWTQ5RTMCFHNZ25ZCGQ7c/tGJfuhX5qr9X9s9N?=
+ =?us-ascii?Q?ZRm+Y7XCpynQsSoCbmPOMFOWgNxqEPHIjU+sGtD8SX+AZk55rJMpFsyHVieZ?=
+ =?us-ascii?Q?MFcYaHPlhH0hxNVXQ8gUBI0y+efT8Gx9n13mni7xxFOMDTNt/JLjq5Tppxu8?=
+ =?us-ascii?Q?CcxdP59PSfgQR9IF455HlYQu8Ift67pOW4okYdul5VCkZKVlD3kmCFHrLoz/?=
+ =?us-ascii?Q?yzrLURbJxopy8fVmdYEtf94UFWs2nMNGTnQMAy7JeIpVwIAc45kBseMdTygj?=
+ =?us-ascii?Q?bXLwACNyKDa6us7a5hoLdz6Ny61l15TvFqbGTxQ8hkqrPA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1Det040grnyDfnlZUKpyoQJz/L8TYwONEUiW0Xew8MxbkR+BmpcEnysXbUmu?=
+ =?us-ascii?Q?fQwyOKcH7j3drHyZ5VLRAXUebtByoacyhyKoLHqxgGyWQbnvINfMyPB+IfHL?=
+ =?us-ascii?Q?g+NZG3rqiv118NRzx6Z+TOKa85iYfTN6MsFe06axCe9LetRAxjiALXNKjDiC?=
+ =?us-ascii?Q?BxVRzip6dfI4AqfI2cE6tn35VyaXShG/c4KSABwTfgdwwCRGCGcgQ+qqjCe9?=
+ =?us-ascii?Q?HrorvIyjQI4XDM7qBdeidUxfREdPwiHI8I+8xy9X5/IQh1+rdzDw7E5O1oW8?=
+ =?us-ascii?Q?JAX6YziKHy9HrS7KKJ7e6xjcDj9iUDS5ElklcLs2mYQ0kJAS2kb9QvJueF6p?=
+ =?us-ascii?Q?G3oMWVUVnNW3bn4WiqPi1idZBNCt+0J0ty8iGauycdvIReAErHv3EAn/716M?=
+ =?us-ascii?Q?MlizpLi1x9hSjKZk38XjE87BTTuUGpy0Z96dpxXL4DN4EC3Nn7XF9vg/XSqB?=
+ =?us-ascii?Q?fTKCt8CnzqU5t2u0EupjiGOzGfBaqVxB5lU6Cybe4udZfN8UuifAr2sfXIWx?=
+ =?us-ascii?Q?XKM3l9aguW/2uCd/3Gqj+3rGN9kefj8/1N+b4l6eNdbXtW8UbtrvwVkGa1im?=
+ =?us-ascii?Q?0CtLN23g4n5QzYGY2p3KyROqy3Gx9UsEngZpg0YFgbUiz9J4TQnft0jcvtcc?=
+ =?us-ascii?Q?oxRyJDA0Uj8noWj+qkSGlOCWaiGi/4jcgraCVM+iT4HXP+0cd9NShVTp/P2W?=
+ =?us-ascii?Q?vrzLpqFYfiIqZLJc+tAtspDBGPXSqxxySvCHb9DGD9T9yl+oa5Qye7m3+VeB?=
+ =?us-ascii?Q?KwjnPgtAEh6pzuvnry9Qe1qWlPRDz7WdPF7DHHxr7u8uEI085s4XSBSpSMZo?=
+ =?us-ascii?Q?3zVP5ts8epw4MldvxHGiUDyw5DxwfFzEGPdSJLRnRhdWum0Wb4qnPHbqdItm?=
+ =?us-ascii?Q?OMF0LQxsR06mgD1NEF7SoyED7AWxMJv3UkW6kcJRYCrKXHQir2/DUYrxg7JU?=
+ =?us-ascii?Q?eUPPeRfIB1eVxPH8dQ9vm0g/XmQ/iZwuxThhxgyfLN28T+dstNZm/PG8vVeO?=
+ =?us-ascii?Q?AwF7hD+c6pCL7j+RKm2jBKG/6cwdCeOjIxFHenQHT7kp9JFdaRimx4wD/Rl2?=
+ =?us-ascii?Q?4yJfRDLee+204f+FzZ27yTvNWnCzZJX1Fpw3naq1dgEqzPyMIuWqlnrFZBLB?=
+ =?us-ascii?Q?wtAbnSQzhtoNH+L7c/VqWd7dkFN7kyz5gOIkWdEGNeQq2vNkfUMyD29wmoGX?=
+ =?us-ascii?Q?Qzu35c7QQmuac2C4syNgM4SlhnIZ/Sdwa/OESY+HIahgC9qiI8O14tVB3CXY?=
+ =?us-ascii?Q?79cQeGFVjKiTaiF96mclB8fGKiZOFg0n5zG1jz9oLLoq/T7l174k28Qvrwpv?=
+ =?us-ascii?Q?mkKooUs28gIYia040pUAREe1XgCJxWJsw+8Sb8Ol7jzKLizOr6yEYzmRuNis?=
+ =?us-ascii?Q?Mx1Wr0RKMxzXjH03Dq31RvOaWXlHkPtwULbgwlWybLpvgAyBHrSZtH//nU/w?=
+ =?us-ascii?Q?v2HNPAoz/w563Lk7Bi2a+LCACyxpTb+GJp4sVIBEjp07/waGBqKUI72BaiNx?=
+ =?us-ascii?Q?loi+kk2qcSDYFDG8caTzQUYEtclx9iqG5GLhfG5GKgLleuoJju8txupjVpHH?=
+ =?us-ascii?Q?WobOhO6en87L8JuhEGxix3hwuaOPbj7HDbleO0k1hjpCK1rIUqfV3rAEHHtq?=
+ =?us-ascii?Q?Vw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41cf4673-a371-4489-b7af-08dd12c7d098
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 11:52:36.5527
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lfTpUCVLPD9R3ZoItyhijJhFntCpOVxAyxlu4V+2FuqdQ7acYfl7NAqWdjsWiQCoK1j2VX3YFV0wxbMdE39Smw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7027
 
-Hi chang,
+On Sat, Nov 30, 2024 at 12:33:10PM +0100, Christian Marangi wrote:
+> It seems real hardware requires some time to stabilize and actually
+> works after an 'ip link up'. This is not the case for veth as everything
+> is simulated but this is a requirement for real hardware to permit
+> receiving packet.
+> 
+> Without this the very fist test for unicast always fails on real
+> hardware. With the introduced sleep of one second after mc_route_prepare,
+> the test corretly pass as the packet can correctly be delivered.
 
-kernel test robot noticed the following build errors:
+I think the analysis is not very convincing for the following reason.
 
-[auto build test ERROR on linusw-pinctrl/devel]
-[also build test ERROR on linusw-pinctrl/for-next linus/master v6.13-rc1 next-20241128]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+To wait after "ip link up", setup_wait() calls setup_wait_dev_with_timeout()
+which waits until "ip link show dev $dev up" reports 'state UP'.
+This comes from IFLA_OPERSTATE, set by linkwatch.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/chang-hao/pinctrl-mediatek-add-eint-new-design-for-mt8196/20241202-165544
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20241202085024.25375-1-ot_chhao.chang%40mediatek.com
-patch subject: [PATCH] pinctrl: mediatek: add eint new design for mt8196
-config: x86_64-buildonly-randconfig-004-20241202 (https://download.01.org/0day-ci/archive/20241202/202412021959.txWIlGI0-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241202/202412021959.txWIlGI0-lkp@intel.com/reproduce)
+I remember having this conversation with Danielle Ratson a few years ago:
+https://lore.kernel.org/netdev/20210624151515.794224-1-danieller@nvidia.com/
+but the bottom line should be that, since commit facd15dfd691 ("net:
+core: synchronize link-watch when carrier is queried") AFAIU, an operstate
+of UP really means that the net device is ready of passing traffic. Failure
+to do so should be a device-side problem.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412021959.txWIlGI0-lkp@intel.com/
+Then I thought that maybe tcpdump needs some time to set up its filters
+on the receving net device. But tcpdump_start() already has "sleep 1" in it.
+I admit, that was purely empirical and there's no guarantee that tcpdump
+has finished setting up even after 1 second. If you increase it to 2,
+does it also solve your problem?
 
-All error/warnings (new ones prefixed by >>):
-
->> drivers/pinctrl/mediatek/mtk-eint.c:246:6: warning: no previous prototype for function 'mt6983_eint_ack' [-Wmissing-prototypes]
-     246 | void mt6983_eint_ack(struct irq_data *d)
-         |      ^
-   drivers/pinctrl/mediatek/mtk-eint.c:246:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     246 | void mt6983_eint_ack(struct irq_data *d)
-         | ^
-         | static 
->> drivers/pinctrl/mediatek/mtk-eint.c:605:2: error: call to undeclared function 'dsb'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     605 |         dsb(sy);
-         |         ^
->> drivers/pinctrl/mediatek/mtk-eint.c:605:6: error: use of undeclared identifier 'sy'
-     605 |         dsb(sy);
-         |             ^
-   drivers/pinctrl/mediatek/mtk-eint.c:626:2: error: call to undeclared function 'dsb'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     626 |         dsb(sy);
-         |         ^
-   drivers/pinctrl/mediatek/mtk-eint.c:626:6: error: use of undeclared identifier 'sy'
-     626 |         dsb(sy);
-         |             ^
->> drivers/pinctrl/mediatek/mtk-eint.c:704:14: warning: no previous prototype for function 'mtk_eint_get_debounce_en' [-Wmissing-prototypes]
-     704 | unsigned int mtk_eint_get_debounce_en(struct mtk_eint *eint,
-         |              ^
-   drivers/pinctrl/mediatek/mtk-eint.c:704:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     704 | unsigned int mtk_eint_get_debounce_en(struct mtk_eint *eint,
-         | ^
-         | static 
->> drivers/pinctrl/mediatek/mtk-eint.c:727:14: warning: no previous prototype for function 'mtk_eint_get_debounce_value' [-Wmissing-prototypes]
-     727 | unsigned int mtk_eint_get_debounce_value(struct mtk_eint *eint,
-         |              ^
-   drivers/pinctrl/mediatek/mtk-eint.c:727:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     727 | unsigned int mtk_eint_get_debounce_value(struct mtk_eint *eint,
-         | ^
-         | static 
-   3 warnings and 4 errors generated.
-
-
-vim +/dsb +605 drivers/pinctrl/mediatek/mtk-eint.c
-
-   589	
-   590	int mtk_eint_do_suspend(struct mtk_eint *eint)
-   591	{
-   592		unsigned int i, j, port;
-   593	
-   594		for (i = 0; i < eint->instance_number; i++) {
-   595			struct mtk_eint_instance inst = eint->instances[i];
-   596	
-   597			for (j = 0; j < inst.number; j += 32) {
-   598				port = j >> 5;
-   599				writel_relaxed(~inst.wake_mask[port],
-   600					       inst.base + port * 4 + eint->comp->regs->mask_set);
-   601				writel_relaxed(inst.wake_mask[port],
-   602					       inst.base + port * 4 + eint->comp->regs->mask_clr);
-   603			}
-   604		}
- > 605		dsb(sy);
-   606	
-   607		return 0;
-   608	}
-   609	EXPORT_SYMBOL_GPL(mtk_eint_do_suspend);
-   610	
-   611	int mtk_eint_do_resume(struct mtk_eint *eint)
-   612	{
-   613		unsigned int i, j, port;
-   614	
-   615		for (i = 0; i < eint->instance_number; i++) {
-   616			struct mtk_eint_instance inst = eint->instances[i];
-   617	
-   618			for (j = 0; j < inst.number; j += 32) {
-   619				port = j >> 5;
-   620				writel_relaxed(~inst.cur_mask[port],
-   621					       inst.base + port * 4 + eint->comp->regs->mask_set);
-   622				writel_relaxed(inst.cur_mask[port],
-   623					       inst.base + port * 4 + eint->comp->regs->mask_clr);
-   624			}
-   625		}
-   626		dsb(sy);
-   627	
-   628		return 0;
-   629	}
-   630	EXPORT_SYMBOL_GPL(mtk_eint_do_resume);
-   631	
-   632	int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_num,
-   633				  unsigned int debounce)
-   634	{
-   635		int virq, eint_offset;
-   636		unsigned int set_offset, bit, clr_bit, clr_offset, rst, i, unmask,
-   637			     dbnc;
-   638		static const unsigned int debounce_time[] = { 156, 313, 625, 1250,
-   639			20000, 40000, 80000, 160000, 320000, 640000 };
-   640		struct irq_data *d;
-   641		unsigned int instance, index;
-   642		void __iomem *reg;
-   643	
-   644		/*
-   645		 * Due to different number of bit field, we only decode
-   646		 * the coordinate here, instead of get the VA.
-   647		 */
-   648		reg = mtk_eint_get_offset(eint, eint_num, MTK_EINT_NO_OFFSET,
-   649					  &instance, &index);
-   650	
-   651		if (!reg) {
-   652			dev_err(eint->dev, "%s invalid eint_num %lu\n",
-   653				__func__, eint_num);
-   654			return 0;
-   655		}
-   656	
-   657		virq = irq_find_mapping(eint->domain, eint_num);
-   658		eint_offset = (index % 4) * 8;
-   659		d = irq_get_irq_data(virq);
-   660	
-   661		reg = eint->instances[instance].base;
-   662		set_offset = (index / 4) * 4 + eint->comp->regs->dbnc_set;
-   663		clr_offset = (index / 4) * 4 + eint->comp->regs->dbnc_clr;
-   664	
-   665		if (!mtk_eint_can_en_debounce(eint, eint_num))
-   666			return -EINVAL;
-   667	
-   668		/*
-   669		 * Check eint number to avoid access out-of-range
-   670		 */
-   671		dbnc = ARRAY_SIZE(debounce_time) - 1;
-   672		for (i = 0; i < ARRAY_SIZE(debounce_time); i++) {
-   673			if (debounce <= debounce_time[i]) {
-   674				dbnc = i;
-   675				break;
-   676			}
-   677		}
-   678	
-   679		if (!mtk_eint_get_mask(eint, eint_num)) {
-   680			mtk_eint_mask(d);
-   681			unmask = 1;
-   682		} else {
-   683			unmask = 0;
-   684		}
-   685	
-   686		clr_bit = 0xff << eint_offset;
-   687		writel(clr_bit, reg + clr_offset);
-   688	
-   689		bit = ((dbnc << MTK_EINT_DBNC_SET_DBNC_BITS)
-   690			| MTK_EINT_DBNC_SET_EN) << eint_offset;
-   691		rst = MTK_EINT_DBNC_RST_BIT << eint_offset;
-   692		writel(rst | bit, reg + set_offset);
-   693	
-   694		/* Delay should be (8T @ 32k) from dbc rst to work correctly. */
-   695		udelay(250);
-   696	
-   697		if (unmask == 1)
-   698			mtk_eint_unmask(d);
-   699	
-   700		return 0;
-   701	}
-   702	EXPORT_SYMBOL_GPL(mtk_eint_set_debounce);
-   703	
- > 704	unsigned int mtk_eint_get_debounce_en(struct mtk_eint *eint,
-   705					      unsigned int eint_num)
-   706	{
-   707		unsigned int instance, index, bit;
-   708		void __iomem *reg;
-   709	
-   710		reg = mtk_eint_get_offset(eint, eint_num, MTK_EINT_NO_OFFSET,
-   711					  &instance, &index);
-   712	
-   713		if (!reg) {
-   714			dev_err(eint->dev, "%s invalid eint_num %d\n",
-   715				__func__, eint_num);
-   716			return 0;
-   717		}
-   718	
-   719		reg = eint->instances[instance].base +
-   720			(index / 4) * 4 + eint->comp->regs->dbnc_ctrl;
-   721	
-   722		bit = MTK_EINT_DBNC_SET_EN << ((index % 4) * 8);
-   723	
-   724		return (readl(reg) & bit) ? 1 : 0;
-   725	}
-   726	
- > 727	unsigned int mtk_eint_get_debounce_value(struct mtk_eint *eint,
-   728						 unsigned int eint_num)
-   729	{
-   730		unsigned int instance, index, mask, offset;
-   731		void __iomem *reg;
-   732	
-   733		reg = mtk_eint_get_offset(eint, eint_num, MTK_EINT_NO_OFFSET,
-   734					  &instance, &index);
-   735	
-   736		if (!reg) {
-   737			dev_err(eint->dev, "%s invalid eint_num %d\n",
-   738				__func__, eint_num);
-   739			return 0;
-   740		}
-   741	
-   742		reg = eint->instances[instance].base +
-   743			(index / 4) * 4 + eint->comp->regs->dbnc_ctrl;
-   744	
-   745		offset = MTK_EINT_DBNC_SET_DBNC_BITS + ((index % 4) * 8);
-   746		mask = 0xf << offset;
-   747	
-   748		return ((readl(reg) & mask) >> offset);
-   749	}
-   750	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Or do you really have to place the sleep call after the mc_route_prepare() calls,
+and any earlier won't help? In that case, it isolates the sleeping
+requirement to the multicast routes themselves?
 
