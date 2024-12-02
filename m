@@ -1,408 +1,282 @@
-Return-Path: <linux-kernel+bounces-427858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239A39E0916
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:53:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3BC9E073A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:39:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C93F5BC080C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:20:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F115177E4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0535B20C03B;
-	Mon,  2 Dec 2024 15:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25A3205ADE;
+	Mon,  2 Dec 2024 15:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y/ag1EWL"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PLJE1dPj"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E03B20A5E1;
-	Mon,  2 Dec 2024 15:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D59205AD5
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152393; cv=none; b=WiEvYaqptO/MkFV/e0Dp384wezlKiNtkyrJeo3LodWefyclcZVwVZgcJjHSjzaTODeLHW86csTXEc5xS0UVLLlEL9LU5GoJbyMzSMU2nrmy3aXCjN2NhhsbOUBj+D3ff/aWt4a4QkIbrbtLRsgmNeInTAgJf9gZeuwdIZn3rFzk=
+	t=1733152497; cv=none; b=hbxnclZ4b77fiFm4U0SGXuCEa2GoFVVFGxui9dxzyvhVtc03V0jncTsLrN7WRocREPWLwf4ufUOgmdZmF6SX7lM/rd8FVcwWdKUhbKP3npjYOvDekx8C3bpTtRra71OOYKlMoka//4akycG1WcS1/fe1xJ3EuVHPPvja0SdhvNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152393; c=relaxed/simple;
-	bh=hgyWZH4F62jNxavKD66RRs0vHTyEatO7/IFqiiAsdUo=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=imsKS5JqimC4xuB3KoTgjdUXi6G+1H+QeeCYDpJdc75N0vqY9HNX9Fgk+iolrXS7d6tnbjTeJlziYapxRONreLKyCWv/nBFdntIMK8CDmCDFkfKUbf3Dgvuq3cD50NeGMd9bhd7gyUr29shycMClOXmhM+E6Z0qRjUs8lvA6FSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y/ag1EWL; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-432d86a3085so36430705e9.2;
-        Mon, 02 Dec 2024 07:13:10 -0800 (PST)
+	s=arc-20240116; t=1733152497; c=relaxed/simple;
+	bh=KpbBb9LzkFtJK58lCHF0v1Z3JHq622hksZSIbRBCl0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jVrTOu5PsmFlLa6lrTQYx33Gzz8jT7sYw1itbELA/D9FeIq3YxTS6qYBYWjPkDCU23Jyd1PeFZdzk3CJf8SBF2g7V1OSX2estkpQoJ5OiITnSXkhqqIM/XBSAcEyAOV70RmCaNnBRtDt+XdZu7LcEiWjRJObaL/GGN+FKxj6VNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PLJE1dPj; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3983426f80so2913514276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:14:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733152389; x=1733757189; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PbreFTMSILvFmiIjtGhpGrlLSi8p4N40sJ7ueFzO6Sk=;
-        b=Y/ag1EWLdHqTT/RO6v75+6to+n/0dPTT8+ybL9hkrkGgZ6sDQdq0R/k0g08ixhcMDl
-         CFMPMM/DWJEEjvt+18b0nNH0Lerhw7W9QzvIVKYid4df11/OD3fJdy8UeAwFFDxCfkTR
-         iF0ZSMVm5m0WD+3t48yD7oCSA9TXQWGXGUCjIF8BLoAjrV0msoSd2f5pbrXbhOfjT8PC
-         qyzVhAo9vbtyHXGmF4ybBv0r+qKgH1yP3/gF6YPPsA5Cg+I/KcnDSKx45L3gKAcFYahH
-         SfoKzkuLaBR56lj64rlnRh5d6txGrUZ+jLZxpmuaqadWY0qxfrq7uvu1uKmWbISsB0WV
-         HU8w==
+        d=linaro.org; s=google; t=1733152494; x=1733757294; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qgQqAmUH/5qaUZ/FJ2uuZznRVamzcHOkuY3OD4Ps5BA=;
+        b=PLJE1dPjXIVznliCdSp+UlhxtKkxfSt2y+ydkpuZl8kdtHVygA2D50m+sjil2p47sW
+         /bCeI1ZiaWy8RemxSNzqjqptCm3N9/+yQNQEBPbi8++DCjgW0vDntMzlS/j8oZ2m5SkB
+         BnOQRjQl+4E5OGqK/KrKkhNKcMntsLmuZuJploYYJhWlQOTVH5yYM02mamDRY/vCT4JZ
+         CBDel8IP1vIkk7/MyJDSY7nH4fd+Fezs1sg3izI2H/FZi3zQa3SqkYtFQoooiyQ7/jFn
+         RCs6m/htUzUWQyIMCY1hX/RPitke7pPo3NAZsGmNnAM6iTeF4yq20SiVmzWyXS8LZvkU
+         O9qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733152389; x=1733757189;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PbreFTMSILvFmiIjtGhpGrlLSi8p4N40sJ7ueFzO6Sk=;
-        b=j8hWXq5SXmxq63ITII3YH5miL2ESlDY3Bg0c27wKPizv22iJ6C1sGh5V54Yf48Bwsf
-         1nAt0lWJziCtM2fz9pWdMKGpVjW/hSQMUkBp2FROXqRoOuPm+EmZhUzc8U1nOpl5Xlsi
-         sG2oyqN3GxFZwzUTXtOE2yD9rhjrmNHv8LDgkliGVQmBloZ2SnlIXgKxp/tdrZqL1e9C
-         ipNI0mTbyU5OImMzcJi85RxLNLdONkW5fRI2UHEX+pKdWKZDsuF1owaHp9YwVd6IRu0L
-         dZyTFSlc21YltVni7dwQueeEcNvnxnNyMY8S6aBRxz1xEMTC3p6SbQsAB2uEbjoBq18T
-         A5vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0fEvrs4ap18nTFHGk9FKSKNGHMlHBYmmOIYicizVOiK6ly3oCZDf5E0HbgnLU4UoMjTjO97xYEI77@vger.kernel.org, AJvYcCVHaP4XIbCmOmq86bqhNu1+mi57xosRwglsf6cb1ql4+p4EBxERN+gex2o8GgdIHDCnlZsb448P/p0=@vger.kernel.org, AJvYcCXrYaJ0Z+jD5fGXBJ93t4oHKileyCHGqQ4eGyjewnH7Si2PhmqWEKWVVzNPIz8AxS/pymuQ9Uw6HylDRd5B@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLYJ6tksS2OBOD9N2M8yVHcD7UXkYbSBtbora7SXwcni+lcVAd
-	hV/Zh1GDjYaOJcaCibrycXD6Y8b6otXypFdQzB50oyfePfcvIuUs
-X-Gm-Gg: ASbGncuTmhtyC7HJhxp7kgue1rTGbMZUHm60LU2XvIE5BGB8ke7mvVO9+v6swVNNVtt
-	iynaZJXYlHNw3fcpVpSZt/MmDXelKyiEGr2MC2TqPR4BNkpM7p+NfbVHPwvz8Ch/xowtdWIMdS4
-	saqIoOLKWOsEYfqNbmzLXQJHI77ZUT7d9arDZCFMAFfmg5lgWJu/0Cm+lyN7pZlIp1do7SAJ+Jk
-	Upw26YJVpPh6m+cwhs+ZWimRFZtY3vBWHEmjsjdWATn6vWKrgTeBM4up0GdorjqhgNRrI2G8WTE
-	t7xZ4MsUzhpziS/IlAE=
-X-Google-Smtp-Source: AGHT+IGSsRVgA0BiMHuiHxh7Njn4BSULa5d7LgbN5teLIdHLWcwjTW+pXzYn9yV3HoT3hxIyL8yCYA==
-X-Received: by 2002:a05:6000:1787:b0:382:4ab4:b43c with SMTP id ffacd0b85a97d-385c6eb736dmr17380038f8f.21.1733152388287;
-        Mon, 02 Dec 2024 07:13:08 -0800 (PST)
-Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434b0dc6831sm154173915e9.20.2024.12.02.07.13.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 07:13:07 -0800 (PST)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: [PATCH v4 2/2] cpufreq: airoha: Add EN7581 CPUFreq SMCCC driver
-Date: Mon,  2 Dec 2024 16:12:04 +0100
-Message-ID: <20241202151228.32609-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241202151228.32609-1-ansuelsmth@gmail.com>
-References: <20241202151228.32609-1-ansuelsmth@gmail.com>
+        d=1e100.net; s=20230601; t=1733152494; x=1733757294;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qgQqAmUH/5qaUZ/FJ2uuZznRVamzcHOkuY3OD4Ps5BA=;
+        b=t0T3z6Jj8Yns/R7j1dZP+MFSel945FV35eO/2qJdzP/0V5HFgyZeM3aB81GDyYuQBO
+         8GJeXv2p88u4hTVRxhHtTc3aQ7VqXr1IrsrPYkf/YRiIXY7AVVej/4kfzxvC1X/DgNF2
+         po7iWAZJkniqfhU/FRPFN//OJx9jccafJn4swUg/Xe9fr45qCHe0whdO2ANd3kAoJi+i
+         +WxY+YbQ2U0Ty0NNEDfHnDuXL0JuOSbKclQKSUFwQwNZTsVFod18t4PNcDEIgAd3bhBD
+         4Ikq2mmaoYdBflfZ+m7R9ktIlm/rGrzUeJZBKseGaMQcVV/Fp3Lw7Qn0PT01/aocK+1v
+         s4VA==
+X-Forwarded-Encrypted: i=1; AJvYcCU921AU9zY823UMxKnA4Ennq1XbenM4A/52VP/wSp6HwLJgWb8r4l4pKrV6jMAOMUEmrj1WezIEw1GHq1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUqCvuEbFkuE6a3bzNkx6786m+N0oKenF4K9P4s1f10/gnen/2
+	aXuY3tP+10mx8xftIc0/2sN0EBAI3bHz/fBJ+93wqAIW3LHeEEOsb2ab7538/z+ByEZZ4LwPhMA
+	/OXkqW6SbKMi0eJ7+2TAbUpHJR4lyg39nvr8dPw==
+X-Gm-Gg: ASbGncspmpvcJ1mDLiStjW5RIzSnvh/fX89+96aC/aw9Ywda1uNtKThTLQc5tcoQjMA
+	c5adGZLkMNkhF9Q1qfamBqAt/FM+UlA==
+X-Google-Smtp-Source: AGHT+IG0eZmZdCpjszUFPQKzsE1pjfh6dUFyWF3HVs2HVQq6iY1PVz+uppjKox4aaeidt2hxIDY0FGQr5/t0c8vw8OQ=
+X-Received: by 2002:a05:6902:1242:b0:e39:826a:c746 with SMTP id
+ 3f1490d57ef6-e39826aca1emr13293016276.40.1733152494114; Mon, 02 Dec 2024
+ 07:14:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
+ <20241120095428.1122935-2-quic_chejiang@quicinc.com> <454tdpuglu23nmxfqqesv42h5rk3vqiji7spo3naf2djqwojqt@6x3ram3lnlkq>
+ <fb5bc38b-83b3-4924-b1d0-39219a2927b4@quicinc.com> <CAA8EJpqAOD_+SLG2LbiodWOs28_rquvMefmSH5CY1yB_rkiZPg@mail.gmail.com>
+ <a7ec9426-8c8a-49b3-9916-4c2660c38e49@quicinc.com> <CAA8EJpqpzwGL38F_MYUJVuAT8q96QZO7CSh00ZpNBU5cGWUqqA@mail.gmail.com>
+ <944fdc7f-313e-48b9-8917-370942d4f073@quicinc.com> <qsaiic4jvhf6nqe7efchxvja6tjvsiquem6ofsgq52iygfflya@huv6x7kz6emd>
+ <c3394a08-edab-45a4-9ed8-db2a06598a0a@quicinc.com>
+In-Reply-To: <c3394a08-edab-45a4-9ed8-db2a06598a0a@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 2 Dec 2024 17:14:42 +0200
+Message-ID: <CAA8EJprgYM1zqzoJvvUAFbauMLQR0zpvQ93eVY6wzxU5YGvhiw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
+To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	quic_zijuhu@quicinc.com, linux-bluetooth@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, quic_mohamull@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add simple CPU Freq driver for Airoha EN7581 SoC that control CPU
-frequency scaling with SMC APIs and register a generic "cpufreq-dt"
-device.
+On Mon, 2 Dec 2024 at 16:25, Cheng Jiang (IOE)
+<quic_chejiang@quicinc.com> wrote:
+>
+>
+>
+> On 12/2/2024 7:38 PM, Dmitry Baryshkov wrote:
+> > On Mon, Dec 02, 2024 at 10:22:52AM +0800, Cheng Jiang (IOE) wrote:
+> >> Hi Dmitry,
+> >>
+> >> On 11/30/2024 4:24 PM, Dmitry Baryshkov wrote:
+> >>> On Sat, 30 Nov 2024 at 05:48, Cheng Jiang (IOE)
+> >>> <quic_chejiang@quicinc.com> wrote:
+> >>>>
+> >>>> Hi Dmitry,
+> >>>>
+> >>>> On 11/21/2024 12:38 PM, Dmitry Baryshkov wrote:
+> >>>>> On Thu, 21 Nov 2024 at 06:02, Cheng Jiang <quic_chejiang@quicinc.com> wrote:
+> >>>>>>
+> >>>>>> Hi Dmitry,
+> >>>>>>
+> >>>>>> On 11/20/2024 6:43 PM, Dmitry Baryshkov wrote:
+> >>>>>>> On Wed, Nov 20, 2024 at 05:54:25PM +0800, Cheng Jiang wrote:
+> >>>>>>>> Several Qualcomm projects will use the same Bluetooth chip, each
+> >>>>>>>> focusing on different features. For instance, consumer projects
+> >>>>>>>> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
+> >>>>>>>> SINK feature, which may have more optimizations for coexistence when
+> >>>>>>>> acting as a SINK. Due to the patch size, it is not feasible to include
+> >>>>>>>> all features in a single firmware.
+> >>>>>>>>
+> >>>>>>>> Therefore, the 'product-variant' devicetree property is used to provide
+> >>>>>>>> product information for the Bluetooth driver to load the appropriate
+> >>>>>>>> firmware.
+> >>>>>>>>
+> >>>>>>>> If this property is not defined, the default firmware will be loaded,
+> >>>>>>>> ensuring there are no backward compatibility issues with older
+> >>>>>>>> devicetrees.
+> >>>>>>>>
+> >>>>>>>> The product-variant defines like this:
+> >>>>>>>>   0 - 15 (16 bits) are product line specific definitions
+> >>>>>>>>   16 - 23 (8 bits) are for the product line.
+> >>>>>>>>   24 - 31 (8 bits) are reserved for future use, 0 currently
+> >>>>>>>
+> >>>>>>> Please use text strings instead of encoding this information into random
+> >>>>>>> integers and then using just 3 bits out of 32.
+> >>>>>> Ack. Originally intended to make it more flexible for future use. It can be
+> >>>>>> text strings for current requirement.
+> >>>>>
+> >>>>> No, fixed-format data isn't flexible. Fine-grained properties are.
+> >>>>> Please define exactly what is necessary rather than leaving empty
+> >>>>> holes "for future expansion".=
+> >>>>>
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>>> |---------------------------------------------------------------------|
+> >>>>>>>> |                       32 Bits                                       |
+> >>>>>>>> |---------------------------------------------------------------------|
+> >>>>>>>> |  31 - 24 (bits)   |    23 - 16 (bits)   | 15 - 0 (16 bits)          |
+> >>>>>>>> |---------------------------------------------------------------------|
+> >>>>>>>> |   Reserved        |    0: default       | 0: default                |
+> >>>>>>>> |                   |    1: CE            |                           |
+> >>>>>>>> |                   |    2: IoT           |                           |
+> >>>>>>>> |                   |    3: Auto          |                           |
+> >>>>>>>> |                   |    4: Reserved      |                           |
+> >>>>>>>> |---------------------------------------------------------------------|
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> >>>>>>>> ---
+> >>>>>>>>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml          | 6 ++++++
+> >>>>>>>>  1 file changed, 6 insertions(+)
+> >>>>>>>>
+> >>>>>>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> >>>>>>>> index 7bb68311c609..9019fe7bcdc6 100644
+> >>>>>>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> >>>>>>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> >>>>>>>> @@ -110,6 +110,12 @@ properties:
+> >>>>>>>>      description:
+> >>>>>>>>        boot firmware is incorrectly passing the address in big-endian order
+> >>>>>>>>
+> >>>>>>>> +  qcom,product-variant:
+> >>>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>>>>>>> +    description:
+> >>>>>>>> +      specify the product information for driver to load the appropriate firmware
+> >>>>>>>
+> >>>>>>> DT describes hardware. Is this a hardware property?
+> >>>>>>
+> >>>>>> It has been added to identify the firmware image for the platform. The driver
+> >>>>>> parses it, and then the rampatch is selected from a specify directory. Currently,
+> >>>>>> there is a 'firmware-name' parameter, but it is only used to specify the NVM
+> >>>>>> (config) file. We also need to specify the rampatch (TLV file).
+> >>>>>>
+> >>>>>>
+> >>>>>> Can we re-use the "firmware-name"? add two segments like the following?
+> >>>>>> firmware-name = "rampatch_xx.tlv",  "nvm_xx.bin";
+> >>>>>
+> >>>>> I think this is the better solution
+> >>>>>
+> >>>> How about the following logic for handling 'firmware-name' property:
+> >>>> 1. If there is only one string in firmware-name, it must be the NVM file, which is used
+> >>>>    for backward compatibility.
+> >>>>
+> >>>> 2. If there are two strings in firmware-name, the first string is for the rampatch, and
+> >>>>    the second string is for the NVM.
+> >>>
+> >>> I'd say, other way around: the first one is always NVM, the second one
+> >>> is rampatch and it is optional.
+> >>>
+> >> OK, Got it.
+> >>>>
+> >>>> 3. Due to variations in RF performance of chips from different foundries, different NVM
+> >>>>    configurations are used based on the board ID. If the second string ends with boardid,
+> >>>>    the NVM file will be selected according to the board ID.
+> >>>
+> >>> Is there a reason why you can not use the exact firmware name? The
+> >>> firmware name is a part of the board DT file. I assume you know the
+> >>> board ID that has been used for the board.
+> >>>
+> >> The boardid is the connectivity board's id. NVM is a board specific configuration file,
+> >> it's related to the connectivity board. We may attach different connectivity board on the
+> >> same platform. For example, we have connectivity boards based on the QCA6698 chipset that
+> >> can support either a two-antenna or three-antenna solution. Both boards work fine on the
+> >> sa8775p-ride platform.
+> >
+> > Please add such an info to the commit messages (plural for it being a
+> > generic feedback: please describe the reasons for your design
+> > decisions),
+> >
+> Ack.
+> > I really don't like the .boardid template. What if we change property
+> > behaviour in the following way: if there is no file extension then .bNN
+> > will be probed, falling back to .bin. This will require reading board ID
+> > for all the platforms that support it (do wcn3990 have board ID?)
+> >
+> Ack, this proposal is great.
+> Yes, We have board ID for each connectivity card. An NVM file maps to it
+> if necessary.
 
-CPUFreq driver registers a get-only clock to get the current global CPU
-frequency from SMC and a Power Domain to configure the performance state
-for each OPP to apply the requested frequency from cpufreq-dt. This is
-needed as SMC use index instead of raw frequency.
+The question was about the WiFI generations, not about the NVM cards.
+Do wcn3990 also support reading board ID?
 
-All CPU share the same frequency and can't be controlled independently.
-Current shared CPU frequency is returned by the related SMC command.
+>
+> Let me provide a new patchset based on this solution. Thank you very much for
+> the valuable comments.
 
-Add SoC compatible to cpufreq-dt-plat block list as a dedicated cpufreq
-driver is needed with OPP v2 nodes declared in DTS.
+:-)
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-Changes v4:
-- Rework to clk-only + PM set_performance_state implementation
-Changes v3:
-- Adapt to new cpufreq-dt APIs
-- Register cpufreq-dt instead of custom freq driver
-Changes v2:
-- Fix kernel bot error with missing slab.h and bitfield.h header
-- Limit COMPILE_TEST to ARM64 due to smcc 1.2
+> >>>>
+> >>>>
+> >>>> Here are two examples:
+> >>>>
+> >>>>  firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.bin";
+> >>>> In this configuration, the driver will use the two files directly.
+> >>>>
+> >>>>
+> >>>>  firmware-name = "qca/QCA6698/hpbtfw21.tlv",  "qca/QCA6698/hpnv21.boardid";
+> >>>> In this configuration, the driver will replace boardid with the actual board information.
+> >>>> If the board id is 0x0206, the nvm file name will be qca/QCA6698/hpnv21.b0206
+> >>>>
+> >>>>>>
+> >>>>>> Or add a new property to specify the rampatch file?
+> >>>>>> rampatch-name = "rampatch_xx.tlv";
+> >>>>>>
+> >>>>>>>
+> >>>>>>>> +
+> >>>>>>>> +
+> >>>>>>>>  required:
+> >>>>>>>>    - compatible
+> >>>>>>>>
+> >>>>>>>> --
+> >>>>>>>> 2.25.1
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>
+> >>>>>
+> >>>>>
+> >>>>
+> >>>
+> >>> --
+> >>> With best wishes
+> >>> Dmitry
+> >>
+> >
+>
 
- drivers/cpufreq/Kconfig.arm          |   9 ++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/airoha-cpufreq.c     | 222 +++++++++++++++++++++++++++
- drivers/cpufreq/cpufreq-dt-platdev.c |   2 +
- 4 files changed, 234 insertions(+)
- create mode 100644 drivers/cpufreq/airoha-cpufreq.c
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 5f7e13e60c80..b6f72ee41364 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -15,6 +15,15 @@ config ARM_ALLWINNER_SUN50I_CPUFREQ_NVMEM
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called sun50i-cpufreq-nvmem.
- 
-+config ARM_AIROHA_SOC_CPUFREQ
-+	tristate "Airoha EN7581 SoC CPUFreq support"
-+	depends on ARCH_AIROHA || (COMPILE_TEST && ARM64)
-+	select PM_OPP
-+	select PM_GENERIC_DOMAINS
-+	default ARCH_AIROHA
-+	help
-+	  This adds the CPUFreq driver for Airoha EN7581 SoCs.
-+
- config ARM_APPLE_SOC_CPUFREQ
- 	tristate "Apple Silicon SoC CPUFreq support"
- 	depends on ARCH_APPLE || (COMPILE_TEST && 64BIT)
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 0f184031dd12..8e5a37a95d36 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -52,6 +52,7 @@ obj-$(CONFIG_X86_AMD_FREQ_SENSITIVITY)	+= amd_freq_sensitivity.o
- 
- ##################################################################################
- # ARM SoC drivers
-+obj-$(CONFIG_ARM_AIROHA_SOC_CPUFREQ)	+= airoha-cpufreq.o
- obj-$(CONFIG_ARM_APPLE_SOC_CPUFREQ)	+= apple-soc-cpufreq.o
- obj-$(CONFIG_ARM_ARMADA_37XX_CPUFREQ)	+= armada-37xx-cpufreq.o
- obj-$(CONFIG_ARM_ARMADA_8K_CPUFREQ)	+= armada-8k-cpufreq.o
-diff --git a/drivers/cpufreq/airoha-cpufreq.c b/drivers/cpufreq/airoha-cpufreq.c
-new file mode 100644
-index 000000000000..46f57236c4db
---- /dev/null
-+++ b/drivers/cpufreq/airoha-cpufreq.c
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/bitfield.h>
-+#include <linux/cpufreq.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/slab.h>
-+
-+#include "cpufreq-dt.h"
-+
-+#define AIROHA_SIP_AVS_HANDLE			0x82000301
-+#define AIROHA_AVS_OP_BASE			0xddddddd0
-+#define AIROHA_AVS_OP_MASK			GENMASK(1, 0)
-+#define AIROHA_AVS_OP_FREQ_DYN_ADJ		(AIROHA_AVS_OP_BASE | \
-+						 FIELD_PREP(AIROHA_AVS_OP_MASK, 0x1))
-+#define AIROHA_AVS_OP_GET_FREQ			(AIROHA_AVS_OP_BASE | \
-+						 FIELD_PREP(AIROHA_AVS_OP_MASK, 0x2))
-+
-+struct airoha_cpufreq_priv {
-+	struct clk_hw hw;
-+	struct generic_pm_domain pd;
-+
-+	int opp_token;
-+	struct dev_pm_domain_list *pd_list;
-+	struct platform_device *cpufreq_dt;
-+};
-+
-+static long airoha_cpufreq_clk_round(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long *parent_rate)
-+{
-+	return rate;
-+}
-+
-+static unsigned long airoha_cpufreq_clk_get(struct clk_hw *hw,
-+					    unsigned long parent_rate)
-+{
-+	const struct arm_smccc_1_2_regs args = {
-+		.a0 = AIROHA_SIP_AVS_HANDLE,
-+		.a1 = AIROHA_AVS_OP_GET_FREQ,
-+	};
-+	struct arm_smccc_1_2_regs res;
-+
-+	arm_smccc_1_2_smc(&args, &res);
-+
-+	/* SMCCC returns freq in MHz */
-+	return (int)(res.a0 * 1000 * 1000);
-+}
-+
-+/* Airoha CPU clk SMCC is always enabled */
-+static int airoha_cpufreq_clk_is_enabled(struct clk_hw *hw)
-+{
-+	return true;
-+}
-+
-+static const struct clk_ops airoha_cpufreq_clk_ops = {
-+	.recalc_rate = airoha_cpufreq_clk_get,
-+	.is_enabled = airoha_cpufreq_clk_is_enabled,
-+	.round_rate = airoha_cpufreq_clk_round,
-+};
-+
-+static const char * const airoha_cpufreq_clk_names[] = { "cpu", NULL };
-+
-+/* NOP function to disable OPP from setting clock */
-+static int airoha_cpufreq_config_clks_nop(struct device *dev,
-+					  struct opp_table *opp_table,
-+					  struct dev_pm_opp *opp,
-+					  void *data, bool scaling_down)
-+{
-+	return 0;
-+}
-+
-+static const char * const airoha_cpufreq_pd_names[] = { "cpu_pd" };
-+
-+static int airoha_cpufreq_set_performance_state(struct generic_pm_domain *domain,
-+						unsigned int state)
-+{
-+	const struct arm_smccc_1_2_regs args = {
-+		.a0 = AIROHA_SIP_AVS_HANDLE,
-+		.a1 = AIROHA_AVS_OP_FREQ_DYN_ADJ,
-+		.a3 = state,
-+	};
-+	struct arm_smccc_1_2_regs res;
-+
-+	arm_smccc_1_2_smc(&args, &res);
-+
-+	/* SMC signal correct apply by unsetting BIT 0 */
-+	return res.a0 & BIT(0) ? -EINVAL : 0;
-+}
-+
-+static int airoha_cpufreq_probe(struct platform_device *pdev)
-+{
-+	const struct dev_pm_domain_attach_data attach_data = {
-+		.pd_names = airoha_cpufreq_pd_names,
-+		.num_pd_names = ARRAY_SIZE(airoha_cpufreq_pd_names),
-+		.pd_flags = PD_FLAG_DEV_LINK_ON | PD_FLAG_REQUIRED_OPP,
-+	};
-+	struct dev_pm_opp_config config = {
-+		.clk_names = airoha_cpufreq_clk_names,
-+		.config_clks = airoha_cpufreq_config_clks_nop,
-+	};
-+	struct platform_device *cpufreq_dt;
-+	struct airoha_cpufreq_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	const struct clk_init_data init = {
-+		.name = "cpu",
-+		.ops = &airoha_cpufreq_clk_ops,
-+		/* Clock with no set_rate, can't cache */
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	};
-+	struct generic_pm_domain *pd;
-+	struct device *cpu_dev;
-+	int ret;
-+
-+	/* CPUs refer to the same OPP table */
-+	cpu_dev = get_cpu_device(0);
-+	if (!cpu_dev)
-+		return -ENODEV;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	/* Init and register a get-only clk for Cpufreq */
-+	priv->hw.init = &init;
-+	ret = devm_clk_hw_register(dev, &priv->hw);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &priv->hw);
-+	if (ret)
-+		return ret;
-+
-+	/* Init and register a PD for Cpufreq */
-+	pd = &priv->pd;
-+	pd->name = "cpu_pd";
-+	pd->flags = GENPD_FLAG_ALWAYS_ON;
-+	pd->set_performance_state = airoha_cpufreq_set_performance_state;
-+
-+	ret = pm_genpd_init(pd, NULL, false);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_genpd_add_provider_simple(dev->of_node, pd);
-+	if (ret)
-+		goto err_add_provider;
-+
-+	/* Set OPP table conf with NOP config_clks */
-+	priv->opp_token = dev_pm_opp_set_config(cpu_dev, &config);
-+	if (priv->opp_token < 0) {
-+		ret = priv->opp_token;
-+		dev_err(dev, "Failed to set OPP config\n");
-+		goto err_set_config;
-+	}
-+
-+	/* Attach PM for OPP */
-+	ret = dev_pm_domain_attach_list(cpu_dev, &attach_data,
-+					&priv->pd_list);
-+	if (ret)
-+		goto err_attach_pm;
-+
-+	cpufreq_dt = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	ret = PTR_ERR_OR_ZERO(cpufreq_dt);
-+	if (ret) {
-+		dev_err(dev, "failed to create cpufreq-dt device: %d\n", ret);
-+		goto err_register_cpufreq;
-+	}
-+
-+	priv->cpufreq_dt = cpufreq_dt;
-+	platform_set_drvdata(pdev, priv);
-+
-+	return 0;
-+
-+err_register_cpufreq:
-+	dev_pm_domain_detach_list(priv->pd_list);
-+err_attach_pm:
-+	dev_pm_opp_clear_config(priv->opp_token);
-+err_set_config:
-+	of_genpd_del_provider(dev->of_node);
-+err_add_provider:
-+	pm_genpd_remove(pd);
-+
-+	return ret;
-+}
-+
-+static void airoha_cpufreq_remove(struct platform_device *pdev)
-+{
-+	struct airoha_cpufreq_priv *priv = platform_get_drvdata(pdev);
-+
-+	platform_device_unregister(priv->cpufreq_dt);
-+
-+	dev_pm_domain_detach_list(priv->pd_list);
-+
-+	dev_pm_opp_clear_config(priv->opp_token);
-+
-+	of_genpd_del_provider(pdev->dev.of_node);
-+	pm_genpd_remove(&priv->pd);
-+}
-+
-+static const struct of_device_id airoha_cpufreq_of_match[] = {
-+	{ .compatible = "airoha,en7581-cpufreq" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, airoha_cpufreq_of_match);
-+
-+static struct platform_driver airoha_cpufreq_driver = {
-+	.probe = airoha_cpufreq_probe,
-+	.remove_new = airoha_cpufreq_remove,
-+	.driver = {
-+		.name = "airoha-cpufreq",
-+		.of_match_table = airoha_cpufreq_of_match,
-+	},
-+};
-+module_platform_driver(airoha_cpufreq_driver);
-+
-+MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-+MODULE_DESCRIPTION("CPUfreq driver for Airoha SoCs");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 18942bfe9c95..5ecd8234bfac 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -103,6 +103,8 @@ static const struct of_device_id allowlist[] __initconst = {
-  * platforms using "operating-points-v2" property.
-  */
- static const struct of_device_id blocklist[] __initconst = {
-+	{ .compatible = "airoha,en7581", },
-+
- 	{ .compatible = "allwinner,sun50i-h6", },
- 	{ .compatible = "allwinner,sun50i-h616", },
- 	{ .compatible = "allwinner,sun50i-h618", },
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
