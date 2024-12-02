@@ -1,54 +1,72 @@
-Return-Path: <linux-kernel+bounces-426866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190189DF98B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB449DF982
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 04:23:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2CDA281C32
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F68F281A8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 03:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D351E1C34;
-	Mon,  2 Dec 2024 03:24:39 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD251E0DB6;
+	Mon,  2 Dec 2024 03:23:17 +0000 (UTC)
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8C41E32A0;
-	Mon,  2 Dec 2024 03:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB789481A3;
+	Mon,  2 Dec 2024 03:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733109879; cv=none; b=ob1QLk/T9X/iosXq8hMU4unmdPjXkvE9qRx8qmQIm1d8btAzMfuutDfyq7uQiA+lLlLc5yVz4HSGm4Mi5Rag3gmnE5r6GQ45MtuO7BTO7BvM8XsmHQHHX1QKrkkEYiPjArEeRKPrAFqgcfzyqUpCpB/OTPBbAIaB/CVcSRKbXiI=
+	t=1733109797; cv=none; b=bl0RpvOQ5mrddI36n6ibYsD9V+l/aLeLAaFWE6fYbOtzxHNJcF83GYwtIhbrboU96ysDEuhySBUsPPp640anFSyaodArtliFbhORr8CMMlshaeM2HAc+3dT7zBY3pPzRSrYvAPoOKYoBoL2DHY8rQWNAbxJnPTGj5mVxfY9qgVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733109879; c=relaxed/simple;
-	bh=7xL42tmCpMAlAdK6aZJbt3fQx7o9Slf7ZNMab3FAbAo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qtUJBoCsVouaiceVzF9etqbxIr/6retGF2Gj87pH6WOqN6W5spmsqxCALhZwfHRQYAsOffnEHc6naIfoTZ4oFjiI64f293FO8A99Z6/5qynepac+GM+D7TjuuPq+aU5EGjXuU9jpAu8D/irfLkyznilLVkLRJhZ0Lgu9i1Arj/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from zq-Legion-Y7000.. (unknown [180.111.103.148])
-	by APP-05 (Coremail) with SMTP id zQCowADn70trKE1nneAuBw--.44471S2;
-	Mon, 02 Dec 2024 11:24:27 +0800 (CST)
-From: zhouquan@iscas.ac.cn
-To: anup@brainfault.org,
-	ajones@ventanamicro.com,
-	atishp@atishpatra.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	Quan Zhou <zhouquan@iscas.ac.cn>
-Subject: [PATCH v2 4/4] KVM: riscv: selftests: Add Svvptc/Zabha/Ziccrse exts to get-reg-list test
-Date: Mon,  2 Dec 2024 11:22:12 +0800
-Message-Id: <35163f0443993a942e0a021c6006bc5d2f0f5d5f.1732854096.git.zhouquan@iscas.ac.cn>
+	s=arc-20240116; t=1733109797; c=relaxed/simple;
+	bh=hRe073Qyfd3Ta4r1K3FtVgDRKPd+7AVOzmCZDc9HAtM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C8ieKfm9DKzsrn7ZjpoeiL4dN7vVxlTwOPNXFA2bL1DkXhnNukoRHCLO9EzzszJgXhnmTg7F6S7G9UEK/kgDW44S5PxgWcpqEzoOrowWwPoQM2MkOAVwJipXUqnFBX3yHfqOSbDK1Y0m5lXdBZ/uRsGdT1pCeQelv/5BCLn1580=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7fc2dbee20fso2527159a12.3;
+        Sun, 01 Dec 2024 19:23:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733109795; x=1733714595;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0dtFVYDQBbPu9F2seAqSmpYK0Qta0k2SVYOB9dve6KU=;
+        b=lHcyr6BLHtZDEq9HM/Wt1aD9gL00ABHKkJkxAFY8hlJB/askt7M1xGIjifLE5Fwjo9
+         CpfIIGyMIuOGKvTYgkosYvjUv9xEy312cxXM12cbUUnI//H9txnbUde088B9B+niqq0+
+         EMGvvKDV5eM4HGEVyd5oaibqfEppLqZ42LOuWCBZAwfOeKQHuBzBSxKNt4koTYJAeZzH
+         q4e8UDx0rp7oNEC/GxmxNlCZYfldKeIPZ7zQ4H5cTBCnUllBpbwLLF2BGx8ET8zKNzEL
+         X94yCeYEkLOEe3NpVIC4YO+mQ4MjqI9cVMbEwni92BUz6qKKauNoYi1Erwi5nM1LH3Ae
+         nErQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVd9lL58vWthX50a1LX9rIESfllZcU5Pzg2jMjXit13CVi4glf4Hg0YhWoFST/ZdE194E9pAJKc3U73S+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrrZg8pll24QszwgHt3lh+eNr1Kg3jnr3t11mK0AcMfgZIdWyL
+	zw/nKeI4rZhdEF8uUZJoVMbKHBn5srGiB+3/31wZjhjJjrowUc2x
+X-Gm-Gg: ASbGnctuOFI1J7YVP8YvU5C4D0jP6F6DKR3GTpiuBrd1NQvQsed7u//FHIZNibduHNH
+	gPc5w+hsgTgV6YNyEG1BZmtUCMYXV/kWgqyGf5T5Fu/ABy2hGzK2DzkpvxKCf7i8GTkSiU3/2Of
+	ppdMhIrLiJSW2x2kIVtWAS0q/gdI6E5eIqdvVz0QnwXs0nZXW0SVH+s6VF5fsLzsB5Z8RSypFth
+	cj/r27QipCGS2Z4RHMx3BsIf4L1hTTW3ravjndN8CNPjhFXuXkoXJHuDmfA6JHbXoF1g1pZDw==
+X-Google-Smtp-Source: AGHT+IEs08bkNN5ppqlAHxRlShlJslMhccvtNJZkPBlz+6t4YdQ8Lqj6t/4XOkJWq96uKV2+u65SAA==
+X-Received: by 2002:a05:6a20:1593:b0:1d9:c64a:9f72 with SMTP id adf61e73a8af0-1e0e0afa644mr31745219637.2.1733109795104;
+        Sun, 01 Dec 2024 19:23:15 -0800 (PST)
+Received: from kylin-ThinkBook-15-G2-ITL.. ([116.128.244.171])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541762d59sm7361614b3a.31.2024.12.01.19.23.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Dec 2024 19:23:14 -0800 (PST)
+From: xueqin Luo <luoxueqin@kylinos.cn>
+To: rafael@kernel.org,
+	pavel@ucw.cz,
+	len.brown@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xueqin Luo <luoxueqin@kylinos.cn>
+Subject: [RESEND PATCH] drivers: base: power: Optimize array out-of-bounds access logic
+Date: Mon,  2 Dec 2024 11:23:06 +0800
+Message-Id: <20241202032306.24671-1-luoxueqin@kylinos.cn>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1732854096.git.zhouquan@iscas.ac.cn>
-References: <cover.1732854096.git.zhouquan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,108 +74,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADn70trKE1nneAuBw--.44471S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw47GFy8uFWftF17uF4kJFb_yoWrWrWUpr
-	10ya9xGr48J3s3Zws2y3s8Gw48Xws8Xw1kCw47ur1fXFyjyryxJF1qy3W3Gr1DJa40qr1S
-	vFWfXr4Iyw40yrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
-	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-	7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-	628vn2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjEksPUUUUU==
-X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiCQ4TBmdNBpCZ5QAAsS
 
-From: Quan Zhou <zhouquan@iscas.ac.cn>
+The code previously used snprintf to format a string into a buffer and
+manually checked for potential buffer overflows by comparing the returned
+length with the buffer size. This approach introduced unnecessary
+complexity and was prone to subtle errors.
 
-The KVM RISC-V allows Svvptc/Zabha/Ziccrse extensions for Guest/VM
-so add them to get-reg-list test.
+Replaced snprintf with scnprintf, which directly returns the actual number
+of characters written to the buffer (excluding the null terminator). This
+change eliminates the need for manual overflow checks and simplifies the
+buffer offset and size adjustment logic.
 
-Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Signed-off-by: xueqin Luo <luoxueqin@kylinos.cn>
 ---
- tools/testing/selftests/kvm/riscv/get-reg-list.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/base/power/trace.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-index 54ab484d0000..2acea616446f 100644
---- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-@@ -50,6 +50,8 @@ bool filter_reg(__u64 reg)
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVINVAL:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVNAPOT:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVPBMT:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVVPTC:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZABHA:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZACAS:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZAWRS:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZBA:
-@@ -69,6 +71,7 @@ bool filter_reg(__u64 reg)
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFHMIN:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZICBOM:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZICBOZ:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZICCRSE:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZICNTR:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZICOND:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZICSR:
-@@ -425,6 +428,8 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
- 		KVM_ISA_EXT_ARR(SVINVAL),
- 		KVM_ISA_EXT_ARR(SVNAPOT),
- 		KVM_ISA_EXT_ARR(SVPBMT),
-+		KVM_ISA_EXT_ARR(SVVPTC),
-+		KVM_ISA_EXT_ARR(ZABHA),
- 		KVM_ISA_EXT_ARR(ZACAS),
- 		KVM_ISA_EXT_ARR(ZAWRS),
- 		KVM_ISA_EXT_ARR(ZBA),
-@@ -444,6 +449,7 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
- 		KVM_ISA_EXT_ARR(ZFHMIN),
- 		KVM_ISA_EXT_ARR(ZICBOM),
- 		KVM_ISA_EXT_ARR(ZICBOZ),
-+		KVM_ISA_EXT_ARR(ZICCRSE),
- 		KVM_ISA_EXT_ARR(ZICNTR),
- 		KVM_ISA_EXT_ARR(ZICOND),
- 		KVM_ISA_EXT_ARR(ZICSR),
-@@ -958,6 +964,8 @@ KVM_ISA_EXT_SIMPLE_CONFIG(sstc, SSTC);
- KVM_ISA_EXT_SIMPLE_CONFIG(svinval, SVINVAL);
- KVM_ISA_EXT_SIMPLE_CONFIG(svnapot, SVNAPOT);
- KVM_ISA_EXT_SIMPLE_CONFIG(svpbmt, SVPBMT);
-+KVM_ISA_EXT_SIMPLE_CONFIG(svvptc, SVVPTC);
-+KVM_ISA_EXT_SIMPLE_CONFIG(zabha, ZABHA);
- KVM_ISA_EXT_SIMPLE_CONFIG(zacas, ZACAS);
- KVM_ISA_EXT_SIMPLE_CONFIG(zawrs, ZAWRS);
- KVM_ISA_EXT_SIMPLE_CONFIG(zba, ZBA);
-@@ -977,6 +985,7 @@ KVM_ISA_EXT_SIMPLE_CONFIG(zfh, ZFH);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfhmin, ZFHMIN);
- KVM_ISA_EXT_SUBLIST_CONFIG(zicbom, ZICBOM);
- KVM_ISA_EXT_SUBLIST_CONFIG(zicboz, ZICBOZ);
-+KVM_ISA_EXT_SIMPLE_CONFIG(ziccrse, ZICCRSE);
- KVM_ISA_EXT_SIMPLE_CONFIG(zicntr, ZICNTR);
- KVM_ISA_EXT_SIMPLE_CONFIG(zicond, ZICOND);
- KVM_ISA_EXT_SIMPLE_CONFIG(zicsr, ZICSR);
-@@ -1023,6 +1032,8 @@ struct vcpu_reg_list *vcpu_configs[] = {
- 	&config_svinval,
- 	&config_svnapot,
- 	&config_svpbmt,
-+	&config_svvptc,
-+	&config_zabha,
- 	&config_zacas,
- 	&config_zawrs,
- 	&config_zba,
-@@ -1042,6 +1053,7 @@ struct vcpu_reg_list *vcpu_configs[] = {
- 	&config_zfhmin,
- 	&config_zicbom,
- 	&config_zicboz,
-+	&config_ziccrse,
- 	&config_zicntr,
- 	&config_zicond,
- 	&config_zicsr,
+diff --git a/drivers/base/power/trace.c b/drivers/base/power/trace.c
+index cd6e559648b2..d8da7195bb00 100644
+--- a/drivers/base/power/trace.c
++++ b/drivers/base/power/trace.c
+@@ -238,10 +238,8 @@ int show_trace_dev_match(char *buf, size_t size)
+ 		unsigned int hash = hash_string(DEVSEED, dev_name(dev),
+ 						DEVHASH);
+ 		if (hash == value) {
+-			int len = snprintf(buf, size, "%s\n",
++			int len = scnprintf(buf, size, "%s\n",
+ 					    dev_driver_string(dev));
+-			if (len > size)
+-				len = size;
+ 			buf += len;
+ 			ret += len;
+ 			size -= len;
 -- 
 2.34.1
 
