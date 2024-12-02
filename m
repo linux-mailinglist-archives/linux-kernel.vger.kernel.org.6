@@ -1,188 +1,152 @@
-Return-Path: <linux-kernel+bounces-426994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B775F9DFB02
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:19:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2C89DFB11
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C68EB21CC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8904281C37
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2E01F9425;
-	Mon,  2 Dec 2024 07:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806A71F9ED4;
+	Mon,  2 Dec 2024 07:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuWQD75t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="kQMJhEtZ"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D031F8F10;
-	Mon,  2 Dec 2024 07:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7D01F9A95;
+	Mon,  2 Dec 2024 07:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733123972; cv=none; b=oshXV57UCopWRaOIAXh86zDXi8a9M7ENB2DwSCCEp4wqsLZ4tMglI2uNNVsSJt9Yu5rVtMT8tRERxep599v5wSsdYi6vIOxrT5ID3S6mdaT0X5wQatRzlVYO7LNBSuo1j9eu4EgOAc3pU/HcDnYBRsNz23qJGE+YATZhAej7RLA=
+	t=1733124083; cv=none; b=l49HcHbynXzp2DTShOiZR0q8i7BAqCIrW80FHX2mWvc4f52ArJUWiQ/5R54W608XjngMsh38qP1QzH8Vc3iQ14Ij+e+W8kgllK+B2Q0jnwCuOSiTURE8ULclnAXS9sGk0jeua10NnnStNDCKygz9jwZv+AXoGRLNOwMt2T+sLKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733123972; c=relaxed/simple;
-	bh=/tlgtK7JjfxgaGxdUXckjbndy/MvCZ5JS02jgL2F4tY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n+59leWSzi8ePio/PNi8tI4Ais1xWr9Inc25oKEdd5WthYwPDr0D7GdYZsB39g+cTi7tHhJcQ7C7mrqYg3Cwy0B6x4tvrc202AQL3irjJZStJgyO9ihl3MktckcNYdZPs18ZjJSE9e1Z1Dl5chTKiokuB7Lw5+Vxg0bUx4Tfwzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DuWQD75t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC9AC4CED2;
-	Mon,  2 Dec 2024 07:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733123972;
-	bh=/tlgtK7JjfxgaGxdUXckjbndy/MvCZ5JS02jgL2F4tY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DuWQD75tMUHZxM2tvrZXS3O4zFJz9l9V9IazfY1a3YWdYlf7+72kel91ViGtVCodF
-	 yoiWqR1VXnaemtZbtaiBkucEwrFeCXoaUerGCOgc4MxJaq834fBN2e9nm69caMycNY
-	 J+uqP7RZeYQKtGuN7hY4HNM6yUDdYgrWX74f6OzeHbQP2QH1lvyz4HNY1r2dtOanrx
-	 FkVUuxmZc5uoU6gZ7pUKgzrq1lnsLPkFfFap4gdV3raMUtCNTeYAezDfYLLtEMnOTi
-	 0TnAYooAJjtw6Hv4HIdhivf42dzjCtyFxc8V47cSgBgOuTNBT7/aD/lkOtRpq34bqx
-	 6oh4m0LDtEvvA==
-Message-ID: <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
-Date: Mon, 2 Dec 2024 08:19:23 +0100
+	s=arc-20240116; t=1733124083; c=relaxed/simple;
+	bh=YjKduTy15lZBVE/9pqMa5ERoezVAixGMlcudWE4nxVU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QNsRbWmRUdqpQFc/vN+mI/1kW2YCoQmky0V2oCLGlQHZhgy7A1yK9vSLHhJttUX8s9POge6iqvSc1TMREQbqLcpci7RdFOgfIucwcxNPruk/kjzYOS8Eh5yRcVhpg/+9oXZrgGRvhMnOC0u/jIemV94H6L+N2yIbxNJH7T3Tp5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=kQMJhEtZ; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=7hNJpGuTc3/rYKS53bsFYQIckkwK3MXNB6qlUliODKU=; b=kQMJhEtZbjvgyNfewkNxNaK2lZ
+	5FDzotMG7mBgaWA1+RgGRTse8Tc5zLGbcbaaHF3JJxgHt9CFJBBlENhEDgBbojd9GvOMkxewatDGa
+	3+BFnBNPXB7Irvg+lgz/WRKgNR4gvhuoKrhL58hHP1CTB4c4kU7bsbJe2CnIt6Z+wSfGc9+d31WlK
+	WXYIVxUNFnBLscnrXStpeAvsOtI1+j8JKILF/cUuhHVsI2U7rgP7vdi1yRdkwhcbEbntakTWhW5ju
+	lP0LbsxiQyP/pjRehNW+9c0vXkRJd8pdfjFSc4sS8SdxIub5bKCFZ8HDJ+lv8c4S83aYmRxniKc+O
+	jHdTeyXA==;
+Received: from [89.212.21.243] (port=53766 helo=and-HP-Z4..)
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <andrej.picej@norik.com>)
+	id 1tI0k4-007Bva-2L;
+	Mon, 02 Dec 2024 08:21:12 +0100
+From: Andrej Picej <andrej.picej@norik.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	upstream@lists.phytec.de
+Subject: [PATCH v2 00/15] Update PHYTEC's i.MX8MM DTSs
+Date: Mon,  2 Dec 2024 08:20:37 +0100
+Message-Id: <20241202072052.2195283-1-andrej.picej@norik.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
- konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
- linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
- vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
- Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
- krzk+dt@kernel.org, robh@kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
- <20241129144357.2008465-2-quic_msavaliy@quicinc.com>
- <db428697-a9dc-46e1-abbe-73341306403f@kernel.org>
- <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
+X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 02/12/2024 05:00, Mukesh Kumar Savaliya wrote:
-> Hi Krzysztof,
-> 
-> On 11/29/2024 8:44 PM, Krzysztof Kozlowski wrote:
->> On 29/11/2024 15:43, Mukesh Kumar Savaliya wrote:
->>> Adds qcom,shared-se flag usage. Use this flag when I2C serial controller
->>> needs to be shared in multiprocessor system(APPS,Modem,ADSP) environment.
->>>
->>> SE(Serial Engine HW controller acting as protocol master controller) is an
->>> I2C controller. Basically a programmable SERDES(serializer/deserializer)
->>> coupled with data DMA entity, capable in handling a bus protocol, and data
->>> moves to/from system memory.
->>>
->>> Two clients from different processors can share an I2C controller for same
->>> slave device OR their owned slave devices. Assume I2C Slave EEPROM device
->>> connected with I2C controller. Each client from ADSP SS and APPS Linux SS
->>> can perform i2c transactions.
->>>
->>> Transfer gets serialized by Lock TRE + DMA xfer + Unlock TRE at HW level.
->>>
->>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->>> ---
->>>   .../devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml       | 8 ++++++++
->>>   1 file changed, 8 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>> index 9f66a3bb1f80..88682a333399 100644
->>> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>> @@ -60,6 +60,14 @@ properties:
->>>     power-domains:
->>>       maxItems: 1
->>>   
->>> +  qcom,shared-se:
->>> +    description: True if I2C controller is shared between two or more system processors.
->>> +        SE(Serial Engine HW controller working as protocol master controller) is an
->>> +        I2C controller. Basically, a programmable SERDES(serializer/deserializer)
->>> +        coupled with data DMA entity, capable in handling a bus protocol, and data
->>> +        moves to/from system memory.
->> I replied why I NAK it. You did not really address my concerns, but
->> replied with some generic statement. After that generic statement you
->> gave me exactly 0 seconds to react and you sent v5.
->>
-> Sorry for 0 seconds, i thought of addressing comment and uploading it 
-> new patch as i wanted to explain SE. whatever i have added for SE 
-> explanation is in qualcomm hardware programming guide document.
->> Really 0 seconds to respond to your comment, while you give yourself
->> days to respond to my comments.
->>
->> This is not how it works.
->>
-> Sure, let me first conclude here what exactly should be done.
->> NAK
->>
->> Implement previous feedback. Don't send any new versions before you
->> understand what you have to do and get some agreement with reviewers.
->>
-> Sure, this is definitely a good way. what did i do for previous comment ?
-> I have opened SE and expanded, explained.
-> 
-> which statement or explanation should i rephrase ? Is it description 
-> statement from this yaml file ? Could you please suggested better word 
-> instead of shared-se if this flag name is not suitable ?
-> 
-> I could not get this ask -
-> "There are few of such flags already and there are some patches adding 
-> it in different flavors."
+Hi all,
 
-Come with one flag or enum, if needed, covering all your cases like this.
+these patches aim to get PHYTEC downstream kernel device-tree changes
+into the mainline for the phyCORE-i.MX8MM SoM and boards (phyBOARD-Polis
+and phyGATE-Tauri-L).
+
+Changes mainly fix suspending/resuming with different wakeup-sources and
+add missing regulators. Last 4 patches add additional overlays. Some are
+meant to be used with PHYTEC's "option tree" to add/disable optional SoM
+components (idea behind it is outlined in [1]).
+
+[1] https://lore.kernel.org/all/4e7dd467-20be-43ce-936d-200ede6d511b@phytec.de/
+
+v1 at: https://lore.kernel.org/all/20241125081814.397352-1-andrej.picej@norik.com/
+v2 changes in corresponding patches.
 
 Best regards,
-Krzysztof
+Andrej
+
+Andrej Picej (3):
+  arm64: dts: imx8mm-phycore-som: Fix bluetooth wakeup source
+  arm64: dts: imx8mm-phyboard-polis: Set RTC as wakeup-source
+  arm64: dts: imx8mm-phygate-tauri-l: Set RTC as wakeup-source
+
+Dominik Haller (1):
+  arm64: dts: imx8mm-phycore-som: Add overlay for rproc
+
+Janine Hagemann (1):
+  arm64: dts: imx8mm-phyboard-polis: Add overlay for PEB-EVAL-01
+
+Teresa Remmet (5):
+  arm64: dts: imx8mm-phycore-som: Keep LDO3 on in suspend
+  arm64: dts: imx8mm-phycore-som: Remove magic-packet property
+  arm64: dts: imx8mm-phyboard-polis: Add support for PEB-AV-10
+  arm64: dts: imx8mm-phycore-som: Add no-eth phy overlay
+  arm64: dts: imx8mm-phycore-som: Add overlay to disable SPI NOR flash
+
+Yannic Moog (3):
+  arm64: dts: imx8mm-phycore-som: add descriptions to nodes
+  arm64: dts: imx8mm-phyboard-polis: add RTC description
+  arm64: dts: imx8mm: move bulk of rtc properties to carrierboards
+
+Yashwanth Varakala (2):
+  arm64: dts: imx8mm-phycore-som: Assign regulator for dsi to lvds
+    bridge
+  arm64: dts: imx8mm-phyboard-polis: Assign missing regulator for
+    bluetooth
+
+ arch/arm64/boot/dts/freescale/Makefile        |  13 +
+ .../imx8mm-phyboard-polis-peb-av-10.dtso      | 237 ++++++++++++++++++
+ .../imx8mm-phyboard-polis-peb-eval-01.dtso    |  72 ++++++
+ .../freescale/imx8mm-phyboard-polis-rdk.dts   |  17 +-
+ .../dts/freescale/imx8mm-phycore-no-eth.dtso  |  12 +
+ .../freescale/imx8mm-phycore-no-spiflash.dtso |  16 ++
+ .../dts/freescale/imx8mm-phycore-rpmsg.dtso   |  55 ++++
+ .../dts/freescale/imx8mm-phycore-som.dtsi     |  22 +-
+ .../dts/freescale/imx8mm-phygate-tauri-l.dts  |  11 +
+ 9 files changed, 439 insertions(+), 16 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-eval-01.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-no-eth.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-no-spiflash.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-rpmsg.dtso
+
+-- 
+2.34.1
+
 
