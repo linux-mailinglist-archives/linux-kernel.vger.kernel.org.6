@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-427207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670409DFE10
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:04:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7503A9DFE12
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:05:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C29163738
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:04:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375F0280F3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA39B1FBEB3;
-	Mon,  2 Dec 2024 10:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7A31FBCA0;
+	Mon,  2 Dec 2024 10:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpCjkYpa"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="afrSt0j0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19C11FA17F;
-	Mon,  2 Dec 2024 10:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2E215A8
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733133876; cv=none; b=WJSxQonAN7ZPl1zDljSEpFYjeZOmfwalygZo9AKFVOAgNx/zpk77N2BA1TZPtE/0WO2h+o6dBlj0ba5RAT3geFVUJVPR2P9MVOvXwOIGkd2YDR34wmwrwQYWzJ9scAWz6Btpv/aImFl5n31hhqNIvkpbH/j46jnjX1Bpk0rKToQ=
+	t=1733133919; cv=none; b=CwZ1M+/JjLDLoL4Z64uUWQYYTJcki58z52dQ5NGWXiEKQXOWrxzH/lNxe1ogdpJmZvCFeJMQbrwoZH9XAlIGF7Iary/KFXFsYOdD/CQxF+ywfVIDKvl3K3LpOcg9WgmmQ6QKUL3WbPLpbZTe55p2XHjthIdR4e7HzLhvr4JZiQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733133876; c=relaxed/simple;
-	bh=//0MAe6pSHy6YWCnRR5EagEeiBWl3fP+h1f+eoKL2D8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iv+ofWUjcSv3V5kjrQUvpn4GvPY+QtT+CjL1pJZDzjV6XcSIL2e2a8czzF8rG9T5wwcjmaHcNVBW5V5Cu7OClYw1Kh8KhIrCow9fsHpM1aAsWJQY6sUTqzoYw02fQr4We3Gtehavlf5MP6+JZhmB7LYFLy6rmsFGYRjxWMmYkUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpCjkYpa; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385dece873cso1291634f8f.0;
-        Mon, 02 Dec 2024 02:04:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733133873; x=1733738673; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sgaf5H+6BR4uuayPQNK9MMI+wxrNCGfTUbRdoLwW1ds=;
-        b=hpCjkYpaqoypQaj4ded496kge9+ar48oEn1LUD7UzIlo5bVpB/Q8XD9TOuxj6rosi7
-         WXb2fotsRP0Z27Bu2DL0zc06G4/Pso32518xcqu0vyWXOHMcPsUpMYssxGN0QzLQi9bd
-         Z6r8Eijq/tfH6HyOfMI/ctQPDg2ALRtrS2doBrcB3eE1Wa4/vsLDfWrdU0fQCtn/19bp
-         sMLVpUIskU/SaUUb8pnVzSPdw+RzAyPNAQ5SieQeA3OWSwcxtL3rSVNdPlUyGdS2y+w4
-         cHpe/6l5ciicoF3UjCfzYnIWZvjbY/VqHoKAOpIM+fike50HygXnEDK/Os6zqkm0LyXB
-         yXjw==
+	s=arc-20240116; t=1733133919; c=relaxed/simple;
+	bh=CFokUjz4OzXkYfuCMx3mFfBTch+bmlT3hb3prDvegrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeUWPvTbl64A7rHR2RLNkXQLXSTk7ucZLwcuN6E9NIeqhDuqWgE2eRi8w4WUU8OxQUzfFzNOrsoMMYk3XoYBaQD69JLe4loSlv7nCUe1r80Zu6/KIJraRLrzc9549+YuK/DcZNyRkx/oK7rL8F8Rk8+g5jWGf93FMkke7IddOz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=afrSt0j0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733133916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7OrPaqjsbcgeweoMhNllMsBWtFbTQTtneD0XhvQpzBI=;
+	b=afrSt0j0nwl/JMxXwuFT3XpC2MRdCdfWKv6K+tifhbpwl3vCGvF0i7RXMwLlKHtK1vh3o9
+	Md87gvCXVn64Cc7lWl9plZXUa/q59xBkHWP5WJQYg7mh3DDMftkdBsXYntP4qpw/e2bRfY
+	O5fTLAJn00b+kGKCk/M1P5DYYMa9/y4=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-624-ih_FwoNhOeykiPsEKzNT2g-1; Mon, 02 Dec 2024 05:05:15 -0500
+X-MC-Unique: ih_FwoNhOeykiPsEKzNT2g-1
+X-Mimecast-MFC-AGG-ID: ih_FwoNhOeykiPsEKzNT2g
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7fbd9fd86d3so4035671a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:05:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733133873; x=1733738673;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sgaf5H+6BR4uuayPQNK9MMI+wxrNCGfTUbRdoLwW1ds=;
-        b=QIAgy2+XDeRm8e3GhPsBDPx3DfQiiTRwNz3C0bJAYBo75lESDmdKHPnpNmRn8iNty3
-         uVhwKr8Q+xGxz2goN//OFV/N2ynpKfmLGzxZmm/Tcci4EZ8HVWmjHVBIHtd+4X4bhgNo
-         FUvwmOFfbNwo1ccRS0FQywQWREkAkmkEbhVwLDfnsu1jsmV5/LMw0E2TEPouw7mLWb8P
-         8+YsPs/bzhts7PO1joSX/Qxy9WmAK14qX4CnLsEntXF7bXav+HPHgow3m6WhZ2u5w2Kf
-         fpz2mq5LSkAPWkkFh9XDtSboVZkScGJKuJFczt+1Y6Vq5pRMIDQizWq7VtNhR+XO83p5
-         /qPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpdnyLAnQS7Dx+bL9zsZFUq64uUSqoMlOcva9dXuA0c8i81K8jfiMScFiP0ljIDcL/raRbHMpQWlKp0ZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIAC2roCHk45dRt07k+iXjrU6yUl7f+zSQcojUwG+pGFY+d6sZ
-	5e9iJL1bqRT+6LJzowK93iN6lPKj97YGVmYjgG+8Ke22DZZQ1ArD4ep5uw==
-X-Gm-Gg: ASbGncthguNzxkCa71VHfnNy9VDguzyrAqQCa29A7gmC7sXI4G7PvYx0dJiA3gBGpSl
-	KdMKssdx6JLohi+k1DAo8PRSaF8hNRo1siBbdoO0/O22CJAsphjsTD4NZstLg9pnUWtnxFoM1No
-	l0/EU9+PiUT/CnPVvuW9FXn1buOeMao452oB/hgSY5TqSiBPF9rA1qNFSfcPk40TsPGK6QalTom
-	kjKspfyII846BifoFN/Hv2B72BH9i1dfyzPG1yX99B9FwLa6w==
-X-Google-Smtp-Source: AGHT+IH80g7ULS7rKcbL2AoMeU1jpiGZyt3N7OkquYoCku2xtN11qM7zuVwy193TAeqVc0ooykNDvg==
-X-Received: by 2002:a05:6000:5c4:b0:385:f5b6:9c9d with SMTP id ffacd0b85a97d-385f5b69f3emr1834887f8f.33.1733133872725;
-        Mon, 02 Dec 2024 02:04:32 -0800 (PST)
-Received: from [10.0.0.4] ([78.242.79.32])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd2db59sm12029473f8f.11.2024.12.02.02.04.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 02:04:31 -0800 (PST)
-Message-ID: <83df9d63-0c27-46a4-9321-ef6337bae1c5@gmail.com>
-Date: Mon, 2 Dec 2024 11:04:30 +0100
+        d=1e100.net; s=20230601; t=1733133914; x=1733738714;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7OrPaqjsbcgeweoMhNllMsBWtFbTQTtneD0XhvQpzBI=;
+        b=scPfPPs+dybxcYv9Gh78HsSAeVSs69qCe18ScMEGorXPW426PqVs7he4hL0RxmSDuN
+         OrOeHn9E2mR5I0phqpjOTT2k0rJ1GmDl57DMwh4QiRsaX2EIZMqTErCJtneMIEYsck/N
+         jYItW34eiM7lRgQWfQVRYANRSeEYfVBvXevqbVsHdmp4Iy7YB/cbKj1kgJKM+R+uNu0u
+         TqhniNxEY8tWzZiWp4GVHD6skUBbEq9LcXzYyCoM4sXTlgEeg6llkFqhinJIRFDiRp7M
+         hduY9UyhqPA9nnO6zuKiePojD3zhg2RXfGCVnT6/YzZiTQLQbSGoW7XbF0ZjJgysRFv3
+         KJug==
+X-Forwarded-Encrypted: i=1; AJvYcCWKFD6ThFTVMkv7lA9qAhl51yeBs0DrMm+4jVwV0V1WaUgUfCEVz10HlFiFYnqGVsSjkQby+GmJC+zaoyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx3wD9/Ak/RHopFLYLM8txKDHe1rz8iS4E36BqKR14ioKXNL6l
+	yuz5Z5zhgqHXLftNRSMhxLLvzipbC9E4bweLdnizS6Aod0+SDUu2V/7gBcjKbUN5hWrUA/AWsWW
+	4xEFmpErtaYVXKFJcYy5B00rgw1aSvD15XGKuUVnli+P3d4IW1FCRsZB3uVv1aw==
+X-Gm-Gg: ASbGnctLxOt8fZCoEJhzG7Og18HLCBpIMdc7mL3QQDCt21/icnT0yp4aPsOh1czaUiB
+	U9Xi4UkORTTV6tYgdWFAzTog0Pb6J4Rjp9WP81jR53ny64lApJctWdtCF+0adgOw+TqgfFRaaKz
+	f5VRgkgL2U3GLsJGCE/68af/Iqx/0O24of9TVvJPbx8JpFi7ApBfSRmKNdAw9ZhDK8M9kMjdu7b
+	nuW4CryObE5F6Hgh3gO2/7LQbYDbP2R+/TyGociuQ==
+X-Received: by 2002:a05:6a20:741f:b0:1e0:b319:fc05 with SMTP id adf61e73a8af0-1e0ec83cf22mr18681092637.12.1733133913958;
+        Mon, 02 Dec 2024 02:05:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEB3NSbvHNFkIbyngZ4ixvt1XNNHTdRsVlMICP66j5qS+PJTaT9IAiRRpmMF3Ih7NXyt+N12w==
+X-Received: by 2002:a05:6a20:741f:b0:1e0:b319:fc05 with SMTP id adf61e73a8af0-1e0ec83cf22mr18681064637.12.1733133913634;
+        Mon, 02 Dec 2024 02:05:13 -0800 (PST)
+Received: from localhost ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c2d4946sm7438932a12.14.2024.12.02.02.05.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 02:05:12 -0800 (PST)
+Date: Mon, 2 Dec 2024 18:04:58 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>, 
+	Milan Broz <gmazyland@gmail.com>, Thomas Staudt <tstaudt@de.ibm.com>, 
+	Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, Kairui Song <ryncsn@gmail.com>, 
+	Jan Pazdziora <jpazdziora@redhat.com>, Pingfan Liu <kernelfans@gmail.com>, 
+	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Dave Hansen <dave.hansen@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Greg KH <gregkh@linuxfoundation.org>, Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH v6 1/7] kexec_file: allow to place kexec_buf randomly
+Message-ID: <ry7sz5vcsergpc7cux2eotoj7eid652dw3fqrivhq3vhsbv7fo@vrinjqre7vbt>
+References: <20241029055223.210039-1-coxu@redhat.com>
+ <20241029055223.210039-2-coxu@redhat.com>
+ <Z0kbMm0HCZQcD2bI@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: "Kernel Warn in af_inet" in Linux Kernel Version 2.6.26
-To: cheung wall <zzqq0103.hey@gmail.com>,
- "David S. Miller" <davem@davemloft.net>,
- Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, pekkas@netcore.fi,
- jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CAKHoSAtVJ=oycBBrcdxrTqZ8yW9dS=dWUU=mxQitJ+f73mGWcQ@mail.gmail.com>
-Content-Language: en-US
-From: Eric Dumazet <eric.dumazet@gmail.com>
-In-Reply-To: <CAKHoSAtVJ=oycBBrcdxrTqZ8yW9dS=dWUU=mxQitJ+f73mGWcQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Z0kbMm0HCZQcD2bI@MiWiFi-R3L-srv>
 
+On Fri, Nov 29, 2024 at 09:38:58AM +0800, Baoquan He wrote:
+>On 10/29/24 at 01:52pm, Coiby Xu wrote:
+>> Currently, kexec_buf is placed in order which means for the same
+>> machine, the info in the kexec_buf is always located at the same
+>> position each time the machine is booted. This may cause a risk for
+>> sensitive information like LUKS volume key. Now struct kexec_buf has a
+>> new field random which indicates it's supposed to be placed in a random
+>> position.
+>
+>This change the generic code, but you don't mention this only takes
+>effect in kdump case, won't impact kexec reboot case. I got this from
+>code, while this should be mentioned in log.
 
-On 12/2/24 5:30 AM, cheung wall wrote:
-> Hello,
->
-> I am writing to report a potential vulnerability identified in the
-> Linux Kernel version 2.6.26.
-> This issue was discovered using our custom vulnerability discovery
-> tool.
->
-> Affected File:
->
-> File: net/ipv4/af_inet.c
->
-> Detailed call trace:
->
-> [ 1788.473836] KERNEL: assertion (!atomic_read(&sk->sk_wmem_alloc))
-> failed at net/ipv4/af_inet.c (155)
-> [ 1788.473836] KERNEL: assertion (!sk->sk_wmem_queued) failed at
-> net/ipv4/af_inet.c (156)
-> [ 1788.473836] KERNEL: assertion (!sk->sk_forward_alloc) failed at
-> net/ipv4/af_inet.c (157)
-> [ 1788.473836] KERNEL: assertion (!atomic_read(&sk->sk_wmem_alloc))
-> failed at net/ipv4/af_inet.c (155)
-> [ 1788.473836] KERNEL: assertion (!sk->sk_wmem_queued) failed at
-> net/ipv4/af_inet.c (156)
-> [ 1788.473862] KERNEL: assertion (!sk->sk_forward_alloc) failed at
-> net/ipv4/af_inet.c (157)
->
-> Repro C Source Code: https://pastebin.com/qs5y6Bcy
->
-> Root Cause:
->
-> The root cause of this bug lies in the improper handling of socket
-> write memory management in the IPv4 stack, specifically in the
-> assertions within net/ipv4/af_inet.c. The PoC triggers a sequence of
-> socket operations, including socket, sendto, listen, and accept, with
-> crafted input data and parameters. These operations result in
-> inconsistent states of the sock structure, where critical fields like
-> sk_wmem_alloc, sk_wmem_queued, and sk_forward_alloc are not properly
-> cleared or synchronized. The kernel fails to maintain the expected
-> invariants for these fields, leading to assertion failures that
-> indicate a logical inconsistency in memory allocation or deallocation
-> for socket operations. This issue highlights a potential lack of
-> proper cleanup or state transition checks in the network stack.
+Thanks for the reminder! I'll put a note in the commit msg.
 
+>
+[...]
+>> +
+>> +#ifdef CONFIG_CRASH_DUMP
+>> +static inline void kexec_random_start(unsigned long start, unsigned long end,
+>                      ~~~~~~~~~~~~~~~~~~
+>This function name is very confusing. I thought it's a starting to
+>randomize at the first glance, then realized it's to randomize the
+>starting position of range.
 
-Please do not fuzz old and not supported kernels.
+Thanks for raising this concern! I'll rename it to
+kexec_random_range_start.
 
-Or do not report to us the issues, _unless_ they also trigger on 
-recent/supported kernels.
-
-Thank you.
-
+-- 
+Best regards,
+Coiby
 
 
