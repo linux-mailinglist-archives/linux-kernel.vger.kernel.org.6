@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-427630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F090C9E03F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:49:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F679E03F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26B42823E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F4A12823B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E002020110F;
-	Mon,  2 Dec 2024 13:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056922010E3;
+	Mon,  2 Dec 2024 13:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zSnEGhJM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SVggcK2d";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zSnEGhJM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SVggcK2d"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="3dsDRb1e"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8065AAD5E;
-	Mon,  2 Dec 2024 13:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91233AD5E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 13:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733147346; cv=none; b=fHTI97Vi58/z+zI0yDtINEJbIA9xS2ZYEhyDl0tElHA08w9rzv9QGvu99v2cVMES3gm4geFst+/QxgHTRKpEo81x2II5PEavsh5qV3mrXhJStedhhdlWe3GWTXsAyk6MctFq0GaIymy4arWeskWCAE750lVT0G6T3/sGkQ7TdAE=
+	t=1733147368; cv=none; b=fsa+DTxoUONNQnnUKGtwWqKuGUImAtbkZ8TY5pxXqCu+l+KioqATO2MeWanyUdvA8FhoMxBnzQo6L0p9T95wiFHKQu9JRelCmFCjkg4hKxaiSfn25JHB2EVGjC7GlXZNjyBVQlRvKDn4FHUOzi6P5tQAkAujlq0XvDq9UjiSNMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733147346; c=relaxed/simple;
-	bh=Ah5hWMdfPFzst6CBjRABiissd/71Qcp2TxJFwtVPowE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EtPdsBjTAF5vz9m86450CrUcK57BYQDdgTWuZDcc8VsWQOggH7GlaqrJepeJnr1l/Rv+rRv+3TUrB7TYkjWPxGed/7HXZBxGO2PLNLiC0L3XBSgY64AJhbRMHLRPiaXfpN2SiyNTuBwVRPKUNertjhXPPV2aiu9Q0MaG9IerApc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zSnEGhJM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SVggcK2d; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zSnEGhJM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SVggcK2d; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 57201211CF;
-	Mon,  2 Dec 2024 13:49:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733147342; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9qx7nVrFeR9OVdYomOaMq/GvODW8JLvzaL2rbW3wAPU=;
-	b=zSnEGhJMpzAV7OPerK/ECYunLFUvgXM1b9Cj1v+CMbAyPWhC6r9BRXGm9I36SC8/QOGB9N
-	X4DjAEO5M9Vzy4XTjE3SWfhNNbXnYt8JHI0M8G1gnlD9f2GW1I1qjh+LYSqcdujkfmDaO9
-	NboozgDQOZdNyLFrVqIs+qwi7ABoUvY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733147342;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9qx7nVrFeR9OVdYomOaMq/GvODW8JLvzaL2rbW3wAPU=;
-	b=SVggcK2dh8P33y3NX+FkAluNvDieRYd5y8E3ZgL18r4zVEz4jPqzVqmweaLt0CDetRTb6Z
-	rmcbXOcAxo9d0KCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733147342; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9qx7nVrFeR9OVdYomOaMq/GvODW8JLvzaL2rbW3wAPU=;
-	b=zSnEGhJMpzAV7OPerK/ECYunLFUvgXM1b9Cj1v+CMbAyPWhC6r9BRXGm9I36SC8/QOGB9N
-	X4DjAEO5M9Vzy4XTjE3SWfhNNbXnYt8JHI0M8G1gnlD9f2GW1I1qjh+LYSqcdujkfmDaO9
-	NboozgDQOZdNyLFrVqIs+qwi7ABoUvY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733147342;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9qx7nVrFeR9OVdYomOaMq/GvODW8JLvzaL2rbW3wAPU=;
-	b=SVggcK2dh8P33y3NX+FkAluNvDieRYd5y8E3ZgL18r4zVEz4jPqzVqmweaLt0CDetRTb6Z
-	rmcbXOcAxo9d0KCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 45906139C2;
-	Mon,  2 Dec 2024 13:49:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ekEDEM66TWf9EQAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Mon, 02 Dec 2024 13:49:02 +0000
-Date: Mon, 2 Dec 2024 14:48:53 +0100
-From: Daniel Wagner <dwagner@suse.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Bjorn Helgaas <bhelgaas@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
-	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, 
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v5 4/8] blk-mq: introduce blk_mq_map_hw_queues
-Message-ID: <95035ac7-8707-4a69-8425-86a47841c15d@flourine.local>
-References: <20241115-refactor-blk-affinity-helpers-v5-0-c472afd84d9f@kernel.org>
- <20241115-refactor-blk-affinity-helpers-v5-4-c472afd84d9f@kernel.org>
- <8b303ed8-f819-4fa2-b447-8d8f4a42b380@oracle.com>
+	s=arc-20240116; t=1733147368; c=relaxed/simple;
+	bh=cJZy9S1FMCngEJ77urL3TJUprQtUSEK6YQgVA1pcvq8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lo6IIIv7/PY+c6et2VaWJNrg4EE2CN7EUHBRIn3bFCsPwoLyr3ry2fwD+N/MK/XJb+J6g0U5tGFQFZ6ykJsjIxj8jmDgMJibhktTT1VDiWmgKDoFGnArf6fGImx7e2sbIPYaj3qJZUY2UXRWgfDmCZOQgtfC1hblCaM391pjnKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=3dsDRb1e; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffc380b1d0so42703181fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 05:49:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733147365; x=1733752165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dpiwpXSnfuXnIooq0y/4KC3bfGsvvfydq/7tBkpGdBA=;
+        b=3dsDRb1e1tUA9XGpsV6v7d9nykNzFRfdoBNP5STwNb+0YtPt1CsrHwjER8cmGv5mQd
+         1lt9UGkD9ESNFolJULXCPoUqk5E6zRljHFJ2k56OMR8zbrKqAbY51nIJBWX+TylYWaIX
+         PQQ/gjDfIgFdTMdLl6acp2axZOZv09NNuzUoHg8SwDEYOvjorbXdRUor7bqaK2/8r+Lb
+         KT7VKuRyAinyjXxEzxyElxwm5TwRIaTilDsysOUxau1mzom28iQSrrEJN/IaEprqFJwT
+         /5jtZSApHtEKY++kV6wSF3VMB1MlkKrjdY/XZcLTUrxNAZotB8ezsQffqc0BgAEnoAXt
+         vPnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733147365; x=1733752165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dpiwpXSnfuXnIooq0y/4KC3bfGsvvfydq/7tBkpGdBA=;
+        b=GrtGWCQQD0DL6RuI9YS6I/GtATENgZs9Y0U7KBGmh/37339dQ/l9KXAofldXNqdjrm
+         ylsgIp2Q/55gAwgdh88KgD0R2RgDQZSfaXZHFQQTTvMKefIxn80kLJNoPUQkgFVvPYH7
+         lOXalAWItqHWvLHKVChHNzfLjNx3X29G9qKjxTHZBVFIz0iqDX6nQt1NsHIAxSpOXvSC
+         7hhxZdRiI4nRCqQZzXZ46nbgO+y25WaemO8/3GeVa3Pnq7G+TRWLdc4EVYYjiUyUhd4k
+         089CRKljDAz/bEEhiL7i1fHFi1oUxOdNzdgKteG6b8E+ih9krfJkWNk/uGKAcf6892xc
+         ukyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZUjgWp0HUBjrUZphqniPDE1CRe6sOdiB99vLKj+t2SpneLAVlf2MjeXTunxzmvORgDGx5QWRU+spTyro=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs/ohISYqSg34wlc3mGmZwBQK/ynBfNNl7Dcfql5m/hyHqGo91
+	L24LmNuDNSDdFsD+wyZFRF4KQbDYfhUfCyeW7/tOFvYtMcR7VSH6wx1a+JXnD74=
+X-Gm-Gg: ASbGncs9h9qI/zhxx+c4qwKXkMEMZWbYKMuSMgqlfgoc2GAvttXoS4a2k5yUBUiwhJx
+	um3eGKbmr9Gd5DMjelS6ez3MebWC1lszS+2RLweD7UR0YJYGxdWc6ge8Y5i0WDLA9hlKxDMD3BQ
+	SPWKXP6aniq6a7Ctk6O0dZiFc0ott1AiiiqtVyA8cwOxky7MI9pjhR2NjcI3wabSAFJ44LqhbBG
+	exIYC+jKK0/lKfU1YtVbGrQ3RDpwmIKhFiORr8lDdG/aPi6d+amlDeb2H6aTVei
+X-Google-Smtp-Source: AGHT+IHMltc1McJoIBtx24nNlj7xLYEfgMGTNoTB0c8hxfeup/9URrE3WWd5lDfPJXd6xm1RQOYP0A==
+X-Received: by 2002:a05:651c:154a:b0:2ff:e2c6:e654 with SMTP id 38308e7fff4ca-2ffe2c6e6fbmr57320641fa.19.1733147364585;
+        Mon, 02 Dec 2024 05:49:24 -0800 (PST)
+Received: from cobook.home ([91.198.101.25])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbb8f2csm12972661fa.15.2024.12.02.05.49.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 05:49:24 -0800 (PST)
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Dege <michael.dege@renesas.com>,
+	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
+	Dennis Ostermann <dennis.ostermann@renesas.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH 0/5] net: renesas: rswitch: several fixes
+Date: Mon,  2 Dec 2024 18:48:59 +0500
+Message-Id: <20241202134904.3882317-1-nikita.yoush@cogentembedded.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b303ed8-f819-4fa2-b447-8d8f4a42b380@oracle.com>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024 at 09:08:02AM +0000, John Garry wrote:
-> > +/**
-> > + * blk_mq_map_hw_queues - Create CPU to hardware queue mapping
-> > + * @qmap:	CPU to hardware queue map.
-> > + * @dev:	The device to map queues.
-> > + * @offset:	Queue offset to use for the device.
-> 
-> supernit: maybe no '.'
+This series fixes several glitches found in the rswitch driver.
 
-np. I've followed the style of the function right above. Dropped them.
+Submitting them first, before new functionality currently being
+prepared.
 
-> is there still a blank line at the bottom of the file?
+Nikita Yushchenko (5):
+  net: renesas: rswitch: fix possible early skb release
+  net: renesas: rswitch: fix leaked pointer on error path
+  net: renesas: rswitch: avoid use-after-put for a device tree node
+  net: renesas: rswitch: do not deinit disabled ports
+  net: renesas: rswitch: remove speed from gwca structure
 
-It ends with (vim):
+ drivers/net/ethernet/renesas/rswitch.c | 14 +++++++-------
+ drivers/net/ethernet/renesas/rswitch.h |  1 -
+ 2 files changed, 7 insertions(+), 8 deletions(-)
 
-	}
-	EXPORT_SYMBOL_GPL(blk_mq_map_hw_queues);
-	~
+-- 
+2.39.5
 
-I hope that is what it supposed to be.
-
-Daniel
 
