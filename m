@@ -1,161 +1,133 @@
-Return-Path: <linux-kernel+bounces-428172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1048B9E0AF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:27:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1116E9E0B0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:31:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C21BB282070
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:27:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54BE6B2C6B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9031DE2A0;
-	Mon,  2 Dec 2024 18:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFD91DDC32;
+	Mon,  2 Dec 2024 18:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mH+7DvtL"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xampav+9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F981DA0EB;
-	Mon,  2 Dec 2024 18:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB5E17C7CE;
+	Mon,  2 Dec 2024 18:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733164016; cv=none; b=miS3cgJq8tLLcAr8us4rHAW7KyY1GIHPnCKlOiZLrkbycfGqT2aI2m4GNmpIwe1ODPcIPyx+fMkDtGPPeVwU3874472w1s/kbFYsXhIy21AoR7w/ncMQyp/8RXWXZCXVXVdJWZCMr/ZyLpm5W/+a7oqEIvM9zgOCi1ElniM+iRU=
+	t=1733164117; cv=none; b=lUBlHW1aywlesDNn6aXRwPVv/mf0TWJF38mcGFvUqPV6NKBll1le1zca9CMb45USHfgDCMeUh89LPCKEGauGNnLKJek9ZvzZDrfXD1nsrGoqrxx6Me4COt2LyiUVxY161u97eenvxzMmZvICeVtvE2XKojUhlGlghC3tAGJ7TWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733164016; c=relaxed/simple;
-	bh=1xtMUwkVsVp7J49UhE+BkhJzLQS3uNzYCblm28g1tPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSTiib2iZ4d5zolzBu9jwOof3QTbqmFOn6aP69/GNOUZJkAs6KRgKhe6k/tPxq5nS28H+rUIBpjVcHQlMcMuu/M+E3r2H/O40zZ6gdAenbHMhyUpZ3VSZsQo9NeFFezMBLhhZ7aGIVbaOUEDsf6wuYVq88OzQwC6b8ccCikPzaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mH+7DvtL; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso42490545e9.3;
-        Mon, 02 Dec 2024 10:26:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733164013; x=1733768813; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sEFfKLNJ5UdJJlChHj2idaky6JocQwCCYRbGZV4i6Zo=;
-        b=mH+7DvtLDcd4GVlAbWK4Mmnm0V/boK73bqBd/E/chAFP+0CluErh3Ek5FV6FvpSkwj
-         f46lqwmBlI2DIVzf6ZyTD2bA6nlO8ANsPcVDzb6Gle3lB4rxmrsqyrTZx6N7Z960qdIe
-         8Zmp73FedWQA5hMpmg+t4JKVaD6qwvXaLxpZLF27sg/PC0m8e9pyfjyntmC8suGUL0Ez
-         0mZLMASdujUC2sDDZjNiV6ZqU3Hqp/Mxrvi0Hdcx8ZtaTGkAgdhGujyhr6RZsSYg2Zk4
-         /FYdqFM23JD1mzByyWCApTuMhwPh7ZviaR04hmCO7qwM5D9TBM01lDe0smEpOER1IU/k
-         OKvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733164013; x=1733768813;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sEFfKLNJ5UdJJlChHj2idaky6JocQwCCYRbGZV4i6Zo=;
-        b=MO3aGQCYO8T4gTwDCFXwpRDK/mWNvVrTZD6Y/xmUZJatlcDQ41uGvVoqc9M1o3CPJY
-         xS8q8p4gooRfImLJpedvGuGNhuxCUAV7ea9uVltnY7ZZNS4TU7R+zGn24GyeSzlGIe1f
-         mUX/BXKfDuYVvmkq4df5cUbCCWOlwHybbM+qaivQjAD/h99AkNUoF/W7e58Hvrqi90WX
-         DTp4RTTpUHQeDfWhrrrHMPWHS01Gm6dAqbn9rePVFp92C+7OFTE++By5zijpWY4Tj2Ls
-         4L8xr4JkgKL6t4KEAbJCXWQu5a8nsUSayq0Mf7Y4z1D5Ib52lwld7MrXbyrsI5WueSlp
-         IhiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjORGagDoWotNJEnXANnW0PnrZXZhqilKzvD9hLWdh9HEcMKWFf9PmXqyJ9X7VVYS7vLvIJriVrGZ3@vger.kernel.org, AJvYcCV0CGbsI29b3GZEjZqd1eBh/uZWp1VYqbQAq4JQiV5qu4vdWVDxjFwQjMoG4pjhBaekTlY+1TgGLISl@vger.kernel.org, AJvYcCWmZFniFhTe8SOjSY0XajUvDvkCe84kIS47qwHHuoZ6uQcQnyrJ3hL9JdMFzkyoi6RoaIyJnEH2Ue+6VMlJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDcAO/I2D+RsyaIY4sCUpkVP0QIXcD9RXIGKZp7OpuLYRNLsFy
-	tYzhtrD8d1oQr9A8eegWf4Vx0Qp2Uu8Vk97bqw9Xm9+2itIDiALEa8pyS96s
-X-Gm-Gg: ASbGnctbRy0J2SX7aLmSg4TH4P6c1SyLxWWbgBR2+KDoPvXm7JhnjymBfCkoGaRGIfQ
-	HzH5POUegs4eoMpZ8V3izmvEJ5/o6weEPWmP2TOflZcxdpP8UO8FWrkx3U6vOmBke+vrV8DY/lZ
-	9MMf1aMhNX0pAmVTTrKeg18bkHJiqxVG/cU0W/4lGa8dZvcgP7elGDWyfjmlZps22IWMcxubZIx
-	xGU011Q+P+TGV/ZoKcdups+45E4/CwPS/JDQ/qgQoMDPMh/duimMCU+fcpD
-X-Google-Smtp-Source: AGHT+IFGIaNwFK/XCDGx4vQJSz1+7TzUMaO1rkmx294oQSZilT7UU+eubv/4Gukkre0TPtQ5DDxJkg==
-X-Received: by 2002:a05:600c:3b1a:b0:434:a160:3647 with SMTP id 5b1f17b1804b1-434a9dc3eb6mr220422765e9.12.1733164012648;
-        Mon, 02 Dec 2024 10:26:52 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:ea8a:93ec:a066:eb25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa78120dsm191685485e9.24.2024.12.02.10.26.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 10:26:52 -0800 (PST)
-Date: Mon, 2 Dec 2024 19:26:50 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] iio: chemical: bme680: add regulators
-Message-ID: <Z0376uLnf8xoqSU7@vamoirid-laptop>
-References: <20241128193246.24572-1-vassilisamir@gmail.com>
- <20241128193246.24572-3-vassilisamir@gmail.com>
- <20241130142648.62ead7fe@jic23-huawei>
+	s=arc-20240116; t=1733164117; c=relaxed/simple;
+	bh=OJJyk1FEEwO3mui+E9YAyMAY34U2B8d/7bsCtYORUxM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BtzxveRY0gcvib9JNntG6bfwk1hNoaC4BTCtIa8DDA0PfVLVLVPQ6li2wyyzLh5tL5/52YFyvn3kvD9tBsMfubgmKshJjo6FRgjxbG2gx3XMJU4rHfdU82Ef8YIlvqrCOVf1A+orzj55WYpYHs5wUoJQIRSyHQJw2660DNise8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xampav+9; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733164116; x=1764700116;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OJJyk1FEEwO3mui+E9YAyMAY34U2B8d/7bsCtYORUxM=;
+  b=Xampav+9bNI3vSMPgdeDgulPd/V5IeY+YNDD8vZrnpUntxeGjUIGV9qI
+   K+DZrwNSLijRsm7lPQa1HA8s36qJJR5wYnhYOAsdSm78326/fXWO1U4/g
+   BQj5115UJ4XuN9NTGimC2JGYL2Zryt4+fVpUptQlwo7xjb7MT32ppr8tu
+   P1J4rWIfw7lIYoRj8qrJKD6U9r/Kere9m4FYucMAi6s1Ey9N29u5z2ilX
+   jeX4tFb2xff8kFy3qQyeT8WNQWB9cQ5iBzeEgAUHU6h15xjRrXpRHPySQ
+   WeFJor9f4yJIcwS6/y1X7QxLi61SDEomfPCeZeRvPnVQZI9rLkYzuNrgE
+   g==;
+X-CSE-ConnectionGUID: kLArtikKTimpYiY2vAbxKA==
+X-CSE-MsgGUID: 1JUNsRIcS/ihXCS4B0s8rA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33409350"
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="33409350"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 10:28:35 -0800
+X-CSE-ConnectionGUID: YPTsmHxzQfmpt9NNMSlPew==
+X-CSE-MsgGUID: p8wmKMfOTqKFXeceUDbjNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
+   d="scan'208";a="93278767"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 02 Dec 2024 10:28:30 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 91DDD31C; Mon, 02 Dec 2024 20:28:28 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] pref/x86/rapl: Remove unused function
+Date: Mon,  2 Dec 2024 20:28:15 +0200
+Message-ID: <20241202182815.639124-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241130142648.62ead7fe@jic23-huawei>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 30, 2024 at 02:26:48PM +0000, Jonathan Cameron wrote:
-> On Thu, 28 Nov 2024 20:32:45 +0100
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > Add support for the regulators described in the dt-binding.
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > ---
-> >  drivers/iio/chemical/bme680_core.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> > 
-> > diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-> > index 9783953e64e0..186e0a6cc2d7 100644
-> > --- a/drivers/iio/chemical/bme680_core.c
-> > +++ b/drivers/iio/chemical/bme680_core.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/log2.h>
-> >  #include <linux/module.h>
-> >  #include <linux/regmap.h>
-> > +#include <linux/regulator/consumer.h>
-> >  
-> >  #include <linux/iio/buffer.h>
-> >  #include <linux/iio/iio.h>
-> > @@ -111,6 +112,10 @@ enum bme680_scan {
-> >  	BME680_GAS,
-> >  };
-> >  
-> > +static const char *const bme680_supply_names[] = { "vdd", "vddio" };
-> > +
-> > +#define BME680_NUM_SUPPLIES ARRAY_SIZE(bme680_supply_names)
-> Trivial: What benefit do we get from this define that is used in one place?
-> 
+get_rapl_pmu_cpumask() is unused, it prevents kernel builds
+with clang, `make W=1` and CONFIG_WERROR=y:
 
-Hi Jonathan,
+  arch/x86/events/rapl.c:165:37: error: unused function 'get_rapl_pmu_cpumask' [-Werror,-Wunused-function]
 
-Thanks for the review! This here made more sense in the beginning
-because I was using it in more places but now it is indeed only used in
-one place. I might as well drop it.
+Fix this by removing unused function.
 
-Cheers,
-Vasilis
+See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+inline functions for W=1 build").
 
-> > +
-> >  struct bme680_data {
-> >  	struct regmap *regmap;
-> >  	struct bme680_calib bme680;
-> > @@ -1114,6 +1119,14 @@ int bme680_core_probe(struct device *dev, struct regmap *regmap,
-> >  	data->heater_dur = 150;  /* milliseconds */
-> >  	data->preheat_curr_mA = 0;
-> >  
-> > +	ret = devm_regulator_bulk_get_enable(dev, BME680_NUM_SUPPLIES,
-> 	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(bme680_supply_names),
-> 					     bme680_supply_names);
-> 
-> And don't worry about slightly over 80 chars line.
-> 
-> > +					     bme680_supply_names);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret,
-> > +				     "failed to get and enable supplies.\n");
-> > +
-> > +	fsleep(BME680_STARTUP_TIME_US);
-> > +
-> >  	ret = regmap_write(regmap, BME680_REG_SOFT_RESET, BME680_CMD_SOFTRESET);
-> >  	if (ret < 0)
-> >  		return dev_err_probe(dev, ret, "Failed to reset chip\n");
-> 
+Fixes: 9e9af8bbb5f9 ("perf/x86/rapl: Clean up cpumask and hotplug")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/events/rapl.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index a8defc813c36..3ed5ea2aa867 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -162,12 +162,6 @@ static inline unsigned int get_rapl_pmu_idx(int cpu)
+ 					 topology_logical_die_id(cpu);
+ }
+ 
+-static inline const struct cpumask *get_rapl_pmu_cpumask(int cpu)
+-{
+-	return rapl_pmu_is_pkg_scope() ? topology_core_cpumask(cpu) :
+-					 topology_die_cpumask(cpu);
+-}
+-
+ static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
+ {
+ 	unsigned int rapl_pmu_idx = get_rapl_pmu_idx(cpu);
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
