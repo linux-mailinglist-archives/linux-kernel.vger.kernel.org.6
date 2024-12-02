@@ -1,267 +1,189 @@
-Return-Path: <linux-kernel+bounces-428026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508539E091C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:54:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DCC9E0922
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:55:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1B7169E73
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:42:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A392E1615E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1691B6D0A;
-	Mon,  2 Dec 2024 16:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EDB1D6DC8;
+	Mon,  2 Dec 2024 16:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ae7u+agM"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JK6AjuaF"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07756FC3
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A08E1D31B2
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733157739; cv=none; b=Lz68kv9RJ0In+YeOHiZeh20HTmREvNDodeMhtjzmOq8176C2BFe4BcfkuNeHKSy8SpdWpA6VyS+Olx1MQkH5UOIbyt6kC/qFDgSVSQmmT7hp6Zve3p9jsW3JpPZtx30PeLRio127WxEZRcRiRFsSaynAhZ4/L8haJFDdWB/nLzc=
+	t=1733157870; cv=none; b=KLpKCxlrcD50I4Ep/xxHJNPcV0GpG0iNXMFnaFwwMGwXv5X1MCbjLwEOq0E3D1yJHLZ0HwUn/cTrSX7EAdMwx9M1Fcm/P7monUO+8FMi8YTSjanOnbb+zzi06um1JOIOPotlj/cu46UP+NCC0ED4EPmYG6I8nFh90HKaN5wmWq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733157739; c=relaxed/simple;
-	bh=8ZyXh8TCH4QhT/YV/uAlx1sWa6cJN39K3SxCDNSBg38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bNzSsxDOeWB8atiKtnq76GhYhzk9BLH8r7qw0uf80jHNwDTgvKNYaZ+KRN4HYyyHa9gV3B2q9vlVSxC31bG6JRCs17jJSaMtOExnK6knljDecNEFcuVV2cnRQ5+e3yyTR9O6bfAbdm0vIIjnwIZs3y4s2to5TQZuVt3FCIPvB5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ae7u+agM; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ee51c5f000so2252534a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 08:42:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733157737; x=1733762537; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wqsRUP7wAfSp8NquH353cBwoUcX5EWbVc93C8IvKtmY=;
-        b=ae7u+agMnPdtVIyU765MBzf6CcoqF1rXftJ06xK30RmFxsyQ6APTxpv/FEpSmlLTD7
-         y12EKvPDT5q5XjwWpxgoCLY0w2ip9Pn6Pi8R3sy86nmwbpnx1/2rkIrqHXCfUAe/3lKY
-         95yC26H6irA1CFRwFJ2h76y7kQD5PXLgZQedpyec4hR9+hscZvVowPJU6yx60T1or6xo
-         n3GKLFTopNyZblORKpNptmynv/lHpzhkX7ywvjny9IQfJGjS5d1K4bUntmTnuUE2qgYw
-         kWhiIZjJqibf+xifzbbuEomKmILBhDwGI9Mq/ZZmxS5IpW802qGwyz9SsPgYSHtTW/bD
-         ysGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733157737; x=1733762537;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wqsRUP7wAfSp8NquH353cBwoUcX5EWbVc93C8IvKtmY=;
-        b=TsV789GquhlNZ+95hs189eYULhMmsSqB8Smiek5lxSKdy6RGzQcCBR631EvJpC1bsH
-         Y2fyT8yirbs+Y7u2hbxEE1WhwJxFQSYpp8SkWOPzZnoVR5Avxa5GExODmR+Ejy4ctXKL
-         NmhJsYIRancDoptw9bM7Pi24IlHgHLUh7r+H3FmlLjYtH0fnXIP1nBf6fBV0D449DdYr
-         cTfOGHDmqDP2wCJUAlmKBA9EXTQTq0dr4x69JnXsE5LFtsoBBXDxQVXVDXe2tTSAs8bV
-         9Wbvz+u2geP5YLNuHYLfcSaK5VKJ7oUYHjGrnD6WHqOKt1SBO/Sh3Zc26j4ai/HzAN3N
-         d4lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxwSsmZBrYjRANOa+/4MhVYOrG6jWBPHkiKwCsvqWQfo1pzEFIRFYe4IBBNyuvdkxFUK0u6u1SHi6Iybo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs/RDnwD3NiSGOscOZU0REMfiCA4LzN1fr7TnvSn8Ht9SCZtbL
-	A2fHLH6ZO0HLv75ZKFNYEfpvpMvSRuAhUxmPNQp0Cme2NAfq1EF3BMttVZN9cg==
-X-Gm-Gg: ASbGncv0kSw4IM2p2MCLuEQ0sf6bObRi1n3elOA4g1stJjRUt10326Y56N+gB2y9EN+
-	iNjTuHrZtgwQa4Yj9lxkc7uYQy7YIW7+HKCocgUGVF3E+dUev6du+vJ5w5tz5IAw+C0U/JbOdVX
-	sygITuQHknVxGH8r7jD3he1JyLTrV70aC29PpdQQ+EpyY8pWWPmvHGefDzt5WYHWi1anuUnayZf
-	mFCA5Eq4iYkUsQcpo4r1tYi1MPumhDWrGie6Vx8YfBhrKW4LzYm0QqqQZn7Wg==
-X-Google-Smtp-Source: AGHT+IEWaG9hQw5W6hzV7999Ggbcuv8yF8PM05Z2+btXJbT9F2Q01zZZ3zFPGUloFY/+vMM6LHEd7w==
-X-Received: by 2002:a17:90b:1d11:b0:2ee:8008:b583 with SMTP id 98e67ed59e1d1-2ee8008b80bmr16187368a91.16.1733157737232;
-        Mon, 02 Dec 2024 08:42:17 -0800 (PST)
-Received: from thinkpad ([120.60.140.110])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eea942f6a8sm3097181a91.41.2024.12.02.08.42.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 08:42:16 -0800 (PST)
-Date: Mon, 2 Dec 2024 22:12:03 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, quic_vbadigan@quicinc.com,
-	quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com,
-	quic_skananth@quicinc.com, quic_vpernami@quicinc.com,
-	quic_mrana@quicinc.com, mmareddy@quicinc.com,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/3] PCI: dwc: Add ECAM support with iATU configuration
-Message-ID: <20241202164203.tpjqqgq6hzzedudc@thinkpad>
-References: <20241117-ecam-v1-0-6059faf38d07@quicinc.com>
- <20241117-ecam-v1-2-6059faf38d07@quicinc.com>
+	s=arc-20240116; t=1733157870; c=relaxed/simple;
+	bh=Kov19Kcf5hBRpnDlYC0mQmJZQDHLQKXhh4VXSpk7UlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HSA9HYTrwu1vgHtziBLpfedLzdtKYSTCvnRDwRj4nCHRclUMVm3HC6vzKCFNb6jzOnom0dEKheIU/tdROhFissoxeDxY6KNdFxN7w5fYOugoyGZ0aRMyx4spcUVak9TyjDcphYbTsCS7LcRPoEQCwhk0c/uhwgIGkgP0W2FDxko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JK6AjuaF; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733157868; x=1764693868;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Kov19Kcf5hBRpnDlYC0mQmJZQDHLQKXhh4VXSpk7UlE=;
+  b=JK6AjuaFiTdBAdnYY2YCobIyTL+c5f2TZM30KC/xUPW2Tht349g/+34e
+   RifGUvi1SrHgBpXqytHR7dVcjp6ISj+DdNcGtRNXI8RUZupO10eMB0BOX
+   lG7exe4XZQKQNar1UsMIjRFeZ/14hJDs6QRrKaVjrVge53X4Y67aC3EXG
+   92480KuM2wxmGsIXMcUGVtw+R3lCnh5If6E01/XPt86aZFhAla4Q6Lc5V
+   3ZI2u1G1YZaoJXP0kx+MsMYOqOC2hB4+hIo/bUXKNPX+MM92HaUR8hdWK
+   BnAaQ9kqZWGmQOp6uD8dCCDjwA8qpkwsSzFo49jLpdy4WTT13m9+E9Sqt
+   g==;
+X-CSE-ConnectionGUID: VXJLcTK3S827uIOuKWwAmg==
+X-CSE-MsgGUID: 3CVsFPfDSQ2L2zwHmwYC3g==
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="202476758"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Dec 2024 09:44:25 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 2 Dec 2024 09:44:22 -0700
+Received: from [10.171.248.21] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 2 Dec 2024 09:44:21 -0700
+Message-ID: <24069031-9ed4-4592-af98-ff53222caf03@microchip.com>
+Date: Mon, 2 Dec 2024 17:44:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241117-ecam-v1-2-6059faf38d07@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: at91: pm: change BU Power Switch to automatic mode
+Content-Language: en-US, fr-FR
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Cristian Birsan <cristian.birsan@microchip.com>
+References: <20241125165648.509162-1-nicolas.ferre@microchip.com>
+ <34a5b77b-e732-4393-a469-d9c719afa879@tuxon.dev>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <34a5b77b-e732-4393-a469-d9c719afa879@tuxon.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 17, 2024 at 03:30:19AM +0530, Krishna chaitanya chundru wrote:
-> The current implementation requires iATU for every configuration
-> space access which increases latency & cpu utilization.
+On 02/12/2024 at 09:05, Claudiu Beznea wrote:
+> Hi, Nicolas,
 > 
-> Configuring iATU in config shift mode enables ECAM feature to access the
-
-Can you please elaborate 'config shift mode'? Quote relevant section in DWC
-databook for reference.
-
-> config space, which avoids iATU configuration for every config access.
+> On 25.11.2024 18:56, nicolas.ferre@microchip.com wrote:
+>> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>
+>> Change how the Backup Unit Power is configured and force the
+>> automatic/hardware mode.
+>> This change eliminates the need for software management of the power
+>> switch, ensuring it transitions to the backup power source before
+>> entering low power modes.
+>>
+>> This is done in the only locaton where this swich was configured. It's
 > 
-> Add "ctrl2" into struct dw_pcie_ob_atu_cfg  to enable config shift mode.
+> s/locaton/location
 > 
-> As DBI comes under config space, this avoids remapping of DBI space
-> separately. Instead, it uses the mapped config space address returned from
-> ECAM initialization. Change the order of dw_pcie_get_resources() execution
-> to acheive this.
+>> usually done in the bootloader.
+>>
+>> Previously, the loss of the VDDANA (or VDDIN33) power source was not
+>> automatically compensated by an alternative power source. This resulted
+>> in the loss of Backup Unit content, including Backup Self-refresh low
+>> power mode information, OTP emulation configuration, and boot
+>> configuration, for instance.
 > 
-> Introduce new ecam_init() function op for the clients to configure after
+> Should we add a fixes for this?
 
-We use 'DWC glue drivers' to refer the 'clients' of this driver.
+Not so easy to tell as there's a loose dependency with the bootloader. 
+But it's true that switching to automatic never harm. So probably yes.
 
-> ecam window creation has been done.
+>> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>> ---
+>>   arch/arm/mach-at91/pm.c | 31 ++++++++++++++++++++-----------
+>>   1 file changed, 20 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+>> index b9b995f8a36e..05a1547642b6 100644
+>> --- a/arch/arm/mach-at91/pm.c
+>> +++ b/arch/arm/mach-at91/pm.c
+>> @@ -598,7 +598,21 @@ static int at91_suspend_finish(unsigned long val)
+>>        return 0;
+>>   }
+>>
+>> -static void at91_pm_switch_ba_to_vbat(void)
+>> +/**
+>> + * at91_pm_switch_ba_to_auto() - Configure Backup Unit Power Switch
+>> + * to automatic/hardware mode.
+>> + *
+>> + * The Backup Unit Power Switch can be managed either by software or hardware.
+>> + * Enabling hardware mode allows the automatic transition of power between
+>> + * VDDANA (or VDDIN33) and VDDBU (or VBAT, respectively), based on the
+>> + * availability of these power sources.
+>> + *
+>> + * If the Backup Unit Power Switch is already in automatic mode, no action is
+>> + * required. If it is in software-controlled mode, it is switched to automatic
+>> + * mode to enhance safety and eliminate the need for toggling between power
+>> + * sources.
+>> + */
+>> +static void at91_pm_switch_ba_to_auto(void)
+>>   {
+>>        unsigned int offset = offsetof(struct at91_pm_sfrbu_regs, pswbu);
+>>        unsigned int val;
+>> @@ -609,24 +623,19 @@ static void at91_pm_switch_ba_to_vbat(void)
+>>
+>>        val = readl(soc_pm.data.sfrbu + offset);
+>>
+>> -     /* Already on VBAT. */
+>> -     if (!(val & soc_pm.sfrbu_regs.pswbu.state))
+>> +     /* Already on auto/hardware. */
+>> +     if (!(val & soc_pm.sfrbu_regs.pswbu.ctrl))
+>>                return;
+>>
+>> -     val &= ~soc_pm.sfrbu_regs.pswbu.softsw;
 > 
+> It seems that softsw and state members of at91_pm_sfrbu_regs.pswbu along
+> with their initialization could be dropped. What do you think?
 
-Use 'ECAM' everywhere.
+I think that I tried when writing the patch but I think that there's a 
+little difference with sama5d2 register layout. Give me a couple more 
+days to come back to this and verify.
 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 114 ++++++++++++++++++----
->  drivers/pci/controller/dwc/pcie-designware.c      |   2 +-
->  drivers/pci/controller/dwc/pcie-designware.h      |   6 ++
->  3 files changed, 102 insertions(+), 20 deletions(-)
+> I can do it while applying, if any.
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 3e41865c7290..e98cc841a2a9 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -418,6 +418,62 @@ static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
->  	}
->  }
->  
-> +static int dw_pcie_config_ecam_iatu(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct dw_pcie_ob_atu_cfg atu = {0};
-> +	struct resource_entry *bus;
-> +	int ret, bus_range_max;
-> +
-> +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
-> +
-> +	/*
-> +	 * Bus 1 config space needs type 0 atu configuration
-> +	 * Remaining buses need type 1 atu configuration
-> +	 */
-> +	atu.index = 0;
-> +	atu.type = PCIE_ATU_TYPE_CFG0;
-> +	atu.cpu_addr = pp->cfg0_base + SZ_1M;
+> Thank you,
+> Claudiu
+> 
+> 
+>> -     val |= soc_pm.sfrbu_regs.pswbu.key | soc_pm.sfrbu_regs.pswbu.ctrl;
+>> +     val &= ~soc_pm.sfrbu_regs.pswbu.ctrl;
+>> +     val |= soc_pm.sfrbu_regs.pswbu.key;
+>>        writel(val, soc_pm.data.sfrbu + offset);
+>> -
+>> -     /* Wait for update. */
+>> -     val = readl(soc_pm.data.sfrbu + offset);
+>> -     while (val & soc_pm.sfrbu_regs.pswbu.state)
+>> -             val = readl(soc_pm.data.sfrbu + offset);
+>>   }
+>>
+>>   static void at91_pm_suspend(suspend_state_t state)
+>>   {
+>>        if (soc_pm.data.mode == AT91_PM_BACKUP) {
+>> -             at91_pm_switch_ba_to_vbat();
+>> +             at91_pm_switch_ba_to_auto();
+>>
+>>                cpu_suspend(0, at91_suspend_finish);
+>>
 
-You didn't mention what occupies the first 1MB.
-
-> +	atu.size = SZ_1M;
-> +	atu.ctrl2 = PCIE_ATU_CFG_SHIFT_MODE_ENABLE;
-> +	ret = dw_pcie_prog_outbound_atu(pci, &atu);
-> +	if (ret)
-> +		return ret;
-> +
-> +	bus_range_max = bus->res->end - bus->res->start + 1;
-
-resource_size(bus->res)
-
-> +
-> +	/* Configure for bus 2 - bus_range_max in type 1 */
-> +	atu.index = 1;
-> +	atu.type = PCIE_ATU_TYPE_CFG1;
-> +	atu.cpu_addr = pp->cfg0_base + SZ_2M;
-> +	atu.size = (SZ_1M * (bus_range_max - 2));
-> +	atu.ctrl2 = PCIE_ATU_CFG_SHIFT_MODE_ENABLE;
-> +	return dw_pcie_prog_outbound_atu(pci, &atu);
-> +}
-> +
-> +static int dw_pcie_create_ecam_window(struct dw_pcie_rp *pp, struct resource *res)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct device *dev = pci->dev;
-> +	struct resource_entry *bus;
-> +
-> +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
-> +	if (!bus)
-> +		return -ENODEV;
-> +
-> +	pp->cfg = pci_ecam_create(dev, res, bus->res, &pci_generic_ecam_ops);
-> +	if (IS_ERR(pp->cfg))
-> +		return PTR_ERR(pp->cfg);
-> +
-> +	pci->dbi_base = pp->cfg->win;
-> +	pci->dbi_phys_addr = res->start;
-> +
-> +	if (pp->ops->ecam_init)
-> +		pp->ops->ecam_init(pci, pp->cfg);
-> +
-> +	return 0;
-> +}
-> +
->  int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> @@ -431,19 +487,8 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  
->  	raw_spin_lock_init(&pp->lock);
->  
-> -	ret = dw_pcie_get_resources(pci);
-> -	if (ret)
-> -		return ret;
-> -
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config");
-> -	if (res) {
-> -		pp->cfg0_size = resource_size(res);
-> -		pp->cfg0_base = res->start;
-> -
-> -		pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
-> -		if (IS_ERR(pp->va_cfg0_base))
-> -			return PTR_ERR(pp->va_cfg0_base);
-> -	} else {
-> +	if (!res) {
->  		dev_err(dev, "Missing *config* reg space\n");
->  		return -ENODEV;
->  	}
-> @@ -454,6 +499,30 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  
->  	pp->bridge = bridge;
->  
-> +	pp->cfg0_size = resource_size(res);
-> +	pp->cfg0_base = res->start;
-> +
-> +	if (!pp->enable_ecam) {
-
-Why can't you just use the ECAM mode when there is enough memory defined in DT?
-Using this flag slightly defeats the purpose of the ECAM mode.
-
-> +		pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
-> +		if (IS_ERR(pp->va_cfg0_base))
-> +			return PTR_ERR(pp->va_cfg0_base);
-> +
-> +		/* Set default bus ops */
-> +		bridge->ops = &dw_pcie_ops;
-> +		bridge->child_ops = &dw_child_pcie_ops;
-> +		bridge->sysdata = pp;
-> +	} else {
-> +		ret = dw_pcie_create_ecam_window(pp, res);
-> +		if (ret)
-> +			return ret;
-> +		bridge->ops = (struct pci_ops *)&pci_generic_ecam_ops.pci_ops;
-> +		pp->bridge->sysdata = pp->cfg;
-
-'bridge->sysdata = pp->cfg'?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
