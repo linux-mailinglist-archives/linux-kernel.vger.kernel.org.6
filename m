@@ -1,146 +1,165 @@
-Return-Path: <linux-kernel+bounces-427867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B36EB9E06D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:23:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CA59E06DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:23:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7922D288FC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC39528289D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB09A20A5EA;
-	Mon,  2 Dec 2024 15:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BDD20ADDF;
+	Mon,  2 Dec 2024 15:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5xonekb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m6S8ycLr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V6scLVXp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC87E209F4D;
-	Mon,  2 Dec 2024 15:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3232320ADD3;
+	Mon,  2 Dec 2024 15:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152741; cv=none; b=dUlABuOJLrRcUV4gAouxa8blhKi2ib7N2rrfY0+vE6CHQNR2ldPAVrHlKJfFphzL+rRh1m8Ri3y7fL70irNmliU4wb+ibi2xBGmWymQ4WxYTqZfDTjzjTK13hWAU6jQ45g+nX0kfi9gN/b32QYb/TDUmQkZ104GqXx5wbg2AOoc=
+	t=1733152753; cv=none; b=gwPX8h+yftJLx/VhJZdtZrLfbhIVv+Tt4CfWmAKn2n2cg5J5WL6xzbnPp+iYeEZ2YeYq6k6zXlMTMNBa4i4nBsrN2kF3QtjMlxf8CdHy7v0cCuHGgwGmmhBzwLu1R713o9WTQXCFzCMd8QvlicxH8hHXDtWYULUb/fZFc4yzqOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152741; c=relaxed/simple;
-	bh=XoFHIPAltC82OoSpVZ6ozybYAmhZuriiKQSdNzVonGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yz2/5lcHTO1LoJq3HLqD15slORpHmwYTEqVVi7eBvaRFZ3mUti2LZE8/TU/7hUwdN4EQ/LYMvK7B6BOUdTVkNBGdF4ksPo5ACo0UGCaDkhieXy1k8dKzAxIikkYeV3Xozv6/Oq3zzKybSnnnvcq8NIYy1PUL1f0pa7CPkW8EACI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5xonekb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92E2AC4CED1;
-	Mon,  2 Dec 2024 15:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733152740;
-	bh=XoFHIPAltC82OoSpVZ6ozybYAmhZuriiKQSdNzVonGA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f5xonekbcd3epNYuMYmqBS4p3LztZuO16RNoc/cDahZSrVcYiuy3jADxZMqtXRDE4
-	 GBG4a1alCSvxJ6ktkMAeS6S5Wurzh5hX3xlAn2XJL9dNotqqAb/8WtfqQcItE04OWk
-	 oRAdIEB3Adc+KjfJb05do1mPSYKFqpoIdbdaPD3ynx8SotoKatud/BKudCfydEgAdQ
-	 q5gpLyApPQpyAGnSoR9bOMrUzl0xZN0lfRkPoxokaqBTS0zXtUQrOKkjb86E4lnE6L
-	 e5FThZaPrUGz+yNj3T99H2hCpcMWHZuh/f+OzjJ7/BFJ0bqsvuj9kdzuUdl8vtbioh
-	 vHZJd1/9TUWqg==
-Message-ID: <39c73599-9bea-4b2e-afa6-3780726e27f5@kernel.org>
-Date: Mon, 2 Dec 2024 16:18:51 +0100
+	s=arc-20240116; t=1733152753; c=relaxed/simple;
+	bh=pMqk8f4ZF02LxWek4PS4btHzMHEM1ZKqlOSdscy5dSg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=VFkiuMgXevdPD3A5XlcuNEs73xcx40u+0SEZ7sfzjyLWuIZWlYyh68eOOGDphq4uHXnKJporU1FV0mHl7jDi9xhbMipH1Z449l/cl7EIjsEs64hrELS+p5VAWgOtb3fMiqr4rr0M2EIBf33ONkAtnNg6lrb2Jj4FULf5F0Qa+gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m6S8ycLr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V6scLVXp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 02 Dec 2024 15:19:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733152747;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XR5B9KFT4xE9l63plzQyJjpZNjoJx+Yy7PUgRslOnTw=;
+	b=m6S8ycLrdBURHfyENSY7ljNd9BWEn+9e1UZZRTwkHZZMDq3IF8lfBLbHf1tQv30XbYvjCo
+	s6PoQbJBRE8UbjiOA2s4K9vK4gW/pgRf9q61PscXEFsHV8buVBs+O13eezCp4TNHKXcvrk
+	s5b+LoNQ2GrETqvPlPQK7hKWc6txEMp1izQbBQJWDCHG0WtFo2BxfLz3mgP6yYrIeDDUCS
+	P169AtdBHLnus/rn2IQY4SieOZbwRK2pqLGyX6SmljY485ul8g/i7W2RwJX8rMh42cfppd
+	Gy1AGbZLpXWXPrzRvtu/ORw61tY4+WrVcP7Gh4O72WTfpHdSuCdy4y+wwFRzVg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733152747;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XR5B9KFT4xE9l63plzQyJjpZNjoJx+Yy7PUgRslOnTw=;
+	b=V6scLVXpQ3qZfyEY/QD9Ofdq5j3J/p/siD6DxKE3ZdZUNWEPTLZgFXQexGfAaDg8/nuffK
+	Qjp2Hy5AINxQ9XDQ==
+From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cache] x86/resctrl: Use kthread_run_on_cpu()
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240807160228.26206-3-frederic@kernel.org>
+References: <20240807160228.26206-3-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] dt-bindings: gpio: brcmstb: add gpio-line-name
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Eric Anholt <eric@anholt.net>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
- linux-gpio@vger.kernel.org
-References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
- <20241202-dt-bcm2712-fixes-v1-3-fac67cc2f98a@raspberrypi.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241202-dt-bcm2712-fixes-v1-3-fac67cc2f98a@raspberrypi.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <173315274594.412.9333883687105089333.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 02/12/2024 15:31, Dave Stevenson wrote:
-> Support comes from gpiolib, so permit it through the binding.
-> 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->  Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
-> index f096f286da19..086d016df6ef 100644
-> --- a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
-> @@ -64,6 +64,8 @@ properties:
->  
->    gpio-ranges: true
->  
-> +  gpio-line-names: true
+The following commit has been merged into the x86/cache branch of tip:
 
+Commit-ID:     a763fc24ecf2ef0471ccba3b1ff6e6271f4bdc0b
+Gitweb:        https://git.kernel.org/tip/a763fc24ecf2ef0471ccba3b1ff6e6271f4bdc0b
+Author:        Frederic Weisbecker <frederic@kernel.org>
+AuthorDate:    Wed, 07 Aug 2024 18:02:08 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 02 Dec 2024 15:35:35 +01:00
 
-maxItems
+x86/resctrl: Use kthread_run_on_cpu()
 
+Use the proper API instead of open coding it.
 
-Best regards,
-Krzysztof
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+Link: https://lore.kernel.org/r/20240807160228.26206-3-frederic@kernel.org
+---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 28 ++++++----------------
+ 1 file changed, 8 insertions(+), 20 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+index 972e6b6..6c60c16 100644
+--- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
++++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+@@ -1205,20 +1205,14 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
+ 	plr->cpu = cpu;
+ 
+ 	if (sel == 1)
+-		thread = kthread_create_on_node(measure_cycles_lat_fn, plr,
+-						cpu_to_node(cpu),
+-						"pseudo_lock_measure/%u",
+-						cpu);
++		thread = kthread_run_on_cpu(measure_cycles_lat_fn, plr,
++					    cpu, "pseudo_lock_measure/%u");
+ 	else if (sel == 2)
+-		thread = kthread_create_on_node(measure_l2_residency, plr,
+-						cpu_to_node(cpu),
+-						"pseudo_lock_measure/%u",
+-						cpu);
++		thread = kthread_run_on_cpu(measure_l2_residency, plr,
++					    cpu, "pseudo_lock_measure/%u");
+ 	else if (sel == 3)
+-		thread = kthread_create_on_node(measure_l3_residency, plr,
+-						cpu_to_node(cpu),
+-						"pseudo_lock_measure/%u",
+-						cpu);
++		thread = kthread_run_on_cpu(measure_l3_residency, plr,
++					    cpu, "pseudo_lock_measure/%u");
+ 	else
+ 		goto out;
+ 
+@@ -1226,8 +1220,6 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
+ 		ret = PTR_ERR(thread);
+ 		goto out;
+ 	}
+-	kthread_bind(thread, cpu);
+-	wake_up_process(thread);
+ 
+ 	ret = wait_event_interruptible(plr->lock_thread_wq,
+ 				       plr->thread_done == 1);
+@@ -1315,18 +1307,14 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 
+ 	plr->thread_done = 0;
+ 
+-	thread = kthread_create_on_node(pseudo_lock_fn, rdtgrp,
+-					cpu_to_node(plr->cpu),
+-					"pseudo_lock/%u", plr->cpu);
++	thread = kthread_run_on_cpu(pseudo_lock_fn, rdtgrp,
++				    plr->cpu, "pseudo_lock/%u");
+ 	if (IS_ERR(thread)) {
+ 		ret = PTR_ERR(thread);
+ 		rdt_last_cmd_printf("Locking thread returned error %d\n", ret);
+ 		goto out_cstates;
+ 	}
+ 
+-	kthread_bind(thread, plr->cpu);
+-	wake_up_process(thread);
+-
+ 	ret = wait_event_interruptible(plr->lock_thread_wq,
+ 				       plr->thread_done == 1);
+ 	if (ret < 0) {
 
