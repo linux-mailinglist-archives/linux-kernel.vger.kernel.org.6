@@ -1,166 +1,138 @@
-Return-Path: <linux-kernel+bounces-427953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6459F9E0884
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:30:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8519E0894
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0F91718FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:02:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E205916CD02
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39F4134AC;
-	Mon,  2 Dec 2024 16:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F0813CA8D;
+	Mon,  2 Dec 2024 16:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EWaRck6d"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jIZE6Aoy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3C33FB3B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16576134AC;
+	Mon,  2 Dec 2024 16:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733155348; cv=none; b=OlpaaD7gXoWQqF6RvhFhFWn1Vwlq4Hz0kT+Qzlx1LFRzTYTkyITntZMn3rUaQLm/xLl4CZc7/vpCkS6OH9p6OkIQEkC74gl4JI8iVyxodOGpFvEOCHCiaj3L9yTWbi9uVIijMqEUDpzySi7Nkyvba1Tw2Xa34UBQ1+yiuHFNFJU=
+	t=1733155393; cv=none; b=oA5YTiO76CFZinwfZSuUdGtlspjxRIn+hz2dEdWnoZxyzgsBnAAlIOBN1QVcCVZKqpEJmeqf60I5s3HGpvJNq7winUlXPgyi5hw7LqqW2GcSNUFhmF4igRo9AxY6as2Kh8NC5T8CCEr48JcnlsaDAdIZ0jOvPBF8J7vP45Dzgzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733155348; c=relaxed/simple;
-	bh=fEMBj/cO5ZohaVdxPPTn3z/8EFB0HnPgOIUHdPDPIqI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=u54ZTchHQoUf/7huiNcTZKOeH9kpvrjlt+bG0dCCGyYl0GBxF1jwId0eRMJQ8uEDbwu0yY4MBIIqCA52FjSqonkjUDrc3OYP2cULDWII1suL68VI8Invq6+O1jA3Ui1R/W/oQo0PPzBr9DCMZqe/8mfem9ZVtDap/+wIT1ZKENg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EWaRck6d; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-29e2e768952so2083106fac.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 08:02:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733155344; x=1733760144; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rwkq9B7tlCVoWp4VRCgQok6o7Mt1wW8UkSSb7Sc/dM0=;
-        b=EWaRck6dE9PWOdP6QpE6RPDQqzvN29HHwiU/pMpzCOa8DymF68g4lEJ1ceuVrF0Rcr
-         jlIEMzSfg76p7xyVL+UapjOZiUX1TdHbyQut2JGGZMWLE3qfnTqS4ML41nQlRd+eT5rb
-         VpmTcTd63WNIdq7OaNDjjy6eTXV4HVulXpNyg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733155344; x=1733760144;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rwkq9B7tlCVoWp4VRCgQok6o7Mt1wW8UkSSb7Sc/dM0=;
-        b=vD1Tf33v40+bPYJZtjyorkmnfxb/HHwbCXJ/hDoHGdtl+TbeWA/WagrMC1HQfNAb37
-         YFJounIaCv6bTLE9mYnRmQZRzJC3ep9WDl/uTjbqzoOUQq0uh7/k05QT+Px5wNess2nz
-         mNYcRXvVqGm+PwT46LuGE+uVD+Xc56uTX9TXBdZOTvcXdG6BWv7JVBoBXrtB3WyoIiR1
-         9DZrT95son6SY11HikdAoq/GeU4rxyqdQ9BpXu7gLPaNk4ZXkCERKMOp5TphhTERJ8xD
-         miS1bNIpHJ7fWv8kvm9FQc/0mVwxSIPrF383Em9Q9RbvstCAtG1SCmz8eOxDeOuB2iOi
-         WUXw==
-X-Gm-Message-State: AOJu0YxPCq9AsMI/eb8Qizo8eRAxgWj3e1vXWdp07MaSxViuIvP6geC8
-	mSS1V+JcxvwBOGCW5HkbQDa5b7jF2iF/0iOratTp5nRqLyo3oKl3H5I+ifnGDw==
-X-Gm-Gg: ASbGnctDNiWQZRngm4gEcfK01d71gQ5LspQLMPEvcHBjO9eqsIRgUPq8I3Pl4IcETPz
-	HEcW6q/rQ8kQgyl5wwWMN9jYVhnx+r0eJav15ed2akLM8Qlzbtmu76gDUFFB79Nmtj2LILrroSh
-	doUTFx24Q24Uuanbds7YnlBbVntKdEesvNFn+9mRBYXCC+8X3DWcumrQcmQzDiu5xoIHQKAs2U3
-	HQFiUOF0kAKmsU+haIh2YkQz764b5bwAiuC1XAGOnL7j7nOIgbV69fKWZfJiDA+yp5HpHQ2/Zpe
-	8P7lIF+YfKTwUpmK1VhS/OIi
-X-Google-Smtp-Source: AGHT+IFm9HDoaNmpX+KjTHl/oULOaZ2lR8+mNRWY1LpNbTFFxdF+4LSVSE8HYxT+AguPmFsJYFchyw==
-X-Received: by 2002:a05:6359:7609:b0:1c6:1d01:9ffe with SMTP id e5c5f4694b2df-1cab15b6233mr895938155d.10.1733155343603;
-        Mon, 02 Dec 2024 08:02:23 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af59164f4fsm1728306137.17.2024.12.02.08.02.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 08:02:22 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 02 Dec 2024 16:02:19 +0000
-Subject: [PATCH] mm: vmstat.h: Annotate operations between enums
+	s=arc-20240116; t=1733155393; c=relaxed/simple;
+	bh=RScNYALkuTnO3i/zO9R+Ncw1GfFLqcahc2rAVTG8cQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kdBu2V1kU4TnWKG/TrvmpSM5o5Y/pfTOrHB+E+UXx7In933IIPxFJics4ZDpeE3TILNQQIgFOe5BTywKzitlcJp8abgzf3JOFTP2jdMygWTg5sdTvJogxfXb+C+2oj3o0h57Q6k5hUgjVlqmkl3VqqHvME7m8Az78Ti1iybDlNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jIZE6Aoy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE273C4CED1;
+	Mon,  2 Dec 2024 16:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733155392;
+	bh=RScNYALkuTnO3i/zO9R+Ncw1GfFLqcahc2rAVTG8cQU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jIZE6AoyCeI7gVLvvakszzpiZ8uOZKi1BJbnlwMBsh8QFFCRpWHIJAfCHNwPbDBTS
+	 fDrV69C71toQJ7TQElgJebpjv6YRVVpVPvkLKFoKhmCAar7ABbIxGMvQySTkxJWAJh
+	 CJ+kYvE/cDDV0Z5DGQBsDBsGchCC3z+yhwpI1+U29CNFhh2NgUo61Dqk9H7O0YFBBj
+	 +mQS9q1KnVo6M7KIlvdrzR6jEzT/TpZa/YPXGbLOeOBUa97m8bvnK1qKU63sN+wLf0
+	 WmIjHFVZPWuwyDviAW5i+3qJemGYNuBq4405dOKeA/rn6884cneg62aZQr/yNqwRTV
+	 B2tgJrsyocTxA==
+Message-ID: <a3a4296d-8a0b-4894-b979-00f3e8f8a75a@kernel.org>
+Date: Mon, 2 Dec 2024 17:03:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] arm64: dts: exynos: Add initial support for
+ Samsung Galaxy S20 5G (x1s)
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+Cc: alim.akhtar@samsung.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ igor.belwon@mentallysanemainliners.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, robh@kernel.org
+References: <88f6ab28-1b3f-4144-91c8-0131ee008838@kernel.org>
+ <20241202160011.3232-1-umer.uddin@mentallysanemainliners.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241202160011.3232-1-umer.uddin@mentallysanemainliners.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-fix-vmstat-v1-1-c995585b7df5@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAAvaTWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDIKGbllmhW5ZbXJJYomthYWlmkZScmGhpaqoE1FBQlAqUBRsWHVtbCwB
- fEgrXXAAAAA==
-To: Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
 
-Compiler is confused when we do arithmetic operations between two
-different enum types.
-In this case NR_VM_STAT_ITEMS and NR_LRU_BASE are not actual
-enumerators, they are used to find the first and the count of the
-enumerator.
+On 02/12/2024 17:00, Umer Uddin wrote:
+> On 02/12/2024 8:53, Krzysztof Kozlowski wrote:
+> 
+>> Umer,
+>>
+>> I wanted to apply the series, but for two weeks you ignored this
+>> feedback/comment, so I am dropping the patchset from my queue.
+>>
+>> Be sure you respond to reviewers in timely manner (and if you give
+>> yourself more than two weeks to respond it also means other have more
+>> than two weeks...).
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Hi Krzysztof, I did not mean to ignore him, I had mock examinations coming
+> up when this feedback was sent. I had no chance to reply as i had to prepare
+> and do good in these examinations as they influence what colleges I get
+> accepted at. Sorry for any inconvenience caused to both of you.
 
-Add a casting to int, to avoid the following llvm 9 warning:
-./include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-  504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-      |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-  505 |                            item];
-      |                            ~~~~
-./include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-  511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-      |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-  512 |                            NR_VM_NUMA_EVENT_ITEMS +
-      |                            ~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-  518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-      |                               ~~~~~~~~~~~ ^ ~~~
-./include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-  524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-      |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-  525 |                            NR_VM_NUMA_EVENT_ITEMS +
-      |                            ~~~~~~~~~~~~~~~~~~~~~~
+I understand. No problem on my side, just wanted to share the reason of
+dropping from my queue. After resolving the discussion somehow, please
+send a new version (if something changed) or resend (if resolution
+results in no changes).
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- include/linux/vmstat.h | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index d2761bf8ff32..32c641d25bea 100644
---- a/include/linux/vmstat.h
-+++ b/include/linux/vmstat.h
-@@ -501,27 +501,26 @@ static inline const char *zone_stat_name(enum zone_stat_item item)
- #ifdef CONFIG_NUMA
- static inline const char *numa_stat_name(enum numa_stat_item item)
- {
--	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
--			   item];
-+	return vmstat_text[(int)NR_VM_ZONE_STAT_ITEMS + item];
- }
- #endif /* CONFIG_NUMA */
- 
- static inline const char *node_stat_name(enum node_stat_item item)
- {
--	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-+	return vmstat_text[(int)NR_VM_ZONE_STAT_ITEMS +
- 			   NR_VM_NUMA_EVENT_ITEMS +
- 			   item];
- }
- 
- static inline const char *lru_list_name(enum lru_list lru)
- {
--	return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-+	return node_stat_name((int)NR_LRU_BASE + lru) + 3; // skip "nr_"
- }
- 
- #if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
- static inline const char *vm_event_name(enum vm_event_item item)
- {
--	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-+	return vmstat_text[(int)NR_VM_ZONE_STAT_ITEMS +
- 			   NR_VM_NUMA_EVENT_ITEMS +
- 			   NR_VM_NODE_STAT_ITEMS +
- 			   NR_VM_STAT_ITEMS +
-
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241202-fix-vmstat-88968bcaa955
 
 Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+Krzysztof
 
