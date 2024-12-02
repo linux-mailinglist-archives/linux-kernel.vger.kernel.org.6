@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-428272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C2D9E0C45
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:38:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70049E0C48
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:38:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642EA163FB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7917C282A9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAE41DE8A8;
-	Mon,  2 Dec 2024 19:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1211F1DED4D;
+	Mon,  2 Dec 2024 19:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="G/r5c3PZ"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="V3u6b9gg"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3C81DE3C0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBF21DE3BC;
 	Mon,  2 Dec 2024 19:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733168320; cv=none; b=uBmKpDAUEqtzWxTVFe7t0dzXiHM5sFclXWEYcY78/ytg+MWJrOtwoe0s+WcYMc67mWBSDmkVv3oYcUBEm8EPuNbBydg2+RazZfFx/DEa3kYIBj55IJr80H0vaU3D3gunHr0SWEE5AMROy3fbhqDuVnikxxM8eBXPQrNMA0svIis=
+	t=1733168321; cv=none; b=uU/z9btP3Q4Jx0mpCpx9sziWZAvMAlCw758hc98TlxlmZa/xDNFHxfRVZudVHPJ5aTNHx4sKVX0rX/dkyyMPwOXNiOmFRg9LHY1ghJ9yaFkdE76UWJrdsmuHsVaeBjYDvYfaKjpCZ4UYrvIeAPSDwxR0+4tzfOlY/BSrMEyo/Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733168320; c=relaxed/simple;
-	bh=bXwjaMZPKYJqfzSnqgQCkzKi6u0bdbqGe9sH10KIhs4=;
+	s=arc-20240116; t=1733168321; c=relaxed/simple;
+	bh=YsbcgpRFOi+cY43e/Gwc75c9FlqZyz0+ZOwZ6DhkDSI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mWx7IQOjc10Q6MT1OSIctgSpkPAZYCNbvMUc0ZuSjlNdaMpQNC1C8bp8+dlyGHwXRO9u0Dqv92xj2980QZ8FhpOjiUqwMvoqMASLSptn/EvdWihO2iBipu1nmCNIGFoPZ2NT74ddGLTbUK60Yr84q/FoPmXMi1wJ291tgpIfjEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=G/r5c3PZ; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=dX+UYtEymbuB0gMTXvpWp7fTWNaC5cm/qAItTTQvgM34YmgJj3Meofl3pYFzuquTnLTeuXWpRCKHSZ1TdwZpVns/yjOCA7nYu/envhFqulgZojiJc404p/WiH0S+uQgnLg7Hrr4Bq3/kjFFUlgW8pjhAl1pDshS4xRcSQEGBq9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=V3u6b9gg; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1733168316;
-	bh=bXwjaMZPKYJqfzSnqgQCkzKi6u0bdbqGe9sH10KIhs4=;
+	bh=YsbcgpRFOi+cY43e/Gwc75c9FlqZyz0+ZOwZ6DhkDSI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=G/r5c3PZzuWfqzRo/c4UjVPrCv2Hc6wx/90Vf14fIwdZi1mnAVo+znnXrOMyEkmPu
-	 LVYLqXjVKlg/LwK9IPwQ82u4AVpwKxa61AHceic6iFHI8jS38yrxPYDpNjxqyWtluW
-	 13LmY3bKxLxct7MeeosLShQTiri85+iwSwZu9hjs=
+	b=V3u6b9ggz5UxbedruQ9U8mCgaUyqq/thMPo8C9kcwjSbkjjETaYTAnzNjeOpyMLz/
+	 126gqxxY3WhHelteRYnRz3sNzQUh1LFqLtCSIrDUlYi13CVXFcc/mec4FbkKI+PysA
+	 9pIq22l2BfckIt5p29IxYKQi5rWzrqZA+gw/jAsI=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 02 Dec 2024 20:38:32 +0100
-Subject: [PATCH 1/5] platform/x86: dell: dcdbas: Constify 'struct
+Date: Mon, 02 Dec 2024 20:38:33 +0100
+Subject: [PATCH 2/5] platform/x86: dell_rbu: Constify 'struct
  bin_attribute'
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -48,8 +48,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-sysfs-const-bin_attr-pdx86-v1-1-9ab204c2a814@weissschuh.net>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241202-sysfs-const-bin_attr-pdx86-v1-2-9ab204c2a814@weissschuh.net>
 References: <20241202-sysfs-const-bin_attr-pdx86-v1-0-9ab204c2a814@weissschuh.net>
 In-Reply-To: <20241202-sysfs-const-bin_attr-pdx86-v1-0-9ab204c2a814@weissschuh.net>
 To: Stuart Hayes <stuart.w.hayes@gmail.com>, 
@@ -61,11 +61,11 @@ To: Stuart Hayes <stuart.w.hayes@gmail.com>,
 Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733168316; l=2655;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733168316; l=3353;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=bXwjaMZPKYJqfzSnqgQCkzKi6u0bdbqGe9sH10KIhs4=;
- b=qlK8gtGb9pNa8t3MtuntUov7EtP4pBk8jm4vpiVItgItUx2t+rUIlBuPse0+uSH+r4aLhON5n
- HLV3OxZHlGcBWC6ZLnz9xGyxMuWwtl16/VfQiz5EP06mNibuRFiCeIE
+ bh=YsbcgpRFOi+cY43e/Gwc75c9FlqZyz0+ZOwZ6DhkDSI=;
+ b=FzqPL1axoOZTDBRkK5+Wfehj/Z+2MZfHleJLbw9zuoeB4O4Jp3P2DWebZ0f4j0f3MFJvpsqtW
+ oaIF99Yxm1aCBmsNsuvvP+8ESgB84DV2fweV3+t45OwkEBbN7+tuH5w
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
@@ -73,75 +73,94 @@ The sysfs core now allows instances of 'struct bin_attribute' to be
 moved into read-only memory. Make use of that to protect them against
 accidental or malicious modifications.
 
-While at it switch from the custom DCDBAS_BIN_ATTR_RW() to the identical
-BIN_ATTR_RW() macro.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- drivers/platform/x86/dell/dcdbas.c | 10 +++++-----
- drivers/platform/x86/dell/dcdbas.h |  8 --------
- 2 files changed, 5 insertions(+), 13 deletions(-)
+ drivers/platform/x86/dell/dell_rbu.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/platform/x86/dell/dcdbas.c b/drivers/platform/x86/dell/dcdbas.c
-index 0aeb8149c16bfcb5df3cad77b69d7e5978ce6536..8149be25fa267ca027d809c45fe1c3f47fcfd453 100644
---- a/drivers/platform/x86/dell/dcdbas.c
-+++ b/drivers/platform/x86/dell/dcdbas.c
-@@ -163,7 +163,7 @@ static ssize_t smi_data_buf_size_store(struct device *dev,
+diff --git a/drivers/platform/x86/dell/dell_rbu.c b/drivers/platform/x86/dell/dell_rbu.c
+index 9f51e0fcab04e1c61ce68b90b754b6b43a741b58..e30ca325938cb604560a810e7d63f65b4b70964b 100644
+--- a/drivers/platform/x86/dell/dell_rbu.c
++++ b/drivers/platform/x86/dell/dell_rbu.c
+@@ -475,7 +475,7 @@ static ssize_t read_rbu_mono_data(char *buffer, loff_t pos, size_t count)
  }
  
- static ssize_t smi_data_read(struct file *filp, struct kobject *kobj,
--			     struct bin_attribute *bin_attr,
-+			     const struct bin_attribute *bin_attr,
- 			     char *buf, loff_t pos, size_t count)
+ static ssize_t data_read(struct file *filp, struct kobject *kobj,
+-			 struct bin_attribute *bin_attr,
++			 const struct bin_attribute *bin_attr,
+ 			 char *buffer, loff_t pos, size_t count)
  {
- 	ssize_t ret;
-@@ -176,7 +176,7 @@ static ssize_t smi_data_read(struct file *filp, struct kobject *kobj,
+ 	ssize_t ret_count = 0;
+@@ -492,7 +492,7 @@ static ssize_t data_read(struct file *filp, struct kobject *kobj,
+ 	spin_unlock(&rbu_data.lock);
+ 	return ret_count;
+ }
+-static BIN_ATTR_RO(data, 0);
++static const BIN_ATTR_RO(data, 0);
+ 
+ static void callbackfn_rbu(const struct firmware *fw, void *context)
+ {
+@@ -530,7 +530,7 @@ static void callbackfn_rbu(const struct firmware *fw, void *context)
  }
  
- static ssize_t smi_data_write(struct file *filp, struct kobject *kobj,
--			      struct bin_attribute *bin_attr,
-+			      const struct bin_attribute *bin_attr,
- 			      char *buf, loff_t pos, size_t count)
+ static ssize_t image_type_read(struct file *filp, struct kobject *kobj,
+-			       struct bin_attribute *bin_attr,
++			       const struct bin_attribute *bin_attr,
+ 			       char *buffer, loff_t pos, size_t count)
  {
- 	ssize_t ret;
-@@ -636,9 +636,9 @@ static struct notifier_block dcdbas_reboot_nb = {
- 	.priority = INT_MIN
+ 	int size = 0;
+@@ -540,7 +540,7 @@ static ssize_t image_type_read(struct file *filp, struct kobject *kobj,
+ }
+ 
+ static ssize_t image_type_write(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
++				const struct bin_attribute *bin_attr,
+ 				char *buffer, loff_t pos, size_t count)
+ {
+ 	int rc = count;
+@@ -597,10 +597,10 @@ static ssize_t image_type_write(struct file *filp, struct kobject *kobj,
+ 
+ 	return rc;
+ }
+-static BIN_ATTR_RW(image_type, 0);
++static const BIN_ATTR_RW(image_type, 0);
+ 
+ static ssize_t packet_size_read(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
++				const struct bin_attribute *bin_attr,
+ 				char *buffer, loff_t pos, size_t count)
+ {
+ 	int size = 0;
+@@ -613,7 +613,7 @@ static ssize_t packet_size_read(struct file *filp, struct kobject *kobj,
+ }
+ 
+ static ssize_t packet_size_write(struct file *filp, struct kobject *kobj,
+-				 struct bin_attribute *bin_attr,
++				 const struct bin_attribute *bin_attr,
+ 				 char *buffer, loff_t pos, size_t count)
+ {
+ 	unsigned long temp;
+@@ -626,9 +626,9 @@ static ssize_t packet_size_write(struct file *filp, struct kobject *kobj,
+ 	spin_unlock(&rbu_data.lock);
+ 	return count;
+ }
+-static BIN_ATTR_RW(packet_size, 0);
++static const BIN_ATTR_RW(packet_size, 0);
+ 
+-static struct bin_attribute *rbu_bin_attrs[] = {
++static const struct bin_attribute *const rbu_bin_attrs[] = {
+ 	&bin_attr_data,
+ 	&bin_attr_image_type,
+ 	&bin_attr_packet_size,
+@@ -636,7 +636,7 @@ static struct bin_attribute *rbu_bin_attrs[] = {
  };
  
--static DCDBAS_BIN_ATTR_RW(smi_data);
-+static const BIN_ATTR_ADMIN_RW(smi_data, 0);
- 
--static struct bin_attribute *dcdbas_bin_attrs[] = {
-+static const struct bin_attribute *const dcdbas_bin_attrs[] = {
- 	&bin_attr_smi_data,
- 	NULL
- };
-@@ -662,7 +662,7 @@ static struct attribute *dcdbas_dev_attrs[] = {
- 
- static const struct attribute_group dcdbas_attr_group = {
- 	.attrs = dcdbas_dev_attrs,
--	.bin_attrs = dcdbas_bin_attrs,
-+	.bin_attrs_new = dcdbas_bin_attrs,
+ static const struct attribute_group rbu_group = {
+-	.bin_attrs = rbu_bin_attrs,
++	.bin_attrs_new = rbu_bin_attrs,
  };
  
- static int dcdbas_probe(struct platform_device *dev)
-diff --git a/drivers/platform/x86/dell/dcdbas.h b/drivers/platform/x86/dell/dcdbas.h
-index 942a23ddded0592d2279da2dfee05113e8f4dbff..a05d7f667586310e379e38601309acdfad25645a 100644
---- a/drivers/platform/x86/dell/dcdbas.h
-+++ b/drivers/platform/x86/dell/dcdbas.h
-@@ -56,14 +56,6 @@
- #define DCDBAS_DEV_ATTR_WO(_name) \
- 	DEVICE_ATTR(_name,0200,NULL,_name##_store);
- 
--#define DCDBAS_BIN_ATTR_RW(_name) \
--struct bin_attribute bin_attr_##_name = { \
--	.attr =  { .name = __stringify(_name), \
--		   .mode = 0600 }, \
--	.read =  _name##_read, \
--	.write = _name##_write, \
--}
--
- struct smi_cmd {
- 	__u32 magic;
- 	__u32 ebx;
+ static int __init dcdrbu_init(void)
 
 -- 
 2.47.1
