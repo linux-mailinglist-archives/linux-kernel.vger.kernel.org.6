@@ -1,239 +1,126 @@
-Return-Path: <linux-kernel+bounces-428260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6888C9E0D08
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:33:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22E89E0C0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:27:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11E74B2DE8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77FD7282C5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81F31DE4D4;
-	Mon,  2 Dec 2024 19:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C0F1DE4D9;
+	Mon,  2 Dec 2024 19:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YZsBWoSG"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3Pe6LRr"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D4E1DE3DF
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1452AD21;
+	Mon,  2 Dec 2024 19:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733167572; cv=none; b=SZjjAxwbxGQbcRtaiMF6RR7Thci5pBskb2R9/z5HRn6Lw+87XO2h2OUiGQADbEFbPPmsMpmXUyT0FhPcGpYDXjRVF9rZtObSNp5zwKeJiQSeGEsuGRPdtF4L0OhX9NkT/Z4rtbJIz3KPkHHrsRuOOT2F5PACotSYsMiU+YJS3oM=
+	t=1733167627; cv=none; b=nB468ogS0gbfSluasROcTIBPmXJI993HnmVgl5rw/gkC3XuQjTI05BW8fwwSfBmwT8yE4EJY8t0LC5rEBBrpa4zATNFrSH5DpR9f8pTM2sZVjqkztd6tUUOvNkbmnFvo7kgVSTr5oHFYYfZM50RxlRlD+lfz6yjDAec64rxfo2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733167572; c=relaxed/simple;
-	bh=o3oFpN5+0icf2Kch71ra+GrrBdKQ7MoFph2ESAD4b3Y=;
+	s=arc-20240116; t=1733167627; c=relaxed/simple;
+	bh=XAPwpQqQiwcnoaUB40hRLc5pzo+e8dWNlOB+nAY8aRc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sm+cDVrdU7c3X5bg+O7URhCyIPiaKqFtJk7kZJL88z1aDR4lPEfoOzxk092yVkkltD/X79HDSCe6qeLijdINdaTgglzUmZ1TgE98Uk3rsW0XkVc9MA+8cejJYglooHl/mh+fVsFhsPLNmG/Wn+X56YkJtpEML7JpP/IsIsxSqxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YZsBWoSG; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d888c38841so25661576d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 11:26:10 -0800 (PST)
+	 To:Cc:Content-Type; b=ipZzVf0v02oKpgCXtcNuFbr79Vhm57ddVnQKem8jPgWUBoH4Z4qPRcfnW/muOfovh+E4nneHB+4p2fbJei4UqBLG8R0C5kh0Bdbt8TVTKU6I/kHE/Pf0iJiAWYoc3oHU0IXsnOECKphfBS14hsy85T685+zcrbaI1BiA6kzBoWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3Pe6LRr; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e916196023so2570189b6e.3;
+        Mon, 02 Dec 2024 11:27:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733167569; x=1733772369; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733167625; x=1733772425; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9kWp+b2vAKxwZc2Adf1FEMAvh7npem3wGK6470DLZVY=;
-        b=YZsBWoSG/cx3MHG4wOmW/S9ucGdHJzymJogbnzXMowtF7DL2aZnzGcrAujQCsH+U8N
-         ELGUJwdSwNqjK8IeSyPKWQir55kvy3Zm6C5fVCRBvUNO4332VYMNe8bkoYcVQdDBvFXU
-         rL5HXlYJLrjgIorxsEtVqzVfa+E/MCw/jp2UzumDgk1qmsQEaapuU0/PVig2VYPIuck7
-         SE9u4TZq51yQAJndYjBilxvwrfS+web6ZzI8Mga4MVKOG+vOX0HSGT2jONuDDRF/Kxh2
-         /9ZuFtUPJ33GeC7PZ0mVmmEZ4/WT7COVCe4QiLxE2hRv0/ia4sRuSqiI/y/nh7KBDFkN
-         IW+A==
+        bh=y82eOTEhwmMyYbOhVYXDIlIEQdK/qSD3OtDPE8tkSD0=;
+        b=H3Pe6LRryALFjzy9PpJJsXXyaJc3T2e/wAuu02RyBHCc0gRptYFZAymlt61DJPN9YL
+         nbPSZt2lpQh3YHTvXGkeA/aDqg1b+F0swg589Br7rBpmF8Qqk8LJS97eAeY1ad2XCVcS
+         7SmFaLI8n7IAEVETcR/+xG8yd//lGZCS4tJLrk9x/fZKNBc8gYoLzVZsadFK5yT/s/Qw
+         VQ1uD74eaWuRFhw7kMSMHMi5kMDPMQQCe4hTwVO73I/SLWUmPIp/2HvfsFXeY50t6re/
+         dz+fPjdyXwQJXMvCtHgqnTBrAIswTSTXv5uyDgtBqDWDeCL1UHusEnIAaDWVbXWF8+J+
+         YFdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733167569; x=1733772369;
+        d=1e100.net; s=20230601; t=1733167625; x=1733772425;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9kWp+b2vAKxwZc2Adf1FEMAvh7npem3wGK6470DLZVY=;
-        b=b+B+Wm4GbDR57ahh0dB1xGWLnpvgr7N2yRaUWOnQr7hsaBenlAT9Fg+QoWIQQhHDBh
-         ahy/4dwUvE3kaHRpFdktffx9XffNkSpGAK8laYBoEUd86GTEHIQzThIVWxXiT8i/CcQU
-         HkssVIF9uNgpEL5R2LJSO92E1RDUOX+mrlCSv7oii9TMFeA5BZaKzVikTyfxHmmmoxVN
-         OOl3+Xvmp0iOoz8NzD1MZizWFfEztHX8xtwrMUcW4RsGeyR/jZEXpI1doy9tMBD1ruda
-         c599p2b93NlJD8oZu7/cmzEv9Qf2WT6p0rWEINrILmnPaBWYlOZZBt3YMwWxIFdwxLB5
-         6Zmw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6IqRq6Wejau1iYJEAAOvmXIrQhAmrxTrrDdtdha0P0Fj7rT7dPd80wvnpoGgnhzTMLjsP3BdVyi1KglM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3JdWOTFWNV3V0UduROXaOWMwUgjiYHnNJ9Xa5Q7h15FS/sUAr
-	oSLXreXFMVn7VGjW49SA2kAM0aRGzGNNfVUutuk2S6Y7wdpgNu5DX2DzHotwH3fYszOaGf1Uj6o
-	K+t7O8+ei6u0JMGw1MB1hesxxwBDLuaJI2Ax9
-X-Gm-Gg: ASbGnculRLrkfDOXbBtOO7xUDkqN0y9YehPh9g92iFy370I5om6TyIBbiXgvfYHmTtu
-	mKwoBoW+c/xbuJbSq8qKt8p6sqYpZ
-X-Google-Smtp-Source: AGHT+IH63gD0V9cyca6pGe0rkEWNUsWMypkh7ldUNn7dEp9D+W12/cWnl/an8g4+ohud5nI3LvTbL6azXYZGZT9KKjY=
-X-Received: by 2002:a05:6214:482:b0:6d4:1f86:b1e6 with SMTP id
- 6a1803df08f44-6d864d44715mr350526716d6.22.1733167569122; Mon, 02 Dec 2024
- 11:26:09 -0800 (PST)
+        bh=y82eOTEhwmMyYbOhVYXDIlIEQdK/qSD3OtDPE8tkSD0=;
+        b=akyDOaSWqMvngxRlviCkbuZBBwKR9LNa83v3gX+mMSWFMhCAAR9gMCvH+mELVZRnKO
+         ZTyzjOh/i/PUkHkI/1ZlhJioeW0MH3PbYhqWxpSmYuqcf9K6N1aMr3IFBc59JPssXRMZ
+         m2hMwx95n2uqT1YrCAHj0FkKeAM+2+rO3CD4mxJHea66EPV3v95+YExK+f1ZLr3jXFYv
+         9EEs9DLqrVJEyssJGZHYL24ZCTYUVehj0oJwn8ytHieUYCPdCkywLXLcBz56zS1M7yl+
+         5w5csZII4nq/bXrUfFAfq7wxNnJEbvkUlJcNgy4Y3GvIJv76t8C0n3IFI+AG0lzbXtzy
+         NdSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHTvg/d5G4vrhcW5RvxZE5ks7MUn83j16FLretUv8cri8/tmFUo1Dtf2f4VAQt/v61md6JiXYoGqBfV2Q=@vger.kernel.org, AJvYcCVnLZhllueBK4mrC/Fc8UZpgkS4HJ/7Ql202ehKUl3+lugh8dnm7Nat9Yrm1k285nOjBCkHu4YLvmvFPOwA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7uKwtIipChbMQb5nruhIPjVEHd+qXcB4UbmqgTNWZXV79EaaK
+	k+hDi0rnnAGPlZkzYJfuRrAVrBuALt66lssGWZHGBHTm3LfK8MGW6es6L21r00r2z+21ZJF+/RS
+	sB+MbiPPJEjtaxpYb/tioyx1FjXo=
+X-Gm-Gg: ASbGncsYGIGHh+sSxmMffhhQC91x+TTxk6eyWaR8aCi6/Hu4hZXRKHBoJhkBUVo9NUW
+	hvFycJigpj6Ia5K0Jfuiee1ypuEjPN7h8bhuMwxSQfkKYT94=
+X-Google-Smtp-Source: AGHT+IEb0q1YzKrjqBN/l+hzvKaqv8aySTKWK83ko71V+ahoVrlVcAzoq3EPKEzVSgFNb+PZs+zg/F0X2N6fm47Wu4o=
+X-Received: by 2002:a05:6808:14c7:b0:3e6:5792:2fb1 with SMTP id
+ 5614622812f47-3ea6dbb4b11mr19902682b6e.10.1733167625419; Mon, 02 Dec 2024
+ 11:27:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202184154.19321-1-ryncsn@gmail.com> <20241202184154.19321-4-ryncsn@gmail.com>
-In-Reply-To: <20241202184154.19321-4-ryncsn@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 2 Dec 2024 11:25:32 -0800
-Message-ID: <CAJD7tkarH0G_5oYOY56Erz_4kqAEBrqnxkW6Q+jRCAfj+zt6eA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] mm/swap_cgroup: simplify swap cgroup definitions
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Barry Song <baohua@kernel.org>, Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org
+References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com>
+ <20241123070127.332773-11-kanchana.p.sridhar@intel.com> <CAJD7tkb0WyLD3hxQ5fHWHogyW5g+eF+GrR15r0PjK9YbFO3szg@mail.gmail.com>
+ <SJ0PR11MB56782CF74C6D6904DDDDAB95C92E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <SJ0PR11MB56782CF74C6D6904DDDDAB95C92E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Mon, 2 Dec 2024 11:26:54 -0800
+Message-ID: <CAKEwX=Ppn-CKPNUJUMc48sU5uxkB6KS1HwFpvpty0nj+wL6rHg@mail.gmail.com>
+Subject: Re: [PATCH v4 10/10] mm: zswap: Compress batching with Intel IAA in
+ zswap_batch_store() of large folios.
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 2, 2024 at 10:42=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
+On Mon, Nov 25, 2024 at 1:54=E2=80=AFPM Sridhar, Kanchana P
+<kanchana.p.sridhar@intel.com> wrote:
 >
-> From: Kairui Song <kasong@tencent.com>
->
-> Remove the intermediate struct swap_cgroup, it just a unsigned short
-> wrapper, simplify the code.
+> There are some minimal "future-proofing" details such as:
 
-Did you actually remove the struct? It doesn't seem like it.
+I don't think they're minimal :)
 
 >
-> Also zero the map on initialization to prevent unexpected behaviour as
-> swap cgroup helpers are suppose to return 0 on error.
+> 1) The folio_batch: This is the most contentious, I believe, because it
+>      is aimed toward evolving the zswap_batch_store() interface for
+>      reclaim batching, while allowing the folio-error association for the
+>      partial benefits provided by (2). As mentioned earlier, I can delete=
+ this
+>      in the next rev if the maintainers feel strongly about this.
 
-All the callers lookup the id of an already swapped out page, so it
-should never be uninitialized. Maybe we should WARN if the result of
-the lookup is 0 in this case?
+Let's delete it, and focus on the low hanging fruit (large folio zswap stor=
+ing).
 
->
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->  mm/swap_cgroup.c | 45 +++++++++++++++++++--------------------------
->  1 file changed, 19 insertions(+), 26 deletions(-)
->
-> diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
-> index 1770b076f6b7..a76afdc3666a 100644
-> --- a/mm/swap_cgroup.c
-> +++ b/mm/swap_cgroup.c
-> @@ -12,14 +12,12 @@ struct swap_cgroup {
->  };
->
->  struct swap_cgroup_ctrl {
-> -       struct swap_cgroup *map;
-> +       unsigned short  *map;
->         spinlock_t      lock;
->  };
->
->  static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_SWAPFILES];
->
-> -#define SC_PER_PAGE    (PAGE_SIZE/sizeof(struct swap_cgroup))
-> -
->  /*
->   * SwapCgroup implements "lookup" and "exchange" operations.
->   * In typical usage, this swap_cgroup is accessed via memcg's charge/unc=
-harge
-> @@ -33,18 +31,6 @@ static struct swap_cgroup_ctrl swap_cgroup_ctrl[MAX_SW=
-APFILES];
->   *
->   * TODO: we can push these buffers out to HIGHMEM.
->   */
-> -static struct swap_cgroup *lookup_swap_cgroup(swp_entry_t ent,
-> -                                       struct swap_cgroup_ctrl **ctrlp)
-> -{
-> -       pgoff_t offset =3D swp_offset(ent);
-> -       struct swap_cgroup_ctrl *ctrl;
-> -
-> -       ctrl =3D &swap_cgroup_ctrl[swp_type(ent)];
-> -       if (ctrlp)
-> -               *ctrlp =3D ctrl;
-> -       return &ctrl->map[offset];
-> -}
-> -
->  /**
->   * swap_cgroup_record - record mem_cgroup for a set of swap entries
->   * @ent: the first swap entry to be recorded into
-> @@ -58,20 +44,21 @@ unsigned short swap_cgroup_record(swp_entry_t ent, un=
-signed short id,
->                                   unsigned int nr_ents)
->  {
->         struct swap_cgroup_ctrl *ctrl;
-> -       struct swap_cgroup *sc;
-> +       unsigned short *map;
->         unsigned short old;
->         unsigned long flags;
->         pgoff_t offset =3D swp_offset(ent);
->         pgoff_t end =3D offset + nr_ents;
->
-> -       sc =3D lookup_swap_cgroup(ent, &ctrl);
-> +       ctrl =3D &swap_cgroup_ctrl[swp_type(ent)];
-> +       map =3D ctrl->map;
->
->         spin_lock_irqsave(&ctrl->lock, flags);
-> -       old =3D sc->id;
-> -       for (; offset < end; offset++, sc++) {
-> -               VM_BUG_ON(sc->id !=3D old);
-> -               sc->id =3D id;
-> -       }
-> +       old =3D map[offset];
-> +       do {
-> +               VM_BUG_ON(map[offset] !=3D old);
-> +               map[offset] =3D id;
-> +       } while (++offset !=3D end);
+> 2) int* error signature: benefit can be realized today due to the latency
+>     optimization it enables from detecting errors early, localized cleanu=
+p,
+>     preventing unwinding state. That said, the same benefits can be reali=
+zed
+>     without making it a part of the interface.
 
-Why did you change the for loop here?
-
->         spin_unlock_irqrestore(&ctrl->lock, flags);
->
->         return old;
-> @@ -85,20 +72,26 @@ unsigned short swap_cgroup_record(swp_entry_t ent, un=
-signed short id,
->   */
->  unsigned short lookup_swap_cgroup_id(swp_entry_t ent)
->  {
-> +       struct swap_cgroup_ctrl *ctrl;
-> +
->         if (mem_cgroup_disabled())
->                 return 0;
-> -       return lookup_swap_cgroup(ent, NULL)->id;
-> +
-> +       ctrl =3D &swap_cgroup_ctrl[swp_type(ent)];
-> +       pgoff_t offset =3D swp_offset(ent);
-> +
-> +       return READ_ONCE(ctrl->map[offset]);
-
-The READ_ONCE() does not exist today in lookup_swap_cgroup(). Why is it nee=
-ded?
-
->  }
->
->  int swap_cgroup_swapon(int type, unsigned long max_pages)
->  {
-> -       struct swap_cgroup *map;
-> +       void *map;
->         struct swap_cgroup_ctrl *ctrl;
->
->         if (mem_cgroup_disabled())
->                 return 0;
->
-> -       map =3D vcalloc(max_pages, sizeof(struct swap_cgroup));
-> +       map =3D vzalloc(max_pages * sizeof(unsigned short));
->         if (!map)
->                 goto nomem;
->
-> @@ -117,7 +110,7 @@ int swap_cgroup_swapon(int type, unsigned long max_pa=
-ges)
->
->  void swap_cgroup_swapoff(int type)
->  {
-> -       struct swap_cgroup *map;
-> +       void *map;
-
-Why void?
-
->         struct swap_cgroup_ctrl *ctrl;
->
->         if (mem_cgroup_disabled())
-> --
-> 2.47.0
->
+This can be done in a separate patch/follow up. It's not related to this wo=
+rk :)
 
