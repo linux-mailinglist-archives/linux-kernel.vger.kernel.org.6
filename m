@@ -1,76 +1,126 @@
-Return-Path: <linux-kernel+bounces-427910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F639E075A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:45:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BD99E075E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C75E285AF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D628285A41
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B492F209F55;
-	Mon,  2 Dec 2024 15:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE1C4779D;
+	Mon,  2 Dec 2024 15:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBLmPfEu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="yRpuJQGm"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1902B200B9B;
-	Mon,  2 Dec 2024 15:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD2B134AC
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154296; cv=none; b=tjbEzNaTk81+Nt4kW3/NFtO+nV5LbnNLQRHzZCEos0xvKtZ/16JJuAZ6O8mQ+ONFamF8IKZQjnCCG1lQDyNUQs0Q3hkZMOQrMb1lGSx95ZaNBSvjcVQ0QdZQNvr8G9euI7aA62pboYltk7OYZgRtiVzYkaXWO5qebLYnZiMiqy8=
+	t=1733154308; cv=none; b=Oxx/hOm/Y1LpuhZ7tDZWQQ6wNz5y+3FswTF02ENaZxFc1n+BVupwxKusePibCmmv6ZWUfdLS6l/B/MsHYbIUUGdDyuwyCiM0yWyt8n7jeo47J3snxnfwV2lb6O09Mq/pNG761kMcKEUbO7GjDptxL2hOkJiPizSokPRXBtBNpn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154296; c=relaxed/simple;
-	bh=J/q1xWj4DxCp6IzU7uPb7iTssY8YnrBnsl5MtdaRI/Q=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=oRA+QjgwBtcCnQuejNojb+JTzB4Sb23uiv+vwPaykbn92FDKMs7DoVJ1OXVcz8C6ycVuNf4n+EkMHuHtndLBwzdEViqsuYkwKhLk96C+4bM9UWoy8K8aHr6zXdzLn2mRyq7ulaOUhVgQSfxlbMeWcZX8OVlhEfX0QoX4I5Omhyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBLmPfEu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29BF5C4CED1;
-	Mon,  2 Dec 2024 15:44:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733154295;
-	bh=J/q1xWj4DxCp6IzU7uPb7iTssY8YnrBnsl5MtdaRI/Q=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=bBLmPfEuiTfRJnp+ZnwgaRqb9cxXz0K6fMMlUyvDEsusKLVmzaRUkMK6epO8opKEs
-	 PwmmSAPf9vdTpehrIfen0th26tLjWFetjQq2vFJs315alQa0XFABW5BAVfcJy5vH3D
-	 qCnqbb0sbSC8lSZB9WwLsOaDr4ykQgEM6fQUspxdClGm1c1NZI0O9ThDWxAH9A4id7
-	 hIwTG55au1gkzWkIt3zOPFTeeNy8K6nea7RTJUvG/AkLDeFtDbKtDjcZq8Tq7a1zQ5
-	 jOfEqNrBFhY8oDlt835VUwvXntb8rAhmkDL0P1EWn8PrpBBLQVNpG3mQzMwHuhfP1x
-	 DYAxZ855ED4dg==
-Message-ID: <f7d5a7e084f01661572b2608c9a73db2@kernel.org>
-Date: Mon, 02 Dec 2024 15:44:53 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v5 04/10] drm/display: hdmi: add generic mode_valid
- helper
-In-Reply-To: <20241130-hdmi-mode-valid-v5-4-742644ec3b1f@linaro.org>
-References: <20241130-hdmi-mode-valid-v5-4-742644ec3b1f@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, "Andrzej
- Hajda" <andrzej.hajda@intel.com>, "Chen-Yu Tsai" <wens@csie.org>, "Dave
- Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime
- Ripard" <mripard@kernel.org>, =?utf-8?b?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, "Neil
- Armstrong" <neil.armstrong@linaro.org>, "Raspberry Pi Kernel Maintenance" <kernel-list@raspberrypi.com>, "Robert
- Foss" <rfoss@kernel.org>, "Samuel Holland" <samuel@sholland.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1733154308; c=relaxed/simple;
+	bh=g9aUICujfvbjpqeM4w3JMq2L4/zhb7YLW+mfp8bRqU8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UKDMEVz+5uZyc5Ib+rvqGVMGMh/rWdrNNR5rCRQhJ/g/l1o1xWQqt1ggAA6NWjxdtfVnEaKnVMILzgrO5vxtgj8c6FIx1+vXdtg5k2ULGtzZtcP/2woQR72dsYg1RgkFv9Xk1w04v9cg4ngiujBeGwWOrWVRtE7PsWdlFcxPVOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=yRpuJQGm; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a0fd9778so40942265e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:45:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1733154304; x=1733759104; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xXCuDP180luZ4JePdaAEPqLFzpR2coh76lHb7Z0CuU0=;
+        b=yRpuJQGmtPcp/0xj+LTQkGBZ6UtxWROEWBR80euqB8nBcEPVp4ftOh2ElW1Nkq7nhE
+         gAUPsTNKLUysXWAOLsFFwJDCvBUlWElLL0KLtWPnsiL3zZgk66MpKWw3lrmWbYwdKzdZ
+         O0iQUe1wGUkbglDOeCKGuUUWJ4vYtoPrkI+S67MV7UsYyyFepzMqhnsW6OCBbcuJ4aQ2
+         l2I6TR/C7mPi18wvxN7HX/n4L1SreMq3ZJRAdj6ZpUgF+KyeopLtTtVp/8JcDiYXkEKX
+         1Ebd8Ennu/olGPWKoA6oo7NSp9+MlQwKGQHqcbYwozdW7vYgBthMylWHs97ArpToVz+9
+         IQdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733154304; x=1733759104;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xXCuDP180luZ4JePdaAEPqLFzpR2coh76lHb7Z0CuU0=;
+        b=vlJwAtIi/YXIbL6qya6stWSf0qdHG7qmkbARBDxMdXUb4DNFrj7Zp4FTAeKxpoV7K7
+         V8Jba4JV2nxheWsLrR/dDH6dFnyu48gUKyQmNirtKW1Y5tZeeDGlcFhOQ4y1AwEU5ji4
+         YHqVsmjgdeLfVW4mXz3km1g2wxefWw+yTDCNLnjEKJwHEurv/tlw0+kxsoV6oJU88TCX
+         UaVpXSQcV4/qyvwJ5vD7e4GU1JpAc60dkINFJOst42RG7YV3OCMajbfApf6Xw33G14Cu
+         mXl5uMv8fG9V69C9QzU409DQwN+X3aP8iNLSlefDzSMjcEGIl5wpg8BNgAME8K37N4+1
+         DeXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0bfXLfEM05mbe8+T6/1iecqyjTV8eFqazq3dUrp8o1D5DXUFIPAxjAhfYGy0xr3PcdDdIndOMvlECa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx30wjlPMVwxgV9/JHCxKgPgZdnSab6RzZorCziksu0qdYy9uWI
+	TLY0f4NFp1Rfok3BQV/yqJJIdr+LcBeNQm1NfMdrqYjxX2fXBTh3R3OaUFb0unVDezNoxHpEt84
+	IFH8=
+X-Gm-Gg: ASbGncufboQSTdKxoaa031dFYqLt6IaC6IP5FV7eFfp7RZI0kJhaHffELu1B2sA5FcY
+	XorI2ByBaAXsTxh8SmHVbodzOSHamvaLcIlF90Dz9yOUFJjzY8XVQT0sDTJkEarFl2MHssUz+xH
+	qkPGgJ8Pw8wkXqZkTUn3a62Dmkgu6+PB8g2BX5Q3ncquSwVEYF+t6GYA1EZ1Qj6a36j3aT1B+Dr
+	VXKXZjHNZ2Q5mP2PwV4DlRMaL04V0SKJvWt7bahVsvqJRvoKAPHeHdvWj4AMVXHdBrhtV2rdtJ5
+	jRvTAYJ36978YY7EEYmHzkI=
+X-Google-Smtp-Source: AGHT+IGgu7NcMFp/eaHdVsUxC15X5VcowG3qWNXAtBMGKtwV64OuR/ITdkzi/tMktSJ0w/eSu83O5Q==
+X-Received: by 2002:a05:600c:510c:b0:431:52b7:a499 with SMTP id 5b1f17b1804b1-434a9df270fmr189824075e9.20.1733154304558;
+        Mon, 02 Dec 2024 07:45:04 -0800 (PST)
+Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dc63b6sm155711085e9.22.2024.12.02.07.45.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 07:45:04 -0800 (PST)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Mon, 02 Dec 2024 16:45:02 +0100
+Subject: [PATCH] dt-bindings: power: rpmpd: Fix comment for SM6375
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-rpmpd-sm6375-v1-1-12a4f0182133@fairphone.com>
+X-B4-Tracking: v=1; b=H4sIAP3VTWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDIKFbVJBbkKJbnGtmbG6qa2BmamGUamhklmKepgTUUlCUmpZZATYuOra
+ 2FgB4/GQDXgAAAA==
+X-Change-ID: 20241202-rpmpd-sm6375-06582e126d7f
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
 
-On Sat, 30 Nov 2024 03:52:29 +0200, Dmitry Baryshkov wrote:
-> Add drm_hdmi_connector_mode_valid(), generic helper for HDMI connectors.
-> It can be either used directly or as a part of the .mode_valid callback.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+During an earlier commit, the comment from SM6350 was copied without
+modifying. Adjust the comment to reflect the defines.
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ include/dt-bindings/power/qcom-rpmpd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-Maxime
+diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+index df599bf462207267a412eac8e01634189a696a59..d9b7bac309537cbfd2488e7d4fe21d195c919ef5 100644
+--- a/include/dt-bindings/power/qcom-rpmpd.h
++++ b/include/dt-bindings/power/qcom-rpmpd.h
+@@ -65,7 +65,7 @@
+ #define SM6350_MSS	4
+ #define SM6350_MX	5
+ 
+-/* SM6350 Power Domain Indexes */
++/* SM6375 Power Domain Indexes */
+ #define SM6375_VDDCX		0
+ #define SM6375_VDDCX_AO	1
+ #define SM6375_VDDCX_VFL	2
+
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241202-rpmpd-sm6375-06582e126d7f
+
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
+
 
