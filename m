@@ -1,245 +1,115 @@
-Return-Path: <linux-kernel+bounces-427051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197069DFBA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:08:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420779DFBA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:12:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48AA5B22AE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:08:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2101624AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225591F9ABC;
-	Mon,  2 Dec 2024 08:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F69F1F9ABD;
+	Mon,  2 Dec 2024 08:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VgBbCzp5"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMIkt7BF"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACBF1F9428
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227301F8AEA;
+	Mon,  2 Dec 2024 08:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733126912; cv=none; b=rT6bwlQcDRnE5VuXD3V7gwG2uxOqWSKk4BPXg3k9nekOvNYuMYCZ4l8We8Gae/F4mWEA0brmZvzBKqAwQGPr2oy5mcvuSSwa9SKwArqSGaKMaHXrpdaoI/TOMRO7+TlKVXrcde4GSSKN+yTmBABKk92xvmnzkZBBCD6w/eg0hnQ=
+	t=1733127125; cv=none; b=sgPnJog+tNPbkSC4UdljfDsH21LI2bIrkZAj7nIhX2Cdz6vj+h6xveuTHfJOOpNXXsvORLDut2l19+3r9MgKbPTnpob3CxkbFl9Cu4BYp1X2LQGp+9ULOk6NcOc6EOv55hnaAlZkjmJZG1Uul9Cm/NKC2KMr9RRnQUN7AKy/azo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733126912; c=relaxed/simple;
-	bh=iS5P/TmdSvSmouyGv1HDCNHfayN4+P7ZVBi4hwvFtak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sEpkU5ET0KZF+OMGzVq6ya9Pqg4l3bmxTH0vo+YWI8EGyXVSRzNTNVwcmCXWRxfAIS+hqplHEqRjhKGrjVO30x1BULRdDnKmRLu17zAO5dBJTsR21bMiObEH9jrAmrFCrdG9EdNK1NOcUcBusPOoE5qaZUq5We05Me9ydtKELCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VgBbCzp5; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385e96a285eso676183f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:08:30 -0800 (PST)
+	s=arc-20240116; t=1733127125; c=relaxed/simple;
+	bh=VSUjNizr/1GTzlmCcQz8331y/PCGwzGRf2PuxJ6n7DA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L/s+AmmhtiJUK8zf/woM5/wda1EJiqs/ws0o4PeEOVHw87llghbBjFckRm0e8aLWsrQ7dKpXTOndwEElA7jhKahTN7kHXgUZkyOdplAUxVbmeuaqLVoV14T5Zvz4AzGlj5diBzA6Yj4miRWfySoRA3rSwomQKzDXZ6zb/4CW9Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMIkt7BF; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2156e078563so9256205ad.2;
+        Mon, 02 Dec 2024 00:12:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733126909; x=1733731709; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=biIoGOQqyq3N6XA0zNtfB70JTNOwYolG4EVywUtJAns=;
-        b=VgBbCzp5ANLq93+U0LSqcq7eAwKg60YI4/c1qSQNNGLPFS0d+GuC9ht4/9loQuJWlZ
-         V2ELxvKgWMt+C0wMUyDn1PYpMkauWJJNoXG94S+SRofE3XnS3/OXA2dP4IoHJTKlVDTC
-         HODhjGAALzETzo8mbewXvakb/qqgZRJVu57S7MA2bzyQnQ30l43YF9VxQMAyCSqfk3HZ
-         Vpu5nhEh4kRdKUeIlESNV0fjUy6ZlDrZjDnmFE2c/IXnG6d+mhDvqlDuHZwtiTJde4Yr
-         TpRUCZeqXqgQR81hOZkz/17E5wbW0dYphgQ81NN9KgiGodW9/HUYQCw/FqEnq7/dFlG1
-         XoeQ==
+        d=gmail.com; s=20230601; t=1733127123; x=1733731923; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rgCxp/kcDTssayp9qUntP//DVF1RVvwjAC+aQl3a/8c=;
+        b=BMIkt7BF9MA9zAJWPu2YYufYI1H5OeEug+Va8zHvtyn9PexVUjlHC4DV6DCbT2sMYC
+         P9j6OKeCzzg/eI75ibooJL87AO9cLPZdGKL976O6gQOIhEMxgKkQx7oaqq9ubg0lDsby
+         YpnmZAMKTCUrSgarCaeRDe3yR3NghRmW4uEqgis2KvKYP8heWjr/kHq4o3rWqNDdjTTA
+         /HJ+/y2t8qSvTPGcYzpUX5YpYEJM/+pSm2SA3xYjXhw8uXHdO/FkNAsAsHt/PWrOFJqN
+         gYbpCIGemh6FXp0Z5Wjo3j9a40I/6Z0ZmhZADXfW+i89MixVghajyH9VeGHPBSHl8o41
+         +dVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733126909; x=1733731709;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=biIoGOQqyq3N6XA0zNtfB70JTNOwYolG4EVywUtJAns=;
-        b=tFvqrgmHyj422N57YnRjMFU4BrGruEswy8ftqJTWkaSBYzPjeZ+sPfV8sOUZLYVB+Q
-         5egkAns96hvjK60tyNQflWgyMXc10QGPTntBYeg50vexhEUCTaVgqmGvLVbsRYOVH3ks
-         6l/Zv9Bq0upxBd80eyHmP2+2KEho3N2he0DMQHYf13XoMpcmOLOQ1ZtMX/uMMUxs22WZ
-         cih1SNL6s1MDKp9i8fEbns04jrDvypLEAK1J9qJpwkI4AtOYTOJ0HDYZN1hUxm12jPJ0
-         GUTdLs1kh8V03J1Nbg8lFCxR3t23UxdU+mxhyLXrvT92oudKToQHibosvxTy2dhn0Thx
-         OX0g==
-X-Forwarded-Encrypted: i=1; AJvYcCViG92LbkQ1v4lCRjHlWZGKz90U+tMo1n2ir8aZQK5AAHCH+Xt/z9PWHZQc6pXncyH0Ja0aK9DyeLtc3mc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMrE6TlVEXaMUGUy287Tn2Vx/6PPdxdvl/3Y8h+XjzE9KP7gZv
-	sAqaZinBCz5qDW5ClBi81ajmopGlphjirP22C5wzEmtezeRC0VoP6MrEBszhrgU=
-X-Gm-Gg: ASbGncsPZp3pZ5dh2gBizJtjAO473gnAHp0AsnW6OhhelBmbWAUfZIolo472Ec4mEqo
-	LTJ8pBoIeC8VoNvTMy/+3+UR+Ad3Bia1K6d5jPFzwgN23Yqa8IoFlgoZO9fbqkcFbtfVbwQb18U
-	EEV3Uyh865lw19QFp/m1ZXYvGWIundSzY72iV+jGhwHX1peUHEE+GzAopO60SVY/sDoCkAFy/mz
-	596QvaFNPcATOL/q2HVf+tK6G9qsynylI+hg91A6ox3TCjS+KaPN+Nb0A==
-X-Google-Smtp-Source: AGHT+IE/FN2ZItFsru5z5bnmJFaCMjGBYDDtPToGAA6DQa0WbEd1yHKPiHr3G9UCYQzQErXFFCJrCA==
-X-Received: by 2002:a5d:6dac:0:b0:382:32ec:f5b4 with SMTP id ffacd0b85a97d-385c6edd38emr19115560f8f.47.1733126908581;
-        Mon, 02 Dec 2024 00:08:28 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e8783843sm5908426f8f.4.2024.12.02.00.08.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 00:08:28 -0800 (PST)
-Message-ID: <db8187d8-5ec6-4aaa-bd61-21cd3a806c66@tuxon.dev>
-Date: Mon, 2 Dec 2024 10:08:25 +0200
+        d=1e100.net; s=20230601; t=1733127123; x=1733731923;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rgCxp/kcDTssayp9qUntP//DVF1RVvwjAC+aQl3a/8c=;
+        b=DgvH//xwV5Wht/skHO8UERjqInfzBdtz5qbrmIkYezPU4awtVoJNHEfN0wwYl9Fb4I
+         05x/zxcK90Inb0CLY3iXLNLKNCY5AWncjdBvpK6ooTO+WYumiUNvgVneWeSZ9NFMMj32
+         JpKvxuvF6Zr389G1l3bK/fSQU3J67EWFpJDUmG27aZkZ5q26PFyn0KPMnWPXkyQ8RLC1
+         DK69Yei0zKtHpcl+0ACscV6wBrTW/Z+NjQdANIEtIUDlOHxjsSdwdzquiPFrF2ZhiDzC
+         67HRvY/KRpwIvTvIch6tmh1mGwo6yZbBCnXbrTuKfJ1ALhprkKzbKdhzbyo8sbBP4OOx
+         TLBw==
+X-Forwarded-Encrypted: i=1; AJvYcCV61XswLtp3ra+NKodpFaBRbCGdxxl/uD/ksliqFVJDnhSamhnMU9msMT3QPKPtJoG+v3sjtAmTTM/tvYBL@vger.kernel.org, AJvYcCVN/BJ85EdS+RW4jUMBsFLSONva5lCpM1W1S3RxaCvtiufomIGcMnZrPo6xbmpdYu4RhrLdhsEeiFIcC4tB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLS1JhYuK5l8LaOoVkKbmML/pSQtw3ddgM3wELIQYfUp9qbHBr
+	uO6btmncw4yvz7evVzyk6eCW+Ng69utPy3GTPfkQiwhTdqjEsJtN
+X-Gm-Gg: ASbGnct8e+91sJvE5baGL+e7ioxvTzflxDC8ALQM4mevcbssK19V2I411M16XGGzte4
+	ekO1k1F/KxNP6Vw1VcRQy1NV46blSGje8ASjTnyZMBW2dHmFwXdutbQ3TqiuEfcdib9eWTtcSYO
+	pBHDUUFOV8+ChUYkDvLiFsGqeOsTCkvcmy2cRlrd0/A54tsxpEqm4i7gVHjdEbeYRrEaQvM/0Dd
+	t2iXS2CU9XvdRCZ5Z+Kp/N7TyQEnMlmlu3w1Vv/KbOzUKbSINmgdXYAz7eeRd9SYexZaK0YGQ==
+X-Google-Smtp-Source: AGHT+IEuUbONqs8zxBj3T/WQhEm8JRiFYXFVrrZ0qaCD6pVq7HPF7oqFAtRt4C8+IUp4BKeTLb/CsA==
+X-Received: by 2002:a17:903:2344:b0:215:711d:d59 with SMTP id d9443c01a7336-215711d0fa0mr97535105ad.2.1733127123344;
+        Mon, 02 Dec 2024 00:12:03 -0800 (PST)
+Received: from localhost.localdomain ([36.110.106.149])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2153d61aabfsm55517385ad.136.2024.12.02.00.12.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 00:12:03 -0800 (PST)
+From: Guo Weikang <guoweikang.kernel@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: Guo Weikang <guoweikang.kernel@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fs:fc_log replace magic number 7 with ARRAY_SIZE()
+Date: Mon,  2 Dec 2024 16:11:45 +0800
+Message-Id: <20241202081146.1031780-1-guoweikang.kernel@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ARM: dts: microchip: sam9x7: Move i2c address/size to
- dtsi
-Content-Language: en-US
-To: Mihai Sain <mihai.sain@microchip.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241122080523.3941-1-mihai.sain@microchip.com>
- <20241122080523.3941-2-mihai.sain@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20241122080523.3941-2-mihai.sain@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Mihai,
+Replace the hardcoded value `7` in `put_fc_log()` with `ARRAY_SIZE`.
+This improves maintainability by ensuring the loop adapts to changes
+in the buffer size.
 
-On 22.11.2024 10:05, Mihai Sain wrote:
-> Since these properties are common for all i2c subnodes,
-> move them to SoC dtsi from board dts.
-> 
-> Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
+Signed-off-by: Guo Weikang <guoweikang.kernel@gmail.com>
+---
+ fs/fs_context.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 98589aae5208..582d33e81117 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -493,7 +493,7 @@ static void put_fc_log(struct fs_context *fc)
+ 	if (log) {
+ 		if (refcount_dec_and_test(&log->usage)) {
+ 			fc->log.log = NULL;
+-			for (i = 0; i <= 7; i++)
++			for (i = 0; i < ARRAY_SIZE(log->buffer) ; i++)
+ 				if (log->need_free & (1 << i))
+ 					kfree(log->buffer[i]);
+ 			kfree(log);
+-- 
+2.25.1
 
-> ---
->  .../dts/microchip/at91-sam9x75_curiosity.dts  |  2 --
->  arch/arm/boot/dts/microchip/sam9x7.dtsi       | 26 +++++++++++++++++++
->  2 files changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
-> index 87b6ea97590b..d453800f8e35 100644
-> --- a/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
-> +++ b/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
-> @@ -88,8 +88,6 @@ &flx6 {
->  };
->  
->  &i2c6 {
-> -	#address-cells = <1>;
-> -	#size-cells = <0>;
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_flx6_default>;
->  	i2c-analog-filter;
-> diff --git a/arch/arm/boot/dts/microchip/sam9x7.dtsi b/arch/arm/boot/dts/microchip/sam9x7.dtsi
-> index beb1f34b38d3..aedba0a8318f 100644
-> --- a/arch/arm/boot/dts/microchip/sam9x7.dtsi
-> +++ b/arch/arm/boot/dts/microchip/sam9x7.dtsi
-> @@ -151,6 +151,8 @@ i2c4: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <13 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -220,6 +222,8 @@ i2c5: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <14 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -312,6 +316,8 @@ i2c11: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <32 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 32>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -362,6 +368,8 @@ i2c12: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <33 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 33>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -533,6 +541,8 @@ i2c6: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <9 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 9>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -583,6 +593,8 @@ i2c7: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <10 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -633,6 +645,8 @@ i2c8: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <11 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 11>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -702,6 +716,8 @@ i2c0: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <5 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -771,6 +787,8 @@ i2c1: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <6 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -840,6 +858,8 @@ i2c2: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <7 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -909,6 +929,8 @@ i2c3: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <8 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -984,6 +1006,8 @@ i2c9: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <15 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
-> @@ -1034,6 +1058,8 @@ i2c10: i2c@600 {
->  				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
->  				reg = <0x600 0x200>;
->  				interrupts = <16 IRQ_TYPE_LEVEL_HIGH 7>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
->  				clocks = <&pmc PMC_TYPE_PERIPHERAL 16>;
->  				dmas = <&dma0
->  					(AT91_XDMAC_DT_MEM_IF(0) |
 
