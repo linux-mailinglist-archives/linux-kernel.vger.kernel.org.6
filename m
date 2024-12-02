@@ -1,35 +1,77 @@
-Return-Path: <linux-kernel+bounces-428486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134469E0F30
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:01:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5BF9E0F32
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:02:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73E3281FF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:01:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BDA3163EBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5743A1DF981;
-	Mon,  2 Dec 2024 23:01:21 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC8F1DFD9A;
+	Mon,  2 Dec 2024 23:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="K0CPNamH"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7D91D79B4;
-	Mon,  2 Dec 2024 23:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA0C1D79B4
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 23:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733180480; cv=none; b=XnaKdFaQVbUHlwZ2f2XMhJ5W2GnfcV9yZNu7JKLl/aBKxNAWnfQxb0PhuoJCRDxzbGoHxi344d5ocwZFT/983L3MtltpUbh5pCB9B3GignSLebkyAsxjjD7dcwxI0fbeCsaBRa+pM8NAKKfJZqNKbm2oSW5icnd/SLOO6P8iPy0=
+	t=1733180564; cv=none; b=uZY6viIC4h/Z292uJKO7Ct0mvUBsEx4x67jK+7H+mZ14rIaN+4T2MY9GSxr3EDdqr3JEAJmOFUp8NtuOkqNv+z5kqoU2ih/iSxwjnKYN2nUZ75Xzm6eROjPv46G9v8WRS7pW8wk4yVTP9Qvz359OrXQVUbzo+tckgNDNobn6YoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733180480; c=relaxed/simple;
-	bh=O40mKIuVkUdaPGlRuJu+ExjHuIkuF5fFK8LoYE40cs4=;
+	s=arc-20240116; t=1733180564; c=relaxed/simple;
+	bh=0o/VeYa0bbOGyirOVhNvZLZhLD1xrhRXWY07BbhU40M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LZ53GjzQxhsK9zJHMMFJ38E+33ugafFotFHDWEZmMowiZ/fq/WC0vHA3N+Zbnd6IX2RNv/x4h2Ge+ViURb6FHAeZbacc7cTlWi6MjWjM+amgWYsu2Odq/eIsrV4E6fl1SsgDoI/5uxiFKizfIWjv/q7GErMYObbtZ0H0zeXDcs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93FC0C4CED1;
-	Mon,  2 Dec 2024 23:01:18 +0000 (UTC)
-Message-ID: <34055476-e711-4e7e-9bc1-ba3e29ddbff1@linux-m68k.org>
-Date: Tue, 3 Dec 2024 09:01:16 +1000
+	 In-Reply-To:Content-Type; b=e3qRw+NwmoBwVIhGqWaN0pu4nj4AyEV8jjJWvu1wmGvJSw9GnM6MjsVv8G+FosBIPDpz0Quei2/kDhbhNOYkdA6KkF3AZXUHCeTeeaL7Hpd7eyj0LVqE9flz6XJsZ04cRtp9njgbVd74yjfXY009FToaSVP4AY8U3UwtJb0esdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=K0CPNamH; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-71d4d0516e6so2340385a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 15:02:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1733180562; x=1733785362; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TBGqkK/v5Iev96wXKEIFiXllPqz6RLCGsNpAQ8PdYPY=;
+        b=K0CPNamHa88OinRjAImF3h9aCeN4UAivsslpkDJTMR7PMFApdxpXtdVlYejqi/wmK1
+         Q3ifTFLhBpvYijEM/8RjmYNzTc1m66BtgvchUlvAje2k1QP72sB4fGZbSUUoQJQXkWQp
+         ZflO4D/DsTH+x2+0dXylOFIoColdiQ63bsvifKcfDJqO36vriv5I1YGJWxOpOwT+1PTS
+         yt2Az4k6s4PQOfJX6zMVEYg/VhMn5ufPE83zsdYI4PUL/ldXyC5yBHGJbnI3dh5qqFTB
+         mdIQbBVsJa+m9ZQM8Lpq3cpiT8uiHN+UCWJ1cHVIDTeEo9F+QCk3RsSkOk5xErxXscNY
+         P9Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733180562; x=1733785362;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TBGqkK/v5Iev96wXKEIFiXllPqz6RLCGsNpAQ8PdYPY=;
+        b=uhIkMkdNpxL/m9dMSLp49tBLzbFoX7Y43V/RAAg4IvuqMHxjZI6QDtVH9YBQxfdjQ7
+         ExRpTBBUqM1N5xhjwOwWiGC0ZsU9QHkqtA2J4CC3wYgUeuP7MSTbjTEJdI9G2aK389V1
+         TAnh0ZnLfKpItlEITDaUXBZCiIO+2mto5nySLJ/gp99ySxA3uZ+x9aZSCcuHWd/2iRHT
+         Fe/WZCYdMwGBTw4nUtw/PaO43cNfEKN0tQsz/ACO5vRtS/IsClenOYXR7Euhqjcz1dEt
+         my5gpE7R3A+6KdR7rGLYybHCoBXY75GGyvbbP5M6ViWs8JkwwPeSQHcELlp7CBz7PXUx
+         T+xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUD1+nWxMexTDvJpmmX9o+mS8IE4CZgzJa8L8M51doWGjk7TRxpRig8FC51o0gtBtEFZXPRjz5j6baDh+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKyZAIrv6/5cceGQEz5QXKRodlPruOSYII04aB8Nq8nw0bvYrd
+	lXY/B09YrI3xt3klYTvV2s4hAp/5J9xrk04xLJh+ss1pvm0EdnSyklO53xFEOzE=
+X-Gm-Gg: ASbGncuhW/elF2JWbvdL7/JmB0YCAluMq87LKcN/fmXMbpuCazoEM+U9Eq540ytvEDR
+	yBr6VQYcKa7wIIITtIXsheXQKvmGeO3pzLdQBqMQN4vHs76HxMNzeuUBCNjQ3osa7zdGpDpyFj8
+	7Cx+TGIaiXMlgsxzSgsM/V507CJV5nmLYoZpFqmW2f0hHVF9ZZvSQVFE5DF+lGhgkUPUijPkvLA
+	EHytDaJlDKiRm7/e025O/E4yLpyGshWRp/1uFvYCEMhktW2JnuRL8hgs6CkRgxGKNXVIJZZmCY=
+X-Google-Smtp-Source: AGHT+IEv1JBbSaCa71BDRL05MtUtqi8CljIjDPjho0wurIfJyJM/U1viaWwUhmNhZ6XHgApvGm5kLA==
+X-Received: by 2002:a05:6830:25d4:b0:710:fa7e:e002 with SMTP id 46e09a7af769-71dad6015c9mr537077a34.5.1733180561967;
+        Mon, 02 Dec 2024 15:02:41 -0800 (PST)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e230de08f6sm2269346173.79.2024.12.02.15.02.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 15:02:41 -0800 (PST)
+Message-ID: <8dc7e94c-4bf2-4367-8561-166bec6ec315@sifive.com>
+Date: Mon, 2 Dec 2024 17:02:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,240 +79,157 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/2] arch: m68k: Add STACKTRACE support
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
- linux-m68k@lists.linux-m68k.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- rostedt@goodmis.org, Michael Schmitz <schmitzmic@gmail.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
- <20241021-add-m68k-tracing-support-v1-2-0883d704525b@yoseli.org>
- <501c04d7-1a7d-4000-a948-e9effb281a05@yoseli.org>
- <a2efe6f7-4bfe-468b-9512-c60f646281b1@linux-m68k.org>
- <7fef0321-5a24-4d8d-9717-8fe02f80b8c2@yoseli.org>
+Subject: Re: [PATCH 7/8] RISC-V: KVM: Implement get event info function
+To: Atish Patra <atishp@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Mayuresh Chitale <mchitale@ventanamicro.com>
+References: <20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com>
+ <20241119-pmu_event_info-v1-7-a4f9691421f8@rivosinc.com>
+From: Samuel Holland <samuel.holland@sifive.com>
 Content-Language: en-US
-From: Greg Ungerer <gerg@linux-m68k.org>
-In-Reply-To: <7fef0321-5a24-4d8d-9717-8fe02f80b8c2@yoseli.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241119-pmu_event_info-v1-7-a4f9691421f8@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi JM,
+Hi Atish,
 
-On 3/12/24 00:52, Jean-Michel Hautbois wrote:
-> On 02/12/2024 15:41, Greg Ungerer wrote:
->> On 27/11/24 21:26, Jean-Michel Hautbois wrote:
->>> On 21/10/2024 11:44, Jean-Michel Hautbois wrote:
->>>> In order to use tracing, implement a basic arch_stack_walk() based on
->>>> the one in PowerPC.
->>>> Tested on a M54418 coldfire.
->>>
->>> Well, I said it was tested, but it was only compile tested basically.
->>> AFAICT now, I think it is not working as when I use wakeup_rt as a tracer, I don't have the stack trace:
->>>
->>> # wakeup_rt latency trace v1.1.5 on 6.12.0-10380-gb66f06337b66-dirty
->>> # --------------------------------------------------------------------
->>> # latency: 2000 us, #18/18, CPU#0 | (M:preempt VP:0, KP:0, SP:0 HP:0)
->>> #    -----------------
->>> #    | task: irq/100-enet-fe-118 (uid:0 nice:0 policy:1 rt_prio:50)
->>> #    -----------------
->>> #
->>> #                    _------=> CPU#
->>> #                   / _-----=> irqs-off/BH-disabled
->>> #                  | / _----=> need-resched
->>> #                  || / _---=> hardirq/softirq
->>> #                  ||| / _--=> preempt-depth
->>> #                  |||| / _-=> migrate-disable
->>> #                  ||||| /     delay
->>> #  cmd     pid     |||||| time  |   caller
->>> #     \   /        ||||||  \    |    /
->>> kworker/-11        0dnh5.    0us :       11:120:R   + [000]      22: 98:R irq_work/0
->>> kworker/-11        0dnh5.    0us : <stack trace>
->>> kworker/-11        0dnh5.    0us : 0
->>> kworker/-11        0d..3.    0us : __schedule
->>> kworker/-11        0d..3.    0us :       11:120:R ==> [000]      22: 98:R irq_work/0
->>> kworker/-11        0d..3.    0us : <stack trace>
->>>   telnetd-229       0Dnh4.    0us :      229:120:R   + [000]     118: 49:R irq/100-enet-fe
->>>   telnetd-229       0Dnh4.    0us : <stack trace>
->>>   telnetd-229       0Dnh4.    0us : 0
->>>   telnetd-229       0D..3.    0us : __schedule
->>>   telnetd-229       0D..3.    0us :      229:120:R ==> [000]     118: 49:R irq/100-enet-fe
->>>   telnetd-229       0D..3.    0us : <stack trace>
->>>   telnetd-229       0dn.5.    0us :      229:120:R   + [000]     118: 49:R irq/100-enet-fe
->>>   telnetd-229       0dn.5.    0us : <stack trace>
->>>   telnetd-229       0dn.5.    0us#: 0
->>>   telnetd-229       0d..3. 2000us : __schedule
->>>   telnetd-229       0d..3. 2000us :      229:120:R ==> [000]     118: 49:R irq/100-enet-fe
->>>   telnetd-229       0d..3. 2000us : <stack trace>
->>>
->>> Geert, Greg, and maybe other highly skilled m68k people, could you please help me with this particular function :-) ?
->>>
->>> Thanks !
->>> JM
->>>
->>>>
->>>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
->>>> ---
->>>>   arch/m68k/Kconfig             |  5 ++++
->>>>   arch/m68k/kernel/Makefile     |  1 +
->>>>   arch/m68k/kernel/stacktrace.c | 70 ++++++++++++++++++++++++++++++++ +++++++++++
->>>>   3 files changed, 76 insertions(+)
->>>>
->>>> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
->>>> index ab3375475721fa63418c40d4ba6ac76679ebc77d..7142f9759181a90269ae1ba9e682d331ee2ddbf6 100644
->>>> --- a/arch/m68k/Kconfig
->>>> +++ b/arch/m68k/Kconfig
->>>> @@ -40,6 +40,7 @@ config M68K
->>>>       select UACCESS_MEMCPY if !MMU
->>>>       select ZONE_DMA
->>>>       select TRACE_IRQFLAGS_SUPPORT
->>>> +    select ARCH_STACKWALK
->>>>   config CPU_BIG_ENDIAN
->>>>       def_bool y
->>>> @@ -107,6 +108,10 @@ config BOOTINFO_PROC
->>>>         Say Y to export the bootinfo used to boot the kernel in a
->>>>         "bootinfo" file in procfs.  This is useful with kexec.
->>>> +config STACKTRACE_SUPPORT
->>>> +    bool
->>>> +    default y
->>>> +
->>>>   menu "Platform setup"
->>>>   source "arch/m68k/Kconfig.cpu"
->>>> diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
->>>> index f335bf3268a108a45bab079fbf0a1c8ead9beb71..4efe92af0b711b19cb1d5129f74e67a739e289b1 100644
->>>> --- a/arch/m68k/kernel/Makefile
->>>> +++ b/arch/m68k/kernel/Makefile
->>>> @@ -31,3 +31,4 @@ obj-$(CONFIG_UBOOT)        += uboot.o
->>>>   obj-$(CONFIG_EARLY_PRINTK)    += early_printk.o
->>>> +obj-y    += stacktrace.o
->>>> diff --git a/arch/m68k/kernel/stacktrace.c b/arch/m68k/kernel/ stacktrace.c
->>>> new file mode 100644
->>>> index 0000000000000000000000000000000000000000..06c7459373bd25b3bb3540cfe2a909259c1db3ce
->>>> --- /dev/null
->>>> +++ b/arch/m68k/kernel/stacktrace.c
->>>> @@ -0,0 +1,70 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +
->>>> +/*
->>>> + * Stack trace utility functions etc.
->>>> + *
->>>> + * Copyright 2024 Jean-Michel Hautbois, Yoseli SAS.
->>>> + */
->>>> +
->>>> +#include <asm/current.h>
->>>> +#include <asm/ptrace.h>
->>>> +#include <linux/sched.h>
->>>> +#include <linux/sched/task_stack.h>
->>>> +#include <linux/stacktrace.h>
->>>> +
->>>> +static inline unsigned long current_stack_frame(void)
->>>> +{
->>>> +    unsigned long sp;
->>>> +
->>>> +    asm volatile("movl %%sp, %0" : "=r"(sp));
->>>> +    return sp;
->>>> +}
->>
->> If I am understanding what this is intended to do then this is probably not right.
->> This will be returning the current stack pointer, which will almost certainly not
->> be the current stack frame pointer. This will be the top of stack at the call site,
->> which will be after the pushed locals and saved registers at the very least for m68k.
->>
->> Does your kernel config have CONFIG_FRAME_POINTER enabled?
->> The default for m68k is usually disabled. Without this there won't be a
->> chain of frame pointers to follow like the code is trying to do below in
->> arch_stack_walk().
+On 2024-11-19 2:29 PM, Atish Patra wrote:
+> The new get_event_info funciton allows the guest to query the presence
+> of multiple events with single SBI call. Currently, the perf driver
+> in linux guest invokes it for all the standard SBI PMU events. Support
+> the SBI function implementation in KVM as well.
 > 
-> Sorry for my preceding mail, it *is* better:
-> # tail -10 trace
-> #                  |||| / _-=> migrate-disable
-> #                  ||||| /     delay
-> #  cmd     pid     |||||| time  |   caller
-> #     \   /        ||||||  \    |    /
->    <idle>-0         0dnh5.   11us+:        0:120:R   + [000]     119: 49:R irq/104-enet-fe
->    <idle>-0         0dnh5.   42us+: <stack trace>
->    <idle>-0         0dnh5.   57us!: wake_up_process <-__handle_irq_event_percpu
->    <idle>-0         0d..3.  282us+: __schedule <-schedule_idle
->    <idle>-0         0d..3.  302us+:        0:120:R ==> [000]     119: 49:R irq/104-enet-fe
->    <idle>-0         0d..3.  325us : <stack trace>
-
-Oh, yeah, there is more required.
-
-The current_stack_frame() function needs to change to actually return
-with the start of the frame pointer chain. You need it to look like this:
-
-
-static inline unsigned long current_stack_frame(void)
-{
-         unsigned long sp;
-
-         asm volatile("movl %%fp, %0" : "=r"(sp));
-         return sp;
-}
-
-
-Note that it is returning the "%fp" register - the current frame pointer.
-
-Regards
-Greg
-
-
-
-> JM
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/kvm_vcpu_pmu.h |  3 ++
+>  arch/riscv/kvm/vcpu_pmu.c             | 67 +++++++++++++++++++++++++++++++++++
+>  arch/riscv/kvm/vcpu_sbi_pmu.c         |  3 ++
+>  3 files changed, 73 insertions(+)
 > 
->> Regards
->> Greg
->>
->>
->>>> +static inline int validate_sp(unsigned long sp, struct task_struct *task)
->>>> +{
->>>> +    unsigned long stack_start, stack_end;
->>>> +
->>>> +    if (task == current)
->>>> +        stack_start = (unsigned long)task_stack_page(task);
->>>> +    else
->>>> +        stack_start = (unsigned long)task->thread.esp0;
->>>> +
->>>> +    stack_end = stack_start + THREAD_SIZE;
->>>> +
->>>> +    if (sp < stack_start || sp >= stack_end)
->>>> +        return 0;
->>>> +
->>>> +    return 1;
->>>> +}
->>>> +
->>>> +void __no_sanitize_address arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie,
->>>> +                       struct task_struct *task, struct pt_regs *regs)
->>>> +{
->>>> +    unsigned long sp;
->>>> +
->>>> +    if (regs && !consume_entry(cookie, regs->pc))
->>>> +        return;
->>>> +
->>>> +    if (regs)
->>>> +        sp = (unsigned long) regs;
->>>> +    else if (task == current)
->>>> +        sp = current_stack_frame();
->>>> +    else
->>>> +        sp = task->thread.ksp;
->>>> +
->>>> +    for (;;) {
->>>> +        unsigned long *stack = (unsigned long *) sp;
->>>> +        unsigned long newsp, ip;
->>>> +
->>>> +        if (!validate_sp(sp, task))
->>>> +            return;
->>>> +
->>>> +        newsp = stack[0];
->>>> +        ip = stack[1];
->>>> +
->>>> +        if (!consume_entry(cookie, ip))
->>>> +            return;
->>>> +
->>>> +        sp = newsp;
->>>> +    }
->>>> +}
->>>>
->>>
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_pmu.h b/arch/riscv/include/asm/kvm_vcpu_pmu.h
+> index 1d85b6617508..9a930afc8f57 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_pmu.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_pmu.h
+> @@ -98,6 +98,9 @@ void kvm_riscv_vcpu_pmu_init(struct kvm_vcpu *vcpu);
+>  int kvm_riscv_vcpu_pmu_snapshot_set_shmem(struct kvm_vcpu *vcpu, unsigned long saddr_low,
+>  				      unsigned long saddr_high, unsigned long flags,
+>  				      struct kvm_vcpu_sbi_return *retdata);
+> +int kvm_riscv_vcpu_pmu_event_info(struct kvm_vcpu *vcpu, unsigned long saddr_low,
+> +				  unsigned long saddr_high, unsigned long num_events,
+> +				  unsigned long flags, struct kvm_vcpu_sbi_return *retdata);
+>  void kvm_riscv_vcpu_pmu_deinit(struct kvm_vcpu *vcpu);
+>  void kvm_riscv_vcpu_pmu_reset(struct kvm_vcpu *vcpu);
+>  
+> diff --git a/arch/riscv/kvm/vcpu_pmu.c b/arch/riscv/kvm/vcpu_pmu.c
+> index efd66835c2b8..a30f7ec31479 100644
+> --- a/arch/riscv/kvm/vcpu_pmu.c
+> +++ b/arch/riscv/kvm/vcpu_pmu.c
+> @@ -456,6 +456,73 @@ int kvm_riscv_vcpu_pmu_snapshot_set_shmem(struct kvm_vcpu *vcpu, unsigned long s
+>  	return 0;
+>  }
+>  
+> +int kvm_riscv_vcpu_pmu_event_info(struct kvm_vcpu *vcpu, unsigned long saddr_low,
+> +				  unsigned long saddr_high, unsigned long num_events,
+> +				  unsigned long flags, struct kvm_vcpu_sbi_return *retdata)
+> +{
+> +	unsigned long hva;
+> +	struct riscv_pmu_event_info *einfo;
+> +	int shmem_size = num_events * sizeof(*einfo);
+> +	bool writable;
+> +	gpa_t shmem;
+> +	u32 eidx, etype;
+> +	u64 econfig;
+> +	int ret;
+> +
+> +	if (flags != 0 || (saddr_low & (SZ_16 - 1))) {
+> +		ret = SBI_ERR_INVALID_PARAM;
+> +		goto out;
+> +	}
+> +
+> +	shmem = saddr_low;
+> +	if (saddr_high != 0) {
+> +		if (IS_ENABLED(CONFIG_32BIT)) {
+> +			shmem |= ((gpa_t)saddr_high << 32);
+> +		} else {
+> +			ret = SBI_ERR_INVALID_ADDRESS;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	hva = kvm_vcpu_gfn_to_hva_prot(vcpu, shmem >> PAGE_SHIFT, &writable);
+> +	if (kvm_is_error_hva(hva) || !writable) {
+> +		ret = SBI_ERR_INVALID_ADDRESS;
+
+This only checks the first page if the address crosses a page boundary. Maybe
+that is okay since kvm_vcpu_read_guest()/kvm_vcpu_write_guest() will fail if a
+later page is inaccessible?
+
+> +		goto out;
+> +	}
+> +
+> +	einfo = kzalloc(shmem_size, GFP_KERNEL);
+> +	if (!einfo)
+> +		return -ENOMEM;
+> +
+> +	ret = kvm_vcpu_read_guest(vcpu, shmem, einfo, shmem_size);
+> +	if (ret) {
+> +		ret = SBI_ERR_FAILURE;
+> +		goto free_mem;
+> +	}
+> +
+> +	for (int i = 0; i < num_events; i++) {
+> +		eidx = einfo[i].event_idx;
+> +		etype = kvm_pmu_get_perf_event_type(eidx);
+> +		econfig = kvm_pmu_get_perf_event_config(eidx, einfo[i].event_data);
+> +		ret = riscv_pmu_get_event_info(etype, econfig, NULL);
+> +		if (ret > 0)
+> +			einfo[i].output = 1;
+
+This also needs to write `output` in the else case to indicate that the event is
+not supported; the spec does not require the caller to initialize bit 0 of
+output to zero.
+
+Regards,
+Samuel
+
+> +	}
+> +
+> +	kvm_vcpu_write_guest(vcpu, shmem, einfo, shmem_size);
+> +	if (ret) {
+> +		ret = SBI_ERR_FAILURE;
+> +		goto free_mem;
+> +	}
+> +
+> +free_mem:
+> +	kfree(einfo);
+> +out:
+> +	retdata->err_val = ret;
+> +
+> +	return 0;
+> +}
+> +
+>  int kvm_riscv_vcpu_pmu_num_ctrs(struct kvm_vcpu *vcpu,
+>  				struct kvm_vcpu_sbi_return *retdata)
+>  {
+> diff --git a/arch/riscv/kvm/vcpu_sbi_pmu.c b/arch/riscv/kvm/vcpu_sbi_pmu.c
+> index e4be34e03e83..a020d979d179 100644
+> --- a/arch/riscv/kvm/vcpu_sbi_pmu.c
+> +++ b/arch/riscv/kvm/vcpu_sbi_pmu.c
+> @@ -73,6 +73,9 @@ static int kvm_sbi_ext_pmu_handler(struct kvm_vcpu *vcpu, struct kvm_run *run,
+>  	case SBI_EXT_PMU_SNAPSHOT_SET_SHMEM:
+>  		ret = kvm_riscv_vcpu_pmu_snapshot_set_shmem(vcpu, cp->a0, cp->a1, cp->a2, retdata);
+>  		break;
+> +	case SBI_EXT_PMU_EVENT_GET_INFO:
+> +		ret = kvm_riscv_vcpu_pmu_event_info(vcpu, cp->a0, cp->a1, cp->a2, cp->a3, retdata);
+> +		break;
+>  	default:
+>  		retdata->err_val = SBI_ERR_NOT_SUPPORTED;
+>  	}
 > 
-> 
+
 
