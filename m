@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-427260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9939DFF2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 577F59DFED5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:26:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1A28B2938A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:25:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86F68B29F90
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5761FC10C;
-	Mon,  2 Dec 2024 10:25:25 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13ED41FC11E;
+	Mon,  2 Dec 2024 10:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kcqIsGqz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C5C1FBEA4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0373F1FC0F1;
+	Mon,  2 Dec 2024 10:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733135125; cv=none; b=mlE/yH5/m061uCUC/6B+utv1xEtx9Kd5Fi7tTF9P2SBwQk+gOijiwuaV8TNaElS0E8qZflcRqgaVcSMOUzjP7EQ+YY1yiDx/LsC2S9eUQUTCvgesPgnR8JshhgKPlSTb1LifhF2VVoOgWqRphBJVlauWrVM7YsiBWqZ67Xfn6LA=
+	t=1733135137; cv=none; b=aq/DVmf2tY0CJkYitYbtLG5Y7pLexreDTKCpC/crmmJFpdOFjVEHaqr46/7GMXOKuU+5GJrqAWaI/k3kMZwUwaok41Z0ydd0gOUdaRxBzSio23cmSGnHZNRtV6/OBa5QItBHHDPjl1+q4FqZ/vHDAjGilTmu4NA7XC2jTySpDss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733135125; c=relaxed/simple;
-	bh=bwU+8Vz6+R85zrOlU8SH1G6SCKGlY2MSsNEldJi4Zlc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gE2lIIaGdNgoYZfK9H7k1von7p3s2wS2mDDCGqQeWFQvaCuYhVUMdzdbGlztytkodXrXQmc5zG1YEB19mcWaZB/bP7fvFytE0GM23EC7oEmo8O3mR2RE2WHBI8uy0lJjSNiJ2B1FAAKIrDw0F7EqT8epmttVwDThCGikdVQ4+Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77a808c27so48414765ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:25:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733135123; x=1733739923;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G7BvBK1k+7yzTwiL16aKjkj3lzK9QCpioNhQY+7cKWQ=;
-        b=XCo65Kbhf18SsB4LltL8b45P97dmUNotA//CLXqUzw/CvLmxWUBDbgMLIhe8h+YHRS
-         ZwumDGIchvzRfFm+oDahtjkQW2IJVfh4Pe8DJo3Pb1olX0EnUYJyOVli/hax//lfAVcC
-         tQ9ogL3LaH+awJJS1RkxPa3HjjhJFV4sgSaE5zsQsvrH4uOZcgJvxU7C2cHwYu4+o283
-         QVmebppQI+YxHQrnHdQO/eKPm55TNryqfUysL2h/4WOy2y7WhpSyWTlUAPGg8MRJR0DI
-         hnTYAo0s/PVg+9bfLCofa2yJ4lv1EBZRtvc3fjL+80b692hC50SLkvCxIyoareR2sT9N
-         H8gg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6/0/veJBwng7pGbXQ+vXEQ4sByiMdC06w0grt0Q0/9ftVmYWG7HaFGANzb/wKe9Fdg/KJIom3ZnNY5U4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLU16Dmpymfvj41LEDeZNwUbcrWQYrFiznE6NKtQ31E2TYXgs6
-	MbwpEI0L9Ucoxs6S6UU6zLicLJEjpmgBxKGjcT8UowI/5+WacZy6awTnjH1rEhRWqyfxA+Z6AOg
-	YvyRgbDfAQOqhADu+3MvpHVMATPh7URjRzOsSwFMCq1zRiA3KLBtV6r8=
-X-Google-Smtp-Source: AGHT+IH3LIxnVeeh5wlBJugS0WttyQLB/huRt9dxiUbMi/2OagJ6D5L01Xwupne/kcxNt3P+h7wQy40tjnA8T2Xkkvfpm0bS0VJK
+	s=arc-20240116; t=1733135137; c=relaxed/simple;
+	bh=sfXpJT1s17rQbX+XpjPOQ5N1pYmn6N1R89Yl9PbRhng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DTr2NKPsqZoATa1uwZUkloieY5599MaoiWc31yU+w3f0/PeZnqkGsO6iJXRKjPaiv9hSmqskGqr96u/UpOqWdYemZLgTJY92oigM4F/G/exUix6g+Sqfi66QzOW+rsYwle0EJJ0pf3uRlvTuGBms55Baa2sHNi68NNJEs2uR8Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kcqIsGqz; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733135136; x=1764671136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sfXpJT1s17rQbX+XpjPOQ5N1pYmn6N1R89Yl9PbRhng=;
+  b=kcqIsGqznv2OHwDk2fGaMnh1HZdtuwk5M128Ixfeyow777HIs+TMu5Qd
+   Pq9gXqosTFSuRy8sdyHlUx8bwDMVgDYyRE/ZL/v2S+FB5RRLkTRTDNEtg
+   VRNZfw5nz2OJuUkbglf2cRFjN6RxBMBoJRbqxkA4paiKEm9oCnHJNyZMU
+   poHOW92YGua9dGxnme/cWV0aadSXthRMdtC/81TJZgWdepo6YWacXXu7n
+   PGeCSS3j27ZYCzce6LesCZlS9Pw4mcWDfwyN4rJ/eEVXk/d1/CjZRWQBJ
+   AATcITtLGnjf8LOosITaYWonBzespGrBsRMjRENd21ayUHyrQV6kxMc8k
+   w==;
+X-CSE-ConnectionGUID: KhZcexIBRCKVPiqfZmQQ0g==
+X-CSE-MsgGUID: vroHt+IhT+GP4i1QnMNh8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="44674861"
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="44674861"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 02:25:36 -0800
+X-CSE-ConnectionGUID: VKo2MdWuQXaW0GvXph8fOQ==
+X-CSE-MsgGUID: pHwGe0BwQGeUyl6kL4RAdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="92900460"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.244.72])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 02:25:33 -0800
+Date: Mon, 2 Dec 2024 11:25:25 +0100
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] iio: accel: kx022a: Support ICs with different
+ G-ranges
+Message-ID: <4waoywlqb63yav6q3rdvqnwbihxccgl6p5y7f72yzdadnlzezz@g4fz63owgguj>
+References: <cover.1732783834.git.mazziesaccount@gmail.com>
+ <fc667b1495adf4e3f29ecbb336495c1f18b47e61.1732783834.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4515:20b0:3a7:c5ff:e5e2 with SMTP id
- e9e14a558f8ab-3a7c5ffe759mr131776685ab.0.1733135123386; Mon, 02 Dec 2024
- 02:25:23 -0800 (PST)
-Date: Mon, 02 Dec 2024 02:25:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674d8b13.050a0220.ad585.004b.GAE@google.com>
-Subject: [syzbot] Monthly v9fs report (Dec 2024)
-From: syzbot <syzbot+list45a27aadcc5c46dbab45@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc667b1495adf4e3f29ecbb336495c1f18b47e61.1732783834.git.mazziesaccount@gmail.com>
 
-Hello v9fs maintainers/developers,
+Hi Matti,
 
-This is a 31-day syzbot report for the v9fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/v9fs
+Sorry for the late answer. I know that this was already applied so maybe
+you can post a really small follow-up patch ?
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 11 issues are still open and 33 have already been fixed.
+> diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-kx022a.h
+> index 7060438ad88c..36e9d9de8c13 100644
+> --- a/drivers/iio/accel/kionix-kx022a.h
+> +++ b/drivers/iio/accel/kionix-kx022a.h
+> @@ -161,6 +161,8 @@ struct kx022a_data;
+>  struct kx022a_chip_info {
+>  	const char *name;
+>  	const struct regmap_config *regmap_config;
+> +	const int (*scale_table)[2];
+> +	const int scale_table_size;
 
-Some of the still happening issues:
+Could you please add kernel-doc for these two new elements like the others already
+have ?
 
-Ref Crashes Repro Title
-<1> 3691    Yes   WARNING in v9fs_fid_get_acl
-                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
-<2> 27      Yes   WARNING in p9pdu_vwritef
-                  https://syzkaller.appspot.com/bug?extid=94b73a3e8ea625efcd05
-<3> 9       No    BUG: corrupted list in p9_fd_cancelled (3)
-                  https://syzkaller.appspot.com/bug?extid=15a08eabe3d3838fb641
+>  	const struct iio_chan_spec *channels;
+>  	unsigned int num_channels;
+>  	unsigned int fifo_length;
+> -- 
+> 2.47.0
+> 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+--
+Kind Regards
+Mehdi Djait
 
