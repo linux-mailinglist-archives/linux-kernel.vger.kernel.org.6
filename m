@@ -1,164 +1,245 @@
-Return-Path: <linux-kernel+bounces-428302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F959E0DED
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C29239E0E01
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:40:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDD22B2F73B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:55:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59FF0B264C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C94F1DED7F;
-	Mon,  2 Dec 2024 19:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78781DED68;
+	Mon,  2 Dec 2024 20:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b="NHxUyl+i"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mRdzOJj7"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9071632FE
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5136AAD
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 20:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733169314; cv=none; b=RqW8N7pCQIP9lFKriNy/C+s3nbUheZpxcTvb8Pgm8oR9JZHOAkcQDuQkG0a5GyTsDAUQfrBjhDjmww+FrWNtelx1UjgJPSf9Tsv8Dejllyz0dFgrbJE3knMNb0bGA+WvIXB3HF3vCFqFdJjlaprKkTccV/EKJpcR7QT+Npdu/Qk=
+	t=1733171255; cv=none; b=qICH2kRoE4GAA2GOR0sRDovJ2OIDWwPcePIsKsIgAii/4WfYXoj4lhZFznXPGz5s3/NzEJ6VG7sHRjitSghAIik8DkHXF7w6p6yqoepxd4op16iEyXUY1LgNAsqNGaRTkckUS9TwtpCMRPyLhoKtQNDo7tSX25KIXr5V3nsOlVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733169314; c=relaxed/simple;
-	bh=oAEOGPcuE44jG0Dh3+qdeTTc+f0IFCOK7ugZhh8C/V8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KkFkVxpAl6UMG+KD9yFyVSWroTtrfZNT/H5yuYLYaqoHSKFKTNVSYgiJTw+6tTjHG5C1ouhRxuVERL/WArqie/i9+fK1IjKfGXcz8M1Y2JjogudX5OBhzS/k6s2U+78T2tOuLyeuYQvzITD//7QIJKgUzQvPWZAyuAB/TwpFWfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com; spf=none smtp.mailfrom=kutsevol.com; dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b=NHxUyl+i; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kutsevol.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b66d20e9ccso225969685a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 11:55:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kutsevol-com.20230601.gappssmtp.com; s=20230601; t=1733169310; x=1733774110; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CTz4SYNXtVQrTL3+YDyL63H/cUWUuCh7OMJoBZyQv8A=;
-        b=NHxUyl+is2LOIC5lC5O5U7WBKK4to1XO+I5azl2gcE6/8SyJ5xVQCesBCvAXgfMoVv
-         RhwBNbWv9jqmq0WNQMLFJEN8OekXxuSYsCde8IUQa0gXyLoS58/P//bhW01nN18PJby1
-         rUKSZU5zsuJ/df++kQFUh2sujtHJpEgWwofZ2q9UKHr/hngq6ZruBrsJtWSmHupxHNwQ
-         fcLzr34rf4oyvFnLKb09YR28krZi/wkCHq+zrqjBHVIoTjBFDT2ei9+Jz0oleUcK54GA
-         LrNbm7vzjHDoxD41kMYmSpZj7sm4hH22DBoQIZa7QTTNs+5DlnzOaURezuU2mbzV/HqO
-         FL1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733169310; x=1733774110;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CTz4SYNXtVQrTL3+YDyL63H/cUWUuCh7OMJoBZyQv8A=;
-        b=wB46E86NANbQlIAxgvHMfSqCLsNCdjpxpNCg3ePIyITTLLMujnLUymEy/NU00AciI1
-         /YDlKtRY4tqSeio9smWmOCahiIDJZtv/d/YC8edW3nJr4EDnukTedWboloKqF38atjjW
-         Zzh7Q5Skuj/tS556c9wQG8kKy1W39xgT/jgMlJvkpThaIZ7O8V/CHKNVmHhh6Tjofi21
-         4ZyCCuJSx9cLoqOjwGpN3x0a8uGYCSM8k4KkpM111gZQstKT+Z0B8QOlvdfF0PX7/oHl
-         jqZPymfbFPEIP7Ck4/W/ecHerAzdWE228M+eIEcqhjaLWHFMFfYPEYsFffFdNbPkmEI0
-         TUcg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/9hjaTkfirhaKz5BqQ0A+AO7s3gd3PZOdKGXwJ5Y/B4ov1twNnRFmWJDfmStD3Lellz0GF95Ebn7ob+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/vip155CjmSOcdetxuQaCv2zhvXQMjPx9TBTuaRmjxBoo0YDo
-	KoN/CrC2U0QyWzbycd5y6XPyVCrrAQ0UAy59B/+6PmQ339b3TEfhj0lzw/YiVoA=
-X-Gm-Gg: ASbGncu1PT1EksUNxMVjVHm38Ekwa6C2/KaZbq3JZNPP/uh9cTo0aGxHTPeQ1oYg6a/
-	UrhW5o2H9r2MduyIwv6UqUk8yh/59237oLlQ/1fFTGC0PkHWzHQEOBh/sy/rr24N+ROZvuE2XYr
-	iZJYU+x2Yb0iA5U8FZxNb4OOocwttn5WzRB/lfB+ZMAKcig7weURXKQPoiXg+1Hl4UlJkq2/cY7
-	E0DQyUjFduq4+Oc7vMvwHtjHzBO1jU2EghvLjZVTRUkUD8nw2iX1xWu8lYzT2m92Tj//jXO1rPM
-	aXnV76aSZL0ukxv9Ug==
-X-Google-Smtp-Source: AGHT+IFbAoiJQCOE6Mt28cCoijQb6g4P6fK4OCOHQ1IvMryYVO44sJECXuqxmew2uqRFGxCiEbEwVw==
-X-Received: by 2002:a05:620a:688f:b0:7b6:77c0:a096 with SMTP id af79cd13be357-7b67c443becmr3395019985a.46.1733169310407;
-        Mon, 02 Dec 2024 11:55:10 -0800 (PST)
-Received: from localhost.localdomain (fwdproxy-ash-112.fbsv.net. [2a03:2880:20ff:70::face:b00c])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849aac8dsm439338585a.77.2024.12.02.11.55.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 11:55:10 -0800 (PST)
-From: Maksym Kutsevol <max@kutsevol.com>
-Subject: [PATCH net-next v5 0/2] netcons: Add udp send fail statistics to
- netconsole
-Date: Mon, 02 Dec 2024 11:55:06 -0800
-Message-Id: <20241202-netcons-add-udp-send-fail-statistics-to-netconsole-v5-0-70e82239f922@kutsevol.com>
+	s=arc-20240116; t=1733171255; c=relaxed/simple;
+	bh=2HU7XWxip2UgDVkC7chuPQVOS72O62R8gByblaP2zs4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R24d1FR4xNNdGy6ikyg79yE/F9wQLrEKjjCra+l0Fyq6Dt0wWL0POCSQH6MjM9KNeDvhA1wY8Rd2iuFJY/iyksBC3vJq47UHvuJJvY+TF7MIeH54bpafh4ErsC4gHijH7D/Dsc3OAKecKYwliM45748i9x2y6umNmO0Fgd+xnio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mRdzOJj7; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B2KRLik075303;
+	Mon, 2 Dec 2024 14:27:21 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733171241;
+	bh=NaRKe/7DGKnbOUiUz5NG4MKDmFIpIXZ07dw8DEoCr3c=;
+	h=From:To:CC:Subject:Date;
+	b=mRdzOJj7wA9IOFsVrYOoF1DkbWWDDRX9Xb4gsUbfGfulK3sIX1FWCxj3nDtxQWt3g
+	 Z5RTiVvvKiEVRkLHr4VR/qGrCz9NrrEQ12bIt3f9y373dPqeCMMchl/iDDWS0ixS1T
+	 XH2u44tsBWVbjnOOs+lvu3CJdo4gwYu0ArJvfTdY=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2KRL8n122460
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Dec 2024 14:27:21 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
+ Dec 2024 14:27:21 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 2 Dec 2024 14:27:20 -0600
+Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2KRKcT081503;
+	Mon, 2 Dec 2024 14:27:20 -0600
+From: Andrew Davis <afd@ti.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Russell King
+	<linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Jean-Marie Verdun
+	<verdun@hpe.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Andrew Davis <afd@ti.com>
+Subject: [PATCH v2] ARM: mach-hpe: Rework support and directory structure
+Date: Mon, 2 Dec 2024 14:27:19 -0600
+Message-ID: <20241202202719.111739-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJoQTmcC/6WOTQ6CMBCFr0Jm7RiEItSV9zAsmnaQRmxJpzQYw
- t1tSDyBy5f3vZ8NmIIlhluxQaBk2XqXRXMqQI/KPQmtyRqqshKXsmrRUdTeMSpjcDEzMjmDg7I
- TclTRcrSaMfof5ydCo6VqlBzkpZaQi+dAg12P0QdkLrNrhD47Y8778DneJHH4/wwngSWqrrw2S
- tS6k+39tUSm5Kez9m/o933/ApDU3JABAQAA
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- Breno Leitao <leitao@debian.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Maksym Kutsevol <max@kutsevol.com>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Enhance observability of netconsole. Packet sends can fail.
-Start tracking at least two failure possibilities: ENOMEM and
-NET_XMIT_DROP for every target. Stats are exposed via an additional
-attribute in CONFIGFS.
+Having a platform need a mach-* directory should be seen as a negative,
+it means the platform needs special non-standard handling. ARM64 support
+does not allow mach-* directories at all. While we may not get to that
+given all the non-standard architectures we support, we should still try
+to get as close as we can and reduce the number of mach directories.
 
-The exposed statistics allows easier debugging of cases when netconsole
-messages were not seen by receivers, eliminating the guesswork if the
-sender thinks that messages in question were sent out.
+The mach-hpe/ directory and files, provides just one "feature":
+having the kernel print the machine name if the DTB does not also contain
+a "model" string (which they always do). To reduce the number of mach-*
+directories let's do without that feature and remove this directory.
 
-Stats are not reset on enable/disable/change remote ip/etc, they
-belong to the netcons target itself.
+Note, we drop the l2c_aux_mask = ~0 line, but this is safe as
+the fallback GENERIC_DT machine has that as the default.
 
-Reported-by: Breno Leitao <leitao@debian.org>
-Closes: https://lore.kernel.org/all/ZsWoUzyK5du9Ffl+@gmail.com/
-Signed-off-by: Maksym Kutsevol <max@kutsevol.com>
+Signed-off-by: Andrew Davis <afd@ti.com>
 ---
-Changelog:
-v5:
- * Don't align the struct.
- * Rename netpoll_send_udp_count_errs to send_udp.
- * Link to v4: https://lore.kernel.org/r/20241027-netcons-add-udp-send-fail-statistics-to-netconsole-v4-0-a8065a43c897@kutsevol.com
 
-v4:
- * Rebased after
-   https://lore.kernel.org/netdev/20241017095028.3131508-1-leitao@debian.org/
-   was merged
- * cc doc maintainers.
- * adhere to 80 columns. Learn that checkpatch defaults to 100. Okay :)
+Changes for v2:
+ - Rebased on v6.13-rc1
 
-v3:
- * https://lore.kernel.org/netdev/20240912173608.1821083-2-max@kutsevol.com/
- * cleanup the accidental slip of debugging addons.
- * use IS_ENABLED() instead of #ifdef. Always have stats field.
+ MAINTAINERS                |  1 -
+ arch/arm/Kconfig           |  2 --
+ arch/arm/Kconfig.platforms | 25 +++++++++++++++++++++++++
+ arch/arm/Makefile          |  1 -
+ arch/arm/mach-hpe/Kconfig  | 23 -----------------------
+ arch/arm/mach-hpe/Makefile |  1 -
+ arch/arm/mach-hpe/gxp.c    | 15 ---------------
+ 7 files changed, 25 insertions(+), 43 deletions(-)
+ delete mode 100644 arch/arm/mach-hpe/Kconfig
+ delete mode 100644 arch/arm/mach-hpe/Makefile
+ delete mode 100644 arch/arm/mach-hpe/gxp.c
 
-v2:
- * https://lore.kernel.org/netdev/20240828214524.1867954-2-max@kutsevol.com/
- * fixed commit message wording and reported-by reference.
- * not hiding netconsole_target_stats when CONFIG_NETCONSOLE_DYNAMIC
-   is not enabled.
- * rename stats attribute in configfs to transmit_errors and make it
-   a single u64 value, which is a sum of errors that occured.
- * make a wrapper function to count errors instead of a return result
-   classifier one.
- * use u64_stats_sync.h to manage stats.
-
-v1:
- * https://lore.kernel.org/netdev/20240824215130.2134153-2-max@kutsevol.com/
-
----
-Maksym Kutsevol (2):
-      netpoll: Make netpoll_send_udp return status instead of void
-      netcons: Add udp send fail statistics to netconsole
-
- Documentation/networking/netconsole.rst |  5 +--
- drivers/net/netconsole.c                | 61 +++++++++++++++++++++++++++++++--
- include/linux/netpoll.h                 |  2 +-
- net/core/netpoll.c                      |  6 ++--
- 4 files changed, 65 insertions(+), 9 deletions(-)
----
-base-commit: 65ae975e97d5aab3ee9dc5ec701b12090572ed43
-change-id: 20241027-netcons-add-udp-send-fail-statistics-to-netconsole-dc9a5a9f9139
-
-Best regards,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1e930c7a58b13..8d8f3caa4066d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2489,7 +2489,6 @@ F:	Documentation/devicetree/bindings/spi/hpe,gxp-spifi.yaml
+ F:	Documentation/devicetree/bindings/timer/hpe,gxp-timer.yaml
+ F:	Documentation/hwmon/gxp-fan-ctrl.rst
+ F:	arch/arm/boot/dts/hpe/
+-F:	arch/arm/mach-hpe/
+ F:	drivers/clocksource/timer-gxp.c
+ F:	drivers/hwmon/gxp-fan-ctrl.c
+ F:	drivers/i2c/busses/i2c-gxp.c
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 202397be76d80..4053aee636ef1 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -391,8 +391,6 @@ source "arch/arm/mach-highbank/Kconfig"
+ 
+ source "arch/arm/mach-hisi/Kconfig"
+ 
+-source "arch/arm/mach-hpe/Kconfig"
+-
+ source "arch/arm/mach-imx/Kconfig"
+ 
+ source "arch/arm/mach-ixp4xx/Kconfig"
+diff --git a/arch/arm/Kconfig.platforms b/arch/arm/Kconfig.platforms
+index 845ab08e20a4b..5c19c1f2cff61 100644
+--- a/arch/arm/Kconfig.platforms
++++ b/arch/arm/Kconfig.platforms
+@@ -87,6 +87,31 @@ config MACH_ASM9260
+ 	help
+ 	  Support for Alphascale ASM9260 based platform.
+ 
++menuconfig ARCH_HPE
++	bool "HPE SoC support"
++	depends on ARCH_MULTI_V7
++	help
++	  This enables support for HPE ARM based BMC chips.
++
++if ARCH_HPE
++
++config ARCH_HPE_GXP
++	bool "HPE GXP SoC"
++	depends on ARCH_MULTI_V7
++	select ARM_VIC
++	select GENERIC_IRQ_CHIP
++	select CLKSRC_MMIO
++	help
++	  HPE GXP is the name of the HPE Soc. This SoC is used to implement many
++	  BMC features at HPE. It supports ARMv7 architecture based on the Cortex
++	  A9 core. It is capable of using an AXI bus to which a memory controller
++	  is attached. It has multiple SPI interfaces to connect boot flash and
++	  BIOS flash. It uses a 10/100/1000 MAC for network connectivity. It
++	  has multiple i2c engines to drive connectivity with a host
++	  infrastructure.
++
++endif
++
+ menuconfig ARCH_MOXART
+ 	bool "MOXA ART SoC"
+ 	depends on ARCH_MULTI_V4
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 00ca7886b18ef..c1cd02a53aa3d 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -188,7 +188,6 @@ machine-$(CONFIG_ARCH_FOOTBRIDGE)	+= footbridge
+ machine-$(CONFIG_ARCH_GEMINI)		+= gemini
+ machine-$(CONFIG_ARCH_HIGHBANK)		+= highbank
+ machine-$(CONFIG_ARCH_HISI)		+= hisi
+-machine-$(CONFIG_ARCH_HPE)		+= hpe
+ machine-$(CONFIG_ARCH_IXP4XX)		+= ixp4xx
+ machine-$(CONFIG_ARCH_KEYSTONE)		+= keystone
+ machine-$(CONFIG_ARCH_LPC18XX)		+= lpc18xx
+diff --git a/arch/arm/mach-hpe/Kconfig b/arch/arm/mach-hpe/Kconfig
+deleted file mode 100644
+index 3372bbf38d383..0000000000000
+--- a/arch/arm/mach-hpe/Kconfig
++++ /dev/null
+@@ -1,23 +0,0 @@
+-menuconfig ARCH_HPE
+-	bool "HPE SoC support"
+-	depends on ARCH_MULTI_V7
+-	help
+-	  This enables support for HPE ARM based BMC chips.
+-if ARCH_HPE
+-
+-config ARCH_HPE_GXP
+-	bool "HPE GXP SoC"
+-	depends on ARCH_MULTI_V7
+-	select ARM_VIC
+-	select GENERIC_IRQ_CHIP
+-	select CLKSRC_MMIO
+-	help
+-	  HPE GXP is the name of the HPE Soc. This SoC is used to implement many
+-	  BMC features at HPE. It supports ARMv7 architecture based on the Cortex
+-	  A9 core. It is capable of using an AXI bus to which a memory controller
+-	  is attached. It has multiple SPI interfaces to connect boot flash and
+-	  BIOS flash. It uses a 10/100/1000 MAC for network connectivity. It
+-	  has multiple i2c engines to drive connectivity with a host
+-	  infrastructure.
+-
+-endif
+diff --git a/arch/arm/mach-hpe/Makefile b/arch/arm/mach-hpe/Makefile
+deleted file mode 100644
+index 8b0a91234df4e..0000000000000
+--- a/arch/arm/mach-hpe/Makefile
++++ /dev/null
+@@ -1 +0,0 @@
+-obj-$(CONFIG_ARCH_HPE_GXP) += gxp.o
+diff --git a/arch/arm/mach-hpe/gxp.c b/arch/arm/mach-hpe/gxp.c
+deleted file mode 100644
+index 581c8da517b86..0000000000000
+--- a/arch/arm/mach-hpe/gxp.c
++++ /dev/null
+@@ -1,15 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/* Copyright (C) 2022 Hewlett-Packard Enterprise Development Company, L.P. */
+-
+-#include <asm/mach/arch.h>
+-
+-static const char * const gxp_board_dt_compat[] = {
+-	"hpe,gxp",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(GXP_DT, "HPE GXP")
+-	.dt_compat	= gxp_board_dt_compat,
+-	.l2c_aux_val = 0,
+-	.l2c_aux_mask = ~0,
+-MACHINE_END
 -- 
-Maksym Kutsevol <max@kutsevol.com>
+2.39.2
 
 
