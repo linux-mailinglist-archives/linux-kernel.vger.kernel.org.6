@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-427329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783F69DFFFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:17:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D0A9DFFF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:17:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FA3B27D87
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:14:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4431B281CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5681D1FDE34;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AA81FE445;
 	Mon,  2 Dec 2024 11:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RPRtQBZv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NLKlWdB0"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bMKkiYU9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dwVqdROb"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D3D1FDE1B;
-	Mon,  2 Dec 2024 11:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A4C1FDE23;
+	Mon,  2 Dec 2024 11:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138053; cv=none; b=U2C218gp/LdA1g4Hd1o6/Z5uuqjczlSFb7PnI/4Zv+CHclZ0znh/jDpKanW7jzwr6GlgzFVaFMvxqwqzAcWy1Gegk6NL23zvaakP0qIqzo10fCIUylnHX5iahaS8XlLIYemWKNV13Sj7YWtFvWKgqkVFrgXeMCpmOvhWKtvLXPk=
+	t=1733138054; cv=none; b=FTy/ik4cOMhEx8ZM07VjbVfNOP7WTJdp7NBqaIWWZUPWhLE02QbO5avna4912CX3AOkX24HmKOttaQ62Ix82x4HZqOEqacAmDXMHgSUL2Wu+zBaZjKMZcoeQmEIYvy24vj3ML5Hop1oZLsoMpqvZ1I4lI0az3RN1Qp5boSFOhvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138053; c=relaxed/simple;
-	bh=8srJQlQRnd3uBczTrcDS0n3JCdopqvZNtz2OST9dtIA=;
+	s=arc-20240116; t=1733138054; c=relaxed/simple;
+	bh=5rUuCE03D/YfBP6wDhi4s9wzDCI3fLHcc3MqcTVpT3c=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OeCwT2W0S1NGLLyeqgVLBtD9BhzuAvcAU9TiXboKfePaMNcFKOLHGjKkUQT2JuQGZDW8Yb1pKQR+5VV2uhkpuZL4I9cgCbNFWjg01r+tsnoDQzeFgRSqjUfJ1nV3Y4wgY4ft8EYVc86iGgojhnqQ4Mduq3vsrtTgIzYNQrQRYRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RPRtQBZv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NLKlWdB0; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=loMcFvZsI6MN3g3tJ7nba1hkzVDS+IP1a0MGRxLqmxP7yd/+rq8QJB1j9kVZDmZ0bMi3yzspg20j/AtO+EsS9rpFNjicS8K8E0Kmz9hLJhZ2sVOiVz3yDkcvR+8CaMDLFTMQx7UFJdn1snDY55syifAVS6p1HHG0gPtEZVr6w1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bMKkiYU9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dwVqdROb; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 02 Dec 2024 11:14:08 -0000
+Date: Mon, 02 Dec 2024 11:14:10 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1733138050;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wTCXdQPkynqH9FhWSXWzfjxZVw96RFN0+E5pqyCgJSg=;
-	b=RPRtQBZvvWKcvXv6LBDFoxKTvSbkNRqirIYpWGLA93J6aPpvjfWzHUKpZYUtHbWnHD4fMU
-	nGLAdWlh7ybnsHdvhLVnJEfICmbwgha4JXVF2pZf+ym+dW7jHpBBwLIPnvXnYgmonUStAd
-	s+t19rkOoYkLkkcke5lrPTyl9WsyO5u2i8zyLh/tURTdBJ4gD4WKT9ecQfwkDeXTdVXuS6
-	y5PlIgKUXYADkOD4mNQbYBWFDDeQy8fJqQM2WKstuAzL0h3rSSfp51wySTbZ67SlvADLJE
-	qBnuGDymjEoIlsOAlM3vNBnIvMpZEG0AiLWJw0ole8EOQ68y5bt/O61tcxnLoA==
+	bh=QbmXCmRuCL+3db+FK15nT8E9qMXHnv6z4GDFXGJ5bHY=;
+	b=bMKkiYU9lI3ajSsuzR1Og4VcdMq8EKfHXOscZGmaodBeYMgb8tc2SZpiNYUNULThhQWdYT
+	rDOVUUIyPH7TYjT8ja4S5e4LUEfn+DsQyIk2JhDS4j396W2B8qHb86UBVDJBl6iuSdXdrD
+	VU4tyV1ucrI2EL1jJgXn0L8KCBKQdrSTqCLq/LoHBMaY2a2B3jP1BfFRirbbIltMv2T45r
+	tAtyO02kftrl369s5iSlFeq5Z2PggfM6rQ1wwcJuowq7Q6MTAYPZTpm6PdZlAFk5K28J6r
+	0OeEy7lJYIMIFz8ryDu/WDBG7mJHvDIUza/wrmYddd0B7Hl2dwd6Vbv9pY7zQA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1733138050;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,28 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wTCXdQPkynqH9FhWSXWzfjxZVw96RFN0+E5pqyCgJSg=;
-	b=NLKlWdB0fP6W0SmjJnCxGwyKlDdr1mISdBimdh8Re4QxYtDbzwCX8gX06+pwNjjk3y6Ub0
-	KwXIjwTucyNl6jBQ==
-From: "tip-bot2 for Andrii Nakryiko" <tip-bot2@linutronix.de>
+	bh=QbmXCmRuCL+3db+FK15nT8E9qMXHnv6z4GDFXGJ5bHY=;
+	b=dwVqdRObHUAFNcgX6fjtF81Mzh6IYBKQ4DxJuKmrDzkkBc7Ux06mn1sUv717EJFkkjakKr
+	arjmJp/3LgM5WPBg==
+From: "tip-bot2 for Suren Baghdasaryan" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] uprobes: simplify find_active_uprobe_rcu() VMA checks
-Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, x86@kernel.org,
+Subject: [tip: perf/core] mm: introduce mmap_lock_speculate_{try_begin|retry}
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@Oracle.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241122035922.3321100-2-andrii@kernel.org>
-References: <20241122035922.3321100-2-andrii@kernel.org>
+In-Reply-To: <20241122174416.1367052-3-surenb@google.com>
+References: <20241122174416.1367052-3-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173313804898.412.14244739462302123654.tip-bot2@tip-bot2>
+Message-ID: <173313805013.412.5462710038573020957.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,40 +82,80 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     83e3dc9a5d4d7402adb24090a77327245d593129
-Gitweb:        https://git.kernel.org/tip/83e3dc9a5d4d7402adb24090a77327245d593129
-Author:        Andrii Nakryiko <andrii@kernel.org>
-AuthorDate:    Thu, 21 Nov 2024 19:59:21 -08:00
+Commit-ID:     03a001b156d2da186a5618de242750d06bf81e2d
+Gitweb:        https://git.kernel.org/tip/03a001b156d2da186a5618de242750d06bf81e2d
+Author:        Suren Baghdasaryan <surenb@google.com>
+AuthorDate:    Fri, 22 Nov 2024 09:44:16 -08:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 02 Dec 2024 12:01:38 +01:00
 
-uprobes: simplify find_active_uprobe_rcu() VMA checks
+mm: introduce mmap_lock_speculate_{try_begin|retry}
 
-At the point where find_active_uprobe_rcu() is used we know that VMA in
-question has triggered software breakpoint, so we don't need to validate
-vma->vm_flags. Keep only vma->vm_file NULL check.
+Add helper functions to speculatively perform operations without
+read-locking mmap_lock, expecting that mmap_lock will not be
+write-locked and mm is not modified from under us.
 
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Link: https://lkml.kernel.org/r/20241122035922.3321100-2-andrii@kernel.org
+Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Link: https://lkml.kernel.org/r/20241122174416.1367052-3-surenb@google.com
 ---
- kernel/events/uprobes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/mmap_lock.h | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index fa04b14..62c14df 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -2304,7 +2304,7 @@ static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
- 	mmap_read_lock(mm);
- 	vma = vma_lookup(mm, bp_vaddr);
- 	if (vma) {
--		if (valid_vma(vma, false)) {
-+		if (vma->vm_file) {
- 			struct inode *inode = file_inode(vma->vm_file);
- 			loff_t offset = vaddr_to_offset(vma, bp_vaddr);
+diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+index 9715326..45a21fa 100644
+--- a/include/linux/mmap_lock.h
++++ b/include/linux/mmap_lock.h
+@@ -71,6 +71,7 @@ static inline void mmap_assert_write_locked(const struct mm_struct *mm)
+ }
  
+ #ifdef CONFIG_PER_VMA_LOCK
++
+ static inline void mm_lock_seqcount_init(struct mm_struct *mm)
+ {
+ 	seqcount_init(&mm->mm_lock_seq);
+@@ -87,11 +88,39 @@ static inline void mm_lock_seqcount_end(struct mm_struct *mm)
+ 	do_raw_write_seqcount_end(&mm->mm_lock_seq);
+ }
+ 
+-#else
++static inline bool mmap_lock_speculate_try_begin(struct mm_struct *mm, unsigned int *seq)
++{
++	/*
++	 * Since mmap_lock is a sleeping lock, and waiting for it to become
++	 * unlocked is more or less equivalent with taking it ourselves, don't
++	 * bother with the speculative path if mmap_lock is already write-locked
++	 * and take the slow path, which takes the lock.
++	 */
++	return raw_seqcount_try_begin(&mm->mm_lock_seq, *seq);
++}
++
++static inline bool mmap_lock_speculate_retry(struct mm_struct *mm, unsigned int seq)
++{
++	return read_seqcount_retry(&mm->mm_lock_seq, seq);
++}
++
++#else /* CONFIG_PER_VMA_LOCK */
++
+ static inline void mm_lock_seqcount_init(struct mm_struct *mm) {}
+ static inline void mm_lock_seqcount_begin(struct mm_struct *mm) {}
+ static inline void mm_lock_seqcount_end(struct mm_struct *mm) {}
+-#endif
++
++static inline bool mmap_lock_speculate_try_begin(struct mm_struct *mm, unsigned int *seq)
++{
++	return false;
++}
++
++static inline bool mmap_lock_speculate_retry(struct mm_struct *mm, unsigned int seq)
++{
++	return true;
++}
++
++#endif /* CONFIG_PER_VMA_LOCK */
+ 
+ static inline void mmap_init_lock(struct mm_struct *mm)
+ {
 
