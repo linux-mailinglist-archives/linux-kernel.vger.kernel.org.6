@@ -1,407 +1,491 @@
-Return-Path: <linux-kernel+bounces-427104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDDC9DFCB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:03:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3672A163EEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:02:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8819B1FA177;
-	Mon,  2 Dec 2024 09:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hOoPTUEF"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2070.outbound.protection.outlook.com [40.107.249.70])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0C79DFC57
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:46:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3985E1F941B;
-	Mon,  2 Dec 2024 09:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733130111; cv=fail; b=K9hk17ZbE3zHjkXr5GXXjiXilLsKx4L16QGxJP32G0j9oON5m0C/dYq0/sTRWGgN9P8GkO14E0JZPK1126kdArJMxN3Rxx79iDr4v0HnmFngE0yworQq2bB9uumGW2swJ5BLXiCmedXoaWnIQHWQJxNCKyPOzw/x7aGbJxAzRmY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733130111; c=relaxed/simple;
-	bh=r/LXM5DEgDK8nm2aUIVERo9wWUoqH6PCF57ZBLAXtpU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=sCvUK2yJyOjzugFZHcvRtnrGKEFQLxNBAJXESLGnYsSsHQScShrYSb9KzBMVMVgcCmgp5kF9swLxh7apHyoQJuiUeR3sf9AtSKiP5+KjEFAy8kUodKAazAfJ7jCnAf/RD+Xi/Q7EQZz1B0AEfMS6uRSmwPhbSz64kmpqlVztZ8g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hOoPTUEF; arc=fail smtp.client-ip=40.107.249.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ud6d/yzk6Go5ztu+Zm5dijdVIGqRygu26KXMmaD5vBZPWaZKecSWIe9YvI37k31HWeDUVgFIJkoRDLRffODVV/r10KFMo2eJlhMjJitecVEtUb0T1pqbg6zsOXF5lI+/CnDiEA4gt1u9XkhfzpxOxNOHhAaXLlP8y4nW+84X/dMMMtJCubykODgvDE8GU4kpeGY0uuxJGum3H7ij19XKXHY98591qZkSnUtO0EeANp7lLnEqSPw+xEyDLMWT5y62Eo5UDGhwC6B4ihEO6i1gJ/U2lzutnEUDGdgHrUXDyGExKX9VhS+DSZOG7/LzNXJ5BndOHg2n+0SfS6Yp+VO6oQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CXxdQ4bIaH71hnjp2jOcq3Z9xwcfCfVOT42hIPlRYVk=;
- b=yFH+GVnGB1yJgTQGTCKNaZFwtaZvr9nMt4wfwosQpJ7FmKcEzpb0po4nF7fKboI8Od+QQAw2ou2or3jNi5OmZgZhR73co1hNpsT6esYIBCBdFR/2QizsNJnHioI8xc979+Bsn6Mi7BXQjL5dAL18PMXh3vx0QyjeiP8FPdojGUJ81xKjDNxwTKeBZTFszAigLKs4vnZl0SYAOI7Dyg25vUE2H+X7thTbaI/TeWXVLk38y7ddqhBuuWctZCsewHupDmNnMqhuBcOalrSmYsIy18Zgq5Y6Xl10Yyy+eMozUUvigE2cC64pZ3+bMPaCtyjmis/jmRDpplDo4uzHLglPbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CXxdQ4bIaH71hnjp2jOcq3Z9xwcfCfVOT42hIPlRYVk=;
- b=hOoPTUEFCIkn8I/jk1Yh5/haDwRqgbdBoEkLWh2GDcKedBHlglXaBQLJbqiyFnxiiSH1LqEusDSNWkppug/qINUNLJzsILdh4NwXzIVJz4g8J0pQwmT0Rks/i+MognBtYNQ5jNAya2af5fsMvsQXtWj2hv5hRMi4DM6HnfC0qG5Cwnf3DdOr8Puw9GrjUdlK15POvYTHDlklVov3ls8QooCwvfEhOTosWVay70x/1d7xd1FHcFQlcefg7Pu1zQQLgrTmxkO7xp7u6XzEHNeCusHhklFeNnvxD6ZfDrvPlspSvjfEbJUeU5Q+NLH0AuhZL0oUtWnZkM7xaJnLe/Tmsw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by AM9PR04MB8636.eurprd04.prod.outlook.com (2603:10a6:20b:43f::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
- 2024 09:01:45 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%7]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 09:01:44 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	florian.fainelli@broadcom.com,
-	heiko.stuebner@cherry.de,
-	frank.li@nxp.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: [PATCH v2 net] net: phy: micrel: Dynamically control external clock of KSZ PHY
-Date: Mon,  2 Dec 2024 16:45:35 +0800
-Message-Id: <20241202084535.2520151-1-wei.fang@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0007.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::6) To PAXPR04MB8510.eurprd04.prod.outlook.com
- (2603:10a6:102:211::7)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 040A3B20D09
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:46:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377F21F9F76;
+	Mon,  2 Dec 2024 08:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9ZgxKqt"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A911F941B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 08:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733129190; cv=none; b=YpYFwQ+U8OMH067zuZyeqpyvuziLEiquD13K5oP0QgS55+15RBujxFvkNz/nPOjoSjSJjJ5RnBvfFOeVcGMlm+XzNYBm/SqU0TPuToQAKdKOz4cLtYGmBuSE0oxk39MbmdUDilt/INNuAq+KI3gG+5bOIBd0Bv948J/eCmG9bxY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733129190; c=relaxed/simple;
+	bh=2i6YTzbDmJtsUUAeqTzmyeUvVfxbBDnIKwCQ5pMMLS4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KpQdzkBOouEU2YLM8uCC02niRgWN4LBcF46x1Dn0CrFY0fIQn690P8ScPW7/wT5itxJJEUQjSpKOv1Lup5DXB+ayfZzlRTIYdv4tgRZ3rz9CkN3t68NoSlEqzu6d6p+kEPGB3BbbhMa/q5sKj+PGFBpTpc/dJ2+X5v2Na2/nnUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9ZgxKqt; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53dde4f0f23so3814202e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 00:46:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733129186; x=1733733986; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KO0PMHTPCNgv7ePv+6rOpWSFWRVpkh6/tEB8bg8Fdb0=;
+        b=m9ZgxKqt/BL0QMSGN5AjkEaPnzYx+vxkM/mMwg9EQ6llmOsUkOnADxYldbVIkLtBMG
+         x+Fips/GVRY5tRu53gxUij/qQpvwhRxUckukLg0J8S+108R6Z875QE5WrE9u149/iheL
+         u+MtcuU3FJhdKzMHRGprmIzjbnEOiPb3JENN4f7lCm1/D9xCdblnFwgssQ+az783MRI2
+         P06GKyi3cM+kXP3WnvDrgHCDShJOrXYthISEvvPLS63sb1S4gUQ1aeTZoAnw++0S6b/W
+         tW689ZdqLnmNDdMPpNpdYEhyh803/RIPxQHQNhhEAig4C3Vp/tdGGvQ0X/tlnA3SS2jk
+         6lAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733129186; x=1733733986;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KO0PMHTPCNgv7ePv+6rOpWSFWRVpkh6/tEB8bg8Fdb0=;
+        b=LB7+IZKFU7p9LukTaa8pFvGUyLcAk9rhKimDS1zpCU6i0RZKVpW90srUirARy2HI1N
+         4pFXwaGOR6u6Nqdq9jopA8eLYAowCFZbYt/SGTyNg81vW554j9Mkxe1s7W6wH54sDf5l
+         mwUuj/38j2pFvoPkNxXeqd7ADNiqjXXwCb9ldc//dEsZR6njKUwojAqkJmhiet6hntDz
+         NmZVOHJsuGoiSjmVAThDMIper8hEp3VzGbv/ApR/QNFkWkyISGUp7LvZpikMS8uNAcAM
+         OCx+DNz3BOFoK4XG/Ls/mXjzBRog+lIAGrMAssiEF3NlmAeJXAkqm1CTwss+kaV0Ym+C
+         XnHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaemsaXak4Ql0SVASZc2XqOkFQpXT8eJhBj1bF9kTq5pB271DO/mJ/GkealjOLeQpj0SRIkdZ4bOXH8FM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTF5QCw5bpQesgY6AQcIay494c9nCYszM8gMUWQW+ZxUHP6BSb
+	RPYq+NYIh8Cidu8LwBlI4ggS2uWotLnVTwcqyADw/fLjduzc5m3F+RglIMmh/xE=
+X-Gm-Gg: ASbGnctw/nxyUDppYehYgRSu0G+9UfZu9A5Y5fz/afecyuAyBjloDKQrHqXLEvO+l6Y
+	XHYCp1DN3h16QMaWdeF6BG9lDJF5szGDlW+GiREVYSHP2HQJAXeh2Zu/yMI+rHnfbhaOxKTdrlv
+	94irAW7MriJt1crKgUPU7FrfiRR0HiLyNFOC5NVyksWWc9SOvY3nMNZUYlPNuCNnEEf8XXmckYd
+	9sloHNA14Jd1d+6sTAmPEGuWvO4+bEGzwVGA6nfJl+pfIqznomXwCNGpBNuAmIuz6J4UM2vDHUO
+	AM6X/B2zlkPMfKYMAhNRUErXJy4=
+X-Google-Smtp-Source: AGHT+IH2XLUfC8L/OoM5Z9wesXnND6BN21UkL2+D+PdmAdyg355CZoFr3QUGxpPoZ5wmZk/rxZmr1w==
+X-Received: by 2002:a05:6512:3d0f:b0:53d:e65c:e33b with SMTP id 2adb3069b0e04-53df00d11bdmr10299748e87.23.1733129186116;
+        Mon, 02 Dec 2024 00:46:26 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:1485:2a78:787c:c669? ([2a01:e0a:982:cbb0:1485:2a78:787c:c669])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa78c202sm175242175e9.26.2024.12.02.00.46.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 00:46:25 -0800 (PST)
+Message-ID: <26a1fa02-0f47-40d8-9ba7-b76ba907297d@linaro.org>
+Date: Mon, 2 Dec 2024 09:46:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|AM9PR04MB8636:EE_
-X-MS-Office365-Filtering-Correlation-Id: cc01cbda-1324-4a71-8f1a-08dd12aff20b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?d4bJNYaaBH1FDzUtOfguQfM66Rdk0bJKcDRMy2VbyIPiuOxzEEEd0c4tR/Dn?=
- =?us-ascii?Q?W9MrW4QcyB9xFNmEcuiagf6mDpPiK6CYSIdY/FS5y1d0hAoKSBECbLy92np8?=
- =?us-ascii?Q?9ql7EY7S8nyMc8GO6yL8481OXdfAsOrLoga5sP0syQt5Zk8rDeSpZNqwf7HE?=
- =?us-ascii?Q?+XRmjFlkcFieH/qHudtDHIBMqyrNL1iKfSnIBlY/z8ri4yAA2UyNwK31L5in?=
- =?us-ascii?Q?kP5oiJ4Ipv8RrsB97uZ9FVIUpfZWBrFGy5VZpP7O0mLVKTZwo0NY3O/UpqKT?=
- =?us-ascii?Q?9gwK6d6NTiYPcC3xkRMzd+wgxJQPi+etqfrFG70YGL1bwys7b2XTad/pDXrZ?=
- =?us-ascii?Q?+Oi51iswWCPVJnw1JLCpYwEnjeNs0pU4xj4vDiOgVRUY9tQ6VX+vKsRWmUWP?=
- =?us-ascii?Q?ylM4JG1Px28fWrQ1FRMrfEdmu3TlWZ00jIUmbvnBp3hZqwwW+QLsFznN5Pyd?=
- =?us-ascii?Q?C94ZGk0sEXUYBaeE/KdeihaSIxvt0q3uS9xXYv+6aN89z3D2xl7oK7DNa041?=
- =?us-ascii?Q?bVpr8FTAiPHp6v22jEgkcKwUqQJKJyBMO2j1PAw6YDWggPVAPaF2+KN2NT//?=
- =?us-ascii?Q?X+SiVsIpdfYpjQDyyztMkD1TC+e/N1U8bekhZZr6cB2DTwuFxMy3VPKpyEtC?=
- =?us-ascii?Q?SDP7XI7rx+kUbVV7nShFNdTXImNuTTqS8GXbTecU03P91GQsQQqWYWy7jYIO?=
- =?us-ascii?Q?11meES54AhYYAyE+/w6fUzD9FwiQkjf68hITlxM2cEnBjq6/6Sn7V6oIkMxC?=
- =?us-ascii?Q?elQtvRBmNkhbzPhspfR+tTRYHLxyvU9tx70dTZdb0O6cOtwGyLvQPUEiOFST?=
- =?us-ascii?Q?YKidOGM252wvR1oAKQN8fXZQwhH/9RpIIxRtJl+/8JwzUqTqBnlWBB8Z6pA/?=
- =?us-ascii?Q?LMG9m9wSrXwXfDAUH00aWJlHtwxyV6MPEwR3Bg0xo9t0F73smX4gir1Jvvhe?=
- =?us-ascii?Q?jW8AzHhokpRl3+NlajGSyNvpDMB7lTcHNz3QNp3ASmyN0j6t2+dTUNcAdVa7?=
- =?us-ascii?Q?3ltPEyqYPj1kLbPCHkBxc3HNs5jqeV6VwCF2/vIWB83TylLq1C+OabohutlJ?=
- =?us-ascii?Q?+FhoBqFGmdkV/gvdCrA8wvsT56mGS6ErARHiUyb4XSL0wn5tt8+UX4zTIaHj?=
- =?us-ascii?Q?LSSkyHFDQ2pOJVwP9XiQuj7KCLGI1jcxg8WDitKEvWi0Q/mYjQpzb8JI8iK1?=
- =?us-ascii?Q?Iy1GWV9I2UUei1oQ9L5SzDzT9NryeOKVgmj5gGGZ8sN6+8EB6pcsTa44rUa7?=
- =?us-ascii?Q?bENVJXSuJVvRIvw8hVSKYqxjEoPwLNpRfe7QvqTHyTThi65dqfWYipGLE1kw?=
- =?us-ascii?Q?BhCiPGK44Fawyz9Oa/XdRF3BNHfI1DPdihKONR+cJM/wT8bK+aHESyY/E/iq?=
- =?us-ascii?Q?hX83Fa+Ydg9a85RisFkwC3CyJjyFnoqxHtBQ35qZylywmaEWvIyNWdV6qhQc?=
- =?us-ascii?Q?Q+xEW6I5q8A=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vnU9WNZnVlXNzGzc8a07vZx5T3lGMPFXpAERc7BPULmAQoIk6FgBFt4UwVek?=
- =?us-ascii?Q?AB0AXPC7RBLheSbmV//3u+U2h8pxEf0kSpeqLS9anMXKBYZacNnHds1zvHnE?=
- =?us-ascii?Q?WcTUdqunfssUcTHWqUgmWlSk9St6DTjER/QbDgMG5aYwdVFWgFVlzUlkedtO?=
- =?us-ascii?Q?Koy06leetWCmyshZxUXq6N5hRaCIrHxqc2qnyZNAKOCyGgp5i3udW+xSRQ/J?=
- =?us-ascii?Q?iR70PLejN0SWuFOaNFk7fbR2sbRIBoGjrFEiLXhpSbm7Ncvo1y764mzOE9LH?=
- =?us-ascii?Q?5fJJljAh8jpMgnxpI/o3rbU2Rucw6u0la+/30Z0g9qVUQ4/uJx49LjS1FN6I?=
- =?us-ascii?Q?R1Wo3klxvwXywjtp9dhoZ0STNOHZiTv0bd4RcF0PZ878fT2klPaYFp80Yipu?=
- =?us-ascii?Q?1BgG8cW0u0LZLOIqSEsDrUVGpKJWzD3mTv/wEzRIn6fkbiqUOb+KJkvLLaSE?=
- =?us-ascii?Q?egAZNJT1chxwl3+T6sDv5Bfcon+3xl09phYUHWni7xCDOAFYDSzdyQyrVZ5G?=
- =?us-ascii?Q?SyXR2cw3rvpbuaCs5D/MytqbN6sLLo1ZuFk2mcd4VqZsaDuN1ANEfDQaJVW1?=
- =?us-ascii?Q?gZHOZooOhGCok+yuspuNv8RXQ8Ckh3pinpX5W1h9/U3z2RWCD1mXQX3/HwPm?=
- =?us-ascii?Q?/cNmkevTFOKm77mZhpTKILeMG02kXMldUZbT3PnOMu7uEIOsaCnrmEBJO54v?=
- =?us-ascii?Q?OM5YBQht41D5dkPqHY8zHTOsCiLEAwotx0lPKZfeT8l5HHnuWf5DbTR7cg41?=
- =?us-ascii?Q?PEU/X/5TlHiVYIGjpC7i3jMLocrzXHaVUjLwtn/+SEBVqaJ7Qo0ed9deU36f?=
- =?us-ascii?Q?b+Ci0CDH7gOQLhATkRUU5m5mmxD3BTVgwsr8xUVldMfHVnwjjglUTqY2XmQh?=
- =?us-ascii?Q?OJMAmYBdgc8Dcp9dYii5eYcgDA25Ah/X/4PE56XXeF1BAEibOEzKqbrwLjH0?=
- =?us-ascii?Q?SnaHzfae0hgH/+W3E1LVe60yRvqA44uTySg5mySGdjxDtrRTjOOgSYY6l+DR?=
- =?us-ascii?Q?F0wY/Moxy91BB88nI1CrYOSt2U0FkPEorQOUI3y4xgFuTvbj+LyrEujBaWBz?=
- =?us-ascii?Q?n/2xAxiuP2eE+Ap7j9oEBWWR64Zo/a4Jr0ecFEAXqPYt/RwKVmaH8wicTIma?=
- =?us-ascii?Q?fYntHgsBPQWHO8x8W8kWywkRYz3uG2+YJQ8TP+shjOARoMNee2qDqzcTUC73?=
- =?us-ascii?Q?ppV7EYGkRQmZ/mre1zWVs9PnOW3EAuH6oyezO8yS4z2SurzE/4oZrWIn8M9V?=
- =?us-ascii?Q?apbL/SQPc2UrEouz4N8FjkBlTADKOZ9ao/z6gbEPhefA1CE86mIRCLvLz1iy?=
- =?us-ascii?Q?1KZrKPgwSDbHSEm1T30LS52gEh9f2EZ8Wh9Ty4n2w9KCvp3+P2q26ZxGROLN?=
- =?us-ascii?Q?BUxpTAVhPPBuO304WNo4rrxwkp0tL/lNIZ1K5b3dfZa9Zf5ur7kIlbxq/Yx0?=
- =?us-ascii?Q?U3GHEtB7Fna1uup2smjKVPqpUr9cqC4UYjvJYRXyhS7cjAujDYRVwuOj4nz3?=
- =?us-ascii?Q?5N2UlMqA1OeduFN/IL7Zxv4kD+JTTVRXzr6qEY7Y+YwVi1oDfwSBbQJtKgYa?=
- =?us-ascii?Q?9igajS6XNWW/gtUmYql1H0VwFf22fkT4Xh6xGpQA?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc01cbda-1324-4a71-8f1a-08dd12aff20b
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 09:01:44.8965
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 79jdkNkBRmkGiQHvHl5RqXj85bNuTLUQqFa93J1C//hNHbXH9w6fqn9n911R7HUkujZamBS0iW0uBSrQst4uhw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8636
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 2/7] drm/msm: adreno: add plumbing to generate
+ bandwidth vote table for GMU
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241128-topic-sm8x50-gpu-bw-vote-v3-0-81d60c10fb73@linaro.org>
+ <20241128-topic-sm8x50-gpu-bw-vote-v3-2-81d60c10fb73@linaro.org>
+ <8cf9db06-0718-4c17-9712-d11943bcbe15@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <8cf9db06-0718-4c17-9712-d11943bcbe15@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On the i.MX6ULL-14x14-EVK board, enet1_ref and enet2_ref are used as the
-clock sources for two external KSZ PHYs. However, after closing the two
-FEC ports, the clk_enable_count of the enet1_ref and enet2_ref clocks is
-not 0. The root cause is that since the commit 985329462723 ("net: phy:
-micrel: use devm_clk_get_optional_enabled for the rmii-ref clock"), the
-external clock of KSZ PHY has been enabled when the PHY driver probes,
-and it can only be disabled when the PHY driver is removed. This causes
-the clock to continue working when the system is suspended or the network
-port is down.
+On 30/11/2024 22:49, Akhil P Oommen wrote:
+> On 11/28/2024 3:55 PM, Neil Armstrong wrote:
+>> The Adreno GPU Management Unit (GMU) can also scale DDR Bandwidth along
+>> the Frequency and Power Domain level, but by default we leave the
+>> OPP core scale the interconnect ddr path.
+>>
+>> While scaling via the interconnect path was sufficient, newer GPUs
+>> like the A750 requires specific vote paremeters and bandwidth to
+>> achieve full functionality.
+>>
+>> In order to calculate vote values used by the GPU Management
+>> Unit (GMU), we need to parse all the possible OPP Bandwidths and
+>> create a vote value to be sent to the appropriate Bus Control
+>> Modules (BCMs) declared in the GPU info struct.
+>>
+>> This vote value is called IB, while on the othe side the GMU also
+>> takes another vote called AB which is a 16bit quantized value
+>> of the bandwidth against the maximum supported bandwidth.
+>>
+>> The vote array will then be used to dynamically generate the GMU
+>> bw_table sent during the GMU power-up.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 174 ++++++++++++++++++++++++++++++++++
+>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  14 +++
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h |   1 +
+>>   drivers/gpu/drm/msm/adreno/a6xx_hfi.h |   5 +
+>>   4 files changed, 194 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>> index 14db7376c712d19446b38152e480bd5a1e0a5198..ee2010a01186721dd377f1655fcf05ddaff77131 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>> @@ -9,6 +9,7 @@
+>>   #include <linux/pm_domain.h>
+>>   #include <linux/pm_opp.h>
+>>   #include <soc/qcom/cmd-db.h>
+>> +#include <soc/qcom/tcs.h>
+>>   #include <drm/drm_gem.h>
+>>   
+>>   #include "a6xx_gpu.h"
+>> @@ -1287,6 +1288,131 @@ static int a6xx_gmu_memory_probe(struct a6xx_gmu *gmu)
+>>   	return 0;
+>>   }
+>>   
+>> +/**
+>> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager (BCM)
+>> + * @unit: divisor used to convert bytes/sec bw value to an RPMh msg
+>> + * @width: multiplier used to convert bytes/sec bw value to an RPMh msg
+>> + * @vcd: virtual clock domain that this bcm belongs to
+>> + * @reserved: reserved field
+>> + */
+>> +struct bcm_db {
+>> +	__le32 unit;
+>> +	__le16 width;
+>> +	u8 vcd;
+>> +	u8 reserved;
+>> +};
+>> +
+>> +static u64 bcm_div(u64 num, u32 base)
+>> +{
+>> +	/* Ensure that small votes aren't lost. */
+>> +	if (num && num < base)
+>> +		return 1;
+>> +
+>> +	do_div(num, base);
+>> +
+>> +	return num;
+>> +}
+>> +
+>> +static int a6xx_gmu_rpmh_bw_votes_init(const struct a6xx_info *info,
+>> +				       struct a6xx_gmu *gmu)
+>> +{
+>> +	const struct bcm_db *bcm_data[GMU_MAX_BCMS] = { 0 };
+>> +	unsigned int bcm_index, bw_index, bcm_count = 0;
+>> +
+>> +	if (!info->bcms)
+>> +		return 0;
+>> +
+>> +	/* Retrieve BCM data from cmd-db */
+>> +	for (bcm_index = 0; bcm_index < GMU_MAX_BCMS; bcm_index++) {
+>> +		size_t count;
+>> +
+>> +		/* Stop at first unconfigured bcm */
+>> +		if (!info->bcms[bcm_index].name)
+>> +			break;
+>> +
+>> +		bcm_data[bcm_index] = cmd_db_read_aux_data(
+>> +						info->bcms[bcm_index].name,
+>> +						&count);
+>> +		if (IS_ERR(bcm_data[bcm_index]))
+>> +			return PTR_ERR(bcm_data[bcm_index]);
+>> +
+>> +		if (!count)
+>> +			return -EINVAL;
+>> +
+>> +		++bcm_count;
+>> +	}
+>> +
+>> +	/* Generate BCM votes values for each bandwidth & BCM */
+>> +	for (bw_index = 0; bw_index < gmu->nr_gpu_bws; bw_index++) {
+>> +		u32 *data = gmu->gpu_ib_votes[bw_index];
+>> +		u32 bw = gmu->gpu_bw_table[bw_index];
+>> +
+>> +		/* Calculations loosely copied from bcm_aggregate() & tcs_cmd_gen() */
+>> +		for (bcm_index = 0; bcm_index < bcm_count; bcm_index++) {
+>> +			bool commit = false;
+>> +			u64 peak, vote;
+>> +			u16 width;
+>> +			u32 unit;
+>> +
+>> +			/* Skip unconfigured BCM */
+>> +			if (!bcm_data[bcm_index])
+>> +				continue;
+>> +
+>> +			if (bcm_index == bcm_count - 1 ||
+>> +			    (bcm_data[bcm_index + 1] &&
+>> +			     bcm_data[bcm_index]->vcd != bcm_data[bcm_index + 1]->vcd))
+>> +				commit = true;
+>> +
+>> +			if (!bw) {
+>> +				data[bcm_index] = BCM_TCS_CMD(commit, false, 0, 0);
+>> +				continue;
+>> +			}
+>> +
+>> +			if (info->bcms[bcm_index].fixed) {
+>> +				u32 perfmode = 0;
+>> +
+>> +				if (bw >= info->bcms[bcm_index].perfmode_bw)
+>> +					perfmode = info->bcms[bcm_index].perfmode;
+>> +
+>> +				data[bcm_index] = BCM_TCS_CMD(commit, true, 0, perfmode);
+>> +				continue;
+>> +			}
+>> +
+>> +			/* Multiply the bandwidth by the width of the connection */
+>> +			width = le16_to_cpu(bcm_data[bcm_index]->width);
+>> +			peak = bcm_div((u64)bw * width, info->bcms[bcm_index].buswidth);
+>> +
+>> +			/* Input bandwidth value is in KBps, scale the value to BCM unit */
+>> +			unit = le32_to_cpu(bcm_data[bcm_index]->unit);
+>> +			vote = bcm_div(peak * 1000ULL, unit);
+>> +
+>> +			if (vote > BCM_TCS_CMD_VOTE_MASK)
+>> +				vote = BCM_TCS_CMD_VOTE_MASK;
+> 
+> use clamp()?
 
-To solve this problem, the clock is enabled when phy_driver::resume() is
-called, and the clock is disabled when phy_driver::suspend() is called.
-Since phy_driver::resume() and phy_driver::suspend() are not called in
-pairs, an additional clk_enable flag is added. When phy_driver::suspend()
-is called, the clock is disabled only if clk_enable is true. Conversely,
-when phy_driver::resume() is called, the clock is enabled if clk_enable
-is false.
+Yep, I think I could replace bcm_div with clamp
 
-Fixes: 985329462723 ("net: phy: micrel: use devm_clk_get_optional_enabled for the rmii-ref clock")
-Fixes: 99ac4cbcc2a5 ("net: phy: micrel: allow usage of generic ethernet-phy clock")
-Signed-off-by: Wei Fang <wei.fang@nxp.com>
----
-v1 link: https://lore.kernel.org/imx/20241125022906.2140428-1-wei.fang@nxp.com/
-v2 changes: only refine the commit message.
----
- drivers/net/phy/micrel.c | 103 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 95 insertions(+), 8 deletions(-)
+> 
+>> +
+>> +			data[bcm_index] = BCM_TCS_CMD(commit, true, vote, vote);
+>> +		}
+>> +	}
+>> +
+>> +	/* Generate AB votes which are a quantitized bandwidth value */
+>> +	for (bw_index = 0; bw_index < gmu->nr_gpu_bws; bw_index++) {
+>> +		u64 tmp;
+>> +
+>> +		/*
+>> +		 * The AB vote consists of a 16 bit wide quantized level
+>> +		 * against the maximum supported bandwidth.
+>> +		 * Quantization can be calculated as below:
+>> +		 * vote = (bandwidth * 2^16) / max bandwidth
+>> +		 */
+>> +		tmp = gmu->gpu_bw_table[bw_index] * MAX_AB_VOTE;
+>> +
+>> +		/* Divide by the maximum bandwidth to get a quantized value */
+>> +		gmu->gpu_ab_votes[bw_index] =
+>> +			bcm_div(tmp, gmu->gpu_bw_table[gmu->nr_gpu_bws - 1]);
+>> +	}
+> 
+> So I suppose you are trying to vote AB equal to IB. Aggregation logic
+> for both are different. So this will make DDR scale very aggressively. A
+> more reasonable approach would be to vote a % of IB vote (25%?). Ideally
+> we should measure GPU's bandwidth usage and vote that if you are really
+> concerned about stability issues. IB is just a floor vote, GPU can
+> generate way higher traffic.
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 3ef508840674..44577b5d48d5 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -432,10 +432,12 @@ struct kszphy_ptp_priv {
- struct kszphy_priv {
- 	struct kszphy_ptp_priv ptp_priv;
- 	const struct kszphy_type *type;
-+	struct clk *clk;
- 	int led_mode;
- 	u16 vct_ctrl1000;
- 	bool rmii_ref_clk_sel;
- 	bool rmii_ref_clk_sel_val;
-+	bool clk_enable;
- 	u64 stats[ARRAY_SIZE(kszphy_hw_stats)];
- };
- 
-@@ -2050,8 +2052,27 @@ static void kszphy_get_stats(struct phy_device *phydev,
- 		data[i] = kszphy_get_stat(phydev, i);
- }
- 
-+static void kszphy_enable_clk(struct kszphy_priv *priv)
-+{
-+	if (!priv->clk_enable && priv->clk) {
-+		clk_prepare_enable(priv->clk);
-+		priv->clk_enable = true;
-+	}
-+}
-+
-+static void kszphy_disable_clk(struct kszphy_priv *priv)
-+{
-+	if (priv->clk_enable && priv->clk) {
-+		clk_disable_unprepare(priv->clk);
-+		priv->clk_enable = false;
-+	}
-+}
-+
- static int kszphy_suspend(struct phy_device *phydev)
- {
-+	struct kszphy_priv *priv = phydev->priv;
-+	int ret;
-+
- 	/* Disable PHY Interrupts */
- 	if (phy_interrupt_is_valid(phydev)) {
- 		phydev->interrupts = PHY_INTERRUPT_DISABLED;
-@@ -2059,7 +2080,13 @@ static int kszphy_suspend(struct phy_device *phydev)
- 			phydev->drv->config_intr(phydev);
- 	}
- 
--	return genphy_suspend(phydev);
-+	ret = genphy_suspend(phydev);
-+	if (ret)
-+		return ret;
-+
-+	kszphy_disable_clk(priv);
-+
-+	return 0;
- }
- 
- static void kszphy_parse_led_mode(struct phy_device *phydev)
-@@ -2088,8 +2115,11 @@ static void kszphy_parse_led_mode(struct phy_device *phydev)
- 
- static int kszphy_resume(struct phy_device *phydev)
- {
-+	struct kszphy_priv *priv = phydev->priv;
- 	int ret;
- 
-+	kszphy_enable_clk(priv);
-+
- 	genphy_resume(phydev);
- 
- 	/* After switching from power-down to normal mode, an internal global
-@@ -2112,6 +2142,24 @@ static int kszphy_resume(struct phy_device *phydev)
- 	return 0;
- }
- 
-+static int ksz8041_resume(struct phy_device *phydev)
-+{
-+	struct kszphy_priv *priv = phydev->priv;
-+
-+	kszphy_enable_clk(priv);
-+
-+	return 0;
-+}
-+
-+static int ksz8041_suspend(struct phy_device *phydev)
-+{
-+	struct kszphy_priv *priv = phydev->priv;
-+
-+	kszphy_disable_clk(priv);
-+
-+	return 0;
-+}
-+
- static int ksz9477_resume(struct phy_device *phydev)
- {
- 	int ret;
-@@ -2150,8 +2198,11 @@ static int ksz9477_resume(struct phy_device *phydev)
- 
- static int ksz8061_resume(struct phy_device *phydev)
- {
-+	struct kszphy_priv *priv = phydev->priv;
- 	int ret;
- 
-+	kszphy_enable_clk(priv);
-+
- 	/* This function can be called twice when the Ethernet device is on. */
- 	ret = phy_read(phydev, MII_BMCR);
- 	if (ret < 0)
-@@ -2194,7 +2245,7 @@ static int kszphy_probe(struct phy_device *phydev)
- 
- 	kszphy_parse_led_mode(phydev);
- 
--	clk = devm_clk_get_optional_enabled(&phydev->mdio.dev, "rmii-ref");
-+	clk = devm_clk_get_optional(&phydev->mdio.dev, "rmii-ref");
- 	/* NOTE: clk may be NULL if building without CONFIG_HAVE_CLK */
- 	if (!IS_ERR_OR_NULL(clk)) {
- 		unsigned long rate = clk_get_rate(clk);
-@@ -2216,11 +2267,14 @@ static int kszphy_probe(struct phy_device *phydev)
- 		}
- 	} else if (!clk) {
- 		/* unnamed clock from the generic ethernet-phy binding */
--		clk = devm_clk_get_optional_enabled(&phydev->mdio.dev, NULL);
-+		clk = devm_clk_get_optional(&phydev->mdio.dev, NULL);
- 		if (IS_ERR(clk))
- 			return PTR_ERR(clk);
- 	}
- 
-+	if (!IS_ERR_OR_NULL(clk))
-+		priv->clk = clk;
-+
- 	if (ksz8041_fiber_mode(phydev))
- 		phydev->port = PORT_FIBRE;
- 
-@@ -5290,15 +5344,45 @@ static int lan8841_probe(struct phy_device *phydev)
- 	return 0;
- }
- 
-+static int lan8804_suspend(struct phy_device *phydev)
-+{
-+	struct kszphy_priv *priv = phydev->priv;
-+	int ret;
-+
-+	ret = genphy_suspend(phydev);
-+	if (ret)
-+		return ret;
-+
-+	kszphy_disable_clk(priv);
-+
-+	return 0;
-+}
-+
-+static int lan8841_resume(struct phy_device *phydev)
-+{
-+	struct kszphy_priv *priv = phydev->priv;
-+
-+	kszphy_enable_clk(priv);
-+
-+	return genphy_resume(phydev);
-+}
-+
- static int lan8841_suspend(struct phy_device *phydev)
- {
- 	struct kszphy_priv *priv = phydev->priv;
- 	struct kszphy_ptp_priv *ptp_priv = &priv->ptp_priv;
-+	int ret;
- 
- 	if (ptp_priv->ptp_clock)
- 		ptp_cancel_worker_sync(ptp_priv->ptp_clock);
- 
--	return genphy_suspend(phydev);
-+	ret = genphy_suspend(phydev);
-+	if (ret)
-+		return ret;
-+
-+	kszphy_disable_clk(priv);
-+
-+	return 0;
- }
- 
- static struct phy_driver ksphy_driver[] = {
-@@ -5358,9 +5442,12 @@ static struct phy_driver ksphy_driver[] = {
- 	.get_sset_count = kszphy_get_sset_count,
- 	.get_strings	= kszphy_get_strings,
- 	.get_stats	= kszphy_get_stats,
--	/* No suspend/resume callbacks because of errata DS80000700A,
--	 * receiver error following software power down.
-+	/* Because of errata DS80000700A, receiver error following software
-+	 * power down. Suspend and resume callbacks only disable and enable
-+	 * external rmii reference clock.
- 	 */
-+	.suspend	= ksz8041_suspend,
-+	.resume		= ksz8041_resume,
- }, {
- 	.phy_id		= PHY_ID_KSZ8041RNLI,
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
-@@ -5507,7 +5594,7 @@ static struct phy_driver ksphy_driver[] = {
- 	.get_sset_count	= kszphy_get_sset_count,
- 	.get_strings	= kszphy_get_strings,
- 	.get_stats	= kszphy_get_stats,
--	.suspend	= genphy_suspend,
-+	.suspend	= lan8804_suspend,
- 	.resume		= kszphy_resume,
- 	.config_intr	= lan8804_config_intr,
- 	.handle_interrupt = lan8804_handle_interrupt,
-@@ -5526,7 +5613,7 @@ static struct phy_driver ksphy_driver[] = {
- 	.get_strings	= kszphy_get_strings,
- 	.get_stats	= kszphy_get_stats,
- 	.suspend	= lan8841_suspend,
--	.resume		= genphy_resume,
-+	.resume		= lan8841_resume,
- 	.cable_test_start	= lan8814_cable_test_start,
- 	.cable_test_get_status	= ksz886x_cable_test_get_status,
- }, {
--- 
-2.34.1
+I think this should be optimized better in a different patchset, so I would
+like to make the simplest vote possible here to retain functionnality.
+
+So if I understand I should divide this vote value by 4 ? Downstram uses 25% by default
+when no AB was calculated, but what does that mean exactly ?
+
+Is there a counter somewhere to measure the GPU traffic ?
+
+> 
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   /* Return the 'arc-level' for the given frequency */
+>>   static unsigned int a6xx_gmu_get_arc_level(struct device *dev,
+>>   					   unsigned long freq)
+>> @@ -1390,12 +1516,15 @@ static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
+>>    * The GMU votes with the RPMh for itself and on behalf of the GPU but we need
+>>    * to construct the list of votes on the CPU and send it over. Query the RPMh
+>>    * voltage levels and build the votes
+>> + * The GMU can also vote for DDR interconnects, use the OPP bandwidth entries
+>> + * and BCM parameters to build the votes.
+>>    */
+>>   
+>>   static int a6xx_gmu_rpmh_votes_init(struct a6xx_gmu *gmu)
+>>   {
+>>   	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>>   	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+>> +	const struct a6xx_info *info = adreno_gpu->info->a6xx;
+>>   	struct msm_gpu *gpu = &adreno_gpu->base;
+>>   	int ret;
+>>   
+>> @@ -1407,6 +1536,10 @@ static int a6xx_gmu_rpmh_votes_init(struct a6xx_gmu *gmu)
+>>   	ret |= a6xx_gmu_rpmh_arc_votes_init(gmu->dev, gmu->cx_arc_votes,
+>>   		gmu->gmu_freqs, gmu->nr_gmu_freqs, "cx.lvl");
+>>   
+>> +	/* Build the interconnect votes */
+>> +	if (info->bcms && gmu->nr_gpu_bws > 1)
+>> +		ret |= a6xx_gmu_rpmh_bw_votes_init(info, gmu);
+>> +
+>>   	return ret;
+>>   }
+>>   
+>> @@ -1442,10 +1575,43 @@ static int a6xx_gmu_build_freq_table(struct device *dev, unsigned long *freqs,
+>>   	return index;
+>>   }
+>>   
+>> +static int a6xx_gmu_build_bw_table(struct device *dev, unsigned long *bandwidths,
+>> +		u32 size)
+>> +{
+>> +	int count = dev_pm_opp_get_opp_count(dev);
+> 
+> I am less concerned about this now since you are not voting real AB BW.
+
+Sorry I don't understand
+
+Thanks,
+Neil
+
+> 
+> -Akhil.
+> 
+>> +	struct dev_pm_opp *opp;
+>> +	int i, index = 0;
+>> +	unsigned int bandwidth = 1;
+>> +
+>> +	/*
+>> +	 * The OPP table doesn't contain the "off" bandwidth level so we need to
+>> +	 * add 1 to the table size to account for it
+>> +	 */
+>> +
+>> +	if (WARN(count + 1 > size,
+>> +		"The GMU bandwidth table is being truncated\n"))
+>> +		count = size - 1;
+>> +
+>> +	/* Set the "off" bandwidth */
+>> +	bandwidths[index++] = 0;
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		opp = dev_pm_opp_find_bw_ceil(dev, &bandwidth, 0);
+>> +		if (IS_ERR(opp))
+>> +			break;
+>> +
+>> +		dev_pm_opp_put(opp);
+>> +		bandwidths[index++] = bandwidth++;
+>> +	}
+>> +
+>> +	return index;
+>> +}
+>> +
+>>   static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+>>   {
+>>   	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>>   	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+>> +	const struct a6xx_info *info = adreno_gpu->info->a6xx;
+>>   	struct msm_gpu *gpu = &adreno_gpu->base;
+>>   
+>>   	int ret = 0;
+>> @@ -1472,6 +1638,14 @@ static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+>>   
+>>   	gmu->current_perf_index = gmu->nr_gpu_freqs - 1;
+>>   
+>> +	/*
+>> +	 * The GMU also handles GPU Interconnect Votes so build a list
+>> +	 * of DDR bandwidths from the GPU OPP table
+>> +	 */
+>> +	if (info->bcms)
+>> +		gmu->nr_gpu_bws = a6xx_gmu_build_bw_table(&gpu->pdev->dev,
+>> +			gmu->gpu_bw_table, ARRAY_SIZE(gmu->gpu_bw_table));
+>> +
+>>   	/* Build the list of RPMh votes that we'll send to the GMU */
+>>   	return a6xx_gmu_rpmh_votes_init(gmu);
+>>   }
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> index 88f18ea6a38a08b5b171709e5020010947a5d347..bdfc106cb3a578c90d7cd84f7d4fe228d761a994 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> @@ -21,6 +21,15 @@ struct a6xx_gmu_bo {
+>>   
+>>   #define GMU_MAX_GX_FREQS	16
+>>   #define GMU_MAX_CX_FREQS	4
+>> +#define GMU_MAX_BCMS		3
+>> +
+>> +struct a6xx_bcm {
+>> +	char *name;
+>> +	unsigned int buswidth;
+>> +	bool fixed;
+>> +	unsigned int perfmode;
+>> +	unsigned int perfmode_bw;
+>> +};
+>>   
+>>   /*
+>>    * These define the different GMU wake up options - these define how both the
+>> @@ -85,6 +94,11 @@ struct a6xx_gmu {
+>>   	unsigned long gpu_freqs[GMU_MAX_GX_FREQS];
+>>   	u32 gx_arc_votes[GMU_MAX_GX_FREQS];
+>>   
+>> +	int nr_gpu_bws;
+>> +	unsigned long gpu_bw_table[GMU_MAX_GX_FREQS];
+>> +	u32 gpu_ib_votes[GMU_MAX_GX_FREQS][GMU_MAX_BCMS];
+>> +	u16 gpu_ab_votes[GMU_MAX_GX_FREQS];
+>> +
+>>   	int nr_gmu_freqs;
+>>   	unsigned long gmu_freqs[GMU_MAX_CX_FREQS];
+>>   	u32 cx_arc_votes[GMU_MAX_CX_FREQS];
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+>> index 4aceffb6aae89c781facc2a6e4a82b20b341b6cb..9201a53dd341bf432923ffb44947e015208a3d02 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+>> @@ -44,6 +44,7 @@ struct a6xx_info {
+>>   	u32 gmu_chipid;
+>>   	u32 gmu_cgc_mode;
+>>   	u32 prim_fifo_threshold;
+>> +	const struct a6xx_bcm *bcms;
+>>   };
+>>   
+>>   struct a6xx_gpu {
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+>> index 528110169398f69f16443a29a1594d19c36fb595..52ba4a07d7b9a709289acd244a751ace9bdaab5d 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+>> @@ -173,6 +173,11 @@ struct a6xx_hfi_gx_bw_perf_vote_cmd {
+>>   	u32 bw;
+>>   };
+>>   
+>> +#define AB_VOTE_MASK		GENMASK(31, 16)
+>> +#define MAX_AB_VOTE		(FIELD_MAX(AB_VOTE_MASK) - 1)
+>> +#define AB_VOTE(vote)		FIELD_PREP(AB_VOTE_MASK, (vote))
+>> +#define AB_VOTE_ENABLE		BIT(8)
+>> +
+>>   #define HFI_H2F_MSG_PREPARE_SLUMBER 33
+>>   
+>>   struct a6xx_hfi_prep_slumber_cmd {
+>>
+> 
 
 
