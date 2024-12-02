@@ -1,241 +1,78 @@
-Return-Path: <linux-kernel+bounces-428494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205609E0F49
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:28:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6979E0F47
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2024 00:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7034EB22F17
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:28:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2E66B21A7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51171DF249;
-	Mon,  2 Dec 2024 23:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227EB1DF278;
+	Mon,  2 Dec 2024 23:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EWqHvV7c"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WL34uAMA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409A81D79B4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 23:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85ECF1D79B4
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 23:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733182094; cv=none; b=meN7aY1Ql+jegPHjOdKItk5yL7+FBkHTrVcJ2ArEkZJMig+JVdCOgYHxVYmcHsuFqWjjQc0a/PiKV/YQYog3GCV3phWILg6xnJRm9ZlV0zgqNaHlLYOyVX0ySG0qPBfyx/pI+jPR234BYXGJFqRtPVkNigiwTe6E0h2dkUvdo10=
+	t=1733182055; cv=none; b=Oyjny6PHS55wW2n/R35v3j1NG8G9zj8Ei5DgGw6yxQx/jtHkEI20WC0fvJHlvPWvuQW/wvfTZJSGGsJ8BtiRJyYRH7/FbiQzWLSKInHLL/wPDMesfvcHELHgkjXp9LDLUdQCEFYl06XMbwQuMrzVG+TT5K7RJEL3rr94db7WcW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733182094; c=relaxed/simple;
-	bh=jwdcVue+nHHQCNc8y1qV+V5+3ZT64hNhWwiKhcS7sE8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nKKAkHomYmRZ9z+SpiwF7DMjgEL+xONxwpop5MiGLvFze2zotttnSZ2kYgXiavMYTApeVBrUV5m7OELFvKt9BVNO3zppLsbX4iLKB3FcdjFVd04UpAmpu+QqzMHGEfnwfY4SAQOG6SuQPeySAgGjxPchBeo5ZXVtlE+eHQl79Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EWqHvV7c; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53dd8b7796dso5206303e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 15:28:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733182090; x=1733786890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n3sbXCn2Rh0xH7nuuep2iyHgGbFrRI3XCnsb9RhyJDQ=;
-        b=EWqHvV7cuWu6Qwb7D+Fmg67lEJXEYt3x9vqqDdthGR0F4gVXK4ohvWMNyCORsma8dt
-         NVnEUMuBExAXZSRK5vgzD6QdEviPs/qR9ork6rAXpgtqlbOAArgQARRAHsdyVtB2X4xy
-         YgTpoOy42eSAJyIMPr4nl3kUEQWp9qzg0pYdYlNQQ+hf1bdljLF+xuMJC+WcotnV/bjM
-         jstF1UjnqbGXdjw0/UCMChlREqCH40SnYSB6kqzNESRxpIar2rlD3cqxHkQHbz+QED7G
-         Y4WNoQpSzK4/xutXWocYgJfnKVa8xoVBzvFjmY519TPjuRI9VcUINen2AUrugAlVijqS
-         y/rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733182090; x=1733786890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n3sbXCn2Rh0xH7nuuep2iyHgGbFrRI3XCnsb9RhyJDQ=;
-        b=w8R/YMh8D94ux300hYdPpfYmmpu4zqO7hcjaOC+NaP35vPpV7zZK3L1Hpo3ad9VQKR
-         CnaiojPWyiZ1NGpGiN0ikQ81h4RgsCa+rdMY/tqol/CcLi4YJk5KouO5RX6+6dK+/EUa
-         KRaVsnP6YJ+H0fnYgi85riz4pP719IhuuP9mU6IFSkhn2Pl3N/Lwd8YRAgg/M8Yl7BKf
-         rT9/JU5vJoMeTOHX3OysHXlNo9cEcCR6e6yFBN7wQHhQx42v7JIqOSPBkOdw3KVgoyO5
-         o8EEPS8Q6WWir120maLJLugu9nvdv5njeEbnlf9bexcps7zSiFlgClDkw82/QK9SAhdq
-         0xMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEClpu/9cz8de2iZN8Ag7ce+/mWCNwieS7HLV36yb30Q4Dz98jPIHGu8xFDYB+2xf7QJAYVLtNTzcgKLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXbyNH026cC9B89oh/9/d/+o9zRjM/zdqPVQ15taT2DCwK18EK
-	BDSp4r5LPpuylpSrvHinlokkiJfp8s90xJ16UwjMz7GNgiLgJS43UQ+sYp/1B88ggyW6rq1MZa9
-	g3RHIsoEsmZX8wHVXwwi4osxr22I4tfbwyK5J
-X-Gm-Gg: ASbGncs5KhIzdp2z7qwYlOWtZMNG+8UPSjePgBqLRUTyRDX5S8xuOUdojF0Si4sSX1Y
-	bWFsKBImyBk09K96ex3nWaXTdMQ5gVg==
-X-Google-Smtp-Source: AGHT+IEhy6WbRnDJO91BppdUDAlEmi+S9zeMSCFE571EcNiY/nN7FU0teqcVwTaqqVL2IKReSprg6M9g51mDFLUkHN8=
-X-Received: by 2002:a05:6512:118e:b0:53d:f095:ffec with SMTP id
- 2adb3069b0e04-53e129cd2d9mr190550e87.8.1733182090221; Mon, 02 Dec 2024
- 15:28:10 -0800 (PST)
+	s=arc-20240116; t=1733182055; c=relaxed/simple;
+	bh=E22bR8bDe5QTkFnCEckdTV4+oRfPtKxdqEpslyVWPl8=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=XWhuesC1WXyYAjjAwMFY77fXiP23pnAINvcrxTQGQ72EpuBeJkip2xTwH2FPKxZAKCITSHy1buYKs88AyDioHzDMdWE3BdPdy8q2bT/tZMWi5qkzlBNM6QViFYJQrO1X1bhQ9i4ZESTW+zelqQzZpVDl5pSsvQxneYOxLA4MQj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WL34uAMA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C627C4CED1;
+	Mon,  2 Dec 2024 23:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733182055;
+	bh=E22bR8bDe5QTkFnCEckdTV4+oRfPtKxdqEpslyVWPl8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=WL34uAMACdpiB7YX/yFdTN67dPwPzhikUNu0ckz8AnI2GAtj/5Ao69S0mA3kpLZDk
+	 c8P/fGSlBsA0w4t1K36XeYnLq5UrEVVhtj2i/22HnvTvBk762zDJnP5TFaU4Rsbmr0
+	 W7VUjZDkfO5Ks/121qa6H7M9EC4Z2U7iSz20ypdlhLWBDpVAm4fsOHcumNi9w4Tl6V
+	 6Ez0m3kWDKE2g5NEiZGTxWDEDLjnm7XNOfbDrzy2RIOwxbVSG3FlVZwr+PsOQE1RoG
+	 TiPf2ZiD2tZkBaivBMIL2zWZe8MO1ste/RNZMO5kmdKJR4DmzHNVq7S572sXLdlHJk
+	 n5i+lIWT9r2gQ==
+Message-ID: <2382757db0ec7485700463b9ac7fcb11.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114220921.2529905-1-saravanak@google.com>
- <20241114220921.2529905-3-saravanak@google.com> <CAJZ5v0jPO24JR5um0gv5U5AwiR_RHx37x6DisG-nUxaZt9gfGA@mail.gmail.com>
- <CAJZ5v0iLq9L5nMp13BrBmbWavFs1ZEAtJ-WeyRzv3D2GXPNuag@mail.gmail.com>
- <CAGETcx-9XSdXcuGQFSoS-mMPwp=UJ3_FfTJ1Cx+9jddyjYTKEg@mail.gmail.com> <CAJZ5v0iWCWdjP9Gku2uV0Qz-Hp6ZEHDspaPVzHPPzHfvyREeWA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iWCWdjP9Gku2uV0Qz-Hp6ZEHDspaPVzHPPzHfvyREeWA@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Mon, 2 Dec 2024 15:27:33 -0800
-Message-ID: <CAGETcx_5oRA-kTzU7WtWSV2=Bp0cKcT=2kPa0+ZkwkHTA+rwOQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/5] PM: sleep: Remove unnecessary mutex lock when
- waiting on parent
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Marek Vasut <marex@denx.de>, 
-	Bird@google.com, Tim <Tim.Bird@sony.com>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAGETcx8B+MZm_ZOFkK=KUvV_9q+48Zvkw8C-oenvvAKX+0+e6Q@mail.gmail.com>
+References: <20241115230509.1793191-1-saravanak@google.com> <CAGETcx8B+MZm_ZOFkK=KUvV_9q+48Zvkw8C-oenvvAKX+0+e6Q@mail.gmail.com>
+Subject: Re: [PATCH v1] spmi: Set fwnode for spmi devices
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org
+To: Saravana Kannan <saravanak@google.com>
+Date: Mon, 02 Dec 2024 15:27:33 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Mon, Dec 2, 2024 at 1:15=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Mon, Dec 2, 2024 at 9:46=E2=80=AFPM Saravana Kannan <saravanak@google.=
-com> wrote:
+Quoting Saravana Kannan (2024-11-27 20:23:01)
+> On Fri, Nov 15, 2024 at 3:05=E2=80=AFPM Saravana Kannan <saravanak@google=
+.com> wrote:
 > >
-> > On Mon, Dec 2, 2024 at 12:16=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
-l.org> wrote:
-> > >
-> > > On Mon, Dec 2, 2024 at 9:11=E2=80=AFPM Rafael J. Wysocki <rafael@kern=
-el.org> wrote:
-> > > >
-> > > > Sorry for the delay.
-> > > >
-> > > > On Thu, Nov 14, 2024 at 11:09=E2=80=AFPM Saravana Kannan <saravanak=
-@google.com> wrote:
-> > > > >
-> > > > > Locking is not needed to do get_device(dev->parent). We either ge=
-t a NULL
-> > > > > (if the parent was cleared) or the actual parent. Also, when a de=
-vice is
-> > > > > deleted (device_del()) and removed from the dpm_list, its complet=
-ion
-> > > > > variable is also complete_all()-ed. So, we don't have to worry ab=
-out
-> > > > > waiting indefinitely on a deleted parent device.
-> > > >
-> > > > The device_pm_initialized(dev) check before get_device(dev->parent)
-> > > > doesn't make sense without the locking and that's the whole point o=
-f
-> > > > it.
-> > >
-> > > Hmm, not really.
-> > >
-> > > How is the parent prevented from going away in get_device() right
-> > > after the initial dev check without the locking?
+> > This allows fw_devlink to do proper dependency tracking for SPMI
+> > devices. So, better deferred probe handling, async probing, async
+> > suspend/resume, etc.
 > >
-> > Not sure what you mean by "go away"? But get_device() is going to keep
-> > a non-zero refcount on the parent so that struct doesn't get freed.
->
-> That's after it has returned.
->
-> There is nothing to prevent dev from being freed in get_device()
-> itself before the kobject_get(&dev->kobj) call.
->
-> So when get_device() is called, there needs to be an active ref on the
-> device already or something else to prevent the target device object
-> from being freed.
->
-> In this particular case it is the lock along with the
-> device_pm_initialized(dev) check on the child.
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+>=20
+> Stephen,
+>=20
+> Gentle nudge. Plan to take this in for 6.13?
+>=20
 
-Ugh... my head hurts whenever I think about get_device(). Yeah, I
-think you are right.
-
-Hmm... I wanted to have this function be replaced by a call to a
-generic helper function dpm_for_each_superior() in the next patch. But
-that helper function could be called from places where the dpm_list
-lock is held. Also, I was planning on making it even more generic (not
-specific to dpm) in the future. So, depending on dpm_list lock didn't
-make sense.
-
-Any other ideas on how I could do this without grabbing the dpm_list mutex?
-
-Actually, with the rewrite and at the end of this series, we don't
-have to worry about this race because each device's suspend/resume is
-only started after all the dependencies are done. So, if the parent
-deletes a child and itself, the child device's suspend wouldn't have
-been triggered at all.
-
-So, another option is to just squash the series and call it a day. Or
-add a comment to the commit text that this adds a race that's fixed by
-the time we get to the end of the series.
-
-Thoughts?
-
-Thanks,
-Saravana
-
-
->
-> > The parent itself can still "go away" in terms of unbinding or
-> > removing the children from the dpm_list(). But that's what the
-> > device_pm_initialized() check is for. When a device_del() is called,
-> > it's removed from the dpm_list. The actual freeing comes later. But we
-> > aren't/weren't checking for that anyway.
-> >
-> > >
-> > > > > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > > > > ---
-> > > > >  drivers/base/power/main.c | 13 ++-----------
-> > > > >  1 file changed, 2 insertions(+), 11 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.=
-c
-> > > > > index 86e51b9fefab..9b9b6088e56a 100644
-> > > > > --- a/drivers/base/power/main.c
-> > > > > +++ b/drivers/base/power/main.c
-> > > > > @@ -284,18 +284,9 @@ static bool dpm_wait_for_superior(struct dev=
-ice *dev, bool async)
-> > > > >          * counting the parent once more unless the device has be=
-en deleted
-> > > > >          * already (in which case return right away).
-> > > > >          */
-> > > > > -       mutex_lock(&dpm_list_mtx);
-> > > > > -
-> > > > > -       if (!device_pm_initialized(dev)) {
-> > > > > -               mutex_unlock(&dpm_list_mtx);
-> > > > > -               return false;
-> > > > > -       }
-> > > > > -
-> > > > >         parent =3D get_device(dev->parent);
-> > > > > -
-> > > > > -       mutex_unlock(&dpm_list_mtx);
-> > > > > -
-> > > > > -       dpm_wait(parent, async);
-> > > > > +       if (device_pm_initialized(dev))
-> > > > > +               dpm_wait(parent, async);
-> > > >
-> > > > This is racy, so what's the point?
-> > > >
-> > > > You can just do
-> > > >
-> > > > parent =3D get_device(dev->parent);
-> > > > dpm_wait(parent, async);
-> >
-> > Parent struct device being there isn't the same as whether this device
-> > is in the dpm_list? So, shouldn't we still check this?
-> >
-> > Also, is it really racy anymore with the new algorithm? We don't kick
-> > off the subordinates until after the parent is done.
-> >
-> > > >
-> > > > and please update the comment above this.
-> >
-> > Will do.
-> >
-> > Thanks,
-> > Saravana
-> > > >
-> > > > >         put_device(parent);
-> > > > >
-> > > > >         dpm_wait_for_suppliers(dev, async);
-> > > > > --
+It doesn't look like a fix and it was sent too late for 6.13 so I was
+going to send it over for the next cycle.
 
