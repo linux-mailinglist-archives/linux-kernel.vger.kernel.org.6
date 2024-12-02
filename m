@@ -1,130 +1,197 @@
-Return-Path: <linux-kernel+bounces-427754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E709E0597
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:54:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321141653C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:46:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0511B2194B4;
-	Mon,  2 Dec 2024 14:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E5I0RieN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81EF9E056D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:47:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C97021C161
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D3428942F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:47:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9AB21D5A3;
+	Mon,  2 Dec 2024 14:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V87mOW6I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC49209696
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733150021; cv=none; b=tTY79lzQesGSjM4XxN4q5Fyj4LWbZX0SPDcKaPu7Mn2EwbHDvsUvhT7/KfM19bIiTIrpIrQxqe/Huz0agwTgEg7a2+L31wn1hfmEg0ImN2lBxPiXAIly4vF5meH9+HGqjj/FoQqyDdCeGt0wtI/APoEXYsI6hr/Aclzmbpl5M3U=
+	t=1733150042; cv=none; b=ruPwS/6xE19firDfNlNLSh0ANHrWipaDcwtDJrXIS1D7S7rwmX3I45vcul0e5JSBwOJ5tBoxs3rXyWR+P1DC/7KqPz4WSw5NOgDi6NBdCVX40HY6bTt8eN/yAnQwQ+bdvqRM8EKi7+J0nmsonjM5Zl9hPhamMG7pdO4DSZBwyOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733150021; c=relaxed/simple;
-	bh=a/25HVs0yA6eBaSB6rSCqAy9E99LVbbWKBcXuJ9I+f0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HDdQ2HZWx/VXeU6j/SSzjCTJs0ZopELS+Es7YKnqtD7gKnfegLP8E77lcsd8P6rV+vjUi7OkH3eTynIflzYW9LcQR8beWqCkQIFtAiOeTb13hL2hM6zk1Ad+1VkLI2kYZpu6V3jzZaiu0PADliPho94Kh5mh2nCBEs75ZwXtvKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E5I0RieN; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733150019; x=1764686019;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=a/25HVs0yA6eBaSB6rSCqAy9E99LVbbWKBcXuJ9I+f0=;
-  b=E5I0RieNnif2JySyva9/cvKxK1bIdGtdXhdx0NKQH0Xk5ePF3LIBN2ik
-   thpxKVAVIYZCyBoLf6GrLF5n525fjCRPPYeFX7Ds1RzOnpJYV/ngF3xTX
-   I53BOeg+7HY1nFmIqhZ3saIKUBnjQknkhD1Ji+bo2sGw8AXROuIb5TXgD
-   Ira9ZVWEuG83JD7HYibK9q7wqwU/ZB6vlKzY7wwt5MqZvcboh2eewvuR5
-   PrdTOFd3Cz3+mi0xSfeWhmcluw7HcNcQtCB6lhsljw1cWi2CR0RKV/Gq7
-   ml7Y2MZHUHOLoKEOq4JVGYCQ0TwL+gg7iyA3Ejuksr4zgLPUhVy4nmGOs
-   w==;
-X-CSE-ConnectionGUID: vD5aw8KNRPeGnwzmuaXhxg==
-X-CSE-MsgGUID: Sp8fHO3HQlipPLmmunU+bQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33062929"
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="33062929"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 06:33:38 -0800
-X-CSE-ConnectionGUID: Ok9RwDSLS625M4+A3AIFgA==
-X-CSE-MsgGUID: 9u6NiAi1SaSDBYnjPPg03w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="97196467"
-Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 02 Dec 2024 06:33:37 -0800
-Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tI7UU-0002Ut-2m;
-	Mon, 02 Dec 2024 14:33:34 +0000
-Date: Mon, 2 Dec 2024 22:33:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dave Marchevsky <davemarchevsky@fb.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: versioncheck: ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9
- linux/version.h not needed.
-Message-ID: <202412022244.0PSi8x5T-lkp@intel.com>
+	s=arc-20240116; t=1733150042; c=relaxed/simple;
+	bh=pPSluDrPZolihQ9FF0FDY4FMT7vtIp8TVNy3EC6ESfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=suJD8Jxg9KGmsdFRV3KJuWbdYHjshiG5TKSu5KCT2owThwL9hFlkS0BnEDiGebPF2EACYUZuBafEc4sKTOOIEi12MceYaz9271Ckoeg9Pi1hGr5bX6/SC36QUabVxGhgmS9gfkTi9U6UZDMn/KLPQLjUYWtkvUa9m6NqTTulrVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V87mOW6I; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733150039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J6Xej+sefl62+HuZJ02rOMvYBMjieqyUp/Rq6GPi75M=;
+	b=V87mOW6Il4PA4jmBa4MRvyMBObr7f0EwxpjR1hwGBlMVSix/CtRJG49PArTVW/uYa3upqt
+	w99qsjewTTaet0VCvgd1Qm6MibPxA3vFAyC9gbW7ScGfKIcm0JwAzPVK5mrREtvTUDoxHk
+	OZeuOUMY6gxKwtvaG79E4+c2U27W684=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-551-bJb8vHtWPvyEaz724cqm9w-1; Mon, 02 Dec 2024 09:33:58 -0500
+X-MC-Unique: bJb8vHtWPvyEaz724cqm9w-1
+X-Mimecast-MFC-AGG-ID: bJb8vHtWPvyEaz724cqm9w
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5d0d341cc43so1088894a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:33:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733150037; x=1733754837;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J6Xej+sefl62+HuZJ02rOMvYBMjieqyUp/Rq6GPi75M=;
+        b=eUDU4+KUpymFq/i4Idr3ZwkLnvqn0gKHEf3TDQCVEklseirEve5jRKa3L3LhQ6Pw6n
+         r8BsNoUiK/jaW08FwUOF1NPDeCWIhZNiUYnpmXIZvkmt1KB1Z/SVLze50Sob2IpVdcM/
+         b0Jh1H/g7u73fidO5FHagEo6AnsNoilYaoBTy5jZpO4YfBi+8/RLB2sN52KlGEEoV6uM
+         0kMGazRnyzWnJf8bpvn4ZxxhFBnvIkkLfYv2dVEz+lIUANVZBp98fCULeEcxFhdzHz6Y
+         F6OQImFficyQaAmbLIq3d3kz3//G4rRzSVEv33nRpIfL41fzqSw/jtokZn0BFEm+C9SW
+         7bsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKgz0UREaGC2iS8DeyR/mhEIjuXB3L8lSA7yUEY/qMC/BGfhyKvqlWn8ZQvd/nykkXYtaL1R0M3DTyiFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/H4QN2qz766X/vqGd53bC0FNSpRmtRRBBkbaUEab5BkkYSXW2
+	Vf1XtohdlxhQJGEOnSpgiQP7vlUi1en1gTC1lNQYG9Wgyk1r4qMhAlA2WSQ+M4VV+/27JekKtak
+	WMoPCgOz/MW1IYqrmhV5uYaqEFdJm2nvgUL7Fclp4isckgWOPVOzWumJKDlmnsQ==
+X-Gm-Gg: ASbGncvEzXstzLvN0S7M8ZM1j637Z7xF80/W4H0MkSR67ymY2l6ljVymbUszYvfAOm+
+	3fVJ6JoGx4OCgL65r99XOMh+HB5Fl0ofbQtbomkY7+WHc308VaGy+m7FkO4FIq+62za7w//PLX9
+	mIgYEAWrj/Vk/LcTb00o3n/DG4yAg2dUUlCAGNktNk4BUSVoJ6/BpXJGxjh6r0pQX6OZwNgI5SG
+	333yyDdG4oCTmn2bpr5Ek5VTNaZk76OoLwbHHfme3K87NLLNa1HeQ==
+X-Received: by 2002:a17:906:3114:b0:aa5:427e:6af6 with SMTP id a640c23a62f3a-aa580ef3240mr1773025266b.3.1733150036761;
+        Mon, 02 Dec 2024 06:33:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGPHol0jCmNI2H8UjxKDJtgKrB4os1/jOlRU53xbQS9RZk2bYe0rO/MZNOZt8QSSYzr7GbqJw==
+X-Received: by 2002:a17:906:3114:b0:aa5:427e:6af6 with SMTP id a640c23a62f3a-aa580ef3240mr1773021766b.3.1733150036328;
+        Mon, 02 Dec 2024 06:33:56 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa599953f7esm512624166b.191.2024.12.02.06.33.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 06:33:55 -0800 (PST)
+Message-ID: <6acfcc52-c547-4823-b8e2-4555ddc64085@redhat.com>
+Date: Mon, 2 Dec 2024 15:33:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] media: uvcvideo: Only save async fh if success
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241202-uvc-fix-async-v5-0-6658c1fe312b@chromium.org>
+ <20241202-uvc-fix-async-v5-1-6658c1fe312b@chromium.org>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241202-uvc-fix-async-v5-1-6658c1fe312b@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e70140ba0d2b1a30467d4af6bcfe761327b9ec95
-commit: dd65acf72d0e073970459d5da80573a04304aaa9 selftests/bpf: Remove SEC("version") from test progs
-date:   3 years, 2 months ago
-reproduce: (https://download.01.org/0day-ci/archive/20241202/202412022244.0PSi8x5T-lkp@intel.com/reproduce)
+Hi,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412022244.0PSi8x5T-lkp@intel.com/
+On 2-Dec-24 3:24 PM, Ricardo Ribalda wrote:
+> Now we keep a reference to the active fh for any call to uvc_ctrl_set,
+> regardless if it is an actual set or if it is a just a try or if the
+> device refused the operation.
+> 
+> We should only keep the file handle if the device actually accepted
+> applying the operation.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
+> Suggested-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-versioncheck warnings: (new ones prefixed by >>)
-   INFO PATH=/opt/cross/clang/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -Wformat-overflow -Wformat-truncation -Wrestrict -Wenum-conversion W=1 --keep-going HOSTCC=gcc-12 CC=gcc-12 -j32 ARCH=x86_64 versioncheck
-   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
-   	-name '*.[hcS]' -type f -print | sort \
-   	| xargs perl -w ./scripts/checkversion.pl
-   ./arch/csky/include/asm/io.h: 8 linux/version.h not needed.
-   ./arch/csky/kernel/process.c: 5 linux/version.h not needed.
-   ./arch/csky/mm/dma-mapping.c: 12 linux/version.h not needed.
-   ./drivers/media/platform/s3c-camif/camif-core.c: 26 linux/version.h not needed.
-   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-common.h: 16 linux/version.h not needed.
-   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c: 31 linux/version.h not needed.
-   ./drivers/media/platform/sti/c8sectpfe/c8sectpfe-dvb.c: 14 linux/version.h not needed.
-   ./drivers/media/usb/uvc/uvc_driver.c: 19 linux/version.h not needed.
-   ./drivers/net/ethernet/qlogic/qede/qede.h: 10 linux/version.h not needed.
-   ./drivers/net/ethernet/qlogic/qede/qede_ethtool.c: 7 linux/version.h not needed.
-   ./drivers/scsi/cxgbi/libcxgbi.h: 27 linux/version.h not needed.
-   ./drivers/scsi/mpi3mr/mpi3mr.h: 32 linux/version.h not needed.
-   ./drivers/scsi/qedi/qedi_dbg.h: 14 linux/version.h not needed.
-   ./drivers/staging/media/atomisp/include/linux/atomisp.h: 23 linux/version.h not needed.
-   ./init/version.c: 17 linux/version.h not needed.
-   ./sound/soc/codecs/cs42l42.c: 14 linux/version.h not needed.
-   ./tools/lib/bpf/bpf_helpers.h: 262: need linux/version.h
-   ./tools/perf/include/bpf/bpf.h: 70: need linux/version.h
-   ./tools/perf/tests/bpf-script-example.c: 49: need linux/version.h
-   ./tools/perf/tests/bpf-script-test-kbuild.c: 21: need linux/version.h
-   ./tools/perf/tests/bpf-script-test-prologue.c: 47: need linux/version.h
-   ./tools/perf/tests/bpf-script-test-relocation.c: 51: need linux/version.h
->> ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9 linux/version.h not needed.
->> ./tools/testing/selftests/bpf/progs/netcnt_prog.c: 3 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
-   ./tools/testing/selftests/wireguard/qemu/init.c: 25 linux/version.h not needed.
+Thank you, nice patch, better then my original suggestion :)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+I'll let this sit on the list to give others a chance to reply
+and if there are no remarks I'll merge this next Monday.
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 4fe26e82e3d1..9a80a7d8e73a 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1811,7 +1811,10 @@ int uvc_ctrl_begin(struct uvc_video_chain *chain)
+>  }
+>  
+>  static int uvc_ctrl_commit_entity(struct uvc_device *dev,
+> -	struct uvc_entity *entity, int rollback, struct uvc_control **err_ctrl)
+> +				  struct uvc_fh *handle,
+> +				  struct uvc_entity *entity,
+> +				  int rollback,
+> +				  struct uvc_control **err_ctrl)
+>  {
+>  	struct uvc_control *ctrl;
+>  	unsigned int i;
+> @@ -1859,6 +1862,10 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
+>  				*err_ctrl = ctrl;
+>  			return ret;
+>  		}
+> +
+> +		if (!rollback && handle &&
+> +		    ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+> +			ctrl->handle = handle;
+>  	}
+>  
+>  	return 0;
+> @@ -1895,8 +1902,8 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
+>  
+>  	/* Find the control. */
+>  	list_for_each_entry(entity, &chain->entities, chain) {
+> -		ret = uvc_ctrl_commit_entity(chain->dev, entity, rollback,
+> -					     &err_ctrl);
+> +		ret = uvc_ctrl_commit_entity(chain->dev, handle, entity,
+> +					     rollback, &err_ctrl);
+>  		if (ret < 0) {
+>  			if (ctrls)
+>  				ctrls->error_idx =
+> @@ -2046,9 +2053,6 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  	mapping->set(mapping, value,
+>  		uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+>  
+> -	if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+> -		ctrl->handle = handle;
+> -
+>  	ctrl->dirty = 1;
+>  	ctrl->modified = 1;
+>  	return 0;
+> @@ -2377,7 +2381,7 @@ int uvc_ctrl_restore_values(struct uvc_device *dev)
+>  			ctrl->dirty = 1;
+>  		}
+>  
+> -		ret = uvc_ctrl_commit_entity(dev, entity, 0, NULL);
+> +		ret = uvc_ctrl_commit_entity(dev, NULL, entity, 0, NULL);
+>  		if (ret < 0)
+>  			return ret;
+>  	}
+> 
+
 
