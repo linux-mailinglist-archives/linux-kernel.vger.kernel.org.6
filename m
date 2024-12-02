@@ -1,120 +1,306 @@
-Return-Path: <linux-kernel+bounces-427680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8B39E04B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:22:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622C29E049F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:17:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E132168486
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:15:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0E5282711
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E266C204080;
-	Mon,  2 Dec 2024 14:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92F1203711;
+	Mon,  2 Dec 2024 14:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PPoAYwi+"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KXUh0mVc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B645217588
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF7B2036FC
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733148917; cv=none; b=Tj92k+TFu3nyukiIhUCppfIFCGe5kS80MqJ0bdVxGjKKxqNlwLp4kw1+ULwfAP5QKMyD6LOqBDtI23xBSxYxzGM6sJuxM2IGMbUs80WXuVUmcc24snG+DkV9ng6ZcX4j9QDG6ckBAnIvdiWpicNic88eoeNxPCftwTlqEQXhy0g=
+	t=1733149052; cv=none; b=C/OXPa2mzPQMd/kkLtphX2sIlik1wkWEgjSrwSYP9GjHXLzTpcY2ceD2ql1CUHQ9DhyGpi91n9IW5Vf86S0KDrWoYACEuNdPopR+Mq2InrDXipfJz31dsquzyubUgcG76TiVAXUUz1G/rDZwofsTau/Z3CAGCouMhWzgtEWPZkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733148917; c=relaxed/simple;
-	bh=ErEwmTVW+AJuBhiJwMY/EZuwY/ewg6Ae7ulD+DF5Jgs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OBkoHGBNx91MILJikx4AJs0GdsAjH7M912YEw920reT9WSg3cnlIAn1zti0Fv/WHz5PZPVdGyGSRGTIv4HGe5QGs+bi6Jx6BzgJQspCNL86riQ21UAFfYxOQAvaV4R9NiQDBLjyRd30xmSurx82l9DTFXs8oR6PQ6CRLUPp85zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PPoAYwi+; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a1095fe4so5093925e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:15:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733148913; x=1733753713; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G4WY1vAA0r2fKbPXY4KjAS2UpwZ8hfCdwU02a05Yrls=;
-        b=PPoAYwi+eUePvErxy+KYvdLvS98V7Pdj0Cj7hD2p03ikjT1l5VaKmhtRSLQxidsAH0
-         j363wx3YAEEe9Pds/nm+sm2uEDFo+FzPq4fkq353hzlq3EARaYlXcgXYFcCe3jdiUa9w
-         Py+YhpNbogB4b5kUIyiKSil59OBIFu9HBJpdTrNSkqMPiy4h/kzIMbhzkWKYfZhJ2xOM
-         We/m7V6fxnK1sxEBpdxNmwLw/v+c1rUsE8ZgLuu8qLAyLXx57nNAD3nyphenx9sxLpW4
-         us395mC+EMtg9PXwf+swibPW0283mwuvxy0QiyZ0VjBFN1GHmzasKqjySe9alD4QfGS8
-         pqGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733148913; x=1733753713;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G4WY1vAA0r2fKbPXY4KjAS2UpwZ8hfCdwU02a05Yrls=;
-        b=GLnxzAR7PuJj2v3RNhpdd31TMrB1/3gDkksmRf5XYz6rpht4uTrrfo0f4i+olX3FY/
-         QrwsT+4G4K00j0JZ606j0lLM+s4YFaiylVjeOtM/RIOFjeuqKWC/20qgWreVS5hilNgb
-         wgavO6tYNNSuXauXPbSlz0a5kw5fLATOn68l7LrB7yzmPxfgKdvHrtUf49pzuESAEgKh
-         m63KYR5FuFELZA7AmJg0lwYBnP1hMONHmLY/FhrqQXjn+hLrDtEC39Gj/AD346jvxJl+
-         M0/e93kGhv68H889gq5UpRYetIezCnR4XO+GOs5mOxzGq29b+7CwMPj31bX9r3aD3awP
-         naWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVO31gObj+gDHdQBnesrGCIDYtQI7+P4Q3ZPkTu0X2I35akpoH2Okbr9cKqulLX4Mcdw0+0HrfatTDlhHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxAgITdLG1xzZFAQgL+thA3qTk9rsphCntwPRc78/6QlmGlFjy
-	4w4ee3q/z4TqeFSgTthLyCwER9ue8rI1LOGJ2RehbjbMzqq6dyY72RouovgUioU=
-X-Gm-Gg: ASbGncuUGPFEyJLunincn+kwCYv+18bhHCXm8xvC6+Ek5WPbyqS9nhV2u7TzghpMx1t
-	z1tyjKh3qW9OQtATnwwzFQnmoc8hwqiGZ43d53O/PsKPujEvcHzSovUtOsEkyvPsGJMUxTx0k0O
-	NtqoJ2j1Zm7+sW6yZsKYuNxVUPl4lFvFGnu7JuAgc7bsooJdrsAG0EEjRrLZNdaz4HMJwVq1670
-	nxrvBWxsWfOgWkOlBTMJH/mfasIXinAyBIz1GzKL7V4fTeZ5cLP5VqP/lTiJQ+s
-X-Google-Smtp-Source: AGHT+IFElDO2xd8mFJCzbrH8EiF3i2wyF8UmcXsrEdAyTq41fa6hejn4lGjAijspgIkC6zPVj6Q6lw==
-X-Received: by 2002:a5d:5984:0:b0:385:de67:229e with SMTP id ffacd0b85a97d-385de672523mr4078648f8f.11.1733148912772;
-        Mon, 02 Dec 2024 06:15:12 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.218.23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dbe4ccsm152388855e9.13.2024.12.02.06.15.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 06:15:12 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <t.figa@samsung.com>, 
- Thomas Abraham <thomas.abraham@linaro.org>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-In-Reply-To: <20241106-samsung-pinctrl-put-v1-0-de854e26dd03@gmail.com>
-References: <20241106-samsung-pinctrl-put-v1-0-de854e26dd03@gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: samsung: fix fwnode refcount cleanup in
- error path and update comment
-Message-Id: <173314891106.48956.4220732642073324618.b4-ty@linaro.org>
-Date: Mon, 02 Dec 2024 15:15:11 +0100
+	s=arc-20240116; t=1733149052; c=relaxed/simple;
+	bh=l53eq6Gqpux6ZIPoGVWN74grMDjkSlFt7LppoiLq+dU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hzof8t8a7ajyXEtQsur81WRtvmpJXcoAdI9Et9PLqgU2+NYdfewihz+zNQhnSNbcRDdbDACZhKqDdIHhh2+Oxxyy4zPetDohwYdo90fvXDUlDE2KG2a1A1GPSa4WNwrqTRE2tLRnFwhKJG4wuQb5bmZR2LQlSFNTKf5hOAv4WRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KXUh0mVc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733149049;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WbP9zKYTPrlEKwNqt/TPMC6qYtfaqL70kVm05VnW98Q=;
+	b=KXUh0mVcQNdDL8ROb3gHKCwNnQZ+Roqf3g0l9Qeck91F/WMAEMFjMgm4NOpILGLBCL2KsS
+	DNP8tcNiCh4h3bvzRcd5DgFWyNTlRMABIgXgGrizl9seJndnskAhx2lvGEGtSpCB+GdiRz
+	Nn0taB6KJxzcZjV1pB3aF6uwmbVrzOY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-651--A63-GJmPJa3r3qvii1ftw-1; Mon,
+ 02 Dec 2024 09:17:26 -0500
+X-MC-Unique: -A63-GJmPJa3r3qvii1ftw-1
+X-Mimecast-MFC-AGG-ID: -A63-GJmPJa3r3qvii1ftw
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DFA861955F43;
+	Mon,  2 Dec 2024 14:17:24 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B33F5195605A;
+	Mon,  2 Dec 2024 14:17:22 +0000 (UTC)
+Date: Mon, 2 Dec 2024 22:17:16 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev, x86@kernel.org,
+	rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
+Message-ID: <Z03BbH5PgNrE81dz@MiWiFi-R3L-srv>
+References: <20241021034553.18824-1-yan.y.zhao@intel.com>
+ <87frop8r0y.fsf@email.froward.int.ebiederm.org>
+ <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
+ <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
+ <ZxmRkUNmx863Po2U@yzhao56-desk.sh.intel.com>
+ <Z0WzHZ+fNn6WuH/E@MiWiFi-R3L-srv>
+ <Z0bt4HXAKqM3C1ZW@yzhao56-desk.sh.intel.com>
+ <Z0iJ+DTPA2IkVDx7@MiWiFi-R3L-srv>
+ <Z0lWkrsXSpDVfW72@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0lWkrsXSpDVfW72@yzhao56-desk.sh.intel.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-
-On Wed, 06 Nov 2024 23:04:38 +0100, Javier Carrasco wrote:
-> The first patch completes a previous fix where one error path stayed as
-> a direct return after the child nodes were acquired, and the second,
-> completely trivial, updates the function name used in the comment to
-> indicate where the references are released.
+On 11/29/24 at 01:52pm, Yan Zhao wrote:
+> On Thu, Nov 28, 2024 at 11:19:20PM +0800, Baoquan He wrote:
+> > On 11/27/24 at 06:01pm, Yan Zhao wrote:
+> > > On Tue, Nov 26, 2024 at 07:38:05PM +0800, Baoquan He wrote:
+> > > > On 10/24/24 at 08:15am, Yan Zhao wrote:
+> > > > > On Wed, Oct 23, 2024 at 10:44:11AM -0500, Eric W. Biederman wrote:
+> > > > > > "Kirill A. Shutemov" <kirill@shutemov.name> writes:
+> > > > > > 
+> > > > > > > Waiting minutes to get VM booted to shell is not feasible for most
+> > > > > > > deployments. Lazy is sane default to me.
+> > > > > > 
+> > > > > > Huh?
+> > > > > > 
+> > > > > > Unless my guesses about what is happening are wrong lazy is hiding
+> > > > > > a serious implementation deficiency.  From all hardware I have seen
+> > > > > > taking minutes is absolutely ridiculous.
+> > > > > > 
+> > > > > > Does writing to all of memory at full speed take minutes?  How can such
+> > > > > > a system be functional?
+> > > > > > 
+> > > > > > If you don't actually have to write to the pages and it is just some
+> > > > > > accounting function it is even more ridiculous.
+> > > > > > 
+> > > > > > 
+> > > > > > I had previously thought that accept_memory was the firmware call.
+> > > > > > Now that I see that it is just a wrapper for some hardware specific
+> > > > > > calls I am even more perplexed.
+> > > > > > 
+> > > > > > 
+> > > > > > Quite honestly what this looks like to me is that someone failed to
+> > > > > > enable write-combining or write-back caching when writing to memory
+> > > > > > when initializing the protected memory.  With the result that everything
+> > > > > > is moving dog slow, and people are introducing complexity left and write
+> > > > > > to avoid that bad implementation.
+> > > > > > 
+> > > > > > 
+> > > > > > Can someone please explain to me why this accept_memory stuff has to be
+> > > > > > slow, why it has to take minutes to do it's job.
+> > > > > This kexec patch is a fix to a guest(TD)'s kexce failure.
+> > > > > 
+> > > > > For a linux guest, the accept_memory() happens before the guest accesses a page.
+> > > > > It will (if the guest is a TD)
+> > > > > (1) trigger the host to allocate the physical page on host to map the accessed
+> > > > >     guest page, which might be slow with wait and sleep involved, depending on
+> > > > >     the memory pressure on host.
+> > > > > (2) initializing the protected page.
+> > > > > 
+> > > > > Actually most of guest memory are not accessed by guest during the guest life
+> > > > > cycle. accept_memory() may cause the host to commit a never-to-be-used page,
+> > > > > with the host physical page not even being able to get swapped out.
+> > > > 
+> > > > So this sounds to me more like a business requirement on cloud platform,
+> > > > e.g if one customer books a guest instance with 60G memory, while the
+> > > > customer actually always only cost 20G memory at most. Then the 40G memory
+> > > > can be saved to reduce pressure for host.
+> > > Yes.
+> > 
+> > That's very interesting, thanks for confirming.
+> > 
+> > > 
+> > > > I could be shallow, just a wild guess.
+> > > > If my guess is right, at least those cloud service providers must like this
+> > > > accept_memory feature very much.
+> > > > 
+> > > > > 
+> > > > > That's why we need a lazy accept, which does not accept_memory() until after a
+> > > > > page is allocated by the kernel (in alloc_page(s)).
+> > > > 
+> > > > By the way, I have two questions, maybe very shallow.
+> > > > 
+> > > > 1) why can't we only find those already accepted memory to put kexec
+> > > > kernel/initrd/bootparam/purgatory?
+> > > 
+> > > Currently, the first kernel only accepts memory during the memory allocation in
+> > > a lazy accept mode. Besides reducing boot time, it's also good for memory
+> > > over-commitment as you mentioned above.
+> > > 
+> > > My understanding of why the memory for the kernel/initrd/bootparam/purgatory is
+> > > not allocated from the first kernel is that this memory usually needs to be
+> > > physically contiguous. Since this memory will not be used by the first kernel,
+> > > looking up from free RAM has a lower chance of failure compared to allocating it
+> > 
+> > Well, there could be misunderstanding here.The final loaded position of
+> > kernel/initrd/bootparam/purgatory is not searched from free RAM, it's
+> Oh, by free RAM, I mean system RAM that is marked as
+> IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY, but not marked as
+> IORESOURCE_SYSRAM_DRIVER_MANAGED.
 > 
 > 
+> > just from RAM on x86. Means it possibly have been allocated and being
+> > used by other component of 1st kernel. Not like kdump, the 2nd kernel of
+> Yes, it's entirely possible that the destination address being searched out has
+> already been allocated and is in use by the 1st kernel. e.g. for
+> KEXEC_TYPE_DEFAULT, the source page for each segment is allocated from the 1st
+> kernel, and it is allowed to have the same address as its corresponding
+> destination address.
+> 
+> However, it's not guaranteed that the destination address must have been
+> allocated by the 1st kernel.
+> 
+> > kexec reboot doesn't care about 1st kernel's memory usage. We will copy
+> > them from intermediat position to the designated location when jumping.
+> Right. If it's not guaranteed that the destination address has been accepted
+> before this copying, the copying could trigger an error due to accessing an
+> unaccepted page, which could be fatal for a linux TDX guest.
 
-Applied, thanks!
+Oh, I just said the opposite. I meant we could search according to the
+current unaccepted->bitmap to make sure the destination area definitely
+have been accepted. This is the best if doable, while I know it's not
+easy.
 
-[1/2] pinctrl: samsung: fix fwnode refcount cleanup if platform_get_irq_optional() fails
-      https://git.kernel.org/pinctrl/samsung/c/459915f55509f4bfd6076daa1428e28490ddee3b
-[2/2] pinctrl: samsung: update child reference drop comment
-      https://git.kernel.org/pinctrl/samsung/c/0ebb1e9e1b12ddcb86105a14b59ccbed76b6ce00
+> 
+> > If we take this way, we need search unaccepted->bitmap top down or
+> > bottom up, according to setting. Then another suit of functions need
+> > be provided. That looks a little complicated.
+> Do you mean searching only accepted pages as destination addresses?
+> That might increase the chance of failure compared to accepting the addressed
+> being searched out.
+> 
+> > kexec_add_buffer()
+> > -->arch_kexec_locate_mem_hole()
+> >    -->kexec_locate_mem_hole()
+> >       -->kexec_walk_memblock(kbuf, locate_mem_hole_callback) -- on arm64
+> >       -->kexec_walk_resources(kbuf, locate_mem_hole_callback) -- on x86
+> >          -->walk_system_ram_res_rev()
+> 
+> Yes.
+> 
+> 
+> > Besides, the change in your patch has one issue. Usually we do kexec load to
+> > read in the kernel/initrd/bootparam/purgatory, while they are loaded to
+> > the destinations till kexec jumping. We could do kexec loading while 
+> > never trigger the jumping, your change have done the accept_memory().
+> > But this doesn't impact much because it always searched and found the
+> > same location on one system.
+> Right.
+> Do you think it's good to move the accept to machine_kexec()?
+> The machine_kexec() is platform specific though.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I am not sure if it's appropriate to accept in machine_kexec(). 
+
+> 
+> > > from the first kernel, especially when memory pressure is high in the first
+> > > kernel.
+> > > 
+> > >  
+> > > > 2) why can't we accept memory for (kernel, boot params/cmdline/initrd)
+> > > > in 2nd kernel? Surely this purgatory still need be accepted in 1st kernel.
+> > > > Sorry, I just read accept_memory() code, haven't gone through x86 boot
+> > > > code flow.
+> > > If a page is not already accepted, invoking accept_memory() will trigger a
+> > > memory accept to zero-out the page content. So, for the pages passed to the
+> > > second kernel, they must have been accepted before page content is copied in.
+> > > 
+> > > For boot params/cmdline/initrd, perhaps we could make those pages in shared
+> > > memory initially and have the second kernel to accept private memory for copy.
+> > > However, that would be very complex and IMHO not ideal.
+> > 
+> > I asked this because I saw your reply to Eric in another thread, quote
+> > your saying at below. I am wondering why kernel can accept itself, why
+> > other parts can't do it similarly.
+> > =====
+> > Yes, the kernel actually will accept initial memory used by itself in
+> > extract_kernel(), as in arch/x86/boot/compressed/misc.c.
+> > 
+> > But the target kernel may not be able to accept memory for purgatory.
+> > And it's currently does not accept memory for boot params/cmdline,
+> > and initrd .
+> > ====
+> Thanks for pointing this out.
+> I also found that my previous reply was confusing and misleading.
+> 
+> The 2nd kernel will accept the addresses before it decompresses itself there.
+> Since these addresses are somewhere "random", the 2nd kernel (and for the 1st
+> kernel for itself) needs to call accept_memory() in case that they might not
+> have been accepted.
+> 
+> So, previously, I thought a workable approach might be for kexec to map the
+> destination addresses in shared memory, perform the copy/jump, and then have the
+> 2nd kernel accept the addresses for decompressing and other parts.
+> However, aside from the complications and security concerns, this approach is
+> problematic because the 2nd kernel may clear the pages by accepting them if the
+> addresses for decompressing overlap with the ones before decompressing.
+> 
+> That said, would it be acceptable if I update the patch log and maybe also move
+> the accept call to machine_kexec()?
+
+Hmm, I think a repost seems necessary, even though this patch looks good
+to me. If I do, I would add a cover letter to present with several sections:
+
+1) background information: to explain what scenario the accept memory is
+used for. And why accept all memory in kexec reboot case is not
+expected.
+2) the current problem: a brief description of the problem and itsroot cause;
+3) How to fix it: here we can list all possible solutions we can thin of
+and what drawbacks they have so that they are not chosen. Then we can
+come to the final sotution that your current patch has to resort to
+take.
+
+As kexec maintainer, Eric's concerns are very important and need be resolved 
+with as much information as possible to let him be happy with the
+change, at least let him not hate it. This is my personal suggestion as a
+reviewer. You can put them into cover letter if you think it's not good to add
+them all in a standalone patch.
+
+> 
+> New patch log:
+> The kexec segments's destination addresses are searched from the memblock
+> or RAM resources. They are not allocated by the first kernel, though they
+> may overlap with the memory in used by the first kernel. So, it is not
+> guaranteed that they are accepted before kexec relocates to the second
+> kernel.
+> 
+> Accept the destination addresses before kexec relocates to the second
+> kernel, since kexec would access them by swapping content of source and
+> destination pages.
+> 
 
 
