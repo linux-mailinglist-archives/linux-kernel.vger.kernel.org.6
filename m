@@ -1,119 +1,489 @@
-Return-Path: <linux-kernel+bounces-427587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126679E0320
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:18:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E26399E0324
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:18:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9FA8288C9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:18:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21B7288D09
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBC720101A;
-	Mon,  2 Dec 2024 13:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5141FECAC;
+	Mon,  2 Dec 2024 13:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TlUDTiqG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="iP2692B7"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2CA200B9B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 13:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC37213AA35;
+	Mon,  2 Dec 2024 13:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733145417; cv=none; b=hC2EQYxBwMN5GsGmJafcfd60BCOML5bfaDXJj6u0deaCBjZCEftRSCyCdLmkMJf93c3IYh+uIN1XLVYuyCsDwwCwFrDglAns//GPMebI4ayrn5ikLP0z2Z1kOk9SG1Lzvl8qowSAQ6m0U6s4on7MxuWf39tJcg8CeSP/XLOQSOM=
+	t=1733145456; cv=none; b=O+AfJAyEl66i7d4AaAjE2B4EA0K6VuTWyo6+rzymaDZJDkuKv3tLTpqK9afi0tFMnzwOZcYTMESeOxCxDK0tfylWv1bd1FpiAcDf/psg1keQ+OblgEZ0iyfvWckwjlvpqIbCfEtuhiUv0BJTO9FyXaKnXG1fDGb/Y55iYCu2jm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733145417; c=relaxed/simple;
-	bh=/VF+nWs6BWtLEi7pKkF8pL4507yNu1NwuQmjk0P5/9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAOxVffYmM1DrKC2I17IXjxRuXwblZYgh7hmdExpF3RTW8hK2o8GIz4+dXDK377mavgNQZjDZlTyvpV0xROlyklOakWW4W8OeJNQC80GkqcrZgMyZgy+azSf+GXq68Cf5i4X2TOg/wU2ckHPs420D5ArCzNHByZQNjY64Gd9jIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TlUDTiqG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9CE9C4CED1;
-	Mon,  2 Dec 2024 13:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733145417;
-	bh=/VF+nWs6BWtLEi7pKkF8pL4507yNu1NwuQmjk0P5/9g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TlUDTiqGqqVXsTcBbB9DY1Tj4GMlqBKCfLy4MRppqgoZ+hIXX+C1MxEj5vfH9GnPp
-	 pZzbmEljazX/5Fp15FZzjtyQiV1ARa5cluHtszSCNK+WUICMjsXncH/i800kboib3d
-	 5yO6V9WPYE2Gw6PKa8jvyRcXDRMhpGkyfykwfGepEd9RLlf9N+2uRYV1kfFkMrn1rb
-	 va5YB+0NIfOs3QsVhKScTQ1SxXldUT4An8nqBvnsXywUZlmtQRVQHW/x/+juRJpXdN
-	 +RZehDyE3RB5KB4msJrMpBXmF/iSnIGVeQI0SRdGYab574kPnU8kJRIi+YRG9yp/R8
-	 u967dyf3w8Lgg==
-Date: Mon, 2 Dec 2024 13:16:51 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Jiaxin Yu =?utf-8?B?KOS/nuWutumRqyk=?= <Jiaxin.Yu@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"ajye_huang@compal.corp-partner.google.com" <ajye_huang@compal.corp-partner.google.com>,
-	Chunxu Li =?utf-8?B?KOadjuaYpeaXrSk=?= <Chunxu.Li@mediatek.com>,
-	Allen-KH Cheng =?utf-8?B?KOeoi+WGoOWLsik=?= <Allen-KH.Cheng@mediatek.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-	"andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	"robert.foss@linaro.org" <robert.foss@linaro.org>,
-	"Laurent.pinchart@ideasonboard.com" <Laurent.pinchart@ideasonboard.com>,
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Nicolas Prado <nfraprado@collabora.com>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH v2 1/3] ASoC: hdmi-codec: Add event handler for hdmi TX
-Message-ID: <00d5c728-3eb9-427a-bc60-5828c20fec09@sirena.org.uk>
-References: <Y4Cysgk5Gic5ae9B@sirena.org.uk>
- <18c82f6f723cd97a9d6b9a7ff16c6ed62fd005d6.camel@mediatek.com>
- <Y4Y/vEWe3dw0FPQH@sirena.org.uk>
- <cf9ea98a3263ffb8fc8b542888ad0ad680facfc7.camel@mediatek.com>
- <Y4jHAJgmz/P58Q/C@sirena.org.uk>
- <7023a2c7b471d6888d9079563a6c01f22599201f.camel@mediatek.com>
- <Y43e+EsNCrCpZSIH@sirena.org.uk>
- <dc50d0b21795acbcc44c77e5fd81e7cb92c65c67.camel@mediatek.com>
- <Y5ipwqzHKTK8UdlC@sirena.org.uk>
- <a699178dcef540fff5caae6291983a444886bff6.camel@mediatek.com>
+	s=arc-20240116; t=1733145456; c=relaxed/simple;
+	bh=OLJpSX3LNj136Ba0KdFNNezKUJSqfSOM2lpI+TIC/FU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=geXQ2ERecR1Sux7K/isMAJHbzQjPKsjJgdsbz3tcTUenSJjxOPQgVNzJ4Yz6l/EyiW7NH3drcguoDw82ojtNchn8Qu74CN3LmAlkfZYQlQF7SzMedRzureV6mNYijFkYcDlykeQpRtERcOjluT70ybmpm7ZUKFTfw9IEDZ4WwTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=iP2692B7; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sendonly@marcansoft.com)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 2F90241F5F;
+	Mon,  2 Dec 2024 13:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1733145447;
+	bh=OLJpSX3LNj136Ba0KdFNNezKUJSqfSOM2lpI+TIC/FU=;
+	h=From:Date:Subject:To:Cc;
+	b=iP2692B7NwQbgSq+Id0GvlWW2ejP9DL62dburowzPz/pTRjFeRnmb7W54ufkRJciu
+	 154HyNgxUKfidUwlylK7NlsEWb+zJvjoM/JR3ERCXjRMdnef8Sc1DrIOPHRUSg/u02
+	 JA4d83v4VVSLaBCi5/jASTmd7OwBE/23WdsCWizxvU+88msk5Nc+oA9iFAfmFwwLNN
+	 P6yBGxSPpgLc/8nhaOMnUAh31cn5zjZkeNwq5TmNCXNTzs1shUbAvnr4/gaxwHI/dP
+	 JJGCNHlF3H1GW/U8C34HKy/RPuyjdIy9NVJPZNlgwgsvfYchRKfo3Ux8siBCaCqD4i
+	 fimp1RVp4jInA==
+From: Asahi Lina <lina@asahilina.net>
+Date: Mon, 02 Dec 2024 22:17:15 +0900
+Subject: [PATCH] ALSA: usb-audio: Add extra PID for RME Digiface USB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NG9fJ4QMkZ8167X3"
-Content-Disposition: inline
-In-Reply-To: <a699178dcef540fff5caae6291983a444886bff6.camel@mediatek.com>
-X-Cookie: (null cookie
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-rme-digiface-usb-id-v1-1-50f730d7a46e@asahilina.net>
+X-B4-Tracking: v=1; b=H4sIAFqzTWcC/x2MQQqAIBBFrxKzbiArQ7pKtDAdaxZZKEUg3b2hz
+ YPH4/8CmRJThrEqkOjmzEcUUXUFbrNxJWQvDm3T9kqAaSf0vHKwjvDKi3T0odEuGGUG3YEsz0S
+ Bn/91mt/3A3llORxlAAAA
+X-Change-ID: 20241202-rme-digiface-usb-id-df05cf818653
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: Heiko Engemann <heikoengemann@gmail.com>, 
+ Cyan Nyan <cyan.vtb@gmail.com>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Asahi Lina <lina@asahilina.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733145447; l=11996;
+ i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
+ bh=OLJpSX3LNj136Ba0KdFNNezKUJSqfSOM2lpI+TIC/FU=;
+ b=IdNg5bli6ojMRL2JqkteKYnIe5jtU1uXf0bBYSbhBiAlQhQxud/BGoJZQwoJCHTvUG81ef6Vo
+ Wbwg1tnmvaeBWjS3A9oHgKoZ7PJTHNAV1xSAFmfKPVx5TkOEJVatDOd
+X-Developer-Key: i=lina@asahilina.net; a=ed25519;
+ pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
 
+It seems there is an alternate version of the hardware with a different
+PID. User testing reveals this still works with the same interface as far
+as the kernel is concerned, so just add the extra PID. Thanks to Heiko
+Engemann for testing with this version.
 
---NG9fJ4QMkZ8167X3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Due to the way quirks-table.h is structured, that means we have to turn
+the entire quirk struct into a macro to avoid duplicating it...
 
-On Sun, Dec 01, 2024 at 05:15:45PM +0000, Jiaxin Yu (=E4=BF=9E=E5=AE=B6=E9=
-=91=AB) wrote:
+Cc: stable@vger.kernel.org
+Signed-off-by: Asahi Lina <lina@asahilina.net>
+---
+ sound/usb/mixer_quirks.c |   1 +
+ sound/usb/quirks-table.h | 341 ++++++++++++++++++++++++-----------------------
+ sound/usb/quirks.c       |   2 +
+ 3 files changed, 176 insertions(+), 168 deletions(-)
 
-> So I want to ask if I can do it by just adding
-> SOC_DAPM_PIN_SWITCH("Speakers") and SOC_DAPM_PIN_SWITCH("HDMI")?
-> Correspondingly, dapm widget and route path need to be added. That is
-> "SND_SOC_DAPM_SPK("Speakers", NULL)/ SND_SOC_DAPM_LINE("HDMI1", NULL)"
-> and "{"Speakers", NULL, "Speaker"}/ {"HDMI1", NULL, "TX"}".
+diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
+index 6456e87e2f397478aa1d767bc27f15d7b09acb86..a95ebcf4e46e76b19ec439c4ec02f18e650f96a3 100644
+--- a/sound/usb/mixer_quirks.c
++++ b/sound/usb/mixer_quirks.c
+@@ -4059,6 +4059,7 @@ int snd_usb_mixer_apply_create_quirk(struct usb_mixer_interface *mixer)
+ 		err = snd_bbfpro_controls_create(mixer);
+ 		break;
+ 	case USB_ID(0x2a39, 0x3f8c): /* RME Digiface USB */
++	case USB_ID(0x2a39, 0x3fa0): /* RME Digiface USB (alternate) */
+ 		err = snd_rme_digiface_controls_create(mixer);
+ 		break;
+ 	case USB_ID(0x2b73, 0x0017): /* Pioneer DJ DJM-250MK2 */
+diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
+index 199d0603cf8e592930199097a9fa009a7b5308d8..3f8beacca27a1787987ee7eba08456eb3598231c 100644
+--- a/sound/usb/quirks-table.h
++++ b/sound/usb/quirks-table.h
+@@ -3616,176 +3616,181 @@ YAMAHA_DEVICE(0x7010, "UB99"),
+ 		}
+ 	}
+ },
+-{
+-	/* Only claim interface 0 */
+-	.match_flags = USB_DEVICE_ID_MATCH_VENDOR |
+-		       USB_DEVICE_ID_MATCH_PRODUCT |
+-		       USB_DEVICE_ID_MATCH_INT_CLASS |
+-		       USB_DEVICE_ID_MATCH_INT_NUMBER,
+-	.idVendor = 0x2a39,
+-	.idProduct = 0x3f8c,
+-	.bInterfaceClass = USB_CLASS_VENDOR_SPEC,
+-	.bInterfaceNumber = 0,
+-	QUIRK_DRIVER_INFO {
+-		QUIRK_DATA_COMPOSITE {
++#define QUIRK_RME_DIGIFACE(pid) \
++{ \
++	/* Only claim interface 0 */ \
++	.match_flags = USB_DEVICE_ID_MATCH_VENDOR | \
++		       USB_DEVICE_ID_MATCH_PRODUCT | \
++		       USB_DEVICE_ID_MATCH_INT_CLASS | \
++		       USB_DEVICE_ID_MATCH_INT_NUMBER, \
++	.idVendor = 0x2a39, \
++	.idProduct = pid, \
++	.bInterfaceClass = USB_CLASS_VENDOR_SPEC, \
++	.bInterfaceNumber = 0, \
++	QUIRK_DRIVER_INFO { \
++		QUIRK_DATA_COMPOSITE { \
+ 			/*
+ 			 * Three modes depending on sample rate band,
+ 			 * with different channel counts for in/out
+-			 */
+-			{ QUIRK_DATA_STANDARD_MIXER(0) },
+-			{
+-				QUIRK_DATA_AUDIOFORMAT(0) {
+-					.formats = SNDRV_PCM_FMTBIT_S32_LE,
+-					.channels = 34, // outputs
+-					.fmt_bits = 24,
+-					.iface = 0,
+-					.altsetting = 1,
+-					.altset_idx = 1,
+-					.endpoint = 0x02,
+-					.ep_idx = 1,
+-					.ep_attr = USB_ENDPOINT_XFER_ISOC |
+-						USB_ENDPOINT_SYNC_ASYNC,
+-					.rates = SNDRV_PCM_RATE_32000 |
+-						SNDRV_PCM_RATE_44100 |
+-						SNDRV_PCM_RATE_48000,
+-					.rate_min = 32000,
+-					.rate_max = 48000,
+-					.nr_rates = 3,
+-					.rate_table = (unsigned int[]) {
+-						32000, 44100, 48000,
+-					},
+-					.sync_ep = 0x81,
+-					.sync_iface = 0,
+-					.sync_altsetting = 1,
+-					.sync_ep_idx = 0,
+-					.implicit_fb = 1,
+-				},
+-			},
+-			{
+-				QUIRK_DATA_AUDIOFORMAT(0) {
+-					.formats = SNDRV_PCM_FMTBIT_S32_LE,
+-					.channels = 18, // outputs
+-					.fmt_bits = 24,
+-					.iface = 0,
+-					.altsetting = 1,
+-					.altset_idx = 1,
+-					.endpoint = 0x02,
+-					.ep_idx = 1,
+-					.ep_attr = USB_ENDPOINT_XFER_ISOC |
+-						USB_ENDPOINT_SYNC_ASYNC,
+-					.rates = SNDRV_PCM_RATE_64000 |
+-						SNDRV_PCM_RATE_88200 |
+-						SNDRV_PCM_RATE_96000,
+-					.rate_min = 64000,
+-					.rate_max = 96000,
+-					.nr_rates = 3,
+-					.rate_table = (unsigned int[]) {
+-						64000, 88200, 96000,
+-					},
+-					.sync_ep = 0x81,
+-					.sync_iface = 0,
+-					.sync_altsetting = 1,
+-					.sync_ep_idx = 0,
+-					.implicit_fb = 1,
+-				},
+-			},
+-			{
+-				QUIRK_DATA_AUDIOFORMAT(0) {
+-					.formats = SNDRV_PCM_FMTBIT_S32_LE,
+-					.channels = 10, // outputs
+-					.fmt_bits = 24,
+-					.iface = 0,
+-					.altsetting = 1,
+-					.altset_idx = 1,
+-					.endpoint = 0x02,
+-					.ep_idx = 1,
+-					.ep_attr = USB_ENDPOINT_XFER_ISOC |
+-						USB_ENDPOINT_SYNC_ASYNC,
+-					.rates = SNDRV_PCM_RATE_KNOT |
+-						SNDRV_PCM_RATE_176400 |
+-						SNDRV_PCM_RATE_192000,
+-					.rate_min = 128000,
+-					.rate_max = 192000,
+-					.nr_rates = 3,
+-					.rate_table = (unsigned int[]) {
+-						128000, 176400, 192000,
+-					},
+-					.sync_ep = 0x81,
+-					.sync_iface = 0,
+-					.sync_altsetting = 1,
+-					.sync_ep_idx = 0,
+-					.implicit_fb = 1,
+-				},
+-			},
+-			{
+-				QUIRK_DATA_AUDIOFORMAT(0) {
+-					.formats = SNDRV_PCM_FMTBIT_S32_LE,
+-					.channels = 32, // inputs
+-					.fmt_bits = 24,
+-					.iface = 0,
+-					.altsetting = 1,
+-					.altset_idx = 1,
+-					.endpoint = 0x81,
+-					.ep_attr = USB_ENDPOINT_XFER_ISOC |
+-						USB_ENDPOINT_SYNC_ASYNC,
+-					.rates = SNDRV_PCM_RATE_32000 |
+-						SNDRV_PCM_RATE_44100 |
+-						SNDRV_PCM_RATE_48000,
+-					.rate_min = 32000,
+-					.rate_max = 48000,
+-					.nr_rates = 3,
+-					.rate_table = (unsigned int[]) {
+-						32000, 44100, 48000,
+-					}
+-				}
+-			},
+-			{
+-				QUIRK_DATA_AUDIOFORMAT(0) {
+-					.formats = SNDRV_PCM_FMTBIT_S32_LE,
+-					.channels = 16, // inputs
+-					.fmt_bits = 24,
+-					.iface = 0,
+-					.altsetting = 1,
+-					.altset_idx = 1,
+-					.endpoint = 0x81,
+-					.ep_attr = USB_ENDPOINT_XFER_ISOC |
+-						USB_ENDPOINT_SYNC_ASYNC,
+-					.rates = SNDRV_PCM_RATE_64000 |
+-						SNDRV_PCM_RATE_88200 |
+-						SNDRV_PCM_RATE_96000,
+-					.rate_min = 64000,
+-					.rate_max = 96000,
+-					.nr_rates = 3,
+-					.rate_table = (unsigned int[]) {
+-						64000, 88200, 96000,
+-					}
+-				}
+-			},
+-			{
+-				QUIRK_DATA_AUDIOFORMAT(0) {
+-					.formats = SNDRV_PCM_FMTBIT_S32_LE,
+-					.channels = 8, // inputs
+-					.fmt_bits = 24,
+-					.iface = 0,
+-					.altsetting = 1,
+-					.altset_idx = 1,
+-					.endpoint = 0x81,
+-					.ep_attr = USB_ENDPOINT_XFER_ISOC |
+-						USB_ENDPOINT_SYNC_ASYNC,
+-					.rates = SNDRV_PCM_RATE_KNOT |
+-						SNDRV_PCM_RATE_176400 |
+-						SNDRV_PCM_RATE_192000,
+-					.rate_min = 128000,
+-					.rate_max = 192000,
+-					.nr_rates = 3,
+-					.rate_table = (unsigned int[]) {
+-						128000, 176400, 192000,
+-					}
+-				}
+-			},
+-			QUIRK_COMPOSITE_END
+-		}
+-	}
+-},
++			 */ \
++			{ QUIRK_DATA_STANDARD_MIXER(0) }, \
++			{ \
++				QUIRK_DATA_AUDIOFORMAT(0) { \
++					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
++					.channels = 34, /* outputs */ \
++					.fmt_bits = 24, \
++					.iface = 0, \
++					.altsetting = 1, \
++					.altset_idx = 1, \
++					.endpoint = 0x02, \
++					.ep_idx = 1, \
++					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
++						USB_ENDPOINT_SYNC_ASYNC, \
++					.rates = SNDRV_PCM_RATE_32000 | \
++						SNDRV_PCM_RATE_44100 | \
++						SNDRV_PCM_RATE_48000, \
++					.rate_min = 32000, \
++					.rate_max = 48000, \
++					.nr_rates = 3, \
++					.rate_table = (unsigned int[]) { \
++						32000, 44100, 48000, \
++					}, \
++					.sync_ep = 0x81, \
++					.sync_iface = 0, \
++					.sync_altsetting = 1, \
++					.sync_ep_idx = 0, \
++					.implicit_fb = 1, \
++				}, \
++			}, \
++			{ \
++				QUIRK_DATA_AUDIOFORMAT(0) { \
++					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
++					.channels = 18, /* outputs */ \
++					.fmt_bits = 24, \
++					.iface = 0, \
++					.altsetting = 1, \
++					.altset_idx = 1, \
++					.endpoint = 0x02, \
++					.ep_idx = 1, \
++					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
++						USB_ENDPOINT_SYNC_ASYNC, \
++					.rates = SNDRV_PCM_RATE_64000 | \
++						SNDRV_PCM_RATE_88200 | \
++						SNDRV_PCM_RATE_96000, \
++					.rate_min = 64000, \
++					.rate_max = 96000, \
++					.nr_rates = 3, \
++					.rate_table = (unsigned int[]) { \
++						64000, 88200, 96000, \
++					}, \
++					.sync_ep = 0x81, \
++					.sync_iface = 0, \
++					.sync_altsetting = 1, \
++					.sync_ep_idx = 0, \
++					.implicit_fb = 1, \
++				}, \
++			}, \
++			{ \
++				QUIRK_DATA_AUDIOFORMAT(0) { \
++					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
++					.channels = 10, /* outputs */ \
++					.fmt_bits = 24, \
++					.iface = 0, \
++					.altsetting = 1, \
++					.altset_idx = 1, \
++					.endpoint = 0x02, \
++					.ep_idx = 1, \
++					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
++						USB_ENDPOINT_SYNC_ASYNC, \
++					.rates = SNDRV_PCM_RATE_KNOT | \
++						SNDRV_PCM_RATE_176400 | \
++						SNDRV_PCM_RATE_192000, \
++					.rate_min = 128000, \
++					.rate_max = 192000, \
++					.nr_rates = 3, \
++					.rate_table = (unsigned int[]) { \
++						128000, 176400, 192000, \
++					}, \
++					.sync_ep = 0x81, \
++					.sync_iface = 0, \
++					.sync_altsetting = 1, \
++					.sync_ep_idx = 0, \
++					.implicit_fb = 1, \
++				}, \
++			}, \
++			{ \
++				QUIRK_DATA_AUDIOFORMAT(0) { \
++					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
++					.channels = 32, /* inputs */ \
++					.fmt_bits = 24, \
++					.iface = 0, \
++					.altsetting = 1, \
++					.altset_idx = 1, \
++					.endpoint = 0x81, \
++					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
++						USB_ENDPOINT_SYNC_ASYNC, \
++					.rates = SNDRV_PCM_RATE_32000 | \
++						SNDRV_PCM_RATE_44100 | \
++						SNDRV_PCM_RATE_48000, \
++					.rate_min = 32000, \
++					.rate_max = 48000, \
++					.nr_rates = 3, \
++					.rate_table = (unsigned int[]) { \
++						32000, 44100, 48000, \
++					} \
++				} \
++			}, \
++			{ \
++				QUIRK_DATA_AUDIOFORMAT(0) { \
++					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
++					.channels = 16, /* inputs */ \
++					.fmt_bits = 24, \
++					.iface = 0, \
++					.altsetting = 1, \
++					.altset_idx = 1, \
++					.endpoint = 0x81, \
++					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
++						USB_ENDPOINT_SYNC_ASYNC, \
++					.rates = SNDRV_PCM_RATE_64000 | \
++						SNDRV_PCM_RATE_88200 | \
++						SNDRV_PCM_RATE_96000, \
++					.rate_min = 64000, \
++					.rate_max = 96000, \
++					.nr_rates = 3, \
++					.rate_table = (unsigned int[]) { \
++						64000, 88200, 96000, \
++					} \
++				} \
++			}, \
++			{ \
++				QUIRK_DATA_AUDIOFORMAT(0) { \
++					.formats = SNDRV_PCM_FMTBIT_S32_LE, \
++					.channels = 8, /* inputs */ \
++					.fmt_bits = 24, \
++					.iface = 0, \
++					.altsetting = 1, \
++					.altset_idx = 1, \
++					.endpoint = 0x81, \
++					.ep_attr = USB_ENDPOINT_XFER_ISOC | \
++						USB_ENDPOINT_SYNC_ASYNC, \
++					.rates = SNDRV_PCM_RATE_KNOT | \
++						SNDRV_PCM_RATE_176400 | \
++						SNDRV_PCM_RATE_192000, \
++					.rate_min = 128000, \
++					.rate_max = 192000, \
++					.nr_rates = 3, \
++					.rate_table = (unsigned int[]) { \
++						128000, 176400, 192000, \
++					} \
++				} \
++			}, \
++			QUIRK_COMPOSITE_END \
++		} \
++	} \
++}
++
++QUIRK_RME_DIGIFACE(0x3f8c),
++QUIRK_RME_DIGIFACE(0x3fa0),
++
+ #undef USB_DEVICE_VENDOR_SPEC
+ #undef USB_AUDIO_DEVICE
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index c5fd180357d1e8cc4560bf03ae1ab3c12e6ee9d1..9f38288a1bede8a360abbd0296f571cdf9a72c7d 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1638,6 +1638,7 @@ int snd_usb_apply_boot_quirk(struct usb_device *dev,
+ 			return snd_usb_motu_microbookii_boot_quirk(dev);
+ 		break;
+ 	case USB_ID(0x2a39, 0x3f8c): /* RME Digiface USB */
++	case USB_ID(0x2a39, 0x3fa0): /* RME Digiface USB (alternate) */
+ 		return snd_usb_rme_digiface_boot_quirk(dev);
+ 	}
+ 
+@@ -1851,6 +1852,7 @@ void snd_usb_set_format_quirk(struct snd_usb_substream *subs,
+ 		mbox3_set_format_quirk(subs, fmt); /* Digidesign Mbox 3 */
+ 		break;
+ 	case USB_ID(0x2a39, 0x3f8c): /* RME Digiface USB */
++	case USB_ID(0x2a39, 0x3fa0): /* RME Digiface USB (alternate) */
+ 		rme_digiface_set_format_quirk(subs);
+ 		break;
+ 	}
 
-Yes, that's what I'd expect to see.
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241202-rme-digiface-usb-id-df05cf818653
 
---NG9fJ4QMkZ8167X3
-Content-Type: application/pgp-signature; name="signature.asc"
+Cheers,
+~~ Lina
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdNs0IACgkQJNaLcl1U
-h9DGvAf+J3hwEq4x3bF91sZy15VQBvz/0kSF2J0M+KaBQnVVFXj/YCUp9AjHd9Py
-svtvltKB2dzk8Cpzti6uG995Vi0ugqWdEFR57tDSFDzyMMEStcr/z+LYr8gmncxg
-0kEyoQrLHpnucIqWa+IJ766YUIsU2FvSM5IP2ZDXfWUeSHI5fzUfpc5M9MrgZJut
-JfoR0eE91G28dKk46pdE+WRc6xsPWl/jRqlgr492lZe5Qew7l8ZRdnvummrx0iDd
-A4z1fW9cZXTepa9GisH8GziS6GP3C+qJWwsAgq+iaKvZ6tBcii8s0sSGVRWbvQQG
-a7poRNcQYuwS88Fimgys4lWYbODVVg==
-=weMB
------END PGP SIGNATURE-----
-
---NG9fJ4QMkZ8167X3--
 
