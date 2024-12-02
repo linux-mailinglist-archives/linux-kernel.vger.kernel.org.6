@@ -1,114 +1,324 @@
-Return-Path: <linux-kernel+bounces-427280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED349DFF07
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:33:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 142F7163693
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:33:01 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712B21FC7C5;
-	Mon,  2 Dec 2024 10:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="olk2X7ew"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150389DFF24
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:40:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3571FBEBF;
-	Mon,  2 Dec 2024 10:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C998728207B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:39:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75B91FC7FA;
+	Mon,  2 Dec 2024 10:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="WA6WwHq2"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4D11FA167;
+	Mon,  2 Dec 2024 10:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733135556; cv=none; b=PuIRnEHMz6+2GAK+Arc5X26uJsSZ4mkdD/Sk6ZPTElrDtLbE8YEKtnkTrqNJuPVv5Vdv/Nsv8AvS6nFXFnNAnoUcRL4KmlH7OXR1Yi5TCJ6eI8MIXPuwo9lTloEts6cFE1qKssOFrfbyJ3Pf3zqP95g0skTh0W2n/lgDusJWnsA=
+	t=1733135995; cv=none; b=rBau1dFDmTnQbbcARXYwn02b6S/dFxivptj4p4x+KkrOTaOh7PipZJ3rSEXpopTPKNG7lA89RQY+fVTb4nlNGu7fpsla0ztVKKB3oPoK5aA69bq7M5Z/CsRGpAv3PC223kR4g9aJ+5rO9kdmN2hug3HARIc+eD4QVJlQAAlOu/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733135556; c=relaxed/simple;
-	bh=dD645igug4uryAPx8B/NRmPRm55kZrdgIULlD+0sH1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzhLbm/jkss1wmxXaRmQHkI/nrX4BhvD8NAs1C3JRlgzrMzkxqik5Cm5k33VDQSoz5/DoGQdQkHUVXCRZ92GWxHhQqMfu7f2XCcUGFEzt33UGr8Ohrv5qR1AcpLD8zodi2Mvt3S4ePZSSi2b+1jEJUH6iVwyXP5eR+gWkVaewWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=olk2X7ew; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=on5sNrP3KPtOdYBKItycuNBCOZl1eJmmYtIIXgoX864=; b=olk2X7ewWuo9EJUoxTt3F5YPoV
-	7iNS39NNH/a9XO4FHIBliQ7qHboi+OlLTiMzbkrz9jgOYEoe0feMfiX6Ogtq24VkMaKg5p0Q8flu3
-	IBB92oAYpSstt4z3oyiKVl14z6/iBZ170OsdCEXD/SDtglDOjMhVUWjjHMQ1A2ckqXaxYtBLI/c+1
-	Q3+hS9jPTZ3vqOD5Ct/llxIdPGlGE3gTkVJHUFadXRyC9oPCLcdgbm/pd85dEcZ1I+S/w9xIJqIqO
-	IJOyZz8StvB3Bkd/e7PMx0sq/C10eG5sIIBeV71PIUsxLDlWpTOk5a4jXSJCsKQyfCu0rXq2/6Wt+
-	EtYAOR+g==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tI3jB-000000029Zc-2Nt7;
-	Mon, 02 Dec 2024 10:32:29 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E87D430020F; Mon,  2 Dec 2024 11:32:28 +0100 (CET)
-Date: Mon, 2 Dec 2024 11:32:28 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ryo Takakura <ryotkkr98@gmail.com>
-Cc: mingo@redhat.com, will@kernel.org, longman@redhat.com,
-	boqun.feng@gmail.com, bigeasy@linutronix.de, clrkwllms@kernel.org,
-	rostedt@goodmis.org, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH] lockdep: Fix wait context check on softirq for PREEMPT_RT
-Message-ID: <20241202103228.GM24400@noisy.programming.kicks-ass.net>
-References: <20241202012017.14910-1-ryotkkr98@gmail.com>
+	s=arc-20240116; t=1733135995; c=relaxed/simple;
+	bh=eK6yjxsDp6WwhycvLzAI+Os6thQ0t/rKpZCVkatl/kk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Q992UL1krNT2E/K76tj3LFLYKiiVvLu2w4n9/ZLY/5YcaUDH2Nl6NRZFYDoDkjufrJgWIrLJW67lhKtstFKUKrIEMcW+3sb8cwvLzA6ns0EcH7Cugg3GlxchGz1Dx9A6cdWp7kyNyIpEFnMt8LEm4VSt3x5jacmQAfni91JsS/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=WA6WwHq2; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id 706E9C2164;
+	Mon,  2 Dec 2024 10:34:31 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 66A5FFF806;
+	Mon,  2 Dec 2024 10:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1733135663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ztHX/ZoXirD5Kwovsqs5OlEVZDsoMYIef909rL/emsY=;
+	b=WA6WwHq2Mm8ChwQDDMNvUQ7sRyt0VyTLOPMiu0PMpEifDUXMlX3vpD4XL18kFry79JEP8G
+	g2QOPe5+8IV2hqunDDkxLPW7vt8QmZlZkWfs5isiURY10+476/cM3gynYiCo5ptuPOoQRo
+	DVuli/nhCV3waV5kgn5sc8rBGdE7ER/FE6Q8/ZvT4yEs2xKT3AarbBRvZ8Ftq5Y77qEd6s
+	dHlnj2ad8wqPK08FoKc1atxakoyGhVaGdkAWLAvaYM14T7BXC6aztKDMoGhKSEB5e8zlaF
+	OUvjYvKYoQm8jriJrZgafjxjNvOmLd0/OVdjfGaINrEZ3TOr1XRfED1bQlmuIg==
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Date: Mon, 02 Dec 2024 11:34:18 +0100
+Subject: [PATCH] m68k: coldfire: Support resources for UART
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202012017.14910-1-ryotkkr98@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-m5441x_uart_resource-v1-1-6b28cb295fb5@yoseli.org>
+X-B4-Tracking: v=1; b=H4sIACmNTWcC/x2MSQqAMBDAviJztmAXFf2KSNE66hxcmKoIpX+3e
+ AnkkATwyIQe2iwA40Oejj2JzDNw67AvKGhKDqpQRiaIrTRGvvYe+LKM/rjZoahVM+rCyVJXGlJ
+ 6Ms70/tuuj/ED3Tcxj2YAAAA=
+X-Change-ID: 20241202-m5441x_uart_resource-729b30c15363
+To: Greg Ungerer <gerg@linux-m68k.org>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+ linux-serial@vger.kernel.org, 
+ Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733135661; l=6941;
+ i=jeanmichel.hautbois@yoseli.org; s=20240925; h=from:subject:message-id;
+ bh=eK6yjxsDp6WwhycvLzAI+Os6thQ0t/rKpZCVkatl/kk=;
+ b=gEPFeyR1Efxg+G/L3sujYuDGlqvtW69oVm91xDeG5DM4gcJgE7bG5Sh1qC0o8UljZX/QdSXEX
+ Vhi81Ak/Fm0Dkrjf+DxLMRJQmQx7fK0ujm8RkPm+48FNPczDJKAfAkx
+X-Developer-Key: i=jeanmichel.hautbois@yoseli.org; a=ed25519;
+ pk=MsMTVmoV69wLIlSkHlFoACIMVNQFyvJzvsJSQsn/kq4=
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On Mon, Dec 02, 2024 at 10:20:17AM +0900, Ryo Takakura wrote:
-> Commit 0c1d7a2c2d32 ("lockdep: Remove softirq accounting on
-> PREEMPT_RT.") stopped updating @softirq_context on PREEMPT_RT
-> to ignore "inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage"
-> as the report accounts softirq context which PREEMPT_RT doesn't
-> have to.
-> 
-> However, wait context check still needs to report mutex usage
-> within softirq, even when its threaded on PREEMPT_RT. The check
-> is failing to report the usage as task_wait_context() checks if
-> its in softirq by referencing @softirq_context, ending up not 
-> assigning the correct wait type of LD_WAIT_CONFIG for PREEMPT_RT's
-> softirq.
-> 
-> [    0.184549]   | wait context tests |
-> [    0.184549]   --------------------------------------------------------------------------
-> [    0.184549]                                  | rcu  | raw  | spin |mutex |
-> [    0.184549]   --------------------------------------------------------------------------
-> [    0.184550]                in hardirq context:  ok  |  ok  |  ok  |  ok  |
-> [    0.185083] in hardirq context (not threaded):  ok  |  ok  |  ok  |  ok  |
-> [    0.185606]                in softirq context:  ok  |  ok  |  ok  |FAILED|
-> 
-> Account softirq context but only when !PREEMPT_RT so that
-> task_wait_context() returns LD_WAIT_CONFIG as intended.
-> 
-> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
-> 
-> 
-> ---
-> 
-> Hi! 
-> 
-> I wasn't able come up with a way to fix the wait context test while 
-> keeping the commit 0c1d7a2c2d32 ("lockdep: Remove softirq accounting 
-> on PREEMPT_RT.") without referencing @softirq_context...
-> Hoping to get a feedback on it!
-> 
-> Also I wonder if the test can be skipped as I believe its taken care 
-> by spinlock wait context test since the PREEMPT_RT's softirq context is 
-> protected by local_lock which is mapped to rt_spinlock.
+In order to use the eDMA channels for UART, the mcf_platform_uart needs
+to be changed. Instead of adding another custom member for the
+structure, use a resource tree in a platform_device per UART. It then
+makes it possible to have a device named like "mcfuart.N" with N the
+UART number.
 
-Right,.. so I remember talking about this with Boqun, and I think we
-were going to 'fix' the test, but I can't quite remember.
+Later, adding the dma channel in the mcf tty driver will also be more
+straightfoward.
 
-Perhaps adding the local_lock to SOFTIRQ_ENTER?
+Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+---
+ arch/m68k/coldfire/device.c | 96 ++++++++++++++-------------------------------
+ drivers/tty/serial/mcf.c    | 69 +++++++++++++++++++-------------
+ 2 files changed, 70 insertions(+), 95 deletions(-)
+
+diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
+index b6958ec2a220cf91a78a14fc7fa18749451412f7..fd7d0b0ce7eb2970cb8ffe33589fe8d7e88c268d 100644
+--- a/arch/m68k/coldfire/device.c
++++ b/arch/m68k/coldfire/device.c
+@@ -24,73 +24,35 @@
+ #include <linux/platform_data/dma-mcf-edma.h>
+ #include <linux/platform_data/mmc-esdhc-mcf.h>
+ 
+-/*
+- *	All current ColdFire parts contain from 2, 3, 4 or 10 UARTS.
+- */
+-static struct mcf_platform_uart mcf_uart_platform_data[] = {
+-	{
+-		.mapbase	= MCFUART_BASE0,
+-		.irq		= MCF_IRQ_UART0,
+-	},
+-	{
+-		.mapbase	= MCFUART_BASE1,
+-		.irq		= MCF_IRQ_UART1,
+-	},
+-#ifdef MCFUART_BASE2
+-	{
+-		.mapbase	= MCFUART_BASE2,
+-		.irq		= MCF_IRQ_UART2,
+-	},
+-#endif
+-#ifdef MCFUART_BASE3
+-	{
+-		.mapbase	= MCFUART_BASE3,
+-		.irq		= MCF_IRQ_UART3,
+-	},
+-#endif
+-#ifdef MCFUART_BASE4
+-	{
+-		.mapbase	= MCFUART_BASE4,
+-		.irq		= MCF_IRQ_UART4,
+-	},
+-#endif
+-#ifdef MCFUART_BASE5
+-	{
+-		.mapbase	= MCFUART_BASE5,
+-		.irq		= MCF_IRQ_UART5,
+-	},
+-#endif
+-#ifdef MCFUART_BASE6
+-	{
+-		.mapbase	= MCFUART_BASE6,
+-		.irq		= MCF_IRQ_UART6,
+-	},
+-#endif
+-#ifdef MCFUART_BASE7
+-	{
+-		.mapbase	= MCFUART_BASE7,
+-		.irq		= MCF_IRQ_UART7,
++static u64 mcf_uart_mask = DMA_BIT_MASK(32);
++
++static struct resource mcf_uart0_resource[] = {
++	[0] = {
++		.start = MCFUART_BASE0,
++		.end   = MCFUART_BASE0 + 0x3fff,
++		.flags = IORESOURCE_MEM,
+ 	},
+-#endif
+-#ifdef MCFUART_BASE8
+-	{
+-		.mapbase	= MCFUART_BASE8,
+-		.irq		= MCF_IRQ_UART8,
++	[1] = {
++		.start = 2,
++		.end   = 3,
++		.flags = IORESOURCE_DMA,
+ 	},
+-#endif
+-#ifdef MCFUART_BASE9
+-	{
+-		.mapbase	= MCFUART_BASE9,
+-		.irq		= MCF_IRQ_UART9,
++	[2] = {
++		.start = MCF_IRQ_UART0,
++		.end   = MCF_IRQ_UART0,
++		.flags = IORESOURCE_IRQ,
+ 	},
+-#endif
+-	{ },
+ };
+ 
+-static struct platform_device mcf_uart = {
++static struct platform_device mcf_uart0 = {
+ 	.name			= "mcfuart",
+ 	.id			= 0,
+-	.dev.platform_data	= mcf_uart_platform_data,
++	.num_resources = ARRAY_SIZE(mcf_uart0_resource),
++	.resource = mcf_uart0_resource,
++	.dev = {
++		.dma_mask = &mcf_uart_mask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++	},
+ };
+ 
+ #ifdef MCFFEC_BASE0
+@@ -485,12 +447,12 @@ static struct platform_device mcf_i2c5 = {
+ static const struct dma_slave_map mcf_edma_map[] = {
+ 	{ "dreq0", "rx-tx", MCF_EDMA_FILTER_PARAM(0) },
+ 	{ "dreq1", "rx-tx", MCF_EDMA_FILTER_PARAM(1) },
+-	{ "uart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
+-	{ "uart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
+-	{ "uart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
+-	{ "uart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
+-	{ "uart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
+-	{ "uart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
++	{ "mcfuart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
++	{ "mcfuart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
++	{ "mcfuart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
++	{ "mcfuart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
++	{ "mcfuart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
++	{ "mcfuart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
+ 	{ "timer0", "rx-tx", MCF_EDMA_FILTER_PARAM(8) },
+ 	{ "timer1", "rx-tx", MCF_EDMA_FILTER_PARAM(9) },
+ 	{ "timer2", "rx-tx", MCF_EDMA_FILTER_PARAM(10) },
+@@ -623,7 +585,7 @@ static struct platform_device mcf_flexcan0 = {
+ #endif /* MCFFLEXCAN_SIZE */
+ 
+ static struct platform_device *mcf_devices[] __initdata = {
+-	&mcf_uart,
++	&mcf_uart0,
+ #ifdef MCFFEC_BASE0
+ 	&mcf_fec0,
+ #endif
+diff --git a/drivers/tty/serial/mcf.c b/drivers/tty/serial/mcf.c
+index 93e7dda4d39acd23daf8c0d4c29ac8d666f263c5..07b8decfdb6005f0265dd130765e45c3fd1715eb 100644
+--- a/drivers/tty/serial/mcf.c
++++ b/drivers/tty/serial/mcf.c
+@@ -570,31 +570,46 @@ static struct uart_driver mcf_driver = {
+ 
+ static int mcf_probe(struct platform_device *pdev)
+ {
+-	struct mcf_platform_uart *platp = dev_get_platdata(&pdev->dev);
+ 	struct uart_port *port;
+-	int i;
+-
+-	for (i = 0; ((i < MCF_MAXPORTS) && (platp[i].mapbase)); i++) {
+-		port = &mcf_ports[i].port;
+-
+-		port->line = i;
+-		port->type = PORT_MCF;
+-		port->mapbase = platp[i].mapbase;
+-		port->membase = (platp[i].membase) ? platp[i].membase :
+-			(unsigned char __iomem *) platp[i].mapbase;
+-		port->dev = &pdev->dev;
+-		port->iotype = SERIAL_IO_MEM;
+-		port->irq = platp[i].irq;
+-		port->uartclk = MCF_BUSCLK;
+-		port->ops = &mcf_uart_ops;
+-		port->flags = UPF_BOOT_AUTOCONF;
+-		port->rs485_config = mcf_config_rs485;
+-		port->rs485_supported = mcf_rs485_supported;
+-		port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
+-
+-		uart_add_one_port(&mcf_driver, port);
++	struct mcf_uart *pp;
++	struct resource *res;
++	void __iomem *base;
++	int id = pdev->id;
++
++	if (id == -1 || id >= MCF_MAXPORTS) {
++		dev_err(&pdev->dev, "uart%d out of range\n",
++			id);
++		return -EINVAL;
+ 	}
+ 
++	port = &mcf_ports[id].port;
++	port->line = id;
++
++	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	port->mapbase = res->start;
++	port->membase = base;
++
++	port->irq = platform_get_irq(pdev, 0);
++	if (port->irq < 0)
++		return port->irq;
++
++	port->type = PORT_MCF;
++	port->dev = &pdev->dev;
++	port->iotype = SERIAL_IO_MEM;
++	port->uartclk = MCF_BUSCLK;
++	port->ops = &mcf_uart_ops;
++	port->flags = UPF_BOOT_AUTOCONF;
++	port->rs485_config = mcf_config_rs485;
++	port->rs485_supported = mcf_rs485_supported;
++	port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
++
++	pp = container_of(port, struct mcf_uart, port);
++
++	uart_add_one_port(&mcf_driver, port);
++
+ 	return 0;
+ }
+ 
+@@ -603,13 +618,11 @@ static int mcf_probe(struct platform_device *pdev)
+ static void mcf_remove(struct platform_device *pdev)
+ {
+ 	struct uart_port *port;
+-	int i;
++	int id = pdev->id;
+ 
+-	for (i = 0; (i < MCF_MAXPORTS); i++) {
+-		port = &mcf_ports[i].port;
+-		if (port)
+-			uart_remove_one_port(&mcf_driver, port);
+-	}
++	port = &mcf_ports[id].port;
++	if (port)
++		uart_remove_one_port(&mcf_driver, port);
+ }
+ 
+ /****************************************************************************/
+
+---
+base-commit: e457f18d7f25288d143c1fe024a620d0b15caec1
+change-id: 20241202-m5441x_uart_resource-729b30c15363
+
+Best regards,
+-- 
+Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+
 
