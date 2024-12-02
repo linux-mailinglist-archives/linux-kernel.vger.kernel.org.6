@@ -1,89 +1,153 @@
-Return-Path: <linux-kernel+bounces-427902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A9BE9E0A70
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:50:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9884E9E0AFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:27:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEEE5B304EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:37:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB44B2C1F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557C4209F27;
-	Mon,  2 Dec 2024 15:37:52 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51133209681;
+	Mon,  2 Dec 2024 15:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IqmPlnHq"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF547209691;
-	Mon,  2 Dec 2024 15:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC9B209F26
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153872; cv=none; b=N+YqZDOAf6XxmHepd70T0xkUSqPo85LpqOUkTlbd8dn2BGBcrpAk0v+ba4wB0dgLILTUmYgYPn0Cua5dV8KAoTkvmzjzX44aqbeQ3r4SDhEK9GB0MT4VQ6W6V9pR8Z4/xvPltrbxlz4eWMBCc91wzlNesrXOkS6N/ZGW1VAIkbI=
+	t=1733154192; cv=none; b=Qzpje2Zmp6oxITdfZaalz50m0fs8pO4ic4E+vI0QX1JkqmgL/ooJsQWQednwq7r7DNx4J6PHWRNN9gvr7j3S1nKwQQGXG5vgCQ4ocjlyyYbmPCQzwLjIpw1VbILM2uTBIO7B7vStNIOQRrabB282t5qtkR5LwTDECtHXtyk5+ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733153872; c=relaxed/simple;
-	bh=mfe+rsjuny1ySz7+fcztmelHL8cytJSxWp5Fk6cu5AQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=suSE8+CEeBuhYLjqiLsvd/2uHDC2TZafbxyNZ+8mJoU1qeY4qJzGrKhH6JKSLzOhL9sGGE+hBGw63UzPekfNlR074GSwSMdATFf7GLTObjhRTkPVd4FKCmdnzczvOuno/xiwJcFrtyxgKQ6y13efyFJqMVeqj0VvwDc77h6T54M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5688AC4CED9;
-	Mon,  2 Dec 2024 15:37:50 +0000 (UTC)
-Date: Mon, 2 Dec 2024 10:38:53 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yeo Reum Yun <YeoReum.Yun@arm.com>
-Cc: Suzuki Poulose <Suzuki.Poulose@arm.com>, "mike.leach@linaro.org"
- <mike.leach@linaro.org>, "james.clark@linaro.org" <james.clark@linaro.org>,
- "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
- "bigeasy@linutronix.de" <bigeasy@linutronix.de>, "clrkwllms@kernel.org"
- <clrkwllms@kernel.org>, "coresight@lists.linaro.org"
- <coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-rt-devel@lists.linux.dev"
- <linux-rt-devel@lists.linux.dev>, nd <nd@arm.com>
-Subject: Re: [PATCH 1/9] coresight: change coresight_device lock type to
- raw_spinlock_t
-Message-ID: <20241202103853.26db0c13@gandalf.local.home>
-In-Reply-To: <GV1PR08MB10521520ABD7B72D92FD60DE9FB292@GV1PR08MB10521.eurprd08.prod.outlook.com>
-References: <20241125094816.365472-1-yeoreum.yun@arm.com>
-	<20241125094816.365472-2-yeoreum.yun@arm.com>
-	<20241127120954.0facd34f@gandalf.local.home>
-	<GV1PR08MB10521520ABD7B72D92FD60DE9FB292@GV1PR08MB10521.eurprd08.prod.outlook.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733154192; c=relaxed/simple;
+	bh=k/f3AXTfh4IjLpqTVVBdk7brWdn7oU78wvX2hwXU6+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MhMWLtee40ORTeLNSrxpMWvaz+Yx6D6bq5/JrFmeD3gsh6oRaELhAuLnFdOCW3L5jnR/lOtJQsPaH3uHqC4Addn+dcC7dVkM4EOBdeOvUzkGsmZK0Va3FtayBMQy4CIpL5ZKi/CJYujzvrVJoUAFnpP+CLHaV0rNQ7gtB9pMjKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IqmPlnHq; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e387ad7abdaso3961428276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:43:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733154190; x=1733758990; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QbUP+dvKWDKM0wMQ0TznKmY7PM7PyjlXbsmxh8B0to8=;
+        b=IqmPlnHqHkx9fZ4PM+jApLoKAxqFgyHu6GrVatp2BwLJ07iS9QBXBVJrZ1CpBcK9ms
+         KgHIbGlEBRDZYqOV9hVaNq+l2El+qTmIXDNdLk2r3i8HoJEFgBNi2JzXOArI7dEu212B
+         Dpi8RwRQAnxRWXM6NIgh/ahe+nfDCtWUTP/siTnKXuCcv5FQKYYK2FuI4zaWEH1UpIGF
+         Pmvvgh+qz/5HNGdLLH20AtP57Kn5ZgfkCQnyKPu2uaENfRMsoKoYmJrZRhWupu18u9ZF
+         I/t3OgvNbmWC187Ow7OUC8NCP9lnovuj1xm3Qs8WU8/8rHfuOJsCtKwwWr/sUiX5vF0x
+         5Ldg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733154190; x=1733758990;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QbUP+dvKWDKM0wMQ0TznKmY7PM7PyjlXbsmxh8B0to8=;
+        b=OQ5OCyAQr8j6sexBy39W5rfdmAeXHm72csoQYZkY7voS932p/ReHuY833GElRoyB2k
+         jvMzIr0qrVfftv2Vd8lbtGf75DAJRnLHosNhylOEljfK7QqI8lnEV6DZMQJDzBHGcmRe
+         qDtR24zM8ONx40Ca27a31yS3AcHkH9HALfpi3EsNz8l3HQSHM8/BRLl7haGTbwkKpMij
+         YLPVjAzq9mr4u2xHXgkaIJ/tKULjcAFhDp8KCTg0VPTc8MoqBxIe0KPCLGq0+HvaW57y
+         uBuqVf3+FRFuQfOu9MBVqyClzzID8J7QI4KpYfUnHA4tAIhtL4Ou8o+XimsM7G+8xwQB
+         mwvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXlKhsWCZ2UG2IaHMn05WFtRuHeoXj283ANWS1k77EJJLd6T+7S3aQvJ0NJxIfLA8T18/qLtqmkAAHDUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztKs2oa+gpB+3qLOf45d9AjkMeeV4Ci0dDMS3di3eVMDibTPk8
+	I9hZ00jcIMYuD71xvUZwbXd9OSAd+5QBfQXbqEPo0/Sbc4144NZoPxsHuBamWlQkBtUi+xL5fgc
+	rZDHdvyhBK4Ze5E3hPfcM6CjEEWN1KyFmXKHhbA==
+X-Gm-Gg: ASbGnctINNOk5P7qjiz4mb0sGAnEzmz/mAefMSBwyPZPD73YjgNjmoBJv2g5tdKX69S
+	Q+8E840glrlMQo9b2fJHaZumN66Qf1dxW
+X-Google-Smtp-Source: AGHT+IGP8X//RtopJ14zcmxJJXKBWB66Fq15r096151qIaf1u6T7kK82VeRXbbWQnNMTUe+do88W/Mt9VjkNBUNU2jY=
+X-Received: by 2002:a05:6902:2804:b0:e2e:440e:d29f with SMTP id
+ 3f1490d57ef6-e395b8939bdmr23346211276.20.1733154190066; Mon, 02 Dec 2024
+ 07:43:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241202151228.32609-1-ansuelsmth@gmail.com>
+In-Reply-To: <20241202151228.32609-1-ansuelsmth@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 2 Dec 2024 16:42:33 +0100
+Message-ID: <CAPDyKFqrY7uLD8ATqH0LghmkHgApQSsGtvGkOTd8UVazGu0_uA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Document support for Airoha
+ EN7581 CPUFreq
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, upstream@airoha.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 28 Nov 2024 07:39:22 +0000
-Yeo Reum Yun <YeoReum.Yun@arm.com> wrote:
+On Mon, 2 Dec 2024 at 16:20, Christian Marangi <ansuelsmth@gmail.com> wrote:
+>
+> Document required property for Airoha EN7581 CPUFreq .
+>
+> On newer Airoha SoC, CPU Frequency is scaled indirectly with SMCCC commands
+> to ATF and no clocks are exposed to the OS.
+>
+> The SoC have performance state described by ID for each OPP, for this a
+> Power Domain is used that sets the performance state ID according to the
+> required OPPs defined in the CPU OPP tables.
+>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+> Changes v4:
+> - Add this patch
+>
+>  .../cpufreq/airoha,en7581-cpufreq.yaml        | 259 ++++++++++++++++++
+>  1 file changed, 259 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
+> new file mode 100644
+> index 000000000000..a5bdea7f34b5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/airoha,en7581-cpufreq.yaml
 
-> Hi Steven,
-> 
-> > We should start documenting what is not real-time "safe". That is, if this
-> > code is executed, we have a loop here that holds a raw spin lock. This
-> > appears to make the time the raw spin lock held to be non deterministic.
-> > 
-> > If someone is running PREEMPT_RT and expects deterministic behavior, they
-> > cannot be using this code. That is fine, but we should probably create a
-> > document somewhere that notes this.
-> >
-> > -- Steve  
-> 
-> I think it's quite deterministic becase the number of loop currently
-> determined by the number of preload_feats.
-> 
-> Also, I don't think the number of  feats will be loaded as much as
-> it can do undeterministic behavior since 
-> the number is not many and it is quite predictable.
+[...]
 
-Still should be documented somewhere. It should describe the maximum number
-of feats that will ever be loaded. If there's a max, it makes it back to
-O(1). With a 'k' of how long it takes to process the max number of feats.
+> +examples:
+> +  - |
+> +    / {
+> +        #address-cells = <2>;
+> +       #size-cells = <2>;
+> +
+> +        cpus {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            cpu0: cpu@0 {
+> +                device_type = "cpu";
+> +                compatible = "arm,cortex-a53";
+> +                reg = <0x0>;
+> +                operating-points-v2 = <&cpu_opp_table>;
+> +                enable-method = "psci";
+> +                clocks = <&cpufreq>;
+> +                clock-names = "cpu";
+> +                power-domains = <&cpufreq>;
+> +                power-domain-names = "cpu_pd";
 
--- Steve
+Nitpick: Perhaps clarify the name to be "perf" or "cpu_perf", to
+indicate it's a power-domain with performance scaling support.
 
+> +                next-level-cache = <&l2>;
+> +                #cooling-cells = <2>;
+> +            };
+> +
+
+[...]
+
+Other than the very minor thing above, feel free to add:
+
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
 
