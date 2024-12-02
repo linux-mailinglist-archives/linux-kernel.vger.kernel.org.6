@@ -1,88 +1,59 @@
-Return-Path: <linux-kernel+bounces-427167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7D99DFD7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:45:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5EF9DFD82
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12C18B22576
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:45:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2FF2B22B4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41A91FBE96;
-	Mon,  2 Dec 2024 09:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7351FC0E5;
+	Mon,  2 Dec 2024 09:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DjOr6S7a"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TI85l/MA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDE81FBC84;
-	Mon,  2 Dec 2024 09:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C0D1FBC9B;
+	Mon,  2 Dec 2024 09:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733132715; cv=none; b=sEmfzs14AM/3/C5zQ5aTTz8urlmnq0WOSmlbZQlMRK7q+U2I7rjbL/VAajrJ73kuAG5eEvhznkkuyHKne+S3jcbG2EB1siBAVSWWtKsZ+XqXe3+IJC0TQyqg4kKc9yESBHEoFRMAbCJ3uh9gCjWvvgvGCZqgb+nbd8IXOvZmPLY=
+	t=1733132721; cv=none; b=M71QHHXKvzxFPVqUENfulE7V5osAM1Rg6WdK4UwA5F2UQsAWGGN3qQmcYxv+G4ruvqwCl72uln3rnJsiugLUToN+y+8h55U2vMSK0rPB2HwLHbfAiNhqHnh9BUIQPQB9AKE1EhYh4yN98KN1pawXYS7e7VpJccOd3JwBJ7cfaw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733132715; c=relaxed/simple;
-	bh=51xoLAkhTufBIA9HOpl57rXM2Uu/lZB808CkH/uV66M=;
+	s=arc-20240116; t=1733132721; c=relaxed/simple;
+	bh=5Zafu1CVVxBBjmaBRtdRdWwlT8bxSaY26er8YOulc1s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpzjEQbeZ0y9y1W1q+AYK3yUlom4NIttllmsAGZ3nDy1xKHXMbyyq/5oKhqJEBZF928of01LDdb3+Cf0VEKnk9FJp+/nLxYqDrn92PnhrRDid716Ia+/VTBLMRWuqc7fPp/LQlSpaWyRHZThP9xVDWI0opBKxwqEis90AnGufAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DjOr6S7a; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4349fe119a8so4782195e9.3;
-        Mon, 02 Dec 2024 01:45:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733132712; x=1733737512; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=51xoLAkhTufBIA9HOpl57rXM2Uu/lZB808CkH/uV66M=;
-        b=DjOr6S7aWDbFzmbrhXMWNGod93s5pKEoiqTndnl4KhmpvMWfEfiBA1uG+/QVx85Z7W
-         ut8BZjcgGXQDgmhPhdgKM02foWbNrDJnIaPgMARxgJszqLIOWpYq9jXiTiCiml8q70tt
-         /ENhaDaI11YmLpLmniB35f5xlXvmX1KfPNJtb39NznX2+hOES5D+oySF5D2o3ivcSwiw
-         clKK9BYGCMERaLAs0OHE0YMVx/Q7A4W1BfbHHytl/t7Rdglsm3KkCVogW0Ko7rfB7koo
-         n1pcexkuaoSp3Qcxwk5FQTDVgoEKjZs9Bs0HvKPHdJ5GzvlxF8CBOu1idflS36ffIHaU
-         yMeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733132712; x=1733737512;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=51xoLAkhTufBIA9HOpl57rXM2Uu/lZB808CkH/uV66M=;
-        b=ReZPYDGranpmG94ykxKin+AC9XKblabEkSmTahriSijDZ/a+5HKS0tpkgs72sSv2+y
-         quQkX5PeF7oSFQccnh6Lrcd+Xtxclvc+rv6tXjWEAd2z5TCJmh+zn1UD4SKoAb5P1mL+
-         yDMpIMe4hQoKGAQhKmu0eV6y+I4ItPCEkqImAvjhfc6dibCAzN3WRa+QwdBDi5GnrOkD
-         dQiuOVjJWYC2L4gKgxmZER5K1jWHTRE6boVe9Rb5uaJzEnlwOji5eAgwvzVwAMFLCv2T
-         4gcojwIDdslqFANseO71ql+TisPCwHVy5E7hJ7DIyEGojL71AFmxpAcb5/ekFn+XutCU
-         Updg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzVmKucNJAWFAGj2tp5t5ui0dO5+61mBmas0OYZhaoBUvLzHFZOMaWtAt4hHPIZ7saQd1XcjV1@vger.kernel.org, AJvYcCXPKCXqmR3AUZhqNGquo4g4eSpjGUZSlWu6/zjWunO870LsSXMrnioBrbmlLOPx3ifw00Mm/sQ+6E/oRdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrYY9Tr4tO8aPYhDYkfcbhkG2CYCDYC56Cg/RCT11c5epm38qZ
-	ebbSeqct0BsdkyLmj2P8nskmzm/zYKdm4VQHUG7Wk6TEHSiMikTa
-X-Gm-Gg: ASbGnctbZjx6g/d+fwWn1TfBGyoOIHThX6yQpKZA85pyH3SJ2vcuM6ZwUPnuTUuFC5L
-	p3aa7F2P+Pz2YgoyUkUHsRWOFPh4Kw8euYR813l536gIzEmVxXXc9CHQifTzi5qgZoYCRsRrC7a
-	2a9Uom4cCPPyn6l5TSTDEBcp7KDCD1EcoNXpNbH/LXGNrt7hTDE7i9+iVZ75YJ/Df1g0aObSOIq
-	ddgsuUpEJ8Gx+sJj+NCmMfs0Oedu2QIviHwtP8=
-X-Google-Smtp-Source: AGHT+IEuYclXXR09MY6JDK/i4V5elV4W4dMYdC9NzyCywPNjEmhe1DHbKBV1L8OOEQIsAUAfxTCvVw==
-X-Received: by 2002:a05:600c:3b16:b0:432:dc5a:b301 with SMTP id 5b1f17b1804b1-434a9e0fb94mr79126665e9.8.1733132711740;
-        Mon, 02 Dec 2024 01:45:11 -0800 (PST)
-Received: from skbuf ([188.25.135.117])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa763a59sm177491135e9.11.2024.12.02.01.45.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 01:45:10 -0800 (PST)
-Date: Mon, 2 Dec 2024 11:45:08 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: Andy Strohman <andrew@andrewstrohman.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] dsa: Make offloading optional on per port basis
-Message-ID: <20241202094508.4tpbed2b4amyvbsi@skbuf>
-References: <20241201074212.2833277-1-andrew@andrewstrohman.com>
- <Z019fbECX6R4HHpm@nanopsycho.orion>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Htk7014pwGQqvLxfxuqroBDoDvstg1XMqqzZYlkbSLw11Eya3PzjOWzYKMwCAObXk/pi7lubU6xI8KvcrazGPFZuFmux8YD+Iup+TC237vPt29OB75r//r+hRfVcrWofvfu43+cLSQjgic8dcfQERxwfO2c8/y7CV7c/HLVQYpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TI85l/MA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B9ECC4CEDA;
+	Mon,  2 Dec 2024 09:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733132720;
+	bh=5Zafu1CVVxBBjmaBRtdRdWwlT8bxSaY26er8YOulc1s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TI85l/MAWf3cnShwzI1jEK+X29PVZq7UOLLcNwQ6pH9awCzHoxIvx99qWckR3btfP
+	 xRUohpmDHyQzg+W2P7VoqOiMFoIXSh6h40XudqomVHy1Y0hr90jYG4FSdYjToaaQJM
+	 SEd0D7M36NrL/kyHBRe20YhJ7aSZAnqOyYpx4lHs=
+Date: Mon, 2 Dec 2024 10:45:17 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+Cc: "sashal@kernel.org" <sashal@kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+	"shivani.agarwal@broadcom.com" <shivani.agarwal@broadcom.com>
+Subject: Re: 5.10.225 stable kernel cgroup_mutex not held assertion failure
+Message-ID: <2024120252-abdominal-reimburse-d670@gregkh>
+References: <20240920092803.101047-1-shivani.agarwal@broadcom.com>
+ <4f827551507ed31b0a876c6a14cdca3209c432ae.camel@oracle.com>
+ <2024110612-lapping-rebate-ed25@gregkh>
+ <6455422802d8334173251dbb96527328e08183cf.camel@oracle.com>
+ <c10d6cc49868dd3c471c53fc3c4aba61c33edead.camel@oracle.com>
+ <2024112022-staleness-caregiver-0707@gregkh>
+ <2bb366f53aa7650e551dc2a5f5ec3b3bec832512.camel@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,21 +62,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z019fbECX6R4HHpm@nanopsycho.orion>
+In-Reply-To: <2bb366f53aa7650e551dc2a5f5ec3b3bec832512.camel@oracle.com>
 
-On Mon, Dec 02, 2024 at 10:27:25AM +0100, Jiri Pirko wrote:
-> Why is this DSA specific? Plus, you say you want to disable offloading
-> in general (DSA_FLAG_OFFLOADING_DISABLED), but you check the flag only
-> when joining bridge. I mean, shouldn't this be rather something exposed
-> by some common UAPI?
+On Wed, Nov 20, 2024 at 05:47:36PM +0000, Siddh Raman Pant wrote:
+> On Wed, Nov 20 2024 at 20:28:36 +0530, gregkh@linuxfoundation.org
+> wrote:
+> > On Wed, Nov 20, 2024 at 02:46:32PM +0000, Siddh Raman Pant wrote:
+> > > On Wed, Nov 06 2024 at 11:54:32 +0530, Siddh Raman Pant wrote:
+> > > > On Wed, Nov 06 2024 at 11:40:39 +0530, gregkh@linuxfoundation.org
+> > > > wrote:
+> > > > > On Wed, Oct 30, 2024 at 07:29:38AM +0000, Siddh Raman Pant wrote:
+> > > > > > Hello maintainers,
+> > > > > > 
+> > > > > > On Fri, 20 Sep 2024 02:28:03 -0700, Shivani Agarwal wrote:
+> > > > > > > Thanks Fedor.
+> > > > > > > 
+> > > > > > > Upstream commit 1be59c97c83c is merged in 5.4 with commit 10aeaa47e4aa and
+> > > > > > > in 4.19 with commit 27d6dbdc6485. The issue is reproducible in 5.4 and 4.19
+> > > > > > > also.
+> > > > > > > 
+> > > > > > > I am sending the backport patch of d23b5c577715 and a7fb0423c201 for 5.4 and
+> > > > > > > 4.19 in the next email.
+> > > > > > 
+> > > > > > Please backport these changes to stable.
+> > > > > > 
+> > > > > > "cgroup/cpuset: Prevent UAF in proc_cpuset_show()" has already been
+> > > > > > backported and bears CVE-2024-43853. As reported, we may already have
+> > > > > > introduced another problem due to the missing backport.
+> > > > > 
+> > > > > What exact commits are needed here?  Please submit backported and tested
+> > > > > commits and we will be glad to queue them up.
+> > > > > 
+> > > > > thanks,
+> > > > > 
+> > > > > greg k-h
+> > > > 
+> > > > Please see the following thread where Shivani posted the patches:
+> > > > 
+> > > > https://lore.kernel.org/all/20240920092803.101047-1-shivani.agarwal@broadcom.com/ 
+> > > > 
+> > > > Thanks,
+> > > > Siddh
+> > > 
+> > > Ping...
+> > 
+> > I don't understand what you want here, sorry.
+> 
+> Please find attached the patch emails for 5.4 with this email. They
+> apply cleanly to the linux-5.4.y branch.
 
-I agree with this. The proposed functionality isn't DSA specific, and
-thus, the UAPI to configure it shouldn't be made so.
+Please resend these as patches, in the correct order, not as attachments
+as it's hard to review and handle them this way.
 
-> Btw, isn't NETIF_F_HW_L2FW_DOFFLOAD what you are looking for?
+thanks,
 
-Is it? macvlan uses NETIF_F_HW_L2FW_DOFFLOAD to detect presence of
-netdev_ops->ndo_dfwd_add_station(). Having to even consider macvlan
-offload and its implications just because somebody decided to monopolize
-the "l2-fwd-offload" name seems at least bizarre in my opinion.
+greg k-h
 
