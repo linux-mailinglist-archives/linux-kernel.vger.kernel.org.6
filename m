@@ -1,148 +1,147 @@
-Return-Path: <linux-kernel+bounces-427159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962119DFD64
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:39:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB68D9DFD5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:38:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00B77B23B38
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:38:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3977BB2375B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5689D1FBCA1;
-	Mon,  2 Dec 2024 09:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7824C1FAC45;
+	Mon,  2 Dec 2024 09:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PXCHcr4B"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tU4WLN5i"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD7B1FBEAA;
-	Mon,  2 Dec 2024 09:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362D61FBCA1
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733132296; cv=none; b=kkVkbHSv2RTKTT53nzCK6FEZYXg/fjLFG9u2YE0Xw59PvOReHa6o/EjxlQ+P285IMJn/AuiLbz72CjZp3hQQ4lKjVgtUswa+3tj/3nhOuJXwzH1iCNTOYH6RtaGM5Q9XdO05wSpGADtoCpurwTpGWxOs6YsBQJwmY5BTBiKtAEo=
+	t=1733132291; cv=none; b=GPuSuUQCa/CYDBZYWNQSincJPs8sJYV9K6cZzvXZLIyiv77iRgYUaQ1LrfEK1TkyElPcabjjl22+PBOuMKBqQU8p0ZzDlNmGYTwuDgXyOOQPxColBWeWiGbf0uH5sfh2ISjnkz27gWH0la7fdxgHkQepnA9o9HtskfOmq6Jy+B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733132296; c=relaxed/simple;
-	bh=PUCL6IyC0pYB6tMfy6hltdUBwGeFHk3ER6ZVdQFYGHw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=XUqam9fcEyWVzlgohYqsJe4XnLpOB+yOJOupuPFzruAEMmwst4AbYDTTL4JQKfEGcoee8e6YhThkBVvjCAfEOsEy+fHbhlpIIHMEY7ev+CQU0h1d7qvE3N2QqvzMYgFg559/iJBheD3FnY5kNoBXz16LOSCm5KimeIpq/YQ7K0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PXCHcr4B; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28aPwN003922;
-	Mon, 2 Dec 2024 09:38:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+tonBH7YMIajOVt2imWKV44Tein9ZfCBMGwQpwb3VDw=; b=PXCHcr4BHbu8ICTl
-	X6YLXYUbe+MREQDu8fUg4DY5IsaT95aCgPHTKxiaK7MZH7vvDSbLCjubAYX3cV26
-	C3NBMrCqLO2fkQ+WyjeZFjNdVK3xPTx8F1m4ITGwdqKadw9x0LkMe8qHvG+QMzWu
-	hNK9WfPRqZOxCJdVqqTr5XC4d4PK0S/BePz3VuwA9kgVF9t0jd0QljZvV+VEMa58
-	s+mHL1CUGleOoFU5N05W3icqx39Qqv+EJ439KK30N6if4WIhA4A1IjAJQEbQRWNZ
-	SL/8Kci3NpOPVfEH0xZn3YPDDTyGViZbyidmYNtz1FEVrdf/45hZUjtRgKzH0orV
-	nwD9DQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ta2var6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 09:38:12 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B29cB6e027154
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Dec 2024 09:38:11 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 2 Dec 2024 01:38:04 -0800
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Date: Mon, 2 Dec 2024 17:37:24 +0800
-Subject: [PATCH v6 3/3] arm64: dts: qcom: qcs615-ride: Enable PMIC
- peripherals
+	s=arc-20240116; t=1733132291; c=relaxed/simple;
+	bh=yZXt4gGnXIs0rJpdGc8dOa8lWJxV3khZ3QXqM5Uof28=;
+	h=From:References:In-Reply-To:MIME-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NCjIpt7FksKLGHC88U+oH6RU909CXtUcFTds7ju2WQDzPGvt0Vgmsu18HE2xmmsZym/5dEXrb9r6z/JVBVVyuqzwwEpBfzSFsib2NyiQ5RlDJ8PNO77n/h76Y862siOirlBKEYmRbrtxm8x/ewpAMzgc/FEc7OLWdHXgo31LVCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tU4WLN5i; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3ea55c356caso2151050b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:38:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733132288; x=1733737088; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :user-agent:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iTAHukQDOhRmCnoHVRWCZSaR6X9fYnJA+kiQMKbXQ6U=;
+        b=tU4WLN5iwhlchTeL5cTiYP0OXJHPzQ7j+fhmcHOEfi04nNccOQuwKNZWgXSxwRvKqa
+         YN9HaDDlbLPu/n7dWK5Si354kwpgSk7QzxjWGlydcTnyJ8yj43sBHYCp+5o3P3rCBh1z
+         g+XxzzBc01wIwLbsRzkp8kUQHSwzK1zlpvQLtDYCCc1SOaglORX/6GLPUHFA8HugoMIt
+         Nm/UHmKj47m7bILeMzrJGs9cGGxkbMpnb4Qhqq/qbpr3VpdNakdzZXLG/VUBPzJZ9h+p
+         bLnWbXeQHHzQ+pWCUfTxep6FG6ql/NoQMvAe1oeWSFLFp6fbesLSuXWxnru5CDWKPyQE
+         vDzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733132288; x=1733737088;
+        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
+         :user-agent:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iTAHukQDOhRmCnoHVRWCZSaR6X9fYnJA+kiQMKbXQ6U=;
+        b=ucfJEsOJnzrqROFqbBqJF7rktfkDAd30NAppnNv009BE3PUbWPDdnuglrXeBtPSJyS
+         CNa5sJO1nEzXAldo8IPcmGrwQ74uf28Njg9Uxe8SB+LRC06qyDh3AM/2VQv4Qs7Eahs/
+         toFRBl0tyHpoP/eLyqiix5c7jAk08AL4F21aHbafFDozzTK4W6Sr5xaMGMVbWpDultVR
+         u1yLB8rl7DJLTGf1p8Vggi1FeGKMMuRFbmFnUxSF2rgpbDz/FSynGg51jByxqFXsiFUB
+         0EKW6vrH+BqyaBZ8GP8GXD//Vx77j5jqyi3YRdgSrgYEpPLHsQWH98qr8NqzOpYC7utG
+         YnVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVisjFRZW38Uyh3st/YcrWFJEQtteWb9jh6htxk8Q424Jr6+zl1YUeyF2b7SZSaiUSbK3xxIvhr27gg2/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT+KVdPNroim5KuSrC0OtL9mPtwogqsclcUwtnF3N1IUDpaKBu
+	DxErRaEHslQaUfVrLwiARb0vndc/bAqMmxqP2C/Ha0Lm08yDKb+0qQLJhz0Mn3UxRaiQtMmyTH5
+	u8aj7AOqwsF5jqzYv0/DhEI9nb6puS0AHexK2Mg==
+X-Gm-Gg: ASbGnctJlFQ564FzH4ZGS9PzxYN/r/Fvke1FMHOnvUb7qykUPt6xW3328PnaJGRiBSv
+	wZ28RdrRzOV9FAmdXNiQREK1XplRKyA==
+X-Google-Smtp-Source: AGHT+IGFYBkRu+t9Rgm8uEYvRACv3R8GZFuyUPEoCQ2kFsszRxvWlytkFAb4tTArftXgRYmzaFXCGr9/hwxPw8QMZIA=
+X-Received: by 2002:a05:6830:6d84:b0:71d:559d:de29 with SMTP id
+ 46e09a7af769-71d65cce8femr13291782a34.17.1733132288329; Mon, 02 Dec 2024
+ 01:38:08 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 2 Dec 2024 03:38:07 -0600
+From: Guillaume Ranquet <granquet@baylibre.com>
+User-Agent: meli 0.8.9
+References: <20241128030940.25657-1-liankun.yang@mediatek.com>
+In-Reply-To: <20241128030940.25657-1-liankun.yang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241202-adds-spmi-pmic-peripherals-for-qcs615-v6-3-bdd306b4940d@quicinc.com>
-References: <20241202-adds-spmi-pmic-peripherals-for-qcs615-v6-0-bdd306b4940d@quicinc.com>
-In-Reply-To: <20241202-adds-spmi-pmic-peripherals-for-qcs615-v6-0-bdd306b4940d@quicinc.com>
-To: <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <kernel@quicinc.com>, <quic_eberman@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tingguo Cheng <quic_tingguoc@quicinc.com>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733132272; l=984;
- i=quic_tingguoc@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=PUCL6IyC0pYB6tMfy6hltdUBwGeFHk3ER6ZVdQFYGHw=;
- b=3GqWGsF5kt3GFXTxqk7iCmmXqmFeXcyMoHHD7NtvhrC/5umlJuNRzX3AvZYVPZGeR5B2c54yl
- Z/Sf47yTBiqA78Dh+CBUOLTA50j/U/M6CiwKplP+1rsAUDb9wVmk4Qi
-X-Developer-Key: i=quic_tingguoc@quicinc.com; a=ed25519;
- pk=PiFYQPN5GCP7O6SA43tuKfHAbl9DewSKOuQA/GiHQrI=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Lx9SmBt4zxEVJPr13vTiQ4TntGzhC9oJ
-X-Proofpoint-GUID: Lx9SmBt4zxEVJPr13vTiQ4TntGzhC9oJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 impostorscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=871
- phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020085
+Date: Mon, 2 Dec 2024 03:38:07 -0600
+Message-ID: <CABnWg9tDMkKkFbQpL8YphOBu3_2zr_q4YASnO-UYMrdM22wCuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] drm/mediatek: Add return value check when reading DPCD
+To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org, 
+	p.zabel@pengutronix.de, airlied@gmail.com, simona@ffwll.ch, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	ck.hu@mediatek.com, dmitry.osipenko@collabora.com, rex-bc.chen@mediatek.com, 
+	jitao.shi@mediatek.com, mac.shen@mediatek.com, peng.liu@mediatek.com, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Enable PMIC and PMIC peripherals for qcs615-ride board.
+On Thu, 28 Nov 2024 04:08, Liankun Yang <liankun.yang@mediatek.com> wrote:
+>Returns the number of bytes transferred (1) on success.
+>Check the return value to confirm that AUX communication is successful.
+>
+>Fixes: d9e6ea02fc3f ("drm/mediatek: dp: Add MT8195 External DisplayPort support")
+>
+>Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+>---
+>Changes in V2:
+>- Modify Fixes in Commit Message.
+>Per suggestion from the previous thread:
+>https://patchwork.kernel.org/project/linux-mediatek/patch/20240930092000.5385-1-liankun.yang@mediatek.com/
+>---
+> drivers/gpu/drm/mediatek/mtk_dp.c | 8 +++++++-
+> 1 file changed, 7 insertions(+), 1 deletion(-)
+>
+>diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+>index 1cc916b16471..9dc68ec2ff43 100644
+>--- a/drivers/gpu/drm/mediatek/mtk_dp.c
+>+++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+>@@ -2101,6 +2101,7 @@ static enum drm_connector_status mtk_dp_bdg_detect(struct drm_bridge *bridge)
+> 	enum drm_connector_status ret = connector_status_disconnected;
+> 	bool enabled = mtk_dp->enabled;
+> 	u8 sink_count = 0;
+>+	size_t value;
+>
+> 	if (!mtk_dp->train_info.cable_plugged_in)
+> 		return ret;
+>@@ -2115,7 +2116,12 @@ static enum drm_connector_status mtk_dp_bdg_detect(struct drm_bridge *bridge)
+> 	 * function, we just need to check the HPD connection to check
+> 	 * whether we connect to a sink device.
+> 	 */
+>-	drm_dp_dpcd_readb(&mtk_dp->aux, DP_SINK_COUNT, &sink_count);
+>+	value = drm_dp_dpcd_readb(&mtk_dp->aux, DP_SINK_COUNT, &sink_count);
+>+	if (value < 0) {
+>+		drm_err(mtk_dp->drm_dev, "Failed to read DP Sink Count: %zd\n", value);
+>+		return ret;
+>+	}
+>+
+> 	if (DP_GET_SINK_COUNT(sink_count))
+> 		ret = connector_status_connected;
 
-Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Hi Liankun,
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index ee6cab3924a6d71f29934a8debba3a832882abdd..4e2f39c78546b4a2a95914fd4aa55d92b9670cb5 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -6,6 +6,7 @@
- 
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
- #include "qcs615.dtsi"
-+#include "pm8150.dtsi"
- / {
- 	model = "Qualcomm Technologies, Inc. QCS615 Ride";
- 	compatible = "qcom,qcs615-ride", "qcom,qcs615";
-@@ -202,6 +203,16 @@ &gcc {
- 		 <&sleep_clk>;
- };
- 
-+&pon_pwrkey {
-+	status = "okay";
-+};
-+
-+&pon_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
+thx for your fix.
+I think your patch could be improved by using the drm_dp_helper
+function drm_dp_read_sink_count() ?
 
--- 
-2.34.1
+Thx,
+Guillaume.
 
+>
+>--
+>2.45.2
 
