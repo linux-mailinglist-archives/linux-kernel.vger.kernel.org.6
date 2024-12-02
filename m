@@ -1,264 +1,173 @@
-Return-Path: <linux-kernel+bounces-428203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F4E19E0C27
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:31:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E97349E0CEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33AB8B3581C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:00:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88842B31924
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13801DE3AB;
-	Mon,  2 Dec 2024 19:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BCF1DE3B4;
+	Mon,  2 Dec 2024 18:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="T8g2mwhh"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6750E1DE3A5;
-	Mon,  2 Dec 2024 19:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCh7aRUF"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52EC1DDC18;
+	Mon,  2 Dec 2024 18:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733166009; cv=none; b=OYmVHdirP72VLO7QxrFSaLMYdbHaKWnHaGDYQ/IcqUXNKadwOpvjw8nPNQ8hqaXRZc0cvPjTAINh9PDd1n11QCg5In4yXuJ5vcb++NXKu7PsLQ8OqQ4hdpqFc5ns6kX5Q1Nnxak7NQGFefknrs4/x3FE2ohylUSxiiB76JXmVWU=
+	t=1733163563; cv=none; b=OZQFf6V5JVjGRHMOvxxKwb1ve8iGzexUzptvOkjwJOQB5U3v/87ksLWiAI3N9Dvl2spMEBPv8XnWxld2JlxflXcH3X+I6EO9bamKnYHJHjs/aJgdozaEcc0SEauikW5u2yYd/kaW5LPaqny25lSg9AXJRKtOStpZZ/TMUs9HGJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733166009; c=relaxed/simple;
-	bh=ilTfIwv93oRhUkU8N6lXP9KIAcMA0X5OUfCS9rybPhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Sj0BIPjf3tOLn4pPXdYAKkrpekzS5+8uI44sDUbhoFC2kmRLaUDpRQsTbgSoqj9Kmx0RCNaYLkg/zzAPrkaKzShzJleUBP56W/BTQt8bEcygytuWIfRNk4l/yDz7oaAkBHSmQagktmhGtPnlh7YRQbEZLXtTXHt3h5cNm+M0LNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=T8g2mwhh; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id A62B1409FE; Mon,  2 Dec 2024 19:18:49 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org A62B1409FE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20180602; t=1733163529;
-	bh=ilTfIwv93oRhUkU8N6lXP9KIAcMA0X5OUfCS9rybPhE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=T8g2mwhhkTAb9tyQqs2HmZAt+RSfB7q72lCgmTjXIOY2YUVp937N4wug2vYWmqwt9
-	 U8NT+7EpXcigPif/J3qwocl0fylV6nqQadf4UwnAcAkvQ03h9gcyPMyAs7E+Zh8/5P
-	 NY0LlIfXHnL/zOBRp5P1ajnAv7P7x6HXYXYzO5LU=
-Date: Mon, 2 Dec 2024 19:18:49 +0100
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Byoungtae Cho <bt.cho@samsung.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Fabio Estevam <festevam@denx.de>, Harini T <harini.t@amd.com>,
-	James Hilliard <james.hilliard1@gmail.com>,
-	Jean Delvare <jdelvare@suse.de>, lijuang <quic_lijuang@quicinc.com>,
-	Marek Vasut <marex@denx.de>, Nick Chan <towinchenmi@gmail.com>,
-	Oleksandr Ocheretnyi <oocheret@cisco.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Rosen Penev <rosenp@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Xingyu Wu <xingyu.wu@starfivetech.com>,
-	Xin Liu <quic_liuxin@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
-	Yassine Oudjana <y.oudjana@protonmail.com>
-Subject: [GIT PULL REQUEST] watchdog - v6.13 release cycle.
-Message-ID: <20241202181849.GA5357@www.linux-watchdog.org>
+	s=arc-20240116; t=1733163563; c=relaxed/simple;
+	bh=g3q9F3nz/BBwL+jGiWySN8SZMNanNAqRFUUhFg0bvO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FItU/4X0z233qhzxsEcLzRfjnhEbnI0eowEqGEee6sqVtLQ1VnBUWO6nu4v4gwIjGtckQU6O2zrH3h6hKXpeuYefw29A2ecnyjV7DGcoa7/vZEF+eN+cr++Y6k4ejFqBfEHnK8gGu5dFyfvrZr9/K5vQI9smmVrmcjIX6zbLxzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TCh7aRUF; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-385e5db74d3so1660779f8f.0;
+        Mon, 02 Dec 2024 10:19:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733163559; x=1733768359; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m9xI3zMiroK1TWhD5qFX+TQwJDBCg2p4NOnhJcoAr3E=;
+        b=TCh7aRUFTiBNdWUwuwIY8oyII73JCvWrvP1+8vcUBzGCLVXPR7JK9s4N3Q6fY83n6q
+         Iv/VgllM4o679iscpzbpjSCobdh8lDN1pgqC3z2W7RCCb/kL2KX4Xs7QAdDjv/zkq3hh
+         7osSv8Ha2YcAITgrCfJwrGc5QXEM9N6QCQfRrYHVxKJENJgH7Lo92RgHZf5lBre6Q4c3
+         jXAfTW7rZTUgbzHdbaEMxKEvNULgRB8oj2BbO91U0W+rdZZKr5T0CHCKWVUKDPQ1M+7v
+         Ol1ZY3Ms1g5Xyli7t/sAZ7M3pIAALGEi1p/sHCSlAXdj++pSCdD//OU6akYC3wrcGzDy
+         L6rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733163559; x=1733768359;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m9xI3zMiroK1TWhD5qFX+TQwJDBCg2p4NOnhJcoAr3E=;
+        b=Oq3mfWTFs/ZKdaBiC6Bn2gDmVBIdfEqKW7irUoEJIVOrVXUg706qQGN3/djkl57gfA
+         6mo94gDAhMfla9ishgXJQjx/5eMC8fsamXJT9qU/ndg7Hy7qH4i6JBnEKoqYBZRsyW6n
+         sr4of2M/j/diuCBPbq+Getf/A463SIGXyKnc4BrejK62txamjRcvyZULDuB7kUZzveMT
+         8mRT2G+pEPOYLTEtETmjqHKKTfrIW3BmsGvYOA94NChI7ZC1GD4uiHZQtIx7dI6n+EHO
+         KuBHhut4X+oTiOvjaMKti26O1nvKYAMTPn5wdSLalWooQa/wne7cM+cht/KwOlL5IPwe
+         GytQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Y9aJIWKlgd7NyEjqkTXRYfdJGzDmDDWvaGyQDjnTBEqytjGI1cvO7OLZ3y3+TWxNzso4DsD+fb8G5194@vger.kernel.org, AJvYcCWbmNUBX/SjDke4urXASqQXfpvP9RjDWj+bEOwyiTvQm1/TCITMGNZNZGt0V5omQ3nNXsqBswOOO9jx@vger.kernel.org, AJvYcCX9+WcO0nZIH4tncjV7Ii95lSIpxQNiccioiGvBsj3Nf5PvJ3Vkn+6FPH+bkIlTCIXx5vLkolqVwmWC@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywth/18aunHasQoFuP5LZ9nbUSK4mzzJlXt3PGQw/qidHnyV50E
+	H6m41EfoxKthiZ8LjE835Xl2KB82AcJUmqKrlu611gkwOTMzadU2
+X-Gm-Gg: ASbGncv2KbHPQ2pArPVbYxIqEcfJSjzg7OfXuexEOrJbt00Y9Jju5tvhoEjCZ/haOGk
+	lfz/yKkiqQ7iyeEuPKCG+GeMRTJHjtgP8F3WvmSRO93i6CPoovqIDLx4Eg/b0Iy/GhyksDRf8MH
+	ipRos80uolEkYPVB5fkAGL4GIlLmzV2359E6yu6w2+D4Nq5v0Cr6YJXF/cXDgDN6h55KTczIHVP
+	JxkTm3938eCvsjDQzyNUK9GJjWmeQzoMy7ODwlVfUcJc5ycWosYS9Z/namFCdM=
+X-Google-Smtp-Source: AGHT+IG80za/uK72ISWgh9HZEe56T4mKDhe/iTDphKwBhssjmYdmU64UlUdSBfkV3GqToLqJEMz44A==
+X-Received: by 2002:a5d:6d8e:0:b0:382:4f9e:711f with SMTP id ffacd0b85a97d-385c6eb8dd0mr21073908f8f.6.1733163559094;
+        Mon, 02 Dec 2024 10:19:19 -0800 (PST)
+Received: from vamoirid-laptop.. ([2a04:ee41:82:7577:ea8a:93ec:a066:eb25])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-385d7d4d9b0sm11659108f8f.65.2024.12.02.10.19.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 10:19:18 -0800 (PST)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com
+Cc: ajarizzo@gmail.com,
+	ak@it-klinger.de,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vassilisamir@gmail.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v1 1/3] dt-bindings: iio: pressure: bmp085: Add SPI interface
+Date: Mon,  2 Dec 2024 19:19:05 +0100
+Message-ID: <20241202181907.21471-2-vassilisamir@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241202181907.21471-1-vassilisamir@gmail.com>
+References: <20241202181907.21471-1-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.20 (2009-12-10)
 
-Hi Linus,
+The BMP{2,3,5}80 and BME280 devices have an SPI interface, so include it
+in the device-tree.
 
-Due to work issues, I was too late to sent in this pull request.
-Can you consider to still pull this in please?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+---
+ .../bindings/iio/pressure/bmp085.yaml         | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Please pull following watchdog changes for the v6.13 release cycle.
-
-This series contains:
-* Add support for exynosautov920 SoC
-* Add support for Airoha EN7851 watchdog
-* Add support for MT6735 TOPRGU/WDT
-* Delete the cpu5wdt driver
-* Always print when registering watchdog fails
-* Several other small fixes and improvements
-
-The output from git request-pull:
-----------------------------------------------------------------
-The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
-
-  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
-
-are available in the git repository at:
-
-  git://www.linux-watchdog.org/linux-watchdog.git linux-watchdog-6.13-rc1
-
-for you to fetch changes up to 4962ee045d8f06638714d801ab0fb72f89c16690:
-
-  watchdog: rti: of: honor timeout-sec property (2024-11-17 11:24:22 +0100)
-
-----------------------------------------------------------------
-linux-watchdog 6.13-rc1 tag
-
-----------------------------------------------------------------
-Alexander Sverdlin (1):
-      watchdog: rti: of: honor timeout-sec property
-
-Animesh Agarwal (1):
-      dt-bindings: watchdog: fsl-imx-wdt: Add missing 'big-endian' property
-
-Byoungtae Cho (2):
-      dt-bindings: watchdog: Document ExynosAutoV920 watchdog bindings
-      watchdog: s3c2410_wdt: add support for exynosautov920 SoC
-
-Christian Marangi (2):
-      dt-bindings: watchdog: airoha: document watchdog for Airoha EN7581
-      watchdog: Add support for Airoha EN7851 watchdog
-
-Claudiu Beznea (1):
-      watchdog: rzg2l_wdt: Power on the watchdog domain in the restart handler
-
-Colin Ian King (1):
-      docs: ABI: Fix spelling mistake in pretimeout_avaialable_governors
-
-Fabio Estevam (2):
-      watchdog: da9063: Do not use a global variable
-      watchdog: da9063: Remove __maybe_unused notations
-
-Harini T (1):
-      watchdog: xilinx_wwdt: Calculate max_hw_heartbeat_ms using clock frequency
-
-James Hilliard (1):
-      watchdog: it87_wdt: add PWRGD enable quirk for Qotom QCML04
-
-Jean Delvare (1):
-      watchdog: Delete the cpu5wdt driver
-
-Marek Vasut (1):
-      watchdog: stm32_iwdg: Add pretimeout support
-
-Nick Chan (2):
-      watchdog: apple: Actually flush writes after requesting watchdog restart
-      watchdog: apple: Increase reset delay to 150ms
-
-Oleksandr Ocheretnyi (1):
-      iTCO_wdt: mask NMI_NOW bit for update_no_reboot_bit() call
-
-Peter Griffin (1):
-      Revert "watchdog: s3c2410_wdt: use exynos_get_pmu_regmap_by_phandle() for PMU regs"
-
-Rosen Penev (1):
-      watchdog: armada_37xx_wdt: remove struct resource
-
-Uwe Kleine-König (2):
-      watchdog: ziirave_wdt: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-      watchdog: Switch back to struct platform_driver::remove()
-
-Wolfram Sang (9):
-      watchdog: always print when registering watchdog fails
-      watchdog: da9055_wdt: don't print out if registering watchdog fails
-      watchdog: gxp-wdt: don't print out if registering watchdog fails
-      watchdog: iTCO_wdt: don't print out if registering watchdog fails
-      watchdog: it87_wdt: don't print out if registering watchdog fails
-      watchdog: octeon-wdt: don't print out if registering watchdog fails
-      watchdog: rti_wdt: don't print out if registering watchdog fails
-      watchdog: rza_wdt: don't print out if registering watchdog fails
-      watchdog: sl28cpld_wdt: don't print out if registering watchdog fails
-
-Xin Liu (1):
-      dt-bindings: watchdog: Document Qualcomm QCS8300
-
-Xingyu Wu (1):
-      MAINTAINERS: Update the maintainer of StarFive watchdog driver
-
-Yan Zhen (1):
-      watchdog: fix typo in the comment
-
-Yassine Oudjana (2):
-      watchdog: mediatek: Make sure system reset gets asserted in mtk_wdt_restart()
-      watchdog: mediatek: Add support for MT6735 TOPRGU/WDT
-
-lijuang (1):
-      dt-bindings: watchdog: Document Qualcomm QCS615 watchdog
-
- Documentation/ABI/testing/sysfs-class-watchdog     |   2 +-
- .../bindings/watchdog/airoha,en7581-wdt.yaml       |  47 ++++
- .../devicetree/bindings/watchdog/fsl-imx-wdt.yaml  |  14 +
- .../devicetree/bindings/watchdog/qcom-wdt.yaml     |   2 +
- .../devicetree/bindings/watchdog/samsung-wdt.yaml  |   3 +
- Documentation/watchdog/watchdog-parameters.rst     |  10 -
- MAINTAINERS                                        |   2 +-
- drivers/watchdog/Kconfig                           |  17 +-
- drivers/watchdog/Makefile                          |   2 +-
- drivers/watchdog/acquirewdt.c                      |   2 +-
- drivers/watchdog/advantechwdt.c                    |   2 +-
- drivers/watchdog/airoha_wdt.c                      | 216 ++++++++++++++++
- drivers/watchdog/apple_wdt.c                       |   8 +-
- drivers/watchdog/armada_37xx_wdt.c                 |  10 +-
- drivers/watchdog/at91rm9200_wdt.c                  |   2 +-
- drivers/watchdog/at91sam9_wdt.c                    |   2 +-
- drivers/watchdog/ath79_wdt.c                       |   2 +-
- drivers/watchdog/bcm2835_wdt.c                     |   2 +-
- drivers/watchdog/bcm_kona_wdt.c                    |   2 +-
- drivers/watchdog/cpu5wdt.c                         | 284 ---------------------
- drivers/watchdog/cpwd.c                            |   2 +-
- drivers/watchdog/da9055_wdt.c                      |   7 +-
- drivers/watchdog/da9063_wdt.c                      |  19 +-
- drivers/watchdog/dw_wdt.c                          |   2 +-
- drivers/watchdog/gef_wdt.c                         |   2 +-
- drivers/watchdog/geodewdt.c                        |   2 +-
- drivers/watchdog/gxp-wdt.c                         |   4 +-
- drivers/watchdog/iTCO_wdt.c                        |  25 +-
- drivers/watchdog/ib700wdt.c                        |   2 +-
- drivers/watchdog/ie6xx_wdt.c                       |   2 +-
- drivers/watchdog/it87_wdt.c                        |  43 +++-
- drivers/watchdog/lpc18xx_wdt.c                     |   2 +-
- drivers/watchdog/mtk_wdt.c                         |  12 +
- drivers/watchdog/mtx-1_wdt.c                       |   2 +-
- drivers/watchdog/nic7018_wdt.c                     |   2 +-
- drivers/watchdog/nv_tco.c                          |   2 +-
- drivers/watchdog/octeon-wdt-main.c                 |   4 +-
- drivers/watchdog/omap_wdt.c                        |   2 +-
- drivers/watchdog/orion_wdt.c                       |   2 +-
- drivers/watchdog/pcwd.c                            |   2 +-
- drivers/watchdog/rc32434_wdt.c                     |   2 +-
- drivers/watchdog/rdc321x_wdt.c                     |   2 +-
- drivers/watchdog/renesas_wdt.c                     |   2 +-
- drivers/watchdog/riowd.c                           |   2 +-
- drivers/watchdog/rti_wdt.c                         |   9 +-
- drivers/watchdog/rza_wdt.c                         |   7 +-
- drivers/watchdog/rzg2l_wdt.c                       |  20 +-
- drivers/watchdog/rzn1_wdt.c                        |   2 +-
- drivers/watchdog/s3c2410_wdt.c                     |  45 +++-
- drivers/watchdog/sa1100_wdt.c                      |   4 +-
- drivers/watchdog/sch311x_wdt.c                     |   2 +-
- drivers/watchdog/shwdt.c                           |   2 +-
- drivers/watchdog/sl28cpld_wdt.c                    |   4 +-
- drivers/watchdog/smsc37b787_wdt.c                  |   2 +-
- drivers/watchdog/st_lpc_wdt.c                      |   2 +-
- drivers/watchdog/starfive-wdt.c                    |   4 +-
- drivers/watchdog/stm32_iwdg.c                      |  95 ++++++-
- drivers/watchdog/stmp3xxx_rtc_wdt.c                |   2 +-
- drivers/watchdog/txx9wdt.c                         |   2 +-
- drivers/watchdog/watchdog_core.c                   |  26 +-
- drivers/watchdog/xilinx_wwdt.c                     |  75 +++++-
- drivers/watchdog/ziirave_wdt.c                     |   2 +-
- include/linux/mfd/da9063/core.h                    |   1 +
- 63 files changed, 661 insertions(+), 424 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
- create mode 100644 drivers/watchdog/airoha_wdt.c
- delete mode 100644 drivers/watchdog/cpu5wdt.c
-----------------------------------------------------------------
-
-Kind regards,
-Wim.
+diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+index cb201cecfa1a..43af400a9939 100644
+--- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
++++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+@@ -55,12 +55,16 @@ properties:
+       If not set, defaults to push-pull configuration.
+     type: boolean
+ 
++  spi-max-frequency:
++    maximum: 10000000
++
+ required:
+   - compatible
+   - vddd-supply
+   - vdda-supply
+ 
+ allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+   - if:
+       properties:
+         compatible:
+@@ -73,6 +77,16 @@ allOf:
+     then:
+       properties:
+         interrupts: false
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - bosch,bmp085
++              - bosch,bmp180
++    then:
++      properties:
++        spi-max-frequency: false
+ 
+ additionalProperties: false
+ 
+@@ -93,3 +107,21 @@ examples:
+             vdda-supply = <&bar>;
+         };
+     };
++  - |
++    # include <dt-bindings/gpio/gpio.h>
++    # include <dt-bindings/interrupt-controller/irq.h>
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        pressure@0 {
++            compatible = "bosch,bmp280";
++            reg = <0>;
++            spi-max-frequency = <10000000>;
++            interrupt-parent = <&gpio0>;
++            interrupts = <25 IRQ_TYPE_EDGE_RISING>;
++            reset-gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
++            vddd-supply = <&foo>;
++            vdda-supply = <&bar>;
++        };
++    };
++
+-- 
+2.43.0
 
 
