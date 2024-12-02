@@ -1,150 +1,121 @@
-Return-Path: <linux-kernel+bounces-427733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3249E069E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:17:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0813B9E08AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:35:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAD03B32F89
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:39:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF32CB3FC0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03CB20E009;
-	Mon,  2 Dec 2024 14:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D9D21018D;
+	Mon,  2 Dec 2024 14:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="UmdGtktN"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rzjSVrTq"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F9420DD53;
-	Mon,  2 Dec 2024 14:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BF420FAA4;
+	Mon,  2 Dec 2024 14:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149951; cv=none; b=NXJfyx9gR9OD6+QLeuXuuJin17elkK3d1p84kNzfehqWJ8X8jmNrgG4L1wKjcyeycExWLuZ6I+hrLU0bX7/9EQwh+3TmOc3XLaaj2UUywiBk4qCIgzrbGiVcJuxPCu/N94Qezwxb447OSH11YKhq4yohmgceP+xt7CFvNueIs88=
+	t=1733149963; cv=none; b=PiGF3Rpo/ZThUtaPWdkwI5TWwX+zdbCX6sz6W+dYgdXtVogxAI948/KFKRI5tcoLi3E6U3dX7KRWpQiypm2ZSeqmZMn6i9YAwIxmYiKbxMO+Xg7Gbtdb8M+z5bqHl41pxnuLqFUMO1SYWDCnPxE66Bc2qCnFjAAMcg09PrVQhgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149951; c=relaxed/simple;
-	bh=KQ141SAk7aylJNm76gG4Pqhya4QFsG6RiJjf5w3002k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L4ApER0zTU0tseewBEMbc+8K7yRy3PoWtdHxiFoKcIoaq/ZQ70ClNFqu9ZzJb2Sfurlhe0bXM3AFdFk38F6LtbEEu/ZXFe0ozMvZEEY8/QriZ2slXjUKni37XXkH1nh3Fam0Txabc7LI5jcmJi8WqH1ztG5FosUkFGYue96rMW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=UmdGtktN; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1733149936; x=1733754736; i=w_armin@gmx.de;
-	bh=KQ141SAk7aylJNm76gG4Pqhya4QFsG6RiJjf5w3002k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=UmdGtktNk94D4YtazuO3tGcBcKAoaBhpTanyXHgGjVeUjdiApR7eUGMn+g3PEn/f
-	 zxniZnz7HZUiwW8wzx1F0wDb7cDVsE4yW7ySEtuaceul0QFYL46gQ4dJ2MqzY/ivH
-	 Dkplo7pQx5IS+eksk1yM1ayMGAcNVZTIHLLU6ZuWMgimD3xTCEOTUv05m+rQM8f4J
-	 KuJPzFRSzRS51bkW1kAsJhkqGm6NXRfpv8+TrzAUji0gUiz+qBisS2+MP7j0BTOBD
-	 /PWv1Zi5viRmIKLucPMRzh36SCugMR7XXRHIpW7oSmIpunWAeX4rnOhB5H2j/29sR
-	 Bs5/+dYkLIY+sWHIVQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mo6qv-1u2W6G3TUR-00bjxA; Mon, 02
- Dec 2024 15:32:15 +0100
-Message-ID: <58da1c4a-45ca-406b-9466-1186c0114cca@gmx.de>
-Date: Mon, 2 Dec 2024 15:32:14 +0100
+	s=arc-20240116; t=1733149963; c=relaxed/simple;
+	bh=IJ1Rrc7KpT8C107R71TYZs9A0BxxfhfJImHlo+06Fxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQoLlbmIZYz9Dj1DeWqWq55+2Umax8YT68T5HSatNc0JpZT3RgCnr3Wi/c2LEese3apP+GHvCZhp9GDAdqjLgsaIAdxUE2Z8wBCoTX1rVGAG/GOGzRD2/za96olldAGTn/F+OcZ1KkOUTU9OQB/tF4Umm6a1XMj1AIVpti/Wea4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rzjSVrTq; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QywnUlO+90s8saZdPpnrP4d9TT5pCFNVTXS7DZDgsoU=; b=rzjSVrTqpXXd2IrWGOplMAgOgI
+	UMaFfeD1n5bCrmJ4CxYG7RRwAQ9BUjKNNP35naVgqIVwIsPGOszt7AASAxlEuTSRotK6PYSf+cA9C
+	to4xkuSiUr751CRr5txHzafN/rW2ey4isMsZvjixo4Q039JXDCv8PVLsYwAOn5ZmDJ/g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tI7TH-00Exjr-G3; Mon, 02 Dec 2024 15:32:19 +0100
+Date: Mon, 2 Dec 2024 15:32:19 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Dege <michael.dege@renesas.com>,
+	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
+	Dennis Ostermann <dennis.ostermann@renesas.com>
+Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
+ speed
+Message-ID: <3b98a7c5-b8bf-4e96-b969-da1800813251@lunn.ch>
+References: <20241202083352.3865373-1-nikita.yoush@cogentembedded.com>
+ <20241202100334.454599a7@fedora.home>
+ <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
+ <Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
+ <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
+ <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
+ <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: asus-wmi: Ignore return value when writing
- thermal policy
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, auslands-kv@gmx.de,
- corentin.chary@gmail.com, luke@ljones.dev,
- platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20241124171941.29789-1-W_Armin@gmx.de>
- <13590dd6-1529-487c-842a-85b44c577811@redhat.com>
- <a56a1bed-de18-4530-aed5-ea8471962c71@gmx.de>
- <c06686ad-f755-4f14-8df8-f5b47e246f98@gmx.de>
- <877a18c8-048c-6c7c-72c3-d899349b278d@linux.intel.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <877a18c8-048c-6c7c-72c3-d899349b278d@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:24mHJg9qfgLD6CzXM8NsNZ+er475eogAbVwtyQOBLqsQtgcqi3T
- 4Jc2eoq7hCOWRP0ua7nIv/u/Ca31W1HUwwKD/RFpwSAm4zWpv4hhQdXJowYG7AdyOooXv5m
- mQCkOEgppar4/tNaakj4kMVGD27Y+KuzC7JCyTHOs+01hu+Ml5rXQRdjTdIc1jNJUzNzxp1
- p4/4UB3kIqf3REDKrjEFg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UaD+xr7m6Rc=;jvCzxU2Yk4ORbGNZtudgDMZtegA
- BbeXIJHy9P7t+jTqncVTlAdkDK/sLNe3evgHkc3IBAHw+8fVP1GQCy6lB+i16KkfBSLjPR8GD
- Lz+/DXcz4MwN7PYdQnnoCEp6mnwV+lUnnoz+dA3qagRCWt2xxJokF+TgDBBAlN95AxR/BfV5/
- wgIm9rRMoUrY8M/OVSHikX8+am+w952J60ruIvgCK0Bh3joIBU48Wc5dkNS35vp01AdT+aqbh
- RJ61527NbCvYSn0nTV9675VUIG2yaAB5UKJk0Yz6HBNVQLlMHWtkGwnpWgiV2t3mp8nbeYYc+
- gSgpnH0ANZJCql6yCT9x4i4WSaiPd8nufIY38TzzuBXbiBMqMgmk6potuLMQ0QNVfASfM3ZLb
- N8uub3zf3fGwLfyLdJtGo2PNBGq79Ef03yzP653Lh6ZSy2BY2oLAc5rasbW822k66JnmWqka6
- 3gfJ4MpdFb/5KK1xHAFkvOnwZDKQMZVZjr950EhJSZ5t2CyO052kEK/WnDB3mAzEy+icQ64dh
- lRZbjV+XZ30NAzvtMGb/VgwYeNJzhV2BxNe8g/GNm2oyrFV1On18Uz5OjMGg44qjkvzJW2vB6
- XGvhMNX/9VK6fgLpNGjHVgLQmHuifOKJrSm2PvkvNCcx1ixQrprj59TBY7gaKuGXVXRKvwoT+
- dZ+qh/bPtM4JEU9CGwIszxPAJCXCdDgZ6vzqstJ7vFYv0bttqQDIONneWKr46OEqXnY27NBtI
- Fu2qn2bomAgmvtYTK+PJJ2Q0YG7Hzuo1P4pkHIaohQSwG62DuWlRrEbiqw0FwPw1VRHB6Xan0
- rSitmWfrjh1miuZMpXjcl6/5qx37hFJNvdjR2hA55pRtbhz9v539a5C7pcUAoBoLGnwRUMUao
- 9dNV7tWtUaqdmz8LL9/YJ1hFCT9xIH39BfLnNSM+xovaELOA3IexbhpAhKESATNtqWhfW36O5
- GAV9EjBjkR4xSxBcS0l6Eoa4hbYJAvSoRteDTYfD4G+99JdFD5UDvc8V7QQssDblDblzNkr57
- 7W1nLWm6zB9kbfoVeEgdy062/yCzv1+asbP7roK2WfaqYowYQEiusUL/sRDBNYxmmMCxH6UUH
- aiwYsHs9GUTrwusrVgWQBI6Pxcxm34
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
 
-Am 02.12.24 um 15:29 schrieb Ilpo J=C3=A4rvinen:
+On Mon, Dec 02, 2024 at 04:09:43PM +0500, Nikita Yushchenko wrote:
+> > > Right now, 'ethtool -s tsn0 master-slave forced-slave' causes a call to
+> > > driver's ethtool set_link_ksettings method. Which does error out for me
+> > > because at the call time, speed field is 2500.
+> > 
+> > Are you saying that the PHY starts in fixed-speed 2.5G mode?
+> > 
+> > What does ethtool tsn0 say after boot and the link has come up but
+> > before any ethtool settings are changed?
+> 
+> On a freshly booted board, with /etc/systemd/network temporary moved away.
+> 
+> (there are two identical boards, connected to each other)
+> 
+> root@vc4-033:~# ip l show dev tsn0
+> 19: tsn0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+>     link/ether 3a:e3:5c:56:ba:bd brd ff:ff:ff:ff:ff:ff
+> 
+> root@vc4-033:~# ethtool tsn0
+> Settings for tsn0:
+>         Supported ports: [ MII ]
+>         Supported link modes:   2500baseT/Full
 
-> On Mon, 2 Dec 2024, Armin Wolf wrote:
->> Am 29.11.24 um 20:29 schrieb Armin Wolf:
->>> Am 25.11.24 um 10:39 schrieb Hans de Goede:
->>>> On 24-Nov-24 6:19 PM, Armin Wolf wrote:
->>>>> On some machines like the ASUS Vivobook S14 writing the thermal poli=
-cy
->>>>> returns the currently writen thermal policy instead of an error code=
-.
->>>>>
->>>>> Ignore the return code to avoid falsely returning an error when the
->>>>> thermal policy was written successfully.
->>>>>
->>>>> Reported-by: auslands-kv@gmx.de
->>>>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219517
->>>>> Fixes: 2daa86e78c49 ("platform/x86: asus_wmi: Support throttle
->>>>> thermal policy")
->>>>> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->>>> Thanks, patch looks good to me:
->>>>
->>>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->>>>
->>>> Regards,
->>>>
->>>> Hans
->>> I forgot to add the following tag:
->>>
->>> Tested-by: auslands-kv@gmx.de
->>>
->>> Can we pick this patch for the next fixes pull?
->>>
->>> Thanks,
->>> Armin Wolf
->>>
->> Another user (Edoardo Brogiolo <brogioloedoardo@gmail.com>) reported a =
-similar
->> issue with another Asus machine,
->> see https://bbs.archlinux.org/viewtopic.php?id=3D301341 for details.
->>
->> Are there any blockers left for this patch to get accepted upstream?
-> Hi Armin,
->
-> I don't think there are any blocker I'm aware of. It's just that I'm
-> extremely busy right after the merge window has closed as usual.
->
-Ok, then i will just wait a bit.
+If it is a T1 PHY, we want it reporting 25000BaseT1/Full here.  Having
+T1 then probably allows us to unlock forced master/slave without
+autoneg, and setting speeds above 1G without autoneg.
 
-Thanks,
-Armin Wolf
+Given this is an out of tree driver, i can understand why it does not,
+it means patching a number of in tree files.
 
+https://www.marvell.com/products/automotive/88q4364.html
+
+says it can actually do 2.5G/5G/10GBASE-T1 as defined by the IEEE
+802.3ch standard.
+
+I would be reluctant to make changes to phylib without a kernel
+quality PHY driver queued for merging. So you might want to spend some
+time cleaning up the code. FYI: I've not looked at 802.3ch, but if
+that defines registers, i would expect the driver patches to actually
+be split into helpers for standard defined registers any 3ch driver
+can use, and a PHY driver gluing those together and accessing marvell
+specific registers.
+
+	 Andrew
 
