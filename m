@@ -1,125 +1,161 @@
-Return-Path: <linux-kernel+bounces-427908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB60C9E0878
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:29:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B21A79E082C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:16:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED0F16CD2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:44:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF29209F59;
+	Mon,  2 Dec 2024 15:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOUNGcF+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A8DCB29009
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:43:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719DF209F5D;
-	Mon,  2 Dec 2024 15:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qiMZ87v+"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BCB209681
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13921200B9B;
+	Mon,  2 Dec 2024 15:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154228; cv=none; b=ZoWkbiRJfTFUYoThdL6073r0w8eNUpDNLjVGmNMXPsj9bRkySwCvWIqWN6ausc4ACwWCBfX02sCD6FRWuVVNkIZxWvzU4rwBIJlpD1uMG/C5Fdm+QBJ/3Kluxz63emAa4gtFO+O1rAkamrJ7ic8UyXZs7YUVMW3knhc7ddRrX+0=
+	t=1733154265; cv=none; b=JkhxF9kGhT4C6rxHv/QDkjxku+U5n4/swl+4RsKY2uKNDp1M+JOSL0MYNZ8Qy4EV2qBqj04fjX1cW7KKgURcZkutZGLAPGpUr2oBC8YdttDC0uZWK5igJVE114ZqtPsZwyNwieV59NyjJ2rDjeo0hUwb8njnxu3a6aRumsDBVag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154228; c=relaxed/simple;
-	bh=G+ixesJwrhmdRGOoKaVi9aVhGhbSs7sCztwyhRsZ6Y8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TXo+tSKyrLpBCTU6PaRlZZFG1/kfg9YxLYdHLeJOKHABKvJuCUSq6/wxcCfvjX+hXnhIPWqxwTaq2orkuKD3GIJ4YDTLyRx7VELcctMZHhe7/9UwcQ1+4Um/4oCUXwDyn3RsceRP9GLUNRa/F/PL7PM5YvIg/1leK7wHf2NQ9W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qiMZ87v+; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fff2ca7425so15800281fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:43:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733154225; x=1733759025; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+dnyVo651sV7HO/Z87qDMxuAsPz5I+ekVBFQvKra+Wc=;
-        b=qiMZ87v+XxNFV32XiCbriIt08jVS80KLFRFfxZHrVPeJD7jzgnXfOfbr6tSBbHcqM0
-         aegRHMFrXb8gYzKgVGlo/mg0S4ezJnNZHyAuFAuNHXu/QA0NohURpYMNuRiWlaz5E1/C
-         vbOGQWQMBfZChn2urWuXNvcrzYZsTIw41nugw1Go4EiuRm+7vTqHcpeAku40q9npYeJc
-         sEXeez2XUEaIuxzH7sHp/uOK2chn9aKnEC6eLnYnb0EBY/+SS3qW78DY+xHUzv0pOqzG
-         jBgwEGNtRPUhkoQCH8ES5v4UCr67FZrMJbfn4yngKE7kBh1Jiwek38Dn+xhr/TzBxpaO
-         RSXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733154225; x=1733759025;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+dnyVo651sV7HO/Z87qDMxuAsPz5I+ekVBFQvKra+Wc=;
-        b=LDMoV8Zr5TK12ojHaOUxZ6eTjzlVhZ8pehD3xcJnoyKgr95MoLI9Af4RHLG1brnS/8
-         R/SL5Qtme5z+hFJr7zSb09dJPnSthjvl82VoGmLCqJywTmTrUZ+NlYLFTa+sLiSisC0Y
-         NEnZJDFbMCzQHMN2T9hvgZ8PBpaFdFNq7TyDHwFoxk9Un3FROJhNQNgbOrF/vFpvJoMm
-         Jmc5wruJf7GafDP1y+1g48aRFwLpU3r9MOaIFDel4KOx7hYp9uKTRvhw8RYdju36d30v
-         GeBr+nruCyrE8mUW8pp/Ct0X0r1DbHX5FR26rz8sXSma9aHagCNdJHA7gtxgYCKI/19Q
-         YKzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUghbuFOVJjsdAXgNGbzUliE0ahFRmcNwtCS2tWcxXezphD+1UzVz+fYM0z5I6nrFdTg0BGjHR1SFOGqWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXBVtlGsgEeyhq0Iov0GobvhPvm9/bhod1Zp4NRX31lNcAwZaG
-	e4Pak5MV0Vly+GkBi95DyJce3YR8ooiwatil/XuEFg56wEz+B0qOiaEDXNx5nRo=
-X-Gm-Gg: ASbGnctTGc0x8D0j0pwq52wfkCSB0mFcfTLe3sBuzIMJPRyxIkjOF4lY0Lf+RpJBs0+
-	PO8f9omksAnaGU76cQ8y6d4w6shmwy4tBPfn/XKYgbem+QClzVN9ikGNOaagipHllwDMXzjyOTY
-	mUu94GsnVJ7uE5ITjiGGyNsSdVOJqGl4PBu6a8oarKxWlVR5LsQqL7G+dsRaiDXEKiajeL8xdS9
-	iCqhBd4/avPVCsjglLPZ9Jbc+EgRr4EAjwLRbDjPmSqurfcvtqzDqQ=
-X-Google-Smtp-Source: AGHT+IEIwYAvgrT4TyGB+e9trQokMHX+TMZ5HrjBCIm5b7G6DptR6s6UNJiBuC0AVZHjQbWqoOKSSQ==
-X-Received: by 2002:a05:651c:2109:b0:2ff:d2b3:753e with SMTP id 38308e7fff4ca-2ffd60d2e19mr133366471fa.20.1733154225544;
-        Mon, 02 Dec 2024 07:43:45 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097ebb78esm5119323a12.86.2024.12.02.07.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 07:43:45 -0800 (PST)
-Date: Mon, 2 Dec 2024 18:43:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?iso-8859-1?Q?Beno=EEt?= Sevens <bsevens@google.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	wangdicheng <wangdicheng@kylinos.cn>,
-	Manuel Barrio Linares <mbarriolinares@gmail.com>,
-	Lianqin Hu <hulianqin@vivo.com>,
-	Shen Lichuan <shenlichuan@vivo.com>, Cyan Nyan <cyan.vtb@gmail.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ALSA: usb-audio: Fix a DMA to stack memory bug
-Message-ID: <0c6fcfb1-a528-4e05-9fe3-f1671784569e@stanley.mountain>
-References: <60e3aa09-039d-46d2-934c-6f123026c2eb@stanley.mountain>
- <CAGCho0Xe-jGcanAxehP+ENmrG0Otq5DzQO-yKHx7Ot_UzSRXWQ@mail.gmail.com>
+	s=arc-20240116; t=1733154265; c=relaxed/simple;
+	bh=DyHkmcoK/rPOrpLfO3N9/3ZQGexPIlejeLIDNVhReJo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mCRD3m+Y/uAF3rju39owNUjvOezfmSZo2oKfbNG6uR0syrY1NmB/nHQMW+uC76LbetYZSNekGUJN6MwdQjV6c1+C/iq6qDscUu6y4XRlla8tz9SojhIe1HVbuewQ34OUS2a00TAxZ4hy6mVF5o1YRggRpNcYC0S6MNLEC+lol50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOUNGcF+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0547AC4CED1;
+	Mon,  2 Dec 2024 15:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733154264;
+	bh=DyHkmcoK/rPOrpLfO3N9/3ZQGexPIlejeLIDNVhReJo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=dOUNGcF+mdb56CEPrlHyw39sLJ6Cpw3nwWs37XYq/5PCKaYPjmRFAKpj3U6FKB9qL
+	 ZDraECnj/6CO8AT1hvqhljlFzcSXwo+/r2HbYd3en7lr5Lrcs8vwB2jgVLcBaNGH+W
+	 3sIwJ6ex6jiS97vYpH3a+BLXNZjMncZACtVsgaI/uKjzAkuH9GzrBSiGp6zofqafe7
+	 yzC3rep21BA4jxNecS1y4iug1WbwCSwjoUGkjCQPhtOV/vi8PXhp0REkXSdFToGYm3
+	 MgBjhLvwIAq7I9xcIh0TUkDGhodZMeTojoiqnpM4+ieY+9Az+7a6Pv9s9tzAqVi4BL
+	 8d1jUMElH1/IQ==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Celeste Liu <uwu@coelacanthus.name>, Oleg Nesterov <oleg@redhat.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Eric Biederman
+ <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, "Dmitry V. Levin" <ldv@strace.io>,
+ Andrea Bolognani <abologna@redhat.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ron Economos <re@w6rz.net>, Felix Yan
+ <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>, Shiqi Zhang
+ <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, Yao Zi
+ <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, stable@vger.kernel.org, Celeste Liu
+ <uwu@coelacanthus.name>
+Subject: Re: [PATCH] riscv/ptrace: add new regset to get original a0 register
+In-Reply-To: <20241201-riscv-new-regset-v1-1-c83c58abcc7b@coelacanthus.name>
+References: <20241201-riscv-new-regset-v1-1-c83c58abcc7b@coelacanthus.name>
+Date: Mon, 02 Dec 2024 16:44:21 +0100
+Message-ID: <87v7w22ip6.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGCho0Xe-jGcanAxehP+ENmrG0Otq5DzQO-yKHx7Ot_UzSRXWQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 02, 2024 at 04:05:01PM +0100, Benoît Sevens wrote:
-> Hi Dan,
-> 
-> On Mon, 2 Dec 2024 at 13:57, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > The usb_get_descriptor() function does DMA so we're not allowed
-> > to use a stack buffer for that.  Doing DMA to the stack is not portable
-> > all architectures.  Move the "new_device_descriptor" from being stored
-> > on the stack and allocate it with kmalloc() instead.
-> >
-> 
-> Thanks for fixing this. It looks good to me.
-> 
-> Note that the commit that is being fixed is already queued for
-> backporting, so I don't know how this usually goes then.
-> 
+Thanks for working on this!
 
-It's fine.  The stable scripts look for fixes to stable patches.
+Celeste Liu <uwu@coelacanthus.name> writes:
 
-But I also CC'd stable because your commit is CC'd for stable.  Even CC'ing
-stable shouldn't be necessary here, maybe there is a rebase or something so the
-Fixes tag gets broken or maybe something else goes wrong.  CC'ing stable is just
-an extra way to be careful.
+> The orig_a0 is missing in struct user_regs_struct of riscv, and there is
+> no way to add it without breaking UAPI. (See Link tag below)
+>
+> Like NT_ARM_SYSTEM_CALL do, we add a new regset name NT_RISCV_ORIG_A0 to
+> access original a0 register from userspace via ptrace API.
+>
+> Link: https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gm=
+ail.com/
+> Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
+> ---
+>  arch/riscv/kernel/ptrace.c | 33 +++++++++++++++++++++++++++++++++
+>  include/uapi/linux/elf.h   |  1 +
+>  2 files changed, 34 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+> index ea67e9fb7a583683b922fe2c017ea61f3bc848db..faa46de9000376eb445a32d43=
+a40210d7b846844 100644
+> --- a/arch/riscv/kernel/ptrace.c
+> +++ b/arch/riscv/kernel/ptrace.c
+> @@ -31,6 +31,7 @@ enum riscv_regset {
+>  #ifdef CONFIG_RISCV_ISA_SUPM
+>  	REGSET_TAGGED_ADDR_CTRL,
+>  #endif
+> +	REGSET_ORIG_A0,
+>  };
+>=20=20
+>  static int riscv_gpr_get(struct task_struct *target,
+> @@ -184,6 +185,30 @@ static int tagged_addr_ctrl_set(struct task_struct *=
+target,
+>  }
+>  #endif
+>=20=20
+> +static int riscv_orig_a0_get(struct task_struct *target,
+> +			     const struct user_regset *regset,
+> +			     struct membuf to)
 
-regards,
-dan carpenter
+Use full 100 chars!
 
+> +{
+> +	return membuf_store(&to, task_pt_regs(target)->orig_a0);
+> +}
+> +
+> +static int riscv_orig_a0_set(struct task_struct *target,
+> +			     const struct user_regset *regset,
+> +			     unsigned int pos, unsigned int count,
+> +			     const void *kbuf, const void __user *ubuf)
+
+Dito!
+
+> +{
+> +	int orig_a0 =3D task_pt_regs(target)->orig_a0;
+
+64b regs on RV64.
+
+> +	int ret;
+> +
+> +	ret =3D user_regset_copyin(&pos, &count, &kbuf, &ubuf, &orig_a0, 0, -1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	task_pt_regs(target)->orig_a0 =3D orig_a0;
+> +	return ret;
+> +}
+> +
+> +
+
+Multiple blanks.
+
+>  static const struct user_regset riscv_user_regset[] =3D {
+>  	[REGSET_X] =3D {
+>  		.core_note_type =3D NT_PRSTATUS,
+> @@ -224,6 +249,14 @@ static const struct user_regset riscv_user_regset[] =
+=3D {
+>  		.set =3D tagged_addr_ctrl_set,
+>  	},
+>  #endif
+> +	[REGSET_ORIG_A0] =3D {
+> +		.core_note_type =3D NT_RISCV_ORIG_A0,
+> +		.n =3D 1,
+> +		.size =3D sizeof(elf_greg_t),
+> +		.align =3D sizeof(elf_greg_t),
+
+...and sizeof(elf_greg_t) is 64b in RV64 -- mismatch above.
+
+
+Bj=C3=B6rn
 
