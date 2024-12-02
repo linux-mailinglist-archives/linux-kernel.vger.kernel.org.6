@@ -1,111 +1,201 @@
-Return-Path: <linux-kernel+bounces-427699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783299E0510
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:32:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE9C9E0512
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32D2167C21
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:29:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223E9168731
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972302040A7;
-	Mon,  2 Dec 2024 14:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25F22040BB;
+	Mon,  2 Dec 2024 14:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="QNXhE5p2"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NhMfzhAD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAE820371E;
-	Mon,  2 Dec 2024 14:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085F6204086;
+	Mon,  2 Dec 2024 14:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149782; cv=none; b=KKQEvl/Han0X14QUyCfipba+2TopqzyeisjFV9pYRlrlTWvBuLwoKNnMloye7WWI95llIuG6pe5YM5kaMRlzEM7uRXBGra1fXTIhF5TaeojyTnm4timsKmLg/Z8VhGXIYQU5eA25UDSiXNZPwZGa+tA4zV8UkcjqRGqqhZB/VYI=
+	t=1733149802; cv=none; b=arxB25hkQ/X6gW1Jpsz1zu099ZCK2hRXAPGoI9cXv7fxQxAc4PPOMu0pui0c3KVbipoIizy7lQwnB10xnGihZzqpc5Ti6EhWqg9qSbtpTyfzaV5JR1MSsVqX1LHHsYDZzVlEp6e2mx72dMZNCwYvAnJeUyeYW/9Y1nHUgy7c7YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149782; c=relaxed/simple;
-	bh=GI2kUtT0OlfNGGETihup6P26nEgr9k/Vnd4oVTiQC8I=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=g/sBeNvM6Oi1WDAJyH4LhsCuqWRPAiT8bN7WXd8oC/d4qqXOnjZ1TFD9fK/9lcjPzR+KpLW1/R2sKjzvlyQV670yOV47qoUQ+WhiBNKeD8rP3+3i9Z3tEGcy3vIfIUQqIFkdv3Uojg3HakEU2uigXjUMdJXzolCBxhWqZdGCUWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=QNXhE5p2; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-	by mxout1.routing.net (Postfix) with ESMTP id 8DD39410AF;
-	Mon,  2 Dec 2024 14:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1733149777;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iiCaU9VCsrHrARnis/Mwz30VnwpZh24c7z+5gmG2wQQ=;
-	b=QNXhE5p2F5VZToy6Ij+oy/Pp3T8prS8YPnb39rnbgMQTfHrkEdYgKmF3fYbXPBDvAVVYlt
-	8u8W19vzGs4HCYBBtY6JGFOzCRGWZve3fZewwFh+w3C4JYjEUinvrQi9DNOtM112D8cLFN
-	xhshK1jH+y/vfWzcWDmK+fX0lHHuftg=
-Received: from [127.0.0.1] (fttx-pool-217.61.149.104.bambit.de [217.61.149.104])
-	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id DC85A1005FD;
-	Mon,  2 Dec 2024 14:29:36 +0000 (UTC)
-Date: Mon, 02 Dec 2024 15:29:36 +0100
-From: Frank Wunderlich <linux@fw-web.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: Frank Wunderlich <frank-w@public-files.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_11/18=5D_arm64=3A_dts=3A_media?=
- =?US-ASCII?Q?tek=3A_mt7988=3A_add_chosen_node_on_bpi-r4?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <0fb58a4a-7bad-4623-99c8-67f5763558bb@kernel.org>
-References: <20241202122602.30734-1-linux@fw-web.de> <20241202122602.30734-12-linux@fw-web.de> <0fb58a4a-7bad-4623-99c8-67f5763558bb@kernel.org>
-Message-ID: <D92CAF3C-F6B7-46DC-BF83-A71907E2D7EA@fw-web.de>
+	s=arc-20240116; t=1733149802; c=relaxed/simple;
+	bh=BfsczZnxqw0bdhiznQxUcWmZYiHdqyMkpjGQf0x/yLs=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=d5o6LJvOc6nsol7HL6W91L7pxFi1RM34J7lq69HrxgR97mAUUbjoCXYMS36FputSeb8vKHz+kiyHSnCn5J1xP7XiYBrJCIrrOeFTb8V60x5PjTbBAfHqbDSaXhdLcUfxwzey/phJ8In2fJAqZwGf8B15pMomniT57qPoTgElDDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NhMfzhAD; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733149800; x=1764685800;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=BfsczZnxqw0bdhiznQxUcWmZYiHdqyMkpjGQf0x/yLs=;
+  b=NhMfzhADSrDtdbmUECrYYbew4nHBbtoEroRUsVuYmS17fGMt3cbA/ZbB
+   5V1S4+zV6e33p0lCUPYbJXKpyqJ3++F+gS2fSKD+TtohWJ0z3na62yYJq
+   KFOF/DZe5O2XynC1aJPM1Fb3vd4ggMPOjFKKcnFHTWbI7c2VuGEkq4u2c
+   G3sTKj0JeyMl5D7juLJtxHZg6+r+NixMKBV6IznwxHarzd9aNaMlZkqIt
+   QLpwwopqrIi1XKKnnFNolkI5cn74OOE+6108nwgWoGaMdYFb4DEnNyqeN
+   7BL0LPdFPdtQeZkzSCwsmloQOGjHV901OHWmbpEJmnnW33vb662gwFkpf
+   A==;
+X-CSE-ConnectionGUID: zcvK7/Z6Rl6I4cmeN99TUA==
+X-CSE-MsgGUID: 8K4RlW0IR4ibzJMkT1Q1OQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33248632"
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="33248632"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 06:29:59 -0800
+X-CSE-ConnectionGUID: BWHWWzvKQrikfPJzrYywzw==
+X-CSE-MsgGUID: B9+TQja6Ss63IV2/mvvNOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="98223306"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.61])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 06:29:56 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 2 Dec 2024 16:29:52 +0200 (EET)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: Hans de Goede <hdegoede@redhat.com>, auslands-kv@gmx.de, 
+    corentin.chary@gmail.com, luke@ljones.dev, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: asus-wmi: Ignore return value when writing
+ thermal policy
+In-Reply-To: <c06686ad-f755-4f14-8df8-f5b47e246f98@gmx.de>
+Message-ID: <877a18c8-048c-6c7c-72c3-d899349b278d@linux.intel.com>
+References: <20241124171941.29789-1-W_Armin@gmx.de> <13590dd6-1529-487c-842a-85b44c577811@redhat.com> <a56a1bed-de18-4530-aed5-ea8471962c71@gmx.de> <c06686ad-f755-4f14-8df8-f5b47e246f98@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mail-ID: dfd265df-7f00-4998-b30b-86ed5c96f812
+Content-Type: multipart/mixed; boundary="8323328-175535707-1733149792=:932"
 
-Am 2=2E Dezember 2024 14:46:24 MEZ schrieb Krzysztof Kozlowski <krzk@kernel=
-=2Eorg>:
->On 02/12/2024 13:25, Frank Wunderlich wrote:
->> From: Frank Wunderlich <frank-w@public-files=2Ede>
->>=20
->> Add chosen node on Bananapi R4 board with stdout and default bootargs=
-=2E
->>=20
->> Signed-off-by: Frank Wunderlich <frank-w@public-files=2Ede>
->> ---
->>  arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4=2Edts | 5 +++++
->>  1 file changed, 5 insertions(+)
->>=20
->> diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4=2Edts=
- b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4=2Edts
->> index 9037f35857a9=2E=2E1c2a806f6f6c 100644
->> --- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4=2Edts
->> +++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4=2Edts
->> @@ -9,6 +9,11 @@ / {
->>  	model =3D "Banana Pi BPI-R4";
->>  	chassis-type =3D "embedded";
->> =20
->> +	chosen {
->> +		stdout-path =3D &serial0;
->> +		bootargs =3D "console=3DttyS0,115200n1";
->
->Drop or merge into stdout path=2E
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Have you an example to pass speed setting to stdout-path? As it is only a =
-phandle it is not clear to me how to merge these 2=2E=2E=2E
+--8323328-175535707-1733149792=:932
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
->Best regards,
->Krzysztof
+On Mon, 2 Dec 2024, Armin Wolf wrote:
+> Am 29.11.24 um 20:29 schrieb Armin Wolf:
+> > Am 25.11.24 um 10:39 schrieb Hans de Goede:
+> > > On 24-Nov-24 6:19 PM, Armin Wolf wrote:
+> > > > On some machines like the ASUS Vivobook S14 writing the thermal pol=
+icy
+> > > > returns the currently writen thermal policy instead of an error cod=
+e.
+> > > >=20
+> > > > Ignore the return code to avoid falsely returning an error when the
+> > > > thermal policy was written successfully.
+> > > >=20
+> > > > Reported-by: auslands-kv@gmx.de
+> > > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219517
+> > > > Fixes: 2daa86e78c49 ("platform/x86: asus_wmi: Support throttle
+> > > > thermal policy")
+> > > > Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> > > Thanks, patch looks good to me:
+> > >=20
+> > > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> > >=20
+> > > Regards,
+> > >=20
+> > > Hans
+> >=20
+> > I forgot to add the following tag:
+> >=20
+> > Tested-by: auslands-kv@gmx.de
+> >=20
+> > Can we pick this patch for the next fixes pull?
+> >=20
+> > Thanks,
+> > Armin Wolf
+> >=20
+> Another user (Edoardo Brogiolo <brogioloedoardo@gmail.com>) reported a si=
+milar
+> issue with another Asus machine,
+> see https://bbs.archlinux.org/viewtopic.php?id=3D301341 for details.
+>=20
+> Are there any blockers left for this patch to get accepted upstream?
 
+Hi Armin,
 
-regards Frank
+I don't think there are any blocker I'm aware of. It's just that I'm=20
+extremely busy right after the merge window has closed as usual.
+
+--=20
+ i.
+
+> > > > ---
+> > > > =C2=A0 drivers/platform/x86/asus-wmi.c | 11 ++---------
+> > > > =C2=A0 1 file changed, 2 insertions(+), 9 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/platform/x86/asus-wmi.c
+> > > > b/drivers/platform/x86/asus-wmi.c
+> > > > index ba8b6d028f9f..8bd187e8b47f 100644
+> > > > --- a/drivers/platform/x86/asus-wmi.c
+> > > > +++ b/drivers/platform/x86/asus-wmi.c
+> > > > @@ -3696,7 +3696,6 @@ static int
+> > > > asus_wmi_custom_fan_curve_init(struct asus_wmi *asus)
+> > > > =C2=A0 /* Throttle thermal policy
+> > > > ****************************************************/
+> > > > =C2=A0 static int throttle_thermal_policy_write(struct asus_wmi *as=
+us)
+> > > > =C2=A0 {
+> > > > -=C2=A0=C2=A0=C2=A0 u32 retval;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 value;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int err;
+> > > >=20
+> > > > @@ -3718,8 +3717,8 @@ static int
+> > > > throttle_thermal_policy_write(struct asus_wmi *asus)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value =3D as=
+us->throttle_thermal_policy_mode;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > >=20
+> > > > -=C2=A0=C2=A0=C2=A0 err =3D asus_wmi_set_devstate(asus->throttle_th=
+ermal_policy_dev,
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value, &retval);
+> > > > +=C2=A0=C2=A0=C2=A0 /* Some machines do not return an error code as=
+ a result, so we
+> > > > ignore it */
+> > > > +=C2=A0=C2=A0=C2=A0 err =3D asus_wmi_set_devstate(asus->throttle_th=
+ermal_policy_dev,
+> > > > value, NULL);
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sysfs_notify(&asus->platform_device-=
+>dev.kobj, NULL,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 "throttle_thermal_policy");
+> > > > @@ -3729,12 +3728,6 @@ static int
+> > > > throttle_thermal_policy_write(struct asus_wmi *asus)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > >=20
+> > > > -=C2=A0=C2=A0=C2=A0 if (retval !=3D 1) {
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_warn("Failed to set =
+throttle thermal policy (retval):
+> > > > 0x%x\n",
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ retval);
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EIO;
+> > > > -=C2=A0=C2=A0=C2=A0 }
+> > > > -
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Must set to disabled if mode is t=
+oggled */
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (asus->cpu_fan_curve_available)
+> > > > asus->custom_fan_curves[FAN_CURVE_DEV_CPU].enabled =3D false;
+> > > > --
+> > > > 2.39.5
+> > > >=20
+> > >=20
+> >=20
+>=20
+--8323328-175535707-1733149792=:932--
 
