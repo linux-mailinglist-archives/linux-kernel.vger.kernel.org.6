@@ -1,176 +1,176 @@
-Return-Path: <linux-kernel+bounces-427840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683A19E0AE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:21:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5909E0A50
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:44:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2A98BA6E1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:16:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58B31BA7CCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7357207A2D;
-	Mon,  2 Dec 2024 15:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2561B20E33F;
+	Mon,  2 Dec 2024 15:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mzDX8qmW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPvw9aPw"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF7B2040A7
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A280B20E320;
+	Mon,  2 Dec 2024 15:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152198; cv=none; b=rI20clh1tXs12ezwHxC/iiAwq5jLfUjarbJheURNWjNSYJOvZ3GlVIAtVOW0N4Bj3ku5s6DzsN+jI0edHrAhxxMcCN+ZxPK7dYbEMJGy2TE+15KgWzNvI6gZMc8GfuLywKspvWQEZaGe6DczUa1OLZFcqsFSE1Y8+9fG9xhrm6Y=
+	t=1733152304; cv=none; b=FU5hJCvtJxXTrYRcrtM41KUWnUt/I1ISH2Ofd6i0qeIxAm44xLduKxlO4ZoKZSloY3f5xz8FomYDjPbzznWSCB8OZ4dYiyFcNRRzB/sW2ULr/5yFTc/zKC4hc8GWaHj+T9En6tCiQ2qXhxzMOmIOkn4IlSHSBcnwSnQX8PoRwdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152198; c=relaxed/simple;
-	bh=ae8PwlwQUZdOmIPnzmhe75h7esJR91bhpoYw7EgyW20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ejH3PJ5bM9Og1HaXddBEBzSUaASJ7Qna9s57JewfWth7tFspwpjdnVakDWujX0yDtK2Kz3b8AC3YDTQZBgb5pzUktFpN2FplaNoH97rvcsx99Rga6lpktDKq6xTWTaFG7h8XoPerIEH//W7quUimlHCKxic88a5qRnecpcTp5jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mzDX8qmW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B291Zd4030330
-	for <linux-kernel@vger.kernel.org>; Mon, 2 Dec 2024 15:09:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	c8rtkoC7IoWsX5kh1U40YLnQo/GZ7NNXDue2xrV8R5M=; b=mzDX8qmWZUfhY/E7
-	MK4rTcUuGk1zKqpIhpKQLvN6Ts4YoZsSLQjVhH4ilhi3voZA5UOzl2T7SUFJ2fgS
-	D13qN3kJnGQSePXXP2Ul4J6V2acDsGYcVCQh7Vtk/Xd7OFiFw37boyRK59j78/S0
-	lpJcd6zivPQ0wUR0jIcBYJ+Is0yx16f0GmtnuigyfPFC8a5wX4zM5nV+gKnTyvw8
-	EYfCtpq4cnj+zNl8Rz2x0KvW6CluioT7Eobv8GOXm/x3FFTObwAjl/C9nI5gxF7F
-	7OoDvtUXRQNkbWfjPGGZ/gifAN9UxJiHmhWoYEai/yuJs+ctK/TTkE1hBzS5XyEC
-	dExG9g==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437rdedbh3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 15:09:50 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-46699075dd4so9691231cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:09:50 -0800 (PST)
+	s=arc-20240116; t=1733152304; c=relaxed/simple;
+	bh=jOURbvIBqcaxRauahaNmGNs8QWjyLcPZWcsQoQf7Bnw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aQOyAT+gf0TVU8NhQKjTjI7RrwiLsnqvXOA16hA1PHdNKQNqmsP0rt33suddJLcbna0Mbvum/5gfz/ln8H6t12yAORnqLA9igFiNaKxXaG/krwGnwJLWo2ysYG7MV+oxbeJGMSdm2gLdVY0lEUX6QuSrtt1NUkITuCgu2rD4flc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPvw9aPw; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385df8815fcso1896355f8f.1;
+        Mon, 02 Dec 2024 07:11:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733152301; x=1733757101; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KUnUP56auFT1j9K/I596a3ZwowwD4uPA1BDcedJEb3M=;
+        b=CPvw9aPwG9CBLVaO2jF3qlWa2jXE+3yaGavVNxnLz9RFHKgkEmkHgVffrMeF3GNMy3
+         3vdRglASNl6+eiidRyfpE4pA3NIHkICLBLa5eESM8Y5mgEfVEh2lFiNFaXcYjvCkogx1
+         VV2Dv0klyTfQZm7htJofc2JVXlA8Zr0qDdALQue9tnkQ5bG5NMe9ggAK7QXweXFfh+j4
+         hIwtV0GJQ9CZMMyDkZFD3lKGaBLfpaRc2YEPavF7J5gttUHu5fhXIF6tJ8xCy0a9FkXH
+         sfycVADqMmOXeP69uEhIxdIlaVmvIQqKMhqsCAHI/ezbyibOGMNrLotNXI9y4+p3m+Aa
+         x1hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733152189; x=1733756989;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8rtkoC7IoWsX5kh1U40YLnQo/GZ7NNXDue2xrV8R5M=;
-        b=qidZaAUKJE0kKznyaQU64Pn6/wcT1xyc5VYGmy+Jw/WQQS/LzBisfHVujj9jLO5HSX
-         MEOOzpqqEUgV9s28LHAxNWFcBCHR00O39RqE0drMCLSPXhkNz5X6uD5VCJWf58x1N+PI
-         Ep4nbC5kFlWmffKxnwRq5dg3PggErAP10u9QDkr9NREmvo3CrG/Thh6XcrMSKAiZ8k3x
-         EdL9vMh1m+Yup5PpKH6oKGM3zMtJOOJXNwL70LXca5xEckZbviRIawy0DubmbmZ7w8Hy
-         GOLHYb3wbci90FPedw1Yqc7ZGDzpxIJPjdX26Na6F9XJKunbMa/CjOtlthvDcMhxnREJ
-         lLNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrDUf043UM2UTSqhZCPpa8q9PwyZ44XrVznkdmIaGfy6KSqX4ApXnriyR6jEnUn5kXVMt7RnUnmWFWow8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSEj4uiP1uXQuYgN6UN+FKEL55ujUmeKlnLtmUXHL3N89FlZMT
-	jP9rZuOREG2LmtUaDWQRsrl+e6xAeZsI9IMLsK+em8M14uf9TO0fN9jk/RBXKoxsldu+1wTMfUO
-	vWMrNE2wU5dd5uZvLUPfOX9x5J2OKIQQdnes0YtQ5nhMZw2E9fwC9shnyPHxvR4U=
-X-Gm-Gg: ASbGncuAJeutpvBkufmf6ECuoCSsgx0b3mBt2/gzGua12HzEsoxRwgr8RmCHv+VBKTx
-	KDKCCo3Wc2+pnn75bDx0JgErSzUznkvTcN8RPfDFFUninRnXtFyefh1QvkAl53OGHEpPCG7c8bG
-	7/n2oNZxJbSlR/a3nT8ekSdTPjrJMzbH80dceWjOmcCZkuwjcqrETpsn0AHdvOTyji9/2OjOMrK
-	uiZ/T/0TSFY3xrN+Rtm0BHnVdwRMWZ4CYqK9eYq/3u9JWI7dhbdJZJLKSSWqibZGfKra7TfqUfC
-	LDfVNV7MoBY8okkbet5qV5f0of5+TnQ=
-X-Received: by 2002:ac8:59cc:0:b0:461:7457:d802 with SMTP id d75a77b69052e-466b365413fmr151242031cf.11.1733152189214;
-        Mon, 02 Dec 2024 07:09:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG/UefXnRbY7jKsFl43YZSHx7rlg9ciKbQkw2agZYp6ql3NLaAm9aMmD6grY9kIrV7OucIpIA==
-X-Received: by 2002:ac8:59cc:0:b0:461:7457:d802 with SMTP id d75a77b69052e-466b365413fmr151241651cf.11.1733152188674;
-        Mon, 02 Dec 2024 07:09:48 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0b931128asm3777116a12.50.2024.12.02.07.09.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 07:09:48 -0800 (PST)
-Message-ID: <df3e3989-f588-4e53-b6f3-bf8c36330911@oss.qualcomm.com>
-Date: Mon, 2 Dec 2024 16:09:46 +0100
+        d=1e100.net; s=20230601; t=1733152301; x=1733757101;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KUnUP56auFT1j9K/I596a3ZwowwD4uPA1BDcedJEb3M=;
+        b=LxOW6icdcZDWQzQ3C+RJAaitZMG7t0YQZunS3xnr6f774dCZqK3jFlbjZyphNes9zZ
+         n4MSPZmQhBGHG6WKcYVfL5wt9r3jOjbdmqhCa4EBd9S/I+DfovWgT/gFTYRF3IEk95lL
+         zFzOaK5IVfFgfrTGeIhcW6xZYABtNxRzkzJaBIpDNnd7XDrmwvEC9M/3olGlQ7pfznn6
+         493m5I7iQWEhe2BD7qwFQO2WbMwtxGvyWKkjTv1KSWsGTt1yXHaLd0O/351mckrwQGwM
+         uhh3SjAGMyVID34eB12M19Cq7bO+9dbU/BUmoZcAl51v+oTN5UCtDlIhxRBxvnTWzqhT
+         aXTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ3rLV3KurL/1NumNUFJTebS/j/OAyCZhZzekm0DfhWScA7qcqpyPVVojbcxzYnRud61+ov9qjNtmiUlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+u8ptz4E0w/kXyVl+YV94hNHVnDu3ysiWRz8sCh/JlRJBedHy
+	xA6I82Fn4CWvH5x8t7+lsc3azomJlujPW82ximoJscXpMN/Vb0u2
+X-Gm-Gg: ASbGncvsQ1CQ79peB/7vKqn37eUZIy6gbD3zF+YyamFpoLEuxis0/ErwWiblg34i2ns
+	IeIPZeEVm39l3TxKnNgQYWJS6jmjT8uCok2PrDwKmM8yAa+Ys1QyNR4uXjkCuGZKHLFVzP6qa4D
+	uu4ITaka0V+pXcOcZuDJekYttvJeKIxS7bQ1qMrunqBNt7ioqKD17T1cv3HnN3g8Re2SS0QK+4G
+	KOv4065Uv+N3sHevH28Y8CFGOuLuKLPQvmnmqL30pZDwxTuLis+nAWG9sWvZnh/JKR6qMCNFAF6
+	rvEINageJu6PaAXTIaPW
+X-Google-Smtp-Source: AGHT+IGqq+9lgtk9pVBWPZO9WpNKI0QexYnW7pTyoCwXBNi+ps5n11meIyKK5EZjurfaMTmhuOLFHw==
+X-Received: by 2002:a5d:6f1d:0:b0:385:e88b:1a76 with SMTP id ffacd0b85a97d-385e88b1c33mr6688498f8f.30.1733152300434;
+        Mon, 02 Dec 2024 07:11:40 -0800 (PST)
+Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d26b5sm185585795e9.35.2024.12.02.07.11.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 07:11:40 -0800 (PST)
+From: Matteo Martelli <matteomartelli3@gmail.com>
+Date: Mon, 02 Dec 2024 16:11:07 +0100
+Subject: [PATCH 1/2] iio: consumers: ensure read buffers for labels and
+ ext_info are page aligned
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/12] arm64: dts: qcom: sdm845-starqltechn: fix usb
- regulator mistake
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com>
- <20241008-starqltechn_integration_upstream-v6-3-5445365d3052@gmail.com>
- <33e14868-e6ee-45ca-b36c-c553e0dcfbef@oss.qualcomm.com>
- <CABTCjFCTggnU7UvqcKYq53iRLACBxWE7C1TKRi7dr42o-=0Mqg@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CABTCjFCTggnU7UvqcKYq53iRLACBxWE7C1TKRi7dr42o-=0Mqg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: OUPDvG7fFGMPmWKHMpgIjXvVlA-sT7yi
-X-Proofpoint-GUID: OUPDvG7fFGMPmWKHMpgIjXvVlA-sT7yi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- adultscore=0 malwarescore=0 mlxlogscore=772 phishscore=0 suspectscore=0
- impostorscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020130
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-iio-kmalloc-align-v1-1-aa9568c03937@gmail.com>
+References: <20241202-iio-kmalloc-align-v1-0-aa9568c03937@gmail.com>
+In-Reply-To: <20241202-iio-kmalloc-align-v1-0-aa9568c03937@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Peter Rosin <peda@axentia.se>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Matteo Martelli <matteomartelli3@gmail.com>
+X-Mailer: b4 0.14.2
 
-On 2.12.2024 2:41 PM, Dzmitry Sankouski wrote:
-> сб, 26 окт. 2024 г. в 13:41, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>:
->>
->> On 8.10.2024 6:51 PM, Dzmitry Sankouski wrote:
->>> Usb regulator was wrongly pointed to vreg_l1a_0p875.
->>> However, on starqltechn it's powered from vreg_l5a_0p8.
->>>
->>> Fixes: d711b22eee55 ("arm64: dts: qcom: starqltechn: add initial device tree for starqltechn")
->>> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
->>>
->>> ---
->>
->> I really really doubt that the supplies for on-SoC PHYs were altered,
->> given these regulators are assigned based on their specific characteristics
->>
-> 
-> From rooted android system from klabit87 on starqltechn:
-> 
-> ```
-> starqltechn:/ # cat /proc/cpuinfo | grep Hardware
-> Hardware        : Qualcomm Technologies, Inc SDM845
-> starqltechn:/ # uname -a
-> Linux localhost 4.9.186-klabitV6.5 #1 SMP PREEMPT Thu Dec 10 19:42:53
-> CST 2020 aarch64
-> starqltechn:/ # cat
-> /sys/kernel/debug/regulator/soc:rpmh-regulator-ldoa1-pm8998_l1/consumers
-> Device-Supply                    EN    Min_uV   Max_uV  load_uA
-> ae90000.qcom,dp_display-vdda-0p9 N     880000   880000        0
-> 1d87000.ufsphy_mem-vdda-phy      Y     880000   880000    62900
-> ae96400.qcom,mdss_dsi_phy0-vdda-0p9 N          0        0        0
-> ae94400.qcom,mdss_dsi_phy0-vdda-0p9 Y     880000   880000    36000
-> 1c00000.qcom,pcie-vreg-0.9       Y     880000   880000    24000
-> pm8998_l1                        N          0        0        0
-> starqltechn:/ # cat
-> /sys/kernel/debug/regulator/soc:rpmh-regulator-ldoa5-pm8998_l5/consumers
-> Device-Supply                    EN    Min_uV   Max_uV  load_uA
-> ae90000.qcom,dp_display-vdda-usb1-ss-core N          0        0        0
-> 88e2000.qusb-vdd                 Y     800000   800000        0
-> 88e8000.ssphy-vdd                Y     800000   800000        0
-> pm8998_l5                        N          0        0        0
-> ```
-> 
-> I also downloaded kernel source from Samsung, to check its dts,
-> and it also powers qusb@88e2000 and ssphy@88e8000 from 'pm8998_l5' regulator.
+Attributes of iio providers are exposed via sysfs. Typically, providers
+pass attribute values to the iio core, which handles formatting and
+printing to sysfs. However, some attributes, such as labels or extended
+info, are directly formatted and printed to sysfs by provider drivers
+using sysfs_emit() and sysfs_emit_at(). These helpers assume the read
+buffer, allocated by sysfs fop, is page-aligned. When these attributes
+are accessed by consumer drivers, the read buffer is allocated by the
+consumer and may not be page-aligned, leading to failures in the
+provider's callback that utilizes sysfs_emit*.
 
-Interesting.. could you try to forcefully shut down L5A (I doubt you'll
-be able to do so with L1A given it powers so much digital logic), or
-set its regulator-min&max-microvolt to a way-too-low voltage (vmin
-seems to be 312000)?
+Add a check to ensure that read buffers for labels and external info
+attributes are page-aligned. Update the prototype documentation as well.
 
-You should then be able to tell fairly easily, depending on whether usb2
-still works after a replug
+Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+---
+ drivers/iio/inkern.c         | 11 +++++++++++
+ include/linux/iio/consumer.h |  4 ++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-Konrad
+diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+index 7f325b3ed08fae6674245312cf8f57bb151006c0..63707ed98e1d7aca1e446122bbf69c85c0dd06a2 100644
+--- a/drivers/iio/inkern.c
++++ b/drivers/iio/inkern.c
+@@ -7,6 +7,7 @@
+ #include <linux/err.h>
+ #include <linux/export.h>
+ #include <linux/minmax.h>
++#include <linux/mm.h>
+ #include <linux/mutex.h>
+ #include <linux/property.h>
+ #include <linux/slab.h>
+@@ -989,6 +990,11 @@ ssize_t iio_read_channel_ext_info(struct iio_channel *chan,
+ {
+ 	const struct iio_chan_spec_ext_info *ext_info;
+ 
++	if (!buf || offset_in_page(buf)) {
++		pr_err("iio: invalid ext_info read buffer\n");
++		return -EINVAL;
++	}
++
+ 	ext_info = iio_lookup_ext_info(chan, attr);
+ 	if (!ext_info)
+ 		return -EINVAL;
+@@ -1014,6 +1020,11 @@ EXPORT_SYMBOL_GPL(iio_write_channel_ext_info);
+ 
+ ssize_t iio_read_channel_label(struct iio_channel *chan, char *buf)
+ {
++	if (!buf || offset_in_page(buf)) {
++		pr_err("iio: invalid label read buffer\n");
++		return -EINVAL;
++	}
++
+ 	return do_iio_read_channel_label(chan->indio_dev, chan->channel, buf);
+ }
+ EXPORT_SYMBOL_GPL(iio_read_channel_label);
+diff --git a/include/linux/iio/consumer.h b/include/linux/iio/consumer.h
+index 333d1d8ccb37f387fe531577ac5e0bfc7f752cec..6a44796164792b2dd930f8168b14de327a80a6f7 100644
+--- a/include/linux/iio/consumer.h
++++ b/include/linux/iio/consumer.h
+@@ -418,7 +418,7 @@ unsigned int iio_get_channel_ext_info_count(struct iio_channel *chan);
+  * @chan:		The channel being queried.
+  * @attr:		The ext_info attribute to read.
+  * @buf:		Where to store the attribute value. Assumed to hold
+- *			at least PAGE_SIZE bytes.
++ *			at least PAGE_SIZE bytes and to be aligned at PAGE_SIZE.
+  *
+  * Returns the number of bytes written to buf (perhaps w/o zero termination;
+  * it need not even be a string), or an error code.
+@@ -445,7 +445,7 @@ ssize_t iio_write_channel_ext_info(struct iio_channel *chan, const char *attr,
+  * iio_read_channel_label() - read label for a given channel
+  * @chan:		The channel being queried.
+  * @buf:		Where to store the attribute value. Assumed to hold
+- *			at least PAGE_SIZE bytes.
++ *			at least PAGE_SIZE bytes and to be aligned at PAGE_SIZE.
+  *
+  * Returns the number of bytes written to buf, or an error code.
+  */
+
+-- 
+2.47.0
+
 
