@@ -1,329 +1,171 @@
-Return-Path: <linux-kernel+bounces-427265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F7E9DFF3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:46:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F15F9DFF16
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85BDFB2BF00
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:27:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C1F2B2DC0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E221FCCF9;
-	Mon,  2 Dec 2024 10:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820E21FCFDA;
+	Mon,  2 Dec 2024 10:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iR1LSF1d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="asi4gFVj"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DAA1FC0F4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DF61FCD0B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 10:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733135226; cv=none; b=lvmkj04n9vQlsy2AMCY8/OtnkU/xXt6oAmN7JaEFpOFSe0JFiONP5koQGY22L0n5iSgWgmQC0XoxW5+JSZRJ0SQOSt1hW+XizS7g8YOel+J4T9nOYb8T7w0eGTpjyU0bCbS4dNVCCuU513JMt/9Q6PDZEUFeoYR8D5eQIu9anPw=
+	t=1733135303; cv=none; b=DhL9e5+R6cDC0bP0Wqns9rCQuuhU0NcetTOWUSn2boIG7Fnd9g2am8a78l5UFvLs7kbAoCg13vo/8vY/IktlQP39YnbQXjKRfGU7ORZlL1GeaefsHYXwxQeKo2V+nks0ukW1/s/ZP47FCJ3tFChpmwvQYdxJgB0X3ownFNFlsbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733135226; c=relaxed/simple;
-	bh=Qm18nmdPbK1yCplSK0aveG7jD4t0nJNgTHkQRw9EWcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AXehE5M2stPFUtqbW70TmL+AevFNzecprdS4NweUwL9Xtg/tCRUKO65+iiAonWh/Z2HIgKW4UUaZyUHw3vH6hsYRmeavG1PEi9Qjy3864e35gMyoU289Td+65tPMlOlYPjy4YVsIQANzTjnUDNKZDaCHiqibMuwaPCDrdSpI8Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iR1LSF1d; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733135222;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bDw5czFk83J50FNgjXOPyEXoRewa5ALY7gP0sfhBomM=;
-	b=iR1LSF1d8glVAUzoJijKmAZ9myMGVcNwI/3+r8jRXT5dVCoyCorjfBuoOzRLJW6Qj1RmEb
-	uJgs9VzIktyb82IrONX1+7lEIrrAYloXy31gs1PEEa014visyVUt9/v8nBPMs3m0lVdsGC
-	odURHbWgbBoiNA0CkbwPrpsuO+43Zko=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-601-jc0Jui-9NTe3zcPbNOhOig-1; Mon, 02 Dec 2024 05:27:01 -0500
-X-MC-Unique: jc0Jui-9NTe3zcPbNOhOig-1
-X-Mimecast-MFC-AGG-ID: jc0Jui-9NTe3zcPbNOhOig
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa538575f0fso392000066b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:27:01 -0800 (PST)
+	s=arc-20240116; t=1733135303; c=relaxed/simple;
+	bh=7SN1zYi2bi4ZL76u0nD+cmpU4TQtVFh2a743pVPGxLM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K0sq40RIF/kupGYAfthba5VnRY2OIRqp3Y3FeXW13f5kzv0NvzqRBj5+06gmg9MdMY94ozkBUhU3oXLjZcla6MA1Xy2VOoLJuhCvE7XvG9zj0jjAHvW7QfNy8TpCe9CP8oZCtLJI6gAUe97pfOrdyKmjBl859GUUOeqSXN3O3vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=asi4gFVj; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385ef8b64b3so860009f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 02:28:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733135298; x=1733740098; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sWmD20KW9HJvkrylQbojOQFf4OK6t+C4W82MREjzz9I=;
+        b=asi4gFVjV40Cg+79aF0Wd2xDYtiBaAlAF0m6bWZRtKVzo7BXZsqYBXMyzLKSAFcjsy
+         4ZDMZCOsBT7EjG9FHuvz04+5MVqtI0Wr/pC866oeb/YpHseWiCV5fLfaMaRNOgg/l7dh
+         KzI8dX6rq57egpWBKXahERxHvorCRdKXsL201UdhUSIShVwzrzKxPF6xD3a4h+YhpxRE
+         Rxy/MKGy5pxHkAIDj2jIhmmtew6TTH/EwCoV43W8MIlJ1FeXLbjw4w0XwLV1MuE4yipf
+         28wuZwDKjiUmKxeIbG8HMD8LqaCrBTTcL44rMFe5L4vUNc7ROttQQbtGzh9XY+70NHY8
+         ZPHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733135220; x=1733740020;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bDw5czFk83J50FNgjXOPyEXoRewa5ALY7gP0sfhBomM=;
-        b=SoJ3MP2XObfSpdpjvddwMj+72gvbUyFxxgkZaOOyzqVYKynHMLRTvKubEyQxAePiyv
-         0kq/4mRerCLp7HaEP0rQj/9aTCaOLlLyx8x+FzkiQ70XvPzrHaFnn00ZK4jIKf5WmPQP
-         JvnDsUM3icZtp/4IimkQreeat06AjJKgnOEgG/Mhdk4dW76MWg7wSZW5h9C/xCgLPgRf
-         r2MXsHTmEHylO6YGEUEv02Srem34IGV3QQtRxCTP0NIfhvlpKkyQkzQY9UNKi9yLdMU6
-         QZ8d3peD15RrG08ljQuu4Y9SQtHOD/+GQyRUfb5Pue8h5u4C5O4ARKOc9WlLXxI7xwq6
-         fIVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6rU+ABmPcsm56Wyh9O8qQ4RC9EK3rp99iqSZG0O6vh0l9Sy5qHqRBDuxwO7CVwEs4dixcIVsn5nKrLIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOeY8COMOogiDgS2dYPnf8ANmuAUh2rFj2M45u2NhA+0tNG5lT
-	AU1Z0rcy4iTpqwk+Y8cnKsqF72Ln/RIEMcSP+gEOGgXT0Vl3UWxRjPxsUdzQPm3wJUxYWmxDwgO
-	vnHjwGrfypyRKBJDdEgIkRa8cAzcX6PgbYj0CyOIegHPYrcbvTl1hkLBIC9pYppeIiA8NCg==
-X-Gm-Gg: ASbGncuPOroPxi8Us2bSMPUohhClaJ6Vzab+HqhAuW2FH4NQEy/cQvNt6y6ezLczWyF
-	ReBEkueHMKM4bK6/iEeocprl1qlG1Y0E1pOWZ+8oPHZDQypxkwSIKeU5zUkOy9Puc9S/w75Gdjn
-	gyvpytLJo5IiWh1jXrZJS9mi9j+cvIf7owfHsDRRJZuwYrrkbwfjy1RES6n0mrAseztfR47AcFv
-	kYVlSWLc9vILK8mD0443lXpm7g3JkiGZlA6DYCpjkkzlaaWB6xOxQ==
-X-Received: by 2002:a17:906:3d29:b0:aa5:63a1:17cf with SMTP id a640c23a62f3a-aa580f23e33mr2320888866b.20.1733135219913;
-        Mon, 02 Dec 2024 02:26:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGsA6/gFrLFxfARxK+FxZz9IDf9ZEHoUGm6qZQ6mQds0yqle5QU9+PsBTkhv9f7s5dynA66Gw==
-X-Received: by 2002:a17:906:3d29:b0:aa5:63a1:17cf with SMTP id a640c23a62f3a-aa580f23e33mr2320886066b.20.1733135219473;
-        Mon, 02 Dec 2024 02:26:59 -0800 (PST)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c19b5sm491004666b.5.2024.12.02.02.26.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 02:26:59 -0800 (PST)
-Message-ID: <633ca07b-6795-429f-874d-474a68396f45@redhat.com>
-Date: Mon, 2 Dec 2024 11:26:58 +0100
+        d=1e100.net; s=20230601; t=1733135298; x=1733740098;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sWmD20KW9HJvkrylQbojOQFf4OK6t+C4W82MREjzz9I=;
+        b=ocm7Y21pfXmZ0haoioL4umj15AJ3Zo8EFlVoSK0DSHFV7ayIYiWa9XKAwctb9a2QrD
+         1j5r7noRHW/h85E7cs2RYWCFpVlFWC8LEgDEpBsPF9J2c3Xa8iUDABfkq+Og+QZD5O/x
+         BFJ1fR/JWxM06WfsE6shhNb3t4axXHPP0lkaYyi0kPrqs+rAXhpxo3QQpNglVvEcf77N
+         B3X8HF0vGVdCe664CNXC/1+x4MWRRImVIKB7jGTh6PkgMYK84TtIv6GG2YTjfJ/Fc5yS
+         wVweqeTZd0uq0ZNJH2LsxtBES43O6SpJzg8I9DXEA5vy0308qgvb1rTQ/RaOSQ1wGE8e
+         D2Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/vq+vvj0b2c2tJEZZRpoBE1WyjZBT2UBwxSHuxKvhCGVLppN1WI2YFUZO3uy0JfcPEYAVL+pT+QpW61Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+wf1Lpk1dVhQCEf7gDmjlgbmfAnTXgTEtQH8mC3kfc1YwvXlV
+	6o/9qSpnmvRhD5LQuRiavEM4urFuJUHjEIJSFynDbZkGdvpBUFFugp0qDRXmqJA=
+X-Gm-Gg: ASbGncs3YJKEKTkMxRf6gaoLRYymMf/GPGkT/NmwKJ7dCL1I4ZUP0EsljQFW3dswzpK
+	B4X2TilGTlycge4v9f2DyTLHwUoha04IcIauW34MMDcpcQHfZ0kD7TVpjdyauSrUDxdM1ud1XoA
+	qpIp8WSuOPm64HWESukuqyY6u6rxouEI5wxmVwgiRtVoah7f4/sb0Acp/zhG5ygysNyCiotGiUh
+	WU2oKVLeQYmweokEY8QvWdTovJds8xsQi9V0vXwFc7Xh1BxzHz5BntGPiVJGw==
+X-Google-Smtp-Source: AGHT+IHZgF0yFRrLmHXVI8InY5pVjPT+BsN4+An2BUJJBhWCA27NuZYZGO0F2gUnMM9QYoWIQlaWDQ==
+X-Received: by 2002:a5d:64ae:0:b0:385:f7ea:eb86 with SMTP id ffacd0b85a97d-385f7eaef3dmr921589f8f.7.1733135298434;
+        Mon, 02 Dec 2024 02:28:18 -0800 (PST)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:2380:13:b62c:611c])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-385e940fef3sm5757614f8f.42.2024.12.02.02.28.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 02:28:17 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v4 0/3] hwmon: pmbus: add tps25990 efuse support
+Date: Mon, 02 Dec 2024 11:27:59 +0100
+Message-Id: <20241202-tps25990-v4-0-bb50a99e0a03@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control owned
- by other fh
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
- <20241129110640.GB4108@pendragon.ideasonboard.com>
- <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
- <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl>
- <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
- <CANiDSCvwzY3DJ+U3EyzA7TCQu2qMUL6L1eTmZYbM+_Tk6DsPaA@mail.gmail.com>
- <20241129220339.GD2652@pendragon.ideasonboard.com>
- <CANiDSCsXi-WQLpbeXMat5FoM8AnYoJ0nVeCkTDMvEus8pXCC3w@mail.gmail.com>
- <20241202001846.GD6105@pendragon.ideasonboard.com>
- <fb321ade-40e7-4b1e-8fcd-c6475767239d@xs4all.nl>
- <20241202081157.GB16635@pendragon.ideasonboard.com>
- <445e551c-c527-443c-8913-6999455bd366@xs4all.nl>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <445e551c-c527-443c-8913-6999455bd366@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK+LTWcC/22Qyw6CMBBFf4V0LaZPSF35H8YFLVNpooItNhLCv
+ zugMcSwmMWdzDnJnZFECB4iOWQjCZB89O0dg9xlxDbV/QK5rzETTrmkmuq87yJXWtNcSEutc9w
+ ALQiedwGcfy2q0xlz42PfhmExJzZvNySJ5WjSRpQgBZRaHU01XL0JsLftjcyexFcspyuWI+sEI
+ G5BsVJssOLHMpwVK5A1RVWArqVRtPhjp0+hAI8nvqT/tpqmN79I0/UwAQAA
+X-Change-ID: 20240909-tps25990-34c0cff2be06
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Jonathan Corbet <corbet@lwn.net>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
+Cc: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+ Vaishnav Achath <vaishnav.a@ti.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2550; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=7SN1zYi2bi4ZL76u0nD+cmpU4TQtVFh2a743pVPGxLM=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnTYu9ILcbuOEyW1tS6r7zDKCEDVBYslcykP4y5
+ Wla7KnDPYyJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ02LvQAKCRDm/A8cN/La
+ hdC8D/4uyt3XMYlS+t6+7hBabCoMr1U+Mhlm+5UJJOduc4b4/vCSfZyhpR1XMUHIcZ98+42ea2y
+ SgoyTNwf50fD3M65Ti+LAFxbs4Jj44G8eVuM/ObA3f20qhjU7CQUjrYyZDH86fKRXKViVVX/rtb
+ QJ3t3FWSbVMSpVRJJN8HqixEcCOm05SDH2lufqsvAIP36u/8C5PH2PO3UOUTCHt6MqD1brJCPrh
+ izXDqrjMMfq/OB08NA3df9/9xzbEeOH6ucszkdu8dj2RW8uLg8+cVSSUcC7ls+8CE7uL1mp6sTR
+ 2l39d9Mg0G93W2KGy6HKWgN5aCj/GEvdOZT9CzmtgtFkA7oWK4A5+BAl5esXC/GVMXg0Xisc2Su
+ L3zuuzBvvaojk8WfYm1coqWhZVdDB9ylVlC+lFTOnorWcDapLVn/tYmhCccz0N7j8m0RXruBVot
+ egSDsdR5jJI5UHXVpoyhnydQP8zfahNukY1q88vpgsEE60pp9+1JBh7DAWVH33sC1Mll7TTxNdi
+ G3Q+BLZzXRQgjkI0VckzWJvwrXCY7bcUOep5Ic1GdvrO+OB7C7UoCzCzLn+ScwN/TRavpemhzOK
+ zwbr2pUmG+8n9GmkkutS3ElRbu+FsCPXUWVj/kdvejTcNuHE5AAVgAH2VK1LQ1Y9J7CwVSeoe1k
+ opvcTLxPW3gp3xg==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Hi,
+This patchset adds initial support for the Texas Instruments TPS25990
+eFuse. The TPS25990 is an integrated, high-current circuit protection and
+power management device. TPS25895 may be stacked on the TPS25990 for
+higher currents.
 
-On 2-Dec-24 9:44 AM, Hans Verkuil wrote:
-> On 02/12/2024 09:11, Laurent Pinchart wrote:
->> On Mon, Dec 02, 2024 at 09:05:07AM +0100, Hans Verkuil wrote:
->>> On 02/12/2024 01:18, Laurent Pinchart wrote:
->>>> On Fri, Nov 29, 2024 at 11:18:54PM +0100, Ricardo Ribalda wrote:
->>>>> On Fri, 29 Nov 2024 at 23:03, Laurent Pinchart wrote:
->>>>>> On Fri, Nov 29, 2024 at 07:47:31PM +0100, Ricardo Ribalda wrote:
->>>>>>> Before we all go on a well deserved weekend, let me recap what we
->>>>>>> know. If I did not get something correctly, let me know.
->>>>>>>
->>>>>>> 1) Well behaved devices do not allow to set or get an incomplete async
->>>>>>> control. They will stall instead (ref: Figure 2-21 in UVC 1.5 )
->>>>>>> 2) Both Laurent and Ricardo consider that there is a big chance that
->>>>>>> some camera modules do not implement this properly. (ref: years of
->>>>>>> crying over broken module firmware :) )
->>>>>>>
->>>>>>> 3) ctrl->handle is designed to point to the fh that originated the
->>>>>>> control. So the logic can decide if the originator needs to be
->>>>>>> notified or not. (ref: uvc_ctrl_send_event() )
->>>>>>> 4) Right now we replace the originator in ctrl->handle for unfinished
->>>>>>> async controls.  (ref:
->>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_ctrl.c#n2050)
->>>>>>>
->>>>>>> My interpretation is that:
->>>>>>> A) We need to change 4). We shall not change the originator of
->>>>>>> unfinished ctrl->handle.
->>>>>>> B) Well behaved cameras do not need the patch "Do not set an async
->>>>>>> control owned by another fh"
->>>>>>> C) For badly behaved cameras, it is fine if we slightly break the
->>>>>>> v4l2-compliance in corner cases, if we do not break any internal data
->>>>>>> structure.
->>>>>>
->>>>>> The fact that some devices may not implement the documented behaviour
->>>>>> correctly may not be a problem. Well-behaved devices will stall, which
->>>>>> means we shouldn't query the device while as async update is in
->>>>>> progress. Badly-behaved devices, whatever they do when queried, should
->>>>>> not cause any issue if we don't query them.
->>>>>
->>>>> I thought we could detect the stall and return safely. Isn't that the case?
->>>>
->>>> We could, but if we know the device will stall anyway, is there a reason
->>>> not to avoid issuing the request in the first place ?
->>>>
->>>>> Why we have not seen issues with this?
->>>>
->>>> I haven't tested a PTZ device for a very long time, and you would need
->>>> to hit a small time window to see the issue.
->>>>
->>>>>> We should not send GET_CUR and SET_CUR requests to the device while an
->>>>>> async update is in progress, and use cached values instead. When we
->>>>>> receive the async update event, we should clear the cache. This will be
->>>>>> the same for both well-behaved and badly-behaved devices, so we can
->>>>>> expose the same behaviour towards userspace.
->>>>>
->>>>> seting ctrl->loaded = 0 when we get an event sounds like a good idea
->>>>> and something we can implement right away.
->>>>> If I have to resend the set I will add it to the end.
->>>>>
->>>>>> We possibly also need some kind of timeout mechanism to cope with the
->>>>>> async update event not being delivered by the device.
->>>>>
->>>>> This is the part that worries me the most:
->>>>> - timeouts make the code fragile
->>>>> - What is a good value for timeout? 1 second, 30, 300? I do not think
->>>>> that we can find a value.
->>>>
->>>> I've been thinking about the implementation of uvc_fh cleanup over the
->>>> weekend, and having a timeout would have the nice advantage that we
->>>> could reference-count uvc_fh instead of implementing a cleanup that
->>>> walks over all controls when closing a file handle. I think it would
->>>> make the code simpler, and possibly safer too.
->>>>
->>>>>> Regarding the userspace behaviour during an auto-update, we have
->>>>>> multiple options:
->>>>>>
->>>>>> For control get,
->>>>>>
->>>>>> - We can return -EBUSY
->>>>>> - We can return the old value from the cache
->>>
->>> This would match the control behavior best. Only when the operation is
->>> done is the control updated and the control event sent.
->>>
->>> Some questions: is any of this documented for UVC? Because this is non-standard
->>
->> No this isn't documented.
->>
->>> behavior. Are there applications that rely on this? Should we perhaps add
->>
->> I don't know.
->>
->>> proper support for this to the control framework? E.g. add an ASYNC flag and
->>> document this?
->>
->> We could, but this is such a specific use case that I don't think is
->> worth adding complexity to the already complex control framework would
->> be worth it. What we could do is perhaps adding a flag for the userspace
->> API, but even there, I never like modelling an API with a single user.
-> 
-> Well, it might be a single driver that uses this, but it is also the most
-> used driver by far. I think the only change is to add a flag for this and
-> describe how it should behave. And add v4l2-compliance tests for it.
-> 
-> Otherwise no changes to the control framework are needed, I think.
-> 
-> Controls with the ASYNC flag set would:
-> 
-> - return the old value from the cache.
-> - document that setting a new value while the operation is in progress
->   results in EBUSY. Document that if the new value is equal to the old value,
->   then return 0 and do nothing (alternative is to just immediately send
->   the control changed event, but that might require a control framework change).
-> - when the operation finishes, update the cache to the new value and
->   send the control changed event.
-> - document that userspace should specify V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK
->   when subscribing to the control if you calling fh wants to know when
->   the operation finishes.
-> - document how timeouts should be handled: this is tricky, especially with
->   bad hardware. I.e. if the hw doesn't send the event, does that mean that
->   you are never able to set the control since it will stall?
->   In the end this will just reflect how UVC handles this.
+This patchset provides basic telemetry support for the device.
+On boot, the device is write protected. Limits can be changed in sysfs
+if the write protection is removed using the introduced pmbus parameter.
 
-I have been catching up on this thread (I have not read the v3 and v4
-threads yet).
+Limits will be restored to the default value device on startup, unless
+saved to NVM. Writing the NVM is not supported by the driver at the moment.
 
-This all started with Ricardo noticing that ctrl->handle may get
-overwritten when another app sets the ctrl, causing the first app
-to set the ctrl to get a V4L2_EVENT for the ctrl (if subscribed)
-even though it set the ctrl itself.
+As part of this series, PMBus regulator support is improved to better
+support write-protected devices.
 
-My observations so far:
+Changes in v4:
+- Rebased on v6.13-rc1, dropping applied patches.
+- Replace 0xff with -1 when using pmbus_read/write_byte()
+- TPS25990 Support only WP_ALL or 0 as write protection, return -EINVAL otherwise.
+- Link to v3: https://lore.kernel.org/r/20241024-tps25990-v3-0-b6a6e9d4b506@baylibre.com
 
-1. This is only hit when another app changes the ctrl after the first app,
-in this case, if there is no stall issued by the hw for the second app's
-request, arguably the first app getting the event for the ctrl is correct
-since it was changed by the second app. IOW I think the current behavior
-is not only fine, but even desirable. Assuming we only override ctrl->handle
-after successfully sending the set-ctrl request to the hardware.
+Changes in v3:
+- Grouped hwmon write protect patches from:
+  https://lore.kernel.org/r/20240920-pmbus-wp-v1-0-d679ef31c483@baylibre.com
+- Link to v2: https://lore.kernel.org/r/20240920-tps25990-v2-0-f3e39bce5173@baylibre.com
 
-2. This adds a lot of complexity for not sending an event to the app
-which made the change. Hans V. suggested maybe adding some sort of flag
-for async ctrls to the userspace API. I wonder if we should not just
-get rid of this complexity and document that these controls will always
-generate events independent of V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK ?
-That would certainly simplify things, but it raises the questions if
-this will cause issues for existing applications.
+Changes in v2:
+- Drop PGOOD command support
+- Use micro-ohms for rimon property and better handle range.
+- Adjust read/write callbacks to let PMBus core do the job by default
+- Drop history reset specific properties and remap to the generic ones
+- Drop debugfs write_protect property and remap to the generic register
+- Link to v1: https://lore.kernel.org/r/20240909-tps25990-v1-0-39b37e43e795@baylibre.com
 
-Note that if we simply return -EBUSY on set until acked by a status
-event we also avoid the issue of ctrl->handle getting overwritten,
-but that relies on reliable status events; or requires timeout handling.
+---
+Jerome Brunet (3):
+      hwmon: (pmbus/core) improve handling of write protected regulators
+      hwmon: (pmbus/core) add wp module param
+      hwmon: (pmbus/tps25990): add initial support
 
-3. I agree with Ricardo that a timeout based approach for cameras which
-to not properly send status events for async ctrls is going to be
-problematic. Things like pan/tilt homing can take multiple seconds which
-is really long to use as a timeout if we plan to return -EBUSY until
-the timeout triggers. I think it would be better to just rely on
-the hardware sending a stall, or it accepting and correctly handling
-a new CUR_SET command while the previous one is still being processed.
+ Documentation/hwmon/index.rst      |   1 +
+ Documentation/hwmon/pmbus-core.rst |  35 +++
+ Documentation/hwmon/tps25990.rst   | 148 +++++++++++++
+ MAINTAINERS                        |   2 +
+ drivers/hwmon/pmbus/Kconfig        |  17 ++
+ drivers/hwmon/pmbus/Makefile       |   1 +
+ drivers/hwmon/pmbus/pmbus.h        |   4 +
+ drivers/hwmon/pmbus/pmbus_core.c   |  81 ++++++-
+ drivers/hwmon/pmbus/tps25990.c     | 437 +++++++++++++++++++++++++++++++++++++
+ include/linux/pmbus.h              |  14 ++
+ 10 files changed, 734 insertions(+), 6 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20240909-tps25990-34c0cff2be06
 
-I guess we can track if the hw does send status events when async ctrls
-complete and then do the -EBUSY thing without going out to the hw after
-the first time an async ctrl has been acked by a status event.
-
-And then combine that with the current behavior of overwriting ctrl->handle
-until the ctrl has been marked as having working status events. So:
-
-a) In case we do not know yet if a ctrl gets status-event acks; and
-on devices without reliable status events keep current behavior.
-
-b) As soon as we know a ctrl has reliable status events, switch to
-returning -EBUSY if a set is pending (as indicated by ctrl->handle
-being set).
-
-I don't like the fact that this changes the behavior after the first
-status event acking an async ctrl, but I don't really see another way.
-
-Regards,
-
-Hans
-
-
-
-
->>
->>>>>> - We can return the new value fromt he cache
->>>>>>
->>>>>> Returning -EBUSY would be simpler to implement.
->>>>>
->>>>> Not only easy, I think it is the most correct,
->>>>>
->>>>>> I don't think the behaviour should depend on whether the control is read
->>>>>> on the file handle that initiated the async operation or on a different
->>>>>> file handle.
->>>>>>
->>>>>> For control set, I don't think we can do much else than returning
->>>>>> -EBUSY, regardless of which file handle the control is set on.
->>>>>
->>>>> ACK.
->>>>>
->>>>>>> I will send a new version with my interpretation.
->>>>>>>
->>>>>>> Thanks for a great discussion
->>>>>
->>>>> Looking with some perspective... I believe that we should look into
->>>>> the "userspace behaviour for auto controls" in a different patchset.
->>>>> It is slightly unrelated to this discussion.
->>
-> 
-> 
+Best regards,
+-- 
+Jerome
 
 
