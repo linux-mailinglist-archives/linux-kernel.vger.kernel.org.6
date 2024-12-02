@@ -1,182 +1,178 @@
-Return-Path: <linux-kernel+bounces-428451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEF49E0EA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:10:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F344516576D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:10:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00C11E04B5;
-	Mon,  2 Dec 2024 22:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tyJ4G0jJ"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2072.outbound.protection.outlook.com [40.107.102.72])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB789E0EB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:11:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB4A1DEFC2
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733177253; cv=fail; b=GqhARef6Xfgd2Z3bp1Ea9t8vQKwi3q459k8jYkUFRgTxdms8lSFQ0lZDAT2fMAmn3UlyUbWalCxKw+EgUq23UDlKfyO98Tz1y2wJKroX35Q0mrhBi43apHknX8mu6yseDslEdKA5pEX+J62eQy0zZn+lhh9cp5WKc471cqUHlzo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733177253; c=relaxed/simple;
-	bh=mMMbmvPqaPauF5Wn1W3WmMn8etIouaslOI8m5RlKBe8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EAURMuSRUgGEtPS209Y1HTWqx8EDNGEWi6o1zmnBteZn6KkoBqdi8Ok6rn/5XXKMiLNNLd3rrJMflV1fUhyGU5t5cLzdPYOD8CHcTI/kxSLPJ1HJ24ZMdwuMXIS6B332uvOYdccFCFXfQ6qljX2jZuO9rPu/W9pTAe27mITGc6k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tyJ4G0jJ; arc=fail smtp.client-ip=40.107.102.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VfTEt0F7ig6sxIjECSHYvq+F4lFS6waUFnKRoyT3LIJi+55jfdfD4lCxPRSakLiCfToDTDm3JegCo5Ik6MAob7Y0cm/8ZMYg8CbGXK6WLO0u1TCrlAgURQUy1qBS/GcxsT7r1t9AHVLCDy3aCYBI1bAmNEzlZRovxjzMwVMvw0zJWCaY07SmzVprCGRKzo8ls3gvKWyJq8yjszGHTBK+nzd+3E1End/SZI8nMFSUMB0Ee1tIrNrPBk27Ga4bgIiAFdrPXpEbFFyPQxOxLcgbq6hS3+KeF4r6Z9GoOWMKqfyVxDZ+rj/AgpH+xZzGGJjuLKWXzKC0sJrXh/elw+ezrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mMMbmvPqaPauF5Wn1W3WmMn8etIouaslOI8m5RlKBe8=;
- b=R0WI7BPnJJON/OmRNgbE1kuZ15vjQoN+PMKHbtzZ1HtnZFJtxPnIkIbov4grW6/m5UUE0wcmuygA6k3Jvkis91ykfTWxE52atsS7lltOT6X4+ewyvQUDZjhQjlLMEZ1kYbfhaTSvvBJtF8QBHELA2fQjXQ6NJfwF/gYg/PrlgBJbPLBDglTaFFvHGwqpiZ1kBWvXKyPdyBSKvQbpngcJVoAZ5PXOe1HE6P/zeg3LvUJ2KSr/QUcza0z0VmkrQR6XusGng5iO/e+g+gwn054+X2yZ3K8F2M9qLfiuSZmKMI8fDE2lq/A4o8cFsKEMMlEf6JsX/kH/q2xP7MPafUXO5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mMMbmvPqaPauF5Wn1W3WmMn8etIouaslOI8m5RlKBe8=;
- b=tyJ4G0jJ7V8E2vYcEDbsa3CIkQqduhQGxpGeE4kAEBP9WHPtnhj8e6OJ+KeilepfaFbyDQ2PwDiH3326A0pHW7EhNSlfPG77cwX10RHCp+kL/6tSAx4l6p1WyNdeqtPB6tKOfIVSD4901eQZQOi0bWpbd138UgcikRPmhN3YKRQ9CsA0K7YEHOyQ2CA9L4+pyCGcc4Ek8jxSYLxI42jO61wHDAkkzcAVcKdkVUH3DED6eFWgCEfaTgI9046qABOUz7q8hockTn7MiHQU531nzUe7h/X2qwysGpcAHA/txD8kqeAjoGT0UxNcZLu8y2ZyN+l12JQ/sEt+7g3v0gUl8A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DS0PR12MB7629.namprd12.prod.outlook.com (2603:10b6:8:13e::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.19; Mon, 2 Dec 2024 22:07:28 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%7]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 22:07:28 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linuxppc-dev@lists.ozlabs.org, Andrew Morton <akpm@linux-foundation.org>,
- Oscar Salvador <osalvador@suse.de>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: Re: [PATCH v1 0/6] mm/page_alloc: gfp flags cleanups for
- alloc_contig_*()
-Date: Mon, 02 Dec 2024 17:07:26 -0500
-X-Mailer: MailMate (1.14r6065)
-Message-ID: <6CE8BCE0-BDBE-41BB-9998-D9165CF05A1F@nvidia.com>
-In-Reply-To: <20241202125812.561028-1-david@redhat.com>
-References: <20241202125812.561028-1-david@redhat.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL6PEPF00013E02.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:22e:400:0:1001:0:18) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442FB28715F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:11:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AC41E0E1A;
+	Mon,  2 Dec 2024 22:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="onAkKEu0"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882151E0DF4;
+	Mon,  2 Dec 2024 22:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733177276; cv=none; b=kxgB58v6Whru7l7FqaUihZRRnCaJNsv+vx+nPK03wfvYSsMwrcWNvvrDFxUYPkcuuE7Oo5hmMPnB0xUyeI0jq85zhx9gsZSoqDmuDMB1i7JImSeXNKnwevydseTOGHlYIwUwv4j+sbTd8UQ/oMqmGw2GY6hP6QK38Wb9TyqCMjI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733177276; c=relaxed/simple;
+	bh=UpTDOAh2SM9Av2dj4fbrvCE+NCvXwCG9JOnqnSIZY0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ML0iac8/XjBB/itK18eJk6e/YZjhPvL2b57Ml6yJn/h9KESfdHLeVheBJp6cNUv0GQpKaZZgIqRc3RapE8sYoYMAPM2um+fmo9Yh2S0l4+Rpk1DYc00Y/NzpCS6sGvWOApHcNrXUIVa/KPKIrN44vb1qEnSAB2D0ExiGaiweU8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=onAkKEu0; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tz4mFzbX9P9yZ/D0ZDZ+CHiKfmuXSyJYiag6bxKZjO8=; b=onAkKEu03knw+yi7mGzMg38F/a
+	eahRL0lxTZx3whiM4B1MeXRexDYWzMYK9BxBpAjL218lJRkT3cNpjCWYiRjWd334Ah2wQ7MujmY3q
+	bq95CThA6JvVB7z3DvP8QhRGb4t27jySO6SfLxGJKdmHLW3jI/DzpTbyhBj8UJqb4JYqp07TzxAEP
+	pZ4pxgISjskPougD7Wssqqk44PW/wrW9sEiZGfW1XgZ6DYMZv5O73usxojtbU7Z3m1hBq0o0g6+RC
+	ySXEJFbmfd0cgDr6aJ1mRJb0TpQVA9JDZSZsBO8fIVEc/ASQQ6vsXF6uHfFzJVnTFINuN8FiyiaYs
+	qrJYl1Tg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39114)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tIEZn-0000ru-0X;
+	Mon, 02 Dec 2024 22:07:31 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tIEZk-0003v9-2I;
+	Mon, 02 Dec 2024 22:07:28 +0000
+Date: Mon, 2 Dec 2024 22:07:28 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: jan.petrous@oss.nxp.com
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>, 0x1207@gmail.com,
+	fancer.lancer@gmail.com, Jacob Keller <jacob.e.keller@intel.com>
+Subject: Re: [PATCH net-next v7 02/15] net: driver: stmmac: Extend CSR calc
+ support
+Message-ID: <Z04voJN9uj1Vefef@shell.armlinux.org.uk>
+References: <20241202-upstream_s32cc_gmac-v7-0-bc3e1f9f656e@oss.nxp.com>
+ <20241202-upstream_s32cc_gmac-v7-2-bc3e1f9f656e@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS0PR12MB7629:EE_
-X-MS-Office365-Filtering-Correlation-Id: aac3bb5e-86fb-4e92-c168-08dd131db62b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iXgnWa5rT0iu64/jEWhCbaOa+xPeOx3SwK1kJhZ3yQzHAawWykWe41yjJEd3?=
- =?us-ascii?Q?ntdh74GWZ96fNdIOCg5FBtwMkeS2VhglN8f9ZZzN+GjtHtaDbkwYIn9bZJiE?=
- =?us-ascii?Q?VbuvDe+Ml5cZ3k8KSIMdFW6dyLHGc1vlqifATN8etL/3ODGQ0ITzH3Jy/ssi?=
- =?us-ascii?Q?XO3fO89eZU5Z1mnAAlZmscp6a+EKgzPoahXKDCtzcCZRzPruWHDN1SEgx24l?=
- =?us-ascii?Q?8d2Q5Ov+M6YzxJuv979ozDL4+HptHL6zn1/3jw9RjJGZWHGZPtCAHt4odjes?=
- =?us-ascii?Q?LMk+koV1rEbXwi40A/K0XK/aL7gB1GnXYfBPe7Lcx8xjCB1ozpDl4yJx+hGn?=
- =?us-ascii?Q?SauYTDcdPRuEXs7cHcCW0amp2RmFvdKvnybq8j0w5f++A9K6Y0FlDrFRbGgW?=
- =?us-ascii?Q?tPOrQ7V4Oc56R2nwNGsM2Vn5zJ2MLYGL2Z+lT24Xc+R7shVcNIPfm0IVEO7i?=
- =?us-ascii?Q?LkHq5BvNhm1qX1XmPW7VuRshmUSzgoEaF8OzjEHOXQWi8o+u2UxRT4HBsJ4B?=
- =?us-ascii?Q?Yq8PFcFM+RWSCXv4YGIZ3sJlCoPMJmGyS/RbUf9+3t1UzWZWeIsAbSwVpdWD?=
- =?us-ascii?Q?SjinzNgBvH3IcdEw6zibQYYd2zehmxCH3GYCryKK3RrBOcgvxGFkg9oAfILC?=
- =?us-ascii?Q?+yPzHSubnszn5b+rmjvO1w0Dqr9EyGbJrSrxdW0pVbhF34lU7EBo1I3ASdLy?=
- =?us-ascii?Q?H61F8n0W1aEerEsrPp0hzE+mUs7KfJheBV/RM2Tc8Yp5ksTGVBGLPOEQ+ZNM?=
- =?us-ascii?Q?Te280so09IswH0IQTyxQ8P4lH7QYEibW+m5P07J9egbKJQEovqrG3mj5DS4X?=
- =?us-ascii?Q?VWG9AfMl9Z7xnjIa+u8LaORCg38O8RpOLZV3rbPqcfMVc7Y4G1XKXKZHcChp?=
- =?us-ascii?Q?PfMttzePe6kk8K8OHXmZt500oKefY2IKrs99KapZ2pQESb0M2q421kNFau3Z?=
- =?us-ascii?Q?HPMHfykuo82v+BUlmhwZiQF8hw5CpTuFxbprk+u/AQb5kKLY8Tnqe9xuZthh?=
- =?us-ascii?Q?CkGxcujKywoMvkGPFjPwptC/bSg8FBndTM6xy9ZTj2zVV5U931fn2glGX3oM?=
- =?us-ascii?Q?OoiCFUXAX2VEFHRcBxBP9m6Pet0+4qRQzYM7GkRRr8NRp3tldF1OJIyEyM3v?=
- =?us-ascii?Q?KDlGNHuGOjmC7CdRM7WR66xEHwwPXOJLsLhIEzvN6XrXK8NCOVi6frcclSJb?=
- =?us-ascii?Q?fuXYjTn0bcH9eXwaBIeZyAAptPHrmlHOYLkM6FXTmKB3OWYLby1UxnXXJIch?=
- =?us-ascii?Q?IFPHYosxMSMAB8Ovnea9YVqoT9J5xOxlryFsvnQjcUf2huF8SA1VBjO8Woef?=
- =?us-ascii?Q?l3DKgMRgFWZC3v2S6rz5ZAvAv2LEvlPgAlhknaQFF1xVsQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?o+0waCXEf0ZrxffSHmYOK19Y2dXoyAn4HJ0QCGzIosTgIGsuZidQW1O2yZLQ?=
- =?us-ascii?Q?1t5DOr/SwvgLI7KHm1V4A/Os7ghRdPaFZIy0zuUpNczP/obz0KNucJCrqjcZ?=
- =?us-ascii?Q?pnzFzQj5mrrPhC/csIYqg4FX4oEf8LndmqbEEnnvtTggKamO6oiz8QEgQEQ3?=
- =?us-ascii?Q?9jkP0rjuTS3ckl+DefWlj1Pfh9nl0PHZZRzKgvAj+s4xa3Dc9jxer5f/rpK3?=
- =?us-ascii?Q?6hFZsYqjgYScgceEuX6jsdl7aZ6OUm7NDLb4qPW3SA914Many4ZG/az7Qoj6?=
- =?us-ascii?Q?3ftdhiAuCAQnSfo7hFYS8YSb2Sx8FFLH1xBUP+ElDfXAgMi2eJam54dg1fDH?=
- =?us-ascii?Q?ywOgF1OHHGrCaxcbRwcR7xIW+HajxMCpaj4juyyy8FI8A6wlvFLknEbVl9I8?=
- =?us-ascii?Q?ZchDTJVeESidzZEfI9Xv/IORfNWvIheP+A+ZKoOcAfYSTWxZCxUKqMSaFjgj?=
- =?us-ascii?Q?Qjhh1nEHYp4Y11X2AXd2wo8glDegctXOt8tAUgZn/AvDNnnhY1z0R2D0b++t?=
- =?us-ascii?Q?ph08IbyiRuPewM6DP5FLo23lOWb/MY5CLuQdRG0PgEkKP4/QEvhh2VoE8hs7?=
- =?us-ascii?Q?56ZJ+UxnNPCTMK02eFI8LYq5B3zmgC5aa7vG2Ozd9rpylBzBV6kXNLNUY9jg?=
- =?us-ascii?Q?ig9QU2oWM+84BBA9enzJrPihvNC1rDpt73yrWklofsJ3wXzFHOPR/Y3D7mky?=
- =?us-ascii?Q?Yw6xH444cfQ2/ek8r5ZL5dgtPeX2DeXeuxyZv6VRZkCbOLbnziso6LHVK49E?=
- =?us-ascii?Q?w1qfFMQW4PRGrl0trz2hsCLRADhn2Shl/o06/NTiJlDOz6k4qdzF5ICDipbH?=
- =?us-ascii?Q?lwqWbTH9wCuLglJeV6PwDE/0opOlBVPLho3ogJBpnsDQGo+gTDyw7LtB6R92?=
- =?us-ascii?Q?Sia0l3sPLaWPyvaYLrk1MPn/cmmMl6GjLZ1vrRuxD0RITi9Fi4WMCj+PNpNb?=
- =?us-ascii?Q?N5YdO6o+UKxLJXOEzZZQykzxSoOAXsJASi9vLQZGQcuNFEZFzo2iOkZSECzJ?=
- =?us-ascii?Q?RceaeUqK5TQQQbpaK6CVXGBHeioMm/O+v2jlug58VFJzUKNlipeyo9eoSy9X?=
- =?us-ascii?Q?KIAEIBAzoCl89DKgwsokye2QvrAF620HliWuklTOLpjE4ly0Shc5V9dhRqSw?=
- =?us-ascii?Q?dWc/mf5BG+HZJAXUGqxPezFNMJXSLgsh+sqpSLvLwhtjxi5pCfWCwtCtY4Fd?=
- =?us-ascii?Q?+vUUK02WXB3SUaoovf0kYuDGk6qz2qhZ3omC8PgPfOUCi3fT+AwV73ms+rcs?=
- =?us-ascii?Q?X9CI0Zidu6tBZ6VeAQd1Wetyvj1OyeVxi1YQf31m+As5XYZ4xoie6P4sweCd?=
- =?us-ascii?Q?+aYVWF2kBx1LegyEyj3BXuQkKcxQQF7YF0O73wU1NBSpom4pH4uc0yZQdXht?=
- =?us-ascii?Q?H/LGtKKVuJsvPC2AWXkPD5JFV/qmdt/L9NyeO9eBNGQ/o418AW9hc1GI12hC?=
- =?us-ascii?Q?1LN7K5SmWDktq7XRDjxpkDzlAgV4kNXR8gDl6tKg7qNtH8WL9LDfDI5tTJO1?=
- =?us-ascii?Q?9mDVq0GT9edQOXUXLI5Henb75Sxw5Lo9FYePOmAM/8ZsZBx14395w2gEF9kI?=
- =?us-ascii?Q?nsAjt/o9FCEtshFuZXIrDYoegjyU2FwP5+u81SC7?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aac3bb5e-86fb-4e92-c168-08dd131db62b
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 22:07:28.8785
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eDVco667ytu1WzuwqqQiE+jxsiljVmiND5JCh+CN+u9wG9Dh7z2P7/j/WuYaJ+iy
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7629
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202-upstream_s32cc_gmac-v7-2-bc3e1f9f656e@oss.nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 2 Dec 2024, at 7:58, David Hildenbrand wrote:
+Hi,
 
-> Let's clean up the gfp flags handling, and support __GFP_ZERO, such tha=
-t we
-> can finally remove the TODO in memtrace code.
->
-> I did some alloc_contig_*() testing with virtio-mem and hugetlb; I did =
-not
-> test powernv/memtrace -- I cross-compiled it, though.
->
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Naveen N Rao <naveen@kernel.org>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+As per patch 1, no need for "driver:" in the subject line.
 
-FYI, linux-mm does not get any of your emails: https://lore.kernel.org/li=
-nux-mm/ECFA727B-F542-42E5-BE32-F9FB27F5DCDB@nvidia.com/, but linux-kernel=
- has them.
+Thanks.
 
-Best Regards,
-Yan, Zi
+On Mon, Dec 02, 2024 at 11:03:41PM +0100, Jan Petrous via B4 Relay wrote:
+> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+> 
+> Add support for CSR clock range up to 800 MHz.
+> 
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/common.h      | 2 ++
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 4 ++++
+>  include/linux/stmmac.h                            | 2 ++
+>  3 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+> index 1367fa5c9b8e..70d601f45481 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/common.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+> @@ -257,6 +257,8 @@ struct stmmac_safety_stats {
+>  #define CSR_F_150M	150000000
+>  #define CSR_F_250M	250000000
+>  #define CSR_F_300M	300000000
+> +#define CSR_F_500M	500000000
+> +#define CSR_F_800M	800000000
+>  
+>  #define	MAC_CSR_H_FRQ_MASK	0x20
+>  
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 9b262cdad60b..3cb7ad6ccc4e 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -325,6 +325,10 @@ static void stmmac_clk_csr_set(struct stmmac_priv *priv)
+>  			priv->clk_csr = STMMAC_CSR_150_250M;
+>  		else if ((clk_rate >= CSR_F_250M) && (clk_rate <= CSR_F_300M))
+>  			priv->clk_csr = STMMAC_CSR_250_300M;
+> +		else if ((clk_rate >= CSR_F_300M) && (clk_rate < CSR_F_500M))
+> +			priv->clk_csr = STMMAC_CSR_300_500M;
+> +		else if ((clk_rate >= CSR_F_500M) && (clk_rate < CSR_F_800M))
+> +			priv->clk_csr = STMMAC_CSR_500_800M;
+>  	}
+>  
+>  	if (priv->plat->flags & STMMAC_FLAG_HAS_SUN8I) {
+> diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+> index 75cbfb576358..865d0fe26f98 100644
+> --- a/include/linux/stmmac.h
+> +++ b/include/linux/stmmac.h
+> @@ -34,6 +34,8 @@
+>  #define	STMMAC_CSR_35_60M	0x3	/* MDC = clk_scr_i/26 */
+>  #define	STMMAC_CSR_150_250M	0x4	/* MDC = clk_scr_i/102 */
+>  #define	STMMAC_CSR_250_300M	0x5	/* MDC = clk_scr_i/124 */
+> +#define	STMMAC_CSR_300_500M	0x6	/* MDC = clk_scr_i/204 */
+> +#define	STMMAC_CSR_500_800M	0x7	/* MDC = clk_scr_i/324 */
+>  
+>  /* MTL algorithms identifiers */
+>  #define MTL_TX_ALGORITHM_WRR	0x0
+> 
+> -- 
+> 2.47.0
+> 
+> 
+> 
+> 
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
