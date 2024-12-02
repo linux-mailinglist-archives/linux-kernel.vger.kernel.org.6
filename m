@@ -1,71 +1,68 @@
-Return-Path: <linux-kernel+bounces-427303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB749DFF8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:01:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608289DFF8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:01:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 992EAB238F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:01:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C010116053C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793151FC7EC;
-	Mon,  2 Dec 2024 11:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7AB1FBCAF;
+	Mon,  2 Dec 2024 11:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="jWnQmxgk"
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fEb6KN+Q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243381FBCAF;
-	Mon,  2 Dec 2024 11:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422511F9EA4
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733137270; cv=none; b=VD3ZKaqx5el3O88RmDa80Hm9v30ihTVxOkrr2y3u0IQKpLfl/eiMXFNneIqml3netn6/H01j7CyegfWsSnih/kn/WTOQ4iZcWdg04ndaZh7D8Ln8uJ4A4Y3k6lGI/BErWTYKLUApNL+3Zzaxym1MIdr4JXTANUwYlnukkgOpl7o=
+	t=1733137278; cv=none; b=KIO8lcX0yE14ToMPU7CiJERuVY5dFSpvygoUGKPvp+W4GfcTHUAOLHxTwXng/n73uCcv8lsSGholJ7+tAl9jRZhaA9eTM8bPLVf3mO6D7sCZP9SH3yTUDihJ+XdnXKtZagLl8DY4hpVQq7dPfL/wSAmyAnE1NlJ9bPyuEmZX8Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733137270; c=relaxed/simple;
-	bh=IvpqhaV/xulVv5zlmJNnCYugVm2DCsNChR4uZU0CDlk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PUaszpeln95dsmoLi79+axXop5uMc3UudPbDW3aj71wwv8qzO+UW/RLnlRfcTaTHFKjT1oZhxdizEUkzA2/oNrpz64pVhKXbOkF6fzJWJyzGeqVLNqPUx2qLJz6oMEFHeZf5IIoV9ziskX0qp/a6g1+H9JL0cTJA/1r9cSPt5Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=jWnQmxgk; arc=none smtp.client-ip=134.0.28.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-	by mxout3.routing.net (Postfix) with ESMTP id 4B8D860FA4;
-	Mon,  2 Dec 2024 11:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1733137261;
+	s=arc-20240116; t=1733137278; c=relaxed/simple;
+	bh=6X1riY+VHXRDka4H1B+wNDkstNqFukhW6/fU6njkVS4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rBXlcRyL/GDAM/H7mCoDP4qeq7pA/VFQ4NfB4idCjeKkABIQ9h41+Pk7OCkcPlJLVk2QYxz3DckU3MUa59SjUwbErwk2DFHJsXDxwm0FE2ZolNkpkkofMbjm5IfK+VbYBLJGXkNb7SkpftYuPUQBaJYXb++QRi1U/U4uusueq6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fEb6KN+Q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733137275;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wyqoNi8b0e4G/mNuoNqWCCyWIXNgFap4NSrKlakizDk=;
-	b=jWnQmxgku532SImzVOvuu35tPoZrB/MDuyEJomKh6H1lDaNVZ+xwvX/O6+lYX5iX3P+t7c
-	tPX/tWNT24o3cMsOhIIdd3StsGWECMmAP4KjPz1lo25GVXZgNaW8gl33kUrJha3pCI5XHp
-	mumQciykHwsn04y3CqEYGBaJT6/SfZ0=
-Received: from frank-u24.. (fttx-pool-217.61.149.104.bambit.de [217.61.149.104])
-	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 818A4100475;
-	Mon,  2 Dec 2024 11:01:00 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sean Wang <sean.wang@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v5 5/5] arm64: dts: mediatek: mt7988: add pinctrl subnodes for bpi-r4
-Date: Mon,  2 Dec 2024 12:00:39 +0100
-Message-ID: <20241202110045.22084-6-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241202110045.22084-1-linux@fw-web.de>
-References: <20241202110045.22084-1-linux@fw-web.de>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5qe+kacRTUMIlGtiIXxBuiYgdy3mvLZJuJ7npnuXvo4=;
+	b=fEb6KN+QQaXnsIYUI8PJMjDpHQljP/yR3XCSguJOixBl/a8w/9Ac510soO72c82K8NIPxN
+	pgok7sf6+LpSv1VTVb+2s1HpOyC3fX2cgY0Fwt44e58Hq32N1wKoKr8y6ALOjFNm7s8kBQ
+	WqQWhtrvozKERF4jv7D8yAZAYxfeTNI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-675-KK3CtWbxPzCZTC6blB60FQ-1; Mon,
+ 02 Dec 2024 06:01:14 -0500
+X-MC-Unique: KK3CtWbxPzCZTC6blB60FQ-1
+X-Mimecast-MFC-AGG-ID: KK3CtWbxPzCZTC6blB60FQ
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EDEE0195421D;
+	Mon,  2 Dec 2024 11:01:12 +0000 (UTC)
+Received: from t14s.cit.tum.de (unknown [10.39.194.150])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 370C130000DF;
+	Mon,  2 Dec 2024 11:01:09 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v1] mm/memory_hotplug: move debug_pagealloc_map_pages() into online_pages_range()
+Date: Mon,  2 Dec 2024 12:01:08 +0100
+Message-ID: <20241202110108.451522-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,215 +70,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: c495ca34-053a-4cad-a31c-eb515f8c7e92
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-From: Frank Wunderlich <frank-w@public-files.de>
+In the near future, we want to have a single way to handover PageOffline
+pages to the buddy, whereby they could have:
 
-Add board specidic pinctrl configurations on Bananapi R4.
+(a) Never been exposed to the buddy before: kept PageOffline when onlining
+    the memory block.
+(b) Been allocated from the buddy, for example using
+    alloc_contig_range() to then be set PageOffline,
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Let's start by making generic_online_page() less special compared to
+ordinary page freeing (e.g., free_contig_range()), and perform the
+debug_pagealloc_map_pages() call unconditionally, even when the online
+callback might decide to keep the pages offline.
+
+All pages are already initialized with PageOffline, so nobody touches
+them either way.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  | 189 ++++++++++++++++++
- 1 file changed, 189 insertions(+)
+ mm/memory_hotplug.c | 10 +++++++++-
+ mm/page_alloc.c     |  6 ------
+ 2 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
-index efc4ad0b08b8..aa2dabc041fd 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
-@@ -9,3 +9,192 @@ / {
- 	model = "Banana Pi BPI-R4";
- 	chassis-type = "embedded";
- };
-+
-+&pio {
-+	mdio0_pins: mdio0-pins {
-+		mux {
-+			function = "eth";
-+			groups = "mdc_mdio0";
-+		};
-+
-+		conf {
-+			pins = "SMI_0_MDC", "SMI_0_MDIO";
-+			drive-strength = <8>;
-+		};
-+	};
-+
-+	i2c0_pins: i2c0-g0-pins {
-+		mux {
-+			function = "i2c";
-+			groups = "i2c0_1";
-+		};
-+	};
-+
-+	i2c1_pins: i2c1-g0-pins {
-+		mux {
-+			function = "i2c";
-+			groups = "i2c1_0";
-+		};
-+	};
-+
-+	i2c1_sfp_pins: i2c1-sfp-g0-pins {
-+		mux {
-+			function = "i2c";
-+			groups = "i2c1_sfp";
-+		};
-+	};
-+
-+	i2c2_0_pins: i2c2-g0-pins {
-+		mux {
-+			function = "i2c";
-+			groups = "i2c2_0";
-+		};
-+	};
-+
-+	i2c2_1_pins: i2c2-g1-pins {
-+		mux {
-+			function = "i2c";
-+			groups = "i2c2_1";
-+		};
-+	};
-+
-+	gbe0_led0_pins: gbe0-led0-pins {
-+		mux {
-+			function = "led";
-+			groups = "gbe0_led0";
-+		};
-+	};
-+
-+	gbe1_led0_pins: gbe1-led0-pins {
-+		mux {
-+			function = "led";
-+			groups = "gbe1_led0";
-+		};
-+	};
-+
-+	gbe2_led0_pins: gbe2-led0-pins {
-+		mux {
-+			function = "led";
-+			groups = "gbe2_led0";
-+		};
-+	};
-+
-+	gbe3_led0_pins: gbe3-led0-pins {
-+		mux {
-+			function = "led";
-+			groups = "gbe3_led0";
-+		};
-+	};
-+
-+	gbe0_led1_pins: gbe0-led1-pins {
-+		mux {
-+			function = "led";
-+			groups = "gbe0_led1";
-+		};
-+	};
-+
-+	gbe1_led1_pins: gbe1-led1-pins {
-+		mux {
-+			function = "led";
-+			groups = "gbe1_led1";
-+		};
-+	};
-+
-+	gbe2_led1_pins: gbe2-led1-pins {
-+		mux {
-+			function = "led";
-+			groups = "gbe2_led1";
-+		};
-+	};
-+
-+	gbe3_led1_pins: gbe3-led1-pins {
-+		mux {
-+			function = "led";
-+			groups = "gbe3_led1";
-+		};
-+	};
-+
-+	i2p5gbe_led0_pins: 2p5gbe-led0-pins {
-+		mux {
-+			function = "led";
-+			groups = "2p5gbe_led0";
-+		};
-+	};
-+
-+	i2p5gbe_led1_pins: 2p5gbe-led1-pins {
-+		mux {
-+			function = "led";
-+			groups = "2p5gbe_led1";
-+		};
-+	};
-+
-+	mmc0_pins_emmc_45: mmc0-emmc-45-pins {
-+		mux {
-+			function = "flash";
-+			groups = "emmc_45";
-+		};
-+	};
-+
-+	mmc0_pins_emmc_51: mmc0-emmc-51-pins {
-+		mux {
-+			function = "flash";
-+			groups = "emmc_51";
-+		};
-+	};
-+
-+	mmc0_pins_sdcard: mmc0-sdcard-pins {
-+		mux {
-+			function = "flash";
-+			groups = "sdcard";
-+		};
-+	};
-+
-+	uart0_pins: uart0-pins {
-+		mux {
-+			function = "uart";
-+			groups =  "uart0";
-+		};
-+	};
-+
-+	snfi_pins: snfi-pins {
-+		mux {
-+			function = "flash";
-+			groups = "snfi";
-+		};
-+	};
-+
-+	spi0_pins: spi0-pins {
-+		mux {
-+			function = "spi";
-+			groups = "spi0";
-+		};
-+	};
-+
-+	spi0_flash_pins: spi0-flash-pins {
-+		mux {
-+			function = "spi";
-+			groups = "spi0", "spi0_wp_hold";
-+		};
-+	};
-+
-+	spi1_pins: spi1-pins {
-+		mux {
-+			function = "spi";
-+			groups = "spi1";
-+		};
-+	};
-+
-+	spi2_pins: spi2-pins {
-+		mux {
-+			function = "spi";
-+			groups = "spi2";
-+		};
-+	};
-+
-+	spi2_flash_pins: spi2-flash-pins {
-+		mux {
-+			function = "spi";
-+			groups = "spi2", "spi2_wp_hold";
-+		};
-+	};
-+};
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index c43b4e7fb298..20af14e695c7 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -650,6 +650,7 @@ static void online_pages_range(unsigned long start_pfn, unsigned long nr_pages)
+ 	 * this and the first chunk to online will be pageblock_nr_pages.
+ 	 */
+ 	for (pfn = start_pfn; pfn < end_pfn;) {
++		struct page *page = pfn_to_page(pfn);
+ 		int order;
+ 
+ 		/*
+@@ -664,7 +665,14 @@ static void online_pages_range(unsigned long start_pfn, unsigned long nr_pages)
+ 		else
+ 			order = MAX_PAGE_ORDER;
+ 
+-		(*online_page_callback)(pfn_to_page(pfn), order);
++		/*
++		 * Exposing the page to the buddy by freeing can cause
++		 * issues with debug_pagealloc enabled: some archs don't
++		 * like double-unmappings. So treat them like any pages that
++		 * were allocated from the buddy.
++		 */
++		debug_pagealloc_map_pages(page, 1 << order);
++		(*online_page_callback)(page, order);
+ 		pfn += (1UL << order);
+ 	}
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cc3296cf8c95..01927f03af0b 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1293,12 +1293,6 @@ void __meminit __free_pages_core(struct page *page, unsigned int order,
+ 			set_page_count(p, 0);
+ 		}
+ 
+-		/*
+-		 * Freeing the page with debug_pagealloc enabled will try to
+-		 * unmap it; some archs don't like double-unmappings, so
+-		 * map it first.
+-		 */
+-		debug_pagealloc_map_pages(page, nr_pages);
+ 		adjust_managed_page_count(page, nr_pages);
+ 	} else {
+ 		for (loop = 0; loop < nr_pages; loop++, p++) {
 -- 
-2.43.0
+2.47.1
 
 
