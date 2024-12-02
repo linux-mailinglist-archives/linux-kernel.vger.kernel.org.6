@@ -1,160 +1,134 @@
-Return-Path: <linux-kernel+bounces-427663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FE99E0461
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:07:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A169E056E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:47:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A781728232D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:07:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91B75B64BDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E838203707;
-	Mon,  2 Dec 2024 14:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515FF203717;
+	Mon,  2 Dec 2024 14:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="O37WTV8J"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mswMmFWm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D40200120;
-	Mon,  2 Dec 2024 14:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2385C202F86;
+	Mon,  2 Dec 2024 14:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733148425; cv=none; b=m1y8/ieALSXZtCxH6iJ3WEvsycRNIxr+z33/kZDEXzVfFAmLlVPzMKxdLhNLHdNuKMAHdFVGoV4WYtFCx09JJmk65wyMkIZZdxnkF0eloyPlFwqZ0aV7qd0a50teRYzU98DSS0ZmkD+r0RczqrLuLp89EwkTOTPsFvgki9J8nps=
+	t=1733148448; cv=none; b=ifXOYJzOZY2oom80YxjE9vkUq3Sq5ye7zRHDDTc6nTBgb3Y0SXMRBIHSHHXnqJZ7MFcCuN5WQP7MuBOktssGSZ8pTVFCYzbjqLPLNIcIPQieR018ly+q5P0HdXDy3vtql/6T+qvtxTq7BxZa84DTJgxSTOGjEza0jMkH/Wa+uCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733148425; c=relaxed/simple;
-	bh=s68fhXtv4SDe3s9WJ30vyDnx8709f0wsijzyrUzUAiw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VXlg9fA5Irr1VRsjDMtQ/4J60BmphXWxOGnFlmru3F9prvM0pdYGj8gws7yt4IW36JPfYnMrKiR9VDcz2YcMBS6nqBVfRWwLph869JLLfwzV9x0EgSk8Thw7KFA6H74LmxCo5dAluGEqSIrw9IVmwebD2Xe5KflBRj9Mr4PCRtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=O37WTV8J; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B29ZdpK026837;
-	Mon, 2 Dec 2024 09:06:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=dLJMfRPTkUeuH9HnRZTFwgP3FIo
-	YPAnFEFpO4kHk7LM=; b=O37WTV8JYkhZTtQxCJMyXPLA4rsUCMhUOMBnF3uIcs5
-	UJCew5hUReGfYQ1TWQPSwqw/3rt6eyrEBbUmKxaaYpFkSiE/K2MiVD2APu1sUfQ/
-	Ry5s3bSPPlRfnCVY5et7bxwFzYHOnU/h1ZCAy3euduVnBn1YYVPXBA1wvvVxKBxK
-	RqPg5XNsEAs4V1U4zuay/dyvWMbuQ3mvHkFuI6LSvvhtGWiUqJttRUdIu8Aji8eK
-	QWNvN85bBKThzkgdJaHINuXvEjTPwjnSmjiX4x9mJG28pO3kP8kwPoze4rITut8Z
-	alCD0oGS9yqRcktlEqGuDPR5R/jhZAEkd2Jkk/BJClQ==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4380g6g31d-1
+	s=arc-20240116; t=1733148448; c=relaxed/simple;
+	bh=finh4zIrmB/B6vTx4hHBDo6hqNjGs4DUogj01fxBl9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TwhaxLJzI7+CVpvK8N2ZvPQLRt3U5Xes5tAjkGHmBzcOxodYKa8mQivdUrXHAv9pW3FHp90VPt+BztlnQ32vD36Ja5wXzQH2PKEtYR2UPSTnKrBbblO1jNTtO0TaJN9KIwYix8P1+StgNKpQc6k9bY30CSfxPCERQR0dsoP3GiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mswMmFWm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28FvZJ019971;
+	Mon, 2 Dec 2024 14:07:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vt74bQlK2rg8iXRO+La37nuO9AD5ByusHr3+bvoPIkI=; b=mswMmFWmeSCWmk9+
+	/voQ5BxL96E5M53PbY7FsT2oLi5BJglXVhvFk+lEvzIXvqlmwBjcyvXclZOgpAGl
+	pKU2etUtrsYZXvQGUTWyYB0PL5gbrZ7V6CvXbjekGuy5C+et3u8DYRbjo3NE1o3t
+	NFEtPzQn3i5o6FCCs/EhCIEk/ntTbeJaefm5/o6n6VVM78pIa85stj5P/tpqIusb
+	zTdAqkeJXYqF29QV/n7bCuE8wzNCQona9b+LR8Qi0wNKPdHh6XD91DtjKtX8/PzO
+	/UEQ6BtO5lBINcY2CAMMYxbo2cKza/2s0ZetJnA5J51qJma7mPWlb/5160KfwyQf
+	0LmSjw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437u36d1pd-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 09:06:42 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4B2E6f8r006580
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 2 Dec 2024 09:06:41 -0500
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 2 Dec 2024 09:06:41 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 2 Dec 2024 09:06:40 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 2 Dec 2024 09:06:40 -0500
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4B2E6SRn027750;
-	Mon, 2 Dec 2024 09:06:31 -0500
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <marcelo.schmitt1@gmail.com>
-Subject: [PATCH v6 0/4] Timestamp and PulSAR support for ad4000
-Date: Mon, 2 Dec 2024 11:06:27 -0300
-Message-ID: <cover.1733147443.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
+	Mon, 02 Dec 2024 14:07:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B2E7Lem020645
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Dec 2024 14:07:21 GMT
+Received: from [10.216.19.249] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 06:07:16 -0800
+Message-ID: <555d8793-320b-4f16-88a2-9d5bd40599ed@quicinc.com>
+Date: Mon, 2 Dec 2024 19:37:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] arm64: dts: qcom: qcs6490-rb3gen2: enable Bluetooth
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_msavaliy@quicinc.com>
+References: <20241022104600.3228-1-quic_janathot@quicinc.com>
+ <dd008ff5-ee2a-47be-8a5b-d4f3a1e2bac3@kernel.org>
+ <75dc7814-a55e-4a6f-9df9-39b7c875dee9@quicinc.com>
+ <6a40b442-6c4e-4abb-aeba-54ff9e86dfde@kernel.org>
+ <3f0b67f7-32ca-4b5a-a655-df6f92258cce@oss.qualcomm.com>
+Content-Language: en-US
+From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+In-Reply-To: <3f0b67f7-32ca-4b5a-a655-df6f92258cce@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: ki0jd1Fkw_D__ImU3YgqOQ-AMPtQwSLD
-X-Proofpoint-ORIG-GUID: ki0jd1Fkw_D__ImU3YgqOQ-AMPtQwSLD
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BryXGnVL6HfFLnPHrs64F_Sz1OPVfQyc
+X-Proofpoint-ORIG-GUID: BryXGnVL6HfFLnPHrs64F_Sz1OPVfQyc
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 clxscore=1015 mlxscore=0 adultscore=0
- priorityscore=1501 phishscore=0 suspectscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020122
-
-Complement the ad4000 driver with a timestamp channel, a minor adjust in
-transfer timing, and support for single-channel PulSAR devices.
-
-Change log v5 -> v6
-[IIO]
-- Added commas at the end of channel lists in macros.
-[Device tree]
-- Made compatible property doc similar to other ADC dt-bindings.
-
-Change log v4 -> v5
-[IIO]
-- No changes.
-[Device tree]
-- Added const items for fallback compatibles.
-
-Change log v3 -> v4
-[IIO]
-- No changes.
-[Device tree]
-- Sorted compatible strings in alphabetical order.
-- Left only fallback compatibles in allOf check list for adi,sdi-pin property.
-- Improved patch description with explanation about how the AD4000 and PulSAR
-  devices are different.
-
-Change log v2 -> v3
-[IIO]
-- Reverted to direct assignment of ad4000_time_spec structs.
-[Device tree]
-- Moved ADAQ compatible strings to last compatible enum.
-
-Change log v1 -> v2
-- Added Suggested-by and Reviewed-by tags.
-[IIO]
-- Commented the removal of unused AD4000_TQUIET1_NS define in commit body.
-- Made a common macro to assign ad4000_time_spec.
-- Explicitly initialized PulSAR t_quiet2_ns with 0 as those don't need any quiet time.
-- Improved PulSAR support commit description with more context.
-- Dropped support for AD7694.
-[Device tree]
-- Made "cs" the default adi,sdi-pin value for PulSAR devices.
-
-Link to v5: https://lore.kernel.org/linux-iio/cover.1732885470.git.marcelo.schmitt@analog.com/
-Link to v4: https://lore.kernel.org/linux-iio/cover.1732660478.git.marcelo.schmitt@analog.com/
-Link to v3: https://lore.kernel.org/linux-iio/cover.1732020224.git.marcelo.schmitt@analog.com/
-Link to v2: https://lore.kernel.org/linux-iio/cover.1731953012.git.marcelo.schmitt@analog.com/
-Link to v1: https://lore.kernel.org/linux-iio/cover.1731626099.git.marcelo.schmitt@analog.com/
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ clxscore=1011 bulkscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
+ mlxlogscore=499 phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412020122
 
 
-Marcelo Schmitt (4):
-  dt-bindings: iio: adc: adi,ad4000: Add PulSAR
-  iio: adc: ad4000: Add timestamp channel
-  iio: adc: ad4000: Use device specific timing for SPI transfers
-  iio: adc: ad4000: Add support for PulSAR devices
 
- .../bindings/iio/adc/adi,ad4000.yaml          |  75 ++++-
- drivers/iio/adc/ad4000.c                      | 311 +++++++++++++++---
- 2 files changed, 322 insertions(+), 64 deletions(-)
+On 12/2/2024 4:56 PM, Konrad Dybcio wrote:
+> On 2.12.2024 10:36 AM, Krzysztof Kozlowski wrote:
+>> On 02/12/2024 10:32, Janaki Ramaiah Thota wrote:
+>>>>
+>>>>> +	pinctrl-names = "default", "sleep";
+>>>>> +	pinctrl-1 = <&qup_uart7_sleep_cts>, <&qup_uart7_sleep_rts>,
+>>>>> +			<&qup_uart7_sleep_tx>, <&qup_uart7_sleep_rx>;
+>>>>
+>>>> This could be just one phandle to state node with multiple pins subnode.
+>>>>
+>>>
+>>> Since we have different configuration for 3 GPIOs, it’s not good to
+>>> combine all 4 GPIOs into one common sleep configuration. Each GPIO
+>>> configuration is having separate requirements based on the Bluetooth SOC.
+>>
+>> I did not propose that. Please read bindings and other existing DTS sources.
+> 
+> Janaki,
+> 
+> you can refer to my older patch (attached)
+> 
+> Konrad
 
+Thank you very much for the information Konrad.
 
-base-commit: a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
--- 
-2.45.2
-
+Thanks,
+Janakiram
 
