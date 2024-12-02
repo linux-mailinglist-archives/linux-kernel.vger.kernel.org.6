@@ -1,286 +1,145 @@
-Return-Path: <linux-kernel+bounces-427770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8B09E08B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:36:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D57019E0678
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:12:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03873B86315
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:51:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3787016B8C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A0320C022;
-	Mon,  2 Dec 2024 14:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C71520898B;
+	Mon,  2 Dec 2024 14:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BE785RWE"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2068.outbound.protection.outlook.com [40.107.212.68])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iwdwMYU3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51316207A2E;
-	Mon,  2 Dec 2024 14:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733150589; cv=fail; b=qOHkuHoJywFUY1y15a66rrCoJfXb7yvDqiQkmEuN3Ab0HjiUTWzg1U+tn7wc72cBGLjWD9Ypa2rHF3hYKf3g/YWBlVOl3vTNAdoOcfrnARO8i/zLmSFnwtM7AQJVvnkoOHYiVayQd5KphtzHkvs20y37GfPTv3Mj2SmOjfyGxpE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733150589; c=relaxed/simple;
-	bh=wlUEXMpu9q2tPqX7PGAvM3DXiQhgllOfp8LrgFtjRqc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=L3zTXiyxp8KHtGC8P5y9zMMoWGix1kNqn5mHFwPupAGleEnXDpVGbXcD5uTvKrN+cO7sBLbYig4vgpVVLpUBAzNnIrsq/gR8cplCBIpz+QjsJwQA3VEadTpEXlzTQ4yIV86MpnUGEi4ZckpGgWQkSk04U7En3oId1shRiOrTQuU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BE785RWE; arc=fail smtp.client-ip=40.107.212.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EvemobRjMARTJ2Uk5AzTv+aVwINvh9MSciniM2pnxX8VFXfxKXYXmIuCLYIlaXCXvfCSC+WYXW1Uw8zLusErWGc5WREWegnOLIPfNNx8en/UYMWlh34PpGzM8hC71/L3+MAt4Q7waooOCS+Gw0xU7DiwFj0VWgsxwsHLwXTa6cqVNZuUcZutzgiCo6hz6d6XB76wSUzYpRsab4vn6tlsTeqab1uvq/8PwneOj5esGClHfN1Mx580r/5PQo7SOnvH2dvB6hW80oIORYWUwWj9gvcaJhzY5Eh+4owpgzRKJH7AoZn/ScZFNZyGUrhloPBdHhvD0ygz0c/R19Lt2eFtFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6O9wcmsXuUkvQQ8Op0ytBu1H1j3VkD8Ann4EdBcVW9g=;
- b=ufTPzBfZJOdEyIgotuR08QpsZn/ztAuvyZiQW/z6BEzZkvTzQU0YMF21cNv6/tTLvndvU0NP7QU61UNqupBxaCm5xi7m27nzaoDr5DcjEBoaXxttXplyualKghyamwbcsg/k2B1pOze2ud/zk6POrC1R1KgOqS0WZTklCee2b0Dk1IPmxweDb/BPPFe3iSS+UN6NfEwDL9Wi57i1/31bPWhdYJjVtmE521PDQyp+KPHZiTIIr0PdEGKnNMLKAw5T5nDax04otmGP+bHuv/dMs7+iGcItwad6NocbR7ait/8p2u+kcriCVgfQjWTCtYbSuIDVW5QAMTQdA9+lXqgglw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6O9wcmsXuUkvQQ8Op0ytBu1H1j3VkD8Ann4EdBcVW9g=;
- b=BE785RWEtbk8Ij8iB8eeLlgxqydjmfzWETR6q7Pjix8KdmLAM+roOhlwFR/afN3CKbqJankGWZrYaxpY7qrsMwa4ghOdqdKfYl+0VL0maQmwUko7S5W2cQEeZ3MIqooXw4lCxABfiV1VelycC9pksHA3EzFOWIjcYKC6gwzk8Ww=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by CH3PR12MB7593.namprd12.prod.outlook.com (2603:10b6:610:141::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
- 2024 14:43:03 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 14:43:02 +0000
-Message-ID: <06162594-21e8-e850-a179-cc42ac5a4c53@amd.com>
-Date: Mon, 2 Dec 2024 08:43:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2] crypto: ccp: Use scoped guard for mutex
-Content-Language: en-US
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: John Allen <john.allen@amd.com>,
- "open list:AMD CRYPTOGRAPHIC COPROCESSOR (CCP) DRIVER - DB..."
- <linux-crypto@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20241130135836.338-1-mario.limonciello@amd.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20241130135836.338-1-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR13CA0010.namprd13.prod.outlook.com
- (2603:10b6:806:130::15) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02784208983
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733150695; cv=none; b=ZNTxZep9TLbHp6SwQ3Yf9LCShCO2lLD7ElnDNknO1orWW8IC2UpMbppGJwHCxVffZX+9VhCaFDfcbNVpp011JRyosV4IRO783Emlz07/dF3w+GLzKd1RIxI2YX8v5GusHYII/gElw1G282xTNKJqLLbJYIFWc0ixiIuna2pZBHA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733150695; c=relaxed/simple;
+	bh=P6WMno8wkJc6FpiCbZ3RKjUDqJawl4a3n5Y+JpdjnQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WxiDiQDX++BxZugY1suoz/+DvQpPhrgJBJSRzn79uTzx2T0Vqjsw3ZbgPaIwzSYjDjtZjN/qzOz26N5s5A7VJJpqFntr0pEaITmZRbtZGAsP2HOxaocU3Ca6has0WM3qqZHlqcvlxJYHJJtLWlT3Ht7DdkEZ2ECSQkq6rz/2FKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iwdwMYU3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733150693;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BYLdp2sXBF6M9dc560NKGF40r2p0eqAZE6J+ajfFVJ8=;
+	b=iwdwMYU3xSfNvaVzmhmhZFCM8vBd3lppgfpKbpEun0WpLyb6Ebnsoz2KUjuwAGKdUKLTVp
+	fZVY1BA7Wimuacje7Q99jlssF4Acpp/cvTOo6bxX9pF3qmjzaiB26vSnRoC0Z1Osm1UIyQ
+	7vpoZBeVykV54rzcse3H735e7/+hDNQ=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-vBS88R_3N6SIejlxN5LtQA-1; Mon, 02 Dec 2024 09:44:50 -0500
+X-MC-Unique: vBS88R_3N6SIejlxN5LtQA-1
+X-Mimecast-MFC-AGG-ID: vBS88R_3N6SIejlxN5LtQA
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5d0ae45646eso3334436a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:44:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733150690; x=1733755490;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BYLdp2sXBF6M9dc560NKGF40r2p0eqAZE6J+ajfFVJ8=;
+        b=LjecII/FBPitkNfwMQXvYSdJMo77d6fZvC1W71FC3MDGfIZoCFoxaH/IrGAhaSmE4/
+         BUAVOO8cDzTOca8xvyl9veWl0akIhyUyYO8SLeoszlJ2CVezBtq7BGmzUZoVJu4fbdaD
+         ZxVGZyHuw1gLrG99UmlleAX1q70LWH1zXb3Z1dJEeVs+y6GRGcWceejsEIq2sgB81YqP
+         A7RfrbEPbNmF2er3yffDuxVna1HvJkf3XndB/50g3wm6hAkDNoVgVUXaZxC+k6B21n+Q
+         zHYJ0nlUFDqDmpEtURtY319bmtHk0YE2BZch9RRFblDcY6Vy+PmNeO9b5bWvKIXCHYrS
+         54rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZK71L33Z+zqLEnYBNA7BSbbKMVofn/Tb6QApO+Mhlk+HeOh5CxiKvOGSDk1t24mKOAwxgvBXXYvtk5TU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcNy0sY3iS73kDzF6UI3OVg37fhPQqULJS74x4w111czAJmoS3
+	hphJEq/M0/sPeojC9j58cRaJfh74ZztDc+yvg3SE2KInyYM+IHZZb+CYnrOH288VBvRGGvVmePN
+	2/JW5x9gJA0NH1LB2QB7vUy6zuH4WdPmUuuDd86R6gZVGCWb6vLuG1g/WCnrbtw==
+X-Gm-Gg: ASbGncsvTfWuvyZ441dFBbTzpS3su64XehTyIIT7IYOfkf6IpyWRzkObPhVYv5EeQVt
+	AI2Dp03ByrVbwCQh5sfv/A8btinp7Hd3sGGog++MjNMu+jiMIpu6827XPLNIaip3b3Kre8IQd1r
+	GNciiVDKLeCPBqXVX+jMLDkanDmxYNT4WtOzQuuQHyAKqvfMn/WhyDmRYRBn9zTWc6bTGsrX9vT
+	tvDm5c4rfVMm3tSzJpy0wTxE9ZIC9CuEFV6Y/ucvyeUdONahE9taA==
+X-Received: by 2002:a05:6402:35d5:b0:5d0:b51c:8483 with SMTP id 4fb4d7f45d1cf-5d0b51c8732mr13566951a12.16.1733150686626;
+        Mon, 02 Dec 2024 06:44:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHgjSPpPOWOYT+FbBn1eUx9lLaAIfbqlbSYEUIqBPBGycl8xuUlXajgumOG7/U9Szq5WSRwow==
+X-Received: by 2002:a05:6402:35d5:b0:5d0:b51c:8483 with SMTP id 4fb4d7f45d1cf-5d0b51c8732mr13566786a12.16.1733150684566;
+        Mon, 02 Dec 2024 06:44:44 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d0b8aeeaf7sm3798271a12.30.2024.12.02.06.44.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 06:44:43 -0800 (PST)
+Message-ID: <34084caa-13a4-40c3-aa81-ba17513add45@redhat.com>
+Date: Mon, 2 Dec 2024 15:44:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|CH3PR12MB7593:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79994603-4102-4ccc-5afc-08dd12df9fe6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TzVaOHB4L29EMUcyMzFIYXVWcnI4K2ZhbEkwYjcrVmpLR0VqM0h3c2ptUTVR?=
- =?utf-8?B?TFRpRkhVT3VDZnhzWksvakZZTCsvZ1pUeHdRZGJwK293L3lyWFI4OEF5N3JR?=
- =?utf-8?B?amUva2FEVzZ1YmsvdnpsaVYyQUFrOWxlWnBUalhWTG5PUlY5QmpQY3paMnd0?=
- =?utf-8?B?cENhU05OVnNudUt4OG5pa3Z1MzRHdWt6MUJQYTdEUmJKWnFMU21zZEgxMlhF?=
- =?utf-8?B?T050Zks5bGREN1o3QWFxTEdnNnlCQWUxblNlcEdZdVNrMHMzTWNtS2NzYlpR?=
- =?utf-8?B?bWhuemRnNUZORUVVYkc5S0Uva0xjN1ZpU3RPNERHQnJXbnZOSHlWSHFQUUZG?=
- =?utf-8?B?WDF3ajR0c05hWmRlalJlazJxOFBGdkJObWxlZHRmNFBVK0NXSXRMNnBvb3hx?=
- =?utf-8?B?bnByZjRYTmlweGNPYXpZYUZwek0rZ2szNHlWcXNPdUt1aW9IU2ora1dyNXQ5?=
- =?utf-8?B?czVNTWx4bkVlUmxqdDlXangySWdUZEcyTXBuaUhPMnc3VGxvNGFpeVFnVE5Z?=
- =?utf-8?B?NmV3TGJUS1F2M3h3V292bVJvakwvOUE3UDQxWVlNZDl6bi81NXJxNXRWZjFB?=
- =?utf-8?B?cHcrSkxUV3FUWW1keGFjRkd1MVlhcjk1Vkg5MjBnbDB1cjk1NThGb1FHcDFK?=
- =?utf-8?B?RG5wTWpTN2FYZ3FSODgrb3hvd0dGWC9ZTWZhMFY0bnNpSmUyb0h2TlRuc0ly?=
- =?utf-8?B?VlRUM2tlaFNPYWRndHBmdnZmYmI1Y2JkbUZwaUh3VHNvamNkM0JYRmNQbGpa?=
- =?utf-8?B?TzJnOFlyS01nTHR1bmlZU0hYN2ZvUEhxclJnbzdDSW5hc3I4eWFCQ2l5Z2pD?=
- =?utf-8?B?eUMzWThDbmF1RVB2S2RKNXZQR09sbUljQ3ZHWVdGS2VCR1drNDIwb1l5OGJK?=
- =?utf-8?B?YW1menJYekpyZTlldUVkb2JoV3pyUU9DaGZKZmhVZzhUY09vcnZWTys1WUkr?=
- =?utf-8?B?ZjVibGJxaDVVNjZzN3hmQSt0YnFTRTFqa0FmVDZjaXJLMFFlTzc2anM2aHVL?=
- =?utf-8?B?dWRjYmYxYkY1cjUrOWY2ZFY2c2RKamkzUmF5TndjL1JMTm1iQmhMLzh0ZExm?=
- =?utf-8?B?Y25naEZBSU1hdFFVek0vbGRGdThRRE9QcHc1eU1DYUV2SjNPWS94Q3hOY0gz?=
- =?utf-8?B?ajlHa2UzRGtjT0g5QXFwZ3FyTFVhRmhzWUs3TDZOeEdpaXlWV05wQ2hUeXpR?=
- =?utf-8?B?eGdWOUhOSndDeHdXeWJkRnVHV283bHNpVFhqV1NmTm9xU1RWV2tHMkVWWHhF?=
- =?utf-8?B?cXB5UTNIcTZDWW5jK1BocktrNkx4WXdJN3dxTE1sTGxWMDRzYnlJVzltbVpF?=
- =?utf-8?B?VmJheHIvOEdvSVlvVDF0VCtZUUtDOWRVMTdCeDBvNGVjOG9XSVE0djdIa1FN?=
- =?utf-8?B?ZUdiNFhKbm5Mb3ovVTJRWSt6b2JBenhLckJTU2hRcGtzUkM3emdnWUxZRVVz?=
- =?utf-8?B?RXNwMElwZXpvc292Q2JScitDVzRxVGQ0WlAweGR1aXU1Zk1vbmkxbnFzVGpa?=
- =?utf-8?B?NmxyMFVLQzVidGNBRDNSYU5ZVWcrTzNvQmlldTJ2aklDcURWd3dQOXFIWVll?=
- =?utf-8?B?UktBVVhpUTBoai9xMVE5clM2Y1p3REtIRENtaDdGankxRWE4WjdmRGlsSm5R?=
- =?utf-8?B?cy9SeWtSQkZaTEkweGh2Si96WVp1SGJqSGpkRnBlcUI2bjl5a0E0U2xkR0RS?=
- =?utf-8?B?MHNiMzRjYWphTFlzUWJDbHdDQ213dElsdW55OUZkN1IvVkExdkVkT1NjWENI?=
- =?utf-8?B?dklhdHY4ekpWYWJ3bitEdlRpMDd4ckdqbURmaVBjbURSYkZWNEIyN2lPb0E5?=
- =?utf-8?B?bS82Q1Vic25raGk4d3dOUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MkJtWlU0bGM5S2ROYy9jdFhxODVFZFJlQVg2dHJnTzRpQUwwQkNyNmRPcVdR?=
- =?utf-8?B?dzFVVkRHTURtZ3Q3MHJLaUZydmt1Z0dFc0NIQk9ocUxKb0MrMXVZS2F3amdQ?=
- =?utf-8?B?RVdBd1grMFhocDZSWmorck5Kczk5Q0EyaGpUMEtLSFc0SXF4UUVKSFFZa3ho?=
- =?utf-8?B?M2MvSDFZMkt5MUlMUUtrWE1keis3NnVqUzhxbDc3TFZwYm9FYWZDYVB3M1hX?=
- =?utf-8?B?UUFKUkJJTWRvdXZHWVFzUTNIOEt3L0hQcEc2dE1HV2JkejJ3YUtyRHQySGxU?=
- =?utf-8?B?dlpEOWJKbE1ta2RrTDVESWt5VHJyM0QvZ3hCWWtPVE50SjBvZ3duRzVpZmM4?=
- =?utf-8?B?aUJtMG9YMnNseHNWcWpyNElINjFOcnlOZ2NqMFptRXkrekx6c05VOFBGa2Zz?=
- =?utf-8?B?OGQ5NnY5VGpQYnJ2ZHpmNG9SelMzQlh3NCs2T0VKNURsZzMzcjc0VDVRUlhq?=
- =?utf-8?B?WGx0QnEzclF6YlVRUTdLUG1UMm9xRlZGbWN3UW80a3lYUXBHVlJMN0tTSTli?=
- =?utf-8?B?SEd5RTFQRWZmWmNqK0tENlNMUkErQ2hQT2p4OEhHYnRBMDZ6UXVLM3RYajdB?=
- =?utf-8?B?aENuM29rQUtXUnpXRXV5cVVLN3JpVE5DVVQyOUVKT2F3WUkvTzFnbVZrYzF6?=
- =?utf-8?B?TXpjaXRIZVJZblFKWVFORmE5V0pzblNnUnFLMzRhYkQ4dytlUlh3V2ZTTDlU?=
- =?utf-8?B?ZksxemV6VGovSXN2S0IwajE1OG9zYlBRK0NFeGJjdCtpeHVzZ0JnVjh6bjRv?=
- =?utf-8?B?ZlJCZktEMkJPa1crb21SVVQrWWk0RnFxNnRuT3FwTDhQWkVVTWFvSmhVUm1t?=
- =?utf-8?B?cTYxbS96VFF6b2FkRk13dmI0OFQxdGxGeURtZ1JOb2xaS1IxaDdlaDNCT1Z1?=
- =?utf-8?B?TElBU0hqanhBNDlLQzFFN1J1b254OW9TSmowZzNKVllySEYyMGdjdVlSUzRU?=
- =?utf-8?B?UmxpM1lQekswT2RWemxjd29FYjJ2M3R6d0QyL1J0d2ZQdEt5Rmw5c1o4MFVn?=
- =?utf-8?B?aGZnajhmWXh4Z1ZNM0l3TklaRzhvMFFWeUhpUENmOW92cEFDTWdvbzBDYnB5?=
- =?utf-8?B?S1V2ZW9iRU5KWGlLYzlKMm5HU0p4NTEwNVIrU2xUVVJWZGV3RUE1S1V2YXYr?=
- =?utf-8?B?RGp5QWlwNkVWdEQ5STVNWjBObGEzTG1ocDBROEl4SzFRMDFCazdSeHNrMGh2?=
- =?utf-8?B?R1psR3AxM0xESFYzZm1XV2paWU54NTJuVjl2NWRoaVJscnhUVzVuL09BcThl?=
- =?utf-8?B?NkoxNmNxbTZxamJLSG5JVitGYkNaT3I3S1dnZGFLbGVTanFZV0hHb3gwWEd4?=
- =?utf-8?B?SlVoZHE3bzVQOFZnZ2t1amtZT0lvcTV4elhLelF0YkZHSHo0Tlh1NFl3RGJI?=
- =?utf-8?B?dHYzQWt4cWk0Y1FMT1dqK1RMV25kZEpwT09rc2FkVVRVcnVhdVBPSWFkWkdU?=
- =?utf-8?B?bUlvcllSM1p5djRRZVdXOW95YTJjcURjNUhxOGd1b2w0WkdLcVN4RTcvQkZZ?=
- =?utf-8?B?d2JGVW93TWNzUkUwWHg0UXFzN2NtNmdwNkorenpNRTE5VTNNSWw2R3hBcm9O?=
- =?utf-8?B?ZFJZQjRyUk9vOXU2Z3Q5VTZqOWVKeW5xSWxVYytDa1EzWFNQbmlSUDhQbHEv?=
- =?utf-8?B?OWdONnVzbG9tOWRXdmxGL2xUQnBpNS8yaVpRa3U1VmdXZ3l4Y24zVDdJVWky?=
- =?utf-8?B?SmNRTmVsN0ZlUE41ZEcrRVJ5QTBIMEMxK2N0OFVyeHNyaEVFN2lxSk1WN2g2?=
- =?utf-8?B?WVQvczhUWUdDZlBWb21neG9HVUtyemZGOWFoblAzam41NisrZ2NtV0VJTDJR?=
- =?utf-8?B?NTErVFFBaHg3aXdoUUt4OEF4eVNob0NmNzE2Q0w4ckRQMnJmN1RwYU5hNHRL?=
- =?utf-8?B?dmxnYTVCNkxsVkpscEpzeGZwSXVyRjhOZ0F6VnZTbVYzeFB5Ris4SGVHZmpX?=
- =?utf-8?B?VUVjT21LeWFrVGVoZEJLUEFySzgyOE5raERZWDN0OU1uT1RJUmhLaEZtSmpa?=
- =?utf-8?B?VHhKdk9LMyt3ejViaFNXOEswSVdJckRrTm9JREV1RlNnZTM4ckV3MjU3ZnVF?=
- =?utf-8?B?T2UyNWFHTGxqMG9uTDZ6VnEvMXVFQkMrcCsydmRidG5XdURQSVd6Q1VUV3E4?=
- =?utf-8?Q?rjlDf349YojcHcf4DMpT2F1SW?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79994603-4102-4ccc-5afc-08dd12df9fe6
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 14:43:02.8149
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CeAr3mjljTt+ZySN69Y+T1VeGQhHtmUNVE0t4ULn1L3BZ+OptPQvyB2Us1FT2uttJILT5fycFniP3BvksPto9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7593
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/5] media: uvcvideo: Annotate lock requirements for
+ uvc_ctrl_set
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241202-uvc-fix-async-v5-0-6658c1fe312b@chromium.org>
+ <20241202-uvc-fix-async-v5-3-6658c1fe312b@chromium.org>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241202-uvc-fix-async-v5-3-6658c1fe312b@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/30/24 07:58, Mario Limonciello wrote:
-> Use a scoped guard to simplify the cleanup handling.
+Hi,
+
+On 2-Dec-24 3:24 PM, Ricardo Ribalda wrote:
+> Make it explicit that the function is always called with ctrl_mutex
+> being held.
 > 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
 > ---
-> v2:
->  * return immediately in default case
-> ---
->  drivers/crypto/ccp/dbc.c | 53 ++++++++++++++--------------------------
->  1 file changed, 19 insertions(+), 34 deletions(-)
+>  drivers/media/usb/uvc/uvc_ctrl.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/crypto/ccp/dbc.c b/drivers/crypto/ccp/dbc.c
-> index 5b105a23f6997..a3c6822b3829a 100644
-> --- a/drivers/crypto/ccp/dbc.c
-> +++ b/drivers/crypto/ccp/dbc.c
-> @@ -7,6 +7,8 @@
->   * Author: Mario Limonciello <mario.limonciello@amd.com>
->   */
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index af1e38f5c6e9..576e3854be91 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1980,6 +1980,8 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  	s32 max;
+>  	int ret;
 >  
-> +#include <linux/mutex.h>
+> +	lockdep_assert_held(&chain->ctrl_mutex);
 > +
->  #include "dbc.h"
+>  	if (__uvc_query_v4l2_class(chain, xctrl->id, 0) >= 0)
+>  		return -EACCES;
 >  
->  #define DBC_DEFAULT_TIMEOUT		(10 * MSEC_PER_SEC)
-> @@ -137,64 +139,47 @@ static long dbc_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  		return -ENODEV;
->  	dbc_dev = psp_master->dbc_data;
->  
-> -	mutex_lock(&dbc_dev->ioctl_mutex);
-> +	guard(mutex)(&dbc_dev->ioctl_mutex);
->  
->  	switch (cmd) {
->  	case DBCIOCNONCE:
-> -		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_nonce))) {
-> -			ret = -EFAULT;
-> -			goto unlock;
-> -		}
-> +		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_nonce)))
-> +			return -EFAULT;
->  
->  		ret = send_dbc_nonce(dbc_dev);
->  		if (ret)
-> -			goto unlock;
-> +			return ret;
->  
-> -		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_nonce))) {
-> -			ret = -EFAULT;
-> -			goto unlock;
-> -		}
-> +		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_nonce)))
-> +			return -EFAULT;
->  		break;
->  	case DBCIOCUID:
-> -		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_setuid))) {
-> -			ret = -EFAULT;
-> -			goto unlock;
-> -		}
-> +		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_setuid)))
-> +			return -EFAULT;
->  
->  		*dbc_dev->payload_size = dbc_dev->header_size + sizeof(struct dbc_user_setuid);
->  		ret = send_dbc_cmd(dbc_dev, PSP_DYNAMIC_BOOST_SET_UID);
->  		if (ret)
-> -			goto unlock;
-> +			return ret;
->  
-> -		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_setuid))) {
-> -			ret = -EFAULT;
-> -			goto unlock;
-> -		}
-> +		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_setuid)))
-> +			return -EFAULT;
->  		break;
->  	case DBCIOCPARAM:
-> -		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_param))) {
-> -			ret = -EFAULT;
-> -			goto unlock;
-> -		}
-> +		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_param)))
-> +			return -EFAULT;
->  
->  		*dbc_dev->payload_size = dbc_dev->header_size + sizeof(struct dbc_user_param);
->  		ret = send_dbc_parameter(dbc_dev);
->  		if (ret)
-> -			goto unlock;
-> +			return ret;
->  
-> -		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_param)))  {
-> -			ret = -EFAULT;
-> -			goto unlock;
-> -		}
-> +		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_param)))
-> +			return -EFAULT;
->  		break;
-> -	default:
-> -		ret = -EINVAL;
-> -
->  	}
-> -unlock:
-> -	mutex_unlock(&dbc_dev->ioctl_mutex);
->  
-> -	return ret;
-> +	return -EINVAL;
+> 
 
-Hmmm... not quite what I said when I said to put a return -EINVAL in the
-default case. You now return -EINVAL for every successful case.
-
-Thanks,
-Tom
-
->  }
->  
->  static const struct file_operations dbc_fops = {
 
