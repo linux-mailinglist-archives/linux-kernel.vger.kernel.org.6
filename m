@@ -1,139 +1,95 @@
-Return-Path: <linux-kernel+bounces-427250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364AF9DFE9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:16:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400869DFE9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:17:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD61280CFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:16:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06288281E54
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DA21FC0E4;
-	Mon,  2 Dec 2024 10:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354471FBEB5;
+	Mon,  2 Dec 2024 10:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUzrRIhk"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rQD3WJAB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1C21D8E10;
-	Mon,  2 Dec 2024 10:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE531E2611;
+	Mon,  2 Dec 2024 10:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733134589; cv=none; b=aRVRc0mjQiWxhJBvdBl3XlwoP0UEb2oAjoU81B8gbveZxJFjDScl4fyRh00gaK53k+QZNVDPIG3gfmd5lDidWKniAPBvAFX3sFNfrKtWJq/PcxFMsr7V9NlsG63vrDUzRvgZs+MtkbJ+eyW6OQJRkSpfV68Uut9xqN5e4PSr1t0=
+	t=1733134624; cv=none; b=VwwyA8XYpWdGeizFGF6vcCGcMlOprMZ0A/h0MQ3wCsP0YXdU74zpgHWrv+j2HUOOlowGBbbbW4r8r6Taw2Yv6XIVhPIeh1WSRspuPJfs/7m81IitpKtfpDhtVrwSh3dbMIiVQLG+hAA2jYizyhgXH77U9izOZepK2DyrnO7qesU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733134589; c=relaxed/simple;
-	bh=VeyGyrt8lzSc0gMCv+H0+uTSDCYGlOKoYE+GGCTCvkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tVDAxxs5oa5NSoLbbsvRjy9qHcOTSQVMupVcwc1ioNC9IdvULkU6CNF65Lo+QFwUAbhV5eHgJxg3l4GtWLLCKZcL5c0ThveyRWIjqm8/ViZ599ZeCgYM62zzvuVchswsj0iuIY0wZYVjL1zJCuAxIXcxSNM87D8K7i1JJckzSCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUzrRIhk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC6FC4CED2;
-	Mon,  2 Dec 2024 10:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733134588;
-	bh=VeyGyrt8lzSc0gMCv+H0+uTSDCYGlOKoYE+GGCTCvkU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mUzrRIhkQEz61XGkipCLG2mjUF92JUEAHCboc1hDJ2ddG/3hcE8TXaWyMnduTvom4
-	 8JDaxAtgOZNV+Zhq7ofNfwAkk0IQ8jdB4UE0jKBzFDyM3q/pAhT0CTc4Sh6P0yYuM9
-	 Dum4Y3n2Vyc/0y55EM4SIrCCJnNYAeoZyzaFtGZ2uk8FJxxGkcuQAzXAW0who/bRwP
-	 iRyR+KRNXajrhLN2zrxXErJUb651MxZ4a3G+8rIa6C9fNm56486rWciJ4/JiaAz7dB
-	 Dq7IXyzN337B875oMMcSPO/w6KAO13bpJa0WmjFc9II/5Y6RzSSL6bLlFLZJjNqLub
-	 NMR65y3GRkOqA==
-Message-ID: <666145e0-d8c8-47cc-92d4-08d6877786c0@kernel.org>
-Date: Mon, 2 Dec 2024 11:16:21 +0100
+	s=arc-20240116; t=1733134624; c=relaxed/simple;
+	bh=nZbkxdkI+UVgIhtCGdCYWt8vDIXlQH1fcvRaVD7SFok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BsnQHCEqahnWEf3gBiegjSN0SRGoD6QJ2zFLEHPAF9UsDx374GhFi3WL73OC1+PNHL+KvR4RofLNo8cReruTF3yRoL03egeT2w0P7mtQEy75yPyQcaxWNxFHdW07B5U42IBR90bdr8OtOdX8CGm3OQuc7rxWaAI61ooqKcxu/pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rQD3WJAB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96DDDC4CED1;
+	Mon,  2 Dec 2024 10:17:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733134624;
+	bh=nZbkxdkI+UVgIhtCGdCYWt8vDIXlQH1fcvRaVD7SFok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rQD3WJAB2SmQbkY8yL2Cb8ReBFEl3EYPEYL6vEV/4gqjyc8eviy7m2j/ikRpdS4m4
+	 Va2PJoqEZUzkcVIDSUCnELSfpBZZUcZlH4AfxPHIY7AjCnSsoaBOQ7bI7view//VI5
+	 wgpu0r8n8Vt+DRuckJaDHiJValRfNmfcJf/50rrA=
+Date: Mon, 2 Dec 2024 11:17:00 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+Cc: Sasha Levin <sashal@kernel.org>, stable <stable@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	cgroups@vger.kernel.org,
+	Shivani Agarwal <shivani.agarwal@broadcom.com>
+Subject: Re: [PATCH 1/2] cgroup: Make operations on the cgroup root_list RCU
+ safe
+Message-ID: <2024120257-icky-audio-cf30@gregkh>
+References: <2024120235-path-hangover-4717@gregkh>
+ <20241202101102.91106-1-siddh.raman.pant@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/9] dt-bindings: power: supply: max17042: add max77705
- support
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
- Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Hans de Goede <hdegoede@redhat.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
- Purism Kernel Team <kernel@puri.sm>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org
-References: <20241202-starqltechn_integration_upstream-v9-0-a1adc3bae2b8@gmail.com>
- <20241202-starqltechn_integration_upstream-v9-2-a1adc3bae2b8@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241202-starqltechn_integration_upstream-v9-2-a1adc3bae2b8@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202101102.91106-1-siddh.raman.pant@oracle.com>
 
-On 02/12/2024 10:47, Dzmitry Sankouski wrote:
-> Add max77705 fuel gauge support.
+On Mon, Dec 02, 2024 at 03:41:01PM +0530, Siddh Raman Pant wrote:
+> From: Yafang Shao <laoar.shao@gmail.com>
 > 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
->  Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> commit d23b5c577715892c87533b13923306acc6243f93 upstream.
 > 
-> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
-> index 085e2504d0dc..f929e7e2b82a 100644
-> --- a/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
-> @@ -20,6 +20,7 @@ properties:
->        - maxim,max17050
->        - maxim,max17055
->        - maxim,max77849-battery
-> +      - maxim,max77705-battery
+> At present, when we perform operations on the cgroup root_list, we must
+> hold the cgroup_mutex, which is a relatively heavyweight lock. In reality,
+> we can make operations on this list RCU-safe, eliminating the need to hold
+> the cgroup_mutex during traversal. Modifications to the list only occur in
+> the cgroup root setup and destroy paths, which should be infrequent in a
+> production environment. In contrast, traversal may occur frequently.
+> Therefore, making it RCU-safe would be beneficial.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> [fp: adapt to 5.10 mainly because of changes made by e210a89f5b07
+>  ("cgroup.c: add helper __cset_cgroup_from_root to cleanup duplicated
+>  codes")]
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> [Shivani: Modified to apply on v5.4.y]
+> Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+> Reviewed-by: Siddh Raman Pant <siddh.raman.pant@oracle.com>
 
-Keep alphabetical order.
+I'm confused.  You do know what signed-off-by means, right?  When
+sending a patch on, you MUST sign off on it.
 
-Best regards,
-Krzysztof
+Please work with other developers of the Oracle Linux kernel team to get
+this right and send it as a whole new series, properly versioned, and
+tested in in a format that we can take this in.
+
+thanks,
+
+greg k-h
 
