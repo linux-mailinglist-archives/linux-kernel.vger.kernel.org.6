@@ -1,168 +1,211 @@
-Return-Path: <linux-kernel+bounces-427539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D5E9E0290
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:56:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A92B9E029B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:58:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AC13283690
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295951618CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11371FECD9;
-	Mon,  2 Dec 2024 12:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166061FC0F4;
+	Mon,  2 Dec 2024 12:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EJys/Oln"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6ZL0xRI"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13A11FDE05;
-	Mon,  2 Dec 2024 12:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7F41FECC7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733144154; cv=none; b=chg2WzF9lx7r+kI8zNE7nLbmUoiWG6zpXDXMJS0VZ+wXig42uG+vkxgtMsMAJ4nA3dsFRWFREFGE81mDQ0x2X0iICwVKLyyylu0UlIxkbU5giK3NCklBoBYxVITiitfHZekfd4hJTY5DITJGhWF5kG3xG4gH1dGMMD+/fwCVDBY=
+	t=1733144282; cv=none; b=YT6JvYbPFVbz4FEw78io/ThEhTBWUA2iQJBsuiKSZKOBo7GRu6CoIf9Kbw0gUZyRuC9Fqdw0rKEJ5VOB0QNvM3XqQ7Xn6WNmvYERbE7ujWcr9Z/TPvZRTzmu5NmR41mTxrJxnJDfQBnDuBzwXuL8w64SWHfuRK066Gbfvrx8kvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733144154; c=relaxed/simple;
-	bh=vd13ZkzEmnU5zASTA5DJf0GZ3dPvQMRCej5XzVRFx20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hzOr9gBA1ZrFOC496nAKR/RhYnWp4ozKOLsRXk1UPoHNM50Rv+AmJR3a4mNq0HHCD+AUCxKp8eTmZiQ6DGIl3ARJ8UpVpFgxw+FpZXjem9iY1orDwwbUxNmTZrp3MCwPmGGCmueqvg6q/kjw4q4y85SMusK2zTCh/HMqNUqMOVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EJys/Oln; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B29fHfI010836;
-	Mon, 2 Dec 2024 12:55:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UaL9rDM7akT1qiyQz0TMbTWhesPFrPNHkY8MNQHniqg=; b=EJys/OlnfBmSMPl3
-	eVncF0OwWPXJ+l1L3unjd2MugM6CRSZTRFVDRzMpv2ff56+KXWqWkyrNLWLKtaPh
-	RhrdOM6c95S6McCJjCx/k9HsObTNFubrNAApNG9OhlzbfUUkSBgcHtf8nL+CextJ
-	irPRi8G+UG0vPn8udM6++Y4nHnXJK4j/cHIn5znXGdZnNbQL/0XDcyvgyBk+8RKM
-	hLxaj2+5DoF2P13J66iB9xycvsT1QfQrS7q4P5Ji7hdkC7sL4e0Cmw5x0ZYEwV3J
-	589CSkUooUrOdCBwp3cBq+1U8RevYd/45mTxIEhCyZQUOawP42kwNuwALIWxwUw1
-	vgUJpQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4393mp9rf4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 12:55:44 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B2CthV7021626
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Dec 2024 12:55:43 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
- 04:55:38 -0800
-Message-ID: <da2ba3df-eb47-4b55-a0c9-e038a3b9da30@quicinc.com>
-Date: Mon, 2 Dec 2024 18:25:35 +0530
+	s=arc-20240116; t=1733144282; c=relaxed/simple;
+	bh=GEQTVkp0q7S6wbPvLRUNqVr9Oj8O3XKdaZNNO+BsE7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FKIPu4CoLrfZJmM1XMvv7e0tslC3+f5J2YLJzPp/EbYcbX0MfA0g8kU7V64iBt+AHW9yKZk1o8CnoH1q4gRhKhU7r/yjx+1XAo9o3lcAeh3qOwG26wAf0f7wvGxqjn2VvLJx67gIht+2cYk6GtvHp/FTKR2+f+i0TbMUq5yrbfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q6ZL0xRI; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-385e5db74d3so1309667f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 04:58:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733144279; x=1733749079; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LZEzOmy1c1zMqWMX7Wa3GA2/fvlPtEiXHjsYcmo7LSw=;
+        b=q6ZL0xRIu3aL2KyRhkSIo0cPAs4T9/ZGXOMmadRsXoW/3S7lcYEvw/fuy1oFiaB0LL
+         hSQzAWjNInzf05PZhRkA1fbEIRXaElY8iwURlelf8iXWY/Y07XyLCXYC85Fc7E3CI5c5
+         ExU8vekbT/oOX1lrQ3qc/HR9r2/xjylOosUSxT04SXayGoaxvhpUHjh+kH3ECXUa7ab8
+         wzzuhow3DD20QVu2d3zdWs286p18yDP2rOXUxNbLowuyFY5CM0/alk9Ldi8FQ5s2xWUh
+         sTLXO5oNFz8mzOElU+YxMI1LE5rVak1aRAw/C0l8wI251ZqVJMkNLXUi47iq+n1/Fhrf
+         T3JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733144279; x=1733749079;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LZEzOmy1c1zMqWMX7Wa3GA2/fvlPtEiXHjsYcmo7LSw=;
+        b=T1tvYQAqe9/Y8wJqpCObpd0exiDussCkgxnAxx54IC9XWN/Wa/g/xure26ss38/KIi
+         Qne8fxe9+qiLqc1mY6pR7jY0eLai5kOXNTax6imRiFpcpahoxozcO5ib11yhl/FkhJAv
+         uMJvtRfoD1XrHxDvwpYN8y8ibqgsUgyISL87DvQbgRCaR8tmzOELehN26VpBuO/1dsOw
+         LJ/CfH6EVvN1Q3ZAAP0uCFyoU38x+rm/iTv35KK1vAy3OTvzeuHb6r9xDxT5ccsvTxpr
+         QhUw8bBCNpGumwmp3Wefo5sCFov+/MkI6QU6WdYyKz+8uwa58JJ2a/bROVS5QUBpdtiA
+         tMbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUj5fADFRj92KQtxjCx5Q3E/uviYvmm2db7VaZEhNrS1pMlkp9jsEihNlBiQ4BIGkCLOpPajx2mJI9t4to=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKsr1/w8kKaa5ZEIKbVYXmyJxKAKOrKfSs4aOwezicB3VH7b03
+	VhWrPMLO2kZlvsTNs97eqaK1O0UbN2mVCh67kjA3nnYcJhTlBF/sBCmjIYq6eIU=
+X-Gm-Gg: ASbGnctJ4FR8xPCK3RrGFXv7+mtoQqpZWvJifQf1HbGrVdlQUnmt65PE4XN0uoYfBZv
+	Vo79Bss3tuT9PS3mk7k6MHz2PB0DzmaTXtsZCfWPg54w97qQ/RFrjMRtdI7jv8Q8fzfJgEg2wHb
+	GQYcVAfbpxFcOuh74o0bQGP/UaveBoHzAwvGPDPuZAbkUS09IU0kPkaMUXq5fj0F6f/q85ux0ms
+	Y5XdMmfoUx1DrycZ52dKk9T9AP+/U84xOjV0AMUPDGXsNKlYDE5xPI=
+X-Google-Smtp-Source: AGHT+IE6fYWnBhMoQgAuqEUuYRVJcRW1Ua9iOjCZrmiZOy42mMa37ZKinsmWcYvq0V848TnBhQipiA==
+X-Received: by 2002:a05:6000:2b12:b0:385:df43:223c with SMTP id ffacd0b85a97d-385df432391mr8837794f8f.13.1733144278635;
+        Mon, 02 Dec 2024 04:57:58 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74f18bsm187503585e9.4.2024.12.02.04.57.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 04:57:58 -0800 (PST)
+Date: Mon, 2 Dec 2024 15:57:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: =?iso-8859-1?Q?Beno=EEt?= Sevens <bsevens@google.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	wangdicheng <wangdicheng@kylinos.cn>,
+	Manuel Barrio Linares <mbarriolinares@gmail.com>,
+	Lianqin Hu <hulianqin@vivo.com>,
+	Shen Lichuan <shenlichuan@vivo.com>, Cyan Nyan <cyan.vtb@gmail.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] ALSA: usb-audio: Fix a DMA to stack memory bug
+Message-ID: <60e3aa09-039d-46d2-934c-6f123026c2eb@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Krzysztof Kozlowski <krzk@kernel.org>, <konrad.dybcio@linaro.org>,
-        <andersson@kernel.org>, <andi.shyti@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <conor+dt@kernel.org>, <agross@kernel.org>,
-        <devicetree@vger.kernel.org>, <vkoul@kernel.org>, <linux@treblig.org>,
-        <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
-        <konradybcio@kernel.org>, <bryan.odonoghue@linaro.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>
-CC: <quic_vdadhani@quicinc.com>
-References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
- <20241129144357.2008465-2-quic_msavaliy@quicinc.com>
- <db428697-a9dc-46e1-abbe-73341306403f@kernel.org>
- <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
- <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
- <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
- <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XA6PMkdLBdJuYQISwDC-dpgvldnzt9NW
-X-Proofpoint-GUID: XA6PMkdLBdJuYQISwDC-dpgvldnzt9NW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=974
- impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 priorityscore=1501
- clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+The usb_get_descriptor() function does DMA so we're not allowed
+to use a stack buffer for that.  Doing DMA to the stack is not portable
+all architectures.  Move the "new_device_descriptor" from being stored
+on the stack and allocate it with kmalloc() instead.
 
+Fixes: b909df18ce2a ("ALSA: usb-audio: Fix potential out-of-bound accesses for Extigy and Mbox devices")
+Cc: stable@kernel.org
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ sound/usb/quirks.c | 42 +++++++++++++++++++++++++++---------------
+ 1 file changed, 27 insertions(+), 15 deletions(-)
 
-On 12/2/2024 4:34 PM, Krzysztof Kozlowski wrote:
-> On 02/12/2024 11:38, Mukesh Kumar Savaliya wrote:
->>>
->>> Come with one flag or enum, if needed, covering all your cases like this.
->>>
->> Let me explain, this feature is one of the additional software case
->> adding on base protocol support. if we dont have more than one usecase
->> or repurposing this feature, why do we need to add enums ? I see one
->> flag gpi_mode but it's internal to driver not exposed to user or expose
->> any usecase/feature.
->>
->> Below was our earlier context, just wanted to add for clarity.
->> --
->>   > Is sharing of IP blocks going to be also for other devices? If yes, then
->>   > this should be one property for all Qualcomm devices. If not, then be
->>   > sure that this is the case because I will bring it up if you come with
->>   > one more solution for something else.
-> 
-> 
-> You keep repeating the same. You won't receive any other answer.
-> 
-So far i was in context to SEs. I am not sure in qualcomm SOC all cores 
-supporting this feature and if it at all it supports, it may have it's 
-own mechanism then what is followed in SE IP. I was probably thinking on 
-my owned IP core hence i was revolving around.
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index 8bc959b60be3..7c9d352864da 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -555,7 +555,7 @@ int snd_usb_create_quirk(struct snd_usb_audio *chip,
+ static int snd_usb_extigy_boot_quirk(struct usb_device *dev, struct usb_interface *intf)
+ {
+ 	struct usb_host_config *config = dev->actconfig;
+-	struct usb_device_descriptor new_device_descriptor;
++	struct usb_device_descriptor *new_device_descriptor __free(kfree) = NULL;
+ 	int err;
+ 
+ 	if (le16_to_cpu(get_cfg_desc(config)->wTotalLength) == EXTIGY_FIRMWARE_SIZE_OLD ||
+@@ -566,15 +566,19 @@ static int snd_usb_extigy_boot_quirk(struct usb_device *dev, struct usb_interfac
+ 				      0x10, 0x43, 0x0001, 0x000a, NULL, 0);
+ 		if (err < 0)
+ 			dev_dbg(&dev->dev, "error sending boot message: %d\n", err);
++
++		new_device_descriptor = kmalloc(sizeof(*new_device_descriptor), GFP_KERNEL);
++		if (!new_device_descriptor)
++			return -ENOMEM;
+ 		err = usb_get_descriptor(dev, USB_DT_DEVICE, 0,
+-				&new_device_descriptor, sizeof(new_device_descriptor));
++				new_device_descriptor, sizeof(*new_device_descriptor));
+ 		if (err < 0)
+ 			dev_dbg(&dev->dev, "error usb_get_descriptor: %d\n", err);
+-		if (new_device_descriptor.bNumConfigurations > dev->descriptor.bNumConfigurations)
++		if (new_device_descriptor->bNumConfigurations > dev->descriptor.bNumConfigurations)
+ 			dev_dbg(&dev->dev, "error too large bNumConfigurations: %d\n",
+-				new_device_descriptor.bNumConfigurations);
++				new_device_descriptor->bNumConfigurations);
+ 		else
+-			memcpy(&dev->descriptor, &new_device_descriptor, sizeof(dev->descriptor));
++			memcpy(&dev->descriptor, new_device_descriptor, sizeof(dev->descriptor));
+ 		err = usb_reset_configuration(dev);
+ 		if (err < 0)
+ 			dev_dbg(&dev->dev, "error usb_reset_configuration: %d\n", err);
+@@ -906,7 +910,7 @@ static void mbox2_setup_48_24_magic(struct usb_device *dev)
+ static int snd_usb_mbox2_boot_quirk(struct usb_device *dev)
+ {
+ 	struct usb_host_config *config = dev->actconfig;
+-	struct usb_device_descriptor new_device_descriptor;
++	struct usb_device_descriptor *new_device_descriptor __free(kfree) = NULL;
+ 	int err;
+ 	u8 bootresponse[0x12];
+ 	int fwsize;
+@@ -941,15 +945,19 @@ static int snd_usb_mbox2_boot_quirk(struct usb_device *dev)
+ 
+ 	dev_dbg(&dev->dev, "device initialised!\n");
+ 
++	new_device_descriptor = kmalloc(sizeof(*new_device_descriptor), GFP_KERNEL);
++	if (!new_device_descriptor)
++		return -ENOMEM;
++
+ 	err = usb_get_descriptor(dev, USB_DT_DEVICE, 0,
+-		&new_device_descriptor, sizeof(new_device_descriptor));
++		new_device_descriptor, sizeof(*new_device_descriptor));
+ 	if (err < 0)
+ 		dev_dbg(&dev->dev, "error usb_get_descriptor: %d\n", err);
+-	if (new_device_descriptor.bNumConfigurations > dev->descriptor.bNumConfigurations)
++	if (new_device_descriptor->bNumConfigurations > dev->descriptor.bNumConfigurations)
+ 		dev_dbg(&dev->dev, "error too large bNumConfigurations: %d\n",
+-			new_device_descriptor.bNumConfigurations);
++			new_device_descriptor->bNumConfigurations);
+ 	else
+-		memcpy(&dev->descriptor, &new_device_descriptor, sizeof(dev->descriptor));
++		memcpy(&dev->descriptor, new_device_descriptor, sizeof(dev->descriptor));
+ 
+ 	err = usb_reset_configuration(dev);
+ 	if (err < 0)
+@@ -1259,7 +1267,7 @@ static void mbox3_setup_defaults(struct usb_device *dev)
+ static int snd_usb_mbox3_boot_quirk(struct usb_device *dev)
+ {
+ 	struct usb_host_config *config = dev->actconfig;
+-	struct usb_device_descriptor new_device_descriptor;
++	struct usb_device_descriptor *new_device_descriptor __free(kfree) = NULL;
+ 	int err;
+ 	int descriptor_size;
+ 
+@@ -1272,15 +1280,19 @@ static int snd_usb_mbox3_boot_quirk(struct usb_device *dev)
+ 
+ 	dev_dbg(&dev->dev, "MBOX3: device initialised!\n");
+ 
++	new_device_descriptor = kmalloc(sizeof(*new_device_descriptor), GFP_KERNEL);
++	if (!new_device_descriptor)
++		return -ENOMEM;
++
+ 	err = usb_get_descriptor(dev, USB_DT_DEVICE, 0,
+-		&new_device_descriptor, sizeof(new_device_descriptor));
++		new_device_descriptor, sizeof(*new_device_descriptor));
+ 	if (err < 0)
+ 		dev_dbg(&dev->dev, "MBOX3: error usb_get_descriptor: %d\n", err);
+-	if (new_device_descriptor.bNumConfigurations > dev->descriptor.bNumConfigurations)
++	if (new_device_descriptor->bNumConfigurations > dev->descriptor.bNumConfigurations)
+ 		dev_dbg(&dev->dev, "MBOX3: error too large bNumConfigurations: %d\n",
+-			new_device_descriptor.bNumConfigurations);
++			new_device_descriptor->bNumConfigurations);
+ 	else
+-		memcpy(&dev->descriptor, &new_device_descriptor, sizeof(dev->descriptor));
++		memcpy(&dev->descriptor, new_device_descriptor, sizeof(dev->descriptor));
+ 
+ 	err = usb_reset_configuration(dev);
+ 	if (err < 0)
+-- 
+2.45.2
 
-Hope this dt-binding i can conclude somewhere by seeking answer from 
-other IP core owners within qualcomm.
->>   >
->> IP blocks like SE can be shared. Here we are talking about I2C sharing.
->> In future it can be SPI sharing. But design wise it fits better to add
->> flag per SE node. Same we shall be adding for SPI too in future.
-> 
-> 
-> How flag per SE node is relevant? I did not ask to move the property.
-> 
->>
->> Please let me know your further suggestions.
-> We do not talk about I2C or SPI here only. We talk about entire SoC.
-> Since beginning. Find other patch proposals and align with rest of
-> Qualcomm developers so that you come with only one definition for this
-> feature/characteristic. Or do you want to say that I am free to NAK all
-> further properties duplicating this one?
-> 
-> Please confirm that you Qualcomm engineers understand the last statement
-> and that every block will use se-shared, even if we speak about UFS for
-> example.
-This UFS word atleast makes me understand and gave me clarity that i 
-need to talk to different IP owners within qualcomm and get an agreement 
-for my i2c feature. I am not sure if there exist an usecase the way we 
-are sharing for i2c. Also i don't know how we can make similar 
-description if different cores and functionality are different.  If you 
-have heard from any other IP core, please keep some usecases/IP names.
-
-Since This demands internal discussion, so give me time to conclude how 
-the IPs are shared and is it the similar to what i have developed here 
-for I2C. (sorry that so far i was in context to my SE protocols/ IPs only).
-> 
-> Best regards,
-> Krzysztof
 
