@@ -1,190 +1,313 @@
-Return-Path: <linux-kernel+bounces-427761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFCF9E08EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F679E07BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:58:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDE6FB84F0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:49:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3F3CB85F3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DF520A5C1;
-	Mon,  2 Dec 2024 14:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF4A207A3E;
+	Mon,  2 Dec 2024 14:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="m8XNpNqg"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="K4XJfP9w"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D341B205E1A;
-	Mon,  2 Dec 2024 14:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733150273; cv=none; b=IlrfXjcJkVKwbDzqEWzCnnjt8Y12+TtPol8i7wCU/xLs6a9nqTr+doAa6L1ghG5tvoTR4etJzxY4HT/6rsLtQZ6/TWOB2tBnUprMxvSBUEPS9rHSn9zf2mClf6oBg9qt2owWnm4XRhSHYXbPQ8tcqFbz8UqsAcA/nzQ4ySFv3cE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733150273; c=relaxed/simple;
-	bh=GdWRBAvtrKxGMvv7J8kqBJ4ESCM0A2fi/MH/wlzjEJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BuuBgP63iuwGueu0Uvb0TiCIqC5cumIBvAb+v942Ys0C1Ad/MYNcVy8ZOEIdqVBfg9VC91OYnKfVyhtsmQOwuIp/k4/DPiI0oPYEspjoFkiqwlQyq1x8aQA1E7QNl3bAuNpLos/wCc/tjSIwmnEby65aMmOPQe/OrQyF4/mvLiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=m8XNpNqg; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.115] (pd9e59944.dip0.t-ipconnect.de [217.229.153.68])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 1B8912FC0073;
-	Mon,  2 Dec 2024 15:37:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1733150261;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m1hG54e5AGZe7r71oY+MTrcsCSAYBgIyew9PDcTZvf0=;
-	b=m8XNpNqggjfavXSBVtYLxppcCzpoIAzM9tCc1UtQL2OkZPw4VBEQqvTPeWs8OUmnwmiFxx
-	5z0Fh+D9o3hfdJxPfYyo3jcEtvCw8b+AE36iUt/uTxKjbnrmVEte505s0iKYQskls/zoDN
-	9hZQ2SWEoLLleAeisf1ZSDsmumhHoHk=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <453e0df5-416b-476e-9629-c40534ecfb72@tuxedocomputers.com>
-Date: Mon, 2 Dec 2024 15:37:40 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFC2207A1C;
+	Mon,  2 Dec 2024 14:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733150561; cv=pass; b=oobdbVTAJGuC9Gj9y4C5O1OjrWwBdH7MJlRHOA2OqLt4wXZYizaDtDiVBRvgdQqmm5OZKiSYODrxJ4lJGfExXQXZIBJug2EjoPltBvm058ZXmGfMeshKkQMfWPiybiQu9s2kiVGAH/Zc5cGt9QbvAdqMw/jhDtJ4tXlbAaXPtXo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733150561; c=relaxed/simple;
+	bh=FKu2C5I4ZzzEZcVt0DYQa08NfShMuxDYJ69UNsolG6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NmTx45ISZWC20zybJwoRX2+cBYaOKELNKREgs4jeRO/Ni8df8ovfAMBhOc+HVgSrHcBIr+DZdqK8yC44HnTjIbzfnP26EWVUd6kvrKgG6hUkg4m/o6MlU0FKsotTEQC8XXo81UlPJ6/57BRkbShpoyaFzfYId0Mn+1Veexou9/g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=K4XJfP9w; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733150530; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kzIJqdKPHsE+h/I1bVb4WwROt1JmRDQXvovJ7VAW9HYw13UuMinvlVQrrnY4zOEUmwT8bbRFL4HFh77iOh9/jM61WSIBYwE0UREpblGiyujpifQRWAzBndKljiYjA1F2A8gL0GPQdZ/Po34+P4ebdMaZzhWeJByJxL22v9B0+cs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733150530; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=PyoyGOlmk+ezHmLvq5i2fa6R0sXOpfhduauleI3aZu8=; 
+	b=Qcg2qA+p3qls92P7rCygyJuLmklGFQCAWiOY61F57HlUGNi/+ZjA313BOhQhWTh1EGeVtX+wthDYPfbDuDuhNLxvkiMW59Hlm7f7ofdAfFokQfcZtmhpahwmVWC9aiTOw8c+j9lxvtGEvw+UFEhlcfnVPEVjIoY5yRN3X71Iu9U=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733150524;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=PyoyGOlmk+ezHmLvq5i2fa6R0sXOpfhduauleI3aZu8=;
+	b=K4XJfP9wymON87VKaDhOVYFPndiX+gggtIAZT25OJg5kf9wNwwMg4+d5DXK+BI1Z
+	FZclUN5/K3WKu0QNrto1pHFHpJCIJJUoR3YYIFsoSMJLLQsFJL/DHvGsZFhtWIee/Mx
+	K+pj353TTEL4R61UBpXWjzmjWSpPBpcLhQS9POjU=
+Received: by mx.zohomail.com with SMTPS id 1733150513461951.7229974767481;
+	Mon, 2 Dec 2024 06:41:53 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id B8AC010604CF; Mon, 02 Dec 2024 15:41:47 +0100 (CET)
+Date: Mon, 2 Dec 2024 15:41:47 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, rfoss@kernel.org, vkoul@kernel.org, 
+	cristian.ciocaltea@collabora.com, l.stach@pengutronix.de, andy.yan@rock-chips.com, 
+	hjc@rock-chips.com, algea.cao@rock-chips.com, kever.yang@rock-chips.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support
+ for eDP mode
+Message-ID: <abzu2chif2g3urxoqbm3gbe6cciexbmqvn44qezrx4hgllfkkn@7bzi5jl3stqe>
+References: <20241127075157.856029-1-damon.ding@rock-chips.com>
+ <2131853.KlZ2vcFHjT@diego>
+ <6e1f35c0-5ea8-414f-b3ea-4e7222c605ef@rock-chips.com>
+ <2886747.Y6S9NjorxK@diego>
+ <h4giob7bcrh7qmtepti6huym2llw4ujfmeff76vrgpahb5zy6x@dz6zghsifww5>
+ <2342f342-672c-447e-90d8-674b748af6a4@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/1] platform: x86: tuxi: Implement TUXEDO TUXI ACPI
- TFAN as thermal subsystem
-To: Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>,
- ilpo.jarvinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20241127112141.42920-1-wse@tuxedocomputers.com>
- <3530748f-4819-4a02-ae6c-c459952ba82f@gmx.de>
- <faf77fbd-ac09-4736-a31f-57f44800e067@redhat.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <faf77fbd-ac09-4736-a31f-57f44800e067@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6udmcollucmigcpf"
+Content-Disposition: inline
+In-Reply-To: <2342f342-672c-447e-90d8-674b748af6a4@rock-chips.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/233.118.59
+X-ZohoMailClient: External
 
-Hi Hans, hi Armin,
 
-Am 02.12.24 um 10:40 schrieb Hans de Goede:
-> Hi Armin, Werner,
->
-> On 1-Dec-24 6:58 PM, Armin Wolf wrote:
->> Am 27.11.24 um 12:21 schrieb Werner Sembach:
->>
->>> Hi,
->>>
->>> Following up to https://lore.kernel.org/all/172b7acd-4313-4924-bcbc-41b73b39ada0@tuxedocomputers.com/ and https://lore.kernel.org/all/f26d867e-f247-43bb-a78b-be0bce35c973@roeck-us.net/ I experimented with the thermal subsystem and these are my results so far, but I'm hitting a bit of a wall:
->>>
->>> As far as I can tell to implement "2. As long as GTMP is > 80°C fan speed must be at least 30%." I would need to add a new gevenor, lets call it "user_space_with_safeguards". I would be nice when the temp <-> fanspeed relation could be passed via the thermal_trip structure. And safeguarding the hardware from userspace only works when I can restrict userspace from just selecting the preexisting "user_space" govenor.
->>>
->>> So my ideas/questions:
->>> - Add a field "min_fanspeed_percent" to the thermal_trip struct that will only be used by the "user_space_with_safeguards" govenor
->>> - Add a "user_space_with_safeguards" govenor that is the same as the "user_space" govenor, but on trip, a minimum speed is applied
->>> - How can i ensure that on further speed updates the min speed is applied to? I could just implement it directly in the cdev, but that would be spagetti coding around the govenor.
->>> - Can I somehow restrict userspace from using certain govenors?
->>> - I'm a litte bit confused about the thermal zone "mode" sysfs switch, here it says deactivate for userspace control: https://elixir.bootlin.com/linux/v6.12/source/Documentation/ABI/testing/sysfs-class-thermal#L20, but what about the user_space govenor then?
->> Hi,
->>
->> i am having little experience with the thermal subsystem, but i suggest that policy decisions like "min_fanspeed_percent" should either:
->>
->> - come from the hardware/firmware itself
->> - come from userspace
->>
->> Effectively this driver tries to enforce a Tuxedo-specific policy that is not directly based on hardware limits. The book "Linux Device Drivers"
->> says:
->>
->>      "the role of a device driver is providing///mechanism/, not/policy/."
+--6udmcollucmigcpf
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support
+ for eDP mode
+MIME-Version: 1.0
 
-But it is a hardware limit, as the hardware will wear and might break if not run 
-within its limits.
+Hi,
 
-As this driver is for already released hardware, a firmware fix is not possible.
+On Mon, Dec 02, 2024 at 11:28:13AM +0800, Damon Ding wrote:
+> Hi,
+>=20
+> On 2024/12/2 6:59, Sebastian Reichel wrote:
+> > Hi,
+> >=20
+> > On Sat, Nov 30, 2024 at 09:25:12PM +0100, Heiko St=FCbner wrote:
+> > > Am Freitag, 29. November 2024, 03:43:57 CET schrieb Damon Ding:
+> > > > On 2024/11/27 19:04, Heiko St=FCbner wrote:
+> > > > > Am Mittwoch, 27. November 2024, 12:00:10 CET schrieb Damon Ding:
+> > > > > > On 2024/11/27 17:29, Heiko St=FCbner wrote:
+> > > > > > > Am Mittwoch, 27. November 2024, 08:51:51 CET schrieb Damon Di=
+ng:
+> > > > > > > > +static int rk_hdptx_phy_set_mode(struct phy *phy, enum phy=
+_mode mode,
+> > > > > > > > +				 int submode)
+> > > > > > > > +{
+> > > > > > > > +	return 0;
+> > > > > > > > +}
+> > > > > > > analogix_dp_phy_power_on
+> > > > > > > I think it might make sense to go the same way as the DCPHY a=
+nd also
+> > > > > > > naneng combophy, to use #phy-cells =3D 1 to select the phy-mo=
+de via DT .
+> > > > > > >=20
+> > > > > > > See [0] for Sebastians initial suggestion regarding the DC-PH=
+Y.
+> > > > > > > The naneng combophy already uses that scheme of mode-selectio=
+n too.
+> > > > > > >=20
+> > > > > > > There is of course the issue of backwards-compatibility, but =
+that can be
+> > > > > > > worked around in the binding with something like:
+> > > > > > >=20
+> > > > > > >     '#phy-cells':
+> > > > > > >        enum: [0, 1]
+> > > > > > >        description: |
+> > > > > > >          If #phy-cells is 0, PHY mode is set to PHY_TYPE_HDMI
+> > > > > > >          If #phy-cells is 1 mode is set in the PHY cells. Sup=
+ported modes are:
+> > > > > > >            - PHY_TYPE_HDMI
+> > > > > > >            - PHY_TYPE_DP
+> > > > > > >          See include/dt-bindings/phy/phy.h for constants.
+> > > > > > >=20
+> > > > > > > PHY_TYPE_HDMI needs to be added to include/dt-bindings/phy/ph=
+y.h
+> > > > > > > but PHY_TYPE_DP is already there.
+> > > > > > >=20
+> > > > > > > That way we would standardize on one form of accessing phy-ty=
+pes
+> > > > > > > on rk3588 :-) .
+> > > > > > >=20
+> > > > > > > Also see the Mediatek CSI rx phy doing this too already [1]
+> > > > > > >=20
+> > > > > > >=20
+> > > > > > > Heiko
+> > > > > > >=20
+> > > > > > > [0] https://lore.kernel.org/linux-rockchip/udad4qf3o7kt45nuz6=
+gxsvsmprh4rnyfxfogopmih6ucznizih@7oj2jrnlfonz/
+> > > > > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/=
+linux.git/tree/Documentation/devicetree/bindings/phy/mediatek,mt8365-csi-rx=
+=2Eyaml
+> > > > > > >=20
+> > > > > >=20
+> > > > > > It is really a nice way to separate HDMI and DP modes.
+> > > >=20
+> > > > I apologize for reopening the discussion about the phy-types settin=
+g.
+> > >=20
+> > > there is definitly no need to apologize. We're trying to find the best
+> > > solution afterall :-) .
+> > >=20
+> > > > With the .set_mode() of struct phy_ops, the HDMI and eDP dynamic
+> > > > switching can be achieved, which just depends on the right setting =
+of
+> > > > enum phy_mode in include/linux/phy/phy.h. So the previous way of
+> > > > configuring phy mode may be also good.
+> > >=20
+> > > I think the deciding factor is, is there a use-case for needing to sw=
+itch
+> > > modes at runtime.
+> > >=20
+> > > I do think the mode for the dc-phy and also the hdptx-phy is pretty m=
+uch
+> > > decided by the board design.
+> > >=20
+> > > I.e. when you end up in a DP-connector (or eDP-panel) on your board y=
+ou
+> > > need DP mode, and when you end up in a hdmi-connector you need the
+> > > HDMI phy mode.
+> > >=20
+> > > So I think the phy-mode for the hdptx-phy is largely dictated by the =
+static
+> > > board definition (like devicetree), hence going with the dt-argument =
+for
+> > > the mode.
+> > >=20
+> > > Like similar to the Naneng combophy, selecting its mode via argument
+> > > because deciding if it ends up in a sata port is a board-design thing.
+> > >=20
+> > > Is there a use-case where you need to switch at runtime between
+> > > HDMI and eDP? Like starting the phy in eDP mode but then needing
+> > > to switch to HDMI mode, while the device is running?
+>=20
+> Indeed, we have the board as you described, on which the DP-connector and
+> HDMI-connector both have been configured.
+>=20
+> And the dynamic switching is more useful for RK3576, which has the same
+> eDP/HDMI design as RK3588 but only one eDP controller/HDMI controller/HDP=
+TX
+> phy. We can only enable both of eDP/HDMI by this way.
+>=20
+> >=20
+> > I believe the eDP controller can only use the PHY in eDP mode and
+> > the HDMI controller can only use it in HDMI mode. So in order to
+> > support runtime switching, the following options are possible:
+> >=20
+> > 1. Enable both controllers, the PHY decides which one is really
+> >     used, the other one is basically a non-functional dummy device
+> >     until the PHY is reconfigured. This requires the set_mode()
+> >     callback, since the HDMI and eDP drivers both expect their
+> >     PHY to be enabled.
+> >=20
+> > 2. Properly enable / disable the used controller, so that only one
+> >     controller is active at the same time. In this case the switching
+> >     is handled one layer above and the PHY has nothing to do with it.
+> >     The phy_enable call from each controller would just set it up in
+> >     the right mode.
+> >=20
+> > I guess option 1 is the hacked solution, which is easier to
+> > implement as DRM's hotplug abilities are quite limited at the moment
+> > as far as I know. I think the second solution looks much cleaner and
+> > should be prefered for upstream. That solution does not require
+> > calling set_mode() for runtime switching making this whole argument
+> > void :)
+> >=20
+>=20
+> Your friendly and detailed analysis has brought me some valuable insights.
+> :)
+>=20
+> The option 2 is really a better way to support the dynamic switching, and=
+ we
+> still need the .set_mode() to select the configurations for either eDP or
+> HDMI in HDPTX phy at the controller level. Would you mind
+> elaborating on the useful way to choose the phy mode for the second
+> solution?
 
->>
->> Furthermore:
->>
->>      "When/writing/ drivers, a programmer should pay particular attention to this fundamental concept: write kernel code to access the hardware,
->>       but don't force particular policies on the user, since different users have different needs. The driver should deal with making the hardware
->>       available, leaving all the issues about/how/ to use the hardware to the applications. A driver, then, is flexible if it offers access to the
->>       hardware capabilities without adding constraints."
->>
->> The issue is that the Tuxedo-specific policy is not directly connected with the hardware. Some hardware might need a bigger minimum fan speed than
->> other hardware for example.
+The xlate function to handle the arguments is called when the PHY
+device is looked up. So the devm_phy_get(dp->dev, "dp") call in
+analogix_dp_probe() would setup the PHY in DP mode.
 
-Currently this driver is for exactly 2 TUXEDO devices (Sirius 16 gen 1 & 2).
+Similarily the call to devm_of_phy_get_by_index() in
+dw_hdmi_qp_rockchip_bind() would set the PHY in HDMI mode.
 
-Future devices can have different limits provided by the ACPI or a list in the 
-driver.
+So the PHY mode is correct as long as only one controller driver
+is bound at the same time.
 
->>
->> The hardware (or rather firmware in this case) should communicate those constraints to the linux driver so that we do not need to rely on random
->> temperatures for hardware protection.
-But then the driver still needs to enforce them.
->>
->> This ACPI interface however basically provides us with a hwmon interface and Tuxedo now wants the kernel to enforce their policy on it. I suspect that
->> happens for warranty reasons, right?
+Greetings,
 
-The ACPI interface is only present on TUXEDO devices (TUXI stands for TUXEDO 
-Interface and TFAN for TUXEDO FAN). And we want the policy for the devices to 
-live longer, not only for warranty.
+-- Sebastian
 
-TUXI meant as a simple getter and setter interface for the EC. We don't have 
-access to the EC firmware source so more complex stuff needs to be done 
-somewhere else, i.e. the driver.
+> > FWIW I think the DT argument based mode setting and the runtime set_mode
+> > are not necessarily mutual exclusive. In theory one could support both
+> > and adding set_mode support later does not change any ABI as far as
+> > I can see. Basically handle it like pin mux/configuration settings,
+> > which are usually automatically handled by the device core based on
+> > DT information, except for some drivers which have special needs.
+> >=20
+>=20
+> > > > And other phys may want to support dynamic switching too, like the
+> > > > Rockchip USBDP combo phy.
+> > >=20
+> > > I guess USBDP is special in that in also does both modes dynamical
+> > > depending on its use (like type-c with option DP altmode)
+> >=20
+> > The USBDP PHY is indeed quite different from the PHYs in your list
+> > above, but for a different reason: All the combined PHYs you listed
+> > above only support one mode at the same time. E.g. you need to
+> > decide between PCIe, SATA and USB3 mode for the Naneng combophy.
+> >=20
+> > For the USBDP PHY the modes are not mutually exclusive. The USB
+> > controller can request the USBDP PHY in USB mode at the same time
+> > as the DP controller requests it in DP mode. Some additional
+> > registers configure how the lanes are being muxed. A typcial setup
+> > would be 2 lanes for USB3 and 2 lanes for DP.
+> >=20
+> > Greetings,
+> >=20
+> > -- Sebastian
+>=20
+> Best regards,
+> Damon
+>=20
 
->>
->> Maybe there is a way to enforce this policy through userspace applications?
-That's no enforcement as userspace can just write the sysfs directly.
-> An important role of device-drivers is also to avoid driving hardware outside
-> its valid specifications. E.g. charger drivers in the power_supply subsystem
-> have constant_charge_current and constant_charge_voltage settings which
-> give a max charging speed in Amperes and a max charging Voltage (typically
-> 4.2V for single Li-xxx cell batteries).
->
-> Setting these too high can be very dangerous leading to batteries catching
-> fire / exploding. so naturally the drivers also have and enforce
-> constant_charge_current_max and constant_charge_voltage_max sysfs attributes
-> and the values there do not reflect the maximum what the charger-chip can
-> handle, but the maximum which the manufacturer has specified for the battery.
->
-> This info can e.g. come from devicetree but if not present then the values
-> applied by the firmware at boot should be read back and used not only
-> as active, but also as max values.
->
-> I believe what Werner wants is pretty much the same thing, allow userspace
-> to provide its own fan management, but have the kernel monitor the temperature
-> and if the temperature goes say above 80° Celsius, enforce a min fan-speed of
-> 30% and at 90° enforce a fan-speed of say 70%.
->
-> Yes the exact values are a for of policy, but this is a policy to protect
-> hw from getting damaged and as such is fine to have in the kernel.
->
-> As for how to implement this with the thermal subsystem (which indeed looks
-> like it might be the way to go) I'm not familiar enough with the thermal
-> subsystem either.
->
-> Werner, I suggest that you send an email to the thermal subsystem maintainers
-> and ask them about this. It would be good to start with explaining your
-> problem before asking the questions. I would leave out details about the ACPI
-> interface. Just say you have a temp-sensor + pwm to control fan speed combination
-> where you want to allow userspace control while having the kernel monitor
-> things and have the kernel overriding userspace's fan speed setting when
-> things get too hot, to deal with e.g. the userspace process crashing at
-> a low fan speed setting.
-Ack
->
-> Regards,
->
-> Hans
->
-Best regards,
+--6udmcollucmigcpf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Werner
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdNxyUACgkQ2O7X88g7
++ppNBg/+OodeJz9zzOuukrua6cpAm7TmVJxnPSs0TMsHKsY+ZHlUpFvLBzCgtOJT
+0Uzs1ae7DnwwOaZjqhm9eRjx3at63sy7LMSKl0LWb1wHMyr9Gg0yLouhvRj9O8NT
+3G9ZgGLK2IfhL5y5e0MQhBVDD8Ib/Q5OS5qzhxfQA9fKPpkji0NnJHVfiEDJzDTp
+vUxKZi635aPI/2FbsEMbiMgeItxHF1HyOSuccBhvA342l1R9bB5IXoK41rTKZQ3d
+9NsUpvB7KN62oDfLC6iZit0/fZzy4eH1iv9zEAGrA18h9E42EHVOJFey8OMRVBX+
+dL++z1draffk+MzsL+T5pnMvumqZdoHIgFp6avMxSgC9ppOYjPXNZ4JUJYNA6u3Z
+oivDNCr0z960fsI9ynZNXr9aS2u5eXPRVJfOL9WRic9AWpdscrAonBYFZJ1eUeeU
+C9dxORl8uWri/K6FUXc9SWWSVq34eY+DiRT8rOviH4ridpH0M71Dzpw8GfabWvjT
+z5233amu9arUqf5O6vySvqmwB7TvcXyzAZSJ2XYieHvDsuUEwoebAEl2WdFcwgFJ
+97TNcxCCGE0xJNzZ6QsQTCDKHA4DMza1ioo8YWGRuZEqwphpMZY7GapSUWXCVNGG
+L3RpcHdmehiyNg7ikKc2P8U3EU/3MBL8B9Qi2WV4Ufc+DIhmlfA=
+=Oin5
+-----END PGP SIGNATURE-----
+
+--6udmcollucmigcpf--
 
