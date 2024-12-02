@@ -1,180 +1,278 @@
-Return-Path: <linux-kernel+bounces-427783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF179E082E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:16:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22EA9E083F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F45BB37E88
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:55:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 189C6BA0760
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4A2205E2F;
-	Mon,  2 Dec 2024 14:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57C820A5DB;
+	Mon,  2 Dec 2024 14:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="EjT+TdmT"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="HtKgSdgl"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B88B202F76;
-	Mon,  2 Dec 2024 14:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733150940; cv=pass; b=I5kf/6Eucxjqx+HaQc7N8rdZCnnrs+dBsy09rzzjTR8A3nqgEcSk57oYaoAIFpTPw9XSaQSX0euy1uCCamr1aSNZwmqMHC6SYho4WiEdjGfJffY9Yhwwtz7A29LqDFiZaplkO6KsynTjnQjLtmFYXRVDf7OrPeRalq7Yb0Lw080=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733150940; c=relaxed/simple;
-	bh=H5hPZUx0N71wjzwU9sPZ5euypkFPFfdruoNx7QEtSNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBPAY/vr0pCY281KWBrm5a6D+WDryZ6etbuZJPeKb3SepB7FeWySZFeHkZL2++bvFbM13xr1kvMK+zzxBQD32qJuhOrDxLgUuDKQKV46uXVbUTN0vsM/g3Z4P64i9ExH7sggk/hKNmgRlX/mfZTX02fx1cVFhYmuZkxMwaxhuRg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=EjT+TdmT; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4Y269f5q4yzySM;
-	Mon,  2 Dec 2024 16:48:54 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1733150934;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5185C207A2D;
+	Mon,  2 Dec 2024 14:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733151095; cv=none; b=deSrUmzwlJVKy7g8eNl3lQiy/hn8QEO1ZKEuKcQwO7hrjpN4XNPU+WUHKaejBOUdh4116WWonIWA3XE+SvEcOGKUN24vXnKMCfEv95nqLWmVMM5nBAyjb24BLc1PV/2Fa2dKK84gN+96ny+eoFHLbeya/9NdU+2PmLk8Sl6mSJw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733151095; c=relaxed/simple;
+	bh=fYVA75+QIWZ9avuk8cg5K4ABDRdncf1y9HWL9Cd47jA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u/3laXUFwteKFfhm1BK3wNvSmg+EbuL83FgL2m0KYMyrg+y9IZD1+EHWTUDwema39Cgf2mnDG0HYmm90XH2qnRLAXrI5agMyQwuC7GJKouwJLidKJC35i3eNsBOMew0Bn81WGi2+o3CRT4/yYLlBybep5V8gQP3t5iO2/yAcqoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=HtKgSdgl; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E0A1C240004;
+	Mon,  2 Dec 2024 14:51:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1733151090;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hk+EnLsdF6+gCNcJg34JWRmKv0bJbT4GQLbay5GUXCM=;
-	b=EjT+TdmTB65VfYr1N8VF21Cuux7iblf+AVKZWC2K/0hLzlV/uwny7krPzHMwjhHqE38DCX
-	UtuXyFqC1krTAmBJwmnR5/wtWIWxkcmWDTbVEeDANIoVZ+WwhDusBwADXqT3QEn7QU98h7
-	irYdWYB5yx3Q9vqmh+H4Nj3THne5P+U=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1733150934; a=rsa-sha256; cv=none;
-	b=RP9fa6Sw2GpoYb65medWDIAWOZ6H5zqtZSqAQIYHUmjuHZNSFIs4iRCGRTjv8zBdIbEFCt
-	sZ7pS1EcoMybq4A90b3UXJu+t4v4vLygD7zwCWKQx1Nkeu73Nqz2fwAGTMaiSxDkkV/7KK
-	Ybbjpk09nZKMpHUnWzxhHvmuled2/IQ=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1733150934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hk+EnLsdF6+gCNcJg34JWRmKv0bJbT4GQLbay5GUXCM=;
-	b=Bx758vUXToUiTuOXeZKqnPHXTfb3vXOhIQs6BEsIi65iOU4k95oWux/AwOLRclS9LfxziT
-	fJifoLevnMvAwtOsFKCmuLmZj/q0fMiuB+d/gxoM8PNDhNfK11jaAevfPEj9S9H/3bAnzf
-	gAnartX0fmjFJ2iZMSU60DfMPVgqFmo=
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 6E4B3634C94;
-	Mon,  2 Dec 2024 16:48:53 +0200 (EET)
-Date: Mon, 2 Dec 2024 14:48:53 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] docs: media: profile: make it clearer about
- maintainership duties
-Message-ID: <Z03I1R0aRylSz742@valkosipuli.retiisi.eu>
-References: <cover.1733131405.git.mchehab+huawei@kernel.org>
- <f47082a84e0c799dd047525d4bc351eb3a759e83.1733131405.git.mchehab+huawei@kernel.org>
+	bh=PFsFZ/LC1ywDQQ48I+F5Vf/kI0MXA9IAqdb786Sr6sg=;
+	b=HtKgSdgld/sMAU0TMWUVxXmACiP7N9GfW0Of1BRbGbzSS34g7jK7v3IRmCtuyNJee1/5HZ
+	gss0bFi710U8ue5UMMbMVH9oTlIPtwa+D2lwSLa/iUnMvj7COzb/aHgMzgTBn9musCQYwB
+	IqigDcYsGj4ZSkMSDijic+gT4Lv1CYvOCnDi9J58b5Qbu+RPsvO+W09ygTXq/tzVEL8go1
+	FC9jk5pS2G2q1RBN8FrdW7F0+yowMY0U53HJwT8P3Qu+v2oYZPv4e2BY79PBw91WMQrBJS
+	+991f5x2FfBDHgCvlKbSvj9Z1TlSkWgNEY2VT0Bu6aNLP9uHGQ47T3ntEhlcvQ==
+Message-ID: <9dc5b470-fd98-4ce0-9196-089635c8852a@yoseli.org>
+Date: Mon, 2 Dec 2024 15:51:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f47082a84e0c799dd047525d4bc351eb3a759e83.1733131405.git.mchehab+huawei@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] arch: m68k: Add STACKTRACE support
+To: Greg Ungerer <gerg@linux-m68k.org>, linux-m68k@lists.linux-m68k.org
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ rostedt@goodmis.org, Michael Schmitz <schmitzmic@gmail.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <20241021-add-m68k-tracing-support-v1-2-0883d704525b@yoseli.org>
+ <501c04d7-1a7d-4000-a948-e9effb281a05@yoseli.org>
+ <a2efe6f7-4bfe-468b-9512-c60f646281b1@linux-m68k.org>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <a2efe6f7-4bfe-468b-9512-c60f646281b1@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-Hi Mauro,
+Hi Greg,
 
-On Mon, Dec 02, 2024 at 10:26:21AM +0100, Mauro Carvalho Chehab wrote:
-> During the review of the media committes profile, it was noticed
-
-s/committe\K/r/
-
-> that the responsibility for timely review patches was not clear:
-> such review is expected that all developers listed at MAINTAINERS
-> with the "M:" tag (e.g. "maintainers" on its broad sense).
+On 02/12/2024 15:41, Greg Ungerer wrote:
+> Hi JM,
 > 
-> This is orthogonal of being a media committer or not. Such duty
-> is implied at:
+> On 27/11/24 21:26, Jean-Michel Hautbois wrote:
+>> Hi there,
+>>
+>> On 21/10/2024 11:44, Jean-Michel Hautbois wrote:
+>>> In order to use tracing, implement a basic arch_stack_walk() based on
+>>> the one in PowerPC.
+>>> Tested on a M54418 coldfire.
+>>
+>> Well, I said it was tested, but it was only compile tested basically.
+>> AFAICT now, I think it is not working as when I use wakeup_rt as a 
+>> tracer, I don't have the stack trace:
+>>
+>> # wakeup_rt latency trace v1.1.5 on 6.12.0-10380-gb66f06337b66-dirty
+>> # --------------------------------------------------------------------
+>> # latency: 2000 us, #18/18, CPU#0 | (M:preempt VP:0, KP:0, SP:0 HP:0)
+>> #    -----------------
+>> #    | task: irq/100-enet-fe-118 (uid:0 nice:0 policy:1 rt_prio:50)
+>> #    -----------------
+>> #
+>> #                    _------=> CPU#
+>> #                   / _-----=> irqs-off/BH-disabled
+>> #                  | / _----=> need-resched
+>> #                  || / _---=> hardirq/softirq
+>> #                  ||| / _--=> preempt-depth
+>> #                  |||| / _-=> migrate-disable
+>> #                  ||||| /     delay
+>> #  cmd     pid     |||||| time  |   caller
+>> #     \   /        ||||||  \    |    /
+>> kworker/-11        0dnh5.    0us :       11:120:R   + [000]      22: 
+>> 98:R irq_work/0
+>> kworker/-11        0dnh5.    0us : <stack trace>
+>> kworker/-11        0dnh5.    0us : 0
+>> kworker/-11        0d..3.    0us : __schedule
+>> kworker/-11        0d..3.    0us :       11:120:R ==> [000]      22: 
+>> 98:R irq_work/0
+>> kworker/-11        0d..3.    0us : <stack trace>
+>>   telnetd-229       0Dnh4.    0us :      229:120:R   + [000]     118: 
+>> 49:R irq/100-enet-fe
+>>   telnetd-229       0Dnh4.    0us : <stack trace>
+>>   telnetd-229       0Dnh4.    0us : 0
+>>   telnetd-229       0D..3.    0us : __schedule
+>>   telnetd-229       0D..3.    0us :      229:120:R ==> [000]     118: 
+>> 49:R irq/100-enet-fe
+>>   telnetd-229       0D..3.    0us : <stack trace>
+>>   telnetd-229       0dn.5.    0us :      229:120:R   + [000]     118: 
+>> 49:R irq/100-enet-fe
+>>   telnetd-229       0dn.5.    0us : <stack trace>
+>>   telnetd-229       0dn.5.    0us#: 0
+>>   telnetd-229       0d..3. 2000us : __schedule
+>>   telnetd-229       0d..3. 2000us :      229:120:R ==> [000]     118: 
+>> 49:R irq/100-enet-fe
+>>   telnetd-229       0d..3. 2000us : <stack trace>
+>>
+>> Geert, Greg, and maybe other highly skilled m68k people, could you 
+>> please help me with this particular function :-) ?
+>>
+>> Thanks !
+>> JM
+>>
+>>>
+>>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+>>> ---
+>>>   arch/m68k/Kconfig             |  5 ++++
+>>>   arch/m68k/kernel/Makefile     |  1 +
+>>>   arch/m68k/kernel/stacktrace.c | 70 ++++++++++++++++++++++++++++++++ 
+>>> +++++++++++
+>>>   3 files changed, 76 insertions(+)
+>>>
+>>> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+>>> index 
+>>> ab3375475721fa63418c40d4ba6ac76679ebc77d..7142f9759181a90269ae1ba9e682d331ee2ddbf6 100644
+>>> --- a/arch/m68k/Kconfig
+>>> +++ b/arch/m68k/Kconfig
+>>> @@ -40,6 +40,7 @@ config M68K
+>>>       select UACCESS_MEMCPY if !MMU
+>>>       select ZONE_DMA
+>>>       select TRACE_IRQFLAGS_SUPPORT
+>>> +    select ARCH_STACKWALK
+>>>   config CPU_BIG_ENDIAN
+>>>       def_bool y
+>>> @@ -107,6 +108,10 @@ config BOOTINFO_PROC
+>>>         Say Y to export the bootinfo used to boot the kernel in a
+>>>         "bootinfo" file in procfs.  This is useful with kexec.
+>>> +config STACKTRACE_SUPPORT
+>>> +    bool
+>>> +    default y
+>>> +
+>>>   menu "Platform setup"
+>>>   source "arch/m68k/Kconfig.cpu"
+>>> diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
+>>> index 
+>>> f335bf3268a108a45bab079fbf0a1c8ead9beb71..4efe92af0b711b19cb1d5129f74e67a739e289b1 100644
+>>> --- a/arch/m68k/kernel/Makefile
+>>> +++ b/arch/m68k/kernel/Makefile
+>>> @@ -31,3 +31,4 @@ obj-$(CONFIG_UBOOT)        += uboot.o
+>>>   obj-$(CONFIG_EARLY_PRINTK)    += early_printk.o
+>>> +obj-y    += stacktrace.o
+>>> diff --git a/arch/m68k/kernel/stacktrace.c b/arch/m68k/kernel/ 
+>>> stacktrace.c
+>>> new file mode 100644
+>>> index 
+>>> 0000000000000000000000000000000000000000..06c7459373bd25b3bb3540cfe2a909259c1db3ce
+>>> --- /dev/null
+>>> +++ b/arch/m68k/kernel/stacktrace.c
+>>> @@ -0,0 +1,70 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +/*
+>>> + * Stack trace utility functions etc.
+>>> + *
+>>> + * Copyright 2024 Jean-Michel Hautbois, Yoseli SAS.
+>>> + */
+>>> +
+>>> +#include <asm/current.h>
+>>> +#include <asm/ptrace.h>
+>>> +#include <linux/sched.h>
+>>> +#include <linux/sched/task_stack.h>
+>>> +#include <linux/stacktrace.h>
+>>> +
+>>> +static inline unsigned long current_stack_frame(void)
+>>> +{
+>>> +    unsigned long sp;
+>>> +
+>>> +    asm volatile("movl %%sp, %0" : "=r"(sp));
+>>> +    return sp;
+>>> +}
 > 
-> 	Documentation/admin-guide/reporting-issues.rst
+> If I am understanding what this is intended to do then this is probably 
+> not right.
+> This will be returning the current stack pointer, which will almost 
+> certainly not
+> be the current stack frame pointer. This will be the top of stack at the 
+> call site,
+> which will be after the pushed locals and saved registers at the very 
+> least for m68k.
 > 
-> and at the MAINTAINERS header, when it says that even when the
-> status is "odd fixes", the patches will flow in.
+> Does your kernel config have CONFIG_FRAME_POINTER enabled?
+> The default for m68k is usually disabled. Without this there won't be a
+> chain of frame pointers to follow like the code is trying to do below in
+> arch_stack_walk().
+
+Thanks, I added the frame pointers support (select 
+ARCH_WANT_FRAME_POINTERS) but this is not better.
+
+> Regards
+> Greg
 > 
-> So, let make it explicit at the maintainer-entry-profile that
-> maintainers need to do timely reviews.
 > 
-> Also, while right now our focus is on granting committer rights to
-> maintainers, the media-committer model may evolve in the future to
-> accept other committers that don't have such duties.
-> 
-> So, make it clear at the media-committer.rst that the duties
-> related to reviewing patches from others are for the drivers
-> they are maintainers as well.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  Documentation/driver-api/media/maintainer-entry-profile.rst | 5 +++++
->  Documentation/driver-api/media/media-committer.rst          | 6 +++---
->  2 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
-> index 705209eacf58..50568c744129 100644
-> --- a/Documentation/driver-api/media/maintainer-entry-profile.rst
-> +++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
-> @@ -153,6 +153,11 @@ b. Committers' workflow: patches are handled by media committers::
->  On both workflows, all patches shall be properly reviewed at
->  linux-media@vger.kernel.org before being merged at media-committers.git.
->  
-> +Such patches will be timely-reviewed by developers listed as maintainers at
-> +the MAINTAINERS file. Such maintainers will follow one of the above
+>>> +static inline int validate_sp(unsigned long sp, struct task_struct 
+>>> *task)
+>>> +{
+>>> +    unsigned long stack_start, stack_end;
+>>> +
+>>> +    if (task == current)
+>>> +        stack_start = (unsigned long)task_stack_page(task);
+>>> +    else
+>>> +        stack_start = (unsigned long)task->thread.esp0;
+>>> +
+>>> +    stack_end = stack_start + THREAD_SIZE;
+>>> +
+>>> +    if (sp < stack_start || sp >= stack_end)
+>>> +        return 0;
+>>> +
+>>> +    return 1;
+>>> +}
+>>> +
+>>> +void __no_sanitize_address arch_stack_walk(stack_trace_consume_fn 
+>>> consume_entry, void *cookie,
+>>> +                       struct task_struct *task, struct pt_regs *regs)
+>>> +{
+>>> +    unsigned long sp;
+>>> +
+>>> +    if (regs && !consume_entry(cookie, regs->pc))
+>>> +        return;
+>>> +
+>>> +    if (regs)
+>>> +        sp = (unsigned long) regs;
+>>> +    else if (task == current)
+>>> +        sp = current_stack_frame();
+>>> +    else
+>>> +        sp = task->thread.ksp;
+>>> +
+>>> +    for (;;) {
+>>> +        unsigned long *stack = (unsigned long *) sp;
+>>> +        unsigned long newsp, ip;
+>>> +
+>>> +        if (!validate_sp(sp, task))
+>>> +            return;
+>>> +
+>>> +        newsp = stack[0];
+>>> +        ip = stack[1];
+>>> +
+>>> +        if (!consume_entry(cookie, ip))
+>>> +            return;
+>>> +
+>>> +        sp = newsp;
+>>> +    }
+>>> +}
+>>>
+>>
 
-I'd put this as:
-
-Such patches will be reviewed timely by the maintainers and reviewers as
-listed in the MAINTAINERS file.
-
-> +workflows, e. g. they will either send a pull request or merge patches
-> +directly at the media-committers tree.
-
-Can we expect people listed as maintainers to either send PRs or be media
-committers? I think this might be eventually the result but I think we're
-quite far from this currently and I expect things to remain that way in the
-near future.
-
-
-> +
->  When patches are picked by patchwork and when merged at media-committers,
->  CI bots will check for errors and may provide e-mail feedback about
->  patch problems. When this happens, the patch submitter must fix them, or
-> diff --git a/Documentation/driver-api/media/media-committer.rst b/Documentation/driver-api/media/media-committer.rst
-> index 3c2f8f413307..ec81f01db126 100644
-> --- a/Documentation/driver-api/media/media-committer.rst
-> +++ b/Documentation/driver-api/media/media-committer.rst
-> @@ -87,9 +87,9 @@ be delegating part of their maintenance tasks.
->  Due to that, to become a committer or a core committer, a consensus between
->  all subsystem maintainers is required, as they all need to trust a developer
->  well enough to be delegated the responsibility to maintain part of the code
-> -and to properly review patches from third parties, in a timely manner and
-> -keeping the status of the reviewed code at https://patchwork.linuxtv.org
-> -updated.
-> +and to properly review patches from third parties for the drivers they are
-> +maintainers in a timely manner and keeping the status of the reviewed code
-
-s/code/patches/
-
-> +at https://patchwork.linuxtv.org updated.
->  
->  .. Note::
->  
-
--- 
-Kind regards,
-
-Sakari Ailus
 
