@@ -1,80 +1,78 @@
-Return-Path: <linux-kernel+bounces-427343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D679DFFF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:17:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D1E9E00A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8414280626
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:17:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D7C3B24C56
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7658202F6E;
-	Mon,  2 Dec 2024 11:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4035A2040A0;
+	Mon,  2 Dec 2024 11:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IyhyTI7w";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9/JLB2no"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gW789VlX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XmX5smRs"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AEC20103D;
-	Mon,  2 Dec 2024 11:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DF11FDE17;
+	Mon,  2 Dec 2024 11:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733138062; cv=none; b=dvYxpKmUPUU2ihxBj8mFUj6HsA5Ey+h1XEhpY4rZVRrXAeMd6BDYezn1iEwBOU7EVKaGlcl0DqJRf5pwmJOvgOZJw1AkMLfZAwnrx40G0wQIrylUPuPYvgqVKVWCYVx7zIdl8uHg/YvX7/EVhD9l4NlWW8hm/x6rHDkBxFvdVz0=
+	t=1733138063; cv=none; b=mojm/oaNXMIHarFSuHIcw6YU5GicBcGtA24vfGcNipWn0gPO0VkrmTXd80wclQfoaNk+nuj8GMK0Np3ZgJ4rZlawGh7CgY3Tg4uv+A8Qz8M3BABeY8hRQjZMtItlY5EmorziMynj1r+tV9N13x2iOX328/wAKfKYEYSN6AAWobs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733138062; c=relaxed/simple;
-	bh=O5vaUCD0R7QHdzss/DFOQEmpckAtNuTS8fLe4beqpiE=;
+	s=arc-20240116; t=1733138063; c=relaxed/simple;
+	bh=N8CS/e4hTEFerWX7YMNUgaHHEid9DwGhUfx4QzOHHx0=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=VrZeTrcwlBlaIFIzfRI9Lf+07DWnI9kWe0eWvM6wwjNqiZBPVOXVcv54zoHbKAF/SrsMKKbQjIIOYF6Zecc5ZYan0rSQ6xP/ynFDaYJBcLT6/HsJcsAoQ8opiSUsZVinlznY2KtT+SD06780XGHM5Dr2r8iNmvlZ5X55gmVdZNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IyhyTI7w; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9/JLB2no; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=JuWfFNipgcl8q3cTAwtuV0QOFoJbEfJieJhjKACI0oLAyVGc4P2DwlXVSLABYLJCcD79X6gtFMmKhiLm3a/9slI86xSeM7WTcoVYVdXm1eCZ86hiQx8HmOypGhPOwZqQ0TyF7z69WfY/YRIIeLYmtdlbEATeLcMCWEH2flFqwf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gW789VlX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XmX5smRs; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 02 Dec 2024 11:14:18 -0000
+Date: Mon, 02 Dec 2024 11:14:19 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733138059;
+	s=2020; t=1733138060;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l0jw6uMwJDNNUDgw5ni8gpVQ4eon7jt4wpKLI29eZu4=;
-	b=IyhyTI7wUwuUeKb3afA/nDcXUtIUn66i4wvmj0Ho0McL3ajKjr/D1wGMBXffvBF/re09Pp
-	bZIo+fKZG4/RZClT/mYE8OcJTlARxMCO2ekMQObs3fmZz9+b2mWCGSyKPoeltNftWtE86H
-	bVLzVuDInN6/fQ1otvVMeBNsMYnKMAzEySOekBIHWddVqxtT9eFGUIapG89Qi4YSo+Ian8
-	e/g8UeANaYx4bprsAaojxPOhmOaPE+gY9E58EvYp6lT63XYgZBeOKemcE9hHtYAn/aQNmQ
-	JPrDqVrepxIVicyZSo4/Zc2Y7IN6VBxyDt5Of8mRdQkwq2LSeOW/mmhtH2V6KA==
+	bh=EcTIty4yJGBihpEnrNxqI20WM2uz0eVJyaAaSPMhIwI=;
+	b=gW789VlXW4Kcqv1di+3/sHEr6c+wTT3pv/A3lK0qAeH4GHjO8yQN5vO6RUb80Z8nyjO5Ez
+	Yt6BuYhQksPQDyjHYId1Gd3tDV5uKA+m3oIBLrTLyIKCVlzqPnlulCODYgadbjHAT0Mh8d
+	xAuM3T8nxYJVVrvGOcLNfcWsNooDMC2CbXQswTaR/1LB1xAqgxans2nOEmTsB4fjwOSwWd
+	C6SijS5XKzRZXJVb12Wf/so7aak/H4b/4jZR07GkpEJr857Ad7PHa3ScPech3/7U8yMNQE
+	30H5frAV5dN4Lq+GyYG6wBIp2aXrhaLBWSskgsSaoQDO0gSW6n5lVFe6piK/ew==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733138059;
+	s=2020e; t=1733138060;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l0jw6uMwJDNNUDgw5ni8gpVQ4eon7jt4wpKLI29eZu4=;
-	b=9/JLB2noj/+ef2swmNwo44lgTDW+i0XpA+8F27+klSdI+YinSPzzXiTQXKKGv0ttvvJf45
-	TWJSdjsWn2pHxSDQ==
-From: "tip-bot2 for K Prateek Nayak" <tip-bot2@linutronix.de>
+	bh=EcTIty4yJGBihpEnrNxqI20WM2uz0eVJyaAaSPMhIwI=;
+	b=XmX5smRsxxl7AEEXNhU+0T/L4dLCzuSYtQf/Iz/Fs4E9GiqHpaVJohrf4CRxIrCW/DBYy0
+	NAbeCW9jLfV7+KBg==
+From: "tip-bot2 for Dhananjay Ugwekar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] x86/topology: Introduce topology_logical_core_id()
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+Subject: [tip: perf/core] perf/x86/rapl: Remove the unused
+ get_rapl_pmu_cpumask() function
+Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Zhang Rui <rui.zhang@intel.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Oleksandr Natalenko <oleksandr@natalenko.name>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241115060805.447565-3-Dhananjay.Ugwekar@amd.com>
-References: <20241115060805.447565-3-Dhananjay.Ugwekar@amd.com>
+ Zhang Rui <rui.zhang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241115060805.447565-2-Dhananjay.Ugwekar@amd.com>
+References: <20241115060805.447565-2-Dhananjay.Ugwekar@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173313805852.412.8999350746579137537.tip-bot2@tip-bot2>
+Message-ID: <173313805916.412.5558253403944642615.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,99 +82,52 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     e4b444347795a1ecc083895582bc2e7f288a22e4
-Gitweb:        https://git.kernel.org/tip/e4b444347795a1ecc083895582bc2e7f288a22e4
-Author:        K Prateek Nayak <kprateek.nayak@amd.com>
-AuthorDate:    Fri, 15 Nov 2024 06:07:58 
+Commit-ID:     2f2db347071a8736c2adcdbf2658ce532e0afc0a
+Gitweb:        https://git.kernel.org/tip/2f2db347071a8736c2adcdbf2658ce532e0afc0a
+Author:        Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+AuthorDate:    Fri, 15 Nov 2024 06:07:57 
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 02 Dec 2024 12:01:35 +01:00
 
-x86/topology: Introduce topology_logical_core_id()
+perf/x86/rapl: Remove the unused get_rapl_pmu_cpumask() function
 
-On x86, topology_core_id() returns a unique core ID within the PKG
-domain. Looking at match_smt() suggests that a core ID just needs to be
-unique within a LLC domain. For use cases such as the core RAPL PMU,
-there exists a need for a unique core ID across the entire system with
-multiple PKG domains. Introduce topology_logical_core_id() to derive a
-unique core ID across the system.
+commit 9e9af8bbb5f9 ("perf/x86/rapl: Clean up cpumask and hotplug")
+removes the cpumask handling from rapl. Post that, we no longer need the
+get_rapl_pmu_cpumask() function. So remove it.
 
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Zhang Rui <rui.zhang@intel.com>
-Reviewed-by: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Link: https://lore.kernel.org/r/20241115060805.447565-3-Dhananjay.Ugwekar@amd.com
+Tested-by: Zhang Rui <rui.zhang@intel.com>
+Link: https://lore.kernel.org/r/20241115060805.447565-2-Dhananjay.Ugwekar@amd.com
 ---
- Documentation/arch/x86/topology.rst   | 4 ++++
- arch/x86/include/asm/processor.h      | 1 +
- arch/x86/include/asm/topology.h       | 1 +
- arch/x86/kernel/cpu/debugfs.c         | 1 +
- arch/x86/kernel/cpu/topology_common.c | 1 +
- 5 files changed, 8 insertions(+)
+ arch/x86/events/rapl.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/Documentation/arch/x86/topology.rst b/Documentation/arch/x86/topology.rst
-index 7352ab8..c12837e 100644
---- a/Documentation/arch/x86/topology.rst
-+++ b/Documentation/arch/x86/topology.rst
-@@ -135,6 +135,10 @@ Thread-related topology information in the kernel:
-     The ID of the core to which a thread belongs. It is also printed in /proc/cpuinfo
-     "core_id."
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index a8defc8..f70c49c 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -153,7 +153,7 @@ static u64 rapl_timer_ms;
+ static struct perf_msr *rapl_msrs;
  
-+  - topology_logical_core_id();
-+
-+    The logical core ID to which a thread belongs.
-+
+ /*
+- * Helper functions to get the correct topology macros according to the
++ * Helper function to get the correct topology id according to the
+  * RAPL PMU scope.
+  */
+ static inline unsigned int get_rapl_pmu_idx(int cpu)
+@@ -162,12 +162,6 @@ static inline unsigned int get_rapl_pmu_idx(int cpu)
+ 					 topology_logical_die_id(cpu);
+ }
  
- 
- System topology examples
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index c097581..cfd8a55 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -98,6 +98,7 @@ struct cpuinfo_topology {
- 	// Logical ID mappings
- 	u32			logical_pkg_id;
- 	u32			logical_die_id;
-+	u32			logical_core_id;
- 
- 	// AMD Node ID and Nodes per Package info
- 	u32			amd_node_id;
-diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-index fd41103..3973cb9 100644
---- a/arch/x86/include/asm/topology.h
-+++ b/arch/x86/include/asm/topology.h
-@@ -143,6 +143,7 @@ extern const struct cpumask *cpu_clustergroup_mask(int cpu);
- #define topology_logical_package_id(cpu)	(cpu_data(cpu).topo.logical_pkg_id)
- #define topology_physical_package_id(cpu)	(cpu_data(cpu).topo.pkg_id)
- #define topology_logical_die_id(cpu)		(cpu_data(cpu).topo.logical_die_id)
-+#define topology_logical_core_id(cpu)		(cpu_data(cpu).topo.logical_core_id)
- #define topology_die_id(cpu)			(cpu_data(cpu).topo.die_id)
- #define topology_core_id(cpu)			(cpu_data(cpu).topo.core_id)
- #define topology_ppin(cpu)			(cpu_data(cpu).ppin)
-diff --git a/arch/x86/kernel/cpu/debugfs.c b/arch/x86/kernel/cpu/debugfs.c
-index 10719ab..cacfd3f 100644
---- a/arch/x86/kernel/cpu/debugfs.c
-+++ b/arch/x86/kernel/cpu/debugfs.c
-@@ -25,6 +25,7 @@ static int cpu_debug_show(struct seq_file *m, void *p)
- 	seq_printf(m, "cpu_type:            %s\n", get_topology_cpu_type_name(c));
- 	seq_printf(m, "logical_pkg_id:      %u\n", c->topo.logical_pkg_id);
- 	seq_printf(m, "logical_die_id:      %u\n", c->topo.logical_die_id);
-+	seq_printf(m, "logical_core_id:     %u\n", c->topo.logical_core_id);
- 	seq_printf(m, "llc_id:              %u\n", c->topo.llc_id);
- 	seq_printf(m, "l2c_id:              %u\n", c->topo.l2c_id);
- 	seq_printf(m, "amd_node_id:         %u\n", c->topo.amd_node_id);
-diff --git a/arch/x86/kernel/cpu/topology_common.c b/arch/x86/kernel/cpu/topology_common.c
-index 8277c64..b5a5e14 100644
---- a/arch/x86/kernel/cpu/topology_common.c
-+++ b/arch/x86/kernel/cpu/topology_common.c
-@@ -185,6 +185,7 @@ static void topo_set_ids(struct topo_scan *tscan, bool early)
- 	if (!early) {
- 		c->topo.logical_pkg_id = topology_get_logical_id(apicid, TOPO_PKG_DOMAIN);
- 		c->topo.logical_die_id = topology_get_logical_id(apicid, TOPO_DIE_DOMAIN);
-+		c->topo.logical_core_id = topology_get_logical_id(apicid, TOPO_CORE_DOMAIN);
- 	}
- 
- 	/* Package relative core ID */
+-static inline const struct cpumask *get_rapl_pmu_cpumask(int cpu)
+-{
+-	return rapl_pmu_is_pkg_scope() ? topology_core_cpumask(cpu) :
+-					 topology_die_cpumask(cpu);
+-}
+-
+ static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
+ {
+ 	unsigned int rapl_pmu_idx = get_rapl_pmu_idx(cpu);
 
