@@ -1,1183 +1,295 @@
-Return-Path: <linux-kernel+bounces-428005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58ACA9E0A40
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:39:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0105C9E0B42
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AF99BC437E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:32:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2F85B39361
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70821DDC15;
-	Mon,  2 Dec 2024 16:29:52 +0000 (UTC)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B98A19D074;
+	Mon,  2 Dec 2024 16:33:32 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9701DBB0C;
-	Mon,  2 Dec 2024 16:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC6312E7F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733156991; cv=none; b=iNXFbkI4KG2/ccYgINWr5mLgXig1/e/EIjakCX7G6TkgeBG5Razi2I1j0AbWCPi00mCSJITl48/q+KNWzevJUCTV/3qkY8n/bUUUmMiIQ+LHAct1yvlYerAmpJ3zs1fkW6dm9bQxUjtl1D7sdb/ElBYCoIGnnOmKXUQ6z8JqaT8=
+	t=1733157211; cv=none; b=WiNJGRDmzP1Ofu+aazl6y8O+DeihzcYjYCsgGPVLEGG3E4KNJ8ZvBd8+ayBz3ei9MYUoV6Yy803ItFxNQl0ayr8zqs3S+wwZg6/QjrD2GkIwXDXNx0+KP+b7WON/UimKer1VsRADs0D24qOzQsOYvkuEv7jwds/M/WxeohYLRnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733156991; c=relaxed/simple;
-	bh=msW/4LDzFqV2Bm7Wafk/VZiEqCdMIvfmqBLyskXdx7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BDrcWZZSQI6i3uEoJqljKZ+fvkZUQ0ITw2Bm+ApYwt3n6wxog3csOlDrChE00pWgf8Vo+44NXbZCG8htJwPrds7nLTllc8TKTyrmKJXSTz6uoxtv6hmuCMhZpnatH/1GFKUcKyywSXigVW0OOf+OMesie2500d+mmB4/W4VAKRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fc2b84bc60so2776984a12.1;
-        Mon, 02 Dec 2024 08:29:48 -0800 (PST)
+	s=arc-20240116; t=1733157211; c=relaxed/simple;
+	bh=+ZT9YPou4RMvhF3BjYEnFFXH9Kx2B5O7yVrylbZWwRU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ES6Ofax7l5vqnMdpDZLtioIQ7Mojj0BckAImhlFDp3ce2xTVj++SgQhKWnJSnwd3CTtah9i2EXf43mGx+6eF7Waz4FAieQjGtu5YY1Tq7azHVmwYjpX572nqKPWy+FKBvl8mZDk22wuP8Oc9XzZunz1al70u0vtUhCJj/PlSpIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a7e4bfae54so26821465ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 08:33:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733156988; x=1733761788;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VpTGLIa5UxEMM14aUCJr3TJqOTztx0MpYXiToTpenjk=;
-        b=bZVwnkxZT5EzQoHpUk/vcORZx8GPmZc70SZk63JZIKm3Y95pbsmnoSPxMG6oc2pBqp
-         rlgLYIaIIPcp/H9pEZc/Pj8R2EDEsqvoheHqPXiRFwGKliAwWipyjnyC7CrbQ/4RmiN0
-         GeirrvuBafSES4eXtI0QpIRfqAiiRWGVyYKPne8ZvMA0zdmt3DRxDKTAl0bpXfkITr9W
-         Zacy1dslTGCdSFZuhLTfoytei4o88B1d6nFEmWnOQeRRRC9LeF1SMJWyITr062iwbmLy
-         1pAc+sr+qjXylilkkmHtsZVFBAU4EvYk+X4O4iDr5xaxnr+kByNWjshFI2try8Y5eqhp
-         I7Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIquy7IyGtG6PM1ONbn28F1s6cvZN9TypyXRklU1HlwTkkONkXmSEp2+v94SW5L94O07R51mqRVr8=@vger.kernel.org, AJvYcCXxx4U8qlTZcFpKFwgj1cyorS9ERK0l5ySBjtPXW0sm3kPb8HtNtEyyF7OzvwE0GG2I3JKKCuVHPjQI2bKO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgnDIoLpu60SjPZqowB75mJ6vKdea9hFMKAwn/Xr8lxiEZmHfH
-	tWPGzUjhost5b9Y5NRuMECAMaC85pR4XKQr/Ysf0iMt5psw9TsqomCRksoA=
-X-Gm-Gg: ASbGnctKX6XGf+WysGXxun6Z1/1POR16fLfq7XhvndHuOpnA6zkN1RygPpPb8ovOJoM
-	inJTxndo2rctYpHTQG+4HQaAPfmEzc7p0XIZBGe7S0w5scgcxLIbvrHuZ0JIXlpMDSzKjxZQ3U5
-	doifsIOl3rT0U/oFc9SsEGF0+evXV7cbyh9B6epow/O2ZDdz6xp6q3kopli/LDdhUTANa5OwNdt
-	L+G0p7WqmfRRxjLnCoLsRYaNjwvhqwETM0OuTtmwlGtXF4oyQ==
-X-Google-Smtp-Source: AGHT+IEA6BQkbG3CDeBtWozetODosGAMzvW54YIZEEpSae2FFvPda5IiEMAj4OcmcMLGykOEi5nubA==
-X-Received: by 2002:a05:6a21:3989:b0:1dc:3022:fe04 with SMTP id adf61e73a8af0-1e0e0ac31b9mr36272303637.13.1733156987334;
-        Mon, 02 Dec 2024 08:29:47 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541849d61sm8681931b3a.193.2024.12.02.08.29.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 08:29:46 -0800 (PST)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	horms@kernel.org,
-	donald.hunter@gmail.com,
-	corbet@lwn.net,
-	andrew+netdev@lunn.ch,
-	kory.maincent@bootlin.com,
-	sdf@fomichev.me,
-	nicolas.dichtel@6wind.com
-Subject: [PATCH net-next v3 7/8] ethtool: remove the comments that are not gonna be generated
-Date: Mon,  2 Dec 2024 08:29:35 -0800
-Message-ID: <20241202162936.3778016-8-sdf@fomichev.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241202162936.3778016-1-sdf@fomichev.me>
-References: <20241202162936.3778016-1-sdf@fomichev.me>
+        d=1e100.net; s=20230601; t=1733157209; x=1733762009;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JAztXcFy5dsyfU7L2urwazIeTlncRkamK1s7kgmq4GA=;
+        b=r9ujnskFbXyvVWzcmqVgC1uhDkzxz3bHCKfBjsYihrD2NoHyBc/Fo0g5sBvh/bUXgA
+         nr/TFRYwXduAPyLZmnP0YOWWaiSNbLT4uMLkUk0GsvAO8406SnlIWfzX/JGCUpRu0Iy5
+         7bPDAVAXq65k9zhDipJ1JQZc3YrQc4fhCT854MirPwPtrpmjX/wSZ/TmhmcUkCsHDCBn
+         4IG74Bezpl73b+28Z4LjJZJzrNE2uT88yWJ2X5jICTXrDy/AUznR8bBsfDPiDmRcFErn
+         l0i89Snk1X7eN9OzaQZoElthbsT+rNMpqGM+jIEJU5YDfH+PJMnSMzEpNr+RNT4qzfzp
+         FDMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzuJQDDcgcliIc95X3uHzMiOJ1OxEnzG16BhTMpmHVhWfkm3xRKVsYSbjq09ru2Qcad8yIgnV5eVTPgBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsw8eutZOE0bF4M779rBnFrYb3ImNZxB+02l/Y/ECf0vY0m8ya
+	cNFHRRqXJyZnCTeUoIneGwjTkUNDKLL07yTOsPC78nTVM6RnzCsUH0sGBqvJUqUz0Ww6s5iyViX
+	NqrvU5Y5cvRIm6Bt8l4IIMITnsZr5KBV4FTOOvS58KrTRtxnFkQbmLyc=
+X-Google-Smtp-Source: AGHT+IGluNMmHiosfyn4WtUNOLpswYsS1BFdfhN3YfczxUdJVTnQvQT22aRNl2V2qdtXBs0vDl/mOsxQWrctl9U1Be7PpAgTNdjo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:12e4:b0:3a7:bcbf:ba99 with SMTP id
+ e9e14a558f8ab-3a7c553fe53mr262818175ab.6.1733157208866; Mon, 02 Dec 2024
+ 08:33:28 -0800 (PST)
+Date: Mon, 02 Dec 2024 08:33:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674de158.050a0220.ad585.0057.GAE@google.com>
+Subject: [syzbot] [serial?] KASAN: slab-use-after-free Read in uart_write
+From: syzbot <syzbot+7e89e4811726b862fd98@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Cleanup the header manually to make it easier to review the changes that ynl
-generator brings in. No functional changes.
+Hello,
 
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+syzbot found the following issue on:
+
+HEAD commit:    b86545e02e8c Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f91f5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=89e59b772d80e74b
+dashboard link: https://syzkaller.appspot.com/bug?extid=7e89e4811726b862fd98
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b86545e0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/547617924f85/vmlinux-b86545e0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c2157113e5b9/bzImage-b86545e0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7e89e4811726b862fd98@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in uart_write+0x9ff/0xb30 drivers/tty/serial/serial_core.c:614
+Read of size 8 at addr ffff888065d185f8 by task aoe_tx0/1412
+
+CPU: 0 UID: 0 PID: 1412 Comm: aoe_tx0 Not tainted 6.12.0-syzkaller-10553-gb86545e02e8c #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:489
+ kasan_report+0xd9/0x110 mm/kasan/report.c:602
+ uart_write+0x9ff/0xb30 drivers/tty/serial/serial_core.c:614
+ handle_tx+0x203/0x630 drivers/net/caif/caif_serial.c:236
+ __netdev_start_xmit include/linux/netdevice.h:5002 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5011 [inline]
+ xmit_one net/core/dev.c:3590 [inline]
+ dev_hard_start_xmit+0x9a/0x7b0 net/core/dev.c:3606
+ __dev_queue_xmit+0x7f0/0x43e0 net/core/dev.c:4434
+ dev_queue_xmit include/linux/netdevice.h:3168 [inline]
+ tx+0xcc/0x190 drivers/block/aoe/aoenet.c:62
+ kthread+0x1e7/0x3c0 drivers/block/aoe/aoecmd.c:1237
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 10254:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:901 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ alloc_tty_struct+0x98/0x8d0 drivers/tty/tty_io.c:3116
+ tty_init_dev.part.0+0x1e/0x660 drivers/tty/tty_io.c:1409
+ tty_init_dev include/linux/err.h:67 [inline]
+ tty_open_by_driver drivers/tty/tty_io.c:2082 [inline]
+ tty_open+0xac1/0xf80 drivers/tty/tty_io.c:2129
+ chrdev_open+0x237/0x6a0 fs/char_dev.c:414
+ do_dentry_open+0xf59/0x1ea0 fs/open.c:945
+ vfs_open+0x82/0x3f0 fs/open.c:1075
+ do_open fs/namei.c:3828 [inline]
+ path_openat+0x1e6a/0x2d60 fs/namei.c:3987
+ do_filp_open+0x20c/0x470 fs/namei.c:4014
+ do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_compat_sys_openat fs/open.c:1479 [inline]
+ __se_compat_sys_openat fs/open.c:1477 [inline]
+ __ia32_compat_sys_openat+0x16e/0x210 fs/open.c:1477
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Freed by task 1327:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:582
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2338 [inline]
+ slab_free mm/slub.c:4598 [inline]
+ kfree+0x14f/0x4b0 mm/slub.c:4746
+ process_one_work+0x958/0x1b30 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Last potentially related work creation:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xba/0xd0 mm/kasan/generic.c:544
+ insert_work+0x36/0x230 kernel/workqueue.c:2183
+ __queue_work+0x97e/0x1080 kernel/workqueue.c:2339
+ queue_work_on+0x11a/0x140 kernel/workqueue.c:2390
+ kref_put include/linux/kref.h:65 [inline]
+ tty_kref_put drivers/tty/tty_io.c:1566 [inline]
+ tty_kref_put drivers/tty/tty_io.c:1563 [inline]
+ release_tty+0x4de/0x5d0 drivers/tty/tty_io.c:1602
+ tty_release_struct+0xb7/0xe0 drivers/tty/tty_io.c:1701
+ tty_release+0xe25/0x1410 drivers/tty/tty_io.c:1861
+ __fput+0x3f8/0xb60 fs/file_table.c:450
+ task_work_run+0x14e/0x250 kernel/task_work.c:239
+ exit_task_work include/linux/task_work.h:43 [inline]
+ do_exit+0xadd/0x2d70 kernel/exit.c:938
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
+ get_signal+0x2576/0x2610 kernel/signal.c:3016
+ arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+The buggy address belongs to the object at ffff888065d18000
+ which belongs to the cache kmalloc-cg-2k of size 2048
+The buggy address is located 1528 bytes inside of
+ freed 2048-byte region [ffff888065d18000, ffff888065d18800)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x65d18
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff88804a2b0e01
+flags: 0x4fff00000000040(head|node=1|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 04fff00000000040 ffff88801ac50140 ffffea0001377600 dead000000000002
+raw: 0000000000000000 0000000000080008 00000001f5000000 ffff88804a2b0e01
+head: 04fff00000000040 ffff88801ac50140 ffffea0001377600 dead000000000002
+head: 0000000000000000 0000000000080008 00000001f5000000 ffff88804a2b0e01
+head: 04fff00000000003 ffffea0001974601 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 8425, tgid 8425 (syz-executor), ts 105968917948, free_ts 105959451209
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2408 [inline]
+ allocate_slab mm/slub.c:2574 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2627
+ ___slab_alloc+0xd1d/0x16e0 mm/slub.c:3815
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3905
+ __slab_alloc_node mm/slub.c:3980 [inline]
+ slab_alloc_node mm/slub.c:4141 [inline]
+ __do_kmalloc_node mm/slub.c:4282 [inline]
+ __kmalloc_node_track_caller_noprof+0x2ee/0x520 mm/slub.c:4302
+ kmemdup_noprof+0x29/0x60 mm/util.c:135
+ neigh_sysctl_register+0xb3/0x640 net/core/neighbour.c:3734
+ addrconf_sysctl_register+0xb9/0x1f0 net/ipv6/addrconf.c:7265
+ ipv6_add_dev+0xa1a/0x13e0 net/ipv6/addrconf.c:456
+ addrconf_notify+0x53e/0x19c0 net/ipv6/addrconf.c:3655
+ notifier_call_chain+0xb7/0x410 kernel/notifier.c:85
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1996
+ call_netdevice_notifiers_extack net/core/dev.c:2034 [inline]
+ call_netdevice_notifiers net/core/dev.c:2048 [inline]
+ register_netdevice+0x1728/0x1e20 net/core/dev.c:10626
+page last free pid 8425 tgid 8425 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
+ __put_partials+0x14c/0x170 mm/slub.c:3142
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4104 [inline]
+ slab_alloc_node mm/slub.c:4153 [inline]
+ kmem_cache_alloc_node_noprof+0x1ca/0x3b0 mm/slub.c:4205
+ __alloc_skb+0x2b3/0x380 net/core/skbuff.c:668
+ alloc_skb include/linux/skbuff.h:1323 [inline]
+ nlmsg_new include/net/netlink.h:1018 [inline]
+ netlink_ack+0x164/0xb20 net/netlink/af_netlink.c:2478
+ netlink_rcv_skb+0x327/0x410 net/netlink/af_netlink.c:2547
+ netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
+ netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1347
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1891
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg net/socket.c:726 [inline]
+ __sys_sendto+0x488/0x4f0 net/socket.c:2197
+ __do_compat_sys_socketcall+0x5e2/0x700 net/compat.c:475
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Memory state around the buggy address:
+ ffff888065d18480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888065d18500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888065d18580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                ^
+ ffff888065d18600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888065d18680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- .../uapi/linux/ethtool_netlink_generated.h    | 678 +++++++-----------
- 1 file changed, 274 insertions(+), 404 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/include/uapi/linux/ethtool_netlink_generated.h b/include/uapi/linux/ethtool_netlink_generated.h
-index 4b4bf17d1a88..35a24d490efe 100644
---- a/include/uapi/linux/ethtool_netlink_generated.h
-+++ b/include/uapi/linux/ethtool_netlink_generated.h
-@@ -2,8 +2,6 @@
- #ifndef _UAPI_LINUX_ETHTOOL_NETLINK_GENERATED_H
- #define _UAPI_LINUX_ETHTOOL_NETLINK_GENERATED_H
- 
--/* TUNNEL INFO */
--
- enum {
- 	ETHTOOL_UDP_TUNNEL_TYPE_VXLAN,
- 	ETHTOOL_UDP_TUNNEL_TYPE_GENEVE,
-@@ -12,8 +10,6 @@ enum {
- 	__ETHTOOL_UDP_TUNNEL_TYPE_CNT
- };
- 
--/* request header */
--
- enum ethtool_header_flags {
- 	ETHTOOL_FLAG_COMPACT_BITSETS	= 1 << 0,	/* use compact bitsets in reply */
- 	ETHTOOL_FLAG_OMIT_REPLY		= 1 << 1,	/* provide optional reply for SET or ACT requests */
-@@ -28,303 +24,250 @@ enum {
- 
- enum {
- 	ETHTOOL_A_HEADER_UNSPEC,
--	ETHTOOL_A_HEADER_DEV_INDEX,		/* u32 */
--	ETHTOOL_A_HEADER_DEV_NAME,		/* string */
--	ETHTOOL_A_HEADER_FLAGS,			/* u32 - ETHTOOL_FLAG_* */
--	ETHTOOL_A_HEADER_PHY_INDEX,		/* u32 */
-+	ETHTOOL_A_HEADER_DEV_INDEX,
-+	ETHTOOL_A_HEADER_DEV_NAME,
-+	ETHTOOL_A_HEADER_FLAGS,
-+	ETHTOOL_A_HEADER_PHY_INDEX,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_HEADER_CNT,
- 	ETHTOOL_A_HEADER_MAX = __ETHTOOL_A_HEADER_CNT - 1
- };
- 
--/* bit sets */
--
- enum {
- 	ETHTOOL_A_BITSET_BIT_UNSPEC,
--	ETHTOOL_A_BITSET_BIT_INDEX,		/* u32 */
--	ETHTOOL_A_BITSET_BIT_NAME,		/* string */
--	ETHTOOL_A_BITSET_BIT_VALUE,		/* flag */
-+	ETHTOOL_A_BITSET_BIT_INDEX,
-+	ETHTOOL_A_BITSET_BIT_NAME,
-+	ETHTOOL_A_BITSET_BIT_VALUE,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_BITSET_BIT_CNT,
- 	ETHTOOL_A_BITSET_BIT_MAX = __ETHTOOL_A_BITSET_BIT_CNT - 1
- };
- 
- enum {
- 	ETHTOOL_A_BITSET_BITS_UNSPEC,
--	ETHTOOL_A_BITSET_BITS_BIT,		/* nest - _A_BITSET_BIT_* */
-+	ETHTOOL_A_BITSET_BITS_BIT,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_BITSET_BITS_CNT,
- 	ETHTOOL_A_BITSET_BITS_MAX = __ETHTOOL_A_BITSET_BITS_CNT - 1
- };
- 
- enum {
- 	ETHTOOL_A_BITSET_UNSPEC,
--	ETHTOOL_A_BITSET_NOMASK,		/* flag */
--	ETHTOOL_A_BITSET_SIZE,			/* u32 */
--	ETHTOOL_A_BITSET_BITS,			/* nest - _A_BITSET_BITS_* */
--	ETHTOOL_A_BITSET_VALUE,			/* binary */
--	ETHTOOL_A_BITSET_MASK,			/* binary */
-+	ETHTOOL_A_BITSET_NOMASK,
-+	ETHTOOL_A_BITSET_SIZE,
-+	ETHTOOL_A_BITSET_BITS,
-+	ETHTOOL_A_BITSET_VALUE,
-+	ETHTOOL_A_BITSET_MASK,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_BITSET_CNT,
- 	ETHTOOL_A_BITSET_MAX = __ETHTOOL_A_BITSET_CNT - 1
- };
- 
--/* string sets */
--
- enum {
- 	ETHTOOL_A_STRING_UNSPEC,
--	ETHTOOL_A_STRING_INDEX,			/* u32 */
--	ETHTOOL_A_STRING_VALUE,			/* string */
-+	ETHTOOL_A_STRING_INDEX,
-+	ETHTOOL_A_STRING_VALUE,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_STRING_CNT,
- 	ETHTOOL_A_STRING_MAX = __ETHTOOL_A_STRING_CNT - 1
- };
- 
- enum {
- 	ETHTOOL_A_STRINGS_UNSPEC,
--	ETHTOOL_A_STRINGS_STRING,		/* nest - _A_STRINGS_* */
-+	ETHTOOL_A_STRINGS_STRING,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_STRINGS_CNT,
- 	ETHTOOL_A_STRINGS_MAX = __ETHTOOL_A_STRINGS_CNT - 1
- };
- 
- enum {
- 	ETHTOOL_A_STRINGSET_UNSPEC,
--	ETHTOOL_A_STRINGSET_ID,			/* u32 */
--	ETHTOOL_A_STRINGSET_COUNT,		/* u32 */
--	ETHTOOL_A_STRINGSET_STRINGS,		/* nest - _A_STRINGS_* */
-+	ETHTOOL_A_STRINGSET_ID,
-+	ETHTOOL_A_STRINGSET_COUNT,
-+	ETHTOOL_A_STRINGSET_STRINGS,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_STRINGSET_CNT,
- 	ETHTOOL_A_STRINGSET_MAX = __ETHTOOL_A_STRINGSET_CNT - 1
- };
- 
- enum {
- 	ETHTOOL_A_STRINGSETS_UNSPEC,
--	ETHTOOL_A_STRINGSETS_STRINGSET,		/* nest - _A_STRINGSET_* */
-+	ETHTOOL_A_STRINGSETS_STRINGSET,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_STRINGSETS_CNT,
- 	ETHTOOL_A_STRINGSETS_MAX = __ETHTOOL_A_STRINGSETS_CNT - 1
- };
- 
--/* STRSET */
--
- enum {
- 	ETHTOOL_A_STRSET_UNSPEC,
--	ETHTOOL_A_STRSET_HEADER,		/* nest - _A_HEADER_* */
--	ETHTOOL_A_STRSET_STRINGSETS,		/* nest - _A_STRINGSETS_* */
--	ETHTOOL_A_STRSET_COUNTS_ONLY,		/* flag */
-+	ETHTOOL_A_STRSET_HEADER,
-+	ETHTOOL_A_STRSET_STRINGSETS,
-+	ETHTOOL_A_STRSET_COUNTS_ONLY,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_STRSET_CNT,
- 	ETHTOOL_A_STRSET_MAX = __ETHTOOL_A_STRSET_CNT - 1
- };
- 
--/* PRIVFLAGS */
--
- enum {
- 	ETHTOOL_A_PRIVFLAGS_UNSPEC,
--	ETHTOOL_A_PRIVFLAGS_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_PRIVFLAGS_FLAGS,			/* bitset */
-+	ETHTOOL_A_PRIVFLAGS_HEADER,
-+	ETHTOOL_A_PRIVFLAGS_FLAGS,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_PRIVFLAGS_CNT,
- 	ETHTOOL_A_PRIVFLAGS_MAX = __ETHTOOL_A_PRIVFLAGS_CNT - 1
- };
- 
--/* RINGS */
--
- enum {
- 	ETHTOOL_A_RINGS_UNSPEC,
--	ETHTOOL_A_RINGS_HEADER,				/* nest - _A_HEADER_* */
--	ETHTOOL_A_RINGS_RX_MAX,				/* u32 */
--	ETHTOOL_A_RINGS_RX_MINI_MAX,			/* u32 */
--	ETHTOOL_A_RINGS_RX_JUMBO_MAX,			/* u32 */
--	ETHTOOL_A_RINGS_TX_MAX,				/* u32 */
--	ETHTOOL_A_RINGS_RX,				/* u32 */
--	ETHTOOL_A_RINGS_RX_MINI,			/* u32 */
--	ETHTOOL_A_RINGS_RX_JUMBO,			/* u32 */
--	ETHTOOL_A_RINGS_TX,				/* u32 */
--	ETHTOOL_A_RINGS_RX_BUF_LEN,                     /* u32 */
--	ETHTOOL_A_RINGS_TCP_DATA_SPLIT,			/* u8 */
--	ETHTOOL_A_RINGS_CQE_SIZE,			/* u32 */
--	ETHTOOL_A_RINGS_TX_PUSH,			/* u8 */
--	ETHTOOL_A_RINGS_RX_PUSH,			/* u8 */
--	ETHTOOL_A_RINGS_TX_PUSH_BUF_LEN,		/* u32 */
--	ETHTOOL_A_RINGS_TX_PUSH_BUF_LEN_MAX,		/* u32 */
--
--	/* add new constants above here */
-+	ETHTOOL_A_RINGS_HEADER,
-+	ETHTOOL_A_RINGS_RX_MAX,
-+	ETHTOOL_A_RINGS_RX_MINI_MAX,
-+	ETHTOOL_A_RINGS_RX_JUMBO_MAX,
-+	ETHTOOL_A_RINGS_TX_MAX,
-+	ETHTOOL_A_RINGS_RX,
-+	ETHTOOL_A_RINGS_RX_MINI,
-+	ETHTOOL_A_RINGS_RX_JUMBO,
-+	ETHTOOL_A_RINGS_TX,
-+	ETHTOOL_A_RINGS_RX_BUF_LEN,
-+	ETHTOOL_A_RINGS_TCP_DATA_SPLIT,
-+	ETHTOOL_A_RINGS_CQE_SIZE,
-+	ETHTOOL_A_RINGS_TX_PUSH,
-+	ETHTOOL_A_RINGS_RX_PUSH,
-+	ETHTOOL_A_RINGS_TX_PUSH_BUF_LEN,
-+	ETHTOOL_A_RINGS_TX_PUSH_BUF_LEN_MAX,
-+
- 	__ETHTOOL_A_RINGS_CNT,
- 	ETHTOOL_A_RINGS_MAX = (__ETHTOOL_A_RINGS_CNT - 1)
- };
- 
--/* MAC Merge (802.3) */
--
- enum {
- 	ETHTOOL_A_MM_STAT_UNSPEC,
- 	ETHTOOL_A_MM_STAT_PAD,
-+	ETHTOOL_A_MM_STAT_REASSEMBLY_ERRORS,
-+	ETHTOOL_A_MM_STAT_SMD_ERRORS,
-+	ETHTOOL_A_MM_STAT_REASSEMBLY_OK,
-+	ETHTOOL_A_MM_STAT_RX_FRAG_COUNT,
-+	ETHTOOL_A_MM_STAT_TX_FRAG_COUNT,
-+	ETHTOOL_A_MM_STAT_HOLD_COUNT,
- 
--	/* aMACMergeFrameAssErrorCount */
--	ETHTOOL_A_MM_STAT_REASSEMBLY_ERRORS,	/* u64 */
--	/* aMACMergeFrameSmdErrorCount */
--	ETHTOOL_A_MM_STAT_SMD_ERRORS,		/* u64 */
--	/* aMACMergeFrameAssOkCount */
--	ETHTOOL_A_MM_STAT_REASSEMBLY_OK,	/* u64 */
--	/* aMACMergeFragCountRx */
--	ETHTOOL_A_MM_STAT_RX_FRAG_COUNT,	/* u64 */
--	/* aMACMergeFragCountTx */
--	ETHTOOL_A_MM_STAT_TX_FRAG_COUNT,	/* u64 */
--	/* aMACMergeHoldCount */
--	ETHTOOL_A_MM_STAT_HOLD_COUNT,		/* u64 */
--
--	/* add new constants above here */
- 	__ETHTOOL_A_MM_STAT_CNT,
- 	ETHTOOL_A_MM_STAT_MAX = (__ETHTOOL_A_MM_STAT_CNT - 1)
- };
- 
- enum {
- 	ETHTOOL_A_MM_UNSPEC,
--	ETHTOOL_A_MM_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_MM_PMAC_ENABLED,		/* u8 */
--	ETHTOOL_A_MM_TX_ENABLED,		/* u8 */
--	ETHTOOL_A_MM_TX_ACTIVE,			/* u8 */
--	ETHTOOL_A_MM_TX_MIN_FRAG_SIZE,		/* u32 */
--	ETHTOOL_A_MM_RX_MIN_FRAG_SIZE,		/* u32 */
--	ETHTOOL_A_MM_VERIFY_ENABLED,		/* u8 */
--	ETHTOOL_A_MM_VERIFY_STATUS,		/* u8 */
--	ETHTOOL_A_MM_VERIFY_TIME,		/* u32 */
--	ETHTOOL_A_MM_MAX_VERIFY_TIME,		/* u32 */
--	ETHTOOL_A_MM_STATS,			/* nest - _A_MM_STAT_* */
--
--	/* add new constants above here */
-+	ETHTOOL_A_MM_HEADER,
-+	ETHTOOL_A_MM_PMAC_ENABLED,
-+	ETHTOOL_A_MM_TX_ENABLED,
-+	ETHTOOL_A_MM_TX_ACTIVE,
-+	ETHTOOL_A_MM_TX_MIN_FRAG_SIZE,
-+	ETHTOOL_A_MM_RX_MIN_FRAG_SIZE,
-+	ETHTOOL_A_MM_VERIFY_ENABLED,
-+	ETHTOOL_A_MM_VERIFY_STATUS,
-+	ETHTOOL_A_MM_VERIFY_TIME,
-+	ETHTOOL_A_MM_MAX_VERIFY_TIME,
-+	ETHTOOL_A_MM_STATS,
-+
- 	__ETHTOOL_A_MM_CNT,
- 	ETHTOOL_A_MM_MAX = (__ETHTOOL_A_MM_CNT - 1)
- };
- 
--/* LINKINFO */
--
- enum {
- 	ETHTOOL_A_LINKINFO_UNSPEC,
--	ETHTOOL_A_LINKINFO_HEADER,		/* nest - _A_HEADER_* */
--	ETHTOOL_A_LINKINFO_PORT,		/* u8 */
--	ETHTOOL_A_LINKINFO_PHYADDR,		/* u8 */
--	ETHTOOL_A_LINKINFO_TP_MDIX,		/* u8 */
--	ETHTOOL_A_LINKINFO_TP_MDIX_CTRL,	/* u8 */
--	ETHTOOL_A_LINKINFO_TRANSCEIVER,		/* u8 */
--
--	/* add new constants above here */
-+	ETHTOOL_A_LINKINFO_HEADER,
-+	ETHTOOL_A_LINKINFO_PORT,
-+	ETHTOOL_A_LINKINFO_PHYADDR,
-+	ETHTOOL_A_LINKINFO_TP_MDIX,
-+	ETHTOOL_A_LINKINFO_TP_MDIX_CTRL,
-+	ETHTOOL_A_LINKINFO_TRANSCEIVER,
-+
- 	__ETHTOOL_A_LINKINFO_CNT,
- 	ETHTOOL_A_LINKINFO_MAX = __ETHTOOL_A_LINKINFO_CNT - 1
- };
- 
--/* LINKMODES */
--
- enum {
- 	ETHTOOL_A_LINKMODES_UNSPEC,
--	ETHTOOL_A_LINKMODES_HEADER,		/* nest - _A_HEADER_* */
--	ETHTOOL_A_LINKMODES_AUTONEG,		/* u8 */
--	ETHTOOL_A_LINKMODES_OURS,		/* bitset */
--	ETHTOOL_A_LINKMODES_PEER,		/* bitset */
--	ETHTOOL_A_LINKMODES_SPEED,		/* u32 */
--	ETHTOOL_A_LINKMODES_DUPLEX,		/* u8 */
--	ETHTOOL_A_LINKMODES_MASTER_SLAVE_CFG,	/* u8 */
--	ETHTOOL_A_LINKMODES_MASTER_SLAVE_STATE,	/* u8 */
--	ETHTOOL_A_LINKMODES_LANES,		/* u32 */
--	ETHTOOL_A_LINKMODES_RATE_MATCHING,	/* u8 */
--
--	/* add new constants above here */
-+	ETHTOOL_A_LINKMODES_HEADER,
-+	ETHTOOL_A_LINKMODES_AUTONEG,
-+	ETHTOOL_A_LINKMODES_OURS,
-+	ETHTOOL_A_LINKMODES_PEER,
-+	ETHTOOL_A_LINKMODES_SPEED,
-+	ETHTOOL_A_LINKMODES_DUPLEX,
-+	ETHTOOL_A_LINKMODES_MASTER_SLAVE_CFG,
-+	ETHTOOL_A_LINKMODES_MASTER_SLAVE_STATE,
-+	ETHTOOL_A_LINKMODES_LANES,
-+	ETHTOOL_A_LINKMODES_RATE_MATCHING,
-+
- 	__ETHTOOL_A_LINKMODES_CNT,
- 	ETHTOOL_A_LINKMODES_MAX = __ETHTOOL_A_LINKMODES_CNT - 1
- };
- 
--/* LINKSTATE */
--
- enum {
- 	ETHTOOL_A_LINKSTATE_UNSPEC,
--	ETHTOOL_A_LINKSTATE_HEADER,		/* nest - _A_HEADER_* */
--	ETHTOOL_A_LINKSTATE_LINK,		/* u8 */
--	ETHTOOL_A_LINKSTATE_SQI,		/* u32 */
--	ETHTOOL_A_LINKSTATE_SQI_MAX,		/* u32 */
--	ETHTOOL_A_LINKSTATE_EXT_STATE,		/* u8 */
--	ETHTOOL_A_LINKSTATE_EXT_SUBSTATE,	/* u8 */
--	ETHTOOL_A_LINKSTATE_EXT_DOWN_CNT,	/* u32 */
--
--	/* add new constants above here */
-+	ETHTOOL_A_LINKSTATE_HEADER,
-+	ETHTOOL_A_LINKSTATE_LINK,
-+	ETHTOOL_A_LINKSTATE_SQI,
-+	ETHTOOL_A_LINKSTATE_SQI_MAX,
-+	ETHTOOL_A_LINKSTATE_EXT_STATE,
-+	ETHTOOL_A_LINKSTATE_EXT_SUBSTATE,
-+	ETHTOOL_A_LINKSTATE_EXT_DOWN_CNT,
-+
- 	__ETHTOOL_A_LINKSTATE_CNT,
- 	ETHTOOL_A_LINKSTATE_MAX = __ETHTOOL_A_LINKSTATE_CNT - 1
- };
- 
--/* DEBUG */
--
- enum {
- 	ETHTOOL_A_DEBUG_UNSPEC,
--	ETHTOOL_A_DEBUG_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_DEBUG_MSGMASK,		/* bitset */
-+	ETHTOOL_A_DEBUG_HEADER,
-+	ETHTOOL_A_DEBUG_MSGMASK,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_DEBUG_CNT,
- 	ETHTOOL_A_DEBUG_MAX = __ETHTOOL_A_DEBUG_CNT - 1
- };
- 
--/* WOL */
--
- enum {
- 	ETHTOOL_A_WOL_UNSPEC,
--	ETHTOOL_A_WOL_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_WOL_MODES,			/* bitset */
--	ETHTOOL_A_WOL_SOPASS,			/* binary */
-+	ETHTOOL_A_WOL_HEADER,
-+	ETHTOOL_A_WOL_MODES,
-+	ETHTOOL_A_WOL_SOPASS,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_WOL_CNT,
- 	ETHTOOL_A_WOL_MAX = __ETHTOOL_A_WOL_CNT - 1
- };
- 
--/* FEATURES */
--
- enum {
- 	ETHTOOL_A_FEATURES_UNSPEC,
--	ETHTOOL_A_FEATURES_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_FEATURES_HW,				/* bitset */
--	ETHTOOL_A_FEATURES_WANTED,			/* bitset */
--	ETHTOOL_A_FEATURES_ACTIVE,			/* bitset */
--	ETHTOOL_A_FEATURES_NOCHANGE,			/* bitset */
-+	ETHTOOL_A_FEATURES_HEADER,
-+	ETHTOOL_A_FEATURES_HW,
-+	ETHTOOL_A_FEATURES_WANTED,
-+	ETHTOOL_A_FEATURES_ACTIVE,
-+	ETHTOOL_A_FEATURES_NOCHANGE,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_FEATURES_CNT,
- 	ETHTOOL_A_FEATURES_MAX = __ETHTOOL_A_FEATURES_CNT - 1
- };
- 
--/* CHANNELS */
--
- enum {
- 	ETHTOOL_A_CHANNELS_UNSPEC,
--	ETHTOOL_A_CHANNELS_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_CHANNELS_RX_MAX,			/* u32 */
--	ETHTOOL_A_CHANNELS_TX_MAX,			/* u32 */
--	ETHTOOL_A_CHANNELS_OTHER_MAX,			/* u32 */
--	ETHTOOL_A_CHANNELS_COMBINED_MAX,		/* u32 */
--	ETHTOOL_A_CHANNELS_RX_COUNT,			/* u32 */
--	ETHTOOL_A_CHANNELS_TX_COUNT,			/* u32 */
--	ETHTOOL_A_CHANNELS_OTHER_COUNT,			/* u32 */
--	ETHTOOL_A_CHANNELS_COMBINED_COUNT,		/* u32 */
--
--	/* add new constants above here */
-+	ETHTOOL_A_CHANNELS_HEADER,
-+	ETHTOOL_A_CHANNELS_RX_MAX,
-+	ETHTOOL_A_CHANNELS_TX_MAX,
-+	ETHTOOL_A_CHANNELS_OTHER_MAX,
-+	ETHTOOL_A_CHANNELS_COMBINED_MAX,
-+	ETHTOOL_A_CHANNELS_RX_COUNT,
-+	ETHTOOL_A_CHANNELS_TX_COUNT,
-+	ETHTOOL_A_CHANNELS_OTHER_COUNT,
-+	ETHTOOL_A_CHANNELS_COMBINED_COUNT,
-+
- 	__ETHTOOL_A_CHANNELS_CNT,
- 	ETHTOOL_A_CHANNELS_MAX = (__ETHTOOL_A_CHANNELS_CNT - 1)
- };
- 
- enum {
- 	ETHTOOL_A_IRQ_MODERATION_UNSPEC,
--	ETHTOOL_A_IRQ_MODERATION_USEC,			/* u32 */
--	ETHTOOL_A_IRQ_MODERATION_PKTS,			/* u32 */
--	ETHTOOL_A_IRQ_MODERATION_COMPS,			/* u32 */
-+	ETHTOOL_A_IRQ_MODERATION_USEC,
-+	ETHTOOL_A_IRQ_MODERATION_PKTS,
-+	ETHTOOL_A_IRQ_MODERATION_COMPS,
- 
- 	__ETHTOOL_A_IRQ_MODERATION_CNT,
- 	ETHTOOL_A_IRQ_MODERATION_MAX = (__ETHTOOL_A_IRQ_MODERATION_CNT - 1)
-@@ -332,111 +275,91 @@ enum {
- 
- enum {
- 	ETHTOOL_A_PROFILE_UNSPEC,
--	/* nest, _A_IRQ_MODERATION_* */
- 	ETHTOOL_A_PROFILE_IRQ_MODERATION,
- 	__ETHTOOL_A_PROFILE_CNT,
- 	ETHTOOL_A_PROFILE_MAX = (__ETHTOOL_A_PROFILE_CNT - 1)
- };
- 
--/* COALESCE */
--
- enum {
- 	ETHTOOL_A_COALESCE_UNSPEC,
--	ETHTOOL_A_COALESCE_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_COALESCE_RX_USECS,			/* u32 */
--	ETHTOOL_A_COALESCE_RX_MAX_FRAMES,		/* u32 */
--	ETHTOOL_A_COALESCE_RX_USECS_IRQ,		/* u32 */
--	ETHTOOL_A_COALESCE_RX_MAX_FRAMES_IRQ,		/* u32 */
--	ETHTOOL_A_COALESCE_TX_USECS,			/* u32 */
--	ETHTOOL_A_COALESCE_TX_MAX_FRAMES,		/* u32 */
--	ETHTOOL_A_COALESCE_TX_USECS_IRQ,		/* u32 */
--	ETHTOOL_A_COALESCE_TX_MAX_FRAMES_IRQ,		/* u32 */
--	ETHTOOL_A_COALESCE_STATS_BLOCK_USECS,		/* u32 */
--	ETHTOOL_A_COALESCE_USE_ADAPTIVE_RX,		/* u8 */
--	ETHTOOL_A_COALESCE_USE_ADAPTIVE_TX,		/* u8 */
--	ETHTOOL_A_COALESCE_PKT_RATE_LOW,		/* u32 */
--	ETHTOOL_A_COALESCE_RX_USECS_LOW,		/* u32 */
--	ETHTOOL_A_COALESCE_RX_MAX_FRAMES_LOW,		/* u32 */
--	ETHTOOL_A_COALESCE_TX_USECS_LOW,		/* u32 */
--	ETHTOOL_A_COALESCE_TX_MAX_FRAMES_LOW,		/* u32 */
--	ETHTOOL_A_COALESCE_PKT_RATE_HIGH,		/* u32 */
--	ETHTOOL_A_COALESCE_RX_USECS_HIGH,		/* u32 */
--	ETHTOOL_A_COALESCE_RX_MAX_FRAMES_HIGH,		/* u32 */
--	ETHTOOL_A_COALESCE_TX_USECS_HIGH,		/* u32 */
--	ETHTOOL_A_COALESCE_TX_MAX_FRAMES_HIGH,		/* u32 */
--	ETHTOOL_A_COALESCE_RATE_SAMPLE_INTERVAL,	/* u32 */
--	ETHTOOL_A_COALESCE_USE_CQE_MODE_TX,		/* u8 */
--	ETHTOOL_A_COALESCE_USE_CQE_MODE_RX,		/* u8 */
--	ETHTOOL_A_COALESCE_TX_AGGR_MAX_BYTES,		/* u32 */
--	ETHTOOL_A_COALESCE_TX_AGGR_MAX_FRAMES,		/* u32 */
--	ETHTOOL_A_COALESCE_TX_AGGR_TIME_USECS,		/* u32 */
--	/* nest - _A_PROFILE_IRQ_MODERATION */
-+	ETHTOOL_A_COALESCE_HEADER,
-+	ETHTOOL_A_COALESCE_RX_USECS,
-+	ETHTOOL_A_COALESCE_RX_MAX_FRAMES,
-+	ETHTOOL_A_COALESCE_RX_USECS_IRQ,
-+	ETHTOOL_A_COALESCE_RX_MAX_FRAMES_IRQ,
-+	ETHTOOL_A_COALESCE_TX_USECS,
-+	ETHTOOL_A_COALESCE_TX_MAX_FRAMES,
-+	ETHTOOL_A_COALESCE_TX_USECS_IRQ,
-+	ETHTOOL_A_COALESCE_TX_MAX_FRAMES_IRQ,
-+	ETHTOOL_A_COALESCE_STATS_BLOCK_USECS,
-+	ETHTOOL_A_COALESCE_USE_ADAPTIVE_RX,
-+	ETHTOOL_A_COALESCE_USE_ADAPTIVE_TX,
-+	ETHTOOL_A_COALESCE_PKT_RATE_LOW,
-+	ETHTOOL_A_COALESCE_RX_USECS_LOW,
-+	ETHTOOL_A_COALESCE_RX_MAX_FRAMES_LOW,
-+	ETHTOOL_A_COALESCE_TX_USECS_LOW,
-+	ETHTOOL_A_COALESCE_TX_MAX_FRAMES_LOW,
-+	ETHTOOL_A_COALESCE_PKT_RATE_HIGH,
-+	ETHTOOL_A_COALESCE_RX_USECS_HIGH,
-+	ETHTOOL_A_COALESCE_RX_MAX_FRAMES_HIGH,
-+	ETHTOOL_A_COALESCE_TX_USECS_HIGH,
-+	ETHTOOL_A_COALESCE_TX_MAX_FRAMES_HIGH,
-+	ETHTOOL_A_COALESCE_RATE_SAMPLE_INTERVAL,
-+	ETHTOOL_A_COALESCE_USE_CQE_MODE_TX,
-+	ETHTOOL_A_COALESCE_USE_CQE_MODE_RX,
-+	ETHTOOL_A_COALESCE_TX_AGGR_MAX_BYTES,
-+	ETHTOOL_A_COALESCE_TX_AGGR_MAX_FRAMES,
-+	ETHTOOL_A_COALESCE_TX_AGGR_TIME_USECS,
- 	ETHTOOL_A_COALESCE_RX_PROFILE,
--	/* nest - _A_PROFILE_IRQ_MODERATION */
- 	ETHTOOL_A_COALESCE_TX_PROFILE,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_COALESCE_CNT,
- 	ETHTOOL_A_COALESCE_MAX = (__ETHTOOL_A_COALESCE_CNT - 1)
- };
- 
--/* PAUSE */
--
- enum {
- 	ETHTOOL_A_PAUSE_STAT_UNSPEC,
- 	ETHTOOL_A_PAUSE_STAT_PAD,
--
- 	ETHTOOL_A_PAUSE_STAT_TX_FRAMES,
- 	ETHTOOL_A_PAUSE_STAT_RX_FRAMES,
- 
--	/* add new constants above here
--	 * adjust ETHTOOL_PAUSE_STAT_CNT if adding non-stats!
--	 */
- 	__ETHTOOL_A_PAUSE_STAT_CNT,
- 	ETHTOOL_A_PAUSE_STAT_MAX = (__ETHTOOL_A_PAUSE_STAT_CNT - 1)
- };
- 
- enum {
- 	ETHTOOL_A_PAUSE_UNSPEC,
--	ETHTOOL_A_PAUSE_HEADER,				/* nest - _A_HEADER_* */
--	ETHTOOL_A_PAUSE_AUTONEG,			/* u8 */
--	ETHTOOL_A_PAUSE_RX,				/* u8 */
--	ETHTOOL_A_PAUSE_TX,				/* u8 */
--	ETHTOOL_A_PAUSE_STATS,				/* nest - _PAUSE_STAT_* */
--	ETHTOOL_A_PAUSE_STATS_SRC,			/* u32 */
--
--	/* add new constants above here */
-+	ETHTOOL_A_PAUSE_HEADER,
-+	ETHTOOL_A_PAUSE_AUTONEG,
-+	ETHTOOL_A_PAUSE_RX,
-+	ETHTOOL_A_PAUSE_TX,
-+	ETHTOOL_A_PAUSE_STATS,
-+	ETHTOOL_A_PAUSE_STATS_SRC,
-+
- 	__ETHTOOL_A_PAUSE_CNT,
- 	ETHTOOL_A_PAUSE_MAX = (__ETHTOOL_A_PAUSE_CNT - 1)
- };
- 
--/* EEE */
--
- enum {
- 	ETHTOOL_A_EEE_UNSPEC,
--	ETHTOOL_A_EEE_HEADER,				/* nest - _A_HEADER_* */
--	ETHTOOL_A_EEE_MODES_OURS,			/* bitset */
--	ETHTOOL_A_EEE_MODES_PEER,			/* bitset */
--	ETHTOOL_A_EEE_ACTIVE,				/* u8 */
--	ETHTOOL_A_EEE_ENABLED,				/* u8 */
--	ETHTOOL_A_EEE_TX_LPI_ENABLED,			/* u8 */
--	ETHTOOL_A_EEE_TX_LPI_TIMER,			/* u32 */
--
--	/* add new constants above here */
-+	ETHTOOL_A_EEE_HEADER,
-+	ETHTOOL_A_EEE_MODES_OURS,
-+	ETHTOOL_A_EEE_MODES_PEER,
-+	ETHTOOL_A_EEE_ACTIVE,
-+	ETHTOOL_A_EEE_ENABLED,
-+	ETHTOOL_A_EEE_TX_LPI_ENABLED,
-+	ETHTOOL_A_EEE_TX_LPI_TIMER,
-+
- 	__ETHTOOL_A_EEE_CNT,
- 	ETHTOOL_A_EEE_MAX = (__ETHTOOL_A_EEE_CNT - 1)
- };
- 
--/* TSINFO */
--
- enum {
- 	ETHTOOL_A_TS_STAT_UNSPEC,
-+	ETHTOOL_A_TS_STAT_TX_PKTS,
-+	ETHTOOL_A_TS_STAT_TX_LOST,
-+	ETHTOOL_A_TS_STAT_TX_ERR,
- 
--	ETHTOOL_A_TS_STAT_TX_PKTS,			/* uint */
--	ETHTOOL_A_TS_STAT_TX_LOST,			/* uint */
--	ETHTOOL_A_TS_STAT_TX_ERR,			/* uint */
--
--	/* add new constants above here */
- 	__ETHTOOL_A_TS_STAT_CNT,
- 	ETHTOOL_A_TS_STAT_MAX = (__ETHTOOL_A_TS_STAT_CNT - 1)
- 
-@@ -444,23 +367,22 @@ enum {
- 
- enum {
- 	ETHTOOL_A_TSINFO_UNSPEC,
--	ETHTOOL_A_TSINFO_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_TSINFO_TIMESTAMPING,			/* bitset */
--	ETHTOOL_A_TSINFO_TX_TYPES,			/* bitset */
--	ETHTOOL_A_TSINFO_RX_FILTERS,			/* bitset */
--	ETHTOOL_A_TSINFO_PHC_INDEX,			/* u32 */
--	ETHTOOL_A_TSINFO_STATS,				/* nest - _A_TSINFO_STAT */
--
--	/* add new constants above here */
-+	ETHTOOL_A_TSINFO_HEADER,
-+	ETHTOOL_A_TSINFO_TIMESTAMPING,
-+	ETHTOOL_A_TSINFO_TX_TYPES,
-+	ETHTOOL_A_TSINFO_RX_FILTERS,
-+	ETHTOOL_A_TSINFO_PHC_INDEX,
-+	ETHTOOL_A_TSINFO_STATS,
-+
- 	__ETHTOOL_A_TSINFO_CNT,
- 	ETHTOOL_A_TSINFO_MAX = (__ETHTOOL_A_TSINFO_CNT - 1)
- };
- 
- enum {
- 	ETHTOOL_A_CABLE_RESULT_UNSPEC,
--	ETHTOOL_A_CABLE_RESULT_PAIR,		/* u8 ETHTOOL_A_CABLE_PAIR_ */
--	ETHTOOL_A_CABLE_RESULT_CODE,		/* u8 ETHTOOL_A_CABLE_RESULT_CODE_ */
--	ETHTOOL_A_CABLE_RESULT_SRC,		/* u32 ETHTOOL_A_CABLE_INF_SRC_ */
-+	ETHTOOL_A_CABLE_RESULT_PAIR,
-+	ETHTOOL_A_CABLE_RESULT_CODE,
-+	ETHTOOL_A_CABLE_RESULT_SRC,
- 
- 	__ETHTOOL_A_CABLE_RESULT_CNT,
- 	ETHTOOL_A_CABLE_RESULT_MAX = (__ETHTOOL_A_CABLE_RESULT_CNT - 1)
-@@ -468,9 +390,9 @@ enum {
- 
- enum {
- 	ETHTOOL_A_CABLE_FAULT_LENGTH_UNSPEC,
--	ETHTOOL_A_CABLE_FAULT_LENGTH_PAIR,	/* u8 ETHTOOL_A_CABLE_PAIR_ */
--	ETHTOOL_A_CABLE_FAULT_LENGTH_CM,	/* u32 */
--	ETHTOOL_A_CABLE_FAULT_LENGTH_SRC,	/* u32 ETHTOOL_A_CABLE_INF_SRC_ */
-+	ETHTOOL_A_CABLE_FAULT_LENGTH_PAIR,
-+	ETHTOOL_A_CABLE_FAULT_LENGTH_CM,
-+	ETHTOOL_A_CABLE_FAULT_LENGTH_SRC,
- 
- 	__ETHTOOL_A_CABLE_FAULT_LENGTH_CNT,
- 	ETHTOOL_A_CABLE_FAULT_LENGTH_MAX = (__ETHTOOL_A_CABLE_FAULT_LENGTH_CNT - 1)
-@@ -478,245 +400,204 @@ enum {
- 
- enum {
- 	ETHTOOL_A_CABLE_NEST_UNSPEC,
--	ETHTOOL_A_CABLE_NEST_RESULT,		/* nest - ETHTOOL_A_CABLE_RESULT_ */
--	ETHTOOL_A_CABLE_NEST_FAULT_LENGTH,	/* nest - ETHTOOL_A_CABLE_FAULT_LENGTH_ */
-+	ETHTOOL_A_CABLE_NEST_RESULT,
-+	ETHTOOL_A_CABLE_NEST_FAULT_LENGTH,
-+
- 	__ETHTOOL_A_CABLE_NEST_CNT,
- 	ETHTOOL_A_CABLE_NEST_MAX = (__ETHTOOL_A_CABLE_NEST_CNT - 1)
- };
- 
--/* CABLE TEST */
--
- enum {
- 	ETHTOOL_A_CABLE_TEST_UNSPEC,
--	ETHTOOL_A_CABLE_TEST_HEADER,		/* nest - _A_HEADER_* */
-+	ETHTOOL_A_CABLE_TEST_HEADER,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_CABLE_TEST_CNT,
- 	ETHTOOL_A_CABLE_TEST_MAX = __ETHTOOL_A_CABLE_TEST_CNT - 1
- };
- 
- enum {
- 	ETHTOOL_A_CABLE_TEST_NTF_UNSPEC,
--	ETHTOOL_A_CABLE_TEST_NTF_HEADER,	/* nest - ETHTOOL_A_HEADER_* */
--	ETHTOOL_A_CABLE_TEST_NTF_STATUS,	/* u8 - _STARTED/_COMPLETE */
--	ETHTOOL_A_CABLE_TEST_NTF_NEST,		/* nest - of results: */
-+	ETHTOOL_A_CABLE_TEST_NTF_HEADER,
-+	ETHTOOL_A_CABLE_TEST_NTF_STATUS,
-+	ETHTOOL_A_CABLE_TEST_NTF_NEST,
- 
- 	__ETHTOOL_A_CABLE_TEST_NTF_CNT,
- 	ETHTOOL_A_CABLE_TEST_NTF_MAX = (__ETHTOOL_A_CABLE_TEST_NTF_CNT - 1)
- };
- 
--/* CABLE TEST TDR */
--
- enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_CFG_UNSPEC,
--	ETHTOOL_A_CABLE_TEST_TDR_CFG_FIRST,		/* u32 */
--	ETHTOOL_A_CABLE_TEST_TDR_CFG_LAST,		/* u32 */
--	ETHTOOL_A_CABLE_TEST_TDR_CFG_STEP,		/* u32 */
--	ETHTOOL_A_CABLE_TEST_TDR_CFG_PAIR,		/* u8 */
-+	ETHTOOL_A_CABLE_TEST_TDR_CFG_FIRST,
-+	ETHTOOL_A_CABLE_TEST_TDR_CFG_LAST,
-+	ETHTOOL_A_CABLE_TEST_TDR_CFG_STEP,
-+	ETHTOOL_A_CABLE_TEST_TDR_CFG_PAIR,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT,
- 	ETHTOOL_A_CABLE_TEST_TDR_CFG_MAX = __ETHTOOL_A_CABLE_TEST_TDR_CFG_CNT - 1
- };
- 
- enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_NTF_UNSPEC,
--	ETHTOOL_A_CABLE_TEST_TDR_NTF_HEADER,	/* nest - ETHTOOL_A_HEADER_* */
--	ETHTOOL_A_CABLE_TEST_TDR_NTF_STATUS,	/* u8 - _STARTED/_COMPLETE */
--	ETHTOOL_A_CABLE_TEST_TDR_NTF_NEST,	/* nest - of results: */
-+	ETHTOOL_A_CABLE_TEST_TDR_NTF_HEADER,
-+	ETHTOOL_A_CABLE_TEST_TDR_NTF_STATUS,
-+	ETHTOOL_A_CABLE_TEST_TDR_NTF_NEST,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT,
- 	ETHTOOL_A_CABLE_TEST_TDR_NTF_MAX = __ETHTOOL_A_CABLE_TEST_TDR_NTF_CNT - 1
- };
- 
- enum {
- 	ETHTOOL_A_CABLE_TEST_TDR_UNSPEC,
--	ETHTOOL_A_CABLE_TEST_TDR_HEADER,	/* nest - _A_HEADER_* */
--	ETHTOOL_A_CABLE_TEST_TDR_CFG,		/* nest - *_TDR_CFG_* */
-+	ETHTOOL_A_CABLE_TEST_TDR_HEADER,
-+	ETHTOOL_A_CABLE_TEST_TDR_CFG,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_CABLE_TEST_TDR_CNT,
- 	ETHTOOL_A_CABLE_TEST_TDR_MAX = __ETHTOOL_A_CABLE_TEST_TDR_CNT - 1
- };
- 
- enum {
- 	ETHTOOL_A_TUNNEL_UDP_ENTRY_UNSPEC,
-+	ETHTOOL_A_TUNNEL_UDP_ENTRY_PORT,
-+	ETHTOOL_A_TUNNEL_UDP_ENTRY_TYPE,
- 
--	ETHTOOL_A_TUNNEL_UDP_ENTRY_PORT,		/* be16 */
--	ETHTOOL_A_TUNNEL_UDP_ENTRY_TYPE,		/* u32 */
--
--	/* add new constants above here */
- 	__ETHTOOL_A_TUNNEL_UDP_ENTRY_CNT,
- 	ETHTOOL_A_TUNNEL_UDP_ENTRY_MAX = (__ETHTOOL_A_TUNNEL_UDP_ENTRY_CNT - 1)
- };
- 
- enum {
- 	ETHTOOL_A_TUNNEL_UDP_TABLE_UNSPEC,
-+	ETHTOOL_A_TUNNEL_UDP_TABLE_SIZE,
-+	ETHTOOL_A_TUNNEL_UDP_TABLE_TYPES,
-+	ETHTOOL_A_TUNNEL_UDP_TABLE_ENTRY,
- 
--	ETHTOOL_A_TUNNEL_UDP_TABLE_SIZE,		/* u32 */
--	ETHTOOL_A_TUNNEL_UDP_TABLE_TYPES,		/* bitset */
--	ETHTOOL_A_TUNNEL_UDP_TABLE_ENTRY,		/* nest - _UDP_ENTRY_* */
--
--	/* add new constants above here */
- 	__ETHTOOL_A_TUNNEL_UDP_TABLE_CNT,
- 	ETHTOOL_A_TUNNEL_UDP_TABLE_MAX = (__ETHTOOL_A_TUNNEL_UDP_TABLE_CNT - 1)
- };
- 
- enum {
- 	ETHTOOL_A_TUNNEL_UDP_UNSPEC,
-+	ETHTOOL_A_TUNNEL_UDP_TABLE,
- 
--	ETHTOOL_A_TUNNEL_UDP_TABLE,			/* nest - _UDP_TABLE_* */
--
--	/* add new constants above here */
- 	__ETHTOOL_A_TUNNEL_UDP_CNT,
- 	ETHTOOL_A_TUNNEL_UDP_MAX = (__ETHTOOL_A_TUNNEL_UDP_CNT - 1)
- };
- 
- enum {
- 	ETHTOOL_A_TUNNEL_INFO_UNSPEC,
--	ETHTOOL_A_TUNNEL_INFO_HEADER,			/* nest - _A_HEADER_* */
-+	ETHTOOL_A_TUNNEL_INFO_HEADER,
-+	ETHTOOL_A_TUNNEL_INFO_UDP_PORTS,
- 
--	ETHTOOL_A_TUNNEL_INFO_UDP_PORTS,		/* nest - _UDP_TABLE */
--
--	/* add new constants above here */
- 	__ETHTOOL_A_TUNNEL_INFO_CNT,
- 	ETHTOOL_A_TUNNEL_INFO_MAX = (__ETHTOOL_A_TUNNEL_INFO_CNT - 1)
- };
- 
--/* FEC */
--
- enum {
- 	ETHTOOL_A_FEC_STAT_UNSPEC,
- 	ETHTOOL_A_FEC_STAT_PAD,
-+	ETHTOOL_A_FEC_STAT_CORRECTED,
-+	ETHTOOL_A_FEC_STAT_UNCORR,
-+	ETHTOOL_A_FEC_STAT_CORR_BITS,
- 
--	ETHTOOL_A_FEC_STAT_CORRECTED,			/* array, u64 */
--	ETHTOOL_A_FEC_STAT_UNCORR,			/* array, u64 */
--	ETHTOOL_A_FEC_STAT_CORR_BITS,			/* array, u64 */
--
--	/* add new constants above here */
- 	__ETHTOOL_A_FEC_STAT_CNT,
- 	ETHTOOL_A_FEC_STAT_MAX = (__ETHTOOL_A_FEC_STAT_CNT - 1)
- };
- 
- enum {
- 	ETHTOOL_A_FEC_UNSPEC,
--	ETHTOOL_A_FEC_HEADER,				/* nest - _A_HEADER_* */
--	ETHTOOL_A_FEC_MODES,				/* bitset */
--	ETHTOOL_A_FEC_AUTO,				/* u8 */
--	ETHTOOL_A_FEC_ACTIVE,				/* u32 */
--	ETHTOOL_A_FEC_STATS,				/* nest - _A_FEC_STAT */
-+	ETHTOOL_A_FEC_HEADER,
-+	ETHTOOL_A_FEC_MODES,
-+	ETHTOOL_A_FEC_AUTO,
-+	ETHTOOL_A_FEC_ACTIVE,
-+	ETHTOOL_A_FEC_STATS,
- 
- 	__ETHTOOL_A_FEC_CNT,
- 	ETHTOOL_A_FEC_MAX = (__ETHTOOL_A_FEC_CNT - 1)
- };
- 
--/* MODULE EEPROM */
--
- enum {
- 	ETHTOOL_A_MODULE_EEPROM_UNSPEC,
--	ETHTOOL_A_MODULE_EEPROM_HEADER,			/* nest - _A_HEADER_* */
--
--	ETHTOOL_A_MODULE_EEPROM_OFFSET,			/* u32 */
--	ETHTOOL_A_MODULE_EEPROM_LENGTH,			/* u32 */
--	ETHTOOL_A_MODULE_EEPROM_PAGE,			/* u8 */
--	ETHTOOL_A_MODULE_EEPROM_BANK,			/* u8 */
--	ETHTOOL_A_MODULE_EEPROM_I2C_ADDRESS,		/* u8 */
--	ETHTOOL_A_MODULE_EEPROM_DATA,			/* binary */
-+	ETHTOOL_A_MODULE_EEPROM_HEADER,
-+	ETHTOOL_A_MODULE_EEPROM_OFFSET,
-+	ETHTOOL_A_MODULE_EEPROM_LENGTH,
-+	ETHTOOL_A_MODULE_EEPROM_PAGE,
-+	ETHTOOL_A_MODULE_EEPROM_BANK,
-+	ETHTOOL_A_MODULE_EEPROM_I2C_ADDRESS,
-+	ETHTOOL_A_MODULE_EEPROM_DATA,
- 
- 	__ETHTOOL_A_MODULE_EEPROM_CNT,
- 	ETHTOOL_A_MODULE_EEPROM_MAX = (__ETHTOOL_A_MODULE_EEPROM_CNT - 1)
- };
- 
--
- enum {
- 	ETHTOOL_A_STATS_GRP_UNSPEC,
- 	ETHTOOL_A_STATS_GRP_PAD,
-+	ETHTOOL_A_STATS_GRP_ID,
-+	ETHTOOL_A_STATS_GRP_SS_ID,
-+	ETHTOOL_A_STATS_GRP_STAT,
-+	ETHTOOL_A_STATS_GRP_HIST_RX,
-+	ETHTOOL_A_STATS_GRP_HIST_TX,
-+	ETHTOOL_A_STATS_GRP_HIST_BKT_LOW,
-+	ETHTOOL_A_STATS_GRP_HIST_BKT_HI,
-+	ETHTOOL_A_STATS_GRP_HIST_VAL,
- 
--	ETHTOOL_A_STATS_GRP_ID,			/* u32 */
--	ETHTOOL_A_STATS_GRP_SS_ID,		/* u32 */
--
--	ETHTOOL_A_STATS_GRP_STAT,		/* nest */
--
--	ETHTOOL_A_STATS_GRP_HIST_RX,		/* nest */
--	ETHTOOL_A_STATS_GRP_HIST_TX,		/* nest */
--
--	ETHTOOL_A_STATS_GRP_HIST_BKT_LOW,	/* u32 */
--	ETHTOOL_A_STATS_GRP_HIST_BKT_HI,	/* u32 */
--	ETHTOOL_A_STATS_GRP_HIST_VAL,		/* u64 */
--
--	/* add new constants above here */
- 	__ETHTOOL_A_STATS_GRP_CNT,
- 	ETHTOOL_A_STATS_GRP_MAX = (__ETHTOOL_A_STATS_GRP_CNT - 1)
- };
- 
--/* STATS */
--
- enum {
- 	ETHTOOL_A_STATS_UNSPEC,
- 	ETHTOOL_A_STATS_PAD,
--	ETHTOOL_A_STATS_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_STATS_GROUPS,			/* bitset */
-+	ETHTOOL_A_STATS_HEADER,
-+	ETHTOOL_A_STATS_GROUPS,
-+	ETHTOOL_A_STATS_GRP,
-+	ETHTOOL_A_STATS_SRC,
- 
--	ETHTOOL_A_STATS_GRP,			/* nest - _A_STATS_GRP_* */
--
--	ETHTOOL_A_STATS_SRC,			/* u32 */
--
--	/* add new constants above here */
- 	__ETHTOOL_A_STATS_CNT,
- 	ETHTOOL_A_STATS_MAX = (__ETHTOOL_A_STATS_CNT - 1)
- };
- 
--/* PHC VCLOCKS */
--
- enum {
- 	ETHTOOL_A_PHC_VCLOCKS_UNSPEC,
--	ETHTOOL_A_PHC_VCLOCKS_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_PHC_VCLOCKS_NUM,			/* u32 */
--	ETHTOOL_A_PHC_VCLOCKS_INDEX,			/* array, s32 */
-+	ETHTOOL_A_PHC_VCLOCKS_HEADER,
-+	ETHTOOL_A_PHC_VCLOCKS_NUM,
-+	ETHTOOL_A_PHC_VCLOCKS_INDEX,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_PHC_VCLOCKS_CNT,
- 	ETHTOOL_A_PHC_VCLOCKS_MAX = (__ETHTOOL_A_PHC_VCLOCKS_CNT - 1)
- };
- 
--/* MODULE */
--
- enum {
- 	ETHTOOL_A_MODULE_UNSPEC,
--	ETHTOOL_A_MODULE_HEADER,		/* nest - _A_HEADER_* */
--	ETHTOOL_A_MODULE_POWER_MODE_POLICY,	/* u8 */
--	ETHTOOL_A_MODULE_POWER_MODE,		/* u8 */
-+	ETHTOOL_A_MODULE_HEADER,
-+	ETHTOOL_A_MODULE_POWER_MODE_POLICY,
-+	ETHTOOL_A_MODULE_POWER_MODE,
- 
--	/* add new constants above here */
- 	__ETHTOOL_A_MODULE_CNT,
- 	ETHTOOL_A_MODULE_MAX = (__ETHTOOL_A_MODULE_CNT - 1)
- };
- 
--/* Power Sourcing Equipment */
- enum {
- 	ETHTOOL_A_C33_PSE_PW_LIMIT_UNSPEC,
--	ETHTOOL_A_C33_PSE_PW_LIMIT_MIN,	/* u32 */
--	ETHTOOL_A_C33_PSE_PW_LIMIT_MAX,	/* u32 */
-+	ETHTOOL_A_C33_PSE_PW_LIMIT_MIN,
-+	ETHTOOL_A_C33_PSE_PW_LIMIT_MAX,
- };
- 
- enum {
- 	ETHTOOL_A_PSE_UNSPEC,
--	ETHTOOL_A_PSE_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_PODL_PSE_ADMIN_STATE,		/* u32 */
--	ETHTOOL_A_PODL_PSE_ADMIN_CONTROL,	/* u32 */
--	ETHTOOL_A_PODL_PSE_PW_D_STATUS,		/* u32 */
--	ETHTOOL_A_C33_PSE_ADMIN_STATE,		/* u32 */
--	ETHTOOL_A_C33_PSE_ADMIN_CONTROL,	/* u32 */
--	ETHTOOL_A_C33_PSE_PW_D_STATUS,		/* u32 */
--	ETHTOOL_A_C33_PSE_PW_CLASS,		/* u32 */
--	ETHTOOL_A_C33_PSE_ACTUAL_PW,		/* u32 */
--	ETHTOOL_A_C33_PSE_EXT_STATE,		/* u32 */
--	ETHTOOL_A_C33_PSE_EXT_SUBSTATE,		/* u32 */
--	ETHTOOL_A_C33_PSE_AVAIL_PW_LIMIT,	/* u32 */
--	ETHTOOL_A_C33_PSE_PW_LIMIT_RANGES,	/* nest - _C33_PSE_PW_LIMIT_* */
--
--	/* add new constants above here */
-+	ETHTOOL_A_PSE_HEADER,
-+	ETHTOOL_A_PODL_PSE_ADMIN_STATE,
-+	ETHTOOL_A_PODL_PSE_ADMIN_CONTROL,
-+	ETHTOOL_A_PODL_PSE_PW_D_STATUS,
-+	ETHTOOL_A_C33_PSE_ADMIN_STATE,
-+	ETHTOOL_A_C33_PSE_ADMIN_CONTROL,
-+	ETHTOOL_A_C33_PSE_PW_D_STATUS,
-+	ETHTOOL_A_C33_PSE_PW_CLASS,
-+	ETHTOOL_A_C33_PSE_ACTUAL_PW,
-+	ETHTOOL_A_C33_PSE_EXT_STATE,
-+	ETHTOOL_A_C33_PSE_EXT_SUBSTATE,
-+	ETHTOOL_A_C33_PSE_AVAIL_PW_LIMIT,
-+	ETHTOOL_A_C33_PSE_PW_LIMIT_RANGES,
-+
- 	__ETHTOOL_A_PSE_CNT,
- 	ETHTOOL_A_PSE_MAX = (__ETHTOOL_A_PSE_CNT - 1)
- };
-@@ -724,70 +605,62 @@ enum {
- enum {
- 	ETHTOOL_A_RSS_UNSPEC,
- 	ETHTOOL_A_RSS_HEADER,
--	ETHTOOL_A_RSS_CONTEXT,		/* u32 */
--	ETHTOOL_A_RSS_HFUNC,		/* u32 */
--	ETHTOOL_A_RSS_INDIR,		/* binary */
--	ETHTOOL_A_RSS_HKEY,		/* binary */
--	ETHTOOL_A_RSS_INPUT_XFRM,	/* u32 */
--	ETHTOOL_A_RSS_START_CONTEXT,	/* u32 */
-+	ETHTOOL_A_RSS_CONTEXT,
-+	ETHTOOL_A_RSS_HFUNC,
-+	ETHTOOL_A_RSS_INDIR,
-+	ETHTOOL_A_RSS_HKEY,
-+	ETHTOOL_A_RSS_INPUT_XFRM,
-+	ETHTOOL_A_RSS_START_CONTEXT,
- 
- 	__ETHTOOL_A_RSS_CNT,
- 	ETHTOOL_A_RSS_MAX = (__ETHTOOL_A_RSS_CNT - 1),
- };
- 
--/* PLCA */
--
- enum {
- 	ETHTOOL_A_PLCA_UNSPEC,
--	ETHTOOL_A_PLCA_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_PLCA_VERSION,			/* u16 */
--	ETHTOOL_A_PLCA_ENABLED,			/* u8  */
--	ETHTOOL_A_PLCA_STATUS,			/* u8  */
--	ETHTOOL_A_PLCA_NODE_CNT,		/* u32 */
--	ETHTOOL_A_PLCA_NODE_ID,			/* u32 */
--	ETHTOOL_A_PLCA_TO_TMR,			/* u32 */
--	ETHTOOL_A_PLCA_BURST_CNT,		/* u32 */
--	ETHTOOL_A_PLCA_BURST_TMR,		/* u32 */
--
--	/* add new constants above here */
-+	ETHTOOL_A_PLCA_HEADER,
-+	ETHTOOL_A_PLCA_VERSION,
-+	ETHTOOL_A_PLCA_ENABLED,
-+	ETHTOOL_A_PLCA_STATUS,
-+	ETHTOOL_A_PLCA_NODE_CNT,
-+	ETHTOOL_A_PLCA_NODE_ID,
-+	ETHTOOL_A_PLCA_TO_TMR,
-+	ETHTOOL_A_PLCA_BURST_CNT,
-+	ETHTOOL_A_PLCA_BURST_TMR,
-+
- 	__ETHTOOL_A_PLCA_CNT,
- 	ETHTOOL_A_PLCA_MAX = (__ETHTOOL_A_PLCA_CNT - 1)
- };
- 
--/* MODULE_FW_FLASH */
--
- enum {
- 	ETHTOOL_A_MODULE_FW_FLASH_UNSPEC,
--	ETHTOOL_A_MODULE_FW_FLASH_HEADER,		/* nest - _A_HEADER_* */
--	ETHTOOL_A_MODULE_FW_FLASH_FILE_NAME,		/* string */
--	ETHTOOL_A_MODULE_FW_FLASH_PASSWORD,		/* u32 */
--	ETHTOOL_A_MODULE_FW_FLASH_STATUS,		/* u32 */
--	ETHTOOL_A_MODULE_FW_FLASH_STATUS_MSG,		/* string */
--	ETHTOOL_A_MODULE_FW_FLASH_DONE,			/* uint */
--	ETHTOOL_A_MODULE_FW_FLASH_TOTAL,		/* uint */
--
--	/* add new constants above here */
-+	ETHTOOL_A_MODULE_FW_FLASH_HEADER,
-+	ETHTOOL_A_MODULE_FW_FLASH_FILE_NAME,
-+	ETHTOOL_A_MODULE_FW_FLASH_PASSWORD,
-+	ETHTOOL_A_MODULE_FW_FLASH_STATUS,
-+	ETHTOOL_A_MODULE_FW_FLASH_STATUS_MSG,
-+	ETHTOOL_A_MODULE_FW_FLASH_DONE,
-+	ETHTOOL_A_MODULE_FW_FLASH_TOTAL,
-+
- 	__ETHTOOL_A_MODULE_FW_FLASH_CNT,
- 	ETHTOOL_A_MODULE_FW_FLASH_MAX = (__ETHTOOL_A_MODULE_FW_FLASH_CNT - 1)
- };
- 
- enum {
- 	ETHTOOL_A_PHY_UNSPEC,
--	ETHTOOL_A_PHY_HEADER,			/* nest - _A_HEADER_* */
--	ETHTOOL_A_PHY_INDEX,			/* u32 */
--	ETHTOOL_A_PHY_DRVNAME,			/* string */
--	ETHTOOL_A_PHY_NAME,			/* string */
--	ETHTOOL_A_PHY_UPSTREAM_TYPE,		/* u32 */
--	ETHTOOL_A_PHY_UPSTREAM_INDEX,		/* u32 */
--	ETHTOOL_A_PHY_UPSTREAM_SFP_NAME,	/* string */
--	ETHTOOL_A_PHY_DOWNSTREAM_SFP_NAME,	/* string */
--
--	/* add new constants above here */
-+	ETHTOOL_A_PHY_HEADER,
-+	ETHTOOL_A_PHY_INDEX,
-+	ETHTOOL_A_PHY_DRVNAME,
-+	ETHTOOL_A_PHY_NAME,
-+	ETHTOOL_A_PHY_UPSTREAM_TYPE,
-+	ETHTOOL_A_PHY_UPSTREAM_INDEX,
-+	ETHTOOL_A_PHY_UPSTREAM_SFP_NAME,
-+	ETHTOOL_A_PHY_DOWNSTREAM_SFP_NAME,
-+
- 	__ETHTOOL_A_PHY_CNT,
- 	ETHTOOL_A_PHY_MAX = (__ETHTOOL_A_PHY_CNT - 1)
- };
- 
--/* message types - userspace to kernel */
- enum {
- 	ETHTOOL_MSG_USER_NONE,
- 	ETHTOOL_MSG_STRSET_GET,
-@@ -836,12 +709,10 @@ enum {
- 	ETHTOOL_MSG_MODULE_FW_FLASH_ACT,
- 	ETHTOOL_MSG_PHY_GET,
- 
--	/* add new constants above here */
- 	__ETHTOOL_MSG_USER_CNT,
- 	ETHTOOL_MSG_USER_MAX = __ETHTOOL_MSG_USER_CNT - 1
- };
- 
--/* message types - kernel to userspace */
- enum {
- 	ETHTOOL_MSG_KERNEL_NONE,
- 	ETHTOOL_MSG_STRSET_GET_REPLY,
-@@ -891,7 +762,6 @@ enum {
- 	ETHTOOL_MSG_PHY_GET_REPLY,
- 	ETHTOOL_MSG_PHY_NTF,
- 
--	/* add new constants above here */
- 	__ETHTOOL_MSG_KERNEL_CNT,
- 	ETHTOOL_MSG_KERNEL_MAX = __ETHTOOL_MSG_KERNEL_CNT - 1
- };
--- 
-2.47.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
