@@ -1,262 +1,162 @@
-Return-Path: <linux-kernel+bounces-428480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E1C9E0F05
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:49:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E6D9E0F0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:51:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0278282945
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:49:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CDF16432C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB501DFD84;
-	Mon,  2 Dec 2024 22:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099C11DF96B;
+	Mon,  2 Dec 2024 22:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Gnc6pJ1f"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FbMhRmb1"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9421DB940
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89541DB940
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733179755; cv=none; b=OJnnUWC2QTXdw9UgwaO7+PjZyIzvUUmU0tmP5RCu6h5S9gA7NNYLQ5e0A4qzbwxv9JvwkJPYAeOd/oQwKECgBZBEjL9qkfWaugr+MnFsHkMvONMk/v1yMmYaNHI8lw5E7klfoGB7XxknpwUGoiurgQpoNsquWYLOzMU2fusf4mo=
+	t=1733179864; cv=none; b=udf5TYwcucal0EHsbVJWBrKnLJLK0z+oTbl1qCUBzgTs6xKLH/p62lCABcKolB9Eop07cN8GBqBbq7RvM4VNzMyvKErQAq8BjtRtegbJfBV98GSPlmdxCQqifq5LQ8qqTCWAoAKh+/VPS3yJTDFboD8KLnhyyGMKq/NuTpuqMZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733179755; c=relaxed/simple;
-	bh=OiT8bZBW9JwxhYUpHWYCsgYxRPzHueGdKeT0Ly3ZIK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZuNILxCz9b9NubN9E63iZ7RN5xNNIpiDWll0PjLjps/xFo35bJ9fEAGcWtkrxdI9KTDVIXc1s5k/pFvtGmn2NeiJTpRLF8AEgLhnF2CnZhQjTrWUtqqsTgw6gH01Ionw7i1pkqSrSbZrFlnoX9tjVWlETQ+/YhryUzSIiPOLk+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Gnc6pJ1f; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a74d9aeb38so16406545ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:49:12 -0800 (PST)
+	s=arc-20240116; t=1733179864; c=relaxed/simple;
+	bh=xD++Pu2Owlwdz/HJYnfDKrfCE8Tqkbg/Wk+AX/Qx0C8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S2fWk2AQVppJEbWaSF10p2DkJ9iElaKDjpYUChIwup5TzWoXfpEEW8FsH7TtaBifFcKRXm+VBPYo4HgQRJYQGE+3DT92KtrAxYUUvLqbwla0Znma1Za0qjpPdIyLQRKmUMnXW329/YkKCR5oJrihHUmcj3ggj0uzqXD1gjBaLxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FbMhRmb1; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53ddad86f4dso1311e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:51:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1733179751; x=1733784551; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fURT0toHjcy+ckEXrUmwcruMUsZPdjbEVGK7GwErbNE=;
-        b=Gnc6pJ1fG0rB83dsd3dT8XpdKXnxdI0+SKilAQVGfP5v6S6BGBOVvLVoCPg1M+tmJo
-         MEE54UDfEkDuRWRvi5texQYX0erveeaJEF+q64Zj6IJB1/ppKyWGf5Axu4dxE0HqUBEJ
-         ffNLHwjRqFh1SIB61OLos/gt/BI1k36UVfvqCjnEoHKjGCRbbSXLDSlnUFe+Y3OiJBZQ
-         sx26l9P+3b1jnJkdliIXXLQjcNVElKMVodApf6TKtMpPH25NRDMAtSS125sol82590hN
-         pdpvxSU/UvsBi/AFuvrBviYyFMGeej5SBBxsfiqC2Kizpyeq/qPwlRuMKexKN8MECIXv
-         VQ0w==
+        d=google.com; s=20230601; t=1733179861; x=1733784661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xD++Pu2Owlwdz/HJYnfDKrfCE8Tqkbg/Wk+AX/Qx0C8=;
+        b=FbMhRmb1rTDpBqhWr0YrcmyCN+70hBf+RnJLWRgTD8Wc7QjhL6cO+6RgiIe6btYxVr
+         BFEXUsk+CwMyM4d31XhG5rNVbBUJs6biyodsKAYhDcwrf96xIcYHSsi2CxCUuiFMh4cp
+         x1VZpimnYobCK0CqlytwQUj7PHnjWJWKXgKe3dAcY4iRQw+1RWNfwatgtx9Qq3TbBvJ8
+         XN8CGBHF6s0frnQGxTSu7B5VzwI6WRwV97bMo87gp0yHnBeYXrECc5rYknLlHbx1y6mF
+         q9QCKGRLmiZrqgjYrLn/bNYRHeawWCD8+6wJkxe9Qzb0NtRvLuyisnojXQX9LTSpDLGy
+         SYFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733179751; x=1733784551;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fURT0toHjcy+ckEXrUmwcruMUsZPdjbEVGK7GwErbNE=;
-        b=qz0OyB9mdN4aXN8vkgSj6bDsAbASEo+QwlLdX17Cz3h0PlnyNTA84tuElIQzlkYYCm
-         GucvRLu5NTRBLi2ub/v6hAR8F+koN+5hSe09mON1JuK/brilCx+UfZyeA/O+4kDQpXCP
-         UTpBbazFEDGVBR3UB9lNcik9FJCdu9Qp8dA11fUFuMqtkpuRNgPjS2oM9M8oByxtvnJK
-         Hkd2C2v1CqnTC9LxEjHzT5pPF057/dmPHpfLZxxaBJPym9u9GWfhabSeeuvSWYy1ICUk
-         2k+ElYOp8iZUnnIFL3S0ho9//BCeykyyq4DjKwc/VfOKBnMeZHtQtwJFOOKRDNYuoMdY
-         +AUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRHLW+a3lIU2y57XJv2wYGaN+skAb48E/TuoNFfbfEwt0JauOxiBY/32k3xTkdJSu8w6Ve+MBzUdEh+6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMQHM8bDJrJuqh8YJpGpOY8q/plgmRKAHWJCWzdUSIriDpOmJ9
-	uxECfqqMVy0ytU/7RU8FWUQp5Y+6Q86NR4MjcXSfP+/Ipx7f/ikC7GRZGCC/+TU=
-X-Gm-Gg: ASbGncv2EtAjq05RlAWJFc1gcdOypWCuZ8pBk45iXZB2GDc6HfziVDZ1lBxP+DDjnC9
-	jMEKq/PI/y2rNo1dJW0Vscil813WTnlgwltd+GRRTAQ/cGSge6i9fvUOHpBYSbOuUknJrwRpokF
-	K5s3lhtgDQunKfcTdDQrptCucPxI9usjosC+ucjeNQ9qwMUy81W2UzC9OWN8u7EXd8VzAwfSJvv
-	WnmHqEun0xBVMuNebXVEmMRAuHIMSyNAqcQKuKNaGGh4EO6XOOqG7bDRiUTQmA7WVgmU5gVQbE=
-X-Google-Smtp-Source: AGHT+IF9tXYZOtmonlaAqjdjkiR3RpZurv0DzZ0bFu7NZtqj+dCVIe1TaFCSnbY1pyQjqWZh355Bpg==
-X-Received: by 2002:a92:c54f:0:b0:3a7:8720:9de5 with SMTP id e9e14a558f8ab-3a7f9a36198mr3019085ab.1.1733179751641;
-        Mon, 02 Dec 2024 14:49:11 -0800 (PST)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e230e5f1easm2357604173.95.2024.12.02.14.49.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 14:49:10 -0800 (PST)
-Message-ID: <0a4a569e-dfab-4aed-90df-2fe9719a3803@sifive.com>
-Date: Mon, 2 Dec 2024 16:49:09 -0600
+        d=1e100.net; s=20230601; t=1733179861; x=1733784661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xD++Pu2Owlwdz/HJYnfDKrfCE8Tqkbg/Wk+AX/Qx0C8=;
+        b=oM3CHTXK9RoYKaUs4wi0Z9xx1kOt/HsSFvrDtOLKDHtlsIVP09OJUv+LA4BYITT/aS
+         s9gbuVt7wdJNFCRTr7IaGBxYl4AIcY71Kn1R2ORzAB8nM8Vskp9RMchn97xCjYh3MYM3
+         1GBB4/xf5RYQpt8KW/Gs+Yel99F4wDpf6pgRysr34ZVJ6vCwF48lZpp3I68vXX5VeWOy
+         B3v9FqZxlGER5Bdy8966PkzjYrNZI8llyqSfeMyvXqZhEC2rElUnptfa4QgQ4k+6KYZg
+         aCc3XUu5LEURJr7t0LcUXkBWfdbB6SoIv/UfPjXwtL0aZeTYmBZ4x9tcZB0yvjb54GIx
+         gp0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXTQ5nKnUwS/TK2r3qa6bptFFLPgbJVvKtbZ67gRnBhP9Y7zq1n4jNPUcoX6eQzPPuAmnGaR+WxuM5xoCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaG9b3df6xKQ1MBWw2S9IfgAFjuIURHEjglRxd80RbRyzLimqn
+	ziUaV+CFDguzCJwu8Lhilo8e4VUjKAcD9vHoMPlai1mOYAocuT+cBe+irJW491P9MCK3y4MHU4h
+	fKLSmijGqmnW2hofC7qy8pYSjQuw/tfUUfO1O
+X-Gm-Gg: ASbGncth4JnjE/F97ohqY25khsGtxY1IjZ3kXAV90vhIvdF4hGVVAnxn+nQZyYBSBic
+	ZySHkIDDdJzYBgH/JMBU8IesOYGEv
+X-Google-Smtp-Source: AGHT+IHtcvBhHAx9qITe3ZXRX+vuVeVnkREr9poKckp6W8ETlL79sRXQdbH7chQZER3ONqKDyN8Ihk+RnC1IMlKztN4=
+X-Received: by 2002:a05:6512:2c97:b0:53d:b15d:1348 with SMTP id
+ 2adb3069b0e04-53e12938ccfmr41765e87.4.1733179860582; Mon, 02 Dec 2024
+ 14:51:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] drivers/perf: riscv: Implement PMU event info
- function
-To: Atish Patra <atishp@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Mayuresh Chitale <mchitale@ventanamicro.com>
-References: <20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com>
- <20241119-pmu_event_info-v1-5-a4f9691421f8@rivosinc.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <20241119-pmu_event_info-v1-5-a4f9691421f8@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241202202058.3249628-1-fvdl@google.com> <3tqmyo3qqaykszxmrmkaa3fo5hndc4ok6xrxozjvlmq5qjv4cs@2geqqedyfzcf>
+In-Reply-To: <3tqmyo3qqaykszxmrmkaa3fo5hndc4ok6xrxozjvlmq5qjv4cs@2geqqedyfzcf>
+From: Frank van der Linden <fvdl@google.com>
+Date: Mon, 2 Dec 2024 14:50:49 -0800
+Message-ID: <CAPTztWbmkFisL7qnmAnre5hv=UD1E60P0hr_kXNyLoQFy9OoTA@mail.gmail.com>
+Subject: Re: [PATCH] mm/hugetlb: optionally pre-zero hugetlb pages
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, 
+	Muchun Song <muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Atish,
+On Mon, Dec 2, 2024 at 1:58=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
+ote:
+>
+> On Mon, Dec 02, 2024 at 08:20:58PM +0000, Frank van der Linden wrote:
+> > Fresh hugetlb pages are zeroed out when they are faulted in,
+> > just like with all other page types. This can take up a good
+> > amount of time for larger page sizes (e.g. around 40
+> > milliseconds for a 1G page on a recent AMD-based system).
+> >
+> > This normally isn't a problem, since hugetlb pages are typically
+> > mapped by the application for a long time, and the initial
+> > delay when touching them isn't much of an issue.
+> >
+> > However, there are some use cases where a large number of hugetlb
+> > pages are touched when an application (such as a VM backed by these
+> > pages) starts. For 256 1G pages and 40ms per page, this would take
+> > 10 seconds, a noticeable delay.
+>
+> The current huge page zeroing code is not that great to begin with.
+>
+> There was a patchset posted some time ago to remedy at least some of it:
+> https://lore.kernel.org/all/20230830184958.2333078-1-ankur.a.arora@oracle=
+.com/
+>
+> but it apparently fell through the cracks.
 
-On 2024-11-19 2:29 PM, Atish Patra wrote:
-> With the new SBI PMU event info function, we can query the availability
-> of the all standard SBI PMU events at boot time with a single ecall.
-> This improves the bootime by avoiding making an SBI call for each
-> standard PMU event. Since this function is defined only in SBI v3.0,
-> invoke this only if the underlying SBI implementation is v3.0 or higher.
-> 
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> ---
->  arch/riscv/include/asm/sbi.h |  7 +++++
->  drivers/perf/riscv_pmu_sbi.c | 71 ++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 78 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index 3ee9bfa5e77c..c04f64fbc01d 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -134,6 +134,7 @@ enum sbi_ext_pmu_fid {
->  	SBI_EXT_PMU_COUNTER_FW_READ,
->  	SBI_EXT_PMU_COUNTER_FW_READ_HI,
->  	SBI_EXT_PMU_SNAPSHOT_SET_SHMEM,
-> +	SBI_EXT_PMU_EVENT_GET_INFO,
->  };
->  
->  union sbi_pmu_ctr_info {
-> @@ -157,6 +158,12 @@ struct riscv_pmu_snapshot_data {
->  	u64 reserved[447];
->  };
->  
-> +struct riscv_pmu_event_info {
-> +	u32 event_idx;
-> +	u32 output;
-> +	u64 event_data;
-> +};
-> +
->  #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
->  #define RISCV_PMU_PLAT_FW_EVENT_MASK GENMASK_ULL(61, 0)
->  /* SBI v3.0 allows extended hpmeventX width value */
-> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-> index f0e845ff6b79..2a6527cc9d97 100644
-> --- a/drivers/perf/riscv_pmu_sbi.c
-> +++ b/drivers/perf/riscv_pmu_sbi.c
-> @@ -100,6 +100,7 @@ static unsigned int riscv_pmu_irq;
->  /* Cache the available counters in a bitmask */
->  static unsigned long cmask;
->  
-> +static int pmu_event_find_cache(u64 config);
+Hi Mateusz, thanks for your reply.
 
-This new declaration does not appear to be used.
+I am aware of that patch set, yes. The discussion around it evolved in
+to one about kernel preemption and the evilness of cond_resched().
 
->  struct sbi_pmu_event_data {
->  	union {
->  		union {
-> @@ -299,6 +300,68 @@ static struct sbi_pmu_event_data pmu_cache_event_map[PERF_COUNT_HW_CACHE_MAX]
->  	},
->  };
->  
-> +static int pmu_sbi_check_event_info(void)
-> +{
-> +	int num_events = ARRAY_SIZE(pmu_hw_event_map) + PERF_COUNT_HW_CACHE_MAX *
-> +			 PERF_COUNT_HW_CACHE_OP_MAX * PERF_COUNT_HW_CACHE_RESULT_MAX;
-> +	struct riscv_pmu_event_info *event_info_shmem;
-> +	phys_addr_t base_addr;
-> +	int i, j, k, result = 0, count = 0;
-> +	struct sbiret ret;
-> +
-> +	event_info_shmem = (struct riscv_pmu_event_info *)
-> +			   kcalloc(num_events, sizeof(*event_info_shmem), GFP_KERNEL);
+You can certainly improve the time it takes to zero out a 1G page by
+optimizing the code that does it. See also, for example,
+https://lore.kernel.org/all/20180725023728.44630-1-cannonmatthews@google.co=
+m/
 
-Please drop the unnecessary cast.
+However, while, say, a 50% improvement in zero out time, at the max,
+is nice, this still leaves the faulting process spending considerable
+time doing it. Like you say, that's cost that needs to be paid - but
+it would be good to avoid paying it inline. This patch avoids doing
+that altogether, leading to a basically 100% improvement under
+reasonably good circumstances.
 
-> +	if (!event_info_shmem) {
-> +		pr_err("Can not allocate memory for event info query\n");
+>
+> Any games with "background zeroing" are notoriously crappy and I would
+> argue one should exhaust other avenues before going there -- at the end
+> of the day the cost of zeroing will have to get paid.
 
-Usually there's no need to print an error for allocation failure, since the
-allocator already warns. And this isn't really an error, since we can (and do)
-fall back to the existing way of checking for events.
+I understand that the concept of background prezeroing has been, and
+will be, met with some resistance. But, do you have any specific
+concerns with the patch I posted? It's pretty well isolated from the
+rest of the code, and optional.
 
-> +		return -ENOMEM;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(pmu_hw_event_map); i++)
-> +		event_info_shmem[count++].event_idx = pmu_hw_event_map[i].event_idx;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(pmu_cache_event_map); i++) {
-> +		for (int j = 0; j < ARRAY_SIZE(pmu_cache_event_map[i]); j++) {
-> +			for (int k = 0; k < ARRAY_SIZE(pmu_cache_event_map[i][j]); k++)
-> +				event_info_shmem[count++].event_idx =
-> +							pmu_cache_event_map[i][j][k].event_idx;
-> +		}
-> +	}
-> +
-> +	base_addr = __pa(event_info_shmem);
-> +	if (IS_ENABLED(CONFIG_32BIT))
-> +		ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_EVENT_GET_INFO, lower_32_bits(base_addr),
-> +				upper_32_bits(base_addr), count, 0, 0, 0);
-> +	else
-> +		ret = sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_EVENT_GET_INFO, base_addr, 0,
-> +				count, 0, 0, 0);
-> +	if (ret.error) {
-> +		result = -EOPNOTSUPP;
-> +		goto free_mem;
-> +	}
-> +	/* Do we need some barriers here or priv mode transition will ensure that */
+>
+> To that end I would suggest picking up the patchset and experimenting
+> with more variants of the zeroing code (for example for 1G it may be it
+> is faster to employ SIMD usage in the routine).
 
-No barrier is needed -- the SBI implementation is running on the same hart, so
-coherency isn't even a consideration.
+See above - happy to pick up older patch(es) as a separate effort, but
+they won't fully solve the issue for the scenario I'm describing.
 
-> +	for (i = 0; i < ARRAY_SIZE(pmu_hw_event_map); i++) {
-> +		if (!(event_info_shmem[i].output & 0x01))
+>
+> If this is really such a problem I wonder if this could start as a
+> series of 2MB pages instead faulted as needed, eventually promoted to
+> 1G after passing some threshold?
 
-This bit mask should probably use a macro.
+This idea sounds similar to HGM (high granularity mapping), an idea
+which was originally posted for the purpose of live migration of VMs
+(but never made it in). It's not trivial, and seems like overkill.
+Again, my patch is non-invasive and optional, so I think it's better
+in that regard.
 
-> +			pmu_hw_event_map[i].event_idx = -ENOENT;
-> +	}
-> +
-> +	count = ARRAY_SIZE(pmu_hw_event_map);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(pmu_cache_event_map); i++) {
-> +		for (j = 0; j < ARRAY_SIZE(pmu_cache_event_map[i]); j++) {
-> +			for (k = 0; k < ARRAY_SIZE(pmu_cache_event_map[i][j]); k++) {
-> +				if (!(event_info_shmem[count].output & 0x01))
-
-Same comment applies here.
-
-Regards,
-Samuel
-
-> +					pmu_cache_event_map[i][j][k].event_idx = -ENOENT;
-> +				count++;
-> +			}
-> +		}
-> +	}
-> +
-> +free_mem:
-> +	kfree(event_info_shmem);
-> +
-> +	return result;
-> +}
-> +
->  static void pmu_sbi_check_event(struct sbi_pmu_event_data *edata)
->  {
->  	struct sbiret ret;
-> @@ -316,6 +379,14 @@ static void pmu_sbi_check_event(struct sbi_pmu_event_data *edata)
->  
->  static void pmu_sbi_check_std_events(struct work_struct *work)
->  {
-> +	int ret;
-> +
-> +	if (sbi_v3_available) {
-> +		ret = pmu_sbi_check_event_info();
-> +		if (!ret)
-> +			return;
-> +	}
-> +
->  	for (int i = 0; i < ARRAY_SIZE(pmu_hw_event_map); i++)
->  		pmu_sbi_check_event(&pmu_hw_event_map[i]);
->  
-> 
-
+- Frank
 
