@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-427724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52829E07D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:01:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB2D9E08A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB176B3BF07
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:37:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 673D8B68296
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FB420C011;
-	Mon,  2 Dec 2024 14:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB9A20C484;
+	Mon,  2 Dec 2024 14:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="SBFZtwSh"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="iL9hfwJ7"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE93B20B7E2
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B0320C00D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149940; cv=none; b=pebftxDyAXPydt7Gxd+jMsYOdYA3xIMWk74UA+ua4azlt5r1b6O4is6XUjPyIZ8uz7W+4s/G5mZozkA9Gtg+LnuauWdXAsqIzxrZjTbKBnzxEm4zh3KNHL6R6XoIh1io3iBNEUEPuOBXA+zQ4hsBbDiHLpzPvzPtF3YBz/4wf6o=
+	t=1733149942; cv=none; b=lsH92rjuEZFoQ3N/I+Jw33yMfxeZED9BBIyRsYzMeTAlo2UPAwNwWpHKFRrkLxYuQMPljhj90GHdvyQ0Q6iwNdIjxayorvVW8i1TzusnGR6f2scA8bgMT2IMSbqPFsJvDdoS5BxW+yvgpV0Z16cEpSr8Yq2AG+kISkMK51uzcjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149940; c=relaxed/simple;
-	bh=qOmQJTbCQeuHlJprqQwHbB2+QP0lQNzJMUj3CXSju98=;
+	s=arc-20240116; t=1733149942; c=relaxed/simple;
+	bh=o+XWrIWz9NMGyzj7C0rloJz0rrUxtTpuh520hN9VdLM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DDqhWHJm5QSKK7jDlj2TpPV5bD4eLvhTkVLx2rmHd3bBifOZmz1hd+R/umHePHwqsYcZRbwFZ4WHf0YWiglPGT0y0sz7piZN9vLCgyANivNpwm1lloTFGnnV00L0jAx0HaiDBedwPAev5i49i4I9uR88w/XBAAS0/hYWUwDzmJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=SBFZtwSh; arc=none smtp.client-ip=209.85.221.51
+	 In-Reply-To:To:Cc; b=CKBvg5BHr4SDtmpUUSrOJ/H4HSEqWfCsr59R9/Q3fhtjOryXpBDAMeck11Oypwt8kraK0kozyrfFmwkTkNkU22GOvk6Bjtp85X/XagbX4wupWBRNpcc40wl9dv40pVjY++ROknQG9k9dSsvyRcUq/B5vyfah8LCSx15aMDqqTmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=iL9hfwJ7; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37ed3bd6114so2931511f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:32:17 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4349fb56260so37462675e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:32:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1733149936; x=1733754736; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1733149938; x=1733754738; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iOx9NaY1qX5HDoI2TYyztMEaA2o1c52TzC8u++gvhCQ=;
-        b=SBFZtwShXawYeNjjUhQw+4rL9onAhwCscQ9RguLo0UFvZVSaYE6fdFw2emSBV+sbYr
-         0Gpk6kcv64QNj4Ffm3MFy/+T7n8YXvGPiGdAVhKaly+CrOS7S4P9yHuIrIz7t7xbE3DC
-         9BxHxtL2DGZ12+7E3s/iDpmY/t4RfA6gKFuHsyIBgoptIT7ftKlF/SxSpqEgruKPqbYr
-         PgEf1+/OBWMrjCm4WDh1juXONUBFm60P9qXZg2dSK9VwuvOLzfK/Hn1FLUCbSyYBiS1g
-         QdkuDxNKDABgHOXn3MoplgmvNpDaCmWox5/D+e7/C4It+MmQ2ZPjw+k7r9nAg15ewGU7
-         7dTQ==
+        bh=ezuuCfz4dXYu4hmKXltppQihukLHouMCBa2+WZneZxU=;
+        b=iL9hfwJ7oYOeQ0hyc3UkH++I8Tn74OEvyvNbHOCTQ73+qE2ILjTfGJ0KAhIYGBxLYr
+         EzZr8TBPh3of+Np59n7sH0wR9PDqIThD+HZd9DBXkpmsHR8hOT06gnG4tMck45M5fUhj
+         v6Zo10tg6+AtR91VjKMmDzpfSzn3DaeLjB1FVS/OaOedX/ozqz+mMED1ZXGdmyrlPoir
+         2QgFTnt3b5FT5AZxQBgY7PtcmF7H9OZp/W6QUrbl+pAciwO0y6iJw7QiKBRBDuWSyUe5
+         fLd370F9fTUeZN4DeDI/lbkFtHiWtH6FhDPX+F6aoeMD1nUf5IzZbF17+hRbKt4Zc920
+         e2/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733149936; x=1733754736;
+        d=1e100.net; s=20230601; t=1733149938; x=1733754738;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iOx9NaY1qX5HDoI2TYyztMEaA2o1c52TzC8u++gvhCQ=;
-        b=cp2dN1+g5KNBlg38AI84b9bv0sPb2xgxrirrjhStwJ5HCIw4izpakl+0RhmoKPf2Bq
-         KLUfZzSY+nktPC6S1a3fGuZeTAQSBdLj6EIlDFZy31ntR9IgBQ7/HxV7uoyMNT/ld3n2
-         Cy66RJU4Ez7Gc97a5jqMssMYAoi3SJemxEJd1veNNnC/xz5jYFrWFMtp9AwLVqhAHUCj
-         q0No5kNDY3vQupzkqyxz+nzUQ0E2jyt1UnWYSVNL5ynw4nC5o5P1hliN452JLtnQeQ13
-         gnpKmOfv3WRtRcRz4qYDE1Gkn8MeYsBiAJH2SPG8gcpDTcNZ/Cwl220/neGI16ZNP+Sc
-         MJOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtbemYg7KpHif/6JzejB052z+ZcxEJc013dD0bRRGVntQSbnATaodHadnwA7PhkwiHCpVoPJc4oynfS1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2vBGvJCNDYYWSBOpy+BVCTGmNys3p8I73QhkVjepsR02QKBUp
-	vKl6dLro17sQ5U5C6vYihkAP0qVDd/sY/quN3MN808HlkVg2oa3kUqNau9/bO4g=
-X-Gm-Gg: ASbGncuc5kO14MpgM2S2kTSb4SnmLW222efjMR4wTtEIdokcGYCxJ1ZgoN1UBieUBdf
-	gm18svVMGOQcxn6jv8JRkeNJ8hmy9BYzZZgVAHdzK6x2c5pq/XCsz5gkMt03msG5apdocLkpcRp
-	Jjc+TPVDion9HyZnUhyWc6kQApcTKR0KYMQZr/Rn0QMM7dN/YOAXAIpZeK4nvgdlijbp/2kxEUA
-	q+L5XK1dLwhTYX1ML5UYRcO8NkRDACVwkqb3tWETg==
-X-Google-Smtp-Source: AGHT+IGWILDCH0oN5IIP6AmBZHCVw8v8xYQoGIqxbhQefLB2luB62aEimC6i2AGfGXR0N+C6cAzdpg==
-X-Received: by 2002:a5d:6c6d:0:b0:385:e8aa:2a4e with SMTP id ffacd0b85a97d-385e8aa2c01mr5694103f8f.31.1733149936076;
-        Mon, 02 Dec 2024 06:32:16 -0800 (PST)
+        bh=ezuuCfz4dXYu4hmKXltppQihukLHouMCBa2+WZneZxU=;
+        b=iaYjdv/JCid9o/lFOTus+VZh3c5evjzeKz/ghZRlTaOgCfLD+2Ws5drskqo5o2nvaI
+         +mG+oXXfz+/SV4fB4RVPqI/pBlv81m1DHLFd/m9cXZJ1rPGdy5rmW9bH3Ny/epTwsVn+
+         CN6HBDqfMkcHKs3G2/Fx7DiXvDBkWbbhvZ55rKQORBlWrNhI1G0eVTrsKgRnYd4rac/r
+         n1o3ioy4oJ0NjYKu/cgwAGFEdgvDIXEWF+HwN2QuA1i5Lq6woHfABVPEGVaMNsi2Hbjv
+         ETKWrkn/SjAbr8G44hSA9XqOrFns3JBf7af5giEXGRnF9tC4vTFbX0wncxXKmyCVe/Oj
+         YtSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+ePgNMquG3xDo86M+4tZwhkkb+rUawJKGzW/LSfrkm0oHJrxVzD/V1taFGD5Ahso5BvwNL21+MO/a8Hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlSq+OVl6uXQJeAjyu6qvbEr9ZWoCf+hxz7N6Uk3aJs/TDxkbc
+	LaqBYGNuK5mgYX6in/A+x5a66q6X0lreDLk6dEKPSa+q3R3pQDPsczIegz5PIuo=
+X-Gm-Gg: ASbGncsCuXW4+VfKKVtV7OgxYoY/su8CMyrTn9TEfDWV3C4FuHxuN4y2l1AEj6Y90j3
+	uSxtlIrzn+Erp9pU51OvKhV9LrZkP9gOi91q29eCe59BR0R0ykAi0FmOEJjqSYW2C4x1u4cyGNX
+	7Hb9j7c3Q3HSd0pQSMfbpG+Hhprg3xSYKU8MWTuhQkIpr13Nivx/9AjFR8bVesUz/XAGLtQk6nm
+	GX3BTIuJy6nY6OETRVCEXAFW8Q0WeX2fxN3q0NbYg==
+X-Google-Smtp-Source: AGHT+IFOZoOXIOMn7ZNkA2Tq2IsupVCxJJKuWUAQoyj7TMD84BgwJO2qsC/1IZqo9dXxiJ/IAPakGA==
+X-Received: by 2002:a05:600c:474c:b0:431:5aea:95f with SMTP id 5b1f17b1804b1-434a9dc824dmr223443175e9.16.1733149938198;
+        Mon, 02 Dec 2024 06:32:18 -0800 (PST)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa74f1e6sm188429555e9.9.2024.12.02.06.32.15
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa74f1e6sm188429555e9.9.2024.12.02.06.32.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 06:32:15 -0800 (PST)
+        Mon, 02 Dec 2024 06:32:17 -0800 (PST)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 02 Dec 2024 14:31:54 +0000
-Subject: [PATCH 1/7] dtbindings: display: bcm2711-hdmi: Correct bindings
- for 2712
+Date: Mon, 02 Dec 2024 14:31:56 +0000
+Subject: [PATCH 3/7] dt-bindings: gpio: brcmstb: add gpio-line-name
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +81,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241202-dt-bcm2712-fixes-v1-1-fac67cc2f98a@raspberrypi.com>
+Message-Id: <20241202-dt-bcm2712-fixes-v1-3-fac67cc2f98a@raspberrypi.com>
 References: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
 In-Reply-To: <20241202-dt-bcm2712-fixes-v1-0-fac67cc2f98a@raspberrypi.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -104,72 +103,26 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-gpio@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-The previous patch just adding the compatible missed out that the
-number of interrupts changed
+Support comes from gpiolib, so permit it through the binding.
 
-Fixes: 62948c62abca ("dt-bindings: display: Add BCM2712 HDMI bindings")
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- .../bindings/display/brcm,bcm2711-hdmi.yaml        | 44 +++++++++++++++-------
- 1 file changed, 30 insertions(+), 14 deletions(-)
+ Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-index 6d11f5955b51..6af342c9b6b8 100644
---- a/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-+++ b/Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
-@@ -56,22 +56,38 @@ properties:
-       - const: cec
+diff --git a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
+index f096f286da19..086d016df6ef 100644
+--- a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
+@@ -64,6 +64,8 @@ properties:
  
-   interrupts:
--    items:
--      - description: CEC TX interrupt
--      - description: CEC RX interrupt
--      - description: CEC stuck at low interrupt
--      - description: Wake-up interrupt
--      - description: Hotplug connected interrupt
--      - description: Hotplug removed interrupt
-+    oneOf:
-+      - items:
-+        - description: CEC TX interrupt
-+        - description: CEC RX interrupt
-+        - description: CEC stuck at low interrupt
-+        - description: Wake-up interrupt
-+        - description: Hotplug connected interrupt
-+        - description: Hotplug removed interrupt
+   gpio-ranges: true
+ 
++  gpio-line-names: true
 +
-+      - items:
-+        - description: CEC TX interrupt
-+        - description: CEC RX interrupt
-+        - description: CEC stuck at low interrupt
-+        - description: Hotplug connected interrupt
-+        - description: Hotplug removed interrupt
- 
-   interrupt-names:
--    items:
--      - const: cec-tx
--      - const: cec-rx
--      - const: cec-low
--      - const: wakeup
--      - const: hpd-connected
--      - const: hpd-removed
-+    oneOf:
-+      - items:
-+        - const: cec-tx
-+        - const: cec-rx
-+        - const: cec-low
-+        - const: wakeup
-+        - const: hpd-connected
-+        - const: hpd-removed
-+
-+      - items:
-+        - const: cec-tx
-+        - const: cec-rx
-+        - const: cec-low
-+        - const: hpd-connected
-+        - const: hpd-removed
- 
-   ddc:
-     $ref: /schemas/types.yaml#/definitions/phandle
+   wakeup-source:
+     type: boolean
+     description: >
 
 -- 
 2.34.1
