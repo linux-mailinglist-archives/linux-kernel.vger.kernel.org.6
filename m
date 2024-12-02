@@ -1,163 +1,163 @@
-Return-Path: <linux-kernel+bounces-428465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EA69E0EDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:21:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 944E69E0EE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7BA6282DAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:21:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46386283172
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2C71DF97F;
-	Mon,  2 Dec 2024 22:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879B91DF964;
+	Mon,  2 Dec 2024 22:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SUfnJrCV"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IF5JxS+u"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46EB1DED48
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAC21DED73
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733178108; cv=none; b=kVlnmRrrj78Gr+US0CcxnVWqwZny0J2VLHw0DmooC2NRQQbt+h5WPt8PB+SNxNN7J8n0VwJax5s2gwjgeIhLBvvMOAgTpAodXYJNzE4sDuOmvduWAQHkM5iqP7R0NdPc5mrNaXGVcv+1GZFfUU8Kjwz655EjqKjzc4D9EOrrvlw=
+	t=1733178297; cv=none; b=Q+kmo80dzEVT4bAtHjRK2MgW1wB5+ZnboDa3mOdfINl0DujrYxoSMfpjaORn4uxZxbp7hP89kA3ng2UsTxOQCPXsrY1pL7MvgMYS0vnHj+NJ5W8mAin7+qGYVToyMUrMwoEq0sRREeFUzUOfM3HKC0h4iP3JcC6XKVFbaO9UJ7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733178108; c=relaxed/simple;
-	bh=iVxWuWFPRmSH/w9N967rYnMYs9UZvnDcHqFoPlDaNek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MgaT7teG7HvhjdSXGRZ8iKfiJmmzk2jt9hTQia3QJXXuLYpE/EgSvG3gGKncA98Zd9YZJtUnD6rhH4WeTr+ib9PELY+K1unyUh2mLzosBSONsI+WeTFJO1z4h7DBr34TXZShW30zoa7hUM4CfWlJORsl7J9aKB0zwTwvgBjAtAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SUfnJrCV; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5f1f1da0c8eso2200902eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:21:46 -0800 (PST)
+	s=arc-20240116; t=1733178297; c=relaxed/simple;
+	bh=3SCjs69uV3EDmq6n+IU/rsyU2Ua5ivJVRg07utNZIDo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J8HXUkYO3yzeh8027mo6PcJRnuVZA4pn33zzGz1EOOda18kwhBtex+GUTBHhvnox6FzgBFB+Skx9fnmWFK/Vq9Q/Ln1EkzGBo1Zg/ioE5kc8AIUHWkBrqBWqXaBBy9YRUlJ3kiOUkdY26NP+GO0S+qQRQW2JCmZjnRt2/gRmFbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IF5JxS+u; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-71d4e043dd9so2111225a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:24:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733178106; x=1733782906; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y5EgvmKsjGlRlTXrv3znxvdWmIWbD+0pEBkl/VL3Zl4=;
-        b=SUfnJrCVbC1XaTkmdRGTMIrrayufxY8cYEpwSd27IpOZbuAJjjeCL4iAR/OAGcMe2+
-         xfuNTgLIeFBGXs65gT922emPXFcuWrQBEFbLYcLYUtuUxOcY7zwDyvtcft6mrn31u7vY
-         sxlKn12AiOk5r8FPo37JCaUup3Fdlr+un0+cvCe6KmPzXVYfli/kh1JcjBiXhHgJRHRM
-         J2Lg3t7KufPnrE/1lssQiU6GY48TMSHCyyxJmSkWr6YCvDIa+Y0zdMl12MfnyWc6exnF
-         qEuU//u/CUtvO0T8mxcwhJq4ZtWVXvh5vuLkbTbVRC+fRte6M6FbXN+ZP7r1SKHxXXtT
-         Oq2w==
+        d=google.com; s=20230601; t=1733178295; x=1733783095; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YJCGC/sgJEzOQ87RHSL5ZFr+7rlghNfPZJAqWvkg6xg=;
+        b=IF5JxS+uEAs28ydKKCm8+W4du0TZaIcY9/vt5/G37evlbgllg6zI2KAL51ia4ZtLUY
+         Skpri9+WG646p250Ckt/R0yR9c+GjUHVMBGRM5HBDQv+a04/l7lMkYzT1ub573E8A7jD
+         Amkqj20SrbuB5ZU7DF2sReXdL+CnnYzH4oKyf9uQmeiQrt3RRzfD4d6UfXJ5376ZJOBJ
+         497rXO6sUuDpBYoEEh6OLhLM1kkaDCHru7UOwutmyhwep/dE76+hu1jEy7pliL4Fh0VD
+         t+e8j7jCO9Jlm13/c7IP+K6AdJHI8I80L3sxIBb3uxSGnVyNL/JbozUR3q5do4Y47kDB
+         /nlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733178106; x=1733782906;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y5EgvmKsjGlRlTXrv3znxvdWmIWbD+0pEBkl/VL3Zl4=;
-        b=jU6WRQVyNmKuJRoIMqCmfBFuHouLcejvA8Y4aiogUEKLcIinE1UchYPOoL6iDj0jf2
-         8TkA6Ve7yRVGw/GW0+LvRWE1bH2yp+j2gDtg7A3Us/Hw/RthNgc8bgarvAHp8PidjIjF
-         9qXLfU9Q5Y9xeil8oB36Qhzuy8e2SPGDPPOb6E1MdPuRL1lUs3EcMTViPY45vXl+vW2a
-         igamKKDQZ3r1fW7GkSDLTBjvAsMcyjz9L6Lhs0esI14kh1Xn8ZGmyHljMKVAI5A9SUIn
-         ktVhoqNOVAQnSuHczdP84i/qjaCKJr2YJjFxTLC2A/IRR4fyugGWD9i1F6y4lFn5JE7h
-         lElw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrd6+oXcZ+n3X7mAN0DA34J67l/5Doy26lFtg9yoIxMkIfmJKwZqjtF01HHcsrmx5PchAB+oI9ObMUCCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgDnIHjdRKBEF9sO0uyMjkQhQpkKhaiVMbkT2vIrZ5SDPGZ8tF
-	o+ysiAlMTXs1k/8MOG9rknYY3+1bcMf3wB03jleEM6fpqUkRqPt6SUKMnWQhXMOwRcfuQXmCKdh
-	G
-X-Gm-Gg: ASbGncuDz6A1XbBn2aPk2waNpMQMlZ7pYFlATsBN13I3LZVBQM/zAAmrpdVwqexFL2E
-	v6EGZvBpXHu+5vBrj9qIeV0B+7+T+YkI3lvI6MNW+wyUfCn4hzhO+sH8hD8p+i8Uwd/isq/kGuT
-	zmYVFI2MER/U8hfqg0GhpHDkdky8LuL/CQ7G+5Fc79WViQv3yaiDtSpS+5qZJHNxgVO7pfcdE8k
-	cyJ+K7Y16md5A+hjfjwuzexULIGvgT0wzowv2XO3XAd2tOKld8A6AA9DtuZf3Syw3r2sBIRChs8
-	N5cOx/8iyy4=
-X-Google-Smtp-Source: AGHT+IH5D8zxsG/6N3xFU3CJRtyYDYXLofQVTyGbW0rtmiK7Peq5YuuswOgSTSpcxUTfc25zA9oMfg==
-X-Received: by 2002:a4a:edc3:0:b0:5e5:941c:ca5a with SMTP id 006d021491bc7-5f25ad2f79emr98037eaf.1.1733178106010;
-        Mon, 02 Dec 2024 14:21:46 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f21a311700sm2481289eaf.6.2024.12.02.14.21.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 14:21:44 -0800 (PST)
-Message-ID: <6435f696-40fe-4ff9-ae76-1f121fe7604f@baylibre.com>
-Date: Mon, 2 Dec 2024 16:21:43 -0600
+        d=1e100.net; s=20230601; t=1733178295; x=1733783095;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YJCGC/sgJEzOQ87RHSL5ZFr+7rlghNfPZJAqWvkg6xg=;
+        b=j/vYy8Cr928I++iktuAZNrjL+zk6kzqWW/KIAzl5GrFgUGbRcK6zihcCe2EA+2cYvI
+         ZTY68VuhSGEIaWAieiXPXWJ8/XgBI7otldjFn4TLXahsWIfR5CWUZXvYzx8MJRf5CWLb
+         rts5By5S+44/37omZxhjVC2ms8M1fKKR1y+IsAirnWmdjDceTQIkWMgHbcC2phkEBRyz
+         /sgbzpq5VBGM5yhNZG9uxzeWt9FVBKKpHp3KFZ90hMDfbyPSv+c74JqiqJJ1oN5J///L
+         2BTTDXsYyFIMELppHfIS+waZWEJGRbHy4jNtCyqa+4wM9+io/+FpgY1fGF36MSUc5i74
+         CUXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXXRKhhkGQy1vsxAFOD2Hz3UzxlS+2mwz38cUxqf+CsmW+cOTPs6BFzBylArLB3IUFxTjPMZswT2GQPWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLefHUSS1cArY/61akEGWi6u4BgysQgXghPZJ0m7woGCL5WeVB
+	grbt9IaaGlTPG8nG7BFtXwNliS5I7HXbwXIoEtDk0W10nya/X4Ofnc7U23FebLFvtQ3+dzOonj2
+	aJFCrMFFBBeiY5ejEOZR4mI0rNIuZprsApzLh
+X-Gm-Gg: ASbGncutysPZIAbr8kUbKzEACwBHnMz9CunyKsqf42boikmt3NPUqQm+FfdsNJC70DO
+	6Zy6gAizRnUdysIadomxhu0WemluZQL9Fwt7Q835x1riEu/awmZAZy1ZNgdt5ME4=
+X-Google-Smtp-Source: AGHT+IGeeo+ghKLojpnbWTzZom5/ogyh7WRdIQxYXPU0UtlV2C/NyHWZ8m/Ani2xjLVRzoyaFLhWiHGqggOcj7aCcyE=
+X-Received: by 2002:a05:6358:280d:b0:1c3:7415:693d with SMTP id
+ e5c5f4694b2df-1caeaa8ba16mr49600855d.5.1733178295304; Mon, 02 Dec 2024
+ 14:24:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] iio: adc: ad7192: Add sync gpio
-To: Jonathan Cameron <jic23@kernel.org>,
- Alisa-Dariana Roman <alisadariana@gmail.com>
-Cc: Alisa-Dariana Roman <alisa.roman@analog.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Michael Hennerich <michael.hennerich@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <20241128125811.11913-1-alisa.roman@analog.com>
- <20241128125811.11913-4-alisa.roman@analog.com>
- <20241130183839.1fd5884f@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241130183839.1fd5884f@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <202411291513.ad55672a-lkp@intel.com>
+In-Reply-To: <202411291513.ad55672a-lkp@intel.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Mon, 2 Dec 2024 15:24:18 -0700
+Message-ID: <CAOUHufYFT3jeY-1ruDwocuGQmW4-Gn69=-DhEHfQuEpv9t4KtA@mail.gmail.com>
+Subject: Re: [linus:master] [madvise] 2f406263e3: stress-ng.mremap.ops_per_sec
+ 6.7% regression
+To: oliver.sang@intel.com
+Cc: Yin Fengwei <fengwei.yin@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Matthew Wilcox <willy@infradead.org>, 
+	Minchan Kim <minchan@kernel.org>, Vishal Moola <vishal.moola@gmail.com>, 
+	Yang Shi <shy828301@gmail.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/30/24 12:38 PM, Jonathan Cameron wrote:
-> On Thu, 28 Nov 2024 14:55:03 +0200
-> Alisa-Dariana Roman <alisadariana@gmail.com> wrote:
-> 
->> Add support for the SYNC pin of AD719x devices. This pin is controlled
->> through a GPIO. The pin allows synchronization of digital filters and
->> analog modulators when using multiple devices.
->>
->> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
-> Hi.
-> 
-> Like all userspace ABI, this needs documentation.
-> 
-> It's an unusual feature, so some usecases would help.
-> 
-> It is also cross multiple devices which makes this odd as only one device
-> can presumably acquire the gpio?
-> 
-> An alternative would be to look at how to do this with a 'wrapper' sort of device
-> so that we have one instance to which this applies.
-> 
-> I'm not sure that helps that much though as we'd still need some for of
-> 'I'm setup for all channels, now you can go' ABI.
-> 
-> Jonathan
-> 
+Hi Oliver,
 
-Giving userspace direct control over the /SYNC pin without coordinating
-with the rest of the driver does seem like it could be asking for trouble.
+On Fri, Nov 29, 2024 at 12:50=E2=80=AFAM kernel test robot
+<oliver.sang@intel.com> wrote:
+>
+>
+>
+> Hello,
+>
+> kernel test robot noticed a 6.7% regression of stress-ng.mremap.ops_per_s=
+ec on:
+>
+>
+> commit: 2f406263e3e954aa24c1248edcfa9be0c1bb30fa ("madvise:madvise_cold_o=
+r_pageout_pte_range(): don't use mapcount() against large folio for sharing=
+ check")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+> [still regression on fix commit cc864ebba5f612ce2960e7e09322a193e8fda0d7]
+>
+> testcase: stress-ng
+> config: x86_64-rhel-8.3
+> compiler: gcc-12
+> test machine: 64 threads 2 sockets Intel(R) Xeon(R) Gold 6346 CPU @ 3.10G=
+Hz (Ice Lake) with 256G memory
+> parameters:
+>
+>         nr_threads: 100%
+>         testtime: 60s
+>         test: mremap
+>         cpufreq_governor: performance
+>
+>
+>
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202411291513.ad55672a-lkp@intel.=
+com
+>
+>
+> Details are as below:
+> -------------------------------------------------------------------------=
+------------------------->
+>
+>
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20241129/202411291513.ad55672a-lk=
+p@intel.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> compiler/cpufreq_governor/kconfig/nr_threads/rootfs/tbox_group/test/testc=
+ase/testtime:
+>   gcc-12/performance/x86_64-rhel-8.3/100%/debian-12-x86_64-20240206.cgz/l=
+kp-icl-2sp7/mremap/stress-ng/60s
+>
+> commit:
+>   6867c7a332 ("mm: multi-gen LRU: don't spin during memcg release")
+>   2f406263e3 ("madvise:madvise_cold_or_pageout_pte_range(): don't use map=
+count() against large folio for sharing check")
 
-It seems like the only time you would want to actually toggle the /SYNC
-pin is when starting a buffered read.
+The .config you attached shows CONFIG_LRU_GEN_ENABLED is NOT set for
+LKP. So this regression can't be from the first commit above.
 
-1. Deassert /SYNC so that no conversions can be triggered.
-2. Enable buffered reads for all chips connected to the same GPIO.
-3. Assert /SYNC to start all conversions at the same time.
-
-So it could make sense to integrate this into the buffer pre/post enable
-callbacks somehow instead of adding a new sysfs attribute.
-
-For the "wrapper" device, maybe we could do something with configfs to
-enable dynamically connecting multiple device instances? We might not
-need to actually create a separate device in sysfs, but just do something
-so that enabling a buffered read on the first chip will enable buffered
-reads on all of the chips in the group.
-
-It seems like we have some other chips that are currently being worked on
-that also have the possibility of some sort of multi-chip synchronization
-like this so it would be nice to come up with a general solution.
-
-Another use case for a general synchronized buffered read/write between
-multiple chips would be the AD3552R DAC. Recently, while adding support
-for an IIO backend for this chip, we saw that the AXI DAC backend has a
-synchronization feature like this where you set an "arm" bit on all AXI
-DAC instances. Then when you enable streaming to the first chip, it also
-triggers all of the other AXI DAC blocks to start streaming at the same
-time. We ended up not implementing that feature since the IIO subsystem
-doesn't really support this yet, but could be a good one to look at as a
-similar feature with a different implementation to help us find a general
-solution.
-
+Also, I asked you a few times if it's possible to set it to 'y'. It'd
+be great if we could do that :)
 
