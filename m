@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-427727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6059E08A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:33:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30EE19E07A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:54:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7424B4333E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:37:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18A98B6263C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C67F20C49D;
-	Mon,  2 Dec 2024 14:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8753217F37;
+	Mon,  2 Dec 2024 14:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Munch2vG"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PSj8N1iG"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C719220C007
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F58207A25
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149943; cv=none; b=rPbek9GNL1hQI3B3aeZSy9z9z2cOaWOrWAez4t6uzCa6lBXn9FbRsfC8J6cbANvgYUdR8z6iRi9sYDDmq52XWAhjjnu/KUPvi4sU9w9yUO0XCsNqJo4ATqVvXBcZOVrAnxzqwz3BOG5UQ7AB+Ima7pqFWFckbOJ79eMAvDeKHRU=
+	t=1733149993; cv=none; b=KeXhdgYMKFe8eDlfO+W1OHZBKa6lg6TgTXLrdI3gIp0XGptgNTXvaX2xwXVNfV6b1qmGgDPcQPAQMPH09EVddEQQg/Sa34qDnILaCYm8cjOdk9MKw3kQM3CP408qPs/zDa+qSMHxTRYsn1jVfPxthTcLohbi85HHM+jEGQ5SdbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149943; c=relaxed/simple;
-	bh=rUzMMJPzPZIIGgL8z6dbdv17oHDc9trx6RlpBDJ6kFE=;
+	s=arc-20240116; t=1733149993; c=relaxed/simple;
+	bh=fTndRwNEjwpImQtidYA+AKg5B5u29tbEAXM0zB3fJB0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sNnWtPvy9C0iO4EADNrkk8SyCeGNO7uPbhwrcLI8fD8y9k42onj15Fjvr9PPsvwag1vwQ7b2feWVSx5xqWduyjUbg8CUW4tLRcMtf8Ex3PNktuvk6OiR1lekLvSCU7sKitRiigY+HWrfUPxOe/NYOUd3jP6/Yv6V5IkBmQ3fXNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Munch2vG; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=D0Z/m0BtTUawlPSBnXl+VMKC6EW/CwogCKEuCpavgDWiNGzNqzjXmHHp3MsIKn5BmD2QCiOJrfnYw3or0UrITaQ9Ma7BZS6lbwqwOHwWHjtIPtUGMPrXtQm0qCmtHQ87iVbUQ3TgeEYLmz0JeUqaOxK8+RYANQImhNIm32bc550=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PSj8N1iG; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733149939;
+	s=mimecast20190719; t=1733149990;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aTLx3un4v/BXGVp78WirV769FO+OD2W0LOlqUzS7mYY=;
-	b=Munch2vGEF93JfEhsojIxT4JlGCJTlfdlWaBt/4sbbcuHvE1EFdUb56kywJ/B80dUnktwn
-	tDerUqbSZxPWPDdlUKgoc6FxbKe7vc6uqAdeCKRsPjOzQu6rjqq/Q+2pCEMq82+RPh7h/B
-	sOA3/eQqUlA/g6Z59nI72GNzUMoyHYk=
+	bh=R//fPk/2GB55CdqKyA48DAIbSeOw+r5dlR/eLGjD72M=;
+	b=PSj8N1iGxUQaI62FXqLvDe7yl5RnJ123fnUJwsrbUul3IVeO3xoC7PZSkFjw0r6ILZhh/o
+	yG60On/kAVbXKg6zBubSKbgNaTstIzRgR3kkENmMupjfIbkwpku9VAk9lVLJA3bPZj8Zlv
+	csZ+CJl9gblvATHjyPRZQbJ2hfMjOBk=
 Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-211-SxtGrQ-PPtipOcLwP49n4Q-1; Mon,
- 02 Dec 2024 09:32:17 -0500
-X-MC-Unique: SxtGrQ-PPtipOcLwP49n4Q-1
-X-Mimecast-MFC-AGG-ID: SxtGrQ-PPtipOcLwP49n4Q
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-591-s6I8G_JXOmOJvCXyJZ9Fmw-1; Mon,
+ 02 Dec 2024 09:33:09 -0500
+X-MC-Unique: s6I8G_JXOmOJvCXyJZ9Fmw-1
+X-Mimecast-MFC-AGG-ID: s6I8G_JXOmOJvCXyJZ9Fmw
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5525C193722E;
-	Mon,  2 Dec 2024 14:32:14 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2909B19373E9;
+	Mon,  2 Dec 2024 14:33:08 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.48])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CA43830000DF;
-	Mon,  2 Dec 2024 14:32:11 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6DBE630001A5;
+	Mon,  2 Dec 2024 14:33:05 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: netdev@vger.kernel.org
 Cc: David Howells <dhowells@redhat.com>,
@@ -67,9 +67,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	Paolo Abeni <pabeni@redhat.com>,
 	linux-afs@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 17/37] rxrpc: call->acks_hard_ack is now the same call->tx_bottom, so remove it
-Date: Mon,  2 Dec 2024 14:30:35 +0000
-Message-ID: <20241202143057.378147-18-dhowells@redhat.com>
+Subject: [PATCH net-next 30/37] rxrpc: Don't allocate a txbuf for an ACK transmission
+Date: Mon,  2 Dec 2024 14:30:48 +0000
+Message-ID: <20241202143057.378147-31-dhowells@redhat.com>
 In-Reply-To: <20241202143057.378147-1-dhowells@redhat.com>
 References: <20241202143057.378147-1-dhowells@redhat.com>
 Precedence: bulk
@@ -81,13 +81,10 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Now that packets are removed from the Tx queue in the rotation function
-rather than being cleaned up later, call->acks_hard_ack now advances in
-step with call->tx_bottom, so remove it.
-
-Some of the places call->acks_hard_ack is used in the rxrpc tracepoints are
-replaced by call->acks_first_seq instead as that's the peer's reported idea
-of the hard-ACK point.
+Don't allocate an rxrpc_txbuf struct for an ACK transmission.  There's now
+no need as the memory to hold the ACK content is allocated with a page frag
+allocator.  The allocation and freeing of a txbuf is just unnecessary
+overhead.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Marc Dionne <marc.dionne@auristor.com>
@@ -98,260 +95,480 @@ cc: Paolo Abeni <pabeni@redhat.com>
 cc: linux-afs@lists.infradead.org
 cc: netdev@vger.kernel.org
 ---
- include/trace/events/rxrpc.h | 20 ++++++++++----------
- net/rxrpc/ar-internal.h      |  1 -
- net/rxrpc/call_event.c       |  4 ++--
- net/rxrpc/input.c            | 17 ++++++++---------
- net/rxrpc/proc.c             |  6 +++---
- net/rxrpc/sendmsg.c          |  6 +++---
- 6 files changed, 26 insertions(+), 28 deletions(-)
+ include/trace/events/rxrpc.h |   2 -
+ net/rxrpc/ar-internal.h      |   5 +-
+ net/rxrpc/output.c           | 210 ++++++++++++++++++++++-------------
+ net/rxrpc/txbuf.c            |  76 -------------
+ 4 files changed, 131 insertions(+), 162 deletions(-)
 
 diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index e6cf9ec940aa..0f253287de00 100644
+index 7681c67f7d65..326a4c257aea 100644
 --- a/include/trace/events/rxrpc.h
 +++ b/include/trace/events/rxrpc.h
-@@ -892,8 +892,8 @@ TRACE_EVENT(rxrpc_txqueue,
- 	    TP_STRUCT__entry(
- 		    __field(unsigned int,		call)
- 		    __field(enum rxrpc_txqueue_trace,	why)
--		    __field(rxrpc_seq_t,		acks_hard_ack)
- 		    __field(rxrpc_seq_t,		tx_bottom)
-+		    __field(rxrpc_seq_t,		acks_first_seq)
- 		    __field(rxrpc_seq_t,		tx_top)
- 		    __field(rxrpc_seq_t,		send_top)
- 		    __field(int,			tx_winsize)
-@@ -902,8 +902,8 @@ TRACE_EVENT(rxrpc_txqueue,
- 	    TP_fast_assign(
- 		    __entry->call = call->debug_id;
- 		    __entry->why = why;
--		    __entry->acks_hard_ack = call->acks_hard_ack;
- 		    __entry->tx_bottom = call->tx_bottom;
-+		    __entry->acks_first_seq = call->acks_first_seq;
- 		    __entry->tx_top = call->tx_top;
- 		    __entry->send_top = call->send_top;
- 		    __entry->tx_winsize = call->tx_winsize;
-@@ -913,9 +913,9 @@ TRACE_EVENT(rxrpc_txqueue,
- 		      __entry->call,
- 		      __print_symbolic(__entry->why, rxrpc_txqueue_traces),
- 		      __entry->tx_bottom,
--		      __entry->acks_hard_ack,
--		      __entry->tx_top - __entry->tx_bottom,
--		      __entry->tx_top - __entry->acks_hard_ack,
-+		      __entry->acks_first_seq,
-+		      __entry->acks_first_seq - __entry->tx_bottom,
-+		      __entry->tx_top - __entry->acks_first_seq,
- 		      __entry->send_top - __entry->tx_top,
- 		      __entry->tx_winsize)
- 	    );
-@@ -945,7 +945,7 @@ TRACE_EVENT(rxrpc_transmit,
- 		    __entry->cong_cwnd	= call->cong_cwnd;
- 		    __entry->cong_extra	= call->cong_extra;
- 		    __entry->prepared	= send_top - call->tx_bottom;
--		    __entry->in_flight	= call->tx_top - call->acks_hard_ack;
-+		    __entry->in_flight	= call->tx_top - call->tx_bottom;
- 		    __entry->pmtud_jumbo = call->peer->pmtud_jumbo;
- 			   ),
+@@ -462,13 +462,11 @@
+ /* ---- Must update size of stat_why_req_ack[] if more are added! */
  
-@@ -1707,7 +1707,7 @@ TRACE_EVENT(rxrpc_congest,
- 	    TP_fast_assign(
- 		    __entry->call	= call->debug_id;
- 		    __entry->change	= change;
--		    __entry->hard_ack	= call->acks_hard_ack;
-+		    __entry->hard_ack	= call->acks_first_seq;
- 		    __entry->top	= call->tx_top;
- 		    __entry->lowest_nak	= call->acks_lowest_nak;
- 		    __entry->ack_serial	= ack_serial;
-@@ -1754,7 +1754,7 @@ TRACE_EVENT(rxrpc_reset_cwnd,
- 		    __entry->mode	= call->cong_mode;
- 		    __entry->cwnd	= call->cong_cwnd;
- 		    __entry->extra	= call->cong_extra;
--		    __entry->hard_ack	= call->acks_hard_ack;
-+		    __entry->hard_ack	= call->acks_first_seq;
- 		    __entry->prepared	= call->send_top - call->tx_bottom;
- 		    __entry->since_last_tx = ktime_sub(now, call->tx_last_sent);
- 		    __entry->has_data	= call->tx_bottom != call->tx_top;
-@@ -1855,7 +1855,7 @@ TRACE_EVENT(rxrpc_resend,
- 	    TP_fast_assign(
- 		    struct rxrpc_skb_priv *sp = ack ? rxrpc_skb(ack) : NULL;
- 		    __entry->call = call->debug_id;
--		    __entry->seq = call->acks_hard_ack;
-+		    __entry->seq = call->acks_first_seq;
- 		    __entry->transmitted = call->tx_transmitted;
- 		    __entry->ack_serial = sp ? sp->hdr.serial : 0;
- 			   ),
-@@ -1944,7 +1944,7 @@ TRACE_EVENT(rxrpc_call_reset,
- 		    __entry->call_id = call->call_id;
- 		    __entry->call_serial = call->rx_serial;
- 		    __entry->conn_serial = call->conn->hi_serial;
--		    __entry->tx_seq = call->acks_hard_ack;
-+		    __entry->tx_seq = call->acks_first_seq;
- 		    __entry->rx_seq = call->rx_highest_seq;
- 			   ),
- 
+ #define rxrpc_txbuf_traces \
+-	EM(rxrpc_txbuf_alloc_ack,		"ALLOC ACK  ")	\
+ 	EM(rxrpc_txbuf_alloc_data,		"ALLOC DATA ")	\
+ 	EM(rxrpc_txbuf_free,			"FREE       ")	\
+ 	EM(rxrpc_txbuf_get_buffer,		"GET BUFFER ")	\
+ 	EM(rxrpc_txbuf_get_trans,		"GET TRANS  ")	\
+ 	EM(rxrpc_txbuf_get_retrans,		"GET RETRANS")	\
+-	EM(rxrpc_txbuf_put_ack_tx,		"PUT ACK TX ")	\
+ 	EM(rxrpc_txbuf_put_cleaned,		"PUT CLEANED")	\
+ 	EM(rxrpc_txbuf_put_nomem,		"PUT NOMEM  ")	\
+ 	EM(rxrpc_txbuf_put_rotated,		"PUT ROTATED")	\
 diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index bcce4862b0b7..6683043cee3f 100644
+index 361d4f1bfb4f..0a9fad23c9ac 100644
 --- a/net/rxrpc/ar-internal.h
 +++ b/net/rxrpc/ar-internal.h
-@@ -759,7 +759,6 @@ struct rxrpc_call {
- 	ktime_t			acks_latest_ts;	/* Timestamp of latest ACK received */
- 	rxrpc_seq_t		acks_first_seq;	/* first sequence number received */
- 	rxrpc_seq_t		acks_prev_seq;	/* Highest previousPacket received */
--	rxrpc_seq_t		acks_hard_ack;	/* Latest hard-ack point */
- 	rxrpc_seq_t		acks_lowest_nak; /* Lowest NACK in the buffer (or ==tx_hard_ack) */
- 	rxrpc_serial_t		acks_highest_serial; /* Highest serial number ACK'd */
+@@ -835,11 +835,9 @@ struct rxrpc_txbuf {
+ #define RXRPC_TXBUF_WIRE_FLAGS	0xff		/* The wire protocol flags */
+ #define RXRPC_TXBUF_RESENT	0x100		/* Set if has been resent */
+ 	__be16			cksum;		/* Checksum to go in header */
+-	unsigned short		ack_rwind;	/* ACK receive window */
+-	u8 /*enum rxrpc_propose_ack_trace*/ ack_why;	/* If ack, why */
+ 	bool			jumboable;	/* Can be non-terminal jumbo subpacket */
+ 	u8			nr_kvec;	/* Amount of kvec[] used */
+-	struct kvec		kvec[3];
++	struct kvec		kvec[1];
  };
-diff --git a/net/rxrpc/call_event.c b/net/rxrpc/call_event.c
-index c97b85f34e4f..866d415801a9 100644
---- a/net/rxrpc/call_event.c
-+++ b/net/rxrpc/call_event.c
-@@ -109,7 +109,7 @@ void rxrpc_resend(struct rxrpc_call *call, struct sk_buff *ack_skb)
- 	bool unacked = false, did_send = false;
- 	unsigned int qix;
  
--	_enter("{%d,%d}", call->acks_hard_ack, call->tx_top);
-+	_enter("{%d,%d}", call->tx_bottom, call->tx_top);
- 
- 	if (call->tx_bottom == call->tx_top)
- 		goto no_resend;
-@@ -267,7 +267,7 @@ static void rxrpc_close_tx_phase(struct rxrpc_call *call)
- static unsigned int rxrpc_tx_window_space(struct rxrpc_call *call)
- {
- 	int winsize = umin(call->tx_winsize, call->cong_cwnd + call->cong_extra);
--	int in_flight = call->tx_top - call->acks_hard_ack;
-+	int in_flight = call->tx_top - call->tx_bottom;
- 
- 	return max(winsize - in_flight, 0);
+ static inline bool rxrpc_sending_to_server(const struct rxrpc_txbuf *txb)
+@@ -1365,7 +1363,6 @@ static inline void rxrpc_sysctl_exit(void) {}
+ extern atomic_t rxrpc_nr_txbuf;
+ struct rxrpc_txbuf *rxrpc_alloc_data_txbuf(struct rxrpc_call *call, size_t data_size,
+ 					   size_t data_align, gfp_t gfp);
+-struct rxrpc_txbuf *rxrpc_alloc_ack_txbuf(struct rxrpc_call *call, size_t sack_size);
+ void rxrpc_get_txbuf(struct rxrpc_txbuf *txb, enum rxrpc_txbuf_trace what);
+ void rxrpc_see_txbuf(struct rxrpc_txbuf *txb, enum rxrpc_txbuf_trace what);
+ void rxrpc_put_txbuf(struct rxrpc_txbuf *txb, enum rxrpc_txbuf_trace what);
+diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
+index 50798a641e37..73c37689c54f 100644
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -71,22 +71,97 @@ static void rxrpc_set_keepalive(struct rxrpc_call *call, ktime_t now)
+ 	trace_rxrpc_timer_set(call, delay, rxrpc_timer_trace_keepalive);
  }
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 03fd11a9bd31..b9fec74626eb 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -40,7 +40,7 @@ static void rxrpc_congestion_management(struct rxrpc_call *call,
- 	bool resend = false;
  
- 	summary->flight_size =
--		(call->tx_top - call->acks_hard_ack) - summary->nr_acks;
-+		(call->tx_top - call->tx_bottom) - summary->nr_acks;
++/*
++ * Allocate transmission buffers for an ACK and attach them to local->kv[].
++ */
++static int rxrpc_alloc_ack(struct rxrpc_call *call, size_t sack_size)
++{
++	struct rxrpc_wire_header *whdr;
++	struct rxrpc_acktrailer *trailer;
++	struct rxrpc_ackpacket *ack;
++	struct kvec *kv = call->local->kvec;
++	gfp_t gfp = rcu_read_lock_held() ? GFP_ATOMIC | __GFP_NOWARN : GFP_NOFS;
++	void *buf, *buf2 = NULL;
++	u8 *filler;
++
++	buf = page_frag_alloc(&call->local->tx_alloc,
++			      sizeof(*whdr) + sizeof(*ack) + 1 + 3 + sizeof(*trailer), gfp);
++	if (!buf)
++		return -ENOMEM;
++
++	if (sack_size) {
++		buf2 = page_frag_alloc(&call->local->tx_alloc, sack_size, gfp);
++		if (!buf2) {
++			page_frag_free(buf);
++			return -ENOMEM;
++		}
++	}
++
++	whdr	= buf;
++	ack	= buf + sizeof(*whdr);
++	filler	= buf + sizeof(*whdr) + sizeof(*ack) + 1;
++	trailer	= buf + sizeof(*whdr) + sizeof(*ack) + 1 + 3;
++
++	kv[0].iov_base	= whdr;
++	kv[0].iov_len	= sizeof(*whdr) + sizeof(*ack);
++	kv[1].iov_base	= buf2;
++	kv[1].iov_len	= sack_size;
++	kv[2].iov_base	= filler;
++	kv[2].iov_len	= 3 + sizeof(*trailer);
++	return 3; /* Number of kvec[] used. */
++}
++
++static void rxrpc_free_ack(struct rxrpc_call *call)
++{
++	page_frag_free(call->local->kvec[0].iov_base);
++	if (call->local->kvec[1].iov_base)
++		page_frag_free(call->local->kvec[1].iov_base);
++}
++
++/*
++ * Record the beginning of an RTT probe.
++ */
++static void rxrpc_begin_rtt_probe(struct rxrpc_call *call, rxrpc_serial_t serial,
++				  ktime_t now, enum rxrpc_rtt_tx_trace why)
++{
++	unsigned long avail = call->rtt_avail;
++	int rtt_slot = 9;
++
++	if (!(avail & RXRPC_CALL_RTT_AVAIL_MASK))
++		goto no_slot;
++
++	rtt_slot = __ffs(avail & RXRPC_CALL_RTT_AVAIL_MASK);
++	if (!test_and_clear_bit(rtt_slot, &call->rtt_avail))
++		goto no_slot;
++
++	call->rtt_serial[rtt_slot] = serial;
++	call->rtt_sent_at[rtt_slot] = now;
++	smp_wmb(); /* Write data before avail bit */
++	set_bit(rtt_slot + RXRPC_CALL_RTT_PEND_SHIFT, &call->rtt_avail);
++
++	trace_rxrpc_rtt_tx(call, why, rtt_slot, serial);
++	return;
++
++no_slot:
++	trace_rxrpc_rtt_tx(call, rxrpc_rtt_tx_no_slot, rtt_slot, serial);
++}
++
+ /*
+  * Fill out an ACK packet.
+  */
+-static void rxrpc_fill_out_ack(struct rxrpc_call *call,
+-			       struct rxrpc_txbuf *txb,
+-			       u8 ack_reason,
+-			       rxrpc_serial_t serial)
++static int rxrpc_fill_out_ack(struct rxrpc_call *call, int nr_kv, u8 ack_reason,
++			      rxrpc_serial_t serial_to_ack, rxrpc_serial_t *_ack_serial)
+ {
+-	struct rxrpc_wire_header *whdr = txb->kvec[0].iov_base;
+-	struct rxrpc_acktrailer *trailer = txb->kvec[2].iov_base + 3;
++	struct kvec *kv = call->local->kvec;
++	struct rxrpc_wire_header *whdr = kv[0].iov_base;
++	struct rxrpc_acktrailer *trailer = kv[2].iov_base + 3;
+ 	struct rxrpc_ackpacket *ack = (struct rxrpc_ackpacket *)(whdr + 1);
+ 	unsigned int qsize, sack, wrap, to, max_mtu, if_mtu;
+ 	rxrpc_seq_t window, wtop;
++	ktime_t now = ktime_get_real();
+ 	int rsize;
+-	u8 *filler = txb->kvec[2].iov_base;
+-	u8 *sackp = txb->kvec[1].iov_base;
++	u8 *filler = kv[2].iov_base;
++	u8 *sackp = kv[1].iov_base;
  
- 	if (test_and_clear_bit(RXRPC_CALL_RETRANS_TIMEOUT, &call->flags)) {
- 		summary->retrans_timeo = true;
-@@ -175,7 +175,7 @@ static void rxrpc_congestion_management(struct rxrpc_call *call,
- 	 * state.
- 	 */
- 	if (test_bit(RXRPC_CALL_TX_LAST, &call->flags) ||
--	    summary->nr_acks != call->tx_top - call->acks_hard_ack) {
-+	    summary->nr_acks != call->tx_top - call->tx_bottom) {
- 		call->cong_extra++;
- 		wake_up(&call->waitq);
- 	}
-@@ -218,7 +218,7 @@ static bool rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
- 	rxrpc_seq_t seq = call->tx_bottom + 1;
- 	bool rot_last = false;
+ 	rxrpc_inc_stat(call->rxnet, stat_tx_ack_fill);
  
--	_enter("%x,%x,%x", call->tx_bottom, call->acks_hard_ack, to);
-+	_enter("%x,%x", call->tx_bottom, to);
+@@ -94,14 +169,25 @@ static void rxrpc_fill_out_ack(struct rxrpc_call *call,
+ 	wtop   = call->ackr_wtop;
+ 	sack   = call->ackr_sack_base % RXRPC_SACK_SIZE;
  
- 	trace_rxrpc_tx_rotate(call, seq, to);
- 	trace_rxrpc_tq(call, tq, seq, rxrpc_tq_rotate);
-@@ -246,7 +246,6 @@ static bool rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
- 		tq->bufs[ix] = NULL;
++	*_ack_serial = rxrpc_get_next_serial(call->conn);
++
++	whdr->epoch		= htonl(call->conn->proto.epoch);
++	whdr->cid		= htonl(call->cid);
++	whdr->callNumber	= htonl(call->call_id);
++	whdr->serial		= htonl(*_ack_serial);
+ 	whdr->seq		= 0;
+ 	whdr->type		= RXRPC_PACKET_TYPE_ACK;
+-	txb->flags		|= RXRPC_SLOW_START_OK;
++	whdr->flags		= call->conn->out_clientflag | RXRPC_SLOW_START_OK;
++	whdr->userStatus	= 0;
++	whdr->securityIndex	= call->security_ix;
++	whdr->_rsvd		= 0;
++	whdr->serviceId		= htons(call->dest_srx.srx_service);
++
+ 	ack->bufferSpace	= 0;
+ 	ack->maxSkew		= 0;
+ 	ack->firstPacket	= htonl(window);
+ 	ack->previousPacket	= htonl(call->rx_highest_seq);
+-	ack->serial		= htonl(serial);
++	ack->serial		= htonl(serial_to_ack);
+ 	ack->reason		= ack_reason;
+ 	ack->nAcks		= wtop - window;
+ 	filler[0]		= 0;
+@@ -109,12 +195,10 @@ static void rxrpc_fill_out_ack(struct rxrpc_call *call,
+ 	filler[2]		= 0;
  
- 		smp_store_release(&call->tx_bottom, seq);
--		smp_store_release(&call->acks_hard_ack, seq);
- 		trace_rxrpc_txqueue(call, (rot_last ?
- 					   rxrpc_txqueue_rotate_last :
- 					   rxrpc_txqueue_rotate));
-@@ -278,9 +277,9 @@ static bool rxrpc_rotate_tx_window(struct rxrpc_call *call, rxrpc_seq_t to,
- 		}
- 	}
+ 	if (ack_reason == RXRPC_ACK_PING)
+-		txb->flags |= RXRPC_REQUEST_ACK;
++		whdr->flags |= RXRPC_REQUEST_ACK;
  
--	_debug("%x,%x,%x,%d", to, call->acks_hard_ack, call->tx_top, rot_last);
-+	_debug("%x,%x,%x,%d", to, call->tx_bottom, call->tx_top, rot_last);
+ 	if (after(wtop, window)) {
+-		txb->len += ack->nAcks;
+-		txb->kvec[1].iov_base = sackp;
+-		txb->kvec[1].iov_len = ack->nAcks;
++		kv[1].iov_len = ack->nAcks;
  
--	if (call->acks_lowest_nak == call->acks_hard_ack) {
-+	if (call->acks_lowest_nak == call->tx_bottom) {
- 		call->acks_lowest_nak = to;
- 	} else if (after(to, call->acks_lowest_nak)) {
- 		summary->new_low_nack = true;
-@@ -968,7 +967,7 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb)
- 	if (unlikely(summary.ack_reason == RXRPC_ACK_OUT_OF_SEQUENCE) &&
- 	    first_soft_ack == 1 &&
- 	    prev_pkt == 0 &&
--	    call->acks_hard_ack == 0 &&
-+	    call->tx_bottom == 0 &&
- 	    rxrpc_is_client_call(call)) {
- 		rxrpc_set_call_completion(call, RXRPC_CALL_REMOTELY_ABORTED,
- 					  0, -ENETRESET);
-@@ -1033,13 +1032,13 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb)
- 		goto send_response;
- 	}
+ 		wrap = RXRPC_SACK_SIZE - sack;
+ 		to = umin(ack->nAcks, RXRPC_SACK_SIZE);
+@@ -133,7 +217,6 @@ static void rxrpc_fill_out_ack(struct rxrpc_call *call,
  
--	if (before(hard_ack, call->acks_hard_ack) ||
-+	if (before(hard_ack, call->tx_bottom) ||
- 	    after(hard_ack, call->tx_top))
- 		return rxrpc_proto_abort(call, 0, rxrpc_eproto_ackr_outside_window);
- 	if (nr_acks > call->tx_top - hard_ack)
- 		return rxrpc_proto_abort(call, 0, rxrpc_eproto_ackr_sack_overflow);
+ 	qsize = (window - 1) - call->rx_consumed;
+ 	rsize = max_t(int, call->rx_winsize - qsize, 0);
+-	txb->ack_rwind = rsize;
  
--	if (after(hard_ack, call->acks_hard_ack)) {
-+	if (after(hard_ack, call->tx_bottom)) {
- 		if (rxrpc_rotate_tx_window(call, hard_ack, &summary)) {
- 			rxrpc_end_tx_phase(call, false, rxrpc_eproto_unexpected_ack);
- 			goto send_response;
-diff --git a/net/rxrpc/proc.c b/net/rxrpc/proc.c
-index aab392b4281f..fb16fff102fc 100644
---- a/net/rxrpc/proc.c
-+++ b/net/rxrpc/proc.c
-@@ -52,7 +52,7 @@ static int rxrpc_call_seq_show(struct seq_file *seq, void *v)
- 	struct rxrpc_call *call;
- 	struct rxrpc_net *rxnet = rxrpc_net(seq_file_net(seq));
- 	enum rxrpc_call_state state;
--	rxrpc_seq_t acks_hard_ack;
-+	rxrpc_seq_t tx_bottom;
- 	char lbuff[50], rbuff[50];
- 	long timeout = 0;
+ 	if_mtu = call->peer->if_mtu - call->peer->hdrsize;
+ 	if (call->peer->ackr_adv_pmtud) {
+@@ -146,48 +229,27 @@ static void rxrpc_fill_out_ack(struct rxrpc_call *call,
+ 	trailer->ifMTU		= htonl(if_mtu);
+ 	trailer->rwind		= htonl(rsize);
+ 	trailer->jumbo_max	= 0; /* Advertise pmtu discovery */
+-}
+-
+-/*
+- * Record the beginning of an RTT probe.
+- */
+-static void rxrpc_begin_rtt_probe(struct rxrpc_call *call, rxrpc_serial_t serial,
+-				  ktime_t now, enum rxrpc_rtt_tx_trace why)
+-{
+-	unsigned long avail = call->rtt_avail;
+-	int rtt_slot = 9;
  
-@@ -79,7 +79,7 @@ static int rxrpc_call_seq_show(struct seq_file *seq, void *v)
- 	if (state != RXRPC_CALL_SERVER_PREALLOC)
- 		timeout = ktime_ms_delta(READ_ONCE(call->expect_rx_by), ktime_get_real());
+-	if (!(avail & RXRPC_CALL_RTT_AVAIL_MASK))
+-		goto no_slot;
+-
+-	rtt_slot = __ffs(avail & RXRPC_CALL_RTT_AVAIL_MASK);
+-	if (!test_and_clear_bit(rtt_slot, &call->rtt_avail))
+-		goto no_slot;
+-
+-	call->rtt_serial[rtt_slot] = serial;
+-	call->rtt_sent_at[rtt_slot] = now;
+-	smp_wmb(); /* Write data before avail bit */
+-	set_bit(rtt_slot + RXRPC_CALL_RTT_PEND_SHIFT, &call->rtt_avail);
+-
+-	trace_rxrpc_rtt_tx(call, why, rtt_slot, serial);
+-	return;
+-
+-no_slot:
+-	trace_rxrpc_rtt_tx(call, rxrpc_rtt_tx_no_slot, rtt_slot, serial);
++	if (ack_reason == RXRPC_ACK_PING)
++		rxrpc_begin_rtt_probe(call, *_ack_serial, now, rxrpc_rtt_tx_ping);
++	if (whdr->flags & RXRPC_REQUEST_ACK)
++		call->peer->rtt_last_req = now;
++	rxrpc_set_keepalive(call, now);
++	return nr_kv;
+ }
  
--	acks_hard_ack = READ_ONCE(call->acks_hard_ack);
-+	tx_bottom = READ_ONCE(call->tx_bottom);
- 	seq_printf(seq,
- 		   "UDP   %-47.47s %-47.47s %4x %08x %08x %s %3u"
- 		   " %-8.8s %08x %08x %08x %02x %08x %02x %08x %02x %06lx\n",
-@@ -93,7 +93,7 @@ static int rxrpc_call_seq_show(struct seq_file *seq, void *v)
- 		   rxrpc_call_states[state],
- 		   call->abort_code,
- 		   call->debug_id,
--		   acks_hard_ack, READ_ONCE(call->tx_top) - acks_hard_ack,
-+		   tx_bottom, READ_ONCE(call->tx_top) - tx_bottom,
- 		   call->ackr_window, call->ackr_wtop - call->ackr_window,
- 		   call->rx_serial,
- 		   call->cong_cwnd,
-diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
-index cb9b38fc5cf8..fcd111709b50 100644
---- a/net/rxrpc/sendmsg.c
-+++ b/net/rxrpc/sendmsg.c
-@@ -138,7 +138,7 @@ static int rxrpc_wait_for_tx_window_waitall(struct rxrpc_sock *rx,
- 		rtt = 2;
- 
- 	timeout = rtt;
--	tx_start = smp_load_acquire(&call->acks_hard_ack);
-+	tx_start = smp_load_acquire(&call->tx_bottom);
- 
- 	for (;;) {
- 		set_current_state(TASK_UNINTERRUPTIBLE);
-@@ -195,8 +195,8 @@ static int rxrpc_wait_for_tx_window(struct rxrpc_sock *rx,
- 	DECLARE_WAITQUEUE(myself, current);
+ /*
+  * Transmit an ACK packet.
+  */
+-static void rxrpc_send_ack_packet(struct rxrpc_call *call, struct rxrpc_txbuf *txb,
+-				  int nr_kv, enum rxrpc_propose_ack_trace why)
++static void rxrpc_send_ack_packet(struct rxrpc_call *call, int nr_kv, size_t len,
++				  rxrpc_serial_t serial, enum rxrpc_propose_ack_trace why)
+ {
+ 	struct kvec *kv = call->local->kvec;
+ 	struct rxrpc_wire_header *whdr = kv[0].iov_base;
++	struct rxrpc_acktrailer *trailer = kv[2].iov_base + 3;
+ 	struct rxrpc_connection *conn;
+ 	struct rxrpc_ackpacket *ack = (struct rxrpc_ackpacket *)(whdr + 1);
+ 	struct msghdr msg;
+-	ktime_t now;
  	int ret;
  
--	_enter(",{%u,%u,%u,%u}",
--	       call->tx_bottom, call->acks_hard_ack, call->tx_top, call->tx_winsize);
-+	_enter(",{%u,%u,%u}",
-+	       call->tx_bottom, call->tx_top, call->tx_winsize);
+ 	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+@@ -201,41 +263,31 @@ static void rxrpc_send_ack_packet(struct rxrpc_call *call, struct rxrpc_txbuf *t
+ 	msg.msg_controllen = 0;
+ 	msg.msg_flags	= MSG_SPLICE_PAGES;
  
- 	add_wait_queue(&call->waitq, &myself);
+-	whdr->flags = txb->flags & RXRPC_TXBUF_WIRE_FLAGS;
+-
+-	txb->serial = rxrpc_get_next_serial(conn);
+-	whdr->serial = htonl(txb->serial);
+-	trace_rxrpc_tx_ack(call->debug_id, txb->serial,
++	trace_rxrpc_tx_ack(call->debug_id, serial,
+ 			   ntohl(ack->firstPacket),
+ 			   ntohl(ack->serial), ack->reason, ack->nAcks,
+-			   txb->ack_rwind);
++			   ntohl(trailer->rwind));
  
+ 	rxrpc_inc_stat(call->rxnet, stat_tx_ack_send);
+ 
+-	iov_iter_kvec(&msg.msg_iter, WRITE, kv, nr_kv, txb->len);
++	iov_iter_kvec(&msg.msg_iter, WRITE, kv, nr_kv, len);
+ 	rxrpc_local_dont_fragment(conn->local, why == rxrpc_propose_ack_ping_for_mtu_probe);
+ 
+-	ret = do_udp_sendmsg(conn->local->socket, &msg, txb->len);
++	ret = do_udp_sendmsg(conn->local->socket, &msg, len);
+ 	call->peer->last_tx_at = ktime_get_seconds();
+ 	if (ret < 0) {
+-		trace_rxrpc_tx_fail(call->debug_id, txb->serial, ret,
++		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
+ 				    rxrpc_tx_point_call_ack);
+ 		if (why == rxrpc_propose_ack_ping_for_mtu_probe &&
+ 		    ret == -EMSGSIZE)
+-			rxrpc_input_probe_for_pmtud(conn, txb->serial, true);
++			rxrpc_input_probe_for_pmtud(conn, serial, true);
+ 	} else {
+ 		trace_rxrpc_tx_packet(call->debug_id, whdr,
+ 				      rxrpc_tx_point_call_ack);
+-		now = ktime_get_real();
+-		if (ack->reason == RXRPC_ACK_PING)
+-			rxrpc_begin_rtt_probe(call, txb->serial, now, rxrpc_rtt_tx_ping);
+-		if (txb->flags & RXRPC_REQUEST_ACK)
+-			call->peer->rtt_last_req = now;
+-		rxrpc_set_keepalive(call, now);
+ 		if (why == rxrpc_propose_ack_ping_for_mtu_probe) {
+ 			call->peer->pmtud_pending = false;
+ 			call->peer->pmtud_probing = true;
+-			call->conn->pmtud_probe = txb->serial;
++			call->conn->pmtud_probe = serial;
+ 			call->conn->pmtud_call = call->debug_id;
+ 			trace_rxrpc_pmtud_tx(call);
+ 		}
+@@ -247,10 +299,11 @@ static void rxrpc_send_ack_packet(struct rxrpc_call *call, struct rxrpc_txbuf *t
+  * Queue an ACK for immediate transmission.
+  */
+ void rxrpc_send_ACK(struct rxrpc_call *call, u8 ack_reason,
+-		    rxrpc_serial_t serial, enum rxrpc_propose_ack_trace why)
++		    rxrpc_serial_t serial_to_ack, enum rxrpc_propose_ack_trace why)
+ {
+-	struct rxrpc_txbuf *txb;
+ 	struct kvec *kv = call->local->kvec;
++	rxrpc_serial_t ack_serial;
++	size_t len;
+ 	int nr_kv;
+ 
+ 	if (test_bit(RXRPC_CALL_DISCONNECTED, &call->flags))
+@@ -258,32 +311,29 @@ void rxrpc_send_ACK(struct rxrpc_call *call, u8 ack_reason,
+ 
+ 	rxrpc_inc_stat(call->rxnet, stat_tx_acks[ack_reason]);
+ 
+-	txb = rxrpc_alloc_ack_txbuf(call, call->ackr_wtop - call->ackr_window);
+-	if (!txb) {
++	nr_kv = rxrpc_alloc_ack(call, call->ackr_wtop - call->ackr_window);
++	if (nr_kv < 0) {
+ 		kleave(" = -ENOMEM");
+ 		return;
+ 	}
+ 
+-	txb->ack_why = why;
+-
+-	rxrpc_fill_out_ack(call, txb, ack_reason, serial);
++	nr_kv = rxrpc_fill_out_ack(call, nr_kv, ack_reason, serial_to_ack, &ack_serial);
++	len  = kv[0].iov_len;
++	len += kv[1].iov_len;
++	len += kv[2].iov_len;
+ 
+ 	/* Extend a path MTU probe ACK. */
+-	nr_kv = txb->nr_kvec;
+-	kv[0] = txb->kvec[0];
+-	kv[1] = txb->kvec[1];
+-	kv[2] = txb->kvec[2];
+ 	if (why == rxrpc_propose_ack_ping_for_mtu_probe) {
+ 		size_t probe_mtu = call->peer->pmtud_trial + sizeof(struct rxrpc_wire_header);
+ 
+-		if (txb->len > probe_mtu)
++		if (len > probe_mtu)
+ 			goto skip;
+-		while (txb->len < probe_mtu) {
+-			size_t part = umin(probe_mtu - txb->len, PAGE_SIZE);
++		while (len < probe_mtu) {
++			size_t part = umin(probe_mtu - len, PAGE_SIZE);
+ 
+ 			kv[nr_kv].iov_base = page_address(ZERO_PAGE(0));
+ 			kv[nr_kv].iov_len = part;
+-			txb->len += part;
++			len += part;
+ 			nr_kv++;
+ 		}
+ 	}
+@@ -292,10 +342,10 @@ void rxrpc_send_ACK(struct rxrpc_call *call, u8 ack_reason,
+ 	atomic_set(&call->ackr_nr_consumed, 0);
+ 	clear_bit(RXRPC_CALL_RX_IS_IDLE, &call->flags);
+ 
+-	trace_rxrpc_send_ack(call, why, ack_reason, serial);
+-	rxrpc_send_ack_packet(call, txb, nr_kv, why);
++	trace_rxrpc_send_ack(call, why, ack_reason, ack_serial);
++	rxrpc_send_ack_packet(call, nr_kv, len, ack_serial, why);
+ skip:
+-	rxrpc_put_txbuf(txb, rxrpc_txbuf_put_ack_tx);
++	rxrpc_free_ack(call);
+ }
+ 
+ /*
+diff --git a/net/rxrpc/txbuf.c b/net/rxrpc/txbuf.c
+index 067223c8c35f..131d9e55c8e9 100644
+--- a/net/rxrpc/txbuf.c
++++ b/net/rxrpc/txbuf.c
+@@ -73,82 +73,6 @@ struct rxrpc_txbuf *rxrpc_alloc_data_txbuf(struct rxrpc_call *call, size_t data_
+ 	return txb;
+ }
+ 
+-/*
+- * Allocate and partially initialise an ACK packet.
+- */
+-struct rxrpc_txbuf *rxrpc_alloc_ack_txbuf(struct rxrpc_call *call, size_t sack_size)
+-{
+-	struct rxrpc_wire_header *whdr;
+-	struct rxrpc_acktrailer *trailer;
+-	struct rxrpc_ackpacket *ack;
+-	struct rxrpc_txbuf *txb;
+-	gfp_t gfp = rcu_read_lock_held() ? GFP_ATOMIC | __GFP_NOWARN : GFP_NOFS;
+-	void *buf, *buf2 = NULL;
+-	u8 *filler;
+-
+-	txb = kmalloc(sizeof(*txb), gfp);
+-	if (!txb)
+-		return NULL;
+-
+-	buf = page_frag_alloc(&call->local->tx_alloc,
+-			      sizeof(*whdr) + sizeof(*ack) + 1 + 3 + sizeof(*trailer), gfp);
+-	if (!buf) {
+-		kfree(txb);
+-		return NULL;
+-	}
+-
+-	if (sack_size) {
+-		buf2 = page_frag_alloc(&call->local->tx_alloc, sack_size, gfp);
+-		if (!buf2) {
+-			page_frag_free(buf);
+-			kfree(txb);
+-			return NULL;
+-		}
+-	}
+-
+-	whdr	= buf;
+-	ack	= buf + sizeof(*whdr);
+-	filler	= buf + sizeof(*whdr) + sizeof(*ack) + 1;
+-	trailer	= buf + sizeof(*whdr) + sizeof(*ack) + 1 + 3;
+-
+-	refcount_set(&txb->ref, 1);
+-	txb->call_debug_id	= call->debug_id;
+-	txb->debug_id		= atomic_inc_return(&rxrpc_txbuf_debug_ids);
+-	txb->space		= 0;
+-	txb->len		= sizeof(*whdr) + sizeof(*ack) + 3 + sizeof(*trailer);
+-	txb->offset		= 0;
+-	txb->flags		= call->conn->out_clientflag;
+-	txb->ack_rwind		= 0;
+-	txb->seq		= 0;
+-	txb->serial		= 0;
+-	txb->cksum		= 0;
+-	txb->nr_kvec		= 3;
+-	txb->kvec[0].iov_base	= whdr;
+-	txb->kvec[0].iov_len	= sizeof(*whdr) + sizeof(*ack);
+-	txb->kvec[1].iov_base	= buf2;
+-	txb->kvec[1].iov_len	= sack_size;
+-	txb->kvec[2].iov_base	= filler;
+-	txb->kvec[2].iov_len	= 3 + sizeof(*trailer);
+-
+-	whdr->epoch		= htonl(call->conn->proto.epoch);
+-	whdr->cid		= htonl(call->cid);
+-	whdr->callNumber	= htonl(call->call_id);
+-	whdr->seq		= 0;
+-	whdr->type		= RXRPC_PACKET_TYPE_ACK;
+-	whdr->flags		= 0;
+-	whdr->userStatus	= 0;
+-	whdr->securityIndex	= call->security_ix;
+-	whdr->_rsvd		= 0;
+-	whdr->serviceId		= htons(call->dest_srx.srx_service);
+-
+-	get_page(virt_to_head_page(trailer));
+-
+-	trace_rxrpc_txbuf(txb->debug_id, txb->call_debug_id, txb->seq, 1,
+-			  rxrpc_txbuf_alloc_ack);
+-	atomic_inc(&rxrpc_nr_txbuf);
+-	return txb;
+-}
+-
+ void rxrpc_get_txbuf(struct rxrpc_txbuf *txb, enum rxrpc_txbuf_trace what)
+ {
+ 	int r;
 
 
