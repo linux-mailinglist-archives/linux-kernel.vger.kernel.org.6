@@ -1,124 +1,121 @@
-Return-Path: <linux-kernel+bounces-427210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CB79DFE17
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:06:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864DB9DFE5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:11:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32CD280A8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0882809A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2FA1FC0E2;
-	Mon,  2 Dec 2024 10:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD6C1FCFE5;
+	Mon,  2 Dec 2024 10:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CMhHzCKk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJ4CyjQx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA75F15A8;
-	Mon,  2 Dec 2024 10:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F0E1FC11E;
+	Mon,  2 Dec 2024 10:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733133991; cv=none; b=CIs71xYvHIwpEBd4lc9sdRhAsAwSayxQPxET98zOuYTcwSBrE3RV7BDHIu/iRiedmlT9xZcVy2DYLcsitph0fRa8rluC0dblJYb4p5NZGcVAwg8ZxFx+2hbKINkSzxzgi4AGqRYaaDDcWc1KI1PW2bUWTM/pp4MNL0S+bLKZ5xk=
+	t=1733134069; cv=none; b=ggQ5dBsWuz7VnPqpZnrTe6JmHpF3HrNcxcvqGp9HiWvaY5pmVlMqveGNsapZPC7R8t/5Fmo3ff6C9kMByXjnmCpyPkUlOEp0KxosRaqYGRWqyzz9xxMJ6sQPI3Pqv9G3zCS4akrrEAMjIrcGxQCbS6pDTSJ+Fkc0P+u/9DWp8VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733133991; c=relaxed/simple;
-	bh=tpy+AYjN2uzbBBhjI4dQGOhHluG542LfSgKZ1ajIBiU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EwgvARlJpVhdiOilMaZYNdJv038UsmwjvBa8te8g7KgKDVcy4V5E1WshMPy3YQq9cslhc+j80LsAWnJdr46v+zgPj8I53a6uIZ6z16qYtnif23fBnJ/kRACRj40fTs8xj0wRZo0C5C01nQKgKPM0a3jRnRWQB1brA+HE96Hty0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CMhHzCKk; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733133990; x=1764669990;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tpy+AYjN2uzbBBhjI4dQGOhHluG542LfSgKZ1ajIBiU=;
-  b=CMhHzCKkNKJ7KR8bCaKUCSyNnmNir5bxcTp9LqUvatdmvtjN7hwMCQPO
-   svOvDHC63IfRpxZdRsCo0ZD2rzdfTv5aeoY997zl8opV7VpeYoxtkJEGB
-   23zjBaoAy5aowZDZB5buoOD4KIQ6v7zCXjw2qPhVOjfDpePN4Wrlu1jKV
-   SX3jNBOrWcH8rjY090jB/cbvj1oDJp++WPt+rkX70SlzIsbu/oGOQJyVC
-   Lf3yF31M5X2ZZ4zxHPQ+OPOWJfAMVuuC9aXGdUYBjbLl/ZNUGOIaDUE+v
-   fCLDN/jxRBhwYNA5QRk1FpV9QmcItBmqQ8HpL54/lhThSb2Cc8YPEAW1i
-   A==;
-X-CSE-ConnectionGUID: h79MmLaWTrCJMlfqkX8pQw==
-X-CSE-MsgGUID: BfRc359WQz+91LHW0RhEeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="32647447"
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="32647447"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 02:06:29 -0800
-X-CSE-ConnectionGUID: GRmKKbWxSYG8eqng4hw0jQ==
-X-CSE-MsgGUID: J2Uu1T3xTMertDKYaK2jSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="97133350"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.61])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 02:06:26 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Jiang Liu <jiang.liu@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] ACPI: resource: Fix memory resource type union access
-Date: Mon,  2 Dec 2024 12:06:13 +0200
-Message-Id: <20241202100614.20731-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1733134069; c=relaxed/simple;
+	bh=q6a8y5F/7qxUW4GnoosIz5h3c/BqGka4D1h+YEyYgdE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pTckX1OwnRL92/FBjJ1PUMQMCntV/34rNmShCkVi6kToYb4dh48041g9Snp5HYLPMZ9jMPD5ESS20nliOeTQOuGTQez+8GoeKL05kguaR9jyNOz4E+7myQdG1y/dJ+VOIqEKQIu45GIGHEGNZIFPr/nUXS4/LHP4Aw4UQRZtivs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJ4CyjQx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F81C4CED1;
+	Mon,  2 Dec 2024 10:07:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733134069;
+	bh=q6a8y5F/7qxUW4GnoosIz5h3c/BqGka4D1h+YEyYgdE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eJ4CyjQx+TkM8o+DubdoG6ZI4p0b8XTvysQ0H3ecC8OcApgQix6KYAQv7n1ppdnyD
+	 CiBcNz4WW6bMR91QQbAf5rfO1Ef0ge8XZ+Dd2Bi3mAoHSgvsd+GQU9qBqETG13MVXm
+	 fX9z9tRUFKe17bDwxdWMxABKmKOxzeCF8KTaUhKZaEhFR5J+J4hswC3sait9YpysXu
+	 Xju1HvbBNsJkJN0sqn4+ZbeKuofiMNVds7NYWB/gRaytSEr+v5qb43Hiqi0ZfamDZa
+	 zDeHxFTTdtFdrpWtX7vsE6El+wApcjL6UgR7/WzSTkonG5zZgXYWsmOxQB7tdTwRNo
+	 m++ASNsFSxyHA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1tI3LE-000000007cn-3BK9;
+	Mon, 02 Dec 2024 11:07:44 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Aishwarya TCV <aishwarya.tcv@arm.com>,
+	Chuan Liu <chuan.liu@amlogic.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] Revert "clk: Fix invalid execution of clk_set_rate"
+Date: Mon,  2 Dec 2024 11:06:21 +0100
+Message-ID: <20241202100621.29209-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-In acpi_decode_space() addr->info.mem.caching is checked on main level
-for any resource type but addr->info.mem is part of union and thus
-valid only if the resource type is memory range.
+This reverts commit 25f1c96a0e841013647d788d4598e364e5c2ebb7.
 
-Move the check inside the preceeding switch/case to only execute it
-when the union is of correct type.
+The offending commit results in errors like
 
-Fixes: fcb29bbcd540 ("ACPI: Add prefetch decoding to the address space parser")
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+	cpu cpu0: _opp_config_clk_single: failed to set clock rate: -22
+
+spamming the logs on the Lenovo ThinkPad X13s and other Qualcomm
+machines when cpufreq tries to update the CPUFreq HW Engine clocks.
+
+As mentioned in commit 4370232c727b ("cpufreq: qcom-hw: Add CPU clock
+provider support"):
+
+	[T]he frequency supplied by the driver is the actual frequency
+	that comes out of the EPSS/OSM block after the DCVS operation.
+	This frequency is not same as what the CPUFreq framework has set
+	but it is the one that gets supplied to the CPUs after
+	throttling by LMh.
+
+which seems to suggest that the driver relies on the previous behaviour
+of clk_set_rate().
+
+Since this affects many Qualcomm machines, let's revert for now.
+
+Fixes: 25f1c96a0e84 ("clk: Fix invalid execution of clk_set_rate")
+Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
+Link: https://lore.kernel.org/all/e2d83e57-ad07-411b-99f6-a4fc3c4534fa@arm.com/
+Cc: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
 
-I only came across this while reading code around these parts (not
-because of investigating some issue).
+#regzbot introduced: 25f1c96a0e84
 
- drivers/acpi/resource.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
-index 7fe842dae1ec..821867de43be 100644
---- a/drivers/acpi/resource.c
-+++ b/drivers/acpi/resource.c
-@@ -250,6 +250,9 @@ static bool acpi_decode_space(struct resource_win *win,
- 	switch (addr->resource_type) {
- 	case ACPI_MEMORY_RANGE:
- 		acpi_dev_memresource_flags(res, len, wp);
-+
-+		if (addr->info.mem.caching == ACPI_PREFETCHABLE_MEMORY)
-+			res->flags |= IORESOURCE_PREFETCH;
- 		break;
- 	case ACPI_IO_RANGE:
- 		acpi_dev_ioresource_flags(res, len, iodec,
-@@ -265,9 +268,6 @@ static bool acpi_decode_space(struct resource_win *win,
- 	if (addr->producer_consumer == ACPI_PRODUCER)
- 		res->flags |= IORESOURCE_WINDOW;
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0d5a2293a8b3..936c0b79c169 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2539,7 +2539,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	rate = clk_core_req_round_rate_nolock(core, req_rate);
  
--	if (addr->info.mem.caching == ACPI_PREFETCHABLE_MEMORY)
--		res->flags |= IORESOURCE_PREFETCH;
--
- 	return !(res->flags & IORESOURCE_DISABLED);
- }
+ 	/* bail early if nothing to do */
+-	if (rate == clk_core_get_rate_recalc(core))
++	if (rate == clk_core_get_rate_nolock(core))
+ 		return 0;
  
+ 	/* fail on a direct rate set of a protected provider */
 -- 
-2.39.5
+2.45.2
 
 
