@@ -1,138 +1,158 @@
-Return-Path: <linux-kernel+bounces-427629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FDE9E03F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:48:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F090C9E03F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:49:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1732628240A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26B42823E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D119200BBB;
-	Mon,  2 Dec 2024 13:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E002020110F;
+	Mon,  2 Dec 2024 13:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C/qhtRXq"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zSnEGhJM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SVggcK2d";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zSnEGhJM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SVggcK2d"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4FC33F6;
-	Mon,  2 Dec 2024 13:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8065AAD5E;
+	Mon,  2 Dec 2024 13:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733147306; cv=none; b=EiCiYHyvhzEQoAB1X6tGmtw8rhAZ4IamP9Sn9HXzi2h8dV2mwI490/c4VRq490+8Yaz0RMRHjyb8gxLHqF8I2Da6O+fKz6OF2XCzyaTyphTFwFcdkV1uHv8+vY+YcSa4N7oqrpnIQELzwEwa21MmXn/xyxz5sECUvg1oSPm0XxI=
+	t=1733147346; cv=none; b=fHTI97Vi58/z+zI0yDtINEJbIA9xS2ZYEhyDl0tElHA08w9rzv9QGvu99v2cVMES3gm4geFst+/QxgHTRKpEo81x2II5PEavsh5qV3mrXhJStedhhdlWe3GWTXsAyk6MctFq0GaIymy4arWeskWCAE750lVT0G6T3/sGkQ7TdAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733147306; c=relaxed/simple;
-	bh=yRFF5Cn9hYJ5NxNNwgBFZ18HfvfvKPMofL1WAQo1+F4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWwzByUOkDMxSXC6MhdVLqWMndC+gk24jCJ5uEMTjn8emUZgANsWGqu8UGLMuP/k0CGiijucEzRNRcNZ+t3FE6IqzvRXEqrHBZv2ldpwGqah74WSnVJUspR4GgU+6TOtxH7TdeyGCzwHE7EH5o1RM1yNSLVoiOBCMy3vhDe+I3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C/qhtRXq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28vMNk008687;
-	Mon, 2 Dec 2024 13:48:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=rqNlJL
-	dkxznHHoNexL0Ceqcdh2TqPu6ZQPu6UIy4HYs=; b=C/qhtRXqXQW9WXvEsIYLjW
-	hNFKgO2PE43GndzSJIq2IbinLmEIJTzQEb47QZopU4zu2cnzW2Pst31199Fe7sFC
-	yE2jgnseoB3Pgmw+l85d9J+J0CSH9cuvozKpjOgdgs4tjNuGgQaohqWyY7j8cOCk
-	UpXCFcmBCBLAiEVpdc+40qhipcg2td9h5cgSnuC5hkKtTyT6B9WYPL/X3fJjIsxB
-	uJHAKDvu0NnJ1rLG3dCMNqrLWwLiRmMw1h/83TtutR9fhWM8EdM4jxd1t1HTOuQw
-	Q53LR2nPwur84WvDR0FPjAA4F5RY0LSRHuuOO+f87l2GrGI66biuRnP/LqyGiR3A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437te8sj4w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 13:48:05 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B2DgHJF010973;
-	Mon, 2 Dec 2024 13:48:05 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437te8sj4t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 13:48:05 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B26GUkT020536;
-	Mon, 2 Dec 2024 13:48:04 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 438d1s2g69-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 13:48:04 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B2Dm2wY65798614
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 2 Dec 2024 13:48:02 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 67A1D2006A;
-	Mon,  2 Dec 2024 13:48:02 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BEC2C20074;
-	Mon,  2 Dec 2024 13:48:01 +0000 (GMT)
-Received: from [9.171.14.28] (unknown [9.171.14.28])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  2 Dec 2024 13:48:01 +0000 (GMT)
-Message-ID: <2b3bc88a-e435-4ccc-a543-c8f8566dd306@linux.ibm.com>
-Date: Mon, 2 Dec 2024 14:48:01 +0100
+	s=arc-20240116; t=1733147346; c=relaxed/simple;
+	bh=Ah5hWMdfPFzst6CBjRABiissd/71Qcp2TxJFwtVPowE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EtPdsBjTAF5vz9m86450CrUcK57BYQDdgTWuZDcc8VsWQOggH7GlaqrJepeJnr1l/Rv+rRv+3TUrB7TYkjWPxGed/7HXZBxGO2PLNLiC0L3XBSgY64AJhbRMHLRPiaXfpN2SiyNTuBwVRPKUNertjhXPPV2aiu9Q0MaG9IerApc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zSnEGhJM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SVggcK2d; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zSnEGhJM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SVggcK2d; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 57201211CF;
+	Mon,  2 Dec 2024 13:49:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733147342; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qx7nVrFeR9OVdYomOaMq/GvODW8JLvzaL2rbW3wAPU=;
+	b=zSnEGhJMpzAV7OPerK/ECYunLFUvgXM1b9Cj1v+CMbAyPWhC6r9BRXGm9I36SC8/QOGB9N
+	X4DjAEO5M9Vzy4XTjE3SWfhNNbXnYt8JHI0M8G1gnlD9f2GW1I1qjh+LYSqcdujkfmDaO9
+	NboozgDQOZdNyLFrVqIs+qwi7ABoUvY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733147342;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qx7nVrFeR9OVdYomOaMq/GvODW8JLvzaL2rbW3wAPU=;
+	b=SVggcK2dh8P33y3NX+FkAluNvDieRYd5y8E3ZgL18r4zVEz4jPqzVqmweaLt0CDetRTb6Z
+	rmcbXOcAxo9d0KCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733147342; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qx7nVrFeR9OVdYomOaMq/GvODW8JLvzaL2rbW3wAPU=;
+	b=zSnEGhJMpzAV7OPerK/ECYunLFUvgXM1b9Cj1v+CMbAyPWhC6r9BRXGm9I36SC8/QOGB9N
+	X4DjAEO5M9Vzy4XTjE3SWfhNNbXnYt8JHI0M8G1gnlD9f2GW1I1qjh+LYSqcdujkfmDaO9
+	NboozgDQOZdNyLFrVqIs+qwi7ABoUvY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733147342;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qx7nVrFeR9OVdYomOaMq/GvODW8JLvzaL2rbW3wAPU=;
+	b=SVggcK2dh8P33y3NX+FkAluNvDieRYd5y8E3ZgL18r4zVEz4jPqzVqmweaLt0CDetRTb6Z
+	rmcbXOcAxo9d0KCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 45906139C2;
+	Mon,  2 Dec 2024 13:49:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ekEDEM66TWf9EQAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Mon, 02 Dec 2024 13:49:02 +0000
+Date: Mon, 2 Dec 2024 14:48:53 +0100
+From: Daniel Wagner <dwagner@suse.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Bjorn Helgaas <bhelgaas@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
+	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, 
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v5 4/8] blk-mq: introduce blk_mq_map_hw_queues
+Message-ID: <95035ac7-8707-4a69-8425-86a47841c15d@flourine.local>
+References: <20241115-refactor-blk-affinity-helpers-v5-0-c472afd84d9f@kernel.org>
+ <20241115-refactor-blk-affinity-helpers-v5-4-c472afd84d9f@kernel.org>
+ <8b303ed8-f819-4fa2-b447-8d8f4a42b380@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf test record+probe_libc_inet_pton: Make test
- resilient
-To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jing Zhang <renyu.zj@linux.alibaba.com>,
-        Guilherme Amadio <amadio@gentoo.org>
-References: <20241202111958.553403-1-leo.yan@arm.com>
-Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <20241202111958.553403-1-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 384liJLtZORsnI_2gW8-8CeKyVM7eI1X
-X-Proofpoint-ORIG-GUID: VIzwQ9x8qYuswBlnADDWHSPxs_OkP4uX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 mlxlogscore=884 impostorscore=0 lowpriorityscore=0
- mlxscore=0 phishscore=0 adultscore=0 clxscore=1011 spamscore=0
- malwarescore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8b303ed8-f819-4fa2-b447-8d8f4a42b380@oracle.com>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 12/2/24 12:19, Leo Yan wrote:
-> The test failed back and forth due to the call chain being heavily
-> impacted by the libc, which varies across different architectures and
-> distros.
+On Thu, Nov 21, 2024 at 09:08:02AM +0000, John Garry wrote:
+> > +/**
+> > + * blk_mq_map_hw_queues - Create CPU to hardware queue mapping
+> > + * @qmap:	CPU to hardware queue map.
+> > + * @dev:	The device to map queues.
+> > + * @offset:	Queue offset to use for the device.
 > 
+> supernit: maybe no '.'
 
-For s390 using 6.13.0.rc1
+np. I've followed the style of the function right above. Dropped them.
 
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+> is there still a blank line at the bottom of the file?
 
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
+It ends with (vim):
 
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+	}
+	EXPORT_SYMBOL_GPL(blk_mq_map_hw_queues);
+	~
 
-Geschäftsführung: David Faller
+I hope that is what it supposed to be.
 
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+Daniel
 
