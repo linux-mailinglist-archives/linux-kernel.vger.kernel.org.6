@@ -1,172 +1,137 @@
-Return-Path: <linux-kernel+bounces-428319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF339E0CD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B07BF9E0CD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:11:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8A122829B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:10:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74DDE282C5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DCE1DED4C;
-	Mon,  2 Dec 2024 20:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63991DED4C;
+	Mon,  2 Dec 2024 20:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fI7EW2TP"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aeyRCeFl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8862C1DDC20;
-	Mon,  2 Dec 2024 20:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4A51DD88D;
+	Mon,  2 Dec 2024 20:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733170253; cv=none; b=aYnhnLAVxdV/vVK9YWJR30bhQ5Dl4Kq5S7H8hCd742SFIbYhI4Xfvt1Y/f+DPG5mPhrQ4Njbo86f0Ott0ndGr8JVMpMiiUaDfBcCTtZotSAvSG1H7Q3YT4twqIzunZABuIrWQBH0c/COy0vwGUkP7ellhw2f6IpwBHqCtjtuv1k=
+	t=1733170285; cv=none; b=WgcJUIAkH/uWWAN6tGyPU5x1yDugTr2P6pVxvCbyx2ZUFxzqUwixbs4rQhb6bO9Z/3NxI3TsegsIe4Kibbdn6avcRZCXBkyEVo0bJVlLzDielxIhuhsA26O3PEptJrep/hizv9ZYsDt9ycdPcfm2sYCE44ISPkOGmBIL3B5tO3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733170253; c=relaxed/simple;
-	bh=kNAArB6LXbmcmOSOjq556NG1kqXhHNqGalvtL/IhDHs=;
+	s=arc-20240116; t=1733170285; c=relaxed/simple;
+	bh=SMljyBQ3PqMcQzJYaV9af8KGCbtNNS53Chu22Ncphq0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZeOljY5iRbdEcfab1leQBwVcqPhBvoEq/UKfp4kcv4uO+GYIBZ1Z4x8T231i8AeRrJfyYFGwK2+JkoSQaqs9FIdX0cXQKvVOmO4/0rDuVTsx0yOiOV10SGHuJzyIAGbYDV9mMHBITHTqP8qlEEf1ikHv9f1jaFSQ9hXggFND7RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fI7EW2TP; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-29e52a97a90so1109519fac.0;
-        Mon, 02 Dec 2024 12:10:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733170250; x=1733775050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yS9Dy4ucuDnqg2UcVFwM0HWcmP9VnKvl7vCv+YPwtCE=;
-        b=fI7EW2TPeenPTBvGJtJNsyHcBxAbrHWk2ocxSkw2FwiMe8c02nLPjLV3CM6+epmDMV
-         dBqV81lPYxe1T9B/iu3HJrgFjrYIFuCu+Z9ApQkpLG++3z9XGPWwvD0LnwMayUmiKLaS
-         t6NEprVt/8WjeU7Wk5bbboA2kDD00ffTsBqoz83u+X4f5s4x0VIxnJofUlkacKKOCrZ5
-         9jq4H3Uhn4sThvjS5mHjXn9yL/opCNOmYDraau0sYVLqdHX3OhQZkC1LirwpKFwfZJ3o
-         10KQuQGbZMFKUMafJq4jI7Ru7mkEtipJeUAJV1MuZ/jRQgGUhwwDaaoDrL2wwdLgSUzh
-         7H0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733170250; x=1733775050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yS9Dy4ucuDnqg2UcVFwM0HWcmP9VnKvl7vCv+YPwtCE=;
-        b=n5TVOxnCM3HOcJG+JGwAPsByhPonaymqz6WCsc7+9zpzZi3h6jKVpSzk/mmJuHHidp
-         /e8X/5q+Th6h0WdZ7rq1ecxAxb60etaJfLjKnEEcM+iZ/cV8Vi6ZvEr3J0FRcKPbqZHm
-         lpTIeohR0RXh+U36G281oIkXMJ1aebHu6vK0FSeXnIIX0V5S6EvyxT4htPqggpfUTnmt
-         18BXVjMtFmhGTYDWNHsT3Tou95ceqKVSLgixB6L4ufk6+iu6LX4Zyc192LLQ+EBv/MCf
-         ZI8ExCETyWOnhAcX1upETFxvgy1AOYlVd3UCLtk2JrdWbTj2tgxfBGLckkBM7GLzGwfH
-         mlEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7jKcHIZVq4JdZ1Ec+uXRkOgxH4Xhdz3pNxrrBrPzcwdOl/PPAsQSpAtNdLtoVjWwkotOfz7b6fNAn@vger.kernel.org, AJvYcCVox9GZMxZZKfcBcOGAGljH5USyOLZ59/0aHwslYmsHoMG+1GkHZWShTD/F66X4nkPeegxW4qLQuvPqNZsI@vger.kernel.org, AJvYcCVwHLwVEogPrYW9ApEz0EnuA5CBepLZvhaZ3FWUuYxA9rJ98OJnni1VmuzKoot1ElGo8nmB62dMjih1TfyGeg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS8SK43k/XCjjpWBWRe0ATvM68zj864ARcmWU5+bR1Qtmtg8vC
-	p78SX+6XSfV+z+ID9Q4DgfwhVD+/aX64rTrwXrMkPPRI/GA7VfFthVEPZNKnr1+HwY4NtDUtiP/
-	OoQvFqj9Y6xL3YlGyN14r6nwgOKxBWNvg+pM=
-X-Gm-Gg: ASbGnct+pNpadmk0Zxl2DSa/bjAcuW548E7MmN9+bojueLsxL4yKM3IcntB9mYDerYu
-	6PnDwa17hf41UlmnU9KfgIWAj0fHPig==
-X-Google-Smtp-Source: AGHT+IFya8i4PUGx866RBB7MZODgNmFkVstPcLxqtKAb3QCr4N3dx7U6bFp9oMkKybjvmsO4+EHWRAa5EYLiZdgyv7M=
-X-Received: by 2002:a05:6358:5bcf:b0:1c3:8f64:add6 with SMTP id
- e5c5f4694b2df-1cab15a65f5mr1137617355d.3.1733170250390; Mon, 02 Dec 2024
- 12:10:50 -0800 (PST)
+	 To:Cc:Content-Type; b=nBBTfEMU7pc1EG/P29M7xnWlcdR2wtX+qJfs31L62hcMnp7YwEK/l1dYefteE8V1NGz52nLviGegUV23lVtgi7XPp4NzOpG6ePo4BgAwMTchdq5E8MNjabTgqjJqmQhlkKW1yqg9D1HrcyZZxN3ueKk5zjnG/mrQvUzsNyJfwLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aeyRCeFl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B6EC4CEE6;
+	Mon,  2 Dec 2024 20:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733170284;
+	bh=SMljyBQ3PqMcQzJYaV9af8KGCbtNNS53Chu22Ncphq0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aeyRCeFlzS8BVSHsJ1b+Wqm7uKsDHPtpp5BmQzLo8+0KNkeKpRHJIs59Y0il0iCrq
+	 dEwXZ8hfPouIy3sUmjzuhaR1LlBNpGjWeUTwSVcr5Nw1WXl2QU33pnqmMStZfzmUrm
+	 rj5tg9siqJAhIVWlAqpeZVOUBcu8Mk05Srq1mu4r+8WpvDRch9XjOzJ+GceM5/2+RH
+	 td4YUnndtY4ZYj5AL0VXaTko9Nyx1yVkVVsLO46OMXo57qGs2rWTuwL8KMBcrgjrBI
+	 hS+euXWtZvXZ/ns2UH4+Vp4O3vlgLoKbA1BTvVB0sgqHcFiDJ2dv+9Aw1GCsDiP5gO
+	 u7OcueoOvow9w==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2967af48248so2600017fac.2;
+        Mon, 02 Dec 2024 12:11:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUfhCb7VjkQ5EyUGB7f1QStaxZnx0kYcJ8c56vcRr5h1eJPgbLsUv0nos7kkFv578RPt1qhiH9/wjA=@vger.kernel.org, AJvYcCXa8ScyXwgXsD4k+aje8zDrErcFlBiHzWPOTXSUGbGHeowLmup5lfm4OZMvxs+Snw/7yq4X1he9g9N7+y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKdTgc5jIK4KEMFI3bmyJk4oPEOddlfQDQBeMDoigSHwIZbsoQ
+	2HiQv0xsNqy8RPMOKE0AjYLLFrc0h4LtoePRoweD+lQlp0qNxXgVFDfpGHqNlIcWzlO9GeA7RCR
+	ipHq9E+20p3D/c/RRa4QyK7/9Igk=
+X-Google-Smtp-Source: AGHT+IFgRh61253Oj6tSR3cf+ytz9ae5vuuPL6lnL20jDldovYzN50pkQ1A9DqEGHJ9D+fk+pbtH1TODhdDW9iX0f6E=
+X-Received: by 2002:a05:6871:4098:b0:288:49a5:7562 with SMTP id
+ 586e51a60fabf-29dc4387a54mr14650275fac.41.1733170283894; Mon, 02 Dec 2024
+ 12:11:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com>
- <20241008-starqltechn_integration_upstream-v6-3-5445365d3052@gmail.com>
- <33e14868-e6ee-45ca-b36c-c553e0dcfbef@oss.qualcomm.com> <CABTCjFCTggnU7UvqcKYq53iRLACBxWE7C1TKRi7dr42o-=0Mqg@mail.gmail.com>
- <df3e3989-f588-4e53-b6f3-bf8c36330911@oss.qualcomm.com>
-In-Reply-To: <df3e3989-f588-4e53-b6f3-bf8c36330911@oss.qualcomm.com>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 2 Dec 2024 23:10:39 +0300
-Message-ID: <CABTCjFAMLOmUrr5+spyWJb_XFmwqC_wE94cHLLRrUeVZGJkJrQ@mail.gmail.com>
-Subject: Re: [PATCH v6 03/12] arm64: dts: qcom: sdm845-starqltechn: fix usb
- regulator mistake
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20241114220921.2529905-1-saravanak@google.com> <20241114220921.2529905-3-saravanak@google.com>
+In-Reply-To: <20241114220921.2529905-3-saravanak@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 2 Dec 2024 21:11:12 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jPO24JR5um0gv5U5AwiR_RHx37x6DisG-nUxaZt9gfGA@mail.gmail.com>
+Message-ID: <CAJZ5v0jPO24JR5um0gv5U5AwiR_RHx37x6DisG-nUxaZt9gfGA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/5] PM: sleep: Remove unnecessary mutex lock when
+ waiting on parent
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Marek Vasut <marex@denx.de>, 
+	Bird@google.com, Tim <Tim.Bird@sony.com>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D0=BD, 2 =D0=B4=D0=B5=D0=BA. 2024=E2=80=AF=D0=B3. =D0=B2 18:09, Konr=
-ad Dybcio <konrad.dybcio@oss.qualcomm.com>:
->
-> On 2.12.2024 2:41 PM, Dzmitry Sankouski wrote:
-> > =D1=81=D0=B1, 26 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 13:41,=
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>:
-> >>
-> >> On 8.10.2024 6:51 PM, Dzmitry Sankouski wrote:
-> >>> Usb regulator was wrongly pointed to vreg_l1a_0p875.
-> >>> However, on starqltechn it's powered from vreg_l5a_0p8.
-> >>>
-> >>> Fixes: d711b22eee55 ("arm64: dts: qcom: starqltechn: add initial devi=
-ce tree for starqltechn")
-> >>> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> >>>
-> >>> ---
-> >>
-> >> I really really doubt that the supplies for on-SoC PHYs were altered,
-> >> given these regulators are assigned based on their specific characteri=
-stics
-> >>
-> >
-> > From rooted android system from klabit87 on starqltechn:
-> >
-> > ```
-> > starqltechn:/ # cat /proc/cpuinfo | grep Hardware
-> > Hardware        : Qualcomm Technologies, Inc SDM845
-> > starqltechn:/ # uname -a
-> > Linux localhost 4.9.186-klabitV6.5 #1 SMP PREEMPT Thu Dec 10 19:42:53
-> > CST 2020 aarch64
-> > starqltechn:/ # cat
-> > /sys/kernel/debug/regulator/soc:rpmh-regulator-ldoa1-pm8998_l1/consumer=
-s
-> > Device-Supply                    EN    Min_uV   Max_uV  load_uA
-> > ae90000.qcom,dp_display-vdda-0p9 N     880000   880000        0
-> > 1d87000.ufsphy_mem-vdda-phy      Y     880000   880000    62900
-> > ae96400.qcom,mdss_dsi_phy0-vdda-0p9 N          0        0        0
-> > ae94400.qcom,mdss_dsi_phy0-vdda-0p9 Y     880000   880000    36000
-> > 1c00000.qcom,pcie-vreg-0.9       Y     880000   880000    24000
-> > pm8998_l1                        N          0        0        0
-> > starqltechn:/ # cat
-> > /sys/kernel/debug/regulator/soc:rpmh-regulator-ldoa5-pm8998_l5/consumer=
-s
-> > Device-Supply                    EN    Min_uV   Max_uV  load_uA
-> > ae90000.qcom,dp_display-vdda-usb1-ss-core N          0        0        =
-0
-> > 88e2000.qusb-vdd                 Y     800000   800000        0
-> > 88e8000.ssphy-vdd                Y     800000   800000        0
-> > pm8998_l5                        N          0        0        0
-> > ```
-> >
-> > I also downloaded kernel source from Samsung, to check its dts,
-> > and it also powers qusb@88e2000 and ssphy@88e8000 from 'pm8998_l5' regu=
-lator.
->
-> Interesting.. could you try to forcefully shut down L5A (I doubt you'll
-> be able to do so with L1A given it powers so much digital logic), or
-> set its regulator-min&max-microvolt to a way-too-low voltage (vmin
-> seems to be 312000)?
->
-> You should then be able to tell fairly easily, depending on whether usb2
-> still works after a replug
->
+Sorry for the delay.
 
-Usb doesn't worked in such experiment:
-Here's the log:
-```
-[    3.541733] ldo5: Setting 312000-312000uV
-......
-[    3.808224] dwc3 a600000.usb: Adding to iommu group 5
-[    3.823116] qcom-qmp-combo-phy 88e8000.phy: phy initialization timed-out
-[    3.824323] phy phy-88e8000.phy.0: phy init failed --> -110
-[    3.825916] dwc3 a600000.usb: error -ETIMEDOUT: failed to initialize cor=
-e
-[    3.827208] dwc3 a600000.usb: probe with driver dwc3 failed with error -=
-110
-[    3.828548] probe of a600000.usb returned 110 after 20399 usecs
-```
+On Thu, Nov 14, 2024 at 11:09=E2=80=AFPM Saravana Kannan <saravanak@google.=
+com> wrote:
+>
+> Locking is not needed to do get_device(dev->parent). We either get a NULL
+> (if the parent was cleared) or the actual parent. Also, when a device is
+> deleted (device_del()) and removed from the dpm_list, its completion
+> variable is also complete_all()-ed. So, we don't have to worry about
+> waiting indefinitely on a deleted parent device.
+
+The device_pm_initialized(dev) check before get_device(dev->parent)
+doesn't make sense without the locking and that's the whole point of
+it.
+
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
+>  drivers/base/power/main.c | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 86e51b9fefab..9b9b6088e56a 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -284,18 +284,9 @@ static bool dpm_wait_for_superior(struct device *dev=
+, bool async)
+>          * counting the parent once more unless the device has been delet=
+ed
+>          * already (in which case return right away).
+>          */
+> -       mutex_lock(&dpm_list_mtx);
+> -
+> -       if (!device_pm_initialized(dev)) {
+> -               mutex_unlock(&dpm_list_mtx);
+> -               return false;
+> -       }
+> -
+>         parent =3D get_device(dev->parent);
+> -
+> -       mutex_unlock(&dpm_list_mtx);
+> -
+> -       dpm_wait(parent, async);
+> +       if (device_pm_initialized(dev))
+> +               dpm_wait(parent, async);
+
+This is racy, so what's the point?
+
+You can just do
+
+parent =3D get_device(dev->parent);
+dpm_wait(parent, async);
+
+and please update the comment above this.
+
+>         put_device(parent);
+>
+>         dpm_wait_for_suppliers(dev, async);
+> --
 
