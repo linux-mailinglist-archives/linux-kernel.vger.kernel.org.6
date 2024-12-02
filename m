@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-428462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABFD9E0ED2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:19:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BDB9E0ED6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:20:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D98281EB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:19:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C19165710
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986331DFE2F;
-	Mon,  2 Dec 2024 22:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F181DF964;
+	Mon,  2 Dec 2024 22:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TMgs6gNZ"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eStUgekU"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C87B1DF986;
-	Mon,  2 Dec 2024 22:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFF81DE3B2
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 22:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733177956; cv=none; b=lS48zZ9kNzsXKOnaBTNyHFY8LTvadd1fmz0/y+woiCoL+c30RncoqT1kz5kQKnAbbccowgF8oV199eEHLdGJefgH+eacIR9G36Ed06RJKodstM5qma68kt07PTj5bGCj3fOLJPZ+d9WC71jRe9Ep0CB/hPCV9363VWhBz38N0l0=
+	t=1733178009; cv=none; b=Qo+1yaOTnHISDYDxeTNkOHeQtRHsaO2qlhvwiTOeZbVBVxXaLa4U9hwLUgvgQ1ffNnzhvYqCkzTMV0dwfeAfsu0Yd3PFQNt9kokOlRjUg0tyOFacZdEnhkE4d0eI1Lo0l3FkDMnskUlQXAUHizFsX/y23+CqRcsuLM+Xu1GFiKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733177956; c=relaxed/simple;
-	bh=urvpwznyO5WKUBXGA4SCvIRflXbeZHt0QRLOdzFKni4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cGOpoiWebQjvKIt2nAE1vFCNqaDHsiGyc4e3iDSZxQRXWicPhmLJxedmPI86jNbzTbeKKB0/1laI6eFnGsU8njEI0xHSOzOaaUNJGWQ2k3JOo7ckPfqwLIvQ6VXlOanv1xT84lKwJeLV0Ek8zbpouG7094kE/Gy1M7iisdH6aNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TMgs6gNZ; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2MJ60o1793774
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 2 Dec 2024 16:19:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733177947;
-	bh=1l584hfjXVw8ZfV2t87/tz1GLJ0Q02GqO2iqyohvDUM=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=TMgs6gNZYoo8U3kCXbW5gNQwneCxmVPpkjvJYi6Tiz6LxTrQjyhEb40LSgtsxmpmT
-	 BIzsXk1d4dAVr3QyRTF3IXmtPZ8M6GqiuarooGH/7WQ9InJRfuOIU3MVdmxC8S01Sz
-	 X3Jc0HyP7fjvRdpEJ2GsvfRD2fVr1sxgRq3/QSmo=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2MJ6nv062225
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 2 Dec 2024 16:19:06 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
- Dec 2024 16:19:06 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 2 Dec 2024 16:19:06 -0600
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2MJ5Uv068468;
-	Mon, 2 Dec 2024 16:19:06 -0600
-From: Andrew Davis <afd@ti.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew
- Davis <afd@ti.com>
-Subject: [PATCH 4/4] remoteproc: wkup_m3: Use devm_rproc_add() helper
-Date: Mon, 2 Dec 2024 16:19:04 -0600
-Message-ID: <20241202221904.319149-4-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241202221904.319149-1-afd@ti.com>
-References: <20241202221904.319149-1-afd@ti.com>
+	s=arc-20240116; t=1733178009; c=relaxed/simple;
+	bh=KxDp5MnGW60aqBFJqD4JyRMmY5bR01t13DbUTGA+aMI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JEQJz1VuasWqDxJZNg5A/uu2EzzyXCnJkdKC6k+jsoo3wYinU1NCaaMUJGmgqyde83WPd8yJdEYgRT2ENgA0ZROaQRjJSAvQKeuX61opwc4yp6/jPgc5PLKouF3qsSGxgEwZ/8EVcISvqU8D7MWZuNd/gbOXUoWlV3DhUIbvfyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eStUgekU; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-71d4ff749baso2273591a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 14:20:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733178006; x=1733782806; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KxDp5MnGW60aqBFJqD4JyRMmY5bR01t13DbUTGA+aMI=;
+        b=eStUgekUv2BvStnkJPPE9KgHfwoqkzoGjYEqu3dvpTPjQ3maeIhVy+UImO61pcIv4l
+         gUmlyy6bTogiVmXMY6cd3nEBhjM50AvoBLfw1RDyZ1YFk2UeilHWKkQV4PgoqQE1bE8f
+         rPlSS5DIM+1YC4gozdbgyreUGQC2CwiAgvjtWZuCl3i5zrX6F00UtaI4GCaVWuaMqe2A
+         ST1hKrBydt3g2+7hIWq/VZ8BVGtAp8DgTHk1Oxr65g6n3Aei7wpFZRHubVPr6o/jKDCN
+         9B6lxcEdvQNa4tDY8bxRk156S4IjhSQ/wn/O5XxYym5QBbduGwXgJytZeTOOhCUOGM/M
+         tbOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733178006; x=1733782806;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KxDp5MnGW60aqBFJqD4JyRMmY5bR01t13DbUTGA+aMI=;
+        b=iCKas5Z9og5WZYvubW9UmleCtV64oIUFZbkmL0/KKHWlHAVY2vpeDm3noj3B0eWkAU
+         hxRyCy44UJD/NrqgRfwy/eEHXpLDm9aQKIbZU/xsG2W8cU+9YYiLgAJPuCMacSIz3bva
+         6gGHGuD8f++H62httfIo3mUT+xBMsR1NwvhNkbZwiUDjUTwzRAQ3SZ54Y8ntlroSB8H0
+         d8awyiFuYkxdG7HyiZV7f2cEkzw0jnDUd8VI0niO5J2Y/Xa7mMp9rIenWV/cHyMFbhzr
+         k7PtIaK4i4qiG/wCGsgU1NaXAAmQQXW9eo2HZ6M1vHBEAIK1d24NroSHP+gelzA3QBIs
+         nIaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWsrVu4kJjSYyXEbFMamETLJ+VeZ+tSzuqToeZcJWLWcC2ja3GnHNfUj17Ox8yGxlrToyt5ivLbPwLZL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS9G3OyQtu/DROGfjD00p9dzEllnUIhZXeTh9BxSzlS8hEdzWf
+	JxZf6luXUYbriPCqHUcMH9vblTidBwL5+BqjeEUSJe85MZa5F/32chVgxcTAeMpArF1vwVQoFaO
+	UdJw79hK3uWVvyQ2ZprWyMGm94PLyrbGjoFGF
+X-Gm-Gg: ASbGncvI7I0fGBzpvrIVDL8xOASOGjCc5FFVQ0Ocm+jGk1jy2kVDz9SM9WDJx9Nt6J1
+	/jbZR8hyNbvaiwSbg4FX5eHWnzvqaipDQjJFV3QhICdOeXRxgZg6rbJ/Tb84d5Hw=
+X-Google-Smtp-Source: AGHT+IGatTpJwiKxbnO6DaUR3NzXa4m4OZ5gudCk71K5HQZbi0bxzC9mddfkQtkd9cEzkEL7rxYDSUpeQaMn7OuLA04=
+X-Received: by 2002:a05:6358:d383:b0:1c3:84de:4d5c with SMTP id
+ e5c5f4694b2df-1caeac4ea20mr45668655d.23.1733178006499; Mon, 02 Dec 2024
+ 14:20:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241128102619.707071-1-00107082@163.com> <20241129025213.34836-1-00107082@163.com>
+In-Reply-To: <20241129025213.34836-1-00107082@163.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Mon, 2 Dec 2024 15:19:29 -0700
+Message-ID: <CAOUHufZpr9GR2KLpgYNMkzBptp3OGDZuHs8URtnKHyU0eap6xg@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/codetag: swap tags when migrate pages
+To: David Wang <00107082@163.com>
+Cc: surenb@google.com, kent.overstreet@linux.dev, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use the device lifecycle managed add function. This helps prevent mistakes
-like deleting out of order in cleanup functions and forgetting to delete
-on error paths.
+On Thu, Nov 28, 2024 at 7:52=E2=80=AFPM David Wang <00107082@163.com> wrote=
+:
+>
+> Current solution to adjust codetag references during page migration is
+> done in 3 steps:
+> 1. sets the codetag reference of the old page as empty (not pointing
+> to any codetag);
+> 2. subtracts counters of the new page to compensate for its own allocatio=
+n;
+> 3. sets codetag reference of the new page to point to the codetag of
+> the old page.
+> This does not work if CONFIG_MEM_ALLOC_PROFILING_DEBUG=3Dn because
+> set_codetag_empty() becomes NOOP. Instead, let's simply swap codetag
+> references so that the new page is referencing the old codetag and the
+> old page is referencing the new codetag. This way accounting stays
+> valid and the logic makes more sense.
+>
+> Fixes: e0a955bf7f61 ("mm/codetag: add pgalloc_tag_copy()")
+> Signed-off-by: David Wang <00107082@163.com>
+> Closes: https://lore.kernel.org/lkml/20241124074318.399027-1-00107082@163=
+.com/
+> Acked-by: Suren Baghdasaryan <surenb@google.com>
+> Suggested-by: Suren Baghdasaryan <surenb@google.com>
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- drivers/remoteproc/wkup_m3_rproc.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-index 30e9ecd75657f..6af9aa4179d0c 100644
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -208,22 +208,13 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
- 		wkupm3->mem[i].dev_addr = be32_to_cpu(*addrp) - l4_offset;
- 	}
- 
--	dev_set_drvdata(dev, rproc);
--
--	ret = rproc_add(rproc);
-+	ret = devm_rproc_add(dev, rproc);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "rproc_add failed\n");
- 
- 	return 0;
- }
- 
--static void wkup_m3_rproc_remove(struct platform_device *pdev)
--{
--	struct rproc *rproc = platform_get_drvdata(pdev);
--
--	rproc_del(rproc);
--}
--
- #ifdef CONFIG_PM
- static int wkup_m3_rpm_suspend(struct device *dev)
- {
-@@ -242,7 +233,6 @@ static const struct dev_pm_ops wkup_m3_rproc_pm_ops = {
- 
- static struct platform_driver wkup_m3_rproc_driver = {
- 	.probe = wkup_m3_rproc_probe,
--	.remove = wkup_m3_rproc_remove,
- 	.driver = {
- 		.name = "wkup_m3_rproc",
- 		.of_match_table = wkup_m3_rproc_of_match,
--- 
-2.39.2
-
+Acked-by: Yu Zhao <yuzhao@google.com>
 
