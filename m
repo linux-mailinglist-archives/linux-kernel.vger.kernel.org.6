@@ -1,119 +1,144 @@
-Return-Path: <linux-kernel+bounces-428420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360019E0EBA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:12:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0229E0EB9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 23:12:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3692DB2A12C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:50:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA31B27F05
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCABC1DF747;
-	Mon,  2 Dec 2024 21:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E501DF74B;
+	Mon,  2 Dec 2024 21:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="j8Nk7cM5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NRciItoR"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TZ1G8DOH"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EAFA50;
-	Mon,  2 Dec 2024 21:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497401DF73D;
+	Mon,  2 Dec 2024 21:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733176211; cv=none; b=ikbWAPSBfNSOv+FIgG4iYk2B2SosubmnjXLupmYek0rO2PR9aGmL1vvZ2R7oSoxRnRc/f2O6E9ZMzXbPJ/kxTkdRagGoO1jtauq6luyZgpsS+LiBFBw/6bEYZK+6f6LfZDrtW9tAkNbAtqprhp7jzUaNif4rYSRe9Qxb/1uMSm8=
+	t=1733176302; cv=none; b=JwetuvqilZXW/Cd1KJosfRO/WepqktnMpqf9oIQq8IxlsfR6Y+FhARtC5PI/98cobUb61AJ+I7kMte4ay1cJUW1vtgHpuI7js1WZLO0+42V0S3d6E3cu9br9tYbhX1w4U5UaVgx9UpXbzfgJw9r6PVvteJvIq2ODszShllW3a2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733176211; c=relaxed/simple;
-	bh=XoADd0ngvc0ii1gCfzrSDFcbAn0l59Bqsdk9xwTlMsI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZTrL0zohY4rYQGYmTmWpEJymxKdKPecS0HOgfz+3K3RljMpWHX1ixDjzkIwSV5ymhigywMiSMUQ9O9njazS4ImW3Cwlh5iBp2YnDhqWf9iBHWB6ptFurD5XasuPwZLPRn/KQJLICbbIejk3z419ZWLPRfcTgqwGSIzzD/wVINyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=j8Nk7cM5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NRciItoR; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id AA120114020C;
-	Mon,  2 Dec 2024 16:50:07 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Mon, 02 Dec 2024 16:50:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1733176207;
-	 x=1733262607; bh=XoADd0ngvc0ii1gCfzrSDFcbAn0l59Bqsdk9xwTlMsI=; b=
-	j8Nk7cM5E3omutwsSiZb3XiZjA3ZByAZnNgAqa7B8FxX3ynx4ysRjf0rtS9th0hz
-	Fllui72ssoJxNLSzpIJK/YPohGhXkTfKccyztqQ0GPCKiFXxtTOwHeGO0QiX4bUk
-	oBTotkhWw5A2LB6BPZ3rCwbV9AQvZR9xkCuA84NSxorCg2pNSVD2piAuqBbLdy+k
-	qPWKG8PMRu4ROfVu7jICG4+bKEHDpbBtlTlnUvSZzO2Fylpmq6zvj75B2MZuRD3n
-	eikHoGZ3DuxYco4s7DHdpmX9b4k8HqUB2FV1suklGztdtsQGxeaYGZEZhmhNZVAU
-	Yy+5E9PtqwUuD0JbkgDdJg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733176207; x=
-	1733262607; bh=XoADd0ngvc0ii1gCfzrSDFcbAn0l59Bqsdk9xwTlMsI=; b=N
-	RciItoRLMag1d+pCQSme3w2jXhVvklFAGVWi87bEae3mZIFfxD7NMTeE037b8JdX
-	ekW7YHCCGQzbNHnXWdx+kLKQbjDd1xsOoalXqQdf/xwXk7Ay2Irzi6yRyPYv9Dw7
-	qRo6QAoo3eXK0gqxWEjEXRo1ReJKhwCFmmJZHpYMrfnGEXq15WjjEEo4tW/Bwslf
-	lNTnCOHC1lW3ZiMKvi215OJaaY8/y3SWSuPz76bwxZen0p3AJISAvA8ZduPrN8Eq
-	2e1KoYiX/TIXMdqdMUXpIXyq8OHAgjfsK6ynEPPECirDnja+or4M0f+wKnIcmwRb
-	33szpomEKAOMYh3S/x58Q==
-X-ME-Sender: <xms:jytOZ4_YtU4An2NYwpHbiJGkjKHCGSuM40T6FOo80ruw7AY8IVT8kg>
-    <xme:jytOZwvLx9GwwJHJa4cTJ71TYydw3GTHxioCiQ8hAJB2qjJj6kzQT-mhHcOo6LmHH
-    XLaWe5PGC6APKoJ>
-X-ME-Received: <xmr:jytOZ-CtAYIaOLMFtVZvPXEbyklqT3eNGAyqEMWsH0PIT-HolnXUIFFiH_gRVaSZPdP3-_dTk-p-3PG6zWzVRzgOpaL-vVerI4fQC_MPAs4NQxesmae7>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheelgdduhedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
-    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepieekfedvleetgfff
-    vdevfeelvdefffeghfetgeegffduudehieeuteevuedukeejnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhht
-    sehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgt
-    phhtthhopehnihhhrghrtghhrghithhhrghnhigrsehgmhgrihhlrdgtohhmpdhrtghpth
-    htohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhf
-    shguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhkhhgr
-    nheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehshiiisghoth
-    dokeejsgekvgeivgguvdehuggstgegudejheelfhejsehshiiikhgrlhhlvghrrdgrphhp
-    shhpohhtmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:jytOZ4e0UazsaxIFy4dE1osarFnI30-CqcrMTCiYQhSxQ9tvMcAgEA>
-    <xmx:jytOZ9PrsoGO98lrLBZugyPmxoLqo3kz49q_MYZccT3hCcyYdUC5LA>
-    <xmx:jytOZymXeNrm4XioOnipRW7getQx16QJMhAR3DxJakOgeMX4KO_nTg>
-    <xmx:jytOZ_vDkLei6Q-PCQjKKLPWPVoKkdKRL0u6Z7mQdMJX5qSftAv9kw>
-    <xmx:jytOZwcutuYdYqZpQx2sCNW27L0PFByIh8_CP1F_ahR1X7DF-rqJh_8n>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 2 Dec 2024 16:50:06 -0500 (EST)
-Message-ID: <c2f05447-0f1b-4710-ad7f-d318b95ac7e3@fastmail.fm>
-Date: Mon, 2 Dec 2024 22:50:05 +0100
+	s=arc-20240116; t=1733176302; c=relaxed/simple;
+	bh=d4jOEgFPUGRrrJgpszrUZkKA/vNoTKCWuEmyS3DfEtM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BI2yWhIkAu5w+JtlIPE01uP3R1qVG6TkebRyvueubfWBgV6ho43wka3tk61+WXWqa881cqYriMENuZKq4d6+bEaNnv0a5lXboItyp7O5Babi/7vPe5OU6yyPHEVgFf7ymxmo9idhRGYKDokOqsS2Bgc6EYPQzt04FU8cYMlGCtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TZ1G8DOH; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2Lpb221525724
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 2 Dec 2024 15:51:37 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733176297;
+	bh=9A2Y6WyidL2RoMmQz8BVZNKxU5PS8D4Q8vAbrrMQaNw=;
+	h=From:To:CC:Subject:Date;
+	b=TZ1G8DOH/461iYJawdDhtb88CtWf0lVS6IIoO/0BQCFpGoVVUso2q98Xro/MyavPj
+	 R1RSs4A0eFNTIZORf6X8gJ+WEmKKHZ8SdB/IcJferRlPebzvauVp5k+HlrLEKWEV7B
+	 bJ6UstfDPjP/1ERSnEgcH9ggC/yIO4U1j+XJFD3c=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B2Lpb2m035747
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Dec 2024 15:51:37 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 2
+ Dec 2024 15:51:36 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 2 Dec 2024 15:51:36 -0600
+Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B2LparJ039277;
+	Mon, 2 Dec 2024 15:51:36 -0600
+From: Andrew Davis <afd@ti.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew
+ Davis <afd@ti.com>
+Subject: [PATCH v2 1/5] remoteproc: keystone: Use devm action to release reserved memory
+Date: Mon, 2 Dec 2024 15:51:31 -0600
+Message-ID: <20241202215135.294829-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: add a null-ptr check
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Nihar Chaithanya <niharchaithanya@gmail.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org,
- syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
-References: <20241130065118.539620-1-niharchaithanya@gmail.com>
- <8806fcd7-8db3-4f9e-ae58-d9a2c7c55702@fastmail.fm>
- <CAJnrk1b1zM=Zyn+LiV2bLbShQoCj4z5b++W2H4h7zR0QbTdZjg@mail.gmail.com>
- <364da8c4-7559-4c6e-afc4-d1b59a297d51@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <364da8c4-7559-4c6e-afc4-d1b59a297d51@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-I think I found it, look into fuse_get_user_pages() in your patch - it
-returns nbytesp as coming in, without having added any pages.
+This helps prevent mistakes like freeing out of order in cleanup functions
+and forgetting to free on error paths.
+
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+
+Changes for v2:
+ - Keep `goto disable_clk` for this patch to prevent git-bisect issues
+
+ drivers/remoteproc/keystone_remoteproc.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+index 6e54093d17323..3f2f72bd1cac8 100644
+--- a/drivers/remoteproc/keystone_remoteproc.c
++++ b/drivers/remoteproc/keystone_remoteproc.c
+@@ -358,6 +358,13 @@ static int keystone_rproc_of_get_dev_syscon(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
++static void keystone_rproc_mem_release(void *data)
++{
++	struct device *dev = data;
++
++	of_reserved_mem_device_release(dev);
++}
++
+ static int keystone_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -434,8 +441,14 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+ 		goto disable_clk;
+ 	}
+ 
+-	if (of_reserved_mem_device_init(dev))
++	ret = of_reserved_mem_device_init(dev);
++	if (ret) {
+ 		dev_warn(dev, "device does not have specific CMA pool\n");
++	} else {
++		ret = devm_add_action_or_reset(dev, keystone_rproc_mem_release, dev);
++		if (ret)
++			goto disable_clk;
++	}
+ 
+ 	/* ensure the DSP is in reset before loading firmware */
+ 	ret = reset_control_status(ksproc->reset);
+@@ -459,7 +472,6 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ release_mem:
+-	of_reserved_mem_device_release(dev);
+ 	gpiod_put(ksproc->kick_gpio);
+ disable_clk:
+ 	pm_runtime_put_sync(dev);
+@@ -476,7 +488,6 @@ static void keystone_rproc_remove(struct platform_device *pdev)
+ 	gpiod_put(ksproc->kick_gpio);
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+-	of_reserved_mem_device_release(&pdev->dev);
+ }
+ 
+ static const struct of_device_id keystone_rproc_of_match[] = {
+-- 
+2.39.2
+
 
