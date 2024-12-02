@@ -1,192 +1,139 @@
-Return-Path: <linux-kernel+bounces-427296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF6C9DFF50
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:50:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331B19DFF4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:49:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26C42810E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:50:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEA3DB24CB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5E41FCF57;
-	Mon,  2 Dec 2024 10:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57371FCF57;
+	Mon,  2 Dec 2024 10:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="E5uGDr9f"
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ReA/52rh"
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C81FC0EB;
-	Mon,  2 Dec 2024 10:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C62CF9E4;
+	Mon,  2 Dec 2024 10:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733136614; cv=none; b=AeowuT7iCIIJhYE/9LjKTxQDLPk8kwJhiOW2tKbcy2zXEbTWwKo+GrZfbGN87jjUlWebqV3//xTVGj610UrtSlt2dnr0emYq3ZIoqSZgOTUYc2rOhNg8UdzZPgK6y8HLiMM6LfjVqFZ103pnjQYfhtPH4qwU38+qPIU3r6yJzE4=
+	t=1733136324; cv=none; b=nKbRHw0C52STJ4J0uCMjfDD1FdMrDMD7krRjm6Rvr8Xxg6j0+wd9kvEQc1jTKc5n3qaBYCRKgMFh9LZVRjaj5e0nMXiTKlfX66lLUVa/HmgpY/ug+bbO+W8tzwNOw3x8OEbmQfNGR2hvOh7/k49F/+5I9MbEvszE7rbg7leVxDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733136614; c=relaxed/simple;
-	bh=nWj9kVjFkA/uzz5o+psqx7pHEdWGVkcXfYTvTuBT39A=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=rthC+TutTRxIMJHm32ThbmjWfk/e1Tk6ycR/aVgGnruJb2zi4h6aXXLSI/czKig+f257hY03av3ic++30Hz5JyKegyjXq0RVB2cexYP4/4sFWO8bD9ANylj+FSTTbYa/xgkhcdCBsVH32Dhmx3KeHavetjzVtHxdUdoFzVe8WAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=E5uGDr9f; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1733136274;
-	bh=yq8INn4zbqzqDhdWCGdL8z+1i1zAqXBLUq6KmP1JVYM=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=E5uGDr9fYjfHo3lHmuz4fFFchfOz5KOxDw6oDLr7hssldy12vEJyZFgxGPbEZbkPr
-	 rboK6KdiyWavWJFdNZUq5qKRp3TXNLjF1TyCLrRw3Kj0FM6HwjXYvmoNJnqNjUIgnu
-	 huitjDunqC3Gf6IedTFVl+G2Z1QugCGmMdfHh7z8=
+	s=arc-20240116; t=1733136324; c=relaxed/simple;
+	bh=of+u0zLYf/EwFYqL2GDoVhwsNt0MOE2vN54pW+uX23A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Orl2wsxcgdBnOtPP0Plo9QUCQWiUEdQMGle25U85xH7uU1jSy203FKJ7TiX0HJi1P8mRoRM0b0lon4GKSDH1K4tEHcbT8jTSf5JVfxHHIC2S+kk+6BTroT7JGWWKfJXinuWTXQ8c6pPDT7yrvKKWMO/ilTdKDONgDkDpvWQdcOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ReA/52rh; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4ae82bad101so959907137.0;
+        Mon, 02 Dec 2024 02:45:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733136321; x=1733741121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fjp4mU+UmEEjsEk0CFm8uiqwBhQjOkJjUFkhquy9+QY=;
+        b=ReA/52rhyGI7NV8WW5BVWGO81An1ws4e4Jq9g8pUzHAvMlxiBZVQYb9u0UokV7C2+u
+         mWYUkP6WFpaIunxhWeAp7ub9nBAMa1h/apfgDX7LbmVPiBUrg5ATuk1lTeWoKK3P3KGi
+         1vkEeKyeMgd1UJQqoma3CVt3PnbrWdvfQYBIsrvxNbGrIEQ+IR9vM0WMjd3SSfKZat3V
+         f5cs07SXJmR4L2igfYYuul1DuoWSeD4IUGIQLBVQYp4bZyCTXTB/9GaLu4LEq9f+RHVH
+         x0Xh4YQwTbJMMLaAoNbk3SR74hMSxaGAIMrQlKnV8SI2v7HoDWco65YFjGrEyQ0R7SD+
+         LsFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733136321; x=1733741121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fjp4mU+UmEEjsEk0CFm8uiqwBhQjOkJjUFkhquy9+QY=;
+        b=MUq+GMG9WLsEF+nNEbYKeSdGxM3fkXq8Be73yC5Wreuj7NRXfTLu4M59WwetMaE9Ek
+         SEQVPX+ei/sreOiTZX0IRGouff4Lv7U211ev5glczAZ6/GzgW2yOL9SaUeGXyGdiEYU9
+         crqDfHlc1EiWMHW92IGzchWoN51+5yuX5dzVJkUJ1+j7Cs6iY5PSzD4wVICo52JUZ9ap
+         seJwr6ZbyNyfQ7+w9QeNX5Etp2aquv9G7Zvu/LF6Mp8ITUFgnCvRzPhgC6UuNljH0Twp
+         36vx3O21JgXLe+NsWcr9PEQ2HckHI6qKeQQ+Vx3LgM77dO54purwlTYUrTATPgrR0QbV
+         W0Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4xp9zZqKgxxYS65W1QVgq6c/GSFHfCXtBoDUzxI+KbDYP/d2TSCkDdx6BAHQaze6KnlJsPoB15LqxSno2IA==@vger.kernel.org, AJvYcCU7dIPR/msm7QlNcj9GiR2XhkVho3XCEJJv37zb1NaYVNsf0UXHgwY515ndbyX+50qbmPcufAMz87XiDapx@vger.kernel.org, AJvYcCVIEGB5dA++BprNjA1cWxwCLRjsgS/yrfMmtZwFoEimrFfB8I90uyU2VfSregP5S9m1NHTrx7RSUBC9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFvPUgsJOFCv6+GIaySzhNmd45fh8kQURRsNVLCkrNRRr15GPh
+	dd1ZEyWDqtrW870yB4HjpAHX0Bnc7mrLaqYYwystG56ecbsR2ADDeFMU3IO8T3kdYcalpOKD3aQ
+	MGDjiKmjZR8KnhzpiQxqDhJSIXrs=
+X-Gm-Gg: ASbGncu7gYUbhRi/2VY8WvgdZ4PcLPotU2nXeCzl5OhCja+TZ6/R1h0HBJUzf507KXo
+	m9R8Q7bx6fWmdjgAKkm9b4Qn5ykUviQ==
+X-Google-Smtp-Source: AGHT+IHAiSm3GH0+EB3SpHNg92ot3w7WC8aHmqVct6yTTsByMKbgdixFUfh2w0hMt6K68oIfSLpQ5jeci88Xjg7nuMA=
+X-Received: by 2002:a05:6102:3050:b0:4af:5b9a:3350 with SMTP id
+ ada2fe7eead31-4af5b9a3e7amr19731719137.3.1733136321388; Mon, 02 Dec 2024
+ 02:45:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
-Date: Mon, 2 Dec 2024 11:44:11 +0100
-Cc: Chris Mason <clm@meta.com>,
- Dave Chinner <david@fromorbit.com>,
- Matthew Wilcox <willy@infradead.org>,
- Jens Axboe <axboe@kernel.dk>,
- linux-mm@kvack.org,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Daniel Dao <dqminh@cloudflare.com>,
- regressions@lists.linux.dev,
- regressions@leemhuis.info
+MIME-Version: 1.0
+References: <20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com>
+ <20241008-starqltechn_integration_upstream-v6-7-5445365d3052@gmail.com> <dc1322d4-8312-47a4-929f-086b417d4ae8@oss.qualcomm.com>
+In-Reply-To: <dc1322d4-8312-47a4-929f-086b417d4ae8@oss.qualcomm.com>
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Mon, 2 Dec 2024 13:45:10 +0300
+Message-ID: <CABTCjFDw-TiWxSdPZNyu5ZO+Z_=m8reLYr8u1rNZpJOxLQ7J-A@mail.gmail.com>
+Subject: Re: [PATCH v6 07/12] arm64: dts: qcom: sdm845-starqltechn: add
+ max77705 PMIC
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: cros-qcom-dts-watchers@chromium.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <48D7686C-6BD4-4439-B7FD-411530802161@flyingcircus.io>
-References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org>
- <ZuuBs762OrOk58zQ@dread.disaster.area>
- <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
- <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
- <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
- <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
- <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
- <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
- <f8232f8b-06e0-4d1a-bee4-cfc2ac23194e@meta.com>
- <E07B71C9-A22A-4C0C-B4AD-247CECC74DFA@flyingcircus.io>
- <381863DE-17A7-4D4E-8F28-0F18A4CEFC31@flyingcircus.io>
- <0A480EBE-9B4D-49CC-9A32-3526F32426E6@flyingcircus.io>
- <c6d723ca-457a-4f97-9813-a75349225e85@meta.com>
- <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
 
-Hi,
+=D1=81=D0=B1, 26 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 13:36, Kon=
+rad Dybcio <konrad.dybcio@oss.qualcomm.com>:
+>
+> On 8.10.2024 6:51 PM, Dzmitry Sankouski wrote:
+> > Add support for max77705 MFD device. Supported sub-devices:
+> >  charger, fuelgauge, haptic, led
+> >
+> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> > ---
+>
+> [...]
+> > +
+> > +     vib_pwm: pwm {
+> > +             compatible =3D "clk-pwm";
+> > +             #pwm-cells =3D <2>;
+> > +             assigned-clock-parents =3D <&rpmhcc RPMH_CXO_CLK>;
+>
+> Don't you want to set assigned-clock-rates instead?
 
-waking this thread up again: we=E2=80=99ve been running the original fix =
-on top of 6.11 for roughly 8 weeks now and have not had a single =
-occurence of this. I=E2=80=99d be willing to call this as fixed.=20
+assigned-clock-rates would set GCC_GP1_CLK_SRC rate, and automatically
+select the proper parent clock best suited for rate.
 
-@Linus: we didn=E2=80=99t specify an actual deadline, but I guess 8 week =
-without any hit is good enough?
+However, as per discussion in
+https://patchwork.kernel.org/project/linux-samsung-soc/patch/20240618-starq=
+ltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com
+the old approach with additional freq_tbl entries was criticised. New
+approach, introduced in
+https://lore.kernel.org/all/20241007-starqltechn_integration_upstream-v6-0-=
+dd75c06c708d@gmail.com/
+automatically calculates m/n/d values for GP clock, but it cannot
+select best suited parent - it's user responsibility.
+>
+> > +             assigned-clocks =3D <&gcc GCC_GP1_CLK_SRC>;
+> > +             clocks =3D <&gcc GCC_GP1_CLK>;
+> > +             pinctrl-0 =3D <&motor_pwm_default_state>;
+> > +             pinctrl-1 =3D <&motor_pwm_suspend_state>;
+> > +             pinctrl-names =3D "default", "suspend";
+> > +     };
+> >  };
+>
+> Looks good otherwise
+>
+> Konrad
 
-My plan would be to migrate our fleet to 6.6 now. AFAICT the relevant =
-patch series is the one in
-https://lore.kernel.org/all/20240415171857.19244-4-ryncsn@gmail.com/T/#u =
-and was released in 6.6.54.
-
-I=E2=80=99d like to revive the discussion on the second issue, though, =
-as it ended with Linus=E2=80=99 last post
-and I couldn=E2=80=99t find whether this may have been followed up =
-elsewhere or still needs to be worked on?
-
-Christian
-
-> On 12. Oct 2024, at 19:01, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
->=20
-> On Fri, 11 Oct 2024 at 06:06, Chris Mason <clm@meta.com> wrote:
->>=20
->> - Linus's starvation observation.  It doesn't feel like there's =
-enough
->> load to cause this, especially given us sitting in truncate, where it
->> should be pretty unlikely to have multiple procs banging on the page =
-in
->> question.
->=20
-> Yeah, I think the starvation can only possibly happen in
-> fdatasync-like paths where it's waiting for existing writeback without
-> holding the page lock. And while Christian has had those backtraces
-> too, the truncate path is not one of them.
->=20
-> That said, just because I wanted to see how nasty it is, I looked into
-> changing the rules for folio_wake_bit().
->=20
-> Christian, just to clarify, this is not for  you to test - this is
-> very experimental - but maybe Willy has comments on it.
->=20
-> Because it *might* be possible to do something like the attached,
-> where we do the page flags changes atomically but without any locks if
-> there are no waiters, but if there is a waiter on the page, we always
-> clear the page flag bit atomically under the waitqueue lock as we wake
-> up the waiter.
->=20
-> I changed the name (and the return value) of the
-> folio_xor_flags_has_waiters() function to just not have any
-> possibility of semantic mixup, but basically instead of doing the xor
-> atomically and unconditionally (and returning whether we had waiters),
-> it now does it conditionally only if we do *not* have waiters, and
-> returns true if successful.
->=20
-> And if there were waiters, it moves the flag clearing into the wakeup =
-function.
->=20
-> That in turn means that the "while whiteback" loop can go back to be
-> just a non-looping "if writeback", and folio_wait_writeback() can't
-> get into any starvation with new writebacks always showing up.
->=20
-> The reason I say it *might* be possible to do something like this is
-> that it changes __folio_end_writeback() to no longer necessarily clear
-> the writeback bit under the XA lock. If there are waiters, we'll clear
-> it later (after releasing the lock) in the caller.
->=20
-> Willy? What do you think? Clearly this now makes PG_writeback not
-> synchronized with the PAGECACHE_TAG_WRITEBACK tag, but the reason I
-> think it might be ok is that the code that *sets* the PG_writeback bit
-> in __folio_start_writeback() only ever starts with a page that isn't
-> under writeback, and has a
->=20
->        VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
->=20
-> at the top of the function even outside the XA lock. So I don't think
-> these *need* to be synchronized under the XA lock, and I think the
-> folio flag wakeup atomicity might be more important than the XA
-> writeback tag vs folio writeback bit.
->=20
-> But I'm not going to really argue for this patch at all - I wanted to
-> look at how bad it was, I wrote it, I'm actually running it on my
-> machine now and it didn't *immediately* blow up in my face, so it
-> *may* work just fine.
->=20
-> The patch is fairly simple, and apart from the XA tagging issue is
-> seems very straightforward. I'm just not sure it's worth synchronizing
-> one part just to at the same time de-synchronize another..
->=20
->                   Linus
-> <0001-Test-atomic-folio-bit-waiting.patch>
-
-Liebe Gr=C3=BC=C3=9Fe,
-Christian Theune
-
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
-
+--
+Best regards and thanks for review,
+Dzmitry
 
