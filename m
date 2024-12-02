@@ -1,190 +1,151 @@
-Return-Path: <linux-kernel+bounces-426930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B1B9DFA35
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:31:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C247A9DFA3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01CF2816DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:31:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E18A6B21AD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730BA1F8EF2;
-	Mon,  2 Dec 2024 05:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E12E1D7984;
+	Mon,  2 Dec 2024 05:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B2tmiWGz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="S5MuBhtz"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24BBF9E4;
-	Mon,  2 Dec 2024 05:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733117499; cv=none; b=CT8AlPI/dHiZhdefUqlyV1T2sAs8LKH596wSqZYiZWcYYfgQ2sJXxW7KQ3mwj7kilWs/1wpbjvQ3PnKixVLHxuBAZF0qd0TzDBqsRQrvIPzPM6w9nvvcKkeOfE0Ap+PmDT0nC0TEZtgWk2qPzUlyjivZZBsJw0UGkj0ETagXJZU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733117499; c=relaxed/simple;
-	bh=R5KY/VIlUNB+iUNIkIB9U4SLzJmN/Q0t2sHVnuILFQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iSyfyh9XnMt0YcQK8TWRrLEGXkYHAFRx9YVcvEbZR4QcbA5vqRjtS0X31z3qHE82vV/rTbactuuP+ZKs3N/wNmDuWMgPb3m3TPofqsEfei0NN+lJmqJAUjfnnNq8TfM2FWohNgZsJa2eP2FCcgVXBM1Iz9KNQG/AsoudmwowPAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B2tmiWGz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B1NMueR002804;
-	Mon, 2 Dec 2024 05:31:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	n0AOzN6heIttX0rfAMYApCYx+LN1oHWWYAzh6AqoBUw=; b=B2tmiWGzOSKzurQZ
-	py2BXJcrCwNbHSDRkxMWxwv7SVqDdWEHORLvdK0BkPSqzCzTvJOSC8Vi1OCpepqR
-	LxK9l5rrqRt+0qESEERMrqu4S31IBUtIun4bWKYoH95k+DqanmO/jx5dNUEHj+iT
-	bX+5Fx4BVhMtWJ8ue9X5rQ4wJQhWOF2cy5a4dd/F7C6dJ2HXytnmsGOKyZNLbEFJ
-	MgcI8jCZnsnCRWZKvVMxo6mSYovtD7+N8PjuUK4ZNDhnD/FbDcyL0gLLm4ioo+V5
-	kFYz6c6p/UFwLyvUUcWS/zUskmtxZh7XrlUv/0z8NnMI1dqBprOgFYaYQwi8VEj5
-	Hh9Kbw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437uvjubfq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Dec 2024 05:31:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B25VXhn010224
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Dec 2024 05:31:33 GMT
-Received: from [10.217.219.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 1 Dec 2024
- 21:31:31 -0800
-Message-ID: <d1e3e1ad-2f00-4697-a3fc-4da671d6b4cb@quicinc.com>
-Date: Mon, 2 Dec 2024 11:01:28 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8054F9E4
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 05:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733118058; cv=pass; b=R2j8IJtQrCrZ2LEw3H+pz3MwgEu3hfUapYF+KKVosRQOscsizzibksUkt6Ugfm0pNVaPE9q55bsJnfnrUcPiVZPIL48JZtE8whKQctuCYldRBL4XmtAd8uZKSy925k9SESLdJQdyHfqKZ5fD+9KiNIJ5WF9I+KO1loynMetSrKU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733118058; c=relaxed/simple;
+	bh=ueYq26d8VcgSnoH9pMABrnnvVoaABggyG41X2QtW8zA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=so1AXbfYiwRvVBGXtlhzKRU06xo+cSc/A/ERdp9u8FKIkaOfhqv/9sLVr2jspizOCOw4X+mnzZ8Ze22wPBkQ4tA107LsIE9fkO5xZLL5RsyunQXEFrrjIENgmOywsmPiyCuisDxOs7Q//Wyrtw/hF8apqStoMGnnKqU8qS0hQPI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=S5MuBhtz; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733118009; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QAR6JFgo/352+alNXmaqH77g8AC1yEWIsCmeUkAhX/mOrWpqY9VrsUOt7tg41Jk9aggN90Aoagr3SzPBpUrllKeE+lqfEh+3KxiL/p926ArIS7h7GDgPyzIFQ7Wtq0P8EAlz7Ge2E3q+9/sqqa5IHlhxB6UAabjv5YDQWNKgfak=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733118009; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/aDX0tKRf8MVvlCU/V5j9pdtLu3K1ygfZJBPnvcrZeU=; 
+	b=g0zC5/OaIo+hCCMZhgLVMi2gdh/WyUF345STIKVnTrgXtEuMCkCAstlkmM/lr7bOqAuJ/YITJPj9ORl5y4ndhCwdy2t1JKVhKjym6zhS40ZSAaPVyy3HkSfTV/qDSlwGps62xgFE1+pNnWH5XKf152NP33bfq+m6G9EOv0X8RTU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733118009;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=/aDX0tKRf8MVvlCU/V5j9pdtLu3K1ygfZJBPnvcrZeU=;
+	b=S5MuBhtzZybZlYXo9aaVZdZ6YDl7V/H3kjWbb8JlKAsQzCrKqNVa+87RPjOF6KMl
+	tVCvOLoKlaFVDuPGddWdzSm+UY/18YpNorKNWq6nRvzwXmC+0yUn6bozRQurQtvO069
+	LA6Ezb9ftBDjCF9ITS1KaRatRnW4zFj6bpPWDu48=
+Received: by mx.zohomail.com with SMTPS id 1733118006843134.69938473813932;
+	Sun, 1 Dec 2024 21:40:06 -0800 (PST)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: David Airlie <airlied@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Kim Dongwon <dongwon.kim@intel.com>,
+	Kasireddy Vivek <vivek.kasireddy@intel.com>
+Cc: Rob Clark <robdclark@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCH v1] drm/virtio: Factor out common dmabuf unmapping code
+Date: Mon,  2 Dec 2024 08:39:55 +0300
+Message-ID: <20241202053955.2451321-1-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dmaengine: qcom: gpi: Add GPI immediate DMA
- support
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <quic_msavaliy@quicinc.com>, <quic_vtanuku@quicinc.com>
-References: <20241128133351.24593-1-quic_jseerapu@quicinc.com>
- <20241128133351.24593-2-quic_jseerapu@quicinc.com>
- <obv72hhaqvremd7b4c4efpqv6vy7blz54upwc7jqx3pvrzg24t@zebke7igb3nl>
- <1666035c-d674-43dd-bc33-83231d64e5f7@quicinc.com>
- <fbpdzrwmlmqhyblchgaq6etmnc5wjd3ierwmtrer5hnwjf7qb3@axgwdegmbs6z>
-Content-Language: en-US
-From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-In-Reply-To: <fbpdzrwmlmqhyblchgaq6etmnc5wjd3ierwmtrer5hnwjf7qb3@axgwdegmbs6z>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hXGaRC-Q06tnn-UXAo9KOEDRbK5hYeBk
-X-Proofpoint-ORIG-GUID: hXGaRC-Q06tnn-UXAo9KOEDRbK5hYeBk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- suspectscore=0 mlxlogscore=999 impostorscore=0 adultscore=0 phishscore=0
- bulkscore=0 priorityscore=1501 clxscore=1015 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412020047
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
+Move out dmabuf detachment and unmapping into separate function. This
+removes duplicated code and there is no need to check the GEM's kref now,
+since both bo->attached and bo->sgt are unset under held reservation lock.
 
+Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+---
+ drivers/gpu/drm/virtio/virtgpu_prime.c | 35 ++++++++++++++------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
-On 11/30/2024 9:35 AM, Bjorn Andersson wrote:
-> On Fri, Nov 29, 2024 at 05:02:22PM +0530, Jyothi Kumar Seerapu wrote:
->> On 11/28/2024 8:53 PM, Bjorn Andersson wrote:
->>> On Thu, Nov 28, 2024 at 07:03:50PM +0530, Jyothi Kumar Seerapu wrote:
->>>> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
-> [..]
->>>
->>>>    	/* first create config tre if applicable */
->>>>    	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
->>>> @@ -1763,14 +1767,32 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
->>>>    	tre_idx++;
->>>>    	address = sg_dma_address(sgl);
->>>> -	tre->dword[0] = lower_32_bits(address);
->>>> -	tre->dword[1] = upper_32_bits(address);
->>>> +	len = sg_dma_len(sgl);
->>>> -	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
->>>> +	/* Support Immediate dma for write transfers for data length up to 8 bytes */
->>>
->>> And what happens if the developer writing the SPI driver forgets to read
->>> this comment and sets QCOM_GPI_IMMEDIATE_DMA for a 9 byte transfer?
->> In V2 patch, QCOM_GPI_IMMEDIATE_DMA is set based on
->> QCOM_GPI_IMMEDIATE_DMA_LEN only.
->>
-> 
-> I assume you mean "patch 2/2". So, what happens if someone refactors the
-> SPI driver in the future, will they read this comment?
-> 
->> As per Hardware programming guide, immediate dma support is for up to 8
->> bytes only.
->> Need to check what is the behavior if we want to handle 9 bytes using
->> immediate dma feature support.
->>
-> 
-> I'm saying that you have a comment here which says that the caller must
-> not pass len > 8. Write that comment in code to avoid mistakes - either
-> now or in the future.
+diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
+index 33084ce1d01d..101d1a6517ae 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_prime.c
++++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
+@@ -184,22 +184,33 @@ int virtgpu_dma_buf_import_sgt(struct virtio_gpu_mem_entry **ents,
+ 	return 0;
+ }
+ 
+-static void virtgpu_dma_buf_free_obj(struct drm_gem_object *obj)
++static void virtgpu_dma_buf_unmap(struct virtio_gpu_object *bo)
+ {
+-	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(obj);
+-	struct virtio_gpu_device *vgdev = obj->dev->dev_private;
+-	struct dma_buf_attachment *attach = obj->import_attach;
+-	struct dma_resv *resv = attach->dmabuf->resv;
++	struct dma_buf_attachment *attach = bo->base.base.import_attach;
+ 
+-	if (attach) {
+-		dma_resv_lock(resv, NULL);
++	dma_resv_assert_held(attach->dmabuf->resv);
+ 
++	if (bo->created) {
+ 		virtio_gpu_detach_object_fenced(bo);
+ 
+ 		if (bo->sgt)
+ 			dma_buf_unmap_attachment(attach, bo->sgt,
+ 						 DMA_BIDIRECTIONAL);
+ 
++		bo->sgt = NULL;
++	}
++}
++
++static void virtgpu_dma_buf_free_obj(struct drm_gem_object *obj)
++{
++	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(obj);
++	struct virtio_gpu_device *vgdev = obj->dev->dev_private;
++	struct dma_buf_attachment *attach = obj->import_attach;
++	struct dma_resv *resv = attach->dmabuf->resv;
++
++	if (attach) {
++		dma_resv_lock(resv, NULL);
++		virtgpu_dma_buf_unmap(bo);
+ 		dma_resv_unlock(resv);
+ 
+ 		dma_buf_detach(attach->dmabuf, attach);
+@@ -272,15 +283,7 @@ static void virtgpu_dma_buf_move_notify(struct dma_buf_attachment *attach)
+ 	struct drm_gem_object *obj = attach->importer_priv;
+ 	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(obj);
+ 
+-	if (bo->created && kref_read(&obj->refcount)) {
+-		virtio_gpu_detach_object_fenced(bo);
+-
+-		if (bo->sgt)
+-			dma_buf_unmap_attachment(attach, bo->sgt,
+-						 DMA_BIDIRECTIONAL);
+-
+-		bo->sgt = NULL;
+-	}
++	virtgpu_dma_buf_unmap(bo);
+ }
+ 
+ static const struct dma_buf_attach_ops virtgpu_dma_buf_attach_ops = {
+-- 
+2.47.0
 
-Sure, i will update the comment in V3.
-> 
->>>
->>>> +	if ((spi->flags & QCOM_GPI_IMMEDIATE_DMA) && direction == DMA_MEM_TO_DEV) {
->>>
->>> Why is this flag introduced?
->>>
->>> If I understand the next patch, all DMA_MEM_TO_DEV transfers of <=
->>> QCOM_GPI_IMMEDIATE_DMA_LEN can use the immediate mode, so why not move
->>> the condition here?
->>>
->>> Also ordering[1].
->>>
->>> 	if (direction == DMA_MEM_TO_DEV && len <= 2 * sizeof(tre->dword[0]))
->>>
->>>
->> Sure, thanks for the suggestion.
->> so, instead using "QCOM_GPI_IMMEDIATE_DMA_LEN" need to use " 2 *
->> sizeof(tre->dword[0])" for 8 bytes length check.
->>
-> 
-> Either one works, but I'm guessing that while 8 is the right number the
-> reason for 8 is that the data is passed in 2 * dword.
-Okay, i will use "2 * sizeof(tre->dword[0]" which gives 8 only.
-> 
-> 
-> The important thing is that you're encoding the length check here, so
-> that the client can't by mistake trigger immediate mode with > 8 bytes.
-> As a side effect, you no longer need the QCOM_GPI_IMMEDIATE_DMA flag and
-> should be able to drop patch 2.
-
-Sure thanks, will update the changes in V3.
-> 
->>> [1] Compare "all transfers of length 8 or less, which are mem to device"
->>> vs "all transfers which are mem to device, with a length of 8 or less".
->>> The bigger "selection criteria" is the direction, then that's fine tuned
->>> by the length query.
->>>
->>>> +		buf = sg_virt(sgl);
->>>
->>> It's a question of style, but I think you could just put the sg_virt()
->>> directly in the memcpy() call and avoid the extra variable.
->>
->> Okay, i will directly put sg_virt() in memcpy().
-> 
-> Try it out, pick the option that look the best.
-Yes, will do it in V3.
-
-> 
-> Regards,
-> Bjorn
-> 
 
