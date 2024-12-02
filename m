@@ -1,262 +1,223 @@
-Return-Path: <linux-kernel+bounces-428188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F092C9E0C86
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:47:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A4A9E0D86
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 22:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47B5DB33175
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:42:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30A7CB608D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559221DE4C4;
-	Mon,  2 Dec 2024 18:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827D21DE3C8;
+	Mon,  2 Dec 2024 19:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dK/BqkoZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="clugj15u"
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676251DE2A0;
-	Mon,  2 Dec 2024 18:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733164933; cv=fail; b=XrSBelH/CmwCixFon5u5kwheMJ/Hb+KMk+Gou3fTv2i2lVpNKF9UTndsUKzB6SMdW+Z4XW4O0msOh6qo5k6TbH245TBKd3EVFDyNwAfD95VNdcL4ldRCk5P53QtBXLzaKuH117TNGocp02t+xM8/u3KK4xjoCN5p7gT9P+/bRgc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733164933; c=relaxed/simple;
-	bh=Hw3Zj1gLW+XydP5zBHaK777U17bQLuXT2KU4OZ1fbaQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Ear4RkyPY7dPyaY4gtUrBShAD2QSWJkBqdcvjCx5sNca9SGY7O5oLxtDB5WNTvRYpYA0PJs+cG1jHEEhLzQiQ3+cugeXxgr5GIa8x6S1ErR5PX4ihavPAxJURwNbkl+UVanwctj55m8EGufjgds+tmD3pW+dRSeqSDZ2ashO+58=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dK/BqkoZ; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733164931; x=1764700931;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=Hw3Zj1gLW+XydP5zBHaK777U17bQLuXT2KU4OZ1fbaQ=;
-  b=dK/BqkoZ/kzL6QsbOXdxU3zuz8q++hdtM864IxZ9huyNAsY5oPbdumrj
-   saVDtTFZa20h4iIrMo33Y8LmBU5pSmGg8L6b6RdJZcwoVgmZch1WXqKy/
-   aYoF2ay37sNfCAXeorkcu5096lYCx58dxFADyW8UR4fllo+XEU4YgIFzO
-   091NFTMN+y0jeJu/Ib2D9qDyXxA6f00mwRrDSQIBZhmLHJ1e8DtmksCsI
-   do/pyszmOUAeqdOxHTNdIour7aaV1FbZu64Y36lgK/6RBVQLxTg//XsNZ
-   KIFp6Gp8Rpr6Z+9sUPMR5/hq8eMpkFaHUYqh2bwrobj5jhGtnRPQwJmcg
-   Q==;
-X-CSE-ConnectionGUID: yiJZSMjeTge5Y7A3Sub5Cw==
-X-CSE-MsgGUID: lc/7xOMaToaFR3mPrySyAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33596420"
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="33596420"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 10:42:09 -0800
-X-CSE-ConnectionGUID: APSG7oAWR3mQCrqnQCC52w==
-X-CSE-MsgGUID: nxKpyVSwSMa3V4524eZvwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,203,1728975600"; 
-   d="scan'208";a="124122053"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Dec 2024 10:42:09 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 2 Dec 2024 10:42:08 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 2 Dec 2024 10:42:08 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.175)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 2 Dec 2024 10:42:08 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kXp3nkRi+v4FLtrCj4GDFpcBVzWYyxCmOBMspB6bQVloGllT2cBTkftwrv/N3hYeBOvf4luDy/n+F8ZB0k0DrXK2MT8ABxSCu2JcGm3be4niWXauT/8kMnbjn5nLlGGqIYN1tjQYJp1k82ZqPEDsiOr+d9OEK+fg70EoepnvH7SJ3m0w92ZChw/4mQb8qKp2bvGzIYsilH1owY1He++EfIwq7k2TKioXvIfeAfwy7rby5Ka/qAimVxRUL37K2Rs/NQgTqyMvbF4vSNOCYK6gmJ3pP8lKGgofgx2KhSZleMOVIhnJLbeUSvHb6lwu0vZlGzK4OYGg04QiFgqA9v7BlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SEuq71mRzN9cEL70OBBPXjGRXL+2FrnU/hNgIQgjE3Y=;
- b=D7TNSB+Tg/pPpU8GITbjOcJ1zKSa+bihTHG8liggRpi7xZNychz+qKOM6iGUCVSkJgn9n6ZkYLlgTeA8ikAR5QqYWwsEWfzQ3LB76wKE1WnoyG0YozbmPZz2ehpUNPngIt75OB1dMlHpzKr2UIKjhVNGVEeESRhafkEmXcW0hLpVrpJQTYNJ7ulBCTBrlg1XMPQDbxyGIdthMbzVf0PXX+IIlC3PTKr8FjZjy3mwYXTywuaVes43jYXJDJxVezxS7Mi9wMiXRrz7jE7JwWlpvpI857N5HsKeZ5ecoXc0sQll4MVvyJswY7RMcQlAhwuNe6+AFhTewX7rRAvbOLwQCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by PH7PR11MB5795.namprd11.prod.outlook.com (2603:10b6:510:132::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
- 2024 18:42:03 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.8207.010; Mon, 2 Dec 2024
- 18:42:03 +0000
-Date: Mon, 2 Dec 2024 12:41:58 -0600
-From: Ira Weiny <ira.weiny@intel.com>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>
-CC: Ard Biesheuvel <ardb@kernel.org>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Yazen Ghannam
-	<yazen.ghannam@amd.com>, Terry Bowman <terry.bowman@amd.com>, "Smita
- Koralahalli" <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v3 6/7] acpi/ghes, cper: Recognize and cache CXL Protocol
- errors
-Message-ID: <674dff76fcd_3cb8e02949a@iweiny-mobl.notmuch>
-References: <20241119003915.174386-1-Smita.KoralahalliChannabasappa@amd.com>
- <20241119003915.174386-7-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241119003915.174386-7-Smita.KoralahalliChannabasappa@amd.com>
-X-ClientProxiedBy: MW4PR04CA0239.namprd04.prod.outlook.com
- (2603:10b6:303:87::34) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2D21B6D0A
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733167509; cv=none; b=pzaSfPSV+QmL6KKHfaGBPPboOuqWEXvd0Ool4XwPkwr03yobUvTpLlqCsDAqn+KhLxUEvdPoTY0PaDoyyNqoHX/shzkWfv0WUBK0WOzxPix2UrV1IlYREylNeZY+Kj/r8lI+orod8kUgydLPgRZ85KgNpTRxKKqWQcU+wIkYfmI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733167509; c=relaxed/simple;
+	bh=kWxiNq9BdSMaw0eJM0Y1m3uFBJJ9ss8RAyp/SIsCGZ4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZBrVVUl6yWV9+3vY8Rc/YibOzdfF9S1m99bawLQw4BQBIQSVdx8IqbTGpmAOu6/Y+i5UF7WEDxlGdUht3XktQNaOHVGwrFZHlKx5+v9mAbQBzzW6u02Qb60dS1tVYuWMbdkamn8eB0pMY5z+KfCw/K52WVkwStHNIeFjfFpmOyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=clugj15u; arc=none smtp.client-ip=78.40.148.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap5-20230908; h=Sender:MIME-Version:
+	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
+	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kWxiNq9BdSMaw0eJM0Y1m3uFBJJ9ss8RAyp/SIsCGZ4=; b=clugj15uQzjxSJX2O5BTIrtI8F
+	cpOhwvc7fmV4AJ5piamhRnNBEYXTMeaZ7vPuGB1b7TkgUGOCtZdfMrGgOCjbY2lR+N4Fvgd5ixSAx
+	YznSpOiF2opXATkIq3axpdCs3oa2+NYdhbedb4Pnvouyfqi7CHIeM67NarB42WsMzl2g1E+bLQ/ME
+	oXBidMAy+tCHTP9qFqNhU9vuUGDWFTPVWIkXNhKLrjuD/ASZd1+VncAEbiILbtF+jMbA3K+YXKTbH
+	DgXkwIce9GZq7AQIcVbyz/HeDhYHYb8DqZTVgrFlFMsk5odn9X+xEGV5AHPAFMthbTvBm+yxdJmiL
+	d/6+/XLg==;
+Received: from [167.98.27.226] (helo=[10.17.3.42])
+	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1tIBR7-00GaSi-Qr; Mon, 02 Dec 2024 18:46:23 +0000
+Message-ID: <98294066b3a0a7a77220e18ab9db5d3c3cb57341.camel@codethink.co.uk>
+Subject: Re: [REGRESSION] Re: [PATCH 00/24] Complete EEVDF
+From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, 	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+ kprateek.nayak@amd.com, 	wuyun.abel@bytedance.com,
+ youssefesmat@chromium.org, tglx@linutronix.de, 	efault@gmx.de
+Date: Mon, 02 Dec 2024 19:46:21 +0100
+In-Reply-To: <20241129090843.GB15382@noisy.programming.kicks-ass.net>
+References: <20240727102732.960974693@infradead.org>
+		 <16f96a109bec0b5849793c8fb90bd6b63a2eb62f.camel@codethink.co.uk>
+		 <20241128105817.GC35539@noisy.programming.kicks-ass.net>
+		 <4052c4e7ed0e02d11c2219915b08928677c88ab8.camel@codethink.co.uk>
+		 <20241129090843.GB15382@noisy.programming.kicks-ass.net>
+Organization: Codethink
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|PH7PR11MB5795:EE_
-X-MS-Office365-Filtering-Correlation-Id: d37dc98a-8191-44f4-a93d-08dd13010373
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dpBHgashDrsUZwi+sRcKQZMgkwJTOKecojhb3tsLNHPmUVEiYL5/duTDvlMx?=
- =?us-ascii?Q?4wNiR7Hv4LVLvbe11HkC+qtUjbgcJZa9HMif6uRH42wDLp2fDIho7g4XrZS3?=
- =?us-ascii?Q?+5XqW1Gyh0MZHjyg7OvCLcUDRvZbP8c5OaAUkekWllMKfBi0S+9O1ZTtde/A?=
- =?us-ascii?Q?q9X5SHUDfEQHpPsQA+t87zczmZFUeoWQFsxk4HrMvr0kIeUfoOxamswYSORL?=
- =?us-ascii?Q?ajH80lVYSEl6+a8Lk5FgxFAYonPEFUaAEjKDG2y4jwGWKgI1/exm85NRvDEu?=
- =?us-ascii?Q?wSQQTia26BB5ypue8EtZEeF1MznVrhNt/9s1FWa5iZ8Ureu+Xb95OtAHJriM?=
- =?us-ascii?Q?3VQHuqBrk4jswzM7aT0BORJckAxe8pTyZgaLorBhpptVPx+2/hD6VWIS+6O1?=
- =?us-ascii?Q?L9fbbbCZWtUeYWflFu5d115PT7o7HgTur/G7tDZ+uVHL+wrlEKt+UPGQEYEl?=
- =?us-ascii?Q?ZdI4yUOXl3ddnp6EKuQ8qNy3lQ1U6dUh6hsUbXB76D48Srh2keVrQlJFdNF/?=
- =?us-ascii?Q?5r4vD3MGgcU2DIpLJa9Ev6Eeh6JFaoyufym/LUoagyhTKjGn3yePONeNm0Yh?=
- =?us-ascii?Q?HFBfVXUZNn2XGoF4GfrVO1q6qz3ZZpaTfzoxC1YiHiIXEZwcSUNxdMomGX/w?=
- =?us-ascii?Q?aHsJfTvtpqNXXTZ/QZJIlnqeQ7XwtAs3qnTfLiYazuxPUve9/DWj0mrvSFye?=
- =?us-ascii?Q?rg1bugzPYNFRKG7g3VBlssysWBblzSHb3/hBlX9rIuSseeVEmY83D3WMxl88?=
- =?us-ascii?Q?WMgoH1OvDnxLcf8rY+Q7HMeUmxwHOIf0uwSNtpTtApVLxOJ0jl9CUkqBsnJN?=
- =?us-ascii?Q?2w6Qa8F+o5eVuwQfkhU6N8sZLGxdrk+mdQBV6mL5kUdCygd/iP/9Rmh2rall?=
- =?us-ascii?Q?FTOD7F9dN2hc8h+9evVZ4H2eh55IQ+55d5qcT9w8IBL5S5cv+4AF2ux2V/cb?=
- =?us-ascii?Q?cPX2X+JQC8N/tTf8vp+jHSE6AARt7ez345Dao0RI080c14ITfxqK11uuEe8Q?=
- =?us-ascii?Q?3v7fnboXoSXjCe+x2uM5dVe9qxM/7WPgIUUTdTn84mip0d62WYXnUH/r/ARb?=
- =?us-ascii?Q?jTRUMe4tLOqBupbzV0vtSPaSuzECy7aEDXyr9nXTM1AH8P+GzAjSXTXcLPsU?=
- =?us-ascii?Q?G8W/DgIn0ZhgqSiR57kBbgKsOiocFaUzVtoD0GILsuAcfkUvovM1fsLUSLpn?=
- =?us-ascii?Q?47UMHoOUNY5uhbLzeqdoGEDC7ywAeV1L9byN1M2ZM6zS8PKVS1fudfB2P/Xc?=
- =?us-ascii?Q?g3OALIYQ4jmrWrG5UqLRRAcIgOa+Pi3dicUsqrCQMNvn6ZIU2uToZb17Zy/P?=
- =?us-ascii?Q?LNxvwzJIAI68oAZ+UVJtKhmbdKNQRC6QQXGcw8SBZ4HokA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1G7yzHtoRbjAtRbMSTz7NoaFQ5x8+Vb+XuhCVdipc5iEwnJp9VIh6VOmW5Ue?=
- =?us-ascii?Q?u0h+8EkxwM9pZnoe7qt0gf5DJIGzQzigwgEL9OqbeITp9fymUI068aLOj0ir?=
- =?us-ascii?Q?IEnw/flx4bdbxaSvbhDC1VnuF9NDiJ2Ywte4RBL6HEDuC2P9VvRqCjhxLBpZ?=
- =?us-ascii?Q?hPTZf1dNubBwzaSFqle4lUhjrvmWftGOeOBeJu2PL5kfcV0eUpZulMwyopdR?=
- =?us-ascii?Q?DgHzMjaQRlBonvy9sGXDGZS4fN5XnnU/w85TvwOcjGDubC4mUdCp7jY0wmRQ?=
- =?us-ascii?Q?aAX8RzUdGye+FNxMb6hF8oCPksAAsoarIQJRsT1dd/OsuKBlL1Z1vARReuhQ?=
- =?us-ascii?Q?CmlcfFe6f5p1kHnHskeR8V0sNR64AdLjb7PIjdYY/Iyf5Z0fnpXVfpuDRNPK?=
- =?us-ascii?Q?KyjDpcMY48ryxtjZ/6RtUYkwGo7q6AIPINuPtejYSQagwOid8/kSVK3q3o2i?=
- =?us-ascii?Q?8ToSRzyBu+1csp72j3z4RLKY9NlWdMD86RPFkKGBsNSaQ/gtLSTN0FPCjjza?=
- =?us-ascii?Q?smK1qcgIWekt1kDEpn/jZvkhROK09uCByY24w47f9o+mt6MuUJkRWtVY874B?=
- =?us-ascii?Q?FyVrpxdDY2WQTqMwloYOr3oaqxGkhlRLpV2Hif4s4IvOvbfgG5MehmDALCIM?=
- =?us-ascii?Q?4MWEts6PP6Zh7/D9WOK+SJ/Xz6YjxDTqaKexQnJs/Z10C4wFbUMyv/0pE585?=
- =?us-ascii?Q?RAWQpBnvxw1DZ30onkbGX/4UADt6DIbNncf4olblb0zCY4y2aulBs9WO0XmV?=
- =?us-ascii?Q?sXuVpB3jPuLFWvO+0Z2qvvt0aRVtnn2qNzHJNtajA8ZlZjXWoWIZvIFAWfo1?=
- =?us-ascii?Q?kcgl27ELACVZfEjWDD+pkswfhPzUu/iTHQxylVLmcQkGXu9LYI7O1Llxt/is?=
- =?us-ascii?Q?RWl2hI6BR3o24yybBUiXKnXnmyTmn/e+Xc1VIj9Tm8ihYNDjFCmdX242C+zx?=
- =?us-ascii?Q?a2yIdKyTlesQucoRkS7KZxfXbtQ6koaWLkSdrJU/gZOcZ6NToBMHoxMgjLZg?=
- =?us-ascii?Q?JQMLkDPmtTjfYMpFmk0JLM0l13taYjjHU6AH8Rz7NHXwgk1D8dylua9ljKpy?=
- =?us-ascii?Q?TfSIjnD0VpBfiQv5tt5ajG3tB//qby7Og7h60qwZht9WQHa3qFpwJP+Fat2Q?=
- =?us-ascii?Q?zmA5McooHeQXwv9NoOzj/xsGCXcMUE0jJiXak9Sd2OxcSKjCM7xDcO85j0gQ?=
- =?us-ascii?Q?JsiA+kJnUbi7p3r5sGhk5vx/FuwU6GshfdrlLJUAaF21MnbmdvNsxCK6xg0T?=
- =?us-ascii?Q?hsC/5n/2EvwazF0L2uEpiYT7t20+0OYZ5etgeJDy8LIfIrDB/ggb2PyMN/d9?=
- =?us-ascii?Q?h1XkQwAGfF8SXNyGHixd8+UNNKuCkIeH4NhlX/AgKKrb42Lymh+fVZgYt6Zi?=
- =?us-ascii?Q?8stvZB3rYCaLV+yA5ESepZxKbfXifCWO/MW0Tw6c3ltPACQP7ENJjgkJVd+2?=
- =?us-ascii?Q?HcS/gPKRYm9pC1wi4YmvijvnFX+V1dqDQaO5jj/w7mv25uFAKLyQvNzVZ/4s?=
- =?us-ascii?Q?bgtpcM6nrvhFZniHhQFOuVblVyVomQjxJJNt/AJ0LsQoQTg0U/NNhHmiMFbW?=
- =?us-ascii?Q?tMuVTmu/LFF3WOXFCPW0gqJCQsH1ym6rXsAdWcEu?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d37dc98a-8191-44f4-a93d-08dd13010373
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 18:42:03.2656
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PYvAl90R6gpjA/9pV+g+o7k6bhzTO30k3vOY0qivDomEHIbV0YIFPo4Qpmh95KvEzlxzrYJYr75LK1VEZBmp6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5795
-X-OriginatorOrg: intel.com
+Sender: marcel.ziswiler@codethink.co.uk
 
-Smita Koralahalli wrote:
-> Add support in GHES to detect and process CXL CPER Protocol errors, as
-> defined in UEFI v2.10, section N.2.13.
-> 
-> Define struct cxl_cper_prot_err_work_data to cache CXL protocol error
-> information, including RAS capabilities and severity, for further
-> handling.
-> 
-> These cached CXL CPER records will later be processed by workqueues
-> within the CXL subsystem.
-> 
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Sorry for my late reply, I was traveling back from Manchester to Switzerlan=
+d but I am all settled down again.
+
+On Fri, 2024-11-29 at 10:08 +0100, Peter Zijlstra wrote:
+> On Thu, Nov 28, 2024 at 12:37:14PM +0100, Marcel Ziswiler wrote:
+>=20
+> > > Oooh, that's something. So far the few reports have not been (easily)
+> > > reproducible. If this is readily reproducible on arm64 that would
+> > > help a lot. Juri, do you have access to an arm64 test box?
+> >=20
+> > As mentioned above, so far our scheduler stress test is not yet open so=
+urce but Codethink is eager to share
+> > anything which helps in resolving this.
+>=20
+> I was hoping you could perhaps share a binary with Juri privately or
+> with RHT (same difference etc), such that he can poke at it too.
+
+Sure, there is nothing secret about it, it is just that we have not gotten =
+around open sourcing all parts of it
+just yet.
+
+The UEFI aarch64 embedded Linux image I am using may be found here [1]. Plu=
+s matching bmap file should you
+fancy using that [2]. And the SSH key may help when interacting with the sy=
+stem (e.g. that is how I trigger the
+failure as the console is quite busy with tracing) [3]. However, that was b=
+uilt by CI and does not contain a
+kernel with below patch applied yet. I manually dumped the kernel config an=
+d compiled v6.12.1 with your patch
+applied and deployed it (to /lib/modules, /usr/lib/kernel et. al.) in the b=
+elow case where I provide the dump.
+
+> Anyway, if you don't mind a bit of back and forth,=C2=A0
+
+Sure.
+
+> would you mind adding
+> the below patch to your kernel and doing:
+>=20
+> (all assuming your kernel has ftrace enabled)
+>=20
+> =C2=A0 echo 1 > /sys/kernel/debug/tracing/options/stacktrace
+> =C2=A0 echo 1 > /proc/sys/kernel/traceoff_on_warning
+>=20
+> running your test to failure and then dumping the trace into a file
+> like:
+>=20
+> =C2=A0 cat /sys/kernel/debug/tracing/trace > ~/trace
+
+Unfortunately, once I trigger the failure the system is completely dead and=
+ won't allow me to dump the trace
+buffer any longer. So I did the following instead on the serial console ter=
+minal:
+
+tail -f /sys/kernel/debug/tracing/trace
+
+Not sure whether there is any better way to go about this. Plus even so we =
+run the serial console at 1.5
+megabaud I am not fully sure whether it was able to keep up logging what yo=
+u are looking for.
+
+> Then compress the file (bzip2 or whatever is popular these days)
+
+xz or zstd (;-p)
+
+> and
+> send it my way along with a dmesg dump (private is fine -- these things
+> tend to be large-ish).
+
+As mentioned before, there is nothing secret about it. Please find it here =
+[4].
+
+> Hopefully, this will give us a little clue as to where the double
+> enqueue happens.
+
+Yes, and do not hesitate to ask for any additional information et. al. we a=
+re happy to help. Thanks!
+
 > ---
->  drivers/acpi/apei/ghes.c | 52 ++++++++++++++++++++++++++++++++++++++++
->  include/cxl/event.h      |  6 +++++
->  2 files changed, 58 insertions(+)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 62ffe6eb5503..6cd9d5375d7c 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -676,6 +676,54 @@ static void ghes_defer_non_standard_event(struct acpi_hest_generic_data *gdata,
->  	schedule_work(&entry->work);
->  }
->  
-> +static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-> +				   int severity)
-> +{
-> +	struct cxl_cper_prot_err_work_data wd;
-> +	u8 *dvsec_start, *cap_start;
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index d9d5a702f1a6..b9cd9b40a19f 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -1203,6 +1203,11 @@ static enum hrtimer_restart dl_server_timer(struct=
+ hrtimer *timer, struct sched_
+> =C2=A0 scoped_guard (rq_lock, rq) {
+> =C2=A0 struct rq_flags *rf =3D &scope.rf;
+> =C2=A0
+> + if (dl_se =3D=3D &rq->fair_server) {
+> + trace_printk("timer fair server %d throttled %d\n",
+> + =C2=A0=C2=A0=C2=A0=C2=A0 cpu_of(rq), dl_se->dl_throttled);
+> + }
 > +
-> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_AGENT_ADDRESS)) {
-> +		pr_err_ratelimited("CXL CPER invalid agent type\n");
-> +		return;
-> +	}
+> =C2=A0 if (!dl_se->dl_throttled || !dl_se->dl_runtime)
+> =C2=A0 return HRTIMER_NORESTART;
+> =C2=A0
+> @@ -1772,6 +1777,9 @@ static enum hrtimer_restart inactive_task_timer(str=
+uct hrtimer *timer)
+> =C2=A0 rq_lock(rq, &rf);
+> =C2=A0 }
+> =C2=A0
+> + if (dl_se =3D=3D &rq->fair_server)
+> + trace_printk("inactive fair server %d\n", cpu_of(rq));
 > +
-> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
-> +		pr_err_ratelimited("CXL CPER invalid protocol error log\n");
-> +		return;
-> +	}
+> =C2=A0 sched_clock_tick();
+> =C2=A0 update_rq_clock(rq);
+> =C2=A0
+> @@ -1967,6 +1975,12 @@ update_stats_dequeue_dl(struct dl_rq *dl_rq, struc=
+t sched_dl_entity *dl_se,
+> =C2=A0static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
+> =C2=A0{
+> =C2=A0 struct dl_rq *dl_rq =3D dl_rq_of_se(dl_se);
+> + struct rq *rq =3D rq_of_dl_se(dl_se);
 > +
-> +	if (prot_err->err_len != sizeof(struct cxl_ras_capability_regs)) {
-> +		pr_err_ratelimited("CXL CPER invalid RAS Cap size (%u)\n",
-> +				   prot_err->err_len);
-> +		return;
-> +	}
+> + if (dl_se =3D=3D &rq->fair_server) {
+> + trace_printk("enqueue fair server %d h_nr_running %d\n",
+> + =C2=A0=C2=A0=C2=A0=C2=A0 cpu_of(rq), rq->cfs.h_nr_running);
+> + }
+> =C2=A0
+> =C2=A0 WARN_ON_ONCE(!RB_EMPTY_NODE(&dl_se->rb_node));
+> =C2=A0
+> @@ -1978,6 +1992,12 @@ static void __enqueue_dl_entity(struct sched_dl_en=
+tity *dl_se)
+> =C2=A0static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
+> =C2=A0{
+> =C2=A0 struct dl_rq *dl_rq =3D dl_rq_of_se(dl_se);
+> + struct rq *rq =3D rq_of_dl_se(dl_se);
 > +
-> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
-> +		pr_warn(FW_WARN "CXL CPER no device serial number\n");
-> +
-> +	switch (prot_err->agent_type) {
-> +	case RCD:
-> +	case DEVICE:
-> +	case LD:
-> +	case FMLD:
-> +	case RP:
-> +	case DSP:
-> +	case USP:
-> +		memcpy(&wd.prot_err, prot_err, sizeof(wd.prot_err));
-> +
-> +		dvsec_start = (u8 *)(prot_err + 1);
-> +		cap_start = dvsec_start + prot_err->dvsec_len;
-> +
-> +		wd.ras_cap = *(struct cxl_ras_capability_regs *)cap_start;
+> + if (dl_se =3D=3D &rq->fair_server) {
+> + trace_printk("dequeue fair server %d h_nr_running %d\n",
+> + =C2=A0=C2=A0=C2=A0=C2=A0 cpu_of(rq), rq->cfs.h_nr_running);
+> + }
+> =C2=A0
+> =C2=A0 if (RB_EMPTY_NODE(&dl_se->rb_node))
+> =C2=A0 return;
 
-Why not memcpy()?
+[1] https://drive.codethink.co.uk/s/N8CQipaNNN45gYM
 
-Ira
+[2] https://drive.codethink.co.uk/s/mpcPawXpCjPL8D3
 
-[snip]
+[3] https://drive.codethink.co.uk/s/8RjHNTQQRpYgaLc
+
+[4] https://drive.codethink.co.uk/s/MWtzWjLDtdD3E5i
+
+Cheers
+
+Marcel
 
