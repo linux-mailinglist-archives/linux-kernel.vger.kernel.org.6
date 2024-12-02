@@ -1,166 +1,131 @@
-Return-Path: <linux-kernel+bounces-427492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8CB59E01F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:20:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673959E0213
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:25:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87BD228225C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:20:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA90116D51C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F26E1FECA8;
-	Mon,  2 Dec 2024 12:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AEB1FCFF5;
+	Mon,  2 Dec 2024 12:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="D5MqestK"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PQazveK4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376C41FC7E1;
-	Mon,  2 Dec 2024 12:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7787E1F9EB8
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 12:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733142023; cv=none; b=IcJur8+omXT/uDtguvEoFOTOzTQYeV07i+qAWoHcGD5wYvDUxflOWq93ZV6Wyp4k67q9YJOEMohxYwGehGgUooaROV37oiUjz8Fw8oAcLWFk/xWXWR/dIdfN7MRyVhFeHXKrDBBSYV6wJ0dS8OPO7LvI59tXQfyFGu0YklOY5/I=
+	t=1733142059; cv=none; b=GP5F8YL0mp2VaBTnutp6+IN1g8V2V05vQirxb4bk6tpeJhIgtpTg5PQ5zAX5foL6bXnSO/CJwT1qOxtrlfJpZOpGhr9RL/KjFuqglw74RDfjJZssApF6pnve1+geqd71CvXulw8wnKuoyCo/jb3NPc6NIMUVrOfS4Xk6Oygg8EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733142023; c=relaxed/simple;
-	bh=4ercBYKdr/wS+o70Dt/gc0Ud0Nppd4D/VDU7L4WgZ2I=;
+	s=arc-20240116; t=1733142059; c=relaxed/simple;
+	bh=M9jrGH7mf0KPVz/vzoJ7jmtDIAbubSGjZKxT5qvrcdg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hGD3l1U9AeIwQvxfhafeA9KXG4iHDWuYnltoREwHgBdBqZWsMxp9EBQci3EzlhO4XcME6/7hJnWYBusPXV3EML5GYsHy8Ae33j5/V/7A/q0AlYkEWjkif3wHC8fCpxdpGfJ24b24Wp87AJAGpVnLHyAM8ACWDEcIAUUs2f58O70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=D5MqestK; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0CF4F40E0274;
-	Mon,  2 Dec 2024 12:20:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id nvbI2-M_wWXx; Mon,  2 Dec 2024 12:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733142013; bh=F1tq3BbMqJG0Q+uEocbwn+TMofehPuuwsk1YGluROtI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D5MqestKzwdYuwfiTkml9kiljHzKJJMu0iV9qRJU2Ia8whtgl9vnxdMOp8zjPPMpS
-	 owr9iMvWPpXB/k92bQ2xLZA2qy9nFdW3BHBBV4Mv0imuOB3DPxF0P3qAotG772awvt
-	 dvmKHLBBDSHWR1mvmaD4rBwSQfjHOkiUdIdeaDLUJkVTuHqy4z8h26VcYfkGSzeNpR
-	 +n4pAVdUgJvBL1T1cfLQ7ZI8qPLn2YFCKinItIWA1CYRRsclrlY0/nuWfggOAae4wc
-	 qCsAAtDuVYF4MZpJQ6ahgN6AJYy4nc0cWntREe8RrYPNE6msKZax+zhKbXTRj/InlM
-	 jSQtfve8h4DKtsBBPN8YfDGBM+YMHHfNIt4+pvalemS4ZRuIQmPnnuUUihzf5teENL
-	 mB9Uty38zOIMbB6cnQI5Gx69CazRahYocPtCaxW11zqYY0sLjzKl0e47gGokLxaGFT
-	 nAKgAC984y3LzvymQ2UDVpY5/4jkrp6rqtp4kTlosspQ/3ProJndP8Hjb1lFoOBNjr
-	 FzLmzAXXtNGSKzSX7LIwp0DwMHARHKhc0SHGo5GYA3NDOIy3K7e+CU9BHi3piQvBPI
-	 DiXhKmKu2DuZfIS8CaPSx+m8boCyztZHV0Tl9J+G30j6qXkPCxYr2vFhNgVo1owlX9
-	 YEhn5/WtRncF8OFTiddLTgQk=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 173A340E01A2;
-	Mon,  2 Dec 2024 12:19:49 +0000 (UTC)
-Date: Mon, 2 Dec 2024 13:19:42 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Shah, Amit" <Amit.Shah@amd.com>
-Cc: "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"kai.huang@intel.com" <kai.huang@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
-	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"Moger, Babu" <Babu.Moger@amd.com>,
-	"Das1, Sandipan" <Sandipan.Das@amd.com>,
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-	"amit@kernel.org" <amit@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"Kaplan, David" <David.Kaplan@amd.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v2 1/2] x86/bugs: Don't fill RSB on VMEXIT with
- eIBRS+retpoline
-Message-ID: <20241202121942.GBZ02l3pnKRs51AI-7@fat_crate.local>
-References: <cover.1732219175.git.jpoimboe@kernel.org>
- <9bd7809697fc6e53c7c52c6c324697b99a894013.1732219175.git.jpoimboe@kernel.org>
- <20241130153125.GBZ0svzaVIMOHBOBS2@fat_crate.local>
- <f43ebdd781d821d7fabdd85f1eebf8acd980566f.camel@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oLUSw9WVcBJB9UtB3zxbj/IpWi/ZP7ckcJGtvvwaR6/7Sy+IINrTydPowxsvYUnOX8X9ORRO0NEOYuJ1EyWTn4ZVVC1Uzbm03eDBvJeoYms9vQzNBYWOgdDA9bSYF/dRqRksZpWA2IZleInSBTmodrFier8dGCYD8HIdhHr4dFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PQazveK4; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733142057; x=1764678057;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=M9jrGH7mf0KPVz/vzoJ7jmtDIAbubSGjZKxT5qvrcdg=;
+  b=PQazveK449e2bxYbRfGIlUa1I9xCIdbfNg1yiUF/RyPfMUNjA+DFIVhc
+   6QBxmnef41GPkRmC97QMwsKsxGymcL8lmjr+BIY+L9RmHnGz1LztNntRc
+   aUx220R9pRRXdJ11a73SskirtE7I2iDcnOPg77BonGdNaW1AhNITUYKNL
+   0uRdWTJkGYKAaOh3C7rBALdqBXt0s1HR+fIq+mtRcnrpXyoN8q3SBghuV
+   BmNqjCUMLAHPmTFoaSl8+2I5DmszTCcTIVWXnjiUnKzrN+aYCapv9N6vi
+   jorWU9KYlbr0jPihpyqAXvTAnVn4oLkMnplOGyk0RngpSiL3I/JRpR99o
+   w==;
+X-CSE-ConnectionGUID: r0RsaWwLRveV3J/9R8vMAg==
+X-CSE-MsgGUID: pabY9tYbTfSjBCO+RPBV3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33435382"
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="33435382"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 04:20:56 -0800
+X-CSE-ConnectionGUID: 9tHCy+sMSIeQw0RvfqmjRQ==
+X-CSE-MsgGUID: Uaw84SIISKObS45VYFAo2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="93263235"
+Received: from lkp-server02.sh.intel.com (HELO 36a1563c48ff) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 02 Dec 2024 04:20:55 -0800
+Received: from kbuild by 36a1563c48ff with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tI5Q4-0002Of-21;
+	Mon, 02 Dec 2024 12:20:52 +0000
+Date: Mon, 2 Dec 2024 20:20:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Yuxue Liu yuxue.liu@jaguarmicro.com" <yuxue.liu@jaguarmicro.com>,
+	jasowang@redhat.com, mst@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, xuanzhuo@linux.alibaba.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	yuxue.liu@jaguarmicro.com, angus.chen@jaguarmicro.com
+Subject: Re: [PATCH] vdpa/vp_vdpa: implement kick_vq_with_data callback
+Message-ID: <202412021926.Sg38msHn-lkp@intel.com>
+References: <20241202033611.1374-1-yuxue.liu@jaguarmicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f43ebdd781d821d7fabdd85f1eebf8acd980566f.camel@amd.com>
+In-Reply-To: <20241202033611.1374-1-yuxue.liu@jaguarmicro.com>
 
-On Mon, Dec 02, 2024 at 11:15:24AM +0000, Shah, Amit wrote:
-> FWIW, I'd say we have fairly decent documentation with commit messages
-> + code + comments in code.
+Hi Yuxue,
 
-You mean everytime we want to swap back in why we did some mitigation decision
-the way we did, we should do git archeology and go on a chase?
+kernel test robot noticed the following build errors:
 
-I've been doing it for years now and it is an awful experience. Absolutely
-certainly can be better.
- 
-> If you're saying that we need *additional* documentation that replicates hw
-> manuals and the knowledge we have in our commit + code + comments, that
-> I agree with.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.13-rc1 next-20241128]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-We need documentation or at least pointers to vendor documentation which
-explain why we're doing this exact type of mitigation and why we're not doing
-other. Why is it ok to disable SMT, why is it not, for example? This patch is
-another good example.
+url:    https://github.com/intel-lab-lkp/linux/commits/Yuxue-Liu-yuxue-liu-jaguarmicro-com/vdpa-vp_vdpa-implement-kick_vq_with_data-callback/20241202-114053
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241202033611.1374-1-yuxue.liu%40jaguarmicro.com
+patch subject: [PATCH] vdpa/vp_vdpa: implement kick_vq_with_data callback
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241202/202412021926.Sg38msHn-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241202/202412021926.Sg38msHn-lkp@intel.com/reproduce)
 
-> I got the feeling earlier, though, that you were saying we need that
-> documentation *instead of* the current comments-within-code, and that
-> didn't sound like the right thing to do.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412021926.Sg38msHn-lkp@intel.com/
 
-Comments within the code are fine. Big fat comment which is almost a page long
-is pushing it. It can very well exist in Documentation/ and a short comment
-can point to it.
+All errors (new ones prefixed by >>):
 
-And in Documentation/ we can go nuts and explain away...
+   drivers/vdpa/virtio_pci/vp_vdpa.c: In function 'vp_vdpa_kick_vq_with_data':
+>> drivers/vdpa/virtio_pci/vp_vdpa.c:372:46: error: 'vdpa' undeclared (first use in this function)
+     372 |         struct vp_vdpa *vp_vdpa = vdpa_to_vp(vdpa);
+         |                                              ^~~~
+   drivers/vdpa/virtio_pci/vp_vdpa.c:372:46: note: each undeclared identifier is reported only once for each function it appears in
 
-> ... and the code flows and looks much better after this commit (for
-> SpectreRSB at least), which is a huge plus.
 
-Why does it look better?
+vim +/vdpa +372 drivers/vdpa/virtio_pci/vp_vdpa.c
 
-Because of the move of SPECTRE_V2_EIBRS_RETPOLINE?
-
-> It's important to note that at some point in the past we got vulnerabilities
-> and hw features/quirks one after the other, and we kept tacking mitigation
-> code on top of the existing one -- because that's what you need to do during
-> an embargo period.  Now's the moment when we're consolidating it all while
-> taking stock of the overall situation.
-
-Yes, that's exactly why I'm pushing for improving the documentation and the
-reasoning for each mitigation. Exactly because stuff is not under NDA anymore
-and we can do all the debating in the open, and the dust has settled.
-
-> This looks like a sound way to go about taking a higher-level view and
-> simplifying the code.
-
-Yap.
-
-And to give you another argument for it: when we clean it up nicely, it'll be
-easier to add new mitigations. :)
-
-And no, I don't want more but no one's listening to me anyway...
+   369	
+   370	static void vp_vdpa_kick_vq_with_data(struct vdpa_device *vdpa_dev, u32 data)
+   371	{
+ > 372		struct vp_vdpa *vp_vdpa = vdpa_to_vp(vdpa);
+   373		u16 qid = data & 0xFFFF;
+   374	
+   375		vp_iowrite32(data, vp_vdpa->vring[qid].notify);
+   376	}
+   377	
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
