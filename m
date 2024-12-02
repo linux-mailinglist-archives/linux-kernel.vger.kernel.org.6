@@ -1,148 +1,248 @@
-Return-Path: <linux-kernel+bounces-427849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CB09E071C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:31:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3F19E0724
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93618172CF0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:18:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBFA6177623
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6C320E335;
-	Mon,  2 Dec 2024 15:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE02208991;
+	Mon,  2 Dec 2024 15:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWmLskC+"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlP7mxwd"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103FD20E316;
-	Mon,  2 Dec 2024 15:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC221D545;
+	Mon,  2 Dec 2024 15:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733152303; cv=none; b=dQlU9sSICJuZv7ev3sdGguFI9tb2DQiX5zhUUT3Rc+Mj0EMTUH7iosaNOfE9Ay+mPXus9MVRktffa+1jd0PNkDX1CA0TfBbTeNp92hm6NOU1l5wOQAPlIAU4ICRFa66J5/jNrc3DCwr/m3TmHI6WdxVPhfwsV5OXW/5Y3mZJv9g=
+	t=1733152334; cv=none; b=bKHqqh30G52DfjZ6qNG2EYyj+pxkcJqLLfFH1HA9r18/oPQ9m+894QeSw6aINwLvNJfR93gN8XAR+QQdFddfPyO+CTPRBE3CVHTmCiz0zIB7jBz/EXTSQv5bdxk8qpyjcpc/fJ2GBSQVbHm60Mfl/0qB1gONM4Ja/pnNeN1E4HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733152303; c=relaxed/simple;
-	bh=YxMgzNRRz3wVdrUzCGMfJ+jt/0auNaIGlNq72sywoXU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=koHfe+XbRLkqjxN8rgoyL7zkEV+hgbiUStg2Y1Wkl3ArF1R3X6o6bukFWwMFwABXTCMafKb1eClkvOuzOgdr8LLJ1Ny0PHNNOPBNiBo3HJEQbUCUOmjDYt8PfoCt528hEKK7BC6muyYO+32rLFYQeB5Kx1RYf/Mnx2khOQi20YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWmLskC+; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1733152334; c=relaxed/simple;
+	bh=SRYFXxrW4YznYwcW9FUcExbIpXBDmP/q9nh/Pa9GfEk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ernHUsuFYUqYQ44GNko5htDrMdGA3zEOe6XKeqiNpRhVY7yCfhsdz+5p5BKA+Nj2bX82VyKWo6H7Qtbqd8xvWPAnuZrnBJvk6jk31C0tH6z7VF2eG3YbOZA1SHR8Jz4nwBPqMV4E12pj5ete2jhHogNq7UtzGxayOgeavN2GOJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlP7mxwd; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43494a20379so35644775e9.0;
-        Mon, 02 Dec 2024 07:11:40 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2154e3af730so21804905ad.3;
+        Mon, 02 Dec 2024 07:12:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733152299; x=1733757099; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nV4l2lLVkQn7AKJu1TpC/+VW5wMnOQmxpRS243GTK9g=;
-        b=iWmLskC+oQl8GahOPvKc6e4v6AvLTJCQuRUmbBoBqrp/4/uR1uwfXy2aKSCgWz52A+
-         65m8fBO9Bw1BBfDJ/5lcOJxy9pLSq2ml2rrvwSyAzKkzJud3NNccYFfBl0wfP0T0cL4S
-         SbyeNvx7EGSRfkFm8coEEKrYH0b6bO2joWSMy0WrtbNfyD4lkEBSkNFLyal0IL2YeNWT
-         gn8Pi3boZDV8ZdMNlKvVqaBTd2hc+KN+uinx88TMAg1lYePsWS34jyV0h4gvlXXal9Xp
-         /BE56piiBkvRZAMK2iBKCHBVhE9bWtrSVfbj9h8q9ubQyoJ0n9Jpm6gYpZly1oMjaQtR
-         QZyA==
+        d=gmail.com; s=20230601; t=1733152332; x=1733757132; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aSE1oYmswp4nZQvrKL5VAYP4YbLQSL+PfB27DrayTI4=;
+        b=KlP7mxwdmV3f0+meIsbfb/Q8DPBJ2Pc8zJibTX/wPEsPbWA9HspqCJ0oRqYaOuzUhM
+         l+/C/yOnYPy6u8jEdEpP0pMWEG8BOzkWJcaw94sw+h9dKe18k3NH/BvsRmkziKn4T9tA
+         8JjwYJy1zSVd6X/1iwJ2XaJWvXXDGtPmujhuSYZ7xACzCRqz37I5OOhGmmGRHEVL/66J
+         aZIWHmbZqJqI/hRjSwG3o2ZvWUO+Mp0cwzEFw5ecYTuJHLdoqvKzUqQLzBs61T53uSaO
+         KbmGTcKWog6Q/EiylkCHnyGTEohvt5+GYsjk/1PuZZksCLUB0RFr7Ajp+uWH111d4P86
+         s8aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733152299; x=1733757099;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nV4l2lLVkQn7AKJu1TpC/+VW5wMnOQmxpRS243GTK9g=;
-        b=pkOCI5cgjj0lAxJQBVYKTUnVO580QOuDnbM7/N35q2652nldFWYShz1kkUn8rDFqCA
-         D1PfmhVgkoRGfpCG0haT7HfDUh9lrTOyFGpvR217Wwkp7fJp0FefLapfaSZ8D3gToW99
-         7cq4C1wyxYeZIVtc+JB5kVw2tIbAFEGSocSg9nEqdjXJ9bLSZ+xd1usnf/J6QOVazkXz
-         Qdl6zyJoGNq0o6T2kDxrIdD49kJGdpcIRoqXY3PJDWXgdkV16qBb+0CuX/3dFCbhZcF4
-         2mg+IBq7lvJNRYZg7XCkH9ekognBGxjdtycZ1WKGwZSS1cK93twoBc5QSKa5cFaOBlO5
-         DgpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzAxS1dZWzRVk1zO19/Vjp/mc3n2iDX0mjGxCr70wfNqSTegG7/v1gQg9Fm+TIW8DSOBp5d21+rVWX8eM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9W9CT+JL+sV5ztSwWu4Dj5lK9KVgQ6tGYdo/pSfsxYc8pNx4S
-	iVJFI4/9x5ySbqUayOYKEDcH6n3Avcebmrk5THjB5ZfJLtl4+hut
-X-Gm-Gg: ASbGncu3QnJ7xvpBWJwSOGSSmZXTLVNzOnXmmvoh06XjkHHjeOg3RW+6kFu1TK028Dv
-	redO0Tp/FRi4PatKWW0xRvF1ghKmz/fXOiMKduEoXEbBHHyvtQkKyPguAJtqozCm77YQp7vMzYg
-	JlkEJR1xUDW7/Vno7DoXaFMleec13ZS0ps85t8nCoHqdUvq5dSnUG0dWOYp0pXbpxMDvPYhMGhX
-	RVMGeX8HSgvaxxMXOkgl6BXGUymL/rQZPj5fgTcANYEAU5sKUGGj/MavJE9CjOEJTRimGFn6c9p
-	anrPs7P9WCAAA796vaxM
-X-Google-Smtp-Source: AGHT+IFqsTbKUWf24PW7pFizyUZDs2575ldIjokvTIMOJTyNmWAWMxhDYbFZ+pC936i08xukQkI3wQ==
-X-Received: by 2002:a05:600c:5022:b0:434:a6af:d322 with SMTP id 5b1f17b1804b1-434a9e10ff0mr189046995e9.33.1733152298396;
-        Mon, 02 Dec 2024 07:11:38 -0800 (PST)
-Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d264dsm186082535e9.33.2024.12.02.07.11.37
+        d=1e100.net; s=20230601; t=1733152332; x=1733757132;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aSE1oYmswp4nZQvrKL5VAYP4YbLQSL+PfB27DrayTI4=;
+        b=GdPZJl2C74x/6c68zvry6hN3972rbzbEWAx8fP0kSQRq8lRjtcchGveH4sgp8VNBKb
+         LH8/Q3gzttLTf3hSsWqqgcItbgsmjpA6kVbc2zUwTJe8PvfeGlT3jLbTr4mLKYE43XhA
+         7kAjHzU2Ow9VWZ5fH6rQezFbw+RXGNb3XS5QB8Trm99v9sRx/J7nBhENAy/sByXOTi8g
+         WbrNMno4lV6NrHLuZpJb0dyq+taaC7CxO6Ch8cDdS6WgpHtU/aFL2fhwbVtWaBMleSl7
+         bbswo/IZ8bMzKilBJagjaXGYkcT5ksp0VThoHDoZbZQ0rc9/bnFqzshaH6rND4wx+Uqj
+         IS0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURG7Wp1Ho91vjR0GEiKqLMPluOPA0DDBfRZKYLxNpgoFkQjXnrFlYoL5GReniwbuLrGRsTiXvUHmZlGPo=@vger.kernel.org, AJvYcCWDycN35bgHVNo0OlucXBF8j/yKniYmumOtEUoACcq01OK/Lg8tUsVEOr9r3DWzuOnYBCPeU3DyTSK/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWjHCaHnoUoAppg0Z301IIaL6BHep8SehMYoQrSbU5Vxovinnk
+	QvtPXwd2q2xcvHEFM4pPS7ukLd+PzVK5Atx+0ELk5Oe3LrH0fHQE
+X-Gm-Gg: ASbGncvAJJjV/sMjFd+r2kipoF5wkEyzOe/+iYzn21aYcYB9j8jJevIxa+n0xLLt4Fg
+	0vIJJ/6puQopWhh4+rNkGvQKYss6sdJDJiMp2iIuD7oTh3xiZTsH+l5C1sC6/+FngQCEqkdOzT5
+	6Fu7pH3lXecA7MelPtm5QNxI2uD2qkHX0l99/llsD1AeCb1Ecg1rj6N3SmW901QknZIqFo52V9s
+	dq1yZ6nqTQTEjZU8PzvjBiaRuufJUKxSetPtj7KF2IzSuOH7ZkpB6qYqgdp5UECVQ==
+X-Google-Smtp-Source: AGHT+IGJGsBN5Bz9z/jmVRFG5EPn8EbineRclxV2mlzSvVxPBgKVWQ30c1kjlQPr/eERQsBmU2EONA==
+X-Received: by 2002:a17:903:440f:b0:215:a7e4:8475 with SMTP id d9443c01a7336-215a7e48795mr33777685ad.24.1733152331602;
+        Mon, 02 Dec 2024 07:12:11 -0800 (PST)
+Received: from localhost.localdomain ([113.30.217.223])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215218f1da4sm78524955ad.12.2024.12.02.07.12.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 07:11:37 -0800 (PST)
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Subject: [PATCH 0/2] iio: consumers: ensure read buffers for labels and
- ext_info are page aligned
-Date: Mon, 02 Dec 2024 16:11:06 +0100
-Message-Id: <20241202-iio-kmalloc-align-v1-0-aa9568c03937@gmail.com>
+        Mon, 02 Dec 2024 07:12:10 -0800 (PST)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v11 1/3] PCI: rockchip: Simplify clock handling by using clk_bulk*() function
+Date: Mon,  2 Dec 2024 20:41:42 +0530
+Message-ID: <20241202151150.7393-2-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241202151150.7393-1-linux.amoon@gmail.com>
+References: <20241202151150.7393-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAArOTWcC/x3MQQqAIBBA0avIrBtIKYKuEi1sGmvINBQiCO+et
- HyL/1/InIQzjOqFxLdkiaFCNwpot2FjlLUaTGs6rc2AIhGP03ofCa2XLaClYXHkuGdqoXZXYif
- P/5zmUj5ilUSlYwAAAA==
-X-Change-ID: 20241127-iio-kmalloc-align-ac7bfcfe5ec0
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Peter Rosin <peda@axentia.se>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Matteo Martelli <matteomartelli3@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-This patch series is a follow up of [1], where I described an issue
-related to the fact that devm_k*alloc() functions do not provide
-alignment to the requested power of two size, leading to potential
-errors when used together with sysfs_emit* helpers which expect
-page-aligned buffers.
+Currently, the driver acquires clks and prepare enable/disable unprepare
+the clks individually thereby making the driver complex to read.
+But this can be simplified by using the clk_bulk*() APIs.
+Use devm_clk_bulk_get_all() API to acquire all the clks and use
+clk_bulk_prepare_enable() to prepare enable clks
+and clk_bulk_disable_unprepare() APIs disable unprepare them in bulk.
 
-From that discussion, it became clear that this issue currently only
-affects iio consumer drivers, as they can directly access providers
-attribute formatted using sysfs_emit* helpers. For instance, the iio-mux
-driver allocates a buffer with devm_kzalloc(PAGE_SIZE) to read provider
-ext_info attributes, which could be handled via sysfs_emit* helpers.
-This leads to an error in the provider ext_info read callback since the
-allocated buffer is not page-aligned.
-
-Summary:
-- Patch 1: harden the consumers APIs to ensure read buffers are page
-  aligned for attributes which could be formatted with sysfs_emit*
-  helpers by the providers. Currently labels and ext_info attributes.
-
-- Patch 2: fix iio-mux consumer by switching from devm_kzalloc to
-  kzalloc for the ext_info buffer.
-
-Tested with the iio-mux consumer driver alongside the pac1921 driver,
-which provides an ext_info attribute (the shunt resistor in this case).
-After applying patch-1, the error was detected during the iio-mux probe
-rather than in the pac1921 ext_info read callback. After applying
-patch-2, the error condition no longer occurred. Additionally, the extra
-check in iio_read_channel_label() was tested with the iio_hwmon consumer
-driver temporarily modified to allocate the buffer for retrieving
-provider labels using devm_kzalloc(PAGE_SIZE) instead of
-devm_get_free_pages(). The error was correctly detected during the
-iio_hwmon probe when attempting to retrieve pac1921 channel labels.
-
-[1]: https://lore.kernel.org/all/c486a1cf98a8b9ad093270543e8d2007@gmail.com
-
-Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
-Matteo Martelli (2):
-      iio: consumers: ensure read buffers for labels and ext_info are page aligned
-      iio: iio-mux: kzalloc instead of devm_kzalloc to ensure page alignment
-
- drivers/iio/inkern.c              | 11 +++++
- drivers/iio/multiplexer/iio-mux.c | 84 +++++++++++++++++++++------------------
- include/linux/iio/consumer.h      |  4 +-
- 3 files changed, 59 insertions(+), 40 deletions(-)
+V11: None
+V10: None
+v9: Re write the commmit message.
+v8: Improve the description of the code changes in commit messagee.
+    Add Rb: Manivannan
+v7: Update the functional change in commmit message.
+v6: None.
+v5: switch to use use devm_clk_bulk_get_all()? gets rid of hardcoding the
+       clock names in driver.
+v4: use dev_err_probe for error patch.
+v3: Fix typo in commit message, dropped reported by.
+v2: Fix compilation error reported by Intel test robot.
 ---
-base-commit: 20fd1383cd616d61b2a79967da1221dc6cfb8430
-change-id: 20241127-iio-kmalloc-align-ac7bfcfe5ec0
+ drivers/pci/controller/pcie-rockchip.c | 65 +++-----------------------
+ drivers/pci/controller/pcie-rockchip.h |  7 ++-
+ 2 files changed, 10 insertions(+), 62 deletions(-)
 
-Best regards,
+diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
+index b9ade7632e11..53aaba03aca6 100644
+--- a/drivers/pci/controller/pcie-rockchip.c
++++ b/drivers/pci/controller/pcie-rockchip.c
+@@ -129,29 +129,9 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
+ 		return dev_err_probe(dev, PTR_ERR(rockchip->perst_gpio),
+ 				     "failed to get PERST# GPIO\n");
+ 
+-	rockchip->aclk_pcie = devm_clk_get(dev, "aclk");
+-	if (IS_ERR(rockchip->aclk_pcie)) {
+-		dev_err(dev, "aclk clock not found\n");
+-		return PTR_ERR(rockchip->aclk_pcie);
+-	}
+-
+-	rockchip->aclk_perf_pcie = devm_clk_get(dev, "aclk-perf");
+-	if (IS_ERR(rockchip->aclk_perf_pcie)) {
+-		dev_err(dev, "aclk_perf clock not found\n");
+-		return PTR_ERR(rockchip->aclk_perf_pcie);
+-	}
+-
+-	rockchip->hclk_pcie = devm_clk_get(dev, "hclk");
+-	if (IS_ERR(rockchip->hclk_pcie)) {
+-		dev_err(dev, "hclk clock not found\n");
+-		return PTR_ERR(rockchip->hclk_pcie);
+-	}
+-
+-	rockchip->clk_pcie_pm = devm_clk_get(dev, "pm");
+-	if (IS_ERR(rockchip->clk_pcie_pm)) {
+-		dev_err(dev, "pm clock not found\n");
+-		return PTR_ERR(rockchip->clk_pcie_pm);
+-	}
++	rockchip->num_clks = devm_clk_bulk_get_all(dev, &rockchip->clks);
++	if (rockchip->num_clks < 0)
++		return dev_err_probe(dev, err, "failed to get clocks\n");
+ 
+ 	return 0;
+ }
+@@ -375,39 +355,11 @@ int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip)
+ 	struct device *dev = rockchip->dev;
+ 	int err;
+ 
+-	err = clk_prepare_enable(rockchip->aclk_pcie);
+-	if (err) {
+-		dev_err(dev, "unable to enable aclk_pcie clock\n");
+-		return err;
+-	}
+-
+-	err = clk_prepare_enable(rockchip->aclk_perf_pcie);
+-	if (err) {
+-		dev_err(dev, "unable to enable aclk_perf_pcie clock\n");
+-		goto err_aclk_perf_pcie;
+-	}
+-
+-	err = clk_prepare_enable(rockchip->hclk_pcie);
+-	if (err) {
+-		dev_err(dev, "unable to enable hclk_pcie clock\n");
+-		goto err_hclk_pcie;
+-	}
+-
+-	err = clk_prepare_enable(rockchip->clk_pcie_pm);
+-	if (err) {
+-		dev_err(dev, "unable to enable clk_pcie_pm clock\n");
+-		goto err_clk_pcie_pm;
+-	}
++	err = clk_bulk_prepare_enable(rockchip->num_clks, rockchip->clks);
++	if (err)
++		return dev_err_probe(dev, err, "failed to enable clocks\n");
+ 
+ 	return 0;
+-
+-err_clk_pcie_pm:
+-	clk_disable_unprepare(rockchip->hclk_pcie);
+-err_hclk_pcie:
+-	clk_disable_unprepare(rockchip->aclk_perf_pcie);
+-err_aclk_perf_pcie:
+-	clk_disable_unprepare(rockchip->aclk_pcie);
+-	return err;
+ }
+ EXPORT_SYMBOL_GPL(rockchip_pcie_enable_clocks);
+ 
+@@ -415,10 +367,7 @@ void rockchip_pcie_disable_clocks(void *data)
+ {
+ 	struct rockchip_pcie *rockchip = data;
+ 
+-	clk_disable_unprepare(rockchip->clk_pcie_pm);
+-	clk_disable_unprepare(rockchip->hclk_pcie);
+-	clk_disable_unprepare(rockchip->aclk_perf_pcie);
+-	clk_disable_unprepare(rockchip->aclk_pcie);
++	clk_bulk_disable_unprepare(rockchip->num_clks, rockchip->clks);
+ }
+ EXPORT_SYMBOL_GPL(rockchip_pcie_disable_clocks);
+ 
+diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
+index a51b087ce878..f79c0a1cbbd0 100644
+--- a/drivers/pci/controller/pcie-rockchip.h
++++ b/drivers/pci/controller/pcie-rockchip.h
+@@ -11,6 +11,7 @@
+ #ifndef _PCIE_ROCKCHIP_H
+ #define _PCIE_ROCKCHIP_H
+ 
++#include <linux/clk.h>
+ #include <linux/kernel.h>
+ #include <linux/pci.h>
+ #include <linux/pci-ecam.h>
+@@ -321,10 +322,8 @@ struct rockchip_pcie {
+ 	struct	reset_control *pm_rst;
+ 	struct	reset_control *aclk_rst;
+ 	struct	reset_control *pclk_rst;
+-	struct	clk *aclk_pcie;
+-	struct	clk *aclk_perf_pcie;
+-	struct	clk *hclk_pcie;
+-	struct	clk *clk_pcie_pm;
++	struct  clk_bulk_data *clks;
++	int	num_clks;
+ 	struct	regulator *vpcie12v; /* 12V power supply */
+ 	struct	regulator *vpcie3v3; /* 3.3V power supply */
+ 	struct	regulator *vpcie1v8; /* 1.8V power supply */
 -- 
-Matteo Martelli <matteomartelli3@gmail.com>
+2.47.0
 
 
