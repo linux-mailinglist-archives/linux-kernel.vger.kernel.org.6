@@ -1,66 +1,65 @@
-Return-Path: <linux-kernel+bounces-427933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613319E085F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:24:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0430F9E0796
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:52:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91CB9178252
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE8F6282443
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48278175D26;
-	Mon,  2 Dec 2024 15:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DEF183CB0;
+	Mon,  2 Dec 2024 15:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1gACQe7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyNMeVfK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A159B16C854;
-	Mon,  2 Dec 2024 15:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3303517B433;
+	Mon,  2 Dec 2024 15:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154677; cv=none; b=d4mBIK8Er41H3f3OX9aG0M25FGXfBFx6VAOM7E004RpIG/8/nrmMFow0M1mVTr/RdM2uYpRUNwH9IRd/I8+lQnxdK16bK5+TFNyK2+K0Za6mKsU/9utebXebtQeLK/iRgOlrGTdLm4KnzCMLJd1gjuGmAJKXLG2P8KYE/ca632I=
+	t=1733154679; cv=none; b=q2iSPpMUvKCsUTEuTISQsNvYYflKogshRZ/3S7MHDgG0mP9rhVjQR+IJisoCfTum9fuCVTu6yZ0xb9PO7cBcq2emBKE53xRNtvcCsjNP7id2O1Gxz9tlhJ4CZ64j3zN3EpeRwT6CFPmV5f65gj5RKLZg5dB+1EZyIhheRTM6WBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154677; c=relaxed/simple;
-	bh=w3NWLI4KLgT4dwNTEWZOaquyn8q5LoNO7IbYT08kOhc=;
+	s=arc-20240116; t=1733154679; c=relaxed/simple;
+	bh=A9rnm/NTuh/5/erDKeO3kviyPDL09VXlpDFb2ytrlMM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YyA4zve9dmC3rsip8zeFCbpuxhTKD1ZbogBTPz9dGZnbWnZWjBTGbeYZKVx/8BRAIWJaluICjxpl9UmG9dlCcDpedM4ueb21LYzROj+pTKIiALcjEUjvgfdkO0GvybPy74T3ZxW0RzZCigcfsZtKOs1osieKuzgu80Alc2LHnR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1gACQe7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3F2C4CED6;
-	Mon,  2 Dec 2024 15:51:16 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Qd4rHSs1fyu7eJwX5ZbRENJQjkcKCAOC5piWN7Dw5rlmSL5vXJuY8d+OsRMwhDaQJmHsrdr9slI1l4RsMbqeyJ06WLk2zY/RDoIpW6duq5h1ciC0+qdpi8uYsDSSndU69HVx16YqmnCU19yOommdQQ2bIn8HEErP+jtGkJo36tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyNMeVfK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABDA9C4CED1;
+	Mon,  2 Dec 2024 15:51:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733154677;
-	bh=w3NWLI4KLgT4dwNTEWZOaquyn8q5LoNO7IbYT08kOhc=;
+	s=k20201202; t=1733154678;
+	bh=A9rnm/NTuh/5/erDKeO3kviyPDL09VXlpDFb2ytrlMM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I1gACQe7pbQ63vIYvLOl2iS0pHLrxq/xlA8hsxZERrAbNjaAgR6SJ1HTYrl3kl0T8
-	 GJ74eum+Eu3brFtUGevA4CH8viR0TUpPmbDF7hxhNN/hwWYZEnsTzotDYpYRJ+30i8
-	 m+fKYaI95hrK0e8BH9la/CA/lJCrKk4y3dMx8ie6/hSrxm4y2Tl++2tFgyIg7zwUfY
-	 Io3IHIsooK8PoAqjgXL5WNvgxXhro9B555GvFN8l8nIIil0QE6/ys966sGe/w9T1Xs
-	 kSq7k1o0/Myl3cJGg7j5EAc1V/9RuPawhf4QGVogw2rVu2N1zIuIF2biXhlMA0JMKa
-	 WwVrVZiKgTGRA==
+	b=KyNMeVfKVc0H5vkEt3MNNfuBV+K5CeZqbVWG2qDhf7H/wMf8v7tFDbMbl+PSh9AtL
+	 iO7yhBHXglU9vflqNIAegUb0b9+bkOOjoh5Xdx9ALBsXZpYefFM84uUepGiadiJ0PH
+	 9qXy4/onV+2kwtd/4TsxaaTSZZUtdCt1SGqmtMCpuFBHscWcdf8FYASB5yn+eR1oRo
+	 fdRao9tnXwTuo3RXO54tWkKdfWNM8q8SWOZ3Qw9sdkGw9bARnfQZ1aBrfbrhAktbzS
+	 tz71n2f5fo0zxkSMe1fSkO8zb4pv88wBpXiw37xqpQqYiDYdKkvC7jKqc1BvUtHC1X
+	 4oTLJdCfy+83Q==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Lijuan Gao <quic_lijuang@quicinc.com>
-Cc: kernel@quicinc.com,
-	linux-arm-msm@vger.kernel.org,
+To: konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	robimarko@gmail.com,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	Qingqing Zhou <quic_qqzhou@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH v5 0/5] Add initial support for QCS615 SoC and QCS615 RIDE board
-Date: Mon,  2 Dec 2024 09:51:03 -0600
-Message-ID: <173315466527.263019.11318467939121751784.b4-ty@kernel.org>
+	iommu@lists.linux.dev
+Subject: Re: (subset) [PATCH v4 0/3] Add support for APPS SMMU on QCS615
+Date: Mon,  2 Dec 2024 09:51:04 -0600
+Message-ID: <173315466530.263019.10143861935675163068.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com>
-References: <20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com>
+In-Reply-To: <20241105032107.9552-1-quic_qqzhou@quicinc.com>
+References: <20241105032107.9552-1-quic_qqzhou@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,30 +70,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 04 Nov 2024 17:10:07 +0800, Lijuan Gao wrote:
-> Introduces the Device Tree for the QCS615 platform.
+On Tue, 05 Nov 2024 08:51:04 +0530, Qingqing Zhou wrote:
+> Enable APPS SMMU function on QCS615 platform. APPS SMMU is required
+> for address translation in devices including Ethernet/UFS/USB and
+> so on.
 > 
-> Features added and enabled:
-> - CPUs with PSCI idle states
-> - Interrupt-controller with PDC wakeup support
-> - Timers, TCSR Clock Controllers
-> - Reserved Shared memory
-> - QFPROM
-> - TLMM
-> - Watchdog
-> - RPMH controller
-> - Sleep stats driver
-> - Rpmhpd power controller
-> - Interconnect
-> - GCC and Rpmhcc
-> - QUP with Uart serial support
+> Add the SCM node for SMMU probing normally. SMMU driver probe will
+> check qcom_scm ready or not, without SCM node, SMMU driver probe will
+> defer.
+> The dmesg log without SCM node:
+> platform 15000000.iommu: deferred probe pending: arm-smmu: qcom_scm not ready
 > 
 > [...]
 
 Applied, thanks!
 
-[5/5] arm64: defconfig: enable clock controller, interconnect and pinctrl for QCS615
-      commit: 9eec6ce36b5dc981327e9f58025d012e524687b4
+[2/3] arm64: dts: qcom: qcs615: add the SCM node
+      commit: 8c7f9d73de1bdb72d114aab053c8f7e3e9b32176
+[3/3] arm64: dts: qcom: qcs615: add the APPS SMMU node
+      commit: 58241be90050e53b7148a43dafa94c999867cbb7
 
 Best regards,
 -- 
