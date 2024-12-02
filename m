@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-428079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AFED9E09F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:31:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B649E0B11
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:33:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601AD2827B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:31:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3446B856C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FE41DCB09;
-	Mon,  2 Dec 2024 17:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255981DDC2C;
+	Mon,  2 Dec 2024 17:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Abvbe3+T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwX9Hvm3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD381DB548;
-	Mon,  2 Dec 2024 17:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E8718784A;
+	Mon,  2 Dec 2024 17:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160667; cv=none; b=YJiGo/S9o3dJKx5knm+u0NQ7OPQTYQdO907gzGm2dSancHXhBN/+uTlFYIn5D7srusbaHR0rZtkY2bAIgdVArSzEvjAmsv4+2atBywWiRugGuuZjAL7Guxmprg+bDWYZe7IUnh+SP6pjtgjV83vgXZKYYG9YZ9qrQQ3961GKUOA=
+	t=1733160675; cv=none; b=V3vK2YhRsLP1iv2FPOzp8p7r6iK3jC6p8mU9UaQ+9YNzZNj8XHHVeYyAiPfqb5XCorlFMf5w3elzWqxoSzrQX83SGkXHiMqCPq1nyKUlgpgwFKb/Pn/6855eNmES2wVTR/3xV/ovAKPRShuUKl52rwkU83it++fGj6W2wHQlN3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160667; c=relaxed/simple;
-	bh=27hbzCnEIwzOJ0IGzzylVzuWfUp7oqVpT0YFWxcLVsg=;
+	s=arc-20240116; t=1733160675; c=relaxed/simple;
+	bh=CAbiLMi4YxUdG9Ik2Xv87eZs8pKV4/K+/quwKpT/55k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eEimQnOQnJGnRuv/w0BOIMWdJzcW7rCgJ3nM3772tKUKgEFShx/iPQu1Kdy5iufofhi/lCpUjvxdphTsKrfH1zeCMd61lUrl6hl7Z5eJmbtIH6mW6mDo7sxovHvvkN8j+qAOMrW23ZOYZkeeNIncU41NpJ4KKWX9UczdZP9ZQlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Abvbe3+T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DC0C4CED1;
-	Mon,  2 Dec 2024 17:31:03 +0000 (UTC)
+	 MIME-Version:Content-Type; b=dRwxbwYrG1EbofsOqBjwkzg2fcBJp6Smjz6qwxNS6uNFBmF+nJqHZopqIxItZLqtEMCs/7/CJgHk30UC9DafKvtawgLaODN3VMjr6A9xDhQfCEdQWx5R53LgwduASTb/XhDqonolp3+ngc+tbr73GeX8EwVOMejCpcECxY7ij10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwX9Hvm3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C25C4CED2;
+	Mon,  2 Dec 2024 17:31:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733160666;
-	bh=27hbzCnEIwzOJ0IGzzylVzuWfUp7oqVpT0YFWxcLVsg=;
+	s=k20201202; t=1733160675;
+	bh=CAbiLMi4YxUdG9Ik2Xv87eZs8pKV4/K+/quwKpT/55k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Abvbe3+T9OICU0YToDA+15POVSCNlTQPhv0L/gb1zWq9gMrmMkDwedpIvo0yo4jg3
-	 XnctuyOpcU3YiHFViBXg4iNG8msrmEpjW5outJn5uC1QguV72RkJuInPE5gmj71fQa
-	 q9uo5YteQyX7kpZtbWnYT3ZmQsGkOFLnkhgGG8s7IyrNUNDFliMSMAoJxpWuqyBbeh
-	 sA7mMQ6N9gOi45nF+eqo3oaQMffhsoxa8kRhBHZ9FKcOVA+5laQ2+/kGGt9phy7wC8
-	 ianbSwBs0hy4b52nDYO4mlpZ02/aA/ubP5+UOth9wrj+Ifx2/6MRnE6AGOtX1NfAXg
-	 E9sLIfNPvnRqQ==
+	b=CwX9Hvm3S2n3U+1E+nCQNyp4qHnxQTYCuAN0goDhNzGwLtKvwEbKSIrYqJS7jVbBD
+	 RYGf9SrS8eFHvcZdYQ77AK7lkSYmokjBQ7lsXV0KeMkJvBW7LtepsIz4rQOxU7ckAl
+	 MnX0CHDmoVF3eu1/JP/d8iHx1qD1PNYDO8Sh9azqglnE9FiXPQnPTmFIAgdGfLRe3b
+	 MbQ85hof+67z5iForJg25Cz6HzWJrx8mqUdx/efVGy38arqW2TQ1U9nLGkdMc/77UC
+	 m+A3zXi49tis7m8Y3YHGUZ8TWm2Ae9J8f5TwFocxqB0L+IfutgU/2z1msVr9P61plT
+	 5EwhaNMr6SAhw==
 From: Vinod Koul <vkoul@kernel.org>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Viken Dadhaniya <quic_vdadhani@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
  linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20241115092854.1877369-1-quic_vdadhani@quicinc.com>
-References: <20241115092854.1877369-1-quic_vdadhani@quicinc.com>
-Subject: Re: [PATCH v2] dt-bindings: dma: qcom,gpi: Add QCS615 compatible
-Message-Id: <173316066288.538095.7308879081334615310.b4-ty@kernel.org>
-Date: Mon, 02 Dec 2024 23:01:02 +0530
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241108-topic-sa8775_dma2-v1-0-1d3b0d08d153@oss.qualcomm.com>
+References: <20241108-topic-sa8775_dma2-v1-0-1d3b0d08d153@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH 0/2] Add SA8775P GPI DMA compatible
+Message-Id: <173316067073.538095.13350944715952515644.b4-ty@kernel.org>
+Date: Mon, 02 Dec 2024 23:01:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,15 +65,15 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Fri, 15 Nov 2024 14:58:54 +0530, Viken Dadhaniya wrote:
-> Document compatible for GPI DMA controller on QCS615 platform.
+On Fri, 08 Nov 2024 22:41:16 +0100, Konrad Dybcio wrote:
+> Fill in the missing parts of the initial submission
 > 
 > 
 
 Applied, thanks!
 
-[1/1] dt-bindings: dma: qcom,gpi: Add QCS615 compatible
-      commit: c841f9909b0d947ae7593040cc59646dc9f14455
+[1/2] dt-bindings: dma: qcom,gpi: Add SA8775P compatible
+      commit: bf9b0834552e615b1dbd3015c2f0ed2a3bdf62a4
 
 Best regards,
 -- 
