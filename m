@@ -1,90 +1,56 @@
-Return-Path: <linux-kernel+bounces-427475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC4F9E01FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:21:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 119A99E01BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:11:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6707B22F4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:15:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C15284667
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3FE1FE46C;
-	Mon,  2 Dec 2024 12:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CEF201265;
+	Mon,  2 Dec 2024 12:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="MEM65gzR";
-	dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="YJwBR9Bx"
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWj3QDTN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B041FECA7;
-	Mon,  2 Dec 2024 12:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.218
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733141278; cv=pass; b=c1UWhfGw+vqCaz909ts7V4/7ygaFT1cXrgV+W1rvaM6cSlJGlxCSk6Dwet5lK11N3VYq6+vrXgs5rbFKXRe8A88oRzaAMSH31Mv9QKHd+uh/sVx5ITXOt89IZ2r8EuEhGD/hmuXSdPrfzWauImXcJLFZCTO8NEF0ExLeI9s90Xs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733141278; c=relaxed/simple;
-	bh=o7Ud+cvNPHrey1c8b1YKen0TsLIn4c3OMSNkknvUDAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=huwmBWkFURxogtaQWjETv3L5GcLBW/vzZFTXnoVB+uhuvxn6ygf0wMfmaWeRk6d055apQkcCBlq2tSuWWjpjTG+xk5bn3T3ICL1M+I2CTbymwxIlYmDEjAWyAZdbDuYrUg6sHFH3LKQWs7wyHsRwMdslr/GagObXTE6buKmq6Rg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de; spf=pass smtp.mailfrom=aepfle.de; dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=MEM65gzR; dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=YJwBR9Bx; arc=pass smtp.client-ip=81.169.146.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aepfle.de
-ARC-Seal: i=1; a=rsa-sha256; t=1733141075; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=XdxiNT3hqmNu4SV5FmQIzXx4zpCH07NFkqsxwroJ8tnOOXSiNHnT2dKPjJgTUcJsoa
-    UGFZ+KhUB+cIIDD1BPad7pKWBfkkel82X0CuNwYGds++pphGjtj6IqaUdSg3t54A1xWu
-    Zqcvbx6CbHwn4AeqX8k61Mp8kIV/8971PbktJaEJdVlt0zJNfMi2sW5ZIL7b9KBRx0rK
-    FYeQyqaafBC6TJaKyxg36ay/7WF6J3r/ww05wDoU0tIJ/6tVzq7P9qiSRxd7DKp5/8oD
-    Osp3xvqItTpj8bWbKulIH5pvhDIfoIm4OdjNu2s5GDxluT6Wd7C1ONnKQkivoV205d82
-    RcnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1733141075;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=buCPLxYTTnHGIbnaGtY5EBfZCa2VAiJd04VS0YcqUWc=;
-    b=bnontD8WtsIgeuLCcEvMrEz7OxGh5ZtbUvmHcxrdOB1eGT/rhRO/tCunmxzbTpNezo
-    4iG5GDGMq/tV6iRvOPbFv4PufrYV0q5RswX6MVxodAMmgjKomqh4k1zZJiQZKtRIHxCP
-    xITt2UNBHn1c+HgX+dBJ4U18MfYcQ7r72Enm95p340k/4RkO8kOWZITDNbzod4r1+7H1
-    G/VhrLn9OtZnPTLHwMgxbDElsg7zGnAvK9J9Eu391+C0elIJb1JXw77FWXawws9nHpUP
-    noU3x7lvZbXvIzb6xeB3Yyf2zAXUGrb4xoqPt+VUaSGGkujJiLJZomSS5DxW5G3E+2li
-    C4KA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1733141075;
-    s=strato-dkim-0002; d=aepfle.de;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=buCPLxYTTnHGIbnaGtY5EBfZCa2VAiJd04VS0YcqUWc=;
-    b=MEM65gzRgBD11TfWqgFq8TSZe79aA0YqDOqzDlc898A9VaCbht/jLuQfx+tcf/khP8
-    wAeqkge7H706oCMSPH3lMjSNtpDIpAe9z1OpWLy/9MYF/a+LUP8X1gMgaBEzC1NitzrI
-    zBRC6WVVMHXl6xTbTMkDvvpLycaFezXiAhjH4XsoWDbKP/R6pMs5KggaJG55iGvdb1rt
-    B4eDvHREh8iMjN0NHQinKSnzoIq1pi+q/8HqRhRonhwQeBk5bkqopVXiUsPELjqbxxCT
-    bCA9dUmrEaO6sj7fwO4WnfZliSNqXdDrrXXq9psXGMNTv0km1JST1HAafJvgIOQ98XqR
-    0C8Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1733141075;
-    s=strato-dkim-0003; d=aepfle.de;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=buCPLxYTTnHGIbnaGtY5EBfZCa2VAiJd04VS0YcqUWc=;
-    b=YJwBR9BxF0uA+i431cnA4iLhrbOtiKmfcD8yeYr+9HPpR8VdnbK4iyMuO+TbrFKuWo
-    S8HPvTF25zSPkH0sF5Ag==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0uv8ZofWaSUMjanMCZmxMwm2OGJkumVDfIDOsNMxne61spO"
-Received: from sender
-    by smtp.strato.de (RZmta 51.2.11 AUTH)
-    with ESMTPSA id Dd65250B2C4ZpJ2
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 2 Dec 2024 13:04:35 +0100 (CET)
-From: Olaf Hering <olaf@aepfle.de>
-To: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH v1] tools/hv: reduce resouce usage in hv_get_dns_info helper
-Date: Mon,  2 Dec 2024 13:04:10 +0100
-Message-ID: <20241202120432.21115-1-olaf@aepfle.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C931FE473;
+	Mon,  2 Dec 2024 12:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733141061; cv=none; b=mYg7g1kk9bAI7o6m4MCf/wj8xfOVZ6ncJTyeC7GiGOBcQOB5fPzku+zE4e8wNUD79fIVnGBL2/CTO7X/VthrAsMy60XhSTqsOmyhmkK5JBAhz22GEl7+cXXFQ+8qtK+dnUIBtDy0pVX0zSPDIWknrAwaEAml+ANdb8JjrTdEP84=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733141061; c=relaxed/simple;
+	bh=vR+qv2NB8nsfTisJ2Ckp7+Knn+5xHm36+cK3KWkfffA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VG3H3IgAtVWRnaOaPRCp0LMm+CEkt8qN+J4hpCLkWSXuJFNae6kZ34zmWrnZlOKBx71y0Zhbqb1Vzt27egOz0BJexZElFTt9Q+YcDLHhxeXSlgmZOXMACJcmqSbhKAsagey3kEFif6GvqPp7m3Ir1xg3sI/AOSP4rs/HZTVPvaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWj3QDTN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AAB8C4CED1;
+	Mon,  2 Dec 2024 12:04:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733141061;
+	bh=vR+qv2NB8nsfTisJ2Ckp7+Knn+5xHm36+cK3KWkfffA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iWj3QDTNe+PwJ8oP81ALjCqoWbgddTryiiaccgDAZaqTFCbhAvvJXmypdgPtH8WUU
+	 BWNq3xTBt/WES7ZRSv47zejwqH+wdujSk7Yl1oaAgZJTHfFsDpe69496Gm8O+yaTGz
+	 PDaRRv0fAGv0bN3gcxPQMDLop2Y+gY/dV3zyuZNanpHRFKq3TstE/fhWGaHUpApXwR
+	 HnDBCuMnVEVXqJfTkQIiK52J9QdVC+mnedhAuh7o4Q1vFtV1IqDSt9ErqgJGCqYuZi
+	 quRl7ZALadxoXnenRLe7W7LFRwxg34+UKqmZH21ieQYESoYJcndDmPh154bHj2MOtD
+	 ESjzdwheEd+yg==
+From: Borislav Petkov <bp@kernel.org>
+To: Sean Christopherson <seanjc@google.com>,
+	X86 ML <x86@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	KVM <kvm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>
+Subject: [PATCH v2 0/4] x86/bugs: Adjust SRSO mitigation to new features
+Date: Mon,  2 Dec 2024 13:04:12 +0100
+Message-ID: <20241202120416.6054-1-bp@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -93,30 +59,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
 
-Remove the usage of cat. Replace the shell process with awk with 'exec'.
-Also use a generic shell because no bash specific features will be used.
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
----
- tools/hv/hv_get_dns_info.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/tools/hv/hv_get_dns_info.sh b/tools/hv/hv_get_dns_info.sh
-index 058c17b46ffc..268521234d4b 100755
---- a/tools/hv/hv_get_dns_info.sh
-+++ b/tools/hv/hv_get_dns_info.sh
-@@ -1,4 +1,4 @@
--#!/bin/bash
-+#!/bin/sh
- 
- # This example script parses /etc/resolv.conf to retrive DNS information.
- # In the interest of keeping the KVP daemon code free of distro specific
-@@ -10,4 +10,4 @@
- # this script can be based on the Network Manager APIs for retrieving DNS
- # entries.
- 
--cat /etc/resolv.conf 2>/dev/null | awk '/^nameserver/ { print $2 }'
-+exec awk '/^nameserver/ { print $2 }' /etc/resolv.conf 2>/dev/null
+here's the next revision, with hopefully all review feedback addressed.
+
+Changelog:
+v1:
+
+https://lore.kernel.org/r/20241104101543.31885-1-bp@kernel.org
+
+Thx.
+
+Borislav Petkov (AMD) (4):
+  x86/bugs: Add SRSO_USER_KERNEL_NO support
+  KVM: x86: Advertise SRSO_USER_KERNEL_NO to userspace
+  x86/bugs: KVM: Add support for SRSO_MSR_FIX
+  Documentation/kernel-parameters: Fix a typo in kvm.enable_virt_at_load
+    text
+
+ Documentation/admin-guide/hw-vuln/srso.rst      | 10 ++++++++++
+ Documentation/admin-guide/kernel-parameters.txt |  2 +-
+ arch/x86/include/asm/cpufeatures.h              |  2 ++
+ arch/x86/include/asm/msr-index.h                |  1 +
+ arch/x86/kernel/cpu/bugs.c                      | 16 +++++++++++++++-
+ arch/x86/kernel/cpu/common.c                    |  1 +
+ arch/x86/kvm/cpuid.c                            |  2 +-
+ arch/x86/kvm/svm/svm.c                          |  6 ++++++
+ arch/x86/lib/msr.c                              |  2 ++
+ 9 files changed, 39 insertions(+), 3 deletions(-)
+
+
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+-- 
+2.43.0
+
 
