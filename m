@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-428092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5349E0A27
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:36:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337A09E0A25
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:36:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAF20B88165
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:35:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF10E162E99
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478721DDC20;
-	Mon,  2 Dec 2024 17:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B61E1DE4FB;
+	Mon,  2 Dec 2024 17:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ungmd37L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/90kkzH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853F11DB548;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA951DC1BA;
 	Mon,  2 Dec 2024 17:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160904; cv=none; b=hOuU2ZDsn9e1oO79/kIPotAVAaFEXKiR9gZzUuDZteCb5qwtW+hbVhTNNXxH+pZvLE5lvFQ+x1Z9La7a4sbhAE45HoJ4StmaQGgkemcbzzRDDafcVMNXci3xLIIlEKht4t+ukuAqTXmz5eKxUVCzpOcGNiGg7kJYVlGk1aik8KA=
+	t=1733160904; cv=none; b=YrdnclkP5sAAffXH9Ggoi72ajh4qv5dI+iV0KwsdAP6vwMFazB0J11/VbOaoECEuNFa84G9WkBOJht1LqE3ANv6Bq3s1AZNM14qlzhgVF0vuPTDP/2VtfSp6qdUEn2OZWu4r03MpaRFPncn5/lfiljFzWuoDyi20gimyaJGivkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733160904; c=relaxed/simple;
-	bh=xwTNFn3pAcjVSWQWx0fHAn53Pqy1YgPTXPD7CvZlCBE=;
+	bh=0n7K8123aVRmHZxGT60ksDzEW/cULJYrbFl/Q86l37M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=svXudUNAAoW5Mo6kZ3XttlnvfhzsfEBz/1iQ5ZnTfWzbnuP+gjPfhaJeG8wrtY/IGxpDeQSiiwEn0QxgjJIyZkTDe9x+NgnaC0c34TG8EpcIPs+AMPv5TmYi8Vyj+ULYaGCqdLWiew/mZF7OJ6UTQEEA/TheBj3G2/EMmLQ36rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ungmd37L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 451ECC4CEE2;
+	 In-Reply-To:To:Cc; b=WVWX531HXG4q+utWscENrYLbvZ7/FyRm8+8nen477ChNx9444rci9GrD0KrcmJn/KCnUt+JIn+lih08RRAYi1lbsC++PoyaY/WoEYTxj9tAuxzpMyD+fNISKM+QBNY6vIPXdiSGHStoiJ8n5vSQV3QSEy/ItuJRBQX35x8btGeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/90kkzH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9AEC8C4CEE9;
 	Mon,  2 Dec 2024 17:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1733160904;
-	bh=xwTNFn3pAcjVSWQWx0fHAn53Pqy1YgPTXPD7CvZlCBE=;
+	bh=0n7K8123aVRmHZxGT60ksDzEW/cULJYrbFl/Q86l37M=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Ungmd37L4dkWQvhcuFclEv+4CcvM6Wg2DepR4tJAgCJBakZJ4OmYWS9Csu9MKZr41
-	 XOv24ODLjWwD+67sbFUifpRNCmPEQhS8JwS9csGxIlgYR/YLsHOkJVI+rsTOnZRPEy
-	 yH2cFtTBr9uKzmixHN0oJOTceYmKMqTwlwwO5KPm5TZsGgwOtl4ORdHEwBnZoivBBH
-	 bSGeNjS+e1SaQ5F6GGhF5sehAhHeG+tGesILeTagGwibgp+e6zEqRMEwmeSetfdcXn
-	 lSorEV45P7zurGKv9mS3+xrhz3uFMSJ+2PzbCz77WDhjVgbfudPNRgeib2oB/A/4F2
-	 ITeXGxWMkkBeQ==
+	b=j/90kkzHJYpxgw9fCykFpmgCYrZb/HPUY4Fn5AfokJhP84zgU7WPjnPRfcVDKNTZ6
+	 wg+fmlmBVyCt//Ey3/M6ExHqZHnZfnNtjNwYpa7cjYFMZUUr9k/jEbhhMlkpXAEPu8
+	 tyBddS+OV2r4MV7GOACqXDiV2MFmPliFoCKNi3gXMxhlm3mvVMqJV7rk2kHU1Nf1iF
+	 Rmspw7y6S/BTMrAVwZfQYYIvu3wu1tA0CWgmUb/hRT/5vecMQRWoCUH10RiN4SK+ik
+	 KNISAN2qv9Bv/qfkjhjCxYcPlt6QwRjzMjF4MkKIAmeuKGAEzSHUCnhg3q3mCxkg59
+	 zwzNKjWmBqpZg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 394CFD7833C;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EEED7831C;
 	Mon,  2 Dec 2024 17:35:04 +0000 (UTC)
 From: Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org>
-Date: Tue, 03 Dec 2024 02:33:26 +0900
-Subject: [PATCH 04/10] linux/bits.h: simplify GENMASK_INPUT_CHECK() by
- using is_const_true()
+Date: Tue, 03 Dec 2024 02:33:29 +0900
+Subject: [PATCH 07/10] overflow: replace __is_constexpr() by is_const()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241203-is_constexpr-refactor-v1-4-4e4cbaecc216@wanadoo.fr>
+Message-Id: <20241203-is_constexpr-refactor-v1-7-4e4cbaecc216@wanadoo.fr>
 References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
 In-Reply-To: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
 To: Linus Torvalds <torvalds@linux-foundation.org>, 
@@ -82,13 +81,13 @@ Cc: linux-sparse@vger.kernel.org, linux-kernel@vger.kernel.org,
  coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
  Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1272;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2119;
  i=mailhol.vincent@wanadoo.fr; h=from:subject:message-id;
- bh=7pxUmK/6W4pXlFZB1NGxttLkuRalLbmF/D69OP2jG1o=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDOm+749GXp33N/vXlsdiTw9lODzSEugV7vlifP1CSKJpp
- EL7cw+XjlIWBjEuBlkxRZZl5ZzcCh2F3mGH/lrCzGFlAhnCwMUpABNR2Mnw35utNVRP1Thc1XO/
- kFrZj4LtpwX/s53aHOaffebyus1pTgz/82/rzvn0wGB67rdoO1XPe0Viq2NqdiXV19t3Vhuemj6
- RGwA=
+ bh=3zhdAHGJKxe/cfP6gSQHSq0jEALX5ywlxJaLknSE8PU=;
+ b=owGbwMvMwCV2McXO4Xp97WbG02pJDOm+74/q876MC9CKYjyo9Ky9cdPpsilBc38vnbBxvs6ZW
+ UF5mtXRHaUsDGJcDLJiiizLyjm5FToKvcMO/bWEmcPKBDKEgYtTACbyQ5fhr7xK1ZyIKSviHgrp
+ 8+d4/NxvmD6DX/jspxv39qf9Nnzx8QYjw5+v16eWdS2+XNXV/TjVMnulR8GKU3Mazly4pdn98Ng
+ OKx4A
 X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp;
  fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 X-Endpoint-Received: by B4 Relay for mailhol.vincent@wanadoo.fr/default
@@ -98,43 +97,54 @@ Reply-To: mailhol.vincent@wanadoo.fr
 
 From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-In GENMASK_INPUT_CHECK(),
-
-  __builtin_choose_expr(__is_constexpr((l) > (h)), (l) > (h), 0)
-
-is equivalent to:
-
-  is_const_true((l) > (h))
-
-Apply is_const_true() to simplify GENMASK_INPUT_CHECK().
+is_const() is a one to one replacement of __is_constexpr(). Do the
+replacement so that __is_constexpr() can be removed.
 
 Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 ---
-This change passes the unit tests from CONFIG_BITS_TEST, including the
-extra negative tests provided under #ifdef TEST_GENMASK_FAILURES [1].
+ include/linux/overflow.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-[1] commit 6d511020e13d ("lib/test_bits.c: add tests of GENMASK")
-Link: https://git.kernel.org/torvalds/c/6d511020e13d
----
- include/linux/bits.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/bits.h b/include/linux/bits.h
-index 60044b6088172b3f26aa3f17cdaede9786863dae..ef0119e6179e1ca95345a3d4d3327ba19633028e 100644
---- a/include/linux/bits.h
-+++ b/include/linux/bits.h
-@@ -20,9 +20,8 @@
+diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+index 0c7e3dcfe8670cb95f371a6f7d41bb8b63b1786c..d69361a3128897d493b5e2ec471f077ca2b9861d 100644
+--- a/include/linux/overflow.h
++++ b/include/linux/overflow.h
+@@ -234,7 +234,7 @@ static inline bool __must_check __must_check_overflow(bool overflow)
+  * Returns: true if overflow can occur, false otherwise.
   */
- #if !defined(__ASSEMBLY__)
- #include <linux/build_bug.h>
--#define GENMASK_INPUT_CHECK(h, l) \
--	(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
--		__is_constexpr((l) > (h)), (l) > (h), 0)))
-+#include <linux/compiler.h>
-+#define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(is_const_true((l) > (h)))
- #else
- /*
-  * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
+ #define overflows_type(n, T)					\
+-	__builtin_choose_expr(__is_constexpr(n),		\
++	__builtin_choose_expr(is_const(n),			\
+ 			      __overflows_type_constexpr(n, T),	\
+ 			      __overflows_type(n, T))
+ 
+@@ -250,7 +250,7 @@ static inline bool __must_check __must_check_overflow(bool overflow)
+  * back to __same_type().
+  */
+ #define castable_to_type(n, T)						\
+-	__builtin_choose_expr(__is_constexpr(n),			\
++	__builtin_choose_expr(is_const(n),				\
+ 			      !__overflows_type_constexpr(n, T),	\
+ 			      __same_type(n, T))
+ 
+@@ -352,7 +352,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+  * Return: number of bytes needed or SIZE_MAX on overflow.
+  */
+ #define flex_array_size(p, member, count)				\
+-	__builtin_choose_expr(__is_constexpr(count),			\
++	__builtin_choose_expr(is_const(count),				\
+ 		(count) * sizeof(*(p)->member) + __must_be_array((p)->member),	\
+ 		size_mul(count, sizeof(*(p)->member) + __must_be_array((p)->member)))
+ 
+@@ -368,7 +368,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+  * Return: number of bytes needed or SIZE_MAX on overflow.
+  */
+ #define struct_size(p, member, count)					\
+-	__builtin_choose_expr(__is_constexpr(count),			\
++	__builtin_choose_expr(is_const(count),				\
+ 		sizeof(*(p)) + flex_array_size(p, member, count),	\
+ 		size_add(sizeof(*(p)), flex_array_size(p, member, count)))
+ 
 
 -- 
 2.45.2
