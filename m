@@ -1,115 +1,200 @@
-Return-Path: <linux-kernel+bounces-427052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420779DFBA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:12:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CDD9DFBAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:12:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2101624AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A58922815BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F69F1F9ABD;
-	Mon,  2 Dec 2024 08:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AC01F9ED9;
+	Mon,  2 Dec 2024 08:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMIkt7BF"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NGdgn/l/"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227301F8AEA;
-	Mon,  2 Dec 2024 08:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD6C1F9427;
+	Mon,  2 Dec 2024 08:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733127125; cv=none; b=sgPnJog+tNPbkSC4UdljfDsH21LI2bIrkZAj7nIhX2Cdz6vj+h6xveuTHfJOOpNXXsvORLDut2l19+3r9MgKbPTnpob3CxkbFl9Cu4BYp1X2LQGp+9ULOk6NcOc6EOv55hnaAlZkjmJZG1Uul9Cm/NKC2KMr9RRnQUN7AKy/azo=
+	t=1733127132; cv=none; b=sFch/WQ/9B2uuzyuId/fTVG1V+HMQz0WySpW+aYV1hiHGAc8f54O/MB3RmYTSbXJmBAUS4RX/i+ah+3Xg7uOCHojkQpsYTLobZW42KtNNm98mqV+nWsXF99rTO4YKMch6Nhclw2em1wAVpn9ylCQ705ttlak9UvM4RjP1/NBKrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733127125; c=relaxed/simple;
-	bh=VSUjNizr/1GTzlmCcQz8331y/PCGwzGRf2PuxJ6n7DA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L/s+AmmhtiJUK8zf/woM5/wda1EJiqs/ws0o4PeEOVHw87llghbBjFckRm0e8aLWsrQ7dKpXTOndwEElA7jhKahTN7kHXgUZkyOdplAUxVbmeuaqLVoV14T5Zvz4AzGlj5diBzA6Yj4miRWfySoRA3rSwomQKzDXZ6zb/4CW9Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMIkt7BF; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2156e078563so9256205ad.2;
-        Mon, 02 Dec 2024 00:12:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733127123; x=1733731923; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rgCxp/kcDTssayp9qUntP//DVF1RVvwjAC+aQl3a/8c=;
-        b=BMIkt7BF9MA9zAJWPu2YYufYI1H5OeEug+Va8zHvtyn9PexVUjlHC4DV6DCbT2sMYC
-         P9j6OKeCzzg/eI75ibooJL87AO9cLPZdGKL976O6gQOIhEMxgKkQx7oaqq9ubg0lDsby
-         YpnmZAMKTCUrSgarCaeRDe3yR3NghRmW4uEqgis2KvKYP8heWjr/kHq4o3rWqNDdjTTA
-         /HJ+/y2t8qSvTPGcYzpUX5YpYEJM/+pSm2SA3xYjXhw8uXHdO/FkNAsAsHt/PWrOFJqN
-         gYbpCIGemh6FXp0Z5Wjo3j9a40I/6Z0ZmhZADXfW+i89MixVghajyH9VeGHPBSHl8o41
-         +dVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733127123; x=1733731923;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rgCxp/kcDTssayp9qUntP//DVF1RVvwjAC+aQl3a/8c=;
-        b=DgvH//xwV5Wht/skHO8UERjqInfzBdtz5qbrmIkYezPU4awtVoJNHEfN0wwYl9Fb4I
-         05x/zxcK90Inb0CLY3iXLNLKNCY5AWncjdBvpK6ooTO+WYumiUNvgVneWeSZ9NFMMj32
-         JpKvxuvF6Zr389G1l3bK/fSQU3J67EWFpJDUmG27aZkZ5q26PFyn0KPMnWPXkyQ8RLC1
-         DK69Yei0zKtHpcl+0ACscV6wBrTW/Z+NjQdANIEtIUDlOHxjsSdwdzquiPFrF2ZhiDzC
-         67HRvY/KRpwIvTvIch6tmh1mGwo6yZbBCnXbrTuKfJ1ALhprkKzbKdhzbyo8sbBP4OOx
-         TLBw==
-X-Forwarded-Encrypted: i=1; AJvYcCV61XswLtp3ra+NKodpFaBRbCGdxxl/uD/ksliqFVJDnhSamhnMU9msMT3QPKPtJoG+v3sjtAmTTM/tvYBL@vger.kernel.org, AJvYcCVN/BJ85EdS+RW4jUMBsFLSONva5lCpM1W1S3RxaCvtiufomIGcMnZrPo6xbmpdYu4RhrLdhsEeiFIcC4tB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLS1JhYuK5l8LaOoVkKbmML/pSQtw3ddgM3wELIQYfUp9qbHBr
-	uO6btmncw4yvz7evVzyk6eCW+Ng69utPy3GTPfkQiwhTdqjEsJtN
-X-Gm-Gg: ASbGnct8e+91sJvE5baGL+e7ioxvTzflxDC8ALQM4mevcbssK19V2I411M16XGGzte4
-	ekO1k1F/KxNP6Vw1VcRQy1NV46blSGje8ASjTnyZMBW2dHmFwXdutbQ3TqiuEfcdib9eWTtcSYO
-	pBHDUUFOV8+ChUYkDvLiFsGqeOsTCkvcmy2cRlrd0/A54tsxpEqm4i7gVHjdEbeYRrEaQvM/0Dd
-	t2iXS2CU9XvdRCZ5Z+Kp/N7TyQEnMlmlu3w1Vv/KbOzUKbSINmgdXYAz7eeRd9SYexZaK0YGQ==
-X-Google-Smtp-Source: AGHT+IEuUbONqs8zxBj3T/WQhEm8JRiFYXFVrrZ0qaCD6pVq7HPF7oqFAtRt4C8+IUp4BKeTLb/CsA==
-X-Received: by 2002:a17:903:2344:b0:215:711d:d59 with SMTP id d9443c01a7336-215711d0fa0mr97535105ad.2.1733127123344;
-        Mon, 02 Dec 2024 00:12:03 -0800 (PST)
-Received: from localhost.localdomain ([36.110.106.149])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2153d61aabfsm55517385ad.136.2024.12.02.00.12.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 00:12:03 -0800 (PST)
-From: Guo Weikang <guoweikang.kernel@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: Guo Weikang <guoweikang.kernel@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs:fc_log replace magic number 7 with ARRAY_SIZE()
-Date: Mon,  2 Dec 2024 16:11:45 +0800
-Message-Id: <20241202081146.1031780-1-guoweikang.kernel@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733127132; c=relaxed/simple;
+	bh=rj+8sbTYBj+7WA6p08GKc/WgM+OR2fWhskdSrcSDwNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V5fKrHCAEh/yuDRGLAtyhFDeKsQx1o/BYgB6dQ4W4jeDiOOMf4WQYWSekgJ1WXD68dhRtHucnZYXMTZf24p04CUjE0xVfdlbqPu6I+YDhtOoQ88lSmCX51yQUHCK9EHzIGnu2DRRXECseKab8+pQjpgJAUmN6UYIPirlkT7ELig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NGdgn/l/; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 31659514;
+	Mon,  2 Dec 2024 09:11:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733127102;
+	bh=rj+8sbTYBj+7WA6p08GKc/WgM+OR2fWhskdSrcSDwNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NGdgn/l/U9tP1TrPaCQILAILi4tPaen6CwEYmoi3GtN0tbJlvUWbDfmk1vGzy0/EQ
+	 /Vh0ZlWqZMNJPavH2HZrVN4KRBsIkhdH3krTPzFUYIsmqUcQR0+YgZ/Kv227I9Q0T5
+	 huGw0giVaO87P7i0jJPBvuBIjwX2wWESvUMIEDo8=
+Date: Mon, 2 Dec 2024 10:11:57 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] media: uvcvideo: Do not set an async control
+ owned by other fh
+Message-ID: <20241202081157.GB16635@pendragon.ideasonboard.com>
+References: <CANiDSCseF3fsufMc-Ovoy-bQH85PqfKDM+zmfoisLw+Kq1biAw@mail.gmail.com>
+ <20241129110640.GB4108@pendragon.ideasonboard.com>
+ <CANiDSCvdjioy-OgC+dHde2zHAAbyfN2+MAY+YsLNdUSawjQFHw@mail.gmail.com>
+ <e95b7d74-2c56-4f5a-a2f2-9c460d52fdb4@xs4all.nl>
+ <CANiDSCvj4VVAcQOpR-u-BcnKA+2ifcuq_8ZML=BNOHT_55fBog@mail.gmail.com>
+ <CANiDSCvwzY3DJ+U3EyzA7TCQu2qMUL6L1eTmZYbM+_Tk6DsPaA@mail.gmail.com>
+ <20241129220339.GD2652@pendragon.ideasonboard.com>
+ <CANiDSCsXi-WQLpbeXMat5FoM8AnYoJ0nVeCkTDMvEus8pXCC3w@mail.gmail.com>
+ <20241202001846.GD6105@pendragon.ideasonboard.com>
+ <fb321ade-40e7-4b1e-8fcd-c6475767239d@xs4all.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fb321ade-40e7-4b1e-8fcd-c6475767239d@xs4all.nl>
 
-Replace the hardcoded value `7` in `put_fc_log()` with `ARRAY_SIZE`.
-This improves maintainability by ensuring the loop adapts to changes
-in the buffer size.
+On Mon, Dec 02, 2024 at 09:05:07AM +0100, Hans Verkuil wrote:
+> On 02/12/2024 01:18, Laurent Pinchart wrote:
+> > On Fri, Nov 29, 2024 at 11:18:54PM +0100, Ricardo Ribalda wrote:
+> >> On Fri, 29 Nov 2024 at 23:03, Laurent Pinchart wrote:
+> >>> On Fri, Nov 29, 2024 at 07:47:31PM +0100, Ricardo Ribalda wrote:
+> >>>> Before we all go on a well deserved weekend, let me recap what we
+> >>>> know. If I did not get something correctly, let me know.
+> >>>>
+> >>>> 1) Well behaved devices do not allow to set or get an incomplete async
+> >>>> control. They will stall instead (ref: Figure 2-21 in UVC 1.5 )
+> >>>> 2) Both Laurent and Ricardo consider that there is a big chance that
+> >>>> some camera modules do not implement this properly. (ref: years of
+> >>>> crying over broken module firmware :) )
+> >>>>
+> >>>> 3) ctrl->handle is designed to point to the fh that originated the
+> >>>> control. So the logic can decide if the originator needs to be
+> >>>> notified or not. (ref: uvc_ctrl_send_event() )
+> >>>> 4) Right now we replace the originator in ctrl->handle for unfinished
+> >>>> async controls.  (ref:
+> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_ctrl.c#n2050)
+> >>>>
+> >>>> My interpretation is that:
+> >>>> A) We need to change 4). We shall not change the originator of
+> >>>> unfinished ctrl->handle.
+> >>>> B) Well behaved cameras do not need the patch "Do not set an async
+> >>>> control owned by another fh"
+> >>>> C) For badly behaved cameras, it is fine if we slightly break the
+> >>>> v4l2-compliance in corner cases, if we do not break any internal data
+> >>>> structure.
+> >>>
+> >>> The fact that some devices may not implement the documented behaviour
+> >>> correctly may not be a problem. Well-behaved devices will stall, which
+> >>> means we shouldn't query the device while as async update is in
+> >>> progress. Badly-behaved devices, whatever they do when queried, should
+> >>> not cause any issue if we don't query them.
+> >>
+> >> I thought we could detect the stall and return safely. Isn't that the case?
+> > 
+> > We could, but if we know the device will stall anyway, is there a reason
+> > not to avoid issuing the request in the first place ?
+> > 
+> >> Why we have not seen issues with this?
+> > 
+> > I haven't tested a PTZ device for a very long time, and you would need
+> > to hit a small time window to see the issue.
+> > 
+> >>> We should not send GET_CUR and SET_CUR requests to the device while an
+> >>> async update is in progress, and use cached values instead. When we
+> >>> receive the async update event, we should clear the cache. This will be
+> >>> the same for both well-behaved and badly-behaved devices, so we can
+> >>> expose the same behaviour towards userspace.
+> >>
+> >> seting ctrl->loaded = 0 when we get an event sounds like a good idea
+> >> and something we can implement right away.
+> >> If I have to resend the set I will add it to the end.
+> >>
+> >>> We possibly also need some kind of timeout mechanism to cope with the
+> >>> async update event not being delivered by the device.
+> >>
+> >> This is the part that worries me the most:
+> >> - timeouts make the code fragile
+> >> - What is a good value for timeout? 1 second, 30, 300? I do not think
+> >> that we can find a value.
+> > 
+> > I've been thinking about the implementation of uvc_fh cleanup over the
+> > weekend, and having a timeout would have the nice advantage that we
+> > could reference-count uvc_fh instead of implementing a cleanup that
+> > walks over all controls when closing a file handle. I think it would
+> > make the code simpler, and possibly safer too.
+> > 
+> >>> Regarding the userspace behaviour during an auto-update, we have
+> >>> multiple options:
+> >>>
+> >>> For control get,
+> >>>
+> >>> - We can return -EBUSY
+> >>> - We can return the old value from the cache
+> 
+> This would match the control behavior best. Only when the operation is
+> done is the control updated and the control event sent.
+> 
+> Some questions: is any of this documented for UVC? Because this is non-standard
 
-Signed-off-by: Guo Weikang <guoweikang.kernel@gmail.com>
----
- fs/fs_context.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+No this isn't documented.
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 98589aae5208..582d33e81117 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -493,7 +493,7 @@ static void put_fc_log(struct fs_context *fc)
- 	if (log) {
- 		if (refcount_dec_and_test(&log->usage)) {
- 			fc->log.log = NULL;
--			for (i = 0; i <= 7; i++)
-+			for (i = 0; i < ARRAY_SIZE(log->buffer) ; i++)
- 				if (log->need_free & (1 << i))
- 					kfree(log->buffer[i]);
- 			kfree(log);
+> behavior. Are there applications that rely on this? Should we perhaps add
+
+I don't know.
+
+> proper support for this to the control framework? E.g. add an ASYNC flag and
+> document this?
+
+We could, but this is such a specific use case that I don't think is
+worth adding complexity to the already complex control framework would
+be worth it. What we could do is perhaps adding a flag for the userspace
+API, but even there, I never like modelling an API with a single user.
+
+> >>> - We can return the new value fromt he cache
+> >>>
+> >>> Returning -EBUSY would be simpler to implement.
+> >>
+> >> Not only easy, I think it is the most correct,
+> >>
+> >>> I don't think the behaviour should depend on whether the control is read
+> >>> on the file handle that initiated the async operation or on a different
+> >>> file handle.
+> >>>
+> >>> For control set, I don't think we can do much else than returning
+> >>> -EBUSY, regardless of which file handle the control is set on.
+> >>
+> >> ACK.
+> >>
+> >>>> I will send a new version with my interpretation.
+> >>>>
+> >>>> Thanks for a great discussion
+> >>
+> >> Looking with some perspective... I believe that we should look into
+> >> the "userspace behaviour for auto controls" in a different patchset.
+> >> It is slightly unrelated to this discussion.
+
 -- 
-2.25.1
+Regards,
 
+Laurent Pinchart
 
