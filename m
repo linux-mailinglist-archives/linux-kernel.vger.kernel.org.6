@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-427887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360EC9E07D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:01:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74559E0831
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:16:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EAC0168007
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:31:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E27208961;
+	Mon,  2 Dec 2024 15:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ll+g4aD6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AF8EB43033
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:30:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF854208988;
-	Mon,  2 Dec 2024 15:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="QJrAvFU9"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F0D207A12
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E40A205E03;
+	Mon,  2 Dec 2024 15:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153409; cv=none; b=WTLWVN+wkf92Vw+5uK2y7z0cnEJptwm4KEbY/C006+LyEJtOUJoZWwK3hEl7/Y2Mjmjc863x6J5Ds+xW6beDDlUJXIL9xmx6Ea5aAZdLIDsxK8euW1k+FP13LNjGMze9PI/ZJ+Lsdf3UkNYHt/G32O7gke9b7eBmD+Xfq6FsHAs=
+	t=1733153488; cv=none; b=QJOyDTNqvERKDf8VqAY6NXvMx/DaiHQXee2hxxlmypdG5pVPgdRpru6LLFBBuHohWJcQ6yzg/TSBZyw9yj9YjHES4pMF9euYuSXXjjcM2RYTSAjTSYaStdnq6Ps9ucHuouri/DyN10iuiJ9qdM1W4GocQz6302a9O5FVzdr5pB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733153409; c=relaxed/simple;
-	bh=4xxCGmBo7FQG0p5BmYqe1NOagdrpfXWw9XcSG+Ugioo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D38r7MVfHww8Ys4RO+SahUaJklf6Ovps6KFYYhgAdMsp68BC5zHew1QRKt3bxqo3YOMo1Ifpc8vu50+KdGzAV+buwLlclJSksZqHnLH3MDz2ei+A7jFJlMIJYXo5W2kYNRwD9gSEu0SwGhPtZQQLd3MjrJKJBnWM4/l/P7DtM7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=QJrAvFU9; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so35731575e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:30:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1733153406; x=1733758206; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P8jtIniQHqaGnIfrwCj5iJuQZ/gWHR/Lk4yIJETbzAw=;
-        b=QJrAvFU9PGw4ecwNa9iwbiRcvMsM81tKQr2eYUFLVZkF/qYnhOf9N0FQ58Lnx1mJJH
-         I9lbBL/yQxGzCV1CDfuodaYjDdma6kNDxwlHlnxatZbCKFY07MumOpCV5KAhH5850Ppu
-         grS+FyUAuQTeel53Bn9q1qvvzWyW/d48rXzKaaaBTjCOQ/dukEtLS3VXBC3L/pLelLIm
-         QJmhZ5SCQMp79/q2hgKF0fdvvIZPFEm01BWAQBfwXUz6+rgoOniIXUd/BDdz1s7hW/Vn
-         f5hPDXSFT1XD3rxMAgQwTPkuqfHlOOzCxOXfLgvogec9bUjNWh1tPkzVZQSpnsZSWcCr
-         pE7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733153406; x=1733758206;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P8jtIniQHqaGnIfrwCj5iJuQZ/gWHR/Lk4yIJETbzAw=;
-        b=nqtrXIjTYW7I+RSB3DHTInCcVqT0qFnU0PvLF3m6N4uOCvprrPlaKOFWOrJcbKr92c
-         HKPoWC6SwldeKlNbvj53wnVxgHP0TBPMAHLgK6OWyfWVizz2oGlJB0k1+IHjZLxwDICk
-         pBw/ikDeAR8D6bTUAWAUZ57R9gL8gi+7YiGFwPPllAI/8ohpzBHFgyhpAtVTDwn9RIsQ
-         OEU65JDS+klb1EDa+d0epEzDgmnazPuO6Np74Yb/+ICgSxAInFUvCzKT6oJdVFYi4h2C
-         fOvVezeOGuKYAImpbI5jGdBXT9rC+h7dffmRYjTTXBzcfXdJ4M9cIlWlcndgpCiw6bXp
-         +FxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2v3JKEnae6nQAX7cX6RqmaHKXELGaDJ+6JEEEOlVt3z65JGBAZsXuL5Uj+2wA6BNmzZ4v++XaTv7X6mI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJvBQr0siwu7hdGM8EY4iHgbYb/1R8hflrl1qp9apsceiynnUX
-	SACQHh97o/tJ9rcpnJY5t176wgKeG18va8OsPLuHiPmErxHE9WdwIYqZmBOqO04gx8BCOI2yCkf
-	/
-X-Gm-Gg: ASbGncsujPMmHsLUL9JsutyXojnZ1MwA1/p32g1CSh5l1VXqA2IBALQ/VIT7S/uivsQ
-	ctmALKoiocBkFBOaKFgEXZXvAocawwuFKCeiXYaJW42V4jq1WOWyPt5j9K+OT+k4a72h82GeKmV
-	yKKCBUL4yYf0vxFJcelSCitBf0us/RNf6pR7sQQ82U/YiXNJpkwWGG++XMEgwVcrKFeKZcuczFF
-	+XXCAn61cLAnZtkIYYv6U7GpCE9K8bPuU3YwAuYr/F4c4wYML54laxGltC2fNw98g==
-X-Google-Smtp-Source: AGHT+IH1hTljFKEA9DHhDP/Bl2T9X3iPXf4B7h5kmrrQdKTb7FK5jK4sFt7iXegFoa1F8JVAtQP1Kw==
-X-Received: by 2002:a05:600c:4447:b0:434:a5bc:70fc with SMTP id 5b1f17b1804b1-434a9dc3c8emr211879435e9.8.1733153405821;
-        Mon, 02 Dec 2024 07:30:05 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e230b283sm8019425f8f.106.2024.12.02.07.30.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 07:30:05 -0800 (PST)
-Message-ID: <90fc1097-d353-4b6a-bcbf-81f8a8e24390@nexus-software.ie>
-Date: Mon, 2 Dec 2024 15:30:03 +0000
+	s=arc-20240116; t=1733153488; c=relaxed/simple;
+	bh=LIC22lvcg0GEAsloGNR0vIWhLAC8DJjmvoKLwQeuxU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lnHfmG7qyippzJI45T6Aezt24QRq3Rmu+oytC3FJpAkDvEnb107k1oTXZOneULYfgitI7hmLwDECgImAYhu/RP6iUIPKk7a8Aa9V3RaTepmq5czz2YTJ09XRj5bIsPtVetKbK8sld6jBaZckJaLgwyQtn1eWDgwteXURkoK06+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ll+g4aD6; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733153486; x=1764689486;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LIC22lvcg0GEAsloGNR0vIWhLAC8DJjmvoKLwQeuxU8=;
+  b=ll+g4aD6SCxCfx9cTrf98+jU+uOrFWjAqhH1Er3lr9q936zAqnxmO1qU
+   L87428/D4D/oDJtvy43MmzqfB9RCfPZnWVibBzQqlkl+yGDhTEf1DOIs/
+   RMGuAe5TXxhdLp/QJGh13+krJlwzAa64BmxPCt8bm5MNXGAWo8M+ecMyS
+   v0FDhiyqFizdwdb88iiZ2Q9X/XvVFQ0r82oG2kRAUSeEq1myHt8b/m+hR
+   LBUozLLwv9aTz+lzREf2nHlnXZGvVuTI+WHtqLik67K2HAR8R3IZY5v54
+   9lY/ocgkMgOpxpgbuwXmdfdJ5LqthZ9Dpg2Q6Ik5o5OlJqWnMd42gej7B
+   Q==;
+X-CSE-ConnectionGUID: i1ddb5X9TO+y3Lxq25RuqQ==
+X-CSE-MsgGUID: ezRFIptKTe251l/tG6sNeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="33204328"
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="33204328"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 07:31:09 -0800
+X-CSE-ConnectionGUID: joznqKyGSpyauln+woZzrA==
+X-CSE-MsgGUID: jhia9RVPQnacitl/6RWCdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="116396336"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 07:31:06 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tI8O7-00000003BAq-3FcZ;
+	Mon, 02 Dec 2024 17:31:03 +0200
+Date: Mon, 2 Dec 2024 17:31:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>,
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] mmc: sdhci-acpi: A few cleanups
+Message-ID: <Z03St5LVqoNWWqcv@smile.fi.intel.com>
+References: <20241101101441.3518612-1-andriy.shevchenko@linux.intel.com>
+ <CAPDyKFqNKXRPT_QonnJ8frY_OvA6FkEMyj09Ywiqhtu0ZL34Xg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] arm64: dts: qcom: x1e80100: Add CAMCC block
- definition
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-i2c@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-4-54075d75f654@linaro.org>
- <02dd5593-38ba-4344-aa64-0913eca45808@oss.qualcomm.com>
- <2chygbm3yjozhkhps64oae5gwirdk5b3orsybss7jgutu5g7ke@4jskpnermxfm>
-Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <2chygbm3yjozhkhps64oae5gwirdk5b3orsybss7jgutu5g7ke@4jskpnermxfm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqNKXRPT_QonnJ8frY_OvA6FkEMyj09Ywiqhtu0ZL34Xg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 02/12/2024 15:02, Dmitry Baryshkov wrote:
->>> +			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
->> This clock is not registered with the CCF
-> Isn't that be going to be handled by the CCF on its own (like orphans,
-> etc)?
+On Mon, Dec 02, 2024 at 04:24:00PM +0100, Ulf Hansson wrote:
+> On Fri, 1 Nov 2024 at 11:14, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > A few almost independent cleanups for the driver because of
+> > new available APIs.
+> >
+> > In v2:
+> > - added patch 1 to solve compilation error (LKP)
+> > - split patch 3 out of (previous version of) patch 4 (Christophe)
+> > - added patches 5 and 6
 
-For refence this is always-on ATM.
+> This looks good to me, but deferring to apply it a few more days to
+> allow Adrian to share his opinion.
 
-drivers/clk/qcom/gcc-x1e80100.c:	qcom_branch_set_clk_en(regmap, 
-0x26004); /* GCC_CAMERA_AHB_CLK */
+Sure, no hurry.
 
----
-bod
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
