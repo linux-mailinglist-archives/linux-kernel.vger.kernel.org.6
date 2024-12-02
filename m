@@ -1,60 +1,85 @@
-Return-Path: <linux-kernel+bounces-426968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88E09DFAB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:29:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 937EE9DFAB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 07:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B83F6281A0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:29:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 182E5B212C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2E1F8F09;
-	Mon,  2 Dec 2024 06:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B3F1F8F09;
+	Mon,  2 Dec 2024 06:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KVyPaHPT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gQvEyVmB"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE10481A3;
-	Mon,  2 Dec 2024 06:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1185E481A3
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 06:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733120961; cv=none; b=eva7FKk8p2g4iPD4K4nQQdQ0t63oPsPzZYhtYqt6Y6Qt/hBGIa5Z8kx648QcTjNVwGpjFypGztm3QSzzIwwZJfRWw/NPMkyJfj/gJk72FnNTch5n4tlV54KHydn3fcQDoc34q0o+dXk7OQE4iUUe9OmUjHJbqazviq1RS4yVUm4=
+	t=1733120913; cv=none; b=Oy0e6Vr2PwfkwGOwqtiQaP9DZmqhsgXQ6lBKDT38RGjBZsoBweocDj274GhxN1ahHMMGH976hYVLi3ukQbN+4AmwefaVsxQiOktRRBH+d9IL0wbqPVB+vaazleCYocVFyIv+LWOKESPEAa/ypuGCDHfpniieX4ld3fUqyfC3X1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733120961; c=relaxed/simple;
-	bh=EUPBnoU4PrZVChM2Uli3aR1C3C7+GwmYPx05eNznviw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TpfwI7NLVNtFyAnk/h9Rw1XU+S6XvWJxP1tbtrwbyggwRO6Va0OagjkEwBwfihY+qjGqjG4r4jspHiPn84KojmyELMfMx+DmrBJi18+VGK1tbHQS+1Sn+rCREhIZ4kgt+jcWTm2m4R1hIcNWoDIa1gEhKqZcuR0xmeY1qnnzcNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KVyPaHPT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F6BC4CED2;
-	Mon,  2 Dec 2024 06:29:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733120960;
-	bh=EUPBnoU4PrZVChM2Uli3aR1C3C7+GwmYPx05eNznviw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KVyPaHPTahglMWsl5idPnjqLqDHXOZMY6trVR/p6NCTxCcQ06BvLWmCb5hKxAlDK1
-	 Fhp4oj88Y62YsyxhnufYIsuKBitTmiWxNU3B+6r3AvOhsp9bzGKkkwKLHoHE5NYM5U
-	 VYqbnwtsXwake5T4IOBlcXekHQG3WJ7wtlq2oolMysuEPsAomktxv49JjPVW6Fm7vR
-	 d5aOIjG4oN30alkAOZB9soW4d4v9oXisEURHpCl52OTnsmCJSVTdP/ftHACTVk+f8I
-	 KLbE578/nmxAFK1gk2BM4RieS3yG0+2ndUTBzxVbh7P+0Q21rIcLwvMplG3p71z9Hm
-	 1UY9M36VBtjvQ==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>,
-	linux-openrisc@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rong Xu <xur@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Han Shen <shenhan@google.com>,
-	Kees Cook <kees@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] openrisc: place exception table at the head of vmlinux
-Date: Mon,  2 Dec 2024 15:28:22 +0900
-Message-ID: <20241202062909.2194341-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733120913; c=relaxed/simple;
+	bh=L6vPam6TecuC+9PWwxZn42pGAfseG9v3kpLLropKN3s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MhUETXb/pvYcw0xOlyRQ9kLfb1FUvyK0ZvfqSvDBL5o+MSuq3xvveVM17wBDlwJIk4QqPeE0IndmQb33W2dvIn1yAm/JV5wuzpyLClGb+YqekW8sU+snFV/RYfnZtXYO9H3GHVJeRkp8IQv4JtErIBQLnivNtTWXEk1CFGSrK9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gQvEyVmB; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-215936688aeso4279505ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 22:28:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733120911; x=1733725711; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bn0LDqdl1s00AOGHv9alMWMkV5CbY2Y3h7DtmORE+v0=;
+        b=gQvEyVmB8Dewea9XCIsStCuBl0PrUC0CKYrG1LRAsQPUMLZxuqyaZTBhw8FDJyw9TK
+         /iDN8SiJuQW6FCPD5000D/52xycNNJHoCKl5u9MAvMMe6qJxJ4BAeKZAJdqFw+Nkt7fJ
+         HbTtI5twDY1m7ZjbmAAeo7em30l2istIHrq/o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733120911; x=1733725711;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bn0LDqdl1s00AOGHv9alMWMkV5CbY2Y3h7DtmORE+v0=;
+        b=jWSLD9o/bJMUWwWSArQhiACSkcePq6L1Ox0WS1O6J9aITXOfNqEKj6IFDokV74YZkF
+         JhyIdLaIogVWEewPfSAGiYG5KnJBqVB4INq/ZKe4hO9gDQGpFg+6wsz1bhvhgSUTlfSQ
+         g7mHCMBQPHslrbwYtC1/JICvMNopS9i2bW3sATaMl95Es3Y8rXpYmI3uQP32EEw1nMtJ
+         QbuGfZ1mTOP3cA4JmBT/J3rZxgqGzsnFQWs3STW7bVIAZVBjrC1Eqxeuo+sLFR2KG+ig
+         iF8DqWldlu2+UD6cYrgwqHmVsrKL+19rb6bteI/BnbnJiBzO7SIDV4/ajhmXW5iq5KhA
+         JIkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvxY3UVhNg4HfUKOm35Rxba2F37IozWZGPG6z6Un4yTOp1ZMl/ObGnijJFJjBbjMnjo01d9aIp65m6Ah4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXhWCVPaLY9+QY8KvwUlu0GbkDeIyDLIgac2LejW+z87YCW/jS
+	TdWcmFgcF3H9BG2k34tsILwDSQ4fnTt4oNk3YvU/+adTHCz7n8ZNpC8a8EyeKA==
+X-Gm-Gg: ASbGncs08Kc7VG4hQr1lqImLcDQN6t/uz8ud7kquysLlIB/a+xkDzap4nkQBJ2M/WOf
+	M30yTioL0/C/revV4CPLXK5163kSKCzcn09Zwn303/9powky9w5gc4+SrLUp6m+dqzeICX8D//k
+	Pi1ByKlwilXqV7Ncau2MJ6rLZNzlOMnyShQUinlEuCVQGK35fYef2c/0cDbxCaBeexuKlYD7K1n
+	rKdk+1l69wmGTa22hom6WvDDzImVnSmhgqTsjEm/lKbFgFqWw+h6e9LJU212Z1q74ZP
+X-Google-Smtp-Source: AGHT+IHrImvV+P3fnp6O9oKMYzWe60hrfjJ4izSDkEkKWNLOabp7zSbgf2dW9C8Dph+qT+k/E/6L3A==
+X-Received: by 2002:a17:902:cccb:b0:215:89a0:416f with SMTP id d9443c01a7336-21589a04ec8mr55693695ad.30.1733120911505;
+        Sun, 01 Dec 2024 22:28:31 -0800 (PST)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:94c8:21f5:4a03:8964])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215361fd5a6sm58878555ad.94.2024.12.01.22.28.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Dec 2024 22:28:31 -0800 (PST)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: [PATCH] remoteproc: mtk_scp: Only populate devices SCP cores
+Date: Mon,  2 Dec 2024 14:28:25 +0800
+Message-ID: <20241202062826.66619-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,113 +88,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since commit 0043ecea2399 ("vmlinux.lds.h: Adjust symbol ordering in
-text output section"), the exception table in arch/openrisc/kernel/head.S
-is no longer positioned at the very beginning of the kernel image, which
-causes a boot failure.
+When multi-core SCP support was added, the driver was made to populate
+platform devices for all the sub-nodes. This ended up adding platform
+devices for the rpmsg sub-nodes as well, which never actually get used,
+since rpmsg devices are registered through the rpmsg interface.
 
-Currently, the exception table resides in the regular .text section.
-Previously, it was placed at the head by relying on the linker receiving
-arch/openrisc/kernel/head.o as the first object. However, this behavior
-has changed because sections like .text.{asan,unknown,unlikely,hot} now
-precede the regular .text section.
+Limit of_platform_populate() to just populating the SCP cores with a
+compatible string match list.
 
-The .head.text section is intended for entry points requiring special
-placement. However, in OpenRISC, this section has been misused: instead
-of the entry points, it contains boot code meant to be discarded after
-booting. This feature is typically handled by the .init.text section.
-
-This commit addresses the issue by replacing the current __HEAD marker
-with __INIT and re-annotating the entry points with __HEAD. Additionally,
-it adds __REF to entry.S to suppress the following modpost warning:
-
-  WARNING: modpost: vmlinux: section mismatch in reference: _tng_kernel_start+0x70 (section: .text) -> _start (section: .init.text)
-
-Fixes: 0043ecea2399 ("vmlinux.lds.h: Adjust symbol ordering in text output section")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Closes: https://lore.kernel.org/all/5e032233-5b65-4ad5-ac50-d2eb6c00171c@roeck-us.net/#t
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
+Cc: Tinghan Shen <tinghan.shen@mediatek.com>
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
+ drivers/remoteproc/mtk_scp.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
- arch/openrisc/kernel/entry.S       | 2 ++
- arch/openrisc/kernel/head.S        | 6 ++++--
- arch/openrisc/kernel/vmlinux.lds.S | 3 +--
- scripts/head-object-list.txt       | 1 -
- 4 files changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/arch/openrisc/kernel/entry.S b/arch/openrisc/kernel/entry.S
-index 440711d7bf40..ce6f2b08a35e 100644
---- a/arch/openrisc/kernel/entry.S
-+++ b/arch/openrisc/kernel/entry.S
-@@ -239,6 +239,8 @@ handler:							;\
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 0f4a7065d0bd..8206a1766481 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -1326,6 +1326,11 @@ static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_clus
+ 	return ret;
+ }
  
- /* =====================================================[ exceptions] === */
- 
-+	__REF
++static const struct of_device_id scp_core_match[] = {
++	{ .compatible = "mediatek,scp-core" },
++	{}
++};
 +
- /* ---[ 0x100: RESET exception ]----------------------------------------- */
+ static int scp_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -1357,13 +1362,15 @@ static int scp_probe(struct platform_device *pdev)
+ 	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
+ 	mutex_init(&scp_cluster->cluster_lock);
  
- EXCEPTION_ENTRY(_tng_kernel_start)
-diff --git a/arch/openrisc/kernel/head.S b/arch/openrisc/kernel/head.S
-index 439e00f81e5d..ec6d2a7d5b92 100644
---- a/arch/openrisc/kernel/head.S
-+++ b/arch/openrisc/kernel/head.S
-@@ -357,6 +357,8 @@
+-	ret = devm_of_platform_populate(dev);
++	ret = of_platform_populate(dev_of_node(dev), scp_core_match, NULL, dev);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
  
- /* =====================================================[ exceptions] === */
+ 	ret = scp_cluster_init(pdev, scp_cluster);
+-	if (ret)
++	if (ret) {
++		of_platform_depopulate(dev);
+ 		return ret;
++	}
  
-+	__HEAD
-+
- /* ---[ 0x100: RESET exception ]----------------------------------------- */
-     .org 0x100
- 	/* Jump to .init code at _start which lives in the .head section
-@@ -506,10 +508,10 @@ _dispatch_do_ipage_fault:
+ 	return 0;
+ }
+@@ -1379,6 +1386,7 @@ static void scp_remove(struct platform_device *pdev)
+ 		rproc_del(scp->rproc);
+ 		scp_free(scp);
+ 	}
++	of_platform_depopulate(&pdev->dev);
+ 	mutex_destroy(&scp_cluster->cluster_lock);
+ }
  
- /*    .text*/
- 
--/* This early stuff belongs in HEAD, but some of the functions below definitely
-+/* This early stuff belongs in the .init.text section, but some of the functions below definitely
-  * don't... */
- 
--	__HEAD
-+	__INIT
- 	.global _start
- _start:
- 	/* Init r0 to zero as per spec */
-diff --git a/arch/openrisc/kernel/vmlinux.lds.S b/arch/openrisc/kernel/vmlinux.lds.S
-index bc1306047837..049bff45f612 100644
---- a/arch/openrisc/kernel/vmlinux.lds.S
-+++ b/arch/openrisc/kernel/vmlinux.lds.S
-@@ -50,6 +50,7 @@ SECTIONS
-         .text                   : AT(ADDR(.text) - LOAD_OFFSET)
- 	{
-           _stext = .;
-+	  HEAD_TEXT
- 	  TEXT_TEXT
- 	  SCHED_TEXT
- 	  LOCK_TEXT
-@@ -83,8 +84,6 @@ SECTIONS
- 	. = ALIGN(PAGE_SIZE);
- 	__init_begin = .;
- 
--	HEAD_TEXT_SECTION
--
- 	/* Page aligned */
- 	INIT_TEXT_SECTION(PAGE_SIZE)
- 
-diff --git a/scripts/head-object-list.txt b/scripts/head-object-list.txt
-index f12b4a7b8406..7274dfc65af6 100644
---- a/scripts/head-object-list.txt
-+++ b/scripts/head-object-list.txt
-@@ -24,7 +24,6 @@ arch/m68k/kernel/head.o
- arch/m68k/kernel/sun3-head.o
- arch/microblaze/kernel/head.o
- arch/nios2/kernel/head.o
--arch/openrisc/kernel/head.o
- arch/parisc/kernel/head.o
- arch/powerpc/kernel/head_44x.o
- arch/powerpc/kernel/head_64.o
 -- 
-2.43.0
+2.47.0.338.g60cca15819-goog
 
 
