@@ -1,87 +1,145 @@
-Return-Path: <linux-kernel+bounces-426765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0869DF78C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 02:01:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D449DF78E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 02:05:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC8228156C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 01:01:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA603162483
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 01:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F7AD530;
-	Mon,  2 Dec 2024 01:01:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADB9125B9;
+	Mon,  2 Dec 2024 01:05:30 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCD03D81
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 01:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770216FC3
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 01:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733101265; cv=none; b=oVCeLXtOvvwQoJRCIUKEjqtoSacdKac9cNnsSitx1YBAaS4gCP6uPGyaJJBVMxnOy0xVgjn1t5rKCSiIKdmZd0QZrRtm4LvYnd6SujV+iDrtldrPjkT7xBYtJnD55thYvSn1yK6zN0StSsNnqW1tt0pXCAag6u9ZB5wOfQDzb/I=
+	t=1733101530; cv=none; b=iqly1TTL9siLZN4ZpLD6f8EXDlIKd6cPM9VSS1xFgsuEFk2ifd6zWW+UA8FycrATR28jJfpHnJ/2CUjNST4nVdg6uQw1KduGt60M/Cr3VE1Be9lLsNzXvT6gtiCtB3yalagfOZIoOzwfJGoZgdjF++4y9IDrd/D+cW5WDJnfTsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733101265; c=relaxed/simple;
-	bh=Z5PUXNs0UDX53gtI3fvu1O5uItvtENdRXNv8x2bJKBg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=R6P5o3vKZwn4SW+Q5uqWZNdmxECUk4/OMiBRFGXOYjqIa4dD7zep2LbSo6jV13HgIhFIQnsVvg0ZpRm+313CtXIPDcRfq/01hiq18mSfRZON33lwdMjtkfWn1d87pjRGSTnlPStZ14GOCNLsv4g20BgfkijONlyM3IE++TNX0oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+	s=arc-20240116; t=1733101530; c=relaxed/simple;
+	bh=ayvb5VSMhLWGhFEYk9sAyHoNKijFyuBCKVo9njMvBTw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HdU1U4SKZyUpyPBLhgtOSDY5IyIUs+Jo5TGjYytr9MWMMf/IlGVugJKnx3bK0H9Zt+o94dN+pPId2V3s5aWjGuUvGb/OWfk7fyF2zp6p/sSHoXbeIOWmff/LpGrj5MF6YyhHPR+gM6z8iKy/fRzWpXqmNaHT9CmS432rgxm4gT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7cff77f99so39826065ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 17:01:03 -0800 (PST)
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7d87dfd9bso30318045ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2024 17:05:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733101263; x=1733706063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7LvFIpu4lWXSvFNgqYGId/xldP0TT3dmI0mpE5KY3vs=;
-        b=oueZ2UocwVxWxJX9mLzQiQx3MuWhwLj61JVm4XxMe1gohv4jbsXL6UVM5/v7yH83NV
-         AfWpY138eKkIRzLK5RepTeXkHveHw4wKreQzKVNUCWH5h2bGJVqESHb1G8iPkeLphmra
-         sPKJLwPNAY140bITtTW1U/e7BKF2eVyC31M+4cIj01sTpxSR1vOg4Qq7ANlM8l4MB5a6
-         EnPl/UI2O2ESkPyO+3mjagNNoCrr5duwrvWJPObEPUhfltQqea0nFBzxXNwJWdbTAZTb
-         9GxxUV2+HgGUIQ3ubFPQxOecAC5DeC1w7jnKSm+BR3RcU3Gc4wHV9C5eDSMpu/ViWgBz
-         /wRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcsGYAu7ekZLcdfQmcew7PSwEJmRre9JQGr57zC3Yhld2gIkQq+bY4sa7lIvCBkzqfSfwuS7jdxtN1CQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxp3PEVBywh1A6AgdX4RNfbfAD2bauRjB2g+jpSeArx3bPiNSe
-	FLWlhgJnpSINa4yl+lXLsw8ZRci9lV0Gk2w1F6s9U1exb0Zo9V/m9eLDB0wMMjhCmbw16rp6DNo
-	Kp9gBPq6qenMSbY7NXl9+a5LNlX8MoefIC0pUmXNlSXqBTUn+gVd9AZQ=
-X-Google-Smtp-Source: AGHT+IFHvgQIL5sGRs6iH6tMhdv5xipZwjHSDXGZyXy+epVf3b0cPZN3VmgjM9ROa1uUzWXPcpGi2js/i0B0CE6vtkTBJ5q6cwkl
+        d=1e100.net; s=20230601; t=1733101526; x=1733706326;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y+NBA3cSHRoEnXkJH9br5XKoQtNBWJygrejEDmNiKwc=;
+        b=PUniBrTKiq7OelBisuTwe9zme/4iOjesjGUlOaTME+816xkD+QVW6SOC8uqY90IJ3h
+         u8eKTaqu7XY7lDW7KgYWmGvTjTTRwpFO1RabNTesJeUzDgUNgROLKzMUAtnEWvAf34bJ
+         KS4qYJmtVCBCp64H+odT5F2A0+dFIqw3PX6ICpCJV3gAEo0bNFPgup4TP8ehD8XK5uQ4
+         okmK4EDJAvtv8Jnbp7T1iBxDQM5oKpIKSHJMfEQrsjkyVewLKnr8pCxOiGWSl+QZdPKk
+         P4THXlhtuJ1M/gioOnjT33Wo4wnQLlf9QqeKOFy5B7YJbAmrPNb9v8CqdmDPMKRDvOle
+         w4Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWE0M63mHCB8jzJ6Lv9FaZYZDdjQWIjS15m2/1n/K2HMA+KDnHwDYctX9oi/ibNhPpKIKA903s4aJcVIWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoeHHA9wD+nm7kYGdPb5P2MV2wXEoGuPAvCCg/kIT7/xZ+aspl
+	UOBZPe3UpwNxb13xI91192530OV3Pq2dmaSV5JUz1qv3Jdpzkh+8klQehFq86Om+4qrXjLLO591
+	el5/rvOuwGFDEFCHTyqE7/lSvUY2NVLjeGrIV0eQG6xZdURwO1Qa7GeM=
+X-Google-Smtp-Source: AGHT+IElKtGqK2Sz1z+Jz+bU0XT7VBm/Bjaq6HS1EPIbjgM2nlEDcz8w1i4cbwXzrDsf8Tt9sDuAtMCcNYCUnykuNlMCtmaC5lMC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156f:b0:3a6:ad61:7ff8 with SMTP id
- e9e14a558f8ab-3a7c556a18fmr193003715ab.12.1733101262766; Sun, 01 Dec 2024
- 17:01:02 -0800 (PST)
-Date: Sun, 01 Dec 2024 17:01:02 -0800
-In-Reply-To: <20241202004104.20604-2-leocstone@gmail.com>
+X-Received: by 2002:a92:ca0f:0:b0:3a7:98c4:86a9 with SMTP id
+ e9e14a558f8ab-3a7c55ec83amr239656195ab.20.1733101526657; Sun, 01 Dec 2024
+ 17:05:26 -0800 (PST)
+Date: Sun, 01 Dec 2024 17:05:26 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674d06ce.050a0220.48a03.001b.GAE@google.com>
-Subject: Re: [syzbot] [udf?] WARNING in udf_rmdir (2)
-From: syzbot <syzbot+5df2d3fa14f2d3e49305@syzkaller.appspotmail.com>
-To: jack@suse.com, leocstone@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <674d07d6.050a0220.ad585.0040.GAE@google.com>
+Subject: [syzbot] [fuse?] KASAN: null-ptr-deref Read in fuse_copy_args
+From: syzbot <syzbot+63ba511937b4080e2ff3@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+syzbot found the following issue on:
 
-Reported-by: syzbot+5df2d3fa14f2d3e49305@syzkaller.appspotmail.com
-Tested-by: syzbot+5df2d3fa14f2d3e49305@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         40384c84 Linux 6.13-rc1
+HEAD commit:    bcc8eda6d349 Merge tag 'turbostat-2024.11.30' of git://git..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=135195e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=55aba29dc49cabd6
-dashboard link: https://syzkaller.appspot.com/bug?extid=5df2d3fa14f2d3e49305
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ad15e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=53ebff8e07a0ee6f
+dashboard link: https://syzkaller.appspot.com/bug?extid=63ba511937b4080e2ff3
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17faa0df980000
 
-Note: testing is done by a robot and is best-effort only.
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/63b4b090e8f0/disk-bcc8eda6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c1f37f73b54c/vmlinux-bcc8eda6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9c076d69bc6d/bzImage-bcc8eda6.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+63ba511937b4080e2ff3@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: null-ptr-deref in fuse_copy_one fs/fuse/dev.c:1065 [inline]
+BUG: KASAN: null-ptr-deref in fuse_copy_args+0x2d8/0x9c0 fs/fuse/dev.c:1083
+Read of size 1 at addr 0000000000000000 by task syz.4.900/10122
+
+CPU: 1 UID: 0 PID: 10122 Comm: syz.4.900 Not tainted 6.12.0-syzkaller-12113-gbcc8eda6d349 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_report+0xe8/0x550 mm/kasan/report.c:492
+ kasan_report+0x143/0x180 mm/kasan/report.c:602
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+ fuse_copy_one fs/fuse/dev.c:1065 [inline]
+ fuse_copy_args+0x2d8/0x9c0 fs/fuse/dev.c:1083
+ fuse_dev_do_read+0xcbd/0x11e0 fs/fuse/dev.c:1357
+ fuse_dev_read+0x170/0x220 fs/fuse/dev.c:1424
+ new_sync_read fs/read_write.c:484 [inline]
+ vfs_read+0x991/0xb70 fs/read_write.c:565
+ ksys_read+0x18f/0x2b0 fs/read_write.c:708
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff6ba57f25c
+Code: ec 28 48 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 99 8e 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 34 44 89 c7 48 89 44 24 08 e8 ef 8e 02 00 48
+RSP: 002b:00007ff6bb396fd0 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000020002100 RCX: 00007ff6ba57f25c
+RDX: 0000000000002000 RSI: 0000000020002100 RDI: 0000000000000003
+RBP: 00007ff6ba5f3986 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000003
+R13: 0000000020000c80 R14: 00007ff6ba745fa0 R15: 00007ffecabbe838
+ </TASK>
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
