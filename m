@@ -1,147 +1,161 @@
-Return-Path: <linux-kernel+bounces-427944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1CB9E07C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:59:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26389E07C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:59:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39232281395
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:59:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98201280A8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9119613B2A8;
-	Mon,  2 Dec 2024 15:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A557146588;
+	Mon,  2 Dec 2024 15:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMzZjFk8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="ERjEn8hM"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6FD137C37;
-	Mon,  2 Dec 2024 15:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C32136352;
+	Mon,  2 Dec 2024 15:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733155131; cv=none; b=ANxrvOziLw2BKHTrhO45SrY5cqfi10izGewXK0uNtBKrZXj5TEOQ7hrTd7Kjc0TEAcJFhgsyMaGbT/uXZEi5edaV7tQSVlP4hlVKbc+V53vdx6Z4hAWWhAGu7M8nugB0nTXFY8rmjSmNQ8XNLT3kJRPBv2DCnRvVISE2nMWNFww=
+	t=1733155160; cv=none; b=QiwF1FSc0LpCV8Do+rdggRU2YtyYSEi0PQFq6fTKlKdBbVNQnb27UspvbppoQpalPlj047xa5pca4aHTnOz8xglRt299KpnsMMyd7OxzuGBhIQpSX6RmxiCnyqzr7Q82s2WDcEtRvZgrvjaRQX+PLleV81Fj+fNgYVnfoT474e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733155131; c=relaxed/simple;
-	bh=fW1G5fe6jq6m4BjYv6eXDZABakXNo+lmsyCAr91F1L0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iUZ/4zQsdHr6f0HzoPNeGg99U53DtqykmQdnS75cWXZL9dmPBowOEPN8eOuyYM14XBcYxNu/kA8jEk2CfW4m+74DqN7ARgsUy4XE0//XVgpjbthuTMbeKkHaVOT1QJO6Nn95gzPRMy0IaHsf5VOqgycZaQQSThN2mCPmT8vIZ20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMzZjFk8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E25F2C4CED1;
-	Mon,  2 Dec 2024 15:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733155130;
-	bh=fW1G5fe6jq6m4BjYv6eXDZABakXNo+lmsyCAr91F1L0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QMzZjFk86MGurUZ976h/wSFEhuKhygZnKxCWDeVwuSa0Q1qQFx+X4TVOsfO2uJwCh
-	 gvy0o9sOro8SMI4q6Rc9sH7GdQvKZliY43B8TJ8+kiJz3zc0oUtKG4S5YNAqUPCIlJ
-	 maQVcxGZRv5aFnIlhSAmnYo/9dmRBPVJOWCFS/RBCwtDG3/sj2q1VEF9nPzMkK0ykx
-	 BlBgJ6vtqB58MwUtwQrnhktsltJ0+y6DzKxWqZ3VjadGWCjzgzZ6GOYIrVUjmNMI5G
-	 8nJLSFkTwvW5DRVpkcxWXUc0QcU8Fq5XT1Aqb1zPJ3Gg84J3ckI4ioGqaNsWfFzAVw
-	 wf7Rbl4TtENdw==
-Message-ID: <e1343cc5-d5e8-40d6-a6f1-3eaf22a8cd6d@kernel.org>
-Date: Mon, 2 Dec 2024 16:58:44 +0100
+	s=arc-20240116; t=1733155160; c=relaxed/simple;
+	bh=WaaoFsJl5CaUoadN0kBxGfgIoSYisHkAnX818rLnxho=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T4b9VUa1f9WChc4qqt1/ITLWLUm3TVk5ek0bzz+vR9oFLMyuUrD7Nzgw613+2fUFfTo/cHRJLJc2V/5WcVueEGjjDkFCY3T7i4vHf+TlIHTem3gBzyuRJcT7ITJNWbvlkB0RzrXOFZTcymaOpn9iEsPixAPG10DRhDzgjxif2vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=ERjEn8hM; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1733155144; x=1733759944; i=wahrenst@gmx.net;
+	bh=H4JLr3SrVxTDzBPpr7Wwo9dixYFhN95i0//rZi7egss=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ERjEn8hMLOoYVrmsOv3gmExeyNc9LrgN8ALCC4uD5ITaaZNhw9A3A8EnP3Kn1mbC
+	 gF/PL2PKYyV19Ck5+GIejlC9DBdg13nqWSRH6GBjIm2hACOWaJFbxHCdxCmyzP+CK
+	 cYgXUW95ZDO7LILLuIaZ4Aiq43yYQ5ex++NclVRGeb/aVFB7j8EvkoH4tF+k6l+Lk
+	 X0kEU61549x6KggiWEBVQEQNO6zVidYk8hCmLiLwlsdrvWH7G2vNhy+n3kBTR0npf
+	 8nFgK0xucsDmM83eO3uuymKj6q33jIE/7lt85DKQJIIm/M94Yra5WqAg1W9SFxArA
+	 MLcVoayWl++0I0e0oA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from stefanw-SCHENKER ([37.4.251.153]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MvK4f-1tZG4P33uz-013UdK; Mon, 02
+ Dec 2024 16:59:04 +0100
+From: Stefan Wahren <wahrenst@gmx.net>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH net] qca_spi: Fix clock speed for multiple QCA7000
+Date: Mon,  2 Dec 2024 16:58:53 +0100
+Message-Id: <20241202155853.5813-1-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/18] arm64: dts: mediatek: mt7988: add chosen node on
- bpi-r4
-To: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20241202122602.30734-1-linux@fw-web.de>
- <20241202122602.30734-12-linux@fw-web.de>
- <0fb58a4a-7bad-4623-99c8-67f5763558bb@kernel.org>
- <D92CAF3C-F6B7-46DC-BF83-A71907E2D7EA@fw-web.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <D92CAF3C-F6B7-46DC-BF83-A71907E2D7EA@fw-web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MWFUgtkNVvcJnJL76qJz6ZjTP7OH7g3wsA62/sTYamIZIH887KH
+ N9HSrBa3ylT5tlUkM/Fe3dlHUldYVMi7qjBPftTughaJCU743DA6AwOsez7gvZaa04jXpjM
+ gLhagrcWTRfICnCsYUtz2ft2IFd+arUu4zejiWB3VST1wML7n6pJy383kbf/JH1WFi57aOU
+ c5fkR9kbCh0ivRfEnMVBA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:DbTM6zPP5Fk=;HD//Hop1KWSsq09EpLvleG51+i+
+ /kns981u1a9kpzPNPsRU2vKBVNnGS5BxhZ6N8fRRNnGEn7N/B4AgmgWWqZ+e7wH2O59TV0uZx
+ 3BewKX6ue1EfRCNlC5XzoC3oExuDq2cQHfzchMYe/JVH04LkLMu/ckqegAWPr3ZmmXwwOl92x
+ z1HEd4WRrN+8XePZFKsbp5jo7Crl/J2toGAoLU/Teoiw/VrStyaRZSCnM1ezYZzQ9cEK+c3KZ
+ r9j4vtDm9FZHKwbPfltTqOL0vmcWYgnbG7HBz22cdCuFqVkiYlqRFkcVDdkwl6JA7IYq4ntv9
+ +OQKDDTILvPUlg0iPThUc9bym3amTUXVL37DnZ4dsU18bQWxmFg0l20KIwTB04eAGUUo7DTF5
+ DBvWdErlK3RKNyd5PKM/S41UwzPUC7btSM3oBscjk0IwtghrpBkMZa0P8ZtguHHO7JcB+o+Wy
+ cQZp7YcD2LuYTk5Hd52gqMAMOugvf/btzbUNN7JSVASRcp1Dgjtsz2l7osatGeny37Qu3exec
+ JGK0cOe68FJ3jb0yYGolppiwRJITmP+LJ8YbExzJSBVqaM0MLzYmUU5hKM8SXir0AGk2Mvx9W
+ aEXo7PF4laRl0T2scNK/MGSYrnR+6G2ZdqOS1QzCJRYXUT+vZ8lEGB0MWTTIopJ9b5kii26Ai
+ eZZvyriHqBnRYMboK2AdjXVzYFF9srkjhNfzsZzGddR+LH1cE11Kjvt3NQzz/BXUuiVm3pG83
+ aTTPOaRiE7lacFJRp/NWgYA/WLa3g0egcSGQJ70HmhlkpTQGr86VFz5bh1MGlPl5yoLblIXS7
+ TEbgRicPYc4Zs2UhLGiPUfrGIqUGfDLVXOzZ6NF1ExYKeQl575B7W8Ddgxehsf8pf89GcPEaN
+ PtgNw2oHu4SoYRcAg5RUzNCxTSLRt8exyW9FBi+4e8d7pZoiXTgYxIv31vOyq1rKYTxTdFpX0
+ GFc7sumZ6TZq268U/Q7FVOuRc09zuNKnSYSlLyiGMDLYZK9o9R04g9N4YkaQwTWeoYctXj0eP
+ UnM6npVz2YVjbRfSCYd9Y4DQlO+buRg0sY/CCK/FhlIGxKzjruOM86mhs8I4Sn8tJXUMaC8Ez
+ nMnAqGX15Dc1xKFDPvy+qog03GmGFA
 
-On 02/12/2024 15:29, Frank Wunderlich wrote:
-> Am 2. Dezember 2024 14:46:24 MEZ schrieb Krzysztof Kozlowski <krzk@kernel.org>:
->> On 02/12/2024 13:25, Frank Wunderlich wrote:
->>> From: Frank Wunderlich <frank-w@public-files.de>
->>>
->>> Add chosen node on Bananapi R4 board with stdout and default bootargs.
->>>
->>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
->>> ---
->>>  arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
->>> index 9037f35857a9..1c2a806f6f6c 100644
->>> --- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
->>> +++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
->>> @@ -9,6 +9,11 @@ / {
->>>  	model = "Banana Pi BPI-R4";
->>>  	chassis-type = "embedded";
->>>  
->>> +	chosen {
->>> +		stdout-path = &serial0;
->>> +		bootargs = "console=ttyS0,115200n1";
->>
->> Drop or merge into stdout path.
-> 
-> Have you an example to pass speed setting to stdout-path? As it is only a phandle it is not clear to me how to merge these 2...
-It is really trivial to find, considering that 66% of files have it.
+Storing the maximum clock speed in module parameter qcaspi_clkspeed
+has the unintended side effect that the first probed instance
+defines the value for all other instances. Fix this issue by storing
+it in max_speed_hz of the relevant SPI device.
 
-git grep stdout
+This fix keeps the priority of the speed parameter (module parameter,
+device tree property, driver default).
 
-Best regards,
-Krzysztof
+Fixes: 291ab06ecf67 ("net: qualcomm: new Ethernet over SPI driver for QCA7=
+000")
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+=2D--
+ drivers/net/ethernet/qualcomm/qca_spi.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/etherne=
+t/qualcomm/qca_spi.c
+index ef9c02b000e4..a79fd2d66534 100644
+=2D-- a/drivers/net/ethernet/qualcomm/qca_spi.c
++++ b/drivers/net/ethernet/qualcomm/qca_spi.c
+@@ -909,17 +909,15 @@ qca_spi_probe(struct spi_device *spi)
+ 	legacy_mode =3D of_property_read_bool(spi->dev.of_node,
+ 					    "qca,legacy-mode");
+
+-	if (qcaspi_clkspeed =3D=3D 0) {
+-		if (spi->max_speed_hz)
+-			qcaspi_clkspeed =3D spi->max_speed_hz;
+-		else
+-			qcaspi_clkspeed =3D QCASPI_CLK_SPEED;
+-	}
+-
+-	if ((qcaspi_clkspeed < QCASPI_CLK_SPEED_MIN) ||
+-	    (qcaspi_clkspeed > QCASPI_CLK_SPEED_MAX)) {
+-		dev_err(&spi->dev, "Invalid clkspeed: %d\n",
+-			qcaspi_clkspeed);
++	if (qcaspi_clkspeed)
++		spi->max_speed_hz =3D qcaspi_clkspeed;
++	else if (!spi->max_speed_hz)
++		spi->max_speed_hz =3D QCASPI_CLK_SPEED;
++
++	if (spi->max_speed_hz < QCASPI_CLK_SPEED_MIN ||
++	    spi->max_speed_hz > QCASPI_CLK_SPEED_MAX) {
++		dev_err(&spi->dev, "Invalid clkspeed: %u\n",
++			spi->max_speed_hz);
+ 		return -EINVAL;
+ 	}
+
+@@ -944,14 +942,13 @@ qca_spi_probe(struct spi_device *spi)
+ 		return -EINVAL;
+ 	}
+
+-	dev_info(&spi->dev, "ver=3D%s, clkspeed=3D%d, burst_len=3D%d, pluggable=
+=3D%d\n",
++	dev_info(&spi->dev, "ver=3D%s, clkspeed=3D%u, burst_len=3D%d, pluggable=
+=3D%d\n",
+ 		 QCASPI_DRV_VERSION,
+-		 qcaspi_clkspeed,
++		 spi->max_speed_hz,
+ 		 qcaspi_burst_len,
+ 		 qcaspi_pluggable);
+
+ 	spi->mode =3D SPI_MODE_3;
+-	spi->max_speed_hz =3D qcaspi_clkspeed;
+ 	if (spi_setup(spi) < 0) {
+ 		dev_err(&spi->dev, "Unable to setup SPI device\n");
+ 		return -EFAULT;
+=2D-
+2.34.1
+
 
