@@ -1,152 +1,165 @@
-Return-Path: <linux-kernel+bounces-427672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8D49E04A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:18:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4769E04A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA17A161664
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:11:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587CC16B01F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B88B2036ED;
-	Mon,  2 Dec 2024 14:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F57B20370B;
+	Mon,  2 Dec 2024 14:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJjlkMAi"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="poSWkFtL"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEC11FA15B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEF01FA15B;
+	Mon,  2 Dec 2024 14:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733148663; cv=none; b=fr8pnwB7Fmy+qMcWYIU0JAPNWGyJkW/pSSI/uXDPvBsHQaChH9LCZXCwoqCXbdd6IUjuHST1xiYhcVTkepRrrp+MhxF2lH4G5KAlYqXyb/NGixhcH1UP1BecGOP2aqt85OSRqZwlBijeFmthPhFxCInwm+CF7j0vbne4GF8+czI=
+	t=1733148676; cv=none; b=sESfJ/3PkgNst43XCDY9231BHRlU4CoFKvUbAzj5GAbKx7LOYwInO3B2dqIM7hqz+FnUZAQlFxiHLUY1elIw2osfSWsK/f9G/CMnTOnWI34jSEGaSObVpfb0OrMv/uUtUaDpPxcyir7qNQoKNxzTS6FPnfTBMDcEE7nY+XX0NJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733148663; c=relaxed/simple;
-	bh=Owvsd2GIFPOCpbP2iP2o/schp0Rwv7AIRVJzM5BKUTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G8iSHLGsc8kZDUp2PhBcxIeFdcRCEkqtQvg3IGj9FB9xPGCnKQMCYq1kriy7IqDxuVbvLv43O7dZ4bF6ZMo+4eHTYLaiyiuZ0PgRXcLab6akoyQBaRMHE2iJedV+zJRLt0toH0IFcxlwc0yfNYNigMXlC/wFVeTe090ScbAk+gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJjlkMAi; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-72528e19aa9so237070b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 06:11:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733148661; x=1733753461; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZhG3GF72Fq8o/jk0lOvSw1REGfU3YheRFY4zkgPERm4=;
-        b=XJjlkMAiCqVQde7Caabpk/akyB4KFxlg3JPdgnmO9iVAvB/u2P68ZYSQ27lWxlrt0k
-         31KFETj0qLvaFIVPovQjPJ01Tae54LDkVTlBySM+bCJ7PjTAQq6L3t86xP8a1yO/HSeP
-         10YwbkkiIrfEFRFhHrt8XZJ2ZkfTJnfGRSMAw8HcZsLUS2iWdqBV4u4C1V2O2O0iV+5U
-         c+BoIw27x13t8kvilJwb1PKu68ADxr0RvHzXKsrffKblDkr1cPnr7jqsRRpiJFC95Lh7
-         ojhz/DG+j0pKUFzi0jvNbsCxk/F39K3juMOsb/FiygGLtQHcNvEVPKAG+Tyb+a02o9x/
-         tgJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733148661; x=1733753461;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZhG3GF72Fq8o/jk0lOvSw1REGfU3YheRFY4zkgPERm4=;
-        b=uWqjk8Hw3C2LkZZt5IHkke/c8dasVnDq18uRmBn6OtAkqPdZcIBUm183JpjmYdJN/i
-         k8EjaVuzi/3LDkIrfEOBxIKlgRaHDrXbsybVEWx9gY6G7IyPJJz45E0aLh01oJL3JF+a
-         Bhf+EYZrGtp4e29pldSdpQ1NaIDHpy3vHn0M83ci08L4f1J0N0MwcRVjAPfVc7nF/5Qm
-         PF03qdS82bRerp9df2gz955Nq6fiNNMLXT/A/1KSH+b1ll3AgL3g0vLmLtf7SHRKHqFN
-         nsyMiWJUKVFjLIuU1tId7H7uFLmvNXapyQtP4QO3JJNEtu4ZW1vjQX3VKcunNvBArLpp
-         QIMg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9uEkfWgFIGNuUMqO6RG0T3mGojK1DDJtxMiHEcKiAQmUdUQbRPp1frbEnm2hSPpBVdUoCYXP+xySs2mI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTJUDZOpD5mWCdtIRc7W+k1amGpVovuEIaM4pPl0wTuzPgVkmU
-	gJTQubs4eQM3Pw0DfMCdlEpcyDW4ISC7liqzV3lQ7fzowEda6Vyy/kcLhb/wAWGghbPjLaIT/Wc
-	4+/JRzLeJnYlk137iTIGh2EVLNNI=
-X-Gm-Gg: ASbGncvU3z/lAW8GtmsacZ7+J/dwJfzy8AfYwGc/dxLoM2HVi4EsB3tybJPzT9xPwLH
-	9bST+fId1ApaoyEl8QShxmbog37CS+fU=
-X-Google-Smtp-Source: AGHT+IE16Z2x8BUgyY0P0StFngdqghpu4YG8qMPby96pkRXX+IYaBbPuSlm8Dx+FaTprGRT0KdZqOS+NHsz7SjNozoQ=
-X-Received: by 2002:a05:6a00:26f5:b0:725:322a:9229 with SMTP id
- d2e1a72fcca58-725322a930cmr12270990b3a.2.1733148661430; Mon, 02 Dec 2024
- 06:11:01 -0800 (PST)
+	s=arc-20240116; t=1733148676; c=relaxed/simple;
+	bh=yRbOjZ2hD0leE2tDAokT732AMFTPg2jdC93fXQD4wyI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aXQw58eVWB4zyJZah7p9FlRpWVAyVuDdCzNqHN2QM/oxDHAfKb3464naLihH7dKa5yktdfXQeVeW+M/QO+QGg/LHowOZnksFcXFWgPMJ7ShmtzjV95zJZa1+U6LTxF58kSRdURDZEdRYRbTsRAiEYISEtNJ8yTclP2kvYnJVAvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=poSWkFtL; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1733148675; x=1764684675;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yRbOjZ2hD0leE2tDAokT732AMFTPg2jdC93fXQD4wyI=;
+  b=poSWkFtL4GlHPBU6Hl6HHgMekxJ8QNSCfKgv4VBe2EtoII3VIkg3kF25
+   4AiowzDfi39cPmnYxioF+3LAWM6C3R6bnvORGcXiOuRWREafk/s1fgiqx
+   k0qb/W9Y4Ky8sxtJnZueKVOoeoj4azNLUGl+Of0FywNPx/88ZBLT011o4
+   rQcYbrfgKoAyMVrLoS5zZKLphTGtXs3J+h4pmR4vIRMW0wrzhmGqrLJRh
+   4eF+N/ZHvWXtCv/dac8D2qxj0lnOGZ7gO5oRwoniMi7W4LkqZoJUmB7Kw
+   uNWlU2UUwjnRBHCTAXzUr8OZLAyAYruMfl/hvsJOTjAhQn0Ca4wvfz76j
+   g==;
+X-CSE-ConnectionGUID: 2KutSU5NQueuFpBXpCyxJA==
+X-CSE-MsgGUID: HEOvJCBSQFuLbWAqGes20Q==
+X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
+   d="scan'208";a="266205958"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Dec 2024 07:11:08 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 2 Dec 2024 07:10:50 -0700
+Received: from valentina.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 2 Dec 2024 07:10:49 -0700
+From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+	<conor.dooley@microchip.com>, <conor+dt@kernel.org>,
+	<jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<valentina.fernandezalanis@microchip.com>
+CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH v5 0/4] Add Microchip IPC mailbox
+Date: Mon, 2 Dec 2024 14:11:03 +0000
+Message-ID: <20241202141107.193809-1-valentina.fernandezalanis@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tzpFOhQN3yCb4+OpLsfYVrq4mLuUS+SP=H=gq=qSLDz7g@mail.gmail.com>
- <CAHk-=wh74-reWGqpP+i3O8usrS1Jr12UGGMCfaK58_0aK5Lw_Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wh74-reWGqpP+i3O8usrS1Jr12UGGMCfaK58_0aK5Lw_Q@mail.gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 2 Dec 2024 09:10:50 -0500
-Message-ID: <CADnq5_PBLv4EDAPY23B6QztH6bnbht8Nzy9dd+=T4_dH4RwS_g@mail.gmail.com>
-Subject: Re: [git pull] drm fixes for 6.13-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Airlie <airlied@gmail.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	Sasha Levin <sashal@kernel.org>, Sima Vetter <sima@ffwll.ch>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, Nov 29, 2024 at 4:57=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 28 Nov 2024 at 12:42, Dave Airlie <airlied@gmail.com> wrote:
-> >
-> > Merge window fixes, mostly amdgpu and xe, with a few other minor ones,
-> > all looks fairly normal,
->
-> Hmm. I've pulled this, but do note the report by Sasha.
->
-> The
->
->         if (WARN_ON(!work->func))
->                 return false;
->
-> from __flush_work() looks odd, and is fairly obviously triggered by
-> this one liner in commit 93df74873703 ("drm/amdgpu/jpeg: cancel the
-> jpeg worker")
->
-> -       bool set_clocks =3D !cancel_delayed_work_sync(&adev->vcn.idle_wor=
-k);
-> +       bool set_clocks =3D !cancel_delayed_work_sync(&adev->jpeg.idle_wo=
-rk);
->
-> where apparently the jpeg.idle_work isn't initialized at that point.
->
-> It looks like the initialization is done by amdgpu_jpeg_sw_init(), and
-> it looks like that cancel_delayed_work_sync() is just done too early.
-> But I don't know the code. Alex?
+Hello all,
 
-Already fixed with this patch:
-https://patchwork.freedesktop.org/patch/625940/
-Will be in my fixes PR this week.
+This series adds support for the Microchip Inter-Processor Communication
+(IPC) mailbox driver.
 
-Alex
+Microchip's family of RISC-V SoCs typically has one or more clusters
+that can be configured to run in Asymmetric Multi-Processing (AMP) mode.
 
+The Microchip IPC is used to send messages between processors using
+an interrupt signaling mechanism. The driver uses the RISC-V Supervisor
+Binary Interface (SBI) to communicate with software running in machine
+mode (M-mode) to access the IPC hardware block.
 
->
-> The other report by Sasha seems to be a 32-bit issue, where something
-> calls roundup_pow_of_two() on a thing that would round up past the
-> 32-bit limit. Presumably it works on 64-bit.
->
-> But I'm not seeing anything that looks like a likely *cause* of the new w=
-arning.
->
-> There's a couple possible cases, although this one looks suspicious:
->
->         adev->vm_manager.max_pfn =3D (uint64_t)vm_size << 18;
->
->         tmp =3D roundup_pow_of_two(adev->vm_manager.max_pfn);
->
-> because it explicitly uses 64-bit types for that max_pfn thing, but
-> then does that roundup_pow_of_two() that only works on "unsigned
-> long".
->
-> Sasha - it would help if your warning stack dumps had line numbers
-> (using decode_stacktrace.sh, which you should be familiar with, since
-> you wrote it...)
->
-> I realize that requires some debug info, which might slow down builds
-> etc, but it would be really nice.
->
->           Linus
+Additional details on the Microchip vendor extension and the IPC
+function IDs described in the driver can be found in the following
+documentation:
+
+https://github.com/linux4microchip/microchip-sbi-ecall-extension
+
+The PIC64GX MPU has a Mi-V IHC block, this will be added to the PIC64GX
+dts after the initial upstreaming [1].
+
+[1] https://patchwork.kernel.org/project/linux-riscv/patch/20240725121609.13101-18-pierre-henry.moussay@microchip.com/
+
+Changes in v5:
+- change interrup-names property to use a list instead of pattern
+- move assitionalProperties after allOf : block
+- update reg property in dt binding example to use lowercase hex
+
+Changes in v4:
+- specify that microchip,miv-ihc-rtl-v2 is intended for use with MIV IHC Soft IP
+- drop items array and use const value for compatible strings
+- add a contraint to microchip,ihc-chan-disabled-mask property
+- minor improvements to "'#mbox-cells' description
+
+Changes in v3:
+- Fix incorrent formatting around '=' in dt binding examples
+- Add per compatible descriptions in dt binding
+- Add '>' in certain dt binding descriptions to keep paragraphs maintained
+- export __cpuid_to_hartid_map to compile mailbox driver as module
+- Drop unused enum ipc_irq_type
+- rename struct mchp_ipc_probe to mchp_ipc_mbox_info
+- rename struct ipc_chan_info to mchp_ipc_sbi_chan
+- rename struct microchip_ipc to mchp_ipc_sbi_mbox
+- use phys_addr_t for __pa()
+- drop mchp_ipc_get_chan_id function
+- use num_chans in mbox_controller
+- Fix buf_base_tx and buf_base_rx sizes using max and kmalloc
+
+Changes in v2:
+- use kmalloc and __pa() instead of DMA API
+- fix size of buf_base to avoid potential buffer overflow
+- add kernel doc for exported functions (mchp_ipc_get_chan_id)
+- use EXPORT_SYMBOL_GPL instead of EXPORT_SYMBOL
+- drop unnecessary blank line and fix alignment issues
+- drop of_match_ptr
+- move MODULE_DEVICE_TABLE next to the definition
+- reword subject from riscv: asm: vendorid_list to riscv: sbi: vendorid_list
+- remove the word "driver" from dt-binding commit subject
+- make interrupt-names a required property for all cases
+- add dependency on COMPILE_TEST and ARCH_MICROCHIP
+
+Regards,
+Valentina
+
+Valentina Fernandez (4):
+  riscv: sbi: vendorid_list: Add Microchip Technology to the vendor list
+  riscv: export __cpuid_to_hartid_map
+  dt-bindings: mailbox: add binding for Microchip IPC mailbox controller
+  mailbox: add Microchip IPC support
+
+ .../bindings/mailbox/microchip,sbi-ipc.yaml   | 117 ++++
+ arch/riscv/include/asm/vendorid_list.h        |   1 +
+ arch/riscv/kernel/smp.c                       |   1 +
+ drivers/mailbox/Kconfig                       |  13 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/mailbox-mchp-ipc-sbi.c        | 504 ++++++++++++++++++
+ include/linux/mailbox/mchp-ipc.h              |  33 ++
+ 7 files changed, 671 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+ create mode 100644 drivers/mailbox/mailbox-mchp-ipc-sbi.c
+ create mode 100644 include/linux/mailbox/mchp-ipc.h
+
+-- 
+2.34.1
+
 
