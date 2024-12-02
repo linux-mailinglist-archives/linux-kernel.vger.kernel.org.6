@@ -1,126 +1,152 @@
-Return-Path: <linux-kernel+bounces-427590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DA19E04B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:21:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BCC19E0328
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88E6CB466CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FAB9288D54
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BB6200B89;
-	Mon,  2 Dec 2024 13:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750E41FE457;
+	Mon,  2 Dec 2024 13:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="npBdrIyG"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMN3JGJR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5E91FE469;
-	Mon,  2 Dec 2024 13:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4A46AAD
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 13:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733145493; cv=none; b=BZa6qYQUa5ewZ5EncDM23IcqWIG1LXN70eqrxeiadAd2jkfAkyW5yD6P7MEUmldMjNX78ckSNmbseISAZtytpQ1K30hGNwdPDr2m0VYpolNkXPlotEOKeA44ft+/OFqPxuIbfnp/5siijnoUTTaz2wGZsghS9lIRNhlmFeM9RMA=
+	t=1733145533; cv=none; b=MMmNoT5TRFWMQ5iZx27OBYbtHB3JDLIQnjq17qKHU2eRFa5CdRqIsONVs0n/zKhUbH8qA1hYtMGfP0o9AG8abkV4GzobvNCfSf23PHsAKNZoQA5rOw3L0IIyc4Zgr4cN0hxqsKxU/wJimgTjoG8OZFNXjzLqWeY7CrKqC+GBwnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733145493; c=relaxed/simple;
-	bh=5/X2VWZcLhb884B2U06+UxdVUml1aa+Rb3ufKfjRT9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BbI8vO5ceB9gxU3kcSmJ7Hos+TwO1r0uZ8MyThZG5dCTjUIn8I48HpeBjGk6fWUdHKLY881l/FlbWLf/F5LB9kMpP7yf6c+mlBqvrvx1Ovj1wo55RESezz/c4vxj7ZClJnWHRq7r+nVv0wRykqmYOT4XLtOCjpNRMnl+eh7Q+Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=npBdrIyG; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5f1ef6324aeso1729829eaf.2;
-        Mon, 02 Dec 2024 05:18:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733145491; x=1733750291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oNkzhZsX5grWLCVpB7LFS/T82bw7a5CHASaDFwVA1Hk=;
-        b=npBdrIyGhfNK07Un0W8DcI8ZMbodwXav7ebnkVpM6H21F1CGKDmv4XiWlBeJZGeN5A
-         ySRpoZvjx0WcO6xcH52dLpHHQIYQ2oMOGB9pPR1jjOA4z/LJ7pQZnldWgdwpcUVY0qbY
-         JUdJ5qUngRn+1qSVqxWQkDxcUKLTWYhtOC1DWyEw+bhUvxzdnP0HKJX/Y13bJTEROY+0
-         8KIuKzIJoyGtBwGQBZp4XIkYYEAiZenA0CGr5YtYV+utcjCLTHQP+IXx+qbul2+EbSmY
-         xI+e7t30/osdp3lqdo+Ak1BvLp6B/5XFllCmMQUuYNkHJiwmmwTsQRY+kpu1/cwG5Xas
-         C+NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733145491; x=1733750291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oNkzhZsX5grWLCVpB7LFS/T82bw7a5CHASaDFwVA1Hk=;
-        b=aIZ5xxkluhzptAMLtKDVAZrxcJCea9/4QH39EYwyqr8u/Dopo8TgnPC808pGAiqxO3
-         qaGQV7gcrTv9733/Qzv5uXcnLqhJh0OEzVYJZ8q4LSrl71q4EJkLPwTIyqGEuvfnBaLG
-         dQVSSdH2a1/26s0j6zfrzqKDuxFcs9E92zBh0+ixUz+6E5ntfBFdgLRliJu3LW++KtLE
-         oyzYIj+1OAk7FQ9+xf23f4wP5KcdGtY6jJMKVzCIoP5C4UQd1PJ3R/XRY7GW4NU+98sz
-         hFZA+ckUJglSL/haoHan/eAsiM88VrgJf/HkDYkS3G5s3MRcaO0jbvj2CVHKzlrhNTyr
-         1dlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoVh1fcTHouWTHKwlxt5OU+T68hKfrWqZK5Az3RjMGDCP4HDKARenI7pZCBsvcjUEe/ahakzd4Rflq@vger.kernel.org, AJvYcCWm+v21yorREAlL4fQ4bppJTymihkencX9UQ6AkOv4o+0SMpjLQseZ1MKfxVxVnJ+XWuBE4jZIFjIPpTAAr@vger.kernel.org, AJvYcCXtKjA8fnbiAAoKQUGKhHfRlsxV5e+6PCkMrf3KlSefE/uoatpYv53dXvuZd7gz7LHFt/CbCbYjtvzK7eTH3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhUqNdKjhaCU+hASSjbccBYtNpw1gSV4eqvwgfg0ANftAKqYdP
-	BZVAe/mijCFCVZ2mSnQRnV+sahyCNTx7Fw40HTdjGAWViY18IBtw21wd3gzoQZaKun8rFP/bc2P
-	irfJiI19jDfiKKgbI2HgV++EgrcM=
-X-Gm-Gg: ASbGncut4Ht4L6L/KmqzHeauHpBBRtUnokKUkXZieTrDVqm3q23cGLqEvtf9FvzAeb5
-	L3iRw41++SKhg3TYy+Yv63JH3BjIZ9w==
-X-Google-Smtp-Source: AGHT+IFRt02lZMTpOM1bIS2v4MnRUOIjLLxGB7sjqggzgFKovM0VxSCGDIp3nEMxIqbchMvq1WVzeeNNUcq8+NihUfQ=
-X-Received: by 2002:a05:6358:7e95:b0:1ca:9540:33d4 with SMTP id
- e5c5f4694b2df-1cab16a8c0bmr850755055d.23.1733145490862; Mon, 02 Dec 2024
- 05:18:10 -0800 (PST)
+	s=arc-20240116; t=1733145533; c=relaxed/simple;
+	bh=6yQGHkRsvK/WA7VpGDijIwaS68k78J3KEAp0crQkHdc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LxKnB6txLid7zMlDVTf9mJoRubSH0KJO0z51sf0KInN0ZqDvIMUJxgNZIvug57M1gCis4CvNrmia1V4fRXoszAwM0CvzkDQIeb5hEc1vOGjigmzaz3nkAGjh97uIJkcv5es3d6bdEIhE7XsvGnhjn3NyinemycP+aF/gKh/fjBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMN3JGJR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1566FC4CED1;
+	Mon,  2 Dec 2024 13:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733145533;
+	bh=6yQGHkRsvK/WA7VpGDijIwaS68k78J3KEAp0crQkHdc=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=lMN3JGJRpKylMai6p8/Bhe1tZQ5DP/oyQNcp8wmW7pE5gkcpNKIpaaSsmeu4ExTd/
+	 xEf1USm5bF48YEjQR1/Bt7X/weXNbpiiUOBZagbosakpNY9sLZAguR9lcqtgXOoD/E
+	 VFXi+Fi5n5YlFu6MuCrZWVVXvTYCfmC0B7NuwIFQR+UuELs4nvADYZ+s5Zb1SquByb
+	 NmfXyp8k2K8NQbtvD4mq/SwLfvx2Ey6vu4FOUPG2WXw2/tXPjlFqedCad455A6w0HZ
+	 ODzJk/Ko9j52yJ8nhxN8ExFNjb+YFGNVu1F0GWGrIDvMZczpEYWCP25LAKPR4nFR95
+	 q6cGumGmjINnw==
+Message-ID: <c0998223-6141-40e1-be08-d79bfc28eb0a@kernel.org>
+Date: Mon, 2 Dec 2024 21:18:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com>
- <20241008-starqltechn_integration_upstream-v6-8-5445365d3052@gmail.com> <ee668cbf-54e0-4c0a-b690-8606cb3785b7@oss.qualcomm.com>
-In-Reply-To: <ee668cbf-54e0-4c0a-b690-8606cb3785b7@oss.qualcomm.com>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 2 Dec 2024 16:18:00 +0300
-Message-ID: <CABTCjFAUp9Oa_qRweO-EpLHDTi78=07i_St+L9EDSgYxHMrc4w@mail.gmail.com>
-Subject: Re: [PATCH v6 08/12] arm64: dts: qcom: sdm845-starqltechn: add
- display PMIC
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, shuah@kernel.org, anupnewsmail@gmail.com,
+ linux-kernel-mentees@lists.linuxfoundation.org,
+ syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] f2fs: Add check for deleted inode
+To: Leo Stone <leocstone@gmail.com>, jaegeuk@kernel.org
+References: <20241129185642.6483-1-leocstone@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <20241129185642.6483-1-leocstone@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-=D0=BF=D0=BD, 4 =D0=BD=D0=BE=D1=8F=D0=B1. 2024=E2=80=AF=D0=B3. =D0=B2 17:15=
-, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>:
->
-> On 8.10.2024 6:51 PM, Dzmitry Sankouski wrote:
-> > Add support for s2dos05 display / touchscreen PMIC
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> > ---
-> > Changes in v6:
-> > - refactor: s/starqltechn/sdm845-starqltechn in subject
-> > - refactor: 'i' < 'm', so put tlmm i2c node before motor*
->
-> Now you have 'i'2c21 before 'g'pio-regulator :/
+On 2024/11/30 2:56, Leo Stone wrote:
+> The syzbot reproducer mounts a f2fs image, then tries to unlink an
+> existing file. However, the unlinked file already has a link count of 0
+> when it is read for the first time in do_read_inode().
+> 
+> Add a check to sanity_check_inode() for i_nlink == 0.
+> 
+> Reported-by: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
+> Fixes: 5d64600d4f33 ("f2fs: avoid bug_on on corrupted inode")
 
-That refactor was about tlmm inner nodes. For soc nodes
-rule `nodes of the same type can be grouped together` should apply I guess.
-I think I should move it to regulators.
+39a53e0ce0df ("f2fs: add superblock and major in-memory structure")?
+Due to it missed to do sanity check on i_nlink in initialization version
+of f2fs.
 
-> [...]
->
-> >
-> > +     i2c21 {
-> > +             compatible =3D "i2c-gpio";
->
-> I'm not sure this has been asked before - is the GENI SE for I2C21
-> disabled? Or are there reasons to use i2c-gpio instead?
->
+Thanks,
 
-I2c21 is wired on pins 127, 128, and those pins don't have a GENI SE functi=
-on.
+Thanks,
 
---
-Best regards and thanks for review,
-Dzmitry
+> Signed-off-by: Leo Stone <leocstone@gmail.com>
+> ---
+> v2: Correct "Fixes" line
+> v1: https://lore.kernel.org/all/20241124010459.23283-1-leocstone@gmail.com/T/
+> ---
+>   fs/f2fs/inode.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 1ed86df343a5..65f1dc32f173 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -372,6 +372,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+>   		return false;
+>   	}
+>   
+> +	if (inode->i_nlink == 0) {
+> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
+> +			  __func__, inode->i_ino);
+> +		return false;
+> +	}
+> +
+>   	return true;
+>   }
+>   
+
 
