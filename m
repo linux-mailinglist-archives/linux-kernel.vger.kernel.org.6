@@ -1,95 +1,90 @@
-Return-Path: <linux-kernel+bounces-428163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97349E0CEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:19:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5E69E0C8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88842B31924
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:19:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BB0FB307A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BCF1DE3B4;
-	Mon,  2 Dec 2024 18:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8804F1DDC24;
+	Mon,  2 Dec 2024 18:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCh7aRUF"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="cWZhNUld"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52EC1DDC18;
-	Mon,  2 Dec 2024 18:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D59670814
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 18:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733163563; cv=none; b=OZQFf6V5JVjGRHMOvxxKwb1ve8iGzexUzptvOkjwJOQB5U3v/87ksLWiAI3N9Dvl2spMEBPv8XnWxld2JlxflXcH3X+I6EO9bamKnYHJHjs/aJgdozaEcc0SEauikW5u2yYd/kaW5LPaqny25lSg9AXJRKtOStpZZ/TMUs9HGJ8=
+	t=1733163717; cv=none; b=E9fCwCkuuzgEhh/trHA3KIlkHSpzr+08lwDjZDaaYIpwqK8P3Hkq92w216+CzwXE386dY82g0p1dpNGtn4P0qHKm46jdBks2u+q3Va16tyx64La/Y1OuJbGXmryQWjpqKsTiZ+IgKNh8o3Sp9Io6uKqWjyHj+kajVv3re6EkEws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733163563; c=relaxed/simple;
-	bh=g3q9F3nz/BBwL+jGiWySN8SZMNanNAqRFUUhFg0bvO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FItU/4X0z233qhzxsEcLzRfjnhEbnI0eowEqGEee6sqVtLQ1VnBUWO6nu4v4gwIjGtckQU6O2zrH3h6hKXpeuYefw29A2ecnyjV7DGcoa7/vZEF+eN+cr++Y6k4ejFqBfEHnK8gGu5dFyfvrZr9/K5vQI9smmVrmcjIX6zbLxzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TCh7aRUF; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-385e5db74d3so1660779f8f.0;
-        Mon, 02 Dec 2024 10:19:20 -0800 (PST)
+	s=arc-20240116; t=1733163717; c=relaxed/simple;
+	bh=Rn8RSyo6St3YsKMOwIjeKXLonnInDGO7TN+trE/MnzA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gg3b+KNEodGsb1io9fo+83Vj4j5JRdV4XHjQmKMoLUmSDD5zUNvTG5uT/wW5/I4atYiFV9YunxYYPA1h/2Ita47mEoaj5HK8sw3NYXa88GzEIN7GfvFiL92ynj+FgOaGbBu6wLXYSPWIZ5DfBazgH99CJZ/kKFXssiBpgsS7sYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=cWZhNUld; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-724f74d6457so4505880b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 10:21:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733163559; x=1733768359; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m9xI3zMiroK1TWhD5qFX+TQwJDBCg2p4NOnhJcoAr3E=;
-        b=TCh7aRUFTiBNdWUwuwIY8oyII73JCvWrvP1+8vcUBzGCLVXPR7JK9s4N3Q6fY83n6q
-         Iv/VgllM4o679iscpzbpjSCobdh8lDN1pgqC3z2W7RCCb/kL2KX4Xs7QAdDjv/zkq3hh
-         7osSv8Ha2YcAITgrCfJwrGc5QXEM9N6QCQfRrYHVxKJENJgH7Lo92RgHZf5lBre6Q4c3
-         jXAfTW7rZTUgbzHdbaEMxKEvNULgRB8oj2BbO91U0W+rdZZKr5T0CHCKWVUKDPQ1M+7v
-         Ol1ZY3Ms1g5Xyli7t/sAZ7M3pIAALGEi1p/sHCSlAXdj++pSCdD//OU6akYC3wrcGzDy
-         L6rw==
+        d=fastly.com; s=google; t=1733163716; x=1733768516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I/B0ei9W1+2IGtRTaS0qVmFrCfQ0sKHpMjt98rIqC9A=;
+        b=cWZhNUldzNCwb+shckPOP7uT2ESUZVdKYiHR2Nl9ESsED0gUyjoK1qNiISoUG2ajrN
+         toG+itnDlsltclRzzLkEO47QapYS0dK3Ez0WWtWO3EhauTMSYDuuyJghWe2IfgC1UKCu
+         f4D27Z97rFJPmB53ipfR0z+1logLyLU0hnxuI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733163559; x=1733768359;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m9xI3zMiroK1TWhD5qFX+TQwJDBCg2p4NOnhJcoAr3E=;
-        b=Oq3mfWTFs/ZKdaBiC6Bn2gDmVBIdfEqKW7irUoEJIVOrVXUg706qQGN3/djkl57gfA
-         6mo94gDAhMfla9ishgXJQjx/5eMC8fsamXJT9qU/ndg7Hy7qH4i6JBnEKoqYBZRsyW6n
-         sr4of2M/j/diuCBPbq+Getf/A463SIGXyKnc4BrejK62txamjRcvyZULDuB7kUZzveMT
-         8mRT2G+pEPOYLTEtETmjqHKKTfrIW3BmsGvYOA94NChI7ZC1GD4uiHZQtIx7dI6n+EHO
-         KuBHhut4X+oTiOvjaMKti26O1nvKYAMTPn5wdSLalWooQa/wne7cM+cht/KwOlL5IPwe
-         GytQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7Y9aJIWKlgd7NyEjqkTXRYfdJGzDmDDWvaGyQDjnTBEqytjGI1cvO7OLZ3y3+TWxNzso4DsD+fb8G5194@vger.kernel.org, AJvYcCWbmNUBX/SjDke4urXASqQXfpvP9RjDWj+bEOwyiTvQm1/TCITMGNZNZGt0V5omQ3nNXsqBswOOO9jx@vger.kernel.org, AJvYcCX9+WcO0nZIH4tncjV7Ii95lSIpxQNiccioiGvBsj3Nf5PvJ3Vkn+6FPH+bkIlTCIXx5vLkolqVwmWC@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywth/18aunHasQoFuP5LZ9nbUSK4mzzJlXt3PGQw/qidHnyV50E
-	H6m41EfoxKthiZ8LjE835Xl2KB82AcJUmqKrlu611gkwOTMzadU2
-X-Gm-Gg: ASbGncv2KbHPQ2pArPVbYxIqEcfJSjzg7OfXuexEOrJbt00Y9Jju5tvhoEjCZ/haOGk
-	lfz/yKkiqQ7iyeEuPKCG+GeMRTJHjtgP8F3WvmSRO93i6CPoovqIDLx4Eg/b0Iy/GhyksDRf8MH
-	ipRos80uolEkYPVB5fkAGL4GIlLmzV2359E6yu6w2+D4Nq5v0Cr6YJXF/cXDgDN6h55KTczIHVP
-	JxkTm3938eCvsjDQzyNUK9GJjWmeQzoMy7ODwlVfUcJc5ycWosYS9Z/namFCdM=
-X-Google-Smtp-Source: AGHT+IG80za/uK72ISWgh9HZEe56T4mKDhe/iTDphKwBhssjmYdmU64UlUdSBfkV3GqToLqJEMz44A==
-X-Received: by 2002:a5d:6d8e:0:b0:382:4f9e:711f with SMTP id ffacd0b85a97d-385c6eb8dd0mr21073908f8f.6.1733163559094;
-        Mon, 02 Dec 2024 10:19:19 -0800 (PST)
-Received: from vamoirid-laptop.. ([2a04:ee41:82:7577:ea8a:93ec:a066:eb25])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-385d7d4d9b0sm11659108f8f.65.2024.12.02.10.19.18
+        d=1e100.net; s=20230601; t=1733163716; x=1733768516;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I/B0ei9W1+2IGtRTaS0qVmFrCfQ0sKHpMjt98rIqC9A=;
+        b=kQDCLi+rxWh+4LqqG86nFQuNrvfX9+EKTQfcSMmUMBwde4mSyYXNPm5STAJiEBGxy+
+         4k+W81QedCXfRm+0FMCGnVh59ugV+eWfZEtP2J3eU7CK0nb6Vg0pCdVWYV7VfxMq2je3
+         NdoBFddVwuNQ+4oJDCKtQ5dYini5kgFSRlS0jGOpLxR3wbuNr4Dt7txiKzByDCIZKGkH
+         9Ari9VJkRqo25u5ZARYHPSw0IrbETwtTbRWLf27ISHWa4L4BAaVl1UeCy4GQ4nQNy8a7
+         B6YurUDtuyRi4Xd+HPHwSsFKasUUV0m4vwJI8JTzFsZ04LcPvHLUQJFM6LurH0zYjKWj
+         jDyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHUSlYmlZsCdxWNHIpo58UeuNuNshDFqIyi72nNrcLFAiukALaEaz0vOcg27e1H6D+8sIZ39stUoOBQeg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHPJ1vseMF3ELp9gBPJVC1lsSpzZF7BGI2nrtoQ8rRPUyzmXan
+	2a35+/KIz5iGrz1ybw94PyLdNL0s0kIrruEb3ZlVAOKxeUyN6K3DSYhY+JGs+ps=
+X-Gm-Gg: ASbGncuX0wqQenre7szBkUX/37RmuqLD6ENBtjr1Oa6TkAVFfDZBXYfsQUeKYY8w1Or
+	taPOE4+jwYkijrk7nH1DdwYj1KD2QKXSSVsKLZH5bK4sBuzGYfl463dofv87wzhtCyay1mPTwnB
+	IMtu7b9Zg2Uwm4MauY8MXHxVDtWK89cI4M+dXFjG2gJVbEFvi266aWMLKUoQSV873hBTGSFShVG
+	W/jSQjuw6D/rhIEMuLAZG/4rLCr1xVeidDD49STGpWlgOae1IKh8UKdWw==
+X-Google-Smtp-Source: AGHT+IG5hA1szOqSgQik4MsxCUTY/OHGOcKWS9WjuBzdQtP1A6LkTbTXItK5kcH9MvJqbQsODhHFHg==
+X-Received: by 2002:a17:90b:4d0d:b0:2ea:a25d:3baa with SMTP id 98e67ed59e1d1-2ee08e5bad3mr30665194a91.5.1733163715640;
+        Mon, 02 Dec 2024 10:21:55 -0800 (PST)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eec5eabec6sm2359185a91.34.2024.12.02.10.21.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 10:19:18 -0800 (PST)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: jic23@kernel.org,
-	lars@metafoo.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andriy.shevchenko@linux.intel.com
-Cc: ajarizzo@gmail.com,
-	ak@it-klinger.de,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vassilisamir@gmail.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v1 1/3] dt-bindings: iio: pressure: bmp085: Add SPI interface
-Date: Mon,  2 Dec 2024 19:19:05 +0100
-Message-ID: <20241202181907.21471-2-vassilisamir@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241202181907.21471-1-vassilisamir@gmail.com>
-References: <20241202181907.21471-1-vassilisamir@gmail.com>
+        Mon, 02 Dec 2024 10:21:55 -0800 (PST)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: pabeni@redhat.com,
+	edumazet@google.com,
+	kuba@kernel.org,
+	mkarsten@uwaterloo.ca,
+	Joe Damato <jdamato@fastly.com>,
+	stable@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [net] net: Make napi_hash_lock irq safe
+Date: Mon,  2 Dec 2024 18:21:02 +0000
+Message-Id: <20241202182103.363038-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,76 +93,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The BMP{2,3,5}80 and BME280 devices have an SPI interface, so include it
-in the device-tree.
+Make napi_hash_lock IRQ safe. It is used during the control path, and is
+taken and released in napi_hash_add and napi_hash_del, which will
+typically be called by calls to napi_enable and napi_disable.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+This change avoids a deadlock in pcnet32 (and other any other drivers
+which follow the same pattern):
+
+ CPU 0:
+ pcnet32_open
+    spin_lock_irqsave(&lp->lock, ...)
+      napi_enable
+        napi_hash_add <- before this executes, CPU 1 proceeds
+          spin_lock(napi_hash_lock)
+       [...]
+    spin_unlock_irqrestore(&lp->lock, flags);
+
+ CPU 1:
+   pcnet32_close
+     napi_disable
+       napi_hash_del
+         spin_lock(napi_hash_lock)
+          < INTERRUPT >
+            pcnet32_interrupt
+              spin_lock(lp->lock) <- DEADLOCK
+
+Changing the napi_hash_lock to be IRQ safe prevents the IRQ from firing
+on CPU 1 until napi_hash_lock is released, preventing the deadlock.
+
+Cc: stable@vger.kernel.org
+Fixes: 86e25f40aa1e ("net: napi: Add napi_config")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Closes: https://lore.kernel.org/netdev/85dd4590-ea6b-427d-876a-1d8559c7ad82@roeck-us.net/
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Joe Damato <jdamato@fastly.com>
 ---
- .../bindings/iio/pressure/bmp085.yaml         | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ net/core/dev.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-index cb201cecfa1a..43af400a9939 100644
---- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-+++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-@@ -55,12 +55,16 @@ properties:
-       If not set, defaults to push-pull configuration.
-     type: boolean
- 
-+  spi-max-frequency:
-+    maximum: 10000000
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 13d00fc10f55..45a8c3dd4a64 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -6557,18 +6557,22 @@ static void __napi_hash_add_with_id(struct napi_struct *napi,
+ static void napi_hash_add_with_id(struct napi_struct *napi,
+ 				  unsigned int napi_id)
+ {
+-	spin_lock(&napi_hash_lock);
++	unsigned long flags;
 +
- required:
-   - compatible
-   - vddd-supply
-   - vdda-supply
++	spin_lock_irqsave(&napi_hash_lock, flags);
+ 	WARN_ON_ONCE(napi_by_id(napi_id));
+ 	__napi_hash_add_with_id(napi, napi_id);
+-	spin_unlock(&napi_hash_lock);
++	spin_unlock_irqrestore(&napi_hash_lock, flags);
+ }
  
- allOf:
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-   - if:
-       properties:
-         compatible:
-@@ -73,6 +77,16 @@ allOf:
-     then:
-       properties:
-         interrupts: false
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - bosch,bmp085
-+              - bosch,bmp180
-+    then:
-+      properties:
-+        spi-max-frequency: false
- 
- additionalProperties: false
- 
-@@ -93,3 +107,21 @@ examples:
-             vdda-supply = <&bar>;
-         };
-     };
-+  - |
-+    # include <dt-bindings/gpio/gpio.h>
-+    # include <dt-bindings/interrupt-controller/irq.h>
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        pressure@0 {
-+            compatible = "bosch,bmp280";
-+            reg = <0>;
-+            spi-max-frequency = <10000000>;
-+            interrupt-parent = <&gpio0>;
-+            interrupts = <25 IRQ_TYPE_EDGE_RISING>;
-+            reset-gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
-+            vddd-supply = <&foo>;
-+            vdda-supply = <&bar>;
-+        };
-+    };
+ static void napi_hash_add(struct napi_struct *napi)
+ {
++	unsigned long flags;
 +
+ 	if (test_bit(NAPI_STATE_NO_BUSY_POLL, &napi->state))
+ 		return;
+ 
+-	spin_lock(&napi_hash_lock);
++	spin_lock_irqsave(&napi_hash_lock, flags);
+ 
+ 	/* 0..NR_CPUS range is reserved for sender_cpu use */
+ 	do {
+@@ -6578,7 +6582,7 @@ static void napi_hash_add(struct napi_struct *napi)
+ 
+ 	__napi_hash_add_with_id(napi, napi_gen_id);
+ 
+-	spin_unlock(&napi_hash_lock);
++	spin_unlock_irqrestore(&napi_hash_lock, flags);
+ }
+ 
+ /* Warning : caller is responsible to make sure rcu grace period
+@@ -6586,11 +6590,13 @@ static void napi_hash_add(struct napi_struct *napi)
+  */
+ static void napi_hash_del(struct napi_struct *napi)
+ {
+-	spin_lock(&napi_hash_lock);
++	unsigned long flags;
++
++	spin_lock_irqsave(&napi_hash_lock, flags);
+ 
+ 	hlist_del_init_rcu(&napi->napi_hash_node);
+ 
+-	spin_unlock(&napi_hash_lock);
++	spin_unlock_irqrestore(&napi_hash_lock, flags);
+ }
+ 
+ static enum hrtimer_restart napi_watchdog(struct hrtimer *timer)
 -- 
-2.43.0
+2.25.1
 
 
