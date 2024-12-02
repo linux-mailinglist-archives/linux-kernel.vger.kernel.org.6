@@ -1,166 +1,137 @@
-Return-Path: <linux-kernel+bounces-427135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630739DFD1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:27:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA779DFD1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:28:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBF7AB228A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:27:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5116A1628C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341661FA850;
-	Mon,  2 Dec 2024 09:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4501FAC59;
+	Mon,  2 Dec 2024 09:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDAYzJSe"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="V4LHsKFd"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F1E1FA252;
-	Mon,  2 Dec 2024 09:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF7E1FA179
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733131641; cv=none; b=ZsRcW2HSC5+S2vbkCZmwiLErfK3bsfzfv4F0/p0CSHY2Anx/Z7498HmIJr3aFuBnIIbe9AA7AQyaL5Qtk3mVA/T+y2f3ZKUM1tup7jGq5UHR4wgSLR2PqksbsyJyMxpUn3Fgc5MdSzm5K2o66lONkhKI/X+243gYyfPNhCIBVp0=
+	t=1733131652; cv=none; b=bQxjrOEGxzrQUFUAUycDSpOgl8Do/wgd95YoUtydjYSXVYbpweohejChwD9tz4k1hkYSre6TgVurA7AGS5GnG4ea1BRkajIJB+VPwDC3BFXbOHv3fIGfykhxBhhsNJIzfEWlHH5Y+uCD6CLzPqLTTXRf4DL66vb0X1p3H2DF52o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733131641; c=relaxed/simple;
-	bh=2HdQ79P7tEMpX4iY+ZlkpDA9tIbAwPcdYuX+GFXpRys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PW/QokP6G1gwo1FMhrF54o6ee+ILEwHL/fW0s4ZrhR8dPlunb9lreb/+S9nGqH0dvKi5x14QnXuGZn5vT9Yit8XRK2G2i1W0WP/3q5sCi1ul0u9MBQe1mjyGu/9HTuCCsyGG8MO2mvqAk075aMRoNQFpXOL8RUa/fpRfxFFsD0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDAYzJSe; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6eeb31b10ceso32591697b3.1;
-        Mon, 02 Dec 2024 01:27:19 -0800 (PST)
+	s=arc-20240116; t=1733131652; c=relaxed/simple;
+	bh=pl7QvLcG+llVV+JTbsX9ovJ8Bb7kDx0u2bflIzoYcYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=puQxWSKqnRm7S+b3ohPCPasIhfO4Qn4lqURuFbHwP/FBl6mXyG/9eZVFjKPC3q3Pf+DwpQs76TvDhx3AqBml308MjidmQXp80epmI58GQ0pxdGBsK3dZ3O794lm6iLY3fgdICxuHYPvJkzpuKPXxG3543knKiftoK8UXr5yc1Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=V4LHsKFd; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9e44654ae3so525184266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:27:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733131639; x=1733736439; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GD/Z51a6lchMwVYFjuhQ3sJcF0heDeQ5X8C8r2Z+aFw=;
-        b=QDAYzJSeiBIJkoCUZza9SjrHB4OTAfEIFwkZLog2kqIruKm1TnQFUXuPldJAGBPNti
-         dpV0r3l/El5tZLfQT3vdWL7TJsDXn4vN81GyaX2Wjy7udwubOfn537rKzUybuDxF4a7U
-         v3E9G8CZL4JSIRzDj2NKuB7UwzmQOiTRrL/pxACPiw5jPxyEH1a/RfEtvOabNMHvIWXv
-         425Yl9J0PYqLe8uChhsgg79tIpYeh5LBWaNlnjYC6/xPliiSismuEaVLKJCpoOpISgUx
-         1iBek0ra07wTUs7/YDVYM7C02d+wpiB2A/mLhb/q/PRWZTai3hJ43xnW3Cn0Cg0fImlI
-         IFxw==
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1733131649; x=1733736449; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pl7QvLcG+llVV+JTbsX9ovJ8Bb7kDx0u2bflIzoYcYI=;
+        b=V4LHsKFdNLMpnxNUcoBkFMOwyfjhCM7hGwl8AyYz8JDZPRoYbrgARMB7LfMzajn5Eh
+         +uRCoXbPpiWKCAENxRMoPuaQC+mSD4FnrG8DILMUDa5KgIvQ0WomE+AJUBBOIuD9fkIl
+         vYutBSN/Vw0ETxrhNuO5crOX0kwONrPwlR2BuN005lpBZIQWmJay7gCVMgiAGbzlzp6d
+         agCcbYboSH6oi8a6x8oxiiJPiyhV6dc7m/Vq+MjQIDceFypZv+eOqbglVj5oPKWxLXjI
+         Xemc5HylFTVdeQCSNz1OI5xuxRBbTjROQtxiUdzj1bMwtfXMPaqOXS10tL1N30HMeXj/
+         Ni+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733131639; x=1733736439;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GD/Z51a6lchMwVYFjuhQ3sJcF0heDeQ5X8C8r2Z+aFw=;
-        b=YrYICI4mPwWsSypLydRwG65oUsD8Cvhf5Rm4eFHQaVB4iQ3O5vnx0Ndt7hhYsgFiGc
-         j5zmnHb1yPLnKVTxI+3d624GY+afvjdIypVvxd0OLNkiXM6waGejIf7hu97v3Hk4f/lR
-         +baUXoBXFzua5ASn88CjOOabwlZ0iY1JprARw1J41M7Z8Huv7bi9e5Jt7eovP0MFw7Di
-         RKWTmlWx5e2RhFj0WcBpcuz8tIAir1KcWdVWAb+Q4M7ARkGyyCcTy+4B4++mqNajljLb
-         RXeXjRXHF4/52/Ktdnep1ACzLMv9u8ggL7Cjsn7R77d+u/62kCVarO/7QrVD2FhBnd7R
-         aMEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXhC32RxoPyGY6l4l4PXp2M0KK+qpYLzdxvivHzpO5FSumQtcxzSl4R48wnis93F3lC3ggn8M1E8qw@vger.kernel.org, AJvYcCUaGyl3TX4iMRgTmH31wnGFreMVaxua7SXo7iKsSJNerMauJD+JSgiatfu2RiUIj9pievhqkJKJIsjS@vger.kernel.org, AJvYcCUsYcREIu2f//bdCsQwuq5tnceZgP6oIzr0FtzlD7iezMFnH+UOa04dZcuvKIIws34UsvzL9kOXgC+T+/SB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW97aczciXhZHd2KJj/x/gbgyYHP7XHXRQDCVo76iquxB2lXXg
-	z1oX/vtQl2uILNWCA4pFSenUMw+c522yD4BMtItxFxcgHKcL6lj895a77rvnoWxwCuNAhW58NaB
-	n3fRWuXDPnBT/RhyJnMi2mxSNtH5rdA==
-X-Gm-Gg: ASbGncspH82c7LGIj91SWK+dl8C2cYiExvGDPstgt7oEcRU0NyvhyRe+meDmewASVDI
-	lJowWmlU5axSui3wo88kakRbIHcsS9P5S6ji64wOlK0ffT1y1EUWEof5YEINMZOkb
-X-Google-Smtp-Source: AGHT+IEtxUVrNr5CD0x73k1QiBveCl8DG1RU5r3OTxhTUiUZMGNDcN5DybBQsyn/Z4eeB3jYqCrSdv6PcKXin0vphA0=
-X-Received: by 2002:a05:6902:dc9:b0:e30:7c38:668b with SMTP id
- 3f1490d57ef6-e395b94b0b1mr17381590276.37.1733131639101; Mon, 02 Dec 2024
- 01:27:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733131649; x=1733736449;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pl7QvLcG+llVV+JTbsX9ovJ8Bb7kDx0u2bflIzoYcYI=;
+        b=h2j94sF7YmPSKMF5pFyQAhyOu6/Js4f3MK7bQeHX2Bgy+C6lOkAw0fNRiXqRD6T3hQ
+         ygdN8z9UoU4ZKyIf6cSaYTN3gKXmtTB/weKfu1Ffan/xfe+krWvjqfn7k7Yn5UaON8Ii
+         DPbgJabWYIL6noN8s6WnWaJWC7rxitr64mlsQ0+xHJB0c+J2suJdRjsUbFzeDyGHmuy1
+         TglbjJawblHA7/vHjHcmW9n+InlBd05Fg7FOpmIn9FIwB87qXDyz2gO083vA69b/GG86
+         5IVkRStQRxBOmWDHfRAtLdkwL4KSuY3xuTarFVzxz1RHs+bIPLa3n2Gst9vZ7IPmYQgh
+         8yxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvzJ0/kSaa28t7kblFJLy5T1xMRmLEKzT5gg08nM7vEheD7FFDdRDsIG4m+uF+k+Z4GiNa9LqfEEDVeTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdt1NSwxP14CqrENP+zKuCmBxpbJTa7KpGaDoj6+zmixFK9+SW
+	U78tlpw8BoA9ymYk1LyimhnNxppojiq+GFgnhjK0AVnqTFJSNUDf/ZuXsgkrDuw=
+X-Gm-Gg: ASbGnctv9KZ1St/PYmOoQKpYHqIrbdQukDhVLLOFKXC44JaJte9Efeliv0rWZgXKS7p
+	J3bQ72orEYWqi7P8Bgpmud1JS0mMSgQbcW2aDsnTEhaFpJJsyqD9jRaSgapHJQ5xgS/AdYjD0hS
+	EnCSrZiNGSZDaZdn2oQII92O5bEy6uOVFGnE4jGmMtIMbqoiB1v+/8MCbZ4TrElPICO4xtG+YHO
+	n7OFwVLuWXUgWjQ/LCo8m/wLL3IT+D1mxGpxVtnCxe3+/40JPrQdRYZ4TM8lb+zfL/9YA==
+X-Google-Smtp-Source: AGHT+IHJFEiwo9Lyc15w9Ds/jb9CjQsGIpHj5PkE/zOc5gjY9Jh+95fpF9pzLyoiB9rNK5ro+urwJw==
+X-Received: by 2002:a17:906:329b:b0:aa5:241a:dc75 with SMTP id a640c23a62f3a-aa58103b03amr2063507466b.41.1733131647333;
+        Mon, 02 Dec 2024 01:27:27 -0800 (PST)
+Received: from localhost (89-24-45-172.nat.epc.tmcz.cz. [89.24.45.172])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996df78csm492732866b.67.2024.12.02.01.27.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 01:27:26 -0800 (PST)
+Date: Mon, 2 Dec 2024 10:27:25 +0100
+From: Jiri Pirko <jiri@resnulli.us>
+To: Andy Strohman <andrew@andrewstrohman.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] dsa: Make offloading optional on per port basis
+Message-ID: <Z019fbECX6R4HHpm@nanopsycho.orion>
+References: <20241201074212.2833277-1-andrew@andrewstrohman.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126074005.546447-1-tmyu0@nuvoton.com> <20241130202849.13eedb04@jic23-huawei>
- <9174d169-6037-400e-8ec5-6e2653c07a1b@roeck-us.net>
-In-Reply-To: <9174d169-6037-400e-8ec5-6e2653c07a1b@roeck-us.net>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Mon, 2 Dec 2024 17:27:08 +0800
-Message-ID: <CAOoeyxVJr8p2RtxKOBGPW8J-DhOQUzHOC-05EDkh0UQ6+Pu_4w@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Add Nuvoton NCT7718W IIO driver
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jonathan Cameron <jic23@kernel.org>, tmyu0@nuvoton.com, lars@metafoo.de, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, cmo@melexis.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241201074212.2833277-1-andrew@andrewstrohman.com>
 
-Dear Guenter,
+Sun, Dec 01, 2024 at 08:42:11AM CET, andrew@andrewstrohman.com wrote:
+>The author has a couple use cases for this:
+>
+>1) Creating a sniffer, or ethernet tap, by bridging two or more
+>non-offloaded ports to the bridge, and tcpdump'ing the member
+>ports. Along the same lines, it would be nice to have the ability
+>to temporarily disable offloading to sniff all traffic for debugging.
+>
+>2) Work around bugs in the hardware switch or use features
+>that are only available in software.
+>
+>DSA drivers can be modified to remove their port_bridge_join()
+>dsa_switch_ops member to accomplish this. But, it would be better
+>to make it this runtime configurable, and configurable on a per port
+>basis.
+>
+>The key to signaling that a port is not offloading is by
+>ensuring dp->bridge == NULL. With this, the VLAN and FDB
+>operations that affect hardware (ie port_fdb_add, port_vlan_del, etc)
+>will not run. dsa_user_fdb_event() will bail if !dp->bridge.
+>dsa_user_port_obj_add() checks dsa_port_offloads_bridge_port(),
+>and dsa_user_host_vlan_add() checks !dp->bridge.
+>
+>By being configurable on a per port basis (as opposed to switch-wide),
+>we can have some subset of a switch's ports offloading and others not.
+>
+>While this approach is generic, and therefore will be available for all
+>dsa switches, I have only tested this on a mt7530 switch. It may not be
+>possible or feasible to disable offloading on other switches.
+>
+>A flags member was added to the dsa user port netdev private data structure
+>in order to facilitate adding future dsa specific flags more easily.
+>IFLA_VLAN_FLAGS was used as an example when implementing the flags member.
+>
+>Signed-off-by: Andy Strohman <andrew@andrewstrohman.com>
 
-Thank you for your reply. I will add a patch to the LM90 driver to
-support NCT7718W.
+Why is this DSA specific? Plus, you say you want to disable offloading
+in general (DSA_FLAG_OFFLOADING_DISABLED), but you check the flag only
+when joining bridge. I mean, shouldn't this be rather something exposed
+by some common UAPI?
 
-Best regards,
-Ming
-
-Guenter Roeck <linux@roeck-us.net> =E6=96=BC 2024=E5=B9=B412=E6=9C=881=E6=
-=97=A5 =E9=80=B1=E6=97=A5 =E4=B8=8A=E5=8D=884:50=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On 11/30/24 12:28, Jonathan Cameron wrote:
-> > On Tue, 26 Nov 2024 15:40:03 +0800
-> > Ming Yu <a0282524688@gmail.com> wrote:
-> >
-> >> NCT7718W is an I2C based thermal sensor chip from Nuvoton.
-> > Hi Ming Yu,
-> >
-> > +CC Jean and Guenter,
-> >
-> > Why an IIO driver rather than a HWMON one?  Superficially this looks li=
-ke a hwmon
-> > chip.  We do have the means to put a generic driver in IIO and bridge t=
-o hwmon, but
-> > when a device is very much intended for monitoring of hardware temperat=
-ures etc
-> > the IIO driver rarely has any purpose and a simpler hwmon only solution=
- makes sense.
-> >
-> > For temperature sensors IIO normally makes sense if:
-> > 1) They are part of a series of devices some of which have more functio=
-nality than temp
-> > 2) Fast devices where hwmon sysfs interfaces become a bottleneck - note=
- you have to have
-> > a usecase for reading them fast, not simply a device that is capable of=
- it.
-> > 3) 'Unusual' temperature sensors such as infrared thermometers or very =
-high precision
-> >     thermocouple interfaces.
-> >
-> > Any of those apply here?
-> >
->
-> Also, it looks like this chip is compatible to LM90. It isn't entirely cl=
-ear to me
-> why this would require a new driver.
->
-> Guenter
->
-> > Note that hwmon has better threshold and critical temperature handling =
-than we can do
-> > in IIO and it seems your part has those as well.
-> >
-> > Thanks,
-> >
-> > Jonathan
-> >
-> >
-> >>
-> >> Ming Yu (2):
-> >>    dt-bindings: iio: temperature: Add support for NCT7718W
-> >>    iio: temperature: Add Nuvoton NCT7718W support
-> >>
-> >>   .../iio/temperature/nuvoton,nct7718.yaml      |  44 ++
-> >>   MAINTAINERS                                   |   7 +
-> >>   drivers/iio/temperature/Kconfig               |  10 +
-> >>   drivers/iio/temperature/Makefile              |   1 +
-> >>   drivers/iio/temperature/nct7718.c             | 505 ++++++++++++++++=
-++
-> >>   5 files changed, 567 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/iio/temperature=
-/nuvoton,nct7718.yaml
-> >>   create mode 100644 drivers/iio/temperature/nct7718.c
-> >>
-> >
->
+Btw, isn't NETIF_F_HW_L2FW_DOFFLOAD what you are looking for?
 
