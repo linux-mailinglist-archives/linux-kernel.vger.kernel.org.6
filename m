@@ -1,116 +1,166 @@
-Return-Path: <linux-kernel+bounces-427952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5A09E0830
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:16:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6459F9E0884
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD80D16EA68
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:02:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0F91718FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F9113C914;
-	Mon,  2 Dec 2024 16:02:04 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39F4134AC;
+	Mon,  2 Dec 2024 16:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EWaRck6d"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6E63FB3B;
-	Mon,  2 Dec 2024 16:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3C33FB3B
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 16:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733155324; cv=none; b=HcMdCvKUyKoO5FMwg2OcUhEyg6rZW3uRcN0lQhiYBoySCTxcIsX2mwK7mcYA9X+BF764ylEYTwTNuajg7T1yqGEvtnLScOqrICifJHJEXMRXhU5fSLFRvHg+OgTjBQJtwbJvGNoHUW0kXyEkN9GVOvhVsl9eh9gcwf49fIAi8DM=
+	t=1733155348; cv=none; b=OlpaaD7gXoWQqF6RvhFhFWn1Vwlq4Hz0kT+Qzlx1LFRzTYTkyITntZMn3rUaQLm/xLl4CZc7/vpCkS6OH9p6OkIQEkC74gl4JI8iVyxodOGpFvEOCHCiaj3L9yTWbi9uVIijMqEUDpzySi7Nkyvba1Tw2Xa34UBQ1+yiuHFNFJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733155324; c=relaxed/simple;
-	bh=YdtFzfmfCgaEaTmMKoE+ak3D7famQJf8ZgAIVhXwNWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGDvYr+sg0pE+8XyWDTFEAgBLjpZBKLGHXrXvUybLaVSEViEDpKAmcIOvcSnfqAZlYa+yvblfFqXlXMGf9z1RrX3aoW09mbt+PP25+5bj4Jq1BbURuu/e3zKlGtOY3zYHKpBC4bcUXdzEW3leOIYrYG1hdMgVI2J4PJNscBYDOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: PykFoYHoSrm7bIPL4PnTJQ==
-X-CSE-MsgGUID: n6I264ASQDqba82B8zz5/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11274"; a="44706503"
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="44706503"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 08:01:41 -0800
-X-CSE-ConnectionGUID: UnHBZLQvSYqvgOHarHL9pg==
-X-CSE-MsgGUID: v/TWbRrXQCaXe8gI7V1SPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="93457502"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 08:01:38 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1tI8rf-00000003BcB-1JwS;
-	Mon, 02 Dec 2024 18:01:35 +0200
-Date: Mon, 2 Dec 2024 18:01:34 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: David Gow <davidgow@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <skhan@linuxfoundation.org>, Rae Moar <rmoar@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Brendan Higgins <brendan.higgins@linux.dev>
-Subject: Re: [PATCH v2 0/6] [PATCH 0/6] KUnit test moves / renames
-Message-ID: <Z03Z3k3OdK4VHEh5@smile.fi.intel.com>
-References: <20241202075545.3648096-1-davidgow@google.com>
+	s=arc-20240116; t=1733155348; c=relaxed/simple;
+	bh=fEMBj/cO5ZohaVdxPPTn3z/8EFB0HnPgOIUHdPDPIqI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=u54ZTchHQoUf/7huiNcTZKOeH9kpvrjlt+bG0dCCGyYl0GBxF1jwId0eRMJQ8uEDbwu0yY4MBIIqCA52FjSqonkjUDrc3OYP2cULDWII1suL68VI8Invq6+O1jA3Ui1R/W/oQo0PPzBr9DCMZqe/8mfem9ZVtDap/+wIT1ZKENg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EWaRck6d; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-29e2e768952so2083106fac.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 08:02:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733155344; x=1733760144; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rwkq9B7tlCVoWp4VRCgQok6o7Mt1wW8UkSSb7Sc/dM0=;
+        b=EWaRck6dE9PWOdP6QpE6RPDQqzvN29HHwiU/pMpzCOa8DymF68g4lEJ1ceuVrF0Rcr
+         jlIEMzSfg76p7xyVL+UapjOZiUX1TdHbyQut2JGGZMWLE3qfnTqS4ML41nQlRd+eT5rb
+         VpmTcTd63WNIdq7OaNDjjy6eTXV4HVulXpNyg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733155344; x=1733760144;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rwkq9B7tlCVoWp4VRCgQok6o7Mt1wW8UkSSb7Sc/dM0=;
+        b=vD1Tf33v40+bPYJZtjyorkmnfxb/HHwbCXJ/hDoHGdtl+TbeWA/WagrMC1HQfNAb37
+         YFJounIaCv6bTLE9mYnRmQZRzJC3ep9WDl/uTjbqzoOUQq0uh7/k05QT+Px5wNess2nz
+         mNYcRXvVqGm+PwT46LuGE+uVD+Xc56uTX9TXBdZOTvcXdG6BWv7JVBoBXrtB3WyoIiR1
+         9DZrT95son6SY11HikdAoq/GeU4rxyqdQ9BpXu7gLPaNk4ZXkCERKMOp5TphhTERJ8xD
+         miS1bNIpHJ7fWv8kvm9FQc/0mVwxSIPrF383Em9Q9RbvstCAtG1SCmz8eOxDeOuB2iOi
+         WUXw==
+X-Gm-Message-State: AOJu0YxPCq9AsMI/eb8Qizo8eRAxgWj3e1vXWdp07MaSxViuIvP6geC8
+	mSS1V+JcxvwBOGCW5HkbQDa5b7jF2iF/0iOratTp5nRqLyo3oKl3H5I+ifnGDw==
+X-Gm-Gg: ASbGnctDNiWQZRngm4gEcfK01d71gQ5LspQLMPEvcHBjO9eqsIRgUPq8I3Pl4IcETPz
+	HEcW6q/rQ8kQgyl5wwWMN9jYVhnx+r0eJav15ed2akLM8Qlzbtmu76gDUFFB79Nmtj2LILrroSh
+	doUTFx24Q24Uuanbds7YnlBbVntKdEesvNFn+9mRBYXCC+8X3DWcumrQcmQzDiu5xoIHQKAs2U3
+	HQFiUOF0kAKmsU+haIh2YkQz764b5bwAiuC1XAGOnL7j7nOIgbV69fKWZfJiDA+yp5HpHQ2/Zpe
+	8P7lIF+YfKTwUpmK1VhS/OIi
+X-Google-Smtp-Source: AGHT+IFm9HDoaNmpX+KjTHl/oULOaZ2lR8+mNRWY1LpNbTFFxdF+4LSVSE8HYxT+AguPmFsJYFchyw==
+X-Received: by 2002:a05:6359:7609:b0:1c6:1d01:9ffe with SMTP id e5c5f4694b2df-1cab15b6233mr895938155d.10.1733155343603;
+        Mon, 02 Dec 2024 08:02:23 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af59164f4fsm1728306137.17.2024.12.02.08.02.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 08:02:22 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 02 Dec 2024 16:02:19 +0000
+Subject: [PATCH] mm: vmstat.h: Annotate operations between enums
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241202075545.3648096-1-davidgow@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-fix-vmstat-v1-1-c995585b7df5@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAAvaTWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDIKGbllmhW5ZbXJJYomthYWlmkZScmGhpaqoE1FBQlAqUBRsWHVtbCwB
+ fEgrXXAAAAA==
+To: Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Mon, Dec 02, 2024 at 03:55:37PM +0800, David Gow wrote:
-> As discussed in [1], the KUnit test naming scheme has changed to avoid
-> name conflicts (and tab-completion woes) with the files being tested.
-> These renames and moves have caused a nasty set of merge conflicts, so
-> this series collates and rebases them all on top of v6.13-rc1, to be
-> applied minimising any further conflicts. [2,3]
-> 
-> Thanks to everyone whose patches appear here, and everyone who reviewed
-> on the original series. I hope I didn't break them too much during the
-> rebase!
-> 
-> Link: https://lore.kernel.org/lkml/20240720165441.it.320-kees@kernel.org/ [1]
-> Link: https://lore.kernel.org/lkml/CABVgOSmbSzcGUi=E4piSojh3A4_0GjE0fAYbqKjtYGbE9beYRQ@mail.gmail.com/ [2]
-> Link: https://lore.kernel.org/linux-kselftest/CABVgOSkhD6=5K72oL_n35CUeMhbsiQjZ6ds+EuQmJggBtVTFVg@mail.gmail.com/ [3]
-> 
-> Bruno Sobreira França (1):
->   lib/math: Add int_log test suite
-> 
-> Diego Vieira (1):
->   lib/tests/kfifo_kunit.c: add tests for the kfifo structure
-> 
-> Gabriela Bittencourt (2):
->   unicode: kunit: refactor selftest to kunit tests
->   unicode: kunit: change tests filename and path
-> 
-> Kees Cook (1):
->   lib: Move KUnit tests into tests/ subdirectory
-> 
-> Luis Felipe Hernandez (1):
->   lib: math: Move kunit tests into tests/ subdir
+Compiler is confused when we do arithmetic operations between two
+different enum types.
+In this case NR_VM_STAT_ITEMS and NR_LRU_BASE are not actual
+enumerators, they are used to find the first and the count of the
+enumerator.
 
-Can we deduplicate test/kunit in the file names please?
+Add a casting to int, to avoid the following llvm 9 warning:
+./include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+  504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+      |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+  505 |                            item];
+      |                            ~~~~
+./include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+  511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+      |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+  512 |                            NR_VM_NUMA_EVENT_ITEMS +
+      |                            ~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+  518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+      |                               ~~~~~~~~~~~ ^ ~~~
+./include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+  524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+      |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+  525 |                            NR_VM_NUMA_EVENT_ITEMS +
+      |                            ~~~~~~~~~~~~~~~~~~~~~~
 
-See df7f9acd8646 ("platform/x86: intel: Add 'intel' prefix to the modules
-automatically") for the details how to achieve that in non-verbose way.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+ include/linux/vmstat.h | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
+diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
+index d2761bf8ff32..32c641d25bea 100644
+--- a/include/linux/vmstat.h
++++ b/include/linux/vmstat.h
+@@ -501,27 +501,26 @@ static inline const char *zone_stat_name(enum zone_stat_item item)
+ #ifdef CONFIG_NUMA
+ static inline const char *numa_stat_name(enum numa_stat_item item)
+ {
+-	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+-			   item];
++	return vmstat_text[(int)NR_VM_ZONE_STAT_ITEMS + item];
+ }
+ #endif /* CONFIG_NUMA */
+ 
+ static inline const char *node_stat_name(enum node_stat_item item)
+ {
+-	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
++	return vmstat_text[(int)NR_VM_ZONE_STAT_ITEMS +
+ 			   NR_VM_NUMA_EVENT_ITEMS +
+ 			   item];
+ }
+ 
+ static inline const char *lru_list_name(enum lru_list lru)
+ {
+-	return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
++	return node_stat_name((int)NR_LRU_BASE + lru) + 3; // skip "nr_"
+ }
+ 
+ #if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
+ static inline const char *vm_event_name(enum vm_event_item item)
+ {
+-	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
++	return vmstat_text[(int)NR_VM_ZONE_STAT_ITEMS +
+ 			   NR_VM_NUMA_EVENT_ITEMS +
+ 			   NR_VM_NODE_STAT_ITEMS +
+ 			   NR_VM_STAT_ITEMS +
+
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241202-fix-vmstat-88968bcaa955
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Ricardo Ribalda <ribalda@chromium.org>
 
 
