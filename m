@@ -1,130 +1,135 @@
-Return-Path: <linux-kernel+bounces-427442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422FA9E02CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:06:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B61F9E012C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:00:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4C8BB2A378
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:00:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4EBB281016
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2771FE473;
-	Mon,  2 Dec 2024 12:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8551FE47A;
+	Mon,  2 Dec 2024 12:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNJkDSvb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOLX9a97"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF531D95A9;
-	Mon,  2 Dec 2024 12:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5488A1FC0FA;
+	Mon,  2 Dec 2024 12:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733140826; cv=none; b=kps4c3wUqYQ7EU1GV8KBv0D7nXmLaVPa7RH3H4JIJ7qY5cWNiJl4V5ucGBoAztTMp3ymi5chcb/tDYPfA7xLmNLFZ+UH7mKkJ4txvpeXIdlLi+f1SLWFYOjuxNPFHz4tmXQg/j2cLYsrbknc/wcXmZ+xCg69ApvmLt7isjr8VjI=
+	t=1733140845; cv=none; b=Ik18wg8w8njrUuMYOxN8LpWcyVrlwZS9BWUOEHvs5ffphzhB/xHQ5IfjbTYIIj/XGBzJXuZzoZLIdOKi1wVtv5a0+bSqOYDsUZZl1rFIRu//d6F1mwFtp1/o5lYIMrri3puezlqHtIFbj738LjeT7FO6nhXMj1kH/dz8PJKC+q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733140826; c=relaxed/simple;
-	bh=uq6P50nPVqYzYznK6CDOgelQtYASy802lUz2VNa3X4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3M1kYLotY/66eZlesArPbYxVa+3zdMPLf4QmOHsC7BcIBRi1CoGo8aGx1qdvjv+fOZfjbfa3qFOisHOHXxln+6dFodx7mr4wn+5xsrCQ4nrT18VRUeQq+SnsZQ93mhaeL9ea6qWND37hcxLfhbmedGnPPq3InpxklVUjv/nGwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNJkDSvb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89875C4CED2;
-	Mon,  2 Dec 2024 12:00:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733140826;
-	bh=uq6P50nPVqYzYznK6CDOgelQtYASy802lUz2VNa3X4k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YNJkDSvbo8lkY9GLqT/hIrlkLQ08AZHdWUxs5r6bl3m2EBQ5pBgHM/mjPWR+I6JMf
-	 WHkFLn1IDnuQbsHQe0nadbr8vKz3xRW21XdUSdb4xT+i2Zor5fgGmzAoSEMfYcJPEX
-	 fwGe0wsbkhNxUqOwQeGiP8NfPPrneSL6Q9Sw24mlIlLforIDucg4Oz6evGeFxOliV0
-	 MWA8nqkra3Zn8VhWEpF06jAI0MaT8iKhzitPgCHIdv1qO0FwMpYUOE7uBvzD2uekk0
-	 +LA/RyRMTlyePXs6iJYth+3uw/OLHT4f3rvhAG9K2jgL+C9JqGuyzaknOpMmRTdq0t
-	 0COIRkOoz/T+w==
-Date: Mon, 2 Dec 2024 13:00:23 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	David Airlie <airlied@gmail.com>, Harry Wentland <harry.wentland@amd.com>, 
-	Inki Dae <inki.dae@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Leo Li <sunpeng.li@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Phong LE <ple@baylibre.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Rob Clark <robdclark@gmail.com>, Robert Foss <rfoss@kernel.org>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Sean Paul <sean@poorly.run>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, Xinhui Pan <Xinhui.Pan@amd.com>
-Subject: Re: [PATCH 00/10] drm/connector: add eld_mutex to protect
- connector->eld
-Message-ID: <20241202-hummingbird-of-hypothetical-aptitude-646def@houat>
-References: <20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org>
- <77545786331df8bfaf5fdcb309437358@kernel.org>
- <ohbtatnn33jj6y3q4milf4txi4n7yirnny2eefdjddlkn2dnhp@eqjedetct4q3>
+	s=arc-20240116; t=1733140845; c=relaxed/simple;
+	bh=JGYBHesYIbhC7aBl5yCYh/PzDEWQVUhlwalGax3dWiY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WMGIK8MY0iAACYzwIYeXW9WZsMs2Jqy2RmoZ2R7+0aAREllUBRcghHQqf+wcLVpTZfluKwZDdPyxKUDtR13Q5uqmSdOwdA+m6shCpPrHNOO1NWKJyG033NxSb9080P0oBCs9NTfQKpg/Hh68Jtf4Tap2bEoOuq9iWytXUuJQQds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOLX9a97; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a1fe2b43so37390325e9.2;
+        Mon, 02 Dec 2024 04:00:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733140843; x=1733745643; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MQnantWxCB7aLJu1F0kD476uJFD2vd0GkTEQYnGy5wg=;
+        b=mOLX9a97jirvY0sKTqzVtRymLx1fTYgt9+YkTqzvTjFMjR63I2xYxHFiJuiP7vHy7C
+         dneq35YaF51dbSlDwiPrVOUEwwb0WqcUkDHxT8CITApoQXr+OvUQCAhZ31y9z+VyFXqM
+         +kLUyjul6LuFpZnSfxb7SXymLfxp/LqhgOJ2ggxnU4zyyJrAjxX6k52mDqPgdnVhXyQ/
+         GJpCTqhkzMXpW0bMrv4gxLGft1hYf7OyuwteS2oHVm56XnzyBlw8FhZ+Dqs4OE+PMu4F
+         Sbg6DvyphFhNjB7A68f3zH8MdNMocCeAAMYyutN5OdVu0OhFq1k4b3HKPAKhAwwpP4JQ
+         4XWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733140843; x=1733745643;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MQnantWxCB7aLJu1F0kD476uJFD2vd0GkTEQYnGy5wg=;
+        b=mI9buOci5Fu0hLR1SQnFGclByTHmC7bpuDtwlLMFYWCMRaoBBvUJm1ptpQ7EeclX2o
+         GSKaqW9L7bQf8Zg8OVkUS5UmrZ4y0p09t5YMOFJjV7wwzo8YrUXy9kxGML83JwONjiIw
+         35gvnImWbd9RKBzXHH1YQby4exF9DTSHEfkLBtQBgU4a6uJEzinR3wSKg/zNFX1UWP2T
+         3b6j+LbfrAQVPIVGLzvpZzYk2VluaLciaJnU+vNF01bVrZCYi5VXSwZwUBfFST7NADMX
+         WaGaNwWrssWg0plENQ1bl40lbd5QFjAey6Y1s2DVADIqGJjt9miFLh4D7AteI3JqajH+
+         GX3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWS9Q0l86ihNPtaCHIu7xsqfpPIdHuxrTE1/Zp5C6VAkiWdquXOnlPqCy6dQlnLUr1RwBg=@vger.kernel.org, AJvYcCWkXjM9Nc7FscYOB2ROIqXgOvQNSMakhzP5Bit4eiX+zB2ThsUDFVjMrZpM5mi/Vr2Xgrvlnfbr6kHI0wFy@vger.kernel.org, AJvYcCX3xzK+dE/iCMv6z3Vszmtj9ytR/F/KP2hvlNbEnuKtoarwVQ6Ye7ZFD5ECe3qm3ArL6zluV26PTg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB23XR6UF0Tffaxnjd+VPeLXX3PhoFfzgRGaJVWF64yHtRF1tx
+	Hfx7v427DdiCvC2ixYQz3hr2H5pqcmcoZZm6hQPKR2G6Ih/JZK66
+X-Gm-Gg: ASbGncvVbbLoVnVlfkirQ7USU6P33FPHSGa48Zx3PlSXxO6reqGc8ZP+149H+TyzuDx
+	oqWKfGHYOe5YRBcQl4K/L7xxuIYu/5MIso80WsG8/exuhs8k0j2sK/zPMQnvQovry2dbMa7NFA4
+	igVUWF2P518oS3V9eIpqLKy7aXUsovEhemCjaG9H5oN+ElVgjZolnSy7M8caf4MLDJiksIO983Z
+	ZBWe2fjzcN4YRJHfpcY9e9vIIGbjWDIb9OAR02kJikI/lU/5o33MvMBCs2nLGpc+NvaAtLvkDcd
+	iIxpc9n9iHAVCldN+QkAjjE=
+X-Google-Smtp-Source: AGHT+IFUnVztOxsIywsf2K4G+S+p56Y2jH9xH9k5ei+h2anBWbIlAMqqxZ0Jl6BPHhhsppFFnIdtUg==
+X-Received: by 2002:a05:600c:314a:b0:434:9de2:b101 with SMTP id 5b1f17b1804b1-434a9dbae1amr200448405e9.2.1733140842328;
+        Mon, 02 Dec 2024 04:00:42 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d29fbsm182935605e9.29.2024.12.02.04.00.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 04:00:41 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 2 Dec 2024 13:00:40 +0100
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alan Maguire <alan.maguire@oracle.com>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>, Daniel Xu <dxu@dxuuu.xyz>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Jan Alexander Steffens <heftig@archlinux.org>,
+	Domenico Andreoli <cavok@debian.org>,
+	Matthias Schwarzott <zzam@gentoo.org>,
+	Dominique Leuenberger <dimstar@opensuse.org>,
+	Dominique Martinet <asmadeus@codewreck.org>, bpf@vger.kernel.org,
+	kernel-team@fb.com, dwarves@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: RFT: Testing pahole for the release of v1.28
+Message-ID: <Z02haBRcetTCNK7A@krava>
+References: <Z0jVLcpgyENlGg6E@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="rf5ewnb7ayc4e2uu"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ohbtatnn33jj6y3q4milf4txi4n7yirnny2eefdjddlkn2dnhp@eqjedetct4q3>
+In-Reply-To: <Z0jVLcpgyENlGg6E@x1>
 
+On Thu, Nov 28, 2024 at 05:40:13PM -0300, Arnaldo Carvalho de Melo wrote:
+> Hi,
+> 
+> 	Please consider testing what is in the master branch both in
+> kernel.org as in github:
+> 
+> https://git.kernel.org/pub/scm/devel/pahole/pahole.git
+> https://github.com/acmel/dwarves.git
+> 
+> 	So that we can release v1.28, we want to follow the cadence of
+> the kernel, i.e. since the kernel was recently released, we should
+> release a new version of pahole, and this one is long overdue.
+> 
+> 	We'll then try to release v1.29 shortly after Linus releases
+> v6.13, and so on.
+> 
+> 	Alan Maguire accepted to co-maintain pahole and as soon as he
+> gets a kernel.org account he'll be able to help me in processing
+> patches, that we expect to continue with the current fashion of being
+> tested and reviewed by as many developers as possible, its greatly
+> appreciated and a good way for us to keep this codebase in shape.
+> 
+> Thanks a lot for all the help,
 
---rf5ewnb7ayc4e2uu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 00/10] drm/connector: add eld_mutex to protect
- connector->eld
-MIME-Version: 1.0
+hi,
+works fine on my setup
 
-On Mon, Dec 02, 2024 at 01:03:07PM +0200, Dmitry Baryshkov wrote:
-> On Mon, Dec 02, 2024 at 10:19:41AM +0000, Maxime Ripard wrote:
-> > On Sun, 1 Dec 2024 01:55:17 +0200, Dmitry Baryshkov wrote:
-> > > The connector->eld is accessed by the .get_eld() callback. This access
-> > > can collide with the drm_edid_to_eld() updating the data at the same
-> > > time. Add drm_connector.eld_mutex to protect the data from concurrenct
-> > > access.
-> > >=20
-> > >=20
-> > > [ ... ]
-> >=20
-> > Reviewed-by: Maxime Ripard <mripard@kernel.org>
->=20
-> Thanks!
->=20
-> I'm going to post v2 to fix Jani's comment, but what should be the merge
-> strategy? Merge patches 1-3, 5, 9-10 through drm-misc and the rest (AMD,
-> i915, MSM, radeon) through the driver trees?
+Tested-by: Jiri Olsa <jolsa@kernel.org>
 
-The easiest is probably to merge everything through drm-misc if everyone ag=
-rees.
-
-Maxime
-
---rf5ewnb7ayc4e2uu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ02hVgAKCRAnX84Zoj2+
-did2AYCKqjIX2aHftKtybJaUPI3aEKi2s1lRBLYyjb1Uwicsybws1tIK08t+OLLX
-OfIShgYBfiJJHZ+4Gj/u8uuAs91T4EvzTss9Zo2aF+YDFdrV47edIsjbVE2McJQO
-YLEiS8Wy0Q==
-=Idbn
------END PGP SIGNATURE-----
-
---rf5ewnb7ayc4e2uu--
+thanks,
+jirka
 
