@@ -1,137 +1,181 @@
-Return-Path: <linux-kernel+bounces-427136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA779DFD1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:28:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13ED79DFD21
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5116A1628C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:27:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CAFB1626C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4501FAC59;
-	Mon,  2 Dec 2024 09:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44861FA27C;
+	Mon,  2 Dec 2024 09:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="V4LHsKFd"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ROviGzmA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k3LcCnBv"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF7E1FA179
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3A91F9EB4
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733131652; cv=none; b=bQxjrOEGxzrQUFUAUycDSpOgl8Do/wgd95YoUtydjYSXVYbpweohejChwD9tz4k1hkYSre6TgVurA7AGS5GnG4ea1BRkajIJB+VPwDC3BFXbOHv3fIGfykhxBhhsNJIzfEWlHH5Y+uCD6CLzPqLTTXRf4DL66vb0X1p3H2DF52o=
+	t=1733131704; cv=none; b=CWV4RIKZm1esFFyuxBuxf72GWVY9/V368XMQvLFkbIJ8Zi1ng94p62ohJKKTAQxaDZmroqwsXrzdO6DQPG7WuzUOiZtFMjgAclOVmIWuNXsq3Ii94Pqv9beFdATm/vdZS3nBYSsVnEHvVmj2tBxO1pV/S2LgQmR8fNjzob5fRa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733131652; c=relaxed/simple;
-	bh=pl7QvLcG+llVV+JTbsX9ovJ8Bb7kDx0u2bflIzoYcYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=puQxWSKqnRm7S+b3ohPCPasIhfO4Qn4lqURuFbHwP/FBl6mXyG/9eZVFjKPC3q3Pf+DwpQs76TvDhx3AqBml308MjidmQXp80epmI58GQ0pxdGBsK3dZ3O794lm6iLY3fgdICxuHYPvJkzpuKPXxG3543knKiftoK8UXr5yc1Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=V4LHsKFd; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9e44654ae3so525184266b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:27:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1733131649; x=1733736449; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pl7QvLcG+llVV+JTbsX9ovJ8Bb7kDx0u2bflIzoYcYI=;
-        b=V4LHsKFdNLMpnxNUcoBkFMOwyfjhCM7hGwl8AyYz8JDZPRoYbrgARMB7LfMzajn5Eh
-         +uRCoXbPpiWKCAENxRMoPuaQC+mSD4FnrG8DILMUDa5KgIvQ0WomE+AJUBBOIuD9fkIl
-         vYutBSN/Vw0ETxrhNuO5crOX0kwONrPwlR2BuN005lpBZIQWmJay7gCVMgiAGbzlzp6d
-         agCcbYboSH6oi8a6x8oxiiJPiyhV6dc7m/Vq+MjQIDceFypZv+eOqbglVj5oPKWxLXjI
-         Xemc5HylFTVdeQCSNz1OI5xuxRBbTjROQtxiUdzj1bMwtfXMPaqOXS10tL1N30HMeXj/
-         Ni+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733131649; x=1733736449;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pl7QvLcG+llVV+JTbsX9ovJ8Bb7kDx0u2bflIzoYcYI=;
-        b=h2j94sF7YmPSKMF5pFyQAhyOu6/Js4f3MK7bQeHX2Bgy+C6lOkAw0fNRiXqRD6T3hQ
-         ygdN8z9UoU4ZKyIf6cSaYTN3gKXmtTB/weKfu1Ffan/xfe+krWvjqfn7k7Yn5UaON8Ii
-         DPbgJabWYIL6noN8s6WnWaJWC7rxitr64mlsQ0+xHJB0c+J2suJdRjsUbFzeDyGHmuy1
-         TglbjJawblHA7/vHjHcmW9n+InlBd05Fg7FOpmIn9FIwB87qXDyz2gO083vA69b/GG86
-         5IVkRStQRxBOmWDHfRAtLdkwL4KSuY3xuTarFVzxz1RHs+bIPLa3n2Gst9vZ7IPmYQgh
-         8yxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvzJ0/kSaa28t7kblFJLy5T1xMRmLEKzT5gg08nM7vEheD7FFDdRDsIG4m+uF+k+Z4GiNa9LqfEEDVeTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdt1NSwxP14CqrENP+zKuCmBxpbJTa7KpGaDoj6+zmixFK9+SW
-	U78tlpw8BoA9ymYk1LyimhnNxppojiq+GFgnhjK0AVnqTFJSNUDf/ZuXsgkrDuw=
-X-Gm-Gg: ASbGnctv9KZ1St/PYmOoQKpYHqIrbdQukDhVLLOFKXC44JaJte9Efeliv0rWZgXKS7p
-	J3bQ72orEYWqi7P8Bgpmud1JS0mMSgQbcW2aDsnTEhaFpJJsyqD9jRaSgapHJQ5xgS/AdYjD0hS
-	EnCSrZiNGSZDaZdn2oQII92O5bEy6uOVFGnE4jGmMtIMbqoiB1v+/8MCbZ4TrElPICO4xtG+YHO
-	n7OFwVLuWXUgWjQ/LCo8m/wLL3IT+D1mxGpxVtnCxe3+/40JPrQdRYZ4TM8lb+zfL/9YA==
-X-Google-Smtp-Source: AGHT+IHJFEiwo9Lyc15w9Ds/jb9CjQsGIpHj5PkE/zOc5gjY9Jh+95fpF9pzLyoiB9rNK5ro+urwJw==
-X-Received: by 2002:a17:906:329b:b0:aa5:241a:dc75 with SMTP id a640c23a62f3a-aa58103b03amr2063507466b.41.1733131647333;
-        Mon, 02 Dec 2024 01:27:27 -0800 (PST)
-Received: from localhost (89-24-45-172.nat.epc.tmcz.cz. [89.24.45.172])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996df78csm492732866b.67.2024.12.02.01.27.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 01:27:26 -0800 (PST)
-Date: Mon, 2 Dec 2024 10:27:25 +0100
-From: Jiri Pirko <jiri@resnulli.us>
-To: Andy Strohman <andrew@andrewstrohman.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] dsa: Make offloading optional on per port basis
-Message-ID: <Z019fbECX6R4HHpm@nanopsycho.orion>
-References: <20241201074212.2833277-1-andrew@andrewstrohman.com>
+	s=arc-20240116; t=1733131704; c=relaxed/simple;
+	bh=YCKKHOkYcjU3eVZLXY4GlyGAzwYDGeB7zy/3/G0VBbY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=jBk8VeIlauWD1F2Od82WoBBjweyivQl5llNQ5wtrLk3CSHONg5+u+XrgHy1if4W4qq28qZMv+qZJrnIl5OOkWHgQV4+2d6XYv/sURCD5SlZM9AeOsVttubVy6mxA1S1Ga9reaE1eCD8BH5ZySqfDQy7/y+xRB5P/ZBja1TmiGLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ROviGzmA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k3LcCnBv; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id C0838114013C;
+	Mon,  2 Dec 2024 04:28:19 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 02 Dec 2024 04:28:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733131699;
+	 x=1733218099; bh=0vtW7zcy28E3VWtcQ0tZtRDJt36nwZn3YMYcW1ufa64=; b=
+	ROviGzmAG0HSz8q4qvRQB4L2vxZ0gTUFxFgbbqjP3qFHSXFOZA3VThUmc+unP1Cc
+	uZEnvOXKZIzAKVX41xrDZqjAQxv7PJHyydGH/hoVNUCAKSrh+p0dtZPrEnZ3IJVS
+	YSF/FCZAdcrFvD6pcwsve73p8u0mH7wn8LCxPDP2K3Ixzqvbwl2Blew/wKIeYP4c
+	JaF7ghNbysxlP6oiXnb4g+Gm0aqbZP0smCJLoXl9MwZPYiOINoROiaIdtq2YXmOC
+	Sr8VW6tGWZbKTeGftLb8qGFNeUGyBTPQMIVXasnp+4H6uEvGd6ibN6n9LopN8I7e
+	aWJXEbONiw/rbzZQtY98uQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733131699; x=
+	1733218099; bh=0vtW7zcy28E3VWtcQ0tZtRDJt36nwZn3YMYcW1ufa64=; b=k
+	3LcCnBvV+X2jdZd9wdvp80HUJMJstHohn95DFYLVckzEfQ1X3XkHIzZpIjkPTE3X
+	wkxxXuUnGaBw356eMjbJTkqx97ilpYxO2DL8R0Pc6nZeLXUBDej4eMOFnCiNhMnh
+	sPzstBlgjLd+LOw4fLOm82nJI4rl2smO3nglB5ZXEgHfuskt66lvuWTLtSf7GXSy
+	8ky4EzFjihMQdQiv/R9R1cULK6/9sKgdc35ny1pFJB7Yny1dHtl57hCXgOKTLoKf
+	7tGSrq2IIVVd1s2NHBGycl65p2IfGoUJiD33IVS9DBl2nixeDc2w6nzfPHAZ6Avq
+	BJsnDOy7lZMhDosErilOw==
+X-ME-Sender: <xms:s31NZ-nRfQMJS-BUHk1nRmAY9WzRgll4-zivZuUGtw27GDXLpH26MA>
+    <xme:s31NZ13S61_8340ydO8o2jhozBFFBG2915JBF_Q8YfwIIu-sR4-LyqBhvAfV9Khp5
+    XtZtUFrr7ivSN2eRIc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrheelgddtfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeej
+    vdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeegpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkh
+    drohhrghdprhgtphhtthhopehgvghrgheslhhinhhugidqmheikehkrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrgh
+    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    gh
+X-ME-Proxy: <xmx:s31NZ8p3hEEM0UIl_wlTiFIuMGNbmCtkflOhpeB93BoD0s94Zuw1Wg>
+    <xmx:s31NZynpIciuFdAJhdNVZYVBmyLhp2IF_SFyhGB8o8Os9FlZqF3A5A>
+    <xmx:s31NZ83g-mk8H2OnybF7i1ix-WzVzHOBPjySl8-e9M_qjtcjhgPVLw>
+    <xmx:s31NZ5uBrAmmmDNdBxVKqpHZ0f8ZjlXQt3XX6QJPi4KzRRDzpvOjhw>
+    <xmx:s31NZ5xfy0l0R9U0OTyXSS99k9jvvwFUCiGFrKpAjUqokXnycc2d7I0_>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 427592220071; Mon,  2 Dec 2024 04:28:19 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241201074212.2833277-1-andrew@andrewstrohman.com>
+Date: Mon, 02 Dec 2024 10:27:48 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Greg Ungerer" <gerg@linux-m68k.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Message-Id: <992c4d62-380d-4908-a688-77197d9c4cbd@app.fastmail.com>
+In-Reply-To: <7bb57485-c08c-4121-ade5-8c76bc48e615@linux-m68k.org>
+References: <20231113133209.1367286-1-gerg@linux-m68k.org>
+ <CAMuHMdVZh6-64hfx1jgOijBEG6cTftinqf+4fZvqjJtV1hO95g@mail.gmail.com>
+ <1dd8be4b-d5c3-4074-a91e-3ce998ce3050@linux-m68k.org>
+ <7bb57485-c08c-4121-ade5-8c76bc48e615@linux-m68k.org>
+Subject: Re: [PATCH v2] m68k: use kernel's generic muldi3 libgcc function
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Sun, Dec 01, 2024 at 08:42:11AM CET, andrew@andrewstrohman.com wrote:
->The author has a couple use cases for this:
->
->1) Creating a sniffer, or ethernet tap, by bridging two or more
->non-offloaded ports to the bridge, and tcpdump'ing the member
->ports. Along the same lines, it would be nice to have the ability
->to temporarily disable offloading to sniff all traffic for debugging.
->
->2) Work around bugs in the hardware switch or use features
->that are only available in software.
->
->DSA drivers can be modified to remove their port_bridge_join()
->dsa_switch_ops member to accomplish this. But, it would be better
->to make it this runtime configurable, and configurable on a per port
->basis.
->
->The key to signaling that a port is not offloading is by
->ensuring dp->bridge == NULL. With this, the VLAN and FDB
->operations that affect hardware (ie port_fdb_add, port_vlan_del, etc)
->will not run. dsa_user_fdb_event() will bail if !dp->bridge.
->dsa_user_port_obj_add() checks dsa_port_offloads_bridge_port(),
->and dsa_user_host_vlan_add() checks !dp->bridge.
->
->By being configurable on a per port basis (as opposed to switch-wide),
->we can have some subset of a switch's ports offloading and others not.
->
->While this approach is generic, and therefore will be available for all
->dsa switches, I have only tested this on a mt7530 switch. It may not be
->possible or feasible to disable offloading on other switches.
->
->A flags member was added to the dsa user port netdev private data structure
->in order to facilitate adding future dsa specific flags more easily.
->IFLA_VLAN_FLAGS was used as an example when implementing the flags member.
->
->Signed-off-by: Andy Strohman <andrew@andrewstrohman.com>
+On Mon, Dec 2, 2024, at 02:34, Greg Ungerer wrote:
+> Arnd, ping...
 
-Why is this DSA specific? Plus, you say you want to disable offloading
-in general (DSA_FLAG_OFFLOADING_DISABLED), but you check the flag only
-when joining bridge. I mean, shouldn't this be rather something exposed
-by some common UAPI?
+Sorry I hadn't realized you were waiting for me.
 
-Btw, isn't NETIF_F_HW_L2FW_DOFFLOAD what you are looking for?
+> On 6/11/24 08:04, Greg Ungerer wrote:
+>> On 5/11/24 21:46, Geert Uytterhoeven wrote:
+>>> On Mon, Nov 13, 2023 at 2:32=E2=80=AFPM Greg Ungerer <gerg@linux-m68=
+k.org> wrote:
+>>>> Use the kernels own generic lib/muldi3.c implementation of muldi3 f=
+or
+>>>> 68K machines. Some 68K CPUs support 64bit multiplies so move the ar=
+ch
+>>>> specific umul_ppmm() macro into a header file that is included by
+>>>> lib/muldi3.c. That way it can take advantage of the single instruct=
+ion
+>>>> when available.
+>>>>
+>>>> There does not appear to be any existing mechanism for the generic
+>>>> lib/muldi3.c code to pick up an external arch definition of umul_pp=
+mm().
+>>>> Create an arch specific libgcc.h that can optionally be included by
+>>>> the system include/linux/libgcc.h to allow for this.
+>>>>
+>>>> Somewhat oddly there is also a similar definition of umul_ppmm() in
+>>>> the non-architecture code in lib/crypto/mpi/longlong.h for a wide r=
+ange
+>>>> or machines. Its presence ends up complicating the include setup and
+>>>> means not being able to use something like compiler.h instead. Actu=
+ally
+>>>> there is a few other defines of umul_ppmm() macros spread around in
+>>>> various architectures, but not directly usable for the m68k case.
+>>>>
+>>>> Signed-off-by: Greg Ungerer <gerg@linux-m68k.org>
+>>>
+>>> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>>>
+>>>> =C2=A0 arch/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 8 +=
+++
+>>>> =C2=A0 arch/m68k/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +
+>>>> =C2=A0 arch/m68k/include/asm/libgcc.h | 20 +++++++
+>>>> =C2=A0 arch/m68k/lib/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 2 +-
+>>>> =C2=A0 arch/m68k/lib/muldi3.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 97 ----------------------------------
+>>>> =C2=A0 include/linux/libgcc.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 4 ++
+>>>> =C2=A0 6 files changed, 35 insertions(+), 98 deletions(-)
+>>>> =C2=A0 create mode 100644 arch/m68k/include/asm/libgcc.h
+>>>> =C2=A0 delete mode 100644 arch/m68k/lib/muldi3.c
+>>>
+>>> I had this in my local tree for about a year.
+>>> Is it fine to queue this in the m68k tree, or does this need a broad=
+er
+>>> coverage?
+>>=20
+>> I am still in favor of it :-)
+>> Would be good to get some feedback on the common code changes, like t=
+he change
+>> to libgcc.h.
+
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+
+This looks fine to me, nice cleanup. My instinct at first was
+to add an asm-generic/libgcc.h as a fallback in place of
+the Kconfig symbol and move the common macro there, but there
+really isn't much benefit to that over your version. Either way,
+please merge this through the m68k tree.
+
+      Arnd
 
