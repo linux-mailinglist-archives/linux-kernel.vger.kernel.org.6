@@ -1,208 +1,125 @@
-Return-Path: <linux-kernel+bounces-427113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D119DFCD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:16:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 735EB9DFCDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 10:18:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71905B216BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:16:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE5CB21378
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2191F9F63;
-	Mon,  2 Dec 2024 09:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B37E1FA15D;
+	Mon,  2 Dec 2024 09:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2HSZoBAS"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KLVCsCZy"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1022868B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6948F1D6DB5
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 09:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733130975; cv=none; b=MXBAtwcvVzGo3ZU5M2xISt6FxE0fmpU7DwgZN5myi2j2/aJcYkqpKfn7XQTiKatWyIVDcU197PAxR3/m3JQ2OClY3EATddL1ki+ib0vcm9C1TO5sqInSi8BvUoPboaDXFjSXN0s+zLNOt7Eyk8RKyyYRTcEISDAMMT0pBGGLAVs=
+	t=1733131087; cv=none; b=JlSCYgqIkVY52P1NF+uruofjG4233IoYOM7CcUW0uOYT/jX+1f2E+F/DE/SnI0GfVUtuFp0YaMm0IBUiUix/t11+3MH7R7J/aK+fxcJzaTXC9CiKJHTuczB3ADZ2NbAAo8Q2Fc5bCb+W03PfCgm95ZfQfXWdpenaItHSzzSGsEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733130975; c=relaxed/simple;
-	bh=5WrUnJEqQiuUuTJ+OJiQnCJ7THQ+A+DF5medutrEQfM=;
+	s=arc-20240116; t=1733131087; c=relaxed/simple;
+	bh=S/nzLrLq8GsDZK1jqvO0PeYLnDGOtFpRQ8POvEjJxL4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qpIiqZxaIT7cw+q4cgYi9Ab89vf0T0+gxikX7S/leXVLO5CUoNE/MkN+tGMMsa+01dU2RJVKa7GPOCYo24L5UtO9L44qHBdpB3LsTeRtjdz/L9RpjTgDvk5IzcXqXRen4Z55NPIrybYgbtod01rDUy573QIs4knqupyWJP5NTRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2HSZoBAS; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6eeca49d8baso30835497b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:16:13 -0800 (PST)
+	 To:Cc:Content-Type; b=BEPUNb+rdwc8n9x79EaI5XDMBkLeRdBKZC7zne4SnHrJxtnliijmnrhH3s3qVX8MJ7iFM11M68VSJV9MHrY7CGZ7R8piHQu6VJJXaH9r8/7AyQpA3pyfWfZbWqimLY+GVlnSQSyiBuSsI7Z3QNkwu138efswGezUsNXNR6XqWZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KLVCsCZy; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2eeb64f3588so654132a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 01:18:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733130972; x=1733735772; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1eG6H9xL8sk/1S7A6iBU9/Voo1x3apTymTAnplNQbuo=;
-        b=2HSZoBAS5Lw9igNyEdTyrFLT3+/HLiaIW9tRZKeeazj0q2JfgX766vMDxm3SIKIay+
-         6yolem1ZZOxuKc7n7SkQOmR5MnHQi4jTH7V6zgUcXtS9Jneo6ByFVjEubHc/trAvb2g6
-         0y5twhZRW2N3T7DvHWmvIE+DutZ3sB2otdmCYdRxoAcDGd2P5m4yslJ8kvxIduBRy32g
-         gKOejEl/CcqoHvi252VuxJyqx4IOShmDu3FXxDig2WewJlXCo9yU9W0IjyWHTNZDTXyx
-         0oAdXsi5l8wI5ytCL2yrXA21JrQGaz6HY34EpaQQ1Yv4QyRW3+6dqO7iGtGEYP7iWotK
-         BYTw==
+        d=linaro.org; s=google; t=1733131085; x=1733735885; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ccSIPqCm+FoEQbw662vqcdHVO6YT4cgJWGVzikvkskk=;
+        b=KLVCsCZy4n6SqUo86itGydA+S3q7Tw98OPqqdmBFeDBdv8z3cCz1fubEhcrNWneoEO
+         Xn3dr0R0eKpxvvDwuHQalPpNEDlXTa8NkdYJAWlYfh9tdxbO2oNIEcHm7eThQqW3mGC2
+         AL/KJIslMQsANlrgjrrHqGWZq0uytYDXSCupEWRFR0JPzwvWnWhX3Cgng0lopGVKLRPJ
+         K+/5aPpR3SaeB65Xxd+wqgzVIDp5fx9o1kGJLw0G3vJYQCKiEGJijWcmrYKRWY6O+XBf
+         iLa+cx1l5nJ5jCIf62PQ7tBKfdCLh7VKGZN/NLSfOyXgclTBaGGreMqLz7UFIg5S0Y3v
+         TbYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733130972; x=1733735772;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1eG6H9xL8sk/1S7A6iBU9/Voo1x3apTymTAnplNQbuo=;
-        b=tNBVlX3rYcytANPFF6yxNM/qsuWmky7zKVO8IKmGJbrX+961AuiOYLo4gxbKNU2VvG
-         7kqkD3ffTbXTAtOOIQLly/tcAdFJ4RDYOOt5s0gnND0yiCy6CnIROq4TOyeFudzfTJ8t
-         B4RyxPWXsKdB3HTf48lCDeOheqnrqe0Hg8YZF8VpTh2DHNqfheeY2L708HfYzauZLkT3
-         AJ7xsf48hmP7hFtwr4Uek/E9XYsD2czDvIWCGtoNyBh6yCgnRbzb/7aH834jC9tbFIbA
-         fqnoWIhcs8rYIshkOoQBiPJeXK4sdY4yNPsZDif2lXrdfPPgrouCWSCSBkwTuNUBZQY2
-         U1/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVy+zujDI3BcugV+BiXlfYmG5gjJLuiFwoVLswZhCvxlbK0T0viGtKeAeWxpMCcSZZfGOrBk03c60ssQY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLsczsdFyl9QuisCyTA6xIW5ua9jwQEgUhiNbv2A5FnmZOIyTT
-	Oo8C/JS1kSpScZEXb1MNDJs//VilQS5CMBnbeXeGrHR20mGLo/xWi8dFNx++qyBahRxPZBzVBDT
-	bJH0WJQXA/6f6TSJSu4uoIb/yRE5zJSITrryn
-X-Gm-Gg: ASbGncsSroZzjfli6zp+P/nVsnhmsVS+olc7wJ8xETYujSJBiDK0jhLj3g/GK+J3rnN
-	4bK1lfW8GlNCjljq1wni/SMHmM0UDXQ==
-X-Google-Smtp-Source: AGHT+IGLfK90CGrw+U7d4tyOPXLmg+EKv1CY3vyA/Q00bc/KKdGdeAKIVU8n+M6Hhwa6n30VmDCqUxFawN0x4JzUV9Q=
-X-Received: by 2002:a05:690c:3505:b0:6db:e1e0:bf6a with SMTP id
- 00721157ae682-6ef4a0dfcb2mr152707887b3.7.1733130972344; Mon, 02 Dec 2024
- 01:16:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733131085; x=1733735885;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ccSIPqCm+FoEQbw662vqcdHVO6YT4cgJWGVzikvkskk=;
+        b=odp/sjyb9ljupZ5c5fjZZuOk1Oy/xAa8N6fCCsYS6S+t7CGJEj/p/DVSigdi4CZhRi
+         BTS0ZcTRR2mC1aFUERSkgkAT4llSnotSdWwuORnVF+TvO7EwM56VxuU0h7x1n3pEkSQn
+         OgT/vYn10m+HBa8YSnELgpHHMf3HHHUOaweygmQBPHyoy6k9UDqgtBBjFUhKVnd5xavZ
+         546Z0rLNmRTNfckFR+e3G997CthZ+tgMCGzq2HB41gFisVQpPrGZz2V9HfKajzuZzAwZ
+         pIfGjLgCIHNQ+NE6hQSctcGw2vIO0/gYs+5fjoHz9vLbyH6r0IXV5GzorJDYFcc0w+aT
+         FCYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUg9c+hnsrIOWGeSvMoA6HMHzOU+6wpXcBzRMjDiPBaDSJiR8AqFe6gWAY/inuQM7isC3wEYTPAk8X2fS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvVXfPO0HuOoFAwXvStsD3r7D1yA02T0b1SAyM4WWTr7aXIFgV
+	qSXZGGrz/XqvK7KhztPXHy6Zyk0ditsm2rFgOMTlkJn66btCTyUCInFYT3WNywealT+Ylg8TStc
+	kM4vuQ5S94xwtUapZ67s+gekYPFSwBDahSdADhA==
+X-Gm-Gg: ASbGncv3b8pw3x7DF05hX/SRS4tF6bzh3ZyvkZAAjkbN/uwi8R6h7NIWTgpcuWvXKNw
+	nqqTQ8SYGyRZAWnvJQicxHXZIEYCbx6coHq6R+DCyBoHlgf7NxCGKpf6puHvu
+X-Google-Smtp-Source: AGHT+IGJEK1PPkajams4wbaAVGv4vMdkj0aENq1aK/vjQY+GnCQTfm/KAkOxJsACki2zF8flFWzVkJXCNdl09xVHlKs=
+X-Received: by 2002:a17:90b:2883:b0:2ee:c04a:4276 with SMTP id
+ 98e67ed59e1d1-2eec04a44e6mr5121422a91.5.1733131084587; Mon, 02 Dec 2024
+ 01:18:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125184446.1040187-1-dawidn@google.com> <Z0fxrDTuCIeCDTiV@google.com>
-In-Reply-To: <Z0fxrDTuCIeCDTiV@google.com>
-From: =?UTF-8?Q?Dawid_Nied=C5=BAwiecki?= <dawidn@google.com>
-Date: Mon, 2 Dec 2024 10:16:01 +0100
-Message-ID: <CAJ_BA_BvGPfAghiQo8uQSAhdqG3NiWXbO7c-Q_x6cvUUukrzsA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] platform/chrome: cros_ec: jump to RW before probing
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, chrome-platform@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, chromeos-krk-upstreaming@google.com
+References: <20241129161756.3081386-1-vincent.guittot@linaro.org> <227863d758551e75cd0807a5f1f31916d695205b.camel@gmx.de>
+In-Reply-To: <227863d758551e75cd0807a5f1f31916d695205b.camel@gmx.de>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 2 Dec 2024 10:17:53 +0100
+Message-ID: <CAKfTPtDwS4+t0Fnacre6dtxKdxtrgua_2v=s7pZHqDsYoMMxFA@mail.gmail.com>
+Subject: Re: [PATCH 0/10 v2] sched/fair: Fix statistics with delayed dequeue
+To: Mike Galbraith <efault@gmx.de>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
+	kprateek.nayak@amd.com, pauld@redhat.com, luis.machado@arm.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 28, 2024 at 5:29=E2=80=AFAM Tzung-Bi Shih <tzungbi@kernel.org> =
-wrote:
+On Sun, 1 Dec 2024 at 14:30, Mike Galbraith <efault@gmx.de> wrote:
 >
-> On Mon, Nov 25, 2024 at 06:44:45PM +0000, Dawid Niedzwiecki wrote:
-> > To avoid such problems, send the RWSIG continue command first, which
-> > skips waiting for the jump to RW. Send the command more times, to make
-> > sure EC is ready in RW before the start of the actual probing process. =
-If
-> > a EC device doesn't support the RWSIG, it will respond with invalid
-> > command error code and probing will continue as usual.
+> Greetings,
 >
-> I'm wondering should it only send RWSIG_ACTION_CONTINUE if EC_CMD_GET_VER=
-SION
-> shows the FW is still in RO.
-
-In theory yes, but in practice it is not necessary. If FW is in RW, it
-will return
-EC_RES_INVALID_COMMAND (the same case as RWSIG is not supported), so
-the job is done.
-EC_CMD_GET_VERSION + potentially RWSIG_ACTION_CONTINUE sequence is longer.
-Additionally, EC_CMD_GET_VERSION requires bigger buffers to store
-versions strings.
-
->
-> Curious about: who (in which use case) is responsible for sending
-> RWSIG_ACTION_ABORT if it wants the EC stays in RO?
-
-Currently, it is done by flashrom
-https://source.chromium.org/chromiumos/chromiumos/codesearch/+/01195dd492ea=
-196cdc60e467a896369e30e90c5b:src/third_party/flashrom/cros_ec.c;l=3D480
-
->
-> > diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrom=
-e/cros_ec.c
-> [...]
-> > @@ -204,6 +204,11 @@ int cros_ec_register(struct cros_ec_device *ec_dev=
-)
-> >       mutex_init(&ec_dev->lock);
-> >       lockdep_set_class(&ec_dev->lock, &ec_dev->lockdep_key);
+> On Fri, 2024-11-29 at 17:17 +0100, Vincent Guittot wrote:
+> > Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until its
+> > lag has elapsed. As a result, it stays also visible in the statistics that
+> > are used to balance the system and in particular the field h_nr_running.
 > >
-> > +     /* Send RWSIG continue to jump to RW for devices using RWSIG. */
-> > +     err =3D cros_ec_rwsig_continue(ec_dev);
-> > +     if (err)
-> > +             dev_warn(dev, "Failed to continue RWSIG: %d\n", err);
+> > This serie fixes those metrics by creating a new h_nr_queued that tracks
+> > all queued tasks. It renames h_nr_running into h_nr_runnable and restores
+> > the behavior of h_nr_running i.e. tracking the number of fair tasks that
+> >  want to run.
+> >
+> > h_nr_runnable is used in several places to make decision on load balance:
+> >   - PELT runnable_avg
+> >   - deciding if a group is overloaded or has spare capacity
+> >   - numa stats
+> >   - reduced capacity management
+> >   - load balance between groups
 >
-> Too verbose, use dev_info() instead.
-
-I will change that.
-
+> I took the series for a spin in tip v6.12-10334-gb1b238fba309, but
+> runnable seems to have an off-by-one issue, causing it to wander ever
+> further south.
 >
-> > diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform=
-/chrome/cros_ec_proto.c
-> [...]
-> > +int cros_ec_rwsig_continue(struct cros_ec_device *ec_dev)
-> > +{
-> [...]
-> > +     for (int i =3D 0; i < RWSIG_CONTINUE_RETRIES; i++) {
-> > +             ret =3D cros_ec_send_command(ec_dev, msg);
-> > +
-> > +             if (ret < 0)
-> > +                     error_count++;
->
-> Should it just return the error if the transmission fails?
+> patches 1-3 applied.
+>   .h_nr_runnable                 : -3046
+>   .runnable_avg                  : 450189777126
 
-The transmission failure is kind of expected here. It is possible that
-FPMCU is not ready, when AP
-starts sending commands. That's why the retry (which is removed in
-PATCH 2/2) was added in the
-cros_ec_get_proto_info function.
+Yeah, I messed up something around finish_delayed_dequeue_entity().
+I'm' going to prepare a v3
 
 >
-> > +             else if (msg->result =3D=3D EC_RES_INVALID_COMMAND)
-> > +                     /*
-> > +                      * If EC_RES_INVALID_COMMAND is retured, it means=
- RWSIG
-> > +                      * is not supported or EC is already in RW, so th=
-ere is
-> > +                      * nothing left to do.
-> > +                      */
-> > +                     break;
-> > +             else if (msg->result !=3D EC_RES_SUCCESS)
-> > +                     /* Unexpected command error. */
-> > +                     error_count++;
+> full set applied.
+>   .h_nr_runnable                 : -5707
+>   .runnable_avg                  : 4391793519526
 >
-> Same as `ret < 0`, should it just return if any unexpected errors?
-
-It should return here. It is unexpected that the command itself
-returns error, we should return
-in this case. I will change that.
-
->
-> > +             else
-> > +                     /*
-> > +                      * The EC_CMD_RWSIG_ACTION succeed. Send the comm=
-and
-> > +                      * more times, to make sure EC is in RW. A follow=
-ing
-> > +                      * command can timeout, because EC may need some =
-time to
-> > +                      * initialize after jump to RW.
-> > +                      */
-> > +                     error_count =3D 0;
-> > +
-> > +             if (error_count >=3D RWSIG_CONTINUE_MAX_ERRORS_IN_ROW)
-> > +                     break;
->
-> It could return 0 if `error_count >=3D RWSIG_CONTINUE_MAX_ERRORS_IN_ROW`.
-
-True. I will fix that.
-
->
-> > +
-> > +             if (ret !=3D -ETIMEDOUT)
-> > +                     usleep_range(90000, 100000);
-> > +     }
-> > +
-> > +     kfree(msg);
-> > +
-> > +     return ret;
-> > +}
-> > +EXPORT_SYMBOL(cros_ec_rwsig_continue);
+>         -Mike
 
