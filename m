@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-428224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6789E0CD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:11:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176099E0BC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:12:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B22D3B67194
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:05:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B275B81B9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1CE1DED78;
-	Mon,  2 Dec 2024 19:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94AF1DE890;
+	Mon,  2 Dec 2024 19:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tSf73ptz"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ORIs5AhQ"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F070A1DE3CE;
-	Mon,  2 Dec 2024 19:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6646A1DE3D4;
+	Mon,  2 Dec 2024 19:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733166142; cv=none; b=iMbpnkOd+HeS379n4+Eq6piROQ38DQt3JwqqBzbIa/rIDf5qk/EyByHo5caDxTi95HLxKGFzW0u3f1KL5id4SmTLntPz43E3CrYt3K5E6s/Wit+b0nZDiDTP/MkqTJqGbjKP/XiEmrnPagY9ZGYpq5oF5snDZmfk0DZVq7XTanE=
+	t=1733166181; cv=none; b=OYCb+rq3O+5JfEQdrlyWv2DhMZ3GAEyTnTOoWz9KKleknJvVGMUC1QGqe3O/Xz0j6xgIXeDAiyiAdvFKLXcunz3Cgzq4S1Mzglcw7V9iQb5B7OvR2k9aS7BYmvWdfcAMjvyzIWj2xfsnsdZXANN08SRmOvRxk3B9cI7/WHV3KSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733166142; c=relaxed/simple;
-	bh=Lw0cF1apHEYbyMDv0FlJULjHdocoRdy1EJZCufUNKiM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HBw0U9ncPgKT+Vlc/4b9Fk2OdtXb1uiJUItxiOEARt6nZ7xVsGO2WPkYPLi9G/DJOkiur3TCw0pchn8f1XaG6SleooT++WSAttxQCd8F2n6mmjm+URNJH2DBNbTJCkH24fxdt63bzHUBYECnwJOk2dDLDSQnP7x7A9m442z9PJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tSf73ptz; arc=none smtp.client-ip=159.69.126.157
+	s=arc-20240116; t=1733166181; c=relaxed/simple;
+	bh=+lQgrVXGmqskGkJ0EZVsQvVGvqiHQqZh0rqrRdQ2bXQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Gd1w0clvWDnXacEAO80ntm8sLrrXTiX38KqZFAqmhwBja9MSLnONIsFZ9mXg6/f0dCoh4hJHObz8E7IZFexw2jQKDE+1C+xerJLgk+pCmWQ7Lf40MHddmuIEwZQ01TrLTGibScSwZ5d3DVxCiPMrmz0UM/pQUEQ9hUbgfV9OweI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ORIs5AhQ; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733166139;
-	bh=Lw0cF1apHEYbyMDv0FlJULjHdocoRdy1EJZCufUNKiM=;
+	s=mail; t=1733166178;
+	bh=+lQgrVXGmqskGkJ0EZVsQvVGvqiHQqZh0rqrRdQ2bXQ=;
 	h=From:Subject:Date:To:Cc:From;
-	b=tSf73ptzoiI/IyAaxbLzcmgZum8vSUnezgdS9pFdaPTjEvG5wB0xn4zhpCXVFV63W
-	 JTXmhVQHJR298xHoX0BoP/tfZDScN3FIrsNtxSTXOEwwtYQuj8slPd3CwxqB8cHkrc
-	 70WbhdyG3xY5Q5Azye4A/nQLsTEAEmawXjqYHMq0=
+	b=ORIs5AhQzO9Vc6vUE/7EUlp6YcbuwevsJZU1ECLwEGIPQThg1QS4Mw0kFWdZXLXRl
+	 0/yjxj/lbqWBle7vbJ94owbJwmPrDDB9bde0Igl0qeg2iGpq891MyRQCJDIeFeF85C
+	 YDhs5JxyrhN/84ipc2Kajg597L6mLvU0HMZBuZyw=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: [PATCH 0/4] power: supply: constify 'struct bin_attribute'
-Date: Mon, 02 Dec 2024 20:02:18 +0100
-Message-Id: <20241202-sysfs-const-bin_attr-psy-v1-0-f846430b8b66@weissschuh.net>
+Subject: [PATCH 0/4] PCI: Constify 'struct bin_attribute'
+Date: Mon, 02 Dec 2024 20:02:56 +0100
+Message-Id: <20241202-sysfs-const-bin_attr-pci-v1-0-c32360f495a7@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,19 +48,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIADoETmcC/x3MQQqAIBBA0avErBtQqaiuEhFpU83GwpFIorsnL
- d/i/weEApNAXzwQ6GLhw2fosgC3z34j5CUbjDKVNkqjJFkF3eElomU/zTEGPCWhbWxXV51yrbG
- Q8zPQyve/Hsb3/QA2VixTagAAAA==
-X-Change-ID: 20241201-sysfs-const-bin_attr-psy-b6b95490c82b
-To: Sebastian Reichel <sre@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+X-B4-Tracking: v=1; b=H4sIAGAETmcC/x3MMQqAMAxA0atIZgM2VBGvIiK1Rs1SpSmiiHe3O
+ L7h/weUo7BCVzwQ+RSVPWSYsgC/ubAyypwNVJE1VBnUWxdFvwdNOEkYXUoRDy84MVmq2bi2biD
+ nR+RFrn/dD+/7ARGkquZqAAAA
+X-Change-ID: 20241201-sysfs-const-bin_attr-pci-be2425e1a856
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Logan Gunthorpe <logang@deltatee.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-acpi@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166139; l=1142;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733166177; l=1067;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=Lw0cF1apHEYbyMDv0FlJULjHdocoRdy1EJZCufUNKiM=;
- b=QjMIX/yWXf5++PynwpYtLyfcxFXlxY16K8Of46voEWBlIgmI8ZT6HF5a6Jm9UbfBepdetKvrF
- UQwDnYuUGNPCVPihSTlLbNjtdQM4tMYr6OZLJzHElGhyEbx7h8Ibybh
+ bh=+lQgrVXGmqskGkJ0EZVsQvVGvqiHQqZh0rqrRdQ2bXQ=;
+ b=3cSuvdzQxw91cAQKKffNXHOj12Mh5lJT+gcQuAZXR2P819DWMthaAjgCc1bhmmGoBYdRtNELF
+ /6ve7/vm8uFDWPNLdG8GBI6FXxIbIOeYgb3x0NvNpp02XYMafUaVJll
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
@@ -74,19 +77,19 @@ and will be reverted after the transition is complete.
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
 Thomas Weißschuh (4):
-      power: supply: ds2760: constify 'struct bin_attribute'
-      power: supply: ds2780: constify 'struct bin_attribute'
-      power: supply: ds2781: constify 'struct bin_attribute'
-      power: supply: olpc_battery: constify 'struct bin_attribute'
+      PCI/sysfs: Constify 'struct bin_attribute'
+      PCI/VPD: Constify 'struct bin_attribute'
+      PCI/P2PDMA: Constify 'struct bin_attribute'
+      PCI/ACPI: Constify 'struct bin_attribute'
 
- drivers/power/supply/ds2760_battery.c |  8 ++++----
- drivers/power/supply/ds2780_battery.c | 24 ++++++++++++------------
- drivers/power/supply/ds2781_battery.c | 24 ++++++++++++------------
- drivers/power/supply/olpc_battery.c   | 11 +++++------
- 4 files changed, 33 insertions(+), 34 deletions(-)
+ drivers/pci/hotplug/acpiphp_ibm.c |  6 +++---
+ drivers/pci/p2pdma.c              |  6 +++---
+ drivers/pci/pci-sysfs.c           | 42 +++++++++++++++++++--------------------
+ drivers/pci/vpd.c                 | 14 ++++++-------
+ 4 files changed, 34 insertions(+), 34 deletions(-)
 ---
 base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
-change-id: 20241201-sysfs-const-bin_attr-psy-b6b95490c82b
+change-id: 20241201-sysfs-const-bin_attr-pci-be2425e1a856
 
 Best regards,
 -- 
