@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-427604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C02A9E05AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:57:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8669E0357
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:27:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 583EBB38D80
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08EE3281516
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1452C1FF613;
-	Mon,  2 Dec 2024 13:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D371FF613;
+	Mon,  2 Dec 2024 13:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKzZBmvu"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EyJgIR+5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BA28F6B;
-	Mon,  2 Dec 2024 13:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6870A6AAD;
+	Mon,  2 Dec 2024 13:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733145951; cv=none; b=jEvBGTRVecI1gT8QkQ66BJFtyClgVMKVzy4FOfHx9R1XCXgB26Glv5ZNujRdh2gZ1AlBZk7azuFMi4D9E3nqZ0G6wLOlQIM7vFBXwQKya8b9S5RVan1g4wEKEXBrMiFHx4oxAz1YRJbhnEYw92BQ1jCi9Dqin1hVqCc6KAHAcOQ=
+	t=1733146072; cv=none; b=EufkPsaQQhptRjjVEM1VLOHsORRqKPsaHBmPaYYUkMNeQChx7w9vJiwCkgSP+Z5JuOgWmbu0JezGWdtcdvSfqZWoOovH+SzcIkz1Y8iee5HeDNkR80JbfiBU2+VXn3RRhPWN9A8csdJlZVwhWLLFidFdTsNLZVlwpP3zatTxbJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733145951; c=relaxed/simple;
-	bh=JzAfREBlzGyxMfq2M3UIkfA3PLTZmhEwa6RuZHSJ35g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RY/k6QISo5WXPojumpQokJNuDHdYOf6doZoiFmFKyhYCM6SrO2cDEF9Xtq7w8qaLsQKEBmII36YVevso8kUEIfe6tARpnn0RUBvQ5SZ00n392MaBw0mUTDOLJxWNHAQxm2QLbtRub0lA75DhV4vMCVrkXwQm2nB5pG1XK/rH3Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKzZBmvu; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-29e71d653fbso217434fac.3;
-        Mon, 02 Dec 2024 05:25:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733145949; x=1733750749; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JzAfREBlzGyxMfq2M3UIkfA3PLTZmhEwa6RuZHSJ35g=;
-        b=WKzZBmvuhdw02o69LehtlaP0H5WnrKT6YCMs11ilof82dA7tBaxzPvAZf+jrX9t02i
-         4dYcsh1W8SS+cHTur/SCmedhI11n+OXYHtXZVOn+x/WLuor9qs0xmgUyUdOMEnhYfwFd
-         1dRhfc3sg5TIJVw5fQPU/kVSX7VhfrJnxLZuangVX/ifzcGKPZKHV60193TFXdmA6dFx
-         mFfp5K6RJqFhDljmIsjjrCl4PfNfu+QwIjxGRpm40hiQuN2TwKgetEWOn7UeMKBv7j3o
-         NpUibk1v/iLEb2EfikUQtLHBr+/zpIARewz8LVljrrXvCWmJ3NJsYhayozl2QNB+ArtJ
-         ktVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733145949; x=1733750749;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JzAfREBlzGyxMfq2M3UIkfA3PLTZmhEwa6RuZHSJ35g=;
-        b=S5K2MO9FwaIPA/lHkWyxVeqIDEVI4Bb+N8WWAm5s+lkDintbPSPKzS4+3lmvZarnjE
-         bJo4oHlCYhF92ppwOO4ULXHKbTo4cIMWCaFBqYHiAeVxcHglAIm95Hv/ewL0GKs+TwdU
-         lU1i17DaYMbJcqsVCgG4X5L4JpSmg19bSiKkVNhb/bvJ0EVV0Jw47AmnvN5rfKmU4u2n
-         pjGfmWYnjqPTpZ+sxiGTa6dstvRLCgq98m/jzKcJ8xDVvyfGZJ0fLt7KVVvgX96b5g9L
-         aKj+Oljo4gRqz+WgpKu16VgvG/l5pGarSqo+RPNj6Vi3BV04JI4mcvufZvmiVI/SWPaM
-         yxsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbtihUtEq9xQOJ6djXGQ+4uWHTGHLKwndvz7tsFRaIG32V2p/L3h6z611lzdZ1Yqxr2Xi9aFAUjGap0YUKHg==@vger.kernel.org, AJvYcCWUxBXuGVnlqE+cTIJLmZ/oDbhkwo8t/E/AK5Zg+E85eGp5B3XdbHy13JnE6FDCSPihVO8hQKsDJxHAtEWy@vger.kernel.org, AJvYcCXl/+3h/x7CQ5jlBP/t7d8mkVXGUyivICU+L+2wfTYk4kQdHDyUUqDXl8RrH1BV9Qos0eNLepDxr04N@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlizZ9Yq7yd/1p3q48UbhF2qJcrWdJJGMByRVM/n3t0s365bfh
-	POb85lTr55U4n70LsOH2mUfy/NWnshIy5z4/WSGm0pP+N6bBvoBe3hUgSRN7FGAJ8yB0riGGLyi
-	+5IhXzbGNj3fd7vNdiWWD8A7A8wA=
-X-Gm-Gg: ASbGncs2KTi4Tkei4v3Z48JXNvH1AgjL2fage4r1xpcGOu8t8Z1CXJo2l79eJIE3xn8
-	E5o4ZJfqJP0Lc+fiQIvR/t5NKG40bgA==
-X-Google-Smtp-Source: AGHT+IEunf9HVnSmilfUsSj/yqIgpyQyjJyUhDfSWV570fxCrjjkJ0fUDzssd3DZMUWvaGkF/Ze3nmoehiVW0J9D7+w=
-X-Received: by 2002:a05:6358:6f18:b0:1ca:a296:f6fe with SMTP id
- e5c5f4694b2df-1cab15cff10mr826643055d.6.1733145949084; Mon, 02 Dec 2024
- 05:25:49 -0800 (PST)
+	s=arc-20240116; t=1733146072; c=relaxed/simple;
+	bh=KiXJWPoIAFp9VW8Wp81Eon9RxfYCjyDx9DTkjVp31GE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JmkS3TQcikMd3gTmweuKxoVp37Tyu/85ZfjLBlYjVRWMeZb5LxhMHK44Sf2rNK1rBNsCIbzKNJBGG10WfvzXx9UNSNBZnFwVqDO8W3a5D3BtlidA770MU2T1ibowQvdfn97UOaSbp4BxC+dxqOykdHHQUsH1v7WBtZZ+5Q0tLOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EyJgIR+5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CA79C4CED9;
+	Mon,  2 Dec 2024 13:27:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733146071;
+	bh=KiXJWPoIAFp9VW8Wp81Eon9RxfYCjyDx9DTkjVp31GE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EyJgIR+5km5eYBiOcnl4Xd0qxh5NcL09MRzRE8iaObRYaKvxyPhgd6vLysyjYMGSU
+	 3I92YLyq93EErMpJowvzmdcqUNTfu/nXqDUZyOzvlzL9h63ZXUffg6V+yBZZ8FmCS2
+	 YtKicdtr1EWqPxEzLqRSHQtCWEQ5HpXwDTaGicQxuBDsPKuVlgmlkYzALFjZXdWsiS
+	 k5GaGuqwN1KsG8pp5V1VZzgg4bB+4YPKqkJ8dLmsNklTGUvbecH6Z3d5IG0BiFrQfv
+	 ZHbas7b2ccomblsCiJECsZ73qK97J6PxGmyPgffVHbOP2jBaLdfeCQ21KgJVq2wls+
+	 RmhqOq6jHy0VQ==
+Date: Mon, 2 Dec 2024 14:27:49 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 9/9] drm/vc4: hdmi: use
+ drm_atomic_helper_connector_hdmi_update_edid()
+Message-ID: <20241202-married-bald-raven-7acd83@houat>
+References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-9-b5316e82f61a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-starqltechn_integration_upstream-v6-0-5445365d3052@gmail.com>
- <20241008-starqltechn_integration_upstream-v6-8-5445365d3052@gmail.com> <ee668cbf-54e0-4c0a-b690-8606cb3785b7@oss.qualcomm.com>
-In-Reply-To: <ee668cbf-54e0-4c0a-b690-8606cb3785b7@oss.qualcomm.com>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 2 Dec 2024 16:25:38 +0300
-Message-ID: <CABTCjFDMFTJCBm3o+5HVd5DiNF7HJETc=Lc2b=fqmKZM9Mz1gA@mail.gmail.com>
-Subject: Re: [PATCH v6 08/12] arm64: dts: qcom: sdm845-starqltechn: add
- display PMIC
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="sr6qnc7nl34mpskl"
+Content-Disposition: inline
+In-Reply-To: <20241201-drm-bridge-hdmi-connector-v5-9-b5316e82f61a@linaro.org>
+
+
+--sr6qnc7nl34mpskl
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 9/9] drm/vc4: hdmi: use
+ drm_atomic_helper_connector_hdmi_update_edid()
+MIME-Version: 1.0
 
-=D0=BF=D0=BD, 4 =D0=BD=D0=BE=D1=8F=D0=B1. 2024=E2=80=AF=D0=B3. =D0=B2 17:15=
-, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>:
->
-> On 8.10.2024 6:51 PM, Dzmitry Sankouski wrote:
-> > Add support for s2dos05 display / touchscreen PMIC
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> > ---
-> > Changes in v6:
-> > - refactor: s/starqltechn/sdm845-starqltechn in subject
-> > - refactor: 'i' < 'm', so put tlmm i2c node before motor*
->
-> Now you have 'i'2c21 before 'g'pio-regulator :/
->
-WIll move i2c21 node before gpio-keys, too
+Hi,
 
+On Sun, Dec 01, 2024 at 02:44:13AM +0200, Dmitry Baryshkov wrote:
+> Use the helper function to update the connector's information. This
+> makes sure that HDMI-related events are handled in a generic way.
+> Currently it is limited to the HDMI state reporting to the sound system.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/vc4/vc4_hdmi.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdm=
+i.c
+> index d0a9aff7ad43016647493263c00d593296a1e3ad..d83f587ab69f4b8f7d5c37a00=
+777f11da8301bc1 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> @@ -401,13 +401,16 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi=
+ *vc4_hdmi,
+>  	 */
+> =20
+>  	if (status =3D=3D connector_status_disconnected) {
+> +		drm_atomic_helper_connector_hdmi_update_edid(connector, NULL);
+>  		cec_phys_addr_invalidate(vc4_hdmi->cec_adap);
+>  		return;
+>  	}
+> =20
+>  	drm_edid =3D drm_edid_read_ddc(connector, vc4_hdmi->ddc);
+> =20
+> -	drm_edid_connector_update(connector, drm_edid);
+> +	// TODO: use drm_atomic_helper_connector_hdmi_update() once it gains
+> +	// CEC support
+> +	drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
 
---
-Best regards and thanks for review,
-Dzmitry
+So, it's not just about EDID, and I think we shouldn't really focus on
+that either.
+
+As that patch points out, even if we only consider EDID's, we have
+different path depending on the connector status. It shouldn't be up to
+the drivers to get this right.
+
+What I had in mind was something like a
+drm_atomic_helper_connector_hdmi_hotplug function that would obviously
+deal with EDID only here, but would expand to CEC, scrambling, etc.
+later on.
+
+And would cover both the connected/disconnected cases.
+
+Maxime
+
+--sr6qnc7nl34mpskl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0211QAKCRAnX84Zoj2+
+dn5LAYD+jqdGwkC0H4iYlSaYETAxZCK9kHnKkNn2ev/+nMCHDbBE52F7rnC+3dq7
+dYCcnzsBf2FnxN2dGnbsJhfLKxYoZJ4Z5apDoHE9vrcc7fB6iJ+TU/Q2sOPTfXFD
+RjebkV+GjQ==
+=UIM2
+-----END PGP SIGNATURE-----
+
+--sr6qnc7nl34mpskl--
 
