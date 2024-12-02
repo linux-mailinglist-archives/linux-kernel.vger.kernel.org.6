@@ -1,135 +1,185 @@
-Return-Path: <linux-kernel+bounces-428110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D9CC9E0A56
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:45:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B779E0A57
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:46:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CFB4282148
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:45:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7C91281FD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB201DACB8;
-	Mon,  2 Dec 2024 17:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D742B1DB548;
+	Mon,  2 Dec 2024 17:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="JJaKMh7J"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BVRhPnPS"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82227E0E8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8691D9A78
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733161547; cv=none; b=PySRSxaR3l+Xo16OX5E4iFBAlNZ7XfZaHrjXHjvbmeG/pr/sHf3zoDXfkVxdiHtFYxccLQ+HZHar/3CSTtnYfZzB44RQClhDrj3C8cAGG1Fmi3JDt2k+1KrfB9B+jQ7QGMYUD6OvYG4cuy7EQR4RJDw48/JU7EqO8LYeWbzknNE=
+	t=1733161575; cv=none; b=XZpePMD2s8QLbry2C0nB1l7q8Y4g4qIA0b+uB0IPmUgiB2wvdunvJgXyJyGVMK+/hkF9lWD1GvO7nQQI04JVZ3ua+NhyTLZgg34fe1JZJj8t5UlTtlQZ/1u+5tnSfAbMCs6646Z2eZUFZQ0vW1QtdQaxSJlEMtd40JNt8VFStLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733161547; c=relaxed/simple;
-	bh=z+cHfkEdofAUSDaqIVg0Z1cSdifjauaRlbhZ1WorbtQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cWm9tsqB+eAna/nwl8fKgXe5eoZ3/hEX143sHLbh+j2ZxWu3wUi9f2VRlcOuhTyo2QM5DvS+GE+RINfGZARHQG1fyaUaH+r7dha0uKc1o8LQ3KATZNtNHtUqBtWLroz6VYy8/wItsNcCwXTvBL823driUDxD8yJfEB05+WQT6wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=JJaKMh7J; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1733161541;
-	bh=z+cHfkEdofAUSDaqIVg0Z1cSdifjauaRlbhZ1WorbtQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=JJaKMh7Jonw1++41i7HOnnKyggY2hqY9DPdRG6JTXFQg95+BzTWLVnJRfTpAyD4bV
-	 aV6cmgk3thspkV9KFGevc0RqZ/TFgBKi3fKrZg/knEAEyTtsKyFkRLaMwQepTVvSNP
-	 XQKqXd//s5Dhb4Ic+N6uZkGq4l7q01ERm6YrGLBI=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 02 Dec 2024 18:45:41 +0100
-Subject: [PATCH] locking/mutex: Mark devm_mutex_init() as __must_check
+	s=arc-20240116; t=1733161575; c=relaxed/simple;
+	bh=BRy2wt4JBba0S2mWDSr7du7tuFzYUS8MnYSoLfvOjAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VtHwnoCVxTohz+Q6ESjyS1g6lLji3ifKNsY9pC2Ef2jse9kHTqN9itb7a520ZykaKthd0trl5ecTBHsQpgQHXRl99QboQuO8uCb1XCVhlU6+f54e3rLxD5CCdPdi5s1iDpDGQAaly0ZYvLoQV4W+ufLVuitw/hUXAoAmy18OT38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BVRhPnPS; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53df1d1b6f8so5242570e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:46:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733161571; x=1733766371; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iw/xxvds+w2MWh0sjhTuvDVbBhBs5XVmK6TyYshqU6A=;
+        b=BVRhPnPSfX/TZOwKwZFSzNSu/AbFCfYsnZ2p0ylM1MZc3KJEpG7ghc0jGGLzTj8tj6
+         QobIN6D3DR/hQTcEn7jtDH4zo+XfJ0b8Ftdg93erRdd/zJTD8tilGoN7E5gzEXt6BUUY
+         Ppw1uUc2vGucP+FqrtcYPD4TJgUZYB3qPpuDu9ACkiGA64/fxLFa1MwOeSSiHfLm/UUE
+         2JQs/feMAw6vbGiKHo5MLEFqotjn7sCLOgaaQlDAjBSrWL6EpBmlVm/i04NXiJaztkOq
+         DG9fh63Np8itj5HePjvCwg2lR+tAMZg0nMCayaugu+po91Fyetm9b6gP5W5SngoQNDcO
+         Lk8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733161571; x=1733766371;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iw/xxvds+w2MWh0sjhTuvDVbBhBs5XVmK6TyYshqU6A=;
+        b=U5HybIG0tDPL5URn4y6QKP7/4bRatSLH61GbqgkKO/gWRD7+dFH5zjSucG/tZlHs+O
+         lZ/piBJ5EJqJ/JABlOjDbG86H+rJLeXjf2QnNQ4sBVenDvDtcRdWS/79+yaBOjjqj+iK
+         E5uFXP3ejO0SB+kR4EvNVg08T6z+CrSp08+vzqTp1o0+oSeiDSbIfGtStRo7L6lQFDpB
+         1GYlifKm6RKsuWzX2uBWWJ4AixLR2lds1Xh772jtt0A5Fystpxl0OLQaswX3opmwHEM2
+         0WaQNrlTyRs/EopIE2PKoyPUCFA7NmJYBoXy4yxPkQJcpxaJf8pegcnQMfSiZ1Sg2/eN
+         f82w==
+X-Forwarded-Encrypted: i=1; AJvYcCWFj+nbVj7WRVtkwXGwL26TEzMEWBjuyAGVSEoIP/hilC7B5B1eCUp8ItA5H+W/a0K3m6A/hvBfQjS/f3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoyCAecgt+BzYYeG0qXonQILbehD8Mb9iPpP4qPi/JxzBQrS5i
+	yTIhnw0AUuEnT8C9/Pi0lY+fQQBNR+RhyKkpZB1XIi0V+QtQYGlnywN2AE1EG4Q=
+X-Gm-Gg: ASbGncvxNRuifIsVjKsSCvBrU0Qjw3D03w2sDc48wtsuxcUUYObTTrwE+PIUiucZwqH
+	muEpKsbVTJCEbACqOEMmuPc2P/pGq5eBkjNqoAoQs2o/DM4UhhyGVR9dr4Sufj7xfmGyHBmi2q4
+	r3NFvw/Y/EXudXxC8TM2TCVWAUxJsVonHTsRNBAx3ApHvkNm1DURBM0ZLZyJ9vluwON74uZt+wW
+	ZqTDFY6P5aCoxAsgtKqeFWc0fD5AdpNzSSCiIl+ncJo6cTMdOwL1QSWmy0=
+X-Google-Smtp-Source: AGHT+IG5m1sNFbzV0jvCtEDAw9SN64pi0uGmcEIYTY1TLttXsxBoCi5G/jpRVN/yNsEDZbonEvYAwg==
+X-Received: by 2002:a05:6512:3b90:b0:53d:a248:983b with SMTP id 2adb3069b0e04-53df0106be7mr13322032e87.42.1733161571325;
+        Mon, 02 Dec 2024 09:46:11 -0800 (PST)
+Received: from vingu-cube.. ([2a01:e0a:f:6020:f271:ff3b:369e:33b6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7d29fbsm193275855e9.29.2024.12.02.09.46.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 09:46:10 -0800 (PST)
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-kernel@vger.kernel.org
+Cc: kprateek.nayak@amd.com,
+	pauld@redhat.com,
+	efault@gmx.de,
+	luis.machado@arm.com,
+	tj@kernel.org,
+	void@manifault.com,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH 0/11 v3] sched/fair: Fix statistics with delayed dequeue
+Date: Mon,  2 Dec 2024 18:45:55 +0100
+Message-ID: <20241202174606.4074512-1-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241202-must_check-devm_mutex_init-v1-1-e60eb97b8c72@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAETyTWcC/x3MQQqDMBAF0KvIrA0YrSC9SpEQJ986lERJogji3
- Rtcvs27KCEKEr2riyIOSbKGAl1XxIsNXyhxxdQ27Us3nVZ+T9nwAv4ph8Mbv2ecRoJkxZb7oZu
- cHWZQCbaIWc4n/4z3/QeFX32kbAAAAA==
-X-Change-ID: 20241031-must_check-devm_mutex_init-cac583bda8fe
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
- Boqun Feng <boqun.feng@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733161541; l=2236;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=z+cHfkEdofAUSDaqIVg0Z1cSdifjauaRlbhZ1WorbtQ=;
- b=o/Dglmg09ww/hRm5ldvVor+HHazQsl/5h+NsLj1zjXAURIWENoCtf4jhZtKMVZg5iCqZLF97E
- vq55iQmoxr+BMD7R2NG8/bPfW0NFNB7deNNTWaZXj5TDhQMJL0LLmqG
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Even if it's not critical, the avoidance of checking the error code
-from devm_mutex_init() call today diminishes the point of using devm
-variant of it. Tomorrow it may even leak something. Enforce all callers
-checking the return value through the compiler.
+Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until its
+lag has elapsed. As a result, it stays also visible in the statistics that
+are used to balance the system and in particular the field h_nr_running.
 
-As devm_mutex_init() itself is a macro which can not be annotated,
-annotate __devm_mutex_init() instead.
-Unfortunately __must_check/warn_unused_result don't propagate through
-statement expression. To work around this move the statement expression
-into the argument list of the call to __devm_mutex_init() so
-devm_mutex_init() directly expands to __devm_mutex_init().
+This serie fixes those metrics by creating a new h_nr_runnable that tracks
+only tasks that want to run. It renames h_nr_running into h_nr_runnable.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- include/linux/mutex.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+h_nr_runnable is used in several places to make decision on load balance:
+  - PELT runnable_avg
+  - deciding if a group is overloaded or has spare capacity
+  - numa stats
+  - reduced capacity management
+  - load balance between groups
 
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 2bf91b57591b49e4668752e773419ae945f124da..3ab77d0d85bd54a700e99694fd4bcf1d310175bd 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -126,11 +126,12 @@ do {							\
- 
- #ifdef CONFIG_DEBUG_MUTEXES
- 
--int __devm_mutex_init(struct device *dev, struct mutex *lock);
-+int __must_check __devm_mutex_init(struct device *dev, struct mutex *lock);
- 
- #else
- 
--static inline int __devm_mutex_init(struct device *dev, struct mutex *lock)
-+static inline int __must_check __devm_mutex_init(struct device *dev,
-+						 struct mutex *lock)
- {
- 	/*
- 	 * When CONFIG_DEBUG_MUTEXES is off mutex_destroy() is just a nop so
-@@ -141,13 +142,12 @@ static inline int __devm_mutex_init(struct device *dev, struct mutex *lock)
- 
- #endif
- 
--#define devm_mutex_init(dev, mutex)			\
--({							\
--	typeof(mutex) mutex_ = (mutex);			\
--							\
--	mutex_init(mutex_);				\
--	__devm_mutex_init(dev, mutex_);			\
--})
-+#define devm_mutex_init(dev, mutex) __devm_mutex_init(dev, ({	\
-+	typeof(mutex) mutex_ = (mutex);				\
-+								\
-+	mutex_init(mutex_);					\
-+	mutex_;							\
-+}))
- 
- /*
-  * See kernel/locking/mutex.c for detailed documentation of these APIs.
+While fixing h_nr_running, some fields have been renamed to follow the
+same pattern. We now have:
+  - cfs.h_nr_runnable : running tasks in the hierarchy
+  - cfs.h_nr_queued : enqueued tasks in the hierarchy either running or
+      delayed dequeue
+  - cfs.h_nr_idle : enqueued sched idle tasks in the hierarchy
 
----
-base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
-change-id: 20241031-must_check-devm_mutex_init-cac583bda8fe
+cfs.nr_running has been rename cfs.nr_queued because it includes the
+delayed dequeued entities
 
-Best regards,
+The unused cfs.idle_nr_running has been removed
+
+Load balance compares the number of running tasks when selecting the
+busiest group or runqueue and tries to migrate a runnable task and not a
+sleeping delayed dequeue one. delayed dequeue tasks are considered only
+when migrating load as they continue to impact it.
+
+It should be noticed that this serie doesn't fix the problem of delayed
+dequeued tasks that can't migrate at wakeup.
+
+Some additional cleanups have been added:
+  - move variable declaration at the beginning of pick_next_entity()
+    and dequeue_entity() 
+  - sched_can_stop_tick() should use cfs.h_nr_queued instead of
+    cfs.nr_queued (previously cfs.nr_running) to know how many tasks
+    are running in the whole hierarchy instead of how many entities at
+    root level
+
+Changes since v2:
+- Fix h_nr_runnable after removing h_nr_delayed (reported by Mike and Prateek)
+- Move "sched/fair: Fix sched_can_stop_tick() for fair tasks" at the
+  beginning of the series so it can be easily backported (asked by Prateek)
+- Split "sched/fair: Add new cfs_rq.h_nr_runnable" in 2 patches. One
+  for the creation of h_nr_runnable and one for its use (asked by Peter)
+- Fix more variable declarations (reported Prateek)
+
+
+Changes since v1:
+- reorder the patches
+- rename fields into:
+  - h_nr_queued for all tasks queued both runnable and delayed dequeue
+  - h_nr_runnable for all runnable tasks
+  - h_nr_idle for all tasks with sched_idle policy
+- Cleanup how h_nr_runnable is updated in enqueue_task_fair() and
+  dequeue_entities
+
+Peter Zijlstra (1):
+  sched/eevdf: More PELT vs DELAYED_DEQUEUE
+
+Vincent Guittot (10):
+  sched/fair: Fix sched_can_stop_tick() for fair tasks
+  sched/fair: Rename h_nr_running into h_nr_queued
+  sched/fair: Add new cfs_rq.h_nr_runnable
+  sched/fair: Use the new cfs_rq.h_nr_runnable
+  sched/fair: Removed unsued cfs_rq.h_nr_delayed
+  sched/fair: Rename cfs_rq.idle_h_nr_running into h_nr_idle
+  sched/fair: Remove unused cfs_rq.idle_nr_running
+  sched/fair: Rename cfs_rq.nr_running into nr_queued
+  sched/fair: Do not try to migrate delayed dequeue task
+  sched/fair: Fix variable declaration position
+
+ kernel/sched/core.c  |   4 +-
+ kernel/sched/debug.c |  14 ++-
+ kernel/sched/fair.c  | 240 ++++++++++++++++++++++++-------------------
+ kernel/sched/pelt.c  |   4 +-
+ kernel/sched/sched.h |  12 +--
+ 5 files changed, 153 insertions(+), 121 deletions(-)
+
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+2.43.0
 
 
