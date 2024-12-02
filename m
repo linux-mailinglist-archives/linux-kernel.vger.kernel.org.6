@@ -1,114 +1,174 @@
-Return-Path: <linux-kernel+bounces-427096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5C99DFC73
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFDC09DFC83
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 09:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF5A281DD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:54:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5D9281D2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 08:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6271F9F6F;
-	Mon,  2 Dec 2024 08:54:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2BF1D6DD8;
-	Mon,  2 Dec 2024 08:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A711FA143;
+	Mon,  2 Dec 2024 08:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CgYsO47/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5301F9F68;
+	Mon,  2 Dec 2024 08:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733129662; cv=none; b=jwi/syPBeoANXohLcv1OiX22h2ehDwDKUplx1PqXmKULfGpTq9pIandw9mjdo6KV1etmmpa2nDvmtHjc/8IfXPatpBwcJG8rvJbE7e0/iNaLE5GKLQ11YWzjK8qM8KS+H2PkRWCf7eDQtHEnE72gEoiIP3H+3MC1LvcxeXyPQ2U=
+	t=1733129817; cv=none; b=JRcSvwqE7T55q2lnM9miSXh/EXnjgOEx9aI51In/gAQxA+5PwcbTyO6WQDAJlAqnYKMLNg76oK3BUuxAUxc9OUNBVJTf6cECG1HFjfFwbrdRndtzRA5/TSoXOh7NWrgGO/SOQ/t2Oi1p3RscRJFq567BgDLm/58ScRphSjNY5yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733129662; c=relaxed/simple;
-	bh=R6Fv08YSF9tjEaXOB/g1hNUtf8CGUiQoNMyz9uhE03s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VKhJqsdMyGpePeHBzqVr2GVADkfpXj2snkLpHYC79gar+X5uS/HQ3/ivywNjIl3TVVjA/eAooJtmoB0CSdN0nvbawiu9KKP9gsogcgTPbRZemZ/oYa8++qjj0e2zBbkNJrNhzFU+T+N0qESDTkqn9bvnz0aSV5uZewO6dSRz4/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABE041063;
-	Mon,  2 Dec 2024 00:54:46 -0800 (PST)
-Received: from [10.57.90.186] (unknown [10.57.90.186])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A3BA3F71E;
-	Mon,  2 Dec 2024 00:54:13 -0800 (PST)
-Message-ID: <01205247-ffcd-439f-b00f-d8e70720d049@arm.com>
-Date: Mon, 2 Dec 2024 08:54:11 +0000
+	s=arc-20240116; t=1733129817; c=relaxed/simple;
+	bh=NXHbiP/N1Z8upZIqhXnScWC1Bjg/zkw9Myc8i00RqOo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mYZXJZyd97TF0VXWECfvN4AlJXxxY3tSvwgbHAWeqUFKH7ce781nrSrkUCcInGLYpbGCl6V0r3mZEB+9lprT1AgZ8hkKS96lvZO3hXVc6hF65CK8n4AAet3CFWpbgRa7MsgKfeCmpByikFMXA1iCxvZImlQFv8hr1jPe7DD8lcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CgYsO47/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28khHU029794;
+	Mon, 2 Dec 2024 08:56:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=fm57W6iEr1JyDnWdJkjpV4mOUWF1y4AcSwrMEljcbec=; b=Cg
+	YsO47/frZKbnpjIKssrjkqo6gAtwI19FZ5yqQhH++XBOxxA1jwTC7b4uYJ3WmwND
+	tEd4YfSRhEeWymYwU4uzppFtx9kKnPG9Ut/tbf/F2dsB1HksilGFee3kxioKZQRQ
+	+lJD7sKQ4T6UZyZEkbsxLTFfJtCLXF83nEVeE+6p+sG4KWAxag3pbp2ncP3gVb16
+	2ItlFpekkae+89JzC/g8ZwfinuroJv5lODe1L3UBMt3ssPFGLlACveLuneapTgNK
+	qcQmJqeASo4/xaQtG3km0WrkHN3Nq3vy/u8LeQPp+NlsS6LUbfIfFiQzh6BcR4nI
+	UwETYkY2yOUSu+fO6gtA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ta2v6er-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 08:56:52 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B28upQO031576
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 2 Dec 2024 08:56:51 GMT
+Received: from hu-sachgupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 2 Dec 2024 00:56:46 -0800
+From: Sachin Gupta <quic_sachgupt@quicinc.com>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
+        <quic_nguyenb@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <quic_mapa@quicinc.com>, <quic_narepall@quicinc.com>,
+        <quic_nitirawa@quicinc.com>, <quic_rampraka@quicinc.com>,
+        <quic_sachgupt@quicinc.com>, <quic_sartgarg@quicinc.com>
+Subject: [PATCH] mmc: sdhci-msm: Command Queue (CQ) Register changes for v5.0
+Date: Mon, 2 Dec 2024 14:26:31 +0530
+Message-ID: <20241202085631.13468-1-quic_sachgupt@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/43] arm64: Support for Arm CCA in KVM
-To: Itaru Kitayama <itaru.kitayama@linux.dev>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>, Jean-Philippe Brucker <jean-philippe@linaro.org>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <Z01BYOgsLXV5yULk@vm3>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <Z01BYOgsLXV5yULk@vm3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: eygyIt_0vp5NN-aCIZM50wJsn1lLXNx6
+X-Proofpoint-GUID: eygyIt_0vp5NN-aCIZM50wJsn1lLXNx6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412020079
 
-Hi Itaru,
+For SDHC version 5.0 onwards, ICE3.0 specific registers are added in
+CQ register space,  due to which few CQ registers(like CQ_VENDOR_GFG,
+CQ_CMD_DBG_RAM) are shifted. This change is to add right offset to 
+shifted registers.
 
-On 02/12/2024 05:10, Itaru Kitayama wrote:
-> On Fri, Oct 04, 2024 at 04:27:21PM +0100, Steven Price wrote:
->> This series adds support for running protected VMs using KVM under the
->> Arm Confidential Compute Architecture (CCA).
-...
-> 
-> On FVP, the v5+v7 kernel is unable to execute virt-manager:
-> 
-> Starting install...
-> Allocating 'test9.qcow2'                                    |    0 B  00:00 ...
-> Removing disk 'test9.qcow2'                                 |    0 B  00:00
-> ERROR    internal error: process exited while connecting to monitor: 2024-12-04T18:56:11.646168Z qemu-system-aarch64: -accel kvm: ioctl(KVM_CREATE_VM) failed: Invalid argument
-> 2024-12-04T18:56:11.646520Z qemu-system-aarch64: -accel kvm: failed to initialize kvm: Invalid argument
-> Domain installation does not appear to have been successful.
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Sarthak Garg <sartgarg@codeaurora.org>
+Signed-off-by: kamasali <quic_kamasali@quicinc.com>
+Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Can you check that the kernel has detected the RMM being available, you
-should have a message like below when the host kernel is booting:
-
-kvm [1]: RMI ABI version 1.0
-
-My guess is that you've got mismatched versions of the RMM and TF-A. The
-interface between those two components isn't stable and there were
-breaking changes fairly recently. And obviously if the RMM hasn't
-initialised successfully then confidential VMs won't be available.
-
-> Below is my virt-manager options:
-> 
-> virt-install --machine=virt --arch=aarch64 --name=test9 --memory=2048 --vcpu=1 --nographic --check all=off --features acpi=off --virt-type kvm --boot kernel=Image-cca,initrd=rootfs.cpio,kernel_args='earlycon console=ttyAMA0 rdinit=/sbin/init rw root=/dev/vda acpi=off' --qemu-commandline='-M virt,confidential-guest-support=rme0,gic-version=3 -cpu host -object rme-guest,id=rme0 -nodefaults' --disk size=4 --import --osinfo detect=on,require=off
-> 
-> Userland is Ubuntu 24.10, the VMM is Linaro's cca/2024-11-20:
-> 
-> https://git.codelinaro.org/linaro/dcap/qemu/-/tree/cca/2024-11-20?ref_type=heads
-
-I don't think this is the latest QEMU tree, Jean-Philippe posted an
-update last week:
-
-https://lore.kernel.org/qemu-devel/20241125195626.856992-2-jean-philippe@linaro.org/
-
-I'm not sure if there were any important updates there, but there are
-detailed instructions that might help.
-
-Regards,
-Steve
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index e00208535bd1..364e91049376 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -146,6 +146,8 @@
+ /* CQHCI vendor specific registers */
+ #define CQHCI_VENDOR_CFG1	0xA00
+ #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
++#define CQE_V5_VENDOR_CFG	0x900
++#define CQHCI_VENDOR_CFG	0x100
+ 
+ struct sdhci_msm_offset {
+ 	u32 core_hc_mode;
+@@ -290,6 +292,7 @@ struct sdhci_msm_host {
+ 	u32 dll_config;
+ 	u32 ddr_config;
+ 	bool vqmmc_enabled;
++	bool cqhci_offset_changed;
+ };
+ 
+ static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+@@ -2249,11 +2252,20 @@ static int sdhci_msm_start_signal_voltage_switch(struct mmc_host *mmc,
+ #define SDHCI_MSM_DUMP(f, x...) \
+ 	pr_err("%s: " DRIVER_NAME ": " f, mmc_hostname(host->mmc), ## x)
+ 
++#define DRV_NAME "cqhci"
++#define CQHCI_DUMP(f, x...) \
++	pr_err("%s: " DRV_NAME ": " f, mmc_hostname(host->mmc), ## x)
++
+ static void sdhci_msm_dump_vendor_regs(struct sdhci_host *host)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+ 	const struct sdhci_msm_offset *msm_offset = msm_host->offset;
++	struct cqhci_host *cq_host;
++	int offset = 0;
++
++	if (msm_host->cqhci_offset_changed)
++		offset = CQE_V5_VENDOR_CFG;
+ 
+ 	SDHCI_MSM_DUMP("----------- VENDOR REGISTER DUMP -----------\n");
+ 
+@@ -2273,6 +2285,8 @@ static void sdhci_msm_dump_vendor_regs(struct sdhci_host *host)
+ 		readl_relaxed(host->ioaddr +
+ 			msm_offset->core_vendor_spec_func2),
+ 		readl_relaxed(host->ioaddr + msm_offset->core_vendor_spec3));
++	CQHCI_DUMP("Vendor cfg 0x%08x\n",
++		readl_relaxed(cq_host->mmio + CQHCI_VENDOR_CFG + offset));
+ }
+ 
+ static const struct sdhci_msm_variant_ops mci_var_ops = {
+@@ -2584,6 +2598,14 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 	if (core_major == 1 && core_minor >= 0x49)
+ 		msm_host->updated_ddr_cfg = true;
+ 
++	/* For SDHC v5.0.0 onwards, ICE 3.0 specific registers are added
++	 * in CQ register space, due to which few CQ registers are
++	 * shifted. Set cqhci_offset_changed boolean to use updated address.
++	 */
++	if (core_major == 1 && core_minor >= 0x6B)
++		msm_host->cqhci_offset_changed = true;
++
++
+ 	if (core_major == 1 && core_minor >= 0x71)
+ 		msm_host->uses_tassadar_dll = true;
+ 
+-- 
+2.17.1
 
 
