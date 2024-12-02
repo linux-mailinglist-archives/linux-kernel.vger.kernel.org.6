@@ -1,833 +1,221 @@
-Return-Path: <linux-kernel+bounces-428326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B979E0CEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:21:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A78359E0CF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:22:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76CBF160644
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:22:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FD31DED6C;
+	Mon,  2 Dec 2024 20:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DtVLRUET"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2042.outbound.protection.outlook.com [40.107.20.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9F39283BB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:21:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4AE1DED68;
-	Mon,  2 Dec 2024 20:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i2XaXB04"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397001DE3BE
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 20:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733170871; cv=none; b=BSdzQ9Ub93o76LygPk8L2m6naiWNHPi3cmIifv1bNrgm3qccxXKhM1rxfRDgrlZ/ClJ8UwStrPZGBRBllormg4VdQY/EMx53ZLw0w2KX6pl+dlT15Y3wYE+OjxOEMRud+5Q+JI2FtpOrliW9DBbruD2AhlZ7EyfbFppxdbgQZ28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733170871; c=relaxed/simple;
-	bh=dAEln+wM2Y0tUS8n6EhKMG2D60a669n4yTpzPk8PVfw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=II/3T4WEHhMgD6aSl3WvwMAQe+KTZtdoJLDZTyOcVy0+KJp/fUJGuGphGGvF2nk8VE4AvjbiBq1OzF4WX1Q3j9OvUmNOhXYXhhDdKbVaMqW4AgQHvWlVa/ulPHnFtjQb2z0n7hQV5+RqmYnl6daNNaIzwvPW8B9Df6I8glKoEn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i2XaXB04; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7250efecda0so4070559b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 12:21:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733170868; x=1733775668; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/n0P7whLMi0XzEQM186r4DNbWC5OCPNUVjgL0U00tb0=;
-        b=i2XaXB04gqn3vhL3Tvbzg2Liszy4NZn63pJ4tTlM3PXA+j6nOzD52ZB/cUOTTHVPWe
-         itwdx/fEBaMKNtT11+5mhVV0rxN/AMJg4JkqmFgBRt5RpiRjgKQK+Vy0Miz0KF5PWXQL
-         zNX9Z5+OySvIiNAteoVe2lja5G2YGXIRSEfjcQpBlr346LSzRlXNyVyyO6hdlnz/sUMJ
-         mjS7AcbEO5Mr1VSUyoa4Q0tyD12ILB9u+tyMeAvVZehJEjmCCPn3tkk+qKbMtLymS2xk
-         UxcP0qrrbMhquBczASrGkMQKzYhqv8mMExSQw2+Qqif8RpTzHcDftv9/kZa+TfXRcT4X
-         10Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733170868; x=1733775668;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/n0P7whLMi0XzEQM186r4DNbWC5OCPNUVjgL0U00tb0=;
-        b=g32gxpVLHyoVvgeJjgqnBYV1PcpZsfxLy2PEskHAYwrNXX7nezSRa1btZu+ehm/+2m
-         Y6vxSVIRmi/+f7QJlcEXWSHGBSNyhBFCMchwL8Mxb08f/ERr33pt8zfeMXOSzJxf58LY
-         lKsUvFceieDotthJ3MrDdzWdhsqb37oZ2L0BIZLw914ZWdIc6A9dxPYBN2cOTkXsoh4a
-         UCBF5G1GLcCVrKACYxtngt5/n8AGEo9toDFGoM8CegWIQBjVYdLi0A2hPxeXst4bysX7
-         aYbzNoq+xA5l9Ignrzzsko5t4jRd0REowZNjUBofTw9IS1HAgy3jIkqu5Q06brpqyg5h
-         fvHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnFLEZ9MIXwIyHqbcpONhtvwOZicVpNvFJAnwMyA7taUC/1ZaU2yaRfycg5A26JxD+iSn9AdPsqS27c5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdZohZFLduV9RnX4F0QBjSabkwPPokt92uHgkqUqUNTeNM1Urh
-	JIjTSiR9wFsyS7pg/npUrwAlh6aaJGXaXXw+OPSv8daEjDUJLhifQspNv9JyrIJ7eoiDmA==
-X-Google-Smtp-Source: AGHT+IEUvT80GSquGtteZFhRp8ruF/z2nOJ6T66ZJnCBVJsHjTbZhKDi0Dyyhzwei7iwB2FZcV/I3enx
-X-Received: from pfba2.prod.google.com ([2002:a05:6a00:ac02:b0:724:e773:436d])
- (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1793:b0:724:edc5:4726
- with SMTP id d2e1a72fcca58-7253004dee1mr32562729b3a.13.1733170868409; Mon, 02
- Dec 2024 12:21:08 -0800 (PST)
-Date: Mon,  2 Dec 2024 20:20:58 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0A91DE3BE;
+	Mon,  2 Dec 2024 20:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733170940; cv=fail; b=YJio+TW+DPpzL/NNxUpekd9DZNc8ePDUhFG3juldgVwBLDcLhxqQ9tSNwiEToKkEc4hzD9nNJj8aDOe1hX+qL5uGgp/V3/ZRDja3csjwqsNVgj7X34y6QxZt9GarVH8gaRwpaZIeX+UQ3MJOFxifr53GyP6NjpaMgEsebzi6blY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733170940; c=relaxed/simple;
+	bh=76qwiCBEm0Rb/gbybVB0jSkHtxb7Hxzq38Xa1usdioA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=VW/M+34qSpKDwUBURrarkmjQ9K+f+04ShcvUBhvGM2NpkAxzYKq+8n8O1lmDWZOtNmg8gjDxx+idanCGWN6T0Q2f+zkQSGNmzOrEZVFzIxW1KPeoc+EFCW5UaHWe3RSf/2OjQ6HVSEHXCQmL1qR/ivYxH/944aDiQyni87Jxxas=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DtVLRUET; arc=fail smtp.client-ip=40.107.20.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T18RHMomNLK5+C8r/D5PcdGEBSsY+VlFgz5pnFt2PFH4jpOzW9uygtt5RleUKkbIYquOvGVKqa68Fny21xlZWD05/uPl7JCNzw/JoiDcHqBxBB+1B8VRoZDg8yTR+9k4NlJO8cAZtr00QnpxZtoODVM7UosNseqqF+Fyk8A1ZwOOZjUuBTeiOKQwzFuJU2loXOw6vbFU/imA2drj12FvrCKjRekJbAqllqz3K57J43uROD6fr6jMWXPYijDaK/ikGo8mvXW+lLrNfUDPYhJlqSnd21AxuUuzI5Y4Nh4fe40FkeWEUE/ywfQOB3deUgL1YngaGB6NfcZVJ14RvrHtag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EM7J18TNS4jIX3r7Waqpa/KAZoKkaFOBeHEkLktc0Aw=;
+ b=wSBVrE5p68KfOcUewPXdJp/xprZIuTS8+sP9+FTuYeoOUBXULuTiS9zEQ0bxGi2acD8c92VfqwSZCW+cNYgJ7FMLDId+tNgmHi/GWjEhzFmYPYpKxOVg+REkzKHxng1KkXu++ecQ4fryn5u82e1/e6J4x6KJItai03ho13Y/fUZu2EQfzVj0ZhIwsGdc42rXegvCiEb56yoC7Az1buyJmAqu8hNcIgZhzcwV+OmnVr7cAKcXZTQQ1n3WdnaZC6yXiisCf1+w0dbHVbaOTfi37uVX5KFEaO3aRQnY8F8WpJZgIDpKFjw1wE+QKlzR6jL7AibdyC7c6D923wZ5kTrn6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EM7J18TNS4jIX3r7Waqpa/KAZoKkaFOBeHEkLktc0Aw=;
+ b=DtVLRUET6rLGvlypMLAxxzMNtE2S1ajvtnuxoqBzVoc3q+l5AGJNW5MXVjTSu3nCWI37qwLsLczb8O3YE4kTzKIQHxSV3bF2HkA7a6FNACQR8UJsIU4msshujNsFWh+o+v19qnpRE87HlIntDXIdakpw+2jV4WcO5sXNC7y1BNgj/xblQaQKl4hnx793B+5fOPwfrWRkFkwhKKimuHAvEQUnAvBlcr+rgh0GwcEoIEGz8z9yONZKRPJ33s+fqn1LjLD66KahT8Vf3IEyv+CsGoqLXIoFRxBps6fTLmzva+3IekDrQHeR0xlMbikHzayWjMsUcgbJcgWS/MXwWXil7Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VE1PR04MB7230.eurprd04.prod.outlook.com (2603:10a6:800:1ab::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
+ 2024 20:22:11 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 20:22:11 +0000
+Date: Mon, 2 Dec 2024 15:21:57 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Pengfei Li <pengfei.li_1@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de,
+	catalin.marinas@arm.com, will@kernel.org, kernel@pengutronix.de,
+	festevam@gmail.com, joao.goncalves@toradex.com, marex@denx.de,
+	hvilleneuve@dimonoff.com, hiago.franco@toradex.com,
+	peng.fan@nxp.com, frieder.schrempf@kontron.de,
+	alexander.stein@ew.tq-group.com, m.othacehe@gmail.com,
+	mwalle@kernel.org, Max.Merchel@ew.tq-group.com,
+	quic_bjorande@quicinc.com, geert+renesas@glider.be,
+	dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
+	arnd@arndb.de, nfraprado@collabora.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, ping.bai@nxp.com,
+	ye.li@nxp.com, aisheng.dong@nxp.com, carlos.song@nxp.com
+Subject: Re: [PATCH v3 0/4] Add i.MX91 platform support
+Message-ID: <Z04W5chGq5TitB9f@lizhi-Precision-Tower-5810>
+References: <20241120094945.3032663-1-pengfei.li_1@nxp.com>
+ <Z01gfuVIIhl0rYwI@pengfei-OptiPlex-Tower-Plus-7010>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z01gfuVIIhl0rYwI@pengfei-OptiPlex-Tower-Plus-7010>
+X-ClientProxiedBy: SJ0PR13CA0074.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241202202058.3249628-1-fvdl@google.com>
-Subject: [PATCH] mm/hugetlb: optionally pre-zero hugetlb pages
-From: Frank van der Linden <fvdl@google.com>
-To: linux-mm@kvack.org, akpm@linux-foundation.org
-Cc: Muchun Song <muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, 
-	linux-kernel@vger.kernel.org, Frank van der Linden <fvdl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VE1PR04MB7230:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad52e275-31ce-475f-84c5-08dd130f006f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nVE4aEUr8yTU35HqKhSARgcEXLOf2pzuT7VlEhKLzzj8RxwddrmtTcxv/zgm?=
+ =?us-ascii?Q?A1g2C6u2zfqZv5HPnUQTHxsIMj4hbDfiFZKzqKVvTJ4MatOQkkJBDBa4mgNj?=
+ =?us-ascii?Q?8ve7IWzyxQp1GEIZ534QPujro9/Rh7WRnxakyr6R4rizLwFa4+VDpqs6u5Fi?=
+ =?us-ascii?Q?CcDCwb2dCl3bl74Sz/jOcAu4Fvi0hRT3AEQK9rLGngvUlfzxZGpMn8U7sX4B?=
+ =?us-ascii?Q?e7mAQnZPG7WIGYpyIXRpKDuT8VstOKUSdgj0JjkMOdQi+Q7aMLkmNm96Kdt2?=
+ =?us-ascii?Q?XPN6y+3Swm8BkTL+qqiyqnYWvUsjtty6B2vyNVFZWz480t1gojpQ97/+9Euj?=
+ =?us-ascii?Q?n1k+Y9tBsLC4CYVxPBgz2FgnNxQiOm3WLKUUKE3gq+npN6tkShBmWxbbN/di?=
+ =?us-ascii?Q?Mlc5uLanxuEgehTtwGsrEMdyxCsTz9kpjIuZCKn2Jj5XEergFNlNclFDYhxh?=
+ =?us-ascii?Q?0l4NUM1Izh7cTbJbh2E3pW7ZhjBoVPpNPogTPAMhBZl02VZiCAtFGrdJkVL0?=
+ =?us-ascii?Q?BTwHaC5r6ZebWj0P4O6snznGLcu2htZh0dwbBbKP7k7P0xoNjworIrIfsaGz?=
+ =?us-ascii?Q?DZ+BXWohv2arV9Q9irmOOYWAPinF13HLQoy+EbVFJPIthTyKQbUcbv6+FpyU?=
+ =?us-ascii?Q?FltnrQ6hUiOuHV7p1r2hwVuMOzvgX9Ch9BCoTDb8npegBkFuqCq40A9d3PWC?=
+ =?us-ascii?Q?AJXFfIRPoO2sHVK2lPJ808WCRrR29qJOMeoWym8zgTFIDtyQGmzW/pZep0Rv?=
+ =?us-ascii?Q?bNekkE9HksksvjzSpOTOxrJhF6p5FErCewMqSdo6vJLYv+vo34jHj4j/JNqk?=
+ =?us-ascii?Q?CBrZiDMFhbQJAiBl3Fy95cWfWh7ScopT9IHxdsQYLHIs3lK1vUsZSe/kcHF8?=
+ =?us-ascii?Q?9p4GM2UL4CZjLy4cmko7pUNC3pMw1PnVj18+K20do6K6PN75jfhTFHg15roT?=
+ =?us-ascii?Q?iRt3Z2t0OOrvLd9nHjKpWT+sqi7cC8Kxh3skthIO5WWR+GJ/9Wrh23zSEyqD?=
+ =?us-ascii?Q?xCAZ80Du2XqBJCqBCpebQc/QgbHwqen2GD2ghRGnTg9d/vf1buqPBYnEMm7w?=
+ =?us-ascii?Q?wt9Q5nnoanEuZEHFSV9sOLOO70p76pmJe1NiXqU5tP3IM/qQXE5vDeBrze6k?=
+ =?us-ascii?Q?IauKJOrCLHCFHiDb75PIj3JDXeWdXI29R9SFRHVOG5WI9UHeHTghIsjs+NGx?=
+ =?us-ascii?Q?YPZLvfsCMv493C3r3/5ZrZOUVAaQFCtZhKT2whiNVId3f1zIsy7scEf1Gsn+?=
+ =?us-ascii?Q?83/nS9aHT9LgIgJaCi31Sx8XEZ7cgP1r98bbz6xBrxcP1Z+xlnfOW4o8IjWB?=
+ =?us-ascii?Q?tNXfCIUrz/bvdGGFPaMVqyIk3OH36tS41EMcdhQLTxCjEa6ZwJnQHBlVykDu?=
+ =?us-ascii?Q?NUoSoD6a7jhRxrFmeAjSWsLfab1EF35iR/074WQJhwOG5KZSKg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1aMxOZbrJcXfHT5e7CD9ENRl5xygoP+cxNkUoIqPtk87JXWJVsYVcRT3b4VK?=
+ =?us-ascii?Q?dJsltWykDlb3w9c+ZJTmvGJ89pFCmwBhlBwB/PITrEl7wIWUqYEMu4GXjTaK?=
+ =?us-ascii?Q?FK/q7JdvHhffE+BxJvaLyu3QaHKRv6W52SSDCxiiwc+96U+JLZnaIyxuUqCx?=
+ =?us-ascii?Q?kX8QkRoyVcXO1xbeCEvicerUZYLveHXC7WHLAbqL985pNjirWGfaTQ/PYnuf?=
+ =?us-ascii?Q?IuN1DZP0Ve0lgF9pRbOzmfCoeBJDBCrGJnY1tVL93ZK7sSLoa7MhyXGtQ+K1?=
+ =?us-ascii?Q?xiH2/jKK+wyxBi+Vuy8Qer7edPQjt/8JYhlEA1QkEbauSPiSDhDuitDWi66/?=
+ =?us-ascii?Q?WinzWpNuInJnda0zq7AJ8A9gT7GqepedNvdO6lrlTl7e+CgagGPmY0mFC1U0?=
+ =?us-ascii?Q?WnQ++JB2lycugPS85aOho392IKDmtmhgLTdDmG2XumHD5bkQYROuFYHpcTQ3?=
+ =?us-ascii?Q?Tzg1G4hxJb5nszGYx7ArByi0j/TuNA60K3F3sIxVRx5WkdSBiV4ZUzI3kX/G?=
+ =?us-ascii?Q?3CZqxQr1uNQeiN7m5nLW2NyZ13zAMUQN6DyM/nmxR2fpHVhAwwScZRwx5Gdt?=
+ =?us-ascii?Q?+ex3GXYO3S68rvdDTPTaquHYNPW888UYVjDMH2r8d0YyaTVSGZiz0z3dbYi+?=
+ =?us-ascii?Q?MWctm6CROGld+DzQp3D/VvFcP1sC8RahNLu7FeHzsj6bngr3YQ/K/EVMU/rd?=
+ =?us-ascii?Q?L/NKxlzawLSa1utyJFWkOjHnEvrntEejy8dlbJWhgK2f56x3YX4YuNyebu3L?=
+ =?us-ascii?Q?M0MIqE0R+yHuLehlY2FJXuVdD9TGtL6HHaU3F8Uo1ivat2KeRv6vHgx6+u23?=
+ =?us-ascii?Q?eNi/5aOcPmKHKchuvh0gKD4ESsy0gL+CyO4ZL2rlrtKBCkAmFz/0kT1LyHwq?=
+ =?us-ascii?Q?kOewwLX3g2uZN5WV25w3yrNUg2FQMUlGYRGV21iNEPGwds+E3z0ADHPOk+IY?=
+ =?us-ascii?Q?watjjlY/Y3fG36gHHUxOOiMD3mZ/PJ7g4ywQTUSzYyKH5sMP+ZEZpQDd1kEV?=
+ =?us-ascii?Q?VOp6jtBYEkqq8vnBYI3WHHWY0q36n3sJuN9B8VnAoIAjJ6Sjr29wSn8J1B99?=
+ =?us-ascii?Q?uwq7cL3+S55FBvTMoFrsvFfnhJLyd7JPEwab0lQkpwRp/v4zBQzDaa5PF8nI?=
+ =?us-ascii?Q?uATDmni3FLbO9KPAYAWK2OrEdDqxrpZ4DUOF9aAbsMAauowABflhlEqAk8oM?=
+ =?us-ascii?Q?m4gl+cz/Zdkhq0ticUrZZuyMIaT3eoAky1/Lxdx7Pg78T5YzhOtJKJ7SdZLz?=
+ =?us-ascii?Q?bbPWzvcPHvuu5HEZjLLR+EevtgwhqBf7+8oWjiMHROp0Z+rC7gNs2PzIcxC+?=
+ =?us-ascii?Q?AfAX+GjVYAXzJJmBK78dASMf6sZzAt6aEitfiEPEp5oPZASPjdwS/xGRP2Nq?=
+ =?us-ascii?Q?+i0muWS499HST46CNQDe9FuCVWf/Dri14e9x2qTGbXzdH2j5G9oV9lr3ff0K?=
+ =?us-ascii?Q?KcOidSggVYzjasWCWtYIpI9pqLsDJ8nvm10RdvAJ17OWL7mRswNouWQbBaRA?=
+ =?us-ascii?Q?sY0E1WEZZUCKLo0UnWYwyXcyr8K2gDo7+fsy2cNp0CsiitZo2w+zqI0s3dJ3?=
+ =?us-ascii?Q?Xew/ncTfBacYorSCHsjVwDHUF3LT56vGLmi6K7ek?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad52e275-31ce-475f-84c5-08dd130f006f
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 20:22:11.2762
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Dswn9ToAiPu0yC3KMr77Gcya+rG75AzrWP4ya5QkKVy/CH8rzXTaMpY+hYl9wv9U3CdYLdD7r7PpIwjyG+9cLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7230
 
-Fresh hugetlb pages are zeroed out when they are faulted in,
-just like with all other page types. This can take up a good
-amount of time for larger page sizes (e.g. around 40
-milliseconds for a 1G page on a recent AMD-based system).
+On Mon, Dec 02, 2024 at 03:24:44PM +0800, Pengfei Li wrote:
+> On Wed, Nov 20, 2024 at 05:49:41PM +0800, Pengfei Li wrote:
+> > The design of the i.MX91 platform is very similar to i.MX93.
+> > The mainly difference between i.MX91 and i.MX93 is as follows:
+> > - i.MX91 removed some clocks and modified the names of some clocks.
+> > - i.MX91 only has one A core
+> > - i.MX91 has different pinmux
+> >
+> > Therefore, i.MX91 can reuse i.MX93 dtsi.
+> >
+> > ---
+> > Change for v3:
+> > - Add Conor's ack on patch #1
+> > - format imx91-11x11-evk.dts with the dt-format tool
+> > - add lpi2c1 node
+> > - link to v2: https://lore.kernel.org/all/20241118051541.2621360-1-pengfei.li_1@nxp.com/
+> >
+> > Pengfei Li (4):
+> >   dt-bindings: arm: fsl: Add i.MX91 11x11 evk board
+> >   arm64: dts: freescale: Add i.MX91 dtsi support
+> >   arm64: dts: freescale: Add i.MX91 11x11 EVK basic support
+> >   arm64: defconfig: enable i.MX91 pinctrl
+> >
+> >  .../devicetree/bindings/arm/fsl.yaml          |   6 +
+> >  arch/arm64/boot/dts/freescale/Makefile        |   1 +
+> >  .../boot/dts/freescale/imx91-11x11-evk.dts    | 875 ++++++++++++++++++
+> >  arch/arm64/boot/dts/freescale/imx91-pinfunc.h | 770 +++++++++++++++
+> >  arch/arm64/boot/dts/freescale/imx91.dtsi      |  70 ++
+> >  arch/arm64/configs/defconfig                  |   1 +
+> >  6 files changed, 1723 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/freescale/imx91-11x11-evk.dts
+> >  create mode 100644 arch/arm64/boot/dts/freescale/imx91-pinfunc.h
+> >  create mode 100644 arch/arm64/boot/dts/freescale/imx91.dtsi
+> >
+> > --
+> > 2.34.1
+> >
+> >
+>
+> Hi Rob Herring,
+>
+> I haven't received any comments from others about this version of the patch set, is this patch set applicable?
 
-This normally isn't a problem, since hugetlb pages are typically
-mapped by the application for a long time, and the initial
-delay when touching them isn't much of an issue.
+Pengfei:
 
-However, there are some use cases where a large number of hugetlb
-pages are touched when an application (such as a VM backed by these
-pages) starts. For 256 1G pages and 40ms per page, this would take
-10 seconds, a noticeable delay.
+	Conor Dooley have acked binding patch. Wait for guo shawn pick up
+these. v6.13-rc1 just create.
 
-To make the above scenario faster, optionally pre-zero hugetlb
-pages. This is done by a kthread for each hstate/node combination
-that is eligible for pre-zeroing.
+Frank
 
-If there are pages to be pre-zeroed, the kthread starts at the tail
-of the per-node free list, and zeroes out pages, walking the list
-backwards until done. To make this logic work, new allocations
-are always taken from the head, and freed pages are added to the tail.
-After a page has been pre-zeroed, it is moved to the head of the list.
 
-The kthread runs on init, and is also woken up when a page is put
-back on the free list.
-
-A thread that allocates a hugetlb page can examine the prezero
-flag to see whether it's been zeroed out already. If this is
-not set, it must do so itself, as before.
-
-For the rare corner where the kthread is busy zeroing out the only
-page available on the freelist, the caller must wait, which is done
-via a per-hstate wait queue.
-
-Prezeroing can be switched on or off per hugetlb page size (hstate)
-by a sysfs value, /sys/kernel/mm/hugepages/hugepage-XXX/prezero_enabled
-If this is set to 0 (default), no pre-zeroing is done. If
-it's set to 1, all hugetlb pages of that size are pre-zeroed.
-
-A new sysfs value, free_huge_pages_zero, tracks the number of
-free prezeroed pages per hstate.
-
-Some test results: a simple test with a loop that maps new
-hugetlb pages and touches them, run on an AMD Milan system,
-touching 512 1G pages. It records the time in microseconds
-that a new touch (fault) takes, and the number of hits,
-misses and waits.
-
-Without prezeroing		With prezeroing
-
-total time 20253322us		total time 760us
-average    39557us		average    1us
-min        38199us		min        0us
-max        41347us		max        10us
-prezero hits   0		prezero hits   512
-prezero misses 512		prezero misses 0
-prezero waits  0		prezero waits  0
-
-Repeating the loop 16 times, meaning the background zeroing is not yet
-complete when the loop restarts (so the worst case scenario for
-prezeroing with these parameters):
-
-Without prezeroing 		With prezeroing
-
-total time 321927564us		total time 111980668us
-average    39297us		average    13669us
-min        38174us		min        0us
-max        41935us		max        41876us
-prezero hits   0		prezero hits   5299
-prezero misses 8192		prezero misses 2877
-prezero waits  0		prezero waits  16
-
-So, even in this scenario, the average fault time is still quite
-a bit faster, and the maximum fault time is never bigger than
-without prezeroing.
-
-Signed-off-by: Frank van der Linden <fvdl@google.com>
----
- fs/hugetlbfs/inode.c    |   3 +-
- include/linux/hugetlb.h |  44 +++++
- mm/hugetlb.c            | 374 +++++++++++++++++++++++++++++++++++++++-
- mm/memory_hotplug.c     |   2 +
- 4 files changed, 413 insertions(+), 10 deletions(-)
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 5cf327337e22..7a6749959372 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -893,8 +893,7 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 			error = PTR_ERR(folio);
- 			goto out;
- 		}
--		folio_zero_user(folio, ALIGN_DOWN(addr, hpage_size));
--		__folio_mark_uptodate(folio);
-+		clear_hugetlb_folio(folio, addr);
- 		error = hugetlb_add_to_page_cache(folio, mapping, index);
- 		if (unlikely(error)) {
- 			restore_reserve_on_error(h, &pseudo_vma, addr, folio);
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index e4697539b665..31d56190a4fb 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -586,6 +586,17 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
-  * HPG_vmemmap_optimized - Set when the vmemmap pages of the page are freed.
-  * HPG_raw_hwp_unreliable - Set when the hugetlb page has a hwpoison sub-page
-  *     that is not tracked by raw_hwp_page list.
-+ * HPG_pre_zeroed - page was pre-zeroed, clear_huge_page not needed.
-+ *	Synchronization: hugetlb_lock held when set by pre-zero kthread.
-+ *	Only valid to read outside hugetlb_lock once the page is off
-+ *	the freelist, and HPG_zero_busy is clear. Always cleared when a
-+ *	page is put (back) on the freelist.
-+ * HPG_zero_busy - page is being zeroed by the pre-zero kthread.
-+ *	Synchronization: set and cleared by the pre-zero kthread with
-+ *	hugetlb_lock held. Access by others is read-only. Once the page
-+ *	is off the freelist, this can only change from set -> clear,
-+ *	which the new page owner must wait for. Always cleared
-+ *	when a page is put (back) on the freelist.
-  */
- enum hugetlb_page_flags {
- 	HPG_restore_reserve = 0,
-@@ -594,6 +605,8 @@ enum hugetlb_page_flags {
- 	HPG_freed,
- 	HPG_vmemmap_optimized,
- 	HPG_raw_hwp_unreliable,
-+	HPG_pre_zeroed,
-+	HPG_zero_busy,
- 	__NR_HPAGEFLAGS,
- };
- 
-@@ -653,6 +666,8 @@ HPAGEFLAG(Temporary, temporary)
- HPAGEFLAG(Freed, freed)
- HPAGEFLAG(VmemmapOptimized, vmemmap_optimized)
- HPAGEFLAG(RawHwpUnreliable, raw_hwp_unreliable)
-+HPAGEFLAG(PreZeroed, pre_zeroed)
-+HPAGEFLAG(ZeroBusy, zero_busy)
- 
- #ifdef CONFIG_HUGETLB_PAGE
- 
-@@ -678,6 +693,19 @@ struct hstate {
- 	unsigned int nr_huge_pages_node[MAX_NUMNODES];
- 	unsigned int free_huge_pages_node[MAX_NUMNODES];
- 	unsigned int surplus_huge_pages_node[MAX_NUMNODES];
-+
-+	unsigned long free_huge_pages_zero;
-+	unsigned int free_huge_pages_zero_node[MAX_NUMNODES];
-+
-+	/* Wait queue for the prezero thread */
-+	wait_queue_head_t hzerod_wait[MAX_NUMNODES];
-+	/* Queue to wait for a hugetlb folio that is being prezeroed */
-+	wait_queue_head_t dqzero_wait[MAX_NUMNODES];
-+	/* Prezero threads (one per node) */
-+	struct task_struct *hzerod[MAX_NUMNODES];
-+
-+	bool prezero_enabled;
-+
- 	char name[HSTATE_NAME_LEN];
- };
- 
-@@ -699,6 +727,7 @@ int hugetlb_add_to_page_cache(struct folio *folio, struct address_space *mapping
- 			pgoff_t idx);
- void restore_reserve_on_error(struct hstate *h, struct vm_area_struct *vma,
- 				unsigned long address, struct folio *folio);
-+void clear_hugetlb_folio(struct folio *folio, unsigned long address);
- 
- /* arch callback */
- int __init __alloc_bootmem_huge_page(struct hstate *h, int nid);
-@@ -1035,6 +1064,9 @@ void hugetlb_unregister_node(struct node *node);
-  */
- bool is_raw_hwpoison_page_in_hugepage(struct page *page);
- 
-+void khzerod_run(int nid);
-+void khzerod_stop(int nid);
-+
- #else	/* CONFIG_HUGETLB_PAGE */
- struct hstate {};
- 
-@@ -1239,6 +1271,18 @@ static inline bool hugetlbfs_pagecache_present(
- {
- 	return false;
- }
-+
-+static inline void khzerod_run(int nid)
-+{
-+}
-+
-+static inline void khzerod_stop(int nid)
-+{
-+}
-+
-+static inline void clear_hugetlb_folio(struct folio *folio, unsigned long address)
-+{
-+}
- #endif	/* CONFIG_HUGETLB_PAGE */
- 
- static inline spinlock_t *huge_pte_lock(struct hstate *h,
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 190fa05635f4..0c9a80851bf5 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -44,6 +44,8 @@
- #include <linux/io.h>
- #include <linux/hugetlb.h>
- #include <linux/hugetlb_cgroup.h>
-+#include <linux/memcontrol.h>
-+#include <linux/memory_hotplug.h>
- #include <linux/node.h>
- #include <linux/page_owner.h>
- #include "internal.h"
-@@ -68,6 +70,20 @@ static bool __initdata parsed_valid_hugepagesz = true;
- static bool __initdata parsed_default_hugepagesz;
- static unsigned int default_hugepages_in_node[MAX_NUMNODES] __initdata;
- 
-+static void khzerod_wakeup_node(struct hstate *h, int nid);
-+static void hpage_wait_zerobusy(struct hstate *h, struct folio *folio);
-+static void khzerod_run_all(void);
-+static void khzerod_run_hstate(struct hstate *h);
-+
-+/*
-+ * Mutex to protect prezero kthread stopping / starting.
-+ * This is really per <hstate,nid> tuple, but since this
-+ * only happens when prezeroing is enabled/disabled via
-+ * sysfs (rarely), a mutex per <hstate,nid> would be
-+ * overkill.
-+ */
-+static DEFINE_MUTEX(prezero_chg_lock);
-+
- /*
-  * Protects updates to hugepage_freelists, hugepage_activelist, nr_huge_pages,
-  * free_huge_pages, and surplus_huge_pages.
-@@ -1309,6 +1325,16 @@ static bool vma_has_reserves(struct vm_area_struct *vma, long chg)
- 	return false;
- }
- 
-+/*
-+ * Clear flags for either a fresh page or one that is being
-+ * added to the free list.
-+ */
-+static inline void prep_clear_prezero(struct folio *folio)
-+{
-+	folio_clear_hugetlb_pre_zeroed(folio);
-+	folio_clear_hugetlb_zero_busy(folio);
-+}
-+
- static void enqueue_hugetlb_folio(struct hstate *h, struct folio *folio)
- {
- 	int nid = folio_nid(folio);
-@@ -1316,14 +1342,16 @@ static void enqueue_hugetlb_folio(struct hstate *h, struct folio *folio)
- 	lockdep_assert_held(&hugetlb_lock);
- 	VM_BUG_ON_FOLIO(folio_ref_count(folio), folio);
- 
--	list_move(&folio->lru, &h->hugepage_freelists[nid]);
-+	list_move_tail(&folio->lru, &h->hugepage_freelists[nid]);
- 	h->free_huge_pages++;
- 	h->free_huge_pages_node[nid]++;
-+	prep_clear_prezero(folio);
- 	folio_set_hugetlb_freed(folio);
-+	khzerod_wakeup_node(h, nid);
- }
- 
--static struct folio *dequeue_hugetlb_folio_node_exact(struct hstate *h,
--								int nid)
-+static struct folio *dequeue_hugetlb_folio_node_exact(struct hstate *h, int nid,
-+		gfp_t gfp_mask)
- {
- 	struct folio *folio;
- 	bool pin = !!(current->flags & PF_MEMALLOC_PIN);
-@@ -1333,6 +1361,16 @@ static struct folio *dequeue_hugetlb_folio_node_exact(struct hstate *h,
- 		if (pin && !folio_is_longterm_pinnable(folio))
- 			continue;
- 
-+		/*
-+		 * This shouldn't happen, as hugetlb pages are never allocated
-+		 * with GFP_ATOMIC. But be paranoid and check for it, as
-+		 * a zero_busy page might cause a sleep later in
-+		 * hpage_wait_zerobusy().
-+		 */
-+		if (WARN_ON_ONCE(folio_test_hugetlb_zero_busy(folio) &&
-+					!gfpflags_allow_blocking(gfp_mask)))
-+			continue;
-+
- 		if (folio_test_hwpoison(folio))
- 			continue;
- 
-@@ -1341,6 +1379,12 @@ static struct folio *dequeue_hugetlb_folio_node_exact(struct hstate *h,
- 		folio_clear_hugetlb_freed(folio);
- 		h->free_huge_pages--;
- 		h->free_huge_pages_node[nid]--;
-+		if (folio_test_hugetlb_pre_zeroed(folio) ||
-+		    folio_test_hugetlb_zero_busy(folio)) {
-+			h->free_huge_pages_zero_node[nid]--;
-+			h->free_huge_pages_zero--;
-+		}
-+
- 		return folio;
- 	}
- 
-@@ -1377,7 +1421,7 @@ static struct folio *dequeue_hugetlb_folio_nodemask(struct hstate *h, gfp_t gfp_
- 			continue;
- 		node = zone_to_nid(zone);
- 
--		folio = dequeue_hugetlb_folio_node_exact(h, node);
-+		folio = dequeue_hugetlb_folio_node_exact(h, node, gfp_mask);
- 		if (folio)
- 			return folio;
- 	}
-@@ -1605,6 +1649,17 @@ static void remove_hugetlb_folio(struct hstate *h, struct folio *folio,
- 		folio_clear_hugetlb_freed(folio);
- 		h->free_huge_pages--;
- 		h->free_huge_pages_node[nid]--;
-+		folio_clear_hugetlb_freed(folio);
-+	}
-+	/*
-+	 * Adjust the zero page counters now. Note that
-+	 * if a page is currently being zeroed, that
-+	 * will be waited for in update_and_free_page()
-+	 */
-+	if (folio_test_hugetlb_pre_zeroed(folio) ||
-+	    folio_test_hugetlb_zero_busy(folio)) {
-+		h->free_huge_pages_zero--;
-+		h->free_huge_pages_zero_node[nid]--;
- 	}
- 	if (adjust_surplus) {
- 		h->surplus_huge_pages--;
-@@ -1658,6 +1713,8 @@ static void __update_and_free_hugetlb_folio(struct hstate *h,
- {
- 	bool clear_flag = folio_test_hugetlb_vmemmap_optimized(folio);
- 
-+	VM_BUG_ON_FOLIO(folio_test_hugetlb_zero_busy(folio), folio);
-+
- 	if (hstate_is_gigantic(h) && !gigantic_page_runtime_supported())
- 		return;
- 
-@@ -1743,6 +1800,7 @@ static void free_hpage_workfn(struct work_struct *work)
- 		 */
- 		h = size_to_hstate(folio_size(folio));
- 
-+		hpage_wait_zerobusy(h, folio);
- 		__update_and_free_hugetlb_folio(h, folio);
- 
- 		cond_resched();
-@@ -1759,7 +1817,8 @@ static inline void flush_free_hpage_work(struct hstate *h)
- static void update_and_free_hugetlb_folio(struct hstate *h, struct folio *folio,
- 				 bool atomic)
- {
--	if (!folio_test_hugetlb_vmemmap_optimized(folio) || !atomic) {
-+	if ((!folio_test_hugetlb_zero_busy(folio) &&
-+	     !folio_test_hugetlb_vmemmap_optimized(folio)) || !atomic) {
- 		__update_and_free_hugetlb_folio(h, folio);
- 		return;
- 	}
-@@ -1974,6 +2033,8 @@ static void prep_new_hugetlb_folio(struct hstate *h, struct folio *folio, int ni
- {
- 	__prep_new_hugetlb_folio(h, folio);
- 	spin_lock_irq(&hugetlb_lock);
-+	folio_clear_hugetlb_freed(folio);
-+	prep_clear_prezero(folio);
- 	__prep_account_new_huge_page(h, nid);
- 	spin_unlock_irq(&hugetlb_lock);
- }
-@@ -2419,6 +2480,13 @@ struct folio *alloc_hugetlb_folio_nodemask(struct hstate *h, int preferred_nid,
- 						preferred_nid, nmask);
- 		if (folio) {
- 			spin_unlock_irq(&hugetlb_lock);
-+			/*
-+			 * The contents of this page will be completely
-+			 * overwritten immediately, as its a migration
-+			 * target, so no clearing is needed. Do wait in
-+			 * case khzerod was working on it, though.
-+			 */
-+			hpage_wait_zerobusy(h, folio);
- 			return folio;
- 		}
- 	}
-@@ -3066,6 +3134,8 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 
- 	spin_unlock_irq(&hugetlb_lock);
- 
-+	hpage_wait_zerobusy(h, folio);
-+
- 	hugetlb_set_folio_subpool(folio, spool);
- 
- 	map_commit = vma_commit_reservation(h, vma, addr);
-@@ -3503,6 +3573,8 @@ static void __init hugetlb_init_hstates(void)
- 				h->demote_order = h2->order;
- 		}
- 	}
-+
-+	khzerod_run_all();
- }
- 
- static void __init report_hugepages(void)
-@@ -4184,15 +4256,72 @@ static ssize_t demote_size_store(struct kobject *kobj,
- }
- HSTATE_ATTR(demote_size);
- 
-+static ssize_t free_hugepages_zero_show(struct kobject *kobj,
-+					struct kobj_attribute *attr, char *buf)
-+{
-+	struct hstate *h;
-+	unsigned long free_huge_pages_zero;
-+	int nid;
-+
-+	h = kobj_to_hstate(kobj, &nid);
-+	if (nid == NUMA_NO_NODE)
-+		free_huge_pages_zero = h->free_huge_pages_zero;
-+	else
-+		free_huge_pages_zero = h->free_huge_pages_zero_node[nid];
-+
-+	return sprintf(buf, "%lu\n", free_huge_pages_zero);
-+}
-+HSTATE_ATTR_RO(free_hugepages_zero);
-+
-+static ssize_t prezero_enabled_show(struct kobject *kobj,
-+					 struct kobj_attribute *attr,
-+					 char *buf)
-+{
-+	struct hstate *h = kobj_to_hstate(kobj, NULL);
-+
-+	return sprintf(buf, "%d\n", h->prezero_enabled ? 1 : 0);
-+}
-+
-+static ssize_t prezero_enabled_store(struct kobject *kobj,
-+					  struct kobj_attribute *attr,
-+					  const char *buf, size_t count)
-+{
-+	struct hstate *h;
-+	int err;
-+	long val;
-+	bool prezero_enabled;
-+
-+	err = kstrtol(buf, 10, &val);
-+	if (val != 0 && val != 1)
-+		return -EINVAL;
-+
-+	prezero_enabled = !!val;
-+
-+	h = kobj_to_hstate(kobj, NULL);
-+	if (prezero_enabled == h->prezero_enabled)
-+		return count;
-+
-+	h->prezero_enabled = prezero_enabled;
-+
-+	mem_hotplug_begin();
-+	khzerod_run_hstate(h);
-+	mem_hotplug_done();
-+
-+	return count;
-+}
-+HSTATE_ATTR(prezero_enabled);
-+
- static struct attribute *hstate_attrs[] = {
- 	&nr_hugepages_attr.attr,
- 	&nr_overcommit_hugepages_attr.attr,
- 	&free_hugepages_attr.attr,
- 	&resv_hugepages_attr.attr,
- 	&surplus_hugepages_attr.attr,
-+	&free_hugepages_zero_attr.attr,
- #ifdef CONFIG_NUMA
- 	&nr_hugepages_mempolicy_attr.attr,
- #endif
-+	&prezero_enabled_attr.attr,
- 	NULL,
- };
- 
-@@ -4265,6 +4394,7 @@ static struct node_hstate node_hstates[MAX_NUMNODES];
- static struct attribute *per_node_hstate_attrs[] = {
- 	&nr_hugepages_attr.attr,
- 	&free_hugepages_attr.attr,
-+	&free_hugepages_zero_attr.attr,
- 	&surplus_hugepages_attr.attr,
- 	NULL,
- };
-@@ -4501,6 +4631,232 @@ bool __init __attribute((weak)) arch_hugetlb_valid_size(unsigned long size)
- 	return size == HPAGE_SIZE;
- }
- 
-+struct khzerod_info {
-+	struct hstate *h;
-+	int nid;
-+};
-+
-+/*
-+ * Clear a hugetlb page.
-+ *
-+ * The caller has already made sure that the page is not
-+ * being actively zeroed out in the background.
-+ *
-+ * If it wasn't zeroed out, do it ourselves.
-+ */
-+void clear_hugetlb_folio(struct folio *folio, unsigned long address)
-+{
-+	if (!folio_test_hugetlb_pre_zeroed(folio))
-+		folio_zero_user(folio, address);
-+
-+	__folio_mark_uptodate(folio);
-+}
-+
-+/*
-+ * Once a page has been taken off the freelist, the new page owner
-+ * must wait for the pre-zero kthread to finish if it happens
-+ * to be working on this page (which should be rare).
-+ */
-+static void hpage_wait_zerobusy(struct hstate *h, struct folio *folio)
-+{
-+	if (!folio_test_hugetlb_zero_busy(folio))
-+		return;
-+
-+	spin_lock_irq(&hugetlb_lock);
-+
-+	wait_event_cmd(h->dqzero_wait[folio_nid(folio)],
-+		       !folio_test_hugetlb_zero_busy(folio),
-+		       spin_unlock_irq(&hugetlb_lock),
-+		       spin_lock_irq(&hugetlb_lock));
-+
-+	spin_unlock_irq(&hugetlb_lock);
-+}
-+
-+/*
-+ * This per-node-per-hstate kthread pre-zeroes pages that are on
-+ * the freelist. They remain on the freelist while this is being
-+ * done. When pre-zeroing is done, they are moved to the head
-+ * of the list.
-+ *
-+ * Pages are left on the freelist because an allocation should not
-+ * fail just because the page is being prezeroed. In the rare
-+ * corner case that a page that is being worked on by this
-+ * thread is taken as part of an allocation, the caller will
-+ * wait for the prezero to finish (see hpage_wait_zerobusy).
-+ */
-+static int khzerod(void *p)
-+{
-+	struct khzerod_info *ki = p;
-+	struct hstate *h = ki->h;
-+	int nid = ki->nid;
-+	unsigned int *freep, *zerop;
-+	struct folio *folio;
-+	const struct cpumask *cpumask = cpumask_of_node(nid);
-+	struct list_head *freelist;
-+
-+	if (!cpumask_empty(cpumask))
-+		set_cpus_allowed_ptr(current, cpumask);
-+
-+	freep = &h->free_huge_pages_node[nid];
-+	zerop = &h->free_huge_pages_zero_node[nid];
-+	freelist = &h->hugepage_freelists[nid];
-+
-+	do {
-+		wait_event_interruptible(h->hzerod_wait[nid],
-+				*zerop < *freep || kthread_should_stop());
-+
-+		if (kthread_should_stop())
-+			break;
-+
-+		spin_lock_irq(&hugetlb_lock);
-+		if (*zerop == *freep || list_empty(freelist)) {
-+			spin_unlock_irq(&hugetlb_lock);
-+			continue;
-+		}
-+
-+		folio = list_last_entry(freelist, struct folio, lru);
-+		if (folio_test_hugetlb_pre_zeroed(folio)) {
-+			spin_unlock_irq(&hugetlb_lock);
-+			continue;
-+		}
-+
-+		folio_set_hugetlb_zero_busy(folio);
-+		/*
-+		 * Incrementing this here is a bit of a fib, since
-+		 * the page hasn't been cleared yet (it will be done
-+		 * immediately after dropping the lock below). But
-+		 * it keeps the count consistent with the overall
-+		 * free count in case the page gets taken off the
-+		 * freelist while we're working on it.
-+		 */
-+		(*zerop)++;
-+		h->free_huge_pages_zero++;
-+		spin_unlock_irq(&hugetlb_lock);
-+
-+		/*
-+		 * HWPoison pages may show up on the freelist.
-+		 * Don't try to zero it out, but do set the flag
-+		 * and counts, so that we don't consider it again.
-+		 */
-+		if (!folio_test_hwpoison(folio))
-+			folio_zero_user(folio, 0);
-+
-+		spin_lock_irq(&hugetlb_lock);
-+		folio_set_hugetlb_pre_zeroed(folio);
-+		folio_clear_hugetlb_zero_busy(folio);
-+
-+		/*
-+		 * If the page is still on the free list, move
-+		 * it to the head.
-+		 */
-+		if (folio_test_hugetlb_freed(folio))
-+			list_move(&folio->lru, freelist);
-+
-+		/*
-+		 * If someone was waiting for the zero to
-+		 * finish, wake them up.
-+		 */
-+		if (waitqueue_active(&h->dqzero_wait[nid]))
-+			wake_up(&h->dqzero_wait[nid]);
-+		spin_unlock_irq(&hugetlb_lock);
-+
-+	} while (1);
-+
-+	kfree(ki);
-+	return 0;
-+}
-+
-+static void khzerod_run_hstate_nid(struct hstate *h, int nid)
-+{
-+	struct khzerod_info *ki;
-+	struct task_struct *t;
-+
-+	mutex_lock(&prezero_chg_lock);
-+
-+	if (!h->prezero_enabled) {
-+		if (h->hzerod[nid] != NULL) {
-+			kthread_stop(h->hzerod[nid]);
-+			h->hzerod[nid] = NULL;
-+		}
-+		goto out;
-+	}
-+
-+	if (h->hzerod[nid] != NULL)
-+		goto out;
-+
-+	ki = kmalloc(sizeof(*ki), GFP_KERNEL);
-+	if (ki == NULL)
-+		goto out;
-+	ki->h = h;
-+	ki->nid = nid;
-+	t = kthread_run(khzerod, ki, "khzerod%d-%lukB",
-+			nid, huge_page_size(h) / 1024);
-+	if (IS_ERR(t)) {
-+		kfree(ki);
-+		pr_err("could not run khzerod on node %d for size %lukB\n",
-+		       nid, huge_page_size(h) / 1024);
-+	} else
-+		h->hzerod[nid] = t;
-+
-+out:
-+	mutex_unlock(&prezero_chg_lock);
-+}
-+
-+static void khzerod_stop_hstate_nid(struct hstate *h, int nid)
-+{
-+	mutex_lock(&prezero_chg_lock);
-+
-+	if (h->hzerod[nid] != NULL) {
-+		kthread_stop(h->hzerod[nid]);
-+		h->hzerod[nid] = NULL;
-+	}
-+
-+	mutex_unlock(&prezero_chg_lock);
-+}
-+
-+/*
-+ * (re-)run all pre-zero kthreads for a node. kthreads
-+ * that are currently running, but should no longer run
-+ * (because the prezero enable flag was changed) are stopped.
-+ */
-+void khzerod_run(int nid)
-+{
-+	struct hstate *h;
-+
-+	for_each_hstate(h)
-+		khzerod_run_hstate_nid(h, nid);
-+}
-+
-+static void khzerod_run_all(void)
-+{
-+	int nid;
-+
-+	for_each_node_state(nid, N_MEMORY)
-+		khzerod_run(nid);
-+}
-+
-+static void khzerod_run_hstate(struct hstate *h)
-+{
-+	int nid;
-+
-+	for_each_node_state(nid, N_MEMORY)
-+		khzerod_run_hstate_nid(h, nid);
-+}
-+
-+void khzerod_stop(int nid)
-+{
-+	struct hstate *h;
-+
-+	for_each_hstate(h)
-+		khzerod_stop_hstate_nid(h, nid);
-+}
-+
-+static void khzerod_wakeup_node(struct hstate *h, int nid)
-+{
-+	if (h->hzerod[nid])
-+		wake_up(&h->hzerod_wait[nid]);
-+}
-+
- void __init hugetlb_add_hstate(unsigned int order)
- {
- 	struct hstate *h;
-@@ -4515,8 +4871,11 @@ void __init hugetlb_add_hstate(unsigned int order)
- 	__mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
- 	h->order = order;
- 	h->mask = ~(huge_page_size(h) - 1);
--	for (i = 0; i < MAX_NUMNODES; ++i)
-+	for (i = 0; i < MAX_NUMNODES; ++i) {
- 		INIT_LIST_HEAD(&h->hugepage_freelists[i]);
-+		init_waitqueue_head(&h->hzerod_wait[i]);
-+		init_waitqueue_head(&h->dqzero_wait[i]);
-+	}
- 	INIT_LIST_HEAD(&h->hugepage_activelist);
- 	h->next_nid_to_alloc = first_memory_node;
- 	h->next_nid_to_free = first_memory_node;
-@@ -6139,8 +6498,7 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
- 				ret = 0;
- 			goto out;
- 		}
--		folio_zero_user(folio, vmf->real_address);
--		__folio_mark_uptodate(folio);
-+		clear_hugetlb_folio(folio, vmf->address);
- 		new_folio = true;
- 
- 		if (vma->vm_flags & VM_MAYSHARE) {
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 621ae1015106..8398e4d0130d 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1217,6 +1217,7 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
- 
- 	kswapd_run(nid);
- 	kcompactd_run(nid);
-+	khzerod_run(nid);
- 
- 	writeback_set_ratelimit();
- 
-@@ -2092,6 +2093,7 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
- 	if (arg.status_change_nid >= 0) {
- 		kcompactd_stop(node);
- 		kswapd_stop(node);
-+		khzerod_stop(node);
- 	}
- 
- 	writeback_set_ratelimit();
--- 
-2.47.0.338.g60cca15819-goog
-
+>
+> BR,
+> Pengfei Li
+>
 
