@@ -1,85 +1,105 @@
-Return-Path: <linux-kernel+bounces-428082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3C49E0C37
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:35:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 222DA9E0C26
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:30:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD5BFB85D82
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:32:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EF23B86F6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763201DE2D2;
-	Mon,  2 Dec 2024 17:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E651DC19A;
+	Mon,  2 Dec 2024 17:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpGSM3Xr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rn1qsH8V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0C018784A;
-	Mon,  2 Dec 2024 17:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9A61DB37B;
+	Mon,  2 Dec 2024 17:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733160678; cv=none; b=oXfzp7mpodaCYCre92Eh5c3vdB9GNzbevs9JM3a2NtQAzvDkjVttz6oM7C8eJARFIxgfW99GaRlkX5ZTGZ/6KPWCt/zKpOuFL9pd1+djP22vcnNQhfXIcWB9l6kS6DyGiCrSYO4OnCcB5hXq3Drg1uzphjarV7Hk2+VOqSMhBwA=
+	t=1733160752; cv=none; b=FvzUX3EfxxmgaZZBW/eo7qlJKlnaJSygcwXR+A3w1S96mxx4Y818m7ursJfQH86paqMJ+o+vk/54kngm5LkIfbev1Jqb1KUG3ZDoTD7v/SROlMXXZVNysGS0cL/g94cI1/JTnyK2IQCdoCqF8n4iUGJ5eGXTFxH3zh86r8fdF9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733160678; c=relaxed/simple;
-	bh=L/oZvplMWyjYBTTB3dGyV8dscK2uL6BBwnEFQQl+ZXU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bgMQO8qJ4Hp5DT5etODSzfVrzyCT+RTc9QTAkYpzTM4Ku8pDuZ7Osnz2MhElpLWY+ufdJDGhO9bkZxPyNYJnZSB03j1YsdpUwSEaTtPqH8/w2IB8Y1jyl9FYtx63QOXiF4Lb+s1Z/EnOnTKzf5VrBFr99iB6uBHJ+rCVqeeU8eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpGSM3Xr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7305C4CED1;
-	Mon,  2 Dec 2024 17:31:15 +0000 (UTC)
+	s=arc-20240116; t=1733160752; c=relaxed/simple;
+	bh=w6qO0Ed/ublU69cCli1C54Cmd72s6/ejpFNGotr9uzI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Q03l5fuPQqcLrE4CzIgNALXOwsT2sbYVqtVK5bBeA/4B6MPvXR8J8Q/qQrGlKunz3rQQThpjI4O2VgvC4hM1w1nfD6xXNz1P2hhfTb3dQmkw6qbXEHkyeTLzG8GhcieWJR9Brz14y9S5XKAqSMrkNX8qT5oOlGsvFSgyi+9E9rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rn1qsH8V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B186C4CED1;
+	Mon,  2 Dec 2024 17:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733160678;
-	bh=L/oZvplMWyjYBTTB3dGyV8dscK2uL6BBwnEFQQl+ZXU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YpGSM3Xra2ozAuzs8ny8KKPd0JrUMqMNXJqLfrCrrsb/HxMW2NyNUSk+4SMzaxM4A
-	 Q5CcAigbgxl/lATHtWVlqHv7ZYzfaXX6efhUeZhNIdlzUq3Usp6DdkZt0B7z6iTpHK
-	 xvaU7TAWQhDZ1p+I+YFU8P0dn1ceFfjCMvaN7WCKAqDXN7id/zbQ/yGBn+LYCTl70K
-	 l6t4w56FSE/lyXgREkAlYwdNl2TlrmO/OevmUjL4k3X/AvTryYj6Skvb6RQQ3Rn0ID
-	 WS33NFReBiCnkrDXq0dLiksoyJT+fwLxlIT0nmBjAVTsNTb/ilSORU9V9QSa+j6o8M
-	 B8o+LPQxQQDWw==
-From: Vinod Koul <vkoul@kernel.org>
-To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
- Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
- Michal Simek <michal.simek@amd.com>, dmaengine@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241107114656.17611-1-colin.i.king@gmail.com>
-References: <20241107114656.17611-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] dmaengine: xilinx: xdma: remove redundant check
- on ret
-Message-Id: <173316067527.538095.8720061974027462596.b4-ty@kernel.org>
-Date: Mon, 02 Dec 2024 23:01:15 +0530
+	s=k20201202; t=1733160751;
+	bh=w6qO0Ed/ublU69cCli1C54Cmd72s6/ejpFNGotr9uzI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Rn1qsH8VMjXlRnQHHa9Dv++TvuG6MSvi1tGugzebcjkhjuluwxukyhCupbFV3tNGs
+	 HiJXBOa2SA9qR24iA06crMO49iD1hjRj6xOrgv+KM+hAXv5H4KqKCwuQXsek6+ZB5Z
+	 5mD8+l/gJywwdqKjA6MlYbOGTaNrnv9UytiEwNGtyBgMFTu9zUz4kHsNs3BJ4/yilz
+	 eui4ZFhp27082Kjc4dl1tu+BzDq1HMxknSaa+wXulCEl7FoMhZKX2w9puG2tAJH80/
+	 9bKhZL4ih+nN2yEb7em2KP/SjlLMc5WYGWIyZG/+G+B46RzbSvaiG7TTO9YlgPLwOW
+	 tuwHh3GKVUGSA==
+Date: Mon, 02 Dec 2024 11:32:29 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org, 
+ devicetree@vger.kernel.org, David Jander <david@protonic.nl>, 
+ Richard Weinberger <richard@nod.at>, kernel@pengutronix.de, 
+ Vignesh Raghavendra <vigneshr@ti.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Heiko Schocher <hs@denx.de>, 
+ linux-kernel@vger.kernel.org
+To: Jonas Rebmann <jre@pengutronix.de>
+In-Reply-To: <20241202-mb85rs128ty-v1-2-a660b6490dc8@pengutronix.de>
+References: <20241202-mb85rs128ty-v1-0-a660b6490dc8@pengutronix.de>
+ <20241202-mb85rs128ty-v1-2-a660b6490dc8@pengutronix.de>
+Message-Id: <173316074958.3037004.1498863519585640694.robh@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: mtd: mchp48l640 add mb85rs128ty
+ compatible
 
 
-On Thu, 07 Nov 2024 11:46:56 +0000, Colin Ian King wrote:
-> The variable ret is being checked for an error and returning ret
-> and the following statement returns ret too. The if check is
-> redundant, and remove it. Just return the value returned from
-> the call to regmap_write.
+On Mon, 02 Dec 2024 17:35:21 +0100, Jonas Rebmann wrote:
+> Add a compatible string to support Fujitsu MB85RS128TY.
 > 
+> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+> ---
+>  Documentation/devicetree/bindings/mtd/microchip,mchp48l640.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Applied, thanks!
+My bot found errors running 'make dt_binding_check' on your patch:
 
-[1/1] dmaengine: xilinx: xdma: remove redundant check on ret
-      commit: 0f31c0912286f84b34b15e39b286db8f4765ced8
+yamllint warnings/errors:
 
-Best regards,
--- 
-~Vinod
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.example.dtb: eeram@0: compatible: ['microchip,48l640'] is too short
+	from schema $id: http://devicetree.org/schemas/mtd/microchip,mchp48l640.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/microchip,mchp48l640.example.dtb: eeram@0: Unevaluated properties are not allowed ('compatible' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mtd/microchip,mchp48l640.yaml#
 
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241202-mb85rs128ty-v1-2-a660b6490dc8@pengutronix.de
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
