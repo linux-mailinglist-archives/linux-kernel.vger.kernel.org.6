@@ -1,307 +1,473 @@
-Return-Path: <linux-kernel+bounces-427706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25D29E052F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:37:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C84CC167885
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:32:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF01204F6E;
-	Mon,  2 Dec 2024 14:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPfnKFDv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6479E0526
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:36:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74644205E0C;
-	Mon,  2 Dec 2024 14:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0C5128422E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:36:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B268520B1FB;
+	Mon,  2 Dec 2024 14:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="osxCdxEt"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FE620ADCB
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733149883; cv=none; b=brsKwAY2Bi8aKgCe/QFzFBkn9aEbJehNppDy+kqULg8o3k1pdVPmFVmY07+GqQRP6CsdYPOmiYZFVMJT7ncWs4RtOJ+4qAsb/1HKRhhj001EJMCVFd72/T7XKFoZCRmiUySEQBV5suz2TDyZRamcCYONas86CshIUQdOo4uhGzk=
+	t=1733149932; cv=none; b=aCZMue0+MB2ItmUHgW58EDInKeLmsDJPS+eeWPC+M226EUQ3fRmChXh8FdZxJgEVO7K3HhPa2CXjtm7ntotp1ZxPHCdpPRgwfTtA5K74ViI0MfImZJeCKzANPf8TdHWBTIOuafDLyiNuFsBSU9XRppp/YzS7bBBlE+7Kfuz9Mmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733149883; c=relaxed/simple;
-	bh=ZtGu6SK5aFdAysupqz7NhzQdEnEBx5d8JsncaclV628=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFDGZyg4ejqhroyWC8YaByzXn2O3/TFbWXxHupd2Qz7n2szaIpN/eTIOtBAaNfFnhEwGZ7YEG7aVV6N+Vnvh55UGfzry9vkUT9unz/HRyYwEPO90egAreoHDNvPP9PDorWMygFxnTIx8ohWn6ZMDbhpvkgiirJ58kGhIcJl4yZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPfnKFDv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E961C4CED2;
-	Mon,  2 Dec 2024 14:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733149883;
-	bh=ZtGu6SK5aFdAysupqz7NhzQdEnEBx5d8JsncaclV628=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BPfnKFDvxZ8vA6jFBhYtrwkOi+RmM6F3HfRS7e8R+fjzPQ0G6pX7hqSlqjNexBJdP
-	 kLhua83Sb3v8k1JGVAU+kmGvQCH0YgzOhObmI11ZJ0Pw3n64slRqA70YrowK54qM+K
-	 eWnyxl4kVUdhxevMp7hLqFu2qr9vP5NLdKYkzxainIXOpjvSEXjHAiJvr8/mwCQnvO
-	 FlCRqDqOZpK0ho/hECjl7tdWFM8F2UVs6p/fpGfILPJJvO86FnPUnTCrpSRjgpfEo3
-	 AM1L0ijv+lSidizSMfnMlgLjsZDsz9EPwFsoiUgp+T7llYXsihPCE8FRO81T2UeH/Y
-	 tXtmDr6i2/z0w==
-Date: Mon, 2 Dec 2024 15:31:13 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, 
-	Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>, 
-	John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v6 2/5] pidfd: add PIDFD_SELF_* sentinels to refer to own
- thread/process
-Message-ID: <20241202-wahrnehmen-mitten-e330cbd1eaf0@brauner>
-References: <cover.1729926229.git.lorenzo.stoakes@oracle.com>
- <8eceec08eb64b744b24bf2aa09d4535e77e1ba47.1729926229.git.lorenzo.stoakes@oracle.com>
- <20241028-gesoffen-drehmoment-5314faba9731@brauner>
- <c96df57a-fa1b-4301-9556-94a6b8c93a31@lucifer.local>
- <b8f4664c-b8f0-46ca-b9a3-8d73e398b5ca@lucifer.local>
+	s=arc-20240116; t=1733149932; c=relaxed/simple;
+	bh=PQupD8MwQjg0e+DOLgrTFTMEpEQIBQUK1DwKYI2R2As=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eyIy0lOd50iIL3+sFlPqfBpwnXGCgsTl5GWeSuifM2ROmYlTNQZUQgCLcICi1/8ECra8wkQwdpHepdGBks9+FFWmRaD2hK6yFcW9hsE7gMRIfHKYe3AQt6EoR9n491B6ktWqwWc6NPlVd8UiM3pV8jLPCS46Q1esKFPDVWKBOTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=osxCdxEt; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9349d3fb-a5ab-415c-bb3b-cef755357ec2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733149925;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fYQ7JwlwNkRCYFStnjFjugZgj77BpCizdmJXDHDcAqg=;
+	b=osxCdxEtCTu9nII6iggJstg12RtUiRbLioDKi7ySeEQkJrZfafXNUnXoSTHZBQj9LhBRKR
+	JbgVDMYanwuqSMjXwGAsj230UeluyNxbXIBdrxQP/PsCxDjOpVrUpoFPZ28H9MomXMvkKH
+	WGqgx7AI/gZ9XDH31Xw5FKKCyEbUJ7w=
+Date: Mon, 2 Dec 2024 22:31:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b8f4664c-b8f0-46ca-b9a3-8d73e398b5ca@lucifer.local>
+Subject: Re: [RFC PATCH] drm/bridge: panel: Use devm_drm_bridge_add()
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Fei Shao <fshao@chromium.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ David Airlie <airlied@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241009052402.411978-1-fshao@chromium.org>
+ <20241024-stalwart-bandicoot-of-music-bc6b29@houat>
+ <CAC=S1niZuiJkWBvci+bmrU-BvahhXyWWAYAMOB200a3Ppu=rTg@mail.gmail.com>
+ <20241114-gray-corgi-of-youth-f992ec@houat>
+ <CAGXv+5EmVj6S2iioYgMKvY8NM3_jzCDS9-GC-GOMU44j0ikmKA@mail.gmail.com>
+ <20241129-meticulous-pumpkin-echidna-dff6df@houat>
+ <d47e57c2-271a-4ed6-8e00-bb1a84b7b3f6@linux.dev>
+ <20241129-blazing-granite-beetle-e9fecd@houat>
+ <4a2396cd-9c17-4a4f-90b8-d28a03120842@linux.dev>
+ <20241202-diligent-uptight-gibbon-da8ff4@houat>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <20241202-diligent-uptight-gibbon-da8ff4@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 30, 2024 at 04:37:37PM +0000, Lorenzo Stoakes wrote:
-> On Mon, Oct 28, 2024 at 04:06:07PM +0000, Lorenzo Stoakes wrote:
-> > I guess I'll try to adapt that and respin a v7 when I get a chance.
-> 
-> Hm looking at this draft patch, it seems like a total rework of pidfd's
-> across the board right (now all pidfd's will need to be converted to
-> pid_fd)? Correct me if I'm wrong.
-> 
-> If only for the signal case, it seems like overkill to define a whole
-> pid_fd and to use this CLASS() wrapper just for this one instance.
-> 
-> If the intent is to convert _all_ pidfd's to use this type, it feels really
-> out of scope for this series and I think we'd probably instead want to go
-> off and do that as a separate series and put this on hold until that is
-> done.
-> 
-> If instead you mean that we ought to do something like this just for the
-> signal case, it feels like it'd be quite a bit of extra abstraction just
-> used in this one case but nowhere else, I think if you did an abstraction
-> like this it would _have_ to be across the board right?
-> 
-> I agree that the issue is with this one signal case that pins only the fd
-> (rather than this pid) where this 'pinning' doesn't _necessary_ mess around
-> with reference counts.
-> 
-> So we definitely must address this, but the issue you had with the first
-> approach was that I think (correct me if I'm wrong) I was passing a pointer
-> to a struct fd which is not permitted right?
-> 
-> Could we pass the struct fd by value to avoid this? I think we'd have to
-> unfortunately special-case this and probably duplicate some code which is a
-> pity as I liked the idea of abstracting everything to one place, but we can
-> obviously do that.
-> 
-> So I guess to TL;DR it, the options are:
-> 
-> 1. Implement pid_fd everywhere, in which case I will leave off on
->    this series and I guess, if I have time I could look at trying to
->    implement that or perhaps you'd prefer to?
-> 
-> 2. We are good for the sake of this series to special-case a pidfd_to_pid()
->    implementation (used only by the pidfd_send_signal() syscall)
-> 
-> 3. Something else, or I am misunderstanding your point :)
-> 
-> Let me know how you want me to proceed on this as we're at v6 already and I
-> want to be _really_ sure I'm doing what you want here.
+Hi,
 
-I don't think we get away with abstracting it in one place without this
-ending up a pretty janky api. I need to go back and think about calling
-conventions for all this stuff. For now I think I'm fine with something
-like the below that abstracts the api to handle mm/ cleanly and then a
-special-case for pidfd_send_signal():
+On 2024/12/2 18:12, Maxime Ripard wrote:
+> On Fri, Nov 29, 2024 at 11:24:18PM +0800, Sui Jingfeng wrote:
+>> Hi,
+>>
+>> On 2024/11/29 22:54, Maxime Ripard wrote:
+>>> On Fri, Nov 29, 2024 at 10:12:02PM +0800, Sui Jingfeng wrote:
+>>>> Hi,
+>>>>
+>>>> On 2024/11/29 18:51, Maxime Ripard wrote:
+>>>>> On Wed, Nov 27, 2024 at 05:58:31PM +0800, Chen-Yu Tsai wrote:
+>>>>>> Revisiting this thread since I just stepped on the same problem on a
+>>>>>> different device.
+>>>>>>
+>>>>>> On Thu, Nov 14, 2024 at 9:12 PM Maxime Ripard <mripard@kernel.org> wrote:
+>>>>>>> On Tue, Oct 29, 2024 at 10:53:49PM +0800, Fei Shao wrote:
+>>>>>>>> On Thu, Oct 24, 2024 at 8:36 PM Maxime Ripard <mripard@kernel.org> wrote:
+>>>>>>>>> On Wed, Oct 09, 2024 at 01:23:31PM +0800, Fei Shao wrote:
+>>>>>>>>>> In the mtk_dsi driver, its DSI host attach callback calls
+>>>>>>>>>> devm_drm_of_get_bridge() to get the next bridge. If that next bridge is
+>>>>>>>>>> a panel bridge, a panel_bridge object is allocated and managed by the
+>>>>>>>>>> panel device.
+>>>>>>>>>>
+>>>>>>>>>> Later, if the attach callback fails with -EPROBE_DEFER from subsequent
+>>>>>>>>>> component_add(), the panel device invoking the callback at probe time
+>>>>>>>>>> also fails, and all device-managed resources are freed accordingly.
+>>>>>>>>>>
+>>>>>>>>>> This exposes a drm_bridge bridge_list corruption due to the unbalanced
+>>>>>>>>>> lifecycle between the DSI host and the panel devices: the panel_bridge
+>>>>>>>>>> object managed by panel device is freed, while drm_bridge_remove() is
+>>>>>>>>>> bound to DSI host device and never gets called.
+>>>>>>>>>> The next drm_bridge_add() will trigger UAF against the freed bridge list
+>>>>>>>>>> object and result in kernel panic.
+>>>>>>>>>>
+>>>>>>>>>> This bug is observed on a MediaTek MT8188-based Chromebook with MIPI DSI
+>>>>>>>>>> outputting to a DSI panel (DT is WIP for upstream).
+>>>>>>>>>>
+>>>>>>>>>> As a fix, using devm_drm_bridge_add() with the panel device in the panel
+>>>>>>>>>> path seems reasonable. This also implies a chain of potential cleanup
+>>>>>>>>>> actions:
+>>>>>>>>>>
+>>>>>>>>>> 1. Removing drm_bridge_remove() means devm_drm_panel_bridge_release()
+>>>>>>>>>>       becomes hollow and can be removed.
+>>>>>>>>>>
+>>>>>>>>>> 2. devm_drm_panel_bridge_add_typed() is almost emptied except for the
+>>>>>>>>>>       `bridge->pre_enable_prev_first` line. Itself can be also removed if
+>>>>>>>>>>       we move the line into drm_panel_bridge_add_typed(). (maybe?)
+>>>>>>>>>>
+>>>>>>>>>> 3. drm_panel_bridge_add_typed() now calls all the needed devm_* calls,
+>>>>>>>>>>       so it's essentially the new devm_drm_panel_bridge_add_typed().
+>>>>>>>>>>
+>>>>>>>>>> 4. drmm_panel_bridge_add() needs to be updated accordingly since it
+>>>>>>>>>>       calls drm_panel_bridge_add_typed(). But now there's only one bridge
+>>>>>>>>>>       object to be freed, and it's already being managed by panel device.
+>>>>>>>>>>       I wonder if we still need both drmm_ and devm_ version in this case.
+>>>>>>>>>>       (maybe yes from DRM PoV, I don't know much about the context)
+>>>>>>>>>>
+>>>>>>>>>> This is a RFC patch since I'm not sure if my understanding is correct
+>>>>>>>>>> (for both the fix and the cleanup). It fixes the issue I encountered,
+>>>>>>>>>> but I don't expect it to be picked up directly due to the redundant
+>>>>>>>>>> commit message and the dangling devm_drm_panel_bridge_release().
+>>>>>>>>>> I plan to resend the official patch(es) once I know what I supposed to
+>>>>>>>>>> do next.
+>>>>>>>>>>
+>>>>>>>>>> For reference, here's the KASAN report from the device:
+>>>>>>>>>> ==================================================================
+>>>>>>>>>>     BUG: KASAN: slab-use-after-free in drm_bridge_add+0x98/0x230
+>>>>>>>>>>     Read of size 8 at addr ffffff80c4e9e100 by task kworker/u32:1/69
+>>>>>>>>>>
+>>>>>>>>>>     CPU: 1 UID: 0 PID: 69 Comm: kworker/u32:1 Not tainted 6.12.0-rc1-next-20241004-kasan-00030-g062135fa4046 #1
+>>>>>>>>>>     Hardware name: Google Ciri sku0/unprovisioned board (DT)
+>>>>>>>>>>     Workqueue: events_unbound deferred_probe_work_func
+>>>>>>>>>>     Call trace:
+>>>>>>>>>>      dump_backtrace+0xfc/0x140
+>>>>>>>>>>      show_stack+0x24/0x38
+>>>>>>>>>>      dump_stack_lvl+0x40/0xc8
+>>>>>>>>>>      print_report+0x140/0x700
+>>>>>>>>>>      kasan_report+0xcc/0x130
+>>>>>>>>>>      __asan_report_load8_noabort+0x20/0x30
+>>>>>>>>>>      drm_bridge_add+0x98/0x230
+>>>>>>>>>>      devm_drm_panel_bridge_add_typed+0x174/0x298
+>>>>>>>>>>      devm_drm_of_get_bridge+0xe8/0x190
+>>>>>>>>>>      mtk_dsi_host_attach+0x130/0x2b0
+>>>>>>>>>>      mipi_dsi_attach+0x8c/0xe8
+>>>>>>>>>>      hx83102_probe+0x1a8/0x368
+>>>>>>>>>>      mipi_dsi_drv_probe+0x6c/0x88
+>>>>>>>>>>      really_probe+0x1c4/0x698
+>>>>>>>>>>      __driver_probe_device+0x160/0x298
+>>>>>>>>>>      driver_probe_device+0x7c/0x2a8
+>>>>>>>>>>      __device_attach_driver+0x2a0/0x398
+>>>>>>>>>>      bus_for_each_drv+0x198/0x200
+>>>>>>>>>>      __device_attach+0x1c0/0x308
+>>>>>>>>>>      device_initial_probe+0x20/0x38
+>>>>>>>>>>      bus_probe_device+0x11c/0x1f8
+>>>>>>>>>>      deferred_probe_work_func+0x80/0x250
+>>>>>>>>>>      worker_thread+0x9b4/0x2780
+>>>>>>>>>>      kthread+0x274/0x350
+>>>>>>>>>>      ret_from_fork+0x10/0x20
+>>>>>>>>>>
+>>>>>>>>>>     Allocated by task 69:
+>>>>>>>>>>      kasan_save_track+0x40/0x78
+>>>>>>>>>>      kasan_save_alloc_info+0x44/0x58
+>>>>>>>>>>      __kasan_kmalloc+0x84/0xa0
+>>>>>>>>>>      __kmalloc_node_track_caller_noprof+0x228/0x450
+>>>>>>>>>>      devm_kmalloc+0x6c/0x288
+>>>>>>>>>>      devm_drm_panel_bridge_add_typed+0xa0/0x298
+>>>>>>>>>>      devm_drm_of_get_bridge+0xe8/0x190
+>>>>>>>>>>      mtk_dsi_host_attach+0x130/0x2b0
+>>>>>>>>>>      mipi_dsi_attach+0x8c/0xe8
+>>>>>>>>>>      hx83102_probe+0x1a8/0x368
+>>>>>>>>>>      mipi_dsi_drv_probe+0x6c/0x88
+>>>>>>>>>>      really_probe+0x1c4/0x698
+>>>>>>>>>>      __driver_probe_device+0x160/0x298
+>>>>>>>>>>      driver_probe_device+0x7c/0x2a8
+>>>>>>>>>>      __device_attach_driver+0x2a0/0x398
+>>>>>>>>>>      bus_for_each_drv+0x198/0x200
+>>>>>>>>>>      __device_attach+0x1c0/0x308
+>>>>>>>>>>      device_initial_probe+0x20/0x38
+>>>>>>>>>>      bus_probe_device+0x11c/0x1f8
+>>>>>>>>>>      deferred_probe_work_func+0x80/0x250
+>>>>>>>>>>      worker_thread+0x9b4/0x2780
+>>>>>>>>>>      kthread+0x274/0x350
+>>>>>>>>>>      ret_from_fork+0x10/0x20
+>>>>>>>>>>
+>>>>>>>>>>     Freed by task 69:
+>>>>>>>>>>      kasan_save_track+0x40/0x78
+>>>>>>>>>>      kasan_save_free_info+0x58/0x78
+>>>>>>>>>>      __kasan_slab_free+0x48/0x68
+>>>>>>>>>>      kfree+0xd4/0x750
+>>>>>>>>>>      devres_release_all+0x144/0x1e8
+>>>>>>>>>>      really_probe+0x48c/0x698
+>>>>>>>>>>      __driver_probe_device+0x160/0x298
+>>>>>>>>>>      driver_probe_device+0x7c/0x2a8
+>>>>>>>>>>      __device_attach_driver+0x2a0/0x398
+>>>>>>>>>>      bus_for_each_drv+0x198/0x200
+>>>>>>>>>>      __device_attach+0x1c0/0x308
+>>>>>>>>>>      device_initial_probe+0x20/0x38
+>>>>>>>>>>      bus_probe_device+0x11c/0x1f8
+>>>>>>>>>>      deferred_probe_work_func+0x80/0x250
+>>>>>>>>>>      worker_thread+0x9b4/0x2780
+>>>>>>>>>>      kthread+0x274/0x350
+>>>>>>>>>>      ret_from_fork+0x10/0x20
+>>>>>>>>>>
+>>>>>>>>>>     The buggy address belongs to the object at ffffff80c4e9e000
+>>>>>>>>>>      which belongs to the cache kmalloc-4k of size 4096
+>>>>>>>>>>     The buggy address is located 256 bytes inside of
+>>>>>>>>>>      freed 4096-byte region [ffffff80c4e9e000, ffffff80c4e9f000)
+>>>>>>>>>>
+>>>>>>>>>>     The buggy address belongs to the physical page:
+>>>>>>>>>>     head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+>>>>>>>>>>     flags: 0x8000000000000040(head|zone=2)
+>>>>>>>>>>     page_type: f5(slab)
+>>>>>>>>>>     page: refcount:1 mapcount:0 mapping:0000000000000000
+>>>>>>>>>>     index:0x0 pfn:0x104e98
+>>>>>>>>>>     raw: 8000000000000040 ffffff80c0003040 dead000000000122 0000000000000000
+>>>>>>>>>>     raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+>>>>>>>>>>     head: 8000000000000040 ffffff80c0003040 dead000000000122 0000000000000000
+>>>>>>>>>>     head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+>>>>>>>>>>     head: 8000000000000003 fffffffec313a601 ffffffffffffffff 0000000000000000
+>>>>>>>>>>     head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+>>>>>>>>>>     page dumped because: kasan: bad access detected
+>>>>>>>>>>
+>>>>>>>>>>     Memory state around the buggy address:
+>>>>>>>>>>      ffffff80c4e9e000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>>>>>      ffffff80c4e9e080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>>>>>     >ffffff80c4e9e100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>>>>>                        ^
+>>>>>>>>>>      ffffff80c4e9e180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>>>>>      ffffff80c4e9e200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>>>>>>>>>> ===================================================================
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Fei Shao <fshao@chromium.org>
+>>>>>>>>> I was looking at the driver to try to follow your (awesome btw, thanks)
+>>>>>>>>> commit log, and it does have a quite different structure compared to
+>>>>>>>>> what we recommend.
+>>>>>>>>>
+>>>>>>>>> Would following
+>>>>>>>>> https://docs.kernel.org/gpu/drm-kms-helpers.html#special-care-with-mipi-dsi-bridges
+>>>>>>>>> help?
+>>>>>>>> Hi Maxime,
+>>>>>>>>
+>>>>>>>> Thank you for the pointer.
+>>>>>>>> I read the suggested pattern in the doc and compared it with the
+>>>>>>>> drivers. If I understand correctly, both the MIPI-DSI host and panel
+>>>>>>>> drivers follow the instructions:
+>>>>>>>>
+>>>>>>>> 1. The MIPI-DSI host driver must run mipi_dsi_host_register() in its probe hook.
+>>>>>>>>       >> drm/mediatek/mtk_dsi.c runs mipi_dsi_host_register() in the probe hook.
+>>>>>>>> 2. In its probe hook, the bridge driver must try to find its MIPI-DSI
+>>>>>>>> host, register as a MIPI-DSI device and attach the MIPI-DSI device to
+>>>>>>>> its host.
+>>>>>>>>       >> drm/panel/panel-himax-hx83102.c follows and runs
+>>>>>>>> mipi_dsi_attach() at the end of probe hook.
+>>>>>>>> 3. In its struct mipi_dsi_host_ops.attach hook, the MIPI-DSI host can
+>>>>>>>> now add its component.
+>>>>>>>>       >> drm/mediatek/mtk_dsi.c calls component_add() in the attach callback.
+>>>>>>>>
+>>>>>>>> Could you elaborate on the "different structures" you mentioned?
+>>>>>>> Yeah, you're right, sorry.
+>>>>>>>
+>>>>>>>> To clarify my point: the issue is that component_add() may return
+>>>>>>>> -EPROBE_DEFER if the component (e.g. DSI encoder) is not ready,
+>>>>>>>> causing the panel bridge to be removed. However, drm_bridge_remove()
+>>>>>>>> is bound to MIPI-DSI host instead of panel bridge, which owns the
+>>>>>>>> actual list_head object.
+>>>>>>>>
+>>>>>>>> This might be reproducible with other MIPI-DSI host + panel
+>>>>>>>> combinations by forcibly returning -EPROBE_DEFER in the host attach
+>>>>>>>> hook (verification with another device is needed), so the fix may be
+>>>>>>>> required in drm/bridge/panel.c.
+>>>>>>> Yeah, I think you're just hitting another bridge lifetime issue, and
+>>>>>>> it's not the only one unfortunately. Tying the bridge structure lifetime
+>>>>>>> itself to the device is wrong, it should be tied to the DRM device
+>>>>>>> lifetime instead.
+>>>>>> I think the more immediate issue is that the bridge object's lifetime
+>>>>>> and drm_bridge_add/remove are inconsistent when devm_drm_of_get_bridge()
+>>>>>> or drmm_of_get_bridge() are used.
+>>>>>>
+>>>>>> These helpers tie the bridge add/removal to the device or drm_device
+>>>>>> passed in, but internally they call down to drm_panel_bridge_add_typed()
+>>>>>> which allocates the bridge object tied to the panel device.
+>>>>>>> But then, the discussion becomes that bridges typically probe outside of
+>>>>>>> the "main" DRM device probe path, so you don't have access to the DRM
+>>>>>>> device structure until attach at best.
+>>>>>>>
+>>>>>>> That's why I'm a bit skeptical about your patch. It might workaround
+>>>>>>> your issue, but it doesn't actually solve the problem. I guess the best
+>>>>>>> way about it would be to convert bridges to reference counting, with the
+>>>>>>> device taking a reference at probe time when it allocates the structure
+>>>>>>> (and giving it back at remove time), and the DRM device taking one when
+>>>>>>> it's attached and one when it's detached.
+>>>>>> Without going as far, it's probably better to align the lifecycle of
+>>>>>> the two parts. Most other bridge drivers in the kernel have |drm_bridge|
+>>>>>> lifecycle tied to their underlying |device|, either with explicit
+>>>>>> drm_bridge_{add,remove}() calls in their probe/bind and remove/unbind
+>>>>>> callbacks respectively, or with devm_drm_bridge_add in the probe/bind
+>>>>>> path. The only ones with a narrower lifecycle are the DSI hosts, which
+>>>>>> add the bridge in during host attach and remove it during host detach.
+>>>>>>
+>>>>>> I'm thinking about fixing the panel_bridge lifecycle such that it is
+>>>>>> tied to the panel itself. Maybe that would involve making
+>>>>>> devm_drm_of_get_bridge() correctly return bridges even if a panel was
+>>>>>> found, and then making the panels create and add panel bridges directly,
+>>>>>> possibly within drm_panel_add(). Would that make sense?
+>>>>> Not really.
+>>>> [...]
+>>>>
+>>>>
+>>>>> Or rather, it doesn't fix the root cause that is that tieing
+>>>>> the bridge lifetime to the device is wrong.
+>>>> This is multiple kernel driver module probe issue, not an issue
+>>>> about bridge's lifetime.
+>>>>
+>>>>
+>>>> The life time of the bridge of an 'struct panel_bridge' has
+>>>> been tied to the 'panel->dev' since 2017 [1].
+>>>>
+>>>> See commit 13dfc0540a575b47b2d640b093ac16e9e09474f6
+>>>> ("drm/bridge: Refactor out the panel wrapper from the lvds-encoder bridge.")
+>>>>
+>>>> [1] https://patchwork.freedesktop.org/patch/159673/
+>>> Yeah, and it's been wrong since 2017.
+>>>
+>>>>>     It needs to be tied to the DRM device somehow.
+>>>> Why?
+>>> Because the DRM device is only free'd when the last userspace
+>>> application has closed it's FD to it, which might much later than the
+>>> device being removed. So if we tie that to the device lifetime, and the
+>>> device goes away, we have a dangling pointer and potential
+>>> use-after-free issue if the application continues to access its fd.
+>>>
+>>>> It's the underlying hardware device backing the bridge, if the
+>>>> backing hardware device has been freed, How does the bound drm
+>>>> bridge driver could continue to work?
+>>> Using drm_dev_enter/drm_dev_exit.
+>>>
+>>>> How could the dangling pointer stored in the bridge_list still
+>>>> will make sense?
+>>> It's dangling only if the bridge has been free'd while still having a
+>>> pointer to it. If you have a reference counted allocation, it's not
+>>> dangling anymore.
+>> I meant that in the deferral context, the underlying panel device has
+>> been freed. You could keep the allocated storage in memory, but this
+>> is in vain.
+> It prevents memory safety issues.
 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 6131543e7c09..c1857c44d1a3 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -564,15 +564,29 @@ struct pid *pidfd_get_pid(unsigned int fd, unsigned int *flags)
-  */
- struct task_struct *pidfd_get_task(int pidfd, unsigned int *flags)
- {
--       unsigned int f_flags;
-+       unsigned int f_flags = 0;
-        struct pid *pid;
-        struct task_struct *task;
-+       enum pid_type type;
+The mentioned problem is NOT a memory safety issue, it's just that the
+devm_drm_of_get_bridge() fails to do resource destruction on driver detach.
 
--       pid = pidfd_get_pid(pidfd, &f_flags);
--       if (IS_ERR(pid))
--               return ERR_CAST(pid);
-+       switch (pidfd) {
-+       case PIDFD_SELF_THREAD:
-+               type = PIDTYPE_PID;
-+               pid = get_task_pid(current, type);
-+               break;
-+       case PIDFD_SELF_THREAD_GROUP:
-+               type = PIDTYPE_TGID;
-+               pid = get_task_pid(current, type);
-+               break;
-+       default:
-+               pid = pidfd_get_pid(pidfd, &f_flags);
-+               if (IS_ERR(pid))
-+                       return ERR_CAST(pid);
-+               type = PIDTYPE_TGID;
-+               break;
-+       }
+When mipi_dsi_attach(dsi) returns -EPROBE_DEFFER, the panel driver detached.
+The underlying *panel* has been removed from the 'panel_list'. The drm_panel
+instance that the panel_bridge structure references has been freed.
 
--       task = get_pid_task(pid, PIDTYPE_TGID);
-+       task = get_pid_task(pid, type);
-        put_pid(pid);
-        if (!task)
-                return ERR_PTR(-ESRCH);
+In this circumstance,have a reference counted allocation for the bridge itself
+means nothing at all. Because the 'struct panel_bridge::panel' pointer is
+dangling after the panel driver detached.
 
-That would get you support for PIDFD_SELF_THREAD and
-PIDFD_SELF_THREAD_GROUP for process_madvise() and process_mrelease().
+We should not access the panel_bridge/the panel/the bridge instance via the
+dangling pointer anymore.
 
-And for pidfd_send_signal() we could just open code this for now:
+>> The real hardware has gone, the reference counted allocation could
+>> only stand for the panel bridge itself, without the real hardware
+>> backing there. It can not fully functional.
+> Yes, but that's not the point?
+>
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 989b1cc9116a..a2e4e3a5ee42 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -3990,6 +3990,45 @@ static struct pid *pidfd_to_pid(const struct file *file)
- 	(PIDFD_SIGNAL_THREAD | PIDFD_SIGNAL_THREAD_GROUP | \
- 	 PIDFD_SIGNAL_PROCESS_GROUP)
- 
-+static int do_pidfd_send_signal(struct pid *pid, int sig, enum pid_type type,
-+				siginfo_t __user *info, unsigned int flags)
-+{
-+	kernel_siginfo_t kinfo;
-+
-+	switch (flags) {
-+	case PIDFD_SIGNAL_THREAD:
-+		type = PIDTYPE_PID;
-+		break;
-+	case PIDFD_SIGNAL_THREAD_GROUP:
-+		type = PIDTYPE_TGID;
-+		break;
-+	case PIDFD_SIGNAL_PROCESS_GROUP:
-+		type = PIDTYPE_PGID;
-+		break;
-+	}
-+
-+	if (info) {
-+		int ret = copy_siginfo_from_user_any(&kinfo, info);
-+		if (unlikely(ret))
-+			return ret;
-+
-+		if (unlikely(sig != kinfo.si_signo))
-+			return -EINVAL;
-+
-+		/* Only allow sending arbitrary signals to yourself. */
-+		if ((task_pid(current) != pid || type > PIDTYPE_TGID) &&
-+		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL))
-+			return -EPERM;
-+	} else {
-+		prepare_kill_siginfo(sig, &kinfo, type);
-+	}
-+
-+	if (type == PIDTYPE_PGID)
-+		return kill_pgrp_info(sig, &kinfo, pid);
-+
-+	return kill_pid_info_type(sig, &kinfo, pid, type);
-+}
-+
- /**
-  * sys_pidfd_send_signal - Signal a process through a pidfd
-  * @pidfd:  file descriptor of the process
-@@ -4009,7 +4048,6 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
- {
- 	int ret;
- 	struct pid *pid;
--	kernel_siginfo_t kinfo;
- 	enum pid_type type;
- 
- 	/* Enforce flags be set to 0 until we add an extension. */
-@@ -4021,56 +4059,39 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
- 		return -EINVAL;
- 
- 	CLASS(fd, f)(pidfd);
--	if (fd_empty(f))
--		return -EBADF;
- 
--	/* Is this a pidfd? */
--	pid = pidfd_to_pid(fd_file(f));
--	if (IS_ERR(pid))
--		return PTR_ERR(pid);
-+	switch (pidfd) {
-+	case PIDFD_SELF_THREAD:
-+		pid = get_task_pid(current, PIDTYPE_PID);
-+		type = PIDTYPE_PID;
-+		break;
-+	case PIDFD_SELF_THREAD_GROUP:
-+		pid = get_task_pid(current, PIDTYPE_TGID);
-+		type = PIDTYPE_TGID;
-+		break;
-+	default:
-+		if (fd_empty(f))
-+			return -EBADF;
- 
--	if (!access_pidfd_pidns(pid))
--		return -EINVAL;
-+		/* Is this a pidfd? */
-+		pid = pidfd_to_pid(fd_file(f));
-+		if (IS_ERR(pid))
-+			return PTR_ERR(pid);
- 
--	switch (flags) {
--	case 0:
-+		if (!access_pidfd_pidns(pid))
-+			return -EINVAL;
- 		/* Infer scope from the type of pidfd. */
- 		if (fd_file(f)->f_flags & PIDFD_THREAD)
- 			type = PIDTYPE_PID;
- 		else
- 			type = PIDTYPE_TGID;
- 		break;
--	case PIDFD_SIGNAL_THREAD:
--		type = PIDTYPE_PID;
--		break;
--	case PIDFD_SIGNAL_THREAD_GROUP:
--		type = PIDTYPE_TGID;
--		break;
--	case PIDFD_SIGNAL_PROCESS_GROUP:
--		type = PIDTYPE_PGID;
--		break;
- 	}
- 
--	if (info) {
--		ret = copy_siginfo_from_user_any(&kinfo, info);
--		if (unlikely(ret))
--			return ret;
--
--		if (unlikely(sig != kinfo.si_signo))
--			return -EINVAL;
--
--		/* Only allow sending arbitrary signals to yourself. */
--		if ((task_pid(current) != pid || type > PIDTYPE_TGID) &&
--		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL))
--			return -EPERM;
--	} else {
--		prepare_kill_siginfo(sig, &kinfo, type);
--	}
--
--	if (type == PIDTYPE_PGID)
--		return kill_pgrp_info(sig, &kinfo, pid);
--	else
--		return kill_pid_info_type(sig, &kinfo, pid, type);
-+	ret = do_pidfd_send_signal(pid, sig, type, info, flags);
-+	if (fd_empty(f))
-+		put_pid(pid);
-+	return ret;
- }
- 
- static int
+The point is to remove the dangling pointer in the bridge_list, make sure
+that it won't be de-referenced anymore.
+
+As the memory it references has been free with regard to the '-EPROBE_DEFFER'
+On the next time round, we will have *new* pointer to *new* memory location.
+The new instance and pointer to that is expected to be used.
+
+>> As far as I could understand, in the deferral context, tears down
+>> everything is standard behavior. This is not very related to the
+>> lifetime.
+>>
+>>>> The imx-lcdif could instantiate three DRM driver, which one
+>>>> should be selected as the "main" DRM device to attach?
+>>> The one the bridge attaches to?
+>> The point is how can we select one from it.
+> bridge->dev ?
+
+
+This still will lead to release time misaligned, as KMS driver/device could
+managed to not leave once probed. Such drivers could create a sub-device
+to bind a sub-driver, offload attach() actions to the sub-device to break
+thecyclic dependency  issue.
+
+
+>>>> No, It is messy since day 0. And has been made worse since 2017,
+>>>> from then, thedevm_drm_panel_bridge_add() [2] was initially introduced.
+>>>> Which allow us to abuse the lifetime of bridge to a different device or (any
+>>>> device).
+>>> I agree it's messy. I'm sure you'd agree that we do not want to make the
+>>> situation any messier.
+>>>
+>>>> Maxime's patch just follow this way, but if the caller side
+>>>> wise enough to refuse to use those helper, we should be still
+>>>> safe. That why I suggest ChenYu to inline and with a little bit
+>>>> revise.
+>>> Hi! I'm that Maxime. And it was indeed a mistake in hindsight.
+>>>
+>>> Maxime
+>>>
+>>>> [2] https://patchwork.freedesktop.org/patch/167666/
+>>>>
+>>>> [3]
+>>>> https://lore.kernel.org/dri-devel/20210910130941.1740182-2-maxime@cerno.tech/
+>>>>
+>>>>> Your suggestion might indeed work around your issue,
+>>>> To be clear, the mentioned problem in this thread is caused
+>>>> by deferral probe. We should remove the dangling pointer
+>>>> stored in the bridge_list, This is just something similar to
+>>>> the fault cleanup or error handling, Right?
+>>>>
+>>>> But the fundamental thing is that the issue is happened in
+>>>> the deferral probe context.
+>>> The context doesn't matter here.
+>>
+>> Its an important factor, it really matters.
+>>
+>> One fundamental criteria, I think, is that *if* other
+>> bridge + KMS driver combinations suffer from the same problem.
+> All of them do. We just collectively stick our head in the sand.
+
+Non devm_drm_of_get_bridge() callers won't create an bridge on the
+*attach* time.
+
+As well as those of_drm_find_bridge() users, which didn't manage
+the release time explicitly. Or those users that tie the release
+time to the underlying backing platform device, are just fine.
+
+
+>> Apparently, other drm bridge users didn't report similar problem.
+>> This means that non devm_drm_of_get_bridge() callers are different
+>> with those devm_drm_of_get_bridge() callers.
+> Nope. They are strictly equivalent.
+
+No.
+
+One is put emphasis on controlling when is ready to use,
+the other one is focus on addressing when is safety to leave.
+Not exactly same in details.
+
+> Maxime
+
+-- 
+Best regards,
+Sui
+
 
