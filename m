@@ -1,101 +1,115 @@
-Return-Path: <linux-kernel+bounces-428131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C879E0CDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 21:15:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F41FD9E0CA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 500D5B3DE99
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:58:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA007B3371C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DCC1DC734;
-	Mon,  2 Dec 2024 17:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603D11DDA37;
+	Mon,  2 Dec 2024 18:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpQWIfe0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="st0MqNb4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F06D1DC197;
-	Mon,  2 Dec 2024 17:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83F41D9694;
+	Mon,  2 Dec 2024 18:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733162304; cv=none; b=B4rmQbNGq+ore+5emfv3PpMdtuLaWp1d5qQkYqibuU535nTvMggsiwyX06BkZCcslsmJdcVZglQCgoTIbinKOLLD29LrkValemPT+/y2njaALz74+/TwamRQzUwG2t4U+BExBGgqdCa/H/QnCMg/172ToTO3vvud/O7kO3AEoeo=
+	t=1733162982; cv=none; b=pdR3mFoYmpmdxTR8GWRH4EYtehfgbrS4r6HMPwU9J8Z/0neP6By+hH+2scWAqJbux4EdgD+wdGPZ1bg2y2EydPtp2nbPZdk0SjqshQaHB43EsKGuzNupmxbpzJIoUiyKy0TFcPhCIDMEMUX93SE2ifLONn1VBPcKZVMeIYkMH2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733162304; c=relaxed/simple;
-	bh=RmCnNjhUcPfj4ZV7oqO8MNtJx7x0NboJ5/JOdBfbFVU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Z7scOZIsiqlE3CkooCmDWL5kFWXzX6Z35jB/3Xd//i9bOGR6Zd9volI1KVsdnWOeCmoZu/259GEMA3aqT4EKkieR9BPAe6/a3ZGnXH1O0QUsnD/6lvGqT/UaSGwCCNqD725NA0BqiE7cZSeJPVqci3Ho7zmPg71tcbtT3teFvlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpQWIfe0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 156DBC4CED1;
-	Mon,  2 Dec 2024 17:58:21 +0000 (UTC)
+	s=arc-20240116; t=1733162982; c=relaxed/simple;
+	bh=Kx8yoGCS5+i0osaVs5Inz0KmuCpKhwgyM2hn+aT4a9M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ASo0HQBbUAfDjorvzJ0Of0e6J+cqiulluJjiCRisyTgOjlQiqxURs8GvV8P04/StNR6bM5ZT1wt/BMxKA60ZGd3gypS8sBs1cCoLBZqnP7PqzBMOhZ7cQMJebC2CI6vJqEmkNUPf7wcBQ08//Cd9C+WDnrpXZCMll8X15fsQXTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=st0MqNb4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE2AC4CED1;
+	Mon,  2 Dec 2024 18:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733162304;
-	bh=RmCnNjhUcPfj4ZV7oqO8MNtJx7x0NboJ5/JOdBfbFVU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UpQWIfe0QTWKVzbmsHY8AvwXql88P2Uo1M7HBqZjVBV3/oGu6U4ZDflItE396DMVk
-	 tHR62hLdfEvCfdSSLl5COy639nYpCxcjAph2rqtvqFC0ZzCxtL7VccaSeFZsTD/Guf
-	 EkhW2E9yv8C1OjWmibIpd0VHi6J+yqNjYxQGztQdQ4oiV9k+bDcDqNOW1KzjHerhXf
-	 vIxjD1j6kQphHn8fqqEiwJmHX3Ln8c8iZShprFNOK9YZWHCrHSZT/9I2RApjZWngEB
-	 azt/+2/HXBqeng28g9WBKGL1r86FA82ahT9EEqJBoBVpcI3dUrlyRan6kxvcDCELNB
-	 8SHJ853O14eKw==
-From: Mark Brown <broonie@kernel.org>
-To: Nicolas Belin <nbelin@baylibre.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
-References: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] ASoc: mediatek: mt8365: Don't use "proxy"
- headers
-Message-Id: <173316230181.189181.7179970847637835365.b4-ty@kernel.org>
-Date: Mon, 02 Dec 2024 17:58:21 +0000
+	s=k20201202; t=1733162981;
+	bh=Kx8yoGCS5+i0osaVs5Inz0KmuCpKhwgyM2hn+aT4a9M=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=st0MqNb40jkAAqyI+nNoYCJBt1G1B1bj0M0beatIM1i2YBR/2ki7pxqKCi9Qvk5Hx
+	 fz7QtYVtAgD2S5o5dTQcPc/Bc26+BrIW9VneZ4clp1fs7VrZ2G0/UPaDmmSYNW7Z2/
+	 AB+IpNbXqkDok255L8PPmWO3sO4pZMvZn1fgPEwMzYs0xcJ6YFhYf/HIV+c0qPWTzF
+	 vnHOrzdq/1cqg0HCIuzZpIXdf3gq3uzowN8oyNmVa1XGMsAanT7zH5lMeO6kk399dF
+	 kk2276OmnJN5zkQgnX3g4rcd7co/d3nZZLFONKdNI0i4yiG/B1ha3TYpscpJvyjgW7
+	 3Z0EDzdN7h+hQ==
+Message-ID: <4601ca077c95393837eb40909c941a4d67bb04dd.camel@kernel.org>
+Subject: Re: [RFC PATCH v3 1/2] x86: cpu/bugs: add AMD ERAPS support;
+ hardware flushes RSB
+From: Amit Shah <amit@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, x86@kernel.org, linux-doc@vger.kernel.org
+Cc: thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de, 
+	peterz@infradead.org, jpoimboe@kernel.org,
+ pawan.kumar.gupta@linux.intel.com, 	corbet@lwn.net, mingo@redhat.com,
+ dave.hansen@linux.intel.com, hpa@zytor.com, 	seanjc@google.com,
+ pbonzini@redhat.com, daniel.sneddon@linux.intel.com, 	kai.huang@intel.com,
+ sandipan.das@amd.com, boris.ostrovsky@oracle.com, 	Babu.Moger@amd.com,
+ david.kaplan@amd.com, dwmw@amazon.co.uk, 	andrew.cooper3@citrix.com, Amit
+ Shah <Amit.Shah@amd.com>
+Date: Mon, 02 Dec 2024 19:09:34 +0100
+In-Reply-To: <7222b969-30a8-42de-b2ca-601f6d1b03cd@intel.com>
+References: <cover.1732219175.git.jpoimboe@kernel.org>
+	 <20241128132834.15126-1-amit@kernel.org>
+	 <20241128132834.15126-2-amit@kernel.org>
+	 <7222b969-30a8-42de-b2ca-601f6d1b03cd@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
 
-On Thu, 31 Oct 2024 12:27:25 +0200, Andy Shevchenko wrote:
-> Update header inclusions to follow IWYU (Include What You Use)
-> principle.
-> 
-> 
+On Mon, 2024-12-02 at 09:26 -0800, Dave Hansen wrote:
+> On 11/28/24 05:28, Amit Shah wrote:
+> > From: Amit Shah <amit.shah@amd.com>
+> >=20
+> > When Automatic IBRS is disabled, Linux flushed the RSB on every
+> > context
+> > switch.=C2=A0 This RSB flush is not necessary in software with the ERAP=
+S
+> > feature on Zen5+ CPUs that flushes the RSB in hardware on a context
+> > switch (triggered by mov-to-CR3).
+> >=20
+> > Additionally, the ERAPS feature also tags host and guest addresses
+> > in
+> > the RSB - eliminating the need for software flushing of the RSB on
+> > VMEXIT.
+> >=20
+> > Disable all RSB flushing by Linux when the CPU has ERAPS.
+> >=20
+> > Feature mentioned in AMD PPR 57238.=C2=A0 Will be resubmitted once APM
+> > is
+> > public - which I'm told is imminent.
+>=20
+> There was a _lot_ of discussion about this. But all of that
+> discussion
+> seems to have been trimmed out and it seems like we're basically back
+> to: "this is new hardware supposed to mitigate SpectreRSB, thus it
+> mitigates SpectreRSB."
 
-Applied to
+Absolutely, I don't want that to get lost -- but I think that got
+captured in Josh's rework patchset.  With that rework, I don't even
+need this patchset for the hardware feature to work, because we now
+rely on AutoIBRS to do the RSB clearing; and the hardware takes care of
+AutoIBRS and ERAPS interaction in Zen5.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+The only thing this patch now does is to handle the AutoIBRS-disabled
+case -- which happens when SEV-SNP is turned on (i.e. let the hw clear
+the RSB instead of stuffing it in Linux).
 
-Thanks!
+I can still include the summary of the discussion in this patch - I
+just feel it isn't necessary with the rework.
 
-[1/1] ASoc: mediatek: mt8365: Don't use "proxy" headers
-      commit: 509544d1b6dbffe7bc1849593ff217f965ec0419
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+		Amit
 
