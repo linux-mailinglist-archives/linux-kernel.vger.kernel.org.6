@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-427668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4269E07C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:59:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB8E9E0761
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE79CB652C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:08:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E48B0B35207
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F40203703;
-	Mon,  2 Dec 2024 14:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D8A204081;
+	Mon,  2 Dec 2024 14:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QVrZklnq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="UqkoriHS"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3F62040B8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 14:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492C02036FE;
+	Mon,  2 Dec 2024 14:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733148500; cv=none; b=V6ziGiOvcpRg9ejqmIWFFi5o+dX0IkvotQKwBnROqcMepYcSlb43U6gz3EJeNs5VHDqNJ4Xf3BONbJsyEO358J0lOJzDpuyCfxKx1vmeZ8iXYKYkAOA7Je78R075WkJrzWF+YB28+gM9ySHTbvpetVPrtBUEK1315NFtemzei1I=
+	t=1733148546; cv=none; b=DXzL+wbUDorXAExfJUQm9T3i6hWIHLR3N2+JO5YdqESOybVcPBHXvJU564IrKqmrviXl6EBTODna2cJNnFHUyBlJyVX40HMzxVdd27/DoWUgKMGtxDxbsqiowSXEsXv3zzSZ22CWwFGOC0cCDdwmVoUX5YB3sUYhKy/lkACnbkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733148500; c=relaxed/simple;
-	bh=Hij2+sULPq2Tuzp6PTd3JydwnzDKFySOX4zpMIHuJJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l73AT+b4S476Q/lJ+xj28ilt/NiFlwquqmRqi3zpMcwqckRTJ65pWz67nNH/z2/RHywxkjG7PcNYRISJU/DOUCfChZ92T8bm9AqTjxO/ObPVnUhFcEXyTN9JlkMep8b4eXv3gZiCxTrtpjWP9leP/bCzNIjO1dDR78vc+aruJ08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QVrZklnq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733148497;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LmnCD0l9UZTLjIVb+9EMwI4IkQHmNiDDiH/3BqQlf3c=;
-	b=QVrZklnq7W60t7Fcxmaxvv5lNqsy7wvNVExeyr79C7wT9yNu14bWhM/J+QhaIUwWbqpCWC
-	hx3RxEgC1MUJodqkganQj1xj77yf/nUtCUPYaLIGyWfk9Z7PW/bkzMgAsmm8TA1LoIhRRh
-	5ZoDcyJGaSifNwuuoXAPljykxAm+8O4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-693-5YW4fO_OOduglG3zpZ3YlA-1; Mon,
- 02 Dec 2024 09:08:13 -0500
-X-MC-Unique: 5YW4fO_OOduglG3zpZ3YlA-1
-X-Mimecast-MFC-AGG-ID: 5YW4fO_OOduglG3zpZ3YlA
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE5801954AFF;
-	Mon,  2 Dec 2024 14:08:11 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.192.39])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 42F93195605A;
-	Mon,  2 Dec 2024 14:08:06 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH 2/2] sched: Move task_mm_cid_work to RCU callback
-Date: Mon,  2 Dec 2024 15:07:35 +0100
-Message-ID: <20241202140735.56368-3-gmonaco@redhat.com>
-In-Reply-To: <20241202140735.56368-1-gmonaco@redhat.com>
-References: <20241202140735.56368-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1733148546; c=relaxed/simple;
+	bh=xHTVWw+RjQdql6g/RWiO2Jy+rHh/4XXQCBb1+OmzXZU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PybeqmlwzuANnSp/ejyLMR6OqnUoTBkv3m2LyvpYEWQV0CV5CriVjF3vUM7DEwoL1+7Zxxt7NRw5DD44OZjnzFf5ePh7nbcLZIlypiqrWMxkVS8EOX5BoKXiG55vVD18OUUttPlabU2UDO3XttXo0hl+jSkt+5/a7qSZdHA23ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=UqkoriHS; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2Dswd1012214;
+	Mon, 2 Dec 2024 09:08:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=SOSCi
+	ioUnPaJZBrREokYLUUxuWQ/vj6nutbW9yKai84=; b=UqkoriHSLFGpmRBOOAkCm
+	MplRPTrTu8Nu6OkMBNVeRprQWngOQya4wgjpltGrVoqZRfnPDpz1m9UyrJA4Hort
+	8klgCS7p/MMyLpBwqxRQwt0Qx7EPBie8ps3z/SHAZSqnb4bQKOtVeVNwVn26lWhe
+	LbFqCG0sHG9MjOpckpzJuyGBCwwuzAEyYEJ4J3FO2+AO/kA+Jy64jLTrN+t0OTid
+	JZFh9/C4XUkEVmu5S0ka7hSOpyt1B6WBYMbBiX1YTpx6FGbPjgIEg6xQDhU1JNcz
+	rz2/hNyNJtLO/CbfHnWUYvu1RAAAUceIZrQSv9NlcOJyr1EwLw5vD074A9wr+P3d
+	Q==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 439e6t02en-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 09:08:48 -0500 (EST)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4B2E8lEq065471
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Dec 2024 09:08:47 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 2 Dec 2024
+ 09:08:47 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 2 Dec 2024 09:08:47 -0500
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4B2E8VvG027795;
+	Mon, 2 Dec 2024 09:08:34 -0500
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <marcelo.schmitt1@gmail.com>, David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v6 4/4] iio: adc: ad4000: Add support for PulSAR devices
+Date: Mon, 2 Dec 2024 11:08:30 -0300
+Message-ID: <2bfb904e29914c3dc4905e1c87fcc735575f330d.1733147444.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1733147443.git.marcelo.schmitt@analog.com>
+References: <cover.1733147443.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,92 +81,233 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: o6otHod8wnF0fGNxZC__sR7hyXClYoMs
+X-Proofpoint-ORIG-GUID: o6otHod8wnF0fGNxZC__sR7hyXClYoMs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ impostorscore=0 lowpriorityscore=0 mlxlogscore=999 clxscore=1015
+ priorityscore=1501 spamscore=0 phishscore=0 suspectscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412020121
 
-Currently, the task_mm_cid_work function is called in a task work
-triggered by a scheduler tick. This can delay the execution of the
-task for the entire duration of the function.
+The ADI PulSAR series of single-channel devices comprises differential and
+pseudo-differential ADCs that don't require any input data from the host
+controller. By not requiring a data input line, PulSAR devices can operate
+with a 3-wire only data bus in some setups.
 
-This patch runs the task_mm_cid_work in the RCU callback thread rather
-than in the task context before returning to userspace.
+The AD4000 series and the single-channel PulSAR series of devices have
+similar SPI transfer specifications and wiring configurations.
+Single-channel PulSAR devices are slower than AD4000 and don't have a
+configuration register. That taken into account, single-channel PulSARs can
+be supported by the ad4000 driver without any increase in code complexity.
 
-The main advantage of this change is that the function can be offloaded
-to a different CPU and even preempted by RT tasks.
+Extend the AD4000 driver to also support single-channel PulSAR devices.
 
-On a busy system, this may mean the function gets called less often, but
-the current behaviour already doesn't provide guarantees.
-
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 ---
- include/linux/sched.h |  1 -
- kernel/sched/core.c   | 17 ++++++-----------
- 2 files changed, 6 insertions(+), 12 deletions(-)
+ drivers/iio/adc/ad4000.c | 162 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 162 insertions(+)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index d380bffee2ef..5d141c310917 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1374,7 +1374,6 @@ struct task_struct {
- 	int				last_mm_cid;	/* Most recent cid in mm */
- 	int				migrate_from_cpu;
- 	int				mm_cid_active;	/* Whether cid bitmap is active */
--	struct callback_head		cid_work;
- #endif
+diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
+index 1d0f9c3ddae6..c6149a855af3 100644
+--- a/drivers/iio/adc/ad4000.c
++++ b/drivers/iio/adc/ad4000.c
+@@ -138,6 +138,48 @@ static const struct ad4000_time_spec ad4020_t_spec = {
+ 	.t_quiet2_ns = 60,
+ };
  
- 	struct tlbflush_unmap_batch	tlb_ubc;
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 57b50b5952fa..0fc1a972fd4f 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10520,17 +10520,15 @@ static void sched_mm_cid_remote_clear_weight(struct mm_struct *mm, int cpu,
- 	sched_mm_cid_remote_clear(mm, pcpu_cid, cpu);
- }
++/* AD7983, AD7984 */
++static const struct ad4000_time_spec ad7983_t_spec = {
++	.t_conv_ns = 500,
++	.t_quiet2_ns = 0,
++};
++
++/* AD7980, AD7982 */
++static const struct ad4000_time_spec ad7980_t_spec = {
++	.t_conv_ns = 800,
++	.t_quiet2_ns = 0,
++};
++
++/* AD7946, AD7686, AD7688, AD7988-5, AD7693 */
++static const struct ad4000_time_spec ad7686_t_spec = {
++	.t_conv_ns = 1600,
++	.t_quiet2_ns = 0,
++};
++
++/* AD7690 */
++static const struct ad4000_time_spec ad7690_t_spec = {
++	.t_conv_ns = 2100,
++	.t_quiet2_ns = 0,
++};
++
++/* AD7942, AD7685, AD7687 */
++static const struct ad4000_time_spec ad7687_t_spec = {
++	.t_conv_ns = 3200,
++	.t_quiet2_ns = 0,
++};
++
++/* AD7691 */
++static const struct ad4000_time_spec ad7691_t_spec = {
++	.t_conv_ns = 3700,
++	.t_quiet2_ns = 0,
++};
++
++/* AD7988-1 */
++static const struct ad4000_time_spec ad7988_1_t_spec = {
++	.t_conv_ns = 9500,
++	.t_quiet2_ns = 0,
++};
++
+ struct ad4000_chip_info {
+ 	const char *dev_name;
+ 	struct iio_chan_spec chan_spec[2];
+@@ -260,6 +302,96 @@ static const struct ad4000_chip_info adaq4003_chip_info = {
+ 	.has_hardware_gain = true,
+ };
  
--static void task_mm_cid_work(struct callback_head *work)
-+static void task_mm_cid_work(struct rcu_head *rhp)
- {
- 	unsigned long now = jiffies, old_scan, next_scan;
--	struct task_struct *t = current;
-+	struct task_struct *t = container_of(rhp, struct task_struct, rcu);
- 	struct cpumask *cidmask;
- 	struct mm_struct *mm;
- 	int weight, cpu;
- 
--	SCHED_WARN_ON(t != container_of(work, struct task_struct, cid_work));
--
--	work->next = work;	/* Prevent double-add */
-+	rhp->next = rhp;	/* Prevent double-add */
- 	if (t->flags & PF_EXITING)
- 		return;
- 	mm = t->mm;
-@@ -10574,23 +10572,20 @@ void init_sched_mm_cid(struct task_struct *t)
- 		if (mm_users == 1)
- 			mm->mm_cid_next_scan = jiffies + msecs_to_jiffies(MM_CID_SCAN_DELAY);
- 	}
--	t->cid_work.next = &t->cid_work;	/* Protect against double add */
--	init_task_work(&t->cid_work, task_mm_cid_work);
- }
- 
- void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
- {
--	struct callback_head *work = &curr->cid_work;
-+	struct rcu_head *rhp = &curr->rcu;
- 	unsigned long now = jiffies;
- 
- 	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) ||
--	    work->next != work)
-+	    rhp->next != rhp)
- 		return;
- 	if (time_before(now, READ_ONCE(curr->mm->mm_cid_next_scan)))
- 		return;
- 
--	/* No page allocation under rq lock */
--	task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
-+	call_rcu(rhp, task_mm_cid_work);
- }
- 
- void sched_mm_cid_exit_signals(struct task_struct *t)
++static const struct ad4000_chip_info ad7685_chip_info = {
++	.dev_name = "ad7685",
++	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
++	.time_spec = &ad7687_t_spec,
++};
++
++static const struct ad4000_chip_info ad7686_chip_info = {
++	.dev_name = "ad7686",
++	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
++	.time_spec = &ad7686_t_spec,
++};
++
++static const struct ad4000_chip_info ad7687_chip_info = {
++	.dev_name = "ad7687",
++	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
++	.time_spec = &ad7687_t_spec,
++};
++
++static const struct ad4000_chip_info ad7688_chip_info = {
++	.dev_name = "ad7688",
++	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
++	.time_spec = &ad7686_t_spec,
++};
++
++static const struct ad4000_chip_info ad7690_chip_info = {
++	.dev_name = "ad7690",
++	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
++	.time_spec = &ad7690_t_spec,
++};
++
++static const struct ad4000_chip_info ad7691_chip_info = {
++	.dev_name = "ad7691",
++	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
++	.time_spec = &ad7691_t_spec,
++};
++
++static const struct ad4000_chip_info ad7693_chip_info = {
++	.dev_name = "ad7693",
++	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
++	.time_spec = &ad7686_t_spec,
++};
++
++static const struct ad4000_chip_info ad7942_chip_info = {
++	.dev_name = "ad7942",
++	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 14, 0),
++	.time_spec = &ad7687_t_spec,
++};
++
++static const struct ad4000_chip_info ad7946_chip_info = {
++	.dev_name = "ad7946",
++	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 14, 0),
++	.time_spec = &ad7686_t_spec,
++};
++
++static const struct ad4000_chip_info ad7980_chip_info = {
++	.dev_name = "ad7980",
++	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
++	.time_spec = &ad7980_t_spec,
++};
++
++static const struct ad4000_chip_info ad7982_chip_info = {
++	.dev_name = "ad7982",
++	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
++	.time_spec = &ad7980_t_spec,
++};
++
++static const struct ad4000_chip_info ad7983_chip_info = {
++	.dev_name = "ad7983",
++	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
++	.time_spec = &ad7983_t_spec,
++};
++
++static const struct ad4000_chip_info ad7984_chip_info = {
++	.dev_name = "ad7984",
++	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
++	.time_spec = &ad7983_t_spec,
++};
++
++static const struct ad4000_chip_info ad7988_1_chip_info = {
++	.dev_name = "ad7988-1",
++	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
++	.time_spec = &ad7988_1_t_spec,
++};
++
++static const struct ad4000_chip_info ad7988_5_chip_info = {
++	.dev_name = "ad7988-5",
++	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
++	.time_spec = &ad7686_t_spec,
++};
++
+ struct ad4000_state {
+ 	struct spi_device *spi;
+ 	struct gpio_desc *cnv_gpio;
+@@ -733,6 +865,21 @@ static const struct spi_device_id ad4000_id[] = {
+ 	{ "ad4022", (kernel_ulong_t)&ad4022_chip_info },
+ 	{ "adaq4001", (kernel_ulong_t)&adaq4001_chip_info },
+ 	{ "adaq4003", (kernel_ulong_t)&adaq4003_chip_info },
++	{ "ad7685", (kernel_ulong_t)&ad7685_chip_info },
++	{ "ad7686", (kernel_ulong_t)&ad7686_chip_info },
++	{ "ad7687", (kernel_ulong_t)&ad7687_chip_info },
++	{ "ad7688", (kernel_ulong_t)&ad7688_chip_info },
++	{ "ad7690", (kernel_ulong_t)&ad7690_chip_info },
++	{ "ad7691", (kernel_ulong_t)&ad7691_chip_info },
++	{ "ad7693", (kernel_ulong_t)&ad7693_chip_info },
++	{ "ad7942", (kernel_ulong_t)&ad7942_chip_info },
++	{ "ad7946", (kernel_ulong_t)&ad7946_chip_info },
++	{ "ad7980", (kernel_ulong_t)&ad7980_chip_info },
++	{ "ad7982", (kernel_ulong_t)&ad7982_chip_info },
++	{ "ad7983", (kernel_ulong_t)&ad7983_chip_info },
++	{ "ad7984", (kernel_ulong_t)&ad7984_chip_info },
++	{ "ad7988-1", (kernel_ulong_t)&ad7988_1_chip_info },
++	{ "ad7988-5", (kernel_ulong_t)&ad7988_5_chip_info },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(spi, ad4000_id);
+@@ -754,6 +901,21 @@ static const struct of_device_id ad4000_of_match[] = {
+ 	{ .compatible = "adi,ad4022", .data = &ad4022_chip_info },
+ 	{ .compatible = "adi,adaq4001", .data = &adaq4001_chip_info },
+ 	{ .compatible = "adi,adaq4003", .data = &adaq4003_chip_info },
++	{ .compatible = "adi,ad7685", .data = &ad7685_chip_info },
++	{ .compatible = "adi,ad7686", .data = &ad7686_chip_info },
++	{ .compatible = "adi,ad7687", .data = &ad7687_chip_info },
++	{ .compatible = "adi,ad7688", .data = &ad7688_chip_info },
++	{ .compatible = "adi,ad7690", .data = &ad7690_chip_info },
++	{ .compatible = "adi,ad7691", .data = &ad7691_chip_info },
++	{ .compatible = "adi,ad7693", .data = &ad7693_chip_info },
++	{ .compatible = "adi,ad7942", .data = &ad7942_chip_info },
++	{ .compatible = "adi,ad7946", .data = &ad7946_chip_info },
++	{ .compatible = "adi,ad7980", .data = &ad7980_chip_info },
++	{ .compatible = "adi,ad7982", .data = &ad7982_chip_info },
++	{ .compatible = "adi,ad7983", .data = &ad7983_chip_info },
++	{ .compatible = "adi,ad7984", .data = &ad7984_chip_info },
++	{ .compatible = "adi,ad7988-1", .data = &ad7988_1_chip_info },
++	{ .compatible = "adi,ad7988-5", .data = &ad7988_5_chip_info },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ad4000_of_match);
 -- 
-2.47.0
+2.45.2
 
 
