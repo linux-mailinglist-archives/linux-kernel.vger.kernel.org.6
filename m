@@ -1,250 +1,142 @@
-Return-Path: <linux-kernel+bounces-428248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C36F9E0BDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:17:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9854C9E0BE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 20:19:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE028282402
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:17:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0D7164FE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A1C1DE3A7;
-	Mon,  2 Dec 2024 19:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9151DE3C8;
+	Mon,  2 Dec 2024 19:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jobyaviation.com header.i=@jobyaviation.com header.b="CK24D814"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y96HLoHJ"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA431DACA7
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 19:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1191DACA7;
+	Mon,  2 Dec 2024 19:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733167019; cv=none; b=EfuFUtXxZ7MaEQCgv/FUlpJqXVTbQb1UovlulWSA0+To/l9AgpvZT9GR+5J0h02IeNBhZSCtxI4ujGomHOB2/wp55GCAtWmgd/0sJooGcP1WBHqQdxUWbK5JpqR8okazWbtlFWK2+i9CInwA4glwqzMSkRVvlZevv5A2ozhblxQ=
+	t=1733167134; cv=none; b=cGghy1LHGYRT49KhweK8Y7JLXmNtTvAuaCAd/3ro26QG9uTOA/9mEYFPMMXmhIIML7Td0BOe17G04ZXCbUAUU7XWvwOuH8QHSs80vPCF0WB6nsJxaDbjQnjJ3mLUxWjc1mY2p9FkHJ7IpR1sxC5Zrlm86ka/cFqFFNoerK4WY1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733167019; c=relaxed/simple;
-	bh=Nckuv6hATlKq/HtY/KkK+SWSCjWapfTxPZWs7KJuGkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BkmvC38SF4+2klHeYcvbTpdCqSFdfR2K2lduYwZMOTtF6e3M21SHwYRNXXRPCzv6HLH79AO9K3he/H9pdulklnuMw7E/9Al0ugEJM9cgE2xlaFF+MvI4UUmeWFRaJ1cEHBt6beNpzXCSi5exBa52IHNmhZkTP1QPJ6GiA7ykVzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jobyaviation.com; spf=pass smtp.mailfrom=jobyaviation.com; dkim=pass (2048-bit key) header.d=jobyaviation.com header.i=@jobyaviation.com header.b=CK24D814; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jobyaviation.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jobyaviation.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-215b0582aaeso5257585ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 11:16:57 -0800 (PST)
+	s=arc-20240116; t=1733167134; c=relaxed/simple;
+	bh=UNYTQCQ4U0f5t75v+3oqKVreEsYoOkeElwGyOVTcyLY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JJPEZ8vSAmQnJIVnWTLSUI9NqVmO0GanjksIqLO4jKDGK1I5ZOUmA2KOFUnoHJPGrfaguL6hABmMupgu33SaDkTurvaCNwlJy02KFdbzmvHdTrMU9YKEGexWiqWYvxaODvJ6AQy95Yi+A8PfsK50VHloT+9RGxuQNQVt5Z1CpEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y96HLoHJ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434ab938e37so30263485e9.0;
+        Mon, 02 Dec 2024 11:18:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jobyaviation.com; s=google; t=1733167017; x=1733771817; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q57ivaqtZdXHj40aGMomGBPEpCPwm3IGe0CZcucTxLY=;
-        b=CK24D814iHUV2Irs7p1FZs2dIU6BBsY5GGruF1eeiv7v4XoctdYAajgyY36FmjCbWY
-         nAzrE0sC28dMq16RUvULvQHo1YCwHxJAPsrwfPJ1TLbNE/5whzaCTIJvfdyx8dCprQXG
-         oRuTJ+2K+wV6zxBBhYckFQrcC0lL4VhfzgDo9Od04iaiFYUXJPlSZsJwpnu1Lkoi+Fhn
-         V2jXgsdJF7t5EJEMJQOWl+DjlTfY5SRAZKEBBJ6U8mgmELoaXzdi0QWKAg1g5shl8/dQ
-         sbz2BOKihj+tQU6GxkznEBDAe0aSPAh8m2GaiKt9L0QTO9f6mfHMvUKHDumSWW/tw50I
-         UZrQ==
+        d=gmail.com; s=20230601; t=1733167131; x=1733771931; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b1M8QkqJkisY/ETmPRqXk3HD34EoSuZs2F99KPXzllo=;
+        b=Y96HLoHJkByYQyttJOP9ETJI6xOcm7D2aXkonklGeJ1XjFP/tGKYel6TF+oisD5S/4
+         pq1WLhK+3wqU2aFsCsD8vmNpVYg+c5DFR5YTeVwg4M20NH+KnoHlxnsFRZ/HxBR28Jhb
+         LzXcfDLyETjVmelqj6osXiIRtcGMfA3S/eQ/wivRs/ZQxZlukYkSMTT/bw8YebQBZr+p
+         G8stg/JHjCrzvR6l7OS3dosYvgAItP3atnEbmwQ6+O5tju7nwMj4zcYtlx3x9rc/l4ts
+         I2NWI7R7PtU1PhPAuaLkqdly9bRE5cV7aC/mMgcGDfWlRpBuFe6Yr1Xlk9cy/h1VGgAs
+         b1Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733167017; x=1733771817;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q57ivaqtZdXHj40aGMomGBPEpCPwm3IGe0CZcucTxLY=;
-        b=D+QM8wo0J8eiWy9Cj6/Px/BfXV7Zah8ytzu0IunAJ/iG3zbSxpdniU2O0Zr0Uj7fro
-         11+BBMRmZQhA4GsbqBJ/78xZ8cMC/UpVDXHTD1Wx8XtK3o/BC8bk1zGaOey2/n88+9Hh
-         DTrrLKaOUrykQY6YfxSqPkcY13g6ayrsFs9NZgSDPhvH6t9uepFcfw+4pMxnsXIBXyUc
-         vclho58+LRSES76f9Jj3IC0UXM+3GKPuEjig1ICn0qmx2/ZioZL/wvG5ABsRzR2zovEr
-         e4DYi9OcjFQQXOhV7Nhkb9+gIi3+Aa6DkKUVWk4MuO5G7L5z3T40oH0tiH9hJRBcj5j+
-         MWdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUngBc87if1XNuRiRX0tPI3PxkxhgtXAH0GeMgkOg09OeOvf0jsxwRFknt9OBfT7o8o5hV+h6SWIXBN1Jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxvd0sGqGkuOMh0a4UI7sxzdM0iFybrTf3ETIUTm6lrqfeMOqMm
-	eHIbw+piAOF0VxuJlvHovg/f4ibDP7gx/9oOJu1/sRNT7BVFv4s/cn48hwN2NJ2B0EEQ9C5OlCv
-	N8q8R5hUdhR41ORv4X60/GbS6XaZS8+x5z6UQIP2eMl7tszDkqwC7WMYTw9HE5Wj07dQJmhuXJr
-	kQfTXZT2yJD7TGyB1lXzi3vs00OV7u
-X-Gm-Gg: ASbGnct1pc+RKeJ3EfezbGvoRBqF+kMs+bZ8BxB+gMd84wuUPui7d827eoYOdFeCZTT
-	VHuvddQ06o5ic/ouWu4amKXm0Eg5sdV0=
-X-Google-Smtp-Source: AGHT+IHXotag8OVIec9YbcZNOA+aqWmJHuTbf5Gno47rTJ7wBXw87VnjsKFCUe/ii6Z7EB1DHUsNyPY2dtKxY2SeVVI=
-X-Received: by 2002:a17:902:e881:b0:215:7287:67c2 with SMTP id
- d9443c01a7336-21572876c74mr128108905ad.42.1733167017210; Mon, 02 Dec 2024
- 11:16:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733167131; x=1733771931;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b1M8QkqJkisY/ETmPRqXk3HD34EoSuZs2F99KPXzllo=;
+        b=ISvyAEEKNILhKh4DMlnmP2jEG4bGUXwVktlyD+H+ZDvM6d6ntCYBxFDxzExoLR4c/M
+         SmmtY4njtgeZhIxQqemHUtzuaoLLWzUTVQ70+P9wAkJSNlZx0WVP8gdZHvBRt00XLbPn
+         j6aOAGp6APicv9u6u3pHtmwi/CEUfgKN6ChU+oJSqK/OImf4nTzXXz4FbJYwAHhNQFXy
+         B1Its5EYbnDpyrX6ms1lonWaurTZmiAsturZD06Iwo2ACsSWqgt2wa6Sv3UIgabt0IS0
+         hPYVGnSYHiVRtW2lTVkqEcW6IC2r6Utwo0cKcTipwUfI+6RkyHsJCjQdMkW3fkEY9Qpj
+         /60Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUSSnL6gy2+aqeszf3xIur8FAvSCNHI1dMIe4CDnmBfxWPMhnhYc0ucvjdueWMjSW2biQocdrLk7i0AIdR+@vger.kernel.org, AJvYcCXAd7lGs5A816Pemt4vQpTBqq86fLiqNsN1vdi0kZbiqo1/eOWOMibKbyhPbSJpqmPCDSoOAHoJ9JU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw33pT6saPEsrvpRlOZFVscZDWJNqgERAs76ycrvUhbjB8sKl2
+	us3tRK7PlWvZJp1JXRFNCUvRYg9KZP89WoJfu46ZfqGrR2MtHFTr
+X-Gm-Gg: ASbGnctEgiIgXTNf5Cq8SGdFMzoZjLql6HmMSwflXOZMOF1wYkpNumBDYChdSzk3qnR
+	C7lnVyQLoIHHa7qY2PfhWrRBQ4dtvxYt14Kgn2U6stNJPKOi38DZYDJ/a27uVwKo4Fffc78kXtU
+	cre/NahZprIXsLWDuqJ2/KQX3lJVaJxJzPWpKEe2mmwdRuk4YqK+D5mTCEp/Jrs/idf5IryCguZ
+	FbYgu1Z0DmuVBCvRaHl9ocPLVvpVBhG83sicab9rFP+ZJMnnej+xRiQxKnZnaL1SQoaUzBeJAsv
+	K9172Nt229Emav5dditzYdmVpFhpo0It3PlJlp6uxPxfzZ1fahmkdkIUFt211W39CpQIw1m3
+X-Google-Smtp-Source: AGHT+IFT1C64b0Tm1Azea/Zf2eWohd4XOQWB+8j1jNvlxpO77F81dukY7Vw9Q+YU53eXBD1Zo5U5KA==
+X-Received: by 2002:a05:6000:4712:b0:385:f271:a22c with SMTP id ffacd0b85a97d-385f271a44cmr5002241f8f.59.1733167130494;
+        Mon, 02 Dec 2024 11:18:50 -0800 (PST)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-d553-b993-925a-609c.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d553:b993:925a:609c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd36b80sm13198423f8f.29.2024.12.02.11.18.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 11:18:50 -0800 (PST)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Mon, 02 Dec 2024 20:18:44 +0100
+Subject: [PATCH] iio: adc: ti-ads1119: fix sample size in scan struct for
+ triggered buffer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACodVevaOp4f=Gg467_m-FAdQFceGQYr7_Ahtt6CfpDVQhAsjA@mail.gmail.com>
- <20241120090354.GE19989@noisy.programming.kicks-ass.net> <xhsmhzflkmvt0.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-In-Reply-To: <xhsmhzflkmvt0.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-From: Chenbo Lu <chenbo.lu@jobyaviation.com>
-Date: Mon, 2 Dec 2024 11:16:45 -0800
-Message-ID: <CACodVet-QpGeixsYdDnRbZdzd1ScGHxPaFUjzBpXW9upZxZzfg@mail.gmail.com>
-Subject: Re: Performance Degradation After Upgrading to Kernel 6.8
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org, 
-	regressions@lists.linux.dev, mingo@redhat.com, juri.lelli@redhat.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241202-ti-ads1119_s16_chan-v1-1-fafe3136dc90@gmail.com>
+X-B4-Tracking: v=1; b=H4sIABMITmcC/x2MSwqAMAwFryJZGzD1A3oVkVJt1GxUGhFBenerm
+ 4GBee8B5SCs0GUPBL5EZd+SUJ7BtLptYRSfHExhKkrAU9B5JaLWKjX2i9A4Jt/MNdNYQloegWe
+ 5/9d+iPEFYunm1mUAAAA=
+To: Francesco Dolcini <francesco@dolcini.it>, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733167129; l=1359;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=UNYTQCQ4U0f5t75v+3oqKVreEsYoOkeElwGyOVTcyLY=;
+ b=VpZJFmK3vOM2cCjPBIBU4i3shRgvvAyHUK3ZhesaFeokMS1oaiA+x1goyqgQ3EnBYNv7UMI+Q
+ EzCX1DcnvDDDa2lMs8+5bm4N8BO+BxtfoILcC4FUsmUOMxxspCbnlfH
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hello Valentin,
-Thanks for the reply. I tried the patch, but it does not bring back
-the performance (the average execution time is 6.15ms).
+This device returns signed, 16-bit samples as stated in its datasheet
+(see 8.5.2 Data Format). That is in line with the scan_type definition
+for the IIO_VOLTAGE channel, but 'unsigned int' is being used to read
+and push the data to userspace.
 
-On Wed, Nov 27, 2024 at 9:27=E2=80=AFAM Valentin Schneider <vschneid@redhat=
-.com> wrote:
->
-> Damn, I wrote a reply on the 20th but seems like I never sent it. At leas=
-t
-> I found it saved somewhere, so I don't have to rewrite it...
->
-> On 20/11/24 10:03, Peter Zijlstra wrote:
-> > On Tue, Nov 19, 2024 at 04:30:02PM -0800, Chenbo Lu wrote:
-> >> Hello,
-> >>
-> >> I am experiencing a significant performance degradation after
-> >> upgrading my kernel from version 6.6 to 6.8 and would appreciate any
-> >> insights or suggestions.
-> >>
-> >> I am running a high-load simulation system that spawns more than 1000
-> >> threads and the overall CPU usage is 30%+ . Most of the threads are
-> >> using real-time
-> >> scheduling (SCHED_RR), and the threads of a model are using
-> >> SCHED_DEADLINE. After upgrading the kernel, I noticed that the
-> >> execution time of my model has increased from 4.5ms to 6ms.
-> >>
-> >> What I Have Done So Far:
-> >> 1. I found this [bug
-> >> report](https://bugzilla.kernel.org/show_bug.cgi?id=3D219366#c7) and
-> >> reverted the commit efa7df3e3bb5da8e6abbe37727417f32a37fba47 mentioned
-> >> in the post. Unfortunately, this did not resolve the issue.
-> >> 2. I performed a git bisect and found that after these two commits
-> >> related to scheduling (RT and deadline) were merged, the problem
-> >> happened. They are 612f769edd06a6e42f7cd72425488e68ddaeef0a,
-> >> 5fe7765997b139e2d922b58359dea181efe618f9
-> >
-> > And yet you failed to Cc Valentin, the author of said commits :/
-> >
-> >> After reverting these two commits, the model execution time improved
-> >> to around 5 ms.
-> >> 3. I revert two more commits, and the execution time is back to 4.7ms:
-> >> 63ba8422f876e32ee564ea95da9a7313b13ff0a1,
-> >> efa7df3e3bb5da8e6abbe37727417f32a37fba47
-> >>
-> >> My questions are:
-> >> 1.Has anyone else experienced similar performance degradation after
-> >> upgrading to kernel 6.8?
-> >
-> > This is 4 kernel releases back, I my memory isn't that long.
-> >
-> >> 2.Can anyone explain why these two commits are causing the problem? I
-> >> am not very familiar with the kernel code and would appreciate any
-> >> insights.
-> >
-> > There might be a race window between setting the tro and sending the
-> > IPI, such that previously the extra IPIs would sooner find the newly
-> > pushable task.
-> >
-> > Valentin, would it make sense to set tro before enqueueing the pushable=
-,
-> > instead of after it?
->
-> Urgh, those cachelines are beyond cold...
->
-> /me goes reading
->
-> Ok yeah I guess we could have this race vs
->
-> rto_push_irq_work_func()
-> `\
->   rto_next_cpu()
->
-> Not sure if that applies to DL too since it doesn't have the PUSH_IPI
-> thing, but anyway - Chenbo, could you please try the below?
-> ---
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index d9d5a702f1a61..270a25335c4bc 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -602,16 +602,16 @@ static void enqueue_pushable_dl_task(struct rq *rq,=
- struct task_struct *p)
->
->         WARN_ON_ONCE(!RB_EMPTY_NODE(&p->pushable_dl_tasks));
->
-> +       if (!rq->dl.overloaded) {
-> +               dl_set_overload(rq);
-> +               rq->dl.overloaded =3D 1;
-> +       }
-> +
->         leftmost =3D rb_add_cached(&p->pushable_dl_tasks,
->                                  &rq->dl.pushable_dl_tasks_root,
->                                  __pushable_less);
->         if (leftmost)
->                 rq->dl.earliest_dl.next =3D p->dl.deadline;
-> -
-> -       if (!rq->dl.overloaded) {
-> -               dl_set_overload(rq);
-> -               rq->dl.overloaded =3D 1;
-> -       }
->  }
->
->  static void dequeue_pushable_dl_task(struct rq *rq, struct task_struct *=
-p)
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index bd66a46b06aca..1ea45a45ed657 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -385,6 +385,15 @@ static inline void rt_queue_pull_task(struct rq *rq)
->
->  static void enqueue_pushable_task(struct rq *rq, struct task_struct *p)
->  {
-> +       /*
-> +        * Set RTO first so rto_push_irq_work_func() can see @rq as a pus=
-h
-> +        * candidate as early as possible.
-> +        */
-> +       if (!rq->rt.overloaded) {
-> +               rt_set_overload(rq);
-> +               rq->rt.overloaded =3D 1;
-> +       }
-> +
->         plist_del(&p->pushable_tasks, &rq->rt.pushable_tasks);
->         plist_node_init(&p->pushable_tasks, p->prio);
->         plist_add(&p->pushable_tasks, &rq->rt.pushable_tasks);
-> @@ -392,15 +401,15 @@ static void enqueue_pushable_task(struct rq *rq, st=
-ruct task_struct *p)
->         /* Update the highest prio pushable task */
->         if (p->prio < rq->rt.highest_prio.next)
->                 rq->rt.highest_prio.next =3D p->prio;
-> -
-> -       if (!rq->rt.overloaded) {
-> -               rt_set_overload(rq);
-> -               rq->rt.overloaded =3D 1;
-> -       }
->  }
->
->  static void dequeue_pushable_task(struct rq *rq, struct task_struct *p)
->  {
-> +       /*
-> +        * To match enqueue we should check/unset RTO first, but for that=
- we
-> +        * need to pop @p first. This makes this asymmetric wrt enqueue, =
-but
-> +        * the worst we can get out of this is an extra useless IPI.
-> +        */
->         plist_del(&p->pushable_tasks, &rq->rt.pushable_tasks);
->
->         /* Update the new highest prio pushable task */
->
+Given that the size of that type depends on the architecture (at least
+2 bytes to store values up to 65535, but its actual size is often 4
+bytes), use the 's16' type to provide the same structure in all cases.
 
---=20
-This email and any relevant attachments may include confidential and/or=20
-proprietary information.=C2=A0 Any distribution or use by anyone other than=
- the=20
-intended recipient(s) or other than for the intended purpose(s) is=20
-prohibited and may be unlawful.=C2=A0 If you are not the intended recipient=
- of=20
-this message, please notify the sender by replying to this message and then=
-=20
-delete it from your system.
+Fixes: a9306887eba4 ("iio: adc: ti-ads1119: Add driver")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+ drivers/iio/adc/ti-ads1119.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/ti-ads1119.c b/drivers/iio/adc/ti-ads1119.c
+index 533610ac214e..6637cb6a6dda 100644
+--- a/drivers/iio/adc/ti-ads1119.c
++++ b/drivers/iio/adc/ti-ads1119.c
+@@ -500,7 +500,7 @@ static irqreturn_t ads1119_trigger_handler(int irq, void *private)
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct ads1119_state *st = iio_priv(indio_dev);
+ 	struct {
+-		unsigned int sample;
++		s16 sample;
+ 		s64 timestamp __aligned(8);
+ 	} scan;
+ 	unsigned int index;
+
+---
+base-commit: a0d6ec6575fce400e976af1dd9223823251775e9
+change-id: 20241202-ti-ads1119_s16_chan-2ae1d6f5e1b3
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
