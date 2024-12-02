@@ -1,62 +1,66 @@
-Return-Path: <linux-kernel+bounces-427932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560FB9E0862
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:24:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 613319E085F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:24:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6ACDBC47F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:52:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91CB9178252
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8312165F1A;
-	Mon,  2 Dec 2024 15:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48278175D26;
+	Mon,  2 Dec 2024 15:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzCj7D4I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1gACQe7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4515B15C14F;
-	Mon,  2 Dec 2024 15:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A159B16C854;
+	Mon,  2 Dec 2024 15:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154676; cv=none; b=W5jC/s3s6JJFWLbOlYR3CNpGqI1oP2oHev0fpIs/WzenaCuvgCun9y27HbwJVchjKW5Go4YmBOjrdIsSMrqLTklh0ws6XvGA9qw1naK3KgIxVGOxvnn79lyGedK0Wr7DAmSxG1SNMwSQAI8xAEpkZN76Gb+fmpycukS4RdsNh5k=
+	t=1733154677; cv=none; b=d4mBIK8Er41H3f3OX9aG0M25FGXfBFx6VAOM7E004RpIG/8/nrmMFow0M1mVTr/RdM2uYpRUNwH9IRd/I8+lQnxdK16bK5+TFNyK2+K0Za6mKsU/9utebXebtQeLK/iRgOlrGTdLm4KnzCMLJd1gjuGmAJKXLG2P8KYE/ca632I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154676; c=relaxed/simple;
-	bh=AcITv8v7xwO3OcPABb6z0A8v9LpEl+qK/t+N2ODkNrY=;
+	s=arc-20240116; t=1733154677; c=relaxed/simple;
+	bh=w3NWLI4KLgT4dwNTEWZOaquyn8q5LoNO7IbYT08kOhc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jd/CyIkBOdSa0rLtDtq72apmmVNR69Ohe6QBGiE006dMSmgURjZW4Y2LfMpVXdpV7feC2PbOidTmbxTH5Ka1y0PmIePpXHq7KSTiXmUUOooRqnzZQpFZi10V6pOWq2XQBzZS5C47ILyv/9EJi0NhCeO5svUh0YrW29Py9N55ok4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzCj7D4I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02FABC4CED9;
-	Mon,  2 Dec 2024 15:51:14 +0000 (UTC)
+	 MIME-Version:Content-Type; b=YyA4zve9dmC3rsip8zeFCbpuxhTKD1ZbogBTPz9dGZnbWnZWjBTGbeYZKVx/8BRAIWJaluICjxpl9UmG9dlCcDpedM4ueb21LYzROj+pTKIiALcjEUjvgfdkO0GvybPy74T3ZxW0RzZCigcfsZtKOs1osieKuzgu80Alc2LHnR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1gACQe7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3F2C4CED6;
+	Mon,  2 Dec 2024 15:51:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733154676;
-	bh=AcITv8v7xwO3OcPABb6z0A8v9LpEl+qK/t+N2ODkNrY=;
+	s=k20201202; t=1733154677;
+	bh=w3NWLI4KLgT4dwNTEWZOaquyn8q5LoNO7IbYT08kOhc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fzCj7D4Iv0UmlDFLVKF4TSbNp9g7i8UYQjML9it1xvog2TWHy/3P+OkyjrigfyV1q
-	 AlmT54s5sdmZU2Yt5cQpDTAKDKgAZT4JB1QoJTot2qqjrSCNK+um/EGQkyGA6WP6rY
-	 iYEqdYk1ww8D6TTTaYVNyVk205RImiaG9s3J4Ko+lYqES3JrN7g6nXuFM2CjazzWWH
-	 FbatlltOpHAT/1Lxqt01DXghJOzXf1ES0b5ezzROO/hOy87qdQi/6fMOZVz6poSkxl
-	 4oegBzcpha5WOzGrYW/sJ6aFQcpoaWxqIWnUJfzi7ZZTC5k01BrlhX7ticcFVVjLop
-	 pv91zCgpNTb1w==
+	b=I1gACQe7pbQ63vIYvLOl2iS0pHLrxq/xlA8hsxZERrAbNjaAgR6SJ1HTYrl3kl0T8
+	 GJ74eum+Eu3brFtUGevA4CH8viR0TUpPmbDF7hxhNN/hwWYZEnsTzotDYpYRJ+30i8
+	 m+fKYaI95hrK0e8BH9la/CA/lJCrKk4y3dMx8ie6/hSrxm4y2Tl++2tFgyIg7zwUfY
+	 Io3IHIsooK8PoAqjgXL5WNvgxXhro9B555GvFN8l8nIIil0QE6/ys966sGe/w9T1Xs
+	 kSq7k1o0/Myl3cJGg7j5EAc1V/9RuPawhf4QGVogw2rVu2N1zIuIF2biXhlMA0JMKa
+	 WwVrVZiKgTGRA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: kernel@quicinc.com,
 	linux-arm-msm@vger.kernel.org,
-	quic_ppratap@quicinc.com,
-	quic_jackp@quicinc.com
-Subject: Re: [PATCH v2 0/2] Add DT Support for primary USB on QCS615
-Date: Mon,  2 Dec 2024 09:51:02 -0600
-Message-ID: <173315466532.263019.3718496755521104621.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v5 0/5] Add initial support for QCS615 SoC and QCS615 RIDE board
+Date: Mon,  2 Dec 2024 09:51:03 -0600
+Message-ID: <173315466527.263019.11318467939121751784.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241121063007.2737908-1-quic_kriskura@quicinc.com>
-References: <20241121063007.2737908-1-quic_kriskura@quicinc.com>
+In-Reply-To: <20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com>
+References: <20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,22 +71,30 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 21 Nov 2024 12:00:05 +0530, Krishna Kurapati wrote:
-> QCS615 has two USB controllers. Adding primary USB controller support
-> in this series. Both the HS Phys are QUSB2 ones. Although the HS PHY
-> is a QUSB2, it still uses DP/DM interrupts for wakeup instead of QUSB2.
+On Mon, 04 Nov 2024 17:10:07 +0800, Lijuan Gao wrote:
+> Introduces the Device Tree for the QCS615 platform.
 > 
-> The primary port has been enabled in peripheral mode as it is intended
-> for debugging purposes.
+> Features added and enabled:
+> - CPUs with PSCI idle states
+> - Interrupt-controller with PDC wakeup support
+> - Timers, TCSR Clock Controllers
+> - Reserved Shared memory
+> - QFPROM
+> - TLMM
+> - Watchdog
+> - RPMH controller
+> - Sleep stats driver
+> - Rpmhpd power controller
+> - Interconnect
+> - GCC and Rpmhcc
+> - QUP with Uart serial support
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] arm64: dts: qcom: Add support for usb node on QCS615
-      commit: 4b2769c7d7ce47a64f874eac92b324f3561339ab
-[2/2] arm64: dts: qcom: Enable Primary USB controller on QCS615 Ride
-      commit: 5c66811c9251303b2806caa04b278b4826e7a408
+[5/5] arm64: defconfig: enable clock controller, interconnect and pinctrl for QCS615
+      commit: 9eec6ce36b5dc981327e9f58025d012e524687b4
 
 Best regards,
 -- 
