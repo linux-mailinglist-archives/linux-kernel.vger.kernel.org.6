@@ -1,114 +1,122 @@
-Return-Path: <linux-kernel+bounces-427466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 201E69E0286
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:53:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC4F9E01FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFF38B3488F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:11:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6707B22F4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3D91FECD1;
-	Mon,  2 Dec 2024 12:04:10 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3FE1FE46C;
+	Mon,  2 Dec 2024 12:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="MEM65gzR";
+	dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="YJwBR9Bx"
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A664B1FECAE;
-	Mon,  2 Dec 2024 12:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733141049; cv=none; b=Kxv6CLE+1BEWQVoWQzkELn9iFZVZ1P2Pp5qwJ0hEPmkZgRydrS7KUGnCn3QgPXYK/X1I9g20y9DEdPpDY38A7HNxb5cNufLL5ZAxwvYKxCZCRBdegPa2rrrtOPs+k4AtwtBLtN1RDKnjnmYZtV4l3RoGBHxCgjDJFLNnnvCjoqw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733141049; c=relaxed/simple;
-	bh=pM/OrLNxROYcJ7+l2eV3d9qX3VqSYGKWpHph9gbWwFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQTzDyuyRkJ8AvvsKX3mO0K/6dqs6khUFcm/++tae3cf4vqd7O0EAFGDOVhvk7qv1ipz9ib0ihyEs6NTUOFCo8W1WawrL+nFeRCQVG8MFrQXXG20ZBd0204MyflgovmBpoDuqVnftBUSqZm8n+L3U7QhBrVPp4v315+NKeeSjLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 0D8351C00C4; Mon,  2 Dec 2024 13:04:05 +0100 (CET)
-Date: Mon, 2 Dec 2024 13:04:04 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Filipe Manana <fdmanana@suse.com>, Qu Wenruo <wqu@suse.com>,
-	David Sterba <dsterba@suse.com>, clm@fb.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 2/2] btrfs: fix warning on PTR_ERR() against
- NULL device at btrfs_control_ioctl()
-Message-ID: <Z02iNPcVHpjPtHXR@duo.ucw.cz>
-References: <20241124124231.3337202-1-sashal@kernel.org>
- <20241124124231.3337202-2-sashal@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B041FECA7;
+	Mon,  2 Dec 2024 12:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.218
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733141278; cv=pass; b=c1UWhfGw+vqCaz909ts7V4/7ygaFT1cXrgV+W1rvaM6cSlJGlxCSk6Dwet5lK11N3VYq6+vrXgs5rbFKXRe8A88oRzaAMSH31Mv9QKHd+uh/sVx5ITXOt89IZ2r8EuEhGD/hmuXSdPrfzWauImXcJLFZCTO8NEF0ExLeI9s90Xs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733141278; c=relaxed/simple;
+	bh=o7Ud+cvNPHrey1c8b1YKen0TsLIn4c3OMSNkknvUDAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=huwmBWkFURxogtaQWjETv3L5GcLBW/vzZFTXnoVB+uhuvxn6ygf0wMfmaWeRk6d055apQkcCBlq2tSuWWjpjTG+xk5bn3T3ICL1M+I2CTbymwxIlYmDEjAWyAZdbDuYrUg6sHFH3LKQWs7wyHsRwMdslr/GagObXTE6buKmq6Rg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de; spf=pass smtp.mailfrom=aepfle.de; dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=MEM65gzR; dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=YJwBR9Bx; arc=pass smtp.client-ip=81.169.146.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aepfle.de
+ARC-Seal: i=1; a=rsa-sha256; t=1733141075; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=XdxiNT3hqmNu4SV5FmQIzXx4zpCH07NFkqsxwroJ8tnOOXSiNHnT2dKPjJgTUcJsoa
+    UGFZ+KhUB+cIIDD1BPad7pKWBfkkel82X0CuNwYGds++pphGjtj6IqaUdSg3t54A1xWu
+    Zqcvbx6CbHwn4AeqX8k61Mp8kIV/8971PbktJaEJdVlt0zJNfMi2sW5ZIL7b9KBRx0rK
+    FYeQyqaafBC6TJaKyxg36ay/7WF6J3r/ww05wDoU0tIJ/6tVzq7P9qiSRxd7DKp5/8oD
+    Osp3xvqItTpj8bWbKulIH5pvhDIfoIm4OdjNu2s5GDxluT6Wd7C1ONnKQkivoV205d82
+    RcnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1733141075;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=buCPLxYTTnHGIbnaGtY5EBfZCa2VAiJd04VS0YcqUWc=;
+    b=bnontD8WtsIgeuLCcEvMrEz7OxGh5ZtbUvmHcxrdOB1eGT/rhRO/tCunmxzbTpNezo
+    4iG5GDGMq/tV6iRvOPbFv4PufrYV0q5RswX6MVxodAMmgjKomqh4k1zZJiQZKtRIHxCP
+    xITt2UNBHn1c+HgX+dBJ4U18MfYcQ7r72Enm95p340k/4RkO8kOWZITDNbzod4r1+7H1
+    G/VhrLn9OtZnPTLHwMgxbDElsg7zGnAvK9J9Eu391+C0elIJb1JXw77FWXawws9nHpUP
+    noU3x7lvZbXvIzb6xeB3Yyf2zAXUGrb4xoqPt+VUaSGGkujJiLJZomSS5DxW5G3E+2li
+    C4KA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1733141075;
+    s=strato-dkim-0002; d=aepfle.de;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=buCPLxYTTnHGIbnaGtY5EBfZCa2VAiJd04VS0YcqUWc=;
+    b=MEM65gzRgBD11TfWqgFq8TSZe79aA0YqDOqzDlc898A9VaCbht/jLuQfx+tcf/khP8
+    wAeqkge7H706oCMSPH3lMjSNtpDIpAe9z1OpWLy/9MYF/a+LUP8X1gMgaBEzC1NitzrI
+    zBRC6WVVMHXl6xTbTMkDvvpLycaFezXiAhjH4XsoWDbKP/R6pMs5KggaJG55iGvdb1rt
+    B4eDvHREh8iMjN0NHQinKSnzoIq1pi+q/8HqRhRonhwQeBk5bkqopVXiUsPELjqbxxCT
+    bCA9dUmrEaO6sj7fwO4WnfZliSNqXdDrrXXq9psXGMNTv0km1JST1HAafJvgIOQ98XqR
+    0C8Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1733141075;
+    s=strato-dkim-0003; d=aepfle.de;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=buCPLxYTTnHGIbnaGtY5EBfZCa2VAiJd04VS0YcqUWc=;
+    b=YJwBR9BxF0uA+i431cnA4iLhrbOtiKmfcD8yeYr+9HPpR8VdnbK4iyMuO+TbrFKuWo
+    S8HPvTF25zSPkH0sF5Ag==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0uv8ZofWaSUMjanMCZmxMwm2OGJkumVDfIDOsNMxne61spO"
+Received: from sender
+    by smtp.strato.de (RZmta 51.2.11 AUTH)
+    with ESMTPSA id Dd65250B2C4ZpJ2
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 2 Dec 2024 13:04:35 +0100 (CET)
+From: Olaf Hering <olaf@aepfle.de>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>
+Subject: [PATCH v1] tools/hv: reduce resouce usage in hv_get_dns_info helper
+Date: Mon,  2 Dec 2024 13:04:10 +0100
+Message-ID: <20241202120432.21115-1-olaf@aepfle.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1UBKiVcZwAh2stw7"
-Content-Disposition: inline
-In-Reply-To: <20241124124231.3337202-2-sashal@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
+Remove the usage of cat. Replace the shell process with awk with 'exec'.
+Also use a generic shell because no bash specific features will be used.
 
---1UBKiVcZwAh2stw7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+---
+ tools/hv/hv_get_dns_info.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hi!
-
-> From: Filipe Manana <fdmanana@suse.com>
->=20
-> [ Upstream commit 2342d6595b608eec94187a17dc112dd4c2a812fa ]
->=20
-> Smatch complains about calling PTR_ERR() against a NULL pointer:
->=20
->   fs/btrfs/super.c:2272 btrfs_control_ioctl() warn: passing zero to 'PTR_=
-ERR'
->=20
-> Fix this by calling PTR_ERR() against the device pointer only if it
-> contains an error.
-
-This patch was wrongly ported to 4.19. It is not needed there. Same
-test is already performed 2 lines above.
-
-Please drop.
-
-BR,
-								Pavel
-
-> +++ b/fs/btrfs/super.c
-> @@ -2283,7 +2283,10 @@ static long btrfs_control_ioctl(struct file *file,=
- unsigned int cmd,
->  					       &btrfs_root_fs_type);
->  		if (IS_ERR(device)) {
->  			mutex_unlock(&uuid_mutex);
-> -			ret =3D PTR_ERR(device);
-> +			if (IS_ERR(device))
-> +				ret =3D PTR_ERR(device);
-> +			else
-> +				ret =3D 0;
->  			break;
->  		}
->  		ret =3D !(device->fs_devices->num_devices =3D=3D
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---1UBKiVcZwAh2stw7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ02iNAAKCRAw5/Bqldv6
-8lTgAKC3bd8uzGQArBotjP/A2zgfWt59IwCfULDTDPWvLesqYqqPZ/deicBdlwk=
-=2XmC
------END PGP SIGNATURE-----
-
---1UBKiVcZwAh2stw7--
+diff --git a/tools/hv/hv_get_dns_info.sh b/tools/hv/hv_get_dns_info.sh
+index 058c17b46ffc..268521234d4b 100755
+--- a/tools/hv/hv_get_dns_info.sh
++++ b/tools/hv/hv_get_dns_info.sh
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ 
+ # This example script parses /etc/resolv.conf to retrive DNS information.
+ # In the interest of keeping the KVP daemon code free of distro specific
+@@ -10,4 +10,4 @@
+ # this script can be based on the Network Manager APIs for retrieving DNS
+ # entries.
+ 
+-cat /etc/resolv.conf 2>/dev/null | awk '/^nameserver/ { print $2 }'
++exec awk '/^nameserver/ { print $2 }' /etc/resolv.conf 2>/dev/null
 
