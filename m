@@ -1,288 +1,138 @@
-Return-Path: <linux-kernel+bounces-427626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528DB9E03DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:43:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FDE9E03F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:48:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13400281BE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1732628240A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 13:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097761FECC4;
-	Mon,  2 Dec 2024 13:43:32 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D119200BBB;
+	Mon,  2 Dec 2024 13:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C/qhtRXq"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72102EEDE
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 13:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4FC33F6;
+	Mon,  2 Dec 2024 13:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733147011; cv=none; b=IhXdyKbxgPvTuniWOXU6DQgpH19MMlOieyELWtqAD6i6G6cdU1WHDVpNLitjP91tmh9u8MYN8iGKYR/nzv68BHokVg4emIAIQ/vdP1VD8ieeMT4tBPysciYrXUsN5VSwJ7Aom1x4/XPy5KmFesKd8T7M1K9yR8QolvC/whQx83c=
+	t=1733147306; cv=none; b=EiCiYHyvhzEQoAB1X6tGmtw8rhAZ4IamP9Sn9HXzi2h8dV2mwI490/c4VRq490+8Yaz0RMRHjyb8gxLHqF8I2Da6O+fKz6OF2XCzyaTyphTFwFcdkV1uHv8+vY+YcSa4N7oqrpnIQELzwEwa21MmXn/xyxz5sECUvg1oSPm0XxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733147011; c=relaxed/simple;
-	bh=5pmKYlpLxzvlS9JAnQH5MCmhwKMJcSmxx/KP5fCt9A0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rjFkkrlWKpczm5QPcX9oKINXfryyJTddTVt5oTUW7/ElUxmxrUd695/8FZeBIIK2gPJ13LVhRJdS+jfy/yx0sfAPaj+OKDJd/4i8dFs4ZCuRyeX72uQcWQa0Q72iDCfNSs2Vm2D6vTUd2OsWzDDpCqBbJQUrVfFgKXxYczqeM0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7de3ab182so38880965ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 05:43:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733147008; x=1733751808;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vboPoXwRv5cDI32OSmx/NfQx+rdINON0MH0jUkQibms=;
-        b=s1ZmNNpv4pBfx9t8TyG/GacW7oMb2YIb4iMQ7J0Bfmh9iionF/AZ7xsKHe6eoBtd+v
-         X0Wc7BqY0GyfEO2xv4WRfkmb3idvlciZ1GGz51EntW3w/cRzxdk0sXB0PJg+jJ36ideU
-         MvJUPcgrF/gfSUarihMiTZrMBx0oHCPkbOVPINsA82OA9eRUx8ipaeKmvF98CMfHDVOr
-         0qmlc6tboF5qXt3ls5hin2+btHCgH5paoOzk9PDEpVh0qTpuq0erW2xv7OcObcJcY123
-         8TiwHgz1dBDBVeckH7tP2oMbiPQP+fQRFO+cCFuXlGBQjGwNikBbX+UEBvQbMp71g1ZJ
-         A2xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTeSzRO+B2RP3Oun80SlgM/V644SB7fpOOkc2Gy6+MFc8hIoA9Hps+dwgg+o3/WyONJTtQwPAz8TKfWTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLEpW3hvHpKGjAgi5gXFQNOoGAAUvYvGLZ/GrxMdIkwFAqa/2f
-	aKnNR9qwuTLq1uThdMi7p/Fa6IiLIm9PD2jV8J24OAxGpj391tu6UWwQUiurojUv5uCEr1sA3XV
-	ZADwUb6XJxN8OyKpcJZZVoI7tYmvUxv/d3P48SBLKkjQ5KapEXA1ZDuo=
-X-Google-Smtp-Source: AGHT+IGKzHQpciWn6xyEXZAsSfL5OcyDYM+FQ4UCKFX4N86xBiXvgkxLUHEN7OaG1ljKAVKJc2ExyJcZsfxwTB1hJecUAWnkL4Qs
+	s=arc-20240116; t=1733147306; c=relaxed/simple;
+	bh=yRFF5Cn9hYJ5NxNNwgBFZ18HfvfvKPMofL1WAQo1+F4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWwzByUOkDMxSXC6MhdVLqWMndC+gk24jCJ5uEMTjn8emUZgANsWGqu8UGLMuP/k0CGiijucEzRNRcNZ+t3FE6IqzvRXEqrHBZv2ldpwGqah74WSnVJUspR4GgU+6TOtxH7TdeyGCzwHE7EH5o1RM1yNSLVoiOBCMy3vhDe+I3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C/qhtRXq; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B28vMNk008687;
+	Mon, 2 Dec 2024 13:48:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=rqNlJL
+	dkxznHHoNexL0Ceqcdh2TqPu6ZQPu6UIy4HYs=; b=C/qhtRXqXQW9WXvEsIYLjW
+	hNFKgO2PE43GndzSJIq2IbinLmEIJTzQEb47QZopU4zu2cnzW2Pst31199Fe7sFC
+	yE2jgnseoB3Pgmw+l85d9J+J0CSH9cuvozKpjOgdgs4tjNuGgQaohqWyY7j8cOCk
+	UpXCFcmBCBLAiEVpdc+40qhipcg2td9h5cgSnuC5hkKtTyT6B9WYPL/X3fJjIsxB
+	uJHAKDvu0NnJ1rLG3dCMNqrLWwLiRmMw1h/83TtutR9fhWM8EdM4jxd1t1HTOuQw
+	Q53LR2nPwur84WvDR0FPjAA4F5RY0LSRHuuOO+f87l2GrGI66biuRnP/LqyGiR3A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437te8sj4w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 13:48:05 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B2DgHJF010973;
+	Mon, 2 Dec 2024 13:48:05 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437te8sj4t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 13:48:05 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B26GUkT020536;
+	Mon, 2 Dec 2024 13:48:04 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 438d1s2g69-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 13:48:04 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B2Dm2wY65798614
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 2 Dec 2024 13:48:02 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 67A1D2006A;
+	Mon,  2 Dec 2024 13:48:02 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BEC2C20074;
+	Mon,  2 Dec 2024 13:48:01 +0000 (GMT)
+Received: from [9.171.14.28] (unknown [9.171.14.28])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  2 Dec 2024 13:48:01 +0000 (GMT)
+Message-ID: <2b3bc88a-e435-4ccc-a543-c8f8566dd306@linux.ibm.com>
+Date: Mon, 2 Dec 2024 14:48:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1caf:b0:3a7:6f5a:e5c7 with SMTP id
- e9e14a558f8ab-3a7c5528576mr233302965ab.4.1733147008652; Mon, 02 Dec 2024
- 05:43:28 -0800 (PST)
-Date: Mon, 02 Dec 2024 05:43:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674db980.050a0220.ad585.0052.GAE@google.com>
-Subject: [syzbot] [xfs?] INFO: task hung in xfs_ail_push_all_sync (3)
-From: syzbot <syzbot+92fbc8b664c9bbc40bf6@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, cem@kernel.org, chandan.babu@oracle.com, 
-	djwong@kernel.org, hch@lst.de, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf test record+probe_libc_inet_pton: Make test
+ resilient
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jing Zhang <renyu.zj@linux.alibaba.com>,
+        Guilherme Amadio <amadio@gentoo.org>
+References: <20241202111958.553403-1-leo.yan@arm.com>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <20241202111958.553403-1-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 384liJLtZORsnI_2gW8-8CeKyVM7eI1X
+X-Proofpoint-ORIG-GUID: VIzwQ9x8qYuswBlnADDWHSPxs_OkP4uX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 mlxlogscore=884 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 phishscore=0 adultscore=0 clxscore=1011 spamscore=0
+ malwarescore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412020117
 
-Hello,
+On 12/2/24 12:19, Leo Yan wrote:
+> The test failed back and forth due to the call chain being heavily
+> impacted by the libc, which varies across different architectures and
+> distros.
+> 
 
-syzbot found the following issue on:
+For s390 using 6.13.0.rc1
 
-HEAD commit:    f486c8aa16b8 Add linux-next specific files for 20241128
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1786f1e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
-dashboard link: https://syzkaller.appspot.com/bug?extid=92fbc8b664c9bbc40bf6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122c1f5f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13978f78580000
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/beb58ebb63cf/disk-f486c8aa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b241b5609e64/vmlinux-f486c8aa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c9d817f665f2/bzImage-f486c8aa.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/fe4e6f4f2b2f/mount_0.gz
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
-The issue was bisected to:
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
 
-commit 3eb96946f0be6bf447cbdf219aba22bc42672f92
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Wed May 24 06:05:38 2023 +0000
+Geschäftsführung: David Faller
 
-    block: make bio_check_eod work for zero sized devices
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11a5c7c0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=13a5c7c0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a5c7c0580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+92fbc8b664c9bbc40bf6@syzkaller.appspotmail.com
-Fixes: 3eb96946f0be ("block: make bio_check_eod work for zero sized devices")
-
-INFO: task syz-executor901:5953 blocked for more than 143 seconds.
-      Not tainted 6.12.0-next-20241128-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor901 state:D stack:25656 pid:5953  tgid:5899  ppid:5854   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0x1850/0x4c30 kernel/sched/core.c:6756
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6848
- xfs_ail_push_all_sync+0x236/0x310 fs/xfs/xfs_trans_ail.c:726
- xfs_log_quiesce+0xdf/0x5b0 fs/xfs/xfs_log.c:1018
- xfs_fs_freeze+0x8d/0x1a0 fs/xfs/xfs_super.c:940
- freeze_super+0x81b/0xee0 fs/super.c:2121
- fs_bdev_freeze+0x1ac/0x320 fs/super.c:1484
- bdev_freeze+0xd6/0x220 block/bdev.c:257
- xfs_fs_goingdown+0xa9/0x160 fs/xfs/xfs_fsops.c:442
- xfs_file_ioctl+0x1312/0x1b20 fs/xfs/xfs_ioctl.c:1360
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f417e96c189
-RSP: 002b:00007f417e8f3168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f417e9fc4b8 RCX: 00007f417e96c189
-RDX: 0000000020000080 RSI: 000000008004587d RDI: 0000000000000004
-RBP: 00007f417e9fc4b0 R08: 00007ffc4da61c37 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f417e9fc4bc
-R13: 000000000000006e R14: 00007ffc4da61b50 R15: 00007ffc4da61c38
- </TASK>
-INFO: task syz-executor901:5954 blocked for more than 143 seconds.
-      Not tainted 6.12.0-next-20241128-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor901 state:D stack:24688 pid:5954  tgid:5901  ppid:5852   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0x1850/0x4c30 kernel/sched/core.c:6756
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6848
- xfs_ail_push_all_sync+0x236/0x310 fs/xfs/xfs_trans_ail.c:726
- xfs_log_quiesce+0xdf/0x5b0 fs/xfs/xfs_log.c:1018
- xfs_fs_freeze+0x8d/0x1a0 fs/xfs/xfs_super.c:940
- freeze_super+0x81b/0xee0 fs/super.c:2121
- fs_bdev_freeze+0x1ac/0x320 fs/super.c:1484
- bdev_freeze+0xd6/0x220 block/bdev.c:257
- xfs_fs_goingdown+0xa9/0x160 fs/xfs/xfs_fsops.c:442
- xfs_file_ioctl+0x1312/0x1b20 fs/xfs/xfs_ioctl.c:1360
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f417e96c189
-RSP: 002b:00007f417e8f3168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f417e9fc4b8 RCX: 00007f417e96c189
-RDX: 0000000020000080 RSI: 000000008004587d RDI: 0000000000000004
-RBP: 00007f417e9fc4b0 R08: 00007ffc4da61c37 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f417e9fc4bc
-R13: 000000000000006e R14: 00007ffc4da61b50 R15: 00007ffc4da61c38
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937b20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937b20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937b20 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6744
-1 lock held by klogd/5196:
- #0: ffff8880b873e8d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:598
-2 locks held by getty/5600:
- #0: ffff8880353b20a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002fde2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-5 locks held by syz-executor901/5953:
- #0: ffff888148c8ddb0 (&bdev->bd_fsfreeze_mutex){+.+.}-{4:4}, at: bdev_freeze+0x2a/0x220 block/bdev.c:248
- #1: ffff8880660c8420 (sb_writers#11){++++}-{0:0}, at: sb_wait_write fs/super.c:1910 [inline]
- #1: ffff8880660c8420 (sb_writers#11){++++}-{0:0}, at: freeze_super+0x4e9/0xee0 fs/super.c:2099
- #2: ffff8880660c80e0 (&type->s_umount_key#45){+.+.}-{4:4}, at: __super_lock fs/super.c:56 [inline]
- #2: ffff8880660c80e0 (&type->s_umount_key#45){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:71 [inline]
- #2: ffff8880660c80e0 (&type->s_umount_key#45){+.+.}-{4:4}, at: freeze_super+0x4f1/0xee0 fs/super.c:2100
- #3: ffff8880660c8518 (sb_pagefaults){+.+.}-{0:0}, at: sb_wait_write fs/super.c:1910 [inline]
- #3: ffff8880660c8518 (sb_pagefaults){+.+.}-{0:0}, at: freeze_super+0x519/0xee0 fs/super.c:2104
- #4: ffff8880660c8610 (sb_internal#2){++++}-{0:0}, at: sb_wait_write fs/super.c:1910 [inline]
- #4: ffff8880660c8610 (sb_internal#2){++++}-{0:0}, at: freeze_super+0x7cc/0xee0 fs/super.c:2118
-5 locks held by syz-executor901/5954:
- #0: ffff888148c8c6b0 (&bdev->bd_fsfreeze_mutex){+.+.}-{4:4}, at: bdev_freeze+0x2a/0x220 block/bdev.c:248
- #1: ffff8880661e0420 (sb_writers#11){++++}-{0:0}, at: sb_wait_write fs/super.c:1910 [inline]
- #1: ffff8880661e0420 (sb_writers#11){++++}-{0:0}, at: freeze_super+0x4e9/0xee0 fs/super.c:2099
- #2: ffff8880661e00e0 (&type->s_umount_key#45){+.+.}-{4:4}, at: __super_lock fs/super.c:56 [inline]
- #2: ffff8880661e00e0 (&type->s_umount_key#45){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:71 [inline]
- #2: ffff8880661e00e0 (&type->s_umount_key#45){+.+.}-{4:4}, at: freeze_super+0x4f1/0xee0 fs/super.c:2100
- #3: ffff8880661e0518 (sb_pagefaults){+.+.}-{0:0}, at: sb_wait_write fs/super.c:1910 [inline]
- #3: ffff8880661e0518 (sb_pagefaults){+.+.}-{0:0}, at: freeze_super+0x519/0xee0 fs/super.c:2104
- #4: ffff8880661e0610 (sb_internal#2){++++}-{0:0}, at: sb_wait_write fs/super.c:1910 [inline]
- #4: ffff8880661e0610 (sb_internal#2){++++}-{0:0}, at: freeze_super+0x7cc/0xee0 fs/super.c:2118
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-next-20241128-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:234 [inline]
- watchdog+0xff6/0x1040 kernel/hung_task.c:397
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 3556 Comm: kworker/u8:10 Not tainted 6.12.0-next-20241128-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: bat_events batadv_iv_send_outstanding_bat_ogm_packet
-RIP: 0010:kasan_check_range+0x5/0x290 mm/kasan/generic.c:188
-Code: 8e e8 ff 89 e1 ff 90 0f 0b 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 55 <41> 57 41 56 41 54 53 b0 01 48 85 f6 0f 84 a0 01 00 00 4c 8d 04 37
-RSP: 0018:ffffc9000cac7760 EFLAGS: 00000046
-RAX: 000000000000001d RBX: 0000000000000759 RCX: ffffffff817abd42
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff942c4968
-RBP: 0000000000000000 R08: ffffffff942c4967 R09: 1ffffffff285892c
-R10: dffffc0000000000 R11: fffffbfff285892d R12: 0000000000000001
-R13: ffff8880323cc728 R14: 0000000000000001 R15: ffff8880323cc728
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055cd011df600 CR3: 000000000e736000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
- hlock_class kernel/locking/lockdep.c:228 [inline]
- check_wait_context kernel/locking/lockdep.c:4875 [inline]
- __lock_acquire+0x8a2/0x2100 kernel/locking/lockdep.c:5176
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- batadv_iv_ogm_slide_own_bcast_window net/batman-adv/bat_iv_ogm.c:754 [inline]
- batadv_iv_ogm_schedule_buff net/batman-adv/bat_iv_ogm.c:825 [inline]
- batadv_iv_ogm_schedule+0x43f/0x10a0 net/batman-adv/bat_iv_ogm.c:868
- batadv_iv_send_outstanding_bat_ogm_packet+0x6fe/0x810 net/batman-adv/bat_iv_ogm.c:1712
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
