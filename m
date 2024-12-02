@@ -1,406 +1,275 @@
-Return-Path: <linux-kernel+bounces-428175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEA79E0B02
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:30:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86DE79E0B0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 19:33:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25812820A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B04281FD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB981DDC37;
-	Mon,  2 Dec 2024 18:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549FF1DDC3D;
+	Mon,  2 Dec 2024 18:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yUceKNg2"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="M2q7+jlY"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D411DDC2D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 18:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C8F70805;
+	Mon,  2 Dec 2024 18:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733164229; cv=none; b=oPIh1jCulMa30ydmB8ziLuS5AjCMvhagOqcJu1N8grYLvwvpjWSdbwm+BO0V0jOJQgWX4Lc0LWu3Qte97WeyV61nqMPLIA8fhYon5UHWPNsjwkOwdlygEPZzQw742bFDh31+BpoT6HJzsRAAhODMY/rLqAvCG5AIyZswYKbMAf8=
+	t=1733164371; cv=none; b=CtFGzvF1ENPhxgXvZXpGufmMWD/EmffgaA2ssz1PAwbcUW4ntfIGjnP4NeMPRMQeP2oyXCGs1d8SPNP8f0fAyG+CAHnYXm9n0UKGRtIU8I1MkCLor+gRRII2XPTIzSbVCM7XwzYfQP/x05YBjkulJifSxjLmbz96OczNEobnHiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733164229; c=relaxed/simple;
-	bh=jfYPmuPcseGgs18akshQku6eeOGrei89q0mSBpAdsoM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qbYidsWbKVrBwQdPd/F4/n+HPcSI/0JWLEIFUQHfUhoZv5JRNoziblViJ/Cz+zm8XCKJDMaW9bEE9yXzOhr9glabDoPZgvGJdqUMvyia3XXNg/ItaTpBfrC+eFEpf/0wiCItBP8OAQSejWmocs0V6daZtHOqZQTQyJaazKjc7NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yUceKNg2; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ee6dccd3c9so2701001a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 10:30:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733164225; x=1733769025; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qUy8x4/Y3tpGiB0Zi5q2SYxfMtOPsbv3PZOW89BEvLY=;
-        b=yUceKNg2NBm8GBDkDfBVit5QxYy6v/bjS6bpddIWFnoch3XX9VedbsbuQDVP7ZHgoY
-         ZQ8ki1Z6bpAe8H9xNyX/JFzJxZqsafrZd8An9J5jA/ptMeKkvKWwnTHuLm5CKQ0iQfT3
-         nuFkTtA2G8lKCbnyjc21Lz7zlC3EKfJ524AP0dUaOsgBevQKXLZVCKUhycVThvl0g87y
-         EJ+szr9Eg+mGicPxeH5OhHTXGrgYd3msZYm2+8gTw5ZrJBD22N9tYGr8KUhOIDZUZFL2
-         eAts9ddxB/gKrK4OOw9XSCo8GS3ZsXXX8PWI6/EwcmKHlELYaF9oSJks8ANJSmEAnwOI
-         b0kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733164225; x=1733769025;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qUy8x4/Y3tpGiB0Zi5q2SYxfMtOPsbv3PZOW89BEvLY=;
-        b=k02/1U6/KA7PuFYP9TtWX3aE8mlDM4K43oBZjsq5rkoKPIwnG5kvoS7vcJ6J0kma0b
-         lgu+szI0UOZZXEv/e69L8rr+lbDxYE6tooCU3Ki30dLhd6IPvhkFxqKKjgMFyGmXRk9Z
-         nK88KJZ5PT1rgqu/xOcsJdbDKaHkVZmdYHCtIp2ULwjGlhd8yYZPylI3Cob8J/cZX5Ym
-         ZQVuozkmh4lu3qtbN3tUlmAirWzZR+/SGCl7uAJ1Py2l1uwdRmWzafoANTNDnfG4hxAg
-         cPaODiunPoSPi+/dPSz/97XOS/UITfc3w3kDHe5EsSiJSUdHNPtxMwaZZ7D22/Qf9eYK
-         N/NQ==
-X-Gm-Message-State: AOJu0YyanCoY42RXGh16PIBVJpJN9uoDrDg+xilSFxSUL638Jw3FB6iP
-	yrYocbuSHAQuakbp2UzN8dMPjM1s93jEwpXHwe+dqGffZ1sEDX+3yosFBwrGbTAoPMcGsr+7ERW
-	Jrg==
-X-Google-Smtp-Source: AGHT+IGwaNwxXMXEV3k2ZvbOJITQYIG7oMCZBKKK13JflpmqU8EUD4VR+m3D0LjUFvc/1eB/zqc8rBfXtAw=
-X-Received: from pjbli9.prod.google.com ([2002:a17:90b:48c9:b0:2e9:38ea:ca0f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c8e:b0:2ee:8430:b831
- with SMTP id 98e67ed59e1d1-2ee8430ba90mr13618408a91.2.1733164225516; Mon, 02
- Dec 2024 10:30:25 -0800 (PST)
-Date: Mon, 2 Dec 2024 10:30:24 -0800
-In-Reply-To: <20241128132834.15126-3-amit@kernel.org>
+	s=arc-20240116; t=1733164371; c=relaxed/simple;
+	bh=5zdc5yDcA29a0xhFW2zhxgI2AoKgeyu3kJazza0fKyg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XAxlTPxIbqSHrlAqHk/5vU18rVgURqLxiv/RfMVJA/bh/KofrLY0+dLjjRqRBVxklq/FejykC2u9aeGro9GjrD/2cB6EeavpTiFoSESkhvZPMC+4tRIJcpegJq+4ZzVJLal0ON1uF887QlRdLUDZTaqOi9I9tAOYplabdbvNxYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=M2q7+jlY; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2AT7LK014470;
+	Mon, 2 Dec 2024 10:32:23 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=e3RFZtalqMokySmIITPzp0C
+	A15CGLdsWKD7j0mPpw54=; b=M2q7+jlYJEwosuGU8Hn+Vmg210+iplzz5DzDUOM
+	KM7afWkDHkqZGer2EVFledvVSXuoNwZVtPFHYJWGjACjuh+SMcVhLwm59RfCjlzg
+	bYQ2wGRl6U5rzzPiLjLQevUkCBDSx9dmWZxDNeaNpEdaD7rirClkPIx96A3b5HgN
+	dpf+TuxazGj9lEoFq1mJJLjxlt1e8tTjr80HPqmjLUnmlDs2x/lJwV2c5hGcJeUG
+	05fyFWNoI+VKq41vC7sBf+elX4ssElgPG2HQ/LquDtn5kJzCzpqD1yBg+HY7ZRyV
+	v8bjnleLLAyuEhgYn1D6KuEuyMxg3k+DroB9fOtMiBo0lRw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 439agjh0yf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 10:32:22 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 2 Dec 2024 10:32:21 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 2 Dec 2024 10:32:21 -0800
+Received: from ubuntu-PowerEdge-T110-II.sclab.marvell.com (unknown [10.106.27.86])
+	by maili.marvell.com (Postfix) with ESMTP id 1CF833F7052;
+	Mon,  2 Dec 2024 10:32:21 -0800 (PST)
+From: Shinas Rasheed <srasheed@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <hgani@marvell.com>, <sedara@marvell.com>, <vimleshk@marvell.com>,
+        <thaller@redhat.com>, <wizhao@redhat.com>, <kheib@redhat.com>,
+        <egallen@redhat.com>, <konguyen@redhat.com>, <horms@kernel.org>,
+        <einstein.xue@synaxg.com>, Shinas Rasheed <srasheed@marvell.com>,
+        Veerasenareddy Burru <vburru@marvell.com>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric
+ Dumazet" <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>
+Subject: [PATCH net-next v3 RESEND] octeon_ep: add ndo ops for VFs in PF driver
+Date: Mon, 2 Dec 2024 10:32:18 -0800
+Message-ID: <20241202183219.2312114-1-srasheed@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1732219175.git.jpoimboe@kernel.org> <20241128132834.15126-1-amit@kernel.org>
- <20241128132834.15126-3-amit@kernel.org>
-Message-ID: <Z038wBhWfVAFNhJJ@google.com>
-Subject: Re: [RFC PATCH v3 2/2] x86: kvm: svm: advertise ERAPS (larger RSB)
- support to guests
-From: Sean Christopherson <seanjc@google.com>
-To: Amit Shah <amit@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org, 
-	linux-doc@vger.kernel.org, amit.shah@amd.com, thomas.lendacky@amd.com, 
-	bp@alien8.de, tglx@linutronix.de, peterz@infradead.org, jpoimboe@kernel.org, 
-	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, pbonzini@redhat.com, 
-	daniel.sneddon@linux.intel.com, kai.huang@intel.com, sandipan.das@amd.com, 
-	boris.ostrovsky@oracle.com, Babu.Moger@amd.com, david.kaplan@amd.com, 
-	dwmw@amazon.co.uk, andrew.cooper3@citrix.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 3BBGa2pk2etLCPcSKW2RU-PQeJr_EQo0
+X-Proofpoint-ORIG-GUID: 3BBGa2pk2etLCPcSKW2RU-PQeJr_EQo0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+
+These APIs are needed to support applications that use netlink to get VF
+information from a PF driver.
+
+Signed-off-by: Shinas Rasheed <srasheed@marvell.com>
+---
+V3:
+  - Corrected line-wrap and space checkpatch errors
+  - Set spoof check as true and vf trusted as false to be default vf
+    configs
+
+V2: https://lore.kernel.org/all/PH0PR18MB47344F6BCCD1B629AC012065C7252@PH0PR18MB4734.namprd18.prod.outlook.com/
+  - Corrected typos, and removed not supported ndo_set_vf* hooks
+
+V1: https://lore.kernel.org/all/20241107121637.1117089-1-srasheed@marvell.com/
+
+ .../ethernet/marvell/octeon_ep/octep_main.c   | 46 ++++++++++++++++++-
+ .../ethernet/marvell/octeon_ep/octep_main.h   |  2 +
+ .../marvell/octeon_ep/octep_pfvf_mbox.c       | 24 +++++++++-
+ .../marvell/octeon_ep/octep_pfvf_mbox.h       |  6 ++-
+ 4 files changed, 73 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
+index 549436efc204..226a44823401 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
+@@ -1137,6 +1137,45 @@ static int octep_set_features(struct net_device *dev, netdev_features_t features
+ 	return err;
+ }
+ 
++static int octep_get_vf_config(struct net_device *dev, int vf,
++			       struct ifla_vf_info *ivi)
++{
++	struct octep_device *oct = netdev_priv(dev);
++
++	ivi->vf = vf;
++	ether_addr_copy(ivi->mac, oct->vf_info[vf].mac_addr);
++	ivi->spoofchk = true;
++	ivi->linkstate = IFLA_VF_LINK_STATE_ENABLE;
++	ivi->trusted = oct->vf_info[vf].trusted;
++	ivi->max_tx_rate = 10000;
++	ivi->min_tx_rate = 0;
++
++	return 0;
++}
++
++static int octep_set_vf_mac(struct net_device *dev, int vf, u8 *mac)
++{
++	struct octep_device *oct = netdev_priv(dev);
++	int err;
++
++	if (!is_valid_ether_addr(mac)) {
++		dev_err(&oct->pdev->dev, "Invalid  MAC Address %pM\n", mac);
++		return -EADDRNOTAVAIL;
++	}
++
++	dev_dbg(&oct->pdev->dev, "set vf-%d mac to %pM\n", vf, mac);
++	ether_addr_copy(oct->vf_info[vf].mac_addr, mac);
++	oct->vf_info[vf].flags |= OCTEON_PFVF_FLAG_MAC_SET_BY_PF;
++
++	err = octep_ctrl_net_set_mac_addr(oct, vf, mac, true);
++	if (err)
++		dev_err(&oct->pdev->dev,
++			"Set VF%d MAC address failed via host control Mbox\n",
++			vf);
++
++	return err;
++}
++
+ static const struct net_device_ops octep_netdev_ops = {
+ 	.ndo_open                = octep_open,
+ 	.ndo_stop                = octep_stop,
+@@ -1146,6 +1185,8 @@ static const struct net_device_ops octep_netdev_ops = {
+ 	.ndo_set_mac_address     = octep_set_mac,
+ 	.ndo_change_mtu          = octep_change_mtu,
+ 	.ndo_set_features        = octep_set_features,
++	.ndo_get_vf_config       = octep_get_vf_config,
++	.ndo_set_vf_mac          = octep_set_vf_mac
+ };
+ 
+ /**
+@@ -1560,9 +1601,12 @@ static void octep_remove(struct pci_dev *pdev)
+ static int octep_sriov_enable(struct octep_device *oct, int num_vfs)
+ {
+ 	struct pci_dev *pdev = oct->pdev;
+-	int err;
++	int i, err;
+ 
+ 	CFG_GET_ACTIVE_VFS(oct->conf) = num_vfs;
++	for (i = 0; i < num_vfs; i++)
++		oct->vf_info[i].trusted = false;
++
+ 	err = pci_enable_sriov(pdev, num_vfs);
+ 	if (err) {
+ 		dev_warn(&pdev->dev, "Failed to enable SRIOV err=%d\n", err);
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.h b/drivers/net/ethernet/marvell/octeon_ep/octep_main.h
+index fee59e0e0138..1c39833ffcc0 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.h
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.h
+@@ -220,7 +220,9 @@ struct octep_iface_link_info {
+ /* The Octeon VF device specific info data structure.*/
+ struct octep_pfvf_info {
+ 	u8 mac_addr[ETH_ALEN];
++	u32 flags;
+ 	u32 mbox_version;
++	bool trusted;
+ };
+ 
+ /* The Octeon device specific private data structure.
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+index e6eb98d70f3c..3024f6428838 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+@@ -156,12 +156,24 @@ static void octep_pfvf_set_mac_addr(struct octep_device *oct,  u32 vf_id,
+ {
+ 	int err;
+ 
++	if ((oct->vf_info[vf_id].flags & OCTEON_PFVF_FLAG_MAC_SET_BY_PF) &&
++	    !oct->vf_info[vf_id].trusted) {
++		dev_err(&oct->pdev->dev,
++			"VF%d attempted to override administrative set MAC address\n",
++			vf_id);
++		rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
++		return;
++	}
++
+ 	err = octep_ctrl_net_set_mac_addr(oct, vf_id, cmd.s_set_mac.mac_addr, true);
+ 	if (err) {
+ 		rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
+-		dev_err(&oct->pdev->dev, "Set VF MAC address failed via host control Mbox\n");
++		dev_err(&oct->pdev->dev, "Set VF%d MAC address failed via host control Mbox\n",
++			vf_id);
+ 		return;
+ 	}
++
++	ether_addr_copy(oct->vf_info[vf_id].mac_addr, cmd.s_set_mac.mac_addr);
+ 	rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
+ }
+ 
+@@ -171,10 +183,18 @@ static void octep_pfvf_get_mac_addr(struct octep_device *oct,  u32 vf_id,
+ {
+ 	int err;
+ 
++	if (oct->vf_info[vf_id].flags & OCTEON_PFVF_FLAG_MAC_SET_BY_PF) {
++		dev_dbg(&oct->pdev->dev, "VF%d MAC address set by PF\n", vf_id);
++		ether_addr_copy(rsp->s_set_mac.mac_addr,
++				oct->vf_info[vf_id].mac_addr);
++		rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
++		return;
++	}
+ 	err = octep_ctrl_net_get_mac_addr(oct, vf_id, rsp->s_set_mac.mac_addr);
+ 	if (err) {
+ 		rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
+-		dev_err(&oct->pdev->dev, "Get VF MAC address failed via host control Mbox\n");
++		dev_err(&oct->pdev->dev, "Get VF%d MAC address failed via host control Mbox\n",
++			vf_id);
+ 		return;
+ 	}
+ 	rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h
+index 0dc6eead292a..386a095a99bc 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h
+@@ -8,8 +8,6 @@
+ #ifndef _OCTEP_PFVF_MBOX_H_
+ #define _OCTEP_PFVF_MBOX_H_
+ 
+-/* VF flags */
+-#define OCTEON_PFVF_FLAG_MAC_SET_BY_PF  BIT_ULL(0) /* PF has set VF MAC address */
+ #define OCTEON_SDP_16K_HW_FRS  16380UL
+ #define OCTEON_SDP_64K_HW_FRS  65531UL
+ 
+@@ -23,6 +21,10 @@ enum octep_pfvf_mbox_version {
+ 
+ #define OCTEP_PFVF_MBOX_VERSION_CURRENT	OCTEP_PFVF_MBOX_VERSION_V2
+ 
++/* VF flags */
++/* PF has set VF MAC address */
++#define OCTEON_PFVF_FLAG_MAC_SET_BY_PF  BIT(0)
++
+ enum octep_pfvf_mbox_opcode {
+ 	OCTEP_PFVF_MBOX_CMD_VERSION,
+ 	OCTEP_PFVF_MBOX_CMD_SET_MTU,
+-- 
+2.25.1
 
-KVM: SVM:
-
-Please through the relevant maintainer handbooks, there are warts all over.
-
-  Documentation/process/maintainer-kvm-x86.rst
-  Documentation/process/maintainer-tip.rst
-
-And the shortlog is wrong.  The patch itself is also broken.  KVM should (a) add
-support for virtualizing ERAPS and (b) advertise support to *userspace*.  The
-userspace VMM ultimately decides what to expose/enable for the guest.
-
-On Thu, Nov 28, 2024, Amit Shah wrote:
-> From: Amit Shah <amit.shah@amd.com>
-> 
-> AMD CPUs with the ERAPS feature (Zen5+) have a larger RSB (aka RAP).
-
-Please spell out ERAPS at least once (I assume it's "Enhanced RAPs"?) and very
-briefly document what it does.
-
-> While the new default RSB size is used on the host without any software
-> modification necessary, the RSB size for guests is limited to the older
-
-Please describe hardware behavior, and make it abundantly clear that the changelog
-is talking about hardware behavior.  One of my pet peeves (understatement) with
-the APM is that it does a shit job of explaining the actual architectural behavior.
-
-> value (32 entries) for backwards compatibility.
-
-Backwards compatibility with what?  And how far back?  E.g. have CPUs with a RAP
-always had 32 entries?
-
-> With this patch, KVM
-
-No "this patch"
-
-> enables guest mode 
-
-Use imperative mood.
-
-> to also use the default number of entries by setting
-
-"default" is clearly wrong, since the *default* behavior is to use
-
-> the new ALLOW_LARGER_RAP bit in the VMCB.
-
-I detest the "ALLOW_LARGER" name.  "Allow" implies the guest somehow has a choice.
-And "Larger" implies there's an even larger size
-
-And again, please explicitly describe what this bit does.
-
-> The two cases for backward compatibility that need special handling are
-> nested guests, and guests using shadow paging
-
-Guests don't use shadow paging, *KVM* uses 
-
-> (or when NPT is disabled):
-
-"i.e", not "or".  "Or" makes it sound like "NPT is disabled" is separate case
-from shadow paging.
-
-> For nested guests: the ERAPS feature adds host/guest tagging to entries
-> in the RSB, but does not distinguish between ASIDs.  On a nested exit,
-> the L0 hypervisor instructs the hardware (via another new VMCB bit,
-
-I strongly suspect this was copied from the APM.  Please don't do that.  State
-what change is being for *KVM*, not for "the L0 hypervisor".  This verbiage mixes
-hardware behavior with software behavior, which again is why I hate much of the
-APM's wording.
-
-> FLUSH_RAP_ON_VMRUN) to flush the RSB on the next VMRUN to prevent RSB
-> poisoning attacks from an L2 guest to an L1 guest.  With that in place,
-> this feature can be exposed to guests.
-
-ERAPS can also be advertised if nested virtualization is disabled, no?  I think
-it makes sense to first add support for ERAPS if "!nested", and then in a separate
-path, add support for ERAPS when nested virtualization is enabled.  Partly so that
-it's easier for readers to understand why nested VMs are special, but mainly because
-the nested virtualization support is sorely lacking.
-
-> For shadow paging guests: do not expose this feature to guests; only
-> expose if nested paging is enabled, to ensure a context switch within
-> a guest triggers a context switch on the CPU -- thereby ensuring guest
-> context switches flush guest RSB entries.
-
-Huh?
-
-> For shadow paging, the CPU's CR3 is not used for guest processes, and hence
-> cannot benefit from this feature.
-
-What does that have to do with anything?
-
-> Signed-off-by: Amit Shah <amit.shah@amd.com>
-> ---
->  arch/x86/include/asm/svm.h |  6 +++++-
->  arch/x86/kvm/cpuid.c       | 18 ++++++++++++++++--
->  arch/x86/kvm/svm/svm.c     | 29 +++++++++++++++++++++++++++++
->  arch/x86/kvm/svm/svm.h     | 15 +++++++++++++++
->  4 files changed, 65 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
-> index 2b59b9951c90..f8584a63c859 100644
-> --- a/arch/x86/include/asm/svm.h
-> +++ b/arch/x86/include/asm/svm.h
-> @@ -129,7 +129,8 @@ struct __attribute__ ((__packed__)) vmcb_control_area {
->  	u64 tsc_offset;
->  	u32 asid;
->  	u8 tlb_ctl;
-> -	u8 reserved_2[3];
-> +	u8 erap_ctl;
-> +	u8 reserved_2[2];
->  	u32 int_ctl;
->  	u32 int_vector;
->  	u32 int_state;
-> @@ -175,6 +176,9 @@ struct __attribute__ ((__packed__)) vmcb_control_area {
->  #define TLB_CONTROL_FLUSH_ASID 3
->  #define TLB_CONTROL_FLUSH_ASID_LOCAL 7
->  
-> +#define ERAP_CONTROL_ALLOW_LARGER_RAP 0
-> +#define ERAP_CONTROL_FLUSH_RAP 1
-
-Assuming the control enables using the full RAP size, these should be something
-like:
-
-#define ERAP_CONTROL_ENABLE_FULL_RAP_MASK	BIT(0)
-#define ERAP_CONTROL_FLUSH_RAP_ON_VMRUN		BIT(1)
-
->  #define V_TPR_MASK 0x0f
->  
->  #define V_IRQ_SHIFT 8
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 097bdc022d0f..dd589670a716 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -803,6 +803,8 @@ void kvm_set_cpu_caps(void)
->  		F(WRMSR_XX_BASE_NS)
->  	);
->  
-> +	if (tdp_enabled)
-> +		kvm_cpu_cap_check_and_set(X86_FEATURE_ERAPS);
->  	kvm_cpu_cap_check_and_set(X86_FEATURE_SBPB);
->  	kvm_cpu_cap_check_and_set(X86_FEATURE_IBPB_BRTYPE);
->  	kvm_cpu_cap_check_and_set(X86_FEATURE_SRSO_NO);
-> @@ -1362,10 +1364,22 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
->  	case 0x80000020:
->  		entry->eax = entry->ebx = entry->ecx = entry->edx = 0;
->  		break;
-> -	case 0x80000021:
-> -		entry->ebx = entry->ecx = entry->edx = 0;
-> +	case 0x80000021: {
-> +		unsigned int ebx_mask = 0;
-> +
-> +		entry->ecx = entry->edx = 0;
->  		cpuid_entry_override(entry, CPUID_8000_0021_EAX);
-> +
-> +		/*
-> +		 * Bits 23:16 in EBX indicate the size of the RSB.
-
-Is this enumeration explicitly tied to ERAPS?
-
-> +		 * Expose the value in the hardware to the guest.
-
-__do_cpuid_func() is used to advertise KVM's supported CPUID to host userspace,
-not to the guest.
-
-Side topic, what happens when Zen6 adds EVEN_LARGER_RAP?  Enumerating the size of
-the RAP suggets it's likely to change in the future.
-
-> +		 */
-> +		if (kvm_cpu_cap_has(X86_FEATURE_ERAPS))
-> +			ebx_mask |= GENMASK(23, 16);
-> +
-> +		entry->ebx &= ebx_mask;
-
-This is a waste of code and makes it unnecessarily difficult to read.  Just do:
-
-		if (kvm_cpu_cap_has(X86_FEATURE_ERAPS))
-			entry->ebx &= GENMASK(23, 16);
-		else
-			entry->ebx = 0;
-
->  		break;
-> +	}
->  	/* AMD Extended Performance Monitoring and Debug */
->  	case 0x80000022: {
->  		union cpuid_0x80000022_ebx ebx;
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index dd15cc635655..9b055de079cb 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -1360,6 +1360,13 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
->  	if (boot_cpu_has(X86_FEATURE_V_SPEC_CTRL))
->  		set_msr_interception(vcpu, svm->msrpm, MSR_IA32_SPEC_CTRL, 1, 1);
->  
-> +	/*
-> +	 * If the hardware has a larger RSB, use it in the guest context as
-> +	 * well.
-> +	 */
-> +	if (cpu_feature_enabled(X86_FEATURE_ERAPS) && npt_enabled)
-
-This is wrong.  Userspace owns the vCPU model, not KVM.  If userspace wants to
-disable ERAPS for the guest, say because of a hardware vulnerability, then KVM
-needs to honor that.
-
-And this should be kvm_cpu_cap_has(), not copy+paste of the code that enables
-the KVM capability.
-
-> +		vmcb_set_larger_rap(svm->vmcb);
-
-s/set/enable.  "set" implies a value in this context.
-
-> +
->  	if (kvm_vcpu_apicv_active(vcpu))
->  		avic_init_vmcb(svm, vmcb);
->  
-> @@ -3395,6 +3402,7 @@ static void dump_vmcb(struct kvm_vcpu *vcpu)
->  	pr_err("%-20s%016llx\n", "tsc_offset:", control->tsc_offset);
->  	pr_err("%-20s%d\n", "asid:", control->asid);
->  	pr_err("%-20s%d\n", "tlb_ctl:", control->tlb_ctl);
-> +	pr_err("%-20s%d\n", "erap_ctl:", control->erap_ctl);
->  	pr_err("%-20s%08x\n", "int_ctl:", control->int_ctl);
->  	pr_err("%-20s%08x\n", "int_vector:", control->int_vector);
->  	pr_err("%-20s%08x\n", "int_state:", control->int_state);
-> @@ -3561,6 +3569,27 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
->  
->  		trace_kvm_nested_vmexit(vcpu, KVM_ISA_SVM);
->  
-> +		if (boot_cpu_has(X86_FEATURE_ERAPS)
-> +		    && 
-
-&& goes on the previous line.
-
-> vmcb_is_larger_rap(svm->vmcb01.ptr)) {
-
-This should be something like "vmcb_is_full_rap_size_enabled()".  "is_larger_rap()"
-begs the question: is larger than what? 
-
-> +			/*
-> +			 * XXX a few further optimizations can be made:
-> +			 *
-> +			 * 1. In pre_svm_run() we can reset this bit when a hw
-> +			 * TLB flush has happened - any context switch on a
-> +			 * CPU (which causes a TLB flush) auto-flushes the RSB
-> +			 * - eg when this vCPU is scheduled on a different
-> +			 * pCPU.
-> +			 *
-> +			 * 2. This is also not needed in the case where the
-> +			 * vCPU is being scheduled on the same pCPU, but there
-> +			 * was a context switch between the #VMEXIT and VMRUN.
-
-Either do the optimizations straightaway, or call them out as possible optimizations
-in the changelog and then explain why it's not worth doing them.
-
-The above also mixes hardware behavior and software behavior, to the point where
-I honestly have no idea who is doing what.  "A context switch" tells me nothing
-useful.
-
-> +			 *
-> +			 * 3. If the guest returns to L2 again after this
-> +			 * #VMEXIT, there's no need to flush the RSB.
-
-This one in particular is trivially easy to implement correctly.
-
-This also highlights the fact that KVM completely fails to emulate FLUSH_RAP_ON_VMRUN
-if it's set in vmcb12, though that's somewhat of a moot point because unless I'm
-missing something, KVM is responsible for emulating host vs. guest hardware tagging.
-
-From L1's perspective, the (virtual) CPU, a.k.a. KVM, is responsible for isolating
-guest (L2) RAP entries from host (L1) RAP entries.  And so KVM must flush the RAP
-on every nested VM-Exit *and* nested VM-Enter, not just on nested VM-Exit.
-
-> +			 */
-> +			vmcb_set_flush_rap(svm->vmcb01.ptr);
-
-Eh, follow the TLB flush helpers and just go with vmcb_flush_rap().
-
-> +		}
-> +
->  		vmexit = nested_svm_exit_special(svm);
->  
->  		if (vmexit == NESTED_EXIT_CONTINUE)
-> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-> index 43fa6a16eb19..8a7877f46dc5 100644
-> --- a/arch/x86/kvm/svm/svm.h
-> +++ b/arch/x86/kvm/svm/svm.h
-> @@ -500,6 +500,21 @@ static inline bool svm_is_intercept(struct vcpu_svm *svm, int bit)
->  	return vmcb_is_intercept(&svm->vmcb->control, bit);
->  }
->  
-> +static inline void vmcb_set_flush_rap(struct vmcb *vmcb)
-> +{
-> +	__set_bit(ERAP_CONTROL_FLUSH_RAP, (unsigned long *)&vmcb->control.erap_ctl);
-
-Eww.  Don't use the bitops helpers, casting a u8 to an unsigned long, and then
-having to use the non-atomic helpers makes this way, way more complicated then
-it actually is.
-
-	vmcb->control.erap_ctl |= ERAP_CONTROL_FLUSH_RAP_ON_VMRUN;
-
-> +}
-> +
-> +static inline void vmcb_set_larger_rap(struct vmcb *vmcb)
-> +{
-> +	__set_bit(ERAP_CONTROL_ALLOW_LARGER_RAP, (unsigned long *)&vmcb->control.erap_ctl);
-> +}
-> +
-> +static inline bool vmcb_is_larger_rap(struct vmcb *vmcb)
-> +{
-> +	return test_bit(ERAP_CONTROL_ALLOW_LARGER_RAP, (unsigned long *)&vmcb->control.erap_ctl);
-> +}
-> +
->  static inline bool nested_vgif_enabled(struct vcpu_svm *svm)
->  {
->  	return guest_can_use(&svm->vcpu, X86_FEATURE_VGIF) &&
-> -- 
-> 2.47.0
-> 
 
