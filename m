@@ -1,121 +1,244 @@
-Return-Path: <linux-kernel+bounces-426924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-426925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0DD9DFA1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:06:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC46B9DFA21
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 06:11:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C17B1626C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:06:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB001B21FE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 05:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17081F8AC5;
-	Mon,  2 Dec 2024 05:06:39 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FEA15A8
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 05:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381FF1F8AF6;
+	Mon,  2 Dec 2024 05:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p2tVaeOb"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AB715A8
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 05:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733115999; cv=none; b=TgCrdLKIMz0u6Bnk3nkrjACnEV0SHaZP7VKInmm6Lv8Z21s/uy+iAHD29ehaFM9PR023+7ZOo2LwpA5chBM0jdG2pxI2RQQtEkUJhZWlOnvqaRLJpJkEfeClInhHWWxYiJ07RdtyoZR94CIYbVyShVquoWlZrETTjmW4SpZstBw=
+	t=1733116278; cv=none; b=VcqBeF69nvnsEk7G3cpdT40GOuHzkEAh6MrvSTB1Q4Cun0U0teSNEcKLAmeW3kpsLxS6QTgi/Qarg8boxsbP62g8w3RDITeBvMzlAnBpAuy3tjfB5xqmxKS8RVO1uLLlJ0coycyz/Run3iNOnQo1meCyGJfZdfRXFzDce/8IKSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733115999; c=relaxed/simple;
-	bh=phNwibU8ifGN8XD5PmUFDia5cRK1h4r/oJFOUkxKCw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rchR8RijFQ+WqHWHWOF/ptgsSstREquLcD/zxN4aU2ArRitlUSDJeBZrTcI0/osCwlvQE0B2OBNKRiGjDnE3uaGYzLeUl3WPV18LZjVj7GuGCsULkXrHqg9PfX2M/qM4013oGRuJCO9+IK/FYDNFfoMHwc0O+jfjJkqjpgraAis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id 08EEE72C8CC;
-	Mon,  2 Dec 2024 07:58:31 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-	by imap.altlinux.org (Postfix) with ESMTPSA id F31FA36D0178;
-	Mon,  2 Dec 2024 07:58:30 +0300 (MSK)
-Date: Mon, 2 Dec 2024 07:58:30 +0300
-From: Vitaly Chikunov <vt@altlinux.org>
-To: linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1733116278; c=relaxed/simple;
+	bh=DFIvOyxErt7/uLYYSwRb1DFMB1yTP5tXkHatqvHWs78=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2qfJ/K5ojuQt7gFXfBMiHP2FOp4+zLWBsnHJrqUyfh9jYHS7QMjZauq+7H3zdRXkrlcaER77mYf2MQFN+YH6tBtZ75TeWGyLiHZnk8HlE9wiaZUKNyFsBCbm6Hgjmi/dMaJR+ydCbORFhBrYULKCefoldoT6uvrauOH5GYZrtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p2tVaeOb; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 2 Dec 2024 14:10:56 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733116271;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8lbIh+01gXs5AzlZMdAt5ULUvPveI4iGrd6WK21lspQ=;
+	b=p2tVaeObXwvbjHZkVLWmnfVhv5ZIkLgvbKIZcEEey/7fX4rxpHjm3LoLMkPoNK9inZyeJG
+	gHPI6rFQVcyrt5nuLb+ECc0E7pwrOUwmFtTEKk5IFdHoH/WIC8sLU2GcSRuEY+xINt9Lmu
+	Pzp6TGnEP33GV9gqwtH+eqQuLf5BXNw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Itaru Kitayama <itaru.kitayama@linux.dev>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: v6.13-rc1: Internal error: Oops - Undefined instruction:
- 0000000002000000 [#1] SMP
-Message-ID: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: Re: [PATCH v5 00/43] arm64: Support for Arm CCA in KVM
+Message-ID: <Z01BYOgsLXV5yULk@vm3>
+References: <20241004152804.72508-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241004152804.72508-1-steven.price@arm.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+On Fri, Oct 04, 2024 at 04:27:21PM +0100, Steven Price wrote:
+> This series adds support for running protected VMs using KVM under the
+> Arm Confidential Compute Architecture (CCA).
+> 
+> The related guest support was posted[1] earlier. As with the guest this
+> series moves to the "v1.0-rel0" version of the specification[2].
+> 
+> Almost all changes since v4[3] are either due to rebasing or minor
+> changes to improve the code following review comments. There are two bug
+> fixes:
+> 
+>  * Setting the GPRS on entry after an exit where the host is allowed to
+>    change registers is now done in kvm_rec_enter(). This fixes a bug
+>    where register updates done by user space were being ignored.
+> 
+>  * Drop the PTE_SHARED bit for unprotected page table entries - this bit
+>    isn't controlled by the host and the RMM now enforces the bit is
+>    zero.
+> 
+> Major limitations:
+> 
+>  * Only supports 4k host PAGE_SIZE (if PAGE_SIZE != 4k then the realm
+>    extensions are disabled).
+> 
+>  * No support for huge pages when mapping the guest's pages. There is
+>    some 'dead' code left over from before guest_mem was supported. This
+>    is partly a current limitation of guest_memfd.
+> 
+> The ABI to the RMM (the RMI) is based on RMM v1.0-rel0 specification[2].
+> 
+> This series is based on v6.12-rc1. It is also available as a git
+> repository:
+> 
+> https://gitlab.arm.com/linux-arm/linux-cca cca-host/v5
+> 
+> Work in progress changes for kvmtool are available from the git
+> repository below:
+> 
+> https://gitlab.arm.com/linux-arm/kvmtool-cca cca/v3
+> 
+> [1] https://lore.kernel.org/r/20241004144307.66199-1-steven.price%40arm.com
+> [2] https://developer.arm.com/documentation/den0137/1-0rel0/
+> [3] https://lore.kernel.org/r/20240821153844.60084-1-steven.price%40arm.com
+> 
+> Jean-Philippe Brucker (7):
+>   arm64: RME: Propagate number of breakpoints and watchpoints to
+>     userspace
+>   arm64: RME: Set breakpoint parameters through SET_ONE_REG
+>   arm64: RME: Initialize PMCR.N with number counter supported by RMM
+>   arm64: RME: Propagate max SVE vector length from RMM
+>   arm64: RME: Configure max SVE vector length for a Realm
+>   arm64: RME: Provide register list for unfinalized RME RECs
+>   arm64: RME: Provide accurate register list
+> 
+> Joey Gouly (2):
+>   arm64: rme: allow userspace to inject aborts
+>   arm64: rme: support RSI_HOST_CALL
+> 
+> Sean Christopherson (1):
+>   KVM: Prepare for handling only shared mappings in mmu_notifier events
+> 
+> Steven Price (29):
+>   arm64: RME: Handle Granule Protection Faults (GPFs)
+>   arm64: RME: Add SMC definitions for calling the RMM
+>   arm64: RME: Add wrappers for RMI calls
+>   arm64: RME: Check for RME support at KVM init
+>   arm64: RME: Define the user ABI
+>   arm64: RME: ioctls to create and configure realms
+>   arm64: kvm: Allow passing machine type in KVM creation
+>   arm64: RME: Keep a spare page delegated to the RMM
+>   arm64: RME: RTT tear down
+>   arm64: RME: Allocate/free RECs to match vCPUs
+>   arm64: RME: Support for the VGIC in realms
+>   KVM: arm64: Support timers in realm RECs
+>   arm64: RME: Allow VMM to set RIPAS
+>   arm64: RME: Handle realm enter/exit
+>   KVM: arm64: Handle realm MMIO emulation
+>   arm64: RME: Allow populating initial contents
+>   arm64: RME: Runtime faulting of memory
+>   KVM: arm64: Handle realm VCPU load
+>   KVM: arm64: Validate register access for a Realm VM
+>   KVM: arm64: Handle Realm PSCI requests
+>   KVM: arm64: WARN on injected undef exceptions
+>   arm64: Don't expose stolen time for realm guests
+>   arm64: RME: Always use 4k pages for realms
+>   arm64: rme: Prevent Device mappings for Realms
+>   arm_pmu: Provide a mechanism for disabling the physical IRQ
+>   arm64: rme: Enable PMU support with a realm guest
+>   kvm: rme: Hide KVM_CAP_READONLY_MEM for realm guests
+>   arm64: kvm: Expose support for private memory
+>   KVM: arm64: Allow activating realms
+> 
+> Suzuki K Poulose (4):
+>   kvm: arm64: pgtable: Track the number of pages in the entry level
+>   kvm: arm64: Include kvm_emulate.h in kvm/arm_psci.h
+>   kvm: arm64: Expose debug HW register numbers for Realm
+>   arm64: rme: Allow checking SVE on VM instance
 
-v6.13-rc1 exhibits a boot failure on aarch64 under KVM. (QEMU 9.1.1, CPU
-Kunpeng-920). Boot log:
+On FVP, the v5+v7 kernel is unable to execute virt-manager:
 
-+ time qemu-system-aarch64 -M accel=kvm:tcg -smp cores=8 -m 4096 -serial mon:stdio -nodefaults -nographic -no-reboot -fsdev local,id=root,path=/,security_model=none,multidevs=remap -device virtio-9p-pci,fsdev=root,mount_tag=virtio-9p:/ -device virtio-rng-pci -kernel /usr/src/tmp/kernel-image-6.13-buildroot/boot/vmlinuz-6.13.0-6.13-alt0.rc1 -initrd /usr/src/tmp/initramfs-6.13.0-6.13-alt0.rc1.img -sandbox on,spawn=deny -M virt,gic-version=3 -cpu max -append 'console=ttyAMA0 mitigations=off nokaslr  panic=-1 SCRIPT=/usr/src/tmp/vm.SchsIm2FjB earlycon earlyprintk=serial ignore_loglevel debug rddebug'
-[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x481fd010]
-[    0.000000] Linux version 6.13.0-6.13-alt0.rc1 (builder@localhost.localdomain) (gcc-14 (GCC) 14.2.1 20241028 (ALT Sisyphus 14.2.1-alt1), GNU ld (GNU Binutils) 2.43.1.20241025) #1 SMP PREEMPT_DYNAMIC Mon Dec  2 03:33:29 UTC 2024
-[    0.000000] KASLR disabled on command line
-[    0.000000] random: crng init done
-[    0.000000] Machine model: linux,dummy-virt
-[    0.000000] printk: debug: ignoring loglevel setting.
-[    0.000000] efi: UEFI not found.
-[    0.000000] earlycon: pl11 at MMIO 0x0000000009000000 (options '')
-[    0.000000] printk: legacy bootconsole [pl11] enabled
-[    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
-[    0.000000] NUMA: Faking a node at [mem 0x0000000040000000-0x000000013fffffff]
-[    0.000000] NODE_DATA(0) allocated [mem 0x13f7f3540-0x13f7f947f]
-[    0.000000] Zone ranges:
-[    0.000000]   DMA      [mem 0x0000000040000000-0x00000000ffffffff]
-[    0.000000]   DMA32    empty
-[    0.000000]   Normal   [mem 0x0000000100000000-0x000000013fffffff]
-[    0.000000] Movable zone start for each node
-[    0.000000] Early memory node ranges
-[    0.000000]   node   0: [mem 0x0000000040000000-0x000000013fffffff]
-[    0.000000] Initmem setup node 0 [mem 0x0000000040000000-0x000000013fffffff]
-[    0.000000] cma: Reserved 256 MiB at 0x00000000f0000000 on node -1
-[    0.000000] psci: probing for conduit method from DT.
-[    0.000000] psci: PSCIv1.1 detected in firmware.
-[    0.000000] psci: Using standard PSCI v0.2 function IDs
-[    0.000000] psci: Trusted OS migration not required
-[    0.000000] psci: SMC Calling Convention v1.1
-[    0.000000] smccc: KVM: hypervisor services detected (0x00000000 0x00000000 0x00000000 0x00000003)
-[    0.000000] percpu: Embedded 34 pages/cpu s100632 r8192 d30440 u139264
-[    0.000000] pcpu-alloc: s100632 r8192 d30440 u139264 alloc=34*4096
-[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7
-[    0.000000] Internal error: Oops - Undefined instruction: 0000000002000000 [#1] SMP
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.13.0-6.13-alt0.rc1 #1
-[    0.000000] Hardware name: linux,dummy-virt (DT)
-[    0.000000] pstate: 004000c5 (nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    0.000000] pc : __cpuinfo_store_cpu+0xe8/0x240
-[    0.000000] lr : cpuinfo_store_boot_cpu+0x34/0x88
-[    0.000000] sp : ffff800082013df0
-[    0.000000] x29: ffff800082013df0 x28: 000000000000008e x27: ffff800081e38128
-[    0.000000] x26: ffff800081702190 x25: ffff80008201f040 x24: ffff0000ff7d1d00
-[    0.000000] x23: ffff80008201ec00 x22: ffff800081e39100 x21: ffff8000816f9750
-[    0.000000] x20: ffff800081f55280 x19: ffff0000ff6be2e0 x18: 0000000000000000
-[    0.000000] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-[    0.000000] x14: 000000000000002f x13: 000000013f7f9490 x12: 0000008000000000
-[    0.000000] x11: 0000000000000000 x10: 00000000007f8000 x9 : 000000013f808000
-[    0.000000] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000013f7f94c0
-[    0.000000] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 1100010011111111
-[    0.000000] x2 : 0000000000000001 x1 : 0000000084448004 x0 : ffff0000ff6be2e0
-[    0.000000] Call trace:
-[    0.000000]  __cpuinfo_store_cpu+0xe8/0x240 (P)
-[    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88 (L)
-[    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88
-[    0.000000]  smp_prepare_boot_cpu+0x30/0x58
-[    0.000000]  start_kernel+0x514/0x9d0
-[    0.000000]  __primary_switched+0x88/0x98
-[    0.000000] Code: f100085f 54000600 f2580c7f 54000060 (d538a482)
-[    0.000000] ---[ end trace 0000000000000000 ]---
-[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
-[    0.000000] Rebooting in 600 seconds..
+Starting install...
+Allocating 'test9.qcow2'                                    |    0 B  00:00 ...
+Removing disk 'test9.qcow2'                                 |    0 B  00:00
+ERROR    internal error: process exited while connecting to monitor: 2024-12-04T18:56:11.646168Z qemu-system-aarch64: -accel kvm: ioctl(KVM_CREATE_VM) failed: Invalid argument
+2024-12-04T18:56:11.646520Z qemu-system-aarch64: -accel kvm: failed to initialize kvm: Invalid argument
+Domain installation does not appear to have been successful.
+
+Below is my virt-manager options:
+
+virt-install --machine=virt --arch=aarch64 --name=test9 --memory=2048 --vcpu=1 --nographic --check all=off --features acpi=off --virt-type kvm --boot kernel=Image-cca,initrd=rootfs.cpio,kernel_args='earlycon console=ttyAMA0 rdinit=/sbin/init rw root=/dev/vda acpi=off' --qemu-commandline='-M virt,confidential-guest-support=rme0,gic-version=3 -cpu host -object rme-guest,id=rme0 -nodefaults' --disk size=4 --import --osinfo detect=on,require=off
+
+Userland is Ubuntu 24.10, the VMM is Linaro's cca/2024-11-20:
+
+https://git.codelinaro.org/linaro/dcap/qemu/-/tree/cca/2024-11-20?ref_type=heads
+
+virt-install doesn't complain if I try to bring up a normal VM.
 
 Thanks,
+Itaru. 
 
+> 
+>  Documentation/virt/kvm/api.rst       |    3 +
+>  arch/arm64/include/asm/kvm_emulate.h |   34 +
+>  arch/arm64/include/asm/kvm_host.h    |   16 +-
+>  arch/arm64/include/asm/kvm_pgtable.h |    2 +
+>  arch/arm64/include/asm/kvm_rme.h     |  155 +++
+>  arch/arm64/include/asm/rmi_cmds.h    |  510 ++++++++
+>  arch/arm64/include/asm/rmi_smc.h     |  255 ++++
+>  arch/arm64/include/asm/virt.h        |    1 +
+>  arch/arm64/include/uapi/asm/kvm.h    |   49 +
+>  arch/arm64/kvm/Kconfig               |    1 +
+>  arch/arm64/kvm/Makefile              |    3 +-
+>  arch/arm64/kvm/arch_timer.c          |   45 +-
+>  arch/arm64/kvm/arm.c                 |  166 ++-
+>  arch/arm64/kvm/guest.c               |   99 +-
+>  arch/arm64/kvm/hyp/pgtable.c         |    5 +-
+>  arch/arm64/kvm/hypercalls.c          |    4 +-
+>  arch/arm64/kvm/inject_fault.c        |    2 +
+>  arch/arm64/kvm/mmio.c                |   10 +-
+>  arch/arm64/kvm/mmu.c                 |  185 ++-
+>  arch/arm64/kvm/pmu-emul.c            |    7 +-
+>  arch/arm64/kvm/psci.c                |   29 +
+>  arch/arm64/kvm/reset.c               |   23 +-
+>  arch/arm64/kvm/rme-exit.c            |  207 ++++
+>  arch/arm64/kvm/rme.c                 | 1628 ++++++++++++++++++++++++++
+>  arch/arm64/kvm/sys_regs.c            |   83 +-
+>  arch/arm64/kvm/vgic/vgic-v3.c        |    8 +-
+>  arch/arm64/kvm/vgic/vgic.c           |   41 +-
+>  arch/arm64/mm/fault.c                |   31 +-
+>  drivers/perf/arm_pmu.c               |   15 +
+>  include/kvm/arm_arch_timer.h         |    2 +
+>  include/kvm/arm_pmu.h                |    4 +
+>  include/kvm/arm_psci.h               |    2 +
+>  include/linux/kvm_host.h             |    2 +
+>  include/linux/perf/arm_pmu.h         |    5 +
+>  include/uapi/linux/kvm.h             |   31 +-
+>  virt/kvm/kvm_main.c                  |    7 +
+>  36 files changed, 3569 insertions(+), 101 deletions(-)
+>  create mode 100644 arch/arm64/include/asm/kvm_rme.h
+>  create mode 100644 arch/arm64/include/asm/rmi_cmds.h
+>  create mode 100644 arch/arm64/include/asm/rmi_smc.h
+>  create mode 100644 arch/arm64/kvm/rme-exit.c
+>  create mode 100644 arch/arm64/kvm/rme.c
+> 
+> -- 
+> 2.34.1
+> 
 
