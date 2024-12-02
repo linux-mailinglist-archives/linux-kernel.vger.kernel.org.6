@@ -1,153 +1,166 @@
-Return-Path: <linux-kernel+bounces-427901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1049E0728
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:36:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4795E9E0737
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14092810A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:36:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 092EB281B93
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9401B209661;
-	Mon,  2 Dec 2024 15:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F62209F4D;
+	Mon,  2 Dec 2024 15:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiodSQrz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wf275xrI"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AAF20898E
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4B1209F33;
+	Mon,  2 Dec 2024 15:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153785; cv=none; b=Z31jrd0vPGuHnDnqfCObFo6fHNrzHcwMlomTgPLmZuS41y+eA4hIcUuhn3ApWsP8hO69pk9DEXYc+QuTp/NfXTKSoFFsuE0JG0mzx6rAVyPwktI7BkwXlxs1AB/oBQVZ1vzcw64YuxXxIrKUuMhWE9h9JESuTdv6Nzjq4gsJ0Ro=
+	t=1733153937; cv=none; b=LRYGVBgglettKfITolFTRIcBvvVL+rUnOFLXZidO1nfi0Bu/zs+wpqBfJBdcZNJTZ0rjk3uQ+6TNzEpbiuZyE+BH3jV4/gr4a0f2NixB44+byOoWkDriO2Szc4MCVQ+v2M7SKWfU/4esdZ2Uu8j6sEBJbkqlmGEoHvKjsYhrsNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733153785; c=relaxed/simple;
-	bh=iZ22iiUsExafvQtlDvstWKo/EY6d5lVZQ/T69ElRhjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3S/zWN0x4D0baghxqS8GHSIasBZkcH+92vZoNvcyuxlKtNIQmbPqPMuRCUQuLUEgmX026OIQE1zToQ1w9ecxFA/X4clVDGDmxv/s8M9fBBggHxT8cxt8klj7uPeGuTQb5sczo12PoHIRW3fBFuKG3kanjZ+ZOJylf2umrBxbeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiodSQrz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FA62C4CED1;
-	Mon,  2 Dec 2024 15:36:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733153784;
-	bh=iZ22iiUsExafvQtlDvstWKo/EY6d5lVZQ/T69ElRhjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KiodSQrz41/ZRmuf5j7NvGOBBP9vTAk47/R3q7+BjSAfpzbL4JMFN7W254SMYOVuD
-	 uGcW20+rAN4S1OJ19X91Hkmfn/OrlI2mq6+v5RoMMLAP9ThERVYVQUChqlIaoETOtd
-	 2oQXDCi7tviseHkyIoeGoPMVfPqMX0PmYmF9GCsrlxieVbIzDCcbrpDg9KrIV6K8oX
-	 3lfofBKRsbQsb35d21F0bCs+VJJ420iVDBbG9sjTnX0vQnyePKmmGc3f+QlMc7nAKz
-	 H2VJQsCfwZkejDw3Aju9MmbhpE3Lhwp+fwd7GMJMVBGHQpyc6zvmlkcXSv2W8zq1ca
-	 q0mp5DGY94Ulw==
-Date: Mon, 2 Dec 2024 15:36:19 +0000
-From: Will Deacon <will@kernel.org>
-To: Vitaly Chikunov <vt@altlinux.org>, james.morse@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, mark.rutland@arm.com
-Subject: Re: v6.13-rc1: Internal error: Oops - Undefined instruction:
- 0000000002000000 [#1] SMP
-Message-ID: <20241202153618.GA6834@willie-the-truck>
-References: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
+	s=arc-20240116; t=1733153937; c=relaxed/simple;
+	bh=6FMVUMuVmiKoknMUpwq7h0V6bMG4QeWN9obr8VkzD5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W9VramS0B3HIH8nQPh/wg1U0dV9Hcl1U0xAUvaLbF34f2XhBhDA7F9aWh5rcENy1tVqj+HoLQ4a0Nzn5Z4jPF5lxLRMXuGgBDUdUJKJmkiQJubH7iYXr6pnmK08OXwjxX5xpon0w1qZTMeW4zYeLNXEeUu561iRedlMIAVTqcB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wf275xrI; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-382610c7116so2941915f8f.0;
+        Mon, 02 Dec 2024 07:38:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733153934; x=1733758734; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BgMG9j17VIY/+uN0vXhoiOG0maPDfpV2MZAeVxSTQP8=;
+        b=Wf275xrIqEt3FSSFceo9CILdLZiXcCZH/GyrrfPdoFfdlSntN1O/HF9YoBFMCfY+xA
+         OBA5XRsQbbD+VHjE6OU6UN3Zga+xQcbvxTKPsGbe0ha8W9eaHWx8NI2ZJLZPZwyljzFm
+         TAjIOg3aL/46/akzL6YX+naL+g69RnzjKREpEz+2mLtW+gIxa+jB4vYzTQHhqXRzJxQK
+         4755AeeJ3ohKks4hdgqsUsmSLoL/XDK5BDYW0QnMabwoJmmZpann2aMKqO0ullQwzR/S
+         qIdM/WbszeV/VnkZxi4tsjAYlogy56T3TWlPqS5GDffSDOT/9sPOrD4XBwjcow0Ae4Md
+         hcWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733153934; x=1733758734;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BgMG9j17VIY/+uN0vXhoiOG0maPDfpV2MZAeVxSTQP8=;
+        b=hZNq9LRpF6My/iIDI6R4H9dKhAtxQey+V8wtwEGEGq37yq9CRwnZDDqC+TWzkND3ln
+         FlI0mEPVRQbb1J90l9vVzCqtEIxZ8qHYLjsjpJ/+NttzgcGi9If9HWESzXnV6cdIAktO
+         HH59aANNSzhlitnuy6AfIY3CF7vjDzqA7b4wOnBG5BU/XQM3Yaer6BaXNilpFcoofvP8
+         egD5daMUYufjs47uTM2yrqPc8OTVouv71nRablqwHXij5eo1MsUUppMyQeMi68dKixwG
+         vz69LgOsz4zHzzirSg7hXfJSE69MZmWks6Sl1QRyDOYS1NcQlmUxmuUFRwC1Wh5zS0zH
+         OMrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFGp8BXE81YCAgf3bw0GAQ2VavXpcXVdXK7r8ygrP5TdDOYHXY8Bcd7/iVBvHH2QlRtgUP1tD/@vger.kernel.org, AJvYcCWxSqPjwTGNI5T5HNazfsTrPXZtEXVeeXPhqYUSiCLqmyJ0yEP1Mpj3RFHVa4PwVOdVK5tgMC+gd00=@vger.kernel.org, AJvYcCXYW6IzdhQkjf2kOOHfHZviPl+XZqjze9BS+HfEW6DwfrCwcNRLb94hhLUt3+0wzGvr/AedjbkdpVnLw0HS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB4LE4USHhl94tYZhu+i/AcPqHQQOftCAoj7uSgTEiuVtEfAUV
+	/cu3oIhuQKoGa22LMAy8B6WOQldKOCKM4d9vynwAZmR4AgkIaJIkddByeA==
+X-Gm-Gg: ASbGncuKYwZmJqnQhmD5y5iwGUyoyrDLZdepyQBVsp7Lxpiy6YXIRGCLT+EJN5NDQmz
+	CddtSyWde8KhSpdlYqjXWqGHQMcVYIURwL/oTSVFtSUAe/qNIWOsGcJ54//rl3iw/8yi9PmCtLI
+	PSu4drC7T2zM6ua112ll9HW8mQsEZzF7vOLLqZ3fuYlWaWBuGMIHpqVDPwp3XRvxOOpMqyigBMA
+	EIBwIGfG7rpWiDMQiCqnx3Ry6XwPmXC8aNyooxWajZYcX9XvwnvTDs9oYvIRCJ0gcpW/CXsD0+w
+	ayPYEJ2IUyIV68N2UdYwup/CtRBihN0iI3MAugcZxDaOog4gteiIzLD9ofLOQYp3vGm9Dcil5n7
+	hA67qV131AUltFnGFdqis4B9wGK2qceG4xoNQX5XJ
+X-Google-Smtp-Source: AGHT+IHhYi7myBSgKxUDvKABHp7+6thL5rVSy5IQiw2xBG1LGFtHDCgslmsCFo7yTW1tKtZUpIBt1g==
+X-Received: by 2002:a5d:64e2:0:b0:385:f092:e1a with SMTP id ffacd0b85a97d-385f0a152e1mr4081697f8f.11.1733153933559;
+        Mon, 02 Dec 2024 07:38:53 -0800 (PST)
+Received: from ?IPV6:2a02:8389:41cf:e200:f58:c447:145b:2b51? (2a02-8389-41cf-e200-0f58-c447-145b-2b51.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:f58:c447:145b:2b51])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385f0056637sm4071203f8f.15.2024.12.02.07.38.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 07:38:52 -0800 (PST)
+Message-ID: <9e1310d8-bcd9-40f9-8d44-abddc595ae9b@gmail.com>
+Date: Mon, 2 Dec 2024 16:38:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202045830.e4yy3nkvxtzaybxk@altlinux.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/11] iio: light: as73211: fix information leak in
+ triggered buffer
+To: Jonathan Cameron <jic23@kernel.org>, Christian Eggers <ceggers@arri.de>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Antoni Pokusinski <apokusinski01@gmail.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?=
+ <jpaulo.silvagoncalves@gmail.com>, Gregor Boirie <gregor.boirie@parrot.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>, stable@vger.kernel.org
+References: <20241125-iio_memset_scan_holes-v1-0-0cb6e98d895c@gmail.com>
+ <20241125-iio_memset_scan_holes-v1-10-0cb6e98d895c@gmail.com>
+ <20241130204923.45d71fa4@jic23-huawei>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20241130204923.45d71fa4@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[+ usual suspects]
+On 30/11/2024 21:49, Jonathan Cameron wrote:
+> On Mon, 25 Nov 2024 22:16:18 +0100
+> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> 
+>> The 'scan' local struct is used to push data to userspace from a
+>> triggered buffer, but it leaves the first channel uninitialized if
+>> AS73211_SCAN_MASK_ALL is not set. That is used to optimize color channel
+>> readings.
+>>
+>> Set the temperature channel to zero if only color channels are
+>> relevant to avoid pushing uninitialized information to userspace.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 403e5586b52e ("iio: light: as73211: New driver")
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> Huh.
+> 
+> If the temperature channel is turned off the data should shift. So should be read
+> into scan.chan[0] and [1] and [2], but not [3].
+> 
+> Not skipping [0] as here.
+> 
+> So this code path currently doesn't work as far as I can tell.
+> 
+> Jonathan
+> 
+>> ---
+>>  drivers/iio/light/as73211.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/iio/light/as73211.c b/drivers/iio/light/as73211.c
+>> index be0068081ebb..99679b686146 100644
+>> --- a/drivers/iio/light/as73211.c
+>> +++ b/drivers/iio/light/as73211.c
+>> @@ -675,6 +675,9 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
+>>  				(char *)&scan.chan[1], 3 * sizeof(scan.chan[1]));
+>>  		if (ret < 0)
+>>  			goto done;
+>> +
+>> +		/* Avoid leaking uninitialized data */
+>> +		scan.chan[0] = 0;
+>>  	}
+>>  
+>>  	if (data_result) {
+>>
+> 
 
-On Mon, Dec 02, 2024 at 07:58:30AM +0300, Vitaly Chikunov wrote:
-> v6.13-rc1 exhibits a boot failure on aarch64 under KVM. (QEMU 9.1.1, CPU
-> Kunpeng-920). Boot log:
+Adding the driver maintainer (should have been added from the beginning)
+to the conversation.
 
-I've not tried to repro this locally, but from the log:
+@Christian, could you please confirm this?
 
-> + time qemu-system-aarch64 -M accel=kvm:tcg -smp cores=8 -m 4096 -serial mon:stdio -nodefaults -nographic -no-reboot -fsdev local,id=root,path=/,security_model=none,multidevs=remap -device virtio-9p-pci,fsdev=root,mount_tag=virtio-9p:/ -device virtio-rng-pci -kernel /usr/src/tmp/kernel-image-6.13-buildroot/boot/vmlinuz-6.13.0-6.13-alt0.rc1 -initrd /usr/src/tmp/initramfs-6.13.0-6.13-alt0.rc1.img -sandbox on,spawn=deny -M virt,gic-version=3 -cpu max -append 'console=ttyAMA0 mitigations=off nokaslr  panic=-1 SCRIPT=/usr/src/tmp/vm.SchsIm2FjB earlycon earlyprintk=serial ignore_loglevel debug rddebug'
-> [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x481fd010]
-> [    0.000000] Linux version 6.13.0-6.13-alt0.rc1 (builder@localhost.localdomain) (gcc-14 (GCC) 14.2.1 20241028 (ALT Sisyphus 14.2.1-alt1), GNU ld (GNU Binutils) 2.43.1.20241025) #1 SMP PREEMPT_DYNAMIC Mon Dec  2 03:33:29 UTC 2024
-> [    0.000000] KASLR disabled on command line
-> [    0.000000] random: crng init done
-> [    0.000000] Machine model: linux,dummy-virt
-> [    0.000000] printk: debug: ignoring loglevel setting.
-> [    0.000000] efi: UEFI not found.
-> [    0.000000] earlycon: pl11 at MMIO 0x0000000009000000 (options '')
-> [    0.000000] printk: legacy bootconsole [pl11] enabled
-> [    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
-> [    0.000000] NUMA: Faking a node at [mem 0x0000000040000000-0x000000013fffffff]
-> [    0.000000] NODE_DATA(0) allocated [mem 0x13f7f3540-0x13f7f947f]
-> [    0.000000] Zone ranges:
-> [    0.000000]   DMA      [mem 0x0000000040000000-0x00000000ffffffff]
-> [    0.000000]   DMA32    empty
-> [    0.000000]   Normal   [mem 0x0000000100000000-0x000000013fffffff]
-> [    0.000000] Movable zone start for each node
-> [    0.000000] Early memory node ranges
-> [    0.000000]   node   0: [mem 0x0000000040000000-0x000000013fffffff]
-> [    0.000000] Initmem setup node 0 [mem 0x0000000040000000-0x000000013fffffff]
-> [    0.000000] cma: Reserved 256 MiB at 0x00000000f0000000 on node -1
-> [    0.000000] psci: probing for conduit method from DT.
-> [    0.000000] psci: PSCIv1.1 detected in firmware.
-> [    0.000000] psci: Using standard PSCI v0.2 function IDs
-> [    0.000000] psci: Trusted OS migration not required
-> [    0.000000] psci: SMC Calling Convention v1.1
-> [    0.000000] smccc: KVM: hypervisor services detected (0x00000000 0x00000000 0x00000000 0x00000003)
-> [    0.000000] percpu: Embedded 34 pages/cpu s100632 r8192 d30440 u139264
-> [    0.000000] pcpu-alloc: s100632 r8192 d30440 u139264 alloc=34*4096
-> [    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7
-> [    0.000000] Internal error: Oops - Undefined instruction: 0000000002000000 [#1] SMP
+Apparently, the optimization to read the color channels without
+temperature is not right. I don't have access to the AS7331 at the
+moment, but I remember that you could test my patches on your hardware
+with an AS73211, so maybe you can confirm whether wrong data is
+delivered or not in that case.
 
-We take an undefined instruction exception in the kernel early during
-boot...
+Thanks and best regards,
+Javier Carrasco
 
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.13.0-6.13-alt0.rc1 #1
-> [    0.000000] Hardware name: linux,dummy-virt (DT)
-> [    0.000000] pstate: 004000c5 (nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    0.000000] pc : __cpuinfo_store_cpu+0xe8/0x240
-> [    0.000000] lr : cpuinfo_store_boot_cpu+0x34/0x88
-> [    0.000000] sp : ffff800082013df0
-> [    0.000000] x29: ffff800082013df0 x28: 000000000000008e x27: ffff800081e38128
-> [    0.000000] x26: ffff800081702190 x25: ffff80008201f040 x24: ffff0000ff7d1d00
-> [    0.000000] x23: ffff80008201ec00 x22: ffff800081e39100 x21: ffff8000816f9750
-> [    0.000000] x20: ffff800081f55280 x19: ffff0000ff6be2e0 x18: 0000000000000000
-> [    0.000000] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> [    0.000000] x14: 000000000000002f x13: 000000013f7f9490 x12: 0000008000000000
-> [    0.000000] x11: 0000000000000000 x10: 00000000007f8000 x9 : 000000013f808000
-> [    0.000000] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000013f7f94c0
-> [    0.000000] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 1100010011111111
-> [    0.000000] x2 : 0000000000000001 x1 : 0000000084448004 x0 : ffff0000ff6be2e0
-> [    0.000000] Call trace:
-> [    0.000000]  __cpuinfo_store_cpu+0xe8/0x240 (P)
-> [    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88 (L)
-> [    0.000000]  cpuinfo_store_boot_cpu+0x34/0x88
-> [    0.000000]  smp_prepare_boot_cpu+0x30/0x58
-> [    0.000000]  start_kernel+0x514/0x9d0
-> [    0.000000]  __primary_switched+0x88/0x98
-> [    0.000000] Code: f100085f 54000600 f2580c7f 54000060 (d538a482)
-
-... and that's:
-
-   0:	f100085f 	cmp	x2, #0x2
-   4:	54000600 	b.eq	0xc4  // b.none
-   8:	f2580c7f 	tst	x3, #0xf0000000000
-   c:	54000060 	b.eq	0x18  // b.none
-  10:*	d538a482 	mrs	x2, s3_0_c10_c4_4		<-- trapping instruction
-
-Which I think corresponds to a read of MPAMIDR_EL1.
-
-It looks like James routed accesses to this register to undef_access()
-in 31ff96c38ea3 ("KVM: arm64: Fix missing traps of guest accesses to the
-MPAM register") so I'm not really sure how this is supposed to work
-given that it's an ID register.
-
-James?
-
-Will
 
