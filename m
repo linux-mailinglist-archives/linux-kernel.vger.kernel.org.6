@@ -1,294 +1,140 @@
-Return-Path: <linux-kernel+bounces-428049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-428050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F269E096E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:06:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82B19E0975
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 18:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B25280D5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C430280D10
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EC81D9A66;
-	Mon,  2 Dec 2024 17:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4647B1D9A41;
+	Mon,  2 Dec 2024 17:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gSPY2QBy"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLy/OGbq"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52A11AB6EA;
-	Mon,  2 Dec 2024 17:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2DB1632F3
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 17:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733159182; cv=none; b=jd8aED3RLdA7rxkQHjhtTXyOhYCvvy3yd1ndt/jubEnSIzeOrCNXOCo5AoiEPnambJBirhLExK4Jj80bqkPBV/6STBPWbu3xc7ArBaPLVzAuvnone1RUKVCiodtRPu7tq7QdDk4w4jmTn8CeI0dXSJENs9lCIfGYfIw9IJ9RYKU=
+	t=1733159257; cv=none; b=XQUNzUe7U01dfjpV6ImTpFUDi9dhtf18ywxlTQByu3+xf4RcZJebpGI7o3hcqP4ZWxSP46PcOtCasjLKclpYkXVN/rG/FkR5g96gglF0viYs4Qha6Cri7gO74VSslQ4ikiEQXTZwqto1gYHolFP2lo/IbMQw3HRUeMSl5lMTI/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733159182; c=relaxed/simple;
-	bh=LscUGPlCVTMi9YLaUvZsUDyhHjb7Xt3ttcgJojJmxrE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jNLAwi+RyXoRTEHrB1c9CQEPb9hp+k4dSII+FKCdW+NtsQTBEOMgRBcKbfSuSvX5drnfjxcqSOlRX0yIn7twpBzQhNgRbUl+pi/A4aVcTmn+MD1YBiBPzhEBNjIkOJED1yXPeKozdpRyU4k0asY4qtl+cRgZ53GYqXXFu8C+f5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gSPY2QBy; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1733159257; c=relaxed/simple;
+	bh=xoGeQFsGXFdenO6BztFVvAvCo4/fpYxbZKwlNh4KCC8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r2lnXtKqFmJjtL/JoKcYvzoprz8nqBKl/Zllc9iZtUfuhwv4c42VM8G2Y0/vQCHyMGorrXqedLn0DOyp0W3Xm7YK6KUx5W8n0AtSq001yRmojgg44ZSA2MrcdZJeo+Fl2i7xs+1ddkC1fa5WwkdIlpD72W5hzKBeaSu/PEi1lzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLy/OGbq; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cece886771so8046520a12.0;
-        Mon, 02 Dec 2024 09:06:20 -0800 (PST)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385df8815fcso1996426f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 09:07:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733159179; x=1733763979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qdKjqhPabAxyMct+P6vOhrz8S75Nq03r7c078zz220g=;
-        b=gSPY2QByfGlC9CMCOzJicudwc49hSOgl/FI8GdbWxn3NJCs0quoeY6hBA048v4Tc9L
-         bocQ95BK6M1VwTsvvWzuiuVfW971Y2Q+MgqIKAk07AqaQCAGEjIY7rMHdqxqzSa1W1+5
-         jUI4R5ft+Z7yVJe2tqGd8EC1V/EO5Rnn+i/nmvLZPb2CvY4G0tl5/rZ2F8lYVC/Tf7Wn
-         SVDFzpQQnROWz1pqXsqVvS8f5SqA7vg0AIsfpZ/wbM6+FmByib9VaaJQDg46E+WtaSC8
-         K+v0DYlK2gEAc9JNb2ApbSzoJntCyeSkN1rNzUFF5ehZDTkNxNK3aYPPc15OejU42EGR
-         PjNg==
+        d=gmail.com; s=20230601; t=1733159253; x=1733764053; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VD2cckSKTuny/Z4/W//PuWPqxulyYqdgQLc6S9jdIVI=;
+        b=JLy/OGbqqYR4QZ2qVqqdWfOoLNTlWNCsxwAvz3y9XN+/95ewQK6UPcKospc90OQVEq
+         gHOYa/4B1dL4CKMoSNLwFp/4rRVPUzM29Rft+T2CRcVKuenjLn+vmmmzJy20OWyGFxIU
+         sIJoU/flG5stphyEdDxIELlSuOKZtUV1KM9gvbzcxOUaalgb8zadFZ9B8tRzCq6LnmY+
+         8Kvtb33AHh8+H/MYQV/cNZApWoNGAgbRsn108gv1rKFU0v7BVGsDbr9a8F56+TX2wK0P
+         4TYfteDFuh5Z9y0mO8LfYhbrAcI5gpCSlX3ISLj8t/JK2m45dzW4NgimFTFlF8aCaSrw
+         A8Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733159179; x=1733763979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qdKjqhPabAxyMct+P6vOhrz8S75Nq03r7c078zz220g=;
-        b=eHj21GZU5QEGXtjnu2Kc3rMM1+A4TM24k+8WowEveL4fem5bzSJFgva4xEaSPdo2dl
-         eBx68njQoRNUAVNgA0MxZoKKZCmmOdibNY8nvNPE4CD73zHXyDmXmFimlba0YM0B9upE
-         Gb822WAz4gdhJhpNYwKdmB1jccR0cHlT9vsqV7O1GBoN00N0dXVeR4xGrcEcfE1saZ/2
-         foPV5cBFbh5Vbls/tMjv/m7OxYbtuvto6Z2KgW8xru8ndVQobYE6axufXIumSucOFUth
-         QY4rNtDH56EgDZMn8yGkM9sqtkiRsjF75lZHInqtVNg4gS6JzZIKwe3DMXDsHx+NKFpQ
-         hNQg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1xmA5mz/iKd84vjBMnV8u0w8qLsyO0VRvVcJDwr/S2xZT6j3041nSZzg2C69+vQhXNDtvnP228zJp@vger.kernel.org, AJvYcCVoqUETjRRWpdBtbgz3hpDlH4SFFUDSIynpKhSBq3PQqxUU+SxvxKvVs7F53lfGoj3sUGENAIWJU72ikpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYICddnba6UUGOU4Zh6uMkD5z4DbBvOEqPtSHDs8yBLakzx+Ll
-	0yV9E9CBEoGKNu/WX0i3ca2z/pTDs9FkqBmssOdp2dEEinI/S4w4YPnOEsIX14yov0FxEdiECC1
-	n755s6ZXlWZEs/VpnYx4BFNsLoQ==
-X-Gm-Gg: ASbGnct2FaVjsAVIq5Zef9FcHT5xPHmVGo/uZdBX5V3bH8WJ6q/rYNPZmn9LsdOh4FC
-	M2TfzlA+5bWWo1zCFmt6sCYXR0ceKGgX4D0CAJqiL7fsi4+lvDHmTCR5ojeJbi88=
-X-Google-Smtp-Source: AGHT+IF1P8KO+fxewApr0nvqHXvhFT1mouSVP7JzMeBLjj19flWEIb7fwGWdzXrbZJCiPoI030KwWu3ccbOHsNKakmc=
-X-Received: by 2002:a05:6402:13d3:b0:5d0:f6ed:4cd1 with SMTP id
- 4fb4d7f45d1cf-5d0f6ed5069mr4647543a12.10.1733159178507; Mon, 02 Dec 2024
- 09:06:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733159253; x=1733764053;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VD2cckSKTuny/Z4/W//PuWPqxulyYqdgQLc6S9jdIVI=;
+        b=KlVco8ox1He0yCg+jDeNvSVHY6pVo5EekiqyaWB/1GoW67k1bA/VY5k0TF1pkFoUND
+         qLpSZGrepkmtndXZ5HdVG/8OAEFr/tIzp9QcDg086CMtlo2+WIeXM7pOKVDAjEiUJ6h5
+         slqCKTDp8qmDUGOMhy0exlHFU8fin/Z/eQlnIuqKKjNeD+mB//Rf2Xz4dtt8T2w8+TDx
+         2H9z2+fWZ7hpqZwhgvzFaLjGsYufC15RUdCVAdqpw+Qxvdz3qFZM2NAfXDgh0EKLk5Mt
+         90Ij/qPqCGHe4/GgsG5bZfznuA/ZEulsoPwvBJhz2PLSCMB73nTN803iVDM1S6gnZMJq
+         kplw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0E/FfSmLIzRmZpdE5XeSqZ1VmZgBi5AuuX1tiMH9u52ixVgNuhQillraewqCaMbTIo27MorPGONS/O+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8sx5x55BhEhy6Nmy2Tq1/BPXcQhI61iPJsOeBOD8pHV34Np4N
+	oLqbSrIV4Fg9i22WAVnwsQg1IW+VlTH4UGC15fh4GbHagKCM21hx
+X-Gm-Gg: ASbGncsXJnX4NNMbRPvqeOMHi6SrLY/2v1UthyImhCJC5Rv/uzuceCqFh1ki3/6azWu
+	HITv0qnJHzYqeO2nSqQupHlAwXSVw7QjpFe8DD1Riyqy3RZwa5+8nEGwu+g6xOj8aixUZZ1OzQ2
+	TYcvZ1uvLctJ2ptrQiWGxIANi2eX7IuxY0RrdPKVBQ0mw/CMvzeWYr9AuBg/FVnOXTkJPqeEI6A
+	v1XJzU8/DmovLasMejrT786aXh5fvzCNliYl74or7o2pzquBDWJtJVMs6ulIuzBQullmUXN/QuQ
+	D2e5Xc8QJw==
+X-Google-Smtp-Source: AGHT+IGAlHAC9hMBIXCdazq9ZUSG21hrjoyyc0/QSMt57xsY9IH+cW4PMIBIR6n8gMAu9psUqWPfEg==
+X-Received: by 2002:a05:6000:4801:b0:385:e3d3:be1b with SMTP id ffacd0b85a97d-385e3d3be6emr9133421f8f.28.1733159251424;
+        Mon, 02 Dec 2024 09:07:31 -0800 (PST)
+Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385de98d618sm10434034f8f.90.2024.12.02.09.07.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 09:07:30 -0800 (PST)
+From: Dave Penkler <dpenkler@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: linux@roeck-us.net,
+	Dave Penkler <dpenkler@gmail.com>
+Subject: [PATCH] staging: gpib: Fix i386 build issue
+Date: Mon,  2 Dec 2024 18:06:13 +0100
+Message-ID: <20241202170613.4889-1-dpenkler@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107014705.2509463-1-lilingfeng@huaweicloud.com>
- <93fd0f1c-812f-4393-ad73-4d07ecebf979@huawei.com> <CAM5tNy4rYLWSuO_KrgXJrHV+DPhOoZGZAdWLZsW35u3qWuMSvg@mail.gmail.com>
- <CAM5tNy4QXM8bhcfTtrKt+ogWPPOKe5g06j1sgFm5z8=BKP-4vw@mail.gmail.com> <Z03fpnNYHjuKox0E@tissot.1015granger.net>
-In-Reply-To: <Z03fpnNYHjuKox0E@tissot.1015granger.net>
-From: Rick Macklem <rick.macklem@gmail.com>
-Date: Mon, 2 Dec 2024 09:06:06 -0800
-Message-ID: <CAM5tNy4AYfJ+AhX-UJ_orvuOkv=ctg=oCHrrOjTcfLz+rRrCsg@mail.gmail.com>
-Subject: Re: [PATCH] nfsd: set acl_access/acl_default after getting successful
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: lilingfeng@huaweicloud.com, "zhangjian (CG)" <zhangjian496@huawei.com>, jlayton@kernel.org, 
-	neilb@suse.de, okorniev@redhat.com, kolga@netapp.com, Dai.Ngo@oracle.com, 
-	tom@talpey.com, Trond.Myklebust@netapp.com, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, houtao1@huawei.com, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, lilingfeng3@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 2, 2024 at 8:33=E2=80=AFAM Chuck Lever <chuck.lever@oracle.com>=
- wrote:
->
-> CAUTION: This email originated from outside of the University of Guelph. =
-Do not click links or open attachments unless you recognize the sender and =
-know the content is safe. If in doubt, forward suspicious emails to IThelp@=
-uoguelph.ca.
->
->
-> On Wed, Nov 27, 2024 at 07:37:42PM -0800, Rick Macklem wrote:
-> > On Wed, Nov 27, 2024 at 7:14=E2=80=AFPM Rick Macklem <rick.macklem@gmai=
-l.com> wrote:
-> > >
-> > > On Wed, Nov 27, 2024 at 5:18=E2=80=AFPM zhangjian (CG) <zhangjian496@=
-huawei.com> wrote:
-> > > >
-> > > > there is one case when disk error cause get_inode_acl(inode,
-> > > > ACL_TYPE_DEFAULT) return EIO,
-> > > > resp->acl_access will not be null. posix_acl_release(resp->acl_defa=
-ult)
-> > > > will trigger this warning.
-> > > >
-> > > >
-> > > > > If getting acl_default fails, acl_access and acl_default will be =
-released
-> > > > > simultaneously. However, acl_access will still retain a pointer p=
-ointing
-> > > > > to the released posix_acl, which will trigger a WARNING in
-> > > > > nfs3svc_release_getacl like this:
-> > > > >
-> > > > > ------------[ cut here ]------------
-> > > > > refcount_t: underflow; use-after-free.
-> > > > > WARNING: CPU: 26 PID: 3199 at lib/refcount.c:28
-> > > > > refcount_warn_saturate+0xb5/0x170
-> > > > > Modules linked in:
-> > > > > CPU: 26 UID: 0 PID: 3199 Comm: nfsd Not tainted
-> > > > > 6.12.0-rc6-00079-g04ae226af01f-dirty #8
-> > > > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-> > > > > 1.16.1-2.fc37 04/01/2014
-> > > > > RIP: 0010:refcount_warn_saturate+0xb5/0x170
-> > > > > Code: cc cc 0f b6 1d b3 20 a5 03 80 fb 01 0f 87 65 48 d8 00 83 e3=
- 01 75
-> > > > > e4 48 c7 c7 c0 3b 9b 85 c6 05 97 20 a5 03 01 e8 fb 3e 30 ff <0f> =
-0b eb
-> > > > > cd 0f b6 1d 8a3
-> > > > > RSP: 0018:ffffc90008637cd8 EFLAGS: 00010282
-> > > > > RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff83904fde
-> > > > > RDX: dffffc0000000000 RSI: 0000000000000008 RDI: ffff88871ed36380
-> > > > > RBP: ffff888158beeb40 R08: 0000000000000001 R09: fffff520010c6f56
-> > > > > R10: ffffc90008637ab7 R11: 0000000000000001 R12: 0000000000000001
-> > > > > R13: ffff888140e77400 R14: ffff888140e77408 R15: ffffffff858b42c0
-> > > > > FS:  0000000000000000(0000) GS:ffff88871ed00000(0000)
-> > > > > knlGS:0000000000000000
-> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > > CR2: 0000562384d32158 CR3: 000000055cc6a000 CR4: 00000000000006f0
-> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > > > Call Trace:
-> > > > >   <TASK>
-> > > > >   ? refcount_warn_saturate+0xb5/0x170
-> > > > >   ? __warn+0xa5/0x140
-> > > > >   ? refcount_warn_saturate+0xb5/0x170
-> > > > >   ? report_bug+0x1b1/0x1e0
-> > > > >   ? handle_bug+0x53/0xa0
-> > > > >   ? exc_invalid_op+0x17/0x40
-> > > > >   ? asm_exc_invalid_op+0x1a/0x20
-> > > > >   ? tick_nohz_tick_stopped+0x1e/0x40
-> > > > >   ? refcount_warn_saturate+0xb5/0x170
-> > > > >   ? refcount_warn_saturate+0xb5/0x170
-> > > > >   nfs3svc_release_getacl+0xc9/0xe0
-> > > > >   svc_process_common+0x5db/0xb60
-> > > > >   ? __pfx_svc_process_common+0x10/0x10
-> > > > >   ? __rcu_read_unlock+0x69/0xa0
-> > > > >   ? __pfx_nfsd_dispatch+0x10/0x10
-> > > > >   ? svc_xprt_received+0xa1/0x120
-> > > > >   ? xdr_init_decode+0x11d/0x190
-> > > > >   svc_process+0x2a7/0x330
-> > > > >   svc_handle_xprt+0x69d/0x940
-> > > > >   svc_recv+0x180/0x2d0
-> > > > >   nfsd+0x168/0x200
-> > > > >   ? __pfx_nfsd+0x10/0x10
-> > > > >   kthread+0x1a2/0x1e0
-> > > > >   ? kthread+0xf4/0x1e0
-> > > > >   ? __pfx_kthread+0x10/0x10
-> > > > >   ret_from_fork+0x34/0x60
-> > > > >   ? __pfx_kthread+0x10/0x10
-> > > > >   ret_from_fork_asm+0x1a/0x30
-> > > > >   </TASK>
-> > > > > Kernel panic - not syncing: kernel: panic_on_warn set ...
-> > > > >
-> > > > > Clear acl_access/acl_default first and set both of them only when=
- both
-> > > > > ACLs are successfully obtained.
-> > > > >
-> > > > > Fixes: a257cdd0e217 ("[PATCH] NFSD: Add server support for NFSv3 =
-ACLs.")
-> > > > > Signed-off-by: Li Lingfeng <lilingfeng@huaweicloud.com>
-> > > > > ---
-> > > > >   fs/nfsd/nfs3acl.c | 14 ++++++++------
-> > > > >   1 file changed, 8 insertions(+), 6 deletions(-)
-> > > > >
-> > > > > diff --git a/fs/nfsd/nfs3acl.c b/fs/nfsd/nfs3acl.c
-> > > > > index 5e34e98db969..17579a032a5b 100644
-> > > > > --- a/fs/nfsd/nfs3acl.c
-> > > > > +++ b/fs/nfsd/nfs3acl.c
-> > > > > @@ -29,10 +29,12 @@ static __be32 nfsd3_proc_getacl(struct svc_rq=
-st *rqstp)
-> > > > >   {
-> > > > >       struct nfsd3_getaclargs *argp =3D rqstp->rq_argp;
-> > > > >       struct nfsd3_getaclres *resp =3D rqstp->rq_resp;
-> > > > > -     struct posix_acl *acl;
-> > > > > +     struct posix_acl *acl =3D NULL, *dacl =3D NULL;
-> > > > >       struct inode *inode;
-> > > > >       svc_fh *fh;
-> > > > >
-> > > > > +     resp->acl_access =3D NULL;
-> > > > > +     resp->acl_default =3D NULL;
-> > > (A) These two lines fix the bug, without other changes needed, I thin=
-k...
-> > Oops, I was wrong w.r.t. this. These two lines need to be repeated afte=
-r the
-> > posix_acl_relase() calls under "fail:".
-> > > > >       fh =3D fh_copy(&resp->fh, &argp->fh);
-> > > > >       resp->status =3D fh_verify(rqstp, &resp->fh, 0, NFSD_MAY_NO=
-P);
-> > > > >       if (resp->status !=3D nfs_ok)
-> > > > > @@ -56,19 +58,19 @@ static __be32 nfsd3_proc_getacl(struct svc_rq=
-st *rqstp)
-> > > > >                       resp->status =3D nfserrno(PTR_ERR(acl));
-> > > > >                       goto fail;
-> > > > >               }
-> > > > > -             resp->acl_access =3D acl;
-> > > Because you deleted this line...
-> > > > >       }
-> > > > >       if (resp->mask & (NFS_DFACL|NFS_DFACLCNT)) {
-> > > > >               /* Check how Solaris handles requests for the Defau=
-lt ACL
-> > > > >                  of a non-directory! */
-> > > > > -             acl =3D get_inode_acl(inode, ACL_TYPE_DEFAULT);
-> > > > > -             if (IS_ERR(acl)) {
-> > > > > -                     resp->status =3D nfserrno(PTR_ERR(acl));
-> > > > > +             dacl =3D get_inode_acl(inode, ACL_TYPE_DEFAULT);
-> > > > > +             if (IS_ERR(dacl)) {
-> > > > > +                     resp->status =3D nfserrno(PTR_ERR(dacl));
-> > > > >                       goto fail;
-> > > The goto fail here will not release the access acl, if I read the cod=
-e
-> > > correctly.
-> > > > >               }
-> > > > > -             resp->acl_default =3D acl;
-> > > > >       }
-> > > > >
-> > > > > +     resp->acl_access =3D acl;
-> > > > > +     resp->acl_default =3D dacl;
-> > > > >       /* resp->acl_{access,default} are released in nfs3svc_relea=
-se_getacl. */
-> > > > >   out:
-> > > > >       return rpc_success;
-> > > >
-> > > Actually, all that is needed to fix the bug is adding the two lines
-> > > that initialize
-> > > them both NUL, I think.. I marked that change (A) above.
-> > Nope, I was wrong w.r.t. this part. You either need to set
-> >      resp->acl_access =3D acl;
-> >      resp->acl_default =3D dacl;
-> > after the posix_acl_relase() calls or switch to using the local
-> > acl and dacl variables for these posix_acl_release calls and stick
-> > with what you did above w.r.t. resp->acl_access and resp->acl_default.
-> >
-> > Anyhow, I think the case I noted above where get_inode_acl(inode,
-> > ACL_TYPE_DEFAULT)
-> > fails will not release acl with your patch.
-> >
-> > rick
->
-> Howdy -
->
-> This one didn't make it into v6.13 because there are some
-> outstanding (and ambiguous, at least to me) review comments. Can you
-> address the comments, update the patch, and post it again?
-In an effort to disambiguate my comments, I'll try again.
-(And, yes, I did not do a good job last time;-)
+Both drivers cast resource_type_t to void * causing the build to fail.
 
-1 - I think your patch fails for the case where the acl_access is acquired,
-     but the acl_default fails. For this case, I do not see how acl_access
-     would be posix_acl_release()'d and would leak the acl structure.
-     If you look at your patched version, resp->acl_access is not set when
-     the "goto fail" is executed in the default acl if block.
+With CONFIG_X86_PAE enabled the resource_size_t type is a 64bit unsigned int
+which cannot be cast to a 32 bit pointer.
 
-2 - Instead of your patch, the bug can be fixed by simply adding the two
-     lines:
-     resp->acl_access =3D NULL;
-     resp->acl_default =3D NULL;
-     after the posix_acl_release() calls below the "fail" label.
-     No other changes are required, from what I can see.
+Use ioremap() instead of pci_resource_start()
 
-rick
+Reported_by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/all/f10e976e-7a04-4454-b38d-39cd18f142da@roeck-us.net/
+Fixes: bb1bd92fa0f2 ("staging: gpib: Add ines GPIB driver")
+Fixes: e1339245eba3 ("staging: gpib: Add Computer Equipment Corporation GPIB driver")
 
->
-> --
-> Chuck Lever
->
+Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+---
+ drivers/staging/gpib/cec/cec_gpib.c   | 3 ++-
+ drivers/staging/gpib/ines/ines_gpib.c | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/gpib/cec/cec_gpib.c b/drivers/staging/gpib/cec/cec_gpib.c
+index 3dc933deb401..a1ea4d9e370a 100644
+--- a/drivers/staging/gpib/cec/cec_gpib.c
++++ b/drivers/staging/gpib/cec/cec_gpib.c
+@@ -297,7 +297,8 @@ int cec_pci_attach(gpib_board_t *board, const gpib_board_config_t *config)
+ 
+ 	cec_priv->plx_iobase = pci_resource_start(cec_priv->pci_device, 1);
+ 	pr_info(" plx9050 base address 0x%lx\n", cec_priv->plx_iobase);
+-	nec_priv->iobase = (void *)(pci_resource_start(cec_priv->pci_device, 3));
++	nec_priv->iobase = ioremap(pci_resource_start(cec_priv->pci_device, 3),
++				   pci_resource_start(cec_priv->pci_device, 3));
+ 	pr_info(" nec7210 base address 0x%p\n", nec_priv->iobase);
+ 
+ 	isr_flags |= IRQF_SHARED;
+diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
+index 9d8387c3bf01..b5f8ea57fd9d 100644
+--- a/drivers/staging/gpib/ines/ines_gpib.c
++++ b/drivers/staging/gpib/ines/ines_gpib.c
+@@ -780,8 +780,8 @@ static int ines_common_pci_attach(gpib_board_t *board, const gpib_board_config_t
+ 
+ 	if (pci_request_regions(ines_priv->pci_device, "ines-gpib"))
+ 		return -1;
+-	nec_priv->iobase = (void *)(pci_resource_start(ines_priv->pci_device,
+-						       found_id.gpib_region));
++	nec_priv->iobase = ioremap(pci_resource_start(ines_priv->pci_device, found_id.gpib_region),
++				   pci_resource_len(ines_priv->pci_device, found_id.gpib_region));
+ 
+ 	ines_priv->pci_chip_type = found_id.pci_chip_type;
+ 	nec_priv->offset = found_id.io_offset;
+-- 
+2.46.2
+
 
