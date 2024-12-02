@@ -1,145 +1,236 @@
-Return-Path: <linux-kernel+bounces-427941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF0B9E08D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 17:40:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22D69E07BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 16:58:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6122BA10E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F8A281800
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 15:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DE413632B;
-	Mon,  2 Dec 2024 15:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD4013B797;
+	Mon,  2 Dec 2024 15:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eDIPDATL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lv0UTB8n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B4/nFAXD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lv0UTB8n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B4/nFAXD"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B524EB50
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 15:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD10757EA;
+	Mon,  2 Dec 2024 15:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733154904; cv=none; b=f39cctNcjCDF4vytBt559va0nkQ6IVjcG3gcS4XnPjvT1NDXe32xkNQEU+HDN4xm2XoZixck5RskNIBZ7M2ME8xJn444pOIUuTfPXMM5sENvfif3JBXLYBad4PPiNajxBpN8iT+nkleUXcgFNC6n6ZrMIZ7gBrMwAL57ZUTYHbM=
+	t=1733155120; cv=none; b=WEIT4nUbiyORU0iifnayTwsbp4vjG5eFZQ7EbwbRI90i9DiRmgkU2KGkBH5TVrtiPfsWfCbnJ2EG7zwELP1xU4HQehDkMjFgjhbZPcZKBEwrp9iI+0f4CmPQ5mehLmwdTDBYUKnW8Du+mGuvPqOYsaYSH/mEbQwwjRodZ0dYq8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733154904; c=relaxed/simple;
-	bh=adL+2LkQ/+XNO8hCMwqPkqXMk3kCQCPZ/eITVwvvJb8=;
+	s=arc-20240116; t=1733155120; c=relaxed/simple;
+	bh=y4FPdSIaQI0lGQ+P9ptBPKy5k1E/YAFgbd//GVIcaog=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWlrR0Pg4QLCGTKIR3XWPBv52RdYLDvRodDPQJki2GncoRRMa2QGS+IA5m0wEfwOOj5JQQxwcfIR77VkfnxA7iyL/M2PBxhxQM3w3d7Bq1C2CmTqqL/ydQYrMcb3mHabTJEplwYGLNePz8YzIlYi78SHavrwE31ps4XmZg3Ml7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eDIPDATL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733154901;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpNsZSR6+9AmB7sm5yntKmdngBAoH/3SnFJl6IQBruO4PM194OXm0tB8ZFYJMhJnkGGGFpMkQdPOdF6qQGv96BMWOJsopjoQtwJlhmfTyIm4xXNHoXYxCHQX+7TjNaICFcxW2TfyQidoXTkkK9U+zu59wucoTKTnIHgZ1oLUJK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lv0UTB8n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B4/nFAXD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lv0UTB8n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B4/nFAXD; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C2D391F44B;
+	Mon,  2 Dec 2024 15:58:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733155116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kMGz26Pd93vereCLJasLGT8lvdI6LqnhcQp8tpVjo7A=;
-	b=eDIPDATLly/sn2wCjq7JcEXjFcUvLXMWc+Gdrbr1uzWOmmO4nI0B/ifsXiTwlUQYv3eLly
-	+KbfcvJHLgBhWyco3JZQIIGvqOSSQPk0/VxRH1yfgMtZW6ttFAPRT5GDTvhTXLaA5imusm
-	REHuzEdS7DLqpLhM/yrM3qLAqjxk7Y4=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-394-GXYRNArGNumEasYJdjeW2A-1; Mon, 02 Dec 2024 10:55:00 -0500
-X-MC-Unique: GXYRNArGNumEasYJdjeW2A-1
-X-Mimecast-MFC-AGG-ID: GXYRNArGNumEasYJdjeW2A
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6d883c2024dso41379756d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 07:55:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733154899; x=1733759699;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kMGz26Pd93vereCLJasLGT8lvdI6LqnhcQp8tpVjo7A=;
-        b=hAe1jt8XoLJbfb5uR8FJkniGTz6dvH9+gfD65bkPTwTDH+ntMPKJwlkT1n9m298/iq
-         lRk4Upb7yaFkdiue6WL7uis1QvuOoUu6z23zJTbtIE3cDsa8vINUu6WFTyh9y0ycU5P6
-         Wgs6U17/JmsC4BqVsUpcv4MwjLMcVmL4jNrXMpQ2UmfA5UJwAEbXCVJj/lBxh+T3cRdt
-         Q3upDmKedZjVo7GotnTLvd4R0KNahDVP7ySOUfyc1QHXDdjKM5t5qgrYfSV3JVAeOMxM
-         jzGodKoZOStm6JM0MmSVI600ExLZIzxxQ480ykT3f+68RTJba+DK6aOuZnasAyxRHMor
-         cUgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFyPi3vg/Mi9naIOptoqGFy7ktdbr2A/5zVb/KUt+znFgQ9gupub2EoWjp706swVtN6YWDm8BIaIGEdiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8HJhJK/QNkF77LBooKBKGndJauVZq5PRm9Bn2VBMPUHLgdE7W
-	OMm57zQgJjld9hni/KF8gOubts1x9RyrOr43istf6pksA0MgiP7NamAU7MLVV9Xwz3CR4ofd+2i
-	ztzKj1igHnulSPIi4V1iRLRrT/IaWwCdD5MbQCJPn6TqfNKrjXDeBfcPF7nZwmfvqXMgDGmo5
-X-Gm-Gg: ASbGncsva5HDeHbnxiqigsoWqERh05c6b6aVb8Wc5Ktk7NjAJr+Hjo/ew9t39wpXEjE
-	dmt579qnxH8tght22UKcpJM+kEFogKqMFf1PlAMLl4YanLzeshuYrREpODFEMp+Q7waDdMpXT5D
-	xlunmwK+Iw8jKrbn8Y4VshsJp+ci0ERBXIchGIZ9zBp3HYsVVMKVz3y/pzRmoEb+Yy2VgWu6zHT
-	LQFt8h2AiEs9+GRHsox+0NBaz2k/STHRENojoPC2muHGZWJnMdcsOCqZfnTCX/RFht+D3F7zYiW
-	HSbYTOBBExanXB4xP9BgKVNIzg==
-X-Received: by 2002:a05:6214:dc7:b0:6d8:88c2:af5f with SMTP id 6a1803df08f44-6d888c2b26amr293838706d6.1.1733154899429;
-        Mon, 02 Dec 2024 07:54:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEoviEDi9BXOJucZNgaChi7PR0dT2tjGFWFCa8hO2q8Ph+R9/XOCu9E7Ze6AFBWJMiaAnRaBQ==
-X-Received: by 2002:a05:6214:dc7:b0:6d8:88c2:af5f with SMTP id 6a1803df08f44-6d888c2b26amr293837866d6.1.1733154898907;
-        Mon, 02 Dec 2024 07:54:58 -0800 (PST)
-Received: from sgarzare-redhat (host-87-12-25-244.business.telecomitalia.it. [87.12.25.244])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d88b9e6a69sm35208006d6.60.2024.12.02.07.54.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 07:54:58 -0800 (PST)
-Date: Mon, 2 Dec 2024 16:54:53 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
-Subject: Re: [PATCH v6 0/3] vsock/test: fix wrong setsockopt() parameters
-Message-ID: <cskeunqjcpywlrkldqw44jpwrrkear46symgk2kucpljsx243h@m7pb7cwvu3yz>
-References: <20241113143557.1000843-1-kshk@linux.ibm.com>
+	bh=Y/qsso5X6tOKUMH1encIDj8wl9rBwroV8igumBF6W+c=;
+	b=Lv0UTB8nhcEKSq9FxnB///3AsWpimsb15LmK57cwuwb/VKfpJEL3K2FzO/Xi35Jt1TKBr2
+	e13OjguVMWOPgBjyBBEa3NJw6YLlcuBbOuAZiHp+Us41N9jG9vabCwVNLiZFu43+JDnL1L
+	oNbcRQ4VSfTG3PHxExwnA6iecbpH1Gg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733155116;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y/qsso5X6tOKUMH1encIDj8wl9rBwroV8igumBF6W+c=;
+	b=B4/nFAXD6yEwt48h/WczVcrocG9efPTMm7tOfp5Aqa1+0B6G8ZSKnEpB8rfREGJmX+0IaL
+	XVf7pCKA/b0A/KDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Lv0UTB8n;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="B4/nFAXD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733155116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y/qsso5X6tOKUMH1encIDj8wl9rBwroV8igumBF6W+c=;
+	b=Lv0UTB8nhcEKSq9FxnB///3AsWpimsb15LmK57cwuwb/VKfpJEL3K2FzO/Xi35Jt1TKBr2
+	e13OjguVMWOPgBjyBBEa3NJw6YLlcuBbOuAZiHp+Us41N9jG9vabCwVNLiZFu43+JDnL1L
+	oNbcRQ4VSfTG3PHxExwnA6iecbpH1Gg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733155116;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y/qsso5X6tOKUMH1encIDj8wl9rBwroV8igumBF6W+c=;
+	b=B4/nFAXD6yEwt48h/WczVcrocG9efPTMm7tOfp5Aqa1+0B6G8ZSKnEpB8rfREGJmX+0IaL
+	XVf7pCKA/b0A/KDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4E6813A31;
+	Mon,  2 Dec 2024 15:58:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EHXrJyzZTWfqOwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 02 Dec 2024 15:58:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3ACAFA07B4; Mon,  2 Dec 2024 16:58:32 +0100 (CET)
+Date: Mon, 2 Dec 2024 16:58:32 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Erin Shepherd <erin.shepherd@e43.eu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH RFC 2/6] fhandle: simplify error handling
+Message-ID: <20241202155832.uoc4h4xazyocmqot@quack3>
+References: <20241129-work-pidfs-file_handle-v1-0-87d803a42495@kernel.org>
+ <20241129-work-pidfs-file_handle-v1-2-87d803a42495@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241113143557.1000843-1-kshk@linux.ibm.com>
+In-Reply-To: <20241129-work-pidfs-file_handle-v1-2-87d803a42495@kernel.org>
+X-Rspamd-Queue-Id: C2D391F44B
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[e43.eu,gmail.com,kernel.org,zeniv.linux.org.uk,suse.cz,oracle.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Nov 13, 2024 at 08:35:54AM -0600, Konstantin Shkolnyy wrote:
->Parameters were created using wrong C types, which caused them to be of
->wrong size on some architectures, causing problems.
->
->The problem with SO_RCVLOWAT was found on s390 (big endian), while x86-64
->didn't show it. After the fix, all tests pass on s390.
->Then Stefano Garzarella pointed out that SO_VM_SOCKETS_* calls might have
->a similar problem, which turned out to be true, hence, the second patch.
->
->Changes for v6:
->- rework the patch #3 to avoid creating a new file for new functions,
->and exclude vsock_perf from calling the new functions.
->- add "Reviewed-by:" to the patch #2.
->Changes for v5:
->- in the patch #2 replace the introduced uint64_t with unsigned long long
->to match documentation
->- add a patch #3 that verifies every setsockopt() call.
->Changes for v4:
->- add "Reviewed-by:" to the first patch, and add a second patch fixing
->SO_VM_SOCKETS_* calls, which depends on the first one (hence, it's now
->a patch series.)
->Changes for v3:
->- fix the same problem in vsock_perf and update commit message
->Changes for v2:
->- add "Fixes:" lines to the commit message
->
->Konstantin Shkolnyy (3):
->  vsock/test: fix failures due to wrong SO_RCVLOWAT parameter
->  vsock/test: fix parameter types in SO_VM_SOCKETS_* calls
->  vsock/test: verify socket options after setting them
+On Fri 29-11-24 14:38:01, Christian Brauner wrote:
+> Rely on our cleanup infrastructure.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Sorry, this series is marked as "Not applicable" [1] since we forgot to 
-target a netdev tree (net/net-next) that we usually use for vsock tests.
+Looks good. Feel free to add:
 
-Please can you send a v7 (carrying my R-b) targeting the net tree?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-You need to rebase on top of net tree and use the "net" tag (e.g.  
-[PATCH net]), more details here:
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
-Let me know if you need more help with that.
+								Honza
 
-Thanks,
-Stefano
-
-[1] 
-https://patchwork.kernel.org/project/netdevbpf/list/?series=909319&archive=both&state=*
-
+> ---
+>  fs/fhandle.c | 39 +++++++++++++++++----------------------
+>  1 file changed, 17 insertions(+), 22 deletions(-)
+> 
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index ec9145047dfc9d25e109e72d210987bbf6b36a20..c00d88fb14e16654b5cbbb71760c0478eac20384 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -261,19 +261,20 @@ static int do_handle_to_path(struct file_handle *handle, struct path *path,
+>  {
+>  	int handle_dwords;
+>  	struct vfsmount *mnt = ctx->root.mnt;
+> +	struct dentry *dentry;
+>  
+>  	/* change the handle size to multiple of sizeof(u32) */
+>  	handle_dwords = handle->handle_bytes >> 2;
+> -	path->dentry = exportfs_decode_fh_raw(mnt,
+> -					  (struct fid *)handle->f_handle,
+> -					  handle_dwords, handle->handle_type,
+> -					  ctx->fh_flags,
+> -					  vfs_dentry_acceptable, ctx);
+> -	if (IS_ERR_OR_NULL(path->dentry)) {
+> -		if (path->dentry == ERR_PTR(-ENOMEM))
+> +	dentry = exportfs_decode_fh_raw(mnt, (struct fid *)handle->f_handle,
+> +					handle_dwords, handle->handle_type,
+> +					ctx->fh_flags, vfs_dentry_acceptable,
+> +					ctx);
+> +	if (IS_ERR_OR_NULL(dentry)) {
+> +		if (dentry == ERR_PTR(-ENOMEM))
+>  			return -ENOMEM;
+>  		return -ESTALE;
+>  	}
+> +	path->dentry = dentry;
+>  	path->mnt = mntget(mnt);
+>  	return 0;
+>  }
+> @@ -398,29 +399,23 @@ static long do_handle_open(int mountdirfd, struct file_handle __user *ufh,
+>  			   int open_flag)
+>  {
+>  	long retval = 0;
+> -	struct path path;
+> +	struct path path __free(path_put) = {};
+>  	struct file *file;
+> -	int fd;
+>  
+>  	retval = handle_to_path(mountdirfd, ufh, &path, open_flag);
+>  	if (retval)
+>  		return retval;
+>  
+> -	fd = get_unused_fd_flags(open_flag);
+> -	if (fd < 0) {
+> -		path_put(&path);
+> +	CLASS(get_unused_fd, fd)(O_CLOEXEC);
+> +	if (fd < 0)
+>  		return fd;
+> -	}
+> +
+>  	file = file_open_root(&path, "", open_flag, 0);
+> -	if (IS_ERR(file)) {
+> -		put_unused_fd(fd);
+> -		retval =  PTR_ERR(file);
+> -	} else {
+> -		retval = fd;
+> -		fd_install(fd, file);
+> -	}
+> -	path_put(&path);
+> -	return retval;
+> +	if (IS_ERR(file))
+> +		return PTR_ERR(file);
+> +
+> +	fd_install(fd, file);
+> +	return take_fd(fd);
+>  }
+>  
+>  /**
+> 
+> -- 
+> 2.45.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
