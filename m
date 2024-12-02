@@ -1,116 +1,140 @@
-Return-Path: <linux-kernel+bounces-427511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B909E03BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:40:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919A49E03DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 14:43:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD1A6B3B095
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:28:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0464AB2C80E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE83204F9E;
-	Mon,  2 Dec 2024 12:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F651FECA4;
+	Mon,  2 Dec 2024 12:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="miO23gm/"
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmIGV1/q"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC5E1FECA2;
-	Mon,  2 Dec 2024 12:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086931A9B2A;
+	Mon,  2 Dec 2024 12:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733142383; cv=none; b=TnJo9z1+PNqgPxev9wXZoWXLdE/fLqeqFGJzNzAKQXYZQnj3bBFc1o8t9Jwtqistco6pzMNmjzGcJyyq37HTZOx45Njo/X2SwnwuWu8m66ZYcsh+mhW0pDAPPSsuSSX2fmkaU/Bwyy/C9cexRF2q11kH4fL8sVawGop1Gd/XXuQ=
+	t=1733142854; cv=none; b=AbiEERl8TFUDf79fbVOuvs2gtzT4MKizlh7XbmlHqhMMi2wUW0qdyvqxjRw7BjKoOgnX8IIHi6eH/WkuG+DhG+NWW0RY2x5gNI9zdPTP2h/5vTRa5x0RA7dcfGUA8zqtMNHZSMIFQ6jGrXOZ87eQoBUYhcapvbd3h5VWpPlCKlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733142383; c=relaxed/simple;
-	bh=tXmGE50YOIz5SzcYHsKev2mYhOC/YO1vLvPg1XfuhQo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U/AgMvGxDLiTA2Z8xWI1W5DDkNGsFeg8BTo5v4s/dhuijTllApa4AAJeFoe4/hVL/ZpO8AkLmPDcb4fPqxwJqJ08OYQ+fNYP6AzLOech9FVg0vmJgrDEaMLBndmR9F6xwvBv+Paa1SuNQQy+2UgJSKSgbNxDhBmPTEuxQtjaL6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=miO23gm/; arc=none smtp.client-ip=134.0.28.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout3.routing.net (Postfix) with ESMTP id DB71A613E1;
-	Mon,  2 Dec 2024 12:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1733142380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RLz82rdcKDrgd4xoVhfZ0YMlDvGMQtoiJXXkans2pP0=;
-	b=miO23gm/nSsZ0oaYi8oGEcKaTVbGDLIaibifAiQnTfcQ+/HVeFzS8Ecbj7B/tmd76ZdQVh
-	g/gCLu2HYWBaWGbGtAs/NRBB2pO9bf/JZ0kpF6UzKZm2+fS2iMyc+qtRedSdHP3bJ+RUkp
-	4shDPCZ6jPdOMXcWZWOud8ReGk1yb/8=
-Received: from frank-u24.. (fttx-pool-217.61.149.104.bambit.de [217.61.149.104])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 28516360552;
-	Mon,  2 Dec 2024 12:26:20 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 18/18] arm64: dts: mediatek: mt7988: enable pwm on bpi-r4
-Date: Mon,  2 Dec 2024 13:25:59 +0100
-Message-ID: <20241202122602.30734-19-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241202122602.30734-1-linux@fw-web.de>
-References: <20241202122602.30734-1-linux@fw-web.de>
+	s=arc-20240116; t=1733142854; c=relaxed/simple;
+	bh=K82C/wSlCQnCagE5Rn+T57wyatHAjCXJw9D440q/x0E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=aHB2sKniAbdTWpwzPHHOZPvRaySiPaKsp+g2ihQcllQ1lqM1WJO7LTbqZWzSwd4JtqGpeRHchP1Y4n7m0hVlo2X8LKgI1od+HJp32NDsyt56dlx+FNjP408vrjgWl6mNAoanLBLZC5/6ZklB2UslnDtMnftAxUulLHRuLKdjf3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UmIGV1/q; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385dece873cso1398692f8f.0;
+        Mon, 02 Dec 2024 04:34:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733142851; x=1733747651; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X2LPxhA5EFsb/CNjbqKNpioL3B8joPuqn0zPyHEcH4Q=;
+        b=UmIGV1/q2RPVTO9CGXIP+i94BAnFMSVBzAuxXGHw072PaCPreBErrrysDouAj1B62X
+         p6Utk+/ihdBh+Iij4x5Q51jn4JRC7GGxaG5X0JCU30y4hLYfuwT72RHcx8kS0vJWMTsn
+         Sq0PKwj3aiMwOClUUK55UR1+tlavtsezr65Sp4Jws2zj4ExEv6Slqf+NBDkqYUED7BL/
+         IOsQEufK2Taz1Ifovk8hW9+d+EXWr0Dfed16D8O5h4k1XB9Zl66ESKXh8Dx/8ndkMYUn
+         MIxp379XGtQ3omvHCZWTacQCzXIQCRWz24bYTZhgfxWB8eCd6u7QUQkFHHwGsr1odtqQ
+         2M9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733142851; x=1733747651;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X2LPxhA5EFsb/CNjbqKNpioL3B8joPuqn0zPyHEcH4Q=;
+        b=l4zUmRWVgKe9CbKydlooe0z8m/Wb0EhX/FJVFix7T6jnFxuxlxbE9M7aDsIwmclzyA
+         nkt5iAThXf5VOyFHmgsTarf70XkU13DQr8MFM24edPBQs93ra0IIPEoKpANO1lHFzdnP
+         GZYmfWfIoH0vrkEKtC4wuhsyXxnh3ozcVDyxZZhfGS0ryLq+dIgLLLe2Vz6bnzWVyh3y
+         6jeGiP/VxiWyepfbaDXUewk6Cvqi9iI1+D6KJXBjnSh1iM3SHVY3sLPm8rv6CJv+bPCW
+         kfvdvwV4SMwGvBk25Ry1xvWGve5UxogRwidHf9R/8mVLsZtlGWYJRZKfWf552mIk2MCa
+         KY8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVtiHfnTxtXcf+LMkyywja1hq2A9dHTDRnY/S/sUxj+laH/+VXJtd/57I0dEVW3f1gfBZ30YwaL7MejLw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6eblSV5s3Lz115R8b7xh9iEAyOTURJpDMGqh6rWzlPfwTd0hC
+	hfwtxK7JxveIsaiGRODjR4cHemdYX8tx9xB3p4f77lQ/ffQtYYs5wy3a6HCM
+X-Gm-Gg: ASbGncuUDHUZFLL/08E5KCd8Jr5uo0LeHdpThyi5+J9hsdXxjK6hxHQq+8/S7L4hRqr
+	1XjadjNeSKIMUMDhHz2X1RzEu3sJJ8gDrVbgW+ckyqvoA/VthBFJuUeGUHP50B8IVAkMVxjW1M3
+	SSIsNeiCJsiUxtC2PPXhzHmvczOstXH2Z+jyCn+KrRfOnIlmh7egrlhBB07UPuh1oVOuCuIA2+L
+	0ZyMkusqgf0sWz+T79QvT3MCWFfra6H7x7cOqaIhGMeQx7ikImb3Yvx5GykMz+U/G1HNII=
+X-Google-Smtp-Source: AGHT+IGB+sqklW5oXVtwm3qQi3zcPxP9UV+M9Nt1GJC+NPuwZZyXlBrMZWUhKi2/GdtIIQUphDVg1g==
+X-Received: by 2002:a05:6000:178d:b0:385:dfab:1643 with SMTP id ffacd0b85a97d-385dfab180cmr10678970f8f.27.1733142850774;
+        Mon, 02 Dec 2024 04:34:10 -0800 (PST)
+Received: from localhost.localdomain ([90.173.102.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e5b10478sm6712040f8f.73.2024.12.02.04.34.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 04:34:10 -0800 (PST)
+From: =?UTF-8?q?Guillermo=20Rodr=C3=ADguez?= <guille.rodriguez@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Guillermo=20Rodr=C3=ADguez?= <guille.rodriguez@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org
+Subject: [PATCH 0/1] Input: evdev - fix wrong timestamp after SYN_DROPPED
+Date: Mon,  2 Dec 2024 13:33:50 +0100
+Message-Id: <20241202123351.86957-1-guille.rodriguez@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 4134b58f-ee95-4f76-aa1e-472263d0e3cf
 
-From: Frank Wunderlich <frank-w@public-files.de>
+Hi all,
 
-Enable pwm on Bananapi R4 board.
+We are seeing an issue with gpio_keys where the first event after
+a SYN_DROPPED has the same timestamp as the SYN_DROPPED event itself.
+After some investigation it looks like this is an issue with evdev
+and not specific to gpio_keys.
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts | 4 ++++
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi                | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+The issue was originally introduced in commit 3b51c44 ("Input: allow
+drivers specify timestamp for input events").
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
-index 12b45b18955b..181bb997cd8d 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
-@@ -369,6 +369,10 @@ mux {
- 	};
- };
- 
-+&pwm {
-+	status = "okay";
-+};
-+
- &serial0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index 2be84acac06a..11651f5e167d 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -211,7 +211,7 @@ mux {
- 			};
- 		};
- 
--		pwm@10048000 {
-+		pwm: pwm@10048000 {
- 			compatible = "mediatek,mt7988-pwm";
- 			reg = <0 0x10048000 0 0x1000>;
- 			clocks = <&infracfg CLK_INFRA_66M_PWM_BCK>,
--- 
-2.43.0
+This commit introduced input_set_timestamp and input_get_timestamp.
+The latter (despite the name) actually generates and stores a timestamp
+in dev->timestamp if the driver did not set one itself. This timestamp
+needs to be reset when events are flushed; otherwise the next event
+will use a stale timestamp. A partial fix was implemented in 4370b23
+("Input: reset device timestamp on sync"), but this does not cover the
+case of SYN_DROPPED.
+
+If a SYN_DROPPED is generated (currently only done by evdev), the
+following happens:
+
+- evdev calls input_get_timestamp to generate a timestamp for the
+  SYN_DROPPED event.
+- input_get_timestamp generates a timestamp and stores it in
+  dev->timestamp
+- When the next real event is reported (in evdev_events), evdev
+  calls input_get_timestamp, which uses the timestamp already
+  stored in dev->timestamp, which corresponds to the SYN_DROPPED event
+  
+How to fix:
+
+- When a SYN_DROPPED is generated, after calling input_get_timestamp,
+  the timestamp stored in dev->timestamp should be reset (same as is
+  currently done in input_handle_event). The attached patch does that.
+  
+(Perhaps the underlying problem is that it is not expected that a
+function called input_get_timestamp will have side effects. The
+commit history of input.c shows that this has actually caused a
+few issues since 3b51c44.)
+
+
+Guillermo Rodríguez (1):
+  Input: evdev - fix wrong timestamp after SYN_DROPPED event
+
+ drivers/input/evdev.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+
+base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
+2.25.1
 
 
