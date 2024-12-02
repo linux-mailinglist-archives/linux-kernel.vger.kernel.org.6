@@ -1,177 +1,228 @@
-Return-Path: <linux-kernel+bounces-427320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-427321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE449DFFCD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:10:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99CDD9DFFD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 12:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FD7281B1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:10:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A33E281D67
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2024 11:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9651FDE05;
-	Mon,  2 Dec 2024 11:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191921FDE01;
+	Mon,  2 Dec 2024 11:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="CbdEhWDn"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GXf3s/g5";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="iJ6Jcpo6"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8AF1FCFF4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2024 11:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733137789; cv=none; b=cDZfvNOPQ32QLkB5as9Qihm1p2EhaxasCS1GfT5uQ9biFYfmghEYftrCzCvSjfOLMVZrz0lg1y5ev8vfiiemiNuMyunKfN+GDQjnmWkw7ruNkVmvTigTvmkr0fQBXWxE4/SjeQGwqCcEWFR3Il9V5HhIrIN9Zks4IbFcR+I8/5U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733137789; c=relaxed/simple;
-	bh=qUcESZ0YUaBtbhD+aoGet9WbGSp2Qo1gyt7ZDRohhNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RWPAHDdyodtFL+gIf3YLbxn6fIlGOwM3Aw+pLxXDPEloac3FbR119bLKXpXgKOzT/rqC47VpFxQCHZnfiG6VNBqw0Cx302D9OqTvWQ7+7Wue7v2rxd+fjna1VbJXreUKtmqVnpxCaFUlaCbgsHBl/nhn0zeuH1c7sYutVhvnm8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=CbdEhWDn; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so59573771fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2024 03:09:47 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470341FCFE5;
+	Mon,  2 Dec 2024 11:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733137850; cv=fail; b=BFx4PgI0TLJv11ll81LNnA3XrUAtWoo0SXJwi18CvdlcSrM+R4pEsDAOATlm4elPesu983ci8QRm//RB/2RHtevPjAEC5fX9AYLSJBB+VDbHv83xB5Z6OcomVSoqqS60iyEBh35Wpv7/e1DAMZl8ggZQ3A58RgU3Dug26vhIJmc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733137850; c=relaxed/simple;
+	bh=/qBAHE6sJcYJ1V1cPSVpf0gtpNRj2w7FjwvsVSADYrs=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bTCgJTMrHBTaHc+9U2APBGayFkPt7hGK2BzwYN3qJybONr3irPTJ5bOlEeSjTKQ3L2lNprf/4VX+oNdPLeDsMFQlRlJEKohi0Ieu4QlHVP2T/9JZLYN3tIAzcHYhzTX+Tghk9UgPsG6+xXooIXEBP5QHnGjFySedEylrjcmsGnI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GXf3s/g5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=iJ6Jcpo6; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B26Wx4J008605;
+	Mon, 2 Dec 2024 11:10:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2023-11-20; bh=TJqmjUKQ+6itdz/D
+	WQkbiCgbViGDlahEDajQIMAIdQM=; b=GXf3s/g5WA16rrLZh+MtPYULfT2wNKtb
+	JxYubLROYz9rJz5vHSFBEasyHzpUXzNKXKYRFsk7IZxjLtuLsshZAVsvnYPp2h2P
+	RI/TtlMCJ+jqJ3ozaZyr0fvdCJ49ie+34j4eaaJZNawYjQUVv5r4d5sGBI90swm6
+	B04k/0y/GBgm9Rzr5bo+A0mU7d2+D+wSi1mivotWyyTvddevrRULtxokUQL/q6rm
+	sUw9URtBjkZJ1wiYYhsQGbh6s2tq1xtwhHu0PrLu0fksoqYWNEJANLMIBONl5i7L
+	EHz7jnmxn/8OASdOAk/jmctJ1fG9GRw4L454XVoqvMPEhx0JmJAdkg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 437s9ytkmm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Dec 2024 11:10:46 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B29m0fp038108;
+	Mon, 2 Dec 2024 11:10:45 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2172.outbound.protection.outlook.com [104.47.56.172])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 437s56r6ed-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Dec 2024 11:10:45 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k/wop2bUTEKzZhROKEWzqQp7/wsBNzzeOY+oV3TNM22oic9JCtXBvEXfVvAIoMI1ihKjteW81KI+GPpTtSVo75rbW9kr8UIcg00aqN2/IKmqRaKRLw2U8oa0ff9uH75UjWJddr21Jno8Ph6x3wKIoQJqv3rk1HcpDagH0nhSlQ99Hsv+ymVsL0iocjIKT//UMtuoUSVsLPdZpumyDmVdIQNEtVst/IhDmchv73cgr4WVZ/KpgWxFYQFWsXDIYfCtqQrhc0c+2GqFtK6pjW42ueDVJ9VHvUNu+OaiVRZsUgDsYRHv0I8OL37/vra87Z/zcvADAyRlFJJBOKkNKw6qUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TJqmjUKQ+6itdz/DWQkbiCgbViGDlahEDajQIMAIdQM=;
+ b=D9upLMHytvvzSboYZXcXGWP4V0AeSjFLjJa1nAlgb5WD1WQNEHHI/cOvKNJUDbGdjbzemd1txEPbkfcuQNjvz8tRBgX37wVvRiGufFIzRMCnoetogfus+sr7gdAkL0PAEa/lqQJIf8hX8iBG2GNw9ALTAzR7q3vmvSCep66l9kVa9/ucNsdxYpMZrKUd7MYStgoHxGDWKzbxxR1hzWtKSN+n5Z/vIYkk7rgt2TIjmB+yOnAl+ZcU7vcu0L9/41ONsk8BvkYfT1DN5bO/UocVq1ob6PVR0jBZ1uGlP1rfGx7CvGSfNOFNwhZI9iPaQJXmcCf/KfR7whI7MVyAWyS9Gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733137786; x=1733742586; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JIz3utMm0/sU5BMr5sIEd+mlpszlZQSMeIY1+TfyJxY=;
-        b=CbdEhWDnrF5LHf8ong5EQLwqU++3HIUr6JWW9UhSDEUGeGqZ1xZpkSy1qV+nUgc1GQ
-         KmrqeSUDUCn/TbP0SDiCtPDWuOLbf9F2g2v459mK8+QXP08G1cfQPpJ4sfeMjdMMNLlr
-         GC5fhshN6b4Gk8kUr1KOpMGYsHuiga5QmPo7XkxTFcXoEwqlL+pqL96d9SaF1mRrn9L9
-         A3HkCbMu9C/7P21fQmV6R3gjdhrsY2gNVWrzI+3BZn5ami3i/P8xwuQXsKsnAFo2HV69
-         LsZzZjeVo5ZlLZrVBl859FG3+auRIp+a/cKGfXK/KROWiDMPaXbBRNs5rCqbOGEQK7Kr
-         g5IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733137786; x=1733742586;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JIz3utMm0/sU5BMr5sIEd+mlpszlZQSMeIY1+TfyJxY=;
-        b=kbX14KaxmkIBuPskFaaNGzBbuTPrQJiWE5RpL1D6zztTypi1rttuyvjsAqARj3GvZq
-         rX03W0leGU+TJ812S+xQ7cwCoZgO/W5lbSi+GTw472WkXX6omiHt/a9bShr4LoWSl183
-         S1YBP3JVFQqur4AiRBQUEk2Hm/grOvLMXci7L9pVlhSLA7VSsCD/ceEXyENTHlSugMEk
-         biCeTTHKSibwI2AnDJiA4EyzBDKUj9/Wz/NPDuclERASqRU45N993+ISZpAj3wANNQJK
-         oiq2RQqvwLkESEsXqR6nn2NgXyscP1ZmXg6Vfb1B98dVlFF6Ve5W8bc0LCQcWHgqIT4Y
-         RJTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkk5s3Oj8lVVn93fsPCA5FoIP45pJHkfS6HB5sS+ak6hw2MLUojMFav4540Zdx8old6i4EX8bZtKDG8es=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAvcPXzxiQTNGFcOBAP+bn701ZrGaeamUsrYZETsFJVZgsxg66
-	EIV/WU2IgtthK3qoisH0a+sFrBIqOKp59Jnphxc2asbJ8XsPJyn1osA7TI0CT0o=
-X-Gm-Gg: ASbGnctc7Ej4F386w5/b3v+27TH4b83tH7ioKucMAJh744+erBdModUM+DRxWRfwajB
-	KYDSoJiou5tLdV3YjY6xZrNFsVBPVz1N4rU5805FO/czKmGv3O5zBt1IJH1YZLbSAJS5TDeFF0/
-	ZZ3Jm9e/N3ikwQ6kYmXSPtMd1F1uE7eaiFLmcv4a3mfqzGwY77kcaBZE3rN47K7fBbgaNGLhx5D
-	0UcRfl0emCfxhOUOcWS6jJivM2BQ384md70eEqAE7SJxrpVMR8E2OhwIVa3LzVVesjlJw==
-X-Google-Smtp-Source: AGHT+IHAvBtf0OQXFo4WX8SQik/WEe881XNPtRWavelPBjYiw87rg6F4KhsnlxUq7isC2k5Va1zqnw==
-X-Received: by 2002:a05:6512:3e1e:b0:53d:eced:f634 with SMTP id 2adb3069b0e04-53df01171b4mr16308916e87.48.1733137786215;
-        Mon, 02 Dec 2024 03:09:46 -0800 (PST)
-Received: from [192.168.0.104] ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649f6dcsm1421513e87.243.2024.12.02.03.09.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2024 03:09:45 -0800 (PST)
-Message-ID: <c1296735-81be-4f7d-a601-bc1a3718a6a2@cogentembedded.com>
-Date: Mon, 2 Dec 2024 16:09:43 +0500
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TJqmjUKQ+6itdz/DWQkbiCgbViGDlahEDajQIMAIdQM=;
+ b=iJ6Jcpo6OVGl8bxqLO0rKyjb6VdCvwuxnCouTB8aohB9wWNW2j3D0C3s2i4ZE895plUKBH07Ql0xadnSupRacEBCEiasW1aNDKXwmJD4hfz9evzXgXapLCFmtRP+MR1AjkB1lxd5bLUCITmivGVrEwaoI0JfjtO8RqCZS6Mndq0=
+Received: from PH0PR10MB5563.namprd10.prod.outlook.com (2603:10b6:510:f2::13)
+ by MN6PR10MB8024.namprd10.prod.outlook.com (2603:10b6:208:501::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
+ 2024 11:10:42 +0000
+Received: from PH0PR10MB5563.namprd10.prod.outlook.com
+ ([fe80::1917:9c45:4a41:240]) by PH0PR10MB5563.namprd10.prod.outlook.com
+ ([fe80::1917:9c45:4a41:240%6]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 11:10:42 +0000
+From: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable <stable@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: [PATCH 5.4.y 0/2] Missing cgroup RCU patches for 5.4.y
+Date: Mon,  2 Dec 2024 16:40:22 +0530
+Message-ID: <20241202111024.11212-1-siddh.raman.pant@oracle.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR06CA0192.apcprd06.prod.outlook.com (2603:1096:4:1::24)
+ To PH0PR10MB5563.namprd10.prod.outlook.com (2603:10b6:510:f2::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: phy: phy_ethtool_ksettings_set: Allow any supported
- speed
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michael Dege <michael.dege@renesas.com>,
- Christian Mardmoeller <christian.mardmoeller@renesas.com>,
- Dennis Ostermann <dennis.ostermann@renesas.com>
-References: <20241202083352.3865373-1-nikita.yoush@cogentembedded.com>
- <20241202100334.454599a7@fedora.home>
- <73ca1492-d97b-4120-b662-cc80fc787ffd@cogentembedded.com>
- <Z02He-kU6jlH-TJb@shell.armlinux.org.uk>
- <eddde51a-2e0b-48c2-9681-48a95f329f5c@cogentembedded.com>
- <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
-Content-Language: en-US, ru-RU
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-In-Reply-To: <Z02KoULvRqMQbxR3@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5563:EE_|MN6PR10MB8024:EE_
+X-MS-Office365-Filtering-Correlation-Id: 119fad87-50ec-42b0-2dbd-08dd12c1f5a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|10070799003|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UmF4WmFTc3pWc2paM3lyTzRBTWRoc3QvanJrUVNYcTZMVFRlSWZJcGhlL1pW?=
+ =?utf-8?B?QWpEbzRlZmZuY3o1N3NRc2VCNVhsellFRjk2YzBDeUpNL2t4Q0pxNklwRFVT?=
+ =?utf-8?B?OWt3YUZncDIyRGdMRkUyTUFlczJnbjFNWTNtV014NEdVZkRyQk5ka0hyVjl3?=
+ =?utf-8?B?VkJUVkRUNU55WHhCSGhqYlpQTEZqblowUjlTdFZIV1ZUN0Rld2pHTGs5SlZJ?=
+ =?utf-8?B?N2lRVGs0a2sxektDOU44Z1V3YnNMWElncFFTd1BxRlJ5WnRoa0llVGRzMGs1?=
+ =?utf-8?B?aDVNT05LZzdkUnRSNllLYlp2alg3dElOdG84NmtvWXNGN2VxWnFBT0x6Tmdn?=
+ =?utf-8?B?M1JBdm5Xa2pHNlVxZXp6NE1RbEg0S0VXMHhUalBtd0trY05neklEbSt2M21K?=
+ =?utf-8?B?VzJva1pXWUlrVlNya2VJcms1VHMzbHhXdTREeWlJelFLaFJ6cXZvOUlkUDB4?=
+ =?utf-8?B?UmFTUVdvMHFjZHFIenhuN3F6VlNhNjVJTzREazJNZkFWdFpTektzSnQ1cHBR?=
+ =?utf-8?B?aHpycmhpSzQ3VVZIdkNhemtKUlpYSndzSi8vNTMrMVA5Skc2NnJhciswLzY4?=
+ =?utf-8?B?bkhTRVBFUlQyRHZkZVZISFVZeEhhRzR4VEQ4Mi85RStoWEpnd3RmL28veWRm?=
+ =?utf-8?B?S04xeG9vV28vR1A2MGxpNEFjVnpwSCtOYlIzVlFyRUJaQWl6NjlsNkF2VTRS?=
+ =?utf-8?B?dnJkNjRPamcxODZRazI5am96QkF5S1FXTHlweDFaK3RITU5Zbm1jMEVOWlRW?=
+ =?utf-8?B?dVV4RWJIejNWR1NmcDdIMzRtQzIwVjhRQWlpVUQvdDJOTzdiNm5EbHRtTEpV?=
+ =?utf-8?B?dTByc2RoZmtUa1ZROEJ2UTkvRUVGQ3d4UkkxZUdjdnFidC93WTQxekJ3OXFO?=
+ =?utf-8?B?YjlsUGQ3ZlZ3YTFXZFVrYkhTaUxlRnByNVc0OXBNZHdSWklDSjJEcTQ1a2Z1?=
+ =?utf-8?B?UkFJejhJallUVEc5dmx5N1RES3FYeXdFRU9XdVg0eThvcXcxcXQ3LzN4MTVB?=
+ =?utf-8?B?cHRyTGkwanBsMEMvRXFHY3hhazZYeFFnV0JmUzFFSDJjb3pFcGRER29xODE4?=
+ =?utf-8?B?WlNKZmN1ZFFHYnRHQWovQnVDV3Y2amViczFVbERwYTFQcUZOd3h4ZUZWY0pm?=
+ =?utf-8?B?OHlZaGRPSjFPSlMwcHRBQzVJS0xVWmNMZ3pvRVZFZ3FydDF4WUR6bUNMbW5X?=
+ =?utf-8?B?RVJxY0xmdksvbE92YWNKMUR2dW5LU3BDQ09iejVsWGY1N1FyRmxkYUUvU2ht?=
+ =?utf-8?B?dHR4SkVrL1F6dDJyYjRianRWL3ZEQ1JMVnVRcCtaTlcyRitrVTg1ekJ4Wndi?=
+ =?utf-8?B?UXBTZmlPUm9nRWxGVnFpYno2Z1V2YXU1VTdaNHdkandFOGp5THdrQjg4STYx?=
+ =?utf-8?B?YzZxM1lxTWI0TC9DOTdCNVFzSFd3UUtFNDdjUHg4RGV0KzBGYjNMNHNGTUxs?=
+ =?utf-8?B?OWlnZk0wcmp5N3JvclJzQU1WTG1TUDMwK2tRNlJLRlhEZmYzWjZFUGo4dnFK?=
+ =?utf-8?B?aE1kN3UydXQ1dmJBOWNrZFg3TUoxcFNZb2dxRmFqdHpNN3VxSUVtc0ZGNHJs?=
+ =?utf-8?B?b2JpbkRCTldWcjhFQ2tzWTAvSkIrUmRLdE9mMnN1cDdjeDV4RmlaS0NlaGIz?=
+ =?utf-8?B?dmsvS2E4aUdZclZPUmtSUGtFaHVrZmxmaE5RREczNnBBV3FLUksyV0I0SUJG?=
+ =?utf-8?B?WXBzaUkwRXhoanpmM0kzSFN5cmZUaURHcVEwbVp0dU5IbUpsMk5wVE5IdHpZ?=
+ =?utf-8?B?aFpIeWp3cFN5bnBuOTF2dWVaZHUyOGd6c0YrVHZZVjY4ZkdjS0RJNXFGZWZt?=
+ =?utf-8?B?ZXhFZFYwem92NzFoZUxndz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5563.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bGc4Z1dMYkhxaFluTWNCSExPMGRCTlljTmFUUElEZ3huRS83SlIzUmN6T251?=
+ =?utf-8?B?a1pNSElQMVpSdlpsZUFyMzY1ZkdCYmpBMWJtUHdSOFJ4dENTY20wZWFLdDg5?=
+ =?utf-8?B?Z1lQQ0o5Q2pTS2gzRGRyWitVRVhNdDJhRk5zS2tUSVk3RDhNdnMzV2lzbUE2?=
+ =?utf-8?B?bUJkaHdUaThwdXYrUDN1QkJlaUt0UE9DYzhPRXZsZy9ZUEpMRkVPUmg1RnpZ?=
+ =?utf-8?B?NmY2Zm02M0ZuQ0Q4a3l5eXJlN2EwNzF5QzJxUlNRNTh6bVowdG9EaStJdUg1?=
+ =?utf-8?B?ZXBoaTlzK2xQNEttYmluVmtic0FkRWdFamxiMXFDUitkd3ZsSmlQM0JXWndp?=
+ =?utf-8?B?RmRPbWQvakdkcHBFYXBOcWdoVExyTXVUTzhQY3E0aXlFRWVRcEcwcUZBQ1FK?=
+ =?utf-8?B?UGdPT3IyWnhLN3BmM1cyaHlVcUtHZWc2VUVmMXBCSVBhWk1CQTh2MW5sQVhE?=
+ =?utf-8?B?Nyt2SlF1bS83eHkvdlhlWUlycUZ4d1VyMnpUU0ZNZlNOR0ZuWWNzaG9IaXRQ?=
+ =?utf-8?B?Z0R6aDFGWFo0b1Q3UlM2dFdISnRJRUQ5K0h5Zm5ndkI4MGV0VmRBREFhRGVs?=
+ =?utf-8?B?Vk1CUTdCUjFtYm5GT0NrNUdWblF3Y0NTeHExS1lnU3VveHVMeWZncmY2MlVG?=
+ =?utf-8?B?ZDFXODZUcXRZb3VEL1dqQm5yZVZyS3ZZSGdxemMyQTljY1pwNjIrQVYwbFdT?=
+ =?utf-8?B?N2tBa0dXNmJwWWxmcmk5Sk9hYjZONERESkNTaFlVeVY1WWpDOUYzODdmR2x0?=
+ =?utf-8?B?Y2k4ZVViVXRPVUJXckNZUFZ6eEF5OG1ZbSsxVmwxZlBVTGNmNTR5UmpnanVu?=
+ =?utf-8?B?bVJoZGVqdWNLYUJETjBjWmhnaXQvek9FN1I0bEM4TFVIeUY4OHYyQmxRRlY1?=
+ =?utf-8?B?N0xQdCtTWml5eWpOSG1tVFhGUndWYS9IN2RrRTlObWJubHU0d2xNeENpMGxl?=
+ =?utf-8?B?MUxMbDVaVUVIbGFNdUxveDBKR1dzZmVJMTVQQW1mVStLcWhDaEJwNVRqOEVq?=
+ =?utf-8?B?VGgyNTRmeEQ0OXQ4VXJOMmFudWZUUC9nM2NoTTB1aGpibVRUaklXc09vMlBJ?=
+ =?utf-8?B?dFpHVERJQWZvY25RcFFNRks0emtEdVpjQ3V6THFadUNKSGp4UlJuVk9hazVm?=
+ =?utf-8?B?VE5wemNJWTNMRmhuejd3blk4R2pOMWFRdnpJQUNGREFya0U3OTN3a0NqVlJa?=
+ =?utf-8?B?bmpiSndvNlM2Q1VWdVBQRE1lYVVieTl4blNqUWtxSFdZWGJFWFBsU0N2NmEx?=
+ =?utf-8?B?aTdxSDBLd3BRRGNtMWt3a0I3NWgrbGwxZHl4MkJCYm9zbzJwSTIvdVdDdi8x?=
+ =?utf-8?B?czZxSnVwOUlYNTVYVW9oekpwR2VrLzR6MGhKUEYzSFpZWHEvcklIUzViK3V2?=
+ =?utf-8?B?enVoMlVzRmlWTnMwdVZyTnFzQStPYk95RDdQYXhMOWpCNnF2bkY2L241Zjhy?=
+ =?utf-8?B?cmVOR2h0Z3FwZzNWdm1TTnBodURVazYvbnRjUnlXUktDSUhKTmVPMjJpcWZl?=
+ =?utf-8?B?d1BhbFVJV3hTejJCQUdubEk1b1NFOUQ5TVFLalhxcUFhUmpReDk2ZERhQXE0?=
+ =?utf-8?B?VmxrL3BuWTY0cUNHdmRhV01XdE5wY1ExK2lyNWtoalQ1RDdydGE0Y1VFaG5z?=
+ =?utf-8?B?TzVQWGVoRFVHdTR3ZVVkOW51RlJSQlBNMm9RNytjUnVHejRidlRGYlVPR1c5?=
+ =?utf-8?B?MGFnSFNOd3NFVVhHMTNSaDgrT2hnNWVHRG1IUHo3dk5Rd24rYmI4QkNvZjVS?=
+ =?utf-8?B?TGp3WHVHT1dmY1FEQ1UrcTc5RE1CNndKNjlHNW9kcmtnS2J3NjB2a0hzbm9P?=
+ =?utf-8?B?d2VQTHR3K0ZzZWFkVTlNdE9QUlFBN29qbEJRMjUrbHFvVWVHNVpWdUJZSlJZ?=
+ =?utf-8?B?ekF3YzgwdXl1VnBqcXdiQXdvTmlHWUVvbmY0Sk1NTHdrSzBuYTZnL3VMOWlr?=
+ =?utf-8?B?dXRRaXV6YzhSNWZESTNubGtBNEhrUXhieTZLc2lwTzc5eFJ0Vjg1ZWwwN3Ix?=
+ =?utf-8?B?OEdBSWl4YWQ2bEFENHAvR29ySGt1NEgvQjJlU2NmWnlDMVFSMEZ4c1pYZTZ1?=
+ =?utf-8?B?NnFidnFRdTdWVklRRlpodVA4bzhBZ3lodGhkN1VOTWQ1V0djRWZ4aEUwdTd6?=
+ =?utf-8?B?OWhOOFIybGo4dVRSODY0UFk2bGdEdngrcXlNYnRJYU5sWncxWkhqZ1hkNTND?=
+ =?utf-8?Q?tgTfQXbP5i+/JrKU/W/gQ1g=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	GQfq1MJab0r3Yjl2i5QXTum+UsZ9Rc8rCWJcyJMXz6JTExQE1eq6pHjlReo/utEuL79va1KFkWsDF1M+0pgGDMO7f5HMnBvZTXSPjthXtdhyhazArWAjc75aAOT9RmgTg2VhJUjgP80g1I0m03tIO07/OcRNUII3p2Vg1vtj06jz7PL99n16HhyCpOMfXE+SycSFRFkDVvqgrH7/H65nvnVGhtQTYKmIk8cy+S3VBBD4mboxboHwymJPuyhOB1jrcfQipu2b3Fn0mONDJpIOfRPUNjnjaw5xS/Ax1TSwQW5N2jUe5D/V9goz6lB3KqqIkGCK0emdETEojGKu6L/Tg9NhUYF9Q4jRE+zRscHR1ETWknlIyu6OMLnO5mUzVUXUiZwDigUkT4fGAXpim77OKRJgZ6WHdMZA3ULZY962qVPGECnpOBYtTC/G7AZQsZhlFvssLwCri5LqH9UEiSbVpa/2+V/NZtq73YC7ijVgHtXAWQAIc0PFFac4Ny04I5Ax7xQrlSrjfktSSYlFyO1bK4o2pmirRSFn0ydfNyfuQDsFPeKD7r9OAr4w3XpurPpSY6NYO9jfe8mCMwjHEgLYC9QshSH+NC/G12iFO4VXxzU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 119fad87-50ec-42b0-2dbd-08dd12c1f5a8
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5563.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 11:10:41.9459
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p/2gUCa4YxCaXwqo0BmjkNi9qst6sA0d5ngNRgMtEGskVAeis5PVBY340123b2MU2C6/ncur69TdcU/ZLFW1iiVFSft0SrripWQaRfDZcrs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR10MB8024
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-02_06,2024-12-02_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 mlxlogscore=782 spamscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412020098
+X-Proofpoint-GUID: E8JZlaOB5B7Rix7YxsH9fsKvMy1CpZq-
+X-Proofpoint-ORIG-GUID: E8JZlaOB5B7Rix7YxsH9fsKvMy1CpZq-
 
->> Right now, 'ethtool -s tsn0 master-slave forced-slave' causes a call to
->> driver's ethtool set_link_ksettings method. Which does error out for me
->> because at the call time, speed field is 2500.
-> 
-> Are you saying that the PHY starts in fixed-speed 2.5G mode?
-> 
-> What does ethtool tsn0 say after boot and the link has come up but
-> before any ethtool settings are changed?
+5.4 doesn't have commit backported which introduces RCU for cgroup
+root_list, but has a commit fixing a UAF (and thus a CVE) which depends
+on it.
 
-On a freshly booted board, with /etc/systemd/network temporary moved away.
+Thus, we need to backport the original commits. See thread:
+https://lore.kernel.org/all/xr93ikus2nd1.fsf@gthelen-cloudtop.c.googlers.com/
 
-(there are two identical boards, connected to each other)
+This patch series backports the requisite commits to 5.4.y, which are
+picked up from the above mentioned thread.
 
-root@vc4-033:~# ip l show dev tsn0
-19: tsn0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
-     link/ether 3a:e3:5c:56:ba:bd brd ff:ff:ff:ff:ff:ff
+Thanks,
+Siddh
 
-root@vc4-033:~# ethtool tsn0
-Settings for tsn0:
-         Supported ports: [ MII ]
-         Supported link modes:   2500baseT/Full
-         Supported pause frame use: Symmetric Receive-only
-         Supports auto-negotiation: No
-         Supported FEC modes: Not reported
-         Advertised link modes:  2500baseT/Full
-         Advertised pause frame use: No
-         Advertised auto-negotiation: No
-         Advertised FEC modes: Not reported
-         Speed: 2500Mb/s
-         Duplex: Unknown! (255)
-         Auto-negotiation: off
-         master-slave cfg: unknown
-         Port: Twisted Pair
-         PHYAD: 0
-         Transceiver: external
-         MDI-X: Unknown
+Waiman Long (1):
+  cgroup: Move rcu_head up near the top of cgroup_root
 
-PHY driver is out of tree and can do things wrong. AFAIU it does nothing more than wrapping Marvell 
-setup sequences into a phy driver skeleton.
+Yafang Shao (1):
+  cgroup: Make operations on the cgroup root_list RCU safe
 
-Still, with the patch in question applied, things just work:
+ include/linux/cgroup-defs.h     |  7 ++++---
+ kernel/cgroup/cgroup-internal.h |  3 ++-
+ kernel/cgroup/cgroup.c          | 23 ++++++++++++++++-------
+ 3 files changed, 22 insertions(+), 11 deletions(-)
 
-root@vc4-033:~# ip l set dev tsn0 up
-root@vc4-033:~# ethtool -s tsn0 master-slave forced-slave
-[   83.743711] renesas_eth_sw e68c0000.ethernet tsn0: Link is Up - 2.5Gbps/Full - flow control off
-root@vc4-033:~# ethtool tsn0
-Settings for tsn0:
-         Supported ports: [ MII ]
-         Supported link modes:   2500baseT/Full
-         Supported pause frame use: Symmetric Receive-only
-         Supports auto-negotiation: No
-         Supported FEC modes: Not reported
-         Advertised link modes:  2500baseT/Full
-         Advertised pause frame use: No
-         Advertised auto-negotiation: No
-         Advertised FEC modes: Not reported
-         Speed: 2500Mb/s
-         Duplex: Full
-         Auto-negotiation: off
-         master-slave cfg: forced slave
-         master-slave status: slave
-         Port: Twisted Pair
-         PHYAD: 0
-         Transceiver: external
-         MDI-X: Unknown
+-- 
+2.45.2
 
-root@vc4-033:~# ip a add 192.168.70.11/24 dev tsn0
-root@vc4-033:~# ping 192.168.70.10
-PING 192.168.70.10 (192.168.70.10) 56(84) bytes of data.
-64 bytes from 192.168.70.10: icmp_seq=1 ttl=64 time=1.03 ms
-64 bytes from 192.168.70.10: icmp_seq=2 ttl=64 time=0.601 ms
-...
 
